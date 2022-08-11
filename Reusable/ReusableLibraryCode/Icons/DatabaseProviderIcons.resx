@@ -19,7 +19,7 @@
     <resheader name="writer">System.Resources.ResXResourceWriter, System.Windows.Forms, ...</resheader>
     <data name="Name1"><value>this is my long string</value><comment>this is a comment</comment></data>
     <data name="Color1" type="System.Drawing.Color, System.Drawing">Blue</data>
-    <data name="Bitmap1" mimetype="application/x-microsoft.net.object.binary.base64">
+    <data name="Image1" mimetype="application/x-microsoft.net.object.binary.base64">
         <value>[base64 mime encoded serialized .NET Framework object]</value>
     </data>
     <data name="Icon1" type="System.Drawing.Icon, System.Drawing" mimetype="application/x-microsoft.net.object.bytearray.base64">
@@ -119,33 +119,33 @@
   </resheader>
   <assembly alias="System.Windows.Forms" name="System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089" />
   <data name="Microsoft" type="System.Resources.ResXFileRef, System.Windows.Forms">
-    <value>DatabaseProviderIcons\Microsoft.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+    <value>DatabaseProviderIcons\Microsoft.png;SixLabors.ImageSharp.Image, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
   </data>
   <data name="MicrosoftOverlay" type="System.Resources.ResXFileRef, System.Windows.Forms">
-    <value>DatabaseProviderIcons\MicrosoftOverlay.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+    <value>DatabaseProviderIcons\MicrosoftOverlay.png;SixLabors.ImageSharp.Image, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
   </data>
   <data name="MySql" type="System.Resources.ResXFileRef, System.Windows.Forms">
-    <value>DatabaseProviderIcons\MySql.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+    <value>DatabaseProviderIcons\MySql.png;SixLabors.ImageSharp.Image, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
   </data>
   <data name="MySqlOverlay" type="System.Resources.ResXFileRef, System.Windows.Forms">
-    <value>DatabaseProviderIcons\MySqlOverlay.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+    <value>DatabaseProviderIcons\MySqlOverlay.png;SixLabors.ImageSharp.Image, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
   </data>
   <data name="Oracle" type="System.Resources.ResXFileRef, System.Windows.Forms">
-    <value>DatabaseProviderIcons\Oracle.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+    <value>DatabaseProviderIcons\Oracle.png;SixLabors.ImageSharp.Image, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
   </data>
   <data name="OracleOverlay" type="System.Resources.ResXFileRef, System.Windows.Forms">
-    <value>DatabaseProviderIcons\OracleOverlay.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+    <value>DatabaseProviderIcons\OracleOverlay.png;SixLabors.ImageSharp.Image, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
   </data>
   <data name="PostgreSql" type="System.Resources.ResXFileRef, System.Windows.Forms">
-    <value>DatabaseProviderIcons\PostgreSql.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+    <value>DatabaseProviderIcons\PostgreSql.png;SixLabors.ImageSharp.Image, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
   </data>
   <data name="PostgreSqlOverlay" type="System.Resources.ResXFileRef, System.Windows.Forms">
-    <value>DatabaseProviderIcons\PostgreSqlOverlay.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+    <value>DatabaseProviderIcons\PostgreSqlOverlay.png;SixLabors.ImageSharp.Image, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
   </data>
   <data name="Unknown" type="System.Resources.ResXFileRef, System.Windows.Forms">
-    <value>DatabaseProviderIcons\Unknown.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+    <value>DatabaseProviderIcons\Unknown.png;SixLabors.ImageSharp.Image, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
   </data>
   <data name="UnknownOverlay" type="System.Resources.ResXFileRef, System.Windows.Forms">
-    <value>DatabaseProviderIcons\UnknownOverlay.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+    <value>DatabaseProviderIcons\UnknownOverlay.png;SixLabors.ImageSharp.Image, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
   </data>
 </root>

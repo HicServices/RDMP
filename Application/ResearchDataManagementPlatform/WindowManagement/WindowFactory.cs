@@ -20,7 +20,7 @@ using Rdmp.UI.SingleControlForms;
 using Rdmp.UI.TestsAndSetup.ServicePropogation;
 using ResearchDataManagementPlatform.WindowManagement.ContentWindowTracking.Persistence;
 using ResearchDataManagementPlatform.WindowManagement.TabPageContextMenus;
-
+using ReusableLibraryCode.Icons;
 using WeifenLuo.WinFormsUI.Docking;
 
 namespace ResearchDataManagementPlatform.WindowManagement
@@ -89,7 +89,7 @@ namespace ResearchDataManagementPlatform.WindowManagement
             var content = new PersistableSingleDatabaseObjectDockContent(control, entity, activator.RefreshBus);
 
             var img = activator.CoreIconProvider.GetImage(entity);
-            AddControlToDockContent(activator, (Control)control, content, entity.ToString(), img);
+            AddControlToDockContent(activator, (Control)control, content, entity.ToString(), img.ToBitmap());
 
             if (!RDMPMainForm.Loading)
                 activator.HistoryProvider.Add(entity);

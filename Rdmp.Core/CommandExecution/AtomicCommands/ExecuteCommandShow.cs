@@ -6,7 +6,7 @@
 
 using System;
 using System.Collections.Generic;
-using System.Drawing;
+using SixLabors.ImageSharp;
 using System.Linq;
 using MapsDirectlyToDatabaseTable;
 using Rdmp.Core.CommandExecution;

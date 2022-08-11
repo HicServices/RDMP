@@ -5,7 +5,7 @@
 // You should have received a copy of the GNU General Public License along with RDMP. If not, see <https://www.gnu.org/licenses/>.
 
 using System.Collections.Generic;
-using System.Drawing;
+using SixLabors.ImageSharp;
 using Rdmp.Core.DataExport.DataRelease.Potential;
 using Rdmp.Core.Icons.IconProvision;
 using Rdmp.Core.Ticketing;
@@ -14,8 +14,8 @@ namespace Rdmp.Core.Icons.IconProvision.StateBasedIconProviders
 {
     public class ReleaseabilityStateBasedIconProvider : IObjectStateBasedIconProvider
     {
-        private readonly Dictionary<Releaseability,Bitmap> _images = new Dictionary<Releaseability, Bitmap>();
-        private readonly Dictionary<TicketingReleaseabilityEvaluation, Bitmap> _environmentImages = new Dictionary<TicketingReleaseabilityEvaluation, Bitmap>();
+        private readonly Dictionary<Releaseability,Image> _images = new Dictionary<Releaseability, Image>();
+        private readonly Dictionary<TicketingReleaseabilityEvaluation, Image> _environmentImages = new Dictionary<TicketingReleaseabilityEvaluation, Image>();
 
         public ReleaseabilityStateBasedIconProvider()
         {
@@ -37,7 +37,7 @@ namespace Rdmp.Core.Icons.IconProvision.StateBasedIconProviders
             _environmentImages.Add(TicketingReleaseabilityEvaluation.TicketingLibraryMissingOrNotConfiguredCorrectly, CatalogueIcons.TinyYellow);
         }
 
-        public Bitmap GetImageIfSupportedObject(object o)
+        public Image GetImageIfSupportedObject(object o)
         {
             if (o is Releaseability) 
                 return _images[(Releaseability) o];

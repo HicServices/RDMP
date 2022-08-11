@@ -10,7 +10,7 @@ using Rdmp.Core.Curation.Data;
 using Rdmp.Core.Icons.IconProvision;
 using ReusableLibraryCode.DataAccess;
 using ReusableLibraryCode.Icons.IconProvision;
-using System.Drawing;
+using SixLabors.ImageSharp;
 using System.IO;
 using System.Text;
 

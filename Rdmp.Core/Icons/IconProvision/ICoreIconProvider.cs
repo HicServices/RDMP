@@ -6,13 +6,13 @@
 
 using ReusableLibraryCode.Icons.IconProvision;
 using System.Collections.Generic;
-using System.Drawing;
+using SixLabors.ImageSharp;
 
 namespace Rdmp.Core.Icons.IconProvision
 {
     public interface ICoreIconProvider : IIconProvider
     {
-        Dictionary<string, Bitmap> GetImageList(bool addFavouritesOverlayKeysToo);
+        Dictionary<string, Image> GetImageList(bool addFavouritesOverlayKeysToo);
 
         /// <summary>
         /// Returns true if there is a valid icon associated with the object (i.e. not a NoIconAvailable icon).

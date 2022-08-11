@@ -5,7 +5,7 @@
 // You should have received a copy of the GNU General Public License along with RDMP. If not, see <https://www.gnu.org/licenses/>.
 
 using System;
-using System.Drawing;
+using SixLabors.ImageSharp;
 using Rdmp.Core.Curation.Data;
 using Rdmp.Core.Icons.IconOverlays;
 using Rdmp.Core.Icons.IconProvision;
@@ -15,14 +15,14 @@ namespace Rdmp.Core.Icons.IconProvision.StateBasedIconProviders
 {
     public class ExtractionInformationStateBasedIconProvider : IObjectStateBasedIconProvider
     {
-        private Bitmap _extractionInformation_Core;
-        private Bitmap _extractionInformation_Supplemental;
-        private Bitmap _extractionInformation_SpecialApproval;
-        private Bitmap _extractionInformation_InternalOnly;
-        private Bitmap _extractionInformation_Deprecated;
-        private Bitmap _extractionInformation_ProjectSpecific;
+        private Image _extractionInformation_Core;
+        private Image _extractionInformation_Supplemental;
+        private Image _extractionInformation_SpecialApproval;
+        private Image _extractionInformation_InternalOnly;
+        private Image _extractionInformation_Deprecated;
+        private Image _extractionInformation_ProjectSpecific;
         private IconOverlayProvider _overlayProvider;
-        private Bitmap _noIconAvailable;
+        private Image _noIconAvailable;
 
         public ExtractionInformationStateBasedIconProvider()
         {
@@ -37,7 +37,7 @@ namespace Rdmp.Core.Icons.IconProvision.StateBasedIconProviders
             _noIconAvailable = CatalogueIcons.NoIconAvailable;
         }
         
-        public Bitmap GetImageIfSupportedObject(object o)
+        public Image GetImageIfSupportedObject(object o)
         {
             
             if(o is ExtractionCategory cat)
@@ -45,7 +45,7 @@ namespace Rdmp.Core.Icons.IconProvision.StateBasedIconProviders
 
             if (o is ExtractionInformation ei)
             {
-                Bitmap toReturn = GetImage(ei.ExtractionCategory);
+                Image toReturn = GetImage(ei.ExtractionCategory);
                 
                 if (ei.IsExtractionIdentifier)
                     toReturn = _overlayProvider.GetOverlay(toReturn, OverlayKind.IsExtractionIdentifier);
@@ -64,7 +64,7 @@ namespace Rdmp.Core.Icons.IconProvision.StateBasedIconProviders
             return null;
         }
 
-        private Bitmap GetImage(ExtractionCategory category)
+        private Image GetImage(ExtractionCategory category)
         {
             switch (category)
             {

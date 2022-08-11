@@ -4,7 +4,7 @@
 // RDMP is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License for more details.
 // You should have received a copy of the GNU General Public License along with RDMP. If not, see <https://www.gnu.org/licenses/>.
 
-using System.Drawing;
+using SixLabors.ImageSharp;
 using Rdmp.Core.DataExport.Data;
 using Rdmp.Core.Icons.IconProvision;
 
@@ -12,8 +12,8 @@ namespace Rdmp.Core.Icons.IconProvision.StateBasedIconProviders
 {
     public class ExtractionConfigurationStateBasedIconProvider : IObjectStateBasedIconProvider
     {
-        private Bitmap _normal;
-        private Bitmap _frozen;
+        private Image _normal;
+        private Image _frozen;
         
         public ExtractionConfigurationStateBasedIconProvider(DataExportIconProvider iconProvider)
         {
@@ -22,14 +22,14 @@ namespace Rdmp.Core.Icons.IconProvision.StateBasedIconProviders
 
         }
 
-        public Bitmap GetImageIfSupportedObject(object o)
+        public Image GetImageIfSupportedObject(object o)
         {
             var ec = o as ExtractionConfiguration;
 
             if (ec == null)
                 return null;
 
-            Bitmap basicImage = ec.IsReleased ? _frozen : _normal;
+            Image basicImage = ec.IsReleased ? _frozen : _normal;
 
             return basicImage;//its all fine and green
         }

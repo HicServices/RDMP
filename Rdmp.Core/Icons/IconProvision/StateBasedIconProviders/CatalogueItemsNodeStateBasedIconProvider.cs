@@ -7,18 +7,18 @@
 using Rdmp.Core.Icons.IconOverlays;
 using Rdmp.Core.Providers.Nodes;
 using ReusableLibraryCode.Icons.IconProvision;
-using System.Drawing;
+using SixLabors.ImageSharp;
 
 namespace Rdmp.Core.Icons.IconProvision.StateBasedIconProviders
 {
     internal class CatalogueItemsNodeStateBasedIconProvider : IObjectStateBasedIconProvider
     {
-        private Bitmap _basic;
-        private Bitmap _core;
-        private Bitmap _internal;
-        private Bitmap _supplemental;
-        private Bitmap _special;
-        private Bitmap _deprecated;
+        private Image _basic;
+        private Image _core;
+        private Image _internal;
+        private Image _supplemental;
+        private Image _special;
+        private Image _deprecated;
 
         public CatalogueItemsNodeStateBasedIconProvider(IconOverlayProvider overlayProvider)
         {
@@ -30,7 +30,7 @@ namespace Rdmp.Core.Icons.IconProvision.StateBasedIconProviders
             _deprecated = overlayProvider.GetOverlay(_basic, OverlayKind.Deprecated);
         }
 
-        public Bitmap GetImageIfSupportedObject(object o)
+        public Image GetImageIfSupportedObject(object o)
         {
             if (o is not CatalogueItemsNode cin)
                 return null;

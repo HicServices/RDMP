@@ -5,7 +5,7 @@
 // You should have received a copy of the GNU General Public License along with RDMP. If not, see <https://www.gnu.org/licenses/>.
 
 using System;
-using System.Drawing;
+using SixLabors.ImageSharp;
 using Rdmp.Core.Icons.IconProvision;
 using ReusableLibraryCode.Checks;
 
@@ -13,9 +13,9 @@ namespace Rdmp.Core.Icons.IconProvision.StateBasedIconProviders
 {
     public class CheckResultStateBasedIconProvider : IObjectStateBasedIconProvider
     {
-        private Bitmap _exception;
-        private Bitmap _warning;
-        private Bitmap _tick;
+        private Image _exception;
+        private Image _warning;
+        private Image _tick;
 
         public CheckResultStateBasedIconProvider()
         {
@@ -24,7 +24,7 @@ namespace Rdmp.Core.Icons.IconProvision.StateBasedIconProviders
             _tick = CatalogueIcons.TinyGreen;
         }
         
-        public Bitmap GetImageIfSupportedObject(object o)
+        public Image GetImageIfSupportedObject(object o)
         {
             if (!(o is CheckResult))
                 return null;

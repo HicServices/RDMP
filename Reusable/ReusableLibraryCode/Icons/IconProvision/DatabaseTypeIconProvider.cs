@@ -5,7 +5,7 @@
 // You should have received a copy of the GNU General Public License along with RDMP. If not, see <https://www.gnu.org/licenses/>.
 
 using System;
-using System.Drawing;
+using SixLabors.ImageSharp;
 using FAnsi;
 
 namespace ReusableLibraryCode.Icons.IconProvision
@@ -15,20 +15,20 @@ namespace ReusableLibraryCode.Icons.IconProvision
     /// </summary>
     public class DatabaseTypeIconProvider
     {
-        private Bitmap _msBig;
-        private Bitmap _msOverlay;
+        private Image _msBig;
+        private Image _msOverlay;
 
-        private Bitmap _oraBig;
-        private Bitmap _oraOverlay;
+        private Image _oraBig;
+        private Image _oraOverlay;
 
-        private Bitmap _mysBig;
-        private Bitmap _mysOverlay;
+        private Image _mysBig;
+        private Image _mysOverlay;
 
-        private Bitmap _postgresBig;
-        private Bitmap _postgresOverlay;
+        private Image _postgresBig;
+        private Image _postgresOverlay;
         
-        private Bitmap _unknownBig;
-        private Bitmap _unknownOverlay;
+        private Image _unknownBig;
+        private Image _unknownOverlay;
         
         public DatabaseTypeIconProvider()
         {
@@ -48,7 +48,7 @@ namespace ReusableLibraryCode.Icons.IconProvision
             _unknownOverlay = DatabaseProviderIcons.UnknownOverlay;
         }
 
-        public Bitmap GetOverlay(DatabaseType type)
+        public Image GetOverlay(DatabaseType type)
         {
             switch (type)
             {
@@ -65,7 +65,7 @@ namespace ReusableLibraryCode.Icons.IconProvision
             }
         }
 
-        public Bitmap GetImage(DatabaseType type)
+        public Image GetImage(DatabaseType type)
         {
             switch (type)
             {

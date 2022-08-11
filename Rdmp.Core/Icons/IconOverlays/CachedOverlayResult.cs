@@ -4,7 +4,7 @@
 // RDMP is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License for more details.
 // You should have received a copy of the GNU General Public License along with RDMP. If not, see <https://www.gnu.org/licenses/>.
 
-using System.Drawing;
+using SixLabors.ImageSharp;
 using ReusableLibraryCode.Icons.IconProvision;
 
 namespace Rdmp.Core.Icons.IconOverlays
@@ -15,9 +15,9 @@ namespace Rdmp.Core.Icons.IconOverlays
     public class CachedOverlayResult
     {
         public OverlayKind Kind { get; private set; }
-        public Bitmap Result { get; private set; }
+        public Image Result { get; private set; }
 
-        public CachedOverlayResult(OverlayKind kind, Bitmap result)
+        public CachedOverlayResult(OverlayKind kind, Image result)
         {
             Kind = kind;
             Result = result;

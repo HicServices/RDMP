@@ -61,102 +61,102 @@ namespace ReusableLibraryCode.Icons {
         }
         
         /// <summary>
-        ///   Looks up a localized resource of type System.Drawing.Bitmap.
+        ///   Looks up a localized resource of type SixLabors.ImageSharp.Image.
         /// </summary>
-        public static System.Drawing.Bitmap Microsoft {
+        public static SixLabors.ImageSharp.Image Microsoft {
             get {
                 object obj = ResourceManager.GetObject("Microsoft", resourceCulture);
-                return ((System.Drawing.Bitmap)(obj));
+                return ((SixLabors.ImageSharp.Image)(obj));
             }
         }
         
         /// <summary>
-        ///   Looks up a localized resource of type System.Drawing.Bitmap.
+        ///   Looks up a localized resource of type SixLabors.ImageSharp.Image.
         /// </summary>
-        public static System.Drawing.Bitmap MicrosoftOverlay {
+        public static SixLabors.ImageSharp.Image MicrosoftOverlay {
             get {
                 object obj = ResourceManager.GetObject("MicrosoftOverlay", resourceCulture);
-                return ((System.Drawing.Bitmap)(obj));
+                return ((SixLabors.ImageSharp.Image)(obj));
             }
         }
         
         /// <summary>
-        ///   Looks up a localized resource of type System.Drawing.Bitmap.
+        ///   Looks up a localized resource of type SixLabors.ImageSharp.Image.
         /// </summary>
-        public static System.Drawing.Bitmap MySql {
+        public static SixLabors.ImageSharp.Image MySql {
             get {
                 object obj = ResourceManager.GetObject("MySql", resourceCulture);
-                return ((System.Drawing.Bitmap)(obj));
+                return ((SixLabors.ImageSharp.Image)(obj));
             }
         }
         
         /// <summary>
-        ///   Looks up a localized resource of type System.Drawing.Bitmap.
+        ///   Looks up a localized resource of type SixLabors.ImageSharp.Image.
         /// </summary>
-        public static System.Drawing.Bitmap MySqlOverlay {
+        public static SixLabors.ImageSharp.Image MySqlOverlay {
             get {
                 object obj = ResourceManager.GetObject("MySqlOverlay", resourceCulture);
-                return ((System.Drawing.Bitmap)(obj));
+                return ((SixLabors.ImageSharp.Image)(obj));
             }
         }
         
         /// <summary>
-        ///   Looks up a localized resource of type System.Drawing.Bitmap.
+        ///   Looks up a localized resource of type SixLabors.ImageSharp.Image.
         /// </summary>
-        public static System.Drawing.Bitmap Oracle {
+        public static SixLabors.ImageSharp.Image Oracle {
             get {
                 object obj = ResourceManager.GetObject("Oracle", resourceCulture);
-                return ((System.Drawing.Bitmap)(obj));
+                return ((SixLabors.ImageSharp.Image)(obj));
             }
         }
         
         /// <summary>
-        ///   Looks up a localized resource of type System.Drawing.Bitmap.
+        ///   Looks up a localized resource of type SixLabors.ImageSharp.Image.
         /// </summary>
-        public static System.Drawing.Bitmap OracleOverlay {
+        public static SixLabors.ImageSharp.Image OracleOverlay {
             get {
                 object obj = ResourceManager.GetObject("OracleOverlay", resourceCulture);
-                return ((System.Drawing.Bitmap)(obj));
+                return ((SixLabors.ImageSharp.Image)(obj));
             }
         }
         
         /// <summary>
-        ///   Looks up a localized resource of type System.Drawing.Bitmap.
+        ///   Looks up a localized resource of type SixLabors.ImageSharp.Image.
         /// </summary>
-        public static System.Drawing.Bitmap PostgreSql {
+        public static SixLabors.ImageSharp.Image PostgreSql {
             get {
                 object obj = ResourceManager.GetObject("PostgreSql", resourceCulture);
-                return ((System.Drawing.Bitmap)(obj));
+                return ((SixLabors.ImageSharp.Image)(obj));
             }
         }
         
         /// <summary>
-        ///   Looks up a localized resource of type System.Drawing.Bitmap.
+        ///   Looks up a localized resource of type SixLabors.ImageSharp.Image.
         /// </summary>
-        public static System.Drawing.Bitmap PostgreSqlOverlay {
+        public static SixLabors.ImageSharp.Image PostgreSqlOverlay {
             get {
                 object obj = ResourceManager.GetObject("PostgreSqlOverlay", resourceCulture);
-                return ((System.Drawing.Bitmap)(obj));
+                return ((SixLabors.ImageSharp.Image)(obj));
             }
         }
         
         /// <summary>
-        ///   Looks up a localized resource of type System.Drawing.Bitmap.
+        ///   Looks up a localized resource of type SixLabors.ImageSharp.Image.
         /// </summary>
-        public static System.Drawing.Bitmap Unknown {
+        public static SixLabors.ImageSharp.Image Unknown {
             get {
                 object obj = ResourceManager.GetObject("Unknown", resourceCulture);
-                return ((System.Drawing.Bitmap)(obj));
+                return ((SixLabors.ImageSharp.Image)(obj));
             }
         }
         
         /// <summary>
-        ///   Looks up a localized resource of type System.Drawing.Bitmap.
+        ///   Looks up a localized resource of type SixLabors.ImageSharp.Image.
         /// </summary>
-        public static System.Drawing.Bitmap UnknownOverlay {
+        public static SixLabors.ImageSharp.Image UnknownOverlay {
             get {
                 object obj = ResourceManager.GetObject("UnknownOverlay", resourceCulture);
-                return ((System.Drawing.Bitmap)(obj));
+                return ((SixLabors.ImageSharp.Image)(obj));
             }
         }
     }

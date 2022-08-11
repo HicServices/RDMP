@@ -5,7 +5,7 @@
 // You should have received a copy of the GNU General Public License along with RDMP. If not, see <https://www.gnu.org/licenses/>.
 
 using System.Collections.Generic;
-using System.Drawing;
+using SixLabors.ImageSharp;
 using System.Reflection;
 using Rdmp.Core.Curation.Data;
 using Rdmp.Core.Databases;
@@ -19,9 +19,9 @@ namespace Rdmp.Core.Icons.IconProvision.StateBasedIconProviders
     public class ExternalDatabaseServerStateBasedIconProvider : IObjectStateBasedIconProvider
     {
         private readonly IconOverlayProvider _overlayProvider;
-        private Bitmap _default;
+        private Image _default;
 
-        Dictionary<string,Bitmap> _assemblyToIconDictionary = new Dictionary<string, Bitmap>();
+        Dictionary<string,Image> _assemblyToIconDictionary = new Dictionary<string, Image>();
         private DatabaseTypeIconProvider _typeSpecificIconsProvider;
         
         public ExternalDatabaseServerStateBasedIconProvider(IconOverlayProvider overlayProvider)
@@ -38,7 +38,7 @@ namespace Rdmp.Core.Icons.IconProvision.StateBasedIconProviders
             _typeSpecificIconsProvider = new DatabaseTypeIconProvider();
         }
 
-        public Bitmap GetIconForAssembly(Assembly assembly)
+        public Image GetIconForAssembly(Assembly assembly)
         {
             var assemblyName = assembly.GetName().Name;
             if (_assemblyToIconDictionary.ContainsKey(assemblyName))
@@ -47,7 +47,7 @@ namespace Rdmp.Core.Icons.IconProvision.StateBasedIconProviders
             return _default;
         }
 
-        public Bitmap GetImageIfSupportedObject(object o)
+        public Image GetImageIfSupportedObject(object o)
         {
             var server = o as ExternalDatabaseServer;
             var dumpServerUsage = o as IdentifierDumpServerUsageNode;

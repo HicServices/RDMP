@@ -5,7 +5,7 @@
 // You should have received a copy of the GNU General Public License along with RDMP. If not, see <https://www.gnu.org/licenses/>.
 
 using System;
-using System.Drawing;
+using SixLabors.ImageSharp;
 using Rdmp.Core.Curation.Data.DataLoad;
 using Rdmp.Core.Icons.IconProvision;
 
@@ -13,12 +13,12 @@ namespace Rdmp.Core.Icons.IconProvision.StateBasedIconProviders
 {
     public class ProcessTaskStateBasedIconProvider : IObjectStateBasedIconProvider
     {
-        private Bitmap _exe;
-        private Bitmap _sql;
-        private Bitmap _plugin;
-        private Bitmap _attacher;
-        private Bitmap _dataProvider;
-        private Bitmap _mutilateDataTables;
+        private Image _exe;
+        private Image _sql;
+        private Image _plugin;
+        private Image _attacher;
+        private Image _dataProvider;
+        private Image _mutilateDataTables;
 
         public ProcessTaskStateBasedIconProvider()
         {
@@ -31,7 +31,7 @@ namespace Rdmp.Core.Icons.IconProvision.StateBasedIconProviders
             _mutilateDataTables = CatalogueIcons.MutilateDataTables;
         }
 
-        public Bitmap GetImageIfSupportedObject(object o)
+        public Image GetImageIfSupportedObject(object o)
         {
             var pt = o as ProcessTask;
 

@@ -6,7 +6,7 @@
 
 using System;
 using System.Collections.Generic;
-using System.Drawing;
+using SixLabors.ImageSharp;
 using System.Linq;
 using System.Resources;
 
@@ -14,7 +14,7 @@ namespace Rdmp.Core.Icons.IconProvision
 {
     public class EnumImageCollection<T> where T : struct, IConvertible
     {
-        readonly Dictionary<T,Bitmap> _images = new Dictionary<T, Bitmap>();
+        readonly Dictionary<T,Image> _images = new Dictionary<T, Image>();
 
         public EnumImageCollection(ResourceManager resourceManager)
         {
@@ -25,7 +25,7 @@ namespace Rdmp.Core.Icons.IconProvision
 
             foreach (var enumValue in Enum.GetValues(typeof(T)))
             {
-                var bmp = (Bitmap)resourceManager.GetObject(enumValue.ToString());
+                var bmp = (Image)resourceManager.GetObject(enumValue.ToString());
                 if(bmp == null)
                     missingImages.Add(enumValue.ToString());
 
@@ -37,12 +37,12 @@ namespace Rdmp.Core.Icons.IconProvision
                     string.Join("," + Environment.NewLine,missingImages));
         }
 
-        public Bitmap this[T index]
+        public Image this[T index]
         {
             get { return _images[index]; }
         }
 
-        public Dictionary<string, Bitmap> ToStringDictionary(int newSizeInPixels = -1)
+        public Dictionary<string, Image> ToStringDictionary(int newSizeInPixels = -1)
         {
             var toReturn = _images.ToDictionary(k => k.Key.ToString(), v => v.Value);
 
@@ -52,7 +52,7 @@ namespace Rdmp.Core.Icons.IconProvision
             return toReturn;
         }
 
-        private Dictionary<string, Bitmap> Resize(Dictionary<string, Bitmap> dictionary, int newSizeInPixels)
+        private Dictionary<string, Image> Resize(Dictionary<string, Image> dictionary, int newSizeInPixels)
         {
             foreach (var k in dictionary.Keys.ToArray())
             {

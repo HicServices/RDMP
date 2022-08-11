@@ -5,7 +5,7 @@
 // You should have received a copy of the GNU General Public License along with RDMP. If not, see <https://www.gnu.org/licenses/>.
 
 using System;
-using System.Drawing;
+using SixLabors.ImageSharp;
 using Rdmp.Core.DataExport.DataExtraction.Commands;
 using Rdmp.Core.Icons.IconProvision;
 
@@ -13,11 +13,11 @@ namespace Rdmp.Core.Icons.IconProvision.StateBasedIconProviders
 {
     public class ExtractCommandStateBasedIconProvider : IObjectStateBasedIconProvider
     {
-        private Bitmap _waiting;
-        private Bitmap _warning;
-        private Bitmap _writing;
-        private Bitmap _failed;
-        private Bitmap _tick;
+        private Image _waiting;
+        private Image _warning;
+        private Image _writing;
+        private Image _failed;
+        private Image _tick;
 
         public ExtractCommandStateBasedIconProvider()
         {
@@ -27,7 +27,7 @@ namespace Rdmp.Core.Icons.IconProvision.StateBasedIconProviders
             _failed = CatalogueIcons.Failed;
             _tick = CatalogueIcons.Tick;
         }
-        public Bitmap GetImageIfSupportedObject(object o)
+        public Image GetImageIfSupportedObject(object o)
         {
             if (!(o is ExtractCommandState))
                 return null;

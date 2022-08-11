@@ -58,334 +58,334 @@ namespace Rdmp.Core.Icons.IconProvision {
         }
         
         /// <summary>
-        ///   Looks up a localized resource of type System.Drawing.Bitmap.
+        ///   Looks up a localized resource of type SixLabors.ImageSharp.Image.
         /// </summary>
-        public static System.Drawing.Bitmap add {
+        public static SixLabors.ImageSharp.Image add {
             get {
                 object obj = ResourceManager.GetObject("add", resourceCulture);
-                return ((System.Drawing.Bitmap)(obj));
+                return ((SixLabors.ImageSharp.Image)(obj));
             }
         }
         
         /// <summary>
-        ///   Looks up a localized resource of type System.Drawing.Bitmap.
+        ///   Looks up a localized resource of type SixLabors.ImageSharp.Image.
         /// </summary>
-        public static System.Drawing.Bitmap application_home {
+        public static SixLabors.ImageSharp.Image application_home {
             get {
                 object obj = ResourceManager.GetObject("application_home", resourceCulture);
-                return ((System.Drawing.Bitmap)(obj));
+                return ((SixLabors.ImageSharp.Image)(obj));
             }
         }
         
         /// <summary>
-        ///   Looks up a localized resource of type System.Drawing.Bitmap.
+        ///   Looks up a localized resource of type SixLabors.ImageSharp.Image.
         /// </summary>
-        public static System.Drawing.Bitmap arrow_refresh {
+        public static SixLabors.ImageSharp.Image arrow_refresh {
             get {
                 object obj = ResourceManager.GetObject("arrow_refresh", resourceCulture);
-                return ((System.Drawing.Bitmap)(obj));
+                return ((SixLabors.ImageSharp.Image)(obj));
             }
         }
         
         /// <summary>
-        ///   Looks up a localized resource of type System.Drawing.Bitmap.
+        ///   Looks up a localized resource of type SixLabors.ImageSharp.Image.
         /// </summary>
-        public static System.Drawing.Bitmap bin_closed {
+        public static SixLabors.ImageSharp.Image bin_closed {
             get {
                 object obj = ResourceManager.GetObject("bin_closed", resourceCulture);
-                return ((System.Drawing.Bitmap)(obj));
+                return ((SixLabors.ImageSharp.Image)(obj));
             }
         }
         
         /// <summary>
-        ///   Looks up a localized resource of type System.Drawing.Bitmap.
+        ///   Looks up a localized resource of type SixLabors.ImageSharp.Image.
         /// </summary>
-        public static System.Drawing.Bitmap cancel {
+        public static SixLabors.ImageSharp.Image cancel {
             get {
                 object obj = ResourceManager.GetObject("cancel", resourceCulture);
-                return ((System.Drawing.Bitmap)(obj));
+                return ((SixLabors.ImageSharp.Image)(obj));
             }
         }
         
         /// <summary>
-        ///   Looks up a localized resource of type System.Drawing.Bitmap.
+        ///   Looks up a localized resource of type SixLabors.ImageSharp.Image.
         /// </summary>
-        public static System.Drawing.Bitmap delete {
+        public static SixLabors.ImageSharp.Image delete {
             get {
                 object obj = ResourceManager.GetObject("delete", resourceCulture);
-                return ((System.Drawing.Bitmap)(obj));
+                return ((SixLabors.ImageSharp.Image)(obj));
             }
         }
         
         /// <summary>
-        ///   Looks up a localized resource of type System.Drawing.Bitmap.
+        ///   Looks up a localized resource of type SixLabors.ImageSharp.Image.
         /// </summary>
-        public static System.Drawing.Bitmap delete_multi {
+        public static SixLabors.ImageSharp.Image delete_multi {
             get {
                 object obj = ResourceManager.GetObject("delete_multi", resourceCulture);
-                return ((System.Drawing.Bitmap)(obj));
+                return ((SixLabors.ImageSharp.Image)(obj));
             }
         }
         
         /// <summary>
-        ///   Looks up a localized resource of type System.Drawing.Bitmap.
+        ///   Looks up a localized resource of type SixLabors.ImageSharp.Image.
         /// </summary>
-        public static System.Drawing.Bitmap disk {
+        public static SixLabors.ImageSharp.Image disk {
             get {
                 object obj = ResourceManager.GetObject("disk", resourceCulture);
-                return ((System.Drawing.Bitmap)(obj));
+                return ((SixLabors.ImageSharp.Image)(obj));
             }
         }
         
         /// <summary>
-        ///   Looks up a localized resource of type System.Drawing.Bitmap.
+        ///   Looks up a localized resource of type SixLabors.ImageSharp.Image.
         /// </summary>
-        public static System.Drawing.Bitmap flag_red {
+        public static SixLabors.ImageSharp.Image flag_red {
             get {
                 object obj = ResourceManager.GetObject("flag_red", resourceCulture);
-                return ((System.Drawing.Bitmap)(obj));
+                return ((SixLabors.ImageSharp.Image)(obj));
             }
         }
         
         /// <summary>
-        ///   Looks up a localized resource of type System.Drawing.Bitmap.
+        ///   Looks up a localized resource of type SixLabors.ImageSharp.Image.
         /// </summary>
-        public static System.Drawing.Bitmap GreenFace {
+        public static SixLabors.ImageSharp.Image GreenFace {
             get {
                 object obj = ResourceManager.GetObject("GreenFace", resourceCulture);
-                return ((System.Drawing.Bitmap)(obj));
+                return ((SixLabors.ImageSharp.Image)(obj));
             }
         }
         
         /// <summary>
-        ///   Looks up a localized resource of type System.Drawing.Bitmap.
+        ///   Looks up a localized resource of type SixLabors.ImageSharp.Image.
         /// </summary>
-        public static System.Drawing.Bitmap help {
+        public static SixLabors.ImageSharp.Image help {
             get {
                 object obj = ResourceManager.GetObject("help", resourceCulture);
-                return ((System.Drawing.Bitmap)(obj));
+                return ((SixLabors.ImageSharp.Image)(obj));
             }
         }
         
         /// <summary>
-        ///   Looks up a localized resource of type System.Drawing.Bitmap.
+        ///   Looks up a localized resource of type SixLabors.ImageSharp.Image.
         /// </summary>
-        public static System.Drawing.Bitmap link {
+        public static SixLabors.ImageSharp.Image link {
             get {
                 object obj = ResourceManager.GetObject("link", resourceCulture);
-                return ((System.Drawing.Bitmap)(obj));
+                return ((SixLabors.ImageSharp.Image)(obj));
             }
         }
         
         /// <summary>
-        ///   Looks up a localized resource of type System.Drawing.Bitmap.
+        ///   Looks up a localized resource of type SixLabors.ImageSharp.Image.
         /// </summary>
-        public static System.Drawing.Bitmap link_break {
+        public static SixLabors.ImageSharp.Image link_break {
             get {
                 object obj = ResourceManager.GetObject("link_break", resourceCulture);
-                return ((System.Drawing.Bitmap)(obj));
+                return ((SixLabors.ImageSharp.Image)(obj));
             }
         }
         
         /// <summary>
-        ///   Looks up a localized resource of type System.Drawing.Bitmap.
+        ///   Looks up a localized resource of type SixLabors.ImageSharp.Image.
         /// </summary>
-        public static System.Drawing.Bitmap lock_break {
+        public static SixLabors.ImageSharp.Image lock_break {
             get {
                 object obj = ResourceManager.GetObject("lock_break", resourceCulture);
-                return ((System.Drawing.Bitmap)(obj));
+                return ((SixLabors.ImageSharp.Image)(obj));
             }
         }
         
         /// <summary>
-        ///   Looks up a localized resource of type System.Drawing.Bitmap.
+        ///   Looks up a localized resource of type SixLabors.ImageSharp.Image.
         /// </summary>
-        public static System.Drawing.Bitmap magnifier {
+        public static SixLabors.ImageSharp.Image magnifier {
             get {
                 object obj = ResourceManager.GetObject("magnifier", resourceCulture);
-                return ((System.Drawing.Bitmap)(obj));
+                return ((SixLabors.ImageSharp.Image)(obj));
             }
         }
         
         /// <summary>
-        ///   Looks up a localized resource of type System.Drawing.Bitmap.
+        ///   Looks up a localized resource of type SixLabors.ImageSharp.Image.
         /// </summary>
-        public static System.Drawing.Bitmap page_white_get {
+        public static SixLabors.ImageSharp.Image page_white_get {
             get {
                 object obj = ResourceManager.GetObject("page_white_get", resourceCulture);
-                return ((System.Drawing.Bitmap)(obj));
+                return ((SixLabors.ImageSharp.Image)(obj));
             }
         }
         
         /// <summary>
-        ///   Looks up a localized resource of type System.Drawing.Bitmap.
+        ///   Looks up a localized resource of type SixLabors.ImageSharp.Image.
         /// </summary>
-        public static System.Drawing.Bitmap page_white_put {
+        public static SixLabors.ImageSharp.Image page_white_put {
             get {
                 object obj = ResourceManager.GetObject("page_white_put", resourceCulture);
-                return ((System.Drawing.Bitmap)(obj));
+                return ((SixLabors.ImageSharp.Image)(obj));
             }
         }
         
         /// <summary>
-        ///   Looks up a localized resource of type System.Drawing.Bitmap.
+        ///   Looks up a localized resource of type SixLabors.ImageSharp.Image.
         /// </summary>
-        public static System.Drawing.Bitmap page_white_word {
+        public static SixLabors.ImageSharp.Image page_white_word {
             get {
                 object obj = ResourceManager.GetObject("page_white_word", resourceCulture);
-                return ((System.Drawing.Bitmap)(obj));
+                return ((SixLabors.ImageSharp.Image)(obj));
             }
         }
         
         /// <summary>
-        ///   Looks up a localized resource of type System.Drawing.Bitmap.
+        ///   Looks up a localized resource of type SixLabors.ImageSharp.Image.
         /// </summary>
-        public static System.Drawing.Bitmap pencil_go {
+        public static SixLabors.ImageSharp.Image pencil_go {
             get {
                 object obj = ResourceManager.GetObject("pencil_go", resourceCulture);
-                return ((System.Drawing.Bitmap)(obj));
+                return ((SixLabors.ImageSharp.Image)(obj));
             }
         }
         
         /// <summary>
-        ///   Looks up a localized resource of type System.Drawing.Bitmap.
+        ///   Looks up a localized resource of type SixLabors.ImageSharp.Image.
         /// </summary>
-        public static System.Drawing.Bitmap phone {
+        public static SixLabors.ImageSharp.Image phone {
             get {
                 object obj = ResourceManager.GetObject("phone", resourceCulture);
-                return ((System.Drawing.Bitmap)(obj));
+                return ((SixLabors.ImageSharp.Image)(obj));
             }
         }
         
         /// <summary>
-        ///   Looks up a localized resource of type System.Drawing.Bitmap.
+        ///   Looks up a localized resource of type SixLabors.ImageSharp.Image.
         /// </summary>
-        public static System.Drawing.Bitmap picture_save {
+        public static SixLabors.ImageSharp.Image picture_save {
             get {
                 object obj = ResourceManager.GetObject("picture_save", resourceCulture);
-                return ((System.Drawing.Bitmap)(obj));
+                return ((SixLabors.ImageSharp.Image)(obj));
             }
         }
         
         /// <summary>
-        ///   Looks up a localized resource of type System.Drawing.Bitmap.
+        ///   Looks up a localized resource of type SixLabors.ImageSharp.Image.
         /// </summary>
-        public static System.Drawing.Bitmap RedFace {
+        public static SixLabors.ImageSharp.Image RedFace {
             get {
                 object obj = ResourceManager.GetObject("RedFace", resourceCulture);
-                return ((System.Drawing.Bitmap)(obj));
+                return ((SixLabors.ImageSharp.Image)(obj));
             }
         }
         
         /// <summary>
-        ///   Looks up a localized resource of type System.Drawing.Bitmap.
+        ///   Looks up a localized resource of type SixLabors.ImageSharp.Image.
         /// </summary>
-        public static System.Drawing.Bitmap Redo {
+        public static SixLabors.ImageSharp.Image Redo {
             get {
                 object obj = ResourceManager.GetObject("Redo", resourceCulture);
-                return ((System.Drawing.Bitmap)(obj));
+                return ((SixLabors.ImageSharp.Image)(obj));
             }
         }
         
         /// <summary>
-        ///   Looks up a localized resource of type System.Drawing.Bitmap.
+        ///   Looks up a localized resource of type SixLabors.ImageSharp.Image.
         /// </summary>
-        public static System.Drawing.Bitmap stop {
+        public static SixLabors.ImageSharp.Image stop {
             get {
                 object obj = ResourceManager.GetObject("stop", resourceCulture);
-                return ((System.Drawing.Bitmap)(obj));
+                return ((SixLabors.ImageSharp.Image)(obj));
             }
         }
         
         /// <summary>
-        ///   Looks up a localized resource of type System.Drawing.Bitmap.
+        ///   Looks up a localized resource of type SixLabors.ImageSharp.Image.
         /// </summary>
-        public static System.Drawing.Bitmap text_align_left {
+        public static SixLabors.ImageSharp.Image text_align_left {
             get {
                 object obj = ResourceManager.GetObject("text_align_left", resourceCulture);
-                return ((System.Drawing.Bitmap)(obj));
+                return ((SixLabors.ImageSharp.Image)(obj));
             }
         }
         
         /// <summary>
-        ///   Looks up a localized resource of type System.Drawing.Bitmap.
+        ///   Looks up a localized resource of type SixLabors.ImageSharp.Image.
         /// </summary>
-        public static System.Drawing.Bitmap text_list_bullets {
+        public static SixLabors.ImageSharp.Image text_list_bullets {
             get {
                 object obj = ResourceManager.GetObject("text_list_bullets", resourceCulture);
-                return ((System.Drawing.Bitmap)(obj));
+                return ((SixLabors.ImageSharp.Image)(obj));
             }
         }
         
         /// <summary>
-        ///   Looks up a localized resource of type System.Drawing.Bitmap.
+        ///   Looks up a localized resource of type SixLabors.ImageSharp.Image.
         /// </summary>
-        public static System.Drawing.Bitmap tick {
+        public static SixLabors.ImageSharp.Image tick {
             get {
                 object obj = ResourceManager.GetObject("tick", resourceCulture);
-                return ((System.Drawing.Bitmap)(obj));
+                return ((SixLabors.ImageSharp.Image)(obj));
             }
         }
         
         /// <summary>
-        ///   Looks up a localized resource of type System.Drawing.Bitmap.
+        ///   Looks up a localized resource of type SixLabors.ImageSharp.Image.
         /// </summary>
-        public static System.Drawing.Bitmap time {
+        public static SixLabors.ImageSharp.Image time {
             get {
                 object obj = ResourceManager.GetObject("time", resourceCulture);
-                return ((System.Drawing.Bitmap)(obj));
+                return ((SixLabors.ImageSharp.Image)(obj));
             }
         }
         
         /// <summary>
-        ///   Looks up a localized resource of type System.Drawing.Bitmap.
+        ///   Looks up a localized resource of type SixLabors.ImageSharp.Image.
         /// </summary>
-        public static System.Drawing.Bitmap Undo {
+        public static SixLabors.ImageSharp.Image Undo {
             get {
                 object obj = ResourceManager.GetObject("Undo", resourceCulture);
-                return ((System.Drawing.Bitmap)(obj));
+                return ((SixLabors.ImageSharp.Image)(obj));
             }
         }
         
         /// <summary>
-        ///   Looks up a localized resource of type System.Drawing.Bitmap.
+        ///   Looks up a localized resource of type SixLabors.ImageSharp.Image.
         /// </summary>
-        public static System.Drawing.Bitmap wand {
+        public static SixLabors.ImageSharp.Image wand {
             get {
                 object obj = ResourceManager.GetObject("wand", resourceCulture);
-                return ((System.Drawing.Bitmap)(obj));
+                return ((SixLabors.ImageSharp.Image)(obj));
             }
         }
         
         /// <summary>
-        ///   Looks up a localized resource of type System.Drawing.Bitmap.
+        ///   Looks up a localized resource of type SixLabors.ImageSharp.Image.
         /// </summary>
-        public static System.Drawing.Bitmap YellowFace {
+        public static SixLabors.ImageSharp.Image YellowFace {
             get {
                 object obj = ResourceManager.GetObject("YellowFace", resourceCulture);
-                return ((System.Drawing.Bitmap)(obj));
+                return ((SixLabors.ImageSharp.Image)(obj));
             }
         }
 
         
         /// <summary>
-        ///   Looks up a localized resource of type System.Drawing.Bitmap.
+        ///   Looks up a localized resource of type SixLabors.ImageSharp.Image.
         /// </summary>
-        public static System.Drawing.Bitmap Forward {
+        public static SixLabors.ImageSharp.Image Forward {
             get {
                 object obj = ResourceManager.GetObject("forward", resourceCulture);
-                return ((System.Drawing.Bitmap)(obj));
+                return ((SixLabors.ImageSharp.Image)(obj));
             }
         }
 
         
         /// <summary>
-        ///   Looks up a localized resource of type System.Drawing.Bitmap.
+        ///   Looks up a localized resource of type SixLabors.ImageSharp.Image.
         /// </summary>
-        public static System.Drawing.Bitmap Back {
+        public static SixLabors.ImageSharp.Image Back {
             get {
                 object obj = ResourceManager.GetObject("back", resourceCulture);
-                return ((System.Drawing.Bitmap)(obj));
+                return ((SixLabors.ImageSharp.Image)(obj));
             }
         }
     }

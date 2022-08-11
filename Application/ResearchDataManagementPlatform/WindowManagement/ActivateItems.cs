@@ -67,6 +67,7 @@ using ResearchDataManagementPlatform.WindowManagement.WindowArranging;
 using ReusableLibraryCode;
 using ReusableLibraryCode.Checks;
 using ReusableLibraryCode.Comments;
+using ReusableLibraryCode.Icons;
 using ReusableLibraryCode.Settings;
 using WeifenLuo.WinFormsUI.Docking;
 
@@ -304,7 +305,7 @@ namespace ResearchDataManagementPlatform.WindowManagement
             where T : RDMPSingleDatabaseObjectControl<T2>, new()
             where T2 : DatabaseEntity
         {
-            return Activate<T, T2>(databaseObject, (Bitmap)CoreIconProvider.GetImage(databaseObject));
+            return Activate<T, T2>(databaseObject, CoreIconProvider.GetImage(databaseObject).ToBitmap());
         }
         
         public T Activate<T>(IPersistableObjectCollection collection)

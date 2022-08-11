@@ -4,7 +4,7 @@
 // RDMP is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License for more details.
 // You should have received a copy of the GNU General Public License along with RDMP. If not, see <https://www.gnu.org/licenses/>.
 
-using System.Drawing;
+using SixLabors.ImageSharp;
 using Rdmp.Core.Curation.Data;
 using Rdmp.Core.Icons.IconOverlays;
 using Rdmp.Core.Icons.IconProvision;
@@ -15,8 +15,8 @@ namespace Rdmp.Core.Icons.IconProvision.StateBasedIconProviders
     public class ColumnInfoStateBasedIconProvider : IObjectStateBasedIconProvider
     {
         private readonly IconOverlayProvider _overlayProvider;
-        private Bitmap _columnInfo;
-        private Bitmap _columnInfoWithANO;
+        private Image _columnInfo;
+        private Image _columnInfoWithANO;
 
         public ColumnInfoStateBasedIconProvider(IconOverlayProvider overlayProvider)
         {
@@ -24,7 +24,7 @@ namespace Rdmp.Core.Icons.IconProvision.StateBasedIconProviders
             _columnInfo = CatalogueIcons.ColumnInfo;
             _columnInfoWithANO = CatalogueIcons.ANOColumnInfo;
         }
-        public Bitmap GetImageIfSupportedObject(object o)
+        public Image GetImageIfSupportedObject(object o)
         {
             var columnInfo = o as ColumnInfo;
 

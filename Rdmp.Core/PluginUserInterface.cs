@@ -6,7 +6,7 @@
 
 using System;
 using System.Collections.Generic;
-using System.Drawing;
+using SixLabors.ImageSharp;
 using MapsDirectlyToDatabaseTable;
 using Rdmp.Core.CommandExecution;
 using Rdmp.Core.CommandExecution.AtomicCommands;
@@ -19,7 +19,7 @@ namespace Rdmp.Core
     {
         protected readonly IBasicActivateItems BasicActivator;
 
-        public Bitmap ImageUnknown => BasicActivator.CoreIconProvider.ImageUnknown;
+        public Image ImageUnknown => BasicActivator.CoreIconProvider.ImageUnknown;
 
         /// <summary>
         /// Creates a new instance of your plugin UI.  See notes on <paramref name="itemActivator"/>
@@ -47,7 +47,7 @@ namespace Rdmp.Core
             yield break;
         }
 
-        public virtual Bitmap GetImage(object concept, OverlayKind kind = OverlayKind.None)
+        public virtual Image GetImage(object concept, OverlayKind kind = OverlayKind.None)
         {
             return null;
         }

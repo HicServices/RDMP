@@ -19,6 +19,7 @@ using Rdmp.UI.CommandExecution.AtomicCommands;
 using Rdmp.UI.CommandExecution.AtomicCommands.UIFactory;
 using Rdmp.UI.ItemActivation;
 using Rdmp.UI.Refreshing;
+using ReusableLibraryCode.Icons;
 using ReusableLibraryCode.Icons.IconProvision;
 
 namespace Rdmp.UI.Collections
@@ -174,7 +175,7 @@ namespace Rdmp.UI.Collections
             CommonFunctionality.Add(new ExecuteCommandCreateNewExtractionConfigurationForProject(Activator),"Extraction Configuration",null,NewMenu);
             CommonFunctionality.Add(new ToolStripSeparator(), NewMenu);
             
-            var mi = new ToolStripMenuItem("Project Specific Catalogue",Activator.CoreIconProvider.GetImage(RDMPConcept.ProjectCatalogue,OverlayKind.Add));
+            var mi = new ToolStripMenuItem("Project Specific Catalogue",Activator.CoreIconProvider.GetImage(RDMPConcept.ProjectCatalogue,OverlayKind.Add).ToBitmap());
 
             var factory = new AtomicCommandUIFactory(Activator);
             mi.DropDownItems.Add(factory.CreateMenuItem(new ExecuteCommandCreateNewCatalogueByImportingFileUI(Activator)

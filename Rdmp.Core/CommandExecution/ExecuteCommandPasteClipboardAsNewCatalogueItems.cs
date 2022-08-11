@@ -10,7 +10,7 @@ using Rdmp.Core.Repositories.Construction;
 using ReusableLibraryCode;
 using ReusableLibraryCode.Icons.IconProvision;
 using System;
-using System.Drawing;
+using SixLabors.ImageSharp;
 using System.Linq;
 
 namespace Rdmp.Core.CommandExecution

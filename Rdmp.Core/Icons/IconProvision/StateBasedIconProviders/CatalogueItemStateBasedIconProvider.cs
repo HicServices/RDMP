@@ -5,7 +5,7 @@
 // You should have received a copy of the GNU General Public License along with RDMP. If not, see <https://www.gnu.org/licenses/>.
 
 using System;
-using System.Drawing;
+using SixLabors.ImageSharp;
 using Rdmp.Core.Curation.Data;
 using Rdmp.Core.Icons.IconOverlays;
 using Rdmp.Core.Icons.IconProvision;
@@ -15,8 +15,8 @@ namespace Rdmp.Core.Icons.IconProvision.StateBasedIconProviders
 {
     public class CatalogueItemStateBasedIconProvider : IObjectStateBasedIconProvider
     {
-        private readonly Bitmap basicImage;
-        private readonly Bitmap transformImage;
+        private readonly Image basicImage;
+        private readonly Image transformImage;
         private readonly IconOverlayProvider _overlayProvider;
 
         public CatalogueItemStateBasedIconProvider(IconOverlayProvider overlayProvider)
@@ -26,7 +26,7 @@ namespace Rdmp.Core.Icons.IconProvision.StateBasedIconProviders
             _overlayProvider = overlayProvider;
         }
 
-        public Bitmap GetImageIfSupportedObject(object o)
+        public Image GetImageIfSupportedObject(object o)
         {
             var ci = o as CatalogueItem;
 
@@ -34,7 +34,7 @@ namespace Rdmp.Core.Icons.IconProvision.StateBasedIconProviders
                 return null;
 
             var ei = ci.ExtractionInformation;
-            Bitmap toReturn = ei?.IsProperTransform() ?? false ? transformImage: basicImage;
+            Image toReturn = ei?.IsProperTransform() ?? false ? transformImage: basicImage;
 
             //it's extractable
             if (ei != null)

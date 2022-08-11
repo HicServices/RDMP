@@ -5,7 +5,7 @@
 // You should have received a copy of the GNU General Public License along with RDMP. If not, see <https://www.gnu.org/licenses/>.
 
 using System;
-using System.Drawing;
+using SixLabors.ImageSharp;
 using Rdmp.Core.Curation.Data;
 using Rdmp.Core.Curation.Data.DataLoad;
 using Rdmp.Core.Curation.Data.DataLoad.Extensions;
@@ -22,7 +22,7 @@ namespace Rdmp.Core.Icons.IconProvision.StateBasedIconProviders
         {
             _iconProvider = iconProvider;
         }
-        public Bitmap GetImageIfSupportedObject(object o)
+        public Image GetImageIfSupportedObject(object o)
         {
             var node = o as LoadStageNode;
 
@@ -38,7 +38,7 @@ namespace Rdmp.Core.Icons.IconProvision.StateBasedIconProviders
             return null;
         }
 
-        private Bitmap GetImageForStage(LoadStage loadStage)
+        private Image GetImageForStage(LoadStage loadStage)
         {
             switch (loadStage)
             {

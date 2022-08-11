@@ -4,7 +4,7 @@
 // RDMP is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License for more details.
 // You should have received a copy of the GNU General Public License along with RDMP. If not, see <https://www.gnu.org/licenses/>.
 
-using System.Drawing;
+using SixLabors.ImageSharp;
 using Rdmp.Core.Curation.Data;
 using Rdmp.Core.Icons.IconProvision;
 
@@ -12,15 +12,15 @@ namespace Rdmp.Core.Icons.IconProvision.StateBasedIconProviders
 {
     public class TableInfoStateBasedIconProvider : IObjectStateBasedIconProvider
     {
-        private Bitmap _tableInfo;
-        private Bitmap _tableInfoTableValuedFunction;
+        private Image _tableInfo;
+        private Image _tableInfoTableValuedFunction;
 
         public TableInfoStateBasedIconProvider()
         {
             _tableInfo = CatalogueIcons.TableInfo;
             _tableInfoTableValuedFunction = CatalogueIcons.TableInfoTableValuedFunction;
         }
-        public Bitmap GetImageIfSupportedObject(object o)
+        public Image GetImageIfSupportedObject(object o)
         {
             var tableInfo = o as TableInfo;
 

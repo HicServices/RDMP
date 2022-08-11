@@ -6,7 +6,7 @@
 
 using System;
 using System.Collections.Generic;
-using System.Drawing;
+using SixLabors.ImageSharp;
 using System.Linq;
 using MapsDirectlyToDatabaseTable;
 using MapsDirectlyToDatabaseTable.Injection;
@@ -302,7 +302,7 @@ namespace Rdmp.Core.CommandExecution
             return new []{mt.Repository.GetObjectByID(mt.GetType(),int.Parse(replacement.Value))};
         }
 
-        private Bitmap GetImage(RDMPConcept concept)
+        private Image GetImage(RDMPConcept concept)
         {
             return _activator.CoreIconProvider.GetImage(concept);
         }

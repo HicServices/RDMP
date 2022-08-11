@@ -7,14 +7,14 @@
 using Rdmp.Core.Curation.Data;
 using Rdmp.Core.Icons.IconOverlays;
 using ReusableLibraryCode.Icons.IconProvision;
-using System.Drawing;
+using SixLabors.ImageSharp;
 using System.Linq;
 
 namespace Rdmp.Core.Icons.IconProvision.StateBasedIconProviders
 {
     public class FilterStateBasedIconProvider : IObjectStateBasedIconProvider
     {
-        private Bitmap _basicIcon;
+        private Image _basicIcon;
         private IconOverlayProvider _overlayProvider;
 
         public FilterStateBasedIconProvider(IconOverlayProvider overlayProvider)
@@ -23,7 +23,7 @@ namespace Rdmp.Core.Icons.IconProvision.StateBasedIconProviders
             _overlayProvider = overlayProvider;
 
         }
-        public Bitmap GetImageIfSupportedObject(object o)
+        public Image GetImageIfSupportedObject(object o)
         {
             if (o is ExtractionFilter f)
             {

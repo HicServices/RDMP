@@ -6,9 +6,9 @@
 #To achieve this, you can run DatabaseCreation.exe with argument 1 being your ServerName
 #You can apply a prefix e.g. TEST_ as an argument to DatabaseCreation.exe and include that prefix below if you like
 
-ServerName:	localhost
+ServerName:	(localdb)\MSSQLLocalDB
 Prefix:	TEST_
-MySql:	server=127.0.0.1;Uid=root;Pwd=YourStrong!Passw0rd;SslMode=None
+#MySql:	server=Server=(localdb)\MSSQLLocalDB;Integrated Security=true;SslMode=None
 PostgreSql:	User ID=postgres;Password=;Host=127.0.0.1;Port=5432
 Oracle: 
 #User accounts you can create with limited access rights (e.g. connect list databases etc).  These users will be used in low privilege tests

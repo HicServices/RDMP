@@ -8,6 +8,7 @@ using System;
 using System.Windows.Forms;
 using Rdmp.Core.Curation.Data.Cohort;
 using Rdmp.UI.ItemActivation;
+using ReusableLibraryCode.Icons;
 
 namespace Rdmp.UI.Wizard
 {
@@ -55,7 +56,7 @@ namespace Rdmp.UI.Wizard
         {
 
             var op = GetSetOperation();
-            pbSetOperation.Image = _activator.CoreIconProvider.GetImage(op);
+            pbSetOperation.Image = _activator.CoreIconProvider.GetImage(op).ToBitmap();
 
         }
 

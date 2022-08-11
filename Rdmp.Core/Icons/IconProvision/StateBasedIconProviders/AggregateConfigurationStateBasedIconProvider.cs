@@ -5,7 +5,7 @@
 // You should have received a copy of the GNU General Public License along with RDMP. If not, see <https://www.gnu.org/licenses/>.
 
 using System;
-using System.Drawing;
+using SixLabors.ImageSharp;
 using Rdmp.Core.Curation.Data.Aggregation;
 using Rdmp.Core.Icons.IconOverlays;
 using Rdmp.Core.Icons.IconProvision;
@@ -16,9 +16,9 @@ namespace Rdmp.Core.Icons.IconProvision.StateBasedIconProviders
     public class AggregateConfigurationStateBasedIconProvider : IObjectStateBasedIconProvider
     {
         private readonly IconOverlayProvider _overlayProvider;
-        private Bitmap _cohortAggregates;
-        private Bitmap _aggregates;
-        private Bitmap _patientIndexTable;
+        private Image _cohortAggregates;
+        private Image _aggregates;
+        private Image _patientIndexTable;
 
         public AggregateConfigurationStateBasedIconProvider(IconOverlayProvider overlayProvider)
         {
@@ -28,7 +28,7 @@ namespace Rdmp.Core.Icons.IconProvision.StateBasedIconProviders
             _patientIndexTable = CatalogueIcons.PatientIndexTable;
         }
 
-        public Bitmap GetImageIfSupportedObject(object o)
+        public Image GetImageIfSupportedObject(object o)
         {
             if (o is Type && o.Equals(typeof (AggregateConfiguration)))
                 return _aggregates;
@@ -38,7 +38,7 @@ namespace Rdmp.Core.Icons.IconProvision.StateBasedIconProviders
             if (ac == null)
                 return null;
             
-            Bitmap img = ac.IsCohortIdentificationAggregate ? _cohortAggregates : _aggregates;
+            Image img = ac.IsCohortIdentificationAggregate ? _cohortAggregates : _aggregates;
 
             if (ac.IsJoinablePatientIndexTable())
                 img = _patientIndexTable;

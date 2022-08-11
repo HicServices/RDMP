@@ -12,7 +12,7 @@ using Rdmp.Core.Icons.IconProvision;
 using Rdmp.Core.QueryCaching.Aggregation;
 using ReusableLibraryCode.Icons.IconProvision;
 using System;
-using System.Drawing;
+using SixLabors.ImageSharp;
 
 namespace Rdmp.Core.CommandExecution.AtomicCommands
 {

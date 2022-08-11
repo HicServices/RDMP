@@ -7,7 +7,7 @@
 using Rdmp.Core.Curation.Data.Cohort;
 using Rdmp.Core.Icons.IconProvision;
 using ReusableLibraryCode.Icons.IconProvision;
-using System.Drawing;
+using SixLabors.ImageSharp;
 
 namespace Rdmp.Core.CommandExecution.AtomicCommands
 {

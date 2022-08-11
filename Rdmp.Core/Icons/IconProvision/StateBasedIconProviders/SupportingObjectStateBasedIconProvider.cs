@@ -4,7 +4,7 @@
 // RDMP is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License for more details.
 // You should have received a copy of the GNU General Public License along with RDMP. If not, see <https://www.gnu.org/licenses/>.
 
-using System.Drawing;
+using SixLabors.ImageSharp;
 using Rdmp.Core.Curation.Data;
 using Rdmp.Core.Icons.IconProvision;
 
@@ -13,15 +13,15 @@ namespace Rdmp.Core.Icons.IconProvision.StateBasedIconProviders
     public class SupportingObjectStateBasedIconProvider : IObjectStateBasedIconProvider
     {
 
-        private Bitmap _supportingDocument;
-        private Bitmap _supportingDocumentGlobal;
-        private Bitmap _supportingDocumentExtractable;
-        private Bitmap _supportingDocumentExtractableGlobal;
+        private Image _supportingDocument;
+        private Image _supportingDocumentGlobal;
+        private Image _supportingDocumentExtractable;
+        private Image _supportingDocumentExtractableGlobal;
 
-        private Bitmap _supportingSql;
-        private Bitmap _supportingSqlGlobal;
-        private Bitmap _supportingSqlExtractable;
-        private Bitmap _supportingSqlExtractableGlobal;
+        private Image _supportingSql;
+        private Image _supportingSqlGlobal;
+        private Image _supportingSqlExtractable;
+        private Image _supportingSqlExtractableGlobal;
 
         public SupportingObjectStateBasedIconProvider()
         {
@@ -36,7 +36,7 @@ namespace Rdmp.Core.Icons.IconProvision.StateBasedIconProviders
             _supportingSqlExtractableGlobal = CatalogueIcons.SupportingSqlExtractableGlobal;
 
         }
-        public Bitmap GetImageIfSupportedObject(object o)
+        public Image GetImageIfSupportedObject(object o)
         {
             var doc = o as SupportingDocument;
             if (doc != null)

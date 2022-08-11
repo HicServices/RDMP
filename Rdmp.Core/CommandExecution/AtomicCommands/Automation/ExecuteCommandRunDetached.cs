@@ -6,7 +6,7 @@
 
 using System;
 using System.Diagnostics;
-using System.Drawing;
+using SixLabors.ImageSharp;
 using System.IO;
 using Rdmp.Core.CommandLine.Options;
 using Rdmp.Core.Icons.IconProvision;

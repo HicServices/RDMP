@@ -5,7 +5,7 @@
 // You should have received a copy of the GNU General Public License along with RDMP. If not, see <https://www.gnu.org/licenses/>.
 
 using System;
-using System.Drawing;
+using SixLabors.ImageSharp;
 using Rdmp.Core.Curation.Data;
 using Rdmp.Core.DataExport.Data;
 using Rdmp.Core.Icons.IconOverlays;
@@ -16,7 +16,7 @@ namespace Rdmp.Core.Icons.IconProvision.StateBasedIconProviders
 {
     public class ExtractableColumnStateBasedIconProvider : IObjectStateBasedIconProvider
     {
-        private readonly Bitmap basicImage;
+        private readonly Image basicImage;
         private readonly IconOverlayProvider _overlayProvider;
 
         public ExtractableColumnStateBasedIconProvider(IconOverlayProvider overlayProvider)
@@ -25,14 +25,14 @@ namespace Rdmp.Core.Icons.IconProvision.StateBasedIconProviders
             _overlayProvider = overlayProvider;
         }
 
-        public Bitmap GetImageIfSupportedObject(object o)
+        public Image GetImageIfSupportedObject(object o)
         {
             var col = o as ExtractableColumn;
 
             if (col == null)
                 return null;
 
-            Bitmap toReturn = basicImage;
+            Image toReturn = basicImage;
             
             //if the current state is to hash add the overlay
             if (col.HashOnDataRelease) 

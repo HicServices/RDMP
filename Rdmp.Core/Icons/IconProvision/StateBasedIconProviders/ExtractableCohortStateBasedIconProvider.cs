@@ -4,7 +4,7 @@
 // RDMP is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License for more details.
 // You should have received a copy of the GNU General Public License along with RDMP. If not, see <https://www.gnu.org/licenses/>.
 
-using System.Drawing;
+using SixLabors.ImageSharp;
 using Rdmp.Core.DataExport.Data;
 using Rdmp.Core.Icons.IconOverlays;
 using Rdmp.Core.Icons.IconProvision;
@@ -15,7 +15,7 @@ namespace Rdmp.Core.Icons.IconProvision.StateBasedIconProviders
     public class ExtractableCohortStateBasedIconProvider : IObjectStateBasedIconProvider
     {
         private readonly IconOverlayProvider _overlayProvider;
-        private Bitmap _basicIcon;
+        private Image _basicIcon;
 
         public ExtractableCohortStateBasedIconProvider(IconOverlayProvider overlayProvider)
         {
@@ -23,7 +23,7 @@ namespace Rdmp.Core.Icons.IconProvision.StateBasedIconProviders
             _basicIcon = CatalogueIcons.ExtractableCohort;
         }
 
-        public Bitmap GetImageIfSupportedObject(object o)
+        public Image GetImageIfSupportedObject(object o)
         {
             var cohort = o as ExtractableCohort;
 

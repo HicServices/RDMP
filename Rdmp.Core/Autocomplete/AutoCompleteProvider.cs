@@ -6,7 +6,7 @@
 
 using System;
 using System.Collections.Generic;
-using System.Drawing;
+using SixLabors.ImageSharp;
 using System.Linq;
 using System.Text.RegularExpressions;
 using FAnsi.Discovery;
@@ -31,7 +31,7 @@ namespace Rdmp.Core.Autocomplete
         /// Array of images that items can be depicted with.  Use <see cref="ItemsWithImages"/> to index into
         /// this array to get the image out
         /// </summary>
-        public Bitmap[] Images;
+        public Image[] Images;
         public Dictionary<string,int> ItemsWithImages { get; set; } = new Dictionary<string, int> ();
 
         private const int TABLE_INFO_IDX = 0;
@@ -41,7 +41,7 @@ namespace Rdmp.Core.Autocomplete
 
         public AutoCompleteProvider()
         {
-            Images = new Bitmap[4];
+            Images = new Image[4];
 
             Images[TABLE_INFO_IDX] = CatalogueIcons.TableInfo;
             Images[COLUMN_INFO_IDX] = CatalogueIcons.ColumnInfo;

@@ -5,7 +5,7 @@
 // You should have received a copy of the GNU General Public License along with RDMP. If not, see <https://www.gnu.org/licenses/>.
 
 using System;
-using System.Drawing;
+using SixLabors.ImageSharp;
 using Rdmp.Core.DataExport.Data;
 using Rdmp.Core.Providers.Nodes;
 using Rdmp.Core.Repositories;
@@ -23,7 +23,7 @@ namespace Rdmp.Core.Icons.IconProvision
             StateBasedIconProviders.Add(new ExtractionConfigurationStateBasedIconProvider(this));
         }
 
-        protected override Bitmap GetImageImpl(object concept, OverlayKind kind = OverlayKind.None)
+        protected override Image GetImageImpl(object concept, OverlayKind kind = OverlayKind.None)
         {
             if (concept is LinkedCohortNode)
                 return base.GetImageImpl(RDMPConcept.ExtractableCohort, OverlayKind.Link);

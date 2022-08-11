@@ -5,21 +5,21 @@
 // You should have received a copy of the GNU General Public License along with RDMP. If not, see <https://www.gnu.org/licenses/>.
 
 using System.Collections.Generic;
-using System.Drawing;
-using System.Drawing.Imaging;
+using SixLabors.ImageSharp;
 using System.Linq;
 using Rdmp.Core.Icons.IconProvision;
 using ReusableLibraryCode.Icons.IconProvision;
+using SixLabors.ImageSharp.PixelFormats;
 
 namespace Rdmp.Core.Icons.IconOverlays
 {
     public class IconOverlayProvider
     {
-        readonly Dictionary<Bitmap,List<CachedOverlayResult>> _resultCache = new Dictionary<Bitmap, List<CachedOverlayResult>>();
+        readonly Dictionary<Image,List<CachedOverlayResult>> _resultCache = new Dictionary<Image, List<CachedOverlayResult>>();
 
-        readonly Dictionary<Bitmap, Dictionary<Bitmap,Bitmap>>  _resultCacheCustom = new Dictionary<Bitmap, Dictionary<Bitmap, Bitmap>>();
+        readonly Dictionary<Image, Dictionary<Image,Image>>  _resultCacheCustom = new Dictionary<Image, Dictionary<Image, Image>>();
 
-        readonly Dictionary<Bitmap,Bitmap> _greyscaleCache = new Dictionary<Bitmap, Bitmap>();
+        readonly Dictionary<Image,Image> _greyscaleCache = new Dictionary<Image, Image>();
 
         private readonly EnumImageCollection<OverlayKind> _images;
 
@@ -28,7 +28,7 @@ namespace Rdmp.Core.Icons.IconOverlays
             _images = new EnumImageCollection<OverlayKind>(Overlays.ResourceManager);
         }
 
-        public Bitmap GetOverlay(Bitmap forImage, OverlayKind overlayKind)
+        public Image GetOverlay(Image forImage, OverlayKind overlayKind)
         {
             //make sure the input image is added to the cache if it is novel
             if(!_resultCache.ContainsKey(forImage))
@@ -51,11 +51,11 @@ namespace Rdmp.Core.Icons.IconOverlays
         }
 
 
-        public Bitmap GetOverlay(Bitmap forImage, Bitmap customOverlay)
+        public Image GetOverlay(Image forImage, Image customOverlay)
         {
             //make sure the input image is added to the cache if it is novel
             if (!_resultCacheCustom.ContainsKey(forImage))
-                _resultCacheCustom.Add(forImage, new Dictionary<Bitmap, Bitmap>());
+                _resultCacheCustom.Add(forImage, new Dictionary<Image, Image>());
 
             //is there a cached image for this overlay ?
             if (!_resultCacheCustom[forImage].ContainsKey(customOverlay))
@@ -63,7 +63,7 @@ namespace Rdmp.Core.Icons.IconOverlays
                 //no
 
                 //draw it
-                var clone = (Bitmap)forImage.Clone();
+                var clone = (Image)forImage.CloneAs<Rgba32>();
 
                 var graphics = Graphics.FromImage(clone);
                 graphics.DrawImage(customOverlay, new Rectangle(0, 0, clone.Width, clone.Height));
@@ -77,7 +77,7 @@ namespace Rdmp.Core.Icons.IconOverlays
             return _resultCacheCustom[forImage][customOverlay];
         }
 
-        public Bitmap GetGrayscale(Bitmap forImage)
+        public Image GetGrayscale(Image forImage)
         {
             if (!_greyscaleCache.ContainsKey(forImage))
                 _greyscaleCache.Add(forImage, MakeGrayscale(forImage));
@@ -90,13 +90,13 @@ namespace Rdmp.Core.Icons.IconOverlays
         /// </summary>
         /// <param name="original"></param>
         /// <returns></returns>
-        private static Bitmap MakeGrayscale(Bitmap original)
+        private static Image MakeGrayscale(Image original)
         {
-            //create a blank bitmap the same size as original
-            Bitmap newBitmap = new Bitmap(original.Width, original.Height);
+            //create a blank Image the same size as original
+            Image newBitmap = new Image<Rgba32>(original.Width, original.Height);
 
             //get a graphics object from the new image
-            Graphics g = Graphics.FromImage(newBitmap);
+            Graphics g = Graphics.FromImage(newImage);
 
             //create the grayscale ColorMatrix
             ColorMatrix colorMatrix = new ColorMatrix(
@@ -125,13 +125,13 @@ namespace Rdmp.Core.Icons.IconOverlays
             return newBitmap;
         }
 
-        public Bitmap GetOverlayNoCache(Bitmap forImage, OverlayKind overlayKind)
+        public Image GetOverlayNoCache(Image forImage, OverlayKind overlayKind)
         {
             //cached result does not exist so we must draw it
             var overlay = _images[overlayKind];
 
-            var clone = (Bitmap)forImage.Clone();
-
+            var clone = (Image)forImage.CloneAs<Rgba32>();
+            
             var graphics = Graphics.FromImage(clone);
             graphics.DrawImage(overlay, new Rectangle(0, 0, clone.Width, clone.Height));
 

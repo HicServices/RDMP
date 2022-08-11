@@ -6,7 +6,7 @@
 
 using System;
 using System.Collections.Generic;
-using System.Drawing;
+using SixLabors.ImageSharp;
 
 namespace Rdmp.Core.Icons.IconProvision
 {
@@ -15,15 +15,15 @@ namespace Rdmp.Core.Icons.IconProvision
     /// </summary>
     public class IconFactory
     {
-        private readonly Dictionary<Bitmap, Icon> _iconDictionary = new Dictionary<Bitmap, Icon>();
+        private readonly Dictionary<Image, Icon> _iconDictionary = new Dictionary<Image, Icon>();
 
         /// <summary>
         /// Returns an <see cref="Icon"/> depicting the provided <paramref name="bmp"/>.  Calling this
-        /// method multiple times with the same <see cref="Bitmap"/> will return the same <see cref="Icon"/> instance.
+        /// method multiple times with the same <see cref="Icon"/> will return the same <see cref="Icon"/> instance.
         /// </summary>
         /// <param name="bmp"></param>
         /// <returns></returns>
-        public Icon GetIcon(Bitmap bmp)
+        public Icon GetIcon(Image bmp)
         {
             if (_iconDictionary.ContainsKey(bmp))
                 return _iconDictionary[bmp];
@@ -31,7 +31,7 @@ namespace Rdmp.Core.Icons.IconProvision
             return CreateIcon(bmp);
         }
 
-        private Icon CreateIcon(Bitmap bmp)
+        private Icon CreateIcon(Image bmp)
         {
             // Get an Hicon for myBitmap.
             IntPtr Hicon = bmp.GetHicon();
@@ -39,7 +39,7 @@ namespace Rdmp.Core.Icons.IconProvision
             // Create a new icon from the handle. 
             Icon newIcon = Icon.FromHandle(Hicon);
 
-            //now that we have created the icon don't create it again for the same bitmap (to avoid memory leaks)
+            //now that we have created the icon don't create it again for the same Image (to avoid memory leaks)
             _iconDictionary.Add(bmp, newIcon);
 
             return newIcon;
