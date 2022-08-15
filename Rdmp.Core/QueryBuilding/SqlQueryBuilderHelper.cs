@@ -209,10 +209,7 @@ namespace Rdmp.Core.QueryBuilding
 
             if (forceJoinsToTheseTables != null)
             {
-                if (forceJoinsToTheseTables.Count(t => t.IsPrimaryExtractionTable) > 1)
-                    throw new QueryBuildingException("Found 2+ tables marked IsPrimaryExtractionTable in force joined tables");
-
-                primaryExtractionTable = forceJoinsToTheseTables.SingleOrDefault(t => t.IsPrimaryExtractionTable);
+                primaryExtractionTable = PickBestPrimaryExtractionTable(qb,forceJoinsToTheseTables) ?? throw new QueryBuildingException("Found 2+ tables marked IsPrimaryExtractionTable in force joined tables");
             }
             else
                 primaryExtractionTable = null;
@@ -237,7 +234,10 @@ namespace Rdmp.Core.QueryBuilding
                         if (primaryExtractionTable == null)
                             primaryExtractionTable = table;
                         else
-                            primaryExtractionTable = PickBestPrimaryExtractionTable(qb,primaryExtractionTable, table);
+                            primaryExtractionTable = PickBestPrimaryExtractionTable(qb,primaryExtractionTable, table)
+                                ?? throw new QueryBuildingException("There are multiple tables marked as IsPrimaryExtractionTable:" +
+                                                                        primaryExtractionTable.Name + "(ID=" + primaryExtractionTable.ID +
+                                                                        ") and " + table.Name + "(ID=" + table.ID + ")"); ;
                 }
             }
 
@@ -268,15 +268,21 @@ namespace Rdmp.Core.QueryBuilding
 
         /// <summary>
         /// Picks between two <see cref="ITableInfo"/> both of which are <see cref="TableInfo.IsPrimaryExtractionTable"/> and returns
-        /// the 'winner' (best to start joining from).  Throws <see cref="QueryBuildingException"/> if there is no clear better one
+        /// the 'winner' (best to start joining from).  returns null if there is no clear better one
         /// </summary>
         /// <param name="qb"></param>
-        /// <param name="t1"></param>
-        /// <param name="t2"></param>
+        /// <param name="tables"></param>
         /// <returns></returns>
         /// <exception cref="QueryBuildingException"></exception>
-        private static ITableInfo PickBestPrimaryExtractionTable(ISqlQueryBuilder qb, ITableInfo t1, TableInfo t2)
+        private static ITableInfo PickBestPrimaryExtractionTable(ISqlQueryBuilder qb,params ITableInfo[] tables)
         {
+            if (tables.Length == 0)
+                throw new ArgumentException($"At least one table must be provided to {nameof(PickBestPrimaryExtractionTable)}");
+
+            // if there is only one choice
+            if (tables.Length == 1)
+                return tables[0]; // go with that
+
             // what tables have IsExtractionIdentifier column(s)? 
             var extractionIdentifierTables = qb.SelectColumns
                 .Where(c => c.IColumn?.IsExtractionIdentifier ?? false)
@@ -288,18 +294,17 @@ namespace Rdmp.Core.QueryBuilding
             {
                 var id = extractionIdentifierTables[0];
 
-                if (id == t1.ID)
-                    return t1;
-
-                if (id == t2.ID)
-                    return t2;
+                foreach(var t in tables)
+                {
+                    if (id == t.ID)
+                        return t;
+                }
 
                 // IsExtractionIdentifier column is from neither of these tables, bad times
             }
 
-            throw new QueryBuildingException("There are multiple tables marked as IsPrimaryExtractionTable:" +
-                                                t1.Name + "(ID=" + t1.ID +
-                                                ") and " + t2.Name + "(ID=" + t2.ID + ")");
+            // no clear winner
+            return null;
         }
 
         private static List<ITableInfo> AddOpportunisticJoins(List<ITableInfo> toReturn, List<IFilter> filters)
