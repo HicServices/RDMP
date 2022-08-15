@@ -207,9 +207,10 @@ namespace Rdmp.Core.QueryBuilding
 
             var toReturn = new List<ITableInfo>(forceJoinsToTheseTables ?? new ITableInfo[0]);
 
-            if (forceJoinsToTheseTables != null)
+            if (forceJoinsToTheseTables != null && forceJoinsToTheseTables.Length > 0)
             {
-                primaryExtractionTable = PickBestPrimaryExtractionTable(qb,forceJoinsToTheseTables) ?? throw new QueryBuildingException("Found 2+ tables marked IsPrimaryExtractionTable in force joined tables");
+                primaryExtractionTable = PickBestPrimaryExtractionTable(qb,forceJoinsToTheseTables) 
+                    ?? throw new QueryBuildingException("Found 2+ tables marked IsPrimaryExtractionTable in force joined tables");
             }
             else
                 primaryExtractionTable = null;
