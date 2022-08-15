@@ -237,9 +237,7 @@ namespace Rdmp.Core.QueryBuilding
                         if (primaryExtractionTable == null)
                             primaryExtractionTable = table;
                         else
-                            throw new QueryBuildingException("There are multiple tables marked as IsPrimaryExtractionTable:" +
-                                                primaryExtractionTable.Name + "(ID=" + primaryExtractionTable.ID +
-                                                ") and " + table.Name + "(ID=" + table.ID + ")");
+                            primaryExtractionTable = PickBestPrimaryExtractionTable(qb,primaryExtractionTable, table);
                 }
             }
 
@@ -266,6 +264,42 @@ namespace Rdmp.Core.QueryBuilding
                 
 
             return toReturn;
+        }
+
+        /// <summary>
+        /// Picks between two <see cref="ITableInfo"/> both of which are <see cref="TableInfo.IsPrimaryExtractionTable"/> and returns
+        /// the 'winner' (best to start joining from).  Throws <see cref="QueryBuildingException"/> if there is no clear better one
+        /// </summary>
+        /// <param name="qb"></param>
+        /// <param name="t1"></param>
+        /// <param name="t2"></param>
+        /// <returns></returns>
+        /// <exception cref="QueryBuildingException"></exception>
+        private static ITableInfo PickBestPrimaryExtractionTable(ISqlQueryBuilder qb, ITableInfo t1, TableInfo t2)
+        {
+            // what tables have IsExtractionIdentifier column(s)? 
+            var extractionIdentifierTables = qb.SelectColumns
+                .Where(c => c.IColumn?.IsExtractionIdentifier ?? false)
+                .Select(t => t.UnderlyingColumn?.TableInfo_ID)
+                .Where(id => id != null)
+                .ToArray();
+
+            if(extractionIdentifierTables.Length == 1)
+            {
+                var id = extractionIdentifierTables[0];
+
+                if (id == t1.ID)
+                    return t1;
+
+                if (id == t2.ID)
+                    return t2;
+
+                // IsExtractionIdentifier column is from neither of these tables, bad times
+            }
+
+            throw new QueryBuildingException("There are multiple tables marked as IsPrimaryExtractionTable:" +
+                                                t1.Name + "(ID=" + t1.ID +
+                                                ") and " + t2.Name + "(ID=" + t2.ID + ")");
         }
 
         private static List<ITableInfo> AddOpportunisticJoins(List<ITableInfo> toReturn, List<IFilter> filters)
