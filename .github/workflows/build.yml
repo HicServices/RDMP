@@ -148,43 +148,43 @@ jobs:
           echo 7z a dist/rdmp-${{ steps.version.outputs.rdmpversion }}-cli-linux-x64.tar rdmp-${{ steps.version.outputs.rdmpversion }}-cli-linux | cmd
           (cd PublishWinForms ; echo 7z a -mx=9 ../dist/rdmp-${{ steps.version.outputs.rdmpversion }}-client.zip . | cmd)
 
-      - name: Fix archive file permissions
+      - name: Install Perl dependencies
         uses: shogo82148/actions-setup-perl@v1
         with:
           install-modules-with: cpanm
           install-modules: Archive::Zip Archive::Tar
-          shell: perl {0}
-          run: |
-            use strict;
-            use warnings;
-            use Archive::Zip qw( :ERROR_CODES :CONSTANTS );
-            use Archive::Tar;
+      - name: Fix execute permissions
+        shell: perl {0}
+        run: |
+          use strict;
+          use warnings;
+          use Archive::Zip qw( :ERROR_CODES :CONSTANTS );
+          use Archive::Tar;
 
-            my ($tarname,$zipname)=('dist/rdmp-${{ steps.version.outputs.rdmpversion }}-cli-linux-x64.tar','dist/rdmp-${{ steps.version.outputs.rdmpversion }}-cli-linux-x64.zip');
+          my ($tarname,$zipname)=('dist/rdmp-${{ steps.version.outputs.rdmpversion }}-cli-linux-x64.tar','dist/rdmp-${{ steps.version.outputs.rdmpversion }}-cli-linux-x64.zip');
 
-            # Find rdmp in .tar, set permissions 0755
-            my $tar=Archive::Tar->new($tarname) || die "read $tarname:$!\n";
-            my @tarbits=$tar->get_files();
-            foreach my $bit (@tarbits) {
-              $bit->chmod(($bit->name eq 'rdmp-cli-linux/rdmp' || $bit->type==5)?'0755':'0644');
-            }
-            $tar->write( $tarname.'.xz', COMPRESS_XZ );
-            unlink($tarname) || die "unlink $tarname:$!\n";
+          # Find rdmp in .tar, set permissions 0755
+          my $tar=Archive::Tar->new($tarname) || die "read $tarname:$!\n";
+          my @tarbits=$tar->get_files();
+          foreach my $bit (@tarbits) {
+            $bit->chmod(($bit->name eq 'rdmp-cli-linux/rdmp' || $bit->type==5)?'0755':'0644');
+          }
+          $tar->write( $tarname.'.xz', COMPRESS_XZ );
+          unlink($tarname) || die "unlink $tarname:$!\n";
 
-            # Find rdmp in .zip, set permissions 0755
-            my $srczip = Archive::Zip->new($zipname);
-            my $zip=Archive::Zip->new();
-            foreach my $bit ($srczip->members()) {
-              print "Adding ",$bit->fileName(),"\n";
-              my $m=$zip->addString($bit->contents(),$bit->fileName());
-              $m->fileName($bit->fileName());
-              my $iszip=$bit->fileName() =~ /\.zip$/i;
-              $m->desiredCompressionMethod($iszip ? COMPRESSION_STORED : COMPRESSION_DEFLATED);
-              $m->desiredCompressionLevel($iszip ? 0 :  9 );
-            }
-            $zip->memberNamed('rdmp')->unixFileAttributes( 0755 );
-            $zip->overwriteAs($zipname);
-            
+          # Find rdmp in .zip, set permissions 0755
+          my $srczip = Archive::Zip->new($zipname);
+          my $zip=Archive::Zip->new();
+          foreach my $bit ($srczip->members()) {
+            print "Adding ",$bit->fileName(),"\n";
+            my $m=$zip->addString($bit->contents(),$bit->fileName());
+            $m->fileName($bit->fileName());
+            my $iszip=$bit->fileName() =~ /\.zip$/i;
+            $m->desiredCompressionMethod($iszip ? COMPRESSION_STORED : COMPRESSION_DEFLATED);
+            $m->desiredCompressionLevel($iszip ? 0 :  9 );
+          }
+          $zip->memberNamed('rdmp')->unixFileAttributes( 0755 );
+          $zip->overwriteAs($zipname);
 
       - name: Build Nuget packages
         run: |
