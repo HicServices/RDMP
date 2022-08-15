@@ -10,6 +10,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Changed
 - Removed restriction preventing [Lookup] requiring all foreign key columns being from the same table [#1331](https://github.com/HicServices/RDMP/issues/1307)
+- If there are multiple IsPrimaryExtractionTable involved in a query then the one with the IsExtractionIdentifier column (if any) will be picked (previously QueryBuildingException was thrown) [#1365](https://github.com/HicServices/RDMP/issues/1365)
 
 ### Added
 - Added 'Set Description' command to [AggregateConfiguration] context menu
