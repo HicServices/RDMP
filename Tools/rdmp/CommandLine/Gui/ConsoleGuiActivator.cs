@@ -5,12 +5,10 @@
 // You should have received a copy of the GNU General Public License along with RDMP. If not, see <https://www.gnu.org/licenses/>.
 
 using System;
-using System.Collections.Generic;
 using System.Diagnostics;
 using System.IO;
 using System.Linq;
 using System.Text.RegularExpressions;
-using System.Threading.Tasks;
 using FAnsi.Discovery;
 using MapsDirectlyToDatabaseTable;
 using MapsDirectlyToDatabaseTable.Revertable;
@@ -228,9 +226,14 @@ namespace Rdmp.Core.CommandLine.Gui
             
             Application.Run(openDir, ConsoleMainWindow.ExceptionPopup);
 
-            var selected = openDir.FilePaths.FirstOrDefault();
+            var file = openDir.FilePaths.FirstOrDefault();
             
-            return selected == null ? null : new FileInfo(selected);
+            if (string.IsNullOrWhiteSpace(file)) return null;
+            if (file.Equals("null", StringComparison.CurrentCultureIgnoreCase))
+                return new FileInfo(System.Runtime.InteropServices.RuntimeInformation.IsOSPlatform(System.Runtime.InteropServices.OSPlatform.Windows)
+                    ? "NUL"
+                    : "/dev/null");
+            return new FileInfo(file);
         }
 
         public override FileInfo SelectFile(string prompt, string patternDescription, string pattern)

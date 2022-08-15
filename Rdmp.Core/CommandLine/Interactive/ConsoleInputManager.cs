@@ -10,6 +10,7 @@ using System.Diagnostics;
 using System.Globalization;
 using System.IO;
 using System.Linq;
+using System.Runtime.InteropServices;
 using FAnsi.Discovery;
 using MapsDirectlyToDatabaseTable;
 using Rdmp.Core.CohortCommitting.Pipeline;
@@ -272,9 +273,6 @@ namespace Rdmp.Core.CommandLine.Interactive
 
         public override FileInfo SelectFile(string prompt)
         {
-            if (DisallowInput)
-                throw new InputDisallowedException($"Value required for '{prompt}'");
-
             return SelectFile(prompt, null, null);
         }
 
@@ -285,11 +283,13 @@ namespace Rdmp.Core.CommandLine.Interactive
 
             Console.WriteLine(prompt);
             var file = Console.ReadLine();
-            
-            if(file != null)
-                return new FileInfo(file);
 
-            return null;
+            if (string.IsNullOrWhiteSpace(file)) return null;
+            if (file.Equals("null", StringComparison.CurrentCultureIgnoreCase))
+                return new FileInfo(System.Runtime.InteropServices.RuntimeInformation.IsOSPlatform(OSPlatform.Windows)
+                    ? "NUL"
+                    : "/dev/null");
+            return new FileInfo(file);
         }
         
         public override FileInfo[] SelectFiles(string prompt, string patternDescription, string pattern)
