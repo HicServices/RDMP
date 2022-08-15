@@ -55,7 +55,8 @@ public class WebFileDownloaderTests
                 HttpClientHandler.Credentials = credentials;
                 HttpClientHandler.PreAuthenticate = true;
             }
-            return HttpClient.GetStreamAsync(url,new CancellationTokenSource(5000).Token).Result;
+            using var cts=new CancellationTokenSource(5000);
+            return HttpClient.GetStreamAsync(url,cts.Token).Result;
         }
     }
 }
