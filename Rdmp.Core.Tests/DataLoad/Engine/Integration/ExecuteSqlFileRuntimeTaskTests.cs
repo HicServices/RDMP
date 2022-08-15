@@ -126,7 +126,9 @@ namespace Rdmp.Core.Tests.DataLoad.Engine.Integration
             var sqlArg = new IArgument[]{Mock.Of<IArgument>(x => 
             x.Name == "Sql" &&
             x.Value == sql &&
+#pragma warning disable CS0252, CS0253 // C# compiler doesn't fully grok Moq
             x.GetValueAsSystemType() == sql) };
+#pragma warning restore CS0252, CS0253
 
             var args = new RuntimeArgumentCollection(sqlArg, new StageArgs(LoadStage.AdjustRaw, db, dir));
 

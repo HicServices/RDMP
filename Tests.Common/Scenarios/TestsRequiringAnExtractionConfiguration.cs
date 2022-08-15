@@ -58,7 +58,7 @@ namespace Tests.Common.Scenarios
         protected string ProjectDirectory { get; private set; }
 
         /// <summary>
-        /// The database in which the referenced data is stored, created during <see cref="OneTimeSetUp"/>
+        /// The database in which the referenced data is stored, created during <see cref="TestsRequiringACohort.OneTimeSetUp"/>
         /// </summary>
         public DiscoveredDatabase Database { get; private set; }
 
