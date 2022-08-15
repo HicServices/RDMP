@@ -102,6 +102,7 @@ namespace Rdmp.UI.Tests
 
         public ICombineableFactory CommandFactory { get; private set; }
         public ICommandExecutionFactory CommandExecutionFactory { get; set; }
+        public new CommentStore CommentStore { get; private set; } // Hide normal CommentStore so we can overwrite it later
         public HistoryProvider HistoryProvider { get; }
 
         public T Activate<T, T2>(T2 databaseObject) where T : RDMPSingleDatabaseObjectControl<T2>, new() where T2 : DatabaseEntity
