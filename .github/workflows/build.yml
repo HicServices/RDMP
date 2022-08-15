@@ -142,12 +142,11 @@ jobs:
           mkdir -p dist
           cmd /c wix\\build.cmd ${{ steps.version.outputs.rdmpversion }}
           echo '"'$signtool'"' 'Sign  /f GitHubActionsWorkflow.pfx /fd sha256 /tr http://timestamp.digicert.com /td sha256 /p ${{ secrets.DIGICERT_PASSWORD }} dist/rdmp.msi' | cmd
-          (cd PublishWindows ; echo 7z a -mx=9 ../dist/rdmp-cli-win-x64.zip . | cmd)
-          (cd PublishLinux ; echo 7z a -mx=0 ../dist/rdmp-cli-linux-x64.zip . | cmd)
-          mv PublishLinux rdmp-cli-linux
-          echo 7z a dist/rdmp-cli-linux-x64.tar rdmp-cli-linux | cmd
-          rm dist/rdmp-cli-linux-x64.tar
-          (cd PublishWinForms ; echo 7z a -mx=9 ../dist/rdmp-client.zip . | cmd)
+          (cd PublishWindows ; echo 7z a -mx=9 ../dist/rdmp-${{ steps.version.outputs.rdmpversion }}-cli-win-x64.zip . | cmd)
+          (cd PublishLinux ; echo 7z a -mx=0 ../dist/rdmp-${{ steps.version.outputs.rdmpversion }}-cli-linux-x64.zip . | cmd)
+          mv PublishLinux rdmp-${{ steps.version.outputs.rdmpversion }}-cli-linux
+          echo 7z a dist/rdmp-${{ steps.version.outputs.rdmpversion }}-cli-linux-x64.tar rdmp-${{ steps.version.outputs.rdmpversion }}-cli-linux | cmd
+          (cd PublishWinForms ; echo 7z a -mx=9 ../dist/rdmp-${{ steps.version.outputs.rdmpversion }}-client.zip . | cmd)
 
       - name: Fix archive file permissions
         uses: shogo82148/actions-setup-perl@v1
@@ -161,7 +160,7 @@ jobs:
             use Archive::Zip qw( :ERROR_CODES :CONSTANTS );
             use Archive::Tar;
 
-            my ($tarname,$zipname)=('dist/rdmp-cli-linux-x64.tar','dist/rdmp-cli-linux-x64.zip');
+            my ($tarname,$zipname)=('dist/rdmp-${{ steps.version.outputs.rdmpversion }}-cli-linux-x64.tar','dist/rdmp-${{ steps.version.outputs.rdmpversion }}-cli-linux-x64.zip');
 
             # Find rdmp in .tar, set permissions 0755
             my $tar=Archive::Tar->new($tarname) || die "read $tarname:$!\n";
