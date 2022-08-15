@@ -211,7 +211,7 @@ namespace Rdmp.Core.QueryBuilding
             {
                 if (forceJoinsToTheseTables.Count(t => t.IsPrimaryExtractionTable) > 1)
                 {
-                    primaryExtractionTable = PickBestPrimaryExtractionTable(qb, forceJoinsToTheseTables)
+                    primaryExtractionTable = PickBestPrimaryExtractionTable(qb, forceJoinsToTheseTables.Where(t=>t.IsPrimaryExtractionTable).ToArray())
                         ?? throw new QueryBuildingException("Found 2+ tables marked IsPrimaryExtractionTable in force joined tables");
                 }
                 else
