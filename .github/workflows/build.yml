@@ -56,7 +56,7 @@ jobs:
           root-password: 'YourStrong!Passw0rd'
           auto-start: true
       - name: Build
-        run: dotnet build --configuration Release --nologo --verbosity minimal
+        run: dotnet build --configuration Release -a x64 --nologo --verbosity minimal
       - name: Initialise RDMP
         run: dotnet run -c Release --project Tools/rdmp/rdmp.csproj -- install --createdatabasetimeout 180 "(localdb)\MSSQLLocalDB" TEST_ -e
       - name: Populate Databases.yaml 
