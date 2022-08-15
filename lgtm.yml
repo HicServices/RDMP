@@ -3,4 +3,4 @@ extraction:
     index:
       buildless: true
       dotnet:
-        version: 5.0.103
+        version: 6.0.x

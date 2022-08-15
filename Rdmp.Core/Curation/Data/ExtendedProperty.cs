@@ -35,6 +35,13 @@ namespace Rdmp.Core.Curation.Data
         /// </summary>
         public const string IsTemplate = "IsTemplate";
 
+
+        /// <summary>
+        /// Key for use in <see cref="ExtendedProperty"/> for defining <see cref="IJoin.GetCustomJoinSql"/>
+        /// </summary>
+        public const string CustomJoinSql = "CustomJoinSql";
+        public const string CustomJoinSqlDescription = "Enter the column comparison(s) SQL for the JOIN line.  Your string should include only the boolean comparison logic that follows the ON keyword.  E.g. col1=col2.  You can optionally use substitution tokens {0} and {1} for table name/alias (e.g. for lookup)";
+
         /// <summary>
         /// Collection of all known property names.  Plugins are free to add to these if desired but must do so pre startup
         /// </summary>
@@ -46,6 +53,10 @@ namespace Rdmp.Core.Curation.Data
 
             foreach (var field in fields)
             {
+                // skip any description fields
+                if (field.Name.EndsWith("Description"))
+                    continue;
+
                 KnownProperties.Add((string)field.GetValue(null));
             }
         }
@@ -75,6 +86,7 @@ namespace Rdmp.Core.Curation.Data
             get { return _referencedObjectRepositoryType; }
             set { SetField(ref _referencedObjectRepositoryType, value); }
         }
+
         #endregion
         public ExtendedProperty()
         {

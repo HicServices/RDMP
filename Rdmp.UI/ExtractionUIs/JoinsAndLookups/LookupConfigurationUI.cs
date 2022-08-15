@@ -436,9 +436,6 @@ Only define secondary columns if you really need them! if any of the key fields 
                 if (new[] { p1, p2, p3 }.Where(o => o != null).Select(c => c.TableInfo_ID).Distinct().Count() != 1)
                     throw new Exception("All primary key columns must come from the same Lookup table");
 
-                if (new[] { f1, f2, f3 }.Where(o => o != null).Select(c => c.TableInfo_ID).Distinct().Count() != 1)
-                    throw new Exception("All foreign key columns must come from the same Lookup table");
-
                 var descs = olvSelectedDescriptionColumns.Objects.Cast<ColumnInfo>().ToArray();
 
                 if (!descs.Any())
