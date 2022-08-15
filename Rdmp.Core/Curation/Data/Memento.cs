@@ -13,6 +13,7 @@ using System.Data.Common;
 
 namespace Rdmp.Core.Curation.Data
 {
+
     /// <summary>
     /// Describes a point in time state of another <see cref="DatabaseEntity"/>.  Note that the state may be invalid if other
     /// objects have been since deleted.  e.g. if user updates the <see cref="Catalogue.TimeCoverage_ExtractionInformation_ID"/> 
@@ -64,7 +65,7 @@ namespace Rdmp.Core.Curation.Data
             Type = (MementoType)Enum.Parse<MementoType>(r["Type"].ToString());
         }
 
-        public Memento(ICatalogueRepository repository, Commit commit, MementoType type, DatabaseEntity entity,string beforeYaml, string afterYaml)
+        public Memento(ICatalogueRepository repository, Commit commit, MementoType type, IMapsDirectlyToDatabaseTable entity,string beforeYaml, string afterYaml)
         {
             repository.InsertAndHydrate(this, new Dictionary<string, object>
             {
