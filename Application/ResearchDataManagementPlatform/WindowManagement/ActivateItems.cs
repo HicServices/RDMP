@@ -619,7 +619,7 @@ namespace ResearchDataManagementPlatform.WindowManagement
                 if (fb.ShowDialog() == DialogResult.OK)
                 {
                     // entering "null" in a winforms file dialog will return something like "D:\Blah\null"
-                    if (Path.GetFileName(fb.FileName).Equals("null", StringComparison.CurrentCultureIgnoreCase))
+                    if (string.Equals(Path.GetFileName(fb.FileName),"null", StringComparison.CurrentCultureIgnoreCase))
                         return null;
 
                     return new FileInfo(fb.FileName);

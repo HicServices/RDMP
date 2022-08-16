@@ -247,7 +247,7 @@ namespace Rdmp.Core.CommandLine.Gui
 
 
             // entering "null" in a file dialog may return something like "D:\Blah\null"
-            if (Path.GetFileName(selected).Equals("null", StringComparison.CurrentCultureIgnoreCase))
+            if (string.Equals(Path.GetFileName(selected),"null", StringComparison.CurrentCultureIgnoreCase))
                 return null;
 
             return selected == null ? null : new FileInfo(selected);
