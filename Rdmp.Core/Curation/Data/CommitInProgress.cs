@@ -7,8 +7,11 @@
 using MapsDirectlyToDatabaseTable;
 using Rdmp.Core.Repositories;
 using System;
+using System.Collections.Concurrent;
 using System.Collections.Generic;
+using System.ComponentModel;
 using System.Linq;
+using System.Threading;
 using YamlDotNet.Serialization;
 
 namespace Rdmp.Core.Curation.Data
@@ -19,9 +22,23 @@ namespace Rdmp.Core.Curation.Data
     /// </summary>
     public class CommitInProgress
     {
+        /// <summary>
+        /// Tracks the original serialized yaml of each object tracked so that we can diff
+        /// in <see cref="Finish"/> and create a <see cref="Commit"/> if necessary.
+        /// </summary>
         Dictionary<IMapsDirectlyToDatabaseTable, string> oldYamls = new();
+
+        /// <summary>
+        /// Tracks the order of the last operation performed on each object so that
+        /// <see cref="Memento"/> objects can be created in the order they were changed during
+        /// the <see cref="Commit"/>.
+        /// </summary>
+        ConcurrentDictionary<IMapsDirectlyToDatabaseTable, int> orderOfLastOperations = new();
+
         private IRDMPPlatformRepositoryServiceLocator _locator;
         private ISerializer _serializer;
+
+        int order = 0;
 
         public CommitInProgress(IRDMPPlatformRepositoryServiceLocator locator, params IMapsDirectlyToDatabaseTable[] track)
         {
@@ -33,11 +50,19 @@ namespace Rdmp.Core.Curation.Data
             foreach(var t in track)
             {
                 oldYamls.Add(t, _serializer.Serialize(t));
+                orderOfLastOperations.AddOrUpdate(t, -1,(k,v)=>-1);
+                t.PropertyChanged += PropertyChanged;
             }
         }
 
-        // TODO: order changes in the sequence they happened
-        // TODO: track new/deleted things
+        private void PropertyChanged(object sender, PropertyChangedEventArgs e)
+        {
+            var m = (IMapsDirectlyToDatabaseTable)sender;
+
+            orderOfLastOperations.AddOrUpdate(m,
+                Interlocked.Increment(ref order),
+                (k, v) => Interlocked.Increment(ref order));
+        }
 
         /// <summary>
         /// Returns a new <see cref="Commit"/> or null if nothing has changed with
@@ -67,7 +92,8 @@ namespace Rdmp.Core.Curation.Data
             var cataRepo = _locator.CatalogueRepository;
 
             var c = new Commit(cataRepo, Guid.NewGuid(), "TODO");
-            foreach(var m in changes)
+
+            foreach(var m in changes.OrderBy(c => orderOfLastOperations[c.Key]))
             {
                 // TODO: Add/Delete too please!
                 new Memento(cataRepo, c, MementoType.Modify, m.Key, m.Value.Item1, m.Value.Item2);

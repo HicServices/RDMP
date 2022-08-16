@@ -12,8 +12,6 @@ using Rdmp.Core;
 using Rdmp.Core.CommandExecution;
 using Rdmp.Core.Curation.Data;
 using Rdmp.Core.Curation.Data.Dashboarding;
-using Rdmp.Core.Icons.IconProvision;
-using Rdmp.Core.Providers;
 using Rdmp.UI.Collections;
 using Rdmp.UI.Collections.Providers;
 using Rdmp.UI.CommandExecution;
@@ -22,7 +20,6 @@ using Rdmp.UI.Refreshing;
 using Rdmp.UI.Rules;
 using Rdmp.UI.TestsAndSetup.ServicePropogation;
 using Rdmp.UI.Theme;
-using ReusableLibraryCode.Comments;
 
 namespace Rdmp.UI.ItemActivation
 {
@@ -143,6 +140,13 @@ namespace Rdmp.UI.ItemActivation
         /// <param name="initialSelectionIfAny">Initial root objects to be in scope (or null if not known)</param>
         /// <param name="initialSearch">The value to set the search textbox to on load if objects are being selected during this operation, or null.</param>
         void StartSession(string sessionName, IEnumerable<IMapsDirectlyToDatabaseTable> initialSelectionIfAny, string initialSearch);
+        
+        /// <summary>
+        /// Perform any user controllable finishing operations on <see cref="Commit"/> e.g. typing a description of
+        /// what was done;
+        /// </summary>
+        /// <param name="commit"></param>
+        void FinishCommit(Commit commit);
 
         /// <summary>
         /// Returns all currently open session uis

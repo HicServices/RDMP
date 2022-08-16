@@ -80,7 +80,7 @@ namespace MapsDirectlyToDatabaseTable
                 using(var con = GetConnection())
                 {
                     using (DbCommand cmd = DatabaseCommandHelper.GetCommand(
-                        "DELETE FROM " + oTableWrapperObject.GetType().Name + " WHERE ID =@ID", con.Connection,
+                        "DELETE FROM " + Wrap(oTableWrapperObject.GetType().Name) + " WHERE ID =@ID", con.Connection,
                         con.Transaction))
                     {
                         DatabaseCommandHelper.AddParameterWithValueToCommand("@ID", cmd, oTableWrapperObject.ID);
@@ -205,7 +205,7 @@ namespace MapsDirectlyToDatabaseTable
 
             //go to database to see if it exists
             using (var connection = GetConnection())
-                using ( DbCommand selectCommand = DatabaseCommandHelper.GetCommand("SELECT case when exists(select * FROM " + type.Name + " WHERE ID= " + id +") then 1 else 0 end", connection.Connection, connection.Transaction))
+                using ( DbCommand selectCommand = DatabaseCommandHelper.GetCommand("SELECT case when exists(select * FROM " + Wrap(type.Name) + " WHERE ID= " + id +") then 1 else 0 end", connection.Connection, connection.Transaction))
                      exists = Convert.ToBoolean(selectCommand.ExecuteScalar());
             
             return exists;
@@ -877,7 +877,7 @@ namespace MapsDirectlyToDatabaseTable
             if (prop.PropertyType.IsEnum)
                 propertyValue = propertyValue.ToString();
 
-            Update("UPDATE " + entity.GetType().Name + " SET " + propertyName + "=@val WHERE ID = " + entity.ID, new Dictionary<string, object>()
+            Update("UPDATE " + Wrap(entity.GetType().Name) + " SET " + propertyName + "=@val WHERE ID = " + entity.ID, new Dictionary<string, object>()
             {
                 {"@val", propertyValue??DBNull.Value}
             });

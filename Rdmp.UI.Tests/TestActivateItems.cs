@@ -338,6 +338,11 @@ namespace Rdmp.UI.Tests
         {
             throw new NotSupportedException();
         }
+
+        public void FinishCommit(Commit commit)
+        {
+            
+        }
     }
 
     public class TestActivateItemsResults:ICheckNotifier

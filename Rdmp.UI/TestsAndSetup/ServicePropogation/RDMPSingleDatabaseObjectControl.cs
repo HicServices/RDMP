@@ -33,6 +33,20 @@ namespace Rdmp.UI.TestsAndSetup.ServicePropogation
     [TechnicalUI]
     public abstract class RDMPSingleDatabaseObjectControl<T> : RDMPUserControl, IRDMPSingleDatabaseObjectControl where T : DatabaseEntity
     {
+        /// <summary>
+        /// True to track changes made to the <see cref="DatabaseObject"/> hosted by this control
+        /// and create <see cref="Commit"/> when changes are saved.  Using this field requires
+        /// declaring yourself <see cref="ISaveableUI"/>
+        /// </summary>
+        public bool UseCommitSystem { get; set; } = false;
+
+        /// <summary>
+        /// Tracks changes to <see cref="DatabaseObject"/> since last save.  Note that this is null
+        /// before <see cref="SetDatabaseObject(IActivateItems, DatabaseEntity)"/> has been called
+        /// or if <see cref="UseCommitSystem"/> is false.
+        /// </summary>
+        protected CommitInProgress CurrentCommit = null;
+
         private Control _colorIndicator;
         private Label _readonlyIndicator;
 
@@ -109,7 +123,16 @@ namespace Rdmp.UI.TestsAndSetup.ServicePropogation
             SetBindings(_binder, databaseObject);
             
             if(this is ISaveableUI)
+            {
+                if(UseCommitSystem && CurrentCommit == null)
+                {
+                    CurrentCommit = new CommitInProgress(activator.RepositoryLocator, databaseObject);
+                    ObjectSaverButton1.AfterSave += FinishCommitInProgressIfAny;
+                }
+
                 ObjectSaverButton1.SetupFor(this, databaseObject, activator);
+            }
+                
             
             var gotoFactory = new GoToCommandFactory(activator);
             foreach (var cmd in gotoFactory.GetCommands(databaseObject).OfType<ExecuteCommandShow>())
@@ -117,6 +140,29 @@ namespace Rdmp.UI.TestsAndSetup.ServicePropogation
                 cmd.SuggestedCategory = AtomicCommandFactory.GoTo;
                 CommonFunctionality.AddToMenu(cmd,null,null,AtomicCommandFactory.GoTo);
             }
+        }
+
+        protected void FinishCommitInProgressIfAny()
+        {
+            if (!UseCommitSystem)
+                return;
+
+            if(CurrentCommit != null)
+            {
+                var commit = CurrentCommit.Finish();
+
+                // No changes were actually made
+                if (commit == null)
+                    return;
+
+                if(Activator.IsInteractive)
+                {
+                    Activator.FinishCommit(commit);
+                }
+            }
+
+            // start a new commit for the next changes the user commits
+            CurrentCommit = new CommitInProgress(Activator.RepositoryLocator, DatabaseObject);
         }
 
         void CommonFunctionality_ToolStripAddedToHost(object sender, EventArgs e)
