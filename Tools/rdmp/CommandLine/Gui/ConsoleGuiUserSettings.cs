@@ -34,6 +34,7 @@ namespace Rdmp.Core.CommandLine.Gui {
             tableview1.Update();
 
             RegisterCheckbox(cbHideCohortBuilderContainersInFind, nameof(UserSettings.ScoreZeroForCohortAggregateContainers));
+            RegisterCheckbox(cbEnableCommits, nameof(UserSettings.EnableCommits));
             RegisterCheckbox(cbStrictValidationForContainers, nameof(UserSettings.StrictValidationForCohortBuilderContainers));
             RegisterCheckbox(cbHideEmptyTableLoadRunAudits, nameof(UserSettings.HideEmptyTableLoadRunAudits));
             RegisterCheckbox(cbShowPipelineCompletedPopup, nameof(UserSettings.ShowPipelineCompletedPopup));

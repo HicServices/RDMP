@@ -142,13 +142,6 @@ namespace Rdmp.UI.ItemActivation
         void StartSession(string sessionName, IEnumerable<IMapsDirectlyToDatabaseTable> initialSelectionIfAny, string initialSearch);
         
         /// <summary>
-        /// Perform any user controllable finishing operations on <see cref="Commit"/> e.g. typing a description of
-        /// what was done;
-        /// </summary>
-        /// <param name="commit"></param>
-        void FinishCommit(Commit commit);
-
-        /// <summary>
         /// Returns all currently open session uis
         /// </summary>
         /// <returns></returns>

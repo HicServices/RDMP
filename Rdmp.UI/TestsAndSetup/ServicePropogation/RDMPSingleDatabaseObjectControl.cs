@@ -19,7 +19,7 @@ using Rdmp.UI.Refreshing;
 using Rdmp.UI.Rules;
 using Rdmp.UI.SimpleControls;
 using Rdmp.UI.Theme;
-
+using ReusableLibraryCode.Settings;
 
 namespace Rdmp.UI.TestsAndSetup.ServicePropogation
 {
@@ -127,7 +127,7 @@ namespace Rdmp.UI.TestsAndSetup.ServicePropogation
                 if(UseCommitSystem && CurrentCommit == null)
                 {
                     CurrentCommit = new CommitInProgress(activator.RepositoryLocator, databaseObject);
-                    ObjectSaverButton1.AfterSave += FinishCommitInProgressIfAny;
+                    ObjectSaverButton1.BeforeSave += (o)=> FinishCommitInProgressIfAny();
                 }
 
                 ObjectSaverButton1.SetupFor(this, databaseObject, activator);
@@ -142,27 +142,28 @@ namespace Rdmp.UI.TestsAndSetup.ServicePropogation
             }
         }
 
-        protected void FinishCommitInProgressIfAny()
+        protected bool FinishCommitInProgressIfAny()
         {
+            // control doesn't require commits (most controls don't)
             if (!UseCommitSystem)
-                return;
+                return true; // go through with the save
 
-            if(CurrentCommit != null)
+            // user has opted out via user settings
+            if (!UserSettings.EnableCommits)
+                return true;
+
+            if (CurrentCommit != null)
             {
-                var commit = CurrentCommit.Finish();
+                var commit = CurrentCommit.Finish(Activator);
 
-                // No changes were actually made
+                // No changes were actually made or user cancelled
                 if (commit == null)
-                    return;
-
-                if(Activator.IsInteractive)
-                {
-                    Activator.FinishCommit(commit);
-                }
+                    return false;
             }
 
             // start a new commit for the next changes the user commits
             CurrentCommit = new CommitInProgress(Activator.RepositoryLocator, DatabaseObject);
+            return true;
         }
 
         void CommonFunctionality_ToolStripAddedToHost(object sender, EventArgs e)

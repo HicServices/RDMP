@@ -5,6 +5,7 @@
 // You should have received a copy of the GNU General Public License along with RDMP. If not, see <https://www.gnu.org/licenses/>.
 
 using MapsDirectlyToDatabaseTable;
+using Rdmp.Core.CommandExecution;
 using Rdmp.Core.Repositories;
 using System;
 using System.Collections.Concurrent;
@@ -16,25 +17,15 @@ using YamlDotNet.Serialization;
 
 namespace Rdmp.Core.Curation.Data
 {
+
     /// <summary>
     /// Tracks changes made by the user to one or more objects.  Changes are tracked from
     /// the moment the class is constructed until finish is called
     /// </summary>
     public class CommitInProgress
     {
-        /// <summary>
-        /// Tracks the original serialized yaml of each object tracked so that we can diff
-        /// in <see cref="Finish"/> and create a <see cref="Commit"/> if necessary.
-        /// </summary>
-        Dictionary<IMapsDirectlyToDatabaseTable, string> oldYamls = new();
-
-        /// <summary>
-        /// Tracks the order of the last operation performed on each object so that
-        /// <see cref="Memento"/> objects can be created in the order they were changed during
-        /// the <see cref="Commit"/>.
-        /// </summary>
-        ConcurrentDictionary<IMapsDirectlyToDatabaseTable, int> orderOfLastOperations = new();
-
+        Dictionary<IMapsDirectlyToDatabaseTable, MementoInProgress> originalStates = new ();
+        
         private IRDMPPlatformRepositoryServiceLocator _locator;
         private ISerializer _serializer;
 
@@ -49,8 +40,7 @@ namespace Rdmp.Core.Curation.Data
 
             foreach(var t in track)
             {
-                oldYamls.Add(t, _serializer.Serialize(t));
-                orderOfLastOperations.AddOrUpdate(t, -1,(k,v)=>-1);
+                originalStates.Add(t, new MementoInProgress(t,_serializer.Serialize(t)));
                 t.PropertyChanged += PropertyChanged;
             }
         }
@@ -58,10 +48,7 @@ namespace Rdmp.Core.Curation.Data
         private void PropertyChanged(object sender, PropertyChangedEventArgs e)
         {
             var m = (IMapsDirectlyToDatabaseTable)sender;
-
-            orderOfLastOperations.AddOrUpdate(m,
-                Interlocked.Increment(ref order),
-                (k, v) => Interlocked.Increment(ref order));
+            originalStates[m].Order = Interlocked.Increment(ref order);
         }
 
         /// <summary>
@@ -69,16 +56,16 @@ namespace Rdmp.Core.Curation.Data
         /// the tracked objects since construction.
         /// </summary>
         /// <returns></returns>
-        public Commit Finish()
+        public Commit Finish(IBasicActivateItems activator)
         {
-            var changes = new Dictionary<IMapsDirectlyToDatabaseTable, Tuple<string,string>>();
+            var changes = new Dictionary<IMapsDirectlyToDatabaseTable, Tuple<MementoInProgress,string>>();
 
-            foreach (var t in oldYamls)
+            foreach (var t in originalStates)
             {
                 var newYaml =  _serializer.Serialize(t.Key);
                 
                 //something changed
-                if(newYaml != t.Value)
+                if(newYaml != t.Value.OldYaml)
                 {
                     changes.Add(t.Key, Tuple.Create(t.Value, newYaml));
                 }
@@ -91,15 +78,70 @@ namespace Rdmp.Core.Curation.Data
             }
             var cataRepo = _locator.CatalogueRepository;
 
-            var c = new Commit(cataRepo, Guid.NewGuid(), "TODO");
+            var description = GetDescription(changes);
+            var transaction = Guid.NewGuid();
 
-            foreach(var m in changes.OrderBy(c => orderOfLastOperations[c.Key]))
+            if (activator.IsInteractive)
+            {
+                // object name or count of the number of objects
+                var collectionDescription = changes.Count == 1 ?
+                        changes.Single().Key.ToString() :
+                        changes.Count + "object(s)";
+
+                if (activator.TypeText(new DialogArgs
+                { 
+                    WindowTitle = transaction.ToString(),
+                    TaskDescription = $"Enter a description of what changes you have made to {collectionDescription}"
+                }, int.MaxValue, description, out var newDescription, false))
+                {
+                    description = newDescription;
+                }
+                else
+                {
+                    // user cancelled creating Commit
+                    return null;
+                }
+
+            }
+
+            // We couldn't describe the changes, thats bad...
+            if (description == null)
+                return null;
+
+            var c = new Commit(cataRepo, transaction, description);
+
+            foreach(var m in changes.OrderBy(c => c.Value.Item1.Order))
             {
                 // TODO: Add/Delete too please!
-                new Memento(cataRepo, c, MementoType.Modify, m.Key, m.Value.Item1, m.Value.Item2);
+                new Memento(cataRepo, c, MementoType.Modify, m.Key, m.Value.Item1.OldYaml, m.Value.Item2);
             }
 
             return c;
+        }
+
+        private string GetDescription(Dictionary<IMapsDirectlyToDatabaseTable, Tuple<MementoInProgress, string>> changes)
+        {
+            // no changes
+            if (changes.Count == 0)
+                return null;
+
+            // we can't summarise changes to multiple objects
+            if(changes.Count != 1)
+            {
+                return "TODO";
+            }
+
+            var kv = changes.Single();
+            var props = kv.Value.Item1.GetDiffProperties(kv.Key).ToArray();
+
+            // no visible changes... but yaml is different which is odd.
+            // Either way abandon this commit.
+            if(!props.Any())
+            {
+                return null;
+            }
+
+            return $"Update {kv.Key.GetType().Name} {string.Join(", ",props.Select(p => p.Name).ToArray())}";
         }
     }
 }

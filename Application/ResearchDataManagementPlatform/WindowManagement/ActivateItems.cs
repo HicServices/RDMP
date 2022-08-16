@@ -812,18 +812,5 @@ namespace ResearchDataManagementPlatform.WindowManagement
             ShowWindow(ctrl, true);
             ctrl.StartProcess(startInfo);
         }
-
-        public void FinishCommit(Commit commit)
-        {
-            if(TypeText(new DialogArgs
-            {
-                WindowTitle = commit.Transaction,
-                TaskDescription = $"Enter a description of what changes you have made to these {commit.Mementos.Length} object(s)"
-            },int.MaxValue,commit.Description,out var newDescription,false))
-            {
-                commit.Description = newDescription;
-                commit.SaveToDatabase();
-            }
-        }
     }
 }

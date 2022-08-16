@@ -101,6 +101,7 @@ namespace Rdmp.UI.SimpleDialogs
             RegisterCheckbox(cbAlwaysJoinEverything,nameof(UserSettings.AlwaysJoinEverything));
             RegisterCheckbox(cbAutoRunSqlQueries, nameof(UserSettings.AutoRunSqlQueries));
             RegisterCheckbox(cbExpandAllInCohortBuilder, nameof(UserSettings.ExpandAllInCohortBuilder));
+            RegisterCheckbox(cbEnableCommits, nameof(UserSettings.EnableCommits));
 
             AddTooltip(label7, nameof(UserSettings.CreateDatabaseTimeout));
             AddTooltip(tbCreateDatabaseTimeout, nameof(UserSettings.CreateDatabaseTimeout));
