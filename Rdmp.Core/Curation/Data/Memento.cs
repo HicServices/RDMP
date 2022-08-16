@@ -78,5 +78,9 @@ namespace Rdmp.Core.Curation.Data
                 {"Type",type},
             });
         }
+        public override string ToString()
+        {
+            return $"{ReferencedObjectType}:{ReferencedObjectID}";
+        }
     }
 }

@@ -1,4 +1,6 @@
-﻿namespace Rdmp.UI.SimpleDialogs
+﻿using Rdmp.Core.Curation.Data;
+
+namespace Rdmp.UI.SimpleDialogs
 {
     partial class CommitsUI
     {
@@ -33,6 +35,7 @@
             this.olvName = new BrightIdeasSoftware.OLVColumn();
             this.olvUser = new BrightIdeasSoftware.OLVColumn();
             this.olvDescription = new BrightIdeasSoftware.OLVColumn();
+            this.olvDate = new BrightIdeasSoftware.OLVColumn();
             this.taskDescriptionLabel1 = new Rdmp.UI.SimpleDialogs.TaskDescriptionLabel();
             ((System.ComponentModel.ISupportInitialize)(this.treeListView1)).BeginInit();
             this.SuspendLayout();
@@ -43,6 +46,7 @@
             this.treeListView1.Columns.AddRange(new System.Windows.Forms.ColumnHeader[] {
             this.olvName,
             this.olvUser,
+            this.olvDate,
             this.olvDescription});
             this.treeListView1.Dock = System.Windows.Forms.DockStyle.Fill;
             this.treeListView1.Location = new System.Drawing.Point(0, 42);
@@ -56,15 +60,25 @@
             // olvName
             // 
             this.olvName.Text = "Name";
+            this.olvName.AspectName = "ToString";
+            this.olvName.Width = 150;
             // 
             // olvUser
             // 
             this.olvUser.Text = "User";
+            this.olvUser.AspectName = nameof(Commit.Username);
+            // 
+            // olvDate
+            // 
+            this.olvDate.Text = "Date";
+            this.olvDate.Width = 120;
+            this.olvDate.AspectName = nameof(Commit.Date);
             // 
             // olvDescription
             // 
             this.olvDescription.Text = "Description";
-            this.olvDescription.Width = 92;
+            this.olvDescription.Width = 200;
+            this.olvDescription.AspectName = nameof(Commit.Description);
             // 
             // taskDescriptionLabel1
             // 
@@ -96,6 +110,7 @@
         private BrightIdeasSoftware.OLVColumn olvName;
         private BrightIdeasSoftware.OLVColumn olvUser;
         private BrightIdeasSoftware.OLVColumn olvDescription;
+        private BrightIdeasSoftware.OLVColumn olvDate;
         private TaskDescriptionLabel taskDescriptionLabel1;
     }
 }

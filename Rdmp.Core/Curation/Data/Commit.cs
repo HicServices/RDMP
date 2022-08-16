@@ -77,5 +77,10 @@ namespace Rdmp.Core.Curation.Data
                 {"Description",description},
             });
         }
+
+        public override string ToString()
+        {
+            return Transaction;
+        }
     }
 }
