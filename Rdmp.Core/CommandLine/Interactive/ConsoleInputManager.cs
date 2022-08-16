@@ -285,8 +285,13 @@ namespace Rdmp.Core.CommandLine.Interactive
 
             Console.WriteLine(prompt);
             var file = Console.ReadLine();
-            
-            if(file != null)
+
+            // if user types the literal string null then return null (typically interpretted as - 'I don't want to pick a file')
+            // but not the same as task cancellation
+            if (string.Equals(file,"null", StringComparison.CurrentCultureIgnoreCase))
+                return null;
+
+            if (file != null)
                 return new FileInfo(file);
 
             return null;
