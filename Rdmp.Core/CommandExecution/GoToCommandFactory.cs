@@ -20,6 +20,7 @@ using Rdmp.Core.Curation.Data.ImportExport;
 using Rdmp.Core.DataExport.Data;
 using Rdmp.Core.Icons.IconProvision;
 using Rdmp.Core.Providers;
+using SixLabors.ImageSharp.PixelFormats;
 
 namespace Rdmp.Core.CommandExecution
 {
@@ -302,7 +303,7 @@ namespace Rdmp.Core.CommandExecution
             return new []{mt.Repository.GetObjectByID(mt.GetType(),int.Parse(replacement.Value))};
         }
 
-        private Image GetImage(RDMPConcept concept)
+        private Image<Rgba32> GetImage(RDMPConcept concept)
         {
             return _activator.CoreIconProvider.GetImage(concept);
         }

@@ -8,13 +8,10 @@
 // </auto-generated>
 //------------------------------------------------------------------------------
 
-using SixLabors.ImageSharp;
-using SixLabors.ImageSharp.PixelFormats;
-
-namespace ReusableLibraryCode.Icons
-{
-
-
+namespace ReusableLibraryCode.Icons {
+    using System;
+    
+    
     /// <summary>
     ///   A strongly-typed resource class, for looking up localized strings, etc.
     /// </summary>
@@ -22,7 +19,7 @@ namespace ReusableLibraryCode.Icons
     // class via a tool like ResGen or Visual Studio.
     // To add or remove a member, edit your .ResX file then rerun ResGen
     // with the /str option, or rebuild your VS project.
-    [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Resources.Tools.StronglyTypedResourceBuilder", "15.0.0.0")]
+    [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Resources.Tools.StronglyTypedResourceBuilder", "17.0.0.0")]
     [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
     [global::System.Runtime.CompilerServices.CompilerGeneratedAttribute()]
     public class DatabaseProviderIcons {
@@ -64,102 +61,102 @@ namespace ReusableLibraryCode.Icons
         }
         
         /// <summary>
-        ///   Looks up a localized resource of type SixLabors.ImageSharp.Image.
+        ///   Looks up a localized resource of type System.Byte[].
         /// </summary>
-        public static Image<Argb32> Microsoft {
+        public static byte[] Microsoft {
             get {
                 object obj = ResourceManager.GetObject("Microsoft", resourceCulture);
-                return (Image<Argb32>)(obj);
+                return ((byte[])(obj));
             }
         }
         
         /// <summary>
-        ///   Looks up a localized resource of type SixLabors.ImageSharp.Image.
+        ///   Looks up a localized resource of type System.Byte[].
         /// </summary>
-        public static Image<Argb32> MicrosoftOverlay {
+        public static byte[] MicrosoftOverlay {
             get {
                 object obj = ResourceManager.GetObject("MicrosoftOverlay", resourceCulture);
-                return (Image<Argb32>)(obj);
+                return ((byte[])(obj));
             }
         }
         
         /// <summary>
-        ///   Looks up a localized resource of type SixLabors.ImageSharp.Image.
+        ///   Looks up a localized resource of type System.Byte[].
         /// </summary>
-        public static Image<Argb32> MySql {
+        public static byte[] MySql {
             get {
                 object obj = ResourceManager.GetObject("MySql", resourceCulture);
-                return (Image<Argb32>)(obj);
+                return ((byte[])(obj));
             }
         }
         
         /// <summary>
-        ///   Looks up a localized resource of type SixLabors.ImageSharp.Image.
+        ///   Looks up a localized resource of type System.Byte[].
         /// </summary>
-        public static Image<Argb32> MySqlOverlay {
+        public static byte[] MySqlOverlay {
             get {
                 object obj = ResourceManager.GetObject("MySqlOverlay", resourceCulture);
-                return (Image<Argb32>)(obj);
+                return ((byte[])(obj));
             }
         }
         
         /// <summary>
-        ///   Looks up a localized resource of type SixLabors.ImageSharp.Image.
+        ///   Looks up a localized resource of type System.Byte[].
         /// </summary>
-        public static Image<Argb32> Oracle {
+        public static byte[] Oracle {
             get {
                 object obj = ResourceManager.GetObject("Oracle", resourceCulture);
-                return (Image<Argb32>)(obj);
+                return ((byte[])(obj));
             }
         }
         
         /// <summary>
-        ///   Looks up a localized resource of type SixLabors.ImageSharp.Image.
+        ///   Looks up a localized resource of type System.Byte[].
         /// </summary>
-        public static Image<Argb32> OracleOverlay {
+        public static byte[] OracleOverlay {
             get {
                 object obj = ResourceManager.GetObject("OracleOverlay", resourceCulture);
-                return (Image<Argb32>)(obj);
+                return ((byte[])(obj));
             }
         }
         
         /// <summary>
-        ///   Looks up a localized resource of type SixLabors.ImageSharp.Image.
+        ///   Looks up a localized resource of type System.Byte[].
         /// </summary>
-        public static Image<Argb32> PostgreSql {
+        public static byte[] PostgreSql {
             get {
                 object obj = ResourceManager.GetObject("PostgreSql", resourceCulture);
-                return (Image<Argb32>)(obj);
+                return ((byte[])(obj));
             }
         }
         
         /// <summary>
-        ///   Looks up a localized resource of type SixLabors.ImageSharp.Image.
+        ///   Looks up a localized resource of type System.Byte[].
         /// </summary>
-        public static Image<Argb32> PostgreSqlOverlay {
+        public static byte[] PostgreSqlOverlay {
             get {
                 object obj = ResourceManager.GetObject("PostgreSqlOverlay", resourceCulture);
-                return (Image<Argb32>)(obj);
+                return ((byte[])(obj));
             }
         }
         
         /// <summary>
-        ///   Looks up a localized resource of type SixLabors.ImageSharp.Image.
+        ///   Looks up a localized resource of type System.Byte[].
         /// </summary>
-        public static Image<Argb32> Unknown {
+        public static byte[] Unknown {
             get {
                 object obj = ResourceManager.GetObject("Unknown", resourceCulture);
-                return (Image<Argb32>)(obj);
+                return ((byte[])(obj));
             }
         }
         
         /// <summary>
-        ///   Looks up a localized resource of type SixLabors.ImageSharp.Image.
+        ///   Looks up a localized resource of type System.Byte[].
         /// </summary>
-        public static Image<Argb32> UnknownOverlay {
+        public static byte[] UnknownOverlay {
             get {
                 object obj = ResourceManager.GetObject("UnknownOverlay", resourceCulture);
-                return (Image<Argb32>)(obj);
+                return ((byte[])(obj));
             }
         }
     }

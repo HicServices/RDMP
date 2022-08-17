@@ -31,7 +31,7 @@ namespace Rdmp.Core.Tests.Reports
 
             var reporter = new DocumentationReportDatabaseEntities();
 
-            Image img = new Image<Argb32>(19, 19);
+            Image img = new Image<Rgba32>(19, 19);
             img.Mutate(x=>x.Fill(Color.DarkMagenta));
 
             var iconProvider = Mock.Of<IIconProvider>(m=>m.GetImage(It.IsAny<object>(),It.IsAny<OverlayKind>()) == img);

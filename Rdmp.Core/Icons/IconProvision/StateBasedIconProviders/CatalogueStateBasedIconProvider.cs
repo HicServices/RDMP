@@ -7,18 +7,18 @@
 using SixLabors.ImageSharp;
 using Rdmp.Core.Curation.Data;
 using Rdmp.Core.Icons.IconOverlays;
-using Rdmp.Core.Icons.IconProvision;
 using Rdmp.Core.Repositories;
 using ReusableLibraryCode.Icons.IconProvision;
+using SixLabors.ImageSharp.PixelFormats;
 
 namespace Rdmp.Core.Icons.IconProvision.StateBasedIconProviders
 {
     public class CatalogueStateBasedIconProvider : IObjectStateBasedIconProvider
     {
-        private readonly Image _basic;
-        private Image _projectSpecific;
+        private readonly Image<Rgba32> _basic;
+        private readonly Image<Rgba32> _projectSpecific;
         private readonly IDataExportRepository _dataExportRepository;
-        private IconOverlayProvider _overlayProvider;
+        private readonly IconOverlayProvider _overlayProvider;
 
 
         public CatalogueStateBasedIconProvider(IDataExportRepository dataExportRepository,
@@ -26,26 +26,18 @@ namespace Rdmp.Core.Icons.IconProvision.StateBasedIconProviders
         {
             _basic = CatalogueIcons.Catalogue;
             _projectSpecific = CatalogueIcons.ProjectCatalogue;
-
             _dataExportRepository = dataExportRepository;
             _overlayProvider = overlayProvider;
-
         }
 
-        public Image GetImageIfSupportedObject(object o)
+        public Image<Rgba32> GetImageIfSupportedObject(object o)
         {
-            var c = o as Catalogue;
-            
-            if (c == null)
+            if (o is not Catalogue c)
                 return null;
 
             var status = c.GetExtractabilityStatus(_dataExportRepository);
 
-            Image img;
-            if (status != null && status.IsExtractable && status.IsProjectSpecific)
-                img = _projectSpecific;
-            else
-                img = _basic;
+            var img = status is { IsExtractable: true, IsProjectSpecific: true } ? _projectSpecific : _basic;
 
             if (c.IsApiCall())
                 img = _overlayProvider.GetOverlay(img, OverlayKind.Cloud);

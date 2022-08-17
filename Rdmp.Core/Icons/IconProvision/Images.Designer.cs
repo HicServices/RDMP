@@ -19,7 +19,7 @@ namespace Rdmp.Core.Icons.IconProvision {
     // class via a tool like ResGen or Visual Studio.
     // To add or remove a member, edit your .ResX file then rerun ResGen
     // with the /str option, or rebuild your VS project.
-    [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Resources.Tools.StronglyTypedResourceBuilder", "15.0.0.0")]
+    [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Resources.Tools.StronglyTypedResourceBuilder", "17.0.0.0")]
     [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
     [global::System.Runtime.CompilerServices.CompilerGeneratedAttribute()]
     public class Images {
@@ -61,92 +61,92 @@ namespace Rdmp.Core.Icons.IconProvision {
         }
         
         /// <summary>
-        ///   Looks up a localized resource of type SixLabors.ImageSharp.Image.
+        ///   Looks up a localized resource of type System.Byte[].
         /// </summary>
-        public static SixLabors.ImageSharp.Image ErrorIcon {
+        public static byte[] ErrorIcon {
             get {
                 object obj = ResourceManager.GetObject("ErrorIcon", resourceCulture);
-                return ((SixLabors.ImageSharp.Image)(obj));
+                return ((byte[])(obj));
             }
         }
         
         /// <summary>
-        ///   Looks up a localized resource of type SixLabors.ImageSharp.Image.
+        ///   Looks up a localized resource of type System.Byte[].
         /// </summary>
-        public static SixLabors.ImageSharp.Image exclamation {
+        public static byte[] exclamation {
             get {
                 object obj = ResourceManager.GetObject("exclamation", resourceCulture);
-                return ((SixLabors.ImageSharp.Image)(obj));
+                return ((byte[])(obj));
             }
         }
         
         /// <summary>
-        ///   Looks up a localized resource of type SixLabors.ImageSharp.Image.
+        ///   Looks up a localized resource of type System.Byte[].
         /// </summary>
-        public static SixLabors.ImageSharp.Image InformationIcon {
+        public static byte[] InformationIcon {
             get {
                 object obj = ResourceManager.GetObject("InformationIcon", resourceCulture);
-                return ((SixLabors.ImageSharp.Image)(obj));
+                return ((byte[])(obj));
             }
         }
         
         /// <summary>
-        ///   Looks up a localized resource of type SixLabors.ImageSharp.Image.
+        ///   Looks up a localized resource of type System.Byte[].
         /// </summary>
-        public static SixLabors.ImageSharp.Image KeyboardKey {
+        public static byte[] KeyboardKey {
             get {
                 object obj = ResourceManager.GetObject("KeyboardKey", resourceCulture);
-                return ((SixLabors.ImageSharp.Image)(obj));
+                return ((byte[])(obj));
             }
         }
         
         /// <summary>
-        ///   Looks up a localized resource of type SixLabors.ImageSharp.Image.
+        ///   Looks up a localized resource of type System.Byte[].
         /// </summary>
-        public static SixLabors.ImageSharp.Image KeyboardKeySpace {
+        public static byte[] KeyboardKeySpace {
             get {
                 object obj = ResourceManager.GetObject("KeyboardKeySpace", resourceCulture);
-                return ((SixLabors.ImageSharp.Image)(obj));
+                return ((byte[])(obj));
             }
         }
         
         /// <summary>
-        ///   Looks up a localized resource of type SixLabors.ImageSharp.Image.
+        ///   Looks up a localized resource of type System.Byte[].
         /// </summary>
-        public static SixLabors.ImageSharp.Image TinyGreen {
+        public static byte[] TinyGreen {
             get {
                 object obj = ResourceManager.GetObject("TinyGreen", resourceCulture);
-                return ((SixLabors.ImageSharp.Image)(obj));
+                return ((byte[])(obj));
             }
         }
         
         /// <summary>
-        ///   Looks up a localized resource of type SixLabors.ImageSharp.Image.
+        ///   Looks up a localized resource of type System.Byte[].
         /// </summary>
-        public static SixLabors.ImageSharp.Image TinyRed {
+        public static byte[] TinyRed {
             get {
                 object obj = ResourceManager.GetObject("TinyRed", resourceCulture);
-                return ((SixLabors.ImageSharp.Image)(obj));
+                return ((byte[])(obj));
             }
         }
         
         /// <summary>
-        ///   Looks up a localized resource of type SixLabors.ImageSharp.Image.
+        ///   Looks up a localized resource of type System.Byte[].
         /// </summary>
-        public static SixLabors.ImageSharp.Image TinyYellow {
+        public static byte[] TinyYellow {
             get {
                 object obj = ResourceManager.GetObject("TinyYellow", resourceCulture);
-                return ((SixLabors.ImageSharp.Image)(obj));
+                return ((byte[])(obj));
             }
         }
         
         /// <summary>
-        ///   Looks up a localized resource of type SixLabors.ImageSharp.Image.
+        ///   Looks up a localized resource of type System.Byte[].
         /// </summary>
-        public static SixLabors.ImageSharp.Image WarningIcon {
+        public static byte[] WarningIcon {
             get {
                 object obj = ResourceManager.GetObject("WarningIcon", resourceCulture);
-                return ((SixLabors.ImageSharp.Image)(obj));
+                return ((byte[])(obj));
             }
         }
     }

@@ -31,7 +31,7 @@ namespace Rdmp.UI.CommandExecution.AtomicCommands
             return "Shows a subset of the main graph as it applies to the records that will be extracted";
         }
 
-        public override Image<Argb32> GetImage(IIconProvider iconProvider)
+        public override Image<Rgba32> GetImage(IIconProvider iconProvider)
         {
             return iconProvider.GetImage(RDMPConcept.AggregateGraph);
         }

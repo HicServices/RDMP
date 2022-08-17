@@ -86,9 +86,9 @@ namespace Rdmp.Core.CommandExecution.AtomicCommands
             }
         }
 
-        public override Image<Argb32> GetImage(IIconProvider iconProvider)
+        public override Image<Rgba32> GetImage(IIconProvider iconProvider)
         {
-            return FamFamFamIcons.page_white_word;
+            return Image.Load<Rgba32>(FamFamFamIcons.page_white_word);
         }
     }
 }

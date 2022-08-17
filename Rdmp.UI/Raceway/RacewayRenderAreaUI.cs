@@ -413,11 +413,11 @@ namespace Rdmp.UI.Raceway
 
                     if (_isEditModeOn)
                     {
-                        var deleteIcon = FamFamFamIcons.delete;
+                        var deleteIcon = FamFamFamIcons.delete.ImageToBitmap();
                         var middleLineOfDeleteButtonY = ((eachRaceLaneHasThisMuchYSpace / 2) - (deleteIcon.Height / 2.0)) + startDrawingLaneAtY;
                         var buttonPoint = new Point((Width / 2), (int)middleLineOfDeleteButtonY);
 
-                        e.Graphics.DrawImage(deleteIcon.ImageToBitmap(), buttonPoint);
+                        e.Graphics.DrawImage(deleteIcon, buttonPoint);
 
                         rectDeleteButtons.Add(new Rectangle(buttonPoint.X, buttonPoint.Y, deleteIcon.Width, deleteIcon.Height), kvp.Key);
                     }

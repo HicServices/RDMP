@@ -68,7 +68,7 @@ namespace Rdmp.UI.CommandExecution.AtomicCommands
                 extractableCohortCollection.SetupForAllCohorts(Activator);
         }
 
-        public override Image<Argb32> GetImage(IIconProvider iconProvider)
+        public override Image<Rgba32> GetImage(IIconProvider iconProvider)
         {
             return iconProvider.GetImage(RDMPConcept.AllCohortsNode);
         }

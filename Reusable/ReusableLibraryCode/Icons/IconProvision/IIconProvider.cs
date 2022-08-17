@@ -14,8 +14,8 @@ namespace ReusableLibraryCode.Icons.IconProvision
     /// </summary>
     public interface IIconProvider
     {
-        Image<Argb32> ImageUnknown { get; }
+        Image<Rgba32> ImageUnknown { get; }
 
-        Image<Argb32> GetImage(object concept, OverlayKind kind = OverlayKind.None);
+        Image<Rgba32> GetImage(object concept, OverlayKind kind = OverlayKind.None);
     }
 }

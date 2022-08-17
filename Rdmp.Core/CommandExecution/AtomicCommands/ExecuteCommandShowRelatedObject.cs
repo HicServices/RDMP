@@ -24,7 +24,7 @@ namespace Rdmp.Core.CommandExecution.AtomicCommands
                 SetImpossible("Reference is an orphan");
         }
 
-        public override Image<Argb32> GetImage(IIconProvider iconProvider)
+        public override Image<Rgba32> GetImage(IIconProvider iconProvider)
         {
             return iconProvider.GetImage(RDMPConcept.AllObjectSharingNode);
         }

@@ -6,7 +6,6 @@
 
 using System;
 using System.Collections.Generic;
-using System.Linq;
 using Rdmp.Core.Icons.IconProvision;
 using ReusableLibraryCode.Icons.IconProvision;
 using SixLabors.ImageSharp;
@@ -18,11 +17,11 @@ namespace Rdmp.Core.Icons.IconOverlays
 {
     public class IconOverlayProvider
     {
-        readonly Dictionary<ValueTuple<Image<Argb32>,OverlayKind>,Image<Argb32>> _cache=new ();
+        readonly Dictionary<ValueTuple<Image<Rgba32>,OverlayKind>,Image<Rgba32>> _cache=new ();
 
-        readonly Dictionary<Image, Dictionary<Image,Image>>  _resultCacheCustom = new Dictionary<Image, Dictionary<Image, Image>>();
+        readonly Dictionary<ValueTuple<Image<Rgba32>,Image<Rgba32>>, Image<Rgba32>>  _resultCacheCustom = new();
 
-        readonly Dictionary<Image<Argb32>, Image<Argb32>> _greyscaleCache = new();
+        readonly Dictionary<Image<Rgba32>, Image<Rgba32>> _greyscaleCache = new();
 
         private readonly EnumImageCollection<OverlayKind> _images;
 
@@ -31,7 +30,7 @@ namespace Rdmp.Core.Icons.IconOverlays
             _images = new EnumImageCollection<OverlayKind>(Overlays.ResourceManager);
         }
 
-        public Image<Argb32> GetOverlay(Image<Argb32> forImage, OverlayKind overlayKind)
+        public Image<Rgba32> GetOverlay(Image<Rgba32> forImage, OverlayKind overlayKind)
         {
             var key = (forImage, overlayKind);
 
@@ -46,31 +45,19 @@ namespace Rdmp.Core.Icons.IconOverlays
         }
 
 
-        public Image GetOverlay(Image forImage, Image customOverlay)
+        public Image<Rgba32> GetOverlay(Image<Rgba32> forImage, Image<Rgba32> customOverlay)
         {
-            //make sure the input image is added to the cache if it is novel
-            if (!_resultCacheCustom.ContainsKey(forImage))
-                _resultCacheCustom.Add(forImage, new Dictionary<Image, Image>());
+            if (_resultCacheCustom.TryGetValue((forImage, customOverlay), out var hit))
+                return hit;
 
-            //is there a cached image for this overlay ?
-            if (!_resultCacheCustom[forImage].ContainsKey(customOverlay))
-            {
-                //no
+            var clone = forImage.Clone<Rgba32>(x=>x.DrawImage(customOverlay,1.0f));
 
-                //draw it
-                var clone = forImage.CloneAs<Rgba32>();
-                clone.Mutate(x=>x.DrawImage(customOverlay,1.0f));
-
-                //and cache it
-                _resultCacheCustom[forImage].Add(customOverlay,clone);
-                
-            }
-
-            //now it is cached for sure
-            return _resultCacheCustom[forImage][customOverlay];
+            //and cache it
+            _resultCacheCustom.Add((forImage,customOverlay),clone);
+            return clone;
         }
 
-        public Image<Argb32> GetGrayscale(Image<Argb32> forImage)
+        public Image<Rgba32> GetGrayscale(Image<Rgba32> forImage)
         {
             if (!_greyscaleCache.ContainsKey(forImage))
                 _greyscaleCache.Add(forImage, MakeGrayscale(forImage));
@@ -83,17 +70,16 @@ namespace Rdmp.Core.Icons.IconOverlays
         /// </summary>
         /// <param name="original"></param>
         /// <returns></returns>
-        private static Image<Argb32> MakeGrayscale(Image<Argb32> original)
+        private static Image<Rgba32> MakeGrayscale(Image<Rgba32> original)
         {
             return original.Clone(x=>x.Grayscale());
         }
 
-        public Image<Argb32> GetOverlayNoCache(Image forImage, OverlayKind overlayKind)
+        public Image<Rgba32> GetOverlayNoCache(Image<Rgba32> forImage, OverlayKind overlayKind)
         {
             //cached result does not exist so we must draw it
             var overlay = _images[overlayKind];
-            var clone = forImage.CloneAs<Argb32>();
-            clone.Mutate(x=>x.DrawImage(overlay,1.0f));
+            var clone = forImage.Clone<Rgba32>(x=>x.DrawImage(overlay,1.0f));
             return clone;
         }
     }

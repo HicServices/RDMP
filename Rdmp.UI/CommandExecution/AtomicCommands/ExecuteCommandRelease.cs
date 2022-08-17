@@ -33,7 +33,7 @@ namespace Rdmp.UI.CommandExecution.AtomicCommands
             return "Gather all the extracted files into one releasable package and freeze the extraction configuration";
         }
 
-        public override Image<Argb32> GetImage(IIconProvider iconProvider)
+        public override Image<Rgba32> GetImage(IIconProvider iconProvider)
         {
             return iconProvider.GetImage(RDMPConcept.Release);
         }

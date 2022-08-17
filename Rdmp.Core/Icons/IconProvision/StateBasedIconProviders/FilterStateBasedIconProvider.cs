@@ -9,21 +9,21 @@ using Rdmp.Core.Icons.IconOverlays;
 using ReusableLibraryCode.Icons.IconProvision;
 using SixLabors.ImageSharp;
 using System.Linq;
+using SixLabors.ImageSharp.PixelFormats;
 
 namespace Rdmp.Core.Icons.IconProvision.StateBasedIconProviders
 {
     public class FilterStateBasedIconProvider : IObjectStateBasedIconProvider
     {
-        private Image _basicIcon;
-        private IconOverlayProvider _overlayProvider;
+        private readonly Image<Rgba32> _basicIcon;
+        private readonly IconOverlayProvider _overlayProvider;
 
         public FilterStateBasedIconProvider(IconOverlayProvider overlayProvider)
         {
             _basicIcon = CatalogueIcons.Filter;
             _overlayProvider = overlayProvider;
-
         }
-        public Image GetImageIfSupportedObject(object o)
+        public Image<Rgba32> GetImageIfSupportedObject(object o)
         {
             if (o is ExtractionFilter f)
             {

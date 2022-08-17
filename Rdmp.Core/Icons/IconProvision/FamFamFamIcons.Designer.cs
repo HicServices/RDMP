@@ -8,9 +8,6 @@
 // </auto-generated>
 //------------------------------------------------------------------------------
 
-using SixLabors.ImageSharp;
-using SixLabors.ImageSharp.PixelFormats;
-
 namespace Rdmp.Core.Icons.IconProvision {
     /// <summary>
     ///   A strongly-typed resource class, for looking up localized strings, etc.
@@ -61,334 +58,334 @@ namespace Rdmp.Core.Icons.IconProvision {
         }
         
         /// <summary>
-        ///   Looks up a localized resource of type SixLabors.ImageSharp.Image.
+        ///   Looks up a localized resource of type byte[].
         /// </summary>
-        public static SixLabors.ImageSharp.Image add {
+        public static byte[] add {
             get {
                 object obj = ResourceManager.GetObject("add", resourceCulture);
-                return ((SixLabors.ImageSharp.Image)(obj));
+                return ((byte[])(obj));
             }
         }
         
         /// <summary>
-        ///   Looks up a localized resource of type SixLabors.ImageSharp.Image.
+        ///   Looks up a localized resource of type byte[].
         /// </summary>
-        public static SixLabors.ImageSharp.Image application_home {
+        public static byte[] application_home {
             get {
                 object obj = ResourceManager.GetObject("application_home", resourceCulture);
-                return ((SixLabors.ImageSharp.Image)(obj));
+                return ((byte[])(obj));
             }
         }
         
         /// <summary>
-        ///   Looks up a localized resource of type SixLabors.ImageSharp.Image.
+        ///   Looks up a localized resource of type byte[].
         /// </summary>
-        public static Image<Argb32> arrow_refresh {
+        public static byte[] arrow_refresh {
             get {
                 object obj = ResourceManager.GetObject("arrow_refresh", resourceCulture);
-                return ((SixLabors.ImageSharp.Image)(obj));
+                return ((byte[])(obj));
             }
         }
         
         /// <summary>
-        ///   Looks up a localized resource of type SixLabors.ImageSharp.Image.
+        ///   Looks up a localized resource of type byte[].
         /// </summary>
-        public static SixLabors.ImageSharp.Image bin_closed {
+        public static byte[] bin_closed {
             get {
                 object obj = ResourceManager.GetObject("bin_closed", resourceCulture);
-                return ((SixLabors.ImageSharp.Image)(obj));
+                return ((byte[])(obj));
             }
         }
         
         /// <summary>
-        ///   Looks up a localized resource of type SixLabors.ImageSharp.Image.
+        ///   Looks up a localized resource of type byte[].
         /// </summary>
-        public static SixLabors.ImageSharp.Image cancel {
+        public static byte[] cancel {
             get {
                 object obj = ResourceManager.GetObject("cancel", resourceCulture);
-                return ((SixLabors.ImageSharp.Image)(obj));
+                return ((byte[])(obj));
             }
         }
         
         /// <summary>
-        ///   Looks up a localized resource of type SixLabors.ImageSharp.Image.
+        ///   Looks up a localized resource of type byte[].
         /// </summary>
-        public static SixLabors.ImageSharp.Image delete {
+        public static byte[] delete {
             get {
                 object obj = ResourceManager.GetObject("delete", resourceCulture);
-                return ((SixLabors.ImageSharp.Image)(obj));
+                return ((byte[])(obj));
             }
         }
         
         /// <summary>
-        ///   Looks up a localized resource of type SixLabors.ImageSharp.Image.
+        ///   Looks up a localized resource of type byte[].
         /// </summary>
-        public static SixLabors.ImageSharp.Image delete_multi {
+        public static byte[] delete_multi {
             get {
                 object obj = ResourceManager.GetObject("delete_multi", resourceCulture);
-                return ((SixLabors.ImageSharp.Image)(obj));
+                return ((byte[])(obj));
             }
         }
         
         /// <summary>
-        ///   Looks up a localized resource of type SixLabors.ImageSharp.Image.
+        ///   Looks up a localized resource of type byte[].
         /// </summary>
-        public static SixLabors.ImageSharp.Image disk {
+        public static byte[] disk {
             get {
                 object obj = ResourceManager.GetObject("disk", resourceCulture);
-                return ((SixLabors.ImageSharp.Image)(obj));
+                return ((byte[])(obj));
             }
         }
         
         /// <summary>
-        ///   Looks up a localized resource of type SixLabors.ImageSharp.Image.
+        ///   Looks up a localized resource of type byte[].
         /// </summary>
-        public static SixLabors.ImageSharp.Image flag_red {
+        public static byte[] flag_red {
             get {
                 object obj = ResourceManager.GetObject("flag_red", resourceCulture);
-                return ((SixLabors.ImageSharp.Image)(obj));
+                return ((byte[])(obj));
             }
         }
         
         /// <summary>
-        ///   Looks up a localized resource of type SixLabors.ImageSharp.Image.
+        ///   Looks up a localized resource of type byte[].
         /// </summary>
-        public static SixLabors.ImageSharp.Image GreenFace {
+        public static byte[] GreenFace {
             get {
                 object obj = ResourceManager.GetObject("GreenFace", resourceCulture);
-                return ((SixLabors.ImageSharp.Image)(obj));
+                return ((byte[])(obj));
             }
         }
         
         /// <summary>
-        ///   Looks up a localized resource of type SixLabors.ImageSharp.Image.
+        ///   Looks up a localized resource of type byte[].
         /// </summary>
-        public static SixLabors.ImageSharp.Image help {
+        public static byte[] help {
             get {
                 object obj = ResourceManager.GetObject("help", resourceCulture);
-                return ((SixLabors.ImageSharp.Image)(obj));
+                return ((byte[])(obj));
             }
         }
         
         /// <summary>
-        ///   Looks up a localized resource of type SixLabors.ImageSharp.Image.
+        ///   Looks up a localized resource of type byte[].
         /// </summary>
-        public static SixLabors.ImageSharp.Image link {
+        public static byte[] link {
             get {
                 object obj = ResourceManager.GetObject("link", resourceCulture);
-                return ((SixLabors.ImageSharp.Image)(obj));
+                return ((byte[])(obj));
             }
         }
         
         /// <summary>
-        ///   Looks up a localized resource of type SixLabors.ImageSharp.Image.
+        ///   Looks up a localized resource of type byte[].
         /// </summary>
-        public static SixLabors.ImageSharp.Image link_break {
+        public static byte[] link_break {
             get {
                 object obj = ResourceManager.GetObject("link_break", resourceCulture);
-                return ((SixLabors.ImageSharp.Image)(obj));
+                return ((byte[])(obj));
             }
         }
         
         /// <summary>
-        ///   Looks up a localized resource of type SixLabors.ImageSharp.Image.
+        ///   Looks up a localized resource of type byte[].
         /// </summary>
-        public static SixLabors.ImageSharp.Image lock_break {
+        public static byte[] lock_break {
             get {
                 object obj = ResourceManager.GetObject("lock_break", resourceCulture);
-                return ((SixLabors.ImageSharp.Image)(obj));
+                return ((byte[])(obj));
             }
         }
         
         /// <summary>
-        ///   Looks up a localized resource of type SixLabors.ImageSharp.Image.
+        ///   Looks up a localized resource of type byte[].
         /// </summary>
-        public static SixLabors.ImageSharp.Image magnifier {
+        public static byte[] magnifier {
             get {
                 object obj = ResourceManager.GetObject("magnifier", resourceCulture);
-                return ((SixLabors.ImageSharp.Image)(obj));
+                return ((byte[])(obj));
             }
         }
         
         /// <summary>
-        ///   Looks up a localized resource of type SixLabors.ImageSharp.Image.
+        ///   Looks up a localized resource of type byte[].
         /// </summary>
-        public static SixLabors.ImageSharp.Image page_white_get {
+        public static byte[] page_white_get {
             get {
                 object obj = ResourceManager.GetObject("page_white_get", resourceCulture);
-                return ((SixLabors.ImageSharp.Image)(obj));
+                return ((byte[])(obj));
             }
         }
         
         /// <summary>
-        ///   Looks up a localized resource of type SixLabors.ImageSharp.Image.
+        ///   Looks up a localized resource of type byte[].
         /// </summary>
-        public static SixLabors.ImageSharp.Image page_white_put {
+        public static byte[] page_white_put {
             get {
                 object obj = ResourceManager.GetObject("page_white_put", resourceCulture);
-                return ((SixLabors.ImageSharp.Image)(obj));
+                return ((byte[])(obj));
             }
         }
         
         /// <summary>
-        ///   Looks up a localized resource of type SixLabors.ImageSharp.Image.
+        ///   Looks up a localized resource of type byte[].
         /// </summary>
-        public static SixLabors.ImageSharp.Image page_white_word {
+        public static byte[] page_white_word {
             get {
                 object obj = ResourceManager.GetObject("page_white_word", resourceCulture);
-                return ((SixLabors.ImageSharp.Image)(obj));
+                return ((byte[])(obj));
             }
         }
         
         /// <summary>
-        ///   Looks up a localized resource of type SixLabors.ImageSharp.Image.
+        ///   Looks up a localized resource of type byte[].
         /// </summary>
-        public static SixLabors.ImageSharp.Image pencil_go {
+        public static byte[] pencil_go {
             get {
                 object obj = ResourceManager.GetObject("pencil_go", resourceCulture);
-                return ((SixLabors.ImageSharp.Image)(obj));
+                return ((byte[])(obj));
             }
         }
         
         /// <summary>
-        ///   Looks up a localized resource of type SixLabors.ImageSharp.Image.
+        ///   Looks up a localized resource of type byte[].
         /// </summary>
-        public static SixLabors.ImageSharp.Image phone {
+        public static byte[] phone {
             get {
                 object obj = ResourceManager.GetObject("phone", resourceCulture);
-                return ((SixLabors.ImageSharp.Image)(obj));
+                return ((byte[])(obj));
             }
         }
         
         /// <summary>
-        ///   Looks up a localized resource of type SixLabors.ImageSharp.Image.
+        ///   Looks up a localized resource of type byte[].
         /// </summary>
-        public static SixLabors.ImageSharp.Image picture_save {
+        public static byte[] picture_save {
             get {
                 object obj = ResourceManager.GetObject("picture_save", resourceCulture);
-                return ((SixLabors.ImageSharp.Image)(obj));
+                return ((byte[])(obj));
             }
         }
         
         /// <summary>
-        ///   Looks up a localized resource of type SixLabors.ImageSharp.Image.
+        ///   Looks up a localized resource of type byte[].
         /// </summary>
-        public static SixLabors.ImageSharp.Image RedFace {
+        public static byte[] RedFace {
             get {
                 object obj = ResourceManager.GetObject("RedFace", resourceCulture);
-                return ((SixLabors.ImageSharp.Image)(obj));
+                return ((byte[])(obj));
             }
         }
         
         /// <summary>
-        ///   Looks up a localized resource of type SixLabors.ImageSharp.Image.
+        ///   Looks up a localized resource of type byte[].
         /// </summary>
-        public static SixLabors.ImageSharp.Image Redo {
+        public static byte[] Redo {
             get {
                 object obj = ResourceManager.GetObject("Redo", resourceCulture);
-                return ((SixLabors.ImageSharp.Image)(obj));
+                return ((byte[])(obj));
             }
         }
         
         /// <summary>
-        ///   Looks up a localized resource of type SixLabors.ImageSharp.Image.
+        ///   Looks up a localized resource of type byte[].
         /// </summary>
-        public static SixLabors.ImageSharp.Image stop {
+        public static byte[] stop {
             get {
                 object obj = ResourceManager.GetObject("stop", resourceCulture);
-                return ((SixLabors.ImageSharp.Image)(obj));
+                return ((byte[])(obj));
             }
         }
         
         /// <summary>
-        ///   Looks up a localized resource of type SixLabors.ImageSharp.Image.
+        ///   Looks up a localized resource of type byte[].
         /// </summary>
-        public static SixLabors.ImageSharp.Image text_align_left {
+        public static byte[] text_align_left {
             get {
                 object obj = ResourceManager.GetObject("text_align_left", resourceCulture);
-                return ((SixLabors.ImageSharp.Image)(obj));
+                return ((byte[])(obj));
             }
         }
         
         /// <summary>
-        ///   Looks up a localized resource of type SixLabors.ImageSharp.Image.
+        ///   Looks up a localized resource of type byte[].
         /// </summary>
-        public static SixLabors.ImageSharp.Image text_list_bullets {
+        public static byte[] text_list_bullets {
             get {
                 object obj = ResourceManager.GetObject("text_list_bullets", resourceCulture);
-                return ((SixLabors.ImageSharp.Image)(obj));
+                return ((byte[])(obj));
             }
         }
         
         /// <summary>
-        ///   Looks up a localized resource of type SixLabors.ImageSharp.Image.
+        ///   Looks up a localized resource of type byte[].
         /// </summary>
-        public static SixLabors.ImageSharp.Image tick {
+        public static byte[] tick {
             get {
                 object obj = ResourceManager.GetObject("tick", resourceCulture);
-                return ((SixLabors.ImageSharp.Image)(obj));
+                return ((byte[])(obj));
             }
         }
         
         /// <summary>
-        ///   Looks up a localized resource of type SixLabors.ImageSharp.Image.
+        ///   Looks up a localized resource of type byte[].
         /// </summary>
-        public static SixLabors.ImageSharp.Image time {
+        public static byte[] time {
             get {
                 object obj = ResourceManager.GetObject("time", resourceCulture);
-                return ((SixLabors.ImageSharp.Image)(obj));
+                return ((byte[])(obj));
             }
         }
         
         /// <summary>
-        ///   Looks up a localized resource of type SixLabors.ImageSharp.Image.
+        ///   Looks up a localized resource of type byte[].
         /// </summary>
-        public static SixLabors.ImageSharp.Image Undo {
+        public static byte[] Undo {
             get {
                 object obj = ResourceManager.GetObject("Undo", resourceCulture);
-                return ((SixLabors.ImageSharp.Image)(obj));
+                return ((byte[])(obj));
             }
         }
         
         /// <summary>
-        ///   Looks up a localized resource of type SixLabors.ImageSharp.Image.
+        ///   Looks up a localized resource of type byte[].
         /// </summary>
-        public static Image<Argb32> wand {
+        public static byte[] wand {
             get {
                 object obj = ResourceManager.GetObject("wand", resourceCulture);
-                return ((SixLabors.ImageSharp.Image)(obj));
+                return ((byte[])(obj));
             }
         }
         
         /// <summary>
-        ///   Looks up a localized resource of type SixLabors.ImageSharp.Image.
+        ///   Looks up a localized resource of type byte[].
         /// </summary>
-        public static SixLabors.ImageSharp.Image YellowFace {
+        public static byte[] YellowFace {
             get {
                 object obj = ResourceManager.GetObject("YellowFace", resourceCulture);
-                return ((SixLabors.ImageSharp.Image)(obj));
+                return ((byte[])(obj));
             }
         }
 
         
         /// <summary>
-        ///   Looks up a localized resource of type SixLabors.ImageSharp.Image.
+        ///   Looks up a localized resource of type byte[].
         /// </summary>
-        public static SixLabors.ImageSharp.Image Forward {
+        public static byte[] Forward {
             get {
                 object obj = ResourceManager.GetObject("forward", resourceCulture);
-                return ((SixLabors.ImageSharp.Image)(obj));
+                return ((byte[])(obj));
             }
         }
 
         
         /// <summary>
-        ///   Looks up a localized resource of type SixLabors.ImageSharp.Image.
+        ///   Looks up a localized resource of type byte[].
         /// </summary>
-        public static SixLabors.ImageSharp.Image Back {
+        public static byte[] Back {
             get {
                 object obj = ResourceManager.GetObject("back", resourceCulture);
-                return ((SixLabors.ImageSharp.Image)(obj));
+                return ((byte[])(obj));
             }
         }
     }

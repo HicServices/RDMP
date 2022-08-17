@@ -10,18 +10,18 @@ using System.Reflection;
 using Rdmp.Core.Curation.Data;
 using Rdmp.Core.Databases;
 using Rdmp.Core.Icons.IconOverlays;
-using Rdmp.Core.Icons.IconProvision;
 using Rdmp.Core.Providers.Nodes;
 using ReusableLibraryCode.Icons.IconProvision;
+using SixLabors.ImageSharp.PixelFormats;
 
 namespace Rdmp.Core.Icons.IconProvision.StateBasedIconProviders
 {
     public class ExternalDatabaseServerStateBasedIconProvider : IObjectStateBasedIconProvider
     {
         private readonly IconOverlayProvider _overlayProvider;
-        private Image _default;
+        private readonly Image<Rgba32> _default;
 
-        Dictionary<string,Image> _assemblyToIconDictionary = new Dictionary<string, Image>();
+        readonly Dictionary<string,Image<Rgba32>> _assemblyToIconDictionary = new();
         private DatabaseTypeIconProvider _typeSpecificIconsProvider;
         
         public ExternalDatabaseServerStateBasedIconProvider(IconOverlayProvider overlayProvider)
@@ -38,7 +38,7 @@ namespace Rdmp.Core.Icons.IconProvision.StateBasedIconProviders
             _typeSpecificIconsProvider = new DatabaseTypeIconProvider();
         }
 
-        public Image GetIconForAssembly(Assembly assembly)
+        public Image<Rgba32> GetIconForAssembly(Assembly assembly)
         {
             var assemblyName = assembly.GetName().Name;
             if (_assemblyToIconDictionary.ContainsKey(assemblyName))
@@ -47,7 +47,7 @@ namespace Rdmp.Core.Icons.IconProvision.StateBasedIconProviders
             return _default;
         }
 
-        public Image GetImageIfSupportedObject(object o)
+        public Image<Rgba32> GetImageIfSupportedObject(object o)
         {
             var server = o as ExternalDatabaseServer;
             var dumpServerUsage = o as IdentifierDumpServerUsageNode;
@@ -55,11 +55,11 @@ namespace Rdmp.Core.Icons.IconProvision.StateBasedIconProviders
             if (dumpServerUsage != null)
                 server = dumpServerUsage.IdentifierDumpServer;
 
-            //if its not a server we aren't responsible for providing an icon for it
+            //if it's not a server we aren't responsible for providing an icon for it
             if (server == null)
                 return null;
 
-            //the untyped server icon (e.g. user creates a reference to a server that he is going to use but isn't created/managed by a .Datbase assembly)
+            //the untyped server icon (e.g. user creates a reference to a server that he is going to use but isn't created/managed by a .Database assembly)
             var toReturn = _default;
 
             //if it is a .Database assembly managed database then use the appropriate icon instead (ANO, LOG, IDD etc)

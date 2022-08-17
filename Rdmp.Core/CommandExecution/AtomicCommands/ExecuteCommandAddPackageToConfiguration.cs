@@ -46,7 +46,7 @@ namespace Rdmp.Core.CommandExecution.AtomicCommands
                 new ExecuteCommandAddDatasetsToConfiguration(BasicActivator, new ExtractableDataSetCombineable(package), _extractionConfiguration).Execute();
         }
 
-        public override Image<Argb32> GetImage(IIconProvider iconProvider)
+        public override Image<Rgba32> GetImage(IIconProvider iconProvider)
         {
             return iconProvider.GetImage(RDMPConcept.ExtractableDataSetPackage,OverlayKind.Import);
         }

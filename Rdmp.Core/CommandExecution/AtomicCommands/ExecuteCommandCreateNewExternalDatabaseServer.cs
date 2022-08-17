@@ -114,15 +114,12 @@ namespace Rdmp.Core.CommandExecution.AtomicCommands
             Activate(ServerCreatedIfAny);
         }
 
-        public override Image<Argb32> GetImage(IIconProvider iconProvider)
+        public override Image<Rgba32> GetImage(IIconProvider iconProvider)
         {
-            if (_patcher != null)
-            {
-                var basicIcon = _databaseIconProvider.GetIconForAssembly(_patcher.GetDbAssembly());
-                return _overlayProvider.GetOverlay(basicIcon, OverlayKind.Add);
-            }
+            if (_patcher == null) return iconProvider.GetImage(RDMPConcept.ExternalDatabaseServer, OverlayKind.Add);
+            var basicIcon = _databaseIconProvider.GetIconForAssembly(_patcher.GetDbAssembly());
+            return _overlayProvider.GetOverlay(basicIcon, OverlayKind.Add);
 
-            return iconProvider.GetImage(RDMPConcept.ExternalDatabaseServer, OverlayKind.Add);
         }
     }
 }

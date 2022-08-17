@@ -32,7 +32,7 @@ namespace Rdmp.Core.CommandExecution.AtomicCommands
             Show($"Script for {_tableInfo.GetRuntimeName()}",_tableInfo.Discover(DataAccessContext.InternalDataProcessing).ScriptTableCreation(false,false,false));
         }
 
-        public override Image<Argb32> GetImage(IIconProvider iconProvider)
+        public override Image<Rgba32> GetImage(IIconProvider iconProvider)
         {
             return iconProvider.GetImage(RDMPConcept.SQL);
         }

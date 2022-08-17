@@ -18,7 +18,7 @@ namespace Rdmp.Core
     {
         protected readonly IBasicActivateItems BasicActivator;
 
-        public Image<Argb32> ImageUnknown => BasicActivator.CoreIconProvider.ImageUnknown;
+        public Image<Rgba32> ImageUnknown => BasicActivator.CoreIconProvider.ImageUnknown;
 
         /// <summary>
         /// Creates a new instance of your plugin UI.  See notes on <paramref name="itemActivator"/>
@@ -46,7 +46,7 @@ namespace Rdmp.Core
             yield break;
         }
 
-        public virtual Image<Argb32> GetImage(object concept, OverlayKind kind = OverlayKind.None)
+        public virtual Image<Rgba32> GetImage(object concept, OverlayKind kind = OverlayKind.None)
         {
             return null;
         }

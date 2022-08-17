@@ -46,7 +46,7 @@ namespace Rdmp.UI.CommandExecution.AtomicCommands
                 UsefulStuff.GetInstance().ShowFolderInWindowsExplorer(_dir);
         }
 
-        public override Image<Argb32> GetImage(IIconProvider iconProvider)
+        public override Image<Rgba32> GetImage(IIconProvider iconProvider)
         {
             return iconProvider.GetImage(RDMPConcept.CatalogueFolder);
         }

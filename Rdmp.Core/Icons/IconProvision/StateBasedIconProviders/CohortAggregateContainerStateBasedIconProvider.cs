@@ -7,15 +7,15 @@
 using System;
 using SixLabors.ImageSharp;
 using Rdmp.Core.Curation.Data.Cohort;
-using Rdmp.Core.Icons.IconProvision;
+using SixLabors.ImageSharp.PixelFormats;
 
 namespace Rdmp.Core.Icons.IconProvision.StateBasedIconProviders
 {
     public class CohortAggregateContainerStateBasedIconProvider : IObjectStateBasedIconProvider
     {
-        private Image _union;
-        private Image _intersect;
-        private Image _except;
+        private readonly Image<Rgba32> _union;
+        private readonly Image<Rgba32> _intersect;
+        private readonly Image<Rgba32> _except;
 
         public CohortAggregateContainerStateBasedIconProvider()
         {
@@ -23,35 +23,25 @@ namespace Rdmp.Core.Icons.IconProvision.StateBasedIconProviders
             _intersect = CatalogueIcons.INTERSECT;
             _except = CatalogueIcons.EXCEPT;            
         }
-        public Image GetImageIfSupportedObject(object o)
+        public Image<Rgba32> GetImageIfSupportedObject(object o)
         {
-            if (o is Type && o.Equals(typeof (CohortAggregateContainer)))
-                return _intersect;
-
-            if (o is SetOperation)
-                return GetImage((SetOperation) o);
-
-            var container = o as CohortAggregateContainer;
-            
-            if (container == null)
-                return null;
-
-            return GetImage(container.Operation);
+            return o switch
+            {
+                Type when o.Equals(typeof(CohortAggregateContainer)) => _intersect,
+                SetOperation operation => GetImage(operation),
+                _ => o is not CohortAggregateContainer container ? null : GetImage(container.Operation)
+            };
         }
 
-        private Image GetImage(SetOperation operation)
+        private Image<Rgba32> GetImage(SetOperation operation)
         {
-            switch (operation)
+            return operation switch
             {
-                case SetOperation.UNION:
-                    return _union;
-                case SetOperation.INTERSECT:
-                    return _intersect;
-                case SetOperation.EXCEPT:
-                    return _except;
-                default:
-                    throw new ArgumentOutOfRangeException();
-            }
+                SetOperation.UNION => _union,
+                SetOperation.INTERSECT => _intersect,
+                SetOperation.EXCEPT => _except,
+                _ => throw new ArgumentOutOfRangeException()
+            };
         }
     }
 }

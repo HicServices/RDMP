@@ -6,25 +6,23 @@
 
 using SixLabors.ImageSharp;
 using Rdmp.Core.Curation.Data;
-using Rdmp.Core.Icons.IconProvision;
+using SixLabors.ImageSharp.PixelFormats;
 
 namespace Rdmp.Core.Icons.IconProvision.StateBasedIconProviders
 {
     public class TableInfoStateBasedIconProvider : IObjectStateBasedIconProvider
     {
-        private Image _tableInfo;
-        private Image _tableInfoTableValuedFunction;
+        private readonly Image<Rgba32> _tableInfo;
+        private readonly Image<Rgba32> _tableInfoTableValuedFunction;
 
         public TableInfoStateBasedIconProvider()
         {
             _tableInfo = CatalogueIcons.TableInfo;
             _tableInfoTableValuedFunction = CatalogueIcons.TableInfoTableValuedFunction;
         }
-        public Image GetImageIfSupportedObject(object o)
+        public Image<Rgba32> GetImageIfSupportedObject(object o)
         {
-            var tableInfo = o as TableInfo;
-
-            if (tableInfo == null)
+            if (o is not TableInfo tableInfo)
                 return null;
 
             return tableInfo.IsTableValuedFunction ? _tableInfoTableValuedFunction : _tableInfo;

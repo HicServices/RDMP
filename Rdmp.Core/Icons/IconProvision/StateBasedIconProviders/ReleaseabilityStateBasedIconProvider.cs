@@ -7,45 +7,50 @@
 using System.Collections.Generic;
 using SixLabors.ImageSharp;
 using Rdmp.Core.DataExport.DataRelease.Potential;
-using Rdmp.Core.Icons.IconProvision;
 using Rdmp.Core.Ticketing;
+using SixLabors.ImageSharp.PixelFormats;
 
 namespace Rdmp.Core.Icons.IconProvision.StateBasedIconProviders
 {
     public class ReleaseabilityStateBasedIconProvider : IObjectStateBasedIconProvider
     {
-        private readonly Dictionary<Releaseability,Image> _images = new Dictionary<Releaseability, Image>();
-        private readonly Dictionary<TicketingReleaseabilityEvaluation, Image> _environmentImages = new Dictionary<TicketingReleaseabilityEvaluation, Image>();
+        private readonly Dictionary<Releaseability,Image<Rgba32>> _images;
+        private readonly Dictionary<TicketingReleaseabilityEvaluation, Image<Rgba32>> _environmentImages;
 
         public ReleaseabilityStateBasedIconProvider()
         {
-            _images.Add(Releaseability.Undefined,CatalogueIcons.TinyRed);
+            _images = new()
+            {
+                { Releaseability.Undefined, CatalogueIcons.TinyRed },
 
-            _images.Add(Releaseability.ExceptionOccurredWhileEvaluatingReleaseability, CatalogueIcons.TinyRed);
-            _images.Add(Releaseability.NeverBeenSuccessfullyExecuted, CatalogueIcons.Failed);
-            _images.Add(Releaseability.ExtractFilesMissing, CatalogueIcons.FileMissing);
-            _images.Add(Releaseability.ExtractionSQLDesynchronisation, CatalogueIcons.Diff);
-            _images.Add(Releaseability.CohortDesynchronisation, CatalogueIcons.Failed);
-            _images.Add(Releaseability.ColumnDifferencesVsCatalogue, CatalogueIcons.TinyYellow);
-            _images.Add(Releaseability.Releaseable, CatalogueIcons.TinyGreen);
+                { Releaseability.ExceptionOccurredWhileEvaluatingReleaseability, CatalogueIcons.TinyRed },
+                { Releaseability.NeverBeenSuccessfullyExecuted, CatalogueIcons.Failed },
+                { Releaseability.ExtractFilesMissing, CatalogueIcons.FileMissing },
+                { Releaseability.ExtractionSQLDesynchronisation, CatalogueIcons.Diff },
+                { Releaseability.CohortDesynchronisation, CatalogueIcons.Failed },
+                { Releaseability.ColumnDifferencesVsCatalogue, CatalogueIcons.TinyYellow },
+                { Releaseability.Releaseable, CatalogueIcons.TinyGreen }
+            };
 
-            _environmentImages.Add(TicketingReleaseabilityEvaluation.CouldNotAuthenticateAgainstServer, CatalogueIcons.TinyRed);
-            _environmentImages.Add(TicketingReleaseabilityEvaluation.CouldNotReachTicketingServer, CatalogueIcons.TinyRed);
-            _environmentImages.Add(TicketingReleaseabilityEvaluation.NotReleaseable, CatalogueIcons.TinyRed);
-            _environmentImages.Add(TicketingReleaseabilityEvaluation.Releaseable, CatalogueIcons.TinyGreen);
-            _environmentImages.Add(TicketingReleaseabilityEvaluation.TicketingLibraryCrashed, CatalogueIcons.TinyRed);
-            _environmentImages.Add(TicketingReleaseabilityEvaluation.TicketingLibraryMissingOrNotConfiguredCorrectly, CatalogueIcons.TinyYellow);
+            _environmentImages = new()
+            {
+                { TicketingReleaseabilityEvaluation.CouldNotAuthenticateAgainstServer, CatalogueIcons.TinyRed },
+                { TicketingReleaseabilityEvaluation.CouldNotReachTicketingServer, CatalogueIcons.TinyRed },
+                { TicketingReleaseabilityEvaluation.NotReleaseable, CatalogueIcons.TinyRed },
+                { TicketingReleaseabilityEvaluation.Releaseable, CatalogueIcons.TinyGreen },
+                { TicketingReleaseabilityEvaluation.TicketingLibraryCrashed, CatalogueIcons.TinyRed },
+                { TicketingReleaseabilityEvaluation.TicketingLibraryMissingOrNotConfiguredCorrectly, CatalogueIcons.TinyYellow }
+            };
         }
 
-        public Image GetImageIfSupportedObject(object o)
+        public Image<Rgba32> GetImageIfSupportedObject(object o)
         {
-            if (o is Releaseability) 
-                return _images[(Releaseability) o];
-
-            if (o is TicketingReleaseabilityEvaluation)
-                return _environmentImages[(TicketingReleaseabilityEvaluation)o];
-
-            return null;
+            return o switch
+            {
+                Releaseability releaseability => _images[releaseability],
+                TicketingReleaseabilityEvaluation evaluation => _environmentImages[evaluation],
+                _ => null
+            };
         }
     }
 }

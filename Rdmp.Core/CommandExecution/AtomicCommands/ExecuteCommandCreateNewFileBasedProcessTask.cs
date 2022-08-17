@@ -116,7 +116,7 @@ namespace Rdmp.Core.CommandExecution.AtomicCommands
             }
         }
 
-        public override Image<Argb32> GetImage(IIconProvider iconProvider)
+        public override Image<Rgba32> GetImage(IIconProvider iconProvider)
         {
             if(_taskType == ProcessTaskType.SQLFile)
                 return iconProvider.GetImage(RDMPConcept.SQL, OverlayKind.Add);

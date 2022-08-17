@@ -43,8 +43,8 @@ namespace Rdmp.UI.Wizard
         {
             InitializeComponent();
 
-            _linkImage = FamFamFamIcons.link.ToBitmap();
-            _unlinkImage = FamFamFamIcons.link_break.ToBitmap();
+            _linkImage = FamFamFamIcons.link.ImageToBitmap();
+            _unlinkImage = FamFamFamIcons.link_break.ImageToBitmap();
 
             cbxColumns.PropertySelector = collection => collection.Cast<ExtractionInformation>().Select(i => i.ToString());
 

@@ -82,7 +82,7 @@ namespace Rdmp.UI.CommandExecution.AtomicCommands
 provides a description for (a given TableInfo can be a Lookup for many columns in many datasets).";
         }
 
-        public override Image<Argb32> GetImage(IIconProvider iconProvider)
+        public override Image<Rgba32> GetImage(IIconProvider iconProvider)
         {
             return iconProvider.GetImage(RDMPConcept.Lookup, OverlayKind.Add);
         }

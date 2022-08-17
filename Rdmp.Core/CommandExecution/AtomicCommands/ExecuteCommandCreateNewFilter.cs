@@ -197,7 +197,7 @@ where    Optional SQL to set for the filter.  If <basedOn> is not null this will
         {
             return _host?.GetCatalogue() ?? _container?.GetCatalogueIfAny();
         }
-        public override Image<Argb32> GetImage(IIconProvider iconProvider)
+        public override Image<Rgba32> GetImage(IIconProvider iconProvider)
         {
             
             return OfferCatalogueFilters ?

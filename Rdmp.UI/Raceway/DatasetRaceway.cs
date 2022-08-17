@@ -22,10 +22,10 @@ using Rdmp.Core.Repositories;
 using Rdmp.UI.DashboardTabs.Construction;
 using Rdmp.UI.ItemActivation;
 using Rdmp.UI.Refreshing;
-using Rdmp.UI.SimpleDialogs;
 using Rdmp.UI.TestsAndSetup.ServicePropogation;
 using ReusableLibraryCode.Icons;
 using ReusableLibraryCode.Icons.IconProvision;
+using SixLabors.ImageSharp.PixelFormats;
 
 namespace Rdmp.UI.Raceway
 {
@@ -44,7 +44,7 @@ namespace Rdmp.UI.Raceway
     public partial class DatasetRaceway : RDMPUserControl, IDashboardableControl
     {
         private ToolStripButton btnAddCatalogue = new ToolStripButton("Add Catalogue"){Name= "btnAddCatalogue" };
-        private ToolStripButton btnRemoveAll = new ToolStripButton("Clear",FamFamFamIcons.delete_multi.ToBitmap()) { Name = "btnRemoveAll" };
+        private ToolStripButton btnRemoveAll = new ToolStripButton("Clear",FamFamFamIcons.delete_multi.ImageToBitmap()) { Name = "btnRemoveAll" };
         private ToolStripButton btnAddExtractableDatasetPackage = new ToolStripButton("Add Package") { Name = "btnAddExtractableDatasetPackage" };
         private ToolStripLabel toolStripLabel1 = new ToolStripLabel("Show Period") { Name = "toolStripLabel1" };
         private ToolStripComboBox ddShowPeriod = new ToolStripComboBox() { Name = "ddShowPeriod", Size = new Size(121, 25) };
@@ -64,7 +64,7 @@ namespace Rdmp.UI.Raceway
             
             ddShowPeriod.ComboBox.DataSource = Enum.GetValues(typeof (RacewayShowPeriod));
             
-            btnRemoveAll.Image = FamFamFamIcons.delete_multi.ToBitmap();
+            btnRemoveAll.Image = FamFamFamIcons.delete_multi.ImageToBitmap();
             _ignoreRowCounts = CatalogueIcons.RowCounts_Ignore.ToBitmap();
             _respectRowCounts = CatalogueIcons.RowCounts_Respect.ToBitmap();
         }

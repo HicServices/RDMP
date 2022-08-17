@@ -38,7 +38,7 @@ namespace Rdmp.UI.CommandExecution.AtomicCommands
             return "Runs the caching activity.  This usually involves long term incremental fetching and storing data ready for load";
         }
 
-        public override Image<Argb32> GetImage(IIconProvider iconProvider)
+        public override Image<Rgba32> GetImage(IIconProvider iconProvider)
         {
             return iconProvider.GetImage(RDMPConcept.CacheProgress, OverlayKind.Execute);
         }

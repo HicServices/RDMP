@@ -8,14 +8,15 @@ using SixLabors.ImageSharp;
 using Rdmp.Core.DataExport.Data;
 using Rdmp.Core.Icons.IconOverlays;
 using ReusableLibraryCode.Icons.IconProvision;
+using SixLabors.ImageSharp.PixelFormats;
 
 namespace Rdmp.Core.Icons.IconProvision.StateBasedIconProviders
 {
     public class ExtractableDataSetStateBasedIconProvider : IObjectStateBasedIconProvider
     {
         private readonly IconOverlayProvider _overlayProvider;
-        private CatalogueStateBasedIconProvider _catalogueIconProvider;
-        private Image _disabled;
+        private readonly CatalogueStateBasedIconProvider _catalogueIconProvider;
+        private readonly Image<Rgba32> _disabled;
 
         public ExtractableDataSetStateBasedIconProvider(IconOverlayProvider overlayProvider, CatalogueStateBasedIconProvider catalogueIconProvider)
         {
@@ -24,10 +25,9 @@ namespace Rdmp.Core.Icons.IconProvision.StateBasedIconProviders
             this._overlayProvider = overlayProvider;
         }
 
-        public Image GetImageIfSupportedObject(object o)
+        public Image<Rgba32> GetImageIfSupportedObject(object o)
         {
-            var ds = o as ExtractableDataSet ;
-            if (ds == null)
+            if (o is not ExtractableDataSet ds)
                 return null;
 
             var cataOne = _catalogueIconProvider.GetImageIfSupportedObject(ds.Catalogue);

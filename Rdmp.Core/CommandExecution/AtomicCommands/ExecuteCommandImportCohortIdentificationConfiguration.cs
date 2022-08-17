@@ -44,7 +44,7 @@ namespace Rdmp.Core.CommandExecution.AtomicCommands
             // 'more choices to come' suffix
             UseTripleDotSuffix = ToImport == null;
         }
-        public override Image<Argb32> GetImage(IIconProvider iconProvider)
+        public override Image<Rgba32> GetImage(IIconProvider iconProvider)
         {
             return iconProvider.GetImage(RDMPConcept.CohortIdentificationConfiguration,OverlayKind.Add);
         }

@@ -38,7 +38,7 @@ namespace Rdmp.UI.CommandExecution.AtomicCommands
             return "View the results of all data quality engine runs that have ever been run on the dataset";
         }
 
-        public override Image<Argb32> GetImage(IIconProvider iconProvider)
+        public override Image<Rgba32> GetImage(IIconProvider iconProvider)
         {
             return CatalogueIcons.DQE;
         }

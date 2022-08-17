@@ -45,7 +45,7 @@ namespace Rdmp.Core.CommandExecution.AtomicCommands
             Publish(_filter);
             Activate(parameterSet);            
         }
-        public override Image<Argb32> GetImage(IIconProvider iconProvider)
+        public override Image<Rgba32> GetImage(IIconProvider iconProvider)
         {
             return iconProvider.GetImage(RDMPConcept.ExtractionFilterParameterSet, OverlayKind.Add);
         }

@@ -62,7 +62,7 @@ namespace Rdmp.Core.CommandExecution.AtomicCommands
 
         }
 
-        public override Image<Argb32> GetImage(IIconProvider iconProvider)
+        public override Image<Rgba32> GetImage(IIconProvider iconProvider)
         {
             if (_databaseEntity != null && BasicActivator.FavouritesProvider.IsFavourite(_databaseEntity))
                 return CatalogueIcons.StarHollow;

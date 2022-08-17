@@ -110,7 +110,7 @@ namespace Rdmp.Core.CommandExecution.AtomicCommands.CohortCreationCommands
                 cmd.Execute();
         }
 
-        public override Image<Argb32> GetImage(IIconProvider iconProvider)
+        public override Image<Rgba32> GetImage(IIconProvider iconProvider)
         {
             return iconProvider.GetImage(RDMPConcept.CohortIdentificationConfiguration, OverlayKind.Import);
         }

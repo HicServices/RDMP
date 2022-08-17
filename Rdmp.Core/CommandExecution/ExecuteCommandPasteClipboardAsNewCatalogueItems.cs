@@ -44,7 +44,7 @@ namespace Rdmp.Core.CommandExecution
             _catalogue = catalogue;
             _clipboardContentGetter = clipboardContentGetter;
         }
-        public override Image<Argb32> GetImage(IIconProvider iconProvider)
+        public override Image<Rgba32> GetImage(IIconProvider iconProvider)
         {
             return iconProvider.GetImage(RDMPConcept.Clipboard, OverlayKind.Import);
         }

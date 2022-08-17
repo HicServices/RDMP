@@ -98,7 +98,7 @@ namespace Rdmp.Core.CommandExecution.AtomicCommands
             SetCommandWeight();
         }
 
-        public override Image<Argb32> GetImage(IIconProvider iconProvider)
+        public override Image<Rgba32> GetImage(IIconProvider iconProvider)
         {
             return _offerCohortAggregates ? iconProvider.GetImage(RDMPConcept.CohortAggregate,OverlayKind.Add): iconProvider.GetImage(RDMPConcept.AggregateGraph, OverlayKind.Add);
         }

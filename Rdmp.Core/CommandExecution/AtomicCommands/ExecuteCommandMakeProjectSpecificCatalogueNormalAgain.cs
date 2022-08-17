@@ -66,7 +66,7 @@ namespace Rdmp.Core.CommandExecution.AtomicCommands
             Publish(_catalogue);
         }
 
-        public override Image<Argb32> GetImage(IIconProvider iconProvider)
+        public override Image<Rgba32> GetImage(IIconProvider iconProvider)
         {
             return CatalogueIcons.MakeProjectSpecificCatalogueNormalAgain;
         }

@@ -91,7 +91,7 @@ namespace Rdmp.Core.CommandExecution.AtomicCommands
             return "Starts a new extraction for the project containing one or more datasets linked against a given cohort";
         }
 
-        public override Image<Argb32> GetImage(IIconProvider iconProvider)
+        public override Image<Rgba32> GetImage(IIconProvider iconProvider)
         {
             return iconProvider.GetImage(RDMPConcept.ExtractionConfiguration, OverlayKind.Add);
         }

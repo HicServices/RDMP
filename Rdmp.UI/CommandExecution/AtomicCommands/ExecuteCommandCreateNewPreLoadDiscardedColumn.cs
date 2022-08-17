@@ -106,7 +106,7 @@ namespace Rdmp.UI.CommandExecution.AtomicCommands
             return "Add New Load Discarded Column";
         }
 
-        public override Image<Argb32> GetImage(IIconProvider iconProvider)
+        public override Image<Rgba32> GetImage(IIconProvider iconProvider)
         {
             return iconProvider.GetImage(RDMPConcept.PreLoadDiscardedColumn, OverlayKind.Add);
         }

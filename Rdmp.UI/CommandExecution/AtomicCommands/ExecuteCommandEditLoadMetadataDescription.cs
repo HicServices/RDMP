@@ -24,7 +24,7 @@ namespace Rdmp.UI.CommandExecution.AtomicCommands
             _loadMetadata = loadMetadata;
         }
 
-        public override Image<Argb32> GetImage(IIconProvider iconProvider)
+        public override Image<Rgba32> GetImage(IIconProvider iconProvider)
         {
             return iconProvider.GetImage(RDMPConcept.LoadMetadata,OverlayKind.Edit);
         }

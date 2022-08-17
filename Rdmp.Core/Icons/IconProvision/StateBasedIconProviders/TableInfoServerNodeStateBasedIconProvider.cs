@@ -6,17 +6,17 @@
 
 using SixLabors.ImageSharp;
 using Rdmp.Core.Icons.IconOverlays;
-using Rdmp.Core.Icons.IconProvision;
 using Rdmp.Core.Providers.Nodes;
 using ReusableLibraryCode.Icons.IconProvision;
+using SixLabors.ImageSharp.PixelFormats;
 
 namespace Rdmp.Core.Icons.IconProvision.StateBasedIconProviders
 {
     public class TableInfoServerNodeStateBasedIconProvider : IObjectStateBasedIconProvider
     {
         private readonly IconOverlayProvider _overlayProvider;
-        private DatabaseTypeIconProvider _databaseTypeIconProvider;
-        private Image _serverNode;
+        private readonly DatabaseTypeIconProvider _databaseTypeIconProvider;
+        private readonly Image<Rgba32> _serverNode;
 
         public TableInfoServerNodeStateBasedIconProvider(IconOverlayProvider overlayProvider)
         {
@@ -26,11 +26,9 @@ namespace Rdmp.Core.Icons.IconProvision.StateBasedIconProviders
             _serverNode = CatalogueIcons.TableInfoServerNode;
         }
 
-        public Image GetImageIfSupportedObject(object o)
+        public Image<Rgba32> GetImageIfSupportedObject(object o)
         {
-            var node = o as TableInfoServerNode;
-
-            if (node == null)
+            if (o is not TableInfoServerNode node)
                 return null;
 
             return _overlayProvider.GetOverlay(_serverNode, _databaseTypeIconProvider.GetOverlay(node.DatabaseType));

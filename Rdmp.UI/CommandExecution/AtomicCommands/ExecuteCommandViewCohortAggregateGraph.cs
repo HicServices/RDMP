@@ -39,7 +39,7 @@ namespace Rdmp.UI.CommandExecution.AtomicCommands
             return _collection.Graph.Name;
         }
 
-        public override Image<Argb32> GetImage(IIconProvider iconProvider)
+        public override Image<Rgba32> GetImage(IIconProvider iconProvider)
         {
             return iconProvider.GetImage(RDMPConcept.AggregateGraph);
         }

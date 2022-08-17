@@ -64,7 +64,7 @@ namespace Rdmp.UI.CommandExecution.AtomicCommands
             popupChecksUI.StartChecking(_checkable);
         }
 
-        public override Image<Argb32> GetImage(IIconProvider iconProvider)
+        public override Image<Rgba32> GetImage(IIconProvider iconProvider)
         {
             return CatalogueIcons.TinyYellow;
         }

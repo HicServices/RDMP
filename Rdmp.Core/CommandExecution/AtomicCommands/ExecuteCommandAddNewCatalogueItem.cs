@@ -162,7 +162,7 @@ namespace Rdmp.Core.CommandExecution.AtomicCommands
             return existingColumnInfos.Contains(candidate.ID);
         }
 
-        public override Image<Argb32> GetImage(IIconProvider iconProvider)
+        public override Image<Rgba32> GetImage(IIconProvider iconProvider)
         {
             return iconProvider.GetImage(RDMPConcept.CatalogueItem, OverlayKind.Add);
         }

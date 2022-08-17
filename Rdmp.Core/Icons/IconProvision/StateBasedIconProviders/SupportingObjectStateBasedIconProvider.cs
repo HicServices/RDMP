@@ -6,22 +6,22 @@
 
 using SixLabors.ImageSharp;
 using Rdmp.Core.Curation.Data;
-using Rdmp.Core.Icons.IconProvision;
+using SixLabors.ImageSharp.PixelFormats;
 
 namespace Rdmp.Core.Icons.IconProvision.StateBasedIconProviders
 {
     public class SupportingObjectStateBasedIconProvider : IObjectStateBasedIconProvider
     {
 
-        private Image _supportingDocument;
-        private Image _supportingDocumentGlobal;
-        private Image _supportingDocumentExtractable;
-        private Image _supportingDocumentExtractableGlobal;
+        private readonly Image<Rgba32> _supportingDocument;
+        private readonly Image<Rgba32> _supportingDocumentGlobal;
+        private readonly Image<Rgba32> _supportingDocumentExtractable;
+        private readonly Image<Rgba32> _supportingDocumentExtractableGlobal;
 
-        private Image _supportingSql;
-        private Image _supportingSqlGlobal;
-        private Image _supportingSqlExtractable;
-        private Image _supportingSqlExtractableGlobal;
+        private readonly Image<Rgba32> _supportingSql;
+        private readonly Image<Rgba32> _supportingSqlGlobal;
+        private readonly Image<Rgba32> _supportingSqlExtractable;
+        private readonly Image<Rgba32> _supportingSqlExtractableGlobal;
 
         public SupportingObjectStateBasedIconProvider()
         {
@@ -36,27 +36,20 @@ namespace Rdmp.Core.Icons.IconProvision.StateBasedIconProviders
             _supportingSqlExtractableGlobal = CatalogueIcons.SupportingSqlExtractableGlobal;
 
         }
-        public Image GetImageIfSupportedObject(object o)
+        public Image<Rgba32> GetImageIfSupportedObject(object o)
         {
-            var doc = o as SupportingDocument;
-            if (doc != null)
+            return o switch
             {
-                if (doc.Extractable)
-                    return doc.IsGlobal ? _supportingDocumentExtractableGlobal : _supportingDocumentExtractable;
-
-                return doc.IsGlobal ? _supportingDocumentGlobal : _supportingDocument;
-            }
-
-            var sql = o as SupportingSQLTable;
-            if (sql != null)
-            {
-                if (sql.Extractable)
-                    return sql.IsGlobal ? _supportingSqlExtractableGlobal : _supportingSqlExtractable;
-
-                return sql.IsGlobal ? _supportingSqlGlobal : _supportingSql;
-            }
-
-            return null;
+                SupportingDocument { Extractable: true } doc => doc.IsGlobal
+                    ? _supportingDocumentExtractableGlobal
+                    : _supportingDocumentExtractable,
+                SupportingDocument doc => doc.IsGlobal ? _supportingDocumentGlobal : _supportingDocument,
+                SupportingSQLTable { Extractable: true } sql => sql.IsGlobal
+                    ? _supportingSqlExtractableGlobal
+                    : _supportingSqlExtractable,
+                SupportingSQLTable sql => sql.IsGlobal ? _supportingSqlGlobal : _supportingSql,
+                _ => null
+            };
         }
     }
 }

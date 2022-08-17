@@ -123,7 +123,7 @@ int? Optional, if <root> is logging server this can be a specific audit id to sh
                 : base.GetCommandName();
         }
 
-        public override Image<Argb32> GetImage(IIconProvider iconProvider)
+        public override Image<Rgba32> GetImage(IIconProvider iconProvider)
         {
             return iconProvider.GetImage(RDMPConcept.Logging);
         }

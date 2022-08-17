@@ -7,17 +7,17 @@
 using System;
 using SixLabors.ImageSharp;
 using Rdmp.Core.DataExport.DataExtraction.Commands;
-using Rdmp.Core.Icons.IconProvision;
+using SixLabors.ImageSharp.PixelFormats;
 
 namespace Rdmp.Core.Icons.IconProvision.StateBasedIconProviders
 {
     public class ExtractCommandStateBasedIconProvider : IObjectStateBasedIconProvider
     {
-        private Image _waiting;
-        private Image _warning;
-        private Image _writing;
-        private Image _failed;
-        private Image _tick;
+        private readonly Image<Rgba32> _waiting;
+        private readonly Image<Rgba32> _warning;
+        private readonly Image<Rgba32> _writing;
+        private readonly Image<Rgba32> _failed;
+        private readonly Image<Rgba32> _tick;
 
         public ExtractCommandStateBasedIconProvider()
         {
@@ -27,36 +27,24 @@ namespace Rdmp.Core.Icons.IconProvision.StateBasedIconProviders
             _failed = CatalogueIcons.Failed;
             _tick = CatalogueIcons.Tick;
         }
-        public Image GetImageIfSupportedObject(object o)
+        public Image<Rgba32> GetImageIfSupportedObject(object o)
         {
-            if (!(o is ExtractCommandState))
+            if (o is not ExtractCommandState ecs)
                 return null;
 
-            var ecs = (ExtractCommandState) o;
-
-            switch (ecs)
+            return ecs switch
             {
-                case ExtractCommandState.NotLaunched:
-                    return _waiting;
-                case ExtractCommandState.WaitingForSQLServer:
-                    return _waiting;
-                case ExtractCommandState.WritingToFile:
-                    return _writing;
-                case ExtractCommandState.Crashed:
-                    return _failed;
-                case ExtractCommandState.UserAborted:
-                    return _failed;
-                case ExtractCommandState.Completed:
-                    return _tick;
-                case ExtractCommandState.Warning:
-                    return _warning;
-                case ExtractCommandState.WritingMetadata:
-                    return _writing;
-                case ExtractCommandState.WaitingToExecute:
-                    return _waiting;
-                default:
-                    throw new ArgumentOutOfRangeException();
-            }
+                ExtractCommandState.NotLaunched => _waiting,
+                ExtractCommandState.WaitingForSQLServer => _waiting,
+                ExtractCommandState.WritingToFile => _writing,
+                ExtractCommandState.Crashed => _failed,
+                ExtractCommandState.UserAborted => _failed,
+                ExtractCommandState.Completed => _tick,
+                ExtractCommandState.Warning => _warning,
+                ExtractCommandState.WritingMetadata => _writing,
+                ExtractCommandState.WaitingToExecute => _waiting,
+                _ => throw new ArgumentOutOfRangeException()
+            };
         }
     }
 }

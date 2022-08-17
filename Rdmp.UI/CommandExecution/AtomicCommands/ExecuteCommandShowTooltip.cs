@@ -35,9 +35,9 @@ namespace Rdmp.UI.CommandExecution.AtomicCommands
         {
             return _isBad ? "Show Problem" : "Show Tooltip";
         }
-        public override Image<Argb32> GetImage(IIconProvider iconProvider)
+        public override Image<Rgba32> GetImage(IIconProvider iconProvider)
         {
-            return (Image<Argb32>)(_isBad ? FamFamFamIcons.flag_red : iconProvider.GetImage(RDMPConcept.Help));
+            return (Image<Rgba32>)(_isBad ? Image<Rgba32>.Load(FamFamFamIcons.flag_red) : iconProvider.GetImage(RDMPConcept.Help));
         }
 
 

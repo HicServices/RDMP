@@ -6,35 +6,32 @@
 
 using SixLabors.ImageSharp;
 using Rdmp.Core.Curation.Data.Pipelines;
-using Rdmp.Core.Icons.IconProvision;
+using SixLabors.ImageSharp.PixelFormats;
 
 namespace Rdmp.Core.Icons.IconProvision.StateBasedIconProviders
 {
     public class PipelineComponentStateBasedIconProvider : IObjectStateBasedIconProvider
     {
-        private Image _component;
-        private Image _soure;
-        private Image _destnition;
+        private readonly Image<Rgba32> _component;
+        private readonly Image<Rgba32> _source;
+        private readonly Image<Rgba32> _destination;
 
         public PipelineComponentStateBasedIconProvider()
         {
             _component = CatalogueIcons.PipelineComponent;
-            _soure = CatalogueIcons.PipelineComponentSource;
-            _destnition = CatalogueIcons.PipelineComponentDestination;
+            _source = CatalogueIcons.PipelineComponentSource;
+            _destination = CatalogueIcons.PipelineComponentDestination;
         }
-        public Image GetImageIfSupportedObject(object o)
+        public Image<Rgba32> GetImageIfSupportedObject(object o)
         {
-            if (o is PipelineComponent pc)
-            {
-                if (pc.Class != null && pc.Class.EndsWith("Source"))
-                    return _soure;
-                if (pc.Class != null && pc.Class.EndsWith("Destination"))
-                    return _destnition;
+            if (o is not PipelineComponent pc) return null;
 
-                return _component;
-            }
+            if (pc.Class != null && pc.Class.EndsWith("Source"))
+                return _source;
+            if (pc.Class != null && pc.Class.EndsWith("Destination"))
+                return _destination;
 
-            return null;
+            return _component;
 
         }
     }

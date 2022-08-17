@@ -40,9 +40,9 @@ namespace Rdmp.UI.CommandExecution.AtomicCommands
             };
         }
 
-        public override Image<Argb32> GetImage(IIconProvider iconProvider)
+        public override Image<Rgba32> GetImage(IIconProvider iconProvider)
         {
-            return FamFamFamIcons.wand;
+            return Image.Load<Rgba32>(FamFamFamIcons.wand);
         }
     }
 }

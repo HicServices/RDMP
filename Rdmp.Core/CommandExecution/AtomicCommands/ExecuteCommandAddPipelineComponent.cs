@@ -49,7 +49,7 @@ namespace Rdmp.Core.CommandExecution.AtomicCommands
             _useCaseIfAny = useCaseIfAny;
         }
 
-        public override Image<Argb32> GetImage(IIconProvider iconProvider)
+        public override Image<Rgba32> GetImage(IIconProvider iconProvider)
         {
             return iconProvider.GetImage(RDMPConcept.PipelineComponent,OverlayKind.Add);
         }

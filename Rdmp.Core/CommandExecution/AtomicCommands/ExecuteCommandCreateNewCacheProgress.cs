@@ -41,7 +41,7 @@ namespace Rdmp.Core.CommandExecution.AtomicCommands
             Emphasise(cp);
         }
 
-        public override Image<Argb32> GetImage(IIconProvider iconProvider)
+        public override Image<Rgba32> GetImage(IIconProvider iconProvider)
         {
             return iconProvider.GetImage(RDMPConcept.CacheProgress, OverlayKind.Add);
         }

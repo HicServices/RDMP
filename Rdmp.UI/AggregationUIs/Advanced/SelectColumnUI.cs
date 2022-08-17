@@ -55,8 +55,8 @@ namespace Rdmp.UI.AggregationUIs.Advanced
 
         public QuerySyntaxHelper _querySyntaxHelper = new MicrosoftQuerySyntaxHelper();
 
-        private Bitmap _add;
-        private Bitmap _delete;
+        private readonly Bitmap _add;
+        private readonly Bitmap _delete;
         private CountColumnRequirement _countColumnRequirement;
 
         public SelectColumnUI()

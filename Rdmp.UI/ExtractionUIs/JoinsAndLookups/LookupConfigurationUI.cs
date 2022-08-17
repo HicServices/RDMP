@@ -135,7 +135,7 @@ namespace Rdmp.UI.ExtractionUIs.JoinsAndLookups
             btnImportNewTableInfo.Image = activator.CoreIconProvider.GetImage(RDMPConcept.TableInfo, OverlayKind.Import).ToBitmap();
             toolTip.SetToolTip(btnImportNewTableInfo, "Import new...");
 
-            btnPrimaryKeyCompositeHelp.Image = FamFamFamIcons.help.ToBitmap();
+            btnPrimaryKeyCompositeHelp.Image = FamFamFamIcons.help.ImageToBitmap();
             
             pictureBox1.Image = activator.CoreIconProvider.GetImage(RDMPConcept.Catalogue).ToBitmap();
             tbCatalogue.Text = databaseObject.ToString();

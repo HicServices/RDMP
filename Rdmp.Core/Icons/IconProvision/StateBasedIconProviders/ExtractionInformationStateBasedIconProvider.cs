@@ -8,21 +8,21 @@ using System;
 using SixLabors.ImageSharp;
 using Rdmp.Core.Curation.Data;
 using Rdmp.Core.Icons.IconOverlays;
-using Rdmp.Core.Icons.IconProvision;
 using ReusableLibraryCode.Icons.IconProvision;
+using SixLabors.ImageSharp.PixelFormats;
 
 namespace Rdmp.Core.Icons.IconProvision.StateBasedIconProviders
 {
     public class ExtractionInformationStateBasedIconProvider : IObjectStateBasedIconProvider
     {
-        private Image _extractionInformation_Core;
-        private Image _extractionInformation_Supplemental;
-        private Image _extractionInformation_SpecialApproval;
-        private Image _extractionInformation_InternalOnly;
-        private Image _extractionInformation_Deprecated;
-        private Image _extractionInformation_ProjectSpecific;
-        private IconOverlayProvider _overlayProvider;
-        private Image _noIconAvailable;
+        private readonly Image<Rgba32> _extractionInformation_Core;
+        private readonly Image<Rgba32> _extractionInformation_Supplemental;
+        private readonly Image<Rgba32> _extractionInformation_SpecialApproval;
+        private readonly Image<Rgba32> _extractionInformation_InternalOnly;
+        private readonly Image<Rgba32> _extractionInformation_Deprecated;
+        private readonly Image<Rgba32> _extractionInformation_ProjectSpecific;
+        private readonly IconOverlayProvider _overlayProvider;
+        private readonly Image<Rgba32> _noIconAvailable;
 
         public ExtractionInformationStateBasedIconProvider()
         {
@@ -37,54 +37,42 @@ namespace Rdmp.Core.Icons.IconProvision.StateBasedIconProviders
             _noIconAvailable = CatalogueIcons.NoIconAvailable;
         }
         
-        public Image GetImageIfSupportedObject(object o)
+        public Image<Rgba32> GetImageIfSupportedObject(object o)
         {
             
             if(o is ExtractionCategory cat)
                 return GetImage(cat);
 
-            if (o is ExtractionInformation ei)
-            {
-                Image toReturn = GetImage(ei.ExtractionCategory);
+            if (o is not ExtractionInformation ei) return null;
+
+            var toReturn = GetImage(ei.ExtractionCategory);
                 
-                if (ei.IsExtractionIdentifier)
-                    toReturn = _overlayProvider.GetOverlay(toReturn, OverlayKind.IsExtractionIdentifier);
+            if (ei.IsExtractionIdentifier)
+                toReturn = _overlayProvider.GetOverlay(toReturn, OverlayKind.IsExtractionIdentifier);
 
+            if (ei.IsPrimaryKey)
+                toReturn = _overlayProvider.GetOverlay(toReturn, OverlayKind.Key);
 
-                if (ei.IsPrimaryKey)
-                    toReturn = _overlayProvider.GetOverlay(toReturn, OverlayKind.Key);
+            if (ei.HashOnDataRelease) 
+                toReturn = _overlayProvider.GetOverlay(toReturn, OverlayKind.Hashed);
 
-                if (ei.HashOnDataRelease) 
-                    toReturn = _overlayProvider.GetOverlay(toReturn, OverlayKind.Hashed);
+            return toReturn;
 
-                return toReturn;
-
-            }
-
-            return null;
         }
 
-        private Image GetImage(ExtractionCategory category)
+        private Image<Rgba32> GetImage(ExtractionCategory category)
         {
-            switch (category)
+            return category switch
             {
-                case ExtractionCategory.Core:
-                    return _extractionInformation_Core;
-                case ExtractionCategory.Supplemental:
-                    return _extractionInformation_Supplemental;
-                case ExtractionCategory.SpecialApprovalRequired:
-                    return _extractionInformation_SpecialApproval;
-                case ExtractionCategory.Internal:
-                    return _extractionInformation_InternalOnly;
-                case ExtractionCategory.Deprecated:
-                    return _extractionInformation_Deprecated;
-                case ExtractionCategory.ProjectSpecific:
-                    return _extractionInformation_ProjectSpecific;
-                case ExtractionCategory.Any:
-                    return _noIconAvailable;
-                default:
-                    throw new ArgumentOutOfRangeException();//.Any is not valid for ExtractionInformations
-            }
+                ExtractionCategory.Core => _extractionInformation_Core,
+                ExtractionCategory.Supplemental => _extractionInformation_Supplemental,
+                ExtractionCategory.SpecialApprovalRequired => _extractionInformation_SpecialApproval,
+                ExtractionCategory.Internal => _extractionInformation_InternalOnly,
+                ExtractionCategory.Deprecated => _extractionInformation_Deprecated,
+                ExtractionCategory.ProjectSpecific => _extractionInformation_ProjectSpecific,
+                ExtractionCategory.Any => _noIconAvailable,
+                _ => throw new ArgumentOutOfRangeException()
+            };
         }
     }
 }

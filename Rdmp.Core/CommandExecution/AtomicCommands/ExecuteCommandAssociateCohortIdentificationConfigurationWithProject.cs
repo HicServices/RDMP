@@ -90,7 +90,7 @@ namespace Rdmp.Core.CommandExecution.AtomicCommands
             Emphasise(_cic);
         }
 
-        public override Image<Argb32> GetImage(IIconProvider iconProvider)
+        public override Image<Rgba32> GetImage(IIconProvider iconProvider)
         {
             //if we know the cic the context is 'pick a project'
             if(_cic != null)

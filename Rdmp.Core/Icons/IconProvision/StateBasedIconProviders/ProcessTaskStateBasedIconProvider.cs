@@ -7,18 +7,18 @@
 using System;
 using SixLabors.ImageSharp;
 using Rdmp.Core.Curation.Data.DataLoad;
-using Rdmp.Core.Icons.IconProvision;
+using SixLabors.ImageSharp.PixelFormats;
 
 namespace Rdmp.Core.Icons.IconProvision.StateBasedIconProviders
 {
     public class ProcessTaskStateBasedIconProvider : IObjectStateBasedIconProvider
     {
-        private Image _exe;
-        private Image _sql;
-        private Image _plugin;
-        private Image _attacher;
-        private Image _dataProvider;
-        private Image _mutilateDataTables;
+        private readonly Image<Rgba32> _exe;
+        private readonly Image<Rgba32> _sql;
+        private readonly Image<Rgba32> _plugin;
+        private readonly Image<Rgba32> _attacher;
+        private readonly Image<Rgba32> _dataProvider;
+        private readonly Image<Rgba32> _mutilateDataTables;
 
         public ProcessTaskStateBasedIconProvider()
         {
@@ -31,31 +31,21 @@ namespace Rdmp.Core.Icons.IconProvision.StateBasedIconProviders
             _mutilateDataTables = CatalogueIcons.MutilateDataTables;
         }
 
-        public Image GetImageIfSupportedObject(object o)
+        public Image<Rgba32> GetImageIfSupportedObject(object o)
         {
-            var pt = o as ProcessTask;
+            if (o is Type && o.Equals(typeof(ProcessTask))) return _plugin;
 
-            if(o is Type && o.Equals(typeof(ProcessTask)))
-                return _plugin;
-
-            if (pt == null)
+            if (o is not ProcessTask pt)
                 return null;
-
-            switch (pt.ProcessTaskType)
+            return pt.ProcessTaskType switch
             {
-                case ProcessTaskType.Executable:
-                    return _exe;
-                case ProcessTaskType.SQLFile:
-                    return _sql;
-                case ProcessTaskType.Attacher:
-                    return _attacher;
-                case ProcessTaskType.DataProvider:
-                    return _dataProvider;
-                case ProcessTaskType.MutilateDataTable:
-                    return _mutilateDataTables;
-                default:
-                    throw new ArgumentOutOfRangeException();
-            }
+                ProcessTaskType.Executable => _exe,
+                ProcessTaskType.SQLFile => _sql,
+                ProcessTaskType.Attacher => _attacher,
+                ProcessTaskType.DataProvider => _dataProvider,
+                ProcessTaskType.MutilateDataTable => _mutilateDataTables,
+                _ => throw new ArgumentOutOfRangeException()
+            };
         }
     }
 }

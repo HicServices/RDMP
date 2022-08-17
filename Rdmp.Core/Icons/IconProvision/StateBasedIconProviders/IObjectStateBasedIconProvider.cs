@@ -5,11 +5,12 @@
 // You should have received a copy of the GNU General Public License along with RDMP. If not, see <https://www.gnu.org/licenses/>.
 
 using SixLabors.ImageSharp;
+using SixLabors.ImageSharp.PixelFormats;
 
 namespace Rdmp.Core.Icons.IconProvision.StateBasedIconProviders
 {
     public interface IObjectStateBasedIconProvider
     {
-        Image GetImageIfSupportedObject(object o);
+        Image<Rgba32> GetImageIfSupportedObject(object o);
     }
 }

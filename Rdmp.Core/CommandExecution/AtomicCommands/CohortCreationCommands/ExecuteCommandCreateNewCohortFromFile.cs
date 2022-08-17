@@ -63,7 +63,7 @@ namespace Rdmp.Core.CommandExecution.AtomicCommands.CohortCreationCommands
             return "Create a cohort containing ALL the patient identifiers in the chosen file";
         }
 
-        public override Image<Argb32> GetImage(IIconProvider iconProvider)
+        public override Image<Rgba32> GetImage(IIconProvider iconProvider)
         {
             return CatalogueIcons.ImportFile;
         }

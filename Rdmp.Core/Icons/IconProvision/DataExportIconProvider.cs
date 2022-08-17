@@ -24,7 +24,7 @@ namespace Rdmp.Core.Icons.IconProvision
             StateBasedIconProviders.Add(new ExtractionConfigurationStateBasedIconProvider(this));
         }
 
-        protected override Image<Argb32> GetImageImpl(object concept, OverlayKind kind = OverlayKind.None)
+        protected override Image<Rgba32> GetImageImpl(object concept, OverlayKind kind = OverlayKind.None)
         {
             if (concept is LinkedCohortNode)
                 return base.GetImageImpl(RDMPConcept.ExtractableCohort, OverlayKind.Link);

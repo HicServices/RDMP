@@ -52,7 +52,7 @@ namespace Rdmp.UI.CommandExecution.AtomicCommands
             return "Extract all the datasets in the configuration linking each against the configuration's cohort";
         }
 
-        public override Image<Argb32> GetImage(IIconProvider iconProvider)
+        public override Image<Rgba32> GetImage(IIconProvider iconProvider)
         {
             return iconProvider.GetImage(RDMPConcept.ExtractionConfiguration,OverlayKind.Execute);
         }

@@ -44,7 +44,7 @@ namespace Rdmp.Core.CommandExecution.AtomicCommands
             _host = host;
         }
 
-        public override Image<Argb32> GetImage(IIconProvider iconProvider)
+        public override Image<Rgba32> GetImage(IIconProvider iconProvider)
         {
             Weight = DEFAULT_WEIGHT;
 

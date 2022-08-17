@@ -66,7 +66,7 @@ namespace Rdmp.UI.SimpleDialogs.SimpleFileImporting
             if (command.File != null)
                 SelectFile(command.File);
 
-            pbHelp.Image = FamFamFamIcons.help.ToBitmap();
+            pbHelp.Image = FamFamFamIcons.help.ImageToBitmap();
 
             BuildHelpFlow();
         }

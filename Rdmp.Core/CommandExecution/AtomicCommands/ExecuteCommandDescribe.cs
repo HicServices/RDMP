@@ -73,7 +73,7 @@ namespace Rdmp.Core.CommandExecution.AtomicCommands
             _nonDatabaseObjectToDescribe = randomThing;
         }
 
-        public override Image<Argb32> GetImage(IIconProvider iconProvider)
+        public override Image<Rgba32> GetImage(IIconProvider iconProvider)
         {
             if (_nonDatabaseObjectToDescribe != null)
                 return iconProvider.GetImage(_nonDatabaseObjectToDescribe);

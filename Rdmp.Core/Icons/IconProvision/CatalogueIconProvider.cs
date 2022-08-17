@@ -23,9 +23,7 @@ using Rdmp.Core.Providers.Nodes.PipelineNodes;
 using Rdmp.Core.Repositories;
 using Rdmp.Core.Icons.IconProvision.StateBasedIconProviders;
 using ReusableLibraryCode.Icons.IconProvision;
-using Rdmp.Core;
 using Rdmp.Core.CommandExecution.AtomicCommands;
-using SixLabors.ImageSharp.Formats.Tga;
 using SixLabors.ImageSharp.PixelFormats;
 
 namespace Rdmp.Core.Icons.IconProvision
@@ -35,13 +33,13 @@ namespace Rdmp.Core.Icons.IconProvision
         private readonly IIconProvider[] _pluginIconProviders;
         public IconOverlayProvider OverlayProvider { get; private set; }
 
-        protected List<IObjectStateBasedIconProvider> StateBasedIconProviders = new List<IObjectStateBasedIconProvider>();
+        protected List<IObjectStateBasedIconProvider> StateBasedIconProviders = new();
 
         protected readonly EnumImageCollection<RDMPConcept> ImagesCollection;
         protected readonly CatalogueStateBasedIconProvider CatalogueStateBasedIconProvider;
         private DatabaseTypeIconProvider _databaseTypeIconProvider = new DatabaseTypeIconProvider();
 
-        public Image<Argb32> ImageUnknown => ImagesCollection[RDMPConcept.NoIconAvailable];
+        public Image<Rgba32> ImageUnknown => ImagesCollection[RDMPConcept.NoIconAvailable];
 
         public CatalogueIconProvider(IRDMPPlatformRepositoryServiceLocator repositoryLocator,
             IIconProvider[] pluginIconProviders)
@@ -74,7 +72,7 @@ namespace Rdmp.Core.Icons.IconProvision
             StateBasedIconProviders.Add(new ExtractCommandStateBasedIconProvider());
         }
 
-        public virtual Image<Argb32> GetImage(object concept, OverlayKind kind = OverlayKind.None)
+        public virtual Image<Rgba32> GetImage(object concept, OverlayKind kind = OverlayKind.None)
         {
             if (concept is IDisableable { IsDisabled: true })
                 return OverlayProvider.GetGrayscale(GetImageImpl(concept, kind));
@@ -82,7 +80,7 @@ namespace Rdmp.Core.Icons.IconProvision
             return GetImageImpl(concept, kind);
         }
 
-        protected virtual Image<Argb32> GetImageImpl(object concept, OverlayKind kind = OverlayKind.None)
+        protected virtual Image<Rgba32> GetImageImpl(object concept, OverlayKind kind = OverlayKind.None)
         {
             if (concept == null)
                 return null;
@@ -108,7 +106,7 @@ namespace Rdmp.Core.Icons.IconProvision
 
             //if there are plugins injecting random objects into RDMP tree views etc then we need the ability to provide icons for them
             if (_pluginIconProviders != null)
-                foreach (IIconProvider plugin in _pluginIconProviders)
+                foreach (var plugin in _pluginIconProviders)
                 {
                     var img = plugin.GetImage(concept, kind);
                     if (img != null)
@@ -196,7 +194,7 @@ namespace Rdmp.Core.Icons.IconProvision
                     var masqueradingAs = @as.MasqueradingAs();
 
                     //provided we don't have a circular reference here!
-                    if (!(masqueradingAs is IMasqueradeAs))
+                    if (masqueradingAs is not IMasqueradeAs)
                         return GetImageImpl(masqueradingAs, kind); //get an image for what your pretending to be
                     break;
                 }
@@ -218,7 +216,7 @@ namespace Rdmp.Core.Icons.IconProvision
             }
 
             // try trimming the I off of IProject
-            if(type.IsInterface && Enum.TryParse(type.Name.Substring(1), out t))
+            if(type.IsInterface && Enum.TryParse(type.Name[1..], out t))
             {
                 return true;
             }
@@ -235,27 +233,18 @@ namespace Rdmp.Core.Icons.IconProvision
 
         public RDMPConcept GetConceptForCollection(RDMPCollection rdmpCollection)
         {
-            switch (rdmpCollection)
+            return rdmpCollection switch
             {
-                case RDMPCollection.None:
-                    return RDMPConcept.NoIconAvailable;
-                case RDMPCollection.Tables:
-                    return RDMPConcept.TableInfo;
-                case RDMPCollection.Catalogue:
-                    return RDMPConcept.Catalogue;
-                case RDMPCollection.DataExport:
-                    return RDMPConcept.Project;
-                case RDMPCollection.SavedCohorts:
-                    return RDMPConcept.AllCohortsNode;
-                case RDMPCollection.Favourites:
-                    return RDMPConcept.Favourite;
-                case RDMPCollection.Cohort:
-                    return RDMPConcept.CohortIdentificationConfiguration;
-                case RDMPCollection.DataLoad:
-                    return RDMPConcept.LoadMetadata;
-                default:
-                    throw new ArgumentOutOfRangeException("rdmpCollection");
-            }
+                RDMPCollection.None => RDMPConcept.NoIconAvailable,
+                RDMPCollection.Tables => RDMPConcept.TableInfo,
+                RDMPCollection.Catalogue => RDMPConcept.Catalogue,
+                RDMPCollection.DataExport => RDMPConcept.Project,
+                RDMPCollection.SavedCohorts => RDMPConcept.AllCohortsNode,
+                RDMPCollection.Favourites => RDMPConcept.Favourite,
+                RDMPCollection.Cohort => RDMPConcept.CohortIdentificationConfiguration,
+                RDMPCollection.DataLoad => RDMPConcept.LoadMetadata,
+                _ => throw new ArgumentOutOfRangeException(nameof(rdmpCollection)),
+            };
         }
 
         /// <summary>
@@ -283,10 +272,9 @@ namespace Rdmp.Core.Icons.IconProvision
         /// </summary>
         /// <param name="addFavouritesOverlayKeysToo">Pass true to also generate Images for every concept with a star overlay with the key being EnumNameFavourite (where EnumName is the RDMPConcept name e.g. CatalogueFavourite for the icon RDMPConcept.Catalogue and the favourite star)</param>
         /// <returns></returns>
-        public Dictionary<string, Image> GetImageList(bool addFavouritesOverlayKeysToo)
+        public Dictionary<string, Image<Rgba32>> GetImageList(bool addFavouritesOverlayKeysToo)
         {
-            Dictionary<string, Image> imageList = new Dictionary<string, Image>();
-
+            Dictionary<string, Image<Rgba32>> imageList = new();
 
             foreach (RDMPConcept concept in Enum.GetValues(typeof(RDMPConcept)))
             {
@@ -294,13 +282,13 @@ namespace Rdmp.Core.Icons.IconProvision
                 imageList.Add(concept.ToString(), img);
 
                 if (addFavouritesOverlayKeysToo)
-                    imageList.Add(concept + "Favourite", OverlayProvider.GetOverlay(img, OverlayKind.FavouredItem));
+                    imageList.Add($"{concept}Favourite", OverlayProvider.GetOverlay(img, OverlayKind.FavouredItem));
             }
 
             return imageList;
         }
 
-        private Image<Argb32> GetImage(Image<Argb32> img, OverlayKind kind)
+        private Image<Rgba32> GetImage(Image<Rgba32> img, OverlayKind kind)
         {
             if (kind == OverlayKind.None)
                 return img;

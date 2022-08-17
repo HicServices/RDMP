@@ -38,7 +38,7 @@ namespace Rdmp.UI.CommandExecution.AtomicCommands
                 SetImpossible("No Lookups found");
         }
 
-        public override Image<Argb32> GetImage(IIconProvider iconProvider)
+        public override Image<Rgba32> GetImage(IIconProvider iconProvider)
         {
             return iconProvider.GetImage(RDMPConcept.Lookup,OverlayKind.Shortcut);
         }

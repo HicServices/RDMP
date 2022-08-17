@@ -32,6 +32,8 @@ using ReusableLibraryCode.Icons;
 using ReusableLibraryCode.Icons.IconProvision;
 using ReusableLibraryCode.Settings;
 using ScintillaNET;
+using SixLabors.ImageSharp;
+using SixLabors.ImageSharp.PixelFormats;
 using WideMessageBox = Rdmp.UI.SimpleDialogs.WideMessageBox;
 
 namespace Rdmp.UI.DataViewing
@@ -122,7 +124,7 @@ namespace Rdmp.UI.DataViewing
             btnExecuteSql.Image = activator.CoreIconProvider.GetImage(RDMPConcept.SQL, OverlayKind.Execute).ToBitmap();
 
             var overlayer = new IconOverlayProvider();
-            btnResetSql.Image = overlayer.GetOverlay(FamFamFamIcons.text_align_left, OverlayKind.Problem).ToBitmap();
+            btnResetSql.Image = overlayer.GetOverlay(Image.Load<Rgba32>(FamFamFamIcons.text_align_left), OverlayKind.Problem).ToBitmap();
 
             if (_scintilla == null)
             {

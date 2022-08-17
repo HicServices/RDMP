@@ -161,7 +161,7 @@ namespace Rdmp.Core.CommandExecution.AtomicCommands.CatalogueCreationCommands
             }
         }
 
-        public override Image<Argb32> GetImage(IIconProvider iconProvider)
+        public override Image<Rgba32> GetImage(IIconProvider iconProvider)
         {
             return ProjectSpecific != null ?
                 iconProvider.GetImage(RDMPConcept.ProjectCatalogue, OverlayKind.Add) :

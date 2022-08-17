@@ -59,7 +59,7 @@ namespace Rdmp.Core.CommandExecution.AtomicCommands
                 SetImpossible("There are no cohorts currently configured with ProjectNumber " + project.ProjectNumber.Value);
         }
 
-        public override Image<Argb32> GetImage(IIconProvider iconProvider)
+        public override Image<Rgba32> GetImage(IIconProvider iconProvider)
         {
             return iconProvider.GetImage(RDMPConcept.ExtractableCohort, OverlayKind.Link);
         }

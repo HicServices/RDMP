@@ -31,7 +31,7 @@ namespace Rdmp.Core.CommandExecution.AtomicCommands
             return "Creates an exact copy of the Extraction Configuration including the cohort selection, all selected datasets, parameters, filter containers, filters etc";
         }
 
-        public override Image<Argb32> GetImage(IIconProvider iconProvider)
+        public override Image<Rgba32> GetImage(IIconProvider iconProvider)
         {
             return CatalogueIcons.CloneExtractionConfiguration;
         }

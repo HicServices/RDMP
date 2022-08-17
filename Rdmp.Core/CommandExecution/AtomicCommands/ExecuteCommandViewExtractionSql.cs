@@ -70,7 +70,7 @@ namespace Rdmp.Core.CommandExecution.AtomicCommands
             return "Shows the SQL that will be executed for the given dataset when it is extracted including the linkage with the cohort table";
         }
 
-        public override Image<Argb32> GetImage(IIconProvider iconProvider)
+        public override Image<Rgba32> GetImage(IIconProvider iconProvider)
         {
             return iconProvider.GetImage(RDMPConcept.SQL, OverlayKind.Execute);
         }

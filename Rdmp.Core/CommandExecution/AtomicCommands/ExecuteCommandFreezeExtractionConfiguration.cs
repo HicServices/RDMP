@@ -24,7 +24,7 @@ namespace Rdmp.Core.CommandExecution.AtomicCommands
                 SetImpossible("ExtractionConfiguration is already released)");
         }
 
-        public override Image<Argb32> GetImage(IIconProvider iconProvider)
+        public override Image<Rgba32> GetImage(IIconProvider iconProvider)
         {
             return CatalogueIcons.FrozenExtractionConfiguration;
         }

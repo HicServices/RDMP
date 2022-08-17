@@ -39,7 +39,7 @@ namespace Rdmp.Core.CommandExecution.AtomicCommands
             Weight = -99.99999f;
         }
 
-        public override Image<Argb32> GetImage(IIconProvider iconProvider)
+        public override Image<Rgba32> GetImage(IIconProvider iconProvider)
         {
             if (_o == null)
                 return null;

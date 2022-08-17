@@ -62,7 +62,7 @@ namespace Rdmp.UI.TestsAndSetup.ServicePropogation
         private AtomicCommandUIFactory atomicCommandUIFactory;
         
         private readonly RAGSmileyToolStrip _ragSmileyToolStrip;
-        private readonly ToolStripButton _runChecksToolStripButton = new ToolStripButton("Run Checks", FamFamFamIcons.arrow_refresh.ToBitmap());
+        private readonly ToolStripButton _runChecksToolStripButton = new ToolStripButton("Run Checks", FamFamFamIcons.arrow_refresh.ImageToBitmap());
         private ICheckable _checkable;
         private IActivateItems _activator;
 

@@ -52,7 +52,7 @@ namespace Rdmp.Core.CommandExecution.AtomicCommands
                 SetImpossible($"There are no cache entries for {cic}");
             }
         }
-        public override Image<Argb32> GetImage(IIconProvider iconProvider)
+        public override Image<Rgba32> GetImage(IIconProvider iconProvider)
         {
             var overlayProvider = new IconOverlayProvider();
             return overlayProvider.GetOverlayNoCache(CatalogueIcons.ExternalDatabaseServer_Cache, OverlayKind.Delete);

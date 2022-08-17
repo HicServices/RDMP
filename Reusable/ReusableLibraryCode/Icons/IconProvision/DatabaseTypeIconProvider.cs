@@ -16,40 +16,40 @@ namespace ReusableLibraryCode.Icons.IconProvision
     /// </summary>
     public class DatabaseTypeIconProvider
     {
-        private Image<Argb32> _msBig;
-        private Image<Argb32> _msOverlay;
+        private readonly Image<Rgba32> _msBig;
+        private readonly Image<Rgba32> _msOverlay;
 
-        private Image<Argb32> _oraBig;
-        private Image<Argb32> _oraOverlay;
+        private readonly Image<Rgba32> _oraBig;
+        private readonly Image<Rgba32> _oraOverlay;
 
-        private Image<Argb32> _mysBig;
-        private Image<Argb32> _mysOverlay;
+        private readonly Image<Rgba32> _mysBig;
+        private readonly Image<Rgba32> _mysOverlay;
 
-        private Image<Argb32> _postgresBig;
-        private Image<Argb32> _postgresOverlay;
+        private readonly Image<Rgba32> _postgresBig;
+        private readonly Image<Rgba32> _postgresOverlay;
         
-        private Image<Argb32> _unknownBig;
-        private Image<Argb32> _unknownOverlay;
+        private readonly Image<Rgba32> _unknownBig;
+        private readonly Image<Rgba32> _unknownOverlay;
         
         public DatabaseTypeIconProvider()
         {
-            _msBig = DatabaseProviderIcons.Microsoft;
-            _msOverlay = DatabaseProviderIcons.MicrosoftOverlay;
+            _msBig = Image.Load<Rgba32>(DatabaseProviderIcons.Microsoft);
+            _msOverlay = Image.Load<Rgba32>(DatabaseProviderIcons.MicrosoftOverlay);
 
-            _mysBig = DatabaseProviderIcons.MySql;
-            _mysOverlay = DatabaseProviderIcons.MySqlOverlay;
+            _mysBig = Image.Load<Rgba32>(DatabaseProviderIcons.MySql);
+            _mysOverlay = Image.Load<Rgba32>(DatabaseProviderIcons.MySqlOverlay);
 
-            _oraBig = DatabaseProviderIcons.Oracle;
-            _oraOverlay = DatabaseProviderIcons.OracleOverlay;
+            _oraBig = Image.Load<Rgba32>(DatabaseProviderIcons.Oracle);
+            _oraOverlay = Image.Load<Rgba32>(DatabaseProviderIcons.OracleOverlay);
 
-            _postgresBig = DatabaseProviderIcons.PostgreSql;
-            _postgresOverlay = DatabaseProviderIcons.PostgreSqlOverlay;
+            _postgresBig = Image.Load<Rgba32>(DatabaseProviderIcons.PostgreSql);
+            _postgresOverlay = Image.Load<Rgba32>(DatabaseProviderIcons.PostgreSqlOverlay);
 
-            _unknownBig = DatabaseProviderIcons.Unknown;
-            _unknownOverlay = DatabaseProviderIcons.UnknownOverlay;
+            _unknownBig = Image.Load<Rgba32>(DatabaseProviderIcons.Unknown);
+            _unknownOverlay = Image.Load<Rgba32>(DatabaseProviderIcons.UnknownOverlay);
         }
 
-        public Image GetOverlay(DatabaseType type)
+        public Image<Rgba32> GetOverlay(DatabaseType type)
         {
             return type switch
             {
@@ -61,7 +61,7 @@ namespace ReusableLibraryCode.Icons.IconProvision
             };
         }
 
-        public Image<Argb32> GetImage(DatabaseType type)
+        public Image<Rgba32> GetImage(DatabaseType type)
         {
             return type switch
             {

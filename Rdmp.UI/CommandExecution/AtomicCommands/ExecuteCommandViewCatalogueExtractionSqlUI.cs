@@ -36,7 +36,7 @@ namespace Rdmp.UI.CommandExecution.AtomicCommands
             return "View the query that would be executed during extraction of the dataset with the current extractable columns/transforms";
         }
 
-        public override Image<Argb32> GetImage(IIconProvider iconProvider)
+        public override Image<Rgba32> GetImage(IIconProvider iconProvider)
         {
             return iconProvider.GetImage(RDMPConcept.SQL);
         }

@@ -95,7 +95,7 @@ namespace Rdmp.UI.Tests
         }
 
 
-        private bool IsBlackAndWhite(SixLabors.ImageSharp.Image<Argb32> img)
+        private bool IsBlackAndWhite(SixLabors.ImageSharp.Image<Rgba32> img)
         {
             var foundColoured = false;
             img.ProcessPixelRows(pixels =>

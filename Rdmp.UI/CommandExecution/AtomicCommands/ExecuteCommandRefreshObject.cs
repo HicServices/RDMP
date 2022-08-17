@@ -42,9 +42,9 @@ namespace Rdmp.UI.CommandExecution.AtomicCommands
             Publish(_databaseEntity);
         }
 
-        public override Image<Argb32> GetImage(IIconProvider iconProvider)
+        public override Image<Rgba32> GetImage(IIconProvider iconProvider)
         {
-            return FamFamFamIcons.arrow_refresh;
+            return Image.Load<Rgba32>(FamFamFamIcons.arrow_refresh);
         }
     }
 }

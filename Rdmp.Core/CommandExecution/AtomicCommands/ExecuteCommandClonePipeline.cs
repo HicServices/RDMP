@@ -32,7 +32,7 @@ namespace Rdmp.Core.CommandExecution.AtomicCommands
             Publish(_pipeline);
         }
 
-        public override Image<Argb32> GetImage(IIconProvider iconProvider)
+        public override Image<Rgba32> GetImage(IIconProvider iconProvider)
         {
             return iconProvider.GetImage(RDMPConcept.Pipeline, OverlayKind.Link);
         }

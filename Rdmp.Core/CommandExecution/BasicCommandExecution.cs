@@ -46,7 +46,7 @@ namespace Rdmp.Core.CommandExecution
         public string ReasonCommandImpossible { get; private set; }
         public string OverrideCommandName { get; set; }
 
-        public Image OverrideIcon { get; set; }
+        public Image<Rgba32> OverrideIcon { get; set; }
 
         /// <summary>
         /// Set to true to suppress the <see cref="Publish(IMapsDirectlyToDatabaseTable)"/> method.  Only use if you are running multiple commands one after the other and don't want to wait for state updates
@@ -156,7 +156,7 @@ namespace Rdmp.Core.CommandExecution
             return String.Empty;
         }
 
-        public virtual Image<Argb32> GetImage(IIconProvider iconProvider)
+        public virtual Image<Rgba32> GetImage(IIconProvider iconProvider)
         {
             return OverrideIcon;
         }

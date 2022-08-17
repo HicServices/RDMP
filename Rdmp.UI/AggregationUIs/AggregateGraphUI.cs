@@ -36,8 +36,8 @@ using ReusableLibraryCode;
 using ReusableLibraryCode.Checks;
 using ReusableLibraryCode.DataAccess;
 using ReusableLibraryCode.Extensions;
-using ReusableLibraryCode.Settings;
 using ScintillaNET;
+using SixLabors.ImageSharp.PixelFormats;
 
 namespace Rdmp.UI.AggregationUIs
 {

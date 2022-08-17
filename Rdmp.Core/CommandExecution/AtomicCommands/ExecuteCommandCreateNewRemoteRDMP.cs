@@ -32,7 +32,7 @@ namespace Rdmp.Core.CommandExecution.AtomicCommands
             return "Tell RDMP about another instance of RDMP that is available for communication with via a web service";
         }
 
-        public override Image<Argb32> GetImage(IIconProvider iconProvider)
+        public override Image<Rgba32> GetImage(IIconProvider iconProvider)
         {
             return iconProvider.GetImage(RDMPConcept.RemoteRDMP, OverlayKind.Add);
         }

@@ -56,7 +56,7 @@ namespace Rdmp.UI.CommandExecution.AtomicCommands
             dialog.Show();
         }
 
-        public override Image<Argb32> GetImage(IIconProvider iconProvider)
+        public override Image<Rgba32> GetImage(IIconProvider iconProvider)
         {
             return iconProvider.GetImage(RDMPConcept.Diff);
         }

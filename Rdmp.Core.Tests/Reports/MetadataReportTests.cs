@@ -27,7 +27,7 @@ namespace Rdmp.Core.Tests.Reports
             cata.Description = "The Quick Brown Fox Was Quicker Than The slow tortoise";
 
             //setup delegate for returning images
-            var bmp = new Image<Argb32>(200, 200);
+            var bmp = new Image<Rgba32>(200, 200);
             bmp.Mutate(x=>x.Fill(Color.Black,new RectangleF(10.0f,10.0f,50.0f,50.0f)));
             
             reporter.RequestCatalogueImages += (s) => { return new BitmapWithDescription[] {new BitmapWithDescription(bmp,"MyPicture","Something interesting about it"),  }; };

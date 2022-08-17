@@ -35,7 +35,7 @@ namespace Rdmp.UI.CommandExecution.AtomicCommands
             return "Runs the data quality engine on the dataset using the currently configured validation rules and stores the results in the default DQE results database";
         }
 
-        public override Image<Argb32> GetImage(IIconProvider iconProvider)
+        public override Image<Rgba32> GetImage(IIconProvider iconProvider)
         {
             return iconProvider.GetImage(RDMPConcept.DQE, OverlayKind.Execute);
         }

@@ -26,8 +26,8 @@ using ResearchDataManagementPlatform.WindowManagement.ContentWindowTracking.Pers
 using ResearchDataManagementPlatform.WindowManagement.Events;
 using ResearchDataManagementPlatform.WindowManagement.HomePane;
 using ReusableLibraryCode.Checks;
-
-
+using SixLabors.ImageSharp;
+using SixLabors.ImageSharp.PixelFormats;
 using WeifenLuo.WinFormsUI.Docking;
 
 namespace ResearchDataManagementPlatform.WindowManagement
@@ -309,7 +309,7 @@ namespace ResearchDataManagementPlatform.WindowManagement
             {
                 _home = new HomeUI(this.ActivateItems);
                 
-                _homeContent = _windowFactory.Create(ActivateItems, _home, "Home", FamFamFamIcons.application_home);
+                _homeContent = _windowFactory.Create(ActivateItems, _home, "Home", Image.Load<Rgba32>(FamFamFamIcons.application_home));
                 _homeContent.Closed += (s, e) => _home = null;
                 _homeContent.Show(_mainDockPanel, DockState.Document);
             }

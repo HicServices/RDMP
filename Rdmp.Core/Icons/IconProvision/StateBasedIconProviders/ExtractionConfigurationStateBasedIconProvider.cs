@@ -6,14 +6,14 @@
 
 using SixLabors.ImageSharp;
 using Rdmp.Core.DataExport.Data;
-using Rdmp.Core.Icons.IconProvision;
+using SixLabors.ImageSharp.PixelFormats;
 
 namespace Rdmp.Core.Icons.IconProvision.StateBasedIconProviders
 {
     public class ExtractionConfigurationStateBasedIconProvider : IObjectStateBasedIconProvider
     {
-        private Image _normal;
-        private Image _frozen;
+        private readonly Image<Rgba32> _normal;
+        private readonly Image<Rgba32> _frozen;
         
         public ExtractionConfigurationStateBasedIconProvider(DataExportIconProvider iconProvider)
         {
@@ -22,16 +22,14 @@ namespace Rdmp.Core.Icons.IconProvision.StateBasedIconProviders
 
         }
 
-        public Image GetImageIfSupportedObject(object o)
+        public Image<Rgba32> GetImageIfSupportedObject(object o)
         {
-            var ec = o as ExtractionConfiguration;
-
-            if (ec == null)
+            if (o is not ExtractionConfiguration ec)
                 return null;
 
-            Image basicImage = ec.IsReleased ? _frozen : _normal;
+            var basicImage = ec.IsReleased ? _frozen : _normal;
 
-            return basicImage;//its all fine and green
+            return basicImage;//it's all fine and green
         }
     }
 }

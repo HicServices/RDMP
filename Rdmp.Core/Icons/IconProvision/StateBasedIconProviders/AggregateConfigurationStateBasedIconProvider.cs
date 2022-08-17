@@ -8,17 +8,17 @@ using System;
 using SixLabors.ImageSharp;
 using Rdmp.Core.Curation.Data.Aggregation;
 using Rdmp.Core.Icons.IconOverlays;
-using Rdmp.Core.Icons.IconProvision;
 using ReusableLibraryCode.Icons.IconProvision;
+using SixLabors.ImageSharp.PixelFormats;
 
 namespace Rdmp.Core.Icons.IconProvision.StateBasedIconProviders
 {
     public class AggregateConfigurationStateBasedIconProvider : IObjectStateBasedIconProvider
     {
         private readonly IconOverlayProvider _overlayProvider;
-        private Image _cohortAggregates;
-        private Image _aggregates;
-        private Image _patientIndexTable;
+        private readonly Image<Rgba32> _cohortAggregates;
+        private readonly Image<Rgba32> _aggregates;
+        private readonly Image<Rgba32> _patientIndexTable;
 
         public AggregateConfigurationStateBasedIconProvider(IconOverlayProvider overlayProvider)
         {
@@ -28,17 +28,15 @@ namespace Rdmp.Core.Icons.IconProvision.StateBasedIconProviders
             _patientIndexTable = CatalogueIcons.PatientIndexTable;
         }
 
-        public Image GetImageIfSupportedObject(object o)
+        public Image<Rgba32> GetImageIfSupportedObject(object o)
         {
             if (o is Type && o.Equals(typeof (AggregateConfiguration)))
                 return _aggregates;
 
-            var ac = o as AggregateConfiguration;
-
-            if (ac == null)
+            if (o is not AggregateConfiguration ac)
                 return null;
             
-            Image img = ac.IsCohortIdentificationAggregate ? _cohortAggregates : _aggregates;
+            var img = ac.IsCohortIdentificationAggregate ? _cohortAggregates : _aggregates;
 
             if (ac.IsJoinablePatientIndexTable())
                 img = _patientIndexTable;

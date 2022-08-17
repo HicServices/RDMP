@@ -39,6 +39,8 @@ using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
+using SixLabors.ImageSharp;
+using SixLabors.ImageSharp.PixelFormats;
 
 namespace Rdmp.Core.CommandExecution
 {
@@ -714,7 +716,7 @@ namespace Rdmp.Core.CommandExecution
                 {
                     AskForFile = true,
                     OverrideCommandName = "Save Cohort To File...",
-                    OverrideIcon = FamFamFamIcons.disk,
+                    OverrideIcon = Image.Load<Rgba32>(FamFamFamIcons.disk),
                     Weight = -99.8f
                 };
                 yield return new ExecuteCommandCreateNewExtractionConfigurationForProject(_activator)

@@ -16,7 +16,7 @@ namespace Rdmp.Core.CommandExecution.AtomicCommands
     /// </summary>
     public interface IAtomicCommand : ICommandExecution
     {
-        Image<Argb32> GetImage(IIconProvider iconProvider);
+        Image<Rgba32> GetImage(IIconProvider iconProvider);
 
 
         /// <summary>

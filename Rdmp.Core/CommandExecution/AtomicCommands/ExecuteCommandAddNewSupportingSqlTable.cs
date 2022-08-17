@@ -76,7 +76,7 @@ namespace Rdmp.Core.CommandExecution.AtomicCommands
             Publish(c);
         }
         
-        public override Image<Argb32> GetImage(IIconProvider iconProvider)
+        public override Image<Rgba32> GetImage(IIconProvider iconProvider)
         {
             return iconProvider.GetImage(RDMPConcept.SupportingSQLTable, OverlayKind.Add);
         }

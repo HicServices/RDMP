@@ -6,25 +6,23 @@
 
 using SixLabors.ImageSharp;
 using Rdmp.Core.Curation.Data.Cohort;
-using Rdmp.Core.Icons.IconProvision;
+using SixLabors.ImageSharp.PixelFormats;
 
 namespace Rdmp.Core.Icons.IconProvision.StateBasedIconProviders
 {
     public class CohortIdentificationConfigurationStateBasedIconProvider : IObjectStateBasedIconProvider
     {
-        private Image _cohortIdentificationConfiguration;
-        private Image _frozenCohortIdentificationConfiguration;
+        private readonly Image<Rgba32> _cohortIdentificationConfiguration;
+        private readonly Image<Rgba32> _frozenCohortIdentificationConfiguration;
 
         public CohortIdentificationConfigurationStateBasedIconProvider()
         {
             _cohortIdentificationConfiguration = CatalogueIcons.CohortIdentificationConfiguration;
             _frozenCohortIdentificationConfiguration = CatalogueIcons.FrozenCohortIdentificationConfiguration;   
         }
-        public Image GetImageIfSupportedObject(object o)
+        public Image<Rgba32> GetImageIfSupportedObject(object o)
         {
-            var cic = o as  CohortIdentificationConfiguration;
-
-            if (cic == null)
+            if (o is not CohortIdentificationConfiguration cic)
                 return null;
 
             return cic.Frozen ? _frozenCohortIdentificationConfiguration : _cohortIdentificationConfiguration;

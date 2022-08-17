@@ -6,16 +6,16 @@
 
 using System;
 using SixLabors.ImageSharp;
-using Rdmp.Core.Icons.IconProvision;
 using ReusableLibraryCode.Checks;
+using SixLabors.ImageSharp.PixelFormats;
 
 namespace Rdmp.Core.Icons.IconProvision.StateBasedIconProviders
 {
     public class CheckResultStateBasedIconProvider : IObjectStateBasedIconProvider
     {
-        private Image _exception;
-        private Image _warning;
-        private Image _tick;
+        private readonly Image<Rgba32> _exception;
+        private readonly Image<Rgba32> _warning;
+        private readonly Image<Rgba32> _tick;
 
         public CheckResultStateBasedIconProvider()
         {
@@ -24,22 +24,18 @@ namespace Rdmp.Core.Icons.IconProvision.StateBasedIconProviders
             _tick = CatalogueIcons.TinyGreen;
         }
         
-        public Image GetImageIfSupportedObject(object o)
+        public Image<Rgba32> GetImageIfSupportedObject(object o)
         {
-            if (!(o is CheckResult))
+            if (o is not CheckResult result)
                 return null;
 
-            switch ((CheckResult)o)
+            return result switch
             {
-                case CheckResult.Success:
-                    return _tick;
-                case CheckResult.Warning:
-                    return _warning;
-                case CheckResult.Fail:
-                    return _exception;
-                default:
-                    throw new ArgumentOutOfRangeException();
-            }
+                CheckResult.Success => _tick,
+                CheckResult.Warning => _warning,
+                CheckResult.Fail => _exception,
+                _ => throw new ArgumentOutOfRangeException()
+            };
         }
     }
 }

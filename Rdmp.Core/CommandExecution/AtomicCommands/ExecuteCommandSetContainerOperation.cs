@@ -49,7 +49,7 @@ namespace Rdmp.Core.CommandExecution.AtomicCommands
             return "Set operation " + _operation;
         }
 
-        public override Image<Argb32> GetImage(IIconProvider iconProvider)
+        public override Image<Rgba32> GetImage(IIconProvider iconProvider)
         {
             switch(_operation)
             {

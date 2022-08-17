@@ -52,7 +52,7 @@ namespace Rdmp.Core.CommandExecution.AtomicCommands
             return _cic.QueryCachingServer_ID == null ? "Set Query Cache":"Change Query Cache";
         }
 
-        public override Image<Argb32> GetImage(IIconProvider iconProvider)
+        public override Image<Rgba32> GetImage(IIconProvider iconProvider)
         {
             return iconProvider.GetImage(RDMPConcept.ExternalDatabaseServer,OverlayKind.Link);
         }
