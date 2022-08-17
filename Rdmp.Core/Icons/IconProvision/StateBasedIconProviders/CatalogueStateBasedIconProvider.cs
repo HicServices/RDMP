@@ -24,8 +24,8 @@ namespace Rdmp.Core.Icons.IconProvision.StateBasedIconProviders
         public CatalogueStateBasedIconProvider(IDataExportRepository dataExportRepository,
             IconOverlayProvider overlayProvider)
         {
-            _basic = CatalogueIcons.Catalogue;
-            _projectSpecific = CatalogueIcons.ProjectCatalogue;
+            _basic = Image.Load<Rgba32>(CatalogueIcons.Catalogue);
+            _projectSpecific = Image.Load<Rgba32>(CatalogueIcons.ProjectCatalogue);
             _dataExportRepository = dataExportRepository;
             _overlayProvider = overlayProvider;
         }

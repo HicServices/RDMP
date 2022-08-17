@@ -65,7 +65,7 @@ namespace Rdmp.Core.CommandExecution.AtomicCommands
         public override Image<Rgba32> GetImage(IIconProvider iconProvider)
         {
             if (_databaseEntity != null && BasicActivator.FavouritesProvider.IsFavourite(_databaseEntity))
-                return CatalogueIcons.StarHollow;
+                return Image.Load<Rgba32>(CatalogueIcons.StarHollow);
 
             return iconProvider.GetImage(RDMPConcept.Favourite, OverlayKind.Add);
         }

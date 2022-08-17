@@ -21,8 +21,8 @@ namespace Rdmp.Core.Icons.IconProvision.StateBasedIconProviders
         public ColumnInfoStateBasedIconProvider(IconOverlayProvider overlayProvider)
         {
             _overlayProvider = overlayProvider;
-            _columnInfo = CatalogueIcons.ColumnInfo;
-            _columnInfoWithANO = CatalogueIcons.ANOColumnInfo;
+            _columnInfo = Image.Load<Rgba32>(CatalogueIcons.ColumnInfo);
+            _columnInfoWithANO = Image.Load<Rgba32>(CatalogueIcons.ANOColumnInfo);
         }
         public Image<Rgba32> GetImageIfSupportedObject(object o)
         {

@@ -21,11 +21,11 @@ namespace Rdmp.Core.Icons.IconProvision.StateBasedIconProviders
 
         public ExtractCommandStateBasedIconProvider()
         {
-            _waiting = CatalogueIcons.Waiting;
-            _warning = CatalogueIcons.Warning;
-            _writing = CatalogueIcons.Writing;
-            _failed = CatalogueIcons.Failed;
-            _tick = CatalogueIcons.Tick;
+            _waiting = Image.Load<Rgba32>(CatalogueIcons.Waiting);
+            _warning = Image.Load<Rgba32>(CatalogueIcons.Warning);
+            _writing = Image.Load<Rgba32>(CatalogueIcons.Writing);
+            _failed = Image.Load<Rgba32>(CatalogueIcons.Failed);
+            _tick = Image.Load<Rgba32>(CatalogueIcons.Tick);
         }
         public Image<Rgba32> GetImageIfSupportedObject(object o)
         {

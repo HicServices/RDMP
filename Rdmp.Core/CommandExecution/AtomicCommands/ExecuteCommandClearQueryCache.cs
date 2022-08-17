@@ -55,7 +55,7 @@ namespace Rdmp.Core.CommandExecution.AtomicCommands
         public override Image<Rgba32> GetImage(IIconProvider iconProvider)
         {
             var overlayProvider = new IconOverlayProvider();
-            return overlayProvider.GetOverlayNoCache(CatalogueIcons.ExternalDatabaseServer_Cache, OverlayKind.Delete);
+            return overlayProvider.GetOverlayNoCache(Image.Load<Rgba32>(CatalogueIcons.ExternalDatabaseServer_Cache), OverlayKind.Delete);
         }
         public override void Execute()
         {

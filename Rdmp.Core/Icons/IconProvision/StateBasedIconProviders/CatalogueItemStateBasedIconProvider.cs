@@ -21,8 +21,8 @@ namespace Rdmp.Core.Icons.IconProvision.StateBasedIconProviders
 
         public CatalogueItemStateBasedIconProvider(IconOverlayProvider overlayProvider)
         {
-            basicImage = CatalogueIcons.CatalogueItem;
-            transformImage = CatalogueIcons.CatalogueItemTransform;
+            basicImage = Image.Load<Rgba32>(CatalogueIcons.CatalogueItem);
+            transformImage = Image.Load<Rgba32>(CatalogueIcons.CatalogueItemTransform);
             _overlayProvider = overlayProvider;
         }
 

@@ -23,7 +23,7 @@ namespace Rdmp.Core.Icons.IconProvision.StateBasedIconProviders
             _overlayProvider = overlayProvider;
             _databaseTypeIconProvider = new DatabaseTypeIconProvider();
 
-            _serverNode = CatalogueIcons.TableInfoServerNode;
+            _serverNode = Image.Load<Rgba32>(CatalogueIcons.TableInfoServerNode);
         }
 
         public Image<Rgba32> GetImageIfSupportedObject(object o)

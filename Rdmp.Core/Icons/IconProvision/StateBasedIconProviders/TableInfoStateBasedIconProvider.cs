@@ -17,8 +17,8 @@ namespace Rdmp.Core.Icons.IconProvision.StateBasedIconProviders
 
         public TableInfoStateBasedIconProvider()
         {
-            _tableInfo = CatalogueIcons.TableInfo;
-            _tableInfoTableValuedFunction = CatalogueIcons.TableInfoTableValuedFunction;
+            _tableInfo = Image.Load<Rgba32>(CatalogueIcons.TableInfo);
+            _tableInfoTableValuedFunction = Image.Load<Rgba32>(CatalogueIcons.TableInfoTableValuedFunction);
         }
         public Image<Rgba32> GetImageIfSupportedObject(object o)
         {

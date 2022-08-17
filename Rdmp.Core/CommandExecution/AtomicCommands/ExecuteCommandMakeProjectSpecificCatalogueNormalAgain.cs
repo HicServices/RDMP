@@ -68,7 +68,7 @@ namespace Rdmp.Core.CommandExecution.AtomicCommands
 
         public override Image<Rgba32> GetImage(IIconProvider iconProvider)
         {
-            return CatalogueIcons.MakeProjectSpecificCatalogueNormalAgain;
+            return Image.Load<Rgba32>(CatalogueIcons.MakeProjectSpecificCatalogueNormalAgain);
         }
     }
 }

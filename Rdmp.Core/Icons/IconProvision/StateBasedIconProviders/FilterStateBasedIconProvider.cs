@@ -20,7 +20,7 @@ namespace Rdmp.Core.Icons.IconProvision.StateBasedIconProviders
 
         public FilterStateBasedIconProvider(IconOverlayProvider overlayProvider)
         {
-            _basicIcon = CatalogueIcons.Filter;
+            _basicIcon = Image.Load<Rgba32>(CatalogueIcons.Filter);
             _overlayProvider = overlayProvider;
         }
         public Image<Rgba32> GetImageIfSupportedObject(object o)

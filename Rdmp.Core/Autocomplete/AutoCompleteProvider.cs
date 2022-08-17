@@ -44,10 +44,10 @@ namespace Rdmp.Core.Autocomplete
         {
             Images = new Image<Rgba32>[4];
 
-            Images[TABLE_INFO_IDX] = CatalogueIcons.TableInfo;
-            Images[COLUMN_INFO_IDX] = CatalogueIcons.ColumnInfo;
-            Images[SQL_IDX] = CatalogueIcons.SQL;
-            Images[PARAMETER_IDX] = CatalogueIcons.ParametersNode;
+            Images[TABLE_INFO_IDX] = Image.Load<Rgba32>(CatalogueIcons.TableInfo);
+            Images[COLUMN_INFO_IDX] = Image.Load<Rgba32>(CatalogueIcons.ColumnInfo);
+            Images[SQL_IDX] = Image.Load<Rgba32>(CatalogueIcons.SQL);
+            Images[PARAMETER_IDX] = Image.Load<Rgba32>(CatalogueIcons.ParametersNode);
         }
         public AutoCompleteProvider(IQuerySyntaxHelper helper) :this()
         {

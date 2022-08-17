@@ -31,7 +31,7 @@ namespace Rdmp.UI.CommandExecution.AtomicCommands
 
         public override Image<Rgba32> GetImage(IIconProvider iconProvider)
         {
-            return CatalogueIcons.LoadBubble;
+            return Image.Load<Rgba32>(CatalogueIcons.LoadBubble);
         }
 
         public override void Execute()

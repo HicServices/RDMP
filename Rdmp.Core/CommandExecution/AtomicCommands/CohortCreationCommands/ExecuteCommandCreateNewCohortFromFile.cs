@@ -65,7 +65,7 @@ namespace Rdmp.Core.CommandExecution.AtomicCommands.CohortCreationCommands
 
         public override Image<Rgba32> GetImage(IIconProvider iconProvider)
         {
-            return CatalogueIcons.ImportFile;
+            return Image.Load<Rgba32>(CatalogueIcons.ImportFile);
         }
 
         public override void Execute()

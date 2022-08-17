@@ -37,7 +37,7 @@ namespace Rdmp.UI.Menus.MenuItems
             Enabled = tableInfo.IdentifierDumpServer_ID == null;
             Image = activator.CoreIconProvider.GetImage(RDMPConcept.ExternalDatabaseServer, OverlayKind.Add).ToBitmap();
 
-            var img = CatalogueIcons.ExternalDatabaseServer_IdentifierDump;
+            var img = Image.Load<Rgba32>(CatalogueIcons.ExternalDatabaseServer_IdentifierDump);
             var overlay = new IconOverlayProvider();
 
             var cataRepo = activator.RepositoryLocator.CatalogueRepository;

@@ -27,13 +27,13 @@ namespace Rdmp.Core.Icons.IconProvision.StateBasedIconProviders
         public ExternalDatabaseServerStateBasedIconProvider(IconOverlayProvider overlayProvider)
         {
             _overlayProvider = overlayProvider;
-            _default = CatalogueIcons.ExternalDatabaseServer;
+            _default = Image.Load<Rgba32>(CatalogueIcons.ExternalDatabaseServer);
             
-            _assemblyToIconDictionary.Add(new DataQualityEnginePatcher().Name,CatalogueIcons.ExternalDatabaseServer_DQE);
-            _assemblyToIconDictionary.Add(new ANOStorePatcher().Name, CatalogueIcons.ExternalDatabaseServer_ANO);
-            _assemblyToIconDictionary.Add(new IdentifierDumpDatabasePatcher().Name, CatalogueIcons.ExternalDatabaseServer_IdentifierDump);
-            _assemblyToIconDictionary.Add(new QueryCachingPatcher().Name, CatalogueIcons.ExternalDatabaseServer_Cache);
-            _assemblyToIconDictionary.Add(new LoggingDatabasePatcher().Name, CatalogueIcons.ExternalDatabaseServer_Logging);
+            _assemblyToIconDictionary.Add(new DataQualityEnginePatcher().Name,Image.Load<Rgba32>(CatalogueIcons.ExternalDatabaseServer_DQE));
+            _assemblyToIconDictionary.Add(new ANOStorePatcher().Name, Image.Load<Rgba32>(CatalogueIcons.ExternalDatabaseServer_ANO));
+            _assemblyToIconDictionary.Add(new IdentifierDumpDatabasePatcher().Name, Image.Load<Rgba32>(CatalogueIcons.ExternalDatabaseServer_IdentifierDump));
+            _assemblyToIconDictionary.Add(new QueryCachingPatcher().Name, Image.Load<Rgba32>(CatalogueIcons.ExternalDatabaseServer_Cache));
+            _assemblyToIconDictionary.Add(new LoggingDatabasePatcher().Name, Image.Load<Rgba32>(CatalogueIcons.ExternalDatabaseServer_Logging));
 
             _typeSpecificIconsProvider = new DatabaseTypeIconProvider();
         }

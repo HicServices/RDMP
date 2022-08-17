@@ -41,7 +41,7 @@ namespace Rdmp.Core.CommandExecution.AtomicCommands.Automation
 
         public override Image<Rgba32> GetImage(IIconProvider iconProvider)
         {
-            return CatalogueIcons.Exe;
+            return Image.Load<Rgba32>(CatalogueIcons.Exe);
         }
 
         public override void Execute()

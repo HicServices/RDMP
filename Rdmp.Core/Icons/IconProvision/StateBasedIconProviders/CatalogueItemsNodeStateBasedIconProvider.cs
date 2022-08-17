@@ -23,7 +23,7 @@ namespace Rdmp.Core.Icons.IconProvision.StateBasedIconProviders
 
         public CatalogueItemsNodeStateBasedIconProvider(IconOverlayProvider overlayProvider)
         {
-            _basic = CatalogueIcons.CatalogueItemsNode;
+            _basic = Image.Load<Rgba32>(CatalogueIcons.CatalogueItemsNode);
             _core = overlayProvider.GetOverlay(_basic, OverlayKind.Extractable);
             _internal = overlayProvider.GetOverlay(_basic, OverlayKind.Extractable_Internal);
             _supplemental = overlayProvider.GetOverlay(_basic, OverlayKind.Extractable_Supplemental);

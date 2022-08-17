@@ -53,9 +53,9 @@ namespace Rdmp.Core.CommandExecution.AtomicCommands
         {
             switch(_operation)
             {
-                case SetOperation.EXCEPT: return iconProvider.GetImage(CatalogueIcons.EXCEPT);
-                case SetOperation.INTERSECT: return iconProvider.GetImage(CatalogueIcons.INTERSECT);
-                case SetOperation.UNION: return iconProvider.GetImage(CatalogueIcons.UNION);
+                case SetOperation.EXCEPT: return iconProvider.GetImage(Image.Load<Rgba32>(CatalogueIcons.EXCEPT));
+                case SetOperation.INTERSECT: return iconProvider.GetImage(Image.Load<Rgba32>(CatalogueIcons.INTERSECT));
+                case SetOperation.UNION: return iconProvider.GetImage(Image.Load<Rgba32>(CatalogueIcons.UNION));
             }
 
             return base.GetImage(iconProvider);

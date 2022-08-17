@@ -17,8 +17,8 @@ namespace Rdmp.Core.Icons.IconProvision.StateBasedIconProviders
         
         public ExtractionConfigurationStateBasedIconProvider(DataExportIconProvider iconProvider)
         {
-            _normal = CatalogueIcons.ExtractionConfiguration;
-            _frozen = CatalogueIcons.FrozenExtractionConfiguration;
+            _normal = Image.Load<Rgba32>(CatalogueIcons.ExtractionConfiguration);
+            _frozen = Image.Load<Rgba32>(CatalogueIcons.FrozenExtractionConfiguration);
 
         }
 

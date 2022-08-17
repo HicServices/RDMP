@@ -66,7 +66,7 @@ namespace Rdmp.UI.CommandExecution.AtomicCommands
 
         public override Image<Rgba32> GetImage(IIconProvider iconProvider)
         {
-            return CatalogueIcons.TinyYellow;
+            return Image.Load<Rgba32>(CatalogueIcons.TinyYellow);
         }
     }
 }

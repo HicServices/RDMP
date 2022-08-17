@@ -17,8 +17,8 @@ namespace Rdmp.Core.Icons.IconProvision.StateBasedIconProviders
 
         public CohortIdentificationConfigurationStateBasedIconProvider()
         {
-            _cohortIdentificationConfiguration = CatalogueIcons.CohortIdentificationConfiguration;
-            _frozenCohortIdentificationConfiguration = CatalogueIcons.FrozenCohortIdentificationConfiguration;   
+            _cohortIdentificationConfiguration = Image.Load<Rgba32>(CatalogueIcons.CohortIdentificationConfiguration);
+            _frozenCohortIdentificationConfiguration = Image.Load<Rgba32>(CatalogueIcons.FrozenCohortIdentificationConfiguration);   
         }
         public Image<Rgba32> GetImageIfSupportedObject(object o)
         {

@@ -716,7 +716,7 @@ namespace ResearchDataManagementPlatform.WindowManagement
             var panel = WindowFactory.Create(this,new SessionCollectionUI(),new SessionCollection(sessionName)
             {
                 DatabaseObjects = initialObjects.ToList()
-            },CatalogueIcons.WindowLayout);
+            },Image.Load<Rgba32>(CatalogueIcons.WindowLayout));
             panel.Show(_mainDockPanel,DockState.DockLeft);
         }
 

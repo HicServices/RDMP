@@ -207,7 +207,7 @@ namespace Rdmp.UI.ExtractionUIs
             rbCore.Image = CatalogueIcons.ExtractionInformation.ToBitmap();
             rbSupplemental.Image = CatalogueIcons.ExtractionInformation_Supplemental.ToBitmap();
             rbSpecialApproval.Image = CatalogueIcons.ExtractionInformation_SpecialApproval.ToBitmap();
-            rbInternal.Image = activator.CoreIconProvider.GetImage(CatalogueIcons.ExtractionInformation_SpecialApproval, OverlayKind.Internal).ToBitmap();
+            rbInternal.Image = activator.CoreIconProvider.GetImage(Image.Load<Rgba32>(CatalogueIcons.ExtractionInformation_SpecialApproval), OverlayKind.Internal).ToBitmap();
 
             CommonFunctionality.Add(rbCore);
             CommonFunctionality.Add(rbSupplemental);

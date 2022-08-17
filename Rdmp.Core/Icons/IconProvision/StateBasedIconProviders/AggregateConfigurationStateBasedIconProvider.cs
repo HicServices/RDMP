@@ -23,9 +23,9 @@ namespace Rdmp.Core.Icons.IconProvision.StateBasedIconProviders
         public AggregateConfigurationStateBasedIconProvider(IconOverlayProvider overlayProvider)
         {
             _overlayProvider = overlayProvider;
-            _cohortAggregates = CatalogueIcons.CohortAggregate;
-            _aggregates = CatalogueIcons.AggregateGraph;
-            _patientIndexTable = CatalogueIcons.PatientIndexTable;
+            _cohortAggregates = Image.Load<Rgba32>(CatalogueIcons.CohortAggregate);
+            _aggregates = Image.Load<Rgba32>(CatalogueIcons.AggregateGraph);
+            _patientIndexTable = Image.Load<Rgba32>(CatalogueIcons.PatientIndexTable);
         }
 
         public Image<Rgba32> GetImageIfSupportedObject(object o)

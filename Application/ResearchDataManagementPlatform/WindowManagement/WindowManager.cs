@@ -99,17 +99,17 @@ namespace ResearchDataManagementPlatform.WindowManagement
             {
                 case RDMPCollection.Catalogue:
                         collection = new CatalogueCollectionUI();
-                        toReturn = Show(RDMPCollection.Catalogue, collection, "Catalogues", CatalogueIcons.Catalogue);
+                        toReturn = Show(RDMPCollection.Catalogue, collection, "Catalogues", Image.Load<Rgba32>(CatalogueIcons.Catalogue));
                 break;
 
                 case RDMPCollection.DataLoad:
                     collection = new LoadMetadataCollectionUI();
-                    toReturn = Show(RDMPCollection.DataLoad, collection, "Load Configurations", CatalogueIcons.LoadMetadata);
+                    toReturn = Show(RDMPCollection.DataLoad, collection, "Load Configurations", Image.Load<Rgba32>(CatalogueIcons.LoadMetadata));
                 break;
 
                 case RDMPCollection.Tables:
                     collection = new TableInfoCollectionUI();
-                    toReturn = Show(RDMPCollection.Tables, collection, "Tables",CatalogueIcons.TableInfo);
+                    toReturn = Show(RDMPCollection.Tables, collection, "Tables",Image.Load<Rgba32>(CatalogueIcons.TableInfo));
                 break;
 
                 case RDMPCollection.DataExport:
@@ -120,20 +120,20 @@ namespace ResearchDataManagementPlatform.WindowManagement
                     }
 
                     collection = new DataExportCollectionUI();
-                    toReturn = Show(RDMPCollection.DataExport,collection, "Projects", CatalogueIcons.Project);
+                    toReturn = Show(RDMPCollection.DataExport,collection, "Projects", Image.Load<Rgba32>(CatalogueIcons.Project));
                 break;
 
                 case RDMPCollection.Cohort:
                     collection = new CohortIdentificationCollectionUI();
-                    toReturn = Show(RDMPCollection.Cohort, collection, "Cohort Builder", CatalogueIcons.CohortIdentificationConfiguration);
+                    toReturn = Show(RDMPCollection.Cohort, collection, "Cohort Builder", Image.Load<Rgba32>(CatalogueIcons.CohortIdentificationConfiguration));
                 break;
                 case RDMPCollection.SavedCohorts:
                     collection = new SavedCohortsCollectionUI();
-                    toReturn = Show(RDMPCollection.SavedCohorts, collection, "Saved Cohorts", CatalogueIcons.AllCohortsNode);
+                    toReturn = Show(RDMPCollection.SavedCohorts, collection, "Saved Cohorts", Image.Load<Rgba32>(CatalogueIcons.AllCohortsNode));
                 break;
                 case RDMPCollection.Favourites:
                     collection = new FavouritesCollectionUI();
-                    toReturn = Show(RDMPCollection.Favourites, collection, "Favourites", CatalogueIcons.Favourite);
+                    toReturn = Show(RDMPCollection.Favourites, collection, "Favourites", Image.Load<Rgba32>(CatalogueIcons.Favourite));
                 break;
 
                 default: throw new ArgumentOutOfRangeException("collectionToCreate");

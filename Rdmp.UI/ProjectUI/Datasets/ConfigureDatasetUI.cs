@@ -73,7 +73,7 @@ namespace Rdmp.UI.ProjectUI.Datasets
             dropSink.CanDropBetween = true;
             AssociatedCollection = RDMPCollection.DataExport;
 
-            var tableInfoIcon = CatalogueIcons.TableInfo;
+            var tableInfoIcon = Image.Load<Rgba32>(CatalogueIcons.TableInfo);
             olvJoinTableName.ImageGetter += o => tableInfoIcon;
             olvJoin.CheckStateGetter += ForceJoinCheckStateGetter;
             olvJoin.CheckStatePutter += ForceJoinCheckStatePutter;

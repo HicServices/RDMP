@@ -21,7 +21,7 @@ namespace Rdmp.Core.Icons.IconProvision.StateBasedIconProviders
         public ExtractableDataSetStateBasedIconProvider(IconOverlayProvider overlayProvider, CatalogueStateBasedIconProvider catalogueIconProvider)
         {
             _catalogueIconProvider = catalogueIconProvider;
-            _disabled = CatalogueIcons.ExtractableDataSetDisabled;
+            _disabled = Image.Load<Rgba32>(CatalogueIcons.ExtractableDataSetDisabled);
             this._overlayProvider = overlayProvider;
         }
 

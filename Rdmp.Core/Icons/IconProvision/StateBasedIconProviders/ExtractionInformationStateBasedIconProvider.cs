@@ -26,15 +26,15 @@ namespace Rdmp.Core.Icons.IconProvision.StateBasedIconProviders
 
         public ExtractionInformationStateBasedIconProvider()
         {
-            _extractionInformation_Core = CatalogueIcons.ExtractionInformation;
-            _extractionInformation_Supplemental = CatalogueIcons.ExtractionInformation_Supplemental;
-            _extractionInformation_SpecialApproval = CatalogueIcons.ExtractionInformation_SpecialApproval;
-            _extractionInformation_ProjectSpecific = CatalogueIcons.ExtractionInformation_ProjectSpecific;
+            _extractionInformation_Core = Image.Load<Rgba32>(CatalogueIcons.ExtractionInformation);
+            _extractionInformation_Supplemental = Image.Load<Rgba32>(CatalogueIcons.ExtractionInformation_Supplemental);
+            _extractionInformation_SpecialApproval = Image.Load<Rgba32>(CatalogueIcons.ExtractionInformation_SpecialApproval);
+            _extractionInformation_ProjectSpecific = Image.Load<Rgba32>(CatalogueIcons.ExtractionInformation_ProjectSpecific);
             _overlayProvider = new IconOverlayProvider();
             _extractionInformation_InternalOnly = _overlayProvider.GetOverlayNoCache(_extractionInformation_SpecialApproval, OverlayKind.Internal);
             _extractionInformation_Deprecated = _overlayProvider.GetOverlayNoCache(_extractionInformation_Core,OverlayKind.Deprecated);
 
-            _noIconAvailable = CatalogueIcons.NoIconAvailable;
+            _noIconAvailable = Image.Load<Rgba32>(CatalogueIcons.NoIconAvailable);
         }
         
         public Image<Rgba32> GetImageIfSupportedObject(object o)

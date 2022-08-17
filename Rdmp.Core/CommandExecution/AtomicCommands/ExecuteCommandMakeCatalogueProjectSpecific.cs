@@ -70,7 +70,7 @@ namespace Rdmp.Core.CommandExecution.AtomicCommands
 
         public override Image<Rgba32> GetImage(IIconProvider iconProvider)
         {
-            return CatalogueIcons.ProjectCatalogue;
+            return Image.Load<Rgba32>(CatalogueIcons.ProjectCatalogue);
         }
 
         public IAtomicCommandWithTarget SetTarget(DatabaseEntity target)

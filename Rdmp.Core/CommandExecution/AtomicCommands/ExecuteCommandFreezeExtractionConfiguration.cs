@@ -26,7 +26,7 @@ namespace Rdmp.Core.CommandExecution.AtomicCommands
 
         public override Image<Rgba32> GetImage(IIconProvider iconProvider)
         {
-            return CatalogueIcons.FrozenExtractionConfiguration;
+            return Image.Load<Rgba32>(CatalogueIcons.FrozenExtractionConfiguration);
         }
         public override void Execute()
         {

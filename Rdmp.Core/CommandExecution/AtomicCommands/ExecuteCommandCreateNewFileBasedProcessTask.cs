@@ -122,7 +122,7 @@ namespace Rdmp.Core.CommandExecution.AtomicCommands
                 return iconProvider.GetImage(RDMPConcept.SQL, OverlayKind.Add);
 
             if(_taskType == ProcessTaskType.Executable)
-                return new IconOverlayProvider().GetOverlayNoCache(CatalogueIcons.Exe, OverlayKind.Add);
+                return new IconOverlayProvider().GetOverlayNoCache(Image.Load<Rgba32>(CatalogueIcons.Exe), OverlayKind.Add);
 
             return null;
         }

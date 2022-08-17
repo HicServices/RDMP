@@ -22,13 +22,13 @@ namespace Rdmp.Core.Icons.IconProvision.StateBasedIconProviders
 
         public ProcessTaskStateBasedIconProvider()
         {
-            _exe = CatalogueIcons.Exe;
-            _sql = CatalogueIcons.SQL;
-            _plugin = CatalogueIcons.ProcessTask;
+            _exe = Image.Load<Rgba32>(CatalogueIcons.Exe);
+            _sql = Image.Load<Rgba32>(CatalogueIcons.SQL);
+            _plugin = Image.Load<Rgba32>(CatalogueIcons.ProcessTask);
 
-            _attacher = CatalogueIcons.Attacher;
-            _dataProvider = CatalogueIcons.DataProvider;
-            _mutilateDataTables = CatalogueIcons.MutilateDataTables;
+            _attacher = Image.Load<Rgba32>(CatalogueIcons.Attacher);
+            _dataProvider = Image.Load<Rgba32>(CatalogueIcons.DataProvider);
+            _mutilateDataTables = Image.Load<Rgba32>(CatalogueIcons.MutilateDataTables);
         }
 
         public Image<Rgba32> GetImageIfSupportedObject(object o)

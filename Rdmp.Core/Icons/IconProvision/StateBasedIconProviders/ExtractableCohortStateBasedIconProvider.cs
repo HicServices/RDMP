@@ -20,7 +20,7 @@ namespace Rdmp.Core.Icons.IconProvision.StateBasedIconProviders
         public ExtractableCohortStateBasedIconProvider(IconOverlayProvider overlayProvider)
         {
             _overlayProvider = overlayProvider;
-            _basicIcon = CatalogueIcons.ExtractableCohort;
+            _basicIcon = Image.Load<Rgba32>(CatalogueIcons.ExtractableCohort);
         }
 
         public Image<Rgba32> GetImageIfSupportedObject(object o)

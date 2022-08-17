@@ -21,25 +21,25 @@ namespace Rdmp.Core.Icons.IconProvision.StateBasedIconProviders
         {
             _images = new()
             {
-                { Releaseability.Undefined, CatalogueIcons.TinyRed },
+                { Releaseability.Undefined, Image.Load<Rgba32>(CatalogueIcons.TinyRed) },
 
-                { Releaseability.ExceptionOccurredWhileEvaluatingReleaseability, CatalogueIcons.TinyRed },
-                { Releaseability.NeverBeenSuccessfullyExecuted, CatalogueIcons.Failed },
-                { Releaseability.ExtractFilesMissing, CatalogueIcons.FileMissing },
-                { Releaseability.ExtractionSQLDesynchronisation, CatalogueIcons.Diff },
-                { Releaseability.CohortDesynchronisation, CatalogueIcons.Failed },
-                { Releaseability.ColumnDifferencesVsCatalogue, CatalogueIcons.TinyYellow },
-                { Releaseability.Releaseable, CatalogueIcons.TinyGreen }
+                { Releaseability.ExceptionOccurredWhileEvaluatingReleaseability, Image.Load<Rgba32>(CatalogueIcons.TinyRed) },
+                { Releaseability.NeverBeenSuccessfullyExecuted, Image.Load<Rgba32>(CatalogueIcons.Failed) },
+                { Releaseability.ExtractFilesMissing, Image.Load<Rgba32>(CatalogueIcons.FileMissing) },
+                { Releaseability.ExtractionSQLDesynchronisation, Image.Load<Rgba32>(CatalogueIcons.Diff) },
+                { Releaseability.CohortDesynchronisation, Image.Load<Rgba32>(CatalogueIcons.Failed) },
+                { Releaseability.ColumnDifferencesVsCatalogue, Image.Load<Rgba32>(CatalogueIcons.TinyYellow) },
+                { Releaseability.Releaseable, Image.Load<Rgba32>(CatalogueIcons.TinyGreen) }
             };
 
             _environmentImages = new()
             {
-                { TicketingReleaseabilityEvaluation.CouldNotAuthenticateAgainstServer, CatalogueIcons.TinyRed },
-                { TicketingReleaseabilityEvaluation.CouldNotReachTicketingServer, CatalogueIcons.TinyRed },
-                { TicketingReleaseabilityEvaluation.NotReleaseable, CatalogueIcons.TinyRed },
-                { TicketingReleaseabilityEvaluation.Releaseable, CatalogueIcons.TinyGreen },
-                { TicketingReleaseabilityEvaluation.TicketingLibraryCrashed, CatalogueIcons.TinyRed },
-                { TicketingReleaseabilityEvaluation.TicketingLibraryMissingOrNotConfiguredCorrectly, CatalogueIcons.TinyYellow }
+                { TicketingReleaseabilityEvaluation.CouldNotAuthenticateAgainstServer, Image.Load<Rgba32>(CatalogueIcons.TinyRed) },
+                { TicketingReleaseabilityEvaluation.CouldNotReachTicketingServer, Image.Load<Rgba32>(CatalogueIcons.TinyRed) },
+                { TicketingReleaseabilityEvaluation.NotReleaseable, Image.Load<Rgba32>(CatalogueIcons.TinyRed) },
+                { TicketingReleaseabilityEvaluation.Releaseable, Image.Load<Rgba32>(CatalogueIcons.TinyGreen) },
+                { TicketingReleaseabilityEvaluation.TicketingLibraryCrashed, Image.Load<Rgba32>(CatalogueIcons.TinyRed) },
+                { TicketingReleaseabilityEvaluation.TicketingLibraryMissingOrNotConfiguredCorrectly, Image.Load<Rgba32>(CatalogueIcons.TinyYellow) }
             };
         }
 

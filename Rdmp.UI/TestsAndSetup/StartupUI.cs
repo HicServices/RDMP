@@ -56,7 +56,7 @@ namespace Rdmp.UI.TestsAndSetup
 
             pbDisconnected.Image = CatalogueIcons.ExternalDatabaseServer.ImageToBitmap();
 
-            this.Icon = IconFactory.Instance.GetIcon(CatalogueIcons.Main);
+            this.Icon = IconFactory.Instance.GetIcon(Image.Load<Rgba32>(CatalogueIcons.Main));
         }
 
         public bool DoNotContinue { get; set; }

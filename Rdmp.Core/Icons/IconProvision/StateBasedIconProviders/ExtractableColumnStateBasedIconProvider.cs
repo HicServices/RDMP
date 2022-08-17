@@ -21,7 +21,7 @@ namespace Rdmp.Core.Icons.IconProvision.StateBasedIconProviders
 
         public ExtractableColumnStateBasedIconProvider(IconOverlayProvider overlayProvider)
         {
-            _basicImage = CatalogueIcons.ExtractableColumn;
+            _basicImage = Image.Load<Rgba32>(CatalogueIcons.ExtractableColumn);
             _overlayProvider = overlayProvider;
         }
 
