@@ -82,27 +82,24 @@ namespace Rdmp.Core.Icons.IconProvision
 
         protected virtual Image<Rgba32> GetImageImpl(object concept, OverlayKind kind = OverlayKind.None)
         {
-            if (concept == null)
-                return null;
-             
-            //the only valid strings are "Catalogue" etc where the value exactly maps to an RDMPConcept
-            if (concept is string str)
+            switch (concept)
             {
+                case null:
+                    return null;
+                //the only valid strings are "Catalogue" etc where the value exactly maps to an RDMPConcept
                 // or strings that are CatalogueFolders, they are allowed to
-                if(str.Contains('\\'))
-                {
+                case string str when str.Contains('\\'):
                     return GetImage(RDMPConcept.CatalogueFolder,kind);
-                }
-
-                if (Enum.TryParse(str, true, out RDMPConcept result))
+                case string str when Enum.TryParse(str, true, out RDMPConcept result):
                     concept = result;
-                else
+                    break;
+                case string str:
                     return null; //it's a string but an unhandled one so give them null back
             }
 
             //if they already passed in an image just return it back (optionally with the overlay).
-            if (concept is Image)
-                return GetImage(concept, kind);
+            if (concept is Image<Rgba32> image)
+                return GetActualImage(image, kind);
 
             //if there are plugins injecting random objects into RDMP tree views etc then we need the ability to provide icons for them
             if (_pluginIconProviders != null)
@@ -139,8 +136,8 @@ namespace Rdmp.Core.Icons.IconProvision
             if (ConceptIs(typeof(JoinableCohortAggregateConfigurationUse), concept))
                 return GetImageImpl(RDMPConcept.PatientIndexTable, OverlayKind.Link);
 
-            if (concept is PermissionWindowUsedByCacheProgressNode)
-                return GetImageImpl(((PermissionWindowUsedByCacheProgressNode)concept).GetImageObject(), OverlayKind.Link);
+            if (concept is PermissionWindowUsedByCacheProgressNode node)
+                return GetImageImpl(node.GetImageObject(), OverlayKind.Link);
 
             if (ConceptIs(typeof(DashboardObjectUse), concept))
                 return GetImageImpl(RDMPConcept.DashboardControl, OverlayKind.Link);
@@ -258,9 +255,7 @@ namespace Rdmp.Core.Icons.IconProvision
             if (t.IsInstanceOfType(concept))
                 return true;
 
-            var type = concept as Type;
-
-            if (type != null && t.IsAssignableFrom(type))
+            if (concept is Type type && t.IsAssignableFrom(type))
                 return true;
 
             return false;
@@ -288,7 +283,7 @@ namespace Rdmp.Core.Icons.IconProvision
             return imageList;
         }
 
-        private Image<Rgba32> GetImage(Image<Rgba32> img, OverlayKind kind)
+        private Image<Rgba32> GetActualImage(Image<Rgba32> img, OverlayKind kind)
         {
             if (kind == OverlayKind.None)
                 return img;
