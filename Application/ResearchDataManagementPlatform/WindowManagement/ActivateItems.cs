@@ -69,6 +69,7 @@ using ReusableLibraryCode.Checks;
 using ReusableLibraryCode.Comments;
 using ReusableLibraryCode.Icons;
 using ReusableLibraryCode.Settings;
+using SixLabors.ImageSharp.PixelFormats;
 using WeifenLuo.WinFormsUI.Docking;
 using Image = SixLabors.ImageSharp.Image;
 

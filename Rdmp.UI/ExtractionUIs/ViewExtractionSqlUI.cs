@@ -29,6 +29,8 @@ using ReusableLibraryCode.Icons;
 using ReusableLibraryCode.Icons.IconProvision;
 
 using ScintillaNET;
+using SixLabors.ImageSharp;
+using SixLabors.ImageSharp.PixelFormats;
 
 namespace Rdmp.UI.ExtractionUIs
 {
@@ -204,9 +206,9 @@ namespace Rdmp.UI.ExtractionUIs
             _catalogue = databaseObject;
             RefreshUIFromDatabase();
 
-            rbCore.Image = CatalogueIcons.ExtractionInformation.ToBitmap();
-            rbSupplemental.Image = CatalogueIcons.ExtractionInformation_Supplemental.ToBitmap();
-            rbSpecialApproval.Image = CatalogueIcons.ExtractionInformation_SpecialApproval.ToBitmap();
+            rbCore.Image = CatalogueIcons.ExtractionInformation.ImageToBitmap();
+            rbSupplemental.Image = CatalogueIcons.ExtractionInformation_Supplemental.ImageToBitmap();
+            rbSpecialApproval.Image = CatalogueIcons.ExtractionInformation_SpecialApproval.ImageToBitmap();
             rbInternal.Image = activator.CoreIconProvider.GetImage(Image.Load<Rgba32>(CatalogueIcons.ExtractionInformation_SpecialApproval), OverlayKind.Internal).ToBitmap();
 
             CommonFunctionality.Add(rbCore);

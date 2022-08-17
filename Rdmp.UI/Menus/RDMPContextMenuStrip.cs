@@ -292,7 +292,7 @@ namespace Rdmp.UI.Menus
                     ToolTipText = "Run validation checks for all visible items in the current window"
                 };
 
-                checkAll.Image = CatalogueIcons.TinyYellow.ToBitmap();
+                checkAll.Image = CatalogueIcons.TinyYellow.ImageToBitmap();
                 checkAll.Enabled = commonFunctionality.CheckColumnProvider.GetCheckables().Any();
                 inspectionMenuItem.DropDownItems.Add(checkAll);
             }

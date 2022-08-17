@@ -29,6 +29,7 @@ using ReusableLibraryCode.Checks;
 using SixLabors.ImageSharp;
 using SixLabors.ImageSharp.PixelFormats;
 using WeifenLuo.WinFormsUI.Docking;
+using Image = SixLabors.ImageSharp.Image;
 
 namespace ResearchDataManagementPlatform.WindowManagement
 {

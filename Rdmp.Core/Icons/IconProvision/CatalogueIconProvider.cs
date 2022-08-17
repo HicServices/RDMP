@@ -46,7 +46,7 @@ namespace Rdmp.Core.Icons.IconProvision
         {
             _pluginIconProviders = pluginIconProviders;
             OverlayProvider = new IconOverlayProvider();
-            ImagesCollection = new EnumImageCollection<RDMPConcept>(Image.Load<Rgba32>(CatalogueIcons.ResourceManager));
+            ImagesCollection = new EnumImageCollection<RDMPConcept>(CatalogueIcons.ResourceManager);
 
             StateBasedIconProviders.Add(CatalogueStateBasedIconProvider = new CatalogueStateBasedIconProvider(repositoryLocator.DataExportRepository, OverlayProvider));
             StateBasedIconProviders.Add(new ExtractionInformationStateBasedIconProvider());

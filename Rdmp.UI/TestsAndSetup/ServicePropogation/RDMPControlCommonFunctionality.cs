@@ -80,7 +80,7 @@ namespace Rdmp.UI.TestsAndSetup.ServicePropogation
 
             //Add the three lines dropdown for seldom used options (See AddToMenu). This starts disabled.
             _menuDropDown = new ToolStripMenuItem();
-            _menuDropDown.Image = CatalogueIcons.Menu.ToBitmap();
+            _menuDropDown.Image = CatalogueIcons.Menu.ImageToBitmap();
             _menuDropDown.Visible = false;
             ToolStrip.Items.Add(_menuDropDown);
                         

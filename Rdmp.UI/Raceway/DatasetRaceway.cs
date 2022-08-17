@@ -65,8 +65,8 @@ namespace Rdmp.UI.Raceway
             ddShowPeriod.ComboBox.DataSource = Enum.GetValues(typeof (RacewayShowPeriod));
             
             btnRemoveAll.Image = FamFamFamIcons.delete_multi.ImageToBitmap();
-            _ignoreRowCounts = CatalogueIcons.RowCounts_Ignore.ToBitmap();
-            _respectRowCounts = CatalogueIcons.RowCounts_Respect.ToBitmap();
+            _ignoreRowCounts = CatalogueIcons.RowCounts_Ignore.ImageToBitmap();
+            _respectRowCounts = CatalogueIcons.RowCounts_Respect.ImageToBitmap();
         }
 
         private DashboardControl _dashboardControlDatabaseRecord;

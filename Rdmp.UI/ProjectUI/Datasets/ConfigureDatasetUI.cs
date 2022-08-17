@@ -30,6 +30,7 @@ using Rdmp.UI.Refreshing;
 using Rdmp.UI.SimpleDialogs;
 using Rdmp.UI.TestsAndSetup.ServicePropogation;
 using ReusableLibraryCode.Settings;
+using SixLabors.ImageSharp.PixelFormats;
 
 namespace Rdmp.UI.ProjectUI.Datasets
 {
@@ -73,7 +74,7 @@ namespace Rdmp.UI.ProjectUI.Datasets
             dropSink.CanDropBetween = true;
             AssociatedCollection = RDMPCollection.DataExport;
 
-            var tableInfoIcon = Image.Load<Rgba32>(CatalogueIcons.TableInfo);
+            var tableInfoIcon = SixLabors.ImageSharp.Image.Load<Rgba32>(CatalogueIcons.TableInfo);
             olvJoinTableName.ImageGetter += o => tableInfoIcon;
             olvJoin.CheckStateGetter += ForceJoinCheckStateGetter;
             olvJoin.CheckStatePutter += ForceJoinCheckStatePutter;

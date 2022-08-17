@@ -20,8 +20,8 @@ using Rdmp.UI.SimpleDialogs;
 using Rdmp.UI.Versioning;
 using ReusableLibraryCode.Checks;
 using ReusableLibraryCode.Settings;
-
-
+using SixLabors.ImageSharp;
+using SixLabors.ImageSharp.PixelFormats;
 using WideMessageBox = Rdmp.UI.SimpleDialogs.WideMessageBox;
 
 namespace Rdmp.UI.TestsAndSetup
