@@ -23,6 +23,12 @@ namespace MapsDirectlyToDatabaseTable
     public interface IRepository
     {
         /// <summary>
+        /// Called when <see cref="SaveToDatabase(IMapsDirectlyToDatabaseTable)"/> is 
+        /// occurring on any object.  Allows cancellation etc.
+        /// </summary>
+        public event EventHandler<SaveEventArgs> Saving;
+
+        /// <summary>
         /// Store the newly constructed object, must set the unique NON-ZERO ID of the object within the repository, also your repository must
         /// set parameters on T such that it matches exactly how it now appears in the repository e.g. if there are system Default values
         /// in the repository physical store they must be rehydrated back into the class T.

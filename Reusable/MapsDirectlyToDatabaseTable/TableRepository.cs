@@ -115,6 +115,12 @@ namespace MapsDirectlyToDatabaseTable
             if(changes.Evaluation == ChangeDescription.NoChanges)
                 return;
 
+            var e =new SaveEventArgs(oTableWrapperObject);
+            Saving?.Invoke(this,e);
+
+            if (e.Cancel)
+                return;
+
             foreach (var c in changes.Differences)
                 _logger.Debug("Save," + oTableWrapperObject.GetType().Name + "," + oTableWrapperObject.ID + "," + c.Property + "," + c.DatabaseValue + "," + c.LocalValue);
 
@@ -895,6 +901,9 @@ namespace MapsDirectlyToDatabaseTable
         }
 
         private Type[] _compatibleTypes;
+
+        public event EventHandler<SaveEventArgs> Saving;
+
         public IMapsDirectlyToDatabaseTable[] GetAllObjectsInDatabase()
         {
             List<IMapsDirectlyToDatabaseTable> toReturn = new List<IMapsDirectlyToDatabaseTable>();

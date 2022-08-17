@@ -126,8 +126,9 @@ namespace Rdmp.UI.TestsAndSetup.ServicePropogation
             {
                 if(UseCommitSystem && CurrentCommit == null)
                 {
-                    CurrentCommit = new CommitInProgress(activator.RepositoryLocator, databaseObject);
-                    ObjectSaverButton1.BeforeSave += (o)=> FinishCommitInProgressIfAny();
+                    CurrentCommit = new CommitInProgress(activator.RepositoryLocator, databaseObject) { DelaySaves  = false};
+                    ObjectSaverButton1.BeforeSave += BeforeSave_FinishCommitInProgressIfAny;
+                    ObjectSaverButton1.AfterSave += AfterSave_BeginNewCommitIfApplicable;
                 }
 
                 ObjectSaverButton1.SetupFor(this, databaseObject, activator);
@@ -142,7 +143,8 @@ namespace Rdmp.UI.TestsAndSetup.ServicePropogation
             }
         }
 
-        protected bool FinishCommitInProgressIfAny()
+
+        protected bool BeforeSave_FinishCommitInProgressIfAny(DatabaseEntity _)
         {
             // control doesn't require commits (most controls don't)
             if (!UseCommitSystem)
@@ -154,18 +156,30 @@ namespace Rdmp.UI.TestsAndSetup.ServicePropogation
 
             if (CurrentCommit != null)
             {
-                var commit = CurrentCommit.Finish(Activator);
-
-                // No changes were actually made or user cancelled
-                if (commit == null)
+                if (CurrentCommit.TryFinish(Activator) == null)
+                {
+                    // No changes were actually made or user cancelled
                     return false;
+                }
             }
+            
+            // before starting a new commit cleanup old one
+            CurrentCommit?.Dispose();
 
-            // start a new commit for the next changes the user commits
-            CurrentCommit = new CommitInProgress(Activator.RepositoryLocator, DatabaseObject);
+            // setting to null means a new one will be created in AfterSave
+            CurrentCommit = null;
+
             return true;
         }
 
+        private void AfterSave_BeginNewCommitIfApplicable()
+        {
+            if (CurrentCommit == null && UseCommitSystem)
+            {
+                // start a new commit for the next changes the user commits
+                CurrentCommit = new CommitInProgress(Activator.RepositoryLocator, DatabaseObject) { DelaySaves = false };
+            }
+        }
         void CommonFunctionality_ToolStripAddedToHost(object sender, EventArgs e)
         {
             if (_colorIndicator != null)
@@ -314,6 +328,18 @@ namespace Rdmp.UI.TestsAndSetup.ServicePropogation
         public virtual ObjectSaverButton GetObjectSaverButton()
         {
             return ObjectSaverButton1;
+        }
+        protected override void Dispose(bool disposing)
+        {
+            base.Dispose(disposing);
+
+            CurrentCommit?.Dispose();
+
+            if(ObjectSaverButton1 != null)
+            {
+                ObjectSaverButton1.BeforeSave -= BeforeSave_FinishCommitInProgressIfAny;
+                ObjectSaverButton1.AfterSave -= AfterSave_BeginNewCommitIfApplicable;
+            }
         }
     }
 }

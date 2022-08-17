@@ -20,28 +20,76 @@ namespace Rdmp.Core.Curation.Data
 
     /// <summary>
     /// Tracks changes made by the user to one or more objects.  Changes are tracked from
-    /// the moment the class is constructed until finish is called
+    /// the moment the class is constructed until <see cref="TryFinish(IBasicActivateItems)"/>
+    /// completes successfully.  This helps with cancellation
     /// </summary>
-    public class CommitInProgress
+    public class CommitInProgress : IDisposable
     {
+        /// <summary>
+        /// Set to true to block calls to <see cref="ISaveable.SaveToDatabase"/>
+        /// on tracked objects until the end of the commit
+        /// </summary>
+        public bool DelaySaves { get; init; }
+
         Dictionary<IMapsDirectlyToDatabaseTable, MementoInProgress> originalStates = new ();
         
         private IRDMPPlatformRepositoryServiceLocator _locator;
+        private IMapsDirectlyToDatabaseTable[] _tracked;
+        private IEnumerable<IRepository> _repositories;
         private ISerializer _serializer;
 
+        /// <summary>
+        /// We suppress saving on <see cref="_tracked"/> objects until <see cref="TryFinish(IBasicActivateItems)"/>
+        /// </summary>
+        private Queue<ISaveable> toSave = new();
+
         int order = 0;
+
+        /// <summary>
+        /// True when <see cref="TryFinish(IBasicActivateItems)"/> is confirmed to definetly be happening.  Controls
+        /// save suppression
+        /// </summary>
+        private bool _finishing;
 
         public CommitInProgress(IRDMPPlatformRepositoryServiceLocator locator, params IMapsDirectlyToDatabaseTable[] track)
         {
             _locator = locator;
-            _serializer = YamlRepository.CreateSerializer(
-                _locator.GetAllRepositories().SelectMany(r=>r.GetCompatibleTypes()).Distinct()
+            _tracked = track;
+
+            _repositories = _locator.GetAllRepositories();
+            _serializer = YamlRepository.CreateSerializer(_repositories.SelectMany(r=>r.GetCompatibleTypes()).Distinct()
                 );
+
+            foreach(var repo in _repositories)
+            {
+                repo.Saving += Saving;
+            }
 
             foreach(var t in track)
             {
                 originalStates.Add(t, new MementoInProgress(t,_serializer.Serialize(t)));
                 t.PropertyChanged += PropertyChanged;
+            }
+        }
+
+        private void Saving(object sender, SaveEventArgs e)
+        {
+            // we are not suppressing saves at all
+            if (!DelaySaves)
+                return;
+
+            // we are in the finishing stage so should stop suppressing saves
+            if (_finishing)
+                return;
+
+            // if its an object we are tracking and saveable (one would hope so)
+            if (_tracked.Contains(e.BeingSaved) && e.BeingSaved is ISaveable s)
+            {
+                // delay save till TryFinish
+                e.Cancel = true;
+
+                if (!toSave.Contains(s))
+                    toSave.Enqueue(s);
             }
         }
 
@@ -56,7 +104,7 @@ namespace Rdmp.Core.Curation.Data
         /// the tracked objects since construction.
         /// </summary>
         /// <returns></returns>
-        public Commit Finish(IBasicActivateItems activator)
+        public Commit TryFinish(IBasicActivateItems activator)
         {
             var changes = new Dictionary<IMapsDirectlyToDatabaseTable, Tuple<MementoInProgress,string>>();
 
@@ -108,6 +156,17 @@ namespace Rdmp.Core.Curation.Data
             if (description == null)
                 return null;
 
+            // Ok user has typed in a description (or system generated one) and we are
+            // definetly going to do this
+
+            // so save all the objects we delayed saving (in the order they asked for saving)
+            _finishing = true;
+
+            while (toSave.TryDequeue(out var result))
+            {
+                result.SaveToDatabase();
+            }
+
             var c = new Commit(cataRepo, transaction, description);
 
             foreach(var m in changes.OrderBy(c => c.Value.Item1.Order))
@@ -142,6 +201,12 @@ namespace Rdmp.Core.Curation.Data
             }
 
             return $"Update {kv.Key.GetType().Name} {string.Join(", ",props.Select(p => p.Name).ToArray())}";
+        }
+
+        public void Dispose()
+        {
+            foreach (var repo in _repositories)
+                repo.Saving -= Saving;
         }
     }
 }

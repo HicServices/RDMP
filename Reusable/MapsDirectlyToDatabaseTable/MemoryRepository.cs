@@ -32,6 +32,8 @@ namespace MapsDirectlyToDatabaseTable
 
         readonly ConcurrentDictionary<IMapsDirectlyToDatabaseTable, HashSet<PropertyChangedExtendedEventArgs>> _propertyChanges = new ConcurrentDictionary<IMapsDirectlyToDatabaseTable, HashSet<PropertyChangedExtendedEventArgs>>();
 
+        public event EventHandler<SaveEventArgs> Saving;
+
         public virtual void InsertAndHydrate<T>(T toCreate, Dictionary<string, object> constructorParameters) where T : IMapsDirectlyToDatabaseTable
         {
             NextObjectId++;
@@ -173,6 +175,8 @@ namespace MapsDirectlyToDatabaseTable
 
         public virtual void SaveToDatabase(IMapsDirectlyToDatabaseTable oTableWrapperObject)
         {
+            Saving?.Invoke(this, new SaveEventArgs(oTableWrapperObject));
+
             var existing = Objects.Keys.FirstOrDefault(k=>k.Equals(oTableWrapperObject));
 
             // If saving a new reference to an existing object then we should update our tracked
