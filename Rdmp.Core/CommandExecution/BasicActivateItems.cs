@@ -204,7 +204,8 @@ namespace Rdmp.Core.CommandExecution
                 }
                 catch (Exception e)
                 {
-                    GlobalErrorCheckNotifier.OnCheckPerformed(new CheckEventArgs("Problem occured trying to load Plugin '" + pluginType.Name + "'", CheckResult.Fail, e));
+                    GlobalErrorCheckNotifier.OnCheckPerformed(new CheckEventArgs(
+                        $"Problem occurred trying to load Plugin '{pluginType.Name}'", CheckResult.Fail, e));
                 }
             }
         }
