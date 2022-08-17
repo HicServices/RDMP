@@ -617,7 +617,13 @@ namespace ResearchDataManagementPlatform.WindowManagement
                     fb.Filter = patternDescription + "|" + pattern;
 
                 if (fb.ShowDialog() == DialogResult.OK)
+                {
+                    // entering "null" in a winforms file dialog will return something like "D:\Blah\null"
+                    if (string.Equals(Path.GetFileName(fb.FileName),"null", StringComparison.CurrentCultureIgnoreCase))
+                        return null;
+
                     return new FileInfo(fb.FileName);
+                }
             
                 return null;
             }        
