@@ -66,2096 +66,2096 @@ namespace Rdmp.Core.Icons.IconProvision
         /// <summary>
         ///   Looks up a localized resource of type Image.
         /// </summary>
-        public static Image<Rgba32> AggregateContinuousDateAxis {
+        public static Byte[] AggregateContinuousDateAxis {
             get {
                 object obj = ResourceManager.GetObject("AggregateContinuousDateAxis", resourceCulture);
-                return ((Image<Rgba32>)(obj));
+                return ((Byte[])(obj));
             }
         }
         
         /// <summary>
         ///   Looks up a localized resource of type Image.
         /// </summary>
-        public static Image<Rgba32> AggregateDimension {
+        public static Byte[] AggregateDimension {
             get {
                 object obj = ResourceManager.GetObject("AggregateDimension", resourceCulture);
-                return ((Image<Rgba32>)(obj));
+                return ((Byte[])(obj));
             }
         }
         
         /// <summary>
         ///   Looks up a localized resource of type Image.
         /// </summary>
-        public static Image<Rgba32> AggregateGraph {
+        public static Byte[] AggregateGraph {
             get {
                 object obj = ResourceManager.GetObject("AggregateGraph", resourceCulture);
-                return ((Image<Rgba32>)(obj));
+                return ((Byte[])(obj));
             }
         }
         
         /// <summary>
         ///   Looks up a localized resource of type Image.
         /// </summary>
-        public static Image<Rgba32> AggregatesNode {
+        public static Byte[] AggregatesNode {
             get {
                 object obj = ResourceManager.GetObject("AggregatesNode", resourceCulture);
-                return ((Image<Rgba32>)(obj));
+                return ((Byte[])(obj));
             }
         }
         
         /// <summary>
         ///   Looks up a localized resource of type Image.
         /// </summary>
-        public static Image<Rgba32> AggregateTopX {
+        public static Byte[] AggregateTopX {
             get {
                 object obj = ResourceManager.GetObject("AggregateTopX", resourceCulture);
-                return ((Image<Rgba32>)(obj));
+                return ((Byte[])(obj));
             }
         }
         
         /// <summary>
         ///   Looks up a localized resource of type Image.
         /// </summary>
-        public static Image<Rgba32> AllANOTablesNode {
+        public static Byte[] AllANOTablesNode {
             get {
                 object obj = ResourceManager.GetObject("AllANOTablesNode", resourceCulture);
-                return ((Image<Rgba32>)(obj));
+                return ((Byte[])(obj));
             }
         }
         
         /// <summary>
         ///   Looks up a localized resource of type Image.
         /// </summary>
-        public static Image<Rgba32> AllAutomationServerSlotsNode {
+        public static Byte[] AllAutomationServerSlotsNode {
             get {
                 object obj = ResourceManager.GetObject("AllAutomationServerSlotsNode", resourceCulture);
-                return ((Image<Rgba32>)(obj));
+                return ((Byte[])(obj));
             }
         }
         
         /// <summary>
         ///   Looks up a localized resource of type Image.
         /// </summary>
-        public static Image<Rgba32> AllCataloguesUsedByLoadMetadataNode {
+        public static Byte[] AllCataloguesUsedByLoadMetadataNode {
             get {
                 object obj = ResourceManager.GetObject("AllCataloguesUsedByLoadMetadataNode", resourceCulture);
-                return ((Image<Rgba32>)(obj));
+                return ((Byte[])(obj));
             }
         }
         
         /// <summary>
         ///   Looks up a localized resource of type Image.
         /// </summary>
-        public static Image<Rgba32> AllCohortsNode {
+        public static Byte[] AllCohortsNode {
             get {
                 object obj = ResourceManager.GetObject("AllCohortsNode", resourceCulture);
-                return ((Image<Rgba32>)(obj));
+                return ((Byte[])(obj));
             }
         }
         
         /// <summary>
         ///   Looks up a localized resource of type Image.
         /// </summary>
-        public static Image<Rgba32> AllConnectionStringKeywordsNode {
+        public static Byte[] AllConnectionStringKeywordsNode {
             get {
                 object obj = ResourceManager.GetObject("AllConnectionStringKeywordsNode", resourceCulture);
-                return ((Image<Rgba32>)(obj));
+                return ((Byte[])(obj));
             }
         }
         
         /// <summary>
         ///   Looks up a localized resource of type Image.
         /// </summary>
-        public static Image<Rgba32> AllDashboardsNode {
+        public static Byte[] AllDashboardsNode {
             get {
                 object obj = ResourceManager.GetObject("AllDashboardsNode", resourceCulture);
-                return ((Image<Rgba32>)(obj));
+                return ((Byte[])(obj));
             }
         }
         
         /// <summary>
         ///   Looks up a localized resource of type Image.
         /// </summary>
-        public static Image<Rgba32> AllDataAccessCredentialsNode {
+        public static Byte[] AllDataAccessCredentialsNode {
             get {
                 object obj = ResourceManager.GetObject("AllDataAccessCredentialsNode", resourceCulture);
-                return ((Image<Rgba32>)(obj));
+                return ((Byte[])(obj));
             }
         }
         
         /// <summary>
         ///   Looks up a localized resource of type Image.
         /// </summary>
-        public static Image<Rgba32> AllExpiredPluginsNode {
+        public static Byte[] AllExpiredPluginsNode {
             get {
                 object obj = ResourceManager.GetObject("AllExpiredPluginsNode", resourceCulture);
-                return ((Image<Rgba32>)(obj));
+                return ((Byte[])(obj));
             }
         }
         
         /// <summary>
         ///   Looks up a localized resource of type Image.
         /// </summary>
-        public static Image<Rgba32> AllExternalServersNode {
+        public static Byte[] AllExternalServersNode {
             get {
                 object obj = ResourceManager.GetObject("AllExternalServersNode", resourceCulture);
-                return ((Image<Rgba32>)(obj));
+                return ((Byte[])(obj));
             }
         }
         
         /// <summary>
         ///   Looks up a localized resource of type Image.
         /// </summary>
-        public static Image<Rgba32> AllFreeCohortIdentificationConfigurationsNode {
+        public static Byte[] AllFreeCohortIdentificationConfigurationsNode {
             get {
                 object obj = ResourceManager.GetObject("AllFreeCohortIdentificationConfigurationsNode", resourceCulture);
-                return ((Image<Rgba32>)(obj));
+                return ((Byte[])(obj));
             }
         }
         
         /// <summary>
         ///   Looks up a localized resource of type Image.
         /// </summary>
-        public static Image<Rgba32> AllGovernanceNode {
+        public static Byte[] AllGovernanceNode {
             get {
                 object obj = ResourceManager.GetObject("AllGovernanceNode", resourceCulture);
-                return ((Image<Rgba32>)(obj));
+                return ((Byte[])(obj));
             }
         }
         
         /// <summary>
         ///   Looks up a localized resource of type Image.
         /// </summary>
-        public static Image<Rgba32> AllLoadMetadatasNode {
+        public static Byte[] AllLoadMetadatasNode {
             get {
                 object obj = ResourceManager.GetObject("AllLoadMetadatasNode", resourceCulture);
-                return ((Image<Rgba32>)(obj));
+                return ((Byte[])(obj));
             }
         }
         
         /// <summary>
         ///   Looks up a localized resource of type Image.
         /// </summary>
-        public static Image<Rgba32> AllObjectExportsNode {
+        public static Byte[] AllObjectExportsNode {
             get {
                 object obj = ResourceManager.GetObject("AllObjectExportsNode", resourceCulture);
-                return ((Image<Rgba32>)(obj));
+                return ((Byte[])(obj));
             }
         }
         
         /// <summary>
         ///   Looks up a localized resource of type Image.
         /// </summary>
-        public static Image<Rgba32> AllObjectImportsNode {
+        public static Byte[] AllObjectImportsNode {
             get {
                 object obj = ResourceManager.GetObject("AllObjectImportsNode", resourceCulture);
-                return ((Image<Rgba32>)(obj));
+                return ((Byte[])(obj));
             }
         }
         
         /// <summary>
         ///   Looks up a localized resource of type Image.
         /// </summary>
-        public static Image<Rgba32> AllObjectSharingNode {
+        public static Byte[] AllObjectSharingNode {
             get {
                 object obj = ResourceManager.GetObject("AllObjectSharingNode", resourceCulture);
-                return ((Image<Rgba32>)(obj));
+                return ((Byte[])(obj));
             }
         }
         
         /// <summary>
         ///   Looks up a localized resource of type Image.
         /// </summary>
-        public static Image<Rgba32> AllOrphanAggregateConfigurationsNode {
+        public static Byte[] AllOrphanAggregateConfigurationsNode {
             get {
                 object obj = ResourceManager.GetObject("AllOrphanAggregateConfigurationsNode", resourceCulture);
-                return ((Image<Rgba32>)(obj));
+                return ((Byte[])(obj));
             }
         }
         
         /// <summary>
         ///   Looks up a localized resource of type Image.
         /// </summary>
-        public static Image<Rgba32> AllPermissionWindowsNode {
+        public static Byte[] AllPermissionWindowsNode {
             get {
                 object obj = ResourceManager.GetObject("AllPermissionWindowsNode", resourceCulture);
-                return ((Image<Rgba32>)(obj));
+                return ((Byte[])(obj));
             }
         }
         
         /// <summary>
         ///   Looks up a localized resource of type Image.
         /// </summary>
-        public static Image<Rgba32> AllTemplateAggregateConfigurationsNode
+        public static Byte[] AllTemplateAggregateConfigurationsNode
         {
             get {
                 object obj = ResourceManager.GetObject("AllTemplateAggregateConfigurationsNode", resourceCulture);
-                return ((Image<Rgba32>)(obj));
+                return ((Byte[])(obj));
             }
         }
         /// <summary>
         ///   Looks up a localized resource of type Image.
         /// </summary>
-        public static Image<Rgba32> AllPipelinesNode {
+        public static Byte[] AllPipelinesNode {
             get {
                 object obj = ResourceManager.GetObject("AllPipelinesNode", resourceCulture);
-                return ((Image<Rgba32>)(obj));
+                return ((Byte[])(obj));
             }
         }
         
         /// <summary>
         ///   Looks up a localized resource of type Image.
         /// </summary>
-        public static Image<Rgba32> AllPluginsNode {
+        public static Byte[] AllPluginsNode {
             get {
                 object obj = ResourceManager.GetObject("AllPluginsNode", resourceCulture);
-                return ((Image<Rgba32>)(obj));
+                return ((Byte[])(obj));
             }
         }
         
         /// <summary>
         ///   Looks up a localized resource of type Image.
         /// </summary>
-        public static Image<Rgba32> AllProcessTasksUsedByLoadMetadataNode {
+        public static Byte[] AllProcessTasksUsedByLoadMetadataNode {
             get {
                 object obj = ResourceManager.GetObject("AllProcessTasksUsedByLoadMetadataNode", resourceCulture);
-                return ((Image<Rgba32>)(obj));
+                return ((Byte[])(obj));
             }
         }
         
         /// <summary>
         ///   Looks up a localized resource of type Image.
         /// </summary>
-        public static Image<Rgba32> AllProjectCohortIdentificationConfigurationsNode {
+        public static Byte[] AllProjectCohortIdentificationConfigurationsNode {
             get {
                 object obj = ResourceManager.GetObject("AllProjectCohortIdentificationConfigurationsNode", resourceCulture);
-                return ((Image<Rgba32>)(obj));
+                return ((Byte[])(obj));
             }
         }
         
         /// <summary>
         ///   Looks up a localized resource of type Image.
         /// </summary>
-        public static Image<Rgba32> AllRDMPRemotesNode {
+        public static Byte[] AllRDMPRemotesNode {
             get {
                 object obj = ResourceManager.GetObject("AllRDMPRemotesNode", resourceCulture);
-                return ((Image<Rgba32>)(obj));
+                return ((Byte[])(obj));
             }
         }
         
         /// <summary>
         ///   Looks up a localized resource of type Image.
         /// </summary>
-        public static Image<Rgba32> AllServersNode {
+        public static Byte[] AllServersNode {
             get {
                 object obj = ResourceManager.GetObject("AllServersNode", resourceCulture);
-                return ((Image<Rgba32>)(obj));
+                return ((Byte[])(obj));
             }
         }
         
         /// <summary>
         ///   Looks up a localized resource of type Image.
         /// </summary>
-        public static Image<Rgba32> AllStandardRegexesNode {
+        public static Byte[] AllStandardRegexesNode {
             get {
                 object obj = ResourceManager.GetObject("AllStandardRegexesNode", resourceCulture);
-                return ((Image<Rgba32>)(obj));
+                return ((Byte[])(obj));
             }
         }
         
         /// <summary>
         ///   Looks up a localized resource of type Image.
         /// </summary>
-        public static Image<Rgba32> ANOColumnInfo {
+        public static Byte[] ANOColumnInfo {
             get {
                 object obj = ResourceManager.GetObject("ANOColumnInfo", resourceCulture);
-                return ((Image<Rgba32>)(obj));
+                return ((Byte[])(obj));
             }
         }
         
         /// <summary>
         ///   Looks up a localized resource of type Image.
         /// </summary>
-        public static Image<Rgba32> ANOTable {
+        public static Byte[] ANOTable {
             get {
                 object obj = ResourceManager.GetObject("ANOTable", resourceCulture);
-                return ((Image<Rgba32>)(obj));
+                return ((Byte[])(obj));
             }
         }
         
         /// <summary>
         ///   Looks up a localized resource of type Image.
         /// </summary>
-        public static Image<Rgba32> AutomateablePipeline {
+        public static Byte[] AutomateablePipeline {
             get {
                 object obj = ResourceManager.GetObject("AutomateablePipeline", resourceCulture);
-                return ((Image<Rgba32>)(obj));
+                return ((Byte[])(obj));
             }
         }
         
         /// <summary>
         ///   Looks up a localized resource of type Image.
         /// </summary>
-        public static Image<Rgba32> AutomationServiceException {
+        public static Byte[] AutomationServiceException {
             get {
                 object obj = ResourceManager.GetObject("AutomationServiceException", resourceCulture);
-                return ((Image<Rgba32>)(obj));
+                return ((Byte[])(obj));
             }
         }
         
         /// <summary>
         ///   Looks up a localized resource of type Image.
         /// </summary>
-        public static Image<Rgba32> AutomationServiceSlot {
+        public static Byte[] AutomationServiceSlot {
             get {
                 object obj = ResourceManager.GetObject("AutomationServiceSlot", resourceCulture);
-                return ((Image<Rgba32>)(obj));
+                return ((Byte[])(obj));
             }
         }
         
         /// <summary>
         ///   Looks up a localized resource of type Image.
         /// </summary>
-        public static Image<Rgba32> Backup {
+        public static Byte[] Backup {
             get {
                 object obj = ResourceManager.GetObject("Backup", resourceCulture);
-                return ((Image<Rgba32>)(obj));
+                return ((Byte[])(obj));
             }
         }
         
         /// <summary>
         ///   Looks up a localized resource of type Image.
         /// </summary>
-        public static Image<Rgba32> BigCohort {
+        public static Byte[] BigCohort {
             get {
                 object obj = ResourceManager.GetObject("BigCohort", resourceCulture);
-                return ((Image<Rgba32>)(obj));
+                return ((Byte[])(obj));
             }
         }
         
         /// <summary>
         ///   Looks up a localized resource of type Image.
         /// </summary>
-        public static Image<Rgba32> BigGraph {
+        public static Byte[] BigGraph {
             get {
                 object obj = ResourceManager.GetObject("BigGraph", resourceCulture);
-                return ((Image<Rgba32>)(obj));
+                return ((Byte[])(obj));
             }
         }
         
         /// <summary>
         ///   Looks up a localized resource of type Image.
         /// </summary>
-        public static Image<Rgba32> BigPatientIndexTable {
+        public static Byte[] BigPatientIndexTable {
             get {
                 object obj = ResourceManager.GetObject("BigPatientIndexTable", resourceCulture);
-                return ((Image<Rgba32>)(obj));
+                return ((Byte[])(obj));
             }
         }
         
         /// <summary>
         ///   Looks up a localized resource of type Image.
         /// </summary>
-        public static Image<Rgba32> CacheFetchFailure {
+        public static Byte[] CacheFetchFailure {
             get {
                 object obj = ResourceManager.GetObject("CacheFetchFailure", resourceCulture);
-                return ((Image<Rgba32>)(obj));
+                return ((Byte[])(obj));
             }
         }
         
         /// <summary>
         ///   Looks up a localized resource of type Image.
         /// </summary>
-        public static Image<Rgba32> CacheProgress {
+        public static Byte[] CacheProgress {
             get {
                 object obj = ResourceManager.GetObject("CacheProgress", resourceCulture);
-                return ((Image<Rgba32>)(obj));
+                return ((Byte[])(obj));
             }
         }
         
         /// <summary>
         ///   Looks up a localized resource of type Image.
         /// </summary>
-        public static Image<Rgba32> Catalogue {
+        public static Byte[] Catalogue {
             get {
                 object obj = ResourceManager.GetObject("Catalogue", resourceCulture);
-                return ((Image<Rgba32>)(obj));
+                return ((Byte[])(obj));
             }
         }
         
         /// <summary>
         ///   Looks up a localized resource of type Image.
         /// </summary>
-        public static Image<Rgba32> CatalogueFolder {
+        public static Byte[] CatalogueFolder {
             get {
                 object obj = ResourceManager.GetObject("CatalogueFolder", resourceCulture);
-                return ((Image<Rgba32>)(obj));
+                return ((Byte[])(obj));
             }
         }
         
         /// <summary>
         ///   Looks up a localized resource of type Image.
         /// </summary>
-        public static Image<Rgba32> CatalogueItem {
+        public static Byte[] CatalogueItem {
             get {
                 object obj = ResourceManager.GetObject("CatalogueItem", resourceCulture);
-                return ((Image<Rgba32>)(obj));
+                return ((Byte[])(obj));
             }
         }
 
         /// <summary>
         ///   Looks up a localized resource of type Image.
         /// </summary>
-        public static Image<Rgba32> CatalogueItemTransform
+        public static Byte[] CatalogueItemTransform
         {
             get
             {
                 object obj = ResourceManager.GetObject("CatalogueItemTransform", resourceCulture);
-                return ((Image<Rgba32>)(obj));
+                return ((Byte[])(obj));
             }
         }
 
         /// <summary>
         ///   Looks up a localized resource of type Image.
         /// </summary>
-        public static Image<Rgba32> CatalogueItemIssue {
+        public static Byte[] CatalogueItemIssue {
             get {
                 object obj = ResourceManager.GetObject("CatalogueItemIssue", resourceCulture);
-                return ((Image<Rgba32>)(obj));
+                return ((Byte[])(obj));
             }
         }
         
         /// <summary>
         ///   Looks up a localized resource of type Image.
         /// </summary>
-        public static Image<Rgba32> CatalogueItemsNode {
+        public static Byte[] CatalogueItemsNode {
             get {
                 object obj = ResourceManager.GetObject("CatalogueItemsNode", resourceCulture);
-                return ((Image<Rgba32>)(obj));
+                return ((Byte[])(obj));
             }
         }
         
         /// <summary>
         ///   Looks up a localized resource of type Image.
         /// </summary>
-        public static Image<Rgba32> CatalogueLookupsNode {
+        public static Byte[] CatalogueLookupsNode {
             get {
                 object obj = ResourceManager.GetObject("CatalogueLookupsNode", resourceCulture);
-                return ((Image<Rgba32>)(obj));
+                return ((Byte[])(obj));
             }
         }
         
         /// <summary>
         ///   Looks up a localized resource of type Image.
         /// </summary>
-        public static Image<Rgba32> Clipboard {
+        public static Byte[] Clipboard {
             get {
                 object obj = ResourceManager.GetObject("Clipboard", resourceCulture);
-                return ((Image<Rgba32>)(obj));
+                return ((Byte[])(obj));
             }
         }
         
         /// <summary>
         ///   Looks up a localized resource of type Image.
         /// </summary>
-        public static Image<Rgba32> CloneExtractionConfiguration {
+        public static Byte[] CloneExtractionConfiguration {
             get {
                 object obj = ResourceManager.GetObject("CloneExtractionConfiguration", resourceCulture);
-                return ((Image<Rgba32>)(obj));
+                return ((Byte[])(obj));
             }
         }
         
         /// <summary>
         ///   Looks up a localized resource of type Image.
         /// </summary>
-        public static Image<Rgba32> CohortAggregate {
+        public static Byte[] CohortAggregate {
             get {
                 object obj = ResourceManager.GetObject("CohortAggregate", resourceCulture);
-                return ((Image<Rgba32>)(obj));
+                return ((Byte[])(obj));
             }
         }
         
         /// <summary>
         ///   Looks up a localized resource of type Image.
         /// </summary>
-        public static Image<Rgba32> CohortAggregateContainer {
+        public static Byte[] CohortAggregateContainer {
             get {
                 object obj = ResourceManager.GetObject("CohortAggregateContainer", resourceCulture);
-                return ((Image<Rgba32>)(obj));
+                return ((Byte[])(obj));
             }
         }
         
         /// <summary>
         ///   Looks up a localized resource of type Image.
         /// </summary>
-        public static Image<Rgba32> CohortCustomColumn {
+        public static Byte[] CohortCustomColumn {
             get {
                 object obj = ResourceManager.GetObject("CohortCustomColumn", resourceCulture);
-                return ((Image<Rgba32>)(obj));
+                return ((Byte[])(obj));
             }
         }
         
         /// <summary>
         ///   Looks up a localized resource of type Image.
         /// </summary>
-        public static Image<Rgba32> CohortIdentificationConfiguration {
+        public static Byte[] CohortIdentificationConfiguration {
             get {
                 object obj = ResourceManager.GetObject("CohortIdentificationConfiguration", resourceCulture);
-                return ((Image<Rgba32>)(obj));
+                return ((Byte[])(obj));
             }
         }
         
         /// <summary>
         ///   Looks up a localized resource of type Image.
         /// </summary>
-        public static Image<Rgba32> collapseAllNodes {
+        public static Byte[] collapseAllNodes {
             get {
                 object obj = ResourceManager.GetObject("collapseAllNodes", resourceCulture);
-                return (Image<Rgba32>)obj;
+                return (Byte[])obj;
             }
         }
         
         /// <summary>
         ///   Looks up a localized resource of type Image.
         /// </summary>
-        public static Image<Rgba32> CollisionResolution {
+        public static Byte[] CollisionResolution {
             get {
                 object obj = ResourceManager.GetObject("CollisionResolution", resourceCulture);
-                return (Image<Rgba32>)obj;
+                return (Byte[])obj;
             }
         }
         
         /// <summary>
         ///   Looks up a localized resource of type Image.
         /// </summary>
-        public static Image<Rgba32> ColumnInfo {
+        public static Byte[] ColumnInfo {
             get {
                 object obj = ResourceManager.GetObject("ColumnInfo", resourceCulture);
-                return ((Image<Rgba32>)(obj));
+                return ((Byte[])(obj));
             }
         }
         
         /// <summary>
         ///   Looks up a localized resource of type Image.
         /// </summary>
-        public static Image<Rgba32> ConnectionStringKeyword {
+        public static Byte[] ConnectionStringKeyword {
             get {
                 object obj = ResourceManager.GetObject("ConnectionStringKeyword", resourceCulture);
-                return ((Image<Rgba32>)(obj));
+                return ((Byte[])(obj));
             }
         }
         
         /// <summary>
         ///   Looks up a localized resource of type Image.
         /// </summary>
-        public static Image<Rgba32> CumulativeExtractionResults {
+        public static Byte[] CumulativeExtractionResults {
             get {
                 object obj = ResourceManager.GetObject("CumulativeExtractionResults", resourceCulture);
-                return ((Image<Rgba32>)(obj));
+                return ((Byte[])(obj));
             }
         }
         
         /// <summary>
         ///   Looks up a localized resource of type Image.
         /// </summary>
-        public static Image<Rgba32> DashboardControl {
+        public static Byte[] DashboardControl {
             get {
                 object obj = ResourceManager.GetObject("DashboardControl", resourceCulture);
-                return ((Image<Rgba32>)(obj));
+                return ((Byte[])(obj));
             }
         }
         
         /// <summary>
         ///   Looks up a localized resource of type Image.
         /// </summary>
-        public static Image<Rgba32> DashboardLayout {
+        public static Byte[] DashboardLayout {
             get {
                 object obj = ResourceManager.GetObject("DashboardLayout", resourceCulture);
-                return ((Image<Rgba32>)(obj));
+                return ((Byte[])(obj));
             }
         }
         
         /// <summary>
         ///   Looks up a localized resource of type Image.
         /// </summary>
-        public static Image<Rgba32> DataAccessCredentials {
+        public static Byte[] DataAccessCredentials {
             get {
                 object obj = ResourceManager.GetObject("DataAccessCredentials", resourceCulture);
-                return ((Image<Rgba32>)(obj));
+                return ((Byte[])(obj));
             }
         }
         
         /// <summary>
         ///   Looks up a localized resource of type Image.
         /// </summary>
-        public static Image<Rgba32> Database {
+        public static Byte[] Database {
             get {
                 object obj = ResourceManager.GetObject("Database", resourceCulture);
-                return ((Image<Rgba32>)(obj));
+                return ((Byte[])(obj));
             }
         }
         
         /// <summary>
         ///   Looks up a localized resource of type Image.
         /// </summary>
-        public static Image<Rgba32> DatabaseRefresh {
+        public static Byte[] DatabaseRefresh {
             get {
                 object obj = ResourceManager.GetObject("DatabaseRefresh", resourceCulture);
-                return ((Image<Rgba32>)(obj));
+                return ((Byte[])(obj));
             }
         }
         
         /// <summary>
         ///   Looks up a localized resource of type Image.
         /// </summary>
-        public static Image<Rgba32> DecryptionPrivateKeyNode {
+        public static Byte[] DecryptionPrivateKeyNode {
             get {
                 object obj = ResourceManager.GetObject("DecryptionPrivateKeyNode", resourceCulture);
-                return ((Image<Rgba32>)(obj));
+                return ((Byte[])(obj));
             }
         }
         
         /// <summary>
         ///   Looks up a localized resource of type Image.
         /// </summary>
-        public static Image<Rgba32> Diff {
+        public static Byte[] Diff {
             get {
                 object obj = ResourceManager.GetObject("Diff", resourceCulture);
-                return ((Image<Rgba32>)(obj));
+                return ((Byte[])(obj));
             }
         }
         
         /// <summary>
         ///   Looks up a localized resource of type Image.
         /// </summary>
-        public static Image<Rgba32> DocumentationNode {
+        public static Byte[] DocumentationNode {
             get {
                 object obj = ResourceManager.GetObject("DocumentationNode", resourceCulture);
-                return ((Image<Rgba32>)(obj));
+                return ((Byte[])(obj));
             }
         }
         
         /// <summary>
         ///   Looks up a localized resource of type Image.
         /// </summary>
-        public static Image<Rgba32> DQE {
+        public static Byte[] DQE {
             get {
                 object obj = ResourceManager.GetObject("DQE", resourceCulture);
-                return (Image<Rgba32>)obj;
+                return (Byte[])obj;
             }
         }
         
         /// <summary>
         ///   Looks up a localized resource of type Image.
         /// </summary>
-        public static Image<Rgba32> DQEGraphAnnotation {
+        public static Byte[] DQEGraphAnnotation {
             get {
                 object obj = ResourceManager.GetObject("DQEGraphAnnotation", resourceCulture);
-                return (Image<Rgba32>)obj;
+                return (Byte[])obj;
             }
         }
         
         /// <summary>
         ///   Looks up a localized resource of type Image.
         /// </summary>
-        public static Image<Rgba32> DropHere {
+        public static Byte[] DropHere {
             get {
                 object obj = ResourceManager.GetObject("DropHere", resourceCulture);
-                return ((Image<Rgba32>)(obj));
+                return ((Byte[])(obj));
             }
         }
         
         /// <summary>
         ///   Looks up a localized resource of type Image.
         /// </summary>
-        public static Image<Rgba32> EmptyProject {
+        public static Byte[] EmptyProject {
             get {
                 object obj = ResourceManager.GetObject("EmptyProject", resourceCulture);
-                return ((Image<Rgba32>)(obj));
+                return ((Byte[])(obj));
             }
         }
         
         /// <summary>
         ///   Looks up a localized resource of type Image.
         /// </summary>
-        public static Image<Rgba32> Evaluation {
+        public static Byte[] Evaluation {
             get {
                 object obj = ResourceManager.GetObject("Evaluation", resourceCulture);
-                return ((Image<Rgba32>)(obj));
+                return ((Byte[])(obj));
             }
         }
         
         /// <summary>
         ///   Looks up a localized resource of type Image.
         /// </summary>
-        public static Image<Rgba32> EXCEPT {
+        public static Byte[] EXCEPT {
             get {
                 object obj = ResourceManager.GetObject("EXCEPT", resourceCulture);
-                return ((Image<Rgba32>)(obj));
+                return ((Byte[])(obj));
             }
         }
         
         /// <summary>
         ///   Looks up a localized resource of type Image.
         /// </summary>
-        public static Image<Rgba32> EXCEPTCohortAggregate {
+        public static Byte[] EXCEPTCohortAggregate {
             get {
                 object obj = ResourceManager.GetObject("EXCEPTCohortAggregate", resourceCulture);
-                return ((Image<Rgba32>)(obj));
+                return ((Byte[])(obj));
             }
         }
         
         /// <summary>
         ///   Looks up a localized resource of type Image.
         /// </summary>
-        public static Image<Rgba32> Exe {
+        public static Byte[] Exe {
             get {
                 object obj = ResourceManager.GetObject("Exe", resourceCulture);
-                return ((Image<Rgba32>)(obj));
+                return ((Byte[])(obj));
             }
         }
         
         /// <summary>
         ///   Looks up a localized resource of type Image.
         /// </summary>
-        public static Image<Rgba32> ExecuteArrow {
+        public static Byte[] ExecuteArrow {
             get {
                 object obj = ResourceManager.GetObject("ExecuteArrow", resourceCulture);
-                return ((Image<Rgba32>)(obj));
+                return ((Byte[])(obj));
             }
         }
         
         /// <summary>
         ///   Looks up a localized resource of type Image.
         /// </summary>
-        public static Image<Rgba32> ExecuteArrowWithTickOverlay {
+        public static Byte[] ExecuteArrowWithTickOverlay {
             get {
                 object obj = ResourceManager.GetObject("ExecuteArrowWithTickOverlay", resourceCulture);
-                return ((Image<Rgba32>)(obj));
+                return ((Byte[])(obj));
             }
         }
         
         /// <summary>
         ///   Looks up a localized resource of type Image.
         /// </summary>
-        public static Image<Rgba32> ExpandAllNodes {
+        public static Byte[] ExpandAllNodes {
             get {
                 object obj = ResourceManager.GetObject("ExpandAllNodes", resourceCulture);
-                return ((Image<Rgba32>)(obj));
+                return ((Byte[])(obj));
             }
         }
         
         /// <summary>
         ///   Looks up a localized resource of type System.Byte[].
         /// </summary>
-        public static Image<Rgba32> ExtendedProperty {
+        public static Byte[] ExtendedProperty {
             get {
                 object obj = ResourceManager.GetObject("ExtendedProperty", resourceCulture);
-                return ((Image<Rgba32>)(obj));
+                return ((Byte[])(obj));
             }
         }
         
         /// <summary>
         ///   Looks up a localized resource of type Image.
         /// </summary>
-        public static Image<Rgba32> ExternalCohortTable {
+        public static Byte[] ExternalCohortTable {
             get {
                 object obj = ResourceManager.GetObject("ExternalCohortTable", resourceCulture);
-                return ((Image<Rgba32>)(obj));
+                return ((Byte[])(obj));
             }
         }
         
         /// <summary>
         ///   Looks up a localized resource of type Image.
         /// </summary>
-        public static Image<Rgba32> ExternalDatabaseServer {
+        public static Byte[] ExternalDatabaseServer {
             get {
                 object obj = ResourceManager.GetObject("ExternalDatabaseServer", resourceCulture);
-                return ((Image<Rgba32>)(obj));
+                return ((Byte[])(obj));
             }
         }
         
         /// <summary>
         ///   Looks up a localized resource of type Image.
         /// </summary>
-        public static Image<Rgba32> ExternalDatabaseServer_ANO {
+        public static Byte[] ExternalDatabaseServer_ANO {
             get {
                 object obj = ResourceManager.GetObject("ExternalDatabaseServer_ANO", resourceCulture);
-                return ((Image<Rgba32>)(obj));
+                return ((Byte[])(obj));
             }
         }
         
         /// <summary>
         ///   Looks up a localized resource of type Image.
         /// </summary>
-        public static Image<Rgba32> ExternalDatabaseServer_Cache {
+        public static Byte[] ExternalDatabaseServer_Cache {
             get {
                 object obj = ResourceManager.GetObject("ExternalDatabaseServer_Cache", resourceCulture);
-                return ((Image<Rgba32>)(obj));
+                return ((Byte[])(obj));
             }
         }
         
         /// <summary>
         ///   Looks up a localized resource of type Image.
         /// </summary>
-        public static Image<Rgba32> ExternalDatabaseServer_DQE {
+        public static Byte[] ExternalDatabaseServer_DQE {
             get {
                 object obj = ResourceManager.GetObject("ExternalDatabaseServer_DQE", resourceCulture);
-                return ((Image<Rgba32>)(obj));
+                return ((Byte[])(obj));
             }
         }
         
         /// <summary>
         ///   Looks up a localized resource of type Image.
         /// </summary>
-        public static Image<Rgba32> ExternalDatabaseServer_IdentifierDump {
+        public static Byte[] ExternalDatabaseServer_IdentifierDump {
             get {
                 object obj = ResourceManager.GetObject("ExternalDatabaseServer_IdentifierDump", resourceCulture);
-                return ((Image<Rgba32>)(obj));
+                return ((Byte[])(obj));
             }
         }
         
         /// <summary>
         ///   Looks up a localized resource of type Image.
         /// </summary>
-        public static Image<Rgba32> ExternalDatabaseServer_Logging {
+        public static Byte[] ExternalDatabaseServer_Logging {
             get {
                 object obj = ResourceManager.GetObject("ExternalDatabaseServer_Logging", resourceCulture);
-                return ((Image<Rgba32>)(obj));
+                return ((Byte[])(obj));
             }
         }
         
         /// <summary>
         ///   Looks up a localized resource of type Image.
         /// </summary>
-        public static Image<Rgba32> ExtractableCohort {
+        public static Byte[] ExtractableCohort {
             get {
                 object obj = ResourceManager.GetObject("ExtractableCohort", resourceCulture);
-                return ((Image<Rgba32>)(obj));
+                return ((Byte[])(obj));
             }
         }
         
         /// <summary>
         ///   Looks up a localized resource of type Image.
         /// </summary>
-        public static Image<Rgba32> ExtractableColumn {
+        public static Byte[] ExtractableColumn {
             get {
                 object obj = ResourceManager.GetObject("ExtractableColumn", resourceCulture);
-                return ((Image<Rgba32>)(obj));
+                return ((Byte[])(obj));
             }
         }
         
         /// <summary>
         ///   Looks up a localized resource of type Image.
         /// </summary>
-        public static Image<Rgba32> ExtractableDataSet {
+        public static Byte[] ExtractableDataSet {
             get {
                 object obj = ResourceManager.GetObject("ExtractableDataSet", resourceCulture);
-                return ((Image<Rgba32>)(obj));
+                return ((Byte[])(obj));
             }
         }
         
         /// <summary>
         ///   Looks up a localized resource of type Image.
         /// </summary>
-        public static Image<Rgba32> ExtractableDataSetDisabled {
+        public static Byte[] ExtractableDataSetDisabled {
             get {
                 object obj = ResourceManager.GetObject("ExtractableDataSetDisabled", resourceCulture);
-                return ((Image<Rgba32>)(obj));
+                return ((Byte[])(obj));
             }
         }
         
         /// <summary>
         ///   Looks up a localized resource of type Image.
         /// </summary>
-        public static Image<Rgba32> ExtractableDataSetPackage {
+        public static Byte[] ExtractableDataSetPackage {
             get {
                 object obj = ResourceManager.GetObject("ExtractableDataSetPackage", resourceCulture);
-                return ((Image<Rgba32>)(obj));
+                return ((Byte[])(obj));
             }
         }
         
         /// <summary>
         ///   Looks up a localized resource of type Image.
         /// </summary>
-        public static Image<Rgba32> ExtractableDataSetsNode {
+        public static Byte[] ExtractableDataSetsNode {
             get {
                 object obj = ResourceManager.GetObject("ExtractableDataSetsNode", resourceCulture);
-                return ((Image<Rgba32>)(obj));
+                return ((Byte[])(obj));
             }
         }
         
         /// <summary>
         ///   Looks up a localized resource of type Image.
         /// </summary>
-        public static Image<Rgba32> ExtractionConfiguration {
+        public static Byte[] ExtractionConfiguration {
             get {
                 object obj = ResourceManager.GetObject("ExtractionConfiguration", resourceCulture);
-                return ((Image<Rgba32>)(obj));
+                return ((Byte[])(obj));
             }
         }
         
         /// <summary>
         ///   Looks up a localized resource of type Image.
         /// </summary>
-        public static Image<Rgba32> ExtractionConfigurationsNode {
+        public static Byte[] ExtractionConfigurationsNode {
             get {
                 object obj = ResourceManager.GetObject("ExtractionConfigurationsNode", resourceCulture);
-                return ((Image<Rgba32>)(obj));
+                return ((Byte[])(obj));
             }
         }
         
         /// <summary>
         ///   Looks up a localized resource of type Image.
         /// </summary>
-        public static Image<Rgba32> ExtractionDirectoryNode {
+        public static Byte[] ExtractionDirectoryNode {
             get {
                 object obj = ResourceManager.GetObject("ExtractionDirectoryNode", resourceCulture);
-                return ((Image<Rgba32>)(obj));
+                return ((Byte[])(obj));
             }
         }
         
         /// <summary>
         ///   Looks up a localized resource of type Image.
         /// </summary>
-        public static Image<Rgba32> ExtractionFilterParameterSet {
+        public static Byte[] ExtractionFilterParameterSet {
             get {
                 object obj = ResourceManager.GetObject("ExtractionFilterParameterSet", resourceCulture);
-                return ((Image<Rgba32>)(obj));
+                return ((Byte[])(obj));
             }
         }
         
         /// <summary>
         ///   Looks up a localized resource of type Image.
         /// </summary>
-        public static Image<Rgba32> ExtractionInformation {
+        public static Byte[] ExtractionInformation {
             get {
                 object obj = ResourceManager.GetObject("ExtractionInformation", resourceCulture);
-                return ((Image<Rgba32>)(obj));
+                return ((Byte[])(obj));
             }
         }
         
         /// <summary>
         ///   Looks up a localized resource of type Image.
         /// </summary>
-        public static Image<Rgba32> ExtractionInformation_ProjectSpecific {
+        public static Byte[] ExtractionInformation_ProjectSpecific {
             get {
                 object obj = ResourceManager.GetObject("ExtractionInformation_ProjectSpecific", resourceCulture);
-                return ((Image<Rgba32>)(obj));
+                return ((Byte[])(obj));
             }
         }
         
         /// <summary>
         ///   Looks up a localized resource of type Image.
         /// </summary>
-        public static Image<Rgba32> ExtractionInformation_SpecialApproval {
+        public static Byte[] ExtractionInformation_SpecialApproval {
             get {
                 object obj = ResourceManager.GetObject("ExtractionInformation_SpecialApproval", resourceCulture);
-                return ((Image<Rgba32>)(obj));
+                return ((Byte[])(obj));
             }
         }
         
         /// <summary>
         ///   Looks up a localized resource of type Image.
         /// </summary>
-        public static Image<Rgba32> ExtractionInformation_Supplemental {
+        public static Byte[] ExtractionInformation_Supplemental {
             get {
                 object obj = ResourceManager.GetObject("ExtractionInformation_Supplemental", resourceCulture);
-                return ((Image<Rgba32>)(obj));
+                return ((Byte[])(obj));
             }
         }
         
         /// <summary>
         ///   Looks up a localized resource of type Image.
         /// </summary>
-        public static Image<Rgba32> Failed {
+        public static Byte[] Failed {
             get {
                 object obj = ResourceManager.GetObject("Failed", resourceCulture);
-                return ((Image<Rgba32>)(obj));
+                return ((Byte[])(obj));
             }
         }
         
         /// <summary>
         ///   Looks up a localized resource of type Image.
         /// </summary>
-        public static Image<Rgba32> Favourite {
+        public static Byte[] Favourite {
             get {
                 object obj = ResourceManager.GetObject("Favourite", resourceCulture);
-                return ((Image<Rgba32>)(obj));
+                return ((Byte[])(obj));
             }
         }
         
         /// <summary>
         ///   Looks up a localized resource of type Image.
         /// </summary>
-        public static Image<Rgba32> File {
+        public static Byte[] File {
             get {
                 object obj = ResourceManager.GetObject("File", resourceCulture);
-                return ((Image<Rgba32>)(obj));
+                return ((Byte[])(obj));
             }
         }
         
         /// <summary>
         ///   Looks up a localized resource of type Image.
         /// </summary>
-        public static Image<Rgba32> FileMissing {
+        public static Byte[] FileMissing {
             get {
                 object obj = ResourceManager.GetObject("FileMissing", resourceCulture);
-                return ((Image<Rgba32>)(obj));
+                return ((Byte[])(obj));
             }
         }
         
         /// <summary>
         ///   Looks up a localized resource of type Image.
         /// </summary>
-        public static Image<Rgba32> Filter {
+        public static Byte[] Filter {
             get {
                 object obj = ResourceManager.GetObject("Filter", resourceCulture);
-                return ((Image<Rgba32>)(obj));
+                return ((Byte[])(obj));
             }
         }
         
         /// <summary>
         ///   Looks up a localized resource of type Image.
         /// </summary>
-        public static Image<Rgba32> FilterContainer {
+        public static Byte[] FilterContainer {
             get {
                 object obj = ResourceManager.GetObject("FilterContainer", resourceCulture);
-                return ((Image<Rgba32>)(obj));
+                return ((Byte[])(obj));
             }
         }
         
         /// <summary>
         ///   Looks up a localized resource of type Image.
         /// </summary>
-        public static Image<Rgba32> FrozenCohortIdentificationConfiguration {
+        public static Byte[] FrozenCohortIdentificationConfiguration {
             get {
                 object obj = ResourceManager.GetObject("FrozenCohortIdentificationConfiguration", resourceCulture);
-                return ((Image<Rgba32>)(obj));
+                return ((Byte[])(obj));
             }
         }
         
         /// <summary>
         ///   Looks up a localized resource of type Image.
         /// </summary>
-        public static Image<Rgba32> FrozenExtractionConfiguration {
+        public static Byte[] FrozenExtractionConfiguration {
             get {
                 object obj = ResourceManager.GetObject("FrozenExtractionConfiguration", resourceCulture);
-                return ((Image<Rgba32>)(obj));
+                return ((Byte[])(obj));
             }
         }
         
         /// <summary>
         ///   Looks up a localized resource of type Image.
         /// </summary>
-        public static Image<Rgba32> FrozenExtractionConfigurationsNode {
+        public static Byte[] FrozenExtractionConfigurationsNode {
             get {
                 object obj = ResourceManager.GetObject("FrozenExtractionConfigurationsNode", resourceCulture);
-                return ((Image<Rgba32>)(obj));
+                return ((Byte[])(obj));
             }
         }
         
         /// <summary>
         ///   Looks up a localized resource of type Image.
         /// </summary>
-        public static Image<Rgba32> GetFilesStage {
+        public static Byte[] GetFilesStage {
             get {
                 object obj = ResourceManager.GetObject("GetFilesStage", resourceCulture);
-                return ((Image<Rgba32>)(obj));
+                return ((Byte[])(obj));
             }
         }
         
         /// <summary>
         ///   Looks up a localized resource of type Image.
         /// </summary>
-        public static Image<Rgba32> GovernanceDocument {
+        public static Byte[] GovernanceDocument {
             get {
                 object obj = ResourceManager.GetObject("GovernanceDocument", resourceCulture);
-                return ((Image<Rgba32>)(obj));
+                return ((Byte[])(obj));
             }
         }
         
         /// <summary>
         ///   Looks up a localized resource of type Image.
         /// </summary>
-        public static Image<Rgba32> GovernancePeriod {
+        public static Byte[] GovernancePeriod {
             get {
                 object obj = ResourceManager.GetObject("GovernancePeriod", resourceCulture);
-                return ((Image<Rgba32>)(obj));
+                return ((Byte[])(obj));
             }
         }
         
         /// <summary>
         ///   Looks up a localized resource of type Image.
         /// </summary>
-        public static Image<Rgba32> Graph {
+        public static Byte[] Graph {
             get {
                 object obj = ResourceManager.GetObject("Graph", resourceCulture);
-                return ((Image<Rgba32>)(obj));
+                return ((Byte[])(obj));
             }
         }
         
         /// <summary>
         ///   Looks up a localized resource of type Image.
         /// </summary>
-        public static Image<Rgba32> GreenIssue {
+        public static Byte[] GreenIssue {
             get {
                 object obj = ResourceManager.GetObject("GreenIssue", resourceCulture);
-                return ((Image<Rgba32>)(obj));
+                return ((Byte[])(obj));
             }
         }
         
         /// <summary>
         ///   Looks up a localized resource of type Image.
         /// </summary>
-        public static Image<Rgba32> Help {
+        public static Byte[] Help {
             get {
                 object obj = ResourceManager.GetObject("Help", resourceCulture);
-                return ((Image<Rgba32>)(obj));
+                return ((Byte[])(obj));
             }
         }
         
         /// <summary>
         ///   Looks up a localized resource of type Image.
         /// </summary>
-        public static Image<Rgba32> ImportFile {
+        public static Byte[] ImportFile {
             get {
                 object obj = ResourceManager.GetObject("ImportFile", resourceCulture);
-                return ((Image<Rgba32>)(obj));
+                return ((Byte[])(obj));
             }
         }
         
         /// <summary>
         ///   Looks up a localized resource of type Image.
         /// </summary>
-        public static Image<Rgba32> INTERSECT {
+        public static Byte[] INTERSECT {
             get {
                 object obj = ResourceManager.GetObject("INTERSECT", resourceCulture);
-                return ((Image<Rgba32>)(obj));
+                return ((Byte[])(obj));
             }
         }
         
         /// <summary>
         ///   Looks up a localized resource of type Image.
         /// </summary>
-        public static Image<Rgba32> INTERSECTCohortAggregate {
+        public static Byte[] INTERSECTCohortAggregate {
             get {
                 object obj = ResourceManager.GetObject("INTERSECTCohortAggregate", resourceCulture);
-                return ((Image<Rgba32>)(obj));
+                return ((Byte[])(obj));
             }
         }
         
         /// <summary>
         ///   Looks up a localized resource of type Image.
         /// </summary>
-        public static Image<Rgba32> JoinableCollectionNode {
+        public static Byte[] JoinableCollectionNode {
             get {
                 object obj = ResourceManager.GetObject("JoinableCollectionNode", resourceCulture);
-                return ((Image<Rgba32>)(obj));
+                return ((Byte[])(obj));
             }
         }
         
         /// <summary>
         ///   Looks up a localized resource of type Image.
         /// </summary>
-        public static Image<Rgba32> JoinInfo {
+        public static Byte[] JoinInfo {
             get {
                 object obj = ResourceManager.GetObject("JoinInfo", resourceCulture);
-                return ((Image<Rgba32>)(obj));
+                return ((Byte[])(obj));
             }
         }
         
         /// <summary>
         ///   Looks up a localized resource of type Image.
         /// </summary>
-        public static Image<Rgba32> Kill {
+        public static Byte[] Kill {
             get {
                 object obj = ResourceManager.GetObject("Kill", resourceCulture);
-                return ((Image<Rgba32>)(obj));
+                return ((Byte[])(obj));
             }
         }
         
         /// <summary>
         ///   Looks up a localized resource of type Image.
         /// </summary>
-        public static Image<Rgba32> LoadBubble {
+        public static Byte[] LoadBubble {
             get {
                 object obj = ResourceManager.GetObject("LoadBubble", resourceCulture);
-                return ((Image<Rgba32>)(obj));
+                return ((Byte[])(obj));
             }
         }
         
         /// <summary>
         ///   Looks up a localized resource of type Image.
         /// </summary>
-        public static Image<Rgba32> LoadBubbleMounting {
+        public static Byte[] LoadBubbleMounting {
             get {
                 object obj = ResourceManager.GetObject("LoadBubbleMounting", resourceCulture);
-                return ((Image<Rgba32>)(obj));
+                return ((Byte[])(obj));
             }
         }
         
         /// <summary>
         ///   Looks up a localized resource of type Image.
         /// </summary>
-        public static Image<Rgba32> LoadDirectoryNode {
+        public static Byte[] LoadDirectoryNode {
             get {
                 object obj = ResourceManager.GetObject("LoadDirectoryNode", resourceCulture);
-                return ((Image<Rgba32>)(obj));
+                return ((Byte[])(obj));
             }
         }
         
         /// <summary>
         ///   Looks up a localized resource of type Image.
         /// </summary>
-        public static Image<Rgba32> LoadFinalDatabase {
+        public static Byte[] LoadFinalDatabase {
             get {
                 object obj = ResourceManager.GetObject("LoadFinalDatabase", resourceCulture);
-                return ((Image<Rgba32>)(obj));
+                return ((Byte[])(obj));
             }
         }
         
         /// <summary>
         ///   Looks up a localized resource of type Image.
         /// </summary>
-        public static Image<Rgba32> LoadMetadata {
+        public static Byte[] LoadMetadata {
             get {
                 object obj = ResourceManager.GetObject("LoadMetadata", resourceCulture);
-                return ((Image<Rgba32>)(obj));
+                return ((Byte[])(obj));
             }
         }
         
         /// <summary>
         ///   Looks up a localized resource of type Image.
         /// </summary>
-        public static Image<Rgba32> LoadMetadataScheduleNode {
+        public static Byte[] LoadMetadataScheduleNode {
             get {
                 object obj = ResourceManager.GetObject("LoadMetadataScheduleNode", resourceCulture);
-                return ((Image<Rgba32>)(obj));
+                return ((Byte[])(obj));
             }
         }
         
         /// <summary>
         ///   Looks up a localized resource of type Image.
         /// </summary>
-        public static Image<Rgba32> LoadModuleAssembly {
+        public static Byte[] LoadModuleAssembly {
             get {
                 object obj = ResourceManager.GetObject("LoadModuleAssembly", resourceCulture);
-                return ((Image<Rgba32>)(obj));
+                return ((Byte[])(obj));
             }
         }
         
         /// <summary>
         ///   Looks up a localized resource of type Image.
         /// </summary>
-        public static Image<Rgba32> LoadPeriodically {
+        public static Byte[] LoadPeriodically {
             get {
                 object obj = ResourceManager.GetObject("LoadPeriodically", resourceCulture);
-                return ((Image<Rgba32>)(obj));
+                return ((Byte[])(obj));
             }
         }
         
         /// <summary>
         ///   Looks up a localized resource of type Image.
         /// </summary>
-        public static Image<Rgba32> LoadProgress {
+        public static Byte[] LoadProgress {
             get {
                 object obj = ResourceManager.GetObject("LoadProgress", resourceCulture);
-                return ((Image<Rgba32>)(obj));
+                return ((Byte[])(obj));
             }
         }
         
         /// <summary>
         ///   Looks up a localized resource of type Image.
         /// </summary>
-        public static Image<Rgba32> Logging {
+        public static Byte[] Logging {
             get {
                 object obj = ResourceManager.GetObject("Logging", resourceCulture);
-                return ((Image<Rgba32>)(obj));
+                return ((Byte[])(obj));
             }
         }
         
         /// <summary>
         ///   Looks up a localized resource of type Image.
         /// </summary>
-        public static Image<Rgba32> Lookup {
+        public static Byte[] Lookup {
             get {
                 object obj = ResourceManager.GetObject("Lookup", resourceCulture);
-                return ((Image<Rgba32>)(obj));
+                return ((Byte[])(obj));
             }
         }
         
         /// <summary>
         ///   Looks up a localized resource of type Image.
         /// </summary>
-        public static Image<Rgba32> LookupCompositeJoinInfo {
+        public static Byte[] LookupCompositeJoinInfo {
             get {
                 object obj = ResourceManager.GetObject("LookupCompositeJoinInfo", resourceCulture);
-                return ((Image<Rgba32>)(obj));
+                return ((Byte[])(obj));
             }
         }
         
         /// <summary>
         ///   Looks up a localized resource of type Image.
         /// </summary>
-        public static Image<Rgba32> Main {
+        public static Byte[] Main {
             get {
                 object obj = ResourceManager.GetObject("Main", resourceCulture);
-                return ((Image<Rgba32>)(obj));
+                return ((Byte[])(obj));
             }
         }
         
         /// <summary>
         ///   Looks up a localized resource of type Image.
         /// </summary>
-        public static Image<Rgba32> MakeProjectSpecificCatalogueNormalAgain {
+        public static Byte[] MakeProjectSpecificCatalogueNormalAgain {
             get {
                 object obj = ResourceManager.GetObject("MakeProjectSpecificCatalogueNormalAgain", resourceCulture);
-                return ((Image<Rgba32>)(obj));
+                return ((Byte[])(obj));
             }
         }
         
         /// <summary>
         ///   Looks up a localized resource of type Image.
         /// </summary>
-        public static Image<Rgba32> Menu {
+        public static Byte[] Menu {
             get {
                 object obj = ResourceManager.GetObject("Menu", resourceCulture);
-                return ((Image<Rgba32>)(obj));
+                return ((Byte[])(obj));
             }
         }
         
         /// <summary>
         ///   Looks up a localized resource of type Image.
         /// </summary>
-        public static Image<Rgba32> NoIconAvailable {
+        public static Byte[] NoIconAvailable {
             get {
                 object obj = ResourceManager.GetObject("NoIconAvailable", resourceCulture);
-                return ((Image<Rgba32>)(obj));
+                return ((Byte[])(obj));
             }
         }
         
         /// <summary>
         ///   Looks up a localized resource of type Image.
         /// </summary>
-        public static Image<Rgba32> ObjectExport {
+        public static Byte[] ObjectExport {
             get {
                 object obj = ResourceManager.GetObject("ObjectExport", resourceCulture);
-                return ((Image<Rgba32>)(obj));
+                return ((Byte[])(obj));
             }
         }
         
         /// <summary>
         ///   Looks up a localized resource of type Image.
         /// </summary>
-        public static Image<Rgba32> ObjectImport {
+        public static Byte[] ObjectImport {
             get {
                 object obj = ResourceManager.GetObject("ObjectImport", resourceCulture);
-                return ((Image<Rgba32>)(obj));
+                return ((Byte[])(obj));
             }
         }
         
         /// <summary>
         ///   Looks up a localized resource of type Image.
         /// </summary>
-        public static Image<Rgba32> OrangeIssue {
+        public static Byte[] OrangeIssue {
             get {
                 object obj = ResourceManager.GetObject("OrangeIssue", resourceCulture);
-                return ((Image<Rgba32>)(obj));
+                return ((Byte[])(obj));
             }
         }
         
         /// <summary>
         ///   Looks up a localized resource of type Image.
         /// </summary>
-        public static Image<Rgba32> OtherPipelinesNode {
+        public static Byte[] OtherPipelinesNode {
             get {
                 object obj = ResourceManager.GetObject("OtherPipelinesNode", resourceCulture);
-                return ((Image<Rgba32>)(obj));
+                return ((Byte[])(obj));
             }
         }
         
         /// <summary>
         ///   Looks up a localized resource of type Image.
         /// </summary>
-        public static Image<Rgba32> ParametersNode {
+        public static Byte[] ParametersNode {
             get {
                 object obj = ResourceManager.GetObject("ParametersNode", resourceCulture);
-                return ((Image<Rgba32>)(obj));
+                return ((Byte[])(obj));
             }
         }
         
         /// <summary>
         ///   Looks up a localized resource of type Image.
         /// </summary>
-        public static Image<Rgba32> PatientIndexTable {
+        public static Byte[] PatientIndexTable {
             get {
                 object obj = ResourceManager.GetObject("PatientIndexTable", resourceCulture);
-                return ((Image<Rgba32>)(obj));
+                return ((Byte[])(obj));
             }
         }
         
         /// <summary>
         ///   Looks up a localized resource of type Image.
         /// </summary>
-        public static Image<Rgba32> PermissionWindow {
+        public static Byte[] PermissionWindow {
             get {
                 object obj = ResourceManager.GetObject("PermissionWindow", resourceCulture);
-                return ((Image<Rgba32>)(obj));
+                return ((Byte[])(obj));
             }
         }
         
         /// <summary>
         ///   Looks up a localized resource of type Image.
         /// </summary>
-        public static Image<Rgba32> Pipeline {
+        public static Byte[] Pipeline {
             get {
                 object obj = ResourceManager.GetObject("Pipeline", resourceCulture);
-                return ((Image<Rgba32>)(obj));
+                return ((Byte[])(obj));
             }
         }
         
         /// <summary>
         ///   Looks up a localized resource of type Image.
         /// </summary>
-        public static Image<Rgba32> PipelineComponent {
+        public static Byte[] PipelineComponent {
             get {
                 object obj = ResourceManager.GetObject("PipelineComponent", resourceCulture);
-                return ((Image<Rgba32>)(obj));
+                return ((Byte[])(obj));
             }
         }
         
         /// <summary>
         ///   Looks up a localized resource of type Image.
         /// </summary>
-        public static Image<Rgba32> PipelineComponentArgument {
+        public static Byte[] PipelineComponentArgument {
             get {
                 object obj = ResourceManager.GetObject("PipelineComponentArgument", resourceCulture);
-                return ((Image<Rgba32>)(obj));
+                return ((Byte[])(obj));
             }
         }
         
         /// <summary>
         ///   Looks up a localized resource of type Image.
         /// </summary>
-        public static Image<Rgba32> PipelineComponentDestination {
+        public static Byte[] PipelineComponentDestination {
             get {
                 object obj = ResourceManager.GetObject("PipelineComponentDestination", resourceCulture);
-                return ((Image<Rgba32>)(obj));
+                return ((Byte[])(obj));
             }
         }
         
         /// <summary>
         ///   Looks up a localized resource of type Image.
         /// </summary>
-        public static Image<Rgba32> PipelineComponentSource {
+        public static Byte[] PipelineComponentSource {
             get {
                 object obj = ResourceManager.GetObject("PipelineComponentSource", resourceCulture);
-                return ((Image<Rgba32>)(obj));
+                return ((Byte[])(obj));
             }
         }
         
         /// <summary>
         ///   Looks up a localized resource of type Image.
         /// </summary>
-        public static Image<Rgba32> PivotField {
+        public static Byte[] PivotField {
             get {
                 object obj = ResourceManager.GetObject("PivotField", resourceCulture);
-                return ((Image<Rgba32>)(obj));
+                return ((Byte[])(obj));
             }
         }
         
         /// <summary>
         ///   Looks up a localized resource of type Image.
         /// </summary>
-        public static Image<Rgba32> Plugin {
+        public static Byte[] Plugin {
             get {
                 object obj = ResourceManager.GetObject("Plugin", resourceCulture);
-                return ((Image<Rgba32>)(obj));
+                return ((Byte[])(obj));
             }
         }
         
         /// <summary>
         ///   Looks up a localized resource of type Image.
         /// </summary>
-        public static Image<Rgba32> PreLoadDiscardedColumn {
+        public static Byte[] PreLoadDiscardedColumn {
             get {
                 object obj = ResourceManager.GetObject("PreLoadDiscardedColumn", resourceCulture);
-                return ((Image<Rgba32>)(obj));
+                return ((Byte[])(obj));
             }
         }
         
         /// <summary>
         ///   Looks up a localized resource of type Image.
         /// </summary>
-        public static Image<Rgba32> PreLoadDiscardedColumnsNode {
+        public static Byte[] PreLoadDiscardedColumnsNode {
             get {
                 object obj = ResourceManager.GetObject("PreLoadDiscardedColumnsNode", resourceCulture);
-                return ((Image<Rgba32>)(obj));
+                return ((Byte[])(obj));
             }
         }
         
         /// <summary>
         ///   Looks up a localized resource of type Image.
         /// </summary>
-        public static Image<Rgba32> ProcessTask {
+        public static Byte[] ProcessTask {
             get {
                 object obj = ResourceManager.GetObject("ProcessTask", resourceCulture);
-                return ((Image<Rgba32>)(obj));
+                return ((Byte[])(obj));
             }
         }
         
         /// <summary>
         ///   Looks up a localized resource of type Image.
         /// </summary>
-        public static Image<Rgba32> ProcessTaskArgument {
+        public static Byte[] ProcessTaskArgument {
             get {
                 object obj = ResourceManager.GetObject("ProcessTaskArgument", resourceCulture);
-                return ((Image<Rgba32>)(obj));
+                return ((Byte[])(obj));
             }
         }
         
         /// <summary>
         ///   Looks up a localized resource of type Image.
         /// </summary>
-        public static Image<Rgba32> Project {
+        public static Byte[] Project {
             get {
                 object obj = ResourceManager.GetObject("Project", resourceCulture);
-                return ((Image<Rgba32>)(obj));
+                return ((Byte[])(obj));
             }
         }
         
         /// <summary>
         ///   Looks up a localized resource of type Image.
         /// </summary>
-        public static Image<Rgba32> ProjectCatalogue {
+        public static Byte[] ProjectCatalogue {
             get {
                 object obj = ResourceManager.GetObject("ProjectCatalogue", resourceCulture);
-                return ((Image<Rgba32>)(obj));
+                return ((Byte[])(obj));
             }
         }
         
         /// <summary>
         ///   Looks up a localized resource of type Image.
         /// </summary>
-        public static Image<Rgba32> ProjectCataloguesNode {
+        public static Byte[] ProjectCataloguesNode {
             get {
                 object obj = ResourceManager.GetObject("ProjectCataloguesNode", resourceCulture);
-                return ((Image<Rgba32>)(obj));
+                return ((Byte[])(obj));
             }
         }
         
         /// <summary>
         ///   Looks up a localized resource of type Image.
         /// </summary>
-        public static Image<Rgba32> ProjectCohortIdentificationConfigurationAssociation {
+        public static Byte[] ProjectCohortIdentificationConfigurationAssociation {
             get {
                 object obj = ResourceManager.GetObject("ProjectCohortIdentificationConfigurationAssociation", resourceCulture);
-                return ((Image<Rgba32>)(obj));
+                return ((Byte[])(obj));
             }
         }
         
         /// <summary>
         ///   Looks up a localized resource of type Image.
         /// </summary>
-        public static Image<Rgba32> ProjectCohortIdentificationConfigurationAssociationsNode {
+        public static Byte[] ProjectCohortIdentificationConfigurationAssociationsNode {
             get {
                 object obj = ResourceManager.GetObject("ProjectCohortIdentificationConfigurationAssociationsNode", resourceCulture);
-                return ((Image<Rgba32>)(obj));
+                return ((Byte[])(obj));
             }
         }
         
         /// <summary>
         ///   Looks up a localized resource of type Image.
         /// </summary>
-        public static Image<Rgba32> ProjectCohortsNode {
+        public static Byte[] ProjectCohortsNode {
             get {
                 object obj = ResourceManager.GetObject("ProjectCohortsNode", resourceCulture);
-                return ((Image<Rgba32>)(obj));
+                return ((Byte[])(obj));
             }
         }
         
         /// <summary>
         ///   Looks up a localized resource of type Image.
         /// </summary>
-        public static Image<Rgba32> ProjectSavedCohortsNode {
+        public static Byte[] ProjectSavedCohortsNode {
             get {
                 object obj = ResourceManager.GetObject("ProjectSavedCohortsNode", resourceCulture);
-                return ((Image<Rgba32>)(obj));
+                return ((Byte[])(obj));
             }
         }
         
         /// <summary>
         ///   Looks up a localized resource of type Image.
         /// </summary>
-        public static Image<Rgba32> ProjectsNode {
+        public static Byte[] ProjectsNode {
             get {
                 object obj = ResourceManager.GetObject("ProjectsNode", resourceCulture);
-                return ((Image<Rgba32>)(obj));
+                return ((Byte[])(obj));
             }
         }
         
         /// <summary>
         ///   Looks up a localized resource of type Image.
         /// </summary>
-        public static Image<Rgba32> RedIssue {
+        public static Byte[] RedIssue {
             get {
                 object obj = ResourceManager.GetObject("RedIssue", resourceCulture);
-                return ((Image<Rgba32>)(obj));
+                return ((Byte[])(obj));
             }
         }
         
         /// <summary>
         ///   Looks up a localized resource of type Image.
         /// </summary>
-        public static Image<Rgba32> Release {
+        public static Byte[] Release {
             get {
                 object obj = ResourceManager.GetObject("Release", resourceCulture);
-                return ((Image<Rgba32>)(obj));
+                return ((Byte[])(obj));
             }
         }
         
         /// <summary>
         ///   Looks up a localized resource of type Image.
         /// </summary>
-        public static Image<Rgba32> ReleaseLog {
+        public static Byte[] ReleaseLog {
             get {
                 object obj = ResourceManager.GetObject("ReleaseLog", resourceCulture);
-                return ((Image<Rgba32>)(obj));
+                return ((Byte[])(obj));
             }
         }
         
         /// <summary>
         ///   Looks up a localized resource of type Image.
         /// </summary>
-        public static Image<Rgba32> RemoteRDMP {
+        public static Byte[] RemoteRDMP {
             get {
                 object obj = ResourceManager.GetObject("RemoteRDMP", resourceCulture);
-                return ((Image<Rgba32>)(obj));
+                return ((Byte[])(obj));
             }
         }
         
         /// <summary>
         ///   Looks up a localized resource of type Image.
         /// </summary>
-        public static Image<Rgba32> ReOrder {
+        public static Byte[] ReOrder {
             get {
                 object obj = ResourceManager.GetObject("ReOrder", resourceCulture);
-                return ((Image<Rgba32>)(obj));
+                return ((Byte[])(obj));
             }
         }
         
         /// <summary>
         ///   Looks up a localized resource of type Image.
         /// </summary>
-        public static Image<Rgba32> RowCounts_Ignore {
+        public static Byte[] RowCounts_Ignore {
             get {
                 object obj = ResourceManager.GetObject("RowCounts_Ignore", resourceCulture);
-                return ((Image<Rgba32>)(obj));
+                return ((Byte[])(obj));
             }
         }
         
         /// <summary>
         ///   Looks up a localized resource of type Image.
         /// </summary>
-        public static Image<Rgba32> RowCounts_Respect {
+        public static Byte[] RowCounts_Respect {
             get {
                 object obj = ResourceManager.GetObject("RowCounts_Respect", resourceCulture);
-                return ((Image<Rgba32>)(obj));
+                return ((Byte[])(obj));
             }
         }
         
         /// <summary>
         ///   Looks up a localized resource of type Image.
         /// </summary>
-        public static Image<Rgba32> SelectedDataSetsForcedJoin {
+        public static Byte[] SelectedDataSetsForcedJoin {
             get {
                 object obj = ResourceManager.GetObject("SelectedDataSetsForcedJoin", resourceCulture);
-                return ((Image<Rgba32>)(obj));
+                return ((Byte[])(obj));
             }
         }
         
         /// <summary>
         ///   Looks up a localized resource of type Image.
         /// </summary>
-        public static Image<Rgba32> Spanner {
+        public static Byte[] Spanner {
             get {
                 object obj = ResourceManager.GetObject("Spanner", resourceCulture);
-                return ((Image<Rgba32>)(obj));
+                return ((Byte[])(obj));
             }
         }
         
         /// <summary>
         ///   Looks up a localized resource of type Image.
         /// </summary>
-        public static Image<Rgba32> SpontaneouslyInventedColumn {
+        public static Byte[] SpontaneouslyInventedColumn {
             get {
                 object obj = ResourceManager.GetObject("SpontaneouslyInventedColumn", resourceCulture);
-                return ((Image<Rgba32>)(obj));
+                return ((Byte[])(obj));
             }
         }
         
         /// <summary>
         ///   Looks up a localized resource of type Image.
         /// </summary>
-        public static Image<Rgba32> SQL {
+        public static Byte[] SQL {
             get {
                 object obj = ResourceManager.GetObject("SQL", resourceCulture);
-                return ((Image<Rgba32>)(obj));
+                return ((Byte[])(obj));
             }
         }
         
         /// <summary>
         ///   Looks up a localized resource of type Image.
         /// </summary>
-        public static Image<Rgba32> SqlThenVSNow {
+        public static Byte[] SqlThenVSNow {
             get {
                 object obj = ResourceManager.GetObject("SqlThenVSNow", resourceCulture);
-                return ((Image<Rgba32>)(obj));
+                return ((Byte[])(obj));
             }
         }
         
         /// <summary>
         ///   Looks up a localized resource of type Image.
         /// </summary>
-        public static Image<Rgba32> StandardPipelineUseCaseNode {
+        public static Byte[] StandardPipelineUseCaseNode {
             get {
                 object obj = ResourceManager.GetObject("StandardPipelineUseCaseNode", resourceCulture);
-                return ((Image<Rgba32>)(obj));
+                return ((Byte[])(obj));
             }
         }
         
         /// <summary>
         ///   Looks up a localized resource of type Image.
         /// </summary>
-        public static Image<Rgba32> StandardRegex {
+        public static Byte[] StandardRegex {
             get {
                 object obj = ResourceManager.GetObject("StandardRegex", resourceCulture);
-                return ((Image<Rgba32>)(obj));
+                return ((Byte[])(obj));
             }
         }
         
         /// <summary>
         ///   Looks up a localized resource of type Image.
         /// </summary>
-        public static Image<Rgba32> StarHollow {
+        public static Byte[] StarHollow {
             get {
                 object obj = ResourceManager.GetObject("StarHollow", resourceCulture);
-                return ((Image<Rgba32>)(obj));
+                return ((Byte[])(obj));
             }
         }
         
         /// <summary>
         ///   Looks up a localized resource of type Image.
         /// </summary>
-        public static Image<Rgba32> SupplementalExtractionResults {
+        public static Byte[] SupplementalExtractionResults {
             get {
                 object obj = ResourceManager.GetObject("SupplementalExtractionResults", resourceCulture);
-                return ((Image<Rgba32>)(obj));
+                return ((Byte[])(obj));
             }
         }
         
         /// <summary>
         ///   Looks up a localized resource of type Image.
         /// </summary>
-        public static Image<Rgba32> SupportingDocument {
+        public static Byte[] SupportingDocument {
             get {
                 object obj = ResourceManager.GetObject("SupportingDocument", resourceCulture);
-                return ((Image<Rgba32>)(obj));
+                return ((Byte[])(obj));
             }
         }
         
         /// <summary>
         ///   Looks up a localized resource of type Image.
         /// </summary>
-        public static Image<Rgba32> SupportingDocumentExtractable {
+        public static Byte[] SupportingDocumentExtractable {
             get {
                 object obj = ResourceManager.GetObject("SupportingDocumentExtractable", resourceCulture);
-                return ((Image<Rgba32>)(obj));
+                return ((Byte[])(obj));
             }
         }
         
         /// <summary>
         ///   Looks up a localized resource of type Image.
         /// </summary>
-        public static Image<Rgba32> SupportingDocumentExtractableGlobal {
+        public static Byte[] SupportingDocumentExtractableGlobal {
             get {
                 object obj = ResourceManager.GetObject("SupportingDocumentExtractableGlobal", resourceCulture);
-                return ((Image<Rgba32>)(obj));
+                return ((Byte[])(obj));
             }
         }
         
         /// <summary>
         ///   Looks up a localized resource of type Image.
         /// </summary>
-        public static Image<Rgba32> SupportingDocumentGlobal {
+        public static Byte[] SupportingDocumentGlobal {
             get {
                 object obj = ResourceManager.GetObject("SupportingDocumentGlobal", resourceCulture);
-                return ((Image<Rgba32>)(obj));
+                return ((Byte[])(obj));
             }
         }
         
         /// <summary>
         ///   Looks up a localized resource of type Image.
         /// </summary>
-        public static Image<Rgba32> SupportingSqlExtractable {
+        public static Byte[] SupportingSqlExtractable {
             get {
                 object obj = ResourceManager.GetObject("SupportingSqlExtractable", resourceCulture);
-                return ((Image<Rgba32>)(obj));
+                return ((Byte[])(obj));
             }
         }
         
         /// <summary>
         ///   Looks up a localized resource of type Image.
         /// </summary>
-        public static Image<Rgba32> SupportingSqlExtractableGlobal {
+        public static Byte[] SupportingSqlExtractableGlobal {
             get {
                 object obj = ResourceManager.GetObject("SupportingSqlExtractableGlobal", resourceCulture);
-                return ((Image<Rgba32>)(obj));
+                return ((Byte[])(obj));
             }
         }
         
         /// <summary>
         ///   Looks up a localized resource of type Image.
         /// </summary>
-        public static Image<Rgba32> SupportingSqlGlobal {
+        public static Byte[] SupportingSqlGlobal {
             get {
                 object obj = ResourceManager.GetObject("SupportingSqlGlobal", resourceCulture);
-                return ((Image<Rgba32>)(obj));
+                return ((Byte[])(obj));
             }
         }
         
         /// <summary>
         ///   Looks up a localized resource of type Image.
         /// </summary>
-        public static Image<Rgba32> SupportingSQLTable {
+        public static Byte[] SupportingSQLTable {
             get {
                 object obj = ResourceManager.GetObject("SupportingSQLTable", resourceCulture);
-                return ((Image<Rgba32>)(obj));
+                return ((Byte[])(obj));
             }
         }
         
         /// <summary>
         ///   Looks up a localized resource of type Image.
         /// </summary>
-        public static Image<Rgba32> Sync {
+        public static Byte[] Sync {
             get {
                 object obj = ResourceManager.GetObject("Sync", resourceCulture);
-                return ((Image<Rgba32>)(obj));
+                return ((Byte[])(obj));
             }
         }
         
         /// <summary>
         ///   Looks up a localized resource of type Image.
         /// </summary>
-        public static Image<Rgba32> TableInfo {
+        public static Byte[] TableInfo {
             get {
                 object obj = ResourceManager.GetObject("TableInfo", resourceCulture);
-                return ((Image<Rgba32>)(obj));
+                return ((Byte[])(obj));
             }
         }
         
         /// <summary>
         ///   Looks up a localized resource of type Image.
         /// </summary>
-        public static Image<Rgba32> TableInfoServerNode {
+        public static Byte[] TableInfoServerNode {
             get {
                 object obj = ResourceManager.GetObject("TableInfoServerNode", resourceCulture);
-                return ((Image<Rgba32>)(obj));
+                return ((Byte[])(obj));
             }
         }
         
         /// <summary>
         ///   Looks up a localized resource of type Image.
         /// </summary>
-        public static Image<Rgba32> TableInfoTableValuedFunction {
+        public static Byte[] TableInfoTableValuedFunction {
             get {
                 object obj = ResourceManager.GetObject("TableInfoTableValuedFunction", resourceCulture);
-                return ((Image<Rgba32>)(obj));
+                return ((Byte[])(obj));
             }
         }
         
         /// <summary>
         ///   Looks up a localized resource of type Image.
         /// </summary>
-        public static Image<Rgba32> Tick {
+        public static Byte[] Tick {
             get {
                 object obj = ResourceManager.GetObject("Tick", resourceCulture);
-                return ((Image<Rgba32>)(obj));
+                return ((Byte[])(obj));
             }
         }
         
         /// <summary>
         ///   Looks up a localized resource of type Image.
         /// </summary>
-        public static Image<Rgba32> TicketingSystemConfiguration {
+        public static Byte[] TicketingSystemConfiguration {
             get {
                 object obj = ResourceManager.GetObject("TicketingSystemConfiguration", resourceCulture);
-                return ((Image<Rgba32>)(obj));
+                return ((Byte[])(obj));
             }
         }
         
         /// <summary>
         ///   Looks up a localized resource of type Image.
         /// </summary>
-        public static Image<Rgba32> TimeCoverageField {
+        public static Byte[] TimeCoverageField {
             get {
                 object obj = ResourceManager.GetObject("TimeCoverageField", resourceCulture);
-                return ((Image<Rgba32>)(obj));
+                return ((Byte[])(obj));
             }
         }
         
         /// <summary>
         ///   Looks up a localized resource of type Image.
         /// </summary>
-        public static Image<Rgba32> TinyGreen {
+        public static Byte[] TinyGreen {
             get {
                 object obj = ResourceManager.GetObject("TinyGreen", resourceCulture);
-                return ((Image<Rgba32>)(obj));
+                return ((Byte[])(obj));
             }
         }
         
         /// <summary>
         ///   Looks up a localized resource of type Image.
         /// </summary>
-        public static Image<Rgba32> TinyRed {
+        public static Byte[] TinyRed {
             get {
                 object obj = ResourceManager.GetObject("TinyRed", resourceCulture);
-                return ((Image<Rgba32>)(obj));
+                return ((Byte[])(obj));
             }
         }
         
         /// <summary>
         ///   Looks up a localized resource of type Image.
         /// </summary>
-        public static Image<Rgba32> TinyYellow {
+        public static Byte[] TinyYellow {
             get {
                 object obj = ResourceManager.GetObject("TinyYellow", resourceCulture);
-                return ((Image<Rgba32>)(obj));
+                return ((Byte[])(obj));
             }
         }
         
         /// <summary>
         ///   Looks up a localized resource of type Image.
         /// </summary>
-        public static Image<Rgba32> UnfreezeExtractionConfiguration {
+        public static Byte[] UnfreezeExtractionConfiguration {
             get {
                 object obj = ResourceManager.GetObject("UnfreezeExtractionConfiguration", resourceCulture);
-                return ((Image<Rgba32>)(obj));
+                return ((Byte[])(obj));
             }
         }
         
         /// <summary>
         ///   Looks up a localized resource of type Image.
         /// </summary>
-        public static Image<Rgba32> UNION {
+        public static Byte[] UNION {
             get {
                 object obj = ResourceManager.GetObject("UNION", resourceCulture);
-                return ((Image<Rgba32>)(obj));
+                return ((Byte[])(obj));
             }
         }
         
         /// <summary>
         ///   Looks up a localized resource of type Image.
         /// </summary>
-        public static Image<Rgba32> UNIONCohortAggregate {
+        public static Byte[] UNIONCohortAggregate {
             get {
                 object obj = ResourceManager.GetObject("UNIONCohortAggregate", resourceCulture);
-                return ((Image<Rgba32>)(obj));
+                return ((Byte[])(obj));
             }
         }
         
         /// <summary>
         ///   Looks up a localized resource of type Image.
         /// </summary>
-        public static Image<Rgba32> Waiting {
+        public static Byte[] Waiting {
             get {
                 object obj = ResourceManager.GetObject("Waiting", resourceCulture);
-                return ((Image<Rgba32>)(obj));
+                return ((Byte[])(obj));
             }
         }
         
         /// <summary>
         ///   Looks up a localized resource of type Image.
         /// </summary>
-        public static Image<Rgba32> WaitingForDatabase {
+        public static Byte[] WaitingForDatabase {
             get {
                 object obj = ResourceManager.GetObject("WaitingForDatabase", resourceCulture);
-                return ((Image<Rgba32>)(obj));
+                return ((Byte[])(obj));
             }
         }
         
         /// <summary>
         ///   Looks up a localized resource of type Image.
         /// </summary>
-        public static Image<Rgba32> Warning {
+        public static Byte[] Warning {
             get {
                 object obj = ResourceManager.GetObject("Warning", resourceCulture);
-                return ((Image<Rgba32>)(obj));
+                return ((Byte[])(obj));
             }
         }
         
         /// <summary>
         ///   Looks up a localized resource of type Image.
         /// </summary>
-        public static Image<Rgba32> WhatIsACohort {
+        public static Byte[] WhatIsACohort {
             get {
                 object obj = ResourceManager.GetObject("WhatIsACohort", resourceCulture);
-                return ((Image<Rgba32>)(obj));
+                return ((Byte[])(obj));
             }
         }
         
         /// <summary>
         ///   Looks up a localized resource of type Image.
         /// </summary>
-        public static Image<Rgba32> WindowLayout {
+        public static Byte[] WindowLayout {
             get {
                 object obj = ResourceManager.GetObject("WindowLayout", resourceCulture);
-                return ((Image<Rgba32>)(obj));
+                return ((Byte[])(obj));
             }
         }
         
         /// <summary>
         ///   Looks up a localized resource of type Image.
         /// </summary>
-        public static Image<Rgba32> Writing {
+        public static Byte[] Writing {
             get {
                 object obj = ResourceManager.GetObject("Writing", resourceCulture);
-                return ((Image<Rgba32>)(obj));
+                return ((Byte[])(obj));
             }
         }
 
         /// <summary>
         ///   Looks up a localized resource of type Image.
         /// </summary>
-        public static Image<Rgba32> Attacher
+        public static Byte[] Attacher
         {
             get
             {
                 object obj = ResourceManager.GetObject("Attacher", resourceCulture);
-                return ((Image<Rgba32>)(obj));
+                return ((Byte[])(obj));
             }
         }
         /// <summary>
         ///   Looks up a localized resource of type Image.
         /// </summary>
-        public static Image<Rgba32> DataProvider
+        public static Byte[] DataProvider
         {
             get
             {
                 object obj = ResourceManager.GetObject("DataProvider", resourceCulture);
-                return ((Image<Rgba32>)(obj));
+                return ((Byte[])(obj));
             }
         }
         /// <summary>
         ///   Looks up a localized resource of type Image.
         /// </summary>
-        public static Image<Rgba32> MutilateDataTables
+        public static Byte[] MutilateDataTables
         {
             get
             {
                 object obj = ResourceManager.GetObject("MutilateDataTables", resourceCulture);
-                return ((Image<Rgba32>)(obj));
+                return ((Byte[])(obj));
             }
         }
     }
