@@ -123,12 +123,12 @@ namespace Rdmp.Core.Tests.DataLoad.Engine.Integration
             
             var dir = LoadDirectory.CreateDirectoryStructure(new DirectoryInfo(TestContext.CurrentContext.TestDirectory),"ExecuteSqlFileRuntimeTaskTests", true);
 
-#pragma warning disable CS0252 // Spurious warning 'Possible unintended reference comparison; left hand side needs cast' since VS doesn't grok Moq fully
+#pragma warning disable CS0252, CS0253 // Spurious warning 'Possible unintended reference comparison; left hand side needs cast' since VS doesn't grok Moq fully
             var sqlArg = new IArgument[]{Mock.Of<IArgument>(x => 
             x.Name == "Sql" &&
             x.Value == sql &&
             x.GetValueAsSystemType() == sql) };
-#pragma warning restore CS0252 // Possible unintended reference comparison; left hand side needs cast
+#pragma warning restore CS0252, CS0253
 
             var args = new RuntimeArgumentCollection(sqlArg, new StageArgs(LoadStage.AdjustRaw, db, dir));
 

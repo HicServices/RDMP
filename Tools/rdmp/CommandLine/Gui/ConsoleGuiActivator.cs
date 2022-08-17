@@ -244,7 +244,12 @@ namespace Rdmp.Core.CommandLine.Gui
             Application.Run(openDir, ConsoleMainWindow.ExceptionPopup);
 
             var selected = openDir.FilePaths.FirstOrDefault();
-            
+
+
+            // entering "null" in a file dialog may return something like "D:\Blah\null"
+            if (string.Equals(Path.GetFileName(selected),"null", StringComparison.CurrentCultureIgnoreCase))
+                return null;
+
             return selected == null ? null : new FileInfo(selected);
         }
         public override FileInfo[] SelectFiles(string prompt, string patternDescription, string pattern)
