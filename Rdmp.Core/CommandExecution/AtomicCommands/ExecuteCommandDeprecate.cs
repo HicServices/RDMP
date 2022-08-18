@@ -44,39 +44,64 @@ namespace Rdmp.Core.CommandExecution.AtomicCommands
             if(_o == null || _o.Length == 0)
                 return;
 
-            // TODO: cancellation doesn't unmark replaced since its object creation
-            // TODO: Don't want to duplicate this kind of thing, maybe move to base class?
-            var commit = UserSettings.EnableCommits ? 
-                new CommitInProgress(BasicActivator.RepositoryLocator, new CommitInProgressSettings(_o)
+            CommitInProgress commit = null;
+            var revert = false;
+            
+            if(UserSettings.EnableCommits)
+                commit = new CommitInProgress(BasicActivator.RepositoryLocator, new CommitInProgressSettings(_o)
                 {
                     UseTransactions = true,
                     Description = GetDescription()
-                }): null;
+                });
 
-            foreach(var o in _o)
+            try
+            {
+                ExecuteImpl();
+
+                // if user cancells transaction
+                if(commit != null && commit.TryFinish(BasicActivator) == null)
+                {
+                    revert = true;
+                }
+            }
+            finally
+            {
+                commit?.Dispose();
+            }
+
+            if(revert)
+            {
+                // go refresh ourselves to the db (uncommitted)
+                foreach (var o in _o)
+                {
+                    o.RevertToDatabaseState();
+                }
+            }
+            else
+            {
+                Publish((DatabaseEntity)_o[0]);
+            }
+        }
+
+        private void ExecuteImpl()
+        {
+            foreach (var o in _o)
             {
                 o.IsDeprecated = _desiredState;
                 o.SaveToDatabase();
             }
 
-
-            if(BasicActivator.IsInteractive && _o.Length == 1 && _o[0] is Catalogue)
+            if (BasicActivator.IsInteractive && _o.Length == 1 && _o[0] is Catalogue)
             {
-                if(_desiredState == true && BasicActivator.YesNo("Do you have a replacement Catalogue you want to link?","Replacement"))
+                if (_desiredState == true && BasicActivator.YesNo("Do you have a replacement Catalogue you want to link?", "Replacement"))
                 {
-                    var cmd = new ExecuteCommandReplacedBy(BasicActivator,_o[0],null)
+                    var cmd = new ExecuteCommandReplacedBy(BasicActivator, _o[0], null)
                     {
                         PromptToPickReplacement = true
                     };
                     cmd.Execute();
                 }
             }
-
-            if(commit == null || commit.TryFinish(BasicActivator) != null)
-            {
-                Publish((DatabaseEntity)_o[0]);
-            }
-
         }
 
         private string GetDescription()
