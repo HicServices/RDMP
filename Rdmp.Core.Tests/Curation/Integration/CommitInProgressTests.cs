@@ -20,7 +20,7 @@ namespace Rdmp.Core.Tests.Curation.Integration
         {
             var c = new Catalogue(CatalogueRepository, "Hey");
 
-            using var start = new CommitInProgress(RepositoryLocator, c);
+            using var start = new CommitInProgress(RepositoryLocator, false, c);
 
             // no changes but lets spam this for added complexity
             c.SaveToDatabase();
@@ -55,7 +55,7 @@ namespace Rdmp.Core.Tests.Curation.Integration
             Assert.AreEqual(ChangeDescription.NoChanges,c.HasLocalChanges().Evaluation,
                 "We just created this Catalogue, how can db copy be different?!");
 
-            using var start = new CommitInProgress(RepositoryLocator, c) { DelaySaves = true };
+            using var start = new CommitInProgress(RepositoryLocator, false,c) { DelaySaves = true };
             var activator = new ThrowImmediatelyActivator(RepositoryLocator);
 
             // there is a CommitInProgress on c so db should not have

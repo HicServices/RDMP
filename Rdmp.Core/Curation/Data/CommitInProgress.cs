@@ -38,7 +38,7 @@ namespace Rdmp.Core.Curation.Data
         /// created.  Do not use this for long lifetime <see cref="CommitInProgress"/> e.g. one
         /// associated with an open tab.
         /// </summary>
-        public bool TrackInsertsAndDeletes { get; set; }
+        public bool TrackInsertsAndDeletes { get; }
 
         Dictionary<IMapsDirectlyToDatabaseTable, MementoInProgress> originalStates = new ();
         
@@ -283,7 +283,16 @@ namespace Rdmp.Core.Curation.Data
         public void Dispose()
         {
             foreach (var repo in _repositories)
+            {
                 repo.Saving -= Saving;
+
+                if (TrackInsertsAndDeletes)
+                {
+                    repo.Deleting += Deleting;
+                    repo.Inserting += Inserting;
+                }
+            }
+             
         }
     }
 }

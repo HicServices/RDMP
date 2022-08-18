@@ -7,6 +7,7 @@
 using MapsDirectlyToDatabaseTable;
 using Rdmp.Core.Curation.Data;
 using Rdmp.Core.Repositories.Construction;
+using ReusableLibraryCode.Settings;
 
 namespace Rdmp.Core.CommandExecution.AtomicCommands
 {
@@ -42,6 +43,10 @@ namespace Rdmp.Core.CommandExecution.AtomicCommands
             if(_o == null || _o.Length == 0)
                 return;
 
+            // TODO: cancellation doesn't unmark replaced since its object creation
+            // TODO: Don't want to duplicate this kind of thing, maybe move to base class?
+            var commit = UserSettings.EnableCommits ? new CommitInProgress(BasicActivator.RepositoryLocator, true, _o) { DelaySaves = true } : null;
+
             foreach(var o in _o)
             {
                 o.IsDeprecated = _desiredState;
@@ -59,7 +64,11 @@ namespace Rdmp.Core.CommandExecution.AtomicCommands
                 }
             }
 
-            Publish((DatabaseEntity)_o[0]);
+            if(commit == null || commit.TryFinish(BasicActivator) != null)
+            {
+                Publish((DatabaseEntity)_o[0]);
+            }
+
         }
     }
 }
