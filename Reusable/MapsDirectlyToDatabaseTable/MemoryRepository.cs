@@ -33,6 +33,8 @@ namespace MapsDirectlyToDatabaseTable
         readonly ConcurrentDictionary<IMapsDirectlyToDatabaseTable, HashSet<PropertyChangedExtendedEventArgs>> _propertyChanges = new ConcurrentDictionary<IMapsDirectlyToDatabaseTable, HashSet<PropertyChangedExtendedEventArgs>>();
 
         public event EventHandler<SaveEventArgs> Saving;
+        public event EventHandler<IMapsDirectlyToDatabaseTableEventArgs> Inserting;
+        public event EventHandler<IMapsDirectlyToDatabaseTableEventArgs> Deleting;
 
         public virtual void InsertAndHydrate<T>(T toCreate, Dictionary<string, object> constructorParameters) where T : IMapsDirectlyToDatabaseTable
         {
@@ -61,6 +63,8 @@ namespace MapsDirectlyToDatabaseTable
             toCreate.PropertyChanged += toCreate_PropertyChanged;
 
             NewObjectPool.Add(toCreate);
+
+            Inserting?.Invoke(this, new IMapsDirectlyToDatabaseTableEventArgs(toCreate));
         }
 
         protected virtual void SetValue<T>(T toCreate, PropertyInfo prop, string strVal, object val) where T : IMapsDirectlyToDatabaseTable
@@ -199,6 +203,8 @@ namespace MapsDirectlyToDatabaseTable
 
             //forget about property changes (since it's been deleted)
             _propertyChanges.TryRemove(oTableWrapperObject, out _);
+
+            Deleting?.Invoke(this, new IMapsDirectlyToDatabaseTableEventArgs(oTableWrapperObject));
         }
 
         /// <summary>

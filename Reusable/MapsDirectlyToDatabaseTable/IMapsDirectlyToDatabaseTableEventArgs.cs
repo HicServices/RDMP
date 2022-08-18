@@ -9,25 +9,15 @@ using System;
 namespace MapsDirectlyToDatabaseTable
 {
     /// <summary>
-    /// Event args for the <see cref="IRepository.SaveToDatabase(IMapsDirectlyToDatabaseTable)"/> operation.
-    /// See also <see cref="IRepository.Saving"/>
+    /// Describes an event taking place on a database <see cref="Object"/>
     /// </summary>
-    public class SaveEventArgs : EventArgs
+    public class IMapsDirectlyToDatabaseTableEventArgs : EventArgs
     {
-        /// <summary>
-        /// Set to true to prevent the save writting to database/disk.
-        /// </summary>
-        public bool Cancel { get; set; }
+        public IMapsDirectlyToDatabaseTable Object { get; }
 
-        /// <summary>
-        /// The object that is about to be saved to database/disk
-        /// </summary>
-        public IMapsDirectlyToDatabaseTable BeingSaved { get;}
-
-        public SaveEventArgs(IMapsDirectlyToDatabaseTable o)
+        public IMapsDirectlyToDatabaseTableEventArgs(IMapsDirectlyToDatabaseTable o)
         {
-            BeingSaved = o;
+            Object = o;
         }
-
     }
 }

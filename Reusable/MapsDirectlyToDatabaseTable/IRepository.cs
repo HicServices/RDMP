@@ -23,6 +23,18 @@ namespace MapsDirectlyToDatabaseTable
     public interface IRepository
     {
         /// <summary>
+        /// Called when <see cref="InsertAndHydrate{T}(T, Dictionary{string, object})"/> is
+        /// occurring on a new object.
+        /// </summary>
+        public event EventHandler<IMapsDirectlyToDatabaseTableEventArgs> Inserting;
+
+        /// <summary>
+        /// Called when <see cref="DeleteFromDatabase(IMapsDirectlyToDatabaseTable)"/> is
+        /// occurring on any object.
+        /// </summary>
+        public event EventHandler<IMapsDirectlyToDatabaseTableEventArgs> Deleting;
+
+        /// <summary>
         /// Called when <see cref="SaveToDatabase(IMapsDirectlyToDatabaseTable)"/> is 
         /// occurring on any object.  Allows cancellation etc.
         /// </summary>

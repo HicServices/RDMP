@@ -25,6 +25,11 @@ namespace Rdmp.Core.Curation.Data
         /// </summary>
         public int Order { get; set; }
 
+        /// <summary>
+        /// What is happening to the object, defaults to <see cref="MementoType.Modify"/>
+        /// </summary>
+        public MementoType Type { get; set; } = MementoType.Modify;
+
         private Dictionary<PropertyInfo, object> _props = new ();
 
         public MementoInProgress(IMapsDirectlyToDatabaseTable o, string oldYaml)

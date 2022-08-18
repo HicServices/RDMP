@@ -31,6 +31,15 @@ namespace Rdmp.Core.Curation.Data
         /// </summary>
         public bool DelaySaves { get; init; }
 
+        /// <summary>
+        /// Set to true to detect ANY object creation or deletion that occurs on any of the 
+        /// <see cref="IRepository"/> in the current application scope.  All new/deleted objects
+        /// during the lifteime of this object will then be included in any <see cref="Commit"/>
+        /// created.  Do not use this for long lifetime <see cref="CommitInProgress"/> e.g. one
+        /// associated with an open tab.
+        /// </summary>
+        public bool TrackInsertsAndDeletes { get; set; }
+
         Dictionary<IMapsDirectlyToDatabaseTable, MementoInProgress> originalStates = new ();
         
         private IRDMPPlatformRepositoryServiceLocator _locator;
@@ -51,18 +60,25 @@ namespace Rdmp.Core.Curation.Data
         /// </summary>
         private bool _finishing;
 
-        public CommitInProgress(IRDMPPlatformRepositoryServiceLocator locator, params IMapsDirectlyToDatabaseTable[] track)
+        public CommitInProgress(IRDMPPlatformRepositoryServiceLocator locator,bool trackInsertsAndDeletes, params IMapsDirectlyToDatabaseTable[] track)
         {
+            TrackInsertsAndDeletes = trackInsertsAndDeletes;
+
             _locator = locator;
             _tracked = track;
 
             _repositories = _locator.GetAllRepositories();
             _serializer = YamlRepository.CreateSerializer(_repositories.SelectMany(r=>r.GetCompatibleTypes()).Distinct()
                 );
-
             foreach(var repo in _repositories)
             {
                 repo.Saving += Saving;
+
+                if(trackInsertsAndDeletes)
+                {
+                    repo.Deleting += Deleting;
+                    repo.Inserting += Inserting;
+                }
             }
 
             foreach(var t in track)
@@ -70,6 +86,68 @@ namespace Rdmp.Core.Curation.Data
                 originalStates.Add(t, new MementoInProgress(t,_serializer.Serialize(t)));
                 t.PropertyChanged += PropertyChanged;
             }
+        }
+
+        private void Inserting(object sender, IMapsDirectlyToDatabaseTableEventArgs e)
+        {
+            if (_finishing)
+                return;
+
+            // how can we be tracking an object that was not created yet?
+            if (originalStates.ContainsKey(e.Object))
+            {
+                // oh well just pretend it magicked into existence
+                originalStates[e.Object].Type = MementoType.Add;
+                BumpOrder(originalStates[e.Object]);
+            }
+            else
+            {
+                // legit new object we didn't know about before
+                originalStates.Add(e.Object, new MementoInProgress(e.Object, null)
+                {
+                    Type = MementoType.Add
+                });
+                BumpOrder(originalStates[e.Object]);
+            }
+        }
+
+        private void Deleting(object sender, IMapsDirectlyToDatabaseTableEventArgs e)
+        {
+            if (_finishing)
+                return;
+
+            // one of the objects we are tracking has been deleted
+            if (originalStates.ContainsKey(e.Object))
+            {
+                // change our understanding of this object
+
+                if(originalStates[e.Object].Type == MementoType.Add)
+                {
+                    // ok user created this object during the commit then deleted it again... odd but fair enough
+                    
+                    // pretend it never existed
+                    originalStates.Remove(e.Object);
+                }
+                else
+                {
+                    originalStates[e.Object].Type = MementoType.Delete;
+                    BumpOrder(originalStates[e.Object]);
+                }
+            }
+            else
+            {
+                // an object we are not yet tracking has been deleted
+                originalStates.Add(e.Object, new MementoInProgress(e.Object, _serializer.Serialize(e.Object))
+                {
+                    Type = MementoType.Delete
+                });
+            }
+
+        }
+
+        private void BumpOrder(MementoInProgress mementoInProgress)
+        {
+            mementoInProgress.Order = Interlocked.Increment(ref order);
         }
 
         private void Saving(object sender, SaveEventArgs e)
@@ -96,7 +174,7 @@ namespace Rdmp.Core.Curation.Data
         private void PropertyChanged(object sender, PropertyChangedEventArgs e)
         {
             var m = (IMapsDirectlyToDatabaseTable)sender;
-            originalStates[m].Order = Interlocked.Increment(ref order);
+            BumpOrder(originalStates[m]);
         }
 
         /// <summary>
@@ -110,7 +188,8 @@ namespace Rdmp.Core.Curation.Data
 
             foreach (var t in originalStates)
             {
-                var newYaml =  _serializer.Serialize(t.Key);
+                // serialize the current state on finishing into yaml (or use null for deleted objects)
+                var newYaml = t.Value.Type == MementoType.Delete ? null :  _serializer.Serialize(t.Key);
                 
                 //something changed
                 if(newYaml != t.Value.OldYaml)
@@ -149,7 +228,6 @@ namespace Rdmp.Core.Curation.Data
                     // user cancelled creating Commit
                     return null;
                 }
-
             }
 
             // We couldn't describe the changes, thats bad...
@@ -171,8 +249,7 @@ namespace Rdmp.Core.Curation.Data
 
             foreach(var m in changes.OrderBy(c => c.Value.Item1.Order))
             {
-                // TODO: Add/Delete too please!
-                new Memento(cataRepo, c, MementoType.Modify, m.Key, m.Value.Item1.OldYaml, m.Value.Item2);
+                new Memento(cataRepo, c, m.Value.Item1.Type, m.Key, m.Value.Item1.OldYaml, m.Value.Item2);
             }
 
             return c;

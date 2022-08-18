@@ -92,6 +92,8 @@ namespace MapsDirectlyToDatabaseTable
                         ObscureDependencyFinder.HandleCascadeDeletesForDeletedObject(oTableWrapperObject);
                 }
             }
+
+            Deleting?.Invoke(this, new IMapsDirectlyToDatabaseTableEventArgs(oTableWrapperObject));
         }
 
         /// <inheritdoc/>
@@ -729,6 +731,8 @@ namespace MapsDirectlyToDatabaseTable
             toCreate.Repository = actual.Repository;
 
             NewObjectPool.Add(toCreate);
+
+            Inserting?.Invoke(this, new IMapsDirectlyToDatabaseTableEventArgs(toCreate));
         }
 
         private object ongoingConnectionsLock = new object();
@@ -903,7 +907,8 @@ namespace MapsDirectlyToDatabaseTable
         private Type[] _compatibleTypes;
 
         public event EventHandler<SaveEventArgs> Saving;
-
+        public event EventHandler<IMapsDirectlyToDatabaseTableEventArgs> Inserting;
+        public event EventHandler<IMapsDirectlyToDatabaseTableEventArgs> Deleting;
         public IMapsDirectlyToDatabaseTable[] GetAllObjectsInDatabase()
         {
             List<IMapsDirectlyToDatabaseTable> toReturn = new List<IMapsDirectlyToDatabaseTable>();

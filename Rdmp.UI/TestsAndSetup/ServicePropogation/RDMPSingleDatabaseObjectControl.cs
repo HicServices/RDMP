@@ -126,7 +126,7 @@ namespace Rdmp.UI.TestsAndSetup.ServicePropogation
             {
                 if(UseCommitSystem && CurrentCommit == null)
                 {
-                    CurrentCommit = new CommitInProgress(activator.RepositoryLocator, databaseObject) { DelaySaves  = false};
+                    CurrentCommit = new CommitInProgress(activator.RepositoryLocator, databaseObject);
                     ObjectSaverButton1.BeforeSave += BeforeSave_FinishCommitInProgressIfAny;
                     ObjectSaverButton1.AfterSave += AfterSave_BeginNewCommitIfApplicable;
                 }
@@ -177,7 +177,7 @@ namespace Rdmp.UI.TestsAndSetup.ServicePropogation
             if (CurrentCommit == null && UseCommitSystem)
             {
                 // start a new commit for the next changes the user commits
-                CurrentCommit = new CommitInProgress(Activator.RepositoryLocator, DatabaseObject) { DelaySaves = false };
+                CurrentCommit = new CommitInProgress(Activator.RepositoryLocator, DatabaseObject);
             }
         }
         void CommonFunctionality_ToolStripAddedToHost(object sender, EventArgs e)
