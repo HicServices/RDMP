@@ -345,7 +345,7 @@ namespace Rdmp.UI.SimpleDialogs.SimpleFileImporting
 
         private UploadFileUseCase GetUseCase()
         {
-            return new UploadFileUseCase(_selectedFile, serverDatabaseTableSelector1.GetDiscoveredDatabase());
+            return new UploadFileUseCase(_selectedFile, serverDatabaseTableSelector1.GetDiscoveredDatabase(),Activator);
         }
 
         private DataFlowPipelineEngineFactory GetFactory()
@@ -374,7 +374,7 @@ namespace Rdmp.UI.SimpleDialogs.SimpleFileImporting
             {
                 var db = serverDatabaseTableSelector1.GetDiscoveredDatabase();
                 var engine = GetFactory().Create(p, new FromCheckNotifierToDataLoadEventListener(ragSmileyExecute));
-                engine.Initialize(new FlatFileToLoad(_selectedFile), db);
+                engine.Initialize(new FlatFileToLoad(_selectedFile), db,Activator);
 
                 bool crashed = false;
 

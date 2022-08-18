@@ -130,7 +130,7 @@ namespace Rdmp.Core.Sharing.Dependency.Gathering
 
         /// <summary>
         /// Gathers dependencies of ColumnInfo, this includes all [Sql] properties on any object in data export / catalogue databases
-        /// which references the fully qualified name of the ColumnInfo as well as it's immediate network friends that should share it's
+        /// which references the fully qualified name of the ColumnInfo as well as its immediate network friends that should share its
         /// runtime name e.g. CatalogueItem and ExtractionInformation.
         /// </summary>
         /// <param name="c"></param>

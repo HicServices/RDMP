@@ -67,7 +67,7 @@ T1
 group by 
 Col1
 order by 
-count(*) asc
+MyCount asc
 LIMIT 31"), CollapseWhitespace(builder.SQL));
 
 

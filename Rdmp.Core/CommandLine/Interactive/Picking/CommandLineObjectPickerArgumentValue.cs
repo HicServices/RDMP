@@ -126,7 +126,7 @@ namespace Rdmp.Core.CommandLine.Interactive.Picking
             var nullableType = Nullable.GetUnderlyingType(paramType);
 
             //it's an array of DatabaseEntities (IMapsDirectlyToDatabaseTable implements IDeleteable)
-            if (paramType.IsArray && typeof(IDeleteable).IsAssignableFrom(paramType.GetElementType()))
+            if (paramType.IsArray && DatabaseEntities != null && typeof(IDeleteable).IsAssignableFrom(paramType.GetElementType()))
             {
                 if(DatabaseEntities.Count == 0)
                     _logger.Warn($"Pattern matched no objects '{RawValue}'");
@@ -219,8 +219,9 @@ namespace Rdmp.Core.CommandLine.Interactive.Picking
 
                 if (ExplicitNull && canBeNull)
                     return true;
+                var val = GetValueForParameterOfType(paramType);
 
-                return GetValueForParameterOfType(paramType) != null;
+                return val != null && paramType.IsAssignableFrom(val.GetType());
             }
             catch (Exception e)
             {

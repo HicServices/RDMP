@@ -10,6 +10,7 @@ using System.Globalization;
 using System.Linq;
 using System.Text;
 using MapsDirectlyToDatabaseTable;
+using NLog;
 using Rdmp.Core.CommandExecution;
 using Rdmp.Core.CommandExecution.AtomicCommands;
 using Rdmp.Core.CommandLine.Interactive;
@@ -43,14 +44,44 @@ namespace Rdmp.Core.CommandLine.Runners
             // but allow it if the input is ./rdmp cmd (i.e. run in a loop prompting for commands)
             _input.DisallowInput = !string.IsNullOrWhiteSpace(_options.CommandName);
 
+            // prevent user input if we are running a script file
+            if(!string.IsNullOrWhiteSpace(_options.File))
+            {
+                _input.DisallowInput = true;
+            }
+
+            var log = LogManager.GetCurrentClassLogger();
+
             _listener = listener;
             _invoker = new CommandInvoker(_input);
-            _invoker.CommandImpossible += (s,c)=>Console.WriteLine($"Command Impossible:{c.Command.ReasonCommandImpossible}");
-            _invoker.CommandCompleted += (s,c)=>Console.WriteLine("Command Completed");
+            _invoker.CommandImpossible += (s,c)=>log.Error($"Command Impossible:{c.Command.ReasonCommandImpossible}");
+            _invoker.CommandCompleted += (s,c)=>log.Info("Command Completed");
 
-            _commands = _invoker.GetSupportedCommands().ToDictionary(
-                k=>BasicCommandExecution.GetCommandName(k.Name),
-                v=>v,StringComparer.CurrentCultureIgnoreCase);
+            var commandTypes = _invoker.GetSupportedCommands();
+            _commands = new Dictionary<string, Type>(StringComparer.InvariantCultureIgnoreCase);
+
+            foreach(var type in commandTypes)
+            {
+                var name = BasicCommandExecution.GetCommandName(type.Name);
+                if(!_commands.TryAdd(name,type))
+                {
+                    _listener.OnNotify(this,new NotifyEventArgs(ProgressEventType.Warning,
+                        $"Found duplicate commands both called '{name}'.  They were '{type.FullName}' and '{_commands[name].FullName}'"));
+                }
+            }
+
+            // add Aliases (commands that can be invoked with an alternate shorthand)
+            foreach(var type in commandTypes)
+            {
+                foreach(var alias in type.GetCustomAttributes(false).OfType<AliasAttribute>())
+                {
+                    if(!_commands.TryAdd(alias.Name,type))
+                    {
+                        _listener.OnNotify(this,new NotifyEventArgs(ProgressEventType.Warning,$"Bad command alias '{alias.Name}', it is already in use by '{_commands[alias.Name].FullName}' so cannot be used for '{type.FullName}'"));
+                    }
+                }
+            }
+
 
             _picker = 
                 _options.CommandArgs != null && _options.CommandArgs.Any() ?
@@ -76,7 +107,10 @@ namespace Rdmp.Core.CommandLine.Runners
         private void RunCommand(string command)
         {
             if(_commands.ContainsKey(command))
+            {
+                _listener.OnNotify(this,new NotifyEventArgs(ProgressEventType.Trace,$"Running Command '{_commands[command].Name}'"));
                 _invoker.ExecuteCommand(_commands[command],_picker);
+            }
             else
             {
                 var suggestions =
@@ -160,8 +194,17 @@ namespace Rdmp.Core.CommandLine.Runners
                 {
                     try
                     {
-                        var cmd = GetCommandAndPickerFromLine(s, out _picker, repositoryLocator);
-                        RunCommand(cmd);
+                        if(StartsWithEngineVerb(s))
+                        {
+                            var exitCode = RdmpCommandLineBootStrapper.HandleArgumentsWithStandardRunner(SplitCommandLine(s).ToArray(), LogManager.GetCurrentClassLogger(), repositoryLocator);
+                            if (exitCode != 0)
+                                throw new Exception("Exit code from runner was non zero");
+                        }
+                        else
+                        {
+                            var cmd = GetCommandAndPickerFromLine(s, out _picker, repositoryLocator);
+                            RunCommand(cmd);
+                        }
                     }
                     catch (Exception ex)
                     {
@@ -172,6 +215,18 @@ namespace Rdmp.Core.CommandLine.Runners
                 
         }
 
+        private bool StartsWithEngineVerb(string s)
+        {
+            var verbs = new[] { "cache", "cohort", "dle", "dqe", "extract", "release" };
+            return verbs.Any(v => s.TrimStart().StartsWith(v, StringComparison.CurrentCultureIgnoreCase));
+        }
+
+        /// <summary>
+        /// Splits a command line string into a sequence of discrete arguments as you would get in Program.cs main
+        /// string[] args.  Includes support for wrapping arguments in spaces and escaping etc
+        /// </summary>
+        /// <param name="commandLine"></param>
+        /// <returns></returns>
         public static IEnumerable<string> SplitCommandLine(string commandLine)
         {
             char? inQuotes = null;

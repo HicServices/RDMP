@@ -25,7 +25,7 @@ namespace Rdmp.UI.TestsAndSetup.ServicePropogation
 {
     /// <summary>
     /// TECHNICAL: base abstract class for all Controls which are concerned with a single root DatabaseEntity e.g. AggregateGraph is concerned only with an AggregateConfiguration
-    /// and it's children.  The reason this class exists is to streamline lifetime publish subscriptions (ensuring multiple tabs editting one anothers database objects happens 
+    /// and its children.  The reason this class exists is to streamline lifetime publish subscriptions (ensuring multiple tabs editting one anothers database objects happens 
     /// in a seamless a way as possible). 
     /// 
     /// </summary>

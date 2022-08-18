@@ -1,0 +1,28 @@
+Commands:
+  # One off bulk insert of data into the TEST_ExampleData database
+  - GenerateTestData biochemistry 100 100 100 ./Biochemistry2.csv
+  - GenerateTestData biochemistry 100 100 100 ./loadme/MoreBiochemistry.csv
+  - CreateNewCatalogueByImportingFile ./Biochemistry2.csv chi "DatabaseType:MicrosoftSQLServer:Server=(localdb)\MSSQLLocalDB;Database=TEST_ExampleData;Trusted_Connection=True;TrustServerCertificate=true" "Pipeline:*BULK INSERT*automated*" null
+  
+  # Create primary key
+  - AlterTableCreatePrimaryKey TableInfo:*Biochemistry2* ColumnInfo:*chi* ColumnInfo:*Healthboard* ColumnInfo:*SampleDate* ColumnInfo:*TestCode*
+
+  # Create a repeatable load in RDMP to load updates to the dataset
+  - CreateNewLoadMetadata Catalogue:Biochemistry2
+  - Set LoadMetadata Name "Loading Biochemistry"
+  - CreateNewDataLoadDirectory LoadMetadata ./Loading
+  
+  # Add file copy component (from landing to ForLoading dir)
+  - CreateNewClassBasedProcessTask LoadMetadata:*Biochemistry GetFiles ImportFilesDataProvider
+  - SetArgument ProcessTask DirectoryPath ./loadme
+  - SetArgument ProcessTask FilePattern *.csv
+
+  # Add CSV data reading component
+  - CreateNewClassBasedProcessTask LoadMetadata:*Biochemistry Mounting AnySeparatorFileAttacher
+  - SetArgument ProcessTask Separator ","
+  - SetArgument ProcessTask FilePattern "*.csv"
+  - SetArgument ProcessTask TableToLoad TableInfo:*Biochemistry*
+
+  # Check and run the load
+  - dle -l "LoadMetadata:*Biochemistry" --command check
+  - dle -l "LoadMetadata:*Biochemistry" --command run

@@ -8,9 +8,11 @@ using System;
 using System.Drawing;
 using System.Linq;
 using Rdmp.Core.CommandExecution.Combining;
+using Rdmp.Core.Curation.Data;
 using Rdmp.Core.Curation.Data.Aggregation;
 using Rdmp.Core.Curation.Data.Cohort;
 using Rdmp.Core.Icons.IconProvision;
+using Rdmp.Core.Repositories.Construction;
 using ReusableLibraryCode.Icons.IconProvision;
 
 namespace Rdmp.Core.CommandExecution.AtomicCommands
@@ -55,6 +57,12 @@ namespace Rdmp.Core.CommandExecution.AtomicCommands
             _aggregateConfigurationCombineable = aggregateConfigurationCommand;
 
             SetCommandWeight();
+        }
+
+        [UseWithObjectConstructor]
+        public ExecuteCommandAddAggregateConfigurationToCohortIdentificationSetContainer(IBasicActivateItems activator, AggregateConfiguration aggregateConfiguration, CohortAggregateContainer targetCohortAggregateContainer)
+            : this(activator, new AggregateConfigurationCombineable(aggregateConfiguration), targetCohortAggregateContainer)
+        {
         }
 
         /// <summary>
@@ -113,20 +121,48 @@ namespace Rdmp.Core.CommandExecution.AtomicCommands
         {
             base.Execute();
 
-            if(_aggregateConfigurationCombineable == null)
+            var available = _available;
+
+            if (_aggregateConfigurationCombineable == null)
             {
                 // runtime decision is required
 
-                if(_available == null || !_available.Any())
+                if(available == null || !available.Any())
                 {
                     throw new Exception("There are no available objects to add");
+                }
+
+                // Are there templates that we can use instead of showing all?
+                var cataRepo = BasicActivator.RepositoryLocator.CatalogueRepository;
+                var templates = cataRepo.GetExtendedProperties(ExtendedProperty.IsTemplate)
+                    .Select(p => p.GetReferencedObject(BasicActivator.RepositoryLocator))
+                    .OfType<AggregateConfiguration>()
+                    .ToArray();
+
+                // yes
+                if(templates.Any())
+                {
+                    // ask user if they want to use a template
+                    if(BasicActivator.YesNo(new DialogArgs
+                    {
+                        WindowTitle = "Use Template?",
+                        TaskDescription = $"You have {templates.Length} AggregateConfiguration templates, do you want to use one of these?"
+                    },out var useTemplate))
+                    {
+                        available = useTemplate ? templates : available.Except(templates).ToArray();
+                    }
+                    else
+                    {
+                        // cancel clicked?
+                        return;
+                    }
                 }
                 
                 if(!BasicActivator.SelectObjects(new DialogArgs
                 {
                     WindowTitle = "Add Aggregate Configuration(s) to Container",
                     TaskDescription = $"Choose which AggregateConfiguration(s) to add to the cohort container '{_targetCohortAggregateContainer.Name}'.",
-                },_available,out var selected))
+                },available,out var selected))
                 {
                     // user cancelled
                     return;

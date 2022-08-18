@@ -36,7 +36,7 @@ namespace Rdmp.UI.DataLoadUIs.ANOUIs.ANOTableManagement
     /// 
     /// <para>BACKGROUND:
     /// The process of anonymisation is referred to as ANO and involves moving existing identifiers into an ANOStore (separate database) and substituting in their place unique anonymous
-    /// identifiers (there is a 1 to 1 mapping between ANO identifiers and the original values).  Each type of data (e.g. GP Code, Practice Code etc) should have it's own ANOTable with
+    /// identifiers (there is a 1 to 1 mapping between ANO identifiers and the original values).  Each type of data (e.g. GP Code, Practice Code etc) should have its own ANOTable with
     /// a unique suffix such that you can more easily trace down identifiers if you ever have to deanonymise data.  </para>
     /// 
     /// <para>For example if you imagine that all GP codes must be anonymised, in your data they appear as a healthboard (T - Tayside, F - Fife) followed by 3 digits.  Then your ANOTable would
@@ -105,6 +105,8 @@ namespace Rdmp.UI.DataLoadUIs.ANOUIs.ANOTableManagement
             InitializeComponent();
 
             AssociatedCollection = RDMPCollection.Catalogue;
+
+            dgPreview.ColumnAdded += (s, e) => e.Column.FillWeight = 1;
         }
 
         public override void SetDatabaseObject(IActivateItems activator, ColumnInfo databaseObject)
@@ -327,7 +329,7 @@ namespace Rdmp.UI.DataLoadUIs.ANOUIs.ANOTableManagement
                 {
                     checksUI1.OnCheckPerformed(
                         new CheckEventArgs(
-                            "ANOTable  " + anoTable + " cannot be used because it's input datatype is " + anoDatatype + " but the data in " +
+                            "ANOTable  " + anoTable + " cannot be used because its input datatype is " + anoDatatype + " but the data in " +
                             _columnInfo + " is of datatype " + colDatatype, CheckResult.Fail));
                     ddANOTables.SelectedItem = null;
                     return;

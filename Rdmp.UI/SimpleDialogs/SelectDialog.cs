@@ -34,6 +34,8 @@ using System.Windows.Forms;
 
 namespace Rdmp.UI.SimpleDialogs
 {
+    // IMPORTANT: To edit this in Designer rename 'SelectDialog`1.resx' to 'SelectDialog.resx'
+
     public partial class SelectDialog<T> : Form, IVirtualListDataSource where T : class
     {
         private readonly Dictionary<IMapsDirectlyToDatabaseTable, DescendancyList> _searchables;
@@ -44,6 +46,8 @@ namespace Rdmp.UI.SimpleDialogs
 
         private Task _lastFetchTask = null;
         private CancellationTokenSource _lastCancellationToken;
+        private int _runCount;
+
         private Type[] _types;
         private HashSet<string> _typeNames;
 
@@ -284,6 +288,8 @@ namespace Rdmp.UI.SimpleDialogs
                 olv.CellToolTip.InitialDelay = UserSettings.TooltipAppearDelay;
                 olv.CellToolTipShowing += (s, e) => RDMPCollectionCommonFunctionality.Tree_CellToolTipShowing(activator, e);
             }
+
+            pbLoading.Visible = IsDatabaseObjects();
         }
 
         private void AddUsefulPropertiesIfHomogeneousTypes(T[] mapsDirectlyToDatabaseTables)
@@ -664,13 +670,20 @@ namespace Rdmp.UI.SimpleDialogs
                 _lastCancellationToken.Cancel();
 
             _lastCancellationToken = new CancellationTokenSource();
-
+            pbLoading.Visible = true;
+            Interlocked.Increment(ref _runCount);
             var toFind = tbFilter.Text;
 
             _lastFetchTask = Task.Run(() => FetchMatches(toFind, _lastCancellationToken.Token))
                 .ContinueWith(
                     (s) =>
                     {
+
+                        if(Interlocked.Decrement(ref _runCount) == 0)
+                        {
+                            pbLoading.Visible = false;
+                        }
+
                         if (_isClosed)
                             return;
 
@@ -691,7 +704,6 @@ namespace Rdmp.UI.SimpleDialogs
                                     StateChanged();
                                 }
                             }
-
                         }
                         catch (ObjectDisposedException)
                         {
@@ -820,7 +832,7 @@ namespace Rdmp.UI.SimpleDialogs
         private void btnSelectNULL_Click(object sender, EventArgs e)
         {
             Selected = default(T);
-            MultiSelected = null;
+            MultiSelected = new HashSet<T>();
             DialogResult = DialogResult.OK;
             this.Close();
         }
@@ -828,7 +840,7 @@ namespace Rdmp.UI.SimpleDialogs
         private void btnCancel_Click(object sender, EventArgs e)
         {
             Selected = default(T);
-            MultiSelected = null;
+            MultiSelected = new HashSet<T>();
             DialogResult = DialogResult.Cancel;
             this.Close();
         }

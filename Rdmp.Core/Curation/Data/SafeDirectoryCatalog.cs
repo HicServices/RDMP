@@ -29,18 +29,17 @@ namespace Rdmp.Core.Curation.Data
         /// <summary>
         /// These assemblies do not load correctly and should be ignored (they produce warnings on Startup)
         /// </summary>
-        public static string[] Ignore = new string[]
-        {
-            "mscorelib.dll",
+        public static string[] Ignore = {
+            "mscorlib.dll",
             "Hunspellx64.dll",
-            "Hunspellx86.dll",
+            "Hunspellx86.dll"
         };
 
         /// <summary>
-        /// Assemblies succesfully loaded
+        /// Assemblies successfully loaded
         /// </summary>
-        public ConcurrentDictionary<string, Assembly> GoodAssemblies = new ();
-        public ConcurrentDictionary<Assembly,Type[]> TypesByAssembly = new ();
+        public readonly ConcurrentDictionary<string, Assembly> GoodAssemblies = new ();
+        public readonly ConcurrentDictionary<Assembly,Type[]> TypesByAssembly = new ();
 
         private object oTypesLock = new object();
         public HashSet<Type> Types = new HashSet<Type>();
@@ -58,6 +57,11 @@ namespace Rdmp.Core.Curation.Data
         public Dictionary<string,Exception> BadAssembliesDictionary { get; set; }
         
         /// <summary>
+        /// Delegate for skipping certain dlls
+        /// </summary>
+        public static Func<FileInfo,bool> IgnoreDll { get; set; }
+
+        /// <summary>
         /// Creates a new list of MEF plugin classes from the dlls/files in the directory list provided
         /// </summary>
         /// <param name="directories"></param>
@@ -72,24 +76,33 @@ namespace Rdmp.Core.Curation.Data
         {
             BadAssembliesDictionary = new Dictionary<string, Exception>();
 
+            TypesByAssembly.TryAdd(typeof(SafeDirectoryCatalog).Assembly,
+                typeof(SafeDirectoryCatalog).Assembly.GetTypes());
+            foreach(var t in typeof(SafeDirectoryCatalog).Assembly.GetTypes())
+                AddType(t);
+
             var files = new HashSet<FileInfo>();
                        
-            foreach (string directory in directories)
+            foreach (var directory in directories)
             {
-                if (!Directory.Exists(directory))
-                    Directory.CreateDirectory(directory);//empty directory 
+                if (directory != null && !Directory.Exists(directory))
+                        Directory.CreateDirectory(directory); //empty directory 
 
                 foreach(var f in Directory.EnumerateFiles(directory, "*.dll", SearchOption.AllDirectories))
                 {
                     var newOne = new FileInfo(f);
                     var existing = files.SingleOrDefault(d => d.Name.Equals(newOne.Name));
 
+                    // don't load the cli dir
+                    if (IgnoreDll != null && IgnoreDll(newOne))
+                        continue;
+
                     if (existing != null)
                     {
                         var existingOneVersion = FileVersionInfo.GetVersionInfo(existing.FullName);
                         var newOneVersion = FileVersionInfo.GetVersionInfo(newOne.FullName);
 
-                        FileInfo winner = null;
+                        FileInfo winner;
 
                         // if we already have a copy of this exact dll we don't care about loading it
                         if(FileVersionsAreEqual(newOneVersion, existingOneVersion))
@@ -206,20 +219,18 @@ namespace Rdmp.Core.Curation.Data
 
         private void AddBadAssembly(FileInfo f, Exception ex,ICheckNotifier listener)
         {
-            if (!BadAssembliesDictionary.ContainsKey(f.FullName)) //couldn't load anything out of it
-            {
-                BadAssembliesDictionary.Add(f.FullName, ex);
-
-                listener?.OnCheckPerformed(new CheckEventArgs(ErrorCodes.CouldNotLoadDll, null,ex,f.FullName));
-            }
+            if (BadAssembliesDictionary.ContainsKey(f.FullName)) return;    // Only report each failure once
+            BadAssembliesDictionary.Add(f.FullName, ex);
+            listener?.OnCheckPerformed(new CheckEventArgs(ErrorCodes.CouldNotLoadDll, null,ex,f.FullName));
         }
 
         private void AddTypes(FileInfo f, Assembly ass, Type[] types, ICheckNotifier listener)
         {
-            TypesByAssembly.TryAdd(ass,types.Where(t=>t != null).ToArray());
+            types = types.Where(t => t != null).ToArray();
+            TypesByAssembly.TryAdd(ass,types);
             
-            foreach(Type t in types.Where(t=>t != null))
-                if(!TypesByName.ContainsKey(t.FullName))
+            foreach(var t in types)
+                if(t.FullName != null && !TypesByName.ContainsKey(t.FullName))
                     AddType(t.FullName,t);
 
             GoodAssemblies.TryAdd(f.FullName, ass);
@@ -235,9 +246,9 @@ namespace Rdmp.Core.Curation.Data
 
         internal void AddType(string typeNameOrAlias, Type type)
         {
-                //only add it if it is novel
-                if(!TypesByName.ContainsKey(typeNameOrAlias))
-                    TypesByName.TryAdd(typeNameOrAlias,type);
+            //only add it if it is novel
+            if (!TypesByName.ContainsKey(typeNameOrAlias))
+                TypesByName.TryAdd(typeNameOrAlias, type);
 
             lock (oTypesLock)
             {

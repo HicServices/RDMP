@@ -13,17 +13,17 @@
         <description>UI package for plugin development</description>
         <copyright>Copyright 2018-2019</copyright>
         <dependencies>
-			<dependency id="HIC.BadMedicine" version="1.0.1" />
+			<dependency id="HIC.BadMedicine" version="1.1.0" />
             <dependency id="HIC.FAnsiSql" version="2.0.4" />
             <dependency id="DockPanelSuite.ThemeVS2015" version="2.13.0" />
-            <dependency id="CsvHelper" version="27.2.1" />
+            <dependency id="CsvHelper" version="28.0.1" />
 			<dependency id="NHunspell" version="1.2.5554.16953" />
 			<dependency id="Newtonsoft.Json" version="13.0.1"/>
             <dependency id="fernandreu.ScintillaNET" version="4.2.0" />
             <dependency id="ObjectListView.Official" version="2.9.1" />
-            <dependency id="CommandLineParser" version="2.8.0" />
-            <dependency id="SSH.NET" version="2020.0.1" />
-            <dependency id="NLog" version="4.7.15" />
+            <dependency id="CommandLineParser" version="2.9.1" />
+            <dependency id="SSH.NET" version="2020.0.2" />
+            <dependency id="NLog" version="5.0.2" />
             <dependency id="ExcelNumberFormat" version="1.1.0" />
             <dependency id="NPOI" version="2.5.5" />
             <dependency id="System.Runtime.Loader" version="4.3.0" />
@@ -43,21 +43,17 @@
             <dependency id="HIC.System.Windows.Forms.DataVisualization" version="1.0.1" />
             <dependency id="ReadLine" version="2.0.1" />
             <dependency id="System.DirectoryServices.Protocols" version="6.0.1" />
-            <dependency id="YamlDotNet" version="11.2.1" />
+            <dependency id="YamlDotNet" version="12.0.0" />
         </dependencies>
     </metadata>
   <files>
     <file src="bin\$configuration$\net6.0-windows7.0\MapsDirectlyToDatabaseTable.dll" target="lib\net6.0-windows7.0"/>
-    <file src="bin\$configuration$\net6.0-windows7.0\MapsDirectlyToDatabaseTable.pdb" target="lib\net6.0-windows7.0"/>
     <file src="bin\$configuration$\net6.0-windows7.0\MapsDirectlyToDatabaseTable.xml" target="lib\net6.0-windows7.0"/>
     <file src="bin\$configuration$\net6.0-windows7.0\Rdmp.Core.dll" target="lib\net6.0-windows7.0"/>
-    <file src="bin\$configuration$\net6.0-windows7.0\Rdmp.Core.pdb" target="lib\net6.0-windows7.0"/>
     <file src="bin\$configuration$\net6.0-windows7.0\Rdmp.Core.xml" target="lib\net6.0-windows7.0"/>
     <file src="bin\$configuration$\net6.0-windows7.0\Rdmp.UI.dll" target="lib\net6.0-windows7.0"/>
-    <file src="bin\$configuration$\net6.0-windows7.0\Rdmp.UI.pdb" target="lib\net6.0-windows7.0"/>
     <file src="bin\$configuration$\net6.0-windows7.0\Rdmp.UI.xml" target="lib\net6.0-windows7.0"/>
     <file src="bin\$configuration$\net6.0-windows7.0\ReusableLibraryCode.dll" target="lib\net6.0-windows7.0"/>
-    <file src="bin\$configuration$\net6.0-windows7.0\ReusableLibraryCode.pdb" target="lib\net6.0-windows7.0"/>
     <file src="bin\$configuration$\net6.0-windows7.0\ReusableLibraryCode.xml" target="lib\net6.0-windows7.0"/>
   </files>
 </package>

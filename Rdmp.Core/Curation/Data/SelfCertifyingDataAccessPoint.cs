@@ -65,7 +65,7 @@ namespace Rdmp.Core.Curation.Data
             if (string.IsNullOrWhiteSpace(Username))
                 return null;
 
-            //this class is it's own credentials
+            //this class is its own credentials
             return this;
         }
 

@@ -56,7 +56,7 @@ namespace Rdmp.UI.SimpleDialogs.SimpleFileImporting
             
             configureAndExecutePipeline1 = new ConfigureAndExecutePipelineUI(
                 ExecuteCommandCreateNewCatalogueByImportingFile.GetCreateCatalogueFromFileDialogArgs()
-                ,new UploadFileUseCase(file,database),activator);
+                ,new UploadFileUseCase(file,database,activator),activator);
             _file = file;
             // 
             // configureAndExecutePipeline1

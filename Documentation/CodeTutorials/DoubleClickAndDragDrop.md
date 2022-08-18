@@ -21,7 +21,7 @@ For the developer it allows easy troubleshooting, if there is a problem with a t
 See [ProposeExecutionWhenTargetIsExtractionConfiguration](./../../Rdmp.UI/CommandExecution/Proposals/ProposeExecutionWhenTargetIsExtractionConfiguration.cs) for an example of how consise the code is.
 
 # Activation
-To add support for activating (double clicking) an object we must first know it's `Type`.  Right click it in the tree view and select 'What is this?' to determine it's `Type`.
+To add support for activating (double clicking) an object we must first know its `Type`.  Right click it in the tree view and select 'What is this?' to determine its `Type`.
 
 ![ExampleMenu](Images/DoubleClickAndDragDrop/WhatIsThis.png)
 

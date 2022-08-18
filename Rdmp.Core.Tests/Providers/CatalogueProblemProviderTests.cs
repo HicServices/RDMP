@@ -10,6 +10,9 @@ using Rdmp.Core.Providers;
 using ReusableLibraryCode.Checks;
 using Tests.Common;
 using Rdmp.Core.Curation.Data.Aggregation;
+using System.Globalization;
+using Rdmp.Core.Curation.Data;
+using Rdmp.Core.Repositories;
 
 namespace Rdmp.Core.Tests.Providers
 {
@@ -348,5 +351,99 @@ namespace Rdmp.Core.Tests.Providers
 
         #endregion
 
+
+        [TestCase(null)]
+        [TestCase("")]
+        public void MixedCollationIsAProblemForJoinInfos_WhenNoExplicitCollation(string nullCollationExpression)
+        {
+            var ci1 = WhenIHaveA<ExtractionInformation>().CatalogueItem;
+            
+            var ci2 = WhenIHaveA<ExtractionInformation>().CatalogueItem;
+
+            _=new JoinInfo((ICatalogueRepository)ci1.Repository,
+                ci2.ColumnInfo,
+                ci1.ColumnInfo,
+                ExtractionJoinType.Right,
+                nullCollationExpression);
+
+            var pp = new CatalogueProblemProvider();
+            var childProvider = GetActivator().CoreChildProvider;
+
+            Assert.IsFalse(pp.HasProblem(ci1),"Should not be problem because no collations are declared");
+            pp.RefreshProblems(childProvider);
+
+            Assert.IsFalse(pp.HasProblem(ci1), "Should not be problem because no collations are declared");
+            pp.RefreshProblems(childProvider);
+
+            ci1.ColumnInfo.Collation = "fishy";
+            ci2.ColumnInfo.Collation = "fishy";
+            pp.RefreshProblems(childProvider);
+
+            Assert.IsFalse(pp.HasProblem(ci1), "Should not be problem because collations are the same");
+
+            ci1.ColumnInfo.Collation = "fishy";
+            ci2.ColumnInfo.Collation = "splishy";
+            pp.RefreshProblems(childProvider);
+
+            Assert.IsTrue(pp.HasProblem(ci1));
+            Assert.AreEqual("Columns in joins declared on this column have mismatched collations ( My_Col = My_Col)", pp.DescribeProblem(ci1));
+        }
+
+        [Test]
+        public void MixedCollationIsAProblemForJoinInfos_ExplicitCollation()
+        {
+            var ci1 = WhenIHaveA<ExtractionInformation>().CatalogueItem;
+
+            var ci2 = WhenIHaveA<ExtractionInformation>().CatalogueItem;
+
+            _ = new JoinInfo((ICatalogueRepository)ci1.Repository,
+                ci2.ColumnInfo,
+                ci1.ColumnInfo,
+                ExtractionJoinType.Right,
+                // user knows they have different collations and has told
+                // RDMP to collate with this
+                "kaboom");
+
+            var pp = new CatalogueProblemProvider();
+            var childProvider = GetActivator().CoreChildProvider;
+
+
+            Assert.IsFalse(pp.HasProblem(ci1), "Should not be problem because collations are the same");
+
+            ci1.ColumnInfo.Collation = "fishy";
+            ci2.ColumnInfo.Collation = "splishy";
+            pp.RefreshProblems(childProvider);
+
+            Assert.IsFalse(pp.HasProblem(ci1), "Should not be problem because JoinInfo explicitly states a resolution collation");
+
+        }
+        #region Parameters
+
+        [TestCase("2001/01/01", true)]
+        [TestCase("'2001/01/01", false)] // This is currently fine, we are only detecting bad dates.  SQL syntax will pick this up for them anyway
+        [TestCase("'2001/01/01'", false)]
+        [TestCase("\"2001/01/01\"", false)]
+        public void TestParameterIsDate(string val, bool expectProblem)
+        {
+            var param = WhenIHaveA<AggregateFilterParameter>();
+            param.Value = val;
+            param.SaveToDatabase();
+
+            var pp = new CatalogueProblemProvider { Culture = new CultureInfo("en-GB") };
+            pp.RefreshProblems(new CatalogueChildProvider(Repository, null, new ThrowImmediatelyCheckNotifier(), null));
+            var problem = pp.DescribeProblem(param);
+
+            if(expectProblem)
+            {
+                Assert.AreEqual("Parameter value looks like a date but is not surrounded by quotes", problem);
+            }
+            else
+            {
+                Assert.IsNull(problem);
+            }
+
+        }
+
+        #endregion
     }
 }

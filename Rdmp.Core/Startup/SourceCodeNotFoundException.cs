@@ -9,7 +9,7 @@ using System;
 namespace Rdmp.Core.Startup
 {
     /// <summary>
-    /// Thrown if the "SourceCodeForSelfAwareness.zip" file is not present where it is expected.  RDMP bundles it's source code in a flattened zip file called 
+    /// Thrown if the "SourceCodeForSelfAwareness.zip" file is not present where it is expected.  RDMP bundles its source code in a flattened zip file called 
     /// "SourceCodeForSelfAwareness.zip" in order to generate dynamic help and display helper information about stack traces (see ExceptionViewerStackTraceWithHyperlinks) 
     /// </summary>
     public class SourceCodeNotFoundException : Exception

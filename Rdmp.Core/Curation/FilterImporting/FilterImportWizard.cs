@@ -34,10 +34,14 @@ namespace Rdmp.Core.Curation.FilterImporting
 
         public IFilter Import(IContainer containerToImportOneInto, IFilter filterToImport)
         {
+            return Import(containerToImportOneInto, filterToImport, null);
+        }
+        public IFilter Import(IContainer containerToImportOneInto, IFilter filterToImport, ExtractionFilterParameterSet parameterSet)
+        {
             ISqlParameter[] globals;
             IFilter[] otherFilters;
             GetGlobalsAndFilters(containerToImportOneInto, out globals, out otherFilters);
-            return Import(containerToImportOneInto, filterToImport, globals, otherFilters);
+            return Import(containerToImportOneInto, filterToImport, globals, otherFilters, parameterSet);
         }
 
         public IFilter ImportOneFromSelection(IContainer containerToImportOneInto, IFilter[] filtersThatCouldBeImported)
@@ -52,10 +56,12 @@ namespace Rdmp.Core.Curation.FilterImporting
             return ImportManyFromSelection(containerToImportOneInto, filtersThatCouldBeImported, global, otherFilters);
         }
 
-        private IFilter Import(IContainer containerToImportOneInto, IFilter filterToImport, ISqlParameter[] globalParameters, IFilter[] otherFiltersInScope)
+        private IFilter Import(IContainer containerToImportOneInto, IFilter filterToImport, ISqlParameter[] globalParameters, IFilter[] otherFiltersInScope, ExtractionFilterParameterSet parameterSet)
         {
+            bool cancel = false;
+
             //Sometimes filters have some recommended parameter values which the user can pick from (e.g. filter Condition could have parameter value sets for 'Dementia', 'Alzheimers' etc
-            var chosenParameterValues = AdvertiseAvailableFilterParameterSetsIfAny(filterToImport, out bool cancel);
+            var chosenParameterValues = parameterSet ?? AdvertiseAvailableFilterParameterSetsIfAny(filterToImport, out cancel);
 
             if (cancel)
                 return null;
@@ -90,7 +96,13 @@ namespace Rdmp.Core.Curation.FilterImporting
                 string param;
                 foreach (var parameter in newFilter.GetAllParameters())
                 {
-                    if (_activator.TypeText(AnyTableSqlParameter.GetValuePromptDialogArgs(newFilter, parameter), 255, null, out param, false))
+                    var initialText = parameter.Value;
+                    if(initialText == AnyTableSqlParameter.DefaultValue)
+                    {
+                        initialText = null;
+                    }
+
+                    if (_activator.IsInteractive && _activator.TypeText(AnyTableSqlParameter.GetValuePromptDialogArgs(newFilter, parameter), 255, initialText, out param, false))
                     {
                         parameter.Value = param;
                         parameter.SaveToDatabase();
@@ -107,7 +119,7 @@ namespace Rdmp.Core.Curation.FilterImporting
 
             if (chosenFilter != null)
             {
-                return Import(containerToImportOneInto, (IFilter)chosenFilter, globalParameters, otherFiltersInScope);
+                return Import(containerToImportOneInto, (IFilter)chosenFilter, globalParameters, otherFiltersInScope,null);
             }
 
             return null;//user chose not to import anything
@@ -127,7 +139,7 @@ namespace Rdmp.Core.Curation.FilterImporting
             { 
                 foreach (var f in results)
                 {
-                    var i = Import(containerToImportOneInto, (IFilter)f, globalParameters, otherFiltersInScope);
+                    var i = Import(containerToImportOneInto, (IFilter)f, globalParameters, otherFiltersInScope,null);
 
                     // returns null if cancelled
                     if (i != null)

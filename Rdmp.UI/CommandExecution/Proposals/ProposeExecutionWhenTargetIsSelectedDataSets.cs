@@ -31,9 +31,17 @@ namespace Rdmp.UI.CommandExecution.Proposals
 
         public override ICommandExecution ProposeExecution(ICombineToMakeCommand cmd, SelectedDataSets target, InsertOption insertOption = InsertOption.Default)
         {
-            
+            // if use drops a reusable template aggregate (e.g. from Cohort Builder)
+            if(cmd is AggregateConfigurationCombineable ac && ac.IsTemplate && ac.Aggregate.RootFilterContainer_ID != null)
+            {
+                // offer to import the WHERE containers
+                return new ExecuteCommandImportFilterContainerTree(ItemActivator, target, ac.Aggregate);
+            }
+
             if(cmd is ContainerCombineable cc)
-                return new ExecuteCommandImportFilterContainerTree(ItemActivator,target,cc.Container);
+            {
+                return new ExecuteCommandImportFilterContainerTree(ItemActivator, target, cc.Container);
+            }
 
             return null;
         }

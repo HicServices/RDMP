@@ -34,6 +34,7 @@ namespace Rdmp.UI.Tests.DesignPatternTests
                 typeof(ExecuteCommandSetDataAccessContextForCredentials),
                 typeof(ExecuteCommandActivate),
                 typeof(ExecuteCommandCreateNewExternalDatabaseServer),
+                typeof(ExecuteCommandShowTooltip),
                 typeof(ExecuteCommandShowKeywordHelp),
                 typeof(ExecuteCommandCollapseChildNodes),
                 typeof(ExecuteCommandExpandAllNodes),
@@ -43,7 +44,6 @@ namespace Rdmp.UI.Tests.DesignPatternTests
                 typeof(ExecuteCommandAddNewCatalogueItem),
 
                 typeof(ExecuteCommandCreateNewFilter),
-                typeof(ExecuteCommandCreateNewFilterFromCatalogue),
 
                 //requires a use case
                 typeof(ExecuteCommandCreateNewPipeline),
@@ -51,7 +51,9 @@ namespace Rdmp.UI.Tests.DesignPatternTests
 
                 typeof(ExecuteCommandExportLoggedDataToCsv),
                 typeof(ExecuteCommandGenerateRunCommand),
-                                
+                typeof(ExecuteCommandRunDetached),
+
+
                 typeof(ExecuteCommandShowXmlDoc),
                 typeof(ImpossibleCommand),
      
@@ -62,7 +64,6 @@ typeof(ExecuteCommandAddCatalogueToCohortIdentificationSetContainer),
 typeof(ExecuteCommandAddCohortToExtractionConfiguration),
 typeof(ExecuteCommandAddDatasetsToConfiguration),
 typeof(ExecuteCommandConvertAggregateConfigurationToPatientIndexTable),
-typeof(ExecuteCommandImportNewCopyOfFilterIntoContainer),
 typeof(ExecuteCommandMakePatientIndexTableIntoRegularCohortIdentificationSetAgain),
 typeof(ExecuteCommandMoveAggregateIntoContainer),
 typeof(ExecuteCommandMoveCohortAggregateContainerIntoSubContainer),
@@ -84,7 +85,7 @@ typeof(ExecuteCommandAddToSession)
         {
             Console.WriteLine("Looking in" + typeof (ExecuteCommandCreateNewExtractableDataSetPackage).Assembly);
             Console.WriteLine("Looking in" + typeof(ExecuteCommandViewCohortAggregateGraph).Assembly);
-            Console.WriteLine("Looking in" + typeof(ExecuteCommandUnpin).Assembly);
+            Console.WriteLine("Looking in" + typeof(ExecuteCommandAddToSession).Assembly);
 
             var uiTests = new UITests();
             var activator = new TestActivateItems(uiTests, new MemoryDataExportRepository());

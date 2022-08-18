@@ -32,7 +32,7 @@ namespace Rdmp.Core.Curation.Data.DataLoad
         }
 
         /// <summary>
-        /// Interrogates a class via reflection and enumerates it's properties to find any that have the attribute [DemandsInitialization]
+        /// Interrogates a class via reflection and enumerates its properties to find any that have the attribute [DemandsInitialization]
         /// Each one of these that is found is created as a ProcessTaskArgument of the appropriate Name and PropertyType under the parent ProcessTask
         /// </summary>
         /// <returns>Each new ProcessTaskArgument created - note that it will not return existing ones that were already present (and therefore not created)</returns>

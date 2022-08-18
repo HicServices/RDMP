@@ -1,0 +1,14 @@
+Commands:
+  
+  # Make this column (in the Biochemistry example dataset) no longer extractable
+  - Delete ExtractionInformation:ArithmeticComparator
+
+  # Clone the ExtractionConfiguration created in example datasets
+  - CloneExtractionConfiguration "ExtractionConfiguration:Project 123*2018 Refresh"
+  - Set ExtractionConfiguration Name "New Clone"
+
+  # TODO: we should detect and fail in this situation unless user sets specific error message suppression
+
+  # check and execute the config
+  - extract -e "ExtractionConfiguration:New Clone" -p "Pipeline:DATA EXPORT*To CSV" --command check
+  - extract -e "ExtractionConfiguration:New Clone" -p "Pipeline:DATA EXPORT*To CSV" --command run

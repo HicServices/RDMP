@@ -12,6 +12,7 @@ using System.Threading.Tasks;
 using Rdmp.Core.CohortCreation.Execution.Joinables;
 using Rdmp.Core.Curation.Data;
 using Rdmp.Core.Curation.Data.Cohort;
+using Rdmp.Core.QueryBuilding;
 
 namespace Rdmp.Core.CohortCreation.Execution
 {
@@ -39,7 +40,7 @@ namespace Rdmp.Core.CohortCreation.Execution
         public bool RunSubcontainers { get; set; }
         
         /// <summary>
-        /// Creates a new runner for the given <paramref name="compiler"/> which will facilitate running it's Tasks in a sensible order using result caching if possible
+        /// Creates a new runner for the given <paramref name="compiler"/> which will facilitate running its Tasks in a sensible order using result caching if possible
         /// </summary>
         /// <param name="compiler"></param>
         /// <param name="timeout">CommandTimeout for each individual command in seconds</param>
@@ -111,7 +112,8 @@ namespace Rdmp.Core.CohortCreation.Execution
                 if(RunSubcontainers)
                 {
                     Parallel.ForEach(
-                        _cic.RootCohortAggregateContainer.GetAllSubContainersRecursively().Where(c => !c.IsDisabled),
+                        _cic.RootCohortAggregateContainer.GetAllSubContainersRecursively().Where(
+                            c=>CohortQueryBuilderResult.IsEnabled(c,Compiler.CoreChildProvider)),
                         (a)=>Compiler.AddTask(a, globals));
                 }
                         

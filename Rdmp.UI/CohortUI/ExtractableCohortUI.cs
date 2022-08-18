@@ -156,7 +156,6 @@ namespace Rdmp.UI.CohortUI
                         AddCheckColumn = false,
                         AddFavouriteColumn = false,
                         AddIDColumn = true,
-                        AllowPinning = false,
                         SuppressActivate = false,
                         SuppressChildrenAdder = true
                     }
@@ -171,7 +170,6 @@ namespace Rdmp.UI.CohortUI
                         AddCheckColumn = false,
                         AddFavouriteColumn = false,
                         AddIDColumn = true,
-                        AllowPinning = false,
                         SuppressActivate = false,
                         SuppressChildrenAdder = true
                     }

@@ -24,6 +24,7 @@ namespace Rdmp.UI.SimpleDialogs
             InitializeComponent();
             
             this.Text = caption;
+            dataGridView1.ColumnAdded += (s, e) => e.Column.FillWeight = 1;
             dataGridView1.DataSource = source;
         }
 

@@ -175,7 +175,7 @@ namespace Rdmp.Core.CommandLine.Gui
                 }
 
                 var sfd = new SaveDialog("Save","Pick file location to save");
-                Application.Run(sfd);
+                Application.Run(sfd, ConsoleMainWindow.ExceptionPopup);
 
                 if(sfd.Canceled)
                     return;
@@ -300,15 +300,18 @@ namespace Rdmp.Core.CommandLine.Gui
                         var dt = new DataTable();
                         da.Fill(dt);
 
-                        tableView.Table = dt;
-
-                        // if query resulted in some data show it
-                        if (dt.Columns.Count > 0)
-                        {
-                            TabView.SelectedTab = resultTab;
-                            TabView.SetNeedsDisplay();
-                        }
+                        Application.MainLoop.Invoke(() => { 
                             
+                            tableView.Table = dt;
+
+                            // if query resulted in some data show it
+                            if (dt.Columns.Count > 0)
+                            {
+                                TabView.SelectedTab = resultTab;
+                                TabView.SetNeedsDisplay();
+                            }
+                        });
+
 
                         OnQueryCompleted(dt);
                     }   

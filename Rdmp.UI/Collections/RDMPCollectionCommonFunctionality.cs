@@ -41,8 +41,7 @@ namespace Rdmp.UI.Collections
 {
     /// <summary>
     /// Provides centralised functionality for all RDMPCollectionUI classes.  This includes configuring TreeListView to use the correct icons, have the correct row 
-    /// height, child nodes etc.  Also centralises functionality like applying a CollectionPinFilterUI to an RDMPCollectionUI, keeping trees up to date during object
-    /// refreshes / deletes etc.
+    /// height, child nodes etc.
     /// </summary>
     public partial class RDMPCollectionCommonFunctionality : IRefreshBusSubscriber
     {
@@ -67,9 +66,6 @@ namespace Rdmp.UI.Collections
         
         public Func<IActivateItems,IAtomicCommand[]> WhitespaceRightClickMenuCommandsGetter { get; set; }
         
-        private CollectionPinFilterUI _pinFilter;
-        public object CurrentlyPinned { get; private set; }
-
         public IDColumnProvider IDColumnProvider { get; set; }
         public OLVColumn IDColumn { get; set; }
         public CheckColumnProvider CheckColumnProvider { get; set; }
@@ -101,7 +97,7 @@ namespace Rdmp.UI.Collections
 
         /// <summary>
         /// Sets up width and visibility tracking on the given <paramref name="col"/>.  Each logically different
-        /// column should have it's own unique Guid.  But it is ok for the same column (e.g. ID) in two different
+        /// column should have its own unique Guid.  But it is ok for the same column (e.g. ID) in two different
         /// collection windows to share the same Guid in order to persist user preference of visibility of the concept.
         /// </summary>
         /// <param name="col"></param>
@@ -301,41 +297,62 @@ namespace Rdmp.UI.Collections
 
             e.AutoPopDelay = 32767;
 
-            string problem = activator.DescribeProblemIfAny(model);
-
-            if (!string.IsNullOrWhiteSpace(problem))
+            if(GetToolTip(activator, model,out string title, out string body, out bool isBad))
             {
-                e.StandardIcon = ToolTipControl.StandardIcons.Error;
-                e.Title = model.ToString();
-
-                e.Text = problem;
-                e.IsBalloon = true;
-
-            }
-            else
-            if (model is ICanBeSummarised sum)
-            {
-                e.StandardIcon = ToolTipControl.StandardIcons.Info;
-                
-                if(model is IMapsDirectlyToDatabaseTable d)
-                {
-                    e.Title = $"{model} (ID: {d.ID})";
-                }
-                else
-                {
-                    e.Title = model.ToString();
-                }
-
-                e.Text = GenerateSummary(activator,sum);
+                e.StandardIcon = isBad ? ToolTipControl.StandardIcons.Error : ToolTipControl.StandardIcons.Info;
+                e.Title = title;
+                e.Text = body;
                 e.IsBalloon = true;
             }
 
         }
 
+        /// <summary>
+        /// Returns true if it is possible to generate tool tip style info on the given <paramref name="model"/>
+        /// </summary>
+        /// <param name="activator"></param>
+        /// <param name="model"></param>
+        /// <param name="title"></param>
+        /// <param name="body"></param>
+        /// <param name="isBad"></param>
+        /// <returns></returns>
+        public static bool GetToolTip(IActivateItems activator, object model, out string title, out string body, out bool isBad)
+        {
+            string problem = activator.DescribeProblemIfAny(model);
+            title = GetToolTipTitle(model);
+
+            if (!string.IsNullOrWhiteSpace(problem))
+            {
+                isBad = true;
+                body = problem;
+                return true;
+            }
+            else
+            if (model is ICanBeSummarised sum)
+            {
+                isBad = false;
+                body = GetToolTipBody(activator, sum);
+                return true;
+            }
+
+
+            // not possible to show any kind of tooltip for this object
+            body = null;
+            isBad = false;
+            return false;
+        }
+
+        private static string GetToolTipTitle(object model)
+        {
+            return model is IMapsDirectlyToDatabaseTable d ?
+                $"{model} (ID: {d.ID})" :
+                model.ToString();
+        }
+
         static DateTime lastInvalidatedCache = DateTime.Now;
         static Dictionary<object, string> cache = new Dictionary<object, string>();
 
-        private static string GenerateSummary(IActivateItems activator, ICanBeSummarised sum)
+        private static string GetToolTipBody(IActivateItems activator, ICanBeSummarised sum)
         {
             if(DateTime.Now.Subtract(lastInvalidatedCache).TotalSeconds > 10)
             {
@@ -519,11 +536,7 @@ namespace Rdmp.UI.Collections
         void _activator_Emphasise(object sender, EmphasiseEventArgs args)
         {
             var rootObject = _activator.GetRootObjectOrSelf(args.Request.ObjectToEmphasise);
-
-            // unpin first if there is somthing pinned, so we find our object!
-            if (_pinFilter != null && _activator.IsRootObjectOfCollection(_collection,rootObject))
-                _pinFilter.UnApplyToTree();
-            
+                        
             //get the parental hierarchy
             var decendancyList = CoreChildProvider.GetDescendancyListIfAnyFor(args.Request.ObjectToEmphasise);
             
@@ -558,9 +571,6 @@ namespace Rdmp.UI.Collections
                     Tree.EndUpdate();
                 }
                 
-            if (args.Request.Pin && Settings.AllowPinning && args.Request.ObjectToEmphasise is IMapsDirectlyToDatabaseTable m)
-                Pin(m, decendancyList);
-
             //update index now pin filter is applied
             index = Tree.IndexOf(args.Request.ObjectToEmphasise);
 
@@ -570,22 +580,6 @@ namespace Rdmp.UI.Collections
 
             
             args.Sender = Tree.FindForm();
-        }
-
-        private void Pin(IMapsDirectlyToDatabaseTable objectToPin, DescendancyList descendancy)
-        {
-            if (_pinFilter != null)
-                _pinFilter.UnApplyToTree();
-            
-            _pinFilter = new CollectionPinFilterUI();
-            _pinFilter.ApplyToTree(_activator, Tree, objectToPin, descendancy);
-            CurrentlyPinned = objectToPin;
-
-            _pinFilter.UnApplied += (s, e) =>
-            {
-                _pinFilter = null;
-                CurrentlyPinned = null;
-            };
         }
 
         /// <summary>
@@ -681,18 +675,7 @@ namespace Rdmp.UI.Collections
 
                     //found a menu with compatible constructor arguments
                     if (menu != null)
-                    {
-                        if (!Settings.AllowPinning)
-                        {
-                            var miPin = menu.Items.OfType<AtomicCommandMenuItem>().SingleOrDefault(mi => mi.Tag is ExecuteCommandPin);
-
-                            if (miPin != null)
-                            {
-                                miPin.Enabled = false;
-                                miPin.ToolTipText = "Pinning is disabled in this collection";
-                            }
-                        }
-                        
+                    {                        
                         MenuBuilt?.Invoke(this,new MenuBuiltEventArgs(menu,o));
                         return Sort(menu);
                     }
@@ -743,7 +726,6 @@ namespace Rdmp.UI.Collections
         private ContextMenuStrip GetMenuWithCompatibleConstructorIfExists(object o, IMasqueradeAs oMasquerader = null)
         {
             RDMPContextMenuStripArgs args = new RDMPContextMenuStripArgs(_activator,Tree,o);
-            args.CurrentlyPinnedObject = CurrentlyPinned;
             args.Masquerader = oMasquerader ?? o as IMasqueradeAs;
 
             var objectConstructor = new ObjectConstructor();
@@ -911,11 +893,6 @@ namespace Rdmp.UI.Collections
 
             //now tell tree view to refresh the object
             
-            //if the descendancy is known 
-            if (_pinFilter != null)
-                _pinFilter.OnRefreshObject(_activator.CoreChildProvider,e);
-
-
             RefreshContextMenuStrip();
 
             //also refresh anyone who is masquerading as e.Object
@@ -926,76 +903,32 @@ namespace Rdmp.UI.Collections
 
         private void RefreshObject(object o, bool exists)
         {
-
-            //or from known descendancy
-            var knownDescendancy = _activator.CoreChildProvider.GetDescendancyListIfAnyFor(o);
-
             //if it is a root object maintained by this tree and it exists
-            if (MaintainRootObjects != null && MaintainRootObjects.Contains(o.GetType()) && exists)
-                //if tree doesn't yet contain the object
-                if (!Tree.Objects.Cast<object>().Contains(o))
-                {
-                    Tree.AddObject(o); //add it
-                    return;
-                }
-
-            if(ShouldClearPinFilterOnRefresh(o,exists))
-                _pinFilter.UnApplyToTree();
-
-            if (!exists)
+            if (MaintainRootObjects != null && MaintainRootObjects.Contains(o.GetType()))
             {
-                //clear the current selection (if the object to be deleted is selected)
-                if(Tree.IsSelected(o))
+                if (exists)
                 {
-                    Tree.SelectedObject = null;
-                    Tree.SelectedObjects = null;
-                }                   
-
-                //remove it from tree
-                Tree.RemoveObject(o);
+                    //if tree doesn't yet contain the object
+                    if (!Tree.Objects.Cast<object>().Contains(o))
+                    {
+                        Tree.AddObject(o); //add it
+                        return;
+                    }
+                }
+                else
+                {
+                    //if tree contains the object remove it
+                    if (Tree.Objects.Cast<object>().Contains(o))
+                    {
+                        Tree.RemoveObject(o); //remove it
+                        return;
+                    }
+                }
             }
                 
 
-            if(!IsHiddenByFilter(o))
-                //By preference refresh the parent that way we deal with hierarchy changes
-                if (knownDescendancy != null)
-                {
-                    var lastParent = knownDescendancy.Parents.LastOrDefault(p => Tree.IndexOf(p) != -1);
-
-                    //does tree have parent?
-                    if (lastParent != null)
-                        Tree.RefreshObject(lastParent); //refresh parent
-                    else
-                        if(Tree.IndexOf(o) != -1)
-                            //Tree has object but not parent, bad times, maybe BetterRouteExists? 
-                            Tree.RebuildAll(true);
-                }
-                else
-                //if we have the object
-                    if (Tree.IndexOf(o) != -1 && exists)
-                        Tree.RefreshObject(o); //it exists so refresh it!
-        }
-
-        private bool ShouldClearPinFilterOnRefresh(object o, bool exists)
-        {
-            //there is no current pin
-            if(_pinFilter == null)
-                return false;
-
-            //the current pin is the object being deleted
-            if(!exists && Equals(CurrentlyPinned, o))
-                return true;
-
-            //the current pin does not exist anymore (e.g. if you pinned something low down and deleted something above it)
-            if (CurrentlyPinned is DatabaseEntity e && !e.Exists())
-                return true;
-
-            return false;
-        }
-
-        private bool IsHiddenByFilter(object o)
-        {
-            return Tree.IsFiltering && !Tree.FilteredObjects.Cast<object>().Contains(o);
+            Tree.RebuildAll(true);
+            Tree.Sort();
         }
 
         public void TearDown()

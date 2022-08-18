@@ -29,8 +29,7 @@ using Rdmp.UI.ProjectUI.Datasets.Node;
 using Rdmp.UI.Refreshing;
 using Rdmp.UI.SimpleDialogs;
 using Rdmp.UI.TestsAndSetup.ServicePropogation;
-
-
+using ReusableLibraryCode.Settings;
 
 namespace Rdmp.UI.ProjectUI.Datasets
 {
@@ -55,6 +54,8 @@ namespace Rdmp.UI.ProjectUI.Datasets
         public ConfigureDatasetUI()
         {
             InitializeComponent();
+
+            cbShowProjectSpecific.Checked = UserSettings.ShowProjectSpecificColumns;
 
             olvAvailableColumnName.ImageGetter += ImageGetter;
             olvSelectedColumnName.ImageGetter += ImageGetter;
@@ -103,7 +104,8 @@ namespace Rdmp.UI.ProjectUI.Datasets
             RDMPCollectionCommonFunctionality.SetupColumnTracking(olvSelected, olvSelectedColumnOrder, new Guid("2b4db0ee-3768-4e0e-a62b-e5a9b19e91a7"));
             
             RDMPCollectionCommonFunctionality.SetupColumnTracking(olvSelected, olvIssues, new Guid("741f0cff-1d2e-46a7-a5da-9ce13e0960cf"));
-            
+
+            this.cbShowProjectSpecific.CheckedChanged += CbShowProjectSpecific_CheckedChanged;
         }
 
         void olvSelected_CellRightClick(object sender, CellRightClickEventArgs e)
@@ -203,7 +205,7 @@ namespace Rdmp.UI.ProjectUI.Datasets
             ICatalogue cata;
             try
             {
-                cata = _dataSet.Catalogue;
+                cata = Activator.CoreChildProvider.AllCataloguesDictionary[_dataSet.Catalogue_ID];
             }
             catch (Exception e)
             {
@@ -214,23 +216,68 @@ namespace Rdmp.UI.ProjectUI.Datasets
 
             //on the left
             
-            HashSet<IColumn> toAdd = new HashSet<IColumn>();
+            HashSet<ExtractionInformation> toAdd = new ();
 
             //add all the extractable columns from the current Catalogue
             foreach (ExtractionInformation e in cata.GetAllExtractionInformation(ExtractionCategory.Any))
                 toAdd.Add(e);
 
-            //plus all the Project Specific columns
-            foreach (ExtractionInformation e in _config.Project.GetAllProjectCatalogueColumns(ExtractionCategory.ProjectSpecific))
-                toAdd.Add(e);
+            if(UserSettings.ShowProjectSpecificColumns)
+            {
+                //plus all the Project Specific columns
+                foreach (ExtractionInformation e in _config.Project.GetAllProjectCatalogueColumns(Activator.CoreChildProvider, ExtractionCategory.ProjectSpecific))
+                    toAdd.Add(e);
+            }
+
+
+            // Tell our columns about their CatalogueItems/ColumnInfos by using CoreChildProvider
+            // Prevents later queries to db to figure out things like column name etc
+            foreach (var ei in toAdd)
+            {
+                var ci = Activator.CoreChildProvider.AllCatalogueItemsDictionary[ei.CatalogueItem_ID];
+                
+                ei.InjectKnown(ci);
+                if (ci.ColumnInfo_ID != null)
+                    ei.InjectKnown(ci.ColumnInfo);
+            }
+
+            olvAvailable.BeginUpdate();
 
             //add the stuff that is in Project Catalogues so they can pick these too
             olvAvailable.AddObjects(toAdd.ToArray());
             
+            olvAvailable.EndUpdate();
+
             //on the right
 
             //add the already included ones on the right
-            ConcreteColumn[] allExtractableColumns = _config.GetAllExtractableColumnsFor(_dataSet);
+            ExtractableColumn[] allExtractableColumns = _config.GetAllExtractableColumnsFor(_dataSet);
+
+            // Tell our columns about their CatalogueItems by using CoreChildProvider
+            // Prevents later queries to db to figure out things like column name etc
+            foreach (var ec in allExtractableColumns)
+            {
+                if(ec.CatalogueExtractionInformation_ID != null)
+                {
+                    var eiDict = Activator.CoreChildProvider.AllExtractionInformationsDictionary;
+                    var ciDict = Activator.CoreChildProvider.AllCatalogueItemsDictionary;
+
+                    if (eiDict.ContainsKey(ec.CatalogueExtractionInformation_ID.Value))
+                    {
+                        var ei = eiDict[ec.CatalogueExtractionInformation_ID.Value];
+                        ec.InjectKnown(ei);
+                        ec.InjectKnown(ei.ColumnInfo);
+
+                        if(ciDict.ContainsKey(ei.CatalogueItem_ID))
+                        {
+                            ec.InjectKnown(ciDict[ei.CatalogueItem_ID]);
+                        }
+                    }
+
+                        
+                }
+            }
+
 
             //now get all the ExtractableColumns that are already configured for this configuration (previously)
             olvSelected.AddObjects(allExtractableColumns);
@@ -241,7 +288,8 @@ namespace Rdmp.UI.ProjectUI.Datasets
         private void RefreshDisabledObjectStatus()
         {
             olvAvailable.DisabledObjects = olvAvailable.Objects.OfType<IColumn>().Where(IsAlreadySelected).ToArray();
-            olvAvailable.RefreshObjects(olvAvailable.Objects.OfType<IColumn>().ToArray());
+            // TN: Seems that this is not required and just updating DisabledObjects is sufficient
+            // olvAvailable.RefreshObjects(olvAvailable.Objects.OfType<IColumn>().ToArray());
 
             UpdateJoins();
             
@@ -577,18 +625,16 @@ namespace Rdmp.UI.ProjectUI.Datasets
             var nodes = new HashSet<AvailableForceJoinNode>();
 
             //identify those we are already joining to based on the columns selected
-            var tablesInQuery = olvSelected.Objects.OfType<ExtractableColumn>()
-                .Where(c => c.ColumnInfo != null)
-                .Select(c => c.ColumnInfo.TableInfo)
-                .Distinct()
-                .Where(t=>!t.IsLookupTable()); //except lookup tables
+            var tablesInQuery = GetTablesUsedInQuery();
             
             //add those as readonly (you cant unjoin from those)
             foreach (TableInfo tableInfo in tablesInQuery)
                 nodes.Add(new AvailableForceJoinNode(tableInfo, true));
 
+            SelectedDataSet.GetCatalogue().GetTableInfos(Activator.CoreChildProvider, out var normal, out _);
+            
             // Add all tables as optional joins that the Catalogue has
-            foreach (var t in SelectedDataSet.GetCatalogue().GetTableInfoList(false))
+            foreach (var t in normal)
             {
                 var node = new AvailableForceJoinNode((TableInfo)t, false);
 
@@ -598,14 +644,22 @@ namespace Rdmp.UI.ProjectUI.Datasets
 
             // Add all tables under other ProjectSpecific Catalogues that are associated with this Project
             foreach (var projectCatalogue in SelectedDataSet.ExtractionConfiguration.Project.GetAllProjectCatalogues())
-                foreach (TableInfo projectSpecificTables in projectCatalogue.GetTableInfoList(false))
+            {
+                // find tables
+                projectCatalogue.GetTableInfos(Activator.CoreChildProvider,out var projNormal, out _);
+
+                // that are not lookups
+                foreach (TableInfo projectSpecificTables in projNormal)
                 {
+                    // add the potential to join to them
                     var node = new AvailableForceJoinNode(projectSpecificTables, false);
 
                     //.Equals works on TableInfo so we avoid double adding
                     if (!nodes.Contains(node))
                         nodes.Add(node);
                 }
+            }
+                
 
             //identify the existing force joins
             var existingForceJoins = new HashSet<SelectedDataSetsForcedJoin>(SelectedDataSet.Repository.GetAllObjectsWithParent<SelectedDataSetsForcedJoin>(SelectedDataSet));
@@ -624,7 +678,7 @@ namespace Rdmp.UI.ProjectUI.Datasets
                 redundantForcedJoin.DeleteInDatabase();
 
             foreach (var node in nodes)
-                node.FindJoinsBetween(nodes);
+                node.FindJoinsBetween(Activator.CoreChildProvider, nodes);
 
             //highlight to user the fact that there are unlinkable tables
             
@@ -633,7 +687,20 @@ namespace Rdmp.UI.ProjectUI.Datasets
             
             olvJoin.AddObjects(nodes.ToArray());
         }
-        
+
+        private IEnumerable<ITableInfo> GetTablesUsedInQuery()
+        {
+            var eis = Activator.CoreChildProvider.AllExtractionInformationsDictionary;
+
+            return olvSelected.Objects.OfType<ExtractableColumn>()
+                .Where(ec => ec.CatalogueExtractionInformation_ID != null)
+                .Select(ec => eis.ContainsKey(ec.CatalogueExtractionInformation_ID.Value) ? eis[ec.CatalogueExtractionInformation_ID.Value] : null)
+                .Where(ei => ei != null)
+                .Select(ei => ei.ColumnInfo.TableInfo)
+                .Distinct()
+                .Where(t => !t.IsLookupTable(Activator.CoreChildProvider));
+        }
+
         void olvJoin_ButtonClick(object sender, CellClickEventArgs e)
         {
             var node = (AvailableForceJoinNode) e.Model;
@@ -755,6 +822,12 @@ namespace Rdmp.UI.ProjectUI.Datasets
             }
 
             UpdateJoins();
+        }
+
+        private void CbShowProjectSpecific_CheckedChanged(object sender, System.EventArgs e)
+        {
+            UserSettings.ShowProjectSpecificColumns = cbShowProjectSpecific.Checked;
+            SetupUserInterface();            
         }
 
     }

@@ -54,6 +54,9 @@ namespace Rdmp.Core.CommandLine.Options
         [Option(Required = false, HelpText = "Connect to an RDMP platform 'database' stored on the file system at this folder")]
         public string Dir { get; set; }
 
+        [Option('q',"quiet",Required = false, HelpText = "Suppress all console logging not directly tied to show/get value etc")]
+        public bool Quiet { get; set; }
+
         /// <summary>
         /// If <see cref="ConnectionStringsFile"/> was specified and that file existed and was succesfully loaded
         /// using <see cref="PopulateConnectionStringsFromYamlIfMissing"/> then this property will store the
@@ -168,7 +171,7 @@ namespace Rdmp.Core.CommandLine.Options
                 return;
             }
 
-            string assemblyFolder = Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location);
+            var assemblyFolder = AppContext.BaseDirectory;
             var yaml = Path.Combine(assemblyFolder, ConnectionStringsFile);
 
             if (File.Exists(yaml))
@@ -183,7 +186,7 @@ namespace Rdmp.Core.CommandLine.Options
                 }
                 catch (Exception ex)
                 {
-                    notifier.OnCheckPerformed(new CheckEventArgs("Failed to read yaml file '" + yaml + "'", CheckResult.Fail,ex));
+                    notifier.OnCheckPerformed(new CheckEventArgs($"Failed to read yaml file '{yaml}'", CheckResult.Fail,ex));
                 }
             }
         }

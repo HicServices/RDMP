@@ -15,6 +15,6 @@ namespace Rdmp.Core.CommandLine.Options
     public class DqeOptions:RDMPCommandLineOptions
     {
         [Option('c',"Catalogue",HelpText = "ID of the Catalogue to run the DQE on",Required = true)]
-        public int Catalogue{ get; set; }
+        public string Catalogue{ get; set; }
     }
 }

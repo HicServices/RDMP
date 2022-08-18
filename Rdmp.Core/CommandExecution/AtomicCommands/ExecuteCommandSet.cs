@@ -58,9 +58,14 @@ namespace Rdmp.Core.CommandExecution.AtomicCommands
         {
             _setOn = setOn;
 
-            _property = _setOn.GetType().GetProperty(property);
+            _property = GetProperty(_setOn, property);
 
-            if(_property == null)
+            if(_setOn is IMightBeReadOnly m)
+            {
+                SetImpossibleIfReadonly(m);
+            }
+
+            if (_property == null)
             {
                 SetImpossible($"Unknown Property '{property}'");
 
@@ -90,6 +95,16 @@ namespace Rdmp.Core.CommandExecution.AtomicCommands
                     NewValue = picker[0].GetValueForParameterOfType(_property.PropertyType);
             }
         }
+
+        private PropertyInfo GetProperty(IMapsDirectlyToDatabaseTable setOn, string property)
+        {
+            var props = setOn.GetType().GetProperties();
+            
+            return props.FirstOrDefault(p => string.Equals(p.Name, property)) ??
+                   props.FirstOrDefault(p => string.Equals(p.Name, property,StringComparison.InvariantCultureIgnoreCase));
+
+        }
+
         public ExecuteCommandSet(IBasicActivateItems activator,IMapsDirectlyToDatabaseTable setOn,PropertyInfo property):base(activator)
         {
             _setOn = setOn;

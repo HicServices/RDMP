@@ -37,7 +37,7 @@ namespace Rdmp.UI.LoadExecutionUIs
         {
             return new CacheOptions()
             {
-                CacheProgress = _cacheProgress.ID,
+                CacheProgress = _cacheProgress.ID.ToString(),
                 Command = commandLineActivity,
                 RetryMode = cbFailures.Checked
             };

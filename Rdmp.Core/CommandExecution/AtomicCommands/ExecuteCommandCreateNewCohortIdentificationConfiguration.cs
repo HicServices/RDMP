@@ -78,12 +78,17 @@ namespace Rdmp.Core.CommandExecution.AtomicCommands
 
             if(proj == null && BasicActivator.IsInteractive && PromptToPickAProject)
             {
-                proj = (Project)BasicActivator.SelectOne(new DialogArgs
+                var projects = BasicActivator.RepositoryLocator.DataExportRepository.GetAllObjects<Project>();
+
+                if(projects.Any())
                 {
-                    WindowTitle = "Associate with Project",
-                    TaskDescription = "Do you want to associate this new query with a Project? if not select Null or Cancel.",
-                    AllowSelectingNull = true,
-                },BasicActivator.RepositoryLocator.DataExportRepository.GetAllObjects<Project>());
+                    proj = (Project)BasicActivator.SelectOne(new DialogArgs
+                    {
+                        WindowTitle = "Associate with Project",
+                        TaskDescription = "Do you want to associate this new query with a Project? if not select Null or Cancel.",
+                        AllowSelectingNull = true,
+                    }, projects);
+                }
             }
 
             CohortIdentificationConfiguration cic;

@@ -10,7 +10,7 @@
 	<NoWarn>1701;1702;CS1591;NU1701;CA1416</NoWarn>
     
     <GenerateResourceUsePreserializedResources>true</GenerateResourceUsePreserializedResources>
-    <DebugType>full</DebugType>
+    <DebugType>embedded</DebugType>
     <DebugSymbols>true</DebugSymbols>
     <UseWindowsForms>true</UseWindowsForms>
   </PropertyGroup>
@@ -53,11 +53,11 @@
     <PackageReference Include="HIC.System.Windows.Forms.DataVisualization" Version="1.0.1" />
     <PackageReference Include="NHunspell" Version="1.2.5554.16953" />
     <PackageReference Include="ObjectListView.Official" Version="2.9.1" />
-    <PackageReference Include="SecurityCodeScan.VS2019" Version="5.6.2">
+    <PackageReference Include="SecurityCodeScan.VS2019" Version="5.6.5">
       <PrivateAssets>all</PrivateAssets>
       <IncludeAssets>runtime; build; native; contentfiles; analyzers</IncludeAssets>
     </PackageReference>
-    <PackageReference Include="HIC.BadMedicine" Version="1.0.1" />
+    <PackageReference Include="HIC.BadMedicine" Version="1.1.0" />
     <PackageReference Include="System.Security.Permissions" Version="6.0.0" />
     <PackageReference Include="System.Resources.Extensions" Version="4.6.0" />
     <PackageReference Include="System.Threading.AccessControl" Version="6.0.0" />
@@ -93,12 +93,6 @@
     </Compile>
     <Compile Update="Collections\CatalogueCollectionUI.Designer.cs">
       <DependentUpon>CatalogueCollectionUI.cs</DependentUpon>
-    </Compile>
-    <Compile Update="Collections\CollectionPinFilterUI.cs">
-      <SubType>UserControl</SubType>
-    </Compile>
-    <Compile Update="Collections\CollectionPinFilterUI.Designer.cs">
-      <DependentUpon>CollectionPinFilterUI.cs</DependentUpon>
     </Compile>
     <Compile Update="Collections\FavouritesCollectionUI.cs">
       <SubType>UserControl</SubType>
@@ -372,9 +366,6 @@
     </EmbeddedResource>
     <EmbeddedResource Update="Collections\CatalogueCollectionUI.resx">
       <DependentUpon>CatalogueCollectionUI.cs</DependentUpon>
-    </EmbeddedResource>
-    <EmbeddedResource Update="Collections\CollectionPinFilterUI.resx">
-      <DependentUpon>CollectionPinFilterUI.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Update="Collections\FavouritesCollectionUI.resx">
       <DependentUpon>FavouritesCollectionUI.cs</DependentUpon>

@@ -76,9 +76,14 @@ namespace Rdmp.Core.CommandLine.Interactive.Picking
         /// <returns></returns>
         protected bool IsDatabaseObjectType(string possibleTypeName, out Type t)
         {
+            var mef = Activator.RepositoryLocator.CatalogueRepository.MEF;
+
+            if (mef == null)
+                throw new Exception("MEF not loaded yet, program may not have loaded startup");
+
             try
             {
-                t = GetTypeFromShortCodeIfAny(possibleTypeName) ?? Activator.RepositoryLocator.CatalogueRepository.MEF.GetType(possibleTypeName);
+                t = GetTypeFromShortCodeIfAny(possibleTypeName) ?? mef.GetType(possibleTypeName);
             }
             catch (Exception)
             {

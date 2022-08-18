@@ -6,6 +6,7 @@
 
 using Rdmp.Core.CommandExecution.Combining;
 using Rdmp.Core.Curation.Data.Cohort;
+using Rdmp.Core.Repositories.Construction;
 
 namespace Rdmp.Core.CommandExecution.AtomicCommands
 {
@@ -13,14 +14,20 @@ namespace Rdmp.Core.CommandExecution.AtomicCommands
     {
         private readonly CohortAggregateContainerCombineable _sourceCohortAggregateContainer;
         private readonly CohortAggregateContainer _targetCohortAggregateContainer;
+        
+        [UseWithObjectConstructor]
+        public ExecuteCommandMoveCohortAggregateContainerIntoSubContainer(IBasicActivateItems activator, CohortAggregateContainer toMove, CohortAggregateContainer into) 
+            : this(activator,new CohortAggregateContainerCombineable(toMove),into)
+        {
 
+        }
         public ExecuteCommandMoveCohortAggregateContainerIntoSubContainer(IBasicActivateItems activator, CohortAggregateContainerCombineable sourceCohortAggregateContainer, CohortAggregateContainer targetCohortAggregateContainer) : base(activator)
         {    
             _sourceCohortAggregateContainer = sourceCohortAggregateContainer;
             _targetCohortAggregateContainer = targetCohortAggregateContainer;
 
             if(_sourceCohortAggregateContainer.AllSubContainersRecursively.Contains(_targetCohortAggregateContainer))
-                SetImpossible("Cannot move a container into one of it's own subcontainers");
+                SetImpossible("Cannot move a container into one of its own subcontainers");
 
             if(_sourceCohortAggregateContainer.AggregateContainer.Equals(_targetCohortAggregateContainer))
                 SetImpossible("Cannot move a container into itself");

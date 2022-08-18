@@ -64,7 +64,7 @@ namespace Rdmp.Core.Repositories
         CommentStore CommentStore { get; set; }
 
         string GetEncryptionKeyPath();
-
+        
         /// <summary>
         /// Manages information about what set containers / subcontainers exist under a <see cref="CohortIdentificationConfiguration"/>
         /// </summary>
@@ -141,5 +141,29 @@ namespace Rdmp.Core.Repositories
         ExternalDatabaseServer[] GetAllDatabases<T>() where T : IPatcher, new();
         void DeleteEncryptionKeyPath();
 
+        /// <summary>
+        /// Returns all <see cref="ExtendedProperty"/> that are declared on
+        /// <paramref name="obj"/> where the property Name is 
+        /// </summary>
+        /// <param name="propertyName"></param>
+        /// <param name="obj"></param>
+        /// <returns></returns>
+        IEnumerable<ExtendedProperty> GetExtendedProperties(string propertyName, IMapsDirectlyToDatabaseTable obj);
+
+
+        /// <summary>
+        /// Returns all <see cref="ExtendedProperty"/> declared on any objects
+        /// Named <paramref name="propertyName"/>
+        /// </summary>
+        /// <param name="propertyName"></param>
+        /// <returns></returns>
+        IEnumerable<ExtendedProperty> GetExtendedProperties(string propertyName);
+
+        /// <summary>
+        /// Returns all <see cref="ExtendedProperty"/> declared on <paramref name="obj"/>
+        /// </summary>
+        /// <param name="obj"></param>
+        /// <returns></returns>
+        IEnumerable<ExtendedProperty> GetExtendedProperties(IMapsDirectlyToDatabaseTable obj);
     }
 }

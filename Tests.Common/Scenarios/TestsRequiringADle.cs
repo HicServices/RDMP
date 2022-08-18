@@ -75,7 +75,7 @@ namespace Tests.Common.Scenarios
             CreateFlatFileAttacher(TestLoadMetadata,"*.csv",TestCatalogue.GetTableInfoList(false).Single(),",");
             
             //Get DleRunner to run pre load checks (includes trigger creation etc)
-            var runner = new DleRunner(new DleOptions() { LoadMetadata = TestLoadMetadata.ID,Command = CommandLineActivity.check});
+            var runner = new DleRunner(new DleOptions() { LoadMetadata = TestLoadMetadata.ID.ToString(),Command = CommandLineActivity.check});
             runner.Run(RepositoryLocator,new ThrowImmediatelyDataLoadEventListener(), new AcceptAllCheckNotifier(), new GracefulCancellationToken());
         }
 
@@ -165,11 +165,11 @@ namespace Tests.Common.Scenarios
             if(checks)
             {
                 //Get DleRunner to run pre load checks (includes trigger creation etc)
-                var checker = new DleRunner(new DleOptions() { LoadMetadata = lmd.ID,Command = CommandLineActivity.check});
+                var checker = new DleRunner(new DleOptions() { LoadMetadata = lmd.ID.ToString(), Command = CommandLineActivity.check});
                 checker.Run(RepositoryLocator,new ThrowImmediatelyDataLoadEventListener(), new AcceptAllCheckNotifier(), new GracefulCancellationToken());
             }
 
-            var runner = new DleRunner(new DleOptions() { LoadMetadata = lmd.ID,Command = CommandLineActivity.run});
+            var runner = new DleRunner(new DleOptions() { LoadMetadata = lmd.ID.ToString(), Command = CommandLineActivity.run});
             runner.Run(RepositoryLocator,new ThrowImmediatelyDataLoadEventListener(), new ThrowImmediatelyCheckNotifier(), new GracefulCancellationToken());
         }
     }

@@ -6,6 +6,7 @@
 
 using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.IO;
 using System.Linq;
 using System.Text.RegularExpressions;
@@ -19,6 +20,7 @@ using Rdmp.Core.CommandLine.Gui.Windows;
 using Rdmp.Core.CommandLine.Runners;
 using Rdmp.Core.Curation.Data;
 using Rdmp.Core.Curation.Data.Aggregation;
+using Rdmp.Core.Curation.Data.Cohort;
 using Rdmp.Core.Curation.Data.DataLoad;
 using Rdmp.Core.Curation.Data.Pipelines;
 using Rdmp.Core.DataViewing;
@@ -82,9 +84,11 @@ namespace Rdmp.Core.CommandLine.Gui
                     Height = Dim.Fill(1),
                     Text = message.Replace("\r\n", "\n"),
                     ReadOnly = true,
-                    AllowsTab = false
+                    AllowsTab = false,
+                    WordWrap = true,
+
             });
-                Application.Run(dlg);
+                Application.Run(dlg, ConsoleMainWindow.ExceptionPopup);
             }
         }
         public override bool YesNo(DialogArgs args, out bool chosen)
@@ -153,7 +157,7 @@ namespace Rdmp.Core.CommandLine.Gui
             IMapsDirectlyToDatabaseTable[] availableObjects)
         {
             var dlg = new ConsoleGuiSelectMany(this, args.WindowTitle, availableObjects);
-            Application.Run(dlg);
+            Application.Run(dlg, ConsoleMainWindow.ExceptionPopup);
 
             return dlg.ResultOk ? dlg.Result.Cast<IMapsDirectlyToDatabaseTable>().ToArray() : new IMapsDirectlyToDatabaseTable[0];
         }
@@ -163,7 +167,7 @@ namespace Rdmp.Core.CommandLine.Gui
             if (args.AllowAutoSelect && availableObjects.Length == 1)
                 return availableObjects[0];
 
-            var dlg = new ConsoleGuiSelectOne(CoreChildProvider, availableObjects);
+            var dlg = new ConsoleGuiSelectOne(this, availableObjects);
             if (dlg.ShowDialog())
                 return dlg.Selected;
 
@@ -180,7 +184,7 @@ namespace Rdmp.Core.CommandLine.Gui
                 return true;
             }
 
-            var dlg = new ConsoleGuiBigListBox<T>(args.WindowTitle,"Ok",true,available,t=>t.ToString(),true);
+            var dlg = new ConsoleGuiBigListBox<T>(args.WindowTitle ?? "","Ok",true,available,t=>t.ToString(),true);
 
             if (dlg.ShowDialog())
             {
@@ -195,7 +199,7 @@ namespace Rdmp.Core.CommandLine.Gui
         public override bool SelectObjects<T>(DialogArgs args, T[] available, out T[] selected)
         {  
             var dlg = new ConsoleGuiSelectMany(this, args.WindowTitle, available);
-            Application.Run(dlg);
+            Application.Run(dlg, ConsoleMainWindow.ExceptionPopup);
 
             selected = dlg.Result.Cast<T>().ToArray();
             return dlg.ResultOk;
@@ -210,7 +214,7 @@ namespace Rdmp.Core.CommandLine.Gui
                 CanChooseFiles = false,
             };
             
-            Application.Run(openDir);
+            Application.Run(openDir, ConsoleMainWindow.ExceptionPopup);
 
             var selected = openDir.FilePath?.ToString();
             
@@ -222,7 +226,7 @@ namespace Rdmp.Core.CommandLine.Gui
         {
             var openDir = new OpenDialog(prompt,"Directory"){AllowsMultipleSelection = false};
             
-            Application.Run(openDir);
+            Application.Run(openDir, ConsoleMainWindow.ExceptionPopup);
 
             var selected = openDir.FilePaths.FirstOrDefault();
             
@@ -237,10 +241,15 @@ namespace Rdmp.Core.CommandLine.Gui
                 AllowedFileTypes = pattern == null ? null : new []{pattern.TrimStart('*')}
             };
             
-            Application.Run(openDir);
+            Application.Run(openDir, ConsoleMainWindow.ExceptionPopup);
 
             var selected = openDir.FilePaths.FirstOrDefault();
-            
+
+
+            // entering "null" in a file dialog may return something like "D:\Blah\null"
+            if (string.Equals(Path.GetFileName(selected),"null", StringComparison.CurrentCultureIgnoreCase))
+                return null;
+
             return selected == null ? null : new FileInfo(selected);
         }
         public override FileInfo[] SelectFiles(string prompt, string patternDescription, string pattern)
@@ -251,7 +260,7 @@ namespace Rdmp.Core.CommandLine.Gui
                 AllowedFileTypes = pattern == null ? null : new []{pattern.TrimStart('*')}
             };
             
-            Application.Run(openDir);
+            Application.Run(openDir, ConsoleMainWindow.ExceptionPopup);
 
             return openDir.FilePaths?.Select(f=>new FileInfo(f))?.ToArray();
         }
@@ -296,7 +305,8 @@ namespace Rdmp.Core.CommandLine.Gui
                 Width = Dim.Fill(),
                 Height = Dim.Fill() - 2,
                 ReadOnly = true,
-                AllowsTab = false
+                AllowsTab = false,
+                WordWrap = true,
             };
 
             bool toggleStack = true;
@@ -316,8 +326,10 @@ namespace Rdmp.Core.CommandLine.Gui
 
             var dlg = new Dialog("Error",w,h,btnOk,btnStack);            
             dlg.Add(textView);
-            
-            Application.Run(dlg);
+
+            Application.MainLoop.Invoke(() =>
+                Application.Run(dlg, ConsoleMainWindow.ExceptionPopup)
+            );
         }
 
         private ustring GetExceptionText(string errorText, Exception exception, bool includeStackTrace)
@@ -333,7 +345,7 @@ namespace Rdmp.Core.CommandLine.Gui
         public override void ShowData(IViewSQLAndResultsCollection collection)
         {
             var view = new ConsoleGuiSqlEditor(this,collection){Modal = true };
-            Application.Run(view);
+            Application.Run(view, ConsoleMainWindow.ExceptionPopup);
         }
 
         public override bool CanActivate(object o)
@@ -353,29 +365,40 @@ namespace Rdmp.Core.CommandLine.Gui
                 }
             }
 
+            if(m is CohortIdentificationConfiguration cic)
+            {
+                var view = new ConsoleGuiCohortIdentificationConfigurationUI(this, cic);
+                Application.Run(view, ConsoleMainWindow.ExceptionPopup);
+            }
+            else
             if(m != null)
             {
                 var view = new ConsoleGuiEdit(this,m){Modal = true };
-                Application.Run(view);
+                Application.Run(view, ConsoleMainWindow.ExceptionPopup);
             }
         }
 
         public override void ShowLogs(ILoggedActivityRootObject rootObject)
         {
             var view = new ConsoleGuiViewLogs(this,rootObject);
-            Application.Run(view);
+            Application.Run(view, ConsoleMainWindow.ExceptionPopup);
         }
 
         public override void ShowGraph(AggregateConfiguration aggregate)
         {
             var view = new ConsoleGuiViewGraph(this, aggregate);
-            Application.Run(view);
+            Application.Run(view, ConsoleMainWindow.ExceptionPopup);
         }
 
 
         public override IPipelineRunner GetPipelineRunner(DialogArgs args, IPipelineUseCase useCase, IPipeline pipeline)
         {
             return new ConsoleGuiRunPipeline(this,useCase, pipeline);
+        }
+
+        public override void LaunchSubprocess(ProcessStartInfo startInfo)
+        {
+            throw new NotSupportedException();
         }
     }
 }

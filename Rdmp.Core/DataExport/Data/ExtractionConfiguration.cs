@@ -516,7 +516,7 @@ namespace Rdmp.Core.DataExport.Data
         }
 
         /// <inheritdoc/>
-        public ConcreteColumn[] GetAllExtractableColumnsFor(IExtractableDataSet dataset)
+        public ExtractableColumn[] GetAllExtractableColumnsFor(IExtractableDataSet dataset)
         {
             return
                 Repository.GetAllObjectsWhere<ExtractableColumn>("ExtractionConfiguration_ID", ID)
@@ -585,13 +585,26 @@ namespace Rdmp.Core.DataExport.Data
         /// <param name="extractableDataSet"></param>
         public void AddDatasetToConfiguration(IExtractableDataSet extractableDataSet)
         {
+            AddDatasetToConfiguration(extractableDataSet, out _);
+        }
+
+        /// <summary>
+        /// Makes the provided <paramref name="extractableDataSet"/> extractable in the current <see cref="IExtractionConfiguration"/>.  This
+        /// includes selecting it (<see cref="ISelectedDataSets"/>) and replicating any mandatory filters.
+        /// </summary>
+        /// <param name="extractableDataSet"></param>
+        /// <param name="selectedDataSet">The RDMP object that indicates that the dataset is extracted in this configuration</param>
+        public void AddDatasetToConfiguration(IExtractableDataSet extractableDataSet, out ISelectedDataSets selectedDataSet)
+        {
+            selectedDataSet = null;
+
             //it is already part of the configuration
             if( SelectedDataSets.Any(s => s.ExtractableDataSet_ID == extractableDataSet.ID))
                 return;
 
             var dataExportRepo = (IDataExportRepository)Repository;
 
-            var selectedDataSet = new SelectedDataSets(dataExportRepo, this, extractableDataSet, null);
+            selectedDataSet = new SelectedDataSets(dataExportRepo, this, extractableDataSet, null);
 
             ExtractionFilter[] mandatoryExtractionFiltersToApplyToDataset = extractableDataSet.Catalogue.GetAllMandatoryFilters();
 

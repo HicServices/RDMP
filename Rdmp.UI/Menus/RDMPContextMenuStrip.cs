@@ -24,6 +24,7 @@ using Rdmp.UI.ItemActivation;
 using Rdmp.UI.Refreshing;
 using ReusableLibraryCode.Checks;
 using ReusableLibraryCode.Icons.IconProvision;
+using ReusableLibraryCode.Settings;
 
 namespace Rdmp.UI.Menus
 {
@@ -93,6 +94,13 @@ namespace Rdmp.UI.Menus
                             cmd.FetchDestinationObjects();
                             mi.Enabled = !cmd.IsImpossible;
                             mi.ToolTipText = cmd.ReasonCommandImpossible;
+                        }
+
+                        if(mi.Tag is ExecuteCommandSimilar cmdSimilar)
+                        {
+                            cmdSimilar.FetchMatches();
+                            mi.Enabled = !cmdSimilar.IsImpossible;
+                            mi.ToolTipText = cmdSimilar.ReasonCommandImpossible;
                         }
                     }
             };
@@ -198,7 +206,8 @@ namespace Rdmp.UI.Menus
             //add refresh and then finally help
             if (databaseEntity != null) 
                 Add(new ExecuteCommandRefreshObject(_activator, databaseEntity), Keys.F5);
-            
+
+            Add(new ExecuteCommandShowTooltip(_activator, _args.Model));
             Add(new ExecuteCommandShowKeywordHelp(_activator, _args));
             
             var gotoMenu = Items.OfType<ToolStripMenuItem>().FirstOrDefault(i=>i.Text.Equals(AtomicCommandFactory.GoTo));
@@ -214,11 +223,30 @@ namespace Rdmp.UI.Menus
         private void AddFactoryMenuItems()
         {
             var factory = new AtomicCommandFactory(_activator);
-                        
-            foreach (var toPresent in factory.CreateCommands(_args.Masquerader ?? _o))
+
+            var start = DateTime.Now;
+            var now = DateTime.Now;
+            Dictionary<IAtomicCommand, TimeSpan> performance = new();
+
+            var forObject = _args.Masquerader ?? _o;
+            foreach (var toPresent in factory.CreateCommands(forObject))
             {
+                // how long did it take to construct the command?
+                performance.Add(toPresent, DateTime.Now.Subtract(now)); 
+
                 Add(toPresent);
+                now = DateTime.Now;
             }
+
+            if (UserSettings.DebugPerformance)
+            {
+                string timings = string.Join(Environment.NewLine, performance.Select(kvp => $"{kvp.Key}:{kvp.Value.TotalMilliseconds}ms"));
+
+                _activator.GlobalErrorCheckNotifier.OnCheckPerformed(
+                    new CheckEventArgs($"Creating menu for '{forObject}' took {DateTime.Now.Subtract(start).Milliseconds}ms:{Environment.NewLine}{timings}",
+                    CheckResult.Success));
+            }
+                
         }
 
         public void Add(IAtomicCommand toPresent)
@@ -239,16 +267,6 @@ namespace Rdmp.UI.Menus
 
         private void PopulateTreeMenu(RDMPCollectionCommonFunctionality commonFunctionality, ToolStripMenuItem treeMenuItem)
         {
-            var databaseEntity = _o as DatabaseEntity;
-
-            if (databaseEntity != null)
-            {
-                if (databaseEntity.Equals(_args.CurrentlyPinnedObject))
-                    Add(new ExecuteCommandUnpin(_activator, databaseEntity), Keys.None, treeMenuItem);
-                else
-                    Add(new ExecuteCommandPin(_activator, databaseEntity), Keys.None, treeMenuItem);
-            }
-
             if (_args.Tree != null && !commonFunctionality.Settings.SuppressChildrenAdder)
             {
                 Add(new ExecuteCommandExpandAllNodes(_activator, commonFunctionality, _args.Model), Keys.None, treeMenuItem);

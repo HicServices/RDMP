@@ -14,6 +14,7 @@ using FAnsi.Discovery.QuerySyntax;
 using MapsDirectlyToDatabaseTable.Attributes;
 using Rdmp.Core.Curation;
 using Rdmp.Core.Curation.Data;
+using Rdmp.Core.Curation.Data.DataLoad;
 using Rdmp.Core.DataFlowPipeline;
 using Rdmp.Core.DataFlowPipeline.Requirements;
 using Rdmp.Core.DataLoad.Engine.Attachers;
@@ -60,8 +61,11 @@ namespace Rdmp.Core.DataLoad.Modules.Attachers
         [DemandsInitialization("When provided this OVERIDES RemoteTableName and is intended for running a complicated query on the remote machine in order to pull data in a suitable format.",DemandType.SQL)]
         public string RemoteSelectSQL { get; set; }
 
-        [DemandsInitialization("The table in RAW that you want to load the remote database data into.  This must (currently) match the TableInfo you are ultimately going to load exactly including having the same number of columns - if you need to run CREATE and ALTER scripts to accommodate dodgy source data formats then you should do that in either Mounting or AdjustRAW", Mandatory = true)]
+        [DemandsInitialization("The table in RAW that you want to load the remote database data into.  This must (currently) match the TableInfo you are ultimately going to load exactly including having the same number of columns - if you need to run CREATE and ALTER scripts to accommodate dodgy source data formats then you should do that in either Mounting or AdjustRAW")]
         public string RAWTableName { get; set; }
+
+        [DemandsInitialization("Overrides RAWTableName with a specific named table")]
+        public ITableInfo RAWTableToLoad { get; set; }
 
         [DemandsInitialization("Optionally gives you access to two parameters " + StartDateParameter + " and " + EndDateParameter + " for use in your RemoteSelectSQL.  This requires that you create a load schedule specifically associated with the LoadMetadata, this ties you contractually to actually respect the dates correctly in your query.")]
         public LoadProgress Progress { get; set; }
@@ -240,8 +244,15 @@ namespace Rdmp.Core.DataLoad.Modules.Attachers
                 }
             }
 
-            if (string.IsNullOrWhiteSpace(RAWTableName))
+            // If user hasn't picked a table to load (either explicit or free text)
+            if (string.IsNullOrWhiteSpace(RAWTableName) && RAWTableToLoad == null)
                 notifier.OnCheckPerformed(new CheckEventArgs("RAWTableName has not been set for " + GetType().Name, CheckResult.Fail));
+
+            // user shouldn't really set both since RAWTableToLoad overrides the string value
+            if (!string.IsNullOrWhiteSpace(RAWTableName) && RAWTableToLoad != null)
+            {
+                notifier.OnCheckPerformed(new CheckEventArgs($"{nameof(RAWTableName)}('{RAWTableName}') will be ignored because {nameof(RAWTableToLoad)} has been set", CheckResult.Warning));
+            }
         }
 
         public override void LoadCompletedSoDispose(ExitCodeType exitCode, IDataLoadEventListener postLoadEventListener)
@@ -361,8 +372,19 @@ namespace Rdmp.Core.DataLoad.Modules.Attachers
                     cmd.Parameters.Add(pmax);
                 };
             }
-                
-            var destination = new SqlBulkInsertDestination(_dbInfo, RAWTableName, Enumerable.Empty<string>());
+
+            string rawTableName;
+            
+            if(RAWTableToLoad != null)
+            {
+                rawTableName = RAWTableToLoad.GetRuntimeName(LoadStage.AdjustRaw, job.Configuration.DatabaseNamer);
+            }
+            else
+            {
+                rawTableName = RAWTableName;
+            }
+                        
+            var destination = new SqlBulkInsertDestination(_dbInfo, rawTableName, Enumerable.Empty<string>());
 
             var contextFactory = new DataFlowPipelineContextFactory<DataTable>();
             var context = contextFactory.Create(PipelineUsage.LogsToTableLoadInfo | PipelineUsage.FixedDestination);
@@ -371,8 +393,8 @@ namespace Rdmp.Core.DataLoad.Modules.Attachers
 
             var rawSyntax = _dbInfo.Server.GetQuerySyntaxHelper();
 
-            ITableLoadInfo loadInfo = job.DataLoadInfo.CreateTableLoadInfo("Truncate RAW table " + RAWTableName,
-                $"{rawSyntax.EnsureFullyQualified(_dbInfo.GetRuntimeName(), null, RAWTableName)} ({_dbInfo.Server.Name})",
+            ITableLoadInfo loadInfo = job.DataLoadInfo.CreateTableLoadInfo("Truncate RAW table " + rawTableName,
+                $"{rawSyntax.EnsureFullyQualified(_dbInfo.GetRuntimeName(), null, rawTableName)} ({_dbInfo.Server.Name})",
                 new []
                 {
                     new DataSource(

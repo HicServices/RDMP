@@ -87,7 +87,7 @@ If you want to interact with a database e.g. test an extraction scenario you wil
 
 ## Further Reading
 
-Each area of the RDMP codebase has it's own documentation.  These include:
+Each area of the RDMP codebase has its own documentation.  These include:
 
 - [User Interface Overview](./UserInterfaceOverview.md)
   - [Creating New Tree Nodes](./CreatingANewCollectionTreeNode.md)

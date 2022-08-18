@@ -28,7 +28,7 @@ namespace Rdmp.Core.CommandExecution.AtomicCommands
         public DirectoryInfo Dir { get; }
 
         public ExecuteCommandCreateNewDataLoadDirectory(IBasicActivateItems activator,
-            [DemandsInitialization("Optional load for which you are creating the folder structure.  Will have it's LocationOfFlatFiles set to the new dir if passed")]
+            [DemandsInitialization("Optional load for which you are creating the folder structure.  Will have its LocationOfFlatFiles set to the new dir if passed")]
             LoadMetadata load,
             [DemandsInitialization("The directory to create new load folders in.")]
             DirectoryInfo dir):base(activator)

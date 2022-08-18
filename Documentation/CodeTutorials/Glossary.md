@@ -46,7 +46,7 @@ Each new project/cohort to identify he should result in a new CohortIdentificati
 
 Records the last known state of a column in an SQL table (see [TableInfo]).
 
-A ColumnInfo can belong to an anonymisation group (see [ANOTable]) e.g. ANOGPCode, in this case it will be aware not only of it's name and datatype in LIVE but also it's unanonymised name/datatype during data loading.
+A ColumnInfo can belong to an anonymisation group (see [ANOTable]) e.g. ANOGPCode, in this case it will be aware not only of its name and datatype in LIVE but also its unanonymised name/datatype during data loading.
 
 ## ConnectionStringKeyword![ConnectionStringKeyword Icon](../../Rdmp.Core/Icons/ConnectionStringKeyword.png)
 
@@ -110,7 +110,7 @@ Once you have executed, extracted and released an [ExtractionConfiguration] it b
 
 Defines as a single line of WHERE SQL.  This is a way of reducing the scope of a data extraction / aggregation etc.
 
-For example, 'Only prescriptions for diabetes medications'.  Typically an ExtractionFilter is cloned as either a DeployedExtractionFilter or an AggregateFilter and either used as is or customised in it's new location 
+For example, 'Only prescriptions for diabetes medications'.  Typically an ExtractionFilter is cloned as either a DeployedExtractionFilter or an AggregateFilter and either used as is or customised in its new location 
 
 It is not uncommon for an extraction to involve multiple customised copies of the same master Extraction filter for example a user might take the filter 'Prescriptions of drug @Drugname' and make 3 copies in a given project with the first as 'Paracetamol', the second as 'Aspirin' and the third as 'Ibuprofen' and then put them all in a single OR container.
 

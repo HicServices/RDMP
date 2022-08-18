@@ -189,7 +189,7 @@ namespace Rdmp.Core.Curation.Data.Aggregation
         }
 
         /// <summary>
-        /// Gets the parent <see cref="AggregateConfiguration"/> that this AggregateFilter is part of by ascending it's AggregateFilterContainer hierarchy.
+        /// Gets the parent <see cref="AggregateConfiguration"/> that this AggregateFilter is part of by ascending its AggregateFilterContainer hierarchy.
         /// If the AggregateFilter is an orphan or one of the parental containers is an orphan then null will be returned.
         /// </summary>
         /// <returns></returns>

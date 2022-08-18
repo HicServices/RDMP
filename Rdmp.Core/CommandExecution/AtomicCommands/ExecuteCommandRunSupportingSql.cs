@@ -6,6 +6,8 @@
 
 using Rdmp.Core.Curation.Data;
 using Rdmp.Core.DataViewing;
+using Rdmp.Core.Repositories.Construction;
+using System.IO;
 using System.Text.RegularExpressions;
 
 namespace Rdmp.Core.CommandExecution.AtomicCommands
@@ -13,14 +15,19 @@ namespace Rdmp.Core.CommandExecution.AtomicCommands
     /// <summary>
     /// Runs the SQL in <see cref="SupportingSQLTable"/> and displays output (if a single table is returned)
     /// </summary>
-    public class ExecuteCommandRunSupportingSql : BasicCommandExecution
+    public class ExecuteCommandRunSupportingSql : ExecuteCommandViewDataBase
     {
-
-        public ExecuteCommandRunSupportingSql(IBasicActivateItems activator, SupportingSQLTable supportingSQLTable) : base(activator)
+        [UseWithObjectConstructor]
+        public ExecuteCommandRunSupportingSql(IBasicActivateItems activator,
+            [DemandsInitialization("RDMP object storing the sql to run and where to run it (including credentials if any)")]
+            SupportingSQLTable supportingSQLTable,
+            [DemandsInitialization(ToFileDescription)]
+            FileInfo toFile = null)
+            : base(activator, toFile)
         {
             SupportingSQLTable = supportingSQLTable;
 
-            if(SupportingSQLTable.ExternalDatabaseServer_ID == null)
+            if (SupportingSQLTable.ExternalDatabaseServer_ID == null)
             {
                 SetImpossible("No server is configured on SupportingSQLTable");
                 return;
@@ -35,29 +42,27 @@ namespace Rdmp.Core.CommandExecution.AtomicCommands
 
         public SupportingSQLTable SupportingSQLTable { get; }
 
-        public override void Execute()
+        protected override IViewSQLAndResultsCollection GetCollection()
         {
-            base.Execute();
             var collection = new ViewSupportingSqlCollection(SupportingSQLTable);
 
             // windows GUI client needs to confirm dangerous queries (don't want missclicks to do bad things)
             if (!string.IsNullOrWhiteSpace(SupportingSQLTable.SQL) &&
-                string.Equals(BasicActivator.GetType().Name, "ActivateItems"))
+                BasicActivator.IsWinForms)
             {
-                
+
                 // does the query look dangerous, if so give them a choice to back out
                 bool requireConfirm = Regex.IsMatch(SupportingSQLTable.SQL, @"\b(update|delete|drop|truncate)\b", RegexOptions.IgnoreCase);
 
-                if(requireConfirm)
+                if (requireConfirm)
                 {
-                    if(!BasicActivator.YesNo("Running this SQL may make changes to your database, really run?", "Run SQL"))
+                    if (!BasicActivator.YesNo("Running this SQL may make changes to your database, really run?", "Run SQL"))
                     {
-                        return;
+                        return null;
                     }
                 }
             }
-
-            BasicActivator.ShowData(collection);
+            return collection;
         }
     }
 }

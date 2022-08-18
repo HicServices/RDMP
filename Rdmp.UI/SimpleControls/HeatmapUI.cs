@@ -323,7 +323,7 @@ namespace Rdmp.UI.SimpleControls
                     {
                         double axisXStart = i * heatPixelWidth;
 
-                        //skip labels if the axis would result in a label overdrawing it's mate
+                        //skip labels if the axis would result in a label overdrawing its mate
                         if (axisXStart  < lastAxisStart + lastAxisLabelWidth)
                             continue;
 

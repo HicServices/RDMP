@@ -22,7 +22,6 @@ namespace Rdmp.UI.Menus
         private HashSet<Type> _skipCommands = new HashSet<Type>();
 
         public IActivateItems ItemActivator { get; set; }
-        public object CurrentlyPinnedObject { get; set; }
         public IMasqueradeAs Masquerader { get; set; }
         
         public TreeListView Tree { get; set; }

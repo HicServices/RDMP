@@ -7,6 +7,7 @@
 using MapsDirectlyToDatabaseTable;
 using Rdmp.Core.Curation.Data;
 using Rdmp.Core.Curation.Data.Cohort;
+using Rdmp.Core.Providers;
 using Rdmp.Core.Repositories;
 using Rdmp.Core.Ticketing;
 using ReusableLibraryCode;
@@ -67,5 +68,18 @@ namespace Rdmp.Core.DataExport.Data
         /// <param name="any"></param>
         /// <returns></returns>
         ExtractionInformation[] GetAllProjectCatalogueColumns(ExtractionCategory any);
+
+        /// <summary>
+        /// <para>
+        /// Returns all <see cref="ExtractionInformation"/> in all <see cref="Catalogue"/> which are marked as project specific (for this <see cref="IProject"/>)
+        /// </para>
+        /// <para>
+        /// High performance overload for when you have a <see cref="ICoreChildProvider"/>
+        /// </para>
+        /// </summary>
+        /// <param name="childProvider"></param>
+        /// <param name="any"></param>
+        /// <returns></returns>
+        ExtractionInformation[] GetAllProjectCatalogueColumns(ICoreChildProvider childProvider, ExtractionCategory any);
     }
 }

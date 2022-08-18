@@ -26,13 +26,13 @@ namespace Rdmp.Core.Curation.Data
     /// <summary>
     /// Records the last known state of a column in an SQL table.  Can be synchronized using <see cref="TableInfoSynchronizer"/>.
     /// 
-    /// <para>A ColumnInfo can belong to an anonymisation group (ANOTable) e.g. ANOGPCode, in this case it will be aware not only of it's name and datatype
-    /// in LIVE but also it's unanonymised name/datatype (see method GetRuntimeName(LoadStage stage)).</para>
+    /// <para>A ColumnInfo can belong to an anonymisation group (ANOTable) e.g. ANOGPCode, in this case it will be aware not only of its name and datatype
+    /// in LIVE but also its unanonymised name/datatype (see method GetRuntimeName(LoadStage stage)).</para>
     /// 
     /// <para>ColumnInfo ensures a cached representation of the underlying database so that RDMP can rationalize and inform the system user of disappearing
     /// columns etc and let the user make decisions about how to resolve it.</para>
     /// </summary>
-    public class ColumnInfo : DatabaseEntity, IComparable, IResolveDuplication, IHasDependencies, ICheckable, IHasQuerySyntaxHelper, IHasFullyQualifiedNameToo, ISupplementalColumnInformation, IInjectKnown<TableInfo>
+    public class ColumnInfo : DatabaseEntity, IComparable, IResolveDuplication, IHasDependencies, ICheckable, IHasQuerySyntaxHelper, IHasFullyQualifiedNameToo, ISupplementalColumnInformation, IInjectKnown<TableInfo>, INamed
     {
         
         #region Database Properties

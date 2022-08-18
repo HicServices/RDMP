@@ -1,5 +1,5 @@
 --Version:1.8.0.0
---Description:Adds a new field SourcePipelineComponent_ID that allows Pipelines to have a fixed source component with it's own configuration
+--Description:Adds a new field SourcePipelineComponent_ID that allows Pipelines to have a fixed source component with its own configuration
 IF NOT EXISTS (SELECT 1 FROM INFORMATION_SCHEMA.COLUMNS WHERE TABLE_NAME='Pipeline' AND COLUMN_NAME='SourcePipelineComponent_ID')
 BEGIN
 	ALTER TABLE Pipeline Add SourcePipelineComponent_ID int null

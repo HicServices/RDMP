@@ -33,10 +33,13 @@ namespace Rdmp.Core.Providers
     /// </summary>
     public interface ICoreChildProvider:IChildProvider
     {
+
+        JoinInfo[] AllJoinInfos { get;}
         LoadMetadata[] AllLoadMetadatas { get; }
         TableInfoServerNode[] AllServers { get; }
         TableInfo[] AllTableInfos { get;}
-        CohortIdentificationConfiguration[] AllCohortIdentificationConfigurations { get; }
+        Dictionary<int, List<ColumnInfo>> TableInfosToColumnInfos { get; }
+        CohortIdentificationConfiguration [] AllCohortIdentificationConfigurations { get; }
         CohortAggregateContainer[] AllCohortAggregateContainers { get; set; }
         JoinableCohortAggregateConfiguration[] AllJoinables { get; set; }
         JoinableCohortAggregateConfigurationUse[] AllJoinUses { get; set; }
@@ -50,7 +53,8 @@ namespace Rdmp.Core.Providers
         ANOTable[] AllANOTables { get; }
         AllDataAccessCredentialsNode AllDataAccessCredentialsNode { get; }
         AllServersNode AllServersNode { get;}
-        ColumnInfo[] AllColumnInfos { get;}
+        ColumnInfo[] AllColumnInfos { get; }
+        Lookup[] AllLookups { get; }
         AllExternalServersNode AllExternalServersNode { get; }
         DescendancyList GetDescendancyListIfAnyFor(object model);
 
@@ -64,6 +68,7 @@ namespace Rdmp.Core.Providers
 
         PermissionWindow[] AllPermissionWindows { get;}
         IEnumerable<CatalogueItem> AllCatalogueItems { get; }
+        Dictionary<int, CatalogueItem> AllCatalogueItemsDictionary { get; }
         AggregateConfiguration[] AllAggregateConfigurations { get;}
         AllRDMPRemotesNode AllRDMPRemotesNode { get; }
 
@@ -79,7 +84,9 @@ namespace Rdmp.Core.Providers
         Dictionary<IMapsDirectlyToDatabaseTable, DescendancyList> GetAllSearchables();
         IEnumerable<object> GetAllChildrenRecursively(object o);
         IEnumerable<ExtractionInformation> AllExtractionInformations { get; }
-        
+
+        Dictionary<int, ExtractionInformation> AllExtractionInformationsDictionary { get; }
+
         AllPermissionWindowsNode AllPermissionWindowsNode { get; set; }
         AllLoadMetadatasNode AllLoadMetadatasNode { get; set; }
         AllConnectionStringKeywordsNode AllConnectionStringKeywordsNode { get; set; }
@@ -114,6 +121,7 @@ namespace Rdmp.Core.Providers
 
         
         AllOrphanAggregateConfigurationsNode OrphanAggregateConfigurationsNode { get; }
+        AllTemplateAggregateConfigurationsNode TemplateAggregateConfigurationsNode { get; }
 
         /// <summary>
         /// All standard (i.e. not plugin) use cases for editting <see cref="IPipeline"/> under.

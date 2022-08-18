@@ -15,13 +15,11 @@ namespace Rdmp.Core.CommandExecution
     {
         public object ObjectToEmphasise { get; set; }
         public int ExpansionDepth { get; set; }
-        public bool Pin { get; set; }
 
         public EmphasiseRequest(object objectToEmphasise, int expansionDepth = 0)
         {
             ObjectToEmphasise = objectToEmphasise;
             ExpansionDepth = expansionDepth;
-            Pin = false;
         }
     }
 }

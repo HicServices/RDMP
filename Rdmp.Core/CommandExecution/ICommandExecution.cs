@@ -39,7 +39,7 @@ namespace Rdmp.Core.CommandExecution
         string GetCommandName();
 
         /// <summary>
-        /// User understandable description of what the command does in it's current state.  This can change depending on constructor arguments etc.
+        /// User understandable description of what the command does in its current state.  This can change depending on constructor arguments etc.
         /// </summary>
         /// <returns></returns>
         string GetCommandHelp();

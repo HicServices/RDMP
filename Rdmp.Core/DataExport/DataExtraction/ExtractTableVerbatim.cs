@@ -10,6 +10,7 @@ using System.IO;
 using System.Linq;
 using FAnsi.Discovery;
 using Rdmp.Core.DataExport.DataExtraction.FileOutputFormats;
+using Rdmp.Core.DataExport.DataExtraction.UserPicks;
 using Rdmp.Core.DataViewing;
 using ReusableLibraryCode.DataAccess;
 
@@ -219,6 +220,12 @@ namespace Rdmp.Core.DataExport.DataExtraction
         {
             var point = collection.GetDataAccessPoint();
             var db = DataAccessPortal.GetInstance().ExpectDatabase(point,context);
+
+            if(!toFile.Directory.Exists)
+            {
+                toFile.Directory.Create();
+            }
+
             using (var fs = File.OpenWrite(toFile.FullName))
             {
                 var toRun = new ExtractTableVerbatim(db.Server, collection.GetSql(), fs, ",", null);

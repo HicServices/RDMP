@@ -4,9 +4,11 @@
 // RDMP is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License for more details.
 // You should have received a copy of the GNU General Public License along with RDMP. If not, see <https://www.gnu.org/licenses/>.
 
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using MapsDirectlyToDatabaseTable;
+using Rdmp.Core.Curation.Data;
 using Rdmp.Core.Curation.Data.Cohort;
 using Rdmp.Core.DataExport.Data;
 
@@ -37,16 +39,19 @@ namespace Rdmp.Core
         /// <returns></returns>
         public int Compare(object x, object y)
         {
-            //Use IOrderable.Order
-            if (x is IOrderable xOrderable && y is IOrderable yOrderable)
-                return xOrderable.Order - yOrderable.Order;
+            var xOrder = GetOrderIfAny(x);
+            var yOrder = GetOrderIfAny(y);
 
-            if (x is IOrderable xOnly)
-                return xOnly.Order;
+            //Use IOrderable.Order
+            if (xOrder.HasValue && yOrder.HasValue)
+                return xOrder.Value - yOrder.Value;
+
+            if (xOrder.HasValue)
+                return xOrder.Value;
 
             // The comparison is reversed (y is orderable) so the order must be negated to.
-            if (y is IOrderable yOnly)
-                return -yOnly.Order;
+            if (yOrder.HasValue)
+                return -yOrder.Value;
 
             //or use whatever the model is
             if (_nestedComparer != null)
@@ -56,8 +61,21 @@ namespace Rdmp.Core
             return string.Compare(x.ToString(), y.ToString());
         }
 
+        private int? GetOrderIfAny(object o)
+        {
+            if(o is IOrderable orderable)
+                return orderable.Order;
+
+            if(o is ISqlParameter)
+            {
+                return -5000;
+            }
+
+            return null;
+        }
+
         /// <summary>
-        /// Return true if the object should never be reordered and always ordered alphabetically based on it's <see cref="INamed.Name"/>
+        /// Return true if the object should never be reordered and always ordered alphabetically based on its <see cref="INamed.Name"/>
         /// </summary>
         /// <param name="x"></param>
         /// <returns></returns>

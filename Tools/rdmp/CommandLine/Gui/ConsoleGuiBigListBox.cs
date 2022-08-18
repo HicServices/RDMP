@@ -25,7 +25,7 @@ namespace Rdmp.Core.CommandLine.Gui
         /// <summary>
         /// If the public constructor was used then this is the fixed list we were initialized with
         /// </summary>
-        private IList<T> _publicCollection;
+        protected IList<T> _publicCollection;
 
         private bool _addNull;
 
@@ -212,7 +212,7 @@ namespace Rdmp.Core.CommandLine.Gui
 
             var callback = Application.MainLoop.AddTimeout(TimeSpan.FromMilliseconds (500), Timer);
 
-            Application.Run(win);
+            Application.Run(win,ConsoleMainWindow.ExceptionPopup);
 
             Application.MainLoop.RemoveTimeout(callback);
 
@@ -263,6 +263,8 @@ namespace Rdmp.Core.CommandLine.Gui
         protected void RestartFiltering(string searchTerm)
         {
             
+            var cts = new CancellationTokenSource();
+
             lock(_taskCancellationLock)
             {
                 //cancel any previous searches
@@ -270,10 +272,9 @@ namespace Rdmp.Core.CommandLine.Gui
                     c.Cancel();
             
                 _cancelFiltering.Clear();
+
+                _cancelFiltering.Add(cts);
             }
-            
-            var cts = new CancellationTokenSource();
-            _cancelFiltering.Add(cts);
 
             _currentFilterTask = Task.Run(()=>
             {
@@ -303,9 +304,13 @@ namespace Rdmp.Core.CommandLine.Gui
             if(_publicCollection == null)
                 throw new InvalidOperationException("When using the protected constructor derived classes must override this method ");
 
+            var searchTerms = searchString.Split(' ');
+
             //stop the Contains searching when the user cancels the search
             return _publicCollection.Where(o => !token.IsCancellationRequested &&
-                AspectGetter(o).Contains(searchString, StringComparison.CurrentCultureIgnoreCase)).ToList();
+                // must have all search terms
+                searchTerms.All(t=>AspectGetter(o).Contains(t, StringComparison.CurrentCultureIgnoreCase))
+                ).ToList();
         }
 
         protected virtual IList<T> GetInitialSource()

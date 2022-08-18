@@ -28,7 +28,7 @@ namespace Rdmp.UI.CommandExecution.Proposals
 
         public override void Activate(CohortAggregateContainer target)
         {
-            var cmd = new ExecuteCommandAddCatalogueToCohortIdentificationSetContainer(ItemActivator, target);
+            var cmd = new ExecuteCommandAddCatalogueToCohortIdentificationSetContainer(ItemActivator, target,null);
             if(!cmd.IsImpossible)
                 cmd.Execute();
         }
@@ -89,7 +89,7 @@ namespace Rdmp.UI.CommandExecution.Proposals
                 if (sourceCohortAggregateContainerCommand.ParentContainerIfAny == null)
                     return null;
 
-                //they are trying to drag it onto it's current parent
+                //they are trying to drag it onto its current parent
                 if (sourceCohortAggregateContainerCommand.ParentContainerIfAny.Equals(targetCohortAggregateContainer))
                     return null;
 

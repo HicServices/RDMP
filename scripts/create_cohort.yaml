@@ -1,0 +1,34 @@
+Commands:
+  
+  # Create Catalogue level filter on Healthboard in Biochemistry
+  - CreateNewFilter ExtractionInformation:Healthboard "Tayside Patients Only" "Healthboard='T'"
+
+  # Create a new cohort builder query with a single inclusion criteria
+  - CreateNewCohortIdentificationConfiguration "My cic"
+  - AddCatalogueToCohortIdentificationSetContainer "CohortAggregateContainer:Inclusion Criteria" Catalogue:Biochemistry
+  
+  # Ignore this warning
+  - SetUserSetting StrictValidationForCohortBuilderContainers false
+
+  # Deploy the catalogue level filter for tayside only patients
+  - CreateNewFilter AggregateConfiguration:*Biochemistry "ExtractionFilter:Tayside Patients Only"
+  - ViewData "CohortIdentificationConfiguration:My cic" All
+
+  # Create a Project for extracting data/storing cohort lists
+  - NewObject Project "Example Project"
+  - Set Project ProjectNumber 23
+  - Set Project ExtractionDirectory "./out/"
+
+  # Commit the cohort identifier list
+  - CreateNewCohortByExecutingACohortIdentificationConfiguration "CohortIdentificationConfiguration:My cic" ExternalCohortTable "Test cohort of Biochemistry Tayside Patients" "Project:Example Project" "Pipeline:CREATE COHORT*Cohort Identification Configuration"
+  - ViewData ExtractableCohort All ./out/cohort.csv
+  
+  # Create extraction (note that terms like "Project" refer to the last one created in the script)
+  - NewObject ExtractionConfiguration Project "My First Extraction"
+  - AddCohortToExtractionConfiguration ExtractableCohort  ExtractionConfiguration
+  - AddDatasetsToConfiguration ExtractableDataSet:Biochemistry ExtractionConfiguration
+  - AddDatasetsToConfiguration ExtractableDataSet:Prescribing ExtractionConfiguration  
+
+  # Run the extraction
+  - extract -e "ExtractionConfiguration:My First Extraction" -p "Pipeline:DATA EXPORT*CSV" --command check
+  - extract -e "ExtractionConfiguration:My First Extraction" -p "Pipeline:DATA EXPORT*CSV" --command run

@@ -47,7 +47,7 @@ public partial class CohortIdentificationCollectionUI : RDMPCollectionUI, ILifet
             olvName//column that can be renamed
                 
         );
-        CommonTreeFunctionality.AxeChildren = new[]{typeof (CohortIdentificationConfiguration)};
+        CommonTreeFunctionality.AxeChildren = new[]{typeof (CohortIdentificationConfiguration), typeof(Core.Curation.Data.Aggregation.AggregateConfiguration) };
 
         if (activator.CoreChildProvider is not DataExportChildProvider dataExportChildProvider)
         {
@@ -56,13 +56,18 @@ public partial class CohortIdentificationCollectionUI : RDMPCollectionUI, ILifet
         }
         else
         {
-            CommonTreeFunctionality.MaintainRootObjects = new[] { typeof(AllProjectCohortIdentificationConfigurationsNode), typeof(AllFreeCohortIdentificationConfigurationsNode) };
+            CommonTreeFunctionality.MaintainRootObjects = new[] { typeof(AllProjectCohortIdentificationConfigurationsNode),
+                typeof(AllFreeCohortIdentificationConfigurationsNode),
+                typeof(AllOrphanAggregateConfigurationsNode),
+                typeof(AllTemplateAggregateConfigurationsNode)
+            };
             tlvCohortIdentificationConfigurations.AddObject(dataExportChildProvider.AllProjectCohortIdentificationConfigurationsNode);
             tlvCohortIdentificationConfigurations.AddObject(dataExportChildProvider.AllFreeCohortIdentificationConfigurationsNode);
         }
 
         tlvCohortIdentificationConfigurations.AddObject(Activator.CoreChildProvider.OrphanAggregateConfigurationsNode);
-
+        tlvCohortIdentificationConfigurations.AddObject(Activator.CoreChildProvider.TemplateAggregateConfigurationsNode);
+        
         CommonTreeFunctionality.WhitespaceRightClickMenuCommandsGetter = a=>new IAtomicCommand[]{
             new ExecuteCommandCreateNewCohortIdentificationConfiguration(a),
             new ExecuteCommandMergeCohortIdentificationConfigurations(a,null)};

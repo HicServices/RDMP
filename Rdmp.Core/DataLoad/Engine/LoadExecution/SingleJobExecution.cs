@@ -80,6 +80,20 @@ namespace Rdmp.Core.DataLoad.Engine.LoadExecution
 
                 job.OnNotify(this, new NotifyEventArgs(ProgressEventType.Information, "Completed job " + job.JobID));
                 
+                if(job.CrashAtEndMessages.Count > 0)
+                {
+                    job.OnNotify(this, new NotifyEventArgs(ProgressEventType.Warning, $"There were {job.CrashAtEndMessages.Count} {nameof(IDataLoadJob.CrashAtEndMessages)} registered for job " + job.JobID));
+
+                    // pop the messages into the handler
+                    foreach (var m in job.CrashAtEndMessages)
+                    {
+                        job.OnNotify(job, m);  // depending on the listener these may break flow of control (e.g. 
+                    }
+
+                    // return failed (even if the messages are all warnings)
+                    return ExitCodeType.Error;                    
+                }
+
                 return ExitCodeType.Success;
             }
             catch (OperationCanceledException)

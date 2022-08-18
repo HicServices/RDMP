@@ -50,7 +50,7 @@ namespace Rdmp.Core.CommandLine.DatabaseCreation
                 creator.Create();
             }
 
-            if(options.ExampleDatasets)
+            if(options.ExampleDatasets || options.Nightmare)
             {
                 var examples = new ExampleDatasetsCreation(new ThrowImmediatelyActivator(repo,null),repo);
                 var server = new DiscoveredServer(options.GetBuilder("ExampleData"));

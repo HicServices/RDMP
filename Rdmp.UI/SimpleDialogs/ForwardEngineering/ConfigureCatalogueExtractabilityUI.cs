@@ -114,7 +114,7 @@ namespace Rdmp.UI.SimpleDialogs.ForwardEngineering
             CommonFunctionality.SetItemActivator(activator);
             var cols = _tableInfo.ColumnInfos;
             
-            var forwardEngineer = new ForwardEngineerCatalogue(_tableInfo, cols, false);
+            var forwardEngineer = new ForwardEngineerCatalogue(_tableInfo, cols);
             ExtractionInformation[] eis;
             forwardEngineer.ExecuteForwardEngineering(out _catalogue, out _catalogueItems, out eis);
 
@@ -133,7 +133,7 @@ namespace Rdmp.UI.SimpleDialogs.ForwardEngineering
 
             //Every CatalogueItem is either mapped to a ColumnInfo (not extractable) or a ExtractionInformation (extractable).  To start out with they are not extractable
             foreach (CatalogueItem ci in _catalogueItems)
-                olvColumnExtractability.AddObject(new ColPair(ci, cols.Single(col => ci.ColumnInfo_ID == col.ID)));
+                olvColumnExtractability.AddObject(new ColPair(ci, cols.Single(col => ci.ColumnInfo_ID == col.ID), eis.SingleOrDefault(e=>e.CatalogueItem_ID == ci.ID)));
 
             _extractionCategories = new object[]
             {
@@ -190,7 +190,7 @@ namespace Rdmp.UI.SimpleDialogs.ForwardEngineering
         {
             base.OnLoad(e);
             
-            if (TargetFolder != null)
+            if (!string.IsNullOrWhiteSpace(TargetFolder))
             {
                 _catalogue.Folder = TargetFolder;
                 _catalogue.SaveToDatabase();
@@ -446,6 +446,8 @@ namespace Rdmp.UI.SimpleDialogs.ForwardEngineering
 
         private void AddToExistingCatalogue(Catalogue addToInstead, ExtractionInformation[] eis)
         {
+            var existingTables = addToInstead.GetTableInfosIdeallyJustFromMainTables();
+
             //move all the CatalogueItems to the other Catalogue instead
             foreach (ExtractionInformation ei in eis)
             {
@@ -456,11 +458,61 @@ namespace Rdmp.UI.SimpleDialogs.ForwardEngineering
             
             _choicesFinalised = true;
             _catalogue.DeleteInDatabase();
-            _catalogue = null;
+
+            // prevents wrappers thinking no Catalogue was created and offering to drop the TableInfo!
+            _catalogue = addToInstead;
 
             Activator.RefreshBus.Publish(this, new RefreshObjectEventArgs(addToInstead));
 
             Close();
+
+            ITableInfo joinFrom;
+
+            // if user is adding a second table and theres currently only 1 TableInfo
+            // associated with the Catalogue
+            if (existingTables.Length == 1)
+            {
+                // mark the TableInfo as primary
+                existingTables[0].IsPrimaryExtractionTable = true;
+                existingTables[0].SaveToDatabase();
+
+                // let the user configure how to join to the second table
+                joinFrom = existingTables[0];
+            }
+            else
+            {
+                joinFrom = (ITableInfo)Activator.SelectOne(new DialogArgs {
+                    WindowTitle = "Pick Table for Join",
+                    TaskDescription = $"Your Catalogue '{addToInstead}' has {existingTables.Length} tables already associated with it.  Which of these can be joined to your new table '{TableInfoCreated}'"
+                },existingTables);
+
+                // user cancelled joining
+                if (joinFrom == null)
+                    return;
+
+            }
+
+            var existingJoins = Activator.RepositoryLocator.CatalogueRepository.JoinManager
+                .GetAllJoinInfosBetweenColumnInfoSets(joinFrom.ColumnInfos,
+                TableInfoCreated.ColumnInfos);
+
+            // we already know how to join these tables
+            if (existingJoins.Any())
+                return;
+
+            // let the user configure how to join to the second table
+            var cmdAddJoin = new ExecuteCommandAddJoinInfo(Activator, (TableInfo)joinFrom);
+            cmdAddJoin.SetInitialJoinToTableInfo((TableInfo)TableInfoCreated);
+
+            if(!cmdAddJoin.IsImpossible)
+            {
+                Activator.Show("Configure Join", "You will now be taken to the join configuration screen to define how your new table is linked to in SQL queries");
+                cmdAddJoin.Execute();
+            }
+            else
+            {
+                Activator.Show("Could not generate JoinInfo screen", "Failed to show JoinInfo configuration screen:" + cmdAddJoin.ReasonCommandImpossible);
+            }
         }
 
         private void btnCancel_Click(object sender, EventArgs e)
@@ -471,6 +523,7 @@ namespace Rdmp.UI.SimpleDialogs.ForwardEngineering
         private void btnOk_Click(object sender, EventArgs e)
         {
             var eis = GetExtractionInformations();
+            objectSaverButton1.Save();
 
             if (!eis.Any())
             {
@@ -575,10 +628,11 @@ namespace Rdmp.UI.SimpleDialogs.ForwardEngineering
             public ColumnInfo ColumnInfo;
             public ExtractionInformation ExtractionInformation;
             
-            public ColPair(CatalogueItem ci, ColumnInfo col)
+            public ColPair(CatalogueItem ci, ColumnInfo col, ExtractionInformation ei)
             {
                 CatalogueItem = ci;
                 ColumnInfo = col;
+                ExtractionInformation = ei;
             }
 
             public override string ToString()

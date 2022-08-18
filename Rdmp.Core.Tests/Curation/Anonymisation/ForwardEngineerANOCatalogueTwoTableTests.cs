@@ -91,8 +91,8 @@ GO";
             
             importer2.DoImport(out t2, out c2);
 
-            var engineer1 = new ForwardEngineerCatalogue(t1, c1, true);
-            var engineer2 = new ForwardEngineerCatalogue(t2, c2, true);
+            var engineer1 = new ForwardEngineerCatalogue(t1, c1);
+            var engineer2 = new ForwardEngineerCatalogue(t2, c2);
 
             engineer1.ExecuteForwardEngineering(out cata1,out cataItems1,out eis1);
             engineer2.ExecuteForwardEngineering(out cata2, out cataItems2, out eis2);
@@ -143,7 +143,7 @@ GO";
             var testIdHeadPlan = plan1.GetPlanForColumnInfo(c1.Single(c => c.GetRuntimeName().Equals("TestId")));
             plan1.TargetDatabase = _destinationDatabase;
 
-            //the plan is that the column TestId should be anonymised - where it's name will become ANOTestId
+            //the plan is that the column TestId should be anonymised - where its name will become ANOTestId
             testIdHeadPlan.Plan = Plan.ANO;
             testIdHeadPlan.ANOTable = _anoTable;
 

@@ -5,9 +5,11 @@
 // You should have received a copy of the GNU General Public License along with RDMP. If not, see <https://www.gnu.org/licenses/>.
 
 using Rdmp.Core.CommandExecution.Combining;
+using Rdmp.Core.Curation.Data.Aggregation;
 using Rdmp.Core.Curation.Data.Cohort;
 using System;
 using System.Linq;
+using Rdmp.Core.Repositories.Construction;
 
 namespace Rdmp.Core.CommandExecution.AtomicCommands
 {
@@ -15,7 +17,13 @@ namespace Rdmp.Core.CommandExecution.AtomicCommands
     {
         private readonly CohortAggregateContainer _targetCohortAggregateContainer;
         private readonly AggregateConfigurationCombineable _sourceAggregateCommand;
-        
+
+        [UseWithObjectConstructor]
+        public ExecuteCommandMoveAggregateIntoContainer(IBasicActivateItems activator, AggregateConfiguration toMove, CohortAggregateContainer into) 
+            : this(activator,new AggregateConfigurationCombineable(toMove), into)
+        {
+
+        }
         public ExecuteCommandMoveAggregateIntoContainer(IBasicActivateItems activator, AggregateConfigurationCombineable sourceAggregateCommand, CohortAggregateContainer targetCohortAggregateContainer) : base(activator)
         {
             _sourceAggregateCommand = sourceAggregateCommand;
@@ -37,7 +45,7 @@ namespace Rdmp.Core.CommandExecution.AtomicCommands
         {
             base.Execute();
 
-            //remove it from it's old container
+            //remove it from its old container
             var oldContainer = _sourceAggregateCommand.ContainerIfAny;
             
             if(oldContainer != null)

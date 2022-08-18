@@ -113,7 +113,7 @@ namespace Rdmp.Core.CommandExecution.AtomicCommands.CatalogueCreationCommands
             if(File == null)
                 return;
 
-            var useCase = new UploadFileUseCase(File, db);
+            var useCase = new UploadFileUseCase(File, db,BasicActivator);
 
             var runner = BasicActivator.GetPipelineRunner(
                 GetCreateCatalogueFromFileDialogArgs()

@@ -117,7 +117,7 @@ namespace Rdmp.Core.CommandLine.Gui
             win.Add(btnCancel);
             win.Add(btnClear);
 
-            Application.Run(win);
+            Application.Run(win, ConsoleMainWindow.ExceptionPopup);
 
             return okClicked;
         }

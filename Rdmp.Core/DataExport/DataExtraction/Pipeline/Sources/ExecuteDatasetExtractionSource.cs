@@ -202,7 +202,7 @@ OrderByAndDistinctInMemory - Adds an ORDER BY statement to the query and applies
                 {
                     var releaseIdentifierColumn =  Request.ReleaseIdentifierSubstitutions.First().GetRuntimeName();
 
-                    if(chunk != null)
+                    if(chunk != null && chunk.Rows.Count > 0)
                     {
                         //last release id in the current chunk
                         var lastReleaseId = chunk.Rows[chunk.Rows.Count-1][releaseIdentifierColumn];
@@ -383,7 +383,11 @@ OrderByAndDistinctInMemory - Adds an ORDER BY statement to the query and applies
                     var substitution =  Request.ReleaseIdentifierSubstitutions.First();
 
                     //add a line at the end of the query to ORDER BY the ReleaseId column (e.g. PROCHI)
-                    Request.QueryBuilder.AddCustomLine("ORDER BY " + substitution.SelectSQL, QueryComponent.Postfix);
+                    var orderBySql = "ORDER BY " + substitution.SelectSQL;
+
+                    // don't add the line if it is already there (e.g. because of Retry)
+                    if(!Request.QueryBuilder.CustomLines.Any(l=>string.Equals(l.Text,orderBySql)))
+                        Request.QueryBuilder.AddCustomLine(orderBySql, QueryComponent.Postfix);
 
                     break;
                 default:

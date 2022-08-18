@@ -6,6 +6,7 @@
 
 using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Drawing;
 using System.IO;
 using System.Linq;
@@ -111,6 +112,7 @@ namespace ResearchDataManagementPlatform.WindowManagement
         public ActivateItems(ITheme theme,RefreshBus refreshBus, DockPanel mainDockPanel, IRDMPPlatformRepositoryServiceLocator repositoryLocator, WindowFactory windowFactory, WindowManager windowManager, ICheckNotifier globalErrorCheckNotifier):base(repositoryLocator,globalErrorCheckNotifier)
         {
             Theme = theme;
+            IsWinForms = true;
             InteractiveDeletes = true;
             WindowFactory = windowFactory;
             _mainDockPanel = mainDockPanel;
@@ -132,6 +134,9 @@ namespace ResearchDataManagementPlatform.WindowManagement
             RefreshProblemProviders();
 
             RefreshBus.Subscribe(this);
+            
+            // We can run subprocesses
+            IsAbleToLaunchSubprocesses = true;
         }
 
         protected override ICoreChildProvider GetChildProvider()
@@ -309,7 +314,7 @@ namespace ResearchDataManagementPlatform.WindowManagement
             //if the window is already open
             if (PopExisting(typeof(T), collection, out var existingHostedControlInstance))
             {
-                //just update it's state
+                //just update its state
                 var existing = (T) existingHostedControlInstance;
                 existing.SetCollection(this,collection);
 
@@ -530,8 +535,6 @@ namespace ResearchDataManagementPlatform.WindowManagement
 
         public override IEnumerable<Type> GetIgnoredCommands()
         {
-            yield return typeof(ExecuteCommandPin);
-            yield return typeof(ExecuteCommandUnpin);
             yield return typeof(ExecuteCommandRefreshObject);
             yield return typeof(ExecuteCommandChangeExtractability);
             yield return typeof (ExecuteCommandOpenInExplorer);
@@ -614,7 +617,13 @@ namespace ResearchDataManagementPlatform.WindowManagement
                     fb.Filter = patternDescription + "|" + pattern;
 
                 if (fb.ShowDialog() == DialogResult.OK)
+                {
+                    // entering "null" in a winforms file dialog will return something like "D:\Blah\null"
+                    if (string.Equals(Path.GetFileName(fb.FileName),"null", StringComparison.CurrentCultureIgnoreCase))
+                        return null;
+
                     return new FileInfo(fb.FileName);
+                }
             
                 return null;
             }        
@@ -801,6 +810,13 @@ namespace ResearchDataManagementPlatform.WindowManagement
         {
             var graph = Activate<AggregateGraphUI, AggregateConfiguration>(aggregate);
             graph.LoadGraphAsync();
+        }
+
+        public override void LaunchSubprocess(ProcessStartInfo startInfo)
+        {
+            var ctrl = new ConsoleControl.ConsoleControl();
+            ShowWindow(ctrl, true);
+            ctrl.StartProcess(startInfo);
         }
     }
 }

@@ -1,19 +1,9 @@
-﻿// Copyright (c) The University of Dundee 2018-2019
+// Copyright (c) The University of Dundee 2018-2019
 // This file is part of the Research Data Management Platform (RDMP).
 // RDMP is free software: you can redistribute it and/or modify it under the terms of the GNU General Public License as published by the Free Software Foundation, either version 3 of the License, or (at your option) any later version.
 // RDMP is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License for more details.
 // You should have received a copy of the GNU General Public License along with RDMP. If not, see <https://www.gnu.org/licenses/>.
 
-using MapsDirectlyToDatabaseTable;
-using Rdmp.Core.CommandExecution;
-using Rdmp.Core.CommandLine.Runners;
-using Rdmp.Core.Curation.Data.Pipelines;
-using Rdmp.Core.DataFlowPipeline;
-using Rdmp.Core.DataFlowPipeline.Events;
-using Rdmp.Core.Repositories;
-using ReusableLibraryCode.Checks;
-using ReusableLibraryCode.Progress;
-using ReusableLibraryCode.Settings;
 using System;
 using System.Collections;
 using System.Collections.Generic;
@@ -21,16 +11,26 @@ using System.Data;
 using System.Linq;
 using System.Threading.Tasks;
 using Terminal.Gui;
+using Rdmp.Core.CommandLine.Runners;
+using ReusableLibraryCode.Progress;
+using Rdmp.Core.CommandExecution;
+using Rdmp.Core.Curation.Data.Pipelines;
+using Rdmp.Core.DataFlowPipeline.Events;
+using Rdmp.Core.DataFlowPipeline;
+using Rdmp.Core.Repositories;
+using ReusableLibraryCode.Checks;
+using ReusableLibraryCode.Settings;
+
+// The .Designer.cs file was built with https://github.com/tznind/TerminalGuiDesigner
+// Use that tool for editing it
 
 namespace Rdmp.Core.CommandLine.Gui
 {
-    internal class ConsoleGuiRunPipeline : Window,IPipelineRunner, IDataLoadEventListener, IListDataSource
+    public partial class ConsoleGuiRunPipeline : Window, IPipelineRunner, IDataLoadEventListener, IListDataSource
     {
         private readonly IBasicActivateItems activator;
         private IPipelineUseCase _useCase;
         private IPipeline _pipeline;
-        private ListView _results;
-        private TableView _tableView;
         public event PipelineEngineEventHandler PipelineExecutionFinishedsuccessfully;
 
         GracefulCancellationTokenSource cancellation;
@@ -40,18 +40,27 @@ namespace Rdmp.Core.CommandLine.Gui
         private PipelineRunner runner;
         private PipelineEngineEventArgs successArgs;
         private DataTable progressDataTable;
-        
+
         private List<NotifyEventArgs> notifyEventArgs = new List<NotifyEventArgs>();
 
         public int Count => notifyEventArgs.Count;
         public int Length => notifyEventArgs.Count;
 
-        Label _lblPipeline;
         private Pipeline[] _compatiblePipelines;
+        private ColorScheme _red;
+        private ColorScheme _yellow;
+        private ColorScheme _white;
 
-        public ConsoleGuiRunPipeline(IBasicActivateItems activator,IPipelineUseCase useCase, IPipeline pipeline)
+        public ConsoleGuiRunPipeline(IBasicActivateItems activator, IPipelineUseCase useCase, IPipeline pipeline)
         {
             Modal = true;
+
+            _red = ColorSettings.Instance.Red;
+            _yellow = ColorSettings.Instance.Yellow;
+            _white = ColorSettings.Instance.White;
+
+            InitializeComponent();
+
             this.activator = activator;
             this._useCase = useCase;
             this._pipeline = pipeline;
@@ -62,62 +71,37 @@ namespace Rdmp.Core.CommandLine.Gui
             Width = Dim.Fill();
             Height = Dim.Fill();
 
-            if(pipeline == null && _compatiblePipelines.Length == 1)
+            if (pipeline == null && _compatiblePipelines.Length == 1)
             {
                 this._pipeline = _compatiblePipelines[0];
             }
-                        
-            Add(_lblPipeline = new Label("Pipeline:" + (this._pipeline?.Name ?? "<<NOT SELECTED>>")) { Width = Dim.Fill()-20});
 
-            var btnChoose = new Button("Choose Pipeline") { X = Pos.Right(_lblPipeline)};
-            btnChoose.Clicked += BtnChoose_Clicked;
-            Add(btnChoose);
+            combobox1.Source = new ListWrapper(_compatiblePipelines);
+            combobox1.AddKeyBinding(Key.CursorDown, Command.Expand);
 
-            var btnRun = new Button("Run") { Y = 1 };
-            btnRun.Clicked += BtnRun_Clicked;
-            Add(btnRun);
+            if (_pipeline != null)
+                combobox1.SelectedItem = combobox1.Source.ToList().IndexOf(_pipeline);
 
-            var btnCancel = new Button("Cancel") { Y = 1, X = Pos.Right(btnRun) };
-            btnCancel.Clicked += BtnCancel_Clicked;
-            Add(btnCancel);
+            progressDataTable = this._tableView.Table;
+            progressDataTable.Columns["Progress"].DataType = typeof(int);
 
-            var btnClose = new Button("C_lose") { Y = 1, X = Pos.Right(btnCancel) };
-            btnClose.Clicked += () => Application.RequestStop();
-            Add(btnClose);
-
-            Add(_tableView = new TableView() { Y = 2, Width = Dim.Fill(), Height = 7 });
-            _tableView.Style.ShowHorizontalHeaderOverline = false;
-            _tableView.Style.AlwaysShowHeaders = true;
-            _tableView.Style.ShowVerticalCellLines = true;
-            _tableView.Style.ShowHorizontalHeaderUnderline = false;
-
-            progressDataTable = new DataTable();
-            progressDataTable.Columns.Add("Name");
-            progressDataTable.Columns.Add("Progress",typeof(int));
-
-            _tableView.Table = progressDataTable;
-
-            Add(_results = new ListView(this) { Y = Pos.Bottom(_tableView), Width = Dim.Fill(), Height = Dim.Fill()});
             _results.KeyPress += Results_KeyPress;
+            btnRun.Clicked += BtnRun_Clicked;
+            btnCancel.Clicked += BtnCancel_Clicked;
+            btnClose.Clicked += () => Application.RequestStop();
 
-
-        }
-
-        private void BtnChoose_Clicked()
-        {
-            _pipeline = (IPipeline)activator.SelectOne("Pipeline", _compatiblePipelines);
-            _lblPipeline.Text = "Pipeline:" + (_pipeline?.Name ?? "<<NOT SELECTED>>");
+            _results.Source = this;
         }
 
         private void Results_KeyPress(KeyEventEventArgs obj)
         {
-            if(obj.KeyEvent.Key == Key.Enter && _results.HasFocus)
+            if (obj.KeyEvent.Key == Key.Enter && _results.HasFocus)
             {
-                if(_results.SelectedItem <= notifyEventArgs.Count)
+                if (_results.SelectedItem <= notifyEventArgs.Count)
                 {
                     var selected = notifyEventArgs[_results.SelectedItem];
-                    
-                    if(selected.Exception != null || selected.ProgressEventType == ProgressEventType.Error)
+
+                    if (selected.Exception != null || selected.ProgressEventType == ProgressEventType.Error)
                     {
                         activator.ShowException(selected.Message, selected.Exception);
                     }
@@ -133,15 +117,15 @@ namespace Rdmp.Core.CommandLine.Gui
 
         private void BtnCancel_Clicked()
         {
-            if(cancellation == null)
+            if (cancellation == null)
             {
-                MessageBox.ErrorQuery("Not Started","Pipeline execution has not started yet", "Ok");
+                MessageBox.ErrorQuery("Not Started", "Pipeline execution has not started yet", "Ok");
                 return;
             }
 
-            if(cancellation.Token.IsAbortRequested)
+            if (cancellation.Token.IsAbortRequested)
             {
-                MessageBox.ErrorQuery("Already Cancelled","Cancellation already issued","Ok");
+                MessageBox.ErrorQuery("Already Cancelled", "Cancellation already issued", "Ok");
             }
             else
             {
@@ -151,24 +135,39 @@ namespace Rdmp.Core.CommandLine.Gui
 
         private void BtnRun_Clicked()
         {
-            if(cancellation != null)
+            if (cancellation != null)
             {
                 MessageBox.ErrorQuery("Already Running", "Pipeline is already running", "Ok");
                 return;
             }
 
-            runner = new PipelineRunner(_useCase, _pipeline);
-            foreach(var l in additionals)
+
+            IPipeline p;
+
+            try
+            {
+                p = combobox1.Source.ToList()[combobox1.SelectedItem] as IPipeline ?? _pipeline;
+
+            }
+            catch (Exception)
+            {
+
+                MessageBox.ErrorQuery("No pipeline selected", "Select which Pipeline to use to run the data", "Ok");
+                return;
+            }
+
+            runner = new PipelineRunner(_useCase, p);
+            foreach (var l in additionals)
             {
                 runner.AdditionalListeners.Add(l);
             }
 
             runner.PipelineExecutionFinishedsuccessfully += Runner_PipelineExecutionFinishedsuccessfully;
-            
+
             // clear old results
             _results.Text = "";
             _results.SelectedItem = 0;
-            Task.Run(()=>
+            Task.Run(() =>
             {
                 try
                 {
@@ -182,7 +181,7 @@ namespace Rdmp.Core.CommandLine.Gui
                     cancellation = null;
                 }
             });
-            
+
         }
 
         private void Runner_PipelineExecutionFinishedsuccessfully(object sender, PipelineEngineEventArgs args)
@@ -208,14 +207,14 @@ namespace Rdmp.Core.CommandLine.Gui
 
         public void OnNotify(object sender, NotifyEventArgs e)
         {
-            lock(notifyEventArgs)
+            lock (notifyEventArgs)
             {
-                notifyEventArgs.Insert(0,e);
+                notifyEventArgs.Insert(0, e);
                 Application.MainLoop.Invoke(() => _results.SetNeedsDisplay());
             }
         }
 
-        
+
 
         public void OnProgress(object sender, ProgressEventArgs e)
         {
@@ -238,10 +237,10 @@ namespace Rdmp.Core.CommandLine.Gui
         public int Run(IRDMPPlatformRepositoryServiceLocator repositoryLocator, IDataLoadEventListener listener, ICheckNotifier checkNotifier, GracefulCancellationToken token)
         {
             // this blocks while the window is run
-            Application.Run(this);
+            Application.Run(this, ConsoleMainWindow.ExceptionPopup);
 
             // run the event after the window has closed
-            if(successArgs != null)
+            if (successArgs != null)
             {
                 PipelineExecutionFinishedsuccessfully?.Invoke(this, successArgs);
             }
@@ -251,7 +250,7 @@ namespace Rdmp.Core.CommandLine.Gui
 
         public void SetAdditionalProgressListener(IDataLoadEventListener toAdd)
         {
-            if(runner != null)
+            if (runner != null)
             {
                 runner.AdditionalListeners.Add(toAdd);
             }
@@ -261,23 +260,24 @@ namespace Rdmp.Core.CommandLine.Gui
             }
         }
 
-        public void Render(ListView container, ConsoleDriver driver, bool selected, int item, int col, int line, int width, int start=0)
+        public void Render(ListView container, ConsoleDriver driver, bool selected, int item, int col, int line, int width, int start = 0)
         {
-            if(item >= notifyEventArgs.Count)
+            if (item >= notifyEventArgs.Count)
             {
                 return;
             }
 
-            var str = notifyEventArgs[item].ProgressEventType + " " + notifyEventArgs[item].Message;
+            var str = $"{notifyEventArgs[item].ProgressEventType} {notifyEventArgs[item].Message}";
 
-            if(str.Length > width)
+            str = str.Length > width ? str[..width] : str.PadRight(width, ' ');
+
+            var colour = notifyEventArgs[item].ProgressEventType switch
             {
-                str = str.Substring(0, width);
-            }
-            else
-            {
-                str = str.PadRight(width, ' ');
-            }
+                ProgressEventType.Error => _red,
+                ProgressEventType.Warning => _yellow,
+                _ => _white
+            };
+            driver.SetAttribute(selected?colour.Focus:colour.Normal);
 
             _results.Move(col, line);
             driver.AddStr(str);

@@ -176,10 +176,10 @@ namespace Rdmp.Core.Curation.ANOEngineering
 
                         var newCatalogueItem = oldCatalogueItem.ShallowClone(NewCatalogue);
                         
-                        //and rewire it's ColumnInfo to the cloned child one
+                        //and rewire its ColumnInfo to the cloned child one
                         newCatalogueItem.ColumnInfo_ID = newColumnInfo.ID;
 
-                        //If the old CatalogueItem had the same name as it's underlying ColumnInfo then we should use the new one otherwise just copy the old name whatever it was
+                        //If the old CatalogueItem had the same name as its underlying ColumnInfo then we should use the new one otherwise just copy the old name whatever it was
                         newCatalogueItem.Name = oldCatalogueItem.Name.Equals(oldColumnInfo.Name) ? newColumnInfo.GetRuntimeName() : oldCatalogueItem.Name;
 
                         //add ANO to the front if the underlying column was annoed

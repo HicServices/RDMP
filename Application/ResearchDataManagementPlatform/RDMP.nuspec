@@ -7,9 +7,9 @@
 		<description>Research Data Management Platform</description>
     </metadata>
   <files>
-    <file src="bin\$configuration$\net6.0-windows\win-x64\*" target="lib\net6.0-windows" />
-	<file src="bin\$configuration$\net6.0-windows\win-x64\Curation\**\*" target="lib\net6.0-windows" />
-	<file src="bin\$configuration$\net6.0-windows\win-x64\Icon\**\*" target="lib\net6.0-windows" />
-	<file src="bin\$configuration$\net6.0-windows\win-x64\WindowManagement\**\*" target="lib\net6.0-windows" />
+    <file src="bin\$configuration$\net6.0-windows\win-x64\*" target="lib\net6.0-windows7.0" />
+	<file src="bin\$configuration$\net6.0-windows\win-x64\Curation\**\*" target="lib\net6.0-windows7.0" />
+	<file src="bin\$configuration$\net6.0-windows\win-x64\Icon\**\*" target="lib\net6.0-windows7.0" />
+	<file src="bin\$configuration$\net6.0-windows\win-x64\WindowManagement\**\*" target="lib\net6.0-windows7.0" />
   </files>
 </package>

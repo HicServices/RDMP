@@ -10,6 +10,7 @@ using System.Drawing.Drawing2D;
 using System.Linq;
 using System.Windows.Forms;
 using Rdmp.Core.Icons.IconProvision;
+using Rdmp.Core.Logging.Listeners.NLogListeners;
 using ReusableLibraryCode.Checks;
 
 using PopupChecksUI = Rdmp.UI.ChecksUI.PopupChecksUI;
@@ -25,7 +26,7 @@ namespace Rdmp.UI
     {
         private const float EmSize = 8f;
 
-        private ToMemoryCheckNotifier _events = new ToMemoryCheckNotifier();
+        private ToMemoryCheckNotifier _events = new ToMemoryCheckNotifier(new NLogICheckNotifier(true,false));
         
         private const float NotifyWidth = 15;
 

@@ -1,0 +1,6 @@
+# Allows
+Commands:
+  - list Catalogue
+  - newobject Catalogue "hey its me"
+  - describe "Catalogue:hey*me"
+  - delete "Catalogue:hey*me" true

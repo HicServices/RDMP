@@ -6,6 +6,7 @@
 
 using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Globalization;
 using System.IO;
 using System.Linq;
@@ -284,8 +285,13 @@ namespace Rdmp.Core.CommandLine.Interactive
 
             Console.WriteLine(prompt);
             var file = Console.ReadLine();
-            
-            if(file != null)
+
+            // if user types the literal string null then return null (typically interpretted as - 'I don't want to pick a file')
+            // but not the same as task cancellation
+            if (string.Equals(file,"null", StringComparison.CurrentCultureIgnoreCase))
+                return null;
+
+            if (file != null)
                 return new FileInfo(file);
 
             return null;
@@ -363,8 +369,13 @@ namespace Rdmp.Core.CommandLine.Interactive
         {
             var point = collection.GetDataAccessPoint();
             var db = DataAccessPortal.GetInstance().ExpectDatabase(point,DataAccessContext.InternalDataProcessing);
+
+            var sql = collection.GetSql();
+
+            var logger = NLog.LogManager.GetCurrentClassLogger();
+            logger.Trace($"About to ShowData from Query:{Environment.NewLine}" + sql);
             
-            var toRun = new ExtractTableVerbatim(db.Server,collection.GetSql(),Console.OpenStandardOutput(),",",null);
+            var toRun = new ExtractTableVerbatim(db.Server,sql,Console.OpenStandardOutput(),",",null);
             toRun.DoExtraction();
         }
 
@@ -435,6 +446,11 @@ namespace Rdmp.Core.CommandLine.Interactive
 
             selected = available.Where((e, idx) => selectIdx.Contains(idx)).ToArray();
             return true;
+        }
+
+        public override void LaunchSubprocess(ProcessStartInfo startInfo)
+        {
+            throw new NotSupportedException();
         }
     }
 }

@@ -180,7 +180,7 @@ namespace Rdmp.Core.QueryBuilding
             
             if (isSolitaryPatientIndexTable)
             {
-                //explicit execution of a patient index table on it's own
+                //explicit execution of a patient index table on its own
                 //the full uncached SQL for the query
                 SqlCacheless = parent.Helper.GetSQLForAggregate(CohortSet,new QueryBuilderArgs(parent.Customise,globals));
 

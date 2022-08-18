@@ -5,6 +5,7 @@
 // You should have received a copy of the GNU General Public License along with RDMP. If not, see <https://www.gnu.org/licenses/>.
 
 using System;
+using System.ComponentModel;
 using System.Drawing;
 using System.IO;
 using System.Text.RegularExpressions;
@@ -50,13 +51,26 @@ namespace Rdmp.UI.ScintillaHelper
         /// <returns></returns>
         public Scintilla Create(ICombineableFactory commandFactory = null, SyntaxLanguage language = SyntaxLanguage.SQL, IQuerySyntaxHelper syntaxHelper = null, bool spellCheck = false, bool lineNumbers = true, string currentDirectory = null)
         {
-            var toReturn =  new Scintilla();
+            Scintilla toReturn = null;
+
+            try
+            {
+                toReturn = new Scintilla();
+            }
+            catch (Win32Exception ex)
+            {
+                throw new Exception("Could not load Scintilla.  Check that the latest Visual C++ 2015 Redistributable is installed",ex);
+            }
+            
             toReturn.Dock = DockStyle.Fill;
             toReturn.HScrollBar = true;
             toReturn.VScrollBar = true;
 
             if (lineNumbers)
-                toReturn.Margins[0].Width = 40; //allows display of line numbers
+            {
+                toReturn.Margins[0].Type = MarginType.Text;
+                toReturn.Margins[1].Type = MarginType.Number;
+            }
             else
                 foreach (var margin in toReturn.Margins)
                     margin.Width = 0;

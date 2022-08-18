@@ -6,6 +6,7 @@
 
 using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.IO;
 using System.Linq;
 using System.Threading;
@@ -101,7 +102,7 @@ namespace Rdmp.UI.Tests
 
         public ICombineableFactory CommandFactory { get; private set; }
         public ICommandExecutionFactory CommandExecutionFactory { get; set; }
-        public CommentStore CommentStore { get; private set; }
+        public new CommentStore CommentStore { get; private set; } // Hide normal CommentStore so we can overwrite it later
         public HistoryProvider HistoryProvider { get; }
 
         public T Activate<T, T2>(T2 databaseObject) where T : RDMPSingleDatabaseObjectControl<T2>, new() where T2 : DatabaseEntity
@@ -331,6 +332,11 @@ namespace Rdmp.UI.Tests
         public override bool SelectObjects<T>(DialogArgs args, T[] available, out T[] selected)
         {
             throw new NotImplementedException();
+        }
+
+        public override void LaunchSubprocess(ProcessStartInfo startInfo)
+        {
+            throw new NotSupportedException();
         }
     }
 

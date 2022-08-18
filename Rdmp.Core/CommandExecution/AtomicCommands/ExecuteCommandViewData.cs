@@ -5,20 +5,26 @@
 // You should have received a copy of the GNU General Public License along with RDMP. If not, see <https://www.gnu.org/licenses/>.
 
 using MapsDirectlyToDatabaseTable;
+using NLog;
 using Rdmp.Core.Curation.Data;
+using Rdmp.Core.Curation.Data.Aggregation;
+using Rdmp.Core.Curation.Data.Cohort;
+using Rdmp.Core.DataExport.Data;
 using Rdmp.Core.DataExport.DataExtraction;
 using Rdmp.Core.DataViewing;
 using Rdmp.Core.Repositories.Construction;
 using System;
 using System.IO;
+using System.Linq;
 
 namespace Rdmp.Core.CommandExecution.AtomicCommands
 {
-    public class ExecuteCommandViewData : BasicCommandExecution, IAtomicCommand
+    public class ExecuteCommandViewData : ExecuteCommandViewDataBase, IAtomicCommand
     {
         private readonly IViewSQLAndResultsCollection _collection;
         private readonly ViewType _viewType;
-        public FileInfo ToFile { get; set; }
+        private readonly IMapsDirectlyToDatabaseTable _obj;
+        private readonly bool _useCache;
 
         #region Constructors
 
@@ -28,27 +34,28 @@ namespace Rdmp.Core.CommandExecution.AtomicCommands
         /// <param name="activator"></param>
         /// <param name="viewType"></param>
         /// <param name="toFile"></param>
+        /// <param name="useCache"></param>
         /// <param name="obj"></param>
         /// <exception cref="ArgumentException"></exception>
         [UseWithObjectConstructor]
         public ExecuteCommandViewData(IBasicActivateItems activator,
-            [DemandsInitialization("The ColumnInfo, TableInfo or ExtractionInformation you want to view a sample of")]
+            [DemandsInitialization("The object (ColumnInfo, TableInfo etc) you want to view a sample of")]
             IMapsDirectlyToDatabaseTable obj,
-            [DemandsInitialization("Optional. The view mode you want to see.  Options include 'TOP_100', 'Aggregate' and 'Distribution'",DefaultValue = ViewType.TOP_100)]
+            [DemandsInitialization("Optional. The view mode you want to see.  Options include 'TOP_100', 'Aggregate', 'Distribution' or 'All'",DefaultValue = ViewType.TOP_100)]
             ViewType viewType = ViewType.TOP_100,
-            [DemandsInitialization("Optional. A file to write the records to instead of the console")]
-            FileInfo toFile = null) :base(activator)
+            [DemandsInitialization(ToFileDescription)]
+            FileInfo toFile = null,
+            [DemandsInitialization("Applies only to CohortIdentificationConfigurations.  Defaults to true.  Set to false to disable query cache use.")]
+            bool useCache = true) : base(activator, toFile)
         {
             _viewType = viewType;
-            ToFile = toFile;
+            _obj = obj;
+            _useCache = useCache;
 
             if (obj is TableInfo ti)
             {
+                ThrowIfNotSimpleSelectViewType();
                 _collection = new ViewTableInfoExtractUICollection(ti, _viewType);
-                if(_viewType != ViewType.TOP_100)
-                {
-                    throw new ArgumentException($"Only '{nameof(ViewType.TOP_100)}' can be used for TableInfos");
-                }
             }
             else if (obj is ColumnInfo col)
             {
@@ -58,9 +65,85 @@ namespace Rdmp.Core.CommandExecution.AtomicCommands
             {
                 _collection = CreateCollection(ei);
             }
+            else if (obj is Catalogue cata)
+            {
+                ThrowIfNotSimpleSelectViewType();
+                _collection = CreateCollection(cata);
+            }
+            else if (obj is CohortIdentificationConfiguration cic)
+            {
+                ThrowIfNotSimpleSelectViewType();
+                _collection = CreateCollection(cic);
+            }
+            else if (obj is ExtractableCohort ec)
+            {
+                ThrowIfNotSimpleSelectViewType();
+                _collection = CreateCollection(ec);
+            }
+            else if (obj is AggregateConfiguration ac)
+            {
+                ThrowIfNotSimpleSelectViewType();
+                _collection = CreateCollection(ac);
+            }
             else
-                throw new ArgumentException($"Object '{obj}' was not a table or column compatible with this command");
-            
+                throw new ArgumentException($"Object '{obj}' was not an object type compatible with this command");
+
+        }
+
+        private IViewSQLAndResultsCollection CreateCollection(AggregateConfiguration ac)
+        {
+            var cic = ac.GetCohortIdentificationConfigurationIfAny();
+
+            var collection = new ViewAggregateExtractUICollection(ac);
+
+            //if it has a cic with a query cache AND it uses joinables.  Since this is a TOP 100 select * from dataset the cache on CHI is useless only patient index tables used by this query are useful if cached
+            if (cic != null && cic.QueryCachingServer_ID != null && ac.PatientIndexJoinablesUsed.Any())
+            {
+                collection.UseQueryCache = _useCache;
+            }
+
+            collection.TopX = _viewType == ViewType.TOP_100 ? 100 : null;
+
+            return collection;
+        }
+
+        private IViewSQLAndResultsCollection CreateCollection(ExtractableCohort ec)
+        {
+
+            return new ViewCohortExtractionUICollection(ec)
+            {
+                Top = _viewType == ViewType.TOP_100 ? 100 : -1,
+                IncludeCohortID = false
+            };
+        }
+
+        private IViewSQLAndResultsCollection CreateCollection(CohortIdentificationConfiguration cic)
+        {
+            if (_viewType == ViewType.TOP_100)
+            {
+                LogManager.GetCurrentClassLogger().Warn($"'{ViewType.TOP_100}' is not supported on '{nameof(CohortIdentificationConfiguration)}', '{ViewType.All}' will be used");
+            }
+
+            return new ViewCohortIdentificationConfigurationSqlCollection(cic)
+            {
+                UseQueryCache = _useCache
+            };
+        }
+
+        private void ThrowIfNotSimpleSelectViewType()
+        {
+            if (_viewType != ViewType.TOP_100 && _viewType != ViewType.All)
+            {
+                throw new ArgumentException($"Only '{nameof(ViewType.TOP_100)}' or '{nameof(ViewType.All)}' can be used for this object Type");
+            }
+        }
+
+        private IViewSQLAndResultsCollection CreateCollection(Catalogue cata)
+        {
+            return new ViewCatalogueDataCollection(cata)
+            {
+                TopX = _viewType == ViewType.All ? null : 100
+            };
         }
 
         /// <summary>
@@ -69,13 +152,13 @@ namespace Rdmp.Core.CommandExecution.AtomicCommands
         /// <param name="activator"></param>
         /// <param name="viewType"></param>
         /// <param name="c"></param>
-        public ExecuteCommandViewData(IBasicActivateItems activator, ViewType viewType, ColumnInfo c) : base(activator)
+        public ExecuteCommandViewData(IBasicActivateItems activator, ViewType viewType, ColumnInfo c) : base(activator, null)
         {
             _viewType = viewType;
             _collection = CreateCollection(c);
         }
 
-        public ExecuteCommandViewData(IBasicActivateItems activator, ViewType viewType, ExtractionInformation ei) : base(activator)
+        public ExecuteCommandViewData(IBasicActivateItems activator, ViewType viewType, ExtractionInformation ei) : base(activator, null)
         {
             _viewType = viewType;
             _collection = CreateCollection(ei);
@@ -86,7 +169,7 @@ namespace Rdmp.Core.CommandExecution.AtomicCommands
         /// </summary>
         /// <param name="activator"></param>
         /// <param name="tableInfo"></param>
-        public ExecuteCommandViewData(IBasicActivateItems activator, TableInfo tableInfo) : base(activator)
+        public ExecuteCommandViewData(IBasicActivateItems activator, TableInfo tableInfo) : base(activator, null)
         {
             _viewType = ViewType.TOP_100;
             _collection = new ViewTableInfoExtractUICollection(tableInfo, _viewType);
@@ -114,20 +197,23 @@ namespace Rdmp.Core.CommandExecution.AtomicCommands
 
         public override string GetCommandName()
         {
+            // if user has set an override, respect it
+            if (!string.IsNullOrWhiteSpace(OverrideCommandName))
+                return OverrideCommandName;
+
+            if (_obj is CohortIdentificationConfiguration)
+            {
+                return _useCache ?
+                    "Query Builder SQL/Results" :
+                    "Query Builder SQL/Results (No Cache)";
+
+            }
+
             return "View " + _viewType.ToString().Replace("_", " ");
         }
-
-
-        public override void Execute()
+        protected override IViewSQLAndResultsCollection GetCollection()
         {
-            if (ToFile == null)
-            {
-                BasicActivator.ShowData(_collection);
-            }
-            else
-            {
-                ExtractTableVerbatim.ExtractDataToFile(_collection, ToFile);
-            }
+            return _collection;
         }
     }
 }

@@ -6,7 +6,10 @@
 
 using BadMedicine;
 using BadMedicine.Datasets;
+using FAnsi;
 using FAnsi.Discovery;
+using FAnsi.Discovery.ConnectionStringDefaults;
+using Microsoft.Data.SqlClient;
 using Rdmp.Core.CohortCommitting;
 using Rdmp.Core.CohortCommitting.Pipeline;
 using Rdmp.Core.CohortCommitting.Pipeline.Sources;
@@ -29,6 +32,7 @@ using Rdmp.Core.Repositories;
 using ReusableLibraryCode.Checks;
 using ReusableLibraryCode.Progress;
 using System;
+using System.Collections.Generic;
 using System.Data;
 using System.IO;
 using System.Linq;
@@ -61,6 +65,16 @@ namespace Rdmp.Core.CommandLine.DatabaseCreation
                 else
                     throw new Exception("Database " + db.GetRuntimeName() + " already exists and allowDrop option was not specified");
             
+            if(db.Server.Builder is SqlConnectionStringBuilder b)
+            {
+                var keywords = _repos.CatalogueRepository
+                    .GetAllObjects<ConnectionStringKeyword>()
+                    .Where(k=>k.DatabaseType == DatabaseType.MicrosoftSQLServer)
+                    .ToArray();
+
+                AddKeywordIfSpecified(b.TrustServerCertificate, nameof(b.TrustServerCertificate),keywords);
+            }
+
             notifier.OnCheckPerformed(new CheckEventArgs("About to create "+ db.GetRuntimeName(),CheckResult.Success));
             //create a new database for the datasets
             db.Create();
@@ -203,29 +217,23 @@ namespace Rdmp.Core.CommandLine.DatabaseCreation
 
             if (options.Nightmare)
             {
-                //Lots of datasets
-                for (int i = 0; i < 1000; i++)
+                var nightmare = new NightmareDatasets(_repos, db)
                 {
-                    var cata = new Catalogue(_repos.CatalogueRepository, $"Catalogue {i}");
-                    var eds = new ExtractableDataSet(_repos.DataExportRepository, cata);
-                    var ti = new TableInfo(_repos.CatalogueRepository, $"[MyDb].[Table{i}]");
+                    Factor = options.NightmareFactor
+                };
+                nightmare.Create(externalCohortTable);
+            }
+        }
 
-                    for (int j = 0; j < 40; j++)
-                    {
-                        var col = new ColumnInfo(_repos.CatalogueRepository, $"MyCol{j}", "varchar(10)", ti);
-                        var ci = new CatalogueItem(_repos.CatalogueRepository, cata, col.Name);
-                        new ExtractionInformation(_repos.CatalogueRepository, ci, col, col.Name);
-                    }
-                    
-                    Project p = new Project(_repos.DataExportRepository,$"Project {i}");
+        private void AddKeywordIfSpecified(bool isEnabled, string name, ConnectionStringKeyword[] alreadyDeclared)
+        {
+            if (isEnabled && !alreadyDeclared.Any(k => k.Name.Equals(name)))
+            {
+                var keyword = new ConnectionStringKeyword(_activator.RepositoryLocator.CatalogueRepository,
+                    DatabaseType.MicrosoftSQLServer, name, "true");
 
-                    for (int j = 0; j < 20; j++)
-                    {
-                        var config = new ExtractionConfiguration(_repos.DataExportRepository, p);
-                        new SelectedDataSets(_repos.DataExportRepository,config, eds,null);
-                    }
-                }
-
+                //pass it into the system wide static keyword collection for use with all databases of this type all the time
+                DiscoveredServerHelper.AddConnectionStringKeyword(keyword.DatabaseType, keyword.Name, keyword.Value, ConnectionStringKeywordPriority.SystemDefaultMedium);
             }
         }
 
@@ -255,8 +263,8 @@ namespace Rdmp.Core.CommandLine.DatabaseCreation
                 {
                     var optsRelease = new ReleaseOptions()
                     {
-                        Configurations = extractionConfigurations.Select(ec=>ec.ID).Distinct().ToArray(),
-                        Pipeline = releasePipeline.ID
+                        Configurations = string.Join(",",extractionConfigurations.Select(ec=>ec.ID.ToString()).Distinct().ToArray()),
+                        Pipeline = releasePipeline.ID.ToString()
                     };
 
                     var runnerRelease = new ReleaseRunner(optsRelease);
@@ -304,7 +312,7 @@ namespace Rdmp.Core.CommandLine.DatabaseCreation
 
             foreach(var c in catalogues)
             {
-                //Get it's extractableness
+                //Get its extractableness
                 var eds = _repos.DataExportRepository.GetAllObjectsWithParent<ExtractableDataSet>(c).SingleOrDefault() 
                             ?? new ExtractableDataSet(_repos.DataExportRepository,c); //or make it extractable
                 
@@ -317,8 +325,8 @@ namespace Rdmp.Core.CommandLine.DatabaseCreation
             {
                 var optsExtract = new ExtractionOptions()
                 {
-                    Pipeline = extractionPipeline.ID,
-                    ExtractionConfiguration = extractionConfiguration.ID
+                    Pipeline = extractionPipeline.ID.ToString(),
+                    ExtractionConfiguration = extractionConfiguration.ID.ToString()
                 };
                 var runnerExtract = new ExtractionRunner(_activator,optsExtract);
                 try
@@ -581,7 +589,7 @@ UNPIVOT
         }
         private ICatalogue ImportCatalogue(ITableInfo ti)
         {
-            var forwardEngineer = new ForwardEngineerCatalogue(ti,ti.ColumnInfos,true);
+            var forwardEngineer = new ForwardEngineerCatalogue(ti,ti.ColumnInfos);
             forwardEngineer.ExecuteForwardEngineering(out var cata, out _,out ExtractionInformation[] eis);
             
             //get descriptions of the columns from BadMedicine

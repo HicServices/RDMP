@@ -7,6 +7,7 @@
 using Rdmp.Core.CommandExecution.Combining;
 using Rdmp.Core.Curation.Data.DataLoad;
 using Rdmp.Core.Providers.Nodes.LoadMetadataNodes;
+using Rdmp.Core.Repositories.Construction;
 
 namespace Rdmp.Core.CommandExecution.AtomicCommands
 {
@@ -14,7 +15,13 @@ namespace Rdmp.Core.CommandExecution.AtomicCommands
     {
         private readonly ProcessTask _sourceProcessTask;
         private readonly LoadStageNode _targetStage;
+        
+        [UseWithObjectConstructor]
+        public ExecuteCommandChangeLoadStage(IBasicActivateItems activator, ProcessTask processTask, LoadStage stage) :
+            this(activator, new ProcessTaskCombineable(processTask), new LoadStageNode(processTask.LoadMetadata,stage))
+        {
 
+        }
         public ExecuteCommandChangeLoadStage(IBasicActivateItems activator, ProcessTaskCombineable sourceProcessTaskCombineable, LoadStageNode targetStage) : base(activator)
         {
             _sourceProcessTask = sourceProcessTaskCombineable.ProcessTask;

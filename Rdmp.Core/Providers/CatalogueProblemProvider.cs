@@ -6,6 +6,7 @@
 
 using System;
 using System.Collections.Generic;
+using System.Globalization;
 using System.Linq;
 using MapsDirectlyToDatabaseTable;
 using Rdmp.Core.CohortCreation.Execution;
@@ -17,6 +18,8 @@ using Rdmp.Core.Curation.Data.Governance;
 using Rdmp.Core.Providers.Nodes;
 using Rdmp.Core.Providers.Nodes.LoadMetadataNodes;
 using ReusableLibraryCode.Settings;
+using TypeGuesser;
+using TypeGuesser.Deciders;
 
 namespace Rdmp.Core.Providers
 {
@@ -28,6 +31,13 @@ namespace Rdmp.Core.Providers
         private ICoreChildProvider _childProvider;
         private HashSet<int> _orphanCatalogueItems = new HashSet<int>();
         private HashSet<int> _usedJoinables;
+        private JoinInfo[] _joinsWithMismatchedCollations = new JoinInfo[0];
+
+        /// <summary>
+        /// Set the culture for problem provision which is culture sensitive
+        /// e.g. detecting date values or leave null for the default system culture
+        /// </summary>
+        public CultureInfo Culture;
 
         /// <inheritdoc/>
         public override void RefreshProblems(ICoreChildProvider childProvider)
@@ -47,6 +57,15 @@ namespace Rdmp.Core.Providers
             _usedJoinables = new HashSet<int>(
                 childProvider.AllJoinableCohortAggregateConfigurationUse.Select(
                     ju => ju.JoinableCohortAggregateConfiguration_ID));
+
+            _joinsWithMismatchedCollations = childProvider.AllJoinInfos.Where(j =>
+                !string.IsNullOrWhiteSpace(j.PrimaryKey.Collation) &&
+                !string.IsNullOrWhiteSpace(j.ForeignKey.Collation) &&
+                
+                // does not have an explicit join collation specified
+                string.IsNullOrWhiteSpace(j.Collation) && 
+                !string.Equals(j.PrimaryKey.Collation, j.ForeignKey.Collation)
+                ).ToArray();
         }
 
         /// <inheritdoc/>
@@ -95,15 +114,49 @@ namespace Rdmp.Core.Providers
             
             return null;
         }
-
+        
         public string DescribeProblem(ISqlParameter parameter)
         {
-            if (string.IsNullOrWhiteSpace(parameter.Value) || parameter.Value == AnyTableSqlParameter.DefaultValue)
-                return "No value defined";
-
-            
             if (AnyTableSqlParameter.HasProhibitedName(parameter))
                 return "Parameter name is a reserved name for the RDMP software";
+
+            // if parameter has no value thats a problem
+            if (string.IsNullOrWhiteSpace(parameter.Value) || parameter.Value == AnyTableSqlParameter.DefaultValue)
+            {
+                // unless it has ExtractionFilterParameterSets defined on it
+                var desc = _childProvider.GetDescendancyListIfAnyFor(parameter);
+                if (desc != null && parameter is ExtractionFilterParameter)
+                {
+                    var filter = desc.Parents.OfType<ExtractionFilter>().FirstOrDefault();
+                    if (filter != null && filter.ExtractionFilterParameterSets.Any())
+                    {
+                        return null;
+                    }
+                }
+
+                return "No value defined";
+            }
+            else
+            {
+                var v = parameter.Value;
+
+                var g = new Guesser();
+                
+                if(Culture != null)
+                    g.Culture = Culture;
+
+                g.AdjustToCompensateForValue(v);
+
+                // if user has entered a date as the value
+                if (g.Guess.CSharpType == typeof(DateTime))
+                {
+                    // and there are no delimiters
+                    if(v.All(c=>c != '\'' && c != '"'))
+                    {
+                        return "Parameter value looks like a date but is not surrounded by quotes";
+                    }
+                }
+            }
 
             return null;
         }
@@ -224,6 +277,13 @@ namespace Rdmp.Core.Providers
         {
             if (_orphanCatalogueItems.Contains(catalogueItem.ID))
                 return "CatalogueItem is extractable but has no associated ColumnInfo";
+
+            var badJoin = _joinsWithMismatchedCollations.FirstOrDefault(j =>
+                j.PrimaryKey_ID == catalogueItem.ColumnInfo_ID ||
+                j.ForeignKey_ID == catalogueItem.ColumnInfo_ID);
+
+            if (badJoin != null)
+                return $"Columns in joins declared on this column have mismatched collations ({badJoin})";
 
             return null;
         }

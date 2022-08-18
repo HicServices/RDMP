@@ -38,7 +38,7 @@ namespace Rdmp.Core.Repositories
         public MEF()
         {
             //try to use the app data folder to download MEF but also evaluate everything in _localPath
-            _localPath = Path.GetDirectoryName(new Uri(Assembly.GetExecutingAssembly().GetName().CodeBase).LocalPath);
+            _localPath = AppContext.BaseDirectory;
 
             string _MEFPathAsString;
 
@@ -46,7 +46,7 @@ namespace Rdmp.Core.Repositories
             {
                 _MEFPathAsString = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData), "MEF");
             }
-            catch (Exception)//couldnt get the AppData/MEF directory so instead go to .\MEF\
+            catch (Exception)//couldn't get the AppData/MEF directory so instead go to .\MEF\
             {
                 if (_localPath == null)
                     throw new Exception("ApplicationData was not available to download MEF and neither apparently was Assembly.GetExecutingAssembly().GetName().CodeBase");
@@ -70,7 +70,7 @@ namespace Rdmp.Core.Repositories
         public Type GetType(string type)
         {            
             if(string.IsNullOrWhiteSpace(type))
-                throw new ArgumentNullException("type");
+                throw new ArgumentNullException(nameof(type));
 
             if(TypeNotKnown.Contains(type))
                 return null;

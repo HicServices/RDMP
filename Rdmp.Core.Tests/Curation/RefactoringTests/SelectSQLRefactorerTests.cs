@@ -131,7 +131,7 @@ namespace Rdmp.Core.Tests.Curation.RefactoringTests
         /// 
         /// BUT column name is [Fish]..[TableA].[MyCol].  In this case it should be refactored to [Fish].[dbo].[TableB].[MyCol]
         /// </example>
-        /// <param name="columnName">A column that belongs to <paramref name="findTableName"/> which should be refactored even if it's name isn't an exact match to the table name</param>
+        /// <param name="columnName">A column that belongs to <paramref name="findTableName"/> which should be refactored even if its name isn't an exact match to the table name</param>
         /// <param name="findTableName">The table being renamed, will be renamed MyTbl to MyNewTbl</param>
         [TestCase("[Fish]..[MyTbl].[A]",     "[Fish]..[MyTbl]")]
         [TestCase("[Fish].[dbo].[MyTbl].[A]","[Fish]..[MyTbl]")]

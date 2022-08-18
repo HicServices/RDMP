@@ -452,11 +452,11 @@ namespace Tests.Common
             if (args.Exception != null)
                 Assert.Fail(args.SummariseAsString());
 
-            //its a tier appropriate fatal error message
+            //it's a tier appropriate fatal error message
             if (args.Status == RDMPPlatformDatabaseStatus.Broken || args.Status == RDMPPlatformDatabaseStatus.Unreachable)
                 Assert.Fail(args.SummariseAsString());
 
-            //its slightly dodgy about it's version numbers
+            //it's slightly dodgy abouits's version numbers
             if (args.Status == RDMPPlatformDatabaseStatus.RequiresPatching)
                 Assert.Fail(args.SummariseAsString());
 
@@ -775,7 +775,7 @@ delete from {1}..Project
             var importer = new TableInfoImporter(CatalogueRepository, tbl);
             importer.DoImport(out tableInfoCreated,out columnInfosCreated);
 
-            var forwardEngineer = new ForwardEngineerCatalogue(tableInfoCreated, columnInfosCreated,true);
+            var forwardEngineer = new ForwardEngineerCatalogue(tableInfoCreated, columnInfosCreated);
             forwardEngineer.ExecuteForwardEngineering(out var catalogue,out catalogueItems,out extractionInformations);
 
             return catalogue;

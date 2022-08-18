@@ -118,9 +118,10 @@ namespace Rdmp.UI.AggregationUIs
             tpCode.Controls.Add(QueryEditor);
             #endregion QueryEditor
 
-            SetToolbarButtonsEnabled(true);
-
+            SetToolbarButtonsEnabled(true); 
             
+            dataGridView1.ColumnAdded += (s, e) => e.Column.FillWeight = 1;
+
             Timeout = 300;
 
             miCopyToClipboard.DropDownItems.Add(miClipboardWord);
@@ -750,7 +751,7 @@ namespace Rdmp.UI.AggregationUIs
 
 
         /// <summary>
-        /// Loads the Graph without establishing a lifetime subscription to refresh events (use if you are a derrived class who has it's own subscription or if you plan
+        /// Loads the Graph without establishing a lifetime subscription to refresh events (use if you are a derived class who has it's own subscription or if you plan
         /// to load multiple different graphs into this control one after the other).
         /// </summary>
         /// <param name="activator"></param>

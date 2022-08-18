@@ -321,7 +321,7 @@ namespace Rdmp.Core.Tests.Curation.Anonymisation
         }
 
         /// <summary>
-        /// Creates a new ANOTable called ANOMyTable in the Data Catalogue (and cleans SetUp any old copy kicking around), you will need to set it's properties and
+        /// Creates a new ANOTable called ANOMyTable in the Data Catalogue (and cleans SetUp any old copy kicking around), you will need to set its properties and
         /// call PushToANOServerAsNewTable if you want to use it with an ANOTransformer
         /// </summary>
         /// <returns></returns>

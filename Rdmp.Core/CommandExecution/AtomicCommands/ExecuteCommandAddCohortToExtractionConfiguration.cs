@@ -7,6 +7,7 @@
 using System.Linq;
 using Rdmp.Core.CommandExecution.Combining;
 using Rdmp.Core.DataExport.Data;
+using Rdmp.Core.Repositories.Construction;
 
 namespace Rdmp.Core.CommandExecution.AtomicCommands
 {
@@ -15,10 +16,23 @@ namespace Rdmp.Core.CommandExecution.AtomicCommands
         private readonly ExtractableCohortCombineable _sourceExtractableCohortComand;
         private readonly ExtractionConfiguration _targetExtractionConfiguration;
 
+        [UseWithObjectConstructor]
+        public ExecuteCommandAddCohortToExtractionConfiguration(IBasicActivateItems activator, ExtractableCohort cohort, ExtractionConfiguration targetExtractionConfiguration)
+            : this(activator, new ExtractableCohortCombineable(cohort), targetExtractionConfiguration)
+        {
+
+        }
+
         public ExecuteCommandAddCohortToExtractionConfiguration(IBasicActivateItems activator, ExtractableCohortCombineable sourceExtractableCohortComand, ExtractionConfiguration targetExtractionConfiguration) : base(activator)
         {
             _sourceExtractableCohortComand = sourceExtractableCohortComand;
             _targetExtractionConfiguration = targetExtractionConfiguration;
+
+            if(_sourceExtractableCohortComand.Cohort.IsDeprecated)
+            {
+                SetImpossible("Cohort is deprecated");
+                return;
+            }
 
             if(_sourceExtractableCohortComand.ErrorGettingCohortData != null)
             {
