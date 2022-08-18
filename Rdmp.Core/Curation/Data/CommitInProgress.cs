@@ -40,6 +40,13 @@ namespace Rdmp.Core.Curation.Data
         /// </summary>
         public bool TrackInsertsAndDeletes { get; }
 
+        /// <summary>
+        /// Optional default description to use when describing the purpose of this commit. 
+        /// If code is interactive then user may expand on the description or replace it entirely.
+        /// If null then a suitable description is generated based on objects/properties changed
+        /// </summary>
+        public string Description { get; set; }
+
         Dictionary<IMapsDirectlyToDatabaseTable, MementoInProgress> originalStates = new ();
         
         private IRDMPPlatformRepositoryServiceLocator _locator;
@@ -260,6 +267,11 @@ namespace Rdmp.Core.Curation.Data
             // no changes
             if (changes.Count == 0)
                 return null;
+
+            if(Description != null)
+            {
+                return Description;
+            }
 
             // we can't summarise changes to multiple objects
             if(changes.Count != 1)
