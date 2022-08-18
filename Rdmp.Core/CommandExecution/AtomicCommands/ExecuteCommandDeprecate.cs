@@ -47,11 +47,11 @@ namespace Rdmp.Core.CommandExecution.AtomicCommands
             // TODO: cancellation doesn't unmark replaced since its object creation
             // TODO: Don't want to duplicate this kind of thing, maybe move to base class?
             var commit = UserSettings.EnableCommits ? 
-                new CommitInProgress(BasicActivator.RepositoryLocator, true, _o) 
+                new CommitInProgress(BasicActivator.RepositoryLocator, new CommitInProgressSettings(_o)
                 {
-                    DelaySaves = true,
+                    UseTransactions = true,
                     Description = GetDescription()
-                } : null;
+                }): null;
 
             foreach(var o in _o)
             {

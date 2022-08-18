@@ -33,12 +33,6 @@ namespace Rdmp.Core.Curation.Data
 
         private Dictionary<PropertyInfo, object> _props = new ();
 
-        /// <summary>
-        /// Operation to carry out when/if the <see cref="CommitInProgress"/> is completed
-        /// (see <see cref="CommitInProgress.TryFinish(CommandExecution.IBasicActivateItems)"/>)
-        /// </summary>
-        public Action CommitAction { get; set; }
-
         public MementoInProgress(IMapsDirectlyToDatabaseTable o, string oldYaml)
         {
             OldYaml = oldYaml;

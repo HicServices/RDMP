@@ -20,7 +20,7 @@ namespace Rdmp.Core.Tests.Curation.Integration
         {
             var c = new Catalogue(CatalogueRepository, "Hey");
 
-            using var start = new CommitInProgress(RepositoryLocator, false, c);
+            using var start = new CommitInProgress(RepositoryLocator, new CommitInProgressSettings(c));
 
             // no changes but lets spam this for added complexity
             c.SaveToDatabase();
@@ -44,19 +44,21 @@ namespace Rdmp.Core.Tests.Curation.Integration
 
         /// <summary>
         /// Tests that when there is a <see cref="CommitInProgress"/> on object(s) e.g. <see cref="Catalogue"/>
-        /// then any <see cref="ISaveable.SaveToDatabase"/> does not write to db until commit ends.        /// 
+        /// that uses transactions.  Cancelling the <see cref="CommitInProgress"/> will leave everything back 
+        /// how it was
         /// </summary>
         [Test]
-        public void CommitInProgress_TestSaveDelaying()
+        public void CommitInProgress_TestCancellation()
         {
-            
             var c = new Catalogue(CatalogueRepository, "Hey");
 
             Assert.AreEqual(ChangeDescription.NoChanges,c.HasLocalChanges().Evaluation,
                 "We just created this Catalogue, how can db copy be different?!");
 
-            using var start = new CommitInProgress(RepositoryLocator, false,c) { DelaySaves = true };
-            var activator = new ThrowImmediatelyActivator(RepositoryLocator);
+            var start = new CommitInProgress(RepositoryLocator, new CommitInProgressSettings(c) 
+            {
+                UseTransactions = true
+            });
 
             // there is a CommitInProgress on c so db should not have
             c.Name = "abadaba";
@@ -67,15 +69,18 @@ namespace Rdmp.Core.Tests.Curation.Integration
 
             c.SaveToDatabase();
 
-            Assert.AreEqual(ChangeDescription.DatabaseCopyDifferent, c.HasLocalChanges().Evaluation,
-                "Since there is a transaction ongoing we should be suppressing writes to db");
-
-            // finish the commit
-            var commit = start.TryFinish(activator);
-            Assert.IsNotNull(commit);
-
             Assert.AreEqual(ChangeDescription.NoChanges, c.HasLocalChanges().Evaluation,
-                "Now that we finished the Commit all objects should be saved");
+                "Should be saved inside the transaction");
+
+            // abandon the commit
+            start.Dispose();
+
+            Assert.AreEqual(ChangeDescription.DatabaseCopyDifferent, c.HasLocalChanges().Evaluation,
+                "With transaction rolled back the Catalogue should now no longer match db state - i.e. be unsaved");
+
+            c.RevertToDatabaseState();
+
+            Assert.AreEqual("Hey", c.Name);
         }
     }
 }
