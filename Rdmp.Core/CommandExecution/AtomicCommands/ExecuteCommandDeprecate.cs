@@ -65,7 +65,9 @@ namespace Rdmp.Core.CommandExecution.AtomicCommands
                 if(_desiredState == true && BasicActivator.YesNo("Do you have a replacement Catalogue you want to link?","Replacement"))
                 {
                     var cmd = new ExecuteCommandReplacedBy(BasicActivator,_o[0],null)
-                        {PromptToPickReplacement = true};
+                    {
+                        PromptToPickReplacement = true
+                    };
                     cmd.Execute();
                 }
             }

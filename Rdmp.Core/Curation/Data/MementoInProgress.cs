@@ -5,6 +5,7 @@
 // You should have received a copy of the GNU General Public License along with RDMP. If not, see <https://www.gnu.org/licenses/>.
 
 using MapsDirectlyToDatabaseTable;
+using System;
 using System.Collections.Generic;
 using System.Reflection;
 
@@ -31,6 +32,12 @@ namespace Rdmp.Core.Curation.Data
         public MementoType Type { get; set; } = MementoType.Modify;
 
         private Dictionary<PropertyInfo, object> _props = new ();
+
+        /// <summary>
+        /// Operation to carry out when/if the <see cref="CommitInProgress"/> is completed
+        /// (see <see cref="CommitInProgress.TryFinish(CommandExecution.IBasicActivateItems)"/>)
+        /// </summary>
+        public Action CommitAction { get; set; }
 
         public MementoInProgress(IMapsDirectlyToDatabaseTable o, string oldYaml)
         {

@@ -50,14 +50,9 @@ namespace Rdmp.Core.Curation.Data
         Dictionary<IMapsDirectlyToDatabaseTable, MementoInProgress> originalStates = new ();
         
         private IRDMPPlatformRepositoryServiceLocator _locator;
-        private IMapsDirectlyToDatabaseTable[] _tracked;
         private IEnumerable<IRepository> _repositories;
         private ISerializer _serializer;
 
-        /// <summary>
-        /// We suppress saving on <see cref="_tracked"/> objects until <see cref="TryFinish(IBasicActivateItems)"/>
-        /// </summary>
-        private Queue<ISaveable> toSave = new();
 
         int order = 0;
 
@@ -72,11 +67,11 @@ namespace Rdmp.Core.Curation.Data
             TrackInsertsAndDeletes = trackInsertsAndDeletes;
 
             _locator = locator;
-            _tracked = track;
 
             _repositories = _locator.GetAllRepositories();
             _serializer = YamlRepository.CreateSerializer(_repositories.SelectMany(r=>r.GetCompatibleTypes()).Distinct()
                 );
+
             foreach(var repo in _repositories)
             {
                 repo.Saving += Saving;
@@ -93,6 +88,17 @@ namespace Rdmp.Core.Curation.Data
                 originalStates.Add(t, new MementoInProgress(t,_serializer.Serialize(t)));
                 t.PropertyChanged += PropertyChanged;
             }
+        }
+
+        /// <summary>
+        /// Mark an object for deletion if <see cref="TryFinish(IBasicActivateItems)"/> is called.
+        /// </summary>
+        /// <param name="toDelete"></param>
+        public void DelayDelete(IMapsDirectlyToDatabaseTable toDelete)
+        {
+            Deleting(this, new IMapsDirectlyToDatabaseTableEventArgs(toDelete));
+
+            originalStates[toDelete].CommitAction = toDelete.DeleteInDatabase;
         }
 
         private void Inserting(object sender, IMapsDirectlyToDatabaseTableEventArgs e)
@@ -149,7 +155,6 @@ namespace Rdmp.Core.Curation.Data
                     Type = MementoType.Delete
                 });
             }
-
         }
 
         private void BumpOrder(MementoInProgress mementoInProgress)
@@ -168,13 +173,13 @@ namespace Rdmp.Core.Curation.Data
                 return;
 
             // if its an object we are tracking and saveable (one would hope so)
-            if (_tracked.Contains(e.BeingSaved) && e.BeingSaved is ISaveable s)
+            if (originalStates.Keys.Contains(e.BeingSaved) && e.BeingSaved is ISaveable s)
             {
                 // delay save till TryFinish
                 e.Cancel = true;
-
-                if (!toSave.Contains(s))
-                    toSave.Enqueue(s);
+                var memento = originalStates[e.BeingSaved];
+                memento.CommitAction = s.SaveToDatabase;
+                BumpOrder(memento);
             }
         }
 
@@ -247,17 +252,26 @@ namespace Rdmp.Core.Curation.Data
             // so save all the objects we delayed saving (in the order they asked for saving)
             _finishing = true;
 
-            while (toSave.TryDequeue(out var result))
-            {
-                result.SaveToDatabase();
-            }
+            // put the repository into transaction mode
+            // so that we fully commit the audit and commit actions in one go
+            // (especially important if DelaySaves is true).
+            using var dbTransaction = cataRepo.BeginNewTransaction();
 
             var c = new Commit(cataRepo, transaction, description);
 
             foreach(var m in changes.OrderBy(c => c.Value.Item1.Order))
             {
+                if(m.Value.Item1.CommitAction != null)
+                {
+                    // may fail if they tried to stage deleting something that blows up on deletion
+                    // e.g. due to a database constraint
+                    m.Value.Item1.CommitAction();
+                }
+
                 new Memento(cataRepo, c, m.Value.Item1.Type, m.Key, m.Value.Item1.OldYaml, m.Value.Item2);
             }
+            
+            cataRepo.EndTransaction(true);
 
             return c;
         }
