@@ -7,23 +7,22 @@
 using MapsDirectlyToDatabaseTable;
 using Rdmp.Core.CommandExecution.AtomicCommands;
 using Rdmp.Core.Curation.Data;
-using Rdmp.UI.CommandExecution.AtomicCommands;
 using Rdmp.UI.ItemActivation;
 using Rdmp.UI.SimpleDialogs;
 using System.Linq;
 
-namespace Rdmp.UI.Menus
+namespace Rdmp.UI.CommandExecution.AtomicCommands
 {
     internal class ExecuteCommandViewCommits : BasicUICommandExecution
     {
         private IMapsDirectlyToDatabaseTable _o;
 
-        public ExecuteCommandViewCommits(IActivateItems activator, IMapsDirectlyToDatabaseTable o):base(activator)
+        public ExecuteCommandViewCommits(IActivateItems activator, IMapsDirectlyToDatabaseTable o) : base(activator)
         {
             _o = o;
             OverrideCommandName = "View History";
 
-            if(
+            if (
                 !activator.RepositoryLocator.CatalogueRepository
                 .GetAllObjectsWhere<Memento>(nameof(Memento.ReferencedObjectID), o.ID)
                 .Where((m) => m.IsReferenceTo(o))
