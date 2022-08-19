@@ -70,7 +70,7 @@ namespace Rdmp.Core.CommandExecution
         public FavouritesProvider FavouritesProvider { get; private set; }
         public ICoreIconProvider CoreIconProvider { get; private set; }
 
-        public CommentStore CommentStore { get { return RepositoryLocator.CatalogueRepository.CommentStore; } }
+        public CommentStore CommentStore => RepositoryLocator.CatalogueRepository.CommentStore;
 
 
         /// <inheritdoc/>

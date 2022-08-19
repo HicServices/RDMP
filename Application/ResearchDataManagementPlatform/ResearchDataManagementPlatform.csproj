@@ -3,8 +3,6 @@
     <ProjectGuid>{550988FD-F1FA-41D8-BE0F-00B4DE47D320}</ProjectGuid>
     <OutputType>WinExe</OutputType>
     <TargetFramework>net6.0-windows</TargetFramework>
-    <SelfContained>true</SelfContained>
-    <RuntimeIdentifier>win-x64</RuntimeIdentifier>
     <GenerateDocumentationFile>true</GenerateDocumentationFile>
     <UseWindowsForms>true</UseWindowsForms>
     <GenerateAssemblyInfo>false</GenerateAssemblyInfo>
@@ -34,7 +32,7 @@
     <PackageReference Include="ConsoleControl" Version="1.3.0" />
     <PackageReference Include="Autoupdater.NET.Official" Version="1.7.4" />
     <PackageReference Include="DockPanelSuite.ThemeVS2015" Version="3.1.0" />
-    <PackageReference Include="SecurityCodeScan.VS2019" Version="5.6.3">
+    <PackageReference Include="SecurityCodeScan.VS2019" Version="5.6.4">
       <PrivateAssets>all</PrivateAssets>
       <IncludeAssets>runtime; build; native; contentfiles; analyzers</IncludeAssets>
     </PackageReference>
