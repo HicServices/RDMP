@@ -620,7 +620,7 @@ namespace Rdmp.UI.Collections
         {
             bool hasProblems = _activator.HasProblem(rowObject);
             
-            return CoreIconProvider.GetImage(rowObject,hasProblems?OverlayKind.Problem:OverlayKind.None);
+            return CoreIconProvider.GetImage(rowObject,hasProblems?OverlayKind.Problem:OverlayKind.None).ImageToBitmap();
         }
 
         /// <summary>
