@@ -10,23 +10,35 @@ using Bitmap = System.Drawing.Bitmap;
 using System.IO;
 using SixLabors.ImageSharp;
 using SixLabors.ImageSharp.PixelFormats;
+using System.Collections.Concurrent;
 
 namespace Rdmp.UI;
 
 public static class ImageTools
 {
+
+    private static ConcurrentDictionary<Image<Rgba32>, Bitmap> ImageToBitmapCacheRgba32 = new();
+
     public static Bitmap ImageToBitmap(this Image<Rgba32> img)
     {
-        using MemoryStream stream=new();
-        img.SaveAsPng(stream);
-        stream.Seek(0, SeekOrigin.Begin);
-        return new Bitmap(stream);
+        return ImageToBitmapCacheRgba32.GetOrAdd(img, (k) =>
+        {
+            using MemoryStream stream = new();
+            k.SaveAsPng(stream);
+            stream.Seek(0, SeekOrigin.Begin);
+            return new Bitmap(stream);
+        });
     }
+
+    static ConcurrentDictionary<byte[], Bitmap> ImageToBitmapCacheByteArray = new ();
 
     public static Bitmap ImageToBitmap(this byte [] img)
     {
-        using MemoryStream ms=new(img); 
-        return new Bitmap(ms);
+        return ImageToBitmapCacheByteArray.GetOrAdd(img, (k) =>
+        {
+            using MemoryStream ms = new(k);
+            return new Bitmap(ms);
+        });
     }
 
     public static Image<Rgba32> LegacyToImage(this System.Drawing.Image img)
