@@ -24,6 +24,7 @@ using ScintillaNET;
 using HelpIcon = Rdmp.UI.SimpleControls.HelpIcon;
 using Point = System.Drawing.Point;
 using ReusableLibraryCode.Icons;
+using SixLabors.ImageSharp.PixelFormats;
 using Color = System.Drawing.Color;
 
 namespace Rdmp.UI.TestsAndSetup.ServicePropogation
@@ -112,7 +113,7 @@ namespace Rdmp.UI.TestsAndSetup.ServicePropogation
         /// <param name="overrideCommandName"></param>
         /// <param name="overrideImage"></param>
         /// <param name="underMenu">If the command should appear under a submenu dropdown then this should be the name of that root button</param>
-        public void Add(IAtomicCommand cmd, string overrideCommandName = null, Image overrideImage = null, string underMenu = null)
+        public void Add(IAtomicCommand cmd, string overrideCommandName = null, Image<Rgba32> overrideImage = null, string underMenu = null)
         {
             var p = _hostControl.GetTopmostRDMPUserControl();
             if (p != _hostControl)
@@ -128,7 +129,7 @@ namespace Rdmp.UI.TestsAndSetup.ServicePropogation
                 button.Text = overrideCommandName;
 
             if (overrideImage != null)
-                button.Image = overrideImage.ToBitmap();
+                button.Image = overrideImage.ImageToBitmap();
 
             Add(button,underMenu);
         }
@@ -344,7 +345,7 @@ namespace Rdmp.UI.TestsAndSetup.ServicePropogation
         /// <param name="overrideCommandName"></param>
         /// <param name="overrideImage"></param>
         /// <param name="underMenu"></param>
-        public void AddToMenu(IAtomicCommand cmd, string overrideCommandName = null, Image overrideImage = null,string underMenu = null)
+        public void AddToMenu(IAtomicCommand cmd, string overrideCommandName = null, Image<Rgba32> overrideImage = null,string underMenu = null)
         {
             var p = _hostControl.GetTopmostRDMPUserControl();
             if (p != _hostControl)
@@ -360,7 +361,7 @@ namespace Rdmp.UI.TestsAndSetup.ServicePropogation
                 menuItem.Text = overrideCommandName;
 
             if (overrideImage != null)
-                menuItem.Image = overrideImage.ToBitmap();
+                menuItem.Image = overrideImage.ImageToBitmap();
 
             AddToMenu(menuItem,underMenu);
         }

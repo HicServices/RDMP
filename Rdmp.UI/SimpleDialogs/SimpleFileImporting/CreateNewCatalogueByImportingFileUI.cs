@@ -57,7 +57,7 @@ namespace Rdmp.UI.SimpleDialogs.SimpleFileImporting
             _command = command;
             InitializeComponent();
 
-            pbFile.Image = activator.CoreIconProvider.GetImage(RDMPConcept.File).ToBitmap();
+            pbFile.Image = activator.CoreIconProvider.GetImage(RDMPConcept.File).ImageToBitmap();
             serverDatabaseTableSelector1.HideTableComponents();
             serverDatabaseTableSelector1.SelectionChanged += serverDatabaseTableSelector1_SelectionChanged;
             serverDatabaseTableSelector1.SetItemActivator(activator);

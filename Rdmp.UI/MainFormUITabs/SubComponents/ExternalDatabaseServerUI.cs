@@ -54,9 +54,9 @@ namespace Rdmp.UI.MainFormUITabs.SubComponents
 
                 tbPassword.Text = _server.GetDecryptedPassword();
                 ddDatabaseType.SelectedItem = _server.DatabaseType;
-                pbDatabaseProvider.Image = Activator.CoreIconProvider.GetImage(_server.DatabaseType).ToBitmap();
+                pbDatabaseProvider.Image = Activator.CoreIconProvider.GetImage(_server.DatabaseType).ImageToBitmap();
 
-                pbServer.Image = Activator.CoreIconProvider.GetImage(_server).ToBitmap();
+                pbServer.Image = Activator.CoreIconProvider.GetImage(_server).ImageToBitmap();
 
                 CommonFunctionality.AddChecks(databaseObject);
             }
@@ -111,7 +111,7 @@ namespace Rdmp.UI.MainFormUITabs.SubComponents
 
             var type = (DatabaseType)ddDatabaseType.SelectedValue;
             _server.DatabaseType = type;
-            pbDatabaseProvider.Image = Activator.CoreIconProvider.GetImage(type).ToBitmap();
+            pbDatabaseProvider.Image = Activator.CoreIconProvider.GetImage(type).ImageToBitmap();
         }
     }
 

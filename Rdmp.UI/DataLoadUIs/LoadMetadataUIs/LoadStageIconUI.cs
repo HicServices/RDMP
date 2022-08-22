@@ -24,7 +24,7 @@ namespace Rdmp.UI.DataLoadUIs.LoadMetadataUIs
 
         public void Setup(ICoreIconProvider iconProvider,LoadStage stage)
         {
-            pictureBox1.Image = iconProvider.GetImage(stage).ToBitmap();
+            pictureBox1.Image = iconProvider.GetImage(stage).ImageToBitmap();
             lblLoadStage.Text = stage.ToString();
             this.Width = lblLoadStage.Right;
         }

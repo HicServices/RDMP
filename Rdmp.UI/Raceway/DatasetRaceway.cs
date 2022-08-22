@@ -176,8 +176,8 @@ namespace Rdmp.UI.Raceway
 
             SetItemActivator(activator);
 
-            btnAddCatalogue.Image = _activator.CoreIconProvider.GetImage(RDMPConcept.Catalogue, OverlayKind.Import).ToBitmap();
-            btnAddExtractableDatasetPackage.Image = _activator.CoreIconProvider.GetImage(RDMPConcept.ExtractableDataSetPackage, OverlayKind.Import).ToBitmap();
+            btnAddCatalogue.Image = _activator.CoreIconProvider.GetImage(RDMPConcept.Catalogue, OverlayKind.Import).ImageToBitmap();
+            btnAddExtractableDatasetPackage.Image = _activator.CoreIconProvider.GetImage(RDMPConcept.ExtractableDataSetPackage, OverlayKind.Import).ImageToBitmap();
             
             ddShowPeriod.ComboBox.SelectedItem = _collection.ShowPeriod;
             cbIgnoreRowCounts.Checked = _collection.IgnoreRows;

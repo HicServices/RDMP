@@ -59,7 +59,7 @@ namespace Rdmp.UI.SimpleDialogs.Reports
 
             aggregateGraph1.Silent = true;
 
-            btnFolder.Image = activator.CoreIconProvider.GetImage(RDMPConcept.CatalogueFolder).ToBitmap();
+            btnFolder.Image = activator.CoreIconProvider.GetImage(RDMPConcept.CatalogueFolder).ImageToBitmap();
         }
 
         private void btnGenerateReport_Click(object sender, EventArgs e)

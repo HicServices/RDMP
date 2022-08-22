@@ -114,7 +114,7 @@ namespace Rdmp.UI.Menus
             {
                 Items.Insert(0,ActivateCommandMenuItem);
             }
-            ActivateCommandMenuItem.Image = _activator.CoreIconProvider.GetImage(newConcept, overlayKind).ToBitmap();
+            ActivateCommandMenuItem.Image = _activator.CoreIconProvider.GetImage(newConcept, overlayKind).ImageToBitmap();
             ActivateCommandMenuItem.Text = newTextForActivate;
         }
 
@@ -314,7 +314,7 @@ namespace Rdmp.UI.Menus
 
         protected Image GetImage(object concept, OverlayKind shortcut = OverlayKind.None)
         {
-            return _activator.CoreIconProvider.GetImage(concept, shortcut).ToBitmap();
+            return _activator.CoreIconProvider.GetImage(concept, shortcut).ImageToBitmap();
         }
 
         protected void Emphasise(DatabaseEntity o, int expansionDepth = 0)

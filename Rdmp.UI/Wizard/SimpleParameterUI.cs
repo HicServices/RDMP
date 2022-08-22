@@ -30,7 +30,7 @@ namespace Rdmp.UI.Wizard
             InitializeComponent();
 
             lblParameterName.Text = parameter.ParameterName.TrimStart('@');
-            pbParameter.Image = _activator.CoreIconProvider.GetImage(RDMPConcept.ParametersNode).ToBitmap();
+            pbParameter.Image = _activator.CoreIconProvider.GetImage(RDMPConcept.ParametersNode).ImageToBitmap();
 
             tbValue.Text = parameter.Value;
 

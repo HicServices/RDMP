@@ -79,7 +79,7 @@ namespace Rdmp.UI.ExtractionUIs.JoinsAndLookups
             _leftTableInfo = databaseObject;
             tbLeftTableInfo.Text = _leftTableInfo.ToString();
 
-            btnChooseRightTableInfo.Image = activator.CoreIconProvider.GetImage(RDMPConcept.TableInfo, OverlayKind.Add).ToBitmap();
+            btnChooseRightTableInfo.Image = activator.CoreIconProvider.GetImage(RDMPConcept.TableInfo, OverlayKind.Add).ImageToBitmap();
             UpdateValidityAssesment();
             
             olvLeftColumns.ClearObjects();

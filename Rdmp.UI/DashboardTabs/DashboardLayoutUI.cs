@@ -54,7 +54,7 @@ namespace Rdmp.UI.DashboardTabs
             base.SetDatabaseObject(activator, databaseObject);
 
             _controlFactory = new DashboardControlFactory(activator,new Point(5,25));
-            btnAddDashboardControl.Image = activator.CoreIconProvider.GetImage(RDMPConcept.AggregateGraph, OverlayKind.Add).ToBitmap();
+            btnAddDashboardControl.Image = activator.CoreIconProvider.GetImage(RDMPConcept.AggregateGraph, OverlayKind.Add).ImageToBitmap();
             _layout = databaseObject;
             ReLayout();
 

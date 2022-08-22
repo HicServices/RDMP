@@ -19,6 +19,8 @@ using Rdmp.UI.SingleControlForms;
 using Rdmp.UI.TestsAndSetup.ServicePropogation;
 using ResearchDataManagementPlatform.WindowManagement.ContentWindowTracking.Persistence;
 using ResearchDataManagementPlatform.WindowManagement.TabPageContextMenus;
+using SixLabors.ImageSharp;
+using SixLabors.ImageSharp.PixelFormats;
 using WeifenLuo.WinFormsUI.Docking;
 using Image = SixLabors.ImageSharp.Image;
 
@@ -46,7 +48,7 @@ namespace ResearchDataManagementPlatform.WindowManagement
             RepositoryLocator = repositoryLocator;
         }
 
-        public PersistableToolboxDockContent Create(IActivateItems activator,Control control, string label, Image image, RDMPCollection collection)
+        public PersistableToolboxDockContent Create(IActivateItems activator,Control control, string label, Image<Rgba32> image, RDMPCollection collection)
         {
             var content = new PersistableToolboxDockContent(collection);
             
@@ -55,7 +57,7 @@ namespace ResearchDataManagementPlatform.WindowManagement
             return content;
         }
         
-        public PersistableSingleDatabaseObjectDockContent Create(IActivateItems activator, RefreshBus refreshBus,IRDMPSingleDatabaseObjectControl control, Image image, IMapsDirectlyToDatabaseTable databaseObject)
+        public PersistableSingleDatabaseObjectDockContent Create(IActivateItems activator, RefreshBus refreshBus,IRDMPSingleDatabaseObjectControl control, Image<Rgba32> image, IMapsDirectlyToDatabaseTable databaseObject)
         {
             var content = new PersistableSingleDatabaseObjectDockContent(control, databaseObject,refreshBus);
             _windowManager.AddWindow(content);
@@ -68,7 +70,7 @@ namespace ResearchDataManagementPlatform.WindowManagement
             return content;
         }
 
-        public PersistableObjectCollectionDockContent Create(IActivateItems activator, IObjectCollectionControl control, IPersistableObjectCollection objectCollection, Image image)
+        public PersistableObjectCollectionDockContent Create(IActivateItems activator, IObjectCollectionControl control, IPersistableObjectCollection objectCollection, Image<Rgba32> image)
         {
             //create a new persistable docking tab
             var content = new PersistableObjectCollectionDockContent(activator,control,objectCollection);
@@ -97,7 +99,7 @@ namespace ResearchDataManagementPlatform.WindowManagement
         }
 
 
-        public DockContent Create(IActivateItems activator, Control control, string label, Image image)
+        public DockContent Create(IActivateItems activator, Control control, string label, Image<Rgba32> image)
         {
             DockContent content = new RDMPSingleControlTab(activator.RefreshBus,control);
             
@@ -108,7 +110,7 @@ namespace ResearchDataManagementPlatform.WindowManagement
             return content;
         }
 
-        private void AddControlToDockContent(IActivateItems activator, Control control,DockContent content, string label, Image image)
+        private void AddControlToDockContent(IActivateItems activator, Control control,DockContent content, string label, Image<Rgba32> image)
         {
             control.Dock = DockStyle.Fill;
             content.Controls.Add(control);

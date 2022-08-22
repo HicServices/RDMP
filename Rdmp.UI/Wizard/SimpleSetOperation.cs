@@ -56,7 +56,7 @@ namespace Rdmp.UI.Wizard
         {
 
             var op = GetSetOperation();
-            pbSetOperation.Image = _activator.CoreIconProvider.GetImage(op).ToBitmap();
+            pbSetOperation.Image = _activator.CoreIconProvider.GetImage(op).ImageToBitmap();
 
         }
 

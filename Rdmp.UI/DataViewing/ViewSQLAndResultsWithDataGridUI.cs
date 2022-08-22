@@ -121,10 +121,10 @@ namespace Rdmp.UI.DataViewing
 
             CommonFunctionality.ClearToolStrip();
 
-            btnExecuteSql.Image = activator.CoreIconProvider.GetImage(RDMPConcept.SQL, OverlayKind.Execute).ToBitmap();
+            btnExecuteSql.Image = activator.CoreIconProvider.GetImage(RDMPConcept.SQL, OverlayKind.Execute).ImageToBitmap();
 
             var overlayer = new IconOverlayProvider();
-            btnResetSql.Image = overlayer.GetOverlay(Image.Load<Rgba32>(FamFamFamIcons.text_align_left), OverlayKind.Problem).ToBitmap();
+            btnResetSql.Image = overlayer.GetOverlay(Image.Load<Rgba32>(FamFamFamIcons.text_align_left), OverlayKind.Problem).ImageToBitmap();
 
             if (_scintilla == null)
             {
@@ -162,7 +162,7 @@ namespace Rdmp.UI.DataViewing
             {
                 var dap = _collection.GetDataAccessPoint();
                 _serverHeader.Text = $"Server: {dap.Server} Database: {dap.Database}";
-                _serverHeader.Image = _databaseTypeIconProvider.GetImage(dap.DatabaseType).ToBitmap();
+                _serverHeader.Image = _databaseTypeIconProvider.GetImage(dap.DatabaseType).ImageToBitmap();
             }
             catch (Exception)
             {

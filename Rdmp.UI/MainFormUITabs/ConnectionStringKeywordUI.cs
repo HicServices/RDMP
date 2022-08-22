@@ -44,7 +44,7 @@ namespace Rdmp.UI.MainFormUITabs
             tbValue.Text = _keyword.Value;
             tbID.Text = _keyword.ID.ToString();
 
-            pbDatabaseProvider.Image = Activator.CoreIconProvider.GetImage(_keyword.DatabaseType).ToBitmap();
+            pbDatabaseProvider.Image = Activator.CoreIconProvider.GetImage(_keyword.DatabaseType).ImageToBitmap();
 
             tbCommandToDelete.Text = "DELETE FROM ConnectionStringKeyword";
 
@@ -68,7 +68,7 @@ namespace Rdmp.UI.MainFormUITabs
                 return;
             
             var type = (DatabaseType)ddDatabaseType.SelectedValue;
-            pbDatabaseProvider.Image = Activator.CoreIconProvider.GetImage(type).ToBitmap();
+            pbDatabaseProvider.Image = Activator.CoreIconProvider.GetImage(type).ImageToBitmap();
         }
     }
 

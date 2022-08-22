@@ -158,7 +158,7 @@ namespace ResearchDataManagementPlatform.WindowManagement
 
         
 
-        private PersistableToolboxDockContent Show(RDMPCollection collection,RDMPCollectionUI control, string label, SixLabors.ImageSharp.Image image)
+        private PersistableToolboxDockContent Show(RDMPCollection collection,RDMPCollectionUI control, string label, Image<Rgba32> image)
         {
             var c = new BackColorProvider();
             image = c.DrawBottomBar(image, collection);

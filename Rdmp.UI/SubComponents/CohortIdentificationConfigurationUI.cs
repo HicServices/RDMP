@@ -235,7 +235,7 @@ namespace Rdmp.UI.SubComponents
 
             _clearCacheCommand = new ExecuteCommandClearQueryCache(Activator, Common.Configuration);
             btnClearCache.Enabled = !_clearCacheCommand.IsImpossible;
-            btnClearCache.Image = _clearCacheCommand.GetImage(Activator.CoreIconProvider).ToBitmap();
+            btnClearCache.Image = _clearCacheCommand.GetImage(Activator.CoreIconProvider).ImageToBitmap();
 
             tt.SetToolTip(btnClearCache, _clearCacheCommand.IsImpossible ? _clearCacheCommand.ReasonCommandImpossible : "Clears any cached results (stale or otherwise) from the query cache");
         }

@@ -7,7 +7,6 @@
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
-using System.Drawing;
 using System.IO;
 using System.Linq;
 using System.Reflection;
@@ -69,9 +68,11 @@ using ReusableLibraryCode.Checks;
 using ReusableLibraryCode.Comments;
 using ReusableLibraryCode.Icons;
 using ReusableLibraryCode.Settings;
+using SixLabors.ImageSharp;
 using SixLabors.ImageSharp.PixelFormats;
 using WeifenLuo.WinFormsUI.Docking;
 using Image = SixLabors.ImageSharp.Image;
+using Rectangle = System.Drawing.Rectangle;
 
 namespace ResearchDataManagementPlatform.WindowManagement
 {
@@ -331,12 +332,11 @@ namespace ResearchDataManagementPlatform.WindowManagement
         }
 
 
-        private T Activate<T, T2>(T2 databaseObject, Image tabImage)
+        private T Activate<T, T2>(T2 databaseObject, Image<Rgba32> tabImage)
             where T : RDMPSingleDatabaseObjectControl<T2>, new()
             where T2 : DatabaseEntity
         {
-            Control existingHostedControlInstance;
-            if (PopExisting(typeof(T), databaseObject, out existingHostedControlInstance))
+            if (PopExisting(typeof(T), databaseObject, out var existingHostedControlInstance))
                 return (T)existingHostedControlInstance;
 
             var uiInstance = new T();

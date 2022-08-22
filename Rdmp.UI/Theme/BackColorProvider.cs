@@ -5,12 +5,12 @@
 // You should have received a copy of the GNU General Public License along with RDMP. If not, see <https://www.gnu.org/licenses/>.
 
 using System;
-using System.Drawing;
 using Rdmp.Core;
+using SixLabors.ImageSharp;
 using SixLabors.ImageSharp.Drawing.Processing;
+using SixLabors.ImageSharp.Formats.Tga;
 using SixLabors.ImageSharp.PixelFormats;
 using SixLabors.ImageSharp.Processing;
-using SolidBrush = System.Drawing.SolidBrush;
 
 namespace Rdmp.UI.Theme
 {
@@ -25,40 +25,47 @@ namespace Rdmp.UI.Theme
         {
             return collection switch
             {
-                RDMPCollection.None => SystemColors.Control,
-                RDMPCollection.Tables => Color.FromArgb(255, 220, 255),
-                RDMPCollection.Catalogue => Color.FromArgb(255, 255, 220),
-                RDMPCollection.DataExport => Color.FromArgb(200, 255, 220),
-                RDMPCollection.SavedCohorts => Color.FromArgb(255, 220, 220),
-                RDMPCollection.Favourites => SystemColors.Control,
-                RDMPCollection.Cohort => Color.FromArgb(210, 240, 255),
+                RDMPCollection.None => Control,
+                RDMPCollection.Tables => ColorFromArgb(255, 220, 255),
+                RDMPCollection.Catalogue => ColorFromArgb(255, 255, 220),
+                RDMPCollection.DataExport => ColorFromArgb(200, 255, 220),
+                RDMPCollection.SavedCohorts => ColorFromArgb(255, 220, 220),
+                RDMPCollection.Favourites => Control,
+                RDMPCollection.Cohort => ColorFromArgb(210, 240, 255),
                 RDMPCollection.DataLoad => Color.DarkGray,
                 _ => throw new ArgumentOutOfRangeException(nameof(collection))
             };
         }
 
-        private SixLabors.ImageSharp.Color LegacyToNewColor(Color l)
+        private static readonly Color Control =
+            Color.FromRgb(System.Drawing.SystemColors.Control.R,
+                System.Drawing.SystemColors.Control.G,
+                System.Drawing.SystemColors.Control.B);
+
+        public static System.Drawing.Color LegacyColor(Color c)
         {
-            return new SixLabors.ImageSharp.Color(new Argb32(l.R, l.G, l.B));
+            Rgba32 rgb=new();
+            c.ToPixel<Rgba32>().ToRgba32(ref rgb);
+            return System.Drawing.Color.FromArgb(rgb.R, rgb.G, rgb.B);
         }
 
-        public SixLabors.ImageSharp.Image DrawBottomBar(SixLabors.ImageSharp.Image image,RDMPCollection collection)
+        private Color ColorFromArgb(byte r, byte g, byte b)
         {
-            var color = LegacyToNewColor(GetColor(collection));
-            var newImage = image.Clone(x => FillRectangleExtensions.Fill(x,color,
-                new SixLabors.ImageSharp.RectangleF(0.0f, 0.0f, image.Width * 1.0f, image.Height * 1.0f)));
-            return newImage;
+            return Color.FromRgb(r,g,b);
+        }
+
+        public Image<Rgba32> DrawBottomBar(Image<Rgba32> image,RDMPCollection collection)
+        {
+            return image.Clone(x => x.Fill(GetColor(collection),
+                new SixLabors.ImageSharp.Rectangle(0, 0, image.Width, image.Height)));
         }
 
 
-        public Image GetBackgroundImage(Size size, RDMPCollection collection)
+        public Image<Rgba32> GetBackgroundImage(int width,int height, RDMPCollection collection)
         {
-            var bmp = new Bitmap(size.Width, size.Height);
-
-            using (var g = Graphics.FromImage(bmp))
-                g.FillRectangle(new SolidBrush(GetColor(collection)),2, size.Height - IndicatorBarSuggestedHeight, size.Width - 4, IndicatorBarSuggestedHeight);
-
-            return bmp;
+            var i=new Image<Rgba32>(width,height);
+            i.Mutate(x=>x.Fill(GetColor(collection),new Rectangle(2,height-IndicatorBarSuggestedHeight,width-4,IndicatorBarSuggestedHeight)));
+            return i;
         }
 
     }

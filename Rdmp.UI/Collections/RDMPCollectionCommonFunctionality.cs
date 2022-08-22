@@ -616,7 +616,7 @@ namespace Rdmp.UI.Collections
             return result.Cast<object>().Any();
         }
 
-        private object ImageGetter(object rowObject)
+        private Bitmap ImageGetter(object rowObject)
         {
             bool hasProblems = _activator.HasProblem(rowObject);
             

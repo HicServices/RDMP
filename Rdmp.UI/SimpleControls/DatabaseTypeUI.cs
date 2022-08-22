@@ -29,7 +29,7 @@ namespace Rdmp.UI.SimpleControls
                     return;
 
                 ddDatabaseType.SelectedItem = value;
-                pbDatabaseProvider.Image = _databaseIconProvider.GetImage(value).ToBitmap();
+                pbDatabaseProvider.Image = _databaseIconProvider.GetImage(value).ImageToBitmap();
                 
             }
         }
@@ -41,7 +41,7 @@ namespace Rdmp.UI.SimpleControls
             ddDatabaseType.DataSource = Enum.GetValues(typeof(DatabaseType));
 
             _databaseIconProvider = new DatabaseTypeIconProvider();
-            pbDatabaseProvider.Image = _databaseIconProvider.GetImage(DatabaseType.MicrosoftSQLServer).ToBitmap();
+            pbDatabaseProvider.Image = _databaseIconProvider.GetImage(DatabaseType.MicrosoftSQLServer).ImageToBitmap();
 
             bLoading = false;
 

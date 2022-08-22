@@ -58,9 +58,9 @@ namespace Rdmp.UI.Wizard
         {
             _activator = activator;
             cbxCatalogues.SetUp(activator.CoreChildProvider.AllCatalogues);
-            pbCatalogue.Image = activator.CoreIconProvider.GetImage(RDMPConcept.Catalogue).ToBitmap();
-            pbExtractionIdentifier.Image = activator.CoreIconProvider.GetImage(RDMPConcept.ExtractionInformation).ToBitmap();
-            pbFilters.Image = activator.CoreIconProvider.GetImage(RDMPConcept.Filter).ToBitmap();
+            pbCatalogue.Image = activator.CoreIconProvider.GetImage(RDMPConcept.Catalogue).ImageToBitmap();
+            pbExtractionIdentifier.Image = activator.CoreIconProvider.GetImage(RDMPConcept.ExtractionInformation).ImageToBitmap();
+            pbFilters.Image = activator.CoreIconProvider.GetImage(RDMPConcept.Filter).ImageToBitmap();
             cbxCatalogues.SetItemActivator(activator);
         }
 

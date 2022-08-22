@@ -62,7 +62,7 @@ namespace Rdmp.UI.DataLoadUIs.LoadMetadataUIs.LoadDiagram
 
         public Bitmap GetImage(ICoreIconProvider coreIconProvider)
         {
-            return coreIconProvider.GetImage(_bubble).ToBitmap();
+            return coreIconProvider.GetImage(_bubble).ImageToBitmap();
         }
 
         public void DiscoverState()

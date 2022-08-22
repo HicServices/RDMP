@@ -51,7 +51,7 @@ namespace Rdmp.UI.MainFormUITabs
 
             var result = TimespanCalculator.GetMachineReadableTimespanIfKnownOf(databaseObject.ExtractionInformation.CatalogueItem.Catalogue, false, out DateTime? date);
 
-            btnFromDQE.Image = activator.CoreIconProvider.GetImage(RDMPConcept.DQE, OverlayKind.Import).ToBitmap();
+            btnFromDQE.Image = activator.CoreIconProvider.GetImage(RDMPConcept.DQE, OverlayKind.Import).ImageToBitmap();
 
             if (date != null)
             {

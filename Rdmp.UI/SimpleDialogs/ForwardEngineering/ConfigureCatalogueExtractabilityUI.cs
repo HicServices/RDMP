@@ -170,7 +170,7 @@ namespace Rdmp.UI.SimpleDialogs.ForwardEngineering
             else
             {
                 SelectProject(projectSpecificIfAny);
-                pbProject.Image = activator.CoreIconProvider.GetImage(RDMPConcept.Project).ToBitmap();
+                pbProject.Image = activator.CoreIconProvider.GetImage(RDMPConcept.Project).ImageToBitmap();
             }
 
             ddIsExtractionIdentifier.Items.Add(None);

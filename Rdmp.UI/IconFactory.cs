@@ -5,6 +5,7 @@
 // You should have received a copy of the GNU General Public License along with RDMP. If not, see <https://www.gnu.org/licenses/>.
 
 using System;
+using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.ComponentModel;
 using SixLabors.ImageSharp;
@@ -12,6 +13,7 @@ using System.Drawing;
 using System.IO;
 using Image = SixLabors.ImageSharp.Image;
 using ReusableLibraryCode.Icons;
+using SixLabors.ImageSharp.PixelFormats;
 
 namespace Rdmp.UI
 {
@@ -21,7 +23,7 @@ namespace Rdmp.UI
     /// </summary>
     public class IconFactory
     {
-        private readonly Dictionary<Image, Icon> _iconDictionary = new Dictionary<Image, Icon>();
+        private readonly ConcurrentDictionary<Image<Rgba32>, Icon> _iconDictionary = new();
 
         public static IconFactory Instance=new();
         private IconFactory()
@@ -35,26 +37,18 @@ namespace Rdmp.UI
         /// </summary>
         /// <param name="bmp"></param>
         /// <returns></returns>
-        public Icon GetIcon(Image bmp)
+        public Icon GetIcon(Image<Rgba32> bmp)
         {
-            if (_iconDictionary.ContainsKey(bmp))
-                return _iconDictionary[bmp];
-
-            return CreateIcon(bmp);
+            return _iconDictionary.GetOrAdd(bmp, CreateIcon);
         }
 
-        private Icon CreateIcon(Image bmp)
+        private Icon CreateIcon(Image<Rgba32> bmp)
         {
             // Get an Hicon for myBitmap.
-            IntPtr Hicon = bmp.ToBitmap().GetHicon();
+            IntPtr Hicon = bmp.ImageToBitmap().GetHicon();
 
             // Create a new icon from the handle. 
-            Icon newIcon = Icon.FromHandle(Hicon);
-
-            //now that we have created the icon don't create it again for the same Image (to avoid memory leaks)
-            _iconDictionary.Add(bmp, newIcon);
-
-            return newIcon;
+            return Icon.FromHandle(Hicon);
         }
     }
 }

@@ -359,7 +359,7 @@ namespace Rdmp.UI.SimpleDialogs
                     if (parent == null)
                         return null;
 
-                    return provider.GetGrayscale(_activator.CoreIconProvider.GetImage(parent)).ToBitmap();
+                    return provider.GetGrayscale(_activator.CoreIconProvider.GetImage(parent)).ImageToBitmap();
                 }
             }
 
@@ -408,19 +408,19 @@ namespace Rdmp.UI.SimpleDialogs
             {
                 foreach (Type t in EasyFilterTypesAndAssociatedCollections.Keys)
                 {
-                    var b = new ToolStripButton();
-                    b.Image = _activator.CoreIconProvider.GetImage(t).ToBitmap();
-                    b.CheckOnClick = true;
-                    b.Tag = t;
-                    b.DisplayStyle = ToolStripItemDisplayStyle.Image;
-
                     string shortCode = SearchablesMatchScorer.ShortCodes.Single(kvp => kvp.Value == t).Key;
+                    var b = new ToolStripButton
+                    {
+                        Checked = startingFilters?.Contains(t) == true,
+                        Image = _activator.CoreIconProvider.GetImage(t).ImageToBitmap(),
+                        DisplayStyle = ToolStripItemDisplayStyle.Image,
+                        CheckOnClick = true,
+                        Tag = t,
+                        Text = $"{t.Name} ({shortCode})"
+                    };
 
-                    b.Text = $"{t.Name} ({shortCode})";
+                    b.BackgroundImage = backColorProvider.GetBackgroundImage(b.Size.Width,b.Size.Height, EasyFilterTypesAndAssociatedCollections[t]).ImageToBitmap();
                     b.CheckedChanged += CollectionCheckedChanged;
-                    b.Checked = startingFilters != null && startingFilters.Contains(t);
-
-                    b.BackgroundImage = backColorProvider.GetBackgroundImage(b.Size, EasyFilterTypesAndAssociatedCollections[t]);
 
                     toolStrip1.Items.Add(b);
                 }
@@ -473,7 +473,7 @@ namespace Rdmp.UI.SimpleDialogs
         public Bitmap GetImage(object model)
         {
             var bmp = _activator.CoreIconProvider.GetImage(model);
-            return bmp == _activator.CoreIconProvider.ImageUnknown ? null : bmp.ToBitmap();
+            return bmp == _activator.CoreIconProvider.ImageUnknown ? null : bmp.ImageToBitmap();
         }
 
 

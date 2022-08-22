@@ -42,9 +42,9 @@ namespace Rdmp.UI.ExtractionUIs.JoinsAndLookups
 
             _lookup = databaseObject;
 
-            pbColumnInfo1.Image = activator.CoreIconProvider.GetImage(RDMPConcept.ColumnInfo).ToBitmap();
-            pbColumnInfo2.Image = activator.CoreIconProvider.GetImage(RDMPConcept.ColumnInfo).ToBitmap();
-            pbTable.Image = activator.CoreIconProvider.GetImage(RDMPConcept.TableInfo).ToBitmap();
+            pbColumnInfo1.Image = activator.CoreIconProvider.GetImage(RDMPConcept.ColumnInfo).ImageToBitmap();
+            pbColumnInfo2.Image = activator.CoreIconProvider.GetImage(RDMPConcept.ColumnInfo).ImageToBitmap();
+            pbTable.Image = activator.CoreIconProvider.GetImage(RDMPConcept.TableInfo).ImageToBitmap();
 
 
             tbFk.Text = databaseObject.ForeignKey.Name;
