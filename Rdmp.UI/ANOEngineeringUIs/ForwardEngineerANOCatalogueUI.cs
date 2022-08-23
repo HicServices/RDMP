@@ -96,7 +96,7 @@ namespace Rdmp.UI.ANOEngineeringUIs
             return null;
         }
 
-        private object PickedANOTable_ImageGetter(object rowObject)
+        private Image PickedANOTable_ImageGetter(object rowObject)
         {
             var ci = rowObject as ColumnInfo;
 
@@ -141,7 +141,7 @@ namespace Rdmp.UI.ANOEngineeringUIs
 
             return null;
         }
-        private object Dilution_ImageGetter(object rowobject)
+        private string Dilution_ImageGetter(object rowobject)
         {
             var col = rowobject as ColumnInfo;
 

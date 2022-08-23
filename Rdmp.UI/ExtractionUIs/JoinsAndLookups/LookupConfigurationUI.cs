@@ -121,9 +121,9 @@ namespace Rdmp.UI.ExtractionUIs.JoinsAndLookups
             _catalogue = databaseObject;
 
             cbxLookup.SetItemActivator(activator);
-            olvLookupNameColumn.ImageGetter = o => activator.CoreIconProvider.GetImage(o);
-            olvExtractionInformationsNameColumn.ImageGetter = o => activator.CoreIconProvider.GetImage(o);
-            olvDescriptionsColumn.ImageGetter = o => activator.CoreIconProvider.GetImage(o);
+            olvLookupNameColumn.ImageGetter = o => activator.CoreIconProvider.GetImage(o).ImageToBitmap();
+            olvExtractionInformationsNameColumn.ImageGetter = o => activator.CoreIconProvider.GetImage(o).ImageToBitmap();
+            olvDescriptionsColumn.ImageGetter = o => activator.CoreIconProvider.GetImage(o).ImageToBitmap();
             
             //add the currently configured extraction informations in the order they appear in the dataset
             List<ExtractionInformation> allExtractionInformationFromCatalogue = new List<ExtractionInformation>(_catalogue.GetAllExtractionInformation(ExtractionCategory.Any));

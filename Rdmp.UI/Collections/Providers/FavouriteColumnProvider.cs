@@ -83,7 +83,7 @@ namespace Rdmp.UI.Collections.Providers
             }
         }
 
-        private object FavouriteImageGetter(object rowobject)
+        private Bitmap FavouriteImageGetter(object rowobject)
         {
             var o = rowobject as DatabaseEntity;
 

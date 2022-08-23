@@ -111,7 +111,7 @@ namespace Rdmp.UI.Progress
             theme.ApplyTo(toolStrip1);
         }
 
-        private object ImageGetter(object rowObject)
+        private Bitmap ImageGetter(object rowObject)
         {
             var o = rowObject as ProgressUIEntry;
 

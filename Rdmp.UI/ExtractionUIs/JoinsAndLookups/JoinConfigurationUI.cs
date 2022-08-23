@@ -73,8 +73,8 @@ namespace Rdmp.UI.ExtractionUIs.JoinsAndLookups
         {
             base.SetDatabaseObject(activator, databaseObject);
 
-            olvLeftColumnNames.ImageGetter = (o) => activator.CoreIconProvider.GetImage(o);
-            olvRightColumnNames.ImageGetter = (o) => activator.CoreIconProvider.GetImage(o);
+            olvLeftColumnNames.ImageGetter = (o) => activator.CoreIconProvider.GetImage(o).ImageToBitmap();
+            olvRightColumnNames.ImageGetter = (o) => activator.CoreIconProvider.GetImage(o).ImageToBitmap();
 
             _leftTableInfo = databaseObject;
             tbLeftTableInfo.Text = _leftTableInfo.ToString();

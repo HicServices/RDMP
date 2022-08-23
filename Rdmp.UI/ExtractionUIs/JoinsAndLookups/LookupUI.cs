@@ -6,6 +6,7 @@
 
 using System;
 using System.ComponentModel;
+using System.Drawing;
 using System.Linq;
 using System.Windows.Forms;
 using BrightIdeasSoftware;
@@ -31,9 +32,9 @@ namespace Rdmp.UI.ExtractionUIs.JoinsAndLookups
             olvExtractionInformationName.ImageGetter = ImageGetter;
         }
 
-        private object ImageGetter(object rowObject)
+        private Bitmap ImageGetter(object rowObject)
         {
-            return Activator.CoreIconProvider.GetImage(rowObject);
+            return Activator.CoreIconProvider.GetImage(rowObject).ImageToBitmap();
         }
 
         public override void SetDatabaseObject(IActivateItems activator, Lookup databaseObject)

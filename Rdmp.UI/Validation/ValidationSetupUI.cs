@@ -82,7 +82,7 @@ namespace Rdmp.UI.Validation
 
             ObjectSaverButton1.BeforeSave += objectSaverButton1_BeforeSave;
 
-            olvName.ImageGetter = (o) => Activator.CoreIconProvider.GetImage(o);
+            olvName.ImageGetter = (o) => Activator.CoreIconProvider.GetImage(o).ImageToBitmap();
         }       
 
         public override void SetDatabaseObject(IActivateItems activator, Catalogue databaseObject)

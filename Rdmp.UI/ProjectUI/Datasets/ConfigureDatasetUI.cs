@@ -74,7 +74,7 @@ namespace Rdmp.UI.ProjectUI.Datasets
             dropSink.CanDropBetween = true;
             AssociatedCollection = RDMPCollection.DataExport;
 
-            var tableInfoIcon = SixLabors.ImageSharp.Image.Load<Rgba32>(CatalogueIcons.TableInfo);
+            var tableInfoIcon = SixLabors.ImageSharp.Image.Load<Rgba32>(CatalogueIcons.TableInfo).ImageToBitmap();
             olvJoinTableName.ImageGetter += o => tableInfoIcon;
             olvJoin.CheckStateGetter += ForceJoinCheckStateGetter;
             olvJoin.CheckStatePutter += ForceJoinCheckStatePutter;
@@ -171,9 +171,9 @@ namespace Rdmp.UI.ProjectUI.Datasets
             olvSelected.Sort(olvSelectedColumnOrder, SortOrder.Ascending);
         }
 
-        private object ImageGetter(object rowObject)
+        private Bitmap ImageGetter(object rowObject)
         {
-            return Activator.CoreIconProvider.GetImage(rowObject);
+            return Activator.CoreIconProvider.GetImage(rowObject).ImageToBitmap();
         }
 
         private object AvailableColumnCategoryAspectGetter(object rowObject)

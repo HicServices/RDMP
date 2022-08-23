@@ -179,7 +179,7 @@ namespace Rdmp.UI.DataLoadUIs.LoadMetadataUIs.LoadDiagram
             return null;
         }
 
-        private object ImageGetter(object rowObject)
+        private Bitmap ImageGetter(object rowObject)
         {
             if (Activator == null)
                 return null;
@@ -188,22 +188,22 @@ namespace Rdmp.UI.DataLoadUIs.LoadMetadataUIs.LoadDiagram
             var col = rowObject as LoadDiagramColumnNode;
 
             if (rowObject is UnplannedTable)
-                return Activator.CoreIconProvider.GetImage(RDMPConcept.TableInfo, OverlayKind.Problem);
+                return Activator.CoreIconProvider.GetImage(RDMPConcept.TableInfo, OverlayKind.Problem).ImageToBitmap();
 
             if (rowObject is DiscoveredColumn)
-                return Activator.CoreIconProvider.GetImage(RDMPConcept.ColumnInfo, OverlayKind.Problem);
+                return Activator.CoreIconProvider.GetImage(RDMPConcept.ColumnInfo, OverlayKind.Problem).ImageToBitmap();
             
             if (rowObject is LoadDiagramServerNode)
                 if (string.IsNullOrWhiteSpace(((LoadDiagramServerNode) rowObject).ErrorDescription))
-                        return Activator.CoreIconProvider.GetImage(rowObject);
+                        return Activator.CoreIconProvider.GetImage(rowObject).ImageToBitmap();
                     else
-                        return Activator.CoreIconProvider.GetImage(rowObject, OverlayKind.Problem);
+                        return Activator.CoreIconProvider.GetImage(rowObject, OverlayKind.Problem).ImageToBitmap();
 
             if (db != null)
                 return db.GetImage(Activator.CoreIconProvider);
 
             if(rowObject is LoadDiagramTableNode)
-                return Activator.CoreIconProvider.GetImage(RDMPConcept.TableInfo);
+                return Activator.CoreIconProvider.GetImage(RDMPConcept.TableInfo).ImageToBitmap();
 
             if (col != null)
                 return col.GetImage(Activator.CoreIconProvider);

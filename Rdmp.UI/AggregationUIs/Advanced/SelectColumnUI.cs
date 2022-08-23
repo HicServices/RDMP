@@ -183,7 +183,7 @@ namespace Rdmp.UI.AggregationUIs.Advanced
             }
         }
 
-        private object ImageGetter(object rowObject)
+        private Bitmap ImageGetter(object rowObject)
         {
             
             if (_availableColumns.Contains(rowObject))

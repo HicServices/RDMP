@@ -106,7 +106,7 @@ namespace Rdmp.UI.ChecksUI
             }
         }
 
-        private object ImageGetter(object rowObject)
+        private Bitmap ImageGetter(object rowObject)
         {
             if (rowObject is not CheckEventArgs e) return null;
             return e.Result switch

@@ -6,6 +6,7 @@
 
 using System;
 using System.Diagnostics;
+using System.Drawing;
 using System.Linq;
 using System.Windows.Forms;
 using BrightIdeasSoftware;
@@ -233,11 +234,11 @@ namespace Rdmp.UI.SimpleDialogs.ForwardEngineering
             isLoading = false;
         }
 
-        private object ImageGetter(object rowObject)
+        private Bitmap ImageGetter(object rowObject)
         {
             var n = (ColPair) rowObject;
 
-            return Activator.CoreIconProvider.GetImage((object) n.ExtractionInformation ?? n.ColumnInfo);
+            return Activator.CoreIconProvider.GetImage((object) n.ExtractionInformation ?? n.ColumnInfo).ImageToBitmap();
         }
 
         private object IsExtractionIdentifier_AspectGetter(object rowObject)

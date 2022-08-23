@@ -57,7 +57,7 @@ namespace Rdmp.UI.SimpleDialogs
 
             olvCatalogueItemName.AspectGetter = CatalogueItemName_AspectGetter;
             olvCatalogueItemState.AspectGetter = CatalogueItemState_AspectGetter;
-            olvCatalogueItemName.ImageGetter += ci=>activator.CoreIconProvider.GetImage(ci);
+            olvCatalogueItemName.ImageGetter += ci=>activator.CoreIconProvider.GetImage(ci).ImageToBitmap();
 
             var changedProperties = DetermineChangedProperties(catalogueItemBeingSaved);
 

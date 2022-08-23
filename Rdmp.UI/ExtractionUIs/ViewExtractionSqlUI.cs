@@ -7,6 +7,7 @@
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
+using System.Drawing;
 using System.Linq;
 using System.Windows.Forms;
 using BrightIdeasSoftware;
@@ -91,9 +92,9 @@ namespace Rdmp.UI.ExtractionUIs
             RefreshUIFromDatabase();
         }
 
-        private object ImageGetter(object rowObject)
+        private Bitmap ImageGetter(object rowObject)
         {
-            return Activator.CoreIconProvider.GetImage(rowObject);
+            return Activator.CoreIconProvider.GetImage(rowObject).ImageToBitmap();
         }
 
         private bool bLoading = false;
@@ -209,7 +210,7 @@ namespace Rdmp.UI.ExtractionUIs
             rbCore.Image = CatalogueIcons.ExtractionInformation.ImageToBitmap();
             rbSupplemental.Image = CatalogueIcons.ExtractionInformation_Supplemental.ImageToBitmap();
             rbSpecialApproval.Image = CatalogueIcons.ExtractionInformation_SpecialApproval.ImageToBitmap();
-            rbInternal.Image = activator.CoreIconProvider.GetImage(Image.Load<Rgba32>(CatalogueIcons.ExtractionInformation_SpecialApproval), OverlayKind.Internal).ImageToBitmap();
+            rbInternal.Image = activator.CoreIconProvider.GetImage(SixLabors.ImageSharp.Image.Load<Rgba32>(CatalogueIcons.ExtractionInformation_SpecialApproval), OverlayKind.Internal).ImageToBitmap();
 
             CommonFunctionality.Add(rbCore);
             CommonFunctionality.Add(rbSupplemental);
