@@ -100,6 +100,13 @@ namespace ResearchDataManagementPlatform.WindowManagement
 
         public override void Show(string title, string message)
         {
+            // if on wrong Thread
+            if (_mainDockPanel.InvokeRequired)
+            {
+                _mainDockPanel.Invoke(() => Show(title, message));
+                return;
+            }
+
             WideMessageBox.Show(title,message,Environment.StackTrace,true,null,WideMessageBoxTheme.Help);
         }
 
@@ -153,7 +160,13 @@ namespace ResearchDataManagementPlatform.WindowManagement
         
 
         public Form ShowWindow(Control singleControlForm, bool asDocument = false)
-        {
+        { 
+            // if on wrong Thread
+            if (_mainDockPanel.InvokeRequired)
+            {
+                return _mainDockPanel.Invoke<Form>(() => ShowWindow(singleControlForm, asDocument));
+            }
+
             int width = singleControlForm.Size.Width + SystemInformation.BorderSize.Width;
             int height = singleControlForm.Size.Height + SystemInformation.BorderSize.Height;
 
@@ -182,6 +195,13 @@ namespace ResearchDataManagementPlatform.WindowManagement
                 
         public override void RequestItemEmphasis(object sender, EmphasiseRequest request)
         {
+            // if on wrong Thread
+            if (_mainDockPanel.InvokeRequired)
+            {
+                _mainDockPanel.Invoke(() => RequestItemEmphasis(sender, request));
+                return;
+            }
+
             AdjustEmphasiseRequest(request);
 
             //ensure a relevant Toolbox is available
@@ -215,6 +235,15 @@ namespace ResearchDataManagementPlatform.WindowManagement
 
         public override bool SelectEnum(DialogArgs args, Type enumType, out Enum chosen)
         {
+            // if on wrong Thread
+            if (_mainDockPanel.InvokeRequired)
+            {
+                Enum result = default;
+                var rtn = _mainDockPanel.Invoke<bool>(()=>SelectEnum(args, enumType, out result));
+                chosen = result;
+                return rtn;
+            }
+
             return SelectObject(args, Enum.GetValues(enumType).Cast<Enum>().ToArray(), out chosen);
         }
 
@@ -229,7 +258,14 @@ namespace ResearchDataManagementPlatform.WindowManagement
         }
         protected override void ActivateImpl(object o)
         {
-            if(CommandExecutionFactory.CanActivate(o))
+            // if on wrong Thread
+            if (_mainDockPanel.InvokeRequired)
+            {
+                _mainDockPanel.Invoke(() => ActivateImpl(o));
+                return;
+            }
+
+            if (CommandExecutionFactory.CanActivate(o))
                 CommandExecutionFactory.Activate(o);
         }
 
@@ -271,16 +307,36 @@ namespace ResearchDataManagementPlatform.WindowManagement
         public string CurrentDirectory { get { return Environment.CurrentDirectory; }}
         public DialogResult ShowDialog(Form form)
         {
+            // if on wrong Thread
+            if (_mainDockPanel.InvokeRequired)
+            {
+                return _mainDockPanel.Invoke(() => ShowDialog(form));
+            }
+
             return form.ShowDialog();
         }
 
         public void KillForm(Form f, Exception reason)
         {
+            // if on wrong Thread
+            if (f.InvokeRequired)
+            {
+                f.Invoke(() => KillForm(f,reason));
+                return;
+            }
+
             f.Close();
             ExceptionViewer.Show("Window Closed",reason);
         }
         public void KillForm(Form f, string reason)
         {
+            // if on wrong Thread
+            if (f.InvokeRequired)
+            {
+                f.Invoke(() => KillForm(f, reason));
+                return;
+            }
+
             f.Close();
             ExceptionViewer.Show("Window Closed",reason);
         }
@@ -468,6 +524,15 @@ namespace ResearchDataManagementPlatform.WindowManagement
         /// <inheritdoc/>
         public override bool YesNo(DialogArgs args,out bool chosen)
         {
+            // if on wrong Thread
+            if (_mainDockPanel.InvokeRequired)
+            {
+                bool result = default;
+                var rtn = _mainDockPanel.Invoke<bool>(() => YesNo(args, out result));
+                chosen = result;
+                return rtn;
+            }
+
             var dr = MessageBox.Show(args.TaskDescription ?? args.EntryLabel, args.WindowTitle, MessageBoxButtons.YesNo);
 
             if (dr == DialogResult.Yes)
@@ -488,6 +553,15 @@ namespace ResearchDataManagementPlatform.WindowManagement
 
         public override bool TypeText(DialogArgs args, int maxLength, string initialText, out string text, bool requireSaneHeaderText)
         {
+            // if on wrong Thread
+            if (_mainDockPanel.InvokeRequired)
+            {
+                string result = default;
+                var rtn = _mainDockPanel.Invoke<bool>(() => TypeText(args,maxLength,initialText,out result,requireSaneHeaderText));
+                text = result;
+                return rtn;
+            }
+
             var textTyper = new TypeTextOrCancelDialog(args, maxLength, initialText, allowBlankText: false, multiLine: maxLength > MultiLineLengthThreshold)
             {
                 RequireSaneHeaderText = requireSaneHeaderText
@@ -499,6 +573,12 @@ namespace ResearchDataManagementPlatform.WindowManagement
 
         public override DiscoveredDatabase SelectDatabase(bool allowDatabaseCreation, string taskDescription)
         {
+            // if on wrong Thread
+            if (_mainDockPanel.InvokeRequired)
+            {
+                return  _mainDockPanel.Invoke(() => SelectDatabase(allowDatabaseCreation,taskDescription));
+            }
+
             var dialog = new ServerDatabaseTableSelectorDialog(taskDescription,false,true,this);
             dialog.ShowDialog();
             
@@ -510,6 +590,12 @@ namespace ResearchDataManagementPlatform.WindowManagement
 
         public override DiscoveredTable SelectTable(bool allowDatabaseCreation, string taskDescription)
         {
+            // if on wrong Thread
+            if (_mainDockPanel.InvokeRequired)
+            {
+                return _mainDockPanel.Invoke(() => SelectTable(allowDatabaseCreation, taskDescription));
+            }
+
             var dialog = new ServerDatabaseTableSelectorDialog(taskDescription,true,true,this);
             dialog.AllowTableValuedFunctionSelection = true;
             
@@ -523,11 +609,25 @@ namespace ResearchDataManagementPlatform.WindowManagement
 
         public override void ShowException(string errorText, Exception exception)
         {
+            // if on wrong Thread
+            if (_mainDockPanel.InvokeRequired)
+            {
+                _mainDockPanel.Invoke(() => ShowException(errorText, exception));
+                return;
+            }
+
             ExceptionViewer.Show(errorText, exception);
         }
 
         public override void Wait(string title, Task task, CancellationTokenSource cts)
         {
+            // if on wrong Thread
+            if (_mainDockPanel.InvokeRequired)
+            {
+                _mainDockPanel.Invoke(() => Wait(title,task,cts));
+                return;
+            }
+
             var ui = new WaitUI(title,task,cts);
             ui.ShowDialog();
         }
@@ -544,6 +644,12 @@ namespace ResearchDataManagementPlatform.WindowManagement
         
         public override IMapsDirectlyToDatabaseTable SelectOne(DialogArgs args, IMapsDirectlyToDatabaseTable[] availableObjects)
         {
+            // if on wrong Thread
+            if (_mainDockPanel.InvokeRequired)
+            {
+                return _mainDockPanel.Invoke(() => SelectOne(args, availableObjects));
+            }
+
             if (!availableObjects.Any())
             {
                 MessageBox.Show($"There are no compatible objects in your RMDP for:{Environment.NewLine}{args}");
@@ -567,6 +673,15 @@ namespace ResearchDataManagementPlatform.WindowManagement
 
         public override bool SelectObject<T>(DialogArgs args, T[] available, out T selected)
         {
+            // if on wrong Thread
+            if (_mainDockPanel.InvokeRequired)
+            {
+                T result = default;
+                var rtn = _mainDockPanel.Invoke<bool>(() => SelectObject(args, available, out result));
+                selected = result;
+                return rtn;
+            }
+
             var pick = new SelectDialog<T>(args,this,available,false);
 
             if (pick.ShowDialog() == DialogResult.OK)
@@ -581,6 +696,15 @@ namespace ResearchDataManagementPlatform.WindowManagement
 
         public override bool SelectObjects<T>(DialogArgs args, T[] available, out T[] selected)
         {
+            // if on wrong Thread
+            if (_mainDockPanel.InvokeRequired)
+            {
+                T[] result = default;
+                var rtn = _mainDockPanel.Invoke<bool>(() => SelectObjects(args, available, out result));
+                selected = result;
+                return rtn;
+            }
+
             var pick = new SelectDialog<T>(args,this, available, false);
             pick.AllowMultiSelect = true;
 
@@ -595,7 +719,13 @@ namespace ResearchDataManagementPlatform.WindowManagement
         }
         public override DirectoryInfo SelectDirectory(string prompt)
         {
-            using(var fb = new FolderBrowserDialog())
+            // if on wrong Thread
+            if (_mainDockPanel.InvokeRequired)
+            {
+                return _mainDockPanel.Invoke(() => SelectDirectory(prompt));
+            }
+
+            using (var fb = new FolderBrowserDialog())
             {
                 if (fb.ShowDialog() == DialogResult.OK)
                     return new DirectoryInfo(fb.SelectedPath);
@@ -606,18 +736,36 @@ namespace ResearchDataManagementPlatform.WindowManagement
 
         public override FileInfo SelectFile(string prompt)
         {
+            // if on wrong Thread
+            if (_mainDockPanel.InvokeRequired)
+            {
+                return _mainDockPanel.Invoke(() => SelectFile(prompt));
+            }
+
             return SelectFile(prompt, null, null);
         }
 
         public override FileInfo SelectFile(string prompt, string patternDescription, string pattern)
         {
-            using(var fb = new OpenFileDialog {CheckFileExists = false,Multiselect = false})
+            // if on wrong Thread
+            if (_mainDockPanel.InvokeRequired)
+            {
+                return _mainDockPanel.Invoke(() => SelectFile(prompt, patternDescription,pattern));
+            }
+
+            using (var fb = new OpenFileDialog {CheckFileExists = false,Multiselect = false})
             {
                 if (patternDescription != null && pattern != null)
                     fb.Filter = patternDescription + "|" + pattern;
 
                 if (fb.ShowDialog() == DialogResult.OK)
+                {
+                    // entering "null" in a winforms file dialog will return something like "D:\Blah\null"
+                    if (string.Equals(Path.GetFileName(fb.FileName),"null", StringComparison.CurrentCultureIgnoreCase))
+                        return null;
+
                     return new FileInfo(fb.FileName);
+                }
             
                 return null;
             }        
@@ -625,7 +773,13 @@ namespace ResearchDataManagementPlatform.WindowManagement
         
         public override FileInfo[] SelectFiles(string prompt, string patternDescription, string pattern)
         {
-            using(var fb = new OpenFileDialog {CheckFileExists = false,Multiselect = true})
+            // if on wrong Thread
+            if (_mainDockPanel.InvokeRequired)
+            {
+                return _mainDockPanel.Invoke(() => SelectFiles(prompt, patternDescription, pattern));
+            }
+
+            using (var fb = new OpenFileDialog {CheckFileExists = false,Multiselect = true})
             {
                 if (patternDescription != null && pattern != null)
                     fb.Filter = patternDescription + "|" + pattern;
@@ -639,6 +793,15 @@ namespace ResearchDataManagementPlatform.WindowManagement
 
         protected override bool SelectValueTypeImpl(DialogArgs args, Type paramType, object initialValue, out object chosen)
         {
+            // if on wrong Thread
+            if (_mainDockPanel.InvokeRequired)
+            {
+                object result = default;
+                var rtn = _mainDockPanel.Invoke<bool>(() => SelectValueTypeImpl(args, paramType, initialValue, out result));
+                chosen = result;
+                return rtn;
+            }
+
             //whatever else it is use string
             var typeTextDialog = new TypeTextOrCancelDialog(args,1000,initialValue?.ToString());
 
@@ -655,6 +818,12 @@ namespace ResearchDataManagementPlatform.WindowManagement
         public override IMapsDirectlyToDatabaseTable[] SelectMany(DialogArgs args, Type arrayElementType,
             IMapsDirectlyToDatabaseTable[] availableObjects)
         {
+            // if on wrong Thread
+            if (_mainDockPanel.InvokeRequired)
+            {
+                return _mainDockPanel.Invoke(() => SelectMany(args, arrayElementType, availableObjects));
+            }
+
             if (!availableObjects.Any())
             {
                 MessageBox.Show("There are no '" + arrayElementType.Name + "' objects in your RMDP");
@@ -721,7 +890,6 @@ namespace ResearchDataManagementPlatform.WindowManagement
 
         public override IPipelineRunner GetPipelineRunner(DialogArgs args,IPipelineUseCase useCase, IPipeline pipeline)
         {
-             
             ConfigureAndExecutePipelineUI configureAndExecuteDialog = new ConfigureAndExecutePipelineUI(args,useCase, this);
             configureAndExecuteDialog.Dock = DockStyle.Fill;
             
@@ -730,6 +898,12 @@ namespace ResearchDataManagementPlatform.WindowManagement
 
         public override CohortCreationRequest GetCohortCreationRequest(ExternalCohortTable externalCohortTable, IProject project, string cohortInitialDescription)
         {
+            // if on wrong Thread
+            if (_mainDockPanel.InvokeRequired)
+            {
+                return _mainDockPanel.Invoke(() => GetCohortCreationRequest(externalCohortTable, project, cohortInitialDescription));
+            }
+
             var ui = new CohortCreationRequestUI(this,externalCohortTable,project);
                 
             if(!string.IsNullOrWhiteSpace(cohortInitialDescription))
@@ -743,6 +917,12 @@ namespace ResearchDataManagementPlatform.WindowManagement
 
         public override ICatalogue CreateAndConfigureCatalogue(ITableInfo tableInfo, ColumnInfo[] extractionIdentifierColumns, string initialDescription, IProject projectSpecific, string folder)
         {
+            // if on wrong Thread
+            if (_mainDockPanel.InvokeRequired)
+            {
+                return _mainDockPanel.Invoke(() => CreateAndConfigureCatalogue(tableInfo, extractionIdentifierColumns, initialDescription,projectSpecific,folder));
+            }
+
             var ui = new ConfigureCatalogueExtractabilityUI(this, tableInfo, initialDescription, projectSpecific);
             ui.TargetFolder = folder;
             ui.ShowDialog();
@@ -751,12 +931,27 @@ namespace ResearchDataManagementPlatform.WindowManagement
         }
         public override ExternalDatabaseServer CreateNewPlatformDatabase(ICatalogueRepository catalogueRepository, PermissableDefaults defaultToSet, IPatcher patcher, DiscoveredDatabase db)
         {
+            // if on wrong Thread
+            if (_mainDockPanel.InvokeRequired)
+            {
+                return _mainDockPanel.Invoke(() => CreateNewPlatformDatabase(catalogueRepository, defaultToSet, patcher, db));
+            }
+
             //launch the winforms UI for creating a database
             return CreatePlatformDatabase.CreateNewExternalServer(catalogueRepository,defaultToSet,patcher);
         }
 
         public override bool ShowCohortWizard(out CohortIdentificationConfiguration cic)
         {
+            // if on wrong Thread
+            if (_mainDockPanel.InvokeRequired)
+            {
+                CohortIdentificationConfiguration result = default;
+                var rtn = _mainDockPanel.Invoke<bool>(() => ShowCohortWizard(out result));
+                cic = result;
+                return rtn;
+            }
+
             var wizard = new CreateNewCohortIdentificationConfigurationUI(this);
 
             if (wizard.ShowDialog() == DialogResult.OK)
@@ -774,6 +969,13 @@ namespace ResearchDataManagementPlatform.WindowManagement
 
         public override void SelectAnythingThen(DialogArgs args, Action<IMapsDirectlyToDatabaseTable> callback)
         {
+            // if on wrong Thread
+            if (_mainDockPanel.InvokeRequired)
+            { 
+                _mainDockPanel.Invoke(() => SelectAnythingThen(args,callback));
+                return;
+            }
+
             var select = new SelectDialog<IMapsDirectlyToDatabaseTable>(
                 args, this, CoreChildProvider.GetAllSearchables().Select(k => k.Key), false);
 
@@ -785,16 +987,38 @@ namespace ResearchDataManagementPlatform.WindowManagement
 
         public override void ShowData(IViewSQLAndResultsCollection collection)
         {
+            // if on wrong Thread
+            if (_mainDockPanel.InvokeRequired)
+            {
+                _mainDockPanel.Invoke(() => ShowData(collection));
+                return;
+            }
+
             Activate<ViewSQLAndResultsWithDataGridUI>(collection);
         }
 
         public override void ShowLogs(ILoggedActivityRootObject rootObject)
         {
+            // if on wrong Thread
+            if (_mainDockPanel.InvokeRequired)
+            {
+                _mainDockPanel.Invoke(() => ShowLogs(rootObject));
+                return;
+            }
+
             Activate<LoadEventsTreeView>(new LoadEventsTreeViewObjectCollection(rootObject));
         }
 
         public override void ShowLogs(ExternalDatabaseServer loggingServer, LogViewerFilter filter)
         {
+            // if on wrong Thread
+            if (_mainDockPanel.InvokeRequired)
+            {
+                _mainDockPanel.Invoke(() => ShowLogs(loggingServer,filter));
+                return;
+            }
+
+
             LoggingTabUI loggingTabUI =  Activate<LoggingTabUI, ExternalDatabaseServer>(loggingServer);
             if(filter != null)
                 loggingTabUI.SetFilter(filter);
@@ -802,12 +1026,26 @@ namespace ResearchDataManagementPlatform.WindowManagement
 
         public override void ShowGraph(AggregateConfiguration aggregate)
         {
+            // if on wrong Thread
+            if (_mainDockPanel.InvokeRequired)
+            {
+                _mainDockPanel.Invoke(() => ShowGraph(aggregate));
+                return;
+            }
+
             var graph = Activate<AggregateGraphUI, AggregateConfiguration>(aggregate);
             graph.LoadGraphAsync();
         }
 
         public override void LaunchSubprocess(ProcessStartInfo startInfo)
         {
+            // if on wrong Thread
+            if (_mainDockPanel.InvokeRequired)
+            {
+                _mainDockPanel.Invoke(() => LaunchSubprocess(startInfo));
+                return;
+            }
+
             var ctrl = new ConsoleControl.ConsoleControl();
             ShowWindow(ctrl, true);
             ctrl.StartProcess(startInfo);
