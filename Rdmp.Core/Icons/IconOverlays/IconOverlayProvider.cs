@@ -4,6 +4,7 @@
 // RDMP is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License for more details.
 // You should have received a copy of the GNU General Public License along with RDMP. If not, see <https://www.gnu.org/licenses/>.
 
+using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Drawing;
 using System.Drawing.Imaging;
@@ -15,11 +16,11 @@ namespace Rdmp.Core.Icons.IconOverlays
 {
     public class IconOverlayProvider
     {
-        readonly Dictionary<Bitmap,List<CachedOverlayResult>> _resultCache = new Dictionary<Bitmap, List<CachedOverlayResult>>();
+        readonly ConcurrentDictionary<Bitmap,ConcurrentBag<CachedOverlayResult>> _resultCache = new ();
 
-        readonly Dictionary<Bitmap, Dictionary<Bitmap,Bitmap>>  _resultCacheCustom = new Dictionary<Bitmap, Dictionary<Bitmap, Bitmap>>();
+        readonly ConcurrentDictionary<Bitmap, ConcurrentDictionary<Bitmap,Bitmap>>  _resultCacheCustom = new ();
 
-        readonly Dictionary<Bitmap,Bitmap> _greyscaleCache = new Dictionary<Bitmap, Bitmap>();
+        readonly ConcurrentDictionary<Bitmap,Bitmap> _greyscaleCache = new ();
 
         private readonly EnumImageCollection<OverlayKind> _images;
 
@@ -31,8 +32,7 @@ namespace Rdmp.Core.Icons.IconOverlays
         public Bitmap GetOverlay(Bitmap forImage, OverlayKind overlayKind)
         {
             //make sure the input image is added to the cache if it is novel
-            if(!_resultCache.ContainsKey(forImage))
-                _resultCache.Add(forImage,new List<CachedOverlayResult>());
+            _resultCache.TryAdd(forImage,new ConcurrentBag<CachedOverlayResult>());
 
             //is there a cached image for this overlay ?
             var cachedResult = _resultCache[forImage].SingleOrDefault(c => c.Kind == overlayKind);
@@ -54,8 +54,7 @@ namespace Rdmp.Core.Icons.IconOverlays
         public Bitmap GetOverlay(Bitmap forImage, Bitmap customOverlay)
         {
             //make sure the input image is added to the cache if it is novel
-            if (!_resultCacheCustom.ContainsKey(forImage))
-                _resultCacheCustom.Add(forImage, new Dictionary<Bitmap, Bitmap>());
+            _resultCacheCustom.TryAdd(forImage, new ConcurrentDictionary<Bitmap, Bitmap>());
 
             //is there a cached image for this overlay ?
             if (!_resultCacheCustom[forImage].ContainsKey(customOverlay))
@@ -69,7 +68,7 @@ namespace Rdmp.Core.Icons.IconOverlays
                 graphics.DrawImage(customOverlay, new Rectangle(0, 0, clone.Width, clone.Height));
 
                 //and cache it
-                _resultCacheCustom[forImage].Add(customOverlay,clone);
+                _resultCacheCustom[forImage].TryAdd(customOverlay,clone);
                 
             }
 
@@ -79,9 +78,7 @@ namespace Rdmp.Core.Icons.IconOverlays
 
         public Bitmap GetGrayscale(Bitmap forImage)
         {
-            if (!_greyscaleCache.ContainsKey(forImage))
-                _greyscaleCache.Add(forImage, MakeGrayscale(forImage));
-
+            _greyscaleCache.TryAdd(forImage, MakeGrayscale(forImage));
             return _greyscaleCache[forImage];
         }
 
