@@ -429,12 +429,14 @@ namespace Rdmp.UI.Collections
 
             var indicatorHeight = BackColorProvider.IndicatorBarSuggestedHeight;
 
-            BackColorProvider p = new BackColorProvider();
-            var ctrl = new Control();
-            ctrl.BackColor = p.GetColor(collection);
-            ctrl.Location = new Point(Tree.Location.X, tree.Location.Y - indicatorHeight);
-            ctrl.Height = indicatorHeight;
-            ctrl.Width = Tree.Width;
+            var p = new BackColorProvider();
+            var ctrl = new Control
+            {
+                BackColor = BackColorProvider.LegacyColor(p.GetColor(collection)),
+                Location = new Point(Tree.Location.X, tree.Location.Y - indicatorHeight),
+                Height = indicatorHeight,
+                Width = Tree.Width
+            };
 
             if (Tree.Dock != DockStyle.None)
                 ctrl.Dock = DockStyle.Top;

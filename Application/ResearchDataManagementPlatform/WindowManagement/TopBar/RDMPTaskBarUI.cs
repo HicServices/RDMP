@@ -39,22 +39,22 @@ namespace ResearchDataManagementPlatform.WindowManagement.TopBar
 
             btnHome.Image = FamFamFamIcons.application_home.ImageToBitmap();
             btnCatalogues.Image = CatalogueIcons.Catalogue.ImageToBitmap();
-            btnCatalogues.BackgroundImage = provider.GetBackgroundImage(btnCatalogues.Size, RDMPCollection.Catalogue);
+            btnCatalogues.BackgroundImage = provider.GetBackgroundImage(btnCatalogues.Size.Width,btnCatalogues.Size.Height, RDMPCollection.Catalogue).ImageToBitmap();
 
             btnCohorts.Image = CatalogueIcons.CohortIdentificationConfiguration.ImageToBitmap();
-            btnCohorts.BackgroundImage = provider.GetBackgroundImage(btnCohorts.Size, RDMPCollection.Cohort);
+            btnCohorts.BackgroundImage = provider.GetBackgroundImage(btnCohorts.Size.Width,btnCohorts.Size.Height, RDMPCollection.Cohort).ImageToBitmap();
 
             btnSavedCohorts.Image = CatalogueIcons.AllCohortsNode.ImageToBitmap();
-            btnSavedCohorts.BackgroundImage = provider.GetBackgroundImage(btnSavedCohorts.Size, RDMPCollection.SavedCohorts);
+            btnSavedCohorts.BackgroundImage = provider.GetBackgroundImage(btnSavedCohorts.Size.Width,btnSavedCohorts.Size.Height, RDMPCollection.SavedCohorts).ImageToBitmap();
 
             btnDataExport.Image = CatalogueIcons.Project.ImageToBitmap();
-            btnDataExport.BackgroundImage = provider.GetBackgroundImage(btnDataExport.Size, RDMPCollection.DataExport);
+            btnDataExport.BackgroundImage = provider.GetBackgroundImage(btnDataExport.Size.Width,btnDataExport.Size.Height, RDMPCollection.DataExport).ImageToBitmap();
 
             btnTables.Image = CatalogueIcons.TableInfo.ImageToBitmap();
-            btnTables.BackgroundImage = provider.GetBackgroundImage(btnTables.Size, RDMPCollection.Tables);
+            btnTables.BackgroundImage = provider.GetBackgroundImage(btnTables.Size.Width,btnTables.Size.Height, RDMPCollection.Tables).ImageToBitmap();
 
             btnLoad.Image = CatalogueIcons.LoadMetadata.ImageToBitmap();
-            btnLoad.BackgroundImage = provider.GetBackgroundImage(btnLoad.Size, RDMPCollection.DataLoad);
+            btnLoad.BackgroundImage = provider.GetBackgroundImage(btnLoad.Size.Width,btnLoad.Size.Height, RDMPCollection.DataLoad).ImageToBitmap();
             
             btnFavourites.Image = CatalogueIcons.Favourite.ImageToBitmap();
             btnDeleteLayout.Image = FamFamFamIcons.delete.ImageToBitmap();
