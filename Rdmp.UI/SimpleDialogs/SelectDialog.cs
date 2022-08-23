@@ -419,7 +419,7 @@ namespace Rdmp.UI.SimpleDialogs
                         Text = $"{t.Name} ({shortCode})"
                     };
 
-                    b.BackgroundImage = backColorProvider.GetBackgroundImage(b.Size.Width,b.Size.Height, EasyFilterTypesAndAssociatedCollections[t]).ImageToBitmap();
+                    b.BackgroundImage = backColorProvider.GetBackgroundImage(b.Size, EasyFilterTypesAndAssociatedCollections[t]);
                     b.CheckedChanged += CollectionCheckedChanged;
 
                     toolStrip1.Items.Add(b);

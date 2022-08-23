@@ -432,7 +432,7 @@ namespace Rdmp.UI.Collections
             var p = new BackColorProvider();
             var ctrl = new Control
             {
-                BackColor = BackColorProvider.LegacyColor(p.GetColor(collection)),
+                BackColor = p.GetColor(collection),
                 Location = new Point(Tree.Location.X, tree.Location.Y - indicatorHeight),
                 Height = indicatorHeight,
                 Width = Tree.Width

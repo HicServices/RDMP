@@ -100,17 +100,17 @@ namespace ResearchDataManagementPlatform.WindowManagement
             {
                 case RDMPCollection.Catalogue:
                         collection = new CatalogueCollectionUI();
-                        toReturn = Show(RDMPCollection.Catalogue, collection, "Catalogues", Image.Load<Rgba32>(CatalogueIcons.Catalogue));
+                        toReturn = Show(RDMPCollection.Catalogue, collection, "Catalogues", Image.Load<Rgba32>(CatalogueIcons.Catalogue).ImageToBitmap());
                 break;
 
                 case RDMPCollection.DataLoad:
                     collection = new LoadMetadataCollectionUI();
-                    toReturn = Show(RDMPCollection.DataLoad, collection, "Load Configurations", Image.Load<Rgba32>(CatalogueIcons.LoadMetadata));
+                    toReturn = Show(RDMPCollection.DataLoad, collection, "Load Configurations", Image.Load<Rgba32>(CatalogueIcons.LoadMetadata).ImageToBitmap());
                 break;
 
                 case RDMPCollection.Tables:
                     collection = new TableInfoCollectionUI();
-                    toReturn = Show(RDMPCollection.Tables, collection, "Tables",Image.Load<Rgba32>(CatalogueIcons.TableInfo));
+                    toReturn = Show(RDMPCollection.Tables, collection, "Tables",Image.Load<Rgba32>(CatalogueIcons.TableInfo).ImageToBitmap());
                 break;
 
                 case RDMPCollection.DataExport:
@@ -121,20 +121,20 @@ namespace ResearchDataManagementPlatform.WindowManagement
                     }
 
                     collection = new DataExportCollectionUI();
-                    toReturn = Show(RDMPCollection.DataExport,collection, "Projects", Image.Load<Rgba32>(CatalogueIcons.Project));
+                    toReturn = Show(RDMPCollection.DataExport,collection, "Projects", Image.Load<Rgba32>(CatalogueIcons.Project).ImageToBitmap());
                 break;
 
                 case RDMPCollection.Cohort:
                     collection = new CohortIdentificationCollectionUI();
-                    toReturn = Show(RDMPCollection.Cohort, collection, "Cohort Builder", Image.Load<Rgba32>(CatalogueIcons.CohortIdentificationConfiguration));
+                    toReturn = Show(RDMPCollection.Cohort, collection, "Cohort Builder", Image.Load<Rgba32>(CatalogueIcons.CohortIdentificationConfiguration).ImageToBitmap());
                 break;
                 case RDMPCollection.SavedCohorts:
                     collection = new SavedCohortsCollectionUI();
-                    toReturn = Show(RDMPCollection.SavedCohorts, collection, "Saved Cohorts", Image.Load<Rgba32>(CatalogueIcons.AllCohortsNode));
+                    toReturn = Show(RDMPCollection.SavedCohorts, collection, "Saved Cohorts", Image.Load<Rgba32>(CatalogueIcons.AllCohortsNode).ImageToBitmap());
                 break;
                 case RDMPCollection.Favourites:
                     collection = new FavouritesCollectionUI();
-                    toReturn = Show(RDMPCollection.Favourites, collection, "Favourites", Image.Load<Rgba32>(CatalogueIcons.Favourite));
+                    toReturn = Show(RDMPCollection.Favourites, collection, "Favourites", Image.Load<Rgba32>(CatalogueIcons.Favourite).ImageToBitmap());
                 break;
 
                 default: throw new ArgumentOutOfRangeException("collectionToCreate");
@@ -158,7 +158,7 @@ namespace ResearchDataManagementPlatform.WindowManagement
 
         
 
-        private PersistableToolboxDockContent Show(RDMPCollection collection,RDMPCollectionUI control, string label, Image<Rgba32> image)
+        private PersistableToolboxDockContent Show(RDMPCollection collection,RDMPCollectionUI control, string label, Bitmap image)
         {
             var c = new BackColorProvider();
             image = c.DrawBottomBar(image, collection);
