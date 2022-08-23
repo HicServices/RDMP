@@ -346,7 +346,7 @@ namespace Rdmp.UI.Collections
         {
             return model is IMapsDirectlyToDatabaseTable d ?
                 $"{model} (ID: {d.ID})" :
-                model.ToString();
+                model?.ToString();
         }
 
         static DateTime lastInvalidatedCache = DateTime.Now;
