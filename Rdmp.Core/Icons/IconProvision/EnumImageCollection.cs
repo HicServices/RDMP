@@ -5,7 +5,6 @@
 // You should have received a copy of the GNU General Public License along with RDMP. If not, see <https://www.gnu.org/licenses/>.
 
 using System;
-using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Drawing;
 using System.Linq;
@@ -15,7 +14,7 @@ namespace Rdmp.Core.Icons.IconProvision
 {
     public class EnumImageCollection<T> where T : struct, IConvertible
     {
-        readonly ConcurrentDictionary<T,Bitmap> _images = new ();
+        readonly Dictionary<T,Bitmap> _images = new Dictionary<T, Bitmap>();
 
         public EnumImageCollection(ResourceManager resourceManager)
         {
@@ -30,7 +29,7 @@ namespace Rdmp.Core.Icons.IconProvision
                 if(bmp == null)
                     missingImages.Add(enumValue.ToString());
 
-                _images.TryAdd((T) enumValue,bmp);
+                _images.Add((T) enumValue,bmp);
             }
 
             if(missingImages.Any())
