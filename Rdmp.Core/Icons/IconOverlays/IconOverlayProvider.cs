@@ -5,23 +5,22 @@
 // You should have received a copy of the GNU General Public License along with RDMP. If not, see <https://www.gnu.org/licenses/>.
 
 using System;
-using System.Collections.Generic;
+using System.Collections.Concurrent;
 using Rdmp.Core.Icons.IconProvision;
 using ReusableLibraryCode.Icons.IconProvision;
 using SixLabors.ImageSharp;
 using SixLabors.ImageSharp.PixelFormats;
 using SixLabors.ImageSharp.Processing;
-using Image = SixLabors.ImageSharp.Image;
 
 namespace Rdmp.Core.Icons.IconOverlays
 {
     public class IconOverlayProvider
     {
-        readonly Dictionary<ValueTuple<Image<Rgba32>,OverlayKind>,Image<Rgba32>> _cache=new ();
+        readonly ConcurrentDictionary<ValueTuple<Image<Rgba32>,OverlayKind>,Image<Rgba32>> _cache=new ();
 
-        readonly Dictionary<ValueTuple<Image<Rgba32>,Image<Rgba32>>, Image<Rgba32>>  _resultCacheCustom = new();
+        readonly ConcurrentDictionary<ValueTuple<Image<Rgba32>,Image<Rgba32>>, Image<Rgba32>>  _resultCacheCustom = new();
 
-        readonly Dictionary<Image<Rgba32>, Image<Rgba32>> _greyscaleCache = new();
+        readonly ConcurrentDictionary<Image<Rgba32>, Image<Rgba32>> _greyscaleCache = new();
 
         private readonly EnumImageCollection<OverlayKind> _images;
 
@@ -39,7 +38,7 @@ namespace Rdmp.Core.Icons.IconOverlays
                 return hit;
             
             var clone = GetOverlayNoCache(forImage, overlayKind);
-            _cache.Add(key,clone);
+            _cache.TryAdd(key,clone);
 
             return clone;
         }
@@ -53,14 +52,13 @@ namespace Rdmp.Core.Icons.IconOverlays
             var clone = forImage.Clone<Rgba32>(x=>x.DrawImage(customOverlay,1.0f));
 
             //and cache it
-            _resultCacheCustom.Add((forImage,customOverlay),clone);
+            _resultCacheCustom.TryAdd((forImage,customOverlay),clone);
             return clone;
         }
 
         public Image<Rgba32> GetGrayscale(Image<Rgba32> forImage)
         {
-            if (!_greyscaleCache.ContainsKey(forImage))
-                _greyscaleCache.Add(forImage, MakeGrayscale(forImage));
+            _greyscaleCache.TryAdd(forImage, MakeGrayscale(forImage));
 
             return _greyscaleCache[forImage];
         }
