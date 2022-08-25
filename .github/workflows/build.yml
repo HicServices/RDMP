@@ -124,9 +124,9 @@ jobs:
       
       - name: Package
         run: |
-          dotnet publish Application/ResearchDataManagementPlatform/ResearchDataManagementPlatform.csproj -r win-x64 --self-contained -c Release -o PublishWinForms -p:GenerateDocumentationFile=false --verbosity minimal --nologo
-          dotnet publish Tools/rdmp/rdmp.csproj -r win-x64 --self-contained -c Release -o PublishWindows -p:GenerateDocumentationFile=false --verbosity minimal --nologo
-          dotnet publish Tools/rdmp/rdmp.csproj -r linux-x64 --self-contained -c Release -o PublishLinux -p:GenerateDocumentationFile=false --verbosity minimal --nologo
+          dotnet publish Application/ResearchDataManagementPlatform/ResearchDataManagementPlatform.csproj -r win-x64 --self-contained -c Release -o PublishWinForms -p:GenerateDocumentationFile=false -p:PublishSingleFile=false --verbosity minimal --nologo
+          dotnet publish Tools/rdmp/rdmp.csproj -r win-x64 --self-contained -c Release -o PublishWindows -p:GenerateDocumentationFile=false -p:PublishSingleFile=false --verbosity minimal --nologo
+          dotnet publish Tools/rdmp/rdmp.csproj -r linux-x64 --self-contained -c Release -o PublishLinux -p:GenerateDocumentationFile=false -p:PublishSingleFile=false --verbosity minimal --nologo
       - name: BundleSource
         shell: bash
         run: |
@@ -142,17 +142,53 @@ jobs:
           signtool=${signtool[${#signtool[@]}-1]}
           signtool=`echo $signtool | sed -e 's#^/c#c:#' | tr / \\\\`
           echo ${{ secrets.DIGICERT_PFX }} | base64 --decode > GitHubActionsWorkflow.pfx
-          echo '"'$signtool'"' 'Sign  /f GitHubActionsWorkflow.pfx /fd sha256 /tr http://timestamp.digicert.com /td sha256 /p ${{ secrets.DIGICERT_PASSWORD }} PublishWindows/*.exe PublishLinux/rdmp PublishWinForms/*.exe PublishWinForms/Hunspell*.dll' | cmd
+          echo '"'$signtool'"' 'Sign  /f GitHubActionsWorkflow.pfx /fd sha256 /tr http://timestamp.digicert.com /td sha256 /p ${{ secrets.DIGICERT_PASSWORD }} PublishWindows/*.exe PublishWinForms/*.exe PublishWinForms/Hunspell*.dll' | cmd
           mkdir -p dist
           cmd /c wix\\build.cmd ${{ steps.version.outputs.rdmpversion }}
           echo '"'$signtool'"' 'Sign  /f GitHubActionsWorkflow.pfx /fd sha256 /tr http://timestamp.digicert.com /td sha256 /p ${{ secrets.DIGICERT_PASSWORD }} dist/rdmp.msi' | cmd
-          (cd PublishWindows ; echo 7z a -mx=9 ../dist/rdmp-cli-win-x64.zip . | cmd)
-          (cd PublishLinux ; echo 7z a -mx=9 ../dist/rdmp-cli-linux-x64.zip . | cmd)
-          mv PublishLinux rdmp-cli-linux
-          echo 7z a dist/rdmp-cli-linux-x64.tar rdmp-cli-linux | cmd
-          echo 7z a dist/rdmp-cli-linux-x64.tar.gz dist/rdmp-cli-linux-x64.tar | cmd
-          rm dist/rdmp-cli-linux-x64.tar
-          (cd PublishWinForms ; echo 7z a -mx=9 ../dist/rdmp-client.zip . | cmd)
+          (cd PublishWindows ; echo 7z a -mx=9 ../dist/rdmp-${{ steps.version.outputs.rdmpversion }}-cli-win-x64.zip . | cmd)
+          (cd PublishLinux ; echo 7z a -mx=0 ../dist/rdmp-${{ steps.version.outputs.rdmpversion }}-cli-linux-x64.zip . | cmd)
+          mv PublishLinux rdmp-${{ steps.version.outputs.rdmpversion }}-cli-linux
+          echo 7z a dist/rdmp-${{ steps.version.outputs.rdmpversion }}-cli-linux-x64.tar rdmp-${{ steps.version.outputs.rdmpversion }}-cli-linux | cmd
+          (cd PublishWinForms ; echo 7z a -mx=9 ../dist/rdmp-${{ steps.version.outputs.rdmpversion }}-client.zip . | cmd)
+
+      - name: Install Perl dependencies
+        uses: shogo82148/actions-setup-perl@v1
+        with:
+          install-modules-with: cpanm
+          install-modules: Archive::Zip Archive::Tar
+      - name: Fix execute permissions
+        shell: perl {0}
+        run: |
+          use strict;
+          use warnings;
+          use Archive::Zip qw( :ERROR_CODES :CONSTANTS );
+          use Archive::Tar;
+
+          my ($tarname,$zipname)=('dist/rdmp-${{ steps.version.outputs.rdmpversion }}-cli-linux-x64.tar','dist/rdmp-${{ steps.version.outputs.rdmpversion }}-cli-linux-x64.zip');
+
+          # Find rdmp in .tar, set permissions 0755
+          my $tar=Archive::Tar->new($tarname) || die "read $tarname:$!\n";
+          my @tarbits=$tar->get_files();
+          foreach my $bit (@tarbits) {
+            $bit->chmod(($bit->name eq 'rdmp-cli-linux/rdmp' || $bit->type==5)?'0755':'0644');
+          }
+          $tar->write( $tarname.'.xz', COMPRESS_XZ );
+          unlink($tarname) || die "unlink $tarname:$!\n";
+
+          # Find rdmp in .zip, set permissions 0755
+          my $srczip = Archive::Zip->new($zipname);
+          my $zip=Archive::Zip->new();
+          foreach my $bit ($srczip->members()) {
+            print "Adding ",$bit->fileName(),"\n";
+            my $m=$zip->addString($bit->contents(),$bit->fileName());
+            $m->fileName($bit->fileName());
+            my $iszip=$bit->fileName() =~ /\.zip$/i;
+            $m->desiredCompressionMethod($iszip ? COMPRESSION_STORED : COMPRESSION_DEFLATED);
+            $m->desiredCompressionLevel($iszip ? 0 :  9 );
+          }
+          $zip->memberNamed('rdmp')->unixFileAttributes( 0755 );
+          $zip->overwriteAs($zipname);
 
       - name: Build Nuget packages
         run: |
@@ -167,7 +203,10 @@ jobs:
           nuget push HIC.RDMP.Plugin.${{ steps.version.outputs.rdmpversion }}.nupkg -skipDuplicate -Source https://api.nuget.org/v3/index.json -ApiKey ${{ secrets.NUGET_KEY }}
           nuget push HIC.RDMP.Plugin.UI.${{ steps.version.outputs.rdmpversion }}.nupkg -skipDuplicate -Source https://api.nuget.org/v3/index.json -ApiKey ${{ secrets.NUGET_KEY }}
           nuget push HIC.RDMP.Plugin.Test.${{ steps.version.outputs.rdmpversion }}.nupkg -skipDuplicate -Source https://api.nuget.org/v3/index.json -ApiKey ${{ secrets.NUGET_KEY }}
-          
+
+      - name: Calculate SHA256SUMS
+        run: '&{foreach ($i in Get-ChildItem dist -Exclude *SUMS|Get-FileHash) { echo "$($i.Hash) $(echo $i | Split-Path -Leaf)" }} > dist/SHA256SUMS'
+
       - name: Archive production artifacts
         uses: actions/upload-artifact@v3
         with:
