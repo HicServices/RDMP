@@ -63,7 +63,8 @@ namespace Rdmp.Core.Databases
 
             sql.AppendLine(db.Helper.GetCreateTableSql(db, "DataLoadTask", new[]
             {
-                new DatabaseColumnRequest("ID",new DatabaseTypeRequest(typeof(int))){IsAutoIncrement = true, AllowNulls = false, IsPrimaryKey = true},
+                //This is not an auto increment (see `GetMaxTaskID` method).  Not sure why it isn't but whatever
+                new DatabaseColumnRequest("ID",new DatabaseTypeRequest(typeof(int))){AllowNulls = false, IsPrimaryKey = true}, 
                 new DatabaseColumnRequest("description",new DatabaseTypeRequest(typeof(string),int.MaxValue){Unicode = true}),
                 new DatabaseColumnRequest("name",new DatabaseTypeRequest(typeof(string),1000){Unicode = true}),
                 new DatabaseColumnRequest("createTime", new DatabaseTypeRequest(typeof(DateTime))){Default = FAnsi.Discovery.QuerySyntax.MandatoryScalarFunctions.GetTodaysDate},
@@ -189,7 +190,7 @@ namespace Rdmp.Core.Databases
 
             sql.AppendLine(db.Helper.GetCreateTableSql(db, "z_DataLoadTaskStatus", new[]
             {
-                new DatabaseColumnRequest("ID",new DatabaseTypeRequest(typeof(int))){IsAutoIncrement = true, AllowNulls = false, IsPrimaryKey = true},
+                new DatabaseColumnRequest("ID",new DatabaseTypeRequest(typeof(int))){ AllowNulls = false, IsPrimaryKey = true},
                 new DatabaseColumnRequest("status",new DatabaseTypeRequest(typeof(string),50){Unicode = true }){AllowNulls = true},
                 new DatabaseColumnRequest("description",new DatabaseTypeRequest(typeof(string),int.MaxValue)){AllowNulls = true},
 
@@ -198,16 +199,41 @@ namespace Rdmp.Core.Databases
 
             sql.AppendLine(db.Helper.GetCreateTableSql(db, "z_FatalErrorStatus", new[]
             {
-                new DatabaseColumnRequest("ID",new DatabaseTypeRequest(typeof(int))){IsAutoIncrement = true, AllowNulls = false, IsPrimaryKey = true},
+                new DatabaseColumnRequest("ID",new DatabaseTypeRequest(typeof(int))){AllowNulls = false, IsPrimaryKey = true},
                 new DatabaseColumnRequest("status",new DatabaseTypeRequest(typeof(string),20){Unicode = true }),
             }, null, true));
 
 
             sql.AppendLine(db.Helper.GetCreateTableSql(db, "z_RowErrorType", new[]
             {
-                new DatabaseColumnRequest("ID",new DatabaseTypeRequest(typeof(int))){IsAutoIncrement = true, AllowNulls = false, IsPrimaryKey = true},
+                new DatabaseColumnRequest("ID",new DatabaseTypeRequest(typeof(int))){AllowNulls = false, IsPrimaryKey = true},
                 new DatabaseColumnRequest("type",new DatabaseTypeRequest(typeof(string),20){Unicode = true }),
             }, null, true));
+
+
+            sql.AppendLine(@"
+
+INSERT INTO z_DataLoadTaskStatus(ID, status, description) VALUES(1, 'Open', NULL)
+INSERT INTO z_DataLoadTaskStatus (ID, status, description) VALUES(2, 'Ready', NULL)
+INSERT INTO z_DataLoadTaskStatus (ID, status, description) VALUES(3, 'Commited', NULL)
+INSERT INTO z_FatalErrorStatus(ID, status) VALUES(1, 'Outstanding')
+INSERT INTO z_FatalErrorStatus (ID, status) VALUES(2, 'Resolved')
+INSERT INTO z_FatalErrorStatus (ID, status) VALUES(3, 'Blocked')
+INSERT INTO z_RowErrorType(ID, type) VALUES(1, 'LoadRow')
+INSERT INTO z_RowErrorType (ID, type) VALUES(2, 'Duplication')
+INSERT INTO z_RowErrorType (ID, type) VALUES(3, 'Validation')
+INSERT INTO z_RowErrorType (ID, type) VALUES(4, 'DatabaseOperation')
+INSERT INTO z_RowErrorType (ID, type) VALUES(5, 'Unknown')
+
+--create datasets
+INSERT INTO DataSet (dataSetID, name, description, time_period, SLA_required, supplier_name, supplier_tel_no, supplier_email, contact_name, contact_position, currentContactInstitutions, contact_tel_no, contact_email, frequency, method) VALUES(N'DataExtraction', 'DataExtraction', NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL)
+INSERT INTO DataSet (dataSetID, name, description, time_period, SLA_required, supplier_name, supplier_tel_no, supplier_email, contact_name, contact_position, currentContactInstitutions, contact_tel_no, contact_email, frequency, method) VALUES(N'Internal', 'Internal', NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL)
+
+--create tasks
+INSERT INTO DataLoadTask(ID, description, name, createTime, userAccount, statusID, isTest, dataSetID) VALUES(1, 'Internal', 'Internal', GETDATE(), 'Thomas', 1, 0, 'Internal')
+INSERT INTO DataLoadTask (ID, description, name, createTime, userAccount, statusID, isTest, dataSetID) VALUES(2, 'DataExtraction', 'DataExtraction', GETDATE(), 'Thomas', 1, 0, 'DataExtraction')
+");
+
 
             return new Patch(InitialScriptName, header + sql);
         }
