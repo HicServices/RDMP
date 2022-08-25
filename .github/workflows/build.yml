@@ -61,6 +61,8 @@ jobs:
           auto-start: true
       - name: Build
         run: dotnet build --configuration Release --verbosity minimal
+      - name: Create MySql Logging Db from YamlRepository
+        run: dotnet run -c Release --project Tools/rdmp/rdmp.csproj -- createnewexternaldatabaseserver LiveLoggingServer_ID "DatabaseType:MySQL:Server=127.0.0.1;Uid=root;Pwd=YourStrong!Passw0rd;Database=rdmp_logging2" --dir ~/rdmp/rdmp-yaml/
       - name: Initialise RDMP
         run: dotnet run -c Release --project Tools/rdmp/rdmp.csproj -- install --createdatabasetimeout 180 "(localdb)\MSSQLLocalDB" TEST_ -e
       - name: Populate Databases.yaml 
