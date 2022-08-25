@@ -13,6 +13,10 @@ using NUnit.Framework;
 using Rdmp.Core.Logging;
 using ReusableLibraryCode;
 using Tests.Common;
+using FAnsi;
+using MapsDirectlyToDatabaseTable.Versioning;
+using Rdmp.Core.Databases;
+using ReusableLibraryCode.Checks;
 
 namespace Rdmp.Core.Tests.Logging
 {
@@ -196,7 +200,44 @@ namespace Rdmp.Core.Tests.Logging
             var dli2 = lm.CreateDataLoadInfo("FF","tests","hi there",null,true);
 
             Assert.AreEqual(1,lm.ListDataSets().Count(s=>s.Equals("ff",StringComparison.CurrentCultureIgnoreCase)));
+        }
 
+        [TestCaseSource(typeof(All), nameof(All.DatabaseTypes))]
+        public void LoggingDatabase_TestActuallyCreatingIt(DatabaseType type)
+        {
+            var db = GetCleanedServer(type);
+
+            var creator = new MasterDatabaseScriptExecutor(db);
+            creator.CreateAndPatchDatabase(new LoggingDatabasePatcher(), new AcceptAllCheckNotifier());
+            
+            var lm = new LogManager(db.Server);
+
+            lm.CreateNewLoggingTaskIfNotExists("blarg");
+
+            var dli = lm.CreateDataLoadInfo("blarg", "tests", "doing nothing interesting", null, true);
+            var tli = dli.CreateTableLoadInfo("", "mytbl", new[] { new DataSource("ff.csv"), new DataSource("bb.csv", new DateTime(2001, 1, 1)) }, 40);
+
+            tli.Inserts = 500;
+            tli.CloseAndArchive();
+
+            dli.LogFatalError("bad.cs", "it went bad");
+            dli.LogProgress(DataLoadInfo.ProgressEventType.OnInformation, "good.cs", "Wrote some records");
+
+            dli.CloseAndMarkComplete();
+
+            var id = dli.ID;
+            var archival = lm.GetArchivalDataLoadInfos("blarg", null, id).Single();
+
+            Assert.AreEqual(500, archival.TableLoadInfos.Single().Inserts);
+            Assert.AreEqual(0, archival.TableLoadInfos.Single().Updates);
+            Assert.AreEqual(0, archival.TableLoadInfos.Single().Deletes);
+            Assert.AreEqual(DateTime.Now.Date, archival.StartTime.Date);
+            Assert.AreEqual(DateTime.Now.Date, archival.EndTime.Value.Date);
+
+            Assert.AreEqual("it went bad", archival.Errors.Single().Description);
+            Assert.AreEqual("bad.cs", archival.Errors.Single().Source);
+
+            Assert.AreEqual("Wrote some records", archival.Progress.Single().Description);
         }
     }
 }
