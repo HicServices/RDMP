@@ -769,7 +769,13 @@ namespace Rdmp.Core.CommandExecution
 
         public virtual ExternalDatabaseServer CreateNewPlatformDatabase(ICatalogueRepository catalogueRepository, PermissableDefaults defaultToSet, IPatcher patcher, DiscoveredDatabase db)
         {
-            if(db == null)
+
+            if (db == null && IsInteractive)
+            {
+                db = SelectDatabase(true, "Select database");
+            }
+
+            if (db == null)
                 throw new ArgumentException($"Database must be picked before calling {nameof(CreateNewPlatformDatabase)} when using {nameof(BasicActivateItems)}",nameof(db));
 
             MasterDatabaseScriptExecutor executor = new MasterDatabaseScriptExecutor(db);
