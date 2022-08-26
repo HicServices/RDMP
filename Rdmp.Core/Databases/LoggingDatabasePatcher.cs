@@ -73,7 +73,7 @@ namespace Rdmp.Core.Databases
                 new DatabaseColumnRequest("userAccount",new DatabaseTypeRequest(typeof(string),500){Unicode = true}),
                 new DatabaseColumnRequest("statusID", new DatabaseTypeRequest(typeof(int))),
                 new DatabaseColumnRequest("isTest", new DatabaseTypeRequest(typeof(bool))),
-                dataLoadTask_datasetID = new DatabaseColumnRequest("dataSetID", new DatabaseTypeRequest(typeof(string), 450) { Unicode = true }),
+                dataLoadTask_datasetID = new DatabaseColumnRequest("dataSetID", new DatabaseTypeRequest(typeof(string), 150) { Unicode = true }),
             }, new Dictionary<DatabaseColumnRequest, DiscoveredColumn>
             {
                 {dataLoadTask_datasetID ,datasetId }
