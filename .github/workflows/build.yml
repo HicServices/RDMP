@@ -59,8 +59,12 @@ jobs:
           mysql-version: '8.0'
           root-password: 'YourStrong!Passw0rd'
           auto-start: true
-      - name: Create MySql Logging Db from YamlRepository
+      - name: Create MySql Logging Db
         run: dotnet run -c Release --project Tools/rdmp/rdmp.csproj -- createnewexternaldatabaseserver LiveLoggingServer_ID "DatabaseType:MySQL:Server=127.0.0.1;Uid=root;Pwd=YourStrong!Passw0rd;Database=rdmp_logging2" --dir ~/rdmp/rdmp-yaml/
+      - name: Create MySql DQE Db
+        run: dotnet run -c Release --project Tools/rdmp/rdmp.csproj -- createnewexternaldatabaseserver DQE "DatabaseType:MySQL:Server=127.0.0.1;Uid=root;Pwd=YourStrong!Passw0rd;Database=rdmp_dqe" --dir ~/rdmp/rdmp-yaml/
+      - name: Create MySql Cohort Building Query Caching Db
+        run: dotnet run -c Release --project Tools/rdmp/rdmp.csproj -- createnewexternaldatabaseserver CohortIdentificationQueryCachingServer_ID "DatabaseType:MySQL:Server=127.0.0.1;Uid=root;Pwd=YourStrong!Passw0rd;Database=rdmp_cache" --dir ~/rdmp/rdmp-yaml/
       - name: Build
         run: dotnet build --configuration Release --verbosity minimal
       - name: Initialise RDMP
