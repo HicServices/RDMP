@@ -30,7 +30,7 @@ namespace Rdmp.Core.Databases
 
             sql.AppendLine(db.Helper.GetCreateTableSql(db, "DataSet", new[]
             {
-                new DatabaseColumnRequest("dataSetID",new DatabaseTypeRequest(typeof(string),450){Unicode = true}){IsPrimaryKey = true},
+                new DatabaseColumnRequest("dataSetID",new DatabaseTypeRequest(typeof(string),150){Unicode = true}){IsPrimaryKey = true},
                 new DatabaseColumnRequest("name",new DatabaseTypeRequest(typeof(string),2000){Unicode = true}){AllowNulls = true},
                 new DatabaseColumnRequest("description",new DatabaseTypeRequest(typeof(string),int.MaxValue){Unicode = true}){AllowNulls = true},
                 new DatabaseColumnRequest("time_period",new DatabaseTypeRequest(typeof(string),64){Unicode = true}){AllowNulls = true},
@@ -45,7 +45,7 @@ namespace Rdmp.Core.Databases
                 new DatabaseColumnRequest("contact_email",new DatabaseTypeRequest(typeof(string),64){Unicode = true}){AllowNulls = true},
                 new DatabaseColumnRequest("frequency",new DatabaseTypeRequest(typeof(string),32){Unicode = true}){AllowNulls = true},
                 new DatabaseColumnRequest("method",new DatabaseTypeRequest(typeof(string),16){Unicode = true}){AllowNulls = true}
-            }, null, false, null) + ";");
+            }, null, false, null).TrimEnd() + ";");
 
 
             // foreign keys
@@ -77,7 +77,7 @@ namespace Rdmp.Core.Databases
             }, new Dictionary<DatabaseColumnRequest, DiscoveredColumn>
             {
                 {dataLoadTask_datasetID ,datasetId }
-            }, true, null) + ";");
+            }, true, null).TrimEnd() + ";");
 
 
 
@@ -97,7 +97,7 @@ namespace Rdmp.Core.Databases
             }, new Dictionary<DatabaseColumnRequest, DiscoveredColumn>
             {
                 {dataLoadRun_dataLoadTaskID ,dataLoadTask_ID }
-            }, true, null) + ";");
+            }, true, null).TrimEnd() + ";");
 
             sql.AppendLine(db.Helper.GetCreateTableSql(db, "TableLoadRun", new[]
             {
@@ -118,7 +118,7 @@ namespace Rdmp.Core.Databases
             }, new Dictionary<DatabaseColumnRequest, DiscoveredColumn>
             {
                 {tableLoadRun_dataLoadRunID ,dataLoadRun_ID }
-            }, true, null) + ";");
+            }, true, null).TrimEnd() + ";");
 
             sql.AppendLine(db.Helper.GetCreateTableSql(db, "DataSource", new[]
             {
@@ -134,7 +134,7 @@ namespace Rdmp.Core.Databases
             }, new Dictionary<DatabaseColumnRequest, DiscoveredColumn>
             {
                 {dataSource_tableLoadRunID ,tableLoadRun_ID }
-            }, true, null) + ";");
+            }, true, null).TrimEnd() + ";");
 
 
 
@@ -152,7 +152,7 @@ namespace Rdmp.Core.Databases
             }, new Dictionary<DatabaseColumnRequest, DiscoveredColumn>
             {
                 {fatalError_dataLoadRunID ,dataLoadRun_ID }
-            }, true, null) + ";");
+            }, true, null).TrimEnd() + ";");
 
 
             sql.AppendLine(db.Helper.GetCreateTableSql(db, "ProgressLog", new[]
@@ -167,7 +167,7 @@ namespace Rdmp.Core.Databases
             }, new Dictionary<DatabaseColumnRequest, DiscoveredColumn>
             {
                 {progressLog_dataLoadRunID ,dataLoadRun_ID }
-            }, true, null) + ";");
+            }, true, null).TrimEnd() + ";");
 
 
 
@@ -184,7 +184,7 @@ namespace Rdmp.Core.Databases
             }, new Dictionary<DatabaseColumnRequest, DiscoveredColumn>
             {
                 {rowError_tableLoadRunID ,tableLoadRun_ID }
-            }, true, null) + ";");
+            }, true, null).TrimEnd() + ";");
 
 
 
@@ -194,21 +194,21 @@ namespace Rdmp.Core.Databases
                 new DatabaseColumnRequest("status",new DatabaseTypeRequest(typeof(string),50){Unicode = true }){AllowNulls = true},
                 new DatabaseColumnRequest("description",new DatabaseTypeRequest(typeof(string),int.MaxValue)){AllowNulls = true},
 
-            },null, true) + ";");
+            },null, true).TrimEnd() + ";");
 
 
             sql.AppendLine(db.Helper.GetCreateTableSql(db, "z_FatalErrorStatus", new[]
             {
                 new DatabaseColumnRequest("ID",new DatabaseTypeRequest(typeof(int))){AllowNulls = false, IsPrimaryKey = true},
                 new DatabaseColumnRequest("status",new DatabaseTypeRequest(typeof(string),20){Unicode = true }),
-            }, null, true) + ";");
+            }, null, true).TrimEnd() + ";");
 
 
             sql.AppendLine(db.Helper.GetCreateTableSql(db, "z_RowErrorType", new[]
             {
                 new DatabaseColumnRequest("ID",new DatabaseTypeRequest(typeof(int))){AllowNulls = false, IsPrimaryKey = true},
                 new DatabaseColumnRequest("type",new DatabaseTypeRequest(typeof(string),20){Unicode = true }),
-            }, null, true) + ";");
+            }, null, true).TrimEnd() + ";");
 
 
             sql.AppendLine(@"
