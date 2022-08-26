@@ -427,7 +427,7 @@ namespace MapsDirectlyToDatabaseTable.Versioning
         {
             var initialPatch = patcher.GetInitialCreateScriptContents(Database);
             notifier.OnCheckPerformed(
-                new CheckEventArgs($"About to run:{Environment.NewLine}{initialPatch}", CheckResult.Success));
+                new CheckEventArgs($"About to run:{Environment.NewLine}{initialPatch.EntireScript}", CheckResult.Success));
 
             CreateDatabase(initialPatch, notifier);
 
