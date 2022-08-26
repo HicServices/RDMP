@@ -61,7 +61,7 @@ namespace MapsDirectlyToDatabaseTable.Versioning
             if (idx == -1)
                 throw new InvalidPatchException(locationInAssembly,"Script does not start with " + VersionKey);
 
-            string versionNumber = lines[0].Substring(idx + VersionKey.Length).Trim(':',' ','\n','\r','\\','*');
+            string versionNumber = lines[0].Substring(idx + VersionKey.Length).Trim(':',' ','\n','\r','/','*');
 
             try
             {
