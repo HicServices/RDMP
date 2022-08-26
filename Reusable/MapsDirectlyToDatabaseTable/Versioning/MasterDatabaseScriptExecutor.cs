@@ -426,6 +426,9 @@ namespace MapsDirectlyToDatabaseTable.Versioning
         public void CreateAndPatchDatabase(IPatcher patcher, ICheckNotifier notifier)
         {
             var initialPatch = patcher.GetInitialCreateScriptContents(Database);
+            notifier.OnCheckPerformed(
+                new CheckEventArgs($"About to run:{Environment.NewLine}{initialPatch}", CheckResult.Success));
+
             CreateDatabase(initialPatch, notifier);
 
             //get everything in the /up/ folder that is .sql
