@@ -230,8 +230,8 @@ INSERT INTO DataSet (dataSetID, name, description, time_period, SLA_required, su
 INSERT INTO DataSet (dataSetID, name, description, time_period, SLA_required, supplier_name, supplier_tel_no, supplier_email, contact_name, contact_position, currentContactInstitutions, contact_tel_no, contact_email, frequency, method) VALUES(N'Internal', 'Internal', NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL);
 
 /*create tasks*/
-INSERT INTO DataLoadTask(ID, description, name, createTime, userAccount, statusID, isTest, dataSetID) VALUES(1, 'Internal', 'Internal', GETDATE(), 'Thomas', 1, 0, 'Internal');
-INSERT INTO DataLoadTask (ID, description, name, createTime, userAccount, statusID, isTest, dataSetID) VALUES(2, 'DataExtraction', 'DataExtraction', GETDATE(), 'Thomas', 1, 0, 'DataExtraction');
+INSERT INTO DataLoadTask(ID, description, name, userAccount, statusID, isTest, dataSetID) VALUES(1, 'Internal', 'Internal', 'Thomas', 1, 0, 'Internal');
+INSERT INTO DataLoadTask (ID, description, name, userAccount, statusID, isTest, dataSetID) VALUES(2, 'DataExtraction', 'DataExtraction', 'Thomas', 1, 0, 'DataExtraction');
 ");
 
 
