@@ -74,10 +74,12 @@ namespace MapsDirectlyToDatabaseTable.Versioning
 
             if(lines.Length >=2)
             {
-                if(!lines[1].StartsWith(DescriptionKey))
-                throw new InvalidPatchException(locationInAssembly,"Second line of patch scripts must start with " + DescriptionKey);
+                idx = lines[1].IndexOf(DescriptionKey);
 
-                string description = lines[1].Substring(DescriptionKey.Length);
+                if (idx == -1 )
+                    throw new InvalidPatchException(locationInAssembly,"Second line of patch scripts must start with " + DescriptionKey);
+
+                string description = lines[1].Substring(idx + DescriptionKey.Length).Trim(':', ' ', '\n', '\r', '/', '*');
                 Description = description;
             } 
         }
