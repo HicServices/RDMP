@@ -56,10 +56,12 @@ namespace MapsDirectlyToDatabaseTable.Versioning
         {
             var lines = EntireScript.Split(new []{'\r', '\n'},StringSplitOptions.RemoveEmptyEntries);
 
-            if(!lines[0].StartsWith(VersionKey))
+            var idx = lines[0].IndexOf(VersionKey);
+
+            if (idx == -1)
                 throw new InvalidPatchException(locationInAssembly,"Script does not start with " + VersionKey);
 
-            string versionNumber = lines[0].Substring(VersionKey.Length).Trim(':',' ','\n','\r');
+            string versionNumber = lines[0].Substring(idx + VersionKey.Length).Trim(':',' ','\n','\r','\\','*');
 
             try
             {

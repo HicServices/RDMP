@@ -23,7 +23,7 @@ namespace Rdmp.Core.Databases
         }
         public override Patch GetInitialCreateScriptContents(DiscoveredDatabase db)
         {
-            var header = GetHeader(InitialScriptName, new Version(1, 0, 0));
+            var header = GetHeader(db.Server.DatabaseType,InitialScriptName, new Version(1, 0, 0));
 
             var sql = new StringBuilder();
 
