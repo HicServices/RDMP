@@ -6,9 +6,7 @@
 
 using System;
 using System.Collections.Generic;
-using System.Data;
 using System.Data.Common;
-using Microsoft.Data.SqlClient;
 using FAnsi.Discovery;
 
 namespace Rdmp.Core.Logging
@@ -160,15 +158,12 @@ namespace Rdmp.Core.Logging
 
         private void RecordNewDataLoadInDatabase(string dataLoadTaskName)
         {
-            int parentTaskID = -1;
-
-            using (var con = (SqlConnection)_server.GetConnection())
+            using (var con = _server.GetConnection())
             {
                 con.Open();
 
-                SqlCommand cmd = new SqlCommand("SELECT ID FROM DataLoadTask WHERE name=@name", con);
-                cmd.Parameters.Add("@name", SqlDbType.VarChar, 255);
-                cmd.Parameters["@name"].Value = dataLoadTaskName;
+                var cmd = _server.GetCommand("SELECT ID FROM DataLoadTask WHERE name=@name", con);
+                _server.AddParameterWithValueToCommand("@name",cmd, dataLoadTaskName);
 
 
                 var result = cmd.ExecuteScalar();
@@ -177,28 +172,20 @@ namespace Rdmp.Core.Logging
                     throw new Exception("Could not find data load task named:" + dataLoadTaskName);
 
                 //ID can come back as a decimal or an Int32 or an Int64 so whatever, just turn it into a string and then parse it
-                parentTaskID = int.Parse(result.ToString());
-
-
-                cmd = new SqlCommand(
+                var parentTaskID = int.Parse(result.ToString());
+                                
+                cmd = _server.GetCommand(
                     @"INSERT INTO DataLoadRun (description,startTime,dataLoadTaskID,isTest,packageName,userAccount,suggestedRollbackCommand) VALUES (@description,@startTime,@dataLoadTaskID,@isTest,@packageName,@userAccount,@suggestedRollbackCommand);
-SELECT SCOPE_IDENTITY();", con);
+SELECT @@IDENTITY;", con);
 
-                cmd.Parameters.Add("@description", SqlDbType.VarChar, -1);
-                cmd.Parameters.Add("@startTime", SqlDbType.DateTime);
-                cmd.Parameters.Add("@dataLoadTaskID", SqlDbType.Int);
-                cmd.Parameters.Add("@isTest", SqlDbType.Bit);
-                cmd.Parameters.Add("@packageName", SqlDbType.VarChar, 100);
-                cmd.Parameters.Add("@userAccount", SqlDbType.VarChar, 50);
-                cmd.Parameters.Add("@suggestedRollbackCommand", SqlDbType.VarChar, -1);
+                _server.AddParameterWithValueToCommand("@description", cmd, _description);
+                _server.AddParameterWithValueToCommand("@startTime", cmd, _startTime);
+                _server.AddParameterWithValueToCommand("@dataLoadTaskID", cmd, parentTaskID);
+                _server.AddParameterWithValueToCommand("@isTest",cmd, _isTest);
+                _server.AddParameterWithValueToCommand("@packageName", cmd, _packageName);
+                _server.AddParameterWithValueToCommand("@userAccount", cmd, _userAccount);
+                _server.AddParameterWithValueToCommand("@suggestedRollbackCommand", cmd, _suggestedRollbackCommand ?? string.Empty);
 
-                cmd.Parameters["@description"].Value = _description;
-                cmd.Parameters["@startTime"].Value = _startTime;
-                cmd.Parameters["@dataLoadTaskID"].Value = parentTaskID;
-                cmd.Parameters["@isTest"].Value = _isTest;
-                cmd.Parameters["@packageName"].Value = _packageName;
-                cmd.Parameters["@userAccount"].Value = _userAccount;
-                cmd.Parameters["@suggestedRollbackCommand"].Value = _suggestedRollbackCommand ?? string.Empty;
 
                 //ID can come back as a decimal or an Int32 or an Int64 so whatever, just turn it into a string and then parse it
                 _id = int.Parse(cmd.ExecuteScalar().ToString());
@@ -312,25 +299,19 @@ SELECT SCOPE_IDENTITY();", con);
                 //look up the fatal error ID (get hte name of the Enum so that we can refactor if nessesary without breaking the code looking for a constant string)
                 string initialErrorStatus = Enum.GetName(typeof(FatalErrorStates), FatalErrorStates.Outstanding);
 
-                SqlCommand cmdLookupStatusID = new SqlCommand("SELECT ID from z_FatalErrorStatus WHERE status=@status", (SqlConnection)con);
-                cmdLookupStatusID.Parameters.Add("@status", SqlDbType.NChar, 20);
-                cmdLookupStatusID.Parameters["@status"].Value = initialErrorStatus;
+                
+                var cmdLookupStatusID = _server.GetCommand("SELECT ID from z_FatalErrorStatus WHERE status=@status", con);
+                _server.AddParameterWithValueToCommand("@status",cmdLookupStatusID, initialErrorStatus);
 
                 int statusID = int.Parse(cmdLookupStatusID.ExecuteScalar().ToString());
 
-                SqlCommand cmdRecordFatalError = new SqlCommand(
-    @"INSERT INTO FatalError (time,source,description,statusID,dataLoadRunID) VALUES (@time,@source,@description,@statusID,@dataLoadRunID);", (SqlConnection)con);
-                cmdRecordFatalError.Parameters.Add("@time", SqlDbType.DateTime);
-                cmdRecordFatalError.Parameters.Add("@source", SqlDbType.VarChar, 50);
-                cmdRecordFatalError.Parameters.Add("@description", SqlDbType.VarChar, -1);
-                cmdRecordFatalError.Parameters.Add("@statusID", SqlDbType.Int);
-                cmdRecordFatalError.Parameters.Add("@dataLoadRunID", SqlDbType.Int);
-
-                cmdRecordFatalError.Parameters["@time"].Value = DateTime.Now;
-                cmdRecordFatalError.Parameters["@source"].Value = errorSource;
-                cmdRecordFatalError.Parameters["@description"].Value = errorDescription;
-                cmdRecordFatalError.Parameters["@statusID"].Value = statusID;
-                cmdRecordFatalError.Parameters["@dataLoadRunID"].Value = ID;
+                var cmdRecordFatalError = _server.GetCommand(
+    @"INSERT INTO FatalError (time,source,description,statusID,dataLoadRunID) VALUES (@time,@source,@description,@statusID,@dataLoadRunID);", con);
+                _server.AddParameterWithValueToCommand("@time", cmdRecordFatalError, DateTime.Now);
+                _server.AddParameterWithValueToCommand("@source", cmdRecordFatalError, errorSource);
+                _server.AddParameterWithValueToCommand("@description", cmdRecordFatalError, errorDescription);
+                _server.AddParameterWithValueToCommand("@statusID", cmdRecordFatalError, statusID);
+                _server.AddParameterWithValueToCommand("@dataLoadRunID", cmdRecordFatalError, ID);
 
                 cmdRecordFatalError.ExecuteNonQuery();
 
@@ -352,24 +333,18 @@ SELECT SCOPE_IDENTITY();", con);
 
         public void LogProgress(ProgressEventType pevent, string Source, string Description)
         {
-            using (var con = (SqlConnection)DatabaseSettings.GetConnection())
-                using (var cmdRecordProgress = new SqlCommand("INSERT INTO ProgressLog " +
+            using (var con = DatabaseSettings.GetConnection())
+                using (var cmdRecordProgress = _server.GetCommand("INSERT INTO ProgressLog " +
                                                                 "(dataLoadRunID,eventType,source,description,time) " +
                                                                 "VALUES (@dataLoadRunID,@eventType,@source,@description,@time);", con))
                 {
                     con.Open();
 
-                    cmdRecordProgress.Parameters.Add("@dataLoadRunID", SqlDbType.Int);
-                    cmdRecordProgress.Parameters.Add("@eventType", SqlDbType.VarChar, 50);
-                    cmdRecordProgress.Parameters.Add("@source", SqlDbType.VarChar, 100);
-                    cmdRecordProgress.Parameters.Add("@description", SqlDbType.VarChar, 8000);
-                    cmdRecordProgress.Parameters.Add("@time", SqlDbType.DateTime);
-
-                    cmdRecordProgress.Parameters["@dataLoadRunID"].Value = ID;
-                    cmdRecordProgress.Parameters["@eventType"].Value = pevent.ToString();
-                    cmdRecordProgress.Parameters["@source"].Value = Source;
-                    cmdRecordProgress.Parameters["@description"].Value = Description;
-                    cmdRecordProgress.Parameters["@time"].Value = DateTime.Now;
+                    _server.AddParameterWithValueToCommand("@dataLoadRunID",cmdRecordProgress, ID);
+                    _server.AddParameterWithValueToCommand("@eventType", cmdRecordProgress, pevent.ToString());
+                    _server.AddParameterWithValueToCommand("@source", cmdRecordProgress, Source);
+                    _server.AddParameterWithValueToCommand("@description", cmdRecordProgress, Description);
+                    _server.AddParameterWithValueToCommand("@time", cmdRecordProgress, DateTime.Now);
 
                     cmdRecordProgress.ExecuteNonQuery();
                 }

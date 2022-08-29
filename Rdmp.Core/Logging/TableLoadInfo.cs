@@ -6,7 +6,7 @@
 
 using System;
 using System.Data;
-using Microsoft.Data.SqlClient;
+using FAnsi.Connections;
 using FAnsi.Discovery;
 
 namespace Rdmp.Core.Logging
@@ -78,23 +78,18 @@ namespace Rdmp.Core.Logging
 
         private void RecordNewTableLoadInDatabase(DataLoadInfo parent,string destinationTable, DataSource[] sources, int expectedInserts)
         {
-            using (var con = (SqlConnection)_databaseSettings.GetConnection())
-                using (var cmd = new SqlCommand("INSERT INTO TableLoadRun (startTime,dataLoadRunID,targetTable,expectedInserts,suggestedRollbackCommand) " +
+            using (var con = _databaseSettings.GetConnection())
+                using (var cmd = _databaseSettings.GetCommand("INSERT INTO TableLoadRun (startTime,dataLoadRunID,targetTable,expectedInserts,suggestedRollbackCommand) " +
                                                 "VALUES (@startTime,@dataLoadRunID,@targetTable,@expectedInserts,@suggestedRollbackCommand); " +
-                                                "SELECT SCOPE_IDENTITY();", con))
+                                                "SELECT @@IDENTITY;", con))
                 {
                     con.Open();
-                    cmd.Parameters.Add("@startTime", SqlDbType.DateTime);
-                    cmd.Parameters.Add("@dataLoadRunID", SqlDbType.Int);
-                    cmd.Parameters.Add("@targetTable", SqlDbType.VarChar, 200);
-                    cmd.Parameters.Add("@expectedInserts", SqlDbType.BigInt);
-                    cmd.Parameters.Add("@suggestedRollbackCommand", SqlDbType.VarChar, -1);
 
-                    cmd.Parameters["@startTime"].Value = DateTime.Now;
-                    cmd.Parameters["@dataLoadRunID"].Value = parent.ID;
-                    cmd.Parameters["@targetTable"].Value = destinationTable;
-                    cmd.Parameters["@expectedInserts"].Value = expectedInserts;
-                    cmd.Parameters["@suggestedRollbackCommand"].Value = _suggestedRollbackCommand;
+                    _databaseSettings.AddParameterWithValueToCommand("@startTime",cmd, DateTime.Now);
+                    _databaseSettings.AddParameterWithValueToCommand("@dataLoadRunID", cmd, parent.ID);
+                    _databaseSettings.AddParameterWithValueToCommand("@targetTable", cmd, destinationTable);
+                    _databaseSettings.AddParameterWithValueToCommand("@expectedInserts", cmd, expectedInserts);
+                    _databaseSettings.AddParameterWithValueToCommand("@suggestedRollbackCommand", cmd, _suggestedRollbackCommand);
 
                     //get the ID, can come back as a decimal or an Int32 or an Int64 so whatever, just turn it into a string and then parse it
                     _id = int.Parse(cmd.ExecuteScalar().ToString());
@@ -105,27 +100,14 @@ namespace Rdmp.Core.Logging
                     //for each of the sources, create them in the DataSource table
                     foreach (DataSource s in DataSources)
                     {
-                        using (var cmdInsertDs = new SqlCommand("INSERT INTO DataSource (source,tableLoadRunID,originDate,MD5) " +
-                                             "VALUES (@source,@tableLoadRunID,@originDate,@MD5); SELECT SCOPE_IDENTITY();", con))
+                        using (var cmdInsertDs = _databaseSettings.GetCommand("INSERT INTO DataSource (source,tableLoadRunID,originDate,MD5) " +
+                                             "VALUES (@source,@tableLoadRunID,@originDate,@MD5); SELECT @@IDENTITY;", con))
                         {
-                            cmdInsertDs.Parameters.Add("@source", SqlDbType.VarChar, -1);
-                            cmdInsertDs.Parameters.Add("@tableLoadRunID", SqlDbType.Int);
-                            cmdInsertDs.Parameters.Add("@originDate", SqlDbType.Date);
-                            cmdInsertDs.Parameters.Add("@MD5", SqlDbType.Binary, 128);
 
-
-                            cmdInsertDs.Parameters["@source"].Value = s.Source;
-                            cmdInsertDs.Parameters["@tableLoadRunID"].Value = _id;
-
-                            if (s.UnknownOriginDate)
-                                cmdInsertDs.Parameters["@originDate"].Value = DBNull.Value;
-                            else
-                                cmdInsertDs.Parameters["@originDate"].Value = s.OriginDate;
-
-                            if (s.MD5 != null)
-                                cmdInsertDs.Parameters["@MD5"].Value = s.MD5;
-                            else
-                                cmdInsertDs.Parameters["@MD5"].Value = DBNull.Value;
+                            _databaseSettings.AddParameterWithValueToCommand("@source", cmdInsertDs, s.Source);
+                            _databaseSettings.AddParameterWithValueToCommand("@tableLoadRunID", cmdInsertDs, _id);
+                            _databaseSettings.AddParameterWithValueToCommand("@originDate", cmdInsertDs, s.UnknownOriginDate ? DBNull.Value : s.OriginDate);
+                            _databaseSettings.AddParameterWithValueToCommand("@MD5", cmdInsertDs, s.MD5 != null ? s.MD5:DBNull.Value);
 
                             s.ID = int.Parse(cmdInsertDs.ExecuteScalar().ToString());
                         }
@@ -220,36 +202,20 @@ namespace Rdmp.Core.Logging
 
         public void CloseAndArchive()
         {
-            using (var con = (SqlConnection)_databaseSettings.GetConnection())
+            using (var con = _databaseSettings.BeginNewTransactedConnection())
             {
-                con.Open();
-                using (SqlTransaction transaction = con.BeginTransaction())
-                using (var cmdCloseRecord = new SqlCommand("UPDATE TableLoadRun SET endTime=@endTime,inserts=@inserts,updates=@updates,deletes=@deletes,errorRows=@errorRows,duplicates=@duplicates, notes=@notes WHERE ID=@ID", con, transaction))
+                using (var cmdCloseRecord = _databaseSettings.GetCommand("UPDATE TableLoadRun SET endTime=@endTime,inserts=@inserts,updates=@updates,deletes=@deletes,errorRows=@errorRows,duplicates=@duplicates, notes=@notes WHERE ID=@ID", con.Connection, con.ManagedTransaction))
                 {
                     try
                     {
-                        cmdCloseRecord.Parameters.Add("@endTime", SqlDbType.DateTime);
-                        cmdCloseRecord.Parameters.Add("@inserts", SqlDbType.BigInt);
-                        cmdCloseRecord.Parameters.Add("@updates", SqlDbType.BigInt);
-                        cmdCloseRecord.Parameters.Add("@deletes", SqlDbType.BigInt);
-                        cmdCloseRecord.Parameters.Add("@errorRows", SqlDbType.BigInt);
-                        cmdCloseRecord.Parameters.Add("@duplicates", SqlDbType.BigInt);
-                        cmdCloseRecord.Parameters.Add("@notes", SqlDbType.VarChar);
-                        cmdCloseRecord.Parameters.Add("@ID", SqlDbType.Int);
-
-                        cmdCloseRecord.Parameters["@endTime"].Value = DateTime.Now;
-                        cmdCloseRecord.Parameters["@inserts"].Value = this.Inserts;
-                        cmdCloseRecord.Parameters["@updates"].Value = this.Updates;
-                        cmdCloseRecord.Parameters["@deletes"].Value = this.Deletes;
-                        cmdCloseRecord.Parameters["@errorRows"].Value = this.ErrorRows;
-                        cmdCloseRecord.Parameters["@duplicates"].Value = this.DiscardedDuplicates;
-
-                        if (string.IsNullOrWhiteSpace(this.Notes))
-                            cmdCloseRecord.Parameters["@notes"].Value = DBNull.Value;
-                        else
-                            cmdCloseRecord.Parameters["@notes"].Value = this.Notes;
-
-                        cmdCloseRecord.Parameters["@ID"].Value = this.ID;
+                        _databaseSettings.AddParameterWithValueToCommand("@endTime",cmdCloseRecord, DateTime.Now);
+                        _databaseSettings.AddParameterWithValueToCommand("@inserts", cmdCloseRecord, this.Inserts);
+                        _databaseSettings.AddParameterWithValueToCommand("@updates", cmdCloseRecord, this.Updates);
+                        _databaseSettings.AddParameterWithValueToCommand("@deletes", cmdCloseRecord, this.Deletes);
+                        _databaseSettings.AddParameterWithValueToCommand("@errorRows", cmdCloseRecord, this.ErrorRows);
+                        _databaseSettings.AddParameterWithValueToCommand("@duplicates", cmdCloseRecord, this.DiscardedDuplicates);
+                        _databaseSettings.AddParameterWithValueToCommand("@notes", cmdCloseRecord, string.IsNullOrWhiteSpace(this.Notes) ? DBNull.Value : this.Notes);
+                        _databaseSettings.AddParameterWithValueToCommand("@ID", cmdCloseRecord, this.ID);
 
                         int affectedRows = cmdCloseRecord.ExecuteNonQuery();
 
@@ -257,9 +223,9 @@ namespace Rdmp.Core.Logging
                             throw new Exception("Error closing TableLoadInfo in database, the UPDATE command affected " + affectedRows + " when we expected 1 (will attempt to rollback transaction)");
 
                         foreach (DataSource s in DataSources)
-                            MarkDataSourceAsArchived(s, con, transaction);
+                            MarkDataSourceAsArchived(s, con);
 
-                        transaction.Commit();
+                        con.ManagedTransaction.CommitAndCloseConnection();
 
                         _endTime = DateTime.Now;
                         _isClosed = true;
@@ -267,27 +233,24 @@ namespace Rdmp.Core.Logging
                     catch (Exception)
                     {
                         //if something goes wrong with the update, roll it back
-                        transaction.Rollback();
+                        con.ManagedTransaction.AbandonAndCloseConnection();
                         throw;
                     }
                 }
             }
         }
 
-        private void MarkDataSourceAsArchived(DataSource ds, SqlConnection con, SqlTransaction transaction)
+        private void MarkDataSourceAsArchived(DataSource ds, IManagedConnection con)
         {
             if (string.IsNullOrEmpty(ds.Archive))
                 return;
 
-            using (var cmdSetArchived = new SqlCommand("UPDATE DataSource SET archive=@archive, source = @source WHERE ID=@ID", con, transaction))
+            using (var cmdSetArchived = _databaseSettings.GetCommand("UPDATE DataSource SET archive=@archive, source = @source WHERE ID=@ID", con.Connection, con.ManagedTransaction))
             {
-                cmdSetArchived.Parameters.Add("@archive", SqlDbType.VarChar, -1);
-                cmdSetArchived.Parameters.Add("@source", SqlDbType.VarChar, -1);
-                cmdSetArchived.Parameters.Add("@ID", SqlDbType.Int);
 
-                cmdSetArchived.Parameters["@archive"].Value = ds.Archive;
-                cmdSetArchived.Parameters["@source"].Value = ds.Source;
-                cmdSetArchived.Parameters["@ID"].Value = ds.ID;
+                _databaseSettings.AddParameterWithValueToCommand("@archive", cmdSetArchived,ds.Archive);
+                _databaseSettings.AddParameterWithValueToCommand("@source", cmdSetArchived, ds.Source);
+                _databaseSettings.AddParameterWithValueToCommand("@ID", cmdSetArchived, ds.ID);
 
                 cmdSetArchived.ExecuteNonQuery();
             }
