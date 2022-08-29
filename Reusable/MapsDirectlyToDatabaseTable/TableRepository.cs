@@ -962,7 +962,7 @@ namespace MapsDirectlyToDatabaseTable
             EndTransactedConnection(commit);
         }
 
-        private string Wrap(string name)
+        public string Wrap(string name)
         {
             return DiscoveredServer.GetQuerySyntaxHelper().EnsureWrapped(name);
         }

@@ -7,6 +7,7 @@
 using System;
 using System.Collections.Generic;
 using System.Data;
+using MapsDirectlyToDatabaseTable;
 using Rdmp.Core.Validation.Constraints;
 using ReusableLibraryCode;
 
@@ -56,17 +57,19 @@ namespace Rdmp.Core.DataQualityEngine.Data
            var calc = new DatasetTimespanCalculator();
            var result = calc.GetMachineReadableTimespanIfKnownOf(evaluation, discardOutliers);
 
+            var t = evaluation.DQERepository;
+
            using (var con = evaluation.DQERepository.GetConnection())
            {
                var sql = 
-               @"SELECT 
-      [Year]
-      ,[Month]
+               @$"SELECT 
+      {t.Wrap("Year")}
+      ,{t.Wrap("Month")}
       ,RowEvaluation
       ,CountOfRecords
   FROM [PeriodicityState]
     where
-  Evaluation_ID = " + evaluation.ID + " and PivotCategory = 'ALL' ORDER BY [Year],[Month]";
+  Evaluation_ID = ${evaluation.ID} and PivotCategory = 'ALL' ORDER BY {t.Wrap("Year")},{t.Wrap("Month")}";
 
                using(var cmd = DatabaseCommandHelper.GetCommand(sql, con.Connection, con.Transaction))
                {
@@ -179,9 +182,11 @@ namespace Rdmp.Core.DataQualityEngine.Data
                 if (IsCommitted)
                     throw new NotSupportedException("PeriodicityState was already committed");
 
+                var t = evaluation.DQERepository;
+
                 string sql =
                     string.Format(
-                        "INSERT INTO [dbo].[PeriodicityState]([Evaluation_ID],[Year],[Month],[CountOfRecords],[RowEvaluation],[PivotCategory])VALUES({0},{1},{2},{3},{4},{5})"
+                        $"INSERT INTO PeriodicityState(Evaluation_ID,{t.Wrap("Year")},{t.Wrap("Month")},CountOfRecords,RowEvaluation,PivotCategory)VALUES({0},{1},{2},{3},{4},{5})"
                         ,evaluation.ID
                         ,Year
                         ,Month
