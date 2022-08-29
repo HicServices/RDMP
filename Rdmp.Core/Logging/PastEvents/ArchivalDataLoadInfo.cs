@@ -7,6 +7,7 @@
 using System;
 using System.Collections.Generic;
 using System.Data.Common;
+using System.Linq;
 using FAnsi.Discovery;
 using ReusableLibraryCode.Settings;
 
@@ -28,7 +29,7 @@ namespace Rdmp.Core.Logging.PastEvents
         public DateTime StartTime { get; internal set; }
         public DateTime? EndTime { get; internal set; }
 
-        public bool HasErrors { get; private set; }
+        public bool HasErrors => _knownErrors.Value.Any();
 
         public string ToShortString()
         {
@@ -93,8 +94,6 @@ namespace Rdmp.Core.Logging.PastEvents
                 EndTime = Convert.ToDateTime(r["endTime"]);
 
             Description = r["description"] as string;
-
-            HasErrors = r["hasErrors"] != DBNull.Value;
 
             _knownTableInfos = new Lazy<List<ArchivalTableLoadInfo>>(GetTableInfos);
             _knownErrors = new Lazy<List<ArchivalFatalError>>(GetErrors);
