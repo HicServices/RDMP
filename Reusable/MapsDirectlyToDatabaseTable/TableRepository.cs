@@ -640,7 +640,7 @@ namespace MapsDirectlyToDatabaseTable
                     throw new InvalidOperationException(
                         "Invalid parameters for " + typeof(T).Name + " INSERT. Do not use @ when specifying parameter names, this is SQL-specific and will be added when required: " + string.Join(", ", parameters.Where(kvp => kvp.Key.StartsWith("@"))));
 
-                var columnString = string.Join(", ", parameters.Select(kvp => "[" + kvp.Key + "]"));
+                var columnString = string.Join(", ", parameters.Select(kvp => Wrap(kvp.Key)));
                 var parameterString = string.Join(", ", parameters.Select(kvp => "@" + kvp.Key));
                 query += "(" + columnString + ") VALUES (" + parameterString + ")";
             }
@@ -960,6 +960,11 @@ namespace MapsDirectlyToDatabaseTable
         public void EndTransaction(bool commit)
         {
             EndTransactedConnection(commit);
+        }
+
+        private string Wrap(string name)
+        {
+            return DiscoveredServer.GetQuerySyntaxHelper().EnsureWrapped(name);
         }
     }
 }
