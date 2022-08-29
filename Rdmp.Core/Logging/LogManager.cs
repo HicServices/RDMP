@@ -246,10 +246,11 @@ namespace Rdmp.Core.Logging
                     var sql =
                         "INSERT INTO DataLoadTask (ID, description, name, createTime, userAccount, statusID, isTest, dataSetID) " +
                         "VALUES " +
-                        "(" + id + ", @dataSetID, @dataSetID, GetDate(), @username, 1, 0, @dataSetID)";
+                        "(" + id + ", @dataSetID, @dataSetID, @date, @username, 1, 0, @dataSetID)";
 
                     using (var cmd = Server.GetCommand(sql, conn))
                     {
+                        Server.AddParameterWithValueToCommand("@date", cmd,DateTime.Now);
                         Server.AddParameterWithValueToCommand("@dataSetID",cmd,dataSetID);
                         Server.AddParameterWithValueToCommand("@username",cmd,Environment.UserName);
                     
@@ -318,7 +319,7 @@ namespace Rdmp.Core.Logging
                 conn.Open();
                 {
                     var sql =
-                        "UPDATE [FatalError] SET explanation =@explanation, statusID=@statusID where ID in (" + string.Join(",", ids) + ")";
+                        "UPDATE FatalError SET explanation =@explanation, statusID=@statusID where ID in (" + string.Join(",", ids) + ")";
 
                     int affectedRows;
 
