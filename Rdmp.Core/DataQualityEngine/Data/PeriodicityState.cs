@@ -185,14 +185,7 @@ namespace Rdmp.Core.DataQualityEngine.Data
                 var t = evaluation.DQERepository;
 
                 string sql =
-                    string.Format(
-                        $"INSERT INTO PeriodicityState(Evaluation_ID,{t.Wrap("Year")},{t.Wrap("Month")},CountOfRecords,RowEvaluation,PivotCategory)VALUES({0},{1},{2},{3},{4},{5})"
-                        ,evaluation.ID
-                        ,Year
-                        ,Month
-                        ,CountOfRecords
-                        , "@RowEvaluation",
-                        "@PivotCategory");
+                        $"INSERT INTO PeriodicityState(Evaluation_ID,{t.Wrap("Year")},{t.Wrap("Month")},CountOfRecords,RowEvaluation,PivotCategory)VALUES({evaluation.ID},{Year},{Month},{CountOfRecords},@RowEvaluation,@PivotCategory)";
 
                 using (var cmd = DatabaseCommandHelper.GetCommand(sql, con.Connection, con.Transaction))
                 {
