@@ -27,6 +27,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 - Running RDMP cli without supplying repository connection details (and after deleting `Databases.yaml`) now results in a specific error message instead of null reference [#1346]https://github.com/HicServices/RDMP/issues/1346
 - Fixed Pipeline components who run in threaded but call UI methods resulting in unstable UI components [#1357](https://github.com/HicServices/RDMP/issues/1357)
+- Fixed deleting an [ExtractionConfiguration] with Selective Refresh enabled not removing it from UI [#1375](https://github.com/HicServices/RDMP/issues/1375)
 
 ## [7.0.17] - 2022-08-01
 
