@@ -9,9 +9,11 @@ using System.Collections.Generic;
 using System.Data;
 using System.Data.Common;
 using System.Linq;
+using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
 using FAnsi.Discovery;
+using FAnsi.Discovery.QuerySyntax;
 using Rdmp.Core.Logging.PastEvents;
 using ReusableLibraryCode;
 using ReusableLibraryCode.DataAccess;
@@ -153,13 +155,9 @@ namespace Rdmp.Core.Logging
                 var dataTaskId = GetDataTaskId(dataTask,Server, con);
 
                 string where = "";
-                string top = "";
 
                 using (var cmd = Server.GetCommand("", con))
                 {
-                    if (topX != null)
-                        top = "TOP " + topX.Value;
-
                     if (specificDataLoadRunIDOnly != null)
                         where = "WHERE ID=" + specificDataLoadRunIDOnly.Value;
                     else
@@ -171,9 +169,32 @@ namespace Rdmp.Core.Logging
                         cmd.Parameters.Add(p);
                     }
 
-                    string sql = "SELECT " + top + " *, (select top 1 1 from FatalError where dataLoadRunID = DataLoadRun.ID) hasErrors FROM " + run.GetFullyQualifiedName() +" " + where + " ORDER BY ID desc";
+                    TopXResponse top = null;
 
-                    cmd.CommandText = sql;
+                    if (topX.HasValue)
+                         top = Server.GetQuerySyntaxHelper().HowDoWeAchieveTopX(topX.Value);
+
+                    StringBuilder sb = new StringBuilder();
+
+
+                    sb.Append("SELECT ");
+
+                    if(top?.Location == QueryComponent.SELECT)
+                    {
+                        sb.AppendLine(top.SQL);
+                    }
+
+                    sb.Append(" *");
+
+
+                    sb.AppendLine($" FROM {run.GetFullyQualifiedName()}  {where} ORDER BY ID desc");
+
+                    if(top?.Location == QueryComponent.Postfix)
+                    {
+                        sb.AppendLine(top.SQL);
+                    }
+
+                    cmd.CommandText = sb.ToString();
 
                     DbDataReader r;
                     if (token == null)
@@ -246,10 +267,11 @@ namespace Rdmp.Core.Logging
                     var sql =
                         "INSERT INTO DataLoadTask (ID, description, name, createTime, userAccount, statusID, isTest, dataSetID) " +
                         "VALUES " +
-                        "(" + id + ", @dataSetID, @dataSetID, GetDate(), @username, 1, 0, @dataSetID)";
+                        "(" + id + ", @dataSetID, @dataSetID, @date, @username, 1, 0, @dataSetID)";
 
                     using (var cmd = Server.GetCommand(sql, conn))
                     {
+                        Server.AddParameterWithValueToCommand("@date", cmd,DateTime.Now);
                         Server.AddParameterWithValueToCommand("@dataSetID",cmd,dataSetID);
                         Server.AddParameterWithValueToCommand("@username",cmd,Environment.UserName);
                     
@@ -318,7 +340,7 @@ namespace Rdmp.Core.Logging
                 conn.Open();
                 {
                     var sql =
-                        "UPDATE [FatalError] SET explanation =@explanation, statusID=@statusID where ID in (" + string.Join(",", ids) + ")";
+                        "UPDATE FatalError SET explanation =@explanation, statusID=@statusID where ID in (" + string.Join(",", ids) + ")";
 
                     int affectedRows;
 

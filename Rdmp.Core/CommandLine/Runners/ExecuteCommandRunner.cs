@@ -20,6 +20,7 @@ using Rdmp.Core.DataFlowPipeline;
 using Rdmp.Core.Repositories;
 using ReusableLibraryCode.Checks;
 using ReusableLibraryCode.Progress;
+using Spectre.Console;
 
 namespace Rdmp.Core.CommandLine.Runners
 {
@@ -138,8 +139,7 @@ namespace Rdmp.Core.CommandLine.Runners
 
             while (true)
             {
-                Console.WriteLine("Enter Command (or 'exit')");
-                var command = _input.GetString(new DialogArgs { WindowTitle = "Command" }, _commands.Keys.ToList());
+                var command = _input.GetString(new DialogArgs { WindowTitle = "Enter Command (or Ctrl+C)" }, _commands.Keys.ToList());
                 try
                 {
                     command = GetCommandAndPickerFromLine(command, out _picker,repositoryLocator);
@@ -151,7 +151,7 @@ namespace Rdmp.Core.CommandLine.Runners
                 }
                 catch (Exception ex)
                 {
-                    Console.WriteLine(ex.Message);
+                    AnsiConsole.WriteException(ex, ExceptionFormats.ShortenEverything);
                 }
 
 

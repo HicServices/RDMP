@@ -235,7 +235,7 @@ namespace Rdmp.Core.CommandLine.Gui
 
         public override FileInfo SelectFile(string prompt, string patternDescription, string pattern)
         {
-            var openDir = new OpenDialog(prompt,"Directory")
+            var openDir = new OpenDialog(prompt,"File")
             {
                 AllowsMultipleSelection = false,
                 AllowedFileTypes = pattern == null ? null : new []{pattern.TrimStart('*')}
