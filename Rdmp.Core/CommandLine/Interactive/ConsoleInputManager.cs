@@ -10,6 +10,7 @@ using System.Diagnostics;
 using System.Globalization;
 using System.IO;
 using System.Linq;
+using System.Text;
 using FAnsi.Discovery;
 using MapsDirectlyToDatabaseTable;
 using Rdmp.Core.CohortCommitting.Pipeline;
@@ -27,6 +28,7 @@ using Rdmp.Core.Startup;
 using ReusableLibraryCode;
 using ReusableLibraryCode.Checks;
 using ReusableLibraryCode.DataAccess;
+using Spectre.Console;
 
 namespace Rdmp.Core.CommandLine.Interactive
 {
@@ -59,8 +61,7 @@ namespace Rdmp.Core.CommandLine.Interactive
         public override bool TypeText(DialogArgs args, int maxLength, string initialText, out string text,
             bool requireSaneHeaderText)
         {
-            WritePromptFor(args);
-            text = ReadLineWithAuto();
+            text = AnsiConsole.Ask<string>(GetPromptFor(args));
             return !string.IsNullOrWhiteSpace(text);
         }
 
@@ -69,8 +70,7 @@ namespace Rdmp.Core.CommandLine.Interactive
             if (DisallowInput)
                 throw new InputDisallowedException($"Value required for '{taskDescription}'");
 
-            Console.WriteLine(taskDescription);
-            var value = ReadLineWithAuto(new PickDatabase());
+            var value = ReadLineWithAuto(new DialogArgs { WindowTitle = taskDescription}, new PickDatabase());
             return value.Database;
         }
 
@@ -79,8 +79,7 @@ namespace Rdmp.Core.CommandLine.Interactive
             if (DisallowInput)
                 throw new InputDisallowedException($"Value required for '{taskDescription}'");
 
-            Console.WriteLine(taskDescription);
-            var value = ReadLineWithAuto(new PickTable());
+            var value = ReadLineWithAuto(new DialogArgs { WindowTitle = taskDescription },new PickTable());
             return value.Table;
         }
 
@@ -133,9 +132,7 @@ namespace Rdmp.Core.CommandLine.Interactive
         public override IMapsDirectlyToDatabaseTable[] SelectMany(DialogArgs args, Type arrayElementType,
             IMapsDirectlyToDatabaseTable[] availableObjects)
         {
-            WritePromptFor(args);
-
-            var value = ReadLineWithAuto(new PickObjectBase[]
+            var value = ReadLineWithAuto(args,new PickObjectBase[]
                 {new PickObjectByID(this), new PickObjectByName(this)},
                 availableObjects.Select(t=>t.GetType().Name).Distinct());
             
@@ -153,27 +150,35 @@ namespace Rdmp.Core.CommandLine.Interactive
         /// <param name="args"></param>
         /// <param name="entryLabel"></param>
         /// <exception cref="InputDisallowedException">Thrown if <see cref="DisallowInput"/> is true</exception>
-        private void WritePromptFor(DialogArgs args, bool entryLabel = true)
+        private string GetPromptFor(DialogArgs args, bool entryLabel = true)
         {
             if (DisallowInput)
                 throw new InputDisallowedException($"Value required for '{args}'");
 
+            var sb = new StringBuilder();
+
             if (!string.IsNullOrWhiteSpace(args.WindowTitle))
             {
-                Console.WriteLine(args.WindowTitle);
+                sb.Append(args.WindowTitle);
+
+                if(entryLabel && !string.IsNullOrWhiteSpace(args.EntryLabel))
+                {
+                    sb.Append(" - ");
+                }
             }
-                
-            if (!string.IsNullOrWhiteSpace(args.TaskDescription))
-            {
-                Console.WriteLine(args.TaskDescription);
-            }
-            
 
             if (entryLabel && !string.IsNullOrWhiteSpace(args.EntryLabel))
             {
-                Console.Write(args.EntryLabel);
+                sb.Append($"[green]{args.TaskDescription}[/]");
             }
-            
+
+            if (!string.IsNullOrWhiteSpace(args.TaskDescription))
+            {
+                sb.AppendLine();
+                sb.Append($"[grey]{args.TaskDescription}[/]");
+            }
+
+            return sb.ToString();
         }
 
         public override IMapsDirectlyToDatabaseTable SelectOne(DialogArgs args, IMapsDirectlyToDatabaseTable[] availableObjects)
@@ -192,7 +197,7 @@ namespace Rdmp.Core.CommandLine.Interactive
 
             Console.Write(args.EntryLabel);
 
-            var value = ReadLineWithAuto(new PickObjectBase[]
+            var value = ReadLineWithAuto(args, new PickObjectBase[]
                 {new PickObjectByID(this), new PickObjectByName(this)},
                 availableObjects.Select(t=>t.GetType().Name).Distinct());
 
@@ -231,31 +236,29 @@ namespace Rdmp.Core.CommandLine.Interactive
             return false;
         }
 
-        private string ReadLineWithAuto(IEnumerable<string> autoComplete = null)
+        private string ReadLineWithAuto(DialogArgs args, IEnumerable<string> autoComplete = null)
         {
             if (DisallowInput)
                 throw new InputDisallowedException("Value required");
 
-            ReadLine.AutoCompletionHandler = new AutoComplete(autoComplete);
-
-            return ReadLine.Read();
+            return AnsiConsole.Ask<string>(GetPromptFor(args));
         }
 
-        private CommandLineObjectPickerArgumentValue ReadLineWithAuto(PickObjectBase picker)
+        private CommandLineObjectPickerArgumentValue ReadLineWithAuto(DialogArgs args, PickObjectBase picker)
         {
             if (DisallowInput)
                 throw new InputDisallowedException("Value required");
 
-            string line = ReadLineWithAuto(picker.GetAutoCompleteIfAny());
+            string line = ReadLineWithAuto(args,picker.GetAutoCompleteIfAny());
 
             return picker.Parse(line, 0);
         }
-        private CommandLineObjectPickerArgumentValue ReadLineWithAuto(PickObjectBase[] pickers,IEnumerable<string> autoComplete)
+        private CommandLineObjectPickerArgumentValue ReadLineWithAuto(DialogArgs args, PickObjectBase[] pickers,IEnumerable<string> autoComplete)
         {
             if (DisallowInput)
                 throw new InputDisallowedException("Value required");
 
-            string line = ReadLineWithAuto(autoComplete);
+            string line = ReadLineWithAuto(args, autoComplete);
             
             var picker = new CommandLineObjectPicker(new[]{line},RepositoryLocator,pickers);
             return picker[0];
@@ -266,8 +269,19 @@ namespace Rdmp.Core.CommandLine.Interactive
             if (DisallowInput)
                 throw new InputDisallowedException($"Value required for '{prompt}'");
 
-            Console.WriteLine(prompt);
-            return new DirectoryInfo(Console.ReadLine());
+            var result = AnsiConsole.Prompt<string>(
+                new TextPrompt<string>(
+                GetPromptFor(new DialogArgs
+                {
+                    WindowTitle = "Select Directory",
+                    EntryLabel = prompt
+                }))
+                .AllowEmpty());
+
+            if (IsBasicallyNull(result))
+                return null;
+
+            return new DirectoryInfo(result);
         }
 
         public override FileInfo SelectFile(string prompt)
@@ -283,31 +297,52 @@ namespace Rdmp.Core.CommandLine.Interactive
             if (DisallowInput)
                 throw new InputDisallowedException($"Value required for '{prompt}'");
 
-            Console.WriteLine(prompt);
-            var file = Console.ReadLine();
+            var result = AnsiConsole.Prompt<string>(
+                new TextPrompt<string>(
+                GetPromptFor(new DialogArgs
+                {
+                    WindowTitle = "Select File",
+                    EntryLabel = prompt
+                }))
+                .AllowEmpty());
 
-            // if user types the literal string null then return null (typically interpretted as - 'I don't want to pick a file')
-            // but not the same as task cancellation
-            if (string.Equals(file,"null", StringComparison.CurrentCultureIgnoreCase))
+            if (IsBasicallyNull(result))
                 return null;
 
-            if (file != null)
-                return new FileInfo(file);
-
-            return null;
+            return new FileInfo(result);
         }
-        
+
+        private bool IsBasicallyNull(string result)
+        {
+            if (string.IsNullOrWhiteSpace(result))
+                return true;
+            
+            // if user types the literal string null then return null (typically interpretted as - 'I don't want to pick one')
+            // but not the same as task cancellation
+            if (string.Equals(result, "null", StringComparison.CurrentCultureIgnoreCase))
+                return true;
+
+            return false;
+        }
+
         public override FileInfo[] SelectFiles(string prompt, string patternDescription, string pattern)
         {
             if (DisallowInput)
                 throw new InputDisallowedException($"Value required for '{prompt}'");
 
-            Console.WriteLine(prompt);
-            Console.WriteLine(@"Enter path with optional wildcards (e.g. c:\*.csv):");
+            var file = AnsiConsole.Prompt<string>(
+                new TextPrompt<string>(
+                GetPromptFor(new DialogArgs
+                {
+                    WindowTitle = "Select File(s)",
+                    TaskDescription = patternDescription,
+                    EntryLabel = prompt
+                }))
+                .AllowEmpty());
 
-            var file = Console.ReadLine();
+            if (IsBasicallyNull(file))
+                return null;
 
-            if (file == null) return null;
             var asteriskIdx = file.IndexOf('*');
 
             if(asteriskIdx != -1)
@@ -337,32 +372,34 @@ namespace Rdmp.Core.CommandLine.Interactive
 
         protected override bool SelectValueTypeImpl(DialogArgs args, Type paramType, object initialValue,out object chosen)
         {
-            WritePromptFor(args);
-
-            chosen = UsefulStuff.ChangeType(ReadLineWithAuto(), paramType);
-
+            chosen = UsefulStuff.ChangeType(AnsiConsole.Ask<string>(GetPromptFor(args)), paramType);
             return true;
         }
         
         public override bool YesNo(DialogArgs args, out bool chosen)
         {
-            WritePromptFor(args, false);
+            var result = GetString(args, new List<string> { "Yes","No","Cancel"});
 
-            Console.WriteLine(args.EntryLabel + "(Y/n)");
             
-            //if user picks no then it's false otherwise true
-            chosen = !string.Equals(Console.ReadLine()?.Trim(), "n", StringComparison.CurrentCultureIgnoreCase);
-
-            //user made a conscious decision
-            return true;
+            if (result == "Yes")
+                chosen = true;
+            else
+                chosen = false;
+            
+            //user made a noncancel decision?
+            return result != "Cancel" && !string.IsNullOrWhiteSpace(result);
         }
         
         public string GetString(DialogArgs args, List<string> options)
         {
-            WritePromptFor(args);
+            var chosen = AnsiConsole.Prompt(
+                new SelectionPrompt<string>()
+                .PageSize(10)
+                .Title(GetPromptFor(args))
+                .AddChoices(options)
+            );
             
-            ReadLine.AutoCompletionHandler = new AutoComplete(options);
-            return ReadLine.Read();
+            return chosen;
         }
 
         public override void ShowData(IViewSQLAndResultsCollection collection)

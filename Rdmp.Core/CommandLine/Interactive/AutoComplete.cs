@@ -9,7 +9,7 @@ using System.Linq;
 
 namespace Rdmp.Core.CommandLine.Interactive
 {
-    class AutoComplete : IAutoCompleteHandler
+    class AutoComplete
     {
         private readonly string[] autocompletes;
 
