@@ -10,6 +10,8 @@ using System.Diagnostics;
 using System.IO;
 using System.Linq;
 using System.Text;
+using System.Threading;
+using System.Threading.Tasks;
 using FAnsi.Discovery;
 using MapsDirectlyToDatabaseTable;
 using Rdmp.Core.CommandExecution;
@@ -502,6 +504,15 @@ namespace Rdmp.Core.CommandLine.Interactive
         public override void LaunchSubprocess(ProcessStartInfo startInfo)
         {
             throw new NotSupportedException();
+        }
+
+        public override void Wait(string title, Task task, CancellationTokenSource cts)
+        {
+            AnsiConsole.Status()
+            .Spinner(Spinner.Known.Star)
+            .Start(title, ctx => 
+                base.Wait(title, task, cts)
+                );
         }
     }
 }
