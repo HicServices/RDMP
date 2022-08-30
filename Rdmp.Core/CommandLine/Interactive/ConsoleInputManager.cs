@@ -7,24 +7,18 @@
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
-using System.Globalization;
 using System.IO;
 using System.Linq;
 using System.Text;
 using FAnsi.Discovery;
 using MapsDirectlyToDatabaseTable;
-using Rdmp.Core.CohortCommitting.Pipeline;
 using Rdmp.Core.CommandExecution;
 using Rdmp.Core.CommandLine.Interactive.Picking;
-using Rdmp.Core.Curation.Data;
 using Rdmp.Core.Curation.Data.Aggregation;
 using Rdmp.Core.Curation.Data.DataLoad;
-using Rdmp.Core.DataExport.Data;
 using Rdmp.Core.DataExport.DataExtraction;
 using Rdmp.Core.DataViewing;
-using Rdmp.Core.Logging;
 using Rdmp.Core.Repositories;
-using Rdmp.Core.Startup;
 using ReusableLibraryCode;
 using ReusableLibraryCode.Checks;
 using ReusableLibraryCode.DataAccess;
@@ -133,8 +127,7 @@ namespace Rdmp.Core.CommandLine.Interactive
             IMapsDirectlyToDatabaseTable[] availableObjects)
         {
             var value = ReadLineWithAuto(args,new PickObjectBase[]
-                {new PickObjectByID(this), new PickObjectByName(this)},
-                availableObjects.Select(t=>t.GetType().Name).Distinct());
+                {new PickObjectByID(this), new PickObjectByName(this)});
             
             var unavailable = value.DatabaseEntities.Except(availableObjects).ToArray();
 
@@ -149,8 +142,9 @@ namespace Rdmp.Core.CommandLine.Interactive
         /// </summary>
         /// <param name="args"></param>
         /// <param name="entryLabel"></param>
+        /// <param name="pickers"></param>
         /// <exception cref="InputDisallowedException">Thrown if <see cref="DisallowInput"/> is true</exception>
-        private string GetPromptFor(DialogArgs args, bool entryLabel = true)
+        private string GetPromptFor(DialogArgs args, bool entryLabel = true, params PickObjectBase[] pickers)
         {
             if (DisallowInput)
                 throw new InputDisallowedException($"Value required for '{args}'");
@@ -159,7 +153,7 @@ namespace Rdmp.Core.CommandLine.Interactive
 
             if (!string.IsNullOrWhiteSpace(args.WindowTitle))
             {
-                sb.Append(args.WindowTitle);
+                sb.Append(Markup.Escape(args.WindowTitle));
 
                 if(entryLabel && !string.IsNullOrWhiteSpace(args.EntryLabel))
                 {
@@ -169,13 +163,33 @@ namespace Rdmp.Core.CommandLine.Interactive
 
             if (entryLabel && !string.IsNullOrWhiteSpace(args.EntryLabel))
             {
-                sb.Append($"[green]{args.TaskDescription}[/]");
+                sb.Append($"[green]{Markup.Escape(args.EntryLabel)}[/]");
             }
 
             if (!string.IsNullOrWhiteSpace(args.TaskDescription))
             {
                 sb.AppendLine();
-                sb.Append($"[grey]{args.TaskDescription}[/]");
+                sb.Append($"[grey]{Markup.Escape(args.TaskDescription)}[/]");
+            }
+
+            foreach(var picker in pickers)
+            {
+                sb.AppendLine();
+                sb.Append($"Format:[grey]{Markup.Escape(picker.Format)}[/]");
+
+                if(picker.Examples.Any())
+                {
+                    
+                    sb.AppendLine();
+                    sb.Append($"Examples:");
+                    foreach (var example in picker.Examples)
+                    {
+                        sb.AppendLine();
+                        sb.Append($"[grey]{Markup.Escape(example)}[/]");
+                    }
+                }
+                sb.AppendLine();
+                sb.Append(":");
             }
 
             return sb.ToString();
@@ -198,8 +212,7 @@ namespace Rdmp.Core.CommandLine.Interactive
             Console.Write(args.EntryLabel);
 
             var value = ReadLineWithAuto(args, new PickObjectBase[]
-                {new PickObjectByID(this), new PickObjectByName(this)},
-                availableObjects.Select(t=>t.GetType().Name).Distinct());
+                {new PickObjectByID(this), new PickObjectByName(this)});
 
             var chosen = value.DatabaseEntities?.SingleOrDefault();
 
@@ -236,32 +249,18 @@ namespace Rdmp.Core.CommandLine.Interactive
             return false;
         }
 
-        private string ReadLineWithAuto(DialogArgs args, IEnumerable<string> autoComplete = null)
+        private CommandLineObjectPickerArgumentValue ReadLineWithAuto(DialogArgs args, params PickObjectBase[] pickers)
         {
             if (DisallowInput)
                 throw new InputDisallowedException("Value required");
 
-            return AnsiConsole.Ask<string>(GetPromptFor(args));
-        }
+            var line = AnsiConsole.Prompt(
+                new TextPrompt<string>(
+                    GetPromptFor(args,true, pickers).Trim()));
 
-        private CommandLineObjectPickerArgumentValue ReadLineWithAuto(DialogArgs args, PickObjectBase picker)
-        {
-            if (DisallowInput)
-                throw new InputDisallowedException("Value required");
 
-            string line = ReadLineWithAuto(args,picker.GetAutoCompleteIfAny());
-
-            return picker.Parse(line, 0);
-        }
-        private CommandLineObjectPickerArgumentValue ReadLineWithAuto(DialogArgs args, PickObjectBase[] pickers,IEnumerable<string> autoComplete)
-        {
-            if (DisallowInput)
-                throw new InputDisallowedException("Value required");
-
-            string line = ReadLineWithAuto(args, autoComplete);
-            
-            var picker = new CommandLineObjectPicker(new[]{line},RepositoryLocator,pickers);
-            return picker[0];
+            var cli = new CommandLineObjectPicker(new[] { line }, RepositoryLocator, pickers);
+            return cli[0];
         }
 
         public override DirectoryInfo SelectDirectory(string prompt)
