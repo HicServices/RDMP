@@ -27,7 +27,7 @@ namespace Rdmp.Core.Curation.Data.Defaults
                 case PermissableDefaults.IdentifierDumpServer_ID:
                     return new IdentifierDumpDatabasePatcher();
                 case PermissableDefaults.DQE:
-                    return new IdentifierDumpDatabasePatcher();
+                    return new DataQualityEnginePatcher();
                 case PermissableDefaults.WebServiceQueryCachingServer_ID:
                     return new QueryCachingPatcher();
                 case PermissableDefaults.CohortIdentificationQueryCachingServer_ID:

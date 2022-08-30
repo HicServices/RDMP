@@ -238,6 +238,9 @@ namespace Rdmp.Core.Tests.Logging
             Assert.AreEqual("bad.cs", archival.Errors.Single().Source);
 
             Assert.AreEqual("Wrote some records", archival.Progress.Single().Description);
+
+            var fatal = archival.Errors.Single();
+            lm.ResolveFatalErrors(new[] { fatal.ID }, DataLoadInfo.FatalErrorStates.Resolved, "problem resolved by building more towers");
         }
     }
 }
