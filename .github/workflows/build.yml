@@ -224,7 +224,7 @@ jobs:
         if: contains(github.ref, 'refs/tags/v')
         with:
           repo_token: ${{ secrets.GITHUB_TOKEN }}
-          file: dist/*.zip
+          file: dist/*
           tag: ${{ github.ref }}
           overwrite: true
           file_glob: true
