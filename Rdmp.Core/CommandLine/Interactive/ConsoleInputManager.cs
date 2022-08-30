@@ -55,8 +55,23 @@ namespace Rdmp.Core.CommandLine.Interactive
         public override bool TypeText(DialogArgs args, int maxLength, string initialText, out string text,
             bool requireSaneHeaderText)
         {
-            text = AnsiConsole.Ask<string>(GetPromptFor(args));
-            return !string.IsNullOrWhiteSpace(text);
+            text = AnsiConsole.Prompt(
+                new TextPrompt<string>(GetPromptFor(args))
+                .AllowEmpty()
+                );
+
+            if(string.Equals(text , "Cancel",StringComparison.CurrentCultureIgnoreCase))
+            {
+                // user does not want to type any text
+                return false;
+            }
+
+            // user typed "null" or some spaces or something
+            if (IsBasicallyNull(text))
+                text = null;
+
+            // thats still an affirmative choice
+            return true;
         }
 
         public override DiscoveredDatabase SelectDatabase(bool allowDatabaseCreation, string taskDescription)
