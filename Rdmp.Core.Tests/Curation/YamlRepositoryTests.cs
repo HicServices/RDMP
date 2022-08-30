@@ -282,15 +282,17 @@ namespace Rdmp.Core.Tests.Curation
             var lma2 = UnitTests.WhenIHaveA<LoadModuleAssembly>(repo1);
 
 
-            lma1.Plugin.Name = "MyPlugin";
+            lma1.Plugin.Name = "MyPlugin1.1.1.1.nupkg";
             lma1.Plugin.RdmpVersion = new Version(version); //the version of Rdmp.Core targetted
             lma1.Plugin.PluginVersion = new Version(1, 1, 1, 1); //the version of the plugin
             lma1.Plugin.SaveToDatabase();
+            lma1.SaveToDatabase();
 
-            lma2.Plugin.Name = "MyPlugin";
+            lma2.Plugin.Name = "MyPlugin1.1.1.2.nupkg";
             lma2.Plugin.RdmpVersion = new Version(version);//the version of Rdmp.Core targetted (same as above)
             lma2.Plugin.PluginVersion = new Version(1, 1, 1, 2);//the version of the plugin (higher)
             lma2.Plugin.SaveToDatabase();
+            lma2.SaveToDatabase();
 
             var plugins = repo1.PluginManager.GetCompatiblePlugins();
             Assert.That(plugins, Has.Length.EqualTo(1));

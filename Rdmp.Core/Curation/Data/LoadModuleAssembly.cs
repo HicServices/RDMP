@@ -16,6 +16,7 @@ using Rdmp.Core.CommandLine.Runners;
 using Rdmp.Core.Curation.Data.ImportExport;
 using Rdmp.Core.Curation.Data.Serialization;
 using Rdmp.Core.Repositories;
+using YamlDotNet.Serialization;
 
 namespace Rdmp.Core.Curation.Data
 {
@@ -36,6 +37,7 @@ namespace Rdmp.Core.Curation.Data
         /// <summary>
         /// The assembly (dll) file as a Byte[], use File.WriteAllBytes to write it to disk
         /// </summary>
+        [YamlIgnore]
         public Byte[] Bin
         {
             get { return _bin;}
