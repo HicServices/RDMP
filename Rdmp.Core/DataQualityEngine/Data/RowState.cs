@@ -43,7 +43,7 @@ namespace Rdmp.Core.DataQualityEngine.Data
         {
 
             var sql = string.Format(
-                "INSERT INTO [dbo].[RowState]([Evaluation_ID],[Correct],[Missing],[Wrong],[Invalid],[DataLoadRunID],[ValidatorXML],[PivotCategory])VALUES({0},{1},{2},{3},{4},{5},@validatorXML,{6})",
+                "INSERT INTO RowState(Evaluation_ID,Correct,Missing,Wrong,Invalid,DataLoadRunID,ValidatorXML,PivotCategory)VALUES({0},{1},{2},{3},{4},{5},@validatorXML,{6})",
                 evaluation.ID,
                 correct,
                 missing,

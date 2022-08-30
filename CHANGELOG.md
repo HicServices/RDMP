@@ -8,10 +8,6 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ...
 
-### Changed
-- Removed restriction preventing [Lookup] requiring all foreign key columns being from the same table [#1331](https://github.com/HicServices/RDMP/issues/1307)
-- If there are multiple IsPrimaryExtractionTable involved in a query then the one with the IsExtractionIdentifier column (if any) will be picked (previously QueryBuildingException was thrown) [#1365](https://github.com/HicServices/RDMP/issues/1365)
-
 ### Added
 - Added 'Set Description' command to [AggregateConfiguration] context menu
 - Template cohort builder aggregates can be dragged onto extraction datasets to import the container tree [#1307](https://github.com/HicServices/RDMP/issues/1307)
@@ -20,13 +16,17 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Added ability to pop out tooltips/problems into modal popup [#1334](https://github.com/HicServices/RDMP/issues/1334)
 
 ### Changed
-
+- The 'Core' folder in extraction execution user interface is no longer disabled when empty [#1377](https://github.com/HicServices/RDMP/issues/1377)
 - Datasets in extraction UI are no longer expanded by default (i.e. to show Supporting Documents/Sql) [#1264](https://github.com/HicServices/RDMP/issues/1264)
+- Removed restriction preventing [Lookup] requiring all foreign key columns being from the same table [#1331](https://github.com/HicServices/RDMP/issues/1307)
+- If there are multiple IsPrimaryExtractionTable involved in a query then the one with the IsExtractionIdentifier column (if any) will be picked (previously QueryBuildingException was thrown) [#1365](https://github.com/HicServices/RDMP/issues/1365)
 
 ### Fixed
 
 - Running RDMP cli without supplying repository connection details (and after deleting `Databases.yaml`) now results in a specific error message instead of null reference [#1346]https://github.com/HicServices/RDMP/issues/1346
 - Fixed Pipeline components who run in threaded but call UI methods resulting in unstable UI components [#1357](https://github.com/HicServices/RDMP/issues/1357)
+- YamlRepository now saves LoadModuleAssembly binary content as a `.nupkg` file instead of string yaml [#1351](https://github.com/HicServices/RDMP/issues/1351)
+- Fixed Console Gui activator 'Select File' dialog having a confusing title of "Directory" [#1282](https://github.com/HicServices/RDMP/issues/1282)
 
 ## [7.0.17] - 2022-08-01
 

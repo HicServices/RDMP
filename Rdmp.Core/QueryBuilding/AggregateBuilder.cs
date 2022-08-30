@@ -13,6 +13,7 @@ using Rdmp.Core.Curation.Data;
 using Rdmp.Core.Curation.Data.Aggregation;
 using Rdmp.Core.QueryBuilding.Options;
 using Rdmp.Core.QueryBuilding.Parameters;
+using ReusableLibraryCode.Settings;
 
 namespace Rdmp.Core.QueryBuilding
 {
@@ -564,7 +565,7 @@ namespace Rdmp.Core.QueryBuilding
 
         private string GetGroupOrOrderByCustomLineBasedOn(string select, string alias)
         {
-            if (QuerySyntaxHelper.DatabaseType == FAnsi.DatabaseType.MySql)
+            if (UserSettings.UseAliasInsteadOfTransformInGroupByAggregateGraphs)
             {
                 return !string.IsNullOrWhiteSpace(alias) ?
                     alias :  // for MySql prefer using the alias if it has one
