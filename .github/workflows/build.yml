@@ -177,10 +177,9 @@ jobs:
           my $tar=Archive::Tar->new($tarname) || die "read $tarname:$!\n";
           my @tarbits=$tar->get_files();
           foreach my $bit (@tarbits) {
-            $bit->chmod(($bit->name eq 'rdmp-cli-linux/rdmp' || $bit->type==5)?'0755':'0644');
+            $bit->chmod(($bit->name =~ /\/rdmp$/ || $bit->type==5)?'0755':'0644');
           }
-          $tar->write( $tarname.'.xz', COMPRESS_XZ );
-          unlink($tarname) || die "unlink $tarname:$!\n";
+          $tar->write( $tarname );
 
           # Find rdmp in .zip, set permissions 0755
           my $srczip = Archive::Zip->new($zipname);
@@ -195,6 +194,10 @@ jobs:
           }
           $zip->memberNamed('rdmp')->unixFileAttributes( 0755 );
           $zip->overwriteAs($zipname);
+      - name: Compress tar
+        run: |
+          7za a -txz dist/rdmp-${{ steps.version.outputs.rdmpversion }}-cli-linux-x64.tar.xz dist/rdmp-${{ steps.version.outputs.rdmpversion }}-cli-linux-x64.tar
+          rm dist/rdmp-${{ steps.version.outputs.rdmpversion }}-cli-linux-x64.tar
 
       - name: Build Nuget packages
         run: |
