@@ -20,8 +20,8 @@ using Rdmp.UI.SimpleDialogs;
 using Rdmp.UI.Versioning;
 using ReusableLibraryCode.Checks;
 using ReusableLibraryCode.Settings;
-
-
+using SixLabors.ImageSharp;
+using SixLabors.ImageSharp.PixelFormats;
 using WideMessageBox = Rdmp.UI.SimpleDialogs.WideMessageBox;
 
 namespace Rdmp.UI.TestsAndSetup
@@ -54,11 +54,9 @@ namespace Rdmp.UI.TestsAndSetup
             _startup.MEFFileDownloaded += StartupMEFFileDownloaded;
             _startup.PluginPatcherFound += StartupPluginPatcherFound;
 
-            pbDisconnected.Image = CatalogueIcons.ExternalDatabaseServer;
+            pbDisconnected.Image = CatalogueIcons.ExternalDatabaseServer.ImageToBitmap();
 
-            var icon = new IconFactory();
-
-            this.Icon = icon.GetIcon(CatalogueIcons.Main);
+            this.Icon = IconFactory.Instance.GetIcon(Image.Load<Rgba32>(CatalogueIcons.Main));
         }
 
         public bool DoNotContinue { get; set; }

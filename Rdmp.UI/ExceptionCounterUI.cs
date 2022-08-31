@@ -32,7 +32,7 @@ namespace Rdmp.UI
 
         public ExceptionCounterUI()
         {
-            Image = Images.exclamation;
+            Image = Images.exclamation.ImageToBitmap();
             Enabled = false;
             ToolTipText = "Application Errors";
         }

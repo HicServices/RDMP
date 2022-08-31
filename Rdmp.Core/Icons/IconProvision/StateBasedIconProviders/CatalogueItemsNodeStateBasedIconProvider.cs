@@ -7,22 +7,23 @@
 using Rdmp.Core.Icons.IconOverlays;
 using Rdmp.Core.Providers.Nodes;
 using ReusableLibraryCode.Icons.IconProvision;
-using System.Drawing;
+using SixLabors.ImageSharp;
+using SixLabors.ImageSharp.PixelFormats;
 
 namespace Rdmp.Core.Icons.IconProvision.StateBasedIconProviders
 {
     internal class CatalogueItemsNodeStateBasedIconProvider : IObjectStateBasedIconProvider
     {
-        private Bitmap _basic;
-        private Bitmap _core;
-        private Bitmap _internal;
-        private Bitmap _supplemental;
-        private Bitmap _special;
-        private Bitmap _deprecated;
+        private readonly Image<Rgba32> _basic;
+        private readonly Image<Rgba32> _core;
+        private readonly Image<Rgba32> _internal;
+        private readonly Image<Rgba32> _supplemental;
+        private readonly Image<Rgba32> _special;
+        private readonly Image<Rgba32> _deprecated;
 
         public CatalogueItemsNodeStateBasedIconProvider(IconOverlayProvider overlayProvider)
         {
-            _basic = CatalogueIcons.CatalogueItemsNode;
+            _basic = Image.Load<Rgba32>(CatalogueIcons.CatalogueItemsNode);
             _core = overlayProvider.GetOverlay(_basic, OverlayKind.Extractable);
             _internal = overlayProvider.GetOverlay(_basic, OverlayKind.Extractable_Internal);
             _supplemental = overlayProvider.GetOverlay(_basic, OverlayKind.Extractable_Supplemental);
@@ -30,7 +31,7 @@ namespace Rdmp.Core.Icons.IconProvision.StateBasedIconProviders
             _deprecated = overlayProvider.GetOverlay(_basic, OverlayKind.Deprecated);
         }
 
-        public Bitmap GetImageIfSupportedObject(object o)
+        public Image<Rgba32> GetImageIfSupportedObject(object o)
         {
             if (o is not CatalogueItemsNode cin)
                 return null;

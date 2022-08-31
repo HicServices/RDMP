@@ -55,8 +55,8 @@ namespace Rdmp.UI.AggregationUIs.Advanced
 
         public QuerySyntaxHelper _querySyntaxHelper = new MicrosoftQuerySyntaxHelper();
 
-        private Bitmap _add;
-        private Bitmap _delete;
+        private readonly Bitmap _add;
+        private readonly Bitmap _delete;
         private CountColumnRequirement _countColumnRequirement;
 
         public SelectColumnUI()
@@ -81,8 +81,8 @@ namespace Rdmp.UI.AggregationUIs.Advanced
             olvAddRemove.ImageGetter += ImageGetter;
             olvSelectColumns.CellClick += olvSelectColumns_CellClick;
             
-            _add = FamFamFamIcons.add;
-            _delete = FamFamFamIcons.delete;
+            _add = FamFamFamIcons.add.ImageToBitmap();
+            _delete = FamFamFamIcons.delete.ImageToBitmap();
 
         }
 
@@ -183,7 +183,7 @@ namespace Rdmp.UI.AggregationUIs.Advanced
             }
         }
 
-        private object ImageGetter(object rowObject)
+        private Bitmap ImageGetter(object rowObject)
         {
             
             if (_availableColumns.Contains(rowObject))

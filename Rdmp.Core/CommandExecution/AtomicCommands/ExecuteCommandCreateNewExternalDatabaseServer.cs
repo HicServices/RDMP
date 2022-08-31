@@ -5,7 +5,7 @@
 // You should have received a copy of the GNU General Public License along with RDMP. If not, see <https://www.gnu.org/licenses/>.
 
 using System;
-using System.Drawing;
+using SixLabors.ImageSharp;
 using System.Linq;
 using FAnsi.Discovery;
 using MapsDirectlyToDatabaseTable.Versioning;
@@ -18,6 +18,7 @@ using Rdmp.Core.Icons.IconProvision.StateBasedIconProviders;
 using Rdmp.Core.Repositories.Construction;
 using ReusableLibraryCode;
 using ReusableLibraryCode.Icons.IconProvision;
+using SixLabors.ImageSharp.PixelFormats;
 
 namespace Rdmp.Core.CommandExecution.AtomicCommands
 {
@@ -113,15 +114,12 @@ namespace Rdmp.Core.CommandExecution.AtomicCommands
             Activate(ServerCreatedIfAny);
         }
 
-        public override Image GetImage(IIconProvider iconProvider)
+        public override Image<Rgba32> GetImage(IIconProvider iconProvider)
         {
-            if (_patcher != null)
-            {
-                var basicIcon = _databaseIconProvider.GetIconForAssembly(_patcher.GetDbAssembly());
-                return _overlayProvider.GetOverlay(basicIcon, OverlayKind.Add);
-            }
+            if (_patcher == null) return iconProvider.GetImage(RDMPConcept.ExternalDatabaseServer, OverlayKind.Add);
+            var basicIcon = _databaseIconProvider.GetIconForAssembly(_patcher.GetDbAssembly());
+            return _overlayProvider.GetOverlay(basicIcon, OverlayKind.Add);
 
-            return iconProvider.GetImage(RDMPConcept.ExternalDatabaseServer, OverlayKind.Add);
         }
     }
 }

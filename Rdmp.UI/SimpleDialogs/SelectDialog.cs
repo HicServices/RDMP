@@ -20,6 +20,7 @@ using Rdmp.UI.Collections;
 using Rdmp.UI.Collections.Providers;
 using Rdmp.UI.ItemActivation;
 using Rdmp.UI.Theme;
+using ReusableLibraryCode.Icons;
 using ReusableLibraryCode.Settings;
 using System;
 using System.Collections;
@@ -358,7 +359,7 @@ namespace Rdmp.UI.SimpleDialogs
                     if (parent == null)
                         return null;
 
-                    return provider.GetGrayscale(_activator.CoreIconProvider.GetImage(parent));
+                    return provider.GetGrayscale(_activator.CoreIconProvider.GetImage(parent)).ImageToBitmap();
                 }
             }
 
@@ -407,19 +408,19 @@ namespace Rdmp.UI.SimpleDialogs
             {
                 foreach (Type t in EasyFilterTypesAndAssociatedCollections.Keys)
                 {
-                    var b = new ToolStripButton();
-                    b.Image = _activator.CoreIconProvider.GetImage(t);
-                    b.CheckOnClick = true;
-                    b.Tag = t;
-                    b.DisplayStyle = ToolStripItemDisplayStyle.Image;
-
                     string shortCode = SearchablesMatchScorer.ShortCodes.Single(kvp => kvp.Value == t).Key;
-
-                    b.Text = $"{t.Name} ({shortCode})";
-                    b.CheckedChanged += CollectionCheckedChanged;
-                    b.Checked = startingFilters != null && startingFilters.Contains(t);
+                    var b = new ToolStripButton
+                    {
+                        Checked = startingFilters?.Contains(t) == true,
+                        Image = _activator.CoreIconProvider.GetImage(t).ImageToBitmap(),
+                        DisplayStyle = ToolStripItemDisplayStyle.Image,
+                        CheckOnClick = true,
+                        Tag = t,
+                        Text = $"{t.Name} ({shortCode})"
+                    };
 
                     b.BackgroundImage = backColorProvider.GetBackgroundImage(b.Size, EasyFilterTypesAndAssociatedCollections[t]);
+                    b.CheckedChanged += CollectionCheckedChanged;
 
                     toolStrip1.Items.Add(b);
                 }
@@ -472,7 +473,7 @@ namespace Rdmp.UI.SimpleDialogs
         public Bitmap GetImage(object model)
         {
             var bmp = _activator.CoreIconProvider.GetImage(model);
-            return bmp == _activator.CoreIconProvider.ImageUnknown ? null : bmp;
+            return bmp == _activator.CoreIconProvider.ImageUnknown ? null : bmp.ImageToBitmap();
         }
 
 

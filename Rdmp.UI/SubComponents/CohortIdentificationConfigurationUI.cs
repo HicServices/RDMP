@@ -33,6 +33,7 @@ using Rdmp.UI.Refreshing;
 using Rdmp.UI.SimpleDialogs;
 using Rdmp.UI.TestsAndSetup.ServicePropogation;
 using ReusableLibraryCode;
+using ReusableLibraryCode.Icons;
 using ReusableLibraryCode.Icons.IconProvision;
 using ReusableLibraryCode.Settings;
 using static Rdmp.Core.CohortCreation.CohortIdentificationConfigurationUICommon;
@@ -234,7 +235,7 @@ namespace Rdmp.UI.SubComponents
 
             _clearCacheCommand = new ExecuteCommandClearQueryCache(Activator, Common.Configuration);
             btnClearCache.Enabled = !_clearCacheCommand.IsImpossible;
-            btnClearCache.Image = _clearCacheCommand.GetImage(Activator.CoreIconProvider);
+            btnClearCache.Image = _clearCacheCommand.GetImage(Activator.CoreIconProvider).ImageToBitmap();
 
             tt.SetToolTip(btnClearCache, _clearCacheCommand.IsImpossible ? _clearCacheCommand.ReasonCommandImpossible : "Clears any cached results (stale or otherwise) from the query cache");
         }

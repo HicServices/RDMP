@@ -30,8 +30,8 @@ namespace Rdmp.UI.SimpleControls
         private Bitmap _undoImage;
         private Bitmap _redoImage;
 
-        private ToolStripButton btnSave  = new ToolStripButton("Save",FamFamFamIcons.disk);
-        private ToolStripButton btnUndoRedo = new ToolStripButton("Undo", FamFamFamIcons.Undo);
+        private ToolStripButton btnSave  = new ToolStripButton("Save",FamFamFamIcons.disk.ImageToBitmap());
+        private ToolStripButton btnUndoRedo = new ToolStripButton("Undo", FamFamFamIcons.Undo.ImageToBitmap());
         
         private RevertableObjectReport _undoneChanges;
         private IRDMPControl _parent;
@@ -42,8 +42,8 @@ namespace Rdmp.UI.SimpleControls
             this.btnSave.Click += new System.EventHandler(this.btnSave_Click);
             this.btnUndoRedo.Click += new System.EventHandler(this.btnUndoRedo_Click);
             
-            _undoImage = FamFamFamIcons.Undo;
-            _redoImage = FamFamFamIcons.Redo;
+            _undoImage = FamFamFamIcons.Undo.ImageToBitmap();
+            _redoImage = FamFamFamIcons.Redo.ImageToBitmap();
 
             btnUndoRedo.Image = _undoImage;
         }

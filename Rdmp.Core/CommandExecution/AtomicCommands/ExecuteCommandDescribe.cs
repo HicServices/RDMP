@@ -5,7 +5,7 @@
 // You should have received a copy of the GNU General Public License along with RDMP. If not, see <https://www.gnu.org/licenses/>.
 
 using System;
-using System.Drawing;
+using SixLabors.ImageSharp;
 using System.Linq;
 using System.Reflection;
 using System.Text;
@@ -17,6 +17,7 @@ using Rdmp.Core.Repositories.Construction;
 using Rdmp.Core.Startup;
 using ReusableLibraryCode.Comments;
 using ReusableLibraryCode.Icons.IconProvision;
+using SixLabors.ImageSharp.PixelFormats;
 
 namespace Rdmp.Core.CommandExecution.AtomicCommands
 {
@@ -72,7 +73,7 @@ namespace Rdmp.Core.CommandExecution.AtomicCommands
             _nonDatabaseObjectToDescribe = randomThing;
         }
 
-        public override Image GetImage(IIconProvider iconProvider)
+        public override Image<Rgba32> GetImage(IIconProvider iconProvider)
         {
             if (_nonDatabaseObjectToDescribe != null)
                 return iconProvider.GetImage(_nonDatabaseObjectToDescribe);

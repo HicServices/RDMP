@@ -11,7 +11,8 @@ using Rdmp.Core.Curation.Data.Aggregation;
 using Rdmp.Core.Icons.IconProvision;
 using ReusableLibraryCode.Icons.IconProvision;
 using System;
-using System.Drawing;
+using SixLabors.ImageSharp;
+using SixLabors.ImageSharp.PixelFormats;
 
 namespace Rdmp.Core.CommandExecution.AtomicCommands
 {
@@ -43,7 +44,7 @@ namespace Rdmp.Core.CommandExecution.AtomicCommands
             _host = host;
         }
 
-        public override Image GetImage(IIconProvider iconProvider)
+        public override Image<Rgba32> GetImage(IIconProvider iconProvider)
         {
             Weight = DEFAULT_WEIGHT;
 

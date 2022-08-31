@@ -27,7 +27,7 @@ namespace Rdmp.UI.Menus
         {
             _package = package;
             _childProvider = (DataExportChildProvider) _activator.CoreChildProvider;
-            Items.Add("Add ExtractableDataSet(s) to Package", _activator.CoreIconProvider.GetImage(RDMPConcept.ExtractableDataSet, OverlayKind.Link), AddExtractableDatasetToPackage);
+            Items.Add("Add ExtractableDataSet(s) to Package", _activator.CoreIconProvider.GetImage(RDMPConcept.ExtractableDataSet, OverlayKind.Link).ImageToBitmap(), AddExtractableDatasetToPackage);
 
         }
 

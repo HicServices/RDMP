@@ -13,6 +13,7 @@ using Rdmp.UI.ItemActivation;
 using Rdmp.UI.Rules;
 using Rdmp.UI.SimpleControls;
 using Rdmp.UI.TestsAndSetup.ServicePropogation;
+using ReusableLibraryCode.Icons;
 using ReusableLibraryCode.Icons.IconProvision;
 using System;
 using System.ComponentModel;
@@ -50,7 +51,7 @@ namespace Rdmp.UI.MainFormUITabs
 
             var result = TimespanCalculator.GetMachineReadableTimespanIfKnownOf(databaseObject.ExtractionInformation.CatalogueItem.Catalogue, false, out DateTime? date);
 
-            btnFromDQE.Image = activator.CoreIconProvider.GetImage(RDMPConcept.DQE, OverlayKind.Import);
+            btnFromDQE.Image = activator.CoreIconProvider.GetImage(RDMPConcept.DQE, OverlayKind.Import).ImageToBitmap();
 
             if (date != null)
             {

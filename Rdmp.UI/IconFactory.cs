@@ -5,45 +5,50 @@
 // You should have received a copy of the GNU General Public License along with RDMP. If not, see <https://www.gnu.org/licenses/>.
 
 using System;
+using System.Collections.Concurrent;
 using System.Collections.Generic;
+using System.ComponentModel;
+using SixLabors.ImageSharp;
 using System.Drawing;
+using System.IO;
+using Image = SixLabors.ImageSharp.Image;
+using ReusableLibraryCode.Icons;
+using SixLabors.ImageSharp.PixelFormats;
 
-namespace Rdmp.Core.Icons.IconProvision
+namespace Rdmp.UI
 {
+    
     /// <summary>
     /// Creates <see cref="Icon"/> instances based on provided <see cref="Bitmap"/> (with support for caching).
     /// </summary>
     public class IconFactory
     {
-        private readonly Dictionary<Bitmap, Icon> _iconDictionary = new Dictionary<Bitmap, Icon>();
+        private readonly ConcurrentDictionary<Image<Rgba32>, Icon> _iconDictionary = new();
+
+        public static IconFactory Instance=new();
+        private IconFactory()
+        {
+
+        }
 
         /// <summary>
         /// Returns an <see cref="Icon"/> depicting the provided <paramref name="bmp"/>.  Calling this
-        /// method multiple times with the same <see cref="Bitmap"/> will return the same <see cref="Icon"/> instance.
+        /// method multiple times with the same <see cref="Icon"/> will return the same <see cref="Icon"/> instance.
         /// </summary>
         /// <param name="bmp"></param>
         /// <returns></returns>
-        public Icon GetIcon(Bitmap bmp)
+        public Icon GetIcon(Image<Rgba32> bmp)
         {
-            if (_iconDictionary.ContainsKey(bmp))
-                return _iconDictionary[bmp];
-
-            return CreateIcon(bmp);
+            return _iconDictionary.GetOrAdd(bmp, CreateIcon);
         }
 
-        private Icon CreateIcon(Bitmap bmp)
+        private Icon CreateIcon(Image<Rgba32> bmp)
         {
             // Get an Hicon for myBitmap.
-            IntPtr Hicon = bmp.GetHicon();
+            IntPtr Hicon = bmp.ImageToBitmap().GetHicon();
 
             // Create a new icon from the handle. 
-            Icon newIcon = Icon.FromHandle(Hicon);
-
-            //now that we have created the icon don't create it again for the same bitmap (to avoid memory leaks)
-            _iconDictionary.Add(bmp, newIcon);
-
-            return newIcon;
+            return Icon.FromHandle(Hicon);
         }
-
     }
 }

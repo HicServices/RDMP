@@ -16,6 +16,7 @@ using Rdmp.UI.DataLoadUIs.LoadMetadataUIs.LoadDiagram.StateDiscovery;
 using ReusableLibraryCode;
 using Rdmp.Core.DataLoad.Triggers;
 using Rdmp.Core.Icons.IconProvision;
+using System.Drawing;
 
 namespace Rdmp.UI.DataLoadUIs.LoadMetadataUIs.LoadDiagram
 {
@@ -84,15 +85,15 @@ namespace Rdmp.UI.DataLoadUIs.LoadMetadataUIs.LoadDiagram
             return new SqlTextOnlyCombineable(querySyntaxHelper.EnsureFullyQualified(_tableNode.DatabaseName,null, _tableNode.TableName, ColumnName));
         }
 
-        public object GetImage(ICoreIconProvider coreIconProvider)
+        public Bitmap GetImage(ICoreIconProvider coreIconProvider)
         {
 
             //if its a ColumnInfo and RAW then use the basic ColumnInfo icon
             if (_column is ColumnInfo && _bubble <= LoadBubble.Raw)
-                return coreIconProvider.GetImage(RDMPConcept.ColumnInfo);
+                return coreIconProvider.GetImage(RDMPConcept.ColumnInfo).ImageToBitmap();
 
             //otherwise use the default Live/PreLoadDiscardedColumn icon
-            return coreIconProvider.GetImage(_column);
+            return coreIconProvider.GetImage(_column).ImageToBitmap();
         }
 
         public void SetState(DiscoveredColumn discoveredColumn)

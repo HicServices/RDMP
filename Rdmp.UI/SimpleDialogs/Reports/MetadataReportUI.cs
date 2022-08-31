@@ -20,6 +20,7 @@ using Rdmp.Core.Icons.IconProvision;
 using Rdmp.Core.Reports;
 using Rdmp.UI.ItemActivation;
 using Rdmp.UI.TestsAndSetup.ServicePropogation;
+using ReusableLibraryCode.Icons;
 using ReusableLibraryCode.Progress;
 
 namespace Rdmp.UI.SimpleDialogs.Reports
@@ -58,7 +59,7 @@ namespace Rdmp.UI.SimpleDialogs.Reports
 
             aggregateGraph1.Silent = true;
 
-            btnFolder.Image = activator.CoreIconProvider.GetImage(RDMPConcept.CatalogueFolder);
+            btnFolder.Image = activator.CoreIconProvider.GetImage(RDMPConcept.CatalogueFolder).ImageToBitmap();
         }
 
         private void btnGenerateReport_Click(object sender, EventArgs e)
