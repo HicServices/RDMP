@@ -68,6 +68,7 @@
             this.groupBox5 = new System.Windows.Forms.GroupBox();
             this.flowLayoutPanel1 = new System.Windows.Forms.FlowLayoutPanel();
             this.groupBox8 = new System.Windows.Forms.GroupBox();
+            this.cbExpandAllInCohortBuilder = new System.Windows.Forms.CheckBox();
             this.cbStrictValidationForCohortBuilderContainers = new System.Windows.Forms.CheckBox();
             this.groupBox6 = new System.Windows.Forms.GroupBox();
             this.cbSkipCohortBuilderValidationOnCommit = new System.Windows.Forms.CheckBox();
@@ -85,7 +86,7 @@
             this.userSettingsToolTips = new System.Windows.Forms.ToolTip(this.components);
             this.tbFind = new System.Windows.Forms.TextBox();
             this.label14 = new System.Windows.Forms.Label();
-            this.cbExpandAllInCohortBuilder = new System.Windows.Forms.CheckBox();
+            this.cbUseAliasInsteadOfTransformInGroupByAggregateGraphs = new System.Windows.Forms.CheckBox();
             this.groupBox1.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.olvErrorCodes)).BeginInit();
             this.groupBox2.SuspendLayout();
@@ -331,7 +332,6 @@
             this.olvErrorCodes.AllColumns.Add(this.olvTreatment);
             this.olvErrorCodes.AllColumns.Add(this.olvMessage);
             this.olvErrorCodes.CellEditUseWholeCell = false;
-            this.olvErrorCodes.Cursor = System.Windows.Forms.Cursors.Default;
             this.olvErrorCodes.Dock = System.Windows.Forms.DockStyle.Fill;
             this.olvErrorCodes.Location = new System.Drawing.Point(3, 19);
             this.olvErrorCodes.Name = "olvErrorCodes";
@@ -466,6 +466,7 @@
             // 
             // groupBox5
             // 
+            this.groupBox5.Controls.Add(this.cbUseAliasInsteadOfTransformInGroupByAggregateGraphs);
             this.groupBox5.Controls.Add(this.cbIncludeZeroSeriesInGraphs);
             this.groupBox5.Controls.Add(this.label5);
             this.groupBox5.Controls.Add(this.tbHeatmapColours);
@@ -507,6 +508,16 @@
             this.groupBox8.TabIndex = 26;
             this.groupBox8.TabStop = false;
             this.groupBox8.Text = "Cohort Building";
+            // 
+            // cbExpandAllInCohortBuilder
+            // 
+            this.cbExpandAllInCohortBuilder.AutoSize = true;
+            this.cbExpandAllInCohortBuilder.Location = new System.Drawing.Point(6, 64);
+            this.cbExpandAllInCohortBuilder.Name = "cbExpandAllInCohortBuilder";
+            this.cbExpandAllInCohortBuilder.Size = new System.Drawing.Size(175, 19);
+            this.cbExpandAllInCohortBuilder.TabIndex = 3;
+            this.cbExpandAllInCohortBuilder.Text = "Expand All in Cohort Builder";
+            this.cbExpandAllInCohortBuilder.UseVisualStyleBackColor = true;
             // 
             // cbStrictValidationForCohortBuilderContainers
             // 
@@ -688,15 +699,16 @@
             this.label14.TabIndex = 26;
             this.label14.Text = "Find Setting:";
             // 
-            // cbAutoExpandInCohortBuilder
+            // cbUseAliasInsteadOfTransformInGroupByAggregateGraphs
             // 
-            this.cbExpandAllInCohortBuilder.AutoSize = true;
-            this.cbExpandAllInCohortBuilder.Location = new System.Drawing.Point(6, 64);
-            this.cbExpandAllInCohortBuilder.Name = "cbAutoExpandInCohortBuilder";
-            this.cbExpandAllInCohortBuilder.Size = new System.Drawing.Size(175, 19);
-            this.cbExpandAllInCohortBuilder.TabIndex = 3;
-            this.cbExpandAllInCohortBuilder.Text = "Expand All in Cohort Builder";
-            this.cbExpandAllInCohortBuilder.UseVisualStyleBackColor = true;
+            this.cbUseAliasInsteadOfTransformInGroupByAggregateGraphs.AutoSize = true;
+            this.cbUseAliasInsteadOfTransformInGroupByAggregateGraphs.Location = new System.Drawing.Point(7, 88);
+            this.cbUseAliasInsteadOfTransformInGroupByAggregateGraphs.Margin = new System.Windows.Forms.Padding(4, 3, 4, 3);
+            this.cbUseAliasInsteadOfTransformInGroupByAggregateGraphs.Name = "cbUseAliasInsteadOfTransformInGroupByAggregateGraphs";
+            this.cbUseAliasInsteadOfTransformInGroupByAggregateGraphs.Size = new System.Drawing.Size(138, 19);
+            this.cbUseAliasInsteadOfTransformInGroupByAggregateGraphs.TabIndex = 20;
+            this.cbUseAliasInsteadOfTransformInGroupByAggregateGraphs.Text = "Use Alias In Group By";
+            this.cbUseAliasInsteadOfTransformInGroupByAggregateGraphs.UseVisualStyleBackColor = true;
             // 
             // UserSettingsFileUI
             // 
@@ -795,5 +807,6 @@
         private System.Windows.Forms.Label label14;
         private System.Windows.Forms.CheckBox cbAutoRunSqlQueries;
         private System.Windows.Forms.CheckBox cbExpandAllInCohortBuilder;
+        private System.Windows.Forms.CheckBox cbUseAliasInsteadOfTransformInGroupByAggregateGraphs;
     }
 }
