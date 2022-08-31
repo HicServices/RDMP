@@ -81,7 +81,7 @@ public class YamlRepository : MemoryDataExportRepository
 
         var deserializer = builder.Build();
 
-        foreach (var t in GetCompatibleTypes())
+        foreach (var t in GetCompatibleTypes().OrderBy(ObjectDependencyOrder))
         {
             // find the directory that contains all the YAML files e.g. MyDir/Catalogue/
             var typeDir = subdirs.FirstOrDefault(d => d.Name.Equals(t.Name));
@@ -120,6 +120,18 @@ public class YamlRepository : MemoryDataExportRepository
         LoadWhereSubContainers();
     }
 
+    private int ObjectDependencyOrder(Type arg)
+    {
+        // Load Plugin objects before dependent children 
+        if (arg == typeof(Rdmp.Core.Curation.Data.Plugin))
+            return 1;
+
+        if (arg == typeof(LoadModuleAssembly))
+            return 2;
+
+        return 3;
+    }
+
 
     /// <summary>
     /// Sets <see cref="IMapsDirectlyToDatabaseTable.Repository"/> on <paramref name="obj"/>.
@@ -138,6 +150,12 @@ public class YamlRepository : MemoryDataExportRepository
             case ConcreteContainer container:
                 container.SetManager(this);
                 break;
+            case LoadModuleAssembly lma:
+                lock(lockFs)
+                {
+                    lma.Bin = File.ReadAllBytes(GetNupkgPath(lma));
+                    break;
+                }
         }
     }
 
@@ -150,7 +168,15 @@ public class YamlRepository : MemoryDataExportRepository
         {
             SaveToDatabase(toCreate);
         }
-        
+    }
+
+    private string GetNupkgPath(LoadModuleAssembly lma)
+    {
+        //somedir/LoadModuleAssembly/
+        var path = Path.GetDirectoryName(GetPath(lma));
+
+        //somedir/LoadModuleAssembly/MyPlugin1.0.0.nupkg
+        return Path.Combine(path,  GetObjectByID<Rdmp.Core.Curation.Data.Plugin>(lma.Plugin_ID).Name);
     }
 
     public override void DeleteFromDatabase(IMapsDirectlyToDatabaseTable oTableWrapperObject)
@@ -159,6 +185,12 @@ public class YamlRepository : MemoryDataExportRepository
         {
             base.DeleteFromDatabase(oTableWrapperObject);
             File.Delete(GetPath(oTableWrapperObject));
+
+            // if deleting a LoadModuleAssembly also delete its binary content file (the plugin dlls in nupkg)
+            if (oTableWrapperObject is LoadModuleAssembly lma)
+            {
+                File.Delete(GetNupkgPath(lma));
+            }             
         }
     }
 
@@ -171,6 +203,14 @@ public class YamlRepository : MemoryDataExportRepository
         lock (lockFs)
         {
             File.WriteAllText(GetPath(o), yaml);
+
+            // Do not write plugin binary content into yaml that results in
+            // a massive blob of binary yaml (not useful and slow to load)
+            if (o is LoadModuleAssembly lma)
+            {
+                // write the nupkg as a binary file instead to the same folder
+                File.WriteAllBytes(GetNupkgPath(lma), lma.Bin);
+            }
         }
     }
 

@@ -31,6 +31,12 @@ namespace Rdmp.Core
 {
     class Program
     {
+        /// <summary>
+        /// True if the user passed the -q switch at startup to suppress any helpful messages we might
+        /// show (e.g. maybe they want to pipe the results somewhere)
+        /// </summary>
+        public static bool Quiet { get; private set; }
+
         static int Main(string[] args)
         {
             try
@@ -51,6 +57,7 @@ namespace Rdmp.Core
             
             if(args.Any(a=>a.Equals("-q")) || args.Any(a=>a.Equals("--quiet",StringComparison.CurrentCultureIgnoreCase)))
             {
+                Quiet = true;
                 foreach(var t in LogManager.Configuration.AllTargets.ToArray())
                 {
                     if(t.GetType().Name.Contains("Console",StringComparison.CurrentCultureIgnoreCase))

@@ -780,7 +780,7 @@ namespace Rdmp.Core.CommandExecution
                 throw new ArgumentException($"Database must be picked before calling {nameof(CreateNewPlatformDatabase)} when using {nameof(BasicActivateItems)}",nameof(db));
 
             MasterDatabaseScriptExecutor executor = new MasterDatabaseScriptExecutor(db);
-            executor.CreateAndPatchDatabase(patcher,new AcceptAllCheckNotifier());
+            executor.CreateAndPatchDatabase(patcher, new AcceptAllCheckNotifier() { WriteToConsole = true});
 
             var eds = new ExternalDatabaseServer(catalogueRepository,"New " + (defaultToSet == PermissableDefaults.None ? "" :  defaultToSet.ToString()) + "Server",patcher);
             eds.SetProperties(db);
