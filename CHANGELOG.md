@@ -8,6 +8,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ...
 
+### Added
+
+- Added UI support for changing `UseAliasInsteadOfTransformInGroupByAggregateGraphs` user setting [#1393](https://github.com/HicServices/RDMP/issues/1393)
+
 ## [7.0.18] - 2022-08-30
 
 ### Added
