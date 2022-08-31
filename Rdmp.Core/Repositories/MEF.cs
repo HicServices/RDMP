@@ -295,7 +295,7 @@ namespace Rdmp.Core.Repositories
             lock(_cachedImplementationsLock)
             {
                 if(_cachedImplementations.ContainsKey(type))
-                return _cachedImplementations[type];
+                    return _cachedImplementations[type];
 
                 Type[] results = SafeDirectoryCatalog.GetAllTypes().Where(t=>type.IsAssignableFrom(t) && !t.IsAbstract && !t.IsInterface).ToArray();
                 _cachedImplementations.Add(type,results);

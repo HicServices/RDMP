@@ -7,7 +7,8 @@
 using Rdmp.Core.Curation.Data.Cohort;
 using Rdmp.Core.Icons.IconProvision;
 using ReusableLibraryCode.Icons.IconProvision;
-using System.Drawing;
+using SixLabors.ImageSharp;
+using SixLabors.ImageSharp.PixelFormats;
 
 namespace Rdmp.Core.CommandExecution.AtomicCommands
 {
@@ -48,13 +49,13 @@ namespace Rdmp.Core.CommandExecution.AtomicCommands
             return "Set operation " + _operation;
         }
 
-        public override Image GetImage(IIconProvider iconProvider)
+        public override Image<Rgba32> GetImage(IIconProvider iconProvider)
         {
             switch(_operation)
             {
-                case SetOperation.EXCEPT: return iconProvider.GetImage(CatalogueIcons.EXCEPT);
-                case SetOperation.INTERSECT: return iconProvider.GetImage(CatalogueIcons.INTERSECT);
-                case SetOperation.UNION: return iconProvider.GetImage(CatalogueIcons.UNION);
+                case SetOperation.EXCEPT: return iconProvider.GetImage(Image.Load<Rgba32>(CatalogueIcons.EXCEPT));
+                case SetOperation.INTERSECT: return iconProvider.GetImage(Image.Load<Rgba32>(CatalogueIcons.INTERSECT));
+                case SetOperation.UNION: return iconProvider.GetImage(Image.Load<Rgba32>(CatalogueIcons.UNION));
             }
 
             return base.GetImage(iconProvider);

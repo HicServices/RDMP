@@ -5,7 +5,7 @@
 // You should have received a copy of the GNU General Public License along with RDMP. If not, see <https://www.gnu.org/licenses/>.
 
 using System;
-using System.Drawing;
+using SixLabors.ImageSharp;
 using System.IO;
 using System.Linq;
 using FAnsi.Discovery;
@@ -17,6 +17,7 @@ using Rdmp.Core.Repositories;
 using Rdmp.Core.Sharing.Dependency.Gathering;
 using ReusableLibraryCode;
 using ReusableLibraryCode.Icons.IconProvision;
+using SixLabors.ImageSharp.PixelFormats;
 
 namespace Rdmp.Core.CommandExecution.AtomicCommands
 {
@@ -37,7 +38,7 @@ namespace Rdmp.Core.CommandExecution.AtomicCommands
 
         public bool ShowInExplorer { get; set; }
 
-        public bool IsSingleObject { get { return _toExport.Length == 1; } }
+        public bool IsSingleObject => _toExport.Length == 1;
 
         public ExecuteCommandExportObjectsToFile(IBasicActivateItems activator, IMapsDirectlyToDatabaseTable toExport, FileInfo targetFileInfo = null) : this(activator, new[] { toExport })
         {
@@ -66,7 +67,7 @@ namespace Rdmp.Core.CommandExecution.AtomicCommands
             var incompatible = toExport.FirstOrDefault(o => !_gatherer.CanGatherDependencies(o));
 
             if (incompatible != null)
-                SetImpossible("Object " + incompatible.GetType() + " is not supported by Gatherer");
+                SetImpossible($"Object {incompatible.GetType()} is not supported by Gatherer");
         }
 
         public override string GetCommandHelp()
@@ -74,9 +75,9 @@ namespace Rdmp.Core.CommandExecution.AtomicCommands
             return "Creates a share file with definitions for the supplied objects and all children";
         }
 
-        public override Image GetImage(IIconProvider iconProvider)
+        public override Image<Rgba32> GetImage(IIconProvider iconProvider)
         {
-            return FamFamFamIcons.page_white_put;
+            return Image.Load<Rgba32>(FamFamFamIcons.page_white_put);
         }
 
 

@@ -33,6 +33,7 @@ using Rdmp.UI.TestsAndSetup.ServicePropogation;
 using Rdmp.UI.TransparentHelpSystem;
 using Rdmp.UI.Tutorials;
 using ReusableLibraryCode.Checks;
+using ReusableLibraryCode.Icons;
 using ReusableLibraryCode.Progress;
 
 namespace Rdmp.UI.SimpleDialogs.SimpleFileImporting
@@ -56,7 +57,7 @@ namespace Rdmp.UI.SimpleDialogs.SimpleFileImporting
             _command = command;
             InitializeComponent();
 
-            pbFile.Image = activator.CoreIconProvider.GetImage(RDMPConcept.File);
+            pbFile.Image = activator.CoreIconProvider.GetImage(RDMPConcept.File).ImageToBitmap();
             serverDatabaseTableSelector1.HideTableComponents();
             serverDatabaseTableSelector1.SelectionChanged += serverDatabaseTableSelector1_SelectionChanged;
             serverDatabaseTableSelector1.SetItemActivator(activator);
@@ -65,7 +66,7 @@ namespace Rdmp.UI.SimpleDialogs.SimpleFileImporting
             if (command.File != null)
                 SelectFile(command.File);
 
-            pbHelp.Image = FamFamFamIcons.help;
+            pbHelp.Image = FamFamFamIcons.help.ImageToBitmap();
 
             BuildHelpFlow();
         }

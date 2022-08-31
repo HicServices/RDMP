@@ -101,7 +101,7 @@ namespace Rdmp.UI.DataLoadUIs.LoadMetadataUIs.ProcessTasks
             
             loadStageIconUI1.Setup(Activator.CoreIconProvider,_processTask.LoadStage);
 
-            CommonFunctionality.Add(new ToolStripButton("Check", FamFamFamIcons.arrow_refresh, (s, e) => CheckComponent()));
+            CommonFunctionality.Add(new ToolStripButton("Check", FamFamFamIcons.arrow_refresh.ImageToBitmap(), (s, e) => CheckComponent()));
         }
 
         protected override void SetBindings(BinderWithErrorProviderFactory rules, ProcessTask databaseObject)

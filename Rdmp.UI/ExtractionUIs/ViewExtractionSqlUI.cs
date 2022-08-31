@@ -7,6 +7,7 @@
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
+using System.Drawing;
 using System.Linq;
 using System.Windows.Forms;
 using BrightIdeasSoftware;
@@ -25,9 +26,12 @@ using Rdmp.UI.ItemActivation;
 using Rdmp.UI.ScintillaHelper;
 using Rdmp.UI.TestsAndSetup.ServicePropogation;
 using ReusableLibraryCode.DataAccess;
+using ReusableLibraryCode.Icons;
 using ReusableLibraryCode.Icons.IconProvision;
 
 using ScintillaNET;
+using SixLabors.ImageSharp;
+using SixLabors.ImageSharp.PixelFormats;
 
 namespace Rdmp.UI.ExtractionUIs
 {
@@ -50,7 +54,7 @@ namespace Rdmp.UI.ExtractionUIs
         ToolStripButton rbSpecialApproval = new ToolStripButton("Special Approval");
         ToolStripButton rbInternal = new ToolStripButton("Internal");
 
-        ToolStripButton btnRun = new ToolStripButton("Run",CatalogueIcons.ExecuteArrow);
+        ToolStripButton btnRun = new ToolStripButton("Run",CatalogueIcons.ExecuteArrow.ImageToBitmap());
         
         private Scintilla QueryPreview;
         public ViewExtractionSqlUI()
@@ -88,9 +92,9 @@ namespace Rdmp.UI.ExtractionUIs
             RefreshUIFromDatabase();
         }
 
-        private object ImageGetter(object rowObject)
+        private Bitmap ImageGetter(object rowObject)
         {
-            return Activator.CoreIconProvider.GetImage(rowObject);
+            return Activator.CoreIconProvider.GetImage(rowObject).ImageToBitmap();
         }
 
         private bool bLoading = false;
@@ -203,10 +207,10 @@ namespace Rdmp.UI.ExtractionUIs
             _catalogue = databaseObject;
             RefreshUIFromDatabase();
 
-            rbCore.Image = CatalogueIcons.ExtractionInformation;
-            rbSupplemental.Image = CatalogueIcons.ExtractionInformation_Supplemental;
-            rbSpecialApproval.Image = CatalogueIcons.ExtractionInformation_SpecialApproval;
-            rbInternal.Image = activator.CoreIconProvider.GetImage(CatalogueIcons.ExtractionInformation_SpecialApproval, OverlayKind.Internal);
+            rbCore.Image = CatalogueIcons.ExtractionInformation.ImageToBitmap();
+            rbSupplemental.Image = CatalogueIcons.ExtractionInformation_Supplemental.ImageToBitmap();
+            rbSpecialApproval.Image = CatalogueIcons.ExtractionInformation_SpecialApproval.ImageToBitmap();
+            rbInternal.Image = activator.CoreIconProvider.GetImage(SixLabors.ImageSharp.Image.Load<Rgba32>(CatalogueIcons.ExtractionInformation_SpecialApproval), OverlayKind.Internal).ImageToBitmap();
 
             CommonFunctionality.Add(rbCore);
             CommonFunctionality.Add(rbSupplemental);

@@ -29,7 +29,7 @@ namespace Rdmp.UI.Menus
 
             if (server.WasCreatedBy(new LoggingDatabasePatcher()))
             {
-                var viewLogs = new ToolStripMenuItem("View Logs",CatalogueIcons.Logging);
+                var viewLogs = new ToolStripMenuItem("View Logs",CatalogueIcons.Logging.ImageToBitmap());
                 Add(new ExecuteCommandViewLogs(_activator, new LogViewerFilter(LoggingTables.DataLoadTask)), Keys.None,viewLogs);
                 Add(new ExecuteCommandViewLogs(_activator, new LogViewerFilter(LoggingTables.DataLoadRun)), Keys.None, viewLogs);
                 Add(new ExecuteCommandViewLogs(_activator, new LogViewerFilter(LoggingTables.FatalError)), Keys.None, viewLogs);
@@ -39,7 +39,7 @@ namespace Rdmp.UI.Menus
 
                 viewLogs.DropDownItems.Add(new ToolStripSeparator());
 
-                viewLogs.DropDownItems.Add(new ToolStripMenuItem("Query with SQL", CatalogueIcons.SQL, ExecuteSqlOnLoggingDatabase));
+                viewLogs.DropDownItems.Add(new ToolStripMenuItem("Query with SQL", CatalogueIcons.SQL.ImageToBitmap(), ExecuteSqlOnLoggingDatabase));
                 
                 Items.Add(viewLogs);
             }

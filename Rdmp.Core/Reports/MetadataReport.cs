@@ -268,7 +268,7 @@ namespace Rdmp.Core.Reports
 
         private void AddImages(XWPFDocument document, BitmapWithDescription[] onRequestCatalogueImages)
         {
-            foreach (BitmapWithDescription image in onRequestCatalogueImages)
+            foreach (var image in onRequestCatalogueImages)
             {
                 if(!string.IsNullOrWhiteSpace(image.Header))
                     InsertHeader(document,image.Header,3);

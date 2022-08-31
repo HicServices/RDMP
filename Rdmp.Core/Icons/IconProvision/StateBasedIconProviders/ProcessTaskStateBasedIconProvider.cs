@@ -5,57 +5,47 @@
 // You should have received a copy of the GNU General Public License along with RDMP. If not, see <https://www.gnu.org/licenses/>.
 
 using System;
-using System.Drawing;
+using SixLabors.ImageSharp;
 using Rdmp.Core.Curation.Data.DataLoad;
-using Rdmp.Core.Icons.IconProvision;
+using SixLabors.ImageSharp.PixelFormats;
 
 namespace Rdmp.Core.Icons.IconProvision.StateBasedIconProviders
 {
     public class ProcessTaskStateBasedIconProvider : IObjectStateBasedIconProvider
     {
-        private Bitmap _exe;
-        private Bitmap _sql;
-        private Bitmap _plugin;
-        private Bitmap _attacher;
-        private Bitmap _dataProvider;
-        private Bitmap _mutilateDataTables;
+        private readonly Image<Rgba32> _exe;
+        private readonly Image<Rgba32> _sql;
+        private readonly Image<Rgba32> _plugin;
+        private readonly Image<Rgba32> _attacher;
+        private readonly Image<Rgba32> _dataProvider;
+        private readonly Image<Rgba32> _mutilateDataTables;
 
         public ProcessTaskStateBasedIconProvider()
         {
-            _exe = CatalogueIcons.Exe;
-            _sql = CatalogueIcons.SQL;
-            _plugin = CatalogueIcons.ProcessTask;
+            _exe = Image.Load<Rgba32>(CatalogueIcons.Exe);
+            _sql = Image.Load<Rgba32>(CatalogueIcons.SQL);
+            _plugin = Image.Load<Rgba32>(CatalogueIcons.ProcessTask);
 
-            _attacher = CatalogueIcons.Attacher;
-            _dataProvider = CatalogueIcons.DataProvider;
-            _mutilateDataTables = CatalogueIcons.MutilateDataTables;
+            _attacher = Image.Load<Rgba32>(CatalogueIcons.Attacher);
+            _dataProvider = Image.Load<Rgba32>(CatalogueIcons.DataProvider);
+            _mutilateDataTables = Image.Load<Rgba32>(CatalogueIcons.MutilateDataTables);
         }
 
-        public Bitmap GetImageIfSupportedObject(object o)
+        public Image<Rgba32> GetImageIfSupportedObject(object o)
         {
-            var pt = o as ProcessTask;
+            if (o is Type && o.Equals(typeof(ProcessTask))) return _plugin;
 
-            if(o is Type && o.Equals(typeof(ProcessTask)))
-                return _plugin;
-
-            if (pt == null)
+            if (o is not ProcessTask pt)
                 return null;
-
-            switch (pt.ProcessTaskType)
+            return pt.ProcessTaskType switch
             {
-                case ProcessTaskType.Executable:
-                    return _exe;
-                case ProcessTaskType.SQLFile:
-                    return _sql;
-                case ProcessTaskType.Attacher:
-                    return _attacher;
-                case ProcessTaskType.DataProvider:
-                    return _dataProvider;
-                case ProcessTaskType.MutilateDataTable:
-                    return _mutilateDataTables;
-                default:
-                    throw new ArgumentOutOfRangeException();
-            }
+                ProcessTaskType.Executable => _exe,
+                ProcessTaskType.SQLFile => _sql,
+                ProcessTaskType.Attacher => _attacher,
+                ProcessTaskType.DataProvider => _dataProvider,
+                ProcessTaskType.MutilateDataTable => _mutilateDataTables,
+                _ => throw new ArgumentOutOfRangeException()
+            };
         }
     }
 }

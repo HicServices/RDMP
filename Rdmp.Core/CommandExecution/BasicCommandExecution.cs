@@ -6,8 +6,7 @@
 
 using System;
 using System.Collections.Generic;
-using System.Drawing;
-using System.IO;
+using SixLabors.ImageSharp;
 using System.Linq;
 using System.Reflection;
 using System.Threading;
@@ -17,14 +16,12 @@ using MapsDirectlyToDatabaseTable;
 using Rdmp.Core.CommandExecution.AtomicCommands;
 using Rdmp.Core.CommandLine.Interactive.Picking;
 using Rdmp.Core.Curation.Data;
-using Rdmp.Core.DataLoad.Modules.Mutilators;
-using Rdmp.Core.DataViewing;
 using Rdmp.Core.Repositories.Construction;
 using ReusableLibraryCode;
 using ReusableLibraryCode.Checks;
 using ReusableLibraryCode.Comments;
-using ReusableLibraryCode.DataAccess;
 using ReusableLibraryCode.Icons.IconProvision;
+using SixLabors.ImageSharp.PixelFormats;
 
 namespace Rdmp.Core.CommandExecution
 {
@@ -49,7 +46,7 @@ namespace Rdmp.Core.CommandExecution
         public string ReasonCommandImpossible { get; private set; }
         public string OverrideCommandName { get; set; }
 
-        public Image OverrideIcon { get; set; }
+        public Image<Rgba32> OverrideIcon { get; set; }
 
         /// <summary>
         /// Set to true to suppress the <see cref="Publish(IMapsDirectlyToDatabaseTable)"/> method.  Only use if you are running multiple commands one after the other and don't want to wait for state updates
@@ -159,7 +156,7 @@ namespace Rdmp.Core.CommandExecution
             return String.Empty;
         }
 
-        public virtual Image GetImage(IIconProvider iconProvider)
+        public virtual Image<Rgba32> GetImage(IIconProvider iconProvider)
         {
             return OverrideIcon;
         }

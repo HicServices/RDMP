@@ -6,7 +6,7 @@
 
 using System;
 using System.Collections.Generic;
-using System.Drawing;
+using SixLabors.ImageSharp;
 using System.Windows.Forms;
 using Rdmp.Core.CommandExecution;
 using Rdmp.Core.CommandExecution.AtomicCommands;
@@ -22,6 +22,10 @@ using ReusableLibraryCode.Icons.IconProvision;
 
 using ScintillaNET;
 using HelpIcon = Rdmp.UI.SimpleControls.HelpIcon;
+using Point = System.Drawing.Point;
+using ReusableLibraryCode.Icons;
+using SixLabors.ImageSharp.PixelFormats;
+using Color = System.Drawing.Color;
 
 namespace Rdmp.UI.TestsAndSetup.ServicePropogation
 {
@@ -59,7 +63,7 @@ namespace Rdmp.UI.TestsAndSetup.ServicePropogation
         private AtomicCommandUIFactory atomicCommandUIFactory;
         
         private readonly RAGSmileyToolStrip _ragSmileyToolStrip;
-        private readonly ToolStripButton _runChecksToolStripButton = new ToolStripButton("Run Checks", FamFamFamIcons.arrow_refresh);
+        private readonly ToolStripButton _runChecksToolStripButton = new ToolStripButton("Run Checks", FamFamFamIcons.arrow_refresh.ImageToBitmap());
         private ICheckable _checkable;
         private IActivateItems _activator;
 
@@ -77,7 +81,7 @@ namespace Rdmp.UI.TestsAndSetup.ServicePropogation
 
             //Add the three lines dropdown for seldom used options (See AddToMenu). This starts disabled.
             _menuDropDown = new ToolStripMenuItem();
-            _menuDropDown.Image = CatalogueIcons.Menu;
+            _menuDropDown.Image = CatalogueIcons.Menu.ImageToBitmap();
             _menuDropDown.Visible = false;
             ToolStrip.Items.Add(_menuDropDown);
                         
@@ -109,7 +113,7 @@ namespace Rdmp.UI.TestsAndSetup.ServicePropogation
         /// <param name="overrideCommandName"></param>
         /// <param name="overrideImage"></param>
         /// <param name="underMenu">If the command should appear under a submenu dropdown then this should be the name of that root button</param>
-        public void Add(IAtomicCommand cmd, string overrideCommandName = null, Image overrideImage = null, string underMenu = null)
+        public void Add(IAtomicCommand cmd, string overrideCommandName = null, Image<Rgba32> overrideImage = null, string underMenu = null)
         {
             var p = _hostControl.GetTopmostRDMPUserControl();
             if (p != _hostControl)
@@ -125,7 +129,7 @@ namespace Rdmp.UI.TestsAndSetup.ServicePropogation
                 button.Text = overrideCommandName;
 
             if (overrideImage != null)
-                button.Image = overrideImage;
+                button.Image = overrideImage.ImageToBitmap();
 
             Add(button,underMenu);
         }
@@ -341,7 +345,7 @@ namespace Rdmp.UI.TestsAndSetup.ServicePropogation
         /// <param name="overrideCommandName"></param>
         /// <param name="overrideImage"></param>
         /// <param name="underMenu"></param>
-        public void AddToMenu(IAtomicCommand cmd, string overrideCommandName = null, Image overrideImage = null,string underMenu = null)
+        public void AddToMenu(IAtomicCommand cmd, string overrideCommandName = null, Image<Rgba32> overrideImage = null,string underMenu = null)
         {
             var p = _hostControl.GetTopmostRDMPUserControl();
             if (p != _hostControl)
@@ -357,7 +361,7 @@ namespace Rdmp.UI.TestsAndSetup.ServicePropogation
                 menuItem.Text = overrideCommandName;
 
             if (overrideImage != null)
-                menuItem.Image = overrideImage;
+                menuItem.Image = overrideImage.ImageToBitmap();
 
             AddToMenu(menuItem,underMenu);
         }
@@ -406,7 +410,7 @@ namespace Rdmp.UI.TestsAndSetup.ServicePropogation
         /// <param name="showIcon">True to add the text icon next to the text</param>
         public void Add(string label, bool showIcon = true)
         {
-            Add(new ToolStripLabel(label, showIcon ? FamFamFamIcons.text_align_left : null));
+            Add(new ToolStripLabel(label, showIcon ? FamFamFamIcons.text_align_left.ImageToBitmap() : null));
         }
 
         /// <summary>

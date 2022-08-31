@@ -15,6 +15,7 @@ using Rdmp.Core.Icons.IconProvision;
 using Rdmp.Core.Providers.Nodes;
 using Rdmp.UI.DataLoadUIs.LoadMetadataUIs.LoadDiagram.StateDiscovery;
 using ReusableLibraryCode;
+using ReusableLibraryCode.Icons;
 
 namespace Rdmp.UI.DataLoadUIs.LoadMetadataUIs.LoadDiagram
 {
@@ -61,7 +62,7 @@ namespace Rdmp.UI.DataLoadUIs.LoadMetadataUIs.LoadDiagram
 
         public Bitmap GetImage(ICoreIconProvider coreIconProvider)
         {
-            return coreIconProvider.GetImage(_bubble);
+            return coreIconProvider.GetImage(_bubble).ImageToBitmap();
         }
 
         public void DiscoverState()

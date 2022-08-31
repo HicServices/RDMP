@@ -88,9 +88,9 @@ namespace Rdmp.UI.ChecksUI
             return _worst == CheckResult.Fail;
         }
 
-        private Bitmap _green = Images.TinyGreen;
-        private Bitmap _yellow = Images.TinyYellow;
-        private Bitmap _red = Images.TinyRed;
+        private Bitmap _green = Images.TinyGreen.ImageToBitmap();
+        private Bitmap _yellow = Images.TinyYellow.ImageToBitmap();
+        private Bitmap _red = Images.TinyRed.ImageToBitmap();
 
         private ToMemoryCheckNotifier memoryCheckNotifier = new ToMemoryCheckNotifier();
         private Task _checkTask;

@@ -76,8 +76,8 @@ namespace Rdmp.UI.ANOEngineeringUIs
 
             AssociatedCollection = RDMPCollection.Catalogue;
 
-            btnLoadPlan.Image = FamFamFamIcons.page_white_get;
-            btnSavePlan.Image = FamFamFamIcons.page_white_put;
+            btnLoadPlan.Image = FamFamFamIcons.page_white_get.ImageToBitmap();
+            btnSavePlan.Image = FamFamFamIcons.page_white_put.ImageToBitmap();
         }
 
         #region Aspect Getters and Setters
@@ -96,7 +96,7 @@ namespace Rdmp.UI.ANOEngineeringUIs
             return null;
         }
 
-        private object PickedANOTable_ImageGetter(object rowObject)
+        private Image PickedANOTable_ImageGetter(object rowObject)
         {
             var ci = rowObject as ColumnInfo;
 
@@ -141,7 +141,7 @@ namespace Rdmp.UI.ANOEngineeringUIs
 
             return null;
         }
-        private object Dilution_ImageGetter(object rowobject)
+        private string Dilution_ImageGetter(object rowobject)
         {
             var col = rowobject as ColumnInfo;
 

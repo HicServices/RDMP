@@ -6,63 +6,39 @@
 
 using System;
 using System.Collections.Generic;
-using System.Drawing;
+using SixLabors.ImageSharp;
 using System.Linq;
 using System.Resources;
+using SixLabors.ImageSharp.Processing;
+using SixLabors.ImageSharp.PixelFormats;
 
-namespace Rdmp.Core.Icons.IconProvision
+namespace Rdmp.Core.Icons.IconProvision;
+
+public class EnumImageCollection<T> where T : struct, Enum, IConvertible
 {
-    public class EnumImageCollection<T> where T : struct, IConvertible
+    readonly Dictionary<T,Image<Rgba32>> _images = new();
+
+    private static Image<Rgba32> LoadImage(byte [] ba)
     {
-        readonly Dictionary<T,Bitmap> _images = new Dictionary<T, Bitmap>();
-
-        public EnumImageCollection(ResourceManager resourceManager)
-        {
-            if (!typeof (T).IsEnum)
-                throw new ArgumentException("T must be an enumerated type");
-
-            List<string> missingImages = new List<string>();
-
-            foreach (var enumValue in Enum.GetValues(typeof(T)))
-            {
-                var bmp = (Bitmap)resourceManager.GetObject(enumValue.ToString());
-                if(bmp == null)
-                    missingImages.Add(enumValue.ToString());
-
-                _images.Add((T) enumValue,bmp);
-            }
-
-            if(missingImages.Any())
-                throw new IconProvisionException("The following expected images were missing from " + resourceManager.BaseName + ".resx" + Environment.NewLine + 
-                    string.Join("," + Environment.NewLine,missingImages));
-        }
-
-        public Bitmap this[T index]
-        {
-            get { return _images[index]; }
-        }
-
-        public Dictionary<string, Bitmap> ToStringDictionary(int newSizeInPixels = -1)
-        {
-            var toReturn = _images.ToDictionary(k => k.Key.ToString(), v => v.Value);
-
-            if (newSizeInPixels != -1)
-                toReturn = Resize(toReturn,newSizeInPixels);
-
-            return toReturn;
-        }
-
-        private Dictionary<string, Bitmap> Resize(Dictionary<string, Bitmap> dictionary, int newSizeInPixels)
-        {
-            foreach (var k in dictionary.Keys.ToArray())
-            {
-                var bmp = new Bitmap(newSizeInPixels, newSizeInPixels);
-                var g = Graphics.FromImage(bmp);
-                g.DrawImage(dictionary[k],0,0,newSizeInPixels,newSizeInPixels);
-                dictionary[k] = bmp;
-            }
-
-            return dictionary;
-        }
+        return (ba == null) ? null : Image.Load<Rgba32>(ba);
     }
+
+    public EnumImageCollection(ResourceManager resourceManager)
+    {
+        _images=Enum.GetValues<T>().ToDictionary(s=>s,s=>LoadImage(resourceManager.GetObject(s.ToString()) as byte[]));
+        var missingImages = _images.Where(i => i.Value is null).Select(p => p.Key).ToList();
+        if(missingImages.Any())
+            throw new IconProvisionException(
+                $"The following expected images were missing from {resourceManager.BaseName}.resx{Environment.NewLine}{string.Join("," + Environment.NewLine, missingImages)}");
+    }
+
+    public Image<Rgba32> this[T index] => _images[index];
+
+    public Dictionary<string, Image<Rgba32>> ToStringDictionary(int newSizeInPixels = -1)
+    {
+        return _images.ToDictionary(
+            k => k.Key.ToString(),
+            v => newSizeInPixels==-1 ? v.Value : v.Value.Clone(x=>x.Resize(newSizeInPixels,newSizeInPixels)));
+    }
+
 }

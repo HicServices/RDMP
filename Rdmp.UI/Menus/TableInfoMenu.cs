@@ -26,7 +26,7 @@ namespace Rdmp.UI.Menus
             Add(new ExecuteCommandAddNewLookupTableRelationship(_activator, null, tableInfo),Keys.None,"New");
             Add(new ExecuteCommandAddJoinInfo(_activator, tableInfo),Keys.None,"New");
                                     
-            Items.Add("Configure Primary Key Collision Resolution ", CatalogueIcons.CollisionResolution, delegate { ConfigurePrimaryKeyCollisionResolution_Click(tableInfo); });
+            Items.Add("Configure Primary Key Collision Resolution ", CatalogueIcons.CollisionResolution.ImageToBitmap(), delegate { ConfigurePrimaryKeyCollisionResolution_Click(tableInfo); });
 
             Items.Add(new ToolStripSeparator());
             Items.Add(new SetDumpServerMenuItem(_activator, tableInfo));
@@ -34,7 +34,7 @@ namespace Rdmp.UI.Menus
             Items.Add(new ToolStripSeparator());
 
             if (tableInfo != null && tableInfo.IsTableValuedFunction)
-                Items.Add("Configure Parameters...", _activator.CoreIconProvider.GetImage(RDMPConcept.ParametersNode), delegate { ConfigureTableInfoParameters(tableInfo); });
+                Items.Add("Configure Parameters...", _activator.CoreIconProvider.GetImage(RDMPConcept.ParametersNode).ImageToBitmap(), delegate { ConfigureTableInfoParameters(tableInfo); });
         }
 
         private void ConfigurePrimaryKeyCollisionResolution_Click(TableInfo tableInfo)

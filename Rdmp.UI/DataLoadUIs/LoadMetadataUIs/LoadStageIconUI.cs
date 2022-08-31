@@ -7,6 +7,7 @@
 using System.Windows.Forms;
 using Rdmp.Core.Curation.Data.DataLoad;
 using Rdmp.Core.Icons.IconProvision;
+using ReusableLibraryCode.Icons;
 
 namespace Rdmp.UI.DataLoadUIs.LoadMetadataUIs
 {
@@ -23,7 +24,7 @@ namespace Rdmp.UI.DataLoadUIs.LoadMetadataUIs
 
         public void Setup(ICoreIconProvider iconProvider,LoadStage stage)
         {
-            pictureBox1.Image = iconProvider.GetImage(stage);
+            pictureBox1.Image = iconProvider.GetImage(stage).ImageToBitmap();
             lblLoadStage.Text = stage.ToString();
             this.Width = lblLoadStage.Right;
         }
