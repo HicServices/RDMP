@@ -263,7 +263,7 @@ namespace MapsDirectlyToDatabaseTable
             }
         }
 
-        private string Wrap(string name)
+        public string Wrap(string name)
         {
             return DiscoveredServer.GetQuerySyntaxHelper().EnsureWrapped(name);
         }
@@ -979,11 +979,6 @@ namespace MapsDirectlyToDatabaseTable
         public void EndTransaction(bool commit)
         {
             EndTransactedConnection(commit);
-        }
-
-        public string Wrap(string name)
-        {
-            return DiscoveredServer.GetQuerySyntaxHelper().EnsureWrapped(name);
         }
     }
 }
