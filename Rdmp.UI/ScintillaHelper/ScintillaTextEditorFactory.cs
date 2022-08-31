@@ -120,8 +120,8 @@ namespace Rdmp.UI.ScintillaHelper
                     }
                     else
                     {
-                        aff = Path.Combine(currentDirectory, "en_us.aff");
-                        dic = Path.Combine(currentDirectory, "en_us.dic");
+                        aff = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "en_us.aff");
+                        dic = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "en_us.dic");
                     }
 
                     var hunspell = new Hunspell(aff,dic);
