@@ -4,30 +4,30 @@
 // RDMP is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License for more details.
 // You should have received a copy of the GNU General Public License along with RDMP. If not, see <https://www.gnu.org/licenses/>.
 
-using System.Drawing;
+using SixLabors.ImageSharp;
 using Rdmp.Core.DataExport.Data;
 using Rdmp.Core.Icons.IconOverlays;
 using ReusableLibraryCode.Icons.IconProvision;
+using SixLabors.ImageSharp.PixelFormats;
 
 namespace Rdmp.Core.Icons.IconProvision.StateBasedIconProviders
 {
     public class ExtractableDataSetStateBasedIconProvider : IObjectStateBasedIconProvider
     {
         private readonly IconOverlayProvider _overlayProvider;
-        private CatalogueStateBasedIconProvider _catalogueIconProvider;
-        private Bitmap _disabled;
+        private readonly CatalogueStateBasedIconProvider _catalogueIconProvider;
+        private readonly Image<Rgba32> _disabled;
 
         public ExtractableDataSetStateBasedIconProvider(IconOverlayProvider overlayProvider, CatalogueStateBasedIconProvider catalogueIconProvider)
         {
             _catalogueIconProvider = catalogueIconProvider;
-            _disabled = CatalogueIcons.ExtractableDataSetDisabled;
+            _disabled = Image.Load<Rgba32>(CatalogueIcons.ExtractableDataSetDisabled);
             this._overlayProvider = overlayProvider;
         }
 
-        public Bitmap GetImageIfSupportedObject(object o)
+        public Image<Rgba32> GetImageIfSupportedObject(object o)
         {
-            var ds = o as ExtractableDataSet ;
-            if (ds == null)
+            if (o is not ExtractableDataSet ds)
                 return null;
 
             var cataOne = _catalogueIconProvider.GetImageIfSupportedObject(ds.Catalogue);

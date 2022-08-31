@@ -10,8 +10,9 @@ using Rdmp.Core.Repositories.Construction;
 using ReusableLibraryCode;
 using ReusableLibraryCode.Icons.IconProvision;
 using System;
-using System.Drawing;
+using SixLabors.ImageSharp;
 using System.Linq;
+using SixLabors.ImageSharp.PixelFormats;
 
 namespace Rdmp.Core.CommandExecution
 {
@@ -43,7 +44,7 @@ namespace Rdmp.Core.CommandExecution
             _catalogue = catalogue;
             _clipboardContentGetter = clipboardContentGetter;
         }
-        public override Image GetImage(IIconProvider iconProvider)
+        public override Image<Rgba32> GetImage(IIconProvider iconProvider)
         {
             return iconProvider.GetImage(RDMPConcept.Clipboard, OverlayKind.Import);
         }

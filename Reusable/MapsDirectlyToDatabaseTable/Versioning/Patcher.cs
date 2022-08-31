@@ -43,20 +43,31 @@ namespace MapsDirectlyToDatabaseTable.Versioning
             Tier = tier;
             ResourceSubdirectory = resourceSubdirectory;
         }
-        
+
         /// <summary>
         /// Generates a properly formatted header for <see cref="Patch"/> creation when you only know the SQL you want to execute
         /// </summary>
+        /// <param name="dbType"></param>
         /// <param name="description"></param>
         /// <param name="version"></param>
         /// <returns></returns>
-        protected string GetHeader(string description,Version version)
+        protected string GetHeader(DatabaseType dbType, string description,Version version)
         {
-            string header = Patch.VersionKey + version.ToString() + Environment.NewLine;
-            header += Patch.DescriptionKey + description + Environment.NewLine;
+            string header = CommentFor(dbType,Patch.VersionKey + version.ToString()) + Environment.NewLine;
+            header += CommentFor(dbType,Patch.DescriptionKey + description) + Environment.NewLine;
 
             return header;
         }
+
+        private string CommentFor(DatabaseType dbType, string sql)
+        {
+            if (dbType == DatabaseType.MicrosoftSQLServer)
+                return sql;
+
+            // some DBMS don't like the -- notation so we need to wrap with C style comments
+            return $"/*{sql}*/";
+        }
+
         public virtual Patch GetInitialCreateScriptContents(DiscoveredDatabase db)
         {
             var assembly = GetDbAssembly();
@@ -76,8 +87,8 @@ namespace MapsDirectlyToDatabaseTable.Versioning
 
                 string sql = sr.ReadToEnd();
 
-                if (!sql.StartsWith(Patch.VersionKey))
-                    sql = GetHeader(InitialScriptName, new Version(1, 0, 0)) + sql;
+                if (!sql.Contains(Patch.VersionKey))
+                    sql = GetHeader(db.Server.DatabaseType, InitialScriptName, new Version(1, 0, 0)) + sql;
 
 
                 return new Patch(InitialScriptName,  sql);

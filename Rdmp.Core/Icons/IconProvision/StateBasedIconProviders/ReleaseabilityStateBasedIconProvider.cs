@@ -5,47 +5,52 @@
 // You should have received a copy of the GNU General Public License along with RDMP. If not, see <https://www.gnu.org/licenses/>.
 
 using System.Collections.Generic;
-using System.Drawing;
+using SixLabors.ImageSharp;
 using Rdmp.Core.DataExport.DataRelease.Potential;
-using Rdmp.Core.Icons.IconProvision;
 using Rdmp.Core.Ticketing;
+using SixLabors.ImageSharp.PixelFormats;
 
 namespace Rdmp.Core.Icons.IconProvision.StateBasedIconProviders
 {
     public class ReleaseabilityStateBasedIconProvider : IObjectStateBasedIconProvider
     {
-        private readonly Dictionary<Releaseability,Bitmap> _images = new Dictionary<Releaseability, Bitmap>();
-        private readonly Dictionary<TicketingReleaseabilityEvaluation, Bitmap> _environmentImages = new Dictionary<TicketingReleaseabilityEvaluation, Bitmap>();
+        private readonly Dictionary<Releaseability,Image<Rgba32>> _images;
+        private readonly Dictionary<TicketingReleaseabilityEvaluation, Image<Rgba32>> _environmentImages;
 
         public ReleaseabilityStateBasedIconProvider()
         {
-            _images.Add(Releaseability.Undefined,CatalogueIcons.TinyRed);
+            _images = new()
+            {
+                { Releaseability.Undefined, Image.Load<Rgba32>(CatalogueIcons.TinyRed) },
 
-            _images.Add(Releaseability.ExceptionOccurredWhileEvaluatingReleaseability, CatalogueIcons.TinyRed);
-            _images.Add(Releaseability.NeverBeenSuccessfullyExecuted, CatalogueIcons.Failed);
-            _images.Add(Releaseability.ExtractFilesMissing, CatalogueIcons.FileMissing);
-            _images.Add(Releaseability.ExtractionSQLDesynchronisation, CatalogueIcons.Diff);
-            _images.Add(Releaseability.CohortDesynchronisation, CatalogueIcons.Failed);
-            _images.Add(Releaseability.ColumnDifferencesVsCatalogue, CatalogueIcons.TinyYellow);
-            _images.Add(Releaseability.Releaseable, CatalogueIcons.TinyGreen);
+                { Releaseability.ExceptionOccurredWhileEvaluatingReleaseability, Image.Load<Rgba32>(CatalogueIcons.TinyRed) },
+                { Releaseability.NeverBeenSuccessfullyExecuted, Image.Load<Rgba32>(CatalogueIcons.Failed) },
+                { Releaseability.ExtractFilesMissing, Image.Load<Rgba32>(CatalogueIcons.FileMissing) },
+                { Releaseability.ExtractionSQLDesynchronisation, Image.Load<Rgba32>(CatalogueIcons.Diff) },
+                { Releaseability.CohortDesynchronisation, Image.Load<Rgba32>(CatalogueIcons.Failed) },
+                { Releaseability.ColumnDifferencesVsCatalogue, Image.Load<Rgba32>(CatalogueIcons.TinyYellow) },
+                { Releaseability.Releaseable, Image.Load<Rgba32>(CatalogueIcons.TinyGreen) }
+            };
 
-            _environmentImages.Add(TicketingReleaseabilityEvaluation.CouldNotAuthenticateAgainstServer, CatalogueIcons.TinyRed);
-            _environmentImages.Add(TicketingReleaseabilityEvaluation.CouldNotReachTicketingServer, CatalogueIcons.TinyRed);
-            _environmentImages.Add(TicketingReleaseabilityEvaluation.NotReleaseable, CatalogueIcons.TinyRed);
-            _environmentImages.Add(TicketingReleaseabilityEvaluation.Releaseable, CatalogueIcons.TinyGreen);
-            _environmentImages.Add(TicketingReleaseabilityEvaluation.TicketingLibraryCrashed, CatalogueIcons.TinyRed);
-            _environmentImages.Add(TicketingReleaseabilityEvaluation.TicketingLibraryMissingOrNotConfiguredCorrectly, CatalogueIcons.TinyYellow);
+            _environmentImages = new()
+            {
+                { TicketingReleaseabilityEvaluation.CouldNotAuthenticateAgainstServer, Image.Load<Rgba32>(CatalogueIcons.TinyRed) },
+                { TicketingReleaseabilityEvaluation.CouldNotReachTicketingServer, Image.Load<Rgba32>(CatalogueIcons.TinyRed) },
+                { TicketingReleaseabilityEvaluation.NotReleaseable, Image.Load<Rgba32>(CatalogueIcons.TinyRed) },
+                { TicketingReleaseabilityEvaluation.Releaseable, Image.Load<Rgba32>(CatalogueIcons.TinyGreen) },
+                { TicketingReleaseabilityEvaluation.TicketingLibraryCrashed, Image.Load<Rgba32>(CatalogueIcons.TinyRed) },
+                { TicketingReleaseabilityEvaluation.TicketingLibraryMissingOrNotConfiguredCorrectly, Image.Load<Rgba32>(CatalogueIcons.TinyYellow) }
+            };
         }
 
-        public Bitmap GetImageIfSupportedObject(object o)
+        public Image<Rgba32> GetImageIfSupportedObject(object o)
         {
-            if (o is Releaseability) 
-                return _images[(Releaseability) o];
-
-            if (o is TicketingReleaseabilityEvaluation)
-                return _environmentImages[(TicketingReleaseabilityEvaluation)o];
-
-            return null;
+            return o switch
+            {
+                Releaseability releaseability => _images[releaseability],
+                TicketingReleaseabilityEvaluation evaluation => _environmentImages[evaluation],
+                _ => null
+            };
         }
     }
 }

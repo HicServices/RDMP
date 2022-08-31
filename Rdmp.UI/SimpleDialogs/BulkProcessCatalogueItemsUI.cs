@@ -7,6 +7,7 @@
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
+using System.Drawing;
 using System.Linq;
 using System.Text.RegularExpressions;
 using System.Windows.Forms;
@@ -75,9 +76,9 @@ namespace Rdmp.UI.SimpleDialogs
             cbTableInfos.Items.AddRange(_catalogue.GetTableInfoList(true));
         }
 
-        private object ImageGetter(object rowObject)
+        private Bitmap ImageGetter(object rowObject)
         {
-            return Activator.CoreIconProvider.GetImage(rowObject);
+            return Activator.CoreIconProvider.GetImage(rowObject).ImageToBitmap();
         }
 
         private void groupBox2_Enter(object sender, EventArgs e)

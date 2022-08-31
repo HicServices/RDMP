@@ -5,12 +5,12 @@
 // You should have received a copy of the GNU General Public License along with RDMP. If not, see <https://www.gnu.org/licenses/>.
 
 using System;
-using System.Drawing;
+using SixLabors.ImageSharp;
 using Rdmp.Core.Curation.Data;
 using Rdmp.Core.Curation.Data.DataLoad;
 using Rdmp.Core.Curation.Data.DataLoad.Extensions;
-using Rdmp.Core.Icons.IconProvision;
 using Rdmp.Core.Providers.Nodes.LoadMetadataNodes;
+using SixLabors.ImageSharp.PixelFormats;
 
 namespace Rdmp.Core.Icons.IconProvision.StateBasedIconProviders
 {
@@ -22,39 +22,28 @@ namespace Rdmp.Core.Icons.IconProvision.StateBasedIconProviders
         {
             _iconProvider = iconProvider;
         }
-        public Bitmap GetImageIfSupportedObject(object o)
+        public Image<Rgba32> GetImageIfSupportedObject(object o)
         {
-            var node = o as LoadStageNode;
-
-            if (o is LoadStage)
-                return GetImageForStage((LoadStage) o);
-
-            if (o is LoadBubble)
-                return GetImageForStage(((LoadBubble) o).ToLoadStage());
-
-            if (node != null)
-                return GetImageForStage(node.LoadStage);
-            
-            return null;
+            return o switch
+            {
+                LoadStage stage => GetImageForStage(stage),
+                LoadBubble bubble => GetImageForStage(bubble.ToLoadStage()),
+                LoadStageNode node => GetImageForStage(node.LoadStage),
+                _ => null
+            };
         }
 
-        private Bitmap GetImageForStage(LoadStage loadStage)
+        private Image<Rgba32> GetImageForStage(LoadStage loadStage)
         {
-            switch (loadStage)
+            return loadStage switch
             {
-                case LoadStage.GetFiles:
-                    return _iconProvider.GetImage(RDMPConcept.GetFilesStage);
-                case LoadStage.Mounting:
-                    return _iconProvider.GetImage(RDMPConcept.LoadBubbleMounting);
-                case LoadStage.AdjustRaw:
-                    return _iconProvider.GetImage(RDMPConcept.LoadBubble);
-                case LoadStage.AdjustStaging:
-                    return _iconProvider.GetImage(RDMPConcept.LoadBubble);
-                case LoadStage.PostLoad:
-                    return _iconProvider.GetImage(RDMPConcept.LoadFinalDatabase);
-                default:
-                    throw new ArgumentOutOfRangeException();
-            }
+                LoadStage.GetFiles => _iconProvider.GetImage(RDMPConcept.GetFilesStage),
+                LoadStage.Mounting => _iconProvider.GetImage(RDMPConcept.LoadBubbleMounting),
+                LoadStage.AdjustRaw => _iconProvider.GetImage(RDMPConcept.LoadBubble),
+                LoadStage.AdjustStaging => _iconProvider.GetImage(RDMPConcept.LoadBubble),
+                LoadStage.PostLoad => _iconProvider.GetImage(RDMPConcept.LoadFinalDatabase),
+                _ => throw new ArgumentOutOfRangeException()
+            };
         }
     }
 }

@@ -19,7 +19,9 @@ using Rdmp.UI.CommandExecution.AtomicCommands;
 using Rdmp.UI.ItemActivation;
 using Rdmp.UI.Refreshing;
 using Rdmp.UI.SimpleDialogs;
+using ReusableLibraryCode.Icons;
 using ReusableLibraryCode.Icons.IconProvision;
+using SixLabors.ImageSharp.PixelFormats;
 
 namespace Rdmp.UI.Menus.MenuItems
 {
@@ -34,20 +36,20 @@ namespace Rdmp.UI.Menus.MenuItems
 
             //cannot set server if we already have one
             Enabled = tableInfo.IdentifierDumpServer_ID == null;
-            Image = activator.CoreIconProvider.GetImage(RDMPConcept.ExternalDatabaseServer, OverlayKind.Add);
+            Image = activator.CoreIconProvider.GetImage(RDMPConcept.ExternalDatabaseServer, OverlayKind.Add).ImageToBitmap();
 
-            var img = CatalogueIcons.ExternalDatabaseServer_IdentifierDump;
+            var img = SixLabors.ImageSharp.Image.Load<Rgba32>(CatalogueIcons.ExternalDatabaseServer_IdentifierDump);
             var overlay = new IconOverlayProvider();
 
             var cataRepo = activator.RepositoryLocator.CatalogueRepository;
 
             _availableServers = cataRepo.GetAllDatabases<IdentifierDumpDatabasePatcher>();
 
-            var miUseExisting = new ToolStripMenuItem("Use Existing...", overlay.GetOverlayNoCache(img, OverlayKind.Link),UseExisting);
+            var miUseExisting = new ToolStripMenuItem("Use Existing...", overlay.GetOverlayNoCache(img, OverlayKind.Link).ImageToBitmap(),UseExisting);
             miUseExisting.Enabled = _availableServers.Any();
 
             DropDownItems.Add(miUseExisting);
-            DropDownItems.Add("Create New...", overlay.GetOverlayNoCache(img, OverlayKind.Add), CreateNewIdentifierDumpServer);
+            DropDownItems.Add("Create New...", overlay.GetOverlayNoCache(img, OverlayKind.Add).ImageToBitmap(), CreateNewIdentifierDumpServer);
 
         }
 

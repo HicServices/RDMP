@@ -5,41 +5,37 @@
 // You should have received a copy of the GNU General Public License along with RDMP. If not, see <https://www.gnu.org/licenses/>.
 
 using System;
-using System.Drawing;
-using Rdmp.Core.Icons.IconProvision;
+using SixLabors.ImageSharp;
 using ReusableLibraryCode.Checks;
+using SixLabors.ImageSharp.PixelFormats;
 
 namespace Rdmp.Core.Icons.IconProvision.StateBasedIconProviders
 {
     public class CheckResultStateBasedIconProvider : IObjectStateBasedIconProvider
     {
-        private Bitmap _exception;
-        private Bitmap _warning;
-        private Bitmap _tick;
+        private readonly Image<Rgba32> _exception;
+        private readonly Image<Rgba32> _warning;
+        private readonly Image<Rgba32> _tick;
 
         public CheckResultStateBasedIconProvider()
         {
-            _exception = CatalogueIcons.TinyRed;
-            _warning = CatalogueIcons.TinyYellow;
-            _tick = CatalogueIcons.TinyGreen;
+            _exception = Image.Load<Rgba32>(CatalogueIcons.TinyRed);
+            _warning = Image.Load<Rgba32>(CatalogueIcons.TinyYellow);
+            _tick = Image.Load<Rgba32>(CatalogueIcons.TinyGreen);
         }
         
-        public Bitmap GetImageIfSupportedObject(object o)
+        public Image<Rgba32> GetImageIfSupportedObject(object o)
         {
-            if (!(o is CheckResult))
+            if (o is not CheckResult result)
                 return null;
 
-            switch ((CheckResult)o)
+            return result switch
             {
-                case CheckResult.Success:
-                    return _tick;
-                case CheckResult.Warning:
-                    return _warning;
-                case CheckResult.Fail:
-                    return _exception;
-                default:
-                    throw new ArgumentOutOfRangeException();
-            }
+                CheckResult.Success => _tick,
+                CheckResult.Warning => _warning,
+                CheckResult.Fail => _exception,
+                _ => throw new ArgumentOutOfRangeException()
+            };
         }
     }
 }

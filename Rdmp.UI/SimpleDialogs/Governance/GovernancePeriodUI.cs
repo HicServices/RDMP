@@ -48,7 +48,7 @@ namespace Rdmp.UI.SimpleDialogs.Governance
             InitializeComponent();
             AssociatedCollection = RDMPCollection.Catalogue;
 
-            olvName.ImageGetter = s => Activator.CoreIconProvider.GetImage(s);
+            olvName.ImageGetter = s => Activator.CoreIconProvider.GetImage(s).ImageToBitmap();
 
             RDMPCollectionCommonFunctionality.SetupColumnTracking(olvCatalogues, olvName, new Guid("6702de5f-490f-4235-bce4-dea0cbd23f06"));
         }

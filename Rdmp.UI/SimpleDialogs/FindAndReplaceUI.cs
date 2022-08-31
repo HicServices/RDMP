@@ -6,6 +6,7 @@
 
 using System;
 using System.Collections.Generic;
+using System.Drawing;
 using System.Linq;
 using System.Reflection;
 using System.Windows.Forms;
@@ -123,12 +124,12 @@ namespace Rdmp.UI.SimpleDialogs
             return node.PropertyName;
         }
 
-        private object ImageGetter(object rowObject)
+        private Bitmap ImageGetter(object rowObject)
         {
             if(rowObject == null)
                 return null;
 
-            return Activator.CoreIconProvider.GetImage(((FindAndReplaceNode)rowObject).Instance);
+            return Activator.CoreIconProvider.GetImage(((FindAndReplaceNode)rowObject).Instance).ImageToBitmap();
         }
 
 

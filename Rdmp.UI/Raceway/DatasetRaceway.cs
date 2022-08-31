@@ -22,9 +22,10 @@ using Rdmp.Core.Repositories;
 using Rdmp.UI.DashboardTabs.Construction;
 using Rdmp.UI.ItemActivation;
 using Rdmp.UI.Refreshing;
-using Rdmp.UI.SimpleDialogs;
 using Rdmp.UI.TestsAndSetup.ServicePropogation;
+using ReusableLibraryCode.Icons;
 using ReusableLibraryCode.Icons.IconProvision;
+using SixLabors.ImageSharp.PixelFormats;
 
 namespace Rdmp.UI.Raceway
 {
@@ -43,7 +44,7 @@ namespace Rdmp.UI.Raceway
     public partial class DatasetRaceway : RDMPUserControl, IDashboardableControl
     {
         private ToolStripButton btnAddCatalogue = new ToolStripButton("Add Catalogue"){Name= "btnAddCatalogue" };
-        private ToolStripButton btnRemoveAll = new ToolStripButton("Clear",FamFamFamIcons.delete_multi) { Name = "btnRemoveAll" };
+        private ToolStripButton btnRemoveAll = new ToolStripButton("Clear",FamFamFamIcons.delete_multi.ImageToBitmap()) { Name = "btnRemoveAll" };
         private ToolStripButton btnAddExtractableDatasetPackage = new ToolStripButton("Add Package") { Name = "btnAddExtractableDatasetPackage" };
         private ToolStripLabel toolStripLabel1 = new ToolStripLabel("Show Period") { Name = "toolStripLabel1" };
         private ToolStripComboBox ddShowPeriod = new ToolStripComboBox() { Name = "ddShowPeriod", Size = new Size(121, 25) };
@@ -63,9 +64,9 @@ namespace Rdmp.UI.Raceway
             
             ddShowPeriod.ComboBox.DataSource = Enum.GetValues(typeof (RacewayShowPeriod));
             
-            btnRemoveAll.Image = FamFamFamIcons.delete_multi;
-            _ignoreRowCounts = CatalogueIcons.RowCounts_Ignore;
-            _respectRowCounts = CatalogueIcons.RowCounts_Respect;
+            btnRemoveAll.Image = FamFamFamIcons.delete_multi.ImageToBitmap();
+            _ignoreRowCounts = CatalogueIcons.RowCounts_Ignore.ImageToBitmap();
+            _respectRowCounts = CatalogueIcons.RowCounts_Respect.ImageToBitmap();
         }
 
         private DashboardControl _dashboardControlDatabaseRecord;
@@ -175,8 +176,8 @@ namespace Rdmp.UI.Raceway
 
             SetItemActivator(activator);
 
-            btnAddCatalogue.Image = _activator.CoreIconProvider.GetImage(RDMPConcept.Catalogue, OverlayKind.Import);
-            btnAddExtractableDatasetPackage.Image = _activator.CoreIconProvider.GetImage(RDMPConcept.ExtractableDataSetPackage, OverlayKind.Import);
+            btnAddCatalogue.Image = _activator.CoreIconProvider.GetImage(RDMPConcept.Catalogue, OverlayKind.Import).ImageToBitmap();
+            btnAddExtractableDatasetPackage.Image = _activator.CoreIconProvider.GetImage(RDMPConcept.ExtractableDataSetPackage, OverlayKind.Import).ImageToBitmap();
             
             ddShowPeriod.ComboBox.SelectedItem = _collection.ShowPeriod;
             cbIgnoreRowCounts.Checked = _collection.IgnoreRows;

@@ -58,7 +58,7 @@ namespace Rdmp.UI.Overview
         {
             olvName.ImageGetter = delegate
             {
-                return Activator.CoreIconProvider.GetImage(RDMPConcept.LoadMetadata);
+                return Activator.CoreIconProvider.GetImage(RDMPConcept.LoadMetadata).ImageToBitmap();
             };
 
             olvDataLoads.ButtonClick += delegate(object sender, CellClickEventArgs e)

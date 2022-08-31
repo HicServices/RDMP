@@ -5,53 +5,43 @@
 // You should have received a copy of the GNU General Public License along with RDMP. If not, see <https://www.gnu.org/licenses/>.
 
 using System;
-using System.Drawing;
+using SixLabors.ImageSharp;
 using Rdmp.Core.Curation.Data.Cohort;
-using Rdmp.Core.Icons.IconProvision;
+using SixLabors.ImageSharp.PixelFormats;
 
 namespace Rdmp.Core.Icons.IconProvision.StateBasedIconProviders
 {
     public class CohortAggregateContainerStateBasedIconProvider : IObjectStateBasedIconProvider
     {
-        private Bitmap _union;
-        private Bitmap _intersect;
-        private Bitmap _except;
+        private readonly Image<Rgba32> _union;
+        private readonly Image<Rgba32> _intersect;
+        private readonly Image<Rgba32> _except;
 
         public CohortAggregateContainerStateBasedIconProvider()
         {
-            _union = CatalogueIcons.UNION;
-            _intersect = CatalogueIcons.INTERSECT;
-            _except = CatalogueIcons.EXCEPT;            
+            _union = Image.Load<Rgba32>(CatalogueIcons.UNION);
+            _intersect = Image.Load<Rgba32>(CatalogueIcons.INTERSECT);
+            _except = Image.Load<Rgba32>(CatalogueIcons.EXCEPT);            
         }
-        public Bitmap GetImageIfSupportedObject(object o)
+        public Image<Rgba32> GetImageIfSupportedObject(object o)
         {
-            if (o is Type && o.Equals(typeof (CohortAggregateContainer)))
-                return _intersect;
-
-            if (o is SetOperation)
-                return GetImage((SetOperation) o);
-
-            var container = o as CohortAggregateContainer;
-            
-            if (container == null)
-                return null;
-
-            return GetImage(container.Operation);
-        }
-
-        private Bitmap GetImage(SetOperation operation)
-        {
-            switch (operation)
+            return o switch
             {
-                case SetOperation.UNION:
-                    return _union;
-                case SetOperation.INTERSECT:
-                    return _intersect;
-                case SetOperation.EXCEPT:
-                    return _except;
-                default:
-                    throw new ArgumentOutOfRangeException();
-            }
+                Type when o.Equals(typeof(CohortAggregateContainer)) => _intersect,
+                SetOperation operation => GetImage(operation),
+                _ => o is not CohortAggregateContainer container ? null : GetImage(container.Operation)
+            };
+        }
+
+        private Image<Rgba32> GetImage(SetOperation operation)
+        {
+            return operation switch
+            {
+                SetOperation.UNION => _union,
+                SetOperation.INTERSECT => _intersect,
+                SetOperation.EXCEPT => _except,
+                _ => throw new ArgumentOutOfRangeException()
+            };
         }
     }
 }

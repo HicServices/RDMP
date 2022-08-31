@@ -13,6 +13,7 @@ using Rdmp.Core.CommandExecution;
 using Rdmp.Core.CommandExecution.AtomicCommands;
 using Rdmp.Core.Curation.Data;
 using Rdmp.Core.Icons.IconProvision;
+using Rdmp.UI;
 using Rdmp.UI.Collections;
 using Rdmp.UI.Collections.Providers;
 using Rdmp.UI.CommandExecution.AtomicCommands;
@@ -45,11 +46,11 @@ namespace ResearchDataManagementPlatform.WindowManagement.HomePane
                 _activator = activator;
                 lblTitle.Text = title;
 
-                btnNew.Image = FamFamFamIcons.add;
+                btnNew.Image = FamFamFamIcons.add.ImageToBitmap();
                 btnNew.Text = "New";
                 btnNew.DisplayStyle = ToolStripItemDisplayStyle.Text;
 
-                btnNewDropdown.Image = FamFamFamIcons.add;
+                btnNewDropdown.Image = FamFamFamIcons.add.ImageToBitmap();
                 btnNewDropdown.Text = "New...";
                 btnNewDropdown.DisplayStyle = ToolStripItemDisplayStyle.Text;
 

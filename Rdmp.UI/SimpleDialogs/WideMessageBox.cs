@@ -201,25 +201,16 @@ namespace Rdmp.UI.SimpleDialogs
         }
         private void ApplyTheme(WideMessageBoxTheme theme)
         {
-            
-            switch (theme)
+
+            pbIcon.Image = theme switch
             {
-                case WideMessageBoxTheme.Exception:
-                    pbIcon.Image = Images.ErrorIcon;
-                    break;
-                case WideMessageBoxTheme.Warning:
-                    pbIcon.Image = Images.WarningIcon;
-                    break;
-                case WideMessageBoxTheme.Help:
-                    pbIcon.Image =Images.InformationIcon;
-                    break;
-                default:
-                    throw new ArgumentOutOfRangeException("theme");
-            }
+                WideMessageBoxTheme.Exception => (Image)Images.ErrorIcon.ImageToBitmap(),
+                WideMessageBoxTheme.Warning => (Image)Images.WarningIcon.ImageToBitmap(),
+                WideMessageBoxTheme.Help => (Image)Images.InformationIcon.ImageToBitmap(),
+                _ => throw new ArgumentOutOfRangeException(nameof(theme)),
+            };
 
-            var f = new IconFactory();
-
-            Icon = f.GetIcon((Bitmap)pbIcon.Image);
+            Icon = IconFactory.Instance.GetIcon(pbIcon.Image.LegacyToImage());
         }
 
         private void btnOk_Click(object sender, EventArgs e)

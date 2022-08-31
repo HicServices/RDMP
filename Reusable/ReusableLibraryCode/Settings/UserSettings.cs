@@ -407,6 +407,20 @@ namespace ReusableLibraryCode.Settings
             set { AppSettings.AddOrUpdateValue("ShowProjectSpecificColumns", value); }
         }
 
+        /// <summary>
+        /// <para>When generating an aggregate graph, use the column alias instead of the select sql.  For example
+        /// when you have the select column 'SELECT YEAR(dt) as myYear' then the GROUP BY will default to 
+        /// 'GROUP BY YEAR(dt)'.  Setting this property to true will instead use 'GROUP BY myYear'.  Typically
+        /// this only works in MySql but it is not universally supported by all MySql versions and server settings
+        /// </para>
+        /// <para>Defaults to false.</para>
+        /// </summary>
+        public static bool UseAliasInsteadOfTransformInGroupByAggregateGraphs
+        {
+            get { return AppSettings.GetValueOrDefault("ShowProjectSpecificColumns", false); }
+            set { AppSettings.AddOrUpdateValue("ShowProjectSpecificColumns", value); }
+        }
+
 
         #endregion
 

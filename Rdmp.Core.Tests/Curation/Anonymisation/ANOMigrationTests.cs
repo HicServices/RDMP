@@ -142,6 +142,7 @@ INSERT [ANOMigration] ([AdmissionDate], [DischargeDate], [Condition1], [Conditio
 
 /*
             //Value and a list of the rows in which it was found on (e.g. the value 'Fish' was found on row 11, 31, 52 and 501
+/*
             Dictionary<object,List<int>> rowsObjectFoundIn = new Dictionary<object, List<int>>();
 
             var server = DataAccessPortal.GetInstance().ExpectServer(_tableInfo, DataAccessContext.DataLoad);

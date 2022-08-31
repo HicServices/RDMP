@@ -4,27 +4,25 @@
 // RDMP is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License for more details.
 // You should have received a copy of the GNU General Public License along with RDMP. If not, see <https://www.gnu.org/licenses/>.
 
-using System.Drawing;
+using SixLabors.ImageSharp;
 using Rdmp.Core.Curation.Data.Cohort;
-using Rdmp.Core.Icons.IconProvision;
+using SixLabors.ImageSharp.PixelFormats;
 
 namespace Rdmp.Core.Icons.IconProvision.StateBasedIconProviders
 {
     public class CohortIdentificationConfigurationStateBasedIconProvider : IObjectStateBasedIconProvider
     {
-        private Bitmap _cohortIdentificationConfiguration;
-        private Bitmap _frozenCohortIdentificationConfiguration;
+        private readonly Image<Rgba32> _cohortIdentificationConfiguration;
+        private readonly Image<Rgba32> _frozenCohortIdentificationConfiguration;
 
         public CohortIdentificationConfigurationStateBasedIconProvider()
         {
-            _cohortIdentificationConfiguration = CatalogueIcons.CohortIdentificationConfiguration;
-            _frozenCohortIdentificationConfiguration = CatalogueIcons.FrozenCohortIdentificationConfiguration;   
+            _cohortIdentificationConfiguration = Image.Load<Rgba32>(CatalogueIcons.CohortIdentificationConfiguration);
+            _frozenCohortIdentificationConfiguration = Image.Load<Rgba32>(CatalogueIcons.FrozenCohortIdentificationConfiguration);   
         }
-        public Bitmap GetImageIfSupportedObject(object o)
+        public Image<Rgba32> GetImageIfSupportedObject(object o)
         {
-            var cic = o as  CohortIdentificationConfiguration;
-
-            if (cic == null)
+            if (o is not CohortIdentificationConfiguration cic)
                 return null;
 
             return cic.Frozen ? _frozenCohortIdentificationConfiguration : _cohortIdentificationConfiguration;

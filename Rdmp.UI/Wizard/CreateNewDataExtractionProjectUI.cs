@@ -29,6 +29,7 @@ using Rdmp.UI.ItemActivation;
 using Rdmp.UI.SimpleDialogs;
 using Rdmp.UI.SingleControlForms;
 using Rdmp.UI.TestsAndSetup.ServicePropogation;
+using ReusableLibraryCode.Icons;
 using ReusableLibraryCode.Progress;
 
 namespace Rdmp.UI.Wizard
@@ -66,16 +67,16 @@ namespace Rdmp.UI.Wizard
 
             tbProjectNumber.Text = highestNumber == null ? "1" : (highestNumber.Value + 1).ToString();
 
-            pbCohort.Image = activator.CoreIconProvider.GetImage(RDMPConcept.CohortIdentificationConfiguration);
-            pbCohortFile.Image = activator.CoreIconProvider.GetImage(RDMPConcept.File);
-            pbCohortSources.Image = activator.CoreIconProvider.GetImage(RDMPConcept.ExternalCohortTable);
+            pbCohort.Image = activator.CoreIconProvider.GetImage(RDMPConcept.CohortIdentificationConfiguration).ImageToBitmap();
+            pbCohortFile.Image = activator.CoreIconProvider.GetImage(RDMPConcept.File).ImageToBitmap();
+            pbCohortSources.Image = activator.CoreIconProvider.GetImage(RDMPConcept.ExternalCohortTable).ImageToBitmap();
 
             IdentifyCompatiblePipelines();
 
             IdentifyCompatibleCohortSources();
 
             cbxDatasets.Items.AddRange(activator.RepositoryLocator.DataExportRepository.GetAllObjects<ExtractableDataSet>());
-            btnPackage.Image = activator.CoreIconProvider.GetImage(RDMPConcept.ExtractableDataSetPackage);
+            btnPackage.Image = activator.CoreIconProvider.GetImage(RDMPConcept.ExtractableDataSetPackage).ImageToBitmap();
             btnPackage.Enabled =
                 activator.RepositoryLocator.DataExportRepository.GetAllObjects<ExtractableDataSetPackage>().Any();
 

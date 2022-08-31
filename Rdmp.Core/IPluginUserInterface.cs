@@ -7,7 +7,6 @@
 using System.Collections.Generic;
 using MapsDirectlyToDatabaseTable;
 using Rdmp.Core.CommandExecution.AtomicCommands;
-using Rdmp.Core.Curation.Data.Aggregation;
 using Rdmp.Core.Providers;
 using ReusableLibraryCode.Icons.IconProvision;
 

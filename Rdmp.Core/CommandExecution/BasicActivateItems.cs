@@ -204,7 +204,8 @@ namespace Rdmp.Core.CommandExecution
                 }
                 catch (Exception e)
                 {
-                    GlobalErrorCheckNotifier.OnCheckPerformed(new CheckEventArgs("Problem occured trying to load Plugin '" + pluginType.Name + "'", CheckResult.Fail, e));
+                    GlobalErrorCheckNotifier.OnCheckPerformed(new CheckEventArgs(
+                        $"Problem occurred trying to load Plugin '{pluginType.Name}'", CheckResult.Fail, e));
                 }
             }
         }
@@ -779,7 +780,7 @@ namespace Rdmp.Core.CommandExecution
                 throw new ArgumentException($"Database must be picked before calling {nameof(CreateNewPlatformDatabase)} when using {nameof(BasicActivateItems)}",nameof(db));
 
             MasterDatabaseScriptExecutor executor = new MasterDatabaseScriptExecutor(db);
-            executor.CreateAndPatchDatabase(patcher,new AcceptAllCheckNotifier());
+            executor.CreateAndPatchDatabase(patcher, new AcceptAllCheckNotifier() { WriteToConsole = true});
 
             var eds = new ExternalDatabaseServer(catalogueRepository,"New " + (defaultToSet == PermissableDefaults.None ? "" :  defaultToSet.ToString()) + "Server",patcher);
             eds.SetProperties(db);

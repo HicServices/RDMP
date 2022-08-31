@@ -346,7 +346,7 @@ namespace Rdmp.UI.Collections
         {
             return model is IMapsDirectlyToDatabaseTable d ?
                 $"{model} (ID: {d.ID})" :
-                model.ToString();
+                model?.ToString();
         }
 
         static DateTime lastInvalidatedCache = DateTime.Now;
@@ -427,14 +427,16 @@ namespace Rdmp.UI.Collections
             if(Tree.Parent == null || collection == RDMPCollection.None)
                 return;
 
-            var indicatorHeight = BackColorProvider.IndiciatorBarSuggestedHeight;
+            var indicatorHeight = BackColorProvider.IndicatorBarSuggestedHeight;
 
-            BackColorProvider p = new BackColorProvider();
-            var ctrl = new Control();
-            ctrl.BackColor = p.GetColor(collection);
-            ctrl.Location = new Point(Tree.Location.X, tree.Location.Y - indicatorHeight);
-            ctrl.Height = indicatorHeight;
-            ctrl.Width = Tree.Width;
+            var p = new BackColorProvider();
+            var ctrl = new Control
+            {
+                BackColor = p.GetColor(collection),
+                Location = new Point(Tree.Location.X, tree.Location.Y - indicatorHeight),
+                Height = indicatorHeight,
+                Width = Tree.Width
+            };
 
             if (Tree.Dock != DockStyle.None)
                 ctrl.Dock = DockStyle.Top;
@@ -616,11 +618,11 @@ namespace Rdmp.UI.Collections
             return result.Cast<object>().Any();
         }
 
-        private object ImageGetter(object rowObject)
+        private Bitmap ImageGetter(object rowObject)
         {
             bool hasProblems = _activator.HasProblem(rowObject);
             
-            return CoreIconProvider.GetImage(rowObject,hasProblems?OverlayKind.Problem:OverlayKind.None);
+            return CoreIconProvider.GetImage(rowObject,hasProblems?OverlayKind.Problem:OverlayKind.None).ImageToBitmap();
         }
 
         /// <summary>

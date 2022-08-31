@@ -122,11 +122,11 @@ namespace Rdmp.Core.Tests.DataLoad.Engine.Integration
             IProcessTask pt;
             
             var dir = LoadDirectory.CreateDirectoryStructure(new DirectoryInfo(TestContext.CurrentContext.TestDirectory),"ExecuteSqlFileRuntimeTaskTests", true);
-                       
+
+#pragma warning disable CS0252, CS0253 // Spurious warning 'Possible unintended reference comparison; left hand side needs cast' since VS doesn't grok Moq fully
             var sqlArg = new IArgument[]{Mock.Of<IArgument>(x => 
             x.Name == "Sql" &&
             x.Value == sql &&
-#pragma warning disable CS0252, CS0253 // C# compiler doesn't fully grok Moq
             x.GetValueAsSystemType() == sql) };
 #pragma warning restore CS0252, CS0253
 

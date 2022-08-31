@@ -5,7 +5,7 @@
 // You should have received a copy of the GNU General Public License along with RDMP. If not, see <https://www.gnu.org/licenses/>.
 
 using System;
-using System.Drawing;
+using SixLabors.ImageSharp;
 using System.IO;
 using Rdmp.Core.Curation;
 using Rdmp.Core.Curation.Data.DataLoad;
@@ -13,6 +13,7 @@ using Rdmp.Core.Icons.IconOverlays;
 using Rdmp.Core.Icons.IconProvision;
 using Rdmp.Core.Repositories;
 using ReusableLibraryCode.Icons.IconProvision;
+using SixLabors.ImageSharp.PixelFormats;
 
 namespace Rdmp.Core.CommandExecution.AtomicCommands
 {
@@ -115,13 +116,13 @@ namespace Rdmp.Core.CommandExecution.AtomicCommands
             }
         }
 
-        public override Image GetImage(IIconProvider iconProvider)
+        public override Image<Rgba32> GetImage(IIconProvider iconProvider)
         {
             if(_taskType == ProcessTaskType.SQLFile)
                 return iconProvider.GetImage(RDMPConcept.SQL, OverlayKind.Add);
 
             if(_taskType == ProcessTaskType.Executable)
-                return new IconOverlayProvider().GetOverlayNoCache(CatalogueIcons.Exe, OverlayKind.Add);
+                return new IconOverlayProvider().GetOverlayNoCache(Image.Load<Rgba32>(CatalogueIcons.Exe), OverlayKind.Add);
 
             return null;
         }

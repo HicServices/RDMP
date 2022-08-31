@@ -51,7 +51,7 @@ namespace Rdmp.UI.ExtractionUIs.JoinsAndLookups
         public KeyDropLocationUI()
         {
             InitializeComponent();
-            btnClear.Image = FamFamFamIcons.delete;
+            btnClear.Image = FamFamFamIcons.delete.ImageToBitmap();
             btnClear.Enabled = false;
         }
         

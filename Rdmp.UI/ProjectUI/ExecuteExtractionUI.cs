@@ -180,10 +180,10 @@ namespace Rdmp.UI.ProjectUI
             checkAndExecuteUI1.ConsultAboutClosing(sender, e);
         }
 
-        private object State_ImageGetter(object rowObject)
+        private Bitmap State_ImageGetter(object rowObject)
         {
             var state = GetState(rowObject);
-            return state == null ? null : Activator.CoreIconProvider.GetImage(state);
+            return state == null ? null : Activator.CoreIconProvider.GetImage(state).ImageToBitmap();
         }
 
         private object GetState(object rowObject)
@@ -286,11 +286,7 @@ namespace Rdmp.UI.ProjectUI
             //if there are no project specific datasets
             if (_datasets.All(sds => sds.ExtractableDataSet.Project_ID == null))
                 tlvDatasets.DisableObject(_projectSpecificDatasetsFolder); //disable this option
-
-            //if all the datasets are project specific
-            if (_datasets.All(sds => sds.ExtractableDataSet.Project_ID != null))
-                tlvDatasets.DisableObject(_coreDatasetsFolder);
-            
+                        
             //don't accept refresh while executing
             if (checkAndExecuteUI1.IsExecuting)
                 return;

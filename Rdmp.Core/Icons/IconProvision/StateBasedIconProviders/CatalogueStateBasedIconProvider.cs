@@ -4,48 +4,40 @@
 // RDMP is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License for more details.
 // You should have received a copy of the GNU General Public License along with RDMP. If not, see <https://www.gnu.org/licenses/>.
 
-using System.Drawing;
+using SixLabors.ImageSharp;
 using Rdmp.Core.Curation.Data;
 using Rdmp.Core.Icons.IconOverlays;
-using Rdmp.Core.Icons.IconProvision;
 using Rdmp.Core.Repositories;
 using ReusableLibraryCode.Icons.IconProvision;
+using SixLabors.ImageSharp.PixelFormats;
 
 namespace Rdmp.Core.Icons.IconProvision.StateBasedIconProviders
 {
     public class CatalogueStateBasedIconProvider : IObjectStateBasedIconProvider
     {
-        private readonly Bitmap _basic;
-        private Bitmap _projectSpecific;
+        private readonly Image<Rgba32> _basic;
+        private readonly Image<Rgba32> _projectSpecific;
         private readonly IDataExportRepository _dataExportRepository;
-        private IconOverlayProvider _overlayProvider;
+        private readonly IconOverlayProvider _overlayProvider;
 
 
         public CatalogueStateBasedIconProvider(IDataExportRepository dataExportRepository,
             IconOverlayProvider overlayProvider)
         {
-            _basic = CatalogueIcons.Catalogue;
-            _projectSpecific = CatalogueIcons.ProjectCatalogue;
-
+            _basic = Image.Load<Rgba32>(CatalogueIcons.Catalogue);
+            _projectSpecific = Image.Load<Rgba32>(CatalogueIcons.ProjectCatalogue);
             _dataExportRepository = dataExportRepository;
             _overlayProvider = overlayProvider;
-
         }
 
-        public Bitmap GetImageIfSupportedObject(object o)
+        public Image<Rgba32> GetImageIfSupportedObject(object o)
         {
-            var c = o as Catalogue;
-            
-            if (c == null)
+            if (o is not Catalogue c)
                 return null;
 
             var status = c.GetExtractabilityStatus(_dataExportRepository);
 
-            Bitmap img;
-            if (status != null && status.IsExtractable && status.IsProjectSpecific)
-                img = _projectSpecific;
-            else
-                img = _basic;
+            var img = status is { IsExtractable: true, IsProjectSpecific: true } ? _projectSpecific : _basic;
 
             if (c.IsApiCall())
                 img = _overlayProvider.GetOverlay(img, OverlayKind.Cloud);

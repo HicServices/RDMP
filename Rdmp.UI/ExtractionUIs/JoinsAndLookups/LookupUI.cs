@@ -6,6 +6,7 @@
 
 using System;
 using System.ComponentModel;
+using System.Drawing;
 using System.Linq;
 using System.Windows.Forms;
 using BrightIdeasSoftware;
@@ -15,7 +16,7 @@ using Rdmp.Core.Curation.Data;
 using Rdmp.Core.Icons.IconProvision;
 using Rdmp.UI.ItemActivation;
 using Rdmp.UI.TestsAndSetup.ServicePropogation;
-
+using ReusableLibraryCode.Icons;
 
 namespace Rdmp.UI.ExtractionUIs.JoinsAndLookups
 {
@@ -31,9 +32,9 @@ namespace Rdmp.UI.ExtractionUIs.JoinsAndLookups
             olvExtractionInformationName.ImageGetter = ImageGetter;
         }
 
-        private object ImageGetter(object rowObject)
+        private Bitmap ImageGetter(object rowObject)
         {
-            return Activator.CoreIconProvider.GetImage(rowObject);
+            return Activator.CoreIconProvider.GetImage(rowObject).ImageToBitmap();
         }
 
         public override void SetDatabaseObject(IActivateItems activator, Lookup databaseObject)
@@ -42,9 +43,9 @@ namespace Rdmp.UI.ExtractionUIs.JoinsAndLookups
 
             _lookup = databaseObject;
 
-            pbColumnInfo1.Image = activator.CoreIconProvider.GetImage(RDMPConcept.ColumnInfo);
-            pbColumnInfo2.Image = activator.CoreIconProvider.GetImage(RDMPConcept.ColumnInfo);
-            pbTable.Image = activator.CoreIconProvider.GetImage(RDMPConcept.TableInfo);
+            pbColumnInfo1.Image = activator.CoreIconProvider.GetImage(RDMPConcept.ColumnInfo).ImageToBitmap();
+            pbColumnInfo2.Image = activator.CoreIconProvider.GetImage(RDMPConcept.ColumnInfo).ImageToBitmap();
+            pbTable.Image = activator.CoreIconProvider.GetImage(RDMPConcept.TableInfo).ImageToBitmap();
 
 
             tbFk.Text = databaseObject.ForeignKey.Name;

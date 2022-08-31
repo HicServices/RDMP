@@ -81,7 +81,7 @@ namespace Rdmp.UI.TestsAndSetup.ServicePropogation
                 _colorIndicator = new Control();
                 _colorIndicator.Dock = DockStyle.Top;
                 _colorIndicator.Location = new Point(0, 0);
-                _colorIndicator.Size = new Size(150, BackColorProvider.IndiciatorBarSuggestedHeight);
+                _colorIndicator.Size = new Size(150, BackColorProvider.IndicatorBarSuggestedHeight);
                 _colorIndicator.TabIndex = 0;
                 _colorIndicator.BackColor = colorProvider.GetColor(AssociatedCollection);
                 this.Controls.Add(this._colorIndicator);

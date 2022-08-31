@@ -340,7 +340,7 @@ namespace Rdmp.UI.Logging
 
                 //set the initial filter
                 _navigationTrack.Append(Filter);
-                _back = new ToolStripButton("Back",FamFamFamIcons.Back,(s,e)=>_navigationTrack.Back(true)){DisplayStyle = ToolStripItemDisplayStyle.Image };
+                _back = new ToolStripButton("Back",FamFamFamIcons.Back.ImageToBitmap(),(s,e)=>_navigationTrack.Back(true)){DisplayStyle = ToolStripItemDisplayStyle.Image };
             }
             
             CommonFunctionality.Add(_back);

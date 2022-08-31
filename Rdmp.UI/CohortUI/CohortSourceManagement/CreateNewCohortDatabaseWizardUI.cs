@@ -100,7 +100,7 @@ namespace Rdmp.UI.CohortUI.CohortSourceManagement
 
         private void HelpIcon2_Click(object sender, EventArgs e)
         {
-            var bmp = CatalogueIcons.WhatIsACohort;
+            var bmp = CatalogueIcons.WhatIsACohort.ImageToBitmap();
 
             var pb = new PictureBox(){
                 Image = bmp,

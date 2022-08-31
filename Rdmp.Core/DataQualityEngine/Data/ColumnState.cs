@@ -133,7 +133,7 @@ namespace Rdmp.Core.DataQualityEngine.Data
                 throw new NotSupportedException("ColumnState was already committed");
 
             var sql = string.Format(
-               "INSERT INTO [dbo].[ColumnState]([TargetProperty],[DataLoadRunID],[Evaluation_ID],[CountCorrect],[CountDBNull],[ItemValidatorXML],[CountMissing],[CountWrong],[CountInvalidatesRow],[PivotCategory])VALUES({0},{1},{2},{3},{4},{5},{6},{7},{8},{9})",
+               "INSERT INTO ColumnState(TargetProperty,DataLoadRunID,Evaluation_ID,CountCorrect,CountDBNull,ItemValidatorXML,CountMissing,CountWrong,CountInvalidatesRow,PivotCategory)VALUES({0},{1},{2},{3},{4},{5},{6},{7},{8},{9})",
                "@TargetProperty",
                DataLoadRunID
                ,evaluation.ID
