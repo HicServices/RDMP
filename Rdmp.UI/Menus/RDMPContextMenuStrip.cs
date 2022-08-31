@@ -23,6 +23,7 @@ using Rdmp.UI.CommandExecution.AtomicCommands.UIFactory;
 using Rdmp.UI.ItemActivation;
 using Rdmp.UI.Refreshing;
 using ReusableLibraryCode.Checks;
+using ReusableLibraryCode.Icons;
 using ReusableLibraryCode.Icons.IconProvision;
 using ReusableLibraryCode.Settings;
 
@@ -113,7 +114,7 @@ namespace Rdmp.UI.Menus
             {
                 Items.Insert(0,ActivateCommandMenuItem);
             }
-            ActivateCommandMenuItem.Image = _activator.CoreIconProvider.GetImage(newConcept, overlayKind);
+            ActivateCommandMenuItem.Image = _activator.CoreIconProvider.GetImage(newConcept, overlayKind).ImageToBitmap();
             ActivateCommandMenuItem.Text = newTextForActivate;
         }
 
@@ -291,7 +292,7 @@ namespace Rdmp.UI.Menus
                     ToolTipText = "Run validation checks for all visible items in the current window"
                 };
 
-                checkAll.Image = CatalogueIcons.TinyYellow;
+                checkAll.Image = CatalogueIcons.TinyYellow.ImageToBitmap();
                 checkAll.Enabled = commonFunctionality.CheckColumnProvider.GetCheckables().Any();
                 inspectionMenuItem.DropDownItems.Add(checkAll);
             }
@@ -313,7 +314,7 @@ namespace Rdmp.UI.Menus
 
         protected Image GetImage(object concept, OverlayKind shortcut = OverlayKind.None)
         {
-            return _activator.CoreIconProvider.GetImage(concept, shortcut);
+            return _activator.CoreIconProvider.GetImage(concept, shortcut).ImageToBitmap();
         }
 
         protected void Emphasise(DatabaseEntity o, int expansionDepth = 0)

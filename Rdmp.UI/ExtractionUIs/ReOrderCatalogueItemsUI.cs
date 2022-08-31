@@ -73,7 +73,7 @@ namespace Rdmp.UI.ExtractionUIs
 
             _catalogue = databaseObject;
 
-            olvColumns.ImageGetter += (s) => activator.CoreIconProvider.GetImage(s);
+            olvColumns.ImageGetter += (s) => activator.CoreIconProvider.GetImage(s).ImageToBitmap();
             olvExtractionInformations.RowHeight = 19;
             ((SimpleDropSink)olvExtractionInformations.DropSink).AcceptableLocations = DropTargetLocation.BetweenItems;
             RefreshUIFromDatabase();

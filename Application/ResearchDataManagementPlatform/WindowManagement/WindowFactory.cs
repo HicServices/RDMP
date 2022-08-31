@@ -10,8 +10,8 @@ using MapsDirectlyToDatabaseTable;
 using Rdmp.Core;
 using Rdmp.Core.Curation.Data;
 using Rdmp.Core.Curation.Data.Dashboarding;
-using Rdmp.Core.Icons.IconProvision;
 using Rdmp.Core.Repositories;
+using Rdmp.UI;
 using Rdmp.UI.Collections;
 using Rdmp.UI.ItemActivation;
 using Rdmp.UI.Refreshing;
@@ -20,8 +20,10 @@ using Rdmp.UI.SingleControlForms;
 using Rdmp.UI.TestsAndSetup.ServicePropogation;
 using ResearchDataManagementPlatform.WindowManagement.ContentWindowTracking.Persistence;
 using ResearchDataManagementPlatform.WindowManagement.TabPageContextMenus;
-
+using SixLabors.ImageSharp;
+using SixLabors.ImageSharp.PixelFormats;
 using WeifenLuo.WinFormsUI.Docking;
+using Image = SixLabors.ImageSharp.Image;
 
 namespace ResearchDataManagementPlatform.WindowManagement
 {
@@ -38,7 +40,7 @@ namespace ResearchDataManagementPlatform.WindowManagement
         /// </summary>
         public IRDMPPlatformRepositoryServiceLocator RepositoryLocator { get; set; }
 
-        private readonly IconFactory _iconFactory = new IconFactory();
+        private readonly IconFactory _iconFactory = IconFactory.Instance;
 
         
         public WindowFactory(IRDMPPlatformRepositoryServiceLocator repositoryLocator, WindowManager windowManager)
@@ -56,12 +58,12 @@ namespace ResearchDataManagementPlatform.WindowManagement
             return content;
         }
         
-        public PersistableSingleDatabaseObjectDockContent Create(IActivateItems activator, RefreshBus refreshBus,IRDMPSingleDatabaseObjectControl control, Bitmap image, IMapsDirectlyToDatabaseTable databaseObject)
+        public PersistableSingleDatabaseObjectDockContent Create(IActivateItems activator, RefreshBus refreshBus,IRDMPSingleDatabaseObjectControl control, Image<Rgba32> image, IMapsDirectlyToDatabaseTable databaseObject)
         {
             var content = new PersistableSingleDatabaseObjectDockContent(control, databaseObject,refreshBus);
             _windowManager.AddWindow(content);
 
-            AddControlToDockContent(activator, (Control)control,content,"Loading...",image);
+            AddControlToDockContent(activator, (Control)control,content,"Loading...",image.ImageToBitmap());
             
             if (!RDMPMainForm.Loading)
                 activator.HistoryProvider.Add(databaseObject);
@@ -69,13 +71,13 @@ namespace ResearchDataManagementPlatform.WindowManagement
             return content;
         }
 
-        public PersistableObjectCollectionDockContent Create(IActivateItems activator, IObjectCollectionControl control, IPersistableObjectCollection objectCollection, Bitmap image)
+        public PersistableObjectCollectionDockContent Create(IActivateItems activator, IObjectCollectionControl control, IPersistableObjectCollection objectCollection, Image<Rgba32> image)
         {
             //create a new persistable docking tab
             var content = new PersistableObjectCollectionDockContent(activator,control,objectCollection);
 
             //add the control to the tab
-            AddControlToDockContent(activator,(Control)control, content,content.TabText, image);
+            AddControlToDockContent(activator,(Control)control, content,content.TabText, image.ImageToBitmap());
             
             //add to the window tracker
             _windowManager.AddWindow(content);
@@ -89,7 +91,7 @@ namespace ResearchDataManagementPlatform.WindowManagement
             var content = new PersistableSingleDatabaseObjectDockContent(control, entity, activator.RefreshBus);
 
             var img = activator.CoreIconProvider.GetImage(entity);
-            AddControlToDockContent(activator, (Control)control, content, entity.ToString(), img);
+            AddControlToDockContent(activator, (Control)control, content, entity.ToString(), img.ImageToBitmap());
 
             if (!RDMPMainForm.Loading)
                 activator.HistoryProvider.Add(entity);
@@ -98,11 +100,11 @@ namespace ResearchDataManagementPlatform.WindowManagement
         }
 
 
-        public DockContent Create(IActivateItems activator, Control control, string label, Bitmap image)
+        public DockContent Create(IActivateItems activator, Control control, string label, Image<Rgba32> image)
         {
             DockContent content = new RDMPSingleControlTab(activator.RefreshBus,control);
             
-            AddControlToDockContent(activator, control, content,label, image);
+            AddControlToDockContent(activator, control, content,label, image.ImageToBitmap());
 
             _windowManager.AddAdhocWindow(content);
 
@@ -115,8 +117,7 @@ namespace ResearchDataManagementPlatform.WindowManagement
             content.Controls.Add(control);
             content.TabText = label;
 
-            if(image != null)
-                content.Icon = _iconFactory.GetIcon(image);
+    
 
             if (control is IConsultableBeforeClosing consult)
                 content.FormClosing += consult.ConsultAboutClosing;

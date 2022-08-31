@@ -52,7 +52,7 @@ namespace Rdmp.UI.CommandExecution.AtomicCommands.UIFactory
             {
                 Width = 26,
                 Height = 26,
-                Image = cmd.GetImage(_activator.CoreIconProvider),
+                Image = cmd.GetImage(_activator.CoreIconProvider).ImageToBitmap(),
                 Tag = cmd
             };
 

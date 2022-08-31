@@ -53,11 +53,11 @@ namespace Rdmp.UI.ChecksUI
             olvResult.ImageGetter += ImageGetter;
             olvChecks.RowHeight = 19;
 
-            _tick = ChecksAndProgressIcons.Tick;
-            _warning = ChecksAndProgressIcons.Warning;
-            _warningEx = ChecksAndProgressIcons.WarningEx;
-            _fail = ChecksAndProgressIcons.Fail;
-            _failEx = ChecksAndProgressIcons.FailEx;
+            _tick = ChecksAndProgressIcons.Tick.ImageToBitmap();
+            _warning = ChecksAndProgressIcons.Warning.ImageToBitmap();
+            _warningEx = ChecksAndProgressIcons.WarningEx.ImageToBitmap();
+            _fail = ChecksAndProgressIcons.Fail.ImageToBitmap();
+            _failEx = ChecksAndProgressIcons.FailEx.ImageToBitmap();
 
             olvChecks.PrimarySortOrder = SortOrder.Descending;
 
@@ -106,24 +106,16 @@ namespace Rdmp.UI.ChecksUI
             }
         }
 
-        private object ImageGetter(object rowObject)
+        private Bitmap ImageGetter(object rowObject)
         {
-            var e = (CheckEventArgs) rowObject;
-
-            if(e != null)
-                switch (e.Result)
-                {
-                    case CheckResult.Success:
-                        return _tick;
-                    case CheckResult.Warning:
-                        return e.Ex == null ? _warning : _warningEx;
-                    case CheckResult.Fail:
-                        return e.Ex == null ? _fail : _failEx;
-                    default:
-                        throw new ArgumentOutOfRangeException();
-                }
-
-            return null;
+            if (rowObject is not CheckEventArgs e) return null;
+            return e.Result switch
+            {
+                CheckResult.Success => _tick,
+                CheckResult.Warning => e.Ex == null ? _warning : _warningEx,
+                CheckResult.Fail => e.Ex == null ? _fail : _failEx,
+                _ => throw new ArgumentOutOfRangeException()
+            };
         }
 
         public bool CheckingInProgress { get; private set; }

@@ -5,6 +5,7 @@
 // You should have received a copy of the GNU General Public License along with RDMP. If not, see <https://www.gnu.org/licenses/>.
 
 using System.Collections.Generic;
+using System.Drawing;
 using System.Linq;
 using System.Threading.Tasks;
 using System.Windows.Forms;
@@ -114,7 +115,7 @@ namespace Rdmp.UI.Collections.Providers
             }
         }
 
-        private object CheckImageGetter(object rowobject)
+        private Bitmap CheckImageGetter(object rowobject)
         {
             var checkable = rowobject as ICheckable;
             if (checkable == null)
@@ -123,7 +124,7 @@ namespace Rdmp.UI.Collections.Providers
             lock (ocheckResultsDictionaryLock)
             {
                 if (checkResultsDictionary.ContainsKey(checkable))
-                    return _iconProvider.GetImage(checkResultsDictionary[checkable]);
+                    return _iconProvider.GetImage(checkResultsDictionary[checkable]).ImageToBitmap();
 
             }
             //not been checked yet

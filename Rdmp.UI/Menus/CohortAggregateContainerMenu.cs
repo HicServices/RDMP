@@ -32,7 +32,7 @@ namespace Rdmp.UI.Menus
             //this requires cache to exist (and be populated for the container)
             if (cic != null && cic.QueryCachingServer_ID != null)
             {
-                var matchIdentifiers = new ToolStripMenuItem("Graph All Records For Matching Patients", _activator.CoreIconProvider.GetImage(RDMPConcept.AggregateGraph));
+                var matchIdentifiers = new ToolStripMenuItem("Graph All Records For Matching Patients", _activator.CoreIconProvider.GetImage(RDMPConcept.AggregateGraph).ImageToBitmap());
 
                 var availableGraphs = _activator.CoreChildProvider.AllAggregateConfigurations.Where(g => !g.IsCohortIdentificationAggregate).ToArray();
                 var allCatalogues = _activator.CoreChildProvider.AllCatalogues;
@@ -49,7 +49,7 @@ namespace Rdmp.UI.Menus
                             continue;
 
                         //otherwise create a subheading for it
-                        var catalogueSubheading = new ToolStripMenuItem(cata.Name, CatalogueIcons.Catalogue);
+                        var catalogueSubheading = new ToolStripMenuItem(cata.Name, CatalogueIcons.Catalogue.ImageToBitmap());
 
                         //add graph for each in the Catalogue
                         foreach (var graph in cataGraphs)

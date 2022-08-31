@@ -24,6 +24,7 @@ using Rdmp.UI.Menus;
 using Rdmp.UI.Refreshing;
 using Rdmp.UI.SimpleDialogs;
 using Rdmp.UI.TestsAndSetup.ServicePropogation;
+using ReusableLibraryCode.Icons;
 using ReusableLibraryCode.Icons.IconProvision;
 
 
@@ -120,9 +121,9 @@ namespace Rdmp.UI.ExtractionUIs.JoinsAndLookups
             _catalogue = databaseObject;
 
             cbxLookup.SetItemActivator(activator);
-            olvLookupNameColumn.ImageGetter = o => activator.CoreIconProvider.GetImage(o);
-            olvExtractionInformationsNameColumn.ImageGetter = o => activator.CoreIconProvider.GetImage(o);
-            olvDescriptionsColumn.ImageGetter = o => activator.CoreIconProvider.GetImage(o);
+            olvLookupNameColumn.ImageGetter = o => activator.CoreIconProvider.GetImage(o).ImageToBitmap();
+            olvExtractionInformationsNameColumn.ImageGetter = o => activator.CoreIconProvider.GetImage(o).ImageToBitmap();
+            olvDescriptionsColumn.ImageGetter = o => activator.CoreIconProvider.GetImage(o).ImageToBitmap();
             
             //add the currently configured extraction informations in the order they appear in the dataset
             List<ExtractionInformation> allExtractionInformationFromCatalogue = new List<ExtractionInformation>(_catalogue.GetAllExtractionInformation(ExtractionCategory.Any));
@@ -131,12 +132,12 @@ namespace Rdmp.UI.ExtractionUIs.JoinsAndLookups
             olvExtractionInformations.ClearObjects();
             olvExtractionInformations.AddObjects(allExtractionInformationFromCatalogue.ToArray());
             
-            btnImportNewTableInfo.Image = activator.CoreIconProvider.GetImage(RDMPConcept.TableInfo, OverlayKind.Import);
+            btnImportNewTableInfo.Image = activator.CoreIconProvider.GetImage(RDMPConcept.TableInfo, OverlayKind.Import).ImageToBitmap();
             toolTip.SetToolTip(btnImportNewTableInfo, "Import new...");
 
-            btnPrimaryKeyCompositeHelp.Image = FamFamFamIcons.help;
+            btnPrimaryKeyCompositeHelp.Image = FamFamFamIcons.help.ImageToBitmap();
             
-            pictureBox1.Image = activator.CoreIconProvider.GetImage(RDMPConcept.Catalogue);
+            pictureBox1.Image = activator.CoreIconProvider.GetImage(RDMPConcept.Catalogue).ImageToBitmap();
             tbCatalogue.Text = databaseObject.ToString();
 
             cbxLookup.SetUp(activator.CoreChildProvider.AllTableInfos);

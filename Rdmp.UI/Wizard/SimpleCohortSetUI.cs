@@ -18,6 +18,7 @@ using Rdmp.Core.Curation.FilterImporting.Construction;
 using Rdmp.Core.Icons.IconProvision;
 using Rdmp.UI.CommandExecution.AtomicCommands;
 using Rdmp.UI.ItemActivation;
+using ReusableLibraryCode.Icons;
 
 namespace Rdmp.UI.Wizard
 {
@@ -42,8 +43,8 @@ namespace Rdmp.UI.Wizard
         {
             InitializeComponent();
 
-            _linkImage = FamFamFamIcons.link;
-            _unlinkImage = FamFamFamIcons.link_break;
+            _linkImage = FamFamFamIcons.link.ImageToBitmap();
+            _unlinkImage = FamFamFamIcons.link_break.ImageToBitmap();
 
             cbxColumns.PropertySelector = collection => collection.Cast<ExtractionInformation>().Select(i => i.ToString());
 
@@ -57,9 +58,9 @@ namespace Rdmp.UI.Wizard
         {
             _activator = activator;
             cbxCatalogues.SetUp(activator.CoreChildProvider.AllCatalogues);
-            pbCatalogue.Image = activator.CoreIconProvider.GetImage(RDMPConcept.Catalogue);
-            pbExtractionIdentifier.Image = activator.CoreIconProvider.GetImage(RDMPConcept.ExtractionInformation);
-            pbFilters.Image = activator.CoreIconProvider.GetImage(RDMPConcept.Filter);
+            pbCatalogue.Image = activator.CoreIconProvider.GetImage(RDMPConcept.Catalogue).ImageToBitmap();
+            pbExtractionIdentifier.Image = activator.CoreIconProvider.GetImage(RDMPConcept.ExtractionInformation).ImageToBitmap();
+            pbFilters.Image = activator.CoreIconProvider.GetImage(RDMPConcept.Filter).ImageToBitmap();
             cbxCatalogues.SetItemActivator(activator);
         }
 

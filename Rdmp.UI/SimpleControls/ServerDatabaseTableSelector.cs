@@ -101,7 +101,7 @@ namespace Rdmp.UI.SimpleControls
 
             _helper = DatabaseCommandHelper.For(DatabaseType);
 
-            btnPickCredentials.Image = CatalogueIcons.DataAccessCredentials;
+            btnPickCredentials.Image = CatalogueIcons.DataAccessCredentials.ImageToBitmap();
             btnPickCredentials.Enabled = false;
         }
 

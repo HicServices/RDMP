@@ -4,37 +4,34 @@
 // RDMP is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License for more details.
 // You should have received a copy of the GNU General Public License along with RDMP. If not, see <https://www.gnu.org/licenses/>.
 
-using System.Drawing;
+using SixLabors.ImageSharp;
 using Rdmp.Core.Curation.Data.Pipelines;
-using Rdmp.Core.Icons.IconProvision;
+using SixLabors.ImageSharp.PixelFormats;
 
 namespace Rdmp.Core.Icons.IconProvision.StateBasedIconProviders
 {
     public class PipelineComponentStateBasedIconProvider : IObjectStateBasedIconProvider
     {
-        private Bitmap _component;
-        private Bitmap _soure;
-        private Bitmap _destnition;
+        private readonly Image<Rgba32> _component;
+        private readonly Image<Rgba32> _source;
+        private readonly Image<Rgba32> _destination;
 
         public PipelineComponentStateBasedIconProvider()
         {
-            _component = CatalogueIcons.PipelineComponent;
-            _soure = CatalogueIcons.PipelineComponentSource;
-            _destnition = CatalogueIcons.PipelineComponentDestination;
+            _component = Image.Load<Rgba32>(CatalogueIcons.PipelineComponent);
+            _source = Image.Load<Rgba32>(CatalogueIcons.PipelineComponentSource);
+            _destination = Image.Load<Rgba32>(CatalogueIcons.PipelineComponentDestination);
         }
-        public Bitmap GetImageIfSupportedObject(object o)
+        public Image<Rgba32> GetImageIfSupportedObject(object o)
         {
-            if (o is PipelineComponent pc)
-            {
-                if (pc.Class != null && pc.Class.EndsWith("Source"))
-                    return _soure;
-                if (pc.Class != null && pc.Class.EndsWith("Destination"))
-                    return _destnition;
+            if (o is not PipelineComponent pc) return null;
 
-                return _component;
-            }
+            if (pc.Class != null && pc.Class.EndsWith("Source"))
+                return _source;
+            if (pc.Class != null && pc.Class.EndsWith("Destination"))
+                return _destination;
 
-            return null;
+            return _component;
 
         }
     }

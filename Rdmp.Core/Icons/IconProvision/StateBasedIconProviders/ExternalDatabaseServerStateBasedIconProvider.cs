@@ -5,40 +5,40 @@
 // You should have received a copy of the GNU General Public License along with RDMP. If not, see <https://www.gnu.org/licenses/>.
 
 using System.Collections.Generic;
-using System.Drawing;
+using SixLabors.ImageSharp;
 using System.Reflection;
 using Rdmp.Core.Curation.Data;
 using Rdmp.Core.Databases;
 using Rdmp.Core.Icons.IconOverlays;
-using Rdmp.Core.Icons.IconProvision;
 using Rdmp.Core.Providers.Nodes;
 using ReusableLibraryCode.Icons.IconProvision;
+using SixLabors.ImageSharp.PixelFormats;
 
 namespace Rdmp.Core.Icons.IconProvision.StateBasedIconProviders
 {
     public class ExternalDatabaseServerStateBasedIconProvider : IObjectStateBasedIconProvider
     {
         private readonly IconOverlayProvider _overlayProvider;
-        private Bitmap _default;
+        private readonly Image<Rgba32> _default;
 
-        Dictionary<string,Bitmap> _assemblyToIconDictionary = new Dictionary<string, Bitmap>();
+        readonly Dictionary<string,Image<Rgba32>> _assemblyToIconDictionary = new();
         private DatabaseTypeIconProvider _typeSpecificIconsProvider;
         
         public ExternalDatabaseServerStateBasedIconProvider(IconOverlayProvider overlayProvider)
         {
             _overlayProvider = overlayProvider;
-            _default = CatalogueIcons.ExternalDatabaseServer;
+            _default = Image.Load<Rgba32>(CatalogueIcons.ExternalDatabaseServer);
             
-            _assemblyToIconDictionary.Add(new DataQualityEnginePatcher().Name,CatalogueIcons.ExternalDatabaseServer_DQE);
-            _assemblyToIconDictionary.Add(new ANOStorePatcher().Name, CatalogueIcons.ExternalDatabaseServer_ANO);
-            _assemblyToIconDictionary.Add(new IdentifierDumpDatabasePatcher().Name, CatalogueIcons.ExternalDatabaseServer_IdentifierDump);
-            _assemblyToIconDictionary.Add(new QueryCachingPatcher().Name, CatalogueIcons.ExternalDatabaseServer_Cache);
-            _assemblyToIconDictionary.Add(new LoggingDatabasePatcher().Name, CatalogueIcons.ExternalDatabaseServer_Logging);
+            _assemblyToIconDictionary.Add(new DataQualityEnginePatcher().Name,Image.Load<Rgba32>(CatalogueIcons.ExternalDatabaseServer_DQE));
+            _assemblyToIconDictionary.Add(new ANOStorePatcher().Name, Image.Load<Rgba32>(CatalogueIcons.ExternalDatabaseServer_ANO));
+            _assemblyToIconDictionary.Add(new IdentifierDumpDatabasePatcher().Name, Image.Load<Rgba32>(CatalogueIcons.ExternalDatabaseServer_IdentifierDump));
+            _assemblyToIconDictionary.Add(new QueryCachingPatcher().Name, Image.Load<Rgba32>(CatalogueIcons.ExternalDatabaseServer_Cache));
+            _assemblyToIconDictionary.Add(new LoggingDatabasePatcher().Name, Image.Load<Rgba32>(CatalogueIcons.ExternalDatabaseServer_Logging));
 
             _typeSpecificIconsProvider = new DatabaseTypeIconProvider();
         }
 
-        public Bitmap GetIconForAssembly(Assembly assembly)
+        public Image<Rgba32> GetIconForAssembly(Assembly assembly)
         {
             var assemblyName = assembly.GetName().Name;
             if (_assemblyToIconDictionary.ContainsKey(assemblyName))
@@ -47,7 +47,7 @@ namespace Rdmp.Core.Icons.IconProvision.StateBasedIconProviders
             return _default;
         }
 
-        public Bitmap GetImageIfSupportedObject(object o)
+        public Image<Rgba32> GetImageIfSupportedObject(object o)
         {
             var server = o as ExternalDatabaseServer;
             var dumpServerUsage = o as IdentifierDumpServerUsageNode;
@@ -55,11 +55,11 @@ namespace Rdmp.Core.Icons.IconProvision.StateBasedIconProviders
             if (dumpServerUsage != null)
                 server = dumpServerUsage.IdentifierDumpServer;
 
-            //if its not a server we aren't responsible for providing an icon for it
+            //if it's not a server we aren't responsible for providing an icon for it
             if (server == null)
                 return null;
 
-            //the untyped server icon (e.g. user creates a reference to a server that he is going to use but isn't created/managed by a .Datbase assembly)
+            //the untyped server icon (e.g. user creates a reference to a server that he is going to use but isn't created/managed by a .Database assembly)
             var toReturn = _default;
 
             //if it is a .Database assembly managed database then use the appropriate icon instead (ANO, LOG, IDD etc)

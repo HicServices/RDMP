@@ -5,7 +5,7 @@
 // You should have received a copy of the GNU General Public License along with RDMP. If not, see <https://www.gnu.org/licenses/>.
 
 using System;
-using System.Drawing;
+using SixLabors.ImageSharp;
 using System.Windows.Forms;
 using Rdmp.Core.CommandExecution.AtomicCommands;
 using Rdmp.Core.Icons.IconProvision;
@@ -14,7 +14,7 @@ using Rdmp.UI.ItemActivation;
 using Rdmp.UI.Menus;
 using ReusableLibraryCode;
 using ReusableLibraryCode.Icons.IconProvision;
-
+using SixLabors.ImageSharp.PixelFormats;
 using WideMessageBox = Rdmp.UI.SimpleDialogs.WideMessageBox;
 
 namespace Rdmp.UI.CommandExecution.AtomicCommands
@@ -35,7 +35,7 @@ namespace Rdmp.UI.CommandExecution.AtomicCommands
             return "What is this?";
         }
 
-        public override Image GetImage(IIconProvider iconProvider)
+        public override Image<Rgba32> GetImage(IIconProvider iconProvider)
         {
             return iconProvider.GetImage(RDMPConcept.Help);
         }

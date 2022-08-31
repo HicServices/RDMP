@@ -6,7 +6,7 @@
 
 using System;
 using System.Collections.Generic;
-using System.Drawing;
+using SixLabors.ImageSharp;
 using System.Linq;
 using Rdmp.Core.Curation.Data;
 using Rdmp.Core.DataExport.Data;
@@ -14,6 +14,7 @@ using Rdmp.Core.Icons.IconProvision;
 using Rdmp.Core.Providers;
 using Rdmp.Core.Repositories.Construction;
 using ReusableLibraryCode.Icons.IconProvision;
+using SixLabors.ImageSharp.PixelFormats;
 
 namespace Rdmp.Core.CommandExecution.AtomicCommands
 {
@@ -90,7 +91,7 @@ namespace Rdmp.Core.CommandExecution.AtomicCommands
             return "Starts a new extraction for the project containing one or more datasets linked against a given cohort";
         }
 
-        public override Image GetImage(IIconProvider iconProvider)
+        public override Image<Rgba32> GetImage(IIconProvider iconProvider)
         {
             return iconProvider.GetImage(RDMPConcept.ExtractionConfiguration, OverlayKind.Add);
         }

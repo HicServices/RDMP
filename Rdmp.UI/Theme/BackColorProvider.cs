@@ -15,7 +15,7 @@ namespace Rdmp.UI.Theme
     /// </summary>
     public class BackColorProvider
     {
-        public const int IndiciatorBarSuggestedHeight = 4;
+        public const int IndicatorBarSuggestedHeight = 4;
 
         public Color GetColor(RDMPCollection collection)
         {
@@ -28,7 +28,7 @@ namespace Rdmp.UI.Theme
                 case RDMPCollection.Catalogue:
                     return Color.FromArgb(255, 255, 220);
                 case RDMPCollection.DataExport:
-                    return Color.FromArgb(200,255,220);
+                    return Color.FromArgb(200, 255, 220);
                 case RDMPCollection.SavedCohorts:
                     return Color.FromArgb(255, 220, 220);
                 case RDMPCollection.Favourites:
@@ -42,13 +42,13 @@ namespace Rdmp.UI.Theme
             }
         }
 
-        public Bitmap DrawBottomBar(Bitmap image,RDMPCollection collection)
+        public Bitmap DrawBottomBar(Bitmap image, RDMPCollection collection)
         {
             var newImage = new Bitmap(image.Width, image.Height);
             using (var g = Graphics.FromImage(newImage))
             {
                 g.FillRectangle(new SolidBrush(GetColor(collection)), 0, 0, newImage.Width, newImage.Height);
-                g.DrawImage(image,0,0);
+                g.DrawImage(image, 0, 0);
             }
 
             return newImage;
@@ -60,7 +60,7 @@ namespace Rdmp.UI.Theme
             var bmp = new Bitmap(size.Width, size.Height);
 
             using (var g = Graphics.FromImage(bmp))
-                g.FillRectangle(new SolidBrush(GetColor(collection)),2, size.Height - IndiciatorBarSuggestedHeight, size.Width - 4, IndiciatorBarSuggestedHeight);
+                g.FillRectangle(new SolidBrush(GetColor(collection)), 2, size.Height - IndicatorBarSuggestedHeight, size.Width - 4, IndicatorBarSuggestedHeight);
 
             return bmp;
         }

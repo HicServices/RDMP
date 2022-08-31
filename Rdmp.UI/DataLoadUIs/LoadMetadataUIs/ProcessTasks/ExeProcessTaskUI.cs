@@ -40,7 +40,7 @@ namespace Rdmp.UI.DataLoadUIs.LoadMetadataUIs.ProcessTasks
         {
             InitializeComponent();
 
-            pbFile.Image = CatalogueIcons.Exe;
+            pbFile.Image = CatalogueIcons.Exe.ImageToBitmap();
             AssociatedCollection = RDMPCollection.DataLoad;
         }
 

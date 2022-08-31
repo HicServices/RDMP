@@ -5,8 +5,9 @@
 // You should have received a copy of the GNU General Public License along with RDMP. If not, see <https://www.gnu.org/licenses/>.
 
 using System;
-using System.Drawing;
+using SixLabors.ImageSharp;
 using FAnsi;
+using SixLabors.ImageSharp.PixelFormats;
 
 namespace ReusableLibraryCode.Icons.IconProvision
 {
@@ -15,71 +16,61 @@ namespace ReusableLibraryCode.Icons.IconProvision
     /// </summary>
     public class DatabaseTypeIconProvider
     {
-        private Bitmap _msBig;
-        private Bitmap _msOverlay;
+        private readonly Image<Rgba32> _msBig;
+        private readonly Image<Rgba32> _msOverlay;
 
-        private Bitmap _oraBig;
-        private Bitmap _oraOverlay;
+        private readonly Image<Rgba32> _oraBig;
+        private readonly Image<Rgba32> _oraOverlay;
 
-        private Bitmap _mysBig;
-        private Bitmap _mysOverlay;
+        private readonly Image<Rgba32> _mysBig;
+        private readonly Image<Rgba32> _mysOverlay;
 
-        private Bitmap _postgresBig;
-        private Bitmap _postgresOverlay;
+        private readonly Image<Rgba32> _postgresBig;
+        private readonly Image<Rgba32> _postgresOverlay;
         
-        private Bitmap _unknownBig;
-        private Bitmap _unknownOverlay;
+        private readonly Image<Rgba32> _unknownBig;
+        private readonly Image<Rgba32> _unknownOverlay;
         
         public DatabaseTypeIconProvider()
         {
-            _msBig = DatabaseProviderIcons.Microsoft;
-            _msOverlay = DatabaseProviderIcons.MicrosoftOverlay;
+            _msBig = Image.Load<Rgba32>(DatabaseProviderIcons.Microsoft);
+            _msOverlay = Image.Load<Rgba32>(DatabaseProviderIcons.MicrosoftOverlay);
 
-            _mysBig = DatabaseProviderIcons.MySql;
-            _mysOverlay = DatabaseProviderIcons.MySqlOverlay;
+            _mysBig = Image.Load<Rgba32>(DatabaseProviderIcons.MySql);
+            _mysOverlay = Image.Load<Rgba32>(DatabaseProviderIcons.MySqlOverlay);
 
-            _oraBig = DatabaseProviderIcons.Oracle;
-            _oraOverlay = DatabaseProviderIcons.OracleOverlay;
+            _oraBig = Image.Load<Rgba32>(DatabaseProviderIcons.Oracle);
+            _oraOverlay = Image.Load<Rgba32>(DatabaseProviderIcons.OracleOverlay);
 
-            _postgresBig = DatabaseProviderIcons.PostgreSql;
-            _postgresOverlay = DatabaseProviderIcons.PostgreSqlOverlay;
+            _postgresBig = Image.Load<Rgba32>(DatabaseProviderIcons.PostgreSql);
+            _postgresOverlay = Image.Load<Rgba32>(DatabaseProviderIcons.PostgreSqlOverlay);
 
-            _unknownBig = DatabaseProviderIcons.Unknown;
-            _unknownOverlay = DatabaseProviderIcons.UnknownOverlay;
+            _unknownBig = Image.Load<Rgba32>(DatabaseProviderIcons.Unknown);
+            _unknownOverlay = Image.Load<Rgba32>(DatabaseProviderIcons.UnknownOverlay);
         }
 
-        public Bitmap GetOverlay(DatabaseType type)
+        public Image<Rgba32> GetOverlay(DatabaseType type)
         {
-            switch (type)
+            return type switch
             {
-                case DatabaseType.MicrosoftSQLServer:
-                    return _msOverlay;
-                case DatabaseType.MySql:
-                    return _mysOverlay;
-                case DatabaseType.Oracle:
-                    return _oraOverlay;
-                case DatabaseType.PostgreSql:
-                        return _postgresOverlay;
-                default:
-                    return _unknownOverlay;
-            }
+                DatabaseType.MicrosoftSQLServer => _msOverlay,
+                DatabaseType.MySql => _mysOverlay,
+                DatabaseType.Oracle => _oraOverlay,
+                DatabaseType.PostgreSql => _postgresOverlay,
+                _ => _unknownOverlay
+            };
         }
 
-        public Bitmap GetImage(DatabaseType type)
+        public Image<Rgba32> GetImage(DatabaseType type)
         {
-            switch (type)
+            return type switch
             {
-                case DatabaseType.MicrosoftSQLServer:
-                    return _msBig;
-                case DatabaseType.MySql:
-                    return _mysBig;
-                case DatabaseType.Oracle:
-                    return _oraBig;
-                case DatabaseType.PostgreSql:
-                    return _postgresBig;
-                default:
-                    return _unknownBig;
-            }
+                DatabaseType.MicrosoftSQLServer => _msBig,
+                DatabaseType.MySql => _mysBig,
+                DatabaseType.Oracle => _oraBig,
+                DatabaseType.PostgreSql => _postgresBig,
+                _ => _unknownBig
+            };
         }
     }
 }

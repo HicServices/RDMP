@@ -43,7 +43,7 @@ namespace Rdmp.UI.AutoComplete
 
             for (int i = 0; i < Images.Length; i++)
             {
-                queryEditor.RegisterRgbaImage(i, Images[i]);
+                queryEditor.RegisterRgbaImage(i, Images[i].ImageToBitmap());
             }
         }
 

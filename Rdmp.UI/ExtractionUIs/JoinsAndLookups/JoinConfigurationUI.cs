@@ -19,6 +19,7 @@ using Rdmp.UI.ItemActivation;
 using Rdmp.UI.Refreshing;
 using Rdmp.UI.SimpleDialogs;
 using Rdmp.UI.TestsAndSetup.ServicePropogation;
+using ReusableLibraryCode.Icons;
 using ReusableLibraryCode.Icons.IconProvision;
 
 
@@ -72,13 +73,13 @@ namespace Rdmp.UI.ExtractionUIs.JoinsAndLookups
         {
             base.SetDatabaseObject(activator, databaseObject);
 
-            olvLeftColumnNames.ImageGetter = (o) => activator.CoreIconProvider.GetImage(o);
-            olvRightColumnNames.ImageGetter = (o) => activator.CoreIconProvider.GetImage(o);
+            olvLeftColumnNames.ImageGetter = (o) => activator.CoreIconProvider.GetImage(o).ImageToBitmap();
+            olvRightColumnNames.ImageGetter = (o) => activator.CoreIconProvider.GetImage(o).ImageToBitmap();
 
             _leftTableInfo = databaseObject;
             tbLeftTableInfo.Text = _leftTableInfo.ToString();
 
-            btnChooseRightTableInfo.Image = activator.CoreIconProvider.GetImage(RDMPConcept.TableInfo, OverlayKind.Add);
+            btnChooseRightTableInfo.Image = activator.CoreIconProvider.GetImage(RDMPConcept.TableInfo, OverlayKind.Add).ImageToBitmap();
             UpdateValidityAssesment();
             
             olvLeftColumns.ClearObjects();

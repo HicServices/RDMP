@@ -34,8 +34,8 @@ namespace Rdmp.UI.Collections.Providers
             _activator = activator;
             _tlv = tlv;
 
-            _starFull = CatalogueIcons.Favourite;
-            _starHollow = CatalogueIcons.StarHollow;
+            _starFull = CatalogueIcons.Favourite.ImageToBitmap();
+            _starHollow = CatalogueIcons.StarHollow.ImageToBitmap();
         }
 
         public OLVColumn CreateColumn()
@@ -83,7 +83,7 @@ namespace Rdmp.UI.Collections.Providers
             }
         }
 
-        private object FavouriteImageGetter(object rowobject)
+        private Bitmap FavouriteImageGetter(object rowobject)
         {
             var o = rowobject as DatabaseEntity;
 

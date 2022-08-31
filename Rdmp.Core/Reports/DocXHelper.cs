@@ -5,7 +5,7 @@
 // You should have received a copy of the GNU General Public License along with RDMP. If not, see <https://www.gnu.org/licenses/>.
 
 using System;
-using System.Drawing;
+using SixLabors.ImageSharp;
 using System.Drawing.Imaging;
 using System.IO;
 using NPOI.OpenXmlFormats.Wordprocessing;
@@ -32,7 +32,7 @@ namespace Rdmp.Core.Reports
 
         /// <summary>
         /// <see cref="Units.ToEMU(double)"/> seems to result in word showing images at 133% size.  This constant fixes that
-        /// problem when using the <see cref="GetPicture(XWPFDocument, Bitmap)"/> methods.
+        /// problem when using the <see cref="GetPicture(XWPFDocument, Image)"/> methods.
         /// 
         /// </summary>
         private const float PICTURE_SCALING = 0.75f;
@@ -103,7 +103,7 @@ namespace Rdmp.Core.Reports
         }
          public const int PICTURE_TYPE_PNG =	6;
 
-        protected XWPFPicture GetPicture(XWPFDocument document, Bitmap bmp)
+        protected XWPFPicture GetPicture(XWPFDocument document, Image bmp)
         {
             var para = document.CreateParagraph();
             var run = para.CreateRun();
@@ -111,11 +111,11 @@ namespace Rdmp.Core.Reports
             return GetPicture(run,bmp);
         }
 
-        protected XWPFPicture GetPicture(XWPFRun run, Bitmap bmp)
+        protected XWPFPicture GetPicture(XWPFRun run, Image bmp)
         {
             using (var ms = new MemoryStream())
             {
-                bmp.Save(ms,ImageFormat.Png);
+                bmp.SaveAsPng(ms);
                 
                 ms.Seek(0, 0);
                 

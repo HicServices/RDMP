@@ -6,7 +6,7 @@
 
 using System;
 using System.Collections.Generic;
-using System.Drawing;
+using SixLabors.ImageSharp;
 using System.Linq;
 using System.Text.RegularExpressions;
 using FAnsi.Discovery;
@@ -17,6 +17,7 @@ using Rdmp.Core.Curation.Data.DataLoad;
 using Rdmp.Core.DataViewing;
 using Rdmp.Core.Icons.IconProvision;
 using Rdmp.Core.QueryBuilding;
+using SixLabors.ImageSharp.PixelFormats;
 
 namespace Rdmp.Core.Autocomplete
 {
@@ -31,7 +32,7 @@ namespace Rdmp.Core.Autocomplete
         /// Array of images that items can be depicted with.  Use <see cref="ItemsWithImages"/> to index into
         /// this array to get the image out
         /// </summary>
-        public Bitmap[] Images;
+        public Image<Rgba32>[] Images;
         public Dictionary<string,int> ItemsWithImages { get; set; } = new Dictionary<string, int> ();
 
         private const int TABLE_INFO_IDX = 0;
@@ -41,12 +42,12 @@ namespace Rdmp.Core.Autocomplete
 
         public AutoCompleteProvider()
         {
-            Images = new Bitmap[4];
+            Images = new Image<Rgba32>[4];
 
-            Images[TABLE_INFO_IDX] = CatalogueIcons.TableInfo;
-            Images[COLUMN_INFO_IDX] = CatalogueIcons.ColumnInfo;
-            Images[SQL_IDX] = CatalogueIcons.SQL;
-            Images[PARAMETER_IDX] = CatalogueIcons.ParametersNode;
+            Images[TABLE_INFO_IDX] = Image.Load<Rgba32>(CatalogueIcons.TableInfo);
+            Images[COLUMN_INFO_IDX] = Image.Load<Rgba32>(CatalogueIcons.ColumnInfo);
+            Images[SQL_IDX] = Image.Load<Rgba32>(CatalogueIcons.SQL);
+            Images[PARAMETER_IDX] = Image.Load<Rgba32>(CatalogueIcons.ParametersNode);
         }
         public AutoCompleteProvider(IQuerySyntaxHelper helper) :this()
         {

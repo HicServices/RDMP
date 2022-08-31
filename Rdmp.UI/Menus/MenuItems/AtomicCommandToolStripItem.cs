@@ -22,7 +22,7 @@ namespace Rdmp.UI.Menus.MenuItems
         {
             _command = command;
 
-            Image = command.GetImage(activator.CoreIconProvider);
+            Image = command.GetImage(activator.CoreIconProvider)?.ImageToBitmap();
             Text = command.GetCommandName();
             Tag = command;
 

@@ -6,6 +6,7 @@
 
 using System;
 using System.Collections.Generic;
+using System.Drawing;
 using System.Linq;
 using System.Windows.Forms;
 using BrightIdeasSoftware;
@@ -387,7 +388,7 @@ namespace Rdmp.UI.ExtractionUIs.FilterUIs.ParameterUIs
                 return;
             }
         }
-        private object ImageGetter(object rowObject)
+        private string ImageGetter(object rowObject)
         {
             try
             {

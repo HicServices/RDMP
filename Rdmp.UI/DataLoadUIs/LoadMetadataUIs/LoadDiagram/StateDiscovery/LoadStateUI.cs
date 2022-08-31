@@ -27,9 +27,9 @@ namespace Rdmp.UI.DataLoadUIs.LoadMetadataUIs.LoadDiagram.StateDiscovery
         {
             InitializeComponent();
 
-            _unknown = CatalogueIcons.OrangeIssue;
-            _noLoadUnderway = CatalogueIcons.Tick;
-            _executingOrCrashed = CatalogueIcons.ExecuteArrow;
+            _unknown = CatalogueIcons.OrangeIssue.ImageToBitmap();
+            _noLoadUnderway = CatalogueIcons.Tick.ImageToBitmap();
+            _executingOrCrashed = CatalogueIcons.ExecuteArrow.ImageToBitmap();
 
             BackColor = Color.Wheat;
             SetStatus(LoadState.Unknown);

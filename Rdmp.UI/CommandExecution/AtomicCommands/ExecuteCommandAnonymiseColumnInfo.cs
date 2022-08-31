@@ -5,7 +5,6 @@
 // You should have received a copy of the GNU General Public License along with RDMP. If not, see <https://www.gnu.org/licenses/>.
 
 using System;
-using System.Drawing;
 using Rdmp.Core.CommandExecution.AtomicCommands;
 using Rdmp.Core.Curation.Data;
 using Rdmp.Core.Curation.Data.DataLoad;
@@ -14,6 +13,8 @@ using Rdmp.Core.Icons.IconProvision;
 using Rdmp.UI.DataLoadUIs.ANOUIs.ANOTableManagement;
 using Rdmp.UI.ItemActivation;
 using ReusableLibraryCode.Icons.IconProvision;
+using SixLabors.ImageSharp;
+using SixLabors.ImageSharp.PixelFormats;
 
 namespace Rdmp.UI.CommandExecution.AtomicCommands
 {
@@ -47,7 +48,7 @@ namespace Rdmp.UI.CommandExecution.AtomicCommands
             Activator.Activate<ColumnInfoToANOTableConverterUI, ColumnInfo>(_columnInfo);
         }
 
-        public override Image GetImage(IIconProvider iconProvider)
+        public override Image<Rgba32> GetImage(IIconProvider iconProvider)
         {
             return iconProvider.GetImage(RDMPConcept.ANOColumnInfo);
         }
