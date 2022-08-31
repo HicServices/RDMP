@@ -14,7 +14,7 @@
         <copyright>Copyright 2018-2019</copyright>
         <dependencies>
 			<dependency id="HIC.BadMedicine" version="1.1.0" />
-            <dependency id="HIC.FAnsiSql" version="2.0.4" />
+            <dependency id="HIC.FAnsiSql" version="3.0.0" />
             <dependency id="DockPanelSuite.ThemeVS2015" version="2.13.0" />
             <dependency id="CsvHelper" version="28.0.1" />
 			<dependency id="NHunspell" version="1.2.5554.16953" />
@@ -22,8 +22,9 @@
             <dependency id="fernandreu.ScintillaNET" version="4.2.0" />
             <dependency id="ObjectListView.Official" version="2.9.1" />
             <dependency id="CommandLineParser" version="2.9.1" />
+			<dependency id="Spectre.Console" version="0.44.0"/>
             <dependency id="SSH.NET" version="2020.0.2" />
-            <dependency id="NLog" version="5.0.1" />
+            <dependency id="NLog" version="5.0.2" />
             <dependency id="ExcelNumberFormat" version="1.1.0" />
             <dependency id="NPOI" version="2.5.5" />
             <dependency id="System.Runtime.Loader" version="4.3.0" />
@@ -40,8 +41,7 @@
             <dependency id="System.Net.Primitives" version="4.3.1" />
             <dependency id="System.Security.Permissions" version="6.0.0" />
             <dependency id="System.Resources.Extensions" version="4.6.0" />
-            <dependency id="HIC.System.Windows.Forms.DataVisualization" version="1.0.1" />
-            <dependency id="ReadLine" version="2.0.1" />
+            <dependency id="HIC.System.Windows.Forms.DataVisualization" version="1.0.1" />            
             <dependency id="System.DirectoryServices.Protocols" version="6.0.1" />
             <dependency id="YamlDotNet" version="12.0.0" />
         </dependencies>

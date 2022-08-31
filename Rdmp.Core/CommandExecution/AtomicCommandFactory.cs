@@ -130,9 +130,15 @@ namespace Rdmp.Core.CommandExecution
                         yield return new ExecuteCommandMakeCatalogueProjectSpecific(_activator, c, null) {
                            Weight = -99.0009f, SuggestedCategory = Extraction };
                     }
-                    
+
                     yield return new ExecuteCommandSetExtractionIdentifier(_activator, c, null, null) {
                         Weight = -99.0008f, SuggestedCategory = Extraction };
+
+                    yield return new ExecuteCommandSetExtractionPrimaryKeys(_activator, c, null, null)
+                    {
+                        Weight = -99.0007f,
+                        SuggestedCategory = Extraction
+                    };
                 }
 
                 yield return new ExecuteCommandExportObjectsToFile(_activator, new[] {c}) {
@@ -204,8 +210,10 @@ namespace Rdmp.Core.CommandExecution
                 yield return new ExecuteCommandRunSupportingSql(_activator,sqlTable,null);
             }
 
-            if(Is(o,out  AggregateConfiguration ac) && !ac.Catalogue.IsApiCall())
+            if(Is(o,out AggregateConfiguration ac) && !ac.Catalogue.IsApiCall())
             {
+                yield return new ExecuteCommandSet(_activator, ac, typeof(AggregateConfiguration).GetProperty(nameof(AggregateConfiguration.Description)));
+
                 yield return new ExecuteCommandCreateNewFilter(_activator, ac) { SuggestedCategory = Add, OverrideCommandName = "New Filter" };
                 yield return new ExecuteCommandCreateNewFilter(_activator, ac) { OfferCatalogueFilters=true, SuggestedCategory = Add, OverrideCommandName = "Existing Filter" };
 
@@ -361,6 +369,23 @@ namespace Rdmp.Core.CommandExecution
             if(Is(o,out AllFreeCohortIdentificationConfigurationsNode _) || Is(o,out AllProjectCohortIdentificationConfigurationsNode _))
                 yield return new ExecuteCommandCreateNewCohortIdentificationConfiguration(_activator) { PromptToPickAProject=true};
 
+
+            if (Is(o, out IJoin j))
+            {
+                yield return new ExecuteCommandSetExtendedProperty(_activator, new[] { (IMapsDirectlyToDatabaseTable)j }, ExtendedProperty.CustomJoinSql, null)
+                {
+                    OverrideCommandName = "Set CustomJoinSql",
+                    PromptForValue = true,
+                    PromptForValueTaskDescription = ExtendedProperty.CustomJoinSqlDescription,
+                    SuggestedCategory = "Custom Join"
+                };
+
+                yield return new ExecuteCommandSetExtendedProperty(_activator, new[] { (IMapsDirectlyToDatabaseTable)j }, ExtendedProperty.CustomJoinSql, null)
+                {
+                    OverrideCommandName = "Clear CustomJoinSql",
+                    SuggestedCategory = "Custom Join"
+                };
+            }
 
             CohortIdentificationConfiguration cic = null;
             if (Is(o, out ProjectCohortIdentificationConfigurationAssociation pcic) || Is(o,out cic))

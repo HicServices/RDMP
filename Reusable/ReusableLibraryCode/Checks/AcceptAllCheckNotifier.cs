@@ -14,12 +14,20 @@ namespace ReusableLibraryCode.Checks
     public class AcceptAllCheckNotifier : ICheckNotifier
     {
         /// <summary>
+        /// True to write out all messages seen directly to the console
+        /// </summary>
+        public bool WriteToConsole { get; set; }
+
+        /// <summary>
         /// Check handler that throws <see cref="Exception"/> on Failures but otherwise returns true
         /// </summary>
         /// <param name="args"></param>
         /// <returns></returns>
         public virtual bool OnCheckPerformed(CheckEventArgs args)
         {
+            if (WriteToConsole)
+                Console.WriteLine($"{args.Result}:{args.Message}");
+
             //if there is a proposed fix then accept it regardless of whether it was a Fail.
             if (!string.IsNullOrWhiteSpace(args.ProposedFix))
                 return true;

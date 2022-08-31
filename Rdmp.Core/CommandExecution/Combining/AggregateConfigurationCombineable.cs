@@ -6,6 +6,7 @@
 
 using System.Collections.Generic;
 using System.Linq;
+using Rdmp.Core.Curation.Data;
 using Rdmp.Core.Curation.Data.Aggregation;
 using Rdmp.Core.Curation.Data.Cohort;
 using Rdmp.Core.Curation.Data.Cohort.Joinables;
@@ -54,6 +55,11 @@ namespace Rdmp.Core.CommandExecution.Combining
         public AggregateConfiguration[] JoinableUsersIfAny { get; set; }
 
         /// <summary>
+        /// True if the <see cref="Aggregate"/> has an <see cref="ExtendedProperty"/> declaring it as a reusable template
+        /// </summary>
+        public bool IsTemplate { get; set; }
+
+        /// <summary>
         /// Creates a new instance, popualtes <see cref="Aggregate"/> and discovers all other state cached fields (e.g.
         /// <see cref="JoinableDeclarationIfAny"/> etc).
         /// </summary>
@@ -64,6 +70,8 @@ namespace Rdmp.Core.CommandExecution.Combining
 
             IsPatientIndexTable = Aggregate.IsJoinablePatientIndexTable();
             
+            IsTemplate = aggregate.CatalogueRepository.GetExtendedProperties(ExtendedProperty.IsTemplate,aggregate).Any(p=> Equals(p.Value, "true"));
+
             //is the aggregate part of cohort identification
             CohortIdentificationConfigurationIfAny = Aggregate.GetCohortIdentificationConfigurationIfAny();
             

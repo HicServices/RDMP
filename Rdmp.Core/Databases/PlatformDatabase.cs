@@ -8,14 +8,6 @@ using MapsDirectlyToDatabaseTable.Versioning;
 
 namespace Rdmp.Core.Databases
 {
-    public sealed class LoggingDatabasePatcher:Patcher
-    {
-        public LoggingDatabasePatcher():base(2,"Databases.LoggingDatabase")
-        {
-            LegacyName = "HIC.Logging.Database";
-        }
-    }
-
     public sealed class ANOStorePatcher:Patcher
     {
         public ANOStorePatcher():base(2,"Databases.ANOStoreDatabase")

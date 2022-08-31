@@ -160,7 +160,7 @@ Platform databases are divided into three tiers:
 
 During application startup (following installing an update) you will be prompted to apply patches on any platform databases that are not up to date.
 
-### Updating The CLI
+### Updating the CLI
 
 Download the [latest release binary](https://github.com/HicServices/RDMP/releases) (e.g. rdmp-cli-win-x64.zip) and unzip into a new empty folder (e.g. c:\temp\latest).  Locate your current CLI deployment folder (e.g. c:\rdmpcli\).
 
@@ -168,8 +168,6 @@ Copy all files from the new release into your current CLI directory __EXCEPT__:
 
 - Databases.yaml (contains connection strings for your RDMP database)
 - NLog.config (contains logging settings)
-
-If running in linux ensure that the rdmp binary is executable e.g. `chmod +x ./rdmp`
 
 Ensure the new version matches expectations:
 

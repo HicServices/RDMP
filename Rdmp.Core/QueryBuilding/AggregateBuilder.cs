@@ -13,6 +13,7 @@ using Rdmp.Core.Curation.Data;
 using Rdmp.Core.Curation.Data.Aggregation;
 using Rdmp.Core.QueryBuilding.Options;
 using Rdmp.Core.QueryBuilding.Parameters;
+using ReusableLibraryCode.Settings;
 
 namespace Rdmp.Core.QueryBuilding
 {
@@ -458,12 +459,7 @@ namespace Rdmp.Core.QueryBuilding
                     if (_skipGroupByForThese.Contains(col.IColumn))
                         continue;
 
-                    string select;
-                    string alias;
-
-                    QuerySyntaxHelper.SplitLineIntoSelectSQLAndAlias(col.GetSelectSQL(null, null,QuerySyntaxHelper), out select, out alias);
-
-                    var line = new CustomLine(select + ",",QueryComponent.GroupBy);
+                    var line = new CustomLine(GetGroupOrOrderByCustomLineBasedOn(col) +",",QueryComponent.GroupBy);
 
                     FlagLineBasedOnIcolumn(line,col.IColumn);
 
@@ -498,14 +494,7 @@ namespace Rdmp.Core.QueryBuilding
                             if (_skipGroupByForThese.Contains(col.IColumn))
                                 continue;
                             
-                            string select;
-                            string alias;
-
-                            QuerySyntaxHelper.SplitLineIntoSelectSQLAndAlias(col.GetSelectSQL(null, null, QuerySyntaxHelper),
-                                out select,
-                                out alias);
-
-                            var line = new CustomLine(select + ",", QueryComponent.OrderBy);
+                            var line = new CustomLine(GetGroupOrOrderByCustomLineBasedOn(col) + ",", QueryComponent.OrderBy);
 
                             FlagLineBasedOnIcolumn(line,col.IColumn);
 
@@ -521,6 +510,70 @@ namespace Rdmp.Core.QueryBuilding
             queryLines.Last().Text = queryLines.Last().Text.TrimEnd('\n', '\r', ',');
 
             CompileCustomLinesInStageAndAddToList(QueryComponent.Postfix, queryLines);
+        }
+
+
+        /// <summary>
+        /// Creates the appropriate line for slotting into GROUP BY or ORDER BY based on DMBS
+        /// </summary>
+        /// <param name="col"></param>
+        /// <returns></returns>
+        private string GetGroupOrOrderByCustomLineBasedOn(QueryTimeColumn col)
+        {
+            /*            Background
+             * 
+             * When using a transform as the SELECT column, different DBMS expect different values in the ORDER/GROUP by bit
+             * 
+             * For this explanation, consider the transform "UPPER(mycol) as mytransform".  This is a select line 
+             * composed of "UPPER(mycol)" and its alias "mytransform"
+             * 
+             * Microsoft Sql Server expects:
+             *   select 
+             *      (UPPER(mycol)) as mytransform,
+             *      count(*)
+             *   from 
+             *      bob
+             *   group by 
+             *      UPPER(mycol)
+             *   order by 
+             *      UPPER(mycol)
+             * 
+             * MySql will NOT work with the above and instead expects:
+             *   select 
+             *      UPPER(mycol) as mytransform,
+             *      count(*)
+             *   from 
+             *      bob
+             *   group by 
+             *      mytransform
+             *   order by 
+             *      mytransform
+             * 
+             * */
+
+            
+            // the sql bit of the transform (e.g. "UPPER(mycol)" in above example)
+            string select;
+
+            // the column alias (e.g. "mytransform" in above example)
+            string alias;
+
+            QuerySyntaxHelper.SplitLineIntoSelectSQLAndAlias(col.GetSelectSQL(null, null, QuerySyntaxHelper), out select, out alias);
+
+            return GetGroupOrOrderByCustomLineBasedOn(select, alias);
+        }
+
+        private string GetGroupOrOrderByCustomLineBasedOn(string select, string alias)
+        {
+            if (UserSettings.UseAliasInsteadOfTransformInGroupByAggregateGraphs)
+            {
+                return !string.IsNullOrWhiteSpace(alias) ?
+                    alias :  // for MySql prefer using the alias if it has one
+                    select;
+            }
+
+            // for everyone else just use the full SQL
+            return select;
         }
 
         private void FlagLineBasedOnIcolumn(CustomLine line, IColumn column)
@@ -574,12 +627,12 @@ namespace Rdmp.Core.QueryBuilding
         {
             var dimension = aggregateTopX.OrderByColumn;
             if (dimension == null)
-                return _countColumn.SelectSQL
+                return GetGroupOrOrderByCustomLineBasedOn(_countColumn.SelectSQL,_countColumn.Alias)
                            + (aggregateTopX.OrderByDirection == AggregateTopXOrderByDirection.Ascending
                                ? " asc"
                                : " desc");
         
-            return dimension.SelectSQL
+            return GetGroupOrOrderByCustomLineBasedOn(dimension.SelectSQL, dimension.Alias)
                 + (aggregateTopX.OrderByDirection == AggregateTopXOrderByDirection.Ascending
                 ? " asc"
                 : " desc");

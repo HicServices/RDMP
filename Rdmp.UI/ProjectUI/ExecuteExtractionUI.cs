@@ -286,11 +286,7 @@ namespace Rdmp.UI.ProjectUI
             //if there are no project specific datasets
             if (_datasets.All(sds => sds.ExtractableDataSet.Project_ID == null))
                 tlvDatasets.DisableObject(_projectSpecificDatasetsFolder); //disable this option
-
-            //if all the datasets are project specific
-            if (_datasets.All(sds => sds.ExtractableDataSet.Project_ID != null))
-                tlvDatasets.DisableObject(_coreDatasetsFolder);
-            
+                        
             //don't accept refresh while executing
             if (checkAndExecuteUI1.IsExecuting)
                 return;
@@ -327,7 +323,8 @@ namespace Rdmp.UI.ProjectUI
 
             checkAndExecuteUI1.SetItemActivator(activator);
 
-            tlvDatasets.ExpandAll();
+            foreach(var o in new[] { _globalsFolder, _coreDatasetsFolder, _projectSpecificDatasetsFolder})
+                tlvDatasets.Expand(o);
 
             if (_isFirstTime)
             {

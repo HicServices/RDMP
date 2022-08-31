@@ -70,7 +70,7 @@ namespace Rdmp.Core.CommandExecution
         public FavouritesProvider FavouritesProvider { get; private set; }
         public ICoreIconProvider CoreIconProvider { get; private set; }
 
-        public CommentStore CommentStore { get { return RepositoryLocator.CatalogueRepository.CommentStore; } }
+        public CommentStore CommentStore => RepositoryLocator.CatalogueRepository.CommentStore;
 
 
         /// <inheritdoc/>
@@ -769,11 +769,17 @@ namespace Rdmp.Core.CommandExecution
 
         public virtual ExternalDatabaseServer CreateNewPlatformDatabase(ICatalogueRepository catalogueRepository, PermissableDefaults defaultToSet, IPatcher patcher, DiscoveredDatabase db)
         {
-            if(db == null)
+
+            if (db == null && IsInteractive)
+            {
+                db = SelectDatabase(true, "Select database");
+            }
+
+            if (db == null)
                 throw new ArgumentException($"Database must be picked before calling {nameof(CreateNewPlatformDatabase)} when using {nameof(BasicActivateItems)}",nameof(db));
 
             MasterDatabaseScriptExecutor executor = new MasterDatabaseScriptExecutor(db);
-            executor.CreateAndPatchDatabase(patcher,new AcceptAllCheckNotifier());
+            executor.CreateAndPatchDatabase(patcher, new AcceptAllCheckNotifier() { WriteToConsole = true});
 
             var eds = new ExternalDatabaseServer(catalogueRepository,"New " + (defaultToSet == PermissableDefaults.None ? "" :  defaultToSet.ToString()) + "Server",patcher);
             eds.SetProperties(db);

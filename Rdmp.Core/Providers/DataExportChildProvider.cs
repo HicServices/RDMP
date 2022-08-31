@@ -853,6 +853,10 @@ namespace Rdmp.Core.Providers
         }
         public bool SelectiveRefresh(IExtractionConfiguration ec)
         {
+            // don't try to selectively refresh when deleting
+            if (!ec.Exists())
+                return false;
+
             var project = ec.Project;
             // update it to the latest state
             project.RevertToDatabaseState();

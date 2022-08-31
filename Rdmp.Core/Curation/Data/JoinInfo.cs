@@ -72,7 +72,6 @@ namespace Rdmp.Core.Curation.Data
     /// </summary>
     public class JoinInfo : DatabaseEntity, IJoin,IHasDependencies
     {
-
         #region Database Properties
 
         private int _foreignKeyID;
@@ -264,6 +263,12 @@ namespace Rdmp.Core.Curation.Data
         public IHasDependencies[] GetObjectsDependingOnThis()
         {
             return new IHasDependencies[0];
+        }
+
+        /// <inheritdoc/>
+        public string GetCustomJoinSql()
+        {
+            return CatalogueRepository.GetExtendedProperties(ExtendedProperty.CustomJoinSql, this).FirstOrDefault()?.Value;
         }
     }
 }

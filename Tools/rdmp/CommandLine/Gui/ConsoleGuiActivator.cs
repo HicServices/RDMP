@@ -235,7 +235,7 @@ namespace Rdmp.Core.CommandLine.Gui
 
         public override FileInfo SelectFile(string prompt, string patternDescription, string pattern)
         {
-            var openDir = new OpenDialog(prompt,"Directory")
+            var openDir = new OpenDialog(prompt,"File")
             {
                 AllowsMultipleSelection = false,
                 AllowedFileTypes = pattern == null ? null : new []{pattern.TrimStart('*')}
@@ -244,7 +244,12 @@ namespace Rdmp.Core.CommandLine.Gui
             Application.Run(openDir, ConsoleMainWindow.ExceptionPopup);
 
             var selected = openDir.FilePaths.FirstOrDefault();
-            
+
+
+            // entering "null" in a file dialog may return something like "D:\Blah\null"
+            if (string.Equals(Path.GetFileName(selected),"null", StringComparison.CurrentCultureIgnoreCase))
+                return null;
+
             return selected == null ? null : new FileInfo(selected);
         }
         public override FileInfo[] SelectFiles(string prompt, string patternDescription, string pattern)

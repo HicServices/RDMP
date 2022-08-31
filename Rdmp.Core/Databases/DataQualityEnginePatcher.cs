@@ -23,7 +23,7 @@ namespace Rdmp.Core.Databases
         }
         public override Patch GetInitialCreateScriptContents(DiscoveredDatabase db)
         {
-            var header = GetHeader(InitialScriptName, new Version(1, 0, 0));
+            var header = GetHeader(db.Server.DatabaseType,InitialScriptName, new Version(1, 0, 0));
 
             var sql = new StringBuilder();
 
@@ -32,7 +32,7 @@ namespace Rdmp.Core.Databases
                 new DatabaseColumnRequest("DateOfEvaluation",new DatabaseTypeRequest(typeof(DateTime))),
                 new DatabaseColumnRequest("CatalogueID",new DatabaseTypeRequest(typeof(int))){AllowNulls = false},
                 new DatabaseColumnRequest("ID",new DatabaseTypeRequest(typeof (int))){IsAutoIncrement = true, IsPrimaryKey = true}
-            },null,false,null));
+            },null,false,null).TrimEnd() + ";");
 
             // foreign keys
             var evaluationId = new DiscoveredColumn(db.ExpectTable("Evaluation"), "ID", false);
@@ -57,7 +57,7 @@ namespace Rdmp.Core.Databases
             }, new Dictionary<DatabaseColumnRequest, DiscoveredColumn>
             {
                 {columnState_Evaluation_ID ,evaluationId }
-            },true , null));
+            },true , null).TrimEnd() + ";");
 
             sql.AppendLine(db.Helper.GetCreateTableSql(db, "RowState", new[]
             {
@@ -72,7 +72,7 @@ namespace Rdmp.Core.Databases
             }, new Dictionary<DatabaseColumnRequest, DiscoveredColumn>
             {
                 {rowState_Evaluation_ID ,evaluationId }
-            }, true, null));
+            }, true, null).TrimEnd() + ";");
 
 
             sql.AppendLine(db.Helper.GetCreateTableSql(db, "PeriodicityState", new[]
@@ -86,7 +86,7 @@ namespace Rdmp.Core.Databases
             }, new Dictionary<DatabaseColumnRequest, DiscoveredColumn>
             {
                 {periodicityState_Evaluation_ID ,evaluationId }
-            }, true, null));
+            }, true, null).TrimEnd() + ";");
 
             sql.AppendLine(db.Helper.GetCreateTableSql(db, "DQEGraphAnnotation", new[]
             {
@@ -104,7 +104,7 @@ namespace Rdmp.Core.Databases
             }, new Dictionary<DatabaseColumnRequest, DiscoveredColumn>
             {
                 {annotation_Evaluation_ID ,evaluationId }
-            }, true, null));
+            }, true, null).TrimEnd() + ";");
 
             return new Patch(InitialScriptName, header + sql);
         }

@@ -4,6 +4,7 @@
 // RDMP is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License for more details.
 // You should have received a copy of the GNU General Public License along with RDMP. If not, see <https://www.gnu.org/licenses/>.
 
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using FAnsi.Discovery;
@@ -41,8 +42,10 @@ namespace Rdmp.Core.Tests.Logging
 
                 var taskCmd =
                     _loggingServer.GetCommand(
-                        "INSERT INTO DataLoadTask VALUES (100, '" + taskName + "', '" + taskName + "', GETDATE(), '" + datasetName + "', 1, 1, '" + datasetName + "')",
+                        "INSERT INTO DataLoadTask VALUES (100, '" + taskName + "', '" + taskName + "',@date, '" + datasetName + "', 1, 1, '" + datasetName + "')",
                         con);
+
+                _loggingServer.AddParameterWithValueToCommand("@date", taskCmd, DateTime.Now);
 
                 taskCmd.ExecuteNonQuery();
                 _sqlToCleanUp.Push("DELETE FROM DataLoadTask WHERE dataSetID = '" + datasetName + "'");

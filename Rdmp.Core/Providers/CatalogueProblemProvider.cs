@@ -31,6 +31,7 @@ namespace Rdmp.Core.Providers
         private ICoreChildProvider _childProvider;
         private HashSet<int> _orphanCatalogueItems = new HashSet<int>();
         private HashSet<int> _usedJoinables;
+        private JoinInfo[] _joinsWithMismatchedCollations = new JoinInfo[0];
 
         /// <summary>
         /// Set the culture for problem provision which is culture sensitive
@@ -56,6 +57,15 @@ namespace Rdmp.Core.Providers
             _usedJoinables = new HashSet<int>(
                 childProvider.AllJoinableCohortAggregateConfigurationUse.Select(
                     ju => ju.JoinableCohortAggregateConfiguration_ID));
+
+            _joinsWithMismatchedCollations = childProvider.AllJoinInfos.Where(j =>
+                !string.IsNullOrWhiteSpace(j.PrimaryKey.Collation) &&
+                !string.IsNullOrWhiteSpace(j.ForeignKey.Collation) &&
+                
+                // does not have an explicit join collation specified
+                string.IsNullOrWhiteSpace(j.Collation) && 
+                !string.Equals(j.PrimaryKey.Collation, j.ForeignKey.Collation)
+                ).ToArray();
         }
 
         /// <inheritdoc/>
@@ -267,6 +277,13 @@ namespace Rdmp.Core.Providers
         {
             if (_orphanCatalogueItems.Contains(catalogueItem.ID))
                 return "CatalogueItem is extractable but has no associated ColumnInfo";
+
+            var badJoin = _joinsWithMismatchedCollations.FirstOrDefault(j =>
+                j.PrimaryKey_ID == catalogueItem.ColumnInfo_ID ||
+                j.ForeignKey_ID == catalogueItem.ColumnInfo_ID);
+
+            if (badJoin != null)
+                return $"Columns in joins declared on this column have mismatched collations ({badJoin})";
 
             return null;
         }
