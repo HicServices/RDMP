@@ -86,7 +86,6 @@
             this.userSettingsToolTips = new System.Windows.Forms.ToolTip(this.components);
             this.tbFind = new System.Windows.Forms.TextBox();
             this.label14 = new System.Windows.Forms.Label();
-            this.cbEnableCommits = new System.Windows.Forms.CheckBox();
             this.groupBox1.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.olvErrorCodes)).BeginInit();
             this.groupBox2.SuspendLayout();
@@ -552,7 +551,6 @@
             // 
             // groupBox7
             // 
-            this.groupBox7.Controls.Add(this.cbEnableCommits);
             this.groupBox7.Controls.Add(this.cbAutoResizeColumns);
             this.groupBox7.Controls.Add(this.label12);
             this.groupBox7.Controls.Add(this.tbArchiveTriggerTimeout);
@@ -699,17 +697,6 @@
             this.label14.TabIndex = 26;
             this.label14.Text = "Find Setting:";
             // 
-            // cbEnableCommits
-            // 
-            this.cbEnableCommits.AutoSize = true;
-            this.cbEnableCommits.Location = new System.Drawing.Point(162, 184);
-            this.cbEnableCommits.Margin = new System.Windows.Forms.Padding(4, 3, 4, 3);
-            this.cbEnableCommits.Name = "cbEnableCommits";
-            this.cbEnableCommits.Size = new System.Drawing.Size(113, 19);
-            this.cbEnableCommits.TabIndex = 26;
-            this.cbEnableCommits.Text = "Enable Commits";
-            this.cbEnableCommits.UseVisualStyleBackColor = true;
-            // 
             // UserSettingsFileUI
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(7F, 15F);
@@ -807,6 +794,5 @@
         private System.Windows.Forms.Label label14;
         private System.Windows.Forms.CheckBox cbAutoRunSqlQueries;
         private System.Windows.Forms.CheckBox cbExpandAllInCohortBuilder;
-        private System.Windows.Forms.CheckBox cbEnableCommits;
     }
 }

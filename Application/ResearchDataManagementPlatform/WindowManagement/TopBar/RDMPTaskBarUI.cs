@@ -12,14 +12,10 @@ using Rdmp.Core.CommandExecution.AtomicCommands;
 using Rdmp.Core.Curation.Data;
 using Rdmp.Core.Icons.IconProvision;
 using Rdmp.UI;
-using Rdmp.UI.Collections;
-using Rdmp.UI.CommandExecution.AtomicCommands;
 using Rdmp.UI.SimpleDialogs;
 using Rdmp.UI.Theme;
-using ResearchDataManagementPlatform.WindowManagement.HomePane;
 using ReusableLibraryCode.Checks;
-
-using WeifenLuo.WinFormsUI.Docking;
+using ReusableLibraryCode.Settings;
 
 namespace ResearchDataManagementPlatform.WindowManagement.TopBar
 {
@@ -58,6 +54,11 @@ namespace ResearchDataManagementPlatform.WindowManagement.TopBar
             
             btnFavourites.Image = CatalogueIcons.Favourite.ImageToBitmap();
             btnDeleteLayout.Image = FamFamFamIcons.delete.ImageToBitmap();
+
+            cbCommits.Image = CatalogueIcons.Commit.ImageToBitmap();
+            cbCommits.Checked = UserSettings.EnableCommits;
+            cbCommits.CheckedChanged += (s, e) => UserSettings.EnableCommits = cbCommits.Checked;
+            cbCommits.CheckOnClick = true;
         }
 
         public void SetWindowManager(WindowManager manager)
