@@ -7,8 +7,12 @@
 using MapsDirectlyToDatabaseTable;
 using Rdmp.Core.CommandExecution.AtomicCommands;
 using Rdmp.Core.Curation.Data;
+using Rdmp.Core.Icons.IconProvision;
 using Rdmp.UI.ItemActivation;
 using Rdmp.UI.SimpleDialogs;
+using ReusableLibraryCode.Icons.IconProvision;
+using SixLabors.ImageSharp;
+using SixLabors.ImageSharp.PixelFormats;
 using System.Linq;
 
 namespace Rdmp.UI.CommandExecution.AtomicCommands
@@ -31,7 +35,10 @@ namespace Rdmp.UI.CommandExecution.AtomicCommands
                 SetImpossible("No commits have been made yet");
             }
         }
-
+        public override Image<Rgba32> GetImage(IIconProvider iconProvider)
+        {
+            return iconProvider.GetImage(RDMPConcept.Commit);
+        }
         public override void Execute()
         {
             base.Execute();
