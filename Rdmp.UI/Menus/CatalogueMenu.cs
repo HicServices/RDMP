@@ -69,8 +69,6 @@ namespace Rdmp.UI.Menus
             Add(new ExecuteCommandChangeExtractionCategory(_activator,catalogue.GetAllExtractionInformation(ExtractionCategory.Any)) { SuggestedCategory = CatalogueItems, Weight = -99.044f, });
             Add(new ExecuteCommandImportCatalogueItemDescriptions(_activator,catalogue, null/*pick at runtime*/) { SuggestedCategory = CatalogueItems, Weight = -99.043f, });
 
-            Add(new ExecuteCommandViewCommits(_activator, catalogue));
-
             if (catalogue.LoadMetadata_ID != null)
             {
                 var dir = catalogue.LoadMetadata.LocationOfFlatFiles;

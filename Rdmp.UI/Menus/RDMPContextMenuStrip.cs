@@ -167,8 +167,13 @@ namespace Rdmp.UI.Menus
 
             var treeMenuItem = AddMenuIfNotExists(Tree);
 
+            if(_o is IMapsDirectlyToDatabaseTable m)
+            {
+                Add(new ExecuteCommandViewCommits(_activator, m));
+            }   
+
             //ensure all submenus appear in the same place
-            foreach(var mi in _subMenuDictionary.Values)
+            foreach (var mi in _subMenuDictionary.Values)
                 Items.Add(mi);
 
             //add plugin menu items

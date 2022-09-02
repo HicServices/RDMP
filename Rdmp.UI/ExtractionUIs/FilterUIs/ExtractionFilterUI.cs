@@ -62,6 +62,7 @@ namespace Rdmp.UI.ExtractionUIs.FilterUIs
             InitializeComponent();
 
             ObjectSaverButton1.BeforeSave += BeforeSave;
+            UseCommitSystem = true;
         }
 
         void QueryEditor_TextChanged(object sender, EventArgs e)
