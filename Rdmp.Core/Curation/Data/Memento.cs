@@ -49,9 +49,10 @@ namespace Rdmp.Core.Curation.Data
         }
         #endregion
 
+        #region Relationships
         [NoMappingToDatabase]
         public Commit Commit { get => Repository.GetObjectByID<Commit>(Commit_ID); }
-
+        #endregion
 
         public Memento()
         {
