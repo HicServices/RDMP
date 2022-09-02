@@ -42,6 +42,10 @@ namespace Rdmp.UI.SimpleDialogs
             // 
             // treeListView1
             // 
+            this.treeListView1.AllColumns.Add(olvName);
+            this.treeListView1.AllColumns.Add(olvUser);
+            this.treeListView1.AllColumns.Add(olvDate);
+            this.treeListView1.AllColumns.Add(olvDescription);
             this.treeListView1.CellEditUseWholeCell = false;
             this.treeListView1.Columns.AddRange(new System.Windows.Forms.ColumnHeader[] {
             this.olvName,
@@ -62,15 +66,20 @@ namespace Rdmp.UI.SimpleDialogs
             this.olvName.Text = "Name";
             this.olvName.AspectName = "ToString";
             this.olvName.Width = 150;
+            this.olvName.Width = 150;
+            this.olvName.Sortable = true;
             // 
             // olvUser
             // 
             this.olvUser.Text = "User";
             this.olvUser.AspectName = nameof(Commit.Username);
+            this.olvUser.Width = 100;
+            this.olvUser.MinimumWidth = 100;
             // 
             // olvDate
             // 
             this.olvDate.Text = "Date";
+            this.olvDate.Width = 120;
             this.olvDate.Width = 120;
             this.olvDate.AspectName = nameof(Commit.Date);
             // 
@@ -78,6 +87,7 @@ namespace Rdmp.UI.SimpleDialogs
             // 
             this.olvDescription.Text = "Description";
             this.olvDescription.Width = 200;
+            this.olvDate.Width = 200;
             this.olvDescription.AspectName = nameof(Commit.Description);
             // 
             // taskDescriptionLabel1
