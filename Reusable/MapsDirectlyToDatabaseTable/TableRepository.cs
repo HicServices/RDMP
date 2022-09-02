@@ -647,7 +647,7 @@ namespace MapsDirectlyToDatabaseTable
         {
             _logger.Info("Created New," + typeof(T).Name);
 
-            var query = $"INSERT INTO {Wrap(typeof(T).Name)} ]";
+            var query = $"INSERT INTO {Wrap(typeof(T).Name)}";
             if (parameters != null && parameters.Any())
             {
                 if (parameters.Any(kvp => kvp.Key.StartsWith("@")))
