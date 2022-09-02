@@ -23,6 +23,11 @@ namespace MapsDirectlyToDatabaseTable
     public interface IRepository
     {
         /// <summary>
+        /// True if repository supports transaction/rollback and commit system
+        /// </summary>
+        bool SupportsCommits { get; }
+
+        /// <summary>
         /// Called when <see cref="InsertAndHydrate{T}(T, Dictionary{string, object})"/> is
         /// occurring on a new object.
         /// </summary>

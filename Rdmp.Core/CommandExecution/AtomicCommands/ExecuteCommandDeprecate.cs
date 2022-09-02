@@ -47,7 +47,7 @@ namespace Rdmp.Core.CommandExecution.AtomicCommands
             CommitInProgress commit = null;
             var revert = false;
             
-            if(UserSettings.EnableCommits)
+            if(BasicActivator.UseCommits())
                 commit = new CommitInProgress(BasicActivator.RepositoryLocator, new CommitInProgressSettings(_o)
                 {
                     UseTransactions = true,

@@ -24,6 +24,8 @@ namespace MapsDirectlyToDatabaseTable
     {
         protected int NextObjectId = 0;
 
+        public bool SupportsCommits => false;
+
         /// <summary>
         /// This is a concurrent hashset.  See https://stackoverflow.com/a/18923091
         /// </summary>

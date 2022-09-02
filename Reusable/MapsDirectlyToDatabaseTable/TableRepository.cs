@@ -35,6 +35,7 @@ namespace MapsDirectlyToDatabaseTable
 
         private static object _oLockUpdateCommands = new object();
         private UpdateCommandStore _updateCommandStore = new UpdateCommandStore();
+        public bool SupportsCommits => true;
 
         //'accessors'
         public string ConnectionString { get { return _connectionStringBuilder.ConnectionString; } }

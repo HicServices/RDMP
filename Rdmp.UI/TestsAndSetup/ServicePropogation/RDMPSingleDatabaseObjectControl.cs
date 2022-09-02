@@ -124,7 +124,7 @@ namespace Rdmp.UI.TestsAndSetup.ServicePropogation
             
             if(this is ISaveableUI)
             {
-                if(UseCommitSystem && CurrentCommit == null)
+                if(UseCommitSystem && CurrentCommit == null && Activator.UseCommits())
                 {
                     CurrentCommit = new CommitInProgress(activator.RepositoryLocator, new CommitInProgressSettings(databaseObject));
                     ObjectSaverButton1.BeforeSave += BeforeSave_FinishCommitInProgressIfAny;
@@ -150,8 +150,8 @@ namespace Rdmp.UI.TestsAndSetup.ServicePropogation
             if (!UseCommitSystem)
                 return true; // go through with the save
 
-            // user has opted out via user settings
-            if (!UserSettings.EnableCommits)
+            // user has opted out via user settings or backing repository doesn't support commits
+            if (!Activator.UseCommits())
                 return true;
 
             if (CurrentCommit != null)
@@ -174,7 +174,7 @@ namespace Rdmp.UI.TestsAndSetup.ServicePropogation
 
         private void AfterSave_BeginNewCommitIfApplicable()
         {
-            if (CurrentCommit == null && UseCommitSystem)
+            if (CurrentCommit == null && UseCommitSystem && Activator.UseCommits())
             {
                 // start a new commit for the next changes the user commits
                 CurrentCommit = new CommitInProgress(Activator.RepositoryLocator, new CommitInProgressSettings(DatabaseObject));

@@ -75,6 +75,14 @@ namespace ResearchDataManagementPlatform.WindowManagement.TopBar
             SetupToolTipText();
 
             _manager.ActivateItems.Theme.ApplyTo(toolStrip1);
+
+            // if we don't support commit system then disable the task bar button for it
+            if(!_manager.ActivateItems.RepositoryLocator.CatalogueRepository.SupportsCommits)
+            {
+                cbCommits.Enabled = false;
+                cbCommits.Text = "Repository does not support commits";
+            }
+            
         }
 
         /// <summary>

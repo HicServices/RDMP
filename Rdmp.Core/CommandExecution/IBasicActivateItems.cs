@@ -538,5 +538,14 @@ namespace Rdmp.Core.CommandExecution
         /// </summary>
         /// <param name="startInfo"></param>
         public void LaunchSubprocess(ProcessStartInfo startInfo);
+
+
+        /// <summary>
+        /// Returns true if the <see cref="UserSettings"/> indicate user has opted into
+        /// the <see cref="Commit"/> system and the RDMP platform repository we are using
+        /// supports commits/rollback (typically db only)
+        /// </summary>
+        /// <returns></returns>
+        public bool UseCommits();
     }
 }
