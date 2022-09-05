@@ -8,6 +8,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ...
 
+## [7.0.19] - 2022-09-05
+
 ### Fixed
 
 - Fixed a bug inserting into old logging databases
@@ -1339,7 +1341,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Fixed Culture (e.g. en-us) not being passed correctly in DelimitedFlatFileAttacher
 - Fixed bug where Updater would show older versions of RDMP as installable 'updates'
 
-[Unreleased]: https://github.com/HicServices/RDMP/compare/v7.0.18...develop
+[Unreleased]: https://github.com/HicServices/RDMP/compare/v7.0.19...develop
+[7.0.19]: https://github.com/HicServices/RDMP/compare/v7.0.18...v7.0.19
 [7.0.18]: https://github.com/HicServices/RDMP/compare/v7.0.17...v7.0.18
 [7.0.17]: https://github.com/HicServices/RDMP/compare/v7.0.16...v7.0.17
 [7.0.16]: https://github.com/HicServices/RDMP/compare/v7.0.15...v7.0.16
