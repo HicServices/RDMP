@@ -44,40 +44,7 @@ namespace Rdmp.Core.CommandExecution.AtomicCommands
             if(_o == null || _o.Length == 0)
                 return;
 
-            CommitInProgress commit = null;
-            var revert = false;
-            
-            if(BasicActivator.UseCommits())
-                commit = new CommitInProgress(BasicActivator.RepositoryLocator, new CommitInProgressSettings(_o)
-                {
-                    UseTransactions = true,
-                    Description = GetDescription()
-                });
-
-            try
-            {
-                ExecuteImpl();
-
-                // if user cancells transaction
-                if(commit != null && commit.TryFinish(BasicActivator) == null)
-                {
-                    revert = true;
-                }
-            }
-            finally
-            {
-                commit?.Dispose();
-            }
-
-            if(revert)
-            {
-                // go refresh ourselves to the db (uncommitted)
-                foreach (var o in _o)
-                {
-                    o.RevertToDatabaseState();
-                }
-            }
-            else
+            if(ExecuteWithCommit(ExecuteImpl, GetDescription(),_o))
             {
                 Publish((DatabaseEntity)_o[0]);
             }
