@@ -177,7 +177,7 @@ jobs:
           my $tar=Archive::Tar->new($tarname) || die "read $tarname:$!\n";
           my @tarbits=$tar->get_files();
           foreach my $bit (@tarbits) {
-            $bit->chmod(($bit->name =~ /\/rdmp$/ || $bit->type==5)?'0755':'0644');
+            $bit->chmod('0755') if $bit->name =~ /\/rdmp$/;
           }
           $tar->write( $tarname );
 
