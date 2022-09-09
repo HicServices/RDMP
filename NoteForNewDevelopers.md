@@ -6,7 +6,7 @@ Heres things you should know about RDMP!
 Windows Forms Designer
 ------------------------------------
 - Using the Windows Forms Designer requires renaming SelectedDialog`1.resx to SelectedDialog.resx first.  Otherwise you get this bug: https://github.com/HicServices/RDMP/issues/1360
-- If creating a new Control or Form you should consider inheriting from `RDMPSingleDatabaseObjectControl<T>` or `RDMPControl`.  If you do this make sure to declare an appropriate `TypeDescriptionProvider` (see below).  Otherwise it will not open in designer.
+- If creating a new Control or Form you should consider inheriting from `RDMPSingleDatabaseObjectControl<T>` or `RDMPUserControl`.  If you do this make sure to declare an appropriate `TypeDescriptionProvider` (see below).  Otherwise it will not open in designer.
 
 ```csharp
 [TypeDescriptionProvider(typeof(AbstractControlDescriptionProvider<LoggingTab_Design, UserControl>))]
