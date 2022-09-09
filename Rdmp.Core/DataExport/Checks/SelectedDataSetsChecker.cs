@@ -303,7 +303,7 @@ namespace Rdmp.Core.DataExport.Checks
             if (cols.Any(c => c?.ExtractionCategory == category))
             {
                 notifier.OnCheckPerformed(new CheckEventArgs(errorCode, configuration, dataset,
-                    String.Join(",", cols.Where(c => c.ExtractionCategory == category)
+                    String.Join(",", cols.Where(c => c?.ExtractionCategory == category)
                         .Select(c => c.GetRuntimeName()))));
             }
         }
