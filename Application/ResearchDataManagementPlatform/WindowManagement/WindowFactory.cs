@@ -77,7 +77,7 @@ namespace ResearchDataManagementPlatform.WindowManagement
             var content = new PersistableObjectCollectionDockContent(activator,control,objectCollection);
 
             //add the control to the tab
-            AddControlToDockContent(activator,(Control)control, content,content.TabText, image.ImageToBitmap());
+            AddControlToDockContent(activator,(Control)control, content,content.TabText, image?.ImageToBitmap());
             
             //add to the window tracker
             _windowManager.AddWindow(content);
