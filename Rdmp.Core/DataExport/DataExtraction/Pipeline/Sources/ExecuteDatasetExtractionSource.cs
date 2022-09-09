@@ -79,6 +79,10 @@ OrderByAndDistinctInMemory - Adds an ORDER BY statement to the query and applies
         [DemandsInitialization("When DBMS is SqlServer and the extraction is for any of these datasets then HASH JOIN should be used instead of regular JOINs")]
         public Catalogue[] UseHashJoinsForCatalogues { get; set; }
 
+        [DemandsInitialization("Exclusion list.  A collection of Catalogues which will never be considered for HASH JOIN even when UseHashJoins is enabled.")]
+        public Catalogue[] DoNotUseHashJoinsForCatalogues { get; set; }
+
+
         /// <summary>
         /// This is a dictionary containing all the CatalogueItems used in the query, the underlying datatype in the origin database and the
         /// actual datatype that was output after the transform operation e.g. a varchar(10) could be converted into a bona fide DateTime which
@@ -416,6 +420,10 @@ OrderByAndDistinctInMemory - Adds an ORDER BY statement to the query and applies
 
             //must be sql server
             if (dbms == null || dbms.Value != DatabaseType.MicrosoftSQLServer)
+                return false;
+
+            // this Catalogue is explicilty marked as never hash join? i.e. its on the exclusion list
+            if (DoNotUseHashJoinsForCatalogues?.Contains(Request.Catalogue) ?? false)
                 return false;
 
             if (UseHashJoins)
