@@ -20,10 +20,14 @@ namespace Rdmp.Core.CommandExecution.AtomicCommands
         private readonly ICatalogue _catalogue;
         private readonly ITableInfo _tableInfo;
 
-        public ExecuteCommandGuessAssociatedColumns(IBasicActivateItems activator,ICatalogue catalogue,ITableInfo tableInfo):base(activator)
+        public bool _allowPartial;
+        public bool PromptForPartialMatching { get; set; } = false;
+
+        public ExecuteCommandGuessAssociatedColumns(IBasicActivateItems activator,ICatalogue catalogue,ITableInfo tableInfo, bool allowPartial = true):base(activator)
         {
             this._catalogue = catalogue;
             this._tableInfo = tableInfo;
+            _allowPartial = allowPartial;
         }
         public override void Execute()
         {
@@ -42,6 +46,14 @@ namespace Rdmp.Core.CommandExecution.AtomicCommands
             //get all columns for the selected parent
             ColumnInfo[] guessPool = selectedTableInfo.ColumnInfos.ToArray();
 
+            // copy to local variable to keep Command immutable
+            var partial = _allowPartial;
+
+            if(BasicActivator.IsInteractive && PromptForPartialMatching)
+            {
+                partial = BasicActivator.YesNo(new DialogArgs { WindowTitle = "Allow Partial Matches", TaskDescription = "Do you want to allow partial matches (contains).  This may result in incorrect mappings." });
+            }
+
             foreach (CatalogueItem catalogueItem in _catalogue.CatalogueItems)
             {
                 itemsSeen++;
@@ -50,7 +62,7 @@ namespace Rdmp.Core.CommandExecution.AtomicCommands
                     continue;
 
                 //guess the associated columns
-                ColumnInfo[] guesses = catalogueItem.GuessAssociatedColumn(guessPool).ToArray();
+                ColumnInfo[] guesses = catalogueItem.GuessAssociatedColumn(guessPool, partial).ToArray();
 
                 itemsQualifying++;
 
