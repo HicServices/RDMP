@@ -34,6 +34,7 @@ using Rdmp.UI.PluginManagement.CodeGeneration;
 using Rdmp.UI.SimpleControls;
 using Rdmp.UI.SimpleDialogs;
 using Rdmp.UI.SimpleDialogs.NavigateTo;
+using Rdmp.UI.SingleControlForms;
 using Rdmp.UI.TestsAndSetup;
 using Rdmp.UI.TestsAndSetup.ServicePropogation;
 using Rdmp.UI.Tutorials;
@@ -582,6 +583,11 @@ namespace ResearchDataManagementPlatform.Menus
         {
             var cmd = new ExecuteCommandStartSession(Activator, null, ExecuteCommandStartSession.FindResultsTitle);
             cmd.Execute();
+        }
+
+        private void viewHistoryToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            Activator.ShowWindow(new CommitsUI(Activator), true);
         }
     }
 }

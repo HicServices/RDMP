@@ -43,8 +43,7 @@ namespace Rdmp.UI.CommandExecution.AtomicCommands
         {
             base.Execute();
 
-            var ui = new CommitsUI(Activator, _o);
-            ui.Show();
+            ((IActivateItems)BasicActivator).ShowWindow(new CommitsUI(Activator, _o));
         }
     }
 }

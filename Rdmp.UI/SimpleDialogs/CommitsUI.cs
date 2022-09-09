@@ -4,7 +4,9 @@
 // RDMP is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License for more details.
 // You should have received a copy of the GNU General Public License along with RDMP. If not, see <https://www.gnu.org/licenses/>.
 
+using BrightIdeasSoftware;
 using MapsDirectlyToDatabaseTable;
+using Rdmp.Core.CommandExecution;
 using Rdmp.Core.Curation.Data;
 using Rdmp.UI.Collections;
 using Rdmp.UI.ItemActivation;
@@ -12,23 +14,57 @@ using Rdmp.UI.SimpleDialogs.SqlDialogs;
 using Rdmp.UI.TestsAndSetup.ServicePropogation;
 using System;
 using System.Collections.Generic;
+using System.ComponentModel;
 using System.Linq;
 using System.Windows.Forms;
 
 namespace Rdmp.UI.SimpleDialogs
 {
-    public partial class CommitsUI : RDMPForm
+    public partial class CommitsUI : CommitsUI_Design
     {
         private List<Commit> _commits;
 
         RDMPCollectionCommonFunctionality CommonCollectionFunctionality = new ();
 
+        public const string GeneralAdviceAboutWhatIsShown = "Only includes changes made while 'Commit' system was enabled.  Does not include changes made by processes/commands that do not support Commit system.";
 
-        public CommitsUI(IActivateItems activator, IMapsDirectlyToDatabaseTable o)
+        private CommitsUI()
         {
             InitializeComponent();
 
+            treeListView1.FullRowSelect = true;
+            treeListView1.ItemActivate += TreeListView1_ItemActivate;
+            treeListView1.CanExpandGetter = (m) => m is Commit;
+            treeListView1.ChildrenGetter = (m) => m is Commit c ? c.Mementos : null;
+        }
+
+        /// <summary>
+        /// Creates a new instance showing all <see cref="Commit"/> ever made regardless of what object
+        /// they were working on.
+        /// </summary>
+        /// <param name="activator"></param>
+        public CommitsUI(IActivateItems activator) : this()
+        {
             SetItemActivator(activator);
+
+            SetupCommonCollectionFunctionality();
+
+            _commits = activator.RepositoryLocator.CatalogueRepository
+                .GetAllObjects<Commit>()
+                .ToList();
+
+            treeListView1.AddObjects(_commits);
+            taskDescriptionLabel1.SetupFor(new DialogArgs
+            {
+                TaskDescription = $"Showing all commits. {GeneralAdviceAboutWhatIsShown}"
+            });
+        }
+        public CommitsUI(IActivateItems activator, IMapsDirectlyToDatabaseTable o):this()
+        {
+
+            SetItemActivator(activator);
+
+            SetupCommonCollectionFunctionality();
 
             // TODO: move this to a helper class
             var commitsInvolvingObject = activator.RepositoryLocator.CatalogueRepository
@@ -42,13 +78,16 @@ namespace Rdmp.UI.SimpleDialogs
                 .GetAllObjectsInIDList<Commit>(commitsInvolvingObject)
                 .ToList();
 
-            treeListView1.FullRowSelect = true;
-            treeListView1.ItemActivate += TreeListView1_ItemActivate;
             treeListView1.AddObjects(_commits);
-            treeListView1.CanExpandGetter = (m) => m is Commit;
-            treeListView1.ChildrenGetter = (m) => m is Commit c ? c.Mementos : null;
+            taskDescriptionLabel1.SetupFor(new DialogArgs
+            {
+                TaskDescription = $"Showing all commits that involved changes to '{o}'. {GeneralAdviceAboutWhatIsShown}"
+            });
+        }
 
-            CommonCollectionFunctionality.SetUp(Core.RDMPCollection.None, treeListView1, activator, olvName, null, new RDMPCollectionCommonFunctionalitySettings
+        private void SetupCommonCollectionFunctionality()
+        {
+            CommonCollectionFunctionality.SetUp(Core.RDMPCollection.None, treeListView1, Activator, olvName, null, new RDMPCollectionCommonFunctionalitySettings
             {
                 SuppressActivate = true,
                 SuppressChildrenAdder = true,
@@ -63,7 +102,6 @@ namespace Rdmp.UI.SimpleDialogs
             CommonCollectionFunctionality.SetupColumnTracking(olvDate, new Guid("b438cb32-9610-4bc8-8590-9288e1cc0ef7"));
             CommonCollectionFunctionality.SetupColumnTracking(olvUser, new Guid("c544ad0a-4ccf-4874-8269-b64465c6010f"));
             CommonCollectionFunctionality.SetupColumnTracking(olvDescription, new Guid("a53f80a5-c0a2-40c0-a8ec-1d3a897fcce4"));
-
         }
 
         private void TreeListView1_ItemActivate(object sender, System.EventArgs e)
@@ -74,5 +112,29 @@ namespace Rdmp.UI.SimpleDialogs
             var dialog = new SQLBeforeAndAfterViewer(m.BeforeYaml,m.AfterYaml,"Before","After",m.ToString(),MessageBoxButtons.OK);
             dialog.Show();
         }
+
+        private void tbFilter_TextChanged(object sender, EventArgs e)
+        {
+            if(string.IsNullOrWhiteSpace(tbFilter.Text))
+            {
+                treeListView1.ModelFilter = null;
+            }
+            else
+            {
+                treeListView1.ModelFilter = new TextMatchFilter(treeListView1,tbFilter.Text) { StringComparison = StringComparison.CurrentCultureIgnoreCase};
+                treeListView1.UseFiltering = true;
+            }
+        }
+
+        private void btnExpandAll_Click(object sender, EventArgs e)
+        {
+            treeListView1.ExpandAll();
+        }
+    }
+
+    [TypeDescriptionProvider(typeof(AbstractControlDescriptionProvider<CommitsUI_Design, UserControl>))]
+    public abstract class CommitsUI_Design : RDMPUserControl
+    {
+
     }
 }
