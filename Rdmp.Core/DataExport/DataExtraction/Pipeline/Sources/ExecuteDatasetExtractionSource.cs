@@ -79,7 +79,7 @@ OrderByAndDistinctInMemory - Adds an ORDER BY statement to the query and applies
         [DemandsInitialization("When DBMS is SqlServer and the extraction is for any of these datasets then HASH JOIN should be used instead of regular JOINs")]
         public Catalogue[] UseHashJoinsForCatalogues { get; set; }
 
-        [DemandsInitialization("Exclusion list.  A collection of Catalogues which will never be considered for HASH JOIN even when UseHashJoins is enabled.")]
+        [DemandsInitialization("Exclusion list.  A collection of Catalogues which will never be considered for HASH JOIN even when UseHashJoins is enabled.  Being on this list takes precedence for a Catalogue even if it is on UseHashJoinsForCatalogues.")]
         public Catalogue[] DoNotUseHashJoinsForCatalogues { get; set; }
 
 
