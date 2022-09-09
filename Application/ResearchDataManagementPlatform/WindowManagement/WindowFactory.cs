@@ -63,7 +63,7 @@ namespace ResearchDataManagementPlatform.WindowManagement
             var content = new PersistableSingleDatabaseObjectDockContent(control, databaseObject,refreshBus);
             _windowManager.AddWindow(content);
 
-            AddControlToDockContent(activator, (Control)control,content,"Loading...",image.ImageToBitmap());
+            AddControlToDockContent(activator, (Control)control,content,"Loading...",image?.ImageToBitmap());
             
             if (!RDMPMainForm.Loading)
                 activator.HistoryProvider.Add(databaseObject);
@@ -91,7 +91,7 @@ namespace ResearchDataManagementPlatform.WindowManagement
             var content = new PersistableSingleDatabaseObjectDockContent(control, entity, activator.RefreshBus);
 
             var img = activator.CoreIconProvider.GetImage(entity);
-            AddControlToDockContent(activator, (Control)control, content, entity.ToString(), img.ImageToBitmap());
+            AddControlToDockContent(activator, (Control)control, content, entity.ToString(), img?.ImageToBitmap());
 
             if (!RDMPMainForm.Loading)
                 activator.HistoryProvider.Add(entity);
@@ -104,7 +104,7 @@ namespace ResearchDataManagementPlatform.WindowManagement
         {
             DockContent content = new RDMPSingleControlTab(activator.RefreshBus,control);
             
-            AddControlToDockContent(activator, control, content,label, image.ImageToBitmap());
+            AddControlToDockContent(activator, control, content,label, image?.ImageToBitmap());
 
             _windowManager.AddAdhocWindow(content);
 
