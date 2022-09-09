@@ -225,6 +225,11 @@ namespace ReusableLibraryCode
             {
                 return new DirectoryInfo(Path.GetDirectoryName(exeLocation));
             }
+            
+            if(!string.IsNullOrWhiteSpace(AppDomain.CurrentDomain.BaseDirectory))
+            {
+                return new DirectoryInfo(AppDomain.CurrentDomain.BaseDirectory);
+            }
 
             return new DirectoryInfo(Environment.CurrentDirectory);
         }
