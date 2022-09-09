@@ -136,7 +136,12 @@ namespace Rdmp.UI.CohortUI.ImportCustomData
             }
             else
             {
-                MessageBox.Show("Checks must pass before continuing");
+                var bads = notifier.Messages.Where(c => c.Result == CheckResult.Fail);
+
+                WideMessageBox.Show("Checks Failed",
+                    @"Checks must pass before continuing:
+- " + 
+                    string.Join(Environment.NewLine + "- ",bads.Select(b=>b.Message)));
 
                 //if it is not passing checks display the results of the failing checking
                 ragSmiley1.Reset();
