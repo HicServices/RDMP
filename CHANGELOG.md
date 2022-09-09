@@ -8,6 +8,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ...
 
+### Added
+
+- Added UI support for changing `UseAliasInsteadOfTransformInGroupByAggregateGraphs` user setting [#1393](https://github.com/HicServices/RDMP/issues/1393)
+
 ## [7.0.20] - 2022-09-08
 
 ### Fixed
@@ -20,6 +24,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Fixed
 
 - Fixed a bug inserting into old logging databases
+
 
 ## [7.0.18] - 2022-08-30
 
