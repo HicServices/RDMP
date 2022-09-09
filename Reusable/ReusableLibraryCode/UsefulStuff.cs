@@ -219,21 +219,6 @@ namespace ReusableLibraryCode
 
         public static DirectoryInfo GetExecutableDirectory()
         {  
-            try
-            {
-                var exeLocation = Process.GetCurrentProcess()?.MainModule?.FileName;
-
-                if (!string.IsNullOrWhiteSpace(exeLocation))
-                {
-                    return new DirectoryInfo(Path.GetDirectoryName(exeLocation));
-                }
-            }
-            catch (Exception)
-            {
-                // unable to get exe directory from process location.  We will
-                // have to fallback on on BaseDirectory or CurrentDirectory
-            }
-
             if (!string.IsNullOrWhiteSpace(AppDomain.CurrentDomain.BaseDirectory))
             {
                 return new DirectoryInfo(AppDomain.CurrentDomain.BaseDirectory);
