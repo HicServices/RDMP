@@ -71,6 +71,10 @@ namespace Rdmp.Core.Logging
 
             DataLoadInfoParent = parent;
 
+            var md5Col = _databaseSettings.GetCurrentDatabase().ExpectTable("DataSource").DiscoverColumn("MD5");
+
+            IsLegacyLoggingSchema = md5Col.DataType.SQLType.Contains("binary");
+
             RecordNewTableLoadInDatabase(parent,destinationTable, sources, expectedInserts);
 
             parent.AddTableLoad(this);
@@ -79,17 +83,19 @@ namespace Rdmp.Core.Logging
         private void RecordNewTableLoadInDatabase(DataLoadInfo parent,string destinationTable, DataSource[] sources, int expectedInserts)
         {
             using (var con = _databaseSettings.GetConnection())
+            {
                 using (var cmd = _databaseSettings.GetCommand("INSERT INTO TableLoadRun (startTime,dataLoadRunID,targetTable,expectedInserts,suggestedRollbackCommand) " +
                                                 "VALUES (@startTime,@dataLoadRunID,@targetTable,@expectedInserts,@suggestedRollbackCommand); " +
                                                 "SELECT @@IDENTITY;", con))
                 {
                     con.Open();
 
-                    _databaseSettings.AddParameterWithValueToCommand("@startTime",cmd, DateTime.Now);
+                    _databaseSettings.AddParameterWithValueToCommand("@startTime", cmd, DateTime.Now);
                     _databaseSettings.AddParameterWithValueToCommand("@dataLoadRunID", cmd, parent.ID);
                     _databaseSettings.AddParameterWithValueToCommand("@targetTable", cmd, destinationTable);
                     _databaseSettings.AddParameterWithValueToCommand("@expectedInserts", cmd, expectedInserts);
                     _databaseSettings.AddParameterWithValueToCommand("@suggestedRollbackCommand", cmd, _suggestedRollbackCommand);
+
 
                     //get the ID, can come back as a decimal or an Int32 or an Int64 so whatever, just turn it into a string and then parse it
                     _id = int.Parse(cmd.ExecuteScalar().ToString());
@@ -107,12 +113,28 @@ namespace Rdmp.Core.Logging
                             _databaseSettings.AddParameterWithValueToCommand("@source", cmdInsertDs, s.Source);
                             _databaseSettings.AddParameterWithValueToCommand("@tableLoadRunID", cmdInsertDs, _id);
                             _databaseSettings.AddParameterWithValueToCommand("@originDate", cmdInsertDs, s.UnknownOriginDate ? DBNull.Value : s.OriginDate);
-                            _databaseSettings.AddParameterWithValueToCommand("@MD5", cmdInsertDs, s.MD5 != null ? s.MD5:DBNull.Value);
+
+                            // old logging schema used binary[128] for the MD5 column
+                            if (IsLegacyLoggingSchema)
+                            {
+                                var p = cmdInsertDs.CreateParameter();
+                                p.DbType = DbType.Binary;
+                                p.Size = 128;
+                                p.Value = s.MD5 != null ? s.MD5 : DBNull.Value;
+                                p.ParameterName = "@MD5";
+                                cmdInsertDs.Parameters.Add(p);
+                            }
+                            else
+                            {
+                                // now logging schema uses string for easier usability and FAnsiSql compatibility
+                                _databaseSettings.AddParameterWithValueToCommand("@MD5", cmdInsertDs, s.MD5 != null ? s.MD5 : DBNull.Value);
+                            }
 
                             s.ID = int.Parse(cmdInsertDs.ExecuteScalar().ToString());
                         }
                     }
                 }
+            }
         }
 
         #region Property setup 
@@ -199,6 +221,8 @@ namespace Rdmp.Core.Logging
             }
             set { _notes = value; }
         }
+
+        public bool IsLegacyLoggingSchema { get; }
 
         public void CloseAndArchive()
         {
