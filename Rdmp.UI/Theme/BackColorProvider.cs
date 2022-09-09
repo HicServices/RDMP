@@ -42,19 +42,6 @@ namespace Rdmp.UI.Theme
             }
         }
 
-        public Bitmap DrawBottomBar(Bitmap image, RDMPCollection collection)
-        {
-            var newImage = new Bitmap(image.Width, image.Height);
-            using (var g = Graphics.FromImage(newImage))
-            {
-                g.FillRectangle(new SolidBrush(GetColor(collection)), 0, 0, newImage.Width, newImage.Height);
-                g.DrawImage(image, 0, 0);
-            }
-
-            return newImage;
-        }
-
-
         public Image GetBackgroundImage(Size size, RDMPCollection collection)
         {
             var bmp = new Bitmap(size.Width, size.Height);
