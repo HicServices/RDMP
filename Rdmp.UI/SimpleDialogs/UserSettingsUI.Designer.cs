@@ -86,6 +86,7 @@
             this.userSettingsToolTips = new System.Windows.Forms.ToolTip(this.components);
             this.tbFind = new System.Windows.Forms.TextBox();
             this.label14 = new System.Windows.Forms.Label();
+            this.cbUseAliasInsteadOfTransformInGroupByAggregateGraphs = new System.Windows.Forms.CheckBox();
             this.groupBox1.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.olvErrorCodes)).BeginInit();
             this.groupBox2.SuspendLayout();
@@ -465,6 +466,7 @@
             // 
             // groupBox5
             // 
+            this.groupBox5.Controls.Add(this.cbUseAliasInsteadOfTransformInGroupByAggregateGraphs);
             this.groupBox5.Controls.Add(this.cbIncludeZeroSeriesInGraphs);
             this.groupBox5.Controls.Add(this.label5);
             this.groupBox5.Controls.Add(this.tbHeatmapColours);
@@ -697,6 +699,17 @@
             this.label14.TabIndex = 26;
             this.label14.Text = "Find Setting:";
             // 
+            // cbUseAliasInsteadOfTransformInGroupByAggregateGraphs
+            // 
+            this.cbUseAliasInsteadOfTransformInGroupByAggregateGraphs.AutoSize = true;
+            this.cbUseAliasInsteadOfTransformInGroupByAggregateGraphs.Location = new System.Drawing.Point(7, 88);
+            this.cbUseAliasInsteadOfTransformInGroupByAggregateGraphs.Margin = new System.Windows.Forms.Padding(4, 3, 4, 3);
+            this.cbUseAliasInsteadOfTransformInGroupByAggregateGraphs.Name = "cbUseAliasInsteadOfTransformInGroupByAggregateGraphs";
+            this.cbUseAliasInsteadOfTransformInGroupByAggregateGraphs.Size = new System.Drawing.Size(138, 19);
+            this.cbUseAliasInsteadOfTransformInGroupByAggregateGraphs.TabIndex = 20;
+            this.cbUseAliasInsteadOfTransformInGroupByAggregateGraphs.Text = "Use Alias In Group By";
+            this.cbUseAliasInsteadOfTransformInGroupByAggregateGraphs.UseVisualStyleBackColor = true;
+            // 
             // UserSettingsFileUI
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(7F, 15F);
@@ -794,5 +807,6 @@
         private System.Windows.Forms.Label label14;
         private System.Windows.Forms.CheckBox cbAutoRunSqlQueries;
         private System.Windows.Forms.CheckBox cbExpandAllInCohortBuilder;
+        private System.Windows.Forms.CheckBox cbUseAliasInsteadOfTransformInGroupByAggregateGraphs;
     }
 }

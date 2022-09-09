@@ -41,6 +41,7 @@ namespace Rdmp.Core.CommandLine.Gui {
             RegisterCheckbox(cbSkipCohortBuilderValidationOnCommit, nameof(UserSettings.SkipCohortBuilderValidationOnCommit));
             RegisterCheckbox(cbAlwaysJoinEverything, nameof(UserSettings.AlwaysJoinEverything));
             RegisterCheckbox(cbSelectiveRefresh, nameof(UserSettings.SelectiveRefresh));
+            RegisterCheckbox(cbUseAliasInsteadOfTransformInGroupByAggregateGraphs, nameof(UserSettings.UseAliasInsteadOfTransformInGroupByAggregateGraphs));
 
             tbCreateDatabaseTimeout.Text = UserSettings.CreateDatabaseTimeout.ToString();
             tbCreateDatabaseTimeout.TextChanged += tbCreateDatabaseTimeout_TextChanged;
