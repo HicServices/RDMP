@@ -8,6 +8,13 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ...
 
+## [7.0.20] - 2022-09-08
+
+### Fixed
+
+- Fixed null reference introduced after new Bitmap dependency refactoring [#1398](https://github.com/HicServices/RDMP/issues/1398)
+
+
 ## [7.0.19] - 2022-09-05
 
 ### Fixed
@@ -1341,7 +1348,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Fixed Culture (e.g. en-us) not being passed correctly in DelimitedFlatFileAttacher
 - Fixed bug where Updater would show older versions of RDMP as installable 'updates'
 
-[Unreleased]: https://github.com/HicServices/RDMP/compare/v7.0.19...develop
+[Unreleased]: https://github.com/HicServices/RDMP/compare/v7.0.20...develop
+[7.0.20]: https://github.com/HicServices/RDMP/compare/v7.0.19...v7.0.20
 [7.0.19]: https://github.com/HicServices/RDMP/compare/v7.0.18...v7.0.19
 [7.0.18]: https://github.com/HicServices/RDMP/compare/v7.0.17...v7.0.18
 [7.0.17]: https://github.com/HicServices/RDMP/compare/v7.0.16...v7.0.17
