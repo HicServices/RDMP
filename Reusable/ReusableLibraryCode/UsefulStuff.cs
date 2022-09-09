@@ -218,12 +218,10 @@ namespace ReusableLibraryCode
         }
 
         public static DirectoryInfo GetExecutableDirectory()
-        {
-            var exeLocation = Process.GetCurrentProcess()?.MainModule?.FileName;
-
-            if(!string.IsNullOrWhiteSpace(exeLocation))
+        {  
+            if (!string.IsNullOrWhiteSpace(AppDomain.CurrentDomain.BaseDirectory))
             {
-                return new DirectoryInfo(Path.GetDirectoryName(exeLocation));
+                return new DirectoryInfo(AppDomain.CurrentDomain.BaseDirectory);
             }
 
             return new DirectoryInfo(Environment.CurrentDirectory);

@@ -15,6 +15,7 @@ using NHunspell;
 using Rdmp.Core.CommandExecution;
 using Rdmp.UI.CommandExecution;
 using Rdmp.UI.SimpleDialogs;
+using ReusableLibraryCode;
 using ReusableLibraryCode.Settings;
 
 using ScintillaNET;
@@ -120,8 +121,8 @@ namespace Rdmp.UI.ScintillaHelper
                     }
                     else
                     {
-                        aff = Path.Combine(currentDirectory, "en_us.aff");
-                        dic = Path.Combine(currentDirectory, "en_us.dic");
+                        aff = Path.Combine(UsefulStuff.GetExecutableDirectory().FullName, "en_us.aff");
+                        dic = Path.Combine(UsefulStuff.GetExecutableDirectory().FullName, "en_us.dic");
                     }
 
                     var hunspell = new Hunspell(aff,dic);
