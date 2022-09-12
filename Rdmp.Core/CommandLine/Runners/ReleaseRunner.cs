@@ -101,7 +101,7 @@ namespace Rdmp.Core.CommandLine.Runners
 
             foreach (IExtractionConfiguration configuration in _configurations)
             {
-                toReturn.AddRange(GetReleasePotentials(configuration));
+                toReturn.AddRange(GetReleasePotentials(checkNotifier,configuration));
                 toReturn.Add(new ReleaseEnvironmentPotential(configuration));
             }
 
@@ -169,7 +169,7 @@ namespace Rdmp.Core.CommandLine.Runners
             }
         }
 
-        private List<ReleasePotential> GetReleasePotentials(IExtractionConfiguration configuration)
+        private List<ReleasePotential> GetReleasePotentials(ICheckNotifier checkNotifier, IExtractionConfiguration configuration)
         {
             var toReturn = new List<ReleasePotential>();
 
@@ -177,6 +177,17 @@ namespace Rdmp.Core.CommandLine.Runners
             foreach (ISelectedDataSets selectedDataSet in GetSelectedDataSets(configuration))//todo only the ones user ticked
             {
                 var extractionResults = selectedDataSet.GetCumulativeExtractionResultsIfAny();
+
+                var progress = selectedDataSet.ExtractionProgressIfAny;
+                if (progress != null)
+                {
+                    if(progress.MoreToFetch())
+                    {
+                        checkNotifier.OnCheckPerformed(new CheckEventArgs(
+                            ErrorCodes.AttemptToReleaseUnfinishedExtractionProgress,
+                            selectedDataSet,progress.ProgressDate,progress.EndDate));
+                    }
+                }
 
                 //if it has never been extracted
                 if (extractionResults == null || extractionResults.DestinationDescription == null)
@@ -208,7 +219,7 @@ namespace Rdmp.Core.CommandLine.Runners
 
             foreach (IExtractionConfiguration configuration in _configurations)
             {
-                data.ConfigurationsForRelease.Add(configuration, GetReleasePotentials(configuration));
+                data.ConfigurationsForRelease.Add(configuration, GetReleasePotentials(checkNotifier,configuration));
                 data.EnvironmentPotentials.Add(configuration, new ReleaseEnvironmentPotential(configuration));
                 data.SelectedDatasets.Add(configuration, GetSelectedDataSets(configuration));
             }

@@ -17,6 +17,11 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Added yes/no popup for 'partial matches' when Guessing [CatalogueItem] to [ColumnInfo] mappings (e.g. when remapping metadata layer to a new underlying table) [#1400](https://github.com/HicServices/RDMP/issues/1400)
 - Added UI support for changing `UseAliasInsteadOfTransformInGroupByAggregateGraphs` user setting [#1393](https://github.com/HicServices/RDMP/issues/1393)
 - Added `DoNotUseHashJoinsForCatalogues` to `ExecuteDatasetExtractionSource` [PipelineComponent] [#1403](https://github.com/HicServices/RDMP/issues/1403)
+- Iteratve extractions ([ExtractionProgress]) now have more warnings during checking [#1395](https://github.com/HicServices/RDMP/issues/1395) _(All errors can be suppressed in UserSettings)_
+  - Attempting to release a dataset before all batches have been extracted now results in R015
+  - If a batch resume is being performed and the previous extraction audit does not contain the same cohort you will get error R017
+  - If a batch resume is being performed but no audit can be found then you get error R016
+
 
 ## [7.0.20] - 2022-09-08
 
