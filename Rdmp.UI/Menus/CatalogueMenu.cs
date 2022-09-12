@@ -65,7 +65,7 @@ namespace Rdmp.UI.Menus
             Add(new ExecuteCommandBulkProcessCatalogueItems(_activator, catalogue) { SuggestedCategory = CatalogueItems , Weight = -99.049f, });
             Add(new ExecuteCommandPasteClipboardAsNewCatalogueItems(_activator, catalogue,()=> Clipboard.GetText()) { SuggestedCategory = CatalogueItems, Weight = -99.047f, });
             Add(new ExecuteCommandReOrderColumns(_activator, catalogue) { SuggestedCategory = CatalogueItems, Weight = -99.046f, });
-            Add(new ExecuteCommandGuessAssociatedColumns(_activator, catalogue,null) { SuggestedCategory = CatalogueItems, Weight = -99.045f, });
+            Add(new ExecuteCommandGuessAssociatedColumns(_activator, catalogue,null) { SuggestedCategory = CatalogueItems, Weight = -99.045f, PromptForPartialMatching = true, });
             Add(new ExecuteCommandChangeExtractionCategory(_activator,catalogue.GetAllExtractionInformation(ExtractionCategory.Any)) { SuggestedCategory = CatalogueItems, Weight = -99.044f, });
             Add(new ExecuteCommandImportCatalogueItemDescriptions(_activator,catalogue, null/*pick at runtime*/) { SuggestedCategory = CatalogueItems, Weight = -99.043f, });
 

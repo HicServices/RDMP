@@ -8,9 +8,15 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ...
 
+### Fixed
+
+- Added better error message when there are problems with naming etc of a new cohort being committed [#1408](https://github.com/HicServices/RDMP/issues/1408)
+
 ### Added
 
+- Added yes/no popup for 'partial matches' when Guessing [CatalogueItem] to [ColumnInfo] mappings (e.g. when remapping metadata layer to a new underlying table) [#1400](https://github.com/HicServices/RDMP/issues/1400)
 - Added UI support for changing `UseAliasInsteadOfTransformInGroupByAggregateGraphs` user setting [#1393](https://github.com/HicServices/RDMP/issues/1393)
+- Added `DoNotUseHashJoinsForCatalogues` to `ExecuteDatasetExtractionSource` [PipelineComponent] [#1403](https://github.com/HicServices/RDMP/issues/1403)
 
 ## [7.0.20] - 2022-09-08
 
