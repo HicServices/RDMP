@@ -258,7 +258,7 @@ OrderByAndDistinctInMemory - Adds an ORDER BY statement to the query and applies
             bool includesReleaseIdentifier = _extractionIdentifiersidx.Count > 0;
 
 
-            //first line - lets see what columns we wrote out
+            //first line - let's see what columns we wrote out
             //looks at the buffer and computes any transforms performed on the column
                     
 

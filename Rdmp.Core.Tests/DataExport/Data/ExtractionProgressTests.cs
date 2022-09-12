@@ -57,7 +57,7 @@ namespace Rdmp.Core.Tests.DataExport.Data
             progress.DeleteInDatabase();
             Assert.DoesNotThrow(() => progress = new ExtractionProgress(DataExportRepository, sds));
 
-            // yeah we can great, lets cleanup the test now
+            // yeah we can great, let's cleanup the test now
             progress.DeleteInDatabase();
         }
 

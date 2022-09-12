@@ -60,7 +60,7 @@ namespace Rdmp.Core.Tests.Curation.Unit
         {
             var memoryrepo = new MemoryCatalogueRepository();
             var c = new SpontaneouslyInventedFilterContainer(memoryrepo,null,null,FilterContainerOperation.AND);
-            Assert.IsFalse(c.ShouldBeReadOnly(out _),"Spont containers should never be in UI but lets not tell the programmer they shouldn't be edited");
+            Assert.IsFalse(c.ShouldBeReadOnly(out _),"Spont containers should never be in UI but let's not tell the programmer they shouldn't be edited");
         }
 
 

@@ -118,7 +118,7 @@ namespace Rdmp.Core.CommandLine.DatabaseCreation
                 }
 
                 // half of the Catalogues have IsExtractionIdentifier
-                // but lets make only 75% of those extractable datasets
+                // but let's make only 75% of those extractable datasets
                 if (r.Next(5) > 0 && hasExtractionIdentifier)
                 {
                     var eds = new ExtractableDataSet(_repos.DataExportRepository, cata);
@@ -240,12 +240,12 @@ namespace Rdmp.Core.CommandLine.DatabaseCreation
             // = average of 24 columns per table
             var ti = new TableInfo(_repos.CatalogueRepository, $"[MyDb].[Table{TablesCount++}]");
             
-            // lets not set the server name on 1 in 20 so we get all those
+            // let's not set the server name on 1 in 20 so we get all those
             // horrible null references out in the open
             if(r.Next(20)!=0)
                 ti.Server = _serverName;
 
-            // lets not set the database name on 1 in 20 so we get all those
+            // let's not set the database name on 1 in 20 so we get all those
             // horrible null references out in the open
             if (r.Next(20) != 0)
                 ti.Database = r.Next(2) == 0 ? _databaseNameRuntime : _databaseNameWrapped; // some are "[mydb]" some will be "mydb"

@@ -174,7 +174,7 @@ namespace Rdmp.UI.Collections.Providers.Copying
                 if (command == null)
                     return null;//it couldn't become a command so leave it as a model object
 
-                //yes, lets hot swap the data object in the drag command, that couldn't possibly go wrong right?
+                //yes, let's hot swap the data object in the drag command, that couldn't possibly go wrong right?
                 toReturn.ModelObjects.Clear();
                 toReturn.ModelObjects.Add(command);
                 return toReturn;

@@ -66,7 +66,7 @@ namespace Rdmp.Core.DataExport.Data
             if((col ?? tbl ?? string.Empty).Contains('.'))
                 return col ?? tbl;
 
-            //they sent us something like "bob" for a table/column name, lets fully qualify it with the Database etc
+            //they sent us something like "bob" for a table/column name, let's fully qualify it with the Database etc
             var syntax = GetQuerySyntaxHelper();
 
             if(col == null)

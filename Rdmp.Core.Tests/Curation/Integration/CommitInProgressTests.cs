@@ -22,7 +22,7 @@ namespace Rdmp.Core.Tests.Curation.Integration
 
             using var start = new CommitInProgress(RepositoryLocator, new CommitInProgressSettings(c));
 
-            // no changes but lets spam this for added complexity
+            // no changes but let's spam this for added complexity
             c.SaveToDatabase();
             c.SaveToDatabase();
             c.SaveToDatabase();

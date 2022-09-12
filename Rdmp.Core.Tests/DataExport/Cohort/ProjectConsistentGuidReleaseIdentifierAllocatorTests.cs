@@ -47,7 +47,7 @@ namespace Rdmp.Core.Tests.DataExport.Cohort
             Assert.AreEqual(0, defTable.GetRowCount());
             Assert.IsNotNull(allocator.AllocateReleaseIdentifier("0101010101"));
             
-            //Now lets define a cohort identifier for someone (0202020202) who is not in our project
+            //Now let's define a cohort identifier for someone (0202020202) who is not in our project
             defTable.Insert(new Dictionary<string, object>()
             {
                 {"projectNumber", 11}, //project is not our project
@@ -75,7 +75,7 @@ namespace Rdmp.Core.Tests.DataExport.Cohort
             Assert.AreNotEqual("0x0123",allocator.AllocateReleaseIdentifier("0202020202"));
 
 
-            //Now lets define a cohort identifier for someone (0202020202) who IS in our project
+            //Now let's define a cohort identifier for someone (0202020202) who IS in our project
             defTable.Insert(new Dictionary<string, object>()
             {
                 {"projectNumber", 10}, //this is our project number!
@@ -103,8 +103,8 @@ namespace Rdmp.Core.Tests.DataExport.Cohort
             Assert.AreEqual("0x0127", allocator.AllocateReleaseIdentifier("0202020202"));
 
 
-            //finally lets break it by giving it conflicting historical records
-            //Lets pretend that previously we had already got 2 historical batches for the project, batch 1 released 0202020202 as 0x0127 (see above) and batch 2 released 0202020202 as 0x0128
+            //finally let's break it by giving it conflicting historical records
+            //let's pretend that previously we had already got 2 historical batches for the project, batch 1 released 0202020202 as 0x0127 (see above) and batch 2 released 0202020202 as 0x0128
             defTable.Insert(new Dictionary<string, object>()
             {
                 {"projectNumber", 10}, //this is our project number!

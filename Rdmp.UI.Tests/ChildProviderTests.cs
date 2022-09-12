@@ -44,7 +44,7 @@ namespace Rdmp.UI.Tests
             var cp1 = new DataExportChildProvider(RepositoryLocator,null,new ThrowImmediatelyCheckNotifier(),null);
             var cp2 = new DataExportChildProvider(RepositoryLocator,null,new ThrowImmediatelyCheckNotifier(),null);
 
-            //to start with lets make sure all fields and properties are different on the two classes except where we expect them to be the same
+            //to start with let's make sure all fields and properties are different on the two classes except where we expect them to be the same
             BindingFlags bindFlags = BindingFlags.Instance | BindingFlags.Public | BindingFlags.NonPublic | BindingFlags.Static;
 
             foreach(var prop in typeof(DataExportChildProvider).GetProperties().Where(p => !skip.Contains(p.Name)))
