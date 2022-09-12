@@ -193,9 +193,19 @@ namespace Rdmp.Core.CommandExecution
             }
 
             if (Is(forObject, out SelectedDataSets selectedDataSet))
-                yield return new ExecuteCommandShow(_activator, selectedDataSet.ExtractableDataSet.Catalogue_ID, typeof(Catalogue)) {
+            {
+                yield return new ExecuteCommandShow(_activator, selectedDataSet.ExtractableDataSet.Catalogue_ID, typeof(Catalogue))
+                {
                     OverrideCommandName = "Catalogue",
-                    OverrideIcon = GetImage(RDMPConcept.Catalogue) };
+                    OverrideIcon = GetImage(RDMPConcept.Catalogue)
+                };
+
+                var ep = selectedDataSet.ExtractionProgressIfAny;
+                if(ep != null)
+                {
+                    yield return new ExecuteCommandShow(_activator, ep, 0, true);
+                }
+            }
 
             if (Is(forObject, out TableInfo tableInfo))
                 yield return new ExecuteCommandShow(_activator, () => tableInfo.ColumnInfos.SelectMany(c => _activator.CoreChildProvider.AllCatalogueItems.Where(catItem => catItem.ColumnInfo_ID == c.ID).Select(catItem => catItem.Catalogue)).Distinct()){OverrideCommandName="Catalogue(s)", OverrideIcon = GetImage(RDMPConcept.Catalogue) };

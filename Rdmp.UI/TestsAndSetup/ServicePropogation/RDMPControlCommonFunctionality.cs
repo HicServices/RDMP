@@ -387,7 +387,7 @@ namespace Rdmp.UI.TestsAndSetup.ServicePropogation
                 {
                     _addToMenuSubmenus.Add(underMenu, new ToolStripMenuItem(underMenu));
                     
-                    // If its the GoTo menu then when the user expands the menu we have to fetch the objects
+                    // If it's the GoTo menu then when the user expands the menu we have to fetch the objects
                     // and update the IsImpossible status etc.
                     if (underMenu == AtomicCommandFactory.GoTo)
                         RDMPContextMenuStrip.RegisterFetchGoToObjecstCallback(_addToMenuSubmenus[underMenu]);
