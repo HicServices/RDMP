@@ -280,7 +280,7 @@ namespace Rdmp.Core.DataExport.Checks
             if (progress == null)
                 return;
 
-            // its the first batch, thats good - user reset the progress after they changed the cohort
+            // it's the first batch, thats good - user reset the progress after they changed the cohort
             // so extraction should begin at the start date correctly and cleanup any remnants
             if(progress.ProgressDate == null)
             {
