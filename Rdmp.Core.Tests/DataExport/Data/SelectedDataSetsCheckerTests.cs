@@ -48,7 +48,7 @@ namespace Rdmp.Core.Tests.DataExport.Data
             // normal checks pass
             var checker = new SelectedDataSetsChecker(new ThrowImmediatelyActivator(RepositoryLocator), _selectedDataSet);
 
-            foreach (var r in CatalogueRepository.GetAllObjects<CumulativeExtractionResults>())
+            foreach (var r in DataExportRepository.GetAllObjects<CumulativeExtractionResults>())
             {
                 r.DeleteInDatabase();
             }
@@ -83,7 +83,7 @@ namespace Rdmp.Core.Tests.DataExport.Data
             ep.ProgressDate = new System.DateTime(1995, 1, 1); // we are half way through
             ep.SaveToDatabase();
 
-            foreach (var r in CatalogueRepository.GetAllObjects<CumulativeExtractionResults>())
+            foreach (var r in DataExportRepository.GetAllObjects<CumulativeExtractionResults>())
             {
                 r.DeleteInDatabase();
             }
