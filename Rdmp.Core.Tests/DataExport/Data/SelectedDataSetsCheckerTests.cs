@@ -48,6 +48,11 @@ namespace Rdmp.Core.Tests.DataExport.Data
             // normal checks pass
             var checker = new SelectedDataSetsChecker(new ThrowImmediatelyActivator(RepositoryLocator), _selectedDataSet);
 
+            foreach (var r in CatalogueRepository.GetAllObjects<CumulativeExtractionResults>())
+            {
+                r.DeleteInDatabase();
+            }
+
             var ep = new ExtractionProgress(DataExportRepository, _selectedDataSet, new System.DateTime(1990, 1, 1), new System.DateTime(2001, 1, 1), 100, "mybatch",
                _extractionInformations[0].ID);
 
@@ -77,6 +82,12 @@ namespace Rdmp.Core.Tests.DataExport.Data
 
             ep.ProgressDate = new System.DateTime(1995, 1, 1); // we are half way through
             ep.SaveToDatabase();
+
+            foreach (var r in CatalogueRepository.GetAllObjects<CumulativeExtractionResults>())
+            {
+                r.DeleteInDatabase();
+            }
+                
 
             // audit has SQL is good, it contains the correct cohort
             var audit = new CumulativeExtractionResults(DataExportRepository, _configuration, _selectedDataSet.ExtractableDataSet,
