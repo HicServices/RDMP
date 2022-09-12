@@ -338,6 +338,11 @@ namespace Rdmp.UI.Tests
         {
             throw new NotSupportedException();
         }
+
+        public override void ShowData(System.Data.DataTable collection)
+        {
+            throw new NotImplementedException();
+        }
     }
 
     public class TestActivateItemsResults:ICheckNotifier

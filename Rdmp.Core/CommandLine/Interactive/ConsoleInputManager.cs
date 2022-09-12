@@ -6,6 +6,7 @@
 
 using System;
 using System.Collections.Generic;
+using System.Data;
 using System.Diagnostics;
 using System.IO;
 using System.Linq;
@@ -513,6 +514,22 @@ namespace Rdmp.Core.CommandLine.Interactive
             .Start(title, ctx => 
                 base.Wait(title, task, cts)
                 );
+        }
+
+        public override void ShowData(System.Data.DataTable collection)
+        {
+            var tbl = new Table();
+
+            foreach(DataColumn c in collection.Columns)
+            {
+                tbl.AddColumn(c.ColumnName);
+            }
+
+            foreach(DataRow row in collection.Rows)
+            {
+                tbl.AddRow(row.ItemArray.Select(i => i.ToString()).ToArray());
+            }
+            AnsiConsole.Write(tbl);
         }
     }
 }

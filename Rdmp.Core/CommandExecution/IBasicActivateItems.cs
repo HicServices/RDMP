@@ -6,6 +6,7 @@
 
 using System;
 using System.Collections.Generic;
+using System.Data;
 using System.Diagnostics;
 using System.IO;
 using System.Threading;
@@ -97,10 +98,16 @@ namespace Rdmp.Core.CommandExecution
         event EmphasiseItemHandler Emphasise;
 
         /// <summary>
-        /// Show some SQL and the data that it returns.  This should be non modal
+        /// Show some SQL and the data that it returns.  This may be non modal
         /// </summary>
         /// <param name="collection"></param>
         void ShowData(IViewSQLAndResultsCollection collection);
+
+        /// <summary>
+        /// Show a table of data that is held in memory already.  This may be non modal
+        /// </summary>
+        /// <param name="dataTable"></param>
+        void ShowData(DataTable dataTable);
         
         /// <summary>
         /// Returns the repository that stores objects of the given <paramref name="type"/> (Must be <see cref="IMapsDirectlyToDatabaseTable"/>).

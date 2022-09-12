@@ -7,6 +7,7 @@
 using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
+using System.Data;
 using System.Diagnostics;
 using System.IO;
 using System.Linq;
@@ -807,6 +808,7 @@ namespace Rdmp.Core.CommandExecution
         }
 
         public abstract void ShowData(IViewSQLAndResultsCollection collection);
+        public abstract void ShowData(DataTable collection);
 
         /// <summary>
         /// Presents user with log info about <paramref name="rootObject"/>.  Inheritors may wish to use <see cref="GetLogs(ILoggedActivityRootObject)"/>.
