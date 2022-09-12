@@ -35,7 +35,9 @@ namespace ReusableLibraryCode.Checks
         public static ErrorCode ExtractionInformationMissing = new ErrorCode("R014", "The following columns no longer map to an ExtractionInformation(it may have been deleted){0}", CheckResult.Warning);
 
         public static ErrorCode AttemptToReleaseUnfinishedExtractionProgress = new ErrorCode("R015", "Dataset {0} should not be released because it's ExtractionProgress has a progress date of {1} but an end date of {2}", CheckResult.Fail);
-
+        public readonly static ErrorCode NoSqlAuditedForExtractionProgress = new ErrorCode("R0016", "ExtractionProgress '{0}' is 'in progress' (ProgressDate is not null) but there is no audit of previously extracted SQL (needed for checking cohort changes)",CheckResult.Fail);
+        public readonly static ErrorCode CohortSwappedMidExtraction = new ErrorCode("R0016", "ExtractionProgress '{0}' is 'in progress' (ProgressDate is not null) but we did not find the expected Cohort WHERE Sql in the audit of SQL extracted with the last batch.  Did you change the cohort without resetting the ProgressDate?.  The SQL we expected to find was '{1}'",CheckResult.Fail);
+        
         static ErrorCodes()
         {
             var fields = typeof(ErrorCodes).GetFields(BindingFlags.Public | BindingFlags.Static).Where(p => p.FieldType == typeof(ErrorCode));
@@ -50,7 +52,6 @@ namespace ReusableLibraryCode.Checks
         /// Collection of all known error codes.  Plugins are free to add to these if desired but must do so pre startup
         /// </summary>
         public static List<ErrorCode> KnownCodes = new List<ErrorCode>();
-
         
     }
 }
