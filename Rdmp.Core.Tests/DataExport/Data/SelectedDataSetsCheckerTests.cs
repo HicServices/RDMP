@@ -66,9 +66,7 @@ namespace Rdmp.Core.Tests.DataExport.Data
 
             var ex = Assert.Throws<Exception>(() => checker.Check(new ThrowImmediatelyCheckNotifier()));
             Assert.AreEqual(
-                $"R0016 ExtractionProgress 'mybatch' is 'in progress' (ProgressDate is not null) but we did not find the expected Cohort WHERE Sql in the audit of SQL extracted with the last batch.  Did you change the cohort without resetting the ProgressDate?.  The SQL we expected to find was '[{TestDatabaseSettings.Prefix}CohortDatabase]..[Cohort].[cohortDefinition_id]=-599'",
-                ex.Message,
-                "Unexpected error message was:" + ex);
+                $"R0017 ExtractionProgress 'mybatch' is 'in progress' (ProgressDate is not null) but we did not find the expected Cohort WHERE Sql in the audit of SQL extracted with the last batch.  Did you change the cohort without resetting the ProgressDate?.  The SQL we expected to find was '[{TestDatabaseSettings.Prefix}CohortDatabase]..[Cohort].[cohortDefinition_id]=-599'",ex.Message);
 
             // tidy up
             ep.DeleteInDatabase();
