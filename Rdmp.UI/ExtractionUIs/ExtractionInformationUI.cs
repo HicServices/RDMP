@@ -85,6 +85,8 @@ namespace Rdmp.UI.ExtractionUIs
             AssociatedCollection = RDMPCollection.Catalogue;
 
             ragSmiley1 = new RAGSmileyToolStrip(this);
+            
+            UseCommitSystem = true;
         }
 
         private bool BeforeSave(DatabaseEntity arg)

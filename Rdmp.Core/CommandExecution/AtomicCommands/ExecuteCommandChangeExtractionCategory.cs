@@ -72,7 +72,7 @@ namespace Rdmp.Core.CommandExecution.AtomicCommands
         public override void Execute()
         {
             base.Execute();
-                                    
+            
             var c = _category;
 
             if (c == null && BasicActivator.SelectValueType("New Extraction Category", typeof(ExtractionCategory), ExtractionCategory.Core, out object category))
@@ -87,15 +87,20 @@ namespace Rdmp.Core.CommandExecution.AtomicCommands
                 throw new Exception("All CatalogueItems in a ProjectSpecific Catalogues must have ExtractionCategory of 'ProjectSpecific'");
             }
 
+            if(ExecuteWithCommit(()=>ExecuteImpl(c.Value), $"Set ExtractionCategory to '{c}'", _extractionInformations))
+            {
+                //publish the root Catalogue
+                Publish(_extractionInformations.First());
+            }
+        }
+
+        private void ExecuteImpl(ExtractionCategory category)
+        {
             foreach (var ei in _extractionInformations)
             {
-                ei.ExtractionCategory = c.Value;
+                ei.ExtractionCategory = category;
                 ei.SaveToDatabase();
-                
-            }            
-
-            //publish the root Catalogue
-            Publish(_extractionInformations.First());
+            }
         }
     }
 }

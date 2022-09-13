@@ -14,7 +14,7 @@ namespace Rdmp.Core.Curation.Data.Spontaneous
     /// SpontaneousObjects are 'memory only' versions of IMapsDirectlyToDatabaseTable classes which throw NotSupportedException on any attempt to persist / delete them etc but which
     /// you can initialize and set properties on towards your own nefarious ends.
     /// 
-    /// <para>E.g. lets say during the course of your programming you want to bolt another container and filter onto an AggregateContainer (in your Catalogue) then you can
+    /// <para>E.g. let's say during the course of your programming you want to bolt another container and filter onto an AggregateContainer (in your Catalogue) then you can
     /// SpontaneouslyInventedFilterContainer, put the AggregateContainer into it and create a SpontaneouslyInventedFilter along side it.  Then pass the Sponted container
     /// to an ISqlQueryBuilder and watch it treat it just like any other normal collection of (database based) filters / containers.</para>
     /// 

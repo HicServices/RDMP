@@ -41,11 +41,14 @@ namespace Rdmp.Core.CommandLine.Gui {
         
         private Terminal.Gui.CheckBox cbUseAliasInsteadOfTransformInGroupByAggregateGraphs;
         
+        private Terminal.Gui.CheckBox cbEnableCommits;
+        
         private Terminal.Gui.TableView tableview1;
         
         private void InitializeComponent() {
             this.tableview1 = new Terminal.Gui.TableView();
             this.cbUseAliasInsteadOfTransformInGroupByAggregateGraphs = new Terminal.Gui.CheckBox();
+            this.cbEnableCommits = new Terminal.Gui.CheckBox();
             this.tbArchiveTriggerTimeout = new Terminal.Gui.TextField();
             this.tbCreateDatabaseTimeout = new Terminal.Gui.TextField();
             this.label2 = new Terminal.Gui.Label();
@@ -190,6 +193,15 @@ namespace Rdmp.Core.CommandLine.Gui {
             this.tbArchiveTriggerTimeout.Text = "";
             this.tbArchiveTriggerTimeout.TextAlignment = Terminal.Gui.TextAlignment.Left;
             tabView1Settings.View.Add(this.tbArchiveTriggerTimeout);
+            this.cbEnableCommits.Width = 4;
+            this.cbEnableCommits.Height = 1;
+            this.cbEnableCommits.X = 0;
+            this.cbEnableCommits.Y = 8;
+            this.cbEnableCommits.Data = "cbEnableCommits";
+            this.cbEnableCommits.Text = "Enable Commits";
+            this.cbEnableCommits.TextAlignment = Terminal.Gui.TextAlignment.Left;
+            this.cbEnableCommits.Checked = false;
+            tabView1Settings.View.Add(this.cbEnableCommits);
             tabView1.AddTab(tabView1Settings, false);
             Terminal.Gui.TabView.Tab tabView1ErrorCodes;
             tabView1ErrorCodes = new Terminal.Gui.TabView.Tab("ErrorCodes", new View());

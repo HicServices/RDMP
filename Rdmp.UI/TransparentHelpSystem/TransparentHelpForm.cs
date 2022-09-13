@@ -174,7 +174,7 @@ namespace Rdmp.UI.TransparentHelpSystem
             var highlightBottomLeft = new Point(highlightTopLeft.X, highlightTopLeft.Y + _highlight.ClientRectangle.Height);
 
 
-            //First lets try to place it like this
+            //First let's try to place it like this
             /**************HOST CONTROL BOUNDS*************
              * 
              *       HIGHLIGHT

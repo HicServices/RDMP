@@ -44,23 +44,7 @@ public class YamlRepository : MemoryDataExportRepository
             Directory.Create();
 
         // Build the serializer
-        var builder = new SerializerBuilder();
-        builder.WithTypeConverter(new VersionYamlTypeConverter());
-
-        foreach(var type in GetCompatibleTypes())
-        {
-            var respect = TableRepository.GetPropertyInfos(type);
-
-            foreach(var prop in type.GetProperties())
-            {
-                if(!respect.Contains(prop))
-                {
-                    builder = builder.WithAttributeOverride(type, prop.Name, new YamlIgnoreAttribute());
-                }
-            }
-        }
-
-        _serializer = builder.Build();
+        _serializer = CreateSerializer(GetCompatibleTypes());
 
         LoadObjects();
 
@@ -71,6 +55,32 @@ public class YamlRepository : MemoryDataExportRepository
 
         // Don't create new objects with the ID of existing objects
         NextObjectId = Objects.Count == 0 ? 0 : Objects.Max(o => o.Key.ID);
+    }
+
+    /// <summary>
+    /// 
+    /// </summary>
+    /// <returns></returns>
+    public static ISerializer CreateSerializer(IEnumerable<Type> supportedTypes)
+    {
+
+        var builder = new SerializerBuilder();
+        builder.WithTypeConverter(new VersionYamlTypeConverter());
+
+        foreach (var type in supportedTypes)
+        {
+            var respect = TableRepository.GetPropertyInfos(type);
+
+            foreach (var prop in type.GetProperties())
+            {
+                if (!respect.Contains(prop))
+                {
+                    builder = builder.WithAttributeOverride(type, prop.Name, new YamlIgnoreAttribute());
+                }
+            }
+        }
+
+        return builder.Build();
     }
 
     private void LoadObjects()

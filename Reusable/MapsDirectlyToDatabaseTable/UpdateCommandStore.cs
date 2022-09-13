@@ -9,6 +9,9 @@ using System.Collections.Generic;
 using System.Data.Common;
 using System.Linq;
 using System.Reflection;
+using FAnsi.Discovery;
+using FAnsi.Discovery.QuerySyntax;
+using FAnsi.Implementation;
 using ReusableLibraryCode;
 
 namespace MapsDirectlyToDatabaseTable
@@ -45,14 +48,16 @@ namespace MapsDirectlyToDatabaseTable
         }
         public void Add(Type o, DbConnectionStringBuilder builder, DbConnection connection, DbTransaction transaction)
         {
-            var command = DatabaseCommandHelper.GetCommand("UPDATE " + o.Name + " SET {0} WHERE ID=@ID;" , connection, transaction);
+            var syntax = ImplementationManager.GetImplementation(builder).GetQuerySyntaxHelper();
+
+            var command = DatabaseCommandHelper.GetCommand("UPDATE " + syntax.EnsureWrapped(o.Name) + " SET {0} WHERE ID=@ID;" , connection, transaction);
                         
             var props = TableRepository.GetPropertyInfos(o);
 
             foreach(PropertyInfo p in props)
                 command.Parameters.Add(DatabaseCommandHelper.GetParameter("@"+p.Name,command));
 
-            command.CommandText = string.Format(command.CommandText,string.Join(",",props.Where(p=>p.Name != "ID").Select(p=> "["+p.Name+"]=@" + p.Name)));
+            command.CommandText = string.Format(command.CommandText,string.Join(",",props.Where(p=>p.Name != "ID").Select(p=> $"{syntax.EnsureWrapped(p.Name)}=@{p.Name}")));
             
             UpdateCommands.Add(o, command);
         }

@@ -156,6 +156,16 @@ namespace ReusableLibraryCode.Settings
             set { AppSettings.AddOrUpdateValue("ScoreZeroForCohortAggregateContainers", value); }
         }
 
+        /// <summary>
+        /// Create audit objects for specific objects/changes (e.g. changes to Catalogue Deprecated status).
+        /// </summary>
+        public static bool EnableCommits
+        {
+            get { return AppSettings.GetValueOrDefault("EnableCommits", true); }
+            set { AppSettings.AddOrUpdateValue("EnableCommits", value); }
+
+        }
+
 
         #region Catalogue flag visibility settings
         public static bool ShowInternalCatalogues

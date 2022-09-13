@@ -22,6 +22,7 @@ using ReusableLibraryCode.Checks;
 using ReusableLibraryCode.Comments;
 using ReusableLibraryCode.Icons.IconProvision;
 using SixLabors.ImageSharp.PixelFormats;
+using MapsDirectlyToDatabaseTable.Revertable;
 
 namespace Rdmp.Core.CommandExecution
 {
@@ -528,6 +529,62 @@ namespace Rdmp.Core.CommandExecution
                     || 
                     commandType.GetCustomAttributes<AliasAttribute>(false)
                     .Any(a=>a.Name.Equals(name,StringComparison.InvariantCultureIgnoreCase));
+        }
+
+
+        /// <summary>
+        /// <para>
+        /// Performs the <paramref name="toRun"/> action within a <see cref="Commit"/> (if
+        /// commits are supported by platform).  Returns true if no commit was used or commit 
+        /// was completed successfully.  Returns false if commit was abandonned (e.g. by user cancelling).
+        /// </para>
+        /// <remarks> If commit is abandoned then <paramref name="trackObjects"/> will all be reverted
+        /// to database state (i.e. local changes discarded)</remarks>
+        /// </summary>
+        /// <param name="toRun"></param>
+        /// <param name="description"></param>
+        /// <param name="trackObjects">Objects to do change tracking on within the transaction</param>
+        /// <returns></returns>
+        protected bool ExecuteWithCommit(Action toRun, string description, params IMapsDirectlyToDatabaseTable[] trackObjects)
+        {
+
+            CommitInProgress commit = null;
+            var revert = false;
+
+            if (BasicActivator.UseCommits())
+                commit = new CommitInProgress(BasicActivator.RepositoryLocator, new CommitInProgressSettings(trackObjects)
+                {
+                    UseTransactions = true,
+                    Description = description
+                });
+
+            try
+            {
+                toRun();
+
+                // if user cancells transaction
+                if (commit != null && commit.TryFinish(BasicActivator) == null)
+                {
+                    revert = true;
+                }
+            }
+            finally
+            {
+                commit?.Dispose();
+            }
+
+            if(revert)
+            {
+                foreach (var o in trackObjects)
+                {
+                    if(o is IRevertable re)
+                    {
+                        re.RevertToDatabaseState();
+                    }   
+                }
+            }
+
+            return !revert;
         }
 
     }

@@ -115,7 +115,7 @@ namespace Rdmp.Core.Tests.CommandExecution
             cata1.SaveToDatabase();
 
 
-            //Lets also test that PipelineComponentArgument also work (not just ProcessTaskArgument)
+            //let's also test that PipelineComponentArgument also work (not just ProcessTaskArgument)
             var pca = WhenIHaveA<PipelineComponentArgument>();
             var pc = pca.PipelineComponent;
             
@@ -141,7 +141,7 @@ namespace Rdmp.Core.Tests.CommandExecution
             cata2.Name = "kapow frank";
             cata2.SaveToDatabase();
 
-            //Lets also test that PipelineComponentArgument also work (not just ProcessTaskArgument)
+            //let's also test that PipelineComponentArgument also work (not just ProcessTaskArgument)
             var pca = WhenIHaveA<PipelineComponentArgument>();
             var pc = pca.PipelineComponent;
             
@@ -165,7 +165,7 @@ namespace Rdmp.Core.Tests.CommandExecution
             cata1.SaveToDatabase();
 
 
-            //Lets also test that PipelineComponentArgument also work (not just ProcessTaskArgument)
+            //let's also test that PipelineComponentArgument also work (not just ProcessTaskArgument)
             var pca = WhenIHaveA<PipelineComponentArgument>();
             var pc = pca.PipelineComponent;
             

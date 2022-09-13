@@ -821,6 +821,30 @@ namespace Rdmp.Core.CommandExecution
             {
                 yield return new ExecuteCommandAddMissingParameters(_activator, many.Cast<ExtractionFilterParameterSet>().ToArray());
             }
+
+            // Deprecate/UnDeprecate many items at once if all share the same state (all true or all false)
+            if (many.Cast<object>().All(d => d is IMightBeDeprecated))
+            {
+                var dep = many.Cast<IMightBeDeprecated>().ToArray();
+
+                if(dep.All((d)=>d.IsDeprecated))
+                {
+                    yield return new ExecuteCommandDeprecate(_activator,dep,false )
+                    {
+                        SuggestedShortcut = "UnDeprecate" 
+                    };
+                }
+                else if (dep.All((d)=>!d.IsDeprecated))
+                {
+                    yield return new ExecuteCommandDeprecate(_activator, dep, true)
+                    {
+                        SuggestedShortcut = "Deprecate"
+                    };
+                    
+                }
+
+                
+            }
         }
     }
 }

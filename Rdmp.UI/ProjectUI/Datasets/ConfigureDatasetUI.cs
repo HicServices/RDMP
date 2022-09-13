@@ -369,7 +369,7 @@ namespace Rdmp.UI.ProjectUI.Datasets
 
         /// <summary>
         /// The user has selected an extractable thing in the catalogue and opted to include it in the extraction
-        /// So we have to convert it to an <see cref="ExtractableColumn"/> (which has configuration specific stuff - and lets
+        /// So we have to convert it to an <see cref="ExtractableColumn"/> (which has configuration specific stuff - and let's
         /// data analyst override stuff for this extraction only)
         /// 
         /// <para>Then add it to the right hand list</para>

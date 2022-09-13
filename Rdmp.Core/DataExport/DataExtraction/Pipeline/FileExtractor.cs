@@ -37,7 +37,7 @@ namespace Rdmp.Core.DataExport.DataExtraction.Pipeline
 
         public void PreInitialize(IExtractCommand value, IDataLoadEventListener listener)
         {
-            // We only want to extract the files once so lets do it as part of extracting globals
+            // We only want to extract the files once so let's do it as part of extracting globals
             _command = value as ExtractGlobalsCommand;
         }
 

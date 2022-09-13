@@ -110,7 +110,7 @@ namespace Rdmp.UI.CatalogueSummary.DataQualityReporting.SubComponents
         {
             var toolTip = new ToolTip();
 
-            //Lets avoid divide by zero errors
+            //let's avoid divide by zero errors
             if (Correct + Missing + Invalid + Wrong < 1)
                 return;
 

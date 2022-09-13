@@ -50,6 +50,8 @@ namespace ResearchDataManagementPlatform.WindowManagement.TopBar
             this.btnSaveWindowLayout = new System.Windows.Forms.ToolStripButton();
             this.btnDeleteLayout = new System.Windows.Forms.ToolStripButton();
             this.toolStripSeparator4 = new System.Windows.Forms.ToolStripSeparator();
+            this.cbCommits = new System.Windows.Forms.ToolStripButton();
+            this.toolStripSeparator3 = new System.Windows.Forms.ToolStripSeparator();
             this.toolStrip1.SuspendLayout();
             this.SuspendLayout();
             // 
@@ -89,7 +91,7 @@ namespace ResearchDataManagementPlatform.WindowManagement.TopBar
             this.btnDataExport.Image = ((System.Drawing.Image)(resources.GetObject("btnDataExport.Image")));
             this.btnDataExport.ImageTransparentColor = System.Drawing.Color.Magenta;
             this.btnDataExport.Name = "btnDataExport";
-            this.btnDataExport.Size = new System.Drawing.Size(87, 22);
+            this.btnDataExport.Size = new System.Drawing.Size(69, 22);
             this.btnDataExport.Text = "Projects";
             this.btnDataExport.Click += new System.EventHandler(this.ToolboxButtonClicked);
             // 
@@ -98,7 +100,7 @@ namespace ResearchDataManagementPlatform.WindowManagement.TopBar
             this.btnTables.Image = ((System.Drawing.Image)(resources.GetObject("btnTables.Image")));
             this.btnTables.ImageTransparentColor = System.Drawing.Color.Magenta;
             this.btnTables.Name = "btnTables";
-            this.btnTables.Size = new System.Drawing.Size(125, 22);
+            this.btnTables.Size = new System.Drawing.Size(123, 22);
             this.btnTables.Text = "Tables (Advanced)";
             this.btnTables.Click += new System.EventHandler(this.ToolboxButtonClicked);
             // 
@@ -141,10 +143,12 @@ namespace ResearchDataManagementPlatform.WindowManagement.TopBar
             this.cbxLayouts,
             this.btnSaveWindowLayout,
             this.btnDeleteLayout,
-            this.toolStripSeparator4});
+            this.toolStripSeparator4,
+            this.cbCommits,
+            this.toolStripSeparator3});
             this.toolStrip1.Location = new System.Drawing.Point(0, 0);
             this.toolStrip1.Name = "toolStrip1";
-            this.toolStrip1.Size = new System.Drawing.Size(1319, 25);
+            this.toolStrip1.Size = new System.Drawing.Size(1539, 25);
             this.toolStrip1.TabIndex = 0;
             this.toolStrip1.Text = "toolStrip1";
             // 
@@ -198,7 +202,7 @@ namespace ResearchDataManagementPlatform.WindowManagement.TopBar
             // cbxLayouts
             // 
             this.cbxLayouts.Name = "cbxLayouts";
-            this.cbxLayouts.Size = new System.Drawing.Size(150, 25);
+            this.cbxLayouts.Size = new System.Drawing.Size(174, 25);
             this.cbxLayouts.DropDownClosed += new System.EventHandler(this.cbx_DropDownClosed);
             this.cbxLayouts.SelectedIndexChanged += new System.EventHandler(this.cbx_SelectedIndexChanged);
             // 
@@ -229,13 +233,28 @@ namespace ResearchDataManagementPlatform.WindowManagement.TopBar
             this.toolStripSeparator4.Name = "toolStripSeparator4";
             this.toolStripSeparator4.Size = new System.Drawing.Size(6, 25);
             // 
-            // RDMPTaskBar
+            // cbCommits
             // 
-            this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
+            this.cbCommits.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Image;
+            this.cbCommits.Image = ((System.Drawing.Image)(resources.GetObject("cbCommits.Image")));
+            this.cbCommits.ImageTransparentColor = System.Drawing.Color.Magenta;
+            this.cbCommits.Name = "cbCommits";
+            this.cbCommits.Size = new System.Drawing.Size(23, 22);
+            this.cbCommits.Text = "Use Commits";
+            // 
+            // toolStripSeparator3
+            // 
+            this.toolStripSeparator3.Name = "toolStripSeparator3";
+            this.toolStripSeparator3.Size = new System.Drawing.Size(6, 25);
+            // 
+            // RDMPTaskBarUI
+            // 
+            this.AutoScaleDimensions = new System.Drawing.SizeF(7F, 15F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.Controls.Add(this.toolStrip1);
+            this.Margin = new System.Windows.Forms.Padding(4, 3, 4, 3);
             this.Name = "RDMPTaskBarUI";
-            this.Size = new System.Drawing.Size(1319, 25);
+            this.Size = new System.Drawing.Size(1539, 29);
             this.toolStrip1.ResumeLayout(false);
             this.toolStrip1.PerformLayout();
             this.ResumeLayout(false);
@@ -264,6 +283,7 @@ namespace ResearchDataManagementPlatform.WindowManagement.TopBar
         private System.Windows.Forms.ToolStripButton btnForward;
         private System.Windows.Forms.ToolStripSplitButton btnBack;
         private System.Windows.Forms.ToolStripSeparator toolStripSeparator4;
-
+        private System.Windows.Forms.ToolStripButton cbCommits;
+        private System.Windows.Forms.ToolStripSeparator toolStripSeparator3;
     }
 }

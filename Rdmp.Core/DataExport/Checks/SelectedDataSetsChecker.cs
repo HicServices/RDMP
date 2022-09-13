@@ -24,6 +24,7 @@ using ReusableLibraryCode.Progress;
 using Rdmp.Core.CommandExecution;
 using ReusableLibraryCode.Settings;
 using static ReusableLibraryCode.Checks.CheckEventArgs;
+using Rdmp.Core.DataExport.DataRelease.Potential;
 
 namespace Rdmp.Core.DataExport.Checks
 {
@@ -186,6 +187,8 @@ namespace Rdmp.Core.DataExport.Checks
                 notifier.OnCheckPerformed(new CheckEventArgs($"'{ds}' Core columns not selected for extractions: { Environment.NewLine + string.Join(',', nonSelectedCore.Select(o => o.ToString() + Environment.NewLine)) }" +
                     $"{ Environment.NewLine } Extraction Configuration: '{config}' ", CheckResult.Warning));
 
+            ComplainIfUserHasHotSwappedCohort(notifier, cohort);
+
             //Make sure cohort and dataset are on same server before checking (can still get around this at runtime by using ExecuteCrossServerDatasetExtractionSource)
             if (!cohortServer.Server.Name.Equals(server.Name,StringComparison.CurrentCultureIgnoreCase) || !cohortServer.Server.DatabaseType.Equals(server.DatabaseType))
             {
@@ -268,6 +271,49 @@ namespace Rdmp.Core.DataExport.Checks
             }
         }
 
+        private void ComplainIfUserHasHotSwappedCohort(ICheckNotifier notifier, IExtractableCohort cohort)
+        {
+            var progress = SelectedDataSet.ExtractionProgressIfAny;
+            
+            // no problem, changing cohort mid way through extraction is only a problem
+            // if we are doing an iterative partial set of extractions
+            if (progress == null)
+                return;
+
+            // it's the first batch, thats good - user reset the progress after they changed the cohort
+            // so extraction should begin at the start date correctly and cleanup any remnants
+            if(progress.ProgressDate == null)
+            {
+                return;
+            }
+
+            ReleasePotential rp;
+
+            try
+            {
+                rp = new FlatFileReleasePotential(_activator.RepositoryLocator, SelectedDataSet);
+                rp.Check(new IgnoreAllErrorsCheckNotifier());
+            }
+            catch (Exception ex)
+            {
+                notifier.OnCheckPerformed(new CheckEventArgs(ErrorCodes.NoSqlAuditedForExtractionProgress,ex,new object[]{ progress}));
+                return;
+            }
+                        
+            if (string.IsNullOrWhiteSpace(rp.SqlExtracted))
+            {
+                notifier.OnCheckPerformed(new CheckEventArgs(ErrorCodes.NoSqlAuditedForExtractionProgress, progress));
+                return;
+            }
+
+            var whereSql = cohort.WhereSQL();
+
+            if (!rp.SqlExtracted.Contains(whereSql))
+            {
+                notifier.OnCheckPerformed(new CheckEventArgs(ErrorCodes.CohortSwappedMidExtraction, progress, whereSql));
+            }
+        }
+
         /// <summary>
         /// Returns true if the <paramref name="arg"/> column is ntext or text
         /// </summary>
@@ -303,7 +349,7 @@ namespace Rdmp.Core.DataExport.Checks
             if (cols.Any(c => c?.ExtractionCategory == category))
             {
                 notifier.OnCheckPerformed(new CheckEventArgs(errorCode, configuration, dataset,
-                    String.Join(",", cols.Where(c => c.ExtractionCategory == category)
+                    String.Join(",", cols.Where(c => c?.ExtractionCategory == category)
                         .Select(c => c.GetRuntimeName()))));
             }
         }

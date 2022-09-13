@@ -858,5 +858,19 @@ namespace Rdmp.Core.CommandExecution
         }
 
         public abstract void LaunchSubprocess(ProcessStartInfo startInfo);
+
+
+        /// <inheritdoc/>
+        public bool UseCommits()
+        {
+            var repo = RepositoryLocator?.CatalogueRepository;
+
+            // system is in a very bad state
+            if (repo == null)
+                return false;
+
+            // does user want to do commits? and we have a db repo
+            return UserSettings.EnableCommits && repo.SupportsCommits;
+        }
     }
 }

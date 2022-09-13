@@ -43,7 +43,7 @@ namespace Rdmp.Core.CohortCommitting.Pipeline.Destinations.IdentifierAllocation
             if (_releaseMap.ContainsKey(privateIdentifier))
                 return _releaseMap[privateIdentifier];
             
-            //otherwise allocate a new guid and lets record it just for prosperity
+            //otherwise allocate a new guid and let's record it just for prosperity
             var toReturn = Guid.NewGuid().ToString();
             _releaseMap.Add(privateIdentifier,toReturn);
 

@@ -109,7 +109,7 @@ namespace Rdmp.UI.Menus
 
         protected void ReBrandActivateAs(string newTextForActivate, RDMPConcept newConcept, OverlayKind overlayKind = OverlayKind.None)
         {
-            // if we are rebranding activate lets make sure its definetly in the menu
+            // if we are rebranding activate let's make sure its definitely in the menu
             if(!Items.Contains(ActivateCommandMenuItem))
             {
                 Items.Insert(0,ActivateCommandMenuItem);
@@ -167,8 +167,13 @@ namespace Rdmp.UI.Menus
 
             var treeMenuItem = AddMenuIfNotExists(Tree);
 
+            if(_o is IMapsDirectlyToDatabaseTable m)
+            {
+                Add(new ExecuteCommandViewCommits(_activator, m));
+            }   
+
             //ensure all submenus appear in the same place
-            foreach(var mi in _subMenuDictionary.Values)
+            foreach (var mi in _subMenuDictionary.Values)
                 Items.Add(mi);
 
             //add plugin menu items
