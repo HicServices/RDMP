@@ -56,6 +56,7 @@ using Rdmp.UI.Rules;
 using Rdmp.UI.SimpleDialogs;
 using Rdmp.UI.SimpleDialogs.ForwardEngineering;
 using Rdmp.UI.SimpleDialogs.NavigateTo;
+using Rdmp.UI.SingleControlForms;
 using Rdmp.UI.SubComponents;
 using Rdmp.UI.TestsAndSetup.ServicePropogation;
 using Rdmp.UI.Theme;
@@ -1052,6 +1053,19 @@ namespace ResearchDataManagementPlatform.WindowManagement
             var ctrl = new ConsoleControl.ConsoleControl();
             ShowWindow(ctrl, true);
             ctrl.StartProcess(startInfo);
+        }
+
+        public override void ShowData(System.Data.DataTable table)
+        { 
+            // if on wrong Thread
+            if (_mainDockPanel.InvokeRequired)
+            {
+                _mainDockPanel.Invoke(() => ShowData(table));
+                return;
+            }
+
+            var ui = new DataTableViewerUI(table, "Table");
+            ShowDialog(new SingleControlForm(ui, true));
         }
     }
 }

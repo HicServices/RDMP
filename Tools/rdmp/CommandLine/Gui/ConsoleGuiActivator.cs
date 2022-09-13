@@ -6,6 +6,7 @@
 
 using System;
 using System.Collections.Generic;
+using System.Data;
 using System.Diagnostics;
 using System.IO;
 using System.Linq;
@@ -345,6 +346,12 @@ namespace Rdmp.Core.CommandLine.Gui
         public override void ShowData(IViewSQLAndResultsCollection collection)
         {
             var view = new ConsoleGuiSqlEditor(this,collection){Modal = true };
+            Application.Run(view, ConsoleMainWindow.ExceptionPopup);
+        }
+
+        public override void ShowData(DataTable table)
+        {
+            var view = new ConsoleGuiDataTableViewerUI(table) { Modal = true };
             Application.Run(view, ConsoleMainWindow.ExceptionPopup);
         }
 
