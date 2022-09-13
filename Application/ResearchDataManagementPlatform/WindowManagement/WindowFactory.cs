@@ -49,7 +49,7 @@ namespace ResearchDataManagementPlatform.WindowManagement
             RepositoryLocator = repositoryLocator;
         }
 
-        public PersistableToolboxDockContent Create(IActivateItems activator,Control control, string label, Bitmap image, RDMPCollection collection)
+        public PersistableToolboxDockContent Create(IActivateItems activator,Control control, string label, Image<Rgba32> image, RDMPCollection collection)
         {
             var content = new PersistableToolboxDockContent(collection);
             
@@ -63,7 +63,7 @@ namespace ResearchDataManagementPlatform.WindowManagement
             var content = new PersistableSingleDatabaseObjectDockContent(control, databaseObject,refreshBus);
             _windowManager.AddWindow(content);
 
-            AddControlToDockContent(activator, (Control)control,content,"Loading...",image.ImageToBitmap());
+            AddControlToDockContent(activator, (Control)control,content,"Loading...",image);
             
             if (!RDMPMainForm.Loading)
                 activator.HistoryProvider.Add(databaseObject);
@@ -77,7 +77,7 @@ namespace ResearchDataManagementPlatform.WindowManagement
             var content = new PersistableObjectCollectionDockContent(activator,control,objectCollection);
 
             //add the control to the tab
-            AddControlToDockContent(activator,(Control)control, content,content.TabText, image?.ImageToBitmap());
+            AddControlToDockContent(activator,(Control)control, content,content.TabText, image);
             
             //add to the window tracker
             _windowManager.AddWindow(content);
@@ -91,7 +91,7 @@ namespace ResearchDataManagementPlatform.WindowManagement
             var content = new PersistableSingleDatabaseObjectDockContent(control, entity, activator.RefreshBus);
 
             var img = activator.CoreIconProvider.GetImage(entity);
-            AddControlToDockContent(activator, (Control)control, content, entity.ToString(), img.ImageToBitmap());
+            AddControlToDockContent(activator, (Control)control, content, entity.ToString(), img);
 
             if (!RDMPMainForm.Loading)
                 activator.HistoryProvider.Add(entity);
@@ -104,19 +104,24 @@ namespace ResearchDataManagementPlatform.WindowManagement
         {
             DockContent content = new RDMPSingleControlTab(activator.RefreshBus,control);
             
-            AddControlToDockContent(activator, control, content,label, image.ImageToBitmap());
+            AddControlToDockContent(activator, control, content,label, image);
 
             _windowManager.AddAdhocWindow(content);
 
             return content;
         }
 
-        private void AddControlToDockContent(IActivateItems activator, Control control,DockContent content, string label, Bitmap image)
+        private void AddControlToDockContent(IActivateItems activator, Control control,DockContent content, string label, Image<Rgba32> image)
         {
             control.Dock = DockStyle.Fill;
             content.Controls.Add(control);
             content.TabText = label;
-
+            
+            if(image != null)
+            {
+                content.Icon = _iconFactory.GetIcon(image);
+            }
+                
     
 
             if (control is IConsultableBeforeClosing consult)

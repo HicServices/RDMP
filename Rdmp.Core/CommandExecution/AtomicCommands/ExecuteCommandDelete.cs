@@ -11,6 +11,7 @@ using MapsDirectlyToDatabaseTable;
 using Rdmp.Core.Curation.Data;
 using Rdmp.Core.Curation.Data.Cohort;
 using Rdmp.Core.Repositories.Construction;
+using ReusableLibraryCode;
 
 namespace Rdmp.Core.CommandExecution.AtomicCommands
 {
@@ -81,15 +82,50 @@ namespace Rdmp.Core.CommandExecution.AtomicCommands
         public override void Execute()
         {
             base.Execute();
+             
+            // if the thing we are deleting is important and sensitive then we should use a transaction
+            if(_deletables.Count > 1 || ShouldUseTransactionsWhenDeleting(_deletables.FirstOrDefault()))
+            {
+                if(!base.ExecuteWithCommit(ExecuteImpl, GetDescription(), _deletables.OfType<IMapsDirectlyToDatabaseTable>().ToArray()))
+                {
+                    // user cancelled
+                    PublishNearest();
+                }
+            }
+            else
+            {
+                ExecuteImpl();
+            }
+
+        }
+
+        private bool ShouldUseTransactionsWhenDeleting(IDeleteable deleteable)
+        {
+            return
+                deleteable is CatalogueItem ||
+                deleteable is ExtractionInformation;
+        }
+
+        private string GetDescription()
+        {
+            if (_deletables.Count == 1)
+                return $"Delete '{_deletables.Single()}'";
+
+
+            return $"Delete {_deletables.Count} objects (" + _deletables.ToBeautifulString() + ")";
+        }
+
+        private void ExecuteImpl()
+        {
 
             switch (_deletables.Count)
             {
                 case 1:
                     BasicActivator.DeleteWithConfirmation(_deletables[0]);
                     return;
-                case <=0:
+                case <= 0:
                     return;
-                // Fall through if deleting multiple:
+                    // Fall through if deleting multiple:
             }
 
             // if the command did not ask to delete many and it is not interactive (e.g. CLI) then 
@@ -99,10 +135,10 @@ namespace Rdmp.Core.CommandExecution.AtomicCommands
                 throw new Exception(
                     $"Allow delete many is false but multiple objects were matched for deletion ({string.Join(",", _deletables)})");
             }
-                
+
             // if it is interactive, only proceed if the user confirms behaviour
             if (BasicActivator.IsInteractive &&
-                !YesNo($"{GetDeleteVerbIfAny()??"Delete"} {_deletables.Count} Items?", "Delete Items")) return;
+                !YesNo($"{GetDeleteVerbIfAny() ?? "Delete"} {_deletables.Count} Items?", "Delete Items")) return;
 
             try
             {
@@ -113,14 +149,19 @@ namespace Rdmp.Core.CommandExecution.AtomicCommands
             }
             finally
             {
-                try
-                {
-                    BasicActivator.PublishNearest(_deletables.FirstOrDefault());
-                }
-                catch (Exception ex)
-                {
-                    GlobalError("Failed to publish after delete", ex);
-                }
+                PublishNearest();
+            }
+        }
+
+        private void PublishNearest()
+        {
+            try
+            {
+                BasicActivator.PublishNearest(_deletables.FirstOrDefault());
+            }
+            catch (Exception ex)
+            {
+                GlobalError("Failed to publish after delete", ex);
             }
         }
     }

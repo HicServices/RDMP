@@ -180,7 +180,7 @@ INSERT [ANOMigration] ([AdmissionDate], [DischargeDate], [Condition1], [Conditio
             //the old Condition2 column shouldn't exist at all
             Assert.IsFalse(columnInfos.Any(c => c.GetRuntimeName().Equals(conditionColumn)));//this column should be gone
 
-            //Now lets confirm that the data itself was successfully transformed and consistent such that A = X in all locations where it was A before and that Null = Null (i.e. the system didn't decided to anonymise the value Null to Y)
+            //Now let's confirm that the data itself was successfully transformed and consistent such that A = X in all locations where it was A before and that Null = Null (i.e. the system didn't decided to anonymise the value Null to Y)
             using (var con = server.GetConnection())
             {
                 con.Open();

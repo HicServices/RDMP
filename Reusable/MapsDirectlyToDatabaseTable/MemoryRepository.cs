@@ -24,6 +24,8 @@ namespace MapsDirectlyToDatabaseTable
     {
         protected int NextObjectId = 0;
 
+        public bool SupportsCommits => false;
+
         /// <summary>
         /// This is a concurrent hashset.  See https://stackoverflow.com/a/18923091
         /// </summary>
@@ -31,6 +33,10 @@ namespace MapsDirectlyToDatabaseTable
 
 
         readonly ConcurrentDictionary<IMapsDirectlyToDatabaseTable, HashSet<PropertyChangedExtendedEventArgs>> _propertyChanges = new ConcurrentDictionary<IMapsDirectlyToDatabaseTable, HashSet<PropertyChangedExtendedEventArgs>>();
+
+        public event EventHandler<SaveEventArgs> Saving;
+        public event EventHandler<IMapsDirectlyToDatabaseTableEventArgs> Inserting;
+        public event EventHandler<IMapsDirectlyToDatabaseTableEventArgs> Deleting;
 
         public virtual void InsertAndHydrate<T>(T toCreate, Dictionary<string, object> constructorParameters) where T : IMapsDirectlyToDatabaseTable
         {
@@ -59,6 +65,8 @@ namespace MapsDirectlyToDatabaseTable
             toCreate.PropertyChanged += toCreate_PropertyChanged;
 
             NewObjectPool.Add(toCreate);
+
+            Inserting?.Invoke(this, new IMapsDirectlyToDatabaseTableEventArgs(toCreate));
         }
 
         protected virtual void SetValue<T>(T toCreate, PropertyInfo prop, string strVal, object val) where T : IMapsDirectlyToDatabaseTable
@@ -173,6 +181,8 @@ namespace MapsDirectlyToDatabaseTable
 
         public virtual void SaveToDatabase(IMapsDirectlyToDatabaseTable oTableWrapperObject)
         {
+            Saving?.Invoke(this, new SaveEventArgs(oTableWrapperObject));
+
             var existing = Objects.Keys.FirstOrDefault(k=>k.Equals(oTableWrapperObject));
 
             // If saving a new reference to an existing object then we should update our tracked
@@ -195,6 +205,8 @@ namespace MapsDirectlyToDatabaseTable
 
             //forget about property changes (since it's been deleted)
             _propertyChanges.TryRemove(oTableWrapperObject, out _);
+
+            Deleting?.Invoke(this, new IMapsDirectlyToDatabaseTableEventArgs(oTableWrapperObject));
         }
 
         /// <summary>

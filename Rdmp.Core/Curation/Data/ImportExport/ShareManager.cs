@@ -585,7 +585,7 @@ namespace Rdmp.Core.Curation.Data.ImportExport
 
             //if it is a nullable int etc
             if (propertyType.IsGenericType && propertyType.GetGenericTypeDefinition() == typeof (Nullable<>))
-                propertyType = propertyType.GetGenericArguments()[0]; //lets pretend it's just int / whatever
+                propertyType = propertyType.GetGenericArguments()[0]; //let's pretend it's just int / whatever
 
             if (value != null && value != DBNull.Value && !propertyType.IsInstanceOfType(value))
                 if (propertyType == typeof(Uri))

@@ -50,7 +50,7 @@ namespace Rdmp.UI.Collections
             //We will return the alwaysShowList objects for sure
             var toReturn = hasAlwaysShowlist ? new HashSet<object>(available.Intersect(_modelFilter.AlwaysShow)) : new HashSet<object>();
             
-            //but lets also take up to _numberOfObjects other objects that match the filter (if any)
+            //but let's also take up to _numberOfObjects other objects that match the filter (if any)
             foreach (var a in available.Where(o => !hasSearchTokens || _modelFilter.Filter(o)))
             {
                 countReturned--;

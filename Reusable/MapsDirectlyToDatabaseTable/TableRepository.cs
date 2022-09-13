@@ -35,6 +35,7 @@ namespace MapsDirectlyToDatabaseTable
 
         private static object _oLockUpdateCommands = new object();
         private UpdateCommandStore _updateCommandStore = new UpdateCommandStore();
+        public bool SupportsCommits => true;
 
         //'accessors'
         public string ConnectionString { get { return _connectionStringBuilder.ConnectionString; } }
@@ -80,7 +81,7 @@ namespace MapsDirectlyToDatabaseTable
                 using(var con = GetConnection())
                 {
                     using (DbCommand cmd = DatabaseCommandHelper.GetCommand(
-                        "DELETE FROM " + oTableWrapperObject.GetType().Name + " WHERE ID =@ID", con.Connection,
+                        "DELETE FROM " + Wrap(oTableWrapperObject.GetType().Name) + " WHERE ID =@ID", con.Connection,
                         con.Transaction))
                     {
                         DatabaseCommandHelper.AddParameterWithValueToCommand("@ID", cmd, oTableWrapperObject.ID);
@@ -92,6 +93,8 @@ namespace MapsDirectlyToDatabaseTable
                         ObscureDependencyFinder.HandleCascadeDeletesForDeletedObject(oTableWrapperObject);
                 }
             }
+
+            Deleting?.Invoke(this, new IMapsDirectlyToDatabaseTableEventArgs(oTableWrapperObject));
         }
 
         /// <inheritdoc/>
@@ -113,6 +116,12 @@ namespace MapsDirectlyToDatabaseTable
             var changes = r.HasLocalChanges();
             
             if(changes.Evaluation == ChangeDescription.NoChanges)
+                return;
+
+            var e =new SaveEventArgs(oTableWrapperObject);
+            Saving?.Invoke(this,e);
+
+            if (e.Cancel)
                 return;
 
             foreach (var c in changes.Differences)
@@ -205,7 +214,7 @@ namespace MapsDirectlyToDatabaseTable
 
             //go to database to see if it exists
             using (var connection = GetConnection())
-                using ( DbCommand selectCommand = DatabaseCommandHelper.GetCommand("SELECT case when exists(select * FROM " + type.Name + " WHERE ID= " + id +") then 1 else 0 end", connection.Connection, connection.Transaction))
+                using ( DbCommand selectCommand = DatabaseCommandHelper.GetCommand("SELECT case when exists(select * FROM " + Wrap(type.Name) + " WHERE ID= " + id +") then 1 else 0 end", connection.Connection, connection.Transaction))
                      exists = Convert.ToBoolean(selectCommand.ExecuteScalar());
             
             return exists;
@@ -236,7 +245,7 @@ namespace MapsDirectlyToDatabaseTable
             if (id == 0)
                 return null;
 
-            string typename = type.Name;
+            string typename = Wrap(type.Name);
 
             using (var connection = GetConnection())
             using (DbCommand selectCommand = DatabaseCommandHelper.GetCommand("SELECT * FROM " + typename + " WHERE ID=" + id, connection.Connection, connection.Transaction))
@@ -244,7 +253,7 @@ namespace MapsDirectlyToDatabaseTable
                 using (DbDataReader r = selectCommand.ExecuteReader())
                 {
                     if (!r.HasRows)
-                        throw new KeyNotFoundException("Could not find " + typename + " with ID " + id);
+                        throw new KeyNotFoundException("Could not find " + type.Name + " with ID " + id);
 
                     r.Read();
                     
@@ -254,7 +263,12 @@ namespace MapsDirectlyToDatabaseTable
                 }
             }
         }
-        
+
+        public string Wrap(string name)
+        {
+            return DiscoveredServer.GetQuerySyntaxHelper().EnsureWrapped(name);
+        }
+
         protected abstract IMapsDirectlyToDatabaseTable ConstructEntity(Type t, DbDataReader reader);
 
         private T ConstructEntity<T>(DbDataReader reader) where T : IMapsDirectlyToDatabaseTable
@@ -280,7 +294,7 @@ namespace MapsDirectlyToDatabaseTable
 
         public T[] GetAllObjects<T>(string whereSQL) where T : IMapsDirectlyToDatabaseTable
         {
-            string typename = typeof (T).Name;
+            string typename = Wrap(typeof (T).Name);
 
             //if there is whereSQL make sure it is a legit SQL where
             if (!string.IsNullOrWhiteSpace(whereSQL))
@@ -288,7 +302,7 @@ namespace MapsDirectlyToDatabaseTable
                     throw new ArgumentException("whereSQL did not start with the word 'WHERE', it was:" + whereSQL);
 
             List<T> toReturn = new List<T>();
-
+            
             using (var opener = GetConnection())
             {
                 DbCommand selectCommand = DatabaseCommandHelper.GetCommand("SELECT * FROM " + typename, opener.Connection, opener.Transaction);
@@ -343,7 +357,7 @@ namespace MapsDirectlyToDatabaseTable
 
         public IEnumerable<IMapsDirectlyToDatabaseTable> GetAllObjects(Type t, string whereSQL, Dictionary<string, object> parameters = null)
         {
-            string typename = t.Name;
+            string typename = Wrap(t.Name);
 
             // if there is whereSQL make sure it is a legit SQL where
             if (!whereSQL.Trim().ToUpper().StartsWith("WHERE"))
@@ -363,7 +377,7 @@ namespace MapsDirectlyToDatabaseTable
         }
         public IEnumerable<IMapsDirectlyToDatabaseTable> GetAllObjects(Type t)
         {
-            string typename = t.Name;
+            string typename = Wrap(t.Name);
 
             List<IMapsDirectlyToDatabaseTable> toReturn = new List<IMapsDirectlyToDatabaseTable>();
 
@@ -628,12 +642,12 @@ namespace MapsDirectlyToDatabaseTable
                 return int.Parse(cmd.ExecuteScalar().ToString());
             }
         }
-        
+
         private string CreateInsertStatement<T>(Dictionary<string, object> parameters) where T : IMapsDirectlyToDatabaseTable
         {
             _logger.Info("Created New," + typeof(T).Name);
-            
-            var query = @"INSERT INTO " + typeof (T).Name;
+
+            var query = $"INSERT INTO {Wrap(typeof(T).Name)}";
             if (parameters != null && parameters.Any())
             {
                 if (parameters.Any(kvp => kvp.Key.StartsWith("@")))
@@ -718,6 +732,8 @@ namespace MapsDirectlyToDatabaseTable
             toCreate.Repository = actual.Repository;
 
             NewObjectPool.Add(toCreate);
+
+            Inserting?.Invoke(this, new IMapsDirectlyToDatabaseTableEventArgs(toCreate));
         }
 
         private object ongoingConnectionsLock = new object();
@@ -872,7 +888,7 @@ namespace MapsDirectlyToDatabaseTable
             if (prop.PropertyType.IsEnum)
                 propertyValue = propertyValue.ToString();
 
-            Update("UPDATE " + entity.GetType().Name + " SET " + propertyName + "=@val WHERE ID = " + entity.ID, new Dictionary<string, object>()
+            Update("UPDATE " + Wrap(entity.GetType().Name) + " SET " + propertyName + "=@val WHERE ID = " + entity.ID, new Dictionary<string, object>()
             {
                 {"@val", propertyValue??DBNull.Value}
             });
@@ -890,6 +906,10 @@ namespace MapsDirectlyToDatabaseTable
         }
 
         private Type[] _compatibleTypes;
+
+        public event EventHandler<SaveEventArgs> Saving;
+        public event EventHandler<IMapsDirectlyToDatabaseTableEventArgs> Inserting;
+        public event EventHandler<IMapsDirectlyToDatabaseTableEventArgs> Deleting;
         public IMapsDirectlyToDatabaseTable[] GetAllObjectsInDatabase()
         {
             List<IMapsDirectlyToDatabaseTable> toReturn = new List<IMapsDirectlyToDatabaseTable>();
@@ -960,11 +980,6 @@ namespace MapsDirectlyToDatabaseTable
         public void EndTransaction(bool commit)
         {
             EndTransactedConnection(commit);
-        }
-
-        public string Wrap(string name)
-        {
-            return DiscoveredServer.GetQuerySyntaxHelper().EnsureWrapped(name);
         }
     }
 }

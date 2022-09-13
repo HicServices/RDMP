@@ -68,7 +68,6 @@ namespace Rdmp.UI.Menus
             Add(new ExecuteCommandGuessAssociatedColumns(_activator, catalogue,null) { SuggestedCategory = CatalogueItems, Weight = -99.045f, PromptForPartialMatching = true, });
             Add(new ExecuteCommandChangeExtractionCategory(_activator,catalogue.GetAllExtractionInformation(ExtractionCategory.Any)) { SuggestedCategory = CatalogueItems, Weight = -99.044f, });
             Add(new ExecuteCommandImportCatalogueItemDescriptions(_activator,catalogue, null/*pick at runtime*/) { SuggestedCategory = CatalogueItems, Weight = -99.043f, });
-        
 
             if (catalogue.LoadMetadata_ID != null)
             {

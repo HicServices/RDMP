@@ -217,7 +217,7 @@ namespace Rdmp.Core.Curation.Data.DataLoad
             {
                 var sql = File.ReadAllText(Path);
 
-                //lets check for any SQL that indicates user is trying to modify a STAGING table in a RAW script (for example)
+                //let's check for any SQL that indicates user is trying to modify a STAGING table in a RAW script (for example)
                 foreach (TableInfo tableInfo in LoadMetadata.GetDistinctTableInfoList(false))
                     //for each stage get all the object names that are in that stage
                     foreach (var stage in new[]{LoadStage.AdjustRaw, LoadStage.AdjustStaging, LoadStage.PostLoad})

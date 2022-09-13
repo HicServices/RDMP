@@ -150,7 +150,7 @@ namespace Rdmp.Core.DataLoad.Engine.Pipeline.Sources
                 if(t == null)
                     throw new NotSupportedException("Type.GetType failed on SQL DataType:" + myField["DataType"]);
 
-                //lets not mess around with floats, make everything a double please
+                //let's not mess around with floats, make everything a double please
                 if (t == typeof (float))
                     t = typeof (double);
 

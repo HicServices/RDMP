@@ -38,6 +38,7 @@ namespace ResearchDataManagementPlatform.Menus
             this.runToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.openToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.findToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.findMultipleToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.findAndReplaceToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.closeToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.quitToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
@@ -81,7 +82,7 @@ namespace ResearchDataManagementPlatform.Menus
             this.licenseToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.checkForUpdatesToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.rdmpTaskBar1 = new ResearchDataManagementPlatform.WindowManagement.TopBar.RDMPTaskBarUI();
-            this.findMultipleToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.viewHistoryToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.menuStrip1.SuspendLayout();
             this.SuspendLayout();
             // 
@@ -155,6 +156,15 @@ namespace ResearchDataManagementPlatform.Menus
             this.findToolStripMenuItem.Size = new System.Drawing.Size(216, 22);
             this.findToolStripMenuItem.Text = "Find";
             this.findToolStripMenuItem.Click += new System.EventHandler(this.findToolStripMenuItem_Click);
+            // 
+            // findMultipleToolStripMenuItem
+            // 
+            this.findMultipleToolStripMenuItem.Name = "findMultipleToolStripMenuItem";
+            this.findMultipleToolStripMenuItem.ShortcutKeys = ((System.Windows.Forms.Keys)(((System.Windows.Forms.Keys.Control | System.Windows.Forms.Keys.Shift) 
+            | System.Windows.Forms.Keys.F)));
+            this.findMultipleToolStripMenuItem.Size = new System.Drawing.Size(216, 22);
+            this.findMultipleToolStripMenuItem.Text = "Find Multiple";
+            this.findMultipleToolStripMenuItem.Click += new System.EventHandler(this.findMultipleToolStripMenuItem_Click);
             // 
             // findAndReplaceToolStripMenuItem
             // 
@@ -249,7 +259,8 @@ namespace ResearchDataManagementPlatform.Menus
             this.logViewerToolStripMenuItem,
             this.userSettingsToolStripMenuItem,
             this.navigateBackwardToolStripMenuItem,
-            this.navigateForwardToolStripMenuItem});
+            this.navigateForwardToolStripMenuItem,
+            this.viewHistoryToolStripMenuItem});
             this.viewToolStripMenuItem.Name = "viewToolStripMenuItem";
             this.viewToolStripMenuItem.Size = new System.Drawing.Size(44, 20);
             this.viewToolStripMenuItem.Text = "View";
@@ -503,14 +514,13 @@ namespace ResearchDataManagementPlatform.Menus
             this.rdmpTaskBar1.Size = new System.Drawing.Size(1353, 29);
             this.rdmpTaskBar1.TabIndex = 57;
             // 
-            // findMultipleToolStripMenuItem
+            // viewHistoryToolStripMenuItem
             // 
-            this.findMultipleToolStripMenuItem.Name = "findMultipleToolStripMenuItem";
-            this.findMultipleToolStripMenuItem.ShortcutKeys = ((System.Windows.Forms.Keys)(((System.Windows.Forms.Keys.Control | System.Windows.Forms.Keys.Shift) 
-            | System.Windows.Forms.Keys.F)));
-            this.findMultipleToolStripMenuItem.Size = new System.Drawing.Size(216, 22);
-            this.findMultipleToolStripMenuItem.Text = "Find Multiple";
-            this.findMultipleToolStripMenuItem.Click += new System.EventHandler(this.findMultipleToolStripMenuItem_Click);
+            this.viewHistoryToolStripMenuItem.Image = ((System.Drawing.Image)(resources.GetObject("viewHistoryToolStripMenuItem.Image")));
+            this.viewHistoryToolStripMenuItem.Name = "viewHistoryToolStripMenuItem";
+            this.viewHistoryToolStripMenuItem.Size = new System.Drawing.Size(238, 22);
+            this.viewHistoryToolStripMenuItem.Text = "View History...";
+            this.viewHistoryToolStripMenuItem.Click += new System.EventHandler(this.viewHistoryToolStripMenuItem_Click);
             // 
             // RDMPTopMenuStripUI
             // 
@@ -581,5 +591,6 @@ namespace ResearchDataManagementPlatform.Menus
         private System.Windows.Forms.ToolStripMenuItem switchToDefaultSettings;
         private System.Windows.Forms.ToolStripMenuItem terminateProcessToolStripMenuItem;
         private System.Windows.Forms.ToolStripMenuItem findMultipleToolStripMenuItem;
+        private System.Windows.Forms.ToolStripMenuItem viewHistoryToolStripMenuItem;
     }
 }

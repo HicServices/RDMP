@@ -47,7 +47,7 @@ namespace Rdmp.UI.CommandExecution.Proposals
                 
                 //otherwise it's an import    
 
-                //so instead lets let them create a new copy (possibly including changing the type e.g. importing a master
+                //so instead let's let them create a new copy (possibly including changing the type e.g. importing a master
                 //filter into a data export AND/OR container
                 return new ExecuteCommandCreateNewFilter(ItemActivator, targetContainer,sourceFilterCommand.Filter);
                 

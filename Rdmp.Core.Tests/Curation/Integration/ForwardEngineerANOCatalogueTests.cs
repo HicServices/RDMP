@@ -362,10 +362,10 @@ namespace Rdmp.Core.Tests.Curation.Integration
 
             var lookup = new Lookup(CatalogueRepository, lookupColumnInfos[2], ciSex.ColumnInfo, lookupColumnInfos[0],ExtractionJoinType.Left, null);
             
-            //now lets make it worse, lets assume the sex code changes per healthboard therefore the join to the lookup requires both fields sex and hb_extract
+            //now let's make it worse, let's assume the sex code changes per healthboard therefore the join to the lookup requires both fields sex and hb_extract
             var compositeLookup = new LookupCompositeJoinInfo(CatalogueRepository, lookup, ciHb.ColumnInfo, lookupColumnInfos[1]);
 
-            //now lets make the _Desc field in the original Catalogue
+            //now let's make the _Desc field in the original Catalogue
             int orderToInsertDescriptionFieldAt = ciSex.ExtractionInformation.Order;
 
             //bump everyone down 1

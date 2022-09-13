@@ -19,7 +19,7 @@ using Rdmp.UI.Refreshing;
 using Rdmp.UI.Rules;
 using Rdmp.UI.SimpleControls;
 using Rdmp.UI.Theme;
-
+using ReusableLibraryCode.Settings;
 
 namespace Rdmp.UI.TestsAndSetup.ServicePropogation
 {
@@ -33,6 +33,20 @@ namespace Rdmp.UI.TestsAndSetup.ServicePropogation
     [TechnicalUI]
     public abstract class RDMPSingleDatabaseObjectControl<T> : RDMPUserControl, IRDMPSingleDatabaseObjectControl where T : DatabaseEntity
     {
+        /// <summary>
+        /// True to track changes made to the <see cref="DatabaseObject"/> hosted by this control
+        /// and create <see cref="Commit"/> when changes are saved.  Using this field requires
+        /// declaring yourself <see cref="ISaveableUI"/>
+        /// </summary>
+        public bool UseCommitSystem { get; set; } = false;
+
+        /// <summary>
+        /// Tracks changes to <see cref="DatabaseObject"/> since last save.  Note that this is null
+        /// before <see cref="SetDatabaseObject(IActivateItems, DatabaseEntity)"/> has been called
+        /// or if <see cref="UseCommitSystem"/> is false.
+        /// </summary>
+        protected CommitInProgress CurrentCommit = null;
+
         private Control _colorIndicator;
         private Label _readonlyIndicator;
 
@@ -109,7 +123,17 @@ namespace Rdmp.UI.TestsAndSetup.ServicePropogation
             SetBindings(_binder, databaseObject);
             
             if(this is ISaveableUI)
+            {
+                if(UseCommitSystem && CurrentCommit == null && Activator.UseCommits())
+                {
+                    CurrentCommit = new CommitInProgress(activator.RepositoryLocator, new CommitInProgressSettings(databaseObject));
+                    ObjectSaverButton1.BeforeSave += BeforeSave_FinishCommitInProgressIfAny;
+                    ObjectSaverButton1.AfterSave += AfterSave_BeginNewCommitIfApplicable;
+                }
+
                 ObjectSaverButton1.SetupFor(this, databaseObject, activator);
+            }
+                
             
             var gotoFactory = new GoToCommandFactory(activator);
             foreach (var cmd in gotoFactory.GetCommands(databaseObject).OfType<ExecuteCommandShow>())
@@ -119,6 +143,43 @@ namespace Rdmp.UI.TestsAndSetup.ServicePropogation
             }
         }
 
+
+        protected bool BeforeSave_FinishCommitInProgressIfAny(DatabaseEntity _)
+        {
+            // control doesn't require commits (most controls don't)
+            if (!UseCommitSystem)
+                return true; // go through with the save
+
+            // user has opted out via user settings or backing repository doesn't support commits
+            if (!Activator.UseCommits())
+                return true;
+
+            if (CurrentCommit != null)
+            {
+                if (CurrentCommit.TryFinish(Activator) == null)
+                {
+                    // No changes were actually made or user cancelled
+                    return false;
+                }
+            }
+            
+            // before starting a new commit cleanup old one
+            CurrentCommit?.Dispose();
+
+            // setting to null means a new one will be created in AfterSave
+            CurrentCommit = null;
+
+            return true;
+        }
+
+        private void AfterSave_BeginNewCommitIfApplicable()
+        {
+            if (CurrentCommit == null && UseCommitSystem && Activator.UseCommits())
+            {
+                // start a new commit for the next changes the user commits
+                CurrentCommit = new CommitInProgress(Activator.RepositoryLocator, new CommitInProgressSettings(DatabaseObject));
+            }
+        }
         void CommonFunctionality_ToolStripAddedToHost(object sender, EventArgs e)
         {
             if (_colorIndicator != null)
@@ -267,6 +328,18 @@ namespace Rdmp.UI.TestsAndSetup.ServicePropogation
         public virtual ObjectSaverButton GetObjectSaverButton()
         {
             return ObjectSaverButton1;
+        }
+        protected override void Dispose(bool disposing)
+        {
+            base.Dispose(disposing);
+
+            CurrentCommit?.Dispose();
+
+            if(ObjectSaverButton1 != null)
+            {
+                ObjectSaverButton1.BeforeSave -= BeforeSave_FinishCommitInProgressIfAny;
+                ObjectSaverButton1.AfterSave -= AfterSave_BeginNewCommitIfApplicable;
+            }
         }
     }
 }

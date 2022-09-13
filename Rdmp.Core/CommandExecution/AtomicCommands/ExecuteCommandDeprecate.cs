@@ -7,6 +7,8 @@
 using MapsDirectlyToDatabaseTable;
 using Rdmp.Core.Curation.Data;
 using Rdmp.Core.Repositories.Construction;
+using ReusableLibraryCode.Settings;
+using System;
 
 namespace Rdmp.Core.CommandExecution.AtomicCommands
 {
@@ -42,24 +44,39 @@ namespace Rdmp.Core.CommandExecution.AtomicCommands
             if(_o == null || _o.Length == 0)
                 return;
 
-            foreach(var o in _o)
+            if(ExecuteWithCommit(ExecuteImpl, GetDescription(),_o))
+            {
+                Publish((DatabaseEntity)_o[0]);
+            }
+        }
+
+        private void ExecuteImpl()
+        {
+            foreach (var o in _o)
             {
                 o.IsDeprecated = _desiredState;
                 o.SaveToDatabase();
             }
 
-
-            if(BasicActivator.IsInteractive && _o.Length == 1 && _o[0] is Catalogue)
+            if (BasicActivator.IsInteractive && _o.Length == 1 && _o[0] is Catalogue)
             {
-                if(_desiredState == true && BasicActivator.YesNo("Do you have a replacement Catalogue you want to link?","Replacement"))
+                if (_desiredState == true && BasicActivator.YesNo("Do you have a replacement Catalogue you want to link?", "Replacement"))
                 {
-                    var cmd = new ExecuteCommandReplacedBy(BasicActivator,_o[0],null)
-                        {PromptToPickReplacement = true};
+                    var cmd = new ExecuteCommandReplacedBy(BasicActivator, _o[0], null)
+                    {
+                        PromptToPickReplacement = true
+                    };
                     cmd.Execute();
                 }
             }
+        }
 
-            Publish((DatabaseEntity)_o[0]);
+        private string GetDescription()
+        {
+            var verb = _desiredState ? "Deprecate" : "UnDeprecate";
+            var noun = _o.Length == 1 ? _o[0].ToString() : _o.Length + " objects";
+
+            return $"{verb} {noun}";
         }
     }
 }

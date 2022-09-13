@@ -54,6 +54,8 @@ namespace Rdmp.UI.MainFormUITabs
             c_ddType.DataSource = Enum.GetValues(typeof(Catalogue.CatalogueType));
             c_ddPeriodicity.DataSource = Enum.GetValues(typeof(Catalogue.CataloguePeriodicity));
             c_ddGranularity.DataSource = Enum.GetValues(typeof(Catalogue.CatalogueGranularity));
+
+            UseCommitSystem = true;
         }
 
         void ticketingControl1_TicketTextChanged(object sender, EventArgs e)

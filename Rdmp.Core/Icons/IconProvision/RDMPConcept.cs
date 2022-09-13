@@ -202,6 +202,8 @@ namespace Rdmp.Core.Icons.IconProvision
         ExtractionProgress,
         Attacher,
         DataProvider,
-        MutilateDataTables
+        MutilateDataTables,
+        Commit,
+        Memento
     }
 }

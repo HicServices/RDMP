@@ -66,7 +66,7 @@ namespace Rdmp.Core.CommandExecution.AtomicCommands
             }
             else
             {
-                //many objects, lets assume they are of the same type for display purposes
+                //many objects, let's assume they are of the same type for display purposes
                 _objectType = objectsToPickFrom.First().GetType();
                 _objectsToPickFrom = obs;
             }
