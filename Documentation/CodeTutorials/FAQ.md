@@ -28,8 +28,8 @@
 1. Data Load Engine
    1. [How does RDMP differ from classic tools e.g. SSIS?](#vsssis)
    1. [Can RDMP Load UnTyped Data?](#untyped)
-   1. [What is the purpose of the the data load folders (ForLoading, ForArchiving etc)?](#dle-folders)
-   1. [What is hic_dataLoadRunID](#hic_dataLoadRunID)
+   1. [What is the purpose of the the data load folders? (ForLoading, ForArchiving etc)](#dle-folders)
+   1. [What is hic_dataLoadRunID?](#hic_dataLoadRunID)
    1. [How does RDMP deal with Csv/text files?](#csv)
    1. [Can RDMP read Excel files?](#excel)
    1. [How does RDMP handle / translate untyped, C# and Database Types?](#typetranslation)
@@ -442,6 +442,8 @@ The `Executables` directory is provided for storing executable files and/or sql 
 The `Cache` folder is used for the RDMP caching engine (long running fetching tasks e.g. pulling images from a PACS server or reports from a webservice).
 
 <a name="hic_dataLoadRunID"></a>
+### What is hic_dataLoadRunID?
+
 When a [LoadMetadata] is executed in RDMP it is assigned a unique number.  This number provides an end to end audit of:
 
 - Files stored on disk that were loaded
@@ -804,7 +806,7 @@ Yes there are over 1,000 unit and integration tests, this is covered in [Tests](
 [TableInfo]: ./Glossary.md#TableInfo
 
 [Project]: ./Glossary.md#Project
-
+[LoadMetadata]: ./Glossary.md#LoadMetadata
 [CatalogueItem]: ./Glossary.md#CatalogueItem
 
 [JoinInfo]: ./Glossary.md#JoinInfo
