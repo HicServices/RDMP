@@ -28,6 +28,8 @@
 1. Data Load Engine
    1. [How does RDMP differ from classic tools e.g. SSIS?](#vsssis)
    1. [Can RDMP Load UnTyped Data?](#untyped)
+   1. [What is the purpose of the the data load folders (ForLoading, ForArchiving etc)?](#dle-folders)
+   1. [What is hic_dataLoadRunID](#hic_dataLoadRunID)
    1. [How does RDMP deal with Csv/text files?](#csv)
    1. [Can RDMP read Excel files?](#excel)
    1. [How does RDMP handle / translate untyped, C# and Database Types?](#typetranslation)
@@ -414,6 +416,49 @@ A full description of the mechanics and design of the DLE can be found in the [U
 ### Can RDMP Load UnTyped Data?
 Yes, [determining database types from untyped data (e.g. CSV)](./DataTableUpload.md) is a core feature.
 
+<a name="dle-folders"></a>
+### What is the purpose of the the data load folders (ForLoading, ForArchiving etc)?
+RDMP data load jobs are configured by creating a [LoadMetadata].  When you create a new [LoadMetada] you will be prompted to choose/create a set of load folders.  The current value is stored in the `LocationOfFlatFiles` field of [LoadMetadata].  The directories created have the following layout:
+
+```
+someFolder
+ |_ Data
+ |  |_ Cache
+ |  |_ ForArchiving
+ |  |_ ForLoading
+ |_ Executables
+```
+
+These folders are accessible to DLE load components.  Some components put data into a folder (e.g. [WebFileDownloader]) while
+others load files in a folder (e.g. [DelimitedFlatFileAttacher]). Some components ignore these folders completely (e.g. [RemoteTableAttacher]).
+When a load starts it is assumed that anything in `ForLoading` will be loaded.  If `ForLoading` is empty then it is assumed that the components
+in the load do not require files (e.g. [RemoteTableAttacher]) or a component will be populate `ForLoading` at runtime (e.g. [ImportFilesDataProvider]).
+
+At the end of a successful load all files in `ForLoading` (if any) are moved into `ForArchiving` and compressed into a zip archive.  The name of the archive
+will be the [hic_dataLoadRunID] of the run (e.g. 132.zip).  If the load fails then files are left in `ForLoading` for future runs.
+
+The `Executables` directory is provided for storing executable files and/or sql scripts that you might want to run during the load.
+
+The `Cache` folder is used for the RDMP caching engine (long running fetching tasks e.g. pulling images from a PACS server or reports from a webservice).
+
+<a name="hic_dataLoadRunID"></a>
+When a [LoadMetadata] is executed in RDMP it is assigned a unique number.  This number provides an end to end audit of:
+
+- Files stored on disk that were loaded
+- Logging audit of messages, errors, insert/update counts etc
+- Records in live table (INSERTed / UPDATEd by the run)
+
+The number is allocated by the logging database and is unqiue to the RUN (i.e. it is not the ID of the [LoadMetadata] but reflects one execution of that config).
+
+![dataLoadRunID](Images/FAQ/dataLoadRunID.png)
+
+If the `hic_dataLoadRunID` of a record in the database is null then it was not loaded by the RDMP DLE.  It may have been loaded by bulk importing a CSV or created by
+other means.
+
+If a load issues an UPDATE then the archive trigger will move the old record state to an `_Archive` table.  Therefore it is important to also loook at the `_Archive`
+table when tracing where records ended up from a given run (`hic_dataLoadRunID`).  This trigger can be disabled for volatile loads where large numbers of records are updated
+frequently and the feature would impact performance.
+
 <a name="csv"></a>
 ### How does RDMP deal with Csv/text files?
 RDMP supports files delimited by any character (tab separated, pipe separated, comma separated etc).  Since [invalid formatting is a common problem with ETL of CSV files RDMP has several fault tolerance features](./CSVHandling.md).
@@ -763,7 +808,10 @@ Yes there are over 1,000 unit and integration tests, this is covered in [Tests](
 [CatalogueItem]: ./Glossary.md#CatalogueItem
 
 [JoinInfo]: ./Glossary.md#JoinInfo
-
+[WebFileDownloader]: ../../Rdmp.Core/DataLoad/Modules/Web/WebFileDownloader.cs
+[DelimitedFlatFileAttacher]: ../../Rdmp.Core/DataLoad/Modules/Attachers/DelimitedFlatFileAttacher.cs
+[RemoteTableAttacher]: ../../Rdmp.Core/DataLoad/Modules/Attachers/RemoteTableAttacher.cs
+[ImportFilesDataProvider]: ../../Rdmp.Core/DataLoad/Modules/DataProvider/ImportFilesDataProvider.cs
 [ProcessTask]: ./Glossary.md#ProcessTask
 
 [Pipeline]: ./Glossary.md#Pipeline
