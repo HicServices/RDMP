@@ -792,6 +792,7 @@ If you think the problem is more widespread then you can also use the [`IInjectK
 ### Are there Unit/Integration Tests?
 Yes there are over 1,000 unit and integration tests, this is covered in [Tests](Tests.md)
 
+[hic_dataLoadRunID]: #hic_dataLoadRunID
 [Data Load Engine]: #data-load-engine
 [db_executor]: https://www.sqlmatters.com/Articles/Adding%20a%20db_executor%20role.aspx
 [cohort databases]: ../../Rdmp.Core/CohortCommitting/Readme.md
