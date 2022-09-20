@@ -2,18 +2,35 @@
 
 ## Contents
 
-1. [Background](#background)
+1. [Installing](#installing)
 2. [Commands](#commands)
     1. [Install](#install)
     2. [cmd](#cmd)
 4. [Terminal Gui](#terminal-gui)
 5. [Scripting](#scripting)
 
-## Background
+## Installing
 
 Command line programs run in a terminal window (e.g. DOS).  In Windows these files usually have the extension `.exe` (e.g. `rdmp.exe`), in Linux these often have no extension (e.g. `rdmp`).
 
 The binaries (runnable files) for the RDMP command line are included in the [Releases](https://github.com/HicServices/RDMP/releases) section of GitHub.  Download and unzip the file that matches your operating system e.g. `rdmp-cli-win-x64.zip` for Windows or `rdmp-cli-linux-x64.zip` for linux.
+
+Unzip the package and edit `Databases.yaml` so that it points to your RDMP databases.  If you do not have any platform databases yet then you can run `./rdmp install "(localdb)\MSSQLLocalDB" TEST_ -e` (use your own server name and/or different prefix if desired).
+
+Open a command prompt in the folder and run `./rdmp list Catalogue`.  You should see a list of example catalogues.  For example:
+
+```
+PS C:\Users\44777\Downloads\rdmp-7.0.20-cli-win-x64> ./rdmp list Catalogue
+2022-09-20 12:12:30.9689 INFO Dotnet Version:6.0.8 .
+2022-09-20 12:12:30.9870 INFO RDMP Version:7.0.20.0 .
+2022-09-20 12:12:32.6898 TRACE Running Command 'ExecuteCommandList' .
+1:Biochemistry
+2:Demography
+3:Prescribing
+4:HospitalAdmissions
+5:vConditions
+6:vOperations
+```
 
 ## Commands
 
