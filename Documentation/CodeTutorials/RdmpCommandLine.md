@@ -7,7 +7,7 @@
     1. [Install](#install)
     2. [cmd](#cmd)
 4. [Terminal Gui](#terminal-gui)
-
+5. [Scripting](#scripting)
 
 ## Background
 
