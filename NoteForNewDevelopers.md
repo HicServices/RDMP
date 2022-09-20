@@ -54,3 +54,4 @@ public abstract class LoggingTab_Design : RDMPSingleDatabaseObjectControl<YourSi
 [CatalogueRepository]: ./Rdmp.CoreRepositories/CatalogueRepository.cs
 [DataExportRepository]: ./Rdmp.Core/Repositories/DataExportRepository.cs
 [DQERepository]: ./Rdmp.Core/Repositories/DQERepository.cs
+[Project]: ./Documentation/CodeTutorials/Glossary.md#Project
