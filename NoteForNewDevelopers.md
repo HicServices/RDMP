@@ -13,7 +13,7 @@ The [Design Pattern](https://en.wikipedia.org/wiki/Software_design_pattern) 'Com
 All commands implement `IAtomicCommand` - it's a good place to start when diagnosing issues.
 
 - If you want to see which command is running when an issue manifests in the windows UI you can use the menu item 'Diagnostics->Last Command Monitor'
-- Commands have access to `IBasicActivateItems` which contains modal operations for illiciting user feedback.  Bear in mind that some implementations do not support interactive content so always check `IBasicItems.IsInteractive`
+- Commands have access to `IBasicActivateItems` which contains modal operations for illiciting user feedback.  Bear in mind that some implementations do not support interactive content so always check `IBasicActivateItems.IsInteractive`
 - UI implementations are
   - `IActivateItems`: windows gui client
   - `ConsoleInputManager`: [CLI client](./Documentation/CodeTutorials/RdmpCommandLine.md).  May be [running in a script](./Documentation/CodeTutorials/RdmpCommandLine.md#scripting)
