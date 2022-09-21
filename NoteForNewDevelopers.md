@@ -2,13 +2,14 @@ Here are things you should know about RDMP!
 
 ## Contents
 
+1. [Other Docs](#other-docs)
 1. [Commands](#Commands)
 1. [Objects](#Objects)
 1. [Windows Forms Designer](#windows-forms-designer)
 
-All the docs are in .md files, start by looking in Documentation\CodeTutorials
 
-The full list of docs are:
+## Other Docs
+All technical and repo specific documentation are stored in markdown (`.md` format).  Below is a list of docs in the repo.  There is also a Confluence website which stores [documentation on how to perform common user tasks](https://hic-docs.atlassian.net/wiki/spaces/RDMPDOCUME/overview?homepageId=196610)
 
 **Code Tutorials**
 - [Overview of RDMP Windows Client GUI application](./Documentation/CodeTutorials/UserInterfaceOverview.md)
@@ -43,9 +44,6 @@ The full list of docs are:
 - [Storing cohort lists](./Rdmp.Core/CohortCommitting/Readme.md)
 - [Cohort Builder docs including info on list caching](./Rdmp.Core/CohortCreation/Readme.md)
 - [Tree layout documentation](./Rdmp.Core/Providers/Readme.md)
-
-
-
 
 ## Commands
 The [Design Pattern](https://en.wikipedia.org/wiki/Software_design_pattern) 'Command' is implemented in RDMP.  Most functionality in RDMP is undertaken by a command and new features should be implemented as new commands if possible. 
