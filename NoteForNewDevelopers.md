@@ -8,6 +8,45 @@ Here are things you should know about RDMP!
 
 All the docs are in .md files, start by looking in Documentation\CodeTutorials
 
+The full list of docs are:
+
+**Code Tutorials**
+- [Overview of RDMP Windows Client GUI application](./Documentation/CodeTutorials/UserInterfaceOverview.md)
+- [Getting started Coding RDMP](./Documentation/CodeTutorials/Coding.md)
+- [How to create 'non database' CohortBuilder plugins e.g. to REST API](./Documentation/CodeTutorials/CohortBuildingApiPlugins.md)
+- [How to add new tree items to RDMP windows GUI client](./Documentation/CodeTutorials/CreatingANewCollectionTreeNode.md)
+- [How to add new right click context menu items](./Documentation/CodeTutorials/CreatingANewRightClickMenu.md)
+- [How to add new 'drag and drop' and double click handlers](./Documentation/CodeTutorials/DoubleClickAndDragDrop.md)
+- [Adding Localization (i.e. foreign language support)](./Documentation/CodeTutorials/Localization.md)
+- [Adding new RDMP plugins](./Documentation/CodeTutorials/PluginWriting.md)
+- [How to write RDMP unit/integration tests](./Documentation/CodeTutorials/Tests.md)
+
+**User Documentation**
+- [Application Changelog](./CHANGELOG.md)
+- [Main landing page README](./README.md)
+- [Frequently Asked Questions](./Documentation/CodeTutorials/FAQ.md)
+- [Glossary](./Documentation/CodeTutorials/Glossary.md)
+- [RDMP DQE](./Documentation/CodeTutorials/Validation.md)
+- [RDMP Command Line](./Documentation/CodeTutorials/RdmpCommandLine.md)
+- [RDMP Command Line syntaxes](./Rdmp.Core/CommandLine/Runners/ExecuteCommandRunner.md)
+- [RDMP upstream dependencies (libraries)](./Documentation/CodeTutorials/Packages.md)
+
+** Performance **
+- [Database Change Tracking (A Performance Enhancement)](./Documentation/CodeTutorials/ChangeTracking.md)
+- [Reducing database calls with 'injection'](./Reusable/MapsDirectlyToDatabaseTable/Injection/README.md)
+
+**Deep Dives**
+- [How untyped CSV data is parsed by RDMP](./Documentation/CodeTutorials/CSVHandling.md)
+- [How 'Bulk Insert' function works](./Documentation/CodeTutorials/DataTableUpload.md)
+- [How xls / xlsx files are read by RDMP](./Documentation/CodeTutorials/ExcelHandling.md)
+- [Multiple Linkage Columns (e.g. NHS Number or CHI)](./Documentation/CodeTutorials/MultipleExtractionIdentifiers.md)
+- [Storing cohort lists](./Rdmp.Core/CohortCommitting/Readme.md)
+- [Cohort Builder docs including info on list caching](./Rdmp.Core/CohortCreation/Readme.md)
+- [Tree layout documentation](./Rdmp.Core/Providers/Readme.md)
+
+
+
+
 ## Commands
 The [Design Pattern](https://en.wikipedia.org/wiki/Software_design_pattern) 'Command' is implemented in RDMP.  Most functionality in RDMP is undertaken by a command and new features should be implemented as new commands if possible. 
 All commands implement `IAtomicCommand` - it's a good place to start when diagnosing issues.
