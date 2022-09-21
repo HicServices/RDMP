@@ -114,7 +114,7 @@ namespace Rdmp.UI.Collections
                 var newCatalogues = CommonTreeFunctionality.CoreChildProvider.AllCatalogues.Except(_allCatalogues);
                 if (newCatalogues.Any())
                 {
-                    oRefreshFrom = CatalogueFolder.Root;//refresh from the root instead
+                    oRefreshFrom = FolderHelper.Root;//refresh from the root instead
                     tlvCatalogues.RefreshObject(oRefreshFrom);
                 }
             }
@@ -150,10 +150,10 @@ namespace Rdmp.UI.Collections
                 CommonFunctionality.Add(new ExecuteCommandAddNewGovernanceDocument(Activator,null), "Governance Document", null, NewMenu);
             }
 
-            if (isFirstTime || Equals(oRefreshFrom, CatalogueFolder.Root))
+            if (isFirstTime || Equals(oRefreshFrom, FolderHelper.Root))
             {
-                tlvCatalogues.RefreshObject(CatalogueFolder.Root);
-                tlvCatalogues.Expand(CatalogueFolder.Root);
+                tlvCatalogues.RefreshObject(FolderHelper.Root);
+                tlvCatalogues.Expand(FolderHelper.Root);
                 isFirstTime = false;
             }
         }
@@ -233,10 +233,10 @@ namespace Rdmp.UI.Collections
             Activator.RefreshBus.EstablishLifetimeSubscription(this);
 
             tlvCatalogues.AddObject(activator.CoreChildProvider.AllGovernanceNode);
-            tlvCatalogues.AddObject(CatalogueFolder.Root);
+            tlvCatalogues.AddObject(FolderHelper.Root);
             ApplyFilters();
 
-            RefreshUIFromDatabase(CatalogueFolder.Root);
+            RefreshUIFromDatabase(FolderHelper.Root);
         }
 
         void _activator_Emphasise(object sender, EmphasiseEventArgs args)
@@ -273,7 +273,7 @@ namespace Rdmp.UI.Collections
 
                 //if there's a change to the folder of the catalogue or it is a new Catalogue (no parent folder) we have to rebuild the entire tree
                 if (oldFolder == null || !oldFolder.Equals(cata.Folder))
-                    RefreshUIFromDatabase(CatalogueFolder.Root);
+                    RefreshUIFromDatabase(FolderHelper.Root);
                 else
                     RefreshUIFromDatabase(o);
                 return;
@@ -293,7 +293,7 @@ namespace Rdmp.UI.Collections
         
         public static bool IsRootObject(object root)
         {
-            return root.Equals(CatalogueFolder.Root) || root is AllGovernanceNode;
+            return root.Equals(FolderHelper.Root) || root is AllGovernanceNode;
         }
 
         public void SelectCatalogue(Catalogue catalogue)

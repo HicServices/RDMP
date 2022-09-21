@@ -49,6 +49,7 @@ namespace Rdmp.Core.Curation.Data.Cohort
         private string _frozenBy;
         private DateTime? _frozenDate;
         private int? _clonedFrom_ID;
+        private string _folder;
 
         /// <inheritdoc/>
         [Unique]
@@ -148,6 +149,13 @@ namespace Rdmp.Core.Curation.Data.Cohort
             set { SetField(ref  _clonedFrom_ID, value); }
         }
 
+        /// <inheritdoc/>
+        [UsefulProperty]
+        public string Folder
+        {
+            get { return _folder; }
+            set { SetField(ref _folder, value); }
+        }
         #endregion
 
         #region Relationships
@@ -192,7 +200,8 @@ namespace Rdmp.Core.Curation.Data.Cohort
             repository.InsertAndHydrate(this,new Dictionary<string, object>
             {
                 {"Name", name},
-                {"QueryCachingServer_ID",queryCache == null ? (object) DBNull.Value:queryCache.ID}
+                {"QueryCachingServer_ID",queryCache == null ? (object) DBNull.Value:queryCache.ID},
+                {"Folder" , FolderHelper.Root}
             });
         }
 
@@ -209,6 +218,8 @@ namespace Rdmp.Core.Curation.Data.Cohort
             FrozenBy = r["FrozenBy"] as string;
             FrozenDate = ObjectToNullableDateTime(r["FrozenDate"]);
             ClonedFrom_ID = ObjectToNullableInt(r["ClonedFrom_ID"]);
+
+            Folder = r["Folder"] as string ?? FolderHelper.Root;
         }
         
         /// <summary>

@@ -70,7 +70,7 @@ namespace Rdmp.Core.Curation.Data.Serialization
         }
 
         /// <summary>
-        /// Removes null entries and fixes problematic value types e.g. <see cref="CatalogueFolder"/> which is better imported as a string
+        /// Removes null entries and fixes problematic value types e.g. <see cref="FolderHelper"/> which is better imported as a string
         /// </summary>
         public Dictionary<string, object> GetDictionaryForImport()
         {

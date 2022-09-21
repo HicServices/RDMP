@@ -369,7 +369,7 @@ namespace Rdmp.Core.Providers
             //add a new CatalogueItemNodes
             InjectCatalogueItems();
 
-            AddChildren(CatalogueFolder.Root,new DescendancyList(CatalogueFolder.Root));
+            AddChildren(FolderHelper.Root,new DescendancyList(FolderHelper.Root));
 
             ReportProgress("Build Catalogue Folder Root");
             
@@ -823,7 +823,7 @@ namespace Rdmp.Core.Providers
         {
             ConcurrentBag<object> childObjects = new ConcurrentBag<object>();
 
-            Parallel.ForEach(CatalogueFolder.GetImmediateSubFoldersUsing(folder,AllCatalogues), (f) =>
+            Parallel.ForEach(FolderHelper.GetImmediateSubFoldersUsing(folder,AllCatalogues), (f) =>
             {
                 //add subfolders
                 childObjects.Add(f);

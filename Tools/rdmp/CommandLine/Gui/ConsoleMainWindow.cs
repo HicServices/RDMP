@@ -451,7 +451,7 @@ namespace Rdmp.Core.CommandLine.Gui
             {
                 // Top level brackets for the tree view
                 if (ReferenceEquals(model , Catalogues))
-                    return new []{CatalogueFolder.Root };
+                    return new []{FolderHelper.Root };
                 
                 if (ReferenceEquals(model , Projects)  && dx != null)
                     return dx.Projects;
@@ -515,7 +515,7 @@ namespace Rdmp.Core.CommandLine.Gui
         {
             var type = o.GetType();
 
-            if(type == typeof(string) || type == typeof(CatalogueFolder))
+            if(type == typeof(string) || type == typeof(FolderHelper))
                 return Catalogues;
 
             if(type == typeof(Project))

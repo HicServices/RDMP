@@ -10,6 +10,7 @@ using System.Data.Common;
 using System.Linq;
 using MapsDirectlyToDatabaseTable;
 using MapsDirectlyToDatabaseTable.Attributes;
+using Org.BouncyCastle.Asn1.X509;
 using Rdmp.Core.CommandExecution;
 using Rdmp.Core.Curation.Data;
 using Rdmp.Core.Curation.Data.Cohort;
@@ -23,13 +24,14 @@ using ReusableLibraryCode.Checks;
 namespace Rdmp.Core.DataExport.Data
 {
     /// <inheritdoc cref="IProject"/>
-    public class Project : DatabaseEntity, IProject, ICustomSearchString,ICheckable
+    public class Project : DatabaseEntity, IProject, ICustomSearchString,ICheckable, IHasFolder
     {
         #region Database Properties
         private string _name;
         private string _masterTicket;
         private string _extractionDirectory;
         private int? _projectNumber;
+        private string _folder;
 
         /// <inheritdoc/>
         [NotNull]
@@ -62,10 +64,18 @@ namespace Rdmp.Core.DataExport.Data
             set { SetField(ref _projectNumber, value); }
         }
 
+        /// <inheritdoc/>
+        [UsefulProperty]
+        public string Folder
+        {
+            get { return _folder; }
+            set { SetField(ref _folder, value); }
+        }
+
         #endregion
 
         #region Relationships
-        
+
         /// <inheritdoc/>
         [NoMappingToDatabase]
         public IExtractionConfiguration[] ExtractionConfigurations
@@ -106,7 +116,8 @@ namespace Rdmp.Core.DataExport.Data
             {
                 Repository.InsertAndHydrate(this, new Dictionary<string, object>
                 {
-                    {"Name", name}
+                    {"Name", name},
+                    {"Folder" , FolderHelper.Root}
                 });
             }
             catch (Exception ex)
@@ -140,6 +151,8 @@ namespace Rdmp.Core.DataExport.Data
             ExtractionDirectory = r["ExtractionDirectory"] as string;
 
             ProjectNumber = ObjectToNullableInt(r["ProjectNumber"]);
+
+            Folder = r["Folder"] as string ?? FolderHelper.Root;
         }
 
         /// <summary>

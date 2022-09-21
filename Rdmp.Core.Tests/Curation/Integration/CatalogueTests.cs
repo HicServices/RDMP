@@ -400,7 +400,7 @@ namespace Rdmp.Core.Tests.Curation.Integration
 
                 c2.SaveToDatabase();
 
-                Assert.IsTrue(CatalogueFolder.IsSubFolderOf(c2.Folder,c1.Folder));
+                Assert.IsTrue(FolderHelper.IsSubFolderOf(c2.Folder,c1.Folder));
 
             }
             finally
@@ -430,16 +430,16 @@ namespace Rdmp.Core.Tests.Curation.Integration
                 c3.SaveToDatabase();
                 
                 //c1 is a subfolder of c3
-                Assert.IsFalse(CatalogueFolder.IsSubFolderOf(c1.Folder,c2.Folder));
-                Assert.IsTrue(CatalogueFolder.IsSubFolderOf(c1.Folder,c3.Folder));
+                Assert.IsFalse(FolderHelper.IsSubFolderOf(c1.Folder,c2.Folder));
+                Assert.IsTrue(FolderHelper.IsSubFolderOf(c1.Folder,c3.Folder));
 
                 //c2 is nobodies subfolder
-                Assert.IsFalse(CatalogueFolder.IsSubFolderOf(c2.Folder, c1.Folder));
-                Assert.IsFalse(CatalogueFolder.IsSubFolderOf(c2.Folder, c3.Folder));
+                Assert.IsFalse(FolderHelper.IsSubFolderOf(c2.Folder, c1.Folder));
+                Assert.IsFalse(FolderHelper.IsSubFolderOf(c2.Folder, c3.Folder));
 
                 //c2 is nobodies subfolder
-                Assert.IsFalse(CatalogueFolder.IsSubFolderOf(c3.Folder,c1.Folder));
-                Assert.IsFalse(CatalogueFolder.IsSubFolderOf(c3.Folder,c2.Folder));
+                Assert.IsFalse(FolderHelper.IsSubFolderOf(c3.Folder,c1.Folder));
+                Assert.IsFalse(FolderHelper.IsSubFolderOf(c3.Folder,c2.Folder));
 
             }
             finally
@@ -493,27 +493,27 @@ namespace Rdmp.Core.Tests.Curation.Integration
 
                 var collection = new[] {c1, c2, c3, c4,c5,c6};
 
-                var results = CatalogueFolder.GetImmediateSubFoldersUsing(CatalogueFolder.Root,collection);
+                var results = FolderHelper.GetImmediateSubFoldersUsing(FolderHelper.Root,collection);
 
                 Assert.AreEqual(3,results.Length);
                 string TwoThousandFive = results.Single(f => f.Equals(@"\2005\"));
                 string TwoThousandOne = results.Single(f => f.Equals(@"\2001\"));
                 string Homeland = results.Single(f => f.Equals(@"\homeland\"));
                 
-                Assert.AreEqual(1,CatalogueFolder.GetImmediateSubFoldersUsing(Homeland,collection).Length);
-                Assert.AreEqual(1, CatalogueFolder.GetImmediateSubFoldersUsing(Homeland,collection).Count(f=>f.Equals(@"\homeland\research\")));
+                Assert.AreEqual(1,FolderHelper.GetImmediateSubFoldersUsing(Homeland,collection).Length);
+                Assert.AreEqual(1, FolderHelper.GetImmediateSubFoldersUsing(Homeland,collection).Count(f=>f.Equals(@"\homeland\research\")));
 
-                Assert.AreEqual(1, CatalogueFolder.GetImmediateSubFoldersUsing(TwoThousandOne,collection).Length);
-                Assert.AreEqual(1, CatalogueFolder.GetImmediateSubFoldersUsing(TwoThousandOne,collection).Count(f => f.Equals(@"\2001\research\")));
+                Assert.AreEqual(1, FolderHelper.GetImmediateSubFoldersUsing(TwoThousandOne,collection).Length);
+                Assert.AreEqual(1, FolderHelper.GetImmediateSubFoldersUsing(TwoThousandOne,collection).Count(f => f.Equals(@"\2001\research\")));
 
-                var sub = CatalogueFolder.GetImmediateSubFoldersUsing(TwoThousandFive, collection).Single();
+                var sub = FolderHelper.GetImmediateSubFoldersUsing(TwoThousandFive, collection).Single();
 
-                string[] finalResult = CatalogueFolder.GetImmediateSubFoldersUsing(sub,collection);
+                string[] finalResult = FolderHelper.GetImmediateSubFoldersUsing(sub,collection);
                 Assert.AreEqual(2, finalResult.Length);
                 Assert.AreEqual(1, finalResult.Count(c => c.Equals(@"\2005\research\current\")));
                 Assert.AreEqual(1, finalResult.Count(c => c.Equals(@"\2005\research\previous\")));
 
-                Assert.AreEqual(0, CatalogueFolder.GetImmediateSubFoldersUsing(finalResult[0],collection).Length);
+                Assert.AreEqual(0, FolderHelper.GetImmediateSubFoldersUsing(finalResult[0],collection).Length);
             }
             finally 
             {

@@ -6,27 +6,26 @@
 
 using System;
 using System.Collections.Generic;
-using System.Diagnostics.Contracts;
 using System.Linq;
 
 namespace Rdmp.Core.Curation.Data
 {
     /// <summary>
-    /// The virtual 'folder' in which to display Catalogues.  This should be a helpful subdivision e.g. "\core datasets\labsystems\"
+    /// The virtual 'folder' in which to display objects.  This should be a helpful subdivision e.g. "\core datasets\labsystems\"
     ///  
     /// <para>CatalogueFolder are represented in the user interface as a tree of folders (calculated at runtime). You can't create an empty CatalogueFolder,
-    /// just declare a Catalogue as being in a new folder and it will be automatically shown.</para>
+    /// just declare an <see cref="IHasFolder"/> (e.g. <see cref="Catalogue"/>) as being in a new folder and it will be automatically shown.</para>
     /// 
-    /// <para>CatalogueFolder is persisted as a string but has methods to help prevent illegal paths and to calculate hierarchy based on multiple Catalogues 
+    /// <para>CatalogueFolder is a static class that contains helper methods to help prevent illegal paths and to calculate hierarchy based on multiple <see cref="IHasFolder"/> 
     /// (See <see cref="GetImmediateSubFoldersUsing"/>)</para>
     /// </summary>
-    public static class CatalogueFolder
+    public static class FolderHelper
     {         
         /// <summary>
         /// The topmost folder under which all other folders reside
         /// </summary>
         public const string Root = "\\";
-
+        
 
         public static string Adjust(string candidate)
         {
@@ -64,7 +63,7 @@ namespace Rdmp.Core.Curation.Data
         }
 
         /// <summary>
-        /// Returns true if the specified path is valid for a <see cref="CatalogueFolder"/>.  Not blank, starts with '\' etc.
+        /// Returns true if the specified path is valid for a <see cref="IHasFolder"/>.  Not blank, starts with '\' etc.
         /// </summary>
         /// <param name="candidatePath"></param>
         /// <returns></returns>
@@ -112,7 +111,7 @@ namespace Rdmp.Core.Curation.Data
         /// </summary>
         /// <param name="currentFolder"></param>
         /// <param name="collection"></param>
-        public static string[] GetImmediateSubFoldersUsing(string currentFolder,IEnumerable<Catalogue> collection)
+        public static string[] GetImmediateSubFoldersUsing(string currentFolder,IEnumerable<IHasFolder> collection)
         {
             List<string> toReturn = new List<string>();
 
