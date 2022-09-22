@@ -369,9 +369,10 @@ namespace Rdmp.Core.Providers
             //add a new CatalogueItemNodes
             InjectCatalogueItems();
 
-            var cicRoot = BuildFolders(AllCohortIdentificationConfigurations);
+            var cicRoot = FolderHelper.BuildFolderTree(AllCohortIdentificationConfigurations);
+            var cataRoot = FolderHelper.BuildFolderTree(AllCatalogues);
 
-            AddChildren(FolderHelper.Root,new DescendancyList(FolderHelper.Root));
+            AddChildren(cataRoot, new DescendancyList(cataRoot));
 
             ReportProgress("Build Catalogue Folder Root");
             
@@ -453,12 +454,6 @@ namespace Rdmp.Core.Providers
             ReportProgress("After building exports");
         }
 
-        private object BuildFolders(IHasFolder[] allObjects)
-        {
-            // TODO finish this properly
-            var dict = FolderHelper.BuildFolderTree(allObjects);
-            return dict;            
-        }
 
         private void FetchCatalogueItems()
         {
@@ -828,26 +823,28 @@ namespace Rdmp.Core.Providers
             AddToDictionaries(new HashSet<object>(AllANOTables), new DescendancyList(anoTablesNode));
         }
 
-        private void AddChildren(string folder, DescendancyList descendancy)
+        private void AddChildren(FolderNode folder, DescendancyList descendancy)
         {
-            ConcurrentBag<object> childObjects = new ConcurrentBag<object>();
-
-            Parallel.ForEach(FolderHelper.GetImmediateSubFoldersUsing(folder,AllCatalogues), (f) =>
+            foreach(var child in folder.ChildFolders)
             {
-                //add subfolders
-                childObjects.Add(f);
-                AddChildren(f, descendancy.Add(f));
-            });
+                //add subfolder children
+                AddChildren(child, descendancy.Add(child));
+            };
 
             //add catalogues in folder
-            Parallel.ForEach(AllCatalogues.Where(c => c.Folder.Equals(folder)), c => 
+            foreach(var obj in folder.ChildObjects)
             {
-                AddChildren(c,descendancy.Add(c));
-                childObjects.Add(c);
-            });
+                if(obj is Catalogue c)
+                {
+                    AddChildren(c, descendancy.Add(c));
+                }
+            }
             
-            //finalise
-            AddToDictionaries(new HashSet<object>(childObjects),descendancy );
+            // Children are the folders + objects
+            AddToDictionaries(new HashSet<object>(
+                    folder.ChildFolders.Cast<object>()
+                    .Union(folder.ChildObjects)),descendancy 
+                    );
         }
 
         #region Load Metadata

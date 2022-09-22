@@ -19,7 +19,7 @@ namespace Rdmp.Core.Curation.Data
     /// just declare an <see cref="IHasFolder"/> (e.g. <see cref="Catalogue"/>) as being in a new folder and it will be automatically shown.</para>
     /// 
     /// <para>CatalogueFolder is a static class that contains helper methods to help prevent illegal paths and to calculate hierarchy based on multiple <see cref="IHasFolder"/> 
-    /// (See <see cref="GetImmediateSubFoldersUsing"/>)</para>
+    /// (See <see cref="BuildFolderTree(IHasFolder[], FolderNode)"/>)</para>
     /// </summary>
     public static class FolderHelper
     {         
@@ -72,80 +72,6 @@ namespace Rdmp.Core.Curation.Data
         public static bool IsValidPath(string candidatePath)
         {
             return IsValidPath(candidatePath, out _);
-        }
-
-        /// <summary>
-        /// Returns true if the <paramref name="candidate"/> is in a subfolder of
-        /// <paramref name="potentialParent"/>.
-        /// </summary>
-        /// <param name="candidate"></param>
-        /// <param name="potentialParent"></param>
-        /// <returns></returns>
-        public static bool IsSubFolderOf(string candidate, string potentialParent)
-        {
-            if (potentialParent == null)
-                return false;
-
-            //they are the same folder so not subfoldres
-            if (candidate.Equals(potentialParent))
-                return false;
-
-            //we contain the potential parents path therefore we are a child of them
-            return candidate.StartsWith(potentialParent);
-        }
-
-        /// <summary>
-        /// Returns the next level of folder down towards the Catalogues in collection - note that the next folder down might be empty 
-        /// e.g.
-        /// 
-        /// <para>Pass in 
-        /// CatalogueA - \2005\Research\
-        /// CatalogueB - \2006\Research\</para>
-        /// 
-        /// <para>This is Root (\)
-        /// Returns:
-        ///     \2005\ - empty 
-        ///     \2006\ - empty</para>
-        /// 
-        /// <para>Pass in the SAME collection but call on This (\2005\)
-        /// Returns :
-        /// \2005\Research\ - containing CatalogueA</para>
-        /// </summary>
-        /// <param name="currentFolder"></param>
-        /// <param name="collection"></param>
-        public static string[] GetImmediateSubFoldersUsing(string currentFolder,IEnumerable<IHasFolder> collection)
-        {
-            List<string> toReturn = new List<string>();
-
-
-            var remoteChildren = collection.Where(c => IsSubFolderOf(c.Folder, currentFolder)).Select(c=>c.Folder).ToArray();
-
-            //no subfolders exist
-            if (!remoteChildren.Any())
-                return toReturn.ToArray();//empty
-            
-
-            foreach (string child in remoteChildren)
-            {
-                // We are \bob\
-
-                //we are looking at \bob\fish\smith\harry\
-
-                //chop off \bob\
-                string trimmed = child.Substring(currentFolder.Length);
-
-                //trimmed = fish\smith\harry\
-
-                string nextFolder = trimmed.Substring(0, trimmed.IndexOf('\\')+1);
-                
-                //nextFolder = fish\
-
-                //add 
-                toReturn.Add(currentFolder + nextFolder);
-            }
-
-            return toReturn.Distinct().ToArray();
-
         }
 
         public static FolderNode BuildFolderTree(IHasFolder[] objects, FolderNode currentBranch = null)
