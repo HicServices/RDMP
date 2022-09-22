@@ -12,6 +12,6 @@ namespace Rdmp.Core.Curation.Data
         /// A useful virtual folder in which to depict the object.  Note that this is not usually
         /// a Directory (i.e. not a file system folder)
         /// </summary>
-        string Folder { get; set; }
+        string Folder { get; }
     }
 }

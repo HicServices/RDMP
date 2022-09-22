@@ -45,7 +45,7 @@ namespace Rdmp.Core.Curation.Data.DataLoad
 
 
     /// <inheritdoc cref="ILoadMetadata"/>
-    public class LoadMetadata : DatabaseEntity, ILoadMetadata, IHasDependencies, IHasQuerySyntaxHelper, ILoggedActivityRootObject
+    public class LoadMetadata : DatabaseEntity, ILoadMetadata, IHasDependencies, IHasQuerySyntaxHelper, ILoggedActivityRootObject, IHasFolder
     {
 
         #region Database Properties
@@ -126,7 +126,7 @@ namespace Rdmp.Core.Curation.Data.DataLoad
         public string Folder
         {
             get { return _folder; }
-            set { SetField(ref _folder, value); }
+            set { SetField(ref _folder, FolderHelper.Adjust(value)); }
         }
 
         #endregion

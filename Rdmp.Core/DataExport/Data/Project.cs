@@ -69,7 +69,7 @@ namespace Rdmp.Core.DataExport.Data
         public string Folder
         {
             get { return _folder; }
-            set { SetField(ref _folder, value); }
+            set { SetField(ref _folder, FolderHelper.Adjust(value)); }
         }
 
         #endregion

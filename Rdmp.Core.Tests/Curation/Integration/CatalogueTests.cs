@@ -621,6 +621,58 @@ namespace Rdmp.Core.Tests.Curation.Integration
             }
 
         }
+
+        class TestClass : IHasFolder
+        {
+            public string Folder { get; set; }
+        }
+
+        [TestCase("\\","\\")]
+        [TestCase("\\fish", "fish")]
+        [TestCase("\\fish\\dog\\cat", "cat")]
+        public void TestTreeNode_FullName_CleanPaths(string fullName,string expectedName)
+        {
+            var r1 = new TestClass { Folder = fullName};
+            var tree = FolderHelper.BuildFolderTree(new[] { r1 });
+
+            var bottomFolder = tree;
+                
+            while(bottomFolder.ChildFolders.Any())
+            {
+                bottomFolder = bottomFolder.ChildFolders.Single();
+            }
+
+            Assert.AreEqual(expectedName, bottomFolder.Name);
+            Assert.AreEqual(fullName, bottomFolder.FullName);
+        }
+
+        [Test]
+        public void TestBuildFolderTree()
+        {
+            var r1 = new TestClass { Folder = "\\"};
+            var r2 = new TestClass { Folder = "\\" };
+
+            var cat = new TestClass { Folder = "\\dog\\fish\\cat" };
+            
+            // give it some malformed ones too
+            var fun = new TestClass { Folder = "\\fun" };
+            var morefun = new TestClass { Folder = "\\fun" };
+
+            var objects = new IHasFolder[]
+            {
+                r1,r2,cat,fun,morefun
+            };
+
+
+            var tree = FolderHelper.BuildFolderTree(objects);
+            Assert.Contains(r1, tree.ChildObjects);
+            Assert.Contains(r2, tree.ChildObjects);
+
+            Assert.Contains(cat, tree["dog"]["fish"]["cat"].ChildObjects);
+
+            Assert.Contains(fun, tree["fun"].ChildObjects);
+            Assert.Contains(morefun, tree["fun"].ChildObjects);
+        }
     }
 }
     

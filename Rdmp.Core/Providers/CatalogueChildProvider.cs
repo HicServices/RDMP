@@ -369,6 +369,8 @@ namespace Rdmp.Core.Providers
             //add a new CatalogueItemNodes
             InjectCatalogueItems();
 
+            var cicRoot = BuildFolders(AllCohortIdentificationConfigurations);
+
             AddChildren(FolderHelper.Root,new DescendancyList(FolderHelper.Root));
 
             ReportProgress("Build Catalogue Folder Root");
@@ -449,6 +451,13 @@ namespace Rdmp.Core.Providers
             }
 
             ReportProgress("After building exports");
+        }
+
+        private object BuildFolders(IHasFolder[] allObjects)
+        {
+            // TODO finish this properly
+            var dict = FolderHelper.BuildFolderTree(allObjects);
+            return dict;            
         }
 
         private void FetchCatalogueItems()

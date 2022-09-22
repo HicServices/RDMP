@@ -4,9 +4,11 @@
 // RDMP is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License for more details.
 // You should have received a copy of the GNU General Public License along with RDMP. If not, see <https://www.gnu.org/licenses/>.
 
+using Rdmp.Core.CommandExecution.AtomicCommands;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Text;
 
 namespace Rdmp.Core.Curation.Data
 {
@@ -144,6 +146,113 @@ namespace Rdmp.Core.Curation.Data
 
             return toReturn.Distinct().ToArray();
 
+        }
+
+        public static FolderNode BuildFolderTree(IHasFolder[] objects, FolderNode currentBranch = null)
+        {
+            currentBranch ??= new FolderNode(Root);
+            var currentBranchFullName = currentBranch.FullName;
+
+            foreach (var g in objects.GroupBy(g => g.Folder).ToArray())
+            {
+                if(g.Key.Equals(currentBranchFullName, StringComparison.CurrentCultureIgnoreCase))
+                {
+                    // all these are in the exact folder we are looking at, they are our children
+                    currentBranch.ChildObjects.AddRange(g);
+                }
+                else
+                {
+                    // these objects are in a subdirectory of us.  Find the next subdirectory name
+                    // bearing in mind we may be at '\' and be seing '\dog\cat\fish' as the next
+                    var idx = g.Key.IndexOf(currentBranchFullName, StringComparison.CurrentCultureIgnoreCase) + currentBranchFullName.Length;
+
+                    // if we have objects that do not live under this full path thats a problem
+                    
+                    // or its also a problem if we found a full match to the end of the string
+                    
+                    // this branch deals with sub folders and that would mean the current group
+                    // are not in any subfolders
+                    if (idx == -1 || idx == g.Key.Length -1)
+                    {
+                        throw new Exception($"Unable to build folder groups.  Current group was not a child of the current branch.  Branch was '{currentBranch.FullName}' while Group was '{g.Key}'");
+                    }
+                    
+                    var subFolders = g.Key.Substring(idx);
+                    var nextFolder = subFolders.Split('\\',StringSplitOptions.RemoveEmptyEntries).FirstOrDefault();
+
+                    if(nextFolder == null)
+                    {
+                        throw new Exception($"Unable to build folder groups.  Current group had malformed Folder name.  Branch was '{currentBranch.FullName}' while Group was '{g.Key}'");
+                    }
+                    else
+                    {
+                        var f = new FolderNode(nextFolder,currentBranch);
+                        currentBranch.ChildFolders.Add(f);
+
+                        BuildFolderTree(g.ToArray(),f);
+                    }
+                }
+            }
+
+            return currentBranch;
+        }
+    }
+
+    public class FolderNode
+    {
+        public string Name { get; set; }
+        public List<IHasFolder> ChildObjects { get; set; } = new();
+        public List<FolderNode> ChildFolders { get; set; } = new();
+
+        public FolderNode Parent { get; set; }
+
+        public string FullName => GetFullName();
+
+        public FolderNode(string name, FolderNode parent = null)
+        {
+            Name = name;
+            Parent = parent;
+        }
+
+        private string GetFullName()
+        {
+            // build the name by prepending each parent
+            // but start with our name
+            StringBuilder sb = new(Name);
+
+            var p = Parent;            
+
+            while(p != null)
+            {
+                if(p.Name.Equals(FolderHelper.Root))
+                {
+                    sb.Insert(0, p.Name);
+                }
+                else
+                {
+                    sb.Insert(0, p.Name + "\\");
+                }
+                                
+                p = p.Parent;
+            }
+
+            return sb.ToString();
+        }
+
+        public FolderNode this[string key]
+        {
+            get => GetChild(key);
+        }
+
+        private FolderNode GetChild(string key)
+        {
+            return ChildFolders.FirstOrDefault(c => c.Name.Equals(key, StringComparison.CurrentCultureIgnoreCase))
+                ?? throw new ArgumentOutOfRangeException($"Could not find a child folder with the key '{key}'");
+        }
+
+        public override string ToString()
+        {
+            return Name;
         }
     }
 }

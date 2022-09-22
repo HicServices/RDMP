@@ -31,7 +31,7 @@ namespace Rdmp.Core.Curation.Data.Cohort
     /// for cohort generation and includes a high level description of what the cohort requirements are, an optional ticket and is the hanging off point for all the 
     /// RootCohortAggregateContainers (the bit that provides the actual filtering/technical data about how the cohort is identified).
     /// </summary>
-    public class CohortIdentificationConfiguration : DatabaseEntity, ICollectSqlParameters,INamed, IHasDependencies,ICustomSearchString, IMightBeReadOnly
+    public class CohortIdentificationConfiguration : DatabaseEntity, ICollectSqlParameters,INamed, IHasDependencies,ICustomSearchString, IMightBeReadOnly, IHasFolder
     {
         /// <summary>
         /// Characters that apear in front of any <see cref="AggregateConfiguration"/> which is acting as a cohort identification list or patient index table
@@ -154,7 +154,7 @@ namespace Rdmp.Core.Curation.Data.Cohort
         public string Folder
         {
             get { return _folder; }
-            set { SetField(ref _folder, value); }
+            set { SetField(ref _folder, FolderHelper.Adjust(value)); }
         }
         #endregion
 
