@@ -324,11 +324,11 @@ namespace Rdmp.Core.Tests.Curation.Integration
             try
             {
                 c.Folder = "\\Research\\Important";
-                Assert.AreEqual("\\research\\important\\", c.Folder);
+                Assert.AreEqual("\\research\\important", c.Folder);
                 c.SaveToDatabase();
 
                 var c2 = Repository.GetObjectByID<Catalogue>(c.ID);
-                Assert.AreEqual("\\research\\important\\", c2.Folder);
+                Assert.AreEqual("\\research\\important", c2.Folder);
             }
             finally
             {
