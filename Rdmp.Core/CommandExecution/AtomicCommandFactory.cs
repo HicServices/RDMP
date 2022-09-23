@@ -160,15 +160,15 @@ namespace Rdmp.Core.CommandExecution
                 };
             }
 
-            if(Is(o,out string cf))
+            if(Is(o,out FolderNode<ICatalogue> cf))
             {
                 yield return new ExecuteCommandCreateNewCatalogueByImportingFile(_activator) { 
-                    OverrideCommandName = "New Catalogue From File...",TargetFolder = cf, SuggestedCategory = Add, Weight = -90.9f};
+                    OverrideCommandName = "New Catalogue From File...",TargetFolder = cf.FullName, SuggestedCategory = Add, Weight = -90.9f};
                 yield return new ExecuteCommandCreateNewCatalogueByImportingExistingDataTable(_activator) {
                     OverrideCommandName = "New Catalogue From Database...",
-                    TargetFolder = cf, SuggestedCategory = Add, Weight = -90.8f };
+                    TargetFolder = cf.FullName, SuggestedCategory = Add, Weight = -90.8f };
                 yield return new ExecuteCommandCreateNewEmptyCatalogue(_activator) {
-                    OverrideCommandName = "New Empty Catalogue (Advanced)",TargetFolder = cf, SuggestedCategory = Add, Weight = -90.7f };
+                    OverrideCommandName = "New Empty Catalogue (Advanced)",TargetFolder = cf.FullName, SuggestedCategory = Add, Weight = -90.7f };
             }
 
             if(Is(o, out ExtractionInformation ei))

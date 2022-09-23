@@ -4,6 +4,7 @@
 // RDMP is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License for more details.
 // You should have received a copy of the GNU General Public License along with RDMP. If not, see <https://www.gnu.org/licenses/>.
 
+using Rdmp.Core.Curation.Data.Cohort;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -11,7 +12,8 @@ using System.Text;
 
 namespace Rdmp.Core.Curation.Data
 {
-    public class FolderNode<T> where T: class, IHasFolder
+    public class FolderNode<T> : IFolderNode, IOrderable /*Orderable interface ensures that folders always appear before datasets in tree*/ 
+        where T: class, IHasFolder
     {
         public string Name { get; set; }
         public List<T> ChildObjects { get; set; } = new();
@@ -20,6 +22,8 @@ namespace Rdmp.Core.Curation.Data
         public FolderNode<T> Parent { get; set; }
 
         public string FullName => GetFullName();
+
+        int IOrderable.Order { get => -1; set => throw new NotSupportedException(); }
 
         public FolderNode(string name, FolderNode<T> parent = null)
         {
