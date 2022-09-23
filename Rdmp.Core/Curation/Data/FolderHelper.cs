@@ -34,15 +34,17 @@ namespace Rdmp.Core.Curation.Data
             if (IsValidPath(candidate, out var reason))
             {
                 candidate = candidate.ToLower();
+                candidate = candidate.TrimEnd('\\');
 
-                //ensure it ends with a slash
-                if (!candidate.EndsWith("\\"))
-                    candidate += "\\";
+                if(string.IsNullOrWhiteSpace(candidate))
+                {
+                    candidate = FolderHelper.Root;
+                }
+
+                return candidate;
             }
             else
                 throw new NotSupportedException(reason);
-
-            return candidate;
         }
 
         public static bool IsValidPath(string candidatePath, out string reason)

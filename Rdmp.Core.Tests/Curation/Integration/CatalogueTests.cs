@@ -502,6 +502,13 @@ namespace Rdmp.Core.Tests.Curation.Integration
             Assert.AreEqual(fullName, bottomFolder.FullName);
         }
 
+        [TestCase("\\admissions\\", "\\admissions")]
+        [TestCase("\\ADMissions\\", "\\admissions")]
+        public void TestFolderHelperAdjust(string input, string expectedOutput)
+        {
+            Assert.AreEqual(expectedOutput, FolderHelper.Adjust(input));
+        }
+
         [Test]
         public void TestBuildFolderTree()
         {
