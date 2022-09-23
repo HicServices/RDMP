@@ -19,7 +19,7 @@ namespace Rdmp.Core.Curation.Data
     /// just declare an <see cref="IHasFolder"/> (e.g. <see cref="Catalogue"/>) as being in a new folder and it will be automatically shown.</para>
     /// 
     /// <para>CatalogueFolder is a static class that contains helper methods to help prevent illegal paths and to calculate hierarchy based on multiple <see cref="IHasFolder"/> 
-    /// (See <see cref="BuildFolderTree(IHasFolder[], FolderNode)"/>)</para>
+    /// (See <see cref="BuildFolderTree{T}(T[], FolderNode{T})"/>)</para>
     /// </summary>
     public static class FolderHelper
     {         
@@ -76,9 +76,9 @@ namespace Rdmp.Core.Curation.Data
             return IsValidPath(candidatePath, out _);
         }
 
-        public static FolderNode BuildFolderTree(IHasFolder[] objects, FolderNode currentBranch = null)
+        public static FolderNode<T> BuildFolderTree<T>(T[] objects, FolderNode<T> currentBranch = null) where T: class, IHasFolder
         {
-            currentBranch ??= new FolderNode(Root);
+            currentBranch ??= new FolderNode<T>(Root);
             var currentBranchFullName = currentBranch.FullName;
 
             foreach (var g in objects.GroupBy(g => g.Folder).ToArray())
@@ -114,7 +114,7 @@ namespace Rdmp.Core.Curation.Data
                     }
                     else
                     {
-                        var f = new FolderNode(nextFolder,currentBranch);
+                        var f = new FolderNode<T>(nextFolder,currentBranch);
                         currentBranch.ChildFolders.Add(f);
 
                         BuildFolderTree(g.ToArray(),f);
@@ -126,17 +126,17 @@ namespace Rdmp.Core.Curation.Data
         }
     }
 
-    public class FolderNode
+    public class FolderNode<T> where T: class, IHasFolder
     {
         public string Name { get; set; }
-        public List<IHasFolder> ChildObjects { get; set; } = new();
-        public List<FolderNode> ChildFolders { get; set; } = new();
+        public List<T> ChildObjects { get; set; } = new();
+        public List<FolderNode<T>> ChildFolders { get; set; } = new();
 
-        public FolderNode Parent { get; set; }
+        public FolderNode<T> Parent { get; set; }
 
         public string FullName => GetFullName();
 
-        public FolderNode(string name, FolderNode parent = null)
+        public FolderNode(string name, FolderNode<T> parent = null)
         {
             Name = name;
             Parent = parent;
@@ -167,12 +167,12 @@ namespace Rdmp.Core.Curation.Data
             return sb.ToString();
         }
 
-        public FolderNode this[string key]
+        public FolderNode<T> this[string key]
         {
             get => GetChild(key);
         }
 
-        private FolderNode GetChild(string key)
+        private FolderNode<T> GetChild(string key)
         {
             return ChildFolders.FirstOrDefault(c => c.Name.Equals(key, StringComparison.CurrentCultureIgnoreCase))
                 ?? throw new ArgumentOutOfRangeException($"Could not find a child folder with the key '{key}'");
@@ -181,6 +181,17 @@ namespace Rdmp.Core.Curation.Data
         public override string ToString()
         {
             return Name;
+        }
+
+        public override bool Equals(object obj)
+        {
+            return obj is FolderNode<T> node &&
+                   FullName == node.FullName;
+        }
+
+        public override int GetHashCode()
+        {
+            return HashCode.Combine(FullName);
         }
     }
 }

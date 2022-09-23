@@ -201,6 +201,7 @@ namespace Rdmp.Core.Providers
 
         public AllOrphanAggregateConfigurationsNode OrphanAggregateConfigurationsNode { get;set; } = new ();
         public AllTemplateAggregateConfigurationsNode TemplateAggregateConfigurationsNode { get; set; } = new ();
+        public FolderNode<ICatalogue> CatalogueRootFolder { get; }
 
         public HashSet<AggregateConfiguration> OrphanAggregateConfigurations;
         public AggregateConfiguration[] TemplateAggregateConfigurations;
@@ -370,9 +371,9 @@ namespace Rdmp.Core.Providers
             InjectCatalogueItems();
 
             var cicRoot = FolderHelper.BuildFolderTree(AllCohortIdentificationConfigurations);
-            var cataRoot = FolderHelper.BuildFolderTree(AllCatalogues);
+            CatalogueRootFolder = FolderHelper.BuildFolderTree(AllCatalogues.Cast<ICatalogue>().ToArray());
 
-            AddChildren(cataRoot, new DescendancyList(cataRoot));
+            AddChildren(CatalogueRootFolder, new DescendancyList(CatalogueRootFolder));
 
             ReportProgress("Build Catalogue Folder Root");
             
@@ -823,7 +824,7 @@ namespace Rdmp.Core.Providers
             AddToDictionaries(new HashSet<object>(AllANOTables), new DescendancyList(anoTablesNode));
         }
 
-        private void AddChildren(FolderNode folder, DescendancyList descendancy)
+        private void AddChildren<T>(FolderNode<T> folder, DescendancyList descendancy) where T: class, IHasFolder
         {
             foreach(var child in folder.ChildFolders)
             {

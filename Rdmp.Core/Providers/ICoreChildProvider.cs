@@ -44,6 +44,8 @@ namespace Rdmp.Core.Providers
         JoinableCohortAggregateConfiguration[] AllJoinables { get; set; }
         JoinableCohortAggregateConfigurationUse[] AllJoinUses { get; set; }
 
+        FolderNode<ICatalogue> CatalogueRootFolder { get; }
+
         Catalogue[] AllCatalogues { get; }
         Dictionary<int, Catalogue> AllCataloguesDictionary { get; }
 
