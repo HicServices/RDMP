@@ -5,7 +5,7 @@
  if not exists (select 1 from sys.columns where name = 'Folder' AND object_id = OBJECT_ID('Project'))
  begin
 
-ALTER TABLE Project ADD Folder varchar(max) null
+ALTER TABLE Project ADD Folder nvarchar(max) null
 
 end
 GO

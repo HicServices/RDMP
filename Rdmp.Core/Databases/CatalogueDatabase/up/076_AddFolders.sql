@@ -5,7 +5,7 @@
  if not exists (select 1 from sys.columns where name = 'Folder' AND object_id = OBJECT_ID('LoadMetadata'))
  begin
 
-ALTER TABLE LoadMetadata ADD Folder varchar(max) null
+ALTER TABLE LoadMetadata ADD Folder nvarchar(max) null
 
 end
 GO
