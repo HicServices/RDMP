@@ -12,6 +12,12 @@ using System.Text;
 
 namespace Rdmp.Core.Curation.Data
 {
+    /// <summary>
+    /// A virtual folder that can have subdirectories and stores ojbects of type <typeparamref name="T"/> e.g.
+    /// Catalogue folders.  <see cref="FolderNode{T}"/> objects are typically created through <see cref="FolderHelper.BuildFolderTree{T}(T[], FolderNode{T})"/>
+    /// dynamically based on the current <see cref="IHasFolder.Folder"/> strings.
+    /// </summary>
+    /// <typeparam name="T"></typeparam>
     public class FolderNode<T> : IFolderNode, IOrderable /*Orderable interface ensures that folders always appear before datasets in tree*/ 
         where T: class, IHasFolder
     {

@@ -8,6 +8,11 @@ using MapsDirectlyToDatabaseTable;
 
 namespace Rdmp.Core.Curation.Data
 {
+    /// <summary>
+    /// Interface for objects that exist within a hierarchy of virtual folders.  The
+    /// <see cref="Folder"/> is primarily used in <see cref="FolderHelper.BuildFolderTree{T}(T[], FolderNode{T})"/>
+    /// to build a virtual folder structure based on the current string values.
+    /// </summary>
     public interface IHasFolder : IMapsDirectlyToDatabaseTable, ISaveable
     {
         /// <summary>
