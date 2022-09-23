@@ -536,6 +536,38 @@ namespace Rdmp.Core.Tests.Curation.Integration
             Assert.Contains(fun, tree["fun"].ChildObjects);
             Assert.Contains(morefun, tree["fun"].ChildObjects);
         }
+
+
+        /// <summary>
+        /// Tests when you have 
+        /// \
+        /// \ somefolder
+        ///   +cata1
+        ///   \ somesub
+        ///     +cata2
+        /// </summary>
+        [Test]
+        public void TestBuildFolderTree_MiddleBranches()
+        {
+            var cata1 = new TestClass { Folder = "\\somefolder" };
+
+            var cata2 = new TestClass { Folder = "\\somefolder\\somesub" };
+
+            var objects = new IHasFolder[]
+            {
+                cata1,cata2
+            };
+
+            var tree = FolderHelper.BuildFolderTree(objects);
+            Assert.IsEmpty(tree.ChildObjects, "Should be no Catalogues on the root");
+
+            Assert.AreEqual(1, tree.ChildFolders.Count());
+            Assert.AreEqual(1, tree["somefolder"].ChildFolders.Count());
+            Assert.IsEmpty(tree["somefolder"]["somesub"].ChildFolders);
+
+            Assert.Contains(cata1, tree["somefolder"].ChildObjects);
+            Assert.Contains(cata2, tree["somefolder"]["somesub"].ChildObjects);
+        }
     }
 }
     

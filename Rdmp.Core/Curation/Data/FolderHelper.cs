@@ -111,10 +111,17 @@ namespace Rdmp.Core.Curation.Data
                     }
                     else
                     {
-                        var f = new FolderNode<T>(nextFolder,currentBranch);
-                        currentBranch.ChildFolders.Add(f);
+                        // we may already have created this as part of a subgroup e.g. seeing \1\2 then seeing \1 alone (we dont want multiple copies of \1 folder).
+                        var existing = currentBranch.ChildFolders.FirstOrDefault(f => f.Name.Equals(nextFolder, StringComparison.CurrentCultureIgnoreCase));
+                        
+                        if(existing == null)
+                        {
+                            // we don't have one already so create it
+                            existing = new FolderNode<T>(nextFolder, currentBranch);
+                            currentBranch.ChildFolders.Add(existing);
+                        }                        
 
-                        BuildFolderTree(g.ToArray(),f);
+                        BuildFolderTree(g.ToArray(),existing);
                     }
                 }
             }
