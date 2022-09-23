@@ -151,6 +151,14 @@ namespace Rdmp.Core.CommandExecution
                     Weight = -99.058f,
                     SuggestedCategory = Metadata };
             }
+            if(Is(o, out IHasFolder folderable) && folderable is IMapsDirectlyToDatabaseTable)
+            {
+                yield return new ExecuteCommandSet(_activator, (IMapsDirectlyToDatabaseTable)folderable, o.GetType().GetProperty(nameof(IHasFolder.Folder)))
+                {
+                    OverrideIcon = Image.Load<Rgba32>(CatalogueIcons.CatalogueFolder),
+                    OverrideCommandName = "Set Folder",
+                };
+            }
 
             if(Is(o,out string cf))
             {
