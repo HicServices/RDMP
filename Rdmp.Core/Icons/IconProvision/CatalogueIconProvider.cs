@@ -86,16 +86,17 @@ namespace Rdmp.Core.Icons.IconProvision
             {
                 case null:
                     return null;
+
                 //the only valid strings are "Catalogue" etc where the value exactly maps to an RDMPConcept
-                // or strings that are CatalogueFolders, they are allowed to
-                case string str when str.Contains('\\'):
-                    return GetImage(RDMPConcept.CatalogueFolder,kind);
                 case string str when Enum.TryParse(str, true, out RDMPConcept result):
                     concept = result;
                     break;
                 case string str:
                     return null; //it's a string but an unhandled one so give them null back
             }
+
+           if(concept.GetType().IsGenericType && concept.GetType().GetGenericTypeDefinition() == typeof(FolderNode<>))
+                return GetImage(RDMPConcept.CatalogueFolder, kind);
 
             //if they already passed in an image just return it back (optionally with the overlay).
             if (concept is Image<Rgba32> image)
