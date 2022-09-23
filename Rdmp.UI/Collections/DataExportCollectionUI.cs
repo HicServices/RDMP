@@ -113,14 +113,14 @@ namespace Rdmp.UI.Collections
 
             CommonTreeFunctionality.WhitespaceRightClickMenuCommandsGetter = (a) => GetWhitespaceRightClickMenu();
             
-            CommonTreeFunctionality.MaintainRootObjects = new Type[]{typeof(ExtractableDataSetPackage),typeof(Project)};
+            CommonTreeFunctionality.MaintainRootObjects = new Type[]{typeof(ExtractableDataSetPackage),typeof(FolderNode<Project>)};
 
             var dataExportChildProvider = activator.CoreChildProvider as DataExportChildProvider;
 
             if(dataExportChildProvider != null)
             {
                 tlvDataExport.AddObjects(dataExportChildProvider.AllPackages);
-                tlvDataExport.AddObjects(dataExportChildProvider.Projects);
+                tlvDataExport.AddObject(dataExportChildProvider.ProjectRootFolder);
             }
             
             if (_isFirstTime)
@@ -214,7 +214,7 @@ namespace Rdmp.UI.Collections
         }
         public static bool IsRootObject(object root)
         {
-            return root is Project || root is ExtractableDataSetPackage;
+            return root is FolderNode<Project> || root is ExtractableDataSetPackage;
         }
     }
 

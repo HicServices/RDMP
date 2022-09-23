@@ -7,42 +7,44 @@
 using System.Linq;
 using Rdmp.Core.CommandExecution.Combining;
 using Rdmp.Core.Curation.Data;
+using Rdmp.Core.Repositories.Construction;
 
 namespace Rdmp.Core.CommandExecution.AtomicCommands
 {
-    public class ExecuteCommandPutCatalogueIntoCatalogueFolder: BasicCommandExecution
+    public class ExecuteCommandPutIntoFolder: BasicCommandExecution
     {
-        private readonly Catalogue[] _catalogues;
-        private readonly string _targetModel;
-
-        public ExecuteCommandPutCatalogueIntoCatalogueFolder(IBasicActivateItems activator, CatalogueCombineable cmd, string targetModel)
-            :this(activator,new []{cmd.Catalogue},targetModel)
+        private readonly IHasFolder[] _toMove;
+        private readonly string _folder;
+        
+        public ExecuteCommandPutIntoFolder(IBasicActivateItems activator, IHasFolderCombineable cmd, string targetModel)
+            :this(activator,new []{cmd.Folderable},targetModel)
         {
             
         }
-        public ExecuteCommandPutCatalogueIntoCatalogueFolder(IBasicActivateItems activator, ManyCataloguesCombineable cmd, string targetModel)
+        public ExecuteCommandPutIntoFolder(IBasicActivateItems activator, ManyCataloguesCombineable cmd, string targetModel)
             : this(activator, cmd.Catalogues, targetModel)
         {
             
         }
 
-        private ExecuteCommandPutCatalogueIntoCatalogueFolder(IBasicActivateItems activator, Catalogue[] catalogues, string targetModel) : base(activator)
+        [UseWithObjectConstructor]
+        public ExecuteCommandPutIntoFolder(IBasicActivateItems activator, IHasFolder[] toMove, string folder) : base(activator)
         {
-            _targetModel = targetModel;
-            _catalogues = catalogues;
+            _folder = folder;
+            _toMove = toMove;
         }
         public override void Execute()
         {
             base.Execute();
 
-            foreach (Catalogue c in _catalogues)
+            foreach (IHasFolder c in _toMove)
             {
-                c.Folder = _targetModel;
+                c.Folder = _folder;
                 c.SaveToDatabase();
             }
 
-            //Catalogue folder has changed so publish the change (but only change the last Catalogue so we don't end up subing a million global refreshes changes)
-            Publish(_catalogues.Last());
+            //Folder has changed so publish the change (but only change the last Catalogue so we don't end up subing a million global refreshes changes)
+            Publish(_toMove.Last());
         }
     }
 }

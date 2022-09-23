@@ -160,7 +160,7 @@ namespace Rdmp.Core.CommandExecution
                 };
             }
 
-            if(Is(o,out FolderNode<ICatalogue> cf))
+            if(Is(o,out FolderNode<Catalogue> cf))
             {
                 yield return new ExecuteCommandCreateNewCatalogueByImportingFile(_activator) { 
                     OverrideCommandName = "New Catalogue From File...",TargetFolder = cf.FullName, SuggestedCategory = Add, Weight = -90.9f};

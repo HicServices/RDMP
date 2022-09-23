@@ -135,11 +135,11 @@ namespace Rdmp.UI.CommandExecution
             var sourceManyCatalogues = cmd as ManyCataloguesCombineable;
             var file = cmd as FileCollectionCombineable;
 
-            if (cmd is CatalogueCombineable sourceCatalogue)
-                return new ExecuteCommandPutCatalogueIntoCatalogueFolder(_activator, sourceCatalogue, targetFolder.FullName);
+            if (cmd is IHasFolderCombineable sourceFolderable)
+                return new ExecuteCommandPutIntoFolder(_activator, sourceFolderable, targetFolder.FullName);
             
             if (sourceManyCatalogues != null)
-                return new ExecuteCommandPutCatalogueIntoCatalogueFolder(_activator, sourceManyCatalogues, targetFolder.FullName);
+                return new ExecuteCommandPutIntoFolder(_activator, sourceManyCatalogues, targetFolder.FullName);
 
             if(file != null)
                 if(file.Files.Length == 1)

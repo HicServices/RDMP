@@ -213,7 +213,7 @@ namespace Rdmp.UI.Collections
             CommonTreeFunctionality.MaintainRootObjects = new[]
             {
                 typeof (AllGovernanceNode),
-                typeof (FolderNode<ICatalogue>)
+                typeof (FolderNode<Catalogue>)
             };
 
             //Things that are always visible regardless
@@ -298,7 +298,7 @@ namespace Rdmp.UI.Collections
         public static bool IsRootObject(object root)
         {
             // The root ICatalogue FolderNode is a root element in this tree
-            if(root is FolderNode<ICatalogue> f)
+            if(root is FolderNode<Catalogue> f)
             {
                 return f.Name == FolderHelper.Root;
             }

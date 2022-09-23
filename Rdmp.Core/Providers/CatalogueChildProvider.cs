@@ -201,7 +201,7 @@ namespace Rdmp.Core.Providers
 
         public AllOrphanAggregateConfigurationsNode OrphanAggregateConfigurationsNode { get;set; } = new ();
         public AllTemplateAggregateConfigurationsNode TemplateAggregateConfigurationsNode { get; set; } = new ();
-        public FolderNode<ICatalogue> CatalogueRootFolder { get; }
+        public FolderNode<Catalogue> CatalogueRootFolder { get; }
 
         public HashSet<AggregateConfiguration> OrphanAggregateConfigurations;
         public AggregateConfiguration[] TemplateAggregateConfigurations;
@@ -371,8 +371,8 @@ namespace Rdmp.Core.Providers
             InjectCatalogueItems();
 
             var cicRoot = FolderHelper.BuildFolderTree(AllCohortIdentificationConfigurations);
-            CatalogueRootFolder = FolderHelper.BuildFolderTree(AllCatalogues.Cast<ICatalogue>().ToArray());
-
+            
+            CatalogueRootFolder = FolderHelper.BuildFolderTree(AllCatalogues);
             AddChildren(CatalogueRootFolder, new DescendancyList(CatalogueRootFolder));
 
             ReportProgress("Build Catalogue Folder Root");
@@ -824,7 +824,7 @@ namespace Rdmp.Core.Providers
             AddToDictionaries(new HashSet<object>(AllANOTables), new DescendancyList(anoTablesNode));
         }
 
-        private void AddChildren<T>(FolderNode<T> folder, DescendancyList descendancy) where T: class, IHasFolder
+        private void AddChildren(FolderNode<Catalogue> folder, DescendancyList descendancy)
         {
             foreach(var child in folder.ChildFolders)
             {
@@ -833,12 +833,9 @@ namespace Rdmp.Core.Providers
             };
 
             //add catalogues in folder
-            foreach(var obj in folder.ChildObjects)
+            foreach(var c in folder.ChildObjects)
             {
-                if(obj is Catalogue c)
-                {
-                    AddChildren(c, descendancy.Add(c));
-                }
+                AddChildren(c, descendancy.Add(c));                
             }
             
             // Children are the folders + objects

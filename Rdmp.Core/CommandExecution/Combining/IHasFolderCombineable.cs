@@ -4,16 +4,16 @@
 // RDMP is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License for more details.
 // You should have received a copy of the GNU General Public License along with RDMP. If not, see <https://www.gnu.org/licenses/>.
 
-using MapsDirectlyToDatabaseTable;
+using Rdmp.Core.Curation.Data;
 
-namespace Rdmp.Core.Curation.Data
+namespace Rdmp.Core.CommandExecution.Combining
 {
-    public interface IHasFolder : IMapsDirectlyToDatabaseTable, ISaveable
+    /// <summary>
+    /// <see cref="ICombineableSource"/> interface for anyone who hosts an <see cref="IHasFolder"/> object
+    /// and wants to support drag and drop onto folders
+    /// </summary>
+    public interface IHasFolderCombineable: ICombineToMakeCommand
     {
-        /// <summary>
-        /// A useful virtual folder in which to depict the object.  Note that this is not usually
-        /// a Directory (i.e. not a file system folder)
-        /// </summary>
-        string Folder { get; set; }
+        IHasFolder Folderable { get; }
     }
 }

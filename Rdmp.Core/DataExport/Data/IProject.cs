@@ -21,7 +21,7 @@ namespace Rdmp.Core.DataExport.Data
     /// 
     /// <para>The <see cref="ProjectNumber"/> must match the project number of the cohorts in your cohort database.</para>
     /// </summary>
-    public interface IProject:IHasDependencies, INamed
+    public interface IProject:IHasDependencies, INamed, IHasFolder
     {
         /// <summary>
         /// Optional ticket identifier for auditing time, project requirements etc.  Should be compatible with your currently configured <see cref="ITicketingSystem"/>

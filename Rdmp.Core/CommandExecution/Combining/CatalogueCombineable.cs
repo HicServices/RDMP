@@ -15,11 +15,13 @@ namespace Rdmp.Core.CommandExecution.Combining
     /// <summary>
     /// <see cref="ICombineToMakeCommand"/> for an object of type <see cref="Catalogue"/>
     /// </summary>
-    public class CatalogueCombineable : ICombineToMakeCommand
+    public class CatalogueCombineable : ICombineToMakeCommand, IHasFolderCombineable
     {
         public bool ContainsAtLeastOneExtractionIdentifier { get; private set; }
         public Catalogue Catalogue { get; set; }
         public CohortIdentificationConfiguration.ChooseWhichExtractionIdentifierToUseFromManyHandler ResolveMultipleExtractionIdentifiers { get; set; }
+
+        public IHasFolder Folderable => Catalogue;
 
         public CatalogueCombineable(Catalogue catalogue)
         {

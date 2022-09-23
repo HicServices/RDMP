@@ -52,6 +52,7 @@ namespace Rdmp.Core.Providers
 
         public ExtractableDataSetPackage[] AllPackages { get; set; }
         
+        public FolderNode<Project> ProjectRootFolder { get; }
         public Project[] Projects { get; set; }
 
         private Dictionary<int,HashSet<ExtractableCohort>> _cohortsByOriginId;
@@ -171,8 +172,8 @@ namespace Rdmp.Core.Providers
             
             ReportProgress("Packages and Cohorts");
 
-            foreach (Project p in Projects)
-                AddChildren(p, new DescendancyList(p));
+            ProjectRootFolder = FolderHelper.BuildFolderTree(Projects);
+            AddChildren(ProjectRootFolder, new DescendancyList(ProjectRootFolder));
             
             ReportProgress("Projects");
 
@@ -208,6 +209,28 @@ namespace Rdmp.Core.Providers
             ReportProgress("Pipeline adding");
 
             GetPluginChildren();
+        }
+
+
+        private void AddChildren(FolderNode<Project> folder, DescendancyList descendancy)
+        {
+            foreach (var child in folder.ChildFolders)
+            {
+                //add subfolder children
+                AddChildren(child, descendancy.Add(child));
+            };
+
+            //add catalogues in folder
+            foreach (var project in folder.ChildObjects)
+            {
+                AddChildren(project, descendancy.Add(project));
+            }
+
+            // Children are the folders + objects
+            AddToDictionaries(new HashSet<object>(
+                    folder.ChildFolders.Cast<object>()
+                    .Union(folder.ChildObjects)), descendancy
+                    );
         }
 
         private void BuildSelectedDatasets()
@@ -696,7 +719,6 @@ namespace Rdmp.Core.Providers
             lock(WriteLock)
             {
                 var toReturn = base.GetAllSearchables();
-                AddToReturnSearchablesWithNoDecendancy(toReturn,Projects);
                 AddToReturnSearchablesWithNoDecendancy(toReturn, AllPackages);
                 return toReturn;
             }

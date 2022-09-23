@@ -478,17 +478,15 @@ namespace Rdmp.Core.Tests.Curation.Integration
 
         }
 
-        class TestClass : IHasFolder
-        {
-            public string Folder { get; set; }
-        }
 
         [TestCase("\\","\\")]
         [TestCase("\\fish", "fish")]
         [TestCase("\\fish\\dog\\cat", "cat")]
         public void TestTreeNode_FullName_CleanPaths(string fullName,string expectedName)
         {
-            var r1 = new TestClass { Folder = fullName};
+            var r1 = WhenIHaveA<Catalogue>();
+            r1.Folder = fullName;
+
             var tree = FolderHelper.BuildFolderTree(new[] { r1 });
 
             var bottomFolder = tree;
@@ -512,14 +510,21 @@ namespace Rdmp.Core.Tests.Curation.Integration
         [Test]
         public void TestBuildFolderTree()
         {
-            var r1 = new TestClass { Folder = "\\"};
-            var r2 = new TestClass { Folder = "\\" };
+            var r1 = WhenIHaveA<Catalogue>();
+            r1.Folder = "\\";
 
-            var cat = new TestClass { Folder = "\\dog\\fish\\cat" };
-            
+            var r2 = WhenIHaveA<Catalogue>();
+            r2.Folder = "\\";
+
+            var cat = WhenIHaveA<Catalogue>();
+            cat.Folder = "\\dog\\fish\\cat";
+
             // give it some malformed ones too
-            var fun = new TestClass { Folder = "\\fun" };
-            var morefun = new TestClass { Folder = "\\fun" };
+            var fun = WhenIHaveA<Catalogue>();
+            fun.Folder = "\\fun";
+
+            var morefun = WhenIHaveA<Catalogue>();
+            morefun.Folder = "\\fun";
 
             var objects = new IHasFolder[]
             {
@@ -549,9 +554,11 @@ namespace Rdmp.Core.Tests.Curation.Integration
         [Test]
         public void TestBuildFolderTree_MiddleBranches()
         {
-            var cata1 = new TestClass { Folder = "\\somefolder" };
+            var cata1 = WhenIHaveA<Catalogue>();
+            cata1.Folder = "\\somefolder";
 
-            var cata2 = new TestClass { Folder = "\\somefolder\\somesub" };
+            var cata2 = WhenIHaveA<Catalogue>();
+            cata2.Folder = "\\somefolder\\somesub";
 
             var objects = new IHasFolder[]
             {
