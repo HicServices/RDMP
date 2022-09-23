@@ -140,7 +140,7 @@ namespace Rdmp.Core.Providers
         } }
 
         public AllPermissionWindowsNode AllPermissionWindowsNode { get; set; }
-        public AllLoadMetadatasNode AllLoadMetadatasNode { get; set; }
+        public FolderNode<LoadMetadata> LoadMetadataRootFolder { get; set; }
 
         public AllConnectionStringKeywordsNode AllConnectionStringKeywordsNode { get; set; }
         public ConnectionStringKeyword[] AllConnectionStringKeywords { get; set; }
@@ -201,7 +201,7 @@ namespace Rdmp.Core.Providers
 
         public AllOrphanAggregateConfigurationsNode OrphanAggregateConfigurationsNode { get;set; } = new ();
         public AllTemplateAggregateConfigurationsNode TemplateAggregateConfigurationsNode { get; set; } = new ();
-        public FolderNode<Catalogue> CatalogueRootFolder { get; }
+        public FolderNode<Catalogue> CatalogueRootFolder { get; private set;}
 
         public HashSet<AggregateConfiguration> OrphanAggregateConfigurations;
         public AggregateConfiguration[] TemplateAggregateConfigurations;
@@ -376,9 +376,9 @@ namespace Rdmp.Core.Providers
             AddChildren(CatalogueRootFolder, new DescendancyList(CatalogueRootFolder));
 
             ReportProgress("Build Catalogue Folder Root");
-            
-            AllLoadMetadatasNode = new AllLoadMetadatasNode();
-            AddChildren(AllLoadMetadatasNode);
+
+            LoadMetadataRootFolder = FolderHelper.BuildFolderTree(AllLoadMetadatas);
+            AddChildren(LoadMetadataRootFolder,new DescendancyList(LoadMetadataRootFolder));
 
             foreach (CohortIdentificationConfiguration cic in AllCohortIdentificationConfigurations)
                 AddChildren(cic);
@@ -607,21 +607,7 @@ namespace Rdmp.Core.Providers
             
             AddToDictionaries(children, descendancy);
         }
-
-
-        private void AddChildren(AllLoadMetadatasNode allLoadMetadatasNode)
-        {
-            HashSet<object> children = new HashSet<object>();
-            var descendancy = new DescendancyList(allLoadMetadatasNode);
-
-            foreach (LoadMetadata lmd in AllLoadMetadatas)
-            {
-                children.Add(lmd);
-                AddChildren(lmd, descendancy.Add(lmd));
-            }
-
-            AddToDictionaries(children,descendancy);
-        }
+                
 
         private void AddChildren(AllPermissionWindowsNode allPermissionWindowsNode)
         {
@@ -836,6 +822,26 @@ namespace Rdmp.Core.Providers
             foreach(var c in folder.ChildObjects)
             {
                 AddChildren(c, descendancy.Add(c));                
+            }
+            
+            // Children are the folders + objects
+            AddToDictionaries(new HashSet<object>(
+                    folder.ChildFolders.Cast<object>()
+                    .Union(folder.ChildObjects)),descendancy 
+                    );
+        }
+        private void AddChildren(FolderNode<LoadMetadata> folder, DescendancyList descendancy)
+        {
+            foreach(var child in folder.ChildFolders)
+            {
+                //add subfolder children
+                AddChildren(child, descendancy.Add(child));
+            };
+
+            //add loads in folder
+            foreach(var lmd in folder.ChildObjects)
+            {
+                AddChildren(lmd, descendancy.Add(lmd));
             }
             
             // Children are the folders + objects
@@ -1704,7 +1710,8 @@ namespace Rdmp.Core.Providers
             AllExtractionInformationsDictionary = otherCat.AllExtractionInformationsDictionary;
             _pluginChildProviders = otherCat._pluginChildProviders;
             AllPermissionWindowsNode = otherCat.AllPermissionWindowsNode;
-            AllLoadMetadatasNode = otherCat.AllLoadMetadatasNode;
+            LoadMetadataRootFolder = otherCat.LoadMetadataRootFolder;
+            CatalogueRootFolder = otherCat.CatalogueRootFolder;
             AllConnectionStringKeywordsNode = otherCat.AllConnectionStringKeywordsNode;
             AllConnectionStringKeywords = otherCat.AllConnectionStringKeywords;
             AllAggregateContainersDictionary = otherCat.AllAggregateContainersDictionary;

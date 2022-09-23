@@ -52,7 +52,7 @@ namespace Rdmp.Core.Providers
 
         public ExtractableDataSetPackage[] AllPackages { get; set; }
         
-        public FolderNode<Project> ProjectRootFolder { get; }
+        public FolderNode<Project> ProjectRootFolder { get; private set;}
         public Project[] Projects { get; set; }
 
         private Dictionary<int,HashSet<ExtractableCohort>> _cohortsByOriginId;
@@ -798,6 +798,7 @@ namespace Rdmp.Core.Providers
                 dataExportRepository = dxOther.dataExportRepository;
                 _extractionInformationsByCatalogueItem = dxOther._extractionInformationsByCatalogueItem;
                 _extractionProgressesBySelectedDataSetID = dxOther._extractionProgressesBySelectedDataSetID;
+                ProjectRootFolder = dxOther.ProjectRootFolder;
             }
             
         }

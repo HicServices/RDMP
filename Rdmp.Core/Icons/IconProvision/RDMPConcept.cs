@@ -154,7 +154,6 @@ namespace Rdmp.Core.Icons.IconProvision
         FrozenExtractionConfigurationsNode,
         ProjectCataloguesNode,
 
-        AllLoadMetadatasNode,
         AllPermissionWindowsNode,
 
 

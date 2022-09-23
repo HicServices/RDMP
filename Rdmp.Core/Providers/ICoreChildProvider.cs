@@ -45,6 +45,7 @@ namespace Rdmp.Core.Providers
         JoinableCohortAggregateConfigurationUse[] AllJoinUses { get; set; }
 
         FolderNode<Catalogue> CatalogueRootFolder { get; }
+        FolderNode<LoadMetadata> LoadMetadataRootFolder { get; }
 
         Catalogue[] AllCatalogues { get; }
         Dictionary<int, Catalogue> AllCataloguesDictionary { get; }
@@ -90,7 +91,6 @@ namespace Rdmp.Core.Providers
         Dictionary<int, ExtractionInformation> AllExtractionInformationsDictionary { get; }
 
         AllPermissionWindowsNode AllPermissionWindowsNode { get; set; }
-        AllLoadMetadatasNode AllLoadMetadatasNode { get; set; }
         AllConnectionStringKeywordsNode AllConnectionStringKeywordsNode { get; set; }
         AllStandardRegexesNode AllStandardRegexesNode { get;}
         AllPipelinesNode AllPipelinesNode { get; }

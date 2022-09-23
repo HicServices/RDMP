@@ -85,7 +85,7 @@ namespace Rdmp.UI.Collections
             CommonTreeFunctionality.WhitespaceRightClickMenuCommandsGetter = (a)=>new IAtomicCommand[] {new ExecuteCommandCreateNewLoadMetadata(a)};
             
             tlvLoadMetadata.AddObject(Activator.CoreChildProvider.AllPermissionWindowsNode);
-            tlvLoadMetadata.AddObject(Activator.CoreChildProvider.AllLoadMetadatasNode);
+            tlvLoadMetadata.AddObject(Activator.CoreChildProvider.LoadMetadataRootFolder);
 
             BuildCommandList();
 
@@ -102,7 +102,7 @@ namespace Rdmp.UI.Collections
         public void RefreshBus_RefreshObject(object sender, RefreshObjectEventArgs e)
         {
             if (e.Object is LoadMetadata)
-                tlvLoadMetadata.RefreshObject(tlvLoadMetadata.Objects.OfType<AllLoadMetadatasNode>());
+                tlvLoadMetadata.RefreshObject(Activator.CoreChildProvider.LoadMetadataRootFolder);
 
             if (e.Object is PermissionWindow)
                 tlvLoadMetadata.RefreshObject(tlvLoadMetadata.Objects.OfType<AllPermissionWindowsNode>());
@@ -115,9 +115,14 @@ namespace Rdmp.UI.Collections
         
         public static bool IsRootObject(object root)
         {
+            // The root LoadMetadata FolderNode is a root element in this tree
+            if (root is FolderNode<LoadMetadata> f)
+            {
+                return f.Name == FolderHelper.Root;
+            }
+
             return
-                root is AllPermissionWindowsNode ||
-                root is AllLoadMetadatasNode;
+                root is AllPermissionWindowsNode;
         }
 
         public void BuildCommandList()

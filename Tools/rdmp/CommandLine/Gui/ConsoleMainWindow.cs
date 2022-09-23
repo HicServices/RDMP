@@ -515,14 +515,14 @@ namespace Rdmp.Core.CommandLine.Gui
         {
             var type = o.GetType();
 
-            if(type == typeof(string) || type == typeof(FolderHelper))
+            if(type == typeof(FolderNode<Catalogue>) || type == typeof(FolderHelper))
                 return Catalogues;
 
             if(type == typeof(Project))
                 return Projects;
             if(type == typeof(LoadMetadata))	
                 return Loads;
-            if (type == typeof(AllLoadMetadatasNode))
+            if (type == typeof(FolderNode<LoadMetadata>))
                 return Loads;
 
             if (type == typeof(AllFreeCohortIdentificationConfigurationsNode) || 

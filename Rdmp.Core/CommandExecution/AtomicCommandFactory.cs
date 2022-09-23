@@ -441,7 +441,7 @@ namespace Rdmp.Core.CommandExecution
                 yield return new ExecuteCommandAddNewGovernanceDocument(_activator, null) { OverrideCommandName = "Add New Governance Document" };
             }
 
-            if (Is(o,out AllLoadMetadatasNode _))
+            if (Is(o,out FolderNode<LoadMetadata> _))
             {
                 yield return new ExecuteCommandCreateNewLoadMetadata(_activator);
                 yield return new ExecuteCommandImportShareDefinitionList(_activator){OverrideCommandName = "Import Load"};
