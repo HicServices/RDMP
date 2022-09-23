@@ -94,15 +94,24 @@ namespace Rdmp.UI.MainFormUITabs.SubComponents
             //do not mess with the table name if it is a table valued function
             if (_tableInfo.IsTableValuedFunction)
                 return true;
+            try
+            {
+                var newName = _tableInfo.GetFullyQualifiedName();
+                _tableInfo.Name = newName;
+
+                var oldName = _tableInfo.Repository.GetObjectByID<TableInfo>(_tableInfo.ID).GetFullyQualifiedName();
+
+                if (oldName != newName && Activator.YesNo("You have just renamed a TableInfo, would you like to refactor your changes into ExtractionInformations?", "Apply Code Refactoring?"))
+                    DoRefactoring(oldName, newName);
+
+            }
+            catch (Exception)
+            {
+                // could not refactor or other problem
+                // just give up on trying to be helpful
+                return true;
+            }
             
-            var newName = _tableInfo.GetFullyQualifiedName();
-            _tableInfo.Name = newName;
-
-            var oldName = _tableInfo.Repository.GetObjectByID<TableInfo>(_tableInfo.ID).GetFullyQualifiedName();
-
-            if (oldName != newName && Activator.YesNo("You have just renamed a TableInfo, would you like to refactor your changes into ExtractionInformations?", "Apply Code Refactoring?"))
-                DoRefactoring(oldName,newName);     
-
             return true;
         }
         private void DoRefactoring(string toReplace, string toReplaceWith)
