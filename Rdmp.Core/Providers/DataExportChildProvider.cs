@@ -81,11 +81,8 @@ namespace Rdmp.Core.Providers
         /// ID of all CohortIdentificationConfiguration which have an ProjectCohortIdentificationConfigurationAssociation declared on them (i.e. the CIC is used with one or more Projects)
         /// </summary>
         private HashSet<int> _cicAssociations;
-
-        public AllFreeCohortIdentificationConfigurationsNode AllFreeCohortIdentificationConfigurationsNode = new AllFreeCohortIdentificationConfigurationsNode();
-        public AllProjectCohortIdentificationConfigurationsNode AllProjectCohortIdentificationConfigurationsNode = new AllProjectCohortIdentificationConfigurationsNode();
+                
         private HashSet<ISelectedDataSets> _selectedDataSetsWithNoIsExtractionIdentifier;
-
 
         /// <summary>
         /// All AND/OR containers found during construction (in the data export database).  The Key is the ID of the container (for rapid random access)
@@ -113,9 +110,6 @@ namespace Rdmp.Core.Providers
             CohortSources = GetAllObjects<ExternalCohortTable>(dataExportRepository);
             ExtractableDataSets = GetAllObjects<ExtractableDataSet>(dataExportRepository);
             
-            AddToDictionaries(new HashSet<object>(AllCohortIdentificationConfigurations.Where(cic => _cicAssociations.Contains(cic.ID))), new DescendancyList(AllProjectCohortIdentificationConfigurationsNode));
-            AddToDictionaries(new HashSet<object>(AllCohortIdentificationConfigurations.Where(cic => !_cicAssociations.Contains(cic.ID))), new DescendancyList(AllFreeCohortIdentificationConfigurationsNode));
-
             //This means that the ToString method in ExtractableDataSet doesn't need to go lookup catalogue info
             var catalogueIdDict = AllCatalogues.ToDictionary(c => c.ID, c2 => c2);
             foreach (ExtractableDataSet ds in ExtractableDataSets)
@@ -789,8 +783,6 @@ namespace Rdmp.Core.Providers
                 AllProjectAssociatedCics = dxOther.AllProjectAssociatedCics;
                 AllGlobalExtractionFilterParameters = dxOther.AllGlobalExtractionFilterParameters;
                 _cicAssociations = dxOther._cicAssociations;
-                AllFreeCohortIdentificationConfigurationsNode = dxOther.AllFreeCohortIdentificationConfigurationsNode;
-                AllProjectCohortIdentificationConfigurationsNode = dxOther.AllProjectCohortIdentificationConfigurationsNode;
                 _selectedDataSetsWithNoIsExtractionIdentifier = dxOther._selectedDataSetsWithNoIsExtractionIdentifier;
                 AllContainers = dxOther.AllContainers;
                 AllDeployedExtractionFilters = dxOther.AllDeployedExtractionFilters;

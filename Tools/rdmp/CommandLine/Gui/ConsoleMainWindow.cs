@@ -451,7 +451,7 @@ namespace Rdmp.Core.CommandLine.Gui
             {
                 // Top level brackets for the tree view
                 if (ReferenceEquals(model , Catalogues))
-                    return new []{FolderHelper.Root };
+                    return new []{_activator.CoreChildProvider.CatalogueRootFolder };
                 
                 if (ReferenceEquals(model , Projects)  && dx != null)
                     return dx.Projects;
@@ -460,15 +460,7 @@ namespace Rdmp.Core.CommandLine.Gui
                     return _activator.CoreChildProvider.AllLoadMetadatas;
                 
                 if (ReferenceEquals(model , CohortConfigs))
-                    if(dx != null)
-                    {
-                        return new object[]{
-                            dx.AllProjectCohortIdentificationConfigurationsNode,
-                            dx.AllFreeCohortIdentificationConfigurationsNode 
-                            };
-                    }
-                    else
-                        return _activator.CoreChildProvider.AllCohortIdentificationConfigurations;
+                        return new[] { _activator.CoreChildProvider.CohortIdentificationConfigurationRootFolder };
                 
                 if (ReferenceEquals(model , BuiltCohorts) && dx != null)
                     return dx.CohortSources;
@@ -525,9 +517,7 @@ namespace Rdmp.Core.CommandLine.Gui
             if (type == typeof(FolderNode<LoadMetadata>))
                 return Loads;
 
-            if (type == typeof(AllFreeCohortIdentificationConfigurationsNode) || 
-                type == typeof(AllProjectCohortIdentificationConfigurationsNode) ||
-                type == typeof(CohortIdentificationConfiguration))
+            if (type == typeof(FolderNode<LoadMetadata>))
                 return CohortConfigs;
 
             if(type == typeof(ExtractableCohort))

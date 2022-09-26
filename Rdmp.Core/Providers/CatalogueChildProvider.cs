@@ -141,6 +141,7 @@ namespace Rdmp.Core.Providers
 
         public AllPermissionWindowsNode AllPermissionWindowsNode { get; set; }
         public FolderNode<LoadMetadata> LoadMetadataRootFolder { get; set; }
+        public FolderNode<CohortIdentificationConfiguration> CohortIdentificationConfigurationRootFolder { get; set; }
 
         public AllConnectionStringKeywordsNode AllConnectionStringKeywordsNode { get; set; }
         public ConnectionStringKeyword[] AllConnectionStringKeywords { get; set; }
@@ -369,9 +370,7 @@ namespace Rdmp.Core.Providers
 
             //add a new CatalogueItemNodes
             InjectCatalogueItems();
-
-            var cicRoot = FolderHelper.BuildFolderTree(AllCohortIdentificationConfigurations);
-            
+                        
             CatalogueRootFolder = FolderHelper.BuildFolderTree(AllCatalogues);
             AddChildren(CatalogueRootFolder, new DescendancyList(CatalogueRootFolder));
 
@@ -380,8 +379,9 @@ namespace Rdmp.Core.Providers
             LoadMetadataRootFolder = FolderHelper.BuildFolderTree(AllLoadMetadatas);
             AddChildren(LoadMetadataRootFolder,new DescendancyList(LoadMetadataRootFolder));
 
-            foreach (CohortIdentificationConfiguration cic in AllCohortIdentificationConfigurations)
-                AddChildren(cic);
+
+            CohortIdentificationConfigurationRootFolder = FolderHelper.BuildFolderTree(AllCohortIdentificationConfigurations);
+            AddChildren(CohortIdentificationConfigurationRootFolder, new DescendancyList(CohortIdentificationConfigurationRootFolder));
 
             var templateAggregateConfigurationIds =
                 new HashSet<int>(
@@ -850,6 +850,26 @@ namespace Rdmp.Core.Providers
                     .Union(folder.ChildObjects)),descendancy 
                     );
         }
+        private void AddChildren(FolderNode<CohortIdentificationConfiguration> folder, DescendancyList descendancy)
+        {
+            foreach(var child in folder.ChildFolders)
+            {
+                //add subfolder children
+                AddChildren(child, descendancy.Add(child));
+            };
+
+            //add cics in folder
+            foreach(var cic in folder.ChildObjects)
+            {
+                AddChildren(cic, descendancy.Add(cic));
+            }
+
+            // Children are the folders + objects
+            AddToDictionaries(new HashSet<object>(
+                    folder.ChildFolders.Cast<object>()
+                    .Union(folder.ChildObjects)),descendancy 
+                    );
+        }
 
         #region Load Metadata
         private void AddChildren(LoadMetadata lmd, DescendancyList descendancy)
@@ -1219,7 +1239,7 @@ namespace Rdmp.Core.Providers
             AddToDictionaries(children, descendancy);
         }
 
-        private void AddChildren(CohortIdentificationConfiguration cic)
+        private void AddChildren(CohortIdentificationConfiguration cic, DescendancyList descendancy)
         {
             HashSet<object> children = new HashSet<object>();
 
@@ -1237,17 +1257,16 @@ namespace Rdmp.Core.Providers
             if (cic.RootCohortAggregateContainer_ID != null)
             {
                 var container = AllCohortAggregateContainers.Single(c => c.ID == cic.RootCohortAggregateContainer_ID);
-                AddChildren(container, new DescendancyList(cic, container).SetBetterRouteExists());
+                AddChildren(container, descendancy.Add(container).SetBetterRouteExists());
                 children.Add(container);
             }
 
-
             //get the patient index tables
             var joinableNode = new JoinableCollectionNode(cic, AllJoinables.Where(j => j.CohortIdentificationConfiguration_ID == cic.ID).ToArray());
-            AddChildren(joinableNode, new DescendancyList(cic, joinableNode).SetBetterRouteExists());
+            AddChildren(joinableNode, descendancy.Add(joinableNode).SetBetterRouteExists());
             children.Add(joinableNode);
 
-            AddToDictionaries(children, new DescendancyList(cic).SetBetterRouteExists());
+            AddToDictionaries(children, descendancy.SetBetterRouteExists());
         }
 
         private void AddChildren(JoinableCollectionNode joinablesNode, DescendancyList descendancy)
@@ -1820,7 +1839,7 @@ namespace Rdmp.Core.Providers
                 {
                     BuildAggregateConfigurations();
                     BuildCohortCohortAggregateContainers();
-                    AddChildren(cic);
+                    AddChildren(cic,descendancy.Add(cic));
                     return true;
                 }
             }

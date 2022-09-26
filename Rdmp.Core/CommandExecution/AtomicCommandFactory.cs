@@ -376,9 +376,8 @@ namespace Rdmp.Core.CommandExecution
                 yield return new ExecuteCommandClearQueryCache(_activator, cicQueryCache.User);
             }
 
-            if(Is(o,out AllFreeCohortIdentificationConfigurationsNode _) || Is(o,out AllProjectCohortIdentificationConfigurationsNode _))
+            if(Is(o,out FolderNode<CohortIdentificationConfiguration> _))
                 yield return new ExecuteCommandCreateNewCohortIdentificationConfiguration(_activator) { PromptToPickAProject=true};
-
 
             if (Is(o, out IJoin j))
             {

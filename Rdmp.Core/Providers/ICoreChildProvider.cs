@@ -46,6 +46,7 @@ namespace Rdmp.Core.Providers
 
         FolderNode<Catalogue> CatalogueRootFolder { get; }
         FolderNode<LoadMetadata> LoadMetadataRootFolder { get; }
+        FolderNode<CohortIdentificationConfiguration> CohortIdentificationConfigurationRootFolder { get; }
 
         Catalogue[] AllCatalogues { get; }
         Dictionary<int, Catalogue> AllCataloguesDictionary { get; }
@@ -147,6 +148,7 @@ namespace Rdmp.Core.Providers
         ProcessTask[] AllProcessTasks { get; }
         
         ProcessTaskArgument[] AllProcessTasksArguments { get; }
+        
 
         /// <summary>
         /// Returns all objects in the tree hierarchy that are assignable to the supplied <paramref name="type"/>
