@@ -121,6 +121,8 @@ class ProposeExecutionWhenTargetIsProject:RDMPCommandExecutionProposal<Project>
 
 ## Drag and Drop
 
+For full docs on drag/drop see [Double Cick And Drag Drop](./DoubleClickAndDragDrop.md)
+
 Drag and drop in tree views is handled through the `RDMPCommandExecutionProposal<T>` class (which also deals with [double clicking](#double-clicking)).  All dragged objects are encapsulated in an `ICombineToMakeCommand` which is generated when a drag operation begins in the program.  The sequence is:
 
 1. Drag operation starts
@@ -172,6 +174,8 @@ public override ICommandExecution ProposeExecution(ICombineToMakeCommand cmd, Pr
 Adding support for dragging a new object (not currently draggable) involves creating a new `ICombineToMakeCommand` and implementing its construction logic in `RDMPCombineableFactory`
 
 ## Menus
+
+For full docs on menu see [Creating a new Right Click Menu](./CreatingANewRightClickMenu.md)
 
 Right click menus for objects are created by subclassing `RDMPContextMenuStrip`.  Once a menu has been created it will be automatically shown when right clicking.  Menus must be in the `Menus` namespace of a project and should be named XMenu where X is the object for whom the menu is shown e.g. `CatalogueMenu`.
 
