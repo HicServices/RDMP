@@ -2161,5 +2161,16 @@ namespace Rdmp.Core.Icons.IconProvision
                 return ((Byte[])(obj));
             }
         }
+        /// <summary>
+        ///   Looks up a localized resource of type Image.
+        /// </summary>
+        public static Byte[] TableInfoDatabaseNode
+        {
+            get
+            {
+                object obj = ResourceManager.GetObject("TableInfoDatabaseNode", resourceCulture);
+                return ((Byte[])(obj));
+            }
+        }
     }
 }

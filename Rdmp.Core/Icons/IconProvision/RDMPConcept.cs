@@ -203,6 +203,7 @@ namespace Rdmp.Core.Icons.IconProvision
         DataProvider,
         MutilateDataTables,
         Commit,
-        Memento
+        Memento,
+        TableInfoDatabaseNode
     }
 }
