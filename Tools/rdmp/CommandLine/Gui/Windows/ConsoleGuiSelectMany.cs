@@ -73,7 +73,7 @@ namespace Rdmp.Core.CommandLine.Gui.Windows
             _tbSearch.TextChanged += TbSearch_TextChanged;
             Add(_tbSearch);
 
-            Text = prompt;
+            Title = prompt;
             
             this._activator = activator;
         }
