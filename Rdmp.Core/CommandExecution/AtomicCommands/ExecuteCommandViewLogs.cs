@@ -46,8 +46,13 @@ int? Optional, if <root> is logging server this can be a specific audit id to sh
                 
                 if(obj is ILoggedActivityRootObject root)
                     RootObject =  root;
+                else
                 if(obj is ExternalDatabaseServer eds)
                     _loggingServers = new ExternalDatabaseServer[]{eds};
+                else
+                {
+                    throw new Exception($"'{obj}' is of type '{obj.GetType().Name}' which is not '{nameof(ILoggedActivityRootObject)}' so cannot be used with this command.");
+                }
             }
 
             LoggingTables table = LoggingTables.None;
@@ -64,6 +69,7 @@ int? Optional, if <root> is logging server this can be a specific audit id to sh
 
         }
 
+        [UseWithObjectConstructor]
         public ExecuteCommandViewLogs(IBasicActivateItems activator, ILoggedActivityRootObject rootObject) : base(activator)
         {
             RootObject = rootObject;
