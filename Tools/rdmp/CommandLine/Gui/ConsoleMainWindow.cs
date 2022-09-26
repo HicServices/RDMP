@@ -454,10 +454,10 @@ namespace Rdmp.Core.CommandLine.Gui
                     return new []{_activator.CoreChildProvider.CatalogueRootFolder };
                 
                 if (ReferenceEquals(model , Projects)  && dx != null)
-                    return dx.Projects;
-                
+                    return new[] { dx.ProjectRootFolder};
+
                 if (ReferenceEquals(model , Loads))
-                    return _activator.CoreChildProvider.AllLoadMetadatas;
+                    return new[] { _activator.CoreChildProvider.LoadMetadataRootFolder };
                 
                 if (ReferenceEquals(model , CohortConfigs))
                         return new[] { _activator.CoreChildProvider.CohortIdentificationConfigurationRootFolder };
