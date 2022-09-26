@@ -62,6 +62,7 @@ namespace Rdmp.Core.CommandExecution.AtomicCommands
             }
         }
 
+        [UseWithObjectConstructor]
         public ExecuteCommandDescribe(IBasicActivateItems activator, 
             IMapsDirectlyToDatabaseTable[] toDescribe):base(activator)
         {
