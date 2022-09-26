@@ -31,8 +31,25 @@ namespace Rdmp.UI.Tests
             Assert.IsNotNull(desc);
 
             //instead we should get a parent node with the name "Null Server"
-            var parent = (TableInfoServerNode) desc.Parents[desc.Parents.Length - 1];
+            var parent = (TableInfoServerNode) desc.Parents[desc.Parents.Length - 2];
             Assert.AreEqual(TableInfoServerNode.NullServerNode, parent.ServerName);
+        }
+
+        [Test]
+        public void ChildProviderGiven_TableInfoWith_NullDatabase()
+        {
+            var ti = WhenIHaveA<TableInfo>();
+            ti.Database = null;
+            ti.SaveToDatabase();
+
+            //creating a child provider when there are TableInfos with null servers should not crash the API!
+            var provider = new CatalogueChildProvider(Repository.CatalogueRepository, null, new ThrowImmediatelyCheckNotifier(), null);
+            var desc = provider.GetDescendancyListIfAnyFor(ti);
+            Assert.IsNotNull(desc);
+
+            //instead we should get a parent node with the name "Null Server"
+            var parent = (TableInfoDatabaseNode)desc.Parents[desc.Parents.Length - 1];
+            Assert.AreEqual(TableInfoDatabaseNode.NullDatabaseNode, parent.DatabaseName);
         }
 
         [Test]
