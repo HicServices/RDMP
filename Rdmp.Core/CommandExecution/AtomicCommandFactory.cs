@@ -151,13 +151,9 @@ namespace Rdmp.Core.CommandExecution
                     Weight = -99.058f,
                     SuggestedCategory = Metadata };
             }
-            if(Is(o, out IHasFolder folderable) && folderable is IMapsDirectlyToDatabaseTable)
+            if(Is(o, out IHasFolder folderable))
             {
-                yield return new ExecuteCommandSet(_activator, (IMapsDirectlyToDatabaseTable)folderable, o.GetType().GetProperty(nameof(IHasFolder.Folder)))
-                {
-                    OverrideIcon = Image.Load<Rgba32>(CatalogueIcons.CatalogueFolder),
-                    OverrideCommandName = "Set Folder",
-                };
+                yield return new ExecuteCommandPutIntoFolder(_activator, new[] { folderable },null);
             }
 
             if(Is(o,out FolderNode<Catalogue> cf))
@@ -806,8 +802,12 @@ namespace Rdmp.Core.CommandExecution
             {
                 yield return new ExecuteCommandDisableOrEnable(_activator, many.Cast<IDisableable>().ToArray());
             }
+            if (many.Cast<object>().All(d => d is IHasFolder))
+            {
+                yield return new ExecuteCommandPutIntoFolder(_activator, many.Cast<IHasFolder>().ToArray(), null);
+            }
 
-            if(many.Cast<object>().All(t=>t is TableInfo))
+            if (many.Cast<object>().All(t=>t is TableInfo))
             {
                 yield return new ExecuteCommandScriptTables(_activator, many.Cast<TableInfo>().ToArray(), null, null, null);
             }
