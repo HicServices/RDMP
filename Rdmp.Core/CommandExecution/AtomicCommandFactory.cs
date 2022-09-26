@@ -151,16 +151,20 @@ namespace Rdmp.Core.CommandExecution
                     Weight = -99.058f,
                     SuggestedCategory = Metadata };
             }
+            if(Is(o, out IHasFolder folderable))
+            {
+                yield return new ExecuteCommandPutIntoFolder(_activator, new[] { folderable },null);
+            }
 
-            if(Is(o,out string cf))
+            if(Is(o,out FolderNode<Catalogue> cf))
             {
                 yield return new ExecuteCommandCreateNewCatalogueByImportingFile(_activator) { 
-                    OverrideCommandName = "New Catalogue From File...",TargetFolder = cf, SuggestedCategory = Add, Weight = -90.9f};
+                    OverrideCommandName = "New Catalogue From File...",TargetFolder = cf.FullName, SuggestedCategory = Add, Weight = -90.9f};
                 yield return new ExecuteCommandCreateNewCatalogueByImportingExistingDataTable(_activator) {
                     OverrideCommandName = "New Catalogue From Database...",
-                    TargetFolder = cf, SuggestedCategory = Add, Weight = -90.8f };
+                    TargetFolder = cf.FullName, SuggestedCategory = Add, Weight = -90.8f };
                 yield return new ExecuteCommandCreateNewEmptyCatalogue(_activator) {
-                    OverrideCommandName = "New Empty Catalogue (Advanced)",TargetFolder = cf, SuggestedCategory = Add, Weight = -90.7f };
+                    OverrideCommandName = "New Empty Catalogue (Advanced)",TargetFolder = cf.FullName, SuggestedCategory = Add, Weight = -90.7f };
             }
 
             if(Is(o, out ExtractionInformation ei))
@@ -368,9 +372,8 @@ namespace Rdmp.Core.CommandExecution
                 yield return new ExecuteCommandClearQueryCache(_activator, cicQueryCache.User);
             }
 
-            if(Is(o,out AllFreeCohortIdentificationConfigurationsNode _) || Is(o,out AllProjectCohortIdentificationConfigurationsNode _))
+            if(Is(o,out FolderNode<CohortIdentificationConfiguration> _))
                 yield return new ExecuteCommandCreateNewCohortIdentificationConfiguration(_activator) { PromptToPickAProject=true};
-
 
             if (Is(o, out IJoin j))
             {
@@ -433,7 +436,7 @@ namespace Rdmp.Core.CommandExecution
                 yield return new ExecuteCommandAddNewGovernanceDocument(_activator, null) { OverrideCommandName = "Add New Governance Document" };
             }
 
-            if (Is(o,out AllLoadMetadatasNode _))
+            if (Is(o,out FolderNode<LoadMetadata> _))
             {
                 yield return new ExecuteCommandCreateNewLoadMetadata(_activator);
                 yield return new ExecuteCommandImportShareDefinitionList(_activator){OverrideCommandName = "Import Load"};
@@ -799,8 +802,12 @@ namespace Rdmp.Core.CommandExecution
             {
                 yield return new ExecuteCommandDisableOrEnable(_activator, many.Cast<IDisableable>().ToArray());
             }
+            if (many.Cast<object>().All(d => d is IHasFolder))
+            {
+                yield return new ExecuteCommandPutIntoFolder(_activator, many.Cast<IHasFolder>().ToArray(), null);
+            }
 
-            if(many.Cast<object>().All(t=>t is TableInfo))
+            if (many.Cast<object>().All(t=>t is TableInfo))
             {
                 yield return new ExecuteCommandScriptTables(_activator, many.Cast<TableInfo>().ToArray(), null, null, null);
             }

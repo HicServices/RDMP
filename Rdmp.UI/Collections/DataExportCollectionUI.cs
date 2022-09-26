@@ -113,14 +113,14 @@ namespace Rdmp.UI.Collections
 
             CommonTreeFunctionality.WhitespaceRightClickMenuCommandsGetter = (a) => GetWhitespaceRightClickMenu();
             
-            CommonTreeFunctionality.MaintainRootObjects = new Type[]{typeof(ExtractableDataSetPackage),typeof(Project)};
+            CommonTreeFunctionality.MaintainRootObjects = new Type[]{typeof(ExtractableDataSetPackage),typeof(FolderNode<Project>)};
 
             var dataExportChildProvider = activator.CoreChildProvider as DataExportChildProvider;
 
             if(dataExportChildProvider != null)
             {
                 tlvDataExport.AddObjects(dataExportChildProvider.AllPackages);
-                tlvDataExport.AddObjects(dataExportChildProvider.Projects);
+                tlvDataExport.AddObject(dataExportChildProvider.ProjectRootFolder);
             }
             
             if (_isFirstTime)
@@ -129,6 +129,12 @@ namespace Rdmp.UI.Collections
                 CommonTreeFunctionality.SetupColumnTracking(olvProjectNumber, new Guid("2a1764d4-8871-4488-b068-8940b777f90e"));
                 CommonTreeFunctionality.SetupColumnTracking(olvCohortSource, new Guid("c4dabcc3-ccc9-4c9b-906b-e8106e8b616c"));
                 CommonTreeFunctionality.SetupColumnTracking(olvCohortVersion, new Guid("2d0f8d32-090d-4d2b-8cfe-b6d16f5cc419"));
+
+                if(dataExportChildProvider != null)
+                {
+                    tlvDataExport.Expand(dataExportChildProvider.ProjectRootFolder);
+                }
+                
                 _isFirstTime = false;
             }
 
@@ -214,7 +220,7 @@ namespace Rdmp.UI.Collections
         }
         public static bool IsRootObject(object root)
         {
-            return root is Project || root is ExtractableDataSetPackage;
+            return root is FolderNode<Project> || root is ExtractableDataSetPackage;
         }
     }
 

@@ -257,8 +257,8 @@ namespace Rdmp.UI.SimpleDialogs.Reports
 
         private void btnFolder_Click(object sender, EventArgs e)
         {
-            var folders = Activator.CoreChildProvider.GetAllChildrenRecursively(CatalogueFolder.Root).OfType<string>().ToList();
-            folders.Add(CatalogueFolder.Root);
+            var folders = Activator.CoreChildProvider.GetAllChildrenRecursively(FolderHelper.Root).OfType<string>().ToList();
+            folders.Add(FolderHelper.Root);
 
             if(Activator.SelectObject(new DialogArgs
             {

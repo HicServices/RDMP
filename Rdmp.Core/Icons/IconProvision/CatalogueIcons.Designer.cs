@@ -227,26 +227,6 @@ namespace Rdmp.Core.Icons.IconProvision
         /// <summary>
         ///   Looks up a localized resource of type Image.
         /// </summary>
-        public static Byte[] AllLoadMetadatasNode {
-            get {
-                object obj = ResourceManager.GetObject("AllLoadMetadatasNode", resourceCulture);
-                return ((Byte[])(obj));
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized resource of type Image.
-        /// </summary>
-        public static Byte[] AllObjectExportsNode {
-            get {
-                object obj = ResourceManager.GetObject("AllObjectExportsNode", resourceCulture);
-                return ((Byte[])(obj));
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized resource of type Image.
-        /// </summary>
         public static Byte[] AllObjectImportsNode {
             get {
                 object obj = ResourceManager.GetObject("AllObjectImportsNode", resourceCulture);
@@ -2178,6 +2158,17 @@ namespace Rdmp.Core.Icons.IconProvision
             get
             {
                 object obj = ResourceManager.GetObject("Memento", resourceCulture);
+                return ((Byte[])(obj));
+            }
+        }
+        /// <summary>
+        ///   Looks up a localized resource of type Image.
+        /// </summary>
+        public static Byte[] TableInfoDatabaseNode
+        {
+            get
+            {
+                object obj = ResourceManager.GetObject("TableInfoDatabaseNode", resourceCulture);
                 return ((Byte[])(obj));
             }
         }

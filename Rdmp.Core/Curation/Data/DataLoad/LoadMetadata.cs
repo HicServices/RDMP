@@ -44,7 +44,7 @@ namespace Rdmp.Core.Curation.Data.DataLoad
 
 
     /// <inheritdoc cref="ILoadMetadata"/>
-    public class LoadMetadata : DatabaseEntity, ILoadMetadata, IHasDependencies, IHasQuerySyntaxHelper, ILoggedActivityRootObject
+    public class LoadMetadata : DatabaseEntity, ILoadMetadata, IHasDependencies, IHasQuerySyntaxHelper, ILoggedActivityRootObject, IHasFolder
     {
 
         #region Database Properties
@@ -55,6 +55,7 @@ namespace Rdmp.Core.Curation.Data.DataLoad
         private CacheArchiveType _cacheArchiveType;
         private int? _overrideRawServerID;
         private bool _ignoreTrigger;
+        private string _folder;
 
         /// <inheritdoc/>
         [AdjustableLocation]
@@ -118,9 +119,18 @@ namespace Rdmp.Core.Curation.Data.DataLoad
             get { return _ignoreTrigger; }
             set { SetField(ref _ignoreTrigger, value); }
         }
+
+        /// <inheritdoc/>
+        [UsefulProperty]
+        public string Folder
+        {
+            get { return _folder; }
+            set { SetField(ref _folder, FolderHelper.Adjust(value)); }
+        }
+
         #endregion
 
-        
+
         #region Relationships
 
         /// <inheritdoc/>
@@ -167,7 +177,8 @@ namespace Rdmp.Core.Curation.Data.DataLoad
             repository.InsertAndHydrate(this,new Dictionary<string, object>()
             {
                 {"Name",name},
-                { "IgnoreTrigger",false/*todo could be system global default here*/}
+                { "IgnoreTrigger",false/*todo could be system global default here*/},
+                {"Folder",FolderHelper.Root }
             });
         }
 
@@ -182,6 +193,7 @@ namespace Rdmp.Core.Curation.Data.DataLoad
             CacheArchiveType = (CacheArchiveType)r["CacheArchiveType"];
             OverrideRAWServer_ID = ObjectToNullableInt(r["OverrideRAWServer_ID"]);
             IgnoreTrigger = ObjectToNullableBool(r["IgnoreTrigger"])??false;
+            Folder = r["Folder"] as string ?? FolderHelper.Root;
         }
 
         internal LoadMetadata(ShareManager shareManager,ShareDefinition shareDefinition):base()

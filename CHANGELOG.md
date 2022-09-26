@@ -11,6 +11,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Fixed
 
 - Added better error message when there are problems with naming etc of a new cohort being committed [#1408](https://github.com/HicServices/RDMP/issues/1408)
+- Fixed null references when Exceptions are surfaced before main UI has loaded
 - Fixed a null reference trying to save [TableInfo] objects in application after setting the `Database` field to null.
 - Fixed `ViewLogs` command not working from Console Gui
 

@@ -76,8 +76,8 @@ namespace Rdmp.UI.CommandExecution
         private ICommandExecution CreateNoCache(ICombineToMakeCommand cmd, object targetModel,InsertOption insertOption = InsertOption.Default)
         {
             ///////////////Catalogue or ambiguous Drop Targets ////////////////////////
-            if (targetModel is string targetCatalogueFolder)
-                return CreateWhenTargetIsFolder(cmd, targetCatalogueFolder);
+            if (targetModel is IFolderNode folder)
+                return CreateWhenTargetIsFolder(cmd, folder);
             
             /////////////Table Info Drop Targets///////////////////////////////////
             if (targetModel is TableInfo targetTableInfo)
@@ -130,22 +130,22 @@ namespace Rdmp.UI.CommandExecution
         }
 
 
-        private ICommandExecution CreateWhenTargetIsFolder(ICombineToMakeCommand cmd, string targetCatalogueFolder)
+        private ICommandExecution CreateWhenTargetIsFolder(ICombineToMakeCommand cmd, IFolderNode targetFolder)
         {
             var sourceManyCatalogues = cmd as ManyCataloguesCombineable;
             var file = cmd as FileCollectionCombineable;
 
-            if (cmd is CatalogueCombineable sourceCatalogue)
-                return new ExecuteCommandPutCatalogueIntoCatalogueFolder(_activator, sourceCatalogue, targetCatalogueFolder);
+            if (cmd is IHasFolderCombineable sourceFolderable)
+                return new ExecuteCommandPutIntoFolder(_activator, sourceFolderable, targetFolder.FullName);
             
             if (sourceManyCatalogues != null)
-                return new ExecuteCommandPutCatalogueIntoCatalogueFolder(_activator, sourceManyCatalogues, targetCatalogueFolder);
+                return new ExecuteCommandPutIntoFolder(_activator, sourceManyCatalogues, targetFolder.FullName);
 
             if(file != null)
                 if(file.Files.Length == 1)
                 {
                     var toReturn = new ExecuteCommandCreateNewCatalogueByImportingFileUI(_activator,file.Files[0]);
-                    toReturn.TargetFolder = targetCatalogueFolder;
+                    toReturn.TargetFolder = targetFolder.FullName;
                     return toReturn;
                 }
 

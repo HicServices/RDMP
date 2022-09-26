@@ -36,13 +36,13 @@ using YamlDotNet.Serialization;
 namespace Rdmp.Core.Curation.Data
 {
     /// <inheritdoc cref="ICatalogue"/>
-    public class Catalogue : DatabaseEntity, IComparable, ICatalogue, ICheckable, IInjectKnown<CatalogueItem[]>,IInjectKnown<CatalogueExtractabilityStatus>
+    public class Catalogue : DatabaseEntity, IComparable, ICatalogue, ICheckable, IInjectKnown<CatalogueItem[]>,IInjectKnown<CatalogueExtractabilityStatus>, IHasFolder
     {
         #region Database Properties
         
         private string _acronym;
         private string _name;
-        private string _folder = CatalogueFolder.Root;
+        private string _folder = FolderHelper.Root;
         private string _description;
         private Uri _detailPageUrl;
         private CatalogueType _type;
@@ -118,7 +118,7 @@ namespace Rdmp.Core.Curation.Data
         public string Folder
         {
             get { return _folder; }
-            set { SetField(ref  _folder, CatalogueFolder.Adjust(value)); }
+            set { SetField(ref  _folder, FolderHelper.Adjust(value)); }
         }
 
 

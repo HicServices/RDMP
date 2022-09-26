@@ -7,21 +7,18 @@
 using System;
 using System.Linq;
 using System.Windows.Forms;
-using BrightIdeasSoftware;
 using Rdmp.Core;
 using Rdmp.Core.CommandExecution;
 using Rdmp.Core.CommandExecution.AtomicCommands;
 using Rdmp.Core.CommandExecution.AtomicCommands.CatalogueCreationCommands;
 using Rdmp.Core.Curation.Data;
 using Rdmp.Core.Curation.Data.Aggregation;
-using Rdmp.Core.Curation.Data.Cohort;
 using Rdmp.Core.Curation.Data.Governance;
 using Rdmp.Core.Providers.Nodes;
 using Rdmp.UI.Collections.Providers.Filtering;
 using Rdmp.UI.CommandExecution.AtomicCommands;
 using Rdmp.UI.ItemActivation;
 using Rdmp.UI.Refreshing;
-using ReusableLibraryCode.Settings;
 
 namespace Rdmp.UI.Collections
 {
@@ -101,8 +98,10 @@ namespace Rdmp.UI.Collections
         private bool isFirstTime = true;
 
         public void RefreshUIFromDatabase(object oRefreshFrom)
-        {   
-            if(tlvCatalogues.ModelFilter is CatalogueCollectionFilter f)
+        {
+            var rootFolder = Activator.CoreChildProvider.CatalogueRootFolder;
+
+            if (tlvCatalogues.ModelFilter is CatalogueCollectionFilter f)
                 f.ChildProvider = Activator.CoreChildProvider;
 
             if (oRefreshFrom is ExtractionInformation ei)
@@ -114,7 +113,7 @@ namespace Rdmp.UI.Collections
                 var newCatalogues = CommonTreeFunctionality.CoreChildProvider.AllCatalogues.Except(_allCatalogues);
                 if (newCatalogues.Any())
                 {
-                    oRefreshFrom = CatalogueFolder.Root;//refresh from the root instead
+                    oRefreshFrom = rootFolder;//refresh from the root instead
                     tlvCatalogues.RefreshObject(oRefreshFrom);
                 }
             }
@@ -150,10 +149,10 @@ namespace Rdmp.UI.Collections
                 CommonFunctionality.Add(new ExecuteCommandAddNewGovernanceDocument(Activator,null), "Governance Document", null, NewMenu);
             }
 
-            if (isFirstTime || Equals(oRefreshFrom, CatalogueFolder.Root))
+            if (isFirstTime || Equals(oRefreshFrom, rootFolder))
             {
-                tlvCatalogues.RefreshObject(CatalogueFolder.Root);
-                tlvCatalogues.Expand(CatalogueFolder.Root);
+                tlvCatalogues.RefreshObject(rootFolder);
+                tlvCatalogues.Expand(rootFolder);
                 isFirstTime = false;
             }
         }
@@ -209,7 +208,8 @@ namespace Rdmp.UI.Collections
 
             CommonTreeFunctionality.MaintainRootObjects = new[]
             {
-                typeof (AllGovernanceNode)
+                typeof (AllGovernanceNode),
+                typeof (FolderNode<Catalogue>)
             };
 
             //Things that are always visible regardless
@@ -233,10 +233,10 @@ namespace Rdmp.UI.Collections
             Activator.RefreshBus.EstablishLifetimeSubscription(this);
 
             tlvCatalogues.AddObject(activator.CoreChildProvider.AllGovernanceNode);
-            tlvCatalogues.AddObject(CatalogueFolder.Root);
+            tlvCatalogues.AddObject(activator.CoreChildProvider.CatalogueRootFolder);
             ApplyFilters();
 
-            RefreshUIFromDatabase(CatalogueFolder.Root);
+            RefreshUIFromDatabase(activator.CoreChildProvider.CatalogueRootFolder);
         }
 
         void _activator_Emphasise(object sender, EmphasiseEventArgs args)
@@ -273,7 +273,7 @@ namespace Rdmp.UI.Collections
 
                 //if there's a change to the folder of the catalogue or it is a new Catalogue (no parent folder) we have to rebuild the entire tree
                 if (oldFolder == null || !oldFolder.Equals(cata.Folder))
-                    RefreshUIFromDatabase(CatalogueFolder.Root);
+                    RefreshUIFromDatabase(Activator.CoreChildProvider.CatalogueRootFolder);
                 else
                     RefreshUIFromDatabase(o);
                 return;
@@ -293,7 +293,14 @@ namespace Rdmp.UI.Collections
         
         public static bool IsRootObject(object root)
         {
-            return root.Equals(CatalogueFolder.Root) || root is AllGovernanceNode;
+            // The root ICatalogue FolderNode is a root element in this tree
+            if(root is FolderNode<Catalogue> f)
+            {
+                return f.Name == FolderHelper.Root;
+            }
+
+            // as is the GovernanceNode
+            return root is AllGovernanceNode;
         }
 
         public void SelectCatalogue(Catalogue catalogue)

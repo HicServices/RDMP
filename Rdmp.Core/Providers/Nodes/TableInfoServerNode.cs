@@ -5,6 +5,8 @@
 // You should have received a copy of the GNU General Public License along with RDMP. If not, see <https://www.gnu.org/licenses/>.
 
 using System;
+using System.Collections.Generic;
+using System.Linq;
 using FAnsi;
 using Rdmp.Core.Curation.Data;
 
@@ -14,13 +16,15 @@ namespace Rdmp.Core.Providers.Nodes
     {
         public readonly DatabaseType DatabaseType;
         public string ServerName { get; private set; }
+        public TableInfo[] Tables { get; }
 
         public const string NullServerNode = "Null Server";
 
-        public TableInfoServerNode(string serverName, DatabaseType databaseType)
+        public TableInfoServerNode(string serverName, DatabaseType databaseType, IEnumerable<TableInfo> tables)
         {
             DatabaseType = databaseType;
             ServerName = serverName ?? NullServerNode;
+            Tables = tables.ToArray();
         }
 
         public override string ToString()

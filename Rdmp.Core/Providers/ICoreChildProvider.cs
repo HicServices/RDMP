@@ -44,6 +44,10 @@ namespace Rdmp.Core.Providers
         JoinableCohortAggregateConfiguration[] AllJoinables { get; set; }
         JoinableCohortAggregateConfigurationUse[] AllJoinUses { get; set; }
 
+        FolderNode<Catalogue> CatalogueRootFolder { get; }
+        FolderNode<LoadMetadata> LoadMetadataRootFolder { get; }
+        FolderNode<CohortIdentificationConfiguration> CohortIdentificationConfigurationRootFolder { get; }
+
         Catalogue[] AllCatalogues { get; }
         Dictionary<int, Catalogue> AllCataloguesDictionary { get; }
 
@@ -88,7 +92,6 @@ namespace Rdmp.Core.Providers
         Dictionary<int, ExtractionInformation> AllExtractionInformationsDictionary { get; }
 
         AllPermissionWindowsNode AllPermissionWindowsNode { get; set; }
-        AllLoadMetadatasNode AllLoadMetadatasNode { get; set; }
         AllConnectionStringKeywordsNode AllConnectionStringKeywordsNode { get; set; }
         AllStandardRegexesNode AllStandardRegexesNode { get;}
         AllPipelinesNode AllPipelinesNode { get; }
@@ -145,6 +148,7 @@ namespace Rdmp.Core.Providers
         ProcessTask[] AllProcessTasks { get; }
         
         ProcessTaskArgument[] AllProcessTasksArguments { get; }
+        
 
         /// <summary>
         /// Returns all objects in the tree hierarchy that are assignable to the supplied <paramref name="type"/>

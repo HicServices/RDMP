@@ -324,11 +324,11 @@ namespace Rdmp.Core.Tests.Curation.Integration
             try
             {
                 c.Folder = "\\Research\\Important";
-                Assert.AreEqual("\\research\\important\\", c.Folder);
+                Assert.AreEqual("\\research\\important", c.Folder);
                 c.SaveToDatabase();
 
                 var c2 = Repository.GetObjectByID<Catalogue>(c.ID);
-                Assert.AreEqual("\\research\\important\\", c2.Folder);
+                Assert.AreEqual("\\research\\important", c2.Folder);
             }
             finally
             {
@@ -380,150 +380,6 @@ namespace Rdmp.Core.Tests.Curation.Integration
             finally
             {
                 c.DeleteInDatabase();
-            }
-        }
-
-        [Test]
-        public void CatalogueFolder_Subfoldering()
-        {
-            var c1 = new Catalogue(Repository, "C1");
-            var c2 = new Catalogue(Repository, "C2");
-
-            try
-            {
-                c1.Folder = "\\Research\\";
-                Assert.AreEqual("\\research\\", c1.Folder);
-                c1.SaveToDatabase();
-
-                c2.Folder = "\\Research\\Methodology";
-                Assert.AreEqual( "\\research\\methodology\\",c2.Folder);
-
-                c2.SaveToDatabase();
-
-                Assert.IsTrue(CatalogueFolder.IsSubFolderOf(c2.Folder,c1.Folder));
-
-            }
-            finally
-            {
-                c1.DeleteInDatabase();
-                c2.DeleteInDatabase();
-            }
-        }
-
-
-        [Test]
-        public void CatalogueFolder_SubfolderingDuplicateNames()
-        {
-            var c1 = new Catalogue(Repository, "C1");
-            var c2 = new Catalogue(Repository, "C2");
-            var c3 = new Catalogue(Repository, "C3");
-
-            try
-            {
-                c1.Folder = @"\A\B\C\";
-                c1.SaveToDatabase();
-
-                c2.Folder = @"\B\C\";
-                c2.SaveToDatabase();
-
-                c3.Folder = @"\A\B\";
-                c3.SaveToDatabase();
-                
-                //c1 is a subfolder of c3
-                Assert.IsFalse(CatalogueFolder.IsSubFolderOf(c1.Folder,c2.Folder));
-                Assert.IsTrue(CatalogueFolder.IsSubFolderOf(c1.Folder,c3.Folder));
-
-                //c2 is nobodies subfolder
-                Assert.IsFalse(CatalogueFolder.IsSubFolderOf(c2.Folder, c1.Folder));
-                Assert.IsFalse(CatalogueFolder.IsSubFolderOf(c2.Folder, c3.Folder));
-
-                //c2 is nobodies subfolder
-                Assert.IsFalse(CatalogueFolder.IsSubFolderOf(c3.Folder,c1.Folder));
-                Assert.IsFalse(CatalogueFolder.IsSubFolderOf(c3.Folder,c2.Folder));
-
-            }
-            finally
-            {
-                c1.DeleteInDatabase();
-                c2.DeleteInDatabase();
-            }
-        }
-        [Test]
-        public void CatalogueFolder_SubfolderingAdvanced()
-        {
-            var c1 = new Catalogue(Repository, "C1");
-            var c2 = new Catalogue(Repository, "C2");
-            var c3 = new Catalogue(Repository, "C3");
-            var c4 = new Catalogue(Repository, "C4");
-            var c5 = new Catalogue(Repository, "C5");
-            var c6 = new Catalogue(Repository, "C6");
-
-
-            // 
-            // Pass in 
-            // CatalogueA - \2005\Research\
-            // CatalogueB - \2006\Research\
-            // 
-            // This is Root (\)
-            // Returns:
-            //     \2005\ - empty 
-            //     \2006\ - empty
-            // 
-
-            try
-            {
-                c1.Folder = @"\2005\Research\Current";
-                c1.SaveToDatabase();
-
-                c2.Folder = @"\2005\Research\Previous";
-                c2.SaveToDatabase();
-
-
-                c3.Folder = @"\2001\Research\Current";
-                c3.SaveToDatabase();
-
-                c4.Folder = @"\Homeland\Research\Current";
-                c4.SaveToDatabase();
-                
-                c5.Folder = @"\Homeland\Research\Current";
-                c5.SaveToDatabase();
-                
-                c6.Folder = @"\Homeland\Research\Current";
-                c6.SaveToDatabase();
-
-                var collection = new[] {c1, c2, c3, c4,c5,c6};
-
-                var results = CatalogueFolder.GetImmediateSubFoldersUsing(CatalogueFolder.Root,collection);
-
-                Assert.AreEqual(3,results.Length);
-                string TwoThousandFive = results.Single(f => f.Equals(@"\2005\"));
-                string TwoThousandOne = results.Single(f => f.Equals(@"\2001\"));
-                string Homeland = results.Single(f => f.Equals(@"\homeland\"));
-                
-                Assert.AreEqual(1,CatalogueFolder.GetImmediateSubFoldersUsing(Homeland,collection).Length);
-                Assert.AreEqual(1, CatalogueFolder.GetImmediateSubFoldersUsing(Homeland,collection).Count(f=>f.Equals(@"\homeland\research\")));
-
-                Assert.AreEqual(1, CatalogueFolder.GetImmediateSubFoldersUsing(TwoThousandOne,collection).Length);
-                Assert.AreEqual(1, CatalogueFolder.GetImmediateSubFoldersUsing(TwoThousandOne,collection).Count(f => f.Equals(@"\2001\research\")));
-
-                var sub = CatalogueFolder.GetImmediateSubFoldersUsing(TwoThousandFive, collection).Single();
-
-                string[] finalResult = CatalogueFolder.GetImmediateSubFoldersUsing(sub,collection);
-                Assert.AreEqual(2, finalResult.Length);
-                Assert.AreEqual(1, finalResult.Count(c => c.Equals(@"\2005\research\current\")));
-                Assert.AreEqual(1, finalResult.Count(c => c.Equals(@"\2005\research\previous\")));
-
-                Assert.AreEqual(0, CatalogueFolder.GetImmediateSubFoldersUsing(finalResult[0],collection).Length);
-            }
-            finally 
-            {
-                c1.DeleteInDatabase();
-                c2.DeleteInDatabase();
-                c3.DeleteInDatabase();
-                c4.DeleteInDatabase();
-                c5.DeleteInDatabase();
-                c6.DeleteInDatabase();
-                
             }
         }
 
@@ -620,6 +476,104 @@ namespace Rdmp.Core.Tests.Curation.Integration
                 t.DeleteInDatabase();
             }
 
+        }
+
+
+        [TestCase("\\","\\")]
+        [TestCase("\\fish", "fish")]
+        [TestCase("\\fish\\dog\\cat", "cat")]
+        public void TestTreeNode_FullName_CleanPaths(string fullName,string expectedName)
+        {
+            var r1 = WhenIHaveA<Catalogue>();
+            r1.Folder = fullName;
+
+            var tree = FolderHelper.BuildFolderTree(new[] { r1 });
+
+            var bottomFolder = tree;
+                
+            while(bottomFolder.ChildFolders.Any())
+            {
+                bottomFolder = bottomFolder.ChildFolders.Single();
+            }
+
+            Assert.AreEqual(expectedName, bottomFolder.Name);
+            Assert.AreEqual(fullName, bottomFolder.FullName);
+        }
+
+        [TestCase("\\admissions\\", "\\admissions")]
+        [TestCase("\\ADMissions\\", "\\admissions")]
+        public void TestFolderHelperAdjust(string input, string expectedOutput)
+        {
+            Assert.AreEqual(expectedOutput, FolderHelper.Adjust(input));
+        }
+
+        [Test]
+        public void TestBuildFolderTree()
+        {
+            var r1 = WhenIHaveA<Catalogue>();
+            r1.Folder = "\\";
+
+            var r2 = WhenIHaveA<Catalogue>();
+            r2.Folder = "\\";
+
+            var cat = WhenIHaveA<Catalogue>();
+            cat.Folder = "\\dog\\fish\\cat";
+
+            // give it some malformed ones too
+            var fun = WhenIHaveA<Catalogue>();
+            fun.Folder = "\\fun";
+
+            var morefun = WhenIHaveA<Catalogue>();
+            morefun.Folder = "\\fun";
+
+            var objects = new IHasFolder[]
+            {
+                r1,r2,cat,fun,morefun
+            };
+
+
+            var tree = FolderHelper.BuildFolderTree(objects);
+            Assert.Contains(r1, tree.ChildObjects);
+            Assert.Contains(r2, tree.ChildObjects);
+
+            Assert.Contains(cat, tree["dog"]["fish"]["cat"].ChildObjects);
+
+            Assert.Contains(fun, tree["fun"].ChildObjects);
+            Assert.Contains(morefun, tree["fun"].ChildObjects);
+        }
+
+
+        /// <summary>
+        /// Tests when you have 
+        /// \
+        /// \ somefolder
+        ///   +cata1
+        ///   \ somesub
+        ///     +cata2
+        /// </summary>
+        [Test]
+        public void TestBuildFolderTree_MiddleBranches()
+        {
+            var cata1 = WhenIHaveA<Catalogue>();
+            cata1.Folder = "\\somefolder";
+
+            var cata2 = WhenIHaveA<Catalogue>();
+            cata2.Folder = "\\somefolder\\somesub";
+
+            var objects = new IHasFolder[]
+            {
+                cata1,cata2
+            };
+
+            var tree = FolderHelper.BuildFolderTree(objects);
+            Assert.IsEmpty(tree.ChildObjects, "Should be no Catalogues on the root");
+
+            Assert.AreEqual(1, tree.ChildFolders.Count());
+            Assert.AreEqual(1, tree["somefolder"].ChildFolders.Count());
+            Assert.IsEmpty(tree["somefolder"]["somesub"].ChildFolders);
+
+            Assert.Contains(cata1, tree["somefolder"].ChildObjects);
+            Assert.Contains(cata2, tree["somefolder"]["somesub"].ChildObjects);
         }
     }
 }

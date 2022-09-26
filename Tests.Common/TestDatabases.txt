@@ -6,8 +6,8 @@
 #To achieve this, you can run DatabaseCreation.exe with argument 1 being your ServerName
 #You can apply a prefix e.g. TEST_ as an argument to DatabaseCreation.exe and include that prefix below if you like
 
-ServerName:	localhost
 Prefix:	TEST_
+ServerName:	(localdb)\MSSQLLocalDB
 MySql:	server=127.0.0.1;Uid=root;Pwd=YourStrong!Passw0rd;AllowPublicKeyRetrieval=True
 PostgreSql:	User ID=postgres;Password=;Host=127.0.0.1;Port=5432
 Oracle: 

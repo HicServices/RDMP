@@ -52,6 +52,7 @@ namespace Rdmp.Core.Providers
 
         public ExtractableDataSetPackage[] AllPackages { get; set; }
         
+        public FolderNode<Project> ProjectRootFolder { get; private set;}
         public Project[] Projects { get; set; }
 
         private Dictionary<int,HashSet<ExtractableCohort>> _cohortsByOriginId;
@@ -80,11 +81,8 @@ namespace Rdmp.Core.Providers
         /// ID of all CohortIdentificationConfiguration which have an ProjectCohortIdentificationConfigurationAssociation declared on them (i.e. the CIC is used with one or more Projects)
         /// </summary>
         private HashSet<int> _cicAssociations;
-
-        public AllFreeCohortIdentificationConfigurationsNode AllFreeCohortIdentificationConfigurationsNode = new AllFreeCohortIdentificationConfigurationsNode();
-        public AllProjectCohortIdentificationConfigurationsNode AllProjectCohortIdentificationConfigurationsNode = new AllProjectCohortIdentificationConfigurationsNode();
+                
         private HashSet<ISelectedDataSets> _selectedDataSetsWithNoIsExtractionIdentifier;
-
 
         /// <summary>
         /// All AND/OR containers found during construction (in the data export database).  The Key is the ID of the container (for rapid random access)
@@ -112,9 +110,6 @@ namespace Rdmp.Core.Providers
             CohortSources = GetAllObjects<ExternalCohortTable>(dataExportRepository);
             ExtractableDataSets = GetAllObjects<ExtractableDataSet>(dataExportRepository);
             
-            AddToDictionaries(new HashSet<object>(AllCohortIdentificationConfigurations.Where(cic => _cicAssociations.Contains(cic.ID))), new DescendancyList(AllProjectCohortIdentificationConfigurationsNode));
-            AddToDictionaries(new HashSet<object>(AllCohortIdentificationConfigurations.Where(cic => !_cicAssociations.Contains(cic.ID))), new DescendancyList(AllFreeCohortIdentificationConfigurationsNode));
-
             //This means that the ToString method in ExtractableDataSet doesn't need to go lookup catalogue info
             var catalogueIdDict = AllCatalogues.ToDictionary(c => c.ID, c2 => c2);
             foreach (ExtractableDataSet ds in ExtractableDataSets)
@@ -171,8 +166,8 @@ namespace Rdmp.Core.Providers
             
             ReportProgress("Packages and Cohorts");
 
-            foreach (Project p in Projects)
-                AddChildren(p, new DescendancyList(p));
+            ProjectRootFolder = FolderHelper.BuildFolderTree(Projects);
+            AddChildren(ProjectRootFolder, new DescendancyList(ProjectRootFolder));
             
             ReportProgress("Projects");
 
@@ -208,6 +203,28 @@ namespace Rdmp.Core.Providers
             ReportProgress("Pipeline adding");
 
             GetPluginChildren();
+        }
+
+
+        private void AddChildren(FolderNode<Project> folder, DescendancyList descendancy)
+        {
+            foreach (var child in folder.ChildFolders)
+            {
+                //add subfolder children
+                AddChildren(child, descendancy.Add(child));
+            };
+
+            //add catalogues in folder
+            foreach (var project in folder.ChildObjects)
+            {
+                AddChildren(project, descendancy.Add(project));
+            }
+
+            // Children are the folders + objects
+            AddToDictionaries(new HashSet<object>(
+                    folder.ChildFolders.Cast<object>()
+                    .Union(folder.ChildObjects)), descendancy
+                    );
         }
 
         private void BuildSelectedDatasets()
@@ -696,7 +713,6 @@ namespace Rdmp.Core.Providers
             lock(WriteLock)
             {
                 var toReturn = base.GetAllSearchables();
-                AddToReturnSearchablesWithNoDecendancy(toReturn,Projects);
                 AddToReturnSearchablesWithNoDecendancy(toReturn, AllPackages);
                 return toReturn;
             }
@@ -767,8 +783,6 @@ namespace Rdmp.Core.Providers
                 AllProjectAssociatedCics = dxOther.AllProjectAssociatedCics;
                 AllGlobalExtractionFilterParameters = dxOther.AllGlobalExtractionFilterParameters;
                 _cicAssociations = dxOther._cicAssociations;
-                AllFreeCohortIdentificationConfigurationsNode = dxOther.AllFreeCohortIdentificationConfigurationsNode;
-                AllProjectCohortIdentificationConfigurationsNode = dxOther.AllProjectCohortIdentificationConfigurationsNode;
                 _selectedDataSetsWithNoIsExtractionIdentifier = dxOther._selectedDataSetsWithNoIsExtractionIdentifier;
                 AllContainers = dxOther.AllContainers;
                 AllDeployedExtractionFilters = dxOther.AllDeployedExtractionFilters;
@@ -776,6 +790,7 @@ namespace Rdmp.Core.Providers
                 dataExportRepository = dxOther.dataExportRepository;
                 _extractionInformationsByCatalogueItem = dxOther._extractionInformationsByCatalogueItem;
                 _extractionProgressesBySelectedDataSetID = dxOther._extractionProgressesBySelectedDataSetID;
+                ProjectRootFolder = dxOther.ProjectRootFolder;
             }
             
         }
