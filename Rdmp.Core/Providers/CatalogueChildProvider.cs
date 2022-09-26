@@ -1731,6 +1731,7 @@ namespace Rdmp.Core.Providers
             AllPermissionWindowsNode = otherCat.AllPermissionWindowsNode;
             LoadMetadataRootFolder = otherCat.LoadMetadataRootFolder;
             CatalogueRootFolder = otherCat.CatalogueRootFolder;
+            CohortIdentificationConfigurationRootFolder = otherCat.CohortIdentificationConfigurationRootFolder;
             AllConnectionStringKeywordsNode = otherCat.AllConnectionStringKeywordsNode;
             AllConnectionStringKeywords = otherCat.AllConnectionStringKeywords;
             AllAggregateContainersDictionary = otherCat.AllAggregateContainersDictionary;
