@@ -83,7 +83,8 @@ namespace Rdmp.Core.Providers
                 {"col",typeof (ColumnInfo)},
                 {"lmd",typeof (LoadMetadata)},
                 {"pipe",typeof(Pipeline)},
-                {"sds",typeof(SelectedDataSets)}
+                {"sds",typeof(SelectedDataSets)},
+                {"eds",typeof(ExternalDatabaseServer)}
 
             };
 
