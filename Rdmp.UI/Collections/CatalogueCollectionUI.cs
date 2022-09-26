@@ -6,23 +6,19 @@
 
 using System;
 using System.Linq;
-using System.Runtime.CompilerServices;
 using System.Windows.Forms;
-using BrightIdeasSoftware;
 using Rdmp.Core;
 using Rdmp.Core.CommandExecution;
 using Rdmp.Core.CommandExecution.AtomicCommands;
 using Rdmp.Core.CommandExecution.AtomicCommands.CatalogueCreationCommands;
 using Rdmp.Core.Curation.Data;
 using Rdmp.Core.Curation.Data.Aggregation;
-using Rdmp.Core.Curation.Data.Cohort;
 using Rdmp.Core.Curation.Data.Governance;
 using Rdmp.Core.Providers.Nodes;
 using Rdmp.UI.Collections.Providers.Filtering;
 using Rdmp.UI.CommandExecution.AtomicCommands;
 using Rdmp.UI.ItemActivation;
 using Rdmp.UI.Refreshing;
-using ReusableLibraryCode.Settings;
 
 namespace Rdmp.UI.Collections
 {
