@@ -7,6 +7,7 @@ Here are things you should know about RDMP!
 1. [Objects](#Objects)
 1. [Windows Forms Designer](#windows-forms-designer)
 1. [Icons and resx files](#icons-and-resx)
+1. [Release Process](#release-process)
 
 
 ## Other Docs
@@ -142,6 +143,37 @@ Or a cross platform ImageSharp `Image` with:
 ```csharp
 Image.Load<Rgba32>(CatalogueIcons.YourImage);
 ```
+
+## Release Process
+RDMP releases are performed by GitHub Actions CI server.  The logic for this is in [build.yml](./.github/workflows/build.yml).
+
+To perform a release merge all branches into `develop` then perform the following:
+
+- Update [Changelog](./CHANGELOG.md)
+  - Add a header with the version number and date e.g. `## [7.0.21] - 2022-09-26`
+  - Add a diff link at the bottom e.g. `[7.0.21]: https://github.com/HicServices/RDMP/compare/v7.0.20...v7.0.21`
+- Update [SharedAssemblyInfo](./SharedAssemblyInfo.cs)
+  - Update all 3 versions to your new number e.g. `7.0.21`
+- Commit and push
+
+Next tag the release with `git` as the new version number.  Do not forget the `v` prefix e.g.
+
+```
+git tag v7.0.21
+git push --tags
+```
+
+This should push a new release to both `NuGet` and `GitHub Releases`.  If you have a problem with the build CI, you can [delete the local AND remote tag](https://devconnected.com/how-to-delete-local-and-remote-tags-on-git/) then fix the problem then re-tag.
+
+Once the release is built and you have tested the binary in [GitHub Releases](https://github.com/HicServices/RDMP/releases) you can make it live by updating [rdmp-client.xml](./rdmp-client.xml)
+
+- Update the `version` tag
+- Update the `url` tag to the new version
+- Update the `changelog` tag to have the new version anchor hyperlink
+
+Test that your RDMP client can update with `Help->Check for updates` (note that if your xml file change is on `develop` you will need to specify this as the update path)
+
+Finally merge `develop` into `main` and push.  This will ensure that the `main` branch always has the source of the last RDMP version release.
 
 [YamlRepository]: /Rdmp.CoreRepositories/YamlRepository.cs
 [CatalogueRepository]: ./Rdmp.CoreRepositories/CatalogueRepository.cs
