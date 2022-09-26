@@ -69,10 +69,15 @@ public partial class CohortIdentificationCollectionUI : RDMPCollectionUI, ILifet
         CommonFunctionality.Add(factory.CreateMenuItem(new ExecuteCommandCreateNewCohortIdentificationConfiguration(Activator)),"New...");
         CommonFunctionality.Add(factory.CreateMenuItem(new ExecuteCommandMergeCohortIdentificationConfigurations(Activator,null){OverrideCommandName = "By Merging Existing..."}),"New...");
 
-        if (!_firstTime) return;
-        CommonTreeFunctionality.SetupColumnTracking(olvName,new Guid("f8a42259-ce5a-4006-8ab8-e0305fce05aa"));
-        CommonTreeFunctionality.SetupColumnTracking(olvFrozen, new Guid("d1e155ef-a28f-41b5-81e4-b763627ddb3c"));
-        _firstTime = false;
+        if (_firstTime)
+        {
+            CommonTreeFunctionality.SetupColumnTracking(olvName, new Guid("f8a42259-ce5a-4006-8ab8-e0305fce05aa"));
+            CommonTreeFunctionality.SetupColumnTracking(olvFrozen, new Guid("d1e155ef-a28f-41b5-81e4-b763627ddb3c"));
+
+            tlvCohortIdentificationConfigurations.Expand(Activator.CoreChildProvider.CohortIdentificationConfigurationRootFolder);
+
+            _firstTime = false;
+        }
     }
         
     public static bool IsRootObject(object root)

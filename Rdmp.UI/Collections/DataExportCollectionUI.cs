@@ -129,6 +129,8 @@ namespace Rdmp.UI.Collections
                 CommonTreeFunctionality.SetupColumnTracking(olvProjectNumber, new Guid("2a1764d4-8871-4488-b068-8940b777f90e"));
                 CommonTreeFunctionality.SetupColumnTracking(olvCohortSource, new Guid("c4dabcc3-ccc9-4c9b-906b-e8106e8b616c"));
                 CommonTreeFunctionality.SetupColumnTracking(olvCohortVersion, new Guid("2d0f8d32-090d-4d2b-8cfe-b6d16f5cc419"));
+
+                tlvDataExport.Expand(dataExportChildProvider.ProjectRootFolder);
                 _isFirstTime = false;
             }
 

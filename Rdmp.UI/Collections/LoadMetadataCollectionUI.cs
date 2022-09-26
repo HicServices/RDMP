@@ -94,6 +94,8 @@ namespace Rdmp.UI.Collections
                 CommonTreeFunctionality.SetupColumnTracking(olvName,new Guid("f84e8217-6b3c-4eb4-a314-fbd95b51c422"));
                 CommonTreeFunctionality.SetupColumnTracking(olvValue,new Guid("facab93a-6950-4815-9f5f-5f076277adb5"));
 
+                tlvLoadMetadata.Expand(Activator.CoreChildProvider.LoadMetadataRootFolder);
+
                 _isFirstTime = false;
             }
         }
