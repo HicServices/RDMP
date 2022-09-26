@@ -14,7 +14,7 @@ The above command would be broken down as follows (see [ExecuteCommandOptions]):
 
 | Operand | Role |
 | ------------- | ------------- |
-| `cmd` | Verb to pick an `IRunner` (in this case `ExecuteCommandRunner`) |
+| `cmd` | Verb to pick an `IRunner` (in this case `ExecuteCommandRunner`).  Note that 'cmd' is the default verb and so can be skipped|
 | `Set` | CommandName, determines which `BasicCommandExecution` derrived Type to attempt to run.  If missing then an [interactive command loop] is triggered|
 | `Catalogue:1 Name "My cool new name"`  | CommandArgs (3 in this case) for [constructing the command]|
 

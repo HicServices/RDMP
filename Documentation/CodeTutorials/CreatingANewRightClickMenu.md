@@ -2,6 +2,8 @@
 
 ## Contents
 1. [Background](#background)
+2. [Cross Platform Menus (Recommended)](#cross-platform)
+2. [Windows GUI Only Menus](#windows-only)
 2. [Masquerading](#masquerading)
 5. [Example](#example)
 6. [Commands](#commands)
@@ -12,7 +14,27 @@ RDMP uses tree collections to represent all objects the user is required to inte
 
 ![ExampleMenu](Images/CreatingANewRightClickMenu/ExampleMenu.png) 
 
-This menu is built by `RDMPCollectionCommonFunctionality` using reflection.  The rule is:
+This menu is built by `RDMPCollectionCommonFunctionality` using reflection.
+
+<a name="cross-platform"/>
+## Cross Platform Menus (Recommended)
+The recommended way of adding new menu items is to create a new class implementing `BasicCommandExecution`.  See [ExecuteCommandList](../../Rdmp.Core/CommandExecution/AtomicCommands/ExecuteCommandList.cs)for a simple example of how to do this.  All commands should be declared in `Rdmp.Core.CommandExecution.AtomicCommands`
+
+After creating the command update [AtomicCommandFactory] to `yield` it for the appropriate object type.
+
+<a name="windows-only"/>
+## Windows GUI Only Menus
+
+If you require windows specific features that are not available through the
+`IBasicActivateItems` abstraction then you can create UI only commands.  These
+should be declared in `Rdmp.UI.CommandExecution.AtomicCommands`.  Since [AtomicCommandFactory]
+is declared in `Rdmp.Core` you will not be able to serve the command in the same way.
+
+Instead you should declare or locate the menu class for your object (whose menu you want to expose the new command
+on).  For example if your new command is intended for [Catalogue] then add it to `CatalogueMenu`.
+
+If you have to define your own menu from scratch (i.e. there is no existing menu called MyObjectMenu) then you must adhere
+to the following:
 
 1. If an object called `MyObject` has a menu it must be called `MyObjectMenu` and must inherit from `RDMPContextMenuStrip`
 2. It must have a constructor signature `public MyObjectMenu(RDMPContextMenuStripArgs args, MyObject instance)`
@@ -21,7 +43,7 @@ This menu is built by `RDMPCollectionCommonFunctionality` using reflection.  The
 If no corresponding menu exists for the object then the default menu will be shown.
 
 ## Masquerading
-Sometimes we want 2 objects to have the same menu without having to create two menu classes.  This is valid if they represent the same object e.g. `ColumnInfo` and  `LinkedColumnInfoNode` (this represents a specific `ColumnInfo` to `CatalogueItem` binding).  The following options are available to make this happen.
+Sometimes we want 2 objects to have the same menu without having to create two menu classes.  This is valid if they represent the same object e.g. [ColumnInfo] and  `LinkedColumnInfoNode` (this represents a specific [ColumnInfo] to [CatalogueItem] binding).  The following options are available to make this happen.
 
 1. Making the wrapper class `IMasqueradeAs` will allow you to specify at the class level that it behaves like the wrapped object with the following exceptions
 1. If you implement `IDeletable` then your method will be called (not the object you are masquerading as)
@@ -92,3 +114,5 @@ Useful methods you can invoke in `Execute` include
 
 [ColumnInfo]: ./Glossary.md#ColumnInfo
 [CatalogueItem]: ./Glossary.md#CatalogueItem
+[Catalogue]: ./Glossary.md#Catalogue
+[AtomicCommandFactory]: ../../Rdmp.Core/CommandExecution/AtomicCommandFactory.cs
