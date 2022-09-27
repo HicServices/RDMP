@@ -182,8 +182,8 @@ Avoid making changes to the RDMP schema until you are experienced with the codeb
 
 If you need to record new information about an object consider using [ExtendedProperty] instead of writting a patch (especially if you are working within a Plugin).
 
-Do not write patches for the [CohortCachingDatabase](.\Rdmp.Core\Databases\QueryCachingPatcher.cs), [LoggingDatabase](.\Rdmp.Core\Databases\LoggingDatabasePatcher.cs) or [DataQualityEngine](.\Rdmp.Core\Databases\DataQualityEnginePatcher.cs) databases.   These 3 databases are cross DBMS (you can create them in MySql / PostgresSQL and/or Oracle).  Patching for cross DBMS database schemas is not implemented yet.  If you
-want to look into writing such a patch you would start with the `SortedDictionary<string, Patch> GetAllPatchesInAssembly(DiscoveredDatabase db)` method and adjust the patch SQL generated for each DBMS.
+Do not write patches for the [CohortCachingDatabase](.\Rdmp.Core\Databases\QueryCachingPatcher.cs), [LoggingDatabase](.\Rdmp.Core\Databases\LoggingDatabasePatcher.cs) or [DataQualityEngine](.\Rdmp.Core\Databases\DataQualityEnginePatcher.cs) databases.   These 3 databases are cross [DBMS] (you can create them in MySql / PostgresSQL and/or Oracle).  Patching for cross [DBMS] database schemas is not implemented yet.  If you
+want to look into writing such a patch you would start with the `SortedDictionary<string, Patch> GetAllPatchesInAssembly(DiscoveredDatabase db)` method and adjust the patch SQL generated for each [DBMS].
 
 If after considering all the alternatives you are sure that a new patch is required and it is for the [Catalogue or Data Export Databases](.\Rdmp.Core\Databases\PlatformDatabase.cs) then the process is as follows:
 
@@ -203,3 +203,4 @@ Once the script is written then the next time you run RDMP you will be prompted 
 [DQERepository]: ./Rdmp.Core/Repositories/DQERepository.cs
 [Project]: ./Documentation/CodeTutorials/Glossary.md#Project
 [ExtendedProperty]: ./Rdmp.Core/Curation/Data/ExtendedProperty.cs
+[[DBMS]]: ./Documentation/CodeTutorials/Glossary.md#[DBMS]
