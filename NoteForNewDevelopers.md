@@ -9,6 +9,7 @@ Here are things you should know about RDMP!
 1. [Icons and resx files](#icons-and-resx)
 1. [Release Process](#release-process)
 1. [Database Schema Changes](#database-schema-changes)
+1. [Existing Plugins](#existing-plugins)
 
 ## Other Docs
 All technical and repo specific documentation are stored in markdown (`.md` format).  Below is a list of docs in the repo.  There is also a Confluence website which stores [documentation on how to perform common user tasks](https://hic-docs.atlassian.net/wiki/spaces/RDMPDOCUME/overview?homepageId=196610)
@@ -196,6 +197,14 @@ If after considering all the alternatives you are sure that a new patch is requi
   - If your new column is required (i.e. not null) then you must UPDATE existing values and provid a database default so that older versions of RDMP that are still running do not crash on object creation.
 
 Once the script is written then the next time you run RDMP you will be prompted to apply the new patch.
+
+## Existing Plugins
+
+RDMP supports plugins.  The following plugin repositories are used by HIC / EPCC:
+
+- [RdmpDicom](https://github.com/HicServices/RdmpDicom): Public repository containing DICOM image loading support.  Foundation for [SmiServices](https://github.com/SMI/SmiServices) ETL microservice
+- [HICPlugin](https://github.com/HicServices/HICPlugin): Private repository containing HIC specific components.  If you get a 404 trying to access this then ask to be granted rights to read/write the repo
+- [RdmpExtensions](https://github.com/HicServices/RdmpExtensions): Private repository containing HIC specific components but which may be more widely useful e.g. run Python scripts.  If you get a 404 trying to access this then ask to be granted rights to read/write the repo
 
 [YamlRepository]: /Rdmp.CoreRepositories/YamlRepository.cs
 [CatalogueRepository]: ./Rdmp.CoreRepositories/CatalogueRepository.cs
