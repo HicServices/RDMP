@@ -8,6 +8,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ...
 
+## [8.0.0] - 2022-09-27
+
+**Contains database patch to add support for Commit system and expanded Folder support**
+
 ### Fixed
 
 - Added better error message when there are problems with naming etc of a new cohort being committed [#1408](https://github.com/HicServices/RDMP/issues/1408)
@@ -1368,7 +1372,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Fixed Culture (e.g. en-us) not being passed correctly in DelimitedFlatFileAttacher
 - Fixed bug where Updater would show older versions of RDMP as installable 'updates'
 
-[Unreleased]: https://github.com/HicServices/RDMP/compare/v7.0.20...develop
+[Unreleased]: https://github.com/HicServices/RDMP/compare/v8.0.0...develop
+[8.0.0]: https://github.com/HicServices/RDMP/compare/v7.0.20...v8.0.0
 [7.0.20]: https://github.com/HicServices/RDMP/compare/v7.0.19...v7.0.20
 [7.0.19]: https://github.com/HicServices/RDMP/compare/v7.0.18...v7.0.19
 [7.0.18]: https://github.com/HicServices/RDMP/compare/v7.0.17...v7.0.18

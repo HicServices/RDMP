@@ -8,7 +8,8 @@ Here are things you should know about RDMP!
 1. [Windows Forms Designer](#windows-forms-designer)
 1. [Icons and resx files](#icons-and-resx)
 1. [Release Process](#release-process)
-
+1. [Database Schema Changes](#database-schema-changes)
+1. [Existing Plugins](#existing-plugins)
 
 ## Other Docs
 All technical and repo specific documentation are stored in markdown (`.md` format).  Below is a list of docs in the repo.  There is also a Confluence website which stores [documentation on how to perform common user tasks](https://hic-docs.atlassian.net/wiki/spaces/RDMPDOCUME/overview?homepageId=196610)
@@ -156,6 +157,8 @@ To perform a release merge all branches into `develop` then perform the followin
   - Update all 3 versions to your new number e.g. `7.0.21`
 - Commit and push
 
+When picking a new version number you should strongly consider only bumping the minor version (i.e. the third number).  Changes to Major or Minor version number will result in incompatible plugins (until a version of the plugin is released with a bumped dependency) - for more information on this see [Plugin Writing](./Documentation/CodeTutorials/PluginWriting.md).
+
 Next tag the release with `git` as the new version number.  Do not forget the `v` prefix e.g.
 
 ```
@@ -175,8 +178,38 @@ Test that your RDMP client can update with `Help->Check for updates` (note that 
 
 Finally merge `develop` into `main` and push.  This will ensure that the `main` branch always has the source of the last RDMP version release.
 
+## Database Schema Changes
+Avoid making changes to the RDMP schema until you are experienced with the codebase as these changes have the greatest possibility of breaking deployments/plugins.
+
+If you need to record new information about an object consider using [ExtendedProperty] instead of writting a patch (especially if you are working within a Plugin).
+
+Do not write patches for the [CohortCachingDatabase](.\Rdmp.Core\Databases\QueryCachingPatcher.cs), [LoggingDatabase](.\Rdmp.Core\Databases\LoggingDatabasePatcher.cs) or [DataQualityEngine](.\Rdmp.Core\Databases\DataQualityEnginePatcher.cs) databases.   These 3 databases are cross [DBMS] (you can create them in MySql / PostgresSQL and/or Oracle).  Patching for cross [DBMS] database schemas is not implemented yet.  If you
+want to look into writing such a patch you would start with the `SortedDictionary<string, Patch> GetAllPatchesInAssembly(DiscoveredDatabase db)` method and adjust the patch SQL generated for each [DBMS].
+
+If after considering all the alternatives you are sure that a new patch is required and it is for the [Catalogue or Data Export Databases](.\Rdmp.Core\Databases\PlatformDatabase.cs) then the process is as follows:
+
+- Within Visual Studio copy and paste the latest patch in the up folder (e.g. [./Rdmp.Core/Databases/CatalogueDatabase/up/076_AddFolders.sql](./Rdmp.Core/Databases/CatalogueDatabase/up/))
+- Rename the file with a higher number and description (e.g. 077BreakRDMP.sql)
+- Update the contents of the script
+  - Script must start with a Version number although if the schema change is backwards compatible it is acceptable to leave this unchanged
+  - Scripts must be designed to run multiple times without fail (i.e. use `if not exists` to check before adding a column)
+  - Scripts must be backwards compatible where possible (e.g. add new fields but do not delete existing ones)
+  - If your new column is required (i.e. not null) then you must UPDATE existing values and provid a database default so that older versions of RDMP that are still running do not crash on object creation.
+
+Once the script is written then the next time you run RDMP you will be prompted to apply the new patch.
+
+## Existing Plugins
+
+RDMP supports plugins.  The following plugin repositories are used by HIC / EPCC:
+
+- [RdmpDicom](https://github.com/HicServices/RdmpDicom): Public repository containing DICOM image loading support.  Foundation for [SmiServices](https://github.com/SMI/SmiServices) ETL microservice
+- [HICPlugin](https://github.com/HicServices/HICPlugin): Private repository containing HIC specific components.  If you get a 404 trying to access this then ask to be granted rights to read/write the repo
+- [RdmpExtensions](https://github.com/HicServices/RdmpExtensions): Private repository containing HIC specific components but which may be more widely useful e.g. run Python scripts.  If you get a 404 trying to access this then ask to be granted rights to read/write the repo
+
 [YamlRepository]: /Rdmp.CoreRepositories/YamlRepository.cs
 [CatalogueRepository]: ./Rdmp.CoreRepositories/CatalogueRepository.cs
 [DataExportRepository]: ./Rdmp.Core/Repositories/DataExportRepository.cs
 [DQERepository]: ./Rdmp.Core/Repositories/DQERepository.cs
 [Project]: ./Documentation/CodeTutorials/Glossary.md#Project
+[ExtendedProperty]: ./Rdmp.Core/Curation/Data/ExtendedProperty.cs
+[[DBMS]]: ./Documentation/CodeTutorials/Glossary.md#[DBMS]
