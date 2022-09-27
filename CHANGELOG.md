@@ -10,6 +10,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [8.0.0] - 2022-09-27
 
+**Contains database patch to add support for Commit system and expanded Folder support**
+
 ### Fixed
 
 - Added better error message when there are problems with naming etc of a new cohort being committed [#1408](https://github.com/HicServices/RDMP/issues/1408)
