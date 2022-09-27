@@ -197,9 +197,6 @@ If after considering all the alternatives you are sure that a new patch is requi
 
 Once the script is written then the next time you run RDMP you will be prompted to apply the new patch.
 
-D:\Repos\RDMP\Rdmp.Core\Databases\CatalogueDatabase\up\
-
-
 [YamlRepository]: /Rdmp.CoreRepositories/YamlRepository.cs
 [CatalogueRepository]: ./Rdmp.CoreRepositories/CatalogueRepository.cs
 [DataExportRepository]: ./Rdmp.Core/Repositories/DataExportRepository.cs
