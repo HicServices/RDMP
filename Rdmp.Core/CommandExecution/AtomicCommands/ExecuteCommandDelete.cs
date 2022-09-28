@@ -86,17 +86,13 @@ namespace Rdmp.Core.CommandExecution.AtomicCommands
             // if the thing we are deleting is important and sensitive then we should use a transaction
             if(_deletables.Count > 1 || ShouldUseTransactionsWhenDeleting(_deletables.FirstOrDefault()))
             {
-                if(!base.ExecuteWithCommit(ExecuteImpl, GetDescription(), _deletables.OfType<IMapsDirectlyToDatabaseTable>().ToArray()))
-                {
-                    // user cancelled
-                    PublishNearest();
-                }
+                base.ExecuteWithCommit(ExecuteImpl, GetDescription(), _deletables.OfType<IMapsDirectlyToDatabaseTable>().ToArray());
+                PublishNearest();
             }
             else
             {
                 ExecuteImpl();
             }
-
         }
 
         private bool ShouldUseTransactionsWhenDeleting(IDeleteable deleteable)
