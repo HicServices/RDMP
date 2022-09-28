@@ -11,6 +11,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Fixed
 
 - Fixed bug with Commit system not refreshing after delete
+- Fixed bug with Commit system when working with Plugins that have custom repositories
+
 ## [8.0.0] - 2022-09-27
 
 **Contains database patch to add support for Commit system and expanded Folder support**
