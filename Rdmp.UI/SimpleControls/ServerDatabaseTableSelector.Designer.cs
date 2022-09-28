@@ -1,5 +1,6 @@
 ﻿using Rdmp.UI.SimpleControls;
 using Rdmp.UI.ChecksUI;
+using System;
 
 namespace Rdmp.UI.SimpleControls
 {
@@ -196,6 +197,7 @@ namespace Rdmp.UI.SimpleControls
             this.tbPassword.Name = "tbPassword";
             this.tbPassword.PasswordChar = '*';
             this.tbPassword.Size = new System.Drawing.Size(329, 23);
+            this.tbPassword.TextChanged += new System.EventHandler(this.tbPassword_TextChanged);
             this.tbPassword.TabIndex = 1;
             // 
             // llLoading

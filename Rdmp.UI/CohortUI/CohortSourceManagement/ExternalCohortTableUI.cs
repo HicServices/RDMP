@@ -33,15 +33,7 @@ namespace Rdmp.UI.CohortUI.CohortSourceManagement
             AssociatedCollection = RDMPCollection.SavedCohorts;
 
             serverDatabaseTableSelector1.HideTableComponents();
-
-            ObjectSaverButton1.BeforeSave += ObjectSaverButton1OnBeforeSave;
-        }
-
-        private bool ObjectSaverButton1OnBeforeSave(DatabaseEntity databaseEntity)
-        {
-            SaveDatabaseSettings();
-            _externalCohortTable.SaveToDatabase();
-            return true;
+            serverDatabaseTableSelector1.SelectionChanged += SaveDatabaseSettings;
         }
 
         private void SaveDatabaseSettings()
