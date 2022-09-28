@@ -8,6 +8,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ...
 
+### Fixed
+
+- Fixed not being able to clear properties on PipelineComponents when Type is an Array of database objects [#1420](https://github.com/HicServices/RDMP/issues/1420)
+
 ## [8.0.0] - 2022-09-27
 
 **Contains database patch to add support for Commit system and expanded Folder support**
