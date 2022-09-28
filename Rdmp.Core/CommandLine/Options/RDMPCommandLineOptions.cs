@@ -57,6 +57,9 @@ namespace Rdmp.Core.CommandLine.Options
         [Option('q',"quiet",Required = false, HelpText = "Suppress all console logging not directly tied to show/get value etc")]
         public bool Quiet { get; set; }
 
+        [Option("skip-patching", Required = false, HelpText = "Do not check to see if platform databases are out of date or suggest patching them")]
+        public bool SkipPatching { get; set; }
+
         /// <summary>
         /// If <see cref="ConnectionStringsFile"/> was specified and that file existed and was succesfully loaded
         /// using <see cref="PopulateConnectionStringsFromYamlIfMissing"/> then this property will store the
@@ -69,7 +72,7 @@ namespace Rdmp.Core.CommandLine.Options
 
         public IRDMPPlatformRepositoryServiceLocator DoStartup(EnvironmentInfo env,ICheckNotifier checkNotifier)
         {
-            Startup.Startup startup = new Startup.Startup(env,GetRepositoryLocator());
+            Startup.Startup startup = new Startup.Startup(env, GetRepositoryLocator()) { SkipPatching = SkipPatching};
             startup.DoStartup(checkNotifier);
             return startup.RepositoryLocator;
         }
