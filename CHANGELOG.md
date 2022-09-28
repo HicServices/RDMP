@@ -11,6 +11,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Fixed
 
 - Fixed Saved Cohort Save button not enabling when updating server/database or credentials [#1259](https://github.com/HicServices/RDMP/issues/1259)
+- Fixed not being able to clear properties on PipelineComponents when Type is an Array of database objects [#1420](https://github.com/HicServices/RDMP/issues/1420)
 - Fixed bug with Commit system not refreshing after delete
 - Fixed bug with Commit system when working with Plugins that have custom repositories
 
