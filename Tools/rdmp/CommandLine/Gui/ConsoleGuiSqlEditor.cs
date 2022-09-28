@@ -367,13 +367,13 @@ namespace Rdmp.Core.CommandLine.Gui
                 _white = Driver.MakeAttribute(Color.White, Color.Black);
                 
             }
-
-            protected override void ColorNormal()
+            
+            protected override void SetNormalColor()
             {
                 Driver.SetAttribute(_white);
             }
 
-            protected override void ColorNormal(List<System.Rune> line, int idx)
+            protected override void SetNormalColor(List<System.Rune> line, int idx)
             {
                 Driver.SetAttribute(IsKeyword(line, idx) ? _blue : _white);
             }
