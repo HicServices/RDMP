@@ -418,20 +418,24 @@ namespace Rdmp.UI.SimpleControls
 
         private void tbUsername_TextChanged(object sender, EventArgs e)
         {
-            //if nobody is listening who cares
-            if (IntegratedSecurityUseChanged == null)
-                return;
-
             //if the last value they typed was blank and the new value is not blank
             if (string.IsNullOrWhiteSpace(oldUsername) && !string.IsNullOrWhiteSpace(Username))
-                IntegratedSecurityUseChanged(false);
+                IntegratedSecurityUseChanged?.Invoke(false);
 
             //if the last value they typed was NOT blank and it is now blank
             if (!string.IsNullOrWhiteSpace(oldUsername) && string.IsNullOrWhiteSpace(Username))
-                IntegratedSecurityUseChanged(true);
+                IntegratedSecurityUseChanged?.Invoke(true);
 
             oldUsername = tbUsername.Text;
 
+            if (SelectionChanged != null)
+                SelectionChanged.Invoke();
+        }
+
+        private void tbPassword_TextChanged(object sender, EventArgs e)
+        {
+            if (SelectionChanged != null)
+                SelectionChanged.Invoke();
         }
 
         public DiscoveredDatabase GetDiscoveredDatabase()

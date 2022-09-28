@@ -8,6 +8,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ...
 
+### Fixed
+
+- Fixed Saved Cohort Save button not enabling when updating server/database or credentials [#1259](https://github.com/HicServices/RDMP/issues/1259)
+
 ## [8.0.0] - 2022-09-27
 
 **Contains database patch to add support for Commit system and expanded Folder support**
