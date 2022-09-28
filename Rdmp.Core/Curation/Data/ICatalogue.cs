@@ -33,7 +33,7 @@ namespace Rdmp.Core.Curation.Data
     /// <para>Catalogues are always flat views although they can be built from multiple relational data tables underneath.</para>
     /// 
     /// </summary>
-    public interface ICatalogue : IHasDependencies, IHasQuerySyntaxHelper,INamed, IMightBeDeprecated, IInjectKnown, ICheckable
+    public interface ICatalogue : IHasDependencies, IHasQuerySyntaxHelper,INamed, IMightBeDeprecated, IInjectKnown, ICheckable, IHasFolder
     {
 
         /// <summary>
@@ -89,12 +89,6 @@ namespace Rdmp.Core.Curation.Data
         /// </summary>
         bool IsColdStorageDataset { get; set; }
         
-        /// <summary>
-        /// A user defined hierarchical category which designates the role of the dataset e.g. '\datasets\extractable\labdata\'
-        /// <para>Should always start and end with a '\' even if it is the root (i.e. '\')</para>
-        /// </summary>
-        string Folder {get;set; }
-
         
         /// <summary>
         /// User specified free text field.  Not used for anything by RDMP.

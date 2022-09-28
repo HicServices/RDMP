@@ -7,6 +7,7 @@
 using System;
 using Rdmp.Core;
 using Rdmp.Core.CommandExecution.AtomicCommands;
+using Rdmp.Core.Curation.Data;
 using Rdmp.Core.Curation.Data.Cohort;
 using Rdmp.Core.Providers;
 using Rdmp.Core.Providers.Nodes.CohortNodes;
@@ -49,22 +50,11 @@ public partial class CohortIdentificationCollectionUI : RDMPCollectionUI, ILifet
         );
         CommonTreeFunctionality.AxeChildren = new[]{typeof (CohortIdentificationConfiguration), typeof(Core.Curation.Data.Aggregation.AggregateConfiguration) };
 
-        if (activator.CoreChildProvider is not DataExportChildProvider dataExportChildProvider)
-        {
-            CommonTreeFunctionality.MaintainRootObjects = new[] { typeof(CohortIdentificationConfiguration) };
-            tlvCohortIdentificationConfigurations.AddObjects(Activator.CoreChildProvider.AllCohortIdentificationConfigurations);
-        }
-        else
-        {
-            CommonTreeFunctionality.MaintainRootObjects = new[] { typeof(AllProjectCohortIdentificationConfigurationsNode),
-                typeof(AllFreeCohortIdentificationConfigurationsNode),
+        CommonTreeFunctionality.MaintainRootObjects = new[] {
+                typeof (FolderNode<CohortIdentificationConfiguration>),
                 typeof(AllOrphanAggregateConfigurationsNode),
-                typeof(AllTemplateAggregateConfigurationsNode)
-            };
-            tlvCohortIdentificationConfigurations.AddObject(dataExportChildProvider.AllProjectCohortIdentificationConfigurationsNode);
-            tlvCohortIdentificationConfigurations.AddObject(dataExportChildProvider.AllFreeCohortIdentificationConfigurationsNode);
-        }
-
+                typeof(AllTemplateAggregateConfigurationsNode)};
+        tlvCohortIdentificationConfigurations.AddObject(Activator.CoreChildProvider.CohortIdentificationConfigurationRootFolder);
         tlvCohortIdentificationConfigurations.AddObject(Activator.CoreChildProvider.OrphanAggregateConfigurationsNode);
         tlvCohortIdentificationConfigurations.AddObject(Activator.CoreChildProvider.TemplateAggregateConfigurationsNode);
         
@@ -79,15 +69,26 @@ public partial class CohortIdentificationCollectionUI : RDMPCollectionUI, ILifet
         CommonFunctionality.Add(factory.CreateMenuItem(new ExecuteCommandCreateNewCohortIdentificationConfiguration(Activator)),"New...");
         CommonFunctionality.Add(factory.CreateMenuItem(new ExecuteCommandMergeCohortIdentificationConfigurations(Activator,null){OverrideCommandName = "By Merging Existing..."}),"New...");
 
-        if (!_firstTime) return;
-        CommonTreeFunctionality.SetupColumnTracking(olvName,new Guid("f8a42259-ce5a-4006-8ab8-e0305fce05aa"));
-        CommonTreeFunctionality.SetupColumnTracking(olvFrozen, new Guid("d1e155ef-a28f-41b5-81e4-b763627ddb3c"));
-        _firstTime = false;
+        if (_firstTime)
+        {
+            CommonTreeFunctionality.SetupColumnTracking(olvName, new Guid("f8a42259-ce5a-4006-8ab8-e0305fce05aa"));
+            CommonTreeFunctionality.SetupColumnTracking(olvFrozen, new Guid("d1e155ef-a28f-41b5-81e4-b763627ddb3c"));
+
+            tlvCohortIdentificationConfigurations.Expand(Activator.CoreChildProvider.CohortIdentificationConfigurationRootFolder);
+
+            _firstTime = false;
+        }
     }
         
     public static bool IsRootObject(object root)
     {
-        return root is CohortIdentificationConfiguration or AllProjectCohortIdentificationConfigurationsNode or AllFreeCohortIdentificationConfigurationsNode;
+        // The root CohortIdentificationConfiguration FolderNode is a root element in this tree
+        if (root is FolderNode<CohortIdentificationConfiguration> f)
+        {
+            return f.Name == FolderHelper.Root;
+        }
+
+        return root is AllOrphanAggregateConfigurationsNode or AllTemplateAggregateConfigurationsNode;
     }
 
     public void RefreshBus_RefreshObject(object sender, RefreshObjectEventArgs e)

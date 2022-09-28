@@ -140,7 +140,8 @@ namespace Rdmp.Core.Providers
         } }
 
         public AllPermissionWindowsNode AllPermissionWindowsNode { get; set; }
-        public AllLoadMetadatasNode AllLoadMetadatasNode { get; set; }
+        public FolderNode<LoadMetadata> LoadMetadataRootFolder { get; set; }
+        public FolderNode<CohortIdentificationConfiguration> CohortIdentificationConfigurationRootFolder { get; set; }
 
         public AllConnectionStringKeywordsNode AllConnectionStringKeywordsNode { get; set; }
         public ConnectionStringKeyword[] AllConnectionStringKeywords { get; set; }
@@ -201,6 +202,7 @@ namespace Rdmp.Core.Providers
 
         public AllOrphanAggregateConfigurationsNode OrphanAggregateConfigurationsNode { get;set; } = new ();
         public AllTemplateAggregateConfigurationsNode TemplateAggregateConfigurationsNode { get; set; } = new ();
+        public FolderNode<Catalogue> CatalogueRootFolder { get; private set;}
 
         public HashSet<AggregateConfiguration> OrphanAggregateConfigurations;
         public AggregateConfiguration[] TemplateAggregateConfigurations;
@@ -368,16 +370,18 @@ namespace Rdmp.Core.Providers
 
             //add a new CatalogueItemNodes
             InjectCatalogueItems();
-
-            AddChildren(CatalogueFolder.Root,new DescendancyList(CatalogueFolder.Root));
+                        
+            CatalogueRootFolder = FolderHelper.BuildFolderTree(AllCatalogues);
+            AddChildren(CatalogueRootFolder, new DescendancyList(CatalogueRootFolder));
 
             ReportProgress("Build Catalogue Folder Root");
-            
-            AllLoadMetadatasNode = new AllLoadMetadatasNode();
-            AddChildren(AllLoadMetadatasNode);
 
-            foreach (CohortIdentificationConfiguration cic in AllCohortIdentificationConfigurations)
-                AddChildren(cic);
+            LoadMetadataRootFolder = FolderHelper.BuildFolderTree(AllLoadMetadatas);
+            AddChildren(LoadMetadataRootFolder,new DescendancyList(LoadMetadataRootFolder));
+
+
+            CohortIdentificationConfigurationRootFolder = FolderHelper.BuildFolderTree(AllCohortIdentificationConfigurations);
+            AddChildren(CohortIdentificationConfigurationRootFolder, new DescendancyList(CohortIdentificationConfigurationRootFolder));
 
             var templateAggregateConfigurationIds =
                 new HashSet<int>(
@@ -450,6 +454,7 @@ namespace Rdmp.Core.Providers
 
             ReportProgress("After building exports");
         }
+
 
         private void FetchCatalogueItems()
         {
@@ -602,21 +607,7 @@ namespace Rdmp.Core.Providers
             
             AddToDictionaries(children, descendancy);
         }
-
-
-        private void AddChildren(AllLoadMetadatasNode allLoadMetadatasNode)
-        {
-            HashSet<object> children = new HashSet<object>();
-            var descendancy = new DescendancyList(allLoadMetadatasNode);
-
-            foreach (LoadMetadata lmd in AllLoadMetadatas)
-            {
-                children.Add(lmd);
-                AddChildren(lmd, descendancy.Add(lmd));
-            }
-
-            AddToDictionaries(children,descendancy);
-        }
+                
 
         private void AddChildren(AllPermissionWindowsNode allPermissionWindowsNode)
         {
@@ -753,46 +744,33 @@ namespace Rdmp.Core.Providers
 
         private void BuildServerNodes()
         {
-            Dictionary<TableInfoServerNode,List<TableInfo>> allServers = new Dictionary<TableInfoServerNode,List<TableInfo>>();
-
             //add a root node for all the servers to be children of
             AllServersNode = new AllServersNode();
 
-            //find the unique server names among TableInfos
-            foreach (TableInfo t in AllTableInfos)
-            {
-                //make sure we have the in our dictionary
-                if(!allServers.Keys.Any(k=>k.IsSameServer(t)))
-                    allServers.Add(new TableInfoServerNode(t.Server,t.DatabaseType),new List<TableInfo>());
+            var servers =
+                from c in AllTableInfos
+                group c by new
+                {
+                    Server = c.Server ?? TableInfoServerNode.NullServerNode,
+                    c.DatabaseType,
+                } into gcs
+                select new TableInfoServerNode(gcs.Key.Server, gcs.Key.DatabaseType, gcs);
 
-                var match = allServers.Single(kvp => kvp.Key.IsSameServer(t));
-                match.Value.Add(t);
+            
+            var descendancy = new DescendancyList(AllServersNode);
+            var allServers = new List<TableInfoServerNode>();
+
+            foreach (var server in servers)
+            {
+                allServers.Add(server);
+                AddChildren(server, descendancy.Add(server));
             }
 
             //create the server nodes
-            AllServers = allServers.Keys.ToArray();
-
-            //document the children
-            foreach (var kvp in allServers)
-            {
-                var tableInfos = kvp.Value;
-
-                //record the fact that the TableInfos are children of their specific TableInfoServerNode
-                AddToDictionaries(new HashSet<object>(tableInfos), new DescendancyList(AllServersNode, kvp.Key));
-                
-                //record the children of the table infos (mostly column infos)
-                var kvp1 = kvp;
-                Parallel.ForEach(tableInfos, (t) =>
-                {
-                    //t descends from :
-                    //the all servers node=>the TableInfoServerNode => the t
-                    AddChildren(t,new DescendancyList(AllServersNode, kvp1.Key, t));
-                });
-
-            }
+            AllServers = allServers.ToArray();
 
             //record the fact that all the servers are children of the all servers node
-            AddToDictionaries(new HashSet<object>(AllServers),new DescendancyList(AllServersNode));
+            AddToDictionaries(new HashSet<object>(AllServers),descendancy);
         }
 
 
@@ -819,26 +797,65 @@ namespace Rdmp.Core.Providers
             AddToDictionaries(new HashSet<object>(AllANOTables), new DescendancyList(anoTablesNode));
         }
 
-        private void AddChildren(string folder, DescendancyList descendancy)
+        private void AddChildren(FolderNode<Catalogue> folder, DescendancyList descendancy)
         {
-            ConcurrentBag<object> childObjects = new ConcurrentBag<object>();
-
-            Parallel.ForEach(CatalogueFolder.GetImmediateSubFoldersUsing(folder,AllCatalogues), (f) =>
+            foreach(var child in folder.ChildFolders)
             {
-                //add subfolders
-                childObjects.Add(f);
-                AddChildren(f, descendancy.Add(f));
-            });
+                //add subfolder children
+                AddChildren(child, descendancy.Add(child));
+            };
 
             //add catalogues in folder
-            Parallel.ForEach(AllCatalogues.Where(c => c.Folder.Equals(folder)), c => 
+            foreach(var c in folder.ChildObjects)
             {
-                AddChildren(c,descendancy.Add(c));
-                childObjects.Add(c);
-            });
+                AddChildren(c, descendancy.Add(c));                
+            }
             
-            //finalise
-            AddToDictionaries(new HashSet<object>(childObjects),descendancy );
+            // Children are the folders + objects
+            AddToDictionaries(new HashSet<object>(
+                    folder.ChildFolders.Cast<object>()
+                    .Union(folder.ChildObjects)),descendancy 
+                    );
+        }
+        private void AddChildren(FolderNode<LoadMetadata> folder, DescendancyList descendancy)
+        {
+            foreach(var child in folder.ChildFolders)
+            {
+                //add subfolder children
+                AddChildren(child, descendancy.Add(child));
+            };
+
+            //add loads in folder
+            foreach(var lmd in folder.ChildObjects)
+            {
+                AddChildren(lmd, descendancy.Add(lmd));
+            }
+            
+            // Children are the folders + objects
+            AddToDictionaries(new HashSet<object>(
+                    folder.ChildFolders.Cast<object>()
+                    .Union(folder.ChildObjects)),descendancy 
+                    );
+        }
+        private void AddChildren(FolderNode<CohortIdentificationConfiguration> folder, DescendancyList descendancy)
+        {
+            foreach(var child in folder.ChildFolders)
+            {
+                //add subfolder children
+                AddChildren(child, descendancy.Add(child));
+            };
+
+            //add cics in folder
+            foreach(var cic in folder.ChildObjects)
+            {
+                AddChildren(cic, descendancy.Add(cic));
+            }
+
+            // Children are the folders + objects
+            AddToDictionaries(new HashSet<object>(
+                    folder.ChildFolders.Cast<object>()
+                    .Union(folder.ChildObjects)),descendancy 
+                    );
         }
 
         #region Load Metadata
@@ -1209,7 +1226,7 @@ namespace Rdmp.Core.Providers
             AddToDictionaries(children, descendancy);
         }
 
-        private void AddChildren(CohortIdentificationConfiguration cic)
+        private void AddChildren(CohortIdentificationConfiguration cic, DescendancyList descendancy)
         {
             HashSet<object> children = new HashSet<object>();
 
@@ -1227,17 +1244,16 @@ namespace Rdmp.Core.Providers
             if (cic.RootCohortAggregateContainer_ID != null)
             {
                 var container = AllCohortAggregateContainers.Single(c => c.ID == cic.RootCohortAggregateContainer_ID);
-                AddChildren(container, new DescendancyList(cic, container).SetBetterRouteExists());
+                AddChildren(container, descendancy.Add(container).SetBetterRouteExists());
                 children.Add(container);
             }
 
-
             //get the patient index tables
             var joinableNode = new JoinableCollectionNode(cic, AllJoinables.Where(j => j.CohortIdentificationConfiguration_ID == cic.ID).ToArray());
-            AddChildren(joinableNode, new DescendancyList(cic, joinableNode).SetBetterRouteExists());
+            AddChildren(joinableNode, descendancy.Add(joinableNode).SetBetterRouteExists());
             children.Add(joinableNode);
 
-            AddToDictionaries(children, new DescendancyList(cic).SetBetterRouteExists());
+            AddToDictionaries(children, descendancy.SetBetterRouteExists());
         }
 
         private void AddChildren(JoinableCollectionNode joinablesNode, DescendancyList descendancy)
@@ -1306,6 +1322,49 @@ namespace Rdmp.Core.Providers
                 descendancy.Parents.OfType<CohortIdentificationConfiguration>().Single().EnsureNamingConvention(configuration);
                 configuration.SaveToDatabase();
             }
+        }
+
+        private void AddChildren(TableInfoServerNode serverNode, DescendancyList descendancy)
+        {
+            //add empty hashset
+            var children = new HashSet<object>();
+
+            var databases =
+
+            from c in serverNode.Tables
+            group c by new
+            {
+                Database = c.Database ?? TableInfoDatabaseNode.NullDatabaseNode,
+                c.DatabaseType,
+            } into gcs
+            select new TableInfoDatabaseNode(gcs.Key.Database, gcs.Key.DatabaseType, gcs);
+
+            foreach (var db in databases)
+            {
+                children.Add(db);
+                AddChildren(db, descendancy.Add(db));
+            }
+
+            //now we have recorded all the children add them with descendancy
+            AddToDictionaries(children, descendancy);
+        }
+
+        private void AddChildren(TableInfoDatabaseNode dbNode, DescendancyList descendancy)
+        {
+            //add empty hashset
+            var children = new HashSet<object>();
+
+            foreach(var t in dbNode.Tables)
+            {
+                //record the children of the table infos (mostly column infos)
+                children.Add(t);
+
+                //the all servers node=>the TableInfoServerNode => the t
+                AddChildren(t, descendancy.Add(t));
+            }
+
+            //now we have recorded all the children add them with descendancy
+            AddToDictionaries(children, descendancy);
         }
 
         private void AddChildren(TableInfo tableInfo,DescendancyList descendancy)
@@ -1700,7 +1759,9 @@ namespace Rdmp.Core.Providers
             AllExtractionInformationsDictionary = otherCat.AllExtractionInformationsDictionary;
             _pluginChildProviders = otherCat._pluginChildProviders;
             AllPermissionWindowsNode = otherCat.AllPermissionWindowsNode;
-            AllLoadMetadatasNode = otherCat.AllLoadMetadatasNode;
+            LoadMetadataRootFolder = otherCat.LoadMetadataRootFolder;
+            CatalogueRootFolder = otherCat.CatalogueRootFolder;
+            CohortIdentificationConfigurationRootFolder = otherCat.CohortIdentificationConfigurationRootFolder;
             AllConnectionStringKeywordsNode = otherCat.AllConnectionStringKeywordsNode;
             AllConnectionStringKeywords = otherCat.AllConnectionStringKeywords;
             AllAggregateContainersDictionary = otherCat.AllAggregateContainersDictionary;
@@ -1809,7 +1870,7 @@ namespace Rdmp.Core.Providers
                 {
                     BuildAggregateConfigurations();
                     BuildCohortCohortAggregateContainers();
-                    AddChildren(cic);
+                    AddChildren(cic,descendancy.Add(cic));
                     return true;
                 }
             }

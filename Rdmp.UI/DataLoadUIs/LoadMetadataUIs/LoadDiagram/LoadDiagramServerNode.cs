@@ -33,7 +33,8 @@ namespace Rdmp.UI.DataLoadUIs.LoadMetadataUIs.LoadDiagram
 
         public readonly List<LoadDiagramDatabaseNode> Children = new List<LoadDiagramDatabaseNode>();
 
-        public LoadDiagramServerNode(LoadBubble bubble, DiscoveredDatabase database, TableInfo[] loadTables, HICDatabaseConfiguration config):base(database.Server.Name,database.Server.DatabaseType)
+        public LoadDiagramServerNode(LoadBubble bubble, DiscoveredDatabase database, TableInfo[] loadTables, HICDatabaseConfiguration config)
+            :base(database.Server.Name,database.Server.DatabaseType, loadTables)
         {
 
             _bubble = bubble;

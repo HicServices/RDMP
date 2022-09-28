@@ -8,13 +8,24 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ...
 
+### Added
+
+- Added command line switch `--skip-patching` to prevent running patches and launch the application as normal (can help debugging patch issues) [#1392](https://github.com/HicServices/RDMP/issues/1392)
+
+## [8.0.0] - 2022-09-27
+
+**Contains database patch to add support for Commit system and expanded Folder support**
+
 ### Fixed
 
 - Added better error message when there are problems with naming etc of a new cohort being committed [#1408](https://github.com/HicServices/RDMP/issues/1408)
+- Fixed null references when Exceptions are surfaced before main UI has loaded
 - Fixed a null reference trying to save [TableInfo] objects in application after setting the `Database` field to null.
+- Fixed `ViewLogs` command not working from Console Gui
 
 ### Added
 
+- Added `SetDefault` command for changing default logging/dqe etc servers from command line
 - Added yes/no popup for 'partial matches' when Guessing [CatalogueItem] to [ColumnInfo] mappings (e.g. when remapping metadata layer to a new underlying table) [#1400](https://github.com/HicServices/RDMP/issues/1400)
 - Added UI support for changing `UseAliasInsteadOfTransformInGroupByAggregateGraphs` user setting [#1393](https://github.com/HicServices/RDMP/issues/1393)
 - Added `DoNotUseHashJoinsForCatalogues` to `ExecuteDatasetExtractionSource` [PipelineComponent] [#1403](https://github.com/HicServices/RDMP/issues/1403)
@@ -1365,7 +1376,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Fixed Culture (e.g. en-us) not being passed correctly in DelimitedFlatFileAttacher
 - Fixed bug where Updater would show older versions of RDMP as installable 'updates'
 
-[Unreleased]: https://github.com/HicServices/RDMP/compare/v7.0.20...develop
+[Unreleased]: https://github.com/HicServices/RDMP/compare/v8.0.0...develop
+[8.0.0]: https://github.com/HicServices/RDMP/compare/v7.0.20...v8.0.0
 [7.0.20]: https://github.com/HicServices/RDMP/compare/v7.0.19...v7.0.20
 [7.0.19]: https://github.com/HicServices/RDMP/compare/v7.0.18...v7.0.19
 [7.0.18]: https://github.com/HicServices/RDMP/compare/v7.0.17...v7.0.18

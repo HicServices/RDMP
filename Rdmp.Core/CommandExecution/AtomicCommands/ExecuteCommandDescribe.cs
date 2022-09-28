@@ -62,6 +62,7 @@ namespace Rdmp.Core.CommandExecution.AtomicCommands
             }
         }
 
+        [UseWithObjectConstructor]
         public ExecuteCommandDescribe(IBasicActivateItems activator, 
             IMapsDirectlyToDatabaseTable[] toDescribe):base(activator)
         {
@@ -289,7 +290,13 @@ namespace Rdmp.Core.CommandExecution.AtomicCommands
                     
                     var desc = req.DemandIfAny?.Description;
 
-                    if(string.IsNullOrWhiteSpace(desc))
+
+                    if (req.Type.IsEnum)
+                    {
+                        desc += $"Allowed Values:{string.Join(", ", Enum.GetNames(req.Type))}";
+                    }
+
+                    if (string.IsNullOrWhiteSpace(desc))
                         return $"{name} {type}";
                     else
                     {

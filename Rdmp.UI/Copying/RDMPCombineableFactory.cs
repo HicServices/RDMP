@@ -107,6 +107,12 @@ namespace Rdmp.UI.Copying
             if (tableInfo != null)
                 return new TableInfoCombineable(tableInfo);
 
+            if(modelObject is LoadMetadata lmd)
+                return new LoadMetadataCombineable(lmd);
+            
+            if (modelObject is Project p)
+                return new ProjectCombineable(p);
+
             //catalogues
             var catalogues = IsArrayOf<Catalogue>(modelObject);
             

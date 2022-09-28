@@ -154,7 +154,6 @@ namespace Rdmp.Core.Icons.IconProvision
         FrozenExtractionConfigurationsNode,
         ProjectCataloguesNode,
 
-        AllLoadMetadatasNode,
         AllPermissionWindowsNode,
 
 
@@ -204,6 +203,7 @@ namespace Rdmp.Core.Icons.IconProvision
         DataProvider,
         MutilateDataTables,
         Commit,
-        Memento
+        Memento,
+        TableInfoDatabaseNode
     }
 }
