@@ -53,6 +53,11 @@ namespace Rdmp.Core.Startup
         public event FoundPlatformDatabaseHandler DatabaseFound = delegate { };
         public event MEFDownloadProgressHandler MEFFileDownloaded = delegate { };
 
+        /// <summary>
+        /// Set to true to ignore unpatched platform databases
+        /// </summary>
+        public bool SkipPatching { get; set; }
+
         public PluginPatcherFoundHandler PluginPatcherFound = delegate { }; 
 
         PatcherManager _patcherManager = new PatcherManager();
@@ -197,6 +202,10 @@ namespace Rdmp.Core.Startup
                 DatabaseFound(this, new PlatformDatabaseFoundEventArgs(tableRepository, patcher, RDMPPlatformDatabaseStatus.Broken, e));
                 return false;
             }
+
+            // if we are suppressing patching
+            if (patchingRequired == Patch.PatchingState.Required && SkipPatching)
+                patchingRequired = Patch.PatchingState.NotRequired;
 
             switch(patchingRequired)
             {

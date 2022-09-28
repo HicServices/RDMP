@@ -13,6 +13,11 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Fixed bug with Commit system not refreshing after delete
 - Fixed bug with Commit system when working with Plugins that have custom repositories
 
+### Added
+
+- Added command line switch `--skip-patching` to prevent running patches and launch the application as normal (can help debugging patch issues) [#1392](https://github.com/HicServices/RDMP/issues/1392)
+
+
 ## [8.0.0] - 2022-09-27
 
 **Contains database patch to add support for Commit system and expanded Folder support**
