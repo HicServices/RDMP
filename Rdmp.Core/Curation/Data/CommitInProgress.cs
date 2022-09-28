@@ -28,7 +28,7 @@ namespace Rdmp.Core.Curation.Data
         public CommitInProgressSettings Settings { get; }
 
         private IRDMPPlatformRepositoryServiceLocator _locator;
-        private IEnumerable<IRepository> _repositories;
+        private List<IRepository> _repositories;
         private ISerializer _serializer;
 
         /// <summary>
@@ -49,7 +49,7 @@ namespace Rdmp.Core.Curation.Data
 
             _locator = locator;
 
-            _repositories = _locator.GetAllRepositories();
+            _repositories = _locator.GetAllRepositories().ToList();
             _serializer = YamlRepository.CreateSerializer(_repositories.SelectMany(r=>r.GetCompatibleTypes()).Distinct()
                 );
 
