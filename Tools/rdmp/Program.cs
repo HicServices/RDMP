@@ -155,7 +155,7 @@ namespace Rdmp.Core
 
             var checker = new NLogICheckNotifier(true, false);
 
-            var start = new Startup.Startup(RdmpCommandLineBootStrapper.GetEnvironmentInfo(),repo);
+            var start = new Startup.Startup(RdmpCommandLineBootStrapper.GetEnvironmentInfo(), repo);
             bool badTimes = false;
 
             start.DatabaseFound += (s,e)=>{

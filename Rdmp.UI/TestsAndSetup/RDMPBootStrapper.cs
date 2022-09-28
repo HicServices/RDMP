@@ -87,7 +87,7 @@ namespace Rdmp.UI.TestsAndSetup
             try
             {
                 //show the startup dialog
-                Startup startup = new Startup(_environmentInfo);
+                Startup startup = new Startup(_environmentInfo) { SkipPatching = _args.SkipPatching };
 
                 if(!string.IsNullOrWhiteSpace(_args.Dir))
                 {
