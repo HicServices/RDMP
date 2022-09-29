@@ -16,6 +16,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Fixed bug with Commit system when working with Plugins that have custom repositories
 - Fix deleting ExternalDatabaseServer with YamlRepository not clearing default (e.g. deleting default logging server)
 - Fixed stale references in YamlRepository breaking on startup (ServerDefaults.yaml and CredentialsDictionary.yaml) 
+- Fixed empty yaml files causing errors (e.g. deleting contents of ServerDefaults.yaml)
 
 ### Added
 

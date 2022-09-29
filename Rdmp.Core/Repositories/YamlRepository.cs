@@ -119,11 +119,11 @@ public class YamlRepository : MemoryDataExportRepository
 
         LoadCredentialsDictionary();
 
-        PackageDictionary = Load<IExtractableDataSetPackage,IExtractableDataSet>(nameof(PackageDictionary));
+        PackageDictionary = Load<IExtractableDataSetPackage,IExtractableDataSet>(nameof(PackageDictionary)) ?? PackageDictionary;
 
-        GovernanceCoverage = Load<GovernancePeriod, ICatalogue>(nameof(GovernanceCoverage));
+        GovernanceCoverage = Load<GovernancePeriod, ICatalogue>(nameof(GovernanceCoverage)) ?? GovernanceCoverage;
 
-        ForcedJoins = Load<AggregateConfiguration,ITableInfo>(nameof(ForcedJoins));
+        ForcedJoins = Load<AggregateConfiguration,ITableInfo>(nameof(ForcedJoins)) ?? ForcedJoins;
 
         LoadCohortContainerContents();
 
@@ -291,6 +291,11 @@ public class YamlRepository : MemoryDataExportRepository
         {
             var yaml = File.ReadAllText(defaultsFile);
             var objectIds = deserializer.Deserialize<Dictionary<PermissableDefaults, int>>(yaml);
+
+            // file exists but is empty
+            if (objectIds == null)
+                return;
+
             Defaults = objectIds.ToDictionary(
                 k=>k.Key,
                 v=>v.Value == 0 ? null : (IExternalDatabaseServer)GetObjectByIDIfExists<ExternalDatabaseServer>(v.Value));
@@ -330,7 +335,10 @@ public class YamlRepository : MemoryDataExportRepository
         if (File.Exists(defaultsFile))
         {
             var yaml = File.ReadAllText(defaultsFile);
-            PropertiesDictionary = deserializer.Deserialize<Dictionary<DataExportProperty, string>>(yaml);
+            var props = deserializer.Deserialize<Dictionary<DataExportProperty, string>>(yaml);
+
+            if(props != null)
+                PropertiesDictionary = props;
         }
     }
     private void SaveDataExportProperties()
@@ -404,6 +412,10 @@ public class YamlRepository : MemoryDataExportRepository
             var yaml = File.ReadAllText(file);
 
             var ids = deserializer.Deserialize<Dictionary<int, Dictionary<DataAccessContext, int>>>(yaml);
+
+            // file exists but is empty
+            if (ids == null)
+                return;
 
             CredentialsDictionary = new Dictionary<ITableInfo, Dictionary<DataAccessContext, DataAccessCredentials>>();
 
@@ -492,6 +504,10 @@ public class YamlRepository : MemoryDataExportRepository
             var id = int.Parse(Path.GetFileNameWithoutExtension(f.Name));
 
             var content = deserializer.Deserialize<List<PersistCohortContainerContent>>(File.ReadAllText(f.FullName));
+
+            // file exists but is empty
+            if (content == null)
+                continue;
 
             try
             {
@@ -610,12 +626,12 @@ public class YamlRepository : MemoryDataExportRepository
     }
 
     private void LoadWhereSubContainers()
-    {
-        foreach(var c in Load<FilterContainer, FilterContainer>("ExtractionFilters"))
+    {        
+        foreach (var c in Load<FilterContainer, FilterContainer>("ExtractionFilters") ?? new())
         {
             WhereSubContainers.Add(c.Key, new HashSet<IContainer>(c.Value));
         }
-        foreach(var c in Load<AggregateFilterContainer, AggregateFilterContainer>("AggregateFilters"))
+        foreach(var c in Load<AggregateFilterContainer, AggregateFilterContainer>("AggregateFilters") ?? new())
         {
             WhereSubContainers.Add(c.Key, new HashSet<IContainer>(c.Value));
         }
@@ -635,7 +651,13 @@ public class YamlRepository : MemoryDataExportRepository
 
             var dictionary = new Dictionary<T, HashSet<T2>>();
 
-            foreach(var ids in deserializer.Deserialize<Dictionary<int, List<int>>>(yaml))
+            var dict = deserializer.Deserialize<Dictionary<int, List<int>>>(yaml);
+
+            //file exists but is empty
+            if (dict == null)
+                return null;
+
+            foreach (var ids in dict)
             {
                 try
                 {
