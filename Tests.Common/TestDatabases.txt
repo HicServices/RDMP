@@ -8,6 +8,8 @@
 
 Prefix:	TEST_
 ServerName:	(localdb)\MSSQLLocalDB
+#Uncomment to run tests with a YamlRepository
+#UseFileSystemRepo: true
 MySql:	server=127.0.0.1;Uid=root;Pwd=YourStrong!Passw0rd;AllowPublicKeyRetrieval=True
 PostgreSql:	User ID=postgres;Password=;Host=127.0.0.1;Port=5432
 Oracle: 

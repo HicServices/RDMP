@@ -184,17 +184,20 @@ namespace Rdmp.Core.Repositories
 
         public IExternalDatabaseServer GetDefaultFor(PermissableDefaults field)
         {
-            return Defaults[field];
+            return Defaults.TryGetValue(field, out var result) ? result : null;
         }
 
         public void ClearDefault(PermissableDefaults toDelete)
         {
-            Defaults[toDelete] = null;
+            SetDefault(toDelete, null);
         }
 
         public virtual void SetDefault(PermissableDefaults toChange, IExternalDatabaseServer externalDatabaseServer)
         {
-            Defaults[toChange] = externalDatabaseServer;
+            if (Defaults.ContainsKey(toChange))
+                Defaults[toChange] = externalDatabaseServer;
+            else
+                Defaults.Add(toChange, externalDatabaseServer);
         }
         
         public override void Clear()

@@ -13,6 +13,7 @@ using FAnsi.Discovery.QuerySyntax;
 using MapsDirectlyToDatabaseTable;
 using MapsDirectlyToDatabaseTable.Attributes;
 using MapsDirectlyToDatabaseTable.Versioning;
+using Rdmp.Core.Curation.Data.Defaults;
 using Rdmp.Core.Curation.Data.ImportExport;
 using Rdmp.Core.Curation.Data.Serialization;
 using Rdmp.Core.Databases;
@@ -286,6 +287,23 @@ namespace Rdmp.Core.Curation.Data
         public bool DiscoverExistence(DataAccessContext context,out string reason)
         {
             return _selfCertifyingDataAccessPoint.DiscoverExistence(context,out reason);
+        }
+
+        public override void DeleteInDatabase()
+        {
+            base.DeleteInDatabase();
+
+            // normally in database schema deleting an ExternalDatabaseServer will cascade to clear defaults
+            // but some repositories do not support this implicit removal so lets double check theres no references
+            foreach(PermissableDefaults d in Enum.GetValues(typeof(PermissableDefaults)))
+            {
+                var existingDefault = CatalogueRepository.GetDefaultFor(d);
+                if (this.Equals(existingDefault))
+                {
+                    CatalogueRepository.ClearDefault(d);
+                }
+            }
+            
         }
     }
 }

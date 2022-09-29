@@ -7,6 +7,7 @@
 using NUnit.Framework;
 using Rdmp.Core.Curation.Data;
 using Rdmp.Core.Curation.Data.Defaults;
+using Rdmp.Core.Databases;
 using Tests.Common;
 
 namespace Rdmp.Core.Tests.Curation.Integration
@@ -48,7 +49,29 @@ namespace Rdmp.Core.Tests.Curation.Integration
             {
                 databaseServer.DeleteInDatabase();
             }
+        }
 
+        [Test]
+        public void TestDeletingClearsDefault()
+        {
+            var eds = new ExternalDatabaseServer(CatalogueRepository, "mydb", new LoggingDatabasePatcher());
+            var old = CatalogueRepository.GetDefaultFor(PermissableDefaults.LiveLoggingServer_ID);
+
+            try
+            {
+                //make the new server the default for logging
+                CatalogueRepository.SetDefault(PermissableDefaults.LiveLoggingServer_ID,eds);
+
+                //now we deleted it!
+                eds.DeleteInDatabase();
+
+                Assert.IsNull(CatalogueRepository.GetDefaultFor(PermissableDefaults.LiveLoggingServer_ID));
+            }
+            finally
+            {
+
+                CatalogueRepository.SetDefault(PermissableDefaults.LiveLoggingServer_ID, old);
+            }            
         }
     }
 }
