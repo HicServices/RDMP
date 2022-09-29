@@ -405,9 +405,33 @@ public class YamlRepository : MemoryDataExportRepository
 
             var ids = deserializer.Deserialize<Dictionary<int, Dictionary<DataAccessContext, int>>>(yaml);
 
-            CredentialsDictionary = ids.ToDictionary(
-                    k=>GetObjectByID<ITableInfo>(k.Key),
-                    v=>v.Value.ToDictionary(k=>k.Key,v=>GetObjectByID<DataAccessCredentials>(v.Value)));
+            CredentialsDictionary = new Dictionary<ITableInfo, Dictionary<DataAccessContext, DataAccessCredentials>>();
+
+            foreach(var tableToCredentialUsage in ids)
+            {
+                var table = GetObjectByIDIfExists<TableInfo>(tableToCredentialUsage.Key);
+
+                // TableInfo was deleted on the sly
+                if (table == null)
+                    continue;
+
+                var valDictionary = new Dictionary<DataAccessContext, DataAccessCredentials>();
+                foreach(var credentialUsage in tableToCredentialUsage.Value)
+                {
+                    var credential = GetObjectByIDIfExists<DataAccessCredentials>(credentialUsage.Value);
+                    DataAccessContext usage = credentialUsage.Key;
+
+                    // Credentials deleted on the sly
+                    if (credential == null)
+                        continue;
+                    
+                    valDictionary.Add(usage, credential);
+                }
+
+                CredentialsDictionary.Add(table, valDictionary);
+            }
+
+            
         }
     }
     private void SaveCredentialsDictionary()
