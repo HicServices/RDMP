@@ -117,12 +117,8 @@ namespace Rdmp.Core.Curation.Data
             get { return _selfCertifyingDataAccessPoint.Password; }
             set
             {
-                if (Equals(_selfCertifyingDataAccessPoint.Password, value))
-                    return;
-
-                var old = _selfCertifyingDataAccessPoint.Password;
                 _selfCertifyingDataAccessPoint.Password = value;
-                OnPropertyChanged(old, value);
+                OnPropertyChanged(null, value);
             }
         }
 
@@ -289,6 +285,7 @@ namespace Rdmp.Core.Curation.Data
             return _selfCertifyingDataAccessPoint.DiscoverExistence(context,out reason);
         }
 
+
         public override void DeleteInDatabase()
         {
             base.DeleteInDatabase();
@@ -303,7 +300,11 @@ namespace Rdmp.Core.Curation.Data
                     CatalogueRepository.ClearDefault(d);
                 }
             }
-            
+        }
+        
+        public void SetRepository(ICatalogueRepository repository)
+        {
+            _selfCertifyingDataAccessPoint.SetRepository(repository);
         }
     }
 }
