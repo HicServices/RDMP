@@ -157,6 +157,9 @@ public class YamlRepository : MemoryDataExportRepository
             case DataAccessCredentials creds:
                 creds.SetEncryptedPasswordHost(new EncryptedPasswordHost(this));
                 break;
+            case ExternalDatabaseServer eds:
+                eds.SetRepository(this);
+                break;
             case ConcreteContainer container:
                 container.SetManager(this);
                 break;

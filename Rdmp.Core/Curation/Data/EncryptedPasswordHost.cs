@@ -4,6 +4,7 @@
 // RDMP is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License for more details.
 // You should have received a copy of the GNU General Public License along with RDMP. If not, see <https://www.gnu.org/licenses/>.
 
+using MapsDirectlyToDatabaseTable;
 using Rdmp.Core.Repositories;
 using ReusableLibraryCode.DataAccess;
 
@@ -36,7 +37,7 @@ namespace Rdmp.Core.Curation.Data
             }
         }
 
-        private readonly IEncryptedString _encryptedString;
+        private IEncryptedString _encryptedString;
 
         /// <summary>
         /// For XML serialization
@@ -58,11 +59,28 @@ namespace Rdmp.Core.Curation.Data
             _encryptedString = new EncryptedString(repository);
         }
 
+        /// <summary>
+        /// Updates the encryption method to use a real encryption strategy.  Should be called
+        /// after deserialization and only if the blank constructor was used.
+        /// </summary>
+        /// <param name="repository"></param>
+        public void SetRepository(ICatalogueRepository repository)
+        {
+            if(_encryptedString is FakeEncryptedString f)
+            {
+                _encryptedString = new EncryptedString(repository);
+                _encryptedString.Value = f.Value;
+            }            
+        }
+
         /// <inheritdoc/>
         public string Password
         {
             get
             {
+                if (_encryptedString is FakeEncryptedString)
+                    throw new System.Exception($"Encryption setup failed, API caller must have forgotten to call {nameof(SetRepository)}");
+
                 return _encryptedString.Value;
             }
             set

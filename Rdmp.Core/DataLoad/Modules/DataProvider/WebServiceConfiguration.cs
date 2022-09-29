@@ -22,6 +22,8 @@ namespace Rdmp.Core.DataLoad.Modules.DataProvider
     
     public class WebServiceConfiguration : EncryptedPasswordHost, ICustomUIDrivenClass
     {
+        private ICatalogueRepository _repository;
+
         /// <summary>
         /// For XML Serialization
         /// </summary>
@@ -31,6 +33,7 @@ namespace Rdmp.Core.DataLoad.Modules.DataProvider
 
         public WebServiceConfiguration(ICatalogueRepository repository) : base(repository)
         {
+            _repository = repository;
         }
 
         public string Endpoint { get; set; }
@@ -51,6 +54,7 @@ namespace Rdmp.Core.DataLoad.Modules.DataProvider
             try
             {
                 var deserialized = (WebServiceConfiguration)deserializer.Deserialize(new StringReader(value));
+                deserialized.SetRepository(_repository);
 
                 Endpoint = deserialized.Endpoint;
                 Username = deserialized.Username;
