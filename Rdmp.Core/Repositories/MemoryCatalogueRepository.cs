@@ -521,15 +521,7 @@ namespace Rdmp.Core.Repositories
         #endregion
 
         #region IEncryptionManager
-        public IEncryptStrings GetEncrypter()
-        {
-            return new SimpleStringValueEncryption(null);
-        }
-        public void ClearAllInjections()
-        {
-
-        }
-
+     
         public virtual void SetEncryptionKeyPath(string fullName)
         {
             EncryptionKeyPath = fullName;
