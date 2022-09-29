@@ -285,6 +285,13 @@ select 0", con.Connection, con.Transaction))
             if (toChange == PermissableDefaults.None)
                 throw new ArgumentException("toChange cannot be None", "toChange");
 
+            if (externalDatabaseServer == null)
+            {
+                ClearDefault(toChange);
+                return;
+            }
+                
+
             var oldValue = GetDefaultFor(toChange);
 
             if (oldValue == null)
