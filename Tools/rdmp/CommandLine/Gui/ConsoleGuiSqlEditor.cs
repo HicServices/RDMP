@@ -135,8 +135,17 @@ namespace Rdmp.Core.CommandLine.Gui
             btnSave.Clicked += ()=>Save();
             Add(btnSave);
 
+            var btnOpen = new Button("Open")
+            {
+                X = Pos.Right(btnSave) + 1,
+            };
+
+            btnOpen.Clicked += OpenFile;
+
+            Add(btnOpen);
+
             var btnClose = new Button("Clos_e"){
-                X= Pos.Right(btnSave)+1,
+                X= Pos.Right(btnOpen) +1,
                 };
 
 
@@ -151,6 +160,26 @@ namespace Rdmp.Core.CommandLine.Gui
             var bits = auto.Items.SelectMany(auto.GetBits).OrderBy(a => a).Where(s => !string.IsNullOrWhiteSpace(s)).Distinct().ToList();
             textView.Autocomplete.AllSuggestions = bits;
             textView.Autocomplete.MaxWidth = 40;
+        }
+
+        private void OpenFile()
+        {
+            try
+            {
+                using var open = new OpenDialog("Open Sql File", "Open");
+                Application.Run(open, ConsoleMainWindow.ExceptionPopup);
+
+                var file = open.FilePath.ToString();
+                if (!open.Canceled && File.Exists(file))
+                {
+                    var sql = File.ReadAllText(file);
+                    textView.Text = sql;
+                }
+            }
+            catch (Exception ex)
+            {
+                ConsoleMainWindow.ExceptionPopup(ex);
+            }
         }
 
         private void TableView_CellActivated(TableView.CellActivatedEventArgs obj)

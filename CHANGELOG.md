@@ -18,7 +18,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Added
 
 - Added command line switch `--skip-patching` to prevent running patches and launch the application as normal (can help debugging patch issues) [#1392](https://github.com/HicServices/RDMP/issues/1392)
-
+- Added 'open file' to Console SQL Editor for easier running of .sql files [#1438](https://github.com/HicServices/RDMP/issues/1438)
 
 ## [8.0.0] - 2022-09-27
 
