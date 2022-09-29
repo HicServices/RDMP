@@ -293,7 +293,25 @@ public class YamlRepository : MemoryDataExportRepository
             var objectIds = deserializer.Deserialize<Dictionary<PermissableDefaults, int>>(yaml);
             Defaults = objectIds.ToDictionary(
                 k=>k.Key,
-                v=>v.Value == 0 ? null : (IExternalDatabaseServer)GetObjectByID<ExternalDatabaseServer>(v.Value));
+                v=>v.Value == 0 ? null : (IExternalDatabaseServer)GetObjectByIDIfExists<ExternalDatabaseServer>(v.Value));
+        }
+    }
+
+    /// <summary>
+    /// Returns the object referenced or null if it has been deleted on the sly (e.g. by user deleting .yaml files on disk)
+    /// </summary>
+    /// <typeparam name="T"></typeparam>
+    /// <param name="id"></param>
+    /// <returns></returns>
+    private T GetObjectByIDIfExists<T>(int id) where T:DatabaseEntity
+    {
+        try
+        {
+            return GetObjectByID<T>(id);
+        }
+        catch (KeyNotFoundException)
+        {
+            return null;
         }
     }
     #endregion
