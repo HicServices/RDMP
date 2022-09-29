@@ -286,7 +286,11 @@ select 0", con.Connection, con.Transaction))
                 throw new ArgumentException("toChange cannot be None", "toChange");
 
             if (externalDatabaseServer == null)
+            {
                 ClearDefault(toChange);
+                return;
+            }
+                
 
             var oldValue = GetDefaultFor(toChange);
 
