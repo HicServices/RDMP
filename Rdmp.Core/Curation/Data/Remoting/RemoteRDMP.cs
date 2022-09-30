@@ -32,6 +32,7 @@ namespace Rdmp.Core.Curation.Data.Remoting
         private string _username;
 
         private EncryptedPasswordHost _encryptedPasswordHost;
+        private string _tempPassword;
 
         #endregion
 
@@ -68,13 +69,16 @@ namespace Rdmp.Core.Curation.Data.Remoting
             get { return _encryptedPasswordHost.Password; }
             set
             {
-                if (_encryptedPasswordHost.Password == value)
+                // if we are being deserialized (using blank constructor)
+                if(_encryptedPasswordHost == null)
+                {
+                    // store the encrypted value from the database in a temp variable
+                    // until we get told how to decrypt (see SetRepository)
+                    _tempPassword = value;
                     return;
-
-                var old = _encryptedPasswordHost.Password;
+                }
                 _encryptedPasswordHost.Password = value;
-
-                OnPropertyChanged(old,value);
+                OnPropertyChanged(null, value);
             }
         }
 
@@ -165,6 +169,13 @@ namespace Rdmp.Core.Curation.Data.Remoting
             baseUri.Path += "/api/values/";
 
             return baseUri.ToString();
+        }
+
+
+        public void SetRepository(ICatalogueRepository repository)
+        {
+            _encryptedPasswordHost = new EncryptedPasswordHost(repository);
+            _encryptedPasswordHost.Password = _tempPassword;
         }
     }
 }

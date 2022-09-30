@@ -59,12 +59,8 @@ namespace Rdmp.Core.Curation.Data
                     return;
                 }
 
-                if (Equals(_encryptedPasswordHost.Password,value))
-                    return;
-
-                var old = _encryptedPasswordHost.Password;
                 _encryptedPasswordHost.Password = value;
-                OnPropertyChanged(old, value);
+                OnPropertyChanged(null, value);
             }
         }
 
