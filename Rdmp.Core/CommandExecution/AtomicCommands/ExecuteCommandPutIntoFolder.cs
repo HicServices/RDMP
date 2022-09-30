@@ -55,12 +55,19 @@ namespace Rdmp.Core.CommandExecution.AtomicCommands
             {
                 if(BasicActivator.IsInteractive)
                 {
+                    // if theres a single current value for the folder
+                    // of these objects (i.e. they are only operating on one item
+                    // or on several items in the same folder).  Then make the 
+                    // popup text box show the old value.  Otherwise show the root \
+                    var current = _toMove.Select(m => m.Folder).Distinct().ToArray();
+                    string oldValue = current.Length == 1 ? current[0] : "\\";
+
                     if (!BasicActivator.TypeText(new DialogArgs
                     {
                         WindowTitle = "Folder",
                         TaskDescription = "Enter a new virtual folder for the object.  Folder names should be lower case and start with a backslash ('\\')",
                         EntryLabel = "New Folder"
-                    }, 500, "\\", out f, false))
+                    }, 500, oldValue, out f, false))
                         return;
                 }
                 else

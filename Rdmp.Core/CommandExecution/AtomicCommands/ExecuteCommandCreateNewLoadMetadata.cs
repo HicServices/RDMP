@@ -12,6 +12,7 @@ using Rdmp.Core.Curation.Data.DataLoad;
 using Rdmp.Core.Icons.IconProvision;
 using ReusableLibraryCode.Icons.IconProvision;
 using SixLabors.ImageSharp.PixelFormats;
+using Rdmp.Core.Curation.Data.Cohort;
 
 namespace Rdmp.Core.CommandExecution.AtomicCommands
 {
@@ -19,6 +20,11 @@ namespace Rdmp.Core.CommandExecution.AtomicCommands
     {
         private Catalogue[] _availableCatalogues;
         private Catalogue _catalogue;
+
+        /// <summary>
+        /// The folder to put the new <see cref="LoadMetadata"/> in.  Defaults to <see cref="FolderHelper.Root"/>
+        /// </summary>
+        public string Folder { get; set; } = FolderHelper.Root;
 
         public ExecuteCommandCreateNewLoadMetadata(IBasicActivateItems activator,
         [DemandsInitialization("Which Catalogue does this load.  Catalogues must not be associated with an existing load")]
@@ -61,6 +67,9 @@ namespace Rdmp.Core.CommandExecution.AtomicCommands
 
                 _catalogue.LoadMetadata_ID = lmd.ID;
                 _catalogue.SaveToDatabase();
+
+                lmd.Folder = Folder;
+                lmd.SaveToDatabase();
 
                 Publish(lmd);
 

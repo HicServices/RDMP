@@ -372,8 +372,11 @@ namespace Rdmp.Core.CommandExecution
                 yield return new ExecuteCommandClearQueryCache(_activator, cicQueryCache.User);
             }
 
-            if(Is(o,out FolderNode<CohortIdentificationConfiguration> _))
-                yield return new ExecuteCommandCreateNewCohortIdentificationConfiguration(_activator) { PromptToPickAProject=true};
+            if(Is(o,out FolderNode<CohortIdentificationConfiguration> cicFolder))
+                yield return new ExecuteCommandCreateNewCohortIdentificationConfiguration(_activator) {
+                    PromptToPickAProject=true,
+                    Folder = cicFolder.FullName
+                };
 
             if (Is(o, out IJoin j))
             {
@@ -436,9 +439,9 @@ namespace Rdmp.Core.CommandExecution
                 yield return new ExecuteCommandAddNewGovernanceDocument(_activator, null) { OverrideCommandName = "Add New Governance Document" };
             }
 
-            if (Is(o,out FolderNode<LoadMetadata> _))
+            if (Is(o,out FolderNode<LoadMetadata> lmdFolder))
             {
-                yield return new ExecuteCommandCreateNewLoadMetadata(_activator);
+                yield return new ExecuteCommandCreateNewLoadMetadata(_activator) { Folder = lmdFolder.FullName};
                 yield return new ExecuteCommandImportShareDefinitionList(_activator){OverrideCommandName = "Import Load"};
             }
 

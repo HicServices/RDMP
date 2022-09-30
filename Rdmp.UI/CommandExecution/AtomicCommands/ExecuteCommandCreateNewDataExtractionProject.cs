@@ -14,11 +14,17 @@ using Rdmp.UI.ItemActivation;
 using Rdmp.UI.Wizard;
 using ReusableLibraryCode.Icons.IconProvision;
 using SixLabors.ImageSharp.PixelFormats;
+using Rdmp.Core.Curation.Data;
 
 namespace Rdmp.UI.CommandExecution.AtomicCommands
 {
     public class ExecuteCommandCreateNewDataExtractionProject : BasicUICommandExecution, IAtomicCommand
     {
+        /// <summary>
+        /// The folder to put the new <see cref="Project"/> in.  Defaults to <see cref="FolderHelper.Root"/>
+        /// </summary>
+        public string Folder { get; set; } = FolderHelper.Root;
+
         public ExecuteCommandCreateNewDataExtractionProject(IActivateItems activator) : base(activator)
         {
             UseTripleDotSuffix = true;
@@ -31,6 +37,10 @@ namespace Rdmp.UI.CommandExecution.AtomicCommands
             if (wizard.ShowDialog() == DialogResult.OK && wizard.ProjectCreatedIfAny != null)
             {
                 var p = wizard.ProjectCreatedIfAny;
+
+                p.Folder = Folder;
+                p.SaveToDatabase();
+
                 Publish(p);
                 Activator.RequestItemEmphasis(this, new EmphasiseRequest(p, int.MaxValue));
 
