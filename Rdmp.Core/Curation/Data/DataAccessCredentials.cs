@@ -149,6 +149,9 @@ namespace Rdmp.Core.Curation.Data
         /// <inheritdoc/>
         public string GetDecryptedPassword()
         {
+            if (_encryptedPasswordHost == null)
+                throw new Exception($"Passwords cannot be decrypted until {nameof(SetEncryptedPasswordHost)} has been called and decryption strategy is established");
+
             return _encryptedPasswordHost.GetDecryptedPassword() ?? "";
         }
 

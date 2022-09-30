@@ -85,6 +85,9 @@ namespace Rdmp.Core.Curation.Data.Remoting
         /// <inheritdoc/>
         public string GetDecryptedPassword()
         {
+            if (_encryptedPasswordHost == null)
+                throw new Exception($"Passwords cannot be decrypted until {nameof(SetRepository)} has been called and decryption strategy is established");
+
             return _encryptedPasswordHost.GetDecryptedPassword()?? "";
         }
         public RemoteRDMP()

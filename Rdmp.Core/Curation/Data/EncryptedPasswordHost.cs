@@ -7,6 +7,7 @@
 using MapsDirectlyToDatabaseTable;
 using Rdmp.Core.Repositories;
 using ReusableLibraryCode.DataAccess;
+using System;
 
 namespace Rdmp.Core.Curation.Data
 {
@@ -92,6 +93,9 @@ namespace Rdmp.Core.Curation.Data
         /// <inheritdoc/>
         public string GetDecryptedPassword()
         {
+            if (_encryptedString == null)
+                throw new Exception($"Passwords cannot be decrypted until {nameof(SetRepository)} has been called and decryption strategy is established");
+
             return _encryptedString.GetDecryptedValue() ?? "";
         }
     }
