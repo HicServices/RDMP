@@ -173,7 +173,10 @@ public class YamlRepository : MemoryDataExportRepository
             case LoadModuleAssembly lma:
                 lock(lockFs)
                 {
-                    lma.Bin = File.ReadAllBytes(GetNupkgPath(lma));
+                    var file = GetNupkgPath(lma);
+
+                    if(File.Exists(file))
+                        lma.Bin = File.ReadAllBytes(file);
                     break;
                 }
         }
