@@ -14,6 +14,7 @@ using Rdmp.Core.Curation.Data.Aggregation;
 using Rdmp.Core.Curation.Data.Cohort;
 using Rdmp.Core.Curation.Data.Defaults;
 using Rdmp.Core.Curation.Data.Governance;
+using Rdmp.Core.Curation.Data.Remoting;
 using Rdmp.Core.DataExport.Data;
 using Rdmp.Core.Repositories.Managers;
 using ReusableLibraryCode.DataAccess;
@@ -160,13 +161,22 @@ public class YamlRepository : MemoryDataExportRepository
             case ExternalDatabaseServer eds:
                 eds.SetRepository(this);
                 break;
+            case ExternalCohortTable ect:
+                ect.SetRepository(this);
+                break;
+            case RemoteRDMP remote:
+                remote.SetRepository(this);
+                break;
             case ConcreteContainer container:
                 container.SetManager(this);
                 break;
             case LoadModuleAssembly lma:
                 lock(lockFs)
                 {
-                    lma.Bin = File.ReadAllBytes(GetNupkgPath(lma));
+                    var file = GetNupkgPath(lma);
+
+                    if(File.Exists(file))
+                        lma.Bin = File.ReadAllBytes(file);
                     break;
                 }
         }
@@ -210,6 +220,8 @@ public class YamlRepository : MemoryDataExportRepository
     public override void SaveToDatabase(IMapsDirectlyToDatabaseTable o)
     {
         base.SaveToDatabase(o);
+        
+        SetRepositoryOnObject(o);
 
         var yaml = _serializer.Serialize(o);
 

@@ -361,12 +361,8 @@ namespace Rdmp.Core.DataExport.Data
             get { return SelfCertifyingDataAccessPoint.Password; }
             set
             {
-                if (Equals(SelfCertifyingDataAccessPoint.Password, value))
-                    return;
-
-                var old = SelfCertifyingDataAccessPoint.Password;
                 SelfCertifyingDataAccessPoint.Password = value;
-                OnPropertyChanged(old, value);
+                OnPropertyChanged(null, value);
             }
         }
 
@@ -530,6 +526,11 @@ description as {syntax.EnsureWrapped("Description")},
         public bool DiscoverExistence(DataAccessContext context, out string reason)
         {
             return SelfCertifyingDataAccessPoint.DiscoverExistence(context,out reason);
+        }
+
+        public void SetRepository(ICatalogueRepository repository)
+        {
+            SelfCertifyingDataAccessPoint.SetRepository(repository);
         }
     }
 }
