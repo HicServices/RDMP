@@ -27,6 +27,5 @@ namespace Rdmp.UI.Menus
 
             Add(new ExecuteCommandCreateNewCatalogueByImportingFileUI(_activator) { OverrideCommandName = "New Project Specific Catalogue From File...", SuggestedCategory = AtomicCommandFactory.Add, Weight = -1.9f });
         }
-
     }
 }

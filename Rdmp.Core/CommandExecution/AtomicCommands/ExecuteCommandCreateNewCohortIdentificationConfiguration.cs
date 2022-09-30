@@ -31,6 +31,11 @@ namespace Rdmp.Core.CommandExecution.AtomicCommands
         /// yet on this command.
         /// </summary>
         public bool PromptToPickAProject { get; set; } = false;
+        
+        /// <summary>
+        /// The folder to put the new <see cref="CohortIdentificationConfiguration"/> in.  Defaults to <see cref="FolderHelper.Root"/>
+        /// </summary>
+        public string Folder { get; set; } = FolderHelper.Root;
 
         /// <summary>
         /// Name to give the root component of new cics created by this command (usually an EXCEPT but not always - see Cohort Configuration Wizard)
@@ -112,6 +117,9 @@ namespace Rdmp.Core.CommandExecution.AtomicCommands
                 
             if (cic == null)
                 return;
+
+            cic.Folder = Folder;
+            cic.SaveToDatabase();
 
             if (proj != null)
             {
