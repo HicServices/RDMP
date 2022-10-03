@@ -32,7 +32,7 @@ namespace Rdmp.Core.CommandLine.Gui
         }
         public int Run(IRDMPPlatformRepositoryServiceLocator repositoryLocator, IDataLoadEventListener listener, ICheckNotifier checkNotifier, GracefulCancellationToken token)
         {
-            LogManager.SuspendLogging();
+            Program.DisableConsoleLogging();
 
             if (options.UseSystemConsole)
             {
