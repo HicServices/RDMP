@@ -14,6 +14,7 @@ using Rdmp.Core.Repositories;
 using ReusableLibraryCode;
 using ReusableLibraryCode.Annotations;
 using ReusableLibraryCode.DataAccess;
+using static Rdmp.Core.Curation.Data.EncryptedPasswordHost;
 
 namespace Rdmp.Core.Curation.Data
 { 
@@ -29,7 +30,6 @@ namespace Rdmp.Core.Curation.Data
         #region Database Properties
         private string _name;
         private string _username;
-        private string _tempPassword;
 
         /// <inheritdoc/>
         [Unique]
@@ -53,12 +53,6 @@ namespace Rdmp.Core.Curation.Data
             get { return _encryptedPasswordHost.Password; }
             set
             {
-                if(_encryptedPasswordHost == null)
-                {
-                    _tempPassword = value;
-                    return;
-                }
-
                 _encryptedPasswordHost.Password = value;
                 OnPropertyChanged(null, value);
             }
@@ -70,14 +64,7 @@ namespace Rdmp.Core.Curation.Data
         {
 
         }
-        internal void SetEncryptedPasswordHost(EncryptedPasswordHost host)
-        {
-            _encryptedPasswordHost = host;
-            if(_tempPassword != null)
-            {
-                Password = _tempPassword;
-            }
-        }
+
         /// <summary>
         /// Records a new (initially blank) set of credentials that can be used to access a <see cref="TableInfo"/> or other object requiring authentication.
         /// <para>A single <see cref="DataAccessCredentials"/> can be shared by multiple tables</para>
@@ -150,7 +137,7 @@ namespace Rdmp.Core.Curation.Data
         public string GetDecryptedPassword()
         {
             if (_encryptedPasswordHost == null)
-                throw new Exception($"Passwords cannot be decrypted until {nameof(SetEncryptedPasswordHost)} has been called and decryption strategy is established");
+                throw new Exception($"Passwords cannot be decrypted until {nameof(SetRepository)} has been called and decryption strategy is established");
 
             return _encryptedPasswordHost.GetDecryptedPassword() ?? "";
         }
@@ -175,6 +162,11 @@ namespace Rdmp.Core.Curation.Data
                 return string.IsNullOrWhiteSpace(password);
 
             return p.Equals(password);
+        }
+
+        internal void SetRepository(ICatalogueRepository repository)
+        {
+            _encryptedPasswordHost.SetRepository(repository);
         }
     }
 }

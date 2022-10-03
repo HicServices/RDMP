@@ -12,6 +12,7 @@ using Rdmp.Core.Curation.Data;
 using Rdmp.Core.Repositories.Managers;
 using ReusableLibraryCode.DataAccess;
 using Tests.Common;
+using MapsDirectlyToDatabaseTable;
 
 namespace Rdmp.Core.Tests.Curation.Integration
 {
@@ -361,6 +362,24 @@ namespace Rdmp.Core.Tests.Curation.Integration
             var manager = new TableInfoCredentialsManager(CatalogueTableRepository);
             Assert.AreEqual(creds,manager.GetCredentialByUsernameAndPasswordIfExists("Root",null));
             Assert.AreEqual(creds,manager.GetCredentialByUsernameAndPasswordIfExists("Root",""));
+        }
+
+        [Test]
+        public void Test_NoDuplicatePasswords()
+        {
+            var t1 = new TableInfo(CatalogueRepository, "tbl1");
+            var t2 = new TableInfo(CatalogueRepository, "tbl2");
+
+            var credCount = CatalogueRepository.GetAllObjects<DataAccessCredentials>().Length;
+
+            //if there is a username then we need to associate it with the TableInfo we just created
+            DataAccessCredentialsFactory credentialsFactory = new DataAccessCredentialsFactory(CatalogueRepository);
+            var cred = credentialsFactory.Create(t1, "blarg", "flarg",DataAccessContext.Any);
+            var cred2 = credentialsFactory.Create(t2, "blarg", "flarg", DataAccessContext.Any);
+
+            Assert.AreEqual(credCount + 1, CatalogueRepository.GetAllObjects<DataAccessCredentials>().Length);
+            
+            Assert.AreEqual(cred, cred2, $"Expected {nameof(DataAccessCredentialsFactory)} to reuse existing credentials for both tables as they have the same username/password - e.g. bulk insert");
         }
     }
 }

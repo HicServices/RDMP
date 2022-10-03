@@ -156,7 +156,7 @@ public class YamlRepository : MemoryDataExportRepository
         switch (obj)
         {
             case DataAccessCredentials creds:
-                creds.SetEncryptedPasswordHost(new EncryptedPasswordHost(this));
+                creds.SetRepository(this);
                 break;
             case ExternalDatabaseServer eds:
                 eds.SetRepository(this);
