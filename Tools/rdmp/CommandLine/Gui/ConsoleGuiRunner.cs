@@ -41,14 +41,22 @@ namespace Rdmp.Core.CommandLine.Gui
 
             Application.Init();
 
-            _activator = new ConsoleGuiActivator(repositoryLocator,checkNotifier);
-            ConsoleMainWindow.StaticActivator = _activator;    
+            try
+            {
+                _activator = new ConsoleGuiActivator(repositoryLocator, checkNotifier);
+                ConsoleMainWindow.StaticActivator = _activator;
 
-            var top = Application.Top;
-            
-            // Creates the top-level window to show
-            var win = new ConsoleMainWindow(_activator);
-            win.SetUp(top);
+                var top = Application.Top;
+
+                // Creates the top-level window to show
+                var win = new ConsoleMainWindow(_activator);
+                win.SetUp(top);
+            }
+            catch (Exception e)
+            {
+                LogManager.GetCurrentClassLogger().Error(e, "Failed to startup application");
+                return -2;
+            }
             
             try
             {
@@ -56,7 +64,6 @@ namespace Rdmp.Core.CommandLine.Gui
             }
             catch (Exception e)
             {
-                LogManager.ResumeLogging();
                 LogManager.GetCurrentClassLogger().Error(e, "Application Crashed");
                 top.Running = false;
                 return -1;
