@@ -216,7 +216,14 @@ namespace Rdmp.Core.CommandLine.Interactive
         public override IMapsDirectlyToDatabaseTable SelectOne(DialogArgs args, IMapsDirectlyToDatabaseTable[] availableObjects)
         {
             if (DisallowInput)
-                throw new InputDisallowedException($"Value required for '{args}'");
+            {
+                if (args.AllowAutoSelect && availableObjects.Length == 1)
+                {
+                    return availableObjects[0];
+                }
+                else
+                    throw new InputDisallowedException($"Value required for '{args}'");
+            }
 
             if (availableObjects.Length == 0)
                 throw new Exception("No available objects found");
