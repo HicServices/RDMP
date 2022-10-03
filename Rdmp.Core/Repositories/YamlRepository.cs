@@ -107,9 +107,16 @@ public class YamlRepository : MemoryDataExportRepository
             {
                 foreach (var yaml in typeDir.EnumerateFiles("*.yaml"))
                 {
-                    var obj = (IMapsDirectlyToDatabaseTable)deserializer.Deserialize(File.ReadAllText(yaml.FullName), t);
-                    SetRepositoryOnObject(obj);
-                    Objects.TryAdd(obj, 0);
+                    try
+                    {
+                        var obj = (IMapsDirectlyToDatabaseTable)deserializer.Deserialize(File.ReadAllText(yaml.FullName), t);
+                        SetRepositoryOnObject(obj);
+                        Objects.TryAdd(obj, 0);
+                    }
+                    catch (Exception ex)
+                    {
+                        throw new Exception($"Error loading object in file {yaml.FullName}",ex);
+                    }
                 }
             }
         }

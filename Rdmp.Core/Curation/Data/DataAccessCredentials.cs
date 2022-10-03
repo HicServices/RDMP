@@ -62,7 +62,7 @@ namespace Rdmp.Core.Curation.Data
 
         public DataAccessCredentials()
         {
-
+            _encryptedPasswordHost = new EncryptedPasswordHost();
         }
 
         /// <summary>
