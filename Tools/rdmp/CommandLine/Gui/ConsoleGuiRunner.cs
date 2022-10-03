@@ -65,7 +65,7 @@ namespace Rdmp.Core.CommandLine.Gui
             catch (Exception e)
             {
                 LogManager.GetCurrentClassLogger().Error(e, "Application Crashed");
-                top.Running = false;
+                Application.Top.Running = false;
                 return -1;
             }
             finally
