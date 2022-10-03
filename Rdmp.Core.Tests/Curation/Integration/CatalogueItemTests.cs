@@ -153,5 +153,33 @@ namespace Rdmp.Core.Tests.Curation.Integration
                 
             }
         }
+
+        [TestCase(true)]
+        [TestCase(false)]
+        public void TestDeleting_CascadesToExtractionInformations(bool makeOrphanFirst)
+        {
+            var c = new Catalogue(CatalogueRepository,"My new cata");
+            var ci = new CatalogueItem(CatalogueRepository, c, "myci");
+
+            var t = new TableInfo(CatalogueRepository, "myt");
+            var col = new ColumnInfo(CatalogueRepository, "mycol", "varchar(10)", t);
+
+            var ei = new ExtractionInformation(CatalogueRepository, ci, col,"fff");
+
+            if(makeOrphanFirst)
+            {
+                col.DeleteInDatabase();
+            }
+
+            c.DeleteInDatabase();
+
+            Assert.IsFalse(c.Exists());
+            Assert.IsFalse(ci.Exists());
+            Assert.IsFalse(ei.Exists());
+
+            Assert.IsTrue(t.Exists());
+            Assert.AreEqual(!makeOrphanFirst,col.Exists());
+
+        }
     }
 }

@@ -148,8 +148,12 @@ namespace Rdmp.Core.CommandExecution.AtomicCommands
             if (married.Any() && YesNo("Found " + married.Count + " columns, make them all extractable?", "Make Extractable"))
                 foreach (var kvp in married)
                 {
-                    //yup thats how we roll, the database is main memory!
-                    new ExtractionInformation(BasicActivator.RepositoryLocator.CatalogueRepository, kvp.Key, kvp.Value, kvp.Value.Name);
+                    // don't mark it extractable twice
+                    if(kvp.Key.ExtractionInformation == null)
+                    {
+                        //yup thats how we roll, the database is main memory!
+                        new ExtractionInformation(BasicActivator.RepositoryLocator.CatalogueRepository, kvp.Key, kvp.Value, kvp.Value.Name);
+                    }
                 }
 
             if (anyNewTable != null)
