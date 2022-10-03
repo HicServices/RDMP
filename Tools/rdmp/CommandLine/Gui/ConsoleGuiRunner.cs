@@ -32,17 +32,18 @@ namespace Rdmp.Core.CommandLine.Gui
         }
         public int Run(IRDMPPlatformRepositoryServiceLocator repositoryLocator, IDataLoadEventListener listener, ICheckNotifier checkNotifier, GracefulCancellationToken token)
         {
-            _activator = new ConsoleGuiActivator(repositoryLocator,checkNotifier);
-            ConsoleMainWindow.StaticActivator = _activator;
-            
             LogManager.SuspendLogging();
 
             if (options.UseSystemConsole)
             {
                 Application.UseSystemConsole = true;
-            }            
+            }
 
-            Application.Init ();
+            Application.Init();
+
+            _activator = new ConsoleGuiActivator(repositoryLocator,checkNotifier);
+            ConsoleMainWindow.StaticActivator = _activator;    
+
             var top = Application.Top;
             
             // Creates the top-level window to show
