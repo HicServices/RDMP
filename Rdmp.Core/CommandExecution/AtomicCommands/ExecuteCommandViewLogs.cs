@@ -112,7 +112,7 @@ int? Optional, if <root> is logging server this can be a specific audit id to sh
             else
             {
                 var server = SelectOne(_loggingServers,null,true);
-                BasicActivator.ShowLogs(server,_filter);
+                BasicActivator.ShowLogs(server,_filter?? new LogViewerFilter(LoggingTables.DataLoadRun));
             }
         }
 
