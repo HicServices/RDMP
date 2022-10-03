@@ -60,28 +60,28 @@ namespace Rdmp.Core.Providers
         public LoadProgress[] AllLoadProgresses { get; set; }
         public CacheProgress[] AllCacheProgresses { get; set; }
         public PermissionWindow[] AllPermissionWindows { get; set; }
-        
+
         //Catalogue side of things
         public Catalogue[] AllCatalogues { get; set; }
         public Dictionary<int, Catalogue> AllCataloguesDictionary { get; private set; }
-        
+
         public SupportingDocument[] AllSupportingDocuments { get; set; }
         public SupportingSQLTable[] AllSupportingSQL { get; set; }
 
         //tells you the imediate children of a given node.  Do not add to this directly instead add using AddToDictionaries unless you want the Key to be an 'on the sly' no known descendency child
         private ConcurrentDictionary<object, HashSet<object>> _childDictionary = new ConcurrentDictionary<object, HashSet<object>>();
-        
+
         //This is the reverse of _childDictionary in some ways.  _childDictionary tells you the immediate children while
         //this tells you for a given child object what the navigation tree down to get to it is e.g. ascendancy[child] would return [root,grandParent,parent]
         private ConcurrentDictionary<object, DescendancyList> _descendancyDictionary = new ConcurrentDictionary<object, DescendancyList>();
-        
-        public IEnumerable<CatalogueItem> AllCatalogueItems { get { return AllCatalogueItemsDictionary.Values; } }
-        
-        private Dictionary<int,List<CatalogueItem>> _catalogueToCatalogueItems;
-        public Dictionary<int,CatalogueItem> AllCatalogueItemsDictionary { get; private set; }
 
-        private Dictionary<int,ColumnInfo> _allColumnInfos;
-        
+        public IEnumerable<CatalogueItem> AllCatalogueItems { get { return AllCatalogueItemsDictionary.Values; } }
+
+        private Dictionary<int, List<CatalogueItem>> _catalogueToCatalogueItems;
+        public Dictionary<int, CatalogueItem> AllCatalogueItemsDictionary { get; private set; }
+
+        private Dictionary<int, ColumnInfo> _allColumnInfos;
+
         public AggregateConfiguration[] AllAggregateConfigurations { get; private set; }
         public AggregateDimension[] AllAggregateDimensions { get; private set; }
 
@@ -90,8 +90,8 @@ namespace Rdmp.Core.Providers
         public AllRDMPRemotesNode AllRDMPRemotesNode { get; private set; }
         public RemoteRDMP[] AllRemoteRDMPs { get; set; }
 
-        public AllDashboardsNode AllDashboardsNode { get;set;}
-        public DashboardLayout[] AllDashboards { get;set;}
+        public AllDashboardsNode AllDashboardsNode { get; set; }
+        public DashboardLayout[] AllDashboards { get; set; }
 
         public AllObjectSharingNode AllObjectSharingNode { get; private set; }
         public ObjectImport[] AllImports { get; set; }
@@ -102,7 +102,7 @@ namespace Rdmp.Core.Providers
         public OtherPipelinesNode OtherPipelinesNode { get; private set; }
         public Pipeline[] AllPipelines { get; set; }
         public PipelineComponent[] AllPipelineComponents { get; set; }
-        
+
         public PipelineComponentArgument[] AllPipelineComponentsArguments { get; set; }
 
         public StandardRegex[] AllStandardRegexes { get; set; }
@@ -112,7 +112,7 @@ namespace Rdmp.Core.Providers
         public ANOTable[] AllANOTables { get; set; }
 
         public ExternalDatabaseServer[] AllExternalServers { get; private set; }
-        public TableInfoServerNode[] AllServers { get;private set; }
+        public TableInfoServerNode[] AllServers { get; private set; }
         public TableInfo[] AllTableInfos { get; private set; }
 
         public AllDataAccessCredentialsNode AllDataAccessCredentialsNode { get; set; }
@@ -123,7 +123,7 @@ namespace Rdmp.Core.Providers
         public DataAccessCredentials[] AllDataAccessCredentials { get; set; }
         public Dictionary<ITableInfo, List<DataAccessCredentialUsageNode>> AllDataAccessCredentialUsages { get; set; }
 
-        public  Dictionary<int, List<ColumnInfo>> TableInfosToColumnInfos { get; private set; }
+        public Dictionary<int, List<ColumnInfo>> TableInfosToColumnInfos { get; private set; }
         public ColumnInfo[] AllColumnInfos { get; private set; }
         public PreLoadDiscardedColumn[] AllPreLoadDiscardedColumns { get; private set; }
 
@@ -135,9 +135,9 @@ namespace Rdmp.Core.Providers
 
         //Filter / extraction side of things
         public IEnumerable<ExtractionInformation> AllExtractionInformations { get
-        {
-            return AllExtractionInformationsDictionary.Values;
-        } }
+            {
+                return AllExtractionInformationsDictionary.Values;
+            } }
 
         public AllPermissionWindowsNode AllPermissionWindowsNode { get; set; }
         public FolderNode<LoadMetadata> LoadMetadataRootFolder { get; set; }
@@ -146,14 +146,14 @@ namespace Rdmp.Core.Providers
         public AllConnectionStringKeywordsNode AllConnectionStringKeywordsNode { get; set; }
         public ConnectionStringKeyword[] AllConnectionStringKeywords { get; set; }
 
-        public Dictionary<int,ExtractionInformation> AllExtractionInformationsDictionary { get; private set; }
+        public Dictionary<int, ExtractionInformation> AllExtractionInformationsDictionary { get; private set; }
         protected Dictionary<int, ExtractionInformation> _extractionInformationsByCatalogueItem;
 
         private IFilterManager _aggregateFilterManager;
 
         //Filters for Aggregates (includes filter containers (AND/OR)
         public Dictionary<int, AggregateFilterContainer> AllAggregateContainersDictionary { get; private set; }
-        public AggregateFilterContainer[] AllAggregateContainers { get { return AllAggregateContainersDictionary.Values.ToArray();}}
+        public AggregateFilterContainer[] AllAggregateContainers { get { return AllAggregateContainersDictionary.Values.ToArray(); } }
 
         public AggregateFilter[] AllAggregateFilters { get; private set; }
         public AggregateFilterParameter[] AllAggregateFilterParameters { get; private set; }
@@ -163,9 +163,9 @@ namespace Rdmp.Core.Providers
         public ExtractionFilterParameter[] AllCatalogueParameters;
         public ExtractionFilterParameterSet[] AllCatalogueValueSets;
         public ExtractionFilterParameterSetValue[] AllCatalogueValueSetValues;
-        
+
         private ICohortContainerManager _cohortContainerManager;
-        
+
         public CohortIdentificationConfiguration[] AllCohortIdentificationConfigurations { get; private set; }
         public CohortAggregateContainer[] AllCohortAggregateContainers { get; set; }
         public JoinableCohortAggregateConfiguration[] AllJoinables { get; set; }
@@ -174,7 +174,7 @@ namespace Rdmp.Core.Providers
         /// <summary>
         /// Collection of all objects for which there are masqueraders
         /// </summary>
-        public ConcurrentDictionary<object,HashSet<IMasqueradeAs>> AllMasqueraders { get; private set; }
+        public ConcurrentDictionary<object, HashSet<IMasqueradeAs>> AllMasqueraders { get; private set; }
 
         private IChildProvider[] _pluginChildProviders;
         private readonly ICatalogueRepository _catalogueRepository;
@@ -185,24 +185,24 @@ namespace Rdmp.Core.Providers
         public GovernancePeriod[] AllGovernancePeriods { get; private set; }
         public GovernanceDocument[] AllGovernanceDocuments { get; private set; }
         public Dictionary<int, HashSet<int>> GovernanceCoverage { get; private set; }
-        
+
         private CommentStore _commentStore;
 
         public JoinableCohortAggregateConfigurationUse[] AllJoinableCohortAggregateConfigurationUse { get; private set; }
-        public AllPluginsNode AllPluginsNode { get; private set;}
-        public Curation.Data.Plugin[] AllPlugins { get; private set ;}
-        public Curation.Data.Plugin[] AllCompatiblePlugins { get; private set;}
+        public AllPluginsNode AllPluginsNode { get; private set; }
+        public Curation.Data.Plugin[] AllPlugins { get; private set; }
+        public Curation.Data.Plugin[] AllCompatiblePlugins { get; private set; }
 
-        public HashSet<StandardPipelineUseCaseNode> PipelineUseCases {get;set; } = new HashSet<StandardPipelineUseCaseNode>();
+        public HashSet<StandardPipelineUseCaseNode> PipelineUseCases { get; set; } = new HashSet<StandardPipelineUseCaseNode>();
 
         /// <summary>
         /// Lock for changes to Child provider
         /// </summary>
         protected object WriteLock = new object();
 
-        public AllOrphanAggregateConfigurationsNode OrphanAggregateConfigurationsNode { get;set; } = new ();
-        public AllTemplateAggregateConfigurationsNode TemplateAggregateConfigurationsNode { get; set; } = new ();
-        public FolderNode<Catalogue> CatalogueRootFolder { get; private set;}
+        public AllOrphanAggregateConfigurationsNode OrphanAggregateConfigurationsNode { get; set; } = new();
+        public AllTemplateAggregateConfigurationsNode TemplateAggregateConfigurationsNode { get; set; } = new();
+        public FolderNode<Catalogue> CatalogueRootFolder { get; private set; }
 
         public HashSet<AggregateConfiguration> OrphanAggregateConfigurations;
         public AggregateConfiguration[] TemplateAggregateConfigurations;
@@ -225,15 +225,15 @@ namespace Rdmp.Core.Providers
             _catalogueRepository?.EncryptionManager?.ClearAllInjections();
 
             _errorsCheckNotifier = errorsCheckNotifier ?? new IgnoreAllErrorsCheckNotifier();
-            
-            if(UserSettings.DebugPerformance)
-                _errorsCheckNotifier.OnCheckPerformed(new CheckEventArgs("Refresh generated by:" + Environment.NewLine + Environment.StackTrace,CheckResult.Success));
+
+            if (UserSettings.DebugPerformance)
+                _errorsCheckNotifier.OnCheckPerformed(new CheckEventArgs("Refresh generated by:" + Environment.NewLine + Environment.StackTrace, CheckResult.Success));
 
             // all the objects which are 
             AllMasqueraders = new ConcurrentDictionary<object, HashSet<IMasqueradeAs>>();
-            
+
             _pluginChildProviders = pluginChildProviders ?? new IChildProvider[0];
-            
+
             ReportProgress("Before object fetches");
 
             AllAnyTableParameters = GetAllObjects<AnyTableSqlParameter>(repository);
@@ -243,14 +243,14 @@ namespace Rdmp.Core.Providers
             AddChildren(AllANOTablesNode);
 
             AllCatalogues = GetAllObjects<Catalogue>(repository);
-            AllCataloguesDictionary = AllCatalogues.ToDictionary(i => i.ID, o => o);
+            AllCataloguesDictionary = AllCatalogues.ToDictionaryEx(i => i.ID, o => o);
 
             AllLoadMetadatas = GetAllObjects<LoadMetadata>(repository);
             AllProcessTasks = GetAllObjects<ProcessTask>(repository);
             AllProcessTasksArguments = GetAllObjects<ProcessTaskArgument>(repository);
             AllLoadProgresses = GetAllObjects<LoadProgress>(repository);
             AllCacheProgresses = GetAllObjects<CacheProgress>(repository);
-            
+
             AllPermissionWindows = GetAllObjects<PermissionWindow>(repository);
             AllPermissionWindowsNode = new AllPermissionWindowsNode();
             AddChildren(AllPermissionWindowsNode);
@@ -267,21 +267,21 @@ namespace Rdmp.Core.Providers
             AllConnectionStringKeywordsNode = new AllConnectionStringKeywordsNode();
             AllConnectionStringKeywords = GetAllObjects<ConnectionStringKeyword>(repository).ToArray();
             AddToDictionaries(new HashSet<object>(AllConnectionStringKeywords), new DescendancyList(AllConnectionStringKeywordsNode));
-            
+
             ReportProgress("after basic object fetches");
 
             Task.WaitAll(
                 //which TableInfos use which Credentials under which DataAccessContexts
-                Task.Factory.StartNew(() => { AllDataAccessCredentialUsages = repository.TableInfoCredentialsManager.GetAllCredentialUsagesBy(AllDataAccessCredentials,AllTableInfos);}),
+                Task.Factory.StartNew(() => { AllDataAccessCredentialUsages = repository.TableInfoCredentialsManager.GetAllCredentialUsagesBy(AllDataAccessCredentials, AllTableInfos); }),
                 Task.Factory.StartNew(() => { AllColumnInfos = GetAllObjects<ColumnInfo>(repository); })
                 );
-            
+
             ;
-            
+
             ReportProgress("After credentials");
 
-            TableInfosToColumnInfos = AllColumnInfos.GroupBy(c => c.TableInfo_ID).ToDictionary(gdc => gdc.Key, gdc => gdc.ToList());
-            
+            TableInfosToColumnInfos = AllColumnInfos.GroupBy(c => c.TableInfo_ID).ToDictionaryEx(gdc => gdc.Key, gdc => gdc.ToList());
+
             ReportProgress("After TableInfo to ColumnInfo mapping");
 
             AllPreLoadDiscardedColumns = GetAllObjects<PreLoadDiscardedColumn>(repository);
@@ -310,20 +310,20 @@ namespace Rdmp.Core.Providers
             AllCatalogueParameters = GetAllObjects<ExtractionFilterParameter>(repository);
             AllCatalogueValueSets = GetAllObjects<ExtractionFilterParameterSet>(repository);
             AllCatalogueValueSetValues = GetAllObjects<ExtractionFilterParameterSetValue>(repository);
-                                    
+
             ReportProgress("After Filter and Joinable fetching");
 
 
             AllLookups = GetAllObjects<Lookup>(repository);
 
             foreach (Lookup l in AllLookups)
-                l.SetKnownColumns(_allColumnInfos[l.PrimaryKey_ID], _allColumnInfos[l.ForeignKey_ID],_allColumnInfos[l.Description_ID]);
+                l.SetKnownColumns(_allColumnInfos[l.PrimaryKey_ID], _allColumnInfos[l.ForeignKey_ID], _allColumnInfos[l.Description_ID]);
 
             AllJoinInfos = repository.GetAllObjects<JoinInfo>();
 
             foreach (JoinInfo j in AllJoinInfos)
                 j.SetKnownColumns(_allColumnInfos[j.PrimaryKey_ID], _allColumnInfos[j.ForeignKey_ID]);
-            
+
             ReportProgress("After SetKnownColumns");
 
             AllExternalServersNode = new AllExternalServersNode();
@@ -339,7 +339,7 @@ namespace Rdmp.Core.Providers
             AllObjectSharingNode = new AllObjectSharingNode();
             AllExports = GetAllObjects<ObjectExport>(repository);
             AllImports = GetAllObjects<ObjectImport>(repository);
-            
+
             AddChildren(AllObjectSharingNode);
 
             ReportProgress("After Object Sharing discovery");
@@ -359,25 +359,25 @@ namespace Rdmp.Core.Providers
 
             AllStandardRegexesNode = new AllStandardRegexesNode();
             AllStandardRegexes = GetAllObjects<StandardRegex>(repository);
-            AddToDictionaries(new HashSet<object>(AllStandardRegexes),new DescendancyList(AllStandardRegexesNode));
+            AddToDictionaries(new HashSet<object>(AllStandardRegexes), new DescendancyList(AllStandardRegexesNode));
 
             ReportProgress("After Pipelines setup");
-            
+
             //All the things for TableInfoCollectionUI
             BuildServerNodes();
-            
+
             ReportProgress("BuildServerNodes");
 
             //add a new CatalogueItemNodes
             InjectCatalogueItems();
-                        
+
             CatalogueRootFolder = FolderHelper.BuildFolderTree(AllCatalogues);
             AddChildren(CatalogueRootFolder, new DescendancyList(CatalogueRootFolder));
 
             ReportProgress("Build Catalogue Folder Root");
 
             LoadMetadataRootFolder = FolderHelper.BuildFolderTree(AllLoadMetadatas);
-            AddChildren(LoadMetadataRootFolder,new DescendancyList(LoadMetadataRootFolder));
+            AddChildren(LoadMetadataRootFolder, new DescendancyList(LoadMetadataRootFolder));
 
 
             CohortIdentificationConfigurationRootFolder = FolderHelper.BuildFolderTree(AllCohortIdentificationConfigurations);
@@ -392,26 +392,26 @@ namespace Rdmp.Core.Providers
             TemplateAggregateConfigurations = AllAggregateConfigurations.Where(ac => templateAggregateConfigurationIds.Contains(ac.ID)).ToArray();
 
             //add the orphans under the orphan folder
-            AddToDictionaries(new HashSet<object>(OrphanAggregateConfigurations),new DescendancyList(OrphanAggregateConfigurationsNode));
+            AddToDictionaries(new HashSet<object>(OrphanAggregateConfigurations), new DescendancyList(OrphanAggregateConfigurationsNode));
 
             var dec = new DescendancyList(TemplateAggregateConfigurationsNode);
             dec.SetBetterRouteExists();
             AddToDictionaries(new HashSet<object>(TemplateAggregateConfigurations), dec);
-            
+
 
             //Some AggregateConfigurations are 'Patient Index Tables', this happens when there is an existing JoinableCohortAggregateConfiguration declared where
             //the AggregateConfiguration_ID is the AggregateConfiguration.ID.  We can inject this knowledge now so to avoid database lookups later (e.g. at icon provision time)
-            Dictionary<int, JoinableCohortAggregateConfiguration> joinableDictionaryByAggregateConfigurationId =  AllJoinables.ToDictionary(j => j.AggregateConfiguration_ID,v=> v);
+            Dictionary<int, JoinableCohortAggregateConfiguration> joinableDictionaryByAggregateConfigurationId = AllJoinables.ToDictionaryEx(j => j.AggregateConfiguration_ID, v => v);
 
             foreach (AggregateConfiguration ac in AllAggregateConfigurations)
             {
-                ac.InjectKnown(joinableDictionaryByAggregateConfigurationId.TryGetValue(ac.ID,out JoinableCohortAggregateConfiguration joinable) //if there's a joinable
+                ac.InjectKnown(joinableDictionaryByAggregateConfigurationId.TryGetValue(ac.ID, out JoinableCohortAggregateConfiguration joinable) //if there's a joinable
                     ? joinable //inject that we know the joinable (and what it is)
                     : null); //otherwise inject that it is not a joinable (suppresses database checking later)
             }
 
             ReportProgress("After AggregateConfiguration injection");
-                    
+
             AllGovernanceNode = new AllGovernanceNode();
             AllGovernancePeriods = GetAllObjects<GovernancePeriod>(repository);
             AllGovernanceDocuments = GetAllObjects<GovernanceDocument>(repository);
@@ -426,29 +426,29 @@ namespace Rdmp.Core.Providers
             AllCompatiblePlugins = _catalogueRepository.PluginManager.GetCompatiblePlugins();
 
             AddChildren(AllPluginsNode);
-            
+
             ReportProgress("After Plugins");
 
             var searchables = new Dictionary<int, HashSet<IMapsDirectlyToDatabaseTable>>();
 
             foreach (IMapsDirectlyToDatabaseTable o in _descendancyDictionary.Keys.OfType<IMapsDirectlyToDatabaseTable>())
             {
-                if(!searchables.ContainsKey(o.ID))
-                    searchables.Add(o.ID,new HashSet<IMapsDirectlyToDatabaseTable>());
+                if (!searchables.ContainsKey(o.ID))
+                    searchables.Add(o.ID, new HashSet<IMapsDirectlyToDatabaseTable>());
 
                 searchables[o.ID].Add(o);
             }
-            
+
             ReportProgress("After building Searchables");
 
             foreach (ObjectExport e in AllExports)
             {
-                if(!searchables.ContainsKey(e.ReferencedObjectID))
+                if (!searchables.ContainsKey(e.ReferencedObjectID))
                     continue;
-                
+
                 var known = searchables[e.ReferencedObjectID].FirstOrDefault(s => e.ReferencedObjectType == s.GetType().FullName);
 
-                if(known != null)
+                if (known != null)
                     e.InjectKnown(known);
             }
 
@@ -458,12 +458,12 @@ namespace Rdmp.Core.Providers
 
         private void FetchCatalogueItems()
         {
-            AllCatalogueItemsDictionary = GetAllObjects<CatalogueItem>(_catalogueRepository).ToDictionary(i => i.ID, o => o);
+            AllCatalogueItemsDictionary = GetAllObjects<CatalogueItem>(_catalogueRepository).ToDictionaryEx(i => i.ID, o => o);
 
             ReportProgress("After CatalogueItem getting");
 
-            _catalogueToCatalogueItems = AllCatalogueItems.GroupBy(c => c.Catalogue_ID).ToDictionary(gdc => gdc.Key, gdc => gdc.ToList());
-            _allColumnInfos = AllColumnInfos.ToDictionary(i => i.ID, o => o);
+            _catalogueToCatalogueItems = AllCatalogueItems.GroupBy(c => c.Catalogue_ID).ToDictionaryEx(gdc => gdc.Key, gdc => gdc.ToList());
+            _allColumnInfos = AllColumnInfos.ToDictionaryEx(i => i.ID, o => o);
 
             ReportProgress("After CatalogueItem Dictionary building");
 
@@ -480,8 +480,8 @@ namespace Rdmp.Core.Providers
 
         private void FetchExtractionInformations()
         {
-            AllExtractionInformationsDictionary = GetAllObjects<ExtractionInformation>(_catalogueRepository).ToDictionary(i => i.ID, o => o);
-            _extractionInformationsByCatalogueItem = AllExtractionInformationsDictionary.Values.ToDictionary(k => k.CatalogueItem_ID, v => v);
+            AllExtractionInformationsDictionary = GetAllObjects<ExtractionInformation>(_catalogueRepository).ToDictionaryEx(i => i.ID, o => o);
+            _extractionInformationsByCatalogueItem = AllExtractionInformationsDictionary.Values.ToDictionaryEx(k => k.CatalogueItem_ID, v => v);
 
             //Inject known CatalogueItems into ExtractionInformations
             foreach (ExtractionInformation ei in AllExtractionInformationsDictionary.Values)
@@ -493,7 +493,6 @@ namespace Rdmp.Core.Providers
                 }
             }
         }
-
         private void BuildCohortCohortAggregateContainers()
         {
             AllCohortAggregateContainers = GetAllObjects<CohortAggregateContainer>(_catalogueRepository);
@@ -539,7 +538,7 @@ namespace Rdmp.Core.Providers
 
         private void BuildAggregateFilterContainers()
         {
-            AllAggregateContainersDictionary = GetAllObjects<AggregateFilterContainer>(_catalogueRepository).ToDictionary(o => o.ID, o2 => o2);
+            AllAggregateContainersDictionary = GetAllObjects<AggregateFilterContainer>(_catalogueRepository).ToDictionaryEx(o => o.ID, o2 => o2);
             AllAggregateFilters = GetAllObjects<AggregateFilter>(_catalogueRepository);
             AllAggregateFilterParameters = GetAllObjects<AggregateFilterParameter>(_catalogueRepository);
 

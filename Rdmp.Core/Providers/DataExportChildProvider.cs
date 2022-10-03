@@ -111,7 +111,7 @@ namespace Rdmp.Core.Providers
             ExtractableDataSets = GetAllObjects<ExtractableDataSet>(dataExportRepository);
             
             //This means that the ToString method in ExtractableDataSet doesn't need to go lookup catalogue info
-            var catalogueIdDict = AllCatalogues.ToDictionary(c => c.ID, c2 => c2);
+            var catalogueIdDict = AllCatalogues.ToDictionaryEx(c => c.ID, c2 => c2);
             foreach (ExtractableDataSet ds in ExtractableDataSets)
                 if(catalogueIdDict.TryGetValue(ds.Catalogue_ID, out Catalogue cata))
                     ds.InjectKnown(cata);
@@ -125,7 +125,7 @@ namespace Rdmp.Core.Providers
                         
             ReportProgress("Get Projects and Configurations");
 
-            ExtractionConfigurationsByProject = ExtractionConfigurations.GroupBy(k => k.Project_ID).ToDictionary(gdc => gdc.Key, gdc => gdc.ToList());
+            ExtractionConfigurationsByProject = ExtractionConfigurations.GroupBy(k => k.Project_ID).ToDictionaryEx(gdc => gdc.Key, gdc => gdc.ToList());
 
             ReportProgress("Grouping Extractions by Project");
 
@@ -234,9 +234,9 @@ namespace Rdmp.Core.Providers
             SelectedDataSets = GetAllObjects<SelectedDataSets>(dataExportRepository);
             ReportProgress("Fetching data export objects");
 
-            _extractionProgressesBySelectedDataSetID = GetAllObjects<ExtractionProgress>(dataExportRepository).ToDictionary(ds => ds.SelectedDataSets_ID, d => d); ;
+            _extractionProgressesBySelectedDataSetID = GetAllObjects<ExtractionProgress>(dataExportRepository).ToDictionaryEx(ds => ds.SelectedDataSets_ID, d => d); ;
 
-            var dsDictionary = ExtractableDataSets.ToDictionary(ds => ds.ID, d => d);
+            var dsDictionary = ExtractableDataSets.ToDictionaryEx(ds => ds.ID, d => d);
             foreach (SelectedDataSets s in SelectedDataSets)
                 s.InjectKnown(dsDictionary[s.ExtractableDataSet_ID]);
 
@@ -244,7 +244,7 @@ namespace Rdmp.Core.Providers
 
             _configurationToDatasetMapping = new();
 
-            var configToSds = SelectedDataSets.GroupBy(k => k.ExtractionConfiguration_ID).ToDictionary(gdc => gdc.Key, gdc => gdc.ToList());
+            var configToSds = SelectedDataSets.GroupBy(k => k.ExtractionConfiguration_ID).ToDictionaryEx(gdc => gdc.Key, gdc => gdc.ToList());
 
             foreach (ExtractionConfiguration configuration in ExtractionConfigurations)
                 if (configToSds.TryGetValue(configuration.ID, out List<SelectedDataSets> result))
@@ -253,7 +253,7 @@ namespace Rdmp.Core.Providers
 
         private void BuildExtractionFilters()
         {
-            AllContainers = GetAllObjects<FilterContainer>(dataExportRepository).ToDictionary(o => o.ID, o => o);
+            AllContainers = GetAllObjects<FilterContainer>(dataExportRepository).ToDictionaryEx(o => o.ID, o => o);
             AllDeployedExtractionFilters = GetAllObjects<DeployedExtractionFilter>(dataExportRepository);
             _allParameters = GetAllObjects<DeployedExtractionFilterParameter>(dataExportRepository);
 
