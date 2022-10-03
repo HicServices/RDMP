@@ -32,22 +32,32 @@ namespace Rdmp.Core.CommandLine.Gui
         }
         public int Run(IRDMPPlatformRepositoryServiceLocator repositoryLocator, IDataLoadEventListener listener, ICheckNotifier checkNotifier, GracefulCancellationToken token)
         {
-            _activator = new ConsoleGuiActivator(repositoryLocator,checkNotifier);
-            ConsoleMainWindow.StaticActivator = _activator;
-            
-            LogManager.SuspendLogging();
+            Program.DisableConsoleLogging();
 
             if (options.UseSystemConsole)
             {
                 Application.UseSystemConsole = true;
-            }            
+            }
 
-            Application.Init ();
-            var top = Application.Top;
-            
-            // Creates the top-level window to show
-            var win = new ConsoleMainWindow(_activator);
-            win.SetUp(top);
+            Application.Init();
+
+            try
+            {
+                _activator = new ConsoleGuiActivator(repositoryLocator, checkNotifier);
+                ConsoleMainWindow.StaticActivator = _activator;
+
+                var top = Application.Top;
+
+                // Creates the top-level window to show
+                var win = new ConsoleMainWindow(_activator);
+                win.SetUp(top);
+            }
+            catch (Exception e)
+            {
+                LogManager.GetCurrentClassLogger().Error(e, "Failed to startup application");
+                Application.Shutdown();
+                return -2;
+            }
             
             try
             {
@@ -55,9 +65,8 @@ namespace Rdmp.Core.CommandLine.Gui
             }
             catch (Exception e)
             {
-                LogManager.ResumeLogging();
                 LogManager.GetCurrentClassLogger().Error(e, "Application Crashed");
-                top.Running = false;
+                Application.Top.Running = false;
                 return -1;
             }
             finally

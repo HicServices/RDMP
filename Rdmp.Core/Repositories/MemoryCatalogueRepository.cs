@@ -304,7 +304,7 @@ namespace Rdmp.Core.Repositories
 
         public DataAccessCredentials GetCredentialByUsernameAndPasswordIfExists(string username, string password)
         {
-            return GetAllObjects<DataAccessCredentials>().FirstOrDefault(c=>Equals(c.Name,username) && Equals(c.GetDecryptedPassword(),password));
+            return GetAllObjects<DataAccessCredentials>().FirstOrDefault(c=>Equals(c.Username,username) && Equals(c.GetDecryptedPassword(),password));
         }
 
         #endregion

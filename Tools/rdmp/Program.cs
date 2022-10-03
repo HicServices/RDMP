@@ -58,11 +58,8 @@ namespace Rdmp.Core
             if(args.Any(a=>a.Equals("-q")) || args.Any(a=>a.Equals("--quiet",StringComparison.CurrentCultureIgnoreCase)))
             {
                 Quiet = true;
-                foreach(var t in LogManager.Configuration.AllTargets.ToArray())
-                {
-                    if(t.GetType().Name.Contains("Console",StringComparison.CurrentCultureIgnoreCase))
-                        LogManager.Configuration.RemoveTarget(t.Name);
-                }
+
+                DisableConsoleLogging();
             }
 
             var logger = LogManager.GetCurrentClassLogger();
@@ -73,6 +70,19 @@ namespace Rdmp.Core
             Startup.Startup.PreStartup();
 
             return HandleArguments(args,logger);
+        }
+
+        /// <summary>
+        /// Disables all log targets that contain the word 'Console'.  This prevents logging output
+        /// corrupting the screen during TUI or cli use (e.g. with -q flag).
+        /// </summary>
+        public static void DisableConsoleLogging()
+        {
+            foreach (var t in LogManager.Configuration.AllTargets.ToArray())
+            {
+                if (t.GetType().Name.Contains("Console", StringComparison.CurrentCultureIgnoreCase))
+                    LogManager.Configuration.RemoveTarget(t.Name);
+            }
         }
 
         private static int HandleArguments(string[] args, Logger logger)

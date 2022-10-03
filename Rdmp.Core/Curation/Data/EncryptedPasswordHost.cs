@@ -43,7 +43,7 @@ namespace Rdmp.Core.Curation.Data
         /// <summary>
         /// For XML serialization
         /// </summary>
-        protected EncryptedPasswordHost()
+        public EncryptedPasswordHost()
         {
             // This is to get around the issue where during de-serialization we cannot create an EncryptedString because there is no access to a repository.
             // If there is not a valid _encryptedString then de-serialization will fail (_encryptedString.Value is needed).
