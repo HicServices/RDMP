@@ -8,6 +8,12 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ...
 
+## [8.0.2] - 2022-10-03
+
+### Fixed
+
+- Rolled back from broken Terminal.Gui 1.8.2 dependency (breaks Console Sql Editor) - see [#1448](https://github.com/HicServices/RDMP/pull/1448)
+
 ## [8.0.1] - 2022-09-30
 
 ### Fixed
@@ -1391,7 +1397,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Fixed Culture (e.g. en-us) not being passed correctly in DelimitedFlatFileAttacher
 - Fixed bug where Updater would show older versions of RDMP as installable 'updates'
 
-[Unreleased]: https://github.com/HicServices/RDMP/compare/v8.0.1...develop
+[Unreleased]: https://github.com/HicServices/RDMP/compare/v8.0.2...develop
+[8.0.2]: https://github.com/HicServices/RDMP/compare/v8.0.1...v8.0.2
 [8.0.1]: https://github.com/HicServices/RDMP/compare/v8.0.0...v8.0.1
 [8.0.0]: https://github.com/HicServices/RDMP/compare/v7.0.20...v8.0.0
 [7.0.20]: https://github.com/HicServices/RDMP/compare/v7.0.19...v7.0.20
