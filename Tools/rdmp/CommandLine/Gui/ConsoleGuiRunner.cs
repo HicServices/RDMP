@@ -55,6 +55,7 @@ namespace Rdmp.Core.CommandLine.Gui
             catch (Exception e)
             {
                 LogManager.GetCurrentClassLogger().Error(e, "Failed to startup application");
+                Application.Shutdown();
                 return -2;
             }
             
