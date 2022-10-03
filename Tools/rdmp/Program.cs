@@ -103,11 +103,11 @@ namespace Rdmp.Core
                             ExtractionOptions,
                             ReleaseOptions,
                             CohortCreationOptions,
-                            ExecuteCommandOptions> (args)
+                            ExecuteCommandOptions>(args)
                         .MapResult(
                             (PackOptions opts) => RdmpCommandLineBootStrapper.Run(opts),
-                            (ConsoleGuiOptions opts) => RdmpCommandLineBootStrapper.Run(opts,new ConsoleGuiRunner(opts)),
-                            (PlatformDatabaseCreationOptions opts) => Run(opts),                            
+                            (ConsoleGuiOptions opts) => RdmpCommandLineBootStrapper.Run(opts, new ConsoleGuiRunner(opts)),
+                            (PlatformDatabaseCreationOptions opts) => Run(opts),
                             (PatchDatabaseOptions opts) => Run(opts),
                             (DleOptions opts) => RdmpCommandLineBootStrapper.Run(opts),
                             (DqeOptions opts) => RdmpCommandLineBootStrapper.Run(opts),
@@ -116,7 +116,13 @@ namespace Rdmp.Core
                             (ReleaseOptions opts) => RdmpCommandLineBootStrapper.Run(opts),
                             (CohortCreationOptions opts) => RdmpCommandLineBootStrapper.Run(opts),
                             (ExecuteCommandOptions opts) => RdmpCommandLineBootStrapper.RunCmd(opts),
-                            errs => returnCode = RdmpCommandLineBootStrapper.HandleArgumentsWithStandardRunner(args,logger));
+                            (errs) =>
+                            {
+                                if (HasHelpArguments(args))
+                                    return returnCode = 0;
+                                else
+                                    return returnCode = RdmpCommandLineBootStrapper.HandleArgumentsWithStandardRunner(args, logger);
+                            });
 
                 logger.Info("Exiting with code " + returnCode);
                 return returnCode;
@@ -129,7 +135,14 @@ namespace Rdmp.Core
             }
         }
 
-    
+        private static bool HasHelpArguments(string[] args)
+        {
+            return
+                args.Any(a =>
+                a.Equals("--help", StringComparison.CurrentCultureIgnoreCase) ||
+                a.Equals("--version", StringComparison.CurrentCultureIgnoreCase)
+                );
+        }
 
         private static int Run(PlatformDatabaseCreationOptions opts)
         {

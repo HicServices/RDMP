@@ -8,6 +8,11 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ...
 
+### Fixed
+
+- Fixed `ViewLogs` command not working properly on command line when passed an [ExternalDatabaseServer](logging server) [#1447](https://github.com/HicServices/RDMP/issues/1447)
+
+
 ## [8.0.2] - 2022-10-03
 
 ### Fixed

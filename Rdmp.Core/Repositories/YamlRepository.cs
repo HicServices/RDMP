@@ -647,6 +647,11 @@ public class YamlRepository : MemoryDataExportRepository
             v => v.Value), "AggregateFilters");
     }
 
+    public override string ToString()
+    {
+        return $"{{YamlRepository {Directory.FullName}}}";
+    }
+
     private void LoadWhereSubContainers()
     {        
         foreach (var c in Load<FilterContainer, FilterContainer>("ExtractionFilters") ?? new())
