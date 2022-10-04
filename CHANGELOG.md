@@ -8,10 +8,15 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ...
 
+## [8.0.3] - 2022-10-04
+
 ### Fixed
 
 - Fixed `ViewLogs` command not working properly on command line when passed an [ExternalDatabaseServer](logging server) [#1447](https://github.com/HicServices/RDMP/issues/1447)
-
+- Fixed bulk import (existing) tables breaking in some corner cases (e.g. when there are broken [Catalogue] from a previous import)
+- Fixed YamlRepository not implementing Release Logs API member
+- Fixed issues with YamlRepository loosing stored [DataAccessCredentials] passwords
+- Fixed `--help` on command line showing help text twice
 
 ## [8.0.2] - 2022-10-03
 
@@ -1402,7 +1407,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Fixed Culture (e.g. en-us) not being passed correctly in DelimitedFlatFileAttacher
 - Fixed bug where Updater would show older versions of RDMP as installable 'updates'
 
-[Unreleased]: https://github.com/HicServices/RDMP/compare/v8.0.2...develop
+[Unreleased]: https://github.com/HicServices/RDMP/compare/v8.0.3...develop
+[8.0.3]: https://github.com/HicServices/RDMP/compare/v8.0.2...v8.0.3
 [8.0.2]: https://github.com/HicServices/RDMP/compare/v8.0.1...v8.0.2
 [8.0.1]: https://github.com/HicServices/RDMP/compare/v8.0.0...v8.0.1
 [8.0.0]: https://github.com/HicServices/RDMP/compare/v7.0.20...v8.0.0
