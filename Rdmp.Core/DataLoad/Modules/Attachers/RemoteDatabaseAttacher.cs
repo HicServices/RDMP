@@ -47,7 +47,7 @@ False - Fetch all columns in the remote table.  To use this option you will need
         [DemandsInitialization(@"By default RemoteDatabaseAttacher expects all tables in the load to exist in the remote database at the time the load is run.  Enabling this option will ignore missing tables:
 True - Ignore the fact that some tables do not exist and skip them
 False - Trigger an error reporting the missing table(s)
-", DefaultValue = true)]
+")]
         public bool IgnoreMissingTables { get; set; }
 
         public override void Check(ICheckNotifier notifier)
@@ -89,7 +89,7 @@ False - Trigger an error reporting the missing table(s)
                         continue;
                     }else
                     {
-                        throw new Exception("Loadable table " + table + " was NOT found on the remote DB!");
+                        throw new Exception("Loadable table " + table + " was NOT found on the remote DB and IgnoreMissingTables is false");
                     }   
                 }
                     
