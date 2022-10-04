@@ -44,6 +44,12 @@ True - Fetch only the default columns that appear in RAW (e.g. skip hic_ columns
 False - Fetch all columns in the remote table.  To use this option you will need ALTER statements in RAW scripts to make table(s) match the remote schema", DefaultValue=true)]
         public bool LoadRawColumnsOnly { get; set; }
 
+        [DemandsInitialization(@"By default RemoteDatabaseAttacher expects all tables in the load to exist in the remote database at the time the load is run.  Enabling this option will ignore missing tables:
+True - Ignore the fact that some tables do not exist and skip them
+False - Trigger an error reporting the missing table(s)
+", DefaultValue = true)]
+        public bool IgnoreMissingTables { get; set; }
+
         public override void Check(ICheckNotifier notifier)
         {
             if (!RemoteSource.Discover(DataAccessContext.DataLoad).Exists())
@@ -71,8 +77,22 @@ False - Fetch all columns in the remote table.  To use this option you will need
             foreach (var tableInfo in loadables)
             {
                 var table = tableInfo.GetRuntimeName();
+
+                // A table in the load does not exist on the remote db
                 if (!remoteTables.Contains(table))
-                    throw new Exception("Loadable table " + table + " was NOT found on the remote DB!");
+                {
+                    if(IgnoreMissingTables)
+                    {
+                        job.OnNotify(this, new NotifyEventArgs(ProgressEventType.Information, $"Table {table} was NOT found on the remote DB but {nameof(IgnoreMissingTables)} is enabled so table will be skipped"));
+
+                        //skip it
+                        continue;
+                    }else
+                    {
+                        throw new Exception("Loadable table " + table + " was NOT found on the remote DB!");
+                    }   
+                }
+                    
 
                 if(LoadRawColumnsOnly)
                 {
