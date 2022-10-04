@@ -149,10 +149,19 @@ namespace Rdmp.Core.Curation.Data.Cohort
         /// Makes the configuration a member of this container.
         /// </summary>
         /// <param name="configuration"></param>
+        public void AddChild(AggregateConfiguration configuration)
+        {
+            AddChild(configuration, GetMinimumOrderOfContentsOrZero());
+        }
+
+        /// <summary>
+        /// Makes the configuration a member of this container.
+        /// </summary>
+        /// <param name="configuration"></param>
         /// <param name="order"></param>
         public void AddChild(AggregateConfiguration configuration, int order)
         {
-            CreateInsertionPointAtOrder(configuration,configuration.Order,true);
+            CreateInsertionPointAtOrder(configuration, order, true);
             CatalogueRepository.CohortContainerManager.Add(this, configuration, order);
             configuration.ReFetchOrder();
         }
@@ -477,6 +486,23 @@ namespace Rdmp.Core.Curation.Data.Cohort
                 if (container != null)
                     yield return container;
             }
+        }
+
+        /// <summary>
+        /// Returns the minimum <see cref="IOrderable.Order"/> of the contents or 0 if there are no contents or content orders are greater than 0.
+        /// </summary>
+        /// <returns>A number less than or equal to 0. This is an order point at which new content could be added as the first item in this container.</returns>
+        public int GetMinimumOrderOfContentsOrZero()
+        {
+            //current contents
+            var contents = this.GetOrderedContents().ToArray();
+
+            //insert it at the begining of the contents
+            int minimumOrder = 0;
+            if (contents.Any())
+                minimumOrder = Math.Min(contents.Min(o => o.Order), 0);
+
+            return minimumOrder;
         }
     }
 }

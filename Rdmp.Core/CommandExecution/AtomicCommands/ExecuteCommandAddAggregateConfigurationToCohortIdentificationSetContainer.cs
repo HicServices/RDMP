@@ -193,17 +193,8 @@ namespace Rdmp.Core.CommandExecution.AtomicCommands
                 ? toAdd.Aggregate
                 : cic.ImportAggregateConfigurationAsIdentifierList(toAdd.Aggregate, (a, b) => CohortCombineToCreateCommandHelper.PickOneExtractionIdentifier(BasicActivator, a, b));
 
-            //current contents
-            var contents = _targetCohortAggregateContainer.GetOrderedContents().ToArray();
-
-            //insert it at the begining of the contents
-            int minimumOrder = 0;
-            if (contents.Any())
-                minimumOrder = contents.Min(o => o.Order);
-
             //bump everyone down to make room
-            _targetCohortAggregateContainer.CreateInsertionPointAtOrder(child, minimumOrder, true);
-            _targetCohortAggregateContainer.AddChild(child, minimumOrder);
+            _targetCohortAggregateContainer.AddChild(child);
 
             if(publish)
                 Publish(_targetCohortAggregateContainer);
