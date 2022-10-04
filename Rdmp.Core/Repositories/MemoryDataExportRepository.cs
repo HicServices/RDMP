@@ -108,7 +108,7 @@ namespace Rdmp.Core.Repositories
 
         public IReleaseLog GetReleaseLogEntryIfAny(CumulativeExtractionResults cumulativeExtractionResults)
         {
-            throw new System.NotImplementedException();
+            return GetAllObjectsWhere<ReleaseLog>("CumulativeExtractionResults_ID", cumulativeExtractionResults.ID).SingleOrDefault();
         }
         #endregion
     }
