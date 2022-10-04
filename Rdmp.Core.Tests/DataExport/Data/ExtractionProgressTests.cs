@@ -117,7 +117,40 @@ namespace Rdmp.Core.Tests.DataExport.Data
             progress.DeleteInDatabase();
         }
 
+        [Test]
+        public void TestCloneResetsProgress()
+        {
+            CreateAnExtractionProgress(out var config);
+
+            // get original objects
+            var origSds = config.SelectedDataSets.Single();
+            var origProgress = origSds.ExtractionProgressIfAny;
+            origProgress.StartDate = new DateTime(2001, 01, 01);
+            origProgress.ProgressDate = new DateTime(2005, 01, 01);
+            origProgress.EndDate = new DateTime(2020, 01, 01);
+            origProgress.SaveToDatabase();
+
+            //clone
+            var clone = config.DeepCloneWithNewIDs();
+
+            // get new objects
+            var cloneSds = clone.SelectedDataSets.Single();
+            var cloneProgress = cloneSds.ExtractionProgressIfAny;
+
+
+            // should be different instances
+            Assert.AreNotSame(origProgress, cloneProgress);
+
+            Assert.AreEqual(cloneProgress.StartDate , new DateTime(2001, 01, 01));
+            Assert.IsNull(cloneProgress.ProgressDate,"Expected progress to be reset on clone");
+            Assert.AreEqual(cloneProgress.EndDate , new DateTime(2020, 01, 01));
+        }
+
         private ExtractionProgress CreateAnExtractionProgress()
+        {
+            return CreateAnExtractionProgress(out _);
+        }
+        private ExtractionProgress CreateAnExtractionProgress(out ExtractionConfiguration config)
         {
             var cata = new Catalogue(CatalogueRepository, "MyCata");
             var cataItem = new CatalogueItem(CatalogueRepository, cata, "MyCol");
@@ -130,7 +163,7 @@ namespace Rdmp.Core.Tests.DataExport.Data
 
             var eds = new ExtractableDataSet(DataExportRepository, cata);
             var project = new Project(DataExportRepository, "My Proj");
-            var config = new ExtractionConfiguration(DataExportRepository, project);
+            config = new ExtractionConfiguration(DataExportRepository, project);
             var sds = new SelectedDataSets(DataExportRepository, config, eds, null);
             
             return new ExtractionProgress(DataExportRepository, sds);
