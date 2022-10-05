@@ -9,6 +9,7 @@
 - [Glossary](./Documentation/CodeTutorials/Glossary.md)
 - [Changelog](./CHANGELOG.md)
 - [Libraries](./Documentation/CodeTutorials/Packages.md)
+- [New Developers](./NoteForNewDevelopers.md)
 
 RDMP is a free, open source software application for cohort building, loading, linking, anonymisation and extraction of datasets stored in relational databases (SQL Server, MySQL, Postgres and Oracle). It was designed from the bottom up to support with data provenance, preserving domain knowledge and configuration management workflows.
 
