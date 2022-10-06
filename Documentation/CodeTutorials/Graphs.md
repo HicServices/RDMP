@@ -25,7 +25,7 @@ can then either:
 
 - Be visualized in the RDMP Windows GUI Client
 - Be visualized in the RDMP Cross Platform Console TUI
-- Be exported as CSV for graphing in other tools (e.g. Excel)
+- Be [exported as CSV](#exporting-graph-data-from-cli) for graphing in other tools (e.g. Excel)
 
 ![Comparison of graph in RDMP Windows GUI and Console](Images/Graphs/GuiVsConsole.png)
 
@@ -44,9 +44,9 @@ table shows what is implemented:
 |  Graph Type  | [Sql Server](https://github.com/HicServices/FAnsiSql/blob/main/Implementations/FAnsi.Implementations.MicrosoftSQL/README.md) | [MySql](https://github.com/HicServices/FAnsiSql/blob/main/Implementations/FAnsi.Implementations.MySql/README.md) | [Postgres](https://github.com/HicServices/FAnsiSql/blob/main/Implementations/FAnsi.Implementations.PostgreSql/README.md) | [Oracle](https://github.com/HicServices/FAnsiSql/blob/main/Implementations/FAnsi.Implementations.Oracle/README.md) |
 |----|---|----|---|---|
 | [Bar 1 Dimension](bar-1-dimension) | yes | yes | yes | yes  |
-| [Bar 2 Dimensions](bar-2-dimensions) | yes | yes | yes | yes  |
+| [Bar 2 Dimensions](bar-2-dimensions) | yes | yes | no | yes  |
 | [Plot 1 Dimension](plot-1-dimension) | yes | yes | yes | no |
-| [Plot 2 Dimensions](plot-2-dimensions) | yes | yes | yes| no  |
+| [Plot 2 Dimensions](plot-2-dimensions) | yes | yes | no| no  |
 
 Graph query generation is handled in the [FAnsiSql](https://github.com/HicServices/FAnsiSql) library.
 
@@ -85,7 +85,7 @@ supported for customizing what data is calculated.
 
 ### COUNT Y
 
-All graphs come with a single 'count' column.  This column cannot be removed and defaults to `count(*)`.  You can change this to any valid SQL e.g. `count(distinct StudyInstanceUID)`.  You are not restricted to count and can use any function e.g. `avg(Result)`.
+All graphs come with a single 'count' column.  This column cannot be removed and defaults to `count(*)`.  You can change this to any valid SQL e.g. `count(distinct StudyInstanceUID)`.  You are not restricted to count and can use any other aggregation function e.g. `avg(Result)`.
 
 ### WHERE
 
@@ -109,11 +109,11 @@ _Bars with values <100 are not shown due to the HAVING condition.  This results 
 
 ### TOP X
 
-You can apply a `TOP` (or `LIMIT` in the case of MySql/Oracle).  This will reduce the number of bars in a Bar chart.
-
-**Applying a TOP to PIVOT graphs will limit the number of values in the PIVOT category only**
+You can apply a `TOP` (or `LIMIT` in the case of MySql/Oracle).  This will reduce the number of bars in a Bar chart or the number of series in a Plot.
 
 ![Comparison of results without using TOP (left) and with TOP 10 (right)](Images/Graphs/WithAndWithoutTop.png)
+
+_Applying a TOP to PIVOT graphs limits the number of series in the PIVOT_
 
 ## Graphing Cohorts
 

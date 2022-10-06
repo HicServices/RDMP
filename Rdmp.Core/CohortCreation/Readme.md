@@ -25,6 +25,16 @@ A complicated cohort can easily include 10 or more criteria (prescribed drug X; 
 
 The RDMP query cache also get's around [DBMS] limitations e.g. MySql not supporting Set operations ([UNION] / [INTERSECT] / [EXCEPT]) and enables cross server (and [DBMS]) query generation.
 
+### Creating a Cache
+
+To create a query cache open any [CohortIdentificationConfiguration] and open the top toolbar menu:
+
+![Creating a CIC query cache database](./Images/CreateCache.png)
+
+After creating the server you should see that the [CohortIdentificationConfiguration] is automatically set to use it.  You should also find that it has been set as the Default caching server and new CohortIdentificationConfigurations you create will automatically use it.
+
+If you have other old [CohortIdentificationConfiguration] that do not yet use the cache you can set them to use caching from the same menu.
+
 ### Cache Hit/Miss
 
 Consider the following cohort
@@ -195,3 +205,4 @@ Notice that the parameter has been renamed `@Result_2` and `@code_2` in the comp
 [INTERSECT]: ../../Documentation/CodeTutorials/Glossary.md#INTERSECT
 [EXCEPT]: ../../Documentation/CodeTutorials/Glossary.md#EXCEPT
 [IsExtractionIdentifier]: ../../Documentation/CodeTutorials/Glossary.md#IsExtractionIdentifier
+[CohortIdentificationConfiguration]: ../../Documentation/CodeTutorials/Glossary.md#CohortIdentificationConfiguration
