@@ -13,8 +13,10 @@
    1. [WHERE](#where)
    1. [HAVING](#having)
    1. [TOP X](#top-x)
+1. [Graphing Cohorts](#graphing-cohorts)
 1. [Performance](#performance)
 1. [Exporting graph data from CLI](#exporting-graph-data-from-cli)
+1. [Limitations](#limitations)
 
 ## Introduction
 
@@ -112,6 +114,28 @@ You can apply a `TOP` (or `LIMIT` in the case of MySql/Oracle).  This will reduc
 
 ![Comparison of results without using TOP (left) and with TOP 10 (right)](Images/Graphs/WithAndWithoutTop.png)
 
+## Graphing Cohorts
+
+One of the core strengths of the RDMP graphing system is the ability to run graphs on Filters, Cohorts and/or [ExtractionConfiguration] datasets.  This lets you rapidly confirm that the cohort you are building does not have data holes or missing trends.
+
+To graph a cohort right click it and go to Graph.  Make sure you have set up a [cohort caching database](../../Rdmp.Core/CohortCreation/Readme.md).
+
+![Right clicking a cohort set in a CohortIdentificationConfiguration and graphing it](Images/Graphs/GraphCohort.png)
+
+There are 2 options for generating graphs:
+
+|               |     Explanation           |
+|---------------|---------------------------|
+| Records       | Graph will show only rows returned by your cohort query (e.g. prescriptions for drug X) |
+| Matching Patients  | Graph of all records held by people that appear in your cohort result set (e.g. all prescriptions that people on drug X are collecting)|
+
+In the above example graphing the records would give a graph showing only drug X.  While graphing patients will show a graph with a heavy bias for drug X (those records contributed patients to the result set) but also any other drugs they are on.  Graphing patients can be done cross dataset e.g. you can view a Demography graph for a cohort built using Prescribing.
+
+
+When running a cohort graph you may benefit from also running the normal graph so you can compare the two:
+
+![Viewing the results of the main Demography dataset vs that matched by cohort](Images/Graphs/GraphCohortResults.png)
+
 ## Performance
 
 RDMP generates a single SQL query which is sent to the server.  This puts the workload on the [DBMS] and not the local
@@ -145,5 +169,13 @@ If you want to pipe the results to another process (e.g. grep) you can skip the 
 ./rdmp viewdata "AggregateConfiguration:1428" ALL -q | grep 1992
 ```
 
+## Limitations
+
+RDMP graphs are relatively simple
+and should not be considered a substitute for dedicated data exploration tools such as Power BI or Tableau.  The
+strengths of RDMP's graph system is the ability to rapidly visualize table data without leaving RDMP and the ability to [combine with the other RDMP systems](#graphing-cohorts) (e.g. cohort building).
+
+
+[ExtractionConfiguration]: ./Glossary.md#ExtractionConfiguration
 [Catalogue]: ./Glossary.md#Catalogue
 [DBMS]: ./Glossary.md#DBMS

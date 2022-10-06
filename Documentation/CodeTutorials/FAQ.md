@@ -725,20 +725,11 @@ Being able to visualize your data is incredibly important for data confidence, c
 graph systems:
 
 - Data Quality Engine graphs
-- Aggregate Graphs
+- [Aggregate Graphs](./Graphs.md)
 
 ### Data Quality Engine Graphs
 
 You can read more about the DQE in the [technical implementation](./Validation.md) 
-
-### Aggregate Graphs
-
-RDMP provides some systems for graphing data.  These graphs in RDMP are relatively simple (bar and plot)
-and should not be considered a substitute for dedicatd data exploration tools such as Power BI or Tableau.  The
-strength of RDMP's graph systems are their ability to interact with its other systems (e.g. cohort building). 
-This lets the user compare graphs of the full dataset against the results matched by their cohort/filter(s).
-
-The [Aggregate graph system is described in more detail in Graphs.md](./Graphs.md)
 
 <a name ="tell-me-about-logging"></a>
 ### Tell me about logging
