@@ -5,6 +5,7 @@
 - [Introduction](#introduction)
 - [Query Caching](#query-caching)
   - [Background](#background)
+  - [Creating a Cache](#creating-a-cache)
   - [Hit/Miss](#cache-hitmiss)
   - [Code](#code)
 - [Parameters and Renaming](#parameters-and-renaming)
