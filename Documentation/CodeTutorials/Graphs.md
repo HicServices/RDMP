@@ -54,7 +54,7 @@ Graph query generation is handled in the [FAnsiSql](https://github.com/HicServic
 The simplest graph you can create has only a single Dimension (column).  The following is an example created from the
 Biochemistry test dataset that is optionally provided with the RDMP installation.
 
-![Bar chart showing record counts by TestCode in Biochemistry](Images/Graphs/Simple.png)
+![Bar chart showing record counts by TestCode in Biochemistry](Images/Graphs/SimpleGraph.png)
 
 ### Bar 2 Dimensions
 
@@ -104,6 +104,7 @@ You can add a `HAVING` block e.g. `count(*)>100` to show only bars / plot values
 **Take care when combining `HAVING` with `PIVOT` as `HAVING` will discard plot points/bars.  This can lead to a graph which appears to show 0 records**
 
 ![HAVING results in bars <100 being lost even if there is a 'T' entry](Images/Graphs/BadHaving.png)
+
 _Bars with values <100 are not shown due to the HAVING condition.  This results in several orange 'F' bars disapearing, even when there is a 'T' bar over 100_
 
 ### TOP X
@@ -151,7 +152,7 @@ Other things to consider include:
 
 ## Exporting graph data from CLI
 
-The [RDMP CLI](./FAQ.md#cli) supports automated running and extraction of CSV data for any graphs you have created in RDMP.
+The [RDMP CLI](./RdmpCommandLine.md) supports automated running and extraction of CSV data for any graphs you have created in RDMP.
 To do this use the ViewData command.  You will need to know the ID of the graph you want to run:
 
 ```
