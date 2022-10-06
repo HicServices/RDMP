@@ -1,8 +1,8 @@
 # Aggregate Graphs
 
 ## Table of contents
-1. Introduction
-1. [Adding a Graph](#adding)
+1. [Introduction](#introduction)
+1. [Adding a Graph](#adding-a-graph)
 1. [Graph Types](#graph-types)
    1. [Bar 1 Dimension](#bar-1-dimension)
    1. [Bar 2 Dimensions](#bar-2-dimensions)
@@ -104,7 +104,7 @@ You can add a `HAVING` block e.g. `count(*)>100` to show only bars / plot values
 **Take care when combining `HAVING` with `PIVOT` as `HAVING` will discard plot points/bars.  This can lead to a graph which appears to show 0 records**
 
 ![HAVING results in bars <100 being lost even if there is a 'T' entry](Images/Graphs/BadHaving.png)
-_Bars with values <100 are not shown due to the HAVING condition.  This results in several orage 'F' bars disapearing, even when there is a 'T' bar over 100_
+_Bars with values <100 are not shown due to the HAVING condition.  This results in several orange 'F' bars disapearing, even when there is a 'T' bar over 100_
 
 ### TOP X
 
