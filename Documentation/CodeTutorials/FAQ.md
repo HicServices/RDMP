@@ -738,8 +738,7 @@ and should not be considered a substitute for dedicatd data exploration tools su
 strength of RDMP's graph systems are their ability to interact with its other systems (e.g. cohort building). 
 This lets the user compare graphs of the full dataset against the results matched by their cohort/filter(s).
 
-
-
+The [Aggregate graph system is described in more detail in Graphs.md](./Graphs.md)
 
 <a name ="tell-me-about-logging"></a>
 ### Tell me about logging
