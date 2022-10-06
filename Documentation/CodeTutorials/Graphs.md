@@ -180,3 +180,4 @@ strengths of RDMP's graph system is the ability to rapidly visualize table data 
 [ExtractionConfiguration]: ./Glossary.md#ExtractionConfiguration
 [Catalogue]: ./Glossary.md#Catalogue
 [DBMS]: ./Glossary.md#DBMS
+[CohortIdentificationConfiguration]: ./Glossary.md#CohortIdentificationConfiguration
