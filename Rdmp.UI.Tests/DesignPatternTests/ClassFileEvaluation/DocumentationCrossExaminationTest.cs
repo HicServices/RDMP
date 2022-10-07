@@ -262,7 +262,8 @@ namespace Rdmp.UI.Tests.DesignPatternTests.ClassFileEvaluation
             "MyPluginClass",
             "SubContainer",
             "DescribeCommand", // this class has now been removed from RDMP codebase, don't complain if you see it in docs (e.g. CHANGELOG.md).
-            "GetDate"
+            "GetDate",
+            "StudyInstanceUID"
         };
         #endregion
         public DocumentationCrossExaminationTest(DirectoryInfo slndir)

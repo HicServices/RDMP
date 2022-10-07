@@ -5,6 +5,7 @@
 - [Introduction](#introduction)
 - [Query Caching](#query-caching)
   - [Background](#background)
+  - [Creating a Cache](#creating-a-cache)
   - [Hit/Miss](#cache-hitmiss)
   - [Code](#code)
 - [Parameters and Renaming](#parameters-and-renaming)
@@ -24,6 +25,16 @@ Cohorts are always created by performing set operations and/or joins on distinct
 A complicated cohort can easily include 10 or more criteria (prescribed drug X; never prescribed drug y etc).  Each criteria can involve querying a large number of records and can take some time.  The traditional approach to this problem is to use temporary tables (e.g. `tempdb`) or a scratch area (e.g. MyWorkingDb) to create tables that store results for subsections of the overall query.  RDMP automates this practice through its query caching subsystem.
 
 The RDMP query cache also get's around [DBMS] limitations e.g. MySql not supporting Set operations ([UNION] / [INTERSECT] / [EXCEPT]) and enables cross server (and [DBMS]) query generation.
+
+### Creating a Cache
+
+To create a query cache open any [CohortIdentificationConfiguration] and open the top toolbar menu:
+
+![Creating a CIC query cache database](./Images/CreateCache.png)
+
+After creating the server you should see that the [CohortIdentificationConfiguration] is automatically set to use it.  You should also find that it has been set as the Default caching server and new CohortIdentificationConfigurations you create will automatically use it.
+
+If you have other old [CohortIdentificationConfiguration] that do not yet use the cache you can set them to use caching from the same menu.
 
 ### Cache Hit/Miss
 
@@ -195,3 +206,4 @@ Notice that the parameter has been renamed `@Result_2` and `@code_2` in the comp
 [INTERSECT]: ../../Documentation/CodeTutorials/Glossary.md#INTERSECT
 [EXCEPT]: ../../Documentation/CodeTutorials/Glossary.md#EXCEPT
 [IsExtractionIdentifier]: ../../Documentation/CodeTutorials/Glossary.md#IsExtractionIdentifier
+[CohortIdentificationConfiguration]: ../../Documentation/CodeTutorials/Glossary.md#CohortIdentificationConfiguration
