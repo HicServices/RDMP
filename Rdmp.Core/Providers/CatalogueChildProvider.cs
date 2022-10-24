@@ -10,6 +10,7 @@ using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
 using System.Threading.Tasks;
+using FAnsi;
 using MapsDirectlyToDatabaseTable;
 using Rdmp.Core.Curation.Data;
 using Rdmp.Core.Curation.Data.Aggregation;
@@ -746,23 +747,24 @@ namespace Rdmp.Core.Providers
             //add a root node for all the servers to be children of
             AllServersNode = new AllServersNode();
 
-            var servers =
-                from c in AllTableInfos
-                group c by new
-                {
-                    Server = c.Server ?? TableInfoServerNode.NullServerNode,
-                    c.DatabaseType,
-                } into gcs
-                select new TableInfoServerNode(gcs.Key.Server, gcs.Key.DatabaseType, gcs);
-
-            
             var descendancy = new DescendancyList(AllServersNode);
             var allServers = new List<TableInfoServerNode>();
 
-            foreach (var server in servers)
+            foreach (var typeGroup in AllTableInfos.GroupBy(t => t.DatabaseType))
             {
-                allServers.Add(server);
-                AddChildren(server, descendancy.Add(server));
+                DatabaseType dbType = typeGroup.Key;
+                IEnumerable<TableInfo> tables = typeGroup;
+
+                var serversByName = tables
+                    .GroupBy(c => c.Server ?? TableInfoServerNode.NullServerNode,StringComparer.CurrentCultureIgnoreCase)
+                    .Select(s => new TableInfoServerNode(s.Key,dbType, s));
+
+
+                foreach (var server in serversByName)
+                {
+                    allServers.Add(server);
+                    AddChildren(server, descendancy.Add(server));
+                }
             }
 
             //create the server nodes
@@ -1330,14 +1332,10 @@ namespace Rdmp.Core.Providers
 
             var databases =
 
-            from c in serverNode.Tables
-            group c by new
-            {
-                Database = c.Database ?? TableInfoDatabaseNode.NullDatabaseNode,
-                c.DatabaseType,
-            } into gcs
-            select new TableInfoDatabaseNode(gcs.Key.Database, gcs.Key.DatabaseType, gcs);
-
+            serverNode.Tables.GroupBy(
+                k => k.Database ?? TableInfoDatabaseNode.NullDatabaseNode, StringComparer.CurrentCultureIgnoreCase)
+            .Select(g=> new TableInfoDatabaseNode(g.Key, serverNode.DatabaseType, g));
+            
             foreach (var db in databases)
             {
                 children.Add(db);
