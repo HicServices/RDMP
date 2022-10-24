@@ -724,12 +724,9 @@ You can check that you have configured the join correctly by right clicking the 
 Being able to visualize your data is incredibly important for data confidence, cohort building and correct filtering.  RDMP has 2
 graph systems:
 
-- Data Quality Engine graphs
+- [Data Quality Engine graphs](./Validation.md)
 - [Aggregate Graphs](./Graphs.md)
 
-### Data Quality Engine Graphs
-
-You can read more about the DQE in the [technical implementation](./Validation.md) 
 
 <a name ="tell-me-about-logging"></a>
 ### Tell me about logging

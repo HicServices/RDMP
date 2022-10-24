@@ -3,6 +3,9 @@
 ## Table of contents
 1. [Background](#background)
 2. [Configuring Validation](#configuring-validation)
+   1. [Consequence](#consequence)
+   1. [StandardRegex](#standardregex)
+   1. [Results by Data Load Run ID](#results-by-data-load-run-id)
 2. [Results Database](#results-database)
 2. [Visualisation](#visualisation)
 2. [Plugin Constraints](#plugin-constraints)
@@ -11,26 +14,39 @@
 The RDMP Data Quality Engine (DQE) performs row level validation based on rules you set up on each column.  Validation is only run on extractable columns.  Results are persisted in a DQE results database designed to scale to very large datasets.
 
 ## Configuring Validation
-Launch the 'Data Quality Engine' from the Home Screen and choose 'Change Validation Rules'.  Then pick a column for:
+Locate a [Catalogue] for which you want to run the DQE.  Right click it and select 'Data Quality Engine...' then from the top menu 'Validation Rules...':
 
-1. Time Period (Required)
-2. Pivot (Optional)
-3. Validation Rules
+![Launch Data Quality Engine Configuration Screen from context menu](Images/Validation/LaunchDqe.png)
 
-The 'Time Period Column' should be a heavily populated column which is representative of the point in time for the record (e.g. Date Prescribed).  Records with a null value in the 'Time Period Column' will still be validated but will only have results in RowState and ColumnState (not PeriodicityState).
+This will let you choose which column in the dataset provides the time element (e.g. StudyDate) and what rules apply to which columns.
 
-The 'Pivot Column' is an optional way of dividing up your dataset when recording results.  This should be a helpful way of narrowing down the source of failing/missing data (e.g. healthboard / data source).
-
-Validation Rules are configured on a per column basis.  Each column can have one Primary Constraint and any number of Secondary Constraints.  Each constraint has a Severity (Consequence).  Only the worst Consequence is recorded for a given column (if two validation rules fail then the worst Consequence is recorded).
 
 ![ValidationRules](Images/Validation/ColumnValidationRules.png)
 
-Regular Expressions are very powerful for string validation.  In order to avoid replication of a given concept in multiple columns/datasets you can centralise the definition in a `StandardRegex`.  After this you can reference the regex anywhere in RDMP (e.g. with a StandardRegexConstraint).
+|Setting | Required | Role |
+|--|---|---|
+| Time Period Column |  Yes | Provides the time axis on which to arrange dataset data.  Should have a high completeness.  Records with a null value in the 'Time Period Column' will still be validated but will only have results in RowState and ColumnState (not PeriodicityState).| 
+| Pivot Column |  No | Optional column for slicing results across.  For example by healthboard.  When set all results will be recorded against each pivot value seen.  Care should be taken not to pick a column with very large number of unique values| 
+| Validation Rules | No | Per column rules that will be applied when running the DQE e.g. date in column X must be after date in column Y.  Each column can have one Primary Constraint and any number of Secondary Constraints.  Each constraint violation has a [consequence](#consequence)|
+
+
+### Consequence
+
+Each constraint has a 'Consequence'.  This describes how important/noteworthy it is when the rule is broken by data.  If a single value breaks 2+ constraints then only the highest Consequence is recorded.
+
+### StandardRegex
+
+Regular Expressions are a very powerful method of string validation.  
+The StandardRegexConstraint allows you to centralise Regex rules.  This feature avoids replication of a given concept in multiple columns/datasets.  After defining a StandardRegexConstraint then you can reference it anywhere in RDMP (e.g. with a StandardRegexConstraint).
 
 ![ExampleStandardRegexConstraint](Images/Validation/StandardRegex.png)
 
 
-If your data is loaded through the DLE then you should have `hic_dataLoadRunID` column.  If you make this column extractable (even with category Internal) then your results will be sliced by load ID too.  This will allow you to corrolate invalid data with loads.
+### Results by Data Load Run ID
+
+If your data is loaded through the DLE then you should have a`hic_dataLoadRunID` column.  If you make this column extractable (even with category Internal) then your results will be sliced by load ID.  This allows you to view DQE results by load.  
+
+Using this feature you can diagnose whether 'bad' data is evenly distributed or was introduced by a single load (or began after a given load date).
 
 ## Results Database
 
@@ -114,3 +130,6 @@ public class NoFishConstraint : PluginSecondaryConstraint
 When uploaded as a plugin the above example would appear as:
 
 ![ValidationRules](Images/Validation/NoFish.png)
+
+
+[Catalogue]: ./Glossary.md#Catalogue
