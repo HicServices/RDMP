@@ -53,6 +53,11 @@ namespace Rdmp.Core.DataLoad.Engine.Job
         HICDatabaseConfiguration Configuration { get; }
         
         /// <summary>
+        /// True to automatically skip creating/dropping the RAW database
+        /// </summary>
+        bool PersistentRaw { get; set; }
+
+        /// <summary>
         /// Orders the job to create the tables it requires in the given stage (e.g. RAW/STAGING), the job will also take ownership of the cloner for the purposes
         /// of disposal (DO NOT DISPOSE OF CLONER YOURSELF)
         /// </summary>

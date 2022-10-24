@@ -459,6 +459,14 @@ namespace Rdmp.Core.CommandExecution
                 yield return new ExecuteCommandSetIgnoredColumns(_activator, lmd) { SuggestedCategory = Advanced };
                 yield return new ExecuteCommandSetIgnoredColumns(_activator, lmd, null) { OverrideCommandName = "Clear Ignored Columns", SuggestedCategory = Advanced };
 
+                yield return new ExecuteCommandSetExtendedProperty(_activator, new[] { lmd }, ExtendedProperty.PersistentRaw, null)
+                {
+                    OverrideCommandName = "Persistent RAW",
+                    PromptForValue = true,
+                    PromptForValueTaskDescription = ExtendedProperty.PersistentRawDescription,
+                    SuggestedCategory = Advanced
+                };
+
                 yield return new ExecuteCommandSet(_activator, lmd, typeof(LoadMetadata).GetProperty(nameof(LoadMetadata.IgnoreTrigger)))
                 {
                     OverrideCommandName = $"Ignore Trigger (Current value:{lmd.IgnoreTrigger})",

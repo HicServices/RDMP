@@ -69,6 +69,7 @@ namespace Rdmp.Core.DataLoad.Engine.Job
         public HICDatabaseConfiguration Configuration { get; set; }
 
         public object Payload { get; set; }
+        public bool PersistentRaw { get; set; }
 
         private List<NotifyEventArgs> _crashAtEnd = new();
 
