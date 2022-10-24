@@ -5,6 +5,9 @@
 // You should have received a copy of the GNU General Public License along with RDMP. If not, see <https://www.gnu.org/licenses/>.
 
 using System;
+using System.Linq;
+using NPOI;
+using Rdmp.Core.Curation.Data;
 using Rdmp.Core.Curation.Data.DataLoad;
 using Rdmp.Core.DataFlowPipeline;
 using Rdmp.Core.DataLoad.Engine.DatabaseManagement.EntityNaming;
@@ -70,6 +73,7 @@ namespace Rdmp.Core.DataLoad.Engine.LoadProcess
                 return ExitCodeType.OperationNotRequired;
 
             job.Payload = payload;
+            job.PersistentRaw = Rdmp.Core.Curation.Data.DataLoad.LoadMetadata.UsesPersistentRaw(LoadMetadata);
 
             return LoadExecution.Run(job, loadCancellationToken);
         }

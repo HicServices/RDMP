@@ -43,6 +43,13 @@ namespace Rdmp.Core.Curation.Data
         public const string CustomJoinSqlDescription = "Enter the column comparison(s) SQL for the JOIN line.  Your string should include only the boolean comparison logic that follows the ON keyword.  E.g. col1=col2.  You can optionally use substitution tokens {0} and {1} for table name/alias (e.g. for lookup)";
 
         /// <summary>
+        /// Key used in <see cref="ExtendedProperty"/> to indicate that a <see cref="LoadMetadata"/> should not 
+        /// attempt to DROP/CREATE its RAW database each time it is run
+        /// </summary>
+        public const string PersistentRaw = "PersistentRaw";
+        public const string PersistentRawDescription = "Should the load leave old RAW databases in the RAW server and only cleanup/reload tables at runtime? Value must be 'true' or 'false'";
+
+        /// <summary>
         /// Collection of all known property names.  Plugins are free to add to these if desired but must do so pre startup
         /// </summary>
         public static List<string> KnownProperties = new();
@@ -86,6 +93,7 @@ namespace Rdmp.Core.Curation.Data
             get { return _referencedObjectRepositoryType; }
             set { SetField(ref _referencedObjectRepositoryType, value); }
         }
+
 
         #endregion
         public ExtendedProperty()

@@ -77,7 +77,12 @@ namespace Rdmp.Core.DataLoad.Engine.LoadExecution.Components
             job.OnNotify(this, new NotifyEventArgs(ProgressEventType.Information, "Determined that we must create the RAW database tables..."));
 
             var cloner = new DatabaseCloner(_databaseConfiguration);
-            cloner.CreateDatabaseForStage(LoadBubble.Raw);
+
+            if(!job.PersistentRaw)
+            {
+                cloner.CreateDatabaseForStage(LoadBubble.Raw);
+            }
+                
 
             job.CreateTablesInStage(cloner,LoadBubble.Raw);
         }
