@@ -8,6 +8,17 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ...
 
+## [8.0.4] - 2022-10-24
+
+### Added
+
+- Added IgnoreMissingTables setting for [RemoteDatabaseAttacher] which allows you to load only the tables that exist on the remote (and in the load)
+- Add overrides for mdf/ldf local paths to MDFAttacher
+
+### Fixed
+
+- Fixed capitalization and database type differences resulting in missing tree entries of TableInfos
+
 ## [8.0.3] - 2022-10-04
 
 ### Fixed
@@ -1407,7 +1418,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Fixed Culture (e.g. en-us) not being passed correctly in DelimitedFlatFileAttacher
 - Fixed bug where Updater would show older versions of RDMP as installable 'updates'
 
-[Unreleased]: https://github.com/HicServices/RDMP/compare/v8.0.3...develop
+[Unreleased]: https://github.com/HicServices/RDMP/compare/v8.0.4...develop
+[8.0.4]: https://github.com/HicServices/RDMP/compare/v8.0.3...v8.0.4
 [8.0.3]: https://github.com/HicServices/RDMP/compare/v8.0.2...v8.0.3
 [8.0.2]: https://github.com/HicServices/RDMP/compare/v8.0.1...v8.0.2
 [8.0.1]: https://github.com/HicServices/RDMP/compare/v8.0.0...v8.0.1
@@ -1507,3 +1519,4 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 [ExtractionFilter]: ./Documentation/CodeTutorials/Glossary.md#ExtractionFilter
 [MigrateUsages]: https://github.com/HicServices/RDMP/pull/666
 [ExternalDatabaseServer]: ./Documentation/CodeTutorials/Glossary.md#ExternalDatabaseServer
+[RemoteDatabaseAttacher]: ./Rdmp.Core/DataLoad/Modules/Attachers/RemoteDatabaseAttacher.cs

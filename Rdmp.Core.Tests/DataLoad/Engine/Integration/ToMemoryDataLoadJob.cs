@@ -52,6 +52,7 @@ namespace Rdmp.Core.Tests.DataLoad.Engine.Integration
         public HICDatabaseConfiguration Configuration { get; private set; }
 
         public object Payload { get; set; }
+        public bool PersistentRaw { get; set; }
 
         public void CreateTablesInStage(DatabaseCloner cloner, LoadBubble stage)
         {

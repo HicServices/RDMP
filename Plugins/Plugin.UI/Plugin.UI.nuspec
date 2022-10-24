@@ -14,7 +14,7 @@
     <copyright>Copyright 2018-2019</copyright>
     <dependencies>
       <dependency id="CommandLineParser" version="2.9.1"/>
-      <dependency id="CsvHelper" version="28.0.1"/>
+      <dependency id="CsvHelper" version="29.0.0"/>
       <dependency id="DockPanelSuite.ThemeVS2015" version="2.13.0"/>
       <dependency id="ExcelNumberFormat" version="1.1.0"/>
       <dependency id="fernandreu.ScintillaNET" version="4.2.0"/>
@@ -45,7 +45,7 @@
       <dependency id="System.Threading.AccessControl" version="6.0.0"/>
       <dependency id="System.Threading.ThreadPool" version="4.3.0"/>
       <dependency id="Xam.Plugins.Settings" version="3.1.1"/>
-      <dependency id="YamlDotNet" version="12.0.1"/>
+      <dependency id="YamlDotNet" version="12.0.2"/>
     </dependencies>
   </metadata>
 

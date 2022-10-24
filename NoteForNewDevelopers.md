@@ -1,5 +1,7 @@
 Here are things you should know about RDMP!
 
+![Don't Panic](./Documentation/CodeTutorials/Images/dontpanic.png)
+
 ## Contents
 
 1. [Other Docs](#other-docs)

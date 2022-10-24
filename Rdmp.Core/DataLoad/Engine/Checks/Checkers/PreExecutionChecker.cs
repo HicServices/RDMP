@@ -148,12 +148,27 @@ namespace Rdmp.Core.DataLoad.Engine.Checks.Checkers
 
         private void CheckRAWDatabaseIsNotPresent()
         {
+            var persistentRaw = LoadMetadata.UsesPersistentRaw(_loadMetadata);
             var rawDbInfo = _databaseConfiguration.DeployInfo[LoadBubble.Raw];
 
             // Check that the raw database is not present
-            if (!rawDbInfo.Exists()) return;
+            if (!rawDbInfo.Exists())
+            {
+                // RAW db does not exist thats usually good unless...
+                if(persistentRaw)
+                {
+                    var shouldCreate = _notifier.OnCheckPerformed(new CheckEventArgs("RAW database '" + rawDbInfo + "' does not exist but load is persistentRaw", CheckResult.Fail, null, $"Create RAW database?"));
+                    if(shouldCreate)
+                    {
+                        rawDbInfo.Create();
+                    }
+                }
 
-            var shouldDrop = _notifier.OnCheckPerformed(new CheckEventArgs("RAW database '" + rawDbInfo + "' exists", CheckResult.Fail, null, "Drop database " + rawDbInfo));
+                return;
+            }
+
+
+            var shouldDrop = _notifier.OnCheckPerformed(new CheckEventArgs("RAW database '" + rawDbInfo + "' exists", CheckResult.Fail, null, $"Drop {(persistentRaw ? "table(s)": "database")} " + rawDbInfo));
             
             if(!rawDbInfo.GetRuntimeName().EndsWith("_RAW",StringComparison.CurrentCultureIgnoreCase))
                 throw new Exception("rawDbInfo database name did not end with _RAW! It was:" + rawDbInfo.GetRuntimeName()+ " (Why is the system trying to drop this database?)");
@@ -165,8 +180,11 @@ namespace Rdmp.Core.DataLoad.Engine.Checks.Checkers
                     t.Drop();
                 }
 
-                _notifier.OnCheckPerformed(new CheckEventArgs("Finally dropping database" + rawDbInfo + "...", CheckResult.Success));
-                rawDbInfo.Drop();
+                if(!persistentRaw)
+                {
+                    _notifier.OnCheckPerformed(new CheckEventArgs("Finally dropping database" + rawDbInfo + "...", CheckResult.Success));
+                    rawDbInfo.Drop();
+                }
             }
         }
 

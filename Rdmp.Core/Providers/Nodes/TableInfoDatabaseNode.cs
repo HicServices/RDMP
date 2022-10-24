@@ -5,6 +5,7 @@
 // You should have received a copy of the GNU General Public License along with RDMP. If not, see <https://www.gnu.org/licenses/>.
 
 using FAnsi;
+using Org.BouncyCastle.Crypto.Tls;
 using Rdmp.Core.Curation.Data;
 using System;
 using System.Collections.Generic;
@@ -32,16 +33,26 @@ namespace Rdmp.Core.Providers.Nodes
             return DatabaseName;
         }
 
+        protected bool Equals(TableInfoDatabaseNode other)
+        {
+            return DatabaseType == other.DatabaseType && string.Equals(DatabaseName, other.DatabaseName, StringComparison.CurrentCultureIgnoreCase);
+        }
+
         public override bool Equals(object obj)
         {
-            return obj is TableInfoDatabaseNode node &&
-                   DatabaseType == node.DatabaseType &&
-                   DatabaseName == node.DatabaseName;
+            if (ReferenceEquals(null, obj)) return false;
+            if (ReferenceEquals(this, obj)) return true;
+            if (obj.GetType() != this.GetType()) return false;
+            return Equals((TableInfoDatabaseNode)obj);
         }
 
         public override int GetHashCode()
         {
-            return HashCode.Combine(DatabaseType, DatabaseName);
+            unchecked
+            {
+
+                return ((int)DatabaseType * 397) ^ (DatabaseName != null ? StringComparer.CurrentCultureIgnoreCase.GetHashCode(DatabaseName) : 0);
+            }
         }
     }
 }

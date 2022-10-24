@@ -389,5 +389,11 @@ namespace Rdmp.Core.Curation.Data.DataLoad
         {
             return runs;
         }
+
+        public static bool UsesPersistentRaw(ILoadMetadata loadMetadata)
+        {
+            return loadMetadata.CatalogueRepository.GetExtendedProperties(ExtendedProperty.PersistentRaw,
+                loadMetadata).Any(p => p.Value == "true");
+        }
     }
 }
