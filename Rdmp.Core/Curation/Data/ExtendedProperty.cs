@@ -44,7 +44,7 @@ namespace Rdmp.Core.Curation.Data
 
         /// <summary>
         /// Key used in <see cref="ExtendedProperty"/> to indicate that a <see cref="LoadMetadata"/> should not 
-        /// attempt to DROP/CREATE it's RAW database each time it is run
+        /// attempt to DROP/CREATE its RAW database each time it is run
         /// </summary>
         public const string PersistentRaw = "PersistentRaw";
         public const string PersistentRawDescription = "Should the load leave old RAW databases in the RAW server and only cleanup/reload tables at runtime? Value must be 'true' or 'false'";
