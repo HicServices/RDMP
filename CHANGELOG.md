@@ -11,6 +11,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Added
 
 - Added IgnoreMissingTables setting for [RemoteDatabaseAttacher] which allows you to load only the tables that exist on the remote (and in the load)
+- Add overrides for mdf/ldf local paths to MDFAttacher
 
 ## [8.0.3] - 2022-10-04
 

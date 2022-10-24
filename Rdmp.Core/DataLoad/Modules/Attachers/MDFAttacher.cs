@@ -42,6 +42,12 @@ namespace Rdmp.Core.DataLoad.Modules.Attachers
 2. ExecuteCreateDatabaseForAttachSql attempts to connect to 'master' and execute CREATE DATABASE sql with the FILENAME property set to your mdf file in the DATA directory of your database server")]
         public MdfAttachStrategy AttachStrategy { get; set; }
 
+        [DemandsInitialization("Set this only if you encounter problems with the ATTACH stage path.  This is the local path to the .mdf file in the DATA directory from the perspective of SQL Server")]
+        public string OverrideAttachMdfPath { get; set; }
+
+        [DemandsInitialization("Set this only if you encounter problems with the ATTACH stage path.  This is the local path to the .ldf file in the DATA directory from the perspective of SQL Server")]
+        public string OverrideAttachLdfPath { get; set; }
+                
         public MDFAttacher():base(false)
         {
              
@@ -54,6 +60,12 @@ namespace Rdmp.Core.DataLoad.Modules.Attachers
             //The location of .mdf files from the perspective of the database server
             var databaseDirectory = FindDefaultSQLServerDatabaseDirectory(new FromDataLoadEventListenerToCheckNotifier(job));
             _locations = new MdfFileAttachLocations(LoadDirectory.ForLoading, databaseDirectory, OverrideMDFFileCopyDestination);
+
+            if (!string.IsNullOrWhiteSpace(OverrideAttachMdfPath))
+                _locations.AttachMdfPath = OverrideAttachMdfPath;
+
+            if (!string.IsNullOrWhiteSpace(OverrideAttachLdfPath))
+                _locations.AttachLdfPath = OverrideAttachLdfPath;
 
             job.OnNotify(this,new NotifyEventArgs(ProgressEventType.Information, "Identified the MDF file:" +_locations.OriginLocationMdf + " and corresponding LDF file:" + _locations.OriginLocationLdf));
 
