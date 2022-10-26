@@ -8,12 +8,17 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ...
 
+### Fixed
+
+- Fixed right clicking in empty space of a collection not passing correct object to UI Plugins
+
 ## [8.0.4] - 2022-10-24
 
 ### Added
 
 - Added IgnoreMissingTables setting for [RemoteDatabaseAttacher] which allows you to load only the tables that exist on the remote (and in the load)
 - Add overrides for mdf/ldf local paths to MDFAttacher
+- Added 'Persistent RAW' setting for [LoadMetadata]
 
 ### Fixed
 
