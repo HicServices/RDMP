@@ -47,6 +47,12 @@ namespace Rdmp.UI.Collections
     {
         private RDMPCollection _collection;
 
+
+        /// <summary>
+        /// The collection if any that this <see cref="Tree"/> represents in the UI
+        /// </summary>
+        public RDMPCollection Collection => _collection;
+
         private IActivateItems _activator;
         public TreeListView Tree;
 
