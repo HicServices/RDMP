@@ -16,7 +16,6 @@ namespace Rdmp.Core.CommandExecution.AtomicCommands.Automation
     public abstract class AutomationCommandExecution : BasicCommandExecution
     {
         protected readonly Func<RDMPCommandLineOptions> CommandGetter;
-        private readonly IBasicActivateItems _activator;
         public readonly string AutomationServiceExecutable = EnvironmentInfo.IsLinux ? "rdmp" : "rdmp.exe";
 
         private TableRepository _cataTableRepo;
@@ -27,12 +26,11 @@ namespace Rdmp.Core.CommandExecution.AtomicCommands.Automation
         protected AutomationCommandExecution(IBasicActivateItems activator, Func<RDMPCommandLineOptions> commandGetter) : base(activator)
         {
             CommandGetter = commandGetter;
-            _activator = activator;
 
             // repository locator must be one of these types for us to properly assemble 
             // CLI args
             _cataTableRepo = activator.RepositoryLocator.CatalogueRepository as TableRepository;
-            _yamlRepository = _activator.RepositoryLocator.CatalogueRepository as YamlRepository;
+            _yamlRepository = activator.RepositoryLocator.CatalogueRepository as YamlRepository;
             _dataExportTableRepo = activator.RepositoryLocator.DataExportRepository as TableRepository;
             
             if (_yamlRepository == null && (_cataTableRepo == null || _dataExportTableRepo == null))
