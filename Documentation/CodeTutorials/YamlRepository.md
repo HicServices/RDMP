@@ -56,9 +56,12 @@ YamlRepository does not support multiple concurrent user writes.  ID allocations
 based on the current system state and therefore if multiple seperate processes are creating objects 
 at once there will be a mismatch in allocation which will lead to corruption.
 
-Multiple concurrent read-only processes *are* permitted.  The easiest way to achieve this is to remove
-write permissions for these accounts' processes and ensure that configuration edits are made only by a
-single admin user.
+ Multiple concurrent read-only processes **are** permitted.  The easiest way to achieve this is to remove
+write permissions on the directory (e.g. `./rdmp-yaml`) for the running accounts.  Ensure that configuration
+changes can only be made by a single admin user account who runs on a single 'write' process at a time.
+
+When running with multiple read-only processes, a restart or refresh may be required to pick up configuration
+changes made by other processes.
 
 As mentioned in the [Quick Start](#quick-start) you will still need some kind of relational database for
 audit and for storing cohorts etc. But this can be any [DBMS] type (e.g. MySql) and can even be the same
