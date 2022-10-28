@@ -8,6 +8,7 @@ using System;
 using CommandLine;
 using MapsDirectlyToDatabaseTable;
 using Rdmp.Core.CommandLine.Options;
+using Rdmp.Core.Repositories;
 using Rdmp.Core.Startup;
 
 namespace Rdmp.Core.CommandExecution.AtomicCommands.Automation
@@ -15,21 +16,28 @@ namespace Rdmp.Core.CommandExecution.AtomicCommands.Automation
     public abstract class AutomationCommandExecution : BasicCommandExecution
     {
         protected readonly Func<RDMPCommandLineOptions> CommandGetter;
+        private readonly IBasicActivateItems _activator;
         public readonly string AutomationServiceExecutable = EnvironmentInfo.IsLinux ? "rdmp" : "rdmp.exe";
 
         private TableRepository _cataTableRepo;
         private TableRepository _dataExportTableRepo;
+        private YamlRepository _yamlRepository;
 
 
         protected AutomationCommandExecution(IBasicActivateItems activator, Func<RDMPCommandLineOptions> commandGetter) : base(activator)
         {
             CommandGetter = commandGetter;
+            _activator = activator;
 
+            // repository locator must be one of these types for us to properly assemble 
+            // CLI args
             _cataTableRepo = activator.RepositoryLocator.CatalogueRepository as TableRepository;
+            _yamlRepository = _activator.RepositoryLocator.CatalogueRepository as YamlRepository;
             _dataExportTableRepo = activator.RepositoryLocator.DataExportRepository as TableRepository;
-
-            if (_cataTableRepo == null || _dataExportTableRepo == null)
-                SetImpossible("Current repositories are not TableRepository");
+            
+            if (_yamlRepository == null && (_cataTableRepo == null || _dataExportTableRepo == null))
+                SetImpossible("Current repository is not not TableRepository/YamlRepository");
+            
         }
 
         /// <summary>
@@ -57,6 +65,16 @@ namespace Rdmp.Core.CommandExecution.AtomicCommands.Automation
             if (BasicActivator == null)
                 return;
 
+            // if backing database uses a directory
+            if(_yamlRepository != null)
+            {
+                // assemble CLI args that also say to use a directory
+                options.Dir = _yamlRepository.Directory.FullName;
+                return;
+            }
+                
+            // if backing database uses a specific connection string
+            // then use the same connection string for CLI args
             if (string.IsNullOrWhiteSpace(options.CatalogueConnectionString))
                 options.CatalogueConnectionString = _cataTableRepo.ConnectionStringBuilder.ConnectionString;
 
