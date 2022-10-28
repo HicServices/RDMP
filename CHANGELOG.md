@@ -11,6 +11,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Fixed
 
 - Fixed right clicking in empty space of a collection not passing correct object to UI Plugins
+- Fixed console gui check/execute on engines (DQE, DLE etc) not working with YamlRepository backends [#1468](https://github.com/HicServices/RDMP/issues/1468)
 
 ## [8.0.4] - 2022-10-24
 
