@@ -20,7 +20,7 @@
 | CsvHelper | [GitHub](https://github.com/JoshClose/CsvHelper) | [29.0.0](https://www.nuget.org/packages/CsvHelper/29.0.0) | MS-PL / Apache 2.0 | Enables reading/writing CSV files |
 | NPOI | [GitHub](https://github.com/tonyqus/npoi) | [2.5.5](https://www.nuget.org/packages/NPOI/2.5.5) | Apache 2.0 | Enables reading/writing Microsoft Excel files |
 | ExcelNumberFormat | [GitHub](https://github.com/andersnm/ExcelNumberFormat) | [1.1.0](https://www.nuget.org/packages/ExcelNumberFormat/1.1.0) |[MIT](https://opensource.org/licenses/MIT)  | Handles translating number formats from Excel formats into usable values | |
-| [NLog](https://nlog-project.org/) | [GitHub](https://github.com/NLog/NLog) | [5.0.4](https://www.nuget.org/packages/NLog/5.0.4) | [BSD 3-Clause](https://github.com/NLog/NLog/blob/dev/LICENSE.txt) | Flexible user configurable logging | |
+| [NLog](https://nlog-project.org/) | [GitHub](https://github.com/NLog/NLog) | [5.0.5](https://www.nuget.org/packages/NLog/5.0.5) | [BSD 3-Clause](https://github.com/NLog/NLog/blob/dev/LICENSE.txt) | Flexible user configurable logging | |
 | HIC.FAnsiSql |[GitHub](https://github.com/HicServices/FAnsiSql) | [3.0.0](https://www.nuget.org/packages/HIC.FansiSql/3.0.0) | [GPL 3.0](https://www.gnu.org/licenses/gpl-3.0.html) | [DBMS] abstraction layer |
 | HIC.BadMedicine | [GitHub](https://github.com/HicServices/BadMedicine) | [1.1.0](https://www.nuget.org/packages/HIC.BadMedicine/1.1.0) | [GPL 3.0](https://www.gnu.org/licenses/gpl-3.0.html) | Generate Test Datasets for tests/exericses |
 | SSH.NET  | [GitHub](https://github.com/sshnet/SSH.NET)  | [2020.0.2](https://www.nuget.org/packages/SSH.NET/2020.0.2) | [MIT](https://github.com/sshnet/SSH.NET/blob/develop/LICENSE) | Enables fetching files from SFTP servers |
