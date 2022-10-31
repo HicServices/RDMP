@@ -76,6 +76,7 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Documentation", "Documentat
 		Documentation\CodeTutorials\RdmpCommandLine.md = Documentation\CodeTutorials\RdmpCommandLine.md
 		Documentation\CodeTutorials\Tests.md = Documentation\CodeTutorials\Tests.md
 		Documentation\CodeTutorials\UserInterfaceOverview.md = Documentation\CodeTutorials\UserInterfaceOverview.md
+		Documentation\CodeTutorials\UserManual.md = Documentation\CodeTutorials\UserManual.md
 		Documentation\CodeTutorials\Validation.md = Documentation\CodeTutorials\Validation.md
 		Documentation\CodeTutorials\YamlRepository.md = Documentation\CodeTutorials\YamlRepository.md
 	EndProjectSection
