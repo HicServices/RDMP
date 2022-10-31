@@ -17,7 +17,7 @@
       <dependency id="CsvHelper" version="30.0.0"/>
       <dependency id="ExcelNumberFormat" version="1.1.0"/>
       <dependency id="HIC.BadMedicine" version="1.1.0"/>
-      <dependency id="HIC.FAnsiSql" version="3.0.0"/>
+      <dependency id="HIC.FAnsiSql" version="3.0.1"/>
       <dependency id="Newtonsoft.Json" version="13.0.1"/>
       <dependency id="NLog" version="5.0.5"/>
       <dependency id="NPOI" version="2.5.5"/>

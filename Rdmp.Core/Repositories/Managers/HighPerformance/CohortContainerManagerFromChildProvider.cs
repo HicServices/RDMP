@@ -90,6 +90,7 @@ namespace Rdmp.Core.Repositories.Managers.HighPerformance
                     _contents[currentParentId].Add(config);
 
                 }
+                r.Close();
             }
         }
     }

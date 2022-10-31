@@ -189,7 +189,7 @@ namespace Rdmp.Core.Tests.CohortCreation.QueryTests
                 {
                     con.Open();
 
-                    var dbReader = new SqlCommand(builder.SQL, con).ExecuteReader();
+                    using var dbReader = new SqlCommand(builder.SQL, con).ExecuteReader();
                     
                     //can read at least one row
                     Assert.IsTrue(dbReader.Read());
@@ -266,7 +266,7 @@ on ["+TestDatabaseNames.Prefix+@"ScratchArea].[dbo].[BulkData].[chi] = {0}.chi",
                 {
                     con.Open();
 
-                    var dbReader = new SqlCommand(builder.SQL, con).ExecuteReader();
+                    using var dbReader = new SqlCommand(builder.SQL, con).ExecuteReader();
 
                     //can read at least one row
                     Assert.IsTrue(dbReader.Read());
@@ -466,7 +466,7 @@ ABS(DATEDIFF(year, {0}.dtCreated, ["+TestDatabaseNames.Prefix+@"ScratchArea].[db
                     {
                         con.Open();
 
-                        var dbReader = new SqlCommand(builder.SQL, con).ExecuteReader();
+                        using var dbReader = new SqlCommand(builder.SQL, con).ExecuteReader();
 
                         //can read at least one row
                         Assert.IsTrue(dbReader.Read());
