@@ -37,7 +37,7 @@ The RDMP uses SQL Server databases* to store metadata (dataset/column descriptio
 
 The first time you start RDMP (ResearchDataManagementPlatform.exe) you will be prompted to create the metadata databases that allow RDMP to function.  The simplest approach is to create them all on a single server, to do this enter your Sql Server name and a prefix for the databases.
 
-Choose 'Set Platform Databases...'
+Choose `Set Platform Databases...`
 
 If you are a new user at a site where there is already a platform database you can connect to the existing instance.  Otherwise choose 'I want to create new Platform Databases'.
 
@@ -45,7 +45,7 @@ Enter the connection details of your server and any keywords that are required t
 
 ![Platform database setup](Images/UserManual/CreatePlatformDatabases.png)
 
-> **[Command Line]:**  Installation can also be performed from the CLI:
+> **[Command Line]:** This can be done from the CLI using:
 > ```
 > ./rdmp install "(localdb)\MSSQLLocalDB" RDMP_ -e
 > ```
@@ -63,9 +63,9 @@ There are a couple of other database types which can be created as and when you 
 
 |Database|Role|
 |---|---|
-| [Query Caching](./../../Rdmp.Core/CohortCreation/Readme.md)| Improves the performance of complex cohort identification configurations and anonymisation.  Also allows cross server and plugin Cohort Builder elements (e.g. to [REST APIs](./FAQ#apis))|
+| [Query Caching](./../../Rdmp.Core/CohortCreation/Readme.md)| Improves the performance of complex cohort identification configurations and anonymisation.  Also allows cross server and plugin Cohort Builder elements (e.g. to [REST APIs](./FAQ.md#apis))|
 |Anonymisation|Provides a way of performing identifier dropping / substitution on data load for when you want an entirely anonymous data repository|
-|[Plugin Databases](./FAQ#plugins)| RDMP supports plugins which can in some cases have their own database(s)|
+|[Plugin Databases](./FAQ.md#plugins)| RDMP supports plugins which can in some cases have their own database(s)|
 
 _\* Unless using [file system backend](./YamlRepository.md)_
 
@@ -83,22 +83,55 @@ There are many problems that can occur in the daily handling of research data by
 
 From the Home screen under Catalogue select `New...=>Catalogue From File...`
 
+After entering the target database make sure to click `Confirm Database` then choose a [Pipeline], for now any of the default CSV pipelines should work.
+
 ![Importing a file](Images/UserManual/ImportCsv1.png)
 
 RDMP will automatically detect column datatypes as it loads the data.  An initial batch of data is inspected to determine initial datatype but if larger/longer data is encountered later this is updated and an `ALTER COLUMN` command sent to the DBMS.  This streaming approach allows RDMP to load very large files (multiple Gigabytes) without running out of memory.
+
+If the import fails you can click the error icon to see error including the stack trace.
 
 Using the 'manual column-type' [Pipeline] will give you a chance to change the column types created (calculated by RDMP):
 
 ![Overriding column datatypes](Images/UserManual/ImportCsv2.png)
 
-> **[Command Line]:** Importing a file can also be done from the CLI:
+You should now proceede to [Configure Extractability] for the Catalogue
+
+> **[Command Line]:** This can be done from the CLI using:
 > ```
 > ./rdmp CreateNewCatalogueByImportingFile "./Biochemistry.csv" "chi" "DatabaseType:MicrosoftSQLServer:Name:RDMP_ExampleData:Server=(localdb)\MSSQLLocalDB;Integrated Security=true" "Pipeline:*Bulk INSERT*CSV*automated*" null
 > ```
 
 ## Import Existing Table
 
+If your data is already in a relational database (MySql, Sql Server etc) then you can import it into RDMP.  This will create a metadata object in RDMP storing the location of the data but will not move any data.
+
+From the Home Screen select `New...->Catalogue From Database...`
+
+Enter your servername (and optionally the username/password if using sql authentication). Choose the database and table you want to import.  Importing views (any [DBMS]) and table valued functions (Sql Server only) as [Catalogue] is fully supported.
+
+![Import existing table](Images/UserManual/ImportExistingTable.png)
+
+After importing you wil be prompted to [configure extractability](#configure-extractability)
+
+> **[Command Line]:** This can be done from the CLI using:
+> ```
+> ./rdmp CreateNewCatalogueByImportingExistingDataTable "Table:Biochemistry:DatabaseType:MicrosoftSQLServer:Name:RDMP_ExampleData:Server=(localdb)\MSSQLLocalDB;Integrated Security=true" null 
+> ```
+
+If you have many tables in the same database you can bulk import them from the windows client:
+
+![Configure Catalogue column extractability](Images/UserManual/BulkImportExistingTable.png)
+
+## Configure Extractability
+
+Once a new [Catalogue] has been imported you will be presented with a dialog that allows you to make a decisions about which columns should be available to researchers in project extracts (extractable) and which should be kept private.  You will also be asked to select which column(s) are the linkage identifier that can be used to link between datasets (e.g. chi).
+
+![Configure Catalogue column extractability](Images/UserManual/ConfigureExtractability.png)
+
 
 
 [Command line]: ./RdmpCommandLine.md
-[Pipeline]: ./Glossary.md#pipeline
+[Pipeline]: ./Glossary.md#Pipeline
+[Catalogue]: ./Glossary.md#Catalogue
+[DBMS]: ./Glossary.md#DBMS
