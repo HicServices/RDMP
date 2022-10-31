@@ -45,7 +45,7 @@ Enter the connection details of your server and any keywords that are required t
 
 ![Platform database setup](Images/UserManual/CreatePlatformDatabases.png)
 
-> **Command Line:_**  Installation can also be performed from the [command line] using:
+> **[Command Line]:**  Installation can also be performed from the CLI:
 > ```
 > ./rdmp install "(localdb)\MSSQLLocalDB" RDMP_ -e
 > ```
@@ -91,11 +91,10 @@ Using the 'manual column-type' [Pipeline] will give you a chance to change the c
 
 ![Overriding column datatypes](Images/UserManual/ImportCsv2.png)
 
-Importing a file can also be done from the [command line]:
-
-```
-./rdmp CreateNewCatalogueByImportingFile "./Biochemistry.csv" "chi" "DatabaseType:MicrosoftSQLServer:Name:RDMP_ExampleData:Server=(localdb)\MSSQLLocalDB;Integrated Security=true" "Pipeline:*Bulk INSERT*CSV*automated*" null
-```
+> **[Command Line]:** Importing a file can also be done from the CLI:
+> ```
+> ./rdmp CreateNewCatalogueByImportingFile "./Biochemistry.csv" "chi" "DatabaseType:MicrosoftSQLServer:Name:RDMP_ExampleData:Server=(localdb)\MSSQLLocalDB;Integrated Security=true" "Pipeline:*Bulk INSERT*CSV*automated*" null
+> ```
 
 ## Import Existing Table
 
