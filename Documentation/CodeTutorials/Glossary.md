@@ -24,6 +24,26 @@ As well as storing human readable names/descriptions of what is in the dataset i
 
 Catalogues are always flat views although they can be built from multiple relational data tables underneath.
 
+A Catalogue has:
+
+- Human readable names/descriptions of what is in the dataset it is
+- A collection of [CatalogueItems] mapped to [underlying columns](#TableInfo) in your database.  Each of these:
+  - Can be extractable or not, or extractable only with SpecialApproval
+  - Can involve a transform on the underlying column (E.g. hash on extraction, UPPER etc)
+  - Have a human readable names/descriptions
+  - Can have curated [WHERE filters](#ExtractionFilter) defined on them which can be reused for project extraction/cohort generation etc
+  - Validation rules for each of the extractable items in the dataset
+- [Graphs](./Graphs.md) for viewing the contents of the dataset (and testing filters / cohorts built)
+- [Attachments](#SupportingDocument) which help understand the dataset (e.g. a pdf file)
+
+A Catalogue can be a part of [project](#Project) [extraction configurations](#ExtractionConfiguration), used in [cohort identification configurations](#CohortIdentificationConfiguration).  They can be marked as Deprecated, Internal etc.
+
+The separation of dataset and underlying table allows you to have multiple datasets both of which draw data from the same table.  It also makes it easier to handle moving a table/database (e.g. to a new server or database) / renaming etc.
+
+If you expand a Catalogue (e.g. Biochemistry) you can see the 'Catalogue Items' node.   These are the extractable columns in the dataset.  If you expand one then you can see two sub nodes.  The first is the [ExtractionInformation] logic for the column and the second is the underlying database column reference [ColumnInfo].  Try right clicking the column and selecting 'View Aggregate'.
+
+![CatalogueItem Icon](./Images/FAQ/CatalogueTree.png)
+
 ## CatalogueItem![CatalogueItem Icon](../../Rdmp.Core/Icons/CatalogueItem.png)
 
 A 'virtual' column that is made available to researchers. Each [Catalogue] has 1 or more CatalogueItems, these store the columns description as well as any outstanding/resolved issues.
@@ -258,6 +278,7 @@ Mathematical set operation which matches unique (distinct) identifiers  **in the
 [Project]: #Project
 [ExtractionConfiguration]: #ExtractionConfiguration
 [CatalogueItem]: #CatalogueItem
+[CatalogueItems]: #CatalogueItem
 [ColumnInfo]: #ColumnInfo
 [ColumnInfos]: #ColumnInfo
 [ExtractionInformation]: #ExtractionInformation

@@ -129,7 +129,15 @@ Once a new [Catalogue] has been imported you will be presented with a dialog tha
 
 ![Configure Catalogue column extractability](Images/UserManual/ConfigureExtractability.png)
 
+> **[Command Line]:** You can configure extractability from the CLI for example:
+> ```
+> ./rdmp ChangeExtractability Catalogue:Biochemistry true
+> ./rdmp Delete ExtractionInformation:patient_triage_score
+> ```
 
+# Data Quality
+
+## 
 
 [Command line]: ./RdmpCommandLine.md
 [Pipeline]: ./Glossary.md#Pipeline
