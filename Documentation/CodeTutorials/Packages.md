@@ -17,7 +17,7 @@
 | [FAM FAM FAM Icons](http://www.famfamfam.com/lab/icons/silk/) | N\A | N\A | [CC 2.5](https://creativecommons.org/licenses/by/2.5/) | Icons for user interfaces |
 | Xam.Plugins.Settings | [GitHub](https://github.com/jamesmontemagno/SettingsPlugin)| [3.1.1](https://www.nuget.org/packages/Xam.Plugins.Settings/3.1.1) | [MIT](https://opensource.org/licenses/MIT)| Read/Write user settings for main client application |
 | CommandLineParser | [GitHub](https://github.com/commandlineparser/commandline) | [2.9.1](https://www.nuget.org/packages/CommandLineParser/2.9.1) | [MIT](https://opensource.org/licenses/MIT) | Allows command line arguments for main client application and CLI executables |
-| CsvHelper | [GitHub](https://github.com/JoshClose/CsvHelper) | [29.0.0](https://www.nuget.org/packages/CsvHelper/29.0.0) | MS-PL / Apache 2.0 | Enables reading/writing CSV files |
+| CsvHelper | [GitHub](https://github.com/JoshClose/CsvHelper) | [30.0.0](https://www.nuget.org/packages/CsvHelper/30.0.0) | MS-PL / Apache 2.0 | Enables reading/writing CSV files |
 | NPOI | [GitHub](https://github.com/tonyqus/npoi) | [2.5.5](https://www.nuget.org/packages/NPOI/2.5.5) | Apache 2.0 | Enables reading/writing Microsoft Excel files |
 | ExcelNumberFormat | [GitHub](https://github.com/andersnm/ExcelNumberFormat) | [1.1.0](https://www.nuget.org/packages/ExcelNumberFormat/1.1.0) |[MIT](https://opensource.org/licenses/MIT)  | Handles translating number formats from Excel formats into usable values | |
 | [NLog](https://nlog-project.org/) | [GitHub](https://github.com/NLog/NLog) | [5.0.5](https://www.nuget.org/packages/NLog/5.0.5) | [BSD 3-Clause](https://github.com/NLog/NLog/blob/dev/LICENSE.txt) | Flexible user configurable logging | |
