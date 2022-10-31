@@ -16,17 +16,15 @@ Continuing dissatisfaction within the academic community with the lack of transp
 # Getting Started
 
 ## Installing RDMP Client Software
-In a normal RDMP deployment, users access a single shared Metadata database.  
-
-You can install the client software via the [installer link on the Github site](https://github.com/HicServices/RDMP#install )
-
-Once installed the software will guide you through the process of setting up platform databases / connecting to existing platform databases.
+In a normal RDMP deployment, users access a single shared Metadata database. 
 
 ![Platform database setup](Images/UserManual/PlatformDatabases.png)
 
-It is possible to run RDMP as a standalone tool without an Sql Server instance using a [File System Backend](./YamlRepository.md) but this approach is recommended only for single user or isolated systems.
+You can install the client software via the [installer link on the Github site](https://github.com/HicServices/RDMP#install ).  Once installed the software will guide you through the process of setting up platform databases / connecting to existing platform databases (see [Platform Database Setup](#platform-database-setup)).
 
-## Prerequisites
+It is possible to run RDMP as a standalone tool without an Sql Server instance using a [File System Backend](./YamlRepository.md) but this approach is recommended only for single user or standalone systems where RDMP performs a specific activity in isolation (e.g. data load, cohort creation etc).
+
+## System Requirements
 You will need an Sql Server instance (unless using a [file system backend](./YamlRepository.md)).  If you do not already have one, you can use the Express edition for free which is available from microsoft.com (https://www.microsoft.com/en-us/sql-server/sql-server-editions-express ).  Alternatively you can use [LocalDb](https://learn.microsoft.com/en-us/sql/database-engine/configure-windows/sql-server-express-localdb?view=sql-server-ver16) which is a Sql Server development tool installable with Visual Studio that allows for instances to be started when needed and shutdown automatically.
 
 You will also need to have your actual dataset data in a relational database.  RDMP supports accessing research data repositories stored in MySql, Sql Server and Oracle databases but stores it’s own metadata (platform databases) in Sql Server only.
@@ -47,10 +45,10 @@ Enter the connection details of your server and any keywords that are required t
 
 ![Platform database setup](Images/UserManual/CreatePlatformDatabases.png)
 
-Installation can also be performed from the [command line] using:
-```
-./rdmp install "(localdb)\MSSQLLocalDB" RDMP_ -e
-```
+> **Command Line:_**  Installation can also be performed from the [command line] using:
+> ```
+> ./rdmp install "(localdb)\MSSQLLocalDB" RDMP_ -e
+> ```
 
 This creates 4 databases which are the minimum set of platform databases required for RDMP to function.  The databses fulfil the following roles.
 
@@ -103,5 +101,5 @@ Importing a file can also be done from the [command line]:
 
 
 
-[Command line]: ./FAQ.md#cli
+[Command line]: ./RdmpCommandLine.md
 [Pipeline]: ./Glossary.md#pipeline

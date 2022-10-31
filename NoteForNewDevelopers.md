@@ -31,6 +31,7 @@ All technical and repo specific documentation are stored in markdown (`.md` form
 - [Application Changelog](./CHANGELOG.md)
 - [Main landing page README](./README.md)
 - [Frequently Asked Questions](./Documentation/CodeTutorials/FAQ.md)
+- [User Manual](./Documentation/CodeTutorials/UserManual.md)
 - [Glossary](./Documentation/CodeTutorials/Glossary.md)
 - [RDMP DQE](./Documentation/CodeTutorials/Validation.md)
 - [RDMP Command Line](./Documentation/CodeTutorials/RdmpCommandLine.md)

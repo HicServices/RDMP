@@ -92,8 +92,6 @@ The RDMP command line client can be used to run unattended jobs (such as overnig
 | Hardware | 2 cores, 8GB RAM, 100MB disk space plus space for logs | Logs are configurable and can be disabled or streamed to a UDP receiver. By default the CLI logs everything to disk and to console | 
 | Operating System | Windows 7 or later or 64 bit Linux compatible with dotnetcore2.2| Application uses the cross platform Dot Net Core 2.2 API|
 
-
-
    
 <a name="cli"></a>
 ### Does RDMP have a Command Line Interface? (CLI)
@@ -102,11 +100,7 @@ Yes, read all about it in [CommandLine](./RdmpCommandLine.md)
 <a name="linux"></a>
 ### Does RDMP run under Linux?
 
-The [RDMP CLI](#cli) runs natively under linux.
-
-Install dot net core 2.2:
-
-https://dotnet.microsoft.com/download/linux-package-manager/ubuntu16-04/sdk-current
+The [RDMP CLI](./RdmpCommandLine.md) runs natively under linux.
 
 Download the [RDMP CLI release binary for linux-x64](https://github.com/HicServices/RDMP/releases)
 
