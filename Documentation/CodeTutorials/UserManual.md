@@ -136,10 +136,30 @@ Once a new [Catalogue] has been imported you will be presented with a dialog tha
 > ```
 
 # Data Quality
+There are two summarisation components to the RDMP.  The first is the [DQE Data Quality Engine](./Validation.md).  This allows you to create row level validation rules for the columns in your datasets (If column A is populated then column B should also have a value in it, column C must match Regex Z etc).  The results of DQE executions are stored longitudinaly in the DQE database, this allows you to pipoint when your data became corrupt or inspect the differences in quality before and after a data load at any time.
 
-## 
+The second summarisation component are [Aggregate Graphs](./Graphs.md).  These are real time charts which provide a live view of the data in your repository.  Aggregate graphs can be reused during cohort identification and data extract building for testing filter configurations.  For example you could build a graph showing  ‘All drugs prescribed over time’ and reuse it in a cohort identification set ‘People prescribed painkillers’ to confirm that you have configured your query filters correctly.
+
+Graphs can be marked Extractable which allows you to run them on [ExtractionConfigurations].  This provides an overview of the subset of data provided to a project in their extract.
+
+# Dashboards
+
+RDMP Allows you to build modular dashboards from a range of available components that let you monitor the healthiness of your datasets, the extent of your metadata cover etc.  This API is also tied into the [plugins system](./PluginWriting.md) and is intended to be expanded upon with custom components.  
+
+There are 3 components supplied out of the box.  These are
+
+|Component|Code|Role|
+|--|--|---|
+|GoodBadCataloguePieChart|[Source](../../Rdmp.UI/PieCharts/GoodBadCataloguePieChart.cs) | Provides an overview of metadata completeness (how many columns have descriptions) |
+|DatasetRaceway|[Source](../../Rdmp.UI/Raceway/DatasetRaceway.cs) | Provides a vertical chronological view of data quality across all your datasets |
+|DataLoadsGraph|[Source](../Rdmp.UI/Overview/DataLoadsGraph.cs)| Shows the last recorded state of data loads (passing/failing)|
+
+
+![RDMP Dashboards](Images/UserManual/Dashboards.png)
+            
 
 [Command line]: ./RdmpCommandLine.md
 [Pipeline]: ./Glossary.md#Pipeline
+[ExtractionConfigurations]: ./Glossary.md#ExtractionConfiguration
 [Catalogue]: ./Glossary.md#Catalogue
 [DBMS]: ./Glossary.md#DBMS
