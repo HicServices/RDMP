@@ -31,7 +31,7 @@ namespace Rdmp.Core.DataLoad.Triggers
 
         /// <summary>
         /// Describes whether or not the table that the <see cref="ITriggerImplementer"/> is pointed at has an intact UPDATE trigger that populates
-        /// a shadow _Archive table.
+        /// a _Archive table.
         /// </summary>
         /// <returns></returns>
         TriggerStatus GetTriggerStatus();

@@ -174,7 +174,7 @@ There are many macro components (e.g [Catalogue], [AggregateConfiguration], [Ext
 
 ## Filters
 
-Extraction Filters are lines of WHERE SQL which can be used as part of cohort creation, data summarisation and project extraction.  Once created and documented a filter can be reused in any context simply by adding a reference to it.  In this example we will create a ‘Diabetic drugs’ filter on the prescribing dataset.
+Extraction Filters are lines of WHERE SQL which can be used as part of cohort creation, data summarisation and project extraction.  Once created and documented a filter can be reused in any context simply by adding a reference to it.  In this example we will create a ‘Diabetic drugs' filter on the prescribing dataset.
 
 You can create a new filter by using the right click context menu on any [ExtractionInformation]:
 
@@ -227,9 +227,106 @@ Make sure that you always provide the column alias when defining a transform (e.
 > ./rdmp Set "ExtractionInformation:FormattedBnfCode" SelectSql "UPPER( [RDMP_ExampleData].[dbo].[Prescribing].[FormattedBnfCode]) AS FormattedBnfCode" 
 > ```
 
+# Data Load Engine
+
+Many datasets are poorly formed, change structure over time and/or require significant transform/cleaning before they are useful for statistical analysis.
+
+Often the technical implementation of each datasets ETL is known only to the data analysts who built the original data load (and who might not even work at the agency any more) or the ETL may be built into bespoke legacy applications.  
+The RDMP data load engine was developed by the Health Informatics Centre at a time when it was struggling to cope with reliable data loading of a high volume of clinical datasets using a mixture of commercial packages such as SSIS, bespoke dataset specific applications and undocumented SQL stored procedures.  The design core requirements for the Data Load Engine were:
+
+- Eliminate the possibility of duplication by loading the same source rows multiple times
+  -DLE requires primary keys that come from the source data provider
+- Prevent failed loads from impacting the live dataset (e.g. crashing half way through a load)
+  - All data is loaded first into an unstructured unconstrained RAW environment
+  - Then loaded into mirror area called STAGING which matches the LIVE environment
+  - Finally, the load is committed as a MERGE from STAGING to LIVE
+  - Any failure at any step results in zero affected changes to the LIVE dataset
+- Centralise load logic into one place that is accessible to every data analyst
+- Handle strange file types and bespoke/proprietary file layouts
+  - Plugin architecture allows agency specific requirements 
+- Useable by data analysts who familiar only with SQL
+- Ensure reusability of components where possible (e.g. where previously each load application would use a different FTP library and store credentials in different places or be hard coded or be a manual task!) 
+- Be automatable through a single point of automation
+
+It is important to note that these features are designed for the robust loading of routine data (supplied on a regular basis).  For one off loads use the [File Import](#importing-a-flat-file-as-a-new-dataset) feature.
+
+RDMP is primarily a data management tool and therefore does not seek to replace existing ETL tools that you might use for complex data transforms.  It's data load engine is optimised for rapidly and safely loading and versioning data tables in as close a schema to the original source as possible (e.g. if a dataset is produced by a clinical scanner and comes out in with 30 headers then the data should ideally be held in your repository in the same format).  This not only simplifies data load but means there is no bias / interpretation introduced at the data management layer, researchers receive the data exactly the same way you receive it.  The only time extensive transformation is required during ETL is when the data includes duplication / errors that make the data otherwise unloadable.
+
+## RAW Bubble, STAGING Bubble, LIVE Model
+
+Core to the data load process implemented in RMDP is the migration of the data you are trying to load through increasingly structured states (RAW=>STAGING=>LIVE).
+
+![RAW, STAGING, Live model](Images/FAQ/DLEDiagram.png)
+
+The purpose of the RAW/STAGING/LIVE Model is:
+- Isolating failed loads from affecting live data
+- Divide data load problems into either loading (RAW) or database constraint /anonymization issues (STAGING)
+- Allow ALTER / UPDATE logic e.g. to merge columns etc to be done in a safe environment (RAW) with a language the user is familiar with (SQL).
+- Freezing failed data in the state in which it failed so analysts can evaluate it
+
+![RAW, STAGING, Live model](Images/UserManual/DLEDiagram2.png)
+
+There are many reasons why a dataset load might fail.  Some of the most common scenarios encountered by HIC include:
+1. Data supplier changes the name of a column(s)
+    - Is there a semantic change to the data that should be documented?
+    - Is the contents of the column still rational with previously loaded data?
+2. A column starts containing null values where previously it was fully populated
+    - Is the column still conceptually the same as before? 
+    - Is it that the provider has started coding 0 values as null?
+    - Is it valid that the column contains nulls and the LIVE schema should be updated?
+3. Data supplier has primary key duplication within a load file
+    - Is it the analyst/dataset which has the wrong primary keys?
+    - Is it possible to resolve by merging missing data into a composite record?
+    - Is it possible to identify one record which is clearly wrong / out of date?
+
+Of the above cases, the first would break on loading to RAW and require adjustments to the load configuration (which would then work on all subsequent loads).   This is because even though RAW does not have constraints (primary key etc) it follows the same column naming and datatypes as LIVE.  Cases 2 and 3 would fail when trying to move from the unconstrained RAW to the constrained STAGING bubbles.  In both cases after the load crashes the RAW database would be left accessible so the analyst could run SQL queries against it to explore the problem data directly (without having to resort to peering at the source file).
+
+## Error Messages
+
+The DLE tries to give as much information about problems as possible.  Every message generated by the system (either during pre-load checking or loading data) is auditted to the logging server as well as displayed in an interactive data load user interface.  It is intended that the data loader user interface be used to debug failing loads and build new loads but that once a load is stable it be setup as an automated run via the [RDMP CLI].
+
+Commonly encountered errors (missing columns, extra columns, data too wide etc) will always provide context that can be used to help resolve the problem.  For example
+
+```
+BulkInsert failed on data row 155, the complaint was about source column <<ApprovedName>> which had value <<SODIUM LAURYL ETHER SULFATE WITH SODIUM LAURYL ETHER SULPHOSUCCINATE>> destination data type was <<varchar(56)>>
+Received an invalid column length from the bcp client for colid 9(Source Column <<ApprovedName>> Dest Column <<ApprovedName>> which has MaxLength of 56).
+```
+
+Since error messages may contain identifiable data, it is important to secure the logging database with the same rigour as your live data repository.
+
+## Archive Tables
+
+All tables loaded by the DLE must have a primary key.  This prevents duplication and allows for 'UPSERT' of new batches such that only new/different records are loaded.
+
+In order to keep a backup of replaced data the DLE creates an `_Archive` table for each table in a load.  This provides a longitudinal history of each row (by primary key).  It is done to provide traceability and reproducability of data extracts as well as to investigate changes in data quality etc.  This process is transparent to the analyst building the load and requires only that appropriate primary keys exist in the source data and are enforced in the repository data table.
+
+
+![Archive tables](Images/UserManual/ArchiveTables.png)
+
+The technical implementation for this process is to issue an INSERT INTO sql command for all unique primary keys and then a MERGE sql command for the remainder.  The versioning of old records is achieved using an SQL Trigger which is applied on UPDATE and inserts the record into the archive table.  This process uses a transaction.  
+
+[Implementations of the archive trigger](../../Rdmp.Core/DataLoad/Triggers/Implementations/TriggerImplementerFactory.cs) exist for all [DBMS] supported by RDMP.
+
+
+INSERT and MERGE are both very fast operations which scale to very large volumes of data (Gigabytes of records).  The archiving trigger however does not scale linearly with dataset size.  Rather it scales against the volume of records which change in a load.  If data loads are highly volatile (rather than incremental updates) then it may be prudent to disable this feature:
+
+![Disable Archive tables](Images/UserManual/DisableArchiving.png)
+
+> **[Command Line]:** This can be done from the CLI using:
+> ```
+> ./rdmp Set "LoadMetadata:*Prescribing*" IgnoreTrigger true 
+> ```
+
+*Note that disabling the trigger will not delete any existing trigger that is already in place*.  This can be manually dropped using SQL appropriate to your [DBMS] e.g.:
+
+```csharp
+drop trigger Prescribing_OnUpdate;
+```
+
 
 
 [Command line]: ./RdmpCommandLine.md
+[RDMP CLI]: ./RdmpCommandLine.md
 [Pipeline]: ./Glossary.md#Pipeline
 [ExtractionConfigurations]: ./Glossary.md#ExtractionConfiguration
 [Catalogue]: ./Glossary.md#Catalogue

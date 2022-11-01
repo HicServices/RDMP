@@ -13,8 +13,8 @@ namespace Rdmp.UI.CatalogueSummary.LoadEvents
 {
     /// <summary>
     /// Part of ViewInsertsAndUpdatesDialog (in the Updates tab), this control shows a sample of the updates that occurred as part of a data load.  The data load engine operates a 'newer
-    /// data is better' policy when loading data such that if a record with the same primary key comes in the old values for the record are moved into the shadow archive table and the new
-    /// values are used to update the dataset (See 'Shadow Archive Tables' in UserManual.md.  This control lets you see the before and after values side by side.
+    /// data is better' policy when loading data such that if a record with the same primary key comes in the old values for the record are moved into the archive table and the new
+    /// values are used to update the dataset (See 'Archive Tables' in UserManual.md.  This control lets you see the before and after values side by side.
     /// </summary>
     public partial class DiffDataTables : UserControl
     {
