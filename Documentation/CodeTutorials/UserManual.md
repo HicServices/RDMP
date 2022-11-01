@@ -158,8 +158,24 @@ There are 3 components supplied out of the box.  These are
 ![RDMP Dashboards](Images/UserManual/Dashboards.png)
             
 
+# Sql Code Management
+
+One difficulty facing any long running data management agency is how to preserve and document the code files/tools used for data loading, linkage and extraction.  RDMP avoids the need for lengthy script files by dividing code into conceptual blocks.  Once created, these blocks are stored as reusable documented components in the Catalogue database.  When an analyst needs to use a given set of concepts they can assemble a query using drag and drop without having to worry about the underlying code implementation.
+
+The core blocks that are curated by RDMP are:
+
+|Component| Role|
+|--|--|
+| [Filter](./Glossary.md#ExtractionFilter) | Reduce the number of records matched using a boolean query.  Each filter results in a  single line of `WHERE` sql.|
+| [Filter Container](./Glossary.md#FilterContainer)| Allows for combining of multiple Filters.  Each container results in brackets, indentation and either the `AND` or `OR` sql keywords|
+| [ExtractionInformation]| Defines governance around an extractable column and whether there is any transform (UPPER etc).  Each of these results in a single line of `SELECT` sql |
+
+
+
+
 [Command line]: ./RdmpCommandLine.md
 [Pipeline]: ./Glossary.md#Pipeline
 [ExtractionConfigurations]: ./Glossary.md#ExtractionConfiguration
 [Catalogue]: ./Glossary.md#Catalogue
 [DBMS]: ./Glossary.md#DBMS
+[ExtractionInformation]: ./Glossary.md#ExtractionInformation

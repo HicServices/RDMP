@@ -148,6 +148,12 @@ When declared on a dataset in an [ExtractionConfiguration] results in batch/resu
 
 For example if you have a dataset Biochemistry that spans 1980 to 2020 then you can extract it in 1 year chunks.
 
+## FilterContainer![Icon](./../../Rdmp.Core/Icons/FilterContainer.png)
+
+Sometimes you need to limit which records are extracted as part of an [ExtractionConfiguration] or [CohortIdentificationConfiguration].  In order to assemble valid WHERE SQL for this use
+ case, each [ExtractionFilter] must be in either an AND or an OR container.  These containers ensure that each subcontainer / filter beyond the first is seperated by the appropriate operator
+ (AND or OR) and brackets/tab indents where appropriate.
+
 ## GovernanceDocument![Icon](./../../Rdmp.Core/Icons/GovernanceDocument.png)
 
 Contains the path to a useful file which reflects either a request or a granting of governance e.g. a letter from your local healthboard authorising you to host/use 1 or more datasets for a given period of time. 
