@@ -21,6 +21,7 @@ using Rdmp.Core.DataExport.Data;
 using Rdmp.Core.Icons.IconProvision;
 using Rdmp.Core.Providers;
 using SixLabors.ImageSharp.PixelFormats;
+using Rdmp.Core.Curation.Data.Dashboarding;
 
 namespace Rdmp.Core.CommandExecution
 {
@@ -55,7 +56,11 @@ namespace Rdmp.Core.CommandExecution
                 if (import != null)
                     yield return new ExecuteCommandShow(_activator, import, 0) { OverrideCommandName = "Show Import Definition" };
 
-                yield return new ExecuteCommandShow(_activator,()=>GetReplacementIfAny(mt)){OverrideCommandName = "Replacement"};
+                if(SupportsReplacement(forObject))
+                {
+                    yield return new ExecuteCommandShow(_activator, () => GetReplacementIfAny(mt)) { OverrideCommandName = "Replacement" };
+                }
+                    
 
                 yield return new ExecuteCommandSimilar(_activator, mt, false) { GoTo = true };
             }
@@ -299,6 +304,15 @@ namespace Rdmp.Core.CommandExecution
                 if (masqueraderIfAny.MasqueradingAs() is DatabaseEntity m)
                     yield return new ExecuteCommandShow(_activator, m, 0, true) { OverrideIcon = _activator.CoreIconProvider.GetImage(m) };
             }
+        }
+
+        private bool SupportsReplacement(object o)
+        {
+            return o switch
+            {
+                DashboardLayout _=> false,
+                _ => true
+            };
         }
 
         private IEnumerable<IMapsDirectlyToDatabaseTable> GetReplacementIfAny(IMapsDirectlyToDatabaseTable mt)
