@@ -435,11 +435,27 @@ One common issue you may encounter is when new data is wider than the existing s
 
 ![Altering the column type](Images/UserManual/AlterColumnType.png)
 
-
 > **[Command Line]:** This can be done from the CLI using:
 > ```
 > ./rdmp.exe AlterColumnType ColumnInfo:*QuantityUnit* "varchar(20)"
 > ```
+
+### Archiving
+
+After a successful load all files in 'ForLoading' are zipped up and put into 'ForArchiving'.  The ID of the load is the file name of the zip.  This allows you to track an entry in the load audit logs to the file that was loaded at the time.
+
+### Data Load Engine Logging
+
+All messages created during the load are stored in the hierarchical logging database along with counts of the number of 
+
+![Access the View Logs command from the right click context menu of the LoadMetadata](Images/UserManual/ViewLogs.png)
+
+
+> **[Command Line]:** This can be done from the CLI using:
+> ```
+> ./rdmp.exe ViewLogs LoadMetadata:*Biochemistry
+> ```
+
 
 [Command line]: ./RdmpCommandLine.md
 [ProcessTask]: ./Glossary.md#ProcessTask
