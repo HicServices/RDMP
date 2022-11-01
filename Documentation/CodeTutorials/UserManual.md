@@ -27,13 +27,13 @@ It is possible to run RDMP as a standalone tool without an Sql Server instance u
 ## System Requirements
 You will need an Sql Server instance (unless using a [file system backend](./YamlRepository.md)).  If you do not already have one, you can use the Express edition for free which is available from microsoft.com (https://www.microsoft.com/en-us/sql-server/sql-server-editions-express ).  Alternatively you can use [LocalDb](https://learn.microsoft.com/en-us/sql/database-engine/configure-windows/sql-server-express-localdb?view=sql-server-ver16) which is a Sql Server development tool installable with Visual Studio that allows for instances to be started when needed and shutdown automatically.
 
-You will also need to have your actual dataset data in a relational database.  RDMP supports accessing research data repositories stored in MySql, Sql Server and Oracle databases but stores it’s own metadata (platform databases) in Sql Server only.
+You will also need to have your actual dataset data in a relational database.  RDMP supports accessing research data repositories stored in MySql, Sql Server and Oracle databases but stores itï¿½s own metadata (platform databases) in Sql Server only.
 
 If your dataset data is currently in flat files then RDMP can load them into a relational database for you via the data load engine.
 
 ## Platform Database Setup
 
-The RDMP uses SQL Server databases* to store metadata (dataset/column descriptions, validation rules, validation results, data load configurations etc) as well as to store logging data, caching repository data etc.  These ‘platform databases’ are separate from your ‘data repository’ which is the location that you store your live research data.
+The RDMP uses SQL Server databases* to store metadata (dataset/column descriptions, validation rules, validation results, data load configurations etc) as well as to store logging data, caching repository data etc.  These ï¿½platform databasesï¿½ are separate from your ï¿½data repositoryï¿½ which is the location that you store your live research data.
 
 The first time you start RDMP (ResearchDataManagementPlatform.exe) you will be prompted to create the metadata databases that allow RDMP to function.  The simplest approach is to create them all on a single server, to do this enter your Sql Server name and a prefix for the databases.
 
@@ -79,7 +79,7 @@ If you have some CSV files (or Excel/Fixed Width) that you want to load into you
 
 Alternatively if you already have your data in a database then you can simply [tell RDMP where it is](#import-existing-table).
 
-There are many problems that can occur in the daily handling of research data by data analysts.  It can be helpful to discover how the RDMP handles various problems and what problems it cannot handle (and how it communicates this to you as a user).  Files you receive may have an array of issues such as missing/extra separators; primary key duplication; missing/extra columns etc.  It is a good idea to take your time at this stage to explore these issues and see how they manifest in RDMP.
+There are many problems that can occur in the daily handling of research data by data analysts.  It can be helpful to discover how RDMP handles various problems and what problems it cannot handle (and how it communicates this to you as a user).  Files you receive may have an array of issues such as missing/extra separators; primary key duplication; missing/extra columns etc.  It is a good idea to take your time at this stage to explore these issues and see how they manifest in RDMP.
 
 From the Home screen under Catalogue select `New...=>Catalogue From File...`
 
@@ -136,9 +136,9 @@ Once a new [Catalogue] has been imported you will be presented with a dialog tha
 > ```
 
 # Data Quality
-There are two summarisation components to the RDMP.  The first is the [DQE Data Quality Engine](./Validation.md).  This allows you to create row level validation rules for the columns in your datasets (If column A is populated then column B should also have a value in it, column C must match Regex Z etc).  The results of DQE executions are stored longitudinaly in the DQE database, this allows you to pipoint when your data became corrupt or inspect the differences in quality before and after a data load at any time.
+There are two summarisation components to RDMP.  The first is the [DQE Data Quality Engine](./Validation.md).  This allows you to create row level validation rules for the columns in your datasets (If column A is populated then column B should also have a value in it, column C must match Regex Z etc).  The results of DQE executions are stored longitudinaly in the DQE database, this allows you to pipoint when your data became corrupt or inspect the differences in quality before and after a data load at any time.
 
-The second summarisation component are [Aggregate Graphs](./Graphs.md).  These are real time charts which provide a live view of the data in your repository.  Aggregate graphs can be reused during cohort identification and data extract building for testing filter configurations.  For example you could build a graph showing  ‘All drugs prescribed over time’ and reuse it in a cohort identification set ‘People prescribed painkillers’ to confirm that you have configured your query filters correctly.
+The second summarisation component are [Aggregate Graphs](./Graphs.md).  These are real time charts which provide a live view of the data in your repository.  Aggregate graphs can be reused during cohort identification and data extract building for testing filter configurations.  For example you could build a graph showing  ï¿½All drugs prescribed over timeï¿½ and reuse it in a cohort identification set ï¿½People prescribed painkillersï¿½ to confirm that you have configured your query filters correctly.
 
 Graphs can be marked Extractable which allows you to run them on [ExtractionConfigurations].  This provides an overview of the subset of data provided to a project in their extract.
 
@@ -166,10 +166,66 @@ The core blocks that are curated by RDMP are:
 
 |Component| Role|
 |--|--|
-| [Filter](./Glossary.md#ExtractionFilter) | Reduce the number of records matched using a boolean query.  Each filter results in a  single line of `WHERE` sql.|
-| [Filter Container](./Glossary.md#FilterContainer)| Allows for combining of multiple Filters.  Each container results in brackets, indentation and either the `AND` or `OR` sql keywords|
+| [Filter] | Reduce the number of records matched using a boolean query.  Each filter results in a  single line of `WHERE` sql.|
+| [FilterContainer]| Allows for combining of multiple Filters.  Each container results in brackets, indentation and either the `AND` or `OR` sql keywords|
 | [ExtractionInformation]| Defines governance around an extractable column and whether there is any transform (UPPER etc).  Each of these results in a single line of `SELECT` sql |
 
+There are many macro components (e.g [Catalogue], [AggregateConfiguration], [ExtractionConfiguration]) that are composed of these sub blocks but these are covered elsewhere.  It is the curation of logic as such small, documented, reusable atomic blocks which makes RDMP unique.
+
+## Filters
+
+Extraction Filters are lines of WHERE SQL which can be used as part of cohort creation, data summarisation and project extraction.  Once created and documented a filter can be reused in any context simply by adding a reference to it.  In this example we will create a â€˜Diabetic drugsâ€™ filter on the prescribing dataset.
+
+You can create a new filter by using the right click context menu on any [ExtractionInformation]:
+
+![Adding a new filter via right click context menu](Images/UserManual/AddFilter.png)
+
+> **[Command Line]:** This can be done from the CLI using:
+> ```
+> ./rdmp CreateNewFilter ExtractionInformation:FormattedBnfCode null "Diabetic Drugs" "LEFT ( [FormattedBnfCode] , 3) = '6.1'"
+> ```
+
+You can test that an [ExtractionFilter] is working correctly by viewing what data it matches
+
+![View Filter Data context menu](Images/UserManual/ViewFilterData.png)
+
+> **[Command Line]:** This can be done from the CLI using:
+> ```
+> ./rdmp ViewFilterMatchData "ExtractionFilter:Diabetic Drugs" Aggregate
+> ```
+
+### Parameters
+
+When updating a filters WHERE sql you can enter a parameter (e.g. @bnfCode).  When saved this will create a new parameter for the filter.  By default this will have the datatype `varchar(50)` and a value of `'todo'`.  Enter a placeholder value and a Comment to describe the role that the parameter plays in the filter.
+
+When the filter is deployed in an [ExtractionConfiguration] or [CohortIdentificationConfiguration] the analyst will be able to specify a different parameter each time.  It is even possible to deploy multiple copies of the same filter with the only difference being the value of the parameter (e.g. inside a [FilterContainer]).
+
+## Extraction Transforms
+
+Sometimes you need to be able to provide a given column in more than one format. Or you may want to hold it in one format and release it in another.  The most common use case is sensitive or identifiable data.  RDMP allows you to write SQL code to change how a given column is extracted (or create multiple versions) and assign it an extraction category (Core, Supplemental, Special Approval etc).
+
+For example you may call a scalar function on the underlying column (e.g. `UPPER` or `dbo.MakeAnonymous(mycol)`).  These are refered to as 'Extraction Transforms' because they transform the data before it is provided in a research extract.
+
+In mature agencies such transforms are often already modelled in views and/or table valued functions.  If this is the case then these should simply be imported directly into RDMP as new [Catalogues] (RDMP supports both views and table valued functions).
+
+### Creating an Extraction Transform
+
+When a column is marked extractable in RDMP, an [ExtractionInformation] is created.  This defines what SQL is executed in the `SELECT` block of any SQL query built including that column (e.g. in an [ExtractionConfiguration]).  This SQL defaults to the fully qualified column name of the underlying column (e.g. `[RDMP_ExampleData].[dbo].[Prescribing].[FormattedBnfCode]`).    This means no transformation takes place.
+
+You can update the SQL by opening it.  For example you could update it as follows:
+
+```sql
+UPPER( [RDMP_ExampleData].[dbo].[Prescribing].[FormattedBnfCode]) as FormattedBnfCode
+```
+
+Make sure that you always provide the column alias when defining a transform (e.g. `as FormattedBnfCode`)
+
+![Open ExtractionInformation to change its SQL](Images/UserManual/CreateTransform.png)
+
+> **[Command Line]:** This can be done from the CLI using:
+> ```
+> ./rdmp Set "ExtractionInformation:FormattedBnfCode" SelectSql "UPPER( [RDMP_ExampleData].[dbo].[Prescribing].[FormattedBnfCode]) AS FormattedBnfCode" 
+> ```
 
 
 
@@ -177,5 +233,11 @@ The core blocks that are curated by RDMP are:
 [Pipeline]: ./Glossary.md#Pipeline
 [ExtractionConfigurations]: ./Glossary.md#ExtractionConfiguration
 [Catalogue]: ./Glossary.md#Catalogue
+[Catalogues]: ./Glossary.md#Catalogue
 [DBMS]: ./Glossary.md#DBMS
 [ExtractionInformation]: ./Glossary.md#ExtractionInformation
+[AggregateConfiguration]: ./Glossary.md#AggregateConfiguration
+[Filter]: ./Glossary.md#ExtractionFilter
+[ExtractionFilter]: ./Glossary.md#ExtractionFilter
+[FilterContainer]: ./Glossary.md#FilterContainer
+
