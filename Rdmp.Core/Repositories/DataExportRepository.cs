@@ -147,7 +147,7 @@ ec.ExtractionConfiguration_ID = sds.ExtractionConfiguration_ID
             var toReturn = new Dictionary<int, List<int>>();
 
             using var con = GetConnection();
-            var r = DiscoveredServer.GetCommand("SELECT * FROM ExtractableDataSetPackage_ExtractableDataSet ORDER BY ExtractableDataSetPackage_ID", con).ExecuteReader();
+            using var r = DiscoveredServer.GetCommand("SELECT * FROM ExtractableDataSetPackage_ExtractableDataSet ORDER BY ExtractableDataSetPackage_ID", con).ExecuteReader();
 
             var lastPackageId = -1;
             while (r.Read())
