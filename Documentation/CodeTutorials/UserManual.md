@@ -429,8 +429,17 @@ Failed loads are deliberately left in the state in which they crash so that the 
 
 ![Viewing temporary tables created during the data load (in the event of failure)](Images/UserManual/ViewLoadDiagram.png)
 
+### Resizing a column
+
+One common issue you may encounter is when new data is wider than the existing schema.  If you encounter this you can resize the column in RDMP.  You can use Ctrl+F to quickly find a column by name and jump to it in the tree collection.
+
+![Altering the column type](Images/UserManual/AlterColumnType.png)
 
 
+> **[Command Line]:** This can be done from the CLI using:
+> ```
+> ./rdmp.exe AlterColumnType ColumnInfo:*QuantityUnit* "varchar(20)"
+> ```
 
 [Command line]: ./RdmpCommandLine.md
 [ProcessTask]: ./Glossary.md#ProcessTask
