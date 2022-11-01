@@ -31,7 +31,7 @@ using ReusableLibraryCode.Settings;
 namespace Rdmp.UI.PipelineUIs.Pipelines
 {
     /// <summary>
-    /// Reusable component shown by the RDMP whenever it wants you to select a pipeline to achieve a task (See 'A brief overview of what a pipeline is' is UserManual.docx).  The task will
+    /// Reusable component shown by the RDMP whenever it wants you to select a pipeline to achieve a task (See 'A brief overview of what a pipeline is' is UserManual.md).  The task will
     /// be clearly described at the top of the form, this might be 'loading a flat file into the database to create a new cohort' (the actual description will be more verbose and clear 
     /// though).
     /// 

@@ -28,7 +28,7 @@ From here you can access several resources that help understand RDMP classes / p
 
 ![Main application Help](Images/Help.png)
 
-Firstly there is the `Help=>Show User Manual` (also available at https://github.com/HicServices/RDMP/blob/master/Documentation/UserManual.docx).
+Firstly there is the `Help=>Show User Manual` (also available at [UserManual.md](./UserManual.md)).
 
 Secondly there is the `Help=>Generate Class/Table Summary` which describes the DatabaseEntity objects that appear in RDMPCollectionUIs and are core concepts for RDMP.
 

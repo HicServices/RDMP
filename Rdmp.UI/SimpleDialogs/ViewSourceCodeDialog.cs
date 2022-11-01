@@ -19,7 +19,7 @@ using ScintillaNET;
 namespace Rdmp.UI.SimpleDialogs
 {
     /// <summary>
-    /// Allows you to view a class file from the RDMP codebase.  See ExceptionViewerStackTraceWithHyperlinks for the mechanics of how this works (or UserManual.docx).  A green line will
+    /// Allows you to view a class file from the RDMP codebase.  See ExceptionViewerStackTraceWithHyperlinks for the mechanics of how this works (or UserManual.md).  A green line will
     /// highlight the line on which the message or error occurred.
     /// </summary>
     [TechnicalUI]

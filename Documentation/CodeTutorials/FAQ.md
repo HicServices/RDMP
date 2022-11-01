@@ -404,7 +404,7 @@ The Data Load Engine is designed to rapidly build simple data loads with a robus
   
 ![Diagram of the stages of an RDMP load](Images/FAQ/DLEDiagram.png)
 
-A full description of the mechanics and design of the DLE can be found in the [UserManual](../UserManual.docx)
+A full description of the mechanics and design of the DLE can be found in the [UserManual](./UserManual.md)
 
 <a name="untyped"></a>
 ### Can RDMP Load UnTyped Data?
@@ -469,7 +469,7 @@ Yes, Support for Excel is described in the [Excel Handling page](./ExcelHandling
 
 <a name="skipColumns"></a>
 ### When loading data can I skip some columns?
-The data load engine first loads all data to the [temporary unconstrained RAW database](#data-load-engine) then migrates it to STAGING and finally merges it with LIVE (See [UserManual.docx](../UserManual.docx) for more info).  It is designed to make it easy to identify common issues such as data providers renaming columns, adding new columns etc.
+The data load engine first loads all data to the [temporary unconstrained RAW database](#data-load-engine) then migrates it to STAGING and finally merges it with LIVE (See [UserManual](./UserManual.md) for more info).  It is designed to make it easy to identify common issues such as data providers renaming columns, adding new columns etc.
 
 ![ReOrdering](Images/FAQ/ColumnNameChanged.png)
 

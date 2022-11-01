@@ -27,7 +27,7 @@ namespace Rdmp.UI.LoadExecutionUIs
     /// <para>You can only attempt to launch a data load if the checks are all passing (or giving Warnings that you understand and are not concerned about).  </para>
     /// 
     /// <para>Once started the load progress will appear and show as data is loaded into RAW, migrated to STAGING and committed to LIVE (See  'RAW Bubble, STAGING Bubble, LIVE Model'
-    /// in UserManual.docx for full implementation details).</para>
+    /// in UserManual.md for full implementation details).</para>
     /// 
     /// <para>There are various options for debugging for example you can override and stop the data load after RAW is populated (in which case the load will crash out early allowing
     /// you to evaluated the RAW data in a database environment conducive with debugging dataset issues). </para>

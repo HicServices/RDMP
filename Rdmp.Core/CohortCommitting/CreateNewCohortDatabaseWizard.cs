@@ -27,7 +27,7 @@ namespace Rdmp.Core.CohortCommitting
     /// key in subsequent versions of the same cohort (generally you want 1 - m private identifiers because you don't want people to be able to link patients
     /// across project extracts they are working on).</para>
     /// 
-    /// <para>See UserManual.docx for more information on how to tailor the resulting database to fit your needs.</para>
+    /// <para>See UserManual.md for more information on how to tailor the resulting database to fit your needs.</para>
     /// </summary>
     public class CreateNewCohortDatabaseWizard
     {
