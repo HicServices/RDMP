@@ -670,6 +670,27 @@ If you have something more complicated in mind you can create a new class implem
 
 In both cases you will need to package your code as a plugin, see [Plugin Writing](./PluginWritting.md).
 
+# Pipelines
+
+[Pipelines] provide flexibility when moving data from place to place (e.g. when [creating a cohort](#cohort-pipeline) or [uploading a file as a new table](#importing-a-flat-file-as-a-new-dataset).
+
+A [Pipeline] consists of a source component generating data (e.g. reading a file) and a series of components operating on the data then a destination component (e.g. writing final data into a database).  
+
+In some situations the source and/or destination may be fixed by the use case.  When this happens the [Pipeline] cannot specify it's own.
+
+[Pipelines] are usually configured once and then reused for the task from then on.  You may find that you define multiple [Pipelines] for the same task (e.g. File Import) that are configured slightly differently (e.g. one for comma separated and another for tab separated).
+
+Each [PipelineComponent] has its own arguments that can be configured.  For example the BULK INSERT [Pipeline] source has settings like `Separator` and `ThrowOnEmptyFiles`.
+
+![Expanded tree showing all arguments on DelimitedFlatFileDataFlowSource (e.g. Culture)](Images/UserManual/PipelineTree.png)
+
+When you edit a [Pipeline] you are able to select and delete components as well as drag new components into the middle (or source/destination) to perform specific activities.  For example if you need to replace values in the pipeline with a mapping you can use [ColumnSwapper](../../Rdmp.Core/DataLoad/Modules/DataFlowOperations/Swapping/ColumnSwapper.cs).
+
+Defining your own custom components is fun and easy and covered in [PluginWritting.md](./PluginWritting.md).
+
+# Extraction
+
+
 
 
 [Command line]: ./RdmpCommandLine.md
@@ -677,6 +698,8 @@ In both cases you will need to package your code as a plugin, see [Plugin Writin
 [RDMP CLI]: ./RdmpCommandLine.md
 [Pipeline]: ./Glossary.md#Pipeline
 [Pipelines]: ./Glossary.md#Pipelines
+[PipelineComponent]: ./Glossary.md#PipelineComponent
+[PipelineComponents]: ./Glossary.md#PipelineComponent
 [ExtractionConfigurations]: ./Glossary.md#ExtractionConfiguration
 [Catalogue]: ./Glossary.md#Catalogue
 [Catalogues]: ./Glossary.md#Catalogue

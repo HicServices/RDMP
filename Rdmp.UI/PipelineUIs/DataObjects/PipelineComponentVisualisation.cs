@@ -16,7 +16,7 @@ namespace Rdmp.UI.PipelineUIs.DataObjects
 {
 
     /// <summary>
-    /// Shows the state of a single pipeline component within a data flow pipeline (See 'A Brief Overview Of What A Pipeline Is' in UserManual.md).  This includes the Type of the pipeline
+    /// Shows the state of a single pipeline component within a data flow pipeline (See 'Pipelines' in UserManual.md).  This includes the Type of the pipeline
     /// component, whether the software was able to create an instance of the type and whether it passed checking.  Components can be either a Source, Middle (of which there can be any 
     /// number) or Destination.  Objects (usually DataTables) flow through the pipeline and are processed by each component in turn.
     /// 
