@@ -541,3 +541,5 @@ Execute the cohort.  You can access various view options from the right click co
 [ExtractionFilter]: ./Glossary.md#ExtractionFilter
 [FilterContainer]: ./Glossary.md#FilterContainer
 [BadMedicine]: https://github.com/HicServices/BadMedicine
+[TableInfo]: ./Glossary.md#TableInfo
+[Project]: ./Glossary.md#Project
