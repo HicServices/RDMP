@@ -520,6 +520,16 @@ Execute the cohort.  You can access various view options from the right click co
 >  ./rdmp ViewData "AggregateConfiguration:People in Biochemistry" All
 > ```
 
+### Cohort Containers
+
+New [CohortIdentificationConfigurations] are created with 3 containers:
+
+- A Root Container
+  - Inclusion Criteria
+  - Exclusion Criteria
+
+The first container is an [EXCEPT] while the other two are [UNION].  For more information on how these work see the [Cohort Builder FAQ](./FAQ.md#cohort-builder-overview) or [Cohort Creation](../../Rdmp.Core/CohortCreation/Readme.md).
+
 ## Commit Cohort
 
 Cohort Committing is the process of 'finalising' a list of identifiers.  This is important for 
@@ -601,9 +611,65 @@ If you get an error and are using a [CohortIdentificationConfiguration], open it
 
 After the pipeline completes you should see your new cohort under 'Saved Cohorts'.
 
-# Extraction
+# Release Identifier Allocation
 
-TODO
+If you view the data in an [ExtractableCohort] you can see two columns.  The first will be whatever column in your dataset you use for linkage (e.g. chi) and the second will be the anonymous representation (e.g. 'ReleaseId').
+
+![View TOP 100 on cohort](Images/UserManual/ViewCohortTop100.png)
+
+> **[Command Line]:** This can be done from the CLI using:
+> ```
+> ./rdmp ViewData ExtractableCohort:1 ALL
+> ```
+
+You can tailor how these identifiers are allocated in several ways.  For example
+
+- [Do not allocate at all](#do-not-allocate-release-identifiers)
+- [Allocate Manually](#allocate-release-identifiers-manually)
+- [Provide custom allocation method (i.e. a Plugin)](#allocate-release-identifiers-with-plugin)
+
+## Do Not Allocate Release Identifiers
+
+If your data is already anonymised or is not sensitive then you may not want seperate release identifiers at all.  Alternatively you may have a seperate process for allocating identifiers (e.g. a find/replace script).
+
+In this case you can disable release identifier allocation by editing the [ExternalCohortTable] such that the 'Private Identifier Field' is the same as the 'Release Identifier Field':
+
+![Setting private and release identifier fields to the same](Images/UserManual/IdentifiableExtractions1.png)
+
+You will also need to update your User Settings to allow for this:
+
+![Update R004 to Success](Images/UserManual/IdentifiableExtractions2.png)
+
+Finally you will need to update the schema of the Cohort table to allow nulls.  The code will vary but this is Sql Server code for the default example [ExternalCohortTable] created on install:
+
+```sql
+ALTER TABLE RDMP_ExampleData..Cohort ALTER COLUMN ReleaseId varchar(300)
+```
+
+> **[Command Line]:** This can be done from the CLI using:
+> ```
+> ./rdmp set ExternalCohortTable:RDMP_ExampleData ReleaseIdentifierField "[RDMP_ExampleData]..[Cohort].[chi]"
+> ./rdmp SetUserSetting R004 Success
+> ```
+_Note that UserSettings are not shared between CLI and Windows application_
+
+
+## Allocate Release Identifiers Manually
+
+You can leave identifiers blank in the [ExternalDatabaseServer] table by editing the [Pipelines] and changing the `ReleaseIdentifierAllocation` property on the destination component to [NullAllocateReleaseIdentifiers](./../../Rdmp.Core/CohortCommitting/Pipeline/Destinations/IdentifierAllocation/NullAllocateReleaseIdentifiers.cs).
+
+![Edit Pipeline and change ReleaseIdentifierAllocation property](Images/UserManual/EditPipelineNoAllocate.png)
+
+As before you will need to ensure that the database allows nulls in the release identifier column (See above).
+
+## Allocate Release Identifiers With Plugin
+
+RDMP supports both [Plugin] destination components and allocation methods.  If you simply want to change what identifiers are allocated then define a new class implementing [IAllocateReleaseIdentifiers](../../Rdmp.Core/CohortCommitting/Pipeline/Destinations/IdentifierAllocation/IAllocateReleaseIdentifiers.cs).
+
+If you have something more complicated in mind you can create a new class implementing [IPluginCohortDestination](../../Rdmp.Core/CohortCommitting/Pipeline/IPluginCohortDestination.cs). 
+
+In both cases you will need to package your code as a plugin, see [Plugin Writing](./PluginWritting.md).
+
 
 
 [Command line]: ./RdmpCommandLine.md
@@ -625,3 +691,8 @@ TODO
 [TableInfo]: ./Glossary.md#TableInfo
 [Project]: ./Glossary.md#Project
 [ExternalCohortTable]: ./Glossary.md#ExternalCohortTable
+[CohortIdentificationConfiguration]: ./Glossary.md#CohortIdentificationConfiguration
+[CohortIdentificationConfigurations]: ./Glossary.md#CohortIdentificationConfiguration
+[EXCEPT]: ./Glossary.md#EXCEPT
+[UNION]: ./Glossary.md#UNION
+[ExtractableCohort]: ./Glossary.md#ExtractableCohort
