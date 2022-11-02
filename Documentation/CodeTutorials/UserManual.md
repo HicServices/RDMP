@@ -520,16 +520,97 @@ Execute the cohort.  You can access various view options from the right click co
 >  ./rdmp ViewData "AggregateConfiguration:People in Biochemistry" All
 > ```
 
-
-
 ## Commit Cohort
 
+Cohort Committing is the process of 'finalising' a list of identifiers.  This is important for 
+reproducibility and anonymisation.
+
+To commit a cohort you will need
+
+- A source of the identifiers (e.g. [CohortIdentificationConfiguration] or file containing identifiers)
+- A place to store the identifiers
+
+### Saved Cohorts
+
+Identifier lists are shown in the 'Saved Cohorts' collection accessible from the top toolbar of RDMP
+
+![Saved Cohorts collection showing source and 1 stored list](Images/UserManual/SavedCohorts.png)
+
+> **[Command Line]:** This can be done from the CLI using:
+> ```
+>  ./rdmp describe ExtractableCohort
+> ```
+
+Assuming you created example datasets when installing RDMP you should see the [ExternalCohortTable] RDMP_ExampleData.
+If you open this store you can see that it stores lists where the 'private identifier' is `chi` and the anonymous
+identifier is `ReleaseId`.
+
+![Database location of cohort db](Images/UserManual/SavedCohortsTable.png)
+
+> **[Command Line]:** This can be done from the CLI using:
+> ```
+>  ./rdmp describe ExternalCohortTable:RDMP_ExampleData
+> ```
+
+Each identifier format that you use for linkage requires its own [ExternalCohortTable].  For example if you perform 
+cohort building / linkage with both `NHSNumber` and `SocialSecurityNumber` then you would need 2 [ExternalCohortTable].
+
+You can create a new [ExternalCohortTable] with the wizard
+
+![Creating a new ExternalCohortTable with wizard via context menu](Images/UserManual/CreateNewSavedCohortsTable.png)
+
+> **[Command Line]:** This can be done from the CLI using:
+> ```
+>  ./rdmp CreateNewCohortStore "DatabaseType:MicrosoftSQLServer:Name:RDMP_ExampleCohorts2:Server=(localdb)\MSSQLLocalDB;Integrated Security=true" false chi "varchar(10)"
+> ```
+
+### Cohort Pipeline
+
+To put the identifiers into the [ExternalCohortTable] you will need to run a 'Cohort Creation' [Pipeline].
+
+A list of all [Pipelines] can be seen in the in the 'Tables (Advanced)' collection:
+
+![Viewing what Pipelines exist](Images/UserManual/ViewPipelines.png)
+
+> **[Command Line]:** This can be done from the CLI using:
+> ```
+>  ./rdmp ls Pipeline
+> ```
+
+The easiest place to commit a cohort from is the 'Project' collection New button:
+
+![Run a cohort pipeline](Images/UserManual/CommitCohortContextMenu.png)
+
+Choose your [CohortIdentificationConfiguration] and the 'RDMP_ExampleData' destination.
+
+When prompted to choose a [Project] pick the existing example [Project] 'Lung Cancer Project'.
+Select 'New Cohort' and give it a name.
+
+![Enter details of the cohort you are trying to create](Images/UserManual/CommitCohortDescribeIt.png)
+
+Preview and then Run the [Pipeline].  Ensure that you have the correct Pipeline for the task (e.g. if uploading a file, use the 'From CSV File').
+
+If you get an error and are using a [CohortIdentificationConfiguration], open it in Cohort Builder and ensure that it runs correctly there and that there are no lines highlighted red.  You may need to disable StrictValidationForCohortBuilderContainers (see [Identify Cohorts](#identify-cohorts)).
+
+![Run Pipeline](Images/UserManual/RunCohortCommitPipeline.png)
+
+> **[Command Line]:** This can be done from the CLI using:
+> ```
+> ./rdmp CreateNewCohortByExecutingACohortIdentificationConfiguration "CohortIdentificationConfiguration:my new cic" ExternalCohortTable:RDMP_ExampleData "My test cohort" null "Pipeline:CREATE COHORT*Cohort Identification Configuration"
+> ```
+
+After the pipeline completes you should see your new cohort under 'Saved Cohorts'.
+
+# Extraction
+
+TODO
 
 
 [Command line]: ./RdmpCommandLine.md
 [ProcessTask]: ./Glossary.md#ProcessTask
 [RDMP CLI]: ./RdmpCommandLine.md
 [Pipeline]: ./Glossary.md#Pipeline
+[Pipelines]: ./Glossary.md#Pipelines
 [ExtractionConfigurations]: ./Glossary.md#ExtractionConfiguration
 [Catalogue]: ./Glossary.md#Catalogue
 [Catalogues]: ./Glossary.md#Catalogue
@@ -543,3 +624,4 @@ Execute the cohort.  You can access various view options from the right click co
 [BadMedicine]: https://github.com/HicServices/BadMedicine
 [TableInfo]: ./Glossary.md#TableInfo
 [Project]: ./Glossary.md#Project
+[ExternalCohortTable]: ./Glossary.md#ExternalCohortTable
