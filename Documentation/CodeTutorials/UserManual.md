@@ -456,6 +456,75 @@ All messages created during the load are stored in the hierarchical logging data
 > ./rdmp.exe ViewLogs LoadMetadata:*Biochemistry
 > ```
 
+# Cohort Builder
+
+Cohorts are lists of identifiers which uniquely identify subjects and can be used to for dataset linkage, anonymisation and extraction.
+
+Cohort identification is often the most complicated parts of meeting projects' extraction needs.  It is a sensitive task with considerable risk potential (for example incorrectly contacting patients about conditions they don't actually have).
+
+There are 2 stages to creating a cohort before it can be used to generate an extraction.
+
+|Stage| Purpose|
+|---|---|
+|Identify Cohort| Build a query or locate a file that contains patient identifiers |
+|Commit Cohort| Create a permenant record of the results of the query / contents of the file and allocate any anonymous mappings|
+
+## Identify Cohort
+
+Each Cohort starts life either as a list of identifiers in a file or a [CohortIdentificationConfiguration] (Query Builder).  
+
+If identifiers are in a file then they can be [directly committed](#commit-cohort) into the Saved Cohorts store.  If additional restrictions must be placed on the identifier list (e.g. removing Opt outs, people with specific conditions) then the identifiers should be [imported as a new Catalogue](#importing-a-flat-file-as-a-new-dataset) and a [CohortIdentificationConfiguration] should be built using it.  If an identifier list is imported as a [Catalogue] you can mark as 'Project Specific' which will tie it to a single [Project] and ensure it is not mistakenly used in other projects/extracts.
+
+If you need to assemble a query to identify the cohort then you will need to create a [CohortIdentificationConfiguration] in the Cohort Builder.
+
+![Create a new Cohort Identification Configuration from home](Images/UserManual/NewCohortBuilderFromHome.png)
+
+> **[Command Line]:** This can be done from the CLI using:
+> ```
+> ./rdmp CreateNewCohortIdentificationConfiguration "My First Cohort"
+> ```
+
+Add the Biochemistry dataset to the 'Inclusion Container'.
+
+![Add Catalogue to Cohort Identification Configuration](Images/UserManual/AddCatalogueToCohort.png)
+
+> **[Command Line]:** This can be done from the CLI using:
+> ```
+> ./rdmp AddCatalogueToCohortIdentificationSetContainer CohortAggregateContainer:6 Catalogue:Biochemistry chi
+> ```
+_The above query uses the ID of the container (6).  We cannot use the name (unless [running in a script](./RdmpCommandLine.md#scripting)) because there are likely to be multiple containers that share that name_
+ 
+You can disable the red 'problem' indicators by disabling them in user settings.  This is worth doing as they will prevent the cohort from being committed.
+
+> **[Command Line]:** This can be done from the CLI using:
+> ```
+> ./rdmp SetUserSetting StrictValidationForCohortBuilderContainers false
+> ```
+
+Add a filter to the dataset.  Either an existing one (if you have any [Catalogue] level [Filters]) or a new empty one (if empty provide some WHERE sql).
+
+![Adding a filter](Images/UserManual/AddFilterToAggregateConfiguration.png)
+
+> **[Command Line]:** This can be done from the CLI using:
+> ```
+>  ./rdmp CreateNewFilter "AggregateConfiguration:People in Biochemistry" null "Creatinine" "TestCode like '%CRE%'"
+> ```
+
+Execute the cohort.  You can access various view options from the right click context menu:
+
+![View data from a run aggregate](Images/UserManual/AggregateConfigurationViewData.png)
+
+> **[Command Line]:** This can be done from the CLI using:
+> ```
+>  ./rdmp ViewData "AggregateConfiguration:People in Biochemistry" TOP_100
+>  ./rdmp ViewData "AggregateConfiguration:People in Biochemistry" All
+> ```
+
+
+
+## Commit Cohort
+
+
 
 [Command line]: ./RdmpCommandLine.md
 [ProcessTask]: ./Glossary.md#ProcessTask
@@ -467,6 +536,7 @@ All messages created during the load are stored in the hierarchical logging data
 [DBMS]: ./Glossary.md#DBMS
 [ExtractionInformation]: ./Glossary.md#ExtractionInformation
 [AggregateConfiguration]: ./Glossary.md#AggregateConfiguration
+[Filters]: ./Glossary.md#ExtractionFilter
 [Filter]: ./Glossary.md#ExtractionFilter
 [ExtractionFilter]: ./Glossary.md#ExtractionFilter
 [FilterContainer]: ./Glossary.md#FilterContainer
