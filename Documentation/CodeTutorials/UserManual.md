@@ -207,7 +207,7 @@ There are 3 components supplied out of the box.  These are
 |--|--|---|
 |GoodBadCataloguePieChart|[Source](../../Rdmp.UI/PieCharts/GoodBadCataloguePieChart.cs) | Provides an overview of metadata completeness (how many columns have descriptions) |
 |DatasetRaceway|[Source](../../Rdmp.UI/Raceway/DatasetRaceway.cs) | Provides a vertical chronological view of data quality across all your datasets |
-|DataLoadsGraph|[Source](../Rdmp.UI/Overview/DataLoadsGraph.cs)| Shows the last recorded state of data loads (passing/failing)|
+|DataLoadsGraph|[Source](../../Rdmp.UI/Overview/DataLoadsGraph.cs)| Shows the last recorded state of data loads (passing/failing)|
 
 
 ![RDMP Dashboards](Images/UserManual/Dashboards.png)
