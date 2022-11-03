@@ -38,10 +38,6 @@ Thirdly `Help=>Show Help` will show a dialog telling you what User Interface con
 
 Fourthly there is the Tutorial system `Help=>Tutorials` which cover the basics for setting up RDMP test data, importing files etc.
 
-Finally if you get stuck you can compare your codebase with the fully worked example (of this documentation):
-https://github.com/HicServices/RDMPExamplePlugins
-
-
  <a name="helloWorldPlugin"></a>
  # Hello World Plugin
 

@@ -236,7 +236,7 @@ Creating new data loads and changing the schema of live tables (e.g. adding a ne
 
 In addition the DLE requires 2 databases the [RAW and DLE_STAGING databases](#vsssis).
 
-The RAW database is created at the begining of a load and is the first place where unconstrained data is loaded.  The DLE runner requires `CREATE DATABASE` and `DROP DATABASE` permissions on this server.  For this reason it is recommended to use a seperate RAW server (or seperate [named instance](https://help.looker.com/hc/en-us/articles/360024102414-Connecting-an-MS-SQL-named-instance-)) from your live data repository.
+The RAW database is created at the begining of a load and is the first place where unconstrained data is loaded.  The DLE runner requires `CREATE DATABASE` and `DROP DATABASE` permissions on this server.  For this reason it is recommended to use a seperate RAW server (or seperate [named instance](https://cloud.google.com/looker/docs/best-practices/connecting-a-ms-sql-named-instance)) from your live data repository.
 
 The final stage of DLE execution requires a database called `DLE_STAGING`.  This database should be created by a user with `CREATE DATABASE` permissions but after it is created once it will remain and not be dropped (like RAW is).  When running the DLE requires the following permissions on `DLE_STAGING`
 
@@ -655,7 +655,7 @@ An example can be seen below:
 
 #### DITA
 
-You can export all dataset descriptions as [.dita files](http://ditaspec.suite-sol.com/Home_ditaspec.html) and a single .ditamap using the Reports menu.
+You can export all dataset descriptions as [.dita files](http://docs.oasis-open.org/dita/dita/v1.3/dita-v1.3-part3-all-inclusive.html) and a single .ditamap using the Reports menu.
 
 An example .dita file is shown below:
 

@@ -741,7 +741,7 @@ Each [PipelineComponent] has its own arguments that can be configured.  For exam
 
 When you edit a [Pipeline] you are able to select and delete components as well as drag new components into the middle (or source/destination) to perform specific activities.  For example if you need to replace values in the pipeline with a mapping you can use [ColumnSwapper](../../Rdmp.Core/DataLoad/Modules/DataFlowOperations/Swapping/ColumnSwapper.cs).
 
-Defining your own custom components is fun and easy and covered in [PluginWritting.md](./PluginWritting.md).
+Defining your own custom components is fun and easy and covered in [PluginWriting.md](./PluginWriting.md).
 
 # Extraction
 
@@ -813,7 +813,7 @@ Since data repositories can contain hundreds of millions of records and cohorts 
 
 As seen above the CLI can be used to execute [ExtractionConfigurations].  This allows for a workflow where data analysts build and check the configuration but the running is then done by a powerful automation server overnight.
 
-Extractions are executed through a [Pipeline] (See [Pipelines chapter](#Pipelines)). This allows for extraction to database or any other destination for which a component exists.  Plugin components can be written and added to extraction pipelines e.g. to perform further identifier substitutions (see [Plugin Writting]).
+Extractions are executed through a [Pipeline] (See [Pipelines chapter](#Pipelines)). This allows for extraction to database or any other destination for which a component exists.  Plugin components can be written and added to extraction pipelines e.g. to perform further identifier substitutions (see [Plugin Writing]).
 
 # Release
 
@@ -858,7 +858,7 @@ _The question mark after ExtractionConfiguration means match all where the Proje
 [PipelineComponents]: ./Glossary.md#PipelineComponent
 [Pipeline]: ./Glossary.md#Pipeline
 [Pipelines]: ./Glossary.md#Pipeline
-[Plugin Writting]: ./PluginWritting.md
+[Plugin Writing]: ./PluginWriting.md
 [ProcessTask]: ./Glossary.md#ProcessTask
 [Project]: ./Glossary.md#Project
 [RDMP CLI]: ./RdmpCommandLine.md
