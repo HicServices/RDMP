@@ -265,7 +265,9 @@ namespace Rdmp.UI.Tests.DesignPatternTests.ClassFileEvaluation
             "GetDate",
             "StudyInstanceUID",
             "RDMP_ExampleData",
-            "MakeAnonymous"
+            "MakeAnonymous",
+            "ReleaseIdentifierAllocation",
+            "SocialSecurityNumber"
         };
         #endregion
         public DocumentationCrossExaminationTest(DirectoryInfo slndir)

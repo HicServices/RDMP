@@ -12,6 +12,7 @@ using Rdmp.Core.Icons.IconProvision;
 using Rdmp.Core.Providers;
 using ReusableLibraryCode.Icons.IconProvision;
 using SixLabors.ImageSharp.PixelFormats;
+using Rdmp.Core.Curation.Data;
 
 namespace Rdmp.Core.CommandExecution.AtomicCommands
 {
@@ -20,8 +21,15 @@ namespace Rdmp.Core.CommandExecution.AtomicCommands
         private readonly ExtractionConfiguration _extractionConfiguration;
         private DataExportChildProvider _childProvider;
         List<ExtractableCohort> _compatibleCohorts = new List<ExtractableCohort>();
+        private ExtractableCohort _pick;
 
-        public ExecuteCommandChooseCohort(IBasicActivateItems activator, ExtractionConfiguration extractionConfiguration):base(activator)
+        public ExecuteCommandChooseCohort(IBasicActivateItems activator,
+
+            [DemandsInitialization("The configuration to change the cohort on")]
+            ExtractionConfiguration extractionConfiguration,
+            
+            [DemandsInitialization("The cohort to pick")]
+            ExtractableCohort cohort = null):base(activator)
         {
             _extractionConfiguration = extractionConfiguration;
 
@@ -57,6 +65,13 @@ namespace Rdmp.Core.CommandExecution.AtomicCommands
 
             if(!_compatibleCohorts.Any())
                 SetImpossible("There are no cohorts currently configured with ProjectNumber " + project.ProjectNumber.Value);
+
+            _pick = cohort;
+            
+            if(_pick != null && !_compatibleCohorts.Contains(_pick))
+            {
+                SetImpossible($"Specified cohort {_pick} was not compatible with Project.  Check the cohorts ProjectNumber matches");
+            }
         }
 
         public override Image<Rgba32> GetImage(IIconProvider iconProvider)
@@ -68,13 +83,21 @@ namespace Rdmp.Core.CommandExecution.AtomicCommands
         {
             base.Execute();
 
-            if (SelectOne(new DialogArgs() {
-                WindowTitle = "Select Saved Cohort",
-                TaskDescription = "Select the existing Cohort you would like to be used for your Extraction Configuration."
-            }, _compatibleCohorts.Where(c => c.ID != _extractionConfiguration.Cohort_ID && !c.IsDeprecated).ToList(), out ExtractableCohort selected))
+            var pick = _pick;
+
+            if (pick == null)
+                if(SelectOne(new DialogArgs() {
+                    WindowTitle = "Select Saved Cohort",
+                    TaskDescription = "Select the existing Cohort you would like to be used for your Extraction Configuration."
+                }, _compatibleCohorts.Where(c => c.ID != _extractionConfiguration.Cohort_ID && !c.IsDeprecated).ToList(), out ExtractableCohort selected))
+            {
+                    pick = selected;                
+            }
+
+            if(pick != null)
             {
                 //clear current one
-                _extractionConfiguration.Cohort_ID = selected.ID;
+                _extractionConfiguration.Cohort_ID = pick.ID;
                 _extractionConfiguration.SaveToDatabase();
                 Publish(_extractionConfiguration);
             }

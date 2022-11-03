@@ -466,7 +466,7 @@ There are 2 stages to creating a cohort before it can be used to generate an ext
 
 |Stage| Purpose|
 |---|---|
-|Identify Cohort| Build a query or locate a file that contains patient identifiers |
+|Identify Cohort| Build a query or locate a file that contains unique person identifiers |
 |Commit Cohort| Create a permenant record of the results of the query / contents of the file and allocate any anonymous mappings|
 
 ## Identify Cohort
@@ -690,7 +690,75 @@ Defining your own custom components is fun and easy and covered in [PluginWritti
 
 # Extraction
 
+Data export in RDMP allows you to link a cohort to one or more dataset(s).  This will extract only those records in a dataset that belong to people in your cohort.  This linkage is done through the user interface by creating a [Project] and one or more [Catalogue].  A [Project] can have one or more [ExtractionConfiguration] (e.g. cases and controls).
 
+In order to be included in an [ExtractionConfiguration] a [Catalogue] must be marked extractable and have a column marked [IsExtractionIdentifier].  When added you can define [Filters] to further constrain what records are extracted (e.g. prescriptions for a specific drug group only).
+
+RDMP preserves all [ExtractionConfiguration] seperate from [Catalogue] definitions.  This ensures reproducibility of extracts even at a far later date (e.g. years).
+
+[ExtractionConfiguration] can be frozen after release to prevent accidental changes.  They can even be cloned for later reuse (e.g. in a data refresh after 6 months).
+
+## Configuring an Extraction
+
+Once you have [created a cohort and Project](#commit-cohort) you are ready to create a new [ExtractionConfiguration].  This can be done from the right click context menu on any [Project] or the 'Extraction Configurations' node. 
+
+Provide a name for the [ExtractionConfiguration] then pick your cohort and initial [Catalogues].
+
+![Add an ExtractionConfiguration to a Project via context menu](Images/UserManual/AddExtractionConfiguration.png)
+
+
+> **[Command Line]:** This can be done from the CLI using:
+> ```
+> ./rdmp CreateNewExtractionConfigurationForProject "Project:Lung Cancer Project" "My test config"
+> ./rdmp ChooseCohort "ExtractionConfiguration:My test config" "ExtractableCohort:MyCohortVersion1"
+> ./rdmp AddDatasetsToConfiguration ExtractableDataset:Biochemistry "ExtractionConfiguration:My test config"
+> ./rdmp AddDatasetsToConfiguration ExtractableDataset:Prescribing "ExtractionConfiguration:My test config"
+> ```
+
+Now check and execute the extraction:
+
+![Run an ExtractionConfiguration via context menu](Images/UserManual/ExecuteExtractionConfiguration.png)
+
+
+> **[Command Line]:** This can be done from the CLI using:
+> ```
+> ./rdmp extract -e "ExtractionConfiguration:My test config" -p "Pipeline:DATA EXPORT*CSV" --command check
+./rdmp extract -e "ExtractionConfiguration:My test config" -p "Pipeline:DATA EXPORT*CSV" --command run
+> ```
+_Check then execute an ExtractionConfiguration.  Note that when specifying the Pipeline name we use the wild card '*'.  In this case it is to avoid the ':' which cannot appear in name pattern on CLI_
+
+## Verification
+
+You can confirm that an extraction was succesful by opening the extraction location on disk or by running the Extraction SQL.
+
+![Check extraction matches expectations](Images/UserManual/CheckExtraction.png)
+
+> **[Command Line]:** This can be done from the CLI using:
+> ```
+> ./rdmp ViewExtractionSql "ExtractionConfiguration:My test config" Catalogue:Prescribing
+> ```
+_Note that this will view both the SQL query and all the data returned_
+
+
+## Adding filters
+
+You can add or import [Filters] to reduce the scope of the extract.  For example if a study only requires specific types of records (e.g. Diabetic Drug Prescriptions).  The cohort ensures that only records for specific people are extracted.  Filters further reduce that according to WHERE SQL in them.
+
+![Adding a filter to Prescribing](Images/UserManual/AddFilterToExtraction.png)
+
+> **[Command Line]:** This can be done from the CLI using:
+> ```
+> ./rdmp CreateNewFilter "SelectedDatasets:22" null "Diabetic Drugs" "LEFT ( [FormattedBnfCode] , 3) = '6.1'"
+> ```
+_Note that this will view both the SQL query and all the data returned_
+
+## Scaleability and Adaptability
+
+Since data repositories can contain hundreds of millions of records and cohorts can be equally large, RDMP data export is designed for scalability.   Datasets are extraced in parallel and results are streamed in batches (to reduce RAM overhead or out of memory errors).
+
+As seen above the CLI can be used to execute [ExtractionConfigurations].  This allows for a workflow where data analysts build and check the configuration but the running is then done by a powerful automation server overnight.
+
+Extractions are executed through a [Pipeline] (See [Pipelines chapter](#Pipelines)). This allows for extraction to database or any other destination for which a component exists.  Plugin components can be written and added to extraction pipelines e.g. to perform further identifier substitutions (see [Plugin Writting]).
 
 
 [Command line]: ./RdmpCommandLine.md
@@ -700,6 +768,7 @@ Defining your own custom components is fun and easy and covered in [PluginWritti
 [Pipelines]: ./Glossary.md#Pipelines
 [PipelineComponent]: ./Glossary.md#PipelineComponent
 [PipelineComponents]: ./Glossary.md#PipelineComponent
+[ExtractionConfiguration]: ./Glossary.md#ExtractionConfiguration
 [ExtractionConfigurations]: ./Glossary.md#ExtractionConfiguration
 [Catalogue]: ./Glossary.md#Catalogue
 [Catalogues]: ./Glossary.md#Catalogue
@@ -719,3 +788,5 @@ Defining your own custom components is fun and easy and covered in [PluginWritti
 [EXCEPT]: ./Glossary.md#EXCEPT
 [UNION]: ./Glossary.md#UNION
 [ExtractableCohort]: ./Glossary.md#ExtractableCohort
+[IsExtractionIdentifier]: ./Glossary.md#IsExtractionIdentifier
+[Plugin Writting]: ./PluginWritting.md
