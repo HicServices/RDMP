@@ -36,7 +36,7 @@ namespace Rdmp.Core.CommandExecution.AtomicCommands
                 return;
             }
 
-            // mark it extractable true/false as passed in constructor or just flip it's state
+            // mark it extractable true/false as passed in constructor or just flip its state
             _markExtractable = explicitExtractability ?? !status.IsExtractable;
         }
 
