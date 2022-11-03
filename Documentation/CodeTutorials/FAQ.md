@@ -90,7 +90,7 @@ The RDMP command line client can be used to run unattended jobs (such as overnig
 | Area | Requirement | Logic |
 |------|-----|-----|
 | Hardware | 2 cores, 8GB RAM, 100MB disk space plus space for logs | Logs are configurable and can be disabled or streamed to a UDP receiver. By default the CLI logs everything to disk and to console | 
-| Operating System | Windows 7 or later or 64 bit Linux compatible with dotnetcore2.2| Application uses the cross platform Dot Net Core 2.2 API|
+| Operating System | Windows 7 or later or Linux on x86-64 | Application uses the cross platform .Net 6 API, self-contained |
 
    
 <a name="cli"></a>
