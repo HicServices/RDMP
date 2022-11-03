@@ -8,8 +8,8 @@ This is the user manual for RDMP.  You may also want to read:
 ## Contents
 
 - [Background](#background)
-  * [What is RDMP?](#what-is-rdmp-)
-  * [Why is research data curation important?](#why-is-research-data-curation-important-)
+  * [What is RDMP?](#what-is-rdmp)
+  * [Why is research data curation important?](#why-is-research-data-curation-important)
 - [Getting Started](#getting-started)
   * [Installing RDMP Client Software](#installing-rdmp-client-software)
   * [System Requirements](#system-requirements)
@@ -835,34 +835,32 @@ You can start a release of one or more [ExtractionConfigurations] via the [Proje
 _The question mark after ExtractionConfiguration means match all where the Project matches the pattern ('Lung Cancer Project')_
 
 
-
-
-[Command line]: ./RdmpCommandLine.md
-[ProcessTask]: ./Glossary.md#ProcessTask
-[RDMP CLI]: ./RdmpCommandLine.md
-[Pipeline]: ./Glossary.md#Pipeline
-[Pipelines]: ./Glossary.md#Pipelines
-[PipelineComponent]: ./Glossary.md#PipelineComponent
-[PipelineComponents]: ./Glossary.md#PipelineComponent
-[ExtractionConfiguration]: ./Glossary.md#ExtractionConfiguration
-[ExtractionConfigurations]: ./Glossary.md#ExtractionConfiguration
+[AggregateConfiguration]: ./Glossary.md#AggregateConfiguration
+[BadMedicine]: https://github.com/HicServices/BadMedicine
 [Catalogue]: ./Glossary.md#Catalogue
 [Catalogues]: ./Glossary.md#Catalogue
-[DBMS]: ./Glossary.md#DBMS
-[ExtractionInformation]: ./Glossary.md#ExtractionInformation
-[AggregateConfiguration]: ./Glossary.md#AggregateConfiguration
-[Filters]: ./Glossary.md#ExtractionFilter
-[Filter]: ./Glossary.md#ExtractionFilter
-[ExtractionFilter]: ./Glossary.md#ExtractionFilter
-[FilterContainer]: ./Glossary.md#FilterContainer
-[BadMedicine]: https://github.com/HicServices/BadMedicine
-[TableInfo]: ./Glossary.md#TableInfo
-[Project]: ./Glossary.md#Project
-[ExternalCohortTable]: ./Glossary.md#ExternalCohortTable
 [CohortIdentificationConfiguration]: ./Glossary.md#CohortIdentificationConfiguration
 [CohortIdentificationConfigurations]: ./Glossary.md#CohortIdentificationConfiguration
+[Command line]: ./RdmpCommandLine.md
+[DBMS]: ./Glossary.md#DBMS
 [EXCEPT]: ./Glossary.md#EXCEPT
-[UNION]: ./Glossary.md#UNION
+[ExternalCohortTable]: ./Glossary.md#ExternalCohortTable
 [ExtractableCohort]: ./Glossary.md#ExtractableCohort
+[ExtractionConfiguration]: ./Glossary.md#ExtractionConfiguration
+[ExtractionConfigurations]: ./Glossary.md#ExtractionConfiguration
+[ExtractionFilter]: ./Glossary.md#ExtractionFilter
+[ExtractionInformation]: ./Glossary.md#ExtractionInformation
+[FilterContainer]: ./Glossary.md#FilterContainer
+[Filter]: ./Glossary.md#ExtractionFilter
+[Filters]: ./Glossary.md#ExtractionFilter
 [IsExtractionIdentifier]: ./Glossary.md#IsExtractionIdentifier
+[PipelineComponent]: ./Glossary.md#PipelineComponent
+[PipelineComponents]: ./Glossary.md#PipelineComponent
+[Pipeline]: ./Glossary.md#Pipeline
+[Pipelines]: ./Glossary.md#Pipeline
 [Plugin Writting]: ./PluginWritting.md
+[ProcessTask]: ./Glossary.md#ProcessTask
+[Project]: ./Glossary.md#Project
+[RDMP CLI]: ./RdmpCommandLine.md
+[TableInfo]: ./Glossary.md#TableInfo
+[UNION]: ./Glossary.md#UNION
