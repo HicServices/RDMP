@@ -1,3 +1,58 @@
+# RDMP User Manual
+
+This is the user manual for RDMP.  You may also want to read:
+
+- [FAQ](./FAQ.md)
+- [NewDevelopers](./../../NoteForNewDevelopers.md)
+
+## Contents
+
+- [Background](#background)
+  * [What is RDMP?](#what-is-rdmp-)
+  * [Why is research data curation important?](#why-is-research-data-curation-important-)
+- [Getting Started](#getting-started)
+  * [Installing RDMP Client Software](#installing-rdmp-client-software)
+  * [System Requirements](#system-requirements)
+  * [Platform Database Setup](#platform-database-setup)
+  * [Example Data](#example-data)
+  * [Importing a flat file as a new dataset](#importing-a-flat-file-as-a-new-dataset)
+  * [Import Existing Table](#import-existing-table)
+  * [Configure Extractability](#configure-extractability)
+- [Data Quality](#data-quality)
+- [Dashboards](#dashboards)
+- [Sql Code Management](#sql-code-management)
+  * [Filters](#filters)
+    + [Parameters](#parameters)
+  * [Extraction Transforms](#extraction-transforms)
+    + [Creating an Extraction Transform](#creating-an-extraction-transform)
+- [Data Load Engine](#data-load-engine)
+  * [RAW Bubble, STAGING Bubble, LIVE Model](#raw-bubble--staging-bubble--live-model)
+  * [Error Messages](#error-messages)
+  * [Archive Tables](#archive-tables)
+  * [Creating a Data Load Configuration](#creating-a-data-load-configuration)
+  * [Configuring the load](#configuring-the-load)
+    + [Running the load](#running-the-load)
+    + [Resizing a column](#resizing-a-column)
+    + [Archiving](#archiving)
+    + [Data Load Engine Logging](#data-load-engine-logging)
+- [Cohort Builder](#cohort-builder)
+  * [Identify Cohort](#identify-cohort)
+    + [Cohort Containers](#cohort-containers)
+  * [Commit Cohort](#commit-cohort)
+    + [Saved Cohorts](#saved-cohorts)
+    + [Cohort Pipeline](#cohort-pipeline)
+- [Release Identifier Allocation](#release-identifier-allocation)
+  * [Do Not Allocate Release Identifiers](#do-not-allocate-release-identifiers)
+  * [Allocate Release Identifiers Manually](#allocate-release-identifiers-manually)
+  * [Allocate Release Identifiers With Plugin](#allocate-release-identifiers-with-plugin)
+- [Pipelines](#pipelines)
+- [Extraction](#extraction)
+  * [Configuring an Extraction](#configuring-an-extraction)
+  * [Verification](#verification)
+  * [Adding filters](#adding-filters)
+  * [Scaleability and Adaptability](#scaleability-and-adaptability)
+- [Release](#release)
+
 # Background
 
 ## What is RDMP?
