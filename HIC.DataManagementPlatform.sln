@@ -25,6 +25,7 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution 
 		.github\workflows\build.yml = .github\workflows\build.yml
 		CHANGELOG.md = CHANGELOG.md
 		.github\workflows\links.yml = .github\workflows\links.yml
+		deadlinksconfig.json = deadlinksconfig.json
 		NoteForNewDevelopers.md = NoteForNewDevelopers.md
 		Documentation\CodeTutorials\Packages.md = Documentation\CodeTutorials\Packages.md
 		rdmp-client.xml = rdmp-client.xml
