@@ -723,7 +723,7 @@ RDMP supports both [Plugin] destination components and allocation methods.  If y
 
 If you have something more complicated in mind you can create a new class implementing [IPluginCohortDestination](../../Rdmp.Core/CohortCommitting/Pipeline/IPluginCohortDestination.cs). 
 
-In both cases you will need to package your code as a plugin, see [Plugin Writing](./PluginWritting.md).
+In both cases you will need to package your code as a plugin, see [Plugin Writing](./PluginWriting.md).
 
 # Pipelines
 
