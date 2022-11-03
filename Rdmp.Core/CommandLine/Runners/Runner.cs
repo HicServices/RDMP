@@ -62,7 +62,7 @@ namespace Rdmp.Core.CommandLine.Runners
             }
 
             // if it is IDs only
-            if (Regex.IsMatch(arg,"[0-9, ]+"))
+            if (Regex.IsMatch(arg,"$[0-9, ]+$"))
             {
                 var repo = locator.GetAllRepositories().FirstOrDefault(r => r.SupportsObjectType(typeof(T)));
                 return repo.GetAllObjectsInIDList<T>(arg.Split(",", StringSplitOptions.RemoveEmptyEntries).Select(int.Parse).ToArray());

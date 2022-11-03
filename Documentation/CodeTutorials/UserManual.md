@@ -760,6 +760,27 @@ As seen above the CLI can be used to execute [ExtractionConfigurations].  This a
 
 Extractions are executed through a [Pipeline] (See [Pipelines chapter](#Pipelines)). This allows for extraction to database or any other destination for which a component exists.  Plugin components can be written and added to extraction pipelines e.g. to perform further identifier substitutions (see [Plugin Writting]).
 
+# Release
+
+An [ExtractionConfiguration] can have many [Catalogues].  These can be extracted at different times.  Some may aquire modifications over time (adjusting filters etc).  Some may fail to extract (e.g. bad SQL in filter) or have extracted files lost (e.g. disk backup restore).
+
+The Release process of RDMP confirms that all expected extraction artifacts are in place and that the extraction audit matches the current live configuration of the [ExtractionConfiguration] (no changes have been made but not run).
+
+Releases use the [Pipeline system](#Pipeline) which allows for customization.  For example a [Plugin] could enable releases to an SFTP server etc.
+
+You can start a release of one or more [ExtractionConfigurations] via the [Project] context menu.
+
+![A starting a release](Images/UserManual/RunRelease.png)
+
+> **[Command Line]:** This can be done from the CLI using:
+> ```
+> ./rdmp release -c "ExtractionConfiguration?Project:Lung Cancer Project" -p "Pipeline:RELEASE*To Directory" --command check --skipreleased
+> ./rdmp release -c "ExtractionConfiguration?Project:Lung Cancer Project" -p "Pipeline:RELEASE*To Directory" --command run --skipreleased
+> ```
+_The question mark after ExtractionConfiguration means match all where the Project matches the pattern ('Lung Cancer Project')_
+
+
+
 
 [Command line]: ./RdmpCommandLine.md
 [ProcessTask]: ./Glossary.md#ProcessTask

@@ -27,5 +27,8 @@ namespace Rdmp.Core.CommandLine.Options
 
         [Option('g', "Globals", HelpText = "True to release extracted globals (default) or false to skip them", Default = true)]
         public bool? ReleaseGlobals { get; set; }
+
+        [Option(HelpText = "True to skip any ExtractionConfiguration that are already released")]
+        public bool SkipReleased { get; internal set; }
     }
 }
