@@ -90,9 +90,7 @@ The RDMP command line client can be used to run unattended jobs (such as overnig
 | Area | Requirement | Logic |
 |------|-----|-----|
 | Hardware | 2 cores, 8GB RAM, 100MB disk space plus space for logs | Logs are configurable and can be disabled or streamed to a UDP receiver. By default the CLI logs everything to disk and to console | 
-| Operating System | Windows 7 or later or 64 bit Linux compatible with dotnetcore2.2| Application uses the cross platform Dot Net Core 2.2 API|
-
-
+| Operating System | Windows 7 or later or Linux on x86-64 | Application uses the cross platform .Net 6 API, self-contained |
 
    
 <a name="cli"></a>
@@ -102,11 +100,7 @@ Yes, read all about it in [CommandLine](./RdmpCommandLine.md)
 <a name="linux"></a>
 ### Does RDMP run under Linux?
 
-The [RDMP CLI](#cli) runs natively under linux.
-
-Install dot net core 2.2:
-
-https://dotnet.microsoft.com/download/linux-package-manager/ubuntu16-04/sdk-current
+The [RDMP CLI](./RdmpCommandLine.md) runs natively under linux.
 
 Download the [RDMP CLI release binary for linux-x64](https://github.com/HicServices/RDMP/releases)
 
@@ -242,7 +236,7 @@ Creating new data loads and changing the schema of live tables (e.g. adding a ne
 
 In addition the DLE requires 2 databases the [RAW and DLE_STAGING databases](#vsssis).
 
-The RAW database is created at the begining of a load and is the first place where unconstrained data is loaded.  The DLE runner requires `CREATE DATABASE` and `DROP DATABASE` permissions on this server.  For this reason it is recommended to use a seperate RAW server (or seperate [named instance](https://help.looker.com/hc/en-us/articles/360024102414-Connecting-an-MS-SQL-named-instance-)) from your live data repository.
+The RAW database is created at the begining of a load and is the first place where unconstrained data is loaded.  The DLE runner requires `CREATE DATABASE` and `DROP DATABASE` permissions on this server.  For this reason it is recommended to use a seperate RAW server (or seperate [named instance](https://cloud.google.com/looker/docs/best-practices/connecting-a-ms-sql-named-instance)) from your live data repository.
 
 The final stage of DLE execution requires a database called `DLE_STAGING`.  This database should be created by a user with `CREATE DATABASE` permissions but after it is created once it will remain and not be dropped (like RAW is).  When running the DLE requires the following permissions on `DLE_STAGING`
 
@@ -410,7 +404,7 @@ The Data Load Engine is designed to rapidly build simple data loads with a robus
   
 ![Diagram of the stages of an RDMP load](Images/FAQ/DLEDiagram.png)
 
-A full description of the mechanics and design of the DLE can be found in the [UserManual](../UserManual.docx)
+A full description of the mechanics and design of the DLE can be found in the [UserManual](./UserManual.md)
 
 <a name="untyped"></a>
 ### Can RDMP Load UnTyped Data?
@@ -475,7 +469,7 @@ Yes, Support for Excel is described in the [Excel Handling page](./ExcelHandling
 
 <a name="skipColumns"></a>
 ### When loading data can I skip some columns?
-The data load engine first loads all data to the [temporary unconstrained RAW database](#data-load-engine) then migrates it to STAGING and finally merges it with LIVE (See [UserManual.docx](../UserManual.docx) for more info).  It is designed to make it easy to identify common issues such as data providers renaming columns, adding new columns etc.
+The data load engine first loads all data to the [temporary unconstrained RAW database](#data-load-engine) then migrates it to STAGING and finally merges it with LIVE (See [UserManual](./UserManual.md) for more info).  It is designed to make it easy to identify common issues such as data providers renaming columns, adding new columns etc.
 
 ![ReOrdering](Images/FAQ/ColumnNameChanged.png)
 
@@ -661,7 +655,7 @@ An example can be seen below:
 
 #### DITA
 
-You can export all dataset descriptions as [.dita files](http://ditaspec.suite-sol.com/Home_ditaspec.html) and a single .ditamap using the Reports menu.
+You can export all dataset descriptions as [.dita files](http://docs.oasis-open.org/dita/dita/v1.3/dita-v1.3-part3-all-inclusive.html) and a single .ditamap using the Reports menu.
 
 An example .dita file is shown below:
 

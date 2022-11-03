@@ -49,6 +49,11 @@ namespace Rdmp.Core.CommandLine.Runners
             //get all configurations user has picked
             _configurations = GetObjectsFromCommandLineString<ExtractionConfiguration>(RepositoryLocator,_options.Configurations).ToArray();
 
+            if(_options.SkipReleased)
+            {
+                _configurations = _configurations.Where(c => !c.IsReleased).ToArray();
+            }
+
             //some datasets only
             if(_options.SelectedDataSets != null && _options.SelectedDataSets.Any())
             {

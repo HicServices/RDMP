@@ -43,10 +43,10 @@ table shows what is implemented:
 
 |  Graph Type  | [Sql Server](https://github.com/HicServices/FAnsiSql/blob/main/Implementations/FAnsi.Implementations.MicrosoftSQL/README.md) | [MySql](https://github.com/HicServices/FAnsiSql/blob/main/Implementations/FAnsi.Implementations.MySql/README.md) | [Postgres](https://github.com/HicServices/FAnsiSql/blob/main/Implementations/FAnsi.Implementations.PostgreSql/README.md) | [Oracle](https://github.com/HicServices/FAnsiSql/blob/main/Implementations/FAnsi.Implementations.Oracle/README.md) |
 |----|---|----|---|---|
-| [Bar 1 Dimension](bar-1-dimension) | yes | yes | yes | yes  |
-| [Bar 2 Dimensions](bar-2-dimensions) | yes | yes | no | yes  |
-| [Plot 1 Dimension](plot-1-dimension) | yes | yes | yes | no |
-| [Plot 2 Dimensions](plot-2-dimensions) | yes | yes | no| no  |
+| [Bar 1 Dimension](#bar-1-dimension) | yes | yes | yes | yes  |
+| [Bar 2 Dimensions](#bar-2-dimensions) | yes | yes | no | yes  |
+| [Plot 1 Dimension](#plot-1-dimension) | yes | yes | yes | no |
+| [Plot 2 Dimensions](#plot-2-dimensions) | yes | yes | no| no  |
 
 Graph query generation is handled in the [FAnsiSql](https://github.com/HicServices/FAnsiSql) library.
 

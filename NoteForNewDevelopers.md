@@ -31,6 +31,7 @@ All technical and repo specific documentation are stored in markdown (`.md` form
 - [Application Changelog](./CHANGELOG.md)
 - [Main landing page README](./README.md)
 - [Frequently Asked Questions](./Documentation/CodeTutorials/FAQ.md)
+- [User Manual](./Documentation/CodeTutorials/UserManual.md)
 - [Glossary](./Documentation/CodeTutorials/Glossary.md)
 - [RDMP DQE](./Documentation/CodeTutorials/Validation.md)
 - [RDMP Command Line](./Documentation/CodeTutorials/RdmpCommandLine.md)
@@ -207,11 +208,13 @@ Once the script is written then the next time you run RDMP you will be prompted 
 RDMP supports plugins.  The following plugin repositories are used by HIC / EPCC:
 
 - [RdmpDicom](https://github.com/HicServices/RdmpDicom): Public repository containing DICOM image loading support.  Foundation for [SmiServices](https://github.com/SMI/SmiServices) ETL microservice
+<!-- markdown-link-check-disable-next-line -->
 - [HICPlugin](https://github.com/HicServices/HICPlugin): Private repository containing HIC specific components.  If you get a 404 trying to access this then ask to be granted rights to read/write the repo
+<!-- markdown-link-check-disable-next-line -->
 - [RdmpExtensions](https://github.com/HicServices/RdmpExtensions): Private repository containing HIC specific components but which may be more widely useful e.g. run Python scripts.  If you get a 404 trying to access this then ask to be granted rights to read/write the repo
 
-[YamlRepository]: /Rdmp.CoreRepositories/YamlRepository.cs
-[CatalogueRepository]: ./Rdmp.CoreRepositories/CatalogueRepository.cs
+[YamlRepository]: ./Rdmp.Core/Repositories/YamlRepository.cs
+[CatalogueRepository]: ./Rdmp.Core/Repositories/CatalogueRepository.cs
 [DataExportRepository]: ./Rdmp.Core/Repositories/DataExportRepository.cs
 [DQERepository]: ./Rdmp.Core/Repositories/DQERepository.cs
 [Project]: ./Documentation/CodeTutorials/Glossary.md#Project

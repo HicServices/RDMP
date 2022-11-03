@@ -30,11 +30,11 @@ namespace Rdmp.UI.SimpleDialogs
     /// 'PatientIdentifier' and 'AdmissionDateTime').  By putting a primary key on the dataset we ensure that there cannot be duplicate data load replication (loading same record twice)
     ///   and also ensure that there cannot be unlinkable records in the database (records where no 'Patient Identifier' exists or when we don't know what date the admission was on).</para>
     /// 
-    /// <para>When primary key collisions occur in a data load it becomes necessary to evaluate the cause (Done by evaluating RAW - see UserManual.docx Load Bubbles).  For example we might 
+    /// <para>When primary key collisions occur in a data load it becomes necessary to evaluate the cause (Done by evaluating RAW - see UserManual.md Load Bubbles).  For example we might 
     /// determine that the data provider is sending us 2 records for the same patient on the same day, the records are identical except for a field 'DataAge'.  Rather than adding this 
     /// to the primary key it would make sense instead to discard the older record on load.</para>
     /// 
-    /// <para>This dialog (in combination with PrimaryKeyCollisionResolverMutilation - See UserManual.docx) lets you delete records out of RAW such that the remaining data matches the datasets
+    /// <para>This dialog (in combination with PrimaryKeyCollisionResolverMutilation - See UserManual.md) lets you delete records out of RAW such that the remaining data matches the datasets
     ///  primary key (obviously this is incredibly dangerous!).  This is done by applying a column order (with a direction for each column).  The dataset is subsetted by primary key with 
     /// each set ordered by the resolution order of the columns and the top record taken.</para>
     /// 

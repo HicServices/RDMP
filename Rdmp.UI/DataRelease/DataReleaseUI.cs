@@ -108,7 +108,7 @@ namespace Rdmp.UI.DataRelease
         private object Releaseability_ImageGetter(object rowObject)
         {
             var state = GetState(rowObject);
-            return state == null ? null : Activator.CoreIconProvider.GetImage(state);
+            return state == null ? null : Activator.CoreIconProvider.GetImage(state).ImageToBitmap();
         }
 
         private object Releaseability_AspectGetter(object rowObject)

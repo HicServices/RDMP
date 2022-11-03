@@ -26,7 +26,7 @@ You can provide a user interface for configuring uses of your plugin by implemen
 
 An example implementation is included:
 
-- [ExamplePluginCohortCompilerUI](../../Rdmp.UI/PluginChildProvision/ExamplePluginCohortCompilerUI.cs)
+- [ExamplePluginCohortCompilerUI](../../Rdmp.Core/Providers/ExamplePluginCohortCompilerUI.cs)
 
 The implementation should be in the `windows` section of your plugin since it will only be called from the Windows Gui Client
 

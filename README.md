@@ -5,7 +5,7 @@
 - [Demo Video](https://www.youtube.com/watch?v=Fgi9-Sdup-Y)
 - [Releases](https://github.com/HicServices/RDMP/releases)
 - [FAQ](Documentation/CodeTutorials/FAQ.md)
-- [User Manual](https://github.com/HicServices/RDMP/raw/main/Documentation/UserManual.docx)
+- [User Manual](./Documentation/CodeTutorials/UserManual.md)
 - [Glossary](./Documentation/CodeTutorials/Glossary.md)
 - [Changelog](./CHANGELOG.md)
 - [Libraries](./Documentation/CodeTutorials/Packages.md)

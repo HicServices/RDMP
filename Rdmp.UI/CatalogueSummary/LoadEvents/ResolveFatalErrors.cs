@@ -18,7 +18,7 @@ namespace Rdmp.UI.CatalogueSummary.LoadEvents
 {
     /// <summary>
     /// Fatal errors are crashes of the data load engine when it is attempting to load data.  If you use the RAW / STAGING / LIVE model this should almost never result in contaminating your
-    /// live dataset (See 'RAW, STAGING, LIVE' in UserManual.docx).  If however you have lots of post load tasks or other custom functionality with knock on consequences it is possible
+    /// live dataset (See 'RAW, STAGING, LIVE' in UserManual.md).  If however you have lots of post load tasks or other custom functionality with knock on consequences it is possible
     /// that a crash will result unforeseen consequences.  For this reason all failure messages are stored in an 'unresolved' state.  Through LoadEventsTreeView you can launch this dialog.
     /// 
     /// <para>This dialog lets you mark errors as 'resolved' and provide a message as to why the error happened and the steps you have taken to resolve it e.g. "Data load failed because data provider
