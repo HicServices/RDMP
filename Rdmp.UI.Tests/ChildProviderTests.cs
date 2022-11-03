@@ -122,5 +122,173 @@ namespace Rdmp.UI.Tests
             Assert.IsEmpty(badFields);
 
         }
+
+        [Test]
+        public void TestDuplicateTableInfos_Identical()
+        {
+            var t1 = WhenIHaveA<TableInfo>();
+            var t2 = WhenIHaveA<TableInfo>();
+
+            var cp = new DataExportChildProvider(RepositoryLocator, null, new ThrowImmediatelyCheckNotifier(), null);
+
+            cp.GetAllObjects(typeof(TableInfo), false).Contains(t1);
+            cp.GetAllObjects(typeof(TableInfo), false).Contains(t2);
+
+            var p1 = cp.GetDescendancyListIfAnyFor(t1).Parents;
+            var p2 = cp.GetDescendancyListIfAnyFor(t2).Parents;
+
+            // both objects should have identical path
+            Assert.IsTrue(p1.SequenceEqual(p2));
+        }
+
+        [Test]
+        public void TestDuplicateTableInfos_DifferentServers()
+        {
+            var t1 = WhenIHaveA<TableInfo>();
+            t1.Server = "127.0.0.1";
+
+            var t2 = WhenIHaveA<TableInfo>();
+            t2.Server = "localhost";
+
+            var cp = new DataExportChildProvider(RepositoryLocator, null, new ThrowImmediatelyCheckNotifier(), null);
+
+            cp.GetAllObjects(typeof(TableInfo), false).Contains(t1);
+            cp.GetAllObjects(typeof(TableInfo), false).Contains(t2);
+
+            var p1 = cp.GetDescendancyListIfAnyFor(t1).Parents;
+            var p2 = cp.GetDescendancyListIfAnyFor(t2).Parents;
+
+            // both objects should have identical path
+            Assert.IsFalse(p1.SequenceEqual(p2));
+
+            Assert.AreEqual(p1[0], p2[0]); // Data Repository Servers
+
+
+            Assert.IsInstanceOf<TableInfoServerNode>(p1[1]);
+            Assert.IsInstanceOf<TableInfoServerNode>(p2[1]);
+            Assert.AreNotEqual(p1[1], p2[1]); // Server (e.g. localhost/127.0.0.1)
+
+            Assert.IsInstanceOf<TableInfoDatabaseNode>(p1[2]);
+            Assert.IsInstanceOf<TableInfoDatabaseNode>(p2[2]);
+            Assert.AreNotEqual(p1[2], p2[2]); // Database (must not be equal because the server is different!)
+        }
+
+        /// <summary>
+        /// If two TableInfo differ by DatabaseType then they should have seperate hierarchies.
+        /// </summary>
+        [Test]
+        public void TestDuplicateTableInfos_DifferentServers_DatabaseTypeOnly()
+        {
+            var t1 = WhenIHaveA<TableInfo>();
+            t1.DatabaseType = FAnsi.DatabaseType.MySql;
+
+            var t2 = WhenIHaveA<TableInfo>();
+            t2.DatabaseType = FAnsi.DatabaseType.PostgreSql;
+
+            var cp = new DataExportChildProvider(RepositoryLocator, null, new ThrowImmediatelyCheckNotifier(), null);
+
+            cp.GetAllObjects(typeof(TableInfo), false).Contains(t1);
+            cp.GetAllObjects(typeof(TableInfo), false).Contains(t2);
+
+            var p1 = cp.GetDescendancyListIfAnyFor(t1).Parents;
+            var p2 = cp.GetDescendancyListIfAnyFor(t2).Parents;
+
+            // both objects should have identical path
+            Assert.IsFalse(p1.SequenceEqual(p2));
+
+            Assert.AreEqual(p1[0], p2[0]); // Data Repository Servers
+
+
+            Assert.IsInstanceOf<TableInfoServerNode>(p1[1]);
+            Assert.IsInstanceOf<TableInfoServerNode>(p2[1]);
+            Assert.AreNotEqual(p1[1], p2[1]); // Server (must not be equal because DatabaseType differs)
+
+            Assert.IsInstanceOf<TableInfoDatabaseNode>(p1[2]);
+            Assert.IsInstanceOf<TableInfoDatabaseNode>(p2[2]);
+            Assert.AreNotEqual(p1[2], p2[2]); // Database (must not be equal because the server is different!)
+        }
+
+        [Test]
+        public void TestDuplicateTableInfos_DifferentDatabases()
+        {
+            var t1 = WhenIHaveA<TableInfo>();
+            t1.Database = "Frank";
+
+            var t2 = WhenIHaveA<TableInfo>();
+            t2.Database = "Biff";
+
+            var cp = new DataExportChildProvider(RepositoryLocator, null, new ThrowImmediatelyCheckNotifier(), null);
+
+            cp.GetAllObjects(typeof(TableInfo), false).Contains(t1);
+            cp.GetAllObjects(typeof(TableInfo), false).Contains(t2);
+
+            var p1 = cp.GetDescendancyListIfAnyFor(t1).Parents;
+            var p2 = cp.GetDescendancyListIfAnyFor(t2).Parents;
+
+            // both objects should have identical path
+            Assert.IsFalse(p1.SequenceEqual(p2));
+
+            Assert.AreEqual(p1[0], p2[0]); // Data Repository Servers
+
+
+            Assert.IsInstanceOf<TableInfoServerNode>(p1[1]);
+            Assert.IsInstanceOf<TableInfoServerNode>(p2[1]);
+            Assert.AreEqual(p1[1], p2[1]); // Server
+
+            Assert.IsInstanceOf<TableInfoDatabaseNode>(p1[2]);
+            Assert.IsInstanceOf<TableInfoDatabaseNode>(p2[2]);
+            Assert.AreNotEqual(p1[2], p2[2]); // Database (i.e. Frank/Biff)
+        }
+        /// <summary>
+        /// Capitalization changes are not considered different.  This test confirms that
+        /// when user has 2 nodes that have SERVER names with different caps they get grouped
+        /// together ok.
+        /// </summary>
+        [Test]
+        public void TestDuplicateTableInfos_DifferentServers_CapsOnly()
+        {
+            var t1 = WhenIHaveA<TableInfo>();
+            t1.Server = "LocalHost";
+
+            var t2 = WhenIHaveA<TableInfo>();
+            t2.Server = "localhost";
+
+            var cp = new DataExportChildProvider(RepositoryLocator, null, new ThrowImmediatelyCheckNotifier(), null);
+
+            cp.GetAllObjects(typeof(TableInfo), false).Contains(t1);
+            cp.GetAllObjects(typeof(TableInfo), false).Contains(t2);
+
+            var p1 = cp.GetDescendancyListIfAnyFor(t1).Parents;
+            var p2 = cp.GetDescendancyListIfAnyFor(t2).Parents;
+
+            // both objects should have identical path
+            Assert.IsTrue(p1.SequenceEqual(p2));
+        }
+        
+        /// <summary>
+        /// Capitalization changes are not considered different.  This test confirms that
+        /// when user has 2 nodes that have DATABASE names with different caps they get grouped
+        /// together ok.
+        /// </summary>
+        [Test]
+        public void TestDuplicateTableInfos_DifferentDatabases_CapsOnly()
+        {
+            var t1 = WhenIHaveA<TableInfo>();
+            t1.Database = "frank";
+
+            var t2 = WhenIHaveA<TableInfo>();
+            t2.Database = "fRAnk";
+
+            var cp = new DataExportChildProvider(RepositoryLocator, null, new ThrowImmediatelyCheckNotifier(), null);
+
+            cp.GetAllObjects(typeof(TableInfo), false).Contains(t1);
+            cp.GetAllObjects(typeof(TableInfo), false).Contains(t2);
+
+            var p1 = cp.GetDescendancyListIfAnyFor(t1).Parents;
+            var p2 = cp.GetDescendancyListIfAnyFor(t2).Parents;
+
+            // both objects should have identical path
+            Assert.IsTrue(p1.SequenceEqual(p2));
+        }
     }
 }

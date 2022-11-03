@@ -1334,7 +1334,7 @@ namespace Rdmp.Core.Providers
 
             serverNode.Tables.GroupBy(
                 k => k.Database ?? TableInfoDatabaseNode.NullDatabaseNode, StringComparer.CurrentCultureIgnoreCase)
-            .Select(g=> new TableInfoDatabaseNode(g.Key, serverNode.DatabaseType, g));
+            .Select(g=> new TableInfoDatabaseNode(g.Key, serverNode, g));
             
             foreach (var db in databases)
             {
