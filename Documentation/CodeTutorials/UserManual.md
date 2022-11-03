@@ -82,13 +82,13 @@ It is possible to run RDMP as a standalone tool without an Sql Server instance u
 ## System Requirements
 You will need an Sql Server instance (unless using a [file system backend](./YamlRepository.md)).  If you do not already have one, you can use the Express edition for free which is available from microsoft.com (https://www.microsoft.com/en-us/sql-server/sql-server-editions-express ).  Alternatively you can use [LocalDb](https://learn.microsoft.com/en-us/sql/database-engine/configure-windows/sql-server-express-localdb?view=sql-server-ver16) which is a Sql Server development tool installable with Visual Studio that allows for instances to be started when needed and shutdown automatically.
 
-You will also need to have your actual dataset data in a relational database.  RDMP supports accessing research data repositories stored in MySql, Sql Server and Oracle databases but stores it�s own metadata (platform databases) in Sql Server only.
+You will also need to have your actual dataset data in a relational database.  RDMP supports accessing research data repositories stored in MySql, Sql Server and Oracle databases but stores it's own metadata (platform databases) in Sql Server only.
 
 If your dataset data is currently in flat files then RDMP can load them into a relational database for you via the data load engine.
 
 ## Platform Database Setup
 
-The RDMP uses SQL Server databases* to store metadata (dataset/column descriptions, validation rules, validation results, data load configurations etc) as well as to store logging data, caching repository data etc.  These �platform databases� are separate from your �data repository� which is the location that you store your live research data.
+The RDMP uses SQL Server databases* to store metadata (dataset/column descriptions, validation rules, validation results, data load configurations etc) as well as to store logging data, caching repository data etc.  These 'platform databases' are separate from your 'data repository' which is the location that you store your live research data.
 
 The first time you start RDMP (ResearchDataManagementPlatform.exe) you will be prompted to create the metadata databases that allow RDMP to function.  The simplest approach is to create them all on a single server, to do this enter your Sql Server name and a prefix for the databases.
 
@@ -193,7 +193,7 @@ Once a new [Catalogue] has been imported you will be presented with a dialog tha
 # Data Quality
 There are two summarisation components to RDMP.  The first is the [DQE Data Quality Engine](./Validation.md).  This allows you to create row level validation rules for the columns in your datasets (If column A is populated then column B should also have a value in it, column C must match Regex Z etc).  The results of DQE executions are stored longitudinaly in the DQE database, this allows you to pipoint when your data became corrupt or inspect the differences in quality before and after a data load at any time.
 
-The second summarisation component are [Aggregate Graphs](./Graphs.md).  These are real time charts which provide a live view of the data in your repository.  Aggregate graphs can be reused during cohort identification and data extract building for testing filter configurations.  For example you could build a graph showing  �All drugs prescribed over time� and reuse it in a cohort identification set �People prescribed painkillers� to confirm that you have configured your query filters correctly.
+The second summarisation component are [Aggregate Graphs](./Graphs.md).  These are real time charts which provide a live view of the data in your repository.  Aggregate graphs can be reused during cohort identification and data extract building for testing filter configurations.  For example you could build a graph showing  'All drugs prescribed over time' and reuse it in a cohort identification set 'People prescribed painkillers' to confirm that you have configured your query filters correctly.
 
 Graphs can be marked Extractable which allows you to run them on [ExtractionConfigurations].  This provides an overview of the subset of data provided to a project in their extract.
 
