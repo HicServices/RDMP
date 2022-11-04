@@ -80,7 +80,9 @@ You can install the client software via the [installer link on the Github site](
 It is possible to run RDMP as a standalone tool without an Sql Server instance using a [File System Backend](./YamlRepository.md) but this approach is recommended only for single user or standalone systems where RDMP performs a specific activity in isolation (e.g. data load, cohort creation etc).
 
 ## System Requirements
-You will need an Sql Server instance (unless using a [file system backend](./YamlRepository.md)).  If you do not already have one, you can use the Express edition for free which is available from microsoft.com (https://www.microsoft.com/en-us/sql-server/sql-server-editions-express ).  Alternatively you can use [LocalDb](https://learn.microsoft.com/en-us/sql/database-engine/configure-windows/sql-server-express-localdb?view=sql-server-ver16) which is a Sql Server development tool installable with Visual Studio that allows for instances to be started when needed and shutdown automatically.
+You will need an Sql Server instance (unless using a [file system backend](./YamlRepository.md)).  Sql Server Express is free.  Alternatively you can install LocalDb from the Visual Studio Installer:
+
+![Platform database setup](Images/Tests/InstallingLocalDb.png)
 
 You will also need to have your actual dataset data in a relational database.  RDMP supports accessing research data repositories stored in MySql, Sql Server and Oracle databases but stores it's own metadata (platform databases) in Sql Server only.
 
