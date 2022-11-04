@@ -263,7 +263,11 @@ namespace Rdmp.UI.Tests.DesignPatternTests.ClassFileEvaluation
             "SubContainer",
             "DescribeCommand", // this class has now been removed from RDMP codebase, don't complain if you see it in docs (e.g. CHANGELOG.md).
             "GetDate",
-            "StudyInstanceUID"
+            "StudyInstanceUID",
+            "RDMP_ExampleData",
+            "MakeAnonymous",
+            "ReleaseIdentifierAllocation",
+            "SocialSecurityNumber"
         };
         #endregion
         public DocumentationCrossExaminationTest(DirectoryInfo slndir)
@@ -462,8 +466,8 @@ namespace Rdmp.UI.Tests.DesignPatternTests.ClassFileEvaluation
             //don't evaluate the glossary!
             if(Path.GetFileName(mdFile) == "Glossary.md")
                 return;
-
-            if(Path.GetFileName(mdFile) == "template.md")
+            
+            if (Path.GetFileName(mdFile) == "template.md")
                 return;
 
             var glossaryHeaders = 
@@ -492,7 +496,7 @@ namespace Rdmp.UI.Tests.DesignPatternTests.ClassFileEvaluation
                     continue;
 
                 //don't complain about keywords in code blocks
-                if(line.TrimStart().StartsWith("```"))
+                if(line.TrimStart().StartsWith("```") || line.TrimStart().StartsWith("> ```"))
                     inCodeBlock = !inCodeBlock;
 
                 if (!inCodeBlock)

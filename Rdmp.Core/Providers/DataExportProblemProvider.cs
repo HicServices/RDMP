@@ -66,6 +66,9 @@ namespace Rdmp.Core.Providers
             if (_exportChildProvider.IsMissingExtractionIdentifier(selectedDataSets))
                 return "There are no IsExtractionIdentifier columns in dataset";
 
+            if (selectedDataSets.GetCatalogue()?.IsDeprecated ?? false)
+                return "Dataset is deprecated";
+
             return null;
         }
 

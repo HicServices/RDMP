@@ -74,6 +74,12 @@ _Example User Interface Test_
 
 The RDMP client requires an Sql Server instance for storing platform metadata objects (`Catalogue`, `Project` etc).  its primary purpose is to query / manage SQL datasets (for linkage, extraction etc).  Database tests exist to test this functionality.
 
+The easiest way to achieve this is to install the 'SQL Server Express LocalDB' package in Visual Studio:
+
+![image](https://user-images.githubusercontent.com/31306100/199936580-dd6cbd70-625a-4a9c-8303-6cb752535b4b.png)
+
+If you are using LocalDB then your server will be called `(localdb)\MSSQLLocalDB`.  If you have manually installed the full version of SQL Server Express tehn it is likely to be `localhost\sqlexpress` or just `localhost`.  In both cases the user authentication will be done with your Windows account so no username or password is required.
+
 Before running DatabaseTests you must create a set of RDMP platform databases for testing.  This can be done through the [RDMP command line tool](https://github.com/HicServices/RDMP/releases):
 
 `rdmp.exe install localhost\sqlexpress TEST_ -D`

@@ -24,6 +24,8 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution 
 	ProjectSection(SolutionItems) = preProject
 		.github\workflows\build.yml = .github\workflows\build.yml
 		CHANGELOG.md = CHANGELOG.md
+		.github\workflows\links.yml = .github\workflows\links.yml
+		deadlinksconfig.json = deadlinksconfig.json
 		NoteForNewDevelopers.md = NoteForNewDevelopers.md
 		Documentation\CodeTutorials\Packages.md = Documentation\CodeTutorials\Packages.md
 		rdmp-client.xml = rdmp-client.xml
@@ -68,15 +70,17 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Documentation", "Documentat
 		Documentation\CodeTutorials\ExcelHandling.md = Documentation\CodeTutorials\ExcelHandling.md
 		Documentation\CodeTutorials\FAQ.md = Documentation\CodeTutorials\FAQ.md
 		Documentation\CodeTutorials\Glossary.md = Documentation\CodeTutorials\Glossary.md
-		Documentation\CodeTutorials\Localization.md = Documentation\CodeTutorials\Localization.md
 		Documentation\CodeTutorials\Graphs.md = Documentation\CodeTutorials\Graphs.md
+		Documentation\CodeTutorials\Localization.md = Documentation\CodeTutorials\Localization.md
 		Documentation\CodeTutorials\MultipleExtractionIdentifiers.md = Documentation\CodeTutorials\MultipleExtractionIdentifiers.md
 		Documentation\CodeTutorials\Packages.md = Documentation\CodeTutorials\Packages.md
 		Documentation\CodeTutorials\PluginWriting.md = Documentation\CodeTutorials\PluginWriting.md
 		Documentation\CodeTutorials\RdmpCommandLine.md = Documentation\CodeTutorials\RdmpCommandLine.md
 		Documentation\CodeTutorials\Tests.md = Documentation\CodeTutorials\Tests.md
 		Documentation\CodeTutorials\UserInterfaceOverview.md = Documentation\CodeTutorials\UserInterfaceOverview.md
+		Documentation\CodeTutorials\UserManual.md = Documentation\CodeTutorials\UserManual.md
 		Documentation\CodeTutorials\Validation.md = Documentation\CodeTutorials\Validation.md
+		Documentation\CodeTutorials\YamlRepository.md = Documentation\CodeTutorials\YamlRepository.md
 	EndProjectSection
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "scripts", "scripts", "{B010E3F1-3124-437A-8F09-06C3840C46BD}"

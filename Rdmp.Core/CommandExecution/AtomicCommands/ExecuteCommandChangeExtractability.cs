@@ -18,9 +18,9 @@ namespace Rdmp.Core.CommandExecution.AtomicCommands
     public class ExecuteCommandChangeExtractability:BasicCommandExecution,IAtomicCommand
     {
         private readonly Catalogue _catalogue;
-        private bool _isExtractable;
+        private bool _markExtractable;
 
-        public ExecuteCommandChangeExtractability(IBasicActivateItems activator, Catalogue catalogue) : base(activator)
+        public ExecuteCommandChangeExtractability(IBasicActivateItems activator, Catalogue catalogue, bool? explicitExtractability = null) : base(activator)
         {
             _catalogue = catalogue;
             var status = catalogue.GetExtractabilityStatus(BasicActivator.RepositoryLocator.DataExportRepository);
@@ -36,18 +36,19 @@ namespace Rdmp.Core.CommandExecution.AtomicCommands
                 return;
             }
 
-            _isExtractable = status.IsExtractable;
+            // mark it extractable true/false as passed in constructor or just flip its state
+            _markExtractable = explicitExtractability ?? !status.IsExtractable;
         }
 
         public override string GetCommandName()
         {
-            return _isExtractable?"Mark Not Extractable":"Mark Extractable";
+            return _markExtractable ? "Mark Extractable" : "Mark Not Extractable";
         }
 
         public override string GetCommandHelp()
         {
 
-            if (_isExtractable)
+            if (!_markExtractable)
                 return "Prevent dataset from being released in Project extracts.  This fails if it is already part of any ExtractionConfigurations";
             
             return @"Enable dataset linkage\extraction in Project extracts.  This requires that at least one column be marked IsExtractionIdentifier";
@@ -55,24 +56,40 @@ namespace Rdmp.Core.CommandExecution.AtomicCommands
 
         public override Image<Rgba32> GetImage(IIconProvider iconProvider)
         {
-            return iconProvider.GetImage(RDMPConcept.ExtractableDataSet, _isExtractable?OverlayKind.Delete:OverlayKind.Add);
+            return iconProvider.GetImage(RDMPConcept.ExtractableDataSet, _markExtractable?OverlayKind.Add: OverlayKind.Delete);
         }
 
         public override void Execute()
         {
             base.Execute();
 
-            if (_isExtractable)
+            if (_markExtractable)
             {
-                var extractabilityRecord = ((DataExportChildProvider)BasicActivator.CoreChildProvider).ExtractableDataSets.Single(ds => ds.Catalogue_ID == _catalogue.ID);
-                extractabilityRecord.DeleteInDatabase();
+                if (!_catalogue.GetExtractabilityStatus(BasicActivator.RepositoryLocator.DataExportRepository).IsExtractable) {
+                    new ExtractableDataSet(BasicActivator.RepositoryLocator.DataExportRepository, _catalogue);
+                }
+                else
+                {
+                    Show($"{_catalogue} is already extractable");
+                    return;
+                }
+                    
                 Publish(_catalogue);
             }
             else
             {
-                 new ExtractableDataSet(BasicActivator.RepositoryLocator.DataExportRepository, _catalogue);
-                Publish(_catalogue);
+                var extractabilityRecord = ((DataExportChildProvider)BasicActivator.CoreChildProvider).ExtractableDataSets.SingleOrDefault(ds => ds.Catalogue_ID == _catalogue.ID);
+                if(extractabilityRecord != null)
+                {
+                    extractabilityRecord.DeleteInDatabase();
+                }
+                else
+                {
+                    Show($"{_catalogue} is already non-extractable");
+                    return;
+                }
 
+                Publish(_catalogue);
             }
         }
     }

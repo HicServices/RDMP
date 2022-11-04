@@ -24,7 +24,7 @@ namespace Rdmp.UI.LocationsMenu
     /// stored in your RDMP database if it ever became compromised.
     /// 
     /// <para>This control lets you create a custom 4096 bit RSA Private Key file.  The location of this file is stored in the RDMP database but the file itself should be held under access 
-    /// control (see UserManual.docx).  This ensures that passwords are only compromised if both the RDMP database and the Windows user account file system (where the private key is held)
+    /// control (see UserManual.md).  This ensures that passwords are only compromised if both the RDMP database and the Windows user account file system (where the private key is held)
     /// are both compromised.</para>
     /// 
     /// <para>It is only possible to have one key at any one time and once you generate a new one all your previously created passwords will be irretrievable so it is advisable to set this up

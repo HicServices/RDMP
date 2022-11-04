@@ -4,8 +4,6 @@
 // RDMP is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License for more details.
 // You should have received a copy of the GNU General Public License along with RDMP. If not, see <https://www.gnu.org/licenses/>.
 
-using FAnsi;
-using Org.BouncyCastle.Crypto.Tls;
 using Rdmp.Core.Curation.Data;
 using System;
 using System.Collections.Generic;
@@ -15,15 +13,15 @@ namespace Rdmp.Core.Providers.Nodes
 {
     public class TableInfoDatabaseNode : Node
     {
-        public readonly DatabaseType DatabaseType;
+        public TableInfoServerNode Server { get; private set; }
         public string DatabaseName { get; private set; }
         public TableInfo[] Tables { get; }
 
         public const string NullDatabaseNode = "Null Database";
 
-        public TableInfoDatabaseNode(string databaseName, DatabaseType databaseType, IEnumerable<TableInfo> tables)
+        public TableInfoDatabaseNode(string databaseName, TableInfoServerNode server, IEnumerable<TableInfo> tables)
         {
-            DatabaseType = databaseType;
+            Server = server;
             Tables = tables.ToArray();
             DatabaseName = databaseName ?? NullDatabaseNode;
         }
@@ -35,7 +33,8 @@ namespace Rdmp.Core.Providers.Nodes
 
         protected bool Equals(TableInfoDatabaseNode other)
         {
-            return DatabaseType == other.DatabaseType && string.Equals(DatabaseName, other.DatabaseName, StringComparison.CurrentCultureIgnoreCase);
+            return Server.Equals(other.Server) &&
+                string.Equals(DatabaseName, other.DatabaseName, StringComparison.CurrentCultureIgnoreCase);
         }
 
         public override bool Equals(object obj)
@@ -48,11 +47,7 @@ namespace Rdmp.Core.Providers.Nodes
 
         public override int GetHashCode()
         {
-            unchecked
-            {
-
-                return ((int)DatabaseType * 397) ^ (DatabaseName != null ? StringComparer.CurrentCultureIgnoreCase.GetHashCode(DatabaseName) : 0);
-            }
+            return HashCode.Combine(Server, DatabaseName);
         }
     }
 }

@@ -785,7 +785,10 @@ namespace Rdmp.Core.CommandExecution
 
             var eds = new ExternalDatabaseServer(catalogueRepository,"New " + (defaultToSet == PermissableDefaults.None ? "" :  defaultToSet.ToString()) + "Server",patcher);
             eds.SetProperties(db);
-            
+
+            if (defaultToSet != PermissableDefaults.None)
+                catalogueRepository.SetDefault(defaultToSet, eds);
+
             return eds;
         }
 

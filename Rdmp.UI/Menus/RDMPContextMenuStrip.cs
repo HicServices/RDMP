@@ -181,7 +181,8 @@ namespace Rdmp.UI.Menus
             {
                 try
                 {
-                    foreach (var cmd in plugin.GetAdditionalRightClickMenuItems(_o))
+                    foreach (var cmd in plugin.GetAdditionalRightClickMenuItems(
+                        _o is RDMPCollectionCommonFunctionality c ? c.Collection : _o))
                         Add(cmd);
                 }
                 catch (Exception ex)

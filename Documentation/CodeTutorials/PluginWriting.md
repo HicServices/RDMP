@@ -6,19 +6,19 @@
   * [Version 1](#anoPluginVersion1)
   * [Version 2](#anoPluginVersion2)
   * [Version 3](#anoPluginVersion3)
-6. [Tests](#tests)
+5. [Tests](#tests)
   * [Unit Tests](#unitTests)
   * [Setting up Database Tests](#databaseTestsSetup)
   * [Writting a Database Test](#databaseTestsWritting)
-7. [Checks](#checks)
+6. [Checks](#checks)
   * [Version 4](#anoPluginVersion4)
 7. [Progress Logging](#progress)
   * [Version 5](#anoPluginVersion5)
   * [What is wrong with NLog etc?](#NLog)
   * [What other funky things can I do with IDataLoadEventListener?](#funkyIDataLoadEventListener)
-7. [Graphical User Interfaces In Plugins](#guis)
-8. [Dependencies](#dependencies)
-7. [Troubleshooting Plugins](#troubleshooting)
+8. [Graphical User Interfaces In Plugins](#guis)
+9. [Dependencies](#dependencies)
+10. [Troubleshooting Plugins](#troubleshooting)
 
 <a name="binary"></a>
 # RDMP Binary and Documentation
@@ -28,7 +28,7 @@ From here you can access several resources that help understand RDMP classes / p
 
 ![Main application Help](Images/Help.png)
 
-Firstly there is the `Help=>Show User Manual` (also available at https://github.com/HicServices/RDMP/blob/master/Documentation/UserManual.docx).
+Firstly there is the `Help=>Show User Manual` (also available at [UserManual.md](./UserManual.md)).
 
 Secondly there is the `Help=>Generate Class/Table Summary` which describes the DatabaseEntity objects that appear in RDMPCollectionUIs and are core concepts for RDMP.
 
@@ -37,10 +37,6 @@ Secondly there is the `Help=>Generate Class/Table Summary` which describes the D
 Thirdly `Help=>Show Help` will show a dialog telling you what User Interface control you are in (class name) and any comments the class has (works for content tabs only - not collection trees).
 
 Fourthly there is the Tutorial system `Help=>Tutorials` which cover the basics for setting up RDMP test data, importing files etc.
-
-Finally if you get stuck you can compare your codebase with the fully worked example (of this documentation):
-https://github.com/HicServices/RDMPExamplePlugins
-
 
  <a name="helloWorldPlugin"></a>
  # Hello World Plugin

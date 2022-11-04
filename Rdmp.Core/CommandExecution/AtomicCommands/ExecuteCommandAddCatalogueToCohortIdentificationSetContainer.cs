@@ -48,7 +48,7 @@ namespace Rdmp.Core.CommandExecution.AtomicCommands
 
             [DemandsInitialization("The container you want to add the set into")]
             CohortAggregateContainer targetCohortAggregateContainer,
-            [DemandsInitialization("The dataset to add, must have ")]
+            [DemandsInitialization("The dataset to add, must have an extraction identifier declared on it")]
             Catalogue catalogue,
             [DemandsInitialization("Typically optional.  But if Catalogue has multiple columns marked IsExtractionIdentifier then you must indicate which to use here.")]
             ExtractionInformation identifierColumn = null

@@ -31,7 +31,7 @@ namespace Rdmp.UI.Collections
     /// description which accurately describes what it does (e.g. 'Load GP/Practice data' - 'Downloads PracticeGP.zip from FTP server, unzips and loads.  Also includes duplication resolution logic for 
     /// dealing with null vs 0 exact record duplication').</para>
     /// 
-    /// <para>A data load takes place across 3 stages (RAW, STAGING, LIVE - see UserManual.docx).  Each stage can have 0 or more tasks associated with it (See PluginProcessTaskUI).  The minimum requirement
+    /// <para>A data load takes place across 3 stages (RAW, STAGING, LIVE - see UserManual.md).  Each stage can have 0 or more tasks associated with it (See PluginProcessTaskUI).  The minimum requirement
     /// for a data load is to have an Attacher (class which populates RAW) e.g. AnySeparatorFileAttacher for comma separated files.  This supposes that your project folder loading directory 
     /// already has the files you are trying to load (See <see cref="ILoadDirectory"/>).  If you want to build an elegant automated solution then you may choose to use a GetFiles process such as 
     /// FTPDownloader to fetch new files directly off a data providers server.  After this you may need to write some bespoke SQL/Python scripts etc to deal with unclean/unloadable data or 
