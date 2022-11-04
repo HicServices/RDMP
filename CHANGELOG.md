@@ -8,6 +8,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ...
 
+## [8.0.5] - 2022-11-04
+
 ### Fixed
 
 - Fixed right clicking in empty space of a collection not passing correct object to UI Plugins
@@ -1425,7 +1427,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Fixed Culture (e.g. en-us) not being passed correctly in DelimitedFlatFileAttacher
 - Fixed bug where Updater would show older versions of RDMP as installable 'updates'
 
-[Unreleased]: https://github.com/HicServices/RDMP/compare/v8.0.4...develop
+[Unreleased]: https://github.com/HicServices/RDMP/compare/v8.0.5...develop
+[8.0.5]: https://github.com/HicServices/RDMP/compare/v8.0.4...v8.0.5
 [8.0.4]: https://github.com/HicServices/RDMP/compare/v8.0.3...v8.0.4
 [8.0.3]: https://github.com/HicServices/RDMP/compare/v8.0.2...v8.0.3
 [8.0.2]: https://github.com/HicServices/RDMP/compare/v8.0.1...v8.0.2
