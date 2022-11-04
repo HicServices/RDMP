@@ -76,21 +76,25 @@ The RDMP client requires an Sql Server instance for storing platform metadata ob
 
 The easiest way to achieve this is to install the 'SQL Server Express LocalDB' package in Visual Studio:
 
-![Installing local db](./Images/InstallingLocalDb.png)
+![Installing local db](./Images/Tests/InstallingLocalDb.png)
 
 If you are using LocalDB then your server will be called `(localdb)\MSSQLLocalDB`.  If you have manually installed the full version of SQL Server Express tehn it is likely to be `localhost\sqlexpress` or just `localhost`.  In both cases the user authentication will be done with your Windows account so no username or password is required.
 
-Before running DatabaseTests you must create a set of RDMP platform databases for testing.  This can be done through the [RDMP command line tool](https://github.com/HicServices/RDMP/releases):
+If you are not using LocalDb you will have to update [TestDatabases.txt] to specify the correct `Server:`.
 
-`rdmp.exe install localhost\sqlexpress TEST_ -D`
+The first time you run `dotnet test` RDMP will create the testing databases listed in [TestDatabases.txt](../../Tests.Common/TestDatabases.txt) provided that:
 
-Or you can use the client application at startup:
+- The server exists and can be connected to
+- The Prefix listed contains 'TEST' (case insensitive).
 
-![ReOrdering](Images/CreatePlatformDatabases.png) 
+If this process fails or you need to manually recreate them then this can be done with the [RDMP command line](./RdmpCommandLine.md).  You can either run it from the repository or fetch the binary from [Github Releases](https://github.com/HicServices/RDMP/releases).
 
-If you need to change the server name or database prefix from the above example then update ".\Tests.Common\DatabaseTests.txt" to match.
+```
+cd ./Tools/rdmp/
+dotnet run -- install "(localdb)\MSSQLLocalDB" TEST_ -D
+```
 
-If you have a testing environment with an Oracle and\or MySql server instance then you can enable running these tests too by entering the connection strings into `DatabaseTests.txt`.  If you do not define a connection string then these tests will be marked `Inconclusive` when run.
+If you have a testing environment with an Oracle, Postgres and\or MySql server instance then you can enable running these tests too by entering the connection strings into [TestDatabases.txt].  If you do not define a connection string then these tests will be marked `Inconclusive` when run.
 
 __WARNING__: DatabaseTests will delete the contents of the TEST_ databases before each test is run and some will create temporary databases/tables during runtime, therefore it is important that you do not use a production server for integration testing
 
@@ -189,3 +193,4 @@ public class MyTests : DatabaseTests
 [Catalogue]: ./Glossary.md#Catalogue
 
 [Project]: ./Glossary.md#Project
+[TestDatabases.txt]: ../../Tests.Common/TestDatabases.txt
