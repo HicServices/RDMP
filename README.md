@@ -88,23 +88,11 @@ cd bin/Debug/net6.0
 
 ### Tests
 
-To run tests you will need an instance of SQL Server.  These instructions use localdb which is included in [visual studio](https://docs.microsoft.com/en-us/sql/database-engine/configure-windows/sql-server-express-localdb?view=sql-server-ver15).
-
-If using a docker container or alternate sql server instance then substitute your host name in place of `(localdb)\MSSQLLocalDB`
+To run tests you will need an instance of SQL Server.  These instructions use LocalDb which is an optional installable package in Visual Studio.  See [Tests.md](./Documentation/CodeTutorials/Tests.md) for more information on setting up LocalDb, testing on linux or using an alternate server as well as information on the types of tests included and how to write new ones.
 
 ```
-dotnet build
-./Tools/rdmp/bin/Debug/net6.0/rdmp.exe install "(localdb)\MSSQLLocalDB" TEST_ -d
-
-echo "ServerName: (localdb)\MSSQLLocalDB" > ./Tests.Common/TestDatabases.txt
-echo "Prefix: TEST_" >> ./Tests.Common/TestDatabases.txt
-
-dotnet build
-
 dotnet test ./scripts/run-all-tests.proj -c Release -p:BuildInParallel=false
 ```
-
-For a more indepth guide to CI testing see [How to set up your test environment in Tests.md](Documentation/CodeTutorials/Tests.md).
 
 ## Contributing
 

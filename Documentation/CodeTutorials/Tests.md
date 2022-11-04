@@ -1,4 +1,7 @@
 # RDMP Code Tests
+
+To run RDMP tests [install Sql Server Localdb](#installing-localdb) then run `dotnet test`
+
 ## Background
 Tests in RDMP are split between [Unit](#unit-tests), [User Interface](#user-interface-tests) and [Database](#database-tests) tests.
 
@@ -74,23 +77,31 @@ _Example User Interface Test_
 
 The RDMP client requires an Sql Server instance for storing platform metadata objects (`Catalogue`, `Project` etc).  its primary purpose is to query / manage SQL datasets (for linkage, extraction etc).  Database tests exist to test this functionality.
 
-The easiest way to achieve this is to install the 'SQL Server Express LocalDB' package in Visual Studio:
+The easiest way to achieve this is to install 'SQL Server Express LocalDB'.
 
-![image](https://user-images.githubusercontent.com/31306100/199936580-dd6cbd70-625a-4a9c-8303-6cb752535b4b.png)
+### Installing LocalDb
 
-If you are using LocalDB then your server will be called `(localdb)\MSSQLLocalDB`.  If you have manually installed the full version of SQL Server Express tehn it is likely to be `localhost\sqlexpress` or just `localhost`.  In both cases the user authentication will be done with your Windows account so no username or password is required.
+You can install SQL Server Express LocalDB via the Visual Studio Installer.  Alternatively, if you are running on linux you can [install sql server express](https://learn.microsoft.com/en-us/sql/linux/quickstart-install-connect-docker?view=sql-server-ver16&pivots=cs1-bash).
+ 
+![Installing local db](./Images/Tests/InstallingLocalDb.png)
 
-Before running DatabaseTests you must create a set of RDMP platform databases for testing.  This can be done through the [RDMP command line tool](https://github.com/HicServices/RDMP/releases):
+If you are using LocalDB then your server will be called `(localdb)\MSSQLLocalDB`.  If you have manually installed the full version of SQL Server Express then it is likely to be called `localhost\sqlexpress` or just `localhost`.
 
-`rdmp.exe install localhost\sqlexpress TEST_ -D`
+If you are not using LocalDb you will have to update [TestDatabases.txt] to specify the correct `Server:`.  Running on linux also requires entering the container's `Username:` and `Password:` options.  On windows integrated security will automatically handle authentication based on your user account.
 
-Or you can use the client application at startup:
+The first time you run `dotnet test` RDMP will create the testing databases listed in [TestDatabases.txt](../../Tests.Common/TestDatabases.txt) provided that:
 
-![ReOrdering](Images/CreatePlatformDatabases.png) 
+- The server exists and can be connected to
+- The Prefix listed contains 'TEST' (case insensitive).
 
-If you need to change the server name or database prefix from the above example then update ".\Tests.Common\DatabaseTests.txt" to match.
+If this process fails or you need to manually recreate them then this can be done with the [RDMP command line](./RdmpCommandLine.md).  You can either run it from the repository or fetch the binary from [Github Releases](https://github.com/HicServices/RDMP/releases).
 
-If you have a testing environment with an Oracle and\or MySql server instance then you can enable running these tests too by entering the connection strings into `DatabaseTests.txt`.  If you do not define a connection string then these tests will be marked `Inconclusive` when run.
+```
+cd ./Tools/rdmp/
+dotnet run -- install "(localdb)\MSSQLLocalDB" TEST_ -D
+```
+
+If you have a testing environment with an Oracle, Postgres and\or MySql server instance then you can enable running these tests too by entering the connection strings into [TestDatabases.txt].  If you do not define a connection string then these tests will be marked `Inconclusive` when run.
 
 __WARNING__: DatabaseTests will delete the contents of the TEST_ databases before each test is run and some will create temporary databases/tables during runtime, therefore it is important that you do not use a production server for integration testing
 
@@ -189,3 +200,4 @@ public class MyTests : DatabaseTests
 [Catalogue]: ./Glossary.md#Catalogue
 
 [Project]: ./Glossary.md#Project
+[TestDatabases.txt]: ../../Tests.Common/TestDatabases.txt

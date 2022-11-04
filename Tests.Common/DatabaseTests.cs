@@ -58,6 +58,7 @@ namespace Tests.Common
     {
         protected readonly IRDMPPlatformRepositoryServiceLocator RepositoryLocator;
         protected static TestDatabasesSettings TestDatabaseSettings;
+        private static bool HaveTriedCreatingTestDatabases;
 
         public ICatalogueRepository CatalogueRepository
         {
@@ -166,7 +167,10 @@ namespace Tests.Common
                     $"Expecting Unit Test Catalogue To Be At Server={cataRepo.DiscoveredServer.Name} Database={cataRepo.DiscoveredServer.GetCurrentDatabase()}");
 
                 if(!cataRepo.DiscoveredServer.Exists())
-                    Assert.Inconclusive("Catalogue database does not exist, run 'rdmp.exe install ...' to create it (Ensure that servername and prefix in TestDatabases.txt match those you provide to CreateDatabases.exe e.g. 'rdmp.exe install localhost\\sqlexpress TEST_')");
+                {
+                    DealWithMissingTestDatabases(opts,cataRepo);
+                }
+                    
             }
                 
 
@@ -223,6 +227,29 @@ namespace Tests.Common
 
             if(TestDatabaseSettings.PostgreSql != null)
                 _discoveredPostgresServer = new DiscoveredServer(TestDatabaseSettings.PostgreSql, DatabaseType.PostgreSql);
+        }
+
+        private void DealWithMissingTestDatabases(PlatformDatabaseCreationOptions opts, TableRepository cataRepo)
+        {
+            var mainDb = cataRepo.DiscoveredServer.ExpectDatabase("master");
+
+            if (HaveTriedCreatingTestDatabases || !mainDb.Server.Exists())
+            {
+                Assert.Inconclusive("Test database server does not exist.  You must install SQL Server LocalDb or Sql Server Express to run DatabaseTests. Or update TestDatabases.txt to point to your existing server.");
+            }
+
+            // if user is trying to connect to a test database
+            // and that server exists (but TEST_ databases don't)
+            if (opts.Prefix.Contains("TEST",StringComparison.InvariantCultureIgnoreCase))
+            {
+                // then create them
+                TestContext.Out.WriteLine($"Creating TEST databases on {mainDb.Server} using prefix {opts.Prefix}");
+
+                var creator = new PlatformDatabaseCreation();
+                creator.CreatePlatformDatabases(opts);
+            }
+
+            HaveTriedCreatingTestDatabases = true;
         }
 
         private IDataExportRepository GetFreshYamlRepository()
