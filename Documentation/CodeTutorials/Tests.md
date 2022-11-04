@@ -1,4 +1,7 @@
 # RDMP Code Tests
+
+To run RDMP tests [install Sql Server Localdb](#installing-localdb) then run `dotnet test`
+
 ## Background
 Tests in RDMP are split between [Unit](#unit-tests), [User Interface](#user-interface-tests) and [Database](#database-tests) tests.
 
@@ -74,13 +77,17 @@ _Example User Interface Test_
 
 The RDMP client requires an Sql Server instance for storing platform metadata objects (`Catalogue`, `Project` etc).  its primary purpose is to query / manage SQL datasets (for linkage, extraction etc).  Database tests exist to test this functionality.
 
-The easiest way to achieve this is to install the 'SQL Server Express LocalDB' package in Visual Studio:
+The easiest way to achieve this is to install 'SQL Server Express LocalDB'.
 
+### Installing LocalDb
+
+You can install SQL Server Express LocalDB via the Visual Studio Installer.  Alternatively, if you are running on linux you can [install sql server express](https://learn.microsoft.com/en-us/sql/linux/quickstart-install-connect-docker?view=sql-server-ver16&pivots=cs1-bash).
+ 
 ![Installing local db](./Images/Tests/InstallingLocalDb.png)
 
-If you are using LocalDB then your server will be called `(localdb)\MSSQLLocalDB`.  If you have manually installed the full version of SQL Server Express tehn it is likely to be `localhost\sqlexpress` or just `localhost`.  In both cases the user authentication will be done with your Windows account so no username or password is required.
+If you are using LocalDB then your server will be called `(localdb)\MSSQLLocalDB`.  If you have manually installed the full version of SQL Server Express then it is likely to be called `localhost\sqlexpress` or just `localhost`.
 
-If you are not using LocalDb you will have to update [TestDatabases.txt] to specify the correct `Server:`.
+If you are not using LocalDb you will have to update [TestDatabases.txt] to specify the correct `Server:`.  Running on linux also requires entering the container's `Username:` and `Password:` options.  On windows integrated security will automatically handle authentication based on your user account.
 
 The first time you run `dotnet test` RDMP will create the testing databases listed in [TestDatabases.txt](../../Tests.Common/TestDatabases.txt) provided that:
 
