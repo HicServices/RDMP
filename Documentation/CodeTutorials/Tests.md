@@ -76,7 +76,7 @@ The RDMP client requires an Sql Server instance for storing platform metadata ob
 
 The easiest way to achieve this is to install the 'SQL Server Express LocalDB' package in Visual Studio:
 
-![image](https://user-images.githubusercontent.com/31306100/199936580-dd6cbd70-625a-4a9c-8303-6cb752535b4b.png)
+![Installing local db](./Images/InstallingLocalDb.png)
 
 If you are using LocalDB then your server will be called `(localdb)\MSSQLLocalDB`.  If you have manually installed the full version of SQL Server Express tehn it is likely to be `localhost\sqlexpress` or just `localhost`.  In both cases the user authentication will be done with your Windows account so no username or password is required.
 
