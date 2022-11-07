@@ -1,5 +1,7 @@
 # Custom Metadata Substitutions
 
+For a simple example of this functionality see [FAQ](./FAQ.md#custom-metadata-report)
+
 ## Contents
 
 - [Background](#background)
