@@ -1294,5 +1294,154 @@ $end
   }
 ]", resultText.TrimEnd());
         }
+
+        [Test]
+        public void TestAllSubs_Catalogue()
+        {
+            var templateCode =
+            @"$API_access_URL
+$Access_options
+$Administrative_contact_address
+$Administrative_contact_email
+$Administrative_contact_name
+$Administrative_contact_telephone
+$Attribution_citation
+$Background_summary
+$Browse_URL
+$Bulk_Download_URL
+$Contact_details
+$Country_of_origin
+$Data_standards
+$DatasetStartDate
+$Description
+$Detail_Page_URL
+$Ethics_approver
+$Explicit_consent
+$Geographical_coverage
+$Granularity
+$ID
+$IsColdStorageDataset
+$IsDeprecated
+$IsInternalDataset
+$Last_revision_date
+$LoggingDataTask
+$Name
+$Periodicity
+$PivotCategory_ExtractionInformation_ID
+$Query_tool_URL
+$Resource_owner
+$Search_keywords
+$Source_URL
+$Source_of_data_collection
+$SubjectNumbers
+$Ticket
+$Time_coverage
+$Type
+$Update_freq
+$Update_sched
+$Database
+$DatabaseType
+$IsPrimaryExtractionTable
+$IsTableValuedFunction
+$IsView
+$Schema
+$Server
+$DQE_CountTotal        
+$DQE_DateOfEvaluation  
+$DQE_DateRange         
+$DQE_EndDate           
+$DQE_EndDay            
+$DQE_EndMonth          
+$DQE_EndYear           
+$DQE_StartDate         
+$DQE_StartDay          
+$DQE_StartMonth        
+$DQE_StartYear";
+            
+
+            Setup2Catalogues(out Catalogue c1, out Catalogue c2);
+
+            var template = new FileInfo(Path.Combine(TestContext.CurrentContext.WorkDirectory, "template.md"));
+            var outDir = new DirectoryInfo(Path.Combine(TestContext.CurrentContext.WorkDirectory, "outDir"));
+
+            if (outDir.Exists)
+                outDir.Delete(true);
+
+            outDir.Create();
+
+            File.WriteAllText(template.FullName, templateCode);
+
+            var cmd = new ExecuteCommandExtractMetadata(new ThrowImmediatelyActivator(RepositoryLocator), new[] { c1, c2 }, outDir, template, "Datasets.md", true, null);
+            cmd.Execute();
+
+            var outFile = Path.Combine(outDir.FullName, "Datasets.md");
+
+            FileAssert.Exists(outFile);
+            var resultText = File.ReadAllText(outFile);
+
+            // this appears in a Catalogue description
+            resultText = resultText.Replace("$30", "");
+
+            Assert.IsFalse(resultText.Contains('$'), $"Expected all template values to disappear but was {resultText}");
+        }
+
+
+        [Test]
+        public void TestAllSubs_CatalogueItem()
+        {
+            var templateCode =
+            @"
+$foreach CatalogueItem
+$Agg_method
+$Comments
+$Description
+$ID
+$Limitations
+$Name
+$Periodicity
+$Research_relevance
+$Statistical_cons
+$Topic
+$Collation
+$Data_type
+$Digitisation_specs
+$Format
+$IgnoreInLoads
+$IsAutoIncrement
+$IsPrimaryKey
+$Source
+$Status
+$DQE_CountCorrect
+$DQE_CountDBNull
+$DQE_CountInvalidatesRow
+$DQE_CountMissing
+$DQE_CountTotal
+$DQE_CountWrong
+$DQE_PercentNull
+$end";
+
+
+            Setup2Catalogues(out Catalogue c1, out Catalogue c2);
+
+            var template = new FileInfo(Path.Combine(TestContext.CurrentContext.WorkDirectory, "template.md"));
+            var outDir = new DirectoryInfo(Path.Combine(TestContext.CurrentContext.WorkDirectory, "outDir"));
+
+            if (outDir.Exists)
+                outDir.Delete(true);
+
+            outDir.Create();
+
+            File.WriteAllText(template.FullName, templateCode);
+
+            var cmd = new ExecuteCommandExtractMetadata(new ThrowImmediatelyActivator(RepositoryLocator), new[] { c1, c2 }, outDir, template, "Datasets.md", true, null);
+            cmd.Execute();
+
+            var outFile = Path.Combine(outDir.FullName, "Datasets.md");
+
+            FileAssert.Exists(outFile);
+            var resultText = File.ReadAllText(outFile);
+
+            Assert.IsFalse(resultText.Contains('$'), $"Expected all template values to disappear but was {resultText}");
+        }
     }
 }
