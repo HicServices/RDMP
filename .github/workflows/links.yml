@@ -27,3 +27,4 @@ jobs:
           use-verbose-mode: 'yes'
           check-modified-files-only: 'yes'
           config-file: 'deadlinksconfig.json'
+          base-branch: 'develop'

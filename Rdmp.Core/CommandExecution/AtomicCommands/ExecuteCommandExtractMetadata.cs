@@ -37,7 +37,7 @@ namespace Rdmp.Core.CommandExecution.AtomicCommands
             FileInfo template, 
             [DemandsInitialization("How output files based on the template should be named.  Uses same replacement strategy as template contents e.g. $Name.xml")]
             string fileNaming, 
-            [DemandsInitialization("True to append all ouputs into a single file.  False to output a new file for every Catalogue")]
+            [DemandsInitialization("True to append all outputs into a single file.  False to output a new file for every Catalogue")]
             bool oneFile, 
             [DemandsInitialization("Optional, specify a replacement for newlines when found in fields e.g. <br/>.  Leave as null to leave newlines intact.")]
             string newlineSub,
