@@ -566,7 +566,7 @@ namespace Rdmp.Core.Reports
             }
             
 
-            return template.Trim();
+            return template.TrimEnd();
         }
 
         private void ThrowIfContainsIterationElements(string template)

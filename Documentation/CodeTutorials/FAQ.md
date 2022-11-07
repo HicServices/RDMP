@@ -613,6 +613,8 @@ There are 4 ways to export/import dataset descriptions from RDMP
 * [Share Definition](#share-definition)
 * [Dublin Core](#dublin-core)
 * [DITA](#dita)
+* [Custom Metadata Report](#custom-metadata-report)
+
 
 #### Metadata Report
 
@@ -688,6 +690,79 @@ An example .dita file is shown below:
 </strow>
 ...
 ```
+#### Custom Metadata Report
+
+RDMP supports exporting in arbitrary file formats (xml, markdown etc) through its 'custom metadata' engine.  To do this you will need to use
+the [RDMP CLI](./RdmpCommandLine.md). 
+
+First create a simple template (e.g. a markdown file).
+
+```md
+# Datasets
+
+These are the datasets we hold:
+
+- Biochemistry
+- Hameatology
+- Prescribing
+```
+
+Then surround the actual values with a `$foreach Catalogue` and `$end`
+
+
+
+```md
+# Datasets
+
+These are the datasets we hold:
+
+$foreach Catalogue
+- Biochemistry
+- Hameatology
+- Prescribing
+$end
+```
+
+Then replace the Name with `$Name`
+
+```md
+# Datasets
+
+These are the datasets we hold:
+
+$foreach Catalogue
+- $Name
+$end
+```
+
+Save this in a file (e.g. `C:\temp\myTemplate.md`).  Next run an metadata extraction using the CLI:
+
+```
+./rdmp ExtractMetadata Catalogue:* c:\temp\ C:\temp\myTemplate.md "out.md" true null null
+```
+
+Open `out.md` and you should have something like:
+
+```md
+# Datasets
+
+These are the datasets we hold:
+
+- AutomateExtraction
+- AutomateExtractionSchedule
+- Biochemistry
+- Demography
+- HospitalAdmissions
+- Prescribing
+- QueuedExtraction
+- ReleaseIdentifiersSeen
+- SuccessfullyExtractedResults
+- vConditions
+- vOperations
+- z_someting
+```
+
+For a full list of substitutions available see [CustomMetadataSubstitutions.md](./CustomMetadataSubstitutions.md)
 
 <a name="2tablecatalogues"></a>
 ## How do I create a [Catalogue] from 2+ tables?
