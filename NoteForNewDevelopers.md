@@ -52,6 +52,7 @@ All technical and repo specific documentation are stored in markdown (`.md` form
 - [Tree layout documentation](./Rdmp.Core/Providers/Readme.md)
 - [Aggregate Graphs](./Documentation/CodeTutorials/Graphs.md)
 - [YamlRepository](./Documentation/CodeTutorials/YamlRepository.md)
+- [Custom Metadata Reports](./Documentation/CodeTutorials/CustomMetadataSubstitutions.md)
 
 ## Commands
 The [Design Pattern](https://en.wikipedia.org/wiki/Software_design_pattern) 'Command' is implemented in RDMP.  Most functionality in RDMP is undertaken by a command and new features should be implemented as new commands if possible. 

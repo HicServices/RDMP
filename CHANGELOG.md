@@ -8,6 +8,14 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ...
 
+### Added
+
+- Documentation for custom metadata reports
+
+### Fixed
+
+- Fixed bug selecting metadata report to run on all [Catalogue] in a folder
+
 ## [8.0.5] - 2022-11-04
 
 ### Fixed
