@@ -1,6 +1,6 @@
 # Custom Metadata Substitutions
 
-For a simple example of this functionality see [FAQ](./FAQ.md#custom-metadata-report)
+For a simple example of this functionality see [FAQ 'Custom Metadata Report'](./FAQ.md#custom-metadata-report)
 
 ## Contents
 
