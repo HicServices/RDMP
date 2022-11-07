@@ -327,7 +327,6 @@ $Description
 Price: $30
 | Column | Description |
 $foreach CatalogueItem
-
 | $Name | $Description |
 $end");
 
@@ -1203,13 +1202,13 @@ $end
   {
     ""Name"": ""Demog"",
     ""Columns"": [
-{
+      {
                 ""Name"": ""Name""
       },
-{
+      {
                 ""Name"": ""Address""
       },
-{
+      {
                 ""Name"": ""Postcode""
       }
     ]
@@ -1217,10 +1216,10 @@ $end
   {
     ""Name"": ""ffff"",
     ""Columns"": [
-{
+      {
                 ""Name"": ""Col1""
       },
-{
+      {
                 ""Name"": ""Col2""
       }
     ]
@@ -1270,13 +1269,13 @@ $end
   {
     ""Name"": ""Demog"",
     ""Columns"": [
-{
+      {
                 ""Name"": ""Name""
       };
-{
+      {
                 ""Name"": ""Address""
       };
-{
+      {
                 ""Name"": ""Postcode""
       }
     ]
@@ -1284,10 +1283,10 @@ $end
   {
     ""Name"": ""ffff"",
     ""Columns"": [
-{
+      {
                 ""Name"": ""Col1""
       };
-{
+      {
                 ""Name"": ""Col2""
       }
     ]
