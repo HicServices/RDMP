@@ -472,6 +472,9 @@ namespace Rdmp.UI.SimpleDialogs
 
         public Bitmap GetImage(object model)
         {
+            if (model is string)
+                return CatalogueIcons.CatalogueFolder.ImageToBitmap();
+
             var bmp = _activator.CoreIconProvider.GetImage(model);
             return bmp == _activator.CoreIconProvider.ImageUnknown ? null : bmp.ImageToBitmap();
         }
