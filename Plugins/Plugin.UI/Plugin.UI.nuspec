@@ -40,9 +40,9 @@
       <dependency id="System.Resources.Extensions" version="4.6.0"/>
       <dependency id="System.Runtime.Extensions" version="4.3.1"/>
       <dependency id="System.Runtime.Loader" version="4.3.0"/>
-      <dependency id="System.Security.Permissions" version="6.0.0"/>
+      <dependency id="System.Security.Permissions" version="7.0.0"/>
       <dependency id="System.Threading" version="4.3.0"/>
-      <dependency id="System.Threading.AccessControl" version="6.0.0"/>
+      <dependency id="System.Threading.AccessControl" version="7.0.0"/>
       <dependency id="System.Threading.ThreadPool" version="4.3.0"/>
       <dependency id="Xam.Plugins.Settings" version="3.1.1"/>
       <dependency id="YamlDotNet" version="12.0.2"/>
