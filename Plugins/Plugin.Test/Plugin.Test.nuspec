@@ -29,7 +29,7 @@
       <dependency id="SixLabors.ImageSharp.Drawing" version="1.0.0-beta15" />
       <dependency id="SSH.NET" version="2020.0.2"/>
       <dependency id="System.Diagnostics.Debug" version="4.3.0"/>
-      <dependency id="System.DirectoryServices.Protocols" version="6.0.1"/>
+      <dependency id="System.DirectoryServices.Protocols" version="7.0.0"/>
       <dependency id="System.Globalization" version="4.3.0"/>
       <dependency id="System.IO.FileSystem" version="4.3.0"/>
       <dependency id="System.IO.FileSystem.Primitives" version="4.3.0"/>
