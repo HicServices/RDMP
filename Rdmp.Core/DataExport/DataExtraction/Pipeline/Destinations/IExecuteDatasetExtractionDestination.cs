@@ -72,5 +72,13 @@ namespace Rdmp.Core.DataExport.DataExtraction.Pipeline.Destinations
         /// <param name="globalToCheck"></param>
         /// <returns></returns>
         GlobalReleasePotential GetGlobalReleasabilityEvaluator(IRDMPPlatformRepositoryServiceLocator repositoryLocator, ISupplementalExtractionResults globalResult, IMapsDirectlyToDatabaseTable globalToCheck);
+
+
+        /// <summary>
+        /// Returns where the output files will be generated including any pipeline level changes (i.e. overrides).
+        /// </summary>
+        /// <param name="request"></param>
+        /// <returns></returns>
+        DirectoryInfo GetDirectoryFor(IExtractCommand request);
     }
 }

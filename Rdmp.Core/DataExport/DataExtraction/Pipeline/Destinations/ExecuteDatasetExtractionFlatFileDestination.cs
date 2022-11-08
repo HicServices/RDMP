@@ -60,7 +60,7 @@ namespace Rdmp.Core.DataExport.DataExtraction.Pipeline.Destinations
             switch (FlatFileType)
             {
                 case ExecuteExtractionToFlatFileType.CSV:
-                    OutputFile = Path.Combine(DirectoryPopulated.FullName, GetFilename() + ".csv");
+                    OutputFile = Path.Combine(GetDirectoryFor(_request).FullName, GetFilename() + ".csv");
                     if (request.Configuration != null)
                         _output = new CSVOutputFormat(OutputFile, request.Configuration.Separator, DateFormat);
                     else
