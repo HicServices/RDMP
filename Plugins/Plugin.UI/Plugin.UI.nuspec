@@ -18,7 +18,7 @@
       <dependency id="DockPanelSuite.ThemeVS2015" version="2.13.0"/>
       <dependency id="ExcelNumberFormat" version="1.1.0"/>
       <dependency id="fernandreu.ScintillaNET" version="4.2.0"/>
-      <dependency id="HIC.BadMedicine" version="1.1.1"/>
+      <dependency id="HIC.BadMedicine" version="1.1.2"/>
       <dependency id="HIC.FAnsiSql" version="3.0.1"/>
       <dependency id="HIC.System.Windows.Forms.DataVisualization" version="1.0.1"/>
       <dependency id="Newtonsoft.Json" version="13.0.1"/>
