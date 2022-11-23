@@ -12,6 +12,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Changed
 
+- Substantial new documentation and updates
 - Bump System.Threading.AccessControl from 6.0.0 to 7.0.0
 - Bump System.Security.Permissions from 6.0.0 to 7.0.0
 - Bump Microsoft.NET.Test.Sdk from 17.3.2 to 17.4.0
