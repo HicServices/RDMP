@@ -1,12 +1,30 @@
-name: Check Markdown links
-
-on: push
-
+---
+name: Docs
+on:
+  push:
+    branches:
+      - develop
+    paths:
+      - '**.md'
+  pull_request:
+    paths:
+      - '**.md'
+env:
+  DISABLE_TELEMETRY: 1
 jobs:
   markdown-link-check:
+    name: Broken Links
     runs-on: ubuntu-latest
     steps:
-    - uses: actions/checkout@master
-    - uses: gaurav-nelson/github-action-markdown-link-check@v1
-      with:
-        config-file: 'deadlinksconfig.json'
+      - name: Checkout
+        uses: actions/checkout@v3
+        with:
+          submodules: recursive
+      - name: Run link check
+        uses: gaurav-nelson/github-action-markdown-link-check@v1
+        with:
+          use-quiet-mode: 'no'
+          use-verbose-mode: 'yes'
+          check-modified-files-only: 'yes'
+          config-file: 'deadlinksconfig.json'
+          base-branch: 'develop'

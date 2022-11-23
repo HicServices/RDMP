@@ -19,6 +19,7 @@ using Rdmp.Core.DataQualityEngine;
 using Rdmp.Core.Icons.IconProvision;
 using Rdmp.Core.Reports;
 using Rdmp.UI.ItemActivation;
+using Rdmp.UI.Menus;
 using Rdmp.UI.TestsAndSetup.ServicePropogation;
 using ReusableLibraryCode.Icons;
 using ReusableLibraryCode.Progress;
@@ -257,16 +258,22 @@ namespace Rdmp.UI.SimpleDialogs.Reports
 
         private void btnFolder_Click(object sender, EventArgs e)
         {
-            var folders = Activator.CoreChildProvider.GetAllChildrenRecursively(FolderHelper.Root).OfType<string>().ToList();
-            folders.Add(FolderHelper.Root);
+            var folders = Activator.CoreChildProvider
+                .AllCatalogues
+                .Select(c => c.Folder)
+                .Distinct()
+                .ToArray();
 
             if(Activator.SelectObject(new DialogArgs
             {
                 TaskDescription = "Which folder do you want to generate metadata for? All Catalogues in that folder will be included in the metadata report generated"
-            }, folders.ToArray(),out var selected))
+            }, folders,out var selected))
             {
-                SetCatalogueSelection(Activator.CoreChildProvider.GetAllChildrenRecursively(selected)
-                    .OfType<ICatalogue>().ToArray());
+                SetCatalogueSelection(
+                    Activator.CoreChildProvider
+                    .AllCatalogues
+                    .Where(c => c.Folder.Equals(selected))
+                    .ToArray());
             }   
         }
     }

@@ -1,6 +1,6 @@
 # RDMP Code Tests
 
-To run RDMP tests [install Sql Server Localdb](#installing-localdb) then run `dotnet test`
+To run RDMP tests [install Sql Server Localdb](#installing-localdb) then run `dotnet test ./scripts/run-all-tests.proj -c Release -p:BuildInParallel=false`
 
 ## Background
 Tests in RDMP are split between [Unit](#unit-tests), [User Interface](#user-interface-tests) and [Database](#database-tests) tests.

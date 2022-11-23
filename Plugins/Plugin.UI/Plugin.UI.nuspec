@@ -14,11 +14,11 @@
     <copyright>Copyright 2018-2019</copyright>
     <dependencies>
       <dependency id="CommandLineParser" version="2.9.1"/>
-      <dependency id="CsvHelper" version="30.0.0"/>
+      <dependency id="CsvHelper" version="30.0.1"/>
       <dependency id="DockPanelSuite.ThemeVS2015" version="2.13.0"/>
       <dependency id="ExcelNumberFormat" version="1.1.0"/>
       <dependency id="fernandreu.ScintillaNET" version="4.2.0"/>
-      <dependency id="HIC.BadMedicine" version="1.1.1"/>
+      <dependency id="HIC.BadMedicine" version="1.1.2"/>
       <dependency id="HIC.FAnsiSql" version="3.0.1"/>
       <dependency id="HIC.System.Windows.Forms.DataVisualization" version="1.0.1"/>
       <dependency id="Newtonsoft.Json" version="13.0.1"/>
@@ -31,7 +31,7 @@
 			<dependency id="Spectre.Console" version="0.45.0"/>
       <dependency id="SSH.NET" version="2020.0.2"/>
       <dependency id="System.Diagnostics.Debug" version="4.3.0"/>
-      <dependency id="System.DirectoryServices.Protocols" version="6.0.1"/>
+      <dependency id="System.DirectoryServices.Protocols" version="7.0.0"/>
       <dependency id="System.Globalization" version="4.3.0"/>
       <dependency id="System.IO.FileSystem" version="4.3.0"/>
       <dependency id="System.IO.FileSystem.Primitives" version="4.3.0"/>
@@ -40,9 +40,9 @@
       <dependency id="System.Resources.Extensions" version="4.6.0"/>
       <dependency id="System.Runtime.Extensions" version="4.3.1"/>
       <dependency id="System.Runtime.Loader" version="4.3.0"/>
-      <dependency id="System.Security.Permissions" version="6.0.0"/>
+      <dependency id="System.Security.Permissions" version="7.0.0"/>
       <dependency id="System.Threading" version="4.3.0"/>
-      <dependency id="System.Threading.AccessControl" version="6.0.0"/>
+      <dependency id="System.Threading.AccessControl" version="7.0.0"/>
       <dependency id="System.Threading.ThreadPool" version="4.3.0"/>
       <dependency id="Xam.Plugins.Settings" version="3.1.1"/>
       <dependency id="YamlDotNet" version="12.0.2"/>
