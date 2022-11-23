@@ -8,6 +8,19 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ...
 
+## [8.0.7] - 2022-11-22
+
+### Changed
+
+- Bump System.Threading.AccessControl from 6.0.0 to 7.0.0
+- Bump System.Security.Permissions from 6.0.0 to 7.0.0
+- Bump Microsoft.NET.Test.Sdk from 17.3.2 to 17.4.0
+- Bump System.DirectoryServices.Protocols from 6.0.1 to 7.0.0
+- Bump NUnit3TestAdapter from 4.3.0 to 4.3.1
+- Bump HIC.BadMedicine from 1.1.1 to 1.1.2
+- Bump CsvHelper from 30.0.0 to 30.0.1
+
+
 ## [8.0.6] - 2022-11-08
 
 ### Added
@@ -1437,7 +1450,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Fixed Culture (e.g. en-us) not being passed correctly in DelimitedFlatFileAttacher
 - Fixed bug where Updater would show older versions of RDMP as installable 'updates'
 
-[Unreleased]: https://github.com/HicServices/RDMP/compare/v8.0.6...develop
+[Unreleased]: https://github.com/HicServices/RDMP/compare/v8.0.7...develop
+[8.0.7]: https://github.com/HicServices/RDMP/compare/v8.0.6...v8.0.7
 [8.0.6]: https://github.com/HicServices/RDMP/compare/v8.0.5...v8.0.6
 [8.0.5]: https://github.com/HicServices/RDMP/compare/v8.0.4...v8.0.5
 [8.0.4]: https://github.com/HicServices/RDMP/compare/v8.0.3...v8.0.4
