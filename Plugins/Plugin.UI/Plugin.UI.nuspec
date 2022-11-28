@@ -21,7 +21,7 @@
       <dependency id="HIC.BadMedicine" version="1.1.2"/>
       <dependency id="HIC.FAnsiSql" version="3.0.1"/>
       <dependency id="HIC.System.Windows.Forms.DataVisualization" version="1.0.1"/>
-      <dependency id="Newtonsoft.Json" version="13.0.1"/>
+      <dependency id="Newtonsoft.Json" version="13.0.2"/>
       <dependency id="NHunspell" version="1.2.5554.16953"/>
       <dependency id="NLog" version="5.1.0"/>
       <dependency id="NPOI" version="2.5.5"/>
