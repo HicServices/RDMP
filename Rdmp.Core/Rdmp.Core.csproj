@@ -292,7 +292,7 @@
     <PackageReference Include="System.Runtime.Loader" Version="4.3.0" />
     <PackageReference Include="SSH.NET" Version="2020.0.2" />
     <PackageReference Include="System.Threading.ThreadPool" Version="4.3.0" />
-    <PackageReference Include="YamlDotNet" Version="12.1.0" />
+    <PackageReference Include="YamlDotNet" Version="12.2.0" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\Reusable\MapsDirectlyToDatabaseTable\MapsDirectlyToDatabaseTable.csproj" />

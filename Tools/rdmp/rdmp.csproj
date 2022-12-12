@@ -43,7 +43,7 @@
     </PackageReference>
     <PackageReference Include="Terminal.Gui" Version="1.7.2" />
     <PackageReference Include="System.Threading.ThreadPool" Version="4.3.0" />
-    <PackageReference Include="YamlDotNet" Version="12.1.0" />
+    <PackageReference Include="YamlDotNet" Version="12.2.0" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\..\Rdmp.Core\Rdmp.Core.csproj" />
