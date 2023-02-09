@@ -28,7 +28,7 @@ namespace Rdmp.Core.DataLoad.Modules.Attachers;
 /// </summary>
 public class MDFAttacher : Attacher,IPluginAttacher
 {
-    private const string GetDefaultSQLServerDatabaseDirectory = @"SELECT LEFT(physical_name,LEN(physical_name)-CHARINDEX('\',REVERSE(physical_name))+1) 
+    private const string GetDefaultSQLServerDatabaseDirectory = @"SELECT physical_name 
             FROM sys.master_files mf   
             INNER JOIN sys.[databases] d   
             ON mf.[database_id] = d.[database_id]   
@@ -265,20 +265,26 @@ public class MDFAttacher : Attacher,IPluginAttacher
         try
         {
             //connect to master to run the data directory discovery SQL
-            var builder = new SqlConnectionStringBuilder(_dbInfo.Server.Builder.ConnectionString);
-            builder.InitialCatalog = "master";
+            var builder = new SqlConnectionStringBuilder(_dbInfo.Server.Builder.ConnectionString)
+             {
+                 InitialCatalog = "master"
+             };
 
             using var connection = new SqlConnection(builder.ConnectionString);
             connection.Open();
 
             notifier.OnCheckPerformed(new CheckEventArgs($"About to run:\r\n{GetDefaultSQLServerDatabaseDirectory}",CheckResult.Success));
 
-            var result = new SqlCommand(GetDefaultSQLServerDatabaseDirectory, connection).ExecuteScalar() as string;
+            using var cmd = new SqlCommand(GetDefaultSQLServerDatabaseDirectory, connection);
+            var result = cmd.ExecuteScalar() as string;
 
             if(string.IsNullOrWhiteSpace(result))
                 throw new Exception("Looking up DATA directory on server returned null (user may not have permissions to read from relevant sys tables)");
 
-            return result;
+            var end = result.LastIndexOfAny(@"\/".ToCharArray());
+            if (end == -1)
+                throw new Exception($"No directory delimiter found in DB file location '{result}'");
+            return result[..end];
         }
         catch (SqlException e)
         {
