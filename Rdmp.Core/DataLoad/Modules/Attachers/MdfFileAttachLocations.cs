@@ -49,14 +49,14 @@ namespace Rdmp.Core.DataLoad.Modules.Attachers
             if (databaseDirectoryFromPerspectiveOfDatabaseServer.Contains('/'))
             {
                 // Unix-style paths
-                AttachMdfPath = $"{databaseDirectoryFromPerspectiveOfDatabaseServer}/{Path.GetFileName(OriginLocationMdf)}";
-                AttachLdfPath = $"{databaseDirectoryFromPerspectiveOfDatabaseServer}/{Path.GetFileName(OriginLocationLdf)}";
+                AttachMdfPath = $"{databaseDirectoryFromPerspectiveOfDatabaseServer.TrimEnd('/')}/{Path.GetFileName(OriginLocationMdf)}";
+                AttachLdfPath = $"{databaseDirectoryFromPerspectiveOfDatabaseServer.TrimEnd('/')}/{Path.GetFileName(OriginLocationLdf)}";
             }
             else
             {
                 // DOS-style paths
-                AttachMdfPath = $"{databaseDirectoryFromPerspectiveOfDatabaseServer}\\{Path.GetFileName(OriginLocationMdf)}";
-                AttachLdfPath = $"{databaseDirectoryFromPerspectiveOfDatabaseServer}\\{Path.GetFileName(OriginLocationLdf)}";
+                AttachMdfPath = $"{databaseDirectoryFromPerspectiveOfDatabaseServer.TrimEnd('\\')}\\{Path.GetFileName(OriginLocationMdf)}";
+                AttachLdfPath = $"{databaseDirectoryFromPerspectiveOfDatabaseServer.TrimEnd('\\')}\\{Path.GetFileName(OriginLocationLdf)}";
             }
         }
 
