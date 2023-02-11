@@ -18,32 +18,46 @@ namespace Rdmp.Core.DataLoad.Modules.Attachers
     {
         public MdfFileAttachLocations(DirectoryInfo originDirectory, string databaseDirectoryFromPerspectiveOfDatabaseServer, string copyToDirectoryOrNullIfDatabaseIsLocalhost)
         {
-            if (databaseDirectoryFromPerspectiveOfDatabaseServer == null)
-                throw new ArgumentNullException("databaseDirectoryFromPerspectiveOfDatabaseServer");
+            ArgumentNullException.ThrowIfNull(databaseDirectoryFromPerspectiveOfDatabaseServer);
 
             var copyToDirectory = copyToDirectoryOrNullIfDatabaseIsLocalhost ?? databaseDirectoryFromPerspectiveOfDatabaseServer;
             
             var filesThatWeCouldLoad = originDirectory.GetFiles("*.mdf").ToArray();
 
-            if(filesThatWeCouldLoad.Length == 0)
-                throw new FileNotFoundException("Could not find any MDF files in the directory " + originDirectory.FullName);
+            switch (filesThatWeCouldLoad.Length)
+            {
+                case 0:
+                    throw new FileNotFoundException(
+                        $"Could not find any MDF files in the directory {originDirectory.FullName}");
+                case > 1:
+                    throw new MultipleMatchingFilesException(
+                        $"Did not know which MDF file to attach, found multiple :{string.Join(",", filesThatWeCouldLoad.Select(f => f.Name))}");
+            }
 
-            if(filesThatWeCouldLoad.Length > 1)
-                throw new MultipleMatchingFilesException("Did not know which MDF file to attach, found multiple :" + string.Join(",",filesThatWeCouldLoad.Select(f=>f.Name)));
-
-            OriginLocationMdf =filesThatWeCouldLoad[0].FullName;
+            OriginLocationMdf = filesThatWeCouldLoad[0].FullName;
        
-            //veryify log file exists
-            OriginLocationLdf = Path.Combine(Path.GetDirectoryName(OriginLocationMdf), Path.GetFileNameWithoutExtension(OriginLocationMdf) + "_log.ldf");
+            //verify log file exists
+            OriginLocationLdf = Path.Combine(Path.GetDirectoryName(OriginLocationMdf),
+                $"{Path.GetFileNameWithoutExtension(OriginLocationMdf)}_log.ldf");
 
             if (!File.Exists(OriginLocationLdf))
-                throw new FileNotFoundException("Cannot attach database, LOG file was not found:" + OriginLocationLdf, OriginLocationLdf);
+                throw new FileNotFoundException($"Cannot attach database, LOG file was not found:{OriginLocationLdf}", OriginLocationLdf);
 
             CopyToMdf = Path.Combine(copyToDirectory, Path.GetFileName(OriginLocationMdf));
             CopyToLdf = Path.Combine(copyToDirectory, Path.GetFileName(OriginLocationLdf));
 
-            AttachMdfPath = Path.Combine(databaseDirectoryFromPerspectiveOfDatabaseServer,Path.GetFileName(OriginLocationMdf));
-            AttachLdfPath = Path.Combine(databaseDirectoryFromPerspectiveOfDatabaseServer, Path.GetFileName(OriginLocationLdf));
+            if (databaseDirectoryFromPerspectiveOfDatabaseServer.Contains('/'))
+            {
+                // Unix-style paths
+                AttachMdfPath = $"{databaseDirectoryFromPerspectiveOfDatabaseServer.TrimEnd('/')}/{Path.GetFileName(OriginLocationMdf)}";
+                AttachLdfPath = $"{databaseDirectoryFromPerspectiveOfDatabaseServer.TrimEnd('/')}/{Path.GetFileName(OriginLocationLdf)}";
+            }
+            else
+            {
+                // DOS-style paths
+                AttachMdfPath = $"{databaseDirectoryFromPerspectiveOfDatabaseServer.TrimEnd('\\')}\\{Path.GetFileName(OriginLocationMdf)}";
+                AttachLdfPath = $"{databaseDirectoryFromPerspectiveOfDatabaseServer.TrimEnd('\\')}\\{Path.GetFileName(OriginLocationLdf)}";
+            }
         }
 
         public string OriginLocationMdf {get; set; }

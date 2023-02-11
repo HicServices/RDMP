@@ -18,7 +18,7 @@ using ReusableLibraryCode.Progress;
 namespace Rdmp.Core.DataLoad.Modules.Attachers;
 
 /// <summary>
-/// Data load component for loading a detatched database file into RAW.  This attacher does not load RAW tables normally (like AnySeparatorFileAttacher etc)
+/// Data load component for loading a detached database file into RAW.  This attacher does not load RAW tables normally (like AnySeparatorFileAttacher etc)
 /// instead it specifies that it is itself going to act as RAW.  Using this component requires that the computer running the data load has file system access
 /// to the RAW Sql Server data directory (and that the path is the same).
 /// 
@@ -37,7 +37,7 @@ public class MDFAttacher : Attacher,IPluginAttacher
     [DemandsInitialization("Set this only if your RAW server is NOT localhost.  This is the network path to the DATA directory of your RAW database server you can find the DATA directory by running 'select * FROM sys.master_files'")]
     public string OverrideMDFFileCopyDestination{ get; set; }
 
-    [DemandsInitialization(@"There are multiple ways to attach a mdf files to an SQL server, the first stage is always to copy the mdf and ldf files to the DATA directory of your server but after that it get's flexible.  
+    [DemandsInitialization(@"There are multiple ways to attach a mdf files to an SQL server, the first stage is always to copy the mdf and ldf files to the DATA directory of your server but after that it gets flexible.  
 1. AttachWithConnectionString attempts to do the attaching as part of connection by specifying the AttachDBFilename keyword in the connection string
 2. ExecuteCreateDatabaseForAttachSql attempts to connect to 'master' and execute CREATE DATABASE sql with the FILENAME property set to your mdf file in the DATA directory of your database server")]
     public MdfAttachStrategy AttachStrategy { get; set; }
