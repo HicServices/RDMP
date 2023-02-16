@@ -72,7 +72,7 @@ namespace Rdmp.Core.Repositories
 
                     using (var con = _repository.GetConnection())
                     {
-                        string sql = $@"SELECT  
+                        var sql = $@"SELECT  
                         CT.ID
                             FROM  
         CHANGETABLE(CHANGES {typeof(T).Name}, {_changeTracking}) AS CT  
@@ -93,11 +93,11 @@ namespace Rdmp.Core.Repositories
 
                     //get new objects
                     var maxId = _cachedObjects.Any() ? _cachedObjects.Max(o => o.ID) : 0;
-                    _cachedObjects.AddRange(_repository.GetAllObjects<T>("WHERE ID > " + maxId));
+                    _cachedObjects.AddRange(_repository.GetAllObjects<T>($"WHERE ID > {maxId}"));
 
                     // Get updated objects
                     var changedObjects =
-                        _repository.GetAllObjects<T>("WHERE RowVer > " + ByteArrayToString(_maxRowVer));
+                        _repository.GetAllObjects<T>($"WHERE RowVer > {ByteArrayToString(_maxRowVer)}");
                     //I'm hoping Union prefers references in the LHS of this since they will be fresher!
                     _cachedObjects = changedObjects.Union(_cachedObjects).ToList();
 
@@ -123,32 +123,29 @@ namespace Rdmp.Core.Repositories
         private void UpdateMaxRowVer()
         {
             //get the earliest RowVer
-            using (var con = _repository.GetConnection())
+            using var con = _repository.GetConnection();
+            using (var cmd = _repository.DiscoveredServer.GetCommand($"select max(RowVer) from {typeof(T).Name}", con))
             {
-                using (var cmd = _repository.DiscoveredServer.GetCommand("select max(RowVer) from " + typeof(T).Name, con))
-                {
-                    var result = cmd.ExecuteScalar();
-                    _maxRowVer = result == DBNull.Value ? null : (byte[])result;
-                }
+                var result = cmd.ExecuteScalar();
+                _maxRowVer = result == DBNull.Value ? null : (byte[])result;
+            }
                     
 
-                using (var cmd =
-                    _repository.DiscoveredServer.GetCommand("select CHANGE_TRACKING_CURRENT_VERSION()", con))
-                {
+            using (var cmd =
+                   _repository.DiscoveredServer.GetCommand("select CHANGE_TRACKING_CURRENT_VERSION()", con))
+            {
                     
-                    object result = cmd.ExecuteScalar();
-                    if(result != DBNull.Value)
-                        _changeTracking = Convert.ToInt64(result);
-                }
-                    
+                var result = cmd.ExecuteScalar();
+                if(result != DBNull.Value)
+                    _changeTracking = Convert.ToInt64(result);
             }
         }
         private string ByteArrayToString(byte[] ba)
         {
-            StringBuilder hex = new StringBuilder(ba.Length * 2);
-            foreach (byte b in ba)
-                hex.AppendFormat("{0:x2}", b);
-            return "0x" + hex;
+            var hex = new StringBuilder(ba.Length * 2);
+            foreach (var b in ba)
+                hex.Append($"{b:x2}");
+            return $"0x{hex}";
         }
 
         public T1[] GetAllObjects<T1>()
