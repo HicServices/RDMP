@@ -10,7 +10,8 @@
 	<NoWarn>1701;1702;CS1591;NU1701</NoWarn>
     <DebugType>embedded</DebugType>
     <DebugSymbols>true</DebugSymbols>
-    <PublishSingleFile>false</PublishSingleFile>
+    <PublishSingleFile>true</PublishSingleFile>
+    <PublishReadyToRun>true</PublishReadyToRun>
   </PropertyGroup>
   <PropertyGroup>
     
