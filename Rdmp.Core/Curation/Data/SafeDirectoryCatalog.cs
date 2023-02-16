@@ -428,28 +428,26 @@ public class SafeDirectoryCatalog
     /// <summary>
     /// Creates a new list of MEF plugin classes from the dlls/files in the directory list provided
     /// </summary>
+    /// <param name="listener"></param>
     /// <param name="directories"></param>
-    public SafeDirectoryCatalog(params string[] directories):this(new IgnoreAllErrorsCheckNotifier(), directories)
-    {
-    }
-
-        
-
-    /// <inheritdoc cref="SafeDirectoryCatalog(string[])"/>
     public SafeDirectoryCatalog(ICheckNotifier listener, params string[] directories)
     {
         BadAssembliesDictionary = new Dictionary<string, Exception>();
 
-        TypesByAssembly.TryAdd(typeof(SafeDirectoryCatalog).Assembly,
-            typeof(SafeDirectoryCatalog).Assembly.GetTypes());
-        foreach(var t in typeof(SafeDirectoryCatalog).Assembly.GetTypes())
-            AddType(t);
+        foreach (var assembly in AppDomain.CurrentDomain.GetAssemblies())
+        {
+            TypesByAssembly.TryAdd(assembly, assembly.GetTypes());
+            foreach (var type in assembly.GetTypes())
+                AddType(type);
+        }
 
         var files = new HashSet<FileInfo>();
                        
         foreach (var directory in directories)
         {
-            if (directory != null && !Directory.Exists(directory))
+            if (directory is null)
+                continue;
+            if (!Directory.Exists(directory))
                 Directory.CreateDirectory(directory); //empty directory 
 
             foreach(var f in Directory.EnumerateFiles(directory, "*.dll", SearchOption.AllDirectories))
@@ -461,48 +459,54 @@ public class SafeDirectoryCatalog
                 if (IgnoreDll?.Invoke(newOne) == true)
                     continue;
 
-                if (existing != null)
+                if (existing == null)
                 {
-                    var existingOneVersion = FileVersionInfo.GetVersionInfo(existing.FullName);
-                    var newOneVersion = FileVersionInfo.GetVersionInfo(newOne.FullName);
+                    files.Add(newOne);
+                    continue;
+                }
 
-                    FileInfo winner;
 
-                    // if we already have a copy of this exact dll we don't care about loading it
-                    if(FileVersionsAreEqual(newOneVersion, existingOneVersion))
-                    {
-                        // no need to spam user with warnings about duplicated dlls
-                        DuplicateDllsIgnored++;
-                        continue;
-                    }
+                // Need to resolve duplicate/conflict:
+                var existingOneVersion = FileVersionInfo.GetVersionInfo(existing.FullName);
+                var newOneVersion = FileVersionInfo.GetVersionInfo(newOne.FullName);
 
-                    if (FileVersionGreaterThan(newOneVersion, existingOneVersion)) 
-                    {
-                        files.Remove(existing);
-                        files.Add(newOne);
-                        winner = newOne;
-                    }
-                    else
-                    {
-                        winner = existing;
-                    }
+                FileInfo winner;
 
-                    listener?.OnCheckPerformed(new CheckEventArgs($"Found 2 copies of {newOne.Name }.  They were {existing.FullName} ({existingOneVersion.FileVersion}) and {newOne.FullName} ({newOneVersion.FileVersion}).  Only {winner.FullName} will be loaded", CheckResult.Success));
+                // if we already have a copy of this exact dll we don't care about loading it
+                if (FileVersionsAreEqual(newOneVersion, existingOneVersion))
+                {
+                    // no need to spam user with warnings about duplicated dlls
+                    DuplicateDllsIgnored++;
+                    continue;
+                }
+
+                if (FileVersionGreaterThan(newOneVersion, existingOneVersion))
+                {
+                    files.Remove(existing);
+                    files.Add(newOne);
+                    winner = newOne;
                 }
                 else
-                    files.Add(newOne);
+                {
+                    winner = existing;
+                }
+
+                listener?.OnCheckPerformed(new CheckEventArgs(
+                    $"Found 2 copies of {newOne.Name}.  They were {existing.FullName} ({existingOneVersion.FileVersion}) and {newOne.FullName} ({newOneVersion.FileVersion}).  Only {winner.FullName} will be loaded",
+                    CheckResult.Success));
             }
         }
 
         // Find and load all the DLLs which are not ignored
-        Parallel.ForEach(files, f=>LoadDll(f,listener));
+        foreach(var file in files)
+            LoadDll(file,listener);
     }
 
     private void LoadDll(FileInfo f, ICheckNotifier listener)
     {
         Assembly ass = null;
         if (Ignore.Contains(f.Name.ToLowerInvariant()))
-            return;
+          return;
             
         try
         {
