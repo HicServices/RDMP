@@ -32,11 +32,6 @@ public static class AssemblyResolver
             if (AssemblyResolveAttempts.ContainsKey(assemblyInfo))
                 return AssemblyResolveAttempts[assemblyInfo];
 
-            var all = AppDomain.CurrentDomain.GetAssemblies();
-            var existing = all.FirstOrDefault(x => x?.FullName.StartsWith($"{name},")==true);
-            if (existing is not null)
-                return AssemblyResolveAttempts[assemblyInfo]=existing;
-
             //start out assuming we cannot load it
             AssemblyResolveAttempts.Add(assemblyInfo,null);
                 
