@@ -13,6 +13,7 @@ using NUnit.Framework;
 using Rdmp.Core.Curation.Data;
 using Rdmp.Core.Curation.Data.Spontaneous;
 using Rdmp.Core.Repositories;
+using ReusableLibraryCode.Checks;
 using Tests.Common;
 
 namespace Rdmp.Core.Tests.Curation
@@ -28,7 +29,7 @@ namespace Rdmp.Core.Tests.Curation
         {
             //load all DatabaseEntity types
             MEF mef = new MEF();
-            mef.Setup(new SafeDirectoryCatalog(TestContext.CurrentContext.TestDirectory));
+            mef.Setup(new SafeDirectoryCatalog(new IgnoreAllErrorsCheckNotifier(), TestContext.CurrentContext.TestDirectory));
 
             var types = mef.GetAllTypes()
                 .Where(t => typeof (DatabaseEntity).IsAssignableFrom(t) && !t.IsAbstract && !t.IsInterface).ToArray();
