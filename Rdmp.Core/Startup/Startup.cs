@@ -359,8 +359,6 @@ namespace Rdmp.Core.Startup
         /// </summary>
         public static void PreStartup()
         {
-            AssemblyResolver.SetupAssemblyResolver();
-
             ImplementationManager.Load<MicrosoftSQLImplementation>();
             ImplementationManager.Load<MySqlImplementation>();
             ImplementationManager.Load<OracleImplementation>();
