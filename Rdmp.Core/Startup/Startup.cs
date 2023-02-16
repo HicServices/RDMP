@@ -78,7 +78,7 @@ namespace Rdmp.Core.Startup
         #region Database Discovery
         public void DoStartup(ICheckNotifier notifier)
         {
-            bool foundCatalogue = false;
+            var foundCatalogue = false;
 
             notifier.OnCheckPerformed(new CheckEventArgs("Loading core assemblies",CheckResult.Success));
 
@@ -99,7 +99,7 @@ namespace Rdmp.Core.Startup
                 try
                 {
                     //setup connection string keywords
-                    foreach (ConnectionStringKeyword keyword in RepositoryLocator.CatalogueRepository.GetAllObjects<ConnectionStringKeyword>())
+                    foreach (var keyword in RepositoryLocator.CatalogueRepository.GetAllObjects<ConnectionStringKeyword>())
                     {
                         var tomem = new ToMemoryCheckNotifier(notifier);
                         keyword.Check(tomem);
@@ -152,7 +152,7 @@ namespace Rdmp.Core.Startup
 
         private void FindTier3Databases(ICatalogueRepository catalogueRepository,ICheckNotifier notifier)
         {
-            foreach (PluginPatcher patcher in _patcherManager.GetTier3Patchers(catalogueRepository.MEF,PluginPatcherFound))
+            foreach (var patcher in _patcherManager.GetTier3Patchers(catalogueRepository.MEF,PluginPatcherFound))
                 FindWithPatcher(patcher,notifier);
         }
 
@@ -165,13 +165,13 @@ namespace Rdmp.Core.Startup
                 return false;
             }
 
-            // it's not a database we are getting this data from then assume its good to go
+            // it's not a database we are getting this data from then assume it's good to go
             if (repository is not ITableRepository tableRepository)
                 return true;
                 
             //check we can reach it
             var db = tableRepository.DiscoveredServer.GetCurrentDatabase();
-            notifier.OnCheckPerformed(new CheckEventArgs(string.Format("Connecting to {0} on {1}",db.GetRuntimeName(),db.Server.Name) ,CheckResult.Success));
+            notifier.OnCheckPerformed(new CheckEventArgs($"Connecting to {db.GetRuntimeName()} on {db.Server.Name}",CheckResult.Success));
 
             //is it reachable
             try
@@ -190,11 +190,8 @@ namespace Rdmp.Core.Startup
             try
             {
                 //is it up-to-date on patches?
-                Version databaseVersion;
-                Patch[] patchesInDatabase;
-                SortedDictionary<string, Patch> allPatchesInAssembly;
-                
-                patchingRequired = Patch.IsPatchingRequired(tableRepository.DiscoveredServer.GetCurrentDatabase(), patcher, out databaseVersion, out patchesInDatabase,out allPatchesInAssembly);
+                patchingRequired = Patch.IsPatchingRequired(tableRepository.DiscoveredServer.GetCurrentDatabase(),
+                    patcher, out _, out _, out _);
             }
             catch (Exception e)
             {
@@ -203,23 +200,14 @@ namespace Rdmp.Core.Startup
                 return false;
             }
 
-            // if we are suppressing patching
-            if (patchingRequired == Patch.PatchingState.Required && SkipPatching)
-                patchingRequired = Patch.PatchingState.NotRequired;
-
-            switch(patchingRequired)
-            {
-                case Patch.PatchingState.NotRequired:
-                    DatabaseFound(this, new PlatformDatabaseFoundEventArgs(tableRepository, patcher, RDMPPlatformDatabaseStatus.Healthy));
-                    break;
-                case Patch.PatchingState.Required: 
-                    DatabaseFound(this, new PlatformDatabaseFoundEventArgs(tableRepository, patcher, RDMPPlatformDatabaseStatus.RequiresPatching));
-                    break;
-                case Patch.PatchingState.SoftwareBehindDatabase:
-                    DatabaseFound(this, new PlatformDatabaseFoundEventArgs(tableRepository, patcher, RDMPPlatformDatabaseStatus.SoftwareOutOfDate));
-                    break;
-                default : throw new ArgumentOutOfRangeException("patchingRequired");
-            }          
+            DatabaseFound(this,
+                new PlatformDatabaseFoundEventArgs(tableRepository, patcher, patchingRequired switch
+                {
+                    Patch.PatchingState.NotRequired => RDMPPlatformDatabaseStatus.Healthy,
+                    Patch.PatchingState.Required    => SkipPatching ? RDMPPlatformDatabaseStatus.Healthy : RDMPPlatformDatabaseStatus.RequiresPatching,
+                    Patch.PatchingState.SoftwareBehindDatabase  => RDMPPlatformDatabaseStatus.SoftwareOutOfDate,
+                    _ => throw new ArgumentOutOfRangeException(nameof(patchingRequired))
+                }));
 
             return true;
         }
@@ -240,7 +228,7 @@ namespace Rdmp.Core.Startup
                 }
                 catch (Exception e)
                 {
-                    notifier.OnCheckPerformed(new CheckEventArgs("Could not resolve ExternalDatabaseServer '" + server + "'",CheckResult.Warning,e));
+                    notifier.OnCheckPerformed(new CheckEventArgs($"Could not resolve ExternalDatabaseServer '{server}'",CheckResult.Warning,e));
                 }
             }
         }
@@ -267,27 +255,28 @@ namespace Rdmp.Core.Startup
                 new DirectoryInfo(AppDomain.CurrentDomain.BaseDirectory)
             };
 
-            for (int i = 0; i < compatiblePlugins.Length; i++)
+            for (var i = 0; i < compatiblePlugins.Length; i++)
             {
                 var subDirName = compatiblePlugins[i].GetPluginDirectoryName(downloadDirectory);
                 var subdir = Directory.CreateDirectory(subDirName);
 
                 dirs.Add(subdir);
                                                              
-                var existingFiles = subdir.GetFiles("*"+PackPluginRunner.PluginPackageSuffix).ToList();
+                var existingFiles = subdir.GetFiles($"*{PackPluginRunner.PluginPackageSuffix}").ToList();
 
                 //if we have not downloaded this yet
                 if(!existingFiles.Any(f=>f.Name.Equals(compatiblePlugins[i].Name)))
                     compatiblePlugins[i].LoadModuleAssemblies.SingleOrDefault()?.DownloadAssembly(subdir); 
                 else
-                    notifier.OnCheckPerformed(new CheckEventArgs("Found existing file '" + compatiblePlugins[i].Name +"' so didn't bother downloading it.",CheckResult.Success));
+                    notifier.OnCheckPerformed(new CheckEventArgs(
+                        $"Found existing file '{compatiblePlugins[i].Name}' so didn't bother downloading it.",CheckResult.Success));
                                 
-                foreach(var archive in  subdir.GetFiles("*"+PackPluginRunner.PluginPackageSuffix).ToList())
+                foreach(var archive in  subdir.GetFiles($"*{PackPluginRunner.PluginPackageSuffix}").ToList())
                 {                    
                     //get rid of any old out dirs
                     var outDir = subdir.EnumerateDirectories("out").SingleOrDefault();
                     
-                    bool mustUnzip = true;
+                    var mustUnzip = true;
 
                     //if there's already an unpacked version
                     if(outDir is { Exists: true })
@@ -309,10 +298,12 @@ namespace Rdmp.Core.Startup
                             }
                             catch(Exception ex)
                             {
-                                notifier.OnCheckPerformed(new CheckEventArgs("Could not extract Plugin to '" + outDir.FullName+"'",CheckResult.Warning,ex));
+                                notifier.OnCheckPerformed(new CheckEventArgs(
+                                    $"Could not extract Plugin to '{outDir.FullName}'",CheckResult.Warning,ex));
                             }
                     else
-                        notifier.OnCheckPerformed(new CheckEventArgs("Found existing directory '" + outDir.FullName+"' so didn't bother unzipping.",CheckResult.Success));
+                        notifier.OnCheckPerformed(new CheckEventArgs(
+                            $"Found existing directory '{outDir.FullName}' so didn't bother unzipping.",CheckResult.Success));
 
                     toLoad.AddRange(_environmentInfo.GetPluginSubDirectories(outDir.CreateSubdirectory("lib"), notifier));
 
@@ -324,20 +315,20 @@ namespace Rdmp.Core.Startup
             }
 
             //The only Directories in MEF folder should be Plugin subdirectories, any that don't correspond with a plugin should be deleted 
-            foreach (DirectoryInfo unexpectedDirectory in downloadDirectory.GetDirectories().Where(expected=>!dirs.Any(d=>d.FullName.Equals(expected.FullName))))
+            foreach (var unexpectedDirectory in downloadDirectory.GetDirectories().Where(expected=>!dirs.Any(d=>d.FullName.Equals(expected.FullName))))
             {
                 try
                 {
                     unexpectedDirectory.Delete(true);
-                    notifier.OnCheckPerformed(new CheckEventArgs("Deleted unreferenced plugin folder " + unexpectedDirectory.FullName, CheckResult.Success));
+                    notifier.OnCheckPerformed(new CheckEventArgs(
+                        $"Deleted unreferenced plugin folder {unexpectedDirectory.FullName}", CheckResult.Success));
 
                 }
                 catch (Exception ex)
                 {
                     notifier.OnCheckPerformed(
                         new CheckEventArgs(
-                            "Found unreferenced (no Plugin) folder " + unexpectedDirectory.FullName +
-                            " but we were unable to delete it (possibly because it is in use, try closing all your local RDMP applications and restarting this one)",
+                            $"Found unreferenced (no Plugin) folder {unexpectedDirectory.FullName} but we were unable to delete it (possibly because it is in use, try closing all your local RDMP applications and restarting this one)",
                             CheckResult.Fail, ex));
                 }
             }
@@ -354,7 +345,7 @@ namespace Rdmp.Core.Startup
                 catalogueRepository.CommentStore.ReadComments(Environment.CurrentDirectory,"SourceCodeForSelfAwareness.zip");
 
             sw.Stop();
-            notifier.OnCheckPerformed(new CheckEventArgs("Help loading took:" + sw.Elapsed, CheckResult.Success));
+            notifier.OnCheckPerformed(new CheckEventArgs($"Help loading took:{sw.Elapsed}", CheckResult.Success));
         }
         #endregion
 

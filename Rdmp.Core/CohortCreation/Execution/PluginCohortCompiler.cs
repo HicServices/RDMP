@@ -40,7 +40,7 @@ namespace Rdmp.Core.CohortCreation.Execution
         /// Override to fetch the results from your API.
         /// </summary>
         /// <param name="ac">Stores any configuration information about what query to to execute on your API</param>
-        /// <param name="cache">Where to store results.  Note you can use helper method <see cref="SubmitIdentifierList"/> instead
+        /// <param name="cache">Where to store results.  Note you can use helper method <see cref="SubmitIdentifierList{T}"/> instead
         /// of using this directly</param>
         /// <param name="token">Check this token for cancellation regularly if your API call takes a while to complete</param>
         public abstract void Run(AggregateConfiguration ac, CachedAggregateConfigurationResultsManager cache, CancellationToken token);
