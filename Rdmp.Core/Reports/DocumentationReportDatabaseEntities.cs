@@ -78,7 +78,7 @@ public class DocumentationReportDatabaseEntities : DocXHelper
             foreach (Type t in _mef.GetAllTypes().Where(t=>typeof(DatabaseEntity).IsAssignableFrom(t)))
                 if (typeof (IMapsDirectlyToDatabaseTable).IsAssignableFrom(t))
                 {
-                    if (t.IsInterface || t.IsAbstract || t.Name.StartsWith("Spontaneous"))
+                    if (t.IsInterface || t.IsAbstract || t.Name.StartsWith("Spontaneous") || t.Assembly.FullName?.StartsWith("DynamicProxyGenAssembly2")==true)
                         continue;
                     try
                     {
