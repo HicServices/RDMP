@@ -8,26 +8,54 @@ using NUnit.Framework;
 using ReusableLibraryCode;
 using System.Linq;
 
-namespace ReusableCodeTests
+namespace ReusableCodeTests;
+
+public class UsefulStuffUnitTests
 {
-    public class UsefulStuffUnitTests
+    [TestCase("[ff ff]", "ff ff")]
+    [TestCase("`ff ff`", "ff ff")]
+    [TestCase("'ff ff'", "ff ff")]
+    [TestCase("\"ff ff\"", "ff ff")]
+    [TestCase("ff ff", "ff ff")]
+    [TestCase("ab.cd", "cd")]
+    [TestCase("[aa]..[ff],", "ff")]
+    [TestCase("[bb]..[ff],", "ff")]
+    [TestCase("[c d]..[we ef],", "we ef")]
+    public void TestGetArrayOfColumnNamesFromStringPastedInByUser(string input, string expectedOutput)
     {
-        [TestCase("[ff ff]", "ff ff")]
-        [TestCase("`ff ff`", "ff ff")]
-        [TestCase("'ff ff'", "ff ff")]
-        [TestCase("\"ff ff\"", "ff ff")]
-        [TestCase("ff ff", "ff ff")]
-        [TestCase("ab.cd", "cd")]
-        [TestCase("[aa]..[ff],", "ff")]
-        [TestCase("[bb]..[ff],", "ff")]
-        [TestCase("[c d]..[we ef],", "we ef")]
-        public void TestGetArrayOfColumnNamesFromStringPastedInByUser(string input, string expectedOutput)
+        foreach(var suffix in new[] { "","\n", "\r","\r\n",",\r\n"})
         {
-            foreach(var suffix in new[] { "","\n", "\r","\r\n",",\r\n"})
-            {
-                var output = UsefulStuff.GetInstance().GetArrayOfColumnNamesFromStringPastedInByUser(input + suffix);
-                Assert.AreEqual(expectedOutput, output.Single());
-            }
+            var output = UsefulStuff.GetInstance().GetArrayOfColumnNamesFromStringPastedInByUser(input + suffix);
+            Assert.AreEqual(expectedOutput, output.Single());
         }
     }
+
+
+    [Test]
+    [TestCase("teststringhere", "teststringhere")]
+    [TestCase("test Stringhere", "testStringhere")]
+    [TestCase("test String Here", "testStringHere")]
+    [TestCase("Test String Here", "TestStringHere")]
+    [TestCase("TEST String Here", "TESTStringHere")]
+    [TestCase("Test STRING Here", "TestSTRINGHere")]
+    [TestCase("Test String HERE", "TestStringHERE")]
+
+    [TestCase("A", "A")]
+    [TestCase("AS", "AS")]
+    [TestCase("A String", "AString")]
+    [TestCase("String A Test", "StringATest")]
+    [TestCase("String AS Test", "StringASTest")]
+    [TestCase("CT Head", "CTHead")]
+    [TestCase("WHERE Clause", "WHEREClause")]
+    [TestCase("Sql WHERE", "SqlWHERE")]
+
+    [TestCase("Test String", "Test_String")]
+    [TestCase("Test string", "Test_string")]
+    [TestCase("test String", "_testString")]
+    [TestCase("test String", "_testString_")]
+    public void PascalCaseStringToHumanReadable(string human, string pascal)
+    {
+        Assert.AreEqual(human, UsefulStuff.PascalCaseStringToHumanReadable(pascal));
+    }
+
 }

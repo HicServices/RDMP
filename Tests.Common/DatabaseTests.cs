@@ -60,10 +60,7 @@ namespace Tests.Common
         protected static TestDatabasesSettings TestDatabaseSettings;
         private static bool HaveTriedCreatingTestDatabases;
 
-        public ICatalogueRepository CatalogueRepository
-        {
-            get { return RepositoryLocator.CatalogueRepository; }
-        }
+        public ICatalogueRepository CatalogueRepository => RepositoryLocator.CatalogueRepository;
 
         /// <summary>
         /// Gets an <see cref="ICatalogueRepository"/> that points to a 
@@ -80,10 +77,8 @@ namespace Tests.Common
                 return null;
             }
         }
-        public IDataExportRepository DataExportRepository 
-        {
-            get { return RepositoryLocator.DataExportRepository; }
-        }
+        public IDataExportRepository DataExportRepository => RepositoryLocator.DataExportRepository;
+
         /// <summary>
         /// Gets an <see cref="IDataExportRepository"/> that points to a 
         /// database server or throws with <see cref="Assert.Inconclusive()"/>

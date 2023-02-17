@@ -38,36 +38,34 @@ namespace Rdmp.Core.Reports
             {
                 Check(notifier);
 
-                using (var document = GetNewDocFile("RDMPDocumentation"))
-                {
-                    var t = InsertTable(document,(Summaries.Count *2) +1, 1);
+                using var document = GetNewDocFile("RDMPDocumentation");
+                var t = InsertTable(document,(Summaries.Count *2) +1, 1);
                     
-                    //Listing Cell header
-                    SetTableCell(t, 0, 0, "Tables");
+                //Listing Cell header
+                SetTableCell(t, 0, 0, "Tables");
 
-                    Type[] keys = Summaries.Keys.ToArray();
+                Type[] keys = Summaries.Keys.ToArray();
 
-                    for (int i = 0; i < Summaries.Count; i++)
-                    {
-                        //creates the run
-                        SetTableCell(t, (i*2) + 1, 0, "");
+                for (int i = 0; i < Summaries.Count; i++)
+                {
+                    //creates the run
+                    SetTableCell(t, (i*2) + 1, 0, "");
                         
-                        var bmp = iconProvider.GetImage(keys[i]);
+                    var bmp = iconProvider.GetImage(keys[i]);
 
-                        if (bmp != null)
-                        {
-                            var para = t.Rows[(i * 2) + 1].GetCell(0).Paragraphs.First();
-                            var run = para.Runs.FirstOrDefault() ?? para.CreateRun();
-                            GetPicture(run,bmp);
-                        }
-                        SetTableCell(t, (i * 2) + 1, 0," "+ keys[i].Name);
-
-                        SetTableCell(t,(i*2) + 2, 0, Summaries[keys[i]]);
+                    if (bmp != null)
+                    {
+                        var para = t.Rows[(i * 2) + 1].GetCell(0).Paragraphs.First();
+                        var run = para.Runs.FirstOrDefault() ?? para.CreateRun();
+                        GetPicture(run,bmp);
                     }
+                    SetTableCell(t, (i * 2) + 1, 0," "+ keys[i].Name);
 
-                    if(showFile)
-                        ShowFile(document);
+                    SetTableCell(t,(i*2) + 2, 0, Summaries[keys[i]]);
                 }
+
+                if(showFile)
+                    ShowFile(document);
             }
             catch (Exception e)
             {
@@ -75,7 +73,7 @@ namespace Rdmp.Core.Reports
             }
         }
 
-        public void Check(ICheckNotifier notifier)
+        private void Check(ICheckNotifier notifier)
         {
             foreach (Type t in _mef.GetAllTypes().Where(t=>typeof(DatabaseEntity).IsAssignableFrom(t)))
                 if (typeof (IMapsDirectlyToDatabaseTable).IsAssignableFrom(t))
@@ -93,13 +91,13 @@ namespace Rdmp.Core.Reports
                         continue;
                     }
 
-                    notifier.OnCheckPerformed(new CheckEventArgs("Found type " + t, CheckResult.Success));
+                    notifier.OnCheckPerformed(new CheckEventArgs($"Found type {t}", CheckResult.Success));
 
                     var docs = _commentStore.GetTypeDocumentationIfExists(t, true, true);
 
                     if (docs == null)
                         notifier.OnCheckPerformed(
-                            new CheckEventArgs("Failed to get definition for class " + t.FullName, CheckResult.Fail));
+                            new CheckEventArgs($"Failed to get definition for class {t.FullName} defined in {t.Assembly}", CheckResult.Fail));
                     else
                         Summaries.Add(t, docs);
                 }

@@ -246,7 +246,7 @@ namespace Rdmp.Core.Validation
         {
             lock (oLockExtraTypes)
             {
-                return _extraTypes??new Type[0];
+                return _extraTypes??Type.EmptyTypes;
             }
         }
 
@@ -262,7 +262,7 @@ namespace Rdmp.Core.Validation
         }
 
         /// <summary>
-        /// Returns an arryay of available PrimaryConstraint names.
+        /// Returns an array of available PrimaryConstraint names.
         /// Provides support for client applications who may need to display a list for selection.
         /// </summary>
         /// <returns></returns>

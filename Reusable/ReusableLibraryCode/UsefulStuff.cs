@@ -555,7 +555,7 @@ namespace ReusableLibraryCode
             //This is then made into a single group that is matched and we add a space on front during the replacement.
             pascalCaseString = Regex.Replace(pascalCaseString, @"([A-Z][A-Z]*(?=[A-Z][a-z]|\b)|[A-Z](?=[a-z]))", " $1");
 
-            //Remove any double mutliple white space
+            //Remove any double multiple white space
             //Because this matched the first capital letter in a string with Part2 of our regex above we should TRIM to remove the white space.
             pascalCaseString = Regex.Replace(pascalCaseString, @"\s\s+", " ").Trim();
 
