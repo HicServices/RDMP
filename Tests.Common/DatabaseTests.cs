@@ -477,36 +477,38 @@ public class DatabaseTests
             }
     }
    
-    private void StartupOnDatabaseFound(object sender, PlatformDatabaseFoundEventArgs args)
-    { 
-        //its a healthy message, jolly good
-        if (args.Status == RDMPPlatformDatabaseStatus.Healthy)
-            return;
+        private void StartupOnDatabaseFound(object sender, PlatformDatabaseFoundEventArgs args)
+        {
+            if (args.Exception != null && args.Status!=RDMPPlatformDatabaseStatus.Healthy && args.Status!=RDMPPlatformDatabaseStatus.SoftwareOutOfDate)
+                Assert.Fail(args.SummariseAsString());
 
-        if(args.Status == RDMPPlatformDatabaseStatus.SoftwareOutOfDate)
-            Assert.Fail(@"Your TEST database schema is out of date with the API version you are testing with, 'run rdmp.exe install ...' to install the version which matches your nuget package.");
+            switch (args.Status)
+            {
+                //it's a healthy message, jolly good
+                case RDMPPlatformDatabaseStatus.Healthy:
+                    return;
+                case RDMPPlatformDatabaseStatus.SoftwareOutOfDate:
+                    Assert.Fail(@"Your TEST database schema is out of date with the API version you are testing with, 'run rdmp.exe install ...' to install the version which matches your nuget package.");
+                    break;
+                //it's a tier appropriate fatal error message
+                case RDMPPlatformDatabaseStatus.Broken:
+                case RDMPPlatformDatabaseStatus.Unreachable:
+                //it's slightly dodgy about its version numbers
+                case RDMPPlatformDatabaseStatus.RequiresPatching:
+                    Assert.Fail(args.SummariseAsString());
+                    break;
+            }
+        }
 
-        if (args.Exception != null)
-            Assert.Fail(args.SummariseAsString());
+        private void StartupOnPluginPatcherFound(object sender, PluginPatcherFoundEventArgs args)
+        {
+            Assert.IsTrue(args.Status == PluginPatcherStatus.Healthy, "PluginPatcherStatus is {0} for plugin {1}{2}{3}", args.Status, args.Type.Name, Environment.NewLine, (args.Exception == null ? "No exception" : ExceptionHelper.ExceptionToListOfInnerMessages(args.Exception)));
+        }
 
-        //it's a tier appropriate fatal error message
-        if (args.Status == RDMPPlatformDatabaseStatus.Broken || args.Status == RDMPPlatformDatabaseStatus.Unreachable)
-            Assert.Fail(args.SummariseAsString());
-
-        //it's slightly dodgy abouits's version numbers
-        if (args.Status == RDMPPlatformDatabaseStatus.RequiresPatching)
-            Assert.Fail(args.SummariseAsString());
-
-    }
-    private void StartupOnPluginPatcherFound(object sender, PluginPatcherFoundEventArgs args)
-    {
-        Assert.IsTrue(args.Status == PluginPatcherStatus.Healthy, "PluginPatcherStatus is " + args.Status + " for plugin " + args.Type.Name + Environment.NewLine + (args.Exception == null ? "No exception" : ExceptionHelper.ExceptionToListOfInnerMessages(args.Exception)));
-    }
-
-    private void StartupOnMEFFileDownloaded(object sender, MEFFileDownloadProgressEventArgs args)
-    {
-        Assert.IsTrue(args.Status == MEFFileDownloadEventStatus.Success || args.Status == MEFFileDownloadEventStatus.FailedDueToFileLock, "MEFFileDownloadEventStatus is " + args.Status + " for plugin " + args.FileBeingProcessed + Environment.NewLine + (args.Exception == null ? "No exception" : ExceptionHelper.ExceptionToListOfInnerMessages(args.Exception)));
-    }
+        private void StartupOnMEFFileDownloaded(object sender, MEFFileDownloadProgressEventArgs args)
+        {
+            Assert.IsTrue(args.Status is MEFFileDownloadEventStatus.Success or MEFFileDownloadEventStatus.FailedDueToFileLock, "MEFFileDownloadEventStatus is {0} for plugin {1}{2}{3}", args.Status, args.FileBeingProcessed, Environment.NewLine, (args.Exception == null ? "No exception" : ExceptionHelper.ExceptionToListOfInnerMessages(args.Exception)));
+        }
         
         
     public const string BlitzDatabases = @"

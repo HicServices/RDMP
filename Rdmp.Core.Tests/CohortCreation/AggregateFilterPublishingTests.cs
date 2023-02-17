@@ -25,7 +25,7 @@ public class AggregateFilterPublishingTests:CohortIdentificationTests
 
     private ExtractionInformation _chiExtractionInformation;
                        
-    [SetUp]
+    [OneTimeSetUp]
     protected override void SetUp()
     {
         base.SetUp();
@@ -134,7 +134,7 @@ public class AggregateFilterPublishingTests:CohortIdentificationTests
         _filter.SaveToDatabase();
         Assert.IsTrue(shortcutAggregate.GetQueryBuilder().SQL.Contains("folk=2"));
 
-        //shouldnt work because of the dependency of the child - should give a foreign key error
+        //shouldn't work because of the dependency of the child - should give a foreign key error
         if(CatalogueRepository is TableRepository)
         {
             Assert.Throws<SqlException>(aggregate1.DeleteInDatabase);
