@@ -242,13 +242,13 @@ public class Validator
         }
     }
 
-    public static Type[] GetExtraTypes()
-    {
-        lock (oLockExtraTypes)
+        public static Type[] GetExtraTypes()
         {
-            return _extraTypes??new Type[0];
+            lock (oLockExtraTypes)
+            {
+                return _extraTypes??Type.EmptyTypes;
+            }
         }
-    }
 
 
     /// <summary>
@@ -261,14 +261,14 @@ public class Validator
         return new RegularExpression(pattern);
     }
 
-    /// <summary>
-    /// Returns an arryay of available PrimaryConstraint names.
-    /// Provides support for client applications who may need to display a list for selection.
-    /// </summary>
-    /// <returns></returns>
-    public static string[] GetPrimaryConstraintNames()
-    {
-        var primaryConstraintTypes = FindSubClassesOf<PrimaryConstraint>();
+        /// <summary>
+        /// Returns an array of available PrimaryConstraint names.
+        /// Provides support for client applications who may need to display a list for selection.
+        /// </summary>
+        /// <returns></returns>
+        public static string[] GetPrimaryConstraintNames()
+        {
+            var primaryConstraintTypes = FindSubClassesOf<PrimaryConstraint>();
             
         return primaryConstraintTypes.Select(t => t.Name.ToLower()).ToArray();
     }

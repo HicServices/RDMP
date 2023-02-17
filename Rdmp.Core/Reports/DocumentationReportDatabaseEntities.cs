@@ -38,8 +38,7 @@ public class DocumentationReportDatabaseEntities : DocXHelper
         {
             Check(notifier);
 
-            using (var document = GetNewDocFile("RDMPDocumentation"))
-            {
+                using var document = GetNewDocFile("RDMPDocumentation");
                 var t = InsertTable(document,(Summaries.Count *2) +1, 1);
                     
                 //Listing Cell header
@@ -68,40 +67,40 @@ public class DocumentationReportDatabaseEntities : DocXHelper
                 if(showFile)
                     ShowFile(document);
             }
-        }
-        catch (Exception e)
-        {
-            notifier.OnCheckPerformed(new CheckEventArgs("Report generation failed", CheckResult.Fail, e));
-        }
-    }
-
-    public void Check(ICheckNotifier notifier)
-    {
-        foreach (Type t in _mef.GetAllTypes().Where(t=>typeof(DatabaseEntity).IsAssignableFrom(t)))
-            if (typeof (IMapsDirectlyToDatabaseTable).IsAssignableFrom(t))
+            catch (Exception e)
             {
-                if (t.IsInterface || t.IsAbstract || t.Name.StartsWith("Spontaneous"))
-                    continue;
-                try
-                {
-                    //spontaneous objects don't exist in the database.
-                    if(typeof(SpontaneousObject).IsAssignableFrom(t))
-                        continue;
-                }
-                catch(Exception)
-                {
-                    continue;
-                }
+                notifier.OnCheckPerformed(new CheckEventArgs("Report generation failed", CheckResult.Fail, e));
+            }
+        }
 
-                notifier.OnCheckPerformed(new CheckEventArgs("Found type " + t, CheckResult.Success));
+        private void Check(ICheckNotifier notifier)
+        {
+            foreach (Type t in _mef.GetAllTypes().Where(t=>typeof(DatabaseEntity).IsAssignableFrom(t)))
+                if (typeof (IMapsDirectlyToDatabaseTable).IsAssignableFrom(t))
+                {
+                    if (t.IsInterface || t.IsAbstract || t.Name.StartsWith("Spontaneous"))
+                        continue;
+                    try
+                    {
+                        //spontaneous objects don't exist in the database.
+                        if(typeof(SpontaneousObject).IsAssignableFrom(t))
+                            continue;
+                    }
+                    catch(Exception)
+                    {
+                        continue;
+                    }
+
+                    notifier.OnCheckPerformed(new CheckEventArgs($"Found type {t}", CheckResult.Success));
 
                 var docs = _commentStore.GetTypeDocumentationIfExists(t, true, true);
 
-                if (docs == null)
-                    notifier.OnCheckPerformed(
-                        new CheckEventArgs("Failed to get definition for class " + t.FullName, CheckResult.Fail));
-                else
-                    Summaries.Add(t, docs);
-            }
+                    if (docs == null)
+                        notifier.OnCheckPerformed(
+                            new CheckEventArgs($"Failed to get definition for class {t.FullName} defined in {t.Assembly}", CheckResult.Fail));
+                    else
+                        Summaries.Add(t, docs);
+                }
+        }
     }
 }

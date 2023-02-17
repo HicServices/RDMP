@@ -60,10 +60,7 @@ public class DatabaseTests
     protected static TestDatabasesSettings TestDatabaseSettings;
     private static bool HaveTriedCreatingTestDatabases;
 
-    public ICatalogueRepository CatalogueRepository
-    {
-        get { return RepositoryLocator.CatalogueRepository; }
-    }
+        public ICatalogueRepository CatalogueRepository => RepositoryLocator.CatalogueRepository;
 
     /// <summary>
     /// Gets an <see cref="ICatalogueRepository"/> that points to a 
@@ -76,22 +73,20 @@ public class DatabaseTests
             if (RepositoryLocator.CatalogueRepository is CatalogueRepository tableRepository)
                 return tableRepository;
 
-            Assert.Inconclusive("CatalogueRepository is not a TableRepository");
-            return null;
+                Assert.Inconclusive("CatalogueRepository is not a TableRepository");
+                return null;
+            }
         }
-    }
-    public IDataExportRepository DataExportRepository 
-    {
-        get { return RepositoryLocator.DataExportRepository; }
-    }
-    /// <summary>
-    /// Gets an <see cref="IDataExportRepository"/> that points to a 
-    /// database server or throws with <see cref="Assert.Inconclusive()"/>
-    /// </summary>
-    public DataExportRepository DataExportTableRepository
-    {
-        get
+        public IDataExportRepository DataExportRepository => RepositoryLocator.DataExportRepository;
+
+        /// <summary>
+        /// Gets an <see cref="IDataExportRepository"/> that points to a 
+        /// database server or throws with <see cref="Assert.Inconclusive()"/>
+        /// </summary>
+        public DataExportRepository DataExportTableRepository
         {
+            get
+            {
 
             if (RepositoryLocator.DataExportRepository is DataExportRepository tableRepository)
                 return tableRepository;
