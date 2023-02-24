@@ -17,252 +17,250 @@ using System.IO;
 using System.Threading.Tasks;
 using Terminal.Gui;
 
-namespace Rdmp.Core.CommandLine.Gui.Windows.RunnerWindows
+namespace Rdmp.Core.CommandLine.Gui.Windows.RunnerWindows;
+
+internal class RunEngineWindow<T> : Window, IListDataSource where T : RDMPCommandLineOptions
 {
+    private Process process;
+    private ListView _results;
+    protected readonly IBasicActivateItems BasicActivator;
+    private readonly Func<T> commandGetter;
 
-    class RunEngineWindow<T> : Window, IListDataSource where T : RDMPCommandLineOptions
+    private object lockList = new();
+    private List<string> consoleOutput = new();
+    private ColorScheme _red;
+    private ColorScheme _yellow;
+    private ColorScheme _white;
+
+    public int Count => consoleOutput.Count;
+    public int Length => consoleOutput.Count;
+    public RunEngineWindow(IBasicActivateItems activator, Func<T> commandGetter)
     {
-        private Process process;
-        private ListView _results;
-        protected readonly IBasicActivateItems BasicActivator;
-        private readonly Func<T> commandGetter;
+        _red = ColorSettings.Instance.Red;
+        _yellow = ColorSettings.Instance.Yellow;
+        _white = ColorSettings.Instance.White;
 
-        private object lockList = new object();
-        private List<string> consoleOutput = new List<string>();
-        private ColorScheme _red;
-        private ColorScheme _yellow;
-        private ColorScheme _white;
+        Modal = true;
+        ColorScheme = ConsoleMainWindow.ColorScheme;
 
-        public int Count => consoleOutput.Count;
-        public int Length => consoleOutput.Count;
-        public RunEngineWindow(IBasicActivateItems activator, Func<T> commandGetter)
+        var check = new Button("_Check") { X = 0 };
+        check.Clicked += () => Check();
+        Add(check);
+
+        var execute = new Button("_Execute") { X = Pos.Right(check) };
+        execute.Clicked += () => Execute();
+        Add(execute);
+
+        var clear = new Button("C_lear Output") { X = Pos.Right(execute) };
+        clear.Clicked += () => ClearOutput();
+        Add(clear);
+
+        var abort = new Button("A_bort") { X = Pos.Right(clear) };
+        abort.Clicked += () => Abort();
+        Add(abort);
+
+        var close = new Button("Cl_ose") { X = Pos.Right(abort) };
+        close.Clicked += () =>
         {
-            _red = ColorSettings.Instance.Red;
-            _yellow = ColorSettings.Instance.Yellow;
-            _white = ColorSettings.Instance.White;
+            Application.RequestStop();
+        };
 
-            Modal = true;
-            ColorScheme = ConsoleMainWindow.ColorScheme;
+        Add(close);
 
-            var check = new Button("_Check") { X = 0 };
-            check.Clicked += () => Check();
-            Add(check);
+        _results = new ListView(this) { Y = 1, Width = Dim.Fill(), Height = Dim.Fill() };
+        Add(_results);
+        _results.KeyPress += Results_KeyPress;
 
-            var execute = new Button("_Execute") { X = Pos.Right(check) };
-            execute.Clicked += () => Execute();
-            Add(execute);
+        BasicActivator = activator;
+        this.commandGetter = commandGetter;
+    }
 
-            var clear = new Button("C_lear Output") { X = Pos.Right(execute) };
-            clear.Clicked += () => ClearOutput();
-            Add(clear);
+    private void Results_KeyPress(KeyEventEventArgs obj)
+    {
+        if (obj.KeyEvent.Key == Key.Enter && _results.HasFocus)
+        {
+            var listIdx = _results.SelectedItem;
+            var list = _results.Source.ToList();
 
-            var abort = new Button("A_bort") { X = Pos.Right(clear) };
-            abort.Clicked += () => Abort();
-            Add(abort);
-
-            var close = new Button("Cl_ose") { X = Pos.Right(abort) };
-            close.Clicked += () =>
+            if (listIdx < list.Count)
             {
-                Application.RequestStop();
-            };
+                var selected = list[listIdx];
+                BasicActivator.Show(selected.ToString());
+            }
 
-            Add(close);
+            obj.Handled = true;
+        }
+    }
+    private void ClearOutput()
+    {
+        lock (lockList)
+        {
+            _results.SelectedItem = 0;
+            consoleOutput.Clear();
+            _results.SetNeedsDisplay();
+        }
+    }
 
-            _results = new ListView(this) { Y = 1, Width = Dim.Fill(), Height = Dim.Fill() };
-            Add(_results);
-            _results.KeyPress += Results_KeyPress;
+    private void Abort()
+    {
+        try
+        {
+            if (process != null)
+                process.Kill();
+        }
+        catch (Exception ex)
+        {
+            BasicActivator.ShowException("Error Aborting Process", ex);
+        }
+    }
 
-            BasicActivator = activator;
-            this.commandGetter = commandGetter;
+    private void Execute()
+    {
+        try
+        {
+            var opts = commandGetter();
+            opts.Command = CommandLineActivity.run;
+
+            AdjustCommand(opts, opts.Command);
+
+            Run(() => opts);
+        }
+        catch (Exception ex)
+        {
+            BasicActivator.ShowException("Error Starting Execute", ex);
+        }
+    }
+
+    /// <summary>
+    /// Override in subclasses to get last minute choices e.g. what pipeline to use for an extraction
+    /// </summary>
+    /// <param name="opts"></param>
+    protected virtual void AdjustCommand(T opts, CommandLineActivity activity)
+    {
+
+    }
+
+    private void Check()
+    {
+        try
+        {
+            var opts = commandGetter();
+            opts.Command = CommandLineActivity.check;
+
+            AdjustCommand(opts, opts.Command);
+
+            Run(() => opts);
+        }
+        catch (Exception ex)
+        {
+            BasicActivator.ShowException("Error Starting Checks", ex);
+        }
+    }
+
+    private void Run(Func<T> commandGetter)
+    {
+        ClearOutput();
+
+        var expectedFileName = $"rdmp{(EnvironmentInfo.IsLinux ? "" : ".exe")}";
+
+        // try in the location we ran from 
+        var binary = Path.Combine(UsefulStuff.GetExecutableDirectory().FullName, expectedFileName);
+
+        if (!File.Exists(binary))
+        {
+            // the program that launched this code isn't rdmp.exe.  Maybe rdmp is in the current directory though
+            binary = $"./{expectedFileName}";
         }
 
-        private void Results_KeyPress(KeyEventEventArgs obj)
+        if (!File.Exists(binary))
         {
-            if (obj.KeyEvent.Key == Key.Enter && _results.HasFocus)
-            {
-                var listIdx = _results.SelectedItem;
-                var list = _results.Source.ToList();
+            MessageBox.ErrorQuery("Could not find rdmp binary", $"Could not find {binary}", "Ok");
+            return;
+        }
+        var cmd = new ExecuteCommandGenerateRunCommand(BasicActivator, commandGetter);
+        var args = cmd.GetCommandText(true);
 
-                if (listIdx < list.Count)
+        process = new Process
+        {
+            StartInfo = new ProcessStartInfo
+            {
+                FileName = binary,
+                Arguments = args,
+                UseShellExecute = false,
+                RedirectStandardOutput = true,
+                CreateNoWindow = true
+            }
+        };
+
+        Task.Run(() =>
+        {
+            process.Start();
+
+            while (!process.StandardOutput.EndOfStream)
+            {
+                var line = process.StandardOutput.ReadLine().Trim();
+
+                lock(lockList)
                 {
-                    var selected = list[listIdx];
-                    BasicActivator.Show(selected.ToString());
+                    consoleOutput.Insert(0,line);
+                    Application.MainLoop.Invoke(()=>_results.SetNeedsDisplay());
                 }
-
-                obj.Handled = true;
+                    
             }
-        }
-        private void ClearOutput()
+        });
+    }
+
+    public void Render(ListView container, ConsoleDriver driver, bool selected, int item, int col, int line, int width, int start = 0)
+    {
+
+        lock (lockList)
         {
-            lock (lockList)
+            if (item >= consoleOutput.Count)
             {
-                _results.SelectedItem = 0;
-                consoleOutput.Clear();
-                _results.SetNeedsDisplay();
-            }
-        }
-
-        private void Abort()
-        {
-            try
-            {
-                if (process != null)
-                    process.Kill();
-            }
-            catch (Exception ex)
-            {
-                BasicActivator.ShowException("Error Aborting Process", ex);
-            }
-        }
-
-        private void Execute()
-        {
-            try
-            {
-                var opts = commandGetter();
-                opts.Command = CommandLineActivity.run;
-
-                AdjustCommand(opts, opts.Command);
-
-                Run(() => opts);
-            }
-            catch (Exception ex)
-            {
-                BasicActivator.ShowException("Error Starting Execute", ex);
-            }
-        }
-
-        /// <summary>
-        /// Override in subclasses to get last minute choices e.g. what pipeline to use for an extraction
-        /// </summary>
-        /// <param name="opts"></param>
-        protected virtual void AdjustCommand(T opts, CommandLineActivity activity)
-        {
-
-        }
-
-        private void Check()
-        {
-            try
-            {
-                var opts = commandGetter();
-                opts.Command = CommandLineActivity.check;
-
-                AdjustCommand(opts, opts.Command);
-
-                Run(() => opts);
-            }
-            catch (Exception ex)
-            {
-                BasicActivator.ShowException("Error Starting Checks", ex);
-            }
-        }
-
-        private void Run(Func<T> commandGetter)
-        {
-            ClearOutput();
-
-            string expectedFileName = "rdmp" + (EnvironmentInfo.IsLinux ? "" : ".exe");
-
-            // try in the location we ran from 
-            var binary = Path.Combine(UsefulStuff.GetExecutableDirectory().FullName, expectedFileName);
-
-            if (!File.Exists(binary))
-            {
-                // the program that launched this code isn't rdmp.exe.  Maybe rdmp is in the current directory though
-                binary = "./" + expectedFileName;
-            }
-
-            if (!File.Exists(binary))
-            {
-                MessageBox.ErrorQuery("Could not find rdmp binary", $"Could not find {binary}", "Ok");
                 return;
             }
-            var cmd = new ExecuteCommandGenerateRunCommand(BasicActivator, commandGetter);
-            var args = cmd.GetCommandText(true);
 
-            process = new Process
+            var str = consoleOutput[item];
+
+            if (str.Length > width)
             {
-                StartInfo = new ProcessStartInfo
-                {
-                    FileName = binary,
-                    Arguments = args,
-                    UseShellExecute = false,
-                    RedirectStandardOutput = true,
-                    CreateNoWindow = true
-                }
-            };
-
-            Task.Run(() =>
+                str = str[..width];
+            }
+            else
             {
-                process.Start();
+                str = str.PadRight(width,' ');
+            }
 
-                while (!process.StandardOutput.EndOfStream)
-                {
-                    var line = process.StandardOutput.ReadLine().Trim();
+            _results.Move(col, line);
 
-                    lock(lockList)
-                    {
-                        consoleOutput.Insert(0,line);
-                        Application.MainLoop.Invoke(()=>_results.SetNeedsDisplay());
-                    }
-                    
-                }
-            });
-        }
-
-        public void Render(ListView container, ConsoleDriver driver, bool selected, int item, int col, int line, int width, int start = 0)
-        {
-
-            lock (lockList)
+            ColorScheme scheme;
+            if (str.Contains("ERROR"))
             {
-                if (item >= consoleOutput.Count)
-                {
-                    return;
-                }
+                scheme = _red;
+            }
+            else if (str.Contains("WARN"))
+            {
+                scheme = _yellow;
+            }
+            else
+                scheme = _white;
 
-                var str = consoleOutput[item];
+            driver.SetAttribute(selected ? scheme.Focus : scheme.Normal);
+            driver.AddStr(str);
+        }                
+    }
 
-                if (str.Length > width)
-                {
-                    str = str.Substring(0, width);
-                }
-                else
-                {
-                    str = str.PadRight(width,' ');
-                }
+    public bool IsMarked(int item)
+    {
+        return false;
+    }
 
-                _results.Move(col, line);
+    public void SetMark(int item, bool value)
+    {
+    }
 
-                ColorScheme scheme;
-                if (str.Contains("ERROR"))
-                {
-                    scheme = _red;
-                }
-                else if (str.Contains("WARN"))
-                {
-                    scheme = _yellow;
-                }
-                else
-                    scheme = _white;
-
-                driver.SetAttribute(selected ? scheme.Focus : scheme.Normal);
-                driver.AddStr(str);
-            }                
-        }
-
-        public bool IsMarked(int item)
-        {
-            return false;
-        }
-
-        public void SetMark(int item, bool value)
-        {
-        }
-
-        public IList ToList()
-        {
-            return consoleOutput;
-        }
+    public IList ToList()
+    {
+        return consoleOutput;
     }
 }

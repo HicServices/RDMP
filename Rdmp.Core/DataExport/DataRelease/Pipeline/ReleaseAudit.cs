@@ -6,14 +6,13 @@
 
 using System.IO;
 
-namespace Rdmp.Core.DataExport.DataRelease.Pipeline
+namespace Rdmp.Core.DataExport.DataRelease.Pipeline;
+
+/// <summary>
+/// Nothing to see here
+/// </summary>
+public class ReleaseAudit
 {
-    /// <summary>
-    /// Nothing to see here
-    /// </summary>
-    public class ReleaseAudit
-    {
-        public DirectoryInfo ReleaseFolder { get; set; }
-        public DirectoryInfo SourceGlobalFolder { get; set; }
-    }
+    public DirectoryInfo ReleaseFolder { get; set; }
+    public DirectoryInfo SourceGlobalFolder { get; set; }
 }

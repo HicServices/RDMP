@@ -9,16 +9,15 @@ using Rdmp.Core.Icons.IconProvision;
 using Rdmp.Core.Providers.Nodes.LoadMetadataNodes;
 using Rdmp.UI.CommandExecution.AtomicCommands;
 
-namespace Rdmp.UI.Menus
-{
-    class LoadDirectoryNodeMenu : RDMPContextMenuStrip
-    {
-        public LoadDirectoryNodeMenu(RDMPContextMenuStripArgs args,LoadDirectoryNode node) : base(args, node)
-        {
-            args.SkipCommand<ExecuteCommandCreateNewDataLoadDirectory>();
+namespace Rdmp.UI.Menus;
 
-            ReBrandActivateAs("Open In Explorer",RDMPConcept.CatalogueFolder);
-            Add(new ExecuteCommandChooseLoadDirectory(_activator, node.LoadMetadata));
-        }
+internal class LoadDirectoryNodeMenu : RDMPContextMenuStrip
+{
+    public LoadDirectoryNodeMenu(RDMPContextMenuStripArgs args,LoadDirectoryNode node) : base(args, node)
+    {
+        args.SkipCommand<ExecuteCommandCreateNewDataLoadDirectory>();
+
+        ReBrandActivateAs("Open In Explorer",RDMPConcept.CatalogueFolder);
+        Add(new ExecuteCommandChooseLoadDirectory(_activator, node.LoadMetadata));
     }
 }

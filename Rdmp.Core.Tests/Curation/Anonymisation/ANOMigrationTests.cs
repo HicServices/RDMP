@@ -5,51 +5,48 @@
 // You should have received a copy of the GNU General Public License along with RDMP. If not, see <https://www.gnu.org/licenses/>.
 
 using System;
-using System.Collections.Generic;
-using System.Data.Common;
 using System.Linq;
 using NUnit.Framework;
 using Rdmp.Core.Curation;
 using Rdmp.Core.Curation.Data;
 using Rdmp.Core.Curation.Data.DataLoad;
-using Rdmp.Core.Curation.Data.Defaults;
 using Rdmp.Core.DataLoad.Engine.Pipeline.Components.Anonymisation;
 using ReusableLibraryCode.Checks;
 using ReusableLibraryCode.DataAccess;
 using Tests.Common.Scenarios;
 
-namespace Rdmp.Core.Tests.Curation.Anonymisation
+namespace Rdmp.Core.Tests.Curation.Anonymisation;
+
+public class ANOMigrationTests : TestsRequiringANOStore
 {
-    public class ANOMigrationTests : TestsRequiringANOStore
+    private const string TableName = "ANOMigration";
+
+    private ITableInfo _tableInfo;
+    private ColumnInfo[] _columnInfos;
+    private ANOTable _anoConditionTable;
+
+    #region setup
+    [SetUp]
+    protected override void SetUp()
     {
-        private const string TableName = "ANOMigration";
+        base.SetUp();
 
-        private ITableInfo _tableInfo;
-        private ColumnInfo[] _columnInfos;
-        private ANOTable _anoConditionTable;
-
-        #region setup
-        [SetUp]
-        protected override void SetUp()
-        {
-            base.SetUp();
-
-            var db = GetCleanedServer(FAnsi.DatabaseType.MicrosoftSQLServer);
+        var db = GetCleanedServer(FAnsi.DatabaseType.MicrosoftSQLServer);
             
-            BlitzMainDataTables();
+        BlitzMainDataTables();
             
-            DeleteANOEndpoint();
+        DeleteANOEndpoint();
             
-            ANOTable remnantANO = CatalogueRepository.GetAllObjects<ANOTable>().SingleOrDefault(a => a.TableName.Equals("ANOCondition"));
+        var remnantANO = CatalogueRepository.GetAllObjects<ANOTable>().SingleOrDefault(a => a.TableName.Equals("ANOCondition"));
 
-            if (remnantANO != null)
-                remnantANO.DeleteInDatabase();
+        if (remnantANO != null)
+            remnantANO.DeleteInDatabase();
 
-            //cleanup
-            foreach (var remnant in CatalogueRepository.GetAllObjects<TableInfo>().Where(t => t.GetRuntimeName().Equals(TableName)))
-                remnant.DeleteInDatabase();
+        //cleanup
+        foreach (var remnant in CatalogueRepository.GetAllObjects<TableInfo>().Where(t => t.GetRuntimeName().Equals(TableName)))
+            remnant.DeleteInDatabase();
 
-            const string sql = @"
+        const string sql = @"
 CREATE TABLE [ANOMigration](
 	[AdmissionDate] [datetime] NOT NULL,
 	[DischargeDate] [datetime] NOT NULL,
@@ -79,66 +76,66 @@ INSERT [ANOMigration] ([AdmissionDate], [DischargeDate], [Condition1], [Conditio
 INSERT [ANOMigration] ([AdmissionDate], [DischargeDate], [Condition1], [Condition2], [Condition3], [Condition4], [CHI]) VALUES (CAST(0x0000088A00000000 AS DateTime), CAST(0x0000089300000000 AS DateTime), N'G009', NULL, NULL, NULL, N'0706013071')
 INSERT [ANOMigration] ([AdmissionDate], [DischargeDate], [Condition1], [Condition2], [Condition3], [Condition4], [CHI]) VALUES (CAST(0x000008CA00000000 AS DateTime), CAST(0x000008D100000000 AS DateTime), N'T47', N'H311', N'O037', NULL, N'1204057592')";
 
-            var server = db.Server;
-            using (var con = server.GetConnection())
-            {
-                con.Open();
-                server.GetCommand(sql,con).ExecuteNonQuery();
-            }
-
-            var table = db.ExpectTable(TableName);
-            TableInfoImporter importer = new TableInfoImporter(CatalogueRepository, table);
-            importer.DoImport(out _tableInfo,out _columnInfos);
-
-            //Configure the structure of the ANO transform we want - identifiers should have 3 characters and 2 ints and end with _C
-            _anoConditionTable = new ANOTable(CatalogueRepository, ANOStore_ExternalDatabaseServer, "ANOCondition","C");
-            _anoConditionTable.NumberOfCharactersToUseInAnonymousRepresentation = 3;
-            _anoConditionTable.NumberOfIntegersToUseInAnonymousRepresentation = 2;
-            _anoConditionTable.SaveToDatabase();
-            _anoConditionTable.PushToANOServerAsNewTable("varchar(4)", new ThrowImmediatelyCheckNotifier());
-        }
-
-        private void DeleteANOEndpoint()
+        var server = db.Server;
+        using (var con = server.GetConnection())
         {
-            var remnantEndpointANOTable = DataAccessPortal.GetInstance()
-                .ExpectDatabase(ANOStore_ExternalDatabaseServer, DataAccessContext.InternalDataProcessing)
-                .ExpectTable("ANOCondition");
-
-            if (remnantEndpointANOTable.Exists())
-                remnantEndpointANOTable.Drop();
+            con.Open();
+            server.GetCommand(sql,con).ExecuteNonQuery();
         }
 
-        #endregion
+        var table = db.ExpectTable(TableName);
+        var importer = new TableInfoImporter(CatalogueRepository, table);
+        importer.DoImport(out _tableInfo,out _columnInfos);
+
+        //Configure the structure of the ANO transform we want - identifiers should have 3 characters and 2 ints and end with _C
+        _anoConditionTable = new ANOTable(CatalogueRepository, ANOStore_ExternalDatabaseServer, "ANOCondition","C");
+        _anoConditionTable.NumberOfCharactersToUseInAnonymousRepresentation = 3;
+        _anoConditionTable.NumberOfIntegersToUseInAnonymousRepresentation = 2;
+        _anoConditionTable.SaveToDatabase();
+        _anoConditionTable.PushToANOServerAsNewTable("varchar(4)", new ThrowImmediatelyCheckNotifier());
+    }
+
+    private void DeleteANOEndpoint()
+    {
+        var remnantEndpointANOTable = DataAccessPortal.GetInstance()
+            .ExpectDatabase(ANOStore_ExternalDatabaseServer, DataAccessContext.InternalDataProcessing)
+            .ExpectTable("ANOCondition");
+
+        if (remnantEndpointANOTable.Exists())
+            remnantEndpointANOTable.Drop();
+    }
+
+    #endregion
 
         
-        [Test,Order(1)]
-        public void PKsAreCorrect()
-        {
-            Assert.IsTrue(_columnInfos.Single(c=>c.GetRuntimeName().Equals("AdmissionDate")).IsPrimaryKey);
-            Assert.IsTrue(_columnInfos.Single(c => c.GetRuntimeName().Equals("Condition1")).IsPrimaryKey);
-            Assert.IsTrue(_columnInfos.Single(c => c.GetRuntimeName().Equals("CHI")).IsPrimaryKey);
-        }
+    [Test,Order(1)]
+    public void PKsAreCorrect()
+    {
+        Assert.IsTrue(_columnInfos.Single(c=>c.GetRuntimeName().Equals("AdmissionDate")).IsPrimaryKey);
+        Assert.IsTrue(_columnInfos.Single(c => c.GetRuntimeName().Equals("Condition1")).IsPrimaryKey);
+        Assert.IsTrue(_columnInfos.Single(c => c.GetRuntimeName().Equals("CHI")).IsPrimaryKey);
+    }
 
-        [Test,Order(2)]
-        public void ConvertPrimaryKeyColumn()
-        {
-            //The table we created above should have a column called Condition2 in it, we will migrate this data to ANO land
-            ColumnInfo condition = _columnInfos.Single(c => c.GetRuntimeName().Equals("Condition1"));
-            ColumnInfoToANOTableConverter converter = new ColumnInfoToANOTableConverter(condition, _anoConditionTable);
-            var ex = Assert.Throws<Exception>(()=>converter.ConvertFullColumnInfo((s) => true, new ThrowImmediatelyCheckNotifier())); //say  yes to everything it proposes 
+    [Test,Order(2)]
+    public void ConvertPrimaryKeyColumn()
+    {
+        //The table we created above should have a column called Condition2 in it, we will migrate this data to ANO land
+        var condition = _columnInfos.Single(c => c.GetRuntimeName().Equals("Condition1"));
+        var converter = new ColumnInfoToANOTableConverter(condition, _anoConditionTable);
+        var ex = Assert.Throws<Exception>(()=>converter.ConvertFullColumnInfo((s) => true, new ThrowImmediatelyCheckNotifier())); //say  yes to everything it proposes 
 
-            StringAssert.IsMatch(@"Could not perform transformation because column \[(.*)\]\.\[dbo\]\.\[.*\]\.\[Condition1\] is not droppable",ex.Message);
-        }
+        StringAssert.IsMatch(@"Could not perform transformation because column \[(.*)\]\.\[dbo\]\.\[.*\]\.\[Condition1\] is not droppable",ex.Message);
+    }
 
 
-        [Test,Order(3)]
-        [TestCase("Condition2")]
-        [TestCase("Condition3")]
-        [TestCase("Condition4")]
-        public void ConvertNonPrimaryKeyColumn(string conditionColumn)
-        {
-            // TODO: This test doesn't ever seem to work!
-            return;
+    [Test,Order(3)]
+    [TestCase("Condition2")]
+    [TestCase("Condition3")]
+    [TestCase("Condition4")]
+    public void ConvertNonPrimaryKeyColumn(string conditionColumn)
+    {
+        // TODO: This test doesn't ever seem to work!
+        return;
 
 /*
             //Value and a list of the rows in which it was found on (e.g. the value 'Fish' was found on row 11, 31, 52 and 501
@@ -208,6 +205,5 @@ INSERT [ANOMigration] ([AdmissionDate], [DischargeDate], [Condition1], [Conditio
                     }
             }
 */
-        }
     }
 }

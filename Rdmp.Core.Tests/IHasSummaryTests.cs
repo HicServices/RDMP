@@ -7,36 +7,31 @@
 using NUnit.Framework;
 using Rdmp.Core.Curation.Data;
 using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using Tests.Common;
 
-namespace Rdmp.Core.Tests
+namespace Rdmp.Core.Tests;
+
+internal class IHasSummaryTests : UnitTests
 {
-    internal class IHasSummaryTests : UnitTests
+    [Test]
+    public void AllObjects_SupportSummary()
     {
-        [Test]
-        public void AllObjects_SupportSummary()
+        var objectCount = 0;
+
+        foreach (var obj in WhenIHaveAll())
         {
-            int objectCount = 0;
-
-            foreach (DatabaseEntity obj in WhenIHaveAll())
+            try
             {
-                try
-                {
-                    var text = obj.GetSummary(true, true);
-                    Assert.IsNotNull(text);
+                var text = obj.GetSummary(true, true);
+                Assert.IsNotNull(text);
 
-                }
-                catch (Exception ex)
-                {
-                    throw new Exception($"GetSummary is broken for {obj.GetType().Name}", ex);
-                }
             }
-
-            Console.WriteLine($"Checked GetSummary for {objectCount} objects");
+            catch (Exception ex)
+            {
+                throw new Exception($"GetSummary is broken for {obj.GetType().Name}", ex);
+            }
         }
+
+        Console.WriteLine($"Checked GetSummary for {objectCount} objects");
     }
 }

@@ -12,71 +12,70 @@ using Rdmp.UI.MainFormUITabs;
 using Rdmp.UI.SimpleDialogs;
 using Rdmp.UI.TestsAndSetup.ServicePropogation;
 
-namespace Rdmp.UI.Tests
+namespace Rdmp.UI.Tests;
+
+[SupportedOSPlatform("windows7.0")]
+internal class CatalogueItemUITests : UITests
 {
-    [SupportedOSPlatform("windows7.0")]
-    class CatalogueItemUITests : UITests
+    [Test, UITimeout(20000)]
+    public void Test_CatalogueItemUI_NormalState()
     {
-        [Test, UITimeout(20000)]
-        public void Test_CatalogueItemUI_NormalState()
-        {
-            //when I have two CatalogueItems that have the same name
-            var catalogueItem = WhenIHaveA<CatalogueItem>();
-            var catalogueItem2 = WhenIHaveA<CatalogueItem>();
+        //when I have two CatalogueItems that have the same name
+        var catalogueItem = WhenIHaveA<CatalogueItem>();
+        var catalogueItem2 = WhenIHaveA<CatalogueItem>();
 
-            var ui = AndLaunch<CatalogueItemUI>(catalogueItem);
+        var ui = AndLaunch<CatalogueItemUI>(catalogueItem);
 
-            //when I change the description of the first
-            var scintilla = ui._scintillaDescription;
-            scintilla.Text = "what is in the column";
+        //when I change the description of the first
+        var scintilla = ui._scintillaDescription;
+        scintilla.Text = "what is in the column";
 
-            //and save it
-            var saver = ui.GetObjectSaverButton();
-            saver.Save();
+        //and save it
+        var saver = ui.GetObjectSaverButton();
+        saver.Save();
 
-            //the new description shuold be set in my class
-            Assert.AreEqual("what is in the column", catalogueItem.Description);
+        //the new description shuold be set in my class
+        Assert.AreEqual("what is in the column", catalogueItem.Description);
 
-            //and the UI should have shown the Propagate changes dialog
-            Assert.AreEqual(1, ItemActivator.Results.WindowsShown.Count);
-            Assert.IsInstanceOf(typeof(PropagateCatalogueItemChangesToSimilarNamedUI),ItemActivator.Results.WindowsShown.Single());
+        //and the UI should have shown the Propagate changes dialog
+        Assert.AreEqual(1, ItemActivator.Results.WindowsShown.Count);
+        Assert.IsInstanceOf(typeof(PropagateCatalogueItemChangesToSimilarNamedUI),ItemActivator.Results.WindowsShown.Single());
 
-            AssertNoErrors(ExpectedErrorType.Any);
-        }
+        AssertNoErrors(ExpectedErrorType.Any);
+    }
 
-        /// <summary>
-        /// Tests that <see cref="INamedTab.GetTabName"/> works even when half way through a call
-        /// to <see cref="IRDMPSingleDatabaseObjectControl.SetDatabaseObject"/>
-        /// </summary>
-        [Test, UITimeout(20000)]
-        public void Test_CatalogueItemUI_GetTabName()
-        {
-            var ci = WhenIHaveA<CatalogueItem>();
-            var ui = AndLaunch<CatalogueItemUI>(ci);
+    /// <summary>
+    /// Tests that <see cref="INamedTab.GetTabName"/> works even when half way through a call
+    /// to <see cref="IRDMPSingleDatabaseObjectControl.SetDatabaseObject"/>
+    /// </summary>
+    [Test, UITimeout(20000)]
+    public void Test_CatalogueItemUI_GetTabName()
+    {
+        var ci = WhenIHaveA<CatalogueItem>();
+        var ui = AndLaunch<CatalogueItemUI>(ci);
             
-            Assert.AreEqual("MyCataItem (Mycata)",ui.GetTabName());
+        Assert.AreEqual("MyCataItem (Mycata)",ui.GetTabName());
 
-            //introduce database change but don't save
-            ci.Name = "Fish";
+        //introduce database change but don't save
+        ci.Name = "Fish";
 
-            //simulates loading the UI with an out of date object
-            ui = AndLaunch<CatalogueItemUI>(ci,false);
+        //simulates loading the UI with an out of date object
+        ui = AndLaunch<CatalogueItemUI>(ci,false);
 
-            //now what we want to ensure is that ui.GetTabName works properly even half way through SetDatabaseObject
-            //so register a callback that interrogates GetTabName midway
-            ItemActivator.ShouldReloadFreshCopyDelegate = ()=>
-            {
-                ui.GetTabName();
-                return true;
-            };
+        //now what we want to ensure is that ui.GetTabName works properly even half way through SetDatabaseObject
+        //so register a callback that interrogates GetTabName midway
+        ItemActivator.ShouldReloadFreshCopyDelegate = ()=>
+        {
+            ui.GetTabName();
+            return true;
+        };
 
-            //and finish launching it, this should trigger the 'FreshCopyDelegate' which will exercise GetTabName.
-            ui.SetDatabaseObject(ItemActivator,ci);
+        //and finish launching it, this should trigger the 'FreshCopyDelegate' which will exercise GetTabName.
+        ui.SetDatabaseObject(ItemActivator,ci);
             
-            Assert.AreEqual("MyCataItem (Mycata)",ui.GetTabName());
+        Assert.AreEqual("MyCataItem (Mycata)",ui.GetTabName());
 
-            //clear the delgate for the next user
-            ItemActivator.ShouldReloadFreshCopyDelegate = null;
-        }
+        //clear the delgate for the next user
+        ItemActivator.ShouldReloadFreshCopyDelegate = null;
     }
 }

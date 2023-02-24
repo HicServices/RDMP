@@ -4,15 +4,14 @@
 // RDMP is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License for more details.
 // You should have received a copy of the GNU General Public License along with RDMP. If not, see <https://www.gnu.org/licenses/>.
 
-namespace ReusableLibraryCode.DataAccess
+namespace ReusableLibraryCode.DataAccess;
+
+public enum DataAccessContext
 {
-    public enum DataAccessContext
-    {
-        //do not change these! (although you can add new ones)
-        DataLoad=0,
-        DataExport=1,
-        InternalDataProcessing=2,
-        Any=3, //You can request DataLoad and receive an Any credential (because there is not a more specific one) but you cannot make a request for Any
-        Logging=4
-    }
+    //do not change these! (although you can add new ones)
+    DataLoad=0,
+    DataExport=1,
+    InternalDataProcessing=2,
+    Any=3, //You can request DataLoad and receive an Any credential (because there is not a more specific one) but you cannot make a request for Any
+    Logging=4
 }

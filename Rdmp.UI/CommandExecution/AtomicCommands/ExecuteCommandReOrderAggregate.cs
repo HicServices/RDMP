@@ -10,71 +10,71 @@ using Rdmp.Core.Curation.Data.Aggregation;
 using Rdmp.Core.Curation.Data.Cohort;
 using Rdmp.UI.ItemActivation;
 
-namespace Rdmp.UI.CommandExecution.AtomicCommands
+namespace Rdmp.UI.CommandExecution.AtomicCommands;
+
+internal class ExecuteCommandReOrderAggregate : BasicUICommandExecution
 {
-    internal class ExecuteCommandReOrderAggregate : BasicUICommandExecution
-    {
-        private readonly AggregateConfigurationCombineable _sourceAggregateCommand;
-        private CohortAggregateContainer _parentContainer;
+    private readonly AggregateConfigurationCombineable _sourceAggregateCommand;
+    private CohortAggregateContainer _parentContainer;
         
-        private IOrderable _targetOrder;
-        private readonly InsertOption _insertOption;
+    private IOrderable _targetOrder;
+    private readonly InsertOption _insertOption;
 
-        public ExecuteCommandReOrderAggregate(IActivateItems activator, AggregateConfigurationCombineable sourceAggregateCommand, AggregateConfiguration targetAggregateConfiguration, InsertOption insertOption) :this(activator,targetAggregateConfiguration,insertOption)
+    public ExecuteCommandReOrderAggregate(IActivateItems activator, AggregateConfigurationCombineable sourceAggregateCommand, AggregateConfiguration targetAggregateConfiguration, InsertOption insertOption) :this(activator,targetAggregateConfiguration,insertOption)
+    {
+        _sourceAggregateCommand = sourceAggregateCommand;
+        _parentContainer = targetAggregateConfiguration.GetCohortAggregateContainerIfAny();
+
+        if(_parentContainer == null)
         {
-            _sourceAggregateCommand = sourceAggregateCommand;
-            _parentContainer = targetAggregateConfiguration.GetCohortAggregateContainerIfAny();
-
-            if(_parentContainer == null)
-            {
-                SetImpossible("Target Aggregate " + targetAggregateConfiguration + " is not part of any cohort identification set containers");
-                return;
-            }
-
-            if (!sourceAggregateCommand.ContainerIfAny.Equals(_parentContainer))
-            {
-                SetImpossible("Cannot ReOrder, you should first move both objects into the same container (UNION / EXCEPT / INTERSECT)");
-                return;
-            }
+            SetImpossible(
+                $"Target Aggregate {targetAggregateConfiguration} is not part of any cohort identification set containers");
+            return;
         }
 
-        public ExecuteCommandReOrderAggregate(IActivateItems activator, AggregateConfigurationCombineable sourceAggregateCommand, CohortAggregateContainer targetCohortAggregateContainer, InsertOption insertOption):this(activator,targetCohortAggregateContainer,insertOption)
+        if (!sourceAggregateCommand.ContainerIfAny.Equals(_parentContainer))
         {
-            _sourceAggregateCommand = sourceAggregateCommand;
-            _parentContainer = targetCohortAggregateContainer.GetParentContainerIfAny();
-            
-            if (!sourceAggregateCommand.ContainerIfAny.Equals(_parentContainer))
-            {
-                SetImpossible("Cannot ReOrder, you should first move both objects into the same container (UNION / EXCEPT / INTERSECT)");
-                return;
-            }
+            SetImpossible("Cannot ReOrder, you should first move both objects into the same container (UNION / EXCEPT / INTERSECT)");
+            return;
         }
+    }
 
-        private ExecuteCommandReOrderAggregate(IActivateItems activator, IOrderable target, InsertOption insertOption):base(activator)
+    public ExecuteCommandReOrderAggregate(IActivateItems activator, AggregateConfigurationCombineable sourceAggregateCommand, CohortAggregateContainer targetCohortAggregateContainer, InsertOption insertOption):this(activator,targetCohortAggregateContainer,insertOption)
+    {
+        _sourceAggregateCommand = sourceAggregateCommand;
+        _parentContainer = targetCohortAggregateContainer.GetParentContainerIfAny();
+            
+        if (!sourceAggregateCommand.ContainerIfAny.Equals(_parentContainer))
         {
-            _targetOrder = target;
-            _insertOption = insertOption;
-            
-            if(target is IMightBeReadOnly ro && ro.ShouldBeReadOnly(out string reason))
-                SetImpossible(reason);
+            SetImpossible("Cannot ReOrder, you should first move both objects into the same container (UNION / EXCEPT / INTERSECT)");
+            return;
         }
+    }
 
-        public override void Execute()
-        {
-            base.Execute();
-
-            var source = _sourceAggregateCommand.Aggregate;
-            _sourceAggregateCommand.ContainerIfAny.RemoveChild(source);
-
-            int targetOrder = _targetOrder.Order;
+    private ExecuteCommandReOrderAggregate(IActivateItems activator, IOrderable target, InsertOption insertOption):base(activator)
+    {
+        _targetOrder = target;
+        _insertOption = insertOption;
             
-            _parentContainer.CreateInsertionPointAtOrder(source,targetOrder , _insertOption == InsertOption.InsertAbove);
-            _parentContainer.AddChild(source, targetOrder);
+        if(target is IMightBeReadOnly ro && ro.ShouldBeReadOnly(out var reason))
+            SetImpossible(reason);
+    }
 
-            //refresh the parent container
-            Publish(_parentContainer);
+    public override void Execute()
+    {
+        base.Execute();
+
+        var source = _sourceAggregateCommand.Aggregate;
+        _sourceAggregateCommand.ContainerIfAny.RemoveChild(source);
+
+        var targetOrder = _targetOrder.Order;
+            
+        _parentContainer.CreateInsertionPointAtOrder(source,targetOrder , _insertOption == InsertOption.InsertAbove);
+        _parentContainer.AddChild(source, targetOrder);
+
+        //refresh the parent container
+        Publish(_parentContainer);
             
 
-        }
     }
 }

@@ -9,46 +9,45 @@ using Rdmp.Core.Curation.Data;
 using Rdmp.Core.Curation.Data.DataLoad;
 using Rdmp.UI.ANOEngineeringUIs;
 
-namespace Rdmp.UI.Tests
+namespace Rdmp.UI.Tests;
+
+internal class ANOTableUITests : UITests
 {
-    class ANOTableUITests : UITests
+    [Test, UITimeout(50000)]
+    public void Test_ANOTableUI_NormalState()
     {
-        [Test, UITimeout(50000)]
-        public void Test_ANOTableUI_NormalState()
-        {
-            var anoTable = WhenIHaveA<ANOTable>();
-            AndLaunch<ANOTableUI>(anoTable);
+        var anoTable = WhenIHaveA<ANOTable>();
+        AndLaunch<ANOTableUI>(anoTable);
 
-            //not much we can do about this without mocking the data access layer
-            AssertErrorWasShown(ExpectedErrorType.Fatal, "Could not reach ANO Server");
+        //not much we can do about this without mocking the data access layer
+        AssertErrorWasShown(ExpectedErrorType.Fatal, "Could not reach ANO Server");
 
-            //but form was not killed and server is not in error
-            AssertNoErrors(ExpectedErrorType.KilledForm);
-            AssertNoErrors(ExpectedErrorType.ErrorProvider);
+        //but form was not killed and server is not in error
+        AssertNoErrors(ExpectedErrorType.KilledForm);
+        AssertNoErrors(ExpectedErrorType.ErrorProvider);
 
-            anoTable.DeleteInDatabase();
-        }
+        anoTable.DeleteInDatabase();
+    }
 
-        [Test, UITimeout(50000)]
-        public void Test_ANOTableUI_ServerWrongType()
-        {
-            ExternalDatabaseServer srv;
-            var anoTable = WhenIHaveA<ANOTable>(Repository, out srv);
-            srv.CreatedByAssembly = null;
-            srv.SaveToDatabase();
+    [Test, UITimeout(50000)]
+    public void Test_ANOTableUI_ServerWrongType()
+    {
+        ExternalDatabaseServer srv;
+        var anoTable = WhenIHaveA<ANOTable>(Repository, out srv);
+        srv.CreatedByAssembly = null;
+        srv.SaveToDatabase();
 
-            var ui = AndLaunch<ANOTableUI>(anoTable);
+        var ui = AndLaunch<ANOTableUI>(anoTable);
             
-            //should be an error on the server showing that it is misconfigured
-            AssertErrorWasShown(ExpectedErrorType.ErrorProvider,"Server is not an ANO server");
-            AssertErrorWasShown(ExpectedErrorType.Fatal, "Could not reach ANO Server");
+        //should be an error on the server showing that it is misconfigured
+        AssertErrorWasShown(ExpectedErrorType.ErrorProvider,"Server is not an ANO server");
+        AssertErrorWasShown(ExpectedErrorType.Fatal, "Could not reach ANO Server");
             
-            //but form was not killed
-            AssertNoErrors(ExpectedErrorType.KilledForm);
+        //but form was not killed
+        AssertNoErrors(ExpectedErrorType.KilledForm);
 
-            anoTable.DeleteInDatabase();
-        }
+        anoTable.DeleteInDatabase();
+    }
 
         
-    }
 }

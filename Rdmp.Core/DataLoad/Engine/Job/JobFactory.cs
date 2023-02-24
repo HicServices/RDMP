@@ -11,27 +11,26 @@ using Rdmp.Core.Logging;
 using Rdmp.Core.Repositories;
 using ReusableLibraryCode.Progress;
 
-namespace Rdmp.Core.DataLoad.Engine.Job
+namespace Rdmp.Core.DataLoad.Engine.Job;
+
+/// <summary>
+/// Basic IJobFactory for creating an 'OnDemand', one off, self contained (not date based) IDataLoadJob.
+/// </summary>
+public class JobFactory : IJobFactory
 {
-    /// <summary>
-    /// Basic IJobFactory for creating an 'OnDemand', one off, self contained (not date based) IDataLoadJob.
-    /// </summary>
-    public class JobFactory : IJobFactory
+    private readonly ILoadMetadata _loadMetadata;
+    private readonly ILogManager _logManager;
+
+    public JobFactory(ILoadMetadata loadMetadata, ILogManager logManager)
     {
-        private readonly ILoadMetadata _loadMetadata;
-        private readonly ILogManager _logManager;
+        _loadMetadata = loadMetadata;
+        _logManager = logManager;
+    }
 
-        public JobFactory(ILoadMetadata loadMetadata, ILogManager logManager)
-        {
-            _loadMetadata = loadMetadata;
-            _logManager = logManager;
-        }
-
-        public IDataLoadJob Create(IRDMPPlatformRepositoryServiceLocator repositoryLocator, IDataLoadEventListener listener, HICDatabaseConfiguration configuration)
-        {
-            var description = _loadMetadata.Name;
-            var LoadDirectory = new LoadDirectory(_loadMetadata.LocationOfFlatFiles);
-            return new DataLoadJob(repositoryLocator,description, _logManager, _loadMetadata, LoadDirectory, listener,configuration);
-        }
+    public IDataLoadJob Create(IRDMPPlatformRepositoryServiceLocator repositoryLocator, IDataLoadEventListener listener, HICDatabaseConfiguration configuration)
+    {
+        var description = _loadMetadata.Name;
+        var LoadDirectory = new LoadDirectory(_loadMetadata.LocationOfFlatFiles);
+        return new DataLoadJob(repositoryLocator,description, _logManager, _loadMetadata, LoadDirectory, listener,configuration);
     }
 }

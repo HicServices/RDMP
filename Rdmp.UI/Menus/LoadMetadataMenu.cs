@@ -9,16 +9,15 @@ using Rdmp.Core.Icons.IconProvision;
 using Rdmp.UI.CommandExecution.AtomicCommands;
 using ReusableLibraryCode.Icons.IconProvision;
 
-namespace Rdmp.UI.Menus
+namespace Rdmp.UI.Menus;
+
+[System.ComponentModel.DesignerCategory("")]
+internal class LoadMetadataMenu:RDMPContextMenuStrip
 {
-    [System.ComponentModel.DesignerCategory("")]
-    class LoadMetadataMenu:RDMPContextMenuStrip
+    public LoadMetadataMenu(RDMPContextMenuStripArgs args, LoadMetadata loadMetadata) : base(args, loadMetadata)
     {
-        public LoadMetadataMenu(RDMPContextMenuStripArgs args, LoadMetadata loadMetadata) : base(args, loadMetadata)
-        {
-            Add(new ExecuteCommandEditLoadMetadataDescription(_activator, loadMetadata));
-            Add(new ExecuteCommandViewLoadDiagram(_activator, loadMetadata));
-            ReBrandActivateAs("Check and Execute",RDMPConcept.LoadMetadata,OverlayKind.Execute);
-        }
+        Add(new ExecuteCommandEditLoadMetadataDescription(_activator, loadMetadata));
+        Add(new ExecuteCommandViewLoadDiagram(_activator, loadMetadata));
+        ReBrandActivateAs("Check and Execute",RDMPConcept.LoadMetadata,OverlayKind.Execute);
     }
 }

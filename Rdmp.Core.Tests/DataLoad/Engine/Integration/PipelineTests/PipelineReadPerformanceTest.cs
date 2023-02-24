@@ -10,44 +10,41 @@ using NUnit.Framework;
 using Tests.Common;
 using Tests.Common.Scenarios;
 
-namespace Rdmp.Core.Tests.DataLoad.Engine.Integration.PipelineTests
+namespace Rdmp.Core.Tests.DataLoad.Engine.Integration.PipelineTests;
+
+public class PipelineReadPerformanceTest:DatabaseTests
 {
-    public class PipelineReadPerformanceTest:DatabaseTests
+    private BulkTestsData _bulkTestData;
+        
+    [OneTimeSetUp]
+    protected override void OneTimeSetUp()
     {
-        private BulkTestsData _bulkTestData;
+        base.OneTimeSetUp();
+
+        _bulkTestData = new BulkTestsData(CatalogueRepository, GetCleanedServer(FAnsi.DatabaseType.MicrosoftSQLServer));
+        _bulkTestData.SetupTestData();
+
+    }
         
-        [OneTimeSetUp]
-        protected override void OneTimeSetUp()
-        {
-            base.OneTimeSetUp();
+    [Test]
+    public void BulkTestDataContainsExpectedNumberOfRows()
+    {
+        var server = _bulkTestData.BulkDataDatabase.Server;
 
-            _bulkTestData = new BulkTestsData(CatalogueRepository, GetCleanedServer(FAnsi.DatabaseType.MicrosoftSQLServer));
-            _bulkTestData.SetupTestData();
+        using var con = server.GetConnection();
+        con.Open();
+        var cmd = server.GetCommand($"Select count(*) from {BulkTestsData.BulkDataTable}", con);
+        var manualCount = Convert.ToInt32(cmd.ExecuteScalar());
 
-        }
-        
-        [Test]
-        public void BulkTestDataContainsExpectedNumberOfRows()
-        {
-            var server = _bulkTestData.BulkDataDatabase.Server;
+        //manual count matches expected
+        Assert.AreEqual(_bulkTestData.ExpectedNumberOfRowsInTestData,manualCount);
 
-            using (DbConnection con = server.GetConnection())
-            {
-                con.Open();
-                DbCommand cmd = server.GetCommand("Select count(*) from " + BulkTestsData.BulkDataTable, con);
-                int manualCount = Convert.ToInt32(cmd.ExecuteScalar());
+        //now get the fast approximate rowcount
+        var fastRowcount = _bulkTestData.BulkDataDatabase
+            .ExpectTable(BulkTestsData.BulkDataTable)
+            .GetRowCount();
 
-                //manual count matches expected
-                Assert.AreEqual(_bulkTestData.ExpectedNumberOfRowsInTestData,manualCount);
-
-                //now get the fast approximate rowcount
-                int fastRowcount = _bulkTestData.BulkDataDatabase
-                    .ExpectTable(BulkTestsData.BulkDataTable)
-                    .GetRowCount();
-
-                //it should also match
-                Assert.AreEqual(_bulkTestData.ExpectedNumberOfRowsInTestData,fastRowcount);
-            }
-        }
+        //it should also match
+        Assert.AreEqual(_bulkTestData.ExpectedNumberOfRowsInTestData,fastRowcount);
     }
 }

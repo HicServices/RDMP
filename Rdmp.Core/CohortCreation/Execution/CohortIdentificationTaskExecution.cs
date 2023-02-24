@@ -12,144 +12,141 @@ using System.Threading.Tasks;
 using FAnsi.Discovery;
 using ReusableLibraryCode.DataAccess;
 
-namespace Rdmp.Core.CohortCreation.Execution
+namespace Rdmp.Core.CohortCreation.Execution;
+
+/// <summary>
+/// An ongoing async execution of a cohort identification subquery in the CohortCompiler.  Includes the query used to fetch the cohort identifiers, the 
+/// identifiers themselves (once complete), cancellation token etc.
+/// </summary>
+public class CohortIdentificationTaskExecution: IDisposable
 {
+    private readonly IDataAccessPoint _cacheServerIfAny;
+    public int SubQueries { get; private set; }
+    public int SubqueriesCached { get; private set; }
+
+    public bool IsResultsForRootContainer { get; set; }
+
+    public DataTable Identifiers { get; private set; }
+    public DataTable CumulativeIdentifiers { get; private set; }
+
+    public bool IsExecuting { get; private set; }
+
+    public string CumulativeSQL { get; set; }
+
     /// <summary>
-    /// An ongoing async execution of a cohort identification subquery in the CohortCompiler.  Includes the query used to fetch the cohort identifiers, the 
-    /// identifiers themselves (once complete), cancellation token etc.
+    /// Although this is called CountSQL it is actually a select distinct identifiers!
     /// </summary>
-    public class CohortIdentificationTaskExecution: IDisposable
+    public string CountSQL { get; set; }
+
+    private CancellationTokenSource _cancellationTokenSource;
+    private readonly DiscoveredServer _target;
+    private DbCommand _cmdCount;
+    private DbDataReader _rIds;
+    private DbDataReader _rCumulative;
+    private DbCommand _cmdCountCumulative;
+
+    public CohortIdentificationTaskExecution(IDataAccessPoint cacheServerIfAny, string countSQL, string cumulativeSQL, CancellationTokenSource cancellationTokenSource, int subQueries, int subqueriesCached, bool isResultsForRootContainer,DiscoveredServer target)
     {
-        private readonly IDataAccessPoint _cacheServerIfAny;
-        public int SubQueries { get; private set; }
-        public int SubqueriesCached { get; private set; }
+        _cacheServerIfAny = cacheServerIfAny;
+        SubQueries = subQueries;
+        SubqueriesCached = subqueriesCached;
+        CountSQL = countSQL;
+        CumulativeSQL = cumulativeSQL;
+        _cancellationTokenSource = cancellationTokenSource;
+        _target = target;
+        IsResultsForRootContainer = isResultsForRootContainer;
+    }
 
-        public bool IsResultsForRootContainer { get; set; }
-
-        public DataTable Identifiers { get; private set; }
-        public DataTable CumulativeIdentifiers { get; private set; }
-
-        public bool IsExecuting { get; private set; }
-
-        public string CumulativeSQL { get; set; }
-
-        /// <summary>
-        /// Although this is called CountSQL it is actually a select distinct identifiers!
-        /// </summary>
-        public string CountSQL { get; set; }
-
-        private CancellationTokenSource _cancellationTokenSource;
-        private readonly DiscoveredServer _target;
-        private DbCommand _cmdCount;
-        private DbDataReader _rIds;
-        private DbDataReader _rCumulative;
-        private DbCommand _cmdCountCumulative;
-
-        public CohortIdentificationTaskExecution(IDataAccessPoint cacheServerIfAny, string countSQL, string cumulativeSQL, CancellationTokenSource cancellationTokenSource, int subQueries, int subqueriesCached, bool isResultsForRootContainer,DiscoveredServer target)
+    public void Cancel()
+    {
+        _cancellationTokenSource.Cancel();
+        if (_cmdCount != null && _cmdCount.Connection.State == ConnectionState.Open)
         {
-            _cacheServerIfAny = cacheServerIfAny;
-            SubQueries = subQueries;
-            SubqueriesCached = subqueriesCached;
-            CountSQL = countSQL;
-            CumulativeSQL = cumulativeSQL;
-            _cancellationTokenSource = cancellationTokenSource;
-            _target = target;
-            IsResultsForRootContainer = isResultsForRootContainer;
+            _cmdCount.Cancel();
         }
 
-        public void Cancel()
+        if (_rIds != null && !_rIds.IsClosed)
         {
-            _cancellationTokenSource.Cancel();
-            if (_cmdCount != null && _cmdCount.Connection.State == ConnectionState.Open)
+            try
             {
-                _cmdCount.Cancel();
+                _rIds.Close();
             }
+            catch (InvalidOperationException)
+            {
+            }
+        }
 
-            if (_rIds != null && !_rIds.IsClosed)
+        if (_rCumulative != null && !_rCumulative.IsClosed)
+        {
+            try
             {
-                try
-                {
-                    _rIds.Close();
-                }
-                catch (InvalidOperationException)
-                {
-                }
+                _rCumulative.Close();
             }
-
-            if (_rCumulative != null && !_rCumulative.IsClosed)
+            catch (InvalidOperationException)
             {
-                try
-                {
-                    _rCumulative.Close();
-                }
-                catch (InvalidOperationException)
-                {
-                }
             }
+        }
             
-        }
+    }
 
         
-        public void GetCohortAsync(int commandTimeout)
+    public void GetCohortAsync(int commandTimeout)
+    {
+        if(Identifiers != null)
+            throw new Exception("GetCohortAsync has already been called for this object");
+
+        Identifiers = new DataTable();
+            
+        IsExecuting = true;
+
+        var server = _target;
+            
+        server.EnableAsync();
+
+        using var con = server.GetConnection();
+        con.Open();
+        _cmdCount = server.GetCommand(CountSQL, con);
+        _cmdCount.CommandTimeout = commandTimeout;
+
+        var identifiersReader = _cmdCount.ExecuteReaderAsync(_cancellationTokenSource.Token);
+
+        identifiersReader.Wait(_cancellationTokenSource.Token);
+        _rIds = identifiersReader.Result;
+        Identifiers.Load(_rIds);
+        _rIds.Close();
+        _rIds.Dispose();
+
+        Task<DbDataReader> cumulativeIdentifiersRead = null;
+
+        //if there is cumulative SQL happening
+        if (!string.IsNullOrWhiteSpace(CumulativeSQL))
         {
-            if(Identifiers != null)
-                throw new Exception("GetCohortAsync has already been called for this object");
+            CumulativeIdentifiers = new DataTable();
 
-            Identifiers = new DataTable();
-            
-            IsExecuting = true;
-
-            var server = _target;
-            
-            server.EnableAsync();
-
-            using (var con = server.GetConnection())
-            {
-                con.Open();
-                _cmdCount = server.GetCommand(CountSQL, con);
-                _cmdCount.CommandTimeout = commandTimeout;
-
-                var identifiersReader = _cmdCount.ExecuteReaderAsync(_cancellationTokenSource.Token);
-
-                identifiersReader.Wait(_cancellationTokenSource.Token);
-                _rIds = identifiersReader.Result;
-                Identifiers.Load(_rIds);
-                _rIds.Close();
-                _rIds.Dispose();
-
-                Task<DbDataReader> cumulativeIdentifiersRead = null;
-
-                //if there is cumulative SQL happening
-                if (!string.IsNullOrWhiteSpace(CumulativeSQL))
-                {
-                    CumulativeIdentifiers = new DataTable();
-
-                    _cmdCountCumulative = server.GetCommand(CumulativeSQL, con);
-                    _cmdCountCumulative.CommandTimeout = commandTimeout;
-                    cumulativeIdentifiersRead = _cmdCountCumulative.ExecuteReaderAsync(_cancellationTokenSource.Token);
-                }
-
-                if (cumulativeIdentifiersRead != null)
-                {
-                    cumulativeIdentifiersRead.Wait(_cancellationTokenSource.Token);
-                    _rCumulative = cumulativeIdentifiersRead.Result;
-                    CumulativeIdentifiers.Load(_rCumulative);
-                    _rCumulative.Close();
-                    _rCumulative.Dispose();
-                }
-
-                IsExecuting = false;
-            }
+            _cmdCountCumulative = server.GetCommand(CumulativeSQL, con);
+            _cmdCountCumulative.CommandTimeout = commandTimeout;
+            cumulativeIdentifiersRead = _cmdCountCumulative.ExecuteReaderAsync(_cancellationTokenSource.Token);
         }
 
-        public void Dispose()
+        if (cumulativeIdentifiersRead != null)
         {
-            Identifiers?.Dispose();
-            CumulativeIdentifiers?.Dispose();
-            _rIds?.Dispose();
-            _rCumulative?.Dispose();
-            _cmdCount?.Dispose();
-            _cmdCountCumulative?.Dispose();
+            cumulativeIdentifiersRead.Wait(_cancellationTokenSource.Token);
+            _rCumulative = cumulativeIdentifiersRead.Result;
+            CumulativeIdentifiers.Load(_rCumulative);
+            _rCumulative.Close();
+            _rCumulative.Dispose();
         }
+
+        IsExecuting = false;
+    }
+
+    public void Dispose()
+    {
+        Identifiers?.Dispose();
+        CumulativeIdentifiers?.Dispose();
+        _rIds?.Dispose();
+        _rCumulative?.Dispose();
+        _cmdCount?.Dispose();
+        _cmdCountCumulative?.Dispose();
     }
 }

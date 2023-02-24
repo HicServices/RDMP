@@ -6,33 +6,32 @@
 
 using CommandLine;
 
-namespace Rdmp.Core.CommandLine.Options
+namespace Rdmp.Core.CommandLine.Options;
+
+/// <summary>
+/// Command line options for the Cohort Creation Pipelines
+/// </summary>
+[Verb("cohort", HelpText = "Runs the Cohort Creation")]
+public class CohortCreationOptions : RDMPCommandLineOptions
 {
-    /// <summary>
-    /// Command line options for the Cohort Creation Pipelines
-    /// </summary>
-    [Verb("cohort", HelpText = "Runs the Cohort Creation")]
-    public class CohortCreationOptions : RDMPCommandLineOptions
-    {
-        // Used for refreshes:
-        [Option('e', "ExtractionConfiguration", HelpText = "The ExtractionConfiguration ID to extract", Required = true)]
-        public string ExtractionConfiguration { get; set; }
+    // Used for refreshes:
+    [Option('e', "ExtractionConfiguration", HelpText = "The ExtractionConfiguration ID to extract", Required = true)]
+    public string ExtractionConfiguration { get; set; }
 
-        // Other Options:
-        /*
-         * External Cohort Table
-         * 
-         * Project (only existing?)
-         * 
-         * New Cohort / Revision?
-         * 
-         * Name (or existing cohort name/id?)
-         * 
-         * Pipeline
-         * 
-         * Description
-         * 
-         */
+    // Other Options:
+    /*
+     * External Cohort Table
+     * 
+     * Project (only existing?)
+     * 
+     * New Cohort / Revision?
+     * 
+     * Name (or existing cohort name/id?)
+     * 
+     * Pipeline
+     * 
+     * Description
+     * 
+     */
 
-    }
 }

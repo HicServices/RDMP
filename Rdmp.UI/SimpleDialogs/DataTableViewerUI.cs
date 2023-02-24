@@ -8,52 +8,46 @@ using System;
 using System.Data;
 using System.Data.Common;
 using System.Windows.Forms;
-using Rdmp.UI.SimpleDialogs;
 using ReusableLibraryCode;
 using ReusableLibraryCode.DataAccess;
 
-namespace Rdmp.UI.SimpleDialogs
+namespace Rdmp.UI.SimpleDialogs;
+
+/// <summary>
+/// Allows you to view the results of a query sent by the RDMP.  This is a reusable component.
+/// </summary>
+public partial class DataTableViewerUI : UserControl
 {
-    /// <summary>
-    /// Allows you to view the results of a query sent by the RDMP.  This is a reusable component.
-    /// </summary>
-    public partial class DataTableViewerUI : UserControl
+    public DataTableViewerUI(DataTable source, string caption)
     {
-        public DataTableViewerUI(DataTable source, string caption)
-        {
-            InitializeComponent();
+        InitializeComponent();
             
-            this.Text = caption;
-            dataGridView1.ColumnAdded += (s, e) => e.Column.FillWeight = 1;
-            dataGridView1.DataSource = source;
-        }
-
-        public DataTableViewerUI(IDataAccessPoint source, string sql, string caption)
-        {
-            InitializeComponent();
-
-            try
-            {
-                using (DbConnection con = DataAccessPortal.GetInstance().ExpectServer(source, DataAccessContext.DataExport).GetConnection())
-                {
-                    con.Open();
-
-                    using(var cmd = DatabaseCommandHelper.GetCommand(sql, con))
-                        using (var da = DatabaseCommandHelper.GetDataAdapter(cmd))
-                        {
-                            DataTable dt = new DataTable();
-                            da.Fill(dt);
-                            dataGridView1.DataSource = dt;
-                        }
-                }
-            }
-            catch (Exception e)
-            {
-                ExceptionViewer.Show("Failed to connect to source " + source + " and execute SQL: "+Environment.NewLine + sql,e);
-            }
-
-            this.Text = caption;
-        }
-
+        Text = caption;
+        dataGridView1.ColumnAdded += (s, e) => e.Column.FillWeight = 1;
+        dataGridView1.DataSource = source;
     }
+
+    public DataTableViewerUI(IDataAccessPoint source, string sql, string caption)
+    {
+        InitializeComponent();
+
+        try
+        {
+            using var con = DataAccessPortal.GetInstance().ExpectServer(source, DataAccessContext.DataExport).GetConnection();
+            con.Open();
+
+            using var cmd = DatabaseCommandHelper.GetCommand(sql, con);
+            using var da = DatabaseCommandHelper.GetDataAdapter(cmd);
+            var dt = new DataTable();
+            da.Fill(dt);
+            dataGridView1.DataSource = dt;
+        }
+        catch (Exception e)
+        {
+            ExceptionViewer.Show($"Failed to connect to source {source} and execute SQL: {Environment.NewLine}{sql}",e);
+        }
+
+        Text = caption;
+    }
+
 }

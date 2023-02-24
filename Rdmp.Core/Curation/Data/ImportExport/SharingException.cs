@@ -7,23 +7,22 @@
 using System;
 using Rdmp.Core.Curation.Data.Serialization;
 
-namespace Rdmp.Core.Curation.Data.ImportExport
-{
-    /// <summary>
-    /// Thrown when there are problems importing or exporting objects from RDMP (either in gathering dependencies or loading <see cref="ShareDefinition"/>
-    /// </summary>
-    public class SharingException:Exception
-    {
-        /// <inheritdoc/>
-        public SharingException(string msg) : base(msg)
-        {
-            
-        }
+namespace Rdmp.Core.Curation.Data.ImportExport;
 
-        /// <inheritdoc/>
-        public SharingException(string msg, Exception ex):base(msg,ex)
-        {
+/// <summary>
+/// Thrown when there are problems importing or exporting objects from RDMP (either in gathering dependencies or loading <see cref="ShareDefinition"/>
+/// </summary>
+public class SharingException:Exception
+{
+    /// <inheritdoc/>
+    public SharingException(string msg) : base(msg)
+    {
             
-        }
+    }
+
+    /// <inheritdoc/>
+    public SharingException(string msg, Exception ex):base(msg,ex)
+    {
+            
     }
 }

@@ -12,71 +12,70 @@ using MapsDirectlyToDatabaseTable.Attributes;
 using Rdmp.Core.Repositories;
 using ReusableLibraryCode.Annotations;
 
-namespace Rdmp.Core.Curation.Data
+namespace Rdmp.Core.Curation.Data;
+
+/// <summary>
+/// Persisted window layout of RDMPMainForm as Xml.  This can be used to reload RDMP to a given layout of windows and can be shared between users.
+/// </summary>
+public class WindowLayout: DatabaseEntity,INamed
 {
-    /// <summary>
-    /// Persisted window layout of RDMPMainForm as Xml.  This can be used to reload RDMP to a given layout of windows and can be shared between users.
-    /// </summary>
-    public class WindowLayout: DatabaseEntity,INamed
+    #region Database Properties
+
+    private string _name;
+    private string _layoutData;
+    #endregion
+
+    /// <inheritdoc/>
+    [NotNull]
+    [Unique]
+    public string Name
     {
-        #region Database Properties
+        get => _name;
+        set => SetField(ref _name, value);
+    }
 
-        private string _name;
-        private string _layoutData;
-        #endregion
+    /// <summary>
+    /// The Xml representation of the window layout being (e.g. what tabs are open, objects pinned etc)
+    /// </summary>
+    public string LayoutData
+    {
+        get => _layoutData;
+        set => SetField(ref _layoutData, value);
+    }
 
-        /// <inheritdoc/>
-        [NotNull]
-        [Unique]
-        public string Name
+    public WindowLayout()
+    {
+
+    }
+
+    /// <summary>
+    /// Record the new layout in the database
+    /// </summary>
+    /// <param name="repository"></param>
+    /// <param name="name">Human readable name for the layout</param>
+    /// <param name="layoutXml">The layout Xml of RDMPMainForm, use GetCurrentLayoutXml to get this, cannot be null</param>
+    public WindowLayout(ICatalogueRepository repository, string name, string layoutXml)
+    {
+        repository.InsertAndHydrate(this,new Dictionary<string, object>()
         {
-            get { return _name;}
-            set { SetField(ref _name, value);}
-        }
+            {"Name",name},
+            {"LayoutData",layoutXml}
+        });
 
-        /// <summary>
-        /// The Xml representation of the window layout being (e.g. what tabs are open, objects pinned etc)
-        /// </summary>
-        public string LayoutData
-        {
-            get { return _layoutData;}
-            set { SetField(ref _layoutData, value);}
-        }
+        if (ID == 0 || Repository != repository)
+            throw new ArgumentException("Repository failed to properly hydrate this class");
+    }
 
-        public WindowLayout()
-        {
+    /// <inheritdoc/>
+    public WindowLayout(ICatalogueRepository repository, DbDataReader r): base(repository, r)
+    {
+        Name = r["Name"].ToString();
+        LayoutData = r["LayoutData"].ToString();
+    }
 
-        }
-
-        /// <summary>
-        /// Record the new layout in the database
-        /// </summary>
-        /// <param name="repository"></param>
-        /// <param name="name">Human readable name for the layout</param>
-        /// <param name="layoutXml">The layout Xml of RDMPMainForm, use GetCurrentLayoutXml to get this, cannot be null</param>
-        public WindowLayout(ICatalogueRepository repository, string name, string layoutXml)
-        {
-            repository.InsertAndHydrate(this,new Dictionary<string, object>()
-            {
-                {"Name",name},
-                {"LayoutData",layoutXml}
-            });
-
-            if (ID == 0 || Repository != repository)
-                throw new ArgumentException("Repository failed to properly hydrate this class");
-        }
-
-        /// <inheritdoc/>
-        public WindowLayout(ICatalogueRepository repository, DbDataReader r): base(repository, r)
-        {
-            Name = r["Name"].ToString();
-            LayoutData = r["LayoutData"].ToString();
-        }
-
-        /// <inheritdoc/>
-        public override string ToString()
-        {
-            return Name;
-        }
+    /// <inheritdoc/>
+    public override string ToString()
+    {
+        return Name;
     }
 }

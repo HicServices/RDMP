@@ -10,106 +10,104 @@ using Rdmp.Core.Curation.Data.DataLoad;
 using Rdmp.Core.Curation.Data.Defaults;
 using Rdmp.Core.DataLoad.Engine.Checks.Checkers;
 using ReusableLibraryCode.Checks;
-using System;
 using System.Linq;
 using Tests.Common;
 
-namespace Rdmp.Core.Tests.Curation.Integration
+namespace Rdmp.Core.Tests.Curation.Integration;
+
+public class MetadataLoggingConfigurationChecksTests : UnitTests
 {
-    public class MetadataLoggingConfigurationChecksTests : UnitTests
+    [Test]
+    public void Test_NoLoggingTask()
     {
-        [Test]
-        public void Test_NoLoggingTask()
-        {
-            var lmd = WhenIHaveA<LoadMetadata>();
-            var cata1 = lmd.GetAllCatalogues().Single();
-            var cata2 = WhenIHaveA<Catalogue>();
-            cata2.LoadMetadata_ID = lmd.ID;
+        var lmd = WhenIHaveA<LoadMetadata>();
+        var cata1 = lmd.GetAllCatalogues().Single();
+        var cata2 = WhenIHaveA<Catalogue>();
+        cata2.LoadMetadata_ID = lmd.ID;
 
-            Assert.AreEqual(2,lmd.GetAllCatalogues().Count());
+        Assert.AreEqual(2,lmd.GetAllCatalogues().Count());
 
-            var checks = new MetadataLoggingConfigurationChecks(lmd);
-            var toMem = new ToMemoryCheckNotifier();
-            checks.Check(toMem);
+        var checks = new MetadataLoggingConfigurationChecks(lmd);
+        var toMem = new ToMemoryCheckNotifier();
+        checks.Check(toMem);
 
-            AssertFailWithFix("Catalogues Mycata,Mycata do not have a logging task specified","Create a new Logging Task called 'MyLoad'?",toMem);   
-        }
+        AssertFailWithFix("Catalogues Mycata,Mycata do not have a logging task specified","Create a new Logging Task called 'MyLoad'?",toMem);   
+    }
 
-        [Test]
-        public void Test_MismatchedLoggingTask()
-        {
-            var lmd = WhenIHaveA<LoadMetadata>();
-            var cata1 = lmd.GetAllCatalogues().Single();
-            var cata2 = WhenIHaveA<Catalogue>();
-            cata2.LoadMetadata_ID = lmd.ID;
+    [Test]
+    public void Test_MismatchedLoggingTask()
+    {
+        var lmd = WhenIHaveA<LoadMetadata>();
+        var cata1 = lmd.GetAllCatalogues().Single();
+        var cata2 = WhenIHaveA<Catalogue>();
+        cata2.LoadMetadata_ID = lmd.ID;
             
-            cata1.LoggingDataTask = "OMG YEAGH";
+        cata1.LoggingDataTask = "OMG YEAGH";
 
-            Assert.AreEqual(2,lmd.GetAllCatalogues().Count());
+        Assert.AreEqual(2,lmd.GetAllCatalogues().Count());
 
-            var checks = new MetadataLoggingConfigurationChecks(lmd);
-            var toMem = new ToMemoryCheckNotifier();
-            checks.Check(toMem);
+        var checks = new MetadataLoggingConfigurationChecks(lmd);
+        var toMem = new ToMemoryCheckNotifier();
+        checks.Check(toMem);
 
-            AssertFailWithFix("Some catalogues have NULL LoggingDataTasks","Set task to OMG YEAGH",toMem);   
-        }
+        AssertFailWithFix("Some catalogues have NULL LoggingDataTasks","Set task to OMG YEAGH",toMem);   
+    }
         
-        [Test]
-        public void Test_MissingLoggingServer()
-        {
-            var lmd = WhenIHaveA<LoadMetadata>();
-            var cata1 = lmd.GetAllCatalogues().Single();
-            var cata2 = WhenIHaveA<Catalogue>();
-            cata2.LoadMetadata_ID = lmd.ID;
+    [Test]
+    public void Test_MissingLoggingServer()
+    {
+        var lmd = WhenIHaveA<LoadMetadata>();
+        var cata1 = lmd.GetAllCatalogues().Single();
+        var cata2 = WhenIHaveA<Catalogue>();
+        cata2.LoadMetadata_ID = lmd.ID;
             
-            cata1.LoggingDataTask = "OMG YEAGH";
-            cata1.LiveLoggingServer_ID = 2;
-            cata2.LoggingDataTask = "OMG YEAGH";
-            cata2.LiveLoggingServer_ID = null;
+        cata1.LoggingDataTask = "OMG YEAGH";
+        cata1.LiveLoggingServer_ID = 2;
+        cata2.LoggingDataTask = "OMG YEAGH";
+        cata2.LiveLoggingServer_ID = null;
 
-            Assert.AreEqual(2,lmd.GetAllCatalogues().Count());
+        Assert.AreEqual(2,lmd.GetAllCatalogues().Count());
 
-            var checks = new MetadataLoggingConfigurationChecks(lmd);
-            var toMem = new ToMemoryCheckNotifier();
-            checks.Check(toMem);
+        var checks = new MetadataLoggingConfigurationChecks(lmd);
+        var toMem = new ToMemoryCheckNotifier();
+        checks.Check(toMem);
 
-            AssertFailWithFix("Some catalogues have NULL LiveLoggingServer_ID","Set LiveLoggingServer_ID to 2",toMem);   
-        }
-        [Test]
-        public void Test_MissingLoggingServer_UseDefault()
-        {
-            var lmd = WhenIHaveA<LoadMetadata>();
-            var cata1 = lmd.GetAllCatalogues().Single();
-            var cata2 = WhenIHaveA<Catalogue>();
+        AssertFailWithFix("Some catalogues have NULL LiveLoggingServer_ID","Set LiveLoggingServer_ID to 2",toMem);   
+    }
+    [Test]
+    public void Test_MissingLoggingServer_UseDefault()
+    {
+        var lmd = WhenIHaveA<LoadMetadata>();
+        var cata1 = lmd.GetAllCatalogues().Single();
+        var cata2 = WhenIHaveA<Catalogue>();
             
-            var eds = WhenIHaveA<ExternalDatabaseServer>();
-            eds.Name = "My Logging Server";
-            eds.SaveToDatabase();
+        var eds = WhenIHaveA<ExternalDatabaseServer>();
+        eds.Name = "My Logging Server";
+        eds.SaveToDatabase();
 
-            cata2.LoadMetadata_ID = lmd.ID;
+        cata2.LoadMetadata_ID = lmd.ID;
             
-            cata1.LoggingDataTask = "OMG YEAGH";
-            cata1.LiveLoggingServer_ID = null;
-            cata2.LoggingDataTask = "OMG YEAGH";
-            cata2.LiveLoggingServer_ID = null;
+        cata1.LoggingDataTask = "OMG YEAGH";
+        cata1.LiveLoggingServer_ID = null;
+        cata2.LoggingDataTask = "OMG YEAGH";
+        cata2.LiveLoggingServer_ID = null;
 
-            var defaults = RepositoryLocator.CatalogueRepository;
-            defaults.SetDefault(PermissableDefaults.LiveLoggingServer_ID,eds);
+        var defaults = RepositoryLocator.CatalogueRepository;
+        defaults.SetDefault(PermissableDefaults.LiveLoggingServer_ID,eds);
 
-            Assert.AreEqual(2,lmd.GetAllCatalogues().Count());
+        Assert.AreEqual(2,lmd.GetAllCatalogues().Count());
 
-            var checks = new MetadataLoggingConfigurationChecks(lmd);
-            var toMem = new ToMemoryCheckNotifier();
-            checks.Check(toMem);
+        var checks = new MetadataLoggingConfigurationChecks(lmd);
+        var toMem = new ToMemoryCheckNotifier();
+        checks.Check(toMem);
 
-            AssertFailWithFix("Some catalogues have NULL LiveLoggingServer_ID",$"Set LiveLoggingServer_ID to 'My Logging Server' (the default)",toMem);   
-        }
-        private void AssertFailWithFix(string expectedMessage, string expectedFix, ToMemoryCheckNotifier toMem)
-        {
-            var msg = toMem.Messages.Where(m => m.Result == CheckResult.Fail).First();
+        AssertFailWithFix("Some catalogues have NULL LiveLoggingServer_ID",$"Set LiveLoggingServer_ID to 'My Logging Server' (the default)",toMem);   
+    }
+    private void AssertFailWithFix(string expectedMessage, string expectedFix, ToMemoryCheckNotifier toMem)
+    {
+        var msg = toMem.Messages.Where(m => m.Result == CheckResult.Fail).First();
 
-            Assert.AreEqual(expectedMessage,msg.Message,"Expected error message was wrong");
-            Assert.AreEqual(expectedFix,msg.ProposedFix,"Expected proposed fix was wrong");
-        }
-    }   
+        Assert.AreEqual(expectedMessage,msg.Message,"Expected error message was wrong");
+        Assert.AreEqual(expectedFix,msg.ProposedFix,"Expected proposed fix was wrong");
+    }
 }

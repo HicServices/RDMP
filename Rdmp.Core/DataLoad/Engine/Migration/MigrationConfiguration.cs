@@ -14,60 +14,58 @@ using Rdmp.Core.Curation.Data;
 using Rdmp.Core.Curation.Data.EntityNaming;
 using ReusableLibraryCode.DataAccess;
 
-namespace Rdmp.Core.DataLoad.Engine.Migration
+namespace Rdmp.Core.DataLoad.Engine.Migration;
+
+/// <summary>
+/// Converts a list of TableInfos into MigrationColumnSets to achieve migration of records from STAGING to LIVE during a DLE execution.
+/// </summary>
+public class MigrationConfiguration
 {
-    /// <summary>
-    /// Converts a list of TableInfos into MigrationColumnSets to achieve migration of records from STAGING to LIVE during a DLE execution.
-    /// </summary>
-    public class MigrationConfiguration
+    private readonly DiscoveredDatabase _fromDatabaseInfo;
+    private readonly LoadBubble _fromBubble;
+    private readonly LoadBubble _toBubble;
+    private readonly INameDatabasesAndTablesDuringLoads _namer;
+
+    public MigrationConfiguration(DiscoveredDatabase fromDatabaseInfo, LoadBubble fromBubble, LoadBubble toBubble, INameDatabasesAndTablesDuringLoads namer)
     {
-        private readonly DiscoveredDatabase _fromDatabaseInfo;
-        private readonly LoadBubble _fromBubble;
-        private readonly LoadBubble _toBubble;
-        private readonly INameDatabasesAndTablesDuringLoads _namer;
-
-        public MigrationConfiguration(DiscoveredDatabase fromDatabaseInfo, LoadBubble fromBubble, LoadBubble toBubble, INameDatabasesAndTablesDuringLoads namer)
-        {
-            _fromDatabaseInfo = fromDatabaseInfo;
-            _fromBubble = fromBubble;
-            _toBubble = toBubble;
-            _namer = namer;
-        }
-
-        public IList<MigrationColumnSet> CreateMigrationColumnSetFromTableInfos(List<ITableInfo> tableInfos, List<ITableInfo> lookupTableInfos, IMigrationFieldProcessor migrationFieldProcessor)
-        {
-            //treat null values as empty
-            tableInfos = tableInfos ?? new List<ITableInfo>();
-            lookupTableInfos = lookupTableInfos ?? new List<ITableInfo>();
-
-            var columnSet = new List<MigrationColumnSet>();
-
-            foreach (var tableInfo in tableInfos.Union(lookupTableInfos))
-            {
-                var fromTableName = tableInfo.GetRuntimeName(_fromBubble, _namer);
-                var toTableName = tableInfo.GetRuntimeName(_toBubble, _namer);
-
-                DiscoveredTable fromTable = _fromDatabaseInfo.ExpectTable(fromTableName); //Staging doesn't have schema e.g. even if live schema is not dbo STAGING will be
-
-                DiscoveredTable toTable = DataAccessPortal.GetInstance()
-                    .ExpectDatabase(tableInfo, DataAccessContext.DataLoad)
-                    .ExpectTable(toTableName,tableInfo.Schema);
-
-                if(!fromTable.Exists())
-                    if(lookupTableInfos.Contains(tableInfo))//its a lookup table which doesn't exist in from (Staging) - nevermind
-                        continue;
-                    else
-                        throw new Exception("Table " + fromTableName + " was not found on on server " + _fromDatabaseInfo.Server + " (Database " + _fromDatabaseInfo + ")"); //its not a lookup table if it isn't in STAGING thats a problem!
-
-                columnSet.Add(new MigrationColumnSet(fromTable,toTable, migrationFieldProcessor));
-            }
-            
-            var sorter = new RelationshipTopologicalSort(columnSet.Select(c => c.DestinationTable));
-            columnSet = columnSet.OrderBy(s => ((ReadOnlyCollection<DiscoveredTable>)sorter.Order).IndexOf(s.DestinationTable)).ToList();
-
-            return columnSet;
-        }
+        _fromDatabaseInfo = fromDatabaseInfo;
+        _fromBubble = fromBubble;
+        _toBubble = toBubble;
+        _namer = namer;
     }
 
-    
+    public IList<MigrationColumnSet> CreateMigrationColumnSetFromTableInfos(List<ITableInfo> tableInfos, List<ITableInfo> lookupTableInfos, IMigrationFieldProcessor migrationFieldProcessor)
+    {
+        //treat null values as empty
+        tableInfos ??= new List<ITableInfo>();
+        lookupTableInfos ??= new List<ITableInfo>();
+
+        var columnSet = new List<MigrationColumnSet>();
+
+        foreach (var tableInfo in tableInfos.Union(lookupTableInfos))
+        {
+            var fromTableName = tableInfo.GetRuntimeName(_fromBubble, _namer);
+            var toTableName = tableInfo.GetRuntimeName(_toBubble, _namer);
+
+            var fromTable = _fromDatabaseInfo.ExpectTable(fromTableName); //Staging doesn't have schema e.g. even if live schema is not dbo STAGING will be
+
+            var toTable = DataAccessPortal.GetInstance()
+                .ExpectDatabase(tableInfo, DataAccessContext.DataLoad)
+                .ExpectTable(toTableName,tableInfo.Schema);
+
+            if(!fromTable.Exists())
+                if(lookupTableInfos.Contains(tableInfo))//its a lookup table which doesn't exist in from (Staging) - nevermind
+                    continue;
+                else
+                    throw new Exception(
+                        $"Table {fromTableName} was not found on on server {_fromDatabaseInfo.Server} (Database {_fromDatabaseInfo})"); //its not a lookup table if it isn't in STAGING thats a problem!
+
+            columnSet.Add(new MigrationColumnSet(fromTable,toTable, migrationFieldProcessor));
+        }
+            
+        var sorter = new RelationshipTopologicalSort(columnSet.Select(c => c.DestinationTable));
+        columnSet = columnSet.OrderBy(s => ((ReadOnlyCollection<DiscoveredTable>)sorter.Order).IndexOf(s.DestinationTable)).ToList();
+
+        return columnSet;
+    }
 }

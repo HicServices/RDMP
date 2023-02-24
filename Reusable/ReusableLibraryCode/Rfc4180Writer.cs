@@ -12,79 +12,66 @@ using System.Linq;
 using FAnsi.Discovery;
 using TypeGuesser;
 
-namespace ReusableLibraryCode
+namespace ReusableLibraryCode;
+
+public static class Rfc4180Writer
 {
-    public static class Rfc4180Writer
+    public static void WriteDataTable(DataTable sourceTable, TextWriter writer, bool includeHeaders, QuerySyntaxHelper escaper = null)
     {
-        public static void WriteDataTable(DataTable sourceTable, TextWriter writer, bool includeHeaders, QuerySyntaxHelper escaper = null)
+        if (includeHeaders)
         {
-            if (includeHeaders)
-            {
-                IEnumerable<string> headerValues = sourceTable.Columns
-                    .OfType<DataColumn>()
-                    .Select(column => QuoteValue(column.ColumnName));
+            var headerValues = sourceTable.Columns
+                .OfType<DataColumn>()
+                .Select(column => QuoteValue(column.ColumnName));
 
-                writer.WriteLine(String.Join(",", headerValues));
-            }
+            writer.WriteLine(string.Join(",", headerValues));
+        }
             
-            var typeDictionary = sourceTable.Columns.Cast<DataColumn>().ToDictionary(c => c, c => new Guesser());
-            foreach (var kvp in typeDictionary)
-                kvp.Value.AdjustToCompensateForValues(kvp.Key);
+        var typeDictionary = sourceTable.Columns.Cast<DataColumn>().ToDictionary(c => c, c => new Guesser());
+        foreach (var kvp in typeDictionary)
+            kvp.Value.AdjustToCompensateForValues(kvp.Key);
             
-            foreach (DataRow row in sourceTable.Rows)
-            {
-                var line = new List<string>();
+        foreach (DataRow row in sourceTable.Rows)
+        {
+            var line = new List<string>();
                 
-                foreach (DataColumn col in sourceTable.Columns)
-                    line.Add(QuoteValue(GetStringRepresentation(row[col], typeDictionary[col].Guess.CSharpType == typeof(DateTime), escaper)));
+            foreach (DataColumn col in sourceTable.Columns)
+                line.Add(QuoteValue(GetStringRepresentation(row[col], typeDictionary[col].Guess.CSharpType == typeof(DateTime), escaper)));
                 
-                writer.WriteLine(String.Join(",", line));
-            }
-
-            writer.Flush();
+            writer.WriteLine(string.Join(",", line));
         }
 
-        private static string GetStringRepresentation(object o, bool allowDates, QuerySyntaxHelper escaper = null)
+        writer.Flush();
+    }
+
+    private static string GetStringRepresentation(object o, bool allowDates, QuerySyntaxHelper escaper = null)
+    {
+        if (o == null || o == DBNull.Value)
+            return null;
+
+        if (o is string s && allowDates)
         {
-            if (o == null || o == DBNull.Value)
-                return null;
-
-            var s = o as string;
-            if (s != null && allowDates)
-            {
-                DateTime dt;
-                if (DateTime.TryParse(s, out dt))
-                    return GetStringRepresentation(dt);
-            }
-
-            if (o is DateTime)
-                return GetStringRepresentation((DateTime) o);
-
-            var str = o.ToString();
-
-            if (escaper != null)
-                str = escaper.Escape(str);
-            else
-                str = str.Replace("\"", "\"\"");
-
-            return str;
+            if (DateTime.TryParse(s, out var dt))
+                return GetStringRepresentation(dt);
         }
 
-        private static string GetStringRepresentation(DateTime dt)
-        {
-            if (dt.TimeOfDay == TimeSpan.Zero)
-                return dt.ToString("yyyy-MM-dd");
+        if (o is DateTime time)
+            return GetStringRepresentation(time);
 
-            return dt.ToString("yyyy-MM-dd HH:mm:ss.fff");
-        }
+        var str = o.ToString();
 
-        private static string QuoteValue(string value)
-        {
-            if (value == null)
-                return "NULL";
+        str = escaper != null ? escaper.Escape(str) : str.Replace("\"", "\"\"");
 
-            return String.Concat("\"", value, "\"");
+        return str;
+    }
 
-        }
+    private static string GetStringRepresentation(DateTime dt)
+    {
+        return dt.ToString(dt.TimeOfDay == TimeSpan.Zero ? "yyyy-MM-dd" : "yyyy-MM-dd HH:mm:ss.fff");
+    }
+
+    private static string QuoteValue(string value)
+    {
+        return value == null ? "NULL" : $"\"{value}\"";
     }
 }

@@ -8,41 +8,40 @@ using System.Data;
 using Rdmp.Core.Curation.Data;
 using ReusableLibraryCode.Checks;
 
-namespace Rdmp.Core.QueryBuilding.SyntaxChecking
+namespace Rdmp.Core.QueryBuilding.SyntaxChecking;
+
+/// <summary>
+/// Checks bracket parity of where SQL of IFilter and syntax validity of parameters which are char based 
+/// </summary>
+public class FilterSyntaxChecker : SyntaxChecker
 {
+    private readonly IFilter _filter;
+
     /// <summary>
-    /// Checks bracket parity of where SQL of IFilter and syntax validity of parameters which are char based 
+    /// Prepares the checker to check the IFilter supplied
     /// </summary>
-    public class FilterSyntaxChecker : SyntaxChecker
+    /// <param name="filter"></param>
+    public FilterSyntaxChecker(IFilter filter)
     {
-        private readonly IFilter _filter;
+        _filter = filter;
+    }
 
-        /// <summary>
-        /// Prepares the checker to check the IFilter supplied
-        /// </summary>
-        /// <param name="filter"></param>
-        public FilterSyntaxChecker(IFilter filter)
+    /// <summary>
+    /// Checks to see if the WhereSQL contains a closing bracket for every opening bracket (see ParityCheckCharacterPairs for more detail) and also checks the syntax validity of each parameter if it is char based (see CheckSyntax for more detail)
+    /// </summary>
+    /// <param name="notifier"></param>
+    public override void Check(ICheckNotifier notifier)
+    {
+        try
         {
-            _filter = filter;
+            ParityCheckCharacterPairs(new[] { '(', '[' }, new[] { ')', ']' }, _filter.WhereSQL);
+        }
+        catch (SyntaxErrorException exception)
+        {
+            throw new SyntaxErrorException($"Failed to validate the bracket parity of filter {_filter}", exception);
         }
 
-        /// <summary>
-        /// Checks to see if the WhereSQL contains a closing bracket for every opening bracket (see ParityCheckCharacterPairs for more detail) and also checks the syntax validity of each parameter if it is char based (see CheckSyntax for more detail)
-        /// </summary>
-        /// <param name="notifier"></param>
-        public override void Check(ICheckNotifier notifier)
-        {
-            try
-            {
-                ParityCheckCharacterPairs(new[] { '(', '[' }, new[] { ')', ']' }, _filter.WhereSQL);
-            }
-            catch (SyntaxErrorException exception)
-            {
-                throw new SyntaxErrorException("Failed to validate the bracket parity of filter " + _filter, exception);
-            }
-
-            foreach (ISqlParameter parameter in _filter.GetAllParameters())
-                CheckSyntax(parameter);
-        }
+        foreach (var parameter in _filter.GetAllParameters())
+            CheckSyntax(parameter);
     }
 }

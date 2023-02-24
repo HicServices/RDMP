@@ -7,51 +7,49 @@
 using System.Windows.Forms;
 using Rdmp.Core.CommandExecution.AtomicCommands;
 using Rdmp.Core.Curation.Data;
-using Rdmp.UI.CommandExecution.AtomicCommands;
 using Rdmp.UI.CommandExecution.AtomicCommands.UIFactory;
 using Rdmp.UI.ItemActivation;
 using Rdmp.UI.Refreshing;
 
-namespace Rdmp.UI.Menus.MenuItems
+namespace Rdmp.UI.Menus.MenuItems;
+
+[System.ComponentModel.DesignerCategory("")]
+public abstract class RDMPToolStripMenuItem : ToolStripMenuItem
 {
-    [System.ComponentModel.DesignerCategory("")]
-    public abstract class RDMPToolStripMenuItem : ToolStripMenuItem
+    protected AtomicCommandUIFactory AtomicCommandUIFactory;
+    protected IActivateItems _activator;
+
+    protected RDMPToolStripMenuItem(IActivateItems activator,string text):base(text)
     {
-        protected AtomicCommandUIFactory AtomicCommandUIFactory;
-        protected IActivateItems _activator;
-
-        protected RDMPToolStripMenuItem(IActivateItems activator,string text):base(text)
-        {
-            _activator = activator;
-            AtomicCommandUIFactory = new AtomicCommandUIFactory(activator);
-        }
+        _activator = activator;
+        AtomicCommandUIFactory = new AtomicCommandUIFactory(activator);
+    }
         
-        protected void Activate(DatabaseEntity o)
-        {
-            var cmd = new ExecuteCommandActivate(_activator, o);
-            cmd.Execute();
-        }
+    protected void Activate(DatabaseEntity o)
+    {
+        var cmd = new ExecuteCommandActivate(_activator, o);
+        cmd.Execute();
+    }
 
-        protected void Publish(DatabaseEntity o)
-        {
-            _activator.RefreshBus.Publish(this, new RefreshObjectEventArgs(o));
-        }
+    protected void Publish(DatabaseEntity o)
+    {
+        _activator.RefreshBus.Publish(this, new RefreshObjectEventArgs(o));
+    }
 
-        /// <summary>
-        /// Adds the given command to the drop down item list of this tool strip menu item
-        /// </summary>
-        /// <param name="cmd"></param>
-        /// <param name="shortcutKey"></param>
-        /// <returns></returns>
-        protected ToolStripMenuItem Add(IAtomicCommand cmd, Keys shortcutKey = Keys.None)
-        {
-            var mi = AtomicCommandUIFactory.CreateMenuItem(cmd);
+    /// <summary>
+    /// Adds the given command to the drop down item list of this tool strip menu item
+    /// </summary>
+    /// <param name="cmd"></param>
+    /// <param name="shortcutKey"></param>
+    /// <returns></returns>
+    protected ToolStripMenuItem Add(IAtomicCommand cmd, Keys shortcutKey = Keys.None)
+    {
+        var mi = AtomicCommandUIFactory.CreateMenuItem(cmd);
 
-            if (shortcutKey != Keys.None)
-                mi.ShortcutKeys = shortcutKey;
+        if (shortcutKey != Keys.None)
+            mi.ShortcutKeys = shortcutKey;
 
-            DropDownItems.Add(mi);
-            return mi;
-        }
+        DropDownItems.Add(mi);
+        return mi;
     }
 }

@@ -13,112 +13,112 @@ using Rdmp.Core.Repositories.Construction;
 using ReusableLibraryCode.Icons.IconProvision;
 using SixLabors.ImageSharp.PixelFormats;
 
-namespace Rdmp.Core.CommandExecution.AtomicCommands
-{
-    public class ExecuteCommandAssociateCatalogueWithLoadMetadata:BasicCommandExecution,IAtomicCommand
-    {
-        private readonly LoadMetadata _loadMetadata;
-        private readonly Catalogue[] _availableCatalogues;
-        private readonly ICatalogue[] _otherCatalogues;
-        private Catalogue[] _chosenCatalogues;
-        
-        [UseWithObjectConstructor]
-        public ExecuteCommandAssociateCatalogueWithLoadMetadata(IBasicActivateItems activator, LoadMetadata loadMetadata, Catalogue[] toAssociate) : this(activator,loadMetadata)
-        {
-            //if command is possible, select those that are available for association
-            if(!IsImpossible)
-            {
-                _chosenCatalogues = _availableCatalogues.Intersect(toAssociate).ToArray();
+namespace Rdmp.Core.CommandExecution.AtomicCommands;
 
-                if(_chosenCatalogues.Length == 0)
-                    SetImpossible($"None of the provided Catalogues are available for association with the LoadMetadata '{loadMetadata}'");
-            }
+public class ExecuteCommandAssociateCatalogueWithLoadMetadata:BasicCommandExecution,IAtomicCommand
+{
+    private readonly LoadMetadata _loadMetadata;
+    private readonly Catalogue[] _availableCatalogues;
+    private readonly ICatalogue[] _otherCatalogues;
+    private Catalogue[] _chosenCatalogues;
+        
+    [UseWithObjectConstructor]
+    public ExecuteCommandAssociateCatalogueWithLoadMetadata(IBasicActivateItems activator, LoadMetadata loadMetadata, Catalogue[] toAssociate) : this(activator,loadMetadata)
+    {
+        //if command is possible, select those that are available for association
+        if(!IsImpossible)
+        {
+            _chosenCatalogues = _availableCatalogues.Intersect(toAssociate).ToArray();
+
+            if(_chosenCatalogues.Length == 0)
+                SetImpossible($"None of the provided Catalogues are available for association with the LoadMetadata '{loadMetadata}'");
+        }
                 
 
             
-        }
-        public ExecuteCommandAssociateCatalogueWithLoadMetadata(IBasicActivateItems activator, LoadMetadata loadMetadata) : base(activator)
-        {
-            _loadMetadata = loadMetadata;
+    }
+    public ExecuteCommandAssociateCatalogueWithLoadMetadata(IBasicActivateItems activator, LoadMetadata loadMetadata) : base(activator)
+    {
+        _loadMetadata = loadMetadata;
 
-            _availableCatalogues = BasicActivator.CoreChildProvider.AllCatalogues.Where(c => c.LoadMetadata_ID == null).ToArray();
-            //Ensure logging task is correct
-            _otherCatalogues = _loadMetadata.GetAllCatalogues().ToArray();
+        _availableCatalogues = BasicActivator.CoreChildProvider.AllCatalogues.Where(c => c.LoadMetadata_ID == null).ToArray();
+        //Ensure logging task is correct
+        _otherCatalogues = _loadMetadata.GetAllCatalogues().ToArray();
             
-            if(!_availableCatalogues.Any())
-                SetImpossible("There are no Catalogues that are not associated with another Load already");
-        }
+        if(!_availableCatalogues.Any())
+            SetImpossible("There are no Catalogues that are not associated with another Load already");
+    }
 
-        public override string GetCommandHelp()
+    public override string GetCommandHelp()
+    {
+        return "Specifies that the table(s) underlying the dataset are loaded by the load configuration.  The union of all catalogue(s) table(s) will be used for RAW=>STAGING=>LIVE migration during DLE execution";
+    }
+
+    public override void Execute()
+    {
+        base.Execute();
+
+        if (_chosenCatalogues == null && !SelectMany(_availableCatalogues,out _chosenCatalogues))
+            return;
+
+        foreach (var cata in _chosenCatalogues)
         {
-            return "Specifies that the table(s) underlying the dataset are loaded by the load configuration.  The union of all catalogue(s) table(s) will be used for RAW=>STAGING=>LIVE migration during DLE execution";
-        }
-
-        public override void Execute()
-        {
-            base.Execute();
-
-            if (_chosenCatalogues == null && !SelectMany(_availableCatalogues,out _chosenCatalogues))
-                return;
-
-            foreach (Catalogue cata in _chosenCatalogues)
+            //if there are other catalogues
+            if (_otherCatalogues.Any())
             {
-                //if there are other catalogues
-                if (_otherCatalogues.Any())
+                var tasks = _otherCatalogues.Select(c => c.LoggingDataTask).Distinct().ToArray();
+                //if the other catalogues have an agreed logging task
+                if (tasks.Length == 1)
                 {
-                    var tasks = _otherCatalogues.Select(c => c.LoggingDataTask).Distinct().ToArray();
-                    //if the other catalogues have an agreed logging task
-                    if (tasks.Length == 1)
+                    var task = tasks.Single();
+
+                    //and that logging task is not blank!, and differs from this Catalogue
+                    if (!string.IsNullOrWhiteSpace(task) && !task.Equals(cata.LoggingDataTask))
                     {
-                        string task = tasks.Single();
+                        var liveServers = _otherCatalogues.Where(c => c.LiveLoggingServer_ID != null).Select(c => c.LiveLoggingServer_ID).Distinct().ToArray();
 
-                        //and that logging task is not blank!, and differs from this Catalogue
-                        if (!string.IsNullOrWhiteSpace(task) && !task.Equals(cata.LoggingDataTask))
+                        //AND if there is agreement on what logging server to use!
+                        if (liveServers.Length <= 1)
                         {
-                            var liveServers = _otherCatalogues.Where(c => c.LiveLoggingServer_ID != null).Select(c => c.LiveLoggingServer_ID).Distinct().ToArray();
-
-                            //AND if there is agreement on what logging server to use!
-                            if (liveServers.Count() <= 1)
-                            {
-                                //if there is no current logging task for the Catalogue
-                                if (string.IsNullOrWhiteSpace(cata.LoggingDataTask)
+                            //if there is no current logging task for the Catalogue
+                            if (string.IsNullOrWhiteSpace(cata.LoggingDataTask)
 
                                 //or if the user wants to switch to the new one
-                                || YesNo("Do you want to set Catalogue '" + cata.Name + "' to use shared logging task '" + task + "' instead of its current Logging Task '" + cata.LoggingDataTask + "' (All Catalogues in a load must share the same task and logging servers)?", "Synchronise Logging Tasks"))
-                                {
-                                    //switch Catalogue to use that logging task (including servers)
-                                    cata.LoggingDataTask = task;
-                                    cata.LiveLoggingServer_ID = liveServers.SingleOrDefault();
-                                }
+                                || YesNo(
+                                    $"Do you want to set Catalogue '{cata.Name}' to use shared logging task '{task}' instead of its current Logging Task '{cata.LoggingDataTask}' (All Catalogues in a load must share the same task and logging servers)?", "Synchronise Logging Tasks"))
+                            {
+                                //switch Catalogue to use that logging task (including servers)
+                                cata.LoggingDataTask = task;
+                                cata.LiveLoggingServer_ID = liveServers.SingleOrDefault();
                             }
                         }
                     }
-                    else if (tasks.Length == 0)
-                    {
-                        cata.LoggingDataTask = "Loading " + _loadMetadata.Name;
-                    }
                 }
-
-                //associate them
-                cata.LoadMetadata_ID = _loadMetadata.ID;
-                cata.SaveToDatabase();
+                else if (tasks.Length == 0)
+                {
+                    cata.LoggingDataTask = $"Loading {_loadMetadata.Name}";
+                }
             }
-            
-            Publish(_loadMetadata);
-        }
 
-        public override Image<Rgba32> GetImage(IIconProvider iconProvider)
-        {
-            return iconProvider.GetImage(RDMPConcept.Catalogue, OverlayKind.Add);
+            //associate them
+            cata.LoadMetadata_ID = _loadMetadata.ID;
+            cata.SaveToDatabase();
         }
-
-        public ICommandExecution SetTarget(Catalogue[] catalogues)
-        {
-            _chosenCatalogues = catalogues;
-            if(_otherCatalogues.Any(catalogues.Contains))
-                SetImpossible("Catalogue(s) are already part of the LoadMetadata");
             
-            return this;
-        }
+        Publish(_loadMetadata);
+    }
+
+    public override Image<Rgba32> GetImage(IIconProvider iconProvider)
+    {
+        return iconProvider.GetImage(RDMPConcept.Catalogue, OverlayKind.Add);
+    }
+
+    public ICommandExecution SetTarget(Catalogue[] catalogues)
+    {
+        _chosenCatalogues = catalogues;
+        if(_otherCatalogues.Any(catalogues.Contains))
+            SetImpossible("Catalogue(s) are already part of the LoadMetadata");
+            
+        return this;
     }
 }

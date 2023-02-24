@@ -11,112 +11,110 @@ using System.Windows.Forms;
 using Rdmp.Core;
 using Rdmp.Core.CommandExecution.AtomicCommands;
 using Rdmp.Core.Curation.Data;
-using Rdmp.UI.CommandExecution.AtomicCommands;
 using Rdmp.UI.ItemActivation;
 using Rdmp.UI.Rules;
 using Rdmp.UI.SimpleControls;
 using Rdmp.UI.TestsAndSetup.ServicePropogation;
 
 
-namespace Rdmp.UI.DataLoadUIs.LoadMetadataUIs.LoadProgressAndCacheUIs
+namespace Rdmp.UI.DataLoadUIs.LoadMetadataUIs.LoadProgressAndCacheUIs;
+
+/// <summary>
+/// Let's you configure the settings of a LoadProgress (see LoadProgress) including how many days to ideally load in each data load, what date has currently been loaded up to etc.
+/// 
+/// <para>Each LoadProgress can be tied to a Cache progress.  If you are using a LoadProgress without a cache then it is up to your load implementation to respect the time period being loaded 
+/// (e.g. when using RemoteTableAttacher you should make use of the @startDate and @endDate parameters are in your fetch query).  See CacheProgressUI for a description of caching and 
+/// permission windows.</para>
+/// </summary>
+public partial class LoadProgressUI : LoadProgressUI_Design, ISaveableUI
 {
-    /// <summary>
-    /// Let's you configure the settings of a LoadProgress (see LoadProgress) including how many days to ideally load in each data load, what date has currently been loaded up to etc.
-    /// 
-    /// <para>Each LoadProgress can be tied to a Cache progress.  If you are using a LoadProgress without a cache then it is up to your load implementation to respect the time period being loaded 
-    /// (e.g. when using RemoteTableAttacher you should make use of the @startDate and @endDate parameters are in your fetch query).  See CacheProgressUI for a description of caching and 
-    /// permission windows.</para>
-    /// </summary>
-    public partial class LoadProgressUI : LoadProgressUI_Design, ISaveableUI
+    private LoadProgress _loadProgress;
+        
+    public LoadProgressUI()
     {
-        private LoadProgress _loadProgress;
+        InitializeComponent();
+        loadProgressDiagram1.LoadProgressChanged += ReloadUIFromDatabase;
+        AssociatedCollection = RDMPCollection.DataLoad;
+    }
         
-        public LoadProgressUI()
-        {
-            InitializeComponent();
-            loadProgressDiagram1.LoadProgressChanged += ReloadUIFromDatabase;
-            AssociatedCollection = RDMPCollection.DataLoad;
-        }
-        
-        private void ReloadUIFromDatabase()
-        {
-            loadProgressDiagram1.SetLoadProgress(_loadProgress, Activator);
-            loadProgressDiagram1.Visible = true;
+    private void ReloadUIFromDatabase()
+    {
+        loadProgressDiagram1.SetLoadProgress(_loadProgress, Activator);
+        loadProgressDiagram1.Visible = true;
 
-            tbDataLoadProgress.ReadOnly = true;
+        tbDataLoadProgress.ReadOnly = true;
                 
-            if(_loadProgress.OriginDate != null)
-                tbOriginDate.Text = _loadProgress.OriginDate.ToString();
+        if(_loadProgress.OriginDate != null)
+            tbOriginDate.Text = _loadProgress.OriginDate.ToString();
                 
-            tbDataLoadProgress.Text = _loadProgress.DataLoadProgress != null ? _loadProgress.DataLoadProgress.ToString() : "";
-        }
+        tbDataLoadProgress.Text = _loadProgress.DataLoadProgress != null ? _loadProgress.DataLoadProgress.ToString() : "";
+    }
 
-        private void btnEditLoadProgress_Click(object sender, EventArgs e)
+    private void btnEditLoadProgress_Click(object sender, EventArgs e)
+    {
+        tbDataLoadProgress.ReadOnly = false;
+    }
+
+    private void tbDataLoadProgress_TextChanged(object sender, EventArgs e)
+    {
+        try
         {
-            tbDataLoadProgress.ReadOnly = false;
+            if (string.IsNullOrWhiteSpace(tbDataLoadProgress.Text))
+                _loadProgress.DataLoadProgress = null;
+            else
+                _loadProgress.DataLoadProgress = DateTime.Parse(tbDataLoadProgress.Text);
+
+            tbDataLoadProgress.ForeColor = Color.Black;
         }
-
-        private void tbDataLoadProgress_TextChanged(object sender, EventArgs e)
+        catch (Exception)
         {
-            try
-            {
-                if (string.IsNullOrWhiteSpace(tbDataLoadProgress.Text))
-                    _loadProgress.DataLoadProgress = null;
-                else
-                    _loadProgress.DataLoadProgress = DateTime.Parse(tbDataLoadProgress.Text);
-
-                tbDataLoadProgress.ForeColor = Color.Black;
-            }
-            catch (Exception)
-            {
-                tbDataLoadProgress.ForeColor = Color.Red;
-            }
+            tbDataLoadProgress.ForeColor = Color.Red;
         }
+    }
 
-        private void tbOriginDate_TextChanged(object sender, EventArgs e)
+    private void tbOriginDate_TextChanged(object sender, EventArgs e)
+    {
+        try
         {
-            try
-            {
-                if (string.IsNullOrEmpty(tbOriginDate.Text))
-                    _loadProgress.OriginDate = null;
-                else
-                    _loadProgress.OriginDate = DateTime.Parse(tbOriginDate.Text);
+            if (string.IsNullOrEmpty(tbOriginDate.Text))
+                _loadProgress.OriginDate = null;
+            else
+                _loadProgress.OriginDate = DateTime.Parse(tbOriginDate.Text);
 
-                tbOriginDate.ForeColor = Color.Black;
-            }
-            catch (Exception)
-            {
-                tbOriginDate.ForeColor = Color.Red;
-            }
+            tbOriginDate.ForeColor = Color.Black;
         }
-
-        public override void SetDatabaseObject(IActivateItems activator, LoadProgress databaseObject)
+        catch (Exception)
         {
-            base.SetDatabaseObject(activator, databaseObject);
-            _loadProgress = databaseObject;
+            tbOriginDate.ForeColor = Color.Red;
+        }
+    }
+
+    public override void SetDatabaseObject(IActivateItems activator, LoadProgress databaseObject)
+    {
+        base.SetDatabaseObject(activator, databaseObject);
+        _loadProgress = databaseObject;
             
-            loadProgressDiagram1.SetItemActivator(activator);
+        loadProgressDiagram1.SetItemActivator(activator);
 
-            ReloadUIFromDatabase();
+        ReloadUIFromDatabase();
 
-            CommonFunctionality.AddHelp(nDefaultNumberOfDaysToLoadEachTime, "ILoadProgress.DefaultNumberOfDaysToLoadEachTime");
+        CommonFunctionality.AddHelp(nDefaultNumberOfDaysToLoadEachTime, "ILoadProgress.DefaultNumberOfDaysToLoadEachTime");
 
-            CommonFunctionality.AddToMenu(new ExecuteCommandActivate(activator, databaseObject.LoadMetadata), "Execute Load");
-        }
-
-
-        protected override void SetBindings(BinderWithErrorProviderFactory rules, LoadProgress databaseObject)
-        {
-            base.SetBindings(rules, databaseObject);
-
-            Bind(tbID,"Text","ID",l=>l.ID);
-            Bind(tbName, "Text", "Name", l => l.Name);
-            Bind(nDefaultNumberOfDaysToLoadEachTime, "Value", "DefaultNumberOfDaysToLoadEachTime", l => l.DefaultNumberOfDaysToLoadEachTime);
-        }
+        CommonFunctionality.AddToMenu(new ExecuteCommandActivate(activator, databaseObject.LoadMetadata), "Execute Load");
     }
 
-    [TypeDescriptionProvider(typeof(AbstractControlDescriptionProvider<LoadProgressUI_Design, UserControl>))]
-    public abstract class LoadProgressUI_Design:RDMPSingleDatabaseObjectControl<LoadProgress>
+
+    protected override void SetBindings(BinderWithErrorProviderFactory rules, LoadProgress databaseObject)
     {
+        base.SetBindings(rules, databaseObject);
+
+        Bind(tbID,"Text","ID",l=>l.ID);
+        Bind(tbName, "Text", "Name", l => l.Name);
+        Bind(nDefaultNumberOfDaysToLoadEachTime, "Value", "DefaultNumberOfDaysToLoadEachTime", l => l.DefaultNumberOfDaysToLoadEachTime);
     }
+}
+
+[TypeDescriptionProvider(typeof(AbstractControlDescriptionProvider<LoadProgressUI_Design, UserControl>))]
+public abstract class LoadProgressUI_Design:RDMPSingleDatabaseObjectControl<LoadProgress>
+{
 }

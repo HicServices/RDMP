@@ -7,70 +7,64 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using MapsDirectlyToDatabaseTable;
 using Rdmp.Core;
-using Rdmp.Core.CommandExecution;
 using Rdmp.Core.Curation.Data.Dashboarding;
 using Rdmp.UI;
 using Rdmp.UI.Collections;
-using Rdmp.UI.ItemActivation;
-using ReusableLibraryCode.Checks;
-
 using WeifenLuo.WinFormsUI.Docking;
 
-namespace ResearchDataManagementPlatform.WindowManagement.ContentWindowTracking.Persistence
+namespace ResearchDataManagementPlatform.WindowManagement.ContentWindowTracking.Persistence;
+
+/// <summary>
+/// A Document Tab that hosts an RDMPCollection, the control knows how to save itself to the persistence settings file for the user ensuring that when they next open the
+/// software the Tab can be reloaded and displayed.  Persistance involves storing this Tab type, the Collection Control type being hosted by the Tab (an RDMPCollection).
+/// Since there can only ever be one RDMPCollection of any Type active at a time this is all that must be stored to persist the control
+/// </summary>
+[TechnicalUI]
+[System.ComponentModel.DesignerCategory("")]
+public class PersistableToolboxDockContent:DockContent
 {
-    /// <summary>
-    /// A Document Tab that hosts an RDMPCollection, the control knows how to save itself to the persistence settings file for the user ensuring that when they next open the
-    /// software the Tab can be reloaded and displayed.  Persistance involves storing this Tab type, the Collection Control type being hosted by the Tab (an RDMPCollection).
-    /// Since there can only ever be one RDMPCollection of any Type active at a time this is all that must be stored to persist the control
-    /// </summary>
-    [TechnicalUI]
-    [System.ComponentModel.DesignerCategory("")]
-    public class PersistableToolboxDockContent:DockContent
+    public const string Prefix = "Toolbox";
+
+    public readonly RDMPCollection CollectionType;
+
+    private PersistStringHelper persistStringHelper = new();
+
+    public PersistableToolboxDockContent(RDMPCollection collectionType)
     {
-        public const string Prefix = "Toolbox";
-
-        public readonly RDMPCollection CollectionType;
-
-        PersistStringHelper persistStringHelper = new PersistStringHelper();
-
-        public PersistableToolboxDockContent(RDMPCollection collectionType)
-        {
-            CollectionType = collectionType;
-        }
-        protected override string GetPersistString()
-        {
+        CollectionType = collectionType;
+    }
+    protected override string GetPersistString()
+    {
 
             
 
-            var args = new Dictionary<string, string>();
-            args.Add("Toolbox", CollectionType.ToString());
+        var args = new Dictionary<string, string>();
+        args.Add("Toolbox", CollectionType.ToString());
 
          
-            return Prefix + PersistStringHelper.Separator + persistStringHelper.SaveDictionaryToString(args);
-        }
-        public RDMPCollectionUI GetCollection()
+        return Prefix + PersistStringHelper.Separator + persistStringHelper.SaveDictionaryToString(args);
+    }
+    public RDMPCollectionUI GetCollection()
+    {
+        return Controls.OfType<RDMPCollectionUI>().SingleOrDefault();
+    }
+
+    public static RDMPCollection? GetToolboxFromPersistString(string persistString)
+    {
+        var helper = new PersistStringHelper();
+        var s = persistString[(Prefix.Length + 1)..];
+
+        var args = helper.LoadDictionaryFromString(s);
+
+        RDMPCollection collection;
+
+        if (args.ContainsKey("Toolbox"))
         {
-            return Controls.OfType<RDMPCollectionUI>().SingleOrDefault();
+            Enum.TryParse(args["Toolbox"], true, out collection);
+            return collection;
         }
 
-        public static RDMPCollection? GetToolboxFromPersistString(string persistString)
-        {
-            var helper = new PersistStringHelper();
-            var s = persistString.Substring(PersistableToolboxDockContent.Prefix.Length + 1);
-
-            var args = helper.LoadDictionaryFromString(s);
-
-            RDMPCollection collection;
-
-            if (args.ContainsKey("Toolbox"))
-            {
-                Enum.TryParse(args["Toolbox"], true, out collection);
-                return collection;
-            }
-
-            return null;
-        }
+        return null;
     }
 }

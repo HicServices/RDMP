@@ -4,61 +4,58 @@
 // RDMP is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License for more details.
 // You should have received a copy of the GNU General Public License along with RDMP. If not, see <https://www.gnu.org/licenses/>.
 
-using System;
-using System.Collections.Generic;
 using System.Text;
 using MapsDirectlyToDatabaseTable;
 using Rdmp.Core.Curation.Data;
 using Rdmp.Core.Repositories.Construction;
 
-namespace Rdmp.Core.CommandExecution.AtomicCommands
+namespace Rdmp.Core.CommandExecution.AtomicCommands;
+
+/// <summary>
+/// Lists all the objects in RDMP that match search term.
+/// </summary>
+[Alias("ls")]
+public class ExecuteCommandList : BasicCommandExecution
 {
-    /// <summary>
-    /// Lists all the objects in RDMP that match search term.
-    /// </summary>
-    [Alias("ls")]
-    public class ExecuteCommandList : BasicCommandExecution
+    private IMapsDirectlyToDatabaseTable[] _toList;
+
+    [UseWithObjectConstructor]
+    public ExecuteCommandList(IBasicActivateItems activator,
+        [DemandsInitialization("The objects you want listed e.g. Catalogue:*bob* or a type e.g. TableInfo or blank to list everything")]
+        IMapsDirectlyToDatabaseTable[] toList = null):base(activator)
     {
-        private IMapsDirectlyToDatabaseTable[] _toList;
+        _toList = toList;
+    }
 
-        [UseWithObjectConstructor]
-        public ExecuteCommandList(IBasicActivateItems activator,
-            [DemandsInitialization("The objects you want listed e.g. Catalogue:*bob* or a type e.g. TableInfo or blank to list everything")]
-            IMapsDirectlyToDatabaseTable[] toList = null):base(activator)
+    public override void Execute()
+    {
+        base.Execute();
+
+        if(_toList == null)
         {
-            _toList = toList;
+            ListEveryone();
+            return;
         }
 
-        public override void Execute()
-        {
-            base.Execute();
+        var sb = new StringBuilder();
+        foreach (var m in _toList)
+            sb.AppendLine($"{m.ID}:{m}");
 
-            if(_toList == null)
-            {
-                ListEveryone();
-                return;
-            }
+        BasicActivator.Show(sb.ToString());
+    }
 
-            StringBuilder sb = new StringBuilder();
-            foreach (var m in _toList)
-                sb.AppendLine(m.ID + ":" + m);
-
-            BasicActivator.Show(sb.ToString());
-        }
-
-        private void ListEveryone()
-        {
-            StringBuilder sb = new StringBuilder();
+    private void ListEveryone()
+    {
+        var sb = new StringBuilder();
             
-            foreach(var repo in BasicActivator.RepositoryLocator.GetAllRepositories())
+        foreach(var repo in BasicActivator.RepositoryLocator.GetAllRepositories())
+        {
+            foreach(var o in repo.GetAllObjectsInDatabase())
             {
-                foreach(var o in repo.GetAllObjectsInDatabase())
-                {
-                    sb.AppendLine($"{o.GetType().Name}:{o.ID}:{o}");
-                }
+                sb.AppendLine($"{o.GetType().Name}:{o.ID}:{o}");
             }
-
-            BasicActivator.Show(sb.ToString());
         }
+
+        BasicActivator.Show(sb.ToString());
     }
 }

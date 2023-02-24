@@ -4,43 +4,37 @@
 // RDMP is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License for more details.
 // You should have received a copy of the GNU General Public License along with RDMP. If not, see <https://www.gnu.org/licenses/>.
 
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using Rdmp.Core.CommandExecution;
 using Rdmp.Core.Providers.Nodes;
 using Rdmp.UI.ItemActivation;
 
-namespace Rdmp.UI.CommandExecution.Proposals
+namespace Rdmp.UI.CommandExecution.Proposals;
+
+internal class ProposeExecutionWhenTargetIsExtractionArbitraryFolderNode : RDMPCommandExecutionProposal<ExtractionArbitraryFolderNode>
 {
-    class ProposeExecutionWhenTargetIsExtractionArbitraryFolderNode : RDMPCommandExecutionProposal<ExtractionArbitraryFolderNode>
+    public ProposeExecutionWhenTargetIsExtractionArbitraryFolderNode(IActivateItems activator):base(activator)
     {
-        public ProposeExecutionWhenTargetIsExtractionArbitraryFolderNode(IActivateItems activator):base(activator)
-        {
 
-        }
-        public override void Activate(ExtractionArbitraryFolderNode target)
+    }
+    public override void Activate(ExtractionArbitraryFolderNode target)
+    {
+    }
+
+    public override bool CanActivate(ExtractionArbitraryFolderNode target)
+    {
+        return false;
+    }
+
+    public override ICommandExecution ProposeExecution(ICombineToMakeCommand cmd, ExtractionArbitraryFolderNode target, InsertOption insertOption = InsertOption.Default)
+    {
+        if (target.Configuration == null)
         {
+            return null;
         }
 
-        public override bool CanActivate(ExtractionArbitraryFolderNode target)
-        {
-            return false;
-        }
-
-        public override ICommandExecution ProposeExecution(ICombineToMakeCommand cmd, ExtractionArbitraryFolderNode target, InsertOption insertOption = InsertOption.Default)
-        {
-            if (target.Configuration == null)
-            {
-                return null;
-            }
-
-            // for drag and drop onto this node the options are whatever they would be for dropping
-            // onto the ExtractionConfiguration itself
-            var config = new ProposeExecutionWhenTargetIsExtractionConfiguration(ItemActivator);
-            return config.ProposeExecution(cmd, target.Configuration, insertOption);
-        }
+        // for drag and drop onto this node the options are whatever they would be for dropping
+        // onto the ExtractionConfiguration itself
+        var config = new ProposeExecutionWhenTargetIsExtractionConfiguration(ItemActivator);
+        return config.ProposeExecution(cmd, target.Configuration, insertOption);
     }
 }

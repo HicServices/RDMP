@@ -10,59 +10,58 @@ using Rdmp.Core.Repositories.Construction;
 using System.IO;
 using System.Text.RegularExpressions;
 
-namespace Rdmp.Core.CommandExecution.AtomicCommands
+namespace Rdmp.Core.CommandExecution.AtomicCommands;
+
+/// <summary>
+/// Runs the SQL in <see cref="SupportingSQLTable"/> and displays output (if a single table is returned)
+/// </summary>
+public class ExecuteCommandRunSupportingSql : ExecuteCommandViewDataBase
 {
-    /// <summary>
-    /// Runs the SQL in <see cref="SupportingSQLTable"/> and displays output (if a single table is returned)
-    /// </summary>
-    public class ExecuteCommandRunSupportingSql : ExecuteCommandViewDataBase
+    [UseWithObjectConstructor]
+    public ExecuteCommandRunSupportingSql(IBasicActivateItems activator,
+        [DemandsInitialization("RDMP object storing the sql to run and where to run it (including credentials if any)")]
+        SupportingSQLTable supportingSQLTable,
+        [DemandsInitialization(ToFileDescription)]
+        FileInfo toFile = null)
+        : base(activator, toFile)
     {
-        [UseWithObjectConstructor]
-        public ExecuteCommandRunSupportingSql(IBasicActivateItems activator,
-            [DemandsInitialization("RDMP object storing the sql to run and where to run it (including credentials if any)")]
-            SupportingSQLTable supportingSQLTable,
-            [DemandsInitialization(ToFileDescription)]
-            FileInfo toFile = null)
-            : base(activator, toFile)
+        SupportingSQLTable = supportingSQLTable;
+
+        if (SupportingSQLTable.ExternalDatabaseServer_ID == null)
         {
-            SupportingSQLTable = supportingSQLTable;
-
-            if (SupportingSQLTable.ExternalDatabaseServer_ID == null)
-            {
-                SetImpossible("No server is configured on SupportingSQLTable");
-                return;
-            }
-
-            if (string.IsNullOrWhiteSpace(SupportingSQLTable.SQL))
-            {
-                SetImpossible($"No SQL is defined for {SupportingSQLTable}");
-                return;
-            }
+            SetImpossible("No server is configured on SupportingSQLTable");
+            return;
         }
 
-        public SupportingSQLTable SupportingSQLTable { get; }
-
-        protected override IViewSQLAndResultsCollection GetCollection()
+        if (string.IsNullOrWhiteSpace(SupportingSQLTable.SQL))
         {
-            var collection = new ViewSupportingSqlCollection(SupportingSQLTable);
+            SetImpossible($"No SQL is defined for {SupportingSQLTable}");
+            return;
+        }
+    }
 
-            // windows GUI client needs to confirm dangerous queries (don't want missclicks to do bad things)
-            if (!string.IsNullOrWhiteSpace(SupportingSQLTable.SQL) &&
-                BasicActivator.IsWinForms)
+    public SupportingSQLTable SupportingSQLTable { get; }
+
+    protected override IViewSQLAndResultsCollection GetCollection()
+    {
+        var collection = new ViewSupportingSqlCollection(SupportingSQLTable);
+
+        // windows GUI client needs to confirm dangerous queries (don't want missclicks to do bad things)
+        if (!string.IsNullOrWhiteSpace(SupportingSQLTable.SQL) &&
+            BasicActivator.IsWinForms)
+        {
+
+            // does the query look dangerous, if so give them a choice to back out
+            var requireConfirm = Regex.IsMatch(SupportingSQLTable.SQL, @"\b(update|delete|drop|truncate)\b", RegexOptions.IgnoreCase);
+
+            if (requireConfirm)
             {
-
-                // does the query look dangerous, if so give them a choice to back out
-                bool requireConfirm = Regex.IsMatch(SupportingSQLTable.SQL, @"\b(update|delete|drop|truncate)\b", RegexOptions.IgnoreCase);
-
-                if (requireConfirm)
+                if (!BasicActivator.YesNo("Running this SQL may make changes to your database, really run?", "Run SQL"))
                 {
-                    if (!BasicActivator.YesNo("Running this SQL may make changes to your database, really run?", "Run SQL"))
-                    {
-                        return null;
-                    }
+                    return null;
                 }
             }
-            return collection;
         }
+        return collection;
     }
 }

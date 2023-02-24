@@ -10,46 +10,45 @@ using BadMedicine;
 using BadMedicine.Datasets;
 using NUnit.Framework;
 
-namespace Rdmp.Core.Tests.Curation.Unit.ExerciseData
+namespace Rdmp.Core.Tests.Curation.Unit.ExerciseData;
+
+[Category("Unit")]
+public class TestDemographyCreation
 {
-    [Category("Unit")]
-    public class TestDemographyCreation
+    [Test]
+    [TestCase(1000)]
+    [TestCase(321)]
+    [TestCase(100000)]
+    public void CreateCSV(int numberOfRecords)
     {
-        [Test]
-        [TestCase(1000)]
-        [TestCase(321)]
-        [TestCase(100000)]
-        public void CreateCSV(int numberOfRecords)
+        var r = new Random(500);
+
+        var people = new PersonCollection();
+        people.GeneratePeople(100,r);
+
+        var f =new FileInfo(Path.Combine(TestContext.CurrentContext.TestDirectory,"DeleteMeTestPeople.csv"));
+            
+        var finished = false;
+        var finishedWithRecords = -1;
+            
+            
+        var demog = new Demography(r);
+        demog.RowsGenerated += (s, e) =>
         {
-            var r = new Random(500);
+            finished = e.IsFinished;
+            finishedWithRecords = e.RowsWritten;
+        };
 
-            PersonCollection people = new PersonCollection();
-            people.GeneratePeople(100,r);
+        demog.GenerateTestDataFile(people, f, numberOfRecords);
 
-            var f =new FileInfo(Path.Combine(TestContext.CurrentContext.TestDirectory,"DeleteMeTestPeople.csv"));
-            
-            bool finished = false;
-            int finishedWithRecords = -1;
-            
-            
-            Demography demog = new Demography(r);
-            demog.RowsGenerated += (s, e) =>
-            {
-                finished = e.IsFinished;
-                finishedWithRecords = e.RowsWritten;
-            };
+        //one progress task only, should have reported craeting 10,000 rows
+        //one progress task only, should have reported creating the correct number of rows
+        Assert.IsTrue(finished);
+        Assert.AreEqual(numberOfRecords, finishedWithRecords);
 
-            demog.GenerateTestDataFile(people, f, numberOfRecords);
+        Assert.GreaterOrEqual(File.ReadAllLines(f.FullName).Length, numberOfRecords);//can be newlines in middle of file
 
-            //one progress task only, should have reported craeting 10,000 rows
-            //one progress task only, should have reported creating the correct number of rows
-            Assert.IsTrue(finished);
-            Assert.AreEqual(numberOfRecords, finishedWithRecords);
-
-            Assert.GreaterOrEqual(File.ReadAllLines(f.FullName).Length, numberOfRecords);//can be newlines in middle of file
-
-            f.Delete();
-        }
-
+        f.Delete();
     }
+
 }

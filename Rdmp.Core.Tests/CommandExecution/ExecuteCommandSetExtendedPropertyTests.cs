@@ -10,63 +10,62 @@ using Rdmp.Core.Curation.Data;
 using Rdmp.Core.Curation.Data.Aggregation;
 using System.Linq;
 
-namespace Rdmp.Core.Tests.CommandExecution
+namespace Rdmp.Core.Tests.CommandExecution;
+
+internal class ExecuteCommandSetExtendedPropertyTests : CommandCliTests
 {
-    class ExecuteCommandSetExtendedPropertyTests : CommandCliTests
+    [Test]
+    public void CommandImpossible_BecausePropertyDoesNotExist()
     {
-        [Test]
-        public void CommandImpossible_BecausePropertyDoesNotExist()
+        var c1 = WhenIHaveA<Catalogue>();
+
+        var cmd = new ExecuteCommandSetExtendedProperty(GetMockActivator().Object, new[] { c1 },"blarg","fff");
+
+        Assert.IsTrue(cmd.IsImpossible);
+        StringAssert.StartsWith("blarg is not a known property.  Known properties are:", cmd.ReasonCommandImpossible);
+    }
+    [Test]
+    public void SetIsTemplate_OnMultipleObjects()
+    {
+        var ac1 = WhenIHaveA<AggregateConfiguration>();
+        var ac2 = WhenIHaveA<AggregateConfiguration>();
+
+
+        Assert.IsEmpty(
+            Repository.CatalogueRepository.GetExtendedProperties(ac1));
+        Assert.IsEmpty(
+            Repository.CatalogueRepository.GetExtendedProperties(ac2));
+
+        var cmd = new ExecuteCommandSetExtendedProperty(GetMockActivator().Object, new[] { ac1,ac2 },
+            ExtendedProperty.IsTemplate,"true");
+
+        Assert.IsFalse(cmd.IsImpossible,cmd.ReasonCommandImpossible);
+
+        cmd.Execute();
+
+        var declaration1 = Repository.CatalogueRepository.GetExtendedProperties(ac1).Single();
+        var declaration2 = Repository.CatalogueRepository.GetExtendedProperties(ac2).Single();
+
+        foreach(var dec in new[] { declaration1,declaration2})
         {
-            var c1 = WhenIHaveA<Catalogue>();
-
-            var cmd = new ExecuteCommandSetExtendedProperty(GetMockActivator().Object, new[] { c1 },"blarg","fff");
-
-            Assert.IsTrue(cmd.IsImpossible);
-            StringAssert.StartsWith("blarg is not a known property.  Known properties are:", cmd.ReasonCommandImpossible);
+            Assert.AreEqual("IsTemplate", dec.Name);
+            Assert.AreEqual("true", dec.Value);
         }
-        [Test]
-        public void SetIsTemplate_OnMultipleObjects()
-        {
-            var ac1 = WhenIHaveA<AggregateConfiguration>();
-            var ac2 = WhenIHaveA<AggregateConfiguration>();
 
+        // now clear that status
 
-            Assert.IsEmpty(
-                Repository.CatalogueRepository.GetExtendedProperties(ac1));
-            Assert.IsEmpty(
-                Repository.CatalogueRepository.GetExtendedProperties(ac2));
+        cmd = new ExecuteCommandSetExtendedProperty(GetMockActivator().Object, new[] { ac1, ac2 },
+            ExtendedProperty.IsTemplate, null);
 
-            var cmd = new ExecuteCommandSetExtendedProperty(GetMockActivator().Object, new[] { ac1,ac2 },
-                ExtendedProperty.IsTemplate,"true");
+        Assert.IsFalse(cmd.IsImpossible, cmd.ReasonCommandImpossible);
 
-            Assert.IsFalse(cmd.IsImpossible,cmd.ReasonCommandImpossible);
+        cmd.Execute();
 
-            cmd.Execute();
+        // should now be back where we started
+        Assert.IsEmpty(
+            Repository.CatalogueRepository.GetExtendedProperties(ac1));
+        Assert.IsEmpty(
+            Repository.CatalogueRepository.GetExtendedProperties(ac2));
 
-            var declaration1 = Repository.CatalogueRepository.GetExtendedProperties(ac1).Single();
-            var declaration2 = Repository.CatalogueRepository.GetExtendedProperties(ac2).Single();
-
-            foreach(var dec in new[] { declaration1,declaration2})
-            {
-                Assert.AreEqual("IsTemplate", dec.Name);
-                Assert.AreEqual("true", dec.Value);
-            }
-
-            // now clear that status
-
-            cmd = new ExecuteCommandSetExtendedProperty(GetMockActivator().Object, new[] { ac1, ac2 },
-                ExtendedProperty.IsTemplate, null);
-
-            Assert.IsFalse(cmd.IsImpossible, cmd.ReasonCommandImpossible);
-
-            cmd.Execute();
-
-            // should now be back where we started
-            Assert.IsEmpty(
-                Repository.CatalogueRepository.GetExtendedProperties(ac1));
-            Assert.IsEmpty(
-                Repository.CatalogueRepository.GetExtendedProperties(ac2));
-
-        }
     }
 }

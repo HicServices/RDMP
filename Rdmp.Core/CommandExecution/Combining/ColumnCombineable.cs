@@ -7,32 +7,31 @@
 using Rdmp.Core.Curation.Data;
 using Rdmp.Core.QueryBuilding;
 
-namespace Rdmp.Core.CommandExecution.Combining
+namespace Rdmp.Core.CommandExecution.Combining;
+
+/// <summary>
+/// <see cref="ICombineToMakeCommand"/> for an object of type <see cref="IColumn"/>
+/// </summary>
+public class ColumnCombineable : ICombineToMakeCommand
 {
     /// <summary>
-    /// <see cref="ICombineToMakeCommand"/> for an object of type <see cref="IColumn"/>
+    /// The column for combining (e.g. an <see cref="ExtractionInformation"/>)
     /// </summary>
-    public class ColumnCombineable : ICombineToMakeCommand
+    public readonly IColumn Column;
+
+    /// <summary>
+    /// Creates a new instance indicating that the <paramref name="column"/> has been selected for combining (e.g.
+    /// by starting a drag and drop operation).
+    /// </summary>
+    /// <param name="column"></param>
+    public ColumnCombineable(IColumn column)
     {
-        /// <summary>
-        /// The column for combining (e.g. an <see cref="ExtractionInformation"/>)
-        /// </summary>
-        public readonly IColumn Column;
+        Column = column;
+    }
 
-        /// <summary>
-        /// Creates a new instance indicating that the <paramref name="column"/> has been selected for combining (e.g.
-        /// by starting a drag and drop operation).
-        /// </summary>
-        /// <param name="column"></param>
-        public ColumnCombineable(IColumn column)
-        {
-            Column = column;
-        }
-
-        /// <inheritdoc/>
-        public string GetSqlString()
-        {
-            return Column.SelectSQL;
-        }
+    /// <inheritdoc/>
+    public string GetSqlString()
+    {
+        return Column.SelectSQL;
     }
 }

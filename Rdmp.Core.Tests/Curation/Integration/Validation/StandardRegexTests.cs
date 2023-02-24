@@ -11,38 +11,37 @@ using Rdmp.Core.Validation;
 using Rdmp.Core.Validation.Constraints.Secondary;
 using Tests.Common;
 
-namespace Rdmp.Core.Tests.Curation.Integration.Validation
+namespace Rdmp.Core.Tests.Curation.Integration.Validation;
+
+public class StandardRegexTests:DatabaseTests
 {
-    public class StandardRegexTests:DatabaseTests
+    [Test]
+    public void CreateNew_UseConstraint()
     {
-        [Test]
-        public void CreateNew_UseConstraint()
+        // Clean SetUp any existing regexes
+        CatalogueRepository.GetAllObjects<StandardRegex>().Where(r=>r.ConceptName == "Fish").ToList().ForEach(r => r.DeleteInDatabase());
+
+        var regex = new StandardRegex(CatalogueRepository);
+        try
         {
-            // Clean SetUp any existing regexes
-            CatalogueRepository.GetAllObjects<StandardRegex>().Where(r=>r.ConceptName == "Fish").ToList().ForEach(r => r.DeleteInDatabase());
+            Assert.IsNotNull(regex.ConceptName);
+            Assert.IsTrue(string.IsNullOrEmpty(regex.Description));
 
-            var regex = new StandardRegex(CatalogueRepository);
-            try
-            {
-                Assert.IsNotNull(regex.ConceptName);
-                Assert.IsTrue(string.IsNullOrEmpty(regex.Description));
+            regex.ConceptName = "Fish";
+            regex.Regex = "^(Fish)$";
+            regex.SaveToDatabase();
 
-                regex.ConceptName = "Fish";
-                regex.Regex = "^(Fish)$";
-                regex.SaveToDatabase();
-
-                StandardRegexConstraint constraint = new StandardRegexConstraint(CatalogueRepository);
+            var constraint = new StandardRegexConstraint(CatalogueRepository);
                 
-                constraint.CatalogueStandardRegex = regex;
+            constraint.CatalogueStandardRegex = regex;
                 
-                Assert.IsNull(constraint.Validate("Fish",null,null));
-                ValidationFailure failure = constraint.Validate("FishFingers", null, null);
-                Assert.IsNotNull(failure);
-            }
-            finally
-            {
-                regex.DeleteInDatabase();
-            }
+            Assert.IsNull(constraint.Validate("Fish",null,null));
+            var failure = constraint.Validate("FishFingers", null, null);
+            Assert.IsNotNull(failure);
+        }
+        finally
+        {
+            regex.DeleteInDatabase();
         }
     }
 }

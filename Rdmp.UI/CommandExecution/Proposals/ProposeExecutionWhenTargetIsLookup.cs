@@ -9,27 +9,26 @@ using Rdmp.Core.Curation.Data;
 using Rdmp.UI.ExtractionUIs.JoinsAndLookups;
 using Rdmp.UI.ItemActivation;
 
-namespace Rdmp.UI.CommandExecution.Proposals
+namespace Rdmp.UI.CommandExecution.Proposals;
+
+internal class ProposeExecutionWhenTargetIsLookup : RDMPCommandExecutionProposal<Lookup>
 {
-    class ProposeExecutionWhenTargetIsLookup : RDMPCommandExecutionProposal<Lookup>
+    public ProposeExecutionWhenTargetIsLookup(IActivateItems itemActivator) : base(itemActivator)
     {
-        public ProposeExecutionWhenTargetIsLookup(IActivateItems itemActivator) : base(itemActivator)
-        {
-        }
+    }
 
-        public override bool CanActivate(Lookup target)
-        {
-            return true;
-        }
+    public override bool CanActivate(Lookup target)
+    {
+        return true;
+    }
 
-        public override void Activate(Lookup target)
-        {
-            ItemActivator.Activate<LookupUI, Lookup>(target);
-        }
+    public override void Activate(Lookup target)
+    {
+        ItemActivator.Activate<LookupUI, Lookup>(target);
+    }
 
-        public override ICommandExecution ProposeExecution(ICombineToMakeCommand cmd, Lookup target, InsertOption insertOption = InsertOption.Default)
-        {
-            return null;
-        }
+    public override ICommandExecution ProposeExecution(ICombineToMakeCommand cmd, Lookup target, InsertOption insertOption = InsertOption.Default)
+    {
+        return null;
     }
 }

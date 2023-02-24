@@ -5,54 +5,54 @@
 // You should have received a copy of the GNU General Public License along with RDMP. If not, see <https://www.gnu.org/licenses/>.
 
 using System;
-using System.Collections.Generic;
 using System.Diagnostics;
 using System.IO;
 using System.Text;
 using System.Windows.Forms;
 
-namespace Rdmp.UI
+namespace Rdmp.UI;
+
+public static class ApplicationRestarter
 {
-    public static class ApplicationRestarter
+
+    public static void Restart()
     {
-
-        public static void Restart()
+        try
         {
-            try
-            {
-                Application.Restart();
-            }
-            catch (Exception)
-            {
-                RestartImpl();
-            }
+            Application.Restart();
         }
-
-        private static void RestartImpl()
+        catch (Exception)
         {
-            string[] arguments = Environment.GetCommandLineArgs();
-
-            StringBuilder sb = new StringBuilder((arguments.Length - 1) * 16);
-            for (int argumentIndex = 1; argumentIndex < arguments.Length - 1; argumentIndex++)
-            {
-                sb.Append('"');
-                sb.Append(arguments[argumentIndex]);
-                sb.Append("\" ");
-            }
-            if (arguments.Length > 1)
-            {
-                sb.Append('"');
-                sb.Append(arguments[arguments.Length - 1]);
-                sb.Append('"');
-            }
-            ProcessStartInfo currentStartInfo = new ProcessStartInfo();
-            currentStartInfo.FileName = Path.ChangeExtension(Application.ExecutablePath, "exe");
-            if (sb.Length > 0)
-            {
-                currentStartInfo.Arguments = sb.ToString();
-            }
-            Application.Exit();
-            Process.Start(currentStartInfo);
+            RestartImpl();
         }
+    }
+
+    private static void RestartImpl()
+    {
+        var arguments = Environment.GetCommandLineArgs();
+
+        var sb = new StringBuilder((arguments.Length - 1) * 16);
+        for (var argumentIndex = 1; argumentIndex < arguments.Length - 1; argumentIndex++)
+        {
+            sb.Append('"');
+            sb.Append(arguments[argumentIndex]);
+            sb.Append("\" ");
+        }
+        if (arguments.Length > 1)
+        {
+            sb.Append('"');
+            sb.Append(arguments[^1]);
+            sb.Append('"');
+        }
+        var currentStartInfo = new ProcessStartInfo
+        {
+            FileName = Path.ChangeExtension(Application.ExecutablePath, "exe")
+        };
+        if (sb.Length > 0)
+        {
+            currentStartInfo.Arguments = sb.ToString();
+        }
+        Application.Exit();
+        Process.Start(currentStartInfo);
     }
 }

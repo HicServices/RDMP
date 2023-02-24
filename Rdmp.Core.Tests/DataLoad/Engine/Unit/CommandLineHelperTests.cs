@@ -13,70 +13,69 @@ using FAnsi.Implementations.MicrosoftSQL;
 using NUnit.Framework;
 using Rdmp.Core.DataLoad.Engine.LoadExecution.Components.Arguments;
 
-namespace Rdmp.Core.Tests.DataLoad.Engine.Unit
+namespace Rdmp.Core.Tests.DataLoad.Engine.Unit;
+
+[Category("Unit")]
+internal class CommandLineHelperTests
 {
-    [Category("Unit")]
-    class CommandLineHelperTests
+    [Test]
+    public void TestGetValueString()
     {
-        [Test]
-        public void TestGetValueString()
-        {
-            var date = new DateTime(2004, 1, 1);
-            Assert.AreEqual("\"2004-01-01\"", CommandLineHelper.GetValueString(date));
+        var date = new DateTime(2004, 1, 1);
+        Assert.AreEqual("\"2004-01-01\"", CommandLineHelper.GetValueString(date));
             
 
-            var fi = new FileInfo(TestContext.CurrentContext.TestDirectory);
-            Assert.AreEqual($@"""{TestContext.CurrentContext.TestDirectory}""", CommandLineHelper.GetValueString(fi));
+        var fi = new FileInfo(TestContext.CurrentContext.TestDirectory);
+        Assert.AreEqual($@"""{TestContext.CurrentContext.TestDirectory}""", CommandLineHelper.GetValueString(fi));
 
-            const string db = "db-name";
-            Assert.AreEqual(db, CommandLineHelper.GetValueString(db));
+        const string db = "db-name";
+        Assert.AreEqual(db, CommandLineHelper.GetValueString(db));
 
-            ImplementationManager.Load<MicrosoftSQLImplementation>();
+        ImplementationManager.Load<MicrosoftSQLImplementation>();
 
-            //notice how server and db don't actually exist, thats cool they implement IMightNotExist
-            var dbInfo = new DiscoveredServer(new SqlConnectionStringBuilder(){DataSource = "server"}).ExpectDatabase("db");
-            Assert.AreEqual("--database-name=db --database-server=server", CommandLineHelper.CreateArgString("DbInfo", dbInfo));
-        }
+        //notice how server and db don't actually exist, thats cool they implement IMightNotExist
+        var dbInfo = new DiscoveredServer(new SqlConnectionStringBuilder(){DataSource = "server"}).ExpectDatabase("db");
+        Assert.AreEqual("--database-name=db --database-server=server", CommandLineHelper.CreateArgString("DbInfo", dbInfo));
+    }
 
-        [Test]
-        public void TestGetValueStringError()
-        {
-            var obj = new CommandLineHelperTests();
-            Assert.Throws<ArgumentException>(()=>CommandLineHelper.GetValueString(obj));
-        }
+    [Test]
+    public void TestGetValueStringError()
+    {
+        var obj = new CommandLineHelperTests();
+        Assert.Throws<ArgumentException>(()=>CommandLineHelper.GetValueString(obj));
+    }
 
-        [Test]
-        public void TestCreateArgString()
-        {
-            var date = new DateTime(2004, 1, 1);
-            var argString = CommandLineHelper.CreateArgString("DateFrom", date);
-            Assert.AreEqual("--date-from=\"2004-01-01\"", argString);
-        }
+    [Test]
+    public void TestCreateArgString()
+    {
+        var date = new DateTime(2004, 1, 1);
+        var argString = CommandLineHelper.CreateArgString("DateFrom", date);
+        Assert.AreEqual("--date-from=\"2004-01-01\"", argString);
+    }
 
-        [Test]
-        public void TestDateTimeCreateArgString()
-        {
-            var date = new DateTime(2004, 1, 1, 12, 34, 56);
-            var argString = CommandLineHelper.CreateArgString("DateFrom", date);
-            Assert.AreEqual("--date-from=\"2004-01-01 12:34:56\"", argString);
-        }
+    [Test]
+    public void TestDateTimeCreateArgString()
+    {
+        var date = new DateTime(2004, 1, 1, 12, 34, 56);
+        var argString = CommandLineHelper.CreateArgString("DateFrom", date);
+        Assert.AreEqual("--date-from=\"2004-01-01 12:34:56\"", argString);
+    }
 
-        [Test]
-        public void TestEmptyArgumentName()
-        {
-            Assert.Throws<ArgumentException>(()=>CommandLineHelper.CreateArgString("", "value"));
-        }
+    [Test]
+    public void TestEmptyArgumentName()
+    {
+        Assert.Throws<ArgumentException>(()=>CommandLineHelper.CreateArgString("", "value"));
+    }
 
-        [Test]
-        public void TestNameWithoutLeadingUppercaseCharacter()
-        {
-            Assert.Throws<ArgumentException>(()=>CommandLineHelper.CreateArgString("dateFrom", "2014-01-01"));
-        }
+    [Test]
+    public void TestNameWithoutLeadingUppercaseCharacter()
+    {
+        Assert.Throws<ArgumentException>(()=>CommandLineHelper.CreateArgString("dateFrom", "2014-01-01"));
+    }
 
-        [Test]
-        public void TestNullValue()
-        {
-            Assert.Throws<ArgumentException>(()=>CommandLineHelper.CreateArgString("DateFrom", null));
-        }
+    [Test]
+    public void TestNullValue()
+    {
+        Assert.Throws<ArgumentException>(()=>CommandLineHelper.CreateArgString("DateFrom", null));
     }
 }

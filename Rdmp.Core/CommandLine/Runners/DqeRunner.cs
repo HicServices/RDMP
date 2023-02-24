@@ -7,7 +7,6 @@
 using System;
 using Rdmp.Core.CommandLine.Options;
 using Rdmp.Core.Curation.Data;
-using Rdmp.Core.Curation.Data.Pipelines;
 using Rdmp.Core.DataFlowPipeline;
 using Rdmp.Core.DataLoad.Triggers;
 using Rdmp.Core.DataQualityEngine.Reports;
@@ -15,35 +14,33 @@ using Rdmp.Core.Repositories;
 using ReusableLibraryCode.Checks;
 using ReusableLibraryCode.Progress;
 
-namespace Rdmp.Core.CommandLine.Runners
+namespace Rdmp.Core.CommandLine.Runners;
+
+internal class DqeRunner:Runner
 {
+    private readonly DqeOptions _options;
 
-    internal class DqeRunner:Runner
+    public DqeRunner(DqeOptions options)
     {
-        private readonly DqeOptions _options;
+        _options = options;
+    }
 
-        public DqeRunner(DqeOptions options)
-        {
-            _options = options;
-        }
-
-        public override int Run(IRDMPPlatformRepositoryServiceLocator repositoryLocator, IDataLoadEventListener listener,ICheckNotifier checkNotifier,GracefulCancellationToken token)
-        {
-            var catalogue = GetObjectFromCommandLineString<Catalogue>(repositoryLocator,_options.Catalogue);
-            var report = new CatalogueConstraintReport(catalogue, SpecialFieldNames.DataLoadRunID);
+    public override int Run(IRDMPPlatformRepositoryServiceLocator repositoryLocator, IDataLoadEventListener listener,ICheckNotifier checkNotifier,GracefulCancellationToken token)
+    {
+        var catalogue = GetObjectFromCommandLineString<Catalogue>(repositoryLocator,_options.Catalogue);
+        var report = new CatalogueConstraintReport(catalogue, SpecialFieldNames.DataLoadRunID);
             
-            switch (_options.Command)
-            {
-                case CommandLineActivity.run:
-                    report.GenerateReport(catalogue, listener, token.AbortToken);
-                    return 0;
+        switch (_options.Command)
+        {
+            case CommandLineActivity.run:
+                report.GenerateReport(catalogue, listener, token.AbortToken);
+                return 0;
                 
-                case CommandLineActivity.check:
-                    report.Check(checkNotifier);
-                    return 0;
-                default:
-                    throw new ArgumentOutOfRangeException();
-            }
+            case CommandLineActivity.check:
+                report.Check(checkNotifier);
+                return 0;
+            default:
+                throw new ArgumentOutOfRangeException();
         }
     }
 }

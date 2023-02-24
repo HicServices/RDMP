@@ -8,49 +8,46 @@ using Rdmp.Core.CommandExecution;
 using Rdmp.Core.CommandLine.Options;
 using Rdmp.Core.Curation.Data;
 using Rdmp.Core.Curation.Data.DataLoad;
-using System;
 using System.Linq;
 
-namespace Rdmp.Core.CommandLine.Gui.Windows.RunnerWindows
+namespace Rdmp.Core.CommandLine.Gui.Windows.RunnerWindows;
+
+internal class RunDleWindow : RunEngineWindow<DleOptions>
 {
+    private readonly LoadMetadata lmd;
 
-    class RunDleWindow : RunEngineWindow<DleOptions>
+    public RunDleWindow(IBasicActivateItems activator, LoadMetadata lmd)
+        : base(activator, () => GetCommand(lmd))
     {
-        private readonly LoadMetadata lmd;
+        this.lmd = lmd;
+    }
 
-        public RunDleWindow(IBasicActivateItems activator, LoadMetadata lmd)
-            : base(activator, () => GetCommand(lmd))
+    private static DleOptions GetCommand(LoadMetadata lmd)
+    {
+        return new DleOptions()
         {
-            this.lmd = lmd;
+            LoadMetadata = lmd.ID.ToString(),
+            Iterative = false
+        };
+    }
+
+    protected override void AdjustCommand(DleOptions opts, CommandLineActivity activity)
+    {
+        base.AdjustCommand(opts, activity);
+
+        if (lmd.LoadProgresses.Any() && activity == CommandLineActivity.run)
+        {
+            var lp = (LoadProgress)BasicActivator.SelectOne("Load Progres", lmd.LoadProgresses, null, true);
+            if (lp == null)
+                return;
+
+            opts.LoadProgress = lp.ID.ToString();
+
+            if (BasicActivator.SelectValueType("Days to Load", typeof(int), lp.DefaultNumberOfDaysToLoadEachTime, out var chosen))
+                opts.DaysToLoad = (int)chosen;
+            else
+                return;
         }
 
-        private static DleOptions GetCommand(LoadMetadata lmd)
-        {
-            return new DleOptions()
-            {
-                LoadMetadata = lmd.ID.ToString(),
-                Iterative = false,
-            };
-        }
-
-        protected override void AdjustCommand(DleOptions opts, CommandLineActivity activity)
-        {
-            base.AdjustCommand(opts, activity);
-
-            if (lmd.LoadProgresses.Any() && activity == CommandLineActivity.run)
-            {
-                var lp = (LoadProgress)BasicActivator.SelectOne("Load Progres", lmd.LoadProgresses, null, true);
-                if (lp == null)
-                    return;
-
-                opts.LoadProgress = lp.ID.ToString();
-
-                if (BasicActivator.SelectValueType("Days to Load", typeof(int), lp.DefaultNumberOfDaysToLoadEachTime, out object chosen))
-                    opts.DaysToLoad = (int)chosen;
-                else
-                    return;
-            }
-
-        }
     }
 }

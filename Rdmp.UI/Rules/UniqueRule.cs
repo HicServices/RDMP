@@ -10,44 +10,41 @@ using System.Windows.Forms;
 using MapsDirectlyToDatabaseTable;
 using Rdmp.UI.ItemActivation;
 
-namespace Rdmp.UI.Rules
+namespace Rdmp.UI.Rules;
+
+internal class UniqueRule<T> : BinderRule<T> where T : IMapsDirectlyToDatabaseTable
 {
-    class UniqueRule<T> : BinderRule<T> where T : IMapsDirectlyToDatabaseTable
+    private readonly string _problemDescription;
+
+    public UniqueRule(IActivateItems activator, T toTest, Func<T, object> propertyToCheck, Control control, string propertyToCheckName)
+        : base(activator, toTest, propertyToCheck, control, propertyToCheckName)
     {
-        private readonly string _problemDescription;
+        _problemDescription = $"Must be unique amongst all {toTest.GetType().Name}s";
 
-        public UniqueRule(IActivateItems activator, T toTest, Func<T, object> propertyToCheck, Control control, string propertyToCheckName)
-            : base(activator, toTest, propertyToCheck, control, propertyToCheckName)
-        {
-            _problemDescription = "Must be unique amongst all " + toTest.GetType().Name + "s";
+    }
 
-        }
-
-        protected override string IsValid(object currentValue, Type typeToTest)
-        {
-            //never check for uniqueness on null values
-            if (currentValue == null || string.IsNullOrWhiteSpace(currentValue.ToString()))
-                return null;
-
-            if (
-                Activator.CoreChildProvider.GetAllSearchables()
-                    .Keys.OfType<T>()
-                    .Except(new[] { ToTest })
-                    .Where(t => t.GetType() == typeToTest)
-                    .Any(v => AreEqual(v, currentValue)))
-                return _problemDescription;
-
+    protected override string IsValid(object currentValue, Type typeToTest)
+    {
+        //never check for uniqueness on null values
+        if (currentValue == null || string.IsNullOrWhiteSpace(currentValue.ToString()))
             return null;
-        }
 
-        private bool AreEqual(T arg, object currentValue)
-        {
-            string s = currentValue as string;
+        if (
+            Activator.CoreChildProvider.GetAllSearchables()
+            .Keys.OfType<T>()
+            .Except(new[] { ToTest })
+            .Where(t => t.GetType() == typeToTest)
+            .Any(v => AreEqual(v, currentValue)))
+            return _problemDescription;
 
-            if (s != null)
-                return string.Equals(s, PropertyToCheck(arg) as string, StringComparison.CurrentCultureIgnoreCase);
+        return null;
+    }
 
-            return Equals(currentValue, PropertyToCheck(arg));
-        }
+    private bool AreEqual(T arg, object currentValue)
+    {
+        if (currentValue is string s)
+            return string.Equals(s, PropertyToCheck(arg) as string, StringComparison.CurrentCultureIgnoreCase);
+
+        return Equals(currentValue, PropertyToCheck(arg));
     }
 }

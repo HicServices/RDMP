@@ -9,87 +9,86 @@ using NUnit.Framework;
 using Rdmp.Core.Curation.Data.Cohort;
 using Tests.Common;
 
-namespace Rdmp.Core.Tests.CohortCreation
+namespace Rdmp.Core.Tests.CohortCreation;
+
+public class SimpleCohortIdentificationTests:DatabaseTests
 {
-    public class SimpleCohortIdentificationTests:DatabaseTests
+    [Test]
+    public void CreateNewCohortIdentificationConfiguration_SaveAndReload()
     {
-        [Test]
-        public void CreateNewCohortIdentificationConfiguration_SaveAndReload()
+        var config = new CohortIdentificationConfiguration(CatalogueRepository, "franky");
+            
+        try
         {
-            var config = new CohortIdentificationConfiguration(CatalogueRepository, "franky");
+            Assert.IsTrue(config.Exists());
+            Assert.AreEqual("franky",config.Name);
             
-            try
-            {
-                Assert.IsTrue(config.Exists());
-                Assert.AreEqual("franky",config.Name);
-            
-                config.Description = "Hi there";
-                config.SaveToDatabase();
+            config.Description = "Hi there";
+            config.SaveToDatabase();
 
 
-                CohortIdentificationConfiguration config2 = CatalogueRepository.GetObjectByID<CohortIdentificationConfiguration>(config.ID);
-                Assert.AreEqual("Hi there", config2.Description);
-            }
-            finally 
-            {
-                config.DeleteInDatabase();
-                Assert.IsFalse(config.Exists());
-            }
+            var config2 = CatalogueRepository.GetObjectByID<CohortIdentificationConfiguration>(config.ID);
+            Assert.AreEqual("Hi there", config2.Description);
         }
-
-        [Test]
-        public void ContainerCreate()
+        finally 
         {
-            var container = new CohortAggregateContainer(CatalogueRepository,SetOperation.UNION);
-
-            try
-            {
-                Assert.AreEqual(SetOperation.UNION,container.Operation);
-
-                container.Operation = SetOperation.INTERSECT;
-                container.SaveToDatabase();
-
-                var container2 = CatalogueRepository.GetObjectByID<CohortAggregateContainer>(container.ID);
-                Assert.AreEqual(SetOperation.INTERSECT, container2.Operation);
-            }
-            finally
-            {
-                container.DeleteInDatabase();
-            }
+            config.DeleteInDatabase();
+            Assert.IsFalse(config.Exists());
         }
+    }
 
+    [Test]
+    public void ContainerCreate()
+    {
+        var container = new CohortAggregateContainer(CatalogueRepository,SetOperation.UNION);
 
-        [Test]
-        public void Container_Subcontainering()
+        try
         {
-            var container = new CohortAggregateContainer(CatalogueRepository,SetOperation.UNION);
+            Assert.AreEqual(SetOperation.UNION,container.Operation);
+
+            container.Operation = SetOperation.INTERSECT;
+            container.SaveToDatabase();
+
+            var container2 = CatalogueRepository.GetObjectByID<CohortAggregateContainer>(container.ID);
+            Assert.AreEqual(SetOperation.INTERSECT, container2.Operation);
+        }
+        finally
+        {
+            container.DeleteInDatabase();
+        }
+    }
+
+
+    [Test]
+    public void Container_Subcontainering()
+    {
+        var container = new CohortAggregateContainer(CatalogueRepository,SetOperation.UNION);
             
-            var container2 = new CohortAggregateContainer(CatalogueRepository,SetOperation.INTERSECT);
-            try
-            {
-                Assert.AreEqual(0, container.GetSubContainers().Length);
+        var container2 = new CohortAggregateContainer(CatalogueRepository,SetOperation.INTERSECT);
+        try
+        {
+            Assert.AreEqual(0, container.GetSubContainers().Length);
 
               
-                Assert.AreEqual(0, container.GetSubContainers().Length);
+            Assert.AreEqual(0, container.GetSubContainers().Length);
 
-                //set container to parent
-                container.AddChild(container2);
+            //set container to parent
+            container.AddChild(container2);
 
-                //container 1 should now contain container 2
-                Assert.AreEqual(1, container.GetSubContainers().Length);
-                Assert.Contains(container2, container.GetSubContainers());
+            //container 1 should now contain container 2
+            Assert.AreEqual(1, container.GetSubContainers().Length);
+            Assert.Contains(container2, container.GetSubContainers());
 
-                //container 2 should not have any children
-                Assert.AreEqual(0, container2.GetSubContainers().Length);
-            }
-            finally
-            {
-                container.DeleteInDatabase();
+            //container 2 should not have any children
+            Assert.AreEqual(0, container2.GetSubContainers().Length);
+        }
+        finally
+        {
+            container.DeleteInDatabase();
 
-                //container 2 was contained within container 1 so should have also been deleted
-                Assert.Throws<KeyNotFoundException>(
-                    () => CatalogueRepository.GetObjectByID<CohortAggregateContainer>(container2.ID));
-            }
+            //container 2 was contained within container 1 so should have also been deleted
+            Assert.Throws<KeyNotFoundException>(
+                () => CatalogueRepository.GetObjectByID<CohortAggregateContainer>(container2.ID));
         }
     }
 }

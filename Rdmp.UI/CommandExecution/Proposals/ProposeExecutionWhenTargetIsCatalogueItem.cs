@@ -8,36 +8,32 @@ using Rdmp.Core.CommandExecution;
 using Rdmp.Core.CommandExecution.AtomicCommands;
 using Rdmp.Core.CommandExecution.Combining;
 using Rdmp.Core.Curation.Data;
-using Rdmp.UI.CommandExecution.AtomicCommands;
 using Rdmp.UI.ItemActivation;
 using Rdmp.UI.MainFormUITabs;
 
-namespace Rdmp.UI.CommandExecution.Proposals
+namespace Rdmp.UI.CommandExecution.Proposals;
+
+internal class ProposeExecutionWhenTargetIsCatalogueItem:RDMPCommandExecutionProposal<CatalogueItem>
 {
-    class ProposeExecutionWhenTargetIsCatalogueItem:RDMPCommandExecutionProposal<CatalogueItem>
+    public ProposeExecutionWhenTargetIsCatalogueItem(IActivateItems itemActivator) : base(itemActivator)
     {
-        public ProposeExecutionWhenTargetIsCatalogueItem(IActivateItems itemActivator) : base(itemActivator)
-        {
-        }
+    }
 
-        public override bool CanActivate(CatalogueItem target)
-        {
-            return true;
-        }
+    public override bool CanActivate(CatalogueItem target)
+    {
+        return true;
+    }
 
-        public override void Activate(CatalogueItem target)
-        {
-            ItemActivator.Activate<CatalogueItemUI, CatalogueItem>(target);
-        }
+    public override void Activate(CatalogueItem target)
+    {
+        ItemActivator.Activate<CatalogueItemUI, CatalogueItem>(target);
+    }
 
-        public override ICommandExecution ProposeExecution(ICombineToMakeCommand cmd, CatalogueItem target, InsertOption insertOption = InsertOption.Default)
-        {
-            var sourceColumnInfo = cmd as ColumnInfoCombineable;
+    public override ICommandExecution ProposeExecution(ICombineToMakeCommand cmd, CatalogueItem target, InsertOption insertOption = InsertOption.Default)
+    {
+        if (cmd is ColumnInfoCombineable sourceColumnInfo)
+            return new ExecuteCommandLinkCatalogueItemToColumnInfo(ItemActivator, sourceColumnInfo, target);
 
-            if (sourceColumnInfo != null)
-                return new ExecuteCommandLinkCatalogueItemToColumnInfo(ItemActivator, sourceColumnInfo, target);
-
-            return null;
-        }
+        return null;
     }
 }

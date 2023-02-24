@@ -12,50 +12,49 @@ using Rdmp.Core.DataLoad.Engine.LoadExecution.Components.Arguments;
 using Rdmp.Core.DataLoad.Engine.LoadExecution.Components.Runtime;
 using ReusableLibraryCode.Checks;
 
-namespace Rdmp.Core.DataLoad.Engine.Checks.Checkers
+namespace Rdmp.Core.DataLoad.Engine.Checks.Checkers;
+
+/// <summary>
+/// Checks all ProcessTasks that the user has configured for a given data load (See LoadMetadata).  This involves both constructing and initializing 
+/// the instances (which can fail if Type names don't resolve etc) and calling check on the instantiated ProcessTask.
+/// </summary>
+public class ProcessTaskChecks : ICheckable
 {
-    /// <summary>
-    /// Checks all ProcessTasks that the user has configured for a given data load (See LoadMetadata).  This involves both constructing and initializing 
-    /// the instances (which can fail if Type names don't resolve etc) and calling check on the instantiated ProcessTask.
-    /// </summary>
-    public class ProcessTaskChecks : ICheckable
+    private readonly ILoadMetadata _loadMetadata;
+    private LoadArgsDictionary dictionary;
+
+    public ProcessTaskChecks(ILoadMetadata loadMetadata)
     {
-        private readonly ILoadMetadata _loadMetadata;
-        LoadArgsDictionary dictionary;
+        _loadMetadata = loadMetadata;
+    }
 
-        public ProcessTaskChecks(ILoadMetadata loadMetadata)
+    public void Check(ProcessTask processTask, ICheckNotifier notifier)
+    {
+        if (dictionary == null)
         {
-            _loadMetadata = loadMetadata;
-        }
-
-        public void Check(ProcessTask processTask, ICheckNotifier notifier)
-        {
-            if (dictionary == null)
+            try
             {
-                try
-                {
-                    dictionary = new LoadArgsDictionary(_loadMetadata, new HICDatabaseConfiguration(_loadMetadata).DeployInfo);
-                }
-                catch (Exception e)
-                {
-                    notifier.OnCheckPerformed(
-                        new CheckEventArgs("Could not assemble LoadArgsDictionary, see inner exception for specifics",
-                            CheckResult.Fail, e));
-                    return;
-                }
+                dictionary = new LoadArgsDictionary(_loadMetadata, new HICDatabaseConfiguration(_loadMetadata).DeployInfo);
             }
-
-
-            var factory = new RuntimeTaskFactory(_loadMetadata.CatalogueRepository);
-            var created = factory.Create(processTask, dictionary.LoadArgs[processTask.LoadStage]);
-
-            created.Check(notifier);
+            catch (Exception e)
+            {
+                notifier.OnCheckPerformed(
+                    new CheckEventArgs("Could not assemble LoadArgsDictionary, see inner exception for specifics",
+                        CheckResult.Fail, e));
+                return;
+            }
         }
 
-        public void Check(ICheckNotifier notifier)
-        {
-            foreach (ProcessTask processTask in _loadMetadata.ProcessTasks.Where(pt=>!pt.IsDisabled))
-                Check(processTask, notifier);
-        }
+
+        var factory = new RuntimeTaskFactory(_loadMetadata.CatalogueRepository);
+        var created = factory.Create(processTask, dictionary.LoadArgs[processTask.LoadStage]);
+
+        created.Check(notifier);
+    }
+
+    public void Check(ICheckNotifier notifier)
+    {
+        foreach (ProcessTask processTask in _loadMetadata.ProcessTasks.Where(pt=>!pt.IsDisabled))
+            Check(processTask, notifier);
     }
 }

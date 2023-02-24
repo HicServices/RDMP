@@ -10,31 +10,29 @@ using Rdmp.Core.Providers.Nodes.PipelineNodes;
 using Rdmp.UI.CommandExecution.AtomicCommands;
 using Rdmp.UI.ItemActivation;
 
-namespace Rdmp.UI.CommandExecution.Proposals
+namespace Rdmp.UI.CommandExecution.Proposals;
+
+internal class ProposeExecutionWhenTargetIsStandardPipelineUseCaseNode :RDMPCommandExecutionProposal<StandardPipelineUseCaseNode>
 {
-    class ProposeExecutionWhenTargetIsStandardPipelineUseCaseNode :RDMPCommandExecutionProposal<StandardPipelineUseCaseNode>
+    public ProposeExecutionWhenTargetIsStandardPipelineUseCaseNode(IActivateItems itemActivator) : base(itemActivator)
     {
-        public ProposeExecutionWhenTargetIsStandardPipelineUseCaseNode(IActivateItems itemActivator) : base(itemActivator)
-        {
-        }
+    }
 
-        public override bool CanActivate(StandardPipelineUseCaseNode target)
-        {
-            return false;
-        }
+    public override bool CanActivate(StandardPipelineUseCaseNode target)
+    {
+        return false;
+    }
 
-        public override void Activate(StandardPipelineUseCaseNode target)
-        {
+    public override void Activate(StandardPipelineUseCaseNode target)
+    {
             
-        }
+    }
 
-        public override ICommandExecution ProposeExecution(ICombineToMakeCommand cmd, StandardPipelineUseCaseNode target, InsertOption insertOption = InsertOption.Default)
-        {
-            var sourcePipelineCommand = cmd as PipelineCombineable;
-            if(sourcePipelineCommand != null)
-                return new ExecuteCommandEditPipelineWithUseCase(ItemActivator,sourcePipelineCommand.Pipeline, target.UseCase);
+    public override ICommandExecution ProposeExecution(ICombineToMakeCommand cmd, StandardPipelineUseCaseNode target, InsertOption insertOption = InsertOption.Default)
+    {
+        if(cmd is PipelineCombineable sourcePipelineCommand)
+            return new ExecuteCommandEditPipelineWithUseCase(ItemActivator,sourcePipelineCommand.Pipeline, target.UseCase);
 
-            return null;
-        }
+        return null;
     }
 }

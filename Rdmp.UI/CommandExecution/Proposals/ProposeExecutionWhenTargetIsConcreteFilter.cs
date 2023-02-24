@@ -9,28 +9,27 @@ using Rdmp.Core.Curation.Data;
 using Rdmp.UI.ExtractionUIs.FilterUIs;
 using Rdmp.UI.ItemActivation;
 
-namespace Rdmp.UI.CommandExecution.Proposals
+namespace Rdmp.UI.CommandExecution.Proposals;
+
+internal class ProposeExecutionWhenTargetIsConcreteFilter:RDMPCommandExecutionProposal<ConcreteFilter>
 {
-    class ProposeExecutionWhenTargetIsConcreteFilter:RDMPCommandExecutionProposal<ConcreteFilter>
+    public ProposeExecutionWhenTargetIsConcreteFilter(IActivateItems itemActivator) : base(itemActivator)
     {
-        public ProposeExecutionWhenTargetIsConcreteFilter(IActivateItems itemActivator) : base(itemActivator)
-        {
-        }
+    }
 
-        public override bool CanActivate(ConcreteFilter target)
-        {
-            return true;
-        }
+    public override bool CanActivate(ConcreteFilter target)
+    {
+        return true;
+    }
 
-        public override void Activate(ConcreteFilter target)
-        {
-            ItemActivator.Activate<ExtractionFilterUI, ConcreteFilter>(target);
-        }
+    public override void Activate(ConcreteFilter target)
+    {
+        ItemActivator.Activate<ExtractionFilterUI, ConcreteFilter>(target);
+    }
 
-        public override ICommandExecution ProposeExecution(ICombineToMakeCommand cmd, ConcreteFilter target, InsertOption insertOption = InsertOption.Default)
-        {
-            //currently nothing can be dropped onto a filter
-            return null;
-        }
+    public override ICommandExecution ProposeExecution(ICombineToMakeCommand cmd, ConcreteFilter target, InsertOption insertOption = InsertOption.Default)
+    {
+        //currently nothing can be dropped onto a filter
+        return null;
     }
 }

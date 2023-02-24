@@ -6,18 +6,17 @@
 
 using System;
 
-namespace Rdmp.Core.CohortCommitting.Pipeline.Destinations.IdentifierAllocation
-{
-    class NullAllocateReleaseIdentifiers : IAllocateReleaseIdentifiers
-    {
-        public object AllocateReleaseIdentifier(object privateIdentifier)
-        {
-            return DBNull.Value;
-        }
+namespace Rdmp.Core.CohortCommitting.Pipeline.Destinations.IdentifierAllocation;
 
-        public void Initialize(ICohortCreationRequest request)
-        {
+internal class NullAllocateReleaseIdentifiers : IAllocateReleaseIdentifiers
+{
+    public object AllocateReleaseIdentifier(object privateIdentifier)
+    {
+        return DBNull.Value;
+    }
+
+    public void Initialize(ICohortCreationRequest request)
+    {
             
-        }
     }
 }

@@ -9,60 +9,59 @@ using System.Linq;
 using Rdmp.Core.Curation.Data;
 using Rdmp.Core.Curation.Data.Aggregation;
 
-namespace Rdmp.Core.Repositories.Managers
+namespace Rdmp.Core.Repositories.Managers;
+
+internal class AggregateFilterManager : IFilterManager
 {
-    class AggregateFilterManager : IFilterManager
+    private readonly CatalogueRepository _catalogueRepository;
+
+    public AggregateFilterManager(CatalogueRepository catalogueRepository)
     {
-        private readonly CatalogueRepository _catalogueRepository;
-
-        public AggregateFilterManager(CatalogueRepository catalogueRepository)
-        {
-            _catalogueRepository = catalogueRepository;
-        }
-
-        public virtual IContainer[] GetSubContainers(IContainer container)
-        {
-            return 
-                _catalogueRepository.SelectAll<AggregateFilterContainer>("SELECT AggregateFilterContainer_ChildID FROM AggregateFilterSubContainer WHERE AggregateFilterContainer_ParentID=" + container.ID,
-                "AggregateFilterContainer_ChildID").ToArray();
-        }
-
-        public void MakeIntoAnOrphan(IContainer container)
-        {
-            _catalogueRepository.Delete("DELETE FROM AggregateFilterSubContainer WHERE AggregateFilterContainer_ChildID = @AggregateFilterContainer_ChildID", new Dictionary<string, object>
-            {
-                {"AggregateFilterContainer_ChildID", container.ID}
-            },false);
-        }
-
-        public IContainer GetParentContainerIfAny(IContainer container)
-        {
-            return _catalogueRepository.SelectAll<AggregateFilterContainer>("SELECT AggregateFilterContainer_ParentID FROM AggregateFilterSubContainer WHERE AggregateFilterContainer_ChildID=" + container.ID,
-                "AggregateFilterContainer_ParentID").SingleOrDefault();
-        }
-
-        public virtual IFilter[] GetFilters(IContainer container)
-        {
-            return _catalogueRepository.GetAllObjectsWhere<AggregateFilter>("FilterContainer_ID", container.ID).ToArray();
-        }
-
-        public void AddSubContainer(IContainer parent, IContainer child)
-        {
-            _catalogueRepository.Insert(
-                "INSERT INTO AggregateFilterSubContainer(AggregateFilterContainer_ParentID,AggregateFilterContainer_ChildID) VALUES (@AggregateFilterContainer_ParentID,@AggregateFilterContainer_ChildID)",
-                new Dictionary<string, object>
-                {
-                    {"AggregateFilterContainer_ParentID", parent.ID},
-                    {"AggregateFilterContainer_ChildID", child.ID}
-                });
-        }
-        
-        public void AddChild(IContainer container, IFilter filter)
-        {
-            filter.FilterContainer_ID = container.ID;
-            filter.SaveToDatabase();
-        }
+        _catalogueRepository = catalogueRepository;
     }
 
-    
+    public virtual IContainer[] GetSubContainers(IContainer container)
+    {
+        return 
+            _catalogueRepository.SelectAll<AggregateFilterContainer>(
+                $"SELECT AggregateFilterContainer_ChildID FROM AggregateFilterSubContainer WHERE AggregateFilterContainer_ParentID={container.ID}",
+                "AggregateFilterContainer_ChildID").ToArray();
+    }
+
+    public void MakeIntoAnOrphan(IContainer container)
+    {
+        _catalogueRepository.Delete("DELETE FROM AggregateFilterSubContainer WHERE AggregateFilterContainer_ChildID = @AggregateFilterContainer_ChildID", new Dictionary<string, object>
+        {
+            {"AggregateFilterContainer_ChildID", container.ID}
+        },false);
+    }
+
+    public IContainer GetParentContainerIfAny(IContainer container)
+    {
+        return _catalogueRepository.SelectAll<AggregateFilterContainer>(
+            $"SELECT AggregateFilterContainer_ParentID FROM AggregateFilterSubContainer WHERE AggregateFilterContainer_ChildID={container.ID}",
+            "AggregateFilterContainer_ParentID").SingleOrDefault();
+    }
+
+    public virtual IFilter[] GetFilters(IContainer container)
+    {
+        return _catalogueRepository.GetAllObjectsWhere<AggregateFilter>("FilterContainer_ID", container.ID).ToArray();
+    }
+
+    public void AddSubContainer(IContainer parent, IContainer child)
+    {
+        _catalogueRepository.Insert(
+            "INSERT INTO AggregateFilterSubContainer(AggregateFilterContainer_ParentID,AggregateFilterContainer_ChildID) VALUES (@AggregateFilterContainer_ParentID,@AggregateFilterContainer_ChildID)",
+            new Dictionary<string, object>
+            {
+                {"AggregateFilterContainer_ParentID", parent.ID},
+                {"AggregateFilterContainer_ChildID", child.ID}
+            });
+    }
+        
+    public void AddChild(IContainer container, IFilter filter)
+    {
+        filter.FilterContainer_ID = container.ID;
+        filter.SaveToDatabase();
+    }
 }

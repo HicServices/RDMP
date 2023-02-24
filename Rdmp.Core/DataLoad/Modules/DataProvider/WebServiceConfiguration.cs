@@ -13,78 +13,76 @@ using Rdmp.Core.Curation.Data;
 using Rdmp.Core.Curation.Data.DataLoad;
 using Rdmp.Core.Repositories;
 
-namespace Rdmp.Core.DataLoad.Modules.DataProvider
+namespace Rdmp.Core.DataLoad.Modules.DataProvider;
+
+/// <summary>
+/// Describes a website / webservice endpoint which can be accessed with an optional username / password.  Use this Type when you need a [DemandsInitialization]
+/// property on a component (e.g. IAttacher) which is a remote website/webservice.
+/// </summary>
+public class WebServiceConfiguration : EncryptedPasswordHost, ICustomUIDrivenClass
 {
+    private ICatalogueRepository _repository;
+
     /// <summary>
-    /// Describes a website / webservice endpoint which can be accessed with an optional username / password.  Use this Type when you need a [DemandsInitialization]
-    /// property on a component (e.g. IAttacher) which is a remote website/webservice.
+    /// For XML Serialization
     /// </summary>
-    
-    public class WebServiceConfiguration : EncryptedPasswordHost, ICustomUIDrivenClass
+    private WebServiceConfiguration()
     {
-        private ICatalogueRepository _repository;
+    }
 
-        /// <summary>
-        /// For XML Serialization
-        /// </summary>
-        private WebServiceConfiguration()
+    public WebServiceConfiguration(ICatalogueRepository repository) : base(repository)
+    {
+        _repository = repository;
+    }
+
+    public string Endpoint { get; set; }
+    public string Username { get; set; }
+
+    //[Obsolete]
+    //public string EndpointName { get; set; }
+
+    public int MaxBufferSize { get; set; }
+    public int MaxReceivedMessageSize { get; set; }
+
+    public void RestoreStateFrom(string value)
+    {
+        if (string.IsNullOrWhiteSpace(value))
+            return;
+
+        var deserializer = new XmlSerializer(typeof(WebServiceConfiguration));
+        try
         {
-        }
+            var deserialized = (WebServiceConfiguration)deserializer.Deserialize(new StringReader(value));
+            deserialized.SetRepository(_repository);
 
-        public WebServiceConfiguration(ICatalogueRepository repository) : base(repository)
+            Endpoint = deserialized.Endpoint;
+            Username = deserialized.Username;
+            Password = deserialized.Password;
+            MaxBufferSize = deserialized.MaxBufferSize;
+            MaxReceivedMessageSize = deserialized.MaxReceivedMessageSize;
+        }
+        catch (Exception e)
         {
-            _repository = repository;
+            throw new Exception($"Deserialisation failed: {value}", e);
         }
+    }
 
-        public string Endpoint { get; set; }
-        public string Username { get; set; }
+    public string SaveStateToString()
+    {
+        var sb = new StringBuilder();
 
-        //[Obsolete]
-        //public string EndpointName { get; set; }
+        var serializer = new XmlSerializer(GetType());
 
-        public int MaxBufferSize { get; set; }
-        public int MaxReceivedMessageSize { get; set; }
+        using (var sw = XmlWriter.Create(sb, new XmlWriterSettings { Indent = true }))
+            serializer.Serialize(sw, this);
 
-        public void RestoreStateFrom(string value)
-        {
-            if (string.IsNullOrWhiteSpace(value))
-                return;
+        return sb.ToString();
+    }
 
-            var deserializer = new XmlSerializer(typeof(WebServiceConfiguration));
-            try
-            {
-                var deserialized = (WebServiceConfiguration)deserializer.Deserialize(new StringReader(value));
-                deserialized.SetRepository(_repository);
-
-                Endpoint = deserialized.Endpoint;
-                Username = deserialized.Username;
-                Password = deserialized.Password;
-                MaxBufferSize = deserialized.MaxBufferSize;
-                MaxReceivedMessageSize = deserialized.MaxReceivedMessageSize;
-            }
-            catch (Exception e)
-            {
-                throw new Exception("Deserialisation failed: " + value, e);
-            }
-        }
-
-        public string SaveStateToString()
-        {
-            var sb = new StringBuilder();
-
-            XmlSerializer serializer = new XmlSerializer(GetType());
-
-            using (var sw = XmlWriter.Create(sb, new XmlWriterSettings { Indent = true }))
-                serializer.Serialize(sw, this);
-
-            return sb.ToString();
-        }
-
-        public bool IsValid()
-        {
-            return !String.IsNullOrWhiteSpace(Endpoint) &&
-                   !String.IsNullOrWhiteSpace(Username) &&
-                   !String.IsNullOrWhiteSpace(Password);
-        }
+    public bool IsValid()
+    {
+        return !string.IsNullOrWhiteSpace(Endpoint) &&
+               !string.IsNullOrWhiteSpace(Username) &&
+               !string.IsNullOrWhiteSpace(Password);
     }
 }

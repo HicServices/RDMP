@@ -12,104 +12,103 @@ using Rdmp.Core.DataExport.Data;
 using Rdmp.Core.DataExport.DataRelease.Audit;
 using Rdmp.Core.Repositories.Managers;
 
-namespace Rdmp.Core.Repositories
+namespace Rdmp.Core.Repositories;
+
+/// <summary>
+/// Memory only implementation of <see cref="IDataExportRepository"/>.  Also implements <see cref="ICatalogueRepository"/>.  All objects are created in 
+/// dictionaries and arrays in memory instead of the database.
+/// </summary>
+public class MemoryDataExportRepository : MemoryCatalogueRepository,IDataExportRepository, IDataExportPropertyManager, IExtractableDataSetPackageManager
 {
-    /// <summary>
-    /// Memory only implementation of <see cref="IDataExportRepository"/>.  Also implements <see cref="ICatalogueRepository"/>.  All objects are created in 
-    /// dictionaries and arrays in memory instead of the database.
-    /// </summary>
-    public class MemoryDataExportRepository : MemoryCatalogueRepository,IDataExportRepository, IDataExportPropertyManager, IExtractableDataSetPackageManager
+    public ICatalogueRepository CatalogueRepository => this;
+    public IDataExportPropertyManager DataExportPropertyManager => this;
+    public IExtractableDataSetPackageManager PackageManager => this;
+
+
+    public CatalogueExtractabilityStatus GetExtractabilityStatus(ICatalogue c)
     {
-        public ICatalogueRepository CatalogueRepository { get { return this; } }
-        public IDataExportPropertyManager DataExportPropertyManager { get { return this; } }
-        public IExtractableDataSetPackageManager PackageManager { get { return this; }}
-         
+        var eds = GetAllObjectsWithParent<ExtractableDataSet>(c).SingleOrDefault();
 
-        public CatalogueExtractabilityStatus GetExtractabilityStatus(ICatalogue c)
-        {
-            var eds = GetAllObjectsWithParent<ExtractableDataSet>(c).SingleOrDefault();
-
-            return eds == null
-                ? new CatalogueExtractabilityStatus(false, false)
-                : new CatalogueExtractabilityStatus(true, eds.Project_ID != null);
-        }
-
-        public ISelectedDataSets[] GetSelectedDatasetsWithNoExtractionIdentifiers()
-        {
-            var col = GetAllObjects<ExtractableColumn>().Where(ec => ec.IsExtractionIdentifier).ToArray();
-
-            return GetAllObjects<ISelectedDataSets>()
-                        .Where(sds => !col.Any(c => c.ExtractableDataSet_ID == sds.ExtractableDataSet_ID
-                                               && c.ExtractionConfiguration_ID == sds.ExtractionConfiguration_ID)).ToArray();
-        }
-
-
-        #region IDataExportPropertyManager
-
-        protected Dictionary<DataExportProperty,string>  PropertiesDictionary = new Dictionary<DataExportProperty, string>();
-        
-        public virtual string GetValue(DataExportProperty property)
-        {
-            return PropertiesDictionary.ContainsKey(property) ? PropertiesDictionary[property] : null;
-        }
-
-        public virtual void SetValue(DataExportProperty property, string value)
-        {
-            if (!PropertiesDictionary.ContainsKey(property))
-                PropertiesDictionary.Add(property,value);
-            else
-                PropertiesDictionary[property] = value;
-        }
-        #endregion
-
-        
-
-        #region IExtractableDataSetPackageManager
-
-        protected Dictionary<IExtractableDataSetPackage,HashSet<IExtractableDataSet>> PackageDictionary { get; set; } = new ();
-
-        public IExtractableDataSet[] GetAllDataSets(IExtractableDataSetPackage package, IExtractableDataSet[] allDataSets)
-        {
-            if (!PackageDictionary.ContainsKey(package))
-                PackageDictionary.Add(package, new HashSet<IExtractableDataSet>());
-
-            return PackageDictionary[package].ToArray();
-        }
-
-        public virtual void AddDataSetToPackage(IExtractableDataSetPackage package, IExtractableDataSet dataSet)
-        {
-            if(!PackageDictionary.ContainsKey(package))
-                PackageDictionary.Add(package,new HashSet<IExtractableDataSet>());
-
-            PackageDictionary[package].Add(dataSet);
-        }
-
-        public virtual void RemoveDataSetFromPackage(IExtractableDataSetPackage package, IExtractableDataSet dataSet)
-        {
-            if (!PackageDictionary.ContainsKey(package))
-                PackageDictionary.Add(package, new HashSet<IExtractableDataSet>());
-
-            if (!PackageDictionary[package].Contains(dataSet))
-                throw new ArgumentException($"dataSet {dataSet} is not part of package {package} so cannot be removed", "dataSet");
-
-            PackageDictionary[package].Remove(dataSet);
-        }
-
-        public Dictionary<int, List<int>> GetPackageContentsDictionary()
-        {
-            return PackageDictionary.ToDictionary(k=>k.Key.ID,v=>v.Value.Select(o=>o.ID).ToList());
-        }
-
-        public IEnumerable<ICumulativeExtractionResults> GetAllCumulativeExtractionResultsFor(IExtractionConfiguration configuration, IExtractableDataSet dataset)
-        {
-            return GetAllObjects<CumulativeExtractionResults>().Where(e=>
-            (e.ExtractionConfiguration_ID == configuration.ID) && (e.ExtractableDataSet_ID == dataset.ID));
-        }
-
-        public IReleaseLog GetReleaseLogEntryIfAny(CumulativeExtractionResults cumulativeExtractionResults)
-        {
-            return GetAllObjectsWhere<ReleaseLog>("CumulativeExtractionResults_ID", cumulativeExtractionResults.ID).SingleOrDefault();
-        }
-        #endregion
+        return eds == null
+            ? new CatalogueExtractabilityStatus(false, false)
+            : new CatalogueExtractabilityStatus(true, eds.Project_ID != null);
     }
+
+    public ISelectedDataSets[] GetSelectedDatasetsWithNoExtractionIdentifiers()
+    {
+        var col = GetAllObjects<ExtractableColumn>().Where(ec => ec.IsExtractionIdentifier).ToArray();
+
+        return GetAllObjects<ISelectedDataSets>()
+            .Where(sds => !col.Any(c => c.ExtractableDataSet_ID == sds.ExtractableDataSet_ID
+                                        && c.ExtractionConfiguration_ID == sds.ExtractionConfiguration_ID)).ToArray();
+    }
+
+
+    #region IDataExportPropertyManager
+
+    protected Dictionary<DataExportProperty,string>  PropertiesDictionary = new();
+        
+    public virtual string GetValue(DataExportProperty property)
+    {
+        return PropertiesDictionary.ContainsKey(property) ? PropertiesDictionary[property] : null;
+    }
+
+    public virtual void SetValue(DataExportProperty property, string value)
+    {
+        if (!PropertiesDictionary.ContainsKey(property))
+            PropertiesDictionary.Add(property,value);
+        else
+            PropertiesDictionary[property] = value;
+    }
+    #endregion
+
+        
+
+    #region IExtractableDataSetPackageManager
+
+    protected Dictionary<IExtractableDataSetPackage,HashSet<IExtractableDataSet>> PackageDictionary { get; set; } = new ();
+
+    public IExtractableDataSet[] GetAllDataSets(IExtractableDataSetPackage package, IExtractableDataSet[] allDataSets)
+    {
+        if (!PackageDictionary.ContainsKey(package))
+            PackageDictionary.Add(package, new HashSet<IExtractableDataSet>());
+
+        return PackageDictionary[package].ToArray();
+    }
+
+    public virtual void AddDataSetToPackage(IExtractableDataSetPackage package, IExtractableDataSet dataSet)
+    {
+        if(!PackageDictionary.ContainsKey(package))
+            PackageDictionary.Add(package,new HashSet<IExtractableDataSet>());
+
+        PackageDictionary[package].Add(dataSet);
+    }
+
+    public virtual void RemoveDataSetFromPackage(IExtractableDataSetPackage package, IExtractableDataSet dataSet)
+    {
+        if (!PackageDictionary.ContainsKey(package))
+            PackageDictionary.Add(package, new HashSet<IExtractableDataSet>());
+
+        if (!PackageDictionary[package].Contains(dataSet))
+            throw new ArgumentException($"dataSet {dataSet} is not part of package {package} so cannot be removed", nameof(dataSet));
+
+        PackageDictionary[package].Remove(dataSet);
+    }
+
+    public Dictionary<int, List<int>> GetPackageContentsDictionary()
+    {
+        return PackageDictionary.ToDictionary(k=>k.Key.ID,v=>v.Value.Select(o=>o.ID).ToList());
+    }
+
+    public IEnumerable<ICumulativeExtractionResults> GetAllCumulativeExtractionResultsFor(IExtractionConfiguration configuration, IExtractableDataSet dataset)
+    {
+        return GetAllObjects<CumulativeExtractionResults>().Where(e=>
+            e.ExtractionConfiguration_ID == configuration.ID && e.ExtractableDataSet_ID == dataset.ID);
+    }
+
+    public IReleaseLog GetReleaseLogEntryIfAny(CumulativeExtractionResults cumulativeExtractionResults)
+    {
+        return GetAllObjectsWhere<ReleaseLog>("CumulativeExtractionResults_ID", cumulativeExtractionResults.ID).SingleOrDefault();
+    }
+    #endregion
 }

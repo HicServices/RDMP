@@ -7,15 +7,13 @@
 using Rdmp.Core.DataFlowPipeline;
 using Rdmp.Core.DataLoad.Engine.LoadExecution;
 
-namespace Rdmp.Core.DataLoad.Engine.LoadProcess
-{
-    /// <summary>
-    /// See DataLoadProcess
-    /// </summary>
-    public interface IDataLoadProcess 
-    {
-        ExitCodeType Run(GracefulCancellationToken loadCancellationToken, object payload = null);
-        IDataLoadExecution LoadExecution { get; }
-    }
+namespace Rdmp.Core.DataLoad.Engine.LoadProcess;
 
+/// <summary>
+/// See DataLoadProcess
+/// </summary>
+public interface IDataLoadProcess 
+{
+    ExitCodeType Run(GracefulCancellationToken loadCancellationToken, object payload = null);
+    IDataLoadExecution LoadExecution { get; }
 }

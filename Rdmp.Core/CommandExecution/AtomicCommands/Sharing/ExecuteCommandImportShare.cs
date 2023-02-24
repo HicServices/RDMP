@@ -15,49 +15,48 @@ using Rdmp.Core.Icons.IconProvision;
 using ReusableLibraryCode.Icons.IconProvision;
 using SixLabors.ImageSharp.PixelFormats;
 
-namespace Rdmp.Core.CommandExecution.AtomicCommands.Sharing
+namespace Rdmp.Core.CommandExecution.AtomicCommands.Sharing;
+
+public abstract class ExecuteCommandImportShare : BasicCommandExecution, IAtomicCommand
 {
-    public abstract class ExecuteCommandImportShare : BasicCommandExecution, IAtomicCommand
+    private FileInfo _shareDefinitionFile;
+
+    /// <summary>
+    /// Sets up the base command to read ShareDefinitions from the selected <paramref name="sourceFileCollection"/> (pass null to have the user pick at Execute)
+    /// </summary>
+    /// <param name="activator"></param>
+    /// <param name="sourceFileCollection"></param>
+    protected ExecuteCommandImportShare(IBasicActivateItems activator, FileCollectionCombineable sourceFileCollection) : base(activator)
     {
-        private FileInfo _shareDefinitionFile;
-
-        /// <summary>
-        /// Sets up the base command to read ShareDefinitions from the selected <paramref name="sourceFileCollection"/> (pass null to have the user pick at Execute)
-        /// </summary>
-        /// <param name="activator"></param>
-        /// <param name="sourceFileCollection"></param>
-        protected ExecuteCommandImportShare(IBasicActivateItems activator, FileCollectionCombineable sourceFileCollection) : base(activator)
+        if (sourceFileCollection != null)
         {
-            if (sourceFileCollection != null)
-            {
-                if (!sourceFileCollection.IsShareDefinition)
-                    SetImpossible("Only ShareDefinition files can be imported");
+            if (!sourceFileCollection.IsShareDefinition)
+                SetImpossible("Only ShareDefinition files can be imported");
 
-                _shareDefinitionFile = sourceFileCollection.Files.Single();
-            }
+            _shareDefinitionFile = sourceFileCollection.Files.Single();
         }
-
-        public override Image<Rgba32> GetImage(IIconProvider iconProvider)
-        {
-            return Image.Load<Rgba32>(FamFamFamIcons.page_white_get);
-        }
-
-        public sealed override void Execute()
-        {
-            base.Execute();
-
-            //ensure file selected
-            if ((_shareDefinitionFile = _shareDefinitionFile ?? BasicActivator.SelectFile("Select share definition file to import","Share Definition","*.sd")) == null)
-                return;
-
-            var json = File.ReadAllText(_shareDefinitionFile.FullName);
-            var shareManager = new ShareManager(BasicActivator.RepositoryLocator);
-
-            List<ShareDefinition> shareDefinitions = shareManager.GetShareDefinitionList(json);
-
-            ExecuteImpl(shareManager, shareDefinitions);
-        }
-
-        protected abstract void ExecuteImpl(ShareManager shareManager, List<ShareDefinition> shareDefinitions);
     }
+
+    public override Image<Rgba32> GetImage(IIconProvider iconProvider)
+    {
+        return Image.Load<Rgba32>(FamFamFamIcons.page_white_get);
+    }
+
+    public sealed override void Execute()
+    {
+        base.Execute();
+
+        //ensure file selected
+        if ((_shareDefinitionFile ??= BasicActivator.SelectFile("Select share definition file to import","Share Definition","*.sd")) == null)
+            return;
+
+        var json = File.ReadAllText(_shareDefinitionFile.FullName);
+        var shareManager = new ShareManager(BasicActivator.RepositoryLocator);
+
+        var shareDefinitions = shareManager.GetShareDefinitionList(json);
+
+        ExecuteImpl(shareManager, shareDefinitions);
+    }
+
+    protected abstract void ExecuteImpl(ShareManager shareManager, List<ShareDefinition> shareDefinitions);
 }

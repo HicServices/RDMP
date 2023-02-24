@@ -13,122 +13,124 @@ using Rdmp.Core.Curation.Data.DataLoad;
 using Rdmp.Core.DataLoad.Engine.DatabaseManagement.EntityNaming;
 using ReusableLibraryCode.Progress;
 
-namespace Rdmp.Core.DataLoad.Engine.DatabaseManagement.Operations
+namespace Rdmp.Core.DataLoad.Engine.DatabaseManagement.Operations;
+
+/// <summary>
+/// Clones databases and tables using ColumnInfos, and records operations so the cloning can be undone.
+/// </summary>
+public class DatabaseCloner : IDisposeAfterDataLoad
 {
-    /// <summary>
-    /// Clones databases and tables using ColumnInfos, and records operations so the cloning can be undone.
-    /// </summary>
-    public class DatabaseCloner : IDisposeAfterDataLoad
+    private readonly HICDatabaseConfiguration _hicDatabaseConfiguration;
+    private readonly List<TableInfoCloneOperation> _tablesCreated;
+    private readonly List<DiscoveredDatabase> _databasesCreated; 
+
+    public DatabaseCloner(HICDatabaseConfiguration hicDatabaseConfiguration)
     {
-        private readonly HICDatabaseConfiguration _hicDatabaseConfiguration;
-        private readonly List<TableInfoCloneOperation> _tablesCreated;
-        private readonly List<DiscoveredDatabase> _databasesCreated; 
+        _hicDatabaseConfiguration = hicDatabaseConfiguration;
+        _tablesCreated = new List<TableInfoCloneOperation>();
+        _databasesCreated = new List<DiscoveredDatabase>();
+    }
 
-        public DatabaseCloner(HICDatabaseConfiguration hicDatabaseConfiguration)
-        {
-            _hicDatabaseConfiguration = hicDatabaseConfiguration;
-            _tablesCreated = new List<TableInfoCloneOperation>();
-            _databasesCreated = new List<DiscoveredDatabase>();
-        }
+    public DiscoveredDatabase CreateDatabaseForStage(LoadBubble stageToCreateDatabase)
+    {
+        if (stageToCreateDatabase == LoadBubble.Live)
+            throw new Exception("Please don't try to create databases on the live server");
 
-        public DiscoveredDatabase CreateDatabaseForStage(LoadBubble stageToCreateDatabase)
-        {
-            if (stageToCreateDatabase == LoadBubble.Live)
-                throw new Exception("Please don't try to create databases on the live server");
+        var dbInfo = _hicDatabaseConfiguration.DeployInfo[stageToCreateDatabase];
 
-            var dbInfo = _hicDatabaseConfiguration.DeployInfo[stageToCreateDatabase];
+        dbInfo.Server.CreateDatabase(dbInfo.GetRuntimeName());
 
-            dbInfo.Server.CreateDatabase(dbInfo.GetRuntimeName());
+        _databasesCreated.Add(dbInfo);
 
-            _databasesCreated.Add(dbInfo);
-
-            return dbInfo;
-        }
+        return dbInfo;
+    }
         
-        public void CreateTablesInDatabaseFromCatalogueInfo(IDataLoadEventListener listener, TableInfo tableInfo, LoadBubble copyToStage)
+    public void CreateTablesInDatabaseFromCatalogueInfo(IDataLoadEventListener listener, TableInfo tableInfo, LoadBubble copyToStage)
+    {
+        if (copyToStage == LoadBubble.Live)
+            throw new Exception("Please don't try to create tables in the live database");
+
+        var destDbInfo = _hicDatabaseConfiguration.DeployInfo[copyToStage];
+
+        var cloneOperation = new TableInfoCloneOperation(_hicDatabaseConfiguration,tableInfo, copyToStage,listener)
         {
-            if (copyToStage == LoadBubble.Live)
-                throw new Exception("Please don't try to create tables in the live database");
+            DropHICColumns = copyToStage == LoadBubble.Raw,//don't drop columns like hic_sourceID, these are optional for population (and don't get Diff'ed) but should still be there
+            AllowNulls = copyToStage == LoadBubble.Raw
+        };
 
-            var destDbInfo = _hicDatabaseConfiguration.DeployInfo[copyToStage];
-
-            var cloneOperation = new TableInfoCloneOperation(_hicDatabaseConfiguration,tableInfo, copyToStage,listener)
-            {
-                DropHICColumns = copyToStage == LoadBubble.Raw,//don't drop columns like hic_sourceID, these are optional for population (and don't get Diff'ed) but should still be there
-                AllowNulls = copyToStage == LoadBubble.Raw
-            };
-
-            cloneOperation.Execute();
-            _tablesCreated.Add(cloneOperation);
+        cloneOperation.Execute();
+        _tablesCreated.Add(cloneOperation);
 
             
-            if (copyToStage == LoadBubble.Raw)
+        if (copyToStage == LoadBubble.Raw)
+        {
+            var tableName = tableInfo.GetRuntimeName(copyToStage, _hicDatabaseConfiguration.DatabaseNamer);
+
+            var table = destDbInfo.ExpectTable(tableName);
+
+            var existingColumns = tableInfo.ColumnInfos.Select(c => c.GetRuntimeName(LoadStage.AdjustRaw)).ToArray();
+
+            foreach (var preLoadDiscardedColumn in tableInfo.PreLoadDiscardedColumns)
             {
-                var tableName = tableInfo.GetRuntimeName(copyToStage, _hicDatabaseConfiguration.DatabaseNamer);
+                //this column does not get dropped so will be in live TableInfo
+                if (preLoadDiscardedColumn.Destination == DiscardedColumnDestination.Dilute)
+                    continue;
 
-                var table = destDbInfo.ExpectTable(tableName);
+                if (existingColumns.Any(e=>e.Equals(preLoadDiscardedColumn.GetRuntimeName(LoadStage.AdjustRaw))))
+                    throw new Exception(
+                        $"There is a column called {preLoadDiscardedColumn.GetRuntimeName(LoadStage.AdjustRaw)} as both a PreLoadDiscardedColumn and in the TableInfo (live table), you should either drop the column from the live table or remove it as a PreLoadDiscarded column");
 
-                string[] existingColumns = tableInfo.ColumnInfos.Select(c => c.GetRuntimeName(LoadStage.AdjustRaw)).ToArray();
+                //add all the preload discarded columns because they could be routed to ANO store or sent to oblivion
+                AddColumnToTable(table, preLoadDiscardedColumn.RuntimeColumnName, preLoadDiscardedColumn.SqlDataType, listener);
+            }
 
-                foreach (PreLoadDiscardedColumn preLoadDiscardedColumn in tableInfo.PreLoadDiscardedColumns)
+            //deal with anonymisation transforms e.g. ANOCHI of datatype varchar(12) would have to become a column called CHI of datatype varchar(10) on creation in RAW
+            var columnInfosWithANOTransforms = tableInfo.ColumnInfos.Where(c => c.ANOTable_ID != null).ToArray();
+            if(columnInfosWithANOTransforms.Any())
+                foreach (var col in columnInfosWithANOTransforms)
                 {
-                    //this column does not get dropped so will be in live TableInfo
-                    if (preLoadDiscardedColumn.Destination == DiscardedColumnDestination.Dilute)
-                        continue;
+                    var liveName = col.GetRuntimeName(LoadStage.PostLoad);
+                    var rawName = col.GetRuntimeName(LoadStage.AdjustRaw);
 
-                    if (existingColumns.Any(e=>e.Equals(preLoadDiscardedColumn.GetRuntimeName(LoadStage.AdjustRaw))))
-                        throw new Exception("There is a column called " + preLoadDiscardedColumn.GetRuntimeName(LoadStage.AdjustRaw) + " as both a PreLoadDiscardedColumn and in the TableInfo (live table), you should either drop the column from the live table or remove it as a PreLoadDiscarded column");
+                    var rawDataType = col.GetRuntimeDataType(LoadStage.AdjustRaw);
 
-                    //add all the preload discarded columns because they could be routed to ANO store or sent to oblivion
-                    AddColumnToTable(table, preLoadDiscardedColumn.RuntimeColumnName, preLoadDiscardedColumn.SqlDataType, listener);
+                    DropColumnFromTable(table, liveName,listener);
+                    AddColumnToTable(table, rawName, rawDataType, listener);
                 }
-
-                //deal with anonymisation transforms e.g. ANOCHI of datatype varchar(12) would have to become a column called CHI of datatype varchar(10) on creation in RAW
-                var columnInfosWithANOTransforms = tableInfo.ColumnInfos.Where(c => c.ANOTable_ID != null).ToArray();
-                if(columnInfosWithANOTransforms.Any())
-                    foreach (ColumnInfo col in columnInfosWithANOTransforms)
-                    {
-                        var liveName = col.GetRuntimeName(LoadStage.PostLoad);
-                        var rawName = col.GetRuntimeName(LoadStage.AdjustRaw);
-
-                        var rawDataType = col.GetRuntimeDataType(LoadStage.AdjustRaw);
-
-                        DropColumnFromTable(table, liveName,listener);
-                        AddColumnToTable(table, rawName, rawDataType, listener);
-                    }
-            }
         }
+    }
 
-        private void AddColumnToTable(DiscoveredTable table, string desiredColumnName, string desiredColumnType, IDataLoadEventListener listener)
+    private void AddColumnToTable(DiscoveredTable table, string desiredColumnName, string desiredColumnType, IDataLoadEventListener listener)
+    {
+        listener.OnNotify(this, new NotifyEventArgs(ProgressEventType.Information,
+            $"Adding column '{desiredColumnName}' with datatype '{desiredColumnType}' to table '{table.GetFullyQualifiedName()}'"));
+        table.AddColumn(desiredColumnName, desiredColumnType, true, 500);
+    }
+
+    private void DropColumnFromTable(DiscoveredTable table, string columnName, IDataLoadEventListener listener)
+    {
+        listener.OnNotify(this, new NotifyEventArgs(ProgressEventType.Information,
+            $"Dropping column '{columnName}' from table '{table.GetFullyQualifiedName()}'"));
+        var col = table.DiscoverColumn(columnName);
+        table.DropColumn(col);
+    }
+
+
+    public void LoadCompletedSoDispose(ExitCodeType exitCode,IDataLoadEventListener postLoadEventListener)
+    {
+        //dont bother cleaning up if it bombed
+        if (exitCode == ExitCodeType.Error )
+            return;
+
+        //its Abort,Success or LoadNotRequired
+        foreach (var cloneOperation in _tablesCreated)
         {
-            listener.OnNotify(this, new NotifyEventArgs(ProgressEventType.Information, string.Format("Adding column '{0}' with datatype '{1}' to table '{2}'", desiredColumnName, desiredColumnType, table.GetFullyQualifiedName())));
-            table.AddColumn(desiredColumnName, desiredColumnType, true, 500);
+            cloneOperation.Undo();
         }
 
-        private void DropColumnFromTable(DiscoveredTable table, string columnName, IDataLoadEventListener listener)
-        {
-            listener.OnNotify(this, new NotifyEventArgs(ProgressEventType.Information, string.Format("Dropping column '{0}' from table '{1}'", columnName, table.GetFullyQualifiedName())));
-            var col = table.DiscoverColumn(columnName);
-            table.DropColumn(col);
-        }
-
-
-        public void LoadCompletedSoDispose(ExitCodeType exitCode,IDataLoadEventListener postLoadEventListener)
-        {
-            //dont bother cleaning up if it bombed
-            if (exitCode == ExitCodeType.Error )
-                return;
-
-            //its Abort,Success or LoadNotRequired
-            foreach (var cloneOperation in _tablesCreated)
-            {
-                cloneOperation.Undo();
-            }
-
-            foreach (var dbInfo in _databasesCreated)
-                dbInfo.Drop();
-        }
+        foreach (var dbInfo in _databasesCreated)
+            dbInfo.Drop();
+    }
 
    
-    }
 }

@@ -6,40 +6,37 @@
 
 using MapsDirectlyToDatabaseTable;
 using Rdmp.Core.Curation.Data;
-using Rdmp.Core.Curation.Data.Aggregation;
 using Rdmp.Core.Curation.Data.Pipelines;
-using Rdmp.Core.DataExport.Data;
 using ReusableLibraryCode;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 
-namespace Rdmp.Core.Providers
+namespace Rdmp.Core.Providers;
+
+public abstract class ProblemProvider:IProblemProvider
 {
-    public abstract class ProblemProvider:IProblemProvider
-    {
-        public static HashSet<Type> IgnoreBadNamesFor = new HashSet<Type>(new[] { 
-            typeof(TableInfo),
-            typeof(ColumnInfo),
-            typeof(IFilter),
-            typeof(Pipeline)});
+    public static HashSet<Type> IgnoreBadNamesFor = new(new[] { 
+        typeof(TableInfo),
+        typeof(ColumnInfo),
+        typeof(IFilter),
+        typeof(Pipeline)});
         
-        /// <inheritdoc/>
-        public bool HasProblem(object o)
-        {
-            return DescribeProblem(o) != null;
-        }
-
-        public string DescribeProblem(object o)
-        {
-            if(o is INamed n && !IgnoreBadNamesFor.Any(t=>t.IsInstanceOfType(o)) && UsefulStuff.IsBadName(n.Name))
-                return "Name contains illegal characters";
-
-            return DescribeProblemImpl(o);
-        }
-
-        protected abstract string DescribeProblemImpl(object o);
-
-        public abstract void RefreshProblems(ICoreChildProvider childProvider);
+    /// <inheritdoc/>
+    public bool HasProblem(object o)
+    {
+        return DescribeProblem(o) != null;
     }
+
+    public string DescribeProblem(object o)
+    {
+        if(o is INamed n && !IgnoreBadNamesFor.Any(t=>t.IsInstanceOfType(o)) && UsefulStuff.IsBadName(n.Name))
+            return "Name contains illegal characters";
+
+        return DescribeProblemImpl(o);
+    }
+
+    protected abstract string DescribeProblemImpl(object o);
+
+    public abstract void RefreshProblems(ICoreChildProvider childProvider);
 }

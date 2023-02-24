@@ -12,43 +12,42 @@ using Rdmp.UI.SimpleDialogs;
 using ReusableLibraryCode;
 using Cursors = System.Windows.Forms.Cursors;
 
-namespace Rdmp.UI.LinkLabels
+namespace Rdmp.UI.LinkLabels;
+
+/// <summary>
+/// Label showing a file system path which opens the containing directory in explorer when clicked.
+/// </summary>
+public class PathLinkLabel : Label
 {
-    /// <summary>
-    /// Label showing a file system path which opens the containing directory in explorer when clicked.
-    /// </summary>
-    public class PathLinkLabel : Label
+    protected override void OnMouseHover(EventArgs e)
     {
-        protected override void OnMouseHover(EventArgs e)
-        {
-            base.OnMouseHover(e);
-            this.Cursor = Cursors.Hand;
-        }
+        base.OnMouseHover(e);
+        Cursor = Cursors.Hand;
+    }
 
-        protected override void OnClick(EventArgs e)
-        {
-            base.OnClick(e);
+    protected override void OnClick(EventArgs e)
+    {
+        base.OnClick(e);
 
-            if(!string.IsNullOrWhiteSpace(Text))
-                try
-                {
-                    UsefulStuff.GetInstance().ShowFolderInWindowsExplorer(new DirectoryInfo(Text));
-                }
-                catch (Exception exception)
-                {
-                    ExceptionViewer.Show(exception);
-                }
-        }
+        if(!string.IsNullOrWhiteSpace(Text))
+            try
+            {
+                UsefulStuff.GetInstance().ShowFolderInWindowsExplorer(new DirectoryInfo(Text));
+            }
+            catch (Exception exception)
+            {
+                ExceptionViewer.Show(exception);
+            }
+    }
         
-        protected override void OnPaint(PaintEventArgs e)
-        {
-            //paint background
-            using (SolidBrush b = new SolidBrush(BackColor))
-                e.Graphics.FillRectangle(b, Bounds);
+    protected override void OnPaint(PaintEventArgs e)
+    {
+        //paint background
+        using (var b = new SolidBrush(BackColor))
+            e.Graphics.FillRectangle(b, Bounds);
             
-            //paint text
-            using(Font f = new Font(Font, FontStyle.Underline))
-                TextRenderer.DrawText(e.Graphics, Text, f, ClientRectangle, Color.Blue, TextFormatFlags.PathEllipsis);
-        }
+        //paint text
+        using(var f = new Font(Font, FontStyle.Underline))
+            TextRenderer.DrawText(e.Graphics, Text, f, ClientRectangle, Color.Blue, TextFormatFlags.PathEllipsis);
     }
 }

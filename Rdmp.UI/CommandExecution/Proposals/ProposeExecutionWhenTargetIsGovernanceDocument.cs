@@ -9,27 +9,26 @@ using Rdmp.Core.Curation.Data.Governance;
 using Rdmp.UI.ItemActivation;
 using Rdmp.UI.SimpleDialogs.Governance;
 
-namespace Rdmp.UI.CommandExecution.Proposals
+namespace Rdmp.UI.CommandExecution.Proposals;
+
+internal class ProposeExecutionWhenTargetIsGovernanceDocument : RDMPCommandExecutionProposal<GovernanceDocument>
 {
-    class ProposeExecutionWhenTargetIsGovernanceDocument : RDMPCommandExecutionProposal<GovernanceDocument>
+    public ProposeExecutionWhenTargetIsGovernanceDocument(IActivateItems itemActivator) : base(itemActivator)
     {
-        public ProposeExecutionWhenTargetIsGovernanceDocument(IActivateItems itemActivator) : base(itemActivator)
-        {
-        }
+    }
 
-        public override bool CanActivate(GovernanceDocument target)
-        {
-            return true;
-        }
+    public override bool CanActivate(GovernanceDocument target)
+    {
+        return true;
+    }
 
-        public override void Activate(GovernanceDocument target)
-        {
-            ItemActivator.Activate<GovernanceDocumentUI, GovernanceDocument>(target);
-        }
+    public override void Activate(GovernanceDocument target)
+    {
+        ItemActivator.Activate<GovernanceDocumentUI, GovernanceDocument>(target);
+    }
 
-        public override ICommandExecution ProposeExecution(ICombineToMakeCommand cmd, GovernanceDocument target, InsertOption insertOption = InsertOption.Default)
-        {
-            return null;
-        }
+    public override ICommandExecution ProposeExecution(ICombineToMakeCommand cmd, GovernanceDocument target, InsertOption insertOption = InsertOption.Default)
+    {
+        return null;
     }
 }

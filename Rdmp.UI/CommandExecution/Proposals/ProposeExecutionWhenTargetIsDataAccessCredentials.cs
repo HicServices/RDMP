@@ -9,28 +9,27 @@ using Rdmp.Core.Curation.Data;
 using Rdmp.UI.CredentialsUIs;
 using Rdmp.UI.ItemActivation;
 
-namespace Rdmp.UI.CommandExecution.Proposals
+namespace Rdmp.UI.CommandExecution.Proposals;
+
+internal class ProposeExecutionWhenTargetIsDataAccessCredentials : RDMPCommandExecutionProposal<DataAccessCredentials>
 {
-    class ProposeExecutionWhenTargetIsDataAccessCredentials : RDMPCommandExecutionProposal<DataAccessCredentials>
+    public ProposeExecutionWhenTargetIsDataAccessCredentials(IActivateItems itemActivator)
+        : base(itemActivator)
     {
-        public ProposeExecutionWhenTargetIsDataAccessCredentials(IActivateItems itemActivator)
-            : base(itemActivator)
-        {
-        }
+    }
 
-        public override bool CanActivate(DataAccessCredentials target)
-        {
-            return true;
-        }
+    public override bool CanActivate(DataAccessCredentials target)
+    {
+        return true;
+    }
 
-        public override void Activate(DataAccessCredentials target)
-        {
-            ItemActivator.Activate<DataAccessCredentialsUI, DataAccessCredentials>(target);
-        }
+    public override void Activate(DataAccessCredentials target)
+    {
+        ItemActivator.Activate<DataAccessCredentialsUI, DataAccessCredentials>(target);
+    }
 
-        public override ICommandExecution ProposeExecution(ICombineToMakeCommand cmd, DataAccessCredentials target, InsertOption insertOption = InsertOption.Default)
-        {
-            return null;
-        }
+    public override ICommandExecution ProposeExecution(ICombineToMakeCommand cmd, DataAccessCredentials target, InsertOption insertOption = InsertOption.Default)
+    {
+        return null;
     }
 }

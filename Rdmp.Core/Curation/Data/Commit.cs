@@ -10,77 +10,76 @@ using System;
 using System.Collections.Generic;
 using System.Data.Common;
 
-namespace Rdmp.Core.Curation.Data
+namespace Rdmp.Core.Curation.Data;
+
+/// <summary>
+/// Captures a user tracked change to the state of objects in RDMP.  A single <see cref="Commit"/> contains
+/// one or more <see cref="Memento"/> which track the before and after states of the objects changed
+/// </summary>
+public class Commit : DatabaseEntity
 {
-    /// <summary>
-    /// Captures a user tracked change to the state of objects in RDMP.  A single <see cref="Commit"/> contains
-    /// one or more <see cref="Memento"/> which track the before and after states of the objects changed
-    /// </summary>
-    public class Commit : DatabaseEntity
+    #region Database Properties
+    private string _username;
+    private DateTime _date;
+    private string _transaction;
+    private string _description;
+
+    public string Username
     {
-        #region Database Properties
-        private string _username;
-        private DateTime _date;
-        private string _transaction;
-        private string _description;
+        get => _username;
+        set => SetField(ref _username, value);
+    }
 
-        public string Username
+    public DateTime Date
+    {
+        get => _date;
+        set => SetField(ref _date, value);
+    }
+    public string Transaction
+    {
+        get => _transaction;
+        set => SetField(ref _transaction, value);
+    }
+    public string Description
+    {
+        get => _description;
+        set => SetField(ref _description, value);
+    }
+
+    #endregion
+
+    #region Relationships
+
+
+    [NoMappingToDatabase]
+    public Memento[] Mementos => Repository.GetAllObjectsWithParent<Memento>(this);
+
+    #endregion
+
+    public Commit()
+    {
+
+    }
+    public Commit(ICatalogueRepository repo, DbDataReader r) : base(repo, r)
+    {
+        Transaction = r["Transaction"].ToString();
+        Username = r["Username"].ToString();
+        Date = Convert.ToDateTime(r["Date"]);
+        Description = r["Description"].ToString();
+    }
+    public Commit(ICatalogueRepository repository, Guid transaction, string description)
+    {
+        repository.InsertAndHydrate(this, new Dictionary<string, object>
         {
-            get { return _username; }
-            set { SetField(ref _username, value); }
-        }
+            {"Transaction",transaction.ToString("N")},
+            {"Username", Environment.UserName},
+            {"Date", DateTime.Now},
+            {"Description",description}
+        });
+    }
 
-        public DateTime Date
-        {
-            get { return _date; }
-            set { SetField(ref _date, value); }
-        }
-        public string Transaction
-        {
-            get { return _transaction; }
-            set { SetField(ref _transaction, value); }
-        }
-        public string Description
-        {
-            get { return _description; }
-            set { SetField(ref _description, value); }
-        }
-
-        #endregion
-
-        #region Relationships
-
-
-        [NoMappingToDatabase]
-        public Memento[] Mementos => Repository.GetAllObjectsWithParent<Memento>(this);
-
-        #endregion
-
-        public Commit()
-        {
-
-        }
-        public Commit(ICatalogueRepository repo, DbDataReader r) : base(repo, r)
-        {
-            Transaction = r["Transaction"].ToString();
-            Username = r["Username"].ToString();
-            Date = Convert.ToDateTime(r["Date"]);
-            Description = r["Description"].ToString();
-        }
-        public Commit(ICatalogueRepository repository, Guid transaction, string description)
-        {
-            repository.InsertAndHydrate(this, new Dictionary<string, object>
-            {
-                {"Transaction",transaction.ToString("N")},
-                {"Username", Environment.UserName},
-                {"Date", DateTime.Now},
-                {"Description",description},
-            });
-        }
-
-        public override string ToString()
-        {
-            return Transaction;
-        }
+    public override string ToString()
+    {
+        return Transaction;
     }
 }

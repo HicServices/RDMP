@@ -7,71 +7,69 @@
 using System;
 using System.Data.Common;
 
-namespace Rdmp.Core.Logging.PastEvents
+namespace Rdmp.Core.Logging.PastEvents;
+
+/// <summary>
+/// Readonly audit of a historical 'data source' (See HIC.Logging.DataSource) that contributed records to a table that was loaded in the last (See 
+/// ArchivalTableLoadInfo).
+/// </summary>
+public class ArchivalDataSource : IArchivalLoggingRecordOfPastEvent, IComparable
 {
-    /// <summary>
-    /// Readonly audit of a historical 'data source' (See HIC.Logging.DataSource) that contributed records to a table that was loaded in the last (See 
-    /// ArchivalTableLoadInfo).
-    /// </summary>
-    public class ArchivalDataSource : IArchivalLoggingRecordOfPastEvent, IComparable
+
+    public string MD5 { get; internal set; }
+    public string Source { get; internal set; }
+    public string Archive { get; internal set; }
+    public DateTime? OriginDate { get; internal set; }
+    public int ID { get; set; }
+
+    public ArchivalDataSource(DbDataReader r)
+    {
+            
+        ID = Convert.ToInt32(r["ID"]);
+        var od = r["originDate"];
+
+        if (od == null || od == DBNull.Value)
+            OriginDate = null;
+        else
+            OriginDate = (DateTime)od;
+
+        Source = r["source"] as string;
+        Archive = r["archive"] as string;
+        MD5 = r["MD5"] as string;
+    }
+        
+    public string ToShortString()
     {
 
-        public string MD5 { get; internal set; }
-        public string Source { get; internal set; }
-        public string Archive { get; internal set; }
-        public DateTime? OriginDate { get; internal set; }
-        public int ID { get; set; }
+        var s = ToString();
+        if (s.Length > ArchivalDataLoadInfo.MaxDescriptionLength)
+            return $"{s[..ArchivalDataLoadInfo.MaxDescriptionLength]}...";
+        return s;
+    }
 
-        public ArchivalDataSource(DbDataReader r)
-        {
-            
-            ID = Convert.ToInt32(r["ID"]);
-            var od = r["originDate"];
+    public override string ToString()
+    {
+        return $"Source:{Source}{(string.IsNullOrWhiteSpace(MD5) ? "" : $"(MD5={MD5})")}";
+    }
 
-            if (od == null || od == DBNull.Value)
-                OriginDate = null;
+    public int CompareTo(object obj)
+    {
+        if (obj is ArchivalDataSource other)
+            if (OriginDate == other.OriginDate)
+                return 0;
             else
-                OriginDate = (DateTime)od;
+            {
 
-            Source = r["source"] as string;
-            Archive = r["archive"] as string;
-            MD5 = r["MD5"] as string;
-        }
-        
-        public string ToShortString()
-        {
+                if (!OriginDate.HasValue)
+                    return -1;
 
-            var s = ToString();
-            if (s.Length > ArchivalDataLoadInfo.MaxDescriptionLength)
-                return s.Substring(0, ArchivalDataLoadInfo.MaxDescriptionLength) + "...";
-            return s;
-        }
-
-        public override string ToString()
-        {
-            return  "Source:" + Source + (string.IsNullOrWhiteSpace(MD5) ? "" : "(MD5=" + MD5 + ")");
-        }
-
-        public int CompareTo(object obj)
-        {
-            var other = obj as ArchivalDataSource;
-            if (other != null)
-                if (OriginDate == other.OriginDate)
-                    return 0;
-                else
-                {
-
-                    if (!OriginDate.HasValue)
-                        return -1;
-
-                    if (!other.OriginDate.HasValue)
-                        return 1;
+                if (!other.OriginDate.HasValue)
+                    return 1;
                     
-                    return OriginDate > other.OriginDate ? 1 : -1;
+                return OriginDate > other.OriginDate ? 1 : -1;
 
-                }
+            }
 
-            return System.String.Compare(ToString(), obj.ToString(), System.StringComparison.Ordinal);
-        }
+        return string.Compare(ToString(), obj.ToString(), StringComparison.Ordinal);
     }
 }

@@ -8,50 +8,48 @@ using System;
 using NUnit.Framework;
 using Rdmp.Core.Curation.Data;
 using Rdmp.Core.DataExport.Data;
-using Rdmp.Core.Repositories.Managers;
 using Tests.Common;
 
-namespace Rdmp.Core.Tests.DataExport.DataAccess
+namespace Rdmp.Core.Tests.DataExport.DataAccess;
+
+public class PackageContentsTests:DatabaseTests
 {
-    public class PackageContentsTests:DatabaseTests
+    [Test]
+    public void AddAndRemove()
     {
-        [Test]
-        public void AddAndRemove()
+        var cata = new Catalogue(CatalogueRepository, "PackageContentsTests");
+
+        var ds = new ExtractableDataSet(DataExportRepository,cata);
+
+        var package = new ExtractableDataSetPackage(DataExportRepository, "My Cool Package");
+        try
         {
-            var cata = new Catalogue(CatalogueRepository, "PackageContentsTests");
-
-            var ds = new ExtractableDataSet(DataExportRepository,cata);
-
-            var package = new ExtractableDataSetPackage(DataExportRepository, "My Cool Package");
-            try
-            {
-                Assert.AreEqual("My Cool Package",package.Name);
-                package.Name = "FishPackage";
-                package.SaveToDatabase();
+            Assert.AreEqual("My Cool Package",package.Name);
+            package.Name = "FishPackage";
+            package.SaveToDatabase();
 
 
-                var packageContents = DataExportRepository;
+            var packageContents = DataExportRepository;
 
-                var results = packageContents.GetAllDataSets(package, null);
-                Assert.AreEqual(0,results.Length);
+            var results = packageContents.GetAllDataSets(package, null);
+            Assert.AreEqual(0,results.Length);
 
-                packageContents.AddDataSetToPackage(package,ds);
+            packageContents.AddDataSetToPackage(package,ds);
 
-                results = packageContents.GetAllDataSets(package, DataExportRepository.GetAllObjects<ExtractableDataSet>());
-                Assert.AreEqual(1, results.Length);
-                Assert.AreEqual(ds,results[0]);
+            results = packageContents.GetAllDataSets(package, DataExportRepository.GetAllObjects<ExtractableDataSet>());
+            Assert.AreEqual(1, results.Length);
+            Assert.AreEqual(ds,results[0]);
 
-                packageContents.RemoveDataSetFromPackage(package,ds);
+            packageContents.RemoveDataSetFromPackage(package,ds);
 
-                //cannot delete the relationship twice
-                Assert.Throws<ArgumentException>(() => packageContents.RemoveDataSetFromPackage(package, ds));
-            }
-            finally
-            {
-                ds.DeleteInDatabase();
-                package.DeleteInDatabase();
-                cata.DeleteInDatabase();
-            }
+            //cannot delete the relationship twice
+            Assert.Throws<ArgumentException>(() => packageContents.RemoveDataSetFromPackage(package, ds));
+        }
+        finally
+        {
+            ds.DeleteInDatabase();
+            package.DeleteInDatabase();
+            cata.DeleteInDatabase();
         }
     }
 }

@@ -18,74 +18,73 @@ using Rdmp.Core.Logging;
 using ReusableLibraryCode.Checks;
 using Tests.Common;
 
-namespace Rdmp.Core.Tests.DataLoad.Engine.Integration
+namespace Rdmp.Core.Tests.DataLoad.Engine.Integration;
+
+/// <summary>
+/// Base class for tests that want to run data loads contains helper methods for setting up a valid DLE load configuration and running it
+/// </summary>
+internal class DataLoadEngineTestsBase : DatabaseTests
 {
-    /// <summary>
-    /// Base class for tests that want to run data loads contains helper methods for setting up a valid DLE load configuration and running it
-    /// </summary>
-    class DataLoadEngineTestsBase : DatabaseTests
+    protected void AssertHasDataLoadRunId(DataRow row)
     {
-        protected void AssertHasDataLoadRunId(DataRow row)
-        {
-            var o = row[SpecialFieldNames.DataLoadRunID];
+        var o = row[SpecialFieldNames.DataLoadRunID];
 
-            Assert.IsNotNull(o, "A row which was expected to have a hic_dataLoadRunID had null instead");
-            Assert.AreNotEqual(DBNull.Value, o, "A row which was expected to have a hic_dataLoadRunID had DBNull.Value instead");
-            Assert.GreaterOrEqual((int)o, 0);
+        Assert.IsNotNull(o, "A row which was expected to have a hic_dataLoadRunID had null instead");
+        Assert.AreNotEqual(DBNull.Value, o, "A row which was expected to have a hic_dataLoadRunID had DBNull.Value instead");
+        Assert.GreaterOrEqual((int)o, 0);
 
-            var d = row[SpecialFieldNames.ValidFrom];
-            Assert.IsNotNull(d, "A row which was expected to have a hic_validFrom had null instead");
-            Assert.AreNotEqual(DBNull.Value, d, "A row which was expected to have a hic_validFrom had DBNull.Value instead");
+        var d = row[SpecialFieldNames.ValidFrom];
+        Assert.IsNotNull(d, "A row which was expected to have a hic_validFrom had null instead");
+        Assert.AreNotEqual(DBNull.Value, d, "A row which was expected to have a hic_validFrom had DBNull.Value instead");
 
-            //expect validFrom to be after 2 hours ago (to handle UTC / BST nonsense)
-            Assert.GreaterOrEqual((DateTime)d, DateTime.Now.Subtract(new TimeSpan(2, 0, 0)));
+        //expect validFrom to be after 2 hours ago (to handle UTC / BST nonsense)
+        Assert.GreaterOrEqual((DateTime)d, DateTime.Now.Subtract(new TimeSpan(2, 0, 0)));
 
-        }
+    }
 
-        protected void CreateCSVProcessTask(LoadMetadata lmd, ITableInfo ti, string regex)
-        {
-            var pt = new ProcessTask(CatalogueRepository, lmd, LoadStage.Mounting);
-            pt.Path = typeof(AnySeparatorFileAttacher).FullName;
-            pt.ProcessTaskType = ProcessTaskType.Attacher;
-            pt.Name = "Load " + ti.GetRuntimeName();
-            pt.SaveToDatabase();
+    protected void CreateCSVProcessTask(LoadMetadata lmd, ITableInfo ti, string regex)
+    {
+        var pt = new ProcessTask(CatalogueRepository, lmd, LoadStage.Mounting);
+        pt.Path = typeof(AnySeparatorFileAttacher).FullName;
+        pt.ProcessTaskType = ProcessTaskType.Attacher;
+        pt.Name = $"Load {ti.GetRuntimeName()}";
+        pt.SaveToDatabase();
 
-            pt.CreateArgumentsForClassIfNotExists<AnySeparatorFileAttacher>();
-            pt.SetArgumentValue("FilePattern", regex);
-            pt.SetArgumentValue("Separator", ",");
-            pt.SetArgumentValue("TableToLoad", ti);
+        pt.CreateArgumentsForClassIfNotExists<AnySeparatorFileAttacher>();
+        pt.SetArgumentValue("FilePattern", regex);
+        pt.SetArgumentValue("Separator", ",");
+        pt.SetArgumentValue("TableToLoad", ti);
 
-            pt.Check(new ThrowImmediatelyCheckNotifier());
-        }
+        pt.Check(new ThrowImmediatelyCheckNotifier());
+    }
 
-        protected LoadDirectory SetupLoadDirectory(LoadMetadata lmd)
-        {
-            var projectDirectory = LoadDirectory.CreateDirectoryStructure(new DirectoryInfo(TestContext.CurrentContext.TestDirectory), "MyLoadDir", true);
-            lmd.LocationOfFlatFiles = projectDirectory.RootPath.FullName;
-            lmd.SaveToDatabase();
+    protected LoadDirectory SetupLoadDirectory(LoadMetadata lmd)
+    {
+        var projectDirectory = LoadDirectory.CreateDirectoryStructure(new DirectoryInfo(TestContext.CurrentContext.TestDirectory), "MyLoadDir", true);
+        lmd.LocationOfFlatFiles = projectDirectory.RootPath.FullName;
+        lmd.SaveToDatabase();
 
-            return projectDirectory;
-        }
+        return projectDirectory;
+    }
 
-        protected ITableInfo Import(DiscoveredTable tbl, LoadMetadata lmd, LogManager logManager)
-        {
-            logManager.CreateNewLoggingTaskIfNotExists(lmd.Name);
+    protected ITableInfo Import(DiscoveredTable tbl, LoadMetadata lmd, LogManager logManager)
+    {
+        logManager.CreateNewLoggingTaskIfNotExists(lmd.Name);
 
-            //import TableInfos
-            var importer = new TableInfoImporter(CatalogueRepository, tbl);
-            importer.DoImport(out var ti, out var cis);
+        //import TableInfos
+        var importer = new TableInfoImporter(CatalogueRepository, tbl);
+        importer.DoImport(out var ti, out var cis);
 
-            //create Catalogue
-            var forwardEngineer = new ForwardEngineerCatalogue(ti, cis);
-            forwardEngineer.ExecuteForwardEngineering(out var cata, out var cataItems, out var eis);
+        //create Catalogue
+        var forwardEngineer = new ForwardEngineerCatalogue(ti, cis);
+        forwardEngineer.ExecuteForwardEngineering(out var cata, out var cataItems, out var eis);
 
-            //make the catalogue use the load configuration
-            cata.LoadMetadata_ID = lmd.ID;
-            cata.LoggingDataTask = lmd.Name;
-            Assert.IsNotNull(cata.LiveLoggingServer_ID); //catalogue should have one of these because of system defaults
-            cata.SaveToDatabase();
+        //make the catalogue use the load configuration
+        cata.LoadMetadata_ID = lmd.ID;
+        cata.LoggingDataTask = lmd.Name;
+        Assert.IsNotNull(cata.LiveLoggingServer_ID); //catalogue should have one of these because of system defaults
+        cata.SaveToDatabase();
 
-            return ti;
-        }
+        return ti;
     }
 }

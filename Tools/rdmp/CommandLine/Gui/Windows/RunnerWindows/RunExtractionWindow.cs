@@ -12,46 +12,45 @@ using Rdmp.Core.DataExport.DataExtraction.Pipeline;
 using System;
 using System.Linq;
 
-namespace Rdmp.Core.CommandLine.Gui.Windows.RunnerWindows
+namespace Rdmp.Core.CommandLine.Gui.Windows.RunnerWindows;
+
+internal class RunExtractionWindow : RunEngineWindow<ExtractionOptions>
 {
-    class RunExtractionWindow : RunEngineWindow<ExtractionOptions>
+    public RunExtractionWindow(IBasicActivateItems activator, ExtractionConfiguration ec) : base(activator, () => GetRunCommand(ec))
     {
-        public RunExtractionWindow(IBasicActivateItems activator, ExtractionConfiguration ec) : base(activator, () => GetRunCommand(ec))
-        {
 
+    }
+
+    private static ExtractionOptions GetRunCommand(ExtractionConfiguration ec)
+    {
+        return new ExtractionOptions()
+        {
+            ExtractionConfiguration = ec.ID.ToString(),
+            ExtractGlobals = true
+        };
+    }
+
+
+    protected override void AdjustCommand(ExtractionOptions opts, CommandLineActivity activity)
+    {
+        base.AdjustCommand(opts, activity);
+
+        var useCase = ExtractionPipelineUseCase.DesignTime();
+
+        var compatible = useCase.FilterCompatiblePipelines(BasicActivator.RepositoryLocator.CatalogueRepository.GetAllObjects<Pipeline>()).ToArray();
+
+        if (!compatible.Any())
+        {
+            throw new Exception("No compatible pipelines");
         }
 
-        private static ExtractionOptions GetRunCommand(ExtractionConfiguration ec)
+        var pipe = BasicActivator.SelectOne("Extraction Pipeline", compatible, null, true);
+
+        if (pipe == null)
         {
-            return new ExtractionOptions()
-            {
-                ExtractionConfiguration = ec.ID.ToString(),
-                ExtractGlobals = true,
-            };
+            throw new OperationCanceledException();
         }
 
-
-        protected override void AdjustCommand(ExtractionOptions opts, CommandLineActivity activity)
-        {
-            base.AdjustCommand(opts, activity);
-
-            var useCase = ExtractionPipelineUseCase.DesignTime();
-
-            var compatible = useCase.FilterCompatiblePipelines(BasicActivator.RepositoryLocator.CatalogueRepository.GetAllObjects<Pipeline>()).ToArray();
-
-            if (!compatible.Any())
-            {
-                throw new Exception("No compatible pipelines");
-            }
-
-            var pipe = BasicActivator.SelectOne("Extraction Pipeline", compatible, null, true);
-
-            if (pipe == null)
-            {
-                throw new OperationCanceledException();
-            }
-
-            opts.Pipeline = pipe.ID.ToString();
-        }
+        opts.Pipeline = pipe.ID.ToString();
     }
 }

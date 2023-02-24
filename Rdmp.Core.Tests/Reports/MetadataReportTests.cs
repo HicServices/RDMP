@@ -15,51 +15,50 @@ using SixLabors.ImageSharp.PixelFormats;
 using SixLabors.ImageSharp.Processing;
 using Tests.Common;
 
-namespace Rdmp.Core.Tests.Reports
+namespace Rdmp.Core.Tests.Reports;
+
+internal class MetadataReportTests:UnitTests
 {
-    class MetadataReportTests:UnitTests
+    [Test]
+    public void Test_MetadataReport_Basic()
     {
-        [Test]
-        public void Test_MetadataReport_Basic()
-        {
-            var cata = WhenIHaveA<Catalogue>();
-            var reporter = new MetadataReport(Repository, new MetadataReportArgs(new[] {cata}));
-            cata.Description = "The Quick Brown Fox Was Quicker Than The slow tortoise";
+        var cata = WhenIHaveA<Catalogue>();
+        var reporter = new MetadataReport(Repository, new MetadataReportArgs(new[] {cata}));
+        cata.Description = "The Quick Brown Fox Was Quicker Than The slow tortoise";
 
-            //setup delegate for returning images
-            var bmp = new Image<Rgba32>(200, 200);
-            bmp.Mutate(x=>x.Fill(Color.Black,new RectangleF(10.0f,10.0f,50.0f,50.0f)));
+        //setup delegate for returning images
+        var bmp = new Image<Rgba32>(200, 200);
+        bmp.Mutate(x=>x.Fill(Color.Black,new RectangleF(10.0f,10.0f,50.0f,50.0f)));
             
-            reporter.RequestCatalogueImages += (s) => { return new BitmapWithDescription[] {new BitmapWithDescription(bmp,"MyPicture","Something interesting about it"),  }; };
+        reporter.RequestCatalogueImages += (s) => { return new BitmapWithDescription[] {new(bmp,"MyPicture","Something interesting about it") }; };
 
-            var file = reporter.GenerateWordFile(new ThrowImmediatelyDataLoadEventListener(), false);
+        var file = reporter.GenerateWordFile(new ThrowImmediatelyDataLoadEventListener(), false);
             
-            Assert.IsNotNull(file);
-            Assert.IsTrue(File.Exists(file.FullName));
+        Assert.IsNotNull(file);
+        Assert.IsTrue(File.Exists(file.FullName));
             
-            //refreshes the file stream status
-            Assert.Greater(new FileInfo(file.FullName).Length,0);
-        }
+        //refreshes the file stream status
+        Assert.Greater(new FileInfo(file.FullName).Length,0);
+    }
 
-        [Test]
-        public void Test_OrphanExtractionInformation()
-        {
-            var ei = WhenIHaveA<ExtractionInformation>();
+    [Test]
+    public void Test_OrphanExtractionInformation()
+    {
+        var ei = WhenIHaveA<ExtractionInformation>();
 
-            //make it an orphan
-            ei.CatalogueItem.ColumnInfo.DeleteInDatabase();
-            ei.CatalogueItem.ColumnInfo_ID = null;
-            ei.CatalogueItem.SaveToDatabase();
-            ei.CatalogueItem.ClearAllInjections();
-            ei.ClearAllInjections();
+        //make it an orphan
+        ei.CatalogueItem.ColumnInfo.DeleteInDatabase();
+        ei.CatalogueItem.ColumnInfo_ID = null;
+        ei.CatalogueItem.SaveToDatabase();
+        ei.CatalogueItem.ClearAllInjections();
+        ei.ClearAllInjections();
 
-            var reporter = new MetadataReport(Repository, 
-                new MetadataReportArgs(new[] {ei.CatalogueItem.Catalogue})
-                );
-            var file = reporter.GenerateWordFile(new ThrowImmediatelyDataLoadEventListener(), false);
+        var reporter = new MetadataReport(Repository, 
+            new MetadataReportArgs(new[] {ei.CatalogueItem.Catalogue})
+        );
+        var file = reporter.GenerateWordFile(new ThrowImmediatelyDataLoadEventListener(), false);
 
-            Assert.IsNotNull(file);
-            Assert.IsTrue(File.Exists(file.FullName));
-        }
+        Assert.IsNotNull(file);
+        Assert.IsTrue(File.Exists(file.FullName));
     }
 }

@@ -8,39 +8,38 @@ using Rdmp.Core.Curation.Data.Pipelines;
 using Rdmp.Core.Repositories;
 using ReusableLibraryCode.Checks;
 
-namespace Rdmp.Core.Curation.Checks
-{
-    /// <summary>
-    /// Checks an IPipeline (persisted data flow pipeline configuration) to see if all its components are constructable (using MEFChecker)
-    /// </summary>
-    public class PipelineChecker : ICheckable
-    {
-        private readonly IPipeline _pipeline;
+namespace Rdmp.Core.Curation.Checks;
 
-        /// <summary>
-        /// Sets up the checker to check the supplied pipeline
-        /// </summary>
-        /// <param name="pipeline"></param>
-        public PipelineChecker(IPipeline pipeline)
-        {
-            _pipeline = pipeline;
-        }
+/// <summary>
+/// Checks an IPipeline (persisted data flow pipeline configuration) to see if all its components are constructable (using MEFChecker)
+/// </summary>
+public class PipelineChecker : ICheckable
+{
+    private readonly IPipeline _pipeline;
+
+    /// <summary>
+    /// Sets up the checker to check the supplied pipeline
+    /// </summary>
+    /// <param name="pipeline"></param>
+    public PipelineChecker(IPipeline pipeline)
+    {
+        _pipeline = pipeline;
+    }
         
-        /// <summary>
-        /// Checks that all the components defined in the pipeline are found using a MEFChecker.  This will also handle classes changing namespaces by updating
-        /// class name reference.
-        /// </summary>
-        /// <param name="notifier"></param>
-        public void Check(ICheckNotifier notifier)
-        {
-            var mef = ((ICatalogueRepository)_pipeline.Repository).MEF;
+    /// <summary>
+    /// Checks that all the components defined in the pipeline are found using a MEFChecker.  This will also handle classes changing namespaces by updating
+    /// class name reference.
+    /// </summary>
+    /// <param name="notifier"></param>
+    public void Check(ICheckNotifier notifier)
+    {
+        var mef = ((ICatalogueRepository)_pipeline.Repository).MEF;
             
-            foreach (var component in _pipeline.PipelineComponents)
-            {
-                var copy = component;
-                var mefChecker = new MEFChecker(mef, component.Class, delegate(string s) { copy.Class = s; copy.SaveToDatabase(); });
-                mefChecker.Check(notifier);
-            }
+        foreach (var component in _pipeline.PipelineComponents)
+        {
+            var copy = component;
+            var mefChecker = new MEFChecker(mef, component.Class, delegate(string s) { copy.Class = s; copy.SaveToDatabase(); });
+            mefChecker.Check(notifier);
         }
     }
 }

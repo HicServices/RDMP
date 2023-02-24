@@ -9,32 +9,32 @@ using CommandLine;
 using CommandLine.Text;
 using Rdmp.Core.CommandLine.Runners;
 
-namespace Rdmp.Core.CommandLine.Options
+namespace Rdmp.Core.CommandLine.Options;
+
+/// <summary>
+/// Command line arguments for uploading plugins
+/// </summary>
+[Verb("pack",HelpText = "Uploads a new RDMP plugin into the database")]
+public class PackOptions:RDMPCommandLineOptions
 {
-    /// <summary>
-    /// Command line arguments for uploading plugins
-    /// </summary>
-    [Verb("pack",HelpText = "Uploads a new RDMP plugin into the database")]
-    public class PackOptions:RDMPCommandLineOptions
+    [Option('f',"file",Required = true, HelpText = $"The {PackPluginRunner.PluginPackageSuffix} plugin file to add")]
+    public string File { get; set; }
+
+    [Option('p',"prune", HelpText =
+        $"Modifies the {PackPluginRunner.PluginPackageSuffix} plugin file by removing duplicate dlls or those already contained in RDMP core before uploading to database")]
+    public bool Prune { get; set; }
+
+    [Usage]
+    public static IEnumerable<Example> Examples
     {
-        [Option('f',"file",Required = true, HelpText = "The " + PackPluginRunner.PluginPackageSuffix + " plugin file to add")]
-        public string File { get; set; }
-
-        [Option('p',"prune", HelpText = "Modifies the " + PackPluginRunner.PluginPackageSuffix + " plugin file by removing duplicate dlls or those already contained in RDMP core before uploading to database")]
-        public bool Prune { get; set; }
-
-        [Usage]
-        public static IEnumerable<Example> Examples
+        get
         {
-            get
+            yield return new Example("Commit Plugin to Rdmp", new PackOptions
             {
-                yield return new Example("Commit Plugin to Rdmp", new PackOptions
-                {
-                    File = @"MyPlugin" + PackPluginRunner.PluginPackageSuffix,
-                    CatalogueConnectionString = ExampleCatalogueConnectionString,
-                    DataExportConnectionString = ExampleDataExportConnectionString
-                });
-            }
+                File = $@"MyPlugin{PackPluginRunner.PluginPackageSuffix}",
+                CatalogueConnectionString = ExampleCatalogueConnectionString,
+                DataExportConnectionString = ExampleDataExportConnectionString
+            });
         }
     }
 }

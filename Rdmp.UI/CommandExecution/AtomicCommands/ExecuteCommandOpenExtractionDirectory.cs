@@ -15,90 +15,89 @@ using Rdmp.UI.ItemActivation;
 using ReusableLibraryCode.Icons.IconProvision;
 using SixLabors.ImageSharp.PixelFormats;
 
-namespace Rdmp.UI.CommandExecution.AtomicCommands
+namespace Rdmp.UI.CommandExecution.AtomicCommands;
+
+internal class ExecuteCommandOpenExtractionDirectory : BasicUICommandExecution,IAtomicCommand
 {
-    internal class ExecuteCommandOpenExtractionDirectory : BasicUICommandExecution,IAtomicCommand
+    private FileInfo _file;
+    private DirectoryInfo _dir;
+
+    public ExecuteCommandOpenExtractionDirectory(IActivateItems activator, ISelectedDataSets sds):base(activator)
     {
-        private FileInfo _file;
-        private DirectoryInfo _dir;
-
-        public ExecuteCommandOpenExtractionDirectory(IActivateItems activator, ISelectedDataSets sds):base(activator)
+        var result = sds.GetCumulativeExtractionResultsIfAny();
+        try
         {
-            var result = sds.GetCumulativeExtractionResultsIfAny();
-            try
+            if(result == null)
+                SetImpossible("Dataset has not been extracted");
+            else
+            if(result.DestinationType == null)
+                SetImpossible("This extraction has not been run");
+            else if (!result.DestinationType.EndsWith("FlatFileDestination"))
+                SetImpossible($"Extraction destination was '{result.DestinationType}' so cannot be opened");
+            else
             {
-                if(result == null)
-                    SetImpossible("Dataset has not been extracted");
-                else
-                if(result.DestinationType == null)
-                    SetImpossible("This extraction has not been run");
-                else if (!result.DestinationType.EndsWith("FlatFileDestination"))
-                    SetImpossible($"Extraction destination was '{result.DestinationType}' so cannot be opened");
-                else
-                {
-                    _file = new FileInfo(result.DestinationDescription);
+                _file = new FileInfo(result.DestinationDescription);
 
-                    if(!_file.Exists)
-                        SetImpossible($"File '{_file.FullName}' did not exist on disk");
-                }
+                if(!_file.Exists)
+                    SetImpossible($"File '{_file.FullName}' did not exist on disk");
             }
-            catch (Exception)
-            {
-                SetImpossible("Could not determine file location");
-            }
-
+        }
+        catch (Exception)
+        {
+            SetImpossible("Could not determine file location");
         }
 
-        public ExecuteCommandOpenExtractionDirectory(IActivateItems activator, IExtractionConfiguration configuration) : base(activator)
+    }
+
+    public ExecuteCommandOpenExtractionDirectory(IActivateItems activator, IExtractionConfiguration configuration) : base(activator)
+    {
+        var cumulativeExtractionResults = configuration.SelectedDataSets.Select(s=>s.GetCumulativeExtractionResultsIfAny()).Where(c=>c!=null).ToArray();
+        try
         {
-            var cumulativeExtractionResults = configuration.SelectedDataSets.Select(s=>s.GetCumulativeExtractionResultsIfAny()).Where(c=>c!=null).ToArray();
-            try
+            if (cumulativeExtractionResults.Length == 0)
+                SetImpossible("No datasets have ever been extracted");
+            else
+            if (!cumulativeExtractionResults.All(c=>c.DestinationType != null && c.DestinationType.EndsWith("FlatFileDestination")))
+                SetImpossible("Extraction destinations were not to disk");
+            else
             {
-                if (cumulativeExtractionResults.Length == 0)
-                    SetImpossible("No datasets have ever been extracted");
-                else
-                if (!cumulativeExtractionResults.All(c=>c.DestinationType != null && c.DestinationType.EndsWith("FlatFileDestination")))
-                    SetImpossible("Extraction destinations were not to disk");
+                // all datasets have been extracted to disk
+
+                // but do they have a shared parent dir?
+                var files = cumulativeExtractionResults.Select(c => new FileInfo(c.DestinationDescription)).ToArray();
+
+                var parents = files.Select(f => f.Directory?.Parent?.FullName).Where(d=>d != null).Distinct().ToArray();
+
+                if (parents.Length != 1)
+                    SetImpossible($"Extracted files do not share a common extraction directory");
                 else
                 {
-                    // all datasets have been extracted to disk
-
-                    // but do they have a shared parent dir?
-                    var files = cumulativeExtractionResults.Select(c => new FileInfo(c.DestinationDescription)).ToArray();
-
-                    var parents = files.Select(f => f.Directory?.Parent?.FullName).Where(d=>d != null).Distinct().ToArray();
-
-                    if (parents.Length != 1)
-                        SetImpossible($"Extracted files do not share a common extraction directory");
-                    else
-                    {
-                        _dir = new DirectoryInfo(parents[0]);
-                    }
+                    _dir = new DirectoryInfo(parents[0]);
+                }
                         
-                }
             }
-            catch (Exception)
-            {
-                SetImpossible("Could not determine file location");
-            }
-
+        }
+        catch (Exception)
+        {
+            SetImpossible("Could not determine file location");
         }
 
-        public override Image<Rgba32> GetImage(IIconProvider iconProvider)
-        {
-            return iconProvider.GetImage(RDMPConcept.ExtractionDirectoryNode);
-        }
+    }
 
-        public override void Execute()
-        {
-            base.Execute();
+    public override Image<Rgba32> GetImage(IIconProvider iconProvider)
+    {
+        return iconProvider.GetImage(RDMPConcept.ExtractionDirectoryNode);
+    }
 
-            var cmd = _file != null?
-                new ExecuteCommandOpenInExplorer(Activator, _file):
-                new ExecuteCommandOpenInExplorer(Activator, _dir);
+    public override void Execute()
+    {
+        base.Execute();
+
+        var cmd = _file != null?
+            new ExecuteCommandOpenInExplorer(Activator, _file):
+            new ExecuteCommandOpenInExplorer(Activator, _dir);
             
-            if(!cmd.IsImpossible)
-                cmd.Execute();
-        }
+        if(!cmd.IsImpossible)
+            cmd.Execute();
     }
 }

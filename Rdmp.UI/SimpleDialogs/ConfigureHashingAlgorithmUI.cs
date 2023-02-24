@@ -14,80 +14,79 @@ using Rdmp.UI.TestsAndSetup.ServicePropogation;
 using ReusableLibraryCode;
 using ScintillaNET;
 
-namespace Rdmp.UI.SimpleDialogs
+namespace Rdmp.UI.SimpleDialogs;
+
+/// <summary>
+/// Any column in a data extraction which is marked with 'Hash On Data Release' (See ExtractionInformationUI) will be wrapped with this SQL string.  Use this to call a scalar valued
+/// function which generates hash strings based on the column value and the project number (salt).
+/// 
+/// <para>For example Work.dbo.HicHash({0},{1}) would wrap column names such that the column name appeared in the {0} and the project number appeared in {1}.  For this to work you must have
+/// a database Work and a scalar function called HicHash (this is just an example, you can call the function whatever you want and adjust it accordingly).  You don't have to use the
+/// salt if you don't want to either, if you don't add a {1} then you won't get a salt argument into your scalar function.</para>
+/// 
+/// <para>This is quite technical if you don't know what a Scalar Function is in SQL then you probably don't want to do hashing and instead you might want to just not extract these columns
+/// or configure them with the RDMP ANO system (See ANOTable).</para>
+/// </summary>
+public partial class ConfigureHashingAlgorithmUI : RDMPForm
 {
-    /// <summary>
-    /// Any column in a data extraction which is marked with 'Hash On Data Release' (See ExtractionInformationUI) will be wrapped with this SQL string.  Use this to call a scalar valued
-    /// function which generates hash strings based on the column value and the project number (salt).
-    /// 
-    /// <para>For example Work.dbo.HicHash({0},{1}) would wrap column names such that the column name appeared in the {0} and the project number appeared in {1}.  For this to work you must have
-    /// a database Work and a scalar function called HicHash (this is just an example, you can call the function whatever you want and adjust it accordingly).  You don't have to use the
-    /// salt if you don't want to either, if you don't add a {1} then you won't get a salt argument into your scalar function.</para>
-    /// 
-    /// <para>This is quite technical if you don't know what a Scalar Function is in SQL then you probably don't want to do hashing and instead you might want to just not extract these columns
-    /// or configure them with the RDMP ANO system (See ANOTable).</para>
-    /// </summary>
-    public partial class ConfigureHashingAlgorithmUI : RDMPForm
+    [DesignerSerializationVisibility(DesignerSerializationVisibility.Hidden)]
+    public Scintilla QueryPreview { get; set; }
+
+    public ConfigureHashingAlgorithmUI(IActivateItems activator):base(activator)
     {
-        [DesignerSerializationVisibility(DesignerSerializationVisibility.Hidden)]
-        public Scintilla QueryPreview { get; set; }
-
-        public ConfigureHashingAlgorithmUI(IActivateItems activator):base(activator)
-        {
-            InitializeComponent();
+        InitializeComponent();
             
-            if(VisualStudioDesignMode)
-                return;
+        if(VisualStudioDesignMode)
+            return;
 
-            QueryPreview = new ScintillaTextEditorFactory().Create(new RDMPCombineableFactory());
-            QueryPreview.ReadOnly = true;
+        QueryPreview = new ScintillaTextEditorFactory().Create(new RDMPCombineableFactory());
+        QueryPreview.ReadOnly = true;
 
-            panel2.Controls.Add(QueryPreview);
+        panel2.Controls.Add(QueryPreview);
 
-        }
+    }
 
-        protected override void OnLoad(EventArgs e)
+    protected override void OnLoad(EventArgs e)
+    {
+        base.OnLoad(e);
+
+        if(VisualStudioDesignMode)
+            return;
+
+        //get the current hashing algorithm
+        var value = Activator.RepositoryLocator.DataExportRepository.DataExportPropertyManager.GetValue(DataExportProperty.HashingAlgorithmPattern);
+        tbHashingAlgorithm.Text = value;
+    }
+
+    private void tbHashingAlgorithm_TextChanged(object sender, EventArgs e)
+    {
+        var pattern = tbHashingAlgorithm.Text;
+
+        try
         {
-            base.OnLoad(e);
-
-            if(VisualStudioDesignMode)
-                return;
-
-            //get the current hashing algorithm
-            string value = Activator.RepositoryLocator.DataExportRepository.DataExportPropertyManager.GetValue(DataExportProperty.HashingAlgorithmPattern);
-            tbHashingAlgorithm.Text = value;
-        }
-
-        private void tbHashingAlgorithm_TextChanged(object sender, EventArgs e)
-        {
-            string pattern = tbHashingAlgorithm.Text;
-
-            try
-            {
-                QueryPreview.ReadOnly = false;
-                QueryPreview.Text = String.Format(pattern, "[TEST]..[ExampleColumn]", "123");
-                Activator.RepositoryLocator.DataExportRepository.DataExportPropertyManager.SetValue(DataExportProperty.HashingAlgorithmPattern, pattern);
+            QueryPreview.ReadOnly = false;
+            QueryPreview.Text = string.Format(pattern, "[TEST]..[ExampleColumn]", "123");
+            Activator.RepositoryLocator.DataExportRepository.DataExportPropertyManager.SetValue(DataExportProperty.HashingAlgorithmPattern, pattern);
                 
-            }
-            catch (Exception exception)
-            {
-                QueryPreview.Text = ExceptionHelper.ExceptionToListOfInnerMessages(exception);
-
-            }
-            finally
-            {
-                QueryPreview.ReadOnly = true;
-            }
         }
-
-        private void btnReferenceColumn_Click(object sender, EventArgs e)
+        catch (Exception exception)
         {
-            tbHashingAlgorithm.Text = tbHashingAlgorithm.Text + "{0}";
-        }
+            QueryPreview.Text = ExceptionHelper.ExceptionToListOfInnerMessages(exception);
 
-        private void btnReferenceSalt_Click(object sender, EventArgs e)
-        {
-            tbHashingAlgorithm.Text = tbHashingAlgorithm.Text + "{1}";
         }
+        finally
+        {
+            QueryPreview.ReadOnly = true;
+        }
+    }
+
+    private void btnReferenceColumn_Click(object sender, EventArgs e)
+    {
+        tbHashingAlgorithm.Text = $"{tbHashingAlgorithm.Text}{{0}}";
+    }
+
+    private void btnReferenceSalt_Click(object sender, EventArgs e)
+    {
+        tbHashingAlgorithm.Text = $"{tbHashingAlgorithm.Text}{{1}}";
     }
 }

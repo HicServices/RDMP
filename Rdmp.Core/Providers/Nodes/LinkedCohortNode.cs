@@ -8,68 +8,67 @@ using MapsDirectlyToDatabaseTable;
 using Rdmp.Core.Curation.Data;
 using Rdmp.Core.DataExport.Data;
 
-namespace Rdmp.Core.Providers.Nodes
+namespace Rdmp.Core.Providers.Nodes;
+
+/// <summary>
+/// The saved cohort (list of patient identifiers) which will be linked with the datasets in the associated <see cref="ExtractionConfiguration"/>
+/// </summary>
+public class LinkedCohortNode : Node,IMasqueradeAs, IDeletableWithCustomMessage
 {
-    /// <summary>
-    /// The saved cohort (list of patient identifiers) which will be linked with the datasets in the associated <see cref="ExtractionConfiguration"/>
-    /// </summary>
-    public class LinkedCohortNode : Node,IMasqueradeAs, IDeletableWithCustomMessage
+    public IExtractionConfiguration Configuration { get; set; }
+    public IExtractableCohort Cohort { get; set; }
+
+    public LinkedCohortNode(IExtractionConfiguration configuration, IExtractableCohort cohort)
     {
-        public IExtractionConfiguration Configuration { get; set; }
-        public IExtractableCohort Cohort { get; set; }
+        Configuration = configuration;
+        Cohort = cohort;
+    }
 
-        public LinkedCohortNode(IExtractionConfiguration configuration, IExtractableCohort cohort)
-        {
-            Configuration = configuration;
-            Cohort = cohort;
-        }
+    public override string ToString()
+    {
+        return Cohort.ToString();
+    }
 
-        public override string ToString()
-        {
-            return Cohort.ToString();
-        }
-
-        public object MasqueradingAs()
-        {
-            return Cohort;
-        }
+    public object MasqueradingAs()
+    {
+        return Cohort;
+    }
         
-        protected bool Equals(LinkedCohortNode other)
-        {
-            return Equals(Configuration, other.Configuration) && Equals(Cohort, other.Cohort);
-        }
+    protected bool Equals(LinkedCohortNode other)
+    {
+        return Equals(Configuration, other.Configuration) && Equals(Cohort, other.Cohort);
+    }
 
-        public override bool Equals(object obj)
-        {
-            if (ReferenceEquals(null, obj)) return false;
-            if (ReferenceEquals(this, obj)) return true;
-            if (obj.GetType() != this.GetType()) return false;
-            return Equals((LinkedCohortNode) obj);
-        }
+    public override bool Equals(object obj)
+    {
+        if (ReferenceEquals(null, obj)) return false;
+        if (ReferenceEquals(this, obj)) return true;
+        if (obj.GetType() != GetType()) return false;
+        return Equals((LinkedCohortNode) obj);
+    }
 
-        public override int GetHashCode()
+    public override int GetHashCode()
+    {
+        unchecked
         {
-            unchecked
-            {
-                return ((Configuration != null ? Configuration.GetHashCode() : 0)*397) ^ (Cohort != null ? Cohort.GetHashCode() : 0);
-            }
+            return ((Configuration != null ? Configuration.GetHashCode() : 0)*397) ^ (Cohort != null ? Cohort.GetHashCode() : 0);
         }
+    }
 
-        public void DeleteInDatabase()
-        {
-            Configuration.Cohort_ID = null;
-            Configuration.SaveToDatabase();
-        }
+    public void DeleteInDatabase()
+    {
+        Configuration.Cohort_ID = null;
+        Configuration.SaveToDatabase();
+    }
 
-        public string GetDeleteMessage()
-        {
-            return "remove cohort from ExtractionConfiguration '" + Configuration + "'";
-        }
+    public string GetDeleteMessage()
+    {
+        return $"remove cohort from ExtractionConfiguration '{Configuration}'";
+    }
 
-        /// <inheritdoc/>
-        public string GetDeleteVerb()
-        {
-            return "Remove";
-        }
+    /// <inheritdoc/>
+    public string GetDeleteVerb()
+    {
+        return "Remove";
     }
 }

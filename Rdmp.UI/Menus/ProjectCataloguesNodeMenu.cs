@@ -8,17 +8,16 @@ using Rdmp.Core.CommandExecution.AtomicCommands.CatalogueCreationCommands;
 using Rdmp.Core.Providers.Nodes;
 using Rdmp.UI.CommandExecution.AtomicCommands;
 
-namespace Rdmp.UI.Menus
-{
-    class ProjectCataloguesNodeMenu : RDMPContextMenuStrip
-    {
-        public ProjectCataloguesNodeMenu(RDMPContextMenuStripArgs args, ProjectCataloguesNode node) : base(args, node)
-        {
-            //instead of this
-            args.SkipCommand<ExecuteCommandCreateNewCatalogueByImportingFile>();
+namespace Rdmp.UI.Menus;
 
-            //use our fabulous UI
-            Add(new ExecuteCommandCreateNewCatalogueByImportingFileUI(_activator) { OverrideCommandName = "Add New Catalogue From File", Weight = -9.5f }.SetTarget(node.Project));
-        }
+internal class ProjectCataloguesNodeMenu : RDMPContextMenuStrip
+{
+    public ProjectCataloguesNodeMenu(RDMPContextMenuStripArgs args, ProjectCataloguesNode node) : base(args, node)
+    {
+        //instead of this
+        args.SkipCommand<ExecuteCommandCreateNewCatalogueByImportingFile>();
+
+        //use our fabulous UI
+        Add(new ExecuteCommandCreateNewCatalogueByImportingFileUI(_activator) { OverrideCommandName = "Add New Catalogue From File", Weight = -9.5f }.SetTarget(node.Project));
     }
 }

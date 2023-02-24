@@ -9,63 +9,62 @@ using Rdmp.Core.CommandExecution.AtomicCommands;
 using Rdmp.UI.ItemActivation;
 using System.Linq;
 
-namespace Rdmp.UI.CommandExecution.AtomicCommands
+namespace Rdmp.UI.CommandExecution.AtomicCommands;
+
+/// <summary>
+/// Starts a new scoped session for one or more objects in the GUI
+/// </summary>
+public class ExecuteCommandStartSession : BasicUICommandExecution, IAtomicCommand
 {
+    public const string FindResultsTitle = "Find Results";
+    private readonly string _sessionName;
+    private IMapsDirectlyToDatabaseTable[] _initialSelection;
+
     /// <summary>
-    /// Starts a new scoped session for one or more objects in the GUI
+    /// True if the command was cancelled before finishing <see cref="Execute"/>
     /// </summary>
-    public class ExecuteCommandStartSession : BasicUICommandExecution, IAtomicCommand
+    public bool Cancelled { get; set; } = true;
+    public string InitialSearch { get; set; }
+
+    public ExecuteCommandStartSession(IActivateItems activator, IMapsDirectlyToDatabaseTable[] initialSelection, string sessionName) : base(activator)
     {
-        public const string FindResultsTitle = "Find Results";
-        private readonly string _sessionName;
-        private IMapsDirectlyToDatabaseTable[] _initialSelection;
+        _initialSelection = initialSelection;
+        _sessionName = sessionName;
+    }
 
-        /// <summary>
-        /// True if the command was cancelled before finishing <see cref="Execute"/>
-        /// </summary>
-        public bool Cancelled { get; set; } = true;
-        public string InitialSearch { get; set; }
+    public override void Execute()
+    {
+        base.Execute();
 
-        public ExecuteCommandStartSession(IActivateItems activator, IMapsDirectlyToDatabaseTable[] initialSelection, string sessionName) : base(activator)
+        var name = _sessionName;
+
+        if (string.IsNullOrWhiteSpace(name))
         {
-            _initialSelection = initialSelection;
-            _sessionName = sessionName;
+            if (!Activator.TypeText("Session Name", "Name", 100, "Session 0", out var sessionName, false))
+                return;
+
+            name = sessionName;
         }
 
-        public override void Execute()
+        name = MakeNovel(name);
+
+        Activator.StartSession(name, _initialSelection, InitialSearch);
+        Cancelled = false;
+    }
+
+    private string MakeNovel(string name)
+    {
+        var novelName = name;
+        var sessions = ((IActivateItems)BasicActivator).GetSessions().ToArray();
+
+        var i = 1;
+
+        while (sessions.Any(s => s.Collection.SessionName.Equals(novelName)))
         {
-            base.Execute();
-
-            var name = _sessionName;
-
-            if (string.IsNullOrWhiteSpace(name))
-            {
-                if (!Activator.TypeText("Session Name", "Name", 100, "Session 0", out string sessionName, false))
-                    return;
-
-                name = sessionName;
-            }
-
-            name = MakeNovel(name);
-
-            Activator.StartSession(name, _initialSelection, InitialSearch);
-            Cancelled = false;
+            i++;
+            novelName = name + i;
         }
 
-        private string MakeNovel(string name)
-        {
-            var novelName = name;
-            var sessions = ((IActivateItems)BasicActivator).GetSessions().ToArray();
-
-            int i = 1;
-
-            while (sessions.Any(s => s.Collection.SessionName.Equals(novelName)))
-            {
-                i++;
-                novelName = name + i;
-            }
-
-            return novelName;
-        }
+        return novelName;
     }
 }

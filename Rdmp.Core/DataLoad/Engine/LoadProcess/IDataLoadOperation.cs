@@ -6,11 +6,10 @@
 
 using System;
 
-namespace Rdmp.Core.DataLoad.Engine.LoadProcess
+namespace Rdmp.Core.DataLoad.Engine.LoadProcess;
+
+internal interface IDataLoadOperation
 {
-    interface IDataLoadOperation
-    {
-        ExitCodeType? ExitCode { get; }
-        Exception Exception { get; }
-    }
+    ExitCodeType? ExitCode { get; }
+    Exception Exception { get; }
 }

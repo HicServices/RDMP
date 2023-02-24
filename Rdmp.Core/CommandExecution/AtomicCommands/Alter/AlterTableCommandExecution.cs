@@ -11,48 +11,46 @@ using ReusableLibraryCode.Checks;
 using ReusableLibraryCode.DataAccess;
 using System;
 
-namespace Rdmp.Core.CommandExecution.AtomicCommands.Alter
-{
-    /// <summary>
-    /// Abstract base command for all commands which change a tables schema (on the live database)
-    /// </summary>
-    public abstract class AlterTableCommandExecution :BasicCommandExecution
-    {
-        protected ITableInfo TableInfo;
-        protected DiscoveredTable Table;
+namespace Rdmp.Core.CommandExecution.AtomicCommands.Alter;
 
-        protected AlterTableCommandExecution(IBasicActivateItems activator, ITableInfo tableInfo) : base(activator)
+/// <summary>
+/// Abstract base command for all commands which change a tables schema (on the live database)
+/// </summary>
+public abstract class AlterTableCommandExecution :BasicCommandExecution
+{
+    protected ITableInfo TableInfo;
+    protected DiscoveredTable Table;
+
+    protected AlterTableCommandExecution(IBasicActivateItems activator, ITableInfo tableInfo) : base(activator)
+    {
+        TableInfo = tableInfo;
+        try
         {
-            TableInfo = tableInfo;
-            try
-            {
-                Table = TableInfo.Discover(DataAccessContext.InternalDataProcessing);
-            }
-            catch(Exception)
-            {
-                SetImpossible("Could not resolve Server/Table connection details");
-                return;
-            }
+            Table = TableInfo.Discover(DataAccessContext.InternalDataProcessing);
+        }
+        catch(Exception)
+        {
+            SetImpossible("Could not resolve Server/Table connection details");
+            return;
+        }
             
                         
-            if (!Table.Exists())
-            {
-                SetImpossible("Table does not exist");
-                return;
-            }
-
-            if(Table.TableType != TableType.Table)
-            {
-                SetImpossible("Table is a " + Table.TableType);
-                return;
-            }
-        }
-        
-        protected bool Synchronize()
+        if (!Table.Exists())
         {
-            var sync = new TableInfoSynchronizer(TableInfo);
-            return sync.Synchronize(new AcceptAllCheckNotifier());
+            SetImpossible("Table does not exist");
+            return;
+        }
+
+        if(Table.TableType != TableType.Table)
+        {
+            SetImpossible($"Table is a {Table.TableType}");
+            return;
         }
     }
-
+        
+    protected bool Synchronize()
+    {
+        var sync = new TableInfoSynchronizer(TableInfo);
+        return sync.Synchronize(new AcceptAllCheckNotifier());
+    }
 }

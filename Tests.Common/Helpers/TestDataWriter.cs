@@ -12,49 +12,48 @@ using Rdmp.Core.DataFlowPipeline;
 using ReusableLibraryCode.Checks;
 using ReusableLibraryCode.Progress;
 
-namespace Tests.Common.Helpers
+namespace Tests.Common.Helpers;
+
+public class TestDataWriter : CacheFilesystemDestination
 {
-    public class TestDataWriter : CacheFilesystemDestination
+    public TestDataWriterChunk ProcessPipelineData(TestDataWriterChunk toProcess, IDataLoadEventListener listener, GracefulCancellationToken cancellationToken)
     {
-        public TestDataWriterChunk ProcessPipelineData(TestDataWriterChunk toProcess, IDataLoadEventListener listener, GracefulCancellationToken cancellationToken)
-        {
-            var layout = CreateCacheLayout();
+        var layout = CreateCacheLayout();
 
-            var toCreateFilesIn = layout.Resolver.GetLoadCacheDirectory(CacheDirectory);
+        var toCreateFilesIn = layout.Resolver.GetLoadCacheDirectory(CacheDirectory);
             
-            foreach (FileInfo file in toProcess.Files)
-            {
-                string destination = Path.Combine(toCreateFilesIn.FullName, file.Name);
-
-                if(File.Exists(destination))
-                    File.Delete(destination);
-
-                file.MoveTo(destination);
-            }
-
-            return null;
-        }
-
-        public override ICacheChunk ProcessPipelineData(ICacheChunk toProcess, IDataLoadEventListener listener, GracefulCancellationToken cancellationToken)
+        foreach (var file in toProcess.Files)
         {
-            return ProcessPipelineData((TestDataWriterChunk)toProcess, listener, cancellationToken);
+            var destination = Path.Combine(toCreateFilesIn.FullName, file.Name);
+
+            if(File.Exists(destination))
+                File.Delete(destination);
+
+            file.MoveTo(destination);
         }
 
-        public override ICacheLayout CreateCacheLayout()
-        {
-            return new BasicCacheLayout(CacheDirectory);
-        }
-
-        public override void Abort(IDataLoadEventListener listener)
-        {
-            
-        }
-
-        public override void Check(ICheckNotifier notifier)
-        {
-            if (CacheDirectory == null)
-                notifier.OnCheckPerformed(new CheckEventArgs("PreInitialize was not called? (CacheDirectory == null)", CheckResult.Fail));
-        }
-
+        return null;
     }
+
+    public override ICacheChunk ProcessPipelineData(ICacheChunk toProcess, IDataLoadEventListener listener, GracefulCancellationToken cancellationToken)
+    {
+        return ProcessPipelineData((TestDataWriterChunk)toProcess, listener, cancellationToken);
+    }
+
+    public override ICacheLayout CreateCacheLayout()
+    {
+        return new BasicCacheLayout(CacheDirectory);
+    }
+
+    public override void Abort(IDataLoadEventListener listener)
+    {
+            
+    }
+
+    public override void Check(ICheckNotifier notifier)
+    {
+        if (CacheDirectory == null)
+            notifier.OnCheckPerformed(new CheckEventArgs("PreInitialize was not called? (CacheDirectory == null)", CheckResult.Fail));
+    }
+
 }

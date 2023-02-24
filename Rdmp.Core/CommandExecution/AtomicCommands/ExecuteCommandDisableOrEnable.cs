@@ -10,88 +10,84 @@ using Rdmp.Core.Curation.Data;
 using Rdmp.Core.Curation.Data.Aggregation;
 using Rdmp.Core.Curation.Data.Cohort;
 
-namespace Rdmp.Core.CommandExecution.AtomicCommands
+namespace Rdmp.Core.CommandExecution.AtomicCommands;
+
+public class ExecuteCommandDisableOrEnable : BasicCommandExecution, IAtomicCommand
 {
-    public class ExecuteCommandDisableOrEnable : BasicCommandExecution, IAtomicCommand
+    private IDisableable[] _targets;
+
+    public ExecuteCommandDisableOrEnable(IBasicActivateItems itemActivator, IDisableable target) : base(itemActivator)
     {
-        private IDisableable[] _targets;
+        UpdateViabilityForTarget(target);
+        _targets = new[] { target };
 
-        public ExecuteCommandDisableOrEnable(IBasicActivateItems itemActivator, IDisableable target) : base(itemActivator)
+        Weight = 50.1f;
+    }
+
+    public ExecuteCommandDisableOrEnable(IBasicActivateItems  activator, IDisableable[] disableables) : base(activator)
+    {
+        _targets = disableables;
+
+        if (!disableables.Any())
         {
-            UpdateViabilityForTarget(target);
-            _targets = new[] { target };
-
-            Weight = 50.1f;
+            SetImpossible("No objects selected");
+            return;
         }
 
-        public ExecuteCommandDisableOrEnable(IBasicActivateItems  activator, IDisableable[] disableables) : base(activator)
+        if (disableables.All(d => d.IsDisabled) || disableables.All(d => !d.IsDisabled))
         {
-            _targets = disableables;
+            foreach (var d in _targets)
+                UpdateViabilityForTarget(d);
+        }
+        else
+        {
+            SetImpossible("All objects must be in the same disabled/enabled state");
+        }
 
-            if (!disableables.Any())
-            {
-                SetImpossible("No objects selected");
-                return;
-            }
+        Weight = 50.1f;
+    }
+    private void UpdateViabilityForTarget(IDisableable target)
+    {
+        //don't let them disable the root container
+        if (target is CohortAggregateContainer container && container.IsRootContainer() && !container.IsDisabled)
+            SetImpossible("You cannot disable the root container of a cic");
 
-            if (disableables.All(d => d.IsDisabled) || disableables.All(d => !d.IsDisabled))
-            {
-                foreach (IDisableable d in _targets)
-                    UpdateViabilityForTarget(d);
-            }
+        if (target is AggregateConfiguration aggregateConfiguration)
+            if (!aggregateConfiguration.IsCohortIdentificationAggregate)
+                SetImpossible("Only cohort identification aggregates can be disabled");
             else
-            {
-                SetImpossible("All objects must be in the same disabled/enabled state");
-            }
+            if (aggregateConfiguration.IsJoinablePatientIndexTable() && !aggregateConfiguration.IsDisabled)
+                SetImpossible("Joinable Patient Index Tables cannot be disabled");
 
-            Weight = 50.1f;
-        }
-        private void UpdateViabilityForTarget(IDisableable target)
+        if (target is IMightBeReadOnly ro && ro.ShouldBeReadOnly(out var reason))
+            SetImpossible(reason);
+
+    }
+
+    public override void Execute()
+    {
+        base.Execute();
+
+        foreach (var d in _targets)
         {
-            var container = target as CohortAggregateContainer;
-
-            //don't let them disable the root container
-            if (container != null && container.IsRootContainer() && !container.IsDisabled)
-                SetImpossible("You cannot disable the root container of a cic");
-
-            var aggregateConfiguration = target as AggregateConfiguration;
-            if (aggregateConfiguration != null)
-                if (!aggregateConfiguration.IsCohortIdentificationAggregate)
-                    SetImpossible("Only cohort identification aggregates can be disabled");
-                else
-                if (aggregateConfiguration.IsJoinablePatientIndexTable() && !aggregateConfiguration.IsDisabled)
-                    SetImpossible("Joinable Patient Index Tables cannot be disabled");
-
-            if (target is IMightBeReadOnly ro && ro.ShouldBeReadOnly(out string reason))
-                SetImpossible(reason);
-
+            d.IsDisabled = !d.IsDisabled;
+            d.SaveToDatabase();
         }
 
-        public override void Execute()
-        {
-            base.Execute();
+        var toRefresh = _targets.FirstOrDefault();
 
-            foreach (IDisableable d in _targets)
-            {
-                d.IsDisabled = !d.IsDisabled;
-                d.SaveToDatabase();
-            }
+        if (toRefresh != null)
+            Publish((DatabaseEntity)toRefresh);
+    }
 
-            var toRefresh = _targets.FirstOrDefault();
+    public override string GetCommandName()
+    {
+        if (_targets.Length == 1)
+            return _targets[0].IsDisabled ? "Enable" : "Disable";
 
-            if (toRefresh != null)
-                Publish((DatabaseEntity)toRefresh);
-        }
+        if (_targets.Length > 1)
+            return _targets.All(d => d.IsDisabled) ? "Enable All" : "Disable All";
 
-        public override string GetCommandName()
-        {
-            if (_targets.Length == 1)
-                return _targets[0].IsDisabled ? "Enable" : "Disable";
-
-            if (_targets.Length > 1)
-                return _targets.All(d => d.IsDisabled) ? "Enable All" : "Disable All";
-
-            return "Enable All";
-        }
+        return "Enable All";
     }
 }

@@ -20,175 +20,175 @@ using Rdmp.UI.TransparentHelpSystem;
 using ReusableLibraryCode.Checks;
 using ReusableLibraryCode.Progress;
 
-namespace Rdmp.UI.SimpleControls
+namespace Rdmp.UI.SimpleControls;
+
+/// <summary>
+/// Enables the launching of one of the core RDMP engines (<see cref="RDMPCommandLineOptions"/>) either as a detatched process or as a hosted process (where the 
+/// UI will show the checking/executing progress messages).  This class ensures that the behaviour is the same between console run rdmp and the UI applications.
+/// </summary>
+public partial class CheckAndExecuteUI : RDMPUserControl, IConsultableBeforeClosing
 {
+    //things you have to set for it to work
+    public event EventHandler StateChanged;
+
+    public CommandGetterHandler CommandGetter;
+
+    public bool ChecksPassed { get; private set; }
+    public bool IsExecuting => _runningTask != null && !_runningTask.IsCompleted;
+
     /// <summary>
-    /// Enables the launching of one of the core RDMP engines (<see cref="RDMPCommandLineOptions"/>) either as a detatched process or as a hosted process (where the 
-    /// UI will show the checking/executing progress messages).  This class ensures that the behaviour is the same between console run rdmp and the UI applications.
+    /// Called every time the execution of the runner completes (does not get called if the runner was detached - running 
+    /// in a seperate process).
     /// </summary>
-    public partial class CheckAndExecuteUI : RDMPUserControl, IConsultableBeforeClosing
+    public event EventHandler<ExecutionEventArgs> ExecutionFinished;
+
+    private RunnerFactory _factory;
+
+    public IRunner CurrentRunner { get; private set; }
+
+    public bool AllowsYesNoToAll
     {
-        //things you have to set for it to work
-        public event EventHandler StateChanged;
+        get => checksUI1.AllowsYesNoToAll;
+        set => checksUI1.AllowsYesNoToAll = value;
+    }
 
-        public CommandGetterHandler CommandGetter;
+    public override void SetItemActivator(IActivateItems activator)
+    {
+        base.SetItemActivator(activator);
 
-        public bool ChecksPassed { get; private set; }
-        public bool IsExecuting { get { return _runningTask != null && !_runningTask.IsCompleted; } }
+        _factory = new RunnerFactory();
 
-        /// <summary>
-        /// Called every time the execution of the runner completes (does not get called if the runner was detached - running 
-        /// in a seperate process).
-        /// </summary>
-        public event EventHandler<ExecutionEventArgs> ExecutionFinished;
+        CommonFunctionality.AddToMenu(new ExecuteCommandGenerateRunCommand(activator, Detatch_CommandGetter));
+        CommonFunctionality.AddToMenu(new ExecuteCommandRunDetached(activator, Detatch_CommandGetter));
 
-        private RunnerFactory _factory;
+        loadProgressUI1.ApplyTheme(activator.Theme);
+    }
 
-        public IRunner CurrentRunner { get; private set; }
+    private RDMPCommandLineOptions Detatch_CommandGetter()
+    {
+        return CommandGetter(CommandLineActivity.run);
+    }
 
-        public bool AllowsYesNoToAll
+    public List<HelpStage> HelpStages { get; private set; }
+
+    //constructor
+    public CheckAndExecuteUI()
+    {
+        InitializeComponent();
+        ChecksPassed = false;
+        SetButtonStates();
+        HelpStages = BuildHelpStages();
+    }
+
+    private List<HelpStage> BuildHelpStages()
+    {
+        var stages = new List<HelpStage>()
         {
-            get { return checksUI1.AllowsYesNoToAll; }
-            set { checksUI1.AllowsYesNoToAll = value; }
-        }
-
-        public override void SetItemActivator(IActivateItems activator)
-        {
-            base.SetItemActivator(activator);
-
-            _factory = new RunnerFactory();
-
-            CommonFunctionality.AddToMenu(new ExecuteCommandGenerateRunCommand(activator, Detatch_CommandGetter));
-            CommonFunctionality.AddToMenu(new ExecuteCommandRunDetached(activator, Detatch_CommandGetter));
-
-            loadProgressUI1.ApplyTheme(activator.Theme);
-        }
-
-        private RDMPCommandLineOptions Detatch_CommandGetter()
-        {
-            return CommandGetter(CommandLineActivity.run);
-        }
-
-        public List<HelpStage> HelpStages { get; private set; }
-
-        //constructor
-        public CheckAndExecuteUI()
-        {
-            InitializeComponent();
-            ChecksPassed = false;
-            SetButtonStates();
-            HelpStages = BuildHelpStages();
-        }
-
-        private List<HelpStage> BuildHelpStages()
-        {
-            var stages = new List<HelpStage>()
-            {
-                new HelpStage(btnRunChecks,
-                    "Once you are happy with the selections, use this button to run the checks for the selected options."),
-                new HelpStage(btnExecute, "This button will execute the required operation in the RDMP UI.\r\n" +
-                                          "Results will be shown below."),
-            };
+            new(btnRunChecks,
+                "Once you are happy with the selections, use this button to run the checks for the selected options."),
+            new(btnExecute, "This button will execute the required operation in the RDMP UI.\r\n" +
+                            "Results will be shown below.")
+        };
             
-            return stages;
-        }
+        return stages;
+    }
 
-        private GracefulCancellationTokenSource _cancellationTokenSource;
-        private Task _runningTask;
+    private GracefulCancellationTokenSource _cancellationTokenSource;
+    private Task _runningTask;
         
         
-        private void btnRunChecks_Click(object sender, EventArgs e)
+    private void btnRunChecks_Click(object sender, EventArgs e)
+    {
+        IRunner runner;
+
+        try
         {
-            IRunner runner;
+            var command = CommandGetter(CommandLineActivity.check);    
+            runner = _factory.CreateRunner(Activator,command);
+        }
+        catch (Exception ex)
+        {
+            ragChecks.Fatal(ex);
+            return;
+        }
+        CurrentRunner = runner;
 
-            try
-            {
-                var command = CommandGetter(CommandLineActivity.check);    
-                runner = _factory.CreateRunner(Activator,command);
-            }
-            catch (Exception ex)
-            {
-                ragChecks.Fatal(ex);
-                return;
-            }
-            CurrentRunner = runner;
-
-            btnRunChecks.Enabled = false;
+        btnRunChecks.Enabled = false;
             
-            //reset the visualisations
-            ragChecks.Reset();
-            checksUI1.Clear();
+        //reset the visualisations
+        ragChecks.Reset();
+        checksUI1.Clear();
 
-            //ensure the checks are visible over the load
-            loadProgressUI1.Visible = false;
-            checksUI1.Visible = true;
+        //ensure the checks are visible over the load
+        loadProgressUI1.Visible = false;
+        checksUI1.Visible = true;
 
-            //create a to memory that passes the events to checksui since that's the only one that can respond to proposed fixes
-            var toMemory = new ToMemoryCheckNotifier(checksUI1);
+        //create a to memory that passes the events to checksui since that's the only one that can respond to proposed fixes
+        var toMemory = new ToMemoryCheckNotifier(checksUI1);
 
-            Task.Factory.StartNew(() => Check(runner,toMemory)).ContinueWith(
-                t=>
-                {
-                    //once Thread completes do this on the main UI Thread
+        Task.Factory.StartNew(() => Check(runner,toMemory)).ContinueWith(
+            t=>
+            {
+                //once Thread completes do this on the main UI Thread
 
-                    //find the worst check state
-                    var worst = toMemory.GetWorst();
-                    //update the rag smiley to reflect whether it has passed
-                    ragChecks.OnCheckPerformed(new CheckEventArgs("Checks resulted in " + worst ,worst));
-                    //update the bit flag
-                    ChecksPassed = worst <= CheckResult.Warning;
+                //find the worst check state
+                var worst = toMemory.GetWorst();
+                //update the rag smiley to reflect whether it has passed
+                ragChecks.OnCheckPerformed(new CheckEventArgs($"Checks resulted in {worst}",worst));
+                //update the bit flag
+                ChecksPassed = worst <= CheckResult.Warning;
                 
-                    //enable other buttons now based on the new state
-                    SetButtonStates();
+                //enable other buttons now based on the new state
+                SetButtonStates();
 
-                }, TaskScheduler.FromCurrentSynchronizationContext());
+            }, TaskScheduler.FromCurrentSynchronizationContext());
 
-            _runningTask = null;
-            ChecksPassed = true;
-        }
+        _runningTask = null;
+        ChecksPassed = true;
+    }
 
-        private void Check(IRunner runner, ToMemoryCheckNotifier toMemory)
+    private void Check(IRunner runner, ToMemoryCheckNotifier toMemory)
+    {
+        try
         {
-            try
-            {
-                runner.Run(Activator.RepositoryLocator, new FromCheckNotifierToDataLoadEventListener(toMemory), toMemory,new GracefulCancellationToken());
-            }
-            catch (Exception e)
-            {
-                toMemory.OnCheckPerformed(new CheckEventArgs("Entire process crashed", CheckResult.Fail, e));
-            }
+            runner.Run(Activator.RepositoryLocator, new FromCheckNotifierToDataLoadEventListener(toMemory), toMemory,new GracefulCancellationToken());
         }
-
-        private void btnExecute_Click(object sender, EventArgs e)
+        catch (Exception e)
         {
-            _cancellationTokenSource = new GracefulCancellationTokenSource();
+            toMemory.OnCheckPerformed(new CheckEventArgs("Entire process crashed", CheckResult.Fail, e));
+        }
+    }
 
-            IRunner runner;
+    private void btnExecute_Click(object sender, EventArgs e)
+    {
+        _cancellationTokenSource = new GracefulCancellationTokenSource();
 
-            try
-            {
-                var command = CommandGetter(CommandLineActivity.run);
-                runner = _factory.CreateRunner(Activator,command);
-            }
-            catch (Exception ex)
-            {
-                ragChecks.Fatal(ex);
-                return;
-            }
-            CurrentRunner = runner;
+        IRunner runner;
 
-            loadProgressUI1.Clear();
-            loadProgressUI1.ShowRunning(true);
+        try
+        {
+            var command = CommandGetter(CommandLineActivity.run);
+            runner = _factory.CreateRunner(Activator,command);
+        }
+        catch (Exception ex)
+        {
+            ragChecks.Fatal(ex);
+            return;
+        }
+        CurrentRunner = runner;
 
-            int exitCode = 0;
+        loadProgressUI1.Clear();
+        loadProgressUI1.ShowRunning(true);
+
+        var exitCode = 0;
             
-            _runningTask =
-                //run the data load in a Thread
-                Task.Factory.StartNew(() => { exitCode = Run(runner); });
+        _runningTask =
+            //run the data load in a Thread
+            Task.Factory.StartNew(() => { exitCode = Run(runner); });
 
-            _runningTask
-                //then on the main UI thread (after load completes with success/error
-                .ContinueWith((t) =>
+        _runningTask
+            //then on the main UI thread (after load completes with success/error
+            .ContinueWith((t) =>
                 {
                     //reset the system state because the execution has completed
                     ChecksPassed = false;
@@ -212,102 +212,102 @@ namespace Rdmp.UI.SimpleControls
                 }
                 , TaskScheduler.FromCurrentSynchronizationContext());
 
+        SetButtonStates();
+    }
+
+    private int Run(IRunner runner)
+    {
+        try
+        {
+            var exitCode = runner.Run(Activator.RepositoryLocator, loadProgressUI1, new FromDataLoadEventListenerToCheckNotifier(loadProgressUI1), _cancellationTokenSource.Token);
+
+            loadProgressUI1.OnNotify(this,new NotifyEventArgs(exitCode == 0 ? ProgressEventType.Information : ProgressEventType.Error,
+                $"Exit code was {exitCode}"));
+
+            return exitCode;
+        }
+        catch (Exception ex)
+        {
+            loadProgressUI1.OnNotify(ProgressUI.GlobalRunError,new NotifyEventArgs(ProgressEventType.Error, "Fatal Error",ex));
+        }
+
+        return -1;
+    }
+
+    private void SetButtonStates()
+    {
+        var h = StateChanged;
+        if (h != null)
+            h(this, new EventArgs());
+
+        if (!ChecksPassed)
+        {
+            //tell user he must run checks
+            if (ragChecks.IsGreen())
+                ragChecks.Warning(new Exception("Checks have not been run yet"));
+
+            btnRunChecks.Enabled = true;
+                
+            btnExecute.Enabled = false;
+            btnAbortLoad.Enabled = false;
+            return;
+        }
+
+        if (_runningTask != null)
+        {
+            checksUI1.Visible = false;
+            loadProgressUI1.Visible = true;
+        }
+            
+        //checks have passed is there a load underway already?
+        if (_runningTask == null || _runningTask.IsCompleted)
+        {
+            //no load underway!
+
+            //leave checks enabled and enable execute
+            btnRunChecks.Enabled = true;
+            btnExecute.Enabled = true;
+        }
+        else
+        {
+            //load is underway!
+            btnExecute.Enabled = false;
+            btnRunChecks.Enabled = false;
+
+            //only thing we can do is abort
+            btnAbortLoad.Enabled = true;
+        }
+    }
+
+    public void GroupBySender(string filter = null)
+    {
+        loadProgressUI1.GroupBySender(filter);
+    }
+
+    private void btnAbortLoad_Click(object sender, EventArgs e)
+    {
+        _cancellationTokenSource.Abort();
+        loadProgressUI1.OnNotify(this, new NotifyEventArgs(ProgressEventType.Warning,"Abort request issued"));
+    }
+
+    public void Reset()
+    {
+        if (!IsExecuting)
+        {
+            checksUI1.Clear();
+            loadProgressUI1.Clear();
+            ChecksPassed = false;
+            _runningTask = null;
             SetButtonStates();
         }
+    }
 
-        private int Run(IRunner runner)
+    public void ConsultAboutClosing(object sender, FormClosingEventArgs formClosingEventArgs)
+    {
+        if (IsExecuting)
         {
-            try
-            {
-                int exitCode = runner.Run(Activator.RepositoryLocator, loadProgressUI1, new FromDataLoadEventListenerToCheckNotifier(loadProgressUI1), _cancellationTokenSource.Token);
-
-                loadProgressUI1.OnNotify(this,new NotifyEventArgs(exitCode == 0 ? ProgressEventType.Information : ProgressEventType.Error,"Exit code was " + exitCode));
-
-                return exitCode;
-            }
-            catch (Exception ex)
-            {
-                loadProgressUI1.OnNotify(ProgressUI.GlobalRunError,new NotifyEventArgs(ProgressEventType.Error, "Fatal Error",ex));
-            }
-
-            return -1;
-        }
-
-        private void SetButtonStates()
-        {
-            var h = StateChanged;
-            if (h != null)
-                h(this, new EventArgs());
-
-            if (!ChecksPassed)
-            {
-                //tell user he must run checks
-                if (ragChecks.IsGreen())
-                    ragChecks.Warning(new Exception("Checks have not been run yet"));
-
-                btnRunChecks.Enabled = true;
-                
-                btnExecute.Enabled = false;
-                btnAbortLoad.Enabled = false;
-                return;
-            }
-
-            if (_runningTask != null)
-            {
-                checksUI1.Visible = false;
-                loadProgressUI1.Visible = true;
-            }
-            
-            //checks have passed is there a load underway already?
-            if (_runningTask == null || _runningTask.IsCompleted)
-            {
-                //no load underway!
-
-                //leave checks enabled and enable execute
-                btnRunChecks.Enabled = true;
-                btnExecute.Enabled = true;
-            }
-            else
-            {
-                //load is underway!
-                btnExecute.Enabled = false;
-                btnRunChecks.Enabled = false;
-
-                //only thing we can do is abort
-                btnAbortLoad.Enabled = true;
-            }
-        }
-
-        public void GroupBySender(string filter = null)
-        {
-            loadProgressUI1.GroupBySender(filter);
-        }
-
-        private void btnAbortLoad_Click(object sender, EventArgs e)
-        {
-            _cancellationTokenSource.Abort();
-            loadProgressUI1.OnNotify(this, new NotifyEventArgs(ProgressEventType.Warning,"Abort request issued"));
-        }
-
-        public void Reset()
-        {
-            if (!IsExecuting)
-            {
-                checksUI1.Clear();
-                loadProgressUI1.Clear();
-                ChecksPassed = false;
-                _runningTask = null;
-                SetButtonStates();
-            }
-        }
-
-        public void ConsultAboutClosing(object sender, FormClosingEventArgs formClosingEventArgs)
-        {
-            if (IsExecuting)
-            {
-                MessageBox.Show("Control is still executing, please abort first");
-                formClosingEventArgs.Cancel = true;
-            }
+            MessageBox.Show("Control is still executing, please abort first");
+            formClosingEventArgs.Cancel = true;
         }
     }
 }

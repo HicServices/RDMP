@@ -10,64 +10,63 @@ using System.Linq;
 using MapsDirectlyToDatabaseTable;
 using Rdmp.Core.Curation.Data.Cache;
 
-namespace Rdmp.Core.Curation.Data.Spontaneous
+namespace Rdmp.Core.Curation.Data.Spontaneous;
+
+/// <summary>
+/// Spontaneous (non database persisted) version of PermissionWindow.  Use this class when you want to define a runtime only (in memory) window of execution for
+/// caching / loading etc.  SpontaneouslyInventedPermissionWindow are never locked.
+/// </summary>
+public class SpontaneouslyInventedPermissionWindow:SpontaneousObject,IPermissionWindow
 {
-    /// <summary>
-    /// Spontaneous (non database persisted) version of PermissionWindow.  Use this class when you want to define a runtime only (in memory) window of execution for
-    /// caching / loading etc.  SpontaneouslyInventedPermissionWindow are never locked.
-    /// </summary>
-    public class SpontaneouslyInventedPermissionWindow:SpontaneousObject,IPermissionWindow
+    private readonly ICacheProgress _cp;
+
+    public SpontaneouslyInventedPermissionWindow(ICacheProgress cp):this()
     {
-        private readonly ICacheProgress _cp;
+        _cp = cp;
+        PermissionWindowPeriods = new List<PermissionWindowPeriod>();
+    }
 
-        public SpontaneouslyInventedPermissionWindow(ICacheProgress cp):this()
-        {
-            _cp = cp;
-            PermissionWindowPeriods = new List<PermissionWindowPeriod>();
-        }
+    public SpontaneouslyInventedPermissionWindow(ICacheProgress cp, List<PermissionWindowPeriod> windows):this()
+    {
+        _cp = cp;
+        PermissionWindowPeriods = windows;
+    }
 
-        public SpontaneouslyInventedPermissionWindow(ICacheProgress cp, List<PermissionWindowPeriod> windows):this()
-        {
-            _cp = cp;
-            PermissionWindowPeriods = windows;
-        }
-
-        private SpontaneouslyInventedPermissionWindow():base(new MemoryRepository())
-        {
-            RequiresSynchronousAccess = true;
-            Name = "Spontaneous Permission Window";
-        }
+    private SpontaneouslyInventedPermissionWindow():base(new MemoryRepository())
+    {
+        RequiresSynchronousAccess = true;
+        Name = "Spontaneous Permission Window";
+    }
 
         
-        public void RefreshLockPropertiesFromDatabase()
-        {
+    public void RefreshLockPropertiesFromDatabase()
+    {
             
-        }
+    }
 
-        public string Name { get; set; }
-        public string Description { get; set; }
-        public bool RequiresSynchronousAccess { get; set; }
+    public string Name { get; set; }
+    public string Description { get; set; }
+    public bool RequiresSynchronousAccess { get; set; }
         
-        public List<PermissionWindowPeriod> PermissionWindowPeriods { get; private set; }
-        public bool WithinPermissionWindow()
-        {
-            //if no periods then yeah its in the window yo
-            if (PermissionWindowPeriods == null || !PermissionWindowPeriods.Any())
-                return true;
+    public List<PermissionWindowPeriod> PermissionWindowPeriods { get; private set; }
+    public bool WithinPermissionWindow()
+    {
+        return WithinPermissionWindow(DateTime.UtcNow);
+    }
 
-            return PermissionWindowPeriods.Any(w => w.Contains(DateTime.Now, true));
-        }
+    public bool WithinPermissionWindow(DateTime dateTimeUTC)
+    {
+        //if no periods then it's in the window
+        if (PermissionWindowPeriods == null || !PermissionWindowPeriods.Any())
+            return true;
 
-        public bool WithinPermissionWindow(DateTime dateTimeUTC)
-        {
-            return WithinPermissionWindow(DateTime.UtcNow);
-        }
+        return PermissionWindowPeriods.Any(w => w.Contains(dateTimeUTC, true));
+    }
 
-        public IEnumerable<ICacheProgress> CacheProgresses{get { return new[] {_cp}; }}
+    public IEnumerable<ICacheProgress> CacheProgresses{get { return new[] {_cp}; }}
 
-        public void SetPermissionWindowPeriods(List<PermissionWindowPeriod> windowPeriods)
-        {
-            PermissionWindowPeriods = windowPeriods;
-        }
+    public void SetPermissionWindowPeriods(List<PermissionWindowPeriod> windowPeriods)
+    {
+        PermissionWindowPeriods = windowPeriods;
     }
 }

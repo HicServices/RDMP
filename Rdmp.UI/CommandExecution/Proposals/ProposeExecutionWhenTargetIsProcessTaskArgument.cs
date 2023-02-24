@@ -7,33 +7,31 @@
 using Rdmp.Core.CommandExecution;
 using Rdmp.Core.CommandExecution.AtomicCommands;
 using Rdmp.Core.Curation.Data.DataLoad;
-using Rdmp.UI.DataLoadUIs.LoadMetadataUIs.ProcessTasks;
 using Rdmp.UI.ItemActivation;
 
-namespace Rdmp.UI.CommandExecution.Proposals
+namespace Rdmp.UI.CommandExecution.Proposals;
+
+internal class ProposeExecutionWhenTargetIsProcessTaskArgument: RDMPCommandExecutionProposal<ProcessTaskArgument>
 {
-    class ProposeExecutionWhenTargetIsProcessTaskArgument: RDMPCommandExecutionProposal<ProcessTaskArgument>
+    private IActivateItems _activator;
+    public ProposeExecutionWhenTargetIsProcessTaskArgument(IActivateItems itemActivator) : base(itemActivator)
     {
-        private IActivateItems _activator;
-        public ProposeExecutionWhenTargetIsProcessTaskArgument(IActivateItems itemActivator) : base(itemActivator)
-        {
-            _activator = itemActivator;
-        }
+        _activator = itemActivator;
+    }
 
-        public override bool CanActivate(ProcessTaskArgument target)
-        {
-            return true;
-        }
+    public override bool CanActivate(ProcessTaskArgument target)
+    {
+        return true;
+    }
 
-        public override void Activate(ProcessTaskArgument processTaskArgument)
-        {
-            var setArgumentCommand = new ExecuteCommandSetArgument(_activator, processTaskArgument);
-            setArgumentCommand.Execute();
-        }
+    public override void Activate(ProcessTaskArgument processTaskArgument)
+    {
+        var setArgumentCommand = new ExecuteCommandSetArgument(_activator, processTaskArgument);
+        setArgumentCommand.Execute();
+    }
 
-        public override ICommandExecution ProposeExecution(ICombineToMakeCommand cmd, ProcessTaskArgument target, InsertOption insertOption = InsertOption.Default)
-        {
-            return null;
-        }
+    public override ICommandExecution ProposeExecution(ICombineToMakeCommand cmd, ProcessTaskArgument target, InsertOption insertOption = InsertOption.Default)
+    {
+        return null;
     }
 }

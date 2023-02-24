@@ -16,79 +16,77 @@ using Rdmp.UI.SimpleDialogs;
 
 using WeifenLuo.WinFormsUI.Docking;
 
-namespace ResearchDataManagementPlatform.WindowManagement.ContentWindowTracking.Persistence
+namespace ResearchDataManagementPlatform.WindowManagement.ContentWindowTracking.Persistence;
+
+/// <summary>
+/// TECHNICAL: Base class for all dockable tabs that host a single control 
+/// </summary>
+[System.ComponentModel.DesignerCategory("")]
+[TechnicalUI]
+public class RDMPSingleControlTab:DockContent,IRefreshBusSubscriber
 {
     /// <summary>
-    /// TECHNICAL: Base class for all dockable tabs that host a single control 
+    /// The control hosted on this tab
     /// </summary>
-    [System.ComponentModel.DesignerCategory("")]
-    [TechnicalUI]
-    public class RDMPSingleControlTab:DockContent,IRefreshBusSubscriber
+    public Control Control { get; protected set; }
+    public const string BasicPrefix = "BASIC";
+
+    protected RDMPSingleControlTab(RefreshBus refreshBus)
     {
-        /// <summary>
-        /// The control hosted on this tab
-        /// </summary>
-        public Control Control { get; protected set; }
-        public const string BasicPrefix = "BASIC";
+        refreshBus.Subscribe(this);
+        FormClosed += (s, e) => refreshBus.Unsubscribe(this);
+    }
 
-        protected RDMPSingleControlTab(RefreshBus refreshBus)
-        {
-            refreshBus.Subscribe(this);
-            FormClosed += (s, e) => refreshBus.Unsubscribe(this);
-        }
+    /// <summary>
+    /// Creates instance and sets <see cref="Control"/> to <paramref name="c"/>.  You
+    /// will still need to add and Dock the control etc yourself
+    /// </summary>
+    /// <param name="refreshBus"></param>
+    /// <param name="c"></param>
+    public RDMPSingleControlTab(RefreshBus refreshBus, Control c)
+    {
+        refreshBus.Subscribe(this);
+        FormClosed += (s, e) => refreshBus.Unsubscribe(this);
+        Control = c;
+    }
 
-        /// <summary>
-        /// Creates instance and sets <see cref="Control"/> to <paramref name="c"/>.  You
-        /// will still need to add and Dock the control etc yourself
-        /// </summary>
-        /// <param name="refreshBus"></param>
-        /// <param name="c"></param>
-        public RDMPSingleControlTab(RefreshBus refreshBus, Control c)
-        {
-            refreshBus.Subscribe(this);
-            FormClosed += (s, e) => refreshBus.Unsubscribe(this);
-            Control = c;
-        }
+    public virtual void RefreshBus_RefreshObject(object sender, RefreshObjectEventArgs e)
+    {
 
-        public virtual void RefreshBus_RefreshObject(object sender, RefreshObjectEventArgs e)
-        {
+    }
+    public virtual void HandleUserRequestingTabRefresh(IActivateItems activator)
+    {
 
-        }
-        public virtual void HandleUserRequestingTabRefresh(IActivateItems activator)
-        {
+    }
 
-        }
+    public virtual void HandleUserRequestingEmphasis(IActivateItems activator)
+    {
 
-        public virtual void HandleUserRequestingEmphasis(IActivateItems activator)
-        {
+    }
+    protected override string GetPersistString()
+    {
+        const char s = PersistStringHelper.Separator;
+        return $"{BasicPrefix}{s}{Control.GetType().FullName}";
+    }
 
-        }
-        protected override string GetPersistString()
-        {
-            const char s = PersistStringHelper.Separator;
-            return BasicPrefix + s + Control.GetType().FullName;
-        }
+    public void ShowHelp(IActivateItems activator)
+    {
+        var typeDocs = activator.RepositoryLocator.CatalogueRepository.CommentStore;
 
-        public void ShowHelp(IActivateItems activator)
-        {
-            var typeDocs = activator.RepositoryLocator.CatalogueRepository.CommentStore;
+        var sb = new StringBuilder();
 
-            StringBuilder sb = new StringBuilder();
+        string firstMatch = null;
 
-            string firstMatch = null;
+        foreach (var c in Controls)
+            if (typeDocs.ContainsKey(c.GetType().Name))
+            {
+                firstMatch ??= c.GetType().Name;
 
-            foreach (var c in Controls)
-                if (typeDocs.ContainsKey(c.GetType().Name))
-                {
-                    if (firstMatch == null)
-                        firstMatch = c.GetType().Name;
+                sb.AppendLine(typeDocs.GetDocumentationIfExists(c.GetType().Name,false,true));
+                sb.AppendLine();
+            }
 
-                    sb.AppendLine(typeDocs.GetDocumentationIfExists(c.GetType().Name,false,true));
-                    sb.AppendLine();
-                }
-
-            if (sb.Length > 0)
-                WideMessageBox.Show(firstMatch, sb.ToString(),Environment.StackTrace,  true,  firstMatch,WideMessageBoxTheme.Help);
-        }
+        if (sb.Length > 0)
+            WideMessageBox.Show(firstMatch, sb.ToString(),Environment.StackTrace,  true,  firstMatch,WideMessageBoxTheme.Help);
     }
 }

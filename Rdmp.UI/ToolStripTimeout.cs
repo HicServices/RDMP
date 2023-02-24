@@ -9,48 +9,47 @@ using System.Collections.Generic;
 using System.Drawing;
 using System.Windows.Forms;
 
-namespace Rdmp.UI
+namespace Rdmp.UI;
+
+/// <summary>
+/// Factory for generating a consistent representation in a <see cref="ToolStrip"/> of a user configurable timeout period.
+/// </summary>
+public class ToolStripTimeout
 {
-    /// <summary>
-    /// Factory for generating a consistent representation in a <see cref="ToolStrip"/> of a user configurable timeout period.
-    /// </summary>
-    public class ToolStripTimeout
+    private ToolStripLabel timeoutLabel = new("Timeout:");
+    private ToolStripTextBox tbTimeout = new(){Text = "300"};
+    private int _timeout;
+
+    public int Timeout
     {
-        ToolStripLabel timeoutLabel = new ToolStripLabel("Timeout:");
-        ToolStripTextBox tbTimeout = new ToolStripTextBox(){Text = "300"};
-        private int _timeout;
-
-        public int Timeout
+        get => _timeout;
+        set
         {
-            get { return _timeout; }
-            set
-            {
-                _timeout = value;
-                tbTimeout.Text = value.ToString();
-            }
+            _timeout = value;
+            tbTimeout.Text = value.ToString();
         }
+    }
 
-        public ToolStripTimeout()
-        {
-            tbTimeout.TextChanged += tbTimeout_TextChanged;
-        }
-        public IEnumerable<ToolStripItem> GetControls()
-        {
-            yield return timeoutLabel;
-            yield return tbTimeout;
-        }
+    public ToolStripTimeout()
+    {
+        tbTimeout.TextChanged += tbTimeout_TextChanged;
+    }
+    public IEnumerable<ToolStripItem> GetControls()
+    {
+        yield return timeoutLabel;
+        yield return tbTimeout;
+    }
 
-        private void tbTimeout_TextChanged(object sender, EventArgs e)
+    private void tbTimeout_TextChanged(object sender, EventArgs e)
+    {
+        try
         {
-            try
-            {
-                _timeout = int.Parse(tbTimeout.Text);
-                tbTimeout.ForeColor = Color.Black;
-            }
-            catch (Exception)
-            {
-                tbTimeout.ForeColor = Color.Red;
-            }
+            _timeout = int.Parse(tbTimeout.Text);
+            tbTimeout.ForeColor = Color.Black;
+        }
+        catch (Exception)
+        {
+            tbTimeout.ForeColor = Color.Red;
         }
     }
 }

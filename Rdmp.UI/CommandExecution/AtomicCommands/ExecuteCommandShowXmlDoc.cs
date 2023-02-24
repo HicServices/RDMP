@@ -8,41 +8,38 @@ using SixLabors.ImageSharp;
 using Rdmp.Core.CommandExecution.AtomicCommands;
 using Rdmp.Core.Icons.IconProvision;
 using Rdmp.UI.ItemActivation;
-using Rdmp.UI.SimpleDialogs;
 using ReusableLibraryCode.Icons.IconProvision;
 using SixLabors.ImageSharp.PixelFormats;
-using WideMessageBox = Rdmp.UI.SimpleDialogs.WideMessageBox;
 
-namespace Rdmp.UI.CommandExecution.AtomicCommands
+namespace Rdmp.UI.CommandExecution.AtomicCommands;
+
+public class ExecuteCommandShowXmlDoc : BasicUICommandExecution,IAtomicCommand
 {
-    public class ExecuteCommandShowXmlDoc : BasicUICommandExecution,IAtomicCommand
+    private readonly string _title;
+    private string _help;
+
+    /// <summary>
+    /// sets up the command to show xmldoc for the supplied <paramref name="classOrProperty"/>
+    /// </summary>
+    /// <param name="activator"></param>
+    /// <param name="classOrProperty">Name of a documented class/interface/property (e.g. "CohortIdentificationConfiguration.QueryCachingServer_ID")</param>
+    /// <param name="title"></param>
+    public ExecuteCommandShowXmlDoc(IActivateItems activator,string classOrProperty, string title):base(activator)
     {
-        private readonly string _title;
-        private string _help;
+        _title = title;
+        _help = activator.RepositoryLocator.CatalogueRepository.CommentStore.GetDocumentationIfExists(classOrProperty, true,true);
 
-        /// <summary>
-        /// sets up the command to show xmldoc for the supplied <paramref name="classOrProperty"/>
-        /// </summary>
-        /// <param name="activator"></param>
-        /// <param name="classOrProperty">Name of a documented class/interface/property (e.g. "CohortIdentificationConfiguration.QueryCachingServer_ID")</param>
-        /// <param name="title"></param>
-        public ExecuteCommandShowXmlDoc(IActivateItems activator,string classOrProperty, string title):base(activator)
-        {
-            _title = title;
-            _help = activator.RepositoryLocator.CatalogueRepository.CommentStore.GetDocumentationIfExists(classOrProperty, true,true);
+        if(string.IsNullOrWhiteSpace(_help))
+            SetImpossible($"No help available for keyword '{classOrProperty}'");
+    }
+    public override Image<Rgba32> GetImage(IIconProvider iconProvider)
+    {
+        return iconProvider.GetImage(RDMPConcept.Help);
+    }
 
-            if(string.IsNullOrWhiteSpace(_help))
-                SetImpossible("No help available for keyword '" + classOrProperty+"'");
-        }
-        public override Image<Rgba32> GetImage(IIconProvider iconProvider)
-        {
-            return iconProvider.GetImage(RDMPConcept.Help);
-        }
-
-        public override void Execute()
-        {
-            base.Execute();
-            BasicActivator.Show(_title, _help);
-        }
+    public override void Execute()
+    {
+        base.Execute();
+        BasicActivator.Show(_title, _help);
     }
 }

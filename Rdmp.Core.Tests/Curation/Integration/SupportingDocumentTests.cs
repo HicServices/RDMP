@@ -8,39 +8,38 @@ using NUnit.Framework;
 using Rdmp.Core.Curation.Data;
 using Tests.Common;
 
-namespace Rdmp.Core.Tests.Curation.Integration
+namespace Rdmp.Core.Tests.Curation.Integration;
+
+public class SupportingDocumentTests : DatabaseTests
 {
-    public class SupportingDocumentTests : DatabaseTests
+    [Test]
+    public void test_SupportingDocument_CreateAndDestroy()
     {
-        [Test]
-        public void test_SupportingDocument_CreateAndDestroy()
-        {
-            Catalogue cata = new Catalogue(CatalogueRepository, "deleteme");
-            SupportingDocument doc = new SupportingDocument(CatalogueRepository, cata,"davesFile");
+        var cata = new Catalogue(CatalogueRepository, "deleteme");
+        var doc = new SupportingDocument(CatalogueRepository, cata,"davesFile");
 
-            Assert.AreEqual(doc.Name ,"davesFile");
+        Assert.AreEqual(doc.Name ,"davesFile");
 
-            doc.DeleteInDatabase();
-            cata.DeleteInDatabase();
-        }
+        doc.DeleteInDatabase();
+        cata.DeleteInDatabase();
+    }
 
-        [Test]
-        public void test_SupportingDocument_CreateChangeSaveDestroy()
-        {
-            Catalogue cata = new Catalogue(CatalogueRepository, "deleteme");
-            SupportingDocument doc = new SupportingDocument(CatalogueRepository, cata, "davesFile");
-            doc.Description = "some exciting file that dave loves";
-            doc.SaveToDatabase();
+    [Test]
+    public void test_SupportingDocument_CreateChangeSaveDestroy()
+    {
+        var cata = new Catalogue(CatalogueRepository, "deleteme");
+        var doc = new SupportingDocument(CatalogueRepository, cata, "davesFile");
+        doc.Description = "some exciting file that dave loves";
+        doc.SaveToDatabase();
 
-            Assert.AreEqual(doc.Name, "davesFile");
-            Assert.AreEqual(doc.Description, "some exciting file that dave loves");
+        Assert.AreEqual(doc.Name, "davesFile");
+        Assert.AreEqual(doc.Description, "some exciting file that dave loves");
 
-            SupportingDocument docAfterCommit = CatalogueRepository.GetObjectByID<SupportingDocument>(doc.ID);
+        var docAfterCommit = CatalogueRepository.GetObjectByID<SupportingDocument>(doc.ID);
 
-            Assert.AreEqual(docAfterCommit.Description,doc.Description);
+        Assert.AreEqual(docAfterCommit.Description,doc.Description);
 
-            doc.DeleteInDatabase();
-            cata.DeleteInDatabase();
-        }
+        doc.DeleteInDatabase();
+        cata.DeleteInDatabase();
     }
 }

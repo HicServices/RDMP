@@ -4,24 +4,19 @@
 // RDMP is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License for more details.
 // You should have received a copy of the GNU General Public License along with RDMP. If not, see <https://www.gnu.org/licenses/>.
 
-using System.Windows.Forms;
-using MapsDirectlyToDatabaseTable;
-using Rdmp.Core.CommandExecution;
 using Rdmp.Core.CommandExecution.AtomicCommands;
 using Rdmp.Core.CommandExecution.AtomicCommands.Sharing;
 using Rdmp.Core.Curation.Data;
-using Rdmp.Core.DataViewing;
 using Rdmp.UI.CommandExecution.AtomicCommands;
 
-namespace Rdmp.UI.Menus
+namespace Rdmp.UI.Menus;
+
+internal class FilterMenu : RDMPContextMenuStrip
 {
-    class FilterMenu : RDMPContextMenuStrip
+    public FilterMenu(RDMPContextMenuStripArgs args, IFilter filter): base(args, (DatabaseEntity)filter)
     {
-        public FilterMenu(RDMPContextMenuStripArgs args, IFilter filter): base(args, (DatabaseEntity)filter)
-        {
-            Add(new ExecuteCommandViewFilterMatchGraph(_activator, filter));
-            Add(new ExecuteCommandExportObjectsToFile(_activator, new[] {filter}));
-            Add(new ExecuteCommandImportFilterDescriptionsFromShare(_activator, filter));
-        }
+        Add(new ExecuteCommandViewFilterMatchGraph(_activator, filter));
+        Add(new ExecuteCommandExportObjectsToFile(_activator, new[] {filter}));
+        Add(new ExecuteCommandImportFilterDescriptionsFromShare(_activator, filter));
     }
 }

@@ -14,142 +14,138 @@ using Rdmp.Core.Curation.Data;
 using Rdmp.Core.Curation.Data.Cohort;
 using Rdmp.Core.Repositories;
 
-namespace Rdmp.Core.DataExport.Data
+namespace Rdmp.Core.DataExport.Data;
+
+/// <inheritdoc cref="IProjectCohortIdentificationConfigurationAssociation"/>
+public class ProjectCohortIdentificationConfigurationAssociation : DatabaseEntity, IProjectCohortIdentificationConfigurationAssociation,IInjectKnown<CohortIdentificationConfiguration>
 {
-    /// <inheritdoc cref="IProjectCohortIdentificationConfigurationAssociation"/>
-    public class ProjectCohortIdentificationConfigurationAssociation : DatabaseEntity, IProjectCohortIdentificationConfigurationAssociation,IInjectKnown<CohortIdentificationConfiguration>
+    #region Database Properties
+
+    private int _project_ID;
+    private int _cohortIdentificationConfiguration_ID;
+    #endregion
+
+    /// <inheritdoc/>
+    public int Project_ID
     {
-        #region Database Properties
+        get => _project_ID;
+        set => SetField(ref _project_ID, value);
+    }
 
-        private int _project_ID;
-        private int _cohortIdentificationConfiguration_ID;
-        #endregion
+    /// <summary>
+    /// The <see cref="Curation.Data.Cohort.CohortIdentificationConfiguration"/> which is associated with the given <see cref="Project_ID"/>.
+    /// </summary>
+    public int CohortIdentificationConfiguration_ID
+    {
+        get => _cohortIdentificationConfiguration_ID;
+        set => SetField(ref _cohortIdentificationConfiguration_ID, value);
+    }
 
-        /// <inheritdoc/>
-        public int Project_ID
+
+    #region Relationships
+
+
+    /// <inheritdoc cref="Project_ID"/>
+    [NoMappingToDatabase]
+    public IProject Project => Repository.GetObjectByID<Project>(Project_ID);
+
+    private Lazy<CohortIdentificationConfiguration> _knownCic;
+
+    /// <inheritdoc cref="CohortIdentificationConfiguration_ID"/>
+    [NoMappingToDatabase]
+    public CohortIdentificationConfiguration CohortIdentificationConfiguration =>
+        //handles the object having been deleted and somehow that deletion is missed
+        _knownCic.Value;
+
+    #endregion
+
+    public ProjectCohortIdentificationConfigurationAssociation()
+    {
+        ClearAllInjections();
+    }
+
+    /// <summary>
+    /// Declares in the <paramref name="repository"/> database that the given <paramref name="cic"/> cohort query is associated with the supplied <paramref name="project"/>.
+    /// This is usually done after using the query to build an <see cref="IExtractableCohort"/> (But it can be done manually by the user too).
+    /// </summary>
+    /// <param name="repository"></param>
+    /// <param name="project"></param>
+    /// <param name="cic"></param>
+    public ProjectCohortIdentificationConfigurationAssociation(IDataExportRepository repository, Project project, CohortIdentificationConfiguration cic)
+    {
+        repository.InsertAndHydrate(this, new Dictionary<string, object>()
         {
-            get { return _project_ID; }
-            set { SetField(ref _project_ID, value); }
-        }
+            {"Project_ID",project.ID},
+            {"CohortIdentificationConfiguration_ID",cic.ID}
+        });
 
-        /// <summary>
-        /// The <see cref="Curation.Data.Cohort.CohortIdentificationConfiguration"/> which is associated with the given <see cref="Project_ID"/>.
-        /// </summary>
-        public int CohortIdentificationConfiguration_ID
-        {
-            get { return _cohortIdentificationConfiguration_ID; }
-            set { SetField(ref _cohortIdentificationConfiguration_ID, value); }
-        }
+        if (ID == 0 || Repository != repository)
+            throw new ArgumentException("Repository failed to properly hydrate this class");
 
+        ClearAllInjections();
+    }
+    internal ProjectCohortIdentificationConfigurationAssociation(IDataExportRepository repository, DbDataReader r)
+        : base(repository, r)
+    {
+        Project_ID = Convert.ToInt32(r["Project_ID"]);
+        CohortIdentificationConfiguration_ID = Convert.ToInt32(r["CohortIdentificationConfiguration_ID"]);
 
-        #region Relationships
-
-
-        /// <inheritdoc cref="Project_ID"/>
-        [NoMappingToDatabase]
-        public IProject Project { get { return Repository.GetObjectByID<Project>(Project_ID); } }
-
-        private Lazy<CohortIdentificationConfiguration> _knownCic;
-
-        /// <inheritdoc cref="CohortIdentificationConfiguration_ID"/>
-        [NoMappingToDatabase]
-        public CohortIdentificationConfiguration CohortIdentificationConfiguration {
-            get
-            {
-                //handles the object having been deleted and somehow that deletion is missed
-                return _knownCic.Value;
-            } }
-
-        #endregion
-
-        public ProjectCohortIdentificationConfigurationAssociation()
-        {
-            ClearAllInjections();
-        }
-
-        /// <summary>
-        /// Declares in the <paramref name="repository"/> database that the given <paramref name="cic"/> cohort query is associated with the supplied <paramref name="project"/>.
-        /// This is usually done after using the query to build an <see cref="IExtractableCohort"/> (But it can be done manually by the user too).
-        /// </summary>
-        /// <param name="repository"></param>
-        /// <param name="project"></param>
-        /// <param name="cic"></param>
-        public ProjectCohortIdentificationConfigurationAssociation(IDataExportRepository repository, Project project, CohortIdentificationConfiguration cic)
-        {
-            repository.InsertAndHydrate(this, new Dictionary<string, object>()
-            {
-                {"Project_ID",project.ID},
-                {"CohortIdentificationConfiguration_ID",cic.ID}
-            });
-
-            if (ID == 0 || Repository != repository)
-                throw new ArgumentException("Repository failed to properly hydrate this class");
-
-            ClearAllInjections();
-        }
-        internal ProjectCohortIdentificationConfigurationAssociation(IDataExportRepository repository, DbDataReader r)
-            : base(repository, r)
-        {
-            Project_ID = Convert.ToInt32(r["Project_ID"]);
-            CohortIdentificationConfiguration_ID = Convert.ToInt32(r["CohortIdentificationConfiguration_ID"]);
-
-            ClearAllInjections();
-        }
+        ClearAllInjections();
+    }
 
 
-        public void InjectKnown(CohortIdentificationConfiguration instance)
-        {
-            _knownCic = new Lazy<CohortIdentificationConfiguration>(() => instance);
-        }
+    public void InjectKnown(CohortIdentificationConfiguration instance)
+    {
+        _knownCic = new Lazy<CohortIdentificationConfiguration>(() => instance);
+    }
 
-        public void ClearAllInjections()
-        {
-            _knownCic = new Lazy<CohortIdentificationConfiguration>(FetchCohortIdentificationConfiguration); 
-        }
+    public void ClearAllInjections()
+    {
+        _knownCic = new Lazy<CohortIdentificationConfiguration>(FetchCohortIdentificationConfiguration); 
+    }
 
-        private CohortIdentificationConfiguration FetchCohortIdentificationConfiguration()
-        {
-            return
-                DataExportRepository.CatalogueRepository.GetAllObjectsWhere<CohortIdentificationConfiguration>("ID",
-                    CohortIdentificationConfiguration_ID).SingleOrDefault();
-        }
+    private CohortIdentificationConfiguration FetchCohortIdentificationConfiguration()
+    {
+        return
+            DataExportRepository.CatalogueRepository.GetAllObjectsWhere<CohortIdentificationConfiguration>("ID",
+                CohortIdentificationConfiguration_ID).SingleOrDefault();
+    }
 
 
-        /// <summary>
-        /// Returns the associated <see cref="CohortIdentificationConfiguration_ID"/> Name
-        /// </summary>
-        /// <returns></returns>
-        public override string ToString()
-        {
-            var assoc = CohortIdentificationConfiguration;
-            return assoc == null ? "Orphan Association" :assoc.Name;
-        }
+    /// <summary>
+    /// Returns the associated <see cref="CohortIdentificationConfiguration_ID"/> Name
+    /// </summary>
+    /// <returns></returns>
+    public override string ToString()
+    {
+        var assoc = CohortIdentificationConfiguration;
+        return assoc == null ? "Orphan Association" :assoc.Name;
+    }
 
-        public bool ShouldBeReadOnly(out string reason)
-        {
-            reason = null;
-            return CohortIdentificationConfiguration?.ShouldBeReadOnly(out reason) ?? false;
-        }
+    public bool ShouldBeReadOnly(out string reason)
+    {
+        reason = null;
+        return CohortIdentificationConfiguration?.ShouldBeReadOnly(out reason) ?? false;
+    }
 
-        /// <inheritdoc/>
-        public string GetDeleteMessage()
-        {
-            return "remove CohortIdentificationConfiguration from the Project";
-        }
+    /// <inheritdoc/>
+    public string GetDeleteMessage()
+    {
+        return "remove CohortIdentificationConfiguration from the Project";
+    }
 
-        /// <inheritdoc/>
-        public string GetDeleteVerb()
-        {
-            return "Remove";
-        }
+    /// <inheritdoc/>
+    public string GetDeleteVerb()
+    {
+        return "Remove";
+    }
 
-        /// <summary>
-        /// Returns the <see cref="CohortIdentificationConfiguration_ID"/>
-        /// </summary>
-        /// <returns></returns>
-        public object MasqueradingAs()
-        {
-            return CohortIdentificationConfiguration;
-        }
+    /// <summary>
+    /// Returns the <see cref="CohortIdentificationConfiguration_ID"/>
+    /// </summary>
+    /// <returns></returns>
+    public object MasqueradingAs()
+    {
+        return CohortIdentificationConfiguration;
     }
 }

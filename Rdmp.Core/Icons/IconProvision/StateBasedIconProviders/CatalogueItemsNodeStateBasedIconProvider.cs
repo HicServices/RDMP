@@ -10,44 +10,43 @@ using ReusableLibraryCode.Icons.IconProvision;
 using SixLabors.ImageSharp;
 using SixLabors.ImageSharp.PixelFormats;
 
-namespace Rdmp.Core.Icons.IconProvision.StateBasedIconProviders
+namespace Rdmp.Core.Icons.IconProvision.StateBasedIconProviders;
+
+internal class CatalogueItemsNodeStateBasedIconProvider : IObjectStateBasedIconProvider
 {
-    internal class CatalogueItemsNodeStateBasedIconProvider : IObjectStateBasedIconProvider
+    private readonly Image<Rgba32> _basic;
+    private readonly Image<Rgba32> _core;
+    private readonly Image<Rgba32> _internal;
+    private readonly Image<Rgba32> _supplemental;
+    private readonly Image<Rgba32> _special;
+    private readonly Image<Rgba32> _deprecated;
+
+    public CatalogueItemsNodeStateBasedIconProvider(IconOverlayProvider overlayProvider)
     {
-        private readonly Image<Rgba32> _basic;
-        private readonly Image<Rgba32> _core;
-        private readonly Image<Rgba32> _internal;
-        private readonly Image<Rgba32> _supplemental;
-        private readonly Image<Rgba32> _special;
-        private readonly Image<Rgba32> _deprecated;
+        _basic = Image.Load<Rgba32>(CatalogueIcons.CatalogueItemsNode);
+        _core = overlayProvider.GetOverlay(_basic, OverlayKind.Extractable);
+        _internal = overlayProvider.GetOverlay(_basic, OverlayKind.Extractable_Internal);
+        _supplemental = overlayProvider.GetOverlay(_basic, OverlayKind.Extractable_Supplemental);
+        _special = overlayProvider.GetOverlay(_basic, OverlayKind.Extractable_SpecialApproval);
+        _deprecated = overlayProvider.GetOverlay(_basic, OverlayKind.Deprecated);
+    }
 
-        public CatalogueItemsNodeStateBasedIconProvider(IconOverlayProvider overlayProvider)
+    public Image<Rgba32> GetImageIfSupportedObject(object o)
+    {
+        if (o is not CatalogueItemsNode cin)
+            return null;
+
+        if (cin.Category == null)
+            return _basic;
+
+        return cin.Category.Value switch
         {
-            _basic = Image.Load<Rgba32>(CatalogueIcons.CatalogueItemsNode);
-            _core = overlayProvider.GetOverlay(_basic, OverlayKind.Extractable);
-            _internal = overlayProvider.GetOverlay(_basic, OverlayKind.Extractable_Internal);
-            _supplemental = overlayProvider.GetOverlay(_basic, OverlayKind.Extractable_Supplemental);
-            _special = overlayProvider.GetOverlay(_basic, OverlayKind.Extractable_SpecialApproval);
-            _deprecated = overlayProvider.GetOverlay(_basic, OverlayKind.Deprecated);
-        }
-
-        public Image<Rgba32> GetImageIfSupportedObject(object o)
-        {
-            if (o is not CatalogueItemsNode cin)
-                return null;
-
-            if (cin.Category == null)
-                return _basic;
-
-            return cin.Category.Value switch
-            {
-                Curation.Data.ExtractionCategory.Core => _core,
-                Curation.Data.ExtractionCategory.Supplemental => _supplemental,
-                Curation.Data.ExtractionCategory.SpecialApprovalRequired => _special,
-                Curation.Data.ExtractionCategory.Internal => _internal,
-                Curation.Data.ExtractionCategory.Deprecated => _deprecated,
-                _ => _basic
-            };
-        }
+            Curation.Data.ExtractionCategory.Core => _core,
+            Curation.Data.ExtractionCategory.Supplemental => _supplemental,
+            Curation.Data.ExtractionCategory.SpecialApprovalRequired => _special,
+            Curation.Data.ExtractionCategory.Internal => _internal,
+            Curation.Data.ExtractionCategory.Deprecated => _deprecated,
+            _ => _basic
+        };
     }
 }

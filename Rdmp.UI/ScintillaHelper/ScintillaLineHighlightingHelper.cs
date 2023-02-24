@@ -7,24 +7,23 @@
 using System.Drawing;
 using ScintillaNET;
 
-namespace Rdmp.UI.ScintillaHelper
-{
-    /// <summary>
-    /// Helper for highlighting specific lines of a <see cref="Scintilla"/> text editor.
-    /// </summary>
-    public class ScintillaLineHighlightingHelper
-    {
-        public void HighlightLine(Scintilla editor, int i, Color color)
-        {
-            Marker marker = editor.Markers[0];
-            marker.Symbol = MarkerSymbol.Background;
-            marker.SetBackColor(color);
-            editor.Lines[i].MarkerAdd(0);
-        }
+namespace Rdmp.UI.ScintillaHelper;
 
-        public void ClearAll(Scintilla editor)
-        {
-            editor.MarkerDeleteAll(-1);
-        }
+/// <summary>
+/// Helper for highlighting specific lines of a <see cref="Scintilla"/> text editor.
+/// </summary>
+public class ScintillaLineHighlightingHelper
+{
+    public void HighlightLine(Scintilla editor, int i, Color color)
+    {
+        var marker = editor.Markers[0];
+        marker.Symbol = MarkerSymbol.Background;
+        marker.SetBackColor(color);
+        editor.Lines[i].MarkerAdd(0);
+    }
+
+    public void ClearAll(Scintilla editor)
+    {
+        editor.MarkerDeleteAll(-1);
     }
 }

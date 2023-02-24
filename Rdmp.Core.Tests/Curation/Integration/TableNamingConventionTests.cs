@@ -11,55 +11,54 @@ using Rdmp.Core.Curation.Data;
 using Rdmp.Core.Curation.Data.EntityNaming;
 using Tests.Common;
 
-namespace Rdmp.Core.Tests.Curation.Integration
+namespace Rdmp.Core.Tests.Curation.Integration;
+
+internal class TableNamingConventionTests : DatabaseTests
 {
-    class TableNamingConventionTests : DatabaseTests
+    [Test]
+    public void GetAllTableInfos_moreThan1_pass()
     {
-        [Test]
-        public void GetAllTableInfos_moreThan1_pass()
-        {
-            var ti = new TableInfo(CatalogueRepository, "AMAGAD!!!");
-            Assert.IsTrue(CatalogueRepository.GetAllObjects<TableInfo>().Any());
-            ti.DeleteInDatabase();
-        }
-
-
-        [Test]
-        public void update_changeAllProperties_pass()
-        {
-            var tableInfo = new TableInfo(CatalogueRepository, "CHI_AMALG..SearchStuff")
-            {
-                Database = "CHI_AMALG",
-                Server = "Highly restricted",
-                Name = "Fishmongery!",
-                DatabaseType = DatabaseType.Oracle
-            };
-
-            tableInfo.SaveToDatabase();
-
-            var tableInfoAfter = CatalogueRepository.GetObjectByID<TableInfo>(tableInfo.ID);
-
-            Assert.IsTrue(tableInfoAfter.Database == "CHI_AMALG");
-            Assert.IsTrue(tableInfoAfter.Server == "Highly restricted");
-            Assert.IsTrue(tableInfoAfter.Name == "Fishmongery!");
-            Assert.IsTrue(tableInfoAfter.DatabaseType == DatabaseType.Oracle);
-
-            tableInfoAfter.DeleteInDatabase();
-            
-        }
-
-        [Test]
-        public void SuffixBasedTableNamingConventionHelper()
-        {
-            const string baseTableName = "MyTable";
-            var namingScheme = new SuffixBasedNamer();
-
-            var stagingTable = namingScheme.GetName(baseTableName, LoadBubble.Staging);
-            Assert.AreEqual("MyTable_STAGING", stagingTable);
-
-            var newLookupTable = namingScheme.GetName(baseTableName, LoadBubble.Live);
-            Assert.AreEqual("MyTable", newLookupTable);
-        }
-
+        var ti = new TableInfo(CatalogueRepository, "AMAGAD!!!");
+        Assert.IsTrue(CatalogueRepository.GetAllObjects<TableInfo>().Any());
+        ti.DeleteInDatabase();
     }
+
+
+    [Test]
+    public void update_changeAllProperties_pass()
+    {
+        var tableInfo = new TableInfo(CatalogueRepository, "CHI_AMALG..SearchStuff")
+        {
+            Database = "CHI_AMALG",
+            Server = "Highly restricted",
+            Name = "Fishmongery!",
+            DatabaseType = DatabaseType.Oracle
+        };
+
+        tableInfo.SaveToDatabase();
+
+        var tableInfoAfter = CatalogueRepository.GetObjectByID<TableInfo>(tableInfo.ID);
+
+        Assert.IsTrue(tableInfoAfter.Database == "CHI_AMALG");
+        Assert.IsTrue(tableInfoAfter.Server == "Highly restricted");
+        Assert.IsTrue(tableInfoAfter.Name == "Fishmongery!");
+        Assert.IsTrue(tableInfoAfter.DatabaseType == DatabaseType.Oracle);
+
+        tableInfoAfter.DeleteInDatabase();
+            
+    }
+
+    [Test]
+    public void SuffixBasedTableNamingConventionHelper()
+    {
+        const string baseTableName = "MyTable";
+        var namingScheme = new SuffixBasedNamer();
+
+        var stagingTable = namingScheme.GetName(baseTableName, LoadBubble.Staging);
+        Assert.AreEqual("MyTable_STAGING", stagingTable);
+
+        var newLookupTable = namingScheme.GetName(baseTableName, LoadBubble.Live);
+        Assert.AreEqual("MyTable", newLookupTable);
+    }
+
 }

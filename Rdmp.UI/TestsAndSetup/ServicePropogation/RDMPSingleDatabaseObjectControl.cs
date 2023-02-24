@@ -5,7 +5,6 @@
 // You should have received a copy of the GNU General Public License along with RDMP. If not, see <https://www.gnu.org/licenses/>.
 
 using System;
-using System.Collections.Generic;
 using System.Drawing;
 using System.Linq;
 using System.Windows.Forms;
@@ -19,327 +18,322 @@ using Rdmp.UI.Refreshing;
 using Rdmp.UI.Rules;
 using Rdmp.UI.SimpleControls;
 using Rdmp.UI.Theme;
-using ReusableLibraryCode.Settings;
 
-namespace Rdmp.UI.TestsAndSetup.ServicePropogation
+namespace Rdmp.UI.TestsAndSetup.ServicePropogation;
+
+/// <summary>
+/// TECHNICAL: base abstract class for all Controls which are concerned with a single root DatabaseEntity e.g. AggregateGraph is concerned only with an AggregateConfiguration
+/// and its children.  The reason this class exists is to streamline lifetime publish subscriptions (ensuring multiple tabs editting one anothers database objects happens 
+/// in a seamless a way as possible). 
+/// 
+/// </summary>
+/// <typeparam name="T"></typeparam>
+[TechnicalUI]
+public abstract class RDMPSingleDatabaseObjectControl<T> : RDMPUserControl, IRDMPSingleDatabaseObjectControl where T : DatabaseEntity
 {
     /// <summary>
-    /// TECHNICAL: base abstract class for all Controls which are concerned with a single root DatabaseEntity e.g. AggregateGraph is concerned only with an AggregateConfiguration
-    /// and its children.  The reason this class exists is to streamline lifetime publish subscriptions (ensuring multiple tabs editting one anothers database objects happens 
-    /// in a seamless a way as possible). 
-    /// 
+    /// True to track changes made to the <see cref="DatabaseObject"/> hosted by this control
+    /// and create <see cref="Commit"/> when changes are saved.  Using this field requires
+    /// declaring yourself <see cref="ISaveableUI"/>
     /// </summary>
-    /// <typeparam name="T"></typeparam>
-    [TechnicalUI]
-    public abstract class RDMPSingleDatabaseObjectControl<T> : RDMPUserControl, IRDMPSingleDatabaseObjectControl where T : DatabaseEntity
+    public bool UseCommitSystem { get; set; } = false;
+
+    /// <summary>
+    /// Tracks changes to <see cref="DatabaseObject"/> since last save.  Note that this is null
+    /// before <see cref="SetDatabaseObject(IActivateItems, DatabaseEntity)"/> has been called
+    /// or if <see cref="UseCommitSystem"/> is false.
+    /// </summary>
+    protected CommitInProgress CurrentCommit = null;
+
+    private Control _colorIndicator;
+    private Label _readonlyIndicator;
+
+    private BinderWithErrorProviderFactory _binder;
+
+    protected ObjectSaverButton ObjectSaverButton1 = new();
+
+    public DatabaseEntity DatabaseObject { get; private set; }
+    protected RDMPCollection AssociatedCollection = RDMPCollection.None;
+
+    /// <summary>
+    /// True if the hosted <see cref="DatabaseObject"/> <see cref="IMightBeReadOnly.ShouldBeReadOnly"/>.  This property is detected and update during SetDatabaseObject so use it only after this call has been made
+    /// </summary>
+    public bool ReadOnly { get; set; }
+
+    protected RDMPSingleDatabaseObjectControl()
     {
-        /// <summary>
-        /// True to track changes made to the <see cref="DatabaseObject"/> hosted by this control
-        /// and create <see cref="Commit"/> when changes are saved.  Using this field requires
-        /// declaring yourself <see cref="ISaveableUI"/>
-        /// </summary>
-        public bool UseCommitSystem { get; set; } = false;
+        CommonFunctionality.ToolStripAddedToHost += CommonFunctionality_ToolStripAddedToHost;
+    }
 
-        /// <summary>
-        /// Tracks changes to <see cref="DatabaseObject"/> since last save.  Note that this is null
-        /// before <see cref="SetDatabaseObject(IActivateItems, DatabaseEntity)"/> has been called
-        /// or if <see cref="UseCommitSystem"/> is false.
-        /// </summary>
-        protected CommitInProgress CurrentCommit = null;
+    public virtual void SetDatabaseObject(IActivateItems activator, T databaseObject)
+    {
+        SetItemActivator(activator);
+        Activator.RefreshBus.EstablishSelfDestructProtocol(this,activator,databaseObject);
+        DatabaseObject = databaseObject;
 
-        private Control _colorIndicator;
-        private Label _readonlyIndicator;
+        CommonFunctionality.ClearToolStrip();
 
-        private BinderWithErrorProviderFactory _binder;
-
-        protected ObjectSaverButton ObjectSaverButton1 = new ObjectSaverButton();
-
-        public DatabaseEntity DatabaseObject { get; private set; }
-        protected RDMPCollection AssociatedCollection = RDMPCollection.None;
-
-        /// <summary>
-        /// True if the hosted <see cref="DatabaseObject"/> <see cref="IMightBeReadOnly.ShouldBeReadOnly"/>.  This property is detected and update during SetDatabaseObject so use it only after this call has been made
-        /// </summary>
-        public bool ReadOnly { get; set; }
-
-        protected RDMPSingleDatabaseObjectControl()
+        if(_colorIndicator == null && AssociatedCollection != RDMPCollection.None)
         {
-            CommonFunctionality.ToolStripAddedToHost += CommonFunctionality_ToolStripAddedToHost;
+            var colorProvider = new BackColorProvider();
+            _colorIndicator = new Control();
+            _colorIndicator.Dock = DockStyle.Top;
+            _colorIndicator.Location = new Point(0, 0);
+            _colorIndicator.Size = new Size(150, BackColorProvider.IndicatorBarSuggestedHeight);
+            _colorIndicator.TabIndex = 0;
+            _colorIndicator.BackColor = colorProvider.GetColor(AssociatedCollection);
+            Controls.Add(_colorIndicator);
         }
 
-        public virtual void SetDatabaseObject(IActivateItems activator, T databaseObject)
+        if (_readonlyIndicator == null)
         {
-            SetItemActivator(activator);
-            Activator.RefreshBus.EstablishSelfDestructProtocol(this,activator,databaseObject);
-            DatabaseObject = databaseObject;
+            _readonlyIndicator = new Label();
+            _readonlyIndicator.Dock = DockStyle.Top;
+            _readonlyIndicator.Location = new Point(0, 0);
+            _readonlyIndicator.Size = new Size(150, 20);
+            _readonlyIndicator.TabIndex = 0;
+            _readonlyIndicator.TextAlign = ContentAlignment.MiddleLeft;
+            _readonlyIndicator.BackColor = SystemColors.HotTrack;
+            _readonlyIndicator.Font = new Font("Microsoft Sans Serif", 8.25F, FontStyle.Bold, GraphicsUnit.Point, (byte)0);
+            _readonlyIndicator.ForeColor = Color.Moccasin;
 
-            CommonFunctionality.ClearToolStrip();
+        }
 
-            if(_colorIndicator == null && AssociatedCollection != RDMPCollection.None)
+        if (databaseObject is IMightBeReadOnly ro)
+        {
+            if (ro.ShouldBeReadOnly(out var reason))
             {
-                var colorProvider = new BackColorProvider();
-                _colorIndicator = new Control();
-                _colorIndicator.Dock = DockStyle.Top;
-                _colorIndicator.Location = new Point(0, 0);
-                _colorIndicator.Size = new Size(150, BackColorProvider.IndicatorBarSuggestedHeight);
-                _colorIndicator.TabIndex = 0;
-                _colorIndicator.BackColor = colorProvider.GetColor(AssociatedCollection);
-                this.Controls.Add(this._colorIndicator);
+                _readonlyIndicator.Text = reason;
+                Controls.Add(_readonlyIndicator);
+                ReadOnly = true;
             }
-
-            if (_readonlyIndicator == null)
+            else
             {
-                _readonlyIndicator = new Label();
-                _readonlyIndicator.Dock = DockStyle.Top;
-                _readonlyIndicator.Location = new Point(0, 0);
-                _readonlyIndicator.Size = new Size(150, 20);
-                _readonlyIndicator.TabIndex = 0;
-                _readonlyIndicator.TextAlign = ContentAlignment.MiddleLeft;
-                _readonlyIndicator.BackColor = System.Drawing.SystemColors.HotTrack;
-                _readonlyIndicator.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-                _readonlyIndicator.ForeColor = System.Drawing.Color.Moccasin;
-
+                //removing it allows us to handle refreshes (where something becomes unfrozen for example)
+                Controls.Remove(_readonlyIndicator);
+                ReadOnly = false;
             }
+        }
 
-            if (databaseObject is IMightBeReadOnly ro)
-            {
-                if (ro.ShouldBeReadOnly(out string reason))
-                {
-                    _readonlyIndicator.Text = reason;
-                    this.Controls.Add(this._readonlyIndicator);
-                    ReadOnly = true;
-                }
-                else
-                {
-                    //removing it allows us to handle refreshes (where something becomes unfrozen for example)
-                    this.Controls.Remove(this._readonlyIndicator);
-                    ReadOnly = false;
-                }
-            }
+        if (_binder == null)
+            _binder = new BinderWithErrorProviderFactory(activator);
 
-            if (_binder == null)
-                _binder = new BinderWithErrorProviderFactory(activator);
-
-            SetBindings(_binder, databaseObject);
+        SetBindings(_binder, databaseObject);
             
-            if(this is ISaveableUI)
+        if(this is ISaveableUI)
+        {
+            if(UseCommitSystem && CurrentCommit == null && Activator.UseCommits())
             {
-                if(UseCommitSystem && CurrentCommit == null && Activator.UseCommits())
-                {
-                    CurrentCommit = new CommitInProgress(activator.RepositoryLocator, new CommitInProgressSettings(databaseObject));
-                    ObjectSaverButton1.BeforeSave += BeforeSave_FinishCommitInProgressIfAny;
-                    ObjectSaverButton1.AfterSave += AfterSave_BeginNewCommitIfApplicable;
-                }
-
-                ObjectSaverButton1.SetupFor(this, databaseObject, activator);
+                CurrentCommit = new CommitInProgress(activator.RepositoryLocator, new CommitInProgressSettings(databaseObject));
+                ObjectSaverButton1.BeforeSave += BeforeSave_FinishCommitInProgressIfAny;
+                ObjectSaverButton1.AfterSave += AfterSave_BeginNewCommitIfApplicable;
             }
+
+            ObjectSaverButton1.SetupFor(this, databaseObject, activator);
+        }
                 
             
-            var gotoFactory = new GoToCommandFactory(activator);
-            foreach (var cmd in gotoFactory.GetCommands(databaseObject).OfType<ExecuteCommandShow>())
-            {
-                cmd.SuggestedCategory = AtomicCommandFactory.GoTo;
-                CommonFunctionality.AddToMenu(cmd,null,null,AtomicCommandFactory.GoTo);
-            }
-        }
-
-
-        protected bool BeforeSave_FinishCommitInProgressIfAny(DatabaseEntity _)
+        var gotoFactory = new GoToCommandFactory(activator);
+        foreach (var cmd in gotoFactory.GetCommands(databaseObject).OfType<ExecuteCommandShow>())
         {
-            // control doesn't require commits (most controls don't)
-            if (!UseCommitSystem)
-                return true; // go through with the save
+            cmd.SuggestedCategory = AtomicCommandFactory.GoTo;
+            CommonFunctionality.AddToMenu(cmd,null,null,AtomicCommandFactory.GoTo);
+        }
+    }
 
-            // user has opted out via user settings or backing repository doesn't support commits
-            if (!Activator.UseCommits())
-                return true;
 
-            if (CurrentCommit != null)
-            {
-                if (CurrentCommit.TryFinish(Activator) == null)
-                {
-                    // No changes were actually made or user cancelled
-                    return false;
-                }
-            }
-            
-            // before starting a new commit cleanup old one
-            CurrentCommit?.Dispose();
+    protected bool BeforeSave_FinishCommitInProgressIfAny(DatabaseEntity _)
+    {
+        // control doesn't require commits (most controls don't)
+        if (!UseCommitSystem)
+            return true; // go through with the save
 
-            // setting to null means a new one will be created in AfterSave
-            CurrentCommit = null;
-
+        // user has opted out via user settings or backing repository doesn't support commits
+        if (!Activator.UseCommits())
             return true;
-        }
 
-        private void AfterSave_BeginNewCommitIfApplicable()
+        if (CurrentCommit != null)
         {
-            if (CurrentCommit == null && UseCommitSystem && Activator.UseCommits())
+            if (CurrentCommit.TryFinish(Activator) == null)
             {
-                // start a new commit for the next changes the user commits
-                CurrentCommit = new CommitInProgress(Activator.RepositoryLocator, new CommitInProgressSettings(DatabaseObject));
+                // No changes were actually made or user cancelled
+                return false;
             }
         }
-        void CommonFunctionality_ToolStripAddedToHost(object sender, EventArgs e)
-        {
-            if (_colorIndicator != null)
-                _colorIndicator.SendToBack();
-        }
-
-        protected virtual void SetBindings(BinderWithErrorProviderFactory rules, T databaseObject)
-        {
             
-        }
+        // before starting a new commit cleanup old one
+        CurrentCommit?.Dispose();
 
-        /// <summary>
-        /// Performs data binding using default parameters (OnPropertyChanged), no formatting etc.  Getter must be a
-        /// property of <see cref="DatabaseObject"/>
-        /// </summary>
-        /// <param name="c"></param>
-        /// <param name="propertyName"></param>
-        /// <param name="dataMember"></param>
-        /// <param name="getter"></param>
-        /// <param name="formattingEnabled"></param>
-        /// <param name="updateMode"></param>
-        protected void Bind(Control c, string propertyName, string dataMember, Func<T, object> getter, bool formattingEnabled = true,DataSourceUpdateMode updateMode = DataSourceUpdateMode.OnPropertyChanged)
+        // setting to null means a new one will be created in AfterSave
+        CurrentCommit = null;
+
+        return true;
+    }
+
+    private void AfterSave_BeginNewCommitIfApplicable()
+    {
+        if (CurrentCommit == null && UseCommitSystem && Activator.UseCommits())
         {
-            var box = c as ComboBox;
+            // start a new commit for the next changes the user commits
+            CurrentCommit = new CommitInProgress(Activator.RepositoryLocator, new CommitInProgressSettings(DatabaseObject));
+        }
+    }
 
-            //workaround for only comitting lists on loose focus
-            if (box != null && box.DropDownStyle == ComboBoxStyle.DropDownList && propertyName.Equals("SelectedItem"))
-            {
-                box.SelectionChangeCommitted += (s,e)=>box.DataBindings["SelectedItem"].WriteValue();
-            }
+    private void CommonFunctionality_ToolStripAddedToHost(object sender, EventArgs e)
+    {
+        if (_colorIndicator != null)
+            _colorIndicator.SendToBack();
+    }
+
+    protected virtual void SetBindings(BinderWithErrorProviderFactory rules, T databaseObject)
+    {
             
-            _binder.Bind(c, propertyName, (T)DatabaseObject, dataMember, formattingEnabled, updateMode, getter);
-        }
+    }
 
-
-        /// <summary>
-        /// Parses the datetime out of the <paramref name="tb"/> with blank being null.  If the string doesn't parse
-        /// then the text will turn red.
-        /// </summary>
-        /// <param name="tb"></param>
-        /// <param name="action">Method to call if a valid DateTime is entered into the text box.  Called with null if text box is blank</param>
-        protected void SetDate(TextBox tb, Action<DateTime?> action)
+    /// <summary>
+    /// Performs data binding using default parameters (OnPropertyChanged), no formatting etc.  Getter must be a
+    /// property of <see cref="DatabaseObject"/>
+    /// </summary>
+    /// <param name="c"></param>
+    /// <param name="propertyName"></param>
+    /// <param name="dataMember"></param>
+    /// <param name="getter"></param>
+    /// <param name="formattingEnabled"></param>
+    /// <param name="updateMode"></param>
+    protected void Bind(Control c, string propertyName, string dataMember, Func<T, object> getter, bool formattingEnabled = true,DataSourceUpdateMode updateMode = DataSourceUpdateMode.OnPropertyChanged)
+    {
+        //workaround for only comitting lists on loose focus
+        if (c is ComboBox box && box.DropDownStyle == ComboBoxStyle.DropDownList && propertyName.Equals("SelectedItem"))
         {
-            try
-            {
+            box.SelectionChangeCommitted += (s,e)=>box.DataBindings["SelectedItem"].WriteValue();
+        }
+            
+        _binder.Bind(c, propertyName, (T)DatabaseObject, dataMember, formattingEnabled, updateMode, getter);
+    }
+
+
+    /// <summary>
+    /// Parses the datetime out of the <paramref name="tb"/> with blank being null.  If the string doesn't parse
+    /// then the text will turn red.
+    /// </summary>
+    /// <param name="tb"></param>
+    /// <param name="action">Method to call if a valid DateTime is entered into the text box.  Called with null if text box is blank</param>
+    protected void SetDate(TextBox tb, Action<DateTime?> action)
+    {
+        try
+        {
                 
-                if (string.IsNullOrWhiteSpace(tb.Text))
-                {
-                    action(null);
-                    return;
-                }
-
-                DateTime dateTime = DateTime.Parse(tb.Text);
-                action(dateTime);
-
-                tb.ForeColor = Color.Black;
-
-            }
-            catch (Exception)
+            if (string.IsNullOrWhiteSpace(tb.Text))
             {
-                tb.ForeColor = Color.Red;
+                action(null);
+                return;
             }
-        }
 
-        /// <summary>
-        /// Parses the Uri out of the <paramref name="tb"/> with blank being null.  If the string doesn't parse
-        /// then the text will turn red.
-        /// </summary>
-        /// <param name="tb"></param>
-        /// <param name="action">Method to call if a valid Uri is entered into the text box.  Called with null if text box is blank</param>
-        protected void SetUrl(TextBox tb, Action<Uri> action)
+            var dateTime = DateTime.Parse(tb.Text);
+            action(dateTime);
+
+            tb.ForeColor = Color.Black;
+
+        }
+        catch (Exception)
         {
-            try
+            tb.ForeColor = Color.Red;
+        }
+    }
+
+    /// <summary>
+    /// Parses the Uri out of the <paramref name="tb"/> with blank being null.  If the string doesn't parse
+    /// then the text will turn red.
+    /// </summary>
+    /// <param name="tb"></param>
+    /// <param name="action">Method to call if a valid Uri is entered into the text box.  Called with null if text box is blank</param>
+    protected void SetUrl(TextBox tb, Action<Uri> action)
+    {
+        try
+        {
+            if (string.IsNullOrWhiteSpace(tb.Text))
             {
-                if (string.IsNullOrWhiteSpace(tb.Text))
-                {
-                    action(null);
-                    return;
-                }
-
-                Uri u = new Uri(tb.Text);
-                action(u);
-                tb.ForeColor = Color.Black;
-
+                action(null);
+                return;
             }
-            catch (UriFormatException)
-            {
-                tb.ForeColor = Color.Red;
-            }
+
+            var u = new Uri(tb.Text);
+            action(u);
+            tb.ForeColor = Color.Black;
+
         }
-
-        public void SetDatabaseObject(IActivateItems activator, DatabaseEntity databaseObject)
+        catch (UriFormatException)
         {
-            SetDatabaseObject(activator,(T)databaseObject);
+            tb.ForeColor = Color.Red;
         }
+    }
 
-        public Type GetTypeOfT()
+    public void SetDatabaseObject(IActivateItems activator, DatabaseEntity databaseObject)
+    {
+        SetDatabaseObject(activator,(T)databaseObject);
+    }
+
+    public Type GetTypeOfT()
+    {
+        return typeof (T);
+    }
+
+    public virtual string GetTabName()
+    {
+        if (DatabaseObject is INamed named)
+            return named.Name;
+
+
+        if (DatabaseObject != null)
+            return DatabaseObject.ToString();
+
+        return "Unamed Tab";
+    }
+
+    public virtual string GetTabToolTip()
+    {
+        return null;
+    }
+
+    /// <summary>
+    /// Triggers an application refresh because a change has been made to <paramref name="e"/>
+    /// </summary>
+    public void Publish(IMapsDirectlyToDatabaseTable e)
+    {
+        Activator.Publish(e);
+    }
+
+    /// <summary>
+    /// Triggers an application refresh because a change has been made to the forms main <see cref="DatabaseObject"/>
+    /// </summary>
+    public void Publish()
+    {
+        Activator.RefreshBus.Publish(this, new RefreshObjectEventArgs(DatabaseObject));
+    }
+
+    /// <summary>
+    /// Triggers a refresh only of this form (calls <see cref="SetDatabaseObject(Rdmp.UI.ItemActivation.IActivateItems,T)"/>)
+    /// </summary>
+    protected void PublishToSelfOnly()
+    {
+        SetDatabaseObject(Activator, DatabaseObject);
+    }
+    public virtual void ConsultAboutClosing(object sender, FormClosingEventArgs e) {}
+
+    public virtual ObjectSaverButton GetObjectSaverButton()
+    {
+        return ObjectSaverButton1;
+    }
+    protected override void Dispose(bool disposing)
+    {
+        base.Dispose(disposing);
+
+        CurrentCommit?.Dispose();
+
+        if(ObjectSaverButton1 != null)
         {
-            return typeof (T);
-        }
-
-        public virtual string GetTabName()
-        {
-            var named = DatabaseObject as INamed;
-
-            if (named != null)
-                return named.Name;
-
-
-            if (DatabaseObject != null)
-                return DatabaseObject.ToString();
-
-            return "Unamed Tab";
-        }
-
-        public virtual string GetTabToolTip()
-        {
-            return null;
-        }
-
-        /// <summary>
-        /// Triggers an application refresh because a change has been made to <paramref name="e"/>
-        /// </summary>
-        public void Publish(IMapsDirectlyToDatabaseTable e)
-        {
-            Activator.Publish(e);
-        }
-
-        /// <summary>
-        /// Triggers an application refresh because a change has been made to the forms main <see cref="DatabaseObject"/>
-        /// </summary>
-        public void Publish()
-        {
-            Activator.RefreshBus.Publish(this, new RefreshObjectEventArgs(DatabaseObject));
-        }
-
-        /// <summary>
-        /// Triggers a refresh only of this form (calls <see cref="SetDatabaseObject(Rdmp.UI.ItemActivation.IActivateItems,T)"/>)
-        /// </summary>
-        protected void PublishToSelfOnly()
-        {
-            SetDatabaseObject(Activator, DatabaseObject);
-        }
-        public virtual void ConsultAboutClosing(object sender, FormClosingEventArgs e) {}
-
-        public virtual ObjectSaverButton GetObjectSaverButton()
-        {
-            return ObjectSaverButton1;
-        }
-        protected override void Dispose(bool disposing)
-        {
-            base.Dispose(disposing);
-
-            CurrentCommit?.Dispose();
-
-            if(ObjectSaverButton1 != null)
-            {
-                ObjectSaverButton1.BeforeSave -= BeforeSave_FinishCommitInProgressIfAny;
-                ObjectSaverButton1.AfterSave -= AfterSave_BeginNewCommitIfApplicable;
-            }
+            ObjectSaverButton1.BeforeSave -= BeforeSave_FinishCommitInProgressIfAny;
+            ObjectSaverButton1.AfterSave -= AfterSave_BeginNewCommitIfApplicable;
         }
     }
 }

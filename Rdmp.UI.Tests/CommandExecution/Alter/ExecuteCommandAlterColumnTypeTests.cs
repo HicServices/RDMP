@@ -7,97 +7,91 @@
 using FAnsi;
 using FAnsi.Discovery;
 using NUnit.Framework;
-using Rdmp.Core.Curation.Data;
 using Rdmp.Core.Repositories;
-using System;
-using System.Collections.Generic;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using Rdmp.Core.CommandExecution.AtomicCommands.Alter;
 using Tests.Common;
 using TypeGuesser;
 
-namespace Rdmp.UI.Tests.CommandExecution.Alter
+namespace Rdmp.UI.Tests.CommandExecution.Alter;
+
+internal class ExecuteCommandAlterColumnTypeTests:DatabaseTests
 {
-    class ExecuteCommandAlterColumnTypeTests:DatabaseTests
+    [TestCaseSource(typeof(All),nameof(All.DatabaseTypes))]
+    [UITimeout(10000)]
+    public void AlterColumnType_NoArchive(DatabaseType dbType)
     {
-        [TestCaseSource(typeof(All),nameof(All.DatabaseTypes))]
-        [UITimeout(10000)]
-        public void AlterColumnType_NoArchive(DatabaseType dbType)
-        {
 
-            var db = GetCleanedServer(dbType);
-            var tbl = db.CreateTable("MyTbl", new[] { new DatabaseColumnRequest("mycol", new DatabaseTypeRequest(typeof(string), 10)) });
+        var db = GetCleanedServer(dbType);
+        var tbl = db.CreateTable("MyTbl", new[] { new DatabaseColumnRequest("mycol", new DatabaseTypeRequest(typeof(string), 10)) });
 
-            Import(tbl, out var ti, out _);
+        Import(tbl, out var ti, out _);
 
-            var ui = new UITests();
-            var activator = new TestActivateItems(ui, new MemoryDataExportRepository());
+        var ui = new UITests();
+        var activator = new TestActivateItems(ui, new MemoryDataExportRepository());
                        
-            var myCol = tbl.DiscoverColumn("myCol");
+        var myCol = tbl.DiscoverColumn("myCol");
             
-            //should have started out as 10
-            Assert.AreEqual(10, myCol.DataType.GetLengthIfString());
+        //should have started out as 10
+        Assert.AreEqual(10, myCol.DataType.GetLengthIfString());
 
-            //we want the new type to be 50 long
-            var newType = myCol.DataType.SQLType.Replace("10", "50");
-            activator.TypeTextResponse = newType;
+        //we want the new type to be 50 long
+        var newType = myCol.DataType.SQLType.Replace("10", "50");
+        activator.TypeTextResponse = newType;
 
-            var cmd = new ExecuteCommandAlterColumnType(activator, ti.ColumnInfos.Single());
-            cmd.Execute();
+        var cmd = new ExecuteCommandAlterColumnType(activator, ti.ColumnInfos.Single());
+        cmd.Execute();
 
-            //rediscover the col to get the expected new datatype
-            myCol = tbl.DiscoverColumn("myCol");
+        //rediscover the col to get the expected new datatype
+        myCol = tbl.DiscoverColumn("myCol");
 
-            Assert.AreEqual(newType, myCol.DataType.SQLType);
-            Assert.AreEqual(newType, ti.ColumnInfos[0].Data_type);
+        Assert.AreEqual(newType, myCol.DataType.SQLType);
+        Assert.AreEqual(newType, ti.ColumnInfos[0].Data_type);
 
-            tbl.Drop();
-        }
+        tbl.Drop();
+    }
 
 
-        [TestCase(DatabaseType.MicrosoftSQLServer)]
-        [TestCase(DatabaseType.MySql)]
-        [TestCase(DatabaseType.Oracle)]
-        [UITimeout(10000)]
-        public void AlterColumnType_WithArchive(DatabaseType dbType)
-        {
+    [TestCase(DatabaseType.MicrosoftSQLServer)]
+    [TestCase(DatabaseType.MySql)]
+    [TestCase(DatabaseType.Oracle)]
+    [UITimeout(10000)]
+    public void AlterColumnType_WithArchive(DatabaseType dbType)
+    {
 
-            var db = GetCleanedServer(dbType);
-            var tbl = db.CreateTable("MyTbl", new[] { new DatabaseColumnRequest("mycol", new DatabaseTypeRequest(typeof(string), 10)) });
-            var tblArchive = db.CreateTable("MyTbl_Archive", new[] { new DatabaseColumnRequest("mycol", new DatabaseTypeRequest(typeof(string), 10)) });
+        var db = GetCleanedServer(dbType);
+        var tbl = db.CreateTable("MyTbl", new[] { new DatabaseColumnRequest("mycol", new DatabaseTypeRequest(typeof(string), 10)) });
+        var tblArchive = db.CreateTable("MyTbl_Archive", new[] { new DatabaseColumnRequest("mycol", new DatabaseTypeRequest(typeof(string), 10)) });
 
-            Import(tbl, out var ti, out _);
+        Import(tbl, out var ti, out _);
 
-            var ui = new UITests();
-            var activator = new TestActivateItems(ui, new MemoryDataExportRepository());
+        var ui = new UITests();
+        var activator = new TestActivateItems(ui, new MemoryDataExportRepository());
 
-            var myCol = tbl.DiscoverColumn("myCol");
+        var myCol = tbl.DiscoverColumn("myCol");
 
-            //should have started out as 10
-            Assert.AreEqual(10, myCol.DataType.GetLengthIfString());
+        //should have started out as 10
+        Assert.AreEqual(10, myCol.DataType.GetLengthIfString());
 
-            string oldType = myCol.DataType.SQLType;
-            //we want the new type to be 50 long
-            var newType = oldType.Replace("10", "50");
-            activator.TypeTextResponse = newType;
+        var oldType = myCol.DataType.SQLType;
+        //we want the new type to be 50 long
+        var newType = oldType.Replace("10", "50");
+        activator.TypeTextResponse = newType;
 
-            var cmd = new ExecuteCommandAlterColumnType(activator, ti.ColumnInfos.Single());
-            cmd.Execute();
+        var cmd = new ExecuteCommandAlterColumnType(activator, ti.ColumnInfos.Single());
+        cmd.Execute();
 
-            //rediscover the col to get the expected new datatype
-            myCol = tbl.DiscoverColumn("myCol");
-            var myColArchive = tblArchive.DiscoverColumn("myCol");
+        //rediscover the col to get the expected new datatype
+        myCol = tbl.DiscoverColumn("myCol");
+        var myColArchive = tblArchive.DiscoverColumn("myCol");
 
-            Assert.AreEqual(newType, myCol.DataType.SQLType);
-            Assert.AreEqual(newType, ti.ColumnInfos[0].Data_type);
+        Assert.AreEqual(newType, myCol.DataType.SQLType);
+        Assert.AreEqual(newType, ti.ColumnInfos[0].Data_type);
 
-            //if they changed the archive then the archive column should also match on Type otherwise it should have stayed the old Type
-            Assert.AreEqual(newType, myColArchive.DataType.SQLType);
+        //if they changed the archive then the archive column should also match on Type otherwise it should have stayed the old Type
+        Assert.AreEqual(newType, myColArchive.DataType.SQLType);
 
-            tbl.Drop();
-            tblArchive.Drop();
-        }
+        tbl.Drop();
+        tblArchive.Drop();
     }
 }

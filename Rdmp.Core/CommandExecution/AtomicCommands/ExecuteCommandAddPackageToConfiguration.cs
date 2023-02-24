@@ -13,42 +13,41 @@ using Rdmp.Core.Providers;
 using ReusableLibraryCode.Icons.IconProvision;
 using SixLabors.ImageSharp.PixelFormats;
 
-namespace Rdmp.Core.CommandExecution.AtomicCommands
+namespace Rdmp.Core.CommandExecution.AtomicCommands;
+
+public class ExecuteCommandAddPackageToConfiguration : BasicCommandExecution, IAtomicCommand
 {
-    public class ExecuteCommandAddPackageToConfiguration : BasicCommandExecution, IAtomicCommand
+    private ExtractionConfiguration _extractionConfiguration;
+    private ExtractableDataSetPackage[] _packages;
+
+    public ExecuteCommandAddPackageToConfiguration(IBasicActivateItems activator, ExtractionConfiguration extractionConfiguration):base(activator)
     {
-        private ExtractionConfiguration _extractionConfiguration;
-        private ExtractableDataSetPackage[] _packages;
+        _extractionConfiguration = extractionConfiguration;
 
-        public ExecuteCommandAddPackageToConfiguration(IBasicActivateItems activator, ExtractionConfiguration extractionConfiguration):base(activator)
+        if(extractionConfiguration.IsReleased)
+            SetImpossible("Extraction is Frozen because it has been released and is readonly, try cloning it instead");
+
+        if(activator.CoreChildProvider is DataExportChildProvider childProvider)
         {
-            this._extractionConfiguration = extractionConfiguration;
-
-            if(extractionConfiguration.IsReleased)
-                SetImpossible("Extraction is Frozen because it has been released and is readonly, try cloning it instead");
-
-            if(activator.CoreChildProvider is DataExportChildProvider childProvider)
-            {
-                if (childProvider.AllPackages.Any())
-                    _packages = childProvider.AllPackages;
-                else
-                    SetImpossible("There are no ExtractableDatasetPackages configured");
-            }
+            if (childProvider.AllPackages.Any())
+                _packages = childProvider.AllPackages;
             else
-                SetImpossible("CoreChildProvider is not DataExportIconProvider");
+                SetImpossible("There are no ExtractableDatasetPackages configured");
         }
+        else
+            SetImpossible("CoreChildProvider is not DataExportIconProvider");
+    }
 
-        public override void Execute()
-        {
-            base.Execute();
+    public override void Execute()
+    {
+        base.Execute();
 
-            if(SelectOne(_packages,out ExtractableDataSetPackage package))
-                new ExecuteCommandAddDatasetsToConfiguration(BasicActivator, new ExtractableDataSetCombineable(package), _extractionConfiguration).Execute();
-        }
+        if(SelectOne(_packages,out var package))
+            new ExecuteCommandAddDatasetsToConfiguration(BasicActivator, new ExtractableDataSetCombineable(package), _extractionConfiguration).Execute();
+    }
 
-        public override Image<Rgba32> GetImage(IIconProvider iconProvider)
-        {
-            return iconProvider.GetImage(RDMPConcept.ExtractableDataSetPackage,OverlayKind.Import);
-        }
+    public override Image<Rgba32> GetImage(IIconProvider iconProvider)
+    {
+        return iconProvider.GetImage(RDMPConcept.ExtractableDataSetPackage,OverlayKind.Import);
     }
 }

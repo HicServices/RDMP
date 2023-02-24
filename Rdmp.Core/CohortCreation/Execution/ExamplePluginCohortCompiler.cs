@@ -14,92 +14,91 @@ using System.Data;
 using System.Linq;
 using System.Threading;
 
-namespace Rdmp.Core.CohortCreation.Execution
+namespace Rdmp.Core.CohortCreation.Execution;
+
+/// <summary>
+/// Demonstration class for how to implement a plugin cohort e.g. to a REST API.
+/// This class generates a number of random chis when prompted to query the 'api'.
+/// 
+/// <para>If deployed as a patient index table, also returns random dates of birth and death</para>
+/// </summary>
+public class ExamplePluginCohortCompiler : PluginCohortCompiler
 {
-    /// <summary>
-    /// Demonstration class for how to implement a plugin cohort e.g. to a REST API.
-    /// This class generates a number of random chis when prompted to query the 'api'.
-    /// 
-    /// <para>If deployed as a patient index table, also returns random dates of birth and death</para>
-    /// </summary>
-    public class ExamplePluginCohortCompiler : PluginCohortCompiler
+    public const string ExampleAPIName = $"{ApiPrefix}GenerateRandomChisExample";
+
+    public override void Run(AggregateConfiguration ac, CachedAggregateConfigurationResultsManager cache,CancellationToken token)
     {
-        public const string ExampleAPIName = ApiPrefix + "GenerateRandomChisExample";
+        token.ThrowIfCancellationRequested();
 
-        public override void Run(AggregateConfiguration ac, CachedAggregateConfigurationResultsManager cache,CancellationToken token)
+        // The user of RDMP will have configured ac as either patient index table or normal cohort aggregate
+        if (ac.IsJoinablePatientIndexTable())
         {
-            token.ThrowIfCancellationRequested();
+            // user expects multiple columns from the API
+            RunAsPatientIndexTable(ac, cache,token);
+        }
+        else
+        {
+            // user expects only a single linkage identifier to be returned by the API
+            RunAsIdentifierList(ac, cache,token);
+        }
+    }
 
-            // The user of RDMP will have configured ac as either patient index table or normal cohort aggregate
-            if (ac.IsJoinablePatientIndexTable())
-            {
-                // user expects multiple columns from the API
-                RunAsPatientIndexTable(ac, cache,token);
-            }
-            else
-            {
-                // user expects only a single linkage identifier to be returned by the API
-                RunAsIdentifierList(ac, cache,token);
-            }
+    private void RunAsPatientIndexTable(AggregateConfiguration ac, CachedAggregateConfigurationResultsManager cache, CancellationToken token)
+    {
+        using var dt = new DataTable();
+        dt.Columns.Add("chi", typeof(string));
+        dt.Columns.Add("dateOfBirth", typeof(DateTime));
+        dt.Columns.Add("dateOfDeath", typeof(DateTime));
+
+        // generate a list of random chis + date of birth/death
+        var pc = new PersonCollection();
+        pc.GeneratePeople(GetNumberToGenerate(ac), new Random());
+
+        foreach (var p in pc.People)
+        {
+            dt.Rows.Add(p.CHI, p.DateOfBirth,p.DateOfDeath ?? (object)DBNull.Value);
         }
 
-        private void RunAsPatientIndexTable(AggregateConfiguration ac, CachedAggregateConfigurationResultsManager cache, CancellationToken token)
+        SubmitPatientIndexTable(dt, ac, cache,true);
+    }
+    private void RunAsIdentifierList(AggregateConfiguration ac, CachedAggregateConfigurationResultsManager cache, CancellationToken token)
+    {
+        var pc = new PersonCollection();
+        var requiredNumber = GetNumberToGenerate(ac);
+        var rand = new Random();
+        pc.GeneratePeople(requiredNumber, rand);
+
+        var set = new HashSet<string>(pc.People.Select(p => p.CHI));
+
+        // there may be duplicates, if so we need to bump up the number to match the required count
+        while(set.Count < requiredNumber)
         {
-            using DataTable dt = new DataTable();
-            dt.Columns.Add("chi", typeof(string));
-            dt.Columns.Add("dateOfBirth", typeof(DateTime));
-            dt.Columns.Add("dateOfDeath", typeof(DateTime));
-
-            // generate a list of random chis + date of birth/death
-            var pc = new PersonCollection();
-            pc.GeneratePeople(GetNumberToGenerate(ac), new Random());
-
-            foreach (var p in pc.People)
-            {
-                dt.Rows.Add(p.CHI, p.DateOfBirth,p.DateOfDeath ?? (object)DBNull.Value);
-            }
-
-            SubmitPatientIndexTable(dt, ac, cache,true);
+            pc.GeneratePeople(1, rand);
+            set.Add(pc.People[0].CHI);
         }
-        private void RunAsIdentifierList(AggregateConfiguration ac, CachedAggregateConfigurationResultsManager cache, CancellationToken token)
-        {
-            var pc = new PersonCollection();
-            var requiredNumber = GetNumberToGenerate(ac);
-            var rand = new Random();
-            pc.GeneratePeople(requiredNumber, rand);
-
-            var set = new HashSet<string>(pc.People.Select(p => p.CHI));
-
-            // there may be duplicates, if so we need to bump up the number to match the required count
-            while(set.Count < requiredNumber)
-            {
-                pc.GeneratePeople(1, rand);
-                set.Add(pc.People[0].CHI);
-            }
                 
-            // generate a list of random chis
-            SubmitIdentifierList("chi", set, ac, cache);
-        }
+        // generate a list of random chis
+        SubmitIdentifierList("chi", set, ac, cache);
+    }
 
-        private int GetNumberToGenerate(AggregateConfiguration ac)
-        {
-            // You can persist configuration info about how to query the API any way
-            // you want.  Here we just use the Description field
-            return int.TryParse(ac.Description, out int result) ? result: 5;
-        }
+    private int GetNumberToGenerate(AggregateConfiguration ac)
+    {
+        // You can persist configuration info about how to query the API any way
+        // you want.  Here we just use the Description field
+        return int.TryParse(ac.Description, out var result) ? result: 5;
+    }
 
-        public override bool ShouldRun(ICatalogue cata)
-        {
-            // we will handle any dataset where the associated Catalogue has this name
-            // you can customise how to spot your API calls however you want
-            return cata.Name.Equals(ExampleAPIName);
-        }
+    public override bool ShouldRun(ICatalogue cata)
+    {
+        // we will handle any dataset where the associated Catalogue has this name
+        // you can customise how to spot your API calls however you want
+        return cata.Name.Equals(ExampleAPIName);
+    }
 
-        protected override string GetJoinColumnNameFor(AggregateConfiguration joinedTo)
-        {
-            // when RunAsPatientIndexTable is being used the column that can be linked
-            // to other datasets is called "chi"
-            return "chi";
-        }
+    protected override string GetJoinColumnNameFor(AggregateConfiguration joinedTo)
+    {
+        // when RunAsPatientIndexTable is being used the column that can be linked
+        // to other datasets is called "chi"
+        return "chi";
     }
 }

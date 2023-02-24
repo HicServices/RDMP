@@ -6,17 +6,16 @@
 
 using System.IO;
 
-namespace Rdmp.Core.Providers.Nodes.LoadMetadataNodes
+namespace Rdmp.Core.Providers.Nodes.LoadMetadataNodes;
+
+/// <summary>
+/// Interface for all <see cref="Node"/> which describe a location on disk (i.e. a <see cref="DirectoryInfo"/>)
+/// </summary>
+public interface IDirectoryInfoNode
 {
     /// <summary>
-    /// Interface for all <see cref="Node"/> which describe a location on disk (i.e. a <see cref="DirectoryInfo"/>)
+    /// Returns null or the <see cref="DirectoryInfo"/> referenced by this node
     /// </summary>
-    public interface IDirectoryInfoNode
-    {
-        /// <summary>
-        /// Returns null or the <see cref="DirectoryInfo"/> referenced by this node
-        /// </summary>
-        /// <returns></returns>
-        DirectoryInfo GetDirectoryInfoIfAny();
-    }
+    /// <returns></returns>
+    DirectoryInfo GetDirectoryInfoIfAny();
 }

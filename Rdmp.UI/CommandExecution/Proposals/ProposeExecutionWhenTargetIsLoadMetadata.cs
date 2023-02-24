@@ -9,28 +9,27 @@ using Rdmp.Core.Curation.Data.DataLoad;
 using Rdmp.UI.ItemActivation;
 using Rdmp.UI.LoadExecutionUIs;
 
-namespace Rdmp.UI.CommandExecution.Proposals
+namespace Rdmp.UI.CommandExecution.Proposals;
+
+internal class ProposeExecutionWhenTargetIsLoadMetadata : RDMPCommandExecutionProposal<LoadMetadata>
 {
-    class ProposeExecutionWhenTargetIsLoadMetadata : RDMPCommandExecutionProposal<LoadMetadata>
+    public ProposeExecutionWhenTargetIsLoadMetadata(IActivateItems itemActivator) : base(itemActivator)
     {
-        public ProposeExecutionWhenTargetIsLoadMetadata(IActivateItems itemActivator) : base(itemActivator)
-        {
-        }
+    }
 
-        public override bool CanActivate(LoadMetadata target)
-        {
-            return true;
-        }
+    public override bool CanActivate(LoadMetadata target)
+    {
+        return true;
+    }
 
-        public override void Activate(LoadMetadata target)
-        {
-            ItemActivator.Activate<ExecuteLoadMetadataUI,LoadMetadata>(target);
-        }
+    public override void Activate(LoadMetadata target)
+    {
+        ItemActivator.Activate<ExecuteLoadMetadataUI,LoadMetadata>(target);
+    }
 
-        public override ICommandExecution ProposeExecution(ICombineToMakeCommand cmd, LoadMetadata target, InsertOption insertOption = InsertOption.Default)
-        {
-            //nothing can be dropped on Load Metadatas
-            return null;
-        }
+    public override ICommandExecution ProposeExecution(ICombineToMakeCommand cmd, LoadMetadata target, InsertOption insertOption = InsertOption.Default)
+    {
+        //nothing can be dropped on Load Metadatas
+        return null;
     }
 }

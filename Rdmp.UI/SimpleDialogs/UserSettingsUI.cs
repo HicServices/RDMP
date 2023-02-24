@@ -8,7 +8,6 @@ using System;
 using System.Collections.Generic;
 using System.Reflection;
 using System.Windows.Forms;
-using Rdmp.UI.Collections;
 using Rdmp.UI.CommandExecution.AtomicCommands;
 using Rdmp.UI.ItemActivation;
 using Rdmp.UI.TestsAndSetup.ServicePropogation;
@@ -17,247 +16,243 @@ using ReusableLibraryCode.Checks;
 using ReusableLibraryCode.Settings;
 using ScintillaNET;
 using static BrightIdeasSoftware.ObjectListView;
-using static ReusableLibraryCode.Checks.CheckEventArgs;
 
-namespace Rdmp.UI.SimpleDialogs
+namespace Rdmp.UI.SimpleDialogs;
+
+/// <summary>
+/// Allows you to change settings in the application that are optional e.g. whether to load the Home screen on startup or to load the state of the application when you last closed it.
+/// 
+/// <para>Settings are stored in AppData in a folder called RDMP in a file called UserSettings.txt</para>
+/// </summary>
+public partial class UserSettingsFileUI : Form
 {
+    private bool _bLoaded;
+    private IActivateItems _activator;
+
+    private const string WarnOnTimeoutOnExtractionChecks = "Extraction checks timeout";
+
     /// <summary>
-    /// Allows you to change settings in the application that are optional e.g. whether to load the Home screen on startup or to load the state of the application when you last closed it.
-    /// 
-    /// <para>Settings are stored in AppData in a folder called RDMP in a file called UserSettings.txt</para>
+    /// The maximum number of characters to allow per line in a tooltip before
+    /// wrapping to next line
     /// </summary>
-    public partial class UserSettingsFileUI : Form
+    private const int MaxTooltipWidth = 100;
+
+    public UserSettingsFileUI(IActivateItems activator)
     {
-        private bool _bLoaded;
-        private IActivateItems _activator;
+        _activator = activator;
 
-        const string WarnOnTimeoutOnExtractionChecks = "Extraction checks timeout";
+        InitializeComponent();
+        //Stop mouse wheel scroll from scrolling the combobox when it's closed to avoid the value being changed without user noticing.
+        RDMPControlCommonFunctionality.DisableMouseWheel(ddWordWrap);
+        RDMPControlCommonFunctionality.DisableMouseWheel(ddTheme);
 
-        /// <summary>
-        /// The maximum number of characters to allow per line in a tooltip before
-        /// wrapping to next line
-        /// </summary>
-        const int MaxTooltipWidth = 100;
 
-        public UserSettingsFileUI(IActivateItems activator)
+        olvErrorCodes.CellEditActivation = CellEditActivateMode.SingleClick;
+        olvErrorCodes.ShowGroups = false;
+
+        olvCode.AspectName = nameof(ErrorCode.Code);
+        olvCode.Text = "Code";
+        olvCode.IsEditable = false;
+
+        olvTreatment.Text = "Treatment";
+        olvTreatment.AspectGetter += Treatment_Getter;
+        olvTreatment.AspectPutter += Treatment_Putter;
+        olvTreatment.CellEditUseWholeCell = true;
+        olvTreatment.IsEditable = true;
+
+        olvMessage.AspectName = nameof(ErrorCode.Message);
+        olvMessage.Text = "Error Message";
+        olvMessage.IsEditable = false;
+
+        olvErrorCodes.RebuildColumns();
+
+        //Resize known columns
+        olvCode.AutoResize(ColumnHeaderAutoResizeStyle.HeaderSize);
+        olvCode.MaximumWidth = olvCode.Width;
+        olvCode.MinimumWidth = olvCode.Width;
+        olvTreatment.AutoResize(ColumnHeaderAutoResizeStyle.HeaderSize);
+        olvTreatment.MaximumWidth = olvTreatment.Width;
+        olvTreatment.MinimumWidth = olvTreatment.Width;
+
+        tbCreateDatabaseTimeout.Text = UserSettings.CreateDatabaseTimeout.ToString();
+        tbArchiveTriggerTimeout.Text = UserSettings.ArchiveTriggerTimeout.ToString();
+        tbTooltipAppearDelay.Text = UserSettings.TooltipAppearDelay.ToString();
+
+        RegisterCheckbox(cbShowHomeOnStartup,nameof(UserSettings.ShowHomeOnStartup));
+        RegisterCheckbox(cbEmphasiseOnTabChanged,nameof(UserSettings.EmphasiseOnTabChanged));
+        RegisterCheckbox(cbConfirmExit,nameof(UserSettings.ConfirmApplicationExiting));
+        RegisterCheckbox(cbFindShouldPin,nameof(UserSettings.FindShouldPin));
+        RegisterCheckbox(cbThemeMenus,nameof(UserSettings.ApplyThemeToMenus));
+        RegisterCheckbox(cbWait5Seconds,nameof(UserSettings.Wait5SecondsAfterStartupUI));
+        RegisterCheckbox(cbShowCohortWizard,nameof(UserSettings.ShowCohortWizard));
+        RegisterCheckbox(cbStrictValidationForCohortBuilderContainers, nameof(UserSettings.StrictValidationForCohortBuilderContainers));
+        RegisterCheckbox(cbDoubleClickToExpand,nameof(UserSettings.DoubleClickToExpand));
+        RegisterCheckbox(cbDebugPerformance,nameof(UserSettings.DebugPerformance));
+        RegisterCheckbox(cbAutoResizeColumns, nameof(UserSettings.AutoResizeColumns));
+        RegisterCheckbox(cbShowPipelineCompletedPopup,nameof(UserSettings.ShowPipelineCompletedPopup));
+        RegisterCheckbox(cbSkipCohortBuilderValidationOnCommit, nameof(UserSettings.SkipCohortBuilderValidationOnCommit));
+        RegisterCheckbox(cbHideEmptyTableLoadRunAudits,nameof(UserSettings.HideEmptyTableLoadRunAudits));
+        RegisterCheckbox(cbScoreZeroForCohortAggregateContainers,nameof(UserSettings.ScoreZeroForCohortAggregateContainers));
+        RegisterCheckbox(cbAdvancedFindFilters,nameof(UserSettings.AdvancedFindFilters));
+        RegisterCheckbox(cbIncludeZeroSeriesInGraphs,nameof(UserSettings.IncludeZeroSeriesInGraphs));
+        RegisterCheckbox(cbSelectiveRefresh, nameof(UserSettings.SelectiveRefresh));
+        RegisterCheckbox(cbAlwaysJoinEverything,nameof(UserSettings.AlwaysJoinEverything));
+        RegisterCheckbox(cbAutoRunSqlQueries, nameof(UserSettings.AutoRunSqlQueries));
+        RegisterCheckbox(cbExpandAllInCohortBuilder, nameof(UserSettings.ExpandAllInCohortBuilder));
+        RegisterCheckbox(cbUseAliasInsteadOfTransformInGroupByAggregateGraphs, nameof(UserSettings.UseAliasInsteadOfTransformInGroupByAggregateGraphs));
+
+        AddTooltip(label7, nameof(UserSettings.CreateDatabaseTimeout));
+        AddTooltip(tbCreateDatabaseTimeout, nameof(UserSettings.CreateDatabaseTimeout));
+        AddTooltip(label13, nameof(UserSettings.ArchiveTriggerTimeout));
+        AddTooltip(tbArchiveTriggerTimeout, nameof(UserSettings.ArchiveTriggerTimeout));
+        AddTooltip(tbTooltipAppearDelay, nameof(UserSettings.TooltipAppearDelay));
+        AddTooltip(label4, nameof(UserSettings.WrapMode));
+        AddTooltip(ddWordWrap,nameof(UserSettings.WrapMode));
+        AddTooltip(ddTheme, nameof(UserSettings.Theme));
+        AddTooltip(label2, nameof(UserSettings.Theme));
+        AddTooltip(label5, nameof(UserSettings.HeatMapColours));
+        AddTooltip(tbHeatmapColours, nameof(UserSettings.HeatMapColours));
+
+        //Add error codes
+        olvErrorCodes.AddObjects(ErrorCodes.KnownCodes);
+
+        //Once added we know what width we'd like to make the columns
+        olvMessage.AutoResize(ColumnHeaderAutoResizeStyle.ColumnContent);
+        olvMessage.MaximumWidth = olvMessage.Width;
+        olvMessage.MinimumWidth = olvMessage.Width;
+
+        ddTheme.DataSource = new []
         {
-            _activator = activator;
+            "ResearchDataManagementPlatform.Theme.MyVS2015BlueTheme",
+            "ResearchDataManagementPlatform.Theme.MyVS2015DarkTheme",
+            "ResearchDataManagementPlatform.Theme.MyVS2015LightTheme"
+        };
 
-            InitializeComponent();
-            //Stop mouse wheel scroll from scrolling the combobox when it's closed to avoid the value being changed without user noticing.
-            RDMPControlCommonFunctionality.DisableMouseWheel(ddWordWrap);
-            RDMPControlCommonFunctionality.DisableMouseWheel(ddTheme);
+        ddTheme.SelectedItem = UserSettings.Theme;
 
+        ddWordWrap.DataSource = Enum.GetValues(typeof(WrapMode));
+        ddWordWrap.SelectedItem = (WrapMode)UserSettings.WrapMode;
 
-            olvErrorCodes.CellEditActivation = CellEditActivateMode.SingleClick;
-            olvErrorCodes.ShowGroups = false;
+        tbHeatmapColours.Text = UserSettings.HeatMapColours;
 
-            olvCode.AspectName = nameof(ErrorCode.Code);
-            olvCode.Text = "Code";
-            olvCode.IsEditable = false;
+        _bLoaded = true;
 
-            olvTreatment.Text = "Treatment";
-            olvTreatment.AspectGetter += Treatment_Getter;
-            olvTreatment.AspectPutter += Treatment_Putter;
-            olvTreatment.CellEditUseWholeCell = true;
-            olvTreatment.IsEditable = true;
+        var cmd = new ExecuteCommandClearFavourites(activator);
+        btnClearFavourites.Enabled = !cmd.IsImpossible;
 
-            olvMessage.AspectName = nameof(ErrorCode.Message);
-            olvMessage.Text = "Error Message";
-            olvMessage.IsEditable = false;
-
-            olvErrorCodes.RebuildColumns();
-
-            //Resize known columns
-            olvCode.AutoResize(ColumnHeaderAutoResizeStyle.HeaderSize);
-            olvCode.MaximumWidth = olvCode.Width;
-            olvCode.MinimumWidth = olvCode.Width;
-            olvTreatment.AutoResize(ColumnHeaderAutoResizeStyle.HeaderSize);
-            olvTreatment.MaximumWidth = olvTreatment.Width;
-            olvTreatment.MinimumWidth = olvTreatment.Width;
-
-            tbCreateDatabaseTimeout.Text = UserSettings.CreateDatabaseTimeout.ToString();
-            tbArchiveTriggerTimeout.Text = UserSettings.ArchiveTriggerTimeout.ToString();
-            tbTooltipAppearDelay.Text = UserSettings.TooltipAppearDelay.ToString();
-
-            RegisterCheckbox(cbShowHomeOnStartup,nameof(UserSettings.ShowHomeOnStartup));
-            RegisterCheckbox(cbEmphasiseOnTabChanged,nameof(UserSettings.EmphasiseOnTabChanged));
-            RegisterCheckbox(cbConfirmExit,nameof(UserSettings.ConfirmApplicationExiting));
-            RegisterCheckbox(cbFindShouldPin,nameof(UserSettings.FindShouldPin));
-            RegisterCheckbox(cbThemeMenus,nameof(UserSettings.ApplyThemeToMenus));
-            RegisterCheckbox(cbWait5Seconds,nameof(UserSettings.Wait5SecondsAfterStartupUI));
-            RegisterCheckbox(cbShowCohortWizard,nameof(UserSettings.ShowCohortWizard));
-            RegisterCheckbox(cbStrictValidationForCohortBuilderContainers, nameof(UserSettings.StrictValidationForCohortBuilderContainers));
-            RegisterCheckbox(cbDoubleClickToExpand,nameof(UserSettings.DoubleClickToExpand));
-            RegisterCheckbox(cbDebugPerformance,nameof(UserSettings.DebugPerformance));
-            RegisterCheckbox(cbAutoResizeColumns, nameof(UserSettings.AutoResizeColumns));
-            RegisterCheckbox(cbShowPipelineCompletedPopup,nameof(UserSettings.ShowPipelineCompletedPopup));
-            RegisterCheckbox(cbSkipCohortBuilderValidationOnCommit, nameof(UserSettings.SkipCohortBuilderValidationOnCommit));
-            RegisterCheckbox(cbHideEmptyTableLoadRunAudits,nameof(UserSettings.HideEmptyTableLoadRunAudits));
-            RegisterCheckbox(cbScoreZeroForCohortAggregateContainers,nameof(UserSettings.ScoreZeroForCohortAggregateContainers));
-            RegisterCheckbox(cbAdvancedFindFilters,nameof(UserSettings.AdvancedFindFilters));
-            RegisterCheckbox(cbIncludeZeroSeriesInGraphs,nameof(UserSettings.IncludeZeroSeriesInGraphs));
-            RegisterCheckbox(cbSelectiveRefresh, nameof(UserSettings.SelectiveRefresh));
-            RegisterCheckbox(cbAlwaysJoinEverything,nameof(UserSettings.AlwaysJoinEverything));
-            RegisterCheckbox(cbAutoRunSqlQueries, nameof(UserSettings.AutoRunSqlQueries));
-            RegisterCheckbox(cbExpandAllInCohortBuilder, nameof(UserSettings.ExpandAllInCohortBuilder));
-            RegisterCheckbox(cbUseAliasInsteadOfTransformInGroupByAggregateGraphs, nameof(UserSettings.UseAliasInsteadOfTransformInGroupByAggregateGraphs));
-
-            AddTooltip(label7, nameof(UserSettings.CreateDatabaseTimeout));
-            AddTooltip(tbCreateDatabaseTimeout, nameof(UserSettings.CreateDatabaseTimeout));
-            AddTooltip(label13, nameof(UserSettings.ArchiveTriggerTimeout));
-            AddTooltip(tbArchiveTriggerTimeout, nameof(UserSettings.ArchiveTriggerTimeout));
-            AddTooltip(tbTooltipAppearDelay, nameof(UserSettings.TooltipAppearDelay));
-            AddTooltip(label4, nameof(UserSettings.WrapMode));
-            AddTooltip(ddWordWrap,nameof(UserSettings.WrapMode));
-            AddTooltip(ddTheme, nameof(UserSettings.Theme));
-            AddTooltip(label2, nameof(UserSettings.Theme));
-            AddTooltip(label5, nameof(UserSettings.HeatMapColours));
-            AddTooltip(tbHeatmapColours, nameof(UserSettings.HeatMapColours));
-
-            //Add error codes
-            olvErrorCodes.AddObjects(ErrorCodes.KnownCodes);
-
-            //Once added we know what width we'd like to make the columns
-            olvMessage.AutoResize(ColumnHeaderAutoResizeStyle.ColumnContent);
-            olvMessage.MaximumWidth = olvMessage.Width;
-            olvMessage.MinimumWidth = olvMessage.Width;
-
-            ddTheme.DataSource = new []
-            {
-                "ResearchDataManagementPlatform.Theme.MyVS2015BlueTheme",
-                "ResearchDataManagementPlatform.Theme.MyVS2015DarkTheme",
-                "ResearchDataManagementPlatform.Theme.MyVS2015LightTheme"
-            };
-
-            ddTheme.SelectedItem = UserSettings.Theme;
-
-            ddWordWrap.DataSource = Enum.GetValues(typeof(WrapMode));
-            ddWordWrap.SelectedItem = (WrapMode)UserSettings.WrapMode;
-
-            tbHeatmapColours.Text = UserSettings.HeatMapColours;
-
-            _bLoaded = true;
-
-            var cmd = new ExecuteCommandClearFavourites(activator);
+        btnClearFavourites.Click += (s, e) =>
+        {
+            cmd.Execute();
             btnClearFavourites.Enabled = !cmd.IsImpossible;
+        };
+    }
 
-            btnClearFavourites.Click += (s, e) =>
-            {
-                cmd.Execute();
-                btnClearFavourites.Enabled = !cmd.IsImpossible;
-            };
+    private Dictionary<CheckBox, PropertyInfo> checkboxDictionary = new();
+
+    private void RegisterCheckbox(CheckBox cb, string propertyName)
+    {
+        // remember about this checkbox for later
+        var prop = typeof(UserSettings).GetProperty(propertyName,BindingFlags.Static | BindingFlags.Public);
+        checkboxDictionary.Add(cb, prop);
+
+        // set initial value from UserSettings
+        cb.Checked = (bool)prop.GetValue(null);
+
+        // register callback
+        cb.CheckedChanged += CheckboxCheckedChanged;
+
+        // add help
+        AddTooltip(cb, propertyName);
+    }
+
+    private void AddTooltip(Control c, string propertyName)
+    {
+        var helpText = _activator.CommentStore.GetDocumentationIfExists($"{ nameof(UserSettings)}.{propertyName}", false);
+        if(string.IsNullOrWhiteSpace(helpText))
+        {
+            return;
         }
 
-        Dictionary<CheckBox, PropertyInfo> checkboxDictionary = new();
+        userSettingsToolTips.SetToolTip(c, UsefulStuff.SplitByLength(helpText, MaxTooltipWidth));
+    }
 
-        private void RegisterCheckbox(CheckBox cb, string propertyName)
+    private void Treatment_Putter(object rowObject, object newValue)
+    {
+        UserSettings.SetErrorReportingLevelFor((ErrorCode)rowObject, (CheckResult)newValue);
+    }
+
+    private object Treatment_Getter(object rowObject)
+    {
+        return UserSettings.GetErrorReportingLevelFor((ErrorCode)rowObject);
+    }
+
+    private void CheckboxCheckedChanged(object sender, EventArgs e)
+    {
+        if (!_bLoaded)
+            return;
+
+        var cb = (CheckBox)sender;
+        checkboxDictionary[cb].SetValue(null, cb.Checked);
+    }
+
+    private void ddTheme_SelectedIndexChanged(object sender, EventArgs e)
+    {
+        if(!_bLoaded)
+            return;
+
+        if(ddTheme.SelectedItem is string t)
+            UserSettings.Theme = t;
+    }
+
+    private void ddWordWrap_SelectedIndexChanged(object sender, EventArgs e)
+    {
+        if (!_bLoaded)
+            return;
+
+        var wrap = (WrapMode)ddWordWrap.SelectedItem;
+        UserSettings.WrapMode = (int)wrap;
+    }
+
+    private void TbHeatmapColours_TextChanged(object sender, EventArgs e)
+    {
+        UserSettings.HeatMapColours = tbHeatmapColours.Text;
+    }
+
+    private void tbCreateDatabaseTimeout_TextChanged(object sender, EventArgs e)
+    {
+        if(int.TryParse(tbCreateDatabaseTimeout.Text,out var result))
         {
-            // remember about this checkbox for later
-            var prop = typeof(UserSettings).GetProperty(propertyName,BindingFlags.Static | BindingFlags.Public);
-            checkboxDictionary.Add(cb, prop);
-
-            // set initial value from UserSettings
-            cb.Checked = (bool)prop.GetValue(null);
-
-            // register callback
-            cb.CheckedChanged += CheckboxCheckedChanged;
-
-            // add help
-            AddTooltip(cb, propertyName);
+            UserSettings.CreateDatabaseTimeout = result;
         }
+    }
+    private void tbArchiveTriggerTimeout_TextChanged(object sender, EventArgs e)
+    {
 
-        private void AddTooltip(Control c, string propertyName)
+        if (int.TryParse(tbArchiveTriggerTimeout.Text, out var result))
         {
-            string helpText = _activator.CommentStore.GetDocumentationIfExists($"{ nameof(UserSettings)}.{propertyName}", false);
-            if(string.IsNullOrWhiteSpace(helpText))
-            {
-                return;
-            }
-
-            userSettingsToolTips.SetToolTip(c, UsefulStuff.SplitByLength(helpText, MaxTooltipWidth));
+            UserSettings.ArchiveTriggerTimeout = result;
         }
-
-        private void Treatment_Putter(object rowObject, object newValue)
+    }
+    private void tbTooltipAppearDelay_TextChanged(object sender, EventArgs e)
+    {
+        if (int.TryParse(tbTooltipAppearDelay.Text, out var result))
         {
-            UserSettings.SetErrorReportingLevelFor((ErrorCode)rowObject, (CheckResult)newValue);
+            UserSettings.TooltipAppearDelay = result;
         }
+    }
 
-        private object Treatment_Getter(object rowObject)
+    private void tbFind_TextChanged(object sender, EventArgs e)
+    {
+        Find(tbFind.Text);
+    }
+
+    private void Find(string text)
+    {
+        foreach(var cb in checkboxDictionary)
         {
-            return UserSettings.GetErrorReportingLevelFor((ErrorCode)rowObject);
-        }
-
-        private void CheckboxCheckedChanged(object sender, EventArgs e)
-        {
-            if (!_bLoaded)
-                return;
-
-            var cb = (CheckBox)sender;
-            checkboxDictionary[cb].SetValue(null, cb.Checked);
-        }
-
-        private void ddTheme_SelectedIndexChanged(object sender, EventArgs e)
-        {
-            if(!_bLoaded)
-                return;
-            
-            var t = ddTheme.SelectedItem as string;
-            
-            if(t != null)
-                UserSettings.Theme = t;
-        }
-
-        private void ddWordWrap_SelectedIndexChanged(object sender, EventArgs e)
-        {
-            if (!_bLoaded)
-                return;
-
-            var wrap = (WrapMode)ddWordWrap.SelectedItem;
-            UserSettings.WrapMode = (int)wrap;
-        }
-
-        private void TbHeatmapColours_TextChanged(object sender, EventArgs e)
-        {
-            UserSettings.HeatMapColours = tbHeatmapColours.Text;
-        }
-
-        private void tbCreateDatabaseTimeout_TextChanged(object sender, EventArgs e)
-        {
-            if(int.TryParse(tbCreateDatabaseTimeout.Text,out int result))
-            {
-                UserSettings.CreateDatabaseTimeout = result;
-            }
-        }
-        private void tbArchiveTriggerTimeout_TextChanged(object sender, EventArgs e)
-        {
-
-            if (int.TryParse(tbArchiveTriggerTimeout.Text, out int result))
-            {
-                UserSettings.ArchiveTriggerTimeout = result;
-            }
-        }
-        private void tbTooltipAppearDelay_TextChanged(object sender, EventArgs e)
-        {
-            if (int.TryParse(tbTooltipAppearDelay.Text, out int result))
-            {
-                UserSettings.TooltipAppearDelay = result;
-            }
-        }
-
-        private void tbFind_TextChanged(object sender, EventArgs e)
-        {
-            Find(tbFind.Text);
-        }
-
-        private void Find(string text)
-        {
-            foreach(var cb in checkboxDictionary)
-            {
-                cb.Key.Visible = string.IsNullOrWhiteSpace(text) ||
-                    cb.Key.Text.Contains(text,StringComparison.CurrentCultureIgnoreCase) ||
-                    cb.Value.Name.Contains(text, StringComparison.CurrentCultureIgnoreCase);
-            }
+            cb.Key.Visible = string.IsNullOrWhiteSpace(text) ||
+                             cb.Key.Text.Contains(text,StringComparison.CurrentCultureIgnoreCase) ||
+                             cb.Value.Name.Contains(text, StringComparison.CurrentCultureIgnoreCase);
         }
     }
 }

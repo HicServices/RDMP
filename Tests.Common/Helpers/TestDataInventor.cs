@@ -14,75 +14,74 @@ using Rdmp.Core.DataFlowPipeline;
 using ReusableLibraryCode.Checks;
 using ReusableLibraryCode.Progress;
 
-namespace Tests.Common.Helpers
+namespace Tests.Common.Helpers;
+
+/// <summary>
+/// Implementation of <see cref="CacheSource{T}"/> which creates csv files with random data in them.  This class can be used if you need
+/// to test running a caching pipeline
+/// </summary>
+public class TestDataInventor : CacheSource<TestDataWriterChunk>
 {
-    /// <summary>
-    /// Implementation of <see cref="CacheSource{T}"/> which creates csv files with random data in them.  This class can be used if you need
-    /// to test running a caching pipeline
-    /// </summary>
-    public class TestDataInventor : CacheSource<TestDataWriterChunk>
-    {
-        Random r = new Random();
+    private Random r = new();
         
-        /// <summary>
-        /// The path in which to create random files
-        /// </summary>
-        [DemandsInitialization("Directory to create files into",Mandatory=true)]
-        public string WorkingFolder { get; set; }
+    /// <summary>
+    /// The path in which to create random files
+    /// </summary>
+    [DemandsInitialization("Directory to create files into",Mandatory=true)]
+    public string WorkingFolder { get; set; }
 
-        public override TestDataWriterChunk DoGetChunk(ICacheFetchRequest request,IDataLoadEventListener listener, GracefulCancellationToken cancellationToken)
-        {
-            // don't load anything for today onwards
-            var today = DateTime.Now.Subtract(DateTime.Now.TimeOfDay);
-            if (Request.Start > today)
-                return null;
+    public override TestDataWriterChunk DoGetChunk(ICacheFetchRequest request,IDataLoadEventListener listener, GracefulCancellationToken cancellationToken)
+    {
+        // don't load anything for today onwards
+        var today = DateTime.Now.Subtract(DateTime.Now.TimeOfDay);
+        if (Request.Start > today)
+            return null;
 
-            DateTime currentDay = Request.Start;
+        var currentDay = Request.Start;
             
-            List<FileInfo> toReturn = new List<FileInfo>();
+        var toReturn = new List<FileInfo>();
 
-            while(currentDay <= Request.End)
-            {
-                toReturn.Add(GetFileForDay(currentDay));
-                currentDay = currentDay.AddDays(1);
-            }
-
-            return new TestDataWriterChunk(Request,toReturn.ToArray());
+        while(currentDay <= Request.End)
+        {
+            toReturn.Add(GetFileForDay(currentDay));
+            currentDay = currentDay.AddDays(1);
         }
 
-        private FileInfo GetFileForDay(DateTime currentDay)
-        {
-            string filename = Path.Combine(WorkingFolder,currentDay.ToString("yyyyMMdd") + ".csv");
+        return new TestDataWriterChunk(Request,toReturn.ToArray());
+    }
 
-            string contents = "MyRand,DateOfRandom" + Environment.NewLine;
-            for (int i = 0; i < 100; i++)
+    private FileInfo GetFileForDay(DateTime currentDay)
+    {
+        var filename = Path.Combine(WorkingFolder, $"{currentDay:yyyyMMdd}.csv");
+
+        var contents = $"MyRand,DateOfRandom{Environment.NewLine}";
+        for (var i = 0; i < 100; i++)
 #pragma warning disable SCS0005 // Weak random generator - This is not a secure context as it is simply a test helper.
-                contents += r.Next(10000) + "," + currentDay.ToString("yyyy-MM-dd") + Environment.NewLine;
+            contents += $"{r.Next(10000)},{currentDay:yyyy-MM-dd}{Environment.NewLine}";
 #pragma warning restore SCS0005 // Weak random generator
 
-            File.WriteAllText(filename, contents);
-            return new FileInfo(filename);
-        }
+        File.WriteAllText(filename, contents);
+        return new FileInfo(filename);
+    }
 
-        public override void Dispose(IDataLoadEventListener listener, Exception pipelineFailureExceptionIfAny)
-        {
+    public override void Dispose(IDataLoadEventListener listener, Exception pipelineFailureExceptionIfAny)
+    {
             
-        }
+    }
 
-        public override void Abort(IDataLoadEventListener listener)
-        {
+    public override void Abort(IDataLoadEventListener listener)
+    {
             
-        }
+    }
 
-        public override TestDataWriterChunk TryGetPreview()
-        {
-            var dt = DateTime.Now.AddYears(-200);
+    public override TestDataWriterChunk TryGetPreview()
+    {
+        var dt = DateTime.Now.AddYears(-200);
 
-            return new TestDataWriterChunk(new CacheFetchRequest(null, dt){ChunkPeriod = new TimeSpan(1,0,0)}, new []{GetFileForDay(dt)});
-        }
+        return new TestDataWriterChunk(new CacheFetchRequest(null, dt){ChunkPeriod = new TimeSpan(1,0,0)}, new []{GetFileForDay(dt)});
+    }
 
-        public override void Check(ICheckNotifier notifier)
-        {
-        }
+    public override void Check(ICheckNotifier notifier)
+    {
     }
 }

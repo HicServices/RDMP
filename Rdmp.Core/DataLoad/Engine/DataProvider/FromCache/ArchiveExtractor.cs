@@ -10,55 +10,56 @@ using System.IO;
 using System.IO.Compression;
 using ReusableLibraryCode.Progress;
 
-namespace Rdmp.Core.DataLoad.Engine.DataProvider.FromCache
+namespace Rdmp.Core.DataLoad.Engine.DataProvider.FromCache;
+
+internal interface IArchivedFileExtractor
 {
-    internal interface IArchivedFileExtractor
+    void Extract(KeyValuePair<DateTime, FileInfo> job, DirectoryInfo destinationDirectory, IDataLoadEventListener dataLoadJob);
+}
+
+internal abstract class ArchiveExtractor : IArchivedFileExtractor
+{
+    private readonly string _extension;
+    protected abstract void DoExtraction(KeyValuePair<DateTime, FileInfo> job, DirectoryInfo destinationDirectory, IDataLoadEventListener dataLoadJob);
+
+    protected ArchiveExtractor(string extension)
     {
-        void Extract(KeyValuePair<DateTime, FileInfo> job, DirectoryInfo destinationDirectory, IDataLoadEventListener dataLoadJob);
+        _extension = extension;
     }
 
-    internal abstract class ArchiveExtractor : IArchivedFileExtractor
+    public void Extract(KeyValuePair<DateTime, FileInfo> job, DirectoryInfo destinationDirectory, IDataLoadEventListener dataLoadJob)
     {
-        private readonly string _extension;
-        protected abstract void DoExtraction(KeyValuePair<DateTime, FileInfo> job, DirectoryInfo destinationDirectory, IDataLoadEventListener dataLoadJob);
+        //ensure it is a legit zip file
+        if (!job.Value.Extension.Equals(_extension))
+            throw new NotSupportedException(
+                $"Unexpected job file extension -{job.Value.Extension} (expected {_extension})");
 
-        protected ArchiveExtractor(string extension)
+        //tell the UI/listener that we have identified the archive
+        dataLoadJob.OnNotify(this, new NotifyEventArgs(ProgressEventType.Information,
+            $"Archive identified:{job.Value.FullName}"));
+
+        try
         {
-            _extension = extension;
+            DoExtraction(job, destinationDirectory, dataLoadJob);
         }
-
-        public void Extract(KeyValuePair<DateTime, FileInfo> job, DirectoryInfo destinationDirectory, IDataLoadEventListener dataLoadJob)
+        catch (Exception ex)
         {
-            //ensure it is a legit zip file
-            if (!job.Value.Extension.Equals(_extension))
-                throw new NotSupportedException("Unexpected job file extension -" + job.Value.Extension + " (expected " + _extension + ")");
-
-            //tell the UI/listener that we have identified the archive
-            dataLoadJob.OnNotify(this, new NotifyEventArgs(ProgressEventType.Information, "Archive identified:" + job.Value.FullName));
-
-            try
-            {
-                DoExtraction(job, destinationDirectory, dataLoadJob);
-            }
-            catch (Exception ex)
-            {
-                throw new Exception("Error occurred extracting zip archive " + job.Value.FullName, ex);
-            }
+            throw new Exception($"Error occurred extracting zip archive {job.Value.FullName}", ex);
         }
     }
+}
 
-    internal class ZipExtractor : ArchiveExtractor
+internal class ZipExtractor : ArchiveExtractor
+{
+    public ZipExtractor() : base(".zip")
     {
-        public ZipExtractor() : base(".zip")
-        {
-        }
+    }
 
 
-        protected override void DoExtraction(KeyValuePair<DateTime, FileInfo> job, DirectoryInfo destinationDirectory, IDataLoadEventListener dataLoadEventListener)
-        {
-            var archive = new ZipArchive(new FileStream(job.Value.FullName, FileMode.Open));
-            archive.ExtractToDirectory(destinationDirectory.FullName);
-            archive.Dispose();
-        }
+    protected override void DoExtraction(KeyValuePair<DateTime, FileInfo> job, DirectoryInfo destinationDirectory, IDataLoadEventListener dataLoadEventListener)
+    {
+        var archive = new ZipArchive(new FileStream(job.Value.FullName, FileMode.Open));
+        archive.ExtractToDirectory(destinationDirectory.FullName);
+        archive.Dispose();
     }
 }

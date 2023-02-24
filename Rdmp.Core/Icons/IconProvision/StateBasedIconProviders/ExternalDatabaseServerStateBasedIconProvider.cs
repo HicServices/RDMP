@@ -14,65 +14,64 @@ using Rdmp.Core.Providers.Nodes;
 using ReusableLibraryCode.Icons.IconProvision;
 using SixLabors.ImageSharp.PixelFormats;
 
-namespace Rdmp.Core.Icons.IconProvision.StateBasedIconProviders
+namespace Rdmp.Core.Icons.IconProvision.StateBasedIconProviders;
+
+public class ExternalDatabaseServerStateBasedIconProvider : IObjectStateBasedIconProvider
 {
-    public class ExternalDatabaseServerStateBasedIconProvider : IObjectStateBasedIconProvider
-    {
-        private readonly IconOverlayProvider _overlayProvider;
-        private readonly Image<Rgba32> _default;
+    private readonly IconOverlayProvider _overlayProvider;
+    private readonly Image<Rgba32> _default;
 
-        readonly Dictionary<string,Image<Rgba32>> _assemblyToIconDictionary = new();
-        private DatabaseTypeIconProvider _typeSpecificIconsProvider;
+    private readonly Dictionary<string,Image<Rgba32>> _assemblyToIconDictionary = new();
+    private DatabaseTypeIconProvider _typeSpecificIconsProvider;
         
-        public ExternalDatabaseServerStateBasedIconProvider(IconOverlayProvider overlayProvider)
-        {
-            _overlayProvider = overlayProvider;
-            _default = Image.Load<Rgba32>(CatalogueIcons.ExternalDatabaseServer);
+    public ExternalDatabaseServerStateBasedIconProvider(IconOverlayProvider overlayProvider)
+    {
+        _overlayProvider = overlayProvider;
+        _default = Image.Load<Rgba32>(CatalogueIcons.ExternalDatabaseServer);
             
-            _assemblyToIconDictionary.Add(new DataQualityEnginePatcher().Name,Image.Load<Rgba32>(CatalogueIcons.ExternalDatabaseServer_DQE));
-            _assemblyToIconDictionary.Add(new ANOStorePatcher().Name, Image.Load<Rgba32>(CatalogueIcons.ExternalDatabaseServer_ANO));
-            _assemblyToIconDictionary.Add(new IdentifierDumpDatabasePatcher().Name, Image.Load<Rgba32>(CatalogueIcons.ExternalDatabaseServer_IdentifierDump));
-            _assemblyToIconDictionary.Add(new QueryCachingPatcher().Name, Image.Load<Rgba32>(CatalogueIcons.ExternalDatabaseServer_Cache));
-            _assemblyToIconDictionary.Add(new LoggingDatabasePatcher().Name, Image.Load<Rgba32>(CatalogueIcons.ExternalDatabaseServer_Logging));
+        _assemblyToIconDictionary.Add(new DataQualityEnginePatcher().Name,Image.Load<Rgba32>(CatalogueIcons.ExternalDatabaseServer_DQE));
+        _assemblyToIconDictionary.Add(new ANOStorePatcher().Name, Image.Load<Rgba32>(CatalogueIcons.ExternalDatabaseServer_ANO));
+        _assemblyToIconDictionary.Add(new IdentifierDumpDatabasePatcher().Name, Image.Load<Rgba32>(CatalogueIcons.ExternalDatabaseServer_IdentifierDump));
+        _assemblyToIconDictionary.Add(new QueryCachingPatcher().Name, Image.Load<Rgba32>(CatalogueIcons.ExternalDatabaseServer_Cache));
+        _assemblyToIconDictionary.Add(new LoggingDatabasePatcher().Name, Image.Load<Rgba32>(CatalogueIcons.ExternalDatabaseServer_Logging));
 
-            _typeSpecificIconsProvider = new DatabaseTypeIconProvider();
-        }
+        _typeSpecificIconsProvider = new DatabaseTypeIconProvider();
+    }
 
-        public Image<Rgba32> GetIconForAssembly(Assembly assembly)
-        {
-            var assemblyName = assembly.GetName().Name;
-            if (_assemblyToIconDictionary.ContainsKey(assemblyName))
-                return _assemblyToIconDictionary[assemblyName];
+    public Image<Rgba32> GetIconForAssembly(Assembly assembly)
+    {
+        var assemblyName = assembly.GetName().Name;
+        if (_assemblyToIconDictionary.ContainsKey(assemblyName))
+            return _assemblyToIconDictionary[assemblyName];
 
-            return _default;
-        }
+        return _default;
+    }
 
-        public Image<Rgba32> GetImageIfSupportedObject(object o)
-        {
-            var server = o as ExternalDatabaseServer;
-            var dumpServerUsage = o as IdentifierDumpServerUsageNode;
+    public Image<Rgba32> GetImageIfSupportedObject(object o)
+    {
+        var server = o as ExternalDatabaseServer;
+        var dumpServerUsage = o as IdentifierDumpServerUsageNode;
 
-            if (dumpServerUsage != null)
-                server = dumpServerUsage.IdentifierDumpServer;
+        if (dumpServerUsage != null)
+            server = dumpServerUsage.IdentifierDumpServer;
 
-            //if it's not a server we aren't responsible for providing an icon for it
-            if (server == null)
-                return null;
+        //if it's not a server we aren't responsible for providing an icon for it
+        if (server == null)
+            return null;
 
-            //the untyped server icon (e.g. user creates a reference to a server that he is going to use but isn't created/managed by a .Database assembly)
-            var toReturn = _default;
+        //the untyped server icon (e.g. user creates a reference to a server that he is going to use but isn't created/managed by a .Database assembly)
+        var toReturn = _default;
 
-            //if it is a .Database assembly managed database then use the appropriate icon instead (ANO, LOG, IDD etc)
-            if (!string.IsNullOrWhiteSpace(server.CreatedByAssembly) && _assemblyToIconDictionary.ContainsKey(server.CreatedByAssembly))
-                toReturn = _assemblyToIconDictionary[server.CreatedByAssembly];
+        //if it is a .Database assembly managed database then use the appropriate icon instead (ANO, LOG, IDD etc)
+        if (!string.IsNullOrWhiteSpace(server.CreatedByAssembly) && _assemblyToIconDictionary.ContainsKey(server.CreatedByAssembly))
+            toReturn = _assemblyToIconDictionary[server.CreatedByAssembly];
                 
-            //add the database type overlay
-            toReturn = _overlayProvider.GetOverlay(toReturn, _typeSpecificIconsProvider.GetOverlay(server.DatabaseType));
+        //add the database type overlay
+        toReturn = _overlayProvider.GetOverlay(toReturn, _typeSpecificIconsProvider.GetOverlay(server.DatabaseType));
 
-            if (dumpServerUsage != null)
-                toReturn = _overlayProvider.GetOverlay(toReturn, OverlayKind.Link);
+        if (dumpServerUsage != null)
+            toReturn = _overlayProvider.GetOverlay(toReturn, OverlayKind.Link);
 
-            return toReturn;
-        }
+        return toReturn;
     }
 }

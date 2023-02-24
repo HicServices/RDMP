@@ -21,109 +21,108 @@ using Rdmp.Core.Logging;
 using ReusableLibraryCode.Progress;
 using Tests.Common;
 
-namespace Rdmp.Core.Tests.DataLoad.Engine.Integration
+namespace Rdmp.Core.Tests.DataLoad.Engine.Integration;
+
+public class RemoteDatabaseAttacherTests:DatabaseTests
 {
-    public class RemoteDatabaseAttacherTests:DatabaseTests
+    [TestCase(DatabaseType.MicrosoftSQLServer, Scenario.AllRawColumns)]
+    [TestCase(DatabaseType.MySql, Scenario.AllRawColumns)]
+    [TestCase(DatabaseType.MicrosoftSQLServer, Scenario.AllColumns)]
+    [TestCase(DatabaseType.MicrosoftSQLServer, Scenario.MissingPreLoadDiscardedColumn)]
+    [TestCase(DatabaseType.MicrosoftSQLServer, Scenario.MissingPreLoadDiscardedColumnButSelectStar)]
+    public void TestRemoteDatabaseAttach(DatabaseType dbType, Scenario scenario)
     {
-        [TestCase(DatabaseType.MicrosoftSQLServer, Scenario.AllRawColumns)]
-        [TestCase(DatabaseType.MySql, Scenario.AllRawColumns)]
-        [TestCase(DatabaseType.MicrosoftSQLServer, Scenario.AllColumns)]
-        [TestCase(DatabaseType.MicrosoftSQLServer, Scenario.MissingPreLoadDiscardedColumn)]
-        [TestCase(DatabaseType.MicrosoftSQLServer, Scenario.MissingPreLoadDiscardedColumnButSelectStar)]
-        public void TestRemoteDatabaseAttach(DatabaseType dbType, Scenario scenario)
-        {
-            var db = GetCleanedServer(dbType);
+        var db = GetCleanedServer(dbType);
 
-            DataTable dt = new DataTable();
+        var dt = new DataTable();
 
-            dt.Columns.Add("Fish");
-            dt.Columns.Add("hic_Heroism");
+        dt.Columns.Add("Fish");
+        dt.Columns.Add("hic_Heroism");
 
-            dt.Rows.Add("123", 11);
+        dt.Rows.Add("123", 11);
 
-            var tbl = db.CreateTable("MyTable",dt);
+        var tbl = db.CreateTable("MyTable",dt);
 
-            Assert.AreEqual(1, tbl.GetRowCount());
-            Import(tbl, out var ti, out var cols);
+        Assert.AreEqual(1, tbl.GetRowCount());
+        Import(tbl, out var ti, out var cols);
 
-            //Create a virtual RAW column
-            if (scenario == Scenario.MissingPreLoadDiscardedColumn || scenario == Scenario.MissingPreLoadDiscardedColumnButSelectStar)
-                new PreLoadDiscardedColumn(CatalogueRepository, ti, "MyMissingCol");
+        //Create a virtual RAW column
+        if (scenario == Scenario.MissingPreLoadDiscardedColumn || scenario == Scenario.MissingPreLoadDiscardedColumnButSelectStar)
+            new PreLoadDiscardedColumn(CatalogueRepository, ti, "MyMissingCol");
 
-            var externalServer = new ExternalDatabaseServer(CatalogueRepository, "MyFictionalRemote",null);
-            externalServer.SetProperties(db);
+        var externalServer = new ExternalDatabaseServer(CatalogueRepository, "MyFictionalRemote",null);
+        externalServer.SetProperties(db);
             
-            var attacher = new RemoteDatabaseAttacher();
-            attacher.Initialize(null,db);
+        var attacher = new RemoteDatabaseAttacher();
+        attacher.Initialize(null,db);
 
-            attacher.LoadRawColumnsOnly = scenario == Scenario.AllRawColumns || scenario == Scenario.MissingPreLoadDiscardedColumn;
-            attacher.RemoteSource = externalServer;
+        attacher.LoadRawColumnsOnly = scenario == Scenario.AllRawColumns || scenario == Scenario.MissingPreLoadDiscardedColumn;
+        attacher.RemoteSource = externalServer;
             
-            var lm = new LogManager(CatalogueRepository.GetDefaultFor(PermissableDefaults.LiveLoggingServer_ID));
-            lm.CreateNewLoggingTaskIfNotExists("amagad");
-            var dli = lm.CreateDataLoadInfo("amagad", "p", "a", "", true);
+        var lm = new LogManager(CatalogueRepository.GetDefaultFor(PermissableDefaults.LiveLoggingServer_ID));
+        lm.CreateNewLoggingTaskIfNotExists("amagad");
+        var dli = lm.CreateDataLoadInfo("amagad", "p", "a", "", true);
 
-            var job = Mock.Of<IDataLoadJob>(p => 
+        var job = Mock.Of<IDataLoadJob>(p => 
             p.RegularTablesToLoad==new List<ITableInfo> {ti} && 
             p.LookupTablesToLoad==new List<ITableInfo>() && p.DataLoadInfo==dli);
             
-                        switch (scenario)
-            {
-                case Scenario.AllRawColumns:
-                    break;
-                case Scenario.AllColumns:
-                    break;
-                case Scenario.MissingPreLoadDiscardedColumn:
-                    var ex = Assert.Throws<PipelineCrashedException>(() => attacher.Attach(job, new GracefulCancellationToken()));
-
-                    Assert.AreEqual("Invalid column name 'MyMissingCol'.", (ex.InnerException.InnerException).InnerException.Message);
-                    return;
-                case Scenario.MissingPreLoadDiscardedColumnButSelectStar:
-                    break;
-                default:
-                    throw new ArgumentOutOfRangeException("scenario");
-            }
-            attacher.Attach(job, new GracefulCancellationToken());
-
-            Assert.AreEqual(2,tbl.GetRowCount());
-
-            dt = tbl.GetDataTable();
-
-            VerifyRowExist(dt,123,11);
-
-            if (scenario == Scenario.AllRawColumns)
-                VerifyRowExist(dt, 123, DBNull.Value);
-
-            attacher.LoadCompletedSoDispose(ExitCodeType.Success, new ThrowImmediatelyDataLoadEventListener());
-
-            externalServer.DeleteInDatabase();
-        }
-        
-        public enum Scenario
+        switch (scenario)
         {
-            /// <summary>
-            /// Tests the ability of the DLE to load RAW columns from a remote database by identifying tables matching
-            /// by name and fetching all columns which are expected to be in RAW.
-            /// </summary>
-            AllRawColumns,
+            case Scenario.AllRawColumns:
+                break;
+            case Scenario.AllColumns:
+                break;
+            case Scenario.MissingPreLoadDiscardedColumn:
+                var ex = Assert.Throws<PipelineCrashedException>(() => attacher.Attach(job, new GracefulCancellationToken()));
 
-            /// <summary>
-            /// Tests the ability of the DLE to load RAW columns from a remote database by identifying tables matching
-            /// by name and fetching all columns using SELECT *.
-            /// </summary>
-            AllColumns,
-
-            /// <summary>
-            /// Tests the behaviour of the system when there is a RAW only column which does not appear in the remote
-            /// database when using the <see cref="RemoteDatabaseAttacher.LoadRawColumnsOnly"/> option.
-            /// </summary>
-            MissingPreLoadDiscardedColumn,
-
-            /// <summary>
-            /// Tests the behaviour of the system when there is a RAW only column which does not appear in the remote
-            /// database but the mode fetch mode is SELECT *
-            /// </summary>
-            MissingPreLoadDiscardedColumnButSelectStar
+                Assert.AreEqual("Invalid column name 'MyMissingCol'.", ex.InnerException.InnerException.InnerException.Message);
+                return;
+            case Scenario.MissingPreLoadDiscardedColumnButSelectStar:
+                break;
+            default:
+                throw new ArgumentOutOfRangeException(nameof(scenario));
         }
+        attacher.Attach(job, new GracefulCancellationToken());
+
+        Assert.AreEqual(2,tbl.GetRowCount());
+
+        dt = tbl.GetDataTable();
+
+        VerifyRowExist(dt,123,11);
+
+        if (scenario == Scenario.AllRawColumns)
+            VerifyRowExist(dt, 123, DBNull.Value);
+
+        attacher.LoadCompletedSoDispose(ExitCodeType.Success, new ThrowImmediatelyDataLoadEventListener());
+
+        externalServer.DeleteInDatabase();
+    }
+        
+    public enum Scenario
+    {
+        /// <summary>
+        /// Tests the ability of the DLE to load RAW columns from a remote database by identifying tables matching
+        /// by name and fetching all columns which are expected to be in RAW.
+        /// </summary>
+        AllRawColumns,
+
+        /// <summary>
+        /// Tests the ability of the DLE to load RAW columns from a remote database by identifying tables matching
+        /// by name and fetching all columns using SELECT *.
+        /// </summary>
+        AllColumns,
+
+        /// <summary>
+        /// Tests the behaviour of the system when there is a RAW only column which does not appear in the remote
+        /// database when using the <see cref="RemoteDatabaseAttacher.LoadRawColumnsOnly"/> option.
+        /// </summary>
+        MissingPreLoadDiscardedColumn,
+
+        /// <summary>
+        /// Tests the behaviour of the system when there is a RAW only column which does not appear in the remote
+        /// database but the mode fetch mode is SELECT *
+        /// </summary>
+        MissingPreLoadDiscardedColumnButSelectStar
     }
 }

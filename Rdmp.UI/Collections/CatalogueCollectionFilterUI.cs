@@ -9,76 +9,75 @@ using System.Windows.Forms;
 using Rdmp.Core.Curation.Data;
 using ReusableLibraryCode.Settings;
 
-namespace Rdmp.UI.Collections
+namespace Rdmp.UI.Collections;
+
+public partial class CatalogueCollectionFilterUI : UserControl
 {
-    public partial class CatalogueCollectionFilterUI : UserControl
+    private bool _loading = true;
+    public CatalogueCollectionFilterUI()
     {
-        private bool _loading = true;
-        public CatalogueCollectionFilterUI()
-        {
-            InitializeComponent();
+        InitializeComponent();
 
+        cbShowInternal.Checked = UserSettings.ShowInternalCatalogues;
+        cbShowDeprecated.Checked = UserSettings.ShowDeprecatedCatalogues ;
+        cbShowColdStorage.Checked = UserSettings.ShowColdStorageCatalogues;
+        cbProjectSpecific.Checked = UserSettings.ShowProjectSpecificCatalogues;
+        cbShowNonExtractable.Checked = UserSettings.ShowNonExtractableCatalogues;
+
+        _loading = false;
+    }
+
+    public event EventHandler<EventArgs> FiltersChanged;
+
+    private void OnCheckboxChanged(object sender, EventArgs e)
+    {
+        if(_loading)
+            return;
+
+        UserSettings.ShowInternalCatalogues = cbShowInternal.Checked;
+        UserSettings.ShowDeprecatedCatalogues = cbShowDeprecated.Checked;
+        UserSettings.ShowColdStorageCatalogues = cbShowColdStorage.Checked;
+        UserSettings.ShowProjectSpecificCatalogues = cbProjectSpecific.Checked;
+        UserSettings.ShowNonExtractableCatalogues = cbShowNonExtractable.Checked;
+
+        FiltersChanged?.Invoke(this,new EventArgs());
+    }
+
+    public void EnsureVisible(Catalogue c)
+    {
+        if (c.IsColdStorageDataset || c.IsDeprecated || c.IsInternalDataset)
+        {
+            //trouble is our flags might be hiding it so make sure it is visible
+            cbShowColdStorage.Checked = cbShowColdStorage.Checked || c.IsColdStorageDataset;
+            cbShowDeprecated.Checked = cbShowDeprecated.Checked || c.IsDeprecated;
+            cbShowInternal.Checked = cbShowInternal.Checked || c.IsInternalDataset;
+        }
+
+        var isExtractable = c.GetExtractabilityStatus(null);
+
+        cbShowNonExtractable.Checked = cbShowNonExtractable.Checked || isExtractable == null || isExtractable.IsExtractable == false;
+
+    }
+
+    /// <summary>
+    /// Checks the current values in <see cref="UserSettings"/> and updates the UI state to match.
+    /// This will trigger checked change events if any are out of sync
+    /// </summary>
+    public void CheckForChanges()
+    {
+        if(cbShowInternal.Checked != UserSettings.ShowInternalCatalogues)
             cbShowInternal.Checked = UserSettings.ShowInternalCatalogues;
-            cbShowDeprecated.Checked = UserSettings.ShowDeprecatedCatalogues ;
+
+        if (cbShowDeprecated.Checked != UserSettings.ShowDeprecatedCatalogues)
+            cbShowDeprecated.Checked = UserSettings.ShowDeprecatedCatalogues;
+
+        if (cbShowColdStorage.Checked != UserSettings.ShowColdStorageCatalogues)
             cbShowColdStorage.Checked = UserSettings.ShowColdStorageCatalogues;
+
+        if (cbProjectSpecific.Checked != UserSettings.ShowProjectSpecificCatalogues)
             cbProjectSpecific.Checked = UserSettings.ShowProjectSpecificCatalogues;
+
+        if (cbShowNonExtractable.Checked != UserSettings.ShowNonExtractableCatalogues)
             cbShowNonExtractable.Checked = UserSettings.ShowNonExtractableCatalogues;
-
-            _loading = false;
-        }
-
-        public event EventHandler<EventArgs> FiltersChanged;
-
-        private void OnCheckboxChanged(object sender, System.EventArgs e)
-        {
-            if(_loading)
-                return;
-
-            UserSettings.ShowInternalCatalogues = cbShowInternal.Checked;
-            UserSettings.ShowDeprecatedCatalogues = cbShowDeprecated.Checked;
-            UserSettings.ShowColdStorageCatalogues = cbShowColdStorage.Checked;
-            UserSettings.ShowProjectSpecificCatalogues = cbProjectSpecific.Checked;
-            UserSettings.ShowNonExtractableCatalogues = cbShowNonExtractable.Checked;
-
-            FiltersChanged?.Invoke(this,new EventArgs());
-        }
-
-        public void EnsureVisible(Catalogue c)
-        {
-            if (c.IsColdStorageDataset || c.IsDeprecated || c.IsInternalDataset)
-            {
-                //trouble is our flags might be hiding it so make sure it is visible
-                cbShowColdStorage.Checked = cbShowColdStorage.Checked || c.IsColdStorageDataset;
-                cbShowDeprecated.Checked = cbShowDeprecated.Checked || c.IsDeprecated;
-                cbShowInternal.Checked = cbShowInternal.Checked || c.IsInternalDataset;
-            }
-
-            var isExtractable = c.GetExtractabilityStatus(null);
-
-            cbShowNonExtractable.Checked = cbShowNonExtractable.Checked || isExtractable == null || isExtractable.IsExtractable == false;
-
-        }
-
-        /// <summary>
-        /// Checks the current values in <see cref="UserSettings"/> and updates the UI state to match.
-        /// This will trigger checked change events if any are out of sync
-        /// </summary>
-        public void CheckForChanges()
-        {
-            if(cbShowInternal.Checked != UserSettings.ShowInternalCatalogues)
-                cbShowInternal.Checked = UserSettings.ShowInternalCatalogues;
-
-            if (cbShowDeprecated.Checked != UserSettings.ShowDeprecatedCatalogues)
-                cbShowDeprecated.Checked = UserSettings.ShowDeprecatedCatalogues;
-
-            if (cbShowColdStorage.Checked != UserSettings.ShowColdStorageCatalogues)
-                cbShowColdStorage.Checked = UserSettings.ShowColdStorageCatalogues;
-
-            if (cbProjectSpecific.Checked != UserSettings.ShowProjectSpecificCatalogues)
-                cbProjectSpecific.Checked = UserSettings.ShowProjectSpecificCatalogues;
-
-            if (cbShowNonExtractable.Checked != UserSettings.ShowNonExtractableCatalogues)
-                cbShowNonExtractable.Checked = UserSettings.ShowNonExtractableCatalogues;
-        }
     }
 }

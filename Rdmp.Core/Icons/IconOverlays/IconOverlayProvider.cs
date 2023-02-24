@@ -12,73 +12,72 @@ using SixLabors.ImageSharp;
 using SixLabors.ImageSharp.PixelFormats;
 using SixLabors.ImageSharp.Processing;
 
-namespace Rdmp.Core.Icons.IconOverlays
+namespace Rdmp.Core.Icons.IconOverlays;
+
+public class IconOverlayProvider
 {
-    public class IconOverlayProvider
+    private readonly ConcurrentDictionary<ValueTuple<Image<Rgba32>,OverlayKind>,Image<Rgba32>> _cache=new ();
+
+    private readonly ConcurrentDictionary<ValueTuple<Image<Rgba32>,Image<Rgba32>>, Image<Rgba32>>  _resultCacheCustom = new();
+
+    private readonly ConcurrentDictionary<Image<Rgba32>, Image<Rgba32>> _greyscaleCache = new();
+
+    private readonly EnumImageCollection<OverlayKind> _images;
+
+    public IconOverlayProvider()
     {
-        readonly ConcurrentDictionary<ValueTuple<Image<Rgba32>,OverlayKind>,Image<Rgba32>> _cache=new ();
+        _images = new EnumImageCollection<OverlayKind>(Overlays.ResourceManager);
+    }
 
-        readonly ConcurrentDictionary<ValueTuple<Image<Rgba32>,Image<Rgba32>>, Image<Rgba32>>  _resultCacheCustom = new();
+    public Image<Rgba32> GetOverlay(Image<Rgba32> forImage, OverlayKind overlayKind)
+    {
+        var key = (forImage, overlayKind);
 
-        readonly ConcurrentDictionary<Image<Rgba32>, Image<Rgba32>> _greyscaleCache = new();
-
-        private readonly EnumImageCollection<OverlayKind> _images;
-
-        public IconOverlayProvider()
-        {
-            _images = new EnumImageCollection<OverlayKind>(Overlays.ResourceManager);
-        }
-
-        public Image<Rgba32> GetOverlay(Image<Rgba32> forImage, OverlayKind overlayKind)
-        {
-            var key = (forImage, overlayKind);
-
-            //make sure the input image is added to the cache if it is novel
-            if (_cache.TryGetValue(key, out var hit))
-                return hit;
+        //make sure the input image is added to the cache if it is novel
+        if (_cache.TryGetValue(key, out var hit))
+            return hit;
             
-            var clone = GetOverlayNoCache(forImage, overlayKind);
-            _cache.TryAdd(key,clone);
+        var clone = GetOverlayNoCache(forImage, overlayKind);
+        _cache.TryAdd(key,clone);
 
-            return clone;
-        }
+        return clone;
+    }
 
 
-        public Image<Rgba32> GetOverlay(Image<Rgba32> forImage, Image<Rgba32> customOverlay)
-        {
-            if (_resultCacheCustom.TryGetValue((forImage, customOverlay), out var hit))
-                return hit;
+    public Image<Rgba32> GetOverlay(Image<Rgba32> forImage, Image<Rgba32> customOverlay)
+    {
+        if (_resultCacheCustom.TryGetValue((forImage, customOverlay), out var hit))
+            return hit;
 
-            var clone = forImage.Clone<Rgba32>(x=>x.DrawImage(customOverlay,1.0f));
+        var clone = forImage.Clone<Rgba32>(x=>x.DrawImage(customOverlay,1.0f));
 
-            //and cache it
-            _resultCacheCustom.TryAdd((forImage,customOverlay),clone);
-            return clone;
-        }
+        //and cache it
+        _resultCacheCustom.TryAdd((forImage,customOverlay),clone);
+        return clone;
+    }
 
-        public Image<Rgba32> GetGrayscale(Image<Rgba32> forImage)
-        {
-            _greyscaleCache.TryAdd(forImage, MakeGrayscale(forImage));
+    public Image<Rgba32> GetGrayscale(Image<Rgba32> forImage)
+    {
+        _greyscaleCache.TryAdd(forImage, MakeGrayscale(forImage));
 
-            return _greyscaleCache[forImage];
-        }
+        return _greyscaleCache[forImage];
+    }
 
-        /// <summary>
-        /// Use ImageSharp's grayscale converter
-        /// </summary>
-        /// <param name="original"></param>
-        /// <returns></returns>
-        private static Image<Rgba32> MakeGrayscale(Image<Rgba32> original)
-        {
-            return original.Clone(x=>x.Grayscale());
-        }
+    /// <summary>
+    /// Use ImageSharp's grayscale converter
+    /// </summary>
+    /// <param name="original"></param>
+    /// <returns></returns>
+    private static Image<Rgba32> MakeGrayscale(Image<Rgba32> original)
+    {
+        return original.Clone(x=>x.Grayscale());
+    }
 
-        public Image<Rgba32> GetOverlayNoCache(Image<Rgba32> forImage, OverlayKind overlayKind)
-        {
-            //cached result does not exist so we must draw it
-            var overlay = _images[overlayKind];
-            var clone = forImage.Clone<Rgba32>(x=>x.DrawImage(overlay,1.0f));
-            return clone;
-        }
+    public Image<Rgba32> GetOverlayNoCache(Image<Rgba32> forImage, OverlayKind overlayKind)
+    {
+        //cached result does not exist so we must draw it
+        var overlay = _images[overlayKind];
+        var clone = forImage.Clone<Rgba32>(x=>x.DrawImage(overlay,1.0f));
+        return clone;
     }
 }

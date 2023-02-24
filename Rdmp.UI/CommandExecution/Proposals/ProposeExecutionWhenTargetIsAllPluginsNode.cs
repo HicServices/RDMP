@@ -8,37 +8,35 @@ using Rdmp.Core.CommandExecution;
 using Rdmp.Core.CommandExecution.AtomicCommands;
 using Rdmp.Core.CommandExecution.Combining;
 using Rdmp.Core.Providers.Nodes;
-using Rdmp.UI.CommandExecution.AtomicCommands;
 using Rdmp.UI.ItemActivation;
 using ReusableLibraryCode;
 
-namespace Rdmp.UI.CommandExecution.Proposals
+namespace Rdmp.UI.CommandExecution.Proposals;
+
+internal class ProposeExecutionWhenTargetIsAllPluginsNode : RDMPCommandExecutionProposal<AllPluginsNode>
 {
-    class ProposeExecutionWhenTargetIsAllPluginsNode : RDMPCommandExecutionProposal<AllPluginsNode>
+    public ProposeExecutionWhenTargetIsAllPluginsNode(IActivateItems itemActivator) : base(itemActivator)
     {
-        public ProposeExecutionWhenTargetIsAllPluginsNode(IActivateItems itemActivator) : base(itemActivator)
-        {
             
-        }
+    }
 
-        public override void Activate(AllPluginsNode target)
-        {
-            if(ItemActivator.RepositoryLocator.CatalogueRepository.MEF.DownloadDirectory.Exists)
-                UsefulStuff.GetInstance().ShowFolderInWindowsExplorer(ItemActivator.RepositoryLocator.CatalogueRepository.MEF.DownloadDirectory);
-        }
+    public override void Activate(AllPluginsNode target)
+    {
+        if(ItemActivator.RepositoryLocator.CatalogueRepository.MEF.DownloadDirectory.Exists)
+            UsefulStuff.GetInstance().ShowFolderInWindowsExplorer(ItemActivator.RepositoryLocator.CatalogueRepository.MEF.DownloadDirectory);
+    }
 
-        public override bool CanActivate(AllPluginsNode target)
-        {
-            return true;
-        }
+    public override bool CanActivate(AllPluginsNode target)
+    {
+        return true;
+    }
 
-        public override ICommandExecution ProposeExecution(ICombineToMakeCommand cmd, AllPluginsNode target, InsertOption insertOption = InsertOption.Default)
-        {
-            //drop files on to attempt to upload plugins
-            if(cmd is FileCollectionCombineable f)
-                return new ExecuteCommandAddPlugins(ItemActivator,f);
+    public override ICommandExecution ProposeExecution(ICombineToMakeCommand cmd, AllPluginsNode target, InsertOption insertOption = InsertOption.Default)
+    {
+        //drop files on to attempt to upload plugins
+        if(cmd is FileCollectionCombineable f)
+            return new ExecuteCommandAddPlugins(ItemActivator,f);
 
-            return null;
-        }
+        return null;
     }
 }

@@ -6,16 +6,14 @@
 
 using Rdmp.Core.CommandExecution.AtomicCommands;
 using Rdmp.Core.Providers.Nodes;
-using Rdmp.UI.CommandExecution.AtomicCommands;
 
-namespace Rdmp.UI.Menus
+namespace Rdmp.UI.Menus;
+
+internal class JoinableCollectionNodeMenu : RDMPContextMenuStrip
 {
-    internal class JoinableCollectionNodeMenu : RDMPContextMenuStrip
+    public JoinableCollectionNodeMenu(RDMPContextMenuStripArgs args, JoinableCollectionNode patientIndexTablesNode): base(args, patientIndexTablesNode)
     {
-        public JoinableCollectionNodeMenu(RDMPContextMenuStripArgs args, JoinableCollectionNode patientIndexTablesNode): base(args, patientIndexTablesNode)
-        {
-            Add(new ExecuteCommandAddCatalogueToCohortIdentificationAsPatientIndexTable(_activator, patientIndexTablesNode.Configuration) { OverrideCommandName = "Add Catalogue" });
-        }
-
+        Add(new ExecuteCommandAddCatalogueToCohortIdentificationAsPatientIndexTable(_activator, patientIndexTablesNode.Configuration) { OverrideCommandName = "Add Catalogue" });
     }
+
 }

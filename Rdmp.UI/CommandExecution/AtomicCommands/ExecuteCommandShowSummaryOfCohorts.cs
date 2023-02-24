@@ -16,61 +16,60 @@ using Rdmp.UI.ItemActivation;
 using ReusableLibraryCode.Icons.IconProvision;
 using SixLabors.ImageSharp.PixelFormats;
 
-namespace Rdmp.UI.CommandExecution.AtomicCommands
+namespace Rdmp.UI.CommandExecution.AtomicCommands;
+
+internal class ExecuteCommandShowSummaryOfCohorts : BasicUICommandExecution,IAtomicCommand
 {
-    internal class ExecuteCommandShowSummaryOfCohorts : BasicUICommandExecution,IAtomicCommand
+    private readonly string _commandName;
+    private readonly ExtractableCohort[] _onlyCohorts;
+
+    public ExecuteCommandShowSummaryOfCohorts(IActivateItems activator)
+        : base(activator)
     {
-        private readonly string _commandName;
-        private readonly ExtractableCohort[] _onlyCohorts;
+        _commandName = "Show Cohort Summary";
+    }
 
-        public ExecuteCommandShowSummaryOfCohorts(IActivateItems activator)
-            : base(activator)
-        {
-            _commandName = "Show Cohort Summary";
-        }
+    public ExecuteCommandShowSummaryOfCohorts(IActivateItems activator,CohortSourceUsedByProjectNode projectSource) : base(activator)
+    {
+        _commandName = "Show Cohort Summary";
 
-        public ExecuteCommandShowSummaryOfCohorts(IActivateItems activator,CohortSourceUsedByProjectNode projectSource) : base(activator)
-        {
-            _commandName = "Show Cohort Summary";
+        if (projectSource.IsEmptyNode)
+            SetImpossible("Node is empty");
+        else
+            _onlyCohorts = projectSource.CohortsUsed.Select(u => u.ObjectBeingUsed).ToArray();
+    }
 
-            if (projectSource.IsEmptyNode)
-                SetImpossible("Node is empty");
-            else
-                _onlyCohorts = projectSource.CohortsUsed.Select(u => u.ObjectBeingUsed).ToArray();
-        }
+    [UseWithObjectConstructor]
+    public ExecuteCommandShowSummaryOfCohorts(IActivateItems activator, ExternalCohortTable externalCohortTable) : base(activator)
+    {
+        _commandName = "Show Detailed Summary of Cohorts";
+        _onlyCohorts = activator.CoreChildProvider.GetChildren(externalCohortTable).OfType<ExtractableCohort>().ToArray();
+    }
 
-        [UseWithObjectConstructor]
-        public ExecuteCommandShowSummaryOfCohorts(IActivateItems activator, ExternalCohortTable externalCohortTable) : base(activator)
-        {
-            _commandName = "Show Detailed Summary of Cohorts";
-            _onlyCohorts = activator.CoreChildProvider.GetChildren(externalCohortTable).OfType<ExtractableCohort>().ToArray();
-        }
+    public override string GetCommandHelp()
+    {
+        return "Show information about the cohort lists stored in your cohort database (number of patients etc)";
+    }
 
-        public override string GetCommandHelp()
-        {
-            return "Show information about the cohort lists stored in your cohort database (number of patients etc)";
-        }
+    public override string GetCommandName()
+    {
+        return _commandName;
+    }
 
-        public override string GetCommandName()
-        {
-            return _commandName;
-        }
+    public override void Execute()
+    {
+        var extractableCohortCollection = new ExtractableCohortCollectionUI();
+        extractableCohortCollection.SetItemActivator(Activator);
+        Activator.ShowWindow(extractableCohortCollection, true);
 
-        public override void Execute()
-        {
-            var extractableCohortCollection = new ExtractableCohortCollectionUI();
-            extractableCohortCollection.SetItemActivator(Activator);
-            Activator.ShowWindow(extractableCohortCollection, true);
+        if (_onlyCohorts != null)
+            extractableCohortCollection.SetupFor(_onlyCohorts);
+        else
+            extractableCohortCollection.SetupForAllCohorts(Activator);
+    }
 
-            if (_onlyCohorts != null)
-                extractableCohortCollection.SetupFor(_onlyCohorts);
-            else
-                extractableCohortCollection.SetupForAllCohorts(Activator);
-        }
-
-        public override Image<Rgba32> GetImage(IIconProvider iconProvider)
-        {
-            return iconProvider.GetImage(RDMPConcept.AllCohortsNode);
-        }
+    public override Image<Rgba32> GetImage(IIconProvider iconProvider)
+    {
+        return iconProvider.GetImage(RDMPConcept.AllCohortsNode);
     }
 }

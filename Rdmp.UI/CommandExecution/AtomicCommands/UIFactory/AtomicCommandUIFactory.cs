@@ -5,73 +5,67 @@
 // You should have received a copy of the GNU General Public License along with RDMP. If not, see <https://www.gnu.org/licenses/>.
 
 using System;
-using System.Collections.Generic;
 using System.Windows.Forms;
-using BrightIdeasSoftware;
-using Rdmp.Core;
 using Rdmp.Core.CommandExecution.AtomicCommands;
 using Rdmp.UI.ItemActivation;
-using Rdmp.UI.Menus;
 using Rdmp.UI.Menus.MenuItems;
 using Rdmp.UI.SimpleDialogs;
 using ReusableLibraryCode.Icons.IconProvision;
 
-namespace Rdmp.UI.CommandExecution.AtomicCommands.UIFactory
+namespace Rdmp.UI.CommandExecution.AtomicCommands.UIFactory;
+
+public class AtomicCommandUIFactory
 {
-    public class AtomicCommandUIFactory
+    private readonly IActivateItems _activator;
+    private readonly IIconProvider _iconProvider;
+
+    public AtomicCommandUIFactory(IActivateItems activator)
     {
-        private readonly IActivateItems _activator;
-        private readonly IIconProvider _iconProvider;
-
-        public AtomicCommandUIFactory(IActivateItems activator)
-        {
-            _activator = activator;
-            _iconProvider = activator.CoreIconProvider;
-        }
-
-        public ToolStripMenuItem CreateMenuItem(IAtomicCommand command)
-        {
-            return new AtomicCommandMenuItem(command, _activator){Tag = command };
-        }
-
-        public AtomicCommandLinkLabel CreateLinkLabel(IAtomicCommand command)
-        {
-            return new AtomicCommandLinkLabel(_iconProvider,command){Tag = command };
-        }
-
-        public ToolStripItem CreateToolStripItem(IAtomicCommand command)
-        {
-            return new AtomicCommandToolStripItem(command, _activator);
-        }
-
-        public Button CreateButton(IAtomicCommand cmd)
-        {
-            var tt = new ToolTip();
-
-            Button b = new Button
-            {
-                Width = 26,
-                Height = 26,
-                Image = cmd.GetImage(_activator.CoreIconProvider).ImageToBitmap(),
-                Tag = cmd
-            };
-
-            b.Click += (s, e) =>
-            {
-                try
-                {
-                    cmd.Execute();
-                }
-                catch (Exception ex)
-                {
-                    ExceptionViewer.Show("Command Failed", ex);
-                }
-            };
-
-            tt.SetToolTip(b, cmd.GetCommandHelp());
-
-            return b;
-        }
+        _activator = activator;
+        _iconProvider = activator.CoreIconProvider;
     }
 
+    public ToolStripMenuItem CreateMenuItem(IAtomicCommand command)
+    {
+        return new AtomicCommandMenuItem(command, _activator){Tag = command };
+    }
+
+    public AtomicCommandLinkLabel CreateLinkLabel(IAtomicCommand command)
+    {
+        return new AtomicCommandLinkLabel(_iconProvider,command){Tag = command };
+    }
+
+    public ToolStripItem CreateToolStripItem(IAtomicCommand command)
+    {
+        return new AtomicCommandToolStripItem(command, _activator);
+    }
+
+    public Button CreateButton(IAtomicCommand cmd)
+    {
+        var tt = new ToolTip();
+
+        var b = new Button
+        {
+            Width = 26,
+            Height = 26,
+            Image = cmd.GetImage(_activator.CoreIconProvider).ImageToBitmap(),
+            Tag = cmd
+        };
+
+        b.Click += (s, e) =>
+        {
+            try
+            {
+                cmd.Execute();
+            }
+            catch (Exception ex)
+            {
+                ExceptionViewer.Show("Command Failed", ex);
+            }
+        };
+
+        tt.SetToolTip(b, cmd.GetCommandHelp());
+
+        return b;
+    }
 }

@@ -12,38 +12,37 @@ using Rdmp.Core.Curation.Data.Defaults;
 using Rdmp.Core.Databases;
 using ReusableLibraryCode.Checks;
 
-namespace Tests.Common.Scenarios
+namespace Tests.Common.Scenarios;
+
+/// <summary>
+/// For any test that requires both the ANOStore and the IdentifierDump and anything else we come up with in terms of anonymisation
+/// </summary>
+public class TestsRequiringFullAnonymisationSuite : TestsRequiringANOStore
 {
-    /// <summary>
-    /// For any test that requires both the ANOStore and the IdentifierDump and anything else we come up with in terms of anonymisation
-    /// </summary>
-    public class TestsRequiringFullAnonymisationSuite : TestsRequiringANOStore
+    protected string IdentifierDump_DatabaseName = TestDatabaseNames.GetConsistentName("IdentifierDump");
+    protected ExternalDatabaseServer IdentifierDump_ExternalDatabaseServer { get; set; }
+    public DiscoveredDatabase IdentifierDump_Database { get; set; }
+
+    [OneTimeSetUp]
+    protected override void OneTimeSetUp()
     {
-        protected string IdentifierDump_DatabaseName = TestDatabaseNames.GetConsistentName("IdentifierDump");
-        protected ExternalDatabaseServer IdentifierDump_ExternalDatabaseServer { get; set; }
-        public DiscoveredDatabase IdentifierDump_Database { get; set; }
+        base.OneTimeSetUp();
 
-        [OneTimeSetUp]
-        protected override void OneTimeSetUp()
-        {
-            base.OneTimeSetUp();
+        IdentifierDump_Database = DiscoveredServerICanCreateRandomDatabasesAndTablesOn.ExpectDatabase(IdentifierDump_DatabaseName);
 
-            IdentifierDump_Database = DiscoveredServerICanCreateRandomDatabasesAndTablesOn.ExpectDatabase(IdentifierDump_DatabaseName);
+        if (IdentifierDump_Database.Exists())
+            IdentifierDump_Database.Drop();
 
-            if (IdentifierDump_Database.Exists())
-                IdentifierDump_Database.Drop();
+        var scriptCreate = new MasterDatabaseScriptExecutor(IdentifierDump_Database);
+        var p = new IdentifierDumpDatabasePatcher();
+        scriptCreate.CreateAndPatchDatabase(p, new ThrowImmediatelyCheckNotifier());
 
-            var scriptCreate = new MasterDatabaseScriptExecutor(IdentifierDump_Database);
-            var p = new IdentifierDumpDatabasePatcher();
-            scriptCreate.CreateAndPatchDatabase(p, new ThrowImmediatelyCheckNotifier());
+        //now create a new reference!
+        IdentifierDump_ExternalDatabaseServer = new ExternalDatabaseServer(CatalogueRepository,IdentifierDump_DatabaseName,p);
+        IdentifierDump_ExternalDatabaseServer.SetProperties(IdentifierDump_Database);
 
-            //now create a new reference!
-            IdentifierDump_ExternalDatabaseServer = new ExternalDatabaseServer(CatalogueRepository,IdentifierDump_DatabaseName,p);
-            IdentifierDump_ExternalDatabaseServer.SetProperties(IdentifierDump_Database);
-
-            CatalogueRepository.SetDefault(PermissableDefaults.IdentifierDumpServer_ID, IdentifierDump_ExternalDatabaseServer);
-
-        }
+        CatalogueRepository.SetDefault(PermissableDefaults.IdentifierDumpServer_ID, IdentifierDump_ExternalDatabaseServer);
 
     }
+
 }

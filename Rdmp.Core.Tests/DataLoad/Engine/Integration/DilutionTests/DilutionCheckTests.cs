@@ -12,41 +12,40 @@ using Rdmp.Core.DataLoad.Modules.Mutilators.Dilution.Exceptions;
 using Rdmp.Core.DataLoad.Modules.Mutilators.Dilution.Operations;
 using ReusableLibraryCode.Checks;
 
-namespace Rdmp.Core.Tests.DataLoad.Engine.Integration.DilutionTests
+namespace Rdmp.Core.Tests.DataLoad.Engine.Integration.DilutionTests;
+
+[Category("Unit")]
+public class DilutionCheckTests
 {
-    [Category("Unit")]
-    public class DilutionCheckTests
+    [Test]
+    public void TestChecking_RoundDateToMiddleOfQuarter_NoColumnSet()
     {
-        [Test]
-        public void TestChecking_RoundDateToMiddleOfQuarter_NoColumnSet()
-        {
-            var dil = new RoundDateToMiddleOfQuarter();
-            Assert.Throws<DilutionColumnNotSetException>(() => dil.Check(new ThrowImmediatelyCheckNotifier()));
-        }
+        var dil = new RoundDateToMiddleOfQuarter();
+        Assert.Throws<DilutionColumnNotSetException>(() => dil.Check(new ThrowImmediatelyCheckNotifier()));
+    }
 
-        [TestCase("varchar(10)")]
-        [TestCase("bit")]
-        [TestCase("binary(50)")]
-        public void TestChecking_RoundDateToMiddleOfQuarter_WrongDataType(string incompatibleType)
-        {
-            var col = Mock.Of<IPreLoadDiscardedColumn>(p => p.SqlDataType == incompatibleType);
+    [TestCase("varchar(10)")]
+    [TestCase("bit")]
+    [TestCase("binary(50)")]
+    public void TestChecking_RoundDateToMiddleOfQuarter_WrongDataType(string incompatibleType)
+    {
+        var col = Mock.Of<IPreLoadDiscardedColumn>(p => p.SqlDataType == incompatibleType);
 
-            var dil = new RoundDateToMiddleOfQuarter();
-            dil.ColumnToDilute = col;
+        var dil = new RoundDateToMiddleOfQuarter();
+        dil.ColumnToDilute = col;
 
-            Assert.Throws<Exception>(() => dil.Check(new ThrowImmediatelyCheckNotifier()));
-        }
+        Assert.Throws<Exception>(() => dil.Check(new ThrowImmediatelyCheckNotifier()));
+    }
 
-        [TestCase("date")]
-        [TestCase("datetime")]
-        public void TestChecking_RoundDateToMiddleOfQuarter_CompatibleDataType(string incompatibleType)
-        {
-            var col = Mock.Of<IPreLoadDiscardedColumn>(p => p.SqlDataType==incompatibleType);
+    [TestCase("date")]
+    [TestCase("datetime")]
+    public void TestChecking_RoundDateToMiddleOfQuarter_CompatibleDataType(string incompatibleType)
+    {
+        var col = Mock.Of<IPreLoadDiscardedColumn>(p => p.SqlDataType==incompatibleType);
 
-            var dil = new RoundDateToMiddleOfQuarter();
-            dil.ColumnToDilute = col;
+        var dil = new RoundDateToMiddleOfQuarter();
+        dil.ColumnToDilute = col;
 
-            dil.Check(new ThrowImmediatelyCheckNotifier());
-        }
+        dil.Check(new ThrowImmediatelyCheckNotifier());
     }
 }

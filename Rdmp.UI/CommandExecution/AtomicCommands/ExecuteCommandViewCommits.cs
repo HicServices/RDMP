@@ -5,7 +5,6 @@
 // You should have received a copy of the GNU General Public License along with RDMP. If not, see <https://www.gnu.org/licenses/>.
 
 using MapsDirectlyToDatabaseTable;
-using Rdmp.Core.CommandExecution.AtomicCommands;
 using Rdmp.Core.Curation.Data;
 using Rdmp.Core.Icons.IconProvision;
 using Rdmp.UI.ItemActivation;
@@ -15,35 +14,34 @@ using SixLabors.ImageSharp;
 using SixLabors.ImageSharp.PixelFormats;
 using System.Linq;
 
-namespace Rdmp.UI.CommandExecution.AtomicCommands
+namespace Rdmp.UI.CommandExecution.AtomicCommands;
+
+internal class ExecuteCommandViewCommits : BasicUICommandExecution
 {
-    internal class ExecuteCommandViewCommits : BasicUICommandExecution
+    private IMapsDirectlyToDatabaseTable _o;
+
+    public ExecuteCommandViewCommits(IActivateItems activator, IMapsDirectlyToDatabaseTable o) : base(activator)
     {
-        private IMapsDirectlyToDatabaseTable _o;
+        _o = o;
+        OverrideCommandName = "View History";
 
-        public ExecuteCommandViewCommits(IActivateItems activator, IMapsDirectlyToDatabaseTable o) : base(activator)
-        {
-            _o = o;
-            OverrideCommandName = "View History";
-
-            if (
-                !activator.RepositoryLocator.CatalogueRepository
+        if (
+            !activator.RepositoryLocator.CatalogueRepository
                 .GetAllObjectsWhere<Memento>(nameof(Memento.ReferencedObjectID), o.ID)
                 .Where((m) => m.IsReferenceTo(o))
                 .Any())
-            {
-                SetImpossible("No commits have been made yet");
-            }
-        }
-        public override Image<Rgba32> GetImage(IIconProvider iconProvider)
         {
-            return iconProvider.GetImage(RDMPConcept.Commit);
+            SetImpossible("No commits have been made yet");
         }
-        public override void Execute()
-        {
-            base.Execute();
+    }
+    public override Image<Rgba32> GetImage(IIconProvider iconProvider)
+    {
+        return iconProvider.GetImage(RDMPConcept.Commit);
+    }
+    public override void Execute()
+    {
+        base.Execute();
 
-            ((IActivateItems)BasicActivator).ShowWindow(new CommitsUI(Activator, _o));
-        }
+        ((IActivateItems)BasicActivator).ShowWindow(new CommitsUI(Activator, _o));
     }
 }

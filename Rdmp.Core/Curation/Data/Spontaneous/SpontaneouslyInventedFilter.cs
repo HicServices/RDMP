@@ -4,91 +4,91 @@
 // RDMP is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License for more details.
 // You should have received a copy of the GNU General Public License along with RDMP. If not, see <https://www.gnu.org/licenses/>.
 
+using System;
 using System.Collections.Generic;
 using Rdmp.Core.Curation.FilterImporting.Construction;
 using Rdmp.Core.Repositories;
 
-namespace Rdmp.Core.Curation.Data.Spontaneous
+namespace Rdmp.Core.Curation.Data.Spontaneous;
+
+/// <summary>
+/// Spontaneous (memory only) implementation of IFilter.  This is the preferred method of injecting lines of WHERE Sql into an ISqlQueryBuilder dynamically in code
+/// (as opposed to ones the user has created).  This can be used to for example enforce additional constraints on the query e.g. 'generate this Aggregate Graph but
+/// restrict the results to patients appearing in my cohort list X' (in this case the SpontaneouslyInventedFilter would be the 'patients appearing in my cohort list X'
+/// 
+/// <para>The other way to inject sql code into an ISqlQueryBuilder is via CustomLine but that's less precise.</para>
+/// </summary>
+public class SpontaneouslyInventedFilter:ConcreteFilter
 {
-    /// <summary>
-    /// Spontaneous (memory only) implementation of IFilter.  This is the preferred method of injecting lines of WHERE Sql into an ISqlQueryBuilder dynamically in code
-    /// (as opposed to ones the user has created).  This can be used to for example enforce additional constraints on the query e.g. 'generate this Aggregate Graph but
-    /// restrict the results to patients appearing in my cohort list X' (in this case the SpontaneouslyInventedFilter would be the 'patients appearing in my cohort list X'
-    /// 
-    /// <para>The other way to inject sql code into an ISqlQueryBuilder is via CustomLine but that's less precise.</para>
-    /// </summary>
-    public class SpontaneouslyInventedFilter:ConcreteFilter
-    {
-        private readonly MemoryCatalogueRepository _repo;
-        private readonly ISqlParameter[] _filterParametersIfAny;
+    private readonly MemoryCatalogueRepository _repo;
+    private readonly ISqlParameter[] _filterParametersIfAny;
         
-        /// <summary>
-        /// Creates a new temporary (unsaveable) filter in the given memory <paramref name="repo"/>
-        /// </summary>
-        /// <param name="repo">The repository to store the temporary object in</param>
-        /// <param name="notionalParent"></param>
-        /// <param name="whereSql"></param>
-        /// <param name="name"></param>
-        /// <param name="description"></param>
-        /// <param name="filterParametersIfAny"></param>
-        public SpontaneouslyInventedFilter(MemoryCatalogueRepository repo,IContainer notionalParent, string whereSql, string name, string description, ISqlParameter[] filterParametersIfAny)
-        {
-            _repo = repo;
-            _filterParametersIfAny = filterParametersIfAny;
-            WhereSQL = whereSql;
-            Name = name;
-            Description = description;
+    /// <summary>
+    /// Creates a new temporary (unsaveable) filter in the given memory <paramref name="repo"/>
+    /// </summary>
+    /// <param name="repo">The repository to store the temporary object in</param>
+    /// <param name="notionalParent"></param>
+    /// <param name="whereSql"></param>
+    /// <param name="name"></param>
+    /// <param name="description"></param>
+    /// <param name="filterParametersIfAny"></param>
+    public SpontaneouslyInventedFilter(MemoryCatalogueRepository repo,IContainer notionalParent, string whereSql, string name, string description, ISqlParameter[] filterParametersIfAny)
+    {
+        _repo = repo;
+        _filterParametersIfAny = filterParametersIfAny;
+        WhereSQL = whereSql;
+        Name = name;
+        Description = description;
             
-            repo.InsertAndHydrate(this,new Dictionary<string, object>());
+        repo.InsertAndHydrate(this,new Dictionary<string, object>());
 
-            if(notionalParent != null)
-            {
-                repo.AddChild(notionalParent,this);
-                FilterContainer_ID = notionalParent.ID;
-            }
-        }
-
-        /// <summary>
-        /// Constructs a new filter by copying out the values from the supplied IFilter
-        /// </summary>
-        /// <param name="repo">The repository to store the temporary object in</param>
-        /// <param name="copyFrom"></param>
-        public SpontaneouslyInventedFilter(MemoryCatalogueRepository repo,IFilter copyFrom):this(repo,null,copyFrom.WhereSQL,copyFrom.Name,copyFrom.Description,copyFrom.GetAllParameters())
+        if(notionalParent != null)
         {
+            repo.AddChild(notionalParent,this);
+            FilterContainer_ID = notionalParent.ID;
+        }
+    }
+
+    /// <summary>
+    /// Constructs a new filter by copying out the values from the supplied IFilter
+    /// </summary>
+    /// <param name="repo">The repository to store the temporary object in</param>
+    /// <param name="copyFrom"></param>
+    public SpontaneouslyInventedFilter(MemoryCatalogueRepository repo,IFilter copyFrom):this(repo,null,copyFrom.WhereSQL,copyFrom.Name,copyFrom.Description,copyFrom.GetAllParameters())
+    {
             
-        }
+    }
 
-        public override int? ClonedFromExtractionFilter_ID { get; set; }
-        public override int? FilterContainer_ID { get; set; }
-        public override ISqlParameter[] GetAllParameters()
+    public override int? ClonedFromExtractionFilter_ID { get; set; }
+    public override int? FilterContainer_ID { get; set; }
+    public override ISqlParameter[] GetAllParameters()
+    {
+        return _filterParametersIfAny??Array.Empty<ISqlParameter>();
+    }
+
+    public override IContainer FilterContainer
+    {
+        get
         {
-            return _filterParametersIfAny??new ISqlParameter[0];
-        }
+            if (FilterContainer_ID.HasValue)
+                return _repo.GetObjectByID<IContainer>(FilterContainer_ID.Value);
 
-        public override IContainer FilterContainer
-        {
-            get
-            {
-                if (FilterContainer_ID.HasValue)
-                    return _repo.GetObjectByID<IContainer>(FilterContainer_ID.Value);
-
-                return null;
-            }
-        }
-
-        public override ColumnInfo GetColumnInfoIfExists()
-        {
             return null;
         }
+    }
 
-        public override IFilterFactory GetFilterFactory()
-        {
-            return null;
-        }
+    public override ColumnInfo GetColumnInfoIfExists()
+    {
+        return null;
+    }
 
-        public override Catalogue GetCatalogue()
-        {
-            return null;
-        }
+    public override IFilterFactory GetFilterFactory()
+    {
+        return null;
+    }
+
+    public override Catalogue GetCatalogue()
+    {
+        return null;
     }
 }

@@ -13,69 +13,69 @@ using Rdmp.Core.CommandExecution.AtomicCommands;
 using Rdmp.UI.ItemActivation;
 using Rdmp.UI.SimpleDialogs;
 using ReusableLibraryCode;
-using ReusableLibraryCode.Exceptions;
 
 
-namespace Rdmp.UI.Menus.MenuItems
+namespace Rdmp.UI.Menus.MenuItems;
+
+/// <summary>
+/// <see cref="ToolStripMenuItem"/> depicting a single <see cref="IAtomicCommand"/>
+/// </summary>
+[System.ComponentModel.DesignerCategory("")]
+public class AtomicCommandMenuItem : ToolStripMenuItem
 {
-    /// <summary>
-    /// <see cref="ToolStripMenuItem"/> depicting a single <see cref="IAtomicCommand"/>
-    /// </summary>
-    [System.ComponentModel.DesignerCategory("")]
-    public class AtomicCommandMenuItem : ToolStripMenuItem
+    private readonly IAtomicCommand _command;
+    private readonly IActivateItems _activator;
+
+    public AtomicCommandMenuItem(IAtomicCommand command,IActivateItems activator)
     {
-        private readonly IAtomicCommand _command;
-        private readonly IActivateItems _activator;
+        _command = command;
+        _activator = activator;
 
-        public AtomicCommandMenuItem(IAtomicCommand command,IActivateItems activator)
-        {
-            _command = command;
-            _activator = activator;
-
-            Text = command.GetCommandName();
-            Tag = command;
-            Image = command.GetImage(activator.CoreIconProvider)?.ImageToBitmap();
+        Text = command.GetCommandName();
+        Tag = command;
+        Image = command.GetImage(activator.CoreIconProvider)?.ImageToBitmap();
             
-            //disable if impossible command
-            Enabled = !command.IsImpossible;
+        //disable if impossible command
+        Enabled = !command.IsImpossible;
 
-            ToolTipText = command.IsImpossible ? command.ReasonCommandImpossible : command.GetCommandHelp() ?? activator.GetDocumentation(command.GetType());
-        }
+        ToolTipText = command.IsImpossible ? command.ReasonCommandImpossible : command.GetCommandHelp() ?? activator.GetDocumentation(command.GetType());
+    }
 
-        protected override void OnClick(EventArgs e)
+    protected override void OnClick(EventArgs e)
+    {
+        base.OnClick(e);
+        try
         {
-            base.OnClick(e);
-            try
-            {
-                _command.Execute();
-            }
-            catch (ImpossibleCommandException ex)
-            {
-                ExceptionViewer.Show("Command Impossible", ex.ReasonCommandImpossible);
-            }
-            catch (Exception ex)
-            {
-                var sqlException = ex.GetExceptionIfExists<SqlException>();
+            _command.Execute();
+        }
+        catch (ImpossibleCommandException ex)
+        {
+            WideMessageBox.Show("Command Impossible", ex.ReasonCommandImpossible);
+        }
+        catch (Exception ex)
+        {
+            var sqlException = ex.GetExceptionIfExists<SqlException>();
 
-                if (sqlException != null)
+            if (sqlException != null)
+            {
+                var fk = new Regex("((FK_)|(ix_))([A-Za-z_]*)");
+                var match = fk.Match(sqlException.Message);
+
+                if (match.Success)
                 {
-                    Regex fk = new Regex("((FK_)|(ix_))([A-Za-z_]*)");
-                    var match = fk.Match(sqlException.Message);
+                    var helpDict = _activator.RepositoryLocator.CatalogueRepository.CommentStore;
 
-                    if (match.Success)
+                    if (helpDict != null && helpDict.ContainsKey(match.Value))
                     {
-                        var helpDict = _activator.RepositoryLocator.CatalogueRepository.CommentStore;
-
-                        if (helpDict != null && helpDict.ContainsKey(match.Value))
-                        {
-                            ExceptionViewer.Show("Rule Broken" + Environment.NewLine + helpDict[match.Value] + Environment.NewLine + "(" + match.Value + ")",ex);
-                            return;
-                        }
+                        ExceptionViewer.Show(
+                            $"Rule Broken{Environment.NewLine}{helpDict[match.Value]}{Environment.NewLine}({match.Value})",ex);
+                        return;
                     }
                 }
-
-                ExceptionViewer.Show("Failed to execute command '" + _command.GetCommandName() + "' (Type was '" + _command.GetType().Name + "')", ex);
             }
+
+            ExceptionViewer.Show(
+                $"Failed to execute command '{_command.GetCommandName()}' (Type was '{_command.GetType().Name}')", ex);
         }
     }
 }

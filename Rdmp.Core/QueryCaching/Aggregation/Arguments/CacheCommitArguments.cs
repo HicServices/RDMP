@@ -9,31 +9,30 @@ using System.Data;
 using FAnsi.Discovery;
 using Rdmp.Core.Curation.Data.Aggregation;
 
-namespace Rdmp.Core.QueryCaching.Aggregation.Arguments
+namespace Rdmp.Core.QueryCaching.Aggregation.Arguments;
+
+public abstract class CacheCommitArguments
 {
-    public abstract class CacheCommitArguments
+    protected readonly int Timeout;
+    public AggregateOperation Operation { get; private set; }
+    public AggregateConfiguration Configuration { get; set; }
+    public string SQL { get; private set; }
+    public DataTable Results { get; private set; }
+    public DatabaseColumnRequest[] ExplicitColumns { get; private set; }
+
+    protected CacheCommitArguments(AggregateOperation operation, AggregateConfiguration configuration, string sql, DataTable results, int timeout, DatabaseColumnRequest[] explicitColumns = null)
     {
-        protected readonly int Timeout;
-        public AggregateOperation Operation { get; private set; }
-        public AggregateConfiguration Configuration { get; set; }
-        public string SQL { get; private set; }
-        public DataTable Results { get; private set; }
-        public DatabaseColumnRequest[] ExplicitColumns { get; private set; }
+        Timeout = timeout;
+        Operation = operation;
+        Configuration = configuration;
+        SQL = sql;
+        Results = results;
+        ExplicitColumns = explicitColumns;
 
-        protected CacheCommitArguments(AggregateOperation operation, AggregateConfiguration configuration, string sql, DataTable results, int timeout, DatabaseColumnRequest[] explicitColumns = null)
-        {
-            Timeout = timeout;
-            Operation = operation;
-            Configuration = configuration;
-            SQL = sql;
-            Results = results;
-            ExplicitColumns = explicitColumns;
+        if (results == null)
+            throw new Exception("DataTable results must have a value");
 
-            if (results == null)
-                throw new Exception("DataTable results must have a value");
-
-        }
-
-        public abstract void CommitTableDataCompleted(DiscoveredTable resultingTable);
     }
+
+    public abstract void CommitTableDataCompleted(DiscoveredTable resultingTable);
 }

@@ -8,65 +8,64 @@ using Rdmp.Core.DataExport.DataExtraction;
 using Rdmp.Core.DataViewing;
 using System.IO;
 
-namespace Rdmp.Core.CommandExecution.AtomicCommands
+namespace Rdmp.Core.CommandExecution.AtomicCommands;
+
+/// <summary>
+/// Abstract base class for all 'view data' style CLI compatible commands
+/// </summary>
+public abstract class ExecuteCommandViewDataBase : BasicCommandExecution
 {
+    public const string ToFileDescription = "Optional file to output the results of the query to.  Or null";
+
+    public FileInfo ToFile { get; private set; }
+
     /// <summary>
-    /// Abstract base class for all 'view data' style CLI compatible commands
+    /// Set to true to prompt user to pick a <see cref="ToFile"/> at command execution time.
     /// </summary>
-    public abstract class ExecuteCommandViewDataBase : BasicCommandExecution
+    public bool AskForFile { get; set; }
+
+    public ExecuteCommandViewDataBase(IBasicActivateItems activator, FileInfo toFile) : base(activator)
     {
-        public const string ToFileDescription = "Optional file to output the results of the query to.  Or null";
+        ToFile = toFile;
+    }
 
-        public FileInfo ToFile { get; private set; }
+    /// <summary>
+    /// Get the SQL query to run and where to run it.  Return null to cancel
+    /// data fetching.
+    /// </summary>
+    /// <returns></returns>
+    protected abstract IViewSQLAndResultsCollection GetCollection();
 
-        /// <summary>
-        /// Set to true to prompt user to pick a <see cref="ToFile"/> at command execution time.
-        /// </summary>
-        public bool AskForFile { get; set; }
 
-        public ExecuteCommandViewDataBase(IBasicActivateItems activator, FileInfo toFile) : base(activator)
+    public override void Execute()
+    {
+        base.Execute();
+
+        var collection = GetCollection();
+
+        if (collection == null)
+            return;
+
+
+        var toFile = ToFile;
+
+        if (AskForFile)
         {
-            ToFile = toFile;
+            toFile = BasicActivator.SelectFile("Save as", "Comma Separated Values", "*.csv");
+            if (toFile == null)
+            {
+                // user cancelled selecting a file
+                return;
+            }
         }
 
-        /// <summary>
-        /// Get the SQL query to run and where to run it.  Return null to cancel
-        /// data fetching.
-        /// </summary>
-        /// <returns></returns>
-        protected abstract IViewSQLAndResultsCollection GetCollection();
-
-
-        public override void Execute()
+        if (toFile != null)
         {
-            base.Execute();
-
-            var collection = GetCollection();
-
-            if (collection == null)
-                return;
-
-
-            FileInfo toFile = ToFile;
-
-            if (AskForFile)
-            {
-                toFile = BasicActivator.SelectFile("Save as", "Comma Separated Values", "*.csv");
-                if (toFile == null)
-                {
-                    // user cancelled selecting a file
-                    return;
-                }
-            }
-
-            if (toFile != null)
-            {
-                ExtractTableVerbatim.ExtractDataToFile(collection, toFile);
-            }
-            else
-            {
-                BasicActivator.ShowData(collection);
-            }
+            ExtractTableVerbatim.ExtractDataToFile(collection, toFile);
+        }
+        else
+        {
+            BasicActivator.ShowData(collection);
         }
     }
 }

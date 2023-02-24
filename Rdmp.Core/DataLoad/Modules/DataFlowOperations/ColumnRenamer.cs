@@ -11,56 +11,56 @@ using Rdmp.Core.DataFlowPipeline;
 using ReusableLibraryCode.Checks;
 using ReusableLibraryCode.Progress;
 
-namespace Rdmp.Core.DataLoad.Modules.DataFlowOperations
+namespace Rdmp.Core.DataLoad.Modules.DataFlowOperations;
+
+/// <summary>
+/// Pipeline component for renaming a single column in DataTables passing through the component.
+/// <para>Renames a column with a given name to have a new name e.g. 'mCHI' to 'CHI'</para>
+/// </summary>
+public class ColumnRenamer : IPluginDataFlowComponent<DataTable>
 {
-    /// <summary>
-    /// Pipeline component for renaming a single column in DataTables passing through the component.
-    /// <para>Renames a column with a given name to have a new name e.g. 'mCHI' to 'CHI'</para>
-    /// </summary>
-    public class ColumnRenamer : IPluginDataFlowComponent<DataTable>
+    [DemandsInitialization("Looks for a column with exactly this name", Mandatory = true)]
+    public string ColumnNameToFind { get; set; }
+
+    [DemandsInitialization("Renames the column to this name", Mandatory = true)]
+    public string ReplacementName { get; set; }
+
+
+    [DemandsInitialization("In relaxed mode the pipeline will not be crashed if the column does not appear.  Default is false i.e. the column MUST appear.", Mandatory = true, DefaultValue = false)]
+    public bool RelaxedMode { get; set; }
+
+
+
+    public DataTable ProcessPipelineData( DataTable toProcess, IDataLoadEventListener listener, GracefulCancellationToken cancellationToken)
     {
-        [DemandsInitialization("Looks for a column with exactly this name", Mandatory = true)]
-        public string ColumnNameToFind { get; set; }
+        if (!toProcess.Columns.Contains(ColumnNameToFind))
+            if (RelaxedMode)
+                return toProcess;
+            else
+                throw new InvalidOperationException(
+                    $"The column to be renamed ({ColumnNameToFind}) does not exist in the supplied data table and RelaxedMode is off. Check that this component is configured correctly, or if any upstream components are removing this column unexpectedly.");
 
-        [DemandsInitialization("Renames the column to this name", Mandatory = true)]
-        public string ReplacementName { get; set; }
+        toProcess.Columns[ColumnNameToFind].ColumnName = ReplacementName;
 
+        return toProcess;
+    }
 
-        [DemandsInitialization("In relaxed mode the pipeline will not be crashed if the column does not appear.  Default is false i.e. the column MUST appear.", Mandatory = true, DefaultValue = false)]
-        public bool RelaxedMode { get; set; }
-
-
-
-        public DataTable ProcessPipelineData( DataTable toProcess, IDataLoadEventListener listener, GracefulCancellationToken cancellationToken)
-        {
-            if (!toProcess.Columns.Contains(ColumnNameToFind))
-                if (RelaxedMode)
-                    return toProcess;
-                else
-                    throw new InvalidOperationException("The column to be renamed (" + ColumnNameToFind + ") does not exist in the supplied data table and RelaxedMode is off. Check that this component is configured correctly, or if any upstream components are removing this column unexpectedly.");
-
-            toProcess.Columns[ColumnNameToFind].ColumnName = ReplacementName;
-
-            return toProcess;
-        }
-
-        public void Dispose(IDataLoadEventListener listener, Exception pipelineFailureExceptionIfAny)
-        {
+    public void Dispose(IDataLoadEventListener listener, Exception pipelineFailureExceptionIfAny)
+    {
             
-        }
+    }
 
-        public void Abort(IDataLoadEventListener listener)
-        {
+    public void Abort(IDataLoadEventListener listener)
+    {
             
-        }
+    }
 
-        public void Check(ICheckNotifier notifier)
-        {
-            if (string.IsNullOrWhiteSpace(ColumnNameToFind))
-                notifier.OnCheckPerformed(new CheckEventArgs("No value specified for argument ColumnNameToFind",CheckResult.Fail));
+    public void Check(ICheckNotifier notifier)
+    {
+        if (string.IsNullOrWhiteSpace(ColumnNameToFind))
+            notifier.OnCheckPerformed(new CheckEventArgs("No value specified for argument ColumnNameToFind",CheckResult.Fail));
 
-            if (string.IsNullOrWhiteSpace(ReplacementName))
-                notifier.OnCheckPerformed(new CheckEventArgs("No value specified for argument ReplacementName", CheckResult.Fail));
-        }
+        if (string.IsNullOrWhiteSpace(ReplacementName))
+            notifier.OnCheckPerformed(new CheckEventArgs("No value specified for argument ReplacementName", CheckResult.Fail));
     }
 }

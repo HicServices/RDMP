@@ -10,23 +10,22 @@ using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 
-namespace Rdmp.Core.Curation.Data.Serialization
+namespace Rdmp.Core.Curation.Data.Serialization;
+
+/// <summary>
+/// JSON Contract Resolver which serializes <see cref="IDictionary"/> as two arrays (keys and values).  This
+/// allows serialization of keys which are complex types (by default json only supports string keys).
+/// </summary>
+public class DictionaryAsArrayResolver : DefaultContractResolver
 {
-    /// <summary>
-    /// JSON Contract Resolver which serializes <see cref="IDictionary"/> as two arrays (keys and values).  This
-    /// allows serialization of keys which are complex types (by default json only supports string keys).
-    /// </summary>
-    public class DictionaryAsArrayResolver : DefaultContractResolver
+    protected override JsonContract CreateContract(Type objectType)
     {
-        protected override JsonContract CreateContract(Type objectType)
+        if (objectType.GetInterfaces().Any(i => i == typeof(IDictionary) || 
+                                                (i.IsGenericType && i.GetGenericTypeDefinition() == typeof(IDictionary<,>))))
         {
-            if (objectType.GetInterfaces().Any(i => i == typeof(IDictionary) || 
-                (i.IsGenericType && i.GetGenericTypeDefinition() == typeof(IDictionary<,>))))
-            {
-                return base.CreateArrayContract(objectType);
-            }
-        
-            return base.CreateContract(objectType);
+            return base.CreateArrayContract(objectType);
         }
+        
+        return base.CreateContract(objectType);
     }
 }

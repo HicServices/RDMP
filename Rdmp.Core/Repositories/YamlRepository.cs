@@ -35,7 +35,7 @@ public class YamlRepository : MemoryDataExportRepository
     public IReadOnlyCollection<IMapsDirectlyToDatabaseTable> AllObjects => Objects.Keys.ToList().AsReadOnly();
     public DirectoryInfo Directory { get; }
 
-    object lockFs = new object();
+    private object lockFs = new();
 
     public YamlRepository(DirectoryInfo dir)
     {
@@ -450,16 +450,12 @@ public class YamlRepository : MemoryDataExportRepository
                     continue;
 
                 var valDictionary = new Dictionary<DataAccessContext, DataAccessCredentials>();
-                foreach(var credentialUsage in tableToCredentialUsage.Value)
+                foreach(var (usage, value) in tableToCredentialUsage.Value)
                 {
-                    var credential = GetObjectByIDIfExists<DataAccessCredentials>(credentialUsage.Value);
-                    DataAccessContext usage = credentialUsage.Key;
+                    var credential = GetObjectByIDIfExists<DataAccessCredentials>(value);
 
-                    // Credentials deleted on the sly
-                    if (credential == null)
-                        continue;
-                    
-                    valDictionary.Add(usage, credential);
+                    // Credentials could have been deleted on the sly
+                    if (credential != null) valDictionary.Add(usage, credential);
                 }
 
                 CredentialsDictionary.Add(table, valDictionary);
@@ -472,10 +468,10 @@ public class YamlRepository : MemoryDataExportRepository
     {
         var serializer = new Serializer();
 
-        Dictionary<int, Dictionary<DataAccessContext, int>> ids = 
+        var ids = 
             CredentialsDictionary.ToDictionary(
                 k => k.Key.ID,
-                v => v.Value.ToDictionary(k => k.Key, v => v.Value.ID));
+                v => v.Value.ToDictionary(k => k.Key, subValue => subValue.Value.ID));
 
         // save the default and the ID
         File.WriteAllText(GetCredentialsDictionaryFile(), serializer.Serialize(ids));
@@ -587,7 +583,7 @@ public class YamlRepository : MemoryDataExportRepository
         SaveCohortContainerContents(parent);
     }
 
-    class PersistCohortContainerContent
+    private class PersistCohortContainerContent
     {
         public string Type { get; set; }
         public int ID { get; set; }
@@ -617,7 +613,7 @@ public class YamlRepository : MemoryDataExportRepository
                 return new CohortContainerContent(repository.GetObjectByID<CohortAggregateContainer>(ID), Order);
             }
 
-            throw new System.Exception($"Unexpected IOrderable Type name '{Type}'");
+            throw new Exception($"Unexpected IOrderable Type name '{Type}'");
         }
     }
 
@@ -654,13 +650,14 @@ public class YamlRepository : MemoryDataExportRepository
 
     private void LoadWhereSubContainers()
     {        
-        foreach (var c in Load<FilterContainer, FilterContainer>("ExtractionFilters") ?? new())
+        foreach (var (key, value) in Load<FilterContainer, FilterContainer>("ExtractionFilters") ?? new Dictionary<FilterContainer, HashSet<FilterContainer>>())
         {
-            WhereSubContainers.Add(c.Key, new HashSet<IContainer>(c.Value));
+            WhereSubContainers.Add(key, new HashSet<IContainer>(value));
         }
-        foreach(var c in Load<AggregateFilterContainer, AggregateFilterContainer>("AggregateFilters") ?? new())
+        foreach (var (key, value) in Load<AggregateFilterContainer, AggregateFilterContainer>("AggregateFilters") ??
+                                                                           new Dictionary<AggregateFilterContainer, HashSet<AggregateFilterContainer>>())
         {
-            WhereSubContainers.Add(c.Key, new HashSet<IContainer>(c.Value));
+            WhereSubContainers.Add(key, new HashSet<IContainer>(value));
         }
     }
 

@@ -7,58 +7,57 @@
 using System;
 using MapsDirectlyToDatabaseTable;
 
-namespace Rdmp.Core.CommandExecution
+namespace Rdmp.Core.CommandExecution;
+
+/// <summary>
+/// A function which can be run to fetch instances of a given <see cref="Type"/> when required at runtime by a <see cref="CommandInvoker"/>
+/// </summary>
+public class CommandInvokerDelegate
 {
     /// <summary>
-    /// A function which can be run to fetch instances of a given <see cref="Type"/> when required at runtime by a <see cref="CommandInvoker"/>
+    /// True if the delegate automatically supplies the value without any user input e.g. <see cref="IBasicActivateItems"/>
     /// </summary>
-    public class CommandInvokerDelegate
+    public bool IsAuto { get; }
+
+    /// <summary>
+    /// The base class for which the delegate handles locating instances of e.g. <see cref="IDeleteable"/>
+    /// </summary>
+    protected readonly Type HandledType;
+
+    /// <summary>
+    /// The method to run when it is time to pick an object for the give <see cref="RequiredArgument"/>
+    /// </summary>
+    public Func<RequiredArgument,object> Run { get; }
+
+    /// <summary>
+    /// Set to true to require <see cref="HandledType"/> to exactly match candidates.  False to identify
+    /// compatible objects using <see cref="Type.IsAssignableFrom(Type?)"/>.  Defaults to false.
+    /// </summary>
+    public bool RequireExactMatch { get; internal set; }
+
+    /// <summary>
+    /// Defines a new <see cref="Type"/> which we know how to get instances at runtime to fulfill
+    /// </summary>
+    /// <param name="handledType"></param>
+    /// <param name="isAuto"></param>
+    /// <param name="run">The function to run when values are required of the <paramref name="handledType"/> during runtime</param>
+    public CommandInvokerDelegate(Type handledType, bool isAuto, Func<RequiredArgument, object> run)
     {
-        /// <summary>
-        /// True if the delegate automatically supplies the value without any user input e.g. <see cref="IBasicActivateItems"/>
-        /// </summary>
-        public bool IsAuto { get; }
+        IsAuto = isAuto;
+        Run = run;
+        HandledType = handledType;
+    }
 
-        /// <summary>
-        /// The base class for which the delegate handles locating instances of e.g. <see cref="IDeleteable"/>
-        /// </summary>
-        protected readonly Type HandledType;
+    /// <summary>
+    /// Returns true if the delegate <see cref="Run"/> function can return valid objects of the passed <see cref="Type"/>
+    /// </summary>
+    /// <param name="t">The type of object you need</param>
+    /// <returns></returns>
+    public virtual bool CanHandle(Type t)
+    {
+        if (RequireExactMatch)
+            return HandledType == t;
 
-        /// <summary>
-        /// The method to run when it is time to pick an object for the give <see cref="RequiredArgument"/>
-        /// </summary>
-        public Func<RequiredArgument,object> Run { get; }
-
-        /// <summary>
-        /// Set to true to require <see cref="HandledType"/> to exactly match candidates.  False to identify
-        /// compatible objects using <see cref="Type.IsAssignableFrom(Type?)"/>.  Defaults to false.
-        /// </summary>
-        public bool RequireExactMatch { get; internal set; }
-
-        /// <summary>
-        /// Defines a new <see cref="Type"/> which we know how to get instances at runtime to fulfill
-        /// </summary>
-        /// <param name="handledType"></param>
-        /// <param name="isAuto"></param>
-        /// <param name="run">The function to run when values are required of the <paramref name="handledType"/> during runtime</param>
-        public CommandInvokerDelegate(Type handledType, bool isAuto, Func<RequiredArgument, object> run)
-        {
-            IsAuto = isAuto;
-            Run = run;
-            HandledType = handledType;
-        }
-
-        /// <summary>
-        /// Returns true if the delegate <see cref="Run"/> function can return valid objects of the passed <see cref="Type"/>
-        /// </summary>
-        /// <param name="t">The type of object you need</param>
-        /// <returns></returns>
-        public virtual bool CanHandle(Type t)
-        {
-            if (RequireExactMatch)
-                return HandledType == t;
-
-            return HandledType.IsAssignableFrom(t);
-        }
+        return HandledType.IsAssignableFrom(t);
     }
 }

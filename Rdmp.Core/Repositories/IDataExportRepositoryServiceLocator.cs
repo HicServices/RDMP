@@ -4,13 +4,12 @@
 // RDMP is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License for more details.
 // You should have received a copy of the GNU General Public License along with RDMP. If not, see <https://www.gnu.org/licenses/>.
 
-namespace Rdmp.Core.Repositories
+namespace Rdmp.Core.Repositories;
+
+/// <summary>
+/// Interface for a class which can find the DataExportRepository database connection string
+/// </summary>
+public interface IDataExportRepositoryServiceLocator
 {
-    /// <summary>
-    /// Interface for a class which can find the DataExportRepository database connection string
-    /// </summary>
-    public interface IDataExportRepositoryServiceLocator
-    {
-        IDataExportRepository DataExportRepository { get; }
-    }
+    IDataExportRepository DataExportRepository { get; }
 }

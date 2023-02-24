@@ -18,109 +18,102 @@ using Rdmp.Core.Icons.IconProvision;
 using ReusableLibraryCode.Icons.IconProvision;
 using SixLabors.ImageSharp.PixelFormats;
 
-namespace Rdmp.Core.CommandExecution.AtomicCommands.CatalogueCreationCommands
+namespace Rdmp.Core.CommandExecution.AtomicCommands.CatalogueCreationCommands;
+
+public class ExecuteCommandCreateNewCatalogueByExecutingAnAggregateConfiguration : CatalogueCreationCommandExecution
 {
+    private AggregateConfiguration _aggregateConfiguration;
+    private ExtractableCohort _cohort;
+    private DiscoveredTable _table;
 
-    public class ExecuteCommandCreateNewCatalogueByExecutingAnAggregateConfiguration : CatalogueCreationCommandExecution
+    public ExecuteCommandCreateNewCatalogueByExecutingAnAggregateConfiguration(IBasicActivateItems activator,AggregateConfiguration ac) : base(activator)
     {
-        private AggregateConfiguration _aggregateConfiguration;
-        private ExtractableCohort _cohort;
-        private DiscoveredTable _table;
+        _aggregateConfiguration = ac;
+    }
 
-        public ExecuteCommandCreateNewCatalogueByExecutingAnAggregateConfiguration(IBasicActivateItems activator,AggregateConfiguration ac) : base(activator)
+    public override string GetCommandHelp()
+    {
+        return "Executes an existing cohort set, patient index table or graph and stores the results in a new table (which is imported as a new dataset)";
+    }
+
+    public override void Execute()
+    {
+        base.Execute();
+
+        _aggregateConfiguration ??= SelectOne<AggregateConfiguration>(BasicActivator.RepositoryLocator.CatalogueRepository);
+
+        if (_aggregateConfiguration == null)
+            return;
+
+        if (_aggregateConfiguration.IsJoinablePatientIndexTable())
         {
-            _aggregateConfiguration = ac;
-        }
-
-        public override string GetCommandHelp()
-        {
-            return "Executes an existing cohort set, patient index table or graph and stores the results in a new table (which is imported as a new dataset)";
-        }
-
-        public override void Execute()
-        {
-            base.Execute();
-
-            if (_aggregateConfiguration == null)
-                _aggregateConfiguration = SelectOne<AggregateConfiguration>(BasicActivator.RepositoryLocator.CatalogueRepository);
-
-            if (_aggregateConfiguration == null)
+            if (!BasicActivator.YesNo("Would you like to constrain the records to only those in a committed cohort?", "Cohort Records Only", out var chosen))
                 return;
 
-            if (_aggregateConfiguration.IsJoinablePatientIndexTable())
+            if (chosen)
             {
-                if (!BasicActivator.YesNo("Would you like to constrain the records to only those in a committed cohort?", "Cohort Records Only", out bool chosen))
+                _cohort = SelectOne<ExtractableCohort>(BasicActivator.RepositoryLocator.DataExportRepository);
+
+                if (_cohort == null)
                     return;
-
-                if (chosen)
-                {
-                    _cohort = SelectOne<ExtractableCohort>(BasicActivator.RepositoryLocator.DataExportRepository);
-
-                    if (_cohort == null)
-                        return;
-                }
-
-                if (_cohort != null)
-                {
-                    var externalData = _cohort.GetExternalData();
-                    if (externalData != null)
-                    {
-                        var projNumber = externalData.ExternalProjectNumber;
-                        var projs = BasicActivator.RepositoryLocator.DataExportRepository.GetAllObjects<Project>().Where(p => p.ProjectNumber == projNumber).ToArray();
-                        if (projs.Length == 1)
-                            ProjectSpecific = projs[0];
-                    }
-                }
             }
 
-            _table = SelectTable(true, "Choose destination table name");
+            var externalData = _cohort?.GetExternalData();
+            if (externalData != null)
+            {
+                var projNumber = externalData.ExternalProjectNumber;
+                var projs = BasicActivator.RepositoryLocator.DataExportRepository.GetAllObjects<Project>().Where(p => p.ProjectNumber == projNumber).ToArray();
+                if (projs.Length == 1)
+                    ProjectSpecific = projs[0];
+            }
+        }
 
-            if (_table == null)
-                return;
+        _table = SelectTable(true, "Choose destination table name");
 
-            var useCase = new CreateTableFromAggregateUseCase(_aggregateConfiguration, _cohort, _table);
+        if (_table == null)
+            return;
 
-            var runner = BasicActivator.GetPipelineRunner(new DialogArgs { 
+        var useCase = new CreateTableFromAggregateUseCase(_aggregateConfiguration, _cohort, _table);
+
+        var runner = BasicActivator.GetPipelineRunner(new DialogArgs { 
                 WindowTitle = "Create Table from AggregateConfiguration",
                 TaskDescription = "Select a Pipeline compatible with reading data from an AggregateConfiguration.  If the pipeline completes succesfully a new Catalogue will be created referencing the new table created in your database."
             }
             ,useCase, null /*TODO inject Pipeline in CLI constructor*/);
 
-            runner.PipelineExecutionFinishedsuccessfully += ui_PipelineExecutionFinishedsuccessfully;
+        runner.PipelineExecutionFinishedsuccessfully += ui_PipelineExecutionFinishedsuccessfully;
 
-            runner.Run(BasicActivator.RepositoryLocator, null, null, null);
-        }
+        runner.Run(BasicActivator.RepositoryLocator, null, null, null);
+    }
 
-        void ui_PipelineExecutionFinishedsuccessfully(object sender, PipelineEngineEventArgs args)
-        {
-            if (!_table.Exists())
-                throw new Exception("Pipeline execute succesfully but the expected table '" + _table + "' did not exist");
+    private void ui_PipelineExecutionFinishedsuccessfully(object sender, PipelineEngineEventArgs args)
+    {
+        if (!_table.Exists())
+            throw new Exception($"Pipeline execute succesfully but the expected table '{_table}' did not exist");
 
-            var importer = new TableInfoImporter(BasicActivator.RepositoryLocator.CatalogueRepository, _table);
-            importer.DoImport(out var ti,out _);
+        var importer = new TableInfoImporter(BasicActivator.RepositoryLocator.CatalogueRepository, _table);
+        importer.DoImport(out var ti,out _);
 
-            BasicActivator.CreateAndConfigureCatalogue(ti,null,"Execution of '" + _aggregateConfiguration + "' (AggregateConfiguration ID =" + _aggregateConfiguration.ID + ")",ProjectSpecific,TargetFolder);
-        }
+        BasicActivator.CreateAndConfigureCatalogue(ti,null,
+            $"Execution of '{_aggregateConfiguration}' (AggregateConfiguration ID ={_aggregateConfiguration.ID})",ProjectSpecific,TargetFolder);
+    }
 
 
-        public override Image<Rgba32> GetImage(IIconProvider iconProvider)
-        {
-            return iconProvider.GetImage(RDMPConcept.Catalogue, OverlayKind.Execute);
-        }
+    public override Image<Rgba32> GetImage(IIconProvider iconProvider)
+    {
+        return iconProvider.GetImage(RDMPConcept.Catalogue, OverlayKind.Execute);
+    }
 
-        public override IAtomicCommandWithTarget SetTarget(DatabaseEntity target)
-        {
-            base.SetTarget(target);
+    public override IAtomicCommandWithTarget SetTarget(DatabaseEntity target)
+    {
+        base.SetTarget(target);
 
-            var configuration = target as AggregateConfiguration;
-            if (configuration != null)
-                _aggregateConfiguration = configuration;
+        if (target is AggregateConfiguration configuration)
+            _aggregateConfiguration = configuration;
 
-            var cohort = target as ExtractableCohort;
-            if (cohort != null)
-                _cohort = cohort;
+        if (target is ExtractableCohort cohort)
+            _cohort = cohort;
 
-            return this;
-        }
+        return this;
     }
 }

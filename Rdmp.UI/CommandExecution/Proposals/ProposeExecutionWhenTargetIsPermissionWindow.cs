@@ -8,35 +8,32 @@ using Rdmp.Core.CommandExecution;
 using Rdmp.Core.CommandExecution.AtomicCommands;
 using Rdmp.Core.CommandExecution.Combining;
 using Rdmp.Core.Curation.Data;
-using Rdmp.UI.CommandExecution.AtomicCommands;
 using Rdmp.UI.DataLoadUIs.LoadMetadataUIs.LoadProgressAndCacheUIs;
 using Rdmp.UI.ItemActivation;
 
-namespace Rdmp.UI.CommandExecution.Proposals
+namespace Rdmp.UI.CommandExecution.Proposals;
+
+internal class ProposeExecutionWhenTargetIsPermissionWindow : RDMPCommandExecutionProposal<PermissionWindow>
 {
-    class ProposeExecutionWhenTargetIsPermissionWindow : RDMPCommandExecutionProposal<PermissionWindow>
+    public ProposeExecutionWhenTargetIsPermissionWindow(IActivateItems itemActivator) : base(itemActivator)
     {
-        public ProposeExecutionWhenTargetIsPermissionWindow(IActivateItems itemActivator) : base(itemActivator)
-        {
-        }
+    }
 
-        public override bool CanActivate(PermissionWindow target)
-        {
-            return true;
-        }
+    public override bool CanActivate(PermissionWindow target)
+    {
+        return true;
+    }
 
-        public override void Activate(PermissionWindow target)
-        {
-            ItemActivator.Activate<PermissionWindowUI, PermissionWindow>(target);
-        }
+    public override void Activate(PermissionWindow target)
+    {
+        ItemActivator.Activate<PermissionWindowUI, PermissionWindow>(target);
+    }
 
-        public override ICommandExecution ProposeExecution(ICombineToMakeCommand cmd, PermissionWindow target, InsertOption insertOption = InsertOption.Default)
-        {
-            var cacheProgressCommand = cmd as CacheProgressCombineable;
-            if(cacheProgressCommand != null)
-                return new ExecuteCommandSetPermissionWindow(ItemActivator,cacheProgressCommand.CacheProgress).SetTarget(target);
+    public override ICommandExecution ProposeExecution(ICombineToMakeCommand cmd, PermissionWindow target, InsertOption insertOption = InsertOption.Default)
+    {
+        if(cmd is CacheProgressCombineable cacheProgressCommand)
+            return new ExecuteCommandSetPermissionWindow(ItemActivator,cacheProgressCommand.CacheProgress).SetTarget(target);
 
-            return null;
-        }
+        return null;
     }
 }

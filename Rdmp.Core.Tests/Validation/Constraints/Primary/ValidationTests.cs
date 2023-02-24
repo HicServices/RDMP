@@ -7,15 +7,14 @@
 using NUnit.Framework;
 using Tests.Common;
 
-namespace Rdmp.Core.Tests.Validation.Constraints.Primary
-{
-    class ValidationTests : UnitTests
-    {
-        [OneTimeSetUp]
-        public void SetupMEFForValidator()
-        {
-            SetupMEF();
-        }
+namespace Rdmp.Core.Tests.Validation.Constraints.Primary;
 
+internal class ValidationTests : UnitTests
+{
+    [OneTimeSetUp]
+    public void SetupMEFForValidator()
+    {
+        SetupMEF();
     }
+
 }

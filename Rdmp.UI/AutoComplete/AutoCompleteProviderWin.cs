@@ -11,83 +11,82 @@ using FAnsi.Discovery.QuerySyntax;
 using Rdmp.Core.Autocomplete;
 using ScintillaNET;
 
-namespace Rdmp.UI.AutoComplete
+namespace Rdmp.UI.AutoComplete;
+
+/// <summary>
+/// Provides autocomplete handling and event hooking for <see cref="Scintilla"/> control
+/// </summary>
+public class AutoCompleteProviderWin : AutoCompleteProvider
 {
-    /// <summary>
-    /// Provides autocomplete handling and event hooking for <see cref="Scintilla"/> control
-    /// </summary>
-    public class AutoCompleteProviderWin : AutoCompleteProvider
+    public AutoCompleteProviderWin(IQuerySyntaxHelper helper) : base(helper)
     {
-        public AutoCompleteProviderWin(IQuerySyntaxHelper helper) : base(helper)
-        {
-        }
+    }
 
-        private char Separator = ';';
+    private char Separator = ';';
 
-        public void RegisterForEvents(Scintilla queryEditor)
+    public void RegisterForEvents(Scintilla queryEditor)
+    {
+        queryEditor.KeyDown += (s, e) =>
         {
-            queryEditor.KeyDown += (s, e) =>
+            if (e.KeyCode == Keys.Space && e.Control)
             {
-                if (e.KeyCode == Keys.Space && e.Control)
-                {
-                    e.SuppressKeyPress = true;
-                    ShowAutocomplete(queryEditor, true);
-                }
-            };
+                e.SuppressKeyPress = true;
+                ShowAutocomplete(queryEditor, true);
+            }
+        };
             
-            queryEditor.AutoCSeparator = Separator;
-            queryEditor.CharAdded += scintilla_CharAdded;
-            queryEditor.AutoCIgnoreCase = true;
-            queryEditor.AutoCOrder = Order.Custom;
-            queryEditor.AutoCAutoHide = false;
+        queryEditor.AutoCSeparator = Separator;
+        queryEditor.CharAdded += scintilla_CharAdded;
+        queryEditor.AutoCIgnoreCase = true;
+        queryEditor.AutoCOrder = Order.Custom;
+        queryEditor.AutoCAutoHide = false;
 
-            for (int i = 0; i < Images.Length; i++)
-            {
-                queryEditor.RegisterRgbaImage(i, Images[i].ImageToBitmap());
-            }
-        }
-
-        private void scintilla_CharAdded(object sender, CharAddedEventArgs e)
+        for (var i = 0; i < Images.Length; i++)
         {
-            if (sender is not Scintilla scintilla)
-                return;
+            queryEditor.RegisterRgbaImage(i, Images[i].ImageToBitmap());
+        }
+    }
+
+    private void scintilla_CharAdded(object sender, CharAddedEventArgs e)
+    {
+        if (sender is not Scintilla scintilla)
+            return;
             
-            ShowAutocomplete(scintilla,false);
-        }
+        ShowAutocomplete(scintilla,false);
+    }
 
-        private void ShowAutocomplete(Scintilla scintilla,bool all)
-        {
-            // Find the word start
-            string word = scintilla.GetWordFromPosition(scintilla.CurrentPosition)?.Trim();
+    private void ShowAutocomplete(Scintilla scintilla,bool all)
+    {
+        // Find the word start
+        var word = scintilla.GetWordFromPosition(scintilla.CurrentPosition)?.Trim();
             
-            if (string.IsNullOrWhiteSpace(word) && !all)
-            {
-                scintilla.AutoCCancel();
-                return;
-            }
-
-            var list = Items.Distinct()
-                .Where(s => !string.IsNullOrWhiteSpace(s) && s.Contains(word,StringComparison.CurrentCultureIgnoreCase))
-                .OrderBy(a => a);
-
-            if(!list.Any())
-            {
-                scintilla.AutoCCancel();
-                return;
-            }
-
-            // Display the autocompletion list
-            scintilla.AutoCShow(word.Length, string.Join(Separator, list.Select(FormatForAutocomplete)));
-        }
-
-        private string FormatForAutocomplete(string word)
+        if (string.IsNullOrWhiteSpace(word) && !all)
         {
-            if(ItemsWithImages.ContainsKey(word))
-            {
-                return $"{word}?{ItemsWithImages[word]}";
-            }
-
-            return word;
+            scintilla.AutoCCancel();
+            return;
         }
+
+        var list = Items.Distinct()
+            .Where(s => !string.IsNullOrWhiteSpace(s) && s.Contains(word,StringComparison.CurrentCultureIgnoreCase))
+            .OrderBy(a => a);
+
+        if(!list.Any())
+        {
+            scintilla.AutoCCancel();
+            return;
+        }
+
+        // Display the autocompletion list
+        scintilla.AutoCShow(word.Length, string.Join(Separator, list.Select(FormatForAutocomplete)));
+    }
+
+    private string FormatForAutocomplete(string word)
+    {
+        if(ItemsWithImages.ContainsKey(word))
+        {
+            return $"{word}?{ItemsWithImages[word]}";
+        }
+
+        return word;
     }
 }

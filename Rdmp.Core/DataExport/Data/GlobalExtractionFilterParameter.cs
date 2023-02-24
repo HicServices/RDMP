@@ -17,152 +17,148 @@ using Rdmp.Core.QueryBuilding.SyntaxChecking;
 using Rdmp.Core.Repositories;
 using ReusableLibraryCode.Checks;
 
-namespace Rdmp.Core.DataExport.Data
+namespace Rdmp.Core.DataExport.Data;
+
+/// <summary>
+/// Sometimes you want to define global parameters that apply to an entire ExtractionConfiguration and all the Catalogues/ExtractableDataSets within it.  For example you might
+/// want to define @studyStartWindow and @studyEndWindow as global parameters which can be used to restrict the extraction window of each dataset.  GlobalExtractionFilterParameters
+/// are created and assocaited with a single ExtractionConfiguration after which they are available for use in all DeployedExtractionFilters of all datasets within the configuration.
+/// 
+/// <para>It also means you have a single point you can change the parameter if you need to adjust it later on.</para>
+/// </summary>
+public class GlobalExtractionFilterParameter : DatabaseEntity, ISqlParameter, IInjectKnown<IQuerySyntaxHelper>
 {
-    /// <summary>
-    /// Sometimes you want to define global parameters that apply to an entire ExtractionConfiguration and all the Catalogues/ExtractableDataSets within it.  For example you might
-    /// want to define @studyStartWindow and @studyEndWindow as global parameters which can be used to restrict the extraction window of each dataset.  GlobalExtractionFilterParameters
-    /// are created and assocaited with a single ExtractionConfiguration after which they are available for use in all DeployedExtractionFilters of all datasets within the configuration.
-    /// 
-    /// <para>It also means you have a single point you can change the parameter if you need to adjust it later on.</para>
-    /// </summary>
-    public class GlobalExtractionFilterParameter : DatabaseEntity, ISqlParameter, IInjectKnown<IQuerySyntaxHelper>
+    /// <inheritdoc/>
+    [NoMappingToDatabase]
+    public string ParameterName => QuerySyntaxHelper.GetParameterNameFromDeclarationSQL(ParameterSQL);
+
+    #region Database Properties
+    private string _parameterSQL;
+    private string _value;
+    private string _comment;
+    private int _extractionConfiguration_ID;
+
+    /// <inheritdoc/>
+    [Sql]
+    public string ParameterSQL
     {
-        /// <inheritdoc/>
-        [NoMappingToDatabase]
-        public string ParameterName
-        {
-            get { return QuerySyntaxHelper.GetParameterNameFromDeclarationSQL(ParameterSQL); }
-        }
+        get => _parameterSQL;
+        set => SetField(ref _parameterSQL, value);
+    }
 
-        #region Database Properties
-        private string _parameterSQL;
-        private string _value;
-        private string _comment;
-        private int _extractionConfiguration_ID;
+    /// <inheritdoc/>
+    public string Value
+    {
+        get => _value;
+        set => SetField(ref _value, value);
+    }
 
-        /// <inheritdoc/>
-        [Sql]
-        public string ParameterSQL
-        {
-            get { return _parameterSQL; }
-            set { SetField(ref _parameterSQL, value); }
-        }
+    /// <inheritdoc/>
+    public string Comment
+    {
+        get => _comment;
+        set => SetField(ref _comment, value);
+    }
 
-        /// <inheritdoc/>
-        public string Value
-        {
-            get { return _value; }
-            set { SetField(ref _value, value); }
-        }
+    /// <summary>
+    /// Which <see cref="ExtractionConfiguration"/> the parameter is declared on.  This parameter will be available for referencing in any <see cref="ISelectedDataSets"/> which
+    /// are part of the configuration.
+    /// </summary>
+    public int ExtractionConfiguration_ID
+    {
+        get => _extractionConfiguration_ID;
+        set => SetField(ref _extractionConfiguration_ID, value);
+    }
 
-        /// <inheritdoc/>
-        public string Comment
-        {
-            get { return _comment; }
-            set { SetField(ref _comment, value); }
-        }
+    #endregion
 
-        /// <summary>
-        /// Which <see cref="ExtractionConfiguration"/> the parameter is declared on.  This parameter will be available for referencing in any <see cref="ISelectedDataSets"/> which
-        /// are part of the configuration.
-        /// </summary>
-        public int ExtractionConfiguration_ID
-        {
-            get { return _extractionConfiguration_ID; }
-            set { SetField(ref _extractionConfiguration_ID, value); }
-        }
-
-        #endregion
-
-        #region Relationships
+    #region Relationships
         
-        /// <inheritdoc cref="ExtractionConfiguration_ID"/>
-        [NoMappingToDatabase]
-        public ExtractionConfiguration ExtractionConfiguration { get{return Repository.GetObjectByID<ExtractionConfiguration>(ExtractionConfiguration_ID);} }
+    /// <inheritdoc cref="ExtractionConfiguration_ID"/>
+    [NoMappingToDatabase]
+    public ExtractionConfiguration ExtractionConfiguration => Repository.GetObjectByID<ExtractionConfiguration>(ExtractionConfiguration_ID);
 
-        #endregion
+    #endregion
 
-        public GlobalExtractionFilterParameter()
+    public GlobalExtractionFilterParameter()
+    {
+        ClearAllInjections();
+    }
+
+    /// <summary>
+    /// Creates a new parameter into the <paramref name="repository"/> database acting as a global parameter for all <see cref="ISelectedDataSets"/> in the <paramref name="configuration"/>
+    /// </summary>
+    /// <param name="repository"></param>
+    /// <param name="configuration"></param>
+    /// <param name="parameterSQL"></param>
+    public GlobalExtractionFilterParameter(IDataExportRepository repository, ExtractionConfiguration configuration, string parameterSQL)
+    {
+        Repository = repository;
+
+        Repository.InsertAndHydrate(this, new Dictionary<string, object>
         {
-            ClearAllInjections();
-        }
-
-        /// <summary>
-        /// Creates a new parameter into the <paramref name="repository"/> database acting as a global parameter for all <see cref="ISelectedDataSets"/> in the <paramref name="configuration"/>
-        /// </summary>
-        /// <param name="repository"></param>
-        /// <param name="configuration"></param>
-        /// <param name="parameterSQL"></param>
-        public GlobalExtractionFilterParameter(IDataExportRepository repository, ExtractionConfiguration configuration, string parameterSQL)
-        {
-            Repository = repository;
-
-            Repository.InsertAndHydrate(this, new Dictionary<string, object>
-            {
-                {"ParameterSQL", parameterSQL},
-                {"ExtractionConfiguration_ID", configuration.ID}
-            });
-        }
+            {"ParameterSQL", parameterSQL},
+            {"ExtractionConfiguration_ID", configuration.ID}
+        });
+    }
 
 
-        /// <summary>
-        /// Reads an existing instance out of the database
-        /// </summary>
-        /// <param name="repository"></param>
-        /// <param name="r"></param>
-        internal GlobalExtractionFilterParameter(IDataExportRepository repository, DbDataReader r)
-            : base(repository, r)
-        {
-            Value = r["Value"] as string;
-            ExtractionConfiguration_ID = (int)r["ExtractionConfiguration_ID"];
-            ParameterSQL = r["ParameterSQL"] as string;
-            Comment = r["Comment"] as string;
-        }
+    /// <summary>
+    /// Reads an existing instance out of the database
+    /// </summary>
+    /// <param name="repository"></param>
+    /// <param name="r"></param>
+    internal GlobalExtractionFilterParameter(IDataExportRepository repository, DbDataReader r)
+        : base(repository, r)
+    {
+        Value = r["Value"] as string;
+        ExtractionConfiguration_ID = (int)r["ExtractionConfiguration_ID"];
+        ParameterSQL = r["ParameterSQL"] as string;
+        Comment = r["Comment"] as string;
+    }
 
-        /// <summary>
-        /// Returns <see cref="ParameterName"/>
-        /// </summary>
-        /// <returns></returns>
-        public override string ToString()
-        {
-            return ParameterName + " = " + Value;
-        }
+    /// <summary>
+    /// Returns <see cref="ParameterName"/>
+    /// </summary>
+    /// <returns></returns>
+    public override string ToString()
+    {
+        return $"{ParameterName} = {Value}";
+    }
 
 
-        /// <inheritdoc/>
-        public void Check(ICheckNotifier notifier)
-        {
-            new ParameterSyntaxChecker(this).Check(notifier);
-        }
+    /// <inheritdoc/>
+    public void Check(ICheckNotifier notifier)
+    {
+        new ParameterSyntaxChecker(this).Check(notifier);
+    }
 
-        /// <inheritdoc/>
-        public IQuerySyntaxHelper GetQuerySyntaxHelper()
-        {
-            if (_syntaxHelper == null)
-                throw new NotSupportedException("Global extraction parameters are multi database type (depending on which ExtractableDataSet they are being used with)");
+    /// <inheritdoc/>
+    public IQuerySyntaxHelper GetQuerySyntaxHelper()
+    {
+        if (_syntaxHelper == null)
+            throw new NotSupportedException("Global extraction parameters are multi database type (depending on which ExtractableDataSet they are being used with)");
 
-            return _syntaxHelper;
-        }
+        return _syntaxHelper;
+    }
 
-        /// <inheritdoc/>
-        public IMapsDirectlyToDatabaseTable GetOwnerIfAny()
-        {
-            return ExtractionConfiguration;
-        }
+    /// <inheritdoc/>
+    public IMapsDirectlyToDatabaseTable GetOwnerIfAny()
+    {
+        return ExtractionConfiguration;
+    }
 
-        private IQuerySyntaxHelper _syntaxHelper;
+    private IQuerySyntaxHelper _syntaxHelper;
 
-        /// <inheritdoc/>
-        public void InjectKnown(IQuerySyntaxHelper instance)
-        {
-            _syntaxHelper = instance;
-        }
+    /// <inheritdoc/>
+    public void InjectKnown(IQuerySyntaxHelper instance)
+    {
+        _syntaxHelper = instance;
+    }
 
-        /// <inheritdoc/>
-        public void ClearAllInjections()
-        {
-            _syntaxHelper = null;
-        }
+    /// <inheritdoc/>
+    public void ClearAllInjections()
+    {
+        _syntaxHelper = null;
     }
 }

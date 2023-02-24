@@ -9,87 +9,86 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 
-namespace ReusableLibraryCode.Progress
+namespace ReusableLibraryCode.Progress;
+
+/// <summary>
+/// IDataLoadEventListener which records all OnNotify and all novel OnProgress messages in memory (in Dictionaries where the key is component which
+/// sent the message).  You can optionally respond to OnNotify events where the ProgressEventType is Error by throwing an Exception.
+/// 
+/// <para>The typical use case for this is for testing to ensure that components log specific messages.</para>
+/// </summary>
+public class ToMemoryDataLoadEventListener:IDataLoadEventListener
 {
-    /// <summary>
-    /// IDataLoadEventListener which records all OnNotify and all novel OnProgress messages in memory (in Dictionaries where the key is component which
-    /// sent the message).  You can optionally respond to OnNotify events where the ProgressEventType is Error by throwing an Exception.
-    /// 
-    /// <para>The typical use case for this is for testing to ensure that components log specific messages.</para>
-    /// </summary>
-    public class ToMemoryDataLoadEventListener:IDataLoadEventListener
+    private readonly bool _throwOnErrorEvents;
+    public Dictionary<object,List<NotifyEventArgs>> EventsReceivedBySender = new();
+    public Dictionary<string,ProgressEventArgs> LastProgressRecieivedByTaskName = new();
+
+    public ToMemoryDataLoadEventListener(bool throwOnErrorEvents)
     {
-        private readonly bool _throwOnErrorEvents;
-        public Dictionary<object,List<NotifyEventArgs>> EventsReceivedBySender = new Dictionary<object, List<NotifyEventArgs>>();
-        public Dictionary<string,ProgressEventArgs> LastProgressRecieivedByTaskName = new Dictionary<string, ProgressEventArgs>();
+        _throwOnErrorEvents = throwOnErrorEvents;
+    }
 
-        public ToMemoryDataLoadEventListener(bool throwOnErrorEvents)
-        {
-            _throwOnErrorEvents = throwOnErrorEvents;
-        }
+    public void OnNotify(object sender, NotifyEventArgs e)
+    {
 
-        public void OnNotify(object sender, NotifyEventArgs e)
-        {
-
-            if(e.ProgressEventType == ProgressEventType.Error && _throwOnErrorEvents)
-                if (e.Exception != null)
-                    throw e.Exception;
-                else
-                    throw new Exception(e.Message);
-
-
-            if(!EventsReceivedBySender.ContainsKey(sender))
-                EventsReceivedBySender.Add(sender,new List<NotifyEventArgs>());
-
-            EventsReceivedBySender[sender].Add(e);
-        }
-
-        public void OnProgress(object sender, ProgressEventArgs e)
-        {
-            if (!LastProgressRecieivedByTaskName.ContainsKey(e.TaskDescription))
-                LastProgressRecieivedByTaskName.Add(e.TaskDescription, e);//add progress on new item
+        if(e.ProgressEventType == ProgressEventType.Error && _throwOnErrorEvents)
+            if (e.Exception != null)
+                throw e.Exception;
             else
-                LastProgressRecieivedByTaskName[e.TaskDescription] = e;//replace last progress
-        }
+                throw new Exception(e.Message);
 
-        public override string ToString()
+
+        if(!EventsReceivedBySender.ContainsKey(sender))
+            EventsReceivedBySender.Add(sender,new List<NotifyEventArgs>());
+
+        EventsReceivedBySender[sender].Add(e);
+    }
+
+    public void OnProgress(object sender, ProgressEventArgs e)
+    {
+        if (!LastProgressRecieivedByTaskName.ContainsKey(e.TaskDescription))
+            LastProgressRecieivedByTaskName.Add(e.TaskDescription, e);//add progress on new item
+        else
+            LastProgressRecieivedByTaskName[e.TaskDescription] = e;//replace last progress
+    }
+
+    public override string ToString()
+    {
+        var sb = new StringBuilder();
+
+        foreach (var kvp in EventsReceivedBySender)
         {
-            StringBuilder sb = new StringBuilder();
+            sb.AppendLine($"{kvp.Key} Messages:");
+            foreach (var msg in kvp.Value)
+                sb.AppendLine($"{msg.ProgressEventType}:{msg.Message}");
 
-            foreach (KeyValuePair<object, List<NotifyEventArgs>> kvp in EventsReceivedBySender)
-            {
-                sb.AppendLine(kvp.Key + " Messages:");
-                foreach (var msg in kvp.Value)
-                    sb.AppendLine(msg.ProgressEventType +":"+ msg.Message);
-
-            }
-
-            foreach (var kvp in LastProgressRecieivedByTaskName)
-                sb.AppendLine(kvp.Key + " " + kvp.Value.Progress.Value + " " + kvp.Value.Progress.UnitOfMeasurement);
-
-            return sb.ToString();
         }
 
-        /// <summary>
-        /// Flattens EventsReceivedBySender and returns the result as a Dictionary by ProgressEventType (Error / Warning etc)
-        /// </summary>
-        /// <returns></returns>
-        public Dictionary<ProgressEventType,List<NotifyEventArgs>> GetAllMessagesByProgressEventType()
-        {
-            Dictionary<ProgressEventType,List<NotifyEventArgs>> toReturn = new Dictionary<ProgressEventType,List<NotifyEventArgs>>();
+        foreach (var kvp in LastProgressRecieivedByTaskName)
+            sb.AppendLine($"{kvp.Key} {kvp.Value.Progress.Value} {kvp.Value.Progress.UnitOfMeasurement}");
 
-            foreach (ProgressEventType e in Enum.GetValues(typeof(ProgressEventType)))
-                toReturn.Add(e,new List<NotifyEventArgs>());
+        return sb.ToString();
+    }
 
-            foreach (NotifyEventArgs eventArgs in EventsReceivedBySender.Values.SelectMany(a => a))
-                toReturn[eventArgs.ProgressEventType].Add(eventArgs);
+    /// <summary>
+    /// Flattens EventsReceivedBySender and returns the result as a Dictionary by ProgressEventType (Error / Warning etc)
+    /// </summary>
+    /// <returns></returns>
+    public Dictionary<ProgressEventType,List<NotifyEventArgs>> GetAllMessagesByProgressEventType()
+    {
+        var toReturn = new Dictionary<ProgressEventType,List<NotifyEventArgs>>();
 
-            return toReturn;
-        }
+        foreach (ProgressEventType e in Enum.GetValues(typeof(ProgressEventType)))
+            toReturn.Add(e,new List<NotifyEventArgs>());
 
-        public ProgressEventType GetWorst()
-        {
-            return EventsReceivedBySender.Values.Max(v=>v.Max(e=>e.ProgressEventType));
-        }
+        foreach (var eventArgs in EventsReceivedBySender.Values.SelectMany(a => a))
+            toReturn[eventArgs.ProgressEventType].Add(eventArgs);
+
+        return toReturn;
+    }
+
+    public ProgressEventType GetWorst()
+    {
+        return EventsReceivedBySender.Values.Max(v=>v.Max(e=>e.ProgressEventType));
     }
 }

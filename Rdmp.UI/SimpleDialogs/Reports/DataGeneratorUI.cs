@@ -11,91 +11,92 @@ using System.Windows.Forms;
 using BadMedicine;
 using BadMedicine.Datasets;
 
-namespace Rdmp.UI.SimpleDialogs.Reports
+namespace Rdmp.UI.SimpleDialogs.Reports;
+
+/// <summary>
+/// Part of GenerateTestDataUI  (See GenerateTestDataUI).  This control lets you decide how many records in the dataset to create.  This data is fictional although it is designed to look
+/// semi real and exhibit peculiarities common to medical records.  The slider is exponential so if you drag it all the way to the top expect to wait for a weekend for it to generate
+/// all the data.
+/// </summary>
+public partial class DataGeneratorUI : UserControl
 {
-    /// <summary>
-    /// Part of GenerateTestDataUI  (See GenerateTestDataUI).  This control lets you decide how many records in the dataset to create.  This data is fictional although it is designed to look
-    /// semi real and exhibit peculiarities common to medical records.  The slider is exponential so if you drag it all the way to the top expect to wait for a weekend for it to generate
-    /// all the data.
-    /// </summary>
-    public partial class DataGeneratorUI : UserControl
+
+    public DataGeneratorUI()
     {
+        InitializeComponent();
+        trackBar1.LargeChange = 1;
+        cbGenerate.Checked = true;
+    }
 
-        public DataGeneratorUI()
+    public IDataGenerator Generator
+    {
+        get => _generator;
+        set
         {
-            InitializeComponent();
-            trackBar1.LargeChange = 1;
-            cbGenerate.Checked = true;
+            _generator = value;
+
+            if(value != null)
+                value.RowsGenerated += ValueOnRowsGenerated;
+
+            cbGenerate.Text = value != null ? value.GetType().Name:"";
         }
-
-        public IDataGenerator Generator
-        {
-            get { return _generator; }
-            set
-            {
-                _generator = value;
-
-                if(value != null)
-                    value.RowsGenerated += ValueOnRowsGenerated;
-
-                cbGenerate.Text = value != null ? value.GetType().Name:"";
-            }
-        }
+    }
         
-        public int GetSize()
-        {
-            return 10* (int)Math.Pow(10, trackBar1.Value);
-        }
+    public int GetSize()
+    {
+        return 10* (int)Math.Pow(10, trackBar1.Value);
+    }
 
-        int sizeAtBeginGeneration = -1;
-        public Thread Thread;
-        private IDataGenerator _generator;
-        public event Action TrackBarMouseUp;
-        public event Action Completed;
+    private int sizeAtBeginGeneration = -1;
+    public Thread Thread;
+    private IDataGenerator _generator;
+    public event Action TrackBarMouseUp;
+    public event Action Completed;
 
-        public void BeginGeneration(IPersonCollection cohort, DirectoryInfo target)
-        {
-            //already running
-            if(sizeAtBeginGeneration != -1)
-                return;
+    public void BeginGeneration(IPersonCollection cohort, DirectoryInfo target)
+    {
+        //already running
+        if(sizeAtBeginGeneration != -1)
+            return;
 
-            sizeAtBeginGeneration = GetSize();
+        sizeAtBeginGeneration = GetSize();
 
-            var fi = new FileInfo(Path.Combine(target.FullName, Generator.GetType().Name + ".csv"));
+        var fi = new FileInfo(Path.Combine(target.FullName, $"{Generator.GetType().Name}.csv"));
 
-            Thread = new Thread(() => Generator.GenerateTestDataFile(cohort, fi, sizeAtBeginGeneration));
-            Thread.Start();
+        Thread = new Thread(() => Generator.GenerateTestDataFile(cohort, fi, sizeAtBeginGeneration));
+        Thread.Start();
 
-        }
+    }
         
-        private void ValueOnRowsGenerated(object sender, RowsGeneratedEventArgs e)
+    private void ValueOnRowsGenerated(object sender, RowsGeneratedEventArgs e)
+    {
+        if (InvokeRequired)
         {
-            if (InvokeRequired)
-            {
-                Invoke(new MethodInvoker(() => ValueOnRowsGenerated(sender, e)));
-                return;
-            }
-
-            double percentProgress = e.RowsWritten/(double)sizeAtBeginGeneration * 100.0;
-            progressBar1.Value = (int)percentProgress;
-
-            if (e.IsFinished)
-                if (Completed != null)
-                    Completed();
+            Invoke(new MethodInvoker(() => ValueOnRowsGenerated(sender, e)));
+            return;
         }
 
-        private void trackBar1_MouseUp(object sender, MouseEventArgs e)
-        {
-            if (TrackBarMouseUp != null)
-                TrackBarMouseUp();
-        }
+        var percentProgress = e.RowsWritten/(double)sizeAtBeginGeneration * 100.0;
+        progressBar1.Value = (int)percentProgress;
 
-        public bool Generate { get {return cbGenerate.Checked;} set{cbGenerate.Checked = value;} }
+        if (e.IsFinished)
+            if (Completed != null)
+                Completed();
+    }
 
-        private void CbGenerate_CheckedChanged(object sender, EventArgs e)
-        {
-            trackBar1.Enabled = Generate;
-            progressBar1.Enabled = Generate;
-        }
+    private void trackBar1_MouseUp(object sender, MouseEventArgs e)
+    {
+        if (TrackBarMouseUp != null)
+            TrackBarMouseUp();
+    }
+
+    public bool Generate { get => cbGenerate.Checked;
+        set => cbGenerate.Checked = value;
+    }
+
+    private void CbGenerate_CheckedChanged(object sender, EventArgs e)
+    {
+        trackBar1.Enabled = Generate;
+        progressBar1.Enabled = Generate;
     }
 }

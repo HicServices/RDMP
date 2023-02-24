@@ -10,52 +10,48 @@ using System.Linq;
 using System.Text.RegularExpressions;
 using NUnit.Framework;
 using Rdmp.Core.DataFlowPipeline;
-using Rdmp.Core.DataLoad.Engine.Job;
 using Rdmp.Core.DataLoad.Modules.DataFlowOperations;
 using ReusableLibraryCode.Progress;
 
-namespace Rdmp.Core.Tests.DataLoad.Modules.DataFlowOperations
+namespace Rdmp.Core.Tests.DataLoad.Modules.DataFlowOperations;
+
+internal class SetNullTests
 {
-    class SetNullTests
+    [Test]
+    public void TestSetNull_OneCell()
     {
-        [Test]
-        public void TestSetNull_OneCell()
-        {
-            var operation = new SetNull();
-            operation.ColumnNameToFind = "b";
-            operation.NullCellsWhereValuesMatch = new Regex("^cat$");
+        var operation = new SetNull();
+        operation.ColumnNameToFind = "b";
+        operation.NullCellsWhereValuesMatch = new Regex("^cat$");
 
-            using (var dt = new DataTable())
-            {
-                dt.Columns.Add("a");
-                dt.Columns.Add("b");
+        using var dt = new DataTable();
+        dt.Columns.Add("a");
+        dt.Columns.Add("b");
 
-                dt.Rows.Add("cat", "cat");
-                dt.Rows.Add("dog", "dog");
-                dt.Rows.Add("cat", "dog");
+        dt.Rows.Add("cat", "cat");
+        dt.Rows.Add("dog", "dog");
+        dt.Rows.Add("cat", "dog");
 
-                var listener = new ToMemoryDataLoadEventListener(true);
+        var listener = new ToMemoryDataLoadEventListener(true);
 
-                var result = operation.ProcessPipelineData(dt,listener , new GracefulCancellationToken());
+        var result = operation.ProcessPipelineData(dt,listener , new GracefulCancellationToken());
 
-                Assert.AreEqual(3,result.Rows.Count);
+        Assert.AreEqual(3,result.Rows.Count);
 
-                Assert.AreEqual("cat",result.Rows[0]["a"]);
-                Assert.AreEqual(DBNull.Value,result.Rows[0]["b"]);
+        Assert.AreEqual("cat",result.Rows[0]["a"]);
+        Assert.AreEqual(DBNull.Value,result.Rows[0]["b"]);
 
-                Assert.AreEqual("dog",result.Rows[1]["a"]);
-                Assert.AreEqual("dog",result.Rows[1]["b"]);
+        Assert.AreEqual("dog",result.Rows[1]["a"]);
+        Assert.AreEqual("dog",result.Rows[1]["b"]);
 
-                Assert.AreEqual("cat",result.Rows[2]["a"]);
-                Assert.AreEqual("dog",result.Rows[2]["b"]);
+        Assert.AreEqual("cat",result.Rows[2]["a"]);
+        Assert.AreEqual("dog",result.Rows[2]["b"]);
 
-                operation.Dispose(listener,null);
+        operation.Dispose(listener,null);
 
-                var msg = listener.EventsReceivedBySender[operation].Single();
+        var msg = listener.EventsReceivedBySender[operation].Single();
 
-                Assert.AreEqual(ProgressEventType.Warning,msg.ProgressEventType);
-                Assert.AreEqual("Total SetNull operations for ColumnNameToFind 'b' was 1",msg.Message);
-            }
-        }
+        Assert.AreEqual(ProgressEventType.Warning,msg.ProgressEventType);
+        Assert.AreEqual("Total SetNull operations for ColumnNameToFind 'b' was 1",msg.Message);
     }
 }

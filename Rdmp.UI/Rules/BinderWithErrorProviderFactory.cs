@@ -9,43 +9,41 @@ using System.Linq;
 using System.Windows.Forms;
 using MapsDirectlyToDatabaseTable;
 using MapsDirectlyToDatabaseTable.Attributes;
-using Rdmp.Core.Curation.Data;
 using Rdmp.UI.ItemActivation;
 using ReusableLibraryCode.Annotations;
 
-namespace Rdmp.UI.Rules
+namespace Rdmp.UI.Rules;
+
+/// <summary>
+/// Factory for generating <see cref="Binding"/>s for a <see cref="Control"/> and automatically configuring error providers based on
+/// whether the bound property has relevant attributes (e.g. <see cref="UniqueAttribute"/>, <see cref="NotNullAttribute"/>).
+/// </summary>
+public class BinderWithErrorProviderFactory
 {
-    /// <summary>
-    /// Factory for generating <see cref="Binding"/>s for a <see cref="Control"/> and automatically configuring error providers based on
-    /// whether the bound property has relevant attributes (e.g. <see cref="UniqueAttribute"/>, <see cref="NotNullAttribute"/>).
-    /// </summary>
-    public class BinderWithErrorProviderFactory
+    private readonly IActivateItems _activator;
+
+    public BinderWithErrorProviderFactory(IActivateItems activator)
     {
-        private readonly IActivateItems _activator;
+        _activator = activator;
+    }
 
-        public BinderWithErrorProviderFactory(IActivateItems activator)
-        {
-            _activator = activator;
-        }
+    public void Bind<T>(Control c, string propertyName, T databaseObject, string dataMember, bool formattingEnabled, DataSourceUpdateMode updateMode,Func<T,object> getter) where T:IMapsDirectlyToDatabaseTable
+    {
+        c.DataBindings.Clear();
+        c.DataBindings.Add(propertyName, databaseObject, dataMember, formattingEnabled, updateMode);
 
-        public void Bind<T>(Control c, string propertyName, T databaseObject, string dataMember, bool formattingEnabled, DataSourceUpdateMode updateMode,Func<T,object> getter) where T:IMapsDirectlyToDatabaseTable
-        {
-            c.DataBindings.Clear();
-            c.DataBindings.Add(propertyName, databaseObject, dataMember, formattingEnabled, updateMode);
+        var property = databaseObject.GetType().GetProperty(dataMember);
 
-            var property = databaseObject.GetType().GetProperty(dataMember);
-
-            if (property.GetCustomAttributes(typeof (UniqueAttribute), true).Any())
-                new UniqueRule<T>(_activator, databaseObject, getter, c, dataMember);
+        if (property.GetCustomAttributes(typeof (UniqueAttribute), true).Any())
+            new UniqueRule<T>(_activator, databaseObject, getter, c, dataMember);
             
-            if (property.GetCustomAttributes(typeof(NotNullAttribute), true).Any())
-                new NotNullRule<T>(_activator, databaseObject, getter, c, dataMember);
+        if (property.GetCustomAttributes(typeof(NotNullAttribute), true).Any())
+            new NotNullRule<T>(_activator, databaseObject, getter, c, dataMember);
 
-            if (property.PropertyType == typeof(string))
-                new MaxLengthRule<T>(_activator, databaseObject, getter, c, dataMember);
+        if (property.PropertyType == typeof(string))
+            new MaxLengthRule<T>(_activator, databaseObject, getter, c, dataMember);
 
-            if(dataMember.Equals("Name") && databaseObject is INamed)
-                new NoBadNamesRule<T>(_activator, databaseObject, getter, c, dataMember);
-        }
+        if(dataMember.Equals("Name") && databaseObject is INamed)
+            new NoBadNamesRule<T>(_activator, databaseObject, getter, c, dataMember);
     }
 }

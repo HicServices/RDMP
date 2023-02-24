@@ -8,18 +8,17 @@ using Rdmp.Core.Curation.Data;
 using Rdmp.Core.DataExport.Data;
 using Rdmp.UI.CommandExecution.AtomicCommands;
 
-namespace Rdmp.UI.Menus
+namespace Rdmp.UI.Menus;
+
+[System.ComponentModel.DesignerCategory("")]
+internal class ProjectFolderMenu : RDMPContextMenuStrip
 {
-    [System.ComponentModel.DesignerCategory("")]
-    class ProjectFolderMenu : RDMPContextMenuStrip
+    public ProjectFolderMenu(RDMPContextMenuStripArgs args, FolderNode<Project> folder)
+        : base(args, folder)
     {
-        public ProjectFolderMenu(RDMPContextMenuStripArgs args, FolderNode<Project> folder)
-            : base(args, folder)
+        Add(new ExecuteCommandCreateNewDataExtractionProject(_activator)
         {
-            Add(new ExecuteCommandCreateNewDataExtractionProject(_activator)
-            {
-                Folder = folder.FullName
-            });
-        }
+            Folder = folder.FullName
+        });
     }
 }

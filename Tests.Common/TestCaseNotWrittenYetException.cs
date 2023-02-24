@@ -6,17 +6,16 @@
 
 using System;
 
-namespace Tests.Common
-{
-    public class TestCaseNotWrittenYetException : Exception
-    {
-        public TestCaseNotWrittenYetException(Type t):base("No test case is written for Type '" + t + "'")
-        {
-        }
+namespace Tests.Common;
 
-        public TestCaseNotWrittenYetException(string msg, Exception ex):base(msg,ex)
-        {
+public class TestCaseNotWrittenYetException : Exception
+{
+    public TestCaseNotWrittenYetException(Type t):base($"No test case is written for Type '{t}'")
+    {
+    }
+
+    public TestCaseNotWrittenYetException(string msg, Exception ex):base(msg,ex)
+    {
             
-        }
     }
 }

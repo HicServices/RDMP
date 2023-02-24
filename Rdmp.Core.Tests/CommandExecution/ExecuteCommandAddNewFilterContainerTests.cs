@@ -11,53 +11,52 @@ using Rdmp.Core.CommandExecution.AtomicCommands;
 using Rdmp.Core.Curation.Data.Aggregation;
 using Tests.Common;
 
-namespace Rdmp.Core.Tests.CommandExecution
+namespace Rdmp.Core.Tests.CommandExecution;
+
+public class ExecuteCommandAddNewFilterContainerTests : UnitTests
 {
-    public class ExecuteCommandAddNewFilterContainerTests : UnitTests
+    [Test]
+    public void TestNormalCase()
     {
-        [Test]
-        public void TestNormalCase()
-        {
-            var ac = WhenIHaveA<AggregateConfiguration>();
-            var cmd = new ExecuteCommandAddNewFilterContainer(new ThrowImmediatelyActivator(RepositoryLocator), ac);
+        var ac = WhenIHaveA<AggregateConfiguration>();
+        var cmd = new ExecuteCommandAddNewFilterContainer(new ThrowImmediatelyActivator(RepositoryLocator), ac);
             
-            Assert.IsNull(ac.RootFilterContainer_ID);
+        Assert.IsNull(ac.RootFilterContainer_ID);
             
-            Assert.IsNull(cmd.ReasonCommandImpossible);
-            Assert.IsFalse(cmd.IsImpossible);
+        Assert.IsNull(cmd.ReasonCommandImpossible);
+        Assert.IsFalse(cmd.IsImpossible);
 
-            cmd.Execute();
+        cmd.Execute();
             
-            Assert.IsNotNull(ac.RootFilterContainer_ID);
-        }
-        [Test]
-        public void Impossible_BecauseAlreadyHasContainer()
-        {
-            var ac = WhenIHaveA<AggregateConfiguration>();
+        Assert.IsNotNull(ac.RootFilterContainer_ID);
+    }
+    [Test]
+    public void Impossible_BecauseAlreadyHasContainer()
+    {
+        var ac = WhenIHaveA<AggregateConfiguration>();
 
-            ac.CreateRootContainerIfNotExists();
-            Assert.IsNotNull(ac.RootFilterContainer_ID);
+        ac.CreateRootContainerIfNotExists();
+        Assert.IsNotNull(ac.RootFilterContainer_ID);
 
-            var cmd = new ExecuteCommandAddNewFilterContainer(new ThrowImmediatelyActivator(RepositoryLocator), ac);
+        var cmd = new ExecuteCommandAddNewFilterContainer(new ThrowImmediatelyActivator(RepositoryLocator), ac);
 
-            Assert.AreEqual("There is already a root filter container on this object", cmd.ReasonCommandImpossible);
-            Assert.IsTrue(cmd.IsImpossible);
-        }
-        [Test]
-        public void Impossible_BecauseAPI()
-        {
-            var ac = WhenIHaveA<AggregateConfiguration>();
+        Assert.AreEqual("There is already a root filter container on this object", cmd.ReasonCommandImpossible);
+        Assert.IsTrue(cmd.IsImpossible);
+    }
+    [Test]
+    public void Impossible_BecauseAPI()
+    {
+        var ac = WhenIHaveA<AggregateConfiguration>();
 
-            var c = ac.Catalogue;
-            c.Name = PluginCohortCompiler.ApiPrefix + "MyAwesomeAPI";
-            c.SaveToDatabase();
+        var c = ac.Catalogue;
+        c.Name = $"{PluginCohortCompiler.ApiPrefix}MyAwesomeAPI";
+        c.SaveToDatabase();
 
-            Assert.IsTrue(c.IsApiCall());
+        Assert.IsTrue(c.IsApiCall());
 
-            var cmd = new ExecuteCommandAddNewFilterContainer(new ThrowImmediatelyActivator(RepositoryLocator), ac);
+        var cmd = new ExecuteCommandAddNewFilterContainer(new ThrowImmediatelyActivator(RepositoryLocator), ac);
 
-            Assert.AreEqual("Filters cannot be added to API calls", cmd.ReasonCommandImpossible);
-            Assert.IsTrue(cmd.IsImpossible);
-        }
+        Assert.AreEqual("Filters cannot be added to API calls", cmd.ReasonCommandImpossible);
+        Assert.IsTrue(cmd.IsImpossible);
     }
 }

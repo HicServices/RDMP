@@ -9,36 +9,35 @@ using Rdmp.Core.CommandExecution;
 using Rdmp.UI.TransparentHelpSystem;
 using ReusableLibraryCode.Settings;
 
-namespace Rdmp.UI.Tutorials
+namespace Rdmp.UI.Tutorials;
+
+/// <summary>
+/// Wrapper for a <see cref="ICommandExecution"/> which should launch a user interaction that guides them through some activity
+/// (e.g. a <see cref="HelpWorkflow"/>).  Each <see cref="Tutorial"/> is associated with a specific <see cref="Guid"/> to ensure
+/// its completeness can can be tracked.
+///
+/// <para>Instances should only be constructed in <see cref="TutorialTracker"/></para>
+/// </summary>
+public class Tutorial
 {
-    /// <summary>
-    /// Wrapper for a <see cref="ICommandExecution"/> which should launch a user interaction that guides them through some activity
-    /// (e.g. a <see cref="HelpWorkflow"/>).  Each <see cref="Tutorial"/> is associated with a specific <see cref="Guid"/> to ensure
-    /// its completeness can can be tracked.
-    ///
-    /// <para>Instances should only be constructed in <see cref="TutorialTracker"/></para>
-    /// </summary>
-    public class Tutorial
+    public readonly ICommandExecution CommandExecution;
+
+    public string Name { get; set; }
+    public Guid Guid { get; set; }
+    public Type CommandType { get; private set; }
+
+    public bool UserHasSeen
     {
-        public readonly ICommandExecution CommandExecution;
-
-        public string Name { get; set; }
-        public Guid Guid { get; set; }
-        public Type CommandType { get; private set; }
-
-        public bool UserHasSeen
-        {
-            get { return UserSettings.GetTutorialDone(Guid); }
-            set {  UserSettings.SetTutorialDone(Guid,value); }
-        }
-
-        public Tutorial(string name, ICommandExecution commandExecutionExecution, Guid guid)
-        {
-            CommandExecution = commandExecutionExecution;
-            Name = name;
-            Guid = guid;
-            CommandType = commandExecutionExecution.GetType();
-        }
-
+        get => UserSettings.GetTutorialDone(Guid);
+        set => UserSettings.SetTutorialDone(Guid,value);
     }
+
+    public Tutorial(string name, ICommandExecution commandExecutionExecution, Guid guid)
+    {
+        CommandExecution = commandExecutionExecution;
+        Name = name;
+        Guid = guid;
+        CommandType = commandExecutionExecution.GetType();
+    }
+
 }

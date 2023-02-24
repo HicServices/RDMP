@@ -11,98 +11,97 @@ using System.Linq;
 using System.Windows.Forms;
 using Rdmp.Core.DataQualityEngine.Data;
 
-namespace Rdmp.UI.CatalogueSummary.DataQualityReporting.SubComponents
+namespace Rdmp.UI.CatalogueSummary.DataQualityReporting.SubComponents;
+
+/// <summary>
+/// The Data Quality Engine stores all validation results in a relational database.  This includes the time the DQE was run.  This allows us to 'rewind' and look at previous results
+/// e.g. to compare the quality of the dataset before and after a data load.
+/// 
+/// <para>If this control is not enabled then it means you have only ever done one DQE evaluation or have never evaluated the dataset by using the DQE.</para>
+/// 
+/// <para>Dragging the slider will adjust a IDataQualityReportingChart to show the results of the DQE on that day.</para>
+/// </summary>
+public partial class EvaluationTrackBar : UserControl
 {
-    /// <summary>
-    /// The Data Quality Engine stores all validation results in a relational database.  This includes the time the DQE was run.  This allows us to 'rewind' and look at previous results
-    /// e.g. to compare the quality of the dataset before and after a data load.
-    /// 
-    /// <para>If this control is not enabled then it means you have only ever done one DQE evaluation or have never evaluated the dataset by using the DQE.</para>
-    /// 
-    /// <para>Dragging the slider will adjust a IDataQualityReportingChart to show the results of the DQE on that day.</para>
-    /// </summary>
-    public partial class EvaluationTrackBar : UserControl
+    private Evaluation[] _evaluations;
+
+    public EvaluationTrackBar()
     {
-        private Evaluation[] _evaluations;
+        InitializeComponent();
+    }
 
-        public EvaluationTrackBar()
+
+    public Evaluation[] Evaluations
+    {
+        get => _evaluations;
+        set
         {
-            InitializeComponent();
-        }
-
-
-        public Evaluation[] Evaluations
-        {
-            get { return _evaluations; }
-            set
-            {
-                _evaluations = value;
-                RefreshUI();
-            }
-        }
-
-        private List<Label> labels = new List<Label>();
-        public event EvaluationSelectedHandler EvaluationSelected;
-
-        private void RefreshUI()
-        {
-            if (Evaluations == null || Evaluations.Length == 0)
-            {
-                this.Enabled = false;
-                return;
-            }
-            else if (Evaluations.Length == 1)
-            {
-                //there is only 1 
-                Enabled = false;
-                EvaluationSelected(this, Evaluations.Single());
-            }
-            else
-                this.Enabled = true;//let user drag around the trackbar if he wants
-
-            foreach (Label label in labels)
-            {
-                this.Controls.Remove(label);
-                label.Dispose();
-            }
-            labels.Clear();
-            
-            //if there is at least 2 evaluations done then we need to have a track bar of evaluations
-            tbEvaluation.Minimum = 0;
-            tbEvaluation.Maximum = Evaluations.Length - 1;
-            tbEvaluation.TickFrequency = 1;
-            tbEvaluation.Value = Evaluations.Length - 1;
-            tbEvaluation.LargeChange = 1;
-
-            for (int i = 0; i < Evaluations.Length; i++)
-            {
-                double ratio = ((double)i)/(Evaluations.Length-1);
-
-
-                int x = tbEvaluation.Left + (int) (ratio * tbEvaluation.Width);
-                int y = tbEvaluation.Bottom - 10;
-
-                Label l = new Label();
-                l.Text = Evaluations[i].DateOfEvaluation.ToString("d");
-                l.Location = new Point(x - (l.PreferredWidth / 2), y);
-              
-                this.Controls.Add(l);
-                l.BringToFront();
-                
-                labels.Add(l);
-                
-            }
-            
-            tbEvaluation.Value = tbEvaluation.Maximum;
-            EvaluationSelected(this, Evaluations[tbEvaluation.Value]);
-        }
-
-        private void tbEvaluation_ValueChanged(object sender, EventArgs e)
-        {
-            if (tbEvaluation.Value >= 0)
-                EvaluationSelected(this,Evaluations[tbEvaluation.Value]);
+            _evaluations = value;
+            RefreshUI();
         }
     }
 
-    public delegate void EvaluationSelectedHandler(object sender, Evaluation evaluation);
+    private List<Label> labels = new();
+    public event EvaluationSelectedHandler EvaluationSelected;
+
+    private void RefreshUI()
+    {
+        if (Evaluations == null || Evaluations.Length == 0)
+        {
+            Enabled = false;
+            return;
+        }
+        else if (Evaluations.Length == 1)
+        {
+            //there is only 1 
+            Enabled = false;
+            EvaluationSelected(this, Evaluations.Single());
+        }
+        else
+            Enabled = true;//let user drag around the trackbar if he wants
+
+        foreach (var label in labels)
+        {
+            Controls.Remove(label);
+            label.Dispose();
+        }
+        labels.Clear();
+            
+        //if there is at least 2 evaluations done then we need to have a track bar of evaluations
+        tbEvaluation.Minimum = 0;
+        tbEvaluation.Maximum = Evaluations.Length - 1;
+        tbEvaluation.TickFrequency = 1;
+        tbEvaluation.Value = Evaluations.Length - 1;
+        tbEvaluation.LargeChange = 1;
+
+        for (var i = 0; i < Evaluations.Length; i++)
+        {
+            var ratio = (double)i/(Evaluations.Length-1);
+
+
+            var x = tbEvaluation.Left + (int) (ratio * tbEvaluation.Width);
+            var y = tbEvaluation.Bottom - 10;
+
+            var l = new Label();
+            l.Text = Evaluations[i].DateOfEvaluation.ToString("d");
+            l.Location = new Point(x - l.PreferredWidth / 2, y);
+              
+            Controls.Add(l);
+            l.BringToFront();
+                
+            labels.Add(l);
+                
+        }
+            
+        tbEvaluation.Value = tbEvaluation.Maximum;
+        EvaluationSelected(this, Evaluations[tbEvaluation.Value]);
+    }
+
+    private void tbEvaluation_ValueChanged(object sender, EventArgs e)
+    {
+        if (tbEvaluation.Value >= 0)
+            EvaluationSelected(this,Evaluations[tbEvaluation.Value]);
+    }
 }
+
+public delegate void EvaluationSelectedHandler(object sender, Evaluation evaluation);

@@ -19,99 +19,98 @@ using Rdmp.Core.Databases;
 using ReusableLibraryCode.Checks;
 using Tests.Common;
 
-namespace Rdmp.Core.Tests.CohortCreation
+namespace Rdmp.Core.Tests.CohortCreation;
+
+public class CohortCompilerRunnerTests:DatabaseTests
 {
-    public class CohortCompilerRunnerTests:DatabaseTests
+    [Test]
+    public void CacheIdentifierListWithRunner_SimpleCase()
     {
-        [Test]
-        public void CacheIdentifierListWithRunner_SimpleCase()
-        {
-            DiscoveredDatabase db;
-            CohortIdentificationConfiguration cic;
-            DataTable dt;
+        DiscoveredDatabase db;
+        CohortIdentificationConfiguration cic;
+        DataTable dt;
 
-            SetupCohort(out db,out cic,out dt);
+        SetupCohort(out db,out cic,out dt);
 
-            var compiler = new CohortCompiler(cic);
+        var compiler = new CohortCompiler(cic);
 
-            var runner = new CohortCompilerRunner(compiler, 5000);
-            runner.Run(new CancellationToken());
+        var runner = new CohortCompilerRunner(compiler, 5000);
+        runner.Run(new CancellationToken());
 
-            Assert.AreEqual(CohortCompilerRunner.Phase.Finished, runner.ExecutionPhase);
+        Assert.AreEqual(CohortCompilerRunner.Phase.Finished, runner.ExecutionPhase);
 
-            var rootTask = runner.Compiler.Tasks.Single(t => t.Key is AggregationContainerTask);
+        var rootTask = runner.Compiler.Tasks.Single(t => t.Key is AggregationContainerTask);
             
-            Assert.IsTrue(rootTask.Value.IsResultsForRootContainer);
-            Assert.IsNull(rootTask.Key.CrashMessage);
-            Assert.AreEqual(CompilationState.Finished, rootTask.Key.State);
+        Assert.IsTrue(rootTask.Value.IsResultsForRootContainer);
+        Assert.IsNull(rootTask.Key.CrashMessage);
+        Assert.AreEqual(CompilationState.Finished, rootTask.Key.State);
 
-            Assert.AreEqual(dt.Rows.Count,rootTask.Value.Identifiers.Rows.Count);
-        }
+        Assert.AreEqual(dt.Rows.Count,rootTask.Value.Identifiers.Rows.Count);
+    }
 
-        [Test]
-        public void CacheIdentifierListWithRunner_WithCaching()
-        {
-            DiscoveredDatabase db;
-            CohortIdentificationConfiguration cic;
-            DataTable dt;
+    [Test]
+    public void CacheIdentifierListWithRunner_WithCaching()
+    {
+        DiscoveredDatabase db;
+        CohortIdentificationConfiguration cic;
+        DataTable dt;
 
-            SetupCohort(out db, out cic, out dt);
+        SetupCohort(out db, out cic, out dt);
             
-            MasterDatabaseScriptExecutor e = new MasterDatabaseScriptExecutor(db);
-            var p = new QueryCachingPatcher();
-            e.CreateAndPatchDatabase(p,new AcceptAllCheckNotifier());
+        var e = new MasterDatabaseScriptExecutor(db);
+        var p = new QueryCachingPatcher();
+        e.CreateAndPatchDatabase(p,new AcceptAllCheckNotifier());
             
-            var serverReference = new ExternalDatabaseServer(CatalogueRepository, "Cache", p);
-            serverReference.SetProperties(db);
+        var serverReference = new ExternalDatabaseServer(CatalogueRepository, "Cache", p);
+        serverReference.SetProperties(db);
 
-            cic.QueryCachingServer_ID = serverReference.ID;
-            cic.SaveToDatabase();
+        cic.QueryCachingServer_ID = serverReference.ID;
+        cic.SaveToDatabase();
 
-            var compiler = new CohortCompiler(cic);
+        var compiler = new CohortCompiler(cic);
 
-            var runner = new CohortCompilerRunner(compiler, 5000);
-            runner.Run(new CancellationToken());
+        var runner = new CohortCompilerRunner(compiler, 5000);
+        runner.Run(new CancellationToken());
 
-            Assert.AreEqual(CohortCompilerRunner.Phase.Finished, runner.ExecutionPhase);
+        Assert.AreEqual(CohortCompilerRunner.Phase.Finished, runner.ExecutionPhase);
 
-            var rootTask = runner.Compiler.Tasks.Single(t => t.Key is AggregationContainerTask);
+        var rootTask = runner.Compiler.Tasks.Single(t => t.Key is AggregationContainerTask);
 
-            Assert.IsTrue(rootTask.Value.IsResultsForRootContainer);
-            Assert.IsNull(rootTask.Key.CrashMessage);
-            Assert.AreEqual(CompilationState.Finished, rootTask.Key.State);
+        Assert.IsTrue(rootTask.Value.IsResultsForRootContainer);
+        Assert.IsNull(rootTask.Key.CrashMessage);
+        Assert.AreEqual(CompilationState.Finished, rootTask.Key.State);
 
-            Assert.IsTrue(runner.Compiler.AreaAllQueriesCached(rootTask.Key));
+        Assert.IsTrue(runner.Compiler.AreaAllQueriesCached(rootTask.Key));
 
-            Assert.AreEqual(dt.Rows.Count, rootTask.Value.Identifiers.Rows.Count);
-        }
-        private void SetupCohort(out DiscoveredDatabase db, out CohortIdentificationConfiguration cic, out DataTable dt)
-        {
-            dt = new DataTable();
-            dt.Columns.Add("PK");
+        Assert.AreEqual(dt.Rows.Count, rootTask.Value.Identifiers.Rows.Count);
+    }
+    private void SetupCohort(out DiscoveredDatabase db, out CohortIdentificationConfiguration cic, out DataTable dt)
+    {
+        dt = new DataTable();
+        dt.Columns.Add("PK");
 
-            //add lots of rows
-            for (int i = 0; i < 100000; i++)
-                dt.Rows.Add(i);
+        //add lots of rows
+        for (var i = 0; i < 100000; i++)
+            dt.Rows.Add(i);
 
-            db = GetCleanedServer(DatabaseType.MicrosoftSQLServer);
-            var tbl = db.CreateTable("CohortCompilerRunnerTestsTable", dt);
+        db = GetCleanedServer(DatabaseType.MicrosoftSQLServer);
+        var tbl = db.CreateTable("CohortCompilerRunnerTestsTable", dt);
 
-            var cata = Import(tbl);
+        var cata = Import(tbl);
 
-            var ei = cata.CatalogueItems[0].ExtractionInformation;
-            ei.IsExtractionIdentifier = true;
-            ei.SaveToDatabase();
+        var ei = cata.CatalogueItems[0].ExtractionInformation;
+        ei.IsExtractionIdentifier = true;
+        ei.SaveToDatabase();
 
-            var agg = new AggregateConfiguration(CatalogueRepository, cata, "MyAgg");
-            agg.CountSQL = null;
-            agg.SaveToDatabase();
-            var dimension = new AggregateDimension(CatalogueRepository, ei, agg);
+        var agg = new AggregateConfiguration(CatalogueRepository, cata, "MyAgg");
+        agg.CountSQL = null;
+        agg.SaveToDatabase();
+        var dimension = new AggregateDimension(CatalogueRepository, ei, agg);
 
-            cic = new CohortIdentificationConfiguration(CatalogueRepository, "MyCic");
-            cic.CreateRootContainerIfNotExists();
-            cic.RootCohortAggregateContainer.AddChild(agg, 0);
+        cic = new CohortIdentificationConfiguration(CatalogueRepository, "MyCic");
+        cic.CreateRootContainerIfNotExists();
+        cic.RootCohortAggregateContainer.AddChild(agg, 0);
 
-            cic.EnsureNamingConvention(agg);
-        }
+        cic.EnsureNamingConvention(agg);
     }
 }

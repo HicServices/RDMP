@@ -8,49 +8,47 @@ using NUnit.Framework;
 using Rdmp.Core.Validation;
 using Rdmp.Core.Validation.Constraints.Secondary;
 
-namespace Rdmp.Core.Tests.Validation.Constraints.Secondary
+namespace Rdmp.Core.Tests.Validation.Constraints.Secondary;
+
+[Category("Unit")]
+internal class RegularExpressionTest
 {
+    private RegularExpression _regex;
 
-    [Category("Unit")]
-    class RegularExpressionTest
+    [SetUp]
+    public void SetUp()
     {
-        private RegularExpression _regex;
+        _regex = (RegularExpression)Validator.CreateRegularExpression("^[MF]");
+    }
 
-        [SetUp]
-        public void SetUp()
-        {
-             _regex = (RegularExpression)Validator.CreateRegularExpression("^[MF]");
-        }
+    [Test]
+    public void Validate_NullValue_IsIgnored()
+    {
+        Assert.IsNull(_regex.Validate(null, null, null));
+    }
 
-        [Test]
-        public void Validate_NullValue_IsIgnored()
-        {
-            Assert.IsNull(_regex.Validate(null, null, null));
-        }
+    [Test]
+    public void Validate_EmpytyValue_Invalid()
+    {
+        Assert.NotNull(_regex.Validate("", null, null));
+    }
 
-        [Test]
-        public void Validate_EmpytyValue_Invalid()
-        {
-            Assert.NotNull(_regex.Validate("", null, null));
-        }
+    [Test]
+    public void Validate_int_Succeeds()
+    {
+        _regex = new RegularExpression("^[0-9]+$");
+        Assert.IsNull(_regex.Validate(5, null, null));
+    }
 
-        [Test]
-        public void Validate_int_Succeeds()
-        {
-            _regex = new RegularExpression("^[0-9]+$");
-            Assert.IsNull(_regex.Validate(5, null, null));
-        }
+    [Test]
+    public void Validate_ValidValue_Valid()
+    {
+        Assert.IsNull(_regex.Validate("M", null, null));
+    }
 
-        [Test]
-        public void Validate_ValidValue_Valid()
-        {
-            Assert.IsNull(_regex.Validate("M", null, null));
-        }
-
-        [Test]
-        public void Validate_InvalidValue_Invalid()
-        {
-            Assert.NotNull(_regex.Validate("INVALID", null, null));
-        }
+    [Test]
+    public void Validate_InvalidValue_Invalid()
+    {
+        Assert.NotNull(_regex.Validate("INVALID", null, null));
     }
 }

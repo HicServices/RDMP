@@ -12,159 +12,158 @@ using Rdmp.Core.Providers.Nodes;
 using Rdmp.Core.Providers.Nodes.LoadMetadataNodes;
 using Rdmp.Core.Providers.Nodes.ProjectCohortNodes;
 
-namespace Rdmp.Core.Providers
+namespace Rdmp.Core.Providers;
+
+/// <summary>
+/// Audit of parents for a given object in the CatalogueChildProvider hierarchy that is used to populate RDMPCollectionUIs.  Every object that is not a root level 
+/// object will have a DescendancyList.  Normally any DatabaseEntity (or node class) has only one DescendancyList (path to reach it) however you can flag BetterRouteExists
+/// on a DescendancyList to indicate that if another DescendancyList is found for the object then that one is to be considered 'better' and used instead.  For example
+/// AggregateConfigurations which are modelling a cohort apper both under their respective Catalogue and their CohortIdentificationConfiguration but sometimes one is an
+/// orphan (its CohortIdentificationConfiguration has been deleted or it has been removed from it) in which case the only path is the 'less goood' one.
+/// 
+/// <para>It is not allowed to have duplicate objects in Parents.  All objects and parents must have appropriate implements of GetHashCode.</para>
+/// </summary>
+public class DescendancyList
 {
     /// <summary>
-    /// Audit of parents for a given object in the CatalogueChildProvider hierarchy that is used to populate RDMPCollectionUIs.  Every object that is not a root level 
-    /// object will have a DescendancyList.  Normally any DatabaseEntity (or node class) has only one DescendancyList (path to reach it) however you can flag BetterRouteExists
-    /// on a DescendancyList to indicate that if another DescendancyList is found for the object then that one is to be considered 'better' and used instead.  For example
-    /// AggregateConfigurations which are modelling a cohort apper both under their respective Catalogue and their CohortIdentificationConfiguration but sometimes one is an
-    /// orphan (its CohortIdentificationConfiguration has been deleted or it has been removed from it) in which case the only path is the 'less goood' one.
-    /// 
-    /// <para>It is not allowed to have duplicate objects in Parents.  All objects and parents must have appropriate implements of GetHashCode.</para>
+    /// For use with <see cref="GetMostDescriptiveParent"/> these objects will be skipped when finding a descriptive parent
     /// </summary>
-    public class DescendancyList
+    private static HashSet<Type> TypesThatAreNotUsefulParents = new(
+        new []
+        {
+            typeof(CatalogueItemsNode),
+            typeof(DocumentationNode),
+            typeof(AggregatesNode),
+            typeof(LoadMetadataScheduleNode),
+            typeof(AllCataloguesUsedByLoadMetadataNode),
+            typeof(AllProcessTasksUsedByLoadMetadataNode),
+            typeof(LoadStageNode),
+            typeof(PreLoadDiscardedColumnsNode),
+            typeof(ProjectCataloguesNode),
+            typeof(ProjectCohortIdentificationConfigurationAssociationsNode)
+
+        });
+
+    /// <summary>
+    /// All objects that are above the described object in order from the root to the immediate parent.
+    /// </summary>
+    public object[] Parents;
+
+
+    /// <summary>
+    /// Set to true to indicate that this route should be considered better than any you have seen before for the given object and its children.  This will cause
+    /// other colliding <see cref="DescendancyList"/> paths for the same object to be marked BetterRouteExists
+    /// </summary>
+    public bool NewBestRoute { get; private set; }
+
+    /// <summary>
+    /// Set to true to indicate that you might find a better DescendancyList for the given object and if so that other DescendancyList should be considered 'better'
+    /// </summary>
+    public bool BetterRouteExists { get; private set; }
+
+    /// <summary>
+    /// Declares that an object has hierarchical <paramref name="parents"/> which should be in order from root to immediate parent
+    /// </summary>
+    /// <param name="parents"></param>
+    public DescendancyList(params object[] parents)
     {
-        /// <summary>
-        /// For use with <see cref="GetMostDescriptiveParent"/> these objects will be skipped when finding a descriptive parent
-        /// </summary>
-        private static HashSet<Type> TypesThatAreNotUsefulParents = new HashSet<Type>(
-            new []
-            {
-                typeof(CatalogueItemsNode),
-                typeof(DocumentationNode),
-                typeof(AggregatesNode),
-                typeof(LoadMetadataScheduleNode),
-                typeof(AllCataloguesUsedByLoadMetadataNode),
-                typeof(AllProcessTasksUsedByLoadMetadataNode),
-                typeof(LoadStageNode),
-                typeof(PreLoadDiscardedColumnsNode),
-                typeof(ProjectCataloguesNode),
-                typeof(ProjectCohortIdentificationConfigurationAssociationsNode)
+        Parents = parents;
+    }
 
-            });
+    /// <summary>
+    /// True if the list is empty (i.e. there are no <see cref="Parents"/>)
+    /// </summary>
+    public bool IsEmpty => !Parents.Any();
 
-        /// <summary>
-        /// All objects that are above the described object in order from the root to the immediate parent.
-        /// </summary>
-        public object[] Parents;
+    /// <summary>
+    /// Returns a new instance of DescendancyList that includes the new parent appended to the end of parent hierarchy. You can only add to the end so 
+    /// if you have Root=>Grandparent then the only thing you should add is Parent.
+    /// </summary>
+    /// <param name="anotherKnownParent"></param>
+    /// <returns></returns>
+    public DescendancyList Add(object anotherKnownParent)
+    {
+        if(Parents.Contains(anotherKnownParent))
+            throw new ArgumentException($"DecendancyList already contains '{anotherKnownParent}'");
 
+        var list = new List<object>(Parents);
+        list.Add(anotherKnownParent);
+        var toReturn = new DescendancyList(list.ToArray());
+        toReturn.BetterRouteExists = BetterRouteExists;
+        toReturn.NewBestRoute = NewBestRoute;
+        return toReturn;
+    }
 
-        /// <summary>
-        /// Set to true to indicate that this route should be considered better than any you have seen before for the given object and its children.  This will cause
-        /// other colliding <see cref="DescendancyList"/> paths for the same object to be marked BetterRouteExists
-        /// </summary>
-        public bool NewBestRoute { get; private set; }
+    /// <summary>
+    /// Returns a new DescendancyList with BetterRouteExists set to true, this means the system will bear in mind it might see a better DescendancyList later on
+    /// in which case it will use that better route instead
+    /// </summary>
+    /// <returns></returns>
+    public DescendancyList SetBetterRouteExists()
+    {
+        NewBestRoute = false;
+        BetterRouteExists = true;
 
-        /// <summary>
-        /// Set to true to indicate that you might find a better DescendancyList for the given object and if so that other DescendancyList should be considered 'better'
-        /// </summary>
-        public bool BetterRouteExists { get; private set; }
+        var toReturn= new DescendancyList(Parents);
+        toReturn.NewBestRoute = false;
+        toReturn.BetterRouteExists = true;
+        return toReturn;
+    }
 
-        /// <summary>
-        /// Declares that an object has hierarchical <paramref name="parents"/> which should be in order from root to immediate parent
-        /// </summary>
-        /// <param name="parents"></param>
-        public DescendancyList(params object[] parents)
-        {
-            Parents = parents;
-        }
+    /// <summary>
+    /// Returns a new DescendancyList with NewBestRoute set to true, this means the system will consider that this DescendancyList can override other colliding DescendancyList
+    /// that already exist.
+    /// </summary>
+    /// <returns></returns>
+    public DescendancyList SetNewBestRoute()
+    {
+        NewBestRoute = true;
+        BetterRouteExists = false;
 
-        /// <summary>
-        /// True if the list is empty (i.e. there are no <see cref="Parents"/>)
-        /// </summary>
-        public bool IsEmpty { get { return !Parents.Any(); } }
+        var toReturn= new DescendancyList(Parents);
+        toReturn.NewBestRoute = true;
+        toReturn.BetterRouteExists = false;
 
-        /// <summary>
-        /// Returns a new instance of DescendancyList that includes the new parent appended to the end of parent hierarchy. You can only add to the end so 
-        /// if you have Root=>Grandparent then the only thing you should add is Parent.
-        /// </summary>
-        /// <param name="anotherKnownParent"></param>
-        /// <returns></returns>
-        public DescendancyList Add(object anotherKnownParent)
-        {
-            if(Parents.Contains(anotherKnownParent))
-                throw new ArgumentException("DecendancyList already contains '" + anotherKnownParent + "'");
+        return toReturn;
+    }
+    public override string ToString()
+    {
+        return $"<<{string.Join("=>", Parents)}>>";
+    }
 
-            var list = new List<object>(Parents);
-            list.Add(anotherKnownParent);
-            var toReturn = new DescendancyList(list.ToArray());
-            toReturn.BetterRouteExists = BetterRouteExists;
-            toReturn.NewBestRoute = NewBestRoute;
-            return toReturn;
-        }
+    /// <summary>
+    /// returns the last object in the chain, for example Root=>GrandParent=>Parent would return 'Parent'
+    /// </summary>
+    /// <returns></returns>
+    public object Last()
+    {
+        return Parents.Last();
+    }
 
-        /// <summary>
-        /// Returns a new DescendancyList with BetterRouteExists set to true, this means the system will bear in mind it might see a better DescendancyList later on
-        /// in which case it will use that better route instead
-        /// </summary>
-        /// <returns></returns>
-        public DescendancyList SetBetterRouteExists()
-        {
-            NewBestRoute = false;
-            BetterRouteExists = true;
-
-            var toReturn= new DescendancyList(Parents);
-            toReturn.NewBestRoute = false;
-            toReturn.BetterRouteExists = true;
-            return toReturn;
-        }
-
-        /// <summary>
-        /// Returns a new DescendancyList with NewBestRoute set to true, this means the system will consider that this DescendancyList can override other colliding DescendancyList
-        /// that already exist.
-        /// </summary>
-        /// <returns></returns>
-        public DescendancyList SetNewBestRoute()
-        {
-            NewBestRoute = true;
-            BetterRouteExists = false;
-
-            var toReturn= new DescendancyList(Parents);
-            toReturn.NewBestRoute = true;
-            toReturn.BetterRouteExists = false;
-
-            return toReturn;
-        }
-        public override string ToString()
-        {
-            return "<<"+ string.Join("=>", Parents) + ">>";
-        }
-
-        /// <summary>
-        /// returns the last object in the chain, for example Root=>GrandParent=>Parent would return 'Parent'
-        /// </summary>
-        /// <returns></returns>
-        public object Last()
-        {
-            return Parents.Last();
-        }
-
-        /// <summary>
-        /// Returns the first <see cref="Parents"/> which is meaningful to the user in locating the object within
-        /// a hierarchy e.g. for <see cref="CatalogueItem"/> it returns the <see cref="Catalogue"/>
-        /// </summary>
-        /// <returns></returns>
-        public object GetMostDescriptiveParent()
-        {
-            return Parents.LastOrDefault(parent => 
-                !TypesThatAreNotUsefulParents.Contains(parent.GetType())
-                &&
-                !(parent is IContainer)
-            );
-        }
-        /// <summary>
-        /// Returns all <see cref="Parents"/> which are meaningful to the user in locating the object within
-        /// a hierarchy 
-        /// </summary>
-        /// <returns></returns>
-        public IEnumerable<object> GetUsefulParents()
-        {
-            return Parents.Where(parent =>
-                !TypesThatAreNotUsefulParents.Contains(parent.GetType())
-                &&
-                !(parent is IContainer)
-            );
-        }
+    /// <summary>
+    /// Returns the first <see cref="Parents"/> which is meaningful to the user in locating the object within
+    /// a hierarchy e.g. for <see cref="CatalogueItem"/> it returns the <see cref="Catalogue"/>
+    /// </summary>
+    /// <returns></returns>
+    public object GetMostDescriptiveParent()
+    {
+        return Parents.LastOrDefault(parent => 
+            !TypesThatAreNotUsefulParents.Contains(parent.GetType())
+            &&
+            parent is not IContainer
+        );
+    }
+    /// <summary>
+    /// Returns all <see cref="Parents"/> which are meaningful to the user in locating the object within
+    /// a hierarchy 
+    /// </summary>
+    /// <returns></returns>
+    public IEnumerable<object> GetUsefulParents()
+    {
+        return Parents.Where(parent =>
+            !TypesThatAreNotUsefulParents.Contains(parent.GetType())
+            &&
+            parent is not IContainer
+        );
     }
 }

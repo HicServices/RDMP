@@ -11,39 +11,38 @@ using Rdmp.Core.DataExport.Data;
 using Rdmp.UI.ItemActivation;
 using Rdmp.UI.ProjectUI.Datasets;
 
-namespace Rdmp.UI.CommandExecution.Proposals
+namespace Rdmp.UI.CommandExecution.Proposals;
+
+internal class ProposeExecutionWhenTargetIsSelectedDataSets:RDMPCommandExecutionProposal<SelectedDataSets>
 {
-    class ProposeExecutionWhenTargetIsSelectedDataSets:RDMPCommandExecutionProposal<SelectedDataSets>
+    public ProposeExecutionWhenTargetIsSelectedDataSets(IActivateItems itemActivator): base(itemActivator)
     {
-        public ProposeExecutionWhenTargetIsSelectedDataSets(IActivateItems itemActivator): base(itemActivator)
+    }
+
+    public override bool CanActivate(SelectedDataSets target)
+    {
+        return true;
+    }
+
+    public override void Activate(SelectedDataSets target)
+    {
+        ItemActivator.Activate<ConfigureDatasetUI, SelectedDataSets>(target);
+    }
+
+    public override ICommandExecution ProposeExecution(ICombineToMakeCommand cmd, SelectedDataSets target, InsertOption insertOption = InsertOption.Default)
+    {
+        // if use drops a reusable template aggregate (e.g. from Cohort Builder)
+        if(cmd is AggregateConfigurationCombineable ac && ac.IsTemplate && ac.Aggregate.RootFilterContainer_ID != null)
         {
+            // offer to import the WHERE containers
+            return new ExecuteCommandImportFilterContainerTree(ItemActivator, target, ac.Aggregate);
         }
 
-        public override bool CanActivate(SelectedDataSets target)
+        if(cmd is ContainerCombineable cc)
         {
-            return true;
+            return new ExecuteCommandImportFilterContainerTree(ItemActivator, target, cc.Container);
         }
 
-        public override void Activate(SelectedDataSets target)
-        {
-            ItemActivator.Activate<ConfigureDatasetUI, SelectedDataSets>(target);
-        }
-
-        public override ICommandExecution ProposeExecution(ICombineToMakeCommand cmd, SelectedDataSets target, InsertOption insertOption = InsertOption.Default)
-        {
-            // if use drops a reusable template aggregate (e.g. from Cohort Builder)
-            if(cmd is AggregateConfigurationCombineable ac && ac.IsTemplate && ac.Aggregate.RootFilterContainer_ID != null)
-            {
-                // offer to import the WHERE containers
-                return new ExecuteCommandImportFilterContainerTree(ItemActivator, target, ac.Aggregate);
-            }
-
-            if(cmd is ContainerCombineable cc)
-            {
-                return new ExecuteCommandImportFilterContainerTree(ItemActivator, target, cc.Container);
-            }
-
-            return null;
-        }
+        return null;
     }
 }

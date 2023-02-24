@@ -9,32 +9,33 @@ using Rdmp.Core.Curation.Data.EntityNaming;
 using ReusableLibraryCode.Checks;
 using TypeGuesser;
 
-namespace Rdmp.Core.DataLoad.Modules.Mutilators.Dilution.Operations
+namespace Rdmp.Core.DataLoad.Modules.Mutilators.Dilution.Operations;
+
+/// <summary>
+/// Dilutes data in the ColumnToDilute which is expected to contain postcodes by replacing stripping the last 3 digits such that DD3 7LX becomes DD3.
+/// See TestExcludeRight3OfUKPostcodes for expected inputs/outputs.
+/// </summary>
+public class ExcludeRight3OfUKPostcodes: DilutionOperation
 {
-    /// <summary>
-    /// Dilutes data in the ColumnToDilute which is expected to contain postcodes by replacing stripping the last 3 digits such that DD3 7LX becomes DD3.
-    /// See TestExcludeRight3OfUKPostcodes for expected inputs/outputs.
-    /// </summary>
-    public class ExcludeRight3OfUKPostcodes: DilutionOperation
+    public ExcludeRight3OfUKPostcodes() : 
+        base(new DatabaseTypeRequest(typeof(string),4))
     {
-        public ExcludeRight3OfUKPostcodes() : 
-            base(new DatabaseTypeRequest(typeof(string),4))
-        {
-        }
+    }
 
-        public override void Check(ICheckNotifier notifier)
-        {
-            base.Check(notifier);
+    public override void Check(ICheckNotifier notifier)
+    {
+        base.Check(notifier);
 
-            if(!ColumnToDilute.SqlDataType.ToLower().Contains("char"))
-                notifier.OnCheckPerformed(new CheckEventArgs("IPreLoadDiscardedColumn " + ColumnToDilute + " is of datatype " + ColumnToDilute.SqlDataType + " which is incompatible with this dilution operation (it must be char/varchar)", CheckResult.Fail));
-        }
+        if(!ColumnToDilute.SqlDataType.ToLower().Contains("char"))
+            notifier.OnCheckPerformed(new CheckEventArgs(
+                $"IPreLoadDiscardedColumn {ColumnToDilute} is of datatype {ColumnToDilute.SqlDataType} which is incompatible with this dilution operation (it must be char/varchar)", CheckResult.Fail));
+    }
         
-        public override string GetMutilationSql(INameDatabasesAndTablesDuringLoads namer)
-        {
-            return 
+    public override string GetMutilationSql(INameDatabasesAndTablesDuringLoads namer)
+    {
+        return 
 
-string.Format(@"
+            string.Format(@"
 
 IF OBJECT_ID('dbo.RemoveDodgyCharacters') IS NOT NULL
   DROP FUNCTION RemoveDodgyCharacters
@@ -101,6 +102,5 @@ GO
 
 UPDATE {0} SET {1}=dbo.Left4OfPostcodes({1})
 GO", ColumnToDilute.TableInfo.GetRuntimeName(LoadStage.AdjustStaging, namer), ColumnToDilute.GetRuntimeName());
-        }
     }
 }

@@ -12,183 +12,181 @@ using FAnsi;
 using FAnsi.Discovery;
 using ReusableLibraryCode.DataAccess;
 
-namespace Rdmp.Core.QueryBuilding
+namespace Rdmp.Core.QueryBuilding;
+
+/// <summary>
+/// Tracks a collection of <see cref="IDataAccessPoint"/> and optionally ensures that they all open connections
+/// to the same server (and server type e.g. MySql on localhost).
+/// </summary>
+public class DataAccessPointCollection
 {
-     /// <summary>
-     /// Tracks a collection of <see cref="IDataAccessPoint"/> and optionally ensures that they all open connections
-     /// to the same server (and server type e.g. MySql on localhost).
-     /// </summary>
-    public class DataAccessPointCollection
+    /// <summary>
+    /// True to require all <see cref="IDataAccessPoint"/> added to be on the same server
+    /// </summary>
+    public bool SingleServer { get; }
+
+    /// <summary>
+    /// All <see cref="IDataAccessPoint"/> that have been added so far.
+    /// </summary>
+    public IReadOnlyCollection<IDataAccessPoint> Points => _points;
+
+    public DataAccessContext DataAccessContext { get;}
+
+    private HashSet<IDataAccessPoint> _points = new();
+
+    /// <summary>
+    /// Creates a new collection of <see cref="IDataAccessPoint"/> for collecting dependencies e.g.
+    /// when building a query in which there are subqueries run on different databases
+    /// </summary>
+    /// <param name="singleServer">True to require all <see cref="Points"/> to be on the same server (and type).</param>
+    /// <param name="context"></param>
+    public DataAccessPointCollection(bool singleServer,DataAccessContext context = DataAccessContext.InternalDataProcessing)
     {
-        /// <summary>
-        /// True to require all <see cref="IDataAccessPoint"/> added to be on the same server
-        /// </summary>
-        public bool SingleServer { get; }
+        SingleServer = singleServer;
+        DataAccessContext = context;
+    }
 
-        /// <summary>
-        /// All <see cref="IDataAccessPoint"/> that have been added so far.
-        /// </summary>
-        public IReadOnlyCollection<IDataAccessPoint> Points => _points;
+    /// <summary>
+    /// Adds the given <paramref name="point"/> to the collection. Throws InvalidOperationException if <see cref="SingleServer"/>
+    /// is set and the new <paramref name="point"/> is on a different server or <see cref="DatabaseType"/>
+    /// </summary>
+    /// <param name="point"></param>
+    public void Add(IDataAccessPoint point)
+    {
+        AddRange(new[] { point });
+    }
 
-        public DataAccessContext DataAccessContext { get;}
+    /// <summary>
+    /// Attempts to add <paramref name="point"/> to the collection returning true if it was successfully added.  Returns false
+    /// if not added (e.g. if <see cref="SingleServer"/> is true and <paramref name="point"/> is to a different server/type).
+    /// </summary>
+    /// <param name="point"></param>
+    /// <returns></returns>
+    public bool TryAdd(IDataAccessPoint point)
+    {
+        return TryAddRange(new []{ point});
+    }
 
-        private HashSet<IDataAccessPoint> _points = new HashSet<IDataAccessPoint>();
-
-        /// <summary>
-        /// Creates a new collection of <see cref="IDataAccessPoint"/> for collecting dependencies e.g.
-        /// when building a query in which there are subqueries run on different databases
-        /// </summary>
-        /// <param name="singleServer">True to require all <see cref="Points"/> to be on the same server (and type).</param>
-        /// <param name="context"></param>
-        public DataAccessPointCollection(bool singleServer,DataAccessContext context = DataAccessContext.InternalDataProcessing)
+    /// <summary>
+    /// Attempts to add <paramref name="points"/> to the collection returning true if it was successfully added.  Returns false
+    /// if not added (e.g. if <see cref="SingleServer"/> is true and <paramref name="points"/> is to a different server/type).
+    ///
+    ///  <para>Either all or none of the <paramref name="points"/> will be added (i.e. not half)</para>
+    /// </summary>
+    /// <param name="points"></param>
+    /// <returns></returns>
+    public bool TryAddRange(IDataAccessPoint[] points)
+    {
+        try
         {
-            SingleServer = singleServer;
-            DataAccessContext = context;
+            AddRange(points);
+            return true;
         }
-
-        /// <summary>
-        /// Adds the given <paramref name="point"/> to the collection. Throws InvalidOperationException if <see cref="SingleServer"/>
-        /// is set and the new <paramref name="point"/> is on a different server or <see cref="DatabaseType"/>
-        /// </summary>
-        /// <param name="point"></param>
-        public void Add(IDataAccessPoint point)
+        catch (InvalidOperationException)
         {
-            AddRange(new[] { point });
+            return false;
         }
+    }
 
-        /// <summary>
-        /// Attempts to add <paramref name="point"/> to the collection returning true if it was successfully added.  Returns false
-        /// if not added (e.g. if <see cref="SingleServer"/> is true and <paramref name="point"/> is to a different server/type).
-        /// </summary>
-        /// <param name="point"></param>
-        /// <returns></returns>
-        public bool TryAdd(IDataAccessPoint point)
-        {
-            return TryAddRange(new []{ point});
-        }
 
-        /// <summary>
-        /// Attempts to add <paramref name="points"/> to the collection returning true if it was successfully added.  Returns false
-        /// if not added (e.g. if <see cref="SingleServer"/> is true and <paramref name="points"/> is to a different server/type).
-        ///
-        ///  <para>Either all or none of the <paramref name="points"/> will be added (i.e. not half)</para>
-        /// </summary>
-        /// <param name="points"></param>
-        /// <returns></returns>
-        public bool TryAddRange(IDataAccessPoint[] points)
+    /// <summary>
+    /// Adds the given <paramref name="points"/> to the collection. Throws InvalidOperationException if <see cref="SingleServer"/>
+    /// is set and the new <paramref name="points"/> is on a different server or <see cref="DatabaseType"/>
+    /// </summary>
+    /// <param name="points"></param>
+    public void AddRange(IDataAccessPoint[] points)
+    {
+        //if we already have all the points then don't bother checking
+        if(points.All(p=>_points.Contains(p)))
+            return;
+
+        if (SingleServer)
         {
+            var tempList = new HashSet<IDataAccessPoint>(_points);
+
+            foreach (var p in points)
+                tempList.Add(p);
+
             try
             {
-                AddRange(points);
-                return true;
-            }
-            catch (InvalidOperationException)
-            {
-                return false;
-            }
-        }
+                DataAccessPortal.GetInstance()
+                    .ExpectDistinctServer(tempList.ToArray(), DataAccessContext, false);
 
-
-        /// <summary>
-        /// Adds the given <paramref name="points"/> to the collection. Throws InvalidOperationException if <see cref="SingleServer"/>
-        /// is set and the new <paramref name="points"/> is on a different server or <see cref="DatabaseType"/>
-        /// </summary>
-        /// <param name="points"></param>
-        public void AddRange(IDataAccessPoint[] points)
-        {
-            //if we already have all the points then don't bother checking
-            if(points.All(p=>_points.Contains(p)))
-                return;
-
-            if (SingleServer)
-            {
-                var tempList = new HashSet<IDataAccessPoint>(_points);
-
-                foreach (IDataAccessPoint p in points)
-                    tempList.Add(p);
-
-                try
-                {
-                    DataAccessPortal.GetInstance()
-                        .ExpectDistinctServer(tempList.ToArray(), DataAccessContext, false);
-
-                    //now add to the proper collection
-                    foreach (IDataAccessPoint p in points)
-                        _points.Add(p);
-                }
-                catch (Exception e)
-                {
-                    if (e is CryptographicException)
-                        throw;
-
-                    throw new InvalidOperationException(
-                        $"Could not identify single set of server/credentials to use with points:" +
-                        string.Join(Environment.NewLine, tempList), e);
-                }
-            }
-            else
-            {
-                foreach(var p in points)
+                //now add to the proper collection
+                foreach (var p in points)
                     _points.Add(p);
             }
-        }
+            catch (Exception e)
+            {
+                if (e is CryptographicException)
+                    throw;
 
-        /// <summary>
-        /// Clears <see cref="Points"/>
-        /// </summary>
-        public void Clear()
+                throw new InvalidOperationException(
+                    $"Could not identify single set of server/credentials to use with points:{string.Join(Environment.NewLine, tempList)}", e);
+            }
+        }
+        else
         {
-            _points.Clear();
+            foreach(var p in points)
+                _points.Add(p);
         }
+    }
 
-        /// <summary>
-        /// Returns comma separated list of <see cref="Points"/> 
-        /// </summary>
-        /// <returns></returns>
-        public override string ToString()
-        {
-            return string.Join(",", Points.Select(p=>p.ToString()));
-        }
+    /// <summary>
+    /// Clears <see cref="Points"/>
+    /// </summary>
+    public void Clear()
+    {
+        _points.Clear();
+    }
 
-        /// <summary>
-        /// Returns as single server on which all <see cref="Points"/> can be reached (even if they are in
-        /// separate databases on that server).  Only valid if <see cref="SingleServer"/> is set (otherwise
-        /// throws <see cref="NotSupportedException"/>
-        /// </summary>
-        /// <returns></returns>
-        public DiscoveredServer GetDistinctServer()
-        {
-            if(!SingleServer)
-                throw new NotSupportedException("Only valid when SingleServer flag is set");
+    /// <summary>
+    /// Returns comma separated list of <see cref="Points"/> 
+    /// </summary>
+    /// <returns></returns>
+    public override string ToString()
+    {
+        return string.Join(",", Points.Select(p=>p.ToString()));
+    }
 
-            //they all have to be in the same server but do they also reside in the same database?
-            var allOnSameDatabase = Points.Select(p => p.Database).Distinct().Count() == 1;
+    /// <summary>
+    /// Returns as single server on which all <see cref="Points"/> can be reached (even if they are in
+    /// separate databases on that server).  Only valid if <see cref="SingleServer"/> is set (otherwise
+    /// throws <see cref="NotSupportedException"/>
+    /// </summary>
+    /// <returns></returns>
+    public DiscoveredServer GetDistinctServer()
+    {
+        if(!SingleServer)
+            throw new NotSupportedException("Only valid when SingleServer flag is set");
 
-            return DataAccessPortal.GetInstance().ExpectDistinctServer(Points.ToArray(),
-                DataAccessContext, allOnSameDatabase);
-        }
+        //they all have to be in the same server but do they also reside in the same database?
+        var allOnSameDatabase = Points.Select(p => p.Database).Distinct().Count() == 1;
 
-        /// <summary>
-        /// Returns a new collection with a new set of <see cref="Points"/> matching the old set (but not instance).
-        /// </summary>
-        /// <returns></returns>
-        public DataAccessPointCollection Clone()
-        {
-            var col = new DataAccessPointCollection(SingleServer,DataAccessContext);
-            col._points = new HashSet<IDataAccessPoint>(_points);
-            return col;
+        return DataAccessPortal.GetInstance().ExpectDistinctServer(Points.ToArray(),
+            DataAccessContext, allOnSameDatabase);
+    }
 
-        }
+    /// <summary>
+    /// Returns a new collection with a new set of <see cref="Points"/> matching the old set (but not instance).
+    /// </summary>
+    /// <returns></returns>
+    public DataAccessPointCollection Clone()
+    {
+        var col = new DataAccessPointCollection(SingleServer,DataAccessContext);
+        col._points = new HashSet<IDataAccessPoint>(_points);
+        return col;
 
-        /// <summary>
-        /// Tests whether the supplied <paramref name="point"/> could be added to the current collection (without
-        /// actually adding it).
-        /// </summary>
-        /// <param name="point"></param>
-        /// <returns></returns>
-        public bool AddWouldBePossible(IDataAccessPoint point)
-        {
-            return Clone().TryAdd(point);
-        }
+    }
+
+    /// <summary>
+    /// Tests whether the supplied <paramref name="point"/> could be added to the current collection (without
+    /// actually adding it).
+    /// </summary>
+    /// <param name="point"></param>
+    /// <returns></returns>
+    public bool AddWouldBePossible(IDataAccessPoint point)
+    {
+        return Clone().TryAdd(point);
     }
 }

@@ -14,53 +14,52 @@ using Rdmp.UI.ItemActivation;
 using ReusableLibraryCode.Icons.IconProvision;
 using SixLabors.ImageSharp.PixelFormats;
 
-namespace Rdmp.UI.CommandExecution.AtomicCommands
+namespace Rdmp.UI.CommandExecution.AtomicCommands;
+
+public class ExecuteCommandRunDQEOnCatalogue:BasicUICommandExecution,IAtomicCommandWithTarget
 {
-    public class ExecuteCommandRunDQEOnCatalogue:BasicUICommandExecution,IAtomicCommandWithTarget
-    {
-        private Catalogue _catalogue;
+    private Catalogue _catalogue;
         
-        [UseWithObjectConstructor]
-        public ExecuteCommandRunDQEOnCatalogue(IActivateItems activator,Catalogue catalogue): base(activator)
-        {
-            _catalogue = catalogue;
-        }
+    [UseWithObjectConstructor]
+    public ExecuteCommandRunDQEOnCatalogue(IActivateItems activator,Catalogue catalogue): base(activator)
+    {
+        _catalogue = catalogue;
+    }
 
-        public ExecuteCommandRunDQEOnCatalogue(IActivateItems activator):base(activator)
-        {
-        }
+    public ExecuteCommandRunDQEOnCatalogue(IActivateItems activator):base(activator)
+    {
+    }
 
-        public override string GetCommandHelp()
-        {
-            return "Runs the data quality engine on the dataset using the currently configured validation rules and stores the results in the default DQE results database";
-        }
+    public override string GetCommandHelp()
+    {
+        return "Runs the data quality engine on the dataset using the currently configured validation rules and stores the results in the default DQE results database";
+    }
 
-        public override Image<Rgba32> GetImage(IIconProvider iconProvider)
-        {
-            return iconProvider.GetImage(RDMPConcept.DQE, OverlayKind.Execute);
-        }
+    public override Image<Rgba32> GetImage(IIconProvider iconProvider)
+    {
+        return iconProvider.GetImage(RDMPConcept.DQE, OverlayKind.Execute);
+    }
 
-        public IAtomicCommandWithTarget SetTarget(DatabaseEntity target)
-        {
-            _catalogue = (Catalogue) target;
-            return this;
-        }
+    public IAtomicCommandWithTarget SetTarget(DatabaseEntity target)
+    {
+        _catalogue = (Catalogue) target;
+        return this;
+    }
 
-        public override void Execute()
-        {
-            base.Execute();
+    public override void Execute()
+    {
+        base.Execute();
 
-            var c = _catalogue ?? SelectOne<Catalogue>(BasicActivator.RepositoryLocator.CatalogueRepository);
+        var c = _catalogue ?? SelectOne<Catalogue>(BasicActivator.RepositoryLocator.CatalogueRepository);
 
-            if(c == null)
-                return;
+        if(c == null)
+            return;
 
-            Activator.Activate<DQEExecutionControlUI, Catalogue>(c);
-        }
+        Activator.Activate<DQEExecutionControlUI, Catalogue>(c);
+    }
 
-        public override string GetCommandName()
-        {
-            return "Data Quality Engine";
-        }
+    public override string GetCommandName()
+    {
+        return "Data Quality Engine";
     }
 }

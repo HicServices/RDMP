@@ -12,63 +12,62 @@ using Rdmp.Core.Icons.IconProvision;
 using ReusableLibraryCode.Icons.IconProvision;
 using SixLabors.ImageSharp.PixelFormats;
 
-namespace Rdmp.Core.CommandExecution.AtomicCommands
+namespace Rdmp.Core.CommandExecution.AtomicCommands;
+
+public class ExecuteCommandMakeProjectSpecificCatalogueNormalAgain : BasicCommandExecution,IAtomicCommand
 {
-    public class ExecuteCommandMakeProjectSpecificCatalogueNormalAgain : BasicCommandExecution,IAtomicCommand
+    private Catalogue _catalogue;
+    private ExtractableDataSet _extractableDataSet;
+
+    public ExecuteCommandMakeProjectSpecificCatalogueNormalAgain(IBasicActivateItems activator, Catalogue catalogue):base(activator)
     {
-        private Catalogue _catalogue;
-        private ExtractableDataSet _extractableDataSet;
+        _catalogue = catalogue;
 
-        public ExecuteCommandMakeProjectSpecificCatalogueNormalAgain(IBasicActivateItems activator, Catalogue catalogue):base(activator)
+        var dataExportRepository = BasicActivator.RepositoryLocator.DataExportRepository;
+        if (dataExportRepository == null)
         {
-            _catalogue = catalogue;
-
-            var dataExportRepository = BasicActivator.RepositoryLocator.DataExportRepository;
-            if (dataExportRepository == null)
-            {
-                SetImpossible("Data Export functionality is not available");
-                return;
-            }
-
-            _extractableDataSet = dataExportRepository.GetAllObjectsWithParent<ExtractableDataSet>(catalogue).SingleOrDefault();
-
-            if (_extractableDataSet == null)
-            {
-                SetImpossible("Catalogue is not extractable");
-                return;
-            }
-
-            if (_extractableDataSet.Project_ID == null)
-            {
-                SetImpossible("Catalogue is not a project specific Catalogue");
-                return;
-            }
+            SetImpossible("Data Export functionality is not available");
+            return;
         }
 
-        public override string GetCommandHelp()
+        _extractableDataSet = dataExportRepository.GetAllObjectsWithParent<ExtractableDataSet>(catalogue).SingleOrDefault();
+
+        if (_extractableDataSet == null)
         {
-            return "Take a dataset that was previously only usable with extractions of a specific project and make it free for use in any extraction project";
+            SetImpossible("Catalogue is not extractable");
+            return;
         }
 
-        public override void Execute()
+        if (_extractableDataSet.Project_ID == null)
         {
-            base.Execute();
+            SetImpossible("Catalogue is not a project specific Catalogue");
+            return;
+        }
+    }
 
-            _extractableDataSet.Project_ID = null;
-            _extractableDataSet.SaveToDatabase();
+    public override string GetCommandHelp()
+    {
+        return "Take a dataset that was previously only usable with extractions of a specific project and make it free for use in any extraction project";
+    }
 
-            foreach (var ei in _catalogue.GetAllExtractionInformation(ExtractionCategory.ProjectSpecific))
-            {
-                ei.ExtractionCategory = ExtractionCategory.Core;
-                ei.SaveToDatabase();
-            }
+    public override void Execute()
+    {
+        base.Execute();
 
-            Publish(_catalogue);
+        _extractableDataSet.Project_ID = null;
+        _extractableDataSet.SaveToDatabase();
+
+        foreach (var ei in _catalogue.GetAllExtractionInformation(ExtractionCategory.ProjectSpecific))
+        {
+            ei.ExtractionCategory = ExtractionCategory.Core;
+            ei.SaveToDatabase();
         }
 
-        public override Image<Rgba32> GetImage(IIconProvider iconProvider)
-        {
-            return Image.Load<Rgba32>(CatalogueIcons.MakeProjectSpecificCatalogueNormalAgain);
-        }
+        Publish(_catalogue);
+    }
+
+    public override Image<Rgba32> GetImage(IIconProvider iconProvider)
+    {
+        return Image.Load<Rgba32>(CatalogueIcons.MakeProjectSpecificCatalogueNormalAgain);
     }
 }

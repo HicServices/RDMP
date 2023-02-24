@@ -9,62 +9,59 @@ using System.Drawing;
 using System.Drawing.Drawing2D;
 using System.Linq;
 
-namespace Rdmp.UI.SimpleControls
+namespace Rdmp.UI.SimpleControls;
+
+/// <summary>
+/// Generates colours on the visual spectrum between blue and red using interoplation.
+/// </summary>
+public class RainbowColorPicker
 {
-    /// <summary>
-    /// Generates colours on the visual spectrum between blue and red using interoplation.
-    /// </summary>
-    public class RainbowColorPicker
+    public List<Color> Colors { get; private set; }
+    public RainbowColorPicker(int numberOfColors)
     {
-        public List<Color> Colors { get; private set; }
-        public RainbowColorPicker(int numberOfColors)
-        {
-            Colors = new List<Color>();
+        Colors = new List<Color>();
 
-            List<Color> baseColors = new List<Color>();  // create a color list
-            baseColors.Add(Color.RoyalBlue);
-            baseColors.Add(Color.LightSkyBlue);
-            baseColors.Add(Color.LightGreen);
-            baseColors.Add(Color.Yellow);
-            baseColors.Add(Color.Orange);
-            baseColors.Add(Color.Red);
-            Colors = interpolateColors(baseColors, numberOfColors);
-        }
+        var baseColors = new List<Color>();  // create a color list
+        baseColors.Add(Color.RoyalBlue);
+        baseColors.Add(Color.LightSkyBlue);
+        baseColors.Add(Color.LightGreen);
+        baseColors.Add(Color.Yellow);
+        baseColors.Add(Color.Orange);
+        baseColors.Add(Color.Red);
+        Colors = interpolateColors(baseColors, numberOfColors);
+    }
 
-        public RainbowColorPicker(Color color1, Color color2, int numberOfColors)
-        {
-            Colors = new List<Color>();
+    public RainbowColorPicker(Color color1, Color color2, int numberOfColors)
+    {
+        Colors = new List<Color>();
 
-            List<Color> baseColors = new List<Color>();  // create a color list
-            baseColors.Add(color1);
-            baseColors.Add(color2);
-            Colors = interpolateColors(baseColors, numberOfColors);
-        }
+        var baseColors = new List<Color>();  // create a color list
+        baseColors.Add(color1);
+        baseColors.Add(color2);
+        Colors = interpolateColors(baseColors, numberOfColors);
+    }
 
-        List<Color> interpolateColors(List<Color> stopColors, int count)
-        {
-            SortedDictionary<float, Color> gradient = new SortedDictionary<float, Color>();
-            for (int i = 0; i < stopColors.Count; i++)
-                gradient.Add(1f * i / (stopColors.Count - 1), stopColors[i]);
-            List<Color> ColorList = new List<Color>();
+    private List<Color> interpolateColors(List<Color> stopColors, int count)
+    {
+        var gradient = new SortedDictionary<float, Color>();
+        for (var i = 0; i < stopColors.Count; i++)
+            gradient.Add(1f * i / (stopColors.Count - 1), stopColors[i]);
+        var ColorList = new List<Color>();
 
-            using (Bitmap bmp = new Bitmap(count, 1))
-            using (Graphics G = Graphics.FromImage(bmp))
-            {
-                Rectangle bmpCRect = new Rectangle(Point.Empty, bmp.Size);
-                LinearGradientBrush br = new LinearGradientBrush
-                                        (bmpCRect, Color.Empty, Color.Empty, 0, false);
-                ColorBlend cb = new ColorBlend();
-                cb.Positions = new float[gradient.Count];
-                for (int i = 0; i < gradient.Count; i++)
-                    cb.Positions[i] = gradient.ElementAt(i).Key;
-                cb.Colors = gradient.Values.ToArray();
-                br.InterpolationColors = cb;
-                G.FillRectangle(br, bmpCRect);
-                for (int i = 0; i < count; i++) ColorList.Add(bmp.GetPixel(i, 0));
-                br.Dispose();
-            }
-            return ColorList;
-        }
+        using var bmp = new Bitmap(count, 1);
+        using var G = Graphics.FromImage(bmp);
+        var bmpCRect = new Rectangle(Point.Empty, bmp.Size);
+        var br = new LinearGradientBrush
+            (bmpCRect, Color.Empty, Color.Empty, 0, false);
+        var cb = new ColorBlend();
+        cb.Positions = new float[gradient.Count];
+        for (var i = 0; i < gradient.Count; i++)
+            cb.Positions[i] = gradient.ElementAt(i).Key;
+        cb.Colors = gradient.Values.ToArray();
+        br.InterpolationColors = cb;
+        G.FillRectangle(br, bmpCRect);
+        for (var i = 0; i < count; i++) ColorList.Add(bmp.GetPixel(i, 0));
+        br.Dispose();
+        return ColorList;
     }
 }

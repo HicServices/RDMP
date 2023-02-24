@@ -10,31 +10,30 @@ using Rdmp.Core.Icons.IconProvision;
 using ReusableLibraryCode.Icons.IconProvision;
 using SixLabors.ImageSharp.PixelFormats;
 
-namespace Rdmp.Core.CommandExecution.AtomicCommands
+namespace Rdmp.Core.CommandExecution.AtomicCommands;
+
+public class ExecuteCommandClonePipeline : BasicCommandExecution, IAtomicCommand
 {
-    public class ExecuteCommandClonePipeline : BasicCommandExecution, IAtomicCommand
+    private readonly Pipeline _pipeline;
+
+    public ExecuteCommandClonePipeline(IBasicActivateItems activator, Pipeline pipeline)
+        : base(activator)
     {
-        private readonly Pipeline _pipeline;
+        _pipeline = pipeline;
+        if (_pipeline == null)
+            SetImpossible("You can only clone an existing pipeline"); 
+    }
 
-        public ExecuteCommandClonePipeline(IBasicActivateItems activator, Pipeline pipeline)
-            : base(activator)
-        {
-            _pipeline = pipeline;
-            if (_pipeline == null)
-                SetImpossible("You can only clone an existing pipeline"); 
-        }
+    public override void Execute()
+    {
+        base.Execute();
 
-        public override void Execute()
-        {
-            base.Execute();
+        _pipeline.Clone();
+        Publish(_pipeline);
+    }
 
-            _pipeline.Clone();
-            Publish(_pipeline);
-        }
-
-        public override Image<Rgba32> GetImage(IIconProvider iconProvider)
-        {
-            return iconProvider.GetImage(RDMPConcept.Pipeline, OverlayKind.Link);
-        }
+    public override Image<Rgba32> GetImage(IIconProvider iconProvider)
+    {
+        return iconProvider.GetImage(RDMPConcept.Pipeline, OverlayKind.Link);
     }
 }

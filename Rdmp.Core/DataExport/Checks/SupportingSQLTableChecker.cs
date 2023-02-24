@@ -8,63 +8,60 @@ using System;
 using Rdmp.Core.Curation.Data;
 using ReusableLibraryCode.Checks;
 
-namespace Rdmp.Core.DataExport.Checks
+namespace Rdmp.Core.DataExport.Checks;
+
+/// <summary>
+/// Checks that a given <see cref="SupportingSQLTable"/> is reachable by the current user and that the <see cref="SupportingSQLTable.SQL"/> can be executed and returns data.
+/// </summary>
+public class SupportingSQLTableChecker:ICheckable
 {
+    private readonly SupportingSQLTable _table;
+
     /// <summary>
-    /// Checks that a given <see cref="SupportingSQLTable"/> is reachable by the current user and that the <see cref="SupportingSQLTable.SQL"/> can be executed and returns data.
+    /// Sets up checking of the supplied
     /// </summary>
-    public class SupportingSQLTableChecker:ICheckable
+    /// <param name="table"></param>
+    public SupportingSQLTableChecker(SupportingSQLTable table)
     {
-        private readonly SupportingSQLTable _table;
+        _table = table;
+    }
 
-        /// <summary>
-        /// Sets up checking of the supplied
-        /// </summary>
-        /// <param name="table"></param>
-        public SupportingSQLTableChecker(SupportingSQLTable table)
+    /// <summary>
+    /// Checks that the table can be reached on its listed server and that at least one row can be read from it.
+    /// </summary>
+    /// <param name="notifier"></param>
+    public void Check(ICheckNotifier notifier)
+    {
+        try
         {
-            _table = table;
+            notifier.OnCheckPerformed(new CheckEventArgs($"Found SupportingSQLTable {_table} about to check it", CheckResult.Success));
+
+            var supportingSQLServer = _table.GetServer();
+
+            notifier.OnCheckPerformed(supportingSQLServer.Exists()
+                ? new CheckEventArgs($"Server {supportingSQLServer} exists", CheckResult.Success)
+                : new CheckEventArgs($"Server {supportingSQLServer} does not exist", CheckResult.Fail));
+
+            using var con = _table.GetServer().GetConnection();
+            con.Open();
+
+            notifier.OnCheckPerformed(new CheckEventArgs($"About to check Extraction SQL:{_table.SQL}", CheckResult.Success));
+
+            using var cmd = supportingSQLServer.GetCommand(_table.SQL, con);
+            using var reader = cmd.ExecuteReader();
+            if (reader.Read())
+                notifier.OnCheckPerformed(
+                    new CheckEventArgs(
+                        "SupportingSQLTable table fetched successfully and at least 1 data row was read ",
+                        CheckResult.Success));
+            else
+                notifier.OnCheckPerformed(new CheckEventArgs(
+                    $"No data was successfully read from SupportingSQLTable {_table}", CheckResult.Fail));
         }
-
-        /// <summary>
-        /// Checks that the table can be reached on its listed server and that at least one row can be read from it.
-        /// </summary>
-        /// <param name="notifier"></param>
-        public void Check(ICheckNotifier notifier)
+        catch (Exception e)
         {
-            try
-            {
-                notifier.OnCheckPerformed(new CheckEventArgs("Found SupportingSQLTable " + _table + " about to check it", CheckResult.Success));
-
-                var supportingSQLServer = _table.GetServer();
-
-                notifier.OnCheckPerformed(supportingSQLServer.Exists()
-                    ? new CheckEventArgs("Server " + supportingSQLServer + " exists", CheckResult.Success)
-                    : new CheckEventArgs("Server " + supportingSQLServer + " does not exist", CheckResult.Fail));
-
-                using (var con = _table.GetServer().GetConnection())
-                {
-                    con.Open();
-
-                    notifier.OnCheckPerformed(new CheckEventArgs("About to check Extraction SQL:" + _table.SQL, CheckResult.Success));
-
-                    using (var cmd = supportingSQLServer.GetCommand(_table.SQL, con))
-                    {
-                        using(var reader = cmd.ExecuteReader())
-                            if (reader.Read())
-                                notifier.OnCheckPerformed(
-                                    new CheckEventArgs(
-                                        "SupportingSQLTable table fetched successfully and at least 1 data row was read ",
-                                        CheckResult.Success));
-                            else
-                                notifier.OnCheckPerformed(new CheckEventArgs("No data was successfully read from SupportingSQLTable " + _table, CheckResult.Fail));
-                    }
-                }
-            }
-            catch (Exception e)
-            {
-                notifier.OnCheckPerformed(new CheckEventArgs("Checking of SupportingSQLTable " + _table + " failed with Exception", CheckResult.Fail, e));
-            }
+            notifier.OnCheckPerformed(new CheckEventArgs(
+                $"Checking of SupportingSQLTable {_table} failed with Exception", CheckResult.Fail, e));
         }
     }
 }

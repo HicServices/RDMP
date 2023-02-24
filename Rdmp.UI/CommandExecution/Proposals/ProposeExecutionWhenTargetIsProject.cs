@@ -12,47 +12,40 @@ using Rdmp.Core.DataExport.Data;
 using Rdmp.UI.CommandExecution.AtomicCommands;
 using Rdmp.UI.ItemActivation;
 
-namespace Rdmp.UI.CommandExecution.Proposals
+namespace Rdmp.UI.CommandExecution.Proposals;
+
+internal class ProposeExecutionWhenTargetIsProject:RDMPCommandExecutionProposal<Project>
 {
-    class ProposeExecutionWhenTargetIsProject:RDMPCommandExecutionProposal<Project>
+    public ProposeExecutionWhenTargetIsProject(IActivateItems itemActivator) : base(itemActivator)
     {
-        public ProposeExecutionWhenTargetIsProject(IActivateItems itemActivator) : base(itemActivator)
-        {
-        }
+    }
 
-        public override bool CanActivate(Project target)
-        {
-            return true;
-        }
+    public override bool CanActivate(Project target)
+    {
+        return true;
+    }
 
-        public override void Activate(Project target)
-        {
-            ItemActivator.Activate<ProjectUI.ProjectUI, Project>(target);
-        }
+    public override void Activate(Project target)
+    {
+        ItemActivator.Activate<ProjectUI.ProjectUI, Project>(target);
+    }
 
-        public override ICommandExecution ProposeExecution(ICombineToMakeCommand cmd, Project project, InsertOption insertOption = InsertOption.Default)
-        {
-            //drop a cic on a Project to associate it with that project
-            var cicCommand = cmd as CohortIdentificationConfigurationCommand;
-            if(cicCommand != null)
-                return new ExecuteCommandAssociateCohortIdentificationConfigurationWithProject(ItemActivator).SetTarget(cicCommand.CohortIdentificationConfiguration).SetTarget(project);
+    public override ICommandExecution ProposeExecution(ICombineToMakeCommand cmd, Project project, InsertOption insertOption = InsertOption.Default)
+    {
+        //drop a cic on a Project to associate it with that project
+        if(cmd is CohortIdentificationConfigurationCommand cicCommand)
+            return new ExecuteCommandAssociateCohortIdentificationConfigurationWithProject(ItemActivator).SetTarget(cicCommand.CohortIdentificationConfiguration).SetTarget(project);
 
-            var cataCommand = cmd as CatalogueCombineable;
-            if (cataCommand != null)
-                return new ExecuteCommandMakeCatalogueProjectSpecific(ItemActivator).SetTarget(cataCommand.Catalogue).SetTarget(project);
+        if (cmd is CatalogueCombineable cataCommand)
+            return new ExecuteCommandMakeCatalogueProjectSpecific(ItemActivator).SetTarget(cataCommand.Catalogue).SetTarget(project);
 
-            var file = cmd as FileCollectionCombineable;
+        if(cmd is FileCollectionCombineable file && file.Files.Length == 1)
+            return new ExecuteCommandCreateNewCatalogueByImportingFileUI(ItemActivator,file.Files[0]).SetTarget(project);
 
-            if(file != null && file.Files.Length == 1)
-                return new ExecuteCommandCreateNewCatalogueByImportingFileUI(ItemActivator,file.Files[0]).SetTarget(project);
-
-            var aggCommand = cmd as AggregateConfigurationCombineable;
-            
-            if(aggCommand != null)
-                return new ExecuteCommandCreateNewCatalogueByExecutingAnAggregateConfiguration(ItemActivator,aggCommand.Aggregate).SetTarget(project);
+        if(cmd is AggregateConfigurationCombineable aggCommand)
+            return new ExecuteCommandCreateNewCatalogueByExecutingAnAggregateConfiguration(ItemActivator,aggCommand.Aggregate).SetTarget(project);
 
 
-            return null;
-        }
+        return null;
     }
 }

@@ -4,17 +4,16 @@
 // RDMP is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License for more details.
 // You should have received a copy of the GNU General Public License along with RDMP. If not, see <https://www.gnu.org/licenses/>.
 
-namespace Rdmp.Core.Caching
+namespace Rdmp.Core.Caching;
+
+/// <summary>
+/// The results of an attempt to start a Caching action.
+/// </summary>
+public enum RetrievalResult
 {
-    /// <summary>
-    /// The results of an attempt to start a Caching action.
-    /// </summary>
-    public enum RetrievalResult
-    {
-        Complete,
-        Aborted,
-        Stopped,
-        NotPermitted,
-        Error
-    }
+    Complete,
+    Aborted,
+    Stopped,
+    NotPermitted,
+    Error
 }

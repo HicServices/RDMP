@@ -16,121 +16,117 @@ using Rdmp.Core.DataFlowPipeline.Requirements;
 using ReusableLibraryCode.Checks;
 using ReusableLibraryCode.Progress;
 
-namespace Rdmp.Core.DataLoad.Engine.Pipeline.Components.Anonymisation
+namespace Rdmp.Core.DataLoad.Engine.Pipeline.Components.Anonymisation;
+
+/// <summary>
+/// Pipeline component for anonymising DataTable batches in memory according to the configuration of ANOTables / PreLoadDiscardedColumn(s) in the TableInfo.
+/// Actual functionality is implemented in IdentifierDumper and ANOTransformer(s).
+/// </summary>
+public class BasicAnonymisationEngine :IPluginDataFlowComponent<DataTable>,IPipelineRequirement<TableInfo>
 {
-    /// <summary>
-    /// Pipeline component for anonymising DataTable batches in memory according to the configuration of ANOTables / PreLoadDiscardedColumn(s) in the TableInfo.
-    /// Actual functionality is implemented in IdentifierDumper and ANOTransformer(s).
-    /// </summary>
-    public class BasicAnonymisationEngine :IPluginDataFlowComponent<DataTable>,IPipelineRequirement<TableInfo>
-    {
-        private bool _bInitialized = false;
+    private bool _bInitialized = false;
 
-        private Dictionary<string, ANOTransformer> columnsToAnonymise = new Dictionary<string, ANOTransformer>();
+    private Dictionary<string, ANOTransformer> columnsToAnonymise = new();
 
-        IdentifierDumper _dumper;
+    private IdentifierDumper _dumper;
         
-        public TableInfo TableToLoad { get; set; }
+    public TableInfo TableToLoad { get; set; }
 
-        public void PreInitialize(TableInfo target,IDataLoadEventListener listener)
+    public void PreInitialize(TableInfo target,IDataLoadEventListener listener)
+    {
+        TableToLoad = target;
+        _bInitialized = true;
+
+        _dumper = new IdentifierDumper(TableToLoad);
+        _dumper.CreateSTAGINGTable();
+
+        //columns we expect to ANO
+        foreach (var columnInfo in target.ColumnInfos)
         {
-            TableToLoad = target;
-            _bInitialized = true;
+            var columnName = columnInfo.GetRuntimeName();
 
-            _dumper = new IdentifierDumper(TableToLoad);
-            _dumper.CreateSTAGINGTable();
-
-            //columns we expect to ANO
-            foreach (ColumnInfo columnInfo in target.ColumnInfos)
+            if (columnInfo.ANOTable_ID != null)
             {
-                string columnName = columnInfo.GetRuntimeName();
+                //The metadata says this column should be ANOd
+                if (!columnName.StartsWith(ANOTable.ANOPrefix))
+                    throw new Exception(
+                        $"ColumnInfo  {columnName} does not start with ANO but is marked as an ANO column (ID={columnInfo.ID})");
 
-                if (columnInfo.ANOTable_ID != null)
-                {
-                    //The metadata says this column should be ANOd
-                    if (!columnName.StartsWith(ANOTable.ANOPrefix))
-                        throw new Exception("ColumnInfo  " + columnName + " does not start with ANO but is marked as an ANO column (ID=" + columnInfo.ID + ")");
-
-                    //if the column is ANOGp then look for column Gp in the input columns (DataTable toProcess)
-                    columnName = columnName.Substring(ANOTable.ANOPrefix.Length);
-                    columnsToAnonymise.Add(columnName, new ANOTransformer(columnInfo.ANOTable));
-                }
+                //if the column is ANOGp then look for column Gp in the input columns (DataTable toProcess)
+                columnName = columnName[ANOTable.ANOPrefix.Length..];
+                columnsToAnonymise.Add(columnName, new ANOTransformer(columnInfo.ANOTable));
             }
         }
+    }
 
-        private int recordsProcessedSoFar = 0;
+    private int recordsProcessedSoFar = 0;
 
-        Stopwatch stopwatch_TimeSpentTransforming = new Stopwatch();
-        Stopwatch stopwatch_TimeSpentDumping = new Stopwatch();
+    private Stopwatch stopwatch_TimeSpentTransforming = new();
+    private Stopwatch stopwatch_TimeSpentDumping = new();
 
-        public DataTable ProcessPipelineData( DataTable toProcess, IDataLoadEventListener listener, GracefulCancellationToken cancellationToken)
-        {
-            bool didAno = false;
+    public DataTable ProcessPipelineData( DataTable toProcess, IDataLoadEventListener listener, GracefulCancellationToken cancellationToken)
+    {
+        var didAno = false;
 
-            stopwatch_TimeSpentTransforming.Start();
+        stopwatch_TimeSpentTransforming.Start();
             
-            if(!_bInitialized)
-                throw new Exception("Not Initialized yet");
+        if(!_bInitialized)
+            throw new Exception("Not Initialized yet");
             
-            recordsProcessedSoFar += toProcess.Rows.Count;
+        recordsProcessedSoFar += toProcess.Rows.Count;
 
-            var missingColumns = columnsToAnonymise.Keys.Where(k => !toProcess.Columns.Cast<DataColumn>().Any(c => c.ColumnName.Equals(k))).ToArray();
+        var missingColumns = columnsToAnonymise.Keys.Where(k => !toProcess.Columns.Cast<DataColumn>().Any(c => c.ColumnName.Equals(k))).ToArray();
 
-            if(missingColumns.Any())
-                throw new KeyNotFoundException("The following columns (which have ANO Transforms on them) were missing from the DataTable:" + Environment.NewLine
-                    +string.Join(Environment.NewLine,missingColumns) + Environment.NewLine + "The columns found in the DataTable were:" +Environment.NewLine 
-                    +string.Join(Environment.NewLine, toProcess.Columns.Cast<DataColumn>().Select(c => c.ColumnName)));
+        if(missingColumns.Any())
+            throw new KeyNotFoundException(
+                $"The following columns (which have ANO Transforms on them) were missing from the DataTable:{Environment.NewLine}{string.Join(Environment.NewLine, missingColumns)}{Environment.NewLine}The columns found in the DataTable were:{Environment.NewLine}{string.Join(Environment.NewLine, toProcess.Columns.Cast<DataColumn>().Select(c => c.ColumnName))}");
 
-            //Dump Identifiers
-            stopwatch_TimeSpentDumping.Start();
-            _dumper.DumpAllIdentifiersInTable(toProcess); //do the dumping of all the rest of the columns (those that must disapear from pipeline as opposed to those above which were substituted for ANO versions)
-            stopwatch_TimeSpentDumping.Stop();
+        //Dump Identifiers
+        stopwatch_TimeSpentDumping.Start();
+        _dumper.DumpAllIdentifiersInTable(toProcess); //do the dumping of all the rest of the columns (those that must disapear from pipeline as opposed to those above which were substituted for ANO versions)
+        stopwatch_TimeSpentDumping.Stop();
             
-            if(_dumper.HaveDumpedRecords)
-                listener.OnProgress(this, new ProgressEventArgs("Dump Identifiers", new ProgressMeasurement(recordsProcessedSoFar, ProgressType.Records), stopwatch_TimeSpentDumping.Elapsed));//time taken to dump identifiers
+        if(_dumper.HaveDumpedRecords)
+            listener.OnProgress(this, new ProgressEventArgs("Dump Identifiers", new ProgressMeasurement(recordsProcessedSoFar, ProgressType.Records), stopwatch_TimeSpentDumping.Elapsed));//time taken to dump identifiers
            
-            //Process ANO Identifier Substitutions
-            //for each column with an ANOTrasformer
-            foreach (KeyValuePair<string, ANOTransformer> kvp in columnsToAnonymise)
-            {
-                didAno = true;
+        //Process ANO Identifier Substitutions
+        //for each column with an ANOTrasformer
+        foreach (var (column, transformer) in columnsToAnonymise)
+        {
+            didAno = true;
 
-                var column = kvp.Key;
-                ANOTransformer transformer = kvp.Value;
+            //add an ANO version
+            var ANOColumn = new DataColumn($"{ANOTable.ANOPrefix}{column}");
+            toProcess.Columns.Add(ANOColumn);
 
-                //add an ANO version
-                DataColumn ANOColumn = new DataColumn(ANOTable.ANOPrefix + column);
-                toProcess.Columns.Add(ANOColumn);
+            //populate ANO version
+            transformer.Transform(toProcess,toProcess.Columns[column], ANOColumn);
 
-                //populate ANO version
-                transformer.Transform(toProcess,toProcess.Columns[column], ANOColumn);
+            //drop the non ANO version
+            toProcess.Columns.Remove(column);
+        }
 
-                //drop the non ANO version
-                toProcess.Columns.Remove(column);
-            }
+        stopwatch_TimeSpentTransforming.Stop();
 
-            stopwatch_TimeSpentTransforming.Stop();
-
-            if(didAno)
-                listener.OnProgress(this, new ProgressEventArgs("Anonymise Identifiers", new ProgressMeasurement(recordsProcessedSoFar, ProgressType.Records), stopwatch_TimeSpentTransforming.Elapsed)); //time taken to swap ANO identifiers
+        if(didAno)
+            listener.OnProgress(this, new ProgressEventArgs("Anonymise Identifiers", new ProgressMeasurement(recordsProcessedSoFar, ProgressType.Records), stopwatch_TimeSpentTransforming.Elapsed)); //time taken to swap ANO identifiers
             
-            return toProcess;
-        }
+        return toProcess;
+    }
 
-        public void Dispose(IDataLoadEventListener listener, Exception pipelineFailureExceptionIfAny)
-        {
-            _dumper.DropStaging();
-        }
+    public void Dispose(IDataLoadEventListener listener, Exception pipelineFailureExceptionIfAny)
+    {
+        _dumper.DropStaging();
+    }
 
-        public void Abort(IDataLoadEventListener listener)
-        {
-            _dumper.DropStaging();
-        }
+    public void Abort(IDataLoadEventListener listener)
+    {
+        _dumper.DropStaging();
+    }
 
-        public bool SilentRunning { get; set; }
-        public void Check(ICheckNotifier notifier)
-        {
+    public bool SilentRunning { get; set; }
+    public void Check(ICheckNotifier notifier)
+    {
             
-        }
     }
 }

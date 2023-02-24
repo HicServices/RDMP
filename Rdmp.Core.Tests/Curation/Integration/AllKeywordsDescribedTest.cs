@@ -14,122 +14,118 @@ using Rdmp.Core.Curation.Data;
 using Rdmp.Core.Repositories;
 using Tests.Common;
 
-namespace Rdmp.Core.Tests.Curation.Integration
+namespace Rdmp.Core.Tests.Curation.Integration;
+
+[TestFixture]
+public class AllKeywordsDescribedTest :DatabaseTests
 {
-    [TestFixture]
-    public class AllKeywordsDescribedTest :DatabaseTests
+
+    [OneTimeSetUp]
+    protected override void OneTimeSetUp()
     {
+        base.OneTimeSetUp();
 
-        [OneTimeSetUp]
-        protected override void OneTimeSetUp()
-        {
-            base.OneTimeSetUp();
+        CatalogueRepository.CommentStore.ReadComments(TestContext.CurrentContext.TestDirectory);
+    }
 
-            CatalogueRepository.CommentStore.ReadComments(TestContext.CurrentContext.TestDirectory);
-        }
+    [Test]
+    public void AllTablesDescribed()
+    {
+        //ensures the DQERepository gets a chance to add its help text
+        new DQERepository(CatalogueRepository);
 
-        [Test]
-        public void AllTablesDescribed()
-        {
-            //ensures the DQERepository gets a chance to add its help text
-            new DQERepository(CatalogueRepository);
+        var problems = new List<string>();
 
-            List<string> problems = new List<string>();
-
-            var databaseTypes = typeof(Catalogue).Assembly.GetTypes().Where(t => typeof(IMapsDirectlyToDatabaseTable).IsAssignableFrom(t) && !t.IsInterface && !t.IsAbstract && !t.Name.StartsWith("Spontaneous") && !t.Name.Contains("Proxy")).ToArray();
+        var databaseTypes = typeof(Catalogue).Assembly.GetTypes().Where(t => typeof(IMapsDirectlyToDatabaseTable).IsAssignableFrom(t) && !t.IsInterface && !t.IsAbstract && !t.Name.StartsWith("Spontaneous") && !t.Name.Contains("Proxy")).ToArray();
             
-            foreach (var type in databaseTypes)
-            {
-                var docs = CatalogueRepository.CommentStore[type.Name]??CatalogueRepository.CommentStore["I"+type.Name];
+        foreach (var type in databaseTypes)
+        {
+            var docs = CatalogueRepository.CommentStore[type.Name]??CatalogueRepository.CommentStore[$"I{type.Name}"];
                 
-                if(string.IsNullOrWhiteSpace(docs))
-                    problems.Add("Type " + type.Name + " does not have an entry in the help dictionary (maybe the class doesn't have documentation? - try adding /// <summary> style comments to the class)");
+            if(string.IsNullOrWhiteSpace(docs))
+                problems.Add(
+                    $"Type {type.Name} does not have an entry in the help dictionary (maybe the class doesn't have documentation? - try adding /// <summary> style comments to the class)");
                 
-            }
-            foreach (string problem in problems)
-                Console.WriteLine("Fatal Problem:" + problem);
-
-            Assert.AreEqual(0,problems.Count);
         }
+        foreach (var problem in problems)
+            Console.WriteLine($"Fatal Problem:{problem}");
 
-        [Test]
-        public void AllForeignKeysDescribed()
+        Assert.AreEqual(0,problems.Count);
+    }
+
+    [Test]
+    public void AllForeignKeysDescribed()
+    {
+        var allKeys = new List<string>();
+
+        //ensures the DQERepository gets a chance to add its help text
+        new DQERepository(CatalogueRepository);
+
+        allKeys.AddRange(GetForeignKeys(CatalogueTableRepository.DiscoveredServer));
+        allKeys.AddRange(GetForeignKeys(DataExportTableRepository.DiscoveredServer));
+        allKeys.AddRange(GetForeignKeys(new DiscoveredServer(DataQualityEngineConnectionString)));
+
+        var problems = new List<string>();
+        foreach (var fkName in allKeys)
         {
-            List<string> allKeys = new List<string>();
-
-            //ensures the DQERepository gets a chance to add its help text
-            new DQERepository(CatalogueRepository);
-
-            allKeys.AddRange(GetForeignKeys(CatalogueTableRepository.DiscoveredServer));
-            allKeys.AddRange(GetForeignKeys(DataExportTableRepository.DiscoveredServer));
-            allKeys.AddRange(GetForeignKeys(new DiscoveredServer(DataQualityEngineConnectionString)));
-
-            List<string> problems = new List<string>();
-            foreach (string fkName in allKeys)
-            {
-                if (!CatalogueRepository.CommentStore.ContainsKey(fkName))
-                    problems.Add(fkName + " is a foreign Key (which does not CASCADE) but does not have any HelpText");
-            }
+            if (!CatalogueRepository.CommentStore.ContainsKey(fkName))
+                problems.Add($"{fkName} is a foreign Key (which does not CASCADE) but does not have any HelpText");
+        }
             
-            foreach (string problem in problems)
-                Console.WriteLine("Fatal Problem:" + problem);
+        foreach (var problem in problems)
+            Console.WriteLine($"Fatal Problem:{problem}");
 
-            Assert.AreEqual(0, problems.Count, @"Add a description for each of these to KeywordHelp.txt");
-        }
+        Assert.AreEqual(0, problems.Count, @"Add a description for each of these to KeywordHelp.txt");
+    }
 
-        [Test]
-        public void AllUserIndexesDescribed()
+    [Test]
+    public void AllUserIndexesDescribed()
+    {
+        var allIndexes = new List<string>();
+
+        //ensures the DQERepository gets a chance to add its help text
+        new DQERepository(CatalogueRepository);
+
+        allIndexes.AddRange(GetIndexes(CatalogueTableRepository.DiscoveredServer));
+        allIndexes.AddRange(GetIndexes(DataExportTableRepository.DiscoveredServer));
+        allIndexes.AddRange(GetIndexes(new DiscoveredServer(DataQualityEngineConnectionString)));
+
+        var problems = new List<string>();
+        foreach (var idx in allIndexes)
         {
-            List<string> allIndexes = new List<string>();
-
-            //ensures the DQERepository gets a chance to add its help text
-            new DQERepository(CatalogueRepository);
-
-            allIndexes.AddRange(GetIndexes(CatalogueTableRepository.DiscoveredServer));
-            allIndexes.AddRange(GetIndexes(DataExportTableRepository.DiscoveredServer));
-            allIndexes.AddRange(GetIndexes(new DiscoveredServer(DataQualityEngineConnectionString)));
-
-            List<string> problems = new List<string>();
-            foreach (string idx in allIndexes)
-            {
-                if (!CatalogueRepository.CommentStore.ContainsKey(idx))
-                    problems.Add(idx + " is an index but does not have any HelpText");
-            }
+            if (!CatalogueRepository.CommentStore.ContainsKey(idx))
+                problems.Add($"{idx} is an index but does not have any HelpText");
+        }
             
-            foreach (string problem in problems)
-                Console.WriteLine("Fatal Problem:" + problem);
+        foreach (var problem in problems)
+            Console.WriteLine($"Fatal Problem:{problem}");
 
-            Assert.AreEqual(0,problems.Count,@"Add a description for each of these to KeywordHelp.txt");
+        Assert.AreEqual(0,problems.Count,@"Add a description for each of these to KeywordHelp.txt");
             
-        }
+    }
 
-        private IEnumerable<string> GetForeignKeys(DiscoveredServer server)
-        {
-            using (var con = server.GetConnection())
-            {
-                con.Open();
-                var r = server.GetCommand(@"select name from sys.foreign_keys where delete_referential_action = 0", con).ExecuteReader();
+    private IEnumerable<string> GetForeignKeys(DiscoveredServer server)
+    {
+        using var con = server.GetConnection();
+        con.Open();
+        var r = server.GetCommand(@"select name from sys.foreign_keys where delete_referential_action = 0", con).ExecuteReader();
 
-                while (r.Read())
-                    yield return (string)r["name"];
-            }
-        }
+        while (r.Read())
+            yield return (string)r["name"];
+    }
 
-        private IEnumerable<string> GetIndexes(DiscoveredServer server)
-        {
-            using (var con = server.GetConnection())
-            {
-                con.Open();
-                var r = server.GetCommand(@"select si.name from sys.indexes si 
+    private IEnumerable<string> GetIndexes(DiscoveredServer server)
+    {
+        using var con = server.GetConnection();
+        con.Open();
+        var r = server.GetCommand(@"select si.name from sys.indexes si 
   JOIN sys.objects so ON si.[object_id] = so.[object_id]
   WHERE
   so.type = 'U'  AND is_primary_key = 0
   and si.name is not null
 and so.name <> 'sysdiagrams'", con).ExecuteReader();
 
-                while (r.Read())
-                    yield return (string)r["name"];
-            }
-        }
+        while (r.Read())
+            yield return (string)r["name"];
     }
 }

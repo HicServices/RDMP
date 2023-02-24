@@ -4,17 +4,16 @@
 // RDMP is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License for more details.
 // You should have received a copy of the GNU General Public License along with RDMP. If not, see <https://www.gnu.org/licenses/>.
 
-namespace ReusableLibraryCode.Progress
+namespace ReusableLibraryCode.Progress;
+
+/// <summary>
+/// Event handler for progress updates and one off notifications.  This can include errors (ProgressEventType.Error), warnings and information.  Progress
+/// events are incremental messages in which a numerical count increases (possibly to a known maximum) e.g. 'loaded 300 records out of 2000'.
+/// 
+/// <para>It is valid to respond to OnNotify with ProgressEventType.Error (or even Warning) by throwing an Exception.</para>
+/// </summary>
+public interface IDataLoadEventListener
 {
-    /// <summary>
-    /// Event handler for progress updates and one off notifications.  This can include errors (ProgressEventType.Error), warnings and information.  Progress
-    /// events are incremental messages in which a numerical count increases (possibly to a known maximum) e.g. 'loaded 300 records out of 2000'.
-    /// 
-    /// <para>It is valid to respond to OnNotify with ProgressEventType.Error (or even Warning) by throwing an Exception.</para>
-    /// </summary>
-    public interface IDataLoadEventListener
-    {
-        void OnNotify(object sender, NotifyEventArgs e);
-        void OnProgress(object sender, ProgressEventArgs e);
-    }
+    void OnNotify(object sender, NotifyEventArgs e);
+    void OnProgress(object sender, ProgressEventArgs e);
 }

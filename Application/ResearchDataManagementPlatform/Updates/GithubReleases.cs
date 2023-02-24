@@ -4,19 +4,13 @@
 // RDMP is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License for more details.
 // You should have received a copy of the GNU General Public License along with RDMP. If not, see <https://www.gnu.org/licenses/>.
 
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+namespace ResearchDataManagementPlatform.Updates;
 
-namespace ResearchDataManagementPlatform.Updates
+/// <summary>
+/// Github Json class
+/// </summary>
+public class GithubReleases
 {
-    /// <summary>
-    /// Github Json class
-    /// </summary>
-    public class GithubReleases
-    {
-        public GHRelease[] Entries { get; set; }
+    public GHRelease[] Entries { get; set; }
 
-    }
 }

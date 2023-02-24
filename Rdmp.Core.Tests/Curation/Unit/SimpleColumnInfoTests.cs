@@ -8,35 +8,33 @@ using System.Linq;
 using FAnsi;
 using FAnsi.Discovery;
 using NUnit.Framework;
-using Rdmp.Core.Curation.Data;
 using ReusableLibraryCode.DataAccess;
 using Tests.Common;
 
-namespace Rdmp.Core.Tests.Curation.Unit
+namespace Rdmp.Core.Tests.Curation.Unit;
+
+public class SimpleColumnInfoTests : DatabaseTests
 {
-    public class SimpleColumnInfoTests : DatabaseTests
+    [Test]
+    [TestCase("varchar(5)",5)]
+    [TestCase("int", -1)]
+    [TestCase("datetime2", -1)]
+    [TestCase("nchar(100)", 100)]
+    [TestCase("char(11)", 11)]
+    [TestCase("text", int.MaxValue)]
+    [TestCase("varchar(max)", int.MaxValue)]
+    public void GetColumnLength(string type, int? expectedLength)
     {
-        [Test]
-        [TestCase("varchar(5)",5)]
-        [TestCase("int", -1)]
-        [TestCase("datetime2", -1)]
-        [TestCase("nchar(100)", 100)]
-        [TestCase("char(11)", 11)]
-        [TestCase("text", int.MaxValue)]
-        [TestCase("varchar(max)", int.MaxValue)]
-        public void GetColumnLength(string type, int? expectedLength)
+        var db = GetCleanedServer(DatabaseType.MicrosoftSQLServer);
+        var t = db.CreateTable("MyTable", new[]
         {
-            var db = GetCleanedServer(DatabaseType.MicrosoftSQLServer);
-            var t = db.CreateTable("MyTable", new[]
-            {
-                new DatabaseColumnRequest("MyCol", type)
-            });
+            new DatabaseColumnRequest("MyCol", type)
+        });
 
-            Import(t, out var ti, out var cis);
+        Import(t, out var ti, out var cis);
             
-            Assert.AreEqual(expectedLength,cis.Single().Discover(DataAccessContext.InternalDataProcessing).DataType.GetLengthIfString());
+        Assert.AreEqual(expectedLength,cis.Single().Discover(DataAccessContext.InternalDataProcessing).DataType.GetLengthIfString());
 
-            ti.DeleteInDatabase();
-        }
+        ti.DeleteInDatabase();
     }
 }

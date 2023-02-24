@@ -9,45 +9,44 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 
-namespace Rdmp.Core.Providers.Nodes
+namespace Rdmp.Core.Providers.Nodes;
+
+public class TableInfoDatabaseNode : Node
 {
-    public class TableInfoDatabaseNode : Node
+    public TableInfoServerNode Server { get; private set; }
+    public string DatabaseName { get; private set; }
+    public TableInfo[] Tables { get; }
+
+    public const string NullDatabaseNode = "Null Database";
+
+    public TableInfoDatabaseNode(string databaseName, TableInfoServerNode server, IEnumerable<TableInfo> tables)
     {
-        public TableInfoServerNode Server { get; private set; }
-        public string DatabaseName { get; private set; }
-        public TableInfo[] Tables { get; }
+        Server = server;
+        Tables = tables.ToArray();
+        DatabaseName = databaseName ?? NullDatabaseNode;
+    }
 
-        public const string NullDatabaseNode = "Null Database";
+    public override string ToString()
+    {
+        return DatabaseName;
+    }
 
-        public TableInfoDatabaseNode(string databaseName, TableInfoServerNode server, IEnumerable<TableInfo> tables)
-        {
-            Server = server;
-            Tables = tables.ToArray();
-            DatabaseName = databaseName ?? NullDatabaseNode;
-        }
+    protected bool Equals(TableInfoDatabaseNode other)
+    {
+        return Server.Equals(other.Server) &&
+               string.Equals(DatabaseName, other.DatabaseName, StringComparison.CurrentCultureIgnoreCase);
+    }
 
-        public override string ToString()
-        {
-            return DatabaseName;
-        }
+    public override bool Equals(object obj)
+    {
+        if (ReferenceEquals(null, obj)) return false;
+        if (ReferenceEquals(this, obj)) return true;
+        if (obj.GetType() != GetType()) return false;
+        return Equals((TableInfoDatabaseNode)obj);
+    }
 
-        protected bool Equals(TableInfoDatabaseNode other)
-        {
-            return Server.Equals(other.Server) &&
-                string.Equals(DatabaseName, other.DatabaseName, StringComparison.CurrentCultureIgnoreCase);
-        }
-
-        public override bool Equals(object obj)
-        {
-            if (ReferenceEquals(null, obj)) return false;
-            if (ReferenceEquals(this, obj)) return true;
-            if (obj.GetType() != this.GetType()) return false;
-            return Equals((TableInfoDatabaseNode)obj);
-        }
-
-        public override int GetHashCode()
-        {
-            return HashCode.Combine(Server, DatabaseName);
-        }
+    public override int GetHashCode()
+    {
+        return HashCode.Combine(Server, DatabaseName);
     }
 }

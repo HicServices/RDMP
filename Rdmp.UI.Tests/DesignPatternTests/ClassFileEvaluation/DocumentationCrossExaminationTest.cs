@@ -12,547 +12,547 @@ using System.Text;
 using System.Text.RegularExpressions;
 using NUnit.Framework;
 
-namespace Rdmp.UI.Tests.DesignPatternTests.ClassFileEvaluation
+namespace Rdmp.UI.Tests.DesignPatternTests.ClassFileEvaluation;
+
+internal class DocumentationCrossExaminationTest
 {
-    class DocumentationCrossExaminationTest
+    private readonly DirectoryInfo _slndir;
+    private Regex matchComments = new(@"///[^;\r\n]*");
+
+    private string[] _mdFiles;
+    private Regex matchMdReferences = new(@"`(.*)`");
+
+    public const bool ReWriteMarkdownToReferenceGlossary = true;
+
+    //words that are in Pascal case and you can use in comments despite not being in the codebase... this is an ironic variable to be honest
+    //since the very fact that you add something to _ignorelist means that it is in the codebase after all!
+    #region Ignorelist Terms
+    private string[] _ignorelist = new []
     {
-        private readonly DirectoryInfo _slndir;
-        Regex matchComments = new Regex(@"///[^;\r\n]*");
-
-        private string[] _mdFiles;
-        Regex matchMdReferences = new Regex(@"`(.*)`");
-
-        public const bool ReWriteMarkdownToReferenceGlossary = true;
-
-        //words that are in Pascal case and you can use in comments despite not being in the codebase... this is an ironic variable to be honest
-        //since the very fact that you add something to _ignorelist means that it is in the codebase after all!
-        #region Ignorelist Terms
-        private string[] _ignorelist = new []
-        {
         "ExecuteAggregateGraph",
- "ExtractMetadata",
- "DateRange",
- "AlterTableMakeDistinct",
-            "MSSQLLocalDB",
-            "NormalCohorts",
-            "FreakyCohorts",
-            "PublicKeyToken",
-            "DatabaseEntities",
-            "MyDateCol",
-            "NumberOfResults",
-            "ANOGPCode",
-            "ANOPatientIdentifier",
-            "PracticeGP",
-            "UNIONing",
-            "PatientId",
-            "PatientIds",
-            "MotherId",
-            "BabyId",
-            "MyColumn",
-            "DrugCode",
-            "DrugCode_Desc",
-            "DrugName",
-            "LabNumber",
-            "DrugName",
-            "SendingLocation",
-            "DischargeLocation",
-            "SendingLocation_Desc",
-            "DischargeLocation_Desc",
-            "MyDb",
-            "NewBiochemistry",
-            "AdmissionDateTime",
-            "DataAge",
-            "PatientCareNumber",
-            "MyDb",
-            "MyTransform",
-            "PatCHI",
-            "PatientCHI",
-            "MotherCHI",
-            "FatherChiNo",
-            "LabNumber",
-            "ANOchi",
-            "INFOs",
-            "PluginDatabase",
-            "PatientDateOfBirth",
-            "PatientDateOfBirthApprox",
-            "ANOLocation",
-            "ConditionList",
-            "DataAnalyst",
-            "HumanReadableDrugName",
-            "DrugPrescribed",
-            "DrugAbuse",
-            "RoutineLoaderAccount",
-            "ReadonlyUserAccount",
-            "HBA1c",
-            "PrescribedDate",
-            "NodaTime",
-            "MotherCHI",
-            "BabyCHI",
-            "ANOIdentifier",
-            "ANOLabNumber",
-            "LabNumber",
-            "EmailAddressOfAuthorizor",
-            "GrandParent",
-            "TestLabCode",
-            "DataAge",
-            "CatalogueItem1",
-            "CatalogueItem2",
-            "CatalogueItem1",
-            "CatalogueItem2",
-            "UPDATEd",
-            "GUIDs",
-            "MyColRenamed",
-            "DateConsentedToStudy",
-            "PrescribingGP",
-            "CasesForProject123",
-            "ControlsForProject123",
-            "GUIDs",
-            "UPPERd",
-            "StackOverflow",
-            "LabNumbers",
-            "LabNumber",
-            "ANOLabNumber",
-            "PatientName",
-            "PatientDob",
-            "DataAge",
-            "DemographyLoading",
-            "MyDb",
-            "MyTbl",
-            "CapsName",
-            "SummaryComment",
-            "MySoftwareSuite",
-            "MyApplication",
-            "MyResources",
-            "MyClass1",
-            "FishFishFish",
-            "CASCADEing",
-            "MyAssembly",
-            "HBA1c",
-            "EnumNameFavourite",
-            "EnumName",
-            "CatalogueFavourite",
-            "PatientDeleted",
-            "MyDoc",
-            "MyDataFiles",
-            "MyServer",
-            "MyData",
-            "RemoteDataFetcher",
-            "EndpointDefinition",
-            "LoadID_Data_STAGING",
-            "AuditObject",
-            "EmailAddressOfAuthorizor",
-            "FixedSource",
-            "AverageResult",
-            "MaxResult",
-            "FormatFile",
-            "IndexedExtractionIdentifierList_AggregateConfiguration5",
-            "YAXLib",
-            "DependsOn",
-            "DependingOnThis",
-            "ProposedFixes",
-            "PropertyX",
-            "FamilyMembers",
+        "ExtractMetadata",
+        "DateRange",
+        "AlterTableMakeDistinct",
+        "MSSQLLocalDB",
+        "NormalCohorts",
+        "FreakyCohorts",
+        "PublicKeyToken",
+        "DatabaseEntities",
+        "MyDateCol",
+        "NumberOfResults",
+        "ANOGPCode",
+        "ANOPatientIdentifier",
+        "PracticeGP",
+        "UNIONing",
+        "PatientId",
+        "PatientIds",
+        "MotherId",
+        "BabyId",
+        "MyColumn",
+        "DrugCode",
+        "DrugCode_Desc",
+        "DrugName",
+        "LabNumber",
+        "DrugName",
+        "SendingLocation",
+        "DischargeLocation",
+        "SendingLocation_Desc",
+        "DischargeLocation_Desc",
+        "MyDb",
+        "NewBiochemistry",
+        "AdmissionDateTime",
+        "DataAge",
+        "PatientCareNumber",
+        "MyDb",
+        "MyTransform",
+        "PatCHI",
+        "PatientCHI",
+        "MotherCHI",
+        "FatherChiNo",
+        "LabNumber",
+        "ANOchi",
+        "INFOs",
+        "PluginDatabase",
+        "PatientDateOfBirth",
+        "PatientDateOfBirthApprox",
+        "ANOLocation",
+        "ConditionList",
+        "DataAnalyst",
+        "HumanReadableDrugName",
+        "DrugPrescribed",
+        "DrugAbuse",
+        "RoutineLoaderAccount",
+        "ReadonlyUserAccount",
+        "HBA1c",
+        "PrescribedDate",
+        "NodaTime",
+        "MotherCHI",
+        "BabyCHI",
+        "ANOIdentifier",
+        "ANOLabNumber",
+        "LabNumber",
+        "EmailAddressOfAuthorizor",
+        "GrandParent",
+        "TestLabCode",
+        "DataAge",
+        "CatalogueItem1",
+        "CatalogueItem2",
+        "CatalogueItem1",
+        "CatalogueItem2",
+        "UPDATEd",
+        "GUIDs",
+        "MyColRenamed",
+        "DateConsentedToStudy",
+        "PrescribingGP",
+        "CasesForProject123",
+        "ControlsForProject123",
+        "GUIDs",
+        "UPPERd",
+        "StackOverflow",
+        "LabNumbers",
+        "LabNumber",
+        "ANOLabNumber",
+        "PatientName",
+        "PatientDob",
+        "DataAge",
+        "DemographyLoading",
+        "MyDb",
+        "MyTbl",
+        "CapsName",
+        "SummaryComment",
+        "MySoftwareSuite",
+        "MyApplication",
+        "MyResources",
+        "MyClass1",
+        "FishFishFish",
+        "CASCADEing",
+        "MyAssembly",
+        "HBA1c",
+        "EnumNameFavourite",
+        "EnumName",
+        "CatalogueFavourite",
+        "PatientDeleted",
+        "MyDoc",
+        "MyDataFiles",
+        "MyServer",
+        "MyData",
+        "RemoteDataFetcher",
+        "EndpointDefinition",
+        "LoadID_Data_STAGING",
+        "AuditObject",
+        "EmailAddressOfAuthorizor",
+        "FixedSource",
+        "AverageResult",
+        "MaxResult",
+        "FormatFile",
+        "IndexedExtractionIdentifierList_AggregateConfiguration5",
+        "YAXLib",
+        "DependsOn",
+        "DependingOnThis",
+        "ProposedFixes",
+        "PropertyX",
+        "FamilyMembers",
             
-            //CreatingANewCollectionTreeNode.md
-            "FolderOfX", 
+        //CreatingANewCollectionTreeNode.md
+        "FolderOfX", 
 
-            //PluginWriting.md
-            "MyPluginUserInterface",
-            "ExecuteCommandRenameCatalogueToBunnies",
-            "BasicDataTableAnonymiser1",
-            "BasicDataTableAnonymiser3",
-            "CodeExamples",
-            "MyExamplePluginTests",
-            "TEST_Catalogue",
-            "BasicDataTableAnonymiser4",
-            "GetCommonNamesTable",
-            "TestBasicDataTableAnonymiser3",
-            "BasicDataTableAnonymiser5",
-            "TestAnonymisationPlugins",
-            "LoggerTestCase",
-            "ToConsole",
-            "ToMemory",
-            "ToDatabase",
-            "TEST_Logging",
-            "DatePrescribed",
+        //PluginWriting.md
+        "MyPluginUserInterface",
+        "ExecuteCommandRenameCatalogueToBunnies",
+        "BasicDataTableAnonymiser1",
+        "BasicDataTableAnonymiser3",
+        "CodeExamples",
+        "MyExamplePluginTests",
+        "TEST_Catalogue",
+        "BasicDataTableAnonymiser4",
+        "GetCommonNamesTable",
+        "TestBasicDataTableAnonymiser3",
+        "BasicDataTableAnonymiser5",
+        "TestAnonymisationPlugins",
+        "LoggerTestCase",
+        "ToConsole",
+        "ToMemory",
+        "ToDatabase",
+        "TEST_Logging",
+        "DatePrescribed",
 
-            //This is a legit verb
-            "ANDed",
-            "FetchBytesExpensive",
+        //This is a legit verb
+        "ANDed",
+        "FetchBytesExpensive",
 
-            "RecordLoadedDate",
-            "TblPatIndx",
-            "DataLoadRunId",
+        "RecordLoadedDate",
+        "TblPatIndx",
+        "DataLoadRunId",
 
-            "DataStructures", //class diagram
-            "MyYetToExistTable",
+        "DataStructures", //class diagram
+        "MyYetToExistTable",
 
-            "SexCode",
-            "SexCode_Desc",
-            "SendingLocationCode",
-            "LocationTable",
-            "AddressLine1",
-            "AddressLine2",
-            "PatientSexCode",
-            "SexDescription",
-            "SexDescriptionLong",
-            "MyTransform",
+        "SexCode",
+        "SexCode_Desc",
+        "SendingLocationCode",
+        "LocationTable",
+        "AddressLine1",
+        "AddressLine2",
+        "PatientSexCode",
+        "SexDescription",
+        "SexDescriptionLong",
+        "MyTransform",
             
-            "MyObject",
-            "MyObjectMenu",
-            "AllServersNodeMenu",
-            "SomeClass",
-            "ProposeExecutionWhenCommandIs",
-            "Log4Net",
-            "ReleaseLocation",
-            "MyCoolDb",
-            "OperationType",
-            "DrugList",
-            "DrugCodeFormat",
-            "GenderCodeDescription",
-            "MyParam",
+        "MyObject",
+        "MyObjectMenu",
+        "AllServersNodeMenu",
+        "SomeClass",
+        "ProposeExecutionWhenCommandIs",
+        "Log4Net",
+        "ReleaseLocation",
+        "MyCoolDb",
+        "OperationType",
+        "DrugList",
+        "DrugCodeFormat",
+        "GenderCodeDescription",
+        "MyParam",
 
-            "GPCode",
-            "RepoType",
-            "LoadingBiochem",
+        "GPCode",
+        "RepoType",
+        "LoadingBiochem",
 
-            //Stuff now in FAnsi
-            "MySqlAggregateHelper",
-            "MicrosoftSQLAggregateHelper",
-            "DbCommandBuilder",
-            "EnvironmentPotential",
-            "MySqlConnection",
-            "DbCommandBuilder",
-            "DbCommandBuilder",
-            "IDecideTypesForStrings",
-            "TypeCompatibilityGroup",
-            "DatatypeComputerTests",
-            "DataTypeRequest",
-            "CrossPlatformTests",
-            "IDecideTypesForStrings",
-            "TypeCompatibilityGroup",
-            "TypeTranslaterTests",
-            "DatatypeComputerTests",
-            "LoadRunID",
-            "HelpDocs",
-            "HicServices",
-            "FAnsiSql",
-            "ProposeExecutionWhenTargetIsX",
-            "InternalsVisibleTo",
-            "AxisDimension",
-            "MyDataset1",
-             "HicHash",
-            "UserManual",
-            "ObjectType",
-            "UserInterfaceOverview",
-            "MyPipelinePlugin",
-            "TestAnonymisationPluginsDatabaseTests",
-            "PDFs",
-            "MyPatIndexTable",
-            "MSBuild15CMD",
-            "SetupLazy",
-            "TestCaseSourceAttribute",
-            "MySqlConnector",
-            "DoSomething",
-            "MyTest",
-            "UserControl1",
-            "MyPluginUI",
-            "SelectIMapsDirectlyToDatabaseTableDialog",
-            "NuGet",
-            "MyPluginClass",
-            "SubContainer",
-            "DescribeCommand", // this class has now been removed from RDMP codebase, don't complain if you see it in docs (e.g. CHANGELOG.md).
-            "GetDate",
-            "StudyInstanceUID",
-            "RDMP_ExampleData",
-            "MakeAnonymous",
-            "ReleaseIdentifierAllocation",
-            "SocialSecurityNumber",
-            "BuildInParallel",
-        };
-        #endregion
-        public DocumentationCrossExaminationTest(DirectoryInfo slndir)
+        //Stuff now in FAnsi
+        "MySqlAggregateHelper",
+        "MicrosoftSQLAggregateHelper",
+        "DbCommandBuilder",
+        "EnvironmentPotential",
+        "MySqlConnection",
+        "DbCommandBuilder",
+        "DbCommandBuilder",
+        "IDecideTypesForStrings",
+        "TypeCompatibilityGroup",
+        "DatatypeComputerTests",
+        "DataTypeRequest",
+        "CrossPlatformTests",
+        "IDecideTypesForStrings",
+        "TypeCompatibilityGroup",
+        "TypeTranslaterTests",
+        "DatatypeComputerTests",
+        "LoadRunID",
+        "HelpDocs",
+        "HicServices",
+        "FAnsiSql",
+        "ProposeExecutionWhenTargetIsX",
+        "InternalsVisibleTo",
+        "AxisDimension",
+        "MyDataset1",
+        "HicHash",
+        "UserManual",
+        "ObjectType",
+        "UserInterfaceOverview",
+        "MyPipelinePlugin",
+        "TestAnonymisationPluginsDatabaseTests",
+        "PDFs",
+        "MyPatIndexTable",
+        "MSBuild15CMD",
+        "SetupLazy",
+        "TestCaseSourceAttribute",
+        "MySqlConnector",
+        "DoSomething",
+        "MyTest",
+        "UserControl1",
+        "MyPluginUI",
+        "SelectIMapsDirectlyToDatabaseTableDialog",
+        "NuGet",
+        "MyPluginClass",
+        "SubContainer",
+        "DescribeCommand", // this class has now been removed from RDMP codebase, don't complain if you see it in docs (e.g. CHANGELOG.md).
+        "GetDate",
+        "StudyInstanceUID",
+        "RDMP_ExampleData",
+        "MakeAnonymous",
+        "ReleaseIdentifierAllocation",
+        "SocialSecurityNumber",
+        "BuildInParallel"
+    };
+    #endregion
+    public DocumentationCrossExaminationTest(DirectoryInfo slndir)
+    {
+        _slndir = slndir;
+        _mdFiles = Directory.GetFiles(slndir.FullName, "*.md",SearchOption.AllDirectories);
+    }
+
+    public void FindProblems(List<string> csFilesFound)
+    {
+        //find all non coment code and extract all unique tokens
+
+        //find all .md files and extract all `` code blocks
+
+        //for each commend and `` code block
+
+        //identify Pascal case words
+
+        //are they in the codebase tokens?
+
+        var problems = new List<string>();
+
+        var codeTokens = new HashSet<string>();
+        var fileCommentTokens = new Dictionary<string, HashSet<string>>();
+
+        //find all comments in class files
+        foreach (var file in csFilesFound)
         {
-            _slndir = slndir;
-            _mdFiles = Directory.GetFiles(slndir.FullName, "*.md",SearchOption.AllDirectories);
-        }
+            var isDesignerFile = file.Contains(".Designer.cs");
+                
+            if(file.Contains("CodeTutorials"))
+                continue;
+                
+            //don't look in the packages dir!
+            if(file.Contains("packages"))
+                continue;
 
-        public void FindProblems(List<string> csFilesFound)
-        {
-            //find all non coment code and extract all unique tokens
-
-            //find all .md files and extract all `` code blocks
-
-            //for each commend and `` code block
-
-            //identify Pascal case words
-
-            //are they in the codebase tokens?
-
-            List<string> problems = new List<string>();
-
-            HashSet<string> codeTokens = new HashSet<string>();
-            Dictionary<string, HashSet<string>> fileCommentTokens = new Dictionary<string, HashSet<string>>();
-
-            //find all comments in class files
-            foreach (string file in csFilesFound)
+            foreach (var line in File.ReadAllLines(file))
             {
-                bool isDesignerFile = file.Contains(".Designer.cs");
-                
-                if(file.Contains("CodeTutorials"))
-                    continue;
-                
-                //don't look in the packages dir!
-                if(file.Contains("packages"))
-                    continue;
-
-                foreach (string line in File.ReadAllLines(file))
+                //if it is a comment
+                if (matchComments.IsMatch(line))
                 {
-                    //if it is a comment
-                    if (matchComments.IsMatch(line))
-                    {
-                        if (isDesignerFile)
-                            continue;
+                    if (isDesignerFile)
+                        continue;
 
-                        if (!fileCommentTokens.ContainsKey(file))
-                            fileCommentTokens.Add(file, new HashSet<string>());
+                    if (!fileCommentTokens.ContainsKey(file))
+                        fileCommentTokens.Add(file, new HashSet<string>());
                         
-                        //its a comment extract all pascal case words
-                        foreach (Match word in Regex.Matches(line, @"\b([A-Z]\w+){2,}"))
-                            fileCommentTokens[file].Add(word.Value);
-                    }
-                    else
-                    {
-                        //else it is a code line, extract all tokens
-                        foreach (Match word in Regex.Matches(line, @"\w+"))
-                            codeTokens.Add(word.Value);
-                    }
+                    //its a comment extract all pascal case words
+                    foreach (Match word in Regex.Matches(line, @"\b([A-Z]\w+){2,}"))
+                        fileCommentTokens[file].Add(word.Value);
+                }
+                else
+                {
+                    //else it is a code line, extract all tokens
+                    foreach (Match word in Regex.Matches(line, @"\w+"))
+                        codeTokens.Add(word.Value);
                 }
             }
+        }
 
-            //find all comments in .md tutorials
-            foreach (string mdFile in _mdFiles)
-            {
-                //don't look in the packages dir!
-                if(mdFile.Contains("packages"))
-                    continue;
+        //find all comments in .md tutorials
+        foreach (var mdFile in _mdFiles)
+        {
+            //don't look in the packages dir!
+            if(mdFile.Contains("packages"))
+                continue;
 
-                fileCommentTokens.Add(mdFile,new HashSet<string>());
-                var fileContents = File.ReadAllText(mdFile);
+            fileCommentTokens.Add(mdFile,new HashSet<string>());
+            var fileContents = File.ReadAllText(mdFile);
                 
-                foreach (Match m in matchMdReferences.Matches(fileContents))
-                    foreach (Match word in Regex.Matches(m.Groups[1].Value, @"([A-Z]\w+){2,}"))
-                        fileCommentTokens[mdFile].Add(word.Value);
+            foreach (Match m in matchMdReferences.Matches(fileContents))
+            foreach (Match word in Regex.Matches(m.Groups[1].Value, @"([A-Z]\w+){2,}"))
+                fileCommentTokens[mdFile].Add(word.Value);
 
-                EnsureMaximumGlossaryUse(mdFile,problems);
+            EnsureMaximumGlossaryUse(mdFile,problems);
 
-                EnsureCodeBlocksCompile(mdFile, problems);
-            }
+            EnsureCodeBlocksCompile(mdFile, problems);
+        }
 
 
-            foreach (KeyValuePair<string, HashSet<string>> kvp in fileCommentTokens)
+        foreach (var kvp in fileCommentTokens)
+        {
+            foreach (var s in kvp.Value)
             {
-                foreach (string s in kvp.Value)
+                if(!codeTokens.Contains(s) && !codeTokens.Contains($"ExecuteCommand{s}"))
                 {
-                    if(!codeTokens.Contains(s) && !codeTokens.Contains("ExecuteCommand"+s))
+                    if (_ignorelist.Contains(s))
+                        continue;
+
+                    //it's SHOUTY TEXT
+                    if (s.ToUpper() == s)
+                        continue;
+
+                    //if it's a plural e.g. TableInfos then we are still ok if we find TableInfo
+                    if (s.Length > 2 && s.EndsWith("s"))
                     {
-                        if (_ignorelist.Contains(s))
+                        if (codeTokens.Contains(s[..^1]))
                             continue;
-
-                        //it's SHOUTY TEXT
-                        if (s.ToUpper() == s)
-                            continue;
-
-                        //if it's a plural e.g. TableInfos then we are still ok if we find TableInfo
-                        if (s.Length > 2 && s.EndsWith("s"))
-                        {
-                            if (codeTokens.Contains(s.Substring(0, s.Length - 1)))
-                                continue;
-                        }
-                        
-                        problems.Add("FATAL PROBLEM: File '" + kvp.Key +"' talks about something which isn't in the codebase, called a:" +Environment.NewLine + s);
-                        
                     }
+                        
+                    problems.Add(
+                        $"FATAL PROBLEM: File '{kvp.Key}' talks about something which isn't in the codebase, called a:{Environment.NewLine}{s}");
+                        
                 }
             }
+        }
 
-            if (problems.Any())
-            {
-                Console.WriteLine("Found problem words in comments (Scroll down to see by file then if you think they are fine add them to DocumentationCrossExaminationTest._ignorelist):");
-                foreach (var pLine in problems.Where(l=>l.Contains('\n')).Select(p => p.Split('\n')))
-                    Console.WriteLine("\"" + pLine[1] + "\",");
+        if (problems.Any())
+        {
+            Console.WriteLine("Found problem words in comments (Scroll down to see by file then if you think they are fine add them to DocumentationCrossExaminationTest._ignorelist):");
+            foreach (var pLine in problems.Where(l=>l.Contains('\n')).Select(p => p.Split('\n')))
+                Console.WriteLine($"\"{pLine[1]}\",");
                 
-            }
-
-            foreach (string problem in problems)
-                Console.WriteLine(problem);
-
-            Assert.AreEqual(0,problems.Count,"Expected there to be nothing talked about in comments that doesn't appear in the codebase somewhere");
         }
 
-        private void EnsureCodeBlocksCompile(string mdFile, List<string> problems)
+        foreach (var problem in problems)
+            Console.WriteLine(problem);
+
+        Assert.AreEqual(0,problems.Count,"Expected there to be nothing talked about in comments that doesn't appear in the codebase somewhere");
+    }
+
+    private void EnsureCodeBlocksCompile(string mdFile, List<string> problems)
+    {
+        var codeBlocks = Path.Combine(TestContext.CurrentContext.TestDirectory,"../../../DesignPatternTests/MarkdownCodeBlockTests.cs");
+
+        Console.WriteLine($"Starting {mdFile}");
+
+        var codeBlocksContent = File.ReadAllText(codeBlocks);
+
+        var rGuidComment = new Regex("<!--- (.{32}) --->");
+        var rStartCodeBlock = new Regex("```csharp");
+        var rEndCodeBlock = new Regex("```");
+
+        var markdownCodeBlocks = new Dictionary<string, string>();
+            
+        var lines = File.ReadAllLines(mdFile);
+
+        for (var i = 0; i < lines.Length; i++)
         {
-            string codeBlocks = Path.Combine(TestContext.CurrentContext.TestDirectory,"../../../DesignPatternTests/MarkdownCodeBlockTests.cs");
+            var match = rGuidComment.Match(lines[i]);
 
-            Console.WriteLine("Starting " + mdFile);
-
-            var codeBlocksContent = File.ReadAllText(codeBlocks);
-
-            Regex rGuidComment = new Regex("<!--- (.{32}) --->");
-            Regex rStartCodeBlock = new Regex("```csharp");
-            Regex rEndCodeBlock = new Regex("```");
-
-            Dictionary<string,string> markdownCodeBlocks = new Dictionary<string, string>();
-            
-            var lines = File.ReadAllLines(mdFile);
-
-            for (int i = 0; i < lines.Length; i++)
+            //match a line like <!--- df7d2bb4cd6145719f933f6f15218b1a --->
+            if (match.Success)
             {
-                var match = rGuidComment.Match(lines[i]);
+                var guid = match.Groups[1].Value;
+                var sb = new StringBuilder();
 
-                //match a line like <!--- df7d2bb4cd6145719f933f6f15218b1a --->
-                if (match.Success)
-                {
-                    var guid = match.Groups[1].Value;
-                    var sb = new StringBuilder();
+                markdownCodeBlocks.Add(guid,null);
 
-                    markdownCodeBlocks.Add(guid,null);
+                //consume the line and look for ```csharp on the next line
+                if(!rStartCodeBlock.IsMatch(lines[++i]))
+                    throw new Exception($"Expected code block in markdown for GUID {guid} to be followed by a line {rStartCodeBlock}");
 
-                    //consume the line and look for ```csharp on the next line
-                    if(!rStartCodeBlock.IsMatch(lines[++i]))
-                        throw new Exception($"Expected code block in markdown for GUID {guid} to be followed by a line {rStartCodeBlock}");
+                //skip the ```csharp line
+                i++;
 
-                    //skip the ```csharp line
-                    i++;
+                //consume until the closing ``` line
+                while (!rEndCodeBlock.IsMatch(lines[i]))
+                    sb.AppendLine(lines[i++]);
 
-                    //consume until the closing ``` line
-                    while (!rEndCodeBlock.IsMatch(lines[i]))
-                        sb.AppendLine(lines[i++]);
-
-                    markdownCodeBlocks[guid] = sb.ToString();
-                }
+                markdownCodeBlocks[guid] = sb.ToString();
             }
-
-            foreach (var kvp in markdownCodeBlocks)
-            {
-                Regex rBlock = new Regex($"#region {kvp.Key}([^#]*)#endregion",RegexOptions.Singleline);
-                var m = rBlock.Match(codeBlocksContent);
-
-                if (!m.Success)
-                    throw new Exception(
-                        $"No code block found in {codeBlocks} for guid {kvp.Key}.  Try adding a #region section for the guid");
-
-                var code = Regex.Replace(m.Groups[1].Value, "\\s+", " ");
-                var docs = Regex.Replace(kvp.Value, "\\s+", " ");
-
-                Assert.AreEqual(code.Trim(), docs.Trim(),        
-                    $"Code in the documentation markdown (actual) did not match the corresponding compiled code (expected) for code guid {kvp.Key} markdown file was {mdFile} and code file was {codeBlocks}");
-
-                Console.WriteLine("Validated markdown block " + kvp.Key);
-            }
-            
-            Console.WriteLine("Validated " + markdownCodeBlocks.Count + " markdown blocks");
         }
 
-        private void EnsureMaximumGlossaryUse(string mdFile, List<string> problems)
+        foreach (var kvp in markdownCodeBlocks)
         {
-            const string glossaryRelativePath = "./Documentation/CodeTutorials/Glossary.md";
-            
-            Regex rGlossary = new Regex("##([A-z ]*)");
-            Regex rWords = new Regex(@"\[?\w*\]?");
-            Regex rGlossaryLink = new Regex(@"^\[\w*\]:");
+            var rBlock = new Regex($"#region {kvp.Key}([^#]*)#endregion",RegexOptions.Singleline);
+            var m = rBlock.Match(codeBlocksContent);
 
-            var glossaryPath = Path.Combine(_slndir.FullName, glossaryRelativePath);
-            
-            //don't evaluate the glossary!
-            if(Path.GetFileName(mdFile) == "Glossary.md")
-                return;
-            
-            if (Path.GetFileName(mdFile) == "template.md")
-                return;
+            if (!m.Success)
+                throw new Exception(
+                    $"No code block found in {codeBlocks} for guid {kvp.Key}.  Try adding a #region section for the guid");
 
-            var glossaryHeaders = 
-                new HashSet<string>(
+            var code = Regex.Replace(m.Groups[1].Value, "\\s+", " ");
+            var docs = Regex.Replace(kvp.Value, "\\s+", " ");
+
+            Assert.AreEqual(code.Trim(), docs.Trim(),        
+                $"Code in the documentation markdown (actual) did not match the corresponding compiled code (expected) for code guid {kvp.Key} markdown file was {mdFile} and code file was {codeBlocks}");
+
+            Console.WriteLine($"Validated markdown block {kvp.Key}");
+        }
+            
+        Console.WriteLine($"Validated {markdownCodeBlocks.Count} markdown blocks");
+    }
+
+    private void EnsureMaximumGlossaryUse(string mdFile, List<string> problems)
+    {
+        const string glossaryRelativePath = "./Documentation/CodeTutorials/Glossary.md";
+            
+        var rGlossary = new Regex("##([A-z ]*)");
+        var rWords = new Regex(@"\[?\w*\]?");
+        var rGlossaryLink = new Regex(@"^\[\w*\]:");
+
+        var glossaryPath = Path.Combine(_slndir.FullName, glossaryRelativePath);
+            
+        //don't evaluate the glossary!
+        if(Path.GetFileName(mdFile) == "Glossary.md")
+            return;
+            
+        if (Path.GetFileName(mdFile) == "template.md")
+            return;
+
+        var glossaryHeaders = 
+            new HashSet<string>(
                 File.ReadAllLines(glossaryPath)
-                .Where(l=>rGlossary.IsMatch(l))
-                .Select(l=>rGlossary.Match(l).Groups[1].Value.Trim()));
+                    .Where(l=>rGlossary.IsMatch(l))
+                    .Select(l=>rGlossary.Match(l).Groups[1].Value.Trim()));
 
-            bool inCodeBlock = false;
-            int lineNumber = 0;
+        var inCodeBlock = false;
+        var lineNumber = 0;
 
-            var allLines = File.ReadAllLines(mdFile);
-            var allLinesRevised = allLines;
+        var allLines = File.ReadAllLines(mdFile);
+        var allLinesRevised = allLines;
 
-            Dictionary<string,string> suggestedLinks = new Dictionary<string, string>();
+        var suggestedLinks = new Dictionary<string, string>();
 
-            foreach (string line in allLines)
-            {
-                lineNumber++;
+        foreach (var line in allLines)
+        {
+            lineNumber++;
 
-                if(string.IsNullOrWhiteSpace(line))
-                    continue;
+            if(string.IsNullOrWhiteSpace(line))
+                continue;
                 
-                //don't complain about the glossary links at the bottom of the file.
-                if(rGlossaryLink.IsMatch(line))
-                    continue;
+            //don't complain about the glossary links at the bottom of the file.
+            if(rGlossaryLink.IsMatch(line))
+                continue;
 
-                //don't complain about keywords in code blocks
-                if(line.TrimStart().StartsWith("```") || line.TrimStart().StartsWith("> ```"))
-                    inCodeBlock = !inCodeBlock;
+            //don't complain about keywords in code blocks
+            if(line.TrimStart().StartsWith("```") || line.TrimStart().StartsWith("> ```"))
+                inCodeBlock = !inCodeBlock;
 
-                if (!inCodeBlock)
+            if (!inCodeBlock)
+            {
+                foreach (Match match in rWords.Matches(line))
                 {
-                    foreach (Match match in rWords.Matches(line))
+                    if (glossaryHeaders.Contains(match.Value))
                     {
-                        if (glossaryHeaders.Contains(match.Value))
+                        //It's already got a link on it e.g. [DBMS] or it's "UNION - sometext"
+                        if(match.Index - 1 > 0 
+                           && 
+                           (line[match.Index-1] == '[' || line[match.Index-1] == '"'))
+                            continue;
+
+
+                        var path1 = new Uri(mdFile);
+                        var path2 = new Uri(glossaryPath);
+                        var diff = path1.MakeRelativeUri(path2);
+                        var relPath = diff.OriginalString;
+
+                        if (!relPath.StartsWith("."))
+                            relPath = $"./{relPath}";
+
+                        var suggestedLine = $"[{match.Value}]: {relPath}#{match.Value}";
+
+                        //if it has spaces on either side
+                        if(line[Math.Max(0,match.Index-1)] == ' ' && line[Math.Min(line.Length-1,match.Index + match.Length)] == ' '
+                                                                  //don't mess with lines that contain an image
+                                                                  && !line.Contains("!["))
+                            allLinesRevised[lineNumber - 1] = line.Replace($" {match.Value} ", $" [{match.Value}] ");
+
+                        //also if we have a name like `Catalogue` it should probably be [Catalogue] instead so it works as a link
+                        allLinesRevised[lineNumber - 1] = line.Replace($"`{match.Value}`", $"[{match.Value}]");
+
+                        //if it is a novel occurrence
+                        if (!allLines.Contains(suggestedLine) && !suggestedLinks.ContainsValue(suggestedLine))
                         {
-                            //It's already got a link on it e.g. [DBMS] or it's "UNION - sometext"
-                            if(match.Index - 1 > 0 
-                               && 
-                               (line[match.Index-1] == '[' || line[match.Index-1] == '"'))
-                                continue;
-
-
-                            Uri path1 = new Uri(mdFile);
-                            Uri path2 = new Uri(glossaryPath);
-                            Uri diff = path1.MakeRelativeUri(path2);
-                            string relPath = diff.OriginalString;
-
-                            if (!relPath.StartsWith("."))
-                                relPath = "./" + relPath;
-
-                            string suggestedLine = $"[{match.Value}]: {relPath}#{match.Value}";
-
-                            //if it has spaces on either side
-                            if(line[Math.Max(0,match.Index-1)] == ' ' && line[Math.Min(line.Length-1,match.Index + match.Length)] == ' '
-                               //don't mess with lines that contain an image
-                               && !line.Contains("!["))
-                                allLinesRevised[lineNumber - 1] = line.Replace($" {match.Value} ", $" [{match.Value}] ");
-
-                            //also if we have a name like `Catalogue` it should probably be [Catalogue] instead so it works as a link
-                            allLinesRevised[lineNumber - 1] = line.Replace($"`{match.Value}`", $"[{match.Value}]");
-
-                            //if it is a novel occurrence
-                            if (!allLines.Contains(suggestedLine) && !suggestedLinks.ContainsValue(suggestedLine))
-                            {
-                                suggestedLinks.Add(match.Value,suggestedLine);
-                                problems.Add($"Glossary term should be link in {mdFile} line number {lineNumber}.  Term is {match.Value}.  Suggested link line is:\"{suggestedLine}\"" );
-                            }
+                            suggestedLinks.Add(match.Value,suggestedLine);
+                            problems.Add($"Glossary term should be link in {mdFile} line number {lineNumber}.  Term is {match.Value}.  Suggested link line is:\"{suggestedLine}\"" );
                         }
                     }
                 }
             }
-            
-            // ReSharper disable once RedundantLogicalConditionalExpressionOperand
-            // ReSharper disable once ConditionIsAlwaysTrueOrFalse
-            if (suggestedLinks.Any() && ReWriteMarkdownToReferenceGlossary)
-            {
-                File.WriteAllLines(mdFile,allLinesRevised);
-
-                File.AppendAllText(mdFile,Environment.NewLine);
-                File.AppendAllLines(mdFile, suggestedLinks.Values.Distinct());
-            }
-
         }
+            
+        // ReSharper disable once RedundantLogicalConditionalExpressionOperand
+        // ReSharper disable once ConditionIsAlwaysTrueOrFalse
+        if (suggestedLinks.Any() && ReWriteMarkdownToReferenceGlossary)
+        {
+            File.WriteAllLines(mdFile,allLinesRevised);
+
+            File.AppendAllText(mdFile,Environment.NewLine);
+            File.AppendAllLines(mdFile, suggestedLinks.Values.Distinct());
+        }
+
     }
 }

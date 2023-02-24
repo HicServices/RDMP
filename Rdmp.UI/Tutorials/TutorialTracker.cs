@@ -14,100 +14,99 @@ using Rdmp.UI.TransparentHelpSystem;
 using Rdmp.UI.TransparentHelpSystem.ProgressTracking;
 using ReusableLibraryCode.Settings;
 
-namespace Rdmp.UI.Tutorials
+namespace Rdmp.UI.Tutorials;
+
+/// <summary>
+/// Collection of <see cref="Tutorial"/>.  Manages marking them complete, launching them etc.
+/// </summary>
+public class TutorialTracker : IHelpWorkflowProgressProvider
 {
-    /// <summary>
-    /// Collection of <see cref="Tutorial"/>.  Manages marking them complete, launching them etc.
-    /// </summary>
-    public class TutorialTracker : IHelpWorkflowProgressProvider
-    {
-        private readonly IActivateItems _activator;
+    private readonly IActivateItems _activator;
         
-        public List<Tutorial> TutorialsAvailable { get; private set; }
+    public List<Tutorial> TutorialsAvailable { get; private set; }
 
-        public TutorialTracker(IActivateItems activator)
-        {
-            _activator = activator;
+    public TutorialTracker(IActivateItems activator)
+    {
+        _activator = activator;
             
-            BuildTutorialList();
-        }
+        BuildTutorialList();
+    }
 
-        private void BuildTutorialList()
-        {
-            TutorialsAvailable = new List<Tutorial>();
+    private void BuildTutorialList()
+    {
+        TutorialsAvailable = new List<Tutorial>();
             
-            TutorialsAvailable.Add(new Tutorial("1. Generate Test Data", new ExecuteCommandGenerateTestDataUI(_activator), new Guid("8255fb4e-94a4-4bbc-9e8d-edec5ecebab0")));
-            TutorialsAvailable.Add(new Tutorial("2. Import a file", new ExecuteCommandCreateNewCatalogueByImportingFile(_activator), new Guid("5d71a169-5c08-4c33-8f88-8ee123222a3b")));
+        TutorialsAvailable.Add(new Tutorial("1. Generate Test Data", new ExecuteCommandGenerateTestDataUI(_activator), new Guid("8255fb4e-94a4-4bbc-9e8d-edec5ecebab0")));
+        TutorialsAvailable.Add(new Tutorial("2. Import a file", new ExecuteCommandCreateNewCatalogueByImportingFile(_activator), new Guid("5d71a169-5c08-4c33-8f88-8ee123222a3b")));
 
-            //var executeExtraction = new Tutorial("4. Execute DataSet Extraction",
-            //                                     new ExecuteCommandExecuteExtractionConfiguration(_activator),
-            //                                     new Guid("ee8c290e-7905-4241-9b9a-0ba944fd1582"))
-            //    {
-            //        UserHasSeen = true // this tutorial is only available on demand
-            //    };
-            //TutorialsAvailable.Add(executeExtraction);
-        }
+        //var executeExtraction = new Tutorial("4. Execute DataSet Extraction",
+        //                                     new ExecuteCommandExecuteExtractionConfiguration(_activator),
+        //                                     new Guid("ee8c290e-7905-4241-9b9a-0ba944fd1582"))
+        //    {
+        //        UserHasSeen = true // this tutorial is only available on demand
+        //    };
+        //TutorialsAvailable.Add(executeExtraction);
+    }
 
-        public bool ShouldShowUserWorkflow(HelpWorkflow workflow)
-        {
-            //all tutorials disabled
-            if (UserSettings.DisableTutorials)
-                return false;
+    public bool ShouldShowUserWorkflow(HelpWorkflow workflow)
+    {
+        //all tutorials disabled
+        if (UserSettings.DisableTutorials)
+            return false;
             
-            return !UserSettings.GetTutorialDone(GetTutorialGuidFromWorkflow(workflow));
-        }
+        return !UserSettings.GetTutorialDone(GetTutorialGuidFromWorkflow(workflow));
+    }
 
-        private Guid GetTutorialGuidFromWorkflow(HelpWorkflow workflow)
-        {
-            //if the workflow has a guid then it isn't associated with a specific command
-            if (workflow.WorkflowGuid != Guid.Empty)
-                return workflow.WorkflowGuid;
+    private Guid GetTutorialGuidFromWorkflow(HelpWorkflow workflow)
+    {
+        //if the workflow has a guid then it isn't associated with a specific command
+        if (workflow.WorkflowGuid != Guid.Empty)
+            return workflow.WorkflowGuid;
 
-            //workflow is associated with a specific Command, so it should have a Tutorial Available
-            var tutorial = TutorialsAvailable.FirstOrDefault(t => t.CommandType == workflow.Command.GetType());
+        //workflow is associated with a specific Command, so it should have a Tutorial Available
+        var tutorial = TutorialsAvailable.FirstOrDefault(t => t.CommandType == workflow.Command.GetType());
 
-            if (tutorial == null)
-                return Guid.Empty;
+        if (tutorial == null)
+            return Guid.Empty;
 
-            return tutorial.Guid;
-        }
+        return tutorial.Guid;
+    }
 
-        public void Completed(HelpWorkflow helpWorkflow)
-        {
-            UserSettings.SetTutorialDone(GetTutorialGuidFromWorkflow(helpWorkflow),true);
-        }
+    public void Completed(HelpWorkflow helpWorkflow)
+    {
+        UserSettings.SetTutorialDone(GetTutorialGuidFromWorkflow(helpWorkflow),true);
+    }
 
-        public void ClearCompleted()
-        {
-            foreach (Tutorial tutorial in TutorialsAvailable)
-                UserSettings.SetTutorialDone(tutorial.Guid, false);
-        }
-
-        public void ClearCompleted(Tutorial tutorial)
-        {
+    public void ClearCompleted()
+    {
+        foreach (var tutorial in TutorialsAvailable)
             UserSettings.SetTutorialDone(tutorial.Guid, false);
-            UserSettings.DisableTutorials = false;
-        }
+    }
 
-        public void DisableAllTutorials()
-        {
-            UserSettings.DisableTutorials = true;
-        }
+    public void ClearCompleted(Tutorial tutorial)
+    {
+        UserSettings.SetTutorialDone(tutorial.Guid, false);
+        UserSettings.DisableTutorials = false;
+    }
 
-        public bool HasSeen(Tutorial tutorial)
-        {
-            return UserSettings.GetTutorialDone(tutorial.Guid);
-        }
+    public void DisableAllTutorials()
+    {
+        UserSettings.DisableTutorials = true;
+    }
 
-        public void LaunchTutorial(Tutorial tutorial)
-        {
-            tutorial.CommandExecution.Execute();
-        }
+    public bool HasSeen(Tutorial tutorial)
+    {
+        return UserSettings.GetTutorialDone(tutorial.Guid);
+    }
 
-        public bool IsClearable()
-        {
-            //any that are true
-            return TutorialsAvailable.Any(t=>UserSettings.GetTutorialDone(t.Guid));
-        }
+    public void LaunchTutorial(Tutorial tutorial)
+    {
+        tutorial.CommandExecution.Execute();
+    }
+
+    public bool IsClearable()
+    {
+        //any that are true
+        return TutorialsAvailable.Any(t=>UserSettings.GetTutorialDone(t.Guid));
     }
 }

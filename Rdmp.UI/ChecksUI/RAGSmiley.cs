@@ -12,230 +12,230 @@ using System.Windows.Forms;
 using Rdmp.UI.SimpleDialogs;
 using ReusableLibraryCode.Checks;
 
-namespace Rdmp.UI.ChecksUI
+namespace Rdmp.UI.ChecksUI;
+
+/// <inheritdoc cref="IRAGSmiley"/>
+public partial class RAGSmiley : UserControl, IRAGSmiley
 {
-    /// <inheritdoc cref="IRAGSmiley"/>
-    public partial class RAGSmiley : UserControl, IRAGSmiley
-    {
-        private bool _alwaysShowHandCursor;
+    private bool _alwaysShowHandCursor;
         
-        public bool AlwaysShowHandCursor
+    public bool AlwaysShowHandCursor
+    {
+        get => _alwaysShowHandCursor;
+        set
         {
-            get { return _alwaysShowHandCursor; }
-            set
-            {
-                _alwaysShowHandCursor = value;
+            _alwaysShowHandCursor = value;
+            SetCorrectCursor();
+        }
+    }
+
+    public bool IsGreen()
+    {
+        return pbGreen.Visible;
+    }
+
+    public bool IsFatal()
+    {
+        return pbRed.Visible;
+    }
+
+    private void SetCorrectCursor()
+    {
+        if (AlwaysShowHandCursor || memoryCheckNotifier.Messages.Any())
+            Cursor = Cursors.Hand;
+        else
+        if (pbYellow.Tag != null || pbRed.Tag != null)
+            Cursor = Cursors.Hand;
+        else
+            Cursor = Cursors.Arrow;
+    }
+
+    public RAGSmiley()
+    {
+        InitializeComponent();
+
+        BackColor = Color.Transparent;
+            
+        pbGreen.Visible = true;
+        pbYellow.Visible = false;
+        pbRed.Visible = false;
+
+        _timer = new Timer();
+        _timer.Interval = 500;
+        _timer.Tick += Timer_Tick;
+        _timer.Start();
+    }
+
+    private void Timer_Tick(object sender, EventArgs e)
+    {
+
+        if(IsDisposed)
+        {
+            _timer.Stop();
+            _timer.Dispose();
+            return;
+        }
+
+        switch(_state)
+        {
+            case CheckResult.Success:
+                pbGreen.Visible = true;
+                pbYellow.Visible = false;
+                pbYellow.Tag = null;
+                pbRed.Visible = false;
+                pbRed.Tag = null;
                 SetCorrectCursor();
-            }
-        }
+                break;
 
-        public bool IsGreen()
-        {
-            return pbGreen.Visible;
-        }
+            case CheckResult.Warning:
 
-        public bool IsFatal()
-        {
-            return pbRed.Visible;
-        }
-
-        private void SetCorrectCursor()
-        {
-            if (AlwaysShowHandCursor || memoryCheckNotifier.Messages.Any())
-                this.Cursor = Cursors.Hand;
-            else
-            if (pbYellow.Tag != null || pbRed.Tag != null)
-                this.Cursor = Cursors.Hand;
-            else
-                this.Cursor = Cursors.Arrow;
-        }
-
-        public RAGSmiley()
-        {
-            InitializeComponent();
-
-            BackColor = Color.Transparent;
-            
-            pbGreen.Visible = true;
-            pbYellow.Visible = false;
-            pbRed.Visible = false;
-
-            _timer = new Timer();
-            _timer.Interval = 500;
-            _timer.Tick += Timer_Tick;
-            _timer.Start();
-        }
-
-        private void Timer_Tick(object sender, EventArgs e)
-        {
-
-            if(IsDisposed)
-            {
-                _timer.Stop();
-                _timer.Dispose();
-                return;
-            }
-
-            switch(_state)
-            {
-                case CheckResult.Success:
-                    pbGreen.Visible = true;
-                    pbYellow.Visible = false;
-                    pbYellow.Tag = null;
-                    pbRed.Visible = false;
-                    pbRed.Tag = null;
-                    SetCorrectCursor();
-                    break;
-
-                case CheckResult.Warning:
-
-                    //only change for novel values to prevent flickering
-                    if (!pbYellow.Visible)
-                    {
-                        pbGreen.Visible = false;
-                        pbYellow.Visible = true;
-                    }
-
-                    pbYellow.Tag = _exception;
-                    SetCorrectCursor();
-                    break;
-
-                case CheckResult.Fail:
-
+                //only change for novel values to prevent flickering
+                if (!pbYellow.Visible)
+                {
                     pbGreen.Visible = false;
-                    pbYellow.Visible = false;
-                    pbRed.Visible = true;
-                    pbRed.Tag = _exception;
-                    SetCorrectCursor();
-                    break;
-            }
-        }
+                    pbYellow.Visible = true;
+                }
 
-        protected override void OnEnabledChanged(EventArgs e)
-        {
-            base.OnEnabledChanged(e);
+                pbYellow.Tag = _exception;
+                SetCorrectCursor();
+                break;
+
+            case CheckResult.Fail:
+
+                pbGreen.Visible = false;
+                pbYellow.Visible = false;
+                pbRed.Visible = true;
+                pbRed.Tag = _exception;
+                SetCorrectCursor();
+                break;
+        }
+    }
+
+    protected override void OnEnabledChanged(EventArgs e)
+    {
+        base.OnEnabledChanged(e);
             
-            pbGrey.Visible = !Enabled;
-        }
+        pbGrey.Visible = !Enabled;
+    }
 
-        public void ShowMessagesIfAny()
-        {
-            pb_Click(this, new EventArgs());
-        }
+    public void ShowMessagesIfAny()
+    {
+        pb_Click(this, new EventArgs());
+    }
 
-        private void pb_Click(object sender, EventArgs e)
-        {
-            Exception tag = ((Control)sender).Tag as Exception ?? _exception;
+    private void pb_Click(object sender, EventArgs e)
+    {
+        var tag = ((Control)sender).Tag as Exception ?? _exception;
             
-            if (PopupMessagesIfAny(tag))
-                return;
+        if (PopupMessagesIfAny(tag))
+            return;
+
+        if(tag != null)
+            ExceptionViewer.Show(tag);
+    }
+
+    public void Warning(Exception ex)
+    {
+        if(_state == CheckResult.Fail)
+        {
+            return;
+        }    
+
+        _state = CheckResult.Warning;
+        _exception = ex;
+    }
+    public void Fatal(Exception ex)
+    {
+        _state = CheckResult.Fail;
+        _exception = ex;
+    }
+        
+    public void Reset()
+    {
+        //reset the checks too so as not to leave old check results kicking about
+        memoryCheckNotifier = new ToMemoryCheckNotifier();
+        _state = CheckResult.Success;
+        _exception = null;
+    }
+
+    private ToMemoryCheckNotifier memoryCheckNotifier = new();
+    private Task _checkTask;
+    private object oTaskLock = new();
+    private Timer _timer;
+    private CheckResult _state;
+    private Exception _exception;
+
+    public bool OnCheckPerformed(CheckEventArgs args)
+    {            
+        //record in memory
+        memoryCheckNotifier.OnCheckPerformed(args);
+
+        ElevateState(args.Result);
+
+        if(args.Ex!= null)
+        {
+            _exception = args.Ex;
+        }
+
+        return false;
+    }
+
+    public void ElevateState(CheckResult result)
+    {
+        switch (result)
+        {
+            case CheckResult.Success:
+                break;
+            case CheckResult.Warning:
+                Warning(null);
+                break;
+            case CheckResult.Fail:
+                Fatal(null);
+                break;
+            default:
+                throw new ArgumentOutOfRangeException();
+        }
+    }
+
+    private bool PopupMessagesIfAny(Exception tag)
+    {
+        if (memoryCheckNotifier.Messages.Any())
+        {
+            var popup = new PopupChecksUI("Record of events", false);
+            new ReplayCheckable(memoryCheckNotifier).Check(popup);
 
             if(tag != null)
-                ExceptionViewer.Show(tag);
+                popup.OnCheckPerformed(new CheckEventArgs(tag.Message, CheckResult.Fail, tag));
+            return true;
         }
 
-        public void Warning(Exception ex)
+        return false;
+    }
+
+
+    public void SetVisible(bool visible)
+    {
+        if (InvokeRequired)
         {
-            if(_state == CheckResult.Fail)
-            {
+            Invoke(new MethodInvoker(()=> SetVisible(visible)));
+            return;
+        }
+        BringToFront();
+        Visible = visible;
+    }
+
+    public void StartChecking(ICheckable checkable)
+    {
+        lock (oTaskLock)
+        {
+
+            //if there is already a Task and it has not completed
+            if (_checkTask != null && !_checkTask.IsCompleted)
                 return;
-            }    
 
-            _state = CheckResult.Warning;
-            _exception = ex;
-        }
-        public void Fatal(Exception ex)
-        {
-            _state = CheckResult.Fail;
-            _exception = ex;
-        }
-        
-        public void Reset()
-        {
-            //reset the checks too so as not to leave old check results kicking about
-            memoryCheckNotifier = new ToMemoryCheckNotifier();
-            _state = CheckResult.Success;
-            _exception = null;
-        }
-
-        private ToMemoryCheckNotifier memoryCheckNotifier = new ToMemoryCheckNotifier();
-        private Task _checkTask;
-        private object oTaskLock = new object();
-        private Timer _timer;
-        private CheckResult _state;
-        private Exception _exception;
-
-        public bool OnCheckPerformed(CheckEventArgs args)
-        {            
-            //record in memory
-            memoryCheckNotifier.OnCheckPerformed(args);
-
-            ElevateState(args.Result);
-
-            if(args.Ex!= null)
-            {
-                _exception = args.Ex;
-            }
-
-            return false;
-        }
-
-        public void ElevateState(CheckResult result)
-        {
-            switch (result)
-            {
-                case CheckResult.Success:
-                    break;
-                case CheckResult.Warning:
-                    Warning(null);
-                    break;
-                case CheckResult.Fail:
-                    Fatal(null);
-                    break;
-                default:
-                    throw new ArgumentOutOfRangeException();
-            }
-        }
-
-        private bool PopupMessagesIfAny(Exception tag)
-        {
-            if (memoryCheckNotifier.Messages.Any())
-            {
-                var popup = new PopupChecksUI("Record of events", false);
-                new ReplayCheckable(memoryCheckNotifier).Check(popup);
-
-                if(tag != null)
-                    popup.OnCheckPerformed(new CheckEventArgs(tag.Message, CheckResult.Fail, tag));
-                return true;
-            }
-
-            return false;
-        }
-
-
-        public void SetVisible(bool visible)
-        {
-            if (InvokeRequired)
-            {
-                Invoke(new MethodInvoker(()=> SetVisible(visible)));
-                return;
-            }
-            BringToFront();
-            Visible = visible;
-        }
-
-        public void StartChecking(ICheckable checkable)
-        {
-            lock (oTaskLock)
-            {
-
-                //if there is already a Task and it has not completed
-                if (_checkTask != null && !_checkTask.IsCompleted)
-                    return;
-
-                //else start a new Task
-                Reset();
-                _checkTask = new Task(() =>
+            //else start a new Task
+            Reset();
+            _checkTask = new Task(() =>
                 {
                     try
                     {
@@ -246,9 +246,8 @@ namespace Rdmp.UI.ChecksUI
                         Fatal(new Exception("Entire Checking Process Failed",ex));
                     }
                 }
-                    );
+            );
             _checkTask.Start();
-            }
         }
     }
 }

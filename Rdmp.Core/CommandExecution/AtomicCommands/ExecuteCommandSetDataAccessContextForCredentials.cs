@@ -9,54 +9,54 @@ using Rdmp.Core.Curation.Data;
 using Rdmp.Core.Providers.Nodes;
 using ReusableLibraryCode.DataAccess;
 
-namespace Rdmp.Core.CommandExecution.AtomicCommands
+namespace Rdmp.Core.CommandExecution.AtomicCommands;
+
+public class ExecuteCommandSetDataAccessContextForCredentials : BasicCommandExecution, IAtomicCommand
 {
-    public class ExecuteCommandSetDataAccessContextForCredentials : BasicCommandExecution, IAtomicCommand
+    private DataAccessCredentialUsageNode _node;
+    private readonly DataAccessContext _newContext;
+
+    public ExecuteCommandSetDataAccessContextForCredentials(IBasicActivateItems activator, DataAccessCredentialUsageNode node, DataAccessContext newContext, Dictionary<DataAccessContext, DataAccessCredentials> existingCredentials): base(activator)
     {
-        private DataAccessCredentialUsageNode _node;
-        private readonly DataAccessContext _newContext;
+        _node = node;
+        _newContext = newContext;
 
-        public ExecuteCommandSetDataAccessContextForCredentials(IBasicActivateItems activator, DataAccessCredentialUsageNode node, DataAccessContext newContext, Dictionary<DataAccessContext, DataAccessCredentials> existingCredentials): base(activator)
+        //if context is same as before
+        if(newContext == node.Context)
         {
-            _node = node;
-            _newContext = newContext;
-
-            //if context is same as before
-            if(newContext == node.Context)
-            {
-                SetImpossible("This is the current usage context declared");
-                return;
-            }
+            SetImpossible("This is the current usage context declared");
+            return;
+        }
             
-            //if there's already another credential for that context (other than this one)
-            if (existingCredentials.ContainsKey(newContext))
-                SetImpossible("DataAccessCredentials '" + existingCredentials[newContext] + "' are used for accessing table under context " + newContext);
-        }
+        //if there's already another credential for that context (other than this one)
+        if (existingCredentials.ContainsKey(newContext))
+            SetImpossible(
+                $"DataAccessCredentials '{existingCredentials[newContext]}' are used for accessing table under context {newContext}");
+    }
 
-        public override string GetCommandHelp()
-        {
-            return "Changes which contexts the credentials can be used under e.g. DataLoad only";
-        }
+    public override string GetCommandHelp()
+    {
+        return "Changes which contexts the credentials can be used under e.g. DataLoad only";
+    }
 
-        public override string GetCommandName()
-        {
-            return _newContext.ToString();
-        }
+    public override string GetCommandName()
+    {
+        return _newContext.ToString();
+    }
 
-        public override void Execute()
-        {
-            base.Execute();
+    public override void Execute()
+    {
+        base.Execute();
 
-            //don't bother if it is already at that context
-            if (_node.Context == _newContext)
-                return;
+        //don't bother if it is already at that context
+        if (_node.Context == _newContext)
+            return;
 
-            var linker = BasicActivator.RepositoryLocator.CatalogueRepository.TableInfoCredentialsManager;
+        var linker = BasicActivator.RepositoryLocator.CatalogueRepository.TableInfoCredentialsManager;
 
-            linker.BreakLinkBetween(_node.Credentials, _node.TableInfo, _node.Context);
-            linker.CreateLinkBetween(_node.Credentials, _node.TableInfo, _newContext);
+        linker.BreakLinkBetween(_node.Credentials, _node.TableInfo, _node.Context);
+        linker.CreateLinkBetween(_node.Credentials, _node.TableInfo, _newContext);
 
-            Publish(_node.TableInfo);
-        }
+        Publish(_node.TableInfo);
     }
 }

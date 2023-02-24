@@ -15,66 +15,65 @@ using ReusableLibraryCode.Icons.IconProvision;
 using ReusableLibraryCode.Progress;
 using SixLabors.ImageSharp.PixelFormats;
 
-namespace Rdmp.Core.CommandExecution.AtomicCommands
+namespace Rdmp.Core.CommandExecution.AtomicCommands;
+
+public class ExecuteCommandAddPlugins : BasicCommandExecution, IAtomicCommand
 {
-    public class ExecuteCommandAddPlugins : BasicCommandExecution, IAtomicCommand
+    private FileInfo[] _files;
+
+    public ExecuteCommandAddPlugins(IBasicActivateItems itemActivator):base(itemActivator)
     {
-        private FileInfo[] _files;
 
-        public ExecuteCommandAddPlugins(IBasicActivateItems itemActivator):base(itemActivator)
+    }
+
+    public ExecuteCommandAddPlugins(IBasicActivateItems itemActivator, FileCollectionCombineable fileCombineable):base(itemActivator)
+    {
+        if(!fileCombineable.Files.All(f=>f.Extension == PackPluginRunner.PluginPackageSuffix))
         {
-
+            SetImpossible($"Plugins must {PackPluginRunner.PluginPackageSuffix}"); 
+            return;
         }
 
-        public ExecuteCommandAddPlugins(IBasicActivateItems itemActivator, FileCollectionCombineable fileCombineable):base(itemActivator)
+        var existing = BasicActivator.RepositoryLocator.CatalogueRepository.PluginManager.GetCompatiblePlugins();
+
+        _files = fileCombineable.Files;
+
+        var collision = existing.FirstOrDefault(p=>_files.Any(f=>f.Name.Equals(p.Name)));
+        if(collision != null)
+            SetImpossible($"There is already a plugin called '{collision}'");
+
+    }
+
+    public override void Execute()
+    {
+        base.Execute();
+
+        if(_files == null)
         {
-            if(!fileCombineable.Files.All(f=>f.Extension == PackPluginRunner.PluginPackageSuffix))
-            {
-                SetImpossible("Plugins must " + PackPluginRunner.PluginPackageSuffix); 
-                return;
-            }
-
-            var existing = BasicActivator.RepositoryLocator.CatalogueRepository.PluginManager.GetCompatiblePlugins();
-
-            _files = fileCombineable.Files;
-
-            var collision = existing.FirstOrDefault(p=>_files.Any(f=>f.Name.Equals(p.Name)));
-            if(collision != null)
-                SetImpossible("There is already a plugin called '" + collision + "'");
-
+                
+            var f = BasicActivator.SelectFile("Plugin to add",
+                $"Plugins (*{PackPluginRunner.PluginPackageSuffix})", $"*{PackPluginRunner.PluginPackageSuffix}");
+            if(f != null)
+                _files = new FileInfo[]{ f };
+            else return;
         }
 
-        public override void Execute()
+
+        foreach(var f in _files)
         {
-            base.Execute();
-
-            if(_files == null)
-            {
+            var runner = new PackPluginRunner(new CommandLine.Options.PackOptions(){File = f.FullName});
+            runner.Run(BasicActivator.RepositoryLocator,new ThrowImmediatelyDataLoadEventListener(),new ThrowImmediatelyCheckNotifier(),new DataFlowPipeline.GracefulCancellationToken());
+        }
                 
-                var f = BasicActivator.SelectFile("Plugin to add",
-                    $"Plugins (*{PackPluginRunner.PluginPackageSuffix})",'*'+PackPluginRunner.PluginPackageSuffix);
-                if(f != null)
-                    _files = new FileInfo[]{ f };
-                else return;
-            }
-
-
-            foreach(FileInfo f in _files)
-            {
-                var runner = new PackPluginRunner(new Core.CommandLine.Options.PackOptions(){File = f.FullName});
-                runner.Run(BasicActivator.RepositoryLocator,new ThrowImmediatelyDataLoadEventListener(),new ThrowImmediatelyCheckNotifier(),new Core.DataFlowPipeline.GracefulCancellationToken());
-            }
-                
-            Show("Changes will take effect on restart");
-            var p = BasicActivator.RepositoryLocator.CatalogueRepository.GetAllObjects<Rdmp.Core.Curation.Data.Plugin>().FirstOrDefault();
+        Show("Changes will take effect on restart");
+        var p = BasicActivator.RepositoryLocator.CatalogueRepository.GetAllObjects<Rdmp.Core.Curation.Data.Plugin>().FirstOrDefault();
             
-            if(p!= null)
-                Publish(p);
-        }
+        if(p!= null)
+            Publish(p);
+    }
 
-        public override Image<Rgba32> GetImage(IIconProvider iconProvider)
-        {
-            return iconProvider.GetImage(RDMPConcept.Plugin,OverlayKind.Add);
-        }
+    public override Image<Rgba32> GetImage(IIconProvider iconProvider)
+    {
+        return iconProvider.GetImage(RDMPConcept.Plugin,OverlayKind.Add);
     }
 }

@@ -12,44 +12,42 @@ using Rdmp.Core.DataExport.Data;
 using Rdmp.Core.DataExport.DataExtraction.UserPicks;
 using Rdmp.Core.QueryBuilding;
 
-namespace Rdmp.Core.DataExport.DataExtraction.Commands
+namespace Rdmp.Core.DataExport.DataExtraction.Commands;
+
+/// <summary>
+/// See ExtractDatasetCommand
+/// </summary>
+public interface IExtractDatasetCommand : IExtractCommand
 {
+    ISelectedDataSets SelectedDataSets { get; }
+
+    IExtractableCohort ExtractableCohort { get; set; }
+    ICatalogue Catalogue { get; }
+    IExtractionDirectory Directory { get; set; }
+    IExtractableDatasetBundle DatasetBundle { get; }
+    List<IColumn> ColumnsToExtract { get; set; }
+
+    IProject Project { get; }
+
+    void GenerateQueryBuilder();
+    ISqlQueryBuilder QueryBuilder { get; set; }
+
+    ICumulativeExtractionResults CumulativeExtractionResults { get; }
+    int TopX { get; set; }
+
     /// <summary>
-    /// See ExtractDatasetCommand
+    /// If this is a batch extraction then this is the inclusive start date of the data fetched
     /// </summary>
-    public interface IExtractDatasetCommand : IExtractCommand
-    {
-        ISelectedDataSets SelectedDataSets { get; }
+    DateTime? BatchStart { get; set; }
 
-        IExtractableCohort ExtractableCohort { get; set; }
-        ICatalogue Catalogue { get; }
-        IExtractionDirectory Directory { get; set; }
-        IExtractableDatasetBundle DatasetBundle { get; }
-        List<IColumn> ColumnsToExtract { get; set; }
+    /// <summary>
+    /// If this is a batch extraction then this is the exclusive end date of the data fetched
+    /// </summary>
+    DateTime? BatchEnd { get; set; }
 
-        IProject Project { get; }
-
-        void GenerateQueryBuilder();
-        ISqlQueryBuilder QueryBuilder { get; set; }
-
-        ICumulativeExtractionResults CumulativeExtractionResults { get; }
-        int TopX { get; set; }
-
-        /// <summary>
-        /// If this is a batch extraction then this is the inclusive start date of the data fetched
-        /// </summary>
-        DateTime? BatchStart { get; set; }
-
-        /// <summary>
-        /// If this is a batch extraction then this is the exclusive end date of the data fetched
-        /// </summary>
-        /// <inheritdoc/>
-        DateTime? BatchEnd { get; set; }
-
-        /// <summary>
-        /// Returns the unique server for running the <see cref="QueryBuilder"/> sql on
-        /// </summary>
-        /// <returns></returns>
-        DiscoveredServer GetDistinctLiveDatabaseServer();
-    }
+    /// <summary>
+    /// Returns the unique server for running the <see cref="QueryBuilder"/> sql on
+    /// </summary>
+    /// <returns></returns>
+    DiscoveredServer GetDistinctLiveDatabaseServer();
 }

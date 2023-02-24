@@ -22,73 +22,72 @@ using ReusableLibraryCode.Progress;
 using Tests.Common;
 using Tests.Common.Scenarios;
 
-namespace Rdmp.Core.Tests.DataLoad.Engine.Integration
+namespace Rdmp.Core.Tests.DataLoad.Engine.Integration;
+
+public class PayloadTest:DatabaseTests
 {
-    public class PayloadTest:DatabaseTests
+    public static object payload = new();
+    public static bool Success = false;
+
+    [Test]
+    public void TestPayloadInjection()
     {
-        public static object payload = new object();
-        public static bool Success = false;
+        var b = new BulkTestsData(CatalogueRepository,GetCleanedServer(FAnsi.DatabaseType.MicrosoftSQLServer),10);
+        b.SetupTestData();
+        b.ImportAsCatalogue();
 
-        [Test]
-        public void TestPayloadInjection()
+        var lmd = new LoadMetadata(CatalogueRepository, "Loading");
+        lmd.LocationOfFlatFiles = LoadDirectory.CreateDirectoryStructure(new DirectoryInfo(TestContext.CurrentContext.TestDirectory),"delme", true).RootPath.FullName;
+        lmd.SaveToDatabase();
+
+        CatalogueRepository.MEF.AddTypeToCatalogForTesting(typeof(TestPayloadAttacher));
+
+        b.catalogue.LoadMetadata_ID = lmd.ID;
+        b.catalogue.LoggingDataTask = "TestPayloadInjection";
+        b.catalogue.SaveToDatabase();
+
+        var lm = new LogManager(CatalogueRepository.GetDefaultFor(PermissableDefaults.LiveLoggingServer_ID));
+        lm.CreateNewLoggingTaskIfNotExists("TestPayloadInjection");
+
+        var pt = new ProcessTask(CatalogueRepository, lmd, LoadStage.Mounting);
+        pt.Path = typeof (TestPayloadAttacher).FullName;
+        pt.ProcessTaskType = ProcessTaskType.Attacher;
+        pt.SaveToDatabase();
+
+        var config = new HICDatabaseConfiguration(GetCleanedServer(FAnsi.DatabaseType.MicrosoftSQLServer).Server);
+        var factory = new HICDataLoadFactory(lmd, config, new HICLoadConfigurationFlags(), CatalogueRepository, lm);
+        var execution = factory.Create(new ThrowImmediatelyDataLoadEventListener());
+
+        var proceedure = new DataLoadProcess(RepositoryLocator, lmd, null, lm, new ThrowImmediatelyDataLoadEventListener(), execution, config);
+
+        proceedure.Run(new GracefulCancellationToken(), payload);
+
+        Assert.IsTrue(Success, "Expected IAttacher to detect Payload and set this property to true");
+    }
+
+
+    public class TestPayloadAttacher : Attacher,IPluginAttacher
+    {
+        public TestPayloadAttacher() : base(false)
         {
-            BulkTestsData b = new BulkTestsData(CatalogueRepository,GetCleanedServer(FAnsi.DatabaseType.MicrosoftSQLServer),10);
-            b.SetupTestData();
-            b.ImportAsCatalogue();
-
-            var lmd = new LoadMetadata(CatalogueRepository, "Loading");
-            lmd.LocationOfFlatFiles = LoadDirectory.CreateDirectoryStructure(new DirectoryInfo(TestContext.CurrentContext.TestDirectory),"delme", true).RootPath.FullName;
-            lmd.SaveToDatabase();
-
-            CatalogueRepository.MEF.AddTypeToCatalogForTesting(typeof(TestPayloadAttacher));
-
-            b.catalogue.LoadMetadata_ID = lmd.ID;
-            b.catalogue.LoggingDataTask = "TestPayloadInjection";
-            b.catalogue.SaveToDatabase();
-
-            var lm = new LogManager(CatalogueRepository.GetDefaultFor(PermissableDefaults.LiveLoggingServer_ID));
-            lm.CreateNewLoggingTaskIfNotExists("TestPayloadInjection");
-
-            var pt = new ProcessTask(CatalogueRepository, lmd, LoadStage.Mounting);
-            pt.Path = typeof (TestPayloadAttacher).FullName;
-            pt.ProcessTaskType = ProcessTaskType.Attacher;
-            pt.SaveToDatabase();
-
-            var config = new HICDatabaseConfiguration(GetCleanedServer(FAnsi.DatabaseType.MicrosoftSQLServer).Server);
-            var factory = new HICDataLoadFactory(lmd, config, new HICLoadConfigurationFlags(), CatalogueRepository, lm);
-            IDataLoadExecution execution = factory.Create(new ThrowImmediatelyDataLoadEventListener());
-
-            var proceedure = new DataLoadProcess(RepositoryLocator, lmd, null, lm, new ThrowImmediatelyDataLoadEventListener(), execution, config);
-
-            proceedure.Run(new GracefulCancellationToken(), payload);
-
-            Assert.IsTrue(PayloadTest.Success, "Expected IAttacher to detect Payload and set this property to true");
         }
 
-
-        public class TestPayloadAttacher : Attacher,IPluginAttacher
+        public override ExitCodeType Attach(IDataLoadJob job, GracefulCancellationToken cancellationToken)
         {
-            public TestPayloadAttacher() : base(false)
-            {
-            }
+            job.OnNotify(this,new NotifyEventArgs(ProgressEventType.Information, $"Found Payload:{job.Payload}"));
+            Success = ReferenceEquals(payload, job.Payload);
 
-            public override ExitCodeType Attach(IDataLoadJob job, GracefulCancellationToken cancellationToken)
-            {
-                job.OnNotify(this,new NotifyEventArgs(ProgressEventType.Information, "Found Payload:" + job.Payload));
-                PayloadTest.Success = ReferenceEquals(payload, job.Payload);
+            return ExitCodeType.OperationNotRequired;
+        }
 
-                return ExitCodeType.OperationNotRequired;
-            }
-
-            public override void Check(ICheckNotifier notifier)
-            {
+        public override void Check(ICheckNotifier notifier)
+        {
                 
-            }
+        }
 
-            public override void LoadCompletedSoDispose(ExitCodeType exitCode, IDataLoadEventListener postLoadEventListener)
-            {
+        public override void LoadCompletedSoDispose(ExitCodeType exitCode, IDataLoadEventListener postLoadEventListener)
+        {
                 
-            }
         }
     }
 }

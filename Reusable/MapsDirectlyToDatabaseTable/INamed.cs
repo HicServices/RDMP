@@ -8,19 +8,18 @@ using System.ComponentModel;
 using MapsDirectlyToDatabaseTable.Revertable;
 using ReusableLibraryCode.Annotations;
 
-namespace MapsDirectlyToDatabaseTable
+namespace MapsDirectlyToDatabaseTable;
+
+/// <summary>
+/// An IMapsDirectlyToDatabaseTable object who has a property/column called Name which is editable.  Note that you should ensure the ToString property of your
+/// class returns the Name field to in order to not drive users crazy.
+/// </summary>
+public interface INamed : IRevertable, INotifyPropertyChanged
 {
-    /// <summary>
-    /// An IMapsDirectlyToDatabaseTable object who has a property/column called Name which is editable.  Note that you should ensure the ToString property of your
-    /// class returns the Name field to in order to not drive users crazy.
-    /// </summary>
-    public interface INamed : IRevertable, INotifyPropertyChanged
-    {
         
-        /// <summary>
-        /// A user meaningful name for describing the entity, this should be suitable for display in minimal screen space.
-        /// </summary>
-        [NotNull]
-        string Name { get; set; }
-    }
+    /// <summary>
+    /// A user meaningful name for describing the entity, this should be suitable for display in minimal screen space.
+    /// </summary>
+    [NotNull]
+    string Name { get; set; }
 }

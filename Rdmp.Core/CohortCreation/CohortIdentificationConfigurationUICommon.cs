@@ -8,7 +8,6 @@ using MapsDirectlyToDatabaseTable;
 using Rdmp.Core.CohortCreation.Execution;
 using Rdmp.Core.CohortCreation.Execution.Joinables;
 using Rdmp.Core.CommandExecution;
-using Rdmp.Core.CommandExecution.AtomicCommands;
 using Rdmp.Core.Curation.Data;
 using Rdmp.Core.Curation.Data.Aggregation;
 using Rdmp.Core.Curation.Data.Cohort;
@@ -32,7 +31,7 @@ public class CohortIdentificationConfigurationUICommon
 
     public ExternalDatabaseServer QueryCachingServer;
     private CohortAggregateContainer _root;
-    CancellationTokenSource _cancelGlobalOperations;
+    private CancellationTokenSource _cancelGlobalOperations;
     private ISqlParameter[] _globals;
     public CohortCompilerRunner Runner;
 
@@ -149,7 +148,7 @@ public class CohortIdentificationConfigurationUICommon
             CompilationState.Executing => Operation.Cancel,
             CompilationState.Finished => Operation.Execute,
             CompilationState.Crashed => Operation.Execute,
-            _ => throw new ArgumentOutOfRangeException("currentState")
+            _ => throw new ArgumentOutOfRangeException(nameof(currentState))
         };
     }
 
@@ -195,7 +194,7 @@ public class CohortIdentificationConfigurationUICommon
             case Operation.None:
                 break;
             default:
-                throw new ArgumentOutOfRangeException("operation");
+                throw new ArgumentOutOfRangeException(nameof(operation));
         }
     }
 
@@ -266,8 +265,7 @@ public class CohortIdentificationConfigurationUICommon
             if (task == null)
                 return;
 
-            var c = task as CacheableTask;
-            if (c != null)
+            if (task is CacheableTask c)
                 ClearCacheFor(new ICacheableTask[] { c });
 
             Compiler.CancelTask(task, true);
@@ -283,8 +281,8 @@ public class CohortIdentificationConfigurationUICommon
     {
         var manager = new CachedAggregateConfigurationResultsManager(QueryCachingServer);
 
-        int successes = 0;
-        foreach (ICacheableTask t in tasks)
+        var successes = 0;
+        foreach (var t in tasks)
             try
             {
                 t.ClearYourselfFromCache(manager);
@@ -293,7 +291,7 @@ public class CohortIdentificationConfigurationUICommon
             }
             catch (Exception exception)
             {
-                Activator.ShowException("Could not clear cache for task " + t, exception);
+                Activator.ShowException($"Could not clear cache for task {t}", exception);
             }
 
         RecreateAllTasks();
@@ -340,8 +338,8 @@ public class CohortIdentificationConfigurationUICommon
             var aliveCount = Compiler.GetAliveThreadCount();
             if (aliveCount > 0)
             {
-                Activator.Show("Confirm Close", "There are " + aliveCount +
-                                " Tasks currently executing, you must cancel them before closing");
+                Activator.Show("Confirm Close",
+                    $"There are {aliveCount} Tasks currently executing, you must cancel them before closing");
                 
                 return true;
             }

@@ -4,99 +4,94 @@
 // RDMP is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License for more details.
 // You should have received a copy of the GNU General Public License along with RDMP. If not, see <https://www.gnu.org/licenses/>.
 
-using MapsDirectlyToDatabaseTable;
 using Rdmp.Core.Repositories;
 using ReusableLibraryCode.DataAccess;
 using System;
 
-namespace Rdmp.Core.Curation.Data
+namespace Rdmp.Core.Curation.Data;
+
+/// <summary>
+/// Helper class for becomming an IEncryptedPasswordHost via SimpleStringValueEncryption.  This class needs an ICatalogueRepository because
+/// SimpleStringValueEncryption is only secure when there is a private RSA encryption key specified in the CatalogueRepository.  This key 
+/// certificate will be a file location.  This allows you to use windows file system based user authentication to securely encrypt strings
+/// within RDMP databases.
+/// 
+/// <para>See also PasswordEncryptionKeyLocationUI</para>
+/// </summary>
+public class EncryptedPasswordHost : IEncryptedPasswordHost
 {
     /// <summary>
-    /// Helper class for becomming an IEncryptedPasswordHost via SimpleStringValueEncryption.  This class needs an ICatalogueRepository because
-    /// SimpleStringValueEncryption is only secure when there is a private RSA encryption key specified in the CatalogueRepository.  This key 
-    /// certificate will be a file location.  This allows you to use windows file system based user authentication to securely encrypt strings
-    /// within RDMP databases.
-    /// 
-    /// <para>See also PasswordEncryptionKeyLocationUI</para>
+    /// This is only to support XML de-serialization
     /// </summary>
-    public class EncryptedPasswordHost : IEncryptedPasswordHost
+    internal class FakeEncryptedString : IEncryptedString
     {
-        /// <summary>
-        /// This is only to support XML de-serialization
-        /// </summary>
-        internal class FakeEncryptedString : IEncryptedString
+        public string Value { get; set; }
+        public string GetDecryptedValue()
         {
-            public string Value { get; set; }
-            public string GetDecryptedValue()
-            {
-                return Value;
-            }
-
-            public bool IsStringEncrypted(string value)
-            {
-                return false;
-            }
+            return Value;
         }
 
-        private IEncryptedString _encryptedString;
-
-        /// <summary>
-        /// For XML serialization
-        /// </summary>
-        public EncryptedPasswordHost()
+        public bool IsStringEncrypted(string value)
         {
-            // This is to get around the issue where during de-serialization we cannot create an EncryptedString because there is no access to a repository.
-            // If there is not a valid _encryptedString then de-serialization will fail (_encryptedString.Value is needed).
-            // This provides an implementation of IEncryptedString which is only valid for deserializing the encrypted password from an XML representation and providing the encrypted password to a 'real' EncryptedPasswordHost
-            _encryptedString = new FakeEncryptedString();
+            return false;
         }
+    }
 
-        /// <summary>
-        /// Prepares the object for decrypting/encrypting passwords based on the <see cref="Repositories.Managers.PasswordEncryptionKeyLocation"/>
-        /// </summary>
-        /// <param name="repository"></param>
-        public EncryptedPasswordHost(ICatalogueRepository repository)
+    private IEncryptedString _encryptedString;
+
+    /// <summary>
+    /// For XML serialization
+    /// </summary>
+    public EncryptedPasswordHost()
+    {
+        // This is to get around the issue where during de-serialization we cannot create an EncryptedString because there is no access to a repository.
+        // If there is not a valid _encryptedString then de-serialization will fail (_encryptedString.Value is needed).
+        // This provides an implementation of IEncryptedString which is only valid for deserializing the encrypted password from an XML representation and providing the encrypted password to a 'real' EncryptedPasswordHost
+        _encryptedString = new FakeEncryptedString();
+    }
+
+    /// <summary>
+    /// Prepares the object for decrypting/encrypting passwords based on the <see cref="Repositories.Managers.PasswordEncryptionKeyLocation"/>
+    /// </summary>
+    /// <param name="repository"></param>
+    public EncryptedPasswordHost(ICatalogueRepository repository)
+    {
+        _encryptedString = new EncryptedString(repository);
+    }
+
+    /// <summary>
+    /// Updates the encryption method to use a real encryption strategy.  Should be called
+    /// after deserialization and only if the blank constructor was used.
+    /// </summary>
+    /// <param name="repository"></param>
+    public void SetRepository(ICatalogueRepository repository)
+    {
+        if(_encryptedString is FakeEncryptedString f)
         {
             _encryptedString = new EncryptedString(repository);
-        }
+            _encryptedString.Value = f.Value;
+        }            
+    }
 
-        /// <summary>
-        /// Updates the encryption method to use a real encryption strategy.  Should be called
-        /// after deserialization and only if the blank constructor was used.
-        /// </summary>
-        /// <param name="repository"></param>
-        public void SetRepository(ICatalogueRepository repository)
+    /// <inheritdoc/>
+    public string Password
+    {
+        get
         {
-            if(_encryptedString is FakeEncryptedString f)
-            {
-                _encryptedString = new EncryptedString(repository);
-                _encryptedString.Value = f.Value;
-            }            
+            if (_encryptedString is FakeEncryptedString)
+                throw new Exception($"Encryption setup failed, API caller must have forgotten to call {nameof(SetRepository)}");
+
+            return _encryptedString.Value;
         }
+        set => _encryptedString.Value = value;
+    }
 
-        /// <inheritdoc/>
-        public string Password
-        {
-            get
-            {
-                if (_encryptedString is FakeEncryptedString)
-                    throw new System.Exception($"Encryption setup failed, API caller must have forgotten to call {nameof(SetRepository)}");
+    /// <inheritdoc/>
+    public string GetDecryptedPassword()
+    {
+        if (_encryptedString == null)
+            throw new Exception($"Passwords cannot be decrypted until {nameof(SetRepository)} has been called and decryption strategy is established");
 
-                return _encryptedString.Value;
-            }
-            set
-            {
-                _encryptedString.Value = value;
-            }
-        }
-
-        /// <inheritdoc/>
-        public string GetDecryptedPassword()
-        {
-            if (_encryptedString == null)
-                throw new Exception($"Passwords cannot be decrypted until {nameof(SetRepository)} has been called and decryption strategy is established");
-
-            return _encryptedString.GetDecryptedValue() ?? "";
-        }
+        return _encryptedString.GetDecryptedValue() ?? "";
     }
 }

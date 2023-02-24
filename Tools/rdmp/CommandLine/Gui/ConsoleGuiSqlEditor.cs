@@ -23,430 +23,425 @@ using static Terminal.Gui.TabView;
 using Attribute = Terminal.Gui.Attribute;
 using Rune = System.Rune;
 
-namespace Rdmp.Core.CommandLine.Gui
+namespace Rdmp.Core.CommandLine.Gui;
+
+internal class ConsoleGuiSqlEditor : Window
 {
-    class ConsoleGuiSqlEditor : Window
+    protected readonly IBasicActivateItems Activator;
+    private readonly IViewSQLAndResultsCollection _collection;
+    private TableView tableView;
+    protected TabView TabView;
+    private SqlTextView textView;
+    private Button _btnRunOrCancel;
+    private Task _runSqlTask;
+    private DbCommand _runSqlCmd;
+
+    /// <summary>
+    /// The original SQL this control was launched with
+    /// </summary>
+    private string _orignalSql;
+
+    /// <summary>
+    /// The number of seconds to allow queries to run for, can be changed by user
+    /// </summary>
+    private int _timeout = DefaultTimeout;
+    private Tab queryTab;
+    private Tab resultTab;
+
+    /// <summary>
+    /// The default number of seconds to allow queries to run for when no value or an invalid value is specified by the user
+    /// </summary>
+    public const int DefaultTimeout = 300;
+
+    public ConsoleGuiSqlEditor(IBasicActivateItems activator,IViewSQLAndResultsCollection collection)
     {
-        protected readonly IBasicActivateItems Activator;
-        private readonly IViewSQLAndResultsCollection _collection;
-        private TableView tableView;
-        protected TabView TabView;
-        private SqlTextView textView;
-        private Button _btnRunOrCancel;
-        private Task _runSqlTask;
-        private DbCommand _runSqlCmd;
+        Activator = activator;
+        _collection = collection;
+        Modal = true;
+        ColorScheme = ConsoleMainWindow.ColorScheme;
 
-        /// <summary>
-        /// The original SQL this control was launched with
-        /// </summary>
-        private string _orignalSql;
+        // Tabs (query and results)
+        TabView = new TabView() { Width = Dim.Fill(), Height = Dim.Fill(), Y = 1 };
 
-        /// <summary>
-        /// The number of seconds to allow queries to run for, can be changed by user
-        /// </summary>
-        private int _timeout = DefaultTimeout;
-        private Tab queryTab;
-        private Tab resultTab;
-
-        /// <summary>
-        /// The default number of seconds to allow queries to run for when no value or an invalid value is specified by the user
-        /// </summary>
-        public const int DefaultTimeout = 300;
-
-        public ConsoleGuiSqlEditor(IBasicActivateItems activator,IViewSQLAndResultsCollection collection)
+        textView = new SqlTextView()
         {
-            this.Activator = activator;
-            this._collection = collection;
-            Modal = true;
-            ColorScheme = ConsoleMainWindow.ColorScheme;
+            X = 0,
+            Y = 0,
+            Width = Dim.Fill(),
+            Height = Dim.Fill(),
+            Text = _orignalSql = collection.GetSql().Replace("\r\n", "\n").Replace("\t", "    ")
+        };
 
-            // Tabs (query and results)
-            TabView = new TabView() { Width = Dim.Fill(), Height = Dim.Fill(), Y = 1 };
+        textView.AllowsTab = false;
 
-            textView = new SqlTextView()
-            {
-                X = 0,
-                Y = 0,
-                Width = Dim.Fill(),
-                Height = Dim.Fill(),
-                Text = _orignalSql = collection.GetSql().Replace("\r\n", "\n").Replace("\t", "    ")
-            };
+        TabView.AddTab(queryTab = new Tab("Query", textView),true);
 
-            textView.AllowsTab = false;
+        tableView = new TableView()
+        {
+            X = 0,
+            Y = 0,
+            Width = Dim.Fill(),
+            Height = Dim.Fill()
+        };
 
-            TabView.AddTab(queryTab = new Tab("Query", textView),true);
+        tableView.Style.AlwaysShowHeaders = true;
+        tableView.CellActivated += TableView_CellActivated;
 
-            tableView = new TableView()
-            {
-                X = 0,
-                Y = 0,
-                Width = Dim.Fill(),
-                Height = Dim.Fill()
-            };
+        TabView.AddTab(resultTab = new Tab("Results", tableView), false);
 
-            tableView.Style.AlwaysShowHeaders = true;
-            tableView.CellActivated += TableView_CellActivated;
+        Add(TabView);
 
-            TabView.AddTab(resultTab = new Tab("Results", tableView), false);
+        // Buttons on top of control
 
-            Add(TabView);
+        _btnRunOrCancel = new Button("Run"){
+            X= 0,
+            Y= 0
+        };
 
-            // Buttons on top of control
+        _btnRunOrCancel.Clicked += ()=>RunOrCancel();
+        Add(_btnRunOrCancel);
 
-            _btnRunOrCancel = new Button("Run"){
-                X= 0,
-                Y= 0,
-                };
+        var resetSql = new Button("Reset Sq_l"){
+            X= Pos.Right(_btnRunOrCancel)+1};
 
-            _btnRunOrCancel.Clicked += ()=>RunOrCancel();
-            Add(_btnRunOrCancel);
+        resetSql.Clicked += ()=>ResetSql();
+        Add(resetSql);
 
-            var resetSql = new Button("Reset Sq_l"){
-                X= Pos.Right(_btnRunOrCancel)+1};
+        var clearSql = new Button("Clear S_ql"){
+            X= Pos.Right(resetSql)+1
+        };
 
-            resetSql.Clicked += ()=>ResetSql();
-            Add(resetSql);
+        clearSql.Clicked += ()=>ClearSql();
+        Add(clearSql);
 
-            var clearSql = new Button("Clear S_ql"){
-                X= Pos.Right(resetSql)+1,
-                };
+        var lblTimeout = new Label("Timeout:")
+        {
+            X = Pos.Right(clearSql)+1
+        };
+        Add(lblTimeout);
 
-            clearSql.Clicked += ()=>ClearSql();
-            Add(clearSql);
-
-            var lblTimeout = new Label("Timeout:")
-            {
-                X = Pos.Right(clearSql)+1,
-            };
-            Add(lblTimeout);
-
-            var tbTimeout = new TextField(_timeout.ToString())
-            {
-                X = Pos.Right(lblTimeout),
-                Width = 5
-            };
-            tbTimeout.TextChanged += TbTimeout_TextChanged;
+        var tbTimeout = new TextField(_timeout.ToString())
+        {
+            X = Pos.Right(lblTimeout),
+            Width = 5
+        };
+        tbTimeout.TextChanged += TbTimeout_TextChanged;
             
-            Add(tbTimeout);
+        Add(tbTimeout);
 
-            var btnSave = new Button("Save"){
-                X= Pos.Right(tbTimeout)+1,
-                };
-            btnSave.Clicked += ()=>Save();
-            Add(btnSave);
+        var btnSave = new Button("Save"){
+            X= Pos.Right(tbTimeout)+1
+        };
+        btnSave.Clicked += ()=>Save();
+        Add(btnSave);
 
-            var btnOpen = new Button("Open")
-            {
-                X = Pos.Right(btnSave) + 1,
-            };
+        var btnOpen = new Button("Open")
+        {
+            X = Pos.Right(btnSave) + 1
+        };
 
-            btnOpen.Clicked += OpenFile;
+        btnOpen.Clicked += OpenFile;
 
-            Add(btnOpen);
+        Add(btnOpen);
 
-            var btnClose = new Button("Clos_e"){
-                X= Pos.Right(btnOpen) +1,
-                };
+        var btnClose = new Button("Clos_e"){
+            X= Pos.Right(btnOpen) +1
+        };
 
 
-            btnClose.Clicked += ()=>{
-                Application.RequestStop();
-                };
+        btnClose.Clicked += ()=>{
+            Application.RequestStop();
+        };
                 
-            Add(btnClose);
+        Add(btnClose);
 
-            var auto = new AutoCompleteProvider(collection.GetQuerySyntaxHelper());
-            collection.AdjustAutocomplete(auto);
-            var bits = auto.Items.SelectMany(auto.GetBits).OrderBy(a => a).Where(s => !string.IsNullOrWhiteSpace(s)).Distinct().ToList();
-            textView.Autocomplete.AllSuggestions = bits;
-            textView.Autocomplete.MaxWidth = 40;
-        }
+        var auto = new AutoCompleteProvider(collection.GetQuerySyntaxHelper());
+        collection.AdjustAutocomplete(auto);
+        var bits = auto.Items.SelectMany(auto.GetBits).OrderBy(a => a).Where(s => !string.IsNullOrWhiteSpace(s)).Distinct().ToList();
+        textView.Autocomplete.AllSuggestions = bits;
+        textView.Autocomplete.MaxWidth = 40;
+    }
 
-        private void OpenFile()
+    private void OpenFile()
+    {
+        try
         {
-            try
-            {
-                using var open = new OpenDialog("Open Sql File", "Open");
-                Application.Run(open, ConsoleMainWindow.ExceptionPopup);
+            using var open = new OpenDialog("Open Sql File", "Open");
+            Application.Run(open, ConsoleMainWindow.ExceptionPopup);
 
-                var file = open.FilePath.ToString();
-                if (!open.Canceled && File.Exists(file))
-                {
-                    var sql = File.ReadAllText(file);
-                    textView.Text = sql;
-                }
-            }
-            catch (Exception ex)
+            var file = open.FilePath.ToString();
+            if (!open.Canceled && File.Exists(file))
             {
-                ConsoleMainWindow.ExceptionPopup(ex);
+                var sql = File.ReadAllText(file);
+                textView.Text = sql;
             }
         }
-
-        private void TableView_CellActivated(TableView.CellActivatedEventArgs obj)
+        catch (Exception ex)
         {
-            var val = obj.Table.Rows[obj.Row][obj.Col];
-            if(val != null && val != DBNull.Value)
-            {
-                Activator.Show(val.ToString());
-            }
+            ConsoleMainWindow.ExceptionPopup(ex);
         }
+    }
 
-        private void Save()
+    private void TableView_CellActivated(TableView.CellActivatedEventArgs obj)
+    {
+        var val = obj.Table.Rows[obj.Row][obj.Col];
+        if(val != null && val != DBNull.Value)
         {
-            try
+            Activator.Show(val.ToString());
+        }
+    }
+
+    private void Save()
+    {
+        try
+        {
+            var tbl = tableView.Table;
+
+            if(tbl == null)
             {
-                var tbl = tableView.Table;
+                MessageBox.ErrorQuery("Cannot Save","No Table Loaded","Ok");
+                return;
+            }
 
-                if(tbl == null)
+            var sfd = new SaveDialog("Save","Pick file location to save");
+            Application.Run(sfd, ConsoleMainWindow.ExceptionPopup);
+
+            if(sfd.Canceled)
+                return;
+
+            if(sfd.FilePath != null)
+            {
+                using(var writer = new StreamWriter(File.OpenWrite(sfd.FilePath.ToString())))
+                using(var w = new CsvWriter(writer,CultureInfo.CurrentCulture))
                 {
-                    MessageBox.ErrorQuery("Cannot Save","No Table Loaded","Ok");
-                    return;
-                }
+                    // write headers
+                    foreach(DataColumn c in tbl.Columns)
+                        w.WriteField(c.ColumnName);
 
-                var sfd = new SaveDialog("Save","Pick file location to save");
-                Application.Run(sfd, ConsoleMainWindow.ExceptionPopup);
+                    w.NextRecord();
 
-                if(sfd.Canceled)
-                    return;
-
-                if(sfd.FilePath != null)
-                {
-                    using(var writer = new StreamWriter(File.OpenWrite(sfd.FilePath.ToString())))
-                        using(var w = new CsvWriter(writer,CultureInfo.CurrentCulture))
+                    // write rows
+                    foreach (DataRow r in tbl.Rows)
+                    {
+                        foreach (var item in r.ItemArray)
                         {
-                            // write headers
-                            foreach(DataColumn c in tbl.Columns)
-                                w.WriteField(c.ColumnName);
-
-                            w.NextRecord();
-
-                            // write rows
-                            foreach (DataRow r in tbl.Rows)
-                            {
-                                foreach (var item in r.ItemArray)
-                                {
-                                    w.WriteField(item);
-                                }
-
-                                w.NextRecord();
-                            }
+                            w.WriteField(item);
                         }
+
+                        w.NextRecord();
+                    }
+                }
                     
-                    MessageBox.Query("File Saved","Save completed","Ok");
-                }
+                MessageBox.Query("File Saved","Save completed","Ok");
             }
-            catch (Exception ex)
-            {
-                MessageBox.ErrorQuery("Save Failed",ex.Message,"Ok");
-            }
+        }
+        catch (Exception ex)
+        {
+            MessageBox.ErrorQuery("Save Failed",ex.Message,"Ok");
+        }
             
-        }
+    }
 
-        private void TbTimeout_TextChanged(NStack.ustring value)
+    private void TbTimeout_TextChanged(NStack.ustring value)
+    {
+        if(int.TryParse(value.ToString(),out var newTimeout))
+            _timeout = newTimeout < 0 ? DefaultTimeout : newTimeout;
+        else
+            _timeout = DefaultTimeout;
+    }
+
+    private void ClearSql()
+    {
+        textView.Text = "";
+        textView.SetNeedsDisplay();
+
+        TabView.SelectedTab = queryTab;
+    }
+
+    private void ResetSql()
+    {
+        textView.Text = _orignalSql;
+        textView.SetNeedsDisplay();
+
+        TabView.SelectedTab = queryTab;
+    }
+
+    private void RunOrCancel()
+    {
+        // if task is still running we should cancel
+        if(_runSqlTask  != null && !_runSqlTask.IsCompleted)
         {
-            if(int.TryParse(value.ToString(),out int newTimeout))
-                _timeout = newTimeout < 0 ? DefaultTimeout : newTimeout;
-            else
-                _timeout = DefaultTimeout;
+            // Cancel the sql command and let that naturally end the task
+            _runSqlCmd?.Cancel();
         }
-
-        private void ClearSql()
+        else
         {
-            textView.Text = "";
-            textView.SetNeedsDisplay();
-
-            TabView.SelectedTab = queryTab;
-        }
-
-        private void ResetSql()
-        {
-            textView.Text = _orignalSql;
-            textView.SetNeedsDisplay();
-
-            TabView.SelectedTab = queryTab;
-        }
-
-        private void RunOrCancel()
-        {
-            // if task is still running we should cancel
-            if(_runSqlTask  != null && !_runSqlTask.IsCompleted)
+            Exception ex=null;
+            _runSqlTask = Task.Run(()=>
             {
-                // Cancel the sql command and let that naturally end the task
-                _runSqlCmd?.Cancel();
-            }
-            else
-            {
-                Exception ex=null;
-                _runSqlTask = Task.Run(()=>
+                try
                 {
-                    try
-                    {
-                        RunSql();
-                    }
-                    catch (Exception e)
-                    {
-                        ex = e;
-                    }
-                }).ContinueWith((s,e)=> {
-                        if(ex != null)
-                        {
-                            Activator.ShowException("Failed to run query", ex);
-                        }
-                    },TaskScheduler.FromCurrentSynchronizationContext());
+                    RunSql();
+                }
+                catch (Exception e)
+                {
+                    ex = e;
+                }
+            }).ContinueWith((s,e)=> {
+                if(ex != null)
+                {
+                    Activator.ShowException("Failed to run query", ex);
+                }
+            },TaskScheduler.FromCurrentSynchronizationContext());
 
-                _btnRunOrCancel.Text = "Cancel";
-                _btnRunOrCancel.SetNeedsDisplay();
-            }
-        }
-        
-        private void SetReadyToRun()
-        {
-            _btnRunOrCancel.Text = "Run";
+            _btnRunOrCancel.Text = "Cancel";
             _btnRunOrCancel.SetNeedsDisplay();
         }
-        private void RunSql()
+    }
+        
+    private void SetReadyToRun()
+    {
+        _btnRunOrCancel.Text = "Run";
+        _btnRunOrCancel.SetNeedsDisplay();
+    }
+    private void RunSql()
+    {
+        try
         {
-            try
+            var sql = textView.Text.ToString();
+
+            if(string.IsNullOrWhiteSpace(sql))
             {
-                string sql = textView.Text.ToString();
+                tableView.Table = null;
+                return;
+            }
 
-                if(string.IsNullOrWhiteSpace(sql))
-                {
-                    tableView.Table = null;
-                    return;
-                }
+            var db = DataAccessPortal.GetInstance().ExpectDatabase(_collection.GetDataAccessPoint(),DataAccessContext.InternalDataProcessing);
 
-                var db = DataAccessPortal.GetInstance().ExpectDatabase(_collection.GetDataAccessPoint(),DataAccessContext.InternalDataProcessing);
+            using var con = db.Server.GetConnection();
+            con.Open();
+            _runSqlCmd = db.Server.GetCommand(sql,con);
+            _runSqlCmd.CommandTimeout = _timeout;
 
-                using(var con = db.Server.GetConnection())
-                {
-                    con.Open();
-                    _runSqlCmd = db.Server.GetCommand(sql,con);
-                    _runSqlCmd.CommandTimeout = _timeout;
+            using var da = db.Server.GetDataAdapter(_runSqlCmd);
+            var dt = new DataTable();
+            da.Fill(dt);
 
-                    using(var da = db.Server.GetDataAdapter(_runSqlCmd))
-                    {
-                        var dt = new DataTable();
-                        da.Fill(dt);
-
-                        Application.MainLoop.Invoke(() => { 
+            Application.MainLoop.Invoke(() => { 
                             
-                            tableView.Table = dt;
+                tableView.Table = dt;
 
-                            // if query resulted in some data show it
-                            if (dt.Columns.Count > 0)
-                            {
-                                TabView.SelectedTab = resultTab;
-                                TabView.SetNeedsDisplay();
-                            }
-                        });
-
-
-                        OnQueryCompleted(dt);
-                    }   
+                // if query resulted in some data show it
+                if (dt.Columns.Count > 0)
+                {
+                    TabView.SelectedTab = resultTab;
+                    TabView.SetNeedsDisplay();
                 }
-            }
-            finally
-            {
-                SetReadyToRun();
-            }
-        }
+            });
 
-        protected virtual void OnQueryCompleted(DataTable dt)
+
+            OnQueryCompleted(dt);
+        }
+        finally
         {
+            SetReadyToRun();
+        }
+    }
+
+    protected virtual void OnQueryCompleted(DataTable dt)
+    {
             
-        }
+    }
 
-        private class SqlAutocomplete : Terminal.Gui.TextViewAutocomplete
+    private class SqlAutocomplete : TextViewAutocomplete
+    {
+        public override bool IsWordChar(Rune rune)
         {
-            public override bool IsWordChar(System.Rune rune)
-            {
-                return (char)rune == '_' || base.IsWordChar(rune);
-            }
+            return (char)rune == '_' || base.IsWordChar(rune);
         }
+    }
 
-        private class SqlTextView : TextView
+    private class SqlTextView : TextView
+    {
+
+        private readonly HashSet<string> _keywords = new(new[]
         {
+            "select", "distinct", "top", "from", "create", "CIPHER", "CLASS_ORIGIN", "CLIENT", "CLOSE", "COALESCE",
+            "CODE", "COLUMNS", "COLUMN_FORMAT", "COLUMN_NAME", "COMMENT", "COMMIT", "COMPACT", "COMPLETION",
+            "COMPRESSED", "COMPRESSION", "CONCURRENT", "CONNECT", "CONNECTION", "CONSISTENT", "CONSTRAINT_CATALOG",
+            "CONSTRAINT_SCHEMA", "CONSTRAINT_NAME", "CONTAINS", "CONTEXT", "CONTRIBUTORS", "COPY", "CPU",
+            "CURSOR_NAME", "primary", "key", "insert", "alter", "add", "update", "set", "delete", "truncate", "as",
+            "order", "by", "asc", "desc", "between", "where", "and", "or", "not", "limit", "null", "is", "drop",
+            "database", "table", "having", "in", "join", "on", "union", "exists"
+        }, StringComparer.CurrentCultureIgnoreCase);
+        private readonly Attribute _blue;
+        private readonly Attribute _white;
 
-            private readonly HashSet<string> _keywords = new(new[]
+
+        public SqlTextView()
+        {
+            Autocomplete = new SqlAutocomplete();
+
+            Autocomplete.ColorScheme = new ColorScheme()
             {
-                "select", "distinct", "top", "from", "create", "CIPHER", "CLASS_ORIGIN", "CLIENT", "CLOSE", "COALESCE",
-                "CODE", "COLUMNS", "COLUMN_FORMAT", "COLUMN_NAME", "COMMENT", "COMMIT", "COMPACT", "COMPLETION",
-                "COMPRESSED", "COMPRESSION", "CONCURRENT", "CONNECT", "CONNECTION", "CONSISTENT", "CONSTRAINT_CATALOG",
-                "CONSTRAINT_SCHEMA", "CONSTRAINT_NAME", "CONTAINS", "CONTEXT", "CONTRIBUTORS", "COPY", "CPU",
-                "CURSOR_NAME", "primary", "key", "insert", "alter", "add", "update", "set", "delete", "truncate", "as",
-                "order", "by", "asc", "desc", "between", "where", "and", "or", "not", "limit", "null", "is", "drop",
-                "database", "table", "having", "in", "join", "on", "union", "exists",
-            }, StringComparer.CurrentCultureIgnoreCase);
-            private readonly Attribute _blue;
-            private readonly Attribute _white;
+                Normal = Driver.MakeAttribute(Color.Black, Color.Blue),
+                Focus = Driver.MakeAttribute(Color.Black, Color.Cyan)
+            };
 
-
-            public SqlTextView()
-            {
-                Autocomplete = new SqlAutocomplete();
-
-                Autocomplete.ColorScheme = new ColorScheme()
-                {
-                    Normal = Driver.MakeAttribute(Color.Black, Color.Blue),
-                    Focus = Driver.MakeAttribute(Color.Black, Color.Cyan),
-                };
-
-                _blue = Driver.MakeAttribute(Color.Cyan, Color.Black);
-                _white = Driver.MakeAttribute(Color.White, Color.Black);
+            _blue = Driver.MakeAttribute(Color.Cyan, Color.Black);
+            _white = Driver.MakeAttribute(Color.White, Color.Black);
                 
+        }
+
+        // These are renamed in 1.8.2 of Terminal.Gui.  But we cannot upgrade because of this issue:
+        // https://github.com/HicServices/RDMP/pull/1448 . Do not upgrade until you can test the
+        // Sql Editor performs correctly in the version you are updating to.  Everything works great
+        // in 1.7.2 so lets stick with that for now
+
+        // protected override void SetNormalColor()
+        protected override void ColorNormal()
+        {
+            Driver.SetAttribute(_white);
+        }
+
+        // protected override void SetNormalColor(List<System.Rune> line, int idx)
+        protected override void ColorNormal(List<Rune> line, int idx)
+        {
+            Driver.SetAttribute(IsKeyword(line, idx) ? _blue : _white);
+        }
+
+        private bool IsKeyword(IEnumerable<Rune> line, int idx)
+        {
+            var word = IdxToWord(line, idx);
+
+            if (string.IsNullOrWhiteSpace(word))
+            {
+                return false;
             }
 
-            // These are renamed in 1.8.2 of Terminal.Gui.  But we cannot upgrade because of this issue:
-            // https://github.com/HicServices/RDMP/pull/1448 . Do not upgrade until you can test the
-            // Sql Editor performs correctly in the version you are updating to.  Everything works great
-            // in 1.7.2 so lets stick with that for now
+            return _keywords.Contains(word);
+        }
 
-            // protected override void SetNormalColor()
-            protected override void ColorNormal()
+        private string IdxToWord(IEnumerable<Rune> line, int idx)
+        {
+            var words = Regex.Split(
+                string.Join("", line),
+                "\\b");
+
+            var count = 0;
+            string current = null;
+
+            foreach (var word in words)
             {
-                Driver.SetAttribute(_white);
-            }
-
-            // protected override void SetNormalColor(List<System.Rune> line, int idx)
-            protected override void ColorNormal(List<System.Rune> line, int idx)
-            {
-                Driver.SetAttribute(IsKeyword(line, idx) ? _blue : _white);
-            }
-
-            private bool IsKeyword(IEnumerable<Rune> line, int idx)
-            {
-                var word = IdxToWord(line, idx);
-
-                if (string.IsNullOrWhiteSpace(word))
+                current = word;
+                count += word.Length;
+                if (count > idx)
                 {
-                    return false;
+                    break;
                 }
-
-                return _keywords.Contains(word);
             }
 
-            private string IdxToWord(IEnumerable<Rune> line, int idx)
-            {
-                var words = Regex.Split(
-                    string.Join("", line),
-                    "\\b");
-
-                int count = 0;
-                string current = null;
-
-                foreach (var word in words)
-                {
-                    current = word;
-                    count += word.Length;
-                    if (count > idx)
-                    {
-                        break;
-                    }
-                }
-
-                return current?.Trim();
-            }
+            return current?.Trim();
         }
     }
 }

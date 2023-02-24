@@ -5,7 +5,6 @@
 // You should have received a copy of the GNU General Public License along with RDMP. If not, see <https://www.gnu.org/licenses/>.
 
 using NLog;
-using Rdmp.Core.CommandExecution;
 using Rdmp.Core.Repositories.Construction;
 using Rdmp.Core.Startup;
 using ReusableLibraryCode;
@@ -14,96 +13,95 @@ using System.IO.Compression;
 using System.Linq;
 using System.Text.RegularExpressions;
 
-namespace Rdmp.Core.CommandExecution.AtomicCommands
+namespace Rdmp.Core.CommandExecution.AtomicCommands;
+
+/// <summary>
+/// Deletes duplicate dlls within the given plugin.  RDMP will not load 2 copies of the same
+/// dll at runtime and so these dlls will just bloat your plugin.  Use this command to prune out
+/// those files.
+/// </summary>
+public class ExecuteCommandPrunePlugin : BasicCommandExecution
 {
-    /// <summary>
-    /// Deletes duplicate dlls within the given plugin.  RDMP will not load 2 copies of the same
-    /// dll at runtime and so these dlls will just bloat your plugin.  Use this command to prune out
-    /// those files.
-    /// </summary>
-    public class ExecuteCommandPrunePlugin : BasicCommandExecution
+    private string file;
+
+
+    [UseWithObjectConstructor]
+    public ExecuteCommandPrunePlugin(string file)
     {
-        private string file;
+        this.file = file;
+    }
+
+    /// <summary>
+    /// Interactive constructor
+    /// </summary>
+    /// <param name="activator"></param>
+    public ExecuteCommandPrunePlugin(IBasicActivateItems activator) : base(activator)
+    {
+
+    }
 
 
-        [UseWithObjectConstructor]
-        public ExecuteCommandPrunePlugin(string file) : base()
+
+    public override void Execute()
+    {
+        base.Execute();
+
+        // make runtime decision about the file to run on
+        if(file == null && BasicActivator != null)
         {
-            this.file = file;
+            file = BasicActivator.SelectFile("Select plugin to prune")?.FullName;
         }
 
-        /// <summary>
-        /// Interactive constructor
-        /// </summary>
-        /// <param name="activator"></param>
-        public ExecuteCommandPrunePlugin(IBasicActivateItems activator) : base(activator)
+        if(file == null)
         {
-
+            return;
         }
 
+        var logger = LogManager.GetCurrentClassLogger();
 
-
-        public override void Execute()
+        using (var zf = ZipFile.Open(file, ZipArchiveMode.Update))
         {
-            base.Execute();
+            var current = UsefulStuff.GetExecutableDirectory();
 
-            // make runtime decision about the file to run on
-            if(file == null && BasicActivator != null)
+            logger.Info($"Reading RDMP core dlls in directory '{current}'");
+
+            var rdmpCoreFiles = current.GetFiles("*.dll");
+
+            var main = $"^/?lib/{EnvironmentInfo.MainSubDir}/.*.dll";
+            var windows = $"^/?lib/{EnvironmentInfo.WindowsSubDir}/.*.dll";
+
+            var inMain = new List<ZipArchiveEntry>();
+            var inWindows = new List<ZipArchiveEntry>();
+
+            foreach (var e in zf.Entries.ToArray())
             {
-                file = BasicActivator.SelectFile("Select plugin to prune")?.FullName;
-            }
-
-            if(file == null)
-            {
-                return;
-            }
-
-            var logger = LogManager.GetCurrentClassLogger();
-
-            using (var zf = ZipFile.Open(file, ZipArchiveMode.Update))
-            {
-                var current = UsefulStuff.GetExecutableDirectory();
-
-                logger.Info($"Reading RDMP core dlls in directory '{current}'");
-
-                var rdmpCoreFiles = current.GetFiles("*.dll");
-
-                string main = $"^/?lib/{EnvironmentInfo.MainSubDir}/.*.dll";
-                string windows = $"^/?lib/{EnvironmentInfo.WindowsSubDir}/.*.dll";
-
-                var inMain = new List<ZipArchiveEntry>();
-                var inWindows = new List<ZipArchiveEntry>();
-
-                foreach (var e in zf.Entries.ToArray())
+                if (rdmpCoreFiles.Any(f => f.Name.Equals(e.Name)))
                 {
-                    if (rdmpCoreFiles.Any(f => f.Name.Equals(e.Name)))
-                    {
-                        logger.Info($"Deleting '{e.FullName}'");
-                        e.Delete();
-                        continue;
-                    }
-
-                    if (Regex.IsMatch(e.FullName, main))
-                    {
-                        inMain.Add(e);
-                    }
-                    else if (Regex.IsMatch(e.FullName, windows))
-                    {
-                        inWindows.Add(e);
-                    }
+                    logger.Info($"Deleting '{e.FullName}'");
+                    e.Delete();
+                    continue;
                 }
 
-                foreach (var dup in inWindows.Where(e => inMain.Any(o => o.Name.Equals(e.Name))).ToArray())
+                if (Regex.IsMatch(e.FullName, main))
                 {
-                    logger.Info($"Deleting '{dup.FullName}' because it is already in 'main' subdir");
-                    dup.Delete();
+                    inMain.Add(e);
+                }
+                else if (Regex.IsMatch(e.FullName, windows))
+                {
+                    inWindows.Add(e);
                 }
             }
 
-            if(BasicActivator != null)
+            foreach (var dup in inWindows.Where(e => inMain.Any(o => o.Name.Equals(e.Name))).ToArray())
             {
-                BasicActivator.Show("Prune Completed");
+                logger.Info($"Deleting '{dup.FullName}' because it is already in 'main' subdir");
+                dup.Delete();
             }
+        }
+
+        if(BasicActivator != null)
+        {
+            BasicActivator.Show("Prune Completed");
         }
     }
 }

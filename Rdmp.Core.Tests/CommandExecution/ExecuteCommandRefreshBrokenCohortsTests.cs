@@ -11,64 +11,58 @@ using Rdmp.Core.DataExport.Data;
 using Rdmp.Core.Providers;
 using Rdmp.Core.Repositories;
 using ReusableLibraryCode.Checks;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
-namespace Rdmp.Core.Tests.CommandExecution
+namespace Rdmp.Core.Tests.CommandExecution;
+
+internal class ExecuteCommandRefreshBrokenCohortsTests 
 {
-    internal class ExecuteCommandRefreshBrokenCohortsTests 
+
+    [Test]
+    public void TestBrokenCohort()
     {
+        var repo = new MemoryDataExportRepository();
+            
+        var ect = new ExternalCohortTable(repo, "yarg", FAnsi.DatabaseType.MicrosoftSQLServer);
+        ect.Server = "IDontExist";
+        ect.Database = "fff";
+        ect.PrivateIdentifierField = "haha";
+        ect.ReleaseIdentifierField = "haha";
+        ect.SaveToDatabase();
 
-        [Test]
-        public void TestBrokenCohort()
+        var cohort = new ExtractableCohort();
+        cohort.Repository = repo;
+        cohort.ExternalCohortTable_ID = ect.ID;
+        cohort.OriginID = 123;
+        cohort.SaveToDatabase();
+
+        var repoLocator = new RepositoryProvider(repo);
+
+        var activator = new ConsoleInputManager(repoLocator, new ThrowImmediatelyCheckNotifier()) {
+            DisallowInput = true
+        };
+
+        Assert.AreEqual(1,((DataExportChildProvider)activator.CoreChildProvider).ForbidListedSources.Count);
+
+        var cmd = new ExecuteCommandRefreshBrokenCohorts(activator)
         {
-            var repo = new MemoryDataExportRepository();
+            // suppress publishing so we don't just go back into a refresh
+            // and find it missing again
+            NoPublish = true
+        };
             
-            var ect = new ExternalCohortTable(repo, "yarg", FAnsi.DatabaseType.MicrosoftSQLServer);
-            ect.Server = "IDontExist";
-            ect.Database = "fff";
-            ect.PrivateIdentifierField = "haha";
-            ect.ReleaseIdentifierField = "haha";
-            ect.SaveToDatabase();
+        Assert.IsFalse(cmd.IsImpossible);
+        cmd.Execute();
 
-            var cohort = new ExtractableCohort();
-            cohort.Repository = repo;
-            cohort.ExternalCohortTable_ID = ect.ID;
-            cohort.OriginID = 123;
-            cohort.SaveToDatabase();
+        //now no forbidden cohorts
+        Assert.IsEmpty(((DataExportChildProvider)activator.CoreChildProvider).ForbidListedSources);
 
-            var repoLocator = new RepositoryProvider(repo);
 
-            var activator = new ConsoleInputManager(repoLocator, new ThrowImmediatelyCheckNotifier()) {
-                DisallowInput = true
-            };
-
-            Assert.AreEqual(1,((DataExportChildProvider)activator.CoreChildProvider).ForbidListedSources.Count);
-
-            var cmd = new ExecuteCommandRefreshBrokenCohorts(activator)
-            {
-                // suppress publishing so we don't just go back into a refresh
-                // and find it missing again
-                NoPublish = true,
-            };
+        cmd = new ExecuteCommandRefreshBrokenCohorts(activator);
+        Assert.IsTrue(cmd.IsImpossible);
+        Assert.AreEqual("There are no broken ExternalCohortTable to clear status on", cmd.ReasonCommandImpossible);
             
-            Assert.IsFalse(cmd.IsImpossible);
-            cmd.Execute();
-
-            //now no forbidden cohorts
-            Assert.IsEmpty(((DataExportChildProvider)activator.CoreChildProvider).ForbidListedSources);
-
-
-            cmd = new ExecuteCommandRefreshBrokenCohorts(activator);
-            Assert.IsTrue(cmd.IsImpossible);
-            Assert.AreEqual("There are no broken ExternalCohortTable to clear status on", cmd.ReasonCommandImpossible);
-            
-            cmd = new ExecuteCommandRefreshBrokenCohorts(activator,ect);
-            Assert.IsTrue(cmd.IsImpossible);
-            Assert.AreEqual("'yarg' is not broken", cmd.ReasonCommandImpossible);
-        }
+        cmd = new ExecuteCommandRefreshBrokenCohorts(activator,ect);
+        Assert.IsTrue(cmd.IsImpossible);
+        Assert.AreEqual("'yarg' is not broken", cmd.ReasonCommandImpossible);
     }
 }

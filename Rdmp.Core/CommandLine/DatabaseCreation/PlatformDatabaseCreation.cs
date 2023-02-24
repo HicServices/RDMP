@@ -13,72 +13,71 @@ using Rdmp.Core.Databases;
 using Rdmp.Core.Repositories;
 using ReusableLibraryCode.Checks;
 
-namespace Rdmp.Core.CommandLine.DatabaseCreation
+namespace Rdmp.Core.CommandLine.DatabaseCreation;
+
+/// <summary>
+/// Creates RDMP core databases (logging, DQE, Catalogue, DataExport) in the given database server.  Also creates initial
+/// pipelines for common activities.
+/// </summary>
+public class PlatformDatabaseCreation
 {
+    public const string DefaultCatalogueDatabaseName = "Catalogue";
+    public const string DefaultDataExportDatabaseName = "DataExport";
+    public const string DefaultDQEDatabaseName = "DQE";
+    public const string DefaultLoggingDatabaseName = "Logging";
+
     /// <summary>
-    /// Creates RDMP core databases (logging, DQE, Catalogue, DataExport) in the given database server.  Also creates initial
-    /// pipelines for common activities.
+    /// Creates new databases on the given server for RDMP platform databases
     /// </summary>
-    public class PlatformDatabaseCreation
+    /// <param name="options"></param>
+    public void CreatePlatformDatabases(PlatformDatabaseCreationOptions options)
     {
-        public const string DefaultCatalogueDatabaseName = "Catalogue";
-        public const string DefaultDataExportDatabaseName = "DataExport";
-        public const string DefaultDQEDatabaseName = "DQE";
-        public const string DefaultLoggingDatabaseName = "Logging";
+        DiscoveredServerHelper.CreateDatabaseTimeoutInSeconds = options.CreateDatabaseTimeout;
 
-        /// <summary>
-        /// Creates new databases on the given server for RDMP platform databases
-        /// </summary>
-        /// <param name="options"></param>
-        public void CreatePlatformDatabases(PlatformDatabaseCreationOptions options)
+        Create(DefaultCatalogueDatabaseName, new CataloguePatcher(), options);
+        Create(DefaultDataExportDatabaseName, new DataExportPatcher(), options);
+
+        var dqe = Create(DefaultDQEDatabaseName, new DataQualityEnginePatcher(), options);
+        var logging = Create(DefaultLoggingDatabaseName, new LoggingDatabasePatcher(), options);
+
+        CatalogueRepository.SuppressHelpLoading = true;
+
+        var repo = new PlatformDatabaseCreationRepositoryFinder(options);
+
+        if (!options.SkipPipelines)
         {
-            DiscoveredServerHelper.CreateDatabaseTimeoutInSeconds = options.CreateDatabaseTimeout;
+            var creator = new CataloguePipelinesAndReferencesCreation(repo, logging, dqe);
+            creator.Create();
+        }
 
-            Create(DefaultCatalogueDatabaseName, new CataloguePatcher(), options);
-            Create(DefaultDataExportDatabaseName, new DataExportPatcher(), options);
-
-            var dqe = Create(DefaultDQEDatabaseName, new DataQualityEnginePatcher(), options);
-            var logging = Create(DefaultLoggingDatabaseName, new LoggingDatabasePatcher(), options);
-
-            CatalogueRepository.SuppressHelpLoading = true;
-
-            var repo = new PlatformDatabaseCreationRepositoryFinder(options);
-
-            if (!options.SkipPipelines)
-            {
-                var creator = new CataloguePipelinesAndReferencesCreation(repo, logging, dqe);
-                creator.Create();
-            }
-
-            if(options.ExampleDatasets || options.Nightmare)
-            {
-                var examples = new ExampleDatasetsCreation(new ThrowImmediatelyActivator(repo,null),repo);
-                var server = new DiscoveredServer(options.GetBuilder("ExampleData"));
+        if(options.ExampleDatasets || options.Nightmare)
+        {
+            var examples = new ExampleDatasetsCreation(new ThrowImmediatelyActivator(repo,null),repo);
+            var server = new DiscoveredServer(options.GetBuilder("ExampleData"));
                 
-                examples.Create(server.GetCurrentDatabase(),new ThrowImmediatelyCheckNotifier(){WriteToConsole = true },options);
-            }
+            examples.Create(server.GetCurrentDatabase(),new ThrowImmediatelyCheckNotifier(){WriteToConsole = true },options);
         }
+    }
 
-        private SqlConnectionStringBuilder Create(string databaseName, IPatcher patcher, PlatformDatabaseCreationOptions options)
+    private SqlConnectionStringBuilder Create(string databaseName, IPatcher patcher, PlatformDatabaseCreationOptions options)
+    {
+        SqlConnection.ClearAllPools();
+
+        var builder = options.GetBuilder(databaseName);
+
+        var db = new DiscoveredServer(builder).ExpectDatabase(builder.InitialCatalog);
+
+        if (options.DropDatabases && db.Exists())
         {
-            SqlConnection.ClearAllPools();
-
-            var builder = options.GetBuilder(databaseName);
-
-            DiscoveredDatabase db = new DiscoveredServer(builder).ExpectDatabase(builder.InitialCatalog);
-
-            if (options.DropDatabases && db.Exists())
-            {
-                Console.WriteLine("Dropping Database:" + builder.InitialCatalog);
-                db.Drop();
-            }
-
-            MasterDatabaseScriptExecutor executor = new MasterDatabaseScriptExecutor(db);
-            executor.BinaryCollation = options.BinaryCollation;
-            executor.CreateAndPatchDatabase(patcher,new AcceptAllCheckNotifier());
-            Console.WriteLine("Created " + builder.InitialCatalog + " on server " + builder.DataSource);
-            
-            return builder;
+            Console.WriteLine($"Dropping Database:{builder.InitialCatalog}");
+            db.Drop();
         }
+
+        var executor = new MasterDatabaseScriptExecutor(db);
+        executor.BinaryCollation = options.BinaryCollation;
+        executor.CreateAndPatchDatabase(patcher,new AcceptAllCheckNotifier());
+        Console.WriteLine($"Created {builder.InitialCatalog} on server {builder.DataSource}");
+            
+        return builder;
     }
 }

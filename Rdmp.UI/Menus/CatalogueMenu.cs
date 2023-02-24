@@ -5,9 +5,7 @@
 // You should have received a copy of the GNU General Public License along with RDMP. If not, see <https://www.gnu.org/licenses/>.
 
 using System;
-using System.Collections.Generic;
 using System.IO;
-using System.Linq;
 using System.Windows.Forms;
 using Rdmp.Core.CommandExecution;
 using Rdmp.Core.CommandExecution.AtomicCommands;
@@ -15,77 +13,75 @@ using Rdmp.Core.CommandExecution.AtomicCommands.Sharing;
 using Rdmp.Core.Curation.Data;
 using Rdmp.UI.CommandExecution.AtomicCommands;
 using Rdmp.UI.Menus.MenuItems;
-using ReusableLibraryCode;
 
-namespace Rdmp.UI.Menus
+namespace Rdmp.UI.Menus;
+
+[System.ComponentModel.DesignerCategory("")]
+internal class CatalogueMenu:RDMPContextMenuStrip
 {
-    [System.ComponentModel.DesignerCategory("")]
-    class CatalogueMenu:RDMPContextMenuStrip
+    private const string CatalogueItems = "Catalogue Items";
+
+    public CatalogueMenu(RDMPContextMenuStripArgs args, Catalogue catalogue):base(args,catalogue)
     {
-        const string CatalogueItems = "Catalogue Items";
+        var isApiCall = catalogue.IsApiCall();
+            
+        Add(new ExecuteCommandGenerateMetadataReport(_activator, catalogue) {
+            Weight = -99.059f
+        },Keys.None,AtomicCommandFactory.Metadata);
 
-        public CatalogueMenu(RDMPContextMenuStripArgs args, Catalogue catalogue):base(args,catalogue)
+        Add(new ExecuteCommandImportCatalogueDescriptionsFromShare(_activator, catalogue)
         {
-            var isApiCall = catalogue.IsApiCall();
-            
-            Add(new ExecuteCommandGenerateMetadataReport(_activator, catalogue) {
-                Weight = -99.059f
-            },Keys.None,AtomicCommandFactory.Metadata);
-
-            Add(new ExecuteCommandImportCatalogueDescriptionsFromShare(_activator, catalogue)
-            {
-                Weight = -95.09f,
-            },Keys.None,AtomicCommandFactory.Metadata);
+            Weight = -95.09f
+        },Keys.None,AtomicCommandFactory.Metadata);
             
             
-            Add(new ExecuteCommandExportInDublinCoreFormat(_activator, catalogue)
-            {
-                Weight = -90.10f,
-            }, Keys.None,AtomicCommandFactory.Metadata);
-            Add(new ExecuteCommandImportDublinCoreFormat(_activator, catalogue)
-            {
-                Weight = -90.09f,
-            }, Keys.None, AtomicCommandFactory.Metadata);
+        Add(new ExecuteCommandExportInDublinCoreFormat(_activator, catalogue)
+        {
+            Weight = -90.10f
+        }, Keys.None,AtomicCommandFactory.Metadata);
+        Add(new ExecuteCommandImportDublinCoreFormat(_activator, catalogue)
+        {
+            Weight = -90.09f
+        }, Keys.None, AtomicCommandFactory.Metadata);
 
-            Add(new ExecuteCommandAddNewLookupTableRelationship(_activator, catalogue,null) {
-                OverrideCommandName = "New Lookup Table Relationship", Weight = -86.9f}, Keys.None, AtomicCommandFactory.Add);
+        Add(new ExecuteCommandAddNewLookupTableRelationship(_activator, catalogue,null) {
+            OverrideCommandName = "New Lookup Table Relationship", Weight = -86.9f}, Keys.None, AtomicCommandFactory.Add);
 
-            if (!isApiCall)
-            {
-                Items.Add(new DQEMenuItem(_activator, catalogue));
+        if (!isApiCall)
+        {
+            Items.Add(new DQEMenuItem(_activator, catalogue));
 
-                //create right click context menu
-                Add(new ExecuteCommandViewCatalogueExtractionSqlUI(_activator) {
-                    Weight = -99.001f,
-                    OverrideCommandName = "Catalogue Extraction SQL",
+            //create right click context menu
+            Add(new ExecuteCommandViewCatalogueExtractionSqlUI(_activator) {
+                Weight = -99.001f,
+                OverrideCommandName = "Catalogue Extraction SQL",
                 SuggestedCategory = AtomicCommandFactory.View}.SetTarget(catalogue));
-            }
+        }
 
-            ////////////////// UI Commands for the CatalogueItems submenu of the Catalogue context menu ///////////////////
-            Add(new ExecuteCommandBulkProcessCatalogueItems(_activator, catalogue) { SuggestedCategory = CatalogueItems , Weight = -99.049f, });
-            Add(new ExecuteCommandPasteClipboardAsNewCatalogueItems(_activator, catalogue,()=> Clipboard.GetText()) { SuggestedCategory = CatalogueItems, Weight = -99.047f, });
-            Add(new ExecuteCommandReOrderColumns(_activator, catalogue) { SuggestedCategory = CatalogueItems, Weight = -99.046f, });
-            Add(new ExecuteCommandGuessAssociatedColumns(_activator, catalogue,null) { SuggestedCategory = CatalogueItems, Weight = -99.045f, PromptForPartialMatching = true, });
-            Add(new ExecuteCommandChangeExtractionCategory(_activator,catalogue.GetAllExtractionInformation(ExtractionCategory.Any)) { SuggestedCategory = CatalogueItems, Weight = -99.044f, });
-            Add(new ExecuteCommandImportCatalogueItemDescriptions(_activator,catalogue, null/*pick at runtime*/) { SuggestedCategory = CatalogueItems, Weight = -99.043f, });
+        ////////////////// UI Commands for the CatalogueItems submenu of the Catalogue context menu ///////////////////
+        Add(new ExecuteCommandBulkProcessCatalogueItems(_activator, catalogue) { SuggestedCategory = CatalogueItems , Weight = -99.049f });
+        Add(new ExecuteCommandPasteClipboardAsNewCatalogueItems(_activator, catalogue,()=> Clipboard.GetText()) { SuggestedCategory = CatalogueItems, Weight = -99.047f });
+        Add(new ExecuteCommandReOrderColumns(_activator, catalogue) { SuggestedCategory = CatalogueItems, Weight = -99.046f });
+        Add(new ExecuteCommandGuessAssociatedColumns(_activator, catalogue,null) { SuggestedCategory = CatalogueItems, Weight = -99.045f, PromptForPartialMatching = true });
+        Add(new ExecuteCommandChangeExtractionCategory(_activator,catalogue.GetAllExtractionInformation(ExtractionCategory.Any)) { SuggestedCategory = CatalogueItems, Weight = -99.044f });
+        Add(new ExecuteCommandImportCatalogueItemDescriptions(_activator,catalogue, null/*pick at runtime*/) { SuggestedCategory = CatalogueItems, Weight = -99.043f });
 
-            if (catalogue.LoadMetadata_ID != null)
+        if (catalogue.LoadMetadata_ID != null)
+        {
+            var dir = catalogue.LoadMetadata.LocationOfFlatFiles;
+            DirectoryInfo dirReal;
+            if (dir != null)
             {
-                var dir = catalogue.LoadMetadata.LocationOfFlatFiles;
-                DirectoryInfo dirReal;
-                if (dir != null)
+                try
                 {
-                    try
-                    {
-                        dirReal = new DirectoryInfo(dir);
-                    }
-                    catch (Exception)
-                    {
-                        // if the directory name is bad or corrupt
-                        return;
-                    }
-                    Add(new ExecuteCommandOpenInExplorer(_activator, dirReal) { OverrideCommandName = "Open Load Directory"});
+                    dirReal = new DirectoryInfo(dir);
                 }
+                catch (Exception)
+                {
+                    // if the directory name is bad or corrupt
+                    return;
+                }
+                Add(new ExecuteCommandOpenInExplorer(_activator, dirReal) { OverrideCommandName = "Open Load Directory"});
             }
         }
     }

@@ -6,15 +6,14 @@
 
 using NUnit.Framework;
 
-namespace Rdmp.Core.Tests.DataLoad.Engine.Unit
+namespace Rdmp.Core.Tests.DataLoad.Engine.Unit;
+
+[Category("Unit")]
+public class IAttacherCompositionTests
 {
-    [Category("Unit")]
-    public class IAttacherCompositionTests
+    [Test]
+    public void AllIAttachersMustHaveTwoArgumentConstructors()
     {
-        [Test]
-        public void AllIAttachersMustHaveTwoArgumentConstructors()
-        {
             
-        }
     }
 }

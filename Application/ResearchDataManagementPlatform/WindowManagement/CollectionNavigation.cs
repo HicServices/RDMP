@@ -7,60 +7,58 @@
 using FAnsi.Discovery;
 using MapsDirectlyToDatabaseTable;
 using Rdmp.Core.CommandExecution;
-using Rdmp.Core.Curation.Data;
 using System.Collections.Generic;
 
-namespace ResearchDataManagementPlatform.WindowManagement
+namespace ResearchDataManagementPlatform.WindowManagement;
+
+/// <summary>
+/// Records the fact that the user visited a specific object in a tree collection
+/// </summary>
+public class CollectionNavigation: INavigation
 {
-    /// <summary>
-    /// Records the fact that the user visited a specific object in a tree collection
-    /// </summary>
-    public class CollectionNavigation: INavigation
+    public IMapsDirectlyToDatabaseTable Object { get; }
+
+    public bool IsAlive
     {
-        public IMapsDirectlyToDatabaseTable Object { get; }
-
-        public bool IsAlive
+        get
         {
-            get
-            {
-                if(Object is IMightNotExist o)
-                    return o.Exists();
+            if(Object is IMightNotExist o)
+                return o.Exists();
 
-                return true;
-            }
-        } 
-
-        public CollectionNavigation(IMapsDirectlyToDatabaseTable Object)
-        {
-            this.Object = Object;
+            return true;
         }
+    } 
 
-        public void Activate(ActivateItems activateItems)
-        {
-            activateItems.RequestItemEmphasis(this,new EmphasiseRequest(Object,0));
-        }
+    public CollectionNavigation(IMapsDirectlyToDatabaseTable @object)
+    {
+        Object = @object;
+    }
 
-        public void Close()
-        {
+    public void Activate(ActivateItems activateItems)
+    {
+        activateItems.RequestItemEmphasis(this,new EmphasiseRequest(Object,0));
+    }
+
+    public void Close()
+    {
             
-        }
-        public override string ToString()
-        {
-            return Object.ToString();
-        }
+    }
+    public override string ToString()
+    {
+        return Object.ToString();
+    }
 
-        public override bool Equals(object obj)
-        {
-            return obj is CollectionNavigation other &&
-                   Object.Equals(other.Object);
-        }
+    public override bool Equals(object obj)
+    {
+        return obj is CollectionNavigation other &&
+               Object.Equals(other.Object);
+    }
 
-        public override int GetHashCode()
+    public override int GetHashCode()
+    {
+        unchecked
         {
-            unchecked
-            {
-                return 162302186 + EqualityComparer<IMapsDirectlyToDatabaseTable>.Default.GetHashCode(Object);
-            }
+            return 162302186 + EqualityComparer<IMapsDirectlyToDatabaseTable>.Default.GetHashCode(Object);
         }
     }
 }

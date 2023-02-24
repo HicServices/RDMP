@@ -9,28 +9,27 @@ using Rdmp.Core.Curation.Data;
 using Rdmp.UI.ExtractionUIs.FilterUIs.ParameterUIs;
 using Rdmp.UI.ItemActivation;
 
-namespace Rdmp.UI.CommandExecution.Proposals
+namespace Rdmp.UI.CommandExecution.Proposals;
+
+internal class ProposeExecutionWhenTargetIsExtractionFilterParameterSet:RDMPCommandExecutionProposal<ExtractionFilterParameterSet>
 {
-    class ProposeExecutionWhenTargetIsExtractionFilterParameterSet:RDMPCommandExecutionProposal<ExtractionFilterParameterSet>
+    public ProposeExecutionWhenTargetIsExtractionFilterParameterSet(IActivateItems itemActivator) : base(itemActivator)
     {
-        public ProposeExecutionWhenTargetIsExtractionFilterParameterSet(IActivateItems itemActivator) : base(itemActivator)
-        {
-        }
+    }
 
-        public override bool CanActivate(ExtractionFilterParameterSet target)
-        {
-            return true;
-        }
+    public override bool CanActivate(ExtractionFilterParameterSet target)
+    {
+        return true;
+    }
 
-        public override void Activate(ExtractionFilterParameterSet target)
-        {
-            ItemActivator.Activate<ExtractionFilterParameterSetUI, ExtractionFilterParameterSet>(target);
-        }
+    public override void Activate(ExtractionFilterParameterSet target)
+    {
+        ItemActivator.Activate<ExtractionFilterParameterSetUI, ExtractionFilterParameterSet>(target);
+    }
 
-        public override ICommandExecution ProposeExecution(ICombineToMakeCommand cmd, ExtractionFilterParameterSet target,
-            InsertOption insertOption = InsertOption.Default)
-        {
-            return null;
-        }
+    public override ICommandExecution ProposeExecution(ICombineToMakeCommand cmd, ExtractionFilterParameterSet target,
+        InsertOption insertOption = InsertOption.Default)
+    {
+        return null;
     }
 }

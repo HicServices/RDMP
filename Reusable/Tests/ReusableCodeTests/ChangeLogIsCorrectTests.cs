@@ -8,41 +8,40 @@ using NUnit.Framework;
 using System.IO;
 using System.Text.RegularExpressions;
 
-namespace ReusableCodeTests
+namespace ReusableCodeTests;
+
+internal class ChangeLogIsCorrectTests
 {
-    class ChangeLogIsCorrectTests
+    [TestCase("../../../../../../CHANGELOG.md")]
+    public void TestChangeLogContents(string changeLogPath)
     {
-        [TestCase("../../../../../../CHANGELOG.md")]
-        public void TestChangeLogContents(string changeLogPath)
+        if (changeLogPath != null && !Path.IsPathRooted(changeLogPath))
+            changeLogPath = Path.Combine(TestContext.CurrentContext.TestDirectory, changeLogPath);
+
+        if (!File.Exists(changeLogPath))
+            Assert.Fail($"Could not find file {changeLogPath}");
+
+        var fi = new FileInfo(changeLogPath);
+
+        var assemblyInfo = Path.Combine(fi.Directory.FullName, "SharedAssemblyInfo.cs");
+
+        if (!File.Exists(assemblyInfo))
+            Assert.Fail($"Could not find file {assemblyInfo}");
+
+        var match = Regex.Match(File.ReadAllText(assemblyInfo), @"AssemblyInformationalVersion\(""(.*)""\)");
+        Assert.IsTrue(match.Success, $"Could not find AssemblyInformationalVersion tag in {assemblyInfo}");
+
+        var currentVersion = match.Groups[1].Value;
+
+        // When looking for the header in the change logs don't worry about -rc1 -rc2 etc
+        if (currentVersion.Contains('-'))
         {
-            if (changeLogPath != null && !Path.IsPathRooted(changeLogPath))
-                changeLogPath = Path.Combine(TestContext.CurrentContext.TestDirectory, changeLogPath);
-
-            if (!File.Exists(changeLogPath))
-                Assert.Fail($"Could not find file {changeLogPath}");
-
-            var fi = new FileInfo(changeLogPath);
-
-            var assemblyInfo = Path.Combine(fi.Directory.FullName, "SharedAssemblyInfo.cs");
-
-            if (!File.Exists(assemblyInfo))
-                Assert.Fail($"Could not find file {assemblyInfo}");
-
-            var match = Regex.Match(File.ReadAllText(assemblyInfo), @"AssemblyInformationalVersion\(""(.*)""\)");
-            Assert.IsTrue(match.Success, $"Could not find AssemblyInformationalVersion tag in {assemblyInfo}");
-
-            string currentVersion = match.Groups[1].Value;
-
-            // When looking for the header in the change logs don't worry about -rc1 -rc2 etc
-            if (currentVersion.Contains('-'))
-            {
-                currentVersion = currentVersion.Substring(0, currentVersion.IndexOf('-'));
-            }
-
-            var changeLog = File.ReadAllText(changeLogPath);
-
-            Assert.IsTrue(changeLog.Contains($"## [{currentVersion}]"), $"{changeLogPath} did not contain a header for the current version '{currentVersion}'");
-
+            currentVersion = currentVersion[..currentVersion.IndexOf('-')];
         }
+
+        var changeLog = File.ReadAllText(changeLogPath);
+
+        Assert.IsTrue(changeLog.Contains($"## [{currentVersion}]"), $"{changeLogPath} did not contain a header for the current version '{currentVersion}'");
+
     }
 }

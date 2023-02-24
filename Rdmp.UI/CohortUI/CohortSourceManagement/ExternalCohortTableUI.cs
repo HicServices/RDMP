@@ -8,7 +8,6 @@ using System;
 using System.ComponentModel;
 using System.Windows.Forms;
 using Rdmp.Core;
-using Rdmp.Core.Curation.Data;
 using Rdmp.Core.DataExport.Data;
 using Rdmp.UI.ItemActivation;
 using Rdmp.UI.Rules;
@@ -16,89 +15,88 @@ using Rdmp.UI.SimpleControls;
 using Rdmp.UI.TestsAndSetup.ServicePropogation;
 
 
-namespace Rdmp.UI.CohortUI.CohortSourceManagement
+namespace Rdmp.UI.CohortUI.CohortSourceManagement;
+
+/// <summary>
+/// Allows you to edit an external cohort reference.  This is the location of a cohort database and includes the names of the Cohort table and the names of 
+/// private/release identifiers in the database
+/// </summary>
+public partial class ExternalCohortTableUI : ExternalCohortTableUI_Design,ISaveableUI
 {
-    /// <summary>
-    /// Allows you to edit an external cohort reference.  This is the location of a cohort database and includes the names of the Cohort table and the names of 
-    /// private/release identifiers in the database
-    /// </summary>
-    public partial class ExternalCohortTableUI : ExternalCohortTableUI_Design,ISaveableUI
-    {
-        private ExternalCohortTable _externalCohortTable;
+    private ExternalCohortTable _externalCohortTable;
         
-        public ExternalCohortTableUI()
-        {
-            InitializeComponent();
-
-            AssociatedCollection = RDMPCollection.SavedCohorts;
-
-            serverDatabaseTableSelector1.HideTableComponents();
-            serverDatabaseTableSelector1.SelectionChanged += SaveDatabaseSettings;
-        }
-
-        private void SaveDatabaseSettings()
-        {
-            var db = serverDatabaseTableSelector1.GetDiscoveredDatabase();
-
-            if(db == null)
-                return;
-
-            _externalCohortTable.Server = db.Server.Name;
-            _externalCohortTable.Database = db.GetRuntimeName();
-            _externalCohortTable.Username = db.Server.ExplicitUsernameIfAny;
-            _externalCohortTable.Password = db.Server.ExplicitPasswordIfAny;
-            _externalCohortTable.DatabaseType = db.Server.DatabaseType;
-        }
-
-        public override void SetDatabaseObject(IActivateItems activator, ExternalCohortTable databaseObject)
-        {
-            base.SetDatabaseObject(activator,databaseObject);
-            _externalCohortTable = databaseObject;
-
-            serverDatabaseTableSelector1.DatabaseType = _externalCohortTable.DatabaseType;
-
-            string password = null;
-            try
-            {
-                password = _externalCohortTable.GetDecryptedPassword();
-            }
-            catch (Exception)
-            {
-                password = null;
-            }
-
-            serverDatabaseTableSelector1.SetExplicitDatabase(_externalCohortTable.Server, _externalCohortTable.Database, _externalCohortTable.Username, password);
-
-            CommonFunctionality.AddHelp(tbTableName, "IExternalCohortTable.TableName");
-            CommonFunctionality.AddHelp(tbPrivateIdentifierField, "IExternalCohortTable.PrivateIdentifierField");
-            CommonFunctionality.AddHelp(tbReleaseIdentifierField, "IExternalCohortTable.ReleaseIdentifierField");
-            CommonFunctionality.AddHelp(tbDefinitionTableForeignKeyField, "IExternalCohortTable.DefinitionTableForeignKeyField");
-
-            CommonFunctionality.AddHelp(tbDefinitionTableName, "IExternalCohortTable.DefinitionTableName");
-
-            CommonFunctionality.AddChecks(_externalCohortTable);
-        }
-
-        protected override void SetBindings(BinderWithErrorProviderFactory rules, ExternalCohortTable databaseObject)
-        {
-            base.SetBindings(rules, databaseObject);
-
-            Bind(tbID,"Text","ID",e=>e.ID);
-            
-            Bind(tbID, "Text", "ID", e => e.ID);
-            Bind(tbName, "Text", "Name", e => e.Name);
-            Bind(tbTableName, "Text", "TableName", e => e.TableName);
-            Bind(tbPrivateIdentifierField, "Text", "PrivateIdentifierField", e => e.PrivateIdentifierField);
-            Bind(tbReleaseIdentifierField, "Text", "ReleaseIdentifierField", e => e.ReleaseIdentifierField);
-            Bind(tbDefinitionTableForeignKeyField, "Text", "DefinitionTableForeignKeyField", e => e.DefinitionTableForeignKeyField);
-
-            Bind(tbDefinitionTableName, "Text", "DefinitionTableName", e => e.DefinitionTableName);
-        }
-    }
-
-    [TypeDescriptionProvider(typeof(AbstractControlDescriptionProvider<ExternalCohortTableUI_Design, UserControl>))]
-    public abstract class ExternalCohortTableUI_Design : RDMPSingleDatabaseObjectControl<ExternalCohortTable>
+    public ExternalCohortTableUI()
     {
-         
+        InitializeComponent();
+
+        AssociatedCollection = RDMPCollection.SavedCohorts;
+
+        serverDatabaseTableSelector1.HideTableComponents();
+        serverDatabaseTableSelector1.SelectionChanged += SaveDatabaseSettings;
     }
+
+    private void SaveDatabaseSettings()
+    {
+        var db = serverDatabaseTableSelector1.GetDiscoveredDatabase();
+
+        if(db == null)
+            return;
+
+        _externalCohortTable.Server = db.Server.Name;
+        _externalCohortTable.Database = db.GetRuntimeName();
+        _externalCohortTable.Username = db.Server.ExplicitUsernameIfAny;
+        _externalCohortTable.Password = db.Server.ExplicitPasswordIfAny;
+        _externalCohortTable.DatabaseType = db.Server.DatabaseType;
+    }
+
+    public override void SetDatabaseObject(IActivateItems activator, ExternalCohortTable databaseObject)
+    {
+        base.SetDatabaseObject(activator,databaseObject);
+        _externalCohortTable = databaseObject;
+
+        serverDatabaseTableSelector1.DatabaseType = _externalCohortTable.DatabaseType;
+
+        string password = null;
+        try
+        {
+            password = _externalCohortTable.GetDecryptedPassword();
+        }
+        catch (Exception)
+        {
+            password = null;
+        }
+
+        serverDatabaseTableSelector1.SetExplicitDatabase(_externalCohortTable.Server, _externalCohortTable.Database, _externalCohortTable.Username, password);
+
+        CommonFunctionality.AddHelp(tbTableName, "IExternalCohortTable.TableName");
+        CommonFunctionality.AddHelp(tbPrivateIdentifierField, "IExternalCohortTable.PrivateIdentifierField");
+        CommonFunctionality.AddHelp(tbReleaseIdentifierField, "IExternalCohortTable.ReleaseIdentifierField");
+        CommonFunctionality.AddHelp(tbDefinitionTableForeignKeyField, "IExternalCohortTable.DefinitionTableForeignKeyField");
+
+        CommonFunctionality.AddHelp(tbDefinitionTableName, "IExternalCohortTable.DefinitionTableName");
+
+        CommonFunctionality.AddChecks(_externalCohortTable);
+    }
+
+    protected override void SetBindings(BinderWithErrorProviderFactory rules, ExternalCohortTable databaseObject)
+    {
+        base.SetBindings(rules, databaseObject);
+
+        Bind(tbID,"Text","ID",e=>e.ID);
+            
+        Bind(tbID, "Text", "ID", e => e.ID);
+        Bind(tbName, "Text", "Name", e => e.Name);
+        Bind(tbTableName, "Text", "TableName", e => e.TableName);
+        Bind(tbPrivateIdentifierField, "Text", "PrivateIdentifierField", e => e.PrivateIdentifierField);
+        Bind(tbReleaseIdentifierField, "Text", "ReleaseIdentifierField", e => e.ReleaseIdentifierField);
+        Bind(tbDefinitionTableForeignKeyField, "Text", "DefinitionTableForeignKeyField", e => e.DefinitionTableForeignKeyField);
+
+        Bind(tbDefinitionTableName, "Text", "DefinitionTableName", e => e.DefinitionTableName);
+    }
+}
+
+[TypeDescriptionProvider(typeof(AbstractControlDescriptionProvider<ExternalCohortTableUI_Design, UserControl>))]
+public abstract class ExternalCohortTableUI_Design : RDMPSingleDatabaseObjectControl<ExternalCohortTable>
+{
+         
 }

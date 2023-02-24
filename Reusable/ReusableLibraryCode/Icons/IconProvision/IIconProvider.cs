@@ -7,15 +7,14 @@
 using SixLabors.ImageSharp;
 using SixLabors.ImageSharp.PixelFormats;
 
-namespace ReusableLibraryCode.Icons.IconProvision
-{
-    /// <summary>
-    /// Provides 19x19 pixel images for the given object which could be an RDMPConcept, class instance or Type.
-    /// </summary>
-    public interface IIconProvider
-    {
-        Image<Rgba32> ImageUnknown { get; }
+namespace ReusableLibraryCode.Icons.IconProvision;
 
-        Image<Rgba32> GetImage(object concept, OverlayKind kind = OverlayKind.None);
-    }
+/// <summary>
+/// Provides 19x19 pixel images for the given object which could be an RDMPConcept, class instance or Type.
+/// </summary>
+public interface IIconProvider
+{
+    Image<Rgba32> ImageUnknown { get; }
+
+    Image<Rgba32> GetImage(object concept, OverlayKind kind = OverlayKind.None);
 }

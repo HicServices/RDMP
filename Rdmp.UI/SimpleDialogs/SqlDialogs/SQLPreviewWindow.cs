@@ -9,59 +9,58 @@ using System.ComponentModel;
 using System.Windows.Forms;
 using Rdmp.UI.ScintillaHelper;
 
-namespace Rdmp.UI.SimpleDialogs.SqlDialogs
+namespace Rdmp.UI.SimpleDialogs.SqlDialogs;
+
+/// <summary>
+/// Shows you some SQL the system is about to execute with a description of what it is trying to achieve.  You can choose either 'Ok' to execute the SQL and carry on with the rest
+/// of the ongoing procedure or Cancel (the SQL will not run and the procedure will be abandoned).
+/// </summary>
+public partial class SQLPreviewWindow : Form
 {
-    /// <summary>
-    /// Shows you some SQL the system is about to execute with a description of what it is trying to achieve.  You can choose either 'Ok' to execute the SQL and carry on with the rest
-    /// of the ongoing procedure or Cancel (the SQL will not run and the procedure will be abandoned).
-    /// </summary>
-    public partial class SQLPreviewWindow : Form
+    private ScintillaNET.Scintilla QueryEditor;
+
+    public SQLPreviewWindow(string title, string msg, string sql)
     {
-        private ScintillaNET.Scintilla QueryEditor;
+        InitializeComponent();
 
-        public SQLPreviewWindow(string title, string msg, string sql)
-        {
-            InitializeComponent();
+        lblMessage.Text = msg;
+        Text = title;
 
-            lblMessage.Text = msg;
-            this.Text = title;
+        var designMode = LicenseManager.UsageMode == LicenseUsageMode.Designtime;
 
-            bool designMode = (LicenseManager.UsageMode == LicenseUsageMode.Designtime);
+        if (designMode) //dont add the QueryEditor if we are in design time (visual studio) because it breaks
+            return;
 
-            if (designMode) //dont add the QueryEditor if we are in design time (visual studio) because it breaks
-                return;
+        QueryEditor = new ScintillaTextEditorFactory().Create();
+        QueryEditor.Text = sql;
 
-            QueryEditor = new ScintillaTextEditorFactory().Create();
-            QueryEditor.Text = sql;
+        QueryEditor.ReadOnly = true;
 
-            QueryEditor.ReadOnly = true;
+        panel1.Controls.Add(QueryEditor);
+        btnOk.Select();
+    }
 
-            panel1.Controls.Add(QueryEditor);
-            btnOk.Select();
-        }
+    public bool YesToAll { get; set; }
 
-        public bool YesToAll { get; set; }
+    private void btnOk_Click(object sender, EventArgs e)
+    {
+        YesToAll = sender == btnOkToAll;
 
-        private void btnOk_Click(object sender, EventArgs e)
-        {
-            YesToAll = sender == btnOkToAll;
+        DialogResult = DialogResult.OK;
+        Close();
+    }
 
-            DialogResult = DialogResult.OK;
-            this.Close();
-        }
+    private void btnCancel_Click(object sender, EventArgs e)
+    {
+        DialogResult=DialogResult.Cancel;
+        Close();
+    }
 
-        private void btnCancel_Click(object sender, EventArgs e)
-        {
-            DialogResult=DialogResult.Cancel;
-            this.Close();
-        }
+    public static DialogResult Show(string title,string message, string sql)
+    {
+        var dialog = new SQLPreviewWindow(title,message, sql);
+        dialog.ShowDialog();
 
-        public static DialogResult Show(string title,string message, string sql)
-        {
-            SQLPreviewWindow dialog = new SQLPreviewWindow(title,message, sql);
-            dialog.ShowDialog();
-
-            return dialog.DialogResult;
-        }
+        return dialog.DialogResult;
     }
 }

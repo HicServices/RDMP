@@ -4,7 +4,6 @@
 // RDMP is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License for more details.
 // You should have received a copy of the GNU General Public License along with RDMP. If not, see <https://www.gnu.org/licenses/>.
 
-using System;
 using System.Collections;
 using System.Collections.Generic;
 using MapsDirectlyToDatabaseTable;
@@ -12,76 +11,75 @@ using Rdmp.Core.Curation.Data;
 using Rdmp.Core.Curation.Data.Cohort;
 using Rdmp.Core.DataExport.Data;
 
-namespace Rdmp.Core
+namespace Rdmp.Core;
+
+/// <summary>
+/// Compares model objects bearing in mind that anything that is compared against IOrderable MUST come in that order.  This class can wrap
+/// another IComparer that looks out for IOrderable objects passing through and enforces that order.
+/// 
+/// <para>This class is designed to modify the behaviour of TreeListView to ensure that despite the users worst efforts, the order of IOrderable nodes is always
+/// Ascending</para>
+/// </summary>
+public class OrderableComparer : IComparer, IComparer<object>
 {
-    /// <summary>
-    /// Compares model objects bearing in mind that anything that is compared against IOrderable MUST come in that order.  This class can wrap
-    /// another IComparer that looks out for IOrderable objects passing through and enforces that order.
-    /// 
-    /// <para>This class is designed to modify the behaviour of TreeListView to ensure that despite the users worst efforts, the order of IOrderable nodes is always
-    /// Ascending</para>
-    /// </summary>
-    public class OrderableComparer : IComparer, IComparer<object>
+    private readonly IComparer _nestedComparer;
+
+    public OrderableComparer(IComparer nestedComparer)
     {
-        private readonly IComparer _nestedComparer;
+        _nestedComparer = nestedComparer;
+    }
 
-        public OrderableComparer(IComparer nestedComparer)
+    /// <summary>
+    /// Decides the order to use.  This overrides the users settings when certain situations arise e.g. two <see cref="IOrderable"/> objects are
+    /// next to each other in the tree at the same branch (in this case reordering them could be very confusing to the user).
+    /// </summary>
+    /// <param name="x"></param>
+    /// <param name="y"></param>
+    /// <returns></returns>
+    public int Compare(object x, object y)
+    {
+        var xOrder = GetOrderIfAny(x);
+        var yOrder = GetOrderIfAny(y);
+
+        //Use IOrderable.Order
+        if (xOrder.HasValue && yOrder.HasValue)
+            return xOrder.Value - yOrder.Value;
+
+        if (xOrder.HasValue)
+            return xOrder.Value;
+
+        // The comparison is reversed (y is orderable) so the order must be negated to.
+        if (yOrder.HasValue)
+            return -yOrder.Value;
+
+        //or use whatever the model is
+        if (_nestedComparer != null)
+            return _nestedComparer.Compare(x, y);
+
+
+        return string.Compare(x.ToString(), y.ToString());
+    }
+
+    private int? GetOrderIfAny(object o)
+    {
+        if(o is IOrderable orderable)
+            return orderable.Order;
+
+        if(o is ISqlParameter)
         {
-            _nestedComparer = nestedComparer;
+            return -5000;
         }
 
-        /// <summary>
-        /// Decides the order to use.  This overrides the users settings when certain situations arise e.g. two <see cref="IOrderable"/> objects are
-        /// next to each other in the tree at the same branch (in this case reordering them could be very confusing to the user).
-        /// </summary>
-        /// <param name="x"></param>
-        /// <param name="y"></param>
-        /// <returns></returns>
-        public int Compare(object x, object y)
-        {
-            var xOrder = GetOrderIfAny(x);
-            var yOrder = GetOrderIfAny(y);
+        return null;
+    }
 
-            //Use IOrderable.Order
-            if (xOrder.HasValue && yOrder.HasValue)
-                return xOrder.Value - yOrder.Value;
-
-            if (xOrder.HasValue)
-                return xOrder.Value;
-
-            // The comparison is reversed (y is orderable) so the order must be negated to.
-            if (yOrder.HasValue)
-                return -yOrder.Value;
-
-            //or use whatever the model is
-            if (_nestedComparer != null)
-                return _nestedComparer.Compare(x, y);
-
-
-            return string.Compare(x.ToString(), y.ToString());
-        }
-
-        private int? GetOrderIfAny(object o)
-        {
-            if(o is IOrderable orderable)
-                return orderable.Order;
-
-            if(o is ISqlParameter)
-            {
-                return -5000;
-            }
-
-            return null;
-        }
-
-        /// <summary>
-        /// Return true if the object should never be reordered and always ordered alphabetically based on its <see cref="INamed.Name"/>
-        /// </summary>
-        /// <param name="x"></param>
-        /// <returns></returns>
-        private bool ShouldSortByName(object x)
-        {
-            return x is INamed && !(x is IProject);
-        }
+    /// <summary>
+    /// Return true if the object should never be reordered and always ordered alphabetically based on its <see cref="INamed.Name"/>
+    /// </summary>
+    /// <param name="x"></param>
+    /// <returns></returns>
+    private bool ShouldSortByName(object x)
+    {
+        return x is INamed && x is not IProject;
     }
 }

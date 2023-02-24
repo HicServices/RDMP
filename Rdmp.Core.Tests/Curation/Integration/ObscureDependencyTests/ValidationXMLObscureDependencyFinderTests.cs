@@ -19,22 +19,22 @@ using ReusableLibraryCode.Checks;
 using Tests.Common;
 using Tests.Common.Scenarios;
 
-namespace Rdmp.Core.Tests.Curation.Integration.ObscureDependencyTests
+namespace Rdmp.Core.Tests.Curation.Integration.ObscureDependencyTests;
+
+public class ValidationXMLObscureDependencyFinderTests: DatabaseTests
 {
-    public class ValidationXMLObscureDependencyFinderTests: DatabaseTests
+    [Test]
+    public void TestGettingTheUsualSuspects()
     {
-        [Test]
-        public void TestGettingTheUsualSuspects()
-        {
-            ValidationXMLObscureDependencyFinder finder = new ValidationXMLObscureDependencyFinder( RepositoryLocator);
+        var finder = new ValidationXMLObscureDependencyFinder( RepositoryLocator);
             
-            //forces call to initialize
-            finder.ThrowIfDeleteDisallowed(null);
+        //forces call to initialize
+        finder.ThrowIfDeleteDisallowed(null);
 
-            //this guy should be a usual suspect!
-            Assert.IsTrue(finder.TheUsualSuspects.Any(s => s.Type == typeof(ReferentialIntegrityConstraint)));
+        //this guy should be a usual suspect!
+        Assert.IsTrue(finder.TheUsualSuspects.Any(s => s.Type == typeof(ReferentialIntegrityConstraint)));
 
-            var testXML = 
+        var testXML = 
             @"<?xml version=""1.0"" encoding=""utf-16""?>
 <Validator xmlns:xsd=""http://www.w3.org/2001/XMLSchema"" xmlns:xsi=""http://www.w3.org/2001/XMLSchema-instance"">
   <ItemValidators>
@@ -51,151 +51,150 @@ namespace Rdmp.Core.Tests.Curation.Integration.ObscureDependencyTests
   </ItemValidators>
 </Validator>";
 
-            bool kaizerSoze = false;
-            foreach (Suspect suspect in finder.TheUsualSuspects)
-            {
-                string pattern = string.Format(suspect.Pattern, 10029);
-
-                kaizerSoze = Regex.IsMatch(testXML, pattern,RegexOptions.Singleline);
-
-                if (kaizerSoze)
-                    break;
-            }
-            
-            Assert.IsTrue(kaizerSoze);
-        }
-
-
-        [Test]
-        public void DeleteAReferencedValidationXML()
+        var kaizerSoze = false;
+        foreach (var suspect in finder.TheUsualSuspects)
         {
-            ColumnInfo l2ColumnInfo;
-            BulkTestsData testData = SetupTestData(out l2ColumnInfo);
-            try
-            {
-                Validator.LocatorForXMLDeserialization = RepositoryLocator;
+            var pattern = string.Format(suspect.Pattern, 10029);
 
-                var worked = Validator.LoadFromXml(testData.catalogue.ValidatorXML);
+            kaizerSoze = Regex.IsMatch(testXML, pattern,RegexOptions.Singleline);
 
-                //notice that it is the ID of the referenced column that is maintained not the name of it! that is because we need to use a data access portal to get the contents of the column which might be in a different table (and normally would be)
-                Assert.IsFalse(testData.catalogue.ValidatorXML.Contains("previous_address_L2"));
-                Assert.IsTrue(testData.catalogue.ValidatorXML.Contains(l2ColumnInfo.ID.ToString()));
+            if (kaizerSoze)
+                break;
+        }
+            
+        Assert.IsTrue(kaizerSoze);
+    }
 
-                Assert.IsTrue(testData.catalogue.ValidatorXML.Contains("previous_address_L1"));
 
-                //we expect the validation XML to find the reference
-                ValidationXMLObscureDependencyFinder finder = new ValidationXMLObscureDependencyFinder(RepositoryLocator);
+    [Test]
+    public void DeleteAReferencedValidationXML()
+    {
+        ColumnInfo l2ColumnInfo;
+        var testData = SetupTestData(out l2ColumnInfo);
+        try
+        {
+            Validator.LocatorForXMLDeserialization = RepositoryLocator;
+
+            var worked = Validator.LoadFromXml(testData.catalogue.ValidatorXML);
+
+            //notice that it is the ID of the referenced column that is maintained not the name of it! that is because we need to use a data access portal to get the contents of the column which might be in a different table (and normally would be)
+            Assert.IsFalse(testData.catalogue.ValidatorXML.Contains("previous_address_L2"));
+            Assert.IsTrue(testData.catalogue.ValidatorXML.Contains(l2ColumnInfo.ID.ToString()));
+
+            Assert.IsTrue(testData.catalogue.ValidatorXML.Contains("previous_address_L1"));
+
+            //we expect the validation XML to find the reference
+            var finder = new ValidationXMLObscureDependencyFinder(RepositoryLocator);
                 
-                //and explode
-                Assert.Throws<ValidationXmlDependencyException>(() => finder.ThrowIfDeleteDisallowed(l2ColumnInfo));
+            //and explode
+            Assert.Throws<ValidationXmlDependencyException>(() => finder.ThrowIfDeleteDisallowed(l2ColumnInfo));
                 
-                Assert.AreEqual(0,finder.CataloguesWithBrokenValidationXml.Count);
+            Assert.AreEqual(0,finder.CataloguesWithBrokenValidationXml.Count);
 
-                //now clear the validation XML
-                testData.catalogue.ValidatorXML = testData.catalogue.ValidatorXML.Insert(100,"I've got a lovely bunch of coconuts!");
-                testData.catalogue.SaveToDatabase();
-
-                //column info should be deleteable but only because we got ourselves onto the forbidlist
-                Assert.DoesNotThrow(() => finder.ThrowIfDeleteDisallowed(l2ColumnInfo));
-                Assert.AreEqual(1, finder.CataloguesWithBrokenValidationXml.Count);
-
-                testData.catalogue.ValidatorXML = "";
-                testData.catalogue.SaveToDatabase();
-
-                //column info should be deleteable now that we cleared the XML
-                Assert.DoesNotThrow(() => finder.ThrowIfDeleteDisallowed(l2ColumnInfo));
-            }
-            finally
-            {
-                testData.DeleteCatalogue();
-            }
-        }
-        
-        [Test]
-        public void Test_DeleteAColumnInfoThatIsReferenced()
-        {
-            var startup = new Startup.Startup(new EnvironmentInfo(),RepositoryLocator);
-            startup.DoStartup(new IgnoreAllErrorsCheckNotifier());
-
-            ColumnInfo l2ColumnInfo;
-            var testData = SetupTestData(out l2ColumnInfo);
-
-            try
-            {
-                //should fail because of the validation constraint being dependent on it
-                Assert.Throws<ValidationXmlDependencyException>(()=>l2ColumnInfo.DeleteInDatabase());
-            }
-            finally
-            {
-                testData.catalogue.ValidatorXML = null;
-                testData.catalogue.SaveToDatabase();
-
-                testData.DeleteCatalogue();
-            }
-        }
-
-        [Test]
-        public void TestRunningSetupMultipleTimes()
-        {
-
-            var startup = new Startup.Startup(new EnvironmentInfo(),RepositoryLocator);
-            try
-            {
-                startup.DoStartup(new IgnoreAllErrorsCheckNotifier());
-            }
-            catch (InvalidPatchException patchException)
-            {
-                throw new Exception("Problem in patch " + patchException.ScriptName ,patchException);
-            }
-            //there should be all the obscure dependencies we need done with only the first call to this function
-            int numberAfterFirstRun =
-                ((CatalogueObscureDependencyFinder) CatalogueRepository.ObscureDependencyFinder)
-                    .OtherDependencyFinders.Count;
-
-            startup.DoStartup(new IgnoreAllErrorsCheckNotifier());
-            startup.DoStartup(new IgnoreAllErrorsCheckNotifier());
-            startup.DoStartup(new IgnoreAllErrorsCheckNotifier());
-
-            //there should not be any replication! and doubling SetUp!
-            Assert.AreEqual(numberAfterFirstRun,
-                ((CatalogueObscureDependencyFinder) CatalogueRepository.ObscureDependencyFinder)
-                    .OtherDependencyFinders.Count);
-            
-            
-        }
-
-        #region setup test data with some validation rule
-
-        private BulkTestsData SetupTestData(out ColumnInfo l2ColumnInfo)
-        {
-            //Setup test data
-            var testData = new BulkTestsData(CatalogueRepository, GetCleanedServer(FAnsi.DatabaseType.MicrosoftSQLServer));
-            testData.SetupTestData();
-            testData.ImportAsCatalogue();
-
-            //Setup some validation rules
-            Validator v = new Validator();
-
-            //rule is that previous address line 1 cannot be the same as previous address line 2
-            var iv = new ItemValidator("previous_address_L1");
-            l2ColumnInfo = testData.columnInfos.Single(c => c.GetRuntimeName().Equals("previous_address_L2"));
-
-            //define the secondary constraint
-            var referentialConstraint = new ReferentialIntegrityConstraint(CatalogueRepository);
-            referentialConstraint.InvertLogic = true;
-            referentialConstraint.OtherColumnInfo = l2ColumnInfo;
-
-            //add it to the item validator for previous_address_L1
-            iv.SecondaryConstraints.Add(referentialConstraint);
-
-            //add the completed item validator to the validator (normally there would be 1 item validator per column with validation but in this test we only have 1)
-            v.ItemValidators.Add(iv);
-
-            testData.catalogue.ValidatorXML = v.SaveToXml();
+            //now clear the validation XML
+            testData.catalogue.ValidatorXML = testData.catalogue.ValidatorXML.Insert(100,"I've got a lovely bunch of coconuts!");
             testData.catalogue.SaveToDatabase();
 
-            return testData;
+            //column info should be deleteable but only because we got ourselves onto the forbidlist
+            Assert.DoesNotThrow(() => finder.ThrowIfDeleteDisallowed(l2ColumnInfo));
+            Assert.AreEqual(1, finder.CataloguesWithBrokenValidationXml.Count);
+
+            testData.catalogue.ValidatorXML = "";
+            testData.catalogue.SaveToDatabase();
+
+            //column info should be deleteable now that we cleared the XML
+            Assert.DoesNotThrow(() => finder.ThrowIfDeleteDisallowed(l2ColumnInfo));
         }
-        #endregion
+        finally
+        {
+            testData.DeleteCatalogue();
+        }
     }
+        
+    [Test]
+    public void Test_DeleteAColumnInfoThatIsReferenced()
+    {
+        var startup = new Startup.Startup(new EnvironmentInfo(),RepositoryLocator);
+        startup.DoStartup(new IgnoreAllErrorsCheckNotifier());
+
+        ColumnInfo l2ColumnInfo;
+        var testData = SetupTestData(out l2ColumnInfo);
+
+        try
+        {
+            //should fail because of the validation constraint being dependent on it
+            Assert.Throws<ValidationXmlDependencyException>(()=>l2ColumnInfo.DeleteInDatabase());
+        }
+        finally
+        {
+            testData.catalogue.ValidatorXML = null;
+            testData.catalogue.SaveToDatabase();
+
+            testData.DeleteCatalogue();
+        }
+    }
+
+    [Test]
+    public void TestRunningSetupMultipleTimes()
+    {
+
+        var startup = new Startup.Startup(new EnvironmentInfo(),RepositoryLocator);
+        try
+        {
+            startup.DoStartup(new IgnoreAllErrorsCheckNotifier());
+        }
+        catch (InvalidPatchException patchException)
+        {
+            throw new Exception($"Problem in patch {patchException.ScriptName}",patchException);
+        }
+        //there should be all the obscure dependencies we need done with only the first call to this function
+        var numberAfterFirstRun =
+            ((CatalogueObscureDependencyFinder) CatalogueRepository.ObscureDependencyFinder)
+            .OtherDependencyFinders.Count;
+
+        startup.DoStartup(new IgnoreAllErrorsCheckNotifier());
+        startup.DoStartup(new IgnoreAllErrorsCheckNotifier());
+        startup.DoStartup(new IgnoreAllErrorsCheckNotifier());
+
+        //there should not be any replication! and doubling SetUp!
+        Assert.AreEqual(numberAfterFirstRun,
+            ((CatalogueObscureDependencyFinder) CatalogueRepository.ObscureDependencyFinder)
+            .OtherDependencyFinders.Count);
+            
+            
+    }
+
+    #region setup test data with some validation rule
+
+    private BulkTestsData SetupTestData(out ColumnInfo l2ColumnInfo)
+    {
+        //Setup test data
+        var testData = new BulkTestsData(CatalogueRepository, GetCleanedServer(FAnsi.DatabaseType.MicrosoftSQLServer));
+        testData.SetupTestData();
+        testData.ImportAsCatalogue();
+
+        //Setup some validation rules
+        var v = new Validator();
+
+        //rule is that previous address line 1 cannot be the same as previous address line 2
+        var iv = new ItemValidator("previous_address_L1");
+        l2ColumnInfo = testData.columnInfos.Single(c => c.GetRuntimeName().Equals("previous_address_L2"));
+
+        //define the secondary constraint
+        var referentialConstraint = new ReferentialIntegrityConstraint(CatalogueRepository);
+        referentialConstraint.InvertLogic = true;
+        referentialConstraint.OtherColumnInfo = l2ColumnInfo;
+
+        //add it to the item validator for previous_address_L1
+        iv.SecondaryConstraints.Add(referentialConstraint);
+
+        //add the completed item validator to the validator (normally there would be 1 item validator per column with validation but in this test we only have 1)
+        v.ItemValidators.Add(iv);
+
+        testData.catalogue.ValidatorXML = v.SaveToXml();
+        testData.catalogue.SaveToDatabase();
+
+        return testData;
+    }
+    #endregion
 }

@@ -8,76 +8,71 @@ using Rdmp.Core.Curation.Data;
 using Rdmp.Core.DataExport.Data;
 using Rdmp.Core.Providers;
 using Rdmp.Core.Repositories.Construction;
-using System;
-using System.Collections.Generic;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
-namespace Rdmp.Core.CommandExecution.AtomicCommands
+namespace Rdmp.Core.CommandExecution.AtomicCommands;
+
+/// <summary>
+/// Clears the <see cref="DataExportChildProvider.ForbidListedSources"/> list and triggers a refresh
+/// which results in all previously broken cohort sources to be re-evaluated for existence
+/// </summary>
+public class ExecuteCommandRefreshBrokenCohorts : BasicCommandExecution
 {
-    /// <summary>
-    /// Clears the <see cref="DataExportChildProvider.ForbidListedSources"/> list and triggers a refresh
-    /// which results in all previously broken cohort sources to be re-evaluated for existence
-    /// </summary>
-    public class ExecuteCommandRefreshBrokenCohorts : BasicCommandExecution
+    private readonly ExternalCohortTable _ect;
+
+    [UseWithObjectConstructor]
+    public ExecuteCommandRefreshBrokenCohorts(IBasicActivateItems activator,
+        [DemandsInitialization("The specific ExternalCohortTable to attempt to refresh connections to or null to refresh all ExternalCohortTables")]
+        ExternalCohortTable ect = null):base(activator)
     {
-        private readonly ExternalCohortTable _ect;
+        _ect = ect;
 
-        [UseWithObjectConstructor]
-        public ExecuteCommandRefreshBrokenCohorts(IBasicActivateItems activator,
-            [DemandsInitialization("The specific ExternalCohortTable to attempt to refresh connections to or null to refresh all ExternalCohortTables")]
-            ExternalCohortTable ect = null):base(activator)
+        if (activator.CoreChildProvider is not DataExportChildProvider dx)
         {
-            _ect = ect;
-
-            if (!(activator.CoreChildProvider is DataExportChildProvider dx))
-            {
-                SetImpossible($"{nameof(activator.CoreChildProvider)} is not a {nameof(DataExportChildProvider)}");
-                return;
-            }
-
-            // if we only want to clear one 
-            if(ect != null)
-            {
-                if(!dx.ForbidListedSources.Contains(ect))
-                {
-                    SetImpossible($"'{ect}' is not broken");
-                }
-            }
-            else
-            {
-                // we want to clear all of them 
-                if (!dx.ForbidListedSources.Any())
-                {
-                    SetImpossible("There are no broken ExternalCohortTable to clear status on");
-                    return;
-                }
-            }
+            SetImpossible($"{nameof(activator.CoreChildProvider)} is not a {nameof(DataExportChildProvider)}");
+            return;
         }
 
-        public override void Execute()
+        // if we only want to clear one 
+        if(ect != null)
         {
-            base.Execute();
-
-            var dx = (DataExportChildProvider)BasicActivator.CoreChildProvider;
-            var toPublish = _ect ?? dx.ForbidListedSources.FirstOrDefault();
-
-            // theres nothing to clear now anyway
-            if (toPublish == null)
-                return;
-
-            if (_ect != null)
+            if(!dx.ForbidListedSources.Contains(ect))
             {
-                dx.ForbidListedSources.Remove(_ect);
+                SetImpossible($"'{ect}' is not broken");
             }
-            else
-            {
-                dx.ForbidListedSources.Clear();
-            }
-
-
-            Publish(toPublish);
         }
+        else
+        {
+            // we want to clear all of them 
+            if (!dx.ForbidListedSources.Any())
+            {
+                SetImpossible("There are no broken ExternalCohortTable to clear status on");
+                return;
+            }
+        }
+    }
+
+    public override void Execute()
+    {
+        base.Execute();
+
+        var dx = (DataExportChildProvider)BasicActivator.CoreChildProvider;
+        var toPublish = _ect ?? dx.ForbidListedSources.FirstOrDefault();
+
+        // theres nothing to clear now anyway
+        if (toPublish == null)
+            return;
+
+        if (_ect != null)
+        {
+            dx.ForbidListedSources.Remove(_ect);
+        }
+        else
+        {
+            dx.ForbidListedSources.Clear();
+        }
+
+
+        Publish(toPublish);
     }
 }

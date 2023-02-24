@@ -10,39 +10,38 @@ using Rdmp.Core.Icons.IconProvision;
 using ReusableLibraryCode.Icons.IconProvision;
 using SixLabors.ImageSharp.PixelFormats;
 
-namespace Rdmp.Core.CommandExecution.AtomicCommands
+namespace Rdmp.Core.CommandExecution.AtomicCommands;
+
+public class ExecuteCommandSetProjectExtractionDirectory : BasicCommandExecution,IAtomicCommand
 {
-    public class ExecuteCommandSetProjectExtractionDirectory : BasicCommandExecution,IAtomicCommand
+    private readonly Project _project;
+
+    public ExecuteCommandSetProjectExtractionDirectory(IBasicActivateItems activator, Project project) : base(activator)
     {
-        private readonly Project _project;
+        _project = project;
+    }
 
-        public ExecuteCommandSetProjectExtractionDirectory(IBasicActivateItems activator, Project project) : base(activator)
-        {
-            _project = project;
-        }
+    public override string GetCommandHelp()
+    {
+        return "Change the location on disk where extracted artifacts are put when you run extraction configurations of this project";
+    }
 
-        public override string GetCommandHelp()
-        {
-            return "Change the location on disk where extracted artifacts are put when you run extraction configurations of this project";
-        }
-
-        public override void Execute()
-        {
-            base.Execute();
+    public override void Execute()
+    {
+        base.Execute();
             
-            var dir = BasicActivator.SelectDirectory("Extraction Directory");
+        var dir = BasicActivator.SelectDirectory("Extraction Directory");
 
-            if (dir != null)
-            {
-                _project.ExtractionDirectory = dir.FullName;
-                _project.SaveToDatabase();
-                Publish(_project);
-            }
-        }
-
-        public override Image<Rgba32> GetImage(IIconProvider iconProvider)
+        if (dir != null)
         {
-            return iconProvider.GetImage(RDMPConcept.ExtractionDirectoryNode,OverlayKind.Edit);
+            _project.ExtractionDirectory = dir.FullName;
+            _project.SaveToDatabase();
+            Publish(_project);
         }
+    }
+
+    public override Image<Rgba32> GetImage(IIconProvider iconProvider)
+    {
+        return iconProvider.GetImage(RDMPConcept.ExtractionDirectoryNode,OverlayKind.Edit);
     }
 }

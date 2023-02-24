@@ -9,27 +9,26 @@ using Rdmp.Core.Curation.Data.Remoting;
 using Rdmp.UI.ItemActivation;
 using Rdmp.UI.SimpleDialogs.Remoting;
 
-namespace Rdmp.UI.CommandExecution.Proposals
+namespace Rdmp.UI.CommandExecution.Proposals;
+
+internal class ProposeExecutionWhenTargetIsRemoteRDMP:RDMPCommandExecutionProposal<RemoteRDMP>
 {
-    class ProposeExecutionWhenTargetIsRemoteRDMP:RDMPCommandExecutionProposal<RemoteRDMP>
+    public ProposeExecutionWhenTargetIsRemoteRDMP(IActivateItems itemActivator) : base(itemActivator)
     {
-        public ProposeExecutionWhenTargetIsRemoteRDMP(IActivateItems itemActivator) : base(itemActivator)
-        {
-        }
+    }
 
-        public override bool CanActivate(RemoteRDMP target)
-        {
-            return true;
-        }
+    public override bool CanActivate(RemoteRDMP target)
+    {
+        return true;
+    }
 
-        public override void Activate(RemoteRDMP target)
-        {
-            ItemActivator.Activate<RemoteRDMPUI, RemoteRDMP>(target);
-        }
+    public override void Activate(RemoteRDMP target)
+    {
+        ItemActivator.Activate<RemoteRDMPUI, RemoteRDMP>(target);
+    }
 
-        public override ICommandExecution ProposeExecution(ICombineToMakeCommand cmd, RemoteRDMP targetAggregateConfiguration, InsertOption insertOption = InsertOption.Default)
-        {
-            return null;
-        }
+    public override ICommandExecution ProposeExecution(ICombineToMakeCommand cmd, RemoteRDMP targetAggregateConfiguration, InsertOption insertOption = InsertOption.Default)
+    {
+        return null;
     }
 }

@@ -7,25 +7,23 @@
 using System;
 using Rdmp.Core.Repositories;
 
-namespace Rdmp.Core.Startup
+namespace Rdmp.Core.Startup;
+
+/// <summary>
+/// MEF discoverable version of IPluginRepositoryFinder
+/// </summary>
+public abstract class PluginRepositoryFinder :IPluginRepositoryFinder
 {
-    /// <summary>
-    /// MEF discoverable version of IPluginRepositoryFinder
-    /// </summary>
-    
-    public abstract class PluginRepositoryFinder :IPluginRepositoryFinder
+    protected readonly IRDMPPlatformRepositoryServiceLocator RepositoryLocator;
+    protected PluginRepositoryFinder(IRDMPPlatformRepositoryServiceLocator repositoryLocator)
     {
-        protected readonly IRDMPPlatformRepositoryServiceLocator RepositoryLocator;
-        protected PluginRepositoryFinder(IRDMPPlatformRepositoryServiceLocator repositoryLocator)
-        {
-            RepositoryLocator = repositoryLocator;
-        }
-
-
-        /// <inheritdoc/>
-        public abstract PluginRepository GetRepositoryIfAny();
-
-        /// <inheritdoc/>
-        public abstract Type GetRepositoryType();
+        RepositoryLocator = repositoryLocator;
     }
+
+
+    /// <inheritdoc/>
+    public abstract PluginRepository GetRepositoryIfAny();
+
+    /// <inheritdoc/>
+    public abstract Type GetRepositoryType();
 }

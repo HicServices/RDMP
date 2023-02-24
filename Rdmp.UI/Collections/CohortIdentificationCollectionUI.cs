@@ -9,7 +9,6 @@ using Rdmp.Core;
 using Rdmp.Core.CommandExecution.AtomicCommands;
 using Rdmp.Core.Curation.Data;
 using Rdmp.Core.Curation.Data.Cohort;
-using Rdmp.Core.Providers;
 using Rdmp.Core.Providers.Nodes.CohortNodes;
 using Rdmp.UI.CommandExecution.AtomicCommands.UIFactory;
 using Rdmp.UI.ItemActivation;
@@ -25,7 +24,7 @@ namespace Rdmp.UI.Collections;
 /// </summary>
 public partial class CohortIdentificationCollectionUI : RDMPCollectionUI, ILifetimeSubscriber
 {
-    bool _firstTime = true;
+    private bool _firstTime = true;
 
 
     //for expand all/ collapse all

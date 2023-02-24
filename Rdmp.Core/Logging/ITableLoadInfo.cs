@@ -7,22 +7,21 @@
 
 using FAnsi.Discovery;
 
-namespace Rdmp.Core.Logging
+namespace Rdmp.Core.Logging;
+
+/// <summary>
+/// See TableLoadInfo
+/// </summary>
+public interface ITableLoadInfo
 {
-    /// <summary>
-    /// See TableLoadInfo
-    /// </summary>
-    public interface ITableLoadInfo
-    {
-        int ID { get; }
-        int Inserts { get; set; }
-        int Updates { get; set; }
-        int DiscardedDuplicates { get; set; }
+    int ID { get; }
+    int Inserts { get; set; }
+    int Updates { get; set; }
+    int DiscardedDuplicates { get; set; }
 
-        string Notes { get; set; }
-        DiscoveredServer DatabaseSettings { get; }
+    string Notes { get; set; }
+    DiscoveredServer DatabaseSettings { get; }
 
-        void CloseAndArchive();
-        void IncrementErrorRows();
-    }
+    void CloseAndArchive();
+    void IncrementErrorRows();
 }

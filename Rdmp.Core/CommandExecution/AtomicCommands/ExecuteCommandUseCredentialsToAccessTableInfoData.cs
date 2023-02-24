@@ -8,49 +8,48 @@ using Rdmp.Core.Curation.Data;
 using Rdmp.Core.Repositories.Construction;
 using ReusableLibraryCode.DataAccess;
 
-namespace Rdmp.Core.CommandExecution.AtomicCommands
+namespace Rdmp.Core.CommandExecution.AtomicCommands;
+
+public class ExecuteCommandUseCredentialsToAccessTableInfoData : BasicCommandExecution
 {
-    public class ExecuteCommandUseCredentialsToAccessTableInfoData : BasicCommandExecution
+    private readonly DataAccessCredentials _credentials;
+    private readonly TableInfo _tableInfo;
+    private readonly DataAccessCredentials[] _available;
+
+    [UseWithObjectConstructor]
+    public ExecuteCommandUseCredentialsToAccessTableInfoData(IBasicActivateItems activator,
+        DataAccessCredentials credentials, TableInfo targetTableInfo) : base(activator)
     {
-        private readonly DataAccessCredentials _credentials;
-        private readonly TableInfo _tableInfo;
-        private readonly DataAccessCredentials[] _available;
+        _credentials = credentials;
 
-        [UseWithObjectConstructor]
-        public ExecuteCommandUseCredentialsToAccessTableInfoData(IBasicActivateItems activator,
-            DataAccessCredentials credentials, TableInfo targetTableInfo) : base(activator)
-        {
-            _credentials = credentials;
-
-            _tableInfo = targetTableInfo;
+        _tableInfo = targetTableInfo;
             
-            if(_credentials == null)
-            {
-                _available = BasicActivator.RepositoryLocator.CatalogueRepository.GetAllObjects<DataAccessCredentials>();
+        if(_credentials == null)
+        {
+            _available = BasicActivator.RepositoryLocator.CatalogueRepository.GetAllObjects<DataAccessCredentials>();
 
-                if(_available.Length == 0)
-                    SetImpossible("There are no credentials configured");
-            }
-            else
-            {
-                var usage = _credentials.GetAllTableInfosThatUseThis();
+            if(_available.Length == 0)
+                SetImpossible("There are no credentials configured");
+        }
+        else
+        {
+            var usage = _credentials.GetAllTableInfosThatUseThis();
                 
-                if(usage[DataAccessContext.Any].Contains(targetTableInfo))
-                    SetImpossible(_credentials + " is already used to access " + targetTableInfo + " under Any context");
-            }
+            if(usage[DataAccessContext.Any].Contains(targetTableInfo))
+                SetImpossible($"{_credentials} is already used to access {targetTableInfo} under Any context");
         }
+    }
 
-        public override void Execute()
-        {
-            base.Execute();
+    public override void Execute()
+    {
+        base.Execute();
             
-            var creds = _credentials ?? (DataAccessCredentials)BasicActivator.SelectOne("Select Credentials",_available);
+        var creds = _credentials ?? (DataAccessCredentials)BasicActivator.SelectOne("Select Credentials",_available);
 
-            if(creds == null)
-                return;
+        if(creds == null)
+            return;
 
-            BasicActivator.RepositoryLocator.CatalogueRepository.TableInfoCredentialsManager.CreateLinkBetween(creds,_tableInfo,DataAccessContext.Any);
-            Publish(_tableInfo);
-        }
+        BasicActivator.RepositoryLocator.CatalogueRepository.TableInfoCredentialsManager.CreateLinkBetween(creds,_tableInfo,DataAccessContext.Any);
+        Publish(_tableInfo);
     }
 }

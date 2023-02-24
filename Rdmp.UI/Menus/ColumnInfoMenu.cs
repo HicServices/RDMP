@@ -4,29 +4,23 @@
 // RDMP is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License for more details.
 // You should have received a copy of the GNU General Public License along with RDMP. If not, see <https://www.gnu.org/licenses/>.
 
-using System.Linq;
 using System.Windows.Forms;
-using Rdmp.Core.CommandExecution.AtomicCommands;
-using Rdmp.Core.CommandExecution.AtomicCommands.Alter;
 using Rdmp.Core.Curation.Data;
-using Rdmp.Core.Curation.Data.DataLoad;
-using Rdmp.Core.DataViewing;
 using Rdmp.UI.CommandExecution.AtomicCommands;
 
-namespace Rdmp.UI.Menus
+namespace Rdmp.UI.Menus;
+
+[System.ComponentModel.DesignerCategory("")]
+internal class ColumnInfoMenu : RDMPContextMenuStrip
 {
-    [System.ComponentModel.DesignerCategory("")]
-    class ColumnInfoMenu : RDMPContextMenuStrip
-    {
-        public ColumnInfoMenu(RDMPContextMenuStripArgs args, ColumnInfo columnInfo) : base(args, columnInfo)
-        {            
-            Add(new ExecuteCommandAddNewLookupTableRelationship(_activator, null,columnInfo.TableInfo));
+    public ColumnInfoMenu(RDMPContextMenuStripArgs args, ColumnInfo columnInfo) : base(args, columnInfo)
+    {            
+        Add(new ExecuteCommandAddNewLookupTableRelationship(_activator, null,columnInfo.TableInfo));
 
-            Items.Add(new ToolStripSeparator());
+        Items.Add(new ToolStripSeparator());
 
-            Add(new ExecuteCommandAddJoinInfo(_activator, columnInfo.TableInfo));
+        Add(new ExecuteCommandAddJoinInfo(_activator, columnInfo.TableInfo));
 
-            Add(new ExecuteCommandAnonymiseColumnInfo(_activator, columnInfo));
-        }
+        Add(new ExecuteCommandAnonymiseColumnInfo(_activator, columnInfo));
     }
 }

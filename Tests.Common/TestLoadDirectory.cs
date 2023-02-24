@@ -5,25 +5,23 @@
 // You should have received a copy of the GNU General Public License along with RDMP. If not, see <https://www.gnu.org/licenses/>.
 
 using System.IO;
-using System.Xml;
 using Rdmp.Core.Curation;
 
-namespace Tests.Common
-{
-    public class TestLoadDirectory :ILoadDirectory{
+namespace Tests.Common;
 
-        /// <summary>
-        /// Creates a new blank/null implementation of <see cref="ILoadDirectory"/>
-        /// </summary>
-        public TestLoadDirectory()
-        {
+public class TestLoadDirectory :ILoadDirectory{
 
-        }
-        public DirectoryInfo ForLoading { get; set; }
-        public DirectoryInfo ForArchiving { get; set; }
-        public DirectoryInfo Cache { get; set; }
-        public DirectoryInfo RootPath { get; set; }
-        public DirectoryInfo DataPath { get; set; }
-        public DirectoryInfo ExecutablesPath { get; set; }
+    /// <summary>
+    /// Creates a new blank/null implementation of <see cref="ILoadDirectory"/>
+    /// </summary>
+    public TestLoadDirectory()
+    {
+
     }
+    public DirectoryInfo ForLoading { get; set; }
+    public DirectoryInfo ForArchiving { get; set; }
+    public DirectoryInfo Cache { get; set; }
+    public DirectoryInfo RootPath { get; set; }
+    public DirectoryInfo DataPath { get; set; }
+    public DirectoryInfo ExecutablesPath { get; set; }
 }

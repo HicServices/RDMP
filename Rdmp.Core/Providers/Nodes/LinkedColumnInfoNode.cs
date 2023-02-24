@@ -7,53 +7,52 @@
 using MapsDirectlyToDatabaseTable;
 using Rdmp.Core.Curation.Data;
 
-namespace Rdmp.Core.Providers.Nodes
+namespace Rdmp.Core.Providers.Nodes;
+
+public class LinkedColumnInfoNode : Node,IDeleteable, IMasqueradeAs
 {
-    public class LinkedColumnInfoNode : Node,IDeleteable, IMasqueradeAs
+    public CatalogueItem CatalogueItem { get; set; }
+    public ColumnInfo ColumnInfo { get; set; }
+
+    public LinkedColumnInfoNode(CatalogueItem catalogueItem, ColumnInfo columnInfo)
     {
-        public CatalogueItem CatalogueItem { get; set; }
-        public ColumnInfo ColumnInfo { get; set; }
+        CatalogueItem = catalogueItem;
+        ColumnInfo = columnInfo;
+    }
 
-        public LinkedColumnInfoNode(CatalogueItem catalogueItem, ColumnInfo columnInfo)
-        {
-            CatalogueItem = catalogueItem;
-            ColumnInfo = columnInfo;
-        }
+    public override string ToString()
+    {
+        return ColumnInfo.ToString();
+    }
 
-        public override string ToString()
-        {
-            return ColumnInfo.ToString();
-        }
+    protected bool Equals(LinkedColumnInfoNode other)
+    {
+        return Equals(CatalogueItem, other.CatalogueItem) && Equals(ColumnInfo, other.ColumnInfo);
+    }
 
-        protected bool Equals(LinkedColumnInfoNode other)
-        {
-            return Equals(CatalogueItem, other.CatalogueItem) && Equals(ColumnInfo, other.ColumnInfo);
-        }
+    public override bool Equals(object obj)
+    {
+        if (ReferenceEquals(null, obj)) return false;
+        if (ReferenceEquals(this, obj)) return true;
+        if (obj.GetType() != GetType()) return false;
+        return Equals((LinkedColumnInfoNode) obj);
+    }
 
-        public override bool Equals(object obj)
+    public override int GetHashCode()
+    {
+        unchecked
         {
-            if (ReferenceEquals(null, obj)) return false;
-            if (ReferenceEquals(this, obj)) return true;
-            if (obj.GetType() != this.GetType()) return false;
-            return Equals((LinkedColumnInfoNode) obj);
+            return ((CatalogueItem != null ? CatalogueItem.GetHashCode() : 0)*397) ^ (ColumnInfo != null ? ColumnInfo.GetHashCode() : 0);
         }
+    }
 
-        public override int GetHashCode()
-        {
-            unchecked
-            {
-                return ((CatalogueItem != null ? CatalogueItem.GetHashCode() : 0)*397) ^ (ColumnInfo != null ? ColumnInfo.GetHashCode() : 0);
-            }
-        }
+    public object MasqueradingAs()
+    {
+        return ColumnInfo;
+    }
 
-        public object MasqueradingAs()
-        {
-            return ColumnInfo;
-        }
-
-        public void DeleteInDatabase()
-        {
-            CatalogueItem.SetColumnInfo(null);
-        }
+    public void DeleteInDatabase()
+    {
+        CatalogueItem.SetColumnInfo(null);
     }
 }

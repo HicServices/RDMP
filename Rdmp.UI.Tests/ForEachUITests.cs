@@ -8,21 +8,20 @@ using NUnit.Framework;
 using Rdmp.Core.CommandExecution.AtomicCommands;
 using Tests.Common;
 
-namespace Rdmp.UI.Tests
+namespace Rdmp.UI.Tests;
+
+internal class ForEachUITests: UITests
 {
-    internal class ForEachUITests: UITests
+    /// <summary>
+    /// Tests that all DatabaseEntity objects can be constructed with <see cref="UnitTests.WhenIHaveA{T}()"/> and that if <see cref="ExecuteCommandActivate"/>  says
+    /// they can be activated then they can be (without blowing up in a major way).
+    /// </summary>
+    [Test,UITimeout(50000)]
+    public void ForEachUI_Test_GetTabName()
     {
-        /// <summary>
-        /// Tests that all DatabaseEntity objects can be constructed with <see cref="UnitTests.WhenIHaveA{T}()"/> and that if <see cref="ExecuteCommandActivate"/>  says
-        /// they can be activated then they can be (without blowing up in a major way).
-        /// </summary>
-        [Test,UITimeout(50000)]
-        public void ForEachUI_Test_GetTabName()
-        {
-            ForEachUI((ui)=>{
-                Assert.NotNull(ui);
-                Assert.IsFalse(string.IsNullOrWhiteSpace(ui.GetTabName()));
-                });
-        }
+        ForEachUI((ui)=>{
+            Assert.NotNull(ui);
+            Assert.IsFalse(string.IsNullOrWhiteSpace(ui.GetTabName()));
+        });
     }
 }

@@ -9,76 +9,75 @@ using System.Linq;
 using Rdmp.Core.DataExport.DataExtraction.Commands;
 using Rdmp.Core.DataExport.DataExtraction.UserPicks;
 
-namespace Rdmp.UI.ProjectUI
+namespace Rdmp.UI.ProjectUI;
+
+internal class ExtractCommandStateMonitor
 {
-    internal class ExtractCommandStateMonitor
+    private Dictionary<IExtractCommand,ExtractCommandState> CommandStates = new();
+    private Dictionary<IExtractCommand, Dictionary<object, ExtractCommandState>> CommandSubStates = new();
+
+    private Dictionary<object, ExtractCommandState> GlobalsStates = new();
+
+    public bool Contains(IExtractCommand cmd)
     {
-        Dictionary<IExtractCommand,ExtractCommandState> CommandStates = new Dictionary<IExtractCommand, ExtractCommandState>();
-        private Dictionary<IExtractCommand, Dictionary<object, ExtractCommandState>> CommandSubStates = new Dictionary<IExtractCommand, Dictionary<object, ExtractCommandState>>();
+        return CommandStates.ContainsKey(cmd);
+    }
 
-        private Dictionary<object, ExtractCommandState> GlobalsStates = new Dictionary<object, ExtractCommandState>();
+    public void Add(IExtractDatasetCommand cmd)
+    {
+        CommandStates.Add(cmd,cmd.State);
+        CommandSubStates.Add(cmd,cmd.DatasetBundle.States);
+    }
 
-        public bool Contains(IExtractCommand cmd)
+    public void SaveState(IExtractDatasetCommand cmd)
+    {
+        CommandStates[cmd] = cmd.State;
+
+        var toUpdateSubstates = CommandSubStates[cmd];
+
+        foreach (var substate in cmd.DatasetBundle.States.ToArray())
         {
-            return CommandStates.ContainsKey(cmd);
+            if(!toUpdateSubstates.ContainsKey(substate.Key))
+                toUpdateSubstates.Add(substate.Key,substate.Value);
+
+            toUpdateSubstates[substate.Key] = substate.Value;
         }
-
-        public void Add(IExtractDatasetCommand cmd)
-        {
-            CommandStates.Add(cmd,cmd.State);
-            CommandSubStates.Add(cmd,cmd.DatasetBundle.States);
-        }
-
-        public void SaveState(IExtractDatasetCommand cmd)
-        {
-            CommandStates[cmd] = cmd.State;
-
-            var toUpdateSubstates = CommandSubStates[cmd];
-
-            foreach (KeyValuePair<object, ExtractCommandState> substate in cmd.DatasetBundle.States.ToArray())
-            {
-                if(!toUpdateSubstates.ContainsKey(substate.Key))
-                    toUpdateSubstates.Add(substate.Key,substate.Value);
-
-                toUpdateSubstates[substate.Key] = substate.Value;
-            }
-        }
+    }
         
-        public IEnumerable<object> GetAllChangedObjects(IExtractDatasetCommand cmd)
-        {
-            if (CommandStates[cmd] != cmd.State)
-                yield return cmd;
+    public IEnumerable<object> GetAllChangedObjects(IExtractDatasetCommand cmd)
+    {
+        if (CommandStates[cmd] != cmd.State)
+            yield return cmd;
 
-            foreach (var substate in cmd.DatasetBundle.States.ToArray())
-                if (CommandSubStates[cmd][substate.Key] != substate.Value)
-                    yield return substate.Key;
+        foreach (var substate in cmd.DatasetBundle.States.ToArray())
+            if (CommandSubStates[cmd][substate.Key] != substate.Value)
+                yield return substate.Key;
+    }
+    public void SaveState(GlobalsBundle globals)
+    {
+        foreach (var gkvp in globals.States)
+        {
+            if(!GlobalsStates.ContainsKey(gkvp.Key))
+                GlobalsStates.Add(gkvp.Key,gkvp.Value);
+
+            GlobalsStates[gkvp.Key] = gkvp.Value;
         }
-        public void SaveState(GlobalsBundle globals)
-        {
-            foreach (var gkvp in globals.States)
-            {
-                if(!GlobalsStates.ContainsKey(gkvp.Key))
-                    GlobalsStates.Add(gkvp.Key,gkvp.Value);
+    }
 
-                GlobalsStates[gkvp.Key] = gkvp.Value;
+    public IEnumerable<object> GetAllChangedObjects(GlobalsBundle globals)
+    {
+        foreach (var gkvp in globals.States)
+        {
+            if (!GlobalsStates.ContainsKey(gkvp.Key))
+            {
+                GlobalsStates.Add(gkvp.Key, gkvp.Value);
+                yield return gkvp.Key;//new objects also are returned as changed
             }
-        }
-
-        public IEnumerable<object> GetAllChangedObjects(GlobalsBundle globals)
-        {
-            foreach (var gkvp in globals.States)
-            {
-                if (!GlobalsStates.ContainsKey(gkvp.Key))
-                {
-                    GlobalsStates.Add(gkvp.Key, gkvp.Value);
-                    yield return gkvp.Key;//new objects also are returned as changed
-                }
-                else
+            else
                 //State has changed since last save
-                if (GlobalsStates[gkvp.Key] != gkvp.Value)
-                    yield return gkvp.Key;
-            }
-            
+            if (GlobalsStates[gkvp.Key] != gkvp.Value)
+                yield return gkvp.Key;
         }
+            
     }
 }

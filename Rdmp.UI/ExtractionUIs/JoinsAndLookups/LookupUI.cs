@@ -16,84 +16,78 @@ using Rdmp.Core.Curation.Data;
 using Rdmp.Core.Icons.IconProvision;
 using Rdmp.UI.ItemActivation;
 using Rdmp.UI.TestsAndSetup.ServicePropogation;
-using ReusableLibraryCode.Icons;
 
-namespace Rdmp.UI.ExtractionUIs.JoinsAndLookups
+namespace Rdmp.UI.ExtractionUIs.JoinsAndLookups;
+
+public partial class LookupUI : LookupUI_Design
 {
-    public partial class LookupUI : LookupUI_Design
+    private Lookup _lookup;
+
+    public LookupUI()
     {
-        private Lookup _lookup;
-
-        public LookupUI()
-        {
-            InitializeComponent();
+        InitializeComponent();
             
-            olvCompositeJoinColumn.ImageGetter = ImageGetter;
-            olvExtractionInformationName.ImageGetter = ImageGetter;
-        }
+        olvCompositeJoinColumn.ImageGetter = ImageGetter;
+        olvExtractionInformationName.ImageGetter = ImageGetter;
+    }
 
-        private Bitmap ImageGetter(object rowObject)
+    private Bitmap ImageGetter(object rowObject)
+    {
+        return Activator.CoreIconProvider.GetImage(rowObject).ImageToBitmap();
+    }
+
+    public override void SetDatabaseObject(IActivateItems activator, Lookup databaseObject)
+    {
+        base.SetDatabaseObject(activator, databaseObject);
+
+        _lookup = databaseObject;
+
+        pbColumnInfo1.Image = activator.CoreIconProvider.GetImage(RDMPConcept.ColumnInfo).ImageToBitmap();
+        pbColumnInfo2.Image = activator.CoreIconProvider.GetImage(RDMPConcept.ColumnInfo).ImageToBitmap();
+        pbTable.Image = activator.CoreIconProvider.GetImage(RDMPConcept.TableInfo).ImageToBitmap();
+
+
+        tbFk.Text = databaseObject.ForeignKey.Name;
+        tbPk.Text = databaseObject.PrimaryKey.Name;
+        tbTable.Text = databaseObject.Description.TableInfo.Name;
+
+        UpdateTreeViews();
+    }
+
+    private void UpdateTreeViews()
+    {
+        olvCompositeJoins.ClearObjects();
+        olvExtractionDescriptions.ClearObjects();
+
+        var eis = Activator.CoreChildProvider.AllExtractionInformations.Where(ei => ei.CatalogueItem.ColumnInfo_ID == _lookup.Description_ID).ToArray();
+        olvExtractionDescriptions.AddObjects(eis);
+
+        olvCompositeJoins.AddObjects(_lookup.GetSupplementalJoins().ToArray());
+    }
+
+    private void label2_Click(object sender, EventArgs e)
+    {
+
+    }
+
+    private void olvExtractionDescriptions_ItemActivate(object sender, EventArgs e)
+    {
+        if(olvExtractionDescriptions.SelectedObject is ExtractionInformation ei)
+            Activator.RequestItemEmphasis(this,new EmphasiseRequest(ei));
+
+    }
+
+    private void olv_KeyUp(object sender, KeyEventArgs e)
+    {
+        if(((ObjectListView)sender).SelectedObject is IDeleteable d)
         {
-            return Activator.CoreIconProvider.GetImage(rowObject).ImageToBitmap();
-        }
-
-        public override void SetDatabaseObject(IActivateItems activator, Lookup databaseObject)
-        {
-            base.SetDatabaseObject(activator, databaseObject);
-
-            _lookup = databaseObject;
-
-            pbColumnInfo1.Image = activator.CoreIconProvider.GetImage(RDMPConcept.ColumnInfo).ImageToBitmap();
-            pbColumnInfo2.Image = activator.CoreIconProvider.GetImage(RDMPConcept.ColumnInfo).ImageToBitmap();
-            pbTable.Image = activator.CoreIconProvider.GetImage(RDMPConcept.TableInfo).ImageToBitmap();
-
-
-            tbFk.Text = databaseObject.ForeignKey.Name;
-            tbPk.Text = databaseObject.PrimaryKey.Name;
-            tbTable.Text = databaseObject.Description.TableInfo.Name;
-
+            Activator.DeleteWithConfirmation(d);
             UpdateTreeViews();
         }
-
-        private void UpdateTreeViews()
-        {
-            olvCompositeJoins.ClearObjects();
-            olvExtractionDescriptions.ClearObjects();
-
-            var eis = Activator.CoreChildProvider.AllExtractionInformations.Where(ei => ei.CatalogueItem.ColumnInfo_ID == _lookup.Description_ID).ToArray();
-            olvExtractionDescriptions.AddObjects(eis);
-
-            olvCompositeJoins.AddObjects(_lookup.GetSupplementalJoins().ToArray());
-        }
-
-        private void label2_Click(object sender, EventArgs e)
-        {
-
-        }
-
-        private void olvExtractionDescriptions_ItemActivate(object sender, EventArgs e)
-        {
-            var ei = olvExtractionDescriptions.SelectedObject as ExtractionInformation;
-
-            if(ei != null)
-                Activator.RequestItemEmphasis(this,new EmphasiseRequest(ei));
-
-        }
-
-        private void olv_KeyUp(object sender, KeyEventArgs e)
-        {
-            var d = ((ObjectListView)sender).SelectedObject as IDeleteable;
-
-            if(d != null)
-            {
-                Activator.DeleteWithConfirmation(d);
-                UpdateTreeViews();
-            }
-        }
     }
+}
 
-    [TypeDescriptionProvider(typeof(AbstractControlDescriptionProvider<LookupUI_Design, UserControl>))]
-    public abstract class LookupUI_Design : RDMPSingleDatabaseObjectControl<Lookup>
-    {
-    }
+[TypeDescriptionProvider(typeof(AbstractControlDescriptionProvider<LookupUI_Design, UserControl>))]
+public abstract class LookupUI_Design : RDMPSingleDatabaseObjectControl<Lookup>
+{
 }

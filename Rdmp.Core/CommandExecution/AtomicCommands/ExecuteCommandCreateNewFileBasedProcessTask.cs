@@ -15,116 +15,115 @@ using Rdmp.Core.Repositories;
 using ReusableLibraryCode.Icons.IconProvision;
 using SixLabors.ImageSharp.PixelFormats;
 
-namespace Rdmp.Core.CommandExecution.AtomicCommands
+namespace Rdmp.Core.CommandExecution.AtomicCommands;
+
+public class ExecuteCommandCreateNewFileBasedProcessTask : BasicCommandExecution
 {
-    public class ExecuteCommandCreateNewFileBasedProcessTask : BasicCommandExecution
+    private readonly ProcessTaskType _taskType;
+    private readonly LoadMetadata _loadMetadata;
+    private readonly LoadStage _loadStage;
+    private LoadDirectory _LoadDirectory;
+    private FileInfo _file;
+
+    public ExecuteCommandCreateNewFileBasedProcessTask(IBasicActivateItems activator, ProcessTaskType taskType, LoadMetadata loadMetadata, LoadStage loadStage, FileInfo file=null) : base(activator)
     {
-        private readonly ProcessTaskType _taskType;
-        private readonly LoadMetadata _loadMetadata;
-        private readonly LoadStage _loadStage;
-        private LoadDirectory _LoadDirectory;
-        private FileInfo _file;
+        _taskType = taskType;
+        _loadMetadata = loadMetadata;
+        _loadStage = loadStage;
 
-        public ExecuteCommandCreateNewFileBasedProcessTask(IBasicActivateItems activator, ProcessTaskType taskType, LoadMetadata loadMetadata, LoadStage loadStage, FileInfo file=null) : base(activator)
+        try
         {
-            _taskType = taskType;
-            _loadMetadata = loadMetadata;
-            _loadStage = loadStage;
-
-            try
-            {
-                _LoadDirectory = new LoadDirectory(_loadMetadata.LocationOfFlatFiles);
-            }
-            catch (Exception)
-            {
-                SetImpossible("Could not construct LoadDirectory");
-            }
-            
-            if(!(taskType == ProcessTaskType.SQLFile || taskType == ProcessTaskType.Executable))
-                SetImpossible("Only SQLFile and Executable task types are supported by this command");
-
-            if (!ProcessTask.IsCompatibleStage(taskType, loadStage))
-                SetImpossible("You cannot run "+taskType+" in " + loadStage);
-
-            _file = file;
+            _LoadDirectory = new LoadDirectory(_loadMetadata.LocationOfFlatFiles);
         }
-        
-        public override void Execute()
+        catch (Exception)
         {
-            base.Execute();
+            SetImpossible("Could not construct LoadDirectory");
+        }
+            
+        if(!(taskType == ProcessTaskType.SQLFile || taskType == ProcessTaskType.Executable))
+            SetImpossible("Only SQLFile and Executable task types are supported by this command");
 
-            if (_file == null)
+        if (!ProcessTask.IsCompatibleStage(taskType, loadStage))
+            SetImpossible($"You cannot run {taskType} in {loadStage}");
+
+        _file = file;
+    }
+        
+    public override void Execute()
+    {
+        base.Execute();
+
+        if (_file == null)
+        {
+            if (_taskType == ProcessTaskType.SQLFile)
             {
-                if (_taskType == ProcessTaskType.SQLFile)
+                if (BasicActivator.TypeText("Enter a name for the SQL file", "File name", 100, "myscript.sql",out var selected,false))
                 {
-                    if (BasicActivator.TypeText("Enter a name for the SQL file", "File name", 100, "myscript.sql",out string selected,false))
-                    {
-                        var target = Path.Combine(_LoadDirectory.ExecutablesPath.FullName, selected);
+                    var target = Path.Combine(_LoadDirectory.ExecutablesPath.FullName, selected);
 
-                        if (!target.EndsWith(".sql"))
-                            target += ".sql";
+                    if (!target.EndsWith(".sql"))
+                        target += ".sql";
 
-                        //create it if it doesn't exist
-                        if (!File.Exists(target))
-                            File.WriteAllText(target, "/*todo Type some SQL*/");
+                    //create it if it doesn't exist
+                    if (!File.Exists(target))
+                        File.WriteAllText(target, "/*todo Type some SQL*/");
 
-                        _file = new FileInfo(target);
-                    }
-                    else
-                        return; //user cancelled
-                }
-                else if (_taskType == ProcessTaskType.Executable)
-                {
-                    _file = BasicActivator.SelectFile("Enter executable's path", "Executables", "*.exe");
-
-                    // they didn't pick one
-                    if(_file == null)
-                        return;
-
-                    if(!_file.Exists)
-                        throw new FileNotFoundException("File did not exist");
+                    _file = new FileInfo(target);
                 }
                 else
-                    throw new ArgumentOutOfRangeException("Unexpected _taskType:" + _taskType);
+                    return; //user cancelled
             }
-
-            var task = new ProcessTask((ICatalogueRepository)_loadMetadata.Repository, _loadMetadata, _loadStage);
-            task.ProcessTaskType = _taskType;
-            task.Path = _file.FullName;
-            SaveAndShow(task);
-        }
-
-        private void SaveAndShow(ProcessTask task)
-        {
-            task.Name = "Run '" + Path.GetFileName(task.Path) +"'";
-            task.SaveToDatabase();
-
-            Publish(_loadMetadata);
-            Activate(task);
-        }
-
-        public override string GetCommandName()
-        {
-            switch (_taskType)
+            else if (_taskType == ProcessTaskType.Executable)
             {
-                case ProcessTaskType.Executable:
-                    return "Add Run .exe File Task";
-                case ProcessTaskType.SQLFile:
-                    return "Add Run SQL Script Task";
-                default:
-                    throw new ArgumentOutOfRangeException();
+                _file = BasicActivator.SelectFile("Enter executable's path", "Executables", "*.exe");
+
+                // they didn't pick one
+                if(_file == null)
+                    return;
+
+                if(!_file.Exists)
+                    throw new FileNotFoundException("File did not exist");
             }
+            else
+                throw new ArgumentOutOfRangeException($"Unexpected _taskType:{_taskType}");
         }
 
-        public override Image<Rgba32> GetImage(IIconProvider iconProvider)
+        var task = new ProcessTask((ICatalogueRepository)_loadMetadata.Repository, _loadMetadata, _loadStage);
+        task.ProcessTaskType = _taskType;
+        task.Path = _file.FullName;
+        SaveAndShow(task);
+    }
+
+    private void SaveAndShow(ProcessTask task)
+    {
+        task.Name = $"Run '{Path.GetFileName(task.Path)}'";
+        task.SaveToDatabase();
+
+        Publish(_loadMetadata);
+        Activate(task);
+    }
+
+    public override string GetCommandName()
+    {
+        switch (_taskType)
         {
-            if(_taskType == ProcessTaskType.SQLFile)
-                return iconProvider.GetImage(RDMPConcept.SQL, OverlayKind.Add);
-
-            if(_taskType == ProcessTaskType.Executable)
-                return new IconOverlayProvider().GetOverlayNoCache(Image.Load<Rgba32>(CatalogueIcons.Exe), OverlayKind.Add);
-
-            return null;
+            case ProcessTaskType.Executable:
+                return "Add Run .exe File Task";
+            case ProcessTaskType.SQLFile:
+                return "Add Run SQL Script Task";
+            default:
+                throw new ArgumentOutOfRangeException();
         }
+    }
+
+    public override Image<Rgba32> GetImage(IIconProvider iconProvider)
+    {
+        if(_taskType == ProcessTaskType.SQLFile)
+            return iconProvider.GetImage(RDMPConcept.SQL, OverlayKind.Add);
+
+        if(_taskType == ProcessTaskType.Executable)
+            return new IconOverlayProvider().GetOverlayNoCache(Image.Load<Rgba32>(CatalogueIcons.Exe), OverlayKind.Add);
+
+        return null;
     }
 }

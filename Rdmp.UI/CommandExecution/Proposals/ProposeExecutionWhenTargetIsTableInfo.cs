@@ -8,30 +8,28 @@ using Rdmp.Core.CommandExecution;
 using Rdmp.Core.Curation.Data;
 using Rdmp.UI.ItemActivation;
 using Rdmp.UI.MainFormUITabs.SubComponents;
-using Rdmp.UI.SingleControlForms;
 
-namespace Rdmp.UI.CommandExecution.Proposals
+namespace Rdmp.UI.CommandExecution.Proposals;
+
+internal class ProposeExecutionWhenTargetIsTableInfo : RDMPCommandExecutionProposal<TableInfo>
 {
-    class ProposeExecutionWhenTargetIsTableInfo : RDMPCommandExecutionProposal<TableInfo>
+    public ProposeExecutionWhenTargetIsTableInfo(IActivateItems itemActivator)
+        : base(itemActivator)
     {
-        public ProposeExecutionWhenTargetIsTableInfo(IActivateItems itemActivator)
-            : base(itemActivator)
-        {
-        }
+    }
 
-        public override bool CanActivate(TableInfo target)
-        {
-            return true;
-        }
+    public override bool CanActivate(TableInfo target)
+    {
+        return true;
+    }
 
-        public override void Activate(TableInfo target)
-        {
-            ItemActivator.Activate<TableInfoUI, TableInfo>(target);
-        }
+    public override void Activate(TableInfo target)
+    {
+        ItemActivator.Activate<TableInfoUI, TableInfo>(target);
+    }
 
-        public override ICommandExecution ProposeExecution(ICombineToMakeCommand cmd, TableInfo target, InsertOption insertOption = InsertOption.Default)
-        {
-            return null;
-        }
+    public override ICommandExecution ProposeExecution(ICombineToMakeCommand cmd, TableInfo target, InsertOption insertOption = InsertOption.Default)
+    {
+        return null;
     }
 }

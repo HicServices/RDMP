@@ -9,28 +9,27 @@ using Rdmp.Core.Curation.Data;
 using Rdmp.UI.ItemActivation;
 using Rdmp.UI.SimpleDialogs;
 
-namespace Rdmp.UI.CommandExecution.Proposals
+namespace Rdmp.UI.CommandExecution.Proposals;
+
+internal class ProposeExecutionWhenTargetIsSupportingDocument : RDMPCommandExecutionProposal<SupportingDocument>
 {
-    class ProposeExecutionWhenTargetIsSupportingDocument : RDMPCommandExecutionProposal<SupportingDocument>
+    public ProposeExecutionWhenTargetIsSupportingDocument(IActivateItems itemActivator)
+        : base(itemActivator)
     {
-        public ProposeExecutionWhenTargetIsSupportingDocument(IActivateItems itemActivator)
-            : base(itemActivator)
-        {
-        }
+    }
 
-        public override bool CanActivate(SupportingDocument target)
-        {
-            return true;
-        }
+    public override bool CanActivate(SupportingDocument target)
+    {
+        return true;
+    }
 
-        public override void Activate(SupportingDocument target)
-        {
-            ItemActivator.Activate<SupportingDocumentUI, SupportingDocument>(target);
-        }
+    public override void Activate(SupportingDocument target)
+    {
+        ItemActivator.Activate<SupportingDocumentUI, SupportingDocument>(target);
+    }
 
-        public override ICommandExecution ProposeExecution(ICombineToMakeCommand cmd, SupportingDocument target, InsertOption insertOption = InsertOption.Default)
-        {
-            return null;
-        }
+    public override ICommandExecution ProposeExecution(ICombineToMakeCommand cmd, SupportingDocument target, InsertOption insertOption = InsertOption.Default)
+    {
+        return null;
     }
 }

@@ -8,120 +8,119 @@ using System;
 using ReusableLibraryCode.Progress;
 using ReusableLibraryCode.Settings;
 
-namespace ReusableLibraryCode.Checks
+namespace ReusableLibraryCode.Checks;
+
+/// <summary>
+/// Created when an ICheckable performs a check to indicate whether the check passed or not and whether there is an Exception or ProposedFix.  ProposedFix
+/// is a string that suggests how a problem can be resolved but where the resolution might be undesireable under certain circumstances (hence the choice).
+/// 
+/// <para>The workflow is:
+/// 1. ICheckable has its Check method called with an ICheckNotifier
+/// 2. Check logic performed
+/// 3. CheckEventArgs created and ICheckNotifier.OnCheckPerformed called
+/// 4. ICheckNotifier decides how to respond to the message (which can include throwing an Exception - which you should not catch/suppress).
+/// 5. If OnCheckPerformed compeltes without Exception evaluate the bool return if there was a ProposedFix and apply the fix if it is true</para>
+/// 
+/// </summary>
+public partial class CheckEventArgs : IHasSummary
 {
-    /// <summary>
-    /// Created when an ICheckable performs a check to indicate whether the check passed or not and whether there is an Exception or ProposedFix.  ProposedFix
-    /// is a string that suggests how a problem can be resolved but where the resolution might be undesireable under certain circumstances (hence the choice).
-    /// 
-    /// <para>The workflow is:
-    /// 1. ICheckable has its Check method called with an ICheckNotifier
-    /// 2. Check logic performed
-    /// 3. CheckEventArgs created and ICheckNotifier.OnCheckPerformed called
-    /// 4. ICheckNotifier decides how to respond to the message (which can include throwing an Exception - which you should not catch/suppress).
-    /// 5. If OnCheckPerformed compeltes without Exception evaluate the bool return if there was a ProposedFix and apply the fix if it is true</para>
-    /// 
-    /// </summary>
-    public partial class CheckEventArgs : IHasSummary
+    public string Message { get; set; }
+    public CheckResult Result { get; set; }
+    public Exception Ex { get; set; }
+    public string ProposedFix { get; set; }
+    public string StackTrace { get; set; }
+
+    public DateTime EventDate { get; private set; }
+
+    public CheckEventArgs(string message, CheckResult result, Exception ex = null, string proposedFix = null)
     {
-        public string Message { get; set; }
-        public CheckResult Result { get; set; }
-        public Exception Ex { get; set; }
-        public string ProposedFix { get; set; }
-        public string StackTrace { get; set; }
+        Message = message;
+        Result = result;
+        Ex = ex;
+        ProposedFix = proposedFix;
 
-        public DateTime EventDate { get; private set; }
+        EventDate = DateTime.Now;
 
-        public CheckEventArgs(string message, CheckResult result, Exception ex = null, string proposedFix = null)
+        try
         {
-            Message = message;
-            Result = result;
-            Ex = ex;
-            ProposedFix = proposedFix;
+            StackTrace = Environment.StackTrace;
+        }
+        catch (Exception)
+        {
+            //Stack trace not available ah well
+        }
+    }
 
-            EventDate = DateTime.Now;
+    public CheckEventArgs(ErrorCode code, params object[] formatStringArgs) : this(code,null,null,formatStringArgs)
+    {
 
-            try
-            {
-                StackTrace = Environment.StackTrace;
-            }
-            catch (Exception)
-            {
-                //Stack trace not available ah well
-            }
+    }
+
+    public CheckEventArgs(ErrorCode code, Exception ex, params object[] formatStringArgs) : this(code, ex, null, formatStringArgs)
+    {
+
+    }
+
+    /// <summary>
+    /// Reports an event from the standard list in <see cref="ErrorCodes"/> at the <see cref="ErrorCode.DefaultTreatment"/> check
+    /// level (or the customised reporting level in <see cref="UserSettings"/>).
+    /// </summary>
+    /// <param name="code"></param>
+    /// <param name="ex"></param>
+    /// <param name="proposedFix"></param>
+    /// <param name="formatStringArgs"></param>
+    public CheckEventArgs(ErrorCode code, Exception ex, string proposedFix, params object[] formatStringArgs)
+    {
+        Message = $"{code.Code} {string.Format(code.Message, formatStringArgs)}";
+        Result = UserSettings.GetErrorReportingLevelFor(code);
+        Ex = ex;
+        ProposedFix = proposedFix;
+
+        EventDate = DateTime.Now;
+
+        try
+        {
+            StackTrace = Environment.StackTrace;
+        }
+        catch (Exception)
+        {
+            //Stack trace not available ah well
         }
 
-        public CheckEventArgs(ErrorCode code, params object[] formatStringArgs) : this(code,null,null,formatStringArgs)
-        {
+    }
 
-        }
+    public override string ToString()
+    {
+        return Message;
+    }
 
-        public CheckEventArgs(ErrorCode code, Exception ex, params object[] formatStringArgs) : this(code, ex, null, formatStringArgs)
-        {
-
-        }
-
-        /// <summary>
-        /// Reports an event from the standard list in <see cref="ErrorCodes"/> at the <see cref="ErrorCode.DefaultTreatment"/> check
-        /// level (or the customised reporting level in <see cref="UserSettings"/>).
-        /// </summary>
-        /// <param name="code"></param>
-        /// <param name="ex"></param>
-        /// <param name="proposedFix"></param>
-        /// <param name="formatStringArgs"></param>
-        public CheckEventArgs(ErrorCode code, Exception ex, string proposedFix, params object[] formatStringArgs)
-        {
-            Message = code.Code + " " + string.Format(code.Message,formatStringArgs);
-            Result = UserSettings.GetErrorReportingLevelFor(code);
-            Ex = ex;
-            ProposedFix = proposedFix;
-
-            EventDate = DateTime.Now;
-
-            try
-            {
-                StackTrace = Environment.StackTrace;
-            }
-            catch (Exception)
-            {
-                //Stack trace not available ah well
-            }
-
-        }
-
-        public override string ToString()
-        {
-            return Message;
-        }
-
-        public NotifyEventArgs ToNotifyEventArgs()
-        {
-            ProgressEventType status;
+    public NotifyEventArgs ToNotifyEventArgs()
+    {
+        ProgressEventType status;
             
-            switch (Result)
-            {
-                case CheckResult.Success:
-                    status = ProgressEventType.Information;
-                    break;
-                case CheckResult.Warning:
-                    status = ProgressEventType.Warning;
-                    break;
-                case CheckResult.Fail:
-                    status = ProgressEventType.Error;
-                    break;
-                default:
-                    throw new ArgumentOutOfRangeException();
-            }
-
-            return new NotifyEventArgs(status, Message,Ex);
-        }
-
-        public void GetSummary(out string title, out string body,out string stackTrace, out CheckResult level)
+        switch (Result)
         {
-            title = "Check Result";
-            body = Message;
-            stackTrace= StackTrace;
-            level = Result;
+            case CheckResult.Success:
+                status = ProgressEventType.Information;
+                break;
+            case CheckResult.Warning:
+                status = ProgressEventType.Warning;
+                break;
+            case CheckResult.Fail:
+                status = ProgressEventType.Error;
+                break;
+            default:
+                throw new ArgumentOutOfRangeException();
         }
+
+        return new NotifyEventArgs(status, Message,Ex);
+    }
+
+    public void GetSummary(out string title, out string body,out string stackTrace, out CheckResult level)
+    {
+        title = "Check Result";
+        body = Message;
+        stackTrace= StackTrace;
+        level = Result;
     }
 }

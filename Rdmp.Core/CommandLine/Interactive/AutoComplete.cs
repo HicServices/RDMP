@@ -2,31 +2,29 @@
 
 using System;
 using System.Collections.Generic;
-using System.Globalization;
 using System.Linq;
 
 #pragma warning disable 1591
 
-namespace Rdmp.Core.CommandLine.Interactive
+namespace Rdmp.Core.CommandLine.Interactive;
+
+internal class AutoComplete
 {
-    class AutoComplete
+    private readonly string[] _autocompletes;
+
+    public AutoComplete(IEnumerable<string> autocompletes)
     {
-        private readonly string[] autocompletes;
+        _autocompletes = autocompletes?.ToArray() ?? Array.Empty<string>();
+    }
 
-        public AutoComplete(IEnumerable<string> autocompletes)
-        {
-            this.autocompletes = autocompletes?.ToArray() ?? new string[0];
-        }
+    public char[] Separators { get;set;} = new []{ ','};
 
-        public char[] Separators { get;set;} = new []{ ','};
+    public string[] GetSuggestions(string text, int index)
+    {
+        //they haven't typed anything yet
+        if(string.IsNullOrWhiteSpace(text))
+            return _autocompletes;
 
-        public string[] GetSuggestions(string text, int index)
-        {
-            //they haven't typed anything yet
-            if(string.IsNullOrWhiteSpace(text))
-                return autocompletes;
-
-            return autocompletes.Where(a=>a.StartsWith(text)).ToArray();
-        }
+        return _autocompletes.Where(a=>a.StartsWith(text)).ToArray();
     }
 }

@@ -15,86 +15,84 @@ using Rdmp.Core.Curation.Data.Defaults;
 using Rdmp.Core.Databases;
 using ReusableLibraryCode.Checks;
 
-namespace Tests.Common.Scenarios
+namespace Tests.Common.Scenarios;
+
+public class TestsRequiringANOStore:TestsRequiringA
 {
-    public class TestsRequiringANOStore:TestsRequiringA
+    protected ExternalDatabaseServer ANOStore_ExternalDatabaseServer { get; set; }
+    protected DiscoveredDatabase ANOStore_Database { get; set; }
+    protected string ANOStore_DatabaseName = TestDatabaseNames.GetConsistentName("ANOStore");
+
+    [OneTimeSetUp]
+    protected override void OneTimeSetUp()
     {
-        protected ExternalDatabaseServer ANOStore_ExternalDatabaseServer { get; set; }
-        protected DiscoveredDatabase ANOStore_Database { get; set; }
-        protected string ANOStore_DatabaseName = TestDatabaseNames.GetConsistentName("ANOStore");
+        base.OneTimeSetUp();
 
-        [OneTimeSetUp]
-        protected override void OneTimeSetUp()
-        {
-            base.OneTimeSetUp();
-
-            ANOStore_Database = DiscoveredServerICanCreateRandomDatabasesAndTablesOn.ExpectDatabase(ANOStore_DatabaseName);
+        ANOStore_Database = DiscoveredServerICanCreateRandomDatabasesAndTablesOn.ExpectDatabase(ANOStore_DatabaseName);
             
-            CreateANODatabase();
+        CreateANODatabase();
 
-            CreateReferenceInCatalogueToANODatabase();
-        }
+        CreateReferenceInCatalogueToANODatabase();
+    }
         
-        private void CreateANODatabase()
-        {
-            if (ANOStore_Database.Exists())
-                ANOStore_Database.Drop();
+    private void CreateANODatabase()
+    {
+        if (ANOStore_Database.Exists())
+            ANOStore_Database.Drop();
 
-            var scriptCreate = new MasterDatabaseScriptExecutor(ANOStore_Database);
+        var scriptCreate = new MasterDatabaseScriptExecutor(ANOStore_Database);
             
-            scriptCreate.CreateAndPatchDatabase(new ANOStorePatcher(), new ThrowImmediatelyCheckNotifier());
-        }
+        scriptCreate.CreateAndPatchDatabase(new ANOStorePatcher(), new ThrowImmediatelyCheckNotifier());
+    }
 
-        private void CreateReferenceInCatalogueToANODatabase()
+    private void CreateReferenceInCatalogueToANODatabase()
+    {
+        RemovePreExistingReference();
+
+        //now create a new reference!
+        ANOStore_ExternalDatabaseServer = new ExternalDatabaseServer(CatalogueRepository, ANOStore_DatabaseName,new ANOStorePatcher());
+        ANOStore_ExternalDatabaseServer.SetProperties(ANOStore_Database);
+
+        CatalogueRepository.SetDefault(PermissableDefaults.ANOStore, ANOStore_ExternalDatabaseServer);
+    }
+
+    private void RemovePreExistingReference()
+    {
+        //There will likely be an old reference to the external database server
+        var preExisting = CatalogueRepository.GetAllObjects<ExternalDatabaseServer>().SingleOrDefault(e => e.Name.Equals(ANOStore_DatabaseName));
+
+        if (preExisting == null) return;
+
+        //Some child tests will likely create ANOTables that reference this server so we need to cleanup those for them so that we can cleanup the old server reference too
+        foreach (var lingeringTablesReferencingServer in CatalogueRepository.GetAllObjects<ANOTable>().Where(a => a.Server_ID == preExisting.ID))
         {
-            RemovePreExistingReference();
-
-            //now create a new reference!
-            ANOStore_ExternalDatabaseServer = new ExternalDatabaseServer(CatalogueRepository, ANOStore_DatabaseName,new ANOStorePatcher());
-            ANOStore_ExternalDatabaseServer.SetProperties(ANOStore_Database);
-
-            CatalogueRepository.SetDefault(PermissableDefaults.ANOStore, ANOStore_ExternalDatabaseServer);
-        }
-
-        private void RemovePreExistingReference()
-        {
-            //There will likely be an old reference to the external database server
-            var preExisting = CatalogueRepository.GetAllObjects<ExternalDatabaseServer>().SingleOrDefault(e => e.Name.Equals(ANOStore_DatabaseName));
-
-            if (preExisting == null) return;
-
-            //Some child tests will likely create ANOTables that reference this server so we need to cleanup those for them so that we can cleanup the old server reference too
-            foreach (var lingeringTablesReferencingServer in CatalogueRepository.GetAllObjects<ANOTable>().Where(a => a.Server_ID == preExisting.ID))
+            //unhook the anonymisation transform from any ColumnInfos using it
+            foreach (var colWithANOTransform in CatalogueRepository.GetAllObjects<ColumnInfo>().Where(c => c.ANOTable_ID == lingeringTablesReferencingServer.ID))
             {
-                //unhook the anonymisation transform from any ColumnInfos using it
-                foreach (ColumnInfo colWithANOTransform in CatalogueRepository.GetAllObjects<ColumnInfo>().Where(c => c.ANOTable_ID == lingeringTablesReferencingServer.ID))
-                {
-                    Console.WriteLine("Unhooked ColumnInfo " + colWithANOTransform + " from ANOTable " + lingeringTablesReferencingServer);
-                    colWithANOTransform.ANOTable_ID = null;
-                    colWithANOTransform.SaveToDatabase();
-                }
+                Console.WriteLine(
+                    $"Unhooked ColumnInfo {colWithANOTransform} from ANOTable {lingeringTablesReferencingServer}");
+                colWithANOTransform.ANOTable_ID = null;
+                colWithANOTransform.SaveToDatabase();
+            }
                 
-                TruncateANOTable(lingeringTablesReferencingServer);
-                lingeringTablesReferencingServer.DeleteInDatabase();
-            }
-
-            //now delete the old server reference
-            preExisting.DeleteInDatabase();
+            TruncateANOTable(lingeringTablesReferencingServer);
+            lingeringTablesReferencingServer.DeleteInDatabase();
         }
 
-        protected void TruncateANOTable(ANOTable anoTable)
-        {
-            Console.WriteLine("Truncating table " + anoTable.TableName + " on server " + ANOStore_ExternalDatabaseServer);
+        //now delete the old server reference
+        preExisting.DeleteInDatabase();
+    }
+
+    protected void TruncateANOTable(ANOTable anoTable)
+    {
+        Console.WriteLine($"Truncating table {anoTable.TableName} on server {ANOStore_ExternalDatabaseServer}");
             
-            var server = ANOStore_Database.Server;
-            using (var con = server.GetConnection())
-            {
-                con.Open();
-                using(var cmdDelete = server.GetCommand("if exists (select top 1 * from sys.tables where name ='" + anoTable.TableName + "') TRUNCATE TABLE " + anoTable.TableName, con))
-                    cmdDelete.ExecuteNonQuery();
-                con.Close();
-            }
-        
-        }
+        var server = ANOStore_Database.Server;
+        using var con = server.GetConnection();
+        con.Open();
+        using(var cmdDelete = server.GetCommand(
+                  $"if exists (select top 1 * from sys.tables where name ='{anoTable.TableName}') TRUNCATE TABLE {anoTable.TableName}", con))
+            cmdDelete.ExecuteNonQuery();
+        con.Close();
     }
 }

@@ -12,47 +12,46 @@ using Rdmp.Core.Icons.IconProvision;
 using ReusableLibraryCode.Icons.IconProvision;
 using SixLabors.ImageSharp.PixelFormats;
 
-namespace Rdmp.Core.CommandExecution.AtomicCommands
+namespace Rdmp.Core.CommandExecution.AtomicCommands;
+
+public class ExecuteCommandCreateNewANOTable : BasicCommandExecution,IAtomicCommand
 {
-    public class ExecuteCommandCreateNewANOTable : BasicCommandExecution,IAtomicCommand
+    private IExternalDatabaseServer _anoStoreServer;
+
+    public ExecuteCommandCreateNewANOTable(IBasicActivateItems activator) : base(activator)
     {
-        private IExternalDatabaseServer _anoStoreServer;
+        _anoStoreServer = BasicActivator.ServerDefaults.GetDefaultFor(PermissableDefaults.ANOStore);
 
-        public ExecuteCommandCreateNewANOTable(IBasicActivateItems activator) : base(activator)
+        if(_anoStoreServer == null)
+            SetImpossible("No default ANOStore has been set");
+    }
+
+    public override string GetCommandHelp()
+    {
+        return "Create a table for storing anonymous identifier mappings for a given type of code e.g. 'PatientId' / 'GP Codes' etc";
+    }
+
+    public override Image<Rgba32> GetImage(IIconProvider iconProvider)
+    {
+        return iconProvider.GetImage(RDMPConcept.ANOTable, OverlayKind.Add);
+    }
+
+    public override void Execute()
+    {
+        base.Execute();
+
+        if(TypeText("ANO Concept Name","Name",500,null, out var name))
         {
-            _anoStoreServer = BasicActivator.ServerDefaults.GetDefaultFor(PermissableDefaults.ANOStore);
-
-            if(_anoStoreServer == null)
-                SetImpossible("No default ANOStore has been set");
-        }
-
-        public override string GetCommandHelp()
-        {
-            return "Create a table for storing anonymous identifier mappings for a given type of code e.g. 'PatientId' / 'GP Codes' etc";
-        }
-
-        public override Image<Rgba32> GetImage(IIconProvider iconProvider)
-        {
-            return iconProvider.GetImage(RDMPConcept.ANOTable, OverlayKind.Add);
-        }
-
-        public override void Execute()
-        {
-            base.Execute();
-
-            if(TypeText("ANO Concept Name","Name",500,null, out string name))
+            if(TypeText("Type Concept Suffix", "Suffix", 5, null, out var suffix))
             {
-                if(TypeText("Type Concept Suffix", "Suffix", 5, null, out string suffix))
-                {
-                    if(!name.StartsWith("ANO"))
-                        name = "ANO" + name;
+                if(!name.StartsWith("ANO"))
+                    name = $"ANO{name}";
 
-                    var s = suffix.Trim('_');
+                var s = suffix.Trim('_');
 
-                    var anoTable = new ANOTable(BasicActivator.RepositoryLocator.CatalogueRepository, (ExternalDatabaseServer) _anoStoreServer,name,s);
-                    Publish(anoTable);
-                    Activate(anoTable);
-                }
+                var anoTable = new ANOTable(BasicActivator.RepositoryLocator.CatalogueRepository, (ExternalDatabaseServer) _anoStoreServer,name,s);
+                Publish(anoTable);
+                Activate(anoTable);
             }
         }
     }

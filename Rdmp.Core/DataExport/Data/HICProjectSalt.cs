@@ -4,31 +4,30 @@
 // RDMP is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License for more details.
 // You should have received a copy of the GNU General Public License along with RDMP. If not, see <https://www.gnu.org/licenses/>.
 
-namespace Rdmp.Core.DataExport.Data
+namespace Rdmp.Core.DataExport.Data;
+
+/// <summary>
+/// Provides the ProjectNumber as the salt for the data export hashing of columns (See ConfigureHashingAlgorithm)
+/// </summary>
+public class HICProjectSalt : IHICProjectSalt
 {
+    private readonly IProject _project;
+
     /// <summary>
-    /// Provides the ProjectNumber as the salt for the data export hashing of columns (See ConfigureHashingAlgorithm)
+    /// Creates a hashing salt based on the given <paramref name="project"/>'s <see cref="IProject.ProjectNumber"/>
     /// </summary>
-    public class HICProjectSalt : IHICProjectSalt
+    /// <param name="project"></param>
+    public HICProjectSalt(IProject project)
     {
-        private readonly IProject _project;
+        _project = project;
+    }
 
-        /// <summary>
-        /// Creates a hashing salt based on the given <paramref name="project"/>'s <see cref="IProject.ProjectNumber"/>
-        /// </summary>
-        /// <param name="project"></param>
-        public HICProjectSalt(IProject project)
-        {
-            _project = project;
-        }
-
-        /// <summary>
-        /// Returns the <see cref="IProject.ProjectNumber"/> (set during construction).
-        /// </summary>
-        /// <returns></returns>
-        public string GetSalt()
-        {
-            return _project.ProjectNumber.ToString();
-        }
+    /// <summary>
+    /// Returns the <see cref="IProject.ProjectNumber"/> (set during construction).
+    /// </summary>
+    /// <returns></returns>
+    public string GetSalt()
+    {
+        return _project.ProjectNumber.ToString();
     }
 }

@@ -5,32 +5,30 @@
 // You should have received a copy of the GNU General Public License along with RDMP. If not, see <https://www.gnu.org/licenses/>.
 
 using System.Linq;
-using Rdmp.Core;
 using Rdmp.Core.CommandExecution;
 using Rdmp.Core.CommandExecution.AtomicCommands.CatalogueCreationCommands;
 using Rdmp.Core.Curation.Data;
 using Rdmp.UI.CommandExecution.AtomicCommands;
 
-namespace Rdmp.UI.Menus
+namespace Rdmp.UI.Menus;
+
+[System.ComponentModel.DesignerCategory("")]
+internal class CatalogueFolderMenu : RDMPContextMenuStrip
 {
-    [System.ComponentModel.DesignerCategory("")]
-    internal class CatalogueFolderMenu : RDMPContextMenuStrip
+    public CatalogueFolderMenu(RDMPContextMenuStripArgs args, string folder) : base(args, folder)
     {
-        public CatalogueFolderMenu(RDMPContextMenuStripArgs args, string folder) : base(args, folder)
+
+        //Things that are always visible regardless
+        Add(new ExecuteCommandCreateNewCatalogueByImportingFileUI(_activator)
         {
+            OverrideCommandName = "New Catalogue From File...",
+            TargetFolder = folder,
+            SuggestedCategory = AtomicCommandFactory.Add,
+            Weight = -90.9f
+        });
 
-            //Things that are always visible regardless
-            Add(new ExecuteCommandCreateNewCatalogueByImportingFileUI(_activator)
-                {
-                    OverrideCommandName = "New Catalogue From File...",
-                    TargetFolder = folder,
-                    SuggestedCategory = AtomicCommandFactory.Add,
-                    Weight = -90.9f
-                });
+        args.SkipCommand<ExecuteCommandCreateNewCatalogueByImportingFile>();
 
-            args.SkipCommand<ExecuteCommandCreateNewCatalogueByImportingFile>();
-
-            Add(new ExecuteCommandGenerateMetadataReport(_activator, _activator.CoreChildProvider.GetAllChildrenRecursively(folder).OfType<ICatalogue>().ToArray()));
-        }
+        Add(new ExecuteCommandGenerateMetadataReport(_activator, _activator.CoreChildProvider.GetAllChildrenRecursively(folder).OfType<ICatalogue>().ToArray()));
     }
 }

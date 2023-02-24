@@ -12,118 +12,117 @@ using Rdmp.Core.Icons.IconProvision;
 using ReusableLibraryCode.Icons.IconProvision;
 using SixLabors.ImageSharp.PixelFormats;
 
-namespace Rdmp.Core.CommandExecution.AtomicCommands
+namespace Rdmp.Core.CommandExecution.AtomicCommands;
+
+/// <summary>
+/// Adds a new SqlParameter to an <see cref="ICollectSqlParameters"/>
+/// </summary>
+public class ExecuteCommandAddParameter : BasicCommandExecution, IAtomicCommand
 {
-    /// <summary>
-    /// Adds a new SqlParameter to an <see cref="ICollectSqlParameters"/>
-    /// </summary>
-    public class ExecuteCommandAddParameter : BasicCommandExecution, IAtomicCommand
+    private readonly ICollectSqlParameters _collector;
+    private readonly string _parameterName;
+    private readonly string _datatype;
+    private readonly string _value;
+    private const float DEFAULT_WEIGHT = 2.1f;
+
+    public ExecuteCommandAddParameter(IBasicActivateItems activator, ICollectSqlParameters collector, string parameterName, string datatype, string value) : base(activator)
     {
-        private readonly ICollectSqlParameters _collector;
-        private readonly string _parameterName;
-        private readonly string _datatype;
-        private readonly string _value;
-        private const float DEFAULT_WEIGHT = 2.1f;
+        Weight = DEFAULT_WEIGHT;
+        _collector = collector;
+        _parameterName = parameterName;
+        _datatype = datatype;
+        _value = value;
+        UseTripleDotSuffix = true;
 
-        public ExecuteCommandAddParameter(IBasicActivateItems activator, ICollectSqlParameters collector, string parameterName, string datatype, string value) : base(activator)
+        if (collector is IMightBeReadOnly r)
         {
-            Weight = DEFAULT_WEIGHT;
-            _collector = collector;
-            _parameterName = parameterName;
-            _datatype = datatype;
-            _value = value;
-            UseTripleDotSuffix = true;
-
-            if (collector is IMightBeReadOnly r)
-            {
-                SetImpossibleIfReadonly(r);
-            }
+            SetImpossibleIfReadonly(r);
         }
+    }
 
-        public override Image<Rgba32> GetImage(IIconProvider iconProvider)
+    public override Image<Rgba32> GetImage(IIconProvider iconProvider)
+    {
+        return iconProvider.GetImage(RDMPConcept.ParametersNode);
+    }
+
+    public override void Execute()
+    {
+        var factory = new ParameterCollectionUIOptionsFactory();
+        var options = factory.Create(_collector, BasicActivator.CoreChildProvider);
+
+        var n = _parameterName;
+        var d = _datatype;
+        var v = _value;
+
+        if (n == null)
         {
-            return iconProvider.GetImage(RDMPConcept.ParametersNode);
-        }
-
-        public override void Execute()
-        {
-            ParameterCollectionUIOptionsFactory factory = new ParameterCollectionUIOptionsFactory();
-            var options = factory.Create(_collector, BasicActivator.CoreChildProvider);
-
-            var n = _parameterName;
-            var d = _datatype;
-            var v = _value;
-
-            if (n == null)
-            {
-                // get user to type the name of the parameter
-                if (BasicActivator.TypeText(new DialogArgs
+            // get user to type the name of the parameter
+            if (BasicActivator.TypeText(new DialogArgs
                 {
                     EntryLabel = "Name",
                     TaskDescription = "A name is required for the paramater.  It must start with '@' e.g. @myparameter.  Do not add spaces or start the name with a number.",
                     WindowTitle = "Add Paramater"
-                }, 99,"@myVariable", out string name,false))
-                {
-                    // user did type a name
-                    n = name;
-                }
-                else
-                {
-                    // user cancelled typing the parameter name
-                    return;
-                }
-            }
-
-
-            if (d == null)
+                }, 99,"@myVariable", out var name,false))
             {
-                // get user to type the name of the parameter
-                if (BasicActivator.TypeText(new DialogArgs
+                // user did type a name
+                n = name;
+            }
+            else
+            {
+                // user cancelled typing the parameter name
+                return;
+            }
+        }
+
+
+        if (d == null)
+        {
+            // get user to type the name of the parameter
+            if (BasicActivator.TypeText(new DialogArgs
                 {
                     EntryLabel = "DataType",
                     TaskDescription = "What data type are you storing in the parameter (e.g. datetime2)",
                     WindowTitle = "Parameter Data Type"
-                }, 99, "varchar(10)", out string datatype, false))
-                {
-                    // user did type
-                    d = datatype;
-                }
-                else
-                {
-                    // user cancelled typing
-                    return;
-                }
-            }
-
-            if (v == null)
+                }, 99, "varchar(10)", out var datatype, false))
             {
-                // get user to type the name of the parameter
-                if (BasicActivator.TypeText(new DialogArgs
+                // user did type
+                d = datatype;
+            }
+            else
+            {
+                // user cancelled typing
+                return;
+            }
+        }
+
+        if (v == null)
+        {
+            // get user to type the name of the parameter
+            if (BasicActivator.TypeText(new DialogArgs
                 {
                     EntryLabel = "Value",
                     TaskDescription = "What value should the parameter have.  Ensure if you are using text that it is appropriately quoted",
                     WindowTitle = "Parameter Value"
-                }, int.MaxValue, AnyTableSqlParameter.DefaultValue, out string value, false))
-                {
-                    // user did type
-                    v = value;
-                }
-                else
-                {
-                    // user cancelled typing
-                    return;
-                }
-            }
-            var p = options.CreateNewParameter(n);
-            p.ParameterSQL = $"DECLARE {p.ParameterName} as {d}";
-            p.Value = v;
-            p.SaveToDatabase();
-
-            if (_collector is DatabaseEntity de)
+                }, int.MaxValue, AnyTableSqlParameter.DefaultValue, out var value, false))
             {
-                Publish(de);
+                // user did type
+                v = value;
             }
-
+            else
+            {
+                // user cancelled typing
+                return;
+            }
         }
+        var p = options.CreateNewParameter(n);
+        p.ParameterSQL = $"DECLARE {p.ParameterName} as {d}";
+        p.Value = v;
+        p.SaveToDatabase();
+
+        if (_collector is DatabaseEntity de)
+        {
+            Publish(de);
+        }
+
     }
 }

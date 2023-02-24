@@ -17,78 +17,74 @@ using ReusableLibraryCode.Icons.IconProvision;
 using SixLabors.ImageSharp.PixelFormats;
 using WideMessageBox = Rdmp.UI.SimpleDialogs.WideMessageBox;
 
-namespace Rdmp.UI.CommandExecution.AtomicCommands
+namespace Rdmp.UI.CommandExecution.AtomicCommands;
+
+public class ExecuteCommandShowKeywordHelp : BasicUICommandExecution, IAtomicCommand
 {
-    public class ExecuteCommandShowKeywordHelp : BasicUICommandExecution, IAtomicCommand
+    private RDMPContextMenuStripArgs _args;
+
+    public ExecuteCommandShowKeywordHelp(IActivateItems activator,  RDMPContextMenuStripArgs args) : base(activator)
     {
-        private RDMPContextMenuStripArgs _args;
+        _args = args;
 
-        public ExecuteCommandShowKeywordHelp(IActivateItems activator,  RDMPContextMenuStripArgs args) : base(activator)
-        {
-            _args = args;
+        Weight = 100.6f;
+    }
 
-            Weight = 100.6f;
-        }
+    public override string GetCommandName()
+    {
+        return "What is this?";
+    }
 
-        public override string GetCommandName()
-        {
-            return "What is this?";
-        }
+    public override Image<Rgba32> GetImage(IIconProvider iconProvider)
+    {
+        return iconProvider.GetImage(RDMPConcept.Help);
+    }
 
-        public override Image<Rgba32> GetImage(IIconProvider iconProvider)
-        {
-            return iconProvider.GetImage(RDMPConcept.Help);
-        }
+    public override string GetCommandHelp()
+    {
+        return "Displays the code documentation for the menu object or the Type name of the object if it has none";
+    }
 
-        public override string GetCommandHelp()
-        {
-            return "Displays the code documentation for the menu object or the Type name of the object if it has none";
-        }
-
-        public override void Execute()
-        {
-            base.Execute();
+    public override void Execute()
+    {
+        base.Execute();
             
-            string title = null;
-            string docs = null;
+        string title = null;
+        string docs = null;
             
-            //get docs from masquerader if it has any
-            if (_args.Masquerader != null)
-            {
-                title = GetTypeName(_args.Masquerader.GetType());
-                docs = Activator.RepositoryLocator.CatalogueRepository.CommentStore.GetTypeDocumentationIfExists(_args.Masquerader.GetType());
-            }
-            
-            //if not get them from the actual class
-            if(docs == null)
-            {
-                title = GetTypeName(_args.Model.GetType());
-
-                var knows = _args.Model as IKnowWhatIAm;
-                //does the class have state dependent alternative to xmldoc?
-                if (knows != null)
-                    docs = knows.WhatIsThis(); //yes
-                else
-                    docs = Activator.RepositoryLocator.CatalogueRepository.CommentStore.GetTypeDocumentationIfExists(_args.Model.GetType());
-            }
-            
-            //if we have docs show them otherwise just the Type name
-            if (docs != null)
-                WideMessageBox.ShowKeywordHelp(title, docs);
-            else
-                MessageBox.Show(title);
-        }
-
-        private string GetTypeName(Type t)
+        //get docs from masquerader if it has any
+        if (_args.Masquerader != null)
         {
-            try
-            {
-                return MEF.GetCSharpNameForType(t);
-            }
-            catch (NotSupportedException)
-            {
-                return t.Name;
-            }
+            title = GetTypeName(_args.Masquerader.GetType());
+            docs = Activator.RepositoryLocator.CatalogueRepository.CommentStore.GetTypeDocumentationIfExists(_args.Masquerader.GetType());
+        }
+            
+        //if not get them from the actual class
+        if(docs == null)
+        {
+            title = GetTypeName(_args.Model.GetType());
+
+            //does the class have state dependent alternative to xmldoc?
+            docs = _args.Model is IKnowWhatIAm knows ? knows.WhatIsThis() : //yes
+                Activator.RepositoryLocator.CatalogueRepository.CommentStore.GetTypeDocumentationIfExists(_args.Model.GetType());
+        }
+            
+        //if we have docs show them otherwise just the Type name
+        if (docs != null)
+            WideMessageBox.ShowKeywordHelp(title, docs);
+        else
+            MessageBox.Show(title);
+    }
+
+    private string GetTypeName(Type t)
+    {
+        try
+        {
+            return MEF.GetCSharpNameForType(t);
+        }
+        catch (NotSupportedException)
+        {
+            return t.Name;
         }
     }
 }

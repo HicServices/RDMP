@@ -10,60 +10,59 @@ using System.Windows.Forms;
 using MapsDirectlyToDatabaseTable;
 using Rdmp.UI.ItemActivation;
 
-namespace Rdmp.UI.Rules
+namespace Rdmp.UI.Rules;
+
+internal abstract class BinderRule<T> : IBinderRule where T : IMapsDirectlyToDatabaseTable
 {
-    abstract class BinderRule<T> : IBinderRule where T : IMapsDirectlyToDatabaseTable
+    protected readonly IActivateItems Activator;
+    protected readonly T ToTest;
+    public ErrorProvider ErrorProvider { get; private set; }
+    protected readonly Func<T, object> PropertyToCheck;
+    protected readonly Control Control;
+
+    /// <summary>
+    /// The member on <see cref="ToTest"/> that 
+    /// </summary>
+    protected readonly string PropertyToCheckName;
+    protected BinderRule(IActivateItems activator, T toTest, Func<T, object> propertyToCheck, Control control, string propertyToCheckName)
     {
-        protected readonly IActivateItems Activator;
-        protected readonly T ToTest;
-        public ErrorProvider ErrorProvider { get; private set; }
-        protected readonly Func<T, object> PropertyToCheck;
-        protected readonly Control Control;
+        ErrorProvider = new ErrorProvider();
+        Activator = activator;
+        ToTest = toTest;
+        PropertyToCheck = propertyToCheck;
+        Control = control;
+        PropertyToCheckName = propertyToCheckName;
 
-        /// <summary>
-        /// The member on <see cref="ToTest"/> that 
-        /// </summary>
-        protected readonly string PropertyToCheckName;
-        protected BinderRule(IActivateItems activator, T toTest, Func<T, object> propertyToCheck, Control control, string propertyToCheckName)
-        {
-            ErrorProvider = new ErrorProvider();
-            Activator = activator;
-            ToTest = toTest;
-            PropertyToCheck = propertyToCheck;
-            Control = control;
-            PropertyToCheckName = propertyToCheckName;
+        activator.OnRuleRegistered(this);
 
-            activator.OnRuleRegistered(this);
-
-            toTest.PropertyChanged += ToTest_PropertyChanged;
-        }
-
-        private void ToTest_PropertyChanged(object sender, PropertyChangedEventArgs e)
-        {
-            // the property being changed is not ours
-            if (!string.Equals(e.PropertyName, PropertyToCheckName))
-            {
-                return;
-            }
-
-            var currentValue = PropertyToCheck(ToTest);
-            var typeToTest = ToTest.GetType();
-
-            string valid = IsValid(currentValue, typeToTest);
-
-            if (!string.IsNullOrWhiteSpace(valid))
-                ErrorProvider.SetError(Control, valid);
-            else
-                ErrorProvider.Clear(); //No error
-        }
-
-        /// <summary>
-        /// Return null if the <paramref name="currentValue"/> is valid or a message describing the problem
-        /// if it is not.
-        /// </summary>
-        /// <param name="currentValue"></param>
-        /// <param name="typeToTest"></param>
-        /// <returns></returns>
-        protected abstract string IsValid(object currentValue, Type typeToTest);
+        toTest.PropertyChanged += ToTest_PropertyChanged;
     }
+
+    private void ToTest_PropertyChanged(object sender, PropertyChangedEventArgs e)
+    {
+        // the property being changed is not ours
+        if (!string.Equals(e.PropertyName, PropertyToCheckName))
+        {
+            return;
+        }
+
+        var currentValue = PropertyToCheck(ToTest);
+        var typeToTest = ToTest.GetType();
+
+        var valid = IsValid(currentValue, typeToTest);
+
+        if (!string.IsNullOrWhiteSpace(valid))
+            ErrorProvider.SetError(Control, valid);
+        else
+            ErrorProvider.Clear(); //No error
+    }
+
+    /// <summary>
+    /// Return null if the <paramref name="currentValue"/> is valid or a message describing the problem
+    /// if it is not.
+    /// </summary>
+    /// <param name="currentValue"></param>
+    /// <param name="typeToTest"></param>
+    /// <returns></returns>
+    protected abstract string IsValid(object currentValue, Type typeToTest);
 }

@@ -11,62 +11,59 @@ using Rdmp.Core.Curation.Data;
 using Rdmp.Core.DataExport.Data;
 using Rdmp.Core.Providers;
 
-namespace Rdmp.Core.Repositories.Managers.HighPerformance
+namespace Rdmp.Core.Repositories.Managers.HighPerformance;
+
+/// <summary>
+/// Provides a memory based efficient (in terms of the number of database queries sent) way of finding all containers and subcontainers and filters in the entire DataExportManager
+/// database at once rather than using the methods on IContainer and IFilter which send individual database queries for relevant subcontainers etc.
+/// </summary>
+internal class DataExportFilterManagerFromChildProvider : DataExportFilterManager
 {
+    private readonly Dictionary<int, List<FilterContainer>> _subcontainers = new();
+        
+    private Dictionary<int, List<DeployedExtractionFilter>> _containersToFilters;
+
     /// <summary>
-    /// Provides a memory based efficient (in terms of the number of database queries sent) way of finding all containers and subcontainers and filters in the entire DataExportManager
-    /// database at once rather than using the methods on IContainer and IFilter which send individual database queries for relevant subcontainers etc.
+    /// Fetches all containers and filters out of the <paramref name="repository"/> and sets the class up to provide
+    /// fast access to them.
     /// </summary>
-    class DataExportFilterManagerFromChildProvider : DataExportFilterManager
+    /// <param name="repository"></param>
+    /// <param name="childProvider"></param>
+    public DataExportFilterManagerFromChildProvider(DataExportRepository repository, DataExportChildProvider childProvider): base(repository)
     {
-        readonly Dictionary<int, List<FilterContainer>> _subcontainers = new Dictionary<int, List<FilterContainer>>();
-        
-        private Dictionary<int, List<DeployedExtractionFilter>> _containersToFilters;
-
-        /// <summary>
-        /// Fetches all containers and filters out of the <paramref name="repository"/> and sets the class up to provide
-        /// fast access to them.
-        /// </summary>
-        /// <param name="repository"></param>
-        /// <param name="childProvider"></param>
-        public DataExportFilterManagerFromChildProvider(DataExportRepository repository, DataExportChildProvider childProvider): base(repository)
-        {
-            _containersToFilters = childProvider.AllDeployedExtractionFilters.Where(f=>f.FilterContainer_ID.HasValue).GroupBy(f=>f.FilterContainer_ID.Value).ToDictionary(gdc => gdc.Key, gdc => gdc.ToList());
+        _containersToFilters = childProvider.AllDeployedExtractionFilters.Where(f=>f.FilterContainer_ID.HasValue).GroupBy(f=>f.FilterContainer_ID.Value).ToDictionary(gdc => gdc.Key, gdc => gdc.ToList());
             
-            var server = repository.DiscoveredServer;
-            using (var con = repository.GetConnection())
-            {
-                var r = server.GetCommand("SELECT *  FROM FilterContainerSubcontainers", con).ExecuteReader();
-                while(r.Read())
-                {
+        var server = repository.DiscoveredServer;
+        using var con = repository.GetConnection();
+        var r = server.GetCommand("SELECT *  FROM FilterContainerSubcontainers", con).ExecuteReader();
+        while(r.Read())
+        {
 
-                    var parentId = Convert.ToInt32(r["FilterContainer_ParentID"]);
-                    var subcontainerId = Convert.ToInt32(r["FilterContainerChildID"]);
+            var parentId = Convert.ToInt32(r["FilterContainer_ParentID"]);
+            var subcontainerId = Convert.ToInt32(r["FilterContainerChildID"]);
 
-                    if(!_subcontainers.ContainsKey(parentId))
-                        _subcontainers.Add(parentId,new List<FilterContainer>());
+            if(!_subcontainers.ContainsKey(parentId))
+                _subcontainers.Add(parentId,new List<FilterContainer>());
 
-                    _subcontainers[parentId].Add(childProvider.AllContainers[subcontainerId]);
-                }
-                r.Close();
-            }
+            _subcontainers[parentId].Add(childProvider.AllContainers[subcontainerId]);
         }
+        r.Close();
+    }
         
-        /// <summary>
-        /// Returns all subcontainers found in the <paramref name="parent"/> (results are returned from the cache created during class construction)
-        /// </summary>
-        public override IContainer[] GetSubContainers(IContainer parent)
-        {
-            return _subcontainers.TryGetValue(parent.ID, out List<FilterContainer> result)
-                ? result.ToArray()
-                : new IContainer[0];
-        }
+    /// <summary>
+    /// Returns all subcontainers found in the <paramref name="parent"/> (results are returned from the cache created during class construction)
+    /// </summary>
+    public override IContainer[] GetSubContainers(IContainer parent)
+    {
+        return _subcontainers.TryGetValue(parent.ID, out var result)
+            ? result.ToArray()
+            : Array.Empty<IContainer>();
+    }
 
-        public override IFilter[] GetFilters(IContainer container)
-        {
-            return _containersToFilters.TryGetValue(container.ID, out List<DeployedExtractionFilter> filters)
-                ? filters.ToArray()
-                : new IFilter[0];
-        }
+    public override IFilter[] GetFilters(IContainer container)
+    {
+        return _containersToFilters.TryGetValue(container.ID, out var filters)
+            ? filters.ToArray()
+            : Array.Empty<IFilter>();
     }
 }

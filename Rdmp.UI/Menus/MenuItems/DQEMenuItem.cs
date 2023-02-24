@@ -14,44 +14,42 @@ using Rdmp.UI.CommandExecution.AtomicCommands;
 using Rdmp.UI.ItemActivation;
 using Rdmp.UI.SimpleDialogs;
 using ReusableLibraryCode.DataAccess;
-using ReusableLibraryCode.Icons;
 
-namespace Rdmp.UI.Menus.MenuItems
+namespace Rdmp.UI.Menus.MenuItems;
+
+internal class DQEMenuItem:RDMPToolStripMenuItem
 {
-    class DQEMenuItem:RDMPToolStripMenuItem
+    private readonly Catalogue _catalogue;
+    private readonly IExternalDatabaseServer _dqeServer;
+    public DQEMenuItem(IActivateItems activator, Catalogue catalogue): base(activator, "Data Quality Engine...")
     {
-        private readonly Catalogue _catalogue;
-        readonly IExternalDatabaseServer _dqeServer;
-        public DQEMenuItem(IActivateItems activator, Catalogue catalogue): base(activator, "Data Quality Engine...")
+        _catalogue = catalogue;
+
+        _dqeServer = activator.RepositoryLocator.CatalogueRepository.GetDefaultFor(PermissableDefaults.DQE);
+
+        Image = activator.CoreIconProvider.GetImage(RDMPConcept.DQE).ImageToBitmap();
+
+        Text = _dqeServer == null ? "Create DQE Database..." : "Data Quality Engine...";
+    }
+
+    protected override void OnClick(EventArgs e)
+    {
+        base.OnClick(e);
+
+        if (_dqeServer == null)
         {
-            _catalogue = catalogue;
-
-            _dqeServer = activator.RepositoryLocator.CatalogueRepository.GetDefaultFor(PermissableDefaults.DQE);
-
-            Image = activator.CoreIconProvider.GetImage(RDMPConcept.DQE).ImageToBitmap();
-
-            Text = _dqeServer == null ? "Create DQE Database..." : "Data Quality Engine...";
+            var cmdCreateDb = new ExecuteCommandCreateNewExternalDatabaseServer(_activator, new DataQualityEnginePatcher(), PermissableDefaults.DQE);
+            cmdCreateDb.Execute();
         }
-
-        protected override void OnClick(EventArgs e)
+        else
         {
-            base.OnClick(e);
-
-            if (_dqeServer == null)
-            {
-                var cmdCreateDb = new ExecuteCommandCreateNewExternalDatabaseServer(_activator, new DataQualityEnginePatcher(), PermissableDefaults.DQE);
-                cmdCreateDb.Execute();
-            }
+            Exception ex;
+            if (!_dqeServer.Discover(DataAccessContext.InternalDataProcessing).Server.RespondsWithinTime(5, out ex))
+                ExceptionViewer.Show(ex);
             else
-            {
-                Exception ex;
-                if (!_dqeServer.Discover(DataAccessContext.InternalDataProcessing).Server.RespondsWithinTime(5, out ex))
-                    ExceptionViewer.Show(ex);
-                else
-                    new ExecuteCommandRunDQEOnCatalogue(_activator, _catalogue).Execute();
-            }
+                new ExecuteCommandRunDQEOnCatalogue(_activator, _catalogue).Execute();
+        }
 
             
-        }
     }
 }

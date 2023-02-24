@@ -10,39 +10,37 @@ using System.Windows.Forms;
 using FAnsi.Discovery;
 using FAnsi.Discovery.TableCreation;
 
-namespace Rdmp.UI.DataLoadUIs.ModuleUIs
+namespace Rdmp.UI.DataLoadUIs.ModuleUIs;
+
+public partial class AdjustColumnDataTypesUI : Form, IDatabaseColumnRequestAdjuster
 {
-    
-    public partial class AdjustColumnDataTypesUI : Form, IDatabaseColumnRequestAdjuster
+    private List<DatabaseColumnRequest> _columns;
+
+    public AdjustColumnDataTypesUI()
     {
-        private List<DatabaseColumnRequest> _columns;
+        InitializeComponent();
+    }
 
-        public AdjustColumnDataTypesUI()
+    public void AdjustColumns(List<DatabaseColumnRequest> columns)
+    {
+        _columns = columns;
+
+        foreach (var column in _columns)
         {
-            InitializeComponent();
+            var ui = new DatabaseColumnRequestUI(column);
+            ui.Dock = DockStyle.Top;
+            flowLayoutPanel1.Controls.Add(ui);
         }
 
-        public void AdjustColumns(List<DatabaseColumnRequest> columns)
-        {
-            _columns = columns;
 
-            foreach (DatabaseColumnRequest column in _columns)
-            {
-                var ui = new DatabaseColumnRequestUI(column);
-                ui.Dock = DockStyle.Top;
-                flowLayoutPanel1.Controls.Add(ui);
-            }
+        ShowDialog();
+    }
 
-
-            ShowDialog();
-        }
-
-        private void btnDone_Click(object sender, System.EventArgs e)
-        {
-            if (_columns == null)
-                throw new Exception("AdjustColumns was not called yet");
+    private void btnDone_Click(object sender, EventArgs e)
+    {
+        if (_columns == null)
+            throw new Exception("AdjustColumns was not called yet");
             
-            Close();
-        }
+        Close();
     }
 }

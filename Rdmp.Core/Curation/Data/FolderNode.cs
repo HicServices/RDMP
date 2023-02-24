@@ -10,83 +10,71 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 
-namespace Rdmp.Core.Curation.Data
+namespace Rdmp.Core.Curation.Data;
+
+/// <summary>
+/// A virtual folder that can have subdirectories and stores ojbects of type <typeparamref name="T"/> e.g.
+/// Catalogue folders.  <see cref="FolderNode{T}"/> objects are typically created through <see cref="FolderHelper.BuildFolderTree{T}(T[], FolderNode{T})"/>
+/// dynamically based on the current <see cref="IHasFolder.Folder"/> strings.
+/// </summary>
+/// <typeparam name="T"></typeparam>
+public class FolderNode<T> : IFolderNode, IOrderable /*Orderable interface ensures that folders always appear before datasets in tree*/ 
+    where T: class, IHasFolder
 {
-    /// <summary>
-    /// A virtual folder that can have subdirectories and stores ojbects of type <typeparamref name="T"/> e.g.
-    /// Catalogue folders.  <see cref="FolderNode{T}"/> objects are typically created through <see cref="FolderHelper.BuildFolderTree{T}(T[], FolderNode{T})"/>
-    /// dynamically based on the current <see cref="IHasFolder.Folder"/> strings.
-    /// </summary>
-    /// <typeparam name="T"></typeparam>
-    public class FolderNode<T> : IFolderNode, IOrderable /*Orderable interface ensures that folders always appear before datasets in tree*/ 
-        where T: class, IHasFolder
+    public string Name { get; set; }
+    public List<T> ChildObjects { get; set; } = new();
+    public List<FolderNode<T>> ChildFolders { get; set; } = new();
+
+    public FolderNode<T> Parent { get; set; }
+
+    public string FullName => GetFullName();
+
+    int IOrderable.Order { get => -1; set => throw new NotSupportedException(); }
+
+    public FolderNode(string name, FolderNode<T> parent = null)
     {
-        public string Name { get; set; }
-        public List<T> ChildObjects { get; set; } = new();
-        public List<FolderNode<T>> ChildFolders { get; set; } = new();
+        Name = name;
+        Parent = parent;
+    }
 
-        public FolderNode<T> Parent { get; set; }
+    private string GetFullName()
+    {
+        // build the name by prepending each parent
+        // but start with our name
+        StringBuilder sb = new(Name);
 
-        public string FullName => GetFullName();
+        var p = Parent;            
 
-        int IOrderable.Order { get => -1; set => throw new NotSupportedException(); }
-
-        public FolderNode(string name, FolderNode<T> parent = null)
+        while(p != null)
         {
-            Name = name;
-            Parent = parent;
+            sb.Insert(0, p.Name.Equals(FolderHelper.Root) ? p.Name : $"{p.Name}\\");
+            p = p.Parent;
         }
 
-        private string GetFullName()
-        {
-            // build the name by prepending each parent
-            // but start with our name
-            StringBuilder sb = new(Name);
+        return sb.ToString();
+    }
 
-            var p = Parent;            
+    public FolderNode<T> this[string key] => GetChild(key);
 
-            while(p != null)
-            {
-                if(p.Name.Equals(FolderHelper.Root))
-                {
-                    sb.Insert(0, p.Name);
-                }
-                else
-                {
-                    sb.Insert(0, p.Name + "\\");
-                }
-                                
-                p = p.Parent;
-            }
+    private FolderNode<T> GetChild(string key)
+    {
+        return ChildFolders.FirstOrDefault(c => c.Name.Equals(key, StringComparison.CurrentCultureIgnoreCase))
+               ?? throw new ArgumentOutOfRangeException($"Could not find a child folder with the key '{key}'");
+    }
 
-            return sb.ToString();
-        }
+    public override string ToString()
+    {
+        return Name;
+    }
 
-        public FolderNode<T> this[string key]
-        {
-            get => GetChild(key);
-        }
+    public override bool Equals(object obj)
+    {
+        return obj is FolderNode<T> node &&
+               FullName == node.FullName;
+    }
 
-        private FolderNode<T> GetChild(string key)
-        {
-            return ChildFolders.FirstOrDefault(c => c.Name.Equals(key, StringComparison.CurrentCultureIgnoreCase))
-                ?? throw new ArgumentOutOfRangeException($"Could not find a child folder with the key '{key}'");
-        }
-
-        public override string ToString()
-        {
-            return Name;
-        }
-
-        public override bool Equals(object obj)
-        {
-            return obj is FolderNode<T> node &&
-                   FullName == node.FullName;
-        }
-
-        public override int GetHashCode()
-        {
-            return HashCode.Combine(FullName);
-        }
+    public override int GetHashCode()
+    {
+        return HashCode.Combine(FullName);
     }
 }

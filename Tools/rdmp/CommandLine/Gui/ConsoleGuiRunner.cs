@@ -5,13 +5,7 @@
 // You should have received a copy of the GNU General Public License along with RDMP. If not, see <https://www.gnu.org/licenses/>.
 
 using System;
-using System.Diagnostics;
-using System.Linq;
-using System.Reflection;
-using MapsDirectlyToDatabaseTable;
 using NLog;
-using Rdmp.Core.CommandExecution;
-using Rdmp.Core.CommandLine.Gui.Windows;
 using Rdmp.Core.CommandLine.Runners;
 using Rdmp.Core.DataFlowPipeline;
 using Rdmp.Core.Repositories;
@@ -19,64 +13,62 @@ using ReusableLibraryCode.Checks;
 using ReusableLibraryCode.Progress;
 using Terminal.Gui;
 
-namespace Rdmp.Core.CommandLine.Gui
+namespace Rdmp.Core.CommandLine.Gui;
+
+internal class ConsoleGuiRunner : IRunner
 {
-    class ConsoleGuiRunner : IRunner
+    private readonly ConsoleGuiOptions options;
+    private ConsoleGuiActivator _activator;
+
+    public ConsoleGuiRunner(ConsoleGuiOptions options)
     {
-        private readonly ConsoleGuiOptions options;
-        private ConsoleGuiActivator _activator;
-
-        public ConsoleGuiRunner(ConsoleGuiOptions options)
-        {
-            this.options = options;
-        }
-        public int Run(IRDMPPlatformRepositoryServiceLocator repositoryLocator, IDataLoadEventListener listener, ICheckNotifier checkNotifier, GracefulCancellationToken token)
-        {
-            Program.DisableConsoleLogging();
-
-            if (options.UseSystemConsole)
-            {
-                Application.UseSystemConsole = true;
-            }
-
-            Application.Init();
-
-            try
-            {
-                _activator = new ConsoleGuiActivator(repositoryLocator, checkNotifier);
-                ConsoleMainWindow.StaticActivator = _activator;
-
-                var top = Application.Top;
-
-                // Creates the top-level window to show
-                var win = new ConsoleMainWindow(_activator);
-                win.SetUp(top);
-            }
-            catch (Exception e)
-            {
-                LogManager.GetCurrentClassLogger().Error(e, "Failed to startup application");
-                Application.Shutdown();
-                return -2;
-            }
-            
-            try
-            {
-                Application.Run();
-            }
-            catch (Exception e)
-            {
-                LogManager.GetCurrentClassLogger().Error(e, "Application Crashed");
-                Application.Top.Running = false;
-                return -1;
-            }
-            finally
-            {
-                Application.Shutdown();
-            }
-
-            return 0;
-        }
-
+        this.options = options;
     }
-}
+    public int Run(IRDMPPlatformRepositoryServiceLocator repositoryLocator, IDataLoadEventListener listener, ICheckNotifier checkNotifier, GracefulCancellationToken token)
+    {
+        Program.DisableConsoleLogging();
 
+        if (options.UseSystemConsole)
+        {
+            Application.UseSystemConsole = true;
+        }
+
+        Application.Init();
+
+        try
+        {
+            _activator = new ConsoleGuiActivator(repositoryLocator, checkNotifier);
+            ConsoleMainWindow.StaticActivator = _activator;
+
+            var top = Application.Top;
+
+            // Creates the top-level window to show
+            var win = new ConsoleMainWindow(_activator);
+            win.SetUp(top);
+        }
+        catch (Exception e)
+        {
+            LogManager.GetCurrentClassLogger().Error(e, "Failed to startup application");
+            Application.Shutdown();
+            return -2;
+        }
+            
+        try
+        {
+            Application.Run();
+        }
+        catch (Exception e)
+        {
+            LogManager.GetCurrentClassLogger().Error(e, "Application Crashed");
+            Application.Top.Running = false;
+            return -1;
+        }
+        finally
+        {
+            Application.Shutdown();
+        }
+
+        return 0;
+    }
+
+}

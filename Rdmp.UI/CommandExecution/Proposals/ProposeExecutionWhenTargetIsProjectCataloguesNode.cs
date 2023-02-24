@@ -9,36 +9,35 @@ using Rdmp.Core.CommandExecution.Combining;
 using Rdmp.Core.Providers.Nodes;
 using Rdmp.UI.ItemActivation;
 
-namespace Rdmp.UI.CommandExecution.Proposals
+namespace Rdmp.UI.CommandExecution.Proposals;
+
+internal class ProposeExecutionWhenTargetIsProjectCataloguesNode : RDMPCommandExecutionProposal<ProjectCataloguesNode>
 {
-    class ProposeExecutionWhenTargetIsProjectCataloguesNode : RDMPCommandExecutionProposal<ProjectCataloguesNode>
+    private ProposeExecutionWhenTargetIsProject _projectFunctionality;
+
+    public ProposeExecutionWhenTargetIsProjectCataloguesNode(IActivateItems itemActivator) : base(itemActivator)
     {
-        private ProposeExecutionWhenTargetIsProject _projectFunctionality;
+        _projectFunctionality = new ProposeExecutionWhenTargetIsProject(itemActivator);
+    }
 
-        public ProposeExecutionWhenTargetIsProjectCataloguesNode(IActivateItems itemActivator) : base(itemActivator)
-        {
-            _projectFunctionality = new ProposeExecutionWhenTargetIsProject(itemActivator);
-        }
+    public override bool CanActivate(ProjectCataloguesNode target)
+    {
+        return false;
+    }
 
-        public override bool CanActivate(ProjectCataloguesNode target)
-        {
-            return false;
-        }
-
-        public override void Activate(ProjectCataloguesNode target)
-        {
+    public override void Activate(ProjectCataloguesNode target)
+    {
             
-        }
+    }
 
-        public override ICommandExecution ProposeExecution(ICombineToMakeCommand cmd, ProjectCataloguesNode target, InsertOption insertOption = InsertOption.Default)
-        {
-            //use the same drop options as Project except for this one
+    public override ICommandExecution ProposeExecution(ICombineToMakeCommand cmd, ProjectCataloguesNode target, InsertOption insertOption = InsertOption.Default)
+    {
+        //use the same drop options as Project except for this one
 
-            if (cmd is CohortIdentificationConfigurationCommand)
-                return null;
+        if (cmd is CohortIdentificationConfigurationCommand)
+            return null;
 
             
-            return _projectFunctionality.ProposeExecution(cmd, target.Project, insertOption);
-        }
+        return _projectFunctionality.ProposeExecution(cmd, target.Project, insertOption);
     }
 }

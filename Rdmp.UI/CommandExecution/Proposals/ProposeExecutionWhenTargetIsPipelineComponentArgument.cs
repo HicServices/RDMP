@@ -9,30 +9,29 @@ using Rdmp.Core.CommandExecution.AtomicCommands;
 using Rdmp.Core.Curation.Data.Pipelines;
 using Rdmp.UI.ItemActivation;
 
-namespace Rdmp.UI.CommandExecution.Proposals
+namespace Rdmp.UI.CommandExecution.Proposals;
+
+internal class ProposeExecutionWhenTargetIsPipelineComponentArgument : RDMPCommandExecutionProposal<PipelineComponentArgument>
 {
-    class ProposeExecutionWhenTargetIsPipelineComponentArgument : RDMPCommandExecutionProposal<PipelineComponentArgument>
+    private IActivateItems _activator;
+    public ProposeExecutionWhenTargetIsPipelineComponentArgument(IActivateItems itemActivator) : base(itemActivator)
     {
-        private IActivateItems _activator;
-        public ProposeExecutionWhenTargetIsPipelineComponentArgument(IActivateItems itemActivator) : base(itemActivator)
-        {
-            _activator = itemActivator;
-        }
+        _activator = itemActivator;
+    }
 
-        public override bool CanActivate(PipelineComponentArgument target)
-        {
-            return true;
-        }
+    public override bool CanActivate(PipelineComponentArgument target)
+    {
+        return true;
+    }
 
-        public override void Activate(PipelineComponentArgument arg)
-        {
-            var setArgumentCommand = new ExecuteCommandSetArgument(_activator, arg);
-            setArgumentCommand.Execute();
-        }
+    public override void Activate(PipelineComponentArgument arg)
+    {
+        var setArgumentCommand = new ExecuteCommandSetArgument(_activator, arg);
+        setArgumentCommand.Execute();
+    }
 
-        public override ICommandExecution ProposeExecution(ICombineToMakeCommand cmd, PipelineComponentArgument target, InsertOption insertOption = InsertOption.Default)
-        {
-            return null;
-        }
+    public override ICommandExecution ProposeExecution(ICombineToMakeCommand cmd, PipelineComponentArgument target, InsertOption insertOption = InsertOption.Default)
+    {
+        return null;
     }
 }

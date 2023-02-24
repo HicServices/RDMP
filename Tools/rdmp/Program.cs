@@ -7,200 +7,191 @@
 using System;
 using System.IO;
 using System.Linq;
-using System.Reflection;
 using CommandLine;
-using MapsDirectlyToDatabaseTable;
 using MapsDirectlyToDatabaseTable.Versioning;
 using NLog;
-using Rdmp.Core.CommandExecution;
 using Rdmp.Core.CommandLine;
 using Rdmp.Core.CommandLine.DatabaseCreation;
 using Rdmp.Core.CommandLine.Gui;
 using Rdmp.Core.CommandLine.Options;
-using Rdmp.Core.CommandLine.Runners;
 using Rdmp.Core.Curation.Data;
-using Rdmp.Core.DataFlowPipeline;
 using Rdmp.Core.Logging.Listeners.NLogListeners;
-using Rdmp.Core.Repositories;
-using Rdmp.Core.Startup;
 using ReusableLibraryCode;
 using ReusableLibraryCode.Checks;
-using YamlDotNet.Serialization;
 
-namespace Rdmp.Core
+namespace Rdmp.Core;
+
+internal class Program
 {
-    class Program
+    /// <summary>
+    /// True if the user passed the -q switch at startup to suppress any helpful messages we might
+    /// show (e.g. maybe they want to pipe the results somewhere)
+    /// </summary>
+    public static bool Quiet { get; private set; }
+
+    private static int Main(string[] args)
     {
-        /// <summary>
-        /// True if the user passed the -q switch at startup to suppress any helpful messages we might
-        /// show (e.g. maybe they want to pipe the results somewhere)
-        /// </summary>
-        public static bool Quiet { get; private set; }
+        try
+        {    
+            var nlog = Path.Combine(AppContext.BaseDirectory ,"NLog.config");
 
-        static int Main(string[] args)
-        {
-            try
-            {    
-                var nlog = Path.Combine(AppContext.BaseDirectory ,"NLog.config");
-
-                if (File.Exists(nlog))
-                {
-                    LogManager.ThrowConfigExceptions = false;
-                    NLog.LogManager.Configuration = new NLog.Config.XmlLoggingConfiguration(nlog);
-                }
+            if (File.Exists(nlog))
+            {
+                LogManager.ThrowConfigExceptions = false;
+                LogManager.Configuration = new NLog.Config.XmlLoggingConfiguration(nlog);
+            }
                     
-            }
-            catch(Exception ex)
-            {
-                Console.WriteLine("Could not load NLog.config:" + ex.Message);
-            }
+        }
+        catch(Exception ex)
+        {
+            Console.WriteLine($"Could not load NLog.config:{ex.Message}");
+        }
             
-            if(args.Any(a=>a.Equals("-q")) || args.Any(a=>a.Equals("--quiet",StringComparison.CurrentCultureIgnoreCase)))
-            {
-                Quiet = true;
+        if(args.Any(a=>a.Equals("-q")) || args.Any(a=>a.Equals("--quiet",StringComparison.CurrentCultureIgnoreCase)))
+        {
+            Quiet = true;
 
-                DisableConsoleLogging();
-            }
-
-            var logger = LogManager.GetCurrentClassLogger();
-
-            logger.Info("Dotnet Version:" + Environment.Version);
-            logger.Info("RDMP Version:" + typeof(Catalogue).Assembly.GetName().Version);
-
-            Startup.Startup.PreStartup();
-
-            return HandleArguments(args,logger);
+            DisableConsoleLogging();
         }
 
-        /// <summary>
-        /// Disables all log targets that contain the word 'Console'.  This prevents logging output
-        /// corrupting the screen during TUI or cli use (e.g. with -q flag).
-        /// </summary>
-        public static void DisableConsoleLogging()
+        var logger = LogManager.GetCurrentClassLogger();
+
+        logger.Info($"Dotnet Version:{Environment.Version}");
+        logger.Info($"RDMP Version:{typeof(Catalogue).Assembly.GetName().Version}");
+
+        Startup.Startup.PreStartup();
+
+        return HandleArguments(args,logger);
+    }
+
+    /// <summary>
+    /// Disables all log targets that contain the word 'Console'.  This prevents logging output
+    /// corrupting the screen during TUI or cli use (e.g. with -q flag).
+    /// </summary>
+    public static void DisableConsoleLogging()
+    {
+        foreach (var t in LogManager.Configuration.AllTargets.ToArray())
         {
-            foreach (var t in LogManager.Configuration.AllTargets.ToArray())
-            {
-                if (t.GetType().Name.Contains("Console", StringComparison.CurrentCultureIgnoreCase))
-                    LogManager.Configuration.RemoveTarget(t.Name);
-            }
+            if (t.GetType().Name.Contains("Console", StringComparison.CurrentCultureIgnoreCase))
+                LogManager.Configuration.RemoveTarget(t.Name);
         }
+    }
 
-        private static int HandleArguments(string[] args, Logger logger)
+    private static int HandleArguments(string[] args, Logger logger)
+    {
+        int returnCode;
+        try
         {
-            int returnCode;
-            try
-            {
-                returnCode =
-                    UsefulStuff.GetParser()
-                        .ParseArguments<
-                            PackOptions,
-                            ConsoleGuiOptions,
-                            PlatformDatabaseCreationOptions,
-                            PatchDatabaseOptions,
-                            DleOptions,
-                            DqeOptions,
-                            CacheOptions,
-                            ExtractionOptions,
-                            ReleaseOptions,
-                            CohortCreationOptions,
-                            ExecuteCommandOptions>(args)
-                        .MapResult(
-                            (PackOptions opts) => RdmpCommandLineBootStrapper.Run(opts),
-                            (ConsoleGuiOptions opts) => RdmpCommandLineBootStrapper.Run(opts, new ConsoleGuiRunner(opts)),
-                            (PlatformDatabaseCreationOptions opts) => Run(opts),
-                            (PatchDatabaseOptions opts) => Run(opts),
-                            (DleOptions opts) => RdmpCommandLineBootStrapper.Run(opts),
-                            (DqeOptions opts) => RdmpCommandLineBootStrapper.Run(opts),
-                            (CacheOptions opts) => RdmpCommandLineBootStrapper.Run(opts),
-                            (ExtractionOptions opts) => RdmpCommandLineBootStrapper.Run(opts),
-                            (ReleaseOptions opts) => RdmpCommandLineBootStrapper.Run(opts),
-                            (CohortCreationOptions opts) => RdmpCommandLineBootStrapper.Run(opts),
-                            (ExecuteCommandOptions opts) => RdmpCommandLineBootStrapper.RunCmd(opts),
-                            (errs) =>
-                            {
-                                if (HasHelpArguments(args))
-                                    return returnCode = 0;
-                                else
-                                    return returnCode = RdmpCommandLineBootStrapper.HandleArgumentsWithStandardRunner(args, logger);
-                            });
+            returnCode =
+                UsefulStuff.GetParser()
+                    .ParseArguments<
+                        PackOptions,
+                        ConsoleGuiOptions,
+                        PlatformDatabaseCreationOptions,
+                        PatchDatabaseOptions,
+                        DleOptions,
+                        DqeOptions,
+                        CacheOptions,
+                        ExtractionOptions,
+                        ReleaseOptions,
+                        CohortCreationOptions,
+                        ExecuteCommandOptions>(args)
+                    .MapResult(
+                        (PackOptions opts) => RdmpCommandLineBootStrapper.Run(opts),
+                        (ConsoleGuiOptions opts) => RdmpCommandLineBootStrapper.Run(opts, new ConsoleGuiRunner(opts)),
+                        (PlatformDatabaseCreationOptions opts) => Run(opts),
+                        (PatchDatabaseOptions opts) => Run(opts),
+                        (DleOptions opts) => RdmpCommandLineBootStrapper.Run(opts),
+                        (DqeOptions opts) => RdmpCommandLineBootStrapper.Run(opts),
+                        (CacheOptions opts) => RdmpCommandLineBootStrapper.Run(opts),
+                        (ExtractionOptions opts) => RdmpCommandLineBootStrapper.Run(opts),
+                        (ReleaseOptions opts) => RdmpCommandLineBootStrapper.Run(opts),
+                        (CohortCreationOptions opts) => RdmpCommandLineBootStrapper.Run(opts),
+                        (ExecuteCommandOptions opts) => RdmpCommandLineBootStrapper.RunCmd(opts),
+                        (errs) =>
+                        {
+                            if (HasHelpArguments(args))
+                                return returnCode = 0;
+                            else
+                                return returnCode = RdmpCommandLineBootStrapper.HandleArgumentsWithStandardRunner(args, logger);
+                        });
 
-                logger.Info("Exiting with code " + returnCode);
-                return returnCode;
-            }
-            catch (Exception e)
-            {
-                logger.Error(e.Message);
-                logger.Info(e, "Fatal error occurred so returning -1");
-                return -1;
-            }
+            logger.Info($"Exiting with code {returnCode}");
+            return returnCode;
         }
-
-        private static bool HasHelpArguments(string[] args)
+        catch (Exception e)
         {
-            return
-                args.Any(a =>
+            logger.Error(e.Message);
+            logger.Info(e, "Fatal error occurred so returning -1");
+            return -1;
+        }
+    }
+
+    private static bool HasHelpArguments(string[] args)
+    {
+        return
+            args.Any(a =>
                 a.Equals("--help", StringComparison.CurrentCultureIgnoreCase) ||
                 a.Equals("--version", StringComparison.CurrentCultureIgnoreCase)
-                );
-        }
+            );
+    }
 
-        private static int Run(PlatformDatabaseCreationOptions opts)
-        {
-            var serverName = opts.ServerName;
-            var prefix = opts.Prefix;
+    private static int Run(PlatformDatabaseCreationOptions opts)
+    {
+        var serverName = opts.ServerName;
+        var prefix = opts.Prefix;
 
-            Console.WriteLine("About to create on server '" + serverName + "' databases with prefix '" + prefix + "'");
+        Console.WriteLine($"About to create on server '{serverName}' databases with prefix '{prefix}'");
             
-            try
-            {
-                var creator = new PlatformDatabaseCreation();
-                creator.CreatePlatformDatabases(opts);
-            }
-            catch (Exception e)
-            {
-                Console.WriteLine(e);
-                return -1;
-            }
-            return 0;
+        try
+        {
+            var creator = new PlatformDatabaseCreation();
+            creator.CreatePlatformDatabases(opts);
         }
+        catch (Exception e)
+        {
+            Console.WriteLine(e);
+            return -1;
+        }
+        return 0;
+    }
 
         
-        private static int Run(PatchDatabaseOptions opts)
+    private static int Run(PatchDatabaseOptions opts)
+    {
+        opts.PopulateConnectionStringsFromYamlIfMissing(new ThrowImmediatelyCheckNotifier());
+
+        var repo = opts.GetRepositoryLocator();
+
+        if(!RdmpCommandLineBootStrapper.CheckRepo(repo))
         {
-            opts.PopulateConnectionStringsFromYamlIfMissing(new ThrowImmediatelyCheckNotifier());
+            return RdmpCommandLineBootStrapper.REPO_ERROR;
+        }
 
-            var repo = opts.GetRepositoryLocator();
+        var checker = new NLogICheckNotifier(true, false);
 
-            if(!RdmpCommandLineBootStrapper.CheckRepo(repo))
+        var start = new Startup.Startup(RdmpCommandLineBootStrapper.GetEnvironmentInfo(), repo);
+        var badTimes = false;
+
+        start.DatabaseFound += (s,e)=>{
+                
+            var db = e.Repository.DiscoveredServer.GetCurrentDatabase();
+                     
+            if(e.Status == Startup.Events.RDMPPlatformDatabaseStatus.RequiresPatching)
             {
-                return RdmpCommandLineBootStrapper.REPO_ERROR;
+                var mds = new MasterDatabaseScriptExecutor(db);
+                mds.PatchDatabase(e.Patcher, checker, (p) => true, () => opts.BackupDatabase);
             }
 
-            var checker = new NLogICheckNotifier(true, false);
+            if(e.Status <= Startup.Events.RDMPPlatformDatabaseStatus.Broken)
+            {
+                checker.OnCheckPerformed(new CheckEventArgs($"Database {db} had status {e.Status}",CheckResult.Fail));
+                badTimes = true;
+            }                    
+        };
 
-            var start = new Startup.Startup(RdmpCommandLineBootStrapper.GetEnvironmentInfo(), repo);
-            bool badTimes = false;
+        start.DoStartup(new IgnoreAllErrorsCheckNotifier());
 
-            start.DatabaseFound += (s,e)=>{
-                
-                var db = e.Repository.DiscoveredServer.GetCurrentDatabase();
-                     
-                if(e.Status == Startup.Events.RDMPPlatformDatabaseStatus.RequiresPatching)
-                {
-                    var mds = new MasterDatabaseScriptExecutor(db);
-                    mds.PatchDatabase(e.Patcher, checker, (p) => true, () => opts.BackupDatabase);
-                }
-
-                if(e.Status <= Startup.Events.RDMPPlatformDatabaseStatus.Broken)
-                {
-                    checker.OnCheckPerformed(new CheckEventArgs($"Database {db} had status {e.Status}",CheckResult.Fail));
-                    badTimes = true;
-                }                    
-            };
-
-            start.DoStartup(new IgnoreAllErrorsCheckNotifier());
-
-            return badTimes ? -1 :0;
-        }
+        return badTimes ? -1 :0;
     }
 }

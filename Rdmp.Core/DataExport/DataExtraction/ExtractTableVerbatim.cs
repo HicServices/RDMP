@@ -10,227 +10,219 @@ using System.IO;
 using System.Linq;
 using FAnsi.Discovery;
 using Rdmp.Core.DataExport.DataExtraction.FileOutputFormats;
-using Rdmp.Core.DataExport.DataExtraction.UserPicks;
 using Rdmp.Core.DataViewing;
 using ReusableLibraryCode.DataAccess;
 
-namespace Rdmp.Core.DataExport.DataExtraction
+namespace Rdmp.Core.DataExport.DataExtraction;
+
+/// <summary>
+/// Helper class for fetching entire tables from a database and writing them to CSV.  It uses CSVOutputFormat.CleanString to strip out problem characters.
+/// Records are read one at a time rather than downloading as a DataTable to allow any size of table to be processed without running out of memory.
+/// </summary>
+public class ExtractTableVerbatim
 {
+    private readonly string[] _tableNames;
+    private readonly string _specificSQL;
+
+    private readonly DirectoryInfo _outputDirectory;
+    private readonly string _separator;
+    private readonly string _dateTimeFormat;
+    private string _specificSQLTableName;
+    private DiscoveredServer _server;
+    private Stream _stream;
+
     /// <summary>
-    /// Helper class for fetching entire tables from a database and writing them to CSV.  It uses CSVOutputFormat.CleanString to strip out problem characters.
-    /// Records are read one at a time rather than downloading as a DataTable to allow any size of table to be processed without running out of memory.
+    /// The number of decimal places to round floating point numbers to.  This only applies to data which is hard typed Float and not to string values
     /// </summary>
-    public class ExtractTableVerbatim
+    private int? RoundFloatsTo { get; set; }
+
+    public string OutputFilename { get; private set; }
+
+    public ExtractTableVerbatim(DiscoveredServer server, string[] tableNames, DirectoryInfo outputDirectory, string separator, string dateTimeFormat)
     {
-        private readonly string[] _tableNames;
-        private readonly string _specificSQL;
+        if(tableNames.Length == 0)
+            throw new ArgumentException("You must select at least one table to extract");
 
-        private readonly DirectoryInfo _outputDirectory;
-        private readonly string _separator;
-        private readonly string _dateTimeFormat;
-        private string _specificSQLTableName;
-        private DiscoveredServer _server;
-        private Stream _stream;
+        _tableNames = tableNames;
+        _outputDirectory = outputDirectory;
+        _separator = separator;
+        _dateTimeFormat = dateTimeFormat ?? GetDefaultDateTimeFormat();
+        _server = server;
+    }
 
-        /// <summary>
-        /// The number of decimal places to round floating point numbers to.  This only applies to data which is hard typed Float and not to string values
-        /// </summary>
-        int? RoundFloatsTo { get; set; }
+    public ExtractTableVerbatim(DirectoryInfo outputDirectory, string separator, string dateTimeFormat,params DiscoveredTable[] tables)
+        :this(tables.Select(t=>t.Database.Server).Distinct().Single(),
+            tables.Select(t=>t.GetFullyQualifiedName()).ToArray(),
+            outputDirectory,
+            separator,
+            dateTimeFormat)
+    {
+    }
 
-        public string OutputFilename { get; private set; }
+    /// <summary>
+    /// Runs the supplied SQL and puts it out to the file specified (in the outputDirectory), will deal with stripping separators etc automatically
+    /// </summary>
+    /// <param name="server"></param>
+    /// <param name="sql">Some SQL you want to run (instead of a specific table)</param>
+    /// <param name="outputName">The name of the csv file you would like to create in the outputDirectory.  Do not include.csv in your string it will be put on automatically</param>
+    /// <param name="outputDirectory"></param>
+    /// <param name="separator"></param>
+    /// <param name="dateTimeFormat"></param>
+    public ExtractTableVerbatim(DiscoveredServer server, string sql,string outputName, DirectoryInfo outputDirectory, string separator,string dateTimeFormat)
+    {
+        _specificSQL = sql;
+        _specificSQLTableName = outputName;
+        _outputDirectory = outputDirectory;
+        _separator = separator;
+        _dateTimeFormat = dateTimeFormat?? GetDefaultDateTimeFormat();
+        _server = server;
+    }
 
-        public ExtractTableVerbatim(DiscoveredServer server, string[] tableNames, DirectoryInfo outputDirectory, string separator, string dateTimeFormat)
+    private string GetDefaultDateTimeFormat()
+    {
+        return "yyyy-MM-dd hh:mm:ss";
+    }
+
+
+    /// <summary>
+    /// Runs the supplied SQL and puts it out to the <paramref name="stream"/> specified, will deal with stripping separators etc automatically
+    /// </summary>
+    /// <param name="server"></param>
+    /// <param name="sql">Some SQL you want to run (instead of a specific table)</param>
+    /// <param name="stream">The output stream to write data to</param>
+    /// <param name="separator"></param>
+    /// <param name="dateTimeFormat"></param>
+    public ExtractTableVerbatim(DiscoveredServer server, string sql,Stream stream, string separator,string dateTimeFormat)
+        :this(server, sql,null,null, separator,dateTimeFormat)
+    {
+        _stream = stream;
+    }
+
+    public int DoExtraction()
+    {
+        var linesWritten = 0;
+
+        using var con = _server.GetConnection();
+        con.Open();
+
+        if (_specificSQL != null)
         {
-            if(tableNames.Length == 0)
-                throw new ArgumentException("You must select at least one table to extract");
-
-            _tableNames = tableNames;
-            _outputDirectory = outputDirectory;
-            _separator = separator;
-            _dateTimeFormat = dateTimeFormat ?? GetDefaultDateTimeFormat();
-            _server = server;
+            linesWritten += ExtractSQL(_specificSQL,_specificSQLTableName,con);
         }
-
-        public ExtractTableVerbatim(DirectoryInfo outputDirectory, string separator, string dateTimeFormat,params DiscoveredTable[] tables)
-            :this(tables.Select(t=>t.Database.Server).Distinct().Single(),
-                tables.Select(t=>t.GetFullyQualifiedName()).ToArray(),
-                outputDirectory,
-                separator,
-                dateTimeFormat)
-        {
-        }
-
-        /// <summary>
-        /// Runs the supplied SQL and puts it out to the file specified (in the outputDirectory), will deal with stripping separators etc automatically
-        /// </summary>
-        /// <param name="server"></param>
-        /// <param name="sql">Some SQL you want to run (instead of a specific table)</param>
-        /// <param name="outputName">The name of the csv file you would like to create in the outputDirectory.  Do not include.csv in your string it will be put on automatically</param>
-        /// <param name="outputDirectory"></param>
-        /// <param name="separator"></param>
-        /// <param name="dateTimeFormat"></param>
-        public ExtractTableVerbatim(DiscoveredServer server, string sql,string outputName, DirectoryInfo outputDirectory, string separator,string dateTimeFormat)
-        {
-            _specificSQL = sql;
-            _specificSQLTableName = outputName;
-            _outputDirectory = outputDirectory;
-            _separator = separator;
-            _dateTimeFormat = dateTimeFormat?? GetDefaultDateTimeFormat();
-            _server = server;
-        }
-
-        private string GetDefaultDateTimeFormat()
-        {
-            return "yyyy-MM-dd hh:mm:ss";
-        }
-
-
-        /// <summary>
-        /// Runs the supplied SQL and puts it out to the <paramref name="stream"/> specified, will deal with stripping separators etc automatically
-        /// </summary>
-        /// <param name="server"></param>
-        /// <param name="sql">Some SQL you want to run (instead of a specific table)</param>
-        /// <param name="stream">The output stream to write data to</param>
-        /// <param name="separator"></param>
-        /// <param name="dateTimeFormat"></param>
-        public ExtractTableVerbatim(DiscoveredServer server, string sql,Stream stream, string separator,string dateTimeFormat)
-            :this(server, sql,null,null, separator,dateTimeFormat)
-        {
-            _stream = stream;
-        }
-
-        public int DoExtraction()
-        {
-            int linesWritten = 0;
-
-            using (var con = _server.GetConnection())
-            {
-                con.Open();
-
-                if (_specificSQL != null)
-                {
-                    linesWritten += ExtractSQL(_specificSQL,_specificSQLTableName,con);
-                }
             
-                if(_tableNames != null)
-                    foreach (string table in _tableNames)
-                        linesWritten += ExtractSQL("select * from " + table, table,con);
+        if(_tableNames != null)
+            foreach (var table in _tableNames)
+                linesWritten += ExtractSQL($"select * from {table}", table,con);
 
-                con.Close();
-            }
+        con.Close();
 
-            return linesWritten;
+        return linesWritten;
+    }
+
+    private int ExtractSQL(string sql, string tableName, DbConnection con)
+    {
+        int linesWritten;
+
+        using var cmdExtract = _server.GetCommand(sql, con);
+        string filename = null;
+
+        if (_outputDirectory !=null)
+        {
+            if(!Directory.Exists(_outputDirectory.FullName))
+                Directory.CreateDirectory(_outputDirectory.FullName);
+
+            filename = tableName.Replace("[", "").Replace("]", "").ToLower().Trim();
+
+            if (!filename.EndsWith(".csv"))
+                filename += ".csv";
         }
 
-        private int ExtractSQL(string sql, string tableName, DbConnection con)
-        {
-            int linesWritten;
-
-            using (DbCommand cmdExtract = _server.GetCommand(sql, con))
-            {
-                string filename = null;
-
-                if (_outputDirectory !=null)
-                {
-                    if(!Directory.Exists(_outputDirectory.FullName))
-                        Directory.CreateDirectory(_outputDirectory.FullName);
-
-                    filename = tableName.Replace("[", "").Replace("]", "").ToLower().Trim();
-
-                    if (!filename.EndsWith(".csv"))
-                        filename += ".csv";
-                }
-
-                StreamWriter sw;
+        StreamWriter sw;
                 
-                if(_stream != null)
-                    sw = new StreamWriter(_stream);
-                else
-                { 
-                    if(_outputDirectory == null)
-                        throw new Exception($"{nameof(_outputDirectory)} cannot be null when using file output mode (only with an explicit stream out).");
+        if(_stream != null)
+            sw = new StreamWriter(_stream);
+        else
+        { 
+            if(_outputDirectory == null)
+                throw new Exception($"{nameof(_outputDirectory)} cannot be null when using file output mode (only with an explicit stream out).");
                     
-                    if(filename == null)
-                        throw new Exception($"{nameof(filename)} cannot be null when using file output mode (only with an explicit stream out).");
+            if(filename == null)
+                throw new Exception($"{nameof(filename)} cannot be null when using file output mode (only with an explicit stream out).");
 
-                    OutputFilename = Path.Combine(_outputDirectory.FullName , filename);
-                    sw = new StreamWriter(OutputFilename);
-                }
+            OutputFilename = Path.Combine(_outputDirectory.FullName , filename);
+            sw = new StreamWriter(OutputFilename);
+        }
                  
-                cmdExtract.CommandTimeout = 500000;
+        cmdExtract.CommandTimeout = 500000;
 
-                using(DbDataReader r = cmdExtract.ExecuteReader())
-                {
-                    WriteHeader(sw, r, _separator, _dateTimeFormat);
-                    linesWritten = WriteBody(sw, r, _separator, _dateTimeFormat,RoundFloatsTo);
+        using(var r = cmdExtract.ExecuteReader())
+        {
+            WriteHeader(sw, r, _separator, _dateTimeFormat);
+            linesWritten = WriteBody(sw, r, _separator, _dateTimeFormat,RoundFloatsTo);
 
-                    r.Close();
-                }
+            r.Close();
+        }
                 
-                sw.Flush();
-                sw.Close();
-            }
-            
-            return linesWritten;
-        }
+        sw.Flush();
+        sw.Close();
 
-        public static void WriteHeader(StreamWriter sw, DbDataReader r, string separator, string dateTimeFormat)
+        return linesWritten;
+    }
+
+    public static void WriteHeader(StreamWriter sw, DbDataReader r, string separator, string dateTimeFormat)
+    {
+        //write headers
+        for (var i = 0; i < r.FieldCount; i++)
         {
-            //write headers
-            for (int i = 0; i < r.FieldCount; i++)
+            sw.Write(CSVOutputFormat.CleanString(r.GetName(i), separator, out _, dateTimeFormat,null));
+            if (i < r.FieldCount - 1)
+                sw.Write(separator);
+            else
+                sw.WriteLine();
+        }
+    }
+    public static int WriteBody(StreamWriter sw, DbDataReader r, string separator, string dateTimeFormat, int? roundFloatsTo)
+    {
+        var linesWritten = 0;
+
+        while (r.Read())
+        {
+            //write values
+            for (var i = 0; i < r.FieldCount; i++)
             {
-                sw.Write(CSVOutputFormat.CleanString(r.GetName(i), separator, out _, dateTimeFormat,null));
+                //clean string
+                sw.Write(CSVOutputFormat.CleanString(r[i], separator, out _, dateTimeFormat, roundFloatsTo));
                 if (i < r.FieldCount - 1)
-                    sw.Write(separator);
+                    sw.Write(separator); //if not the last element add a ','
                 else
-                    sw.WriteLine();
-            }
-        }
-        public static int WriteBody(StreamWriter sw, DbDataReader r, string separator, string dateTimeFormat, int? roundFloatsTo)
-        {
-            int linesWritten = 0;
-
-            while (r.Read())
-            {
-                //write values
-                for (int i = 0; i < r.FieldCount; i++)
                 {
-                    //clean string
-                    sw.Write(CSVOutputFormat.CleanString(r[i], separator, out _, dateTimeFormat, roundFloatsTo));
-                    if (i < r.FieldCount - 1)
-                        sw.Write(separator); //if not the last element add a ','
-                    else
-                    {
-                        sw.WriteLine();
-                    }
+                    sw.WriteLine();
                 }
-                linesWritten++;
             }
-
-            return linesWritten;
+            linesWritten++;
         }
 
-        /// <summary>
-        /// Runs the query described in <paramref name="collection"/> and extracts the data into <paramref name="toFile"/>
-        /// </summary>
-        /// <param name="collection"></param>
-        /// <param name="toFile"></param>
-        /// <param name="context">Determines which access credentials (if any) are used to run the query</param>
-        public static void ExtractDataToFile(IViewSQLAndResultsCollection collection, FileInfo toFile, DataAccessContext context = DataAccessContext.InternalDataProcessing)
+        return linesWritten;
+    }
+
+    /// <summary>
+    /// Runs the query described in <paramref name="collection"/> and extracts the data into <paramref name="toFile"/>
+    /// </summary>
+    /// <param name="collection"></param>
+    /// <param name="toFile"></param>
+    /// <param name="context">Determines which access credentials (if any) are used to run the query</param>
+    public static void ExtractDataToFile(IViewSQLAndResultsCollection collection, FileInfo toFile, DataAccessContext context = DataAccessContext.InternalDataProcessing)
+    {
+        var point = collection.GetDataAccessPoint();
+        var db = DataAccessPortal.GetInstance().ExpectDatabase(point,context);
+
+        if(!toFile.Directory.Exists)
         {
-            var point = collection.GetDataAccessPoint();
-            var db = DataAccessPortal.GetInstance().ExpectDatabase(point,context);
-
-            if(!toFile.Directory.Exists)
-            {
-                toFile.Directory.Create();
-            }
-
-            using (var fs = File.OpenWrite(toFile.FullName))
-            {
-                var toRun = new ExtractTableVerbatim(db.Server, collection.GetSql(), fs, ",", null);
-                toRun.DoExtraction();
-            }
+            toFile.Directory.Create();
         }
+
+        using var fs = File.OpenWrite(toFile.FullName);
+        var toRun = new ExtractTableVerbatim(db.Server, collection.GetSql(), fs, ",", null);
+        toRun.DoExtraction();
     }
 }

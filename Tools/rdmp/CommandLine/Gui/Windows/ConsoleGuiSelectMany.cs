@@ -8,119 +8,116 @@ using Rdmp.Core.CommandExecution;
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using Terminal.Gui;
 
-namespace Rdmp.Core.CommandLine.Gui.Windows
+namespace Rdmp.Core.CommandLine.Gui.Windows;
+
+/// <summary>
+/// Allows the user to select one or more objects in a modal console dialog
+/// </summary>
+public class ConsoleGuiSelectMany : Window
 {
+    private ListView lv;
+    private readonly IBasicActivateItems _activator;
+
     /// <summary>
-    /// Allows the user to select one or more objects in a modal console dialog
+    /// The final object selection made.  Note that you should
+    /// also check <see cref="ResultOk"/> in case of user cancellation
     /// </summary>
-    public class ConsoleGuiSelectMany : Window
+    public object[] Result { get { return _available.Where((e, idx) => lv.Source.IsMarked(idx)).ToArray(); } }
+
+    /// <summary>
+    /// True if the user made a final selection or False if they exited without
+    /// making a choice e.g. Hit Ctrl+Q
+    /// </summary>
+    public bool ResultOk { get; internal set; }
+    private object[] _available;
+    private IReadOnlyCollection<object> _original;
+    private TextField _tbSearch;
+
+    public ConsoleGuiSelectMany(IBasicActivateItems activator,string prompt, object[] available)
     {
-        private ListView lv;
-        private readonly IBasicActivateItems _activator;
+        _available = available;
+        _original = available.ToList().AsReadOnly();
 
-        /// <summary>
-        /// The final object selection made.  Note that you should
-        /// also check <see cref="ResultOk"/> in case of user cancellation
-        /// </summary>
-        public object[] Result { get { return _available.Where((e, idx) => lv.Source.IsMarked(idx)).ToArray(); } }
+        // By using Dim.Fill(), it will automatically resize without manual intervention
+        Width = Dim.Fill();
+        Height = Dim.Fill();
+        Modal = true;
+        ColorScheme = ConsoleMainWindow.ColorScheme;
 
-        /// <summary>
-        /// True if the user made a final selection or False if they exited without
-        /// making a choice e.g. Hit Ctrl+Q
-        /// </summary>
-        public bool ResultOk { get; internal set; }
-        private object[] _available;
-        private IReadOnlyCollection<object> _original;
-        private TextField _tbSearch;
+        lv = new ListView(available);
+        lv.AllowsMarking = true;
+        lv.AllowsMultipleSelection = true;
 
-        public ConsoleGuiSelectMany(IBasicActivateItems activator,string prompt, object[] available)
+        lv.Width = Dim.Fill();
+        lv.Height = Dim.Fill(1);
+        lv.KeyPress += Lv_KeyPress;
+        Add(lv);
+
+        var lblSearch = new Label
         {
-            _available = available;
-            _original = available.ToList().AsReadOnly();
+            Text = "Search:",
+            Y = Pos.Bottom(lv)
+        };
+        Add(lblSearch);
 
-            // By using Dim.Fill(), it will automatically resize without manual intervention
-            Width = Dim.Fill();
-            Height = Dim.Fill();
-            Modal = true;
-            ColorScheme = ConsoleMainWindow.ColorScheme;
+        _tbSearch = new TextField
+        {
+            X = Pos.Right(lblSearch),
+            Y = Pos.Bottom(lv),
+            Width = Dim.Fill()
+        };
+        _tbSearch.TextChanged += TbSearch_TextChanged;
+        Add(_tbSearch);
 
-            lv = new ListView(available);
-            lv.AllowsMarking = true;
-            lv.AllowsMultipleSelection = true;
-
-            lv.Width = Dim.Fill();
-            lv.Height = Dim.Fill(1);
-            lv.KeyPress += Lv_KeyPress;
-            Add(lv);
-
-            var lblSearch = new Label
-            {
-                Text = "Search:",
-                Y = Pos.Bottom(lv),
-            };
-            Add(lblSearch);
-
-            _tbSearch = new TextField
-            {
-                X = Pos.Right(lblSearch),
-                Y = Pos.Bottom(lv),
-                Width = Dim.Fill()
-            };
-            _tbSearch.TextChanged += TbSearch_TextChanged;
-            Add(_tbSearch);
-
-            Title = prompt;
+        Title = prompt;
             
-            this._activator = activator;
-        }
+        _activator = activator;
+    }
 
-        private void TbSearch_TextChanged(NStack.ustring obj)
-        {
-            // everything they have ticked so far
-            var ticked = Result;
-            var search = _tbSearch.Text?.ToString();
+    private void TbSearch_TextChanged(NStack.ustring obj)
+    {
+        // everything they have ticked so far
+        var ticked = Result;
+        var search = _tbSearch.Text?.ToString();
 
-            // plus everything else that matches on search text
-            var matchingFilter = _original.Except(ticked)
-                                          .Where(o => string.IsNullOrWhiteSpace(search) || o.ToString().Contains(search, StringComparison.CurrentCultureIgnoreCase))
-                                          .ToArray();
+        // plus everything else that matches on search text
+        var matchingFilter = _original.Except(ticked)
+            .Where(o => string.IsNullOrWhiteSpace(search) || o.ToString().Contains(search, StringComparison.CurrentCultureIgnoreCase))
+            .ToArray();
             
-            // make a list of all marked followed by unmarked but matching filter
-            var all = ticked.ToList();
-            all.AddRange(matchingFilter);
+        // make a list of all marked followed by unmarked but matching filter
+        var all = ticked.ToList();
+        all.AddRange(matchingFilter);
 
-            // update the available list in the list view (destructive recreate)
-            _available = all.ToArray();
-            lv.SetSource(all);
+        // update the available list in the list view (destructive recreate)
+        _available = all.ToArray();
+        lv.SetSource(all);
 
-            // since we changed the source we need to remark the originally ticked ones
-            for(int i=0;i<ticked.Length;i++)
-            {
-                lv.Source.SetMark(i, true);
-            }
-            SetNeedsDisplay();
-        }
-
-        private void Lv_KeyPress(KeyEventEventArgs obj)
+        // since we changed the source we need to remark the originally ticked ones
+        for(var i=0;i<ticked.Length;i++)
         {
-            if(obj.KeyEvent.Key == Key.Enter)
-            {
-                // if there are no selected objects (user hits space to select many)
-                // then they probably want a single object selection
-                if(Result.Length == 0)
-                {
-                    lv.MarkUnmarkRow();
-                }
-
-                obj.Handled = true;
-                ResultOk = true;
-                Application.RequestStop();
-            }
-            SetNeedsDisplay();
+            lv.Source.SetMark(i, true);
         }
+        SetNeedsDisplay();
+    }
+
+    private void Lv_KeyPress(KeyEventEventArgs obj)
+    {
+        if(obj.KeyEvent.Key == Key.Enter)
+        {
+            // if there are no selected objects (user hits space to select many)
+            // then they probably want a single object selection
+            if(Result.Length == 0)
+            {
+                lv.MarkUnmarkRow();
+            }
+
+            obj.Handled = true;
+            ResultOk = true;
+            Application.RequestStop();
+        }
+        SetNeedsDisplay();
     }
 }

@@ -12,173 +12,172 @@ using Rdmp.Core.CommandExecution;
 using Rdmp.UI.ScintillaHelper;
 using ScintillaNET;
 
-namespace Rdmp.UI.SimpleDialogs
+namespace Rdmp.UI.SimpleDialogs;
+
+/// <summary>
+/// Prompts the user to type in some text.  There will be a title text telling you what the system expects you to type (e.g. some DQE annotation text).
+/// </summary>
+[TechnicalUI]
+public partial class TypeTextOrCancelDialog : Form
 {
+    private readonly bool _allowBlankText;
+    private readonly bool _multiline;
+    private Scintilla _scintilla;
+
+    public string ResultText => (_multiline ? _scintilla.Text : textBox1.Text)?.Trim();
+
     /// <summary>
-    /// Prompts the user to type in some text.  There will be a title text telling you what the system expects you to type (e.g. some DQE annotation text).
+    /// True to require that text typed be sane for usage as a column name, table name etc e.g. "bob" but not "bob::bbbbb".
     /// </summary>
-    [TechnicalUI]
-    public partial class TypeTextOrCancelDialog : Form
+    public bool RequireSaneHeaderText{get;set; }
+
+    //"Column Name","Enter name for column (this should NOT include any qualifiers e.g. database name)", 300);
+
+    public TypeTextOrCancelDialog(string title, string prompt, int maxCharacters, string startingTextForInputBox = null, bool allowBlankText = false, bool multiLine = false)
+        : this(new DialogArgs
+        {
+            WindowTitle = title,
+            EntryLabel = prompt
+        },maxCharacters,startingTextForInputBox,allowBlankText,multiLine)
     {
-        private readonly bool _allowBlankText;
-        private readonly bool _multiline;
-        private Scintilla _scintilla;
-
-        public string ResultText {get { return (_multiline ? _scintilla.Text : textBox1.Text)?.Trim(); }}
-
-        /// <summary>
-        /// True to require that text typed be sane for usage as a column name, table name etc e.g. "bob" but not "bob::bbbbb".
-        /// </summary>
-        public bool RequireSaneHeaderText{get;set; }
-
-        //"Column Name","Enter name for column (this should NOT include any qualifiers e.g. database name)", 300);
-
-        public TypeTextOrCancelDialog(string title, string prompt, int maxCharacters, string startingTextForInputBox = null, bool allowBlankText = false, bool multiLine = false)
-            : this(new DialogArgs
-            {
-                WindowTitle = title,
-                EntryLabel = prompt,
-            },maxCharacters,startingTextForInputBox,allowBlankText,multiLine)
-        {
             
-        }
+    }
 
-        public TypeTextOrCancelDialog(DialogArgs args, int maxCharacters, string startingTextForInputBox = null, bool allowBlankText = false, bool multiLine = false)
-        {
-            _allowBlankText = allowBlankText;
-            _multiline = multiLine;
+    public TypeTextOrCancelDialog(DialogArgs args, int maxCharacters, string startingTextForInputBox = null, bool allowBlankText = false, bool multiLine = false)
+    {
+        _allowBlankText = allowBlankText;
+        _multiline = multiLine;
 
-            InitializeComponent();
+        InitializeComponent();
 
-            var header = args.WindowTitle;
+        var header = args.WindowTitle;
            
 
-            if (header != null && header.Length > WideMessageBox.MAX_LENGTH_TITLE)
-                header = header.Substring(0, WideMessageBox.MAX_LENGTH_TITLE);
+        if (header != null && header.Length > WideMessageBox.MAX_LENGTH_TITLE)
+            header = header[..WideMessageBox.MAX_LENGTH_TITLE];
 
-            taskDescriptionLabel1.SetupFor(args);
+        taskDescriptionLabel1.SetupFor(args);
 
-            this.Text = header;
-            this.textBox1.MaxLength = maxCharacters;
+        Text = header;
+        textBox1.MaxLength = maxCharacters;
 
-            if (_multiline)
+        if (_multiline)
+        {
+            var editor = new ScintillaTextEditorFactory();
+            _scintilla = editor.Create(null,SyntaxLanguage.None,null,true,false);
+            _scintilla.Dock = DockStyle.Fill;
+            _scintilla.TextChanged += _scintilla_TextChanged;
+            _scintilla.KeyDown += _scintilla_KeyDown;
+            _scintilla.Text = startingTextForInputBox;
+            _scintilla.WrapMode = WrapMode.Word;
+
+            pTextEditor.Controls.Remove(textBox1);
+            pTextEditor.Controls.Add(_scintilla);
+
+            //Move cursor to the end of the textbox
+            ActiveControl = _scintilla;
+            _scintilla.SelectionStart = _scintilla.TextLength;
+
+            textBox1.Anchor = AnchorStyles.Top | AnchorStyles.Bottom | AnchorStyles.Left | AnchorStyles.Right;
+            textBox1.ScrollBars = ScrollBars.Vertical;
+            Width = 740;
+
+            //Update the tooltip for the OK button
+            toolTip.SetToolTip(btnOk, "Press to Save (SHIFT + ENTER)");
+        }
+        else
+        {
+            textBox1.Text = startingTextForInputBox;
+            Width = Math.Max(540, Math.Min(740, taskDescriptionLabel1.PreferredWidth));
+
+            ActiveControl = textBox1;
+        }
+
+        SetEnabledness();          
+    }
+
+    private void _scintilla_KeyDown(object sender, KeyEventArgs e)
+    {
+        FinishedKeyCheck(e);
+    }
+
+    private void _scintilla_TextChanged(object sender, EventArgs e)
+    {
+        SetEnabledness();
+    }
+
+    private void btnOk_Click(object sender, EventArgs e)
+    {
+        DialogResult = DialogResult.OK;
+        Close();
+    }
+
+    private void btnCancel_Click(object sender, EventArgs e)
+    {
+        DialogResult = DialogResult.Cancel;
+        Close();
+    }
+
+    private void textBox1_KeyDown(object sender, KeyEventArgs e)
+    {
+        FinishedKeyCheck(e);
+    }
+
+    private void textBox1_TextChanged(object sender, EventArgs e)
+    {
+        SetEnabledness();
+    }
+
+    private void SetEnabledness()
+    {
+        textBox1.ForeColor = Color.Black;
+
+        //if there's some text typed and we want typed text to be sane
+        if(RequireSaneHeaderText && !string.IsNullOrWhiteSpace(textBox1.Text))
+        {
+            //if the sane name doesn't match the 
+            if(!textBox1.Text.Equals(QuerySyntaxHelper.MakeHeaderNameSensible(textBox1.Text),StringComparison.CurrentCultureIgnoreCase))
             {
-                var editor = new ScintillaTextEditorFactory();
-                _scintilla = editor.Create(null,SyntaxLanguage.None,null,true,false);
-                _scintilla.Dock = DockStyle.Fill;
-                _scintilla.TextChanged += _scintilla_TextChanged;
-                _scintilla.KeyDown += _scintilla_KeyDown;
-                _scintilla.Text = startingTextForInputBox;
-                _scintilla.WrapMode = WrapMode.Word;
-
-                pTextEditor.Controls.Remove(textBox1);
-                pTextEditor.Controls.Add(_scintilla);
-
-                //Move cursor to the end of the textbox
-                this.ActiveControl = _scintilla;
-                _scintilla.SelectionStart = _scintilla.TextLength;
-
-                this.textBox1.Anchor = (AnchorStyles.Top | AnchorStyles.Bottom | AnchorStyles.Left | AnchorStyles.Right);
-                this.textBox1.ScrollBars = ScrollBars.Vertical;
-                this.Width = 740;
-
-                //Update the tooltip for the OK button
-                toolTip.SetToolTip(btnOk, "Press to Save (SHIFT + ENTER)");
+                btnOk.Enabled = false;
+                textBox1.ForeColor = Color.Red;
+                return;
             }
-            else
+        }
+
+        btnOk.Enabled = !string.IsNullOrWhiteSpace(ResultText) || _allowBlankText;
+    }
+
+    private void FinishedKeyCheck(KeyEventArgs e)
+    {
+        //If they've pressed enter...
+        if (e.KeyCode == Keys.Enter)
+        {
+            //If the OK button is enabled AND... (we're not multiline OR we are multiline but they're holding shift)
+            if(btnOk.Enabled && (!_multiline || (_multiline && e.Shift)))
             {
-                textBox1.Text = startingTextForInputBox;
-                Width = Math.Max(540, Math.Min(740, taskDescriptionLabel1.PreferredWidth));
-
-                this.ActiveControl = textBox1;
+                //Supress the enter key (so a new line isn't created) and press the OK button
+                e.Handled = true;
+                e.SuppressKeyPress = true;
+                btnOk_Click(null, null);
             }
-
-            SetEnabledness();          
         }
 
-        private void _scintilla_KeyDown(object sender, KeyEventArgs e)
+        //Escape should work for all controls
+        if (e.KeyCode == Keys.Escape)
+            btnCancel_Click(null, null);
+
+    }
+
+    private void TypeTextOrCancelDialog_Resize(object sender, EventArgs e)
+    {
+        // Set the height by taking the designer height and adding on the height that the task description label wants to be
+        if (_multiline)
         {
-            FinishedKeyCheck(e);
+            Height = taskDescriptionLabel1.PreferredHeight + 220;
         }
-
-        private void _scintilla_TextChanged(object sender, EventArgs e)
+        else
         {
-            SetEnabledness();
-        }
-
-        private void btnOk_Click(object sender, EventArgs e)
-        {
-            DialogResult = DialogResult.OK;
-            this.Close();
-        }
-
-        private void btnCancel_Click(object sender, EventArgs e)
-        {
-            DialogResult = DialogResult.Cancel;
-            this.Close();
-        }
-
-        private void textBox1_KeyDown(object sender, KeyEventArgs e)
-        {
-            FinishedKeyCheck(e);
-        }
-
-        private void textBox1_TextChanged(object sender, EventArgs e)
-        {
-            SetEnabledness();
-        }
-
-        private void SetEnabledness()
-        {
-            textBox1.ForeColor = Color.Black;
-
-            //if there's some text typed and we want typed text to be sane
-            if(RequireSaneHeaderText && !string.IsNullOrWhiteSpace(textBox1.Text))
-            {
-                //if the sane name doesn't match the 
-                if(!textBox1.Text.Equals(QuerySyntaxHelper.MakeHeaderNameSensible(textBox1.Text),StringComparison.CurrentCultureIgnoreCase))
-                {
-                    btnOk.Enabled = false;
-                    textBox1.ForeColor = Color.Red;
-                    return;
-                }
-            }
-
-            btnOk.Enabled = (!string.IsNullOrWhiteSpace(ResultText)) || _allowBlankText;
-        }
-
-        private void FinishedKeyCheck(KeyEventArgs e)
-        {
-            //If they've pressed enter...
-            if (e.KeyCode == Keys.Enter)
-            {
-                //If the OK button is enabled AND... (we're not multiline OR we are multiline but they're holding shift)
-                if(btnOk.Enabled && (!_multiline || (_multiline && e.Shift)))
-                {
-                    //Supress the enter key (so a new line isn't created) and press the OK button
-                    e.Handled = true;
-                    e.SuppressKeyPress = true;
-                    btnOk_Click(null, null);
-                }
-            }
-
-            //Escape should work for all controls
-            if (e.KeyCode == Keys.Escape)
-             btnCancel_Click(null, null);
-
-        }
-
-        private void TypeTextOrCancelDialog_Resize(object sender, EventArgs e)
-        {
-            // Set the height by taking the designer height and adding on the height that the task description label wants to be
-            if (_multiline)
-            {
-                this.Height = taskDescriptionLabel1.PreferredHeight + 220;
-            }
-            else
-            {
-                this.Height = taskDescriptionLabel1.PreferredHeight + 100;
-            }
+            Height = taskDescriptionLabel1.PreferredHeight + 100;
         }
     }
 }

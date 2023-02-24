@@ -7,22 +7,21 @@
 using Rdmp.Core.Curation.Data;
 using Rdmp.Core.QueryBuilding;
 
-namespace Rdmp.Core.Curation.FilterImporting
+namespace Rdmp.Core.Curation.FilterImporting;
+
+/// <summary>
+/// Determines which parameters should be presented and which tables are available for autocomplete etc.
+/// </summary>
+public abstract class FilterUIOptions
 {
-    /// <summary>
-    /// Determines which parameters should be presented and which tables are available for autocomplete etc.
-    /// </summary>
-    public abstract class FilterUIOptions
+    protected IFilter Filter;
+
+    protected FilterUIOptions(IFilter filter)
     {
-        protected IFilter Filter;
-
-        protected FilterUIOptions(IFilter filter)
-        {
-            Filter = filter;
-        }
-
-        public abstract ITableInfo[] GetTableInfos();
-        public abstract ISqlParameter[] GetGlobalParametersInFilterScope();
-        public abstract IColumn[] GetIColumnsInFilterScope();
+        Filter = filter;
     }
+
+    public abstract ITableInfo[] GetTableInfos();
+    public abstract ISqlParameter[] GetGlobalParametersInFilterScope();
+    public abstract IColumn[] GetIColumnsInFilterScope();
 }

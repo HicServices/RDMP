@@ -9,37 +9,33 @@ using Rdmp.Core.Curation.ANOEngineering;
 using Rdmp.Core.Curation.Data.DataLoad;
 using Rdmp.Core.Repositories;
 
-namespace Rdmp.Core.DataLoad.Modules.Mutilators.Dilution
+namespace Rdmp.Core.DataLoad.Modules.Mutilators.Dilution;
+
+/// <summary>
+/// Creates IDilutionOperations by reflection based on Type name and hydrates with the target IPreLoadDiscardedColumn.  See Dilution.
+/// </summary>
+public class DilutionOperationFactory
 {
-    /// <summary>
-    /// Creates IDilutionOperations by reflection based on Type name and hydrates with the target IPreLoadDiscardedColumn.  See Dilution.
-    /// </summary>
-    public class DilutionOperationFactory
+    private readonly IPreLoadDiscardedColumn _targetColumn;
+    private MEF _mef;
+
+    public DilutionOperationFactory(IPreLoadDiscardedColumn targetColumn)
     {
-        private readonly IPreLoadDiscardedColumn _targetColumn;
-        private MEF _mef;
+        _targetColumn = targetColumn ?? throw new ArgumentNullException(nameof(targetColumn));
+        _mef = ((ICatalogueRepository)_targetColumn.Repository).MEF;
+    }
 
-        public DilutionOperationFactory(IPreLoadDiscardedColumn targetColumn)
-        {
-            if(targetColumn == null)
-                throw new ArgumentNullException("targetColumn");
+    public IDilutionOperation Create(Type operation)
+    {
+        if(operation == null)
+            throw new ArgumentNullException(nameof(operation));
 
-            _targetColumn = targetColumn;
-            _mef = ((ICatalogueRepository)_targetColumn.Repository).MEF;
-        }
+        if(!typeof(IDilutionOperation).IsAssignableFrom(operation))
+            throw new ArgumentException($"Requested operation Type {operation} did was not an IDilutionOperation");
 
-        public IDilutionOperation Create(Type operation)
-        {
-            if(operation == null)
-                throw new ArgumentNullException("operation");
-
-            if(!typeof(IDilutionOperation).IsAssignableFrom(operation))
-                throw new ArgumentException("Requested operation Type " + operation + " did was not an IDilutionOperation");
-
-            var instance = _mef.CreateA<IDilutionOperation>(operation.FullName);
-            instance.ColumnToDilute = _targetColumn;
+        var instance = _mef.CreateA<IDilutionOperation>(operation.FullName);
+        instance.ColumnToDilute = _targetColumn;
             
-            return instance;
-        }
+        return instance;
     }
 }

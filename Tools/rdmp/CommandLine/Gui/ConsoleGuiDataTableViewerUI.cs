@@ -12,18 +12,16 @@
 //      You can make changes to this file and they will not be overwritten when saving.
 //  </auto-generated>
 // -----------------------------------------------------------------------------
-namespace Rdmp.Core.CommandLine.Gui {
-    using System.Data;
-    using Terminal.Gui;
-    
-    
-    public partial class ConsoleGuiDataTableViewerUI {
-        
-        public ConsoleGuiDataTableViewerUI(DataTable tbl) {
-            InitializeComponent();
+namespace Rdmp.Core.CommandLine.Gui;
 
-            tableview1.Table = tbl;
-            tableview1.Update();
-        }
+using System.Data;
+
+public partial class ConsoleGuiDataTableViewerUI {
+        
+    public ConsoleGuiDataTableViewerUI(DataTable tbl) {
+        InitializeComponent();
+
+        tableview1.Table = tbl;
+        tableview1.Update();
     }
 }

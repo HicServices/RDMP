@@ -6,43 +6,42 @@
 
 using Rdmp.Core.Curation.Data;
 
-namespace Rdmp.Core.Providers.Nodes
+namespace Rdmp.Core.Providers.Nodes;
+
+/// <summary>
+/// Collection node for all <see cref="Lookup"/> that exist under a <see cref="Catalogue"/>
+/// </summary>
+public class CatalogueLookupsNode:Node
 {
-    /// <summary>
-    /// Collection node for all <see cref="Lookup"/> that exist under a <see cref="Catalogue"/>
-    /// </summary>
-    public class CatalogueLookupsNode:Node
+    public Catalogue Catalogue { get; set; }
+    public Lookup[] Lookups { get; set; }
+
+    public CatalogueLookupsNode(Catalogue catalogue, Lookup[] lookups)
     {
-        public Catalogue Catalogue { get; set; }
-        public Lookup[] Lookups { get; set; }
+        Catalogue = catalogue;
+        Lookups = lookups;
+    }
 
-        public CatalogueLookupsNode(Catalogue catalogue, Lookup[] lookups)
-        {
-            Catalogue = catalogue;
-            Lookups = lookups;
-        }
+    public override string ToString()
+    {
+        return "Lookups";
+    }
 
-        public override string ToString()
-        {
-            return "Lookups";
-        }
+    protected bool Equals(CatalogueLookupsNode other)
+    {
+        return Equals(Catalogue, other.Catalogue);
+    }
 
-        protected bool Equals(CatalogueLookupsNode other)
-        {
-            return Equals(Catalogue, other.Catalogue);
-        }
+    public override bool Equals(object obj)
+    {
+        if (ReferenceEquals(null, obj)) return false;
+        if (ReferenceEquals(this, obj)) return true;
+        if (obj.GetType() != typeof(CatalogueLookupsNode)) return false;
+        return Equals((CatalogueLookupsNode)obj);
+    }
 
-        public override bool Equals(object obj)
-        {
-            if (ReferenceEquals(null, obj)) return false;
-            if (ReferenceEquals(this, obj)) return true;
-            if (obj.GetType() != typeof(CatalogueLookupsNode)) return false;
-            return Equals((CatalogueLookupsNode)obj);
-        }
-
-        public override int GetHashCode()
-        {
-            return (Catalogue != null ? Catalogue.GetHashCode() : 0);
-        }
+    public override int GetHashCode()
+    {
+        return Catalogue != null ? Catalogue.GetHashCode() : 0;
     }
 }

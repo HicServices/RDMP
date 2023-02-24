@@ -12,33 +12,31 @@ using Rdmp.Core.DataFlowPipeline;
 using Rdmp.Core.Repositories;
 using Tests.Common;
 
-namespace Rdmp.Core.Tests.DataLoad.Engine.Integration.PipelineTests
+namespace Rdmp.Core.Tests.DataLoad.Engine.Integration.PipelineTests;
+
+public class ComponentCompatibilityTests :UnitTests
 {
-    public class ComponentCompatibilityTests :UnitTests
+    [OneTimeSetUp]
+    protected override void OneTimeSetUp()
     {
-        [OneTimeSetUp]
-        protected override void OneTimeSetUp()
-        {
-            base.OneTimeSetUp();
+        base.OneTimeSetUp();
 
-            SetupMEF();
-        }
+        SetupMEF();
+    }
 
-        [Test]
-        public void GetComponentsCompatibleWithBulkInsertContext()
-        {
-            Type[] array = MEF.GetTypes<IDataFlowComponent<DataTable>>().ToArray();
+    [Test]
+    public void GetComponentsCompatibleWithBulkInsertContext()
+    {
+        var array = MEF.GetTypes<IDataFlowComponent<DataTable>>().ToArray();
 
-            Assert.Greater(array.Count(),0);
-        }
+        Assert.Greater(array.Length,0);
+    }
 
-        [Test]
-        public void HowDoesMEFHandleTypeNames()
-        {
-            string expected = "Rdmp.Core.DataFlowPipeline.IDataFlowSource(System.Data.DataTable)";
+    [Test]
+    public void HowDoesMEFHandleTypeNames()
+    {
+        var expected = "Rdmp.Core.DataFlowPipeline.IDataFlowSource(System.Data.DataTable)";
 
-            Assert.AreEqual(expected, MEF.GetMEFNameForType(typeof(IDataFlowSource<DataTable>)));
-        }
+        Assert.AreEqual(expected, MEF.GetMEFNameForType(typeof(IDataFlowSource<DataTable>)));
     }
 }
-

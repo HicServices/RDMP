@@ -11,72 +11,71 @@ using System.Linq;
 using System.Reflection;
 using System.Runtime.Loader;
 
-namespace ReusableLibraryCode
+namespace ReusableLibraryCode;
+
+/// <summary>
+/// Create a resolver for when assemblies cannot be properly loaded through the usual mechanism
+/// and the bidingredirect is not available.
+/// </summary>
+public class AssemblyResolver
 {
-    /// <summary>
-    /// Create a resolver for when assemblies cannot be properly loaded through the usual mechanism
-    /// and the bidingredirect is not available.
-    /// </summary>
-    public class AssemblyResolver
+    private static Dictionary<string,Assembly> assemblyResolveAttempts = new(); 
+
+    public static void SetupAssemblyResolver(params DirectoryInfo[] dirs)
     {
-        private static Dictionary<string,Assembly> assemblyResolveAttempts = new Dictionary<string, Assembly>(); 
-
-        public static void SetupAssemblyResolver(params DirectoryInfo[] dirs)
+        AppDomain.CurrentDomain.AssemblyResolve += (sender, resolveArgs) =>
         {
-            AppDomain.CurrentDomain.AssemblyResolve += (sender, resolveArgs) =>
-            {
-                string assemblyInfo = resolveArgs.Name;
-                var parts = assemblyInfo.Split(',');
-                string name = parts[0];
+            var assemblyInfo = resolveArgs.Name;
+            var parts = assemblyInfo.Split(',');
+            var name = parts[0];
 
-                if (assemblyResolveAttempts.ContainsKey(assemblyInfo))
-                    return assemblyResolveAttempts[assemblyInfo];
+            if (assemblyResolveAttempts.ContainsKey(assemblyInfo))
+                return assemblyResolveAttempts[assemblyInfo];
 
-                //start out assuming we cannot load it
-                assemblyResolveAttempts.Add(assemblyInfo,null);
+            //start out assuming we cannot load it
+            assemblyResolveAttempts.Add(assemblyInfo,null);
                 
-                foreach(DirectoryInfo dir in dirs)
-                {
-                    var dll = dir.EnumerateFiles(name + ".dll").SingleOrDefault();
-                    if(dll != null)
-                        return assemblyResolveAttempts[assemblyInfo] = LoadFile(dll); //cache and return answer
-                }
-                
-                var assembly = System.AppContext.BaseDirectory;
-                if (string.IsNullOrWhiteSpace(assembly))
-                    return null;
-
-                var directoryInfo = new DirectoryInfo(assembly);
-                var file = directoryInfo?.EnumerateFiles(name + ".dll").FirstOrDefault();
-                if (file == null)
-                    return null;
-
-                return assemblyResolveAttempts[assemblyInfo] = Assembly.LoadFile(file.FullName); //cache and return answer
-            };
-        } 
- 
-        public static Assembly LoadFile(FileInfo f)
-        {
-            try
+            foreach(var dir in dirs)
             {
-                return F1(f);
-
-            }catch(FileLoadException)
-            {
-                //AssemblyLoadContext.Default.LoadFromAssemblyPath causes this Exception at runtime only
-                return F2(f);
+                var dll = dir.EnumerateFiles($"{name}.dll").SingleOrDefault();
+                if(dll != null)
+                    return assemblyResolveAttempts[assemblyInfo] = LoadFile(dll); //cache and return answer
             }
-        }
+                
+            var assembly = AppContext.BaseDirectory;
+            if (string.IsNullOrWhiteSpace(assembly))
+                return null;
 
-        private static Assembly F2(FileInfo f)
+            var directoryInfo = new DirectoryInfo(assembly);
+            var file = directoryInfo?.EnumerateFiles($"{name}.dll").FirstOrDefault();
+            if (file == null)
+                return null;
+
+            return assemblyResolveAttempts[assemblyInfo] = Assembly.LoadFile(file.FullName); //cache and return answer
+        };
+    } 
+ 
+    public static Assembly LoadFile(FileInfo f)
+    {
+        try
         {
-            return Assembly.LoadFile(f.FullName);
-        }
+            return F1(f);
 
-        private static Assembly F1(FileInfo f)
+        }catch(FileLoadException)
         {
-            return AssemblyLoadContext.Default.LoadFromAssemblyPath(f.FullName);
+            //AssemblyLoadContext.Default.LoadFromAssemblyPath causes this Exception at runtime only
+            return F2(f);
         }
-
     }
+
+    private static Assembly F2(FileInfo f)
+    {
+        return Assembly.LoadFile(f.FullName);
+    }
+
+    private static Assembly F1(FileInfo f)
+    {
+        return AssemblyLoadContext.Default.LoadFromAssemblyPath(f.FullName);
+    }
+
 }

@@ -10,16 +10,15 @@ using ReusableLibraryCode.Checks;
 using Tests.Common;
 
 
-namespace Rdmp.Core.Tests.CommandExecution
-{
-    class TestStartup : UnitTests
-    {
-        [Test]
-        public void TestStartupWithMemoryRepository()
-        {
-            var s = new Rdmp.Core.Startup.Startup(new EnvironmentInfo(),RepositoryLocator);
-            Assert.DoesNotThrow(()=>s.DoStartup(new ThrowImmediatelyCheckNotifier()));
-        }
+namespace Rdmp.Core.Tests.CommandExecution;
 
+internal class TestStartup : UnitTests
+{
+    [Test]
+    public void TestStartupWithMemoryRepository()
+    {
+        var s = new Rdmp.Core.Startup.Startup(new EnvironmentInfo(),RepositoryLocator);
+        Assert.DoesNotThrow(()=>s.DoStartup(new ThrowImmediatelyCheckNotifier()));
     }
+
 }

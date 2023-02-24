@@ -12,57 +12,56 @@ using Rdmp.Core.CommandExecution;
 using Rdmp.Core.Curation.Data;
 using Rdmp.Core.Repositories;
 
-namespace Rdmp.Core.Providers
+namespace Rdmp.Core.Providers;
+
+/// <summary>
+/// Determines whether objects are a <see cref="Favourite"/> of the current user and handles creating/deleting them.
+/// </summary>
+public class FavouritesProvider
 {
-    /// <summary>
-    /// Determines whether objects are a <see cref="Favourite"/> of the current user and handles creating/deleting them.
-    /// </summary>
-    public class FavouritesProvider
+    private readonly IBasicActivateItems _activator;
+    private readonly ICatalogueRepository _catalogueRepository;
+    public List<Favourite> CurrentFavourites { get; set; }
+
+    public FavouritesProvider(IBasicActivateItems activator)
     {
-        private readonly IBasicActivateItems _activator;
-        private readonly ICatalogueRepository _catalogueRepository;
-        public List<Favourite> CurrentFavourites { get; set; }
+        _activator = activator;
+        _catalogueRepository = _activator.RepositoryLocator.CatalogueRepository;
+        CurrentFavourites = _catalogueRepository.GetAllObjectsWhere<Favourite>("Username", Environment.UserName).ToList();
+    }
 
-        public FavouritesProvider(IBasicActivateItems activator)
+    public void AddFavourite(object sender, IMapsDirectlyToDatabaseTable o)
+    {
+        //it's already a favourite
+        if (IsFavourite(o))
+            return;
+
+        var newFavourite = new Favourite(_catalogueRepository, o);
+        CurrentFavourites.Add(newFavourite);
+        _activator.Publish(newFavourite);
+    }
+
+    public void RemoveFavourite(object sender, IMapsDirectlyToDatabaseTable o)
+    {
+        var toRemove = CurrentFavourites.SingleOrDefault(f => f.IsReferenceTo(o));
+
+        if (toRemove != null)
         {
-            _activator = activator;
-            _catalogueRepository = _activator.RepositoryLocator.CatalogueRepository;
-            CurrentFavourites = _catalogueRepository.GetAllObjectsWhere<Favourite>("Username", Environment.UserName).ToList();
+            CurrentFavourites.Remove(toRemove);
+            toRemove.DeleteInDatabase();
+            _activator.Publish(toRemove);
         }
 
-        public void AddFavourite(object sender, IMapsDirectlyToDatabaseTable o)
-        {
-            //it's already a favourite
-            if (IsFavourite(o))
-                return;
+        //it wasn't a favourite anyway
+    }
 
-            var newFavourite = new Favourite(_catalogueRepository, o);
-            CurrentFavourites.Add(newFavourite);
-            _activator.Publish(newFavourite);
-        }
+    public bool IsFavourite(IMapsDirectlyToDatabaseTable o)
+    {
+        return GetFavouriteIfAny(o) != null;
+    }
 
-        public void RemoveFavourite(object sender, IMapsDirectlyToDatabaseTable o)
-        {
-            Favourite toRemove = CurrentFavourites.SingleOrDefault(f => f.IsReferenceTo(o));
-
-            if (toRemove != null)
-            {
-                CurrentFavourites.Remove(toRemove);
-                toRemove.DeleteInDatabase();
-                _activator.Publish(toRemove);
-            }
-
-            //it wasn't a favourite anyway
-        }
-
-        public bool IsFavourite(IMapsDirectlyToDatabaseTable o)
-        {
-            return GetFavouriteIfAny(o) != null;
-        }
-
-        public Favourite GetFavouriteIfAny(IMapsDirectlyToDatabaseTable o)
-        {
-            return CurrentFavourites.SingleOrDefault(f => f.IsReferenceTo(o));
-        }
+    public Favourite GetFavouriteIfAny(IMapsDirectlyToDatabaseTable o)
+    {
+        return CurrentFavourites.SingleOrDefault(f => f.IsReferenceTo(o));
     }
 }

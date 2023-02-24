@@ -11,121 +11,120 @@ using Rdmp.Core.Repositories;
 using ReusableLibraryCode.Comments;
 using ReusableLibraryCode.Settings;
 
-namespace Rdmp.Core.Startup
+namespace Rdmp.Core.Startup;
+
+/// <summary>
+/// Records connection strings to the Catalogue and DataExport databases (See LinkedRepositoryProvider) in the user settings file for the current
+/// user.
+/// 
+/// <para>Use properties CatalogueRepository and DataExportRepository for interacting with objects saved in those databases (and to create new ones).</para>
+/// </summary>
+public class UserSettingsRepositoryFinder : IRDMPPlatformRepositoryServiceLocator
 {
-    /// <summary>
-    /// Records connection strings to the Catalogue and DataExport databases (See LinkedRepositoryProvider) in the user settings file for the current
-    /// user.
-    /// 
-    /// <para>Use properties CatalogueRepository and DataExportRepository for interacting with objects saved in those databases (and to create new ones).</para>
-    /// </summary>
-    public class UserSettingsRepositoryFinder : IRDMPPlatformRepositoryServiceLocator
+    private LinkedRepositoryProvider _linkedRepositoryProvider;
+
+    public ICatalogueRepository CatalogueRepository
     {
-        private LinkedRepositoryProvider _linkedRepositoryProvider;
-
-        public ICatalogueRepository CatalogueRepository
+        get
         {
-            get
-            {
-                if(_linkedRepositoryProvider == null)
-                    RefreshRepositoriesFromUserSettings();
+            if(_linkedRepositoryProvider == null)
+                RefreshRepositoriesFromUserSettings();
 
-                if (_linkedRepositoryProvider == null)
-                    throw new Exception("RefreshRepositoriesFromUserSettings failed to populate_linkedRepositoryProvider as expected ");
+            if (_linkedRepositoryProvider == null)
+                throw new Exception("RefreshRepositoriesFromUserSettings failed to populate_linkedRepositoryProvider as expected ");
 
-                return _linkedRepositoryProvider.CatalogueRepository;
-            }
+            return _linkedRepositoryProvider.CatalogueRepository;
         }
+    }
 
-        public IDataExportRepository DataExportRepository
+    public IDataExportRepository DataExportRepository
+    {
+        get
         {
-            get
-            {
-                if (_linkedRepositoryProvider == null)
-                    RefreshRepositoriesFromUserSettings();
+            if (_linkedRepositoryProvider == null)
+                RefreshRepositoriesFromUserSettings();
 
-                if (_linkedRepositoryProvider == null)
-                    throw new Exception("RefreshRepositoriesFromUserSettings failed to populate_linkedRepositoryProvider as expected ");
+            if (_linkedRepositoryProvider == null)
+                throw new Exception("RefreshRepositoriesFromUserSettings failed to populate_linkedRepositoryProvider as expected ");
 
-                return _linkedRepositoryProvider.DataExportRepository; 
-            }
+            return _linkedRepositoryProvider.DataExportRepository; 
         }
+    }
 
-        public IMapsDirectlyToDatabaseTable GetArbitraryDatabaseObject(string repositoryTypeName, string databaseObjectTypeName, int objectID)
-        {
-            return _linkedRepositoryProvider.GetArbitraryDatabaseObject(repositoryTypeName, databaseObjectTypeName,objectID);
-        }
+    public IMapsDirectlyToDatabaseTable GetArbitraryDatabaseObject(string repositoryTypeName, string databaseObjectTypeName, int objectID)
+    {
+        return _linkedRepositoryProvider.GetArbitraryDatabaseObject(repositoryTypeName, databaseObjectTypeName,objectID);
+    }
 
-        public bool ArbitraryDatabaseObjectExists(string repositoryTypeName, string databaseObjectTypeName, int objectID)
-        {
-            return _linkedRepositoryProvider.ArbitraryDatabaseObjectExists(repositoryTypeName, databaseObjectTypeName, objectID);
-        }
+    public bool ArbitraryDatabaseObjectExists(string repositoryTypeName, string databaseObjectTypeName, int objectID)
+    {
+        return _linkedRepositoryProvider.ArbitraryDatabaseObjectExists(repositoryTypeName, databaseObjectTypeName, objectID);
+    }
 
-        public void RefreshRepositoriesFromUserSettings()
-        {
-            //we have mef?
-            MEF mef = null;
-            CommentStore commentStore = null;
+    public void RefreshRepositoriesFromUserSettings()
+    {
+        //we have mef?
+        MEF mef = null;
+        CommentStore commentStore = null;
             
-            //if we have a catalogue repository with loaded MEF then grab it
-            if (_linkedRepositoryProvider != null && _linkedRepositoryProvider.CatalogueRepository != null)
-            {
+        //if we have a catalogue repository with loaded MEF then grab it
+        if (_linkedRepositoryProvider != null && _linkedRepositoryProvider.CatalogueRepository != null)
+        {
 
-                if(_linkedRepositoryProvider.CatalogueRepository.MEF != null)
-                    mef = _linkedRepositoryProvider.CatalogueRepository.MEF;
+            if(_linkedRepositoryProvider.CatalogueRepository.MEF != null)
+                mef = _linkedRepositoryProvider.CatalogueRepository.MEF;
 
-                if (_linkedRepositoryProvider.CatalogueRepository.CommentStore != null)
-                    commentStore = _linkedRepositoryProvider.CatalogueRepository.CommentStore;
-            }
+            if (_linkedRepositoryProvider.CatalogueRepository.CommentStore != null)
+                commentStore = _linkedRepositoryProvider.CatalogueRepository.CommentStore;
+        }
 
-            //user must have a Catalogue
-            string catalogueString = UserSettings.CatalogueConnectionString;
+        //user must have a Catalogue
+        var catalogueString = UserSettings.CatalogueConnectionString;
             
-            //user may have a DataExportManager
-            string dataExportManagerConnectionString = UserSettings.DataExportConnectionString;
+        //user may have a DataExportManager
+        var dataExportManagerConnectionString = UserSettings.DataExportConnectionString;
 
-            LinkedRepositoryProvider newrepo;
+        LinkedRepositoryProvider newrepo;
 
-            try
-            {
-                newrepo = new LinkedRepositoryProvider(catalogueString, dataExportManagerConnectionString);
-            }
-            catch (Exception ex)
-            {
-                throw new CorruptRepositoryConnectionDetailsException($"Unable to create {nameof(LinkedRepositoryProvider)}",ex);
-            }
+        try
+        {
+            newrepo = new LinkedRepositoryProvider(catalogueString, dataExportManagerConnectionString);
+        }
+        catch (Exception ex)
+        {
+            throw new CorruptRepositoryConnectionDetailsException($"Unable to create {nameof(LinkedRepositoryProvider)}",ex);
+        }
 
-            //preserve the currently loaded MEF assemblies
+        //preserve the currently loaded MEF assemblies
 
-            //if we have a new repo
-            if (newrepo.CatalogueRepository != null)
-            {
-                //and the new repo doesn't have MEF loaded
-                if(newrepo.CatalogueRepository.MEF != null && !newrepo.CatalogueRepository.MEF.HaveDownloadedAllAssemblies && mef != null && mef.HaveDownloadedAllAssemblies)
-                    //use the old MEF    
-                    newrepo.CatalogueRepository.MEF = mef;
+        //if we have a new repo
+        if (newrepo.CatalogueRepository != null)
+        {
+            //and the new repo doesn't have MEF loaded
+            if(newrepo.CatalogueRepository.MEF != null && !newrepo.CatalogueRepository.MEF.HaveDownloadedAllAssemblies && mef != null && mef.HaveDownloadedAllAssemblies)
+                //use the old MEF    
+                newrepo.CatalogueRepository.MEF = mef;
 
-                newrepo.CatalogueRepository.CommentStore = commentStore ?? newrepo.CatalogueRepository.CommentStore;
+            newrepo.CatalogueRepository.CommentStore = commentStore ?? newrepo.CatalogueRepository.CommentStore;
 
-            }
+        }
             
 
-            _linkedRepositoryProvider = newrepo;
-        }
+        _linkedRepositoryProvider = newrepo;
+    }
 
-        public IMapsDirectlyToDatabaseTable GetObjectByID<T>(int value) where T : IMapsDirectlyToDatabaseTable
-        {
-            return _linkedRepositoryProvider.GetObjectByID<T>(value);
-        }
+    public IMapsDirectlyToDatabaseTable GetObjectByID<T>(int value) where T : IMapsDirectlyToDatabaseTable
+    {
+        return _linkedRepositoryProvider.GetObjectByID<T>(value);
+    }
 
-        public IMapsDirectlyToDatabaseTable GetObjectByID(Type t, int value)
-        {
-            return _linkedRepositoryProvider.GetObjectByID(t,value);
-        }
+    public IMapsDirectlyToDatabaseTable GetObjectByID(Type t, int value)
+    {
+        return _linkedRepositoryProvider.GetObjectByID(t,value);
+    }
 
-        public IEnumerable<IRepository> GetAllRepositories()
-        {
-            return _linkedRepositoryProvider.GetAllRepositories();
-        }
+    public IEnumerable<IRepository> GetAllRepositories()
+    {
+        return _linkedRepositoryProvider.GetAllRepositories();
     }
 }

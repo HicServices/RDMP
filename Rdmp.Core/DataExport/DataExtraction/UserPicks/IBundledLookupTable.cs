@@ -6,13 +6,12 @@
 
 using Rdmp.Core.Curation.Data;
 
-namespace Rdmp.Core.DataExport.DataExtraction.UserPicks
+namespace Rdmp.Core.DataExport.DataExtraction.UserPicks;
+
+/// <summary>
+/// See BundledLookupTable
+/// </summary>
+public interface IBundledLookupTable
 {
-    /// <summary>
-    /// See BundledLookupTable
-    /// </summary>
-    public interface IBundledLookupTable
-    {
-        ITableInfo TableInfo { get; set; }
-    }
+    ITableInfo TableInfo { get; set; }
 }

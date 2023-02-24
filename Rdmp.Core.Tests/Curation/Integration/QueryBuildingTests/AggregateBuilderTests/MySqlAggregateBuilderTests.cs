@@ -10,27 +10,27 @@ using Rdmp.Core.Curation.Data;
 using Rdmp.Core.QueryBuilding;
 using ReusableLibraryCode.Settings;
 
-namespace Rdmp.Core.Tests.Curation.Integration.QueryBuildingTests.AggregateBuilderTests
+namespace Rdmp.Core.Tests.Curation.Integration.QueryBuildingTests.AggregateBuilderTests;
+
+public class MySqlAggregateBuilderTests : AggregateBuilderTestsBase
 {
-    public class MySqlAggregateBuilderTests : AggregateBuilderTestsBase
+    [Test]
+    public void Test_AggregateBuilder_MySql_Top32()
     {
-        [Test]
-        public void Test_AggregateBuilder_MySql_Top32()
-        {
-            _ti.DatabaseType = DatabaseType.MySql;
-            _ti.SaveToDatabase();
+        _ti.DatabaseType = DatabaseType.MySql;
+        _ti.SaveToDatabase();
 
-            var builder = new AggregateBuilder(null, "count(*)", null);
-            builder.AddColumn(_dimension1);
+        var builder = new AggregateBuilder(null, "count(*)", null);
+        builder.AddColumn(_dimension1);
 
-            var topx = new AggregateTopX(CatalogueRepository, _configuration, 32);
-            topx.OrderByDimensionIfAny_ID = _dimension1.ID;
-            topx.SaveToDatabase();
+        var topx = new AggregateTopX(CatalogueRepository, _configuration, 32);
+        topx.OrderByDimensionIfAny_ID = _dimension1.ID;
+        topx.SaveToDatabase();
 
-            builder.AggregateTopX = topx;
+        builder.AggregateTopX = topx;
             
             
-            Assert.AreEqual(CollapseWhitespace(@"/**/
+        Assert.AreEqual(CollapseWhitespace(@"/**/
 SELECT 
 Col1,
 count(*) AS MyCount
@@ -43,27 +43,26 @@ Col1 desc
 LIMIT 32"),CollapseWhitespace(builder.SQL.Trim()));
 
 
-            topx.DeleteInDatabase();
-        }
-        [TestCase(true)]
-        [TestCase(false)]
-        public void Test_AggregateBuilder_MySql_Top31OrderByCountAsc(bool useAliasForGroupBy)
-        {
-            _ti.DatabaseType = DatabaseType.MySql;
-            _ti.SaveToDatabase();
+        topx.DeleteInDatabase();
+    }
+    [TestCase(true)]
+    [TestCase(false)]
+    public void Test_AggregateBuilder_MySql_Top31OrderByCountAsc(bool useAliasForGroupBy)
+    {
+        _ti.DatabaseType = DatabaseType.MySql;
+        _ti.SaveToDatabase();
 
-            UserSettings.UseAliasInsteadOfTransformInGroupByAggregateGraphs = useAliasForGroupBy;
+        UserSettings.UseAliasInsteadOfTransformInGroupByAggregateGraphs = useAliasForGroupBy;
 
-            var builder = new AggregateBuilder(null, "count(*)", null);
-            builder.AddColumn(_dimension1);
+        var builder = new AggregateBuilder(null, "count(*)", null);
+        builder.AddColumn(_dimension1);
 
-            var topx = new AggregateTopX(CatalogueRepository, _configuration, 31);
-            topx.OrderByDirection = AggregateTopXOrderByDirection.Ascending;
-            builder.AggregateTopX = topx;
+        var topx = new AggregateTopX(CatalogueRepository, _configuration, 31);
+        topx.OrderByDirection = AggregateTopXOrderByDirection.Ascending;
+        builder.AggregateTopX = topx;
 
-            if (useAliasForGroupBy)
-            {
-                Assert.AreEqual(CollapseWhitespace(@"/**/
+        Assert.AreEqual(useAliasForGroupBy
+            ? CollapseWhitespace(@"/**/
 SELECT 
 Col1,
 count(*) AS MyCount
@@ -73,11 +72,8 @@ group by
 Col1
 order by 
 MyCount asc
-LIMIT 31"), CollapseWhitespace(builder.SQL));
-            }
-            else
-            {
-                Assert.AreEqual(CollapseWhitespace(@"/**/
+LIMIT 31")
+            : CollapseWhitespace(@"/**/
 SELECT 
 Col1,
 count(*) AS MyCount
@@ -88,13 +84,10 @@ Col1
 order by 
 count(*) asc
 LIMIT 31"), CollapseWhitespace(builder.SQL));
-            }
-            
 
 
-            topx.DeleteInDatabase();
+        topx.DeleteInDatabase();
 
-            UserSettings.UseAliasInsteadOfTransformInGroupByAggregateGraphs = false;
-        }
+        UserSettings.UseAliasInsteadOfTransformInGroupByAggregateGraphs = false;
     }
 }

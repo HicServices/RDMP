@@ -10,32 +10,31 @@ using Rdmp.Core.Icons.IconProvision;
 using ReusableLibraryCode.Icons.IconProvision;
 using SixLabors.ImageSharp.PixelFormats;
 
-namespace Rdmp.Core.CommandExecution.AtomicCommands
+namespace Rdmp.Core.CommandExecution.AtomicCommands;
+
+internal class ExecuteCommandFreezeExtractionConfiguration : BasicCommandExecution, IAtomicCommand
 {
-    internal class ExecuteCommandFreezeExtractionConfiguration : BasicCommandExecution, IAtomicCommand
+    private ExtractionConfiguration _extractionConfiguration;
+
+    public ExecuteCommandFreezeExtractionConfiguration(IBasicActivateItems activator, ExtractionConfiguration extractionConfiguration) : base(activator)
     {
-        private ExtractionConfiguration _extractionConfiguration;
+        _extractionConfiguration = extractionConfiguration;
 
-        public ExecuteCommandFreezeExtractionConfiguration(IBasicActivateItems activator, ExtractionConfiguration extractionConfiguration) : base(activator)
-        {
-            _extractionConfiguration = extractionConfiguration;
+        if (extractionConfiguration.IsReleased)
+            SetImpossible("ExtractionConfiguration is already released)");
+    }
 
-            if (extractionConfiguration.IsReleased)
-                SetImpossible("ExtractionConfiguration is already released)");
-        }
+    public override Image<Rgba32> GetImage(IIconProvider iconProvider)
+    {
+        return Image.Load<Rgba32>(CatalogueIcons.FrozenExtractionConfiguration);
+    }
+    public override void Execute()
+    {
+        base.Execute();
 
-        public override Image<Rgba32> GetImage(IIconProvider iconProvider)
-        {
-            return Image.Load<Rgba32>(CatalogueIcons.FrozenExtractionConfiguration);
-        }
-        public override void Execute()
-        {
-            base.Execute();
-
-            _extractionConfiguration.IsReleased = true;
-            _extractionConfiguration.SaveToDatabase();
-            Publish(_extractionConfiguration);
-            Emphasise(_extractionConfiguration);
-        }
+        _extractionConfiguration.IsReleased = true;
+        _extractionConfiguration.SaveToDatabase();
+        Publish(_extractionConfiguration);
+        Emphasise(_extractionConfiguration);
     }
 }

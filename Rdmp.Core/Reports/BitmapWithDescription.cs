@@ -6,22 +6,21 @@
 
 using SixLabors.ImageSharp;
 
-namespace Rdmp.Core.Reports
-{
-    /// <summary>
-    /// Describes an Aggregate Graph or Heatmap etc with optional description/headers
-    /// </summary>
-    public class BitmapWithDescription
-    {
-        public Image Bitmap { get; set; }
-        public string Header { get; set; }
-        public string Description { get; set; }
+namespace Rdmp.Core.Reports;
 
-        public BitmapWithDescription(Image bitmap, string header, string description)
-        {
-            Bitmap = bitmap;
-            Header = header;
-            Description = description;
-        }
+/// <summary>
+/// Describes an Aggregate Graph or Heatmap etc with optional description/headers
+/// </summary>
+public class BitmapWithDescription
+{
+    public Image Bitmap { get; set; }
+    public string Header { get; set; }
+    public string Description { get; set; }
+
+    public BitmapWithDescription(Image bitmap, string header, string description)
+    {
+        Bitmap = bitmap;
+        Header = header;
+        Description = description;
     }
 }

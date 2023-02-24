@@ -9,53 +9,49 @@ using Rdmp.Core.CommandExecution.AtomicCommands;
 using Rdmp.Core.CommandLine.Interactive.Picking;
 using ReusableLibraryCode.Checks;
 using ReusableLibraryCode.Settings;
-using System;
-using System.Collections.Generic;
-using System.Text;
 
-namespace Rdmp.Core.Tests.CommandExecution
+namespace Rdmp.Core.Tests.CommandExecution;
+
+internal class TestExecuteCommandSetUserSetting : CommandCliTests
 {
-    class TestExecuteCommandSetUserSetting : CommandCliTests
+    [Test]
+    public void Test_CatalogueDescription_Normal()
     {
-        [Test]
-        public void Test_CatalogueDescription_Normal()
-        {
-            UserSettings.Wait5SecondsAfterStartupUI = false;
+        UserSettings.Wait5SecondsAfterStartupUI = false;
 
-            GetInvoker().ExecuteCommand(typeof(ExecuteCommandSetUserSetting),new CommandLineObjectPicker(new []{ "Wait5SecondsAfterStartupUI", "true"}, GetActivator()));
+        GetInvoker().ExecuteCommand(typeof(ExecuteCommandSetUserSetting),new CommandLineObjectPicker(new []{ "Wait5SecondsAfterStartupUI", "true"}, GetActivator()));
 
-            Assert.IsTrue(UserSettings.Wait5SecondsAfterStartupUI);
+        Assert.IsTrue(UserSettings.Wait5SecondsAfterStartupUI);
 
-            GetInvoker().ExecuteCommand(typeof(ExecuteCommandSetUserSetting),new CommandLineObjectPicker(new []{ "Wait5SecondsAfterStartupUI", "false"}, GetActivator()));
+        GetInvoker().ExecuteCommand(typeof(ExecuteCommandSetUserSetting),new CommandLineObjectPicker(new []{ "Wait5SecondsAfterStartupUI", "false"}, GetActivator()));
             
-            Assert.IsFalse(UserSettings.Wait5SecondsAfterStartupUI);
+        Assert.IsFalse(UserSettings.Wait5SecondsAfterStartupUI);
 
-        }
+    }
 
-        [Test]
-        public void TestSettingErrorCodeValue_InvalidValue()
-        {
-            var cmd = new ExecuteCommandSetUserSetting(GetActivator(), "R001", "foo");
-            Assert.IsTrue(cmd.IsImpossible);
-            Assert.AreEqual(cmd.ReasonCommandImpossible, "Invalid enum value.  When setting an error code you must supply a value of one of :Success,Warning,Fail");
-        }
+    [Test]
+    public void TestSettingErrorCodeValue_InvalidValue()
+    {
+        var cmd = new ExecuteCommandSetUserSetting(GetActivator(), "R001", "foo");
+        Assert.IsTrue(cmd.IsImpossible);
+        Assert.AreEqual(cmd.ReasonCommandImpossible, "Invalid enum value.  When setting an error code you must supply a value of one of :Success,Warning,Fail");
+    }
 
-        [Test]
-        public void TestSettingErrorCodeValue_Success()
-        {
-            Assert.AreEqual("R001", ErrorCodes.ExistingExtractionTableInDatabase.Code);
-            var before = UserSettings.GetErrorReportingLevelFor(ErrorCodes.ExistingExtractionTableInDatabase);
-            Assert.AreNotEqual(CheckResult.Success, before);
+    [Test]
+    public void TestSettingErrorCodeValue_Success()
+    {
+        Assert.AreEqual("R001", ErrorCodes.ExistingExtractionTableInDatabase.Code);
+        var before = UserSettings.GetErrorReportingLevelFor(ErrorCodes.ExistingExtractionTableInDatabase);
+        Assert.AreNotEqual(CheckResult.Success, before);
 
-            var cmd = new ExecuteCommandSetUserSetting(GetActivator(), "R001", "Success");
-            Assert.IsFalse(cmd.IsImpossible,cmd.ReasonCommandImpossible);
-            cmd.Execute();
+        var cmd = new ExecuteCommandSetUserSetting(GetActivator(), "R001", "Success");
+        Assert.IsFalse(cmd.IsImpossible,cmd.ReasonCommandImpossible);
+        cmd.Execute();
 
-            var after = UserSettings.GetErrorReportingLevelFor(ErrorCodes.ExistingExtractionTableInDatabase);
-            Assert.AreEqual(CheckResult.Success, after);
+        var after = UserSettings.GetErrorReportingLevelFor(ErrorCodes.ExistingExtractionTableInDatabase);
+        Assert.AreEqual(CheckResult.Success, after);
 
-            //reset the original state of the system (the default)
-            UserSettings.SetErrorReportingLevelFor(ErrorCodes.ExistingExtractionTableInDatabase,before);
-        }
+        //reset the original state of the system (the default)
+        UserSettings.SetErrorReportingLevelFor(ErrorCodes.ExistingExtractionTableInDatabase,before);
     }
 }

@@ -13,71 +13,70 @@ using Rdmp.Core.Curation.Data;
 using Rdmp.Core.Repositories.Construction;
 using ReusableLibraryCode.DataAccess;
 
-namespace Rdmp.Core.CommandExecution.AtomicCommands.Alter
+namespace Rdmp.Core.CommandExecution.AtomicCommands.Alter;
+
+/// <summary>
+/// Creates a primary key on the live database table based on one or more columns
+/// </summary>
+public class ExecuteCommandAlterTableCreatePrimaryKey : AlterTableCommandExecution
 {
-    /// <summary>
-    /// Creates a primary key on the live database table based on one or more columns
-    /// </summary>
-    public class ExecuteCommandAlterTableCreatePrimaryKey : AlterTableCommandExecution
-    {
-        private ColumnInfo[] _columnInfos;
+    private ColumnInfo[] _columnInfos;
 
-        [UseWithCommandLine( ParameterHelpList = "<TableInfo> <ColumnInfo1> <ColumnInfo2> etc",
-            ParameterHelpBreakdown = @"TableInfo    The table you want to create a primary key on e.g. TableInfo:*Biochem*
+    [UseWithCommandLine( ParameterHelpList = "<TableInfo> <ColumnInfo1> <ColumnInfo2> etc",
+        ParameterHelpBreakdown = @"TableInfo    The table you want to create a primary key on e.g. TableInfo:*Biochem*
 ColumnInfos List of columns that should form the primary key (1 for simple primary key, 2+ for composite primary key)")]
-        public ExecuteCommandAlterTableCreatePrimaryKey(IBasicActivateItems activator, CommandLineObjectPicker picker) :
-            this(activator, (TableInfo)picker[0].GetValueForParameterOfType(typeof(TableInfo)))
+    public ExecuteCommandAlterTableCreatePrimaryKey(IBasicActivateItems activator, CommandLineObjectPicker picker) :
+        this(activator, (TableInfo)picker[0].GetValueForParameterOfType(typeof(TableInfo)))
+    {
+        if (IsImpossible)
+            return;
+
+        var pick = new List<ColumnInfo>();
+        for (var i = 1; i < picker.Length; i++)
         {
-            if (IsImpossible)
-                return;
-
-            var pick = new List<ColumnInfo>();
-            for (int i = 1; i < picker.Length; i++)
-            {
-                pick.Add((ColumnInfo)picker[i].GetValueForParameterOfType(typeof(ColumnInfo)));
-            }
-
-            _columnInfos = pick.ToArray();
-        }
-        public ExecuteCommandAlterTableCreatePrimaryKey(IBasicActivateItems activator, TableInfo tableInfo):base(activator,tableInfo)
-        {
-            if(IsImpossible)
-                return;
-
-            if(Table.DiscoverColumns().Any(c=>c.IsPrimaryKey))
-            {
-                SetImpossible("Table already has a primary key, try synchronizing the TableInfo");
-                return;
-            }
+            pick.Add((ColumnInfo)picker[i].GetValueForParameterOfType(typeof(ColumnInfo)));
         }
 
-        public override void Execute()
+        _columnInfos = pick.ToArray();
+    }
+    public ExecuteCommandAlterTableCreatePrimaryKey(IBasicActivateItems activator, TableInfo tableInfo):base(activator,tableInfo)
+    {
+        if(IsImpossible)
+            return;
+
+        if(Table.DiscoverColumns().Any(c=>c.IsPrimaryKey))
         {
-            base.Execute();
+            SetImpossible("Table already has a primary key, try synchronizing the TableInfo");
+            return;
+        }
+    }
 
-            Synchronize();
+    public override void Execute()
+    {
+        base.Execute();
 
-            var cols = _columnInfos;
+        Synchronize();
 
-            if (cols == null && SelectMany(TableInfo.ColumnInfos, out ColumnInfo[] selected))
-                cols = selected;
+        var cols = _columnInfos;
 
-            if (cols == null || cols.Length == 0)
-                return;
+        if (cols == null && SelectMany(TableInfo.ColumnInfos, out var selected))
+            cols = selected;
+
+        if (cols == null || cols.Length == 0)
+            return;
             
-            var cts = new CancellationTokenSource();
+        var cts = new CancellationTokenSource();
 
-            var task = Task.Run(() =>
-                Table.CreatePrimaryKey(cols.Select(c => c.Discover(DataAccessContext.DataLoad)).ToArray()));
+        var task = Task.Run(() =>
+            Table.CreatePrimaryKey(cols.Select(c => c.Discover(DataAccessContext.DataLoad)).ToArray()));
                 
-            Wait("Creating Primary Key...",task, cts);
+        Wait("Creating Primary Key...",task, cts);
 
-            if(task.IsFaulted)
-                ShowException("Create Primary Key Failed",task.Exception);
+        if(task.IsFaulted)
+            ShowException("Create Primary Key Failed",task.Exception);
             
-            Synchronize();
+        Synchronize();
 
-            Publish(TableInfo);
-        }
+        Publish(TableInfo);
     }
 }

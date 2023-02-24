@@ -14,146 +14,146 @@ using Rdmp.Core.Curation.Data;
 using Rdmp.Core.Curation.Data.Governance;
 using Rdmp.Core.Repositories;
 
-namespace Rdmp.Core.Reports
+namespace Rdmp.Core.Reports;
+
+/// <summary>
+/// Processes all GovernancePeriod and Catalogues into a CSV report about which datasets are covered by which governance periods, which periods have expired (and there
+/// is no corresponding follow on GovernancePeriod) and which Catalogues are not covered by any governance.
+/// </summary>
+public class GovernanceReport:DocXHelper
 {
-    /// <summary>
-    /// Processes all GovernancePeriod and Catalogues into a CSV report about which datasets are covered by which governance periods, which periods have expired (and there
-    /// is no corresponding follow on GovernancePeriod) and which Catalogues are not covered by any governance.
-    /// </summary>
-    public class GovernanceReport:DocXHelper
+    private readonly IDetermineDatasetTimespan _timespanCalculator;
+    private readonly ICatalogueRepository _repository;
+
+    private readonly CsvConfiguration _csvConfig = new(CultureInfo.CurrentCulture)
     {
-        private readonly IDetermineDatasetTimespan _timespanCalculator;
-        private readonly ICatalogueRepository _repository;
+        Delimiter = ","
+    };
+    public GovernanceReport(IDetermineDatasetTimespan timespanCalculator,ICatalogueRepository repository)
+    {
+        _timespanCalculator = timespanCalculator;
+        _repository = repository;
+    }
 
-        private readonly CsvConfiguration _csvConfig = new CsvConfiguration(CultureInfo.CurrentCulture)
-        {
-            Delimiter = ","
-        };
-        public GovernanceReport(IDetermineDatasetTimespan timespanCalculator,ICatalogueRepository repository)
-        {
-            _timespanCalculator = timespanCalculator;
-            _repository = repository;
-        }
+    public void GenerateReport()
+    {
+        var f = GetUniqueFilenameInWorkArea("GovernanceReport", ".csv");
 
-        public void GenerateReport()
+        using (var s = new StreamWriter(f.FullName))
         {
-            var f = GetUniqueFilenameInWorkArea("GovernanceReport", ".csv");
-
-            using (var s = new StreamWriter(f.FullName))
+            using (var writer = new CsvWriter(s, _csvConfig))
             {
-                using (CsvWriter writer = new CsvWriter(s, _csvConfig))
-                {
-                    writer.WriteField("Extractable Datasets");
-                    writer.NextRecord();
+                writer.WriteField("Extractable Datasets");
+                writer.NextRecord();
                         
-                    writer.WriteField("Folder");
-                    writer.WriteField("Catalogue");
-                    writer.WriteField("Current Governance");
-                    writer.WriteField("Dataset Period");
-                    writer.WriteField("Description");
-                    writer.NextRecord();
+                writer.WriteField("Folder");
+                writer.WriteField("Catalogue");
+                writer.WriteField("Current Governance");
+                writer.WriteField("Dataset Period");
+                writer.WriteField("Description");
+                writer.NextRecord();
 
 
-                    Dictionary<GovernancePeriod, ICatalogue[]> govs = _repository.GetAllObjects<GovernancePeriod>().ToDictionary(period => period, period => period.GovernedCatalogues.ToArray());
+                var govs = _repository.GetAllObjects<GovernancePeriod>().ToDictionary(period => period, period => period.GovernedCatalogues.ToArray());
             
-                    foreach (Catalogue catalogue in _repository.GetAllObjects<Catalogue>()
-                        .Where(c=>c.CatalogueItems.Any(ci=>ci.ExtractionInformation != null))
-                        .OrderBy(c=>c.Name))
-                    {
-                        if (catalogue.IsDeprecated || catalogue.IsColdStorageDataset || catalogue.IsInternalDataset)
-                            continue;
+                foreach (var catalogue in _repository.GetAllObjects<Catalogue>()
+                             .Where(c=>c.CatalogueItems.Any(ci=>ci.ExtractionInformation != null))
+                             .OrderBy(c=>c.Name))
+                {
+                    if (catalogue.IsDeprecated || catalogue.IsColdStorageDataset || catalogue.IsInternalDataset)
+                        continue;
 
-                        //get active governances
-                        var activeGovs = govs.Where(kvp => kvp.Value.Contains(catalogue) && !kvp.Key.IsExpired()).Select(g=>g.Key).ToArray();
-                        var expiredGovs = govs.Where(kvp => kvp.Value.Contains(catalogue) && kvp.Key.IsExpired()).Select(g => g.Key).ToArray();
+                    //get active governances
+                    var activeGovs = govs.Where(kvp => kvp.Value.Contains(catalogue) && !kvp.Key.IsExpired()).Select(g=>g.Key).ToArray();
+                    var expiredGovs = govs.Where(kvp => kvp.Value.Contains(catalogue) && kvp.Key.IsExpired()).Select(g => g.Key).ToArray();
 
-                        string relevantGovernance = null;
+                    string relevantGovernance = null;
 
-                        if (activeGovs.Any())
-                            relevantGovernance = string.Join("," , activeGovs.Select(gov => gov.Name));
-                        else if (expiredGovs.Any())
-                            relevantGovernance = "No Current Governance (Expired Governances: " + string.Join(",", expiredGovs.Select(gov => gov.Name)) + ")";
-                        else
-                            relevantGovernance = "No Governance Required";
+                    if (activeGovs.Any())
+                        relevantGovernance = string.Join("," , activeGovs.Select(gov => gov.Name));
+                    else if (expiredGovs.Any())
+                        relevantGovernance =
+                            $"No Current Governance (Expired Governances: {string.Join(",", expiredGovs.Select(gov => gov.Name))})";
+                    else
+                        relevantGovernance = "No Governance Required";
 
 
-                        //write the results out to Excel
-                        writer.WriteField(catalogue.Folder);
-                        writer.WriteField(catalogue.Name);
-                        writer.WriteField(relevantGovernance);
-                        writer.WriteField(_timespanCalculator.GetHumanReadableTimespanIfKnownOf(catalogue,true, out _));
-                        writer.WriteField(ShortenDescription(catalogue.Description));
-
-                        writer.NextRecord();
-                    }
+                    //write the results out to Excel
+                    writer.WriteField(catalogue.Folder);
+                    writer.WriteField(catalogue.Name);
+                    writer.WriteField(relevantGovernance);
+                    writer.WriteField(_timespanCalculator.GetHumanReadableTimespanIfKnownOf(catalogue,true, out _));
+                    writer.WriteField(ShortenDescription(catalogue.Description));
 
                     writer.NextRecord();
-
-                    // next section header
-                    writer.WriteField("Active Governance");
-            
-                    OutputGovernanceList(govs,writer, false);
-
-                    writer.NextRecord();
-                    // next section header
-                    writer.WriteField("Expired Governance");
-
-                    OutputGovernanceList(govs,writer, true);
                 }
-            }
-                
-            ShowFile(f);
-        }
-
-        private string ShortenDescription(string description)
-        {
-            if (string.IsNullOrWhiteSpace(description))
-                return description;
-
-            description = description.Replace("\r\n"," ");
-            description = description.Replace("\n"," ");
-
-            if (description.Length >= 100)
-                return description.Substring(0, 100) + "...";
-            else
-                return description;
-        }
-
-        /// <summary>
-        /// Pass false for active or true for expired
-        /// </summary>
-        /// <param name="govs"></param>
-        /// <param name="writer"></param>
-        /// <param name="expired"></param>
-        private void OutputGovernanceList(Dictionary<GovernancePeriod, ICatalogue[]> govs, CsvWriter writer, bool expired)
-        {
-            //headers for this section
-            writer.WriteField("Governance");
-            writer.WriteField("Period Name");
-            writer.WriteField("Catalogues");
-            writer.WriteField("Approval Start");
-            writer.WriteField("Approval End");
-            writer.WriteField("Documents");
-            writer.NextRecord();
-            
-            foreach (KeyValuePair<GovernancePeriod, ICatalogue[]> kvp in govs)
-            {
-                //if governance period does not have any Catalogues associated with it skip it
-                if (!kvp.Value.Any())
-                    continue;
-
-                //if it is expiry does not match the callers desired expiry state then skip it
-                if (kvp.Key.IsExpired() != expired)
-                    continue;
-
-                writer.WriteField(kvp.Key.Name);
-                writer.WriteField(string.Join(",", kvp.Value.Select(cata => cata.Name)));
-                writer.WriteField(kvp.Key.StartDate);
-                writer.WriteField(kvp.Key.EndDate == null ? "Never Expires" : kvp.Key.EndDate.ToString());
-                writer.WriteField(string.Join(",", kvp.Key.GovernanceDocuments.Select(doc => doc.GetFilenameOnly())));
 
                 writer.NextRecord();
+
+                // next section header
+                writer.WriteField("Active Governance");
+            
+                OutputGovernanceList(govs,writer, false);
+
+                writer.NextRecord();
+                // next section header
+                writer.WriteField("Expired Governance");
+
+                OutputGovernanceList(govs,writer, true);
             }
+        }
+                
+        ShowFile(f);
+    }
+
+    private string ShortenDescription(string description)
+    {
+        if (string.IsNullOrWhiteSpace(description))
+            return description;
+
+        description = description.Replace("\r\n"," ");
+        description = description.Replace("\n"," ");
+
+        if (description.Length >= 100)
+            return $"{description[..100]}...";
+        else
+            return description;
+    }
+
+    /// <summary>
+    /// Pass false for active or true for expired
+    /// </summary>
+    /// <param name="govs"></param>
+    /// <param name="writer"></param>
+    /// <param name="expired"></param>
+    private void OutputGovernanceList(Dictionary<GovernancePeriod, ICatalogue[]> govs, CsvWriter writer, bool expired)
+    {
+        //headers for this section
+        writer.WriteField("Governance");
+        writer.WriteField("Period Name");
+        writer.WriteField("Catalogues");
+        writer.WriteField("Approval Start");
+        writer.WriteField("Approval End");
+        writer.WriteField("Documents");
+        writer.NextRecord();
+            
+        foreach (var kvp in govs)
+        {
+            //if governance period does not have any Catalogues associated with it skip it
+            if (!kvp.Value.Any())
+                continue;
+
+            //if it is expiry does not match the callers desired expiry state then skip it
+            if (kvp.Key.IsExpired() != expired)
+                continue;
+
+            writer.WriteField(kvp.Key.Name);
+            writer.WriteField(string.Join(",", kvp.Value.Select(cata => cata.Name)));
+            writer.WriteField(kvp.Key.StartDate);
+            writer.WriteField(kvp.Key.EndDate == null ? "Never Expires" : kvp.Key.EndDate.ToString());
+            writer.WriteField(string.Join(",", kvp.Key.GovernanceDocuments.Select(doc => doc.GetFilenameOnly())));
+
+            writer.NextRecord();
         }
     }
 }

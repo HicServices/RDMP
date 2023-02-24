@@ -5,34 +5,31 @@
 // You should have received a copy of the GNU General Public License along with RDMP. If not, see <https://www.gnu.org/licenses/>.
 
 using System.IO;
-using Rdmp.Core.CommandExecution;
-using Rdmp.Core.CommandExecution.AtomicCommands;
 using Rdmp.Core.Curation.Data;
 using Rdmp.Core.Reports.DublinCore;
 
-namespace Rdmp.Core.CommandExecution.AtomicCommands.Sharing
+namespace Rdmp.Core.CommandExecution.AtomicCommands.Sharing;
+
+public class ExecuteCommandExportInDublinCoreFormat : BasicCommandExecution, IAtomicCommand
 {
-    public class ExecuteCommandExportInDublinCoreFormat : BasicCommandExecution, IAtomicCommand
+    private readonly DublinCoreDefinition _definition;
+    private FileInfo _toExport;
+    private readonly DublinCoreTranslater _translater = new();
+
+    public ExecuteCommandExportInDublinCoreFormat(IBasicActivateItems activator, Catalogue catalogue) : base(activator)
     {
-        private readonly DublinCoreDefinition _definition;
-        private FileInfo _toExport;
-        readonly DublinCoreTranslater _translater = new DublinCoreTranslater();
+        _definition = _translater.GenerateFrom(catalogue);
+        UseTripleDotSuffix = true;
+    }
 
-        public ExecuteCommandExportInDublinCoreFormat(IBasicActivateItems activator, Catalogue catalogue) : base(activator)
-        {
-            _definition = _translater.GenerateFrom(catalogue);
-            UseTripleDotSuffix = true;
-        }
+    public override void Execute()
+    {
+        base.Execute();
 
-        public override void Execute()
-        {
-            base.Execute();
+        if ((_toExport ??= BasicActivator.SelectFile("Dublin Core Xml|*.xml")) == null)
+            return;
 
-            if ((_toExport = _toExport ?? BasicActivator.SelectFile("Dublin Core Xml|*.xml")) == null)
-                return;
-
-            using (var stream = File.OpenWrite(_toExport.FullName))
-                _definition.WriteXml(stream);
-        }
+        using var stream = File.OpenWrite(_toExport.FullName);
+        _definition.WriteXml(stream);
     }
 }

@@ -11,57 +11,51 @@ using FAnsi.Discovery;
 using Rdmp.Core.Logging;
 using ReusableLibraryCode.Checks;
 
-namespace Rdmp.Core.Tests.Logging
+namespace Rdmp.Core.Tests.Logging;
+
+internal class DataLoadTaskHelper
 {
-    class DataLoadTaskHelper
+    private readonly DiscoveredServer _loggingServer;
+    private readonly Stack<string> _sqlToCleanUp = new();
+
+    public DataLoadTaskHelper(DiscoveredServer loggingServer)
     {
-        private readonly DiscoveredServer _loggingServer;
-        private readonly Stack<string> _sqlToCleanUp = new Stack<string>();
+        _loggingServer = loggingServer;
+    }
 
-        public DataLoadTaskHelper(DiscoveredServer loggingServer)
-        {
-            _loggingServer = loggingServer;
-        }
+    public void SetUp()
+    {
+        var checker = new LoggingDatabaseChecker(_loggingServer);
+        checker.Check(new AcceptAllCheckNotifier());
+    }
 
-        public void SetUp()
-        {
-            var checker = new LoggingDatabaseChecker(_loggingServer);
-            checker.Check(new AcceptAllCheckNotifier());
-        }
+    public void CreateDataLoadTask(string taskName)
+    {
+        using var con =_loggingServer.GetConnection();
+        con.Open();
 
-        public void CreateDataLoadTask(string taskName)
-        {
-            using (var con =_loggingServer.GetConnection())
-            {
-                con.Open();
+        var datasetName = $"Test_{taskName}";
+        var datasetCmd = _loggingServer.GetCommand($"INSERT INTO DataSet (dataSetID) VALUES ('{datasetName}')", con);
+        datasetCmd.ExecuteNonQuery();
+        _sqlToCleanUp.Push($"DELETE FROM DataSet WHERE dataSetID = '{datasetName}'");
 
-                var datasetName = "Test_" + taskName;
-                var datasetCmd = _loggingServer.GetCommand("INSERT INTO DataSet (dataSetID) VALUES ('" + datasetName + "')", con);
-                datasetCmd.ExecuteNonQuery();
-                _sqlToCleanUp.Push("DELETE FROM DataSet WHERE dataSetID = '" + datasetName + "'");
+        var taskCmd =
+            _loggingServer.GetCommand(
+                $"INSERT INTO DataLoadTask VALUES (100, '{taskName}', '{taskName}',@date, '{datasetName}', 1, 1, '{datasetName}')",
+                con);
 
-                var taskCmd =
-                    _loggingServer.GetCommand(
-                        "INSERT INTO DataLoadTask VALUES (100, '" + taskName + "', '" + taskName + "',@date, '" + datasetName + "', 1, 1, '" + datasetName + "')",
-                        con);
+        _loggingServer.AddParameterWithValueToCommand("@date", taskCmd, DateTime.Now);
 
-                _loggingServer.AddParameterWithValueToCommand("@date", taskCmd, DateTime.Now);
+        taskCmd.ExecuteNonQuery();
+        _sqlToCleanUp.Push($"DELETE FROM DataLoadTask WHERE dataSetID = '{datasetName}'");
+    }
 
-                taskCmd.ExecuteNonQuery();
-                _sqlToCleanUp.Push("DELETE FROM DataLoadTask WHERE dataSetID = '" + datasetName + "'");
-            }
-        }
+    public void TearDown()
+    {
+        using var con = _loggingServer.GetConnection();
+        con.Open();
 
-        public void TearDown()
-        {
-            using (var con = _loggingServer.GetConnection())
-            {
-                con.Open();
-
-                while (_sqlToCleanUp.Any())
-                    _loggingServer.GetCommand(_sqlToCleanUp.Pop(), con).ExecuteNonQuery();
-            }
-
-        }
+        while (_sqlToCleanUp.Any())
+            _loggingServer.GetCommand(_sqlToCleanUp.Pop(), con).ExecuteNonQuery();
     }
 }

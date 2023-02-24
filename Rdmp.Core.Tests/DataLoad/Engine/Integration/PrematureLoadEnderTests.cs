@@ -13,64 +13,63 @@ using Rdmp.Core.DataLoad.Engine.Job;
 using Rdmp.Core.DataLoad.Modules.Mutilators;
 using Tests.Common;
 
-namespace Rdmp.Core.Tests.DataLoad.Engine.Integration
+namespace Rdmp.Core.Tests.DataLoad.Engine.Integration;
+
+internal class PrematureLoadEnderTests:DatabaseTests
 {
-    class PrematureLoadEnderTests:DatabaseTests
+    [TestCase(DatabaseType.MySql)]
+    [TestCase(DatabaseType.MicrosoftSQLServer)]
+    public void TestEndLoadBecause_NoTables(DatabaseType type)
     {
-        [TestCase(DatabaseType.MySql)]
-        [TestCase(DatabaseType.MicrosoftSQLServer)]
-        public void TestEndLoadBecause_NoTables(DatabaseType type)
-        {
-            var database = GetCleanedServer(type);
+        var database = GetCleanedServer(type);
             
-            Assert.AreEqual(0,database.DiscoverTables(false).Length);
+        Assert.AreEqual(0,database.DiscoverTables(false).Length);
 
-            var ender = new PrematureLoadEnder();
-            ender.ConditionsToTerminateUnder = PrematureLoadEndCondition.NoRecordsInAnyTablesInDatabase;
-            ender.ExitCodeToReturnIfConditionMet = ExitCodeType.OperationNotRequired;
+        var ender = new PrematureLoadEnder();
+        ender.ConditionsToTerminateUnder = PrematureLoadEndCondition.NoRecordsInAnyTablesInDatabase;
+        ender.ExitCodeToReturnIfConditionMet = ExitCodeType.OperationNotRequired;
             
-            ender.Initialize(database,LoadStage.AdjustRaw);
+        ender.Initialize(database,LoadStage.AdjustRaw);
 
-            Assert.AreEqual(ExitCodeType.OperationNotRequired ,ender.Mutilate(new ThrowImmediatelyDataLoadJob()));
-        }
+        Assert.AreEqual(ExitCodeType.OperationNotRequired ,ender.Mutilate(new ThrowImmediatelyDataLoadJob()));
+    }
 
-        [TestCase(DatabaseType.MySql)]
-        [TestCase(DatabaseType.MicrosoftSQLServer)]
-        public void TestEndLoadBecause_NoRows(DatabaseType type)
-        {
-            var database = GetCleanedServer(type);
+    [TestCase(DatabaseType.MySql)]
+    [TestCase(DatabaseType.MicrosoftSQLServer)]
+    public void TestEndLoadBecause_NoRows(DatabaseType type)
+    {
+        var database = GetCleanedServer(type);
 
-            DataTable dt = new DataTable();
-            dt.Columns.Add("Fish");
+        var dt = new DataTable();
+        dt.Columns.Add("Fish");
 
-            database.CreateTable("MyTable", dt);
-            var ender = new PrematureLoadEnder();
-            ender.ConditionsToTerminateUnder = PrematureLoadEndCondition.NoRecordsInAnyTablesInDatabase;
-            ender.ExitCodeToReturnIfConditionMet = ExitCodeType.OperationNotRequired;
+        database.CreateTable("MyTable", dt);
+        var ender = new PrematureLoadEnder();
+        ender.ConditionsToTerminateUnder = PrematureLoadEndCondition.NoRecordsInAnyTablesInDatabase;
+        ender.ExitCodeToReturnIfConditionMet = ExitCodeType.OperationNotRequired;
 
-            ender.Initialize(database, LoadStage.AdjustRaw);
+        ender.Initialize(database, LoadStage.AdjustRaw);
 
-            Assert.AreEqual(ExitCodeType.OperationNotRequired, ender.Mutilate(new ThrowImmediatelyDataLoadJob()));
-        }
+        Assert.AreEqual(ExitCodeType.OperationNotRequired, ender.Mutilate(new ThrowImmediatelyDataLoadJob()));
+    }
 
-        [TestCase(DatabaseType.MySql)]
-        [TestCase(DatabaseType.MicrosoftSQLServer)]
-        public void TestNoEnd_BecauseRows(DatabaseType type)
-        {
-            var database = GetCleanedServer(type);
+    [TestCase(DatabaseType.MySql)]
+    [TestCase(DatabaseType.MicrosoftSQLServer)]
+    public void TestNoEnd_BecauseRows(DatabaseType type)
+    {
+        var database = GetCleanedServer(type);
 
-            DataTable dt = new DataTable();
-            dt.Columns.Add("Fish");
-            dt.Rows.Add("myval");
+        var dt = new DataTable();
+        dt.Columns.Add("Fish");
+        dt.Rows.Add("myval");
 
-            database.CreateTable("MyTable", dt);
-            var ender = new PrematureLoadEnder();
-            ender.ConditionsToTerminateUnder = PrematureLoadEndCondition.NoRecordsInAnyTablesInDatabase;
-            ender.ExitCodeToReturnIfConditionMet = ExitCodeType.OperationNotRequired;
+        database.CreateTable("MyTable", dt);
+        var ender = new PrematureLoadEnder();
+        ender.ConditionsToTerminateUnder = PrematureLoadEndCondition.NoRecordsInAnyTablesInDatabase;
+        ender.ExitCodeToReturnIfConditionMet = ExitCodeType.OperationNotRequired;
 
-            ender.Initialize(database, LoadStage.AdjustRaw);
+        ender.Initialize(database, LoadStage.AdjustRaw);
 
-            Assert.AreEqual(ExitCodeType.Success, ender.Mutilate(new ThrowImmediatelyDataLoadJob()));
-        }
+        Assert.AreEqual(ExitCodeType.Success, ender.Mutilate(new ThrowImmediatelyDataLoadJob()));
     }
 }

@@ -8,39 +8,39 @@ using System.Linq;
 using Rdmp.Core.Curation.Data;
 using ReusableLibraryCode.Checks;
 
-namespace Rdmp.Core.DataLoad.Engine.LoadExecution.Components.Runtime
+namespace Rdmp.Core.DataLoad.Engine.LoadExecution.Components.Runtime;
+
+/// <summary>
+/// Checks that all Properties on the supplied classInstanceToCheck that are decorated with a [DemandsInitialization] where the Mandatory flag is true have 
+/// a value.
+/// </summary>
+public class MandatoryPropertyChecker:ICheckable
 {
-    /// <summary>
-    /// Checks that all Properties on the supplied classInstanceToCheck that are decorated with a [DemandsInitialization] where the Mandatory flag is true have 
-    /// a value.
-    /// </summary>
-    public class MandatoryPropertyChecker:ICheckable
+    private readonly object _classInstanceToCheck;
+
+    public MandatoryPropertyChecker(object classInstanceToCheck)
     {
-        private readonly object _classInstanceToCheck;
+        _classInstanceToCheck = classInstanceToCheck;
+    }
 
-        public MandatoryPropertyChecker(object classInstanceToCheck)
+    public void Check(ICheckNotifier notifier)
+    {
+        //get all possible properties that we could set
+        foreach (var propertyInfo in _classInstanceToCheck.GetType().GetProperties())
         {
-            _classInstanceToCheck = classInstanceToCheck;
-        }
+            //see if any demand initialization
+            var demand = System.Attribute.GetCustomAttributes(propertyInfo).OfType<DemandsInitializationAttribute>().FirstOrDefault();
 
-        public void Check(ICheckNotifier notifier)
-        {
-            //get all possible properties that we could set
-            foreach (var propertyInfo in _classInstanceToCheck.GetType().GetProperties())
+            //this one does
+            if (demand != null)
             {
-                //see if any demand initialization
-                DemandsInitializationAttribute demand = System.Attribute.GetCustomAttributes(propertyInfo).OfType<DemandsInitializationAttribute>().FirstOrDefault();
-
-                //this one does
-                if (demand != null)
+                if(demand.Mandatory)
                 {
-                    if(demand.Mandatory)
-                    {
-                        var value = propertyInfo.GetValue(_classInstanceToCheck);
-                        if (value == null || string.IsNullOrEmpty(value.ToString()))
-                            notifier.OnCheckPerformed(new CheckEventArgs( "DemandsInitialization Property '" + propertyInfo.Name + "' is marked Mandatory but does not have a value", CheckResult.Fail));
+                    var value = propertyInfo.GetValue(_classInstanceToCheck);
+                    if (value == null || string.IsNullOrEmpty(value.ToString()))
+                        notifier.OnCheckPerformed(new CheckEventArgs(
+                            $"DemandsInitialization Property '{propertyInfo.Name}' is marked Mandatory but does not have a value", CheckResult.Fail));
 
-                    }
                 }
             }
         }

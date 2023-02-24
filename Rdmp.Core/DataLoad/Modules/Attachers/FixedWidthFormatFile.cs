@@ -10,135 +10,139 @@ using System.IO;
 using System.Linq;
 using Rdmp.Core.DataLoad.Modules.Exceptions;
 
-namespace Rdmp.Core.DataLoad.Modules.Attachers
+namespace Rdmp.Core.DataLoad.Modules.Attachers;
+
+/// <summary>
+/// User generated file describing the layout of a fixed width file (See FixedWidthAttacher).  Includes the character positions of each named field and date
+/// format (where applicable).
+/// </summary>
+public class FixedWidthFormatFile
 {
-    /// <summary>
-    /// User generated file describing the layout of a fixed width file (See FixedWidthAttacher).  Includes the character positions of each named field and date
-    /// format (where applicable).
-    /// </summary>
-    public class FixedWidthFormatFile
+    private readonly FileInfo _pathToFormatFile;
+
+    public FixedWidthColumn[] FormatColumns { get; private set; }
+
+    public FixedWidthFormatFile(FileInfo pathToFormatFile)
     {
-        private readonly FileInfo _pathToFormatFile;
+        _pathToFormatFile = pathToFormatFile;
+        var readAllLines = File.ReadAllLines(_pathToFormatFile.FullName);
 
-        public FixedWidthColumn[] FormatColumns { get; private set; }
+        var headers = readAllLines[0];
 
-        public FixedWidthFormatFile(FileInfo pathToFormatFile)
-        {
-            _pathToFormatFile = pathToFormatFile;
-            string[] readAllLines = File.ReadAllLines(_pathToFormatFile.FullName);
+        EnsureHeaderIntact(headers);
 
-            string headers = readAllLines[0];
-
-            EnsureHeaderIntact(headers);
-
-            //get rid of blank lines
-            readAllLines = readAllLines.Where(l => !string.IsNullOrWhiteSpace(l)).ToArray();
+        //get rid of blank lines
+        readAllLines = readAllLines.Where(l => !string.IsNullOrWhiteSpace(l)).ToArray();
             
-            //create a format field for each line in the format file
-            FormatColumns = new FixedWidthColumn[readAllLines.Count()-1];
+        //create a format field for each line in the format file
+        FormatColumns = new FixedWidthColumn[readAllLines.Length-1];
 
-            //now add values
-            for (int index = 0; index < readAllLines.Count()-1; index++)
+        //now add values
+        for (var index = 0; index < readAllLines.Length-1; index++)
+        {
+            //skip header line 
+            var cellsOnRowAsSplitString = readAllLines[index + 1].Split(',');
+
+            FormatColumns[index].From = int.Parse(cellsOnRowAsSplitString[0]);
+            FormatColumns[index].To = int.Parse(cellsOnRowAsSplitString[1]);
+            FormatColumns[index].Field = cellsOnRowAsSplitString[2];
+            FormatColumns[index].Size = int.Parse(cellsOnRowAsSplitString[3]);
+
+            //It's ok to ommmit this column for specific rows (that aren't dates)
+            if (cellsOnRowAsSplitString.Length >4)
+                FormatColumns[index].DateFormat = cellsOnRowAsSplitString[4].Replace("ccyy","yyyy"); //some people think that ccyy is a valid way of expressing year formats... they are wrong 
+
+            if (FormatColumns[index].From + FormatColumns[index].Size -1 != FormatColumns[index].To)
+                throw new FlatFileLoadException(
+                    $"Problem with format of field {FormatColumns[index].Field} From + Size -1 does not equal To");
+
+            if (!string.IsNullOrWhiteSpace(FormatColumns[index].DateFormat))
+                try
+                {
+                    DateTime.Now.ToString(FormatColumns[index].DateFormat);
+                }
+                catch (Exception e)
+                {
+                    throw new FlatFileLoadException(
+                        $"Problem with flat file format which announced the date format as {FormatColumns[index].DateFormat} which C# says isn't a valid format",e);
+                }
+        }
+    }
+
+
+    public DataTable GetDataTableFromFlatFile(FileInfo f)
+    {
+        //setup the table
+        var toReturn = new DataTable();
+
+
+        foreach (var fixedWidthColumn in FormatColumns)
+        {
+            var dataColumn = toReturn.Columns.Add(fixedWidthColumn.Field);
+
+            if (!string.IsNullOrWhiteSpace(fixedWidthColumn.DateFormat))
+                dataColumn.DataType = typeof (DateTime);
+
+            dataColumn.AllowDBNull = true;
+
+        }
+
+        var lineNumber = 0;
+
+        //populate the table
+        //foreach line in file
+        foreach (var readAllLine in File.ReadAllLines(f.FullName))
+        {
+            lineNumber++;
+
+            //add a new row to data table
+            var dataRow = toReturn.Rows.Add();
+
+            //foreach expected fixed width column
+            foreach (var fixedWidthColumn in FormatColumns)
             {
-                //skip header line 
-                string[] cellsOnRowAsSplitString = readAllLines[index + 1].Split(',');
+                if(readAllLine.Length < fixedWidthColumn.To)
+                    throw new FlatFileLoadException(
+                        $"Error on line {lineNumber} of file {f.Name}, the format file ({_pathToFormatFile.FullName}) specified that a column {fixedWidthColumn.Field} would be found between character positions {fixedWidthColumn.From} and {fixedWidthColumn.To} but the current line is only {readAllLine.Length} characters long");
 
-                FormatColumns[index].From = int.Parse(cellsOnRowAsSplitString[0]);
-                FormatColumns[index].To = int.Parse(cellsOnRowAsSplitString[1]);
-                FormatColumns[index].Field = cellsOnRowAsSplitString[2];
-                FormatColumns[index].Size = int.Parse(cellsOnRowAsSplitString[3]);
-
-                //It's ok to ommmit this column for specific rows (that aren't dates)
-                if (cellsOnRowAsSplitString.Length >4)
-                    FormatColumns[index].DateFormat = cellsOnRowAsSplitString[4].Replace("ccyy","yyyy"); //some people think that ccyy is a valid way of expressing year formats... they are wrong 
-
-                if (FormatColumns[index].From + FormatColumns[index].Size -1 != FormatColumns[index].To)
-                    throw new FlatFileLoadException("Problem with format of field " + FormatColumns[index].Field + " From + Size -1 does not equal To");
-
-                if (!string.IsNullOrWhiteSpace(FormatColumns[index].DateFormat))
+                //substring in order to get cell data
+                var value = readAllLine.Substring(fixedWidthColumn.From-1, fixedWidthColumn.Size);
+                      
+                //if its a null
+                if (string.IsNullOrWhiteSpace(value))
+                    dataRow[fixedWidthColumn.Field] = DBNull.Value;
+                else
+                    //it is a date column
+                if (!string.IsNullOrWhiteSpace(fixedWidthColumn.DateFormat))
                     try
                     {
-                        DateTime.Now.ToString(FormatColumns[index].DateFormat);
+                        dataRow[fixedWidthColumn.Field] = DateTime.ParseExact(value, fixedWidthColumn.DateFormat,null);
                     }
                     catch (Exception e)
                     {
-                        throw new FlatFileLoadException("Problem with flat file format which announced the date format as " + FormatColumns[index].DateFormat + " which C# says isn't a valid format",e);
-                    }
-            }
-        }
-
-
-        public DataTable GetDataTableFromFlatFile(FileInfo f)
-        {
-            //setup the table
-            DataTable toReturn = new DataTable();
-
-
-            foreach (FixedWidthColumn fixedWidthColumn in FormatColumns)
-            {
-                DataColumn dataColumn = toReturn.Columns.Add(fixedWidthColumn.Field);
-
-                if (!string.IsNullOrWhiteSpace(fixedWidthColumn.DateFormat))
-                    dataColumn.DataType = typeof (DateTime);
-
-                dataColumn.AllowDBNull = true;
-
-            }
-
-            int lineNumber = 0;
-
-            //populate the table
-            //foreach line in file
-            foreach (string readAllLine in File.ReadAllLines(f.FullName))
-            {
-                lineNumber++;
-
-                //add a new row to data table
-                DataRow dataRow = toReturn.Rows.Add();
-
-                //foreach expected fixed width column
-                foreach (FixedWidthColumn fixedWidthColumn in FormatColumns)
-                {
-                    if(readAllLine.Length < fixedWidthColumn.To)
-                        throw new FlatFileLoadException("Error on line " + lineNumber + " of file " + f.Name + ", the format file (" + _pathToFormatFile.FullName + ") specified that a column " + fixedWidthColumn.Field + " would be found between character positions " + fixedWidthColumn.From + " and " + fixedWidthColumn.To + " but the current line is only " + readAllLine.Length + " characters long");
-
-                    //substring in order to get cell data
-                    string value = readAllLine.Substring(fixedWidthColumn.From-1, fixedWidthColumn.Size);
-                      
-                    //if its a null
-                    if (string.IsNullOrWhiteSpace(value))
-                            dataRow[fixedWidthColumn.Field] = DBNull.Value;
-                    else
-                    //it is a date column
-                    if (!string.IsNullOrWhiteSpace(fixedWidthColumn.DateFormat))
-                        try
-                        {
-                            dataRow[fixedWidthColumn.Field] = DateTime.ParseExact(value, fixedWidthColumn.DateFormat,null);
-                        }
-                        catch (Exception e)
-                        {
                             
-                            throw new Exception("The value '" + value + "' was rejected by DateTime.ParseExact using the listed date time format '" + fixedWidthColumn.DateFormat +"'",e);
-                        }
-                    else //its not a date
-                        dataRow[fixedWidthColumn.Field] = value.Trim();
-                }
+                        throw new Exception(
+                            $"The value '{value}' was rejected by DateTime.ParseExact using the listed date time format '{fixedWidthColumn.DateFormat}'",e);
+                    }
+                else //its not a date
+                    dataRow[fixedWidthColumn.Field] = value.Trim();
             }
-
-            return toReturn;
         }
 
-        private void EnsureHeaderIntact(string header)
-        {
+        return toReturn;
+    }
+
+    private void EnsureHeaderIntact(string header)
+    {
             
-            //From	To	Field	Size	DateFormat
-            string expected = string.Join(",",typeof(FixedWidthColumn).GetFields().Select(f=>f.Name));
+        //From	To	Field	Size	DateFormat
+        var expected = string.Join(",",typeof(FixedWidthColumn).GetFields().Select(f=>f.Name));
 
-            if(!header.TrimEnd().Equals(expected))
-                throw new FlatFileLoadException("Format file headers in file " + _pathToFormatFile.FullName + " WAS: "+header+" WE EXPECTED: " + expected);
+        if(!header.TrimEnd().Equals(expected))
+            throw new FlatFileLoadException(
+                $"Format file headers in file {_pathToFormatFile.FullName} WAS: {header} WE EXPECTED: {expected}");
 
 
 
-        }
     }
 }
