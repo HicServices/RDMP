@@ -8,14 +8,12 @@ using System;
 using System.Collections.Generic;
 using System.Data.Common;
 using System.Linq;
-using FAnsi;
 using FAnsi.Discovery;
 using NUnit.Framework;
 using Rdmp.Core.Curation;
 using Rdmp.Core.Curation.Data;
 using Rdmp.Core.DataLoad.Modules.Mutilators.QueryBuilders;
 using Rdmp.Core.DataLoad.Triggers;
-using Tests.Common;
 using Tests.Common.Scenarios;
 
 namespace Rdmp.Core.Tests.DataLoad.Engine.Integration

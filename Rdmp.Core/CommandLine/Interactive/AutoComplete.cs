@@ -1,8 +1,6 @@
 ﻿// This code is adapted from https://www.codeproject.com/Articles/1182358/Using-Autocomplete-in-Windows-Console-Applications
 
-using System;
 using System.Collections.Generic;
-using System.Globalization;
 using System.Linq;
 
 #pragma warning disable 1591

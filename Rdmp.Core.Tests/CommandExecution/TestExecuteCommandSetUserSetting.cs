@@ -9,9 +9,6 @@ using Rdmp.Core.CommandExecution.AtomicCommands;
 using Rdmp.Core.CommandLine.Interactive.Picking;
 using ReusableLibraryCode.Checks;
 using ReusableLibraryCode.Settings;
-using System;
-using System.Collections.Generic;
-using System.Text;
 
 namespace Rdmp.Core.Tests.CommandExecution
 {

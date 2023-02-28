@@ -10,7 +10,6 @@ using System.Diagnostics;
 using System.IO;
 using System.IO.Compression;
 using System.Linq;
-using System.Reflection;
 using FAnsi.Discovery;
 using FAnsi.Discovery.ConnectionStringDefaults;
 using FAnsi.Implementation;
@@ -23,9 +22,6 @@ using MapsDirectlyToDatabaseTable.Versioning;
 using Rdmp.Core.CommandLine.Runners;
 using Rdmp.Core.Curation.Data;
 using Rdmp.Core.Databases;
-using Rdmp.Core.DataExport.Data;
-using Rdmp.Core.DataQualityEngine.Data;
-using Rdmp.Core.Logging;
 using Rdmp.Core.Repositories;
 using Rdmp.Core.Startup.Events;
 using Rdmp.Core.Validation;
@@ -252,7 +248,7 @@ namespace Rdmp.Core.Startup
             var dirs = new List<DirectoryInfo>();
             var toLoad = new List<DirectoryInfo> {
                 //always load the current application directory
-                new DirectoryInfo(AppDomain.CurrentDomain.BaseDirectory)
+                //new DirectoryInfo(AppDomain.CurrentDomain.BaseDirectory)
             };
 
             for (var i = 0; i < compatiblePlugins.Length; i++)
@@ -338,14 +334,13 @@ namespace Rdmp.Core.Startup
             MEFSafeDirectoryCatalog = new SafeDirectoryCatalog(notifier, toLoad.Select(d=>d.FullName).ToArray());
             catalogueRepository.MEF.Setup(MEFSafeDirectoryCatalog);
             
+            if (CatalogueRepository.SuppressHelpLoading) return;
             notifier.OnCheckPerformed(new CheckEventArgs("Loading Help...", CheckResult.Success));
             var sw = Stopwatch.StartNew();
-
-            if(!CatalogueRepository.SuppressHelpLoading)
-                catalogueRepository.CommentStore.ReadComments(Environment.CurrentDirectory,"SourceCodeForSelfAwareness.zip");
-
+            catalogueRepository.CommentStore.ReadComments(Environment.CurrentDirectory, "SourceCodeForSelfAwareness.zip");
             sw.Stop();
             notifier.OnCheckPerformed(new CheckEventArgs($"Help loading took:{sw.Elapsed}", CheckResult.Success));
+
         }
         #endregion
 

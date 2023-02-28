@@ -20,7 +20,6 @@ using Rdmp.Core.DataFlowPipeline.Requirements;
 using Rdmp.Core.DataLoad.Engine.Pipeline.Components;
 using Rdmp.Core.DataLoad.Engine.Pipeline.Sources;
 using Rdmp.Core.QueryBuilding;
-using Rdmp.Core.Repositories;
 using ReusableLibraryCode;
 using ReusableLibraryCode.Checks;
 using ReusableLibraryCode.DataAccess;

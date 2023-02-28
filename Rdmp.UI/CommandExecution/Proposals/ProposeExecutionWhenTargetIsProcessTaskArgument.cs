@@ -7,7 +7,6 @@
 using Rdmp.Core.CommandExecution;
 using Rdmp.Core.CommandExecution.AtomicCommands;
 using Rdmp.Core.Curation.Data.DataLoad;
-using Rdmp.UI.DataLoadUIs.LoadMetadataUIs.ProcessTasks;
 using Rdmp.UI.ItemActivation;
 
 namespace Rdmp.UI.CommandExecution.Proposals

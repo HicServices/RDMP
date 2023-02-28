@@ -9,7 +9,6 @@ using NUnit.Framework;
 using Rdmp.Core.CohortCommitting.Pipeline.Sources;
 using Rdmp.Core.CohortCreation.Execution;
 using Rdmp.Core.CommandExecution.AtomicCommands;
-using Rdmp.Core.CommandExecution.AtomicCommands.CatalogueCreationCommands;
 using Rdmp.Core.CommandExecution.Combining;
 using Rdmp.Core.CommandLine.Interactive;
 using Rdmp.Core.Curation.Data;

@@ -23,7 +23,6 @@ using ReusableLibraryCode.Icons.IconProvision;
 using ScintillaNET;
 using HelpIcon = Rdmp.UI.SimpleControls.HelpIcon;
 using Point = System.Drawing.Point;
-using ReusableLibraryCode.Icons;
 using SixLabors.ImageSharp.PixelFormats;
 using Color = System.Drawing.Color;
 

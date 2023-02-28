@@ -23,13 +23,12 @@ namespace ReusableLibraryCode.Progress
 
         public ThrowImmediatelyDataLoadEventListener()
         {
-            WriteToConsole = true;
         }
 
         public void OnNotify(object sender, NotifyEventArgs e)
         {
             if (WriteToConsole)
-                Console.WriteLine(sender + ":" + e.Message);
+                Console.WriteLine($"{sender}:{e.Message}");
 
             if(e.ProgressEventType == ProgressEventType.Error || 
                 (e.ProgressEventType == ProgressEventType.Warning && ThrowOnWarning))

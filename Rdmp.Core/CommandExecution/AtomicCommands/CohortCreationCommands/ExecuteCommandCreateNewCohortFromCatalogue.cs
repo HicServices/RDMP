@@ -8,7 +8,6 @@ using System;
 using SixLabors.ImageSharp;
 using System.Linq;
 using MapsDirectlyToDatabaseTable;
-using Rdmp.Core.CommandExecution.AtomicCommands;
 using Rdmp.Core.Curation.Data;
 using Rdmp.Core.Curation.Data.Pipelines;
 using Rdmp.Core.DataExport.Data;

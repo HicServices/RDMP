@@ -11,7 +11,6 @@ using System.Text.RegularExpressions;
 using FAnsi;
 using NUnit.Framework;
 using Rdmp.Core.Curation;
-using Rdmp.Core.Curation.Data;
 using Rdmp.Core.Curation.Data.DataLoad;
 using Rdmp.Core.Curation.Data.EntityNaming;
 using Rdmp.Core.DataLoad.Engine.DatabaseManagement.EntityNaming;

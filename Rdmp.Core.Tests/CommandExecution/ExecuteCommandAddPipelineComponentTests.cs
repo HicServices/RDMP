@@ -5,17 +5,12 @@
 // You should have received a copy of the GNU General Public License along with RDMP. If not, see <https://www.gnu.org/licenses/>.
 
 using NUnit.Framework;
-using Rdmp.Core.CommandExecution.AtomicCommands;
 using Rdmp.Core.Curation.Data.Pipelines;
 using Rdmp.Core.DataExport.DataExtraction.Pipeline.Destinations;
 using Rdmp.Core.DataLoad.Engine.Pipeline.Components;
 using Rdmp.Core.DataLoad.Modules.DataFlowOperations.Swapping;
 using Rdmp.Core.DataLoad.Modules.DataFlowSources;
 using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace Rdmp.Core.Tests.CommandExecution
 {

@@ -12,7 +12,6 @@ using System.Reflection;
 using System.Text;
 using MapsDirectlyToDatabaseTable;
 using MapsDirectlyToDatabaseTable.Attributes;
-using MapsDirectlyToDatabaseTable.Injection;
 using Rdmp.Core.Curation.Data.Defaults;
 using Rdmp.Core.Curation.Data.Serialization;
 using Rdmp.Core.Repositories;

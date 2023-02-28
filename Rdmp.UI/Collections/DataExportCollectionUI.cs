@@ -5,7 +5,6 @@
 // You should have received a copy of the GNU General Public License along with RDMP. If not, see <https://www.gnu.org/licenses/>.
 
 using System;
-using System.Linq;
 using System.Windows.Forms;
 using Rdmp.Core;
 using Rdmp.Core.CommandExecution.AtomicCommands;
@@ -19,7 +18,6 @@ using Rdmp.UI.CommandExecution.AtomicCommands;
 using Rdmp.UI.CommandExecution.AtomicCommands.UIFactory;
 using Rdmp.UI.ItemActivation;
 using Rdmp.UI.Refreshing;
-using ReusableLibraryCode.Icons;
 using ReusableLibraryCode.Icons.IconProvision;
 
 namespace Rdmp.UI.Collections

@@ -9,7 +9,6 @@ using System.Linq;
 using System.Windows.Forms;
 using MapsDirectlyToDatabaseTable;
 using MapsDirectlyToDatabaseTable.Attributes;
-using Rdmp.Core.Curation.Data;
 using Rdmp.UI.ItemActivation;
 using ReusableLibraryCode.Annotations;
 

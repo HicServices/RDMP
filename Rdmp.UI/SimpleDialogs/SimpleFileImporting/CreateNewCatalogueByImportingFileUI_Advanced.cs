@@ -8,7 +8,6 @@ using System;
 using System.IO;
 using System.Windows.Forms;
 using FAnsi.Discovery;
-using Rdmp.Core.CommandExecution;
 using Rdmp.Core.CommandExecution.AtomicCommands.CatalogueCreationCommands;
 using Rdmp.Core.Curation;
 using Rdmp.Core.Curation.Data;

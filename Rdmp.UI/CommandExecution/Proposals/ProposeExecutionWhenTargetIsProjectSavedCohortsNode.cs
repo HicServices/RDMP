@@ -9,7 +9,6 @@ using Rdmp.Core.CommandExecution.AtomicCommands.CohortCreationCommands;
 using Rdmp.Core.CommandExecution.Combining;
 using Rdmp.Core.Curation.Data;
 using Rdmp.Core.Providers.Nodes.ProjectCohortNodes;
-using Rdmp.UI.CohortUI.ImportCustomData;
 using Rdmp.UI.ItemActivation;
 
 namespace Rdmp.UI.CommandExecution.Proposals

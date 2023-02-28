@@ -9,8 +9,6 @@ using System.Collections.Generic;
 using System.Data.Common;
 using System.Linq;
 using System.Reflection;
-using FAnsi.Discovery;
-using FAnsi.Discovery.QuerySyntax;
 using FAnsi.Implementation;
 using ReusableLibraryCode;
 

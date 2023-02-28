@@ -9,8 +9,6 @@ using SixLabors.ImageSharp;
 using System.IO;
 using System.Linq;
 using FAnsi.Discovery;
-using Rdmp.Core;
-using Rdmp.Core.CommandExecution;
 using Rdmp.Core.CommandExecution.Combining;
 using Rdmp.Core.Curation;
 using Rdmp.Core.Curation.Data;

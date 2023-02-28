@@ -8,7 +8,6 @@ using Rdmp.Core.CommandExecution;
 using Rdmp.Core.Curation.Data;
 using Rdmp.UI.ItemActivation;
 using Rdmp.UI.MainFormUITabs.SubComponents;
-using Rdmp.UI.SingleControlForms;
 
 namespace Rdmp.UI.CommandExecution.Proposals
 {

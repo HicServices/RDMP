@@ -10,9 +10,7 @@ using Rdmp.Core.Curation.Data;
 using Rdmp.Core.Curation.Data.DataLoad;
 using Rdmp.Core.Repositories.Construction;
 using System;
-using System.Collections.Generic;
 using System.Linq;
-using System.Text;
 
 namespace Rdmp.Core.CommandExecution.AtomicCommands
 {

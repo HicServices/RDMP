@@ -15,7 +15,6 @@ using Rdmp.Core.CommandLine.Interactive;
 using Rdmp.Core.CommandLine.Interactive.Picking;
 using Rdmp.Core.Repositories.Construction;
 using Rdmp.Core.Startup;
-using ReusableLibraryCode.Comments;
 using ReusableLibraryCode.Icons.IconProvision;
 using SixLabors.ImageSharp.PixelFormats;
 

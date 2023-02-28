@@ -8,7 +8,6 @@ using System;
 using System.Data;
 using System.Data.Common;
 using System.Windows.Forms;
-using Rdmp.UI.SimpleDialogs;
 using ReusableLibraryCode;
 using ReusableLibraryCode.DataAccess;
 

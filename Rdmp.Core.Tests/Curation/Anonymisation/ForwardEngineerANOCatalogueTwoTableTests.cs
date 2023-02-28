@@ -15,7 +15,6 @@ using Rdmp.Core.Curation.Data.DataLoad;
 using Rdmp.Core.QueryBuilding;
 using ReusableLibraryCode;
 using ReusableLibraryCode.Checks;
-using Tests.Common;
 using Tests.Common.Scenarios;
 
 namespace Rdmp.Core.Tests.Curation.Anonymisation

@@ -6,9 +6,7 @@
 
 using MapsDirectlyToDatabaseTable;
 using Rdmp.Core.Curation.Data;
-using Rdmp.Core.Curation.Data.Aggregation;
 using Rdmp.Core.Curation.Data.Pipelines;
-using Rdmp.Core.DataExport.Data;
 using ReusableLibraryCode;
 using System;
 using System.Collections.Generic;

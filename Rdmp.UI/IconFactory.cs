@@ -6,13 +6,8 @@
 
 using System;
 using System.Collections.Concurrent;
-using System.Collections.Generic;
-using System.ComponentModel;
 using SixLabors.ImageSharp;
 using System.Drawing;
-using System.IO;
-using Image = SixLabors.ImageSharp.Image;
-using ReusableLibraryCode.Icons;
 using SixLabors.ImageSharp.PixelFormats;
 
 namespace Rdmp.UI

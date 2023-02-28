@@ -8,7 +8,6 @@ using System;
 using System.Collections.Generic;
 using Rdmp.Core.Curation.Data;
 using Rdmp.Core.Curation.Data.Spontaneous;
-using ReusableLibraryCode.Checks;
 
 namespace Rdmp.Core.Curation.FilterImporting
 {

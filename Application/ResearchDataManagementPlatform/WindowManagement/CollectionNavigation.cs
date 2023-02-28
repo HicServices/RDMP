@@ -7,7 +7,6 @@
 using FAnsi.Discovery;
 using MapsDirectlyToDatabaseTable;
 using Rdmp.Core.CommandExecution;
-using Rdmp.Core.Curation.Data;
 using System.Collections.Generic;
 
 namespace ResearchDataManagementPlatform.WindowManagement

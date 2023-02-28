@@ -5,9 +5,6 @@
 // You should have received a copy of the GNU General Public License along with RDMP. If not, see <https://www.gnu.org/licenses/>.
 
 using Rdmp.Core.CommandExecution;
-using System;
-using System.Collections.Generic;
-using System.Text;
 using Terminal.Gui;
 
 namespace Rdmp.Core.CommandLine.Gui

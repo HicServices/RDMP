@@ -13,7 +13,6 @@ using MapsDirectlyToDatabaseTable;
 using NUnit.Framework;
 using Rdmp.Core.Curation;
 using Rdmp.Core.Curation.Data;
-using Rdmp.Core.Curation.Data.Defaults;
 using Rdmp.Core.DataLoad;
 using Rdmp.Core.DataLoad.Engine.DatabaseManagement.EntityNaming;
 using Rdmp.Core.DataLoad.Engine.DatabaseManagement.Operations;

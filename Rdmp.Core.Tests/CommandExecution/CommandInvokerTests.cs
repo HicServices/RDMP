@@ -9,10 +9,8 @@ using FAnsi.Discovery;
 using NUnit.Framework;
 using Rdmp.Core.CommandExecution;
 using Rdmp.Core.CommandExecution.AtomicCommands;
-using Rdmp.Core.CommandLine.Interactive;
 using Rdmp.Core.CommandLine.Interactive.Picking;
 using Rdmp.Core.Curation.Data;
-using ReusableLibraryCode.Checks;
 using Tests.Common;
 
 namespace Rdmp.Core.Tests.CommandExecution

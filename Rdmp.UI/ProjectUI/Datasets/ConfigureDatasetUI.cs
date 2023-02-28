@@ -11,7 +11,6 @@ using System.Drawing;
 using System.Linq;
 using System.Windows.Forms;
 using BrightIdeasSoftware;
-using MapsDirectlyToDatabaseTable;
 using MapsDirectlyToDatabaseTable.Revertable;
 using Rdmp.Core;
 using Rdmp.Core.CommandExecution;

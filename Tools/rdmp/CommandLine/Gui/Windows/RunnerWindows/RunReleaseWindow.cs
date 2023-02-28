@@ -11,7 +11,6 @@ using Rdmp.Core.DataExport.Data;
 using Rdmp.Core.DataExport.DataRelease.Pipeline;
 using System;
 using System.Linq;
-using Terminal.Gui;
 
 namespace Rdmp.Core.CommandLine.Gui.Windows.RunnerWindows
 {

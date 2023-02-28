@@ -6,7 +6,6 @@
 
 using System;
 using System.Linq;
-using MapsDirectlyToDatabaseTable;
 using NUnit.Framework;
 using Rdmp.Core.Curation.Data.Pipelines;
 using Rdmp.Core.DataLoad.Engine.Pipeline.Components.Anonymisation;

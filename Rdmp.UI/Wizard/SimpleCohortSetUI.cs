@@ -16,9 +16,7 @@ using Rdmp.Core.Curation.Data.Aggregation;
 using Rdmp.Core.Curation.Data.Cohort;
 using Rdmp.Core.Curation.FilterImporting.Construction;
 using Rdmp.Core.Icons.IconProvision;
-using Rdmp.UI.CommandExecution.AtomicCommands;
 using Rdmp.UI.ItemActivation;
-using ReusableLibraryCode.Icons;
 
 namespace Rdmp.UI.Wizard
 {

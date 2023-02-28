@@ -7,7 +7,6 @@
 using System.Data;
 using System.IO;
 using System.Linq;
-using System.Text.RegularExpressions;
 using NUnit.Framework;
 using Rdmp.Core.Curation.Data;
 using Rdmp.Core.Curation.Data.DataLoad;

@@ -7,10 +7,8 @@
 namespace Rdmp.Core.CommandLine.Gui {
     using NStack;
     using Rdmp.Core.CommandExecution;
-    using ReusableLibraryCode;
     using ReusableLibraryCode.Checks;
     using ReusableLibraryCode.Settings;
-    using System;
     using System.Collections.Generic;
     using System.Linq;
     using System.Reflection;

@@ -13,7 +13,6 @@ using FAnsi.Discovery;
 using FAnsi.Extensions;
 using Moq;
 using NUnit.Framework;
-using Rdmp.Core.Curation.Data;
 using Rdmp.Core.DataExport.Data;
 using Rdmp.Core.DataExport.DataExtraction.Commands;
 using Rdmp.Core.DataFlowPipeline;

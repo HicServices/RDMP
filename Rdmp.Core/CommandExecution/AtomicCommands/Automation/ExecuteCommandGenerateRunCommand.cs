@@ -6,8 +6,6 @@
 
 using System;
 using SixLabors.ImageSharp;
-using Rdmp.Core.CommandExecution;
-using Rdmp.Core.CommandExecution.AtomicCommands;
 using Rdmp.Core.CommandLine.Options;
 using Rdmp.Core.Icons.IconProvision;
 using ReusableLibraryCode.Icons.IconProvision;

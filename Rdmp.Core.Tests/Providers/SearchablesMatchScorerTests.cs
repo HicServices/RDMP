@@ -14,9 +14,7 @@ using ReusableLibraryCode.Settings;
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text;
 using System.Threading;
-using System.Threading.Tasks;
 using Tests.Common;
 
 namespace Rdmp.Core.Tests.Providers

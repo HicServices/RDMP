@@ -10,7 +10,6 @@ using Rdmp.Core.CommandExecution.AtomicCommands;
 using Rdmp.Core.Curation.Data;
 using Rdmp.Core.Curation.Data.Aggregation;
 using Rdmp.UI.AggregationUIs.Advanced;
-using Rdmp.UI.CommandExecution.AtomicCommands;
 
 namespace Rdmp.UI.Tests
 {

@@ -12,7 +12,6 @@ using Rdmp.Core.CommandLine.Interactive.Picking;
 using Rdmp.Core.Curation.Data;
 using Rdmp.Core.Repositories;
 using Rdmp.Core.Repositories.Construction;
-using Rdmp.Core.Startup;
 using Tests.Common;
 
 namespace Rdmp.Core.Tests.CommandLine

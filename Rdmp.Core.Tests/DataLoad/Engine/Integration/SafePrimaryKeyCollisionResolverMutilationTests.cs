@@ -9,7 +9,6 @@ using System.Data;
 using System.Linq;
 using FAnsi;
 using NUnit.Framework;
-using Rdmp.Core.Curation.Data;
 using Rdmp.Core.Curation.Data.DataLoad;
 using Rdmp.Core.DataLoad.Engine.DatabaseManagement.EntityNaming;
 using Rdmp.Core.DataLoad.Engine.Job;

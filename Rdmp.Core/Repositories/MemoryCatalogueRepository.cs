@@ -8,19 +8,15 @@ using System;
 using System.Collections.Generic;
 using System.Data.Common;
 using System.Linq;
-using System.Reflection;
 using FAnsi.Discovery;
 using MapsDirectlyToDatabaseTable;
 using MapsDirectlyToDatabaseTable.Versioning;
-using Rdmp.Core.Curation;
 using Rdmp.Core.Curation.Data;
 using Rdmp.Core.Curation.Data.Aggregation;
 using Rdmp.Core.Curation.Data.Cohort;
 using Rdmp.Core.Curation.Data.Defaults;
 using Rdmp.Core.Curation.Data.Governance;
-using Rdmp.Core.Curation.Data.ImportExport;
 using Rdmp.Core.Curation.Data.Referencing;
-using Rdmp.Core.Curation.Data.Serialization;
 using Rdmp.Core.DataExport;
 using Rdmp.Core.Logging;
 using Rdmp.Core.Providers.Nodes;
@@ -30,7 +26,6 @@ using Rdmp.Core.Validation.Dependency;
 using ReusableLibraryCode.Comments;
 using ReusableLibraryCode.DataAccess;
 using ReusableLibraryCode.Settings;
-using YamlDotNet.Serialization;
 using IContainer = Rdmp.Core.Curation.Data.IContainer;
 
 namespace Rdmp.Core.Repositories

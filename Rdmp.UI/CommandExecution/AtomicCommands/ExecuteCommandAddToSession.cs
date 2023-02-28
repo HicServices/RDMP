@@ -9,9 +9,7 @@ using Rdmp.Core.CommandExecution;
 using Rdmp.Core.CommandExecution.AtomicCommands;
 using Rdmp.UI.Collections;
 using Rdmp.UI.ItemActivation;
-using Rdmp.UI.SimpleDialogs;
 using System.Linq;
-using System.Windows.Forms;
 
 namespace Rdmp.UI.CommandExecution.AtomicCommands
 {

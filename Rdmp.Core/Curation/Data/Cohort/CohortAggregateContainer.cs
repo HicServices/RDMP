@@ -13,7 +13,6 @@ using Rdmp.Core.Curation.Data.Aggregation;
 using Rdmp.Core.Curation.Data.Cohort.Joinables;
 using Rdmp.Core.QueryBuilding;
 using Rdmp.Core.Repositories;
-using Rdmp.Core.Repositories.Managers;
 using ReusableLibraryCode.Annotations;
 using ReusableLibraryCode.Checks;
 

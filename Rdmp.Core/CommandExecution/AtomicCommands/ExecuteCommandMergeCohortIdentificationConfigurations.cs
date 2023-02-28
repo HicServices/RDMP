@@ -6,9 +6,6 @@
 
 using Rdmp.Core.Curation.Data.Cohort;
 using Rdmp.Core.Repositories;
-using System;
-using System.Collections.Generic;
-using System.Text;
 
 namespace Rdmp.Core.CommandExecution.AtomicCommands
 {

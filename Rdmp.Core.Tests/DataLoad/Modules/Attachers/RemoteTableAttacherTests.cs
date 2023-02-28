@@ -7,7 +7,6 @@
 using System;
 using System.Collections.Generic;
 using System.Data;
-using System.Text;
 using FAnsi;
 using FAnsi.Discovery;
 using Moq;
@@ -21,7 +20,6 @@ using Rdmp.Core.DataLoad.Engine.Job.Scheduling;
 using Rdmp.Core.DataLoad.Modules.Attachers;
 using Rdmp.Core.DataLoad.Modules.LoadProgressUpdating;
 using Rdmp.Core.Logging;
-using Rdmp.Core.Repositories;
 using ReusableLibraryCode.Checks;
 using ReusableLibraryCode.Progress;
 using Tests.Common;

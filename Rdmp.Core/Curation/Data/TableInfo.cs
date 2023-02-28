@@ -22,7 +22,6 @@ using Rdmp.Core.Curation.Data.Defaults;
 using Rdmp.Core.Curation.Data.EntityNaming;
 using Rdmp.Core.DataLoad.Triggers;
 using Rdmp.Core.Providers;
-using Rdmp.Core.QueryBuilding;
 using Rdmp.Core.Repositories;
 using ReusableLibraryCode;
 using ReusableLibraryCode.Annotations;

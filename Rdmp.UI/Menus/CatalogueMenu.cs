@@ -5,9 +5,7 @@
 // You should have received a copy of the GNU General Public License along with RDMP. If not, see <https://www.gnu.org/licenses/>.
 
 using System;
-using System.Collections.Generic;
 using System.IO;
-using System.Linq;
 using System.Windows.Forms;
 using Rdmp.Core.CommandExecution;
 using Rdmp.Core.CommandExecution.AtomicCommands;
@@ -15,7 +13,6 @@ using Rdmp.Core.CommandExecution.AtomicCommands.Sharing;
 using Rdmp.Core.Curation.Data;
 using Rdmp.UI.CommandExecution.AtomicCommands;
 using Rdmp.UI.Menus.MenuItems;
-using ReusableLibraryCode;
 
 namespace Rdmp.UI.Menus
 {

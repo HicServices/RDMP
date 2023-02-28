@@ -9,7 +9,6 @@ using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using MapsDirectlyToDatabaseTable.Attributes;
-using MapsDirectlyToDatabaseTable.Revertable;
 using NUnit.Framework;
 using Rdmp.Core.CommandLine.Runners;
 using Rdmp.Core.Curation.Data;

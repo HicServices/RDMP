@@ -9,7 +9,6 @@ using System.Data;
 using System.IO;
 using System.Linq;
 using System.Text;
-using CsvHelper;
 using FAnsi.Discovery;
 using NUnit.Framework;
 using Rdmp.Core.DataFlowPipeline;

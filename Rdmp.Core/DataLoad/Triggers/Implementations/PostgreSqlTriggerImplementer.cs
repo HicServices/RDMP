@@ -7,7 +7,6 @@
 using System;
 using System.Linq;
 using System.Text.RegularExpressions;
-using FAnsi;
 using FAnsi.Discovery;
 using ReusableLibraryCode.Checks;
 using ReusableLibraryCode.Exceptions;

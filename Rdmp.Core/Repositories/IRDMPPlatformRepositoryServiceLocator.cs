@@ -6,7 +6,6 @@
 
 using MapsDirectlyToDatabaseTable;
 using Rdmp.Core.DataQualityEngine.Data;
-using Rdmp.Core.Providers;
 using System;
 using System.Collections.Generic;
 

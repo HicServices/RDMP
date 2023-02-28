@@ -9,7 +9,6 @@ using System.ComponentModel;
 using System.IO;
 using System.Windows.Forms;
 using Rdmp.Core;
-using Rdmp.Core.Autocomplete;
 using Rdmp.Core.Curation.Data;
 using Rdmp.Core.Curation.Data.DataLoad;
 using Rdmp.UI.AutoComplete;

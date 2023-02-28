@@ -10,7 +10,6 @@ using System.Linq;
 using System.Text.RegularExpressions;
 using FAnsi;
 using FAnsi.Discovery;
-using FAnsi.Discovery.QuerySyntax;
 using MapsDirectlyToDatabaseTable.Attributes;
 using Rdmp.Core.Curation;
 using Rdmp.Core.Curation.Data;

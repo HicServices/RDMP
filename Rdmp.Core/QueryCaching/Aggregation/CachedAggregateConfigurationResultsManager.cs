@@ -7,7 +7,6 @@
 using System;
 using System.Collections.Generic;
 using System.Data.Common;
-using System.Diagnostics;
 using System.Text.RegularExpressions;
 using FAnsi.Discovery;
 using FAnsi.Extensions;
@@ -15,7 +14,6 @@ using FAnsi.Naming;
 using NLog;
 using Rdmp.Core.Curation.Data;
 using Rdmp.Core.Curation.Data.Aggregation;
-using Rdmp.Core.Curation.Data.Cohort;
 using Rdmp.Core.QueryCaching.Aggregation.Arguments;
 using ReusableLibraryCode;
 using ReusableLibraryCode.DataAccess;

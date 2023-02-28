@@ -6,7 +6,6 @@
 
 using NUnit.Framework;
 using System;
-using System.Data;
 using System.Linq;
 using FAnsi;
 using FAnsi.Discovery;

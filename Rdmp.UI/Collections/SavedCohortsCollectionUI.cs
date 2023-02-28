@@ -9,7 +9,6 @@ using Rdmp.Core.CommandExecution.AtomicCommands.CohortCreationCommands;
 using Rdmp.Core.DataExport.Data;
 using Rdmp.Core.Providers;
 using Rdmp.Core.Providers.Nodes;
-using Rdmp.UI.CohortUI.ImportCustomData;
 using Rdmp.UI.ItemActivation;
 using Rdmp.UI.Refreshing;
 using System;

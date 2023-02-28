@@ -19,7 +19,6 @@ using Rdmp.Core.DataExport.DataExtraction.Pipeline;
 using Rdmp.Core.DataExport.DataRelease.Pipeline;
 using Rdmp.Core.DataLoad.Engine.Pipeline;
 using Rdmp.Core.Providers.Nodes;
-using Rdmp.Core.Providers.Nodes.CohortNodes;
 using Rdmp.Core.Providers.Nodes.ProjectCohortNodes;
 using Rdmp.Core.Providers.Nodes.UsedByNodes;
 using Rdmp.Core.Providers.Nodes.UsedByProject;

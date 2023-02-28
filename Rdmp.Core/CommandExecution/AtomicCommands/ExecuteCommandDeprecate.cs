@@ -7,8 +7,6 @@
 using MapsDirectlyToDatabaseTable;
 using Rdmp.Core.Curation.Data;
 using Rdmp.Core.Repositories.Construction;
-using ReusableLibraryCode.Settings;
-using System;
 
 namespace Rdmp.Core.CommandExecution.AtomicCommands
 {

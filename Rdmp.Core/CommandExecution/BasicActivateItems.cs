@@ -6,7 +6,6 @@
 
 using System;
 using System.Collections.Generic;
-using System.Collections.ObjectModel;
 using System.Data;
 using System.Diagnostics;
 using System.IO;
@@ -17,9 +16,7 @@ using FAnsi.Discovery;
 using MapsDirectlyToDatabaseTable;
 using MapsDirectlyToDatabaseTable.Versioning;
 using Rdmp.Core.CohortCommitting.Pipeline;
-using Rdmp.Core.CohortCreation.Execution;
 using Rdmp.Core.CommandExecution.AtomicCommands;
-using Rdmp.Core.CommandLine.Interactive;
 using Rdmp.Core.CommandLine.Runners;
 using Rdmp.Core.Curation;
 using Rdmp.Core.Curation.Data;

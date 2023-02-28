@@ -6,12 +6,8 @@
 
 using System;
 using System.Collections.Generic;
-using Microsoft.Data.SqlClient;
-using System.IO;
 using System.Linq;
 using System.Reflection;
-using System.Text.RegularExpressions;
-using FAnsi;
 using FAnsi.Discovery;
 
 namespace MapsDirectlyToDatabaseTable.Versioning

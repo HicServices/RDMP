@@ -10,10 +10,8 @@ using Rdmp.Core.Repositories;
 using Rdmp.Core.Startup;
 using ReusableLibraryCode.Checks;
 using NLog;
-using System.Reflection;
 using System.IO;
 using System;
-using YamlDotNet.RepresentationModel;   
 
 namespace Rdmp.Core.CommandLine.Options
 {

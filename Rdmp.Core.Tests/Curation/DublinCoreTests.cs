@@ -6,10 +6,8 @@
 
 using System;
 using System.IO;
-using System.Text;
 using System.Xml.Linq;
 using NUnit.Framework;
-using Rdmp.Core.Curation.Data;
 using Rdmp.Core.Reports.DublinCore;
 using Tests.Common;
 

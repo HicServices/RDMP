@@ -16,10 +16,8 @@ using Rdmp.Core.Icons.IconProvision;
 using Rdmp.UI;
 using Rdmp.UI.Collections;
 using Rdmp.UI.Collections.Providers;
-using Rdmp.UI.CommandExecution.AtomicCommands;
 using Rdmp.UI.CommandExecution.AtomicCommands.UIFactory;
 using Rdmp.UI.ItemActivation;
-using Rdmp.UI.SimpleDialogs.NavigateTo;
 
 namespace ResearchDataManagementPlatform.WindowManagement.HomePane
 {

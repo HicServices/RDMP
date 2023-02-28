@@ -11,7 +11,6 @@ using Rdmp.Core.Curation.Data.Aggregation;
 using Rdmp.UI.AggregationUIs.Advanced;
 using Rdmp.UI.CommandExecution.AtomicCommands;
 using Rdmp.UI.ItemActivation;
-using System.Linq;
 
 namespace Rdmp.UI.CommandExecution.Proposals
 {

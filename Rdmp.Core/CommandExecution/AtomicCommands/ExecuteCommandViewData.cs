@@ -10,7 +10,6 @@ using Rdmp.Core.Curation.Data;
 using Rdmp.Core.Curation.Data.Aggregation;
 using Rdmp.Core.Curation.Data.Cohort;
 using Rdmp.Core.DataExport.Data;
-using Rdmp.Core.DataExport.DataExtraction;
 using Rdmp.Core.DataViewing;
 using Rdmp.Core.Repositories.Construction;
 using System;

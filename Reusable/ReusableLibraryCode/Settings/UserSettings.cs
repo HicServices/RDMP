@@ -10,7 +10,6 @@ using System.Linq;
 using FAnsi.Discovery;
 using Plugin.Settings.Abstractions;
 using ReusableLibraryCode.Checks;
-using static ReusableLibraryCode.Checks.CheckEventArgs;
 
 namespace ReusableLibraryCode.Settings
 {

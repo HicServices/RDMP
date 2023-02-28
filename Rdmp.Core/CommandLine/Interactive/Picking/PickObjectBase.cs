@@ -11,7 +11,6 @@ using MapsDirectlyToDatabaseTable;
 using Rdmp.Core.CommandExecution;
 using Rdmp.Core.Curation.Data;
 using Rdmp.Core.Providers;
-using Rdmp.Core.Repositories;
 
 namespace Rdmp.Core.CommandLine.Interactive.Picking
 {

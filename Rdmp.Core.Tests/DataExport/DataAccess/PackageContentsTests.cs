@@ -8,7 +8,6 @@ using System;
 using NUnit.Framework;
 using Rdmp.Core.Curation.Data;
 using Rdmp.Core.DataExport.Data;
-using Rdmp.Core.Repositories.Managers;
 using Tests.Common;
 
 namespace Rdmp.Core.Tests.DataExport.DataAccess

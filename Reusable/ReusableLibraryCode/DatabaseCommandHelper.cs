@@ -11,7 +11,6 @@ using Microsoft.Data.SqlClient;
 using System.Linq;
 using FAnsi;
 using FAnsi.Discovery;
-using FAnsi.Discovery.QuerySyntax;
 using FAnsi.Implementation;
 using FAnsi.Implementations.MicrosoftSQL;
 using FAnsi.Implementations.MySql;
@@ -20,7 +19,6 @@ using FAnsi.Implementations.PostgreSql;
 using Oracle.ManagedDataAccess.Client;
 using Npgsql;
 using ReusableLibraryCode.Performance;
-using TypeGuesser;
 using MySqlConnector;
 
 namespace ReusableLibraryCode

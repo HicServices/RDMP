@@ -8,7 +8,6 @@ using System;
 using System.IO;
 using System.Linq;
 using System.Text.RegularExpressions;
-using MapsDirectlyToDatabaseTable;
 using NUnit.Framework;
 using Rdmp.Core.Curation;
 using Rdmp.Core.Curation.Data;
