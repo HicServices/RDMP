@@ -101,16 +101,12 @@ namespace Rdmp.Core.Curation.Data
         /// <inheritdoc/>
         public bool WithinPermissionWindow()
         {
-            if (!PermissionWindowPeriods.Any())
-                return true;
-
             return WithinPermissionWindow(DateTime.UtcNow);
         }
 
         /// <inheritdoc/>
         public virtual bool WithinPermissionWindow(DateTime dateTimeUTC)
         {
-            
             if (!PermissionWindowPeriods.Any())
                 return true;
 
