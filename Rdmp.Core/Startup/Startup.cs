@@ -245,11 +245,11 @@ public class Startup
 
         var compatiblePlugins = catalogueRepository.PluginManager.GetCompatiblePlugins();
 
-        var dirs = new List<DirectoryInfo>();
-        var toLoad = new List<DirectoryInfo> {
-            //always load the current application directory
-            new DirectoryInfo(AppDomain.CurrentDomain.BaseDirectory)
-        };
+            var dirs = new List<DirectoryInfo>();
+            var toLoad = new List<DirectoryInfo> {
+                //always load the current application directory
+                //new DirectoryInfo(AppDomain.CurrentDomain.BaseDirectory)
+            };
 
             for (var i = 0; i < compatiblePlugins.Length; i++)
             {
@@ -334,14 +334,13 @@ public class Startup
         MEFSafeDirectoryCatalog = new SafeDirectoryCatalog(notifier, toLoad.Select(d=>d.FullName).ToArray());
         catalogueRepository.MEF.Setup(MEFSafeDirectoryCatalog);
             
-        notifier.OnCheckPerformed(new CheckEventArgs("Loading Help...", CheckResult.Success));
-        var sw = Stopwatch.StartNew();
-
-        if(!CatalogueRepository.SuppressHelpLoading)
-            catalogueRepository.CommentStore.ReadComments(Environment.CurrentDirectory,"SourceCodeForSelfAwareness.zip");
-
+            if (CatalogueRepository.SuppressHelpLoading) return;
+            notifier.OnCheckPerformed(new CheckEventArgs("Loading Help...", CheckResult.Success));
+            var sw = Stopwatch.StartNew();
+            catalogueRepository.CommentStore.ReadComments(Environment.CurrentDirectory, "SourceCodeForSelfAwareness.zip");
             sw.Stop();
             notifier.OnCheckPerformed(new CheckEventArgs($"Help loading took:{sw.Elapsed}", CheckResult.Success));
+
         }
         #endregion
 
