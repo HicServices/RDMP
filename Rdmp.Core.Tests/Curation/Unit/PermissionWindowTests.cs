@@ -50,13 +50,13 @@ public class PermissionWindowTests:DatabaseTests
     {
         var dtNow = DateTime.UtcNow;
 
-        if ((dtNow.Hour == 23 && dtNow.Minute >= 40) || (dtNow.Hour == 0 && dtNow.Minute <= 5))
-            Assert.Inconclusive("This test cannot run at midnight since it is afraid of the dark");
+            if (dtNow is { Hour: 23, Minute: >= 40 } or { Hour: 0, Minute: <= 5 })
+                Assert.Inconclusive("This test cannot run at midnight since it is afraid of the dark");
             
         var fiveMinutes = new TimeSpan(0, 5, 0);
 
-        var utcTime = new TimeSpan(dtNow.Hour, dtNow.Minute, dtNow.Second);
-        var period1 = new PermissionWindowPeriod((int)DateTime.Now.DayOfWeek, utcTime.Subtract(fiveMinutes), utcTime.Add(fiveMinutes));
+            var utcTime = new TimeSpan(dtNow.Hour, dtNow.Minute, dtNow.Second);
+            var period1 = new PermissionWindowPeriod((int)DateTime.UtcNow.DayOfWeek, utcTime.Subtract(fiveMinutes), utcTime.Add(fiveMinutes));
 
         var permissionWindow = new PermissionWindow(CatalogueRepository); 
         permissionWindow.SetPermissionWindowPeriods(new List<PermissionWindowPeriod> { period1 });

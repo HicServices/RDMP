@@ -88,31 +88,27 @@ public class PermissionWindow : DatabaseEntity, IPermissionWindow
         }
     }
 
-    private void DeserializePermissionWindowPeriods(string permissionPeriodConfig)
-    {
-        if (string.IsNullOrWhiteSpace(permissionPeriodConfig))
-            PermissionWindowPeriods = new List<PermissionWindowPeriod>();
-        else
+        private void DeserializePermissionWindowPeriods(string permissionPeriodConfig)
         {
-            var deserializer = new XmlSerializer(typeof (List<PermissionWindowPeriod>));
-            PermissionWindowPeriods = deserializer.Deserialize(new StringReader(permissionPeriodConfig)) as List<PermissionWindowPeriod>;
+            if (string.IsNullOrWhiteSpace(permissionPeriodConfig))
+                PermissionWindowPeriods = new List<PermissionWindowPeriod>();
+            else
+            {
+                var deserializer = new XmlSerializer(typeof (List<PermissionWindowPeriod>));
+                PermissionWindowPeriods = deserializer.Deserialize(new StringReader(permissionPeriodConfig)) as List<PermissionWindowPeriod>;
+            }
         }
-    }
-    /// <inheritdoc/>
-    public bool WithinPermissionWindow()
-    {
-        if (!PermissionWindowPeriods.Any())
-            return true;
+        /// <inheritdoc/>
+        public bool WithinPermissionWindow()
+        {
+            return WithinPermissionWindow(DateTime.UtcNow);
+        }
 
-        return WithinPermissionWindow(DateTime.UtcNow);
-    }
-
-    /// <inheritdoc/>
-    public virtual bool WithinPermissionWindow(DateTime dateTimeUTC)
-    {
-            
-        if (!PermissionWindowPeriods.Any())
-            return true;
+        /// <inheritdoc/>
+        public virtual bool WithinPermissionWindow(DateTime dateTimeUTC)
+        {
+            if (!PermissionWindowPeriods.Any())
+                return true;
 
         return PermissionWindowPeriods.Any(permissionPeriod => permissionPeriod.Contains(dateTimeUTC));
     }
