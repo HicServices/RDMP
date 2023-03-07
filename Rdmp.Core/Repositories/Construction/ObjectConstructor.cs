@@ -76,30 +76,32 @@ public class ObjectConstructor
         // Preferred constructor
         var constructors = GetConstructors<T, DbDataReader>(objectType);
 
-        if (!constructors.Any())
-        {
-            // Fallback constructor
-            throw new ObjectLacksCompatibleConstructorException(objectType.Name + " requires a constructor ("+typeof(T).Name+" repo, DbDataReader reader) to be used with ConstructIMapsDirectlyToDatabaseObject");
-        }
+           if (!constructors.Any())
+           {
+                // Fallback constructor
+                throw new ObjectLacksCompatibleConstructorException(
+                    $"{objectType.Name} requires a constructor ({typeof(T).Name} repo, DbDataReader reader) to be used with ConstructIMapsDirectlyToDatabaseObject");
+            }
 
         return (IMapsDirectlyToDatabaseTable)InvokeBestConstructor(constructors, repositoryOfTypeT, reader);
     }
     #endregion
 
-    /// <summary>
-    /// Constructs an instance of object of Type 'typeToConstruct' which should have a compatible constructor taking an object or interface compatible with T
-    /// or a blank constructor (optionally)
-    /// </summary>
-    /// <typeparam name="T">The parameter type expected to be in the constructor</typeparam>
-    /// <param name="typeToConstruct">The type to construct an instance of</param>
-    /// <param name="constructorParameter1">a value to feed into the compatible constructor found for Type typeToConstruct in order to produce an instance</param>
-    /// <param name="allowBlank">true to allow calling the blank constructor if no matching constructor is found that takes a T</param>
-    /// <returns></returns>
-    public object Construct<T>(Type typeToConstruct, T constructorParameter1, bool allowBlank = true)
-    {
-        List<ConstructorInfo> repositoryLocatorConstructorInfos = GetConstructors<T>(typeToConstruct);
+        /// <summary>
+        /// Constructs an instance of object of Type 'typeToConstruct' which should have a compatible constructor taking an object or interface compatible with T
+        /// or a blank constructor (optionally)
+        /// </summary>
+        /// <typeparam name="T">The parameter type expected to be in the constructor</typeparam>
+        /// <param name="typeToConstruct">The type to construct an instance of</param>
+        /// <param name="constructorParameter1">a value to feed into the compatible constructor found for Type typeToConstruct in order to produce an instance</param>
+        /// <param name="allowBlank">true to allow calling the blank constructor if no matching constructor is found that takes a T</param>
+        /// <returns></returns>
+        public object Construct<T>(Type typeToConstruct, T constructorParameter1, bool allowBlank = true)
+        {
+            var repositoryLocatorConstructorInfos = GetConstructors<T>(typeToConstruct);
 
-        if (!repositoryLocatorConstructorInfos.Any())
+            if (repositoryLocatorConstructorInfos.Any())
+                return InvokeBestConstructor(repositoryLocatorConstructorInfos, constructorParameter1);
             if (allowBlank)
                 try
                 {
@@ -107,42 +109,40 @@ public class ObjectConstructor
                 }
                 catch (ObjectLacksCompatibleConstructorException)
                 {
-                    throw new ObjectLacksCompatibleConstructorException("Type '" + typeToConstruct +
-                                                                        "' does not have a constructor taking an " +
-                                                                        typeof (T) +
-                                                                        " - it doesn't even have a blank constructor!");
+                    throw new ObjectLacksCompatibleConstructorException(
+                        $"Type '{typeToConstruct}' does not have a constructor taking an {typeof(T)} - it doesn't even have a blank constructor!");
                 }
-            else
-                throw new ObjectLacksCompatibleConstructorException("Type '" + typeToConstruct +
-                                                                    "' does not have a constructor taking an " +
-                                                                    typeof (T));
 
-
-        return InvokeBestConstructor(repositoryLocatorConstructorInfos, constructorParameter1);
-    }
+            throw new ObjectLacksCompatibleConstructorException(
+                $"Type '{typeToConstruct}' does not have a constructor taking an {typeof(T)}");
+        }
         
     private List<ConstructorInfo> GetConstructors<T>(Type type)
     {
         var toReturn = new List<ConstructorInfo>();
         ConstructorInfo exactMatch = null;
 
-        foreach (ConstructorInfo constructor in type.GetConstructors(BindingFlags))
-        {
-            var p = constructor.GetParameters();
+            foreach (var constructor in type.GetConstructors(BindingFlags))
+            {
+                var p = constructor.GetParameters();
 
-            if (p.Length == 1)
-                if (p[0].ParameterType == typeof (T))//is it an exact match i.e. ctor(T bob) 
-                    exactMatch = constructor;
-                else
-                if(p[0].ParameterType.IsAssignableFrom(typeof(T))) //is it a derrived class match i.e. ctor(F bob) where F is a derrived class of T
-                    toReturn.Add(constructor);
+                switch (p.Length)
+                {
+                    //is it an exact match i.e. ctor(T bob) 
+                    case 1 when p[0].ParameterType == typeof (T):
+                        exactMatch = constructor;
+                        break;
+                    case 1:
+                    {
+                        if(p[0].ParameterType.IsAssignableFrom(typeof(T))) //is it a derived class match i.e. ctor(F bob) where F is a derived class of T
+                            toReturn.Add(constructor);
+                        break;
+                    }
+                }
+            }
+
+            return exactMatch != null ? new List<ConstructorInfo>(new []{exactMatch}) : toReturn;
         }
-
-        if(exactMatch != null)
-            return new List<ConstructorInfo>(new []{exactMatch});
-
-        return toReturn;
-    }
 
 
     /// <summary>
@@ -157,9 +157,9 @@ public class ObjectConstructor
         var toReturn = new List<ConstructorInfo>();
         ConstructorInfo exactMatch = null;
 
-        foreach (ConstructorInfo constructor in type.GetConstructors(BindingFlags))
-        {
-            var p = constructor.GetParameters();
+            foreach (var constructor in type.GetConstructors(BindingFlags))
+            {
+                var p = constructor.GetParameters();
 
             if (p.Length == 2)
                 if (p[0].ParameterType == typeof (T) && p[1].ParameterType == typeof (T2))
@@ -172,25 +172,25 @@ public class ObjectConstructor
         if (exactMatch != null)
             return new List<ConstructorInfo>(new[] { exactMatch });
 
-        return toReturn;
-    }
-    /// <summary>
-    /// Returns all constructors defined for class 'type' which are compatible with any set or subset of the provided parameters.  The return value is a dictionary
-    /// of all compatible constructors with the objects needed to invoke them.
-    /// </summary>
-    /// <param name="type"></param>
-    /// <param name="allowBlankConstructor"></param>
-    /// <param name="allowPrivate"></param>
-    /// <param name="parameterObjects"></param>
-    /// <returns></returns>
-    public Dictionary<ConstructorInfo, List<object>> GetConstructors(Type type, bool allowBlankConstructor, bool allowPrivate, params object[] parameterObjects)
-    {
-        Dictionary<ConstructorInfo,List<object>> toReturn = new Dictionary<ConstructorInfo, List<object>>();
-
-        foreach (ConstructorInfo constructor in type.GetConstructors(BindingFlags))
+            return toReturn;
+        }
+        /// <summary>
+        /// Returns all constructors defined for class 'type' which are compatible with any set or subset of the provided parameters.  The return value is a dictionary
+        /// of all compatible constructors with the objects needed to invoke them.
+        /// </summary>
+        /// <param name="type"></param>
+        /// <param name="allowBlankConstructor"></param>
+        /// <param name="allowPrivate"></param>
+        /// <param name="parameterObjects"></param>
+        /// <returns></returns>
+        public Dictionary<ConstructorInfo, List<object>> GetConstructors(Type type, bool allowBlankConstructor, bool allowPrivate, params object[] parameterObjects)
         {
-            if(constructor.IsPrivate && !allowPrivate)
-                continue;
+            var toReturn = new Dictionary<ConstructorInfo, List<object>>();
+
+            foreach (var constructor in type.GetConstructors(BindingFlags))
+            {
+                if(constructor.IsPrivate && !allowPrivate)
+                    continue;
 
             var p = constructor.GetParameters();
 
@@ -204,9 +204,9 @@ public class ObjectConstructor
             {
                 //ok we found a constructor that takes some arguments
 
-                //do we have clear 1 to 1 winners on what object to drop into which parameter of the constructor?
-                bool canInvoke = true;
-                List<object> invokeWithObjects = new List<object>();
+                    //do we have clear 1 to 1 winners on what object to drop into which parameter of the constructor?
+                    var canInvoke = true;
+                    var invokeWithObjects = new List<object>();
 
                 //for each object in the constructor
                 foreach (var arg in p)
@@ -257,7 +257,8 @@ public class ObjectConstructor
         if (matches.Length == 0)
             return null;
 
-        throw new ObjectLacksCompatibleConstructorException("Could not pick a suitable parameterObject for populating " + parameterType + " (found " + matches.Length + " compatible parameter objects)");
+            throw new ObjectLacksCompatibleConstructorException(
+                $"Could not pick a suitable parameterObject for populating {parameterType} (found {matches.Length} compatible parameter objects)");
 
     }
 
@@ -270,16 +271,16 @@ public class ObjectConstructor
         if(importDecorated.Length == 1)
             return importDecorated[0].Invoke( parameters);
 
-        throw new ObjectLacksCompatibleConstructorException("Could not pick the correct constructor between:" + Environment.NewLine
-            + string.Join(""+Environment.NewLine,constructors.Select(c=>c.Name +"(" + string.Join(",",c.GetParameters().Select(p=>p.ParameterType)))));
-    }
+            throw new ObjectLacksCompatibleConstructorException(
+                $"Could not pick the correct constructor between:{Environment.NewLine}{string.Join($"{Environment.NewLine}", constructors.Select(c => $"{c.Name}({string.Join(",", c.GetParameters().Select(p => p.ParameterType))}"))}");
+        }
 
     private object GetUsingBlankConstructor(Type t)
     {
         var blankConstructor = t.GetConstructor(Type.EmptyTypes);
 
-        if (blankConstructor == null)
-            throw new ObjectLacksCompatibleConstructorException("Type '" + t + "' did not contain a blank constructor");
+            if (blankConstructor == null)
+                throw new ObjectLacksCompatibleConstructorException($"Type '{t}' did not contain a blank constructor");
 
         return (blankConstructor.Invoke(new object[0]));
     }
@@ -294,20 +295,20 @@ public class ObjectConstructor
         return arg.GetConstructor(Type.EmptyTypes) != null;
     }
 
-    /// <summary>
-    /// Attempts to construct an instance of Type typeToConstruct using the provided constructorValues.  This must match on parameter number but ignores order
-    /// so if you pass new Obj1(),new Obj2() it could invoke either MyClass(Obj1 a,Obj2 b) or MyClass(Obj2 a, Obj1 b).  
-    /// <para>Throws <see cref="ObjectLacksCompatibleConstructorException"/> if there are multiple constructors that match the constructorValues</para>
-    /// 
-    /// <para>Does not invoke the default constructor unless you leave constructorValues blank</para>
-    /// <para>returns null if no compatible constructor is found</para>
-    /// </summary>
-    /// <param name="typeToConstruct"></param>
-    /// <param name="constructorValues"></param>
-    /// <returns></returns>
-    public object ConstructIfPossible(Type typeToConstruct, params object[] constructorValues)
-    {
-        List<ConstructorInfo> compatible = new List<ConstructorInfo>();
+        /// <summary>
+        /// Attempts to construct an instance of Type typeToConstruct using the provided constructorValues.  This must match on parameter number but ignores order
+        /// so if you pass new Obj1(),new Obj2() it could invoke either MyClass(Obj1 a,Obj2 b) or MyClass(Obj2 a, Obj1 b).  
+        /// <para>Throws <see cref="ObjectLacksCompatibleConstructorException"/> if there are multiple constructors that match the constructorValues</para>
+        /// 
+        /// <para>Does not invoke the default constructor unless you leave constructorValues blank</para>
+        /// <para>returns null if no compatible constructor is found</para>
+        /// </summary>
+        /// <param name="typeToConstruct"></param>
+        /// <param name="constructorValues"></param>
+        /// <returns></returns>
+        public object ConstructIfPossible(Type typeToConstruct, params object[] constructorValues)
+        {
+            var compatible = new List<ConstructorInfo>();
 
         foreach (var constructor in typeToConstruct.GetConstructors(BindingFlags))
         {
@@ -317,21 +318,21 @@ public class ObjectConstructor
             if (p.Length != constructorValues.Length)
                 continue;
 
-            bool isCompatible = true;
+                var isCompatible = true;
 
-            for (int index = 0; index < constructorValues.Length; index++)
-            {
-                //if we have been given a null value for this parameter
-                if (constructorValues[index] == null)
+                for (var index = 0; index < constructorValues.Length; index++)
                 {
-                    //if the parameter is value type null is not ok otherwise it is
-                    if (p[index].ParameterType.IsEnum || p[index].ParameterType.IsValueType)
-                        isCompatible = false;
+                    //if we have been given a null value for this parameter
+                    if (constructorValues[index] == null)
+                    {
+                        //if the parameter is value type null is not ok otherwise it is
+                        if (p[index].ParameterType.IsEnum || p[index].ParameterType.IsValueType)
+                            isCompatible = false;
+                    }
+                    else
+                        if (!p[index].ParameterType.IsInstanceOfType(constructorValues[index]))
+                            isCompatible = false;
                 }
-                else
-                if (!p[index].ParameterType.IsInstanceOfType(constructorValues[index]))
-                    isCompatible = false;
-            }
 
             if(isCompatible)
                 compatible.Add(constructor);
@@ -376,6 +377,8 @@ public class ObjectConstructor
         if (compatible.Count == 1)
             return compatible.Single();
 
-        throw new ObjectLacksCompatibleConstructorException("No best constructor found for Type " + type +" (found " + compatible.Count +")");
+            throw new ObjectLacksCompatibleConstructorException(
+                $"No best constructor found for Type {type} (found {compatible.Count})");
+        }
     }
 }

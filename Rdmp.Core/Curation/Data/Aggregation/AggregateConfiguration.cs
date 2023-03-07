@@ -59,6 +59,42 @@ public class AggregateConfiguration : DatabaseEntity, ICheckable, IOrderable, IC
     private bool _isExtractable;
     private string _havingSQL;
     private bool _isDisabled;
+namespace Rdmp.Core.Curation.Data.Aggregation
+{
+    /// <summary>
+    /// Entry point for the aggregation system.  This class describes what a given aggregation is supposed to achieve (e.g. summarise the number of records in a 
+    /// dataset by region over time since 2001 to present).  An AggregateConfiguration belongs to a given Catalogue and is the hanging-off point for the rest of
+    /// the configuration (e.g. AggregateDimension / AggregateFilter)
+    /// 
+    /// <para>AggregateConfigurations can be used with an AggregateBuilder to produce runnable SQL which will return a DataTable containing results appropriate to the
+    /// query being built.</para>
+    /// 
+    /// <para>There are Three types of AggregateConfiguration (these are configurations - not separate classes):</para>
+    /// <para>1. 'Aggregate Graph' - Produce summary information about a dataset designed to be displayed in a graph e.g. number of records each year by healthboard</para>
+    /// <para>2. 'Cohort Aggregate' - Produce a list of unique patient identifiers from a dataset (e.g. 'all patients with HBA1c test code > 50 in biochemistry')</para>
+    /// <para>3. 'Joinable PatientIndex Table' - Produce a patient identifier fact table for joining to other Cohort Aggregates during cohort building (See JoinableCohortAggregateConfiguration)</para>
+    /// <para>The above labels are informal terms.  Use IsCohortIdentificationAggregate and IsJoinablePatientIndexTable to determine what type a given
+    /// AggregateConfiguration is. </para>
+    /// 
+    /// <para>If your Aggregate is part of cohort identification (Identifier List or Patient Index Table) then its name will start with cic_X_ where X is the ID of the cohort identification 
+    /// configuration.  Depending on the user interface though this might not appear (See ToString implementation).</para>
+    /// </summary>
+    public class AggregateConfiguration : DatabaseEntity, ICheckable, IOrderable, ICollectSqlParameters, INamed, IHasDependencies, IHasQuerySyntaxHelper,
+        IInjectKnown<JoinableCohortAggregateConfiguration>,
+        IInjectKnown<AggregateDimension[]>,
+        IInjectKnown<Catalogue>,
+        IDisableable,IKnowWhatIAm,IMightBeReadOnly, IRootFilterContainerHost
+    {
+        #region Database Properties
+        private string _countSQL;
+        private int _catalogueID;
+        private string _name;
+        private string _description;
+        private DateTime _dtCreated;
+        private int? _pivotOnDimensionID;
+        private bool _isExtractable;
+        private string _havingSQL;
+        private bool _isDisabled;
 
 
     /// <summary>
@@ -368,15 +404,12 @@ public class AggregateConfiguration : DatabaseEntity, ICheckable, IOrderable, IC
         }
     }
 
-    /// <summary>
-    /// True if the AggregateConfiguration is part of a <see cref="CohortIdentificationConfiguration"/> and is intended to produce list of patient identifiers (optionally
-    /// with other data if it is a 'patient index table'.
-    /// </summary>
-    [NoMappingToDatabase]
-    public bool IsCohortIdentificationAggregate
-    {
-        get { return Name.StartsWith(CohortIdentificationConfiguration.CICPrefix); }
-    }
+        /// <summary>
+        /// True if the AggregateConfiguration is part of a <see cref="CohortIdentificationConfiguration"/> and is intended to produce list of patient identifiers (optionally
+        /// with other data if it is a 'patient index table'.
+        /// </summary>
+        [NoMappingToDatabase]
+        public bool IsCohortIdentificationAggregate => Name.StartsWith(CohortIdentificationConfiguration.CICPrefix);
 
     /// <summary>
     /// Creates a new AggregateConfiguration (graph, cohort set or patient index table) in the ICatalogueRepository

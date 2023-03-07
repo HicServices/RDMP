@@ -78,15 +78,13 @@ public class PermissionWindow : DatabaseEntity, IPermissionWindow
     [NoMappingToDatabase]
     public List<PermissionWindowPeriod> PermissionWindowPeriods { get; private set; }
 
-    private string SerializePermissionWindowPeriods()
-    {
-        var serializer = new XmlSerializer(typeof (List<PermissionWindowPeriod>));
-        using (var output = new StringWriter())
+        private string SerializePermissionWindowPeriods()
         {
+            var serializer = new XmlSerializer(typeof (List<PermissionWindowPeriod>));
+            using var output = new StringWriter();
             serializer.Serialize(output, PermissionWindowPeriods);
             return output.ToString();
         }
-    }
 
         private void DeserializePermissionWindowPeriods(string permissionPeriodConfig)
         {

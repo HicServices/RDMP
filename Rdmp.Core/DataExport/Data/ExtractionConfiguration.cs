@@ -294,12 +294,12 @@ public class ExtractionConfiguration : DatabaseEntity, IExtractionConfiguration,
 
     #endregion
 
-    /// <summary>
-    /// Returns <see cref="Project.Name"/>
-    /// </summary>
-    [NoMappingToDatabase]
-    [UsefulProperty]
-    public string ProjectName{ get=>Project.Name;}
+        /// <summary>
+        /// Returns <see cref="INamed.Name"/>
+        /// </summary>
+        [NoMappingToDatabase]
+        [UsefulProperty]
+        public string ProjectName => Project.Name;
 
     public ExtractionConfiguration()
     {

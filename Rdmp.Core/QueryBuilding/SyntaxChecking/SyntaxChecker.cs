@@ -48,42 +48,44 @@ public abstract class SyntaxChecker : ICheckable
     public void CheckSyntax(ISqlParameter parameter)
     {
 
-        if (string.IsNullOrWhiteSpace(parameter.Value))
-            throw new SyntaxErrorException("Parameter " + parameter.ParameterName + " does not have a value");
+            if (string.IsNullOrWhiteSpace(parameter.Value))
+                throw new SyntaxErrorException($"Parameter {parameter.ParameterName} does not have a value");
 
-        bool isCharBased = parameter.ParameterSQL.ToLower().Contains("char");
+            var isCharBased = parameter.ParameterSQL.ToLower().Contains("char");
 
-        if (isCharBased && parameter.Value.Trim().StartsWith("'"))
-        {
-            Match matchValue = Regex.Match(parameter.Value, "'[^']*'");
-            Match matchLength = Regex.Match(parameter.ParameterSQL, "\\([0-9]*\\)");
-
-            if (matchValue.Success && matchLength.Success)
+            if (isCharBased && parameter.Value.Trim().StartsWith("'"))
             {
-                int userSpecifiedLength = Int32.Parse(matchLength.Value.Substring(1, matchLength.Value.Length - 2));
-                int actualLength = matchValue.Value.Trim().Length - 2;
+                var matchValue = QuotedString.Match(parameter.Value);
+                var matchLength = BracketedNumber.Match(parameter.ParameterSQL);
 
-                if (actualLength > userSpecifiedLength)
-                    throw new SyntaxErrorException("You created a parameter of length " + userSpecifiedLength + " (" + parameter.ParameterName + ") but then put a value in it that is " + actualLength + " characters long, the parameter with the problem was:" + parameter.ParameterName);
+                if (matchValue.Success && matchLength.Success)
+                {
+                    var userSpecifiedLength = int.Parse(matchLength.Value.Substring(1, matchLength.Value.Length - 2));
+                    var actualLength = matchValue.Value.Trim().Length - 2;
+
+                    if (actualLength > userSpecifiedLength)
+                        throw new SyntaxErrorException(
+                            $"You created a parameter of length {userSpecifiedLength} ({parameter.ParameterName}) but then put a value in it that is {actualLength} characters long, the parameter with the problem was:{parameter.ParameterName}");
+                }
             }
-        }
 
-        if (isCharBased && !(parameter.Value.Contains("'") || parameter.Value.Contains("@")))
-            throw new SyntaxErrorException("Parameter " + parameter.ParameterName + " looks like it is character based but its value does not contain any single quotes (or at least a reference to another variable)");
+            if (isCharBased && !(parameter.Value.Contains("'") || parameter.Value.Contains("@")))
+                throw new SyntaxErrorException(
+                    $"Parameter {parameter.ParameterName} looks like it is character based but its value does not contain any single quotes (or at least a reference to another variable)");
 
-        try
-        {
-            ParityCheckCharacterPairs(new[] { '(', '[', '\'' }, new[] { ')', ']', '\'' }, parameter.ParameterSQL);
-            ParityCheckCharacterPairs(new[] { '(', '[', '\'' }, new[] { ')', ']', '\'' }, parameter.Value);
-        }
-        catch (SyntaxErrorException exception)
-        {
-            throw new SyntaxErrorException("Failed to validate the bracket parity of parameter " + parameter, exception);
-        }
+            try
+            {
+                ParityCheckCharacterPairs(new[] { '(', '[', '\'' }, new[] { ')', ']', '\'' }, parameter.ParameterSQL);
+                ParityCheckCharacterPairs(new[] { '(', '[', '\'' }, new[] { ')', ']', '\'' }, parameter.Value);
+            }
+            catch (SyntaxErrorException exception)
+            {
+                throw new SyntaxErrorException($"Failed to validate the bracket parity of parameter {parameter}", exception);
+            }
 
 
-        if (!parameter.GetQuerySyntaxHelper().IsValidParameterName(parameter.ParameterSQL))
-            throw new SyntaxErrorException("parameterSQL is not valid \"" + parameter.ParameterSQL + "\"");
+            if (!parameter.GetQuerySyntaxHelper().IsValidParameterName(parameter.ParameterSQL))
+                throw new SyntaxErrorException($"parameterSQL is not valid \"{parameter.ParameterSQL}\"");
 
     }
 
