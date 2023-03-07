@@ -40,22 +40,16 @@ namespace Rdmp.Core.DataViewing
 
         public IEnumerable<DatabaseEntity> GetToolStripObjects()
         {
-            if (UseQueryCache)
-            {
-                var cache = GetCacheServer();
-                if (cache != null)
-                    yield return cache;
-            }
+            if (!UseQueryCache) yield break;
+            var cache = GetCacheServer();
+            if (cache != null)
+                yield return cache;
         }
 
         private ExternalDatabaseServer GetCacheServer()
         {
             var cic = AggregateConfiguration.GetCohortIdentificationConfigurationIfAny();
-
-            if (cic != null && cic.QueryCachingServer_ID != null)
-                return cic.QueryCachingServer;
-
-            return null;
+            return cic is { QueryCachingServer_ID: { } } ? cic.QueryCachingServer : null;
         }
 
         public IDataAccessPoint GetDataAccessPoint()
@@ -63,47 +57,39 @@ namespace Rdmp.Core.DataViewing
             var dim = AggregateConfiguration.AggregateDimensions.FirstOrDefault();
 
             //the aggregate has no dimensions
-            if (dim == null)
-            {
-                var table = AggregateConfiguration.ForcedJoins.FirstOrDefault();
-                if (table == null)
-                    throw new Exception("AggregateConfiguration '" + AggregateConfiguration + "' has no AggregateDimensions and no TableInfo forced joins, we do not know where/what table to run the query on");
+            if (dim != null) return dim.ColumnInfo.TableInfo;
+            var table = AggregateConfiguration.ForcedJoins.FirstOrDefault();
+            if (table == null)
+                throw new Exception(
+                    $"AggregateConfiguration '{AggregateConfiguration}' has no AggregateDimensions and no TableInfo forced joins, we do not know where/what table to run the query on");
 
-                return table;
-            }
+            return table;
 
-            return dim.ColumnInfo.TableInfo;
         }
 
         public string GetSql()
         {
-            string sql = "";
             var ac = AggregateConfiguration;
 
-            if (ac.IsCohortIdentificationAggregate)
+            if (!ac.IsCohortIdentificationAggregate)
             {
-                var cic = ac.GetCohortIdentificationConfigurationIfAny();
-                var globals = cic.GetAllParameters();
-
-                var builder = new CohortQueryBuilder(ac, globals, null);
-
-                if (UseQueryCache)
-                    builder.CacheServer = GetCacheServer();
-
-                sql = TopX.HasValue ? builder.GetDatasetSampleSQL(TopX.Value) : builder.SQL;
-            }
-            else
-            {
-                var builder = ac.GetQueryBuilder();
-                sql = builder.SQL;
+                return ac.GetQueryBuilder().SQL;
             }
 
-            return sql;
+            var cic = ac.GetCohortIdentificationConfigurationIfAny();
+            var globals = cic.GetAllParameters();
+
+            var builder = new CohortQueryBuilder(ac, globals, null);
+
+            if (UseQueryCache)
+                builder.CacheServer = GetCacheServer();
+
+            return TopX.HasValue ? builder.GetDatasetSampleSQL(TopX.Value) : builder.SQL;
         }
 
         public string GetTabName()
         {
-            return "View Top 100 " + AggregateConfiguration;
+            return $"View Top 100 {AggregateConfiguration}";
         }
 
         public void AdjustAutocomplete(IAutoCompleteProvider autoComplete)
@@ -112,18 +98,11 @@ namespace Rdmp.Core.DataViewing
                 autoComplete.Add(AggregateConfiguration);
         }
 
-        AggregateConfiguration AggregateConfiguration
-        {
-            get
-            {
-                return DatabaseObjects.OfType<AggregateConfiguration>().SingleOrDefault();
-            }
-        }
+        AggregateConfiguration AggregateConfiguration => DatabaseObjects.OfType<AggregateConfiguration>().SingleOrDefault();
 
         public IQuerySyntaxHelper GetQuerySyntaxHelper()
         {
-            var a = AggregateConfiguration;
-            return a != null ? a.GetQuerySyntaxHelper() : null;
+            return AggregateConfiguration?.GetQuerySyntaxHelper();
         }
     }
 }

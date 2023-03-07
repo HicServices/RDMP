@@ -33,7 +33,7 @@ namespace Rdmp.Core.Curation.Data.Aggregation
     /// <para>AggregateConfigurations can be used with an AggregateBuilder to produce runnable SQL which will return a DataTable containing results appropriate to the
     /// query being built.</para>
     /// 
-    /// <para>There are Three types of AggregateConfiguration (these are configurations - not seperate classes):</para>
+    /// <para>There are Three types of AggregateConfiguration (these are configurations - not separate classes):</para>
     /// <para>1. 'Aggregate Graph' - Produce summary information about a dataset designed to be displayed in a graph e.g. number of records each year by healthboard</para>
     /// <para>2. 'Cohort Aggregate' - Produce a list of unique patient identifiers from a dataset (e.g. 'all patients with HBA1c test code > 50 in biochemistry')</para>
     /// <para>3. 'Joinable PatientIndex Table' - Produce a patient identifier fact table for joining to other Cohort Aggregates during cohort building (See JoinableCohortAggregateConfiguration)</para>
@@ -373,10 +373,7 @@ namespace Rdmp.Core.Curation.Data.Aggregation
         /// with other data if it is a 'patient index table'.
         /// </summary>
         [NoMappingToDatabase]
-        public bool IsCohortIdentificationAggregate
-        {
-            get { return Name.StartsWith(CohortIdentificationConfiguration.CICPrefix); }
-        }
+        public bool IsCohortIdentificationAggregate => Name.StartsWith(CohortIdentificationConfiguration.CICPrefix);
 
         /// <summary>
         /// Creates a new AggregateConfiguration (graph, cohort set or patient index table) in the ICatalogueRepository

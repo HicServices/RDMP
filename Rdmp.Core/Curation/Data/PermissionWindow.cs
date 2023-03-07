@@ -81,11 +81,9 @@ namespace Rdmp.Core.Curation.Data
         private string SerializePermissionWindowPeriods()
         {
             var serializer = new XmlSerializer(typeof (List<PermissionWindowPeriod>));
-            using (var output = new StringWriter())
-            {
-                serializer.Serialize(output, PermissionWindowPeriods);
-                return output.ToString();
-            }
+            using var output = new StringWriter();
+            serializer.Serialize(output, PermissionWindowPeriods);
+            return output.ToString();
         }
 
         private void DeserializePermissionWindowPeriods(string permissionPeriodConfig)

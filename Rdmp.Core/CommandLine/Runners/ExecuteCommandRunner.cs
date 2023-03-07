@@ -40,16 +40,15 @@ namespace Rdmp.Core.CommandLine.Runners
         public int Run(IRDMPPlatformRepositoryServiceLocator repositoryLocator, IDataLoadEventListener listener,
             ICheckNotifier checkNotifier, GracefulCancellationToken token)
         {
-            _input = new ConsoleInputManager(repositoryLocator,checkNotifier);
-            // if there is a single command we are running then disable user input
-            // but allow it if the input is ./rdmp cmd (i.e. run in a loop prompting for commands)
-            _input.DisallowInput = !string.IsNullOrWhiteSpace(_options.CommandName);
-
-            // prevent user input if we are running a script file
-            if(!string.IsNullOrWhiteSpace(_options.File))
+            _input = new ConsoleInputManager(repositoryLocator,checkNotifier)
             {
-                _input.DisallowInput = true;
-            }
+                // if there is a single command we are running then disable user input
+                // but allow it if the input is ./rdmp cmd (i.e. run in a loop prompting for commands)
+                // prevent user input if we are running a script file
+                DisallowInput = !string.IsNullOrWhiteSpace(_options.CommandName) ||
+                                !string.IsNullOrWhiteSpace(_options.File)
+            };
+
 
             var log = LogManager.GetCurrentClassLogger();
 
@@ -58,7 +57,7 @@ namespace Rdmp.Core.CommandLine.Runners
             _invoker.CommandImpossible += (s,c)=>log.Error($"Command Impossible:{c.Command.ReasonCommandImpossible}");
             _invoker.CommandCompleted += (s,c)=>log.Info("Command Completed");
 
-            var commandTypes = _invoker.GetSupportedCommands();
+            var commandTypes = _invoker.GetSupportedCommands().ToArray();
             _commands = new Dictionary<string, Type>(StringComparer.InvariantCultureIgnoreCase);
 
             foreach(var type in commandTypes)

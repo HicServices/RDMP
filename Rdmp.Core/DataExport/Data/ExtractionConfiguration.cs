@@ -295,11 +295,11 @@ namespace Rdmp.Core.DataExport.Data
         #endregion
 
         /// <summary>
-        /// Returns <see cref="Project.Name"/>
+        /// Returns <see cref="INamed.Name"/>
         /// </summary>
         [NoMappingToDatabase]
         [UsefulProperty]
-        public string ProjectName{ get=>Project.Name;}
+        public string ProjectName => Project.Name;
 
         public ExtractionConfiguration()
         {
