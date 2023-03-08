@@ -10,71 +10,72 @@ using System.Linq;
 
 namespace Rdmp.Core.MapsDirectlyToDatabaseTable;
 
-public static class NewObjectPool
-{
-    private static Scope CurrentScope;
-    private static object currentScopeLock = new object();
-
-    public static void Add(IMapsDirectlyToDatabaseTable toCreate)
+    public static class NewObjectPool
     {
-        lock(currentScopeLock)
+        private static Scope CurrentScope;
+        private static object currentScopeLock = new object();
+
+        public static void Add(IMapsDirectlyToDatabaseTable toCreate)
         {
-            CurrentScope?.Objects.Add(toCreate);
+            lock(currentScopeLock)
+            {
+                CurrentScope?.Objects.Add(toCreate);
+            }
         }
-    }
 
-    /// <summary>
-    /// Returns the latest object in <paramref name="from"/> that was created during this session or null.
-    /// Objects are ordered by creation time so that the return value always reflects the most recent (if
-    /// there are multiple matches)
-    /// </summary>
-    /// <param name="from"></param>
-    /// <returns></returns>
-    public static IMapsDirectlyToDatabaseTable Latest(IEnumerable<IMapsDirectlyToDatabaseTable> from)
-    {
-        lock (currentScopeLock)
+        /// <summary>
+        /// Returns the latest object in <paramref name="from"/> that was created during this session or null.
+        /// Objects are ordered by creation time so that the return value always reflects the most recent (if
+        /// there are multiple matches)
+        /// </summary>
+        /// <param name="from"></param>
+        /// <returns></returns>
+        public static IMapsDirectlyToDatabaseTable Latest(IEnumerable<IMapsDirectlyToDatabaseTable> from)
         {
-            //prevent multiple enumeration
-            var fromArray = from.ToArray();
+            lock (currentScopeLock)
+            {
+                //prevent multiple enumeration
+                var fromArray = from.ToArray();
 
-            return CurrentScope?.Objects.AsEnumerable().Reverse().FirstOrDefault(fromArray.Contains);
+                return CurrentScope?.Objects.AsEnumerable().Reverse().FirstOrDefault(fromArray.Contains);
+            }
         }
-    }
 
-    /// <summary>
-    /// Starts a new session tracking all new objects created.  Make sure you wrap the
-    /// returned session in a using statement.  
-    /// </summary>
-    /// <exception cref="Exception">If there is already a session ongoing</exception>
-    /// <returns></returns>
-    public static IDisposable StartSession()
-    {
-        lock (currentScopeLock)
+        /// <summary>
+        /// Starts a new session tracking all new objects created.  Make sure you wrap the
+        /// returned session in a using statement.  
+        /// </summary>
+        /// <exception cref="Exception">If there is already a session ongoing</exception>
+        /// <returns></returns>
+        public static IDisposable StartSession()
         {
-            if (CurrentScope != null)
-                throw new Exception("An existing session is already underway");
+            lock (currentScopeLock)
+            {
+                if (CurrentScope != null)
+                    throw new Exception("An existing session is already underway");
 
-            return CurrentScope = new Scope();
+                return CurrentScope = new Scope();
+            }
         }
-    }
 
-    private static void EndSession()
-    {
-        lock (currentScopeLock)
+        private static void EndSession()
         {
-            CurrentScope = null;
+            lock (currentScopeLock)
+            {
+                CurrentScope = null;
+            }
         }
-    }
 
-    private class Scope : IDisposable
-    {
-        public List<IMapsDirectlyToDatabaseTable> Objects { get; set; } = new List<IMapsDirectlyToDatabaseTable>();
-
-
-        public void Dispose()
+        private class Scope : IDisposable
         {
-            Objects.Clear();
-            NewObjectPool.EndSession();
+            public List<IMapsDirectlyToDatabaseTable> Objects { get; set; } = new List<IMapsDirectlyToDatabaseTable>();
+
+
+            public void Dispose()
+            {
+                Objects.Clear();
+                NewObjectPool.EndSession();
+            }
         }
     }
 }

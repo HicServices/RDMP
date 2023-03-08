@@ -14,4 +14,8 @@ namespace Rdmp.Core.MapsDirectlyToDatabaseTable;
 [AttributeUsage(AttributeTargets.Property, Inherited = false, AllowMultiple = false)]
 public sealed class NoMappingToDatabase : Attribute
 {
+    /// <summary>
+    /// The user account name to supply when sending the credentials
+    /// </summary>
+    string Username { get;}
 }

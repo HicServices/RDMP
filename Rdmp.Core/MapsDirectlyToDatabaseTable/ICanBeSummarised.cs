@@ -6,6 +6,8 @@
 
 namespace Rdmp.Core.MapsDirectlyToDatabaseTable;
 
+namespace Rdmp.Core.ReusableLibraryCode;
+
 /// <summary>
 /// Interface for objects able to summarise themselves as strings
 /// </summary>

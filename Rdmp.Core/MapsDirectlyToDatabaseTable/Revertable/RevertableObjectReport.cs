@@ -8,23 +8,24 @@ using System.Collections.Generic;
 
 namespace Rdmp.Core.MapsDirectlyToDatabaseTable.Revertable;
 
-/// <summary>
-/// Summarises the differences (if any) between the Properties of an IRevertable object vs the corresponding currently saved database record.  Changes
-/// can be the result of local in memory changes the user has made but not saved yet or changes other users have made and saved since the IRevertable 
-/// was fetched.
-/// </summary>
-public class RevertableObjectReport
-{
-    public ChangeDescription Evaluation { get; set; }
-    public List<RevertablePropertyDifference> Differences { get; private set; }
-
-    public RevertableObjectReport()
+    /// <summary>
+    /// Summarises the differences (if any) between the Properties of an IRevertable object vs the corresponding currently saved database record.  Changes
+    /// can be the result of local in memory changes the user has made but not saved yet or changes other users have made and saved since the IRevertable 
+    /// was fetched.
+    /// </summary>
+    public class RevertableObjectReport
     {
-        Differences = new List<RevertablePropertyDifference>();
-    }
+        public ChangeDescription Evaluation { get; set; }
+        public List<RevertablePropertyDifference> Differences { get; private set; }
 
-    public RevertableObjectReport(List<RevertablePropertyDifference> differences)
-    {
-        Differences = differences;
+        public RevertableObjectReport()
+        {
+            Differences = new List<RevertablePropertyDifference>();
+        }
+
+        public RevertableObjectReport(List<RevertablePropertyDifference> differences)
+        {
+            Differences = differences;
+        }
     }
 }
