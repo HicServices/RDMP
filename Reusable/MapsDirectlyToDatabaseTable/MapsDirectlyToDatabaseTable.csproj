@@ -15,9 +15,6 @@
     <Compile Include="..\..\SharedAssemblyInfo.cs" Link="Properties\SharedAssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>
-    <None Include="MapsDirectlyToDatabaseTable.cd" />
-  </ItemGroup>
-  <ItemGroup>
     <ProjectReference Include="..\ReusableLibraryCode\ReusableLibraryCode.csproj" />
   </ItemGroup>
   <ItemGroup>
