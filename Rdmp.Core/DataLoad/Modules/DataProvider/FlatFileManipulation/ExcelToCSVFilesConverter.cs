@@ -58,84 +58,78 @@ public class ExcelToCSVFilesConverter: IPluginDataProvider
 
     public ExitCodeType Fetch(IDataLoadJob job, GracefulCancellationToken cancellationToken)
     {
-        Stopwatch s = new Stopwatch();
-        s.Start();
+        var foundAtLeastOne = false;
 
-        bool foundAtLeastOne = false;
-
-        foreach (FileInfo f in job.LoadDirectory.ForLoading.GetFiles(ExcelFilePattern))
+        foreach (var f in job.LoadDirectory.ForLoading.GetFiles(ExcelFilePattern))
         {
             foundAtLeastOne = true;
-            job.OnNotify(this,new NotifyEventArgs(ProgressEventType.Information, "About to process file " + f.Name));
+            job.OnNotify(this,new NotifyEventArgs(ProgressEventType.Information, $"About to process file {f.Name}"));
             ProcessFile(f,job);
         }
 
         if(!foundAtLeastOne)
-            job.OnNotify(this, new NotifyEventArgs(ProgressEventType.Warning, "Did not find any files matching Pattern '" + ExcelFilePattern+"' in directory '" + job.LoadDirectory.ForLoading.FullName+"'"));
+            job.OnNotify(this, new NotifyEventArgs(ProgressEventType.Warning,
+                $"Did not find any files matching Pattern '{ExcelFilePattern}' in directory '{job.LoadDirectory.ForLoading.FullName}'"));
 
         return ExitCodeType.Success;
     }
 
     private void ProcessFile(FileInfo fileInfo, IDataLoadJob job)
     {
-        using (var fs = new FileStream(fileInfo.FullName, FileMode.Open))
+        using var fs = new FileStream(fileInfo.FullName, FileMode.Open);
+        IWorkbook wb;
+        if (fileInfo.Extension == ".xls")
+            wb = new HSSFWorkbook(fs);
+        else
+            wb = new XSSFWorkbook(fs);
+                
+        try
         {
-            IWorkbook wb;
-            if (fileInfo.Extension == ".xls")
-                wb = new HSSFWorkbook(fs);
-            else
-                wb = new XSSFWorkbook(fs);
-                
-            try
-            {
-                var source = new ExcelDataFlowSource();
-                source.PreInitialize(new FlatFileToLoad(fileInfo), job);
+            var source = new ExcelDataFlowSource();
+            source.PreInitialize(new FlatFileToLoad(fileInfo), job);
 
-                for (int i = 0; i < wb.NumberOfSheets; i++)
+            for (var i = 0; i < wb.NumberOfSheets; i++)
+            {
+                var sheet = wb.GetSheetAt(i);
+
+                if (IsWorksheetNameMatch(sheet.SheetName))
                 {
-                    var sheet = wb.GetSheetAt(i);
+                    job.OnNotify(this,
+                        new NotifyEventArgs(ProgressEventType.Information,
+                            $"Started processing worksheet:{sheet.SheetName}"));
 
-                    if (IsWorksheetNameMatch(sheet.SheetName))
-                    {
-                        job.OnNotify(this,
-                            new NotifyEventArgs(ProgressEventType.Information,
-                                "Started processing worksheet:" + sheet.SheetName));
+                    var newName = PrefixWithWorkbookName
+                        ? $"{Path.GetFileNameWithoutExtension(fileInfo.FullName)}_{sheet.SheetName}"
+                        : sheet.SheetName;
 
-                        string newName = PrefixWithWorkbookName
-                            ? Path.GetFileNameWithoutExtension(fileInfo.FullName) + "_" + sheet.SheetName
-                            : sheet.SheetName;
+                    //make it sensible
+                    newName =
+                        $"{new MicrosoftQuerySyntaxHelper().GetSensibleEntityNameFromString(newName)}.csv";
 
-                        //make it sensible
-                        newName = new MicrosoftQuerySyntaxHelper().GetSensibleEntityNameFromString(newName) + ".csv";
+                    var savePath = Path.Combine(job.LoadDirectory.ForLoading.FullName, newName);
+                    var dt = source.GetAllData(sheet, job);
+                    using var saveStream = new StreamWriter(savePath);
+                    dt.SaveAsCsv(saveStream);
 
-                        string savePath = Path.Combine(job.LoadDirectory.ForLoading.FullName, newName);
-                        var dt = source.GetAllData(sheet, job);
-                        dt.SaveAsCsv(savePath);
+                    job.OnNotify(this,
+                        new NotifyEventArgs(ProgressEventType.Information, $"Saved worksheet as {newName}"));
 
-                        job.OnNotify(this,
-                            new NotifyEventArgs(ProgressEventType.Information, "Saved worksheet as " + newName));
-
-                    }
-                    else
-                        job.OnNotify(this,
-                            new NotifyEventArgs(ProgressEventType.Information, "Ignoring worksheet:" + sheet.SheetName));
                 }
+                else
+                    job.OnNotify(this,
+                        new NotifyEventArgs(ProgressEventType.Information,
+                            $"Ignoring worksheet:{sheet.SheetName}"));
+            }
 
-            }
-            finally
-            {
-                wb.Close();
-            }
-                
         }
-            
+        finally
+        {
+            wb.Close();
+        }
     }
 
     private bool IsWorksheetNameMatch(string name)
     {
-        if (WorksheetPattern == null)
-            return true;
-
-        return WorksheetPattern.IsMatch(name);
+        return WorksheetPattern?.IsMatch(name)!=false;
     }
 }

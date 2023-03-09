@@ -351,19 +351,19 @@ public partial class AggregateGraphUI : AggregateGraph_Design
         {
             int index = i;
                 
-            if (!haveSetSource)
-            {
-                try
+                if (!haveSetSource)
                 {
-                    dataGridView1.DataSource = _dt;
-                    lblCannotLoadData.Visible = false;
-                }
-                catch (Exception e)
-                {
-                    lblCannotLoadData.Visible = true;
-                    lblCannotLoadData.Text = "Could not load data table:" + e.Message;
-                    dataGridView1.DataSource = null;
-                }
+                    try
+                    {
+                        dataGridView1.DataSource = _dt;
+                        lblCannotLoadData.Visible = false;
+                    }
+                    catch (Exception e)
+                    {
+                        lblCannotLoadData.Visible = true;
+                        lblCannotLoadData.Text = $"Could not load data table:{e.Message}";
+                        dataGridView1.DataSource = null;
+                    }
 
                 chart1.DataSource = _dt;
                 haveSetSource = true;
@@ -546,8 +546,8 @@ public partial class AggregateGraphUI : AggregateGraph_Design
         if(chart1.Series.Count == 1)
             chart1.Legends.Clear();
 
-        lblLoadStage.Text = "Data Binding Chart (" + _dt.Columns.Count + " columns)";
-        lblLoadStage.Refresh();
+            lblLoadStage.Text = $"Data Binding Chart ({_dt.Columns.Count} columns)";
+            lblLoadStage.Refresh();
 
         int cells = _dt.Columns.Count * _dt.Rows.Count;
 
@@ -628,56 +628,56 @@ public partial class AggregateGraphUI : AggregateGraph_Design
         return o.ToString();
     }
 
-    public void SaveTo(DirectoryInfo subdir, string nameOfFile, ICheckNotifier notifier, Dictionary<AggregateGraphUI, string> graphSaveLocations = null)
-    {
-        if (!Done)
+        public void SaveTo(DirectoryInfo subdir, string nameOfFile, ICheckNotifier notifier, Dictionary<AggregateGraphUI, string> graphSaveLocations = null)
         {
-            notifier.OnCheckPerformed(
-                new CheckEventArgs(
-                    "Graph could not be extracted to " + nameOfFile +
-                    " because Done is false, possibly the graph has not been loaded yet or crashed?",
-                    CheckResult.Fail));
-            return;
-        }
+            if (!Done)
+            {
+                notifier.OnCheckPerformed(
+                    new CheckEventArgs(
+                        $"Graph could not be extracted to {nameOfFile} because Done is false, possibly the graph has not been loaded yet or crashed?",
+                        CheckResult.Fail));
+                return;
+            }
 
-        string imgSavePath = Path.Combine(subdir.FullName, nameOfFile + ".png");
-        string dataSavePath = Path.Combine(subdir.FullName, nameOfFile + ".csv");
-        string querySavePath = Path.Combine(subdir.FullName, nameOfFile + ".sql");
-        try
-        {
-            chart1.SaveImage(imgSavePath, ChartImageFormat.Png);
-            notifier.OnCheckPerformed(new CheckEventArgs("Saved chart image to " + imgSavePath, CheckResult.Success));
+            string imgSavePath = Path.Combine(subdir.FullName, $"{nameOfFile}.png");
+            string dataSavePath = Path.Combine(subdir.FullName, $"{nameOfFile}.csv");
+            string querySavePath = Path.Combine(subdir.FullName, $"{nameOfFile}.sql");
+            try
+            {
+                chart1.SaveImage(imgSavePath, ChartImageFormat.Png);
+                notifier.OnCheckPerformed(new CheckEventArgs($"Saved chart image to {imgSavePath}", CheckResult.Success));
 
-            if(graphSaveLocations != null)
-                graphSaveLocations.Add(this,imgSavePath);
-        }
-        catch (Exception e)
-        {
-            notifier.OnCheckPerformed(new CheckEventArgs("Failed to save image to " + imgSavePath, CheckResult.Fail,e));
-        }
+                if(graphSaveLocations != null)
+                    graphSaveLocations.Add(this,imgSavePath);
+            }
+            catch (Exception e)
+            {
+                notifier.OnCheckPerformed(new CheckEventArgs($"Failed to save image to {imgSavePath}", CheckResult.Fail,e));
+            }
 
-        try
-        {
-            var dt = (DataTable) dataGridView1.DataSource;
-            dt.SaveAsCsv(dataSavePath);
+            try
+            {
+                var dt = (DataTable) dataGridView1.DataSource;
+                using var dataSaveStream = new StreamWriter(dataSavePath);
+                dt.SaveAsCsv(dataSaveStream);
 
-            notifier.OnCheckPerformed(new CheckEventArgs("Saved chart data to " + dataSavePath, CheckResult.Success));
-        }
-        catch (Exception e)
-        {
-            notifier.OnCheckPerformed(new CheckEventArgs("Failed to save chart data to " + dataSavePath,CheckResult.Fail, e));
-        }
+                notifier.OnCheckPerformed(new CheckEventArgs($"Saved chart data to {dataSavePath}", CheckResult.Success));
+            }
+            catch (Exception e)
+            {
+                notifier.OnCheckPerformed(new CheckEventArgs($"Failed to save chart data to {dataSavePath}",CheckResult.Fail, e));
+            }
 
-        try
-        {
-            File.WriteAllText(querySavePath, QueryEditor.Text);
-            notifier.OnCheckPerformed(new CheckEventArgs("Wrote SQL used to " + querySavePath, CheckResult.Success));
+            try
+            {
+                File.WriteAllText(querySavePath, QueryEditor.Text);
+                notifier.OnCheckPerformed(new CheckEventArgs($"Wrote SQL used to {querySavePath}", CheckResult.Success));
+            }
+            catch (Exception e)
+            {
+                notifier.OnCheckPerformed(new CheckEventArgs($"Failed to save SQL query to {querySavePath}",CheckResult.Fail,e));
+            }
         }
-        catch (Exception e)
-        {
-            notifier.OnCheckPerformed(new CheckEventArgs("Failed to save SQL query to " + querySavePath,CheckResult.Fail,e));
-        }
-    }
 
     private void llCancel_LinkClicked(object sender, LinkLabelLinkClickedEventArgs e)
     {
@@ -815,11 +815,11 @@ public partial class AggregateGraphUI : AggregateGraph_Design
         {
             chart1.SaveImage(sfd.FileName, ChartImageFormat.Jpeg);
 
-            if (heatmapUI.HasDataTable())
-            {
-                var directory = Path.GetDirectoryName(sfd.FileName);
-                var filename = Path.GetFileNameWithoutExtension(sfd.FileName) + "_HeatMap.jpg";
-                string heatmapPath = Path.Combine(directory, filename);
+                if (heatmapUI.HasDataTable())
+                {
+                    var directory = Path.GetDirectoryName(sfd.FileName);
+                    var filename = $"{Path.GetFileNameWithoutExtension(sfd.FileName)}_HeatMap.jpg";
+                    string heatmapPath = Path.Combine(directory, filename);
 
                 heatmapUI.SaveImage(heatmapPath, ImageFormat.Jpeg);
             }
@@ -851,10 +851,10 @@ public partial class AggregateGraphUI : AggregateGraph_Design
         LoadGraphAsync();
     }
 
-    public override string GetTabName()
-    {
-        return "Graph:" + base.GetTabName();
-    }
+        public override string GetTabName()
+        {
+            return $"Graph:{base.GetTabName()}";
+        }
 
     private void btnCache_Click(object sender, EventArgs e)
     {
@@ -870,15 +870,15 @@ public partial class AggregateGraphUI : AggregateGraph_Design
             if(result == null)
                 throw new NullReferenceException("CommitResults passed but GetLatestResultsTable returned false (when we tried to refetch the table name from the cache)");
 
-            MessageBox.Show("DataTable successfully submitted to:" + result.GetFullyQualifiedName());
-            btnClearFromCache.Enabled = true;
-        }
-        catch (Exception exception)
-        {
-            ExceptionViewer.Show(exception);
+                MessageBox.Show($"DataTable successfully submitted to:{result.GetFullyQualifiedName()}");
+                btnClearFromCache.Enabled = true;
+            }
+            catch (Exception exception)
+            {
+                ExceptionViewer.Show(exception);
+            }
         }
     }
-}
 
 [TypeDescriptionProvider(typeof(AbstractControlDescriptionProvider<AggregateGraph_Design, UserControl>))]
 public abstract class AggregateGraph_Design : RDMPSingleDatabaseObjectControl<AggregateConfiguration>
