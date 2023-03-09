@@ -92,19 +92,14 @@ public class SuperMultiThreadedVolumeAccess:DatabaseTests
         FireMultiThreaded(SingleThreadedBulkCatalogueCreation, 5, useTransactions);
     }
 
-    [Test]
-    [TestCase(true)]
-    [TestCase(false)]
-    public void SimpleCaseSingleThreaded(bool useTransaction)
-    {
-
-
-        using (
-            var con = useTransaction
-                ? CatalogueTableRepository.BeginNewTransactedConnection()
-                : CatalogueTableRepository.GetConnection())
+        [Test]
+        [TestCase(true)]
+        [TestCase(false)]
+        public void SimpleCaseSingleThreaded(bool useTransaction)
         {
-
+            using var con = useTransaction
+                ? CatalogueTableRepository.BeginNewTransactedConnection()
+                : CatalogueTableRepository.GetConnection();
             Assert.AreEqual(ConnectionState.Open, con.Connection.State);
             Thread.Sleep(1000);
 
@@ -116,35 +111,31 @@ public class SuperMultiThreadedVolumeAccess:DatabaseTests
             Assert.AreEqual(ConnectionState.Closed, con.Connection.State);
         }
 
-
-            
-    }
-
-    [Test]
-    [TestCase(true)]
-    [TestCase(false)]
-    public void SimpleCaseMultiThreaded(bool useTransactions)
-    {
-        FireMultiThreaded(SimpleCaseSingleThreaded, 50, useTransactions);
-    }
-
-    private void FireMultiThreaded(Action<bool> method, int numberToFire, bool useTransactions)
-    {
-        if (CatalogueRepository is not TableRepository)
-            Assert.Inconclusive("We dont have to test this for yaml repos");
-
-            
-        List<Exception> exes = new List<Exception>();
-            
-
-        List<Thread> ts = new List<Thread>();
-
-        for (int i = 0; i < numberToFire; i++)
+        [Test]
+        [TestCase(true)]
+        [TestCase(false)]
+        public void SimpleCaseMultiThreaded(bool useTransactions)
         {
-            int i1 = i;
-            ts.Add(new Thread(() => {
-                try
-                {
+            FireMultiThreaded(SimpleCaseSingleThreaded, 50, useTransactions);
+        }
+
+        private void FireMultiThreaded(Action<bool> method, int numberToFire, bool useTransactions)
+        {
+            if (CatalogueRepository is not TableRepository)
+                Assert.Inconclusive("We don't have to test this for yaml repos");
+
+            
+            var exes = new List<Exception>();
+            
+
+            var ts = new List<Thread>();
+
+            for (var i = 0; i < numberToFire; i++)
+            {
+                var i1 = i;
+                ts.Add(new Thread(() => {
+                    try
+                    {
 
                     method(useTransactions && i1 == 0);
                 }
@@ -155,11 +146,11 @@ public class SuperMultiThreadedVolumeAccess:DatabaseTests
             }));
         }
 
-        foreach (Thread thread in ts)
-            thread.Start();
+            foreach (var thread in ts)
+                thread.Start();
             
-        while(ts.Any(t=>t.IsAlive))
-            Thread.Sleep(100);
+            while(ts.Any(t=>t.IsAlive))
+                ts.FirstOrDefault(t=>t.IsAlive)?.Join(100);
             
         Assert.IsEmpty(exes);
     }

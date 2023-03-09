@@ -18,7 +18,7 @@ public class ThrowImmediatelyCheckNotifier : ICheckNotifier
 {
     public ThrowImmediatelyCheckNotifier()
     {
-        WriteToConsole = true;
+        WriteToConsole = false;
     }
 
     virtual public bool OnCheckPerformed(CheckEventArgs args)
@@ -26,14 +26,14 @@ public class ThrowImmediatelyCheckNotifier : ICheckNotifier
         if (WriteToConsole)
             Console.WriteLine(args.Message);
 
-        if (args.Result == CheckResult.Fail)
-            throw new Exception(args.Message, args.Ex);
+        return args.Result switch
+        {
+            CheckResult.Fail => throw new Exception(args.Message, args.Ex),
+            CheckResult.Warning when ThrowOnWarning => throw new Exception(args.Message, args.Ex),
+            _ => false
+            //do not apply fixes to warnings/success
+        };
 
-        if(args.Result == CheckResult.Warning && ThrowOnWarning)
-            throw new Exception(args.Message, args.Ex);
-
-        //do not apply fixes to warnings/success
-        return false;
     }
 
     /// <summary>
@@ -42,7 +42,7 @@ public class ThrowImmediatelyCheckNotifier : ICheckNotifier
     public bool ThrowOnWarning { get; set; }
 
     /// <summary>
-    /// By default this class will also log to the Console. Set to false to skip this (in case of non-interactive environments)
+    /// By default this class will not log to the Console. Set to true to get a console flood
     /// </summary>
     public bool WriteToConsole { get; set; }
 }
