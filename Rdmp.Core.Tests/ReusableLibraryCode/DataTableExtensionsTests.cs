@@ -9,74 +9,66 @@ using System.IO;
 using NUnit.Framework;
 using Rdmp.Core.ReusableLibraryCode.Extensions;
 
-namespace Rdmp.Core.Tests.ReusableLibraryCode
+namespace Rdmp.Core.Tests.ReusableLibraryCode;
+
+[Category("Unit")]
+class DataTableExtensionsTests
 {
-    [Category("Unit")]
-    class DataTableExtensionsTests
+    [Test]
+    public void TestEscaping_CommaInCell()
     {
-        [Test]
-        public void TestEscaping_CommaInCell()
-        {
-            var path = Path.Combine(TestContext.CurrentContext.TestDirectory, "out.csv");
+        using var ms=new MemoryStream(1024);
+        using var stream = new StreamWriter(ms);
+        using var dt = new DataTable();
+        dt.Columns.Add("Phrase");
+        dt.Columns.Add("Car");
 
-            DataTable dt = new DataTable();
-            dt.Columns.Add("Phrase");
-            dt.Columns.Add("Car");
+        dt.Rows.Add("omg,why me!", "Ferrari");
 
-            dt.Rows.Add("omg,why me!", "Ferrari");
+        dt.SaveAsCsv(stream);
 
-            dt.SaveAsCsv(path);
-
-            var answer = File.ReadAllText(path);
-
-            Assert.AreEqual(answer,
-                @"Phrase,Car
+        Assert.AreEqual(ms.ToArray(),
+            @"Phrase,Car
 ""omg,why me!"",Ferrari
 ");
 
-        }
+    }
 
-        [Test]
-        public void TestEscaping_CommaAndQuotesInCell()
-        {
-            var path = Path.Combine(TestContext.CurrentContext.TestDirectory,"out.csv");
+    [Test]
+    public void TestEscaping_CommaAndQuotesInCell()
+    {
+        using var ms = new MemoryStream(1024);
+        using var stream = new StreamWriter(ms);
 
-            DataTable dt = new DataTable();
-            dt.Columns.Add("Phrase");
-            dt.Columns.Add("Car");
+        using var dt = new DataTable();
+        dt.Columns.Add("Phrase");
+        dt.Columns.Add("Car");
 
-            dt.Rows.Add("omg,\"why\" me!","Ferrari");
+        dt.Rows.Add("omg,\"why\" me!","Ferrari");
 
-            dt.SaveAsCsv(path);
-
-            var answer = File.ReadAllText(path);
-
-            Assert.AreEqual(answer,
-                @"Phrase,Car
+        dt.SaveAsCsv(stream);
+        Assert.AreEqual(ms.ToArray(),
+            @"Phrase,Car
 ""omg,""""why"""" me!"",Ferrari
 ");
-        }
+    }
 
 
-        [Test]
-        public void TestEscaping_CommaAndQuotesInCell2()
-        {
-            var path = Path.Combine(TestContext.CurrentContext.TestDirectory, "out.csv");
+    [Test]
+    public void TestEscaping_CommaAndQuotesInCell2()
+    {
+        using var ms=new MemoryStream(1024);
+        using var stream = new StreamWriter(ms);
+        using var dt = new DataTable();
+        dt.Columns.Add("Phrase");
+        dt.Columns.Add("Car");
 
-            DataTable dt = new DataTable();
-            dt.Columns.Add("Phrase");
-            dt.Columns.Add("Car");
+        dt.Rows.Add("\"omg,why me!\"", "Ferrari");
 
-            dt.Rows.Add("\"omg,why me!\"", "Ferrari");
-
-            dt.SaveAsCsv(path);
-
-            var answer = File.ReadAllText(path);
-
-            Assert.AreEqual(answer,
-                @"Phrase,Car
+        dt.SaveAsCsv(stream);
+        Assert.AreEqual(ms.ToArray(),
+            @"Phrase,Car
 """"""omg,why me!"""""",Ferrari
 ");
-        }
     }
 }

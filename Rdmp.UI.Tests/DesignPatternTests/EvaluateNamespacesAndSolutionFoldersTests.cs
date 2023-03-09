@@ -21,7 +21,7 @@ namespace Rdmp.UI.Tests.DesignPatternTests
     public class EvaluateNamespacesAndSolutionFoldersTests : DatabaseTests
     {
         private const string SolutionName = "HIC.DataManagementPlatform.sln";
-        public List<string> csFilesFound = new List<string>();
+        private readonly List<string> _csFilesFound = new();
 
         public static readonly HashSet<string> IgnoreList = new()
         {
@@ -40,26 +40,20 @@ namespace Rdmp.UI.Tests.DesignPatternTests
         [Test]
         public void EvaluateNamespacesAndSolutionFolders()
         {
-            var slndir = new DirectoryInfo(AppDomain.CurrentDomain.BaseDirectory);
+            var solutionDir = new DirectoryInfo(AppDomain.CurrentDomain.BaseDirectory);
+            while (solutionDir?.GetFiles("*.sln").Any() != true) solutionDir = solutionDir?.Parent;
+            Assert.IsNotNull(solutionDir, "Failed to find {0} in any parent directories", SolutionName);
 
-            while (slndir != null)
-            {
-                if (slndir.GetFiles().Any(f => f.Name.Equals(SolutionName)))
-                    break;
-                slndir = slndir.Parent;
-            }
-            Assert.IsNotNull(slndir, "Failed to find {0} in any parent directories", SolutionName);
+            var sln = new VisualStudioSolutionFile(solutionDir,solutionDir.GetFiles(SolutionName).Single());
 
-            var sln = new VisualStudioSolutionFile(slndir,slndir.GetFiles().Single(f => f.Name.Equals(SolutionName)));
-
-            ProcessFolderRecursive(sln.RootFolders, slndir);
+            ProcessFolderRecursive(sln.RootFolders, solutionDir);
 
             foreach (var rootLevelProjects in sln.RootProjects)
-                FindProjectInFolder(rootLevelProjects, slndir);
+                FindProjectInFolder(rootLevelProjects, solutionDir);
 
             var foundProjects = sln.Projects.ToDictionary(project => project, project => new List<string>());
 
-            FindUnreferencedProjectsRecursively(foundProjects, slndir);
+            FindUnreferencedProjectsRecursively(foundProjects, solutionDir);
 
             foreach (var kvp in foundProjects)
             {
@@ -83,29 +77,29 @@ namespace Rdmp.UI.Tests.DesignPatternTests
             InterfaceDeclarationsCorrect.FindProblems(CatalogueRepository.MEF);
 
             var documented = new AllImportantClassesDocumented();
-            documented.FindProblems(csFilesFound);
+            documented.FindProblems(_csFilesFound);
 
             var uiStandardisationTest = new UserInterfaceStandardisationChecker();
-            uiStandardisationTest.FindProblems(csFilesFound, RepositoryLocator.CatalogueRepository.MEF);
+            uiStandardisationTest.FindProblems(_csFilesFound, RepositoryLocator.CatalogueRepository.MEF);
 
-            var crossExamination = new DocumentationCrossExaminationTest(slndir);
-            crossExamination.FindProblems(csFilesFound);
+            var crossExamination = new DocumentationCrossExaminationTest(solutionDir);
+            crossExamination.FindProblems(_csFilesFound);
 
             //Assuming all files are present and correct we can now evaluate the RDMP specific stuff:
             var otherTestRunner = new RDMPFormInitializationTests();
-            otherTestRunner.FindUninitializedForms(csFilesFound);
+            otherTestRunner.FindUninitializedForms(_csFilesFound);
 
             var propertyChecker = new SuspiciousRelationshipPropertyUse(CatalogueRepository.MEF);
-            propertyChecker.FindPropertyMisuse(csFilesFound);
+            propertyChecker.FindPropertyMisuse(_csFilesFound);
 
             var explicitDatabaseNamesChecker = new ExplicitDatabaseNameChecker();
-            explicitDatabaseNamesChecker.FindProblems(csFilesFound);
+            explicitDatabaseNamesChecker.FindProblems(_csFilesFound);
             
             var noMappingToDatabaseComments = new AutoCommentsEvaluator();
-            noMappingToDatabaseComments.FindProblems(CatalogueRepository.MEF, csFilesFound);
+            noMappingToDatabaseComments.FindProblems(CatalogueRepository.MEF, _csFilesFound);
 
             var copyrightHeaderEvaluator = new CopyrightHeaderEvaluator();
-            CopyrightHeaderEvaluator.FindProblems(csFilesFound);
+            CopyrightHeaderEvaluator.FindProblems(_csFilesFound);
 
             //foreach (var file in slndir.EnumerateFiles("*.cs", SearchOption.AllDirectories))
             //{
@@ -188,12 +182,12 @@ namespace Rdmp.UI.Tests.DesignPatternTests
                         Error(str);
 
                     foreach (var found in tidy.csFilesFound
-                                 .Where(found => csFilesFound.Any(otherFile =>
+                                 .Where(found => _csFilesFound.Any(otherFile =>
                                      Path.GetFileName(otherFile).Equals(Path.GetFileName(found)))).Where(found =>
                                      !IgnoreList.Contains(Path.GetFileName(found))))
                         Error($"Found 2+ files called {Path.GetFileName(found)}");
 
-                    csFilesFound.AddRange(tidy.csFilesFound);
+                    _csFilesFound.AddRange(tidy.csFilesFound);
                 }
             }
         }

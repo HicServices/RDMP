@@ -362,7 +362,7 @@ namespace Rdmp.UI.AggregationUIs
                     catch (Exception e)
                     {
                         lblCannotLoadData.Visible = true;
-                        lblCannotLoadData.Text = "Could not load data table:" + e.Message;
+                        lblCannotLoadData.Text = $"Could not load data table:{e.Message}";
                         dataGridView1.DataSource = null;
                     }
 
@@ -547,7 +547,7 @@ namespace Rdmp.UI.AggregationUIs
             if(chart1.Series.Count == 1)
                 chart1.Legends.Clear();
 
-            lblLoadStage.Text = "Data Binding Chart (" + _dt.Columns.Count + " columns)";
+            lblLoadStage.Text = $"Data Binding Chart ({_dt.Columns.Count} columns)";
             lblLoadStage.Refresh();
 
             int cells = _dt.Columns.Count * _dt.Rows.Count;
@@ -635,48 +635,48 @@ namespace Rdmp.UI.AggregationUIs
             {
                 notifier.OnCheckPerformed(
                     new CheckEventArgs(
-                        "Graph could not be extracted to " + nameOfFile +
-                        " because Done is false, possibly the graph has not been loaded yet or crashed?",
+                        $"Graph could not be extracted to {nameOfFile} because Done is false, possibly the graph has not been loaded yet or crashed?",
                         CheckResult.Fail));
                 return;
             }
 
-            string imgSavePath = Path.Combine(subdir.FullName, nameOfFile + ".png");
-            string dataSavePath = Path.Combine(subdir.FullName, nameOfFile + ".csv");
-            string querySavePath = Path.Combine(subdir.FullName, nameOfFile + ".sql");
+            string imgSavePath = Path.Combine(subdir.FullName, $"{nameOfFile}.png");
+            string dataSavePath = Path.Combine(subdir.FullName, $"{nameOfFile}.csv");
+            string querySavePath = Path.Combine(subdir.FullName, $"{nameOfFile}.sql");
             try
             {
                 chart1.SaveImage(imgSavePath, ChartImageFormat.Png);
-                notifier.OnCheckPerformed(new CheckEventArgs("Saved chart image to " + imgSavePath, CheckResult.Success));
+                notifier.OnCheckPerformed(new CheckEventArgs($"Saved chart image to {imgSavePath}", CheckResult.Success));
 
                 if(graphSaveLocations != null)
                     graphSaveLocations.Add(this,imgSavePath);
             }
             catch (Exception e)
             {
-                notifier.OnCheckPerformed(new CheckEventArgs("Failed to save image to " + imgSavePath, CheckResult.Fail,e));
+                notifier.OnCheckPerformed(new CheckEventArgs($"Failed to save image to {imgSavePath}", CheckResult.Fail,e));
             }
 
             try
             {
                 var dt = (DataTable) dataGridView1.DataSource;
-                dt.SaveAsCsv(dataSavePath);
+                using var dataSaveStream = new StreamWriter(dataSavePath);
+                dt.SaveAsCsv(dataSaveStream);
 
-                notifier.OnCheckPerformed(new CheckEventArgs("Saved chart data to " + dataSavePath, CheckResult.Success));
+                notifier.OnCheckPerformed(new CheckEventArgs($"Saved chart data to {dataSavePath}", CheckResult.Success));
             }
             catch (Exception e)
             {
-                notifier.OnCheckPerformed(new CheckEventArgs("Failed to save chart data to " + dataSavePath,CheckResult.Fail, e));
+                notifier.OnCheckPerformed(new CheckEventArgs($"Failed to save chart data to {dataSavePath}",CheckResult.Fail, e));
             }
 
             try
             {
                 File.WriteAllText(querySavePath, QueryEditor.Text);
-                notifier.OnCheckPerformed(new CheckEventArgs("Wrote SQL used to " + querySavePath, CheckResult.Success));
+                notifier.OnCheckPerformed(new CheckEventArgs($"Wrote SQL used to {querySavePath}", CheckResult.Success));
             }
             catch (Exception e)
             {
-                notifier.OnCheckPerformed(new CheckEventArgs("Failed to save SQL query to " + querySavePath,CheckResult.Fail,e));
+                notifier.OnCheckPerformed(new CheckEventArgs($"Failed to save SQL query to {querySavePath}",CheckResult.Fail,e));
             }
         }
 
@@ -819,7 +819,7 @@ namespace Rdmp.UI.AggregationUIs
                 if (heatmapUI.HasDataTable())
                 {
                     var directory = Path.GetDirectoryName(sfd.FileName);
-                    var filename = Path.GetFileNameWithoutExtension(sfd.FileName) + "_HeatMap.jpg";
+                    var filename = $"{Path.GetFileNameWithoutExtension(sfd.FileName)}_HeatMap.jpg";
                     string heatmapPath = Path.Combine(directory, filename);
 
                     heatmapUI.SaveImage(heatmapPath, ImageFormat.Jpeg);
@@ -854,7 +854,7 @@ namespace Rdmp.UI.AggregationUIs
 
         public override string GetTabName()
         {
-            return "Graph:" + base.GetTabName();
+            return $"Graph:{base.GetTabName()}";
         }
 
         private void btnCache_Click(object sender, EventArgs e)
@@ -871,7 +871,7 @@ namespace Rdmp.UI.AggregationUIs
                 if(result == null)
                     throw new NullReferenceException("CommitResults passed but GetLatestResultsTable returned false (when we tried to refetch the table name from the cache)");
 
-                MessageBox.Show("DataTable successfully submitted to:" + result.GetFullyQualifiedName());
+                MessageBox.Show($"DataTable successfully submitted to:{result.GetFullyQualifiedName()}");
                 btnClearFromCache.Enabled = true;
             }
             catch (Exception exception)

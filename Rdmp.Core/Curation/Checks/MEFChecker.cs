@@ -22,9 +22,9 @@ namespace Rdmp.Core.Curation.Checks
     /// </summary>
     public class MEFChecker : ICheckable
     {
-        private string _classToFind;
+        private readonly string _classToFind;
         private readonly Action<string> _userAcceptedSubstitution;
-        private MEF _mefPlugins;
+        private readonly MEF _mefPlugins;
 
         /// <summary>
         /// Setup the checker to look for a specific class within the defined Types in all assemblies loaded in MEF.  The Action will be called if the class name is found
@@ -56,56 +56,53 @@ namespace Rdmp.Core.Curation.Checks
                 return;
             }
 
-            string typeNameOnly = _classToFind.Substring(_classToFind.LastIndexOf(".") + 1);
+            string typeNameOnly = _classToFind[(_classToFind.LastIndexOf(".", StringComparison.Ordinal) + 1)..];
 
             var allTypes = _mefPlugins.GetAllTypes().ToArray();
 
             if (allTypes.Any(t => t.FullName.Equals(_classToFind)))
                 notifier.OnCheckPerformed(new CheckEventArgs(
-                    "Found MEF class " + _classToFind + "",
+                    $"Found MEF class {_classToFind}",
                     CheckResult.Success, null));
             else
             {
-
                 Type[] substitute = allTypes.Where(t => t.Name.Equals(typeNameOnly)).ToArray();
 
-                if (substitute.Length == 0)
+                switch (substitute.Length)
                 {
-
-                    notifier.OnCheckPerformed(new CheckEventArgs(
-                        "Could not find MEF class called " + _classToFind + " in LoadModuleAssembly.GetAllTypes() and couldn't even find any with the same basic name (Note that we only checked Exported MEF types e.g. classes implementing IPluginAttacher, IPluginDataProvider etc)",
-                        CheckResult.Fail, null));
-
-                    Dictionary<string, Exception> badAssemblies = _mefPlugins.ListBadAssemblies();
-
-                    if (badAssemblies.Any())
+                    case 0:
+                    {
                         notifier.OnCheckPerformed(new CheckEventArgs(
-                            "It is possible that the class you are looking for is in the BadAssemblies list",
+                            $"Could not find MEF class called {_classToFind} in LoadModuleAssembly.GetAllTypes() and couldn't even find any with the same basic name (Note that we only checked Exported MEF types e.g. classes implementing IPluginAttacher, IPluginDataProvider etc)",
                             CheckResult.Fail, null));
-                    foreach (KeyValuePair<string, Exception> badAssembly in badAssemblies)
-                        notifier.OnCheckPerformed(new CheckEventArgs("Bad Assembly " + badAssembly.Key, CheckResult.Warning,
-                            badAssembly.Value));
-                }
-                else if (substitute.Length == 1)
-                {
 
-                    bool acceptSubstitution = notifier.OnCheckPerformed(new CheckEventArgs(
-                        "Could not find MEF class called " + _classToFind + " but did find one called " +
-                        substitute[0].FullName,
-                        CheckResult.Fail, null,
-                        "Change reference to " + _classToFind + " to point to MEF assembly type " +
-                        substitute[0].FullName));
+                        Dictionary<string, Exception> badAssemblies = _mefPlugins.ListBadAssemblies();
 
-                    if (acceptSubstitution)
-                        _userAcceptedSubstitution(substitute[0].FullName);
-                }
-                else
-                {
-                    notifier.OnCheckPerformed(new CheckEventArgs(
-                        "Could not find MEF class called " + _classToFind +
-                        ", we were looking for a suitable replacment (a Type with the same basic name) but we found " +
-                        substitute.Length + " subistutitions!!! (" +
-                        substitute.Aggregate("", (s, n) => s + n.FullName + ","), CheckResult.Fail, null));
+                        if (badAssemblies.Any())
+                            notifier.OnCheckPerformed(new CheckEventArgs(
+                                "It is possible that the class you are looking for is in the BadAssemblies list",
+                                CheckResult.Fail, null));
+                        foreach (var (assembly, exception) in badAssemblies)
+                            notifier.OnCheckPerformed(new CheckEventArgs($"Bad Assembly {assembly}", CheckResult.Warning,
+                                exception));
+                        break;
+                    }
+                    case 1:
+                    {
+                        bool acceptSubstitution = notifier.OnCheckPerformed(new CheckEventArgs(
+                            $"Could not find MEF class called {_classToFind} but did find one called {substitute[0].FullName}",
+                            CheckResult.Fail, null,
+                            $"Change reference to {_classToFind} to point to MEF assembly type {substitute[0].FullName}"));
+
+                        if (acceptSubstitution)
+                            _userAcceptedSubstitution(substitute[0].FullName);
+                        break;
+                    }
+                    default:
+                        notifier.OnCheckPerformed(new CheckEventArgs(
+                            $"Could not find MEF class called {_classToFind}, we were looking for a suitable replacement (a Type with the same basic name) but we found {substitute.Length} substitutions! ({substitute.Aggregate("", (s, n) => $"{s}{n.FullName},")}",
+                            CheckResult.Fail, null));
+                        break;
                 }
             }
         }
