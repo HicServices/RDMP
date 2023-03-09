@@ -282,6 +282,7 @@
     <PackageReference Include="SixLabors.ImageSharp.Drawing" Version="1.0.0-beta15" />
     <PackageReference Include="Spectre.Console" Version="0.46.0" />
     <PackageReference Include="System.Diagnostics.Debug" Version="4.3.0" />
+    <PackageReference Include="System.DirectoryServices.Protocols" Version="7.0.0" />
     <PackageReference Include="System.IO.FileSystem.Primitives" Version="4.3.0" />
     <PackageReference Include="System.IO.FileSystem" Version="4.3.0" />
     <PackageReference Include="System.Resources.Extensions" Version="4.6.0" />
@@ -306,6 +307,7 @@
     </Content>
   </ItemGroup>
   <ItemGroup>
+    <Folder Include="ReusableLibraryCode\" />
     <Folder Include="Startup\PluginManagement\" />
   </ItemGroup>
   <ItemGroup>
@@ -323,6 +325,11 @@
       <DesignTime>True</DesignTime>
       <AutoGen>True</AutoGen>
       <DependentUpon>Images.resx</DependentUpon>
+    </Compile>
+    <Compile Update="ReusableLibraryCode\Icons\DatabaseProviderIcons.Designer.cs">
+      <DependentUpon>DatabaseProviderIcons.resx</DependentUpon>
+      <DesignTime>True</DesignTime>
+      <AutoGen>True</AutoGen>
     </Compile>
   </ItemGroup>
   <ItemGroup>
@@ -344,6 +351,11 @@
       <SubType>Designer</SubType>
       <Generator>PublicResXFileCodeGenerator</Generator>
       <LastGenOutput>Images.Designer.cs</LastGenOutput>
+    </EmbeddedResource>
+    <EmbeddedResource Update="ReusableLibraryCode\Icons\DatabaseProviderIcons.resx">
+      <SubType>Designer</SubType>
+      <LastGenOutput>DatabaseProviderIcons.Designer.cs</LastGenOutput>
+      <Generator>PublicResXFileCodeGenerator</Generator>
     </EmbeddedResource>
   </ItemGroup>
 </Project>

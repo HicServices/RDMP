@@ -12,23 +12,23 @@ using System.Text;
 using System.Text.RegularExpressions;
 using NUnit.Framework;
 
-namespace Rdmp.UI.Tests.DesignPatternTests.ClassFileEvaluation;
-
-class DocumentationCrossExaminationTest
+namespace Rdmp.UI.Tests.DesignPatternTests.ClassFileEvaluation
 {
-    private readonly DirectoryInfo _slndir;
-    Regex matchComments = new Regex(@"///[^;\r\n]*");
-
-    private string[] _mdFiles;
-    Regex matchMdReferences = new Regex(@"`(.*)`");
-
-    public const bool ReWriteMarkdownToReferenceGlossary = true;
-
-    //words that are in Pascal case and you can use in comments despite not being in the codebase... this is an ironic variable to be honest
-    //since the very fact that you add something to _ignorelist means that it is in the codebase after all!
-    #region Ignorelist Terms
-    private string[] _ignorelist = new []
+    class DocumentationCrossExaminationTest
     {
+        private readonly DirectoryInfo _slndir;
+        private static readonly Regex MatchComments = new Regex(@"///[^;\r\n]*",RegexOptions.Compiled|RegexOptions.CultureInvariant);
+
+        private string[] _mdFiles;
+        private static readonly Regex MatchMdReferences = new Regex(@"`(.*)`",RegexOptions.Compiled|RegexOptions.CultureInvariant);
+
+        private const bool ReWriteMarkdownToReferenceGlossary = true;
+
+        //words that are in Pascal case and you can use in comments despite not being in the codebase... this is an ironic variable to be honest
+        //since the very fact that you add something to _ignorelist means that it is in the codebase after all!
+        #region IgnoreList Terms
+        private static readonly HashSet<string> IgnoreList = new()
+        {
         "ExecuteAggregateGraph",
         "ExtractMetadata",
         "DateRange",
@@ -277,9 +277,9 @@ class DocumentationCrossExaminationTest
         _mdFiles = Directory.GetFiles(slndir.FullName, "*.md",SearchOption.AllDirectories);
     }
 
-    public void FindProblems(List<string> csFilesFound)
-    {
-        //find all non coment code and extract all unique tokens
+        public void FindProblems(List<string> csFilesFound)
+        {
+            //find all non comment code and extract all unique tokens
 
         //find all .md files and extract all `` code blocks
 
@@ -306,13 +306,13 @@ class DocumentationCrossExaminationTest
             if(file.Contains("packages"))
                 continue;
 
-            foreach (string line in File.ReadAllLines(file))
-            {
-                //if it is a comment
-                if (matchComments.IsMatch(line))
+                foreach (string line in File.ReadAllLines(file))
                 {
-                    if (isDesignerFile)
-                        continue;
+                    //if it is a comment
+                    if (MatchComments.IsMatch(line))
+                    {
+                        if (isDesignerFile)
+                            continue;
 
                     if (!fileCommentTokens.ContainsKey(file))
                         fileCommentTokens.Add(file, new HashSet<string>());
@@ -340,9 +340,9 @@ class DocumentationCrossExaminationTest
             fileCommentTokens.Add(mdFile,new HashSet<string>());
             var fileContents = File.ReadAllText(mdFile);
                 
-            foreach (Match m in matchMdReferences.Matches(fileContents))
-            foreach (Match word in Regex.Matches(m.Groups[1].Value, @"([A-Z]\w+){2,}"))
-                fileCommentTokens[mdFile].Add(word.Value);
+                foreach (Match m in MatchMdReferences.Matches(fileContents))
+                    foreach (Match word in Regex.Matches(m.Groups[1].Value, @"([A-Z]\w+){2,}"))
+                        fileCommentTokens[mdFile].Add(word.Value);
 
             EnsureMaximumGlossaryUse(mdFile,problems);
 
@@ -350,14 +350,14 @@ class DocumentationCrossExaminationTest
         }
 
 
-        foreach (KeyValuePair<string, HashSet<string>> kvp in fileCommentTokens)
-        {
-            foreach (string s in kvp.Value)
+            foreach (KeyValuePair<string, HashSet<string>> kvp in fileCommentTokens)
             {
-                if(!codeTokens.Contains(s) && !codeTokens.Contains("ExecuteCommand"+s))
+                foreach (string s in kvp.Value)
                 {
-                    if (_ignorelist.Contains(s))
-                        continue;
+                    if(!codeTokens.Contains(s) && !codeTokens.Contains($"ExecuteCommand{s}"))
+                    {
+                        if (IgnoreList.Contains(s))
+                            continue;
 
                     //it's SHOUTY TEXT
                     if (s.ToUpper() == s)
@@ -370,17 +370,18 @@ class DocumentationCrossExaminationTest
                             continue;
                     }
                         
-                    problems.Add("FATAL PROBLEM: File '" + kvp.Key +"' talks about something which isn't in the codebase, called a:" +Environment.NewLine + s);
+                        problems.Add(
+                            $"FATAL PROBLEM: File '{kvp.Key}' talks about something which isn't in the codebase, called a:{Environment.NewLine}{s}");
                         
                 }
             }
         }
 
-        if (problems.Any())
-        {
-            Console.WriteLine("Found problem words in comments (Scroll down to see by file then if you think they are fine add them to DocumentationCrossExaminationTest._ignorelist):");
-            foreach (var pLine in problems.Where(l=>l.Contains('\n')).Select(p => p.Split('\n')))
-                Console.WriteLine("\"" + pLine[1] + "\",");
+            if (problems.Any())
+            {
+                Console.WriteLine("Found problem words in comments (Scroll down to see by file then if you think they are fine add them to DocumentationCrossExaminationTest._ignorelist):");
+                foreach (var pLine in problems.Where(l=>l.Contains('\n')).Select(p => p.Split('\n')))
+                    Console.WriteLine($"\"{pLine[1]}\",");
                 
         }
 
@@ -394,7 +395,7 @@ class DocumentationCrossExaminationTest
     {
         string codeBlocks = Path.Combine(TestContext.CurrentContext.TestDirectory,"../../../DesignPatternTests/MarkdownCodeBlockTests.cs");
 
-        Console.WriteLine("Starting " + mdFile);
+            Console.WriteLine($"Starting {mdFile}");
 
         var codeBlocksContent = File.ReadAllText(codeBlocks);
 
@@ -448,11 +449,11 @@ class DocumentationCrossExaminationTest
             Assert.AreEqual(code.Trim(), docs.Trim(),        
                 $"Code in the documentation markdown (actual) did not match the corresponding compiled code (expected) for code guid {kvp.Key} markdown file was {mdFile} and code file was {codeBlocks}");
 
-            Console.WriteLine("Validated markdown block " + kvp.Key);
-        }
+                Console.WriteLine($"Validated markdown block {kvp.Key}");
+            }
             
-        Console.WriteLine("Validated " + markdownCodeBlocks.Count + " markdown blocks");
-    }
+            Console.WriteLine($"Validated {markdownCodeBlocks.Count} markdown blocks");
+        }
 
     private void EnsureMaximumGlossaryUse(string mdFile, List<string> problems)
     {
@@ -518,8 +519,8 @@ class DocumentationCrossExaminationTest
                         Uri diff = path1.MakeRelativeUri(path2);
                         string relPath = diff.OriginalString;
 
-                        if (!relPath.StartsWith("."))
-                            relPath = "./" + relPath;
+                            if (!relPath.StartsWith("."))
+                                relPath = $"./{relPath}";
 
                         string suggestedLine = $"[{match.Value}]: {relPath}#{match.Value}";
 

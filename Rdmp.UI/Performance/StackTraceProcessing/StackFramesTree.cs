@@ -11,7 +11,6 @@ using System.Linq;
 using Rdmp.Core.ReusableLibraryCode.Performance;
 using Rdmp.UI.SimpleDialogs;
 
-
 namespace Rdmp.UI.Performance.StackTraceProcessing;
 
 class StackFramesTree

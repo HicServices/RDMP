@@ -4,8 +4,9 @@
 // RDMP is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License for more details.
 // You should have received a copy of the GNU General Public License along with RDMP. If not, see <https://www.gnu.org/licenses/>.
 
-/*
+
 // Helpers/Settings.cs This file was automatically added when you installed the Settings Plugin. If you are not using a PCL then comment this file back in to use it.
+/*
 using Plugin.Settings;
 using Plugin.Settings.Abstractions;
 
@@ -18,31 +19,32 @@ namespace Rdmp.Core.ReusableLibraryCode.Helpers;
 /// </summary>
 public static class Settings
 {
-	private static ISettings AppSettings
-	{
-		get
-		{
-			return CrossSettings.Current;
-		}
-	}
+    private static ISettings AppSettings
+    {
+        get
+        {
+            return CrossSettings.Current;
+        }
+    }
 
-	#region Setting Constants
+    #region Setting Constants
 
-	private const string SettingsKey = "settings_key";
-	private static readonly string SettingsDefault = string.Empty;
+    private const string SettingsKey = "settings_key";
+    private static readonly string SettingsDefault = string.Empty;
 
-	#endregion
+    #endregion
 
 
-	public static string GeneralSettings
-	{
-		get
-		{
-			return AppSettings.GetValueOrDefault(SettingsKey, SettingsDefault);
-		}
-		set
-		{
-			AppSettings.AddOrUpdateValue(SettingsKey, value);
-		}
-	}
+    public static string GeneralSettings
+    {
+        get
+        {
+            return AppSettings.GetValueOrDefault(SettingsKey, SettingsDefault);
+        }
+        set
+        {
+            AppSettings.AddOrUpdateValue(SettingsKey, value);
+        }
+    }
+
 }*/

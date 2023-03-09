@@ -12,7 +12,6 @@ using System.Text.RegularExpressions;
 using System.Windows.Forms;
 using Rdmp.Core.ReusableLibraryCode;
 
-
 namespace Rdmp.UI.SimpleDialogs;
 
 /// <summary>

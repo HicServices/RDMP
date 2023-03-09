@@ -8,8 +8,6 @@ using System;
 using System.Collections.Generic;
 using System.Globalization;
 using System.Linq;
-using MapsDirectlyToDatabaseTable;
-using Rdmp.Core.CohortCreation.Execution;
 using Rdmp.Core.CommandExecution.AtomicCommands;
 using Rdmp.Core.Curation.Data;
 using Rdmp.Core.Curation.Data.Aggregation;
@@ -19,9 +17,7 @@ using Rdmp.Core.MapsDirectlyToDatabaseTable;
 using Rdmp.Core.Providers.Nodes;
 using Rdmp.Core.Providers.Nodes.LoadMetadataNodes;
 using Rdmp.Core.ReusableLibraryCode.Settings;
-
-namespace Rdmp.Core.Providers;
-using TypeGuesser.Deciders;
+using TypeGuesser;
 
 /// <summary>
 /// Identifies all problems with all objects found in the Catalogue database.  This only includes problems that are fast to detect at runtime.

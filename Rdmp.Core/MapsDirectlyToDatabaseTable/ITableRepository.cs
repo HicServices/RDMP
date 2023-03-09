@@ -12,29 +12,27 @@ using FAnsi.Discovery;
 
 namespace Rdmp.Core.MapsDirectlyToDatabaseTable;
 
-    /// <summary>
-    /// IRepository that uses a database to store IMapsDirectlyToDatabaseTable objects.  Realistically all IRepository are going to be these since the idea
-    /// of building a non database IRepository would be virtually impossible.
-    /// </summary>
-    public interface ITableRepository : IRepository
-    {
+/// <summary>
+/// IRepository that uses a database to store IMapsDirectlyToDatabaseTable objects.  Realistically all IRepository are going to be these since the idea
+/// of building a non database IRepository would be virtually impossible.
+/// </summary>
+public interface ITableRepository : IRepository
+{
         
-        string ConnectionString { get; }
-        DbConnectionStringBuilder ConnectionStringBuilder { get; }
-        DiscoveredServer DiscoveredServer { get; }
+    string ConnectionString { get; }
+    DbConnectionStringBuilder ConnectionStringBuilder { get; }
+    DiscoveredServer DiscoveredServer { get; }
 
-        IManagedConnection GetConnection();
-        IManagedConnection BeginNewTransactedConnection();
-        void EndTransactedConnection(bool commit);
-        void ClearUpdateCommandCache();
-        int? ObjectToNullableInt(object o);
-        DateTime? ObjectToNullableDateTime(object o);
+    IManagedConnection GetConnection();
+    IManagedConnection BeginNewTransactedConnection();
+    void EndTransactedConnection(bool commit);
+    void ClearUpdateCommandCache();
+    int? ObjectToNullableInt(object o);
+    DateTime? ObjectToNullableDateTime(object o);
         
-        IEnumerable<T> SelectAll<T>(string selectQuery, string columnWithObjectID = null) where T : IMapsDirectlyToDatabaseTable;
+    IEnumerable<T> SelectAll<T>(string selectQuery, string columnWithObjectID = null) where T : IMapsDirectlyToDatabaseTable;
 
-        int Insert(string sql, Dictionary<string, object> parameters);
-        int Delete(string deleteQuery, Dictionary<string, object> parameters = null, bool throwOnZeroAffectedRows = true);
-        int Update(string updateQuery, Dictionary<string, object> parameters);
-    }
-
+    int Insert(string sql, Dictionary<string, object> parameters);
+    int Delete(string deleteQuery, Dictionary<string, object> parameters = null, bool throwOnZeroAffectedRows = true);
+    int Update(string updateQuery, Dictionary<string, object> parameters);
 }

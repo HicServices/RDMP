@@ -505,16 +505,16 @@ namespace Rdmp.Core.Curation.Data.Aggregation
         _knownCatalogue = new Lazy<Catalogue>(() => instance);
     }
 
-    /// <summary>
-    /// Returns the Name.  If the AggregateConfiguration is a cohort identification aggregate (distinguished by <see cref="CohortIdentificationConfiguration.CICPrefix"/>)
-    /// then the prefix is removed from the return value.
-    /// </summary>
-    /// <returns></returns>
-    public override string ToString()
-    {
-        //strip the cic section from the front
-        return Regex.Replace(Name, CohortIdentificationConfiguration.CICPrefix + @"\d+_?", "");
-    }
+        /// <summary>
+        /// Returns the Name.  If the AggregateConfiguration is a cohort identification aggregate (distinguished by <see cref="CohortIdentificationConfiguration.CICPrefix"/>)
+        /// then the prefix is removed from the return value.
+        /// </summary>
+        /// <returns></returns>
+        public override string ToString()
+        {
+            //strip the cic section from the front
+            return Regex.Replace(Name, $@"{CohortIdentificationConfiguration.CICPrefix}\d+_?", "");
+        }
 
     public bool ShouldBeReadOnly(out string reason)
     {
@@ -549,22 +549,23 @@ namespace Rdmp.Core.Curation.Data.Aggregation
         return new AggregateDimension((ICatalogueRepository) basedOnColumn.Repository, basedOnColumn, this);
     }
         
-    /// <summary>
-    /// Sets up a new <see cref="AggregateBuilder"/> with all the columns (See <see cref="AggregateDimensions"/>), WHERE logic (See <see cref="RootFilterContainer"/>, Pivot
-    /// etc.
-    /// </summary>
-    /// <remarks>Note that some elements e.g. axis are automatically handles at query generation time and therefore do not have to be injected into the <see cref="AggregateBuilder"/></remarks>
-    /// <param name="topX">Maximum number of rows to return, the proper way to do this is via <see cref="AggregateTopX"/></param>
-    /// <returns></returns>
-    public AggregateBuilder GetQueryBuilder(int? topX = null)
-    {
-        if(string.IsNullOrWhiteSpace(CountSQL))
-            throw new NotSupportedException("Cannot generate an AggregateBuilder because the AggregateConfiguration '" + this + "' has no Count SQL, usually this is the case for 'Cohort Set' Aggregates or 'Patient Index Table' Aggregates.  In either case you should use CohortQueryBuilder instead of AggregateBuilder");
+        /// <summary>
+        /// Sets up a new <see cref="AggregateBuilder"/> with all the columns (See <see cref="AggregateDimensions"/>), WHERE logic (See <see cref="RootFilterContainer"/>, Pivot
+        /// etc.
+        /// </summary>
+        /// <remarks>Note that some elements e.g. axis are automatically handles at query generation time and therefore do not have to be injected into the <see cref="AggregateBuilder"/></remarks>
+        /// <param name="topX">Maximum number of rows to return, the proper way to do this is via <see cref="AggregateTopX"/></param>
+        /// <returns></returns>
+        public AggregateBuilder GetQueryBuilder(int? topX = null)
+        {
+            if(string.IsNullOrWhiteSpace(CountSQL))
+                throw new NotSupportedException(
+                    $"Cannot generate an AggregateBuilder because the AggregateConfiguration '{this}' has no Count SQL, usually this is the case for 'Cohort Set' Aggregates or 'Patient Index Table' Aggregates.  In either case you should use CohortQueryBuilder instead of AggregateBuilder");
 
         var allForcedJoins = ForcedJoins.ToArray();
 
-        AggregateBuilder builder;
-        var limitationSQLIfAny = topX == null ? null : "TOP " + topX.Value;
+            AggregateBuilder builder;
+            var limitationSQLIfAny = topX == null ? null : $"TOP {topX.Value}";
 
         if (allForcedJoins.Any())
             builder = new AggregateBuilder(limitationSQLIfAny, CountSQL, this, allForcedJoins);
@@ -654,17 +655,17 @@ namespace Rdmp.Core.Curation.Data.Aggregation
         if(AggregateDimensions.Length == 2 && !PivotOnDimensionID.HasValue)
             throw new QueryBuildingException("In order to have 2 columns, one must be selected as a pivot");
 
-        try
-        {
-            var qb = GetQueryBuilder();
-            notifier.OnCheckPerformed(new CheckEventArgs("successfully generated Aggregate SQL:" + qb.SQL,
-                CheckResult.Success));
+            try
+            {
+                var qb = GetQueryBuilder();
+                notifier.OnCheckPerformed(new CheckEventArgs($"successfully generated Aggregate SQL:{qb.SQL}",
+                    CheckResult.Success));
+            }
+            catch (Exception e)
+            {
+                notifier.OnCheckPerformed(new CheckEventArgs("Failed to generate Aggregate SQL", CheckResult.Fail, e));
+            }
         }
-        catch (Exception e)
-        {
-            notifier.OnCheckPerformed(new CheckEventArgs("Failed to generate Aggregate SQL", CheckResult.Fail, e));
-        }
-    }
 
     private int? _orderWithinKnownContainer;
     private int? _overrideFiltersByUsingParentAggregateConfigurationInsteadID;
@@ -778,24 +779,24 @@ namespace Rdmp.Core.Curation.Data.Aggregation
         _orderWithinKnownContainer = currentOrder;
     }
 
-    /// <summary>
-    /// Deletes the AggregateConfiguration.  This includes removing it from its <see cref="CohortAggregateContainer"/> if it is part of one.  Also includes deleting its 
-    /// <see cref="JoinableCohortAggregateConfiguration"/> if it is a 'patient index table'.
-    /// </summary>
-    /// <exception cref="NotSupportedException">Thrown if the AggregateConfiguration is a patient index table that is being used by other AggregateConfigurations</exception>
-    public override void DeleteInDatabase()
-    {
-        var container = GetCohortAggregateContainerIfAny();
-               
-        if(container != null)
-            container.RemoveChild(this);
+        /// <summary>
+        /// Deletes the AggregateConfiguration.  This includes removing it from its <see cref="CohortAggregateContainer"/> if it is part of one.  Also includes deleting its 
+        /// <see cref="JoinableCohortAggregateConfiguration"/> if it is a 'patient index table'.
+        /// </summary>
+        /// <exception cref="NotSupportedException">Thrown if the AggregateConfiguration is a patient index table that is being used by other AggregateConfigurations</exception>
+        public override void DeleteInDatabase()
+        {
+            var container = GetCohortAggregateContainerIfAny();
 
-        var isAJoinable = Repository.GetAllObjectsWithParent<JoinableCohortAggregateConfiguration>(this).SingleOrDefault();
-        if(isAJoinable != null)
-            if (isAJoinable.Users.Any())
-                throw new NotSupportedException("Cannot Delete AggregateConfiguration '" + this + "' because it is a Joinable Patient Index Table AND it has join users.  You must first remove the join usages and then you can delete it.");
-            else
-                isAJoinable.DeleteInDatabase();
+            container?.RemoveChild(this);
+
+            var isAJoinable = Repository.GetAllObjectsWithParent<JoinableCohortAggregateConfiguration>(this).SingleOrDefault();
+            if(isAJoinable != null)
+                if (isAJoinable.Users.Any())
+                    throw new NotSupportedException(
+                        $"Cannot Delete AggregateConfiguration '{this}' because it is a Joinable Patient Index Table AND it has join users.  You must first remove the join usages and then you can delete it.");
+                else
+                    isAJoinable.DeleteInDatabase();
 
         base.DeleteInDatabase();
     }

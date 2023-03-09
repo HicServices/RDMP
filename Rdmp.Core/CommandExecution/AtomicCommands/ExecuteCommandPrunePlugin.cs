@@ -4,12 +4,15 @@
 // RDMP is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License for more details.
 // You should have received a copy of the GNU General Public License along with RDMP. If not, see <https://www.gnu.org/licenses/>.
 
+using System;
 using NLog;
 using Rdmp.Core.Repositories.Construction;
 using Rdmp.Core.Startup;
 using System.Collections.Generic;
 using System.IO.Compression;
 using System.Linq;
+using System.Reflection;
+using System.Runtime.Loader;
 using System.Text.RegularExpressions;
 using Rdmp.Core.ReusableLibraryCode;
 
@@ -59,38 +62,50 @@ public class ExecuteCommandPrunePlugin : BasicCommandExecution
 
         var logger = LogManager.GetCurrentClassLogger();
 
-        using (var zf = ZipFile.Open(file, ZipArchiveMode.Update))
-        {
-            var current = UsefulStuff.GetExecutableDirectory();
+            Regex main = new ($@"^/?lib/{EnvironmentInfo.MainSubDir}/.*\.dll$",RegexOptions.Compiled|RegexOptions.CultureInvariant);
+            Regex windows = new($@"^/?lib/{EnvironmentInfo.WindowsSubDir}/.*\.dll$", RegexOptions.Compiled | RegexOptions.CultureInvariant);
+            AssemblyLoadContext context = new(nameof(ExecuteCommandPrunePlugin),true);
+            using (var zf = ZipFile.Open(file, ZipArchiveMode.Update))
+            {
+                var current = UsefulStuff.GetExecutableDirectory();
 
             logger.Info($"Reading RDMP core dlls in directory '{current}'");
 
             var rdmpCoreFiles = current.GetFiles("*.dll");
 
-            string main = $"^/?lib/{EnvironmentInfo.MainSubDir}/.*.dll";
-            string windows = $"^/?lib/{EnvironmentInfo.WindowsSubDir}/.*.dll";
+                var inMain = new List<ZipArchiveEntry>();
+                var inWindows = new List<ZipArchiveEntry>();
 
-            var inMain = new List<ZipArchiveEntry>();
-            var inWindows = new List<ZipArchiveEntry>();
+                foreach (var e in zf.Entries.ToArray())
+                {
+                    Assembly assembly;
+                    using (var stream = e.Open())
+                    {
+                        assembly = context.LoadFromStream(stream);
+                    }
 
-            foreach (var e in zf.Entries.ToArray())
-            {
-                if (rdmpCoreFiles.Any(f => f.Name.Equals(e.Name)))
-                {
-                    logger.Info($"Deleting '{e.FullName}'");
-                    e.Delete();
-                    continue;
-                }
+                    if (AssemblyLoadContext.Default.Assemblies.Any(a => a.FullName?.Equals(assembly.FullName) == true))
+                    {
+                        logger.Info($"Deleting '{e.FullName}'");
+                        e.Delete();
+                        continue;
+                    }
+                    if (rdmpCoreFiles.Any(f => f.Name.Equals(e.Name)))
+                    {
+                        logger.Info($"Deleting '{e.FullName}'");
+                        e.Delete();
+                        continue;
+                    }
 
-                if (Regex.IsMatch(e.FullName, main))
-                {
-                    inMain.Add(e);
+                    if (main.IsMatch(e.FullName))
+                    {
+                        inMain.Add(e);
+                    }
+                    else if (windows.IsMatch(e.FullName))
+                    {
+                        inWindows.Add(e);
+                    }
                 }
-                else if (Regex.IsMatch(e.FullName, windows))
-                {
-                    inWindows.Add(e);
-                }
-            }
 
             foreach (var dup in inWindows.Where(e => inMain.Any(o => o.Name.Equals(e.Name))).ToArray())
             {
@@ -99,9 +114,7 @@ public class ExecuteCommandPrunePlugin : BasicCommandExecution
             }
         }
 
-        if(BasicActivator != null)
-        {
-            BasicActivator.Show("Prune Completed");
+            BasicActivator?.Show("Prune Completed");
         }
     }
 }

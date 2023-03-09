@@ -1,2 +1,0 @@
-CatalogueConnectionString: Server=localhost\SQL2017;Database=TEST_Catalogue;User Id=sa;Password=Password12!;
-DataExportConnectionString: Server=localhost\SQL2017;Database=TEST_DataExport;User Id=sa;Password=Password12!;

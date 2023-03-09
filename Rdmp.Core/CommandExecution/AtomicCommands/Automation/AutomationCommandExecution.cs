@@ -10,6 +10,8 @@ using Rdmp.Core.CommandLine.Options;
 using Rdmp.Core.MapsDirectlyToDatabaseTable;
 using Rdmp.Core.Repositories;
 using Rdmp.Core.Startup;
+using YamlDotNet.Core;
+using Parser = CommandLine.Parser;
 
 namespace Rdmp.Core.CommandExecution.AtomicCommands.Automation;
 
@@ -38,25 +40,22 @@ public abstract class AutomationCommandExecution : BasicCommandExecution
             
     }
 
-    /// <summary>
-    /// Generates command line arguments for the current engine
-    /// </summary>
-    /// <param name="argsOnly"></param>
-    /// <returns></returns>
-    public string GetCommandText(bool argsOnly = false)
-    {
-        using(Parser p = new Parser())
+        /// <summary>
+        /// Generates command line arguments for the current engine
+        /// </summary>
+        /// <param name="argsOnly"></param>
+        /// <returns></returns>
+        public string GetCommandText(bool argsOnly = false)
         {
+            using var p = new Parser();
             var options = CommandGetter();
 
             PopulateConnectionStringOptions(options);
 
-            if (argsOnly)
-                return p.FormatCommandLine(options);
-
-            return AutomationServiceExecutable + " " + p.FormatCommandLine(options);
+            return argsOnly
+                ? p.FormatCommandLine(options)
+                : $"{AutomationServiceExecutable} {p.FormatCommandLine(options)}";
         }
-    }
 
     private void PopulateConnectionStringOptions(RDMPCommandLineOptions options)
     {

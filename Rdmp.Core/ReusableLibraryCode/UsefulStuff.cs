@@ -35,6 +35,9 @@ public class UsefulStuff
         
     public static UsefulStuff GetInstance() => _instance;
 
+        return _instance;
+    }
+
     public static bool IsBadName(string name)
     {
         return name != null && name.Any(c=>Path.GetInvalidFileNameChars().Contains(c));
@@ -182,8 +185,9 @@ public class UsefulStuff
         if (!long.TryParse(sCHI, out n) || sCHI.Length != 10) return ok;
         var sDate = $"{sCHI[..2]}/{sCHI.Substring(2, 2)}/{sCHI.Substring(4, 2)}";
         var sCheck = sCHI[^1..];
-        if (DateTime.TryParse(sDate, out d) && GetCHICheckDigit(sCHI) == sCheck)
-            ok = true;
+            if (DateTime.TryParse(sDate, out d) && GetCHICheckDigit(sCHI) == sCheck)
+                ok = true;
+        }
 
         return ok;
     }
@@ -224,7 +228,9 @@ public class UsefulStuff
         {
             using var hashProvider = SHA512.Create();
             using var stream = File.OpenRead(filename);
-            return BitConverter.ToString(hashProvider.ComputeHash(stream));
+                    return BitConverter.ToString(hashProvider.ComputeHash(stream));
+                }
+            }
         }
         catch (IOException)
         {
@@ -233,7 +239,8 @@ public class UsefulStuff
 
             if (retryCount-- > 0)
                 return HashFile(filename, retryCount);//try it again (recursively)
-            throw;
+            else
+                throw;
         }
 
 
@@ -254,6 +261,7 @@ public class UsefulStuff
             "numeric" => true,
             _ => false
         };
+        }
     }
 
     public static bool HasPrecisionAndScale(string columnType)
@@ -264,6 +272,7 @@ public class UsefulStuff
             "numeric" => true,
             _ => false
         };
+        }
     }
         
     public static string RemoveIllegalFilenameCharacters(string value)
@@ -373,6 +382,10 @@ public class UsefulStuff
         var target = new FileInfo(Path.Combine(outputDirectory,file));
 
         File.WriteAllBytes(target.FullName, buffer);
+
+        fileToSpray.Close();
+        fileToSpray.Dispose();
+            
         return target;
     }
 
@@ -448,21 +461,22 @@ public class UsefulStuff
         var sb = new StringBuilder();
 
         using var w = new CsvWriter(new StringWriter(sb),CultureInfo.CurrentCulture);
-        foreach (DataColumn column in dt.Columns)
-            w.WriteField(column.ColumnName);
-
-        w.NextRecord();
-
-        foreach (DataRow row in dt.Rows)
-        {
-            foreach (var cellObject in row.ItemArray)
-                w.WriteField(cellObject);
+            foreach (DataColumn column in dt.Columns)
+                w.WriteField(column.ColumnName);
 
             w.NextRecord();
+
+            foreach (DataRow row in dt.Rows)
+            {
+                foreach (var cellObject in row.ItemArray)
+                    w.WriteField(cellObject);
+
+                w.NextRecord();
+            }
+
+            w.Flush();
         }
-
-        w.Flush();
-
+            
         return sb.ToString();
     }
     public void ShowPathInWindowsExplorer(FileSystemInfo fileInfo)
@@ -524,7 +538,7 @@ public class UsefulStuff
         //This is then made into a single group that is matched and we add a space on front during the replacement.
         pascalCaseString = Regex.Replace(pascalCaseString, @"([A-Z][A-Z]*(?=[A-Z][a-z]|\b)|[A-Z](?=[a-z]))", " $1");
 
-        //Remove any double mutliple white space
+        //Remove any double multiple white space
         //Because this matched the first capital letter in a string with Part2 of our regex above we should TRIM to remove the white space.
         pascalCaseString = Regex.Replace(pascalCaseString, @"\s\s+", " ").Trim();
 

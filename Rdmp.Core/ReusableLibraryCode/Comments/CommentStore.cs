@@ -49,19 +49,16 @@ public class CommentStore : IEnumerable<KeyValuePair<string, string>>
         {
             if(Path.HasExtension(d) && Path.GetExtension(d) == ".zip")
             {
-                if(File.Exists(d) && !zips.ContainsKey(d))
-                    try
-                    {
-                        zips.Add(d,ZipFile.OpenRead(d));
-
-                    }catch(System.Exception)
-                    {
-                        //couldn't open zip file :(
-                        continue;
-                    }
+                if (!File.Exists(d) || zips.ContainsKey(d)) continue;
+                try
+                {
+                    zips.Add(d,ZipFile.OpenRead(d));
+                }catch(Exception)
+                {
+                    //couldn't open zip file :(
+                }
             }
             else
-            if(!dirs.Contains(d))
                 dirs.Add(d);
         }
                     
@@ -78,17 +75,13 @@ public class CommentStore : IEnumerable<KeyValuePair<string, string>>
             foreach (var zip in zips.Values)
             {
                 var entry = zip.GetEntry(xmlFile);
-                if(entry != null)
-                {
-                    var f = Path.GetTempFileName();
-                    entry.ExtractToFile(f,true);
+                if (entry == null) continue;
+                var f = Path.GetTempFileName();
+                entry.ExtractToFile(f,true);
 
-                    ReadComments(assembly,f);
+                ReadComments(assembly,f);
 
-                    File.Delete(f);
-                    continue;
-
-                }
+                File.Delete(f);
             }
                 
             //can we get it from a dir
@@ -103,14 +96,12 @@ public class CommentStore : IEnumerable<KeyValuePair<string, string>>
 
     private void ReadComments(Assembly assembly,string filename)
     {
-        if (File.Exists(filename))
-        {
-            var doc = new XmlDocument();
-            doc.Load(filename);
+        if (!File.Exists(filename)) return;
+        var doc = new XmlDocument();
+        doc.Load(filename);
 
-            doc.IterateThroughAllNodes(AddXmlDoc);
-        }
-            
+        doc.IterateThroughAllNodes(AddXmlDoc);
+
     }
         
     /// <summary>
@@ -122,18 +113,16 @@ public class CommentStore : IEnumerable<KeyValuePair<string, string>>
         if(obj == null)
             return;
 
-        if (obj.Name == "member" && obj.Attributes != null)
-        {
-            string memberName = obj.Attributes["name"]?.Value;
-            var summary = GetSummaryAsText(obj["summary"]);
+        if (obj.Name != "member" || obj.Attributes == null) return;
+        var memberName = obj.Attributes["name"]?.Value;
+        var summary = GetSummaryAsText(obj["summary"]);
 
-            if(memberName == null || string.IsNullOrWhiteSpace(summary))
-                return;
+        if(memberName == null || string.IsNullOrWhiteSpace(summary))
+            return;
                 
-            //it's a Property get Type.Property (not fully specified)
-            if (memberName.StartsWith("P:") || memberName.StartsWith("T:"))
-                Add(GetLastTokens(memberName),summary.Trim());
-        }
+        //it's a Property get Type.Property (not fully specified)
+        if (memberName.StartsWith("P:") || memberName.StartsWith("T:"))
+            Add(GetLastTokens(memberName),summary.Trim());
     }
 
     private string GetSummaryAsText(XmlElement summaryTag)
@@ -146,12 +135,21 @@ public class CommentStore : IEnumerable<KeyValuePair<string, string>>
         summaryTag.IterateThroughAllNodes(
             n =>
             {
-                if (n.Name == "see" && n.Attributes != null)
-                    sb.Append(GetLastTokens(n.Attributes["cref"]?.Value) + " "); // a <see cref="omg"> tag
-                else if (n.Name == "para")
-                    TrimEndSpace(sb).Append(Environment.NewLine + Environment.NewLine);  //open para tag (next tag is probably #text)
-                else if (n.Value != null) //e.g. #text
-                    sb.Append(TrimSummary(n.Value) + " ");
+                switch (n.Name)
+                {
+                    case "see" when n.Attributes != null:
+                        sb.Append($"{GetLastTokens(n.Attributes["cref"]?.Value)} "); // a <see cref="omg"> tag
+                        break;
+                    case "para":
+                        TrimEndSpace(sb).Append(Environment.NewLine + Environment.NewLine);  //open para tag (next tag is probably #text)
+                        break;
+                    default:
+                    {
+                        if (n.Value != null) //e.g. #text
+                            sb.Append($"{TrimSummary(n.Value)} ");
+                        break;
+                    }
+                }
             });
 
         return sb.ToString();
@@ -159,10 +157,7 @@ public class CommentStore : IEnumerable<KeyValuePair<string, string>>
 
     private string TrimSummary(string value)
     {
-        if (value == null)
-            return null;
-
-        return Regex.Replace(value,@"\s+"," ").Trim();
+        return value == null ? null : Regex.Replace(value,@"\s+"," ").Trim();
     }
 
     /// <summary>
@@ -174,18 +169,17 @@ public class CommentStore : IEnumerable<KeyValuePair<string, string>>
     private string GetLastTokens(string memberName, int partsToGet)
     {
         //throw away any preceding "T:", "M:" etc
-        memberName = memberName.Substring(memberName.IndexOf(':') + 1);
+        memberName = memberName[(memberName.IndexOf(':') + 1)..];
 
         var idxBracket = memberName.LastIndexOf('(');
         if (idxBracket != -1)
-            memberName = memberName.Substring(0, idxBracket);
+            memberName = memberName[..idxBracket];
 
         var matches = memberName.Split('.');
 
-        if (matches.Length < partsToGet)
-            return memberName;
-
-        return string.Join(".", matches.Reverse().Take(partsToGet).Reverse());
+        return matches.Length < partsToGet
+            ? memberName
+            : string.Join(".", matches.Reverse().Take(partsToGet).Reverse());
     }
 
     private string GetLastTokens(string memberName)
@@ -240,16 +234,7 @@ public class CommentStore : IEnumerable<KeyValuePair<string, string>>
     /// </summary>
     /// <param name="index"></param>
     /// <returns></returns>
-    public string this[string index]    // Indexer declaration  
-    {
-        get
-        {
-            if (_dictionary.ContainsKey(index))
-                return _dictionary[index];
-
-            return null;
-        }
-    }
+    public string this[string index] => _dictionary.ContainsKey(index) ? _dictionary[index] : null; // Indexer declaration  
 
     public IEnumerator<KeyValuePair<string, string>> GetEnumerator()
     {
@@ -275,7 +260,7 @@ public class CommentStore : IEnumerable<KeyValuePair<string, string>>
 
         //if it's a generic try looking for an non generic or abstract base etc
         if (docs == null && type.Name.EndsWith("`1"))
-            docs = this[type.Name.Substring(0, type.Name.Length - "`1".Length)];
+            docs = this[type.Name[..^"`1".Length]];
 
         if (docs == null && allowInterfaceInstead && !type.IsInterface)
             docs = this["I" + type.Name];
@@ -291,7 +276,7 @@ public class CommentStore : IEnumerable<KeyValuePair<string, string>>
         if (docs.Length <= maxLength)
             return docs;
 
-        return docs.Substring(0, maxLength) + "...";
+        return docs[..maxLength] + "...";
     }
     /// <inheritdoc cref="GetTypeDocumentationIfExists(int,Type,bool,bool)"/>
     public string GetTypeDocumentationIfExists(Type type, bool allowInterfaceInstead = true, bool formatAsParagraphs = false)
@@ -326,18 +311,18 @@ public class CommentStore : IEnumerable<KeyValuePair<string, string>>
     /// <returns></returns>
     public string GetDocumentationKeywordIfExists(string word, bool fuzzyMatch)
     {
-        if (ContainsKey(word))
-            return word;
+        if (ContainsKey(word)) return word;
+        if (!fuzzyMatch) return null;
 
-        //try the plural if we didnt match the basic word
-        if (word.EndsWith("s") && fuzzyMatch)
-            return GetDocumentationKeywordIfExists(word.TrimEnd('s'), true);
+        //try the singular if we didn't match the plural
+        if (word.EndsWith("s"))
+        {
+            word = word.TrimEnd('s');
+            if (ContainsKey(word)) return word;
+        }
 
-        //try the interface
-        if (fuzzyMatch)
-            return GetDocumentationKeywordIfExists("I" + word, false);
-
-        return null;
+        word = $"I{word}";
+        return ContainsKey(word) ? word : null;
     }
 
     /// <summary>
