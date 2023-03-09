@@ -25,7 +25,7 @@ class NuspecIsCorrectTests
 
     //<dependency id="CsvHelper" version="12.1.2" />
     private static readonly Regex RDependencyRef = new(@"<dependency\s+id=""(.*)""\s+version=""([^""]*)""", RegexOptions.IgnoreCase|RegexOptions.Compiled|RegexOptions.CultureInvariant);
-    private static readonly Dictionary<string, string> PathCache;
+    protected static readonly Dictionary<string, string> PathCache;
 
     static NuspecIsCorrectTests()
     {
