@@ -29,14 +29,13 @@ namespace Rdmp.Core.ReusableLibraryCode;
 /// </summary>
 public class UsefulStuff
 {
-    private static readonly UsefulStuff _instance=new();
-    public static Regex RegexThingsThatAreNotNumbersOrLetters = new Regex("[^0-9A-Za-z]+");
-    public static Regex RegexThingsThatAreNotNumbersOrLettersOrUnderscores = new Regex("[^0-9A-Za-z_]+");
+    private static readonly UsefulStuff Instance=new();
+    public static readonly Regex RegexThingsThatAreNotNumbersOrLetters = new Regex("[^0-9A-Za-z]+",RegexOptions.Compiled|RegexOptions.CultureInvariant);
+    public static readonly Regex RegexThingsThatAreNotNumbersOrLettersOrUnderscores = new Regex("[^0-9A-Za-z_]+",RegexOptions.Compiled|RegexOptions.CultureInvariant);
         
-    public static UsefulStuff GetInstance() => _instance;
+    public static UsefulStuff GetInstance() => Instance;
 
-        return _instance;
-    }
+    private UsefulStuff() {}
 
     public static bool IsBadName(string name)
     {
@@ -87,20 +86,15 @@ public class UsefulStuff
             {
                 var sDateAsString = iO.ToString();
 
-                if (sDateAsString.Length == 8)
+                switch (sDateAsString?.Length)
                 {
-                    sDateAsString =
-                        $"{sDateAsString[..2]}/{sDateAsString.Substring(2, 2)}/{sDateAsString.Substring(4, 4)}";
-                    sDate = Convert.ToDateTime(sDateAsString);
+                    case 6:
+                    case 8:
+                        sDate = Convert.ToDateTime($"{sDateAsString[..2]}/{sDateAsString[2..4]}/{sDateAsString[4..]}");
+                        break;
+                    default:
+                        throw;
                 }
-                else if (sDateAsString.Length == 6)
-                {
-                    sDateAsString =
-                        $"{sDateAsString[..2]}/{sDateAsString.Substring(2, 2)}/{sDateAsString.Substring(4, 2)}";
-                    sDate = Convert.ToDateTime(sDateAsString);
-                }
-                else
-                    throw;
             }
             catch (Exception)
             {
@@ -112,14 +106,14 @@ public class UsefulStuff
     }
 
 
+    // find quoted field names at end of line
+    private static readonly Regex RDoubleQuotes = new ("\"([^\"]+)\"$");
+    private static readonly Regex RSingleQuotes = new Regex("'([^']+)'$");
+    private static readonly Regex RBacktickQuotes = new Regex("`([^']+)`$");
+    private static readonly Regex RSquareBrackets = new Regex(@"\[([^[]+)]$");
+    private static readonly Regex RNoPunctuation = new Regex(@"^([\w\s]+)$");
     public IEnumerable<string> GetArrayOfColumnNamesFromStringPastedInByUser(string text)
     {
-        // find quoted field names at end of line
-        var rDoubleQuotes = new Regex("\"([^\"]+)\"$"); 
-        var rSingleQuotes = new Regex("'([^']+)'$");
-        var rBacktickQuotes = new Regex("`([^']+)`$");
-        var rSquareBrackets = new Regex(@"\[([^[]+)]$");
-        var rNoPunctuation = new Regex(@"^([\w\s]+)$");
 
         if (string.IsNullOrWhiteSpace(text))
             yield break;
@@ -139,23 +133,21 @@ public class UsefulStuff
 
             var toAdd = s.Trim();
             if (toAdd.Contains("."))
-                toAdd = toAdd[(toAdd.LastIndexOf(".") + 1)..];
+                toAdd = toAdd[(toAdd.LastIndexOf(".", StringComparison.Ordinal) + 1)..];
                 
             var gotDelimitedMatch = false;
 
             // if user has really horrible names like with spaces and stuff
             // then try expect them to have quoted them and pull out the capture
             // groups.  Remember different DBMS have different quoting symbols
-            foreach (var r in new[] { rDoubleQuotes, rSingleQuotes, 
-                         rSquareBrackets, rBacktickQuotes, rNoPunctuation})
+            foreach (var r in new[] { RDoubleQuotes, RSingleQuotes, 
+                         RSquareBrackets, RBacktickQuotes, RNoPunctuation})
             {
                 var m = r.Matches(toAdd);
-                if (m.Any())
-                {
-                    yield return m.Last().Groups[1].Value;
-                    gotDelimitedMatch = true;
-                    break;
-                }
+                if (!m.Any()) continue;
+                yield return m.Last().Groups[1].Value;
+                gotDelimitedMatch = true;
+                break;
             }
 
             if (gotDelimitedMatch)
@@ -166,7 +158,7 @@ public class UsefulStuff
 
             toAdd = toAdd.Replace("`", "");
 
-            if (String.IsNullOrWhiteSpace(toAdd))
+            if (string.IsNullOrWhiteSpace(toAdd))
                 continue;
 
             if (regexLastWord.IsMatch(toAdd))
@@ -178,48 +170,33 @@ public class UsefulStuff
 
     public bool CHIisOK(string sCHI)
     {
-        long n;
-        DateTime d;
-        var ok = false;
-
-        if (!long.TryParse(sCHI, out n) || sCHI.Length != 10) return ok;
-        var sDate = $"{sCHI[..2]}/{sCHI.Substring(2, 2)}/{sCHI.Substring(4, 2)}";
-        var sCheck = sCHI[^1..];
-            if (DateTime.TryParse(sDate, out d) && GetCHICheckDigit(sCHI) == sCheck)
-                ok = true;
-        }
-
-        return ok;
+        if (!long.TryParse(sCHI, NumberStyles.None,CultureInfo.InvariantCulture, out _) || sCHI.Length != 10) return false;
+        return DateTime.TryParse($"{sCHI[..2]}/{sCHI[2..4]}/{sCHI[4..6]}", out _) && GetCHICheckDigit(sCHI) == sCHI[^1];
     }
 
-    public string GetCHICheckDigit(string sCHI)
+    private static char GetCHICheckDigit(string sCHI)
     {
-        int sum = 0, c = 0, lsCHI = 0;
-
         //sCHI = "120356785";
-        lsCHI = sCHI.Length; // Must be 10!!
+        var lsCHI = sCHI.Length; // Must be 10!!
 
-        sum = 0;
-        c = (int)'0';
+        var sum = 0;
+        var c = (int)'0';
         for (var i = 0; i < lsCHI - 1; i++)
-            sum += ((int)(sCHI.Substring(i, 1)[0]) - c) * (lsCHI - i);
-        sum = sum % 11;
+            sum += ((int)sCHI[i] - c) * (lsCHI - i);
+        sum %= 11;
 
         c = 11 - sum;
         if (c == 11) c = 0;
 
-        return ((char)(c + (int)'0')).ToString();
+        return (char)(c + '0');
 
     }
 
     public static DirectoryInfo GetExecutableDirectory()
-    {  
-        if (!string.IsNullOrWhiteSpace(AppDomain.CurrentDomain.BaseDirectory))
-        {
-            return new DirectoryInfo(AppDomain.CurrentDomain.BaseDirectory);
-        }
-
-        return new DirectoryInfo(Environment.CurrentDirectory);
+    {
+        return !string.IsNullOrWhiteSpace(AppDomain.CurrentDomain.BaseDirectory)
+            ? new DirectoryInfo(AppDomain.CurrentDomain.BaseDirectory)
+            : new DirectoryInfo(Environment.CurrentDirectory);
     }
 
     public static string HashFile(string filename, int retryCount = 6)
@@ -228,9 +205,7 @@ public class UsefulStuff
         {
             using var hashProvider = SHA512.Create();
             using var stream = File.OpenRead(filename);
-                    return BitConverter.ToString(hashProvider.ComputeHash(stream));
-                }
-            }
+            return BitConverter.ToString(hashProvider.ComputeHash(stream));
         }
         catch (IOException)
         {
@@ -239,8 +214,7 @@ public class UsefulStuff
 
             if (retryCount-- > 0)
                 return HashFile(filename, retryCount);//try it again (recursively)
-            else
-                throw;
+            throw;
         }
 
 
@@ -248,7 +222,7 @@ public class UsefulStuff
      
     public static bool RequiresLength(string columnType)
     {
-        return columnType.ToLower() switch
+        return columnType.ToLowerInvariant() switch
         {
             "binary" => true,
             "bit" => false,
@@ -261,27 +235,24 @@ public class UsefulStuff
             "numeric" => true,
             _ => false
         };
-        }
     }
 
     public static bool HasPrecisionAndScale(string columnType)
     {
-        return columnType.ToLower() switch
+        return columnType.ToLowerInvariant() switch
         {
             "decimal" => true,
             "numeric" => true,
             _ => false
         };
-        }
     }
         
     public static string RemoveIllegalFilenameCharacters(string value)
     {
-        if (!string.IsNullOrWhiteSpace(value))
-            foreach (var invalidFileNameChar in Path.GetInvalidFileNameChars())
-                value = value.Replace(invalidFileNameChar.ToString(), "");
-
-        return value;
+        return string.IsNullOrWhiteSpace(value)
+            ? value
+            : Path.GetInvalidFileNameChars().Aggregate(value,
+                (current, invalidFileNameChar) => current.Replace(invalidFileNameChar.ToString(), ""));
     }
 
         
@@ -372,20 +343,12 @@ public class UsefulStuff
             throw new Exception(
                 $"assembly.GetManifestResourceStream returned null for manifest name {manifestName} in assembly {assembly}");
 
-        //get the bytes
-        var buffer = new byte[fileToSpray.Length];
-        fileToSpray.Read(buffer, 0, buffer.Length);
-
         if (!Directory.Exists(outputDirectory))
             Directory.CreateDirectory(outputDirectory);
 
         var target = new FileInfo(Path.Combine(outputDirectory,file));
-
-        File.WriteAllBytes(target.FullName, buffer);
-
-        fileToSpray.Close();
-        fileToSpray.Dispose();
-            
+        using var dest = target.OpenWrite();
+        fileToSpray.CopyTo(dest);
         return target;
     }
 
@@ -512,19 +475,14 @@ public class UsefulStuff
     {
         var interfaceTypes = givenType.GetInterfaces();
 
-        foreach (var it in interfaceTypes)
-        {
-            if (it.IsGenericType && it.GetGenericTypeDefinition() == genericType)
-                return true;
-        }
+        if (interfaceTypes.Any(it => it.IsGenericType && it.GetGenericTypeDefinition() == genericType))
+            return true;
 
         if (givenType.IsGenericType && givenType.GetGenericTypeDefinition() == genericType)
             return true;
 
         var baseType = givenType.BaseType;
-        if (baseType == null) return false;
-
-        return IsAssignableToGenericType(baseType, genericType);
+        return baseType != null && IsAssignableToGenericType(baseType, genericType);
     }
 
     public static string PascalCaseStringToHumanReadable(string pascalCaseString)
@@ -619,11 +577,9 @@ public class UsefulStuff
 
         if (t == typeof(DateTime) && value is string s)
         {
-            if (string.Equals(s, "now",StringComparison.CurrentCultureIgnoreCase))
-                return DateTime.Now;
-
-            //Convert.ChangeType doesn't handle dates, so let's deal with that
-            return DateTime.Parse(s);
+            return string.Equals(s, "now",StringComparison.InvariantCultureIgnoreCase) ? DateTime.Now :
+                //Convert.ChangeType doesn't handle dates, so let's deal with that
+                DateTime.Parse(s);
         }
 
         return value == null || value is string sval && string.IsNullOrWhiteSpace(sval) ? null : Convert.ChangeType(value, t);
