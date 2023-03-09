@@ -97,27 +97,18 @@ namespace Rdmp.Core.Tests.Curation.Integration.DataAccess
         [TestCase(false)]
         public void SimpleCaseSingleThreaded(bool useTransaction)
         {
+            using var con = useTransaction
+                ? CatalogueTableRepository.BeginNewTransactedConnection()
+                : CatalogueTableRepository.GetConnection();
+            Assert.AreEqual(ConnectionState.Open, con.Connection.State);
+            Thread.Sleep(1000);
 
+            if (useTransaction)
+                CatalogueTableRepository.EndTransactedConnection(false);
+            else
+                con.Connection.Close();
 
-            using (
-                var con = useTransaction
-                    ? CatalogueTableRepository.BeginNewTransactedConnection()
-                    : CatalogueTableRepository.GetConnection())
-            {
-
-                Assert.AreEqual(ConnectionState.Open, con.Connection.State);
-                Thread.Sleep(1000);
-
-                if (useTransaction)
-                    CatalogueTableRepository.EndTransactedConnection(false);
-                else
-                    con.Connection.Close();
-
-                Assert.AreEqual(ConnectionState.Closed, con.Connection.State);
-            }
-
-
-            
+            Assert.AreEqual(ConnectionState.Closed, con.Connection.State);
         }
 
         [Test]
@@ -131,17 +122,17 @@ namespace Rdmp.Core.Tests.Curation.Integration.DataAccess
         private void FireMultiThreaded(Action<bool> method, int numberToFire, bool useTransactions)
         {
             if (CatalogueRepository is not TableRepository)
-                Assert.Inconclusive("We dont have to test this for yaml repos");
+                Assert.Inconclusive("We don't have to test this for yaml repos");
 
             
-            List<Exception> exes = new List<Exception>();
+            var exes = new List<Exception>();
             
 
-            List<Thread> ts = new List<Thread>();
+            var ts = new List<Thread>();
 
-            for (int i = 0; i < numberToFire; i++)
+            for (var i = 0; i < numberToFire; i++)
             {
-                int i1 = i;
+                var i1 = i;
                 ts.Add(new Thread(() => {
                     try
                     {
@@ -155,11 +146,11 @@ namespace Rdmp.Core.Tests.Curation.Integration.DataAccess
                 }));
             }
 
-            foreach (Thread thread in ts)
+            foreach (var thread in ts)
                 thread.Start();
             
             while(ts.Any(t=>t.IsAlive))
-                Thread.Sleep(100);
+                ts.FirstOrDefault(t=>t.IsAlive)?.Join(100);
             
             Assert.IsEmpty(exes);
         }

@@ -25,7 +25,7 @@ class NuspecIsCorrectTests
 
     //<dependency id="CsvHelper" version="12.1.2" />
     private static readonly Regex RDependencyRef = new(@"<dependency\s+id=""(.*)""\s+version=""([^""]*)""", RegexOptions.IgnoreCase|RegexOptions.Compiled|RegexOptions.CultureInvariant);
-    protected static readonly Dictionary<string, string> PathCache;
+    public static readonly Dictionary<string, string> PathCache;
 
     static NuspecIsCorrectTests()
     {
@@ -33,7 +33,7 @@ class NuspecIsCorrectTests
         while (!Directory.EnumerateFiles(solutionRoot, "*.sln").Any())
             solutionRoot = Directory.GetParent(solutionRoot)?.FullName ?? throw new Exception($"No VS Solution file found above {AppDomain.CurrentDomain.BaseDirectory}");
         PathCache=Directory.EnumerateFiles(solutionRoot,"*.*", SearchOption.AllDirectories)
-            .Where(p => p.EndsWith(".csproj") || p.EndsWith("Packages.md") || p.EndsWith(".nuspec"))
+            .Where(p => p.EndsWith(".csproj") || p.EndsWith(".md") || p.EndsWith(".nuspec"))
             .ToDictionary(Path.GetFileName, p => p);
     }
 

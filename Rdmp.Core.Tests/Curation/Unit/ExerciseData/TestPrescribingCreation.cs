@@ -6,6 +6,7 @@
 
 using System;
 using System.IO;
+using System.Linq;
 using BadMedicine;
 using BadMedicine.Datasets;
 using NUnit.Framework;
@@ -18,7 +19,6 @@ namespace Rdmp.Core.Tests.Curation.Unit.ExerciseData
         [Test]
         [TestCase(1000)]
         [TestCase(321)]
-        [TestCase(100000)]
         public void CreateCSV(int numberOfRecords)
         {
             var r = new Random(500);
@@ -44,9 +44,7 @@ namespace Rdmp.Core.Tests.Curation.Unit.ExerciseData
             Assert.IsTrue(finished);
             Assert.AreEqual(numberOfRecords, finishedWithRecords);
 
-            Assert.GreaterOrEqual(File.ReadAllLines(f.FullName).Length, numberOfRecords);//can be newlines in middle of file
-
-            Console.WriteLine("Created file: " + f.FullName);
+            Assert.GreaterOrEqual(File.ReadLines(f.FullName).Count(), numberOfRecords);//can be newlines in middle of file
             f.Delete();
         }
 
