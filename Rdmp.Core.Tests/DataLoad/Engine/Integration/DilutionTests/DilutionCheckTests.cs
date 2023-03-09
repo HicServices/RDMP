@@ -10,7 +10,7 @@ using NUnit.Framework;
 using Rdmp.Core.Curation.Data.DataLoad;
 using Rdmp.Core.DataLoad.Modules.Mutilators.Dilution.Exceptions;
 using Rdmp.Core.DataLoad.Modules.Mutilators.Dilution.Operations;
-using ReusableLibraryCode.Checks;
+using Rdmp.Core.ReusableLibraryCode.Checks;
 
 namespace Rdmp.Core.Tests.DataLoad.Engine.Integration.DilutionTests
 {

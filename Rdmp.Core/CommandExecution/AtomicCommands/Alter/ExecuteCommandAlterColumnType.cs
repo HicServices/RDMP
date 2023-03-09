@@ -6,7 +6,7 @@
 
 using System;
 using Rdmp.Core.Curation.Data;
-using ReusableLibraryCode.DataAccess;
+using Rdmp.Core.ReusableLibraryCode.DataAccess;
 
 namespace Rdmp.Core.CommandExecution.AtomicCommands.Alter
 {

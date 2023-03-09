@@ -12,7 +12,7 @@ using NUnit.Framework;
 using Rdmp.Core.CommandExecution;
 using Rdmp.Core.DataExport.Checks;
 using Rdmp.Core.DataExport.Data;
-using ReusableLibraryCode.Checks;
+using Rdmp.Core.ReusableLibraryCode.Checks;
 using Tests.Common;
 
 namespace Rdmp.Core.Tests.DataExport

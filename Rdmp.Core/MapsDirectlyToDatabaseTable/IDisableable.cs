@@ -4,19 +4,18 @@
 // RDMP is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License for more details.
 // You should have received a copy of the GNU General Public License along with RDMP. If not, see <https://www.gnu.org/licenses/>.
 
-using MapsDirectlyToDatabaseTable.Revertable;
+using Rdmp.Core.MapsDirectlyToDatabaseTable.Revertable;
 
-namespace MapsDirectlyToDatabaseTable
+namespace Rdmp.Core.MapsDirectlyToDatabaseTable;
+
+/// <summary>
+/// Class supports a disabled state which should be consulted before running the component
+/// e.g. in a data load.
+/// </summary>
+public interface IDisableable: IRevertable
 {
     /// <summary>
-    /// Class supports a disabled state which should be consulted before running the component
-    /// e.g. in a data load.
+    /// True to skip the component when executing (but still show it at design time).
     /// </summary>
-    public interface IDisableable: IRevertable
-    {
-        /// <summary>
-        /// True to skip the component when executing (but still show it at design time).
-        /// </summary>
-        bool IsDisabled { get; set; }
-    }
+    bool IsDisabled { get; set; }
 }

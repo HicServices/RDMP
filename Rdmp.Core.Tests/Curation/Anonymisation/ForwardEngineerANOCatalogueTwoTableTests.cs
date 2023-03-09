@@ -13,8 +13,8 @@ using Rdmp.Core.Curation.ANOEngineering;
 using Rdmp.Core.Curation.Data;
 using Rdmp.Core.Curation.Data.DataLoad;
 using Rdmp.Core.QueryBuilding;
-using ReusableLibraryCode;
-using ReusableLibraryCode.Checks;
+using Rdmp.Core.ReusableLibraryCode;
+using Rdmp.Core.ReusableLibraryCode.Checks;
 using Tests.Common.Scenarios;
 
 namespace Rdmp.Core.Tests.Curation.Anonymisation

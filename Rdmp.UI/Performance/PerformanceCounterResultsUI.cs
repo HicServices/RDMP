@@ -12,9 +12,9 @@ using System.Linq;
 using System.Text.RegularExpressions;
 using System.Windows.Forms;
 using BrightIdeasSoftware;
+using Rdmp.Core.ReusableLibraryCode.Performance;
 using Rdmp.UI.Collections;
 using Rdmp.UI.Performance.StackTraceProcessing;
-using ReusableLibraryCode.Performance;
 
 namespace Rdmp.UI.Performance
 {

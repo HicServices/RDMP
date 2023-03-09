@@ -6,7 +6,7 @@
 
 using System.IO;
 using Rdmp.Core.Curation.Data;
-using ReusableLibraryCode.Checks;
+using Rdmp.Core.ReusableLibraryCode.Checks;
 
 namespace Rdmp.Core.DataExport.DataRelease
 {

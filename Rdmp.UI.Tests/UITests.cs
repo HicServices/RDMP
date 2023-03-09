@@ -16,12 +16,12 @@ using NUnit.Framework;
 using Rdmp.Core.CommandExecution.AtomicCommands;
 using Rdmp.Core.Curation.Data;
 using Rdmp.Core.Curation.Data.Spontaneous;
+using Rdmp.Core.ReusableLibraryCode.Checks;
 using Rdmp.UI.Collections;
 using Rdmp.UI.CommandExecution;
 using Rdmp.UI.MainFormUITabs;
 using Rdmp.UI.Refreshing;
 using Rdmp.UI.TestsAndSetup.ServicePropogation;
-using ReusableLibraryCode.Checks;
 using Tests.Common;
 
 namespace Rdmp.UI.Tests

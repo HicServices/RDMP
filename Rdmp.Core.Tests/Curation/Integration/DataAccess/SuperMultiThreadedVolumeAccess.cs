@@ -10,11 +10,11 @@ using System.Data;
 using System.Linq;
 using System.Threading;
 using FAnsi.Connections;
-using MapsDirectlyToDatabaseTable;
-using MapsDirectlyToDatabaseTable.Revertable;
 using NUnit.Framework;
 using Rdmp.Core.Curation.Data;
-using ReusableLibraryCode;
+using Rdmp.Core.MapsDirectlyToDatabaseTable;
+using Rdmp.Core.MapsDirectlyToDatabaseTable.Revertable;
+using Rdmp.Core.ReusableLibraryCode;
 using Tests.Common;
 
 namespace Rdmp.Core.Tests.Curation.Integration.DataAccess

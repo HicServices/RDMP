@@ -12,7 +12,7 @@ namespace Rdmp.Core.Curation.Data
     /// </summary>
     public interface IEncryptedString
     {
-        /// <inheritdoc cref="ReusableLibraryCode.DataAccess.IEncryptedPasswordHost.Password"/>
+        /// <inheritdoc cref="Rdmp.Core.ReusableLibraryCode.DataAccess.IEncryptedPasswordHost.Password"/>
         string Value { get; set; }
 
         /// <inheritdoc cref="ReusableLibraryCode.DataAccess.IEncryptedPasswordHost.GetDecryptedPassword"/>

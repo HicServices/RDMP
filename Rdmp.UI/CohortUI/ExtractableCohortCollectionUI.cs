@@ -12,13 +12,11 @@ using BrightIdeasSoftware;
 using Rdmp.Core.Curation.Data;
 using Rdmp.Core.DataExport.CohortDescribing;
 using Rdmp.Core.DataExport.Data;
+using Rdmp.Core.ReusableLibraryCode;
 using Rdmp.UI.ItemActivation;
 using Rdmp.UI.Refreshing;
 using Rdmp.UI.SimpleDialogs;
 using Rdmp.UI.TestsAndSetup.ServicePropogation;
-using ReusableLibraryCode;
-
-
 using WideMessageBox = Rdmp.UI.SimpleDialogs.WideMessageBox;
 
 namespace Rdmp.UI.CohortUI

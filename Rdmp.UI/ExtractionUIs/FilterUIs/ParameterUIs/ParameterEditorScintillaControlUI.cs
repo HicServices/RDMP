@@ -14,10 +14,10 @@ using Rdmp.Core.Curation.Data;
 using Rdmp.Core.Curation.Data.Cohort;
 using Rdmp.Core.Curation.FilterImporting;
 using Rdmp.Core.QueryBuilding;
+using Rdmp.Core.ReusableLibraryCode.Checks;
 using Rdmp.UI.Copying;
 using Rdmp.UI.ScintillaHelper;
 using Rdmp.UI.TestsAndSetup.ServicePropogation;
-using ReusableLibraryCode.Checks;
 using ScintillaNET;
 
 namespace Rdmp.UI.ExtractionUIs.FilterUIs.ParameterUIs

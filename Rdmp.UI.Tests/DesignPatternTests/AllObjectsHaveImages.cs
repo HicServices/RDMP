@@ -10,7 +10,7 @@ using System.Linq;
 using NUnit.Framework;
 using Rdmp.Core.Curation.Data;
 using Rdmp.Core.Icons.IconProvision;
-using ReusableLibraryCode;
+using Rdmp.Core.ReusableLibraryCode;
 using Tests.Common;
 
 namespace Rdmp.UI.Tests.DesignPatternTests

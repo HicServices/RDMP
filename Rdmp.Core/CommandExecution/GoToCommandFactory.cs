@@ -7,8 +7,6 @@
 using System.Collections.Generic;
 using SixLabors.ImageSharp;
 using System.Linq;
-using MapsDirectlyToDatabaseTable;
-using MapsDirectlyToDatabaseTable.Injection;
 using Rdmp.Core.CommandExecution.AtomicCommands;
 using Rdmp.Core.Curation.Data;
 using Rdmp.Core.Curation.Data.Aggregation;
@@ -21,6 +19,8 @@ using Rdmp.Core.Icons.IconProvision;
 using Rdmp.Core.Providers;
 using SixLabors.ImageSharp.PixelFormats;
 using Rdmp.Core.Curation.Data.Dashboarding;
+using Rdmp.Core.MapsDirectlyToDatabaseTable;
+using Rdmp.Core.MapsDirectlyToDatabaseTable.Injection;
 
 namespace Rdmp.Core.CommandExecution
 {

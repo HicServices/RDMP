@@ -6,8 +6,8 @@
 
 using System.Threading;
 using Rdmp.Core.Curation.Data;
-using ReusableLibraryCode.Checks;
-using ReusableLibraryCode.Progress;
+using Rdmp.Core.ReusableLibraryCode.Checks;
+using Rdmp.Core.ReusableLibraryCode.Progress;
 
 namespace Rdmp.Core.DataQualityEngine.Reports
 {

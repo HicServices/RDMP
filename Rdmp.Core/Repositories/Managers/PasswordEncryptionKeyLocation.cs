@@ -8,8 +8,8 @@ using System;
 using System.IO;
 using System.Security.Cryptography;
 using System.Xml.Serialization;
-using MapsDirectlyToDatabaseTable.Injection;
 using Rdmp.Core.Curation;
+using Rdmp.Core.MapsDirectlyToDatabaseTable.Injection;
 
 namespace Rdmp.Core.Repositories.Managers
 {

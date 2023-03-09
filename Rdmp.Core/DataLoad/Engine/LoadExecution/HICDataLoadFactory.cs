@@ -16,7 +16,7 @@ using Rdmp.Core.DataLoad.Engine.LoadExecution.Components.Standard;
 using Rdmp.Core.DataLoad.Engine.LoadProcess;
 using Rdmp.Core.Logging;
 using Rdmp.Core.Repositories;
-using ReusableLibraryCode.Progress;
+using Rdmp.Core.ReusableLibraryCode.Progress;
 
 namespace Rdmp.Core.DataLoad.Engine.LoadExecution
 {

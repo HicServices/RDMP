@@ -6,10 +6,10 @@
 
 using System;
 using System.Collections.Generic;
-using MapsDirectlyToDatabaseTable;
 using Rdmp.Core.Curation.Data.Cohort;
 using Rdmp.Core.Curation.Data.DataLoad;
-using ReusableLibraryCode;
+using Rdmp.Core.MapsDirectlyToDatabaseTable;
+using Rdmp.Core.ReusableLibraryCode;
 
 namespace Rdmp.Core.Curation.Data.Pipelines
 {

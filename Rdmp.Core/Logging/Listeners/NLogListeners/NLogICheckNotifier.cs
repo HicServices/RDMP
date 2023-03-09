@@ -6,7 +6,7 @@
 
 using NLog;
 using Rdmp.Core.Logging.Listeners.Extensions;
-using ReusableLibraryCode.Checks;
+using Rdmp.Core.ReusableLibraryCode.Checks;
 
 namespace Rdmp.Core.Logging.Listeners.NLogListeners
 {

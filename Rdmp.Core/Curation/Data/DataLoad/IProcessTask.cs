@@ -6,9 +6,9 @@
 
 using System;
 using System.Collections.Generic;
-using MapsDirectlyToDatabaseTable;
-using MapsDirectlyToDatabaseTable.Revertable;
 using Rdmp.Core.Curation.Data.Cohort;
+using Rdmp.Core.MapsDirectlyToDatabaseTable;
+using Rdmp.Core.MapsDirectlyToDatabaseTable.Revertable;
 
 namespace Rdmp.Core.Curation.Data.DataLoad
 {

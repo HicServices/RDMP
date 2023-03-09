@@ -6,8 +6,8 @@
 
 using System;
 using Rdmp.Core.CommandExecution;
+using Rdmp.Core.ReusableLibraryCode.Settings;
 using Rdmp.UI.TransparentHelpSystem;
-using ReusableLibraryCode.Settings;
 
 namespace Rdmp.UI.Tutorials
 {

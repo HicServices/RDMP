@@ -7,9 +7,9 @@
 using System;
 using System.Linq;
 using System.Windows.Forms;
+using Rdmp.Core.ReusableLibraryCode;
+using Rdmp.Core.ReusableLibraryCode.Performance;
 using Rdmp.UI.Performance;
-using ReusableLibraryCode;
-using ReusableLibraryCode.Performance;
 
 
 namespace Rdmp.UI.SimpleDialogs

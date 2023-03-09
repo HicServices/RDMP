@@ -6,13 +6,12 @@
 
 using System;
 
-namespace MapsDirectlyToDatabaseTable
+namespace Rdmp.Core.MapsDirectlyToDatabaseTable;
+
+/// <summary>
+/// Used to indicate when a property does not map to an underlying data table
+/// </summary>
+[AttributeUsage(AttributeTargets.Property, Inherited = false, AllowMultiple = false)]
+public sealed class NoMappingToDatabase : Attribute
 {
-    /// <summary>
-    /// Used to indicate when a property does not map to an underlying data table
-    /// </summary>
-    [AttributeUsage(AttributeTargets.Property, Inherited = false, AllowMultiple = false)]
-    public sealed class NoMappingToDatabase : Attribute
-    {
-    }
 }

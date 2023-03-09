@@ -8,11 +8,11 @@ using System;
 using System.Linq;
 using FAnsi.Discovery.QuerySyntax;
 using FAnsi.Naming;
-using MapsDirectlyToDatabaseTable;
 using Rdmp.Core.CohortCreation.Execution;
 using Rdmp.Core.Curation.Data;
 using Rdmp.Core.Curation.Data.Aggregation;
 using Rdmp.Core.Curation.Data.Spontaneous;
+using Rdmp.Core.MapsDirectlyToDatabaseTable;
 using Rdmp.Core.QueryBuilding.Parameters;
 
 namespace Rdmp.Core.QueryBuilding

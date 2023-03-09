@@ -16,9 +16,9 @@ using Rdmp.Core.CommandExecution.AtomicCommands.Automation;
 using Rdmp.Core.CommandExecution.AtomicCommands.Sharing;
 using Rdmp.Core.CommandLine.Interactive;
 using Rdmp.Core.Repositories;
+using Rdmp.Core.ReusableLibraryCode.Checks;
 using Rdmp.UI.CommandExecution.AtomicCommands;
 using Rdmp.UI.ItemActivation;
-using ReusableLibraryCode.Checks;
 using Tests.Common;
 
 namespace Rdmp.UI.Tests.DesignPatternTests

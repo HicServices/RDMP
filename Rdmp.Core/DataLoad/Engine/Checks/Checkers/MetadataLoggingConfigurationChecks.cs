@@ -9,7 +9,7 @@ using System.Linq;
 using Rdmp.Core.Curation.Data;
 using Rdmp.Core.Curation.Data.DataLoad;
 using Rdmp.Core.Curation.Data.Defaults;
-using ReusableLibraryCode.Checks;
+using Rdmp.Core.ReusableLibraryCode.Checks;
 using LogManager = Rdmp.Core.Logging.LogManager;
 
 namespace Rdmp.Core.DataLoad.Engine.Checks.Checkers

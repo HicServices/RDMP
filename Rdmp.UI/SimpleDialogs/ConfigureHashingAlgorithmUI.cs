@@ -7,11 +7,11 @@
 using System;
 using System.ComponentModel;
 using Rdmp.Core.Repositories.Managers;
+using Rdmp.Core.ReusableLibraryCode;
 using Rdmp.UI.Copying;
 using Rdmp.UI.ItemActivation;
 using Rdmp.UI.ScintillaHelper;
 using Rdmp.UI.TestsAndSetup.ServicePropogation;
-using ReusableLibraryCode;
 using ScintillaNET;
 
 namespace Rdmp.UI.SimpleDialogs

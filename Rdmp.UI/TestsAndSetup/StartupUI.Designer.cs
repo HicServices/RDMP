@@ -1,5 +1,5 @@
-﻿using Rdmp.UI.ChecksUI;
-using ReusableLibraryCode.Checks;
+﻿using Rdmp.Core.ReusableLibraryCode.Checks;
+using Rdmp.UI.ChecksUI;
 
 namespace Rdmp.UI.TestsAndSetup
 {

@@ -5,9 +5,9 @@
 // You should have received a copy of the GNU General Public License along with RDMP. If not, see <https://www.gnu.org/licenses/>.
 
 using FAnsi.Discovery;
-using MapsDirectlyToDatabaseTable;
 using Rdmp.Core.CommandExecution;
 using System.Collections.Generic;
+using Rdmp.Core.MapsDirectlyToDatabaseTable;
 
 namespace ResearchDataManagementPlatform.WindowManagement
 {

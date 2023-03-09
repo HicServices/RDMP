@@ -14,7 +14,7 @@ using FAnsi.Implementations.PostgreSql;
 using Moq;
 using NUnit.Framework;
 using Rdmp.Core.QueryBuilding;
-using ReusableLibraryCode.DataAccess;
+using Rdmp.Core.ReusableLibraryCode.DataAccess;
 
 namespace Rdmp.Core.Tests.QueryCaching
 {

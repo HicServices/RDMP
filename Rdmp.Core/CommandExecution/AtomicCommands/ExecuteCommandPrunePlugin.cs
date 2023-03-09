@@ -4,14 +4,17 @@
 // RDMP is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License for more details.
 // You should have received a copy of the GNU General Public License along with RDMP. If not, see <https://www.gnu.org/licenses/>.
 
+using System;
 using NLog;
 using Rdmp.Core.Repositories.Construction;
 using Rdmp.Core.Startup;
-using ReusableLibraryCode;
 using System.Collections.Generic;
 using System.IO.Compression;
 using System.Linq;
+using System.Reflection;
+using System.Runtime.Loader;
 using System.Text.RegularExpressions;
+using Rdmp.Core.ReusableLibraryCode;
 
 namespace Rdmp.Core.CommandExecution.AtomicCommands
 {
@@ -59,6 +62,9 @@ namespace Rdmp.Core.CommandExecution.AtomicCommands
 
             var logger = LogManager.GetCurrentClassLogger();
 
+            Regex main = new ($@"^/?lib/{EnvironmentInfo.MainSubDir}/.*\.dll$",RegexOptions.Compiled|RegexOptions.CultureInvariant);
+            Regex windows = new($@"^/?lib/{EnvironmentInfo.WindowsSubDir}/.*\.dll$", RegexOptions.Compiled | RegexOptions.CultureInvariant);
+            AssemblyLoadContext context = new(nameof(ExecuteCommandPrunePlugin),true);
             using (var zf = ZipFile.Open(file, ZipArchiveMode.Update))
             {
                 var current = UsefulStuff.GetExecutableDirectory();
@@ -67,14 +73,23 @@ namespace Rdmp.Core.CommandExecution.AtomicCommands
 
                 var rdmpCoreFiles = current.GetFiles("*.dll");
 
-                string main = $"^/?lib/{EnvironmentInfo.MainSubDir}/.*.dll";
-                string windows = $"^/?lib/{EnvironmentInfo.WindowsSubDir}/.*.dll";
-
                 var inMain = new List<ZipArchiveEntry>();
                 var inWindows = new List<ZipArchiveEntry>();
 
                 foreach (var e in zf.Entries.ToArray())
                 {
+                    Assembly assembly;
+                    using (var stream = e.Open())
+                    {
+                        assembly = context.LoadFromStream(stream);
+                    }
+
+                    if (AssemblyLoadContext.Default.Assemblies.Any(a => a.FullName?.Equals(assembly.FullName) == true))
+                    {
+                        logger.Info($"Deleting '{e.FullName}'");
+                        e.Delete();
+                        continue;
+                    }
                     if (rdmpCoreFiles.Any(f => f.Name.Equals(e.Name)))
                     {
                         logger.Info($"Deleting '{e.FullName}'");
@@ -82,11 +97,11 @@ namespace Rdmp.Core.CommandExecution.AtomicCommands
                         continue;
                     }
 
-                    if (Regex.IsMatch(e.FullName, main))
+                    if (main.IsMatch(e.FullName))
                     {
                         inMain.Add(e);
                     }
-                    else if (Regex.IsMatch(e.FullName, windows))
+                    else if (windows.IsMatch(e.FullName))
                     {
                         inWindows.Add(e);
                     }
@@ -99,10 +114,7 @@ namespace Rdmp.Core.CommandExecution.AtomicCommands
                 }
             }
 
-            if(BasicActivator != null)
-            {
-                BasicActivator.Show("Prune Completed");
-            }
+            BasicActivator?.Show("Prune Completed");
         }
     }
 }

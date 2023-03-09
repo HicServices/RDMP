@@ -11,7 +11,7 @@ using System.Linq;
 using Rdmp.Core.Caching.Layouts;
 using Rdmp.Core.Curation.Data.Cache;
 using Rdmp.Core.DataFlowPipeline.Requirements;
-using ReusableLibraryCode.Progress;
+using Rdmp.Core.ReusableLibraryCode.Progress;
 
 namespace Rdmp.Core.Tests.Caching.Unit
 {

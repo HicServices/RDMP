@@ -8,8 +8,8 @@ using System;
 using System.ComponentModel;
 using System.Text.RegularExpressions;
 using System.Xml.Serialization;
-using MapsDirectlyToDatabaseTable;
 using Rdmp.Core.Curation.Data;
+using Rdmp.Core.MapsDirectlyToDatabaseTable;
 using Rdmp.Core.Validation.UIAttributes;
 
 namespace Rdmp.Core.Validation.Constraints.Secondary

@@ -6,7 +6,7 @@
 
 using System.Xml;
 using NUnit.Framework;
-using ReusableLibraryCode.Comments;
+using Rdmp.Core.ReusableLibraryCode.Comments;
 
 namespace Rdmp.Core.Tests
 {

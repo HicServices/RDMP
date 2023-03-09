@@ -11,12 +11,10 @@ using System.Linq;
 using System.Windows.Forms;
 using Rdmp.Core.Curation.Data.DataLoad;
 using Rdmp.Core.Repositories;
+using Rdmp.Core.ReusableLibraryCode;
+using Rdmp.Core.ReusableLibraryCode.Checks;
 using Rdmp.UI.ItemActivation;
 using Rdmp.UI.PipelineUIs.DemandsInitializationUIs.ArgumentValueControls;
-using ReusableLibraryCode;
-using ReusableLibraryCode.Checks;
-
-
 using HelpIcon = Rdmp.UI.SimpleControls.HelpIcon;
 using RAGSmiley = Rdmp.UI.ChecksUI.RAGSmiley;
 using ViewSourceCodeDialog = Rdmp.UI.SimpleDialogs.ViewSourceCodeDialog;

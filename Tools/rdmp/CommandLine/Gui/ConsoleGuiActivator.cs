@@ -11,8 +11,6 @@ using System.IO;
 using System.Linq;
 using System.Text.RegularExpressions;
 using FAnsi.Discovery;
-using MapsDirectlyToDatabaseTable;
-using MapsDirectlyToDatabaseTable.Revertable;
 using NStack;
 using Rdmp.Core.CommandExecution;
 using Rdmp.Core.CommandLine.Gui.Windows;
@@ -23,9 +21,11 @@ using Rdmp.Core.Curation.Data.Cohort;
 using Rdmp.Core.Curation.Data.DataLoad;
 using Rdmp.Core.Curation.Data.Pipelines;
 using Rdmp.Core.DataViewing;
+using Rdmp.Core.MapsDirectlyToDatabaseTable;
+using Rdmp.Core.MapsDirectlyToDatabaseTable.Revertable;
 using Rdmp.Core.Repositories;
-using ReusableLibraryCode;
-using ReusableLibraryCode.Checks;
+using Rdmp.Core.ReusableLibraryCode;
+using Rdmp.Core.ReusableLibraryCode.Checks;
 using Terminal.Gui;
 
 namespace Rdmp.Core.CommandLine.Gui

@@ -6,8 +6,8 @@
 
 using System;
 using System.Windows.Forms;
+using Rdmp.Core.ReusableLibraryCode.Settings;
 using Rdmp.UI.Tutorials;
-using ReusableLibraryCode.Settings;
 
 namespace ResearchDataManagementPlatform.Menus.MenuItems
 {

@@ -9,8 +9,8 @@ using Rdmp.Core.Curation.Data;
 using Rdmp.Core.Curation.Data.DataLoad;
 using Rdmp.Core.Curation.Data.Defaults;
 using Rdmp.Core.DataLoad.Engine.Checks.Checkers;
-using ReusableLibraryCode.Checks;
 using System.Linq;
+using Rdmp.Core.ReusableLibraryCode.Checks;
 using Tests.Common;
 
 namespace Rdmp.Core.Tests.Curation.Integration

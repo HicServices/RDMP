@@ -8,7 +8,7 @@ using System;
 using System.ComponentModel;
 using System.Windows.Forms;
 using NHunspell;
-using ReusableLibraryCode.Settings;
+using Rdmp.Core.ReusableLibraryCode.Settings;
 using ScintillaNET;
 
 namespace Rdmp.UI.ScintillaHelper

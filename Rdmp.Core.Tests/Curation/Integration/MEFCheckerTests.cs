@@ -9,7 +9,7 @@ using System.IO;
 using NUnit.Framework;
 using Rdmp.Core.Curation.Checks;
 using Rdmp.Core.Curation.Data;
-using ReusableLibraryCode.Checks;
+using Rdmp.Core.ReusableLibraryCode.Checks;
 using Tests.Common;
 
 namespace Rdmp.Core.Tests.Curation.Integration

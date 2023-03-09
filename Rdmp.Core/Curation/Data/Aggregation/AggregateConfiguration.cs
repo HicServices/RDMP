@@ -11,17 +11,17 @@ using System.Data.Common;
 using System.Linq;
 using System.Text.RegularExpressions;
 using FAnsi.Discovery.QuerySyntax;
-using MapsDirectlyToDatabaseTable;
-using MapsDirectlyToDatabaseTable.Injection;
 using Rdmp.Core.Curation.Data.Cohort;
 using Rdmp.Core.Curation.Data.Cohort.Joinables;
 using Rdmp.Core.Curation.FilterImporting.Construction;
+using Rdmp.Core.MapsDirectlyToDatabaseTable;
+using Rdmp.Core.MapsDirectlyToDatabaseTable.Injection;
 using Rdmp.Core.QueryBuilding;
 using Rdmp.Core.Repositories;
-using ReusableLibraryCode;
-using ReusableLibraryCode.Annotations;
-using ReusableLibraryCode.Checks;
-using ReusableLibraryCode.Settings;
+using Rdmp.Core.ReusableLibraryCode;
+using Rdmp.Core.ReusableLibraryCode.Annotations;
+using Rdmp.Core.ReusableLibraryCode.Checks;
+using Rdmp.Core.ReusableLibraryCode.Settings;
 
 namespace Rdmp.Core.Curation.Data.Aggregation
 {
@@ -477,7 +477,7 @@ namespace Rdmp.Core.Curation.Data.Aggregation
         public override string ToString()
         {
             //strip the cic section from the front
-            return Regex.Replace(Name, CohortIdentificationConfiguration.CICPrefix + @"\d+_?", "");
+            return Regex.Replace(Name, $@"{CohortIdentificationConfiguration.CICPrefix}\d+_?", "");
         }
 
         public bool ShouldBeReadOnly(out string reason)
@@ -523,12 +523,13 @@ namespace Rdmp.Core.Curation.Data.Aggregation
         public AggregateBuilder GetQueryBuilder(int? topX = null)
         {
             if(string.IsNullOrWhiteSpace(CountSQL))
-                throw new NotSupportedException("Cannot generate an AggregateBuilder because the AggregateConfiguration '" + this + "' has no Count SQL, usually this is the case for 'Cohort Set' Aggregates or 'Patient Index Table' Aggregates.  In either case you should use CohortQueryBuilder instead of AggregateBuilder");
+                throw new NotSupportedException(
+                    $"Cannot generate an AggregateBuilder because the AggregateConfiguration '{this}' has no Count SQL, usually this is the case for 'Cohort Set' Aggregates or 'Patient Index Table' Aggregates.  In either case you should use CohortQueryBuilder instead of AggregateBuilder");
 
             var allForcedJoins = ForcedJoins.ToArray();
 
             AggregateBuilder builder;
-            var limitationSQLIfAny = topX == null ? null : "TOP " + topX.Value;
+            var limitationSQLIfAny = topX == null ? null : $"TOP {topX.Value}";
 
             if (allForcedJoins.Any())
                 builder = new AggregateBuilder(limitationSQLIfAny, CountSQL, this, allForcedJoins);
@@ -621,7 +622,7 @@ namespace Rdmp.Core.Curation.Data.Aggregation
             try
             {
                 var qb = GetQueryBuilder();
-                notifier.OnCheckPerformed(new CheckEventArgs("successfully generated Aggregate SQL:" + qb.SQL,
+                notifier.OnCheckPerformed(new CheckEventArgs($"successfully generated Aggregate SQL:{qb.SQL}",
                     CheckResult.Success));
             }
             catch (Exception e)
@@ -750,14 +751,14 @@ namespace Rdmp.Core.Curation.Data.Aggregation
         public override void DeleteInDatabase()
         {
             var container = GetCohortAggregateContainerIfAny();
-               
-            if(container != null)
-                container.RemoveChild(this);
+
+            container?.RemoveChild(this);
 
             var isAJoinable = Repository.GetAllObjectsWithParent<JoinableCohortAggregateConfiguration>(this).SingleOrDefault();
             if(isAJoinable != null)
                 if (isAJoinable.Users.Any())
-                    throw new NotSupportedException("Cannot Delete AggregateConfiguration '" + this + "' because it is a Joinable Patient Index Table AND it has join users.  You must first remove the join usages and then you can delete it.");
+                    throw new NotSupportedException(
+                        $"Cannot Delete AggregateConfiguration '{this}' because it is a Joinable Patient Index Table AND it has join users.  You must first remove the join usages and then you can delete it.");
                 else
                     isAJoinable.DeleteInDatabase();
 

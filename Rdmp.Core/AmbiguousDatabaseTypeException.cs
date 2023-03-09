@@ -10,7 +10,7 @@ using FAnsi;
 namespace Rdmp.Core
 {
     /// <summary>
-    /// Thrown when a piece of code needs to know what <see cref="DatabaseType"/> is being targetted but no determination
+    /// Thrown when a piece of code needs to know what <see cref="DatabaseType"/> is being targeted but no determination
     /// can be made either because there are no objects of a known <see cref="DatabaseType"/> or because there are objects
     /// of multiple different <see cref="DatabaseType"/>.
     /// </summary>

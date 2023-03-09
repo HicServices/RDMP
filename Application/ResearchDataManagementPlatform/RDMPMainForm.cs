@@ -11,9 +11,11 @@ using System.Linq;
 using System.Reflection;
 using System.Text;
 using System.Windows.Forms;
-using MapsDirectlyToDatabaseTable;
 using Rdmp.Core.Curation.Data;
+using Rdmp.Core.MapsDirectlyToDatabaseTable;
 using Rdmp.Core.Repositories;
+using Rdmp.Core.ReusableLibraryCode.Checks;
+using Rdmp.Core.ReusableLibraryCode.Settings;
 using Rdmp.UI;
 using Rdmp.UI.Refreshing;
 using Rdmp.UI.SimpleDialogs;
@@ -25,10 +27,6 @@ using ResearchDataManagementPlatform.WindowManagement;
 using ResearchDataManagementPlatform.WindowManagement.ContentWindowTracking.Persistence;
 using ResearchDataManagementPlatform.WindowManagement.ExtenderFunctionality;
 using ResearchDataManagementPlatform.WindowManagement.Licenses;
-using ReusableLibraryCode.Checks;
-using ReusableLibraryCode.Settings;
-
-
 using WeifenLuo.WinFormsUI.Docking;
 
 namespace ResearchDataManagementPlatform

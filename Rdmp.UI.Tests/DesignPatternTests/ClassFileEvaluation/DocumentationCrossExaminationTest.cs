@@ -17,17 +17,17 @@ namespace Rdmp.UI.Tests.DesignPatternTests.ClassFileEvaluation
     class DocumentationCrossExaminationTest
     {
         private readonly DirectoryInfo _slndir;
-        Regex matchComments = new Regex(@"///[^;\r\n]*");
+        private static readonly Regex MatchComments = new Regex(@"///[^;\r\n]*",RegexOptions.Compiled|RegexOptions.CultureInvariant);
 
         private string[] _mdFiles;
-        Regex matchMdReferences = new Regex(@"`(.*)`");
+        private static readonly Regex MatchMdReferences = new Regex(@"`(.*)`",RegexOptions.Compiled|RegexOptions.CultureInvariant);
 
-        public const bool ReWriteMarkdownToReferenceGlossary = true;
+        private const bool ReWriteMarkdownToReferenceGlossary = true;
 
         //words that are in Pascal case and you can use in comments despite not being in the codebase... this is an ironic variable to be honest
         //since the very fact that you add something to _ignorelist means that it is in the codebase after all!
-        #region Ignorelist Terms
-        private string[] _ignorelist = new []
+        #region IgnoreList Terms
+        private static readonly HashSet<string> IgnoreList = new()
         {
         "ExecuteAggregateGraph",
  "ExtractMetadata",
@@ -279,7 +279,7 @@ namespace Rdmp.UI.Tests.DesignPatternTests.ClassFileEvaluation
 
         public void FindProblems(List<string> csFilesFound)
         {
-            //find all non coment code and extract all unique tokens
+            //find all non comment code and extract all unique tokens
 
             //find all .md files and extract all `` code blocks
 
@@ -309,7 +309,7 @@ namespace Rdmp.UI.Tests.DesignPatternTests.ClassFileEvaluation
                 foreach (string line in File.ReadAllLines(file))
                 {
                     //if it is a comment
-                    if (matchComments.IsMatch(line))
+                    if (MatchComments.IsMatch(line))
                     {
                         if (isDesignerFile)
                             continue;
@@ -340,7 +340,7 @@ namespace Rdmp.UI.Tests.DesignPatternTests.ClassFileEvaluation
                 fileCommentTokens.Add(mdFile,new HashSet<string>());
                 var fileContents = File.ReadAllText(mdFile);
                 
-                foreach (Match m in matchMdReferences.Matches(fileContents))
+                foreach (Match m in MatchMdReferences.Matches(fileContents))
                     foreach (Match word in Regex.Matches(m.Groups[1].Value, @"([A-Z]\w+){2,}"))
                         fileCommentTokens[mdFile].Add(word.Value);
 
@@ -354,9 +354,9 @@ namespace Rdmp.UI.Tests.DesignPatternTests.ClassFileEvaluation
             {
                 foreach (string s in kvp.Value)
                 {
-                    if(!codeTokens.Contains(s) && !codeTokens.Contains("ExecuteCommand"+s))
+                    if(!codeTokens.Contains(s) && !codeTokens.Contains($"ExecuteCommand{s}"))
                     {
-                        if (_ignorelist.Contains(s))
+                        if (IgnoreList.Contains(s))
                             continue;
 
                         //it's SHOUTY TEXT
@@ -370,7 +370,8 @@ namespace Rdmp.UI.Tests.DesignPatternTests.ClassFileEvaluation
                                 continue;
                         }
                         
-                        problems.Add("FATAL PROBLEM: File '" + kvp.Key +"' talks about something which isn't in the codebase, called a:" +Environment.NewLine + s);
+                        problems.Add(
+                            $"FATAL PROBLEM: File '{kvp.Key}' talks about something which isn't in the codebase, called a:{Environment.NewLine}{s}");
                         
                     }
                 }
@@ -380,7 +381,7 @@ namespace Rdmp.UI.Tests.DesignPatternTests.ClassFileEvaluation
             {
                 Console.WriteLine("Found problem words in comments (Scroll down to see by file then if you think they are fine add them to DocumentationCrossExaminationTest._ignorelist):");
                 foreach (var pLine in problems.Where(l=>l.Contains('\n')).Select(p => p.Split('\n')))
-                    Console.WriteLine("\"" + pLine[1] + "\",");
+                    Console.WriteLine($"\"{pLine[1]}\",");
                 
             }
 
@@ -394,7 +395,7 @@ namespace Rdmp.UI.Tests.DesignPatternTests.ClassFileEvaluation
         {
             string codeBlocks = Path.Combine(TestContext.CurrentContext.TestDirectory,"../../../DesignPatternTests/MarkdownCodeBlockTests.cs");
 
-            Console.WriteLine("Starting " + mdFile);
+            Console.WriteLine($"Starting {mdFile}");
 
             var codeBlocksContent = File.ReadAllText(codeBlocks);
 
@@ -448,10 +449,10 @@ namespace Rdmp.UI.Tests.DesignPatternTests.ClassFileEvaluation
                 Assert.AreEqual(code.Trim(), docs.Trim(),        
                     $"Code in the documentation markdown (actual) did not match the corresponding compiled code (expected) for code guid {kvp.Key} markdown file was {mdFile} and code file was {codeBlocks}");
 
-                Console.WriteLine("Validated markdown block " + kvp.Key);
+                Console.WriteLine($"Validated markdown block {kvp.Key}");
             }
             
-            Console.WriteLine("Validated " + markdownCodeBlocks.Count + " markdown blocks");
+            Console.WriteLine($"Validated {markdownCodeBlocks.Count} markdown blocks");
         }
 
         private void EnsureMaximumGlossaryUse(string mdFile, List<string> problems)
@@ -519,7 +520,7 @@ namespace Rdmp.UI.Tests.DesignPatternTests.ClassFileEvaluation
                             string relPath = diff.OriginalString;
 
                             if (!relPath.StartsWith("."))
-                                relPath = "./" + relPath;
+                                relPath = $"./{relPath}";
 
                             string suggestedLine = $"[{match.Value}]: {relPath}#{match.Value}";
 

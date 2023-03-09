@@ -7,7 +7,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using NUnit.Framework;
-using ReusableLibraryCode.Checks;
+using Rdmp.Core.ReusableLibraryCode.Checks;
 using Tests.Common.Scenarios;
 
 namespace Rdmp.Core.Tests.DataExport.Cohort

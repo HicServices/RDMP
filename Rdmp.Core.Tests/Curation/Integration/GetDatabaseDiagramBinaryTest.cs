@@ -7,7 +7,7 @@
 using System;
 using System.Data.Common;
 using NUnit.Framework;
-using ReusableLibraryCode;
+using Rdmp.Core.ReusableLibraryCode;
 using Tests.Common;
 
 namespace Rdmp.Core.Tests.Curation.Integration

@@ -6,10 +6,10 @@
 
 using System;
 using System.Collections.Generic;
-using MapsDirectlyToDatabaseTable;
 using Rdmp.Core.Curation.Data.DataLoad;
 using Rdmp.Core.Curation.Data.Pipelines;
 using Rdmp.Core.Logging.PastEvents;
+using Rdmp.Core.MapsDirectlyToDatabaseTable;
 
 namespace Rdmp.Core.Curation.Data.Cache
 {

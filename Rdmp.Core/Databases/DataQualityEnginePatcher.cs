@@ -8,7 +8,7 @@ using System;
 using System.Collections.Generic;
 using System.Text;
 using FAnsi.Discovery;
-using MapsDirectlyToDatabaseTable.Versioning;
+using Rdmp.Core.MapsDirectlyToDatabaseTable.Versioning;
 using TypeGuesser;
 
 namespace Rdmp.Core.Databases

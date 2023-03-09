@@ -4,20 +4,19 @@
 // RDMP is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License for more details.
 // You should have received a copy of the GNU General Public License along with RDMP. If not, see <https://www.gnu.org/licenses/>.
 
-using MapsDirectlyToDatabaseTable.Revertable;
+using Rdmp.Core.MapsDirectlyToDatabaseTable.Revertable;
 
-namespace MapsDirectlyToDatabaseTable
+namespace Rdmp.Core.MapsDirectlyToDatabaseTable;
+
+/// <summary>
+/// Interface for database object classes with a deprecated status flag
+/// </summary>
+public interface IMightBeDeprecated:IRevertable
 {
-    /// <summary>
-    /// Interface for database object classes with a deprecated status flag
-    /// </summary>
-    public interface IMightBeDeprecated:IRevertable
-    {
 
-        /// <summary>
-        /// Bit flag indicating whether the object should be considered Deprecated (i.e. do not use anymore).  This is preferred to deleting it.  The implications
-        /// of this are that it no longer appears in UIs by default and that warnings may appear when trying to interact with it.
-        /// </summary>
-        bool IsDeprecated { get; set; }
-    }
+    /// <summary>
+    /// Bit flag indicating whether the object should be considered Deprecated (i.e. do not use anymore).  This is preferred to deleting it.  The implications
+    /// of this are that it no longer appears in UIs by default and that warnings may appear when trying to interact with it.
+    /// </summary>
+    bool IsDeprecated { get; set; }
 }

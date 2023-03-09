@@ -7,8 +7,8 @@
 using System;
 using System.Collections.Generic;
 using System.Data.Common;
-using MapsDirectlyToDatabaseTable;
 using Rdmp.Core.Curation.Data.Referencing;
+using Rdmp.Core.MapsDirectlyToDatabaseTable;
 using Rdmp.Core.Repositories;
 
 namespace Rdmp.Core.Curation.Data.ImportExport

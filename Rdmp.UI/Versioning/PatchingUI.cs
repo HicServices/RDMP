@@ -9,9 +9,9 @@ using System.ComponentModel;
 using System.Drawing;
 using System.Windows.Forms;
 using FAnsi.Discovery;
-using MapsDirectlyToDatabaseTable;
-using MapsDirectlyToDatabaseTable.Versioning;
-using ReusableLibraryCode.Checks;
+using Rdmp.Core.MapsDirectlyToDatabaseTable;
+using Rdmp.Core.MapsDirectlyToDatabaseTable.Versioning;
+using Rdmp.Core.ReusableLibraryCode.Checks;
 using Rdmp.UI.SimpleDialogs.SqlDialogs;
 
 

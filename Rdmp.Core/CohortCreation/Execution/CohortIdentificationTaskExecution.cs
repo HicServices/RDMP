@@ -10,7 +10,7 @@ using System.Data.Common;
 using System.Threading;
 using System.Threading.Tasks;
 using FAnsi.Discovery;
-using ReusableLibraryCode.DataAccess;
+using Rdmp.Core.ReusableLibraryCode.DataAccess;
 
 namespace Rdmp.Core.CohortCreation.Execution
 {

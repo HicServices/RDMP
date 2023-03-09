@@ -6,7 +6,7 @@
 
 using System;
 using Rdmp.Core.DataLoad.Engine.Job.Scheduling;
-using ReusableLibraryCode.Progress;
+using Rdmp.Core.ReusableLibraryCode.Progress;
 
 namespace Rdmp.Core.DataLoad.Modules.LoadProgressUpdating
 {

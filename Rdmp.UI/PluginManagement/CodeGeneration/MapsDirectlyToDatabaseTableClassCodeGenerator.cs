@@ -7,11 +7,12 @@
 using System.Linq;
 using System.Text;
 using FAnsi.Discovery;
+using Rdmp.Core.MapsDirectlyToDatabaseTable;
 
 namespace Rdmp.UI.PluginManagement.CodeGeneration
 {
     /// <summary>
-    /// Generates template code for a <see cref="MapsDirectlyToDatabaseTable.IMapsDirectlyToDatabaseTable"/> implementation class which
+    /// Generates template code for a <see cref="IMapsDirectlyToDatabaseTable"/> implementation class which
     /// models the data in the table (like a budget version of entity framework).
     /// </summary>
     public class MapsDirectlyToDatabaseTableClassCodeGenerator

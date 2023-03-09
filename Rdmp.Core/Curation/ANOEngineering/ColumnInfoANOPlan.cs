@@ -13,7 +13,7 @@ using Rdmp.Core.Curation.Data;
 using Rdmp.Core.Curation.Data.DataLoad;
 using Rdmp.Core.Curation.Data.Serialization;
 using Rdmp.Core.DataLoad.Triggers;
-using ReusableLibraryCode.Checks;
+using Rdmp.Core.ReusableLibraryCode.Checks;
 using TypeGuesser;
 
 namespace Rdmp.Core.Curation.ANOEngineering

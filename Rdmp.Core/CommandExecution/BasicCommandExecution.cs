@@ -12,17 +12,17 @@ using System.Reflection;
 using System.Threading;
 using System.Threading.Tasks;
 using FAnsi.Discovery;
-using MapsDirectlyToDatabaseTable;
 using Rdmp.Core.CommandExecution.AtomicCommands;
 using Rdmp.Core.CommandLine.Interactive.Picking;
 using Rdmp.Core.Curation.Data;
+using Rdmp.Core.MapsDirectlyToDatabaseTable;
+using Rdmp.Core.MapsDirectlyToDatabaseTable.Revertable;
 using Rdmp.Core.Repositories.Construction;
-using ReusableLibraryCode;
-using ReusableLibraryCode.Checks;
-using ReusableLibraryCode.Comments;
-using ReusableLibraryCode.Icons.IconProvision;
+using Rdmp.Core.ReusableLibraryCode;
 using SixLabors.ImageSharp.PixelFormats;
-using MapsDirectlyToDatabaseTable.Revertable;
+using Rdmp.Core.ReusableLibraryCode.Checks;
+using Rdmp.Core.ReusableLibraryCode.Comments;
+using Rdmp.Core.ReusableLibraryCode.Icons.IconProvision;
 
 namespace Rdmp.Core.CommandExecution
 {
@@ -32,7 +32,7 @@ namespace Rdmp.Core.CommandExecution
     /// constructor).  Override Execute to provide the implementation logic of your command but make sure to leave the base.Execute() call in first to ensure 
     /// IsImpossible is respected in the unlikely event that some code or user attempts to execute an impossible command.
     /// 
-    /// <para>Override GetCommandHelp and GetCommandName to change the persentation layer of the command (if applicable).</para>
+    /// <para>Override GetCommandHelp and GetCommandName to change the presentation layer of the command (if applicable).</para>
     /// </summary>
     public abstract class BasicCommandExecution : ICommandExecution,IAtomicCommand
     {

@@ -9,8 +9,8 @@ using Rdmp.Core.CommandExecution;
 using Rdmp.Core.DataExport.Checks;
 using Rdmp.Core.DataExport.Data;
 using Rdmp.Core.DataExport.DataExtraction.Pipeline.Destinations;
-using ReusableLibraryCode.Checks;
 using System;
+using Rdmp.Core.ReusableLibraryCode.Checks;
 using Tests.Common.Scenarios;
 
 namespace Rdmp.Core.Tests.DataExport.Data

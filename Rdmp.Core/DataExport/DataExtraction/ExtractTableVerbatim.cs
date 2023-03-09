@@ -11,7 +11,7 @@ using System.Linq;
 using FAnsi.Discovery;
 using Rdmp.Core.DataExport.DataExtraction.FileOutputFormats;
 using Rdmp.Core.DataViewing;
-using ReusableLibraryCode.DataAccess;
+using Rdmp.Core.ReusableLibraryCode.DataAccess;
 
 namespace Rdmp.Core.DataExport.DataExtraction
 {

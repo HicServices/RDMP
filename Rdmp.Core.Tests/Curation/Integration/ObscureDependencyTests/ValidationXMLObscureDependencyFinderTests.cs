@@ -7,15 +7,15 @@
 using System;
 using System.Linq;
 using System.Text.RegularExpressions;
-using MapsDirectlyToDatabaseTable.Versioning;
 using NUnit.Framework;
 using Rdmp.Core.Curation.Data;
+using Rdmp.Core.MapsDirectlyToDatabaseTable.Versioning;
+using Rdmp.Core.ReusableLibraryCode.Checks;
 using Rdmp.Core.Startup;
 using Rdmp.Core.Validation;
 using Rdmp.Core.Validation.Constraints.Secondary;
 using Rdmp.Core.Validation.Dependency;
 using Rdmp.Core.Validation.Dependency.Exceptions;
-using ReusableLibraryCode.Checks;
 using Tests.Common;
 using Tests.Common.Scenarios;
 

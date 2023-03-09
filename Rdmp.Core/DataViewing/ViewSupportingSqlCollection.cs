@@ -7,9 +7,9 @@
 using FAnsi.Discovery.QuerySyntax;
 using Rdmp.Core.Curation.Data;
 using Rdmp.Core.Curation.Data.Dashboarding;
-using ReusableLibraryCode.DataAccess;
 using System.Collections.Generic;
 using System.Linq;
+using Rdmp.Core.ReusableLibraryCode.DataAccess;
 
 namespace Rdmp.Core.DataViewing
 {

@@ -8,7 +8,7 @@ using System.Collections.Generic;
 using System.Data.Common;
 using FAnsi.Discovery.QuerySyntax;
 using FAnsi.Discovery.QuerySyntax.Aggregation;
-using MapsDirectlyToDatabaseTable;
+using Rdmp.Core.MapsDirectlyToDatabaseTable;
 using Rdmp.Core.Repositories;
 
 namespace Rdmp.Core.Curation.Data.Aggregation

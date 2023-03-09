@@ -18,7 +18,7 @@ using Rdmp.Core.Curation.Data.Serialization;
 using Rdmp.Core.DataLoad.Modules.Mutilators.Dilution.Operations;
 using Rdmp.Core.DataLoad.Triggers;
 using Rdmp.Core.QueryBuilding;
-using ReusableLibraryCode.Checks;
+using Rdmp.Core.ReusableLibraryCode.Checks;
 using Tests.Common;
 using Tests.Common.Scenarios;
 using TypeGuesser;

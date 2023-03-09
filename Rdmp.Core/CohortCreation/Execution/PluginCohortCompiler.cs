@@ -6,7 +6,6 @@
 
 using FAnsi.Discovery;
 using FAnsi.Naming;
-using MapsDirectlyToDatabaseTable;
 using Rdmp.Core.Curation.Data;
 using Rdmp.Core.Curation.Data.Aggregation;
 using Rdmp.Core.Curation.Data.Spontaneous;
@@ -17,6 +16,7 @@ using System.Collections.Generic;
 using System.Data;
 using System.Linq;
 using System.Threading;
+using Rdmp.Core.MapsDirectlyToDatabaseTable;
 using TypeGuesser;
 
 namespace Rdmp.Core.CohortCreation.Execution

@@ -8,10 +8,10 @@ using Microsoft.Data.SqlClient;
 using CommandLine;
 using Rdmp.Core.Repositories;
 using Rdmp.Core.Startup;
-using ReusableLibraryCode.Checks;
 using NLog;
 using System.IO;
 using System;
+using Rdmp.Core.ReusableLibraryCode.Checks;
 
 namespace Rdmp.Core.CommandLine.Options
 {

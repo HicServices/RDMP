@@ -6,18 +6,17 @@
 
 using System;
 
-namespace MapsDirectlyToDatabaseTable
-{
-    /// <summary>
-    /// Describes an event taking place on a database <see cref="Object"/>
-    /// </summary>
-    public class IMapsDirectlyToDatabaseTableEventArgs : EventArgs
-    {
-        public IMapsDirectlyToDatabaseTable Object { get; }
+namespace Rdmp.Core.MapsDirectlyToDatabaseTable;
 
-        public IMapsDirectlyToDatabaseTableEventArgs(IMapsDirectlyToDatabaseTable o)
-        {
-            Object = o;
-        }
+/// <summary>
+/// Describes an event taking place on a database <see cref="Object"/>
+/// </summary>
+public class IMapsDirectlyToDatabaseTableEventArgs : EventArgs
+{
+    public IMapsDirectlyToDatabaseTable Object { get; }
+
+    public IMapsDirectlyToDatabaseTableEventArgs(IMapsDirectlyToDatabaseTable o)
+    {
+        Object = o;
     }
 }

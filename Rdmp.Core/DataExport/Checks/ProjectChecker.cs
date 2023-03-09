@@ -9,7 +9,7 @@ using System.IO;
 using System.Linq;
 using Rdmp.Core.CommandExecution;
 using Rdmp.Core.DataExport.Data;
-using ReusableLibraryCode.Checks;
+using Rdmp.Core.ReusableLibraryCode.Checks;
 
 namespace Rdmp.Core.DataExport.Checks
 {

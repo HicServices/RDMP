@@ -7,7 +7,7 @@
 using BrightIdeasSoftware;
 using Rdmp.Core.Curation.Data;
 using Rdmp.Core.Providers;
-using ReusableLibraryCode.Settings;
+using Rdmp.Core.ReusableLibraryCode.Settings;
 
 namespace Rdmp.UI.Collections.Providers.Filtering
 {

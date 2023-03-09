@@ -9,12 +9,12 @@ using Rdmp.Core.Curation.Data;
 using Rdmp.Core.Curation.Data.Cohort;
 using Rdmp.Core.DataExport.Data;
 using Rdmp.Core.Providers;
-using ReusableLibraryCode.Checks;
-using ReusableLibraryCode.Settings;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading;
+using Rdmp.Core.ReusableLibraryCode.Checks;
+using Rdmp.Core.ReusableLibraryCode.Settings;
 using Tests.Common;
 
 namespace Rdmp.Core.Tests.Providers

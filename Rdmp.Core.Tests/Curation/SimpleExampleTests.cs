@@ -9,7 +9,7 @@ using System.Linq;
 using FAnsi;
 using NUnit.Framework;
 using Rdmp.Core.Curation.Data;
-using ReusableLibraryCode.DataAccess;
+using Rdmp.Core.ReusableLibraryCode.DataAccess;
 using Tests.Common;
 
 namespace Rdmp.Core.Tests.Curation

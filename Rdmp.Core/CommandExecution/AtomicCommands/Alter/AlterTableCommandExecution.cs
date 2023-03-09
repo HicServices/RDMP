@@ -7,9 +7,9 @@
 using FAnsi.Discovery;
 using Rdmp.Core.Curation;
 using Rdmp.Core.Curation.Data;
-using ReusableLibraryCode.Checks;
-using ReusableLibraryCode.DataAccess;
 using System;
+using Rdmp.Core.ReusableLibraryCode.Checks;
+using Rdmp.Core.ReusableLibraryCode.DataAccess;
 
 namespace Rdmp.Core.CommandExecution.AtomicCommands.Alter
 {

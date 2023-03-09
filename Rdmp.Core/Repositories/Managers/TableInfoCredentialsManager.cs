@@ -10,8 +10,8 @@ using System.Data.Common;
 using System.Linq;
 using Rdmp.Core.Curation.Data;
 using Rdmp.Core.Providers.Nodes;
-using ReusableLibraryCode;
-using ReusableLibraryCode.DataAccess;
+using Rdmp.Core.ReusableLibraryCode;
+using Rdmp.Core.ReusableLibraryCode.DataAccess;
 
 namespace Rdmp.Core.Repositories.Managers
 {

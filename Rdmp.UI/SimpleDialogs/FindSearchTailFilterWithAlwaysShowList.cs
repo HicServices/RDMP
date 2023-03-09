@@ -5,7 +5,6 @@
 // You should have received a copy of the GNU General Public License along with RDMP. If not, see <https://www.gnu.org/licenses/>.
 
 using BrightIdeasSoftware;
-using MapsDirectlyToDatabaseTable;
 using Rdmp.Core.CommandExecution;
 using Rdmp.Core.Providers;
 using System;
@@ -13,6 +12,7 @@ using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading;
+using Rdmp.Core.MapsDirectlyToDatabaseTable;
 
 namespace Rdmp.UI.SimpleDialogs
 {

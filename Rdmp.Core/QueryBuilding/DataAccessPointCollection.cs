@@ -10,7 +10,7 @@ using System.Linq;
 using System.Security.Cryptography;
 using FAnsi;
 using FAnsi.Discovery;
-using ReusableLibraryCode.DataAccess;
+using Rdmp.Core.ReusableLibraryCode.DataAccess;
 
 namespace Rdmp.Core.QueryBuilding
 {

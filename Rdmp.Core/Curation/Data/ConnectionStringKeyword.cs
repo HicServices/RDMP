@@ -9,10 +9,10 @@ using System.Collections.Generic;
 using System.Data.Common;
 using FAnsi;
 using FAnsi.Discovery.ConnectionStringDefaults;
-using MapsDirectlyToDatabaseTable;
+using Rdmp.Core.MapsDirectlyToDatabaseTable;
 using Rdmp.Core.Repositories;
-using ReusableLibraryCode.Annotations;
-using ReusableLibraryCode.Checks;
+using Rdmp.Core.ReusableLibraryCode.Annotations;
+using Rdmp.Core.ReusableLibraryCode.Checks;
 
 namespace Rdmp.Core.Curation.Data
 {

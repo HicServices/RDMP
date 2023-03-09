@@ -12,14 +12,14 @@ using System.Linq;
 using System.Threading.Tasks;
 using Terminal.Gui;
 using Rdmp.Core.CommandLine.Runners;
-using ReusableLibraryCode.Progress;
 using Rdmp.Core.CommandExecution;
 using Rdmp.Core.Curation.Data.Pipelines;
 using Rdmp.Core.DataFlowPipeline.Events;
 using Rdmp.Core.DataFlowPipeline;
 using Rdmp.Core.Repositories;
-using ReusableLibraryCode.Checks;
-using ReusableLibraryCode.Settings;
+using Rdmp.Core.ReusableLibraryCode.Checks;
+using Rdmp.Core.ReusableLibraryCode.Progress;
+using Rdmp.Core.ReusableLibraryCode.Settings;
 
 // The .Designer.cs file was built with https://github.com/tznind/TerminalGuiDesigner
 // Use that tool for editing it

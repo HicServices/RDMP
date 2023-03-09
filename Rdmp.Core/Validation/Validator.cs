@@ -15,11 +15,11 @@ using System.Xml;
 using System.Xml.Serialization;
 using Rdmp.Core.Curation.Data;
 using Rdmp.Core.Repositories;
+using Rdmp.Core.ReusableLibraryCode.Checks;
 using Rdmp.Core.Validation.Constraints;
 using Rdmp.Core.Validation.Constraints.Primary;
 using Rdmp.Core.Validation.Constraints.Secondary;
 using Rdmp.Core.Validation.Constraints.Secondary.Predictor;
-using ReusableLibraryCode.Checks;
 
 namespace Rdmp.Core.Validation
 {

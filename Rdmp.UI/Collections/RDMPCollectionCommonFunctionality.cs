@@ -12,15 +12,18 @@ using System.Linq;
 using System.Text;
 using System.Windows.Forms;
 using BrightIdeasSoftware;
-using MapsDirectlyToDatabaseTable;
 using Rdmp.Core;
 using Rdmp.Core.CommandExecution;
 using Rdmp.Core.CommandExecution.AtomicCommands;
 using Rdmp.Core.Curation.Data;
 using Rdmp.Core.Icons.IconProvision;
+using Rdmp.Core.MapsDirectlyToDatabaseTable;
 using Rdmp.Core.Providers;
 using Rdmp.Core.Repositories;
 using Rdmp.Core.Repositories.Construction;
+using Rdmp.Core.ReusableLibraryCode.Checks;
+using Rdmp.Core.ReusableLibraryCode.Icons.IconProvision;
+using Rdmp.Core.ReusableLibraryCode.Settings;
 using Rdmp.UI.Collections.Providers;
 using Rdmp.UI.Collections.Providers.Copying;
 using Rdmp.UI.CommandExecution.AtomicCommands;
@@ -30,9 +33,6 @@ using Rdmp.UI.Menus;
 using Rdmp.UI.Refreshing;
 using Rdmp.UI.Theme;
 using Rdmp.UI.TreeHelper;
-using ReusableLibraryCode.Checks;
-using ReusableLibraryCode.Icons.IconProvision;
-using ReusableLibraryCode.Settings;
 
 namespace Rdmp.UI.Collections
 {

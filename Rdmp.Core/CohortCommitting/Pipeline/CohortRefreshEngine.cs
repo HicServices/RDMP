@@ -7,7 +7,7 @@
 using Rdmp.Core.CohortCommitting.Pipeline.Sources;
 using Rdmp.Core.DataExport.Data;
 using Rdmp.Core.DataFlowPipeline;
-using ReusableLibraryCode.Progress;
+using Rdmp.Core.ReusableLibraryCode.Progress;
 
 namespace Rdmp.Core.CohortCommitting.Pipeline
 {

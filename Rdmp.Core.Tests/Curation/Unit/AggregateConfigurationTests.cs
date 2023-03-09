@@ -6,8 +6,8 @@
 
 using NUnit.Framework;
 using Rdmp.Core.Curation.Data.Aggregation;
-using ReusableLibraryCode.Settings;
 using System.Data;
+using Rdmp.Core.ReusableLibraryCode.Settings;
 using Tests.Common;
 
 namespace Rdmp.Core.Tests.Curation.Unit

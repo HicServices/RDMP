@@ -10,13 +10,13 @@ using System.Net;
 using System.Net.Http;
 using System.Text;
 using System.Threading.Tasks;
-using MapsDirectlyToDatabaseTable;
 using Rdmp.Core.Curation.Data.ImportExport;
 using Rdmp.Core.Curation.Data.Remoting;
 using Rdmp.Core.Curation.Data.Serialization;
+using Rdmp.Core.MapsDirectlyToDatabaseTable;
 using Rdmp.Core.Repositories;
+using Rdmp.Core.ReusableLibraryCode.Progress;
 using Rdmp.Core.Sharing.Dependency.Gathering;
-using ReusableLibraryCode.Progress;
 
 namespace Rdmp.Core.Sharing.Transmission
 {

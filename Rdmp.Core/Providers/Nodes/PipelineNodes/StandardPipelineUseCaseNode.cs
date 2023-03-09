@@ -7,8 +7,8 @@
 using System;
 using System.Collections.Generic;
 using Rdmp.Core.Curation.Data.Pipelines;
-using ReusableLibraryCode;
-using ReusableLibraryCode.Comments;
+using Rdmp.Core.ReusableLibraryCode;
+using Rdmp.Core.ReusableLibraryCode.Comments;
 
 namespace Rdmp.Core.Providers.Nodes.PipelineNodes
 {

@@ -11,7 +11,7 @@ using System.Reflection;
 using System.Text;
 using Rdmp.Core.Curation.Data.Pipelines;
 using Rdmp.Core.DataFlowPipeline.Requirements.Exceptions;
-using ReusableLibraryCode.Progress;
+using Rdmp.Core.ReusableLibraryCode.Progress;
 
 namespace Rdmp.Core.DataFlowPipeline.Requirements
 {

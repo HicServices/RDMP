@@ -9,10 +9,10 @@ using NUnit.Framework;
 using Rdmp.Core.DataExport.DataExtraction.Pipeline.Destinations;
 using Rdmp.Core.DataFlowPipeline;
 using Rdmp.Core.Logging;
-using ReusableLibraryCode.Progress;
 using System;
 using System.Data;
 using System.IO;
+using Rdmp.Core.ReusableLibraryCode.Progress;
 using Tests.Common.Scenarios;
 
 namespace Rdmp.Core.Tests.DataExport.DataExtraction

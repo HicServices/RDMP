@@ -18,8 +18,8 @@ using Rdmp.Core.DataFlowPipeline.Requirements;
 using Rdmp.Core.Logging;
 using Rdmp.Core.Reports.ExtractionTime;
 using Rdmp.Core.Repositories;
-using ReusableLibraryCode;
-using ReusableLibraryCode.Progress;
+using Rdmp.Core.ReusableLibraryCode;
+using Rdmp.Core.ReusableLibraryCode.Progress;
 
 namespace Rdmp.Core.DataExport.DataExtraction.Pipeline
 {

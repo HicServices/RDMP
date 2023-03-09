@@ -6,10 +6,12 @@
 
 using System;
 using CommandLine;
-using MapsDirectlyToDatabaseTable;
 using Rdmp.Core.CommandLine.Options;
+using Rdmp.Core.MapsDirectlyToDatabaseTable;
 using Rdmp.Core.Repositories;
 using Rdmp.Core.Startup;
+using YamlDotNet.Core;
+using Parser = CommandLine.Parser;
 
 namespace Rdmp.Core.CommandExecution.AtomicCommands.Automation
 {
@@ -45,17 +47,14 @@ namespace Rdmp.Core.CommandExecution.AtomicCommands.Automation
         /// <returns></returns>
         public string GetCommandText(bool argsOnly = false)
         {
-            using(Parser p = new Parser())
-            {
-                var options = CommandGetter();
+            using var p = new Parser();
+            var options = CommandGetter();
 
-                PopulateConnectionStringOptions(options);
+            PopulateConnectionStringOptions(options);
 
-                if (argsOnly)
-                    return p.FormatCommandLine(options);
-
-                return AutomationServiceExecutable + " " + p.FormatCommandLine(options);
-            }
+            return argsOnly
+                ? p.FormatCommandLine(options)
+                : $"{AutomationServiceExecutable} {p.FormatCommandLine(options)}";
         }
 
         private void PopulateConnectionStringOptions(RDMPCommandLineOptions options)
