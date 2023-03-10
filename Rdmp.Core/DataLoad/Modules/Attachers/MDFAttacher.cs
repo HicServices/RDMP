@@ -7,6 +7,7 @@
 using System;
 using Microsoft.Data.SqlClient;
 using System.IO;
+using System.Linq;
 using Rdmp.Core.Curation.Data;
 using Rdmp.Core.DataFlowPipeline;
 using Rdmp.Core.DataLoad.Engine.Attachers;
@@ -129,14 +130,6 @@ public class MDFAttacher : Attacher,IPluginAttacher
         {
             listener.OnNotify(this, new NotifyEventArgs(ProgressEventType.Error,
                 $"Could not attach file {_locations.AttachMdfPath} to database", e));
-            try
-            {
-                DeleteFilesIfExist();
-            }
-            catch (Exception exception)
-            {
-                listener.OnNotify(this, new NotifyEventArgs(ProgressEventType.Error, "File Deletion (in cleanup phase - post failure) did not succeed either ", exception));
-            }
 
             return ExitCodeType.Error;
         }
@@ -165,18 +158,8 @@ public class MDFAttacher : Attacher,IPluginAttacher
         {
             listener.OnNotify(this, new NotifyEventArgs(ProgressEventType.Error,
                 $"Could not attach file {_locations.AttachMdfPath} to database", e));
-            try
-            {
-                DeleteFilesIfExist();
-            }
-            catch (Exception exception)
-            {
-                listener.OnNotify(this, new NotifyEventArgs(ProgressEventType.Error, "File Deletion (in cleanup phase - post failure) did not succeed either ", exception));
-            }
-
             return ExitCodeType.Error;
         }
-
 
         return ExitCodeType.Success;
 
@@ -201,7 +184,9 @@ public class MDFAttacher : Attacher,IPluginAttacher
 
             _dbInfo.Drop();
 
-            DeleteFilesIfExist();
+            // Only delete the copied file if we successfully extracted the content first, to save ChrisH lots of re-copying...
+            if (exitCode==ExitCodeType.Success)
+                DeleteFilesIfExist();
         }
         catch (Exception e)
         {
@@ -219,22 +204,60 @@ public class MDFAttacher : Attacher,IPluginAttacher
             File.Delete(_locations.CopyToMdf);
     }
 
+    /// <summary>
+    /// Determine if two files are 'similar' - timestamps, sizes, first and last 4K
+    /// </summary>
+    /// <param name="pathA"></param>
+    /// <param name="pathB"></param>
+    /// <param name="dataLoadEventListener"></param>
+    /// <returns></returns>
+    private bool FilesSimilar(string pathA, string pathB, IDataLoadEventListener job)
+    {
+        try
+        {
+            var bufferA = new byte[4096];
+            var bufferB = new byte[4096];
+            var a = new FileInfo(pathA);
+            var b = new FileInfo(pathB);
+            if (!a.Exists || !b.Exists) return false;
+            if (a.LastWriteTimeUtc != b.LastWriteTimeUtc) return false;
+            if (a.Length != b.Length) return false;
+            if (a.Length < 8192) return false;
+            using var streamA=File.OpenRead(pathA);
+            using var streamB=File.OpenRead(pathB);
+            if (streamA.Read(bufferA, 0, 4096) != 4096 || streamB.Read(bufferB, 0, 4096) != 4096) return false;
+            if (!bufferA.SequenceEqual(bufferB)) return false;
+            streamA.Seek(-4096, SeekOrigin.End);
+            streamB.Seek(-4096, SeekOrigin.End);
+            if (streamA.Read(bufferA, 0, 4096) != 4096 || streamB.Read(bufferB, 0, 4096) != 4096) return false;
+            if (!bufferA.SequenceEqual(bufferB)) return false;
+            return true;
+        }
+        catch (Exception e)
+        {
+            job.OnNotify(this,new NotifyEventArgs(ProgressEventType.Warning,$"Unable to compare files {pathA} and {pathB} due to {e.Message}",e));
+            return false;
+        }
+    }
+
+    private void CopyIfNeeded(string src, string dest, IDataLoadEventListener job)
+    {
+        if (FilesSimilar(src, dest,job))
+            job.OnNotify(this, new NotifyEventArgs(ProgressEventType.Information, $"Files {src} and {dest} match, skipping copy"));
+        else
+        {
+            File.Copy(src, dest, true);
+            job.OnNotify(this, new NotifyEventArgs(ProgressEventType.Information, $"Copied {src} to {dest}"));
+        }
+    }
+
     private void AsyncCopyMDFFilesWithEvents(string MDFSource, string MDFDestination, string LDFSource, string LDFDestination,IDataLoadEventListener job)
     {
         ArgumentNullException.ThrowIfNull(MDFDestination);
         ArgumentNullException.ThrowIfNull(LDFDestination);
 
-        if(File.Exists(MDFDestination))
-            job.OnNotify(this,new NotifyEventArgs(ProgressEventType.Warning,$"File {MDFDestination} already exists, an attempt will be made to overwrite it"));
-        if (File.Exists(LDFDestination))
-            job.OnNotify(this, new NotifyEventArgs(ProgressEventType.Warning, $"File {LDFDestination} already exists, an attempt will be made to overwrite it"));
-
-        job.OnNotify(this, new NotifyEventArgs(ProgressEventType.Information,
-            $"Starting copy from {MDFSource} to {MDFDestination}"));
-        File.Copy(MDFSource,MDFDestination,true);
-        job.OnNotify(this, new NotifyEventArgs(ProgressEventType.Information,
-            $"Starting copy from {LDFSource} to {LDFDestination}"));
-        File.Copy(LDFSource,LDFDestination,true);
+        CopyIfNeeded(MDFSource,MDFDestination,job);
+        CopyIfNeeded(LDFSource,LDFDestination,job);
     }
 
     public string FindDefaultSQLServerDatabaseDirectory(ICheckNotifier notifier)
