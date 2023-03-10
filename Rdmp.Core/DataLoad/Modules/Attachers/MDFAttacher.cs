@@ -209,7 +209,7 @@ public class MDFAttacher : Attacher,IPluginAttacher
     /// </summary>
     /// <param name="pathA"></param>
     /// <param name="pathB"></param>
-    /// <param name="dataLoadEventListener"></param>
+    /// <param name="job"></param>
     /// <returns></returns>
     private bool FilesSimilar(string pathA, string pathB, IDataLoadEventListener job)
     {
