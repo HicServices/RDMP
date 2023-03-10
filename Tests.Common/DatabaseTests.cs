@@ -313,7 +313,7 @@ namespace Tests.Common
             var catalogueDatabaseName = ((TableRepository) repositoryLocator.CatalogueRepository).DiscoveredServer.GetCurrentDatabase().GetRuntimeName();
             var dataExportDatabaseName = ((TableRepository) repositoryLocator.DataExportRepository).DiscoveredServer.GetCurrentDatabase().GetRuntimeName();
 
-            UsefulStuff.ExecuteBatchNonQuery(string.Format(BlitzDatabases, catalogueDatabaseName, dataExportDatabaseName),con.Connection);
+            UsefulStuff.ExecuteBatchNonQuery(string.Format(BlitzDatabases, catalogueDatabaseName, dataExportDatabaseName),con.Connection,con.Transaction);
         }
 
         /// <summary>
@@ -334,7 +334,7 @@ namespace Tests.Common
             var catalogueDatabaseName = ((TableRepository)RepositoryLocator.CatalogueRepository).DiscoveredServer.GetCurrentDatabase().GetRuntimeName();
             var dataExportDatabaseName = ((TableRepository)RepositoryLocator.DataExportRepository).DiscoveredServer.GetCurrentDatabase().GetRuntimeName();
 
-            UsefulStuff.ExecuteBatchNonQuery(string.Format(BlitzDatabasesLite, catalogueDatabaseName, dataExportDatabaseName), con.Connection);
+            UsefulStuff.ExecuteBatchNonQuery(string.Format(BlitzDatabasesLite, catalogueDatabaseName, dataExportDatabaseName), con.Connection, con.Transaction);
         }
 
         private void BlitzMainDataTables(YamlRepository y)
