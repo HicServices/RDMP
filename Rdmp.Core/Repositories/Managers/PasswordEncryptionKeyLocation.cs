@@ -7,6 +7,7 @@
 using System;
 using System.IO;
 using System.Security.Cryptography;
+using System.Text;
 using System.Xml.Serialization;
 using Rdmp.Core.Curation;
 using Rdmp.Core.MapsDirectlyToDatabaseTable.Injection;
@@ -61,10 +62,7 @@ namespace Rdmp.Core.Repositories.Managers
             // Prefer to get it from the environment variable
             var fromEnvVar = Environment.GetEnvironmentVariable(RDMP_KEY_LOCATION);
 
-            if (fromEnvVar != null)
-                return fromEnvVar;
-
-            return _catalogueRepository.GetEncryptionKeyPath();
+            return fromEnvVar ?? _catalogueRepository.GetEncryptionKeyPath();
         }
 
 
@@ -72,43 +70,30 @@ namespace Rdmp.Core.Repositories.Managers
         /// Connects to the private key location and returns the encryption/decryption parameters stored in it
         /// </summary>
         /// <returns></returns>
-        public RSAParameters? OpenKeyFile()
+        public string OpenKeyFile()
         {
-            string existingKey = GetKeyFileLocation();
-            return DeserializeFromLocation(existingKey);
+            var location = GetKeyFileLocation();
+            return location is null ? null : File.ReadAllText(location);
         }
 
-        private RSAParameters? DeserializeFromLocation(string keyLocation)
+        private void DeserializeFromLocation(string keyLocation)
         {
             if (string.IsNullOrWhiteSpace(keyLocation))
-                return null;
-
-            string xml;
-
+                return;
             try
             {
-                xml = File.ReadAllText(keyLocation);
+                new RSACryptoServiceProvider().FromXmlString(File.ReadAllText(keyLocation));
             }
             catch (Exception ex)
             {
-                throw new Exception("Failed to open and read key file " + keyLocation + " (possibly it is not in a shared network location or the current user - " + Environment.UserName + ", does not have access to the file?)", ex);
-            }
-
-
-            try
-            {
-                XmlSerializer DeserializeXml = new XmlSerializer(typeof(RSAParameters));
-                return (RSAParameters)DeserializeXml.Deserialize(new StringReader(xml));
-            }
-            catch (Exception e)
-            {
-                throw new Exception("Failed to deserialize key file " + keyLocation + ", possibly it is corrupt or has been modified manually to break it?", e);
+                throw new Exception(
+                    $"Failed to open and read key file {keyLocation} (possibly it is not in a shared network location or the current user ({Environment.UserName}) does not have access to the file?)", ex);
             }
         }
 
         /// <summary>
         /// Creates a new private RSA encryption key certificate at the given location and sets the catalogue repository to use it for encrypting passwords.
-        /// This will make any existing serialized passwords iretrievable unless you restore and reset the original key file location. 
+        /// This will make any existing serialized passwords irretrievable unless you restore and reset the original key file location. 
         /// </summary>
         /// <param name="path"></param>
         /// <returns></returns>
@@ -116,26 +101,19 @@ namespace Rdmp.Core.Repositories.Managers
         {
             ClearAllInjections();
 
-            string existingKey = GetKeyFileLocation();
+            var existingKey = GetKeyFileLocation();
             if (existingKey != null)
-                throw new NotSupportedException("There is already a key file at location:" + existingKey);
+                throw new NotSupportedException($"There is already a key file at location:{existingKey}");
 
-            RSACryptoServiceProvider provider = new RSACryptoServiceProvider(4096);
-            RSAParameters p = provider.ExportParameters(true);
+            var provider = new RSACryptoServiceProvider(4096);
 
             var fi = new FileInfo(path);
 
-            if(fi.Directory != null && !fi.Directory.Exists)
+            if(fi.Directory is { Exists: false })
                 fi.Directory.Create();
 
             using (var stream = fi.Create())
-            {
-                XmlSerializer SerializeXml = new XmlSerializer(typeof(RSAParameters));
-                SerializeXml.Serialize(stream, p);
-                stream.Flush();
-                stream.Close();
-            }
-
+                stream.Write(Encoding.UTF8.GetBytes(provider.ToXmlString(true)));
             var fileInfo = new FileInfo(path);
 
             if (!fileInfo.Exists)
@@ -157,7 +135,7 @@ namespace Rdmp.Core.Repositories.Managers
             ClearAllInjections();
 
             if (!File.Exists(newLocation))
-                throw new FileNotFoundException("Could not find key file at:" + newLocation);
+                throw new FileNotFoundException($"Could not find key file at:{newLocation}");
 
             //confirms that it is accessible and deserializable
             DeserializeFromLocation(newLocation);
@@ -175,7 +153,7 @@ namespace Rdmp.Core.Repositories.Managers
         {
             ClearAllInjections();
 
-            string existingKey = GetKeyFileLocation();
+            var existingKey = GetKeyFileLocation();
 
             if (existingKey == null)
                 throw new NotSupportedException("Cannot delete key because there is no key file configured");
