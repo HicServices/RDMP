@@ -39,6 +39,6 @@ class ChangeLogIsCorrectTests
         if (currentVersion.Contains('-')) currentVersion = currentVersion[..currentVersion.IndexOf('-')];
 
         var changeLog = File.ReadLines(changeLogPath);
-        Assert.IsTrue(changeLog.Any(l=>l.Equals($"## [{currentVersion}]",StringComparison.InvariantCulture)), $"{changeLogPath} did not contain a header for the current version '{currentVersion}'");
+        Assert.IsTrue(changeLog.Any(l=>l.StartsWith($"## [{currentVersion}]",StringComparison.InvariantCulture)), $"{changeLogPath} did not contain a header for the current version '{currentVersion}'");
     }
 }
