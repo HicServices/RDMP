@@ -1,15 +1,24 @@
 <Project Sdk="Microsoft.NET.Sdk">
   <PropertyGroup>
+    <PackageId>HIC.RDMP.Plugin.Test</PackageId>
+    <version>$(version)</version>
+    <title>HIC.RDMP.Plugin.Test</title>
+    <authors>Health Informatics Centre, University of Dundee</authors>
+    <owners>Health Informatics Centre, University of Dundee</owners>
+    <licenseUrl>https://raw.githubusercontent.com/HicServices/RDMP/master/LICENSE</licenseUrl>
+    <projectUrl>https://github.com/HicServices/RDMP</projectUrl>
+    <iconUrl>https://raw.githubusercontent.com/HicServices/RDMP/master/Application/ResearchDataManagementPlatform/Icon/main.png</iconUrl>
+    <requireLicenseAcceptance>false</requireLicenseAcceptance>
+    <description>Package for writing plugin tests</description>
+    <copyright>Copyright 2018-2019</copyright>
     <TargetFramework>net6.0</TargetFramework>
-    <SolutionDir Condition="$(SolutionDir) == '' Or $(SolutionDir) == '*Undefined*'">..\SMI\</SolutionDir>
     <GenerateAssemblyInfo>false</GenerateAssemblyInfo>
     <GenerateDocumentationFile>true</GenerateDocumentationFile>
-	<NoWarn>1701;1702;CS1591</NoWarn>
-    
+	  <NoWarn>1701;1702;CS1591</NoWarn>
     <DebugType>embedded</DebugType>
     <DebugSymbols>true</DebugSymbols>
+    <IsPackable>true</IsPackable>
   </PropertyGroup>
-  <Import Project="$(SolutionDir)\.nuget\NuGet.targets" Condition="Exists('$(SolutionDir)\.nuget\NuGet.targets')" />
   <ItemGroup>
     <None Remove="TestDatabases.txt" />
   </ItemGroup>
@@ -25,13 +34,12 @@
     <ProjectReference Include="..\Rdmp.Core\Rdmp.Core.csproj" />
   </ItemGroup>
   <ItemGroup>
+    <PackageReference Include="Microsoft.SourceLink.GitHub" Version="1.1.1">
+      <PrivateAssets>all</PrivateAssets>
+      <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
+    </PackageReference>
     <PackageReference Include="Moq" Version="4.18.4" />
     <PackageReference Include="Microsoft.NET.Test.Sdk" Version="17.5.0" />
     <PackageReference Include="NUnit" Version="3.13.3" />
-    <PackageReference Include="YamlDotNet" Version="13.1.0" />
-    <PackageReference Include="HIC.BadMedicine" Version="1.1.2" />
-  </ItemGroup>
-  <ItemGroup>
-    <Service Include="{82A7F48D-3B50-4B1E-B82E-3ADA8210C358}" />
   </ItemGroup>
 </Project>

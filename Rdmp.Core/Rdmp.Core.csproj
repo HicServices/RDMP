@@ -1,5 +1,17 @@
 <Project Sdk="Microsoft.NET.Sdk">
   <PropertyGroup>
+    <PackageId>HIC.RDMP.Plugin</PackageId>
+    <version>$(version)</version>
+    <title>HIC.RDMP.Plugin</title>
+    <authors>Health Informatics Centre, University of Dundee</authors>
+    <owners>Health Informatics Centre, University of Dundee</owners>
+    <licenseUrl>https://raw.githubusercontent.com/HicServices/RDMP/master/LICENSE</licenseUrl>
+    <projectUrl>https://github.com/HicServices/RDMP</projectUrl>
+    <iconUrl>https://raw.githubusercontent.com/HicServices/RDMP/master/Application/ResearchDataManagementPlatform/Icon/main.png</iconUrl>
+    <requireLicenseAcceptance>false</requireLicenseAcceptance>
+    <description>Core package for plugin development</description>
+    <copyright>Copyright 2018-2019</copyright>
+
     <TargetFramework>net6.0</TargetFramework>
     <GenerateAssemblyInfo>false</GenerateAssemblyInfo>
     <GenerateDocumentationFile>true</GenerateDocumentationFile>
@@ -8,6 +20,7 @@
 	<NoWarn>1701;1702;CS1591;SCS0018</NoWarn>
     <DebugType>embedded</DebugType>
     <DebugSymbols>true</DebugSymbols>
+    <NoWarn>$(NoWarn);NU5104</NoWarn>
   </PropertyGroup>
   <PropertyGroup>
     <TreatWarningsAsErrors>true</TreatWarningsAsErrors>
@@ -275,8 +288,13 @@
     <PackageReference Include="ExcelNumberFormat" Version="1.1.0" />
     <PackageReference Include="HIC.BadMedicine" Version="1.1.2" />
     <PackageReference Include="HIC.FAnsiSql" Version="3.0.1" />
+    <PackageReference Include="LibArchive.Net" Version="0.1.3" />
+    <PackageReference Include="Microsoft.SourceLink.GitHub" Version="1.1.1">
+      <PrivateAssets>all</PrivateAssets>
+      <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
+    </PackageReference>
     <PackageReference Include="Newtonsoft.Json" Version="13.0.3" />
-    <PackageReference Include="NLog" Version="5.1.3" />
+    <PackageReference Include="NLog" Version="5.1.2" />
     <PackageReference Include="NPOI" Version="2.5.5" />
     <PackageReference Include="SixLabors.ImageSharp" Version="3.0.1" />
     <PackageReference Include="SixLabors.ImageSharp.Drawing" Version="1.0.0-beta15" />
