@@ -7,17 +7,15 @@
 using System;
 using System.ComponentModel;
 using System.Drawing;
-using System.IO;
 using System.Text.RegularExpressions;
 using System.Windows.Forms;
 using FAnsi.Discovery.QuerySyntax;
-using NHunspell;
 using Rdmp.Core.CommandExecution;
-using Rdmp.Core.ReusableLibraryCode;
 using Rdmp.Core.ReusableLibraryCode.Settings;
 using Rdmp.UI.CommandExecution;
 using Rdmp.UI.SimpleDialogs;
 using ScintillaNET;
+using WeCantSpell.Hunspell;
 
 namespace Rdmp.UI.ScintillaHelper
 {
@@ -35,6 +33,7 @@ namespace Rdmp.UI.ScintillaHelper
     /// </summary>
     public class ScintillaTextEditorFactory
     {
+        private static WordList hUnSpell = null;
         private static bool DictionaryExceptionShown = false;
 
         /// <summary>
@@ -88,10 +87,10 @@ namespace Rdmp.UI.ScintillaHelper
                     SetCSharpHighlighting(toReturn);
                     break;
                 case SyntaxLanguage.XML:
-                    SetLexerEnumHighlighting(toReturn, Lexer.Xml);
+                    SetLexerEnumHighlighting(toReturn, "xml");
                     break;
                 case SyntaxLanguage.LogFile:
-                    SetLexerEnumHighlighting(toReturn, Lexer.Verilog);
+                    SetLexerEnumHighlighting(toReturn, "none");
                     break;
             }      
 
@@ -110,36 +109,25 @@ namespace Rdmp.UI.ScintillaHelper
             {
                 if(spellCheck)
                 {
-                    string aff;
-                    string dic;
-
-                    if (currentDirectory == null)
+                    if (hUnSpell == null)
                     {
-                        aff = "en_us.aff";
-                        dic = "en_us.dic";
+                        using var dic = typeof(ScintillaTextEditorFactory).Assembly.GetManifestResourceStream("Rdmp.UI.en_GB.dic");
+                        using var aff = typeof(ScintillaTextEditorFactory).Assembly.GetManifestResourceStream("Rdmp.UI.en_GB.aff");
+                        hUnSpell = WordList.CreateFromStreams(
+                            dic ?? throw new InvalidOperationException("Dictionary not found"),
+                            aff ?? throw new InvalidOperationException("Dictionary not found"));
                     }
-                    else
-                    {
-                        aff = Path.Combine(UsefulStuff.GetExecutableDirectory().FullName, "en_us.aff");
-                        dic = Path.Combine(UsefulStuff.GetExecutableDirectory().FullName, "en_us.dic");
-                    }
-
-                    var hunspell = new Hunspell(aff,dic);
-
-                    DateTime lastCheckedSpelling = DateTime.MinValue;
+                    var lastCheckedSpelling = DateTime.MinValue;
 
                     toReturn.KeyPress += (s, e) =>
                     {
-                        if (DateTime.Now.Subtract(lastCheckedSpelling) > TimeSpan.FromSeconds(10))
-                        {
-                            lastCheckedSpelling = DateTime.Now;
-                            CheckSpelling((Scintilla)s, hunspell);
-                        }
+                        if (DateTime.Now.Subtract(lastCheckedSpelling) <= TimeSpan.FromSeconds(10)) return;
+                        lastCheckedSpelling = DateTime.Now;
+                        CheckSpelling((Scintilla)s, hUnSpell);
                     };
 
-                    toReturn.Leave += (s,e)=> CheckSpelling((Scintilla)s,hunspell);
-                    toReturn.Disposed += (s, e) => scintilla_Disposed(s, e, hunspell);
-                    scintillaMenu.Hunspell = hunspell;
+                    toReturn.Leave += (s,e)=> CheckSpelling((Scintilla)s,hUnSpell);
+                    scintillaMenu.Hunspell = hUnSpell;
                 }
             }
             catch (Exception e)
@@ -154,12 +142,7 @@ namespace Rdmp.UI.ScintillaHelper
             return toReturn;
         }
 
-        void scintilla_Disposed(object sender, EventArgs e, Hunspell hunspell)
-        {
-            hunspell.Dispose();
-        }
-
-        public static void CheckSpelling(Scintilla scintilla, Hunspell hunspell)
+        public static void CheckSpelling(Scintilla scintilla, WordList hunspell)
         {
             if (string.IsNullOrWhiteSpace(scintilla.Text))
                 return;
@@ -170,7 +153,7 @@ namespace Rdmp.UI.ScintillaHelper
             scintilla.IndicatorClearRange(0, scintilla.TextLength);
 
             foreach (Match m in Regex.Matches(scintilla.Text, @"\b\w*\b"))
-                if (!hunspell.Spell(m.Value))
+                if (!hunspell.Check(m.Value))
                 {
                     scintilla.IndicatorFillRange(m.Index, m.Length);
                 }            
@@ -212,7 +195,6 @@ namespace Rdmp.UI.ScintillaHelper
             editor.InsertText(pos,command.GetSqlString());
         }
 
-
         private void SetSQLHighlighting(Scintilla scintilla, IQuerySyntaxHelper syntaxHelper)
         {
             // Reset the styles
@@ -222,7 +204,7 @@ namespace Rdmp.UI.ScintillaHelper
             scintilla.StyleClearAll();
 
             // Set the SQL Lexer
-            scintilla.Lexer = Lexer.Sql;
+            scintilla.LexerName = "sql";
 
             // Show line numbers
             scintilla.Margins[0].Width = 20;
@@ -251,8 +233,7 @@ namespace Rdmp.UI.ScintillaHelper
                 @"ascii cast charindex ceiling coalesce collate contains convert current_time current_timestamp current_user floor isnull max min nullif object_id session_user substring system_user tsequal";
 
             if (syntaxHelper != null)
-                foreach (var kvp in syntaxHelper.GetSQLFunctionsDictionary())
-                word2 += " " + kvp.Key;
+                word2 += " "+string.Join(' ', syntaxHelper.GetSQLFunctionsDictionary().Keys);
             
             // Word2 = 1
             scintilla.SetKeywords(1, word2);
@@ -285,11 +266,11 @@ namespace Rdmp.UI.ScintillaHelper
             scintilla.Styles[CSharpLexer.StyleNumber].ForeColor = Color.Purple;
             scintilla.Styles[CSharpLexer.StyleString].ForeColor = Color.Red;
 
-            scintilla.Lexer = Lexer.Container;
+            scintilla.LexerName = "container";
             scintilla.StyleNeeded += (s,e)=>scintilla_StyleNeeded(scintilla,e);
         }
 
-        private void SetLexerEnumHighlighting(Scintilla scintilla, Lexer lexer)
+        private void SetLexerEnumHighlighting(Scintilla scintilla, string lexer)
         {
             scintilla.StyleResetDefault();
 
@@ -303,7 +284,7 @@ namespace Rdmp.UI.ScintillaHelper
             scintilla.Styles[CSharpLexer.StyleNumber].ForeColor = Color.Purple;
             scintilla.Styles[CSharpLexer.StyleString].ForeColor = Color.Red;
 
-            scintilla.Lexer = lexer;
+            scintilla.LexerName = lexer;
         }
     }
 }
