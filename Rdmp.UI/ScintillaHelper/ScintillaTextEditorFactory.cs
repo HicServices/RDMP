@@ -7,17 +7,15 @@
 using System;
 using System.ComponentModel;
 using System.Drawing;
-using System.IO;
 using System.Text.RegularExpressions;
 using System.Windows.Forms;
 using FAnsi.Discovery.QuerySyntax;
-using NHunspell;
 using Rdmp.Core.CommandExecution;
-using Rdmp.Core.ReusableLibraryCode;
 using Rdmp.Core.ReusableLibraryCode.Settings;
 using Rdmp.UI.CommandExecution;
 using Rdmp.UI.SimpleDialogs;
 using ScintillaNET;
+using WeCantSpell.Hunspell;
 
 namespace Rdmp.UI.ScintillaHelper;
 
@@ -30,12 +28,13 @@ public enum SyntaxLanguage
     LogFile
 };
 
-/// <summary>
-/// Factory for creating instances of <see cref="Scintilla"/> with a consistent look and feel and behaviour (e.g. drag and drop).
-/// </summary>
-public class ScintillaTextEditorFactory
-{
-    private static bool DictionaryExceptionShown = false;
+    /// <summary>
+    /// Factory for creating instances of <see cref="Scintilla"/> with a consistent look and feel and behaviour (e.g. drag and drop).
+    /// </summary>
+    public class ScintillaTextEditorFactory
+    {
+        private static WordList hUnSpell = null;
+        private static bool DictionaryExceptionShown = false;
 
     /// <summary>
     /// Creates a new SQL (default) Scintilla editor with highlighting
@@ -79,21 +78,21 @@ public class ScintillaTextEditorFactory
         toReturn.ClearCmdKey(Keys.Control | Keys.R); //prevent Ctrl+R displaying ascii code
         toReturn.ClearCmdKey(Keys.Control | Keys.W); //prevent Ctrl+W displaying ascii code
 
-        switch (language)
-        {
-            case SyntaxLanguage.SQL:
-                SetSQLHighlighting(toReturn, syntaxHelper);
-                break;
-            case SyntaxLanguage.CSharp:
-                SetCSharpHighlighting(toReturn);
-                break;
-            case SyntaxLanguage.XML:
-                SetLexerEnumHighlighting(toReturn, Lexer.Xml);
-                break;
-            case SyntaxLanguage.LogFile:
-                SetLexerEnumHighlighting(toReturn, Lexer.Verilog);
-                break;
-        }      
+            switch (language)
+            {
+                case SyntaxLanguage.SQL:
+                    SetSQLHighlighting(toReturn, syntaxHelper);
+                    break;
+                case SyntaxLanguage.CSharp:
+                    SetCSharpHighlighting(toReturn);
+                    break;
+                case SyntaxLanguage.XML:
+                    SetLexerEnumHighlighting(toReturn, "xml");
+                    break;
+                case SyntaxLanguage.LogFile:
+                    SetLexerEnumHighlighting(toReturn, "none");
+                    break;
+            }      
 
         if (commandFactory != null)
         {
@@ -106,75 +105,59 @@ public class ScintillaTextEditorFactory
         var scintillaMenu = new ScintillaMenu(toReturn, spellCheck);
         toReturn.ContextMenuStrip = scintillaMenu;
 
-        try
-        {
-            if(spellCheck)
+            try
             {
-                string aff;
-                string dic;
-
-                if (currentDirectory == null)
+                if(spellCheck)
                 {
-                    aff = "en_us.aff";
-                    dic = "en_us.dic";
-                }
-                else
-                {
-                    aff = Path.Combine(UsefulStuff.GetExecutableDirectory().FullName, "en_us.aff");
-                    dic = Path.Combine(UsefulStuff.GetExecutableDirectory().FullName, "en_us.dic");
-                }
-
-                var hunspell = new Hunspell(aff,dic);
-
-                DateTime lastCheckedSpelling = DateTime.MinValue;
-
-                toReturn.KeyPress += (s, e) =>
-                {
-                    if (DateTime.Now.Subtract(lastCheckedSpelling) > TimeSpan.FromSeconds(10))
+                    if (hUnSpell == null)
                     {
-                        lastCheckedSpelling = DateTime.Now;
-                        CheckSpelling((Scintilla)s, hunspell);
+                        using var dic = typeof(ScintillaTextEditorFactory).Assembly.GetManifestResourceStream("Rdmp.UI.en_GB.dic");
+                        using var aff = typeof(ScintillaTextEditorFactory).Assembly.GetManifestResourceStream("Rdmp.UI.en_GB.aff");
+                        hUnSpell = WordList.CreateFromStreams(
+                            dic ?? throw new InvalidOperationException("Dictionary not found"),
+                            aff ?? throw new InvalidOperationException("Dictionary not found"));
                     }
-                };
+                    var lastCheckedSpelling = DateTime.MinValue;
 
-                toReturn.Leave += (s,e)=> CheckSpelling((Scintilla)s,hunspell);
-                toReturn.Disposed += (s, e) => scintilla_Disposed(s, e, hunspell);
-                scintillaMenu.Hunspell = hunspell;
+                    toReturn.KeyPress += (s, e) =>
+                    {
+                        if (DateTime.Now.Subtract(lastCheckedSpelling) <= TimeSpan.FromSeconds(10)) return;
+                        lastCheckedSpelling = DateTime.Now;
+                        CheckSpelling((Scintilla)s, hUnSpell);
+                    };
+
+                    toReturn.Leave += (s,e)=> CheckSpelling((Scintilla)s,hUnSpell);
+                    scintillaMenu.Hunspell = hUnSpell;
+                }
             }
-        }
-        catch (Exception e)
-        {
-            if (!DictionaryExceptionShown)
+            catch (Exception e)
             {
-                ExceptionViewer.Show("Could not load dictionary",e);
-                DictionaryExceptionShown = true;
+                if (!DictionaryExceptionShown)
+                {
+                    ExceptionViewer.Show("Could not load dictionary",e);
+                    DictionaryExceptionShown = true;
+                }
             }
-        }
 
         return toReturn;
     }
 
-    void scintilla_Disposed(object sender, EventArgs e, Hunspell hunspell)
-    {
-        hunspell.Dispose();
-    }
-
-    public static void CheckSpelling(Scintilla scintilla, Hunspell hunspell)
-    {
-        if (string.IsNullOrWhiteSpace(scintilla.Text))
-            return;
+        public static void CheckSpelling(Scintilla scintilla, WordList hunspell)
+        {
+            if (string.IsNullOrWhiteSpace(scintilla.Text))
+                return;
 
         scintilla.Indicators[8].Style = IndicatorStyle.Squiggle;
         scintilla.Indicators[8].ForeColor = Color.Red;
         scintilla.IndicatorCurrent = 8;
         scintilla.IndicatorClearRange(0, scintilla.TextLength);
 
-        foreach (Match m in Regex.Matches(scintilla.Text, @"\b\w*\b"))
-            if (!hunspell.Spell(m.Value))
-            {
-                scintilla.IndicatorFillRange(m.Index, m.Length);
-            }            
-    }
+            foreach (Match m in Regex.Matches(scintilla.Text, @"\b\w*\b"))
+                if (!hunspell.Check(m.Value))
+                {
+                    scintilla.IndicatorFillRange(m.Index, m.Length);
+                }            
+        }
 
     private void OnDragEnter(object sender, DragEventArgs dragEventArgs, ICombineableFactory commandFactory)
     {
@@ -212,17 +195,16 @@ public class ScintillaTextEditorFactory
         editor.InsertText(pos,command.GetSqlString());
     }
 
+        private void SetSQLHighlighting(Scintilla scintilla, IQuerySyntaxHelper syntaxHelper)
+        {
+            // Reset the styles
+            scintilla.StyleResetDefault();
+            scintilla.Styles[Style.Default].Font = "Courier New";
+            scintilla.Styles[Style.Default].Size = 10;
+            scintilla.StyleClearAll();
 
-    private void SetSQLHighlighting(Scintilla scintilla, IQuerySyntaxHelper syntaxHelper)
-    {
-        // Reset the styles
-        scintilla.StyleResetDefault();
-        scintilla.Styles[Style.Default].Font = "Courier New";
-        scintilla.Styles[Style.Default].Size = 10;
-        scintilla.StyleClearAll();
-
-        // Set the SQL Lexer
-        scintilla.Lexer = Lexer.Sql;
+            // Set the SQL Lexer
+            scintilla.LexerName = "sql";
 
         // Show line numbers
         scintilla.Margins[0].Width = 20;
@@ -250,9 +232,8 @@ public class ScintillaTextEditorFactory
         string word2 =
             @"ascii cast charindex ceiling coalesce collate contains convert current_time current_timestamp current_user floor isnull max min nullif object_id session_user substring system_user tsequal";
 
-        if (syntaxHelper != null)
-            foreach (var kvp in syntaxHelper.GetSQLFunctionsDictionary())
-                word2 += " " + kvp.Key;
+            if (syntaxHelper != null)
+                word2 += " "+string.Join(' ', syntaxHelper.GetSQLFunctionsDictionary().Keys);
             
         // Word2 = 1
         scintilla.SetKeywords(1, word2);
@@ -285,13 +266,13 @@ public class ScintillaTextEditorFactory
         scintilla.Styles[CSharpLexer.StyleNumber].ForeColor = Color.Purple;
         scintilla.Styles[CSharpLexer.StyleString].ForeColor = Color.Red;
 
-        scintilla.Lexer = Lexer.Container;
-        scintilla.StyleNeeded += (s,e)=>scintilla_StyleNeeded(scintilla,e);
-    }
+            scintilla.LexerName = "container";
+            scintilla.StyleNeeded += (s,e)=>scintilla_StyleNeeded(scintilla,e);
+        }
 
-    private void SetLexerEnumHighlighting(Scintilla scintilla, Lexer lexer)
-    {
-        scintilla.StyleResetDefault();
+        private void SetLexerEnumHighlighting(Scintilla scintilla, string lexer)
+        {
+            scintilla.StyleResetDefault();
 
         scintilla.Styles[Style.Default].Font = "Consolas";
         scintilla.Styles[Style.Default].Size = 10;
@@ -303,6 +284,7 @@ public class ScintillaTextEditorFactory
         scintilla.Styles[CSharpLexer.StyleNumber].ForeColor = Color.Purple;
         scintilla.Styles[CSharpLexer.StyleString].ForeColor = Color.Red;
 
-        scintilla.Lexer = lexer;
+            scintilla.LexerName = lexer;
+        }
     }
 }
