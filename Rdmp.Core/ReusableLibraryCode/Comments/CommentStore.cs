@@ -10,10 +10,10 @@ using System.Collections.Generic;
 using System.IO;
 using System.IO.Compression;
 using System.Linq;
-using System.Reflection;
 using System.Text;
 using System.Text.RegularExpressions;
 using System.Xml;
+using LibArchive.Net;
 
 namespace Rdmp.Core.ReusableLibraryCode.Comments;
 
@@ -39,67 +39,28 @@ public class CommentStore : IEnumerable<KeyValuePair<string, string>>
         "nunit.framework.xml"
     };
         
-    public virtual void ReadComments(params string[] directoriesToLookInForComments)
+    public virtual void ReadComments(params string[] locations)
     {
-        Dictionary<string,ZipArchive> zips = new Dictionary<string, ZipArchive>(StringComparer.CurrentCultureIgnoreCase);
-        HashSet<string> dirs = new HashSet<string>(StringComparer.CurrentCultureIgnoreCase);
-
-            
-        foreach(var d in directoriesToLookInForComments)
+        foreach (var location in locations)
         {
-            if(Path.HasExtension(d) && Path.GetExtension(d) == ".zip")
-            {
-                if (!File.Exists(d) || zips.ContainsKey(d)) continue;
-                try
-                {
-                    zips.Add(d,ZipFile.OpenRead(d));
-                }catch(Exception)
-                {
-                    //couldn't open zip file :(
-                }
-            }
-            else
-                dirs.Add(d);
-        }
-                    
-
-        foreach (var assembly in AppDomain.CurrentDomain.GetAssemblies())
-        {
-            var xmlFile = assembly.GetName().Name + ".xml";
-
-            //we don't need to provide help for system classes
-            if (xmlFile.StartsWith("System") || _ignoreHelpFor.Contains(xmlFile))
+            if (location is null)
                 continue;
-
-            //can we get it from the zips?
-            foreach (var zip in zips.Values)
-            {
-                var entry = zip.GetEntry(xmlFile);
-                if (entry == null) continue;
-                var f = Path.GetTempFileName();
-                entry.ExtractToFile(f,true);
-
-                ReadComments(assembly,f);
-
-                File.Delete(f);
-            }
-                
-            //can we get it from a dir
-            foreach(var dir in dirs)
-                ReadComments(assembly,Path.Combine(dir, xmlFile));
+            if (Directory.Exists(location))
+                foreach(var xml in Directory.EnumerateFiles(location,"*.xml",SearchOption.AllDirectories))
+                    using (var content = File.OpenRead(xml))
+                        ReadComments(content);
+            else if (File.Exists(location))
+                using (var zip = new LibArchiveReader(location))
+                    foreach(var xml in zip.Entries())
+                        using (var content=xml.Stream)
+                            ReadComments(content);
         }
-
-        //dispose zips
-        foreach(IDisposable d in zips.Values)
-            d.Dispose();
     }
 
-    private void ReadComments(Assembly assembly,string filename)
+    private void ReadComments(Stream filename)
     {
-        if (!File.Exists(filename)) return;
         var doc = new XmlDocument();
         doc.Load(filename);
-
         doc.IterateThroughAllNodes(AddXmlDoc);
 
     }
