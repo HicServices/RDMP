@@ -771,7 +771,7 @@ abstract public class TableRepository : ITableRepository
             ongoingConnections[Thread.CurrentThread] = toReturn;
         var cmd=toReturn.Connection.CreateCommand();
         cmd.Transaction=toReturn.Transaction;
-        cmd.CommandText = "SET TRANSACTION ISOLATION LEVEL SNAPSHOT";
+        cmd.CommandText = "SET TRANSACTION ISOLATION LEVEL READ COMMITTED";
         cmd.ExecuteNonQuery();
         return toReturn;
     }
