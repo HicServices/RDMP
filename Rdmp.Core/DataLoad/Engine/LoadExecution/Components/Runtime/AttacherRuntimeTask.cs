@@ -35,7 +35,8 @@ public class AttacherRuntimeTask : RuntimeTask, IMEFRuntimeTask
             throw new Exception("AttacherRuntimeTask can only be called as a Mounting stage process");
             
         if (string.IsNullOrWhiteSpace(task.Path))
-            throw new ArgumentException("Path is blank for ProcessTask '" + task + "' - it should be a class name of type " + typeof(IAttacher).Name);
+            throw new ArgumentException(
+                $"Path is blank for ProcessTask '{task}' - it should be a class name of type {typeof(IAttacher).Name}");
 
         Attacher = mef.CreateA<IAttacher>(ProcessTask.Path);
         SetPropertiesForClass(RuntimeArguments, Attacher);
@@ -50,8 +51,10 @@ public class AttacherRuntimeTask : RuntimeTask, IMEFRuntimeTask
         var beforeDatabase = RuntimeArguments.StageSpecificArguments.DbInfo.Server.GetCurrentDatabase().GetRuntimeName();
         var beforeDatabaseType = RuntimeArguments.StageSpecificArguments.DbInfo.Server.DatabaseType;
 
-        job.OnNotify(this, new NotifyEventArgs(ProgressEventType.Information, "About to run Task '" + ProcessTask.Name + "'"));
-        job.OnNotify(this,new NotifyEventArgs(ProgressEventType.Information, "Attacher class is:" + Attacher.GetType().FullName));
+        job.OnNotify(this, new NotifyEventArgs(ProgressEventType.Information,
+            $"About to run Task '{ProcessTask.Name}'"));
+        job.OnNotify(this,new NotifyEventArgs(ProgressEventType.Information,
+            $"Attacher class is:{Attacher.GetType().FullName}"));
 
         try
         {
@@ -59,7 +62,8 @@ public class AttacherRuntimeTask : RuntimeTask, IMEFRuntimeTask
         }
         catch (Exception e)
         {
-            job.OnNotify(this, new NotifyEventArgs(ProgressEventType.Error, "Attach failed on job " + job + " Attacher was of type " + Attacher.GetType().Name + " see InnerException for specifics",e));
+            job.OnNotify(this, new NotifyEventArgs(ProgressEventType.Error,
+                $"Attach failed on job {job} Attacher was of type {Attacher.GetType().Name} see InnerException for specifics",e));
             return ExitCodeType.Error;
         }
         finally
@@ -69,7 +73,8 @@ public class AttacherRuntimeTask : RuntimeTask, IMEFRuntimeTask
             var afterDatabaseType = RuntimeArguments.StageSpecificArguments.DbInfo.Server.DatabaseType;
                 
             if(!(beforeServer.Equals(afterServer) && beforeDatabase.Equals(afterDatabase) && beforeDatabaseType == afterDatabaseType))
-                job.OnNotify(this, new NotifyEventArgs(ProgressEventType.Error, "Attacher " + Attacher.GetType().Name + " modified the ConnectionString during attaching"));
+                job.OnNotify(this, new NotifyEventArgs(ProgressEventType.Error,
+                    $"Attacher {Attacher.GetType().Name} modified the ConnectionString during attaching"));
                 
         }
     }

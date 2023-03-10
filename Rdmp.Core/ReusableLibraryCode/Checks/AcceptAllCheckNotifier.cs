@@ -33,7 +33,7 @@ public class AcceptAllCheckNotifier : ICheckNotifier
             return true;
 
         if (args.Result == CheckResult.Fail)
-            throw new Exception("Failed check with message: " + args.Message, args.Ex);
+            throw new Exception($"Failed check with message: {args.Message}", args.Ex);
 
         return true;
     }
