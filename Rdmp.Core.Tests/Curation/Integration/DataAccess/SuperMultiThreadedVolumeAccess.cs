@@ -23,24 +23,32 @@ public class SuperMultiThreadedVolumeAccess:DatabaseTests
 {
     int _timeoutBefore;
 
-    [SetUp]
-    protected override void SetUp()
-    {
-        base.SetUp();
-            
-        _timeoutBefore = DatabaseCommandHelper.GlobalTimeout;
-        DatabaseCommandHelper.GlobalTimeout = 60;
-        DeleteRemants();
-    }
+        [OneTimeSetUp]
+        protected override void SetUp()
+        {
+            base.SetUp();
 
-    private void DeleteRemants()
-    {
-        foreach (
-            Catalogue catalogue in
-            CatalogueRepository.GetAllObjects<Catalogue>()
-                .Where(c => c.Name.StartsWith("SuperMultiThreadedTestCatalogue")))
-            catalogue.DeleteInDatabase();
-    }
+            var timeoutBefore = DatabaseCommandHelper.GlobalTimeout;
+            DatabaseCommandHelper.GlobalTimeout = 60;
+
+            foreach (
+                var catalogue in
+                CatalogueRepository.GetAllObjects<Catalogue>()
+                    .Where(c => c.Name.StartsWith("SuperMultiThreadedTestCatalogue")))
+                catalogue.DeleteInDatabase();
+
+            DatabaseCommandHelper.GlobalTimeout=timeoutBefore;
+        }
+
+        [OneTimeTearDown]
+        protected void DeleteRemnants()
+        {
+            foreach (
+                var catalogue in
+                CatalogueRepository.GetAllObjects<Catalogue>()
+                    .Where(c => c.Name.StartsWith("SuperMultiThreadedTestCatalogue")))
+                catalogue.DeleteInDatabase();
+        }
 
 
     [Test]
@@ -54,16 +62,15 @@ public class SuperMultiThreadedVolumeAccess:DatabaseTests
         if (CatalogueRepository is not TableRepository && useTransactions)
             Assert.Inconclusive("YamlRepository does not support transactions so don't test this");
 
-        if (useTransactions)
-            c = CatalogueTableRepository.BeginNewTransactedConnection();
+            if (useTransactions) c = CatalogueTableRepository.BeginNewTransactedConnection();
 
-        using (c)
-        {
-            //create lots of catalogues
-            for (int i = 0; i < 30; i++)
+            using (c)
             {
-                var cata = new Catalogue(CatalogueRepository, "SuperMultiThreadedTestCatalogue" + Guid.NewGuid());
-                var copy = CatalogueRepository.GetObjectByID<Catalogue>(cata.ID);
+                //create lots of catalogues
+                for (var i = 0; i < 30; i++)
+                {
+                    var cata = new Catalogue(CatalogueRepository, $"SuperMultiThreadedTestCatalogue{Guid.NewGuid()}");
+                    var copy = CatalogueRepository.GetObjectByID<Catalogue>(cata.ID);
 
                 copy.Description = "fish";
                 Assert.IsTrue(copy.HasLocalChanges().Evaluation == ChangeDescription.DatabaseCopyDifferent);
@@ -72,9 +79,9 @@ public class SuperMultiThreadedVolumeAccess:DatabaseTests
                 Assert.IsTrue(copy.HasLocalChanges().Evaluation == ChangeDescription.NoChanges);
             }
 
-            //now fetch them out of database lots of times
-            for (int i = 0; i < 100; i++)
-                CatalogueRepository.GetAllObjects<Catalogue>();
+                //now fetch them out of database lots of times
+                for (var i = 0; i < 100; i++)
+                    CatalogueRepository.GetAllObjects<Catalogue>();
 
             if (useTransactions)
                 CatalogueTableRepository.EndTransactedConnection(false);
