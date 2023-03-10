@@ -21,24 +21,31 @@ namespace Rdmp.Core.Tests.Curation.Integration.DataAccess
 {
     public class SuperMultiThreadedVolumeAccess:DatabaseTests
     {
-        int _timeoutBefore;
 
-        [SetUp]
+        [OneTimeSetUp]
         protected override void SetUp()
         {
             base.SetUp();
-            
-            _timeoutBefore = DatabaseCommandHelper.GlobalTimeout;
+
+            var timeoutBefore = DatabaseCommandHelper.GlobalTimeout;
             DatabaseCommandHelper.GlobalTimeout = 60;
-            DeleteRemants();
+
+            foreach (
+                var catalogue in
+                CatalogueRepository.GetAllObjects<Catalogue>()
+                    .Where(c => c.Name.StartsWith("SuperMultiThreadedTestCatalogue")))
+                catalogue.DeleteInDatabase();
+
+            DatabaseCommandHelper.GlobalTimeout=timeoutBefore;
         }
 
-        private void DeleteRemants()
+        [OneTimeTearDown]
+        protected void DeleteRemnants()
         {
             foreach (
-                Catalogue catalogue in
-                    CatalogueRepository.GetAllObjects<Catalogue>()
-                        .Where(c => c.Name.StartsWith("SuperMultiThreadedTestCatalogue")))
+                var catalogue in
+                CatalogueRepository.GetAllObjects<Catalogue>()
+                    .Where(c => c.Name.StartsWith("SuperMultiThreadedTestCatalogue")))
                 catalogue.DeleteInDatabase();
         }
 
@@ -54,15 +61,14 @@ namespace Rdmp.Core.Tests.Curation.Integration.DataAccess
             if (CatalogueRepository is not TableRepository && useTransactions)
                 Assert.Inconclusive("YamlRepository does not support transactions so don't test this");
 
-            if (useTransactions)
-                c = CatalogueTableRepository.BeginNewTransactedConnection();
+            if (useTransactions) c = CatalogueTableRepository.BeginNewTransactedConnection();
 
             using (c)
             {
                 //create lots of catalogues
-                for (int i = 0; i < 30; i++)
+                for (var i = 0; i < 30; i++)
                 {
-                    var cata = new Catalogue(CatalogueRepository, "SuperMultiThreadedTestCatalogue" + Guid.NewGuid());
+                    var cata = new Catalogue(CatalogueRepository, $"SuperMultiThreadedTestCatalogue{Guid.NewGuid()}");
                     var copy = CatalogueRepository.GetObjectByID<Catalogue>(cata.ID);
 
                     copy.Description = "fish";
@@ -73,7 +79,7 @@ namespace Rdmp.Core.Tests.Curation.Integration.DataAccess
                 }
 
                 //now fetch them out of database lots of times
-                for (int i = 0; i < 100; i++)
+                for (var i = 0; i < 100; i++)
                     CatalogueRepository.GetAllObjects<Catalogue>();
 
                 if (useTransactions)
