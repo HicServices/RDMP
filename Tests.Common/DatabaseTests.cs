@@ -312,8 +312,8 @@ public class DatabaseTests
         var catalogueDatabaseName = ((TableRepository) repositoryLocator.CatalogueRepository).DiscoveredServer.GetCurrentDatabase().GetRuntimeName();
         var dataExportDatabaseName = ((TableRepository) repositoryLocator.DataExportRepository).DiscoveredServer.GetCurrentDatabase().GetRuntimeName();
 
-        UsefulStuff.ExecuteBatchNonQuery(string.Format(BlitzDatabases, catalogueDatabaseName, dataExportDatabaseName),con.Connection);
-    }
+            UsefulStuff.ExecuteBatchNonQuery(string.Format(BlitzDatabases, catalogueDatabaseName, dataExportDatabaseName),con.Connection,con.Transaction);
+        }
 
     /// <summary>
     /// Deletes all data tables except <see cref="ServerDefaults"/>, <see cref="ExternalDatabaseServer"/> and some other core tables which are required for access to
@@ -333,8 +333,8 @@ public class DatabaseTests
         var catalogueDatabaseName = ((TableRepository)RepositoryLocator.CatalogueRepository).DiscoveredServer.GetCurrentDatabase().GetRuntimeName();
         var dataExportDatabaseName = ((TableRepository)RepositoryLocator.DataExportRepository).DiscoveredServer.GetCurrentDatabase().GetRuntimeName();
 
-        UsefulStuff.ExecuteBatchNonQuery(string.Format(BlitzDatabasesLite, catalogueDatabaseName, dataExportDatabaseName), con.Connection);
-    }
+            UsefulStuff.ExecuteBatchNonQuery(string.Format(BlitzDatabasesLite, catalogueDatabaseName, dataExportDatabaseName), con.Connection, con.Transaction);
+        }
 
     private void BlitzMainDataTables(YamlRepository y)
     {
