@@ -6,7 +6,6 @@
 
 using System;
 using Microsoft.Data.SqlClient;
-using System.Diagnostics;
 using System.IO;
 using Rdmp.Core.Curation.Data;
 using Rdmp.Core.DataFlowPipeline;
@@ -222,40 +221,20 @@ public class MDFAttacher : Attacher,IPluginAttacher
 
     private void AsyncCopyMDFFilesWithEvents(string MDFSource, string MDFDestination, string LDFSource, string LDFDestination,IDataLoadEventListener job)
     {
+        ArgumentNullException.ThrowIfNull(MDFDestination);
+        ArgumentNullException.ThrowIfNull(LDFDestination);
+
         if(File.Exists(MDFDestination))
             job.OnNotify(this,new NotifyEventArgs(ProgressEventType.Warning,$"File {MDFDestination} already exists, an attempt will be made to overwrite it"));
-
         if (File.Exists(LDFDestination))
             job.OnNotify(this, new NotifyEventArgs(ProgressEventType.Warning, $"File {LDFDestination} already exists, an attempt will be made to overwrite it"));
 
-        var s = new Stopwatch();
-        s.Start();
-            
         job.OnNotify(this, new NotifyEventArgs(ProgressEventType.Information,
             $"Starting copy from {MDFSource} to {MDFDestination}"));
+        File.Copy(MDFSource,MDFDestination,true);
         job.OnNotify(this, new NotifyEventArgs(ProgressEventType.Information,
             $"Starting copy from {LDFSource} to {LDFDestination}"));
-
-        var copyMDF = new CopyWithProgress();
-        copyMDF.Progress +=
-            (size, transferred, streamSize, bytesTransferred, number, reason, file, destinationFile, data) =>
-            {
-                job.OnProgress(this,new ProgressEventArgs(MDFDestination, new ProgressMeasurement((int)(transferred * 0.001),ProgressType.Kilobytes),s.Elapsed));
-                return CopyWithProgress.CopyProgressResult.PROGRESS_CONTINUE;
-            };
-        copyMDF.XCopy(MDFSource,MDFDestination);
-        s.Reset();
-        s.Start();
-        
-        var copyLDF = new CopyWithProgress();
-        copyLDF.Progress +=
-            (size, transferred, streamSize, bytesTransferred, number, reason, file, destinationFile, data) =>
-            {
-                job.OnProgress(this,new ProgressEventArgs(LDFDestination,new ProgressMeasurement((int)(transferred * 0.001),ProgressType.Kilobytes),s.Elapsed));
-                return CopyWithProgress.CopyProgressResult.PROGRESS_CONTINUE;
-            };
-        copyLDF.XCopy(LDFSource,LDFDestination);
-        s.Stop();
+        File.Copy(LDFSource,LDFDestination,true);
     }
 
     public string FindDefaultSQLServerDatabaseDirectory(ICheckNotifier notifier)
