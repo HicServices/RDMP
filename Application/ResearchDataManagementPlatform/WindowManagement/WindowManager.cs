@@ -30,6 +30,7 @@ using SixLabors.ImageSharp.PixelFormats;
 using WeifenLuo.WinFormsUI.Docking;
 using Image = SixLabors.ImageSharp.Image;
 
+[assembly: System.Runtime.Versioning.SupportedOSPlatformAttribute("windows")]
 namespace ResearchDataManagementPlatform.WindowManagement
 {
     /// <summary>

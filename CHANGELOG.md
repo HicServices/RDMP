@@ -8,6 +8,14 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ...
 
+## [8.1.0] - in development
+
+### Changed
+
+- Refactor build process
+- Update Scintilla
+- Add LibArchive.Net 0.1.3 for archive reading support
+
 ## [8.0.7] - 2022-11-22
 
 ### Changed
@@ -1451,7 +1459,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Fixed Culture (e.g. en-us) not being passed correctly in DelimitedFlatFileAttacher
 - Fixed bug where Updater would show older versions of RDMP as installable 'updates'
 
-[Unreleased]: https://github.com/HicServices/RDMP/compare/v8.0.7...develop
+[Unreleased]: https://github.com/HicServices/RDMP/compare/v8.1.0...develop
+[8.1.0]: https://github.com/HicServices/RDMP/compare/v8.0.7...v8.1.0
 [8.0.7]: https://github.com/HicServices/RDMP/compare/v8.0.6...v8.0.7
 [8.0.6]: https://github.com/HicServices/RDMP/compare/v8.0.5...v8.0.6
 [8.0.5]: https://github.com/HicServices/RDMP/compare/v8.0.4...v8.0.5

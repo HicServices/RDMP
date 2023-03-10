@@ -29,24 +29,21 @@ class NuspecIsCorrectTests
 
     static NuspecIsCorrectTests()
     {
+        Regex interestingFile = new(@"\.(md|csproj|nuspec)$");
         var solutionRoot = AppDomain.CurrentDomain.BaseDirectory;
         while (!Directory.EnumerateFiles(solutionRoot, "*.sln").Any())
             solutionRoot = Directory.GetParent(solutionRoot)?.FullName ?? throw new Exception($"No VS Solution file found above {AppDomain.CurrentDomain.BaseDirectory}");
         PathCache=Directory.EnumerateFiles(solutionRoot,"*.*", SearchOption.AllDirectories)
-            .Where(p => p.EndsWith(".csproj") || p.EndsWith(".md") || p.EndsWith(".nuspec"))
+            .Where(p => interestingFile.IsMatch(p))
+            .DistinctBy(Path.GetFileName)
             .ToDictionary(Path.GetFileName, p => p);
     }
 
-    //test dependencies should be in Plugin.Test.nuspec
-    [TestCase("Tests.Common.csproj","Plugin.Test.nuspec","Packages.md")]
-        
-    //core dependencies should be in all nuspec files
-    [TestCase("Rdmp.Core.csproj","Plugin.Test.nuspec","Packages.md")]
-    [TestCase("Rdmp.Core.csproj","Plugin.nuspec","Packages.md")]
-    [TestCase("Rdmp.Core.csproj","Plugin.UI.nuspec","Packages.md")]
-
-    //ui dependencies should be in Plugin.UI.nuspec
-    [TestCase("Rdmp.UI.csproj","Plugin.UI.nuspec","Packages.md")]
+    [TestCase("Tests.Common.csproj",null,"Packages.md")]
+    [TestCase("Rdmp.Core.csproj", null, "Packages.md")]
+    [TestCase("Rdmp.UI.csproj", null, "Packages.md")]
+    [TestCase("ResearchDataManagementPlatform.csproj", null, "Packages.md")]
+    [TestCase("rdmp.csproj", null, "Packages.md")]
     public void TestDependencyCorrect( string csproj, string nuspec, string packagesMarkdown)
     {
         string nuspecContent=null;

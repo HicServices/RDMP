@@ -2,10 +2,10 @@ using System.Reflection;
 
 [assembly: AssemblyCompany("Health Informatics Centre, University of Dundee")]
 [assembly: AssemblyProduct("Research Data Management Platform (RDMP)")]
-[assembly: AssemblyCopyright("Copyright (c) 2018 - 2019")]
+[assembly: AssemblyCopyright("Copyright (c) 2018 - 20123")]
 [assembly: AssemblyTrademark("")]
 [assembly: AssemblyCulture("")]
 
-[assembly: AssemblyVersion("8.0.8")]
-[assembly: AssemblyFileVersion("8.0.8")]
-[assembly: AssemblyInformationalVersion("8.0.8-js1")]
+[assembly: AssemblyVersion("8.1.0")]
+[assembly: AssemblyFileVersion("8.1.0")]
+[assembly: AssemblyInformationalVersion("8.1.0-rc1")]
