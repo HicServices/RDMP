@@ -74,34 +74,38 @@ public class MDFAttacherTests : DatabaseTests
 
             //create an already existing file in the 'data' directory (immitates the copy to location)
             File.WriteAllText(Path.Combine(data.FullName, "MyFile.mdf"), "fish");
+                //create an already existing file in the 'data' directory (imitates the copy to location)
+                File.WriteAllText(Path.Combine(data.FullName, "MyFile.mdf"), "fish");
                 
 
-            var attacher = new MDFAttacher();
-            attacher.OverrideMDFFileCopyDestination = data.FullName;
+                var attacher = new MDFAttacher
+                {
+                    OverrideMDFFileCopyDestination = data.FullName
+                };
 
             attacher.Initialize(loadDirectory, GetCleanedServer(FAnsi.DatabaseType.MicrosoftSQLServer));
                 
-            //should be a warning since overwritting is default behaviour
-            var ex = Assert.Throws<Exception>(()=>
-                attacher.Attach(
-                    new ThrowImmediatelyDataLoadJob(new ThrowImmediatelyDataLoadEventListener(){ThrowOnWarning=true})
-                    , new GracefulCancellationToken())
-            );
+                //should be a warning since overwriting is default behaviour
+                var ex = Assert.Throws<Exception>(()=>
+                    attacher.Attach(
+                        new ThrowImmediatelyDataLoadJob(new ThrowImmediatelyDataLoadEventListener(){ThrowOnWarning=true})
+                        , new GracefulCancellationToken())
+                );
 
-            StringAssert.Contains("mdf already exists",ex.Message);
-        }
-        finally
-        {
-            try
-            {
-                testDir.Delete(true);
+                StringAssert.Contains("Overwriting",ex?.Message);
             }
-            catch (IOException e)
+            finally
             {
-                Console.WriteLine(e);
+                try
+                {
+                    data.Delete(true);
+                }
+                catch (IOException e)
+                {
+                    Console.WriteLine(e);
+                }
             }
         }
-    }
 
     [Test]
     public void TestLocations_NoNetworkPath()
