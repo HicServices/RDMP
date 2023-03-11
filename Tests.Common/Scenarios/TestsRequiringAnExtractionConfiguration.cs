@@ -163,8 +163,7 @@ namespace Tests.Common.Scenarios
 
         protected void Execute(out ExtractionPipelineUseCase pipelineUseCase, out IExecuteDatasetExtractionDestination results, IDataLoadEventListener listener = null)
         {
-            if (listener == null)
-                listener = new ThrowImmediatelyDataLoadEventListener();
+            listener ??= new ThrowImmediatelyDataLoadEventListener();
 
             DataLoadInfo d = new DataLoadInfo("Internal", _testDatabaseName, "IgnoreMe", "", true, new DiscoveredServer(UnitTestLoggingConnectionString));
 

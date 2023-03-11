@@ -239,10 +239,10 @@ namespace Rdmp.Core.DataQualityEngine.Reports
             }
             catch (Exception e)
             {
-                if (!(e is OperationCanceledException))
-                    forker.OnNotify(this, new NotifyEventArgs(ProgressEventType.Error, "Fatal Crash", e));
-                else
-                    forker.OnNotify(this, new NotifyEventArgs(ProgressEventType.Warning, "DQE Execution Cancelled", e));
+                forker.OnNotify(this,
+                    e is OperationCanceledException
+                        ? new NotifyEventArgs(ProgressEventType.Warning, "DQE Execution Cancelled", e)
+                        : new NotifyEventArgs(ProgressEventType.Error, "Fatal Crash", e));
             }
             finally
             {

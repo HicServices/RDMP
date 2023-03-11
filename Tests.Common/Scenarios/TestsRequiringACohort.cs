@@ -52,31 +52,22 @@ namespace Tests.Common.Scenarios
         [OneTimeSetUp]
         protected override void OneTimeSetUp()
         {
-            try
-            {
-                base.OneTimeSetUp();
-                
-                CreateCohortDatabase();
-                
-                EmptyCohortTables();
-                SetupCohortDefinitionAndCustomTable();
+            base.OneTimeSetUp();
+            
+            CreateCohortDatabase();
+            
+            EmptyCohortTables();
+            SetupCohortDefinitionAndCustomTable();
 
-                CreateExternalCohortTableReference();
-                CreateExtractableCohort();
+            CreateExternalCohortTableReference();
+            CreateExtractableCohort();
 
-                InsertIntoCohortTable("Priv_12345", "Pub_54321");
-                InsertIntoCohortTable("Priv_66666", "Pub_66666");
-                InsertIntoCohortTable("Priv_54321", "Pub_12345");
-                InsertIntoCohortTable("Priv_66999", "Pub_99666");
-                InsertIntoCohortTable("Priv_14722", "Pub_22741");
-                InsertIntoCohortTable("Priv_wtf11", "Pub_11ftw");
-            }
-            catch (Exception e)
-            {
-                Console.WriteLine(ExceptionHelper.ExceptionToListOfInnerMessages(e));
-                _setupException = e;
-                throw;
-            }            
+            InsertIntoCohortTable("Priv_12345", "Pub_54321");
+            InsertIntoCohortTable("Priv_66666", "Pub_66666");
+            InsertIntoCohortTable("Priv_54321", "Pub_12345");
+            InsertIntoCohortTable("Priv_66999", "Pub_99666");
+            InsertIntoCohortTable("Priv_14722", "Pub_22741");
+            InsertIntoCohortTable("Priv_wtf11", "Pub_11ftw");
         }
 
         [SetUp]
@@ -97,7 +88,7 @@ namespace Tests.Common.Scenarios
             else
                 _cohortDatabase.Create();
             
-            string sql = string.Format(@"
+            string sql = @"
 
 CREATE TABLE [dbo].[Cohort](
        [PrivateID] [varchar](10) NOT NULL,
@@ -131,14 +122,12 @@ REFERENCES [dbo].[CohortDefinition] ([id])
 GO
 ALTER TABLE [dbo].[Cohort] CHECK CONSTRAINT [FK_Cohort_CohortDefinition]
 GO
-");
+";
 
-            using (var con = _cohortDatabase.Server.GetConnection())
-            {
-                con.Open();
-                UsefulStuff.ExecuteBatchNonQuery(sql, con, timeout: 15);
-                con.Close();
-            }
+            using var con = _cohortDatabase.Server.GetConnection();
+            con.Open();
+            UsefulStuff.ExecuteBatchNonQuery(sql, con, timeout: 15);
+            con.Close();
         }
 
 
