@@ -72,29 +72,31 @@ namespace Rdmp.Core.Tests.DataLoad.Engine.Unit
                 File.WriteAllText(Path.Combine(loadDirectory.ForLoading.FullName, "MyFile.mdf"), "fish");
                 File.WriteAllText(Path.Combine(loadDirectory.ForLoading.FullName, "MyFile_log.ldf"), "fish");
 
-                //create an already existing file in the 'data' directory (immitates the copy to location)
+                //create an already existing file in the 'data' directory (imitates the copy to location)
                 File.WriteAllText(Path.Combine(data.FullName, "MyFile.mdf"), "fish");
                 
 
-                var attacher = new MDFAttacher();
-                attacher.OverrideMDFFileCopyDestination = data.FullName;
+                var attacher = new MDFAttacher
+                {
+                    OverrideMDFFileCopyDestination = data.FullName
+                };
 
                 attacher.Initialize(loadDirectory, GetCleanedServer(FAnsi.DatabaseType.MicrosoftSQLServer));
                 
-                //should be a warning since overwritting is default behaviour
+                //should be a warning since overwriting is default behaviour
                 var ex = Assert.Throws<Exception>(()=>
                     attacher.Attach(
                         new ThrowImmediatelyDataLoadJob(new ThrowImmediatelyDataLoadEventListener(){ThrowOnWarning=true})
                         , new GracefulCancellationToken())
                 );
 
-                StringAssert.Contains("mdf already exists",ex.Message);
+                StringAssert.Contains("Overwriting",ex?.Message);
             }
             finally
             {
                 try
                 {
-                    testDir.Delete(true);
+                    data.Delete(true);
                 }
                 catch (IOException e)
                 {

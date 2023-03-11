@@ -246,6 +246,8 @@ public class MDFAttacher : Attacher,IPluginAttacher
             job.OnNotify(this, new NotifyEventArgs(ProgressEventType.Information, $"Files {src} and {dest} match, skipping copy"));
         else
         {
+            if (File.Exists(dest))
+                job.OnNotify(this,new NotifyEventArgs(ProgressEventType.Warning,"Overwriting existing database file '{dest}'"));
             File.Copy(src, dest, true);
             job.OnNotify(this, new NotifyEventArgs(ProgressEventType.Information, $"Copied {src} to {dest}"));
         }
