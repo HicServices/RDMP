@@ -236,19 +236,19 @@ public class CatalogueConstraintReport : DataQualityReport
                 new NotifyEventArgs(ProgressEventType.Information,
                     "CatalogueConstraintReport completed successfully  and committed results to DQE server"));
 
+            }
+            catch (Exception e)
+            {
+                forker.OnNotify(this,
+                    e is OperationCanceledException
+                        ? new NotifyEventArgs(ProgressEventType.Warning, "DQE Execution Cancelled", e)
+                        : new NotifyEventArgs(ProgressEventType.Error, "Fatal Crash", e));
+            }
+            finally
+            {
+                toDatabaseLogger.FinalizeTableLoadInfos();
+            }
         }
-        catch (Exception e)
-        {
-            if (!(e is OperationCanceledException))
-                forker.OnNotify(this, new NotifyEventArgs(ProgressEventType.Error, "Fatal Crash", e));
-            else
-                forker.OnNotify(this, new NotifyEventArgs(ProgressEventType.Warning, "DQE Execution Cancelled", e));
-        }
-        finally
-        {
-            toDatabaseLogger.FinalizeTableLoadInfos();
-        }
-    }
 
     private bool _haveComplainedAboutTrailingWhitespaces = false;
 

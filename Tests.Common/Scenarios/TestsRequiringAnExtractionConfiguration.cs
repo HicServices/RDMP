@@ -161,10 +161,9 @@ public class TestsRequiringAnExtractionConfiguration : TestsRequiringACohort
         Assert.AreEqual(0,returnCode,"Return code from runner was non zero");
     }
 
-    protected void Execute(out ExtractionPipelineUseCase pipelineUseCase, out IExecuteDatasetExtractionDestination results, IDataLoadEventListener listener = null)
-    {
-        if (listener == null)
-            listener = new ThrowImmediatelyDataLoadEventListener();
+        protected void Execute(out ExtractionPipelineUseCase pipelineUseCase, out IExecuteDatasetExtractionDestination results, IDataLoadEventListener listener = null)
+        {
+            listener ??= new ThrowImmediatelyDataLoadEventListener();
 
         DataLoadInfo d = new DataLoadInfo("Internal", _testDatabaseName, "IgnoreMe", "", true, new DiscoveredServer(UnitTestLoggingConnectionString));
 

@@ -49,15 +49,13 @@ public class TestsRequiringACohort : TestsRequiringA
 
         
 
-    [OneTimeSetUp]
-    protected override void OneTimeSetUp()
-    {
-        try
+        [OneTimeSetUp]
+        protected override void OneTimeSetUp()
         {
             base.OneTimeSetUp();
-                
+            
             CreateCohortDatabase();
-                
+            
             EmptyCohortTables();
             SetupCohortDefinitionAndCustomTable();
 
@@ -71,13 +69,6 @@ public class TestsRequiringACohort : TestsRequiringA
             InsertIntoCohortTable("Priv_14722", "Pub_22741");
             InsertIntoCohortTable("Priv_wtf11", "Pub_11ftw");
         }
-        catch (Exception e)
-        {
-            Console.WriteLine(ExceptionHelper.ExceptionToListOfInnerMessages(e));
-            _setupException = e;
-            throw;
-        }            
-    }
 
     [SetUp]
     protected override void SetUp()
@@ -97,7 +88,7 @@ public class TestsRequiringACohort : TestsRequiringA
         else
             _cohortDatabase.Create();
             
-        string sql = string.Format(@"
+            string sql = @"
 
 CREATE TABLE [dbo].[Cohort](
        [PrivateID] [varchar](10) NOT NULL,
@@ -131,15 +122,13 @@ REFERENCES [dbo].[CohortDefinition] ([id])
 GO
 ALTER TABLE [dbo].[Cohort] CHECK CONSTRAINT [FK_Cohort_CohortDefinition]
 GO
-");
+";
 
-        using (var con = _cohortDatabase.Server.GetConnection())
-        {
+            using var con = _cohortDatabase.Server.GetConnection();
             con.Open();
             UsefulStuff.ExecuteBatchNonQuery(sql, con, timeout: 15);
             con.Close();
         }
-    }
 
 
     private void CreateExternalCohortTableReference()
