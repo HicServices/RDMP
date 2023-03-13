@@ -362,7 +362,7 @@ namespace Rdmp.Core.Tests.DataLoad.Engine.Integration
 
 
         [Test]
-        public void Test_FlatFileAttcher_IgnoreColumns()
+        public void Test_FlatFileAttacher_IgnoreColumns()
         {
             string filename = Path.Combine(LoadDirectory.ForLoading.FullName, "bob.csv");
             var sw = new StreamWriter(filename);

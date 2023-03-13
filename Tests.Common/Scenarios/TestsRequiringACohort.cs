@@ -32,7 +32,6 @@ namespace Tests.Common.Scenarios
         protected string ExternalCohortTableNameInCatalogue = "CohortTests";
         protected readonly string CohortDatabaseName = TestDatabaseNames.GetConsistentName("CohortDatabase");
         protected DiscoveredDatabase _cohortDatabase;
-        private Exception _setupException;
 
         /// <summary>
         /// Set the Project_ID to your project to make this 'custom data'
@@ -74,9 +73,6 @@ namespace Tests.Common.Scenarios
         protected override void SetUp()
         {
             base.SetUp();
-
-            if (_setupException != null)
-                throw _setupException;
         }
 
         private void CreateCohortDatabase()

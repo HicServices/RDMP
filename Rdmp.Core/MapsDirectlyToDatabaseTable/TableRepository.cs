@@ -13,6 +13,7 @@ using System.Linq;
 using System.Linq.Expressions;
 using System.Reflection;
 using System.Threading;
+using FAnsi;
 using FAnsi.Connections;
 using FAnsi.Discovery;
 using NLog;
@@ -767,10 +768,13 @@ abstract public class TableRepository : ITableRepository
             ongoingConnections.Add(Thread.CurrentThread,toReturn);
         else
             ongoingConnections[Thread.CurrentThread] = toReturn;
-        var cmd=toReturn.Connection.CreateCommand();
-        cmd.Transaction=toReturn.Transaction;
-        cmd.CommandText = "SET TRANSACTION ISOLATION LEVEL READ COMMITTED";
-        cmd.ExecuteNonQuery();
+        if (DiscoveredServer.DatabaseType == DatabaseType.MicrosoftSQLServer)
+        {
+            var cmd = toReturn.Connection.CreateCommand();
+            cmd.Transaction = toReturn.Transaction;
+            cmd.CommandText = "SET TRANSACTION ISOLATION LEVEL READ COMMITTED";
+            cmd.ExecuteNonQuery();
+        }
         return toReturn;
     }
 
