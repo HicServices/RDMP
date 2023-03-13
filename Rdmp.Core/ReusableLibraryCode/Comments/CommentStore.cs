@@ -7,6 +7,7 @@
 using System;
 using System.Collections;
 using System.Collections.Generic;
+using System.Globalization;
 using System.IO;
 using System.IO.Compression;
 using System.Linq;
@@ -52,8 +53,9 @@ public class CommentStore : IEnumerable<KeyValuePair<string, string>>
             else if (File.Exists(location))
                 using (var zip = new LibArchiveReader(location))
                     foreach(var xml in zip.Entries())
-                        using (var content=xml.Stream)
-                            ReadComments(content);
+                        if (xml.Name.EndsWith(".xml",true,CultureInfo.InvariantCulture))
+                            using (var content=xml.Stream)
+                                ReadComments(content);
         }
     }
 

@@ -5,6 +5,8 @@
 // You should have received a copy of the GNU General Public License along with RDMP. If not, see <https://www.gnu.org/licenses/>.
 
 using System;
+using System.Linq;
+using System.Reflection;
 using System.Text.RegularExpressions;
 using System.Threading.Tasks;
 using System.Windows.Forms;
@@ -44,7 +46,7 @@ public partial class StartupUI : Form, ICheckNotifier
         if(_startup == null)
             return;
 
-        Text = $"RDMP - v{typeof(Rdmp.Core.PluginUserInterface).Assembly.GetName().Version}";// + FileVersionInfo.GetVersionInfo(Assembly.GetExecutingAssembly().Location).FileVersion;
+        Text = $"RDMP - v{GetVersion()}";
             
         _startup.DatabaseFound += StartupDatabaseFound;
         _startup.MEFFileDownloaded += StartupMEFFileDownloaded;
@@ -54,6 +56,22 @@ public partial class StartupUI : Form, ICheckNotifier
 
         this.Icon = IconFactory.Instance.GetIcon(Image.Load<Rgba32>(CatalogueIcons.Main));
     }
+
+
+    public static string GetVersion()
+    {
+        try
+        {
+            return typeof(StartupUI).Assembly.CustomAttributes
+                .FirstOrDefault(a => a.AttributeType == typeof(AssemblyInformationalVersionAttribute))
+                ?.ToString().Split('"')[1];
+        }
+        catch (Exception)
+        {
+            return "unknown version";
+        }
+    }
+
 
     public bool DoNotContinue { get; set; }
 

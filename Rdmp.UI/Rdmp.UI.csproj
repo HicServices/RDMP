@@ -32,15 +32,9 @@
   <ItemGroup>
     <None Remove="en_GB.aff" />
     <None Remove="en_GB.dic" />
-    <None Remove="Pencil.cur" />
   </ItemGroup>
   <ItemGroup>
     <Compile Include="..\SharedAssemblyInfo.cs" Link="SharedAssemblyInfo.cs" />
-  </ItemGroup>
-  <ItemGroup>
-    <Content Include="Pencil.cur">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </Content>
   </ItemGroup>
   <ItemGroup>
     <EmbeddedResource Include="en_GB.aff" />
@@ -48,12 +42,13 @@
   </ItemGroup>
   <ItemGroup>
     <PackageReference Include="HIC.System.Windows.Forms.DataVisualization" Version="1.0.1" />
+    <PackageReference Include="Lib.Harmony" Version="2.2.2" />
     <PackageReference Include="Microsoft.SourceLink.GitHub" Version="1.1.1">
       <PrivateAssets>all</PrivateAssets>
       <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
     </PackageReference>
     <PackageReference Include="ObjectListView.Repack.NET6Plus" Version="2.9.4" />
-    <PackageReference Include="Scintilla.NET" Version="5.3.2.5" />
+    <PackageReference Include="Scintilla.NET" Version="5.3.2.6" />
     <PackageReference Include="SecurityCodeScan.VS2019" Version="5.6.7">
       <PrivateAssets>all</PrivateAssets>
       <IncludeAssets>runtime; build; native; contentfiles; analyzers</IncludeAssets>
@@ -61,6 +56,7 @@
     <PackageReference Include="System.Security.Permissions" Version="7.0.0" />
     <PackageReference Include="System.Resources.Extensions" Version="4.6.0" />
     <PackageReference Include="System.Threading.AccessControl" Version="7.0.1" />
+    <PackageReference Include="VPKSoft.ScintillaLexers.NET" Version="1.1.15" />
     <PackageReference Include="WeCantSpell.Hunspell" Version="4.0.0" />
   </ItemGroup>
   <ItemGroup>

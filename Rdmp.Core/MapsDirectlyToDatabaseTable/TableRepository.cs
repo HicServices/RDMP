@@ -284,13 +284,11 @@ abstract public class TableRepository : ITableRepository
         var toReturn = new List<T>();
 
         using var opener = GetConnection();
-        var selectCommand = DatabaseCommandHelper.GetCommand($"SELECT * FROM {typename}", opener.Connection, opener.Transaction);
-        if (whereSQL != null)
-            selectCommand.CommandText += $" {whereSQL}";
+        var selectCommand = DatabaseCommandHelper.GetCommand($"SELECT * FROM {typename} {whereSQL??""}", opener.Connection, opener.Transaction);
 
-        using (var r = selectCommand.ExecuteReader())
-            while (r.Read())
-                toReturn.Add(ConstructEntity<T>(r));
+        using var r = selectCommand.ExecuteReader();
+        while (r.Read())
+            toReturn.Add(ConstructEntity<T>(r));
         return toReturn.ToArray();
     }
 
