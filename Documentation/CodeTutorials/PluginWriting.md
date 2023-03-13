@@ -9,7 +9,7 @@
 5. [Tests](#tests)
   * [Unit Tests](#unitTests)
   * [Setting up Database Tests](#databaseTestsSetup)
-  * [Writting a Database Test](#databaseTestsWritting)
+  * [Writing a Database Test](#databaseTestsWriting)
 6. [Checks](#checks)
   * [Version 4](#anoPluginVersion4)
 7. [Progress Logging](#progress)
@@ -602,8 +602,8 @@ Create these databases you can use the main RDMP UI:
 
 Clean and Rebuild your project and run the unit test again. It should pass this time.
 
-<a name="databaseTestsWritting"></a>
-## Writting a Database Test
+<a name="databaseTestsWriting"></a>
+## Writing a Database Test
 Add a new test 
 
 ```csharp

@@ -361,11 +361,11 @@ public class FlatFileAttacherTests : DatabaseTests
     }
 
 
-    [Test]
-    public void Test_FlatFileAttcher_IgnoreColumns()
-    {
-        string filename = Path.Combine(LoadDirectory.ForLoading.FullName, "bob.csv");
-        var sw = new StreamWriter(filename);
+        [Test]
+        public void Test_FlatFileAttacher_IgnoreColumns()
+        {
+            string filename = Path.Combine(LoadDirectory.ForLoading.FullName, "bob.csv");
+            var sw = new StreamWriter(filename);
 
         sw.WriteLine("name,name2,address");
         sw.WriteLine("Bob,Munchousain,\"67, franklin\"");

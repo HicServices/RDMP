@@ -29,10 +29,9 @@ public class TestsRequiringACohort : TestsRequiringA
     protected string cohortTableName = "Cohort";
     protected string definitionTableName = "CohortDefinition";
 
-    protected string ExternalCohortTableNameInCatalogue = "CohortTests";
-    protected readonly string CohortDatabaseName = TestDatabaseNames.GetConsistentName("CohortDatabase");
-    protected DiscoveredDatabase _cohortDatabase;
-    private Exception _setupException;
+        protected string ExternalCohortTableNameInCatalogue = "CohortTests";
+        protected readonly string CohortDatabaseName = TestDatabaseNames.GetConsistentName("CohortDatabase");
+        protected DiscoveredDatabase _cohortDatabase;
 
     /// <summary>
     /// Set the Project_ID to your project to make this 'custom data'
@@ -70,14 +69,11 @@ public class TestsRequiringACohort : TestsRequiringA
             InsertIntoCohortTable("Priv_wtf11", "Pub_11ftw");
         }
 
-    [SetUp]
-    protected override void SetUp()
-    {
-        base.SetUp();
-
-        if (_setupException != null)
-            throw _setupException;
-    }
+        [SetUp]
+        protected override void SetUp()
+        {
+            base.SetUp();
+        }
 
     private void CreateCohortDatabase()
     {
