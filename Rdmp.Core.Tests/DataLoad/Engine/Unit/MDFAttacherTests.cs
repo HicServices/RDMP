@@ -99,6 +99,7 @@ public class MDFAttacherTests : DatabaseTests
                 try
                 {
                     data.Delete(true);
+                    testDir.Delete(true);
                 }
                 catch (IOException e)
                 {
