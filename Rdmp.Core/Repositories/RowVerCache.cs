@@ -47,21 +47,20 @@ namespace Rdmp.Core.Repositories
 
         public List<T> GetAllObjects()
         {
-            if(!Broken && Monitor.TryEnter(_oLockCachedObjects))
+            if (Broken || !Monitor.TryEnter(_oLockCachedObjects)) return _repository.GetAllObjectsNoCache<T>().ToList();
+            try
             {
-                try
+                //cache is empty
+                if (!_cachedObjects.Any() || _maxRowVer == null)
                 {
-                    //cache is empty
-                    if (!_cachedObjects.Any() || _maxRowVer == null)
-                    {
-                        _cachedObjects.Clear();
-                        _cachedObjects.AddRange(_repository.GetAllObjectsNoCache<T>());
-                        UpdateMaxRowVer();
-                        return _cachedObjects;
-                    }
+                    _cachedObjects.Clear();
+                    _cachedObjects.AddRange(_repository.GetAllObjectsNoCache<T>());
+                    UpdateMaxRowVer();
+                    return _cachedObjects;
+                }
 
-                    // Get deleted objects
-                    /*
+                // Get deleted objects
+                /*
                     SELECT  
         CT.ID
     FROM  
@@ -70,49 +69,48 @@ namespace Rdmp.Core.Repositories
 
         */
 
-                    using (var con = _repository.GetConnection())
-                    {
-                        var sql = $@"SELECT  
+                using (var con = _repository.GetConnection())
+                {
+                    var sql = $@"SELECT  
                         CT.ID
                             FROM  
         CHANGETABLE(CHANGES {typeof(T).Name}, {_changeTracking}) AS CT  
         WHERE SYS_CHANGE_OPERATION = 'D'";
 
-                        using (var cmd = _repository.DiscoveredServer.GetCommand(sql, con))
-                        using (var r = cmd.ExecuteReader())
-                            while (r.Read())
-                            {
-                                //it might have been added and deleted by someone else and we never saw it
-                                var d = _cachedObjects.SingleOrDefault(o => o.ID == (int) r["ID"]);
+                    using (var cmd = _repository.DiscoveredServer.GetCommand(sql, con))
+                    using (var r = cmd.ExecuteReader())
+                        while (r.Read())
+                        {
+                            //it might have been added and deleted by someone else and we never saw it
+                            var d = _cachedObjects.SingleOrDefault(o => o.ID == (int) r["ID"]);
 
-                                if (d != null)
-                                    _cachedObjects.Remove(d);
+                            if (d != null)
+                                _cachedObjects.Remove(d);
 
-                            }
-                    }
-
-                    //get new objects
-                    var maxId = _cachedObjects.Any() ? _cachedObjects.Max(o => o.ID) : 0;
-                    _cachedObjects.AddRange(_repository.GetAllObjects<T>($"WHERE ID > {maxId}"));
-
-                    // Get updated objects
-                    var changedObjects =
-                        _repository.GetAllObjects<T>($"WHERE RowVer > {ByteArrayToString(_maxRowVer)}");
-                    //I'm hoping Union prefers references in the LHS of this since they will be fresher!
-                    _cachedObjects = changedObjects.Union(_cachedObjects).ToList();
-
-                    UpdateMaxRowVer();
-
-                    return _cachedObjects;
+                        }
                 }
-                catch (SqlException ex)
-                {
-                    BrokenReason = ex;
-                }
-                finally
-                {
-                    Monitor.Exit(_oLockCachedObjects);
-                }
+
+                //get new objects
+                var maxId = _cachedObjects.Any() ? _cachedObjects.Max(o => o.ID) : 0;
+                _cachedObjects.AddRange(_repository.GetAllObjects<T>($"WHERE ID > {maxId}"));
+
+                // Get updated objects
+                var changedObjects =
+                    _repository.GetAllObjects<T>($"WHERE RowVer > {ByteArrayToString(_maxRowVer)}");
+                //I'm hoping Union prefers references in the LHS of this since they will be fresher!
+                _cachedObjects = changedObjects.Union(_cachedObjects).ToList();
+
+                UpdateMaxRowVer();
+
+                return _cachedObjects;
+            }
+            catch (SqlException ex)
+            {
+                BrokenReason = ex;
+            }
+            finally
+            {
+                Monitor.Exit(_oLockCachedObjects);
             }
 
             //we were unable to get a lock
@@ -122,13 +120,15 @@ namespace Rdmp.Core.Repositories
 
         private void UpdateMaxRowVer()
         {
-            //get the earliest RowVer
+            //get the latest RowVer
             using var con = _repository.GetConnection();
-            using (var cmd = _repository.DiscoveredServer.GetCommand($"select max(RowVer) from {typeof(T).Name}", con))
-            {
-                var result = cmd.ExecuteScalar();
-                _maxRowVer = result == DBNull.Value ? null : (byte[])result;
-            }
+            var table = _repository.DiscoveredServer.GetCurrentDatabase().ExpectTable(typeof(T).Name);
+            if (table.Exists() && table.DiscoverColumns().Any(c=>c.GetRuntimeName().Equals("RowVer",StringComparison.InvariantCultureIgnoreCase)))
+                using (var cmd = _repository.DiscoveredServer.GetCommand($"select max(RowVer) from {typeof(T).Name}", con))
+                {
+                    var result = cmd.ExecuteScalar();
+                    _maxRowVer = result == DBNull.Value ? null : (byte[])result;
+                }
                     
 
             using (var cmd =

@@ -67,14 +67,6 @@
     <Compile Update="Menus\RDMPTopMenuStripUI.Designer.cs">
       <DependentUpon>RDMPTopMenuStripUI.cs</DependentUpon>
     </Compile>
-    <Content Include="..\..\Rdmp.UI\Hunspellx64.dll">
-      <Link>Hunspellx64.dll</Link>
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </Content>
-    <Content Include="..\..\Rdmp.UI\Hunspellx86.dll">
-      <Link>Hunspellx86.dll</Link>
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </Content>
     <Content Include="Icon\main.ico" />
     <Content Include="Icon\main.png">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>

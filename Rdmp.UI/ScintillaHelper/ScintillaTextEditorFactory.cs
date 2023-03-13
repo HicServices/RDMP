@@ -266,7 +266,7 @@ namespace Rdmp.UI.ScintillaHelper
             scintilla.Styles[CSharpLexer.StyleNumber].ForeColor = Color.Purple;
             scintilla.Styles[CSharpLexer.StyleString].ForeColor = Color.Red;
 
-            scintilla.LexerName = "container";
+            scintilla.LexerName = null;
             scintilla.StyleNeeded += (s,e)=>scintilla_StyleNeeded(scintilla,e);
         }
 

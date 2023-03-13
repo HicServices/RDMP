@@ -109,7 +109,7 @@ namespace ResearchDataManagementPlatform
             
             //put the version of the software into the window title
             
-            _version = Assembly.GetExecutingAssembly().GetName().Version.ToString();
+            _version = StartupUI.GetVersion();
             
             //put the current platform database into the window title too
             if (Activator?.RepositoryLocator?.CatalogueRepository is TableRepository connectedTo)
@@ -146,7 +146,7 @@ namespace ResearchDataManagementPlatform
                     if (_persistenceFile.Exists)
                         LoadFromXml(new FileStream(_persistenceFile.FullName, FileMode.Open));
 
-                    //load the stateusing the method
+                    //load the state using the method
                 }
                 catch (Exception ex)
                 {
