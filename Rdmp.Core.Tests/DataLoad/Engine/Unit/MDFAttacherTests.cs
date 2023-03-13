@@ -97,6 +97,7 @@ namespace Rdmp.Core.Tests.DataLoad.Engine.Unit
                 try
                 {
                     data.Delete(true);
+                    testDir.Delete(true);
                 }
                 catch (IOException e)
                 {
