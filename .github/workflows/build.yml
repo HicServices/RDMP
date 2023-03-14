@@ -92,7 +92,7 @@ jobs:
           dotnet test Rdmp.Core.Tests/Rdmp.Core.Tests.csproj --nologo --collect:"XPlat Code Coverage" --no-build --verbosity minimal -c Release --results-directory coverage -- DataCollectionRunSettings.DataCollectors.DataCollector.Configuration.Format=lcov
           mv `find coverage -type f` fs-core.lcov
       - name: Merge LCovs
-        run: lcov-result-merger {db,fs}-{ui,core}.lcov all.lcov
+        run: lcov-result-merger "{db,fs}-{ui,core}.lcov" all.lcov
       - name: Coveralls
         uses: coverallsapp/github-action@master
         with:
