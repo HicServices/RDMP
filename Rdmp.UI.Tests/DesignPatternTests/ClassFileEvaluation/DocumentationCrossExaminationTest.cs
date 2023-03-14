@@ -350,43 +350,25 @@ namespace Rdmp.UI.Tests.DesignPatternTests.ClassFileEvaluation
         }
 
 
-            foreach (KeyValuePair<string, HashSet<string>> kvp in fileCommentTokens)
+            foreach (var (filename,tokens) in fileCommentTokens)
             {
-                foreach (string s in kvp.Value)
-                {
-                    if(!codeTokens.Contains(s) && !codeTokens.Contains($"ExecuteCommand{s}"))
-                    {
-                        if (IgnoreList.Contains(s))
-                            continue;
-
-                    //it's SHOUTY TEXT
-                    if (s.ToUpper() == s)
-                        continue;
-
-                    //if it's a plural e.g. TableInfos then we are still ok if we find TableInfo
-                    if (s.Length > 2 && s.EndsWith("s"))
-                    {
-                        if (codeTokens.Contains(s.Substring(0, s.Length - 1)))
-                            continue;
-                    }
-                        
-                        problems.Add(
-                            $"FATAL PROBLEM: File '{kvp.Key}' talks about something which isn't in the codebase, called a:{Environment.NewLine}{s}");
-                        
-                }
+                problems.AddRange(tokens
+                    .Where(token => !codeTokens.Contains(token) && !codeTokens.Contains($"ExecuteCommand{token}"))
+                    .Where(token => !IgnoreList.Contains(token))
+                    .Where(token => token.ToUpper() != token)
+                    .Where(token => token.Length <= 2 || !token.EndsWith("s") || !codeTokens.Contains(token[..^1]))
+                    .Select(token =>
+                        $"FATAL PROBLEM: File '{filename}' talks about something which isn't in the codebase, called a:{Environment.NewLine}{token}"));
             }
-        }
 
             if (problems.Any())
             {
                 Console.WriteLine("Found problem words in comments (Scroll down to see by file then if you think they are fine add them to DocumentationCrossExaminationTest._ignorelist):");
                 foreach (var pLine in problems.Where(l=>l.Contains('\n')).Select(p => p.Split('\n')))
                     Console.WriteLine($"\"{pLine[1]}\",");
-                
-        }
-
-        foreach (string problem in problems)
-            Console.WriteLine(problem);
+                foreach (string problem in problems)
+                    Console.WriteLine(problem);
+            }
 
         Assert.AreEqual(0,problems.Count,"Expected there to be nothing talked about in comments that doesn't appear in the codebase somewhere");
     }
@@ -446,13 +428,9 @@ namespace Rdmp.UI.Tests.DesignPatternTests.ClassFileEvaluation
             var code = Regex.Replace(m.Groups[1].Value, "\\s+", " ");
             var docs = Regex.Replace(kvp.Value, "\\s+", " ");
 
-            Assert.AreEqual(code.Trim(), docs.Trim(),        
-                $"Code in the documentation markdown (actual) did not match the corresponding compiled code (expected) for code guid {kvp.Key} markdown file was {mdFile} and code file was {codeBlocks}");
-
-                Console.WriteLine($"Validated markdown block {kvp.Key}");
+                Assert.AreEqual(code.Trim(), docs.Trim(),        
+                    $"Code in the documentation markdown (actual) did not match the corresponding compiled code (expected) for code guid {kvp.Key} markdown file was {mdFile} and code file was {codeBlocks}");
             }
-            
-            Console.WriteLine($"Validated {markdownCodeBlocks.Count} markdown blocks");
         }
 
     private void EnsureMaximumGlossaryUse(string mdFile, List<string> problems)

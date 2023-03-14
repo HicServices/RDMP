@@ -328,12 +328,11 @@ class BoundsValidationDateTest: ValidationTests
         Assert.Throws<InvalidOperationException>(()=>v.Validate(TestConstants.AdmissionDateOccursAfterDob));
     }
 
-    [Test]
-    [Ignore("Thomas, can you fix please?")]
-    public void f_invalid_comparator_field_evokes_exception()
-    {
-        var v = new Validator();
-        v.EnsureThatValue("admission_date").OccursAfter("INVALID");
+        [Test]
+        public void f_invalid_comparator_field_evokes_exception()
+        {
+            var v = new Validator();
+            v.EnsureThatValue("admission_date").OccursAfter("INVALID");
 
         Assert.Throws<InvalidOperationException>(()=>v.Validate(TestConstants.AdmissionDateOccursAfterDob));
     }

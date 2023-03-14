@@ -78,16 +78,14 @@ public class AllUIsDocumentedTest : UnitTests
             if (type.Namespace.Contains(".Tests"))
                 continue;
 
-            //theese guys can be wherever they want
-            if (_exemptNamespaces.Any(e => type.Namespace.Contains(e)))
-                continue;
+                //these guys can be wherever they want
+                if (_exemptNamespaces.Any(e => type.Namespace.Contains(e)))
+                    continue;
 
-            if (!legalNamespaces.Any(ns=>type.Namespace.Contains(ns)))
-                yield return "Expected Type '" + type.Name + "' to be in namespace(s) '" + string.Join("' or '",legalNamespaces) + "' but it was in '" + type.Namespace + "'";
-                
-            evaluatedClasses++;
+                if (!legalNamespaces.Any(ns=>type.Namespace.Contains(ns)))
+                    yield return
+                        $"Expected Type '{type.Name}' to be in namespace(s) '{string.Join("' or '", legalNamespaces)}' but it was in '{type.Namespace}'";
+            }
         }
-
-        Console.WriteLine("Evaluated " + evaluatedClasses + " classes for namespace compatibility");
     }
 }

@@ -34,14 +34,14 @@ static class Program
             // client then don't load the dlls (or we end up with 2 copies!).
             SafeDirectoryCatalog.IgnoreDll = (f) => Path.GetFileName(f.DirectoryName)?.Equals("cli")==true;
 
-        try
-        {
-            AttachConsole(-1);
-        }
-        catch (Exception)
-        {
-            Console.WriteLine("Couldn't redirect console. Nevermind");
-        }
+            try
+            {
+                AttachConsole(-1);
+            }
+            catch (Exception)
+            {
+                Console.WriteLine("Couldn't redirect console. Never mind");
+            }
 
         Startup.PreStartup();
 
