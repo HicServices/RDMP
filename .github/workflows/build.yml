@@ -33,7 +33,7 @@ jobs:
       - name: Determine RDMP build version
         id: version
         shell: cmd
-        run: perl -ne "print \"rdmpversion=$1\" if /AssemblyInformationalVersion\(\"([0-9a-z.-]+)\"\)/;" SharedAssemblyInfo.cs >> $GITHUB_OUTPUT
+        run: perl -ne "print \"rdmpversion=$1\n\" if /AssemblyInformationalVersion\(\"([0-9a-z.-]+)\"\)/;" SharedAssemblyInfo.cs >> $GITHUB_OUTPUT
       - name: Setup .NET Core
         uses: actions/setup-dotnet@v3.0.3
         with:
