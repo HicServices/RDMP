@@ -27,15 +27,15 @@ namespace Rdmp.Core.Tests.Validation
             var prediction = new Prediction(new ChiSexPredictor(), targetField);
             var v = CreateInitialisedValidator(prediction);
 
-            var ex = Assert.Throws<Exception>(()=>v.Validate(TestConstants.ValidChiAndInconsistentSex));
-            Assert.IsInstanceOf<MissingFieldException>(ex.InnerException);
+            var ex = Assert.Throws<InvalidOperationException>(()=>v.Validate(TestConstants.ValidChiAndInconsistentSex));
+            Assert.IsInstanceOf<MissingFieldException>(ex?.InnerException);
         }
 
         [Test]
         public void Validate_NullRule_GeneratesException()
         {
-            var ex = Assert.Throws<ArgumentException>(()=>new Prediction(null, "gender"));
-            StringAssert.Contains("You must specify a PredictionRule to follow",ex.Message);
+            var ex = Assert.Throws<ArgumentException>(()=>_=new Prediction(null, "gender"));
+            StringAssert.Contains("You must specify a PredictionRule to follow",ex?.Message);
         }
 
         [Test]
@@ -44,28 +44,30 @@ namespace Rdmp.Core.Tests.Validation
             var prediction = new Prediction();
             var v = CreateInitialisedValidator(prediction);
 
-            var ex = Assert.Throws <Exception>(()=>v.Validate(TestConstants.ValidChiAndInconsistentSex));
-            Assert.IsInstanceOf<InvalidOperationException>(ex.InnerException);
+            var ex = Assert.Throws<InvalidOperationException>(()=>v.Validate(TestConstants.ValidChiAndInconsistentSex));
         }
 
         [Test]
         public void Validate_UninitializedTarget_GeneratesException()
         {
-            var prediction = new Prediction();
-            prediction.Rule = new ChiSexPredictor();
+            var prediction = new Prediction
+            {
+                Rule = new ChiSexPredictor()
+            };
             var v = CreateInitialisedValidator(prediction);
-            var ex = Assert.Throws<Exception>(()=>v.Validate(TestConstants.ValidChiAndInconsistentSex));
-            Assert.IsInstanceOf<InvalidOperationException>(ex.InnerException);
+            var ex = Assert.Throws<InvalidOperationException>(()=>v.Validate(TestConstants.ValidChiAndInconsistentSex));
+            Assert.IsInstanceOf<InvalidOperationException>(ex?.InnerException);
         }
 
         [Test]
         public void Validate_UninitializedRule_GeneratesException()
         {
-            var prediction = new Prediction();
-            prediction.TargetColumn = "chi";
+            var prediction = new Prediction
+            {
+                TargetColumn = "chi"
+            };
             var v = CreateInitialisedValidator(prediction);
-            var ex = Assert.Throws<Exception>(()=>v.Validate(TestConstants.ValidChiAndInconsistentSex));
-            Assert.IsInstanceOf<InvalidOperationException>(ex.InnerException);
+            var ex = Assert.Throws<InvalidOperationException>(()=>v.Validate(TestConstants.ValidChiAndInconsistentSex));
         }
         #endregion
 
@@ -160,8 +162,10 @@ namespace Rdmp.Core.Tests.Validation
         
         private static Validator CreateInitialisedValidator(SecondaryConstraint prediction)
         {
-            var i = new ItemValidator();
-            i.PrimaryConstraint = new Chi();
+            var i = new ItemValidator
+            {
+                PrimaryConstraint = new Chi()
+            };
             i.SecondaryConstraints.Add(prediction);
 
             var v = new Validator();
