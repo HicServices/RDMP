@@ -9,6 +9,7 @@
     <projectUrl>https://github.com/HicServices/RDMP</projectUrl>
     <iconUrl>https://raw.githubusercontent.com/HicServices/RDMP/master/Application/ResearchDataManagementPlatform/Icon/main.png</iconUrl>
     <requireLicenseAcceptance>false</requireLicenseAcceptance>
+    <PackageLicenseExpression>GPL-3.0-or-later</PackageLicenseExpression>
     <description>Package for writing plugin tests</description>
     <copyright>Copyright 2018-2019</copyright>
     <TargetFramework>net6.0</TargetFramework>

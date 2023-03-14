@@ -1,11 +1,13 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
   <PropertyGroup>
+    <PackageId>HIC.RDMP.UI</PackageId>
     <id>HIC.RDMP.Plugin.UI</id>
     <version>$(version)</version>
     <title>HIC.RDMP.Plugin.UI</title>
     <authors>Health Informatics Centre, University of Dundee</authors>
     <owners>Health Informatics Centre, University of Dundee</owners>
     <licenseUrl>https://raw.githubusercontent.com/HicServices/RDMP/master/LICENSE</licenseUrl>
+    <PackageLicenseExpression>GPL-3.0-or-later</PackageLicenseExpression>
     <projectUrl>https://github.com/HicServices/RDMP</projectUrl>
     <iconUrl>https://raw.githubusercontent.com/HicServices/RDMP/master/Application/ResearchDataManagementPlatform/Icon/main.png</iconUrl>
     <requireLicenseAcceptance>false</requireLicenseAcceptance>
@@ -13,8 +15,6 @@
     <copyright>Copyright 2018-2019</copyright>
     <ProjectGuid>60721bce-e328-45cf-b6d2-b627364fbbfa</ProjectGuid>
     <TargetFramework>net6.0-windows7.0</TargetFramework>
-    <AssemblyTitle>Rdmp.UI</AssemblyTitle>
-    <Product>Rdmp.UI</Product>
     <Copyright>Copyright ©  2019</Copyright>
     <GenerateAssemblyInfo>false</GenerateAssemblyInfo>
     <GenerateDocumentationFile>true</GenerateDocumentationFile>
