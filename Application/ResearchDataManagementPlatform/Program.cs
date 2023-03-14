@@ -40,7 +40,7 @@ namespace ResearchDataManagementPlatform
             }
             catch (Exception)
             {
-                Console.WriteLine("Couldn't redirect console. Nevermind");
+                Console.WriteLine("Couldn't redirect console. Never mind");
             }
 
             Startup.PreStartup();

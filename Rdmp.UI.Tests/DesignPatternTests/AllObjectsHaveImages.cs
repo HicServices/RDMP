@@ -20,10 +20,7 @@ namespace Rdmp.UI.Tests.DesignPatternTests
         [Test]
         public void AllIHasDependenciesHaveIcons()
         {
-            List<string> missingConcepts = new List<string>();
-
-
-            string[] ExceptionsAllowed = new[]
+            string[] exceptionsAllowed = new[]
             {
 
                 "IHasDependencies", //base interface of which nobody is who isn't otherwise on this list
@@ -40,27 +37,16 @@ namespace Rdmp.UI.Tests.DesignPatternTests
 
             };
 
-            foreach (Type type in RepositoryLocator.CatalogueRepository.MEF.GetAllTypes().Where(t => typeof (IHasDependencies).IsAssignableFrom(t) && !t.IsInterface))
-            {
-                //skip masqueraders
-                if(typeof(IMasqueradeAs).IsAssignableFrom(type))
-                    continue;
+            var missingConcepts = RepositoryLocator.CatalogueRepository.MEF.GetAllTypes()
+                .Where(t => typeof(IHasDependencies).IsAssignableFrom(t) && !t.IsInterface)
+                .Where(type => !typeof(IMasqueradeAs).IsAssignableFrom(type))
+                .Select(type => type.Name)
+                .Where(typeName => !exceptionsAllowed.Any(s => s.Equals(typeName)))
+                .Where(typeName => !Enum.TryParse(typeof(RDMPConcept), typeName, out _)).ToList();
 
-                var typeName = type.Name;
-                if (ExceptionsAllowed.Any(s=>s.Equals(typeName)))
-                    continue;
-
-                try
-                {
-                    var c = Enum.Parse(typeof (RDMPConcept), typeName);
-                }
-                catch (Exception)
-                {
-                    missingConcepts.Add(typeName);
-                }
-            }
-
-            Console.WriteLine("The following Database Object Types are missing concepts (and therefore images) in CatalogueManager.exe" + Environment.NewLine + string.Join("," + Environment.NewLine , missingConcepts));
+            if (missingConcepts.Count > 0)
+                Console.WriteLine(
+                    $"The following Database Object Types are missing concepts (and therefore images) in CatalogueManager.exe{Environment.NewLine}{string.Join($",{Environment.NewLine}", missingConcepts)}");
 
             Assert.AreEqual(0,missingConcepts.Count);
         }

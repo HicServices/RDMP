@@ -351,20 +351,19 @@ namespace Rdmp.Core.Validation
                 if (_domainObjectDictionary.TryGetValue(itemValidator.TargetProperty, out o))
                 {
                     //get the first validation failure for the given column (or null if it is valid)
-                    ValidationFailure result = itemValidator.ValidateAll(o, vals, keys);
+                    var result = itemValidator.ValidateAll(o, vals, keys);
                     
                     //if it wasn't valid then add it to the eList 
-                    if(result != null)
-                        if (result.SourceItemValidator == null)
-                        {
-                            result.SourceItemValidator = itemValidator;
-                            eList.Add(result);
-                        }
+                    if(result is { SourceItemValidator: null })
+                    {
+                        result.SourceItemValidator = itemValidator;
+                        eList.Add(result);
+                    }
                 }
                 else
                 {
-                    throw new InvalidOperationException("Validation failed: Target field [" + itemValidator.TargetProperty +
-                                                  "] not found in dictionary.");
+                    throw new InvalidOperationException(
+                        $"Validation failed: Target field [{itemValidator.TargetProperty}] not found in dictionary.");
                 }
             }
 
@@ -460,9 +459,8 @@ namespace Rdmp.Core.Validation
                             result = itemValidator.ValidateAll(value, propertiesDictionary.Values.ToArray(), propertiesDictionary.Keys.ToArray());
                         }
                         else
-                            throw new MissingFieldException("Validation failed: Target field [" +
-                                                            itemValidator.TargetProperty +
-                                                            "] not found in domain object.");
+                            throw new MissingFieldException(
+                                $"Validation failed: Target field [{itemValidator.TargetProperty}] not found in domain object.");
                         
                     }
                     if (result != null)
@@ -475,7 +473,8 @@ namespace Rdmp.Core.Validation
                 }
                 catch (IndexOutOfRangeException)
                 {
-                    throw new IndexOutOfRangeException("Validation failed: Target field [" + itemValidator.TargetProperty + "] not found in domain object.");
+                    throw new IndexOutOfRangeException(
+                        $"Validation failed: Target field [{itemValidator.TargetProperty}] not found in domain object.");
                 }
             }
 
