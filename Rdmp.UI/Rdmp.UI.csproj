@@ -1,6 +1,6 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
   <PropertyGroup>
-    <PackageId>HIC.RDMP.UI</PackageId>
+    <PackageId>HIC.RDMP.Plugin.UI</PackageId>
     <id>HIC.RDMP.Plugin.UI</id>
     <version>$(version)</version>
     <title>HIC.RDMP.Plugin.UI</title>
