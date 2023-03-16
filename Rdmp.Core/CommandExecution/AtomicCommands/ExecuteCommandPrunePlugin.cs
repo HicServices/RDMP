@@ -14,6 +14,7 @@ using System.Linq;
 using System.Reflection;
 using System.Runtime.Loader;
 using System.Text.RegularExpressions;
+using Rdmp.Core.Curation.Data;
 using Rdmp.Core.ReusableLibraryCode;
 
 namespace Rdmp.Core.CommandExecution.AtomicCommands;
@@ -78,21 +79,31 @@ public class ExecuteCommandPrunePlugin : BasicCommandExecution
 
                 foreach (var e in zf.Entries.ToArray())
                 {
+                    if (!e.Name.EndsWith(".dll", StringComparison.InvariantCultureIgnoreCase))
+                        continue;
                     Assembly assembly;
-                    using (var stream = e.Open())
+                    if (SafeDirectoryCatalog.Ignore.Contains(e.Name.ToLowerInvariant()) || rdmpCoreFiles.Any(f => f.Name.Equals(e.Name)))
                     {
+                        logger.Info($"Deleting '{e.FullName}' (static)");
+                        e.Delete();
+                        continue;
+                    }
+
+                    try
+                    {
+                        using var stream = e.Open();
                         assembly = context.LoadFromStream(stream);
+                    }
+                    catch (Exception exception)
+                    {
+                        logger.Warn($"Deleting corrupt or non-.Net file {e.FullName} due to {exception.Message}");
+                        e.Delete();
+                        continue;
                     }
 
                     if (AssemblyLoadContext.Default.Assemblies.Any(a => a.FullName?.Equals(assembly.FullName) == true))
                     {
-                        logger.Info($"Deleting '{e.FullName}'");
-                        e.Delete();
-                        continue;
-                    }
-                    if (rdmpCoreFiles.Any(f => f.Name.Equals(e.Name)))
-                    {
-                        logger.Info($"Deleting '{e.FullName}'");
+                        logger.Info($"Deleting '{e.FullName}' (dynamic)");
                         e.Delete();
                         continue;
                     }

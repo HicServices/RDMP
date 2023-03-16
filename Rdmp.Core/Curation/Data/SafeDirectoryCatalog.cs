@@ -31,7 +31,9 @@ public class SafeDirectoryCatalog
     /// <summary>
     /// These assemblies do not load correctly and should be ignored (they produce warnings on Startup)
     /// </summary>
-    private static readonly HashSet<string> Ignore = new() {
+    public static readonly HashSet<string> Ignore = new() {
+
+"0harmony.dll",
 "accessibility.dll",
 "api-ms-win-core-console-l1-1-0.dll",
 "api-ms-win-core-console-l1-2-0.dll",
@@ -75,6 +77,7 @@ public class SafeDirectoryCatalog
 "api-ms-win-crt-string-l1-1-0.dll",
 "api-ms-win-crt-time-l1-1-0.dll",
 "api-ms-win-crt-utility-l1-1-0.dll",
+"archive.dll",
 "autoupdater.net.dll",
 "autoupdater.net.resources.dll",
 "azure.core.dll",
@@ -102,6 +105,8 @@ public class SafeDirectoryCatalog
 "hunspellx64.dll",
 "hunspellx86.dll",
 "icsharpcode.sharpziplib.dll",
+"lexilla.dll",
+"libarchive.net.dll",
 "mapsdirectlytodatabasetable.dll",
 "mathnet.numerics.dll",
 "microsoft.bcl.asyncinterfaces.dll",
@@ -129,6 +134,11 @@ public class SafeDirectoryCatalog
 "microsoft.win32.registry.accesscontrol.dll",
 "microsoft.win32.registry.dll",
 "microsoft.win32.systemevents.dll",
+"mono.cecil.dll",
+"mono.cecil.mdb.dll",
+"mono.cecil.pdb.dll",
+"mono.cecil.rocks.dll",
+"monomod.common.dll",
 "mscordaccore.dll",
 "mscordaccore_amd64_amd64_6.0.1122.52304.dll",
 "mscordbi.dll",
@@ -146,6 +156,7 @@ public class SafeDirectoryCatalog
 "npoi.openxml4net.dll",
 "npoi.openxmlformats.dll",
 "objectlistview.dll",
+"objectlistview2022net.dll",
 "oracle.manageddataaccess.dll",
 "penimc_cor3.dll",
 "plugin.settings.abstractions.dll",
@@ -176,6 +187,8 @@ public class SafeDirectoryCatalog
 "renci.sshnet.dll",
 "researchdatamanagementplatform.dll",
 "reusablelibrarycode.dll",
+"scintilla.dll",
+"scintilla.net.dll",
 "scintillanet.dll",
 "sixlabors.fonts.dll",
 "sixlabors.imagesharp.dll",
@@ -390,7 +403,9 @@ public class SafeDirectoryCatalog
 "uiautomationtypes.resources.dll",
 "universaltypeconverter.dll",
 "vcruntime140_cor3.dll",
+"vpksoft.scintillalexers.net.dll",
 "webview2loader.dll",
+"wecantspell.hunspell.dll",
 "weifenluo.winformsui.docking.dll",
 "weifenluo.winformsui.docking.themevs2015.dll",
 "windowsbase.dll",

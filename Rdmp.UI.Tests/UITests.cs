@@ -255,7 +255,7 @@ public class UITests : UnitTests
 
                 break;
             default:
-                throw new ArgumentOutOfRangeException("expectedErrorLevel");
+                throw new ArgumentOutOfRangeException(nameof(expectedErrorLevel));
         }
     }
 
