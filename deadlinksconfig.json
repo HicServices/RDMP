@@ -12,5 +12,10 @@
     429,
     403,
     503
+  ],
+  "ignorePatterns": [
+    {
+      "pattern": "^https://github.com/HicServices/RDMP/compare/"
+    }
   ]
 }
