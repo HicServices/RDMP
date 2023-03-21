@@ -767,7 +767,8 @@ delete from {1}..Project
                 DatabaseType.MicrosoftSQLServer => MsScratch ??= GetCleanedServer(type).Server,
                 DatabaseType.MySql => MyScratch ??= GetCleanedServer(type).Server,
                 DatabaseType.PostgreSql => PostScratch ??= GetCleanedServer(type).Server,
-                DatabaseType.Oracle => OracleScratch ??= GetCleanedServer(type).Server
+                DatabaseType.Oracle => OracleScratch ??= GetCleanedServer(type).Server,
+                _ => throw new ArgumentOutOfRangeException(nameof(type))
             };
             var trans = server.BeginNewTransactedConnection();
             return (trans,server.GetCurrentDatabase());
