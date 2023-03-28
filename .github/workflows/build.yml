@@ -85,6 +85,7 @@ jobs:
       - name: Test Reusable code
         shell: bash
         run: |
+          set -x
           rm -rf coverage
           dotnet test "Reusable/Tests/ReusableCodeTests/ReusableCodeTests.csproj" --nologo --collect:"XPlat Code Coverage" --no-build --verbosity minimal -c Release --results-directory coverage -- DataCollectionRunSettings.DataCollectors.DataCollector.Configuration.Format=lcov
           mv `find coverage -type f` recode.lcov
