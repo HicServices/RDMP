@@ -30,7 +30,7 @@ public class ExecuteCommandPrunePlugin : BasicCommandExecution
 
 
     [UseWithObjectConstructor]
-    public ExecuteCommandPrunePlugin(string file)
+    public ExecuteCommandPrunePlugin(string file) : base()
     {
         this.file = file;
     }
@@ -63,60 +63,60 @@ public class ExecuteCommandPrunePlugin : BasicCommandExecution
 
         var logger = LogManager.GetCurrentClassLogger();
 
-            Regex main = new ($@"^/?lib/{EnvironmentInfo.MainSubDir}/.*\.dll$",RegexOptions.Compiled|RegexOptions.CultureInvariant);
-            Regex windows = new($@"^/?lib/{EnvironmentInfo.WindowsSubDir}/.*\.dll$", RegexOptions.Compiled | RegexOptions.CultureInvariant);
-            AssemblyLoadContext context = new(nameof(ExecuteCommandPrunePlugin),true);
-            using (var zf = ZipFile.Open(file, ZipArchiveMode.Update))
-            {
-                var current = UsefulStuff.GetExecutableDirectory();
+        Regex main = new ($@"^/?lib/{EnvironmentInfo.MainSubDir}/.*\.dll$",RegexOptions.Compiled|RegexOptions.CultureInvariant);
+        Regex windows = new($@"^/?lib/{EnvironmentInfo.WindowsSubDir}/.*\.dll$", RegexOptions.Compiled | RegexOptions.CultureInvariant);
+        AssemblyLoadContext context = new(nameof(ExecuteCommandPrunePlugin),true);
+        using (var zf = ZipFile.Open(file, ZipArchiveMode.Update))
+        {
+            var current = UsefulStuff.GetExecutableDirectory();
 
             logger.Info($"Reading RDMP core dlls in directory '{current}'");
 
             var rdmpCoreFiles = current.GetFiles("*.dll");
 
-                var inMain = new List<ZipArchiveEntry>();
-                var inWindows = new List<ZipArchiveEntry>();
+            var inMain = new List<ZipArchiveEntry>();
+            var inWindows = new List<ZipArchiveEntry>();
 
-                foreach (var e in zf.Entries.ToArray())
+            foreach (var e in zf.Entries.ToArray())
+            {
+                if (!e.Name.EndsWith(".dll", StringComparison.InvariantCultureIgnoreCase))
+                    continue;
+                Assembly assembly;
+                if (SafeDirectoryCatalog.Ignore.Contains(e.Name.ToLowerInvariant()) || rdmpCoreFiles.Any(f => f.Name.Equals(e.Name)))
                 {
-                    if (!e.Name.EndsWith(".dll", StringComparison.InvariantCultureIgnoreCase))
-                        continue;
-                    Assembly assembly;
-                    if (SafeDirectoryCatalog.Ignore.Contains(e.Name.ToLowerInvariant()) || rdmpCoreFiles.Any(f => f.Name.Equals(e.Name)))
-                    {
-                        logger.Info($"Deleting '{e.FullName}' (static)");
-                        e.Delete();
-                        continue;
-                    }
-
-                    try
-                    {
-                        using var stream = e.Open();
-                        assembly = context.LoadFromStream(stream);
-                    }
-                    catch (Exception exception)
-                    {
-                        logger.Warn($"Deleting corrupt or non-.Net file {e.FullName} due to {exception.Message}");
-                        e.Delete();
-                        continue;
-                    }
-
-                    if (AssemblyLoadContext.Default.Assemblies.Any(a => a.FullName?.Equals(assembly.FullName) == true))
-                    {
-                        logger.Info($"Deleting '{e.FullName}' (dynamic)");
-                        e.Delete();
-                        continue;
-                    }
-
-                    if (main.IsMatch(e.FullName))
-                    {
-                        inMain.Add(e);
-                    }
-                    else if (windows.IsMatch(e.FullName))
-                    {
-                        inWindows.Add(e);
-                    }
+                    logger.Info($"Deleting '{e.FullName}' (static)");
+                    e.Delete();
+                    continue;
                 }
+
+                try
+                {
+                    using var stream = e.Open();
+                    assembly = context.LoadFromStream(stream);
+                }
+                catch (Exception exception)
+                {
+                    logger.Warn($"Deleting corrupt or non-.Net file {e.FullName} due to {exception.Message}");
+                    e.Delete();
+                    continue;
+                }
+
+                if (AssemblyLoadContext.Default.Assemblies.Any(a => a.FullName?.Equals(assembly.FullName) == true))
+                {
+                    logger.Info($"Deleting '{e.FullName}' (dynamic)");
+                    e.Delete();
+                    continue;
+                }
+
+                if (main.IsMatch(e.FullName))
+                {
+                    inMain.Add(e);
+                }
+                else if (windows.IsMatch(e.FullName))
+                {
+                    inWindows.Add(e);
+                }
+            }
 
             foreach (var dup in inWindows.Where(e => inMain.Any(o => o.Name.Equals(e.Name))).ToArray())
             {
@@ -125,7 +125,6 @@ public class ExecuteCommandPrunePlugin : BasicCommandExecution
             }
         }
 
-            BasicActivator?.Show("Prune Completed");
-        }
+        BasicActivator?.Show("Prune Completed");
     }
 }

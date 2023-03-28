@@ -49,7 +49,7 @@ class ExecuteSqlFileRuntimeTaskTests:DatabaseTests
 
         var dir = LoadDirectory.CreateDirectoryStructure(new DirectoryInfo(TestContext.CurrentContext.TestDirectory),"ExecuteSqlFileRuntimeTaskTests", true);
 
-        var task = new ExecuteSqlFileRuntimeTask(pt, new RuntimeArgumentCollection(new IArgument[0], new StageArgs(LoadStage.AdjustRaw, db, dir)));
+            var task = new ExecuteSqlFileRuntimeTask(pt, new RuntimeArgumentCollection(Array.Empty<IArgument>(), new StageArgs(LoadStage.AdjustRaw, db, dir)));
 
         task.Check(new ThrowImmediatelyCheckNotifier());
 
@@ -86,7 +86,7 @@ class ExecuteSqlFileRuntimeTaskTests:DatabaseTests
 
 
 
-        var task = new ExecuteSqlFileRuntimeTask(pt, new RuntimeArgumentCollection(new IArgument[0], new StageArgs(LoadStage.AdjustRaw, db, dir)));
+            var task = new ExecuteSqlFileRuntimeTask(pt, new RuntimeArgumentCollection(Array.Empty<IArgument>(), new StageArgs(LoadStage.AdjustRaw, db, dir)));
 
         task.Check(new ThrowImmediatelyCheckNotifier());
         HICDatabaseConfiguration configuration = new HICDatabaseConfiguration(db.Server);
@@ -185,7 +185,7 @@ class ExecuteSqlFileRuntimeTaskTests:DatabaseTests
 
         var dir = LoadDirectory.CreateDirectoryStructure(new DirectoryInfo(TestContext.CurrentContext.TestDirectory),"ExecuteSqlFileRuntimeTaskTests", true);
 
-        var task = new ExecuteSqlFileRuntimeTask(pt, new RuntimeArgumentCollection(new IArgument[0], new StageArgs(LoadStage.AdjustRaw, db, dir)));
+            var task = new ExecuteSqlFileRuntimeTask(pt, new RuntimeArgumentCollection(Array.Empty<IArgument>(), new StageArgs(LoadStage.AdjustRaw, db, dir)));
 
         task.Check(new ThrowImmediatelyCheckNotifier());
 

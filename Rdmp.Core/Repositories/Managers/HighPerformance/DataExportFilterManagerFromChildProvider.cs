@@ -59,13 +59,13 @@ class DataExportFilterManagerFromChildProvider : DataExportFilterManager
     {
         return _subcontainers.TryGetValue(parent.ID, out List<FilterContainer> result)
             ? result.ToArray()
-            : new IContainer[0];
+            : Array.Empty<IContainer>();
     }
 
     public override IFilter[] GetFilters(IContainer container)
     {
         return _containersToFilters.TryGetValue(container.ID, out List<DeployedExtractionFilter> filters)
             ? filters.ToArray()
-            : new IFilter[0];
+            : Array.Empty<IFilter>();
     }
 }

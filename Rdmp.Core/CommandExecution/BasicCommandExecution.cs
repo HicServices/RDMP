@@ -32,7 +32,7 @@ namespace Rdmp.Core.CommandExecution;
 /// constructor).  Override Execute to provide the implementation logic of your command but make sure to leave the base.Execute() call in first to ensure 
 /// IsImpossible is respected in the unlikely event that some code or user attempts to execute an impossible command.
 /// 
-/// <para>Override GetCommandHelp and GetCommandName to change the persentation layer of the command (if applicable).</para>
+/// <para>Override GetCommandHelp and GetCommandName to change the presentation layer of the command (if applicable).</para>
 /// </summary>
 public abstract class BasicCommandExecution : ICommandExecution,IAtomicCommand
 {

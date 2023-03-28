@@ -5,6 +5,7 @@
 // You should have received a copy of the GNU General Public License along with RDMP. If not, see <https://www.gnu.org/licenses/>.
 
 
+using System;
 using Rdmp.Core.Curation.Data;
 using Rdmp.Core.Curation.Data.DataLoad;
 using Rdmp.Core.Repositories.Construction;
@@ -39,7 +40,7 @@ public class ExecuteCommandSetIgnoredColumns : BasicCommandExecution
 
         if(_explicitChoiceMade)
         {
-            var ignore = _columnsToIgnore ?? new ColumnInfo[0];
+            var ignore = _columnsToIgnore ?? Array.Empty<ColumnInfo>();
 
             foreach (var c in availableColumns)
             {

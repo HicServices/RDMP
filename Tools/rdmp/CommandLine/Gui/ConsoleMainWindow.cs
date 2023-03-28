@@ -461,19 +461,19 @@ class ConsoleMainWindow
             if(ReferenceEquals(model,Other))
                 return GetOtherCategoryChildren();
 
-            // don't show cic children (this is consistent with 'AxeChildren' in main collection RDMP client for Cohort Builder)
-            if (model is CohortIdentificationConfiguration)
-                return new object[0];
+                // don't show cic children (this is consistent with 'AxeChildren' in main collection RDMP client for Cohort Builder)
+                if (model is CohortIdentificationConfiguration)
+                    return Array.Empty<object>();
 
-            //sub brackets
-            return _activator.CoreChildProvider.GetChildren(model) ?? new object[0];
+                //sub brackets
+                return _activator.CoreChildProvider.GetChildren(model) ?? Array.Empty<object>();
+            }
+            catch (Exception ex)
+            {
+                _activator.ShowException("Error getting node children",ex);
+                return Array.Empty<object>();
+            }
         }
-        catch (Exception ex)
-        {
-            _activator.ShowException("Error getting node children",ex);
-            return new object[0];
-        }
-    }
 
     private IEnumerable<object> GetOtherCategoryChildren()
     {

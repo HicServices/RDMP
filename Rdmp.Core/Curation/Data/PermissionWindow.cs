@@ -78,35 +78,35 @@ public class PermissionWindow : DatabaseEntity, IPermissionWindow
     [NoMappingToDatabase]
     public List<PermissionWindowPeriod> PermissionWindowPeriods { get; private set; }
 
-        private string SerializePermissionWindowPeriods()
-        {
-            var serializer = new XmlSerializer(typeof (List<PermissionWindowPeriod>));
-            using var output = new StringWriter();
-            serializer.Serialize(output, PermissionWindowPeriods);
-            return output.ToString();
-        }
+    private string SerializePermissionWindowPeriods()
+    {
+        var serializer = new XmlSerializer(typeof (List<PermissionWindowPeriod>));
+        using var output = new StringWriter();
+        serializer.Serialize(output, PermissionWindowPeriods);
+        return output.ToString();
+    }
 
-        private void DeserializePermissionWindowPeriods(string permissionPeriodConfig)
+    private void DeserializePermissionWindowPeriods(string permissionPeriodConfig)
+    {
+        if (string.IsNullOrWhiteSpace(permissionPeriodConfig))
+            PermissionWindowPeriods = new List<PermissionWindowPeriod>();
+        else
         {
-            if (string.IsNullOrWhiteSpace(permissionPeriodConfig))
-                PermissionWindowPeriods = new List<PermissionWindowPeriod>();
-            else
-            {
-                var deserializer = new XmlSerializer(typeof (List<PermissionWindowPeriod>));
-                PermissionWindowPeriods = deserializer.Deserialize(new StringReader(permissionPeriodConfig)) as List<PermissionWindowPeriod>;
-            }
+            var deserializer = new XmlSerializer(typeof (List<PermissionWindowPeriod>));
+            PermissionWindowPeriods = deserializer.Deserialize(new StringReader(permissionPeriodConfig)) as List<PermissionWindowPeriod>;
         }
-        /// <inheritdoc/>
-        public bool WithinPermissionWindow()
-        {
-            return WithinPermissionWindow(DateTime.UtcNow);
-        }
+    }
+    /// <inheritdoc/>
+    public bool WithinPermissionWindow()
+    {
+        return WithinPermissionWindow(DateTime.UtcNow);
+    }
 
-        /// <inheritdoc/>
-        public virtual bool WithinPermissionWindow(DateTime dateTimeUTC)
-        {
-            if (!PermissionWindowPeriods.Any())
-                return true;
+    /// <inheritdoc/>
+    public virtual bool WithinPermissionWindow(DateTime dateTimeUTC)
+    {
+        if (!PermissionWindowPeriods.Any())
+            return true;
 
         return PermissionWindowPeriods.Any(permissionPeriod => permissionPeriod.Contains(dateTimeUTC));
     }

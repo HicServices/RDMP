@@ -64,10 +64,10 @@ public partial class DataReleaseUI : DataReleaseUI_Design
     private ArbitraryFolderNode _globalsNode = new ArbitraryFolderNode(ExtractionDirectory.GLOBALS_DATA_NAME,-500);
 
 
-    private bool _isExecuting;
-    private RDMPCollectionCommonFunctionality _commonFunctionality;
-    private IEnumerable<ExtractionConfiguration> _configurations = new ExtractionConfiguration[0];
-    private IEnumerable<ISelectedDataSets> _selectedDataSets = new ISelectedDataSets[0];
+        private bool _isExecuting;
+        private RDMPCollectionCommonFunctionality _commonFunctionality;
+        private IEnumerable<ExtractionConfiguration> _configurations = Array.Empty<ExtractionConfiguration>();
+        private IEnumerable<ISelectedDataSets> _selectedDataSets = Array.Empty<ISelectedDataSets>();
 
     private ToolStripControlHost _pipelinePanel;
 
@@ -146,21 +146,21 @@ public partial class DataReleaseUI : DataReleaseUI_Design
         return null;
     }
 
-    private RDMPCommandLineOptions CommandGetter(CommandLineActivity activityRequested)
-    {
-        return new ReleaseOptions()
+        private RDMPCommandLineOptions CommandGetter(CommandLineActivity activityRequested)
         {
-            Pipeline = _pipelineSelectionUI1.Pipeline == null ? "0" : _pipelineSelectionUI1.Pipeline.ID.ToString(),
-            Configurations = ToIdList(
-                _configurations.Where(c => tlvReleasePotentials.IsChecked(c) || tlvReleasePotentials.IsCheckedIndeterminate(c)).Select(ec => ec.ID).ToArray()
-            ),
-            SelectedDataSets = ToIdList(
-                _selectedDataSets.All(tlvReleasePotentials.IsChecked) ? new int[0] : tlvReleasePotentials.CheckedObjects.OfType<ISelectedDataSets>().Select(sds => sds.ID).ToArray()
-            ),
-            Command = activityRequested,
-            ReleaseGlobals = tlvReleasePotentials.IsChecked(_globalsNode),
-        };
-    }
+            return new ReleaseOptions()
+            {
+                Pipeline = _pipelineSelectionUI1.Pipeline == null ? "0" : _pipelineSelectionUI1.Pipeline.ID.ToString(),
+                Configurations = ToIdList(
+                    _configurations.Where(c => tlvReleasePotentials.IsChecked(c) || tlvReleasePotentials.IsCheckedIndeterminate(c)).Select(ec => ec.ID).ToArray()
+                    ),
+                SelectedDataSets = ToIdList(
+                    _selectedDataSets.All(tlvReleasePotentials.IsChecked) ? Array.Empty<int>() : tlvReleasePotentials.CheckedObjects.OfType<ISelectedDataSets>().Select(sds => sds.ID).ToArray()
+                    ),
+                Command = activityRequested,
+                ReleaseGlobals = tlvReleasePotentials.IsChecked(_globalsNode),
+            };
+        }
 
     private string ToIdList(int[] ints)
     {
@@ -210,9 +210,9 @@ public partial class DataReleaseUI : DataReleaseUI_Design
         _childProvider = (DataExportChildProvider)Activator.CoreChildProvider;
         _project = databaseObject;
 
-        //figure out the globals
-        var ec = _project.ExtractionConfigurations.FirstOrDefault();
-        _globals = ec != null ? ec.GetGlobals() : new IMapsDirectlyToDatabaseTable[0];
+            //figure out the globals
+            var ec = _project.ExtractionConfigurations.FirstOrDefault();
+            _globals = ec != null ? ec.GetGlobals() : Array.Empty<IMapsDirectlyToDatabaseTable>();
 
         if (_pipelineSelectionUI1 == null)
         {

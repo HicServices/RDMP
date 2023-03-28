@@ -40,22 +40,22 @@ public abstract class AutomationCommandExecution : BasicCommandExecution
             
     }
 
-        /// <summary>
-        /// Generates command line arguments for the current engine
-        /// </summary>
-        /// <param name="argsOnly"></param>
-        /// <returns></returns>
-        public string GetCommandText(bool argsOnly = false)
-        {
-            using var p = new Parser();
-            var options = CommandGetter();
+    /// <summary>
+    /// Generates command line arguments for the current engine
+    /// </summary>
+    /// <param name="argsOnly"></param>
+    /// <returns></returns>
+    public string GetCommandText(bool argsOnly = false)
+    {
+        using var p = new Parser();
+        var options = CommandGetter();
 
-            PopulateConnectionStringOptions(options);
+        PopulateConnectionStringOptions(options);
 
-            return argsOnly
-                ? p.FormatCommandLine(options)
-                : $"{AutomationServiceExecutable} {p.FormatCommandLine(options)}";
-        }
+        return argsOnly
+            ? p.FormatCommandLine(options)
+            : $"{AutomationServiceExecutable} {p.FormatCommandLine(options)}";
+    }
 
     private void PopulateConnectionStringOptions(RDMPCommandLineOptions options)
     {

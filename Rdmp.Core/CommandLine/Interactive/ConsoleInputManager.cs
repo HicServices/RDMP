@@ -73,7 +73,7 @@ public class ConsoleInputManager : BasicActivateItems
         if (IsBasicallyNull(text))
             text = null;
 
-        // thats still an affirmative choice
+        // that's still an affirmative choice
         return true;
     }
 
@@ -485,7 +485,7 @@ public class ConsoleInputManager : BasicActivateItems
     {
         if(available.Length == 0)
         {
-            selected = new T[0];
+            selected = Array.Empty<T>();
             return true;
         }
 
@@ -499,7 +499,7 @@ public class ConsoleInputManager : BasicActivateItems
         if (string.IsNullOrWhiteSpace(result))
         {
             // selecting none is a valid user selection
-            selected = new T[0];
+            selected = Array.Empty<T>();
             return true;
         }
 

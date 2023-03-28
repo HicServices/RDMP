@@ -242,13 +242,13 @@ public class Validator
         }
     }
 
-        public static Type[] GetExtraTypes()
+    public static Type[] GetExtraTypes()
+    {
+        lock (oLockExtraTypes)
         {
-            lock (oLockExtraTypes)
-            {
-                return _extraTypes??Type.EmptyTypes;
-            }
+            return _extraTypes??Type.EmptyTypes;
         }
+    }
 
 
     /// <summary>
@@ -261,14 +261,14 @@ public class Validator
         return new RegularExpression(pattern);
     }
 
-        /// <summary>
-        /// Returns an array of available PrimaryConstraint names.
-        /// Provides support for client applications who may need to display a list for selection.
-        /// </summary>
-        /// <returns></returns>
-        public static string[] GetPrimaryConstraintNames()
-        {
-            var primaryConstraintTypes = FindSubClassesOf<PrimaryConstraint>();
+    /// <summary>
+    /// Returns an array of available PrimaryConstraint names.
+    /// Provides support for client applications who may need to display a list for selection.
+    /// </summary>
+    /// <returns></returns>
+    public static string[] GetPrimaryConstraintNames()
+    {
+        var primaryConstraintTypes = FindSubClassesOf<PrimaryConstraint>();
             
         return primaryConstraintTypes.Select(t => t.Name.ToLower()).ToArray();
     }
@@ -347,25 +347,25 @@ public class Validator
         foreach (ItemValidator itemValidator in ItemValidators)
         {
                 
-                object o;
-                if (_domainObjectDictionary.TryGetValue(itemValidator.TargetProperty, out o))
-                {
-                    //get the first validation failure for the given column (or null if it is valid)
-                    var result = itemValidator.ValidateAll(o, vals, keys);
+            object o;
+            if (_domainObjectDictionary.TryGetValue(itemValidator.TargetProperty, out o))
+            {
+                //get the first validation failure for the given column (or null if it is valid)
+                var result = itemValidator.ValidateAll(o, vals, keys);
                     
-                    //if it wasn't valid then add it to the eList 
-                    if(result is { SourceItemValidator: null })
-                    {
-                        result.SourceItemValidator = itemValidator;
-                        eList.Add(result);
-                    }
-                }
-                else
+                //if it wasn't valid then add it to the eList 
+                if(result is { SourceItemValidator: null })
                 {
-                    throw new InvalidOperationException(
-                        $"Validation failed: Target field [{itemValidator.TargetProperty}] not found in dictionary.");
+                    result.SourceItemValidator = itemValidator;
+                    eList.Add(result);
                 }
             }
+            else
+            {
+                throw new InvalidOperationException(
+                    $"Validation failed: Target field [{itemValidator.TargetProperty}] not found in dictionary.");
+            }
+        }
 
         if (eList.Count > 0)
         {
@@ -456,11 +456,11 @@ public class Validator
                     {
                         value = propertiesDictionary[itemValidator.TargetProperty];
                             
-                            result = itemValidator.ValidateAll(value, propertiesDictionary.Values.ToArray(), propertiesDictionary.Keys.ToArray());
-                        }
-                        else
-                            throw new MissingFieldException(
-                                $"Validation failed: Target field [{itemValidator.TargetProperty}] not found in domain object.");
+                        result = itemValidator.ValidateAll(value, propertiesDictionary.Values.ToArray(), propertiesDictionary.Keys.ToArray());
+                    }
+                    else
+                        throw new MissingFieldException(
+                            $"Validation failed: Target field [{itemValidator.TargetProperty}] not found in domain object.");
                         
                 }
                 if (result != null)
@@ -468,15 +468,15 @@ public class Validator
                     if (result.SourceItemValidator == null)
                         result.SourceItemValidator = itemValidator;
 
-                        eList.Add(result);
-                    }
-                }
-                catch (IndexOutOfRangeException)
-                {
-                    throw new IndexOutOfRangeException(
-                        $"Validation failed: Target field [{itemValidator.TargetProperty}] not found in domain object.");
+                    eList.Add(result);
                 }
             }
+            catch (IndexOutOfRangeException)
+            {
+                throw new IndexOutOfRangeException(
+                    $"Validation failed: Target field [{itemValidator.TargetProperty}] not found in domain object.");
+            }
+        }
 
         if (eList.Count > 0)
         {

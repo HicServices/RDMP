@@ -38,8 +38,8 @@ public class ItemValidatorTest
         _v.PrimaryConstraint = (PrimaryConstraint)Validator.CreateConstraint("chi",Consequence.Wrong);
         _v.ExpectedType = typeof(int);
 
-        Assert.NotNull(_v.ValidateAll(DateTime.Now,  new object[0], new string[0]));
-    }
+            Assert.NotNull(_v.ValidateAll(DateTime.Now,  Array.Empty<object>(), Array.Empty<string>()));
+        }
 
     [Test]
     public void ValidateAll_IsTypeIncompatible_GivesReason()
@@ -47,7 +47,7 @@ public class ItemValidatorTest
         _v.PrimaryConstraint = (PrimaryConstraint)Validator.CreateConstraint("chi",Consequence.Wrong);
         _v.ExpectedType = typeof(DateTime);
             
-        ValidationFailure result = _v.ValidateAll(DateTime.Now, new object[0], new string[0]);
+            ValidationFailure result = _v.ValidateAll(DateTime.Now, Array.Empty<object>(), Array.Empty<string>());
 
         Assert.IsNotNull(result);
         Assert.IsTrue(result.Message.StartsWith("Incompatible type"));
@@ -60,23 +60,23 @@ public class ItemValidatorTest
     {
         _v.PrimaryConstraint = new Chi();
          
-        Assert.IsNull(_v.ValidateAll(TestConstants._VALID_CHI, new object[0], new string[0]));
-    }
+            Assert.IsNull(_v.ValidateAll(TestConstants._VALID_CHI, Array.Empty<object>(), Array.Empty<string>()));
+        }
 
     [Test]
     public void ValidateAll_InvalidData_ThrowsException()
     {
         _v.PrimaryConstraint = (PrimaryConstraint)Validator.CreateConstraint("chi",Consequence.Wrong);
 
-        Assert.NotNull(_v.ValidateAll(TestConstants._INVALID_CHI_CHECKSUM, new object[0], new string[0]));
-    }
+            Assert.NotNull(_v.ValidateAll(TestConstants._INVALID_CHI_CHECKSUM, Array.Empty<object>(), Array.Empty<string>()));
+        }
 
     [Test]
     public void ValidateAll_InvalidData_GivesReason()
     {
         _v.PrimaryConstraint = (PrimaryConstraint)Validator.CreateConstraint("chi",Consequence.Wrong);
 
-        ValidationFailure result = _v.ValidateAll(TestConstants._INVALID_CHI_CHECKSUM, new object[0], new string[0]);
+            ValidationFailure result = _v.ValidateAll(TestConstants._INVALID_CHI_CHECKSUM, Array.Empty<object>(), Array.Empty<string>());
             
         Assert.AreEqual("CHI check digit did not match", result.Message);
             

@@ -20,8 +20,8 @@ class TestExecuteCommandNewObject : CommandCliTests
     public void Test_NewObjectCommand_NoArguments()
     {
             
-        var ex = Assert.Throws<Exception>(() => GetInvoker().ExecuteCommand(typeof(ExecuteCommandNewObject),
-            new CommandLineObjectPicker(new string[0], GetActivator())));
+            var ex = Assert.Throws<Exception>(() => GetInvoker().ExecuteCommand(typeof(ExecuteCommandNewObject),
+                new CommandLineObjectPicker(Array.Empty<string>(), GetActivator())));
 
         StringAssert.StartsWith("First parameter must be a Type",ex.Message);
     }

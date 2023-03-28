@@ -439,8 +439,8 @@ public partial class CreateNewDataExtractionProjectUI : RDMPForm
         if(_bLoading)
             return;
 
-        _selectedDatasets = cbxDatasets.SelectedItem != null ? new[] {(IExtractableDataSet) cbxDatasets.SelectedItem} : new IExtractableDataSet[0];
-    }
+            _selectedDatasets = cbxDatasets.SelectedItem != null ? new[] {(IExtractableDataSet) cbxDatasets.SelectedItem} : Array.Empty<IExtractableDataSet>();
+        }
 
     private void btnPick_Click(object sender, EventArgs e)
     {
@@ -489,11 +489,11 @@ public partial class CreateNewDataExtractionProjectUI : RDMPForm
         _bLoading = false;
     }
 
-    private void btnClearDatasets_Click(object sender, EventArgs e)
-    {
-        _selectedDatasets = new IExtractableDataSet[0];
-        UpdateDatasetControlVisibility();
-    }
+        private void btnClearDatasets_Click(object sender, EventArgs e)
+        {
+            _selectedDatasets = Array.Empty<IExtractableDataSet>();
+            UpdateDatasetControlVisibility();
+        }
 
     private void btnCancel_Click(object sender, EventArgs e)
     {

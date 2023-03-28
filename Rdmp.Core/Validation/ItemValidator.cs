@@ -85,14 +85,14 @@ public class ItemValidator
             {
                 ValidationFailure result = secondaryConstraint.Validate(columnValue, otherColumns, otherColumnNames);
 
-                    if (result != null)
-                        return result;
-                }
-                catch (Exception ex)
-                {
-                    throw new InvalidOperationException($"Error processing Secondary Constraint validator of Type {secondaryConstraint.GetType().Name} on column {TargetProperty}.  Value being validated was '{columnValue}'",ex);
-                }
+                if (result != null)
+                    return result;
             }
+            catch (Exception ex)
+            {
+                throw new InvalidOperationException($"Error processing Secondary Constraint validator of Type {secondaryConstraint.GetType().Name} on column {TargetProperty}.  Value being validated was '{columnValue}'",ex);
+            }
+        }
 
         return null;
     }

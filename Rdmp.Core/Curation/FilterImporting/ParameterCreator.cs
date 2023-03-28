@@ -64,7 +64,7 @@ public class ParameterCreator
     public void CreateAll(IFilter filterToCreateFor, ISqlParameter[] existingParametersInScope)
     {
         //get what parameter exists
-        ISqlParameter[] sqlParameters = filterToCreateFor.GetAllParameters()??new ISqlParameter[0];
+        ISqlParameter[] sqlParameters = filterToCreateFor.GetAllParameters()??Array.Empty<ISqlParameter>();
 
         //all parameters in the Select SQL
         HashSet<string> parametersRequiredByWhereSQL = GetRequiredParamaterNamesForQuery(filterToCreateFor.WhereSQL, _globals);

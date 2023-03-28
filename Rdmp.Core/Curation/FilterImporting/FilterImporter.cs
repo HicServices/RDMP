@@ -67,7 +67,7 @@ public class FilterImporter
         }
 
         //Handle problems with existing filters
-        existingFiltersAlreadyInScope = existingFiltersAlreadyInScope ?? new IFilter[0];
+        existingFiltersAlreadyInScope = existingFiltersAlreadyInScope ?? Array.Empty<IFilter>();
 
         if(existingFiltersAlreadyInScope.Contains(fromMaster))
             throw new ArgumentException("Master filter (that you are trying to import) cannot be part of the existing filters collection!");
@@ -126,7 +126,7 @@ public class FilterImporter
     {
         List<IFilter> createdSoFar = new List<IFilter>();
 
-        existingFiltersAlreadyInScope = existingFiltersAlreadyInScope ?? new IFilter[0];
+        existingFiltersAlreadyInScope = existingFiltersAlreadyInScope ?? Array.Empty<IFilter>();
 
         foreach (IFilter master in allMasters)
         {

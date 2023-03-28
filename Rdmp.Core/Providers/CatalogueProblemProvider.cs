@@ -19,6 +19,8 @@ using Rdmp.Core.Providers.Nodes.LoadMetadataNodes;
 using Rdmp.Core.ReusableLibraryCode.Settings;
 using TypeGuesser;
 
+namespace Rdmp.Core.Providers;
+
 /// <summary>
 /// Identifies all problems with all objects found in the Catalogue database.  This only includes problems that are fast to detect at runtime.
 /// </summary>
@@ -27,7 +29,7 @@ public class CatalogueProblemProvider : ProblemProvider
     private ICoreChildProvider _childProvider;
     private HashSet<int> _orphanCatalogueItems = new HashSet<int>();
     private HashSet<int> _usedJoinables;
-    private JoinInfo[] _joinsWithMismatchedCollations = new JoinInfo[0];
+    private JoinInfo[] _joinsWithMismatchedCollations = Array.Empty<JoinInfo>();
 
     /// <summary>
     /// Set the culture for problem provision which is culture sensitive

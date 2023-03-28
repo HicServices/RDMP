@@ -14,16 +14,16 @@ using System.Linq;
 using Terminal.Gui;
 using Terminal.Gui.Trees;
 
-namespace Rdmp.Core.CommandLine.Gui;
-
-internal class ConsoleGuiViewLogs : Window, ITreeBuilder<object>
+namespace Rdmp.Core.CommandLine.Gui
 {
-    private IBasicActivateItems _activator;
-    private ArchivalDataLoadInfo[] _archivalDataLoadInfos = new ArchivalDataLoadInfo[0];
-    private TreeView<object> _treeView;
-    private TextField _tbToFetch;
-    private ILoggedActivityRootObject _rootObject;
-    private TextField _tbcontains;
+    internal class ConsoleGuiViewLogs : Window, ITreeBuilder<object>
+    {
+        private IBasicActivateItems _activator;
+        private ArchivalDataLoadInfo[] _archivalDataLoadInfos = Array.Empty<ArchivalDataLoadInfo>();
+        private TreeView<object> _treeView;
+        private TextField _tbToFetch;
+        private ILoggedActivityRootObject _rootObject;
+        private TextField _tbcontains;
 
     public ConsoleGuiViewLogs(IBasicActivateItems activator, ILoggedActivityRootObject rootObject)
     {

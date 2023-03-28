@@ -38,59 +38,59 @@ public class ViewAggregateExtractUICollection : PersistableObjectCollection, IVi
         DatabaseObjects.Add(config);
     }
 
-        public IEnumerable<DatabaseEntity> GetToolStripObjects()
-        {
-            if (!UseQueryCache) yield break;
-            var cache = GetCacheServer();
-            if (cache != null)
-                yield return cache;
-        }
+    public IEnumerable<DatabaseEntity> GetToolStripObjects()
+    {
+        if (!UseQueryCache) yield break;
+        var cache = GetCacheServer();
+        if (cache != null)
+            yield return cache;
+    }
 
-        private ExternalDatabaseServer GetCacheServer()
-        {
-            var cic = AggregateConfiguration.GetCohortIdentificationConfigurationIfAny();
-            return cic is { QueryCachingServer_ID: { } } ? cic.QueryCachingServer : null;
-        }
+    private ExternalDatabaseServer GetCacheServer()
+    {
+        var cic = AggregateConfiguration.GetCohortIdentificationConfigurationIfAny();
+        return cic is { QueryCachingServer_ID: { } } ? cic.QueryCachingServer : null;
+    }
 
     public IDataAccessPoint GetDataAccessPoint()
     {
         var dim = AggregateConfiguration.AggregateDimensions.FirstOrDefault();
 
-            //the aggregate has no dimensions
-            if (dim != null) return dim.ColumnInfo.TableInfo;
-            var table = AggregateConfiguration.ForcedJoins.FirstOrDefault();
-            if (table == null)
-                throw new Exception(
-                    $"AggregateConfiguration '{AggregateConfiguration}' has no AggregateDimensions and no TableInfo forced joins, we do not know where/what table to run the query on");
+        //the aggregate has no dimensions
+        if (dim != null) return dim.ColumnInfo.TableInfo;
+        var table = AggregateConfiguration.ForcedJoins.FirstOrDefault();
+        if (table == null)
+            throw new Exception(
+                $"AggregateConfiguration '{AggregateConfiguration}' has no AggregateDimensions and no TableInfo forced joins, we do not know where/what table to run the query on");
 
-            return table;
+        return table;
 
-        }
+    }
 
-        public string GetSql()
+    public string GetSql()
+    {
+        var ac = AggregateConfiguration;
+
+        if (!ac.IsCohortIdentificationAggregate)
         {
-            var ac = AggregateConfiguration;
-
-            if (!ac.IsCohortIdentificationAggregate)
-            {
-                return ac.GetQueryBuilder().SQL;
-            }
-
-            var cic = ac.GetCohortIdentificationConfigurationIfAny();
-            var globals = cic.GetAllParameters();
-
-            var builder = new CohortQueryBuilder(ac, globals, null);
-
-            if (UseQueryCache)
-                builder.CacheServer = GetCacheServer();
-
-            return TopX.HasValue ? builder.GetDatasetSampleSQL(TopX.Value) : builder.SQL;
+            return ac.GetQueryBuilder().SQL;
         }
 
-        public string GetTabName()
-        {
-            return $"View Top 100 {AggregateConfiguration}";
-        }
+        var cic = ac.GetCohortIdentificationConfigurationIfAny();
+        var globals = cic.GetAllParameters();
+
+        var builder = new CohortQueryBuilder(ac, globals, null);
+
+        if (UseQueryCache)
+            builder.CacheServer = GetCacheServer();
+
+        return TopX.HasValue ? builder.GetDatasetSampleSQL(TopX.Value) : builder.SQL;
+    }
+
+    public string GetTabName()
+    {
+        return $"View Top 100 {AggregateConfiguration}";
+    }
 
     public void AdjustAutocomplete(IAutoCompleteProvider autoComplete)
     {
@@ -98,11 +98,10 @@ public class ViewAggregateExtractUICollection : PersistableObjectCollection, IVi
             autoComplete.Add(AggregateConfiguration);
     }
 
-        AggregateConfiguration AggregateConfiguration => DatabaseObjects.OfType<AggregateConfiguration>().SingleOrDefault();
+    AggregateConfiguration AggregateConfiguration => DatabaseObjects.OfType<AggregateConfiguration>().SingleOrDefault();
 
-        public IQuerySyntaxHelper GetQuerySyntaxHelper()
-        {
-            return AggregateConfiguration?.GetQuerySyntaxHelper();
-        }
+    public IQuerySyntaxHelper GetQuerySyntaxHelper()
+    {
+        return AggregateConfiguration?.GetQuerySyntaxHelper();
     }
 }

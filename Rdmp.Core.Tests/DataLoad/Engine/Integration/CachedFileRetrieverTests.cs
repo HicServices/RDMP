@@ -167,11 +167,11 @@ public class CachedFileRetrieverTests : DatabaseTests
         }
     }
 
-    private ScheduledDataLoadJob CreateTestJob(ILoadDirectory directory)
-    {
-        var catalogue = Mock.Of<ICatalogue>(c => 
-            c.GetTableInfoList(false) == new TableInfo[0] &&
-            c.GetLookupTableInfoList()==new TableInfo[0] &&
+        private ScheduledDataLoadJob CreateTestJob(ILoadDirectory directory)
+        {
+            var catalogue = Mock.Of<ICatalogue>(c => 
+            c.GetTableInfoList(false) == Array.Empty<TableInfo>() &&
+            c.GetLookupTableInfoList()==Array.Empty<TableInfo>() &&
             c.LoggingDataTask == "TestLogging"
         );
             

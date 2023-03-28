@@ -603,10 +603,10 @@ public partial class RDMPCollectionCommonFunctionality : IRefreshBusSubscriber
             ExpandToDepth(expansionDepth -1,o);
     }
 
-    private IEnumerable ChildrenGetter(object model)
-    {
-        if (AxeChildren != null && AxeChildren.Contains(model.GetType()))
-            return new object[0];
+        private IEnumerable ChildrenGetter(object model)
+        {
+            if (AxeChildren != null && AxeChildren.Contains(model.GetType()))
+                return Array.Empty<object>();
 
         return CoreChildProvider.GetChildren(model);
     }

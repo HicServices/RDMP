@@ -95,7 +95,7 @@ public class ExecuteCommandShow : BasicCommandExecution, IAtomicCommand
 
         _getObjectsFunc = ()=> foreignKey.HasValue ?
             new IMapsDirectlyToDatabaseTable[]{activator.RepositoryLocator.GetObjectByID(typeToFetch,foreignKey.Value) } :
-            new IMapsDirectlyToDatabaseTable[0];
+            Array.Empty<IMapsDirectlyToDatabaseTable>();
 
         OverrideCommandName = typeToFetch.Name + "(s)";
 
@@ -135,7 +135,7 @@ public class ExecuteCommandShow : BasicCommandExecution, IAtomicCommand
         // If we have a lazy func to call when only on command execution, nows the time
         if(_getObjectsFunc != null && _objectsToPickFrom == null)
         {
-            var pick = _getObjectsFunc()?.ToArray() ?? new IMapsDirectlyToDatabaseTable[0];
+            var pick = _getObjectsFunc()?.ToArray() ?? Array.Empty<IMapsDirectlyToDatabaseTable>();
 
             if (!pick.Any())
             {

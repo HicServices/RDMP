@@ -9,18 +9,18 @@ using System.Linq;
 using System.Security.Cryptography;
 using System.Text;
 
-namespace Rdmp.Core.Curation
+namespace Rdmp.Core.Curation;
+
+/// <summary>
+/// Core RDMP implementation of RSA public/private key encryption.  In order to be secure you should create a private key (See PasswordEncryptionKeyLocationUI).  If
+/// no private key is configured then the default Key will be used (this is not secure and anyone with access to the RDMP source code could decrypt your strings - which
+///  is open source!). Strings are encrypted based on the key file.  Note that because RSA is a good encryption technique you will get a different output (encrypted) string
+/// value for repeated calls to Encrypt even with the same input string.
+/// </summary>
+public class SimpleStringValueEncryption : IEncryptStrings
 {
-    /// <summary>
-    /// Core RDMP implementation of RSA public/private key encryption.  In order to be secure you should create a private key (See PasswordEncryptionKeyLocationUI).  If
-    /// no private key is configured then the default Key will be used (this is not secure and anyone with access to the RDMP source code could decrypt your strings - which
-    ///  is open source!). Strings are encrypted based on the key file.  Note that because RSA is a good encryption technique you will get a different output (encrypted) string
-    /// value for repeated calls to Encrypt even with the same input string.
-    /// </summary>
-    public class SimpleStringValueEncryption : IEncryptStrings
-    {
-        private static readonly RSACryptoServiceProvider Turing=new ();
-        private Encoding encoding = Encoding.ASCII;
+    private static readonly RSACryptoServiceProvider Turing=new ();
+    private Encoding encoding = Encoding.ASCII;
         
     private const string Key =
         @"<?xml version=""1.0"" encoding=""utf-16""?>
@@ -35,44 +35,44 @@ namespace Rdmp.Core.Curation
     <D>Y8zC8dUF7gI9zeeAkKfReInauV6wpg4iVh7jaTDN5DAmKFURTAyv6Il6LEyr07JB</D>
 </RSAParameters>";
 
-        public SimpleStringValueEncryption(string parameters)
-        {
-            Turing.FromXmlString(parameters ?? Key);
-        }
+    public SimpleStringValueEncryption(string parameters)
+    {
+        Turing.FromXmlString(parameters ?? Key);
+    }
 
-        /// <summary>
-        /// Encrypts using its Public Key then returns a the encrypted byte[] as a string by using BitConverter.ToString()
-        /// </summary>
-        /// <returns></returns>
-        public string Encrypt(string toEncrypt)
-        {
-            return BitConverter.ToString(Turing.Encrypt(Encoding.UTF8.GetBytes(toEncrypt), false));
-        }
+    /// <summary>
+    /// Encrypts using its Public Key then returns a the encrypted byte[] as a string by using BitConverter.ToString()
+    /// </summary>
+    /// <returns></returns>
+    public string Encrypt(string toEncrypt)
+    {
+        return BitConverter.ToString(Turing.Encrypt(Encoding.UTF8.GetBytes(toEncrypt), false));
+    }
         
-        /// <summary>
-        /// Takes an encrypted byte[] (in string format as produced by BitConverter.ToString() 
-        /// </summary>
-        /// <param name="toDecrypt"></param>
-        /// <returns></returns>
-        public string Decrypt(string toDecrypt)
+    /// <summary>
+    /// Takes an encrypted byte[] (in string format as produced by BitConverter.ToString() 
+    /// </summary>
+    /// <param name="toDecrypt"></param>
+    /// <returns></returns>
+    public string Decrypt(string toDecrypt)
+    {
+        try
         {
-            try
-            {
-                return Encoding.UTF8.GetString(Turing.Decrypt(ByteConverterGetBytes(toDecrypt), false));
-            }
-            catch (CryptographicException e)
-            {
-                throw new CryptographicException("Could not decrypt an encrypted string, possibly you are trying to decrypt it after having changed the PrivateKey to a different one than at the time it was encrypted?",e);
-            }
+            return Encoding.UTF8.GetString(Turing.Decrypt(ByteConverterGetBytes(toDecrypt), false));
         }
-
-        private static byte[] ByteConverterGetBytes(string encodedstring)
+        catch (CryptographicException e)
         {
-            var arr = encodedstring.Split('-');
-            var array = new byte[arr.Length];
+            throw new CryptographicException("Could not decrypt an encrypted string, possibly you are trying to decrypt it after having changed the PrivateKey to a different one than at the time it was encrypted?",e);
+        }
+    }
 
-            for (var i = 0; i < arr.Length; i++)
-                array[i] = Convert.ToByte(arr[i], 16);
+    private static byte[] ByteConverterGetBytes(string encodedstring)
+    {
+        var arr = encodedstring.Split('-');
+        var array = new byte[arr.Length];
+
+        for (var i = 0; i < arr.Length; i++)
+            array[i] = Convert.ToByte(arr[i], 16);
 
         return array;
     }

@@ -40,9 +40,9 @@ public partial class LoadEventsTreeView : RDMPUserControl,IObjectCollectionContr
 {
     public LoadEventsTreeViewObjectCollection Collection {get;set;}
                 
-    private BackgroundWorker _populateLoadHistory = new BackgroundWorker();
-    private ArchivalDataLoadInfo[] _populateLoadHistoryResults = new ArchivalDataLoadInfo[0];
-    private CancellationTokenSource _populateLoadHistoryCancel;
+        private BackgroundWorker _populateLoadHistory = new BackgroundWorker();
+        private ArchivalDataLoadInfo[] _populateLoadHistoryResults = Array.Empty<ArchivalDataLoadInfo>();
+        private CancellationTokenSource _populateLoadHistoryCancel;
         
 
     readonly ToolStripTextBox _tbFilterBox = new ToolStripTextBox();
@@ -259,22 +259,22 @@ public partial class LoadEventsTreeView : RDMPUserControl,IObjectCollectionContr
         treeView1.ClearObjects();
     }
 
-    LogManager _logManager;
-    void _populateLoadHistory_DoWork(object sender, DoWorkEventArgs e)
-    {
-        ArchivalDataLoadInfo[] results;
-        try
+        LogManager _logManager;
+        void _populateLoadHistory_DoWork(object sender, DoWorkEventArgs e)
         {
+            ArchivalDataLoadInfo[] results;
             try
             {
-                _logManager = new LogManager(Collection.RootObject.GetDistinctLoggingDatabase());
-                var unfilteredResults = _logManager.GetArchivalDataLoadInfos(Collection.RootObject.GetDistinctLoggingTask(), _populateLoadHistoryCancel.Token,null, _toFetch);
-                results = Collection.RootObject.FilterRuns(unfilteredResults).ToArray();
-            }
-            catch (OperationCanceledException)//user cancels
-            {
-                results = new ArchivalDataLoadInfo[0];
-            }
+                try
+                {
+                    _logManager = new LogManager(Collection.RootObject.GetDistinctLoggingDatabase());
+                    var unfilteredResults = _logManager.GetArchivalDataLoadInfos(Collection.RootObject.GetDistinctLoggingTask(), _populateLoadHistoryCancel.Token,null, _toFetch);
+                    results = Collection.RootObject.FilterRuns(unfilteredResults).ToArray();
+                }
+                catch (OperationCanceledException)//user cancels
+                {
+                    results = Array.Empty<ArchivalDataLoadInfo>();
+                }
 
             _populateLoadHistoryResults = results;
         }
@@ -304,8 +304,8 @@ public partial class LoadEventsTreeView : RDMPUserControl,IObjectCollectionContr
         llLoading.Visible = true;
         pbLoading.Visible = true;
 
-        //clear the results
-        _populateLoadHistoryResults = new ArchivalDataLoadInfo[0];
+            //clear the results
+            _populateLoadHistoryResults = Array.Empty<ArchivalDataLoadInfo>();
 
         _populateLoadHistoryCancel = new CancellationTokenSource();
         _populateLoadHistory.RunWorkerAsync();

@@ -666,7 +666,7 @@ public class DataExportChildProvider : CatalogueChildProvider
         lock(WriteLock)
         {
             return _configurationToDatasetMapping.TryGetValue(extractionConfiguration,out List<SelectedDataSets> result)?
-                (IEnumerable<SelectedDataSets>) result :new SelectedDataSets[0];
+                (IEnumerable<SelectedDataSets>) result :Array.Empty<SelectedDataSets>();
         }
     }
 

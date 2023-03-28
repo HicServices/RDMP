@@ -53,7 +53,7 @@ public class AttributePropertyFinder<T> : IAttributePropertyFinder where T : Att
         if (_properties.ContainsKey(t))
             return _properties[t];
 
-        return new PropertyInfo[0];
+        return Array.Empty<PropertyInfo>();
     }
 
     /// <summary>

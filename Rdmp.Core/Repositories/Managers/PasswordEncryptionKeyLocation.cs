@@ -62,59 +62,59 @@ public class PasswordEncryptionKeyLocation : IEncryptionManager, IInjectKnown
         // Prefer to get it from the environment variable
         var fromEnvVar = Environment.GetEnvironmentVariable(RDMP_KEY_LOCATION);
 
-            return fromEnvVar ?? _catalogueRepository.GetEncryptionKeyPath();
-        }
+        return fromEnvVar ?? _catalogueRepository.GetEncryptionKeyPath();
+    }
 
 
-        /// <summary>
-        /// Connects to the private key location and returns the encryption/decryption parameters stored in it
-        /// </summary>
-        /// <returns></returns>
-        public string OpenKeyFile()
+    /// <summary>
+    /// Connects to the private key location and returns the encryption/decryption parameters stored in it
+    /// </summary>
+    /// <returns></returns>
+    public string OpenKeyFile()
+    {
+        var location = GetKeyFileLocation();
+        return location is null ? null : File.ReadAllText(location);
+    }
+
+    private void DeserializeFromLocation(string keyLocation)
+    {
+        if (string.IsNullOrWhiteSpace(keyLocation))
+            return;
+        try
         {
-            var location = GetKeyFileLocation();
-            return location is null ? null : File.ReadAllText(location);
+            new RSACryptoServiceProvider().FromXmlString(File.ReadAllText(keyLocation));
         }
-
-        private void DeserializeFromLocation(string keyLocation)
+        catch (Exception ex)
         {
-            if (string.IsNullOrWhiteSpace(keyLocation))
-                return;
-            try
-            {
-                new RSACryptoServiceProvider().FromXmlString(File.ReadAllText(keyLocation));
-            }
-            catch (Exception ex)
-            {
-                throw new Exception(
-                    $"Failed to open and read key file {keyLocation} (possibly it is not in a shared network location or the current user ({Environment.UserName}) does not have access to the file?)", ex);
-            }
+            throw new Exception(
+                $"Failed to open and read key file {keyLocation} (possibly it is not in a shared network location or the current user ({Environment.UserName}) does not have access to the file?)", ex);
         }
+    }
 
-        /// <summary>
-        /// Creates a new private RSA encryption key certificate at the given location and sets the catalogue repository to use it for encrypting passwords.
-        /// This will make any existing serialized passwords irretrievable unless you restore and reset the original key file location. 
-        /// </summary>
-        /// <param name="path"></param>
-        /// <returns></returns>
-        public FileInfo CreateNewKeyFile(string path)
-        {
-            ClearAllInjections();
+    /// <summary>
+    /// Creates a new private RSA encryption key certificate at the given location and sets the catalogue repository to use it for encrypting passwords.
+    /// This will make any existing serialized passwords irretrievable unless you restore and reset the original key file location. 
+    /// </summary>
+    /// <param name="path"></param>
+    /// <returns></returns>
+    public FileInfo CreateNewKeyFile(string path)
+    {
+        ClearAllInjections();
 
-            var existingKey = GetKeyFileLocation();
-            if (existingKey != null)
-                throw new NotSupportedException($"There is already a key file at location:{existingKey}");
+        var existingKey = GetKeyFileLocation();
+        if (existingKey != null)
+            throw new NotSupportedException($"There is already a key file at location:{existingKey}");
 
-            var provider = new RSACryptoServiceProvider(4096);
+        var provider = new RSACryptoServiceProvider(4096);
 
         var fi = new FileInfo(path);
 
-            if(fi.Directory is { Exists: false })
-                fi.Directory.Create();
+        if(fi.Directory is { Exists: false })
+            fi.Directory.Create();
 
-            using (var stream = fi.Create())
-                stream.Write(Encoding.UTF8.GetBytes(provider.ToXmlString(true)));
-            var fileInfo = new FileInfo(path);
+        using (var stream = fi.Create())
+            stream.Write(Encoding.UTF8.GetBytes(provider.ToXmlString(true)));
+        var fileInfo = new FileInfo(path);
 
         if (!fileInfo.Exists)
             throw new Exception("Created file but somehow it didn't exist!?!");
@@ -134,8 +134,8 @@ public class PasswordEncryptionKeyLocation : IEncryptionManager, IInjectKnown
     {
         ClearAllInjections();
 
-            if (!File.Exists(newLocation))
-                throw new FileNotFoundException($"Could not find key file at:{newLocation}");
+        if (!File.Exists(newLocation))
+            throw new FileNotFoundException($"Could not find key file at:{newLocation}");
 
         //confirms that it is accessible and deserializable
         DeserializeFromLocation(newLocation);
@@ -153,7 +153,7 @@ public class PasswordEncryptionKeyLocation : IEncryptionManager, IInjectKnown
     {
         ClearAllInjections();
 
-            var existingKey = GetKeyFileLocation();
+        var existingKey = GetKeyFileLocation();
 
         if (existingKey == null)
             throw new NotSupportedException("Cannot delete key because there is no key file configured");

@@ -33,21 +33,21 @@ class ExecuteCommandRunner:IRunner
     private CommandLineObjectPicker _picker;
     private IDataLoadEventListener _listener;
 
-        public ExecuteCommandRunner(ExecuteCommandOptions options)
+    public ExecuteCommandRunner(ExecuteCommandOptions options)
+    {
+        _options = options;
+    }
+    public int Run(IRDMPPlatformRepositoryServiceLocator repositoryLocator, IDataLoadEventListener listener,
+        ICheckNotifier checkNotifier, GracefulCancellationToken token)
+    {
+        _input = new ConsoleInputManager(repositoryLocator,checkNotifier)
         {
-            _options = options;
-        }
-        public int Run(IRDMPPlatformRepositoryServiceLocator repositoryLocator, IDataLoadEventListener listener,
-            ICheckNotifier checkNotifier, GracefulCancellationToken token)
-        {
-            _input = new ConsoleInputManager(repositoryLocator,checkNotifier)
-            {
-                // if there is a single command we are running then disable user input
-                // but allow it if the input is ./rdmp cmd (i.e. run in a loop prompting for commands)
-                // prevent user input if we are running a script file
-                DisallowInput = !string.IsNullOrWhiteSpace(_options.CommandName) ||
-                                !string.IsNullOrWhiteSpace(_options.File)
-            };
+            // if there is a single command we are running then disable user input
+            // but allow it if the input is ./rdmp cmd (i.e. run in a loop prompting for commands)
+            // prevent user input if we are running a script file
+            DisallowInput = !string.IsNullOrWhiteSpace(_options.CommandName) ||
+                            !string.IsNullOrWhiteSpace(_options.File)
+        };
 
 
         var log = LogManager.GetCurrentClassLogger();
@@ -57,8 +57,8 @@ class ExecuteCommandRunner:IRunner
         _invoker.CommandImpossible += (s,c)=>log.Error($"Command Impossible:{c.Command.ReasonCommandImpossible}");
         _invoker.CommandCompleted += (s,c)=>log.Info("Command Completed");
 
-            var commandTypes = _invoker.GetSupportedCommands().ToArray();
-            _commands = new Dictionary<string, Type>(StringComparer.InvariantCultureIgnoreCase);
+        var commandTypes = _invoker.GetSupportedCommands().ToArray();
+        _commands = new Dictionary<string, Type>(StringComparer.InvariantCultureIgnoreCase);
 
         foreach(var type in commandTypes)
         {

@@ -4,6 +4,7 @@
 // RDMP is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License for more details.
 // You should have received a copy of the GNU General Public License along with RDMP. If not, see <https://www.gnu.org/licenses/>.
 
+using System;
 using System.Linq;
 using System.Windows.Forms;
 using Rdmp.Core.CommandExecution.AtomicCommands;
@@ -40,15 +41,15 @@ class AggregateConfigurationMenu :RDMPContextMenuStrip
                 //find other non cohort aggregates (graphs) 
                 AggregateConfiguration[] graphsAvailableInCatalogue;
 
-                try
-                {
-                    graphsAvailableInCatalogue = CohortSummaryQueryBuilder.GetAllCompatibleSummariesForCohort(aggregate);
-                }
-                catch (System.Exception)
-                {
-                    // Occurs if the AggregateConfiguration is badly set up e.g. has too many extraction identifiers
-                    graphsAvailableInCatalogue = new AggregateConfiguration[0];
-                }
+                    try
+                    {
+                        graphsAvailableInCatalogue = CohortSummaryQueryBuilder.GetAllCompatibleSummariesForCohort(aggregate);
+                    }
+                    catch (System.Exception)
+                    {
+                        // Occurs if the AggregateConfiguration is badly set up e.g. has too many extraction identifiers
+                        graphsAvailableInCatalogue = Array.Empty<AggregateConfiguration>();
+                    }
 
                 //and offer graph generation for the cohort subsets
                 var matchRecords = new ToolStripMenuItem("Graph Matching Records Only",_activator.CoreIconProvider.GetImage(RDMPConcept.AggregateGraph).ImageToBitmap());

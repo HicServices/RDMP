@@ -45,108 +45,108 @@ public class RowVerCache<T>: IRowVerCache where T : IMapsDirectlyToDatabaseTable
         _repository = repository;
     }
 
-        public List<T> GetAllObjects()
+    public List<T> GetAllObjects()
+    {
+        if (Broken || !Monitor.TryEnter(_oLockCachedObjects)) return _repository.GetAllObjectsNoCache<T>().ToList();
+        try
         {
-            if (Broken || !Monitor.TryEnter(_oLockCachedObjects)) return _repository.GetAllObjectsNoCache<T>().ToList();
-            try
+            //cache is empty
+            if (!_cachedObjects.Any() || _maxRowVer == null)
             {
-                //cache is empty
-                if (!_cachedObjects.Any() || _maxRowVer == null)
-                {
-                    _cachedObjects.Clear();
-                    _cachedObjects.AddRange(_repository.GetAllObjectsNoCache<T>());
-                    UpdateMaxRowVer();
-                    return _cachedObjects;
-                }
+                _cachedObjects.Clear();
+                _cachedObjects.AddRange(_repository.GetAllObjectsNoCache<T>());
+                UpdateMaxRowVer();
+                return _cachedObjects;
+            }
 
-                // Get deleted objects
-                /*
-                    SELECT  
-        CT.ID
-    FROM  
-        CHANGETABLE(CHANGES Catalogue, @last_synchronization_version) AS CT  
-        WHERE SYS_CHANGE_OPERATION = 'D'
+            // Get deleted objects
+            /*
+                SELECT  
+    CT.ID
+FROM  
+    CHANGETABLE(CHANGES Catalogue, @last_synchronization_version) AS CT  
+    WHERE SYS_CHANGE_OPERATION = 'D'
 
     */
 
-                using (var con = _repository.GetConnection())
-                {
-                    var sql = $@"SELECT  
+            using (var con = _repository.GetConnection())
+            {
+                var sql = $@"SELECT  
                         CT.ID
                             FROM  
         CHANGETABLE(CHANGES {typeof(T).Name}, {_changeTracking}) AS CT  
         WHERE SYS_CHANGE_OPERATION = 'D'";
 
-                    using (var cmd = _repository.DiscoveredServer.GetCommand(sql, con))
-                    using (var r = cmd.ExecuteReader())
-                        while (r.Read())
-                        {
-                            //it might have been added and deleted by someone else and we never saw it
-                            var d = _cachedObjects.SingleOrDefault(o => o.ID == (int) r["ID"]);
+                using (var cmd = _repository.DiscoveredServer.GetCommand(sql, con))
+                using (var r = cmd.ExecuteReader())
+                    while (r.Read())
+                    {
+                        //it might have been added and deleted by someone else and we never saw it
+                        var d = _cachedObjects.SingleOrDefault(o => o.ID == (int) r["ID"]);
 
-                            if (d != null)
-                                _cachedObjects.Remove(d);
+                        if (d != null)
+                            _cachedObjects.Remove(d);
 
-                        }
-                }
-
-                //get new objects
-                var maxId = _cachedObjects.Any() ? _cachedObjects.Max(o => o.ID) : 0;
-                _cachedObjects.AddRange(_repository.GetAllObjects<T>($"WHERE ID > {maxId}"));
-
-                // Get updated objects
-                var changedObjects =
-                    _repository.GetAllObjects<T>($"WHERE RowVer > {ByteArrayToString(_maxRowVer)}");
-                //I'm hoping Union prefers references in the LHS of this since they will be fresher!
-                _cachedObjects = changedObjects.Union(_cachedObjects).ToList();
-
-                UpdateMaxRowVer();
-
-                return _cachedObjects;
+                    }
             }
-            catch (SqlException ex)
-            {
-                BrokenReason = ex;
-            }
-            finally
-            {
-                Monitor.Exit(_oLockCachedObjects);
-            }
+
+            //get new objects
+            var maxId = _cachedObjects.Any() ? _cachedObjects.Max(o => o.ID) : 0;
+            _cachedObjects.AddRange(_repository.GetAllObjects<T>($"WHERE ID > {maxId}"));
+
+            // Get updated objects
+            var changedObjects =
+                _repository.GetAllObjects<T>($"WHERE RowVer > {ByteArrayToString(_maxRowVer)}");
+            //I'm hoping Union prefers references in the LHS of this since they will be fresher!
+            _cachedObjects = changedObjects.Union(_cachedObjects).ToList();
+
+            UpdateMaxRowVer();
+
+            return _cachedObjects;
+        }
+        catch (SqlException ex)
+        {
+            BrokenReason = ex;
+        }
+        finally
+        {
+            Monitor.Exit(_oLockCachedObjects);
+        }
 
         //we were unable to get a lock
         return _repository.GetAllObjectsNoCache<T>().ToList();
     }
 
 
-        private void UpdateMaxRowVer()
-        {
-            //get the latest RowVer
-            using var con = _repository.GetConnection();
-            var table = _repository.DiscoveredServer.GetCurrentDatabase().ExpectTable(typeof(T).Name);
-            if (table.Exists() && table.DiscoverColumns().Any(c=>c.GetRuntimeName().Equals("RowVer",StringComparison.InvariantCultureIgnoreCase)))
-                using (var cmd = _repository.DiscoveredServer.GetCommand($"select max(RowVer) from {typeof(T).Name}", con))
-                {
-                    var result = cmd.ExecuteScalar();
-                    _maxRowVer = result == DBNull.Value ? null : (byte[])result;
-                }
+    private void UpdateMaxRowVer()
+    {
+        //get the latest RowVer
+        using var con = _repository.GetConnection();
+        var table = _repository.DiscoveredServer.GetCurrentDatabase().ExpectTable(typeof(T).Name);
+        if (table.Exists() && table.DiscoverColumns().Any(c=>c.GetRuntimeName().Equals("RowVer",StringComparison.InvariantCultureIgnoreCase)))
+            using (var cmd = _repository.DiscoveredServer.GetCommand($"select max(RowVer) from {typeof(T).Name}", con))
+            {
+                var result = cmd.ExecuteScalar();
+                _maxRowVer = result == DBNull.Value ? null : (byte[])result;
+            }
                     
 
-            using (var cmd =
-                   _repository.DiscoveredServer.GetCommand("select CHANGE_TRACKING_CURRENT_VERSION()", con))
-            {
-                    
-                var result = cmd.ExecuteScalar();
-                if(result != DBNull.Value)
-                    _changeTracking = Convert.ToInt64(result);
-            }
-        }
-        private string ByteArrayToString(byte[] ba)
+        using (var cmd =
+               _repository.DiscoveredServer.GetCommand("select CHANGE_TRACKING_CURRENT_VERSION()", con))
         {
-            var hex = new StringBuilder(ba.Length * 2);
-            foreach (var b in ba)
-                hex.Append($"{b:x2}");
-            return $"0x{hex}";
+                    
+            var result = cmd.ExecuteScalar();
+            if(result != DBNull.Value)
+                _changeTracking = Convert.ToInt64(result);
         }
+    }
+    private string ByteArrayToString(byte[] ba)
+    {
+        var hex = new StringBuilder(ba.Length * 2);
+        foreach (var b in ba)
+            hex.Append($"{b:x2}");
+        return $"0x{hex}";
+    }
 
     public T1[] GetAllObjects<T1>()
     {

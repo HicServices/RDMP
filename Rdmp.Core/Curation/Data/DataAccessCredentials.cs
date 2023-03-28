@@ -144,7 +144,7 @@ public class DataAccessCredentials : DatabaseEntity, IDataAccessCredentials,INam
     /// <inheritdoc/>
     public IHasDependencies[] GetObjectsThisDependsOn()
     {
-        return new IHasDependencies[0];
+        return Array.Empty<IHasDependencies>();
     }
 
     /// <inheritdoc/>

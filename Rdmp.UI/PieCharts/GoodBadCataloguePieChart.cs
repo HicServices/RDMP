@@ -148,15 +148,15 @@ public partial class GoodBadCataloguePieChart : RDMPUserControl, IDashboardableC
         {
             var catalogues = Activator.CoreChildProvider.AllCatalogues.Where(c => _collection.Include(c, Activator.RepositoryLocator.DataExportRepository)).ToArray();
 
-            //if there are some
-            if (catalogues.Any())
-                return catalogues.SelectMany(c => c.CatalogueItems).Where(ci => _collection.Include(ci)).ToArray();//get the extractable columns
+                //if there are some
+                if (catalogues.Any())
+                    return catalogues.SelectMany(c => c.CatalogueItems).Where(ci => _collection.Include(ci)).ToArray();//get the extractable columns
+                else
+                    return Array.Empty<CatalogueItem>();//there weren't any so Catalogues so wont be any ExtractionInformationsEither
+            }
             else
-                return new CatalogueItem[0];//there weren't any so Catalogues so wont be any ExtractionInformationsEither
+                return  _collection.GetSingleCatalogueModeCatalogue().CatalogueItems;
         }
-        else
-            return  _collection.GetSingleCatalogueModeCatalogue().CatalogueItems;
-    }
 
     public void RefreshBus_RefreshObject(object sender, RefreshObjectEventArgs e)
     {

@@ -40,7 +40,7 @@ public class ExtractableDatasetBundle : Bundle, IExtractableDatasetBundle
     }
 
     public ExtractableDatasetBundle(IExtractableDataSet dataSet)
-        : this(dataSet, new SupportingDocument[0], new SupportingSQLTable[0], new TableInfo[0])
+        : this(dataSet, Array.Empty<SupportingDocument>(), Array.Empty<SupportingSQLTable>(), Array.Empty<TableInfo>())
     {
     }
         

@@ -23,13 +23,13 @@ public class DataLoadProgressUpdateInfoTests :DatabaseTests
 {
     private ScheduledDataLoadJob _job;
 
-    #region Setup Methods
-    public DataLoadProgressUpdateInfoTests()
-    {
-        ICatalogue cata = Mock.Of<ICatalogue>(
-            c=> c.LoggingDataTask == "NothingTask" && 
-                c.GetTableInfoList(false) == new TableInfo[0] &&
-                c.GetLookupTableInfoList() == new TableInfo[0]);
+        #region Setup Methods
+        public DataLoadProgressUpdateInfoTests()
+        {
+            ICatalogue cata = Mock.Of<ICatalogue>(
+                c=> c.LoggingDataTask == "NothingTask" && 
+                c.GetTableInfoList(false) == Array.Empty<TableInfo>() &&
+                c.GetLookupTableInfoList() == Array.Empty<TableInfo>());
             
         var lmd = Mock.Of<ILoadMetadata>(m => m.GetAllCatalogues() == new[] { cata });
 

@@ -4,6 +4,7 @@
 // RDMP is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License for more details.
 // You should have received a copy of the GNU General Public License along with RDMP. If not, see <https://www.gnu.org/licenses/>.
 
+using System;
 using FAnsi.Implementations.MicrosoftSQL;
 using Moq;
 using NUnit.Framework;
@@ -51,10 +52,10 @@ public class FilterImporterTests : UnitTests
         var master = Mock.Of<IFilter>(x => x.GetQuerySyntaxHelper()==new MicrosoftQuerySyntaxHelper());
         master.Name = "Space Odyssey";
 
-        //An existing IFilter that is in the scope that is being imported into (e.g. a data extract configuration)
-        var existing = Mock.Of<IFilter>(f=>
-            f.Name == "Space Odyssey" &&
-            f.GetAllParameters()==new ISqlParameter[0]);// has no parameters
+            //An existing IFilter that is in the scope that is being imported into (e.g. a data extract configuration)
+            var existing = Mock.Of<IFilter>(f=>
+                f.Name == "Space Odyssey" &&
+            f.GetAllParameters()==Array.Empty<ISqlParameter>());// has no parameters
 
         //The factory will return this value
         var constructed = Mock.Of<IFilter>(x => x.GetQuerySyntaxHelper()==new MicrosoftQuerySyntaxHelper());

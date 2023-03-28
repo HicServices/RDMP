@@ -90,7 +90,7 @@ public class PipelineComponentArgument : Argument, IPipelineComponentArgument
     /// <inheritdoc/>
     public IHasDependencies[] GetObjectsDependingOnThis()
     {
-        return new IHasDependencies[0];
+        return Array.Empty<IHasDependencies>();
     }
 
     /// <inheritdoc/>
