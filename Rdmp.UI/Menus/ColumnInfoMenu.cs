@@ -13,20 +13,19 @@ using Rdmp.Core.Curation.Data.DataLoad;
 using Rdmp.Core.DataViewing;
 using Rdmp.UI.CommandExecution.AtomicCommands;
 
-namespace Rdmp.UI.Menus
+namespace Rdmp.UI.Menus;
+
+[System.ComponentModel.DesignerCategory("")]
+class ColumnInfoMenu : RDMPContextMenuStrip
 {
-    [System.ComponentModel.DesignerCategory("")]
-    class ColumnInfoMenu : RDMPContextMenuStrip
-    {
-        public ColumnInfoMenu(RDMPContextMenuStripArgs args, ColumnInfo columnInfo) : base(args, columnInfo)
-        {            
-            Add(new ExecuteCommandAddNewLookupTableRelationship(_activator, null,columnInfo.TableInfo));
+    public ColumnInfoMenu(RDMPContextMenuStripArgs args, ColumnInfo columnInfo) : base(args, columnInfo)
+    {            
+        Add(new ExecuteCommandAddNewLookupTableRelationship(_activator, null,columnInfo.TableInfo));
 
-            Items.Add(new ToolStripSeparator());
+        Items.Add(new ToolStripSeparator());
 
-            Add(new ExecuteCommandAddJoinInfo(_activator, columnInfo.TableInfo));
+        Add(new ExecuteCommandAddJoinInfo(_activator, columnInfo.TableInfo));
 
-            Add(new ExecuteCommandAnonymiseColumnInfo(_activator, columnInfo));
-        }
+        Add(new ExecuteCommandAnonymiseColumnInfo(_activator, columnInfo));
     }
 }

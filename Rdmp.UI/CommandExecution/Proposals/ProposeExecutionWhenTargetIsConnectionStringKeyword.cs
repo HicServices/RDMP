@@ -9,28 +9,27 @@ using Rdmp.Core.Curation.Data;
 using Rdmp.UI.ItemActivation;
 using Rdmp.UI.MainFormUITabs;
 
-namespace Rdmp.UI.CommandExecution.Proposals
+namespace Rdmp.UI.CommandExecution.Proposals;
+
+class ProposeExecutionWhenTargetIsConnectionStringKeyword :RDMPCommandExecutionProposal<ConnectionStringKeyword>
 {
-    class ProposeExecutionWhenTargetIsConnectionStringKeyword :RDMPCommandExecutionProposal<ConnectionStringKeyword>
+    public ProposeExecutionWhenTargetIsConnectionStringKeyword(IActivateItems itemActivator) : base(itemActivator)
     {
-        public ProposeExecutionWhenTargetIsConnectionStringKeyword(IActivateItems itemActivator) : base(itemActivator)
-        {
-        }
+    }
 
-        public override bool CanActivate(ConnectionStringKeyword target)
-        {
-            return true;
-        }
+    public override bool CanActivate(ConnectionStringKeyword target)
+    {
+        return true;
+    }
 
-        public override void Activate(ConnectionStringKeyword target)
-        {
-            ItemActivator.Activate<ConnectionStringKeywordUI,ConnectionStringKeyword>(target);
-        }
+    public override void Activate(ConnectionStringKeyword target)
+    {
+        ItemActivator.Activate<ConnectionStringKeywordUI,ConnectionStringKeyword>(target);
+    }
 
-        public override ICommandExecution ProposeExecution(ICombineToMakeCommand cmd, ConnectionStringKeyword target, InsertOption insertOption = InsertOption.Default)
-        {
-            //no drag and drop
-            return null;
-        }
+    public override ICommandExecution ProposeExecution(ICombineToMakeCommand cmd, ConnectionStringKeyword target, InsertOption insertOption = InsertOption.Default)
+    {
+        //no drag and drop
+        return null;
     }
 }

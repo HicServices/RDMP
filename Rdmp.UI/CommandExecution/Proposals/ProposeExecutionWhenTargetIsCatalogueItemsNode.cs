@@ -12,45 +12,44 @@ using Rdmp.UI.CommandExecution.AtomicCommands;
 using Rdmp.UI.ItemActivation;
 using System.Linq;
 
-namespace Rdmp.UI.CommandExecution.Proposals
+namespace Rdmp.UI.CommandExecution.Proposals;
+
+class ProposeExecutionWhenTargetIsCatalogueItemsNode : RDMPCommandExecutionProposal<CatalogueItemsNode>
 {
-    class ProposeExecutionWhenTargetIsCatalogueItemsNode : RDMPCommandExecutionProposal<CatalogueItemsNode>
+    public ProposeExecutionWhenTargetIsCatalogueItemsNode(IActivateItems itemActivator) : base(itemActivator)
     {
-        public ProposeExecutionWhenTargetIsCatalogueItemsNode(IActivateItems itemActivator) : base(itemActivator)
-        {
-        }
+    }
 
-        public override bool CanActivate(CatalogueItemsNode target)
-        {
-            return false;
-        }
+    public override bool CanActivate(CatalogueItemsNode target)
+    {
+        return false;
+    }
 
-        public override void Activate(CatalogueItemsNode target)
-        {
-        }
+    public override void Activate(CatalogueItemsNode target)
+    {
+    }
 
-        public override ICommandExecution ProposeExecution(ICombineToMakeCommand cmd, CatalogueItemsNode target, InsertOption insertOption = InsertOption.Default)
-        {
-            var colInfo = cmd as ColumnInfoCombineable;
-            var tableInfo = cmd as TableInfoCombineable;
+    public override ICommandExecution ProposeExecution(ICombineToMakeCommand cmd, CatalogueItemsNode target, InsertOption insertOption = InsertOption.Default)
+    {
+        var colInfo = cmd as ColumnInfoCombineable;
+        var tableInfo = cmd as TableInfoCombineable;
 
-            if (colInfo != null)
-                return new ExecuteCommandAddNewCatalogueItem(ItemActivator, target.Catalogue, colInfo) { Category = target.Category };
+        if (colInfo != null)
+            return new ExecuteCommandAddNewCatalogueItem(ItemActivator, target.Catalogue, colInfo) { Category = target.Category };
             
-            if (tableInfo != null)
-                return new ExecuteCommandAddNewCatalogueItem(ItemActivator, target.Catalogue, tableInfo.TableInfo.ColumnInfos) { Category = target.Category };
+        if (tableInfo != null)
+            return new ExecuteCommandAddNewCatalogueItem(ItemActivator, target.Catalogue, tableInfo.TableInfo.ColumnInfos) { Category = target.Category };
 
-            // when dropping onto Core or Supplemental etc
-            if(cmd is CatalogueItemCombineable ciCombine && target.Category != null)
-            {
-                // drag to a new category to change the extractability
-                return new ExecuteCommandChangeExtractionCategory(ItemActivator, 
-                    ciCombine.CatalogueItems.Select(ci => ci.ExtractionInformation)
+        // when dropping onto Core or Supplemental etc
+        if(cmd is CatalogueItemCombineable ciCombine && target.Category != null)
+        {
+            // drag to a new category to change the extractability
+            return new ExecuteCommandChangeExtractionCategory(ItemActivator, 
+                ciCombine.CatalogueItems.Select(ci => ci.ExtractionInformation)
                     .Where(e => e != null).ToArray(),
-                    target.Category);
-            }
-
-            return null;
+                target.Category);
         }
+
+        return null;
     }
 }

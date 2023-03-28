@@ -11,55 +11,54 @@ using Rdmp.Core.Curation.Data;
 using Rdmp.Core.DataExport.Data;
 using ReusableLibraryCode.Checks;
 
-namespace Rdmp.Core.CommandExecution.AtomicCommands
+namespace Rdmp.Core.CommandExecution.AtomicCommands;
+
+/// <summary>
+/// Creates a new database in which to store final cohort lists of a given private linkage identifier name and format (e.g. CHI).
+/// </summary>
+public class ExecuteCommandCreateNewCohortStore : BasicCommandExecution
 {
+    private IBasicActivateItems activator;
+    private readonly DiscoveredDatabase databaseToCreate;
+    private readonly bool allowNullReleaseIdentifiers;
+    private readonly string privateFieldName;
+    private readonly string privateFieldDataType;
+
     /// <summary>
-    /// Creates a new database in which to store final cohort lists of a given private linkage identifier name and format (e.g. CHI).
+    /// The cohort store created 
     /// </summary>
-    public class ExecuteCommandCreateNewCohortStore : BasicCommandExecution
+    public ExternalCohortTable Created;
+
+
+    public ExecuteCommandCreateNewCohortStore(IBasicActivateItems activator, 
+            
+        [DemandsInitialization("The database to create")]
+        DiscoveredDatabase databaseToCreate,
+
+        [DemandsInitialization("True to allow null values in the release identifier field.  Set to true if you want to do your own custom release identifier allocation later e.g. via a stored proc")]
+        bool allowNullReleaseIdentifiers,
+
+        [DemandsInitialization("Name of the private identifier field in your datasets e.g. chi")]
+        string privateFieldName,
+        [DemandsInitialization("Sql datatype (of your DBMS) that the private identifier field should have e.g. varchar(10)")]
+        string privateFieldDataType) : base(activator)
     {
-        private IBasicActivateItems activator;
-        private readonly DiscoveredDatabase databaseToCreate;
-        private readonly bool allowNullReleaseIdentifiers;
-        private readonly string privateFieldName;
-        private readonly string privateFieldDataType;
+        this.activator = activator;
+        this.databaseToCreate = databaseToCreate;
+        this.allowNullReleaseIdentifiers = allowNullReleaseIdentifiers;
+        this.privateFieldName = privateFieldName;
+        this.privateFieldDataType = privateFieldDataType;
+    }
 
-        /// <summary>
-        /// The cohort store created 
-        /// </summary>
-        public ExternalCohortTable Created;
+    public override void Execute()
+    {
+        base.Execute();
 
 
-        public ExecuteCommandCreateNewCohortStore(IBasicActivateItems activator, 
+        //Create cohort store database
+        var wizard = new CreateNewCohortDatabaseWizard(databaseToCreate, activator.RepositoryLocator.CatalogueRepository, activator.RepositoryLocator.DataExportRepository, allowNullReleaseIdentifiers);
+        Created = wizard.CreateDatabase(new PrivateIdentifierPrototype(privateFieldName, privateFieldDataType), new ThrowImmediatelyCheckNotifier() { WriteToConsole = false });
             
-            [DemandsInitialization("The database to create")]
-            DiscoveredDatabase databaseToCreate,
-
-            [DemandsInitialization("True to allow null values in the release identifier field.  Set to true if you want to do your own custom release identifier allocation later e.g. via a stored proc")]
-            bool allowNullReleaseIdentifiers,
-
-            [DemandsInitialization("Name of the private identifier field in your datasets e.g. chi")]
-            string privateFieldName,
-            [DemandsInitialization("Sql datatype (of your DBMS) that the private identifier field should have e.g. varchar(10)")]
-            string privateFieldDataType) : base(activator)
-        {
-            this.activator = activator;
-            this.databaseToCreate = databaseToCreate;
-            this.allowNullReleaseIdentifiers = allowNullReleaseIdentifiers;
-            this.privateFieldName = privateFieldName;
-            this.privateFieldDataType = privateFieldDataType;
-        }
-
-        public override void Execute()
-        {
-            base.Execute();
-
-
-            //Create cohort store database
-            var wizard = new CreateNewCohortDatabaseWizard(databaseToCreate, activator.RepositoryLocator.CatalogueRepository, activator.RepositoryLocator.DataExportRepository, allowNullReleaseIdentifiers);
-            Created = wizard.CreateDatabase(new PrivateIdentifierPrototype(privateFieldName, privateFieldDataType), new ThrowImmediatelyCheckNotifier() { WriteToConsole = false });
-            
-            Publish(Created);
-        }
+        Publish(Created);
     }
 }

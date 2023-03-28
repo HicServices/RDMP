@@ -10,33 +10,32 @@ using ReusableLibraryCode.Checks;
 using ReusableLibraryCode.Icons.IconProvision;
 using SixLabors.ImageSharp.PixelFormats;
 
-namespace Rdmp.Core.CommandExecution.AtomicCommands
+namespace Rdmp.Core.CommandExecution.AtomicCommands;
+
+/// <summary>
+/// Checks a given <see cref="ICheckable"/> object reporting integrity to an <see cref="ICheckNotifier"/>
+/// </summary>
+public class ExecuteCommandCheck : BasicCommandExecution, IAtomicCommand
 {
-    /// <summary>
-    /// Checks a given <see cref="ICheckable"/> object reporting integrity to an <see cref="ICheckNotifier"/>
-    /// </summary>
-    public class ExecuteCommandCheck : BasicCommandExecution, IAtomicCommand
+    private readonly ICheckable _checkable;
+    private ICheckNotifier _notifier;
+
+    public ExecuteCommandCheck(IBasicActivateItems activator, ICheckable checkable, ICheckNotifier notifier) : base(activator)
     {
-        private readonly ICheckable _checkable;
-        private ICheckNotifier _notifier;
+        _checkable = checkable;
+        _notifier = notifier;
+    }
 
-        public ExecuteCommandCheck(IBasicActivateItems activator, ICheckable checkable, ICheckNotifier notifier) : base(activator)
-        {
-            _checkable = checkable;
-            _notifier = notifier;
-        }
+    public override void Execute()
+    {
+        base.Execute();
 
-        public override void Execute()
-        {
-            base.Execute();
-
-            _checkable.Check(_notifier);
-        }
+        _checkable.Check(_notifier);
+    }
 
 
-        public override Image<Rgba32> GetImage(IIconProvider iconProvider)
-        {
-            return Image.Load<Rgba32>(CatalogueIcons.TinyYellow);
-        }
+    public override Image<Rgba32> GetImage(IIconProvider iconProvider)
+    {
+        return Image.Load<Rgba32>(CatalogueIcons.TinyYellow);
     }
 }

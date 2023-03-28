@@ -13,48 +13,47 @@ using System;
 using System.Linq;
 using Terminal.Gui;
 
-namespace Rdmp.Core.CommandLine.Gui.Windows.RunnerWindows
+namespace Rdmp.Core.CommandLine.Gui.Windows.RunnerWindows;
+
+class RunReleaseWindow : RunEngineWindow<ReleaseOptions>
 {
-    class RunReleaseWindow : RunEngineWindow<ReleaseOptions>
+    private IExtractionConfiguration[] configs;
+
+    public RunReleaseWindow(IBasicActivateItems activator, IProject project):base(activator,()=>new ReleaseOptions())
     {
-        private IExtractionConfiguration[] configs;
+        configs = project.ExtractionConfigurations.Where(c => !c.IsReleased).ToArray();
+    }
+    public RunReleaseWindow(IBasicActivateItems activator, ExtractionConfiguration ec) : base(activator, () => new ReleaseOptions())
+    {
+        configs = new IExtractionConfiguration[] { ec };
+    }
 
-        public RunReleaseWindow(IBasicActivateItems activator, IProject project):base(activator,()=>new ReleaseOptions())
+
+    protected override void AdjustCommand(ReleaseOptions opts, CommandLineActivity activity)
+    {
+        base.AdjustCommand(opts, activity);
+
+        var useCase = new ReleaseUseCase();
+
+        var compatible = useCase.FilterCompatiblePipelines(BasicActivator.RepositoryLocator.CatalogueRepository.GetAllObjects<Pipeline>()).ToArray();
+
+        if (!compatible.Any())
         {
-            configs = project.ExtractionConfigurations.Where(c => !c.IsReleased).ToArray();
+            throw new Exception("No compatible pipelines");
         }
-        public RunReleaseWindow(IBasicActivateItems activator, ExtractionConfiguration ec) : base(activator, () => new ReleaseOptions())
+
+        var pipe = BasicActivator.SelectOne("Release Pipeline", compatible, null, true);
+
+        if (pipe == null)
         {
-            configs = new IExtractionConfiguration[] { ec };
+            throw new OperationCanceledException();
         }
 
+        opts.Pipeline = pipe.ID.ToString();
+        opts.Configurations = string.Join(",",configs.Select(c=>c.ID.ToString()).ToArray());
+        opts.ReleaseGlobals = true;
 
-        protected override void AdjustCommand(ReleaseOptions opts, CommandLineActivity activity)
-        {
-            base.AdjustCommand(opts, activity);
-
-            var useCase = new ReleaseUseCase();
-
-            var compatible = useCase.FilterCompatiblePipelines(BasicActivator.RepositoryLocator.CatalogueRepository.GetAllObjects<Pipeline>()).ToArray();
-
-            if (!compatible.Any())
-            {
-                throw new Exception("No compatible pipelines");
-            }
-
-            var pipe = BasicActivator.SelectOne("Release Pipeline", compatible, null, true);
-
-            if (pipe == null)
-            {
-                throw new OperationCanceledException();
-            }
-
-            opts.Pipeline = pipe.ID.ToString();
-            opts.Configurations = string.Join(",",configs.Select(c=>c.ID.ToString()).ToArray());
-            opts.ReleaseGlobals = true;
-
-            // all datasets
-            opts.SelectedDataSets = null;
-        }
+        // all datasets
+        opts.SelectedDataSets = null;
     }
 }

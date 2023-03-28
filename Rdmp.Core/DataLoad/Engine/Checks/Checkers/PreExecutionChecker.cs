@@ -15,260 +15,258 @@ using Rdmp.Core.DataLoad.Triggers;
 using ReusableLibraryCode.Checks;
 using ReusableLibraryCode.DataAccess;
 
-namespace Rdmp.Core.DataLoad.Engine.Checks.Checkers
+namespace Rdmp.Core.DataLoad.Engine.Checks.Checkers;
+
+/// <summary>
+/// Checks DLE databases (RAW, STAGING, LIVE) are in a correct state ahead of running a data load (See LoadMetadata).
+/// </summary>
+public class PreExecutionChecker :  ICheckable
 {
+    private readonly ILoadMetadata _loadMetadata;
+    private readonly IList<ICatalogue> _cataloguesToLoad;
+    private readonly HICDatabaseConfiguration _databaseConfiguration;
+
     /// <summary>
-    /// Checks DLE databases (RAW, STAGING, LIVE) are in a correct state ahead of running a data load (See LoadMetadata).
+    /// True if when running <see cref="Check"/> there was a catastrophic problem e.g. unable to reach tables which means you shouldn't bother
+    /// running any other kinds of checks
     /// </summary>
-    public class PreExecutionChecker :  ICheckable
+    public bool HardFail { get; private set; }
+
+    public PreExecutionChecker(ILoadMetadata loadMetadata, HICDatabaseConfiguration overrideDatabaseConfiguration) 
     {
-        private readonly ILoadMetadata _loadMetadata;
-        private readonly IList<ICatalogue> _cataloguesToLoad;
-        private readonly HICDatabaseConfiguration _databaseConfiguration;
+        _loadMetadata = loadMetadata;
+        _databaseConfiguration = overrideDatabaseConfiguration ?? new HICDatabaseConfiguration(loadMetadata);
+        _cataloguesToLoad = _loadMetadata.GetAllCatalogues().ToList();
+    }
 
-        /// <summary>
-        /// True if when running <see cref="Check"/> there was a catastrophic problem e.g. unable to reach tables which means you shouldn't bother
-        /// running any other kinds of checks
-        /// </summary>
-        public bool HardFail { get; private set; }
+    private void PreExecutionStagingDatabaseCheck(bool skipLookups)
+    {
+        var allTableInfos = _cataloguesToLoad.SelectMany(catalogue => catalogue.GetTableInfoList(!skipLookups)).Distinct().ToList();
+        CheckDatabaseExistsForStage(LoadBubble.Staging, "STAGING database found", "STAGING database not found");
 
-        public PreExecutionChecker(ILoadMetadata loadMetadata, HICDatabaseConfiguration overrideDatabaseConfiguration) 
+        if (_databaseConfiguration.RequiresStagingTableCreation)
         {
-            _loadMetadata = loadMetadata;
-            _databaseConfiguration = overrideDatabaseConfiguration ?? new HICDatabaseConfiguration(loadMetadata);
-            _cataloguesToLoad = _loadMetadata.GetAllCatalogues().ToList();
+            CheckTablesDoNotExistOnStaging(allTableInfos);
         }
-
-        private void PreExecutionStagingDatabaseCheck(bool skipLookups)
+        else
         {
-            var allTableInfos = _cataloguesToLoad.SelectMany(catalogue => catalogue.GetTableInfoList(!skipLookups)).Distinct().ToList();
-            CheckDatabaseExistsForStage(LoadBubble.Staging, "STAGING database found", "STAGING database not found");
-
-            if (_databaseConfiguration.RequiresStagingTableCreation)
-            {
-                CheckTablesDoNotExistOnStaging(allTableInfos);
-            }
-            else
-            {
-                CheckTablesAreEmptyInDatabaseOnServer();
-                CheckColumnInfosMatchWithWhatIsInDatabaseAtStage(allTableInfos, LoadBubble.Staging);
-            }
+            CheckTablesAreEmptyInDatabaseOnServer();
+            CheckColumnInfosMatchWithWhatIsInDatabaseAtStage(allTableInfos, LoadBubble.Staging);
         }
+    }
 
-        private void CheckDatabaseExistsForStage(LoadBubble deploymentStage, string successMessage, string failureMessage)
+    private void CheckDatabaseExistsForStage(LoadBubble deploymentStage, string successMessage, string failureMessage)
+    {
+        var dbInfo = _databaseConfiguration.DeployInfo[deploymentStage];
+
+        if (!dbInfo.Exists())
         {
-            var dbInfo = _databaseConfiguration.DeployInfo[deploymentStage];
-
-            if (!dbInfo.Exists())
-            {
-                var createDatabase = _notifier.OnCheckPerformed(new CheckEventArgs(failureMessage + ": " + dbInfo, CheckResult.Fail, null, "Create " + dbInfo.GetRuntimeName() + " on " + dbInfo.Server.Name));
+            var createDatabase = _notifier.OnCheckPerformed(new CheckEventArgs(failureMessage + ": " + dbInfo, CheckResult.Fail, null, "Create " + dbInfo.GetRuntimeName() + " on " + dbInfo.Server.Name));
 
                 
-                if (createDatabase)
-                    dbInfo.Server.CreateDatabase(dbInfo.GetRuntimeName());
-            }
-            else
-                _notifier.OnCheckPerformed(new CheckEventArgs(successMessage + ": " + dbInfo, CheckResult.Success, null));
+            if (createDatabase)
+                dbInfo.Server.CreateDatabase(dbInfo.GetRuntimeName());
+        }
+        else
+            _notifier.OnCheckPerformed(new CheckEventArgs(successMessage + ": " + dbInfo, CheckResult.Success, null));
+    }
+
+    private void CheckTablesDoNotExistOnStaging(IEnumerable<ITableInfo> allTableInfos)
+    {
+        DiscoveredDatabase stagingDbInfo = _databaseConfiguration.DeployInfo[LoadBubble.Staging];
+        var alreadyExistingTableInfosThatShouldntBeThere = new List<string>();
+
+        var tableNames = allTableInfos.Select(info => info.GetRuntimeName(LoadBubble.Staging, _databaseConfiguration.DatabaseNamer));
+        foreach (string tableName in tableNames)
+        {
+            if (stagingDbInfo.ExpectTable(tableName).Exists())
+                alreadyExistingTableInfosThatShouldntBeThere.Add(tableName);
         }
 
-        private void CheckTablesDoNotExistOnStaging(IEnumerable<ITableInfo> allTableInfos)
+        if (alreadyExistingTableInfosThatShouldntBeThere.Any())
         {
-            DiscoveredDatabase stagingDbInfo = _databaseConfiguration.DeployInfo[LoadBubble.Staging];
-            var alreadyExistingTableInfosThatShouldntBeThere = new List<string>();
+            bool nukeTables;
 
-            var tableNames = allTableInfos.Select(info => info.GetRuntimeName(LoadBubble.Staging, _databaseConfiguration.DatabaseNamer));
-            foreach (string tableName in tableNames)
-            {
-                if (stagingDbInfo.ExpectTable(tableName).Exists())
-                    alreadyExistingTableInfosThatShouldntBeThere.Add(tableName);
-            }
+            nukeTables = _notifier.OnCheckPerformed(new CheckEventArgs(
+                "The following tables: '" +
+                alreadyExistingTableInfosThatShouldntBeThere.Aggregate("", (s, n) => s + n + ",") +
+                "' exists in the Staging database (" + stagingDbInfo.GetRuntimeName() +
+                ") but the database load configuration requires that tables are created during the load process",
+                CheckResult.Fail, null, "Drop the tables"));
 
-            if (alreadyExistingTableInfosThatShouldntBeThere.Any())
-            {
-                bool nukeTables;
-
-                nukeTables = _notifier.OnCheckPerformed(new CheckEventArgs(
-                        "The following tables: '" +
-                        alreadyExistingTableInfosThatShouldntBeThere.Aggregate("", (s, n) => s + n + ",") +
-                        "' exists in the Staging database (" + stagingDbInfo.GetRuntimeName() +
-                        ") but the database load configuration requires that tables are created during the load process",
-                        CheckResult.Fail, null, "Drop the tables"));
-
-                if (nukeTables)
-                    RemoveTablesFromDatabase(alreadyExistingTableInfosThatShouldntBeThere,stagingDbInfo);
-            }
-            else
-                _notifier.OnCheckPerformed(new CheckEventArgs("Staging table is clear", CheckResult.Success, null));
+            if (nukeTables)
+                RemoveTablesFromDatabase(alreadyExistingTableInfosThatShouldntBeThere,stagingDbInfo);
         }
+        else
+            _notifier.OnCheckPerformed(new CheckEventArgs("Staging table is clear", CheckResult.Success, null));
+    }
 
-        private void CheckTablesAreEmptyInDatabaseOnServer()
+    private void CheckTablesAreEmptyInDatabaseOnServer()
+    {
+        var stagingDbInfo = _databaseConfiguration.DeployInfo[LoadBubble.Staging];
+
+        foreach (var table in stagingDbInfo.DiscoverTables(false))
         {
-            var stagingDbInfo = _databaseConfiguration.DeployInfo[LoadBubble.Staging];
-
-            foreach (var table in stagingDbInfo.DiscoverTables(false))
-            {
-                if(!table.IsEmpty())
-                    _notifier.OnCheckPerformed(new CheckEventArgs("Table " + table + " in staging database '" + stagingDbInfo.GetRuntimeName() + "' is not empty on " + stagingDbInfo.Server.Name, CheckResult.Fail));
-                else
-                    _notifier.OnCheckPerformed(new CheckEventArgs("Staging database is empty (" + stagingDbInfo + ")", CheckResult.Success, null));
-            }
+            if(!table.IsEmpty())
+                _notifier.OnCheckPerformed(new CheckEventArgs("Table " + table + " in staging database '" + stagingDbInfo.GetRuntimeName() + "' is not empty on " + stagingDbInfo.Server.Name, CheckResult.Fail));
+            else
+                _notifier.OnCheckPerformed(new CheckEventArgs("Staging database is empty (" + stagingDbInfo + ")", CheckResult.Success, null));
+        }
             
-        }
+    }
 
-        // Check that the column infos from the catalogue match up with what is actually in the staging databases
-        private void CheckColumnInfosMatchWithWhatIsInDatabaseAtStage(IEnumerable<ITableInfo> allTableInfos, LoadBubble deploymentStage)
+    // Check that the column infos from the catalogue match up with what is actually in the staging databases
+    private void CheckColumnInfosMatchWithWhatIsInDatabaseAtStage(IEnumerable<ITableInfo> allTableInfos, LoadBubble deploymentStage)
+    {
+        var dbInfo = _databaseConfiguration.DeployInfo[deploymentStage];
+        foreach (var tableInfo in allTableInfos)
         {
-            var dbInfo = _databaseConfiguration.DeployInfo[deploymentStage];
-            foreach (var tableInfo in allTableInfos)
-            {
-                var columnNames = tableInfo.ColumnInfos.Select(info => info.GetRuntimeName()).ToList();
+            var columnNames = tableInfo.ColumnInfos.Select(info => info.GetRuntimeName()).ToList();
 
-                if (!columnNames.Any())
-                    _notifier.OnCheckPerformed(new CheckEventArgs("Table '" + tableInfo.GetRuntimeName() + "' has no ColumnInfos", CheckResult.Fail, null));
+            if (!columnNames.Any())
+                _notifier.OnCheckPerformed(new CheckEventArgs("Table '" + tableInfo.GetRuntimeName() + "' has no ColumnInfos", CheckResult.Fail, null));
 
-                string tableName = tableInfo.GetRuntimeName(deploymentStage, _databaseConfiguration.DatabaseNamer);
-                var table = dbInfo.ExpectTable(tableName);
+            string tableName = tableInfo.GetRuntimeName(deploymentStage, _databaseConfiguration.DatabaseNamer);
+            var table = dbInfo.ExpectTable(tableName);
                     
-                if(!table.Exists())
-                    throw new Exception("PreExecutionChecker spotted that table does not exist:" + table + " it was about to check whether the TableInfo matched the columns or not");
+            if(!table.Exists())
+                throw new Exception("PreExecutionChecker spotted that table does not exist:" + table + " it was about to check whether the TableInfo matched the columns or not");
+        }
+    }
+
+    private void PreExecutionDatabaseCheck()
+    {
+        var allNonLookups = _cataloguesToLoad.SelectMany(catalogue => catalogue.GetTableInfoList(false)).Distinct().ToList();
+        CheckDatabaseExistsForStage(LoadBubble.Live, "LIVE database found", "LIVE database not found");
+        CheckColumnInfosMatchWithWhatIsInDatabaseAtStage(allNonLookups, LoadBubble.Live);
+            
+        if(!_loadMetadata.IgnoreTrigger)
+            CheckUpdateTriggers(allNonLookups);
+
+        CheckRAWDatabaseIsNotPresent();
+    }
+
+    private void CheckRAWDatabaseIsNotPresent()
+    {
+        var persistentRaw = LoadMetadata.UsesPersistentRaw(_loadMetadata);
+        var rawDbInfo = _databaseConfiguration.DeployInfo[LoadBubble.Raw];
+
+        // Check that the raw database is not present
+        if (!rawDbInfo.Exists())
+        {
+            // RAW db does not exist thats usually good unless...
+            if(persistentRaw)
+            {
+                var shouldCreate = _notifier.OnCheckPerformed(new CheckEventArgs("RAW database '" + rawDbInfo + "' does not exist but load is persistentRaw", CheckResult.Fail, null, $"Create RAW database?"));
+                if(shouldCreate)
+                {
+                    rawDbInfo.Create();
+                }
+            }
+
+            return;
+        }
+
+
+        var shouldDrop = _notifier.OnCheckPerformed(new CheckEventArgs("RAW database '" + rawDbInfo + "' exists", CheckResult.Fail, null, $"Drop {(persistentRaw ? "table(s)": "database")} " + rawDbInfo));
+            
+        if(!rawDbInfo.GetRuntimeName().EndsWith("_RAW",StringComparison.CurrentCultureIgnoreCase))
+            throw new Exception("rawDbInfo database name did not end with _RAW! It was:" + rawDbInfo.GetRuntimeName()+ " (Why is the system trying to drop this database?)");
+        if (shouldDrop)
+        {
+            foreach (DiscoveredTable t in rawDbInfo.DiscoverTables(true))
+            {
+                _notifier.OnCheckPerformed(new CheckEventArgs("Dropping table " + t.GetFullyQualifiedName() + "...", CheckResult.Success));
+                t.Drop();
+            }
+
+            if(!persistentRaw)
+            {
+                _notifier.OnCheckPerformed(new CheckEventArgs("Finally dropping database" + rawDbInfo + "...", CheckResult.Success));
+                rawDbInfo.Drop();
             }
         }
+    }
 
-        private void PreExecutionDatabaseCheck()
+    private void CheckUpdateTriggers(IEnumerable<ITableInfo> allTableInfos)
+    {
+        // Check that the update triggers are present/enabled
+        foreach (var tableInfo in allTableInfos)
         {
-            var allNonLookups = _cataloguesToLoad.SelectMany(catalogue => catalogue.GetTableInfoList(false)).Distinct().ToList();
-            CheckDatabaseExistsForStage(LoadBubble.Live, "LIVE database found", "LIVE database not found");
-            CheckColumnInfosMatchWithWhatIsInDatabaseAtStage(allNonLookups, LoadBubble.Live);
-            
-            if(!_loadMetadata.IgnoreTrigger)
-                CheckUpdateTriggers(allNonLookups);
-
-            CheckRAWDatabaseIsNotPresent();
+            TriggerChecks checker = new TriggerChecks(_databaseConfiguration.DeployInfo[LoadBubble.Live].ExpectTable(tableInfo.GetRuntimeName(),tableInfo.Schema));
+            checker.Check(_notifier);
         }
+    }
 
-        private void CheckRAWDatabaseIsNotPresent()
+ 
+    private ICheckNotifier _notifier;
+
+ 
+    public void Check(ICheckNotifier notifier)
+    {
+        _notifier = notifier;
+
+        //For each table in load can we reach it and is it a valid table type
+        foreach (ITableInfo ti in _loadMetadata.GetAllCatalogues().SelectMany(c => c.GetTableInfoList(true)).Distinct())
         {
-            var persistentRaw = LoadMetadata.UsesPersistentRaw(_loadMetadata);
-            var rawDbInfo = _databaseConfiguration.DeployInfo[LoadBubble.Raw];
-
-            // Check that the raw database is not present
-            if (!rawDbInfo.Exists())
+            DiscoveredTable tbl;
+            try
             {
-                // RAW db does not exist thats usually good unless...
-                if(persistentRaw)
-                {
-                    var shouldCreate = _notifier.OnCheckPerformed(new CheckEventArgs("RAW database '" + rawDbInfo + "' does not exist but load is persistentRaw", CheckResult.Fail, null, $"Create RAW database?"));
-                    if(shouldCreate)
-                    {
-                        rawDbInfo.Create();
-                    }
-                }
-
+                tbl = ti.Discover(DataAccessContext.DataLoad);
+            }
+            catch (Exception e)
+            {
+                HardFail = true;
+                notifier.OnCheckPerformed(new CheckEventArgs("Could not reach table in load '" + ti.Name +"'",CheckResult.Fail,e));
                 return;
             }
 
-
-            var shouldDrop = _notifier.OnCheckPerformed(new CheckEventArgs("RAW database '" + rawDbInfo + "' exists", CheckResult.Fail, null, $"Drop {(persistentRaw ? "table(s)": "database")} " + rawDbInfo));
-            
-            if(!rawDbInfo.GetRuntimeName().EndsWith("_RAW",StringComparison.CurrentCultureIgnoreCase))
-                throw new Exception("rawDbInfo database name did not end with _RAW! It was:" + rawDbInfo.GetRuntimeName()+ " (Why is the system trying to drop this database?)");
-            if (shouldDrop)
+            if (!tbl.Exists())
             {
-                foreach (DiscoveredTable t in rawDbInfo.DiscoverTables(true))
-                {
-                    _notifier.OnCheckPerformed(new CheckEventArgs("Dropping table " + t.GetFullyQualifiedName() + "...", CheckResult.Success));
-                    t.Drop();
-                }
+                HardFail = true;
+                notifier.OnCheckPerformed(new CheckEventArgs("Table '" + ti.Name + "' does not exist", CheckResult.Fail));
+            }
 
-                if(!persistentRaw)
-                {
-                    _notifier.OnCheckPerformed(new CheckEventArgs("Finally dropping database" + rawDbInfo + "...", CheckResult.Success));
-                    rawDbInfo.Drop();
-                }
+            if (tbl.TableType != TableType.Table)
+            {
+                HardFail = true;
+                notifier.OnCheckPerformed(new CheckEventArgs("Table '" + ti + "' is a " + tbl.TableType,CheckResult.Fail));
             }
         }
 
-        private void CheckUpdateTriggers(IEnumerable<ITableInfo> allTableInfos)
-        {
-            // Check that the update triggers are present/enabled
-            foreach (var tableInfo in allTableInfos)
-            {
-                TriggerChecks checker = new TriggerChecks(_databaseConfiguration.DeployInfo[LoadBubble.Live].ExpectTable(tableInfo.GetRuntimeName(),tableInfo.Schema));
-                checker.Check(_notifier);
-            }
-        }
-
- 
-        private ICheckNotifier _notifier;
-
- 
-        public void Check(ICheckNotifier notifier)
-        {
-            _notifier = notifier;
-
-            //For each table in load can we reach it and is it a valid table type
-            foreach (ITableInfo ti in _loadMetadata.GetAllCatalogues().SelectMany(c => c.GetTableInfoList(true)).Distinct())
-            {
-                DiscoveredTable tbl;
-                try
-                {
-                    tbl = ti.Discover(DataAccessContext.DataLoad);
-                }
-                catch (Exception e)
-                {
-                    HardFail = true;
-                    notifier.OnCheckPerformed(new CheckEventArgs("Could not reach table in load '" + ti.Name +"'",CheckResult.Fail,e));
-                    return;
-                }
-
-                if (!tbl.Exists())
-                {
-                    HardFail = true;
-                    notifier.OnCheckPerformed(new CheckEventArgs("Table '" + ti.Name + "' does not exist", CheckResult.Fail));
-                }
-
-                if (tbl.TableType != TableType.Table)
-                {
-                    HardFail = true;
-                    notifier.OnCheckPerformed(new CheckEventArgs("Table '" + ti + "' is a " + tbl.TableType,CheckResult.Fail));
-                }
-            }
-
-            if(HardFail)
-                return;
+        if(HardFail)
+            return;
             
-            AtLeastOneTaskCheck();
+        AtLeastOneTaskCheck();
 
-            PreExecutionStagingDatabaseCheck(false);
-            PreExecutionDatabaseCheck();
+        PreExecutionStagingDatabaseCheck(false);
+        PreExecutionDatabaseCheck();
             
-        }
+    }
 
         
 
-        private void AtLeastOneTaskCheck()
-        {
-            if (_loadMetadata.ProcessTasks.All(p => p.IsDisabled))
-                _notifier.OnCheckPerformed(
-                    new CheckEventArgs(
-                        "There are no ProcessTasks defined for '" + _loadMetadata +
-                        "'",
-                        CheckResult.Fail));
-        }
-                
-        public void RemoveTablesFromDatabase(IEnumerable<string> tableNames, DiscoveredDatabase dbInfo)
-        {
-            if (!IsNukable(dbInfo))
-                throw new Exception("This method loops through every table in a database and nukes it! for obvious reasons this is only allowed on databases with a suffix _STAGING/_RAW");
-
-            foreach (var tableName in tableNames)
-                dbInfo.ExpectTable(tableName).Drop();
-        }
-
-        private bool IsNukable(DiscoveredDatabase dbInfo)
-        {
-            return dbInfo.GetRuntimeName().EndsWith("_STAGING", StringComparison.CurrentCultureIgnoreCase) || dbInfo.GetRuntimeName().EndsWith("_RAW", StringComparison.CurrentCultureIgnoreCase);
-        }
+    private void AtLeastOneTaskCheck()
+    {
+        if (_loadMetadata.ProcessTasks.All(p => p.IsDisabled))
+            _notifier.OnCheckPerformed(
+                new CheckEventArgs(
+                    "There are no ProcessTasks defined for '" + _loadMetadata +
+                    "'",
+                    CheckResult.Fail));
     }
-      
+                
+    public void RemoveTablesFromDatabase(IEnumerable<string> tableNames, DiscoveredDatabase dbInfo)
+    {
+        if (!IsNukable(dbInfo))
+            throw new Exception("This method loops through every table in a database and nukes it! for obvious reasons this is only allowed on databases with a suffix _STAGING/_RAW");
+
+        foreach (var tableName in tableNames)
+            dbInfo.ExpectTable(tableName).Drop();
+    }
+
+    private bool IsNukable(DiscoveredDatabase dbInfo)
+    {
+        return dbInfo.GetRuntimeName().EndsWith("_STAGING", StringComparison.CurrentCultureIgnoreCase) || dbInfo.GetRuntimeName().EndsWith("_RAW", StringComparison.CurrentCultureIgnoreCase);
+    }
 }

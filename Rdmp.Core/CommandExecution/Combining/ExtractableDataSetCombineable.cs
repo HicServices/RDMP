@@ -7,34 +7,33 @@
 using Rdmp.Core.DataExport.Data;
 using Rdmp.Core.Repositories;
 
-namespace Rdmp.Core.CommandExecution.Combining
+namespace Rdmp.Core.CommandExecution.Combining;
+
+/// <summary>
+/// <see cref="ICombineToMakeCommand"/> for one or more objects of type <see cref="IExtractableDataSet"/>
+/// </summary>
+public class ExtractableDataSetCombineable : ICombineToMakeCommand
 {
-    /// <summary>
-    /// <see cref="ICombineToMakeCommand"/> for one or more objects of type <see cref="IExtractableDataSet"/>
-    /// </summary>
-    public class ExtractableDataSetCombineable : ICombineToMakeCommand
+    public IExtractableDataSet[] ExtractableDataSets { get; set; }
+
+    public ExtractableDataSetCombineable(ExtractableDataSet extractableDataSet)
     {
-        public IExtractableDataSet[] ExtractableDataSets { get; set; }
+        ExtractableDataSets = new ExtractableDataSet[]{extractableDataSet};
+    }
 
-        public ExtractableDataSetCombineable(ExtractableDataSet extractableDataSet)
-        {
-            ExtractableDataSets = new ExtractableDataSet[]{extractableDataSet};
-        }
+    public ExtractableDataSetCombineable(ExtractableDataSet[] extractableDataSetArray)
+    {
+        ExtractableDataSets = extractableDataSetArray;
+    }
 
-        public ExtractableDataSetCombineable(ExtractableDataSet[] extractableDataSetArray)
-        {
-            ExtractableDataSets = extractableDataSetArray;
-        }
+    public ExtractableDataSetCombineable(ExtractableDataSetPackage extractableDataSetPackage)
+    {
+        var repository = (IDataExportRepository) extractableDataSetPackage.Repository;
+        ExtractableDataSets = repository.GetAllDataSets(extractableDataSetPackage, repository.GetAllObjects<ExtractableDataSet>());
+    }
 
-        public ExtractableDataSetCombineable(ExtractableDataSetPackage extractableDataSetPackage)
-        {
-            var repository = (IDataExportRepository) extractableDataSetPackage.Repository;
-            ExtractableDataSets = repository.GetAllDataSets(extractableDataSetPackage, repository.GetAllObjects<ExtractableDataSet>());
-        }
-
-        public string GetSqlString()
-        {
-            return null;
-        }
+    public string GetSqlString()
+    {
+        return null;
     }
 }

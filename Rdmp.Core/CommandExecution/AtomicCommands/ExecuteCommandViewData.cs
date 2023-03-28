@@ -17,203 +17,202 @@ using System;
 using System.IO;
 using System.Linq;
 
-namespace Rdmp.Core.CommandExecution.AtomicCommands
+namespace Rdmp.Core.CommandExecution.AtomicCommands;
+
+public class ExecuteCommandViewData : ExecuteCommandViewDataBase, IAtomicCommand
 {
-    public class ExecuteCommandViewData : ExecuteCommandViewDataBase, IAtomicCommand
+    private readonly IViewSQLAndResultsCollection _collection;
+    private readonly ViewType _viewType;
+    private readonly IMapsDirectlyToDatabaseTable _obj;
+    private readonly bool _useCache;
+
+    #region Constructors
+
+    /// <summary>
+    /// Provides a view of a sample of records in a column/table
+    /// </summary>
+    /// <param name="activator"></param>
+    /// <param name="viewType"></param>
+    /// <param name="toFile"></param>
+    /// <param name="useCache"></param>
+    /// <param name="obj"></param>
+    /// <exception cref="ArgumentException"></exception>
+    [UseWithObjectConstructor]
+    public ExecuteCommandViewData(IBasicActivateItems activator,
+        [DemandsInitialization("The object (ColumnInfo, TableInfo etc) you want to view a sample of")]
+        IMapsDirectlyToDatabaseTable obj,
+        [DemandsInitialization("Optional. The view mode you want to see.  Options include 'TOP_100', 'Aggregate', 'Distribution' or 'All'",DefaultValue = ViewType.TOP_100)]
+        ViewType viewType = ViewType.TOP_100,
+        [DemandsInitialization(ToFileDescription)]
+        FileInfo toFile = null,
+        [DemandsInitialization("Applies only to CohortIdentificationConfigurations.  Defaults to true.  Set to false to disable query cache use.")]
+        bool useCache = true) : base(activator, toFile)
     {
-        private readonly IViewSQLAndResultsCollection _collection;
-        private readonly ViewType _viewType;
-        private readonly IMapsDirectlyToDatabaseTable _obj;
-        private readonly bool _useCache;
+        _viewType = viewType;
+        _obj = obj;
+        _useCache = useCache;
 
-        #region Constructors
-
-        /// <summary>
-        /// Provides a view of a sample of records in a column/table
-        /// </summary>
-        /// <param name="activator"></param>
-        /// <param name="viewType"></param>
-        /// <param name="toFile"></param>
-        /// <param name="useCache"></param>
-        /// <param name="obj"></param>
-        /// <exception cref="ArgumentException"></exception>
-        [UseWithObjectConstructor]
-        public ExecuteCommandViewData(IBasicActivateItems activator,
-            [DemandsInitialization("The object (ColumnInfo, TableInfo etc) you want to view a sample of")]
-            IMapsDirectlyToDatabaseTable obj,
-            [DemandsInitialization("Optional. The view mode you want to see.  Options include 'TOP_100', 'Aggregate', 'Distribution' or 'All'",DefaultValue = ViewType.TOP_100)]
-            ViewType viewType = ViewType.TOP_100,
-            [DemandsInitialization(ToFileDescription)]
-            FileInfo toFile = null,
-            [DemandsInitialization("Applies only to CohortIdentificationConfigurations.  Defaults to true.  Set to false to disable query cache use.")]
-            bool useCache = true) : base(activator, toFile)
+        if (obj is TableInfo ti)
         {
-            _viewType = viewType;
-            _obj = obj;
-            _useCache = useCache;
-
-            if (obj is TableInfo ti)
-            {
-                ThrowIfNotSimpleSelectViewType();
-                _collection = new ViewTableInfoExtractUICollection(ti, _viewType);
-            }
-            else if (obj is ColumnInfo col)
-            {
-                _collection = CreateCollection(col);
-            }
-            else if (obj is ExtractionInformation ei)
-            {
-                _collection = CreateCollection(ei);
-            }
-            else if (obj is Catalogue cata)
-            {
-                ThrowIfNotSimpleSelectViewType();
-                _collection = CreateCollection(cata);
-            }
-            else if (obj is CohortIdentificationConfiguration cic)
-            {
-                ThrowIfNotSimpleSelectViewType();
-                _collection = CreateCollection(cic);
-            }
-            else if (obj is ExtractableCohort ec)
-            {
-                ThrowIfNotSimpleSelectViewType();
-                _collection = CreateCollection(ec);
-            }
-            else if (obj is AggregateConfiguration ac)
-            {
-                ThrowIfNotSimpleSelectViewType();
-                _collection = CreateCollection(ac);
-            }
-            else
-                throw new ArgumentException($"Object '{obj}' was not an object type compatible with this command");
-
+            ThrowIfNotSimpleSelectViewType();
+            _collection = new ViewTableInfoExtractUICollection(ti, _viewType);
         }
-
-        private IViewSQLAndResultsCollection CreateCollection(AggregateConfiguration ac)
+        else if (obj is ColumnInfo col)
         {
-            var cic = ac.GetCohortIdentificationConfigurationIfAny();
-
-            var collection = new ViewAggregateExtractUICollection(ac);
-
-            //if it has a cic with a query cache AND it uses joinables.  Since this is a TOP 100 select * from dataset the cache on CHI is useless only patient index tables used by this query are useful if cached
-            if (cic != null && cic.QueryCachingServer_ID != null && ac.PatientIndexJoinablesUsed.Any())
-            {
-                collection.UseQueryCache = _useCache;
-            }
-
-            collection.TopX = _viewType == ViewType.TOP_100 ? 100 : null;
-
-            return collection;
+            _collection = CreateCollection(col);
         }
-
-        private IViewSQLAndResultsCollection CreateCollection(ExtractableCohort ec)
+        else if (obj is ExtractionInformation ei)
         {
-
-            return new ViewCohortExtractionUICollection(ec)
-            {
-                Top = _viewType == ViewType.TOP_100 ? 100 : -1,
-                IncludeCohortID = false
-            };
-        }
-
-        private IViewSQLAndResultsCollection CreateCollection(CohortIdentificationConfiguration cic)
-        {
-            if (_viewType == ViewType.TOP_100)
-            {
-                LogManager.GetCurrentClassLogger().Warn($"'{ViewType.TOP_100}' is not supported on '{nameof(CohortIdentificationConfiguration)}', '{ViewType.All}' will be used");
-            }
-
-            return new ViewCohortIdentificationConfigurationSqlCollection(cic)
-            {
-                UseQueryCache = _useCache
-            };
-        }
-
-        private void ThrowIfNotSimpleSelectViewType()
-        {
-            if (_viewType != ViewType.TOP_100 && _viewType != ViewType.All)
-            {
-                throw new ArgumentException($"Only '{nameof(ViewType.TOP_100)}' or '{nameof(ViewType.All)}' can be used for this object Type");
-            }
-        }
-
-        private IViewSQLAndResultsCollection CreateCollection(Catalogue cata)
-        {
-            return new ViewCatalogueDataCollection(cata)
-            {
-                TopX = _viewType == ViewType.All ? null : 100
-            };
-        }
-
-        /// <summary>
-        /// Fetches the <paramref name="viewType"/> of the data in <see cref="ColumnInfo"/> <paramref name="c"/>
-        /// </summary>
-        /// <param name="activator"></param>
-        /// <param name="viewType"></param>
-        /// <param name="c"></param>
-        public ExecuteCommandViewData(IBasicActivateItems activator, ViewType viewType, ColumnInfo c) : base(activator, null)
-        {
-            _viewType = viewType;
-            _collection = CreateCollection(c);
-        }
-
-        public ExecuteCommandViewData(IBasicActivateItems activator, ViewType viewType, ExtractionInformation ei) : base(activator, null)
-        {
-            _viewType = viewType;
             _collection = CreateCollection(ei);
         }
-
-        /// <summary>
-        /// Views the top 100 records of the <paramref name="tableInfo"/>
-        /// </summary>
-        /// <param name="activator"></param>
-        /// <param name="tableInfo"></param>
-        public ExecuteCommandViewData(IBasicActivateItems activator, TableInfo tableInfo) : base(activator, null)
+        else if (obj is Catalogue cata)
         {
-            _viewType = ViewType.TOP_100;
-            _collection = new ViewTableInfoExtractUICollection(tableInfo, _viewType);
+            ThrowIfNotSimpleSelectViewType();
+            _collection = CreateCollection(cata);
         }
-        #endregion
-
-        private IViewSQLAndResultsCollection CreateCollection(ColumnInfo c)
+        else if (obj is CohortIdentificationConfiguration cic)
         {
-            var toReturn = new ViewColumnExtractCollection(c, _viewType);
-
-            if (!c.IsNumerical() && _viewType == ViewType.Distribution)
-                SetImpossible("Column is not numerical");
-
-            return toReturn;
+            ThrowIfNotSimpleSelectViewType();
+            _collection = CreateCollection(cic);
         }
-
-        private IViewSQLAndResultsCollection CreateCollection(ExtractionInformation ei)
+        else if (obj is ExtractableCohort ec)
         {
-            var toReturn = new ViewColumnExtractCollection(ei, _viewType);
-            if ((!ei.ColumnInfo?.IsNumerical() ?? false) && _viewType == ViewType.Distribution)
-                SetImpossible("Column is not numerical");
-
-            return toReturn;
+            ThrowIfNotSimpleSelectViewType();
+            _collection = CreateCollection(ec);
         }
-
-        public override string GetCommandName()
+        else if (obj is AggregateConfiguration ac)
         {
-            // if user has set an override, respect it
-            if (!string.IsNullOrWhiteSpace(OverrideCommandName))
-                return OverrideCommandName;
-
-            if (_obj is CohortIdentificationConfiguration)
-            {
-                return _useCache ?
-                    "Query Builder SQL/Results" :
-                    "Query Builder SQL/Results (No Cache)";
-
-            }
-
-            return "View " + _viewType.ToString().Replace("_", " ");
+            ThrowIfNotSimpleSelectViewType();
+            _collection = CreateCollection(ac);
         }
-        protected override IViewSQLAndResultsCollection GetCollection()
+        else
+            throw new ArgumentException($"Object '{obj}' was not an object type compatible with this command");
+
+    }
+
+    private IViewSQLAndResultsCollection CreateCollection(AggregateConfiguration ac)
+    {
+        var cic = ac.GetCohortIdentificationConfigurationIfAny();
+
+        var collection = new ViewAggregateExtractUICollection(ac);
+
+        //if it has a cic with a query cache AND it uses joinables.  Since this is a TOP 100 select * from dataset the cache on CHI is useless only patient index tables used by this query are useful if cached
+        if (cic != null && cic.QueryCachingServer_ID != null && ac.PatientIndexJoinablesUsed.Any())
         {
-            return _collection;
+            collection.UseQueryCache = _useCache;
         }
+
+        collection.TopX = _viewType == ViewType.TOP_100 ? 100 : null;
+
+        return collection;
+    }
+
+    private IViewSQLAndResultsCollection CreateCollection(ExtractableCohort ec)
+    {
+
+        return new ViewCohortExtractionUICollection(ec)
+        {
+            Top = _viewType == ViewType.TOP_100 ? 100 : -1,
+            IncludeCohortID = false
+        };
+    }
+
+    private IViewSQLAndResultsCollection CreateCollection(CohortIdentificationConfiguration cic)
+    {
+        if (_viewType == ViewType.TOP_100)
+        {
+            LogManager.GetCurrentClassLogger().Warn($"'{ViewType.TOP_100}' is not supported on '{nameof(CohortIdentificationConfiguration)}', '{ViewType.All}' will be used");
+        }
+
+        return new ViewCohortIdentificationConfigurationSqlCollection(cic)
+        {
+            UseQueryCache = _useCache
+        };
+    }
+
+    private void ThrowIfNotSimpleSelectViewType()
+    {
+        if (_viewType != ViewType.TOP_100 && _viewType != ViewType.All)
+        {
+            throw new ArgumentException($"Only '{nameof(ViewType.TOP_100)}' or '{nameof(ViewType.All)}' can be used for this object Type");
+        }
+    }
+
+    private IViewSQLAndResultsCollection CreateCollection(Catalogue cata)
+    {
+        return new ViewCatalogueDataCollection(cata)
+        {
+            TopX = _viewType == ViewType.All ? null : 100
+        };
+    }
+
+    /// <summary>
+    /// Fetches the <paramref name="viewType"/> of the data in <see cref="ColumnInfo"/> <paramref name="c"/>
+    /// </summary>
+    /// <param name="activator"></param>
+    /// <param name="viewType"></param>
+    /// <param name="c"></param>
+    public ExecuteCommandViewData(IBasicActivateItems activator, ViewType viewType, ColumnInfo c) : base(activator, null)
+    {
+        _viewType = viewType;
+        _collection = CreateCollection(c);
+    }
+
+    public ExecuteCommandViewData(IBasicActivateItems activator, ViewType viewType, ExtractionInformation ei) : base(activator, null)
+    {
+        _viewType = viewType;
+        _collection = CreateCollection(ei);
+    }
+
+    /// <summary>
+    /// Views the top 100 records of the <paramref name="tableInfo"/>
+    /// </summary>
+    /// <param name="activator"></param>
+    /// <param name="tableInfo"></param>
+    public ExecuteCommandViewData(IBasicActivateItems activator, TableInfo tableInfo) : base(activator, null)
+    {
+        _viewType = ViewType.TOP_100;
+        _collection = new ViewTableInfoExtractUICollection(tableInfo, _viewType);
+    }
+    #endregion
+
+    private IViewSQLAndResultsCollection CreateCollection(ColumnInfo c)
+    {
+        var toReturn = new ViewColumnExtractCollection(c, _viewType);
+
+        if (!c.IsNumerical() && _viewType == ViewType.Distribution)
+            SetImpossible("Column is not numerical");
+
+        return toReturn;
+    }
+
+    private IViewSQLAndResultsCollection CreateCollection(ExtractionInformation ei)
+    {
+        var toReturn = new ViewColumnExtractCollection(ei, _viewType);
+        if ((!ei.ColumnInfo?.IsNumerical() ?? false) && _viewType == ViewType.Distribution)
+            SetImpossible("Column is not numerical");
+
+        return toReturn;
+    }
+
+    public override string GetCommandName()
+    {
+        // if user has set an override, respect it
+        if (!string.IsNullOrWhiteSpace(OverrideCommandName))
+            return OverrideCommandName;
+
+        if (_obj is CohortIdentificationConfiguration)
+        {
+            return _useCache ?
+                "Query Builder SQL/Results" :
+                "Query Builder SQL/Results (No Cache)";
+
+        }
+
+        return "View " + _viewType.ToString().Replace("_", " ");
+    }
+    protected override IViewSQLAndResultsCollection GetCollection()
+    {
+        return _collection;
     }
 }

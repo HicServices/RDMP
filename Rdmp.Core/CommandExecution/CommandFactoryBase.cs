@@ -6,32 +6,31 @@
 
 using Rdmp.Core.Curation.Data;
 
-namespace Rdmp.Core.CommandExecution
+namespace Rdmp.Core.CommandExecution;
+
+public abstract class CommandFactoryBase
 {
-    public abstract class CommandFactoryBase
+    /// <summary>
+    /// Returns o is <typeparamref name="T"/> but with auto unpacking of <see cref="IMasqueradeAs"/>
+    /// </summary>
+    /// <typeparam name="T"></typeparam>
+    /// <param name="o"></param>
+    /// <param name="match"></param>
+    /// <returns></returns>
+    public static bool Is<T>(object o, out T match)
     {
-        /// <summary>
-        /// Returns o is <typeparamref name="T"/> but with auto unpacking of <see cref="IMasqueradeAs"/>
-        /// </summary>
-        /// <typeparam name="T"></typeparam>
-        /// <param name="o"></param>
-        /// <param name="match"></param>
-        /// <returns></returns>
-        public static bool Is<T>(object o, out T match)
+        if(o is T)
         {
-            if(o is T)
-            {
-                match = (T)o;
-                return true;
-            }
-
-            if(o is IMasqueradeAs m)
-            {
-                return Is<T>(m.MasqueradingAs(),out match);
-            }
-
-            match = default(T);
-            return false;
+            match = (T)o;
+            return true;
         }
+
+        if(o is IMasqueradeAs m)
+        {
+            return Is<T>(m.MasqueradingAs(),out match);
+        }
+
+        match = default(T);
+        return false;
     }
 }

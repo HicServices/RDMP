@@ -11,52 +11,51 @@ using Rdmp.Core.Logging;
 using ReusableLibraryCode.DataAccess;
 using System.Collections.Generic;
 
-namespace Rdmp.Core.DataViewing
+namespace Rdmp.Core.DataViewing;
+
+/// <summary>
+/// Collection that builds SQL for querying the logging database tables
+/// </summary>
+public class ViewLogsCollection : PersistableObjectCollection, IViewSQLAndResultsCollection
 {
-    /// <summary>
-    /// Collection that builds SQL for querying the logging database tables
-    /// </summary>
-    public class ViewLogsCollection : PersistableObjectCollection, IViewSQLAndResultsCollection
+    private ExternalDatabaseServer _loggingServer;
+    private LogViewerFilter _filter;
+
+    public ViewLogsCollection(ExternalDatabaseServer loggingServer, LogViewerFilter filter)
     {
-        private ExternalDatabaseServer _loggingServer;
-        private LogViewerFilter _filter;
+        _loggingServer = loggingServer;
+        _filter = filter;
+    }
 
-        public ViewLogsCollection(ExternalDatabaseServer loggingServer, LogViewerFilter filter)
-        {
-            _loggingServer = loggingServer;
-            _filter = filter;
-        }
+    public void AdjustAutocomplete(IAutoCompleteProvider autoComplete)
+    {
 
-        public void AdjustAutocomplete(IAutoCompleteProvider autoComplete)
-        {
+    }
 
-        }
+    public IDataAccessPoint GetDataAccessPoint()
+    {
+        return _loggingServer;
+    }
 
-        public IDataAccessPoint GetDataAccessPoint()
-        {
-            return _loggingServer;
-        }
+    public IQuerySyntaxHelper GetQuerySyntaxHelper()
+    {
+        return _loggingServer.GetQuerySyntaxHelper();
+    }
 
-        public IQuerySyntaxHelper GetQuerySyntaxHelper()
-        {
-            return _loggingServer.GetQuerySyntaxHelper();
-        }
-
-        public string GetSql()
-        {
-            return $@"Select * from {_filter.LoggingTable }
+    public string GetSql()
+    {
+        return $@"Select * from {_filter.LoggingTable }
 
 {_filter.GetWhereSql() }";
-        }
+    }
 
-        public string GetTabName()
-        {
-            return _filter.ToString();
-        }
+    public string GetTabName()
+    {
+        return _filter.ToString();
+    }
 
-        public IEnumerable<DatabaseEntity> GetToolStripObjects()
-        {
-            yield return _loggingServer;
-        }
+    public IEnumerable<DatabaseEntity> GetToolStripObjects()
+    {
+        yield return _loggingServer;
     }
 }

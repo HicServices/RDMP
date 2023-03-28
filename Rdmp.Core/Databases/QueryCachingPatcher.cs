@@ -11,45 +11,41 @@ using FAnsi.Discovery.QuerySyntax;
 using MapsDirectlyToDatabaseTable.Versioning;
 using TypeGuesser;
 
-namespace Rdmp.Core.Databases
+namespace Rdmp.Core.Databases;
+
+public sealed class QueryCachingPatcher:Patcher
 {
-
-
-    public sealed class QueryCachingPatcher:Patcher
+    public QueryCachingPatcher():base(2,"Databases.QueryCachingDatabase")
     {
-        public QueryCachingPatcher():base(2,"Databases.QueryCachingDatabase")
-        {
-            LegacyName = "QueryCaching.Database";
-            SqlServerOnly = false;
-        }
+        LegacyName = "QueryCaching.Database";
+        SqlServerOnly = false;
+    }
 
-        public override Patch GetInitialCreateScriptContents(DiscoveredDatabase db)
-        {
-            var header = GetHeader(db.Server.DatabaseType, InitialScriptName, new Version(1,0,0));
+    public override Patch GetInitialCreateScriptContents(DiscoveredDatabase db)
+    {
+        var header = GetHeader(db.Server.DatabaseType, InitialScriptName, new Version(1,0,0));
             
-            var body = db.Helper.GetCreateTableSql(db, "CachedAggregateConfigurationResults", new[]
-            {
-                new DatabaseColumnRequest("Committer",new DatabaseTypeRequest(typeof(string),500)),
-                new DatabaseColumnRequest("Date",new DatabaseTypeRequest(typeof(DateTime))){Default = MandatoryScalarFunctions.GetTodaysDate},
-                new DatabaseColumnRequest("AggregateConfiguration_ID",new DatabaseTypeRequest(typeof(int))){IsPrimaryKey = true},
-                new DatabaseColumnRequest("SqlExecuted",new DatabaseTypeRequest(typeof(string),int.MaxValue){Unicode = true}),
-                new DatabaseColumnRequest("Operation",new DatabaseTypeRequest(typeof(string),50)){IsPrimaryKey = true},
-
-                new DatabaseColumnRequest("TableName",new DatabaseTypeRequest(typeof(string),500){Unicode = true})
-            },null,false,null);
-
-            return new Patch(InitialScriptName,header + body);
-        }
-
-        public override SortedDictionary<string, Patch> GetAllPatchesInAssembly(DiscoveredDatabase db)
+        var body = db.Helper.GetCreateTableSql(db, "CachedAggregateConfigurationResults", new[]
         {
-            var basePatches = base.GetAllPatchesInAssembly(db);
-            if(basePatches.Count > 1)
-                throw new NotImplementedException("Someone has added some patches, we need to think about how we handle those in MySql and Oracle! i.e. don't add them in '/QueryCachingDatabase/up' please");
+            new DatabaseColumnRequest("Committer",new DatabaseTypeRequest(typeof(string),500)),
+            new DatabaseColumnRequest("Date",new DatabaseTypeRequest(typeof(DateTime))){Default = MandatoryScalarFunctions.GetTodaysDate},
+            new DatabaseColumnRequest("AggregateConfiguration_ID",new DatabaseTypeRequest(typeof(int))){IsPrimaryKey = true},
+            new DatabaseColumnRequest("SqlExecuted",new DatabaseTypeRequest(typeof(string),int.MaxValue){Unicode = true}),
+            new DatabaseColumnRequest("Operation",new DatabaseTypeRequest(typeof(string),50)){IsPrimaryKey = true},
+
+            new DatabaseColumnRequest("TableName",new DatabaseTypeRequest(typeof(string),500){Unicode = true})
+        },null,false,null);
+
+        return new Patch(InitialScriptName,header + body);
+    }
+
+    public override SortedDictionary<string, Patch> GetAllPatchesInAssembly(DiscoveredDatabase db)
+    {
+        var basePatches = base.GetAllPatchesInAssembly(db);
+        if(basePatches.Count > 1)
+            throw new NotImplementedException("Someone has added some patches, we need to think about how we handle those in MySql and Oracle! i.e. don't add them in '/QueryCachingDatabase/up' please");
             
-            //this is empty because the only patch is already accounted for
-            return new SortedDictionary<string, Patch>();
-        }
+        //this is empty because the only patch is already accounted for
+        return new SortedDictionary<string, Patch>();
     }
 }
- 

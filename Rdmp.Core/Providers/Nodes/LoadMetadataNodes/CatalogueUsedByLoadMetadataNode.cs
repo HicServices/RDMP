@@ -9,31 +9,30 @@ using Rdmp.Core.Curation.Data;
 using Rdmp.Core.Curation.Data.DataLoad;
 using Rdmp.Core.Providers.Nodes.UsedByNodes;
 
-namespace Rdmp.Core.Providers.Nodes.LoadMetadataNodes
+namespace Rdmp.Core.Providers.Nodes.LoadMetadataNodes;
+
+public class CatalogueUsedByLoadMetadataNode:ObjectUsedByOtherObjectNode<LoadMetadata,Catalogue>,IDeletableWithCustomMessage
 {
-    public class CatalogueUsedByLoadMetadataNode:ObjectUsedByOtherObjectNode<LoadMetadata,Catalogue>,IDeletableWithCustomMessage
+
+    public CatalogueUsedByLoadMetadataNode(LoadMetadata loadMetadata, Catalogue catalogue):base(loadMetadata,catalogue)
     {
-
-        public CatalogueUsedByLoadMetadataNode(LoadMetadata loadMetadata, Catalogue catalogue):base(loadMetadata,catalogue)
-        {
-        }
+    }
 
 
-        public void DeleteInDatabase()
-        {
-            ObjectBeingUsed.LoadMetadata_ID = null;
-            ObjectBeingUsed.SaveToDatabase();
-        }
+    public void DeleteInDatabase()
+    {
+        ObjectBeingUsed.LoadMetadata_ID = null;
+        ObjectBeingUsed.SaveToDatabase();
+    }
 
-        public string GetDeleteMessage()
-        {
-            return "remove Catalogue '" + ObjectBeingUsed +"' from Load";
-        }
+    public string GetDeleteMessage()
+    {
+        return "remove Catalogue '" + ObjectBeingUsed +"' from Load";
+    }
 
-        /// <inheritdoc/>
-        public string GetDeleteVerb()
-        {
-            return "Remove";
-        }
+    /// <inheritdoc/>
+    public string GetDeleteVerb()
+    {
+        return "Remove";
     }
 }

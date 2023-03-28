@@ -10,28 +10,27 @@ using Rdmp.Core.Providers.Nodes;
 using ReusableLibraryCode.Icons.IconProvision;
 using SixLabors.ImageSharp.PixelFormats;
 
-namespace Rdmp.Core.Icons.IconProvision.StateBasedIconProviders
+namespace Rdmp.Core.Icons.IconProvision.StateBasedIconProviders;
+
+public class TableInfoServerNodeStateBasedIconProvider : IObjectStateBasedIconProvider
 {
-    public class TableInfoServerNodeStateBasedIconProvider : IObjectStateBasedIconProvider
+    private readonly IconOverlayProvider _overlayProvider;
+    private readonly DatabaseTypeIconProvider _databaseTypeIconProvider;
+    private readonly Image<Rgba32> _serverNode;
+
+    public TableInfoServerNodeStateBasedIconProvider(IconOverlayProvider overlayProvider)
     {
-        private readonly IconOverlayProvider _overlayProvider;
-        private readonly DatabaseTypeIconProvider _databaseTypeIconProvider;
-        private readonly Image<Rgba32> _serverNode;
+        _overlayProvider = overlayProvider;
+        _databaseTypeIconProvider = new DatabaseTypeIconProvider();
 
-        public TableInfoServerNodeStateBasedIconProvider(IconOverlayProvider overlayProvider)
-        {
-            _overlayProvider = overlayProvider;
-            _databaseTypeIconProvider = new DatabaseTypeIconProvider();
+        _serverNode = Image.Load<Rgba32>(CatalogueIcons.TableInfoServerNode);
+    }
 
-            _serverNode = Image.Load<Rgba32>(CatalogueIcons.TableInfoServerNode);
-        }
+    public Image<Rgba32> GetImageIfSupportedObject(object o)
+    {
+        if (o is not TableInfoServerNode node)
+            return null;
 
-        public Image<Rgba32> GetImageIfSupportedObject(object o)
-        {
-            if (o is not TableInfoServerNode node)
-                return null;
-
-            return _overlayProvider.GetOverlay(_serverNode, _databaseTypeIconProvider.GetOverlay(node.DatabaseType));
-        }
+        return _overlayProvider.GetOverlay(_serverNode, _databaseTypeIconProvider.GetOverlay(node.DatabaseType));
     }
 }

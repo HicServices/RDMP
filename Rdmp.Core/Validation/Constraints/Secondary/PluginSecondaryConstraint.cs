@@ -5,13 +5,11 @@
 // You should have received a copy of the GNU General Public License along with RDMP. If not, see <https://www.gnu.org/licenses/>.
 
 
-namespace Rdmp.Core.Validation.Constraints.Secondary
+namespace Rdmp.Core.Validation.Constraints.Secondary;
+
+/// <summary>
+/// Abstract base that allows plugin developers to create new <see cref="SecondaryConstraint"/> rules
+/// </summary>
+public abstract class PluginSecondaryConstraint : SecondaryConstraint
 {
-    
-    /// <summary>
-    /// Abstract base that allows plugin developers to create new <see cref="SecondaryConstraint"/> rules
-    /// </summary>
-    public abstract class PluginSecondaryConstraint : SecondaryConstraint
-    {
-    }
 }

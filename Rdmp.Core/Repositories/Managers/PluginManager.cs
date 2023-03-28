@@ -10,37 +10,36 @@ using System.IO;
 using System.Linq;
 using ReusableLibraryCode.Extensions;
 
-namespace Rdmp.Core.Repositories.Managers
+namespace Rdmp.Core.Repositories.Managers;
+
+/// <inheritdoc/>
+public class PluginManager : IPluginManager
 {
-    /// <inheritdoc/>
-    public class PluginManager : IPluginManager
+    private readonly ICatalogueRepository _repository;
+
+
+    public PluginManager(ICatalogueRepository repository)
     {
-        private readonly ICatalogueRepository _repository;
+        _repository = repository;
+    }
 
+    /// <summary>
+    /// Returns the latest version of each plugin which is compatible with the running RDMP software version (as determined
+    /// by the listed <see cref="Curation.Data.Plugin.RdmpVersion"/>)
+    /// </summary>
+    /// <returns></returns>
+    public Curation.Data.Plugin[] GetCompatiblePlugins()
+    {
+        var runningSoftwareVersion = typeof(PluginManager).Assembly.GetName().Version;
 
-        public PluginManager(ICatalogueRepository repository)
-        {
-            _repository = repository;
-        }
-
-        /// <summary>
-        /// Returns the latest version of each plugin which is compatible with the running RDMP software version (as determined
-        /// by the listed <see cref="Curation.Data.Plugin.RdmpVersion"/>)
-        /// </summary>
-        /// <returns></returns>
-        public Curation.Data.Plugin[] GetCompatiblePlugins()
-        {
-            var runningSoftwareVersion = typeof(PluginManager).Assembly.GetName().Version;
-
-            //nupkg that are compatible with the running software
-            var plugins = _repository.GetAllObjects<Curation.Data.Plugin>().Where(a=>a.RdmpVersion.IsCompatibleWith(runningSoftwareVersion,2));
+        //nupkg that are compatible with the running software
+        var plugins = _repository.GetAllObjects<Curation.Data.Plugin>().Where(a=>a.RdmpVersion.IsCompatibleWith(runningSoftwareVersion,2));
             
-            //latest versions
-            var latestVersionsOfPlugins = from p in plugins
-                      group p by p.GetShortName() into grp
-                      select grp.OrderByDescending(p => p.PluginVersion).FirstOrDefault();
+        //latest versions
+        var latestVersionsOfPlugins = from p in plugins
+            group p by p.GetShortName() into grp
+            select grp.OrderByDescending(p => p.PluginVersion).FirstOrDefault();
                         
-            return latestVersionsOfPlugins.ToArray();
-        }
+        return latestVersionsOfPlugins.ToArray();
     }
 }

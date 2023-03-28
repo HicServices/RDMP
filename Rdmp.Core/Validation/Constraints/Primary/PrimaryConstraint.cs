@@ -6,24 +6,23 @@
 
 using Rdmp.Core.Validation.Constraints.Secondary;
 
-namespace Rdmp.Core.Validation.Constraints.Primary
+namespace Rdmp.Core.Validation.Constraints.Primary;
+
+/// <summary>
+/// A rule for validating the data in a column.  Each column can have a single <see cref="IPrimaryConstraint"/> but many
+/// <see cref="ISecondaryConstraint"/>
+/// </summary>
+public abstract class PrimaryConstraint : IPrimaryConstraint
 {
-    /// <summary>
-    /// A rule for validating the data in a column.  Each column can have a single <see cref="IPrimaryConstraint"/> but many
-    /// <see cref="ISecondaryConstraint"/>
-    /// </summary>
-    public abstract class PrimaryConstraint : IPrimaryConstraint
-    {
-        /// <inheritdoc/>
-        public Consequence? Consequence { get; set; }
+    /// <inheritdoc/>
+    public Consequence? Consequence { get; set; }
 
-        /// <inheritdoc/>
-        public abstract void RenameColumn(string originalName, string newName);
+    /// <inheritdoc/>
+    public abstract void RenameColumn(string originalName, string newName);
 
-        /// <inheritdoc/>
-        public abstract string GetHumanReadableDescriptionOfValidation();
+    /// <inheritdoc/>
+    public abstract string GetHumanReadableDescriptionOfValidation();
 
-        /// <inheritdoc/>
-        public abstract ValidationFailure Validate(object value);
-    }
+    /// <inheritdoc/>
+    public abstract ValidationFailure Validate(object value);
 }

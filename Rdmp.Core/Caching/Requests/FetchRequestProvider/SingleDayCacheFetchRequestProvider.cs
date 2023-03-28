@@ -6,40 +6,39 @@
 
 using ReusableLibraryCode.Progress;
 
-namespace Rdmp.Core.Caching.Requests.FetchRequestProvider
+namespace Rdmp.Core.Caching.Requests.FetchRequestProvider;
+
+/// <summary>
+/// Generates ICacheFetchRequests until the end of the day.  Day is based on the initial request.  This can be still be multiple requests if the ICacheProgress
+/// ChunkPeriod is, for example, 1 hour at a time.
+/// </summary>
+public class SingleDayCacheFetchRequestProvider : ICacheFetchRequestProvider
 {
-    /// <summary>
-    /// Generates ICacheFetchRequests until the end of the day.  Day is based on the initial request.  This can be still be multiple requests if the ICacheProgress
-    /// ChunkPeriod is, for example, 1 hour at a time.
-    /// </summary>
-    public class SingleDayCacheFetchRequestProvider : ICacheFetchRequestProvider
+    private readonly ICacheFetchRequest _initialRequest;
+    public ICacheFetchRequest Current { get; private set; }
+
+    public SingleDayCacheFetchRequestProvider(ICacheFetchRequest initialRequest)
     {
-        private readonly ICacheFetchRequest _initialRequest;
-        public ICacheFetchRequest Current { get; private set; }
+        Current = null;
+        _initialRequest = initialRequest;
+    }
 
-        public SingleDayCacheFetchRequestProvider(ICacheFetchRequest initialRequest)
+    public ICacheFetchRequest GetNext(IDataLoadEventListener listener)
+    {
+        // If we haven't provided one, give out _initialRequest
+        if (Current == null)
         {
-            Current = null;
-            _initialRequest = initialRequest;
+            Current = _initialRequest;
+        }
+        else
+        {
+            Current = Current.GetNext();
+            // We have provided requests for more than one day
+            if (Current.Start >= _initialRequest.Start.AddDays(1))
+                return null;
         }
 
-        public ICacheFetchRequest GetNext(IDataLoadEventListener listener)
-        {
-            // If we haven't provided one, give out _initialRequest
-            if (Current == null)
-            {
-                Current = _initialRequest;
-            }
-            else
-            {
-                Current = Current.GetNext();
-                // We have provided requests for more than one day
-                if (Current.Start >= _initialRequest.Start.AddDays(1))
-                    return null;
-            }
-
-            // Otherwise we have provided our request so signal there is none left
-            return Current;
-        }
+        // Otherwise we have provided our request so signal there is none left
+        return Current;
     }
 }

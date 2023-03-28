@@ -12,50 +12,49 @@ using Rdmp.Core.Curation.Data;
 using Rdmp.Core.Curation.Data.DataLoad;
 using Tests.Common;
 
-namespace Rdmp.Core.Tests.Curation.Integration.ArgumentTests
+namespace Rdmp.Core.Tests.Curation.Integration.ArgumentTests;
+
+public class ArgumentTypeTests:UnitTests
 {
-    public class ArgumentTypeTests:UnitTests
+    [OneTimeSetUp]
+    protected override void OneTimeSetUp()
     {
-        [OneTimeSetUp]
-        protected override void OneTimeSetUp()
-        {
-            base.OneTimeSetUp();
-            base.SetupMEF();
-        }
+        base.OneTimeSetUp();
+        base.SetupMEF();
+    }
 
-        object[] _expectedAnswers = new object[]
-        {
-            5,
-            new CultureInfo("en-us"),
-            CultureInfo.CurrentCulture
-        };
+    object[] _expectedAnswers = new object[]
+    {
+        5,
+        new CultureInfo("en-us"),
+        CultureInfo.CurrentCulture
+    };
                
-        [TestCase(typeof(int),"5",0)]
-        [TestCase(typeof(CultureInfo),"en-us",1)]
-        public void Test_Type_WithStringValue(Type t, string val, int expectedAnswerIdx)
-        {
-            var arg = WhenIHaveA<ProcessTaskArgument>();
+    [TestCase(typeof(int),"5",0)]
+    [TestCase(typeof(CultureInfo),"en-us",1)]
+    public void Test_Type_WithStringValue(Type t, string val, int expectedAnswerIdx)
+    {
+        var arg = WhenIHaveA<ProcessTaskArgument>();
             
-            arg.SetType(t);
-            arg.Value = val;
+        arg.SetType(t);
+        arg.Value = val;
 
-            Assert.AreEqual(_expectedAnswers[expectedAnswerIdx],arg.GetValueAsSystemType());
-        }
+        Assert.AreEqual(_expectedAnswers[expectedAnswerIdx],arg.GetValueAsSystemType());
+    }
 
-        [Test]
-        public void TestClassDemandingDouble_CreateArgumentsForClassIfNotExists()
-        {
-            var args = WhenIHaveA<ProcessTask>().CreateArgumentsForClassIfNotExists<TestClassDemandingDouble>();
+    [Test]
+    public void TestClassDemandingDouble_CreateArgumentsForClassIfNotExists()
+    {
+        var args = WhenIHaveA<ProcessTask>().CreateArgumentsForClassIfNotExists<TestClassDemandingDouble>();
 
-            Assert.AreEqual(1.0,args.Single().GetValueAsSystemType());
-            Assert.AreEqual("1",args.Single().Value);
+        Assert.AreEqual(1.0,args.Single().GetValueAsSystemType());
+        Assert.AreEqual("1",args.Single().Value);
 
-        }
+    }
 
-        class TestClassDemandingDouble
-        {
-            [DemandsInitialization("some field",defaultValue:1)]
-            public double MyVar { get; set; }
-        }
+    class TestClassDemandingDouble
+    {
+        [DemandsInitialization("some field",defaultValue:1)]
+        public double MyVar { get; set; }
     }
 }

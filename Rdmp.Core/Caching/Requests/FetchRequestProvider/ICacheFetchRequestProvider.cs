@@ -6,14 +6,13 @@
 
 using ReusableLibraryCode.Progress;
 
-namespace Rdmp.Core.Caching.Requests.FetchRequestProvider
+namespace Rdmp.Core.Caching.Requests.FetchRequestProvider;
+
+/// <summary>
+/// Interface for classes that make descisions about which time periods to request and in what order when caching.
+/// </summary>
+public interface ICacheFetchRequestProvider
 {
-    /// <summary>
-    /// Interface for classes that make descisions about which time periods to request and in what order when caching.
-    /// </summary>
-    public interface ICacheFetchRequestProvider
-    {
-        ICacheFetchRequest Current { get; }
-        ICacheFetchRequest GetNext(IDataLoadEventListener listener);
-    }
+    ICacheFetchRequest Current { get; }
+    ICacheFetchRequest GetNext(IDataLoadEventListener listener);
 }

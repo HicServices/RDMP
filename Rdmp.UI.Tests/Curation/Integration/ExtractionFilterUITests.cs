@@ -14,33 +14,32 @@ using System.Text;
 using System.Threading.Tasks;
 using Tests.Common;
 
-namespace Rdmp.UI.Tests.Curation.Integration
+namespace Rdmp.UI.Tests.Curation.Integration;
+
+class ExtractionFilterUITests : UITests
 {
-    class ExtractionFilterUITests : UITests
+
+    [Test]
+    public void TestExtractionFilterDeleting_WhenItHas_ExtractionFilterParameterSet_Interactive()
     {
+        var filter = WhenIHaveA<ExtractionFilter>();
 
-        [Test]
-        public void TestExtractionFilterDeleting_WhenItHas_ExtractionFilterParameterSet_Interactive()
-        {
-            var filter = WhenIHaveA<ExtractionFilter>();
+        var set = new ExtractionFilterParameterSet(Repository,filter,"fff");
 
-            var set = new ExtractionFilterParameterSet(Repository,filter,"fff");
-
-            Assert.IsTrue(filter.Exists());
-            Assert.IsTrue(set.Exists());
+        Assert.IsTrue(filter.Exists());
+        Assert.IsTrue(set.Exists());
             
-            SetupMEF();
+        SetupMEF();
 
-            var activator = new TestActivateItems(this, Repository);
-            activator.InteractiveDeletes = true;
-            activator.YesNoResponse = true;
+        var activator = new TestActivateItems(this, Repository);
+        activator.InteractiveDeletes = true;
+        activator.YesNoResponse = true;
 
-            var del = new ExecuteCommandDelete(activator, filter);
-            del.Execute();
+        var del = new ExecuteCommandDelete(activator, filter);
+        del.Execute();
 
-            Assert.IsFalse(filter.Exists());
-            Assert.IsFalse(set.Exists());
-        }
-
+        Assert.IsFalse(filter.Exists());
+        Assert.IsFalse(set.Exists());
     }
+
 }

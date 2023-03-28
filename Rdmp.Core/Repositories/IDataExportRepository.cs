@@ -11,32 +11,31 @@ using Rdmp.Core.DataExport.DataRelease.Audit;
 using Rdmp.Core.Repositories.Managers;
 using System.Collections.Generic;
 
-namespace Rdmp.Core.Repositories
+namespace Rdmp.Core.Repositories;
+
+/// <summary>
+/// See DataExportRepository
+/// </summary>
+public interface IDataExportRepository : IRepository, IExtractableDataSetPackageManager
 {
+    ICatalogueRepository CatalogueRepository { get; }
+    CatalogueExtractabilityStatus GetExtractabilityStatus(ICatalogue c);
+
+    ISelectedDataSets[] GetSelectedDatasetsWithNoExtractionIdentifiers();
+
     /// <summary>
-    /// See DataExportRepository
+    /// Manager for AND/OR WHERE containers and filters
     /// </summary>
-    public interface IDataExportRepository : IRepository, IExtractableDataSetPackageManager
-    {
-        ICatalogueRepository CatalogueRepository { get; }
-        CatalogueExtractabilityStatus GetExtractabilityStatus(ICatalogue c);
-
-        ISelectedDataSets[] GetSelectedDatasetsWithNoExtractionIdentifiers();
-
-        /// <summary>
-        /// Manager for AND/OR WHERE containers and filters
-        /// </summary>
-        IFilterManager FilterManager { get; }
+    IFilterManager FilterManager { get; }
 
 
-        /// <summary>
-        /// Handles forbidding deleting stuff / cascading deletes into other objects
-        /// </summary>
-        IObscureDependencyFinder ObscureDependencyFinder { get; set; }
+    /// <summary>
+    /// Handles forbidding deleting stuff / cascading deletes into other objects
+    /// </summary>
+    IObscureDependencyFinder ObscureDependencyFinder { get; set; }
         
-        IDataExportPropertyManager DataExportPropertyManager { get; }
+    IDataExportPropertyManager DataExportPropertyManager { get; }
         
-        IEnumerable<ICumulativeExtractionResults> GetAllCumulativeExtractionResultsFor(IExtractionConfiguration configuration, IExtractableDataSet dataset);
-        IReleaseLog GetReleaseLogEntryIfAny(CumulativeExtractionResults cumulativeExtractionResults);
-    }
+    IEnumerable<ICumulativeExtractionResults> GetAllCumulativeExtractionResultsFor(IExtractionConfiguration configuration, IExtractableDataSet dataset);
+    IReleaseLog GetReleaseLogEntryIfAny(CumulativeExtractionResults cumulativeExtractionResults);
 }

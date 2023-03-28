@@ -8,48 +8,47 @@ using Rdmp.Core.Curation.Data;
 using Rdmp.Core.Repositories.Construction;
 using System.Linq;
 
-namespace Rdmp.Core.CommandExecution.AtomicCommands
+namespace Rdmp.Core.CommandExecution.AtomicCommands;
+
+/// <summary>
+/// Creates new parameters for <see cref="ExtractionFilterParameterSet"/> when they are
+/// in the parent filter but missing in the value set.
+/// </summary>
+public class ExecuteCommandAddMissingParameters : BasicCommandExecution
 {
-    /// <summary>
-    /// Creates new parameters for <see cref="ExtractionFilterParameterSet"/> when they are
-    /// in the parent filter but missing in the value set.
-    /// </summary>
-    public class ExecuteCommandAddMissingParameters : BasicCommandExecution
+    private ExtractionFilterParameterSet[] _sets;
+
+    public ExecuteCommandAddMissingParameters(IBasicActivateItems activator, ExtractionFilterParameterSet set) : this(activator, new[] { set })
     {
-        private ExtractionFilterParameterSet[] _sets;
 
-        public ExecuteCommandAddMissingParameters(IBasicActivateItems activator, ExtractionFilterParameterSet set) : this(activator, new[] { set })
+    }
+
+    [UseWithObjectConstructor]
+    public ExecuteCommandAddMissingParameters(IBasicActivateItems activator, ExtractionFilterParameterSet[] sets) : base(activator)
+    {
+        _sets = sets;
+
+        // if nobody is missing any entries
+        if (!_sets.Any(s => s.GetMissingEntries().Any()))
         {
+            SetImpossible("There are no missing parameters");
+        }
+    }
 
+    public override void Execute()
+    {
+        base.Execute();
+
+        if (_sets.Length == 0)
+        {
+            return;
         }
 
-        [UseWithObjectConstructor]
-        public ExecuteCommandAddMissingParameters(IBasicActivateItems activator, ExtractionFilterParameterSet[] sets) : base(activator)
+        foreach (var set in _sets)
         {
-            _sets = sets;
-
-            // if nobody is missing any entries
-            if (!_sets.Any(s => s.GetMissingEntries().Any()))
-            {
-                SetImpossible("There are no missing parameters");
-            }
+            set.CreateNewValueEntries();
         }
 
-        public override void Execute()
-        {
-            base.Execute();
-
-            if (_sets.Length == 0)
-            {
-                return;
-            }
-
-            foreach (var set in _sets)
-            {
-                set.CreateNewValueEntries();
-            }
-
-            Publish(_sets.First());
-        }
+        Publish(_sets.First());
     }
 }

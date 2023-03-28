@@ -7,26 +7,25 @@
 using System.Drawing;
 using System.Windows.Forms;
 
-namespace Rdmp.UI
+namespace Rdmp.UI;
+
+/// <summary>
+/// Helper for positioning controls on top of one another (with transparent backgrounds)
+/// </summary>
+public class DoTransparencyProperly
 {
     /// <summary>
-    /// Helper for positioning controls on top of one another (with transparent backgrounds)
+    /// Positions <paramref name="controlThatHovers"/> on top of <paramref name="whatItHoversOver"/> and
+    /// sets the background colour of the controlThatHovers to Transparent.
     /// </summary>
-    public class DoTransparencyProperly
+    /// <param name="controlThatHovers"></param>
+    /// <param name="whatItHoversOver"></param>
+    public static void ThisHoversOver(Control controlThatHovers, Control whatItHoversOver)
     {
-        /// <summary>
-        /// Positions <paramref name="controlThatHovers"/> on top of <paramref name="whatItHoversOver"/> and
-        /// sets the background colour of the controlThatHovers to Transparent.
-        /// </summary>
-        /// <param name="controlThatHovers"></param>
-        /// <param name="whatItHoversOver"></param>
-        public static void ThisHoversOver(Control controlThatHovers, Control whatItHoversOver)
-        {
-            controlThatHovers.BackColor = Color.Transparent;
+        controlThatHovers.BackColor = Color.Transparent;
 
-            var pos = controlThatHovers.Parent.PointToScreen(controlThatHovers.Location);
-            controlThatHovers.Parent = whatItHoversOver;
-            controlThatHovers.Location = whatItHoversOver.PointToClient(pos);
-        }
+        var pos = controlThatHovers.Parent.PointToScreen(controlThatHovers.Location);
+        controlThatHovers.Parent = whatItHoversOver;
+        controlThatHovers.Location = whatItHoversOver.PointToClient(pos);
     }
 }

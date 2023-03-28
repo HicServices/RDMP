@@ -13,172 +13,171 @@ using Rdmp.Core.Repositories;
 using ReusableLibraryCode.Annotations;
 using ReusableLibraryCode.DataAccess;
 
-namespace Rdmp.Core.Curation.Data.Remoting
+namespace Rdmp.Core.Curation.Data.Remoting;
+
+/// <summary>
+/// This represent a Remote Installation of RDMP which can accept connections at multiple endpoints
+/// 
+/// <para>Endpoints are usual REST endpoints with a URL and a type which they can accept.
+/// The endpoint format is {Url}/api/{typename}
+/// The typename is used to create the URL for the endpoint.
+/// If you are sending a collection, append this to the URI: ?asarray=true</para>
+/// </summary>
+public class RemoteRDMP : DatabaseEntity, INamed, IEncryptedPasswordHost
 {
+    #region Database Properties
+
+    private string _uRL;
+    private string _name;
+    private string _username;
+
+    private EncryptedPasswordHost _encryptedPasswordHost;
+    private string _tempPassword;
+
+    #endregion
+
     /// <summary>
-    /// This represent a Remote Installation of RDMP which can accept connections at multiple endpoints
-    /// 
-    /// <para>Endpoints are usual REST endpoints with a URL and a type which they can accept.
-    /// The endpoint format is {Url}/api/{typename}
-    /// The typename is used to create the URL for the endpoint.
-    /// If you are sending a collection, append this to the URI: ?asarray=true</para>
+    /// Web service URL for communicating with the remote RDMP instance
     /// </summary>
-    public class RemoteRDMP : DatabaseEntity, INamed, IEncryptedPasswordHost
+    public string URL
     {
-        #region Database Properties
+        get { return _uRL; }
+        set { SetField(ref _uRL, value); }
+    }
 
-        private string _uRL;
-        private string _name;
-        private string _username;
+    /// <inheritdoc/>
+    [NotNull]
+    [Unique]
+    public string Name
+    {
+        get { return _name; }
+        set { SetField(ref _name, value); }
+    }
 
-        private EncryptedPasswordHost _encryptedPasswordHost;
-        private string _tempPassword;
-
-        #endregion
-
-        /// <summary>
-        /// Web service URL for communicating with the remote RDMP instance
-        /// </summary>
-        public string URL
-        {
-            get { return _uRL; }
-            set { SetField(ref _uRL, value); }
-        }
-
-        /// <inheritdoc/>
-        [NotNull]
-        [Unique]
-        public string Name
-        {
-            get { return _name; }
-            set { SetField(ref _name, value); }
-        }
-
-        /// <summary>
-        /// Username to specify when connecting to the remote webservice
-        /// </summary>
-        public string Username
-        {
-            get { return _username; }
-            set { SetField(ref _username, value); }
-        }
+    /// <summary>
+    /// Username to specify when connecting to the remote webservice
+    /// </summary>
+    public string Username
+    {
+        get { return _username; }
+        set { SetField(ref _username, value); }
+    }
         
-        /// <inheritdoc/>
-        public string Password
+    /// <inheritdoc/>
+    public string Password
+    {
+        get { return _encryptedPasswordHost.Password; }
+        set
         {
-            get { return _encryptedPasswordHost.Password; }
-            set
+            // if we are being deserialized (using blank constructor)
+            if(_encryptedPasswordHost == null)
             {
-                // if we are being deserialized (using blank constructor)
-                if(_encryptedPasswordHost == null)
-                {
-                    // store the encrypted value from the database in a temp variable
-                    // until we get told how to decrypt (see SetRepository)
-                    _tempPassword = value;
-                    return;
-                }
-                _encryptedPasswordHost.Password = value;
-                OnPropertyChanged(null, value);
+                // store the encrypted value from the database in a temp variable
+                // until we get told how to decrypt (see SetRepository)
+                _tempPassword = value;
+                return;
             }
+            _encryptedPasswordHost.Password = value;
+            OnPropertyChanged(null, value);
         }
+    }
 
-        /// <inheritdoc/>
-        public string GetDecryptedPassword()
+    /// <inheritdoc/>
+    public string GetDecryptedPassword()
+    {
+        if (_encryptedPasswordHost == null)
+            throw new Exception($"Passwords cannot be decrypted until {nameof(SetRepository)} has been called and decryption strategy is established");
+
+        return _encryptedPasswordHost.GetDecryptedPassword()?? "";
+    }
+    public RemoteRDMP()
+    {
+
+    }
+
+    /// <inheritdoc/>
+    public RemoteRDMP(ICatalogueRepository repository):base()
+    {
+        // need a new copy of the catalogue repository so a new DB connection can be made to use with the encrypted host.
+        _encryptedPasswordHost = new EncryptedPasswordHost(repository);
+
+        repository.InsertAndHydrate(this, new Dictionary<string, object>()
         {
-            if (_encryptedPasswordHost == null)
-                throw new Exception($"Passwords cannot be decrypted until {nameof(SetRepository)} has been called and decryption strategy is established");
+            { "Name", "Unnamed remote" },
+            { "URL", "https://example.com" }
+        });
 
-            return _encryptedPasswordHost.GetDecryptedPassword()?? "";
-        }
-        public RemoteRDMP()
-        {
+        if (ID == 0 || Repository != repository)
+            throw new ArgumentException("Repository failed to properly hydrate this class");
+    }
 
-        }
+    /// <inheritdoc/>
+    public RemoteRDMP(ICatalogueRepository repository, DbDataReader r) : base(repository, r)
+    {
+        // need a new copy of the catalogue repository so a new DB connection can be made to use with the encrypted host.
+        _encryptedPasswordHost = new EncryptedPasswordHost((ICatalogueRepository) repository);
 
-        /// <inheritdoc/>
-        public RemoteRDMP(ICatalogueRepository repository):base()
-        {
-            // need a new copy of the catalogue repository so a new DB connection can be made to use with the encrypted host.
-            _encryptedPasswordHost = new EncryptedPasswordHost(repository);
+        URL = r["URL"].ToString();
+        Name = r["Name"].ToString();
+        Username = r["Username"] as string;
+        Password = r["Password"] as string;
+    }
 
-            repository.InsertAndHydrate(this, new Dictionary<string, object>()
-            {
-                { "Name", "Unnamed remote" },
-                { "URL", "https://example.com" }
-            });
-
-            if (ID == 0 || Repository != repository)
-                throw new ArgumentException("Repository failed to properly hydrate this class");
-        }
-
-        /// <inheritdoc/>
-        public RemoteRDMP(ICatalogueRepository repository, DbDataReader r) : base(repository, r)
-        {
-            // need a new copy of the catalogue repository so a new DB connection can be made to use with the encrypted host.
-            _encryptedPasswordHost = new EncryptedPasswordHost((ICatalogueRepository) repository);
-
-            URL = r["URL"].ToString();
-            Name = r["Name"].ToString();
-            Username = r["Username"] as string;
-            Password = r["Password"] as string;
-        }
-
-        /// <inheritdoc cref="Name"/>
-        public override string ToString()
-        {
-            return Name;
-        }
+    /// <inheritdoc cref="Name"/>
+    public override string ToString()
+    {
+        return Name;
+    }
 
 
 
-        /// <summary>
-        /// Gets the web service sub url for interacting with the object T
-        /// </summary>
-        /// <typeparam name="T"></typeparam>
-        /// <param name="isarray"></param>
-        /// <returns></returns>
-        public string GetUrlFor<T>(bool isarray = false)
-        {
-            var baseUri = new UriBuilder(new Uri(URL));
-            if (isarray)
-                baseUri.Query = "isarray=true";
+    /// <summary>
+    /// Gets the web service sub url for interacting with the object T
+    /// </summary>
+    /// <typeparam name="T"></typeparam>
+    /// <param name="isarray"></param>
+    /// <returns></returns>
+    public string GetUrlFor<T>(bool isarray = false)
+    {
+        var baseUri = new UriBuilder(new Uri(URL));
+        if (isarray)
+            baseUri.Query = "isarray=true";
 
-            baseUri.Path += "/api/" + typeof(T).Name;
+        baseUri.Path += "/api/" + typeof(T).Name;
             
-            return baseUri.ToString();
-        }
+        return baseUri.ToString();
+    }
 
-        /// <summary>
-        /// Gets the web service sub url for performing a data release
-        /// </summary>
-        /// <returns></returns>
-        public string GetUrlForRelease()
-        {
-            var baseUri = new UriBuilder(new Uri(URL));
+    /// <summary>
+    /// Gets the web service sub url for performing a data release
+    /// </summary>
+    /// <returns></returns>
+    public string GetUrlForRelease()
+    {
+        var baseUri = new UriBuilder(new Uri(URL));
 
-            baseUri.Path += "/api/Release/";
+        baseUri.Path += "/api/Release/";
 
-            return baseUri.ToString();
-        }
+        return baseUri.ToString();
+    }
 
-        /// <summary>
-        /// Gets the web service sub url for value checking?
-        /// </summary>
-        /// <returns></returns>
-        public string GetCheckingUrl()
-        {
-            var baseUri = new UriBuilder(new Uri(URL));
+    /// <summary>
+    /// Gets the web service sub url for value checking?
+    /// </summary>
+    /// <returns></returns>
+    public string GetCheckingUrl()
+    {
+        var baseUri = new UriBuilder(new Uri(URL));
 
-            baseUri.Path += "/api/values/";
+        baseUri.Path += "/api/values/";
 
-            return baseUri.ToString();
-        }
+        return baseUri.ToString();
+    }
 
 
-        public void SetRepository(ICatalogueRepository repository)
-        {
-            _encryptedPasswordHost = new EncryptedPasswordHost(repository);
-            _encryptedPasswordHost.Password = _tempPassword;
-        }
+    public void SetRepository(ICatalogueRepository repository)
+    {
+        _encryptedPasswordHost = new EncryptedPasswordHost(repository);
+        _encryptedPasswordHost.Password = _tempPassword;
     }
 }

@@ -9,23 +9,22 @@ using System;
 using System.Collections.Generic;
 using Rdmp.Core.CommandExecution.AtomicCommands;
 
-namespace Rdmp.Core.Providers.Nodes
+namespace Rdmp.Core.Providers.Nodes;
+
+/// <summary>
+/// Folder Node that can be added to TreeListViews.  You can only add one folder of each name because they inherit from <see cref="SingletonNode"/>.
+/// </summary>
+public class ArbitraryFolderNode:SingletonNode,IOrderable
 {
+    public int Order { get; set; }
+
     /// <summary>
-    /// Folder Node that can be added to TreeListViews.  You can only add one folder of each name because they inherit from <see cref="SingletonNode"/>.
+    /// Commands to be created when/if the node is right clicked.  Null if no commands are required
     /// </summary>
-    public class ArbitraryFolderNode:SingletonNode,IOrderable
+    public Func<IEnumerable<IAtomicCommand>> CommandGetter { get;set;}
+
+    public ArbitraryFolderNode(string caption, int order) : base(caption)
     {
-        public int Order { get; set; }
-
-        /// <summary>
-        /// Commands to be created when/if the node is right clicked.  Null if no commands are required
-        /// </summary>
-        public Func<IEnumerable<IAtomicCommand>> CommandGetter { get;set;}
-
-        public ArbitraryFolderNode(string caption, int order) : base(caption)
-        {
-            Order = order;
-        }
+        Order = order;
     }
 }

@@ -13,66 +13,65 @@ using ReusableLibraryCode.Exceptions;
 using ReusableLibraryCode.Settings;
 using TypeGuesser;
 
-namespace Rdmp.Core.DataLoad.Triggers.Implementations
+namespace Rdmp.Core.DataLoad.Triggers.Implementations;
+
+/// <inheritdoc/>
+internal class OracleTriggerImplementer:MySqlTriggerImplementer
 {
-    /// <inheritdoc/>
-    internal class OracleTriggerImplementer:MySqlTriggerImplementer
+    /// <inheritdoc cref="TriggerImplementer(DiscoveredTable,bool)"/>
+    public OracleTriggerImplementer(DiscoveredTable table, bool createDataLoadRunIDAlso = true) : base(table, createDataLoadRunIDAlso)
     {
-        /// <inheritdoc cref="TriggerImplementer(DiscoveredTable,bool)"/>
-        public OracleTriggerImplementer(DiscoveredTable table, bool createDataLoadRunIDAlso = true) : base(table, createDataLoadRunIDAlso)
-        {
-        }
+    }
 
-        protected override string GetTriggerBody()
+    protected override string GetTriggerBody()
+    {
+        using (var con = _server.GetConnection())
         {
-            using (var con = _server.GetConnection())
+            con.Open();
+
+            using (var cmd =
+                   _server.GetCommand(
+                       string.Format("select trigger_body from all_triggers where trigger_name = UPPER('{0}')",
+                           GetTriggerName()), con))
             {
-                con.Open();
+                ((OracleCommand)cmd).InitialLONGFetchSize = -1;
+                var r = cmd.ExecuteReader();
 
-                using (var cmd =
-                    _server.GetCommand(
-                        string.Format("select trigger_body from all_triggers where trigger_name = UPPER('{0}')",
-                            GetTriggerName()), con))
-                {
-                    ((OracleCommand)cmd).InitialLONGFetchSize = -1;
-                    var r = cmd.ExecuteReader();
-
-                    while (r.Read())
-                        return (string) r["trigger_body"];
-                }
+                while (r.Read())
+                    return (string) r["trigger_body"];
             }
-
-            return null;
         }
 
-        protected override void AddValidFrom(DiscoveredTable table, IQuerySyntaxHelper syntaxHelper)
-        {
-            _table.AddColumn(SpecialFieldNames.ValidFrom, " DATE DEFAULT CURRENT_TIMESTAMP", true, UserSettings.ArchiveTriggerTimeout);
-        }
+        return null;
+    }
 
-        protected override string CreateTriggerBody()
-        {
-            var syntax = _table.GetQuerySyntaxHelper();
+    protected override void AddValidFrom(DiscoveredTable table, IQuerySyntaxHelper syntaxHelper)
+    {
+        _table.AddColumn(SpecialFieldNames.ValidFrom, " DATE DEFAULT CURRENT_TIMESTAMP", true, UserSettings.ArchiveTriggerTimeout);
+    }
 
-            return string.Format(@"BEGIN
+    protected override string CreateTriggerBody()
+    {
+        var syntax = _table.GetQuerySyntaxHelper();
+
+        return string.Format(@"BEGIN
     INSERT INTO {0} ({1},hic_validTo,hic_userID,hic_status) VALUES ({2},CURRENT_DATE,USER,'U');
 
   :new.{3} := sysdate;
 
 
   END", _archiveTable.GetFullyQualifiedName(),
-                string.Join(",", _columns.Select(c => syntax.EnsureWrapped(c.GetRuntimeName()))),
-                string.Join(",", _columns.Select(c => ":old." + syntax.EnsureWrapped(c.GetRuntimeName()))),
-                syntax.EnsureWrapped(SpecialFieldNames.ValidFrom));
-        }
+            string.Join(",", _columns.Select(c => syntax.EnsureWrapped(c.GetRuntimeName()))),
+            string.Join(",", _columns.Select(c => ":old." + syntax.EnsureWrapped(c.GetRuntimeName()))),
+            syntax.EnsureWrapped(SpecialFieldNames.ValidFrom));
+    }
 
-        protected override void AssertTriggerBodiesAreEqual(string sqlThen, string sqlNow)
-        {
-            sqlNow = sqlNow??"";
-            sqlThen = sqlThen??"";
+    protected override void AssertTriggerBodiesAreEqual(string sqlThen, string sqlNow)
+    {
+        sqlNow = sqlNow??"";
+        sqlThen = sqlThen??"";
 
-            if(!sqlNow.Trim(';',' ','\t').Equals(sqlThen.Trim(';',' ','\t')))
-                throw new ExpectedIdenticalStringsException("Sql body for trigger doesn't match expcted sql",sqlThen,sqlNow);
-        }
+        if(!sqlNow.Trim(';',' ','\t').Equals(sqlThen.Trim(';',' ','\t')))
+            throw new ExpectedIdenticalStringsException("Sql body for trigger doesn't match expcted sql",sqlThen,sqlNow);
     }
 }

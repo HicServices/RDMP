@@ -7,19 +7,18 @@
 using Rdmp.Core.Curation.Data.Aggregation;
 using Rdmp.Core.Curation.Data.Cohort;
 
-namespace Rdmp.Core.Providers.Nodes.CohortNodes
+namespace Rdmp.Core.Providers.Nodes.CohortNodes;
+
+/// <summary>
+/// Collection of all <see cref="AggregateConfiguration"/> which are <see cref="AggregateConfiguration.IsCohortIdentificationAggregate"/> but
+/// not associated with any <see cref="CohortIdentificationConfiguration"/>
+/// </summary>
+public class AllOrphanAggregateConfigurationsNode:SingletonNode
 {
     /// <summary>
-    /// Collection of all <see cref="AggregateConfiguration"/> which are <see cref="AggregateConfiguration.IsCohortIdentificationAggregate"/> but
-    /// not associated with any <see cref="CohortIdentificationConfiguration"/>
+    /// Creates a new instance of the singleton node
     /// </summary>
-    public class AllOrphanAggregateConfigurationsNode:SingletonNode
+    public AllOrphanAggregateConfigurationsNode() : base("Orphan Cohort Sets")
     {
-        /// <summary>
-        /// Creates a new instance of the singleton node
-        /// </summary>
-        public AllOrphanAggregateConfigurationsNode() : base("Orphan Cohort Sets")
-        {
-        }
     }
 }

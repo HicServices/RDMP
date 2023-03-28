@@ -12,95 +12,94 @@ using Rdmp.Core.CohortCreation.Execution;
 using Rdmp.Core.Curation.Data.Cohort;
 using ReusableLibraryCode.DataAccess;
 
-namespace Rdmp.Core.CohortCreation
+namespace Rdmp.Core.CohortCreation;
+
+public abstract class Compileable:ICompileable
 {
-    public abstract class Compileable:ICompileable
+    protected readonly CohortCompiler _compiler;
+    private CompilationState _state;
+        
+    public CohortAggregateContainer ParentContainerIfAny { get; set; }
+    public bool? IsFirstInContainer { get; set; }
+
+    public string Log { get; set; }
+
+    protected Compileable(CohortCompiler compiler)
     {
-        protected readonly CohortCompiler _compiler;
-        private CompilationState _state;
+        _compiler = compiler;
+    }
+
+    public override string ToString()
+    {
+        return Child.ToString();
+    }
+
+    public string GetStateDescription()
+    {
+        return State.ToString();
+    }
+
+    public abstract string GetCatalogueName();
+
+    public CancellationToken CancellationToken { set; get; }
+    public CancellationTokenSource CancellationTokenSource { get; set; }
+
+    public CompilationState State
+    {
+        set
+        {
+            _state = value;
+            var h = StateChanged;
+            if(h != null)
+                h(this,new EventArgs());
+        }
+        get { return _state; }
+    }
+
+    public virtual int Order
+    {
+        get { return ((IOrderable) Child).Order; }
+        set { ((IOrderable) Child).Order = value; }
+    }
+
+    public event EventHandler StateChanged;
+    public Exception CrashMessage { get; set; }
         
-        public CohortAggregateContainer ParentContainerIfAny { get; set; }
-        public bool? IsFirstInContainer { get; set; }
-
-        public string Log { get; set; }
-
-        protected Compileable(CohortCompiler compiler)
-        {
-            _compiler = compiler;
-        }
-
-        public override string ToString()
-        {
-            return Child.ToString();
-        }
-
-        public string GetStateDescription()
-        {
-            return State.ToString();
-        }
-
-        public abstract string GetCatalogueName();
-
-        public CancellationToken CancellationToken { set; get; }
-        public CancellationTokenSource CancellationTokenSource { get; set; }
-
-        public CompilationState State
-        {
-            set
-            {
-                _state = value;
-                var h = StateChanged;
-                if(h != null)
-                    h(this,new EventArgs());
-            }
-            get { return _state; }
-        }
-
-        public virtual int Order
-        {
-            get { return ((IOrderable) Child).Order; }
-            set { ((IOrderable) Child).Order = value; }
-        }
-
-        public event EventHandler StateChanged;
-        public Exception CrashMessage { get; set; }
+    public int FinalRowCount { set; get; }
         
-        public int FinalRowCount { set; get; }
-        
-        public int? CumulativeRowCount { set; get; }
+    public int? CumulativeRowCount { set; get; }
 
-        public abstract IMapsDirectlyToDatabaseTable Child { get; }
-        public int Timeout { get; set; }
-        public abstract IDataAccessPoint[] GetDataAccessPoints();
+    public abstract IMapsDirectlyToDatabaseTable Child { get; }
+    public int Timeout { get; set; }
+    public abstract IDataAccessPoint[] GetDataAccessPoints();
 
 
-        public Stopwatch Stopwatch { get; set; }
+    public Stopwatch Stopwatch { get; set; }
 
-        public TimeSpan? ElapsedTime {
-            get
-            {
-                if (Stopwatch == null)
-                    return null;
-
-                return Stopwatch.Elapsed;
-            }
-        }
-
-        public abstract bool IsEnabled();
-
-        public string GetCachedQueryUseCount()
+    public TimeSpan? ElapsedTime {
+        get
         {
-           return _compiler.GetCachedQueryUseCount(this);
-        }
+            if (Stopwatch == null)
+                return null;
 
-        public bool AreaAllQueriesCached()
-        {
-            return _compiler.AreaAllQueriesCached(this);
+            return Stopwatch.Elapsed;
         }
-        public void SetKnownContainer(CohortAggregateContainer parent, bool isFirstInContainer)
-        {
-            ParentContainerIfAny = parent;
-            IsFirstInContainer = isFirstInContainer;
-        }
+    }
+
+    public abstract bool IsEnabled();
+
+    public string GetCachedQueryUseCount()
+    {
+        return _compiler.GetCachedQueryUseCount(this);
+    }
+
+    public bool AreaAllQueriesCached()
+    {
+        return _compiler.AreaAllQueriesCached(this);
+    }
+    public void SetKnownContainer(CohortAggregateContainer parent, bool isFirstInContainer)
+    {
+        ParentContainerIfAny = parent;
+        IsFirstInContainer = isFirstInContainer;
     }
 }

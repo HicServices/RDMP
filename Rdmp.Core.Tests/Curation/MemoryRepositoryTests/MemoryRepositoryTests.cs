@@ -15,53 +15,52 @@ using Rdmp.Core.Curation.Data;
 using Rdmp.Core.QueryBuilding;
 using Rdmp.Core.Repositories;
 
-namespace Rdmp.Core.Tests.Curation.MemoryRepositoryTests
+namespace Rdmp.Core.Tests.Curation.MemoryRepositoryTests;
+
+[Category("Unit")]
+class MemoryRepositoryTests
 {
-    [Category("Unit")]
-    class MemoryRepositoryTests
+    readonly MemoryCatalogueRepository _repo = new MemoryCatalogueRepository();
+
+    [OneTimeSetUp]
+    public virtual void OneTimeSetUp()
     {
-        readonly MemoryCatalogueRepository _repo = new MemoryCatalogueRepository();
+        ImplementationManager.Load<MicrosoftSQLImplementation>();
+        ImplementationManager.Load<MySqlImplementation>();
+        ImplementationManager.Load<OracleImplementation>();
+        ImplementationManager.Load<PostgreSqlImplementation>();
+    }
 
-        [OneTimeSetUp]
-        public virtual void OneTimeSetUp()
-        {
-            ImplementationManager.Load<MicrosoftSQLImplementation>();
-            ImplementationManager.Load<MySqlImplementation>();
-            ImplementationManager.Load<OracleImplementation>();
-            ImplementationManager.Load<PostgreSqlImplementation>();
-        }
+    [Test]
+    public void TestMemoryRepository_CatalogueConstructor()
+    {
+        Catalogue memCatalogue = new Catalogue(_repo, "My New Catalogue");
 
-        [Test]
-        public void TestMemoryRepository_CatalogueConstructor()
-        {
-            Catalogue memCatalogue = new Catalogue(_repo, "My New Catalogue");
+        Assert.AreEqual(memCatalogue, _repo.GetObjectByID<Catalogue>(memCatalogue.ID));
+    }
 
-            Assert.AreEqual(memCatalogue, _repo.GetObjectByID<Catalogue>(memCatalogue.ID));
-        }
+    [Test]
+    public void TestMemoryRepository_QueryBuilder()
+    {
+        Catalogue memCatalogue = new Catalogue(_repo, "My New Catalogue");
 
-        [Test]
-        public void TestMemoryRepository_QueryBuilder()
-        {
-            Catalogue memCatalogue = new Catalogue(_repo, "My New Catalogue");
+        CatalogueItem myCol = new CatalogueItem(_repo,memCatalogue,"MyCol1");
 
-            CatalogueItem myCol = new CatalogueItem(_repo,memCatalogue,"MyCol1");
+        var ti = new TableInfo(_repo, "My table");
+        var col = new ColumnInfo(_repo, "Mycol", "varchar(10)", ti);
 
-            var ti = new TableInfo(_repo, "My table");
-            var col = new ColumnInfo(_repo, "Mycol", "varchar(10)", ti);
+        ExtractionInformation ei = new ExtractionInformation(_repo, myCol, col, col.Name);
 
-            ExtractionInformation ei = new ExtractionInformation(_repo, myCol, col, col.Name);
+        Assert.AreEqual(memCatalogue, _repo.GetObjectByID<Catalogue>(memCatalogue.ID));
 
-            Assert.AreEqual(memCatalogue, _repo.GetObjectByID<Catalogue>(memCatalogue.ID));
+        var qb = new QueryBuilder(null,null);
+        qb.AddColumnRange(memCatalogue.GetAllExtractionInformation(ExtractionCategory.Any));
 
-            var qb = new QueryBuilder(null,null);
-            qb.AddColumnRange(memCatalogue.GetAllExtractionInformation(ExtractionCategory.Any));
-
-            Assert.AreEqual(@"
+        Assert.AreEqual(@"
 SELECT 
 
 Mycol
 FROM 
 My table", qb.SQL);
-        }
     }
 }

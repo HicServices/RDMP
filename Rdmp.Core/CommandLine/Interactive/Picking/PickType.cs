@@ -11,44 +11,43 @@ using MapsDirectlyToDatabaseTable;
 using Rdmp.Core.CommandExecution;
 using Rdmp.Core.Repositories;
 
-namespace Rdmp.Core.CommandLine.Interactive.Picking
+namespace Rdmp.Core.CommandLine.Interactive.Picking;
+
+class PickType : PickObjectBase
 {
-    class PickType : PickObjectBase
+    public PickType(IBasicActivateItems activator) : base(activator, new Regex(".*"))
     {
-        public PickType(IBasicActivateItems activator) : base(activator, new Regex(".*"))
+    }
+
+    public override string Format { get; }
+    public override string Help { get; }
+    public override IEnumerable<string> Examples { get; }
+
+    public override bool IsMatch(string arg, int idx)
+    {
+        return GetType(arg) != null;
+    }
+
+    public override CommandLineObjectPickerArgumentValue Parse(string arg, int idx)
+    {
+        return new CommandLineObjectPickerArgumentValue(arg,idx,GetType(arg));
+    }
+
+    private Type GetType(string arg)
+    {
+        if(string.IsNullOrWhiteSpace(arg))
+            return null;
+
+        try
         {
+            return
+                Activator.RepositoryLocator.CatalogueRepository.MEF.GetType(BasicCommandExecution.ExecuteCommandPrefix + arg)
+                ??
+                Activator.RepositoryLocator.CatalogueRepository.MEF.GetType(arg);
         }
-
-        public override string Format { get; }
-        public override string Help { get; }
-        public override IEnumerable<string> Examples { get; }
-
-        public override bool IsMatch(string arg, int idx)
+        catch (Exception)
         {
-            return GetType(arg) != null;
-        }
-
-        public override CommandLineObjectPickerArgumentValue Parse(string arg, int idx)
-        {
-            return new CommandLineObjectPickerArgumentValue(arg,idx,GetType(arg));
-        }
-
-        private Type GetType(string arg)
-        {
-            if(string.IsNullOrWhiteSpace(arg))
-                return null;
-
-            try
-            {
-                return
-                    Activator.RepositoryLocator.CatalogueRepository.MEF.GetType(BasicCommandExecution.ExecuteCommandPrefix + arg)
-                    ??
-                    Activator.RepositoryLocator.CatalogueRepository.MEF.GetType(arg);
-            }
-            catch (Exception)
-            {
-                return null;
-            }
+            return null;
         }
     }
 }

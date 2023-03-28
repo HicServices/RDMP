@@ -20,120 +20,119 @@ using Rdmp.Core.DataFlowPipeline;
 using ReusableLibraryCode.Progress;
 using Tests.Common;
 
-namespace Rdmp.Core.Tests.Caching.Integration
+namespace Rdmp.Core.Tests.Caching.Integration;
+
+public class CachingHostTests : UnitTests
 {
-    public class CachingHostTests : UnitTests
+    /// <summary>
+    /// Makes sure that a cache progress pipeline will not be run if we are outside the permission window
+    /// </summary>
+    [Test]
+    public void CacheHostOutwithPermissionWindow()
     {
-        /// <summary>
-        /// Makes sure that a cache progress pipeline will not be run if we are outside the permission window
-        /// </summary>
-        [Test]
-        public void CacheHostOutwithPermissionWindow()
-        {
-            var rootDir = new DirectoryInfo(TestContext.CurrentContext.TestDirectory);
-            var testDir = rootDir.CreateSubdirectory("C");
+        var rootDir = new DirectoryInfo(TestContext.CurrentContext.TestDirectory);
+        var testDir = rootDir.CreateSubdirectory("C");
 
-            if (testDir.Exists)
-                Directory.Delete(testDir.FullName, true);
+        if (testDir.Exists)
+            Directory.Delete(testDir.FullName, true);
 
-            var loadDirectory = LoadDirectory.CreateDirectoryStructure(testDir, "Test");
+        var loadDirectory = LoadDirectory.CreateDirectoryStructure(testDir, "Test");
 
 
-            var cp = WhenIHaveA<CacheProgress>();
-            var loadMetadata = cp.LoadProgress.LoadMetadata;
-            loadMetadata.LocationOfFlatFiles = loadDirectory.RootPath.FullName;
+        var cp = WhenIHaveA<CacheProgress>();
+        var loadMetadata = cp.LoadProgress.LoadMetadata;
+        loadMetadata.LocationOfFlatFiles = loadDirectory.RootPath.FullName;
 
-            // This feels a bit nasty, but quick and much better than having the test wait for an arbitrary time period.
-            var listener = new ExpectedNotificationListener("Download not permitted at this time, sleeping for 60 seconds");
+        // This feels a bit nasty, but quick and much better than having the test wait for an arbitrary time period.
+        var listener = new ExpectedNotificationListener("Download not permitted at this time, sleeping for 60 seconds");
                         
-            cp.CacheFillProgress = DateTime.Now.AddDays(-1);
-            cp.PermissionWindow_ID = 1;
+        cp.CacheFillProgress = DateTime.Now.AddDays(-1);
+        cp.PermissionWindow_ID = 1;
                                   
 
-            var permissionWindow = new PermissionWindow(Repository);
-            permissionWindow.RequiresSynchronousAccess = true;
-            permissionWindow.ID = 1;
-            permissionWindow.Name = "Test Permission Window";
+        var permissionWindow = new PermissionWindow(Repository);
+        permissionWindow.RequiresSynchronousAccess = true;
+        permissionWindow.ID = 1;
+        permissionWindow.Name = "Test Permission Window";
 
             
-            //Create a time period that we are outwith (1 hour ago to 30 minutes ago).
-            TimeSpan start = DateTime.Now.TimeOfDay.Subtract(new TimeSpan(0,1,0,0));
-            TimeSpan stop = DateTime.Now.TimeOfDay.Subtract(new TimeSpan(0,0,30,0));
-            permissionWindow.SetPermissionWindowPeriods(new List<PermissionWindowPeriod>(new []
-            {
-                new PermissionWindowPeriod(
-                    (int)DateTime.Now.DayOfWeek,
-                    start,
-                    stop)
-            }));
-            permissionWindow.SaveToDatabase();
+        //Create a time period that we are outwith (1 hour ago to 30 minutes ago).
+        TimeSpan start = DateTime.Now.TimeOfDay.Subtract(new TimeSpan(0,1,0,0));
+        TimeSpan stop = DateTime.Now.TimeOfDay.Subtract(new TimeSpan(0,0,30,0));
+        permissionWindow.SetPermissionWindowPeriods(new List<PermissionWindowPeriod>(new []
+        {
+            new PermissionWindowPeriod(
+                (int)DateTime.Now.DayOfWeek,
+                start,
+                stop)
+        }));
+        permissionWindow.SaveToDatabase();
 
-            cp.PermissionWindow_ID = permissionWindow.ID;
-            cp.SaveToDatabase();
+        cp.PermissionWindow_ID = permissionWindow.ID;
+        cp.SaveToDatabase();
 
-            var dataFlowPipelineEngine = Mock.Of<IDataFlowPipelineEngine>();
+        var dataFlowPipelineEngine = Mock.Of<IDataFlowPipelineEngine>();
 
-            // set SetUp a factory stub to return our engine mock
-            var cacheHost = new CachingHost(Repository)
-            {
-                CacheProgress = cp
-            };
+        // set SetUp a factory stub to return our engine mock
+        var cacheHost = new CachingHost(Repository)
+        {
+            CacheProgress = cp
+        };
 
-            var stopTokenSource = new CancellationTokenSource();
-            var abortTokenSource = new CancellationTokenSource();
-            var cancellationToken = new GracefulCancellationToken(stopTokenSource.Token, abortTokenSource.Token);
+        var stopTokenSource = new CancellationTokenSource();
+        var abortTokenSource = new CancellationTokenSource();
+        var cancellationToken = new GracefulCancellationToken(stopTokenSource.Token, abortTokenSource.Token);
 
-            var task = Task.Run(() => cacheHost.Start(listener, cancellationToken), cancellationToken.CreateLinkedSource().Token);
+        var task = Task.Run(() => cacheHost.Start(listener, cancellationToken), cancellationToken.CreateLinkedSource().Token);
 
-            // Don't want to cancel before the DownloadUntilFinished loop starts and we receive the first "Download not permitted at this time, sleeping for 60 seconds" message
-            listener.ReceivedMessage += abortTokenSource.Cancel;
+        // Don't want to cancel before the DownloadUntilFinished loop starts and we receive the first "Download not permitted at this time, sleeping for 60 seconds" message
+        listener.ReceivedMessage += abortTokenSource.Cancel;
 
-            try
-            {
-                task.Wait();
-            }
-            catch (AggregateException e)
-            {
-                Assert.AreEqual(1, e.InnerExceptions.Count);
-                Assert.IsInstanceOf(typeof (TaskCanceledException), e.InnerExceptions[0], e.InnerExceptions[0].Message);
-            }
-            finally
-            {
-                testDir.Delete(true);
-            }
+        try
+        {
+            task.Wait();
         }
-
-
+        catch (AggregateException e)
+        {
+            Assert.AreEqual(1, e.InnerExceptions.Count);
+            Assert.IsInstanceOf(typeof (TaskCanceledException), e.InnerExceptions[0], e.InnerExceptions[0].Message);
+        }
+        finally
+        {
+            testDir.Delete(true);
+        }
     }
 
-    internal delegate void ReceivedMessageHandler();
-    internal class ExpectedNotificationListener : IDataLoadEventListener
+
+}
+
+internal delegate void ReceivedMessageHandler();
+internal class ExpectedNotificationListener : IDataLoadEventListener
+{
+    private readonly string _expectedNotificationString;
+    public event ReceivedMessageHandler ReceivedMessage;
+
+    protected virtual void OnReceivedMessage()
     {
-        private readonly string _expectedNotificationString;
-        public event ReceivedMessageHandler ReceivedMessage;
+        var handler = ReceivedMessage;
+        if (handler != null) handler();
+    }
 
-        protected virtual void OnReceivedMessage()
-        {
-            var handler = ReceivedMessage;
-            if (handler != null) handler();
-        }
+    public ExpectedNotificationListener(string expectedNotificationString)
+    {
+        _expectedNotificationString = expectedNotificationString;
+    }
 
-        public ExpectedNotificationListener(string expectedNotificationString)
-        {
-            _expectedNotificationString = expectedNotificationString;
-        }
+    public void OnNotify(object sender, NotifyEventArgs e)
+    {
+        Console.WriteLine(sender + " sent message: " + e.Message);
 
-        public void OnNotify(object sender, NotifyEventArgs e)
-        {
-            Console.WriteLine(sender + " sent message: " + e.Message);
+        if (e.Message.Equals(_expectedNotificationString))
+            OnReceivedMessage();
+    }
 
-            if (e.Message.Equals(_expectedNotificationString))
-                OnReceivedMessage();
-        }
-
-        public void OnProgress(object sender, ProgressEventArgs e)
-        {
-            throw new NotImplementedException();
-        }
+    public void OnProgress(object sender, ProgressEventArgs e)
+    {
+        throw new NotImplementedException();
     }
 }

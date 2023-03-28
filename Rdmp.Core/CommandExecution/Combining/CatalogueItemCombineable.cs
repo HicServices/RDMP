@@ -8,29 +8,28 @@ using Rdmp.Core.Curation.Data;
 using System;
 using System.Linq;
 
-namespace Rdmp.Core.CommandExecution.Combining
+namespace Rdmp.Core.CommandExecution.Combining;
+
+/// <summary>
+/// <see cref="ICombineToMakeCommand"/> for one or more objects of type <see cref="CatalogueItem"/>
+/// </summary>
+public class CatalogueItemCombineable : ICombineToMakeCommand
 {
-    /// <summary>
-    /// <see cref="ICombineToMakeCommand"/> for one or more objects of type <see cref="CatalogueItem"/>
-    /// </summary>
-    public class CatalogueItemCombineable : ICombineToMakeCommand
+    public CatalogueItem[] CatalogueItems { get; private set; }
+
+    public CatalogueItemCombineable(CatalogueItem catalogueItem)
     {
-        public CatalogueItem[] CatalogueItems { get; private set; }
+        CatalogueItems = new[] { catalogueItem };
+    }
 
-        public CatalogueItemCombineable(CatalogueItem catalogueItem)
-        {
-            CatalogueItems = new[] { catalogueItem };
-        }
+    public CatalogueItemCombineable(CatalogueItem[] catalogueItems)
+    {
+        CatalogueItems = catalogueItems;
+    }
 
-        public CatalogueItemCombineable(CatalogueItem[] catalogueItems)
-        {
-            CatalogueItems = catalogueItems;
-        }
-
-        public string GetSqlString()
-        {
-            var strings = CatalogueItems.Select(ci => ci.ExtractionInformation?.SelectSQL).Where(v => !string.IsNullOrEmpty(v)).ToArray();
-            return string.Join(Environment.NewLine, strings);
-        }
+    public string GetSqlString()
+    {
+        var strings = CatalogueItems.Select(ci => ci.ExtractionInformation?.SelectSQL).Where(v => !string.IsNullOrEmpty(v)).ToArray();
+        return string.Join(Environment.NewLine, strings);
     }
 }

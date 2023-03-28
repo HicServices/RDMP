@@ -6,12 +6,11 @@
 
 using Rdmp.Core.Curation.Data.Dashboarding;
 
-namespace Rdmp.UI.Overview
+namespace Rdmp.UI.Overview;
+
+/// <summary>
+/// Input/persistence object for <see cref="DataLoadsGraph"/> (no objects get persisted).
+/// </summary>
+public class DataLoadsGraphObjectCollection : PersistableObjectCollection
 {
-    /// <summary>
-    /// Input/persistence object for <see cref="DataLoadsGraph"/> (no objects get persisted).
-    /// </summary>
-    public class DataLoadsGraphObjectCollection : PersistableObjectCollection
-    {
-    }
 }

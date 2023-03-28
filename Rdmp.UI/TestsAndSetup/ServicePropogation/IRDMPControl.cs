@@ -7,17 +7,16 @@
 using System;
 using Rdmp.UI.ItemActivation;
 
-namespace Rdmp.UI.TestsAndSetup.ServicePropogation
+namespace Rdmp.UI.TestsAndSetup.ServicePropogation;
+
+public interface IRDMPControl
 {
-    public interface IRDMPControl
-    {
-        RDMPControlCommonFunctionality CommonFunctionality { get; }
-        IActivateItems Activator { get; }
-        void SetItemActivator(IActivateItems activator);
+    RDMPControlCommonFunctionality CommonFunctionality { get; }
+    IActivateItems Activator { get; }
+    void SetItemActivator(IActivateItems activator);
 
-        IRDMPControl GetTopmostRDMPUserControl();
+    IRDMPControl GetTopmostRDMPUserControl();
 
-        event EventHandler<bool> UnSavedChanges;
-        void SetUnSavedChanges(bool b);
-    }
+    event EventHandler<bool> UnSavedChanges;
+    void SetUnSavedChanges(bool b);
 }

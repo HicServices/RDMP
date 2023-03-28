@@ -7,26 +7,25 @@ using System.Linq;
 
 #pragma warning disable 1591
 
-namespace Rdmp.Core.CommandLine.Interactive
+namespace Rdmp.Core.CommandLine.Interactive;
+
+class AutoComplete
 {
-    class AutoComplete
+    private readonly string[] autocompletes;
+
+    public AutoComplete(IEnumerable<string> autocompletes)
     {
-        private readonly string[] autocompletes;
+        this.autocompletes = autocompletes?.ToArray() ?? new string[0];
+    }
 
-        public AutoComplete(IEnumerable<string> autocompletes)
-        {
-            this.autocompletes = autocompletes?.ToArray() ?? new string[0];
-        }
+    public char[] Separators { get;set;} = new []{ ','};
 
-        public char[] Separators { get;set;} = new []{ ','};
+    public string[] GetSuggestions(string text, int index)
+    {
+        //they haven't typed anything yet
+        if(string.IsNullOrWhiteSpace(text))
+            return autocompletes;
 
-        public string[] GetSuggestions(string text, int index)
-        {
-            //they haven't typed anything yet
-            if(string.IsNullOrWhiteSpace(text))
-                return autocompletes;
-
-            return autocompletes.Where(a=>a.StartsWith(text)).ToArray();
-        }
+        return autocompletes.Where(a=>a.StartsWith(text)).ToArray();
     }
 }

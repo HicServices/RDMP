@@ -21,240 +21,238 @@ using ReusableLibraryCode.Checks;
 using ReusableLibraryCode.Progress;
 using System.Linq;
 
-namespace Rdmp.Core.DataExport.DataExtraction.Pipeline.Destinations
-{
+namespace Rdmp.Core.DataExport.DataExtraction.Pipeline.Destinations;
 
-    public enum ExecuteExtractionToFlatFileType
+public enum ExecuteExtractionToFlatFileType
+{
+    CSV
+}
+
+/// <summary>
+/// Writes the pipeline DataTable (extracted dataset/custom data) to disk (as ExecuteExtractionToFlatFileType e.g. CSV).  Also copies SupportingDocuments, 
+/// lookups etc into accompanying folders in the ExtractionDirectory.
+/// </summary>
+public class ExecuteDatasetExtractionFlatFileDestination : ExtractionDestination
+{
+    private FileOutputFormat _output;
+        
+    [DemandsInitialization("The kind of flat file to generate for the extraction", DemandType.Unspecified, ExecuteExtractionToFlatFileType.CSV)]
+    public ExecuteExtractionToFlatFileType FlatFileType { get; set; }
+
+    [DemandsInitialization("The number of decimal places to round floating point numbers to.  This only applies to data in the pipeline which is hard typed Float and not to string values", DemandType.Unspecified)]
+    public int? RoundFloatsTo { get; internal set; }
+
+    public ExecuteDatasetExtractionFlatFileDestination():base(true)
     {
-        CSV
+
+    }
+                                        
+    protected override void PreInitializeImpl(IExtractCommand request, IDataLoadEventListener listener)
+    {
+        if (_request is ExtractGlobalsCommand)
+        {
+            listener.OnNotify(this, new NotifyEventArgs(ProgressEventType.Information, "Request is for the extraction of Globals."));
+            OutputFile = _request.GetExtractionDirectory().FullName;
+            return;
+        }
+
+        switch (FlatFileType)
+        {
+            case ExecuteExtractionToFlatFileType.CSV:
+                OutputFile = Path.Combine(DirectoryPopulated.FullName, GetFilename() + ".csv");
+                if (request.Configuration != null)
+                    _output = new CSVOutputFormat(OutputFile, request.Configuration.Separator, DateFormat);
+                else
+                    _output = new CSVOutputFormat(OutputFile, ",", DateFormat);
+
+                _output.RoundFloatsTo = RoundFloatsTo;
+                break;
+            default:
+                throw new ArgumentOutOfRangeException();
+        }
+
+        listener.OnNotify(this, new NotifyEventArgs(ProgressEventType.Information, "Setup data extraction destination as " + OutputFile + " (will not exist yet)"));
+    }
+    
+    protected override void Open(DataTable toProcess, IDataLoadEventListener job, GracefulCancellationToken cancellationToken)
+    {
+        if(_request.IsBatchResume)
+        {
+            if (File.Exists(_output.OutputFilename))
+            {
+                // if it is a batch resume then create a backup of the file as it looked at the start of the process
+                _backupFile = _output.OutputFilename + ".bak";
+                job.OnNotify(this, new NotifyEventArgs(ProgressEventType.Information, $"Creating {_backupFile}"));
+                File.Copy(_output.OutputFilename, _backupFile, true);
+            }
+            else
+            {
+                throw new Exception($"Batch resume is true but there was no file to append to (expected a file to exist at '{_output.OutputFilename}')");
+            }
+        }
+
+        _output.Open(_request.IsBatchResume);
+
+        // write the headers for the file unless we are resuming
+        if(!_request.IsBatchResume)
+        {
+            _output.WriteHeaders(toProcess);
+        }
     }
 
-    /// <summary>
-    /// Writes the pipeline DataTable (extracted dataset/custom data) to disk (as ExecuteExtractionToFlatFileType e.g. CSV).  Also copies SupportingDocuments, 
-    /// lookups etc into accompanying folders in the ExtractionDirectory.
-    /// </summary>
-    public class ExecuteDatasetExtractionFlatFileDestination : ExtractionDestination
+    protected override void WriteRows(DataTable toProcess, IDataLoadEventListener job, GracefulCancellationToken cancellationToken, Stopwatch stopwatch)
     {
-        private FileOutputFormat _output;
+        foreach (DataRow row in toProcess.Rows)
+        {
+            _output.Append(row);
+
+            LinesWritten++;
+
+            if (LinesWritten % 1000 == 0)
+                job.OnProgress(this, new ProgressEventArgs("Write to file " + OutputFile, new ProgressMeasurement(LinesWritten, ProgressType.Records), stopwatch.Elapsed));
+        }
+        job.OnProgress(this, new ProgressEventArgs("Write to file " + OutputFile, new ProgressMeasurement(LinesWritten, ProgressType.Records), stopwatch.Elapsed));
+
+    }
+    protected override void Flush(IDataLoadEventListener job, GracefulCancellationToken cancellationToken, Stopwatch stopwatch)
+    {
+        _output.Flush();
+    }
+
+    public override void Dispose(IDataLoadEventListener listener, Exception pipelineFailureExceptionIfAny)
+    {
+        CloseFile(listener, pipelineFailureExceptionIfAny != null);
+
+        // if pipeline execution failed and we are doing a batch resume
+        if(pipelineFailureExceptionIfAny != null &&
+           (_request?.IsBatchResume ?? false) && _backupFile != null && _output?.OutputFilename != null)
+        {
+            if(File.Exists(_backupFile))
+            {
+                listener.OnNotify(this, new NotifyEventArgs(ProgressEventType.Information, $"Pipeline crashed so restoring backup file {_backupFile}"));
+                File.Copy(_backupFile, _output.OutputFilename, true);
+            }
+        }
+
+        if(_backupFile != null && File.Exists(_backupFile))
+        {
+            listener.OnNotify(this, new NotifyEventArgs(ProgressEventType.Information, $"Deleting {_backupFile}"));
+            File.Delete(_backupFile);
+        }
+    }
+
+    public override void Abort(IDataLoadEventListener listener)
+    {
+        CloseFile(listener,true);
+    }
+
+    private bool _fileAlreadyClosed = false;
+
+    /// <summary>
+    /// If performing a batch resume then this file will be a copy of the flat file
+    /// before we began appending data to it in case the pipeline execution fails
+    /// </summary>
+    private string _backupFile;
+
+
+    private void CloseFile(IDataLoadEventListener listener, bool failed)
+    {
+        //we never even started or have already closed
+        if (!haveOpened || _fileAlreadyClosed )
+            return;
+
+        _fileAlreadyClosed = true;
+
+        try
+        {
+            //whatever happens in the writing block, make sure to at least attempt to close off the file
+            _output.Close();
+            GC.Collect(); //prevents file locks from sticking around
+
+            if(TableLoadInfo == null)
+            {
+                return;
+            }
+
+            //close audit object - unless it was prematurely closed e.g. by a failure somewhere
+            if (!TableLoadInfo.IsClosed)
+                TableLoadInfo.CloseAndArchive();
+
+            // TODO: Make sure to only increment if batch succeeded
+
+            // also close off the cumulative extraction result
+            var result = ((IExtractDatasetCommand)_request).CumulativeExtractionResults;
+            if (result != null) 
+                result.CompleteAudit(this.GetType(), GetDestinationDescription(), LinesWritten,_request.IsBatchResume, failed);
+        }
+        catch (Exception e)
+        {
+            listener.OnNotify(this, new NotifyEventArgs(ProgressEventType.Error, "Error when trying to close csv file", e));
+        }
+    }
+
+
+    public override string GetDestinationDescription()
+    {
+        return OutputFile;
+    }               
         
-        [DemandsInitialization("The kind of flat file to generate for the extraction", DemandType.Unspecified, ExecuteExtractionToFlatFileType.CSV)]
-        public ExecuteExtractionToFlatFileType FlatFileType { get; set; }
+    public override ReleasePotential GetReleasePotential(IRDMPPlatformRepositoryServiceLocator repositoryLocator, ISelectedDataSets selectedDataSet)
+    {
+        return new FlatFileReleasePotential(repositoryLocator, selectedDataSet);
+    }
 
-        [DemandsInitialization("The number of decimal places to round floating point numbers to.  This only applies to data in the pipeline which is hard typed Float and not to string values", DemandType.Unspecified)]
-        public int? RoundFloatsTo { get; internal set; }
+    public override FixedReleaseSource<ReleaseAudit> GetReleaseSource(ICatalogueRepository catalogueRepository)
+    {
+        return new FlatFileReleaseSource<ReleaseAudit>();
+    }
 
-        public ExecuteDatasetExtractionFlatFileDestination():base(true)
+    public override GlobalReleasePotential GetGlobalReleasabilityEvaluator(IRDMPPlatformRepositoryServiceLocator repositoryLocator, ISupplementalExtractionResults globalResult, IMapsDirectlyToDatabaseTable globalToCheck)
+    {
+        return new FlatFileGlobalsReleasePotential(repositoryLocator, globalResult, globalToCheck);
+    }
+
+    public override void Check(ICheckNotifier notifier)
+    {
+        if (_request == ExtractDatasetCommand.EmptyCommand)
         {
-
+            notifier.OnCheckPerformed(new CheckEventArgs("Request is ExtractDatasetCommand.EmptyCommand, checking will not be carried out",CheckResult.Warning));
+            return;
         }
-                                        
-        protected override void PreInitializeImpl(IExtractCommand request, IDataLoadEventListener listener)
+        try
         {
-            if (_request is ExtractGlobalsCommand)
-            {
-                listener.OnNotify(this, new NotifyEventArgs(ProgressEventType.Information, "Request is for the extraction of Globals."));
-                OutputFile = _request.GetExtractionDirectory().FullName;
-                return;
-            }
-
-            switch (FlatFileType)
-            {
-                case ExecuteExtractionToFlatFileType.CSV:
-                    OutputFile = Path.Combine(DirectoryPopulated.FullName, GetFilename() + ".csv");
-                    if (request.Configuration != null)
-                        _output = new CSVOutputFormat(OutputFile, request.Configuration.Separator, DateFormat);
-                    else
-                        _output = new CSVOutputFormat(OutputFile, ",", DateFormat);
-
-                    _output.RoundFloatsTo = RoundFloatsTo;
-                    break;
-                default:
-                    throw new ArgumentOutOfRangeException();
-            }
-
-            listener.OnNotify(this, new NotifyEventArgs(ProgressEventType.Information, "Setup data extraction destination as " + OutputFile + " (will not exist yet)"));
+            string result = DateTime.Now.ToString(DateFormat);
+            notifier.OnCheckPerformed(new CheckEventArgs("DateFormat '" + DateFormat + "' is valid, dates will look like:" + result, CheckResult.Success));
         }
-    
-        protected override void Open(DataTable toProcess, IDataLoadEventListener job, GracefulCancellationToken cancellationToken)
+        catch (Exception e)
         {
-            if(_request.IsBatchResume)
-            {
-                if (File.Exists(_output.OutputFilename))
-                {
-                    // if it is a batch resume then create a backup of the file as it looked at the start of the process
-                    _backupFile = _output.OutputFilename + ".bak";
-                    job.OnNotify(this, new NotifyEventArgs(ProgressEventType.Information, $"Creating {_backupFile}"));
-                    File.Copy(_output.OutputFilename, _backupFile, true);
-                }
-                else
-                {
-                    throw new Exception($"Batch resume is true but there was no file to append to (expected a file to exist at '{_output.OutputFilename}')");
-                }
-            }
-
-            _output.Open(_request.IsBatchResume);
-
-            // write the headers for the file unless we are resuming
-            if(!_request.IsBatchResume)
-            {
-                _output.WriteHeaders(toProcess);
-            }
+            notifier.OnCheckPerformed(new CheckEventArgs("DateFormat '" + DateFormat + "' was invalid",CheckResult.Fail, e));
         }
 
-        protected override void WriteRows(DataTable toProcess, IDataLoadEventListener job, GracefulCancellationToken cancellationToken, Stopwatch stopwatch)
+        var dsRequest = _request as ExtractDatasetCommand;
+
+        if (UseAcronymForFileNaming && dsRequest != null)
         {
-            foreach (DataRow row in toProcess.Rows)
-            {
-                _output.Append(row);
-
-                LinesWritten++;
-
-                if (LinesWritten % 1000 == 0)
-                    job.OnProgress(this, new ProgressEventArgs("Write to file " + OutputFile, new ProgressMeasurement(LinesWritten, ProgressType.Records), stopwatch.Elapsed));
-            }
-            job.OnProgress(this, new ProgressEventArgs("Write to file " + OutputFile, new ProgressMeasurement(LinesWritten, ProgressType.Records), stopwatch.Elapsed));
-
-        }
-        protected override void Flush(IDataLoadEventListener job, GracefulCancellationToken cancellationToken, Stopwatch stopwatch)
-        {
-            _output.Flush();
+            if(string.IsNullOrWhiteSpace(dsRequest.Catalogue.Acronym))
+                notifier.OnCheckPerformed(new CheckEventArgs("Catalogue '" + dsRequest.Catalogue +"' does not have an Acronym but UseAcronymForFileNaming is true",CheckResult.Fail));
         }
 
-        public override void Dispose(IDataLoadEventListener listener, Exception pipelineFailureExceptionIfAny)
+        if (CleanExtractionFolderBeforeExtraction)
         {
-            CloseFile(listener, pipelineFailureExceptionIfAny != null);
+            var rootDir = _request.GetExtractionDirectory();
+            var contents = rootDir.GetFileSystemInfos();
 
-            // if pipeline execution failed and we are doing a batch resume
-            if(pipelineFailureExceptionIfAny != null &&
-                (_request?.IsBatchResume ?? false) && _backupFile != null && _output?.OutputFilename != null)
+            if (contents.Length > 0
+                &&
+                notifier.OnCheckPerformed(new CheckEventArgs(
+                    $"Extraction directory '{rootDir.FullName}' contained {contents.Length} files/folders:\r\n {string.Join(Environment.NewLine, contents.Take(100).Select(e => e.Name))}", CheckResult.Warning,null,"Delete Files"))
+               )
             {
-                if(File.Exists(_backupFile))
-                {
-                    listener.OnNotify(this, new NotifyEventArgs(ProgressEventType.Information, $"Pipeline crashed so restoring backup file {_backupFile}"));
-                    File.Copy(_backupFile, _output.OutputFilename, true);
-                }
-            }
-
-            if(_backupFile != null && File.Exists(_backupFile))
-            {
-                listener.OnNotify(this, new NotifyEventArgs(ProgressEventType.Information, $"Deleting {_backupFile}"));
-                File.Delete(_backupFile);
-            }
+                rootDir.Delete(true);
+                rootDir.Create();
+            }                    
         }
-
-        public override void Abort(IDataLoadEventListener listener)
-        {
-            CloseFile(listener,true);
-        }
-
-        private bool _fileAlreadyClosed = false;
-
-        /// <summary>
-        /// If performing a batch resume then this file will be a copy of the flat file
-        /// before we began appending data to it in case the pipeline execution fails
-        /// </summary>
-        private string _backupFile;
-
-
-        private void CloseFile(IDataLoadEventListener listener, bool failed)
-        {
-            //we never even started or have already closed
-            if (!haveOpened || _fileAlreadyClosed )
-                return;
-
-            _fileAlreadyClosed = true;
-
-            try
-            {
-                //whatever happens in the writing block, make sure to at least attempt to close off the file
-                _output.Close();
-                GC.Collect(); //prevents file locks from sticking around
-
-                if(TableLoadInfo == null)
-                {
-                    return;
-                }
-
-                //close audit object - unless it was prematurely closed e.g. by a failure somewhere
-                if (!TableLoadInfo.IsClosed)
-                    TableLoadInfo.CloseAndArchive();
-
-                // TODO: Make sure to only increment if batch succeeded
-
-                // also close off the cumulative extraction result
-                var result = ((IExtractDatasetCommand)_request).CumulativeExtractionResults;
-                if (result != null) 
-                    result.CompleteAudit(this.GetType(), GetDestinationDescription(), LinesWritten,_request.IsBatchResume, failed);
-            }
-            catch (Exception e)
-            {
-                listener.OnNotify(this, new NotifyEventArgs(ProgressEventType.Error, "Error when trying to close csv file", e));
-            }
-        }
-
-
-        public override string GetDestinationDescription()
-        {
-            return OutputFile;
-        }               
-        
-        public override ReleasePotential GetReleasePotential(IRDMPPlatformRepositoryServiceLocator repositoryLocator, ISelectedDataSets selectedDataSet)
-        {
-            return new FlatFileReleasePotential(repositoryLocator, selectedDataSet);
-        }
-
-        public override FixedReleaseSource<ReleaseAudit> GetReleaseSource(ICatalogueRepository catalogueRepository)
-        {
-            return new FlatFileReleaseSource<ReleaseAudit>();
-        }
-
-        public override GlobalReleasePotential GetGlobalReleasabilityEvaluator(IRDMPPlatformRepositoryServiceLocator repositoryLocator, ISupplementalExtractionResults globalResult, IMapsDirectlyToDatabaseTable globalToCheck)
-        {
-            return new FlatFileGlobalsReleasePotential(repositoryLocator, globalResult, globalToCheck);
-        }
-
-        public override void Check(ICheckNotifier notifier)
-        {
-            if (_request == ExtractDatasetCommand.EmptyCommand)
-            {
-                notifier.OnCheckPerformed(new CheckEventArgs("Request is ExtractDatasetCommand.EmptyCommand, checking will not be carried out",CheckResult.Warning));
-                return;
-            }
-            try
-            {
-                string result = DateTime.Now.ToString(DateFormat);
-                notifier.OnCheckPerformed(new CheckEventArgs("DateFormat '" + DateFormat + "' is valid, dates will look like:" + result, CheckResult.Success));
-            }
-            catch (Exception e)
-            {
-                notifier.OnCheckPerformed(new CheckEventArgs("DateFormat '" + DateFormat + "' was invalid",CheckResult.Fail, e));
-            }
-
-            var dsRequest = _request as ExtractDatasetCommand;
-
-            if (UseAcronymForFileNaming && dsRequest != null)
-            {
-                if(string.IsNullOrWhiteSpace(dsRequest.Catalogue.Acronym))
-                    notifier.OnCheckPerformed(new CheckEventArgs("Catalogue '" + dsRequest.Catalogue +"' does not have an Acronym but UseAcronymForFileNaming is true",CheckResult.Fail));
-            }
-
-            if (CleanExtractionFolderBeforeExtraction)
-            {
-                var rootDir = _request.GetExtractionDirectory();
-                var contents = rootDir.GetFileSystemInfos();
-
-                if (contents.Length > 0
-                    &&
-                    notifier.OnCheckPerformed(new CheckEventArgs(
-                        $"Extraction directory '{rootDir.FullName}' contained {contents.Length} files/folders:\r\n {string.Join(Environment.NewLine, contents.Take(100).Select(e => e.Name))}", CheckResult.Warning,null,"Delete Files"))
-                    )
-                {
-                    rootDir.Delete(true);
-                    rootDir.Create();
-                }                    
-            }
             
-            base.Check(notifier);
-        }
+        base.Check(notifier);
     }
 }

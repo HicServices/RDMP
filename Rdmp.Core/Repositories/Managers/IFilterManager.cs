@@ -6,19 +6,18 @@
 
 using Rdmp.Core.Curation.Data;
 
-namespace Rdmp.Core.Repositories.Managers
+namespace Rdmp.Core.Repositories.Managers;
+
+/// <summary>
+/// Subcomponent of <see cref="ICatalogueRepository"/> which manages persisting / editting which 
+/// <see cref="IFilter"/> belong in which <see cref="IContainer"/> etc.
+/// </summary>
+public interface IFilterManager
 {
-    /// <summary>
-    /// Subcomponent of <see cref="ICatalogueRepository"/> which manages persisting / editting which 
-    /// <see cref="IFilter"/> belong in which <see cref="IContainer"/> etc.
-    /// </summary>
-    public interface IFilterManager
-    {
-        IContainer[] GetSubContainers(IContainer container);
-        void MakeIntoAnOrphan(IContainer container);
-        IContainer GetParentContainerIfAny(IContainer container);
-        void AddSubContainer(IContainer parent, IContainer child);
-        IFilter[] GetFilters(IContainer container);
-        void AddChild(IContainer container, IFilter filter);
-    }
+    IContainer[] GetSubContainers(IContainer container);
+    void MakeIntoAnOrphan(IContainer container);
+    IContainer GetParentContainerIfAny(IContainer container);
+    void AddSubContainer(IContainer parent, IContainer child);
+    IFilter[] GetFilters(IContainer container);
+    void AddChild(IContainer container, IFilter filter);
 }

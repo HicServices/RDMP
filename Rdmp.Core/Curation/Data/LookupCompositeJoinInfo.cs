@@ -10,122 +10,121 @@ using System.Data.Common;
 using MapsDirectlyToDatabaseTable;
 using Rdmp.Core.Repositories;
 
-namespace Rdmp.Core.Curation.Data
+namespace Rdmp.Core.Curation.Data;
+
+/// <summary>
+/// Describes to QueryBuilder a secondary/tertiary etc join requirement when making a Lookup join (see <see cref="Lookup"/>)
+/// 
+/// <para>This is only the case if you have a given lookup code which changes meaning based on another column e.g. testcode X means a different thing
+/// in healthboard A vs healthboard B</para>
+/// </summary>
+public class LookupCompositeJoinInfo : DatabaseEntity, ISupplementalJoin
 {
+    #region Database Properties
+    private int _originalLookup_ID;
+    private int _foreignKey_ID;
+    private int _primaryKey_ID;
+    private string _collation;
+
     /// <summary>
-    /// Describes to QueryBuilder a secondary/tertiary etc join requirement when making a Lookup join (see <see cref="Lookup"/>)
-    /// 
-    /// <para>This is only the case if you have a given lookup code which changes meaning based on another column e.g. testcode X means a different thing
-    /// in healthboard A vs healthboard B</para>
+    /// The Main <see cref="Lookup"/> to which this column pair must also be joined in the ON SQL block
     /// </summary>
-    public class LookupCompositeJoinInfo : DatabaseEntity, ISupplementalJoin
+    public int OriginalLookup_ID
     {
-        #region Database Properties
-        private int _originalLookup_ID;
-        private int _foreignKey_ID;
-        private int _primaryKey_ID;
-        private string _collation;
+        get { return _originalLookup_ID; }
+        set { SetField(ref _originalLookup_ID, value); }
+    }
 
-        /// <summary>
-        /// The Main <see cref="Lookup"/> to which this column pair must also be joined in the ON SQL block
-        /// </summary>
-        public int OriginalLookup_ID
+    /// <inheritdoc cref="IJoin.ForeignKey"/>
+    public int ForeignKey_ID
+    {
+        get { return _foreignKey_ID; }
+        set { SetField(ref _foreignKey_ID, value); }
+    }
+    /// <inheritdoc cref="IJoin.PrimaryKey"/>
+    public int PrimaryKey_ID
+    {
+        get { return _primaryKey_ID; }
+        set { SetField(ref _primaryKey_ID, value); }
+    }
+
+    /// <inheritdoc/>
+    public string Collation
+    {
+        get { return _collation; }
+        set { SetField(ref _collation, value); }
+    }
+
+    #endregion
+
+    #region Relationships
+
+    /// <inheritdoc cref="IJoin.ForeignKey"/>
+    [NoMappingToDatabase]
+    public ColumnInfo ForeignKey { get { return Repository.GetObjectByID<ColumnInfo>(ForeignKey_ID); } }
+
+    /// <inheritdoc cref="IJoin.PrimaryKey"/>
+    [NoMappingToDatabase]
+    public ColumnInfo PrimaryKey {
+        get { return Repository.GetObjectByID<ColumnInfo>(PrimaryKey_ID); }
+    }
+    #endregion
+
+    public LookupCompositeJoinInfo()
+    {
+
+    }
+
+    /// <inheritdoc cref="LookupCompositeJoinInfo"/>
+    public LookupCompositeJoinInfo(ICatalogueRepository repository, Lookup parent, ColumnInfo foreignKey,
+        ColumnInfo primaryKey, string collation = null)
+    {
+        if (foreignKey.ID == primaryKey.ID)
+            throw new ArgumentException("Join Key 1 and Join Key 2 cannot be the same");
+
+        if (foreignKey.TableInfo_ID == primaryKey.TableInfo_ID)
+            throw new ArgumentException("Join Key 1 and Join Key 2 are from the same table, this is not cool");
+
+        repository.InsertAndHydrate(this,new Dictionary<string, object>
         {
-            get { return _originalLookup_ID; }
-            set { SetField(ref _originalLookup_ID, value); }
-        }
+            {"OriginalLookup_ID", parent.ID},
+            {"ForeignKey_ID", foreignKey.ID},
+            {"PrimaryKey_ID", primaryKey.ID},
+            {"Collation", string.IsNullOrWhiteSpace(collation) ? DBNull.Value : (object) collation}
+        });
+    }
 
-        /// <inheritdoc cref="IJoin.ForeignKey"/>
-        public int ForeignKey_ID
-        {
-            get { return _foreignKey_ID; }
-            set { SetField(ref _foreignKey_ID, value); }
-        }
-        /// <inheritdoc cref="IJoin.PrimaryKey"/>
-        public int PrimaryKey_ID
-        {
-            get { return _primaryKey_ID; }
-            set { SetField(ref _primaryKey_ID, value); }
-        }
+    internal LookupCompositeJoinInfo(ICatalogueRepository repository, DbDataReader r)
+        : base(repository, r)
+    {
+        Collation = r["Collation"] as string;
+        OriginalLookup_ID = int.Parse(r["OriginalLookup_ID"].ToString());
 
-        /// <inheritdoc/>
-        public string Collation
-        {
-            get { return _collation; }
-            set { SetField(ref _collation, value); }
-        }
+        ForeignKey_ID = int.Parse(r["ForeignKey_ID"].ToString());
+        PrimaryKey_ID = int.Parse(r["PrimaryKey_ID"].ToString());
+    }
 
-        #endregion
+    /// <inheritdoc/>
+    public override string ToString()
+    {
+        return ToStringCached();
+    }
 
-        #region Relationships
+    private string _cachedToString = null;
+    private string ToStringCached()
+    {
+        return _cachedToString ?? (_cachedToString = ForeignKey.Name + " = " + PrimaryKey.Name);
+    }
 
-        /// <inheritdoc cref="IJoin.ForeignKey"/>
-        [NoMappingToDatabase]
-        public ColumnInfo ForeignKey { get { return Repository.GetObjectByID<ColumnInfo>(ForeignKey_ID); } }
+    /// <inheritdoc/>
+    public override void SaveToDatabase()
+    {
+        if (ForeignKey.ID == PrimaryKey.ID)
+            throw new ArgumentException("Join Key 1 and Join Key 2 cannot be the same");
 
-        /// <inheritdoc cref="IJoin.PrimaryKey"/>
-        [NoMappingToDatabase]
-        public ColumnInfo PrimaryKey {
-            get { return Repository.GetObjectByID<ColumnInfo>(PrimaryKey_ID); }
-        }
-        #endregion
+        if (ForeignKey.TableInfo_ID == PrimaryKey.TableInfo_ID)
+            throw new ArgumentException("Join Key 1 and Join Key 2 are from the same table, this is not cool");
 
-        public LookupCompositeJoinInfo()
-        {
-
-        }
-
-        /// <inheritdoc cref="LookupCompositeJoinInfo"/>
-        public LookupCompositeJoinInfo(ICatalogueRepository repository, Lookup parent, ColumnInfo foreignKey,
-            ColumnInfo primaryKey, string collation = null)
-        {
-            if (foreignKey.ID == primaryKey.ID)
-                throw new ArgumentException("Join Key 1 and Join Key 2 cannot be the same");
-
-            if (foreignKey.TableInfo_ID == primaryKey.TableInfo_ID)
-                throw new ArgumentException("Join Key 1 and Join Key 2 are from the same table, this is not cool");
-
-            repository.InsertAndHydrate(this,new Dictionary<string, object>
-            {
-                {"OriginalLookup_ID", parent.ID},
-                {"ForeignKey_ID", foreignKey.ID},
-                {"PrimaryKey_ID", primaryKey.ID},
-                {"Collation", string.IsNullOrWhiteSpace(collation) ? DBNull.Value : (object) collation}
-            });
-        }
-
-        internal LookupCompositeJoinInfo(ICatalogueRepository repository, DbDataReader r)
-            : base(repository, r)
-        {
-            Collation = r["Collation"] as string;
-            OriginalLookup_ID = int.Parse(r["OriginalLookup_ID"].ToString());
-
-            ForeignKey_ID = int.Parse(r["ForeignKey_ID"].ToString());
-            PrimaryKey_ID = int.Parse(r["PrimaryKey_ID"].ToString());
-        }
-
-        /// <inheritdoc/>
-        public override string ToString()
-        {
-            return ToStringCached();
-        }
-
-        private string _cachedToString = null;
-        private string ToStringCached()
-        {
-            return _cachedToString ?? (_cachedToString = ForeignKey.Name + " = " + PrimaryKey.Name);
-        }
-
-        /// <inheritdoc/>
-        public override void SaveToDatabase()
-        {
-            if (ForeignKey.ID == PrimaryKey.ID)
-                throw new ArgumentException("Join Key 1 and Join Key 2 cannot be the same");
-
-            if (ForeignKey.TableInfo_ID == PrimaryKey.TableInfo_ID)
-                throw new ArgumentException("Join Key 1 and Join Key 2 are from the same table, this is not cool");
-
-            base.SaveToDatabase();
-        }
+        base.SaveToDatabase();
     }
 }

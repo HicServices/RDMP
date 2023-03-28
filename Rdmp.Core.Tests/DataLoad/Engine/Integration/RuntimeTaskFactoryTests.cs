@@ -13,37 +13,36 @@ using Rdmp.Core.DataLoad.Engine.LoadExecution.Components.Arguments;
 using Rdmp.Core.DataLoad.Engine.LoadExecution.Components.Runtime;
 using Tests.Common;
 
-namespace Rdmp.Core.Tests.DataLoad.Engine.Integration
+namespace Rdmp.Core.Tests.DataLoad.Engine.Integration;
+
+public class RuntimeTaskFactoryTests : DatabaseTests
 {
-    public class RuntimeTaskFactoryTests : DatabaseTests
+    [Test]
+    [TestCase("Rdmp.Core.DataLoad.Modules.Web.WebFileDownloader")]
+    [TestCase("Rdmp.Core.DataLoad.Modules.DataProvider.FlatFileManipulation.ExcelToCSVFilesConverter")]
+    public void RuntimeTaskFactoryTest(string className)
     {
-        [Test]
-        [TestCase("Rdmp.Core.DataLoad.Modules.Web.WebFileDownloader")]
-        [TestCase("Rdmp.Core.DataLoad.Modules.DataProvider.FlatFileManipulation.ExcelToCSVFilesConverter")]
-        public void RuntimeTaskFactoryTest(string className)
-        {
 
-            var lmd = new LoadMetadata(CatalogueRepository);
-            var task = new ProcessTask(CatalogueRepository, lmd,LoadStage.GetFiles);
+        var lmd = new LoadMetadata(CatalogueRepository);
+        var task = new ProcessTask(CatalogueRepository, lmd,LoadStage.GetFiles);
 
-            var f = new RuntimeTaskFactory(CatalogueRepository);
+        var f = new RuntimeTaskFactory(CatalogueRepository);
 
-            task.Path = className;
-            task.ProcessTaskType = ProcessTaskType.DataProvider;
-            task.SaveToDatabase();
+        task.Path = className;
+        task.ProcessTaskType = ProcessTaskType.DataProvider;
+        task.SaveToDatabase();
             
-            try
-            {
-                var ex = Assert.Throws<Exception>(() => f.Create(task, new StageArgs(LoadStage.AdjustRaw, GetCleanedServer(FAnsi.DatabaseType.MicrosoftSQLServer), Mock.Of<ILoadDirectory>())));
-                Assert.IsTrue(ex.InnerException.Message.Contains("marked with DemandsInitialization but no corresponding argument was provided in ArgumentCollection"));
-            }
-            finally 
-            {
-                task.DeleteInDatabase();
-                lmd.DeleteInDatabase();
-            }
-
-
+        try
+        {
+            var ex = Assert.Throws<Exception>(() => f.Create(task, new StageArgs(LoadStage.AdjustRaw, GetCleanedServer(FAnsi.DatabaseType.MicrosoftSQLServer), Mock.Of<ILoadDirectory>())));
+            Assert.IsTrue(ex.InnerException.Message.Contains("marked with DemandsInitialization but no corresponding argument was provided in ArgumentCollection"));
         }
+        finally 
+        {
+            task.DeleteInDatabase();
+            lmd.DeleteInDatabase();
+        }
+
+
     }
 }

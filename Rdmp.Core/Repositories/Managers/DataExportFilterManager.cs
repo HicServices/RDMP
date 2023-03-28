@@ -10,67 +10,66 @@ using System.Linq;
 using Rdmp.Core.Curation.Data;
 using Rdmp.Core.DataExport.Data;
 
-namespace Rdmp.Core.Repositories.Managers
+namespace Rdmp.Core.Repositories.Managers;
+
+class DataExportFilterManager : IFilterManager
 {
-    class DataExportFilterManager : IFilterManager
+    private readonly DataExportRepository _dataExportRepository;
+
+    public DataExportFilterManager(DataExportRepository dataExportRepository)
     {
-        private readonly DataExportRepository _dataExportRepository;
+        _dataExportRepository = dataExportRepository;
+    }
 
-        public DataExportFilterManager(DataExportRepository dataExportRepository)
+    public IContainer GetParentContainerIfAny(IContainer container)
+    {
+        return _dataExportRepository.SelectAll<FilterContainer>(
+            "SELECT FilterContainer_ParentID FROM FilterContainerSubcontainers WHERE FilterContainerChildID=" + container.ID,
+            "FilterContainer_ParentID").SingleOrDefault();
+    }
+
+
+    /// <inheritdoc/>
+    public virtual IContainer[] GetSubContainers(IContainer parent)
+    {
+        var subcontainers = _dataExportRepository.SelectAll<FilterContainer>(
+            "SELECT FilterContainerChildID FROM FilterContainerSubcontainers WHERE FilterContainer_ParentID=" + parent.ID,
+            "FilterContainerChildID");
+
+        return subcontainers.Cast<IContainer>().ToArray();
+    }
+
+    /// <inheritdoc/>
+    public virtual IFilter[] GetFilters(IContainer container)
+    {
+        var filters = _dataExportRepository.GetAllObjectsWhere<DeployedExtractionFilter>("FilterContainer_ID" , container.ID);
+        return filters.Cast<IFilter>().ToArray();
+    }
+
+    /// <inheritdoc/>
+    public void AddSubContainer(IContainer parent, IContainer child)
+    {
+        if (!(child is FilterContainer))
+            throw new NotSupportedException();
+
+        _dataExportRepository.Insert("INSERT INTO FilterContainerSubcontainers(FilterContainer_ParentID,FilterContainerChildID) VALUES (@FilterContainer_ParentID, @FilterContainerChildID)", new Dictionary<string, object>
         {
-            _dataExportRepository = dataExportRepository;
-        }
+            {"FilterContainer_ParentID", parent.ID},
+            {"FilterContainerChildID", child.ID}
+        });
+    }
 
-        public IContainer GetParentContainerIfAny(IContainer container)
+    /// <inheritdoc/>
+    public void MakeIntoAnOrphan(IContainer container)
+    {
+        _dataExportRepository.Delete("DELETE FROM FilterContainerSubcontainers where FilterContainerChildID = @FilterContainerChildID", new Dictionary<string, object>
         {
-            return _dataExportRepository.SelectAll<FilterContainer>(
-                "SELECT FilterContainer_ParentID FROM FilterContainerSubcontainers WHERE FilterContainerChildID=" + container.ID,
-                "FilterContainer_ParentID").SingleOrDefault();
-        }
-
-
-        /// <inheritdoc/>
-        public virtual IContainer[] GetSubContainers(IContainer parent)
-        {
-            var subcontainers = _dataExportRepository.SelectAll<FilterContainer>(
-                "SELECT FilterContainerChildID FROM FilterContainerSubcontainers WHERE FilterContainer_ParentID=" + parent.ID,
-                "FilterContainerChildID");
-
-            return subcontainers.Cast<IContainer>().ToArray();
-        }
-
-        /// <inheritdoc/>
-        public virtual IFilter[] GetFilters(IContainer container)
-        {
-            var filters = _dataExportRepository.GetAllObjectsWhere<DeployedExtractionFilter>("FilterContainer_ID" , container.ID);
-            return filters.Cast<IFilter>().ToArray();
-        }
-
-        /// <inheritdoc/>
-        public void AddSubContainer(IContainer parent, IContainer child)
-        {
-            if (!(child is FilterContainer))
-                throw new NotSupportedException();
-
-            _dataExportRepository.Insert("INSERT INTO FilterContainerSubcontainers(FilterContainer_ParentID,FilterContainerChildID) VALUES (@FilterContainer_ParentID, @FilterContainerChildID)", new Dictionary<string, object>
-            {
-                {"FilterContainer_ParentID", parent.ID},
-                {"FilterContainerChildID", child.ID}
-            });
-        }
-
-        /// <inheritdoc/>
-        public void MakeIntoAnOrphan(IContainer container)
-        {
-            _dataExportRepository.Delete("DELETE FROM FilterContainerSubcontainers where FilterContainerChildID = @FilterContainerChildID", new Dictionary<string, object>
-            {
-                {"FilterContainerChildID", container.ID}
-            },false);
-        }
-        public void AddChild(IContainer container, IFilter filter)
-        {
-            filter.FilterContainer_ID = container.ID;
-            filter.SaveToDatabase();
-        }
+            {"FilterContainerChildID", container.ID}
+        },false);
+    }
+    public void AddChild(IContainer container, IFilter filter)
+    {
+        filter.FilterContainer_ID = container.ID;
+        filter.SaveToDatabase();
     }
 }

@@ -10,41 +10,40 @@ using Rdmp.Core.CommandExecution.AtomicCommands;
 using ReusableLibraryCode.Icons.IconProvision;
 
 
-namespace Rdmp.UI.CommandExecution.AtomicCommands.UIFactory
+namespace Rdmp.UI.CommandExecution.AtomicCommands.UIFactory;
+
+/// <summary>
+/// Provides access to an IAtomicCommand including showing the command name, help text etc.  When the link label is clicked the command .Execute is run.
+/// </summary>
+[TechnicalUI]
+public partial class AtomicCommandLinkLabel : UserControl
 {
-    /// <summary>
-    /// Provides access to an IAtomicCommand including showing the command name, help text etc.  When the link label is clicked the command .Execute is run.
-    /// </summary>
-    [TechnicalUI]
-    public partial class AtomicCommandLinkLabel : UserControl
+    private readonly IAtomicCommand _command;
+
+    public AtomicCommandLinkLabel(IIconProvider iconProvider, IAtomicCommand command)
     {
-        private readonly IAtomicCommand _command;
+        _command = command;
+        InitializeComponent();
 
-        public AtomicCommandLinkLabel(IIconProvider iconProvider, IAtomicCommand command)
-        {
-            _command = command;
-            InitializeComponent();
+        pbCommandIcon.Image = command.GetImage(iconProvider).ImageToBitmap();
+        var name = command.GetCommandName();
+        lblName.Text = name;
 
-            pbCommandIcon.Image = command.GetImage(iconProvider).ImageToBitmap();
-            var name = command.GetCommandName();
-            lblName.Text = name;
-
-            helpIcon1.SetHelpText(_command.GetCommandName(),command.GetCommandHelp());
-        }
+        helpIcon1.SetHelpText(_command.GetCommandName(),command.GetCommandHelp());
+    }
         
-        private void label1_Click(object sender, EventArgs e)
-        {
-            _command.Execute();
-        }
+    private void label1_Click(object sender, EventArgs e)
+    {
+        _command.Execute();
+    }
 
-        private void label1_MouseEnter(object sender, EventArgs e)
-        {
-            Cursor = Cursors.Hand;
-        }
+    private void label1_MouseEnter(object sender, EventArgs e)
+    {
+        Cursor = Cursors.Hand;
+    }
 
-        private void label1_MouseLeave(object sender, EventArgs e)
-        {
-            Cursor = DefaultCursor;
-        }
+    private void label1_MouseLeave(object sender, EventArgs e)
+    {
+        Cursor = DefaultCursor;
     }
 }

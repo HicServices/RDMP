@@ -13,25 +13,24 @@ using ReusableLibraryCode.Icons.IconProvision;
 using SixLabors.ImageSharp;
 using SixLabors.ImageSharp.PixelFormats;
 
-namespace Rdmp.UI.CommandExecution.AtomicCommands
+namespace Rdmp.UI.CommandExecution.AtomicCommands;
+
+internal class ExecuteCommandBulkProcessCatalogueItems : BasicUICommandExecution,IAtomicCommand
 {
-    internal class ExecuteCommandBulkProcessCatalogueItems : BasicUICommandExecution,IAtomicCommand
+    private readonly Catalogue _catalogue;
+
+    public ExecuteCommandBulkProcessCatalogueItems(IActivateItems activator, Catalogue catalogue):base(activator)
     {
-        private readonly Catalogue _catalogue;
+        _catalogue = catalogue;
+    }
 
-        public ExecuteCommandBulkProcessCatalogueItems(IActivateItems activator, Catalogue catalogue):base(activator)
-        {
-            _catalogue = catalogue;
-        }
+    public override Image<Rgba32> GetImage(IIconProvider iconProvider)
+    {
+        return iconProvider.GetImage(RDMPConcept.CatalogueItem, OverlayKind.Edit);
+    }
 
-        public override Image<Rgba32> GetImage(IIconProvider iconProvider)
-        {
-            return iconProvider.GetImage(RDMPConcept.CatalogueItem, OverlayKind.Edit);
-        }
-
-        public override void Execute()
-        {
-            Activator.Activate<BulkProcessCatalogueItemsUI, Catalogue>(_catalogue);
-        }
+    public override void Execute()
+    {
+        Activator.Activate<BulkProcessCatalogueItemsUI, Catalogue>(_catalogue);
     }
 }

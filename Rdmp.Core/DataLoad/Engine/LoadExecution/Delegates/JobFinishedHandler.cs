@@ -6,7 +6,6 @@
 
 using Rdmp.Core.DataLoad.Engine.Job;
 
-namespace Rdmp.Core.DataLoad.Engine.LoadExecution.Delegates
-{
-    public delegate void JobFinishedHandler(object sender, IDataLoadJob job);
-}
+namespace Rdmp.Core.DataLoad.Engine.LoadExecution.Delegates;
+
+public delegate void JobFinishedHandler(object sender, IDataLoadJob job);

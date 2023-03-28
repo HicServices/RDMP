@@ -15,221 +15,220 @@ using Rdmp.Core.DataLoad.Modules.Attachers;
 using Rdmp.Core.DataLoad.Modules.DataFlowOperations;
 using Tests.Common;
 
-namespace Rdmp.Core.Tests.Curation.Integration
-{
-    public class PipelineTests : DatabaseTests
-    {
-        [Test]
-        public void SetupAndSaveAPipeline()
-        {
-            Pipeline pipeline = new Pipeline(CatalogueRepository, "Bob");
+namespace Rdmp.Core.Tests.Curation.Integration;
 
+public class PipelineTests : DatabaseTests
+{
+    [Test]
+    public void SetupAndSaveAPipeline()
+    {
+        Pipeline pipeline = new Pipeline(CatalogueRepository, "Bob");
+
+        try
+        {
+            Assert.AreEqual(pipeline.Name,"Bob");
+
+            PipelineComponent pipelineComponent = new PipelineComponent(CatalogueRepository, pipeline, typeof (BasicAnonymisationEngine), 0);
+                
             try
             {
-                Assert.AreEqual(pipeline.Name,"Bob");
+                Assert.AreEqual(pipelineComponent.Class,typeof(BasicAnonymisationEngine).FullName);
 
-                PipelineComponent pipelineComponent = new PipelineComponent(CatalogueRepository, pipeline, typeof (BasicAnonymisationEngine), 0);
-                
+                PipelineComponentArgument argument1 = (PipelineComponentArgument) pipelineComponent.CreateNewArgument();
+                PipelineComponentArgument argument2 = new PipelineComponentArgument(CatalogueRepository, pipelineComponent);
+
                 try
                 {
-                    Assert.AreEqual(pipelineComponent.Class,typeof(BasicAnonymisationEngine).FullName);
+                    argument1.SetType(typeof(string));
+                    argument1.SetValue("bob");
+                    argument1.SaveToDatabase();
 
-                    PipelineComponentArgument argument1 = (PipelineComponentArgument) pipelineComponent.CreateNewArgument();
-                    PipelineComponentArgument argument2 = new PipelineComponentArgument(CatalogueRepository, pipelineComponent);
+                    var dt = DateTime.Now ;
+                    dt = new DateTime(dt.Ticks - (dt.Ticks % TimeSpan.TicksPerSecond),dt.Kind);//get rid of the milliseconds
 
-                    try
-                    {
-                        argument1.SetType(typeof(string));
-                        argument1.SetValue("bob");
-                        argument1.SaveToDatabase();
+                    argument2.SetType(typeof(DateTime));
+                    argument2.SetValue(dt);
+                    argument2.SaveToDatabase();
 
-                        var dt = DateTime.Now ;
-                        dt = new DateTime(dt.Ticks - (dt.Ticks % TimeSpan.TicksPerSecond),dt.Kind);//get rid of the milliseconds
-
-                        argument2.SetType(typeof(DateTime));
-                        argument2.SetValue(dt);
-                        argument2.SaveToDatabase();
-
-                        PipelineComponentArgument argument2Copy = CatalogueRepository.GetObjectByID<PipelineComponentArgument>(argument2.ID);
-                        Assert.AreEqual(dt,argument2Copy.GetValueAsSystemType());
-                    }
-                    finally 
-                    {
-                        
-                        argument1.DeleteInDatabase();
-                        argument2.DeleteInDatabase();
-                    }
+                    PipelineComponentArgument argument2Copy = CatalogueRepository.GetObjectByID<PipelineComponentArgument>(argument2.ID);
+                    Assert.AreEqual(dt,argument2Copy.GetValueAsSystemType());
                 }
-                finally
+                finally 
                 {
-                    pipelineComponent.DeleteInDatabase();
+                        
+                    argument1.DeleteInDatabase();
+                    argument2.DeleteInDatabase();
                 }
-
             }
-            finally 
+            finally
             {
-                pipeline.DeleteInDatabase();
+                pipelineComponent.DeleteInDatabase();
             }
-        }
 
-        [Test]
-        public void ClonePipelineNaming()
+        }
+        finally 
         {
-            Pipeline p = new Pipeline(CatalogueRepository);
-            p.Name = "My Pipe";
-            p.SaveToDatabase();
-
-            var clone1 = p.Clone();
-            var clone2 = p.Clone();
-            var clone3 = p.Clone();
-
-            Assert.AreEqual("My Pipe (Clone)",clone1.Name);
-            Assert.AreEqual("My Pipe (Clone2)",clone2.Name);
-            Assert.AreEqual("My Pipe (Clone3)",clone3.Name);
-
-            var cloneOfClone1 = clone3.Clone();
-            var cloneOfClone2 = clone3.Clone();
-            
-            Assert.AreEqual("My Pipe (Clone3) (Clone)",cloneOfClone1.Name);
-            Assert.AreEqual("My Pipe (Clone3) (Clone2)",cloneOfClone2.Name);
+            pipeline.DeleteInDatabase();
         }
+    }
 
+    [Test]
+    public void ClonePipelineNaming()
+    {
+        Pipeline p = new Pipeline(CatalogueRepository);
+        p.Name = "My Pipe";
+        p.SaveToDatabase();
 
-        /// <summary>
-        /// Tests the ability to clone a <see cref="Pipeline"/> including all
-        /// components and arguments.
-        /// </summary>
-        /// <exception cref="InconclusiveException"></exception>
-        [Test]
-        public void CloneAPipeline()
-        {
-            Pipeline p = new Pipeline(CatalogueRepository);
+        var clone1 = p.Clone();
+        var clone2 = p.Clone();
+        var clone3 = p.Clone();
 
-            var source = new PipelineComponent(CatalogueRepository, p, typeof (DelimitedFlatFileAttacher), 0);
-            source.CreateArgumentsForClassIfNotExists<DelimitedFlatFileAttacher>();
+        Assert.AreEqual("My Pipe (Clone)",clone1.Name);
+        Assert.AreEqual("My Pipe (Clone2)",clone2.Name);
+        Assert.AreEqual("My Pipe (Clone3)",clone3.Name);
 
-            var middle = new PipelineComponent(CatalogueRepository, p, typeof (ColumnRenamer), 1);
-            middle.CreateArgumentsForClassIfNotExists<ColumnRenamer>();
+        var cloneOfClone1 = clone3.Clone();
+        var cloneOfClone2 = clone3.Clone();
             
-            var middle2 = new PipelineComponent(CatalogueRepository, p, typeof(ColumnForbidder), 1);
-            middle2.CreateArgumentsForClassIfNotExists<ColumnForbidder>();
+        Assert.AreEqual("My Pipe (Clone3) (Clone)",cloneOfClone1.Name);
+        Assert.AreEqual("My Pipe (Clone3) (Clone2)",cloneOfClone2.Name);
+    }
 
-            var destination = new PipelineComponent(CatalogueRepository, p, typeof (DataTableUploadDestination), 2);
-            destination.CreateArgumentsForClassIfNotExists<DataTableUploadDestination>();
+
+    /// <summary>
+    /// Tests the ability to clone a <see cref="Pipeline"/> including all
+    /// components and arguments.
+    /// </summary>
+    /// <exception cref="InconclusiveException"></exception>
+    [Test]
+    public void CloneAPipeline()
+    {
+        Pipeline p = new Pipeline(CatalogueRepository);
+
+        var source = new PipelineComponent(CatalogueRepository, p, typeof (DelimitedFlatFileAttacher), 0);
+        source.CreateArgumentsForClassIfNotExists<DelimitedFlatFileAttacher>();
+
+        var middle = new PipelineComponent(CatalogueRepository, p, typeof (ColumnRenamer), 1);
+        middle.CreateArgumentsForClassIfNotExists<ColumnRenamer>();
             
-            p.SourcePipelineComponent_ID = source.ID;
-            p.DestinationPipelineComponent_ID = destination.ID;
-            p.SaveToDatabase();
+        var middle2 = new PipelineComponent(CatalogueRepository, p, typeof(ColumnForbidder), 1);
+        middle2.CreateArgumentsForClassIfNotExists<ColumnForbidder>();
 
-            int componentsBefore = RepositoryLocator.CatalogueRepository.GetAllObjects<PipelineComponent>().Count();
-            int argumentsBefore = RepositoryLocator.CatalogueRepository.GetAllObjects<PipelineComponentArgument>().Count();
-
-            var arg = p.PipelineComponents.Single(c => c.Class == typeof (ColumnRenamer).ToString()).PipelineComponentArguments.Single(a => a.Name == "ColumnNameToFind");
-            arg.SetValue("MyMostCoolestColumnEver");
-            arg.SaveToDatabase();
-
-            //Execute the cloning process
-            var p2 = p.Clone();
-
-            Assert.AreNotEqual(p2, p);
-            Assert.AreNotEqual(p2.ID,p.ID);
-
-            Assert.AreEqual(p2.Name, p.Name + " (Clone)");
-
-            Assert.AreEqual(componentsBefore *2, RepositoryLocator.CatalogueRepository.GetAllObjects<PipelineComponent>().Count());
-            Assert.AreEqual(argumentsBefore *2, RepositoryLocator.CatalogueRepository.GetAllObjects<PipelineComponentArgument>().Count());
-
-            //p the original should have a pipeline component that has the value we set earlier
-            Assert.AreEqual(
-                p.PipelineComponents.Single(c => c.Class == typeof(ColumnRenamer).ToString()).PipelineComponentArguments.Single(a => a.Name == "ColumnNameToFind").Value,
-                "MyMostCoolestColumnEver"
-                );
+        var destination = new PipelineComponent(CatalogueRepository, p, typeof (DataTableUploadDestination), 2);
+        destination.CreateArgumentsForClassIfNotExists<DataTableUploadDestination>();
             
-            //p2 the clone should have a pipeline component too since it's a clone
-            Assert.AreEqual(
-                p2.PipelineComponents.Single(c => c.Class == typeof(ColumnRenamer).ToString()).PipelineComponentArguments.Single(a => a.Name == "ColumnNameToFind").Value,
-                "MyMostCoolestColumnEver"
-                );
+        p.SourcePipelineComponent_ID = source.ID;
+        p.DestinationPipelineComponent_ID = destination.ID;
+        p.SaveToDatabase();
+
+        int componentsBefore = RepositoryLocator.CatalogueRepository.GetAllObjects<PipelineComponent>().Count();
+        int argumentsBefore = RepositoryLocator.CatalogueRepository.GetAllObjects<PipelineComponentArgument>().Count();
+
+        var arg = p.PipelineComponents.Single(c => c.Class == typeof (ColumnRenamer).ToString()).PipelineComponentArguments.Single(a => a.Name == "ColumnNameToFind");
+        arg.SetValue("MyMostCoolestColumnEver");
+        arg.SaveToDatabase();
+
+        //Execute the cloning process
+        var p2 = p.Clone();
+
+        Assert.AreNotEqual(p2, p);
+        Assert.AreNotEqual(p2.ID,p.ID);
+
+        Assert.AreEqual(p2.Name, p.Name + " (Clone)");
+
+        Assert.AreEqual(componentsBefore *2, RepositoryLocator.CatalogueRepository.GetAllObjects<PipelineComponent>().Count());
+        Assert.AreEqual(argumentsBefore *2, RepositoryLocator.CatalogueRepository.GetAllObjects<PipelineComponentArgument>().Count());
+
+        //p the original should have a pipeline component that has the value we set earlier
+        Assert.AreEqual(
+            p.PipelineComponents.Single(c => c.Class == typeof(ColumnRenamer).ToString()).PipelineComponentArguments.Single(a => a.Name == "ColumnNameToFind").Value,
+            "MyMostCoolestColumnEver"
+        );
             
-            //both should have source and destination components
-            Assert.NotNull(p2.DestinationPipelineComponent_ID);
-            Assert.NotNull(p2.SourcePipelineComponent_ID);
-
-            //but with different IDs because they are clones
-            Assert.AreNotEqual(p.DestinationPipelineComponent_ID, p2.DestinationPipelineComponent_ID);
-            Assert.AreNotEqual(p.SourcePipelineComponent_ID, p2.SourcePipelineComponent_ID);
-
-            p.DeleteInDatabase();
-            p2.DeleteInDatabase();
-        }
-
-        [Test]
-        public void CloneAPipeline_BrokenPipes()
-        {
-            Pipeline p = new Pipeline(CatalogueRepository);
-
-            //Setup a pipeline with a source component type that doesn't exist
-            var source = new PipelineComponent(CatalogueRepository, p, typeof (DelimitedFlatFileAttacher), 0);
-            source.Class = "Trollololol";
-            source.SaveToDatabase();
-
-            var arg = source.CreateNewArgument();
-
-            //Also give the source component a non existent argument
-            arg.GetType().GetProperty("Type").SetValue(arg,"fffffzololz");
-            arg.SaveToDatabase();
-
-            p.SourcePipelineComponent_ID = source.ID;
-            p.SaveToDatabase();
+        //p2 the clone should have a pipeline component too since it's a clone
+        Assert.AreEqual(
+            p2.PipelineComponents.Single(c => c.Class == typeof(ColumnRenamer).ToString()).PipelineComponentArguments.Single(a => a.Name == "ColumnNameToFind").Value,
+            "MyMostCoolestColumnEver"
+        );
             
-            Assert.AreEqual("fffffzololz",p.Source.GetAllArguments().Single().Type);
+        //both should have source and destination components
+        Assert.NotNull(p2.DestinationPipelineComponent_ID);
+        Assert.NotNull(p2.SourcePipelineComponent_ID);
 
-            var clone = p.Clone();
+        //but with different IDs because they are clones
+        Assert.AreNotEqual(p.DestinationPipelineComponent_ID, p2.DestinationPipelineComponent_ID);
+        Assert.AreNotEqual(p.SourcePipelineComponent_ID, p2.SourcePipelineComponent_ID);
 
-            Assert.AreEqual(clone.Source.Class,p.Source.Class);
-            Assert.AreEqual("fffffzololz",clone.Source.GetAllArguments().Single().Type);
+        p.DeleteInDatabase();
+        p2.DeleteInDatabase();
+    }
 
-            p.DeleteInDatabase();
-            clone.DeleteInDatabase();
+    [Test]
+    public void CloneAPipeline_BrokenPipes()
+    {
+        Pipeline p = new Pipeline(CatalogueRepository);
+
+        //Setup a pipeline with a source component type that doesn't exist
+        var source = new PipelineComponent(CatalogueRepository, p, typeof (DelimitedFlatFileAttacher), 0);
+        source.Class = "Trollololol";
+        source.SaveToDatabase();
+
+        var arg = source.CreateNewArgument();
+
+        //Also give the source component a non existent argument
+        arg.GetType().GetProperty("Type").SetValue(arg,"fffffzololz");
+        arg.SaveToDatabase();
+
+        p.SourcePipelineComponent_ID = source.ID;
+        p.SaveToDatabase();
+            
+        Assert.AreEqual("fffffzololz",p.Source.GetAllArguments().Single().Type);
+
+        var clone = p.Clone();
+
+        Assert.AreEqual(clone.Source.Class,p.Source.Class);
+        Assert.AreEqual("fffffzololz",clone.Source.GetAllArguments().Single().Type);
+
+        p.DeleteInDatabase();
+        clone.DeleteInDatabase();
 
 
-        }
-        [Test]
-        public void DeletePipelineSource_ClearsReference()
-        {
-            Pipeline p = new Pipeline(CatalogueRepository);
+    }
+    [Test]
+    public void DeletePipelineSource_ClearsReference()
+    {
+        Pipeline p = new Pipeline(CatalogueRepository);
 
-            //Setup a pipeline with a source component
-            var source = new PipelineComponent(CatalogueRepository, p, typeof(DelimitedFlatFileAttacher), 0);
-            source.Class = "Trollololol";
-            p.SourcePipelineComponent_ID = source.ID;
-            p.SaveToDatabase();
+        //Setup a pipeline with a source component
+        var source = new PipelineComponent(CatalogueRepository, p, typeof(DelimitedFlatFileAttacher), 0);
+        source.Class = "Trollololol";
+        p.SourcePipelineComponent_ID = source.ID;
+        p.SaveToDatabase();
 
-            // delete the source
-            source.DeleteInDatabase();
-            p.RevertToDatabaseState();
+        // delete the source
+        source.DeleteInDatabase();
+        p.RevertToDatabaseState();
 
-            // should also clear the reference
-            Assert.IsNull(p.SourcePipelineComponent_ID);
-        }
+        // should also clear the reference
+        Assert.IsNull(p.SourcePipelineComponent_ID);
+    }
 
-        [Test]
-        public void DeletePipelineDestination_ClearsReference()
-        {
-            Pipeline p = new Pipeline(CatalogueRepository);
+    [Test]
+    public void DeletePipelineDestination_ClearsReference()
+    {
+        Pipeline p = new Pipeline(CatalogueRepository);
 
-            //Setup a pipeline with a source component
-            var dest = new PipelineComponent(CatalogueRepository, p, typeof(DelimitedFlatFileAttacher), 0);
-            dest.Class = "Trollololol";
-            p.DestinationPipelineComponent_ID = dest.ID;
-            p.SaveToDatabase();
+        //Setup a pipeline with a source component
+        var dest = new PipelineComponent(CatalogueRepository, p, typeof(DelimitedFlatFileAttacher), 0);
+        dest.Class = "Trollololol";
+        p.DestinationPipelineComponent_ID = dest.ID;
+        p.SaveToDatabase();
 
-            // delete the dest
-            dest.DeleteInDatabase();
-            p.RevertToDatabaseState();
+        // delete the dest
+        dest.DeleteInDatabase();
+        p.RevertToDatabaseState();
 
-            // should also clear the reference
-            Assert.IsNull(p.DestinationPipelineComponent_ID);
-        }
+        // should also clear the reference
+        Assert.IsNull(p.DestinationPipelineComponent_ID);
     }
 }

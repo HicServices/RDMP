@@ -7,48 +7,46 @@
 using Rdmp.Core.Curation.Data;
 using Rdmp.Core.DataExport.Data;
 
-namespace Rdmp.Core.CommandExecution.AtomicCommands.CatalogueCreationCommands
+namespace Rdmp.Core.CommandExecution.AtomicCommands.CatalogueCreationCommands;
+
+public abstract class CatalogueCreationCommandExecution : BasicCommandExecution, IAtomicCommandWithTarget
 {
-
-    public abstract class CatalogueCreationCommandExecution : BasicCommandExecution, IAtomicCommandWithTarget
-    {
-        protected IProject ProjectSpecific;
+    protected IProject ProjectSpecific;
         
-        public string TargetFolder {get;set; }
+    public string TargetFolder {get;set; }
 
-        protected const string Desc_ProjectSpecificParameter = "Optionally associate the Catalogue created with a specific Project, otherwise Null";
-        protected const string Desc_TargetFolder = "Optionally create the Catalogue in a virtual subdirectory e.g. /mycatalogues/, otherwise Null";
-        /// <summary>
-        /// Create a project specific Catalogue when command is executed by prompting the user to first pick a project
-        /// </summary>
-        public bool PromptForProject { get; set; }
+    protected const string Desc_ProjectSpecificParameter = "Optionally associate the Catalogue created with a specific Project, otherwise Null";
+    protected const string Desc_TargetFolder = "Optionally create the Catalogue in a virtual subdirectory e.g. /mycatalogues/, otherwise Null";
+    /// <summary>
+    /// Create a project specific Catalogue when command is executed by prompting the user to first pick a project
+    /// </summary>
+    public bool PromptForProject { get; set; }
 
-        protected CatalogueCreationCommandExecution(IBasicActivateItems activator):this(activator,null,null)
-        {
+    protected CatalogueCreationCommandExecution(IBasicActivateItems activator):this(activator,null,null)
+    {
 
-        }
+    }
 
-        protected CatalogueCreationCommandExecution(IBasicActivateItems activator, IProject projectSpecific, string targetFolder) :base(activator)
-        {
-            ProjectSpecific = projectSpecific;
-            TargetFolder = targetFolder;
-        }
+    protected CatalogueCreationCommandExecution(IBasicActivateItems activator, IProject projectSpecific, string targetFolder) :base(activator)
+    {
+        ProjectSpecific = projectSpecific;
+        TargetFolder = targetFolder;
+    }
 
-        public virtual IAtomicCommandWithTarget SetTarget(DatabaseEntity target)
-        {
-            if (target is Project project)
-                ProjectSpecific = project;
+    public virtual IAtomicCommandWithTarget SetTarget(DatabaseEntity target)
+    {
+        if (target is Project project)
+            ProjectSpecific = project;
 
-            return this;
-        }
+        return this;
+    }
 
-        public override void Execute()
-        {
-            base.Execute();
+    public override void Execute()
+    {
+        base.Execute();
 
-            if (PromptForProject)
-                if (SelectOne(BasicActivator.RepositoryLocator.DataExportRepository, out Project p))
-                    ProjectSpecific = p;
-        }
+        if (PromptForProject)
+            if (SelectOne(BasicActivator.RepositoryLocator.DataExportRepository, out Project p))
+                ProjectSpecific = p;
     }
 }

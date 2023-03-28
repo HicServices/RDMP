@@ -8,14 +8,13 @@ using Rdmp.Core.CommandExecution.AtomicCommands;
 using Rdmp.Core.Providers.Nodes;
 using Rdmp.UI.CommandExecution.AtomicCommands;
 
-namespace Rdmp.UI.Menus
+namespace Rdmp.UI.Menus;
+
+class ExtractionConfigurationsNodeMenu:RDMPContextMenuStrip
 {
-    class ExtractionConfigurationsNodeMenu:RDMPContextMenuStrip
+    public ExtractionConfigurationsNodeMenu(RDMPContextMenuStripArgs args, ExtractionConfigurationsNode extractionConfigurationsNode): base(args, extractionConfigurationsNode)
     {
-        public ExtractionConfigurationsNodeMenu(RDMPContextMenuStripArgs args, ExtractionConfigurationsNode extractionConfigurationsNode): base(args, extractionConfigurationsNode)
-        {
-            Add(new ExecuteCommandExecuteExtractionConfiguration(_activator, extractionConfigurationsNode.Project) { Weight = -10.2f});
-            Add(new ExecuteCommandRelease(_activator) { Weight = -10.1f }.SetTarget(extractionConfigurationsNode.Project));
-        }
+        Add(new ExecuteCommandExecuteExtractionConfiguration(_activator, extractionConfigurationsNode.Project) { Weight = -10.2f});
+        Add(new ExecuteCommandRelease(_activator) { Weight = -10.1f }.SetTarget(extractionConfigurationsNode.Project));
     }
 }

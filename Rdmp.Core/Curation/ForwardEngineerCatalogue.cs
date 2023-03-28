@@ -8,97 +8,96 @@ using System;
 using System.Collections.Generic;
 using Rdmp.Core.Curation.Data;
 
-namespace Rdmp.Core.Curation
+namespace Rdmp.Core.Curation;
+
+/// <summary>
+/// Creates a Catalogue from a TableInfo (See TableInfoImporter for how to create a TableInfo from your live database table).  A Catalogue is an extractable dataset
+/// which can be made by joining multiple underlying tables and often contains only a subset of columns (those that are extractable to researchers).
+/// </summary>
+public class ForwardEngineerCatalogue
 {
-    /// <summary>
-    /// Creates a Catalogue from a TableInfo (See TableInfoImporter for how to create a TableInfo from your live database table).  A Catalogue is an extractable dataset
-    /// which can be made by joining multiple underlying tables and often contains only a subset of columns (those that are extractable to researchers).
-    /// </summary>
-    public class ForwardEngineerCatalogue
+    private readonly ITableInfo _tableInfo;
+    private readonly ColumnInfo[] _columnInfos;
+
+
+    [Obsolete("markAllExtractable is ignored, this constructor is included for API backwards compatibility only.")]
+    public ForwardEngineerCatalogue(ITableInfo tableInfo, ColumnInfo[] columnInfos, bool markAllExtractable)
+        : this(tableInfo, columnInfos)
     {
-        private readonly ITableInfo _tableInfo;
-        private readonly ColumnInfo[] _columnInfos;
+
+    }
+
+    /// <summary>
+    /// Sets up the class to create a new <see cref="Catalogue"/> from the supplied table reference
+    /// </summary>
+    /// <param name="tableInfo"></param>
+    /// <param name="columnInfos"></param>
+    public ForwardEngineerCatalogue(ITableInfo tableInfo, ColumnInfo[] columnInfos)
+    {
+        _tableInfo = tableInfo;
+        _columnInfos = columnInfos;
+    }
 
 
-        [Obsolete("markAllExtractable is ignored, this constructor is included for API backwards compatibility only.")]
-        public ForwardEngineerCatalogue(ITableInfo tableInfo, ColumnInfo[] columnInfos, bool markAllExtractable)
-            : this(tableInfo, columnInfos)
+    /// <inheritdoc cref="ExecuteForwardEngineering()"/>
+    public void ExecuteForwardEngineering(out ICatalogue catalogue, out CatalogueItem[] items, out ExtractionInformation[] extractionInformations)
+    {
+        ExecuteForwardEngineering(null, out catalogue, out items, out extractionInformations);
+    }
+
+    /// <summary>
+    /// Creates a new <see cref="Catalogue"/> with <see cref="CatalogueItem"/> and <see cref="ExtractionInformation"/> with a one-to-one mapping to
+    ///  the <see cref="ColumnInfo"/> this class was constructed with.
+    /// </summary>
+    public void ExecuteForwardEngineering()
+    {
+        ExecuteForwardEngineering(null,out _,out _,out _);
+    }
+
+    /// <summary>
+    /// Creates new <see cref="CatalogueItem"/> and <see cref="ExtractionInformation"/> with a one-to-one mapping to the <see cref="ColumnInfo"/> this class was constructed with.
+    /// 
+    /// <para>These new columns are added to an existing <see cref="Catalogue"/>.  Use this if you want a dataset that draws data from 2 tables using a <see cref="JoinInfo"/></para>
+    /// </summary>
+    /// <param name="intoExistingCatalogue"></param>
+    public void ExecuteForwardEngineering(ICatalogue intoExistingCatalogue)
+    {
+
+        ExecuteForwardEngineering(intoExistingCatalogue, out _, out _, out _);
+    }
+
+    /// <inheritdoc cref="ExecuteForwardEngineering()"/>
+    public void ExecuteForwardEngineering(ICatalogue intoExistingCatalogue,out ICatalogue catalogue, out CatalogueItem[] catalogueItems, out ExtractionInformation[] extractionInformations)
+    {
+        var repo = _tableInfo.CatalogueRepository;
+
+        //if user did not specify an existing catalogue to supplement 
+        if (intoExistingCatalogue == null)
+            //create a new (empty) catalogue and treat that as the new target
+            intoExistingCatalogue = new Catalogue(repo, _tableInfo.GetRuntimeName());
+
+        catalogue = intoExistingCatalogue;
+        List<CatalogueItem> catalogueItemsCreated = new List<CatalogueItem>();
+        List<ExtractionInformation> extractionInformationsCreated = new List<ExtractionInformation>();
+
+        int order = 0;
+
+        //for each column we will add a new one to the 
+        foreach (ColumnInfo col in _columnInfos)
         {
-
-        }
-
-        /// <summary>
-        /// Sets up the class to create a new <see cref="Catalogue"/> from the supplied table reference
-        /// </summary>
-        /// <param name="tableInfo"></param>
-        /// <param name="columnInfos"></param>
-        public ForwardEngineerCatalogue(ITableInfo tableInfo, ColumnInfo[] columnInfos)
-        {
-            _tableInfo = tableInfo;
-            _columnInfos = columnInfos;
-        }
-
-
-        /// <inheritdoc cref="ExecuteForwardEngineering()"/>
-        public void ExecuteForwardEngineering(out ICatalogue catalogue, out CatalogueItem[] items, out ExtractionInformation[] extractionInformations)
-        {
-            ExecuteForwardEngineering(null, out catalogue, out items, out extractionInformations);
-        }
-
-        /// <summary>
-        /// Creates a new <see cref="Catalogue"/> with <see cref="CatalogueItem"/> and <see cref="ExtractionInformation"/> with a one-to-one mapping to
-        ///  the <see cref="ColumnInfo"/> this class was constructed with.
-        /// </summary>
-        public void ExecuteForwardEngineering()
-        {
-            ExecuteForwardEngineering(null,out _,out _,out _);
-        }
-
-        /// <summary>
-        /// Creates new <see cref="CatalogueItem"/> and <see cref="ExtractionInformation"/> with a one-to-one mapping to the <see cref="ColumnInfo"/> this class was constructed with.
-        /// 
-        /// <para>These new columns are added to an existing <see cref="Catalogue"/>.  Use this if you want a dataset that draws data from 2 tables using a <see cref="JoinInfo"/></para>
-        /// </summary>
-        /// <param name="intoExistingCatalogue"></param>
-        public void ExecuteForwardEngineering(ICatalogue intoExistingCatalogue)
-        {
-
-            ExecuteForwardEngineering(intoExistingCatalogue, out _, out _, out _);
-        }
-
-        /// <inheritdoc cref="ExecuteForwardEngineering()"/>
-        public void ExecuteForwardEngineering(ICatalogue intoExistingCatalogue,out ICatalogue catalogue, out CatalogueItem[] catalogueItems, out ExtractionInformation[] extractionInformations)
-        {
-            var repo = _tableInfo.CatalogueRepository;
-
-            //if user did not specify an existing catalogue to supplement 
-            if (intoExistingCatalogue == null)
-                //create a new (empty) catalogue and treat that as the new target
-                intoExistingCatalogue = new Catalogue(repo, _tableInfo.GetRuntimeName());
-
-            catalogue = intoExistingCatalogue;
-            List<CatalogueItem> catalogueItemsCreated = new List<CatalogueItem>();
-            List<ExtractionInformation> extractionInformationsCreated = new List<ExtractionInformation>();
-
-            int order = 0;
-
-            //for each column we will add a new one to the 
-            foreach (ColumnInfo col in _columnInfos)
-            {
-                order++;
+            order++;
                 
-                //create it with the same name
-                CatalogueItem cataItem = new CatalogueItem(repo, intoExistingCatalogue, col.Name.Substring(col.Name.LastIndexOf(".") + 1).Trim('[', ']', '`','"'));
-                catalogueItemsCreated.Add(cataItem);
+            //create it with the same name
+            CatalogueItem cataItem = new CatalogueItem(repo, intoExistingCatalogue, col.Name.Substring(col.Name.LastIndexOf(".") + 1).Trim('[', ']', '`','"'));
+            catalogueItemsCreated.Add(cataItem);
                                 
-                var newExtractionInfo = new ExtractionInformation(repo, cataItem, col, col.Name);
-                newExtractionInfo.Order = order;
-                newExtractionInfo.SaveToDatabase();
-                extractionInformationsCreated.Add(newExtractionInfo);
-            }
-
-            extractionInformations = extractionInformationsCreated.ToArray();
-            catalogueItems = catalogueItemsCreated.ToArray();
+            var newExtractionInfo = new ExtractionInformation(repo, cataItem, col, col.Name);
+            newExtractionInfo.Order = order;
+            newExtractionInfo.SaveToDatabase();
+            extractionInformationsCreated.Add(newExtractionInfo);
         }
+
+        extractionInformations = extractionInformationsCreated.ToArray();
+        catalogueItems = catalogueItemsCreated.ToArray();
     }
 }

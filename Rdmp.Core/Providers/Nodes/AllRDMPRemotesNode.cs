@@ -6,16 +6,15 @@
 
 using Rdmp.Core.Curation.Data.Remoting;
 
-namespace Rdmp.Core.Providers.Nodes
+namespace Rdmp.Core.Providers.Nodes;
+
+/// <summary>
+/// Collection of all <see cref="RemoteRDMP"/>s you have configured.
+/// </summary>
+public class AllRDMPRemotesNode : SingletonNode
 {
-    /// <summary>
-    /// Collection of all <see cref="RemoteRDMP"/>s you have configured.
-    /// </summary>
-    public class AllRDMPRemotesNode : SingletonNode
+    public AllRDMPRemotesNode()
+        : base("Remote RDMP Instances")
     {
-        public AllRDMPRemotesNode()
-            : base("Remote RDMP Instances")
-        {
-        }
     }
 }

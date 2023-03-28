@@ -9,58 +9,57 @@ using System.Collections.Generic;
 using System.Linq;
 using BrightIdeasSoftware;
 
-namespace Rdmp.UI.Collections
+namespace Rdmp.UI.Collections;
+
+/// <summary>
+/// Tail filter that returns up to a maximum number of objects but priorities search matches
+/// </summary>
+internal class CherryPickingTailFilter : IListFilter
 {
+    private readonly int _numberOfObjects;
+    private readonly TextMatchFilterWithAlwaysShowList _modelFilter;
+
     /// <summary>
-    /// Tail filter that returns up to a maximum number of objects but priorities search matches
+    /// Creates a new whole list filter that prioritizes items in the <paramref name="modelFilter"/> if any
     /// </summary>
-    internal class CherryPickingTailFilter : IListFilter
+    /// <param name="numberOfObjects">The maximum number of objects to return (can be exceeded if there are <see cref="TextMatchFilterWithAlwaysShowList.AlwaysShow"/> objects)</param>
+    /// <param name="modelFilter">The optional search/alwaysShowList filter from which objects should be returned from first</param>
+    public CherryPickingTailFilter(int numberOfObjects,TextMatchFilterWithAlwaysShowList modelFilter)
     {
-        private readonly int _numberOfObjects;
-        private readonly TextMatchFilterWithAlwaysShowList _modelFilter;
+        _numberOfObjects = numberOfObjects;
+        _modelFilter = modelFilter;
+    }
 
-        /// <summary>
-        /// Creates a new whole list filter that prioritizes items in the <paramref name="modelFilter"/> if any
-        /// </summary>
-        /// <param name="numberOfObjects">The maximum number of objects to return (can be exceeded if there are <see cref="TextMatchFilterWithAlwaysShowList.AlwaysShow"/> objects)</param>
-        /// <param name="modelFilter">The optional search/alwaysShowList filter from which objects should be returned from first</param>
-        public CherryPickingTailFilter(int numberOfObjects,TextMatchFilterWithAlwaysShowList modelFilter)
-        {
-            _numberOfObjects = numberOfObjects;
-            _modelFilter = modelFilter;
-        }
+    /// <summary>
+    /// Returns objects that survive filtering
+    /// </summary>
+    /// <param name="modelObjects">Model objects in the tree</param>
+    /// <returns>Objects that should survive filtering</returns>
+    public IEnumerable Filter(IEnumerable modelObjects)
+    {
+        int countReturned = _numberOfObjects;
 
-        /// <summary>
-        /// Returns objects that survive filtering
-        /// </summary>
-        /// <param name="modelObjects">Model objects in the tree</param>
-        /// <returns>Objects that should survive filtering</returns>
-        public IEnumerable Filter(IEnumerable modelObjects)
-        {
-            int countReturned = _numberOfObjects;
+        if (_modelFilter == null)
+            return modelObjects.Cast<object>().Take(_numberOfObjects);
 
-            if (_modelFilter == null)
-                return modelObjects.Cast<object>().Take(_numberOfObjects);
+        bool hasSearchTokens = _modelFilter.HasComponents;
+        bool hasAlwaysShowlist = _modelFilter.AlwaysShow != null && _modelFilter.AlwaysShow.Any();
 
-            bool hasSearchTokens = _modelFilter.HasComponents;
-            bool hasAlwaysShowlist = _modelFilter.AlwaysShow != null && _modelFilter.AlwaysShow.Any();
+        var available = modelObjects.Cast<object>().ToList();
 
-            var available = modelObjects.Cast<object>().ToList();
-
-            //We will return the alwaysShowList objects for sure
-            var toReturn = hasAlwaysShowlist ? new HashSet<object>(available.Intersect(_modelFilter.AlwaysShow)) : new HashSet<object>();
+        //We will return the alwaysShowList objects for sure
+        var toReturn = hasAlwaysShowlist ? new HashSet<object>(available.Intersect(_modelFilter.AlwaysShow)) : new HashSet<object>();
             
-            //but let's also take up to _numberOfObjects other objects that match the filter (if any)
-            foreach (var a in available.Where(o => !hasSearchTokens || _modelFilter.Filter(o)))
-            {
-                countReturned--;
-                toReturn.Add(a);
+        //but let's also take up to _numberOfObjects other objects that match the filter (if any)
+        foreach (var a in available.Where(o => !hasSearchTokens || _modelFilter.Filter(o)))
+        {
+            countReturned--;
+            toReturn.Add(a);
 
-                if (countReturned < 0)
-                    break;
-            }
-
-            return toReturn;
+            if (countReturned < 0)
+                break;
         }
+
+        return toReturn;
     }
 }

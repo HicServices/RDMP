@@ -11,20 +11,20 @@ using System.Security.Cryptography;
 using System.Text;
 using System.Xml.Serialization;
 
-namespace Rdmp.Core.Curation
+namespace Rdmp.Core.Curation;
+
+/// <summary>
+/// Core RDMP implementation of RSA puublic/private key encryption.  In order to be secure you should create a private key (See PasswordEncryptionKeyLocationUI).  If
+/// no private key is configured then the default Key will be used (this is not secure and anyone with access to the RDMP source code could decrypt your strings - which
+///  is open source!). Strings are encrypted based on the key file.  Note that because RSA is a good encryption technique you will get a different output (encrypted) string
+/// value for repeated calls to Encrypt even with the same input string.
+/// </summary>
+public class SimpleStringValueEncryption : IEncryptStrings
 {
-    /// <summary>
-    /// Core RDMP implementation of RSA puublic/private key encryption.  In order to be secure you should create a private key (See PasswordEncryptionKeyLocationUI).  If
-    /// no private key is configured then the default Key will be used (this is not secure and anyone with access to the RDMP source code could decrypt your strings - which
-    ///  is open source!). Strings are encrypted based on the key file.  Note that because RSA is a good encryption technique you will get a different output (encrypted) string
-    /// value for repeated calls to Encrypt even with the same input string.
-    /// </summary>
-    public class SimpleStringValueEncryption : IEncryptStrings
-    {
-        private Encoding encoding = Encoding.ASCII;
+    private Encoding encoding = Encoding.ASCII;
         
-        private const string Key =
-            @"<?xml version=""1.0"" encoding=""utf-16""?>
+    private const string Key =
+        @"<?xml version=""1.0"" encoding=""utf-16""?>
 <RSAParameters xmlns:xsd=""http://www.w3.org/2001/XMLSchema"" xmlns:xsi=""http://www.w3.org/2001/XMLSchema-instance"">
    <Exponent>AQAB</Exponent>
     <Modulus>sMDeszVErUmbqOxQavw5OsWpL3frccEGtTJYM8G54Fw7NK6xFVUrq79nWB6px4/B</Modulus>
@@ -36,70 +36,69 @@ namespace Rdmp.Core.Curation
     <D>Y8zC8dUF7gI9zeeAkKfReInauV6wpg4iVh7jaTDN5DAmKFURTAyv6Il6LEyr07JB</D>
 </RSAParameters>";
 
-        /// <summary>
-        /// The private key file parameters required to encrypt/decrypt strings.  These will either be read from the secure location on disk (<see cref="Repositories.Managers.PasswordEncryptionKeyLocation"/>) or
-        /// will match the the default decryption certificate (<see cref="Key"/>).
-        /// </summary>
-        public RSAParameters PrivateKey { get; set; }
+    /// <summary>
+    /// The private key file parameters required to encrypt/decrypt strings.  These will either be read from the secure location on disk (<see cref="Repositories.Managers.PasswordEncryptionKeyLocation"/>) or
+    /// will match the the default decryption certificate (<see cref="Key"/>).
+    /// </summary>
+    public RSAParameters PrivateKey { get; set; }
 
-        public SimpleStringValueEncryption(RSAParameters? parameters)
-        {
-            //use the memory one no parameters passed
-            PrivateKey = parameters ?? (RSAParameters)new XmlSerializer(typeof(RSAParameters)).Deserialize(new StringReader(Key));
-        }
+    public SimpleStringValueEncryption(RSAParameters? parameters)
+    {
+        //use the memory one no parameters passed
+        PrivateKey = parameters ?? (RSAParameters)new XmlSerializer(typeof(RSAParameters)).Deserialize(new StringReader(Key));
+    }
 
-        /// <summary>
-        /// Encrypts using its Public Key then returns a the encrypted byte[] as a string by using BitConverter.ToString()
-        /// </summary>
-        /// <returns></returns>
-        public string Encrypt(string toEncrypt)
+    /// <summary>
+    /// Encrypts using its Public Key then returns a the encrypted byte[] as a string by using BitConverter.ToString()
+    /// </summary>
+    /// <returns></returns>
+    public string Encrypt(string toEncrypt)
+    {
+        using (RSACryptoServiceProvider RSA = new RSACryptoServiceProvider())
         {
-            using (RSACryptoServiceProvider RSA = new RSACryptoServiceProvider())
-            {
-                RSA.ImportParameters(PrivateKey);
-               return BitConverter.ToString(RSA.Encrypt(encoding.GetBytes(toEncrypt), false));
-            }
+            RSA.ImportParameters(PrivateKey);
+            return BitConverter.ToString(RSA.Encrypt(encoding.GetBytes(toEncrypt), false));
         }
+    }
         
-        /// <summary>
-        /// Takes an encrypted byte[] (in string format as produced by BitConverter.ToString() 
-        /// </summary>
-        /// <param name="toDecrypt"></param>
-        /// <returns></returns>
-        public string Decrypt(string toDecrypt)
+    /// <summary>
+    /// Takes an encrypted byte[] (in string format as produced by BitConverter.ToString() 
+    /// </summary>
+    /// <param name="toDecrypt"></param>
+    /// <returns></returns>
+    public string Decrypt(string toDecrypt)
+    {
+        using (RSACryptoServiceProvider RSA = new RSACryptoServiceProvider())
         {
-            using (RSACryptoServiceProvider RSA = new RSACryptoServiceProvider())
-            {
-                RSA.ImportParameters(PrivateKey);
+            RSA.ImportParameters(PrivateKey);
 
-                try
-                {
-                    return encoding.GetString(RSA.Decrypt(ByteConverterGetBytes(toDecrypt), false));
-                }
-                catch (CryptographicException e)
-                {
-                    throw new CryptographicException("Could not decrypt an encrypted string, possibly you are trying to decrypt it after having changed the PrivateKey to a different one than at the time it was encrypted?",e);
-                }
+            try
+            {
+                return encoding.GetString(RSA.Decrypt(ByteConverterGetBytes(toDecrypt), false));
+            }
+            catch (CryptographicException e)
+            {
+                throw new CryptographicException("Could not decrypt an encrypted string, possibly you are trying to decrypt it after having changed the PrivateKey to a different one than at the time it was encrypted?",e);
             }
         }
+    }
 
-        private static byte[] ByteConverterGetBytes(string encodedstring)
-        {
-            String[] arr = encodedstring.Split('-');
-            byte[] array = new byte[arr.Length];
+    private static byte[] ByteConverterGetBytes(string encodedstring)
+    {
+        String[] arr = encodedstring.Split('-');
+        byte[] array = new byte[arr.Length];
 
-            for (int i = 0; i < arr.Length; i++)
-                array[i] = Convert.ToByte(arr[i], 16);
+        for (int i = 0; i < arr.Length; i++)
+            array[i] = Convert.ToByte(arr[i], 16);
 
-            return array;
-        }
+        return array;
+    }
 
-        public bool IsStringEncrypted(string value)
-        {
-            if (value == null || string.IsNullOrWhiteSpace(value))
-                return false;
+    public bool IsStringEncrypted(string value)
+    {
+        if (value == null || string.IsNullOrWhiteSpace(value))
+            return false;
 
-            return value.Count(c=>c== '-') >= 47;
-        }
+        return value.Count(c=>c== '-') >= 47;
     }
 }

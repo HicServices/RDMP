@@ -7,25 +7,24 @@
 using System.Collections.Generic;
 using Rdmp.Core.Curation.Data;
 
-namespace Rdmp.Core.DataLoad.Engine.LoadProcess.Scheduling.Strategy
+namespace Rdmp.Core.DataLoad.Engine.LoadProcess.Scheduling.Strategy;
+
+/// <summary>
+/// Hacky ILoadProgressSelectionStrategy in which only the specific LoadProgress in the constructor to this class is ever suggested.
+/// </summary>
+public class SingleLoadProgressSelectionStrategy : ILoadProgressSelectionStrategy
 {
-    /// <summary>
-    /// Hacky ILoadProgressSelectionStrategy in which only the specific LoadProgress in the constructor to this class is ever suggested.
-    /// </summary>
-    public class SingleLoadProgressSelectionStrategy : ILoadProgressSelectionStrategy
+    private readonly ILoadProgress _loadProgress;
+
+    public SingleLoadProgressSelectionStrategy(ILoadProgress loadProgress)
     {
-        private readonly ILoadProgress _loadProgress;
-
-        public SingleLoadProgressSelectionStrategy(ILoadProgress loadProgress)
-        {
             
-            _loadProgress = loadProgress;
-        }
+        _loadProgress = loadProgress;
+    }
 
-        public List<ILoadProgress> GetAllLoadProgresses()
-        {
-            //here are the load progresses that exist
-            return new List<ILoadProgress> { _loadProgress };
-        }
+    public List<ILoadProgress> GetAllLoadProgresses()
+    {
+        //here are the load progresses that exist
+        return new List<ILoadProgress> { _loadProgress };
     }
 }

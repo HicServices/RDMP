@@ -17,39 +17,38 @@ using Rdmp.Core.DataLoad.Engine.Job;
 using ReusableLibraryCode.Checks;
 using ReusableLibraryCode.Progress;
 
-namespace Rdmp.Core.Tests.CommandLine.AutomationLoopTests.FictionalCache.Reading
+namespace Rdmp.Core.Tests.CommandLine.AutomationLoopTests.FictionalCache.Reading;
+
+public class TestDataCacheReader : ICachedDataProvider
 {
-    public class TestDataCacheReader : ICachedDataProvider
+    public ILoadProgress LoadProgress { get; set; }
+
+    public void LoadCompletedSoDispose(ExitCodeType exitCode, IDataLoadEventListener postLoadEventsListener)
     {
-        public ILoadProgress LoadProgress { get; set; }
-
-        public void LoadCompletedSoDispose(ExitCodeType exitCode, IDataLoadEventListener postLoadEventsListener)
-        {
-            throw new NotImplementedException();
-        }
-
-        public void Check(ICheckNotifier notifier)
-        {
-            throw new NotImplementedException();
-        }
-
-        public void Initialize(ILoadDirectory directory, DiscoveredDatabase dbInfo)
-        {
-            throw new NotImplementedException();
-        }
-
-        public ExitCodeType Fetch(IDataLoadJob job, GracefulCancellationToken cancellationToken)
-        {
-            throw new NotImplementedException();
-        }
-
-        public CacheArchiveType CacheArchiveType { get; set; }
-        public string CacheDateFormat { get; set; }
-        public Type CacheLayoutType { get; set; }
-        public ILoadCachePathResolver CreateResolver(ILoadProgress loadProgress)
-        {
-            throw new NotImplementedException();
-        }
-
+        throw new NotImplementedException();
     }
+
+    public void Check(ICheckNotifier notifier)
+    {
+        throw new NotImplementedException();
+    }
+
+    public void Initialize(ILoadDirectory directory, DiscoveredDatabase dbInfo)
+    {
+        throw new NotImplementedException();
+    }
+
+    public ExitCodeType Fetch(IDataLoadJob job, GracefulCancellationToken cancellationToken)
+    {
+        throw new NotImplementedException();
+    }
+
+    public CacheArchiveType CacheArchiveType { get; set; }
+    public string CacheDateFormat { get; set; }
+    public Type CacheLayoutType { get; set; }
+    public ILoadCachePathResolver CreateResolver(ILoadProgress loadProgress)
+    {
+        throw new NotImplementedException();
+    }
+
 }

@@ -14,91 +14,90 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace Rdmp.Core.CommandExecution.AtomicCommands
+namespace Rdmp.Core.CommandExecution.AtomicCommands;
+
+/// <summary>
+/// Clears progress recorded in an <see cref="ExtractionProgress"/>
+/// </summary>
+public class ExecuteCommandResetExtractionProgress : BasicCommandExecution
 {
+    List<IExtractionProgress> _toClear = new List<IExtractionProgress>();
+
     /// <summary>
-    /// Clears progress recorded in an <see cref="ExtractionProgress"/>
+    /// Clears one or more <see cref="ExtractionProgress"/> on a single <see cref="ExtractionConfiguration"/>
     /// </summary>
-    public class ExecuteCommandResetExtractionProgress : BasicCommandExecution
+    /// <param name="activator"></param>
+    /// <param name="config"></param>
+    /// <param name="catalogue"></param>
+    [UseWithObjectConstructor]
+    public ExecuteCommandResetExtractionProgress(IBasicActivateItems activator,
+        [DemandsInitialization("The configuration to clear progress for")]
+        ExtractionConfiguration config,
+        [DemandsInitialization("Optional.  Pass null to clear all progress for all datasets.  Or pass a single Catalogue to reset progress for it only")]
+        Catalogue catalogue) : base(activator)
     {
-        List<IExtractionProgress> _toClear = new List<IExtractionProgress>();
 
-        /// <summary>
-        /// Clears one or more <see cref="ExtractionProgress"/> on a single <see cref="ExtractionConfiguration"/>
-        /// </summary>
-        /// <param name="activator"></param>
-        /// <param name="config"></param>
-        /// <param name="catalogue"></param>
-        [UseWithObjectConstructor]
-        public ExecuteCommandResetExtractionProgress(IBasicActivateItems activator,
-            [DemandsInitialization("The configuration to clear progress for")]
-            ExtractionConfiguration config,
-            [DemandsInitialization("Optional.  Pass null to clear all progress for all datasets.  Or pass a single Catalogue to reset progress for it only")]
-            Catalogue catalogue) : base(activator)
+        foreach(var sds in config.SelectedDataSets)
         {
-
-            foreach(var sds in config.SelectedDataSets)
+            if(catalogue == null || sds.ExtractableDataSet.Catalogue_ID == catalogue.ID)
             {
-                if(catalogue == null || sds.ExtractableDataSet.Catalogue_ID == catalogue.ID)
-                {
-                    AddClearTarget(sds);
-                }
+                AddClearTarget(sds);
             }
+        }
             
-            EvaluateIsImpossible();
-        }
-        public ExecuteCommandResetExtractionProgress(IBasicActivateItems activator, SelectedDataSets sds) : base(activator)
-        {
-            AddClearTarget(sds);
+        EvaluateIsImpossible();
+    }
+    public ExecuteCommandResetExtractionProgress(IBasicActivateItems activator, SelectedDataSets sds) : base(activator)
+    {
+        AddClearTarget(sds);
 
-            EvaluateIsImpossible();
-        }
+        EvaluateIsImpossible();
+    }
 
-        public ExecuteCommandResetExtractionProgress(IBasicActivateItems activator, ExtractionProgress progress) : base(activator)
+    public ExecuteCommandResetExtractionProgress(IBasicActivateItems activator, ExtractionProgress progress) : base(activator)
+    {
+        if (progress.ProgressDate != null)
         {
-            if (progress.ProgressDate != null)
-            {
-                _toClear.Add(progress);
-            }
-
-            EvaluateIsImpossible();
-        }
-        private void EvaluateIsImpossible()
-        {
-            if (_toClear.Count == 0)
-            {
-                SetImpossible("There are no ExtractionProgress underway which could be cleared");
-            }
+            _toClear.Add(progress);
         }
 
-        private void AddClearTarget(ISelectedDataSets sds)
+        EvaluateIsImpossible();
+    }
+    private void EvaluateIsImpossible()
+    {
+        if (_toClear.Count == 0)
         {
-            var progress = sds.ExtractionProgressIfAny;
+            SetImpossible("There are no ExtractionProgress underway which could be cleared");
+        }
+    }
+
+    private void AddClearTarget(ISelectedDataSets sds)
+    {
+        var progress = sds.ExtractionProgressIfAny;
             
-            if (progress == null)
-                return;
+        if (progress == null)
+            return;
 
-            if(progress.ProgressDate != null)
-            {
-                _toClear.Add(progress);
-            }
+        if(progress.ProgressDate != null)
+        {
+            _toClear.Add(progress);
+        }
+    }
+
+    public override void Execute()
+    {
+        base.Execute();
+
+        foreach(var progress in _toClear)
+        {
+            progress.ProgressDate = null;
+            progress.SaveToDatabase();
         }
 
-        public override void Execute()
+        var config = _toClear.FirstOrDefault()?.SelectedDataSets?.ExtractionConfiguration;
+        if (config != null)
         {
-            base.Execute();
-
-            foreach(var progress in _toClear)
-            {
-                progress.ProgressDate = null;
-                progress.SaveToDatabase();
-            }
-
-            var config = _toClear.FirstOrDefault()?.SelectedDataSets?.ExtractionConfiguration;
-            if (config != null)
-            {
-                Publish(config);
-            }
+            Publish(config);
         }
     }
 }

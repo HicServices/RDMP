@@ -15,48 +15,47 @@ using ReusableLibraryCode.DataAccess;
 using ReusableLibraryCode.Icons.IconProvision;
 using SixLabors.ImageSharp.PixelFormats;
 
-namespace Rdmp.Core.CommandExecution.AtomicCommands
+namespace Rdmp.Core.CommandExecution.AtomicCommands;
+
+public class ExecuteCommandExecuteAggregateGraph : BasicCommandExecution, IAtomicCommand
 {
-    public class ExecuteCommandExecuteAggregateGraph : BasicCommandExecution, IAtomicCommand
+    private readonly AggregateConfiguration _aggregate;
+    private readonly FileInfo _toFile;
+
+    public ExecuteCommandExecuteAggregateGraph(IBasicActivateItems activator, AggregateConfiguration aggregate, FileInfo toFile=null) : base(activator)
     {
-        private readonly AggregateConfiguration _aggregate;
-        private readonly FileInfo _toFile;
+        _aggregate = aggregate;
+        this._toFile = toFile;
+        if (aggregate.IsCohortIdentificationAggregate)
+            SetImpossible("AggregateConfiguration is a Cohort aggregate");
 
-        public ExecuteCommandExecuteAggregateGraph(IBasicActivateItems activator, AggregateConfiguration aggregate, FileInfo toFile=null) : base(activator)
+        SetImpossibleIfFailsChecks(aggregate);
+
+        UseTripleDotSuffix = true;
+    }
+
+    public override string GetCommandHelp()
+    {
+        return "Assembles and runs the graph query and renders the results as a graph";
+    }
+
+    public override void Execute()
+    {
+        base.Execute();
+
+        if(_toFile != null)
         {
-            _aggregate = aggregate;
-            this._toFile = toFile;
-            if (aggregate.IsCohortIdentificationAggregate)
-                SetImpossible("AggregateConfiguration is a Cohort aggregate");
-
-            SetImpossibleIfFailsChecks(aggregate);
-
-            UseTripleDotSuffix = true;
+            var collection = new ViewAggregateExtractUICollection(_aggregate);
+            ExtractTableVerbatim.ExtractDataToFile(collection,_toFile);
         }
-
-        public override string GetCommandHelp()
+        else
         {
-            return "Assembles and runs the graph query and renders the results as a graph";
+            BasicActivator.ShowGraph(_aggregate);
         }
+    }        
 
-        public override void Execute()
-        {
-            base.Execute();
-
-            if(_toFile != null)
-            {
-                var collection = new ViewAggregateExtractUICollection(_aggregate);
-                ExtractTableVerbatim.ExtractDataToFile(collection,_toFile);
-            }
-            else
-            {
-                BasicActivator.ShowGraph(_aggregate);
-            }
-        }        
-
-        public override Image<Rgba32> GetImage(IIconProvider iconProvider)
-        {
-            return Image.Load<Rgba32>(CatalogueIcons.Graph);
-        }
+    public override Image<Rgba32> GetImage(IIconProvider iconProvider)
+    {
+        return Image.Load<Rgba32>(CatalogueIcons.Graph);
     }
 }

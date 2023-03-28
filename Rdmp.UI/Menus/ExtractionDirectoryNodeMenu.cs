@@ -9,16 +9,15 @@ using Rdmp.Core.Icons.IconProvision;
 using Rdmp.Core.Providers.Nodes;
 using Rdmp.UI.CommandExecution.AtomicCommands;
 
-namespace Rdmp.UI.Menus
+namespace Rdmp.UI.Menus;
+
+[System.ComponentModel.DesignerCategory("")]
+class ExtractionDirectoryNodeMenu : RDMPContextMenuStrip
 {
-    [System.ComponentModel.DesignerCategory("")]
-    class ExtractionDirectoryNodeMenu : RDMPContextMenuStrip
+    public ExtractionDirectoryNodeMenu(RDMPContextMenuStripArgs args, ExtractionDirectoryNode folder): base(args, folder)
     {
-        public ExtractionDirectoryNodeMenu(RDMPContextMenuStripArgs args, ExtractionDirectoryNode folder): base(args, folder)
-        {
-            ReBrandActivateAs("Open In Explorer",RDMPConcept.CatalogueFolder);
+        ReBrandActivateAs("Open In Explorer",RDMPConcept.CatalogueFolder);
             
-            Add(new ExecuteCommandSetProjectExtractionDirectory(_activator, folder.Project));
-        }
+        Add(new ExecuteCommandSetProjectExtractionDirectory(_activator, folder.Project));
     }
 }

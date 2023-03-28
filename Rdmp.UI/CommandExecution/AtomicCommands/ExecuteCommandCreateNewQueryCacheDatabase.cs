@@ -17,46 +17,45 @@ using Rdmp.UI.Versioning;
 using ReusableLibraryCode.Icons.IconProvision;
 using SixLabors.ImageSharp.PixelFormats;
 
-namespace Rdmp.UI.CommandExecution.AtomicCommands
+namespace Rdmp.UI.CommandExecution.AtomicCommands;
+
+public class ExecuteCommandCreateNewQueryCacheDatabase : BasicUICommandExecution,IAtomicCommand
 {
-    public class ExecuteCommandCreateNewQueryCacheDatabase : BasicUICommandExecution,IAtomicCommand
-    {
-        private readonly CohortIdentificationConfiguration _cic;
+    private readonly CohortIdentificationConfiguration _cic;
         
-        public ExecuteCommandCreateNewQueryCacheDatabase(IActivateItems activator, CohortIdentificationConfiguration configuration):base(activator)
+    public ExecuteCommandCreateNewQueryCacheDatabase(IActivateItems activator, CohortIdentificationConfiguration configuration):base(activator)
+    {
+        _cic = configuration;
+        if(_cic.QueryCachingServer_ID != null)
+            SetImpossible("CohortIdentificationConfiguration already has a Query Cache configured");
+    }
+
+    public override void Execute()
+    {
+        base.Execute();
+
+        var p = new QueryCachingPatcher();
+
+        CreatePlatformDatabase createPlatform = new CreatePlatformDatabase(p);
+        createPlatform.ShowDialog();
+
+        var db = createPlatform.DatabaseCreatedIfAny;
+        if (db != null)
         {
-            _cic = configuration;
-            if(_cic.QueryCachingServer_ID != null)
-                SetImpossible("CohortIdentificationConfiguration already has a Query Cache configured");
-        }
+            var newServer = new ExternalDatabaseServer(Activator.RepositoryLocator.CatalogueRepository, "Caching Database", p);
+            newServer.SetProperties(db);
 
-        public override void Execute()
-        {
-            base.Execute();
+            _cic.QueryCachingServer_ID = newServer.ID;
+            _cic.SaveToDatabase();
 
-            var p = new QueryCachingPatcher();
-
-            CreatePlatformDatabase createPlatform = new CreatePlatformDatabase(p);
-            createPlatform.ShowDialog();
-
-            var db = createPlatform.DatabaseCreatedIfAny;
-            if (db != null)
-            {
-                var newServer = new ExternalDatabaseServer(Activator.RepositoryLocator.CatalogueRepository, "Caching Database", p);
-                newServer.SetProperties(db);
-
-                _cic.QueryCachingServer_ID = newServer.ID;
-                _cic.SaveToDatabase();
-
-                SetDefaultIfNotExists(newServer,PermissableDefaults.CohortIdentificationQueryCachingServer_ID,true);
+            SetDefaultIfNotExists(newServer,PermissableDefaults.CohortIdentificationQueryCachingServer_ID,true);
                 
-                Publish(_cic);
-            }
+            Publish(_cic);
         }
+    }
 
-        public override Image<Rgba32> GetImage(IIconProvider iconProvider)
-        {
-            return iconProvider.GetImage(RDMPConcept.ExternalDatabaseServer, OverlayKind.Add);
-        }
+    public override Image<Rgba32> GetImage(IIconProvider iconProvider)
+    {
+        return iconProvider.GetImage(RDMPConcept.ExternalDatabaseServer, OverlayKind.Add);
     }
 }

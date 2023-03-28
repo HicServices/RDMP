@@ -7,19 +7,18 @@
 using System.IO;
 using Rdmp.Core.Caching.Requests;
 
-namespace Tests.Common.Helpers
-{
-    public class TestDataWriterChunk : ICacheChunk
-    {
-        public FileInfo[] Files { get; set; }
-        public ICacheFetchRequest Request { get; private set; }
+namespace Tests.Common.Helpers;
 
-        public TestDataWriterChunk(ICacheFetchRequest request, FileInfo[] files)
-        {
-            Request = request;
-            Files = files;
-        }
+public class TestDataWriterChunk : ICacheChunk
+{
+    public FileInfo[] Files { get; set; }
+    public ICacheFetchRequest Request { get; private set; }
+
+    public TestDataWriterChunk(ICacheFetchRequest request, FileInfo[] files)
+    {
+        Request = request;
+        Files = files;
+    }
 
         
-    }
 }

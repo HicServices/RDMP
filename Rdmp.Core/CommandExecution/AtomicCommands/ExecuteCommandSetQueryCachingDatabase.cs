@@ -13,48 +13,47 @@ using Rdmp.Core.Icons.IconProvision;
 using ReusableLibraryCode.Icons.IconProvision;
 using SixLabors.ImageSharp.PixelFormats;
 
-namespace Rdmp.Core.CommandExecution.AtomicCommands
+namespace Rdmp.Core.CommandExecution.AtomicCommands;
+
+public class ExecuteCommandSetQueryCachingDatabase : BasicCommandExecution, IAtomicCommand
 {
-    public class ExecuteCommandSetQueryCachingDatabase : BasicCommandExecution, IAtomicCommand
+    private readonly CohortIdentificationConfiguration _cic;
+    private ExternalDatabaseServer[] _caches;
+
+    public ExecuteCommandSetQueryCachingDatabase(IBasicActivateItems activator,CohortIdentificationConfiguration cic) : base(activator)
     {
-        private readonly CohortIdentificationConfiguration _cic;
-        private ExternalDatabaseServer[] _caches;
+        _cic = cic;
 
-        public ExecuteCommandSetQueryCachingDatabase(IBasicActivateItems activator,CohortIdentificationConfiguration cic) : base(activator)
-        {
-            _cic = cic;
+        _caches = BasicActivator.RepositoryLocator.CatalogueRepository.GetAllObjects<ExternalDatabaseServer>()
+            .Where(s => s.WasCreatedBy(new QueryCachingPatcher())).ToArray();
 
-            _caches = BasicActivator.RepositoryLocator.CatalogueRepository.GetAllObjects<ExternalDatabaseServer>()
-                .Where(s => s.WasCreatedBy(new QueryCachingPatcher())).ToArray();
+        if(!_caches.Any())
+            SetImpossible("There are no Query Caching databases set up");
+    }
 
-            if(!_caches.Any())
-                SetImpossible("There are no Query Caching databases set up");
-        }
-
-        public override void Execute()
-        {
-            base.Execute();
+    public override void Execute()
+    {
+        base.Execute();
             
-            if (SelectOne(_caches.ToList(), out ExternalDatabaseServer selected))
-            {
-                if (selected == null)
-                    _cic.QueryCachingServer_ID = null;
-                else
-                    _cic.QueryCachingServer_ID = selected.ID;
-
-                _cic.SaveToDatabase();
-                Publish(_cic);
-            }
-        }
-
-        public override string GetCommandName()
+        if (SelectOne(_caches.ToList(), out ExternalDatabaseServer selected))
         {
-            return _cic.QueryCachingServer_ID == null ? "Set Query Cache":"Change Query Cache";
-        }
+            if (selected == null)
+                _cic.QueryCachingServer_ID = null;
+            else
+                _cic.QueryCachingServer_ID = selected.ID;
 
-        public override Image<Rgba32> GetImage(IIconProvider iconProvider)
-        {
-            return iconProvider.GetImage(RDMPConcept.ExternalDatabaseServer,OverlayKind.Link);
+            _cic.SaveToDatabase();
+            Publish(_cic);
         }
+    }
+
+    public override string GetCommandName()
+    {
+        return _cic.QueryCachingServer_ID == null ? "Set Query Cache":"Change Query Cache";
+    }
+
+    public override Image<Rgba32> GetImage(IIconProvider iconProvider)
+    {
+        return iconProvider.GetImage(RDMPConcept.ExternalDatabaseServer,OverlayKind.Link);
     }
 }

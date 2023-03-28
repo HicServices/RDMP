@@ -12,39 +12,38 @@ using Rdmp.Core.Providers.Nodes.LoadMetadataNodes;
 using Rdmp.UI.CommandExecution.AtomicCommands;
 using Rdmp.UI.ItemActivation;
 
-namespace Rdmp.UI.CommandExecution.Proposals
+namespace Rdmp.UI.CommandExecution.Proposals;
+
+class ProposeExecutionWhenTargetIsAllCataloguesUsedByLoadMetadataNode : RDMPCommandExecutionProposal<AllCataloguesUsedByLoadMetadataNode>
 {
-    class ProposeExecutionWhenTargetIsAllCataloguesUsedByLoadMetadataNode : RDMPCommandExecutionProposal<AllCataloguesUsedByLoadMetadataNode>
+    public ProposeExecutionWhenTargetIsAllCataloguesUsedByLoadMetadataNode(IActivateItems itemActivator) : base(itemActivator)
     {
-        public ProposeExecutionWhenTargetIsAllCataloguesUsedByLoadMetadataNode(IActivateItems itemActivator) : base(itemActivator)
-        {
-        }
+    }
 
-        public override bool CanActivate(AllCataloguesUsedByLoadMetadataNode target)
-        {
-            return false;
-        }
+    public override bool CanActivate(AllCataloguesUsedByLoadMetadataNode target)
+    {
+        return false;
+    }
 
-        public override void Activate(AllCataloguesUsedByLoadMetadataNode target)
-        {
-            throw new NotSupportedException();
-        }
+    public override void Activate(AllCataloguesUsedByLoadMetadataNode target)
+    {
+        throw new NotSupportedException();
+    }
 
-        public override ICommandExecution ProposeExecution(ICombineToMakeCommand cmd, AllCataloguesUsedByLoadMetadataNode target,InsertOption insertOption = InsertOption.Default)
-        {
-            var cata = cmd as CatalogueCombineable;
-            var manyCata = cmd as ManyCataloguesCombineable;
+    public override ICommandExecution ProposeExecution(ICombineToMakeCommand cmd, AllCataloguesUsedByLoadMetadataNode target,InsertOption insertOption = InsertOption.Default)
+    {
+        var cata = cmd as CatalogueCombineable;
+        var manyCata = cmd as ManyCataloguesCombineable;
 
-            ICommandExecution cmdExecution = null;
+        ICommandExecution cmdExecution = null;
 
-            if (cata != null)
-                cmdExecution = new ExecuteCommandAssociateCatalogueWithLoadMetadata(ItemActivator,target.LoadMetadata).SetTarget(new[]{cata.Catalogue});
+        if (cata != null)
+            cmdExecution = new ExecuteCommandAssociateCatalogueWithLoadMetadata(ItemActivator,target.LoadMetadata).SetTarget(new[]{cata.Catalogue});
 
-            if(manyCata != null)
-                cmdExecution = new ExecuteCommandAssociateCatalogueWithLoadMetadata(ItemActivator, target.LoadMetadata).SetTarget(manyCata.Catalogues);
+        if(manyCata != null)
+            cmdExecution = new ExecuteCommandAssociateCatalogueWithLoadMetadata(ItemActivator, target.LoadMetadata).SetTarget(manyCata.Catalogues);
 
 
-            return cmdExecution;
-        }
+        return cmdExecution;
     }
 }

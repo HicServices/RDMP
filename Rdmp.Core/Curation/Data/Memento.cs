@@ -11,77 +11,75 @@ using System;
 using System.Collections.Generic;
 using System.Data.Common;
 
-namespace Rdmp.Core.Curation.Data
+namespace Rdmp.Core.Curation.Data;
+
+/// <summary>
+/// Describes a point in time state of another <see cref="DatabaseEntity"/>.  Note that the state may be invalid if other
+/// objects have been since deleted.  e.g. if user updates the <see cref="Catalogue.TimeCoverage_ExtractionInformation_ID"/> 
+/// the memento would point to an old <see cref="ExtractionInformation"/> which may be subsequently deleted
+/// </summary>
+public class Memento : ReferenceOtherObjectDatabaseEntity
 {
+    #region Database Properties
+    private string _beforeYaml;
+    private string _afterYaml;
+    private int _commit_ID;
+    private MementoType _type;
 
-    /// <summary>
-    /// Describes a point in time state of another <see cref="DatabaseEntity"/>.  Note that the state may be invalid if other
-    /// objects have been since deleted.  e.g. if user updates the <see cref="Catalogue.TimeCoverage_ExtractionInformation_ID"/> 
-    /// the memento would point to an old <see cref="ExtractionInformation"/> which may be subsequently deleted
-    /// </summary>
-    public class Memento : ReferenceOtherObjectDatabaseEntity
+    public string BeforeYaml
     {
-        #region Database Properties
-        private string _beforeYaml;
-        private string _afterYaml;
-        private int _commit_ID;
-        private MementoType _type;
+        get { return _beforeYaml; }
+        set { SetField(ref _beforeYaml, value); }
+    }
+    public string AfterYaml
+    {
+        get { return _afterYaml; }
+        set { SetField(ref _afterYaml, value); }
+    }
+    public int Commit_ID
+    {
+        get { return _commit_ID; }
+        set { SetField(ref _commit_ID, value); }
+    }
+    public MementoType Type
+    {
+        get { return _type; }
+        set { SetField(ref _type, value); }
+    }
+    #endregion
 
-        public string BeforeYaml
-        {
-            get { return _beforeYaml; }
-            set { SetField(ref _beforeYaml, value); }
-        }
-        public string AfterYaml
-        {
-            get { return _afterYaml; }
-            set { SetField(ref _afterYaml, value); }
-        }
-        public int Commit_ID
-        {
-            get { return _commit_ID; }
-            set { SetField(ref _commit_ID, value); }
-        }
-        public MementoType Type
-        {
-            get { return _type; }
-            set { SetField(ref _type, value); }
-        }
-        #endregion
+    #region Relationships
+    [NoMappingToDatabase]
+    public Commit Commit { get => Repository.GetObjectByID<Commit>(Commit_ID); }
+    #endregion
 
-        #region Relationships
-        [NoMappingToDatabase]
-        public Commit Commit { get => Repository.GetObjectByID<Commit>(Commit_ID); }
-        #endregion
+    public Memento()
+    {
 
-        public Memento()
-        {
+    }
+    public Memento(ICatalogueRepository repo,DbDataReader r) : base(repo, r)
+    {
+        BeforeYaml = r["BeforeYaml"].ToString();
+        AfterYaml = r["AfterYaml"].ToString();
+        Commit_ID = (int)r["Commit_ID"];
+        Type = (MementoType)Enum.Parse<MementoType>(r["Type"].ToString());
+    }
 
-        }
-        public Memento(ICatalogueRepository repo,DbDataReader r) : base(repo, r)
+    public Memento(ICatalogueRepository repository, Commit commit, MementoType type, IMapsDirectlyToDatabaseTable entity,string beforeYaml, string afterYaml)
+    {
+        repository.InsertAndHydrate(this, new Dictionary<string, object>
         {
-            BeforeYaml = r["BeforeYaml"].ToString();
-            AfterYaml = r["AfterYaml"].ToString();
-            Commit_ID = (int)r["Commit_ID"];
-            Type = (MementoType)Enum.Parse<MementoType>(r["Type"].ToString());
-        }
-
-        public Memento(ICatalogueRepository repository, Commit commit, MementoType type, IMapsDirectlyToDatabaseTable entity,string beforeYaml, string afterYaml)
-        {
-            repository.InsertAndHydrate(this, new Dictionary<string, object>
-            {
-                {"ReferencedObjectID",entity.ID},
-                {"ReferencedObjectType",entity.GetType().Name},
-                {"ReferencedObjectRepositoryType",entity.Repository.GetType().Name},
-                {"Commit_ID",commit.ID},
-                {"BeforeYaml",beforeYaml},
-                {"AfterYaml",afterYaml},
-                {"Type",type},
-            });
-        }
-        public override string ToString()
-        {
-            return $"{ReferencedObjectType}:{ReferencedObjectID}";
-        }
+            {"ReferencedObjectID",entity.ID},
+            {"ReferencedObjectType",entity.GetType().Name},
+            {"ReferencedObjectRepositoryType",entity.Repository.GetType().Name},
+            {"Commit_ID",commit.ID},
+            {"BeforeYaml",beforeYaml},
+            {"AfterYaml",afterYaml},
+            {"Type",type},
+        });
+    }
+    public override string ToString()
+    {
+        return $"{ReferencedObjectType}:{ReferencedObjectID}";
     }
 }

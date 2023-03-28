@@ -18,123 +18,122 @@ using System.ComponentModel;
 using System.Linq;
 using System.Windows.Forms;
 
-namespace Rdmp.UI.SimpleDialogs
+namespace Rdmp.UI.SimpleDialogs;
+
+public partial class CommitsUI : CommitsUI_Design
 {
-    public partial class CommitsUI : CommitsUI_Design
+    private List<Commit> _commits;
+
+    RDMPCollectionCommonFunctionality CommonCollectionFunctionality = new ();
+
+    public const string GeneralAdviceAboutWhatIsShown = "Only includes changes made while 'Commit' system was enabled.  Does not include changes made by processes/commands that do not support Commit system.";
+
+    private CommitsUI()
     {
-        private List<Commit> _commits;
+        InitializeComponent();
 
-        RDMPCollectionCommonFunctionality CommonCollectionFunctionality = new ();
+        treeListView1.FullRowSelect = true;
+        treeListView1.ItemActivate += TreeListView1_ItemActivate;
+        treeListView1.CanExpandGetter = (m) => m is Commit;
+        treeListView1.ChildrenGetter = (m) => m is Commit c ? c.Mementos : null;
+    }
 
-        public const string GeneralAdviceAboutWhatIsShown = "Only includes changes made while 'Commit' system was enabled.  Does not include changes made by processes/commands that do not support Commit system.";
+    /// <summary>
+    /// Creates a new instance showing all <see cref="Commit"/> ever made regardless of what object
+    /// they were working on.
+    /// </summary>
+    /// <param name="activator"></param>
+    public CommitsUI(IActivateItems activator) : this()
+    {
+        SetItemActivator(activator);
 
-        private CommitsUI()
+        SetupCommonCollectionFunctionality();
+
+        _commits = activator.RepositoryLocator.CatalogueRepository
+            .GetAllObjects<Commit>()
+            .ToList();
+
+        treeListView1.AddObjects(_commits);
+        taskDescriptionLabel1.SetupFor(new DialogArgs
         {
-            InitializeComponent();
+            TaskDescription = $"Showing all commits. {GeneralAdviceAboutWhatIsShown}"
+        });
+    }
+    public CommitsUI(IActivateItems activator, IMapsDirectlyToDatabaseTable o):this()
+    {
 
-            treeListView1.FullRowSelect = true;
-            treeListView1.ItemActivate += TreeListView1_ItemActivate;
-            treeListView1.CanExpandGetter = (m) => m is Commit;
-            treeListView1.ChildrenGetter = (m) => m is Commit c ? c.Mementos : null;
+        SetItemActivator(activator);
+
+        SetupCommonCollectionFunctionality();
+
+        // TODO: move this to a helper class
+        var commitsInvolvingObject = activator.RepositoryLocator.CatalogueRepository
+            .GetAllObjectsWhere<Memento>(nameof(Memento.ReferencedObjectID), o.ID)
+            .Where((m) => m.IsReferenceTo(o))
+            .Select(m=>m.Commit_ID)
+            .Distinct()
+            .ToList();
+
+        _commits = activator.RepositoryLocator.CatalogueRepository
+            .GetAllObjectsInIDList<Commit>(commitsInvolvingObject)
+            .ToList();
+
+        treeListView1.AddObjects(_commits);
+        taskDescriptionLabel1.SetupFor(new DialogArgs
+        {
+            TaskDescription = $"Showing all commits that involved changes to '{o}'. {GeneralAdviceAboutWhatIsShown}"
+        });
+    }
+
+    private void SetupCommonCollectionFunctionality()
+    {
+        CommonCollectionFunctionality.SetUp(Core.RDMPCollection.None, treeListView1, Activator, olvName, null, new RDMPCollectionCommonFunctionalitySettings
+        {
+            SuppressActivate = true,
+            SuppressChildrenAdder = true,
+            AddCheckColumn = false,
+            AddIDColumn = false,
+            AddFavouriteColumn = false
+        });
+
+        RDMPCollectionCommonFunctionality.SetupColumnSortTracking(treeListView1, new Guid("6199b509-a52a-4d38-ae47-023dbe891c7d"));
+
+        CommonCollectionFunctionality.SetupColumnTracking(olvName, new Guid("c502c0bb-eda6-4703-b6bd-8124d7792a57"));
+        CommonCollectionFunctionality.SetupColumnTracking(olvDate, new Guid("b438cb32-9610-4bc8-8590-9288e1cc0ef7"));
+        CommonCollectionFunctionality.SetupColumnTracking(olvUser, new Guid("c544ad0a-4ccf-4874-8269-b64465c6010f"));
+        CommonCollectionFunctionality.SetupColumnTracking(olvDescription, new Guid("a53f80a5-c0a2-40c0-a8ec-1d3a897fcce4"));
+    }
+
+    private void TreeListView1_ItemActivate(object sender, System.EventArgs e)
+    {
+        if(treeListView1.SelectedObject is not Memento m)
+            return;
+
+        var dialog = new SQLBeforeAndAfterViewer(m.BeforeYaml,m.AfterYaml,"Before","After",m.ToString(),MessageBoxButtons.OK);
+        dialog.Show();
+    }
+
+    private void tbFilter_TextChanged(object sender, EventArgs e)
+    {
+        if(string.IsNullOrWhiteSpace(tbFilter.Text))
+        {
+            treeListView1.ModelFilter = null;
         }
-
-        /// <summary>
-        /// Creates a new instance showing all <see cref="Commit"/> ever made regardless of what object
-        /// they were working on.
-        /// </summary>
-        /// <param name="activator"></param>
-        public CommitsUI(IActivateItems activator) : this()
+        else
         {
-            SetItemActivator(activator);
-
-            SetupCommonCollectionFunctionality();
-
-            _commits = activator.RepositoryLocator.CatalogueRepository
-                .GetAllObjects<Commit>()
-                .ToList();
-
-            treeListView1.AddObjects(_commits);
-            taskDescriptionLabel1.SetupFor(new DialogArgs
-            {
-                TaskDescription = $"Showing all commits. {GeneralAdviceAboutWhatIsShown}"
-            });
-        }
-        public CommitsUI(IActivateItems activator, IMapsDirectlyToDatabaseTable o):this()
-        {
-
-            SetItemActivator(activator);
-
-            SetupCommonCollectionFunctionality();
-
-            // TODO: move this to a helper class
-            var commitsInvolvingObject = activator.RepositoryLocator.CatalogueRepository
-                .GetAllObjectsWhere<Memento>(nameof(Memento.ReferencedObjectID), o.ID)
-                .Where((m) => m.IsReferenceTo(o))
-                .Select(m=>m.Commit_ID)
-                .Distinct()
-                .ToList();
-
-            _commits = activator.RepositoryLocator.CatalogueRepository
-                .GetAllObjectsInIDList<Commit>(commitsInvolvingObject)
-                .ToList();
-
-            treeListView1.AddObjects(_commits);
-            taskDescriptionLabel1.SetupFor(new DialogArgs
-            {
-                TaskDescription = $"Showing all commits that involved changes to '{o}'. {GeneralAdviceAboutWhatIsShown}"
-            });
-        }
-
-        private void SetupCommonCollectionFunctionality()
-        {
-            CommonCollectionFunctionality.SetUp(Core.RDMPCollection.None, treeListView1, Activator, olvName, null, new RDMPCollectionCommonFunctionalitySettings
-            {
-                SuppressActivate = true,
-                SuppressChildrenAdder = true,
-                AddCheckColumn = false,
-                AddIDColumn = false,
-                AddFavouriteColumn = false
-            });
-
-            RDMPCollectionCommonFunctionality.SetupColumnSortTracking(treeListView1, new Guid("6199b509-a52a-4d38-ae47-023dbe891c7d"));
-
-            CommonCollectionFunctionality.SetupColumnTracking(olvName, new Guid("c502c0bb-eda6-4703-b6bd-8124d7792a57"));
-            CommonCollectionFunctionality.SetupColumnTracking(olvDate, new Guid("b438cb32-9610-4bc8-8590-9288e1cc0ef7"));
-            CommonCollectionFunctionality.SetupColumnTracking(olvUser, new Guid("c544ad0a-4ccf-4874-8269-b64465c6010f"));
-            CommonCollectionFunctionality.SetupColumnTracking(olvDescription, new Guid("a53f80a5-c0a2-40c0-a8ec-1d3a897fcce4"));
-        }
-
-        private void TreeListView1_ItemActivate(object sender, System.EventArgs e)
-        {
-            if(treeListView1.SelectedObject is not Memento m)
-                return;
-
-            var dialog = new SQLBeforeAndAfterViewer(m.BeforeYaml,m.AfterYaml,"Before","After",m.ToString(),MessageBoxButtons.OK);
-            dialog.Show();
-        }
-
-        private void tbFilter_TextChanged(object sender, EventArgs e)
-        {
-            if(string.IsNullOrWhiteSpace(tbFilter.Text))
-            {
-                treeListView1.ModelFilter = null;
-            }
-            else
-            {
-                treeListView1.ModelFilter = new TextMatchFilter(treeListView1,tbFilter.Text) { StringComparison = StringComparison.CurrentCultureIgnoreCase};
-                treeListView1.UseFiltering = true;
-            }
-        }
-
-        private void btnExpandAll_Click(object sender, EventArgs e)
-        {
-            treeListView1.ExpandAll();
+            treeListView1.ModelFilter = new TextMatchFilter(treeListView1,tbFilter.Text) { StringComparison = StringComparison.CurrentCultureIgnoreCase};
+            treeListView1.UseFiltering = true;
         }
     }
 
-    [TypeDescriptionProvider(typeof(AbstractControlDescriptionProvider<CommitsUI_Design, UserControl>))]
-    public abstract class CommitsUI_Design : RDMPUserControl
+    private void btnExpandAll_Click(object sender, EventArgs e)
     {
-
+        treeListView1.ExpandAll();
     }
+}
+
+[TypeDescriptionProvider(typeof(AbstractControlDescriptionProvider<CommitsUI_Design, UserControl>))]
+public abstract class CommitsUI_Design : RDMPUserControl
+{
+
 }

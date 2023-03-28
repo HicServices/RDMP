@@ -6,12 +6,11 @@
 
 using Rdmp.Core.Curation.Data;
 
-namespace Rdmp.UI.Menus
+namespace Rdmp.UI.Menus;
+
+class JoinInfoMenu : RDMPContextMenuStrip
 {
-    class JoinInfoMenu : RDMPContextMenuStrip
+    public JoinInfoMenu(RDMPContextMenuStripArgs args, JoinInfo j) : base(args, j)
     {
-        public JoinInfoMenu(RDMPContextMenuStripArgs args, JoinInfo j) : base(args, j)
-        {
-        }
     }
 }

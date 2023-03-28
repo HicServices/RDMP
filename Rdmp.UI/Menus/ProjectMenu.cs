@@ -12,20 +12,19 @@ using Rdmp.Core.Icons.IconProvision;
 using Rdmp.UI.CommandExecution.AtomicCommands;
 using ReusableLibraryCode.Icons.IconProvision;
 
-namespace Rdmp.UI.Menus
+namespace Rdmp.UI.Menus;
+
+[System.ComponentModel.DesignerCategory("")]
+class ProjectMenu:RDMPContextMenuStrip
 {
-    [System.ComponentModel.DesignerCategory("")]
-    class ProjectMenu:RDMPContextMenuStrip
+    public ProjectMenu(RDMPContextMenuStripArgs args, Project project)
+        : base(args,project)
     {
-        public ProjectMenu(RDMPContextMenuStripArgs args, Project project)
-            : base(args,project)
-        {
-            Add(new ExecuteCommandExecuteExtractionConfiguration(_activator) { Weight = -99.9f }.SetTarget(project));
-            Add(new ExecuteCommandRelease(_activator) { Weight = -99.8f }.SetTarget(project));
+        Add(new ExecuteCommandExecuteExtractionConfiguration(_activator) { Weight = -99.9f }.SetTarget(project));
+        Add(new ExecuteCommandRelease(_activator) { Weight = -99.8f }.SetTarget(project));
 
-            args.SkipCommand<ExecuteCommandCreateNewCatalogueByImportingFile>();
+        args.SkipCommand<ExecuteCommandCreateNewCatalogueByImportingFile>();
 
-            Add(new ExecuteCommandCreateNewCatalogueByImportingFileUI(_activator) { OverrideCommandName = "New Project Specific Catalogue From File...", SuggestedCategory = AtomicCommandFactory.Add, Weight = -1.9f });
-        }
+        Add(new ExecuteCommandCreateNewCatalogueByImportingFileUI(_activator) { OverrideCommandName = "New Project Specific Catalogue From File...", SuggestedCategory = AtomicCommandFactory.Add, Weight = -1.9f });
     }
 }

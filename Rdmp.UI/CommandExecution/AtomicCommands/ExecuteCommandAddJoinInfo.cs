@@ -13,49 +13,48 @@ using ReusableLibraryCode.Icons.IconProvision;
 using SixLabors.ImageSharp;
 using SixLabors.ImageSharp.PixelFormats;
 
-namespace Rdmp.UI.CommandExecution.AtomicCommands
+namespace Rdmp.UI.CommandExecution.AtomicCommands;
+
+public class ExecuteCommandAddJoinInfo : BasicUICommandExecution, IAtomicCommand
 {
-    public class ExecuteCommandAddJoinInfo : BasicUICommandExecution, IAtomicCommand
+    private readonly TableInfo _tableInfo;
+    private TableInfo _otherTableInfo;
+
+    public ExecuteCommandAddJoinInfo(IActivateItems activator, TableInfo tableInfo):base(activator)
     {
-        private readonly TableInfo _tableInfo;
-        private TableInfo _otherTableInfo;
+        _tableInfo = tableInfo;
+    }
 
-        public ExecuteCommandAddJoinInfo(IActivateItems activator, TableInfo tableInfo):base(activator)
-        {
-            _tableInfo = tableInfo;
-        }
+    public override string GetCommandName()
+    {
+        return "Configure JoinInfo where '" + _tableInfo + "' is a Primary Key Table";
+    }
 
-        public override string GetCommandName()
-        {
-            return "Configure JoinInfo where '" + _tableInfo + "' is a Primary Key Table";
-        }
+    public override string GetCommandHelp()
+    {
+        return "Tells RDMP that two TableInfos can be joined together (including the direction LEFT/RIGHT/INNER, collation etc)";
+    }
 
-        public override string GetCommandHelp()
-        {
-            return "Tells RDMP that two TableInfos can be joined together (including the direction LEFT/RIGHT/INNER, collation etc)";
-        }
+    public override Image<Rgba32> GetImage(IIconProvider iconProvider)
+    {
+        return Activator.CoreIconProvider.GetImage(RDMPConcept.JoinInfo, OverlayKind.Add);
+    }
 
-        public override Image<Rgba32> GetImage(IIconProvider iconProvider)
-        {
-            return Activator.CoreIconProvider.GetImage(RDMPConcept.JoinInfo, OverlayKind.Add);
-        }
-
-        public void SetInitialJoinToTableInfo(TableInfo otherTableInfo)
-        {
-            if(_tableInfo.Equals(otherTableInfo))
-                SetImpossible("Cannot join a TableInfo to itself");
+    public void SetInitialJoinToTableInfo(TableInfo otherTableInfo)
+    {
+        if(_tableInfo.Equals(otherTableInfo))
+            SetImpossible("Cannot join a TableInfo to itself");
             
-            _otherTableInfo = otherTableInfo;
-        }
+        _otherTableInfo = otherTableInfo;
+    }
 
-        public override void Execute()
-        {
-            base.Execute();
+    public override void Execute()
+    {
+        base.Execute();
 
-            var jc = Activator.Activate<JoinConfigurationUI, TableInfo>(_tableInfo);
+        var jc = Activator.Activate<JoinConfigurationUI, TableInfo>(_tableInfo);
 
-            if (_otherTableInfo != null)
-                jc.SetOtherTableInfo(_otherTableInfo);
-        }
+        if (_otherTableInfo != null)
+            jc.SetOtherTableInfo(_otherTableInfo);
     }
 }

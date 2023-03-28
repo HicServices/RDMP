@@ -8,38 +8,37 @@ using Rdmp.Core.CommandExecution.Combining;
 using Rdmp.Core.Curation.Data;
 using Rdmp.Core.Repositories.Construction;
 
-namespace Rdmp.Core.CommandExecution.AtomicCommands
+namespace Rdmp.Core.CommandExecution.AtomicCommands;
+
+public class ExecuteCommandMoveContainerIntoContainer : BasicCommandExecution
 {
-    public class ExecuteCommandMoveContainerIntoContainer : BasicCommandExecution
+    private readonly ContainerCombineable _containerCombineable;
+    private readonly IContainer _targetContainer;
+
+    [UseWithObjectConstructor]
+    public ExecuteCommandMoveContainerIntoContainer(IBasicActivateItems activator, IContainer toMove, IContainer into) 
+        : this(activator,new ContainerCombineable(toMove),into)
     {
-        private readonly ContainerCombineable _containerCombineable;
-        private readonly IContainer _targetContainer;
 
-        [UseWithObjectConstructor]
-        public ExecuteCommandMoveContainerIntoContainer(IBasicActivateItems activator, IContainer toMove, IContainer into) 
-            : this(activator,new ContainerCombineable(toMove),into)
-        {
+    }
+    public ExecuteCommandMoveContainerIntoContainer(IBasicActivateItems activator, ContainerCombineable containerCombineable, IContainer targetContainer) : base(activator)
+    {
+        _containerCombineable = containerCombineable;
+        _targetContainer = targetContainer;
 
-        }
-        public ExecuteCommandMoveContainerIntoContainer(IBasicActivateItems activator, ContainerCombineable containerCombineable, IContainer targetContainer) : base(activator)
-        {
-            _containerCombineable = containerCombineable;
-            _targetContainer = targetContainer;
+        if(containerCombineable.AllSubContainersRecursive.Contains(targetContainer))
+            SetImpossible("You cannot move a container (AND/OR) into one of its own subcontainers");
 
-            if(containerCombineable.AllSubContainersRecursive.Contains(targetContainer))
-                SetImpossible("You cannot move a container (AND/OR) into one of its own subcontainers");
+        if(targetContainer.ShouldBeReadOnly(out string reason))
+            SetImpossible(reason);
+    }
 
-            if(targetContainer.ShouldBeReadOnly(out string reason))
-                SetImpossible(reason);
-        }
+    public override void Execute()
+    {
+        base.Execute();
 
-        public override void Execute()
-        {
-            base.Execute();
-
-            _containerCombineable.Container.MakeIntoAnOrphan();
-            _targetContainer.AddChild(_containerCombineable.Container);
-            Publish((DatabaseEntity) _targetContainer);
-        }
+        _containerCombineable.Container.MakeIntoAnOrphan();
+        _targetContainer.AddChild(_containerCombineable.Container);
+        Publish((DatabaseEntity) _targetContainer);
     }
 }

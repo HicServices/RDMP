@@ -11,42 +11,41 @@ using Rdmp.Core.Icons.IconProvision;
 using ReusableLibraryCode.Icons.IconProvision;
 using SixLabors.ImageSharp.PixelFormats;
 
-namespace Rdmp.Core.CommandExecution.AtomicCommands
+namespace Rdmp.Core.CommandExecution.AtomicCommands;
+
+public class ExecuteCommandCreateNewEmptyCatalogue : BasicCommandExecution, IAtomicCommand
 {
-    public class ExecuteCommandCreateNewEmptyCatalogue : BasicCommandExecution, IAtomicCommand
+    public string TargetFolder { get; set; }
+
+    public ExecuteCommandCreateNewEmptyCatalogue(IBasicActivateItems activator) : base(activator)
     {
-        public string TargetFolder { get; set; }
 
-        public ExecuteCommandCreateNewEmptyCatalogue(IBasicActivateItems activator) : base(activator)
+    }
+
+    public override string GetCommandHelp()
+    {
+        return @"Create a new dataset not yet linked to any underlying database columns\tables";
+    }
+
+    public override Image<Rgba32> GetImage(IIconProvider iconProvider)
+    {
+        return iconProvider.GetImage(RDMPConcept.Catalogue, OverlayKind.Problem);
+    }
+
+    public override void Execute()
+    {
+        base.Execute();
+
+        var c = new Catalogue(BasicActivator.RepositoryLocator.CatalogueRepository, "New Catalogue " + Guid.NewGuid());
+
+        if (TargetFolder != null)
         {
-
+            c.Folder = TargetFolder;
+            c.SaveToDatabase();
         }
 
-        public override string GetCommandHelp()
-        {
-            return @"Create a new dataset not yet linked to any underlying database columns\tables";
-        }
 
-        public override Image<Rgba32> GetImage(IIconProvider iconProvider)
-        {
-            return iconProvider.GetImage(RDMPConcept.Catalogue, OverlayKind.Problem);
-        }
-
-        public override void Execute()
-        {
-            base.Execute();
-
-            var c = new Catalogue(BasicActivator.RepositoryLocator.CatalogueRepository, "New Catalogue " + Guid.NewGuid());
-
-            if (TargetFolder != null)
-            {
-                c.Folder = TargetFolder;
-                c.SaveToDatabase();
-            }
-
-
-            Publish(c);
-            Emphasise(c);
-        }
+        Publish(c);
+        Emphasise(c);
     }
 }

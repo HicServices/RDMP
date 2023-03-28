@@ -18,19 +18,19 @@ using Rdmp.Core.Repositories;
 using ReusableLibraryCode.Checks;
 using ReusableLibraryCode.Progress;
 
-namespace Rdmp.Core.DataLoad.Modules.DataFlowOperations
-{
-    /// <summary>
-    /// Extraction component that will generate share definition files for the catalogues involved in the extraction.
-    /// 
-    /// <para>The Metadata Naming Pattern will also override the table name in the DataTable flow object.</para>
-    /// </summary>
-    public class ExtractCatalogueMetadata : IPluginDataFlowComponent<DataTable>, IPipelineRequirement<IExtractCommand>, IPipelineRequirement<IBasicActivateItems>
-    {
-        private IExtractCommand _request;
-        private IBasicActivateItems _activator;
+namespace Rdmp.Core.DataLoad.Modules.DataFlowOperations;
 
-        [DemandsInitialization(@"How do you want to name datasets, use the following tokens if you need them:   
+/// <summary>
+/// Extraction component that will generate share definition files for the catalogues involved in the extraction.
+/// 
+/// <para>The Metadata Naming Pattern will also override the table name in the DataTable flow object.</para>
+/// </summary>
+public class ExtractCatalogueMetadata : IPluginDataFlowComponent<DataTable>, IPipelineRequirement<IExtractCommand>, IPipelineRequirement<IBasicActivateItems>
+{
+    private IExtractCommand _request;
+    private IBasicActivateItems _activator;
+
+    [DemandsInitialization(@"How do you want to name datasets, use the following tokens if you need them:   
          $p - Project Name ('e.g. My Project')
          $n - Project Number (e.g. 234)
          $c - Configuration Name (e.g. 'Cases')
@@ -40,87 +40,86 @@ namespace Rdmp.Core.DataLoad.Modules.DataFlowOperations
          You must have either $a or $d
          THIS WILL OVERRIDE THE TableNamingPattern at the destination!
          ", Mandatory = true, DefaultValue = "$d")]
-        public string MetadataNamingPattern { get; set; }
+    public string MetadataNamingPattern { get; set; }
         
-        public DataTable ProcessPipelineData(DataTable toProcess, IDataLoadEventListener listener, GracefulCancellationToken cancellationToken)
-        {
-            toProcess.TableName = GetTableName();
-            toProcess.ExtendedProperties.Add("ProperlyNamed", true);
+    public DataTable ProcessPipelineData(DataTable toProcess, IDataLoadEventListener listener, GracefulCancellationToken cancellationToken)
+    {
+        toProcess.TableName = GetTableName();
+        toProcess.ExtendedProperties.Add("ProperlyNamed", true);
 
-            var extractDatasetCommand = _request as ExtractDatasetCommand;
-            if (extractDatasetCommand != null)
-            {
-                var catalogue = extractDatasetCommand.Catalogue;
+        var extractDatasetCommand = _request as ExtractDatasetCommand;
+        if (extractDatasetCommand != null)
+        {
+            var catalogue = extractDatasetCommand.Catalogue;
             
-                var sourceFolder = _request.GetExtractionDirectory();
-                if (sourceFolder == null)
-                    throw new Exception("Could not find Source Folder. Does the project have an Extraction Directory defined?");
+            var sourceFolder = _request.GetExtractionDirectory();
+            if (sourceFolder == null)
+                throw new Exception("Could not find Source Folder. Does the project have an Extraction Directory defined?");
 
-                var outputFolder = sourceFolder.Parent.CreateSubdirectory(ExtractionDirectory.METADATA_FOLDER_NAME);
-                var outputFile = new FileInfo(Path.Combine(outputFolder.FullName, toProcess.TableName + ".sd"));
+            var outputFolder = sourceFolder.Parent.CreateSubdirectory(ExtractionDirectory.METADATA_FOLDER_NAME);
+            var outputFile = new FileInfo(Path.Combine(outputFolder.FullName, toProcess.TableName + ".sd"));
 
-                catalogue.Name = toProcess.TableName;
-                var cmd = new ExecuteCommandExportObjectsToFile(_activator, catalogue, outputFile);
-                cmd.Execute();
-                catalogue.RevertToDatabaseState();
+            catalogue.Name = toProcess.TableName;
+            var cmd = new ExecuteCommandExportObjectsToFile(_activator, catalogue, outputFile);
+            cmd.Execute();
+            catalogue.RevertToDatabaseState();
 
-            }
-            return toProcess;
+        }
+        return toProcess;
+    }
+
+    public string GetTableName()
+    {
+        string tblName = MetadataNamingPattern;
+        var project = _request.Configuration.Project;
+
+        tblName = tblName.Replace("$p", project.Name);
+        tblName = tblName.Replace("$n", project.ProjectNumber.ToString());
+        tblName = tblName.Replace("$c", _request.Configuration.Name);
+
+        if (_request is ExtractDatasetCommand)
+        {
+            tblName = tblName.Replace("$d", ((ExtractDatasetCommand)_request).DatasetBundle.DataSet.Catalogue.Name);
+            tblName = tblName.Replace("$a", ((ExtractDatasetCommand)_request).DatasetBundle.DataSet.Catalogue.Acronym);
         }
 
-        public string GetTableName()
+        if (_request is ExtractGlobalsCommand)
         {
-            string tblName = MetadataNamingPattern;
-            var project = _request.Configuration.Project;
-
-            tblName = tblName.Replace("$p", project.Name);
-            tblName = tblName.Replace("$n", project.ProjectNumber.ToString());
-            tblName = tblName.Replace("$c", _request.Configuration.Name);
-
-            if (_request is ExtractDatasetCommand)
-            {
-                tblName = tblName.Replace("$d", ((ExtractDatasetCommand)_request).DatasetBundle.DataSet.Catalogue.Name);
-                tblName = tblName.Replace("$a", ((ExtractDatasetCommand)_request).DatasetBundle.DataSet.Catalogue.Acronym);
-            }
-
-            if (_request is ExtractGlobalsCommand)
-            {
-                tblName = tblName.Replace("$d", ExtractionDirectory.GLOBALS_DATA_NAME);
-                tblName = tblName.Replace("$a", "G");
-            }
-
-            return tblName;
+            tblName = tblName.Replace("$d", ExtractionDirectory.GLOBALS_DATA_NAME);
+            tblName = tblName.Replace("$a", "G");
         }
 
-        public void Dispose(IDataLoadEventListener listener, Exception pipelineFailureExceptionIfAny)
-        {
+        return tblName;
+    }
+
+    public void Dispose(IDataLoadEventListener listener, Exception pipelineFailureExceptionIfAny)
+    {
             
-        }
+    }
 
-        public void Abort(IDataLoadEventListener listener)
-        {
+    public void Abort(IDataLoadEventListener listener)
+    {
             
-        }
+    }
 
-        public void Check(ICheckNotifier notifier)
+    public void Check(ICheckNotifier notifier)
+    {
+        if (MetadataNamingPattern != null && MetadataNamingPattern.Contains("$a"))
         {
-            if (MetadataNamingPattern != null && MetadataNamingPattern.Contains("$a"))
-            {
-                var dsRequest = _request as ExtractDatasetCommand;
+            var dsRequest = _request as ExtractDatasetCommand;
 
-                if (dsRequest != null && string.IsNullOrWhiteSpace(dsRequest.Catalogue.Acronym))
-                    notifier.OnCheckPerformed(new CheckEventArgs("Catalogue '" + dsRequest.Catalogue + "' does not have an Acronym but MetadataNamingPattern contains $a", CheckResult.Fail));
-            }
+            if (dsRequest != null && string.IsNullOrWhiteSpace(dsRequest.Catalogue.Acronym))
+                notifier.OnCheckPerformed(new CheckEventArgs("Catalogue '" + dsRequest.Catalogue + "' does not have an Acronym but MetadataNamingPattern contains $a", CheckResult.Fail));
         }
+    }
 
-        public void PreInitialize(IExtractCommand value, IDataLoadEventListener listener)
-        {
-            _request = value;
-        }
+    public void PreInitialize(IExtractCommand value, IDataLoadEventListener listener)
+    {
+        _request = value;
+    }
 
-        public void PreInitialize(IBasicActivateItems value, IDataLoadEventListener listener)
-        {
-            _activator = value;
-        }
+    public void PreInitialize(IBasicActivateItems value, IDataLoadEventListener listener)
+    {
+        _activator = value;
     }
 }

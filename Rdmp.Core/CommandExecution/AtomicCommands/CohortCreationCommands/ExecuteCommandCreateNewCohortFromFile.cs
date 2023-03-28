@@ -15,92 +15,91 @@ using Rdmp.Core.Repositories.Construction;
 using ReusableLibraryCode.Icons.IconProvision;
 using SixLabors.ImageSharp.PixelFormats;
 
-namespace Rdmp.Core.CommandExecution.AtomicCommands.CohortCreationCommands
+namespace Rdmp.Core.CommandExecution.AtomicCommands.CohortCreationCommands;
+
+/// <summary>
+/// Loads private identifiers from a file using the given <see cref="Pipeline"/> to create a new <see cref="ExtractableCohort"/> for a given <see cref="Project"/> (which must have a ProjectNumber specified)
+/// </summary>
+public class ExecuteCommandCreateNewCohortFromFile : CohortCreationCommandExecution
 {
-    /// <summary>
-    /// Loads private identifiers from a file using the given <see cref="Pipeline"/> to create a new <see cref="ExtractableCohort"/> for a given <see cref="Project"/> (which must have a ProjectNumber specified)
-    /// </summary>
-    public class ExecuteCommandCreateNewCohortFromFile : CohortCreationCommandExecution
+    private FileInfo _file;
+
+    public ExecuteCommandCreateNewCohortFromFile(IBasicActivateItems activator, ExternalCohortTable externalCohortTable) :
+        base(activator, externalCohortTable, null, null, null)
     {
-        private FileInfo _file;
+        UseTripleDotSuffix = true;
+    }
 
-        public ExecuteCommandCreateNewCohortFromFile(IBasicActivateItems activator, ExternalCohortTable externalCohortTable) :
-            base(activator, externalCohortTable, null, null, null)
+    public ExecuteCommandCreateNewCohortFromFile(IBasicActivateItems activator, FileInfo file, ExternalCohortTable externalCohortTable)
+        : this(activator, file, externalCohortTable, null, null, null)
+    {
+    }
+
+    [UseWithObjectConstructor]
+    public ExecuteCommandCreateNewCohortFromFile(IBasicActivateItems activator,
+
+        [DemandsInitialization("A file containing private cohort identifiers")]
+        FileInfo file,
+
+        [DemandsInitialization(Desc_ExternalCohortTableParameter)]
+        ExternalCohortTable externalCohortTable,
+
+        [DemandsInitialization(Desc_CohortNameParameter)]
+        string cohortName,
+
+        [DemandsInitialization(Desc_ProjectParameter)]
+        Project project,
+
+        [DemandsInitialization("Pipeline for reading from the file and allocating release identifiers")]
+        IPipeline pipeline)
+        : base(activator, externalCohortTable, cohortName, project, pipeline)
+    {
+        _file = file;
+        UseTripleDotSuffix = true;
+    }
+
+    public override string GetCommandHelp()
+    {
+        return "Create a cohort containing ALL the patient identifiers in the chosen file";
+    }
+
+    public override Image<Rgba32> GetImage(IIconProvider iconProvider)
+    {
+        return Image.Load<Rgba32>(CatalogueIcons.ImportFile);
+    }
+
+    public override void Execute()
+    {
+        base.Execute();
+
+        FlatFileToLoad flatFile;
+
+        //if no explicit file has been chosen
+        if (_file == null)
         {
-            UseTripleDotSuffix = true;
-        }
+            var file = BasicActivator.SelectFile("Cohort file");
 
-        public ExecuteCommandCreateNewCohortFromFile(IBasicActivateItems activator, FileInfo file, ExternalCohortTable externalCohortTable)
-            : this(activator, file, externalCohortTable, null, null, null)
-        {
-        }
-
-        [UseWithObjectConstructor]
-        public ExecuteCommandCreateNewCohortFromFile(IBasicActivateItems activator,
-
-            [DemandsInitialization("A file containing private cohort identifiers")]
-            FileInfo file,
-
-            [DemandsInitialization(Desc_ExternalCohortTableParameter)]
-            ExternalCohortTable externalCohortTable,
-
-            [DemandsInitialization(Desc_CohortNameParameter)]
-            string cohortName,
-
-            [DemandsInitialization(Desc_ProjectParameter)]
-            Project project,
-
-            [DemandsInitialization("Pipeline for reading from the file and allocating release identifiers")]
-            IPipeline pipeline)
-            : base(activator, externalCohortTable, cohortName, project, pipeline)
-        {
-            _file = file;
-            UseTripleDotSuffix = true;
-        }
-
-        public override string GetCommandHelp()
-        {
-            return "Create a cohort containing ALL the patient identifiers in the chosen file";
-        }
-
-        public override Image<Rgba32> GetImage(IIconProvider iconProvider)
-        {
-            return Image.Load<Rgba32>(CatalogueIcons.ImportFile);
-        }
-
-        public override void Execute()
-        {
-            base.Execute();
-
-            FlatFileToLoad flatFile;
-
-            //if no explicit file has been chosen
-            if (_file == null)
-            {
-                var file = BasicActivator.SelectFile("Cohort file");
-
-                //get user to pick one
-                if (file == null)
-                    return;
-
-                flatFile = new FlatFileToLoad(file);
-            }
-            else
-                flatFile = new FlatFileToLoad(_file);
-
-            var auditLogBuilder = new ExtractableCohortAuditLogBuilder();
-            var request = GetCohortCreationRequest(auditLogBuilder.GetDescription(flatFile.File));
-
-            //user choose to cancel the cohort creation request dialogue
-            if (request == null)
+            //get user to pick one
+            if (file == null)
                 return;
 
-            request.FileToLoad = flatFile;
-
-            var configureAndExecuteDialog = GetConfigureAndExecuteControl(request, "Uploading File " + flatFile.File.Name, flatFile);
-
-            //add the flat file to the dialog with an appropriate description of what they are trying to achieve
-            configureAndExecuteDialog.Run(BasicActivator.RepositoryLocator, null, null, null);
+            flatFile = new FlatFileToLoad(file);
         }
+        else
+            flatFile = new FlatFileToLoad(_file);
+
+        var auditLogBuilder = new ExtractableCohortAuditLogBuilder();
+        var request = GetCohortCreationRequest(auditLogBuilder.GetDescription(flatFile.File));
+
+        //user choose to cancel the cohort creation request dialogue
+        if (request == null)
+            return;
+
+        request.FileToLoad = flatFile;
+
+        var configureAndExecuteDialog = GetConfigureAndExecuteControl(request, "Uploading File " + flatFile.File.Name, flatFile);
+
+        //add the flat file to the dialog with an appropriate description of what they are trying to achieve
+        configureAndExecuteDialog.Run(BasicActivator.RepositoryLocator, null, null, null);
     }
 }

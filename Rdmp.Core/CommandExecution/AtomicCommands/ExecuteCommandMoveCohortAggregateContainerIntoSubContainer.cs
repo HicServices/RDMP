@@ -8,43 +8,42 @@ using Rdmp.Core.CommandExecution.Combining;
 using Rdmp.Core.Curation.Data.Cohort;
 using Rdmp.Core.Repositories.Construction;
 
-namespace Rdmp.Core.CommandExecution.AtomicCommands
+namespace Rdmp.Core.CommandExecution.AtomicCommands;
+
+public class ExecuteCommandMoveCohortAggregateContainerIntoSubContainer : BasicCommandExecution
 {
-    public class ExecuteCommandMoveCohortAggregateContainerIntoSubContainer : BasicCommandExecution
-    {
-        private readonly CohortAggregateContainerCombineable _sourceCohortAggregateContainer;
-        private readonly CohortAggregateContainer _targetCohortAggregateContainer;
+    private readonly CohortAggregateContainerCombineable _sourceCohortAggregateContainer;
+    private readonly CohortAggregateContainer _targetCohortAggregateContainer;
         
-        [UseWithObjectConstructor]
-        public ExecuteCommandMoveCohortAggregateContainerIntoSubContainer(IBasicActivateItems activator, CohortAggregateContainer toMove, CohortAggregateContainer into) 
-            : this(activator,new CohortAggregateContainerCombineable(toMove),into)
-        {
+    [UseWithObjectConstructor]
+    public ExecuteCommandMoveCohortAggregateContainerIntoSubContainer(IBasicActivateItems activator, CohortAggregateContainer toMove, CohortAggregateContainer into) 
+        : this(activator,new CohortAggregateContainerCombineable(toMove),into)
+    {
 
-        }
-        public ExecuteCommandMoveCohortAggregateContainerIntoSubContainer(IBasicActivateItems activator, CohortAggregateContainerCombineable sourceCohortAggregateContainer, CohortAggregateContainer targetCohortAggregateContainer) : base(activator)
-        {    
-            _sourceCohortAggregateContainer = sourceCohortAggregateContainer;
-            _targetCohortAggregateContainer = targetCohortAggregateContainer;
+    }
+    public ExecuteCommandMoveCohortAggregateContainerIntoSubContainer(IBasicActivateItems activator, CohortAggregateContainerCombineable sourceCohortAggregateContainer, CohortAggregateContainer targetCohortAggregateContainer) : base(activator)
+    {    
+        _sourceCohortAggregateContainer = sourceCohortAggregateContainer;
+        _targetCohortAggregateContainer = targetCohortAggregateContainer;
 
-            if(_sourceCohortAggregateContainer.AllSubContainersRecursively.Contains(_targetCohortAggregateContainer))
-                SetImpossible("Cannot move a container into one of its own subcontainers");
+        if(_sourceCohortAggregateContainer.AllSubContainersRecursively.Contains(_targetCohortAggregateContainer))
+            SetImpossible("Cannot move a container into one of its own subcontainers");
 
-            if(_sourceCohortAggregateContainer.AggregateContainer.Equals(_targetCohortAggregateContainer))
-                SetImpossible("Cannot move a container into itself");
+        if(_sourceCohortAggregateContainer.AggregateContainer.Equals(_targetCohortAggregateContainer))
+            SetImpossible("Cannot move a container into itself");
             
-            if(_targetCohortAggregateContainer.ShouldBeReadOnly(out string reason))
-                SetImpossible(reason);
-        }
+        if(_targetCohortAggregateContainer.ShouldBeReadOnly(out string reason))
+            SetImpossible(reason);
+    }
 
-        public override void Execute()
-        {
-            base.Execute();
+    public override void Execute()
+    {
+        base.Execute();
             
-            var cic = _sourceCohortAggregateContainer.AggregateContainer.GetCohortIdentificationConfiguration();
-            var srcContainer = _sourceCohortAggregateContainer.AggregateContainer;
-            srcContainer.MakeIntoAnOrphan();
-            _targetCohortAggregateContainer.AddChild(srcContainer);
-            Publish(cic);
-        }
+        var cic = _sourceCohortAggregateContainer.AggregateContainer.GetCohortIdentificationConfiguration();
+        var srcContainer = _sourceCohortAggregateContainer.AggregateContainer;
+        srcContainer.MakeIntoAnOrphan();
+        _targetCohortAggregateContainer.AddChild(srcContainer);
+        Publish(cic);
     }
 }

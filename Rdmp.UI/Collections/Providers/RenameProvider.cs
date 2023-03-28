@@ -15,96 +15,95 @@ using Rdmp.UI.ItemActivation;
 using Rdmp.UI.SimpleDialogs;
 
 
-namespace Rdmp.UI.Collections.Providers
+namespace Rdmp.UI.Collections.Providers;
+
+/// <summary>
+/// Determines whether objects are <see cref="INamed"/> and provides UI support for changing the <see cref="INamed.Name"/>.
+/// </summary>
+public class RenameProvider
 {
-    /// <summary>
-    /// Determines whether objects are <see cref="INamed"/> and provides UI support for changing the <see cref="INamed.Name"/>.
-    /// </summary>
-    public class RenameProvider
-    {
-        private readonly IActivateItems _activator;
-        private readonly ObjectListView _olv;
-        private readonly OLVColumn _columnThatSupportsRenaming;
+    private readonly IActivateItems _activator;
+    private readonly ObjectListView _olv;
+    private readonly OLVColumn _columnThatSupportsRenaming;
         
-        public bool AllowRenaming {  
-            get
-            {
-                return _columnThatSupportsRenaming.IsEditable;
-            }
-            set
-            {
-                _olv.CellEditActivation = value ? ObjectListView.CellEditActivateMode.SingleClick : ObjectListView.CellEditActivateMode.None;
-                _columnThatSupportsRenaming.IsEditable = value;
-            } }
-
-        public RenameProvider(IActivateItems activator, ObjectListView olv, OLVColumn columnThatSupportsRenaming)
+    public bool AllowRenaming {  
+        get
         {
-            _activator = activator;
-            _olv = olv;
-            _columnThatSupportsRenaming = columnThatSupportsRenaming;
+            return _columnThatSupportsRenaming.IsEditable;
         }
-
-        public void RegisterEvents()
+        set
         {
-            _olv.CellEditStarting += OlvOnCellEditStarting;
-            _olv.CellEditFinishing += OlvOnCellEditFinishing;
+            _olv.CellEditActivation = value ? ObjectListView.CellEditActivateMode.SingleClick : ObjectListView.CellEditActivateMode.None;
+            _columnThatSupportsRenaming.IsEditable = value;
+        } }
 
-            _columnThatSupportsRenaming.CellEditUseWholeCell = true;
-            _columnThatSupportsRenaming.AutoCompleteEditorMode = AutoCompleteMode.None;
+    public RenameProvider(IActivateItems activator, ObjectListView olv, OLVColumn columnThatSupportsRenaming)
+    {
+        _activator = activator;
+        _olv = olv;
+        _columnThatSupportsRenaming = columnThatSupportsRenaming;
+    }
 
-            AllowRenaming = true;
+    public void RegisterEvents()
+    {
+        _olv.CellEditStarting += OlvOnCellEditStarting;
+        _olv.CellEditFinishing += OlvOnCellEditFinishing;
 
-        }
-        private void OlvOnCellEditStarting(object sender, CellEditEventArgs e)
-        {
-            //it's not for our name column
-            if (e.Column != _columnThatSupportsRenaming)
-                return;
+        _columnThatSupportsRenaming.CellEditUseWholeCell = true;
+        _columnThatSupportsRenaming.AutoCompleteEditorMode = AutoCompleteMode.None;
 
-            if (!(e.RowObject is INamed) || e.RowObject is ITableInfo)
-                e.Cancel = true;
-        }
-
-        void OlvOnCellEditFinishing(object sender, CellEditEventArgs e)
-        {
-            if(e.RowObject == null)
-                return;
-            
-            if(e.Column != _columnThatSupportsRenaming)
-                return;
-
-            //don't let them rename things to blank names
-            if (string.IsNullOrWhiteSpace((string) e.NewValue))
-            {
-                e.Cancel = true;
-                return;
-            }
-
-            var name = e.RowObject as INamed;
-
-            try
-            {
-                if (name != null)
-                {
-                    var cmd = new ExecuteCommandRename(_activator, name, (string) e.NewValue);
-
-                    if(cmd.IsImpossible)
-                        MessageBox.Show(cmd.ReasonCommandImpossible);
-                    else
-                        cmd.Execute();
-                }
-                    
-            }
-            catch (Exception exception)
-            {
-                e.Cancel = true;
-                ExceptionViewer.Show(exception);
-
-                //reset it to what it was before
-                if (name != null)
-                    name.Name = (string)e.Value;
-            }
-        }
+        AllowRenaming = true;
 
     }
+    private void OlvOnCellEditStarting(object sender, CellEditEventArgs e)
+    {
+        //it's not for our name column
+        if (e.Column != _columnThatSupportsRenaming)
+            return;
+
+        if (!(e.RowObject is INamed) || e.RowObject is ITableInfo)
+            e.Cancel = true;
+    }
+
+    void OlvOnCellEditFinishing(object sender, CellEditEventArgs e)
+    {
+        if(e.RowObject == null)
+            return;
+            
+        if(e.Column != _columnThatSupportsRenaming)
+            return;
+
+        //don't let them rename things to blank names
+        if (string.IsNullOrWhiteSpace((string) e.NewValue))
+        {
+            e.Cancel = true;
+            return;
+        }
+
+        var name = e.RowObject as INamed;
+
+        try
+        {
+            if (name != null)
+            {
+                var cmd = new ExecuteCommandRename(_activator, name, (string) e.NewValue);
+
+                if(cmd.IsImpossible)
+                    MessageBox.Show(cmd.ReasonCommandImpossible);
+                else
+                    cmd.Execute();
+            }
+                    
+        }
+        catch (Exception exception)
+        {
+            e.Cancel = true;
+            ExceptionViewer.Show(exception);
+
+            //reset it to what it was before
+            if (name != null)
+                name.Name = (string)e.Value;
+        }
+    }
+
 }

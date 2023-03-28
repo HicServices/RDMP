@@ -10,15 +10,14 @@ using Rdmp.Core.DataFlowPipeline;
 using Rdmp.Core.DataLoad.Engine.Job;
 using ReusableLibraryCode.Checks;
 
-namespace Rdmp.Core.DataLoad.Engine.DataProvider
+namespace Rdmp.Core.DataLoad.Engine.DataProvider;
+
+/// <summary>
+/// DLE component ostensibly responsible for 'fetching data'.  This typically involves fetching data and saving it into the ILoadDirectory (e.g. into 
+/// ForLoading) ready for loading by later components.
+/// </summary>
+public interface IDataProvider : IDisposeAfterDataLoad,ICheckable
 {
-    /// <summary>
-    /// DLE component ostensibly responsible for 'fetching data'.  This typically involves fetching data and saving it into the ILoadDirectory (e.g. into 
-    /// ForLoading) ready for loading by later components.
-    /// </summary>
-    public interface IDataProvider : IDisposeAfterDataLoad,ICheckable
-    {
-        void Initialize(ILoadDirectory directory, DiscoveredDatabase dbInfo);
-        ExitCodeType Fetch(IDataLoadJob job, GracefulCancellationToken cancellationToken);
-    }
+    void Initialize(ILoadDirectory directory, DiscoveredDatabase dbInfo);
+    ExitCodeType Fetch(IDataLoadJob job, GracefulCancellationToken cancellationToken);
 }

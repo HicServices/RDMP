@@ -10,47 +10,46 @@ using Rdmp.Core.DataExport.DataRelease.Potential;
 using Rdmp.Core.Ticketing;
 using SixLabors.ImageSharp.PixelFormats;
 
-namespace Rdmp.Core.Icons.IconProvision.StateBasedIconProviders
+namespace Rdmp.Core.Icons.IconProvision.StateBasedIconProviders;
+
+public class ReleaseabilityStateBasedIconProvider : IObjectStateBasedIconProvider
 {
-    public class ReleaseabilityStateBasedIconProvider : IObjectStateBasedIconProvider
+    private readonly Dictionary<Releaseability,Image<Rgba32>> _images;
+    private readonly Dictionary<TicketingReleaseabilityEvaluation, Image<Rgba32>> _environmentImages;
+
+    public ReleaseabilityStateBasedIconProvider()
     {
-        private readonly Dictionary<Releaseability,Image<Rgba32>> _images;
-        private readonly Dictionary<TicketingReleaseabilityEvaluation, Image<Rgba32>> _environmentImages;
-
-        public ReleaseabilityStateBasedIconProvider()
+        _images = new()
         {
-            _images = new()
-            {
-                { Releaseability.Undefined, Image.Load<Rgba32>(CatalogueIcons.TinyRed) },
+            { Releaseability.Undefined, Image.Load<Rgba32>(CatalogueIcons.TinyRed) },
 
-                { Releaseability.ExceptionOccurredWhileEvaluatingReleaseability, Image.Load<Rgba32>(CatalogueIcons.TinyRed) },
-                { Releaseability.NeverBeenSuccessfullyExecuted, Image.Load<Rgba32>(CatalogueIcons.Failed) },
-                { Releaseability.ExtractFilesMissing, Image.Load<Rgba32>(CatalogueIcons.FileMissing) },
-                { Releaseability.ExtractionSQLDesynchronisation, Image.Load<Rgba32>(CatalogueIcons.Diff) },
-                { Releaseability.CohortDesynchronisation, Image.Load<Rgba32>(CatalogueIcons.Failed) },
-                { Releaseability.ColumnDifferencesVsCatalogue, Image.Load<Rgba32>(CatalogueIcons.TinyYellow) },
-                { Releaseability.Releaseable, Image.Load<Rgba32>(CatalogueIcons.TinyGreen) }
-            };
+            { Releaseability.ExceptionOccurredWhileEvaluatingReleaseability, Image.Load<Rgba32>(CatalogueIcons.TinyRed) },
+            { Releaseability.NeverBeenSuccessfullyExecuted, Image.Load<Rgba32>(CatalogueIcons.Failed) },
+            { Releaseability.ExtractFilesMissing, Image.Load<Rgba32>(CatalogueIcons.FileMissing) },
+            { Releaseability.ExtractionSQLDesynchronisation, Image.Load<Rgba32>(CatalogueIcons.Diff) },
+            { Releaseability.CohortDesynchronisation, Image.Load<Rgba32>(CatalogueIcons.Failed) },
+            { Releaseability.ColumnDifferencesVsCatalogue, Image.Load<Rgba32>(CatalogueIcons.TinyYellow) },
+            { Releaseability.Releaseable, Image.Load<Rgba32>(CatalogueIcons.TinyGreen) }
+        };
 
-            _environmentImages = new()
-            {
-                { TicketingReleaseabilityEvaluation.CouldNotAuthenticateAgainstServer, Image.Load<Rgba32>(CatalogueIcons.TinyRed) },
-                { TicketingReleaseabilityEvaluation.CouldNotReachTicketingServer, Image.Load<Rgba32>(CatalogueIcons.TinyRed) },
-                { TicketingReleaseabilityEvaluation.NotReleaseable, Image.Load<Rgba32>(CatalogueIcons.TinyRed) },
-                { TicketingReleaseabilityEvaluation.Releaseable, Image.Load<Rgba32>(CatalogueIcons.TinyGreen) },
-                { TicketingReleaseabilityEvaluation.TicketingLibraryCrashed, Image.Load<Rgba32>(CatalogueIcons.TinyRed) },
-                { TicketingReleaseabilityEvaluation.TicketingLibraryMissingOrNotConfiguredCorrectly, Image.Load<Rgba32>(CatalogueIcons.TinyYellow) }
-            };
-        }
-
-        public Image<Rgba32> GetImageIfSupportedObject(object o)
+        _environmentImages = new()
         {
-            return o switch
-            {
-                Releaseability releaseability => _images[releaseability],
-                TicketingReleaseabilityEvaluation evaluation => _environmentImages[evaluation],
-                _ => null
-            };
-        }
+            { TicketingReleaseabilityEvaluation.CouldNotAuthenticateAgainstServer, Image.Load<Rgba32>(CatalogueIcons.TinyRed) },
+            { TicketingReleaseabilityEvaluation.CouldNotReachTicketingServer, Image.Load<Rgba32>(CatalogueIcons.TinyRed) },
+            { TicketingReleaseabilityEvaluation.NotReleaseable, Image.Load<Rgba32>(CatalogueIcons.TinyRed) },
+            { TicketingReleaseabilityEvaluation.Releaseable, Image.Load<Rgba32>(CatalogueIcons.TinyGreen) },
+            { TicketingReleaseabilityEvaluation.TicketingLibraryCrashed, Image.Load<Rgba32>(CatalogueIcons.TinyRed) },
+            { TicketingReleaseabilityEvaluation.TicketingLibraryMissingOrNotConfiguredCorrectly, Image.Load<Rgba32>(CatalogueIcons.TinyYellow) }
+        };
+    }
+
+    public Image<Rgba32> GetImageIfSupportedObject(object o)
+    {
+        return o switch
+        {
+            Releaseability releaseability => _images[releaseability],
+            TicketingReleaseabilityEvaluation evaluation => _environmentImages[evaluation],
+            _ => null
+        };
     }
 }

@@ -6,20 +6,19 @@
 
 using MapsDirectlyToDatabaseTable;
 
-namespace Rdmp.Core.CommandExecution
-{
-    /// <summary>
-    /// Models a request to make a given object (<see cref="ObjectToEmphasise"/>) in an RDMP tree view visible to the user.
-    /// </summary>
-    public class EmphasiseRequest
-    {
-        public object ObjectToEmphasise { get; set; }
-        public int ExpansionDepth { get; set; }
+namespace Rdmp.Core.CommandExecution;
 
-        public EmphasiseRequest(object objectToEmphasise, int expansionDepth = 0)
-        {
-            ObjectToEmphasise = objectToEmphasise;
-            ExpansionDepth = expansionDepth;
-        }
+/// <summary>
+/// Models a request to make a given object (<see cref="ObjectToEmphasise"/>) in an RDMP tree view visible to the user.
+/// </summary>
+public class EmphasiseRequest
+{
+    public object ObjectToEmphasise { get; set; }
+    public int ExpansionDepth { get; set; }
+
+    public EmphasiseRequest(object objectToEmphasise, int expansionDepth = 0)
+    {
+        ObjectToEmphasise = objectToEmphasise;
+        ExpansionDepth = expansionDepth;
     }
 }

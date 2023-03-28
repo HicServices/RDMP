@@ -13,38 +13,37 @@ using ReusableLibraryCode.Icons.IconProvision;
 using SixLabors.ImageSharp;
 using SixLabors.ImageSharp.PixelFormats;
 
-namespace Rdmp.UI.CommandExecution.AtomicCommands
+namespace Rdmp.UI.CommandExecution.AtomicCommands;
+
+/// <summary>
+/// Publishes the fact that changes have been made to a <see cref="DatabaseEntity"/> which mean that other user interfaces in the
+/// application may be now out of date (or no longer valid).  This will trigger the <see cref="RefreshBus"/> to call all listeners
+/// </summary>
+public class ExecuteCommandRefreshObject:BasicUICommandExecution,IAtomicCommand
 {
-    /// <summary>
-    /// Publishes the fact that changes have been made to a <see cref="DatabaseEntity"/> which mean that other user interfaces in the
-    /// application may be now out of date (or no longer valid).  This will trigger the <see cref="RefreshBus"/> to call all listeners
-    /// </summary>
-    public class ExecuteCommandRefreshObject:BasicUICommandExecution,IAtomicCommand
+    private readonly DatabaseEntity _databaseEntity;
+
+    public ExecuteCommandRefreshObject(IActivateItems activator, DatabaseEntity databaseEntity) : base(activator)
     {
-        private readonly DatabaseEntity _databaseEntity;
+        _databaseEntity = databaseEntity;
 
-        public ExecuteCommandRefreshObject(IActivateItems activator, DatabaseEntity databaseEntity) : base(activator)
-        {
-            _databaseEntity = databaseEntity;
+        if(_databaseEntity == null)
+            SetImpossible("No DatabaseEntity was specified");
 
-            if(_databaseEntity == null)
-                SetImpossible("No DatabaseEntity was specified");
+        Weight = 100.5f;
+    }
 
-            Weight = 100.5f;
-        }
+    public override void Execute()
+    {
+        base.Execute();
 
-        public override void Execute()
-        {
-            base.Execute();
+        _databaseEntity.RevertToDatabaseState();
+        BasicActivator.HardRefresh = true;
+        Publish(_databaseEntity);
+    }
 
-            _databaseEntity.RevertToDatabaseState();
-            BasicActivator.HardRefresh = true;
-            Publish(_databaseEntity);
-        }
-
-        public override Image<Rgba32> GetImage(IIconProvider iconProvider)
-        {
-            return Image.Load<Rgba32>(FamFamFamIcons.arrow_refresh);
-        }
+    public override Image<Rgba32> GetImage(IIconProvider iconProvider)
+    {
+        return Image.Load<Rgba32>(FamFamFamIcons.arrow_refresh);
     }
 }

@@ -4,15 +4,14 @@
 // RDMP is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License for more details.
 // You should have received a copy of the GNU General Public License along with RDMP. If not, see <https://www.gnu.org/licenses/>.
 
-namespace Rdmp.Core.Curation.Data
+namespace Rdmp.Core.Curation.Data;
+
+/// <summary>
+/// An object that helps understanding a <see cref="Catalogue"/>
+/// </summary>
+public interface ISupportingObject
 {
-    /// <summary>
-    /// An object that helps understanding a <see cref="Catalogue"/>
-    /// </summary>
-    public interface ISupportingObject
-    {
-        int Catalogue_ID { get; set; }
-        bool Extractable { get; set; }
-        bool IsGlobal { get; set; }
-    }
+    int Catalogue_ID { get; set; }
+    bool Extractable { get; set; }
+    bool IsGlobal { get; set; }
 }

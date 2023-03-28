@@ -16,89 +16,88 @@ using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Forms;
 
-namespace Rdmp.UI.SimpleDialogs
-{
-    public partial class TaskDescriptionLabel : UserControl
-    {
-        private Color _backColour;
-        private Color _foreColour;
-        public TaskDescriptionLabel()
-        {
-            InitializeComponent();
-        }
+namespace Rdmp.UI.SimpleDialogs;
 
-        public void SetupFor(DialogArgs args)
-        {
-            var task = args.TaskDescription;
-            var entryLabel = args.EntryLabel;
+public partial class TaskDescriptionLabel : UserControl
+{
+    private Color _backColour;
+    private Color _foreColour;
+    public TaskDescriptionLabel()
+    {
+        InitializeComponent();
+    }
+
+    public void SetupFor(DialogArgs args)
+    {
+        var task = args.TaskDescription;
+        var entryLabel = args.EntryLabel;
             
 
-            tbTaskDescription.Visible = pnlTaskDescription.Visible = !string.IsNullOrWhiteSpace(task);
-            tbTaskDescription.Text = task;
+        tbTaskDescription.Visible = pnlTaskDescription.Visible = !string.IsNullOrWhiteSpace(task);
+        tbTaskDescription.Text = task;
 
-            tbEntryLabel.Visible = pnlEntryLabel.Visible = !string.IsNullOrWhiteSpace(entryLabel);
+        tbEntryLabel.Visible = pnlEntryLabel.Visible = !string.IsNullOrWhiteSpace(entryLabel);
 
-            if (entryLabel != null && entryLabel.Length > WideMessageBox.MAX_LENGTH_BODY)
-                entryLabel = entryLabel.Substring(0, WideMessageBox.MAX_LENGTH_BODY);
+        if (entryLabel != null && entryLabel.Length > WideMessageBox.MAX_LENGTH_BODY)
+            entryLabel = entryLabel.Substring(0, WideMessageBox.MAX_LENGTH_BODY);
 
-            // set prompt text. If theres a TaskDescription too then leave a bit of extra space
-            this.tbEntryLabel.Text = entryLabel;
+        // set prompt text. If theres a TaskDescription too then leave a bit of extra space
+        this.tbEntryLabel.Text = entryLabel;
 
-            this.Height = (!string.IsNullOrWhiteSpace(entryLabel) ? tbEntryLabel.Height : 0) + 
-                          (!string.IsNullOrWhiteSpace(task) ? tbTaskDescription.Height : 0);
+        this.Height = (!string.IsNullOrWhiteSpace(entryLabel) ? tbEntryLabel.Height : 0) + 
+                      (!string.IsNullOrWhiteSpace(task) ? tbTaskDescription.Height : 0);
 
-            //Switch style based on args.DesciptionSeverity
-            switch (args.DesciptionSeverity)
-            {
-                case (ProgressEventType.Warning):
-                    _backColour = Color.FromArgb(253, 248, 228);
-                    _foreColour = Color.FromArgb(134, 105, 53);
-                    break;
-                case (ProgressEventType.Error):
-                    _backColour = Color.FromArgb(242, 222, 223);
-                    _foreColour = Color.FromArgb(143, 58, 75);
-                    break;
-                //Default blue information colours
-                default:
-                    _backColour = Color.FromArgb(217, 236, 242);
-                    _foreColour = Color.FromArgb(44, 108, 128);
-                    break;
-            }
-
-            pnlTaskDescriptionBorder.BackColor = _backColour;
-            tbTaskDescription.BackColor = _backColour;
-            tbTaskDescription.ForeColor = _foreColour;
-        }
-
-        /// <summary>
-        /// Returns the width this control would ideally like to take up
-        /// </summary>
-        public int PreferredWidth => Math.Max(tbEntryLabel.Width, tbTaskDescription.Width);
-        public int PreferredHeight => this.Height;
-
-        private void textBox1_Resize(object sender, EventArgs e)
+        //Switch style based on args.DesciptionSeverity
+        switch (args.DesciptionSeverity)
         {
-            SizeF MessageSize = tbTaskDescription.CreateGraphics()
-                                            .MeasureString(tbTaskDescription.Text,
-                                                            tbTaskDescription.Font,
-                                                            tbTaskDescription.Width,
-                                                            new StringFormat(0));
-
-            tbTaskDescription.Height = (int)MessageSize.Height + 3;
-            pnlTaskDescriptionBorder.Height = tbTaskDescription.Height + 20;
-            pnlTaskDescription.Height = pnlTopMargin.Height + pnlTaskDescriptionBorder.Height;
+            case (ProgressEventType.Warning):
+                _backColour = Color.FromArgb(253, 248, 228);
+                _foreColour = Color.FromArgb(134, 105, 53);
+                break;
+            case (ProgressEventType.Error):
+                _backColour = Color.FromArgb(242, 222, 223);
+                _foreColour = Color.FromArgb(143, 58, 75);
+                break;
+            //Default blue information colours
+            default:
+                _backColour = Color.FromArgb(217, 236, 242);
+                _foreColour = Color.FromArgb(44, 108, 128);
+                break;
         }
 
-        private void tbEntryLabel_Resize(object sender, EventArgs e)
-        {
-            SizeF MessageSize = tbEntryLabel.CreateGraphics()
-                                            .MeasureString(tbEntryLabel.Text,
-                                                            tbEntryLabel.Font,
-                                                            tbEntryLabel.Width,
-                                                            new StringFormat(0));
+        pnlTaskDescriptionBorder.BackColor = _backColour;
+        tbTaskDescription.BackColor = _backColour;
+        tbTaskDescription.ForeColor = _foreColour;
+    }
 
-            tbEntryLabel.Height = (int)MessageSize.Height + 3;
-            pnlEntryLabel.Height = pnlTopMargin.Height + tbEntryLabel.Height;
-        }
+    /// <summary>
+    /// Returns the width this control would ideally like to take up
+    /// </summary>
+    public int PreferredWidth => Math.Max(tbEntryLabel.Width, tbTaskDescription.Width);
+    public int PreferredHeight => this.Height;
+
+    private void textBox1_Resize(object sender, EventArgs e)
+    {
+        SizeF MessageSize = tbTaskDescription.CreateGraphics()
+            .MeasureString(tbTaskDescription.Text,
+                tbTaskDescription.Font,
+                tbTaskDescription.Width,
+                new StringFormat(0));
+
+        tbTaskDescription.Height = (int)MessageSize.Height + 3;
+        pnlTaskDescriptionBorder.Height = tbTaskDescription.Height + 20;
+        pnlTaskDescription.Height = pnlTopMargin.Height + pnlTaskDescriptionBorder.Height;
+    }
+
+    private void tbEntryLabel_Resize(object sender, EventArgs e)
+    {
+        SizeF MessageSize = tbEntryLabel.CreateGraphics()
+            .MeasureString(tbEntryLabel.Text,
+                tbEntryLabel.Font,
+                tbEntryLabel.Width,
+                new StringFormat(0));
+
+        tbEntryLabel.Height = (int)MessageSize.Height + 3;
+        pnlEntryLabel.Height = pnlTopMargin.Height + tbEntryLabel.Height;
     }
 }

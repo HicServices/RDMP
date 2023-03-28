@@ -9,14 +9,13 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace ResearchDataManagementPlatform.Updates
-{
-    /// <summary>
-    /// Github Json class
-    /// </summary>
-    public class GithubReleases
-    {
-        public GHRelease[] Entries { get; set; }
+namespace ResearchDataManagementPlatform.Updates;
 
-    }
+/// <summary>
+/// Github Json class
+/// </summary>
+public class GithubReleases
+{
+    public GHRelease[] Entries { get; set; }
+
 }

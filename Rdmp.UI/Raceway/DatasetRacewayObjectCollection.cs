@@ -10,68 +10,67 @@ using System.Linq;
 using Rdmp.Core.Curation.Data;
 using Rdmp.Core.Curation.Data.Dashboarding;
 
-namespace Rdmp.UI.Raceway
+namespace Rdmp.UI.Raceway;
+
+/// <summary>
+/// Input/Persistence collection for <see cref="DatasetRaceway"/>
+/// </summary>
+public class DatasetRacewayObjectCollection : PersistableObjectCollection
 {
-    /// <summary>
-    /// Input/Persistence collection for <see cref="DatasetRaceway"/>
-    /// </summary>
-    public class DatasetRacewayObjectCollection : PersistableObjectCollection
+    public DatasetRaceway.RacewayShowPeriod ShowPeriod { get; set; }
+    public bool IgnoreRows { get; set; }
+
+    public DatasetRacewayObjectCollection()
     {
-        public DatasetRaceway.RacewayShowPeriod ShowPeriod { get; set; }
-        public bool IgnoreRows { get; set; }
+        //default
+        ShowPeriod = DatasetRaceway.RacewayShowPeriod.AllTime;
+        IgnoreRows = false;
+    }
 
-        public DatasetRacewayObjectCollection()
+    public Catalogue[] GetCatalogues()
+    {
+        return DatabaseObjects.Cast<Catalogue>().ToArray();
+    }
+
+    public override string SaveExtraText()
+    {
+        return Helper.SaveDictionaryToString(new Dictionary<string, string>
         {
-            //default
-            ShowPeriod = DatasetRaceway.RacewayShowPeriod.AllTime;
-            IgnoreRows = false;
-        }
+            {"ShowPeriod", ShowPeriod.ToString()},
+            {"IgnoreRows", IgnoreRows.ToString()}
+        });
+    }
 
-        public Catalogue[] GetCatalogues()
-        {
-            return DatabaseObjects.Cast<Catalogue>().ToArray();
-        }
+    public override void LoadExtraText(string s)
+    {
+        var dict = Helper.LoadDictionaryFromString(s);
 
-        public override string SaveExtraText()
-        {
-            return Helper.SaveDictionaryToString(new Dictionary<string, string>
-            {
-                {"ShowPeriod", ShowPeriod.ToString()},
-                {"IgnoreRows", IgnoreRows.ToString()}
-            });
-        }
+        //if it's empty we just use the default values we are set up for
+        if (dict == null || !dict.Any())
+            return;
 
-        public override void LoadExtraText(string s)
-        {
-            var dict = Helper.LoadDictionaryFromString(s);
+        ShowPeriod = (DatasetRaceway.RacewayShowPeriod)Enum.Parse(typeof(DatasetRaceway.RacewayShowPeriod), dict["ShowPeriod"], true);
+        IgnoreRows = Convert.ToBoolean(dict["IgnoreRows"]);
+    }
 
-            //if it's empty we just use the default values we are set up for
-            if (dict == null || !dict.Any())
-                return;
+    public void AddCatalogue(Catalogue catalogue)
+    {
+        if(catalogue == null)
+            throw new ArgumentException("Catalogue must not be null", "catalogue");
 
-            ShowPeriod = (DatasetRaceway.RacewayShowPeriod)Enum.Parse(typeof(DatasetRaceway.RacewayShowPeriod), dict["ShowPeriod"], true);
-            IgnoreRows = Convert.ToBoolean(dict["IgnoreRows"]);
-        }
+        DatabaseObjects.Add(catalogue);
+    }
 
-        public void AddCatalogue(Catalogue catalogue)
-        {
-            if(catalogue == null)
-                throw new ArgumentException("Catalogue must not be null", "catalogue");
+    public void RemoveCatalogue(Catalogue catalogue)
+    {
+        if(catalogue == null)
+            throw new ArgumentException("Catalogue must not be null", "catalogue");
 
-            DatabaseObjects.Add(catalogue);
-        }
+        DatabaseObjects.Remove(catalogue);
+    }
 
-        public void RemoveCatalogue(Catalogue catalogue)
-        {
-            if(catalogue == null)
-                throw new ArgumentException("Catalogue must not be null", "catalogue");
-
-            DatabaseObjects.Remove(catalogue);
-        }
-
-        public void ClearDatabaseObjects()
-        {
-            DatabaseObjects.Clear();
-        }
+    public void ClearDatabaseObjects()
+    {
+        DatabaseObjects.Clear();
     }
 }

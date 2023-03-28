@@ -15,52 +15,51 @@ using Rdmp.UI.ProjectUI.Graphs;
 using Rdmp.UI.SimpleDialogs;
 using ReusableLibraryCode.Icons.IconProvision;
 
-namespace Rdmp.UI.Menus
+namespace Rdmp.UI.Menus;
+
+class SelectedDataSetsMenu : RDMPContextMenuStrip
 {
-    class SelectedDataSetsMenu : RDMPContextMenuStrip
+    private readonly SelectedDataSets _selectedDataSet;
+    private IExtractionConfiguration _extractionConfiguration;
+
+    public SelectedDataSetsMenu(RDMPContextMenuStripArgs args, SelectedDataSets selectedDataSet): base(args, selectedDataSet)
     {
-        private readonly SelectedDataSets _selectedDataSet;
-        private IExtractionConfiguration _extractionConfiguration;
+        _selectedDataSet = selectedDataSet;
+        _extractionConfiguration = _selectedDataSet.ExtractionConfiguration;
 
-        public SelectedDataSetsMenu(RDMPContextMenuStripArgs args, SelectedDataSets selectedDataSet): base(args, selectedDataSet)
+        ReBrandActivateAs("Edit Extractable Columns", RDMPConcept.ExtractionConfiguration, OverlayKind.Edit);
+
+        Add(new ExecuteCommandExecuteExtractionConfiguration(_activator, selectedDataSet) { Weight = 4f});
+
+        Add(new ExecuteCommandRelease(_activator) { Weight = 4.1f }.SetTarget(selectedDataSet));
+
+
+
+        Add(new ExecuteCommandViewThenVsNowSql(_activator, selectedDataSet) { Weight = 5.1f });
+
+
+        /////////////////// Extraction Graphs //////////////////////////////
+        var cata = selectedDataSet.ExtractableDataSet.Catalogue;
+            
+        // If the Catalogue has been deleted, don't build Catalogue specific menu items
+        if(cata == null)
+            return;
+
+        var availableGraphs = cata.AggregateConfigurations.Where(a => !a.IsCohortIdentificationAggregate).ToArray();
+
+        foreach (AggregateConfiguration graph in availableGraphs)
         {
-            _selectedDataSet = selectedDataSet;
-            _extractionConfiguration = _selectedDataSet.ExtractionConfiguration;
-
-            ReBrandActivateAs("Edit Extractable Columns", RDMPConcept.ExtractionConfiguration, OverlayKind.Edit);
-
-            Add(new ExecuteCommandExecuteExtractionConfiguration(_activator, selectedDataSet) { Weight = 4f});
-
-            Add(new ExecuteCommandRelease(_activator) { Weight = 4.1f }.SetTarget(selectedDataSet));
-
-
-
-            Add(new ExecuteCommandViewThenVsNowSql(_activator, selectedDataSet) { Weight = 5.1f });
-
-
-            /////////////////// Extraction Graphs //////////////////////////////
-            var cata = selectedDataSet.ExtractableDataSet.Catalogue;
-            
-            // If the Catalogue has been deleted, don't build Catalogue specific menu items
-            if(cata == null)
-                return;
-
-            var availableGraphs = cata.AggregateConfigurations.Where(a => !a.IsCohortIdentificationAggregate).ToArray();
-
-            foreach (AggregateConfiguration graph in availableGraphs)
+            Add(new ExecuteCommandExecuteExtractionAggregateGraph(_activator, new ExtractionAggregateGraphObjectCollection(_selectedDataSet, graph))
             {
-                Add(new ExecuteCommandExecuteExtractionAggregateGraph(_activator, new ExtractionAggregateGraphObjectCollection(_selectedDataSet, graph))
-                {
-                    SuggestedCategory = "Graph",
-                    OverrideCommandName = graph.Name,
-                    Weight = 5.2f
-                });
-            }
-            ////////////////////////////////////////////////////////////////////
+                SuggestedCategory = "Graph",
+                OverrideCommandName = graph.Name,
+                Weight = 5.2f
+            });
+        }
+        ////////////////////////////////////////////////////////////////////
             
 
-            Add(new ExecuteCommandOpenExtractionDirectory(_activator, selectedDataSet));
-        }
-
+        Add(new ExecuteCommandOpenExtractionDirectory(_activator, selectedDataSet));
     }
+
 }

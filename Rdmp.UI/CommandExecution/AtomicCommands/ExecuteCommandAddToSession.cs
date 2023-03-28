@@ -13,50 +13,49 @@ using Rdmp.UI.SimpleDialogs;
 using System.Linq;
 using System.Windows.Forms;
 
-namespace Rdmp.UI.CommandExecution.AtomicCommands
+namespace Rdmp.UI.CommandExecution.AtomicCommands;
+
+public class ExecuteCommandAddToSession : BasicUICommandExecution, IAtomicCommand
 {
-    public class ExecuteCommandAddToSession : BasicUICommandExecution, IAtomicCommand
+    private IMapsDirectlyToDatabaseTable[] _toAdd;
+    private readonly SessionCollectionUI session;
+
+    public ExecuteCommandAddToSession(IActivateItems activator, IMapsDirectlyToDatabaseTable[] toAdd, SessionCollectionUI session) : base(activator)
     {
-        private IMapsDirectlyToDatabaseTable[] _toAdd;
-        private readonly SessionCollectionUI session;
+        _toAdd = toAdd;
+        this.session = session;
 
-        public ExecuteCommandAddToSession(IActivateItems activator, IMapsDirectlyToDatabaseTable[] toAdd, SessionCollectionUI session) : base(activator)
+        if (session == null && !activator.GetSessions().Any())
+            SetImpossible("There are no active Sessions");
+
+        Weight = 100.2f;
+
+    }
+    public override void Execute()
+    {
+        base.Execute();
+        var ses = session;
+
+        if (ses == null)
         {
-            _toAdd = toAdd;
-            this.session = session;
+            var sessions = Activator.GetSessions().ToArray();
 
-            if (session == null && !activator.GetSessions().Any())
-                SetImpossible("There are no active Sessions");
-
-            Weight = 100.2f;
-
-        }
-        public override void Execute()
-        {
-            base.Execute();
-            var ses = session;
-
-            if (ses == null)
+            if (sessions.Length == 1)
+                ses = sessions[0];
+            else
             {
-                var sessions = Activator.GetSessions().ToArray();
-
-                if (sessions.Length == 1)
-                    ses = sessions[0];
-                else
+                if(BasicActivator.SelectObject(new DialogArgs 
+                   {
+                       TaskDescription = "Choose which session to add the objects to"
+                   }, sessions,out var selected))
                 {
-                    if(BasicActivator.SelectObject(new DialogArgs 
-                    {
-                     TaskDescription = "Choose which session to add the objects to"
-                    }, sessions,out var selected))
-                    {
-                        ses = selected;
-                    }                       
-                }
+                    ses = selected;
+                }                       
             }
-
-            if (ses == null)
-                return;
-            ses.Add(_toAdd);
         }
+
+        if (ses == null)
+            return;
+        ses.Add(_toAdd);
     }
 }

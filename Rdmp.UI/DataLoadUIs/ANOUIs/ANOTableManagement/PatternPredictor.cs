@@ -7,15 +7,15 @@
 using Rdmp.Core.Curation.Data;
 using ReusableLibraryCode.DataAccess;
 
-namespace Rdmp.UI.DataLoadUIs.ANOUIs.ANOTableManagement
-{
-    internal class PatternPredictor
-    {
-        private readonly ColumnInfo _columnInfo;
+namespace Rdmp.UI.DataLoadUIs.ANOUIs.ANOTableManagement;
 
-        #region horrible SQL code
-        private const string SqlToCountLetters =
-            @"
+internal class PatternPredictor
+{
+    private readonly ColumnInfo _columnInfo;
+
+    #region horrible SQL code
+    private const string SqlToCountLetters =
+        @"
 SELECT  MAX(LEN(thing)), MAX(
 LEN(thing) - 
 LEN(
@@ -125,52 +125,51 @@ REPLACE(thing
 , 'z', '')))
 FROM 
 (select top 1000 FIELDTOEVALUATE as thing from TABLETOEVALUATE  order by newID()) bob";
-        #endregion
+    #endregion
 
-        TableInfo _parent;
+    TableInfo _parent;
 
-        public PatternPredictor(ColumnInfo columnInfo)
+    public PatternPredictor(ColumnInfo columnInfo)
+    {
+        _columnInfo = columnInfo;
+        _parent = columnInfo.TableInfo;
+    }
+
+    public string GetPattern(int timeoutInMilliseconds)
+    {
+
+        var server = DataAccessPortal.GetInstance().ExpectServer(_parent, DataAccessContext.InternalDataProcessing);
+
+        using(var con = server.GetConnection())
         {
-            _columnInfo = columnInfo;
-            _parent = columnInfo.TableInfo;
-        }
+            con.Open();
 
-        public string GetPattern(int timeoutInMilliseconds)
-        {
-
-            var server = DataAccessPortal.GetInstance().ExpectServer(_parent, DataAccessContext.InternalDataProcessing);
-
-            using(var con = server.GetConnection())
+            using (var cmd = server.GetCommand(
+                       SqlToCountLetters
+                           .Replace("FIELDTOEVALUATE", _columnInfo.GetRuntimeName())
+                           .Replace("TABLETOEVALUATE", _parent.Name)
+                       , con))
             {
-                con.Open();
-
-                using (var cmd = server.GetCommand(
-                    SqlToCountLetters
-                        .Replace("FIELDTOEVALUATE", _columnInfo.GetRuntimeName())
-                        .Replace("TABLETOEVALUATE", _parent.Name)
-                    , con))
+                cmd.CommandTimeout = timeoutInMilliseconds;
+                using (var reader = cmd.ExecuteReader())
                 {
-                    cmd.CommandTimeout = timeoutInMilliseconds;
-                    using (var reader = cmd.ExecuteReader())
-                    {
-                        reader.Read();
+                    reader.Read();
 
-                        int longestString = int.Parse(reader[0].ToString());
-                        int largestNumberOfCharactersSpotted = int.Parse(reader[1].ToString());
+                    int longestString = int.Parse(reader[0].ToString());
+                    int largestNumberOfCharactersSpotted = int.Parse(reader[1].ToString());
 
-                        string resultPattern = "";
+                    string resultPattern = "";
 
-                        for (int i = 0; i < largestNumberOfCharactersSpotted; i++)
-                            resultPattern += 'Z';
+                    for (int i = 0; i < largestNumberOfCharactersSpotted; i++)
+                        resultPattern += 'Z';
 
-                        for (int i = 0; i < longestString - largestNumberOfCharactersSpotted; i++)
-                            resultPattern += '9';
+                    for (int i = 0; i < longestString - largestNumberOfCharactersSpotted; i++)
+                        resultPattern += '9';
 
-                        //double up on the first character type (ask chris hall about this)
-                        resultPattern = resultPattern.ToCharArray()[0] + resultPattern;
+                    //double up on the first character type (ask chris hall about this)
+                    resultPattern = resultPattern.ToCharArray()[0] + resultPattern;
 
-                        return resultPattern;
-                    }
+                    return resultPattern;
                 }
             }
         }

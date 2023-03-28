@@ -16,82 +16,81 @@ using Rdmp.UI.ProjectUI;
 using ReusableLibraryCode.Icons.IconProvision;
 using SixLabors.ImageSharp.PixelFormats;
 
-namespace Rdmp.UI.CommandExecution.AtomicCommands
+namespace Rdmp.UI.CommandExecution.AtomicCommands;
+
+public class ExecuteCommandExecuteExtractionConfiguration:BasicUICommandExecution,IAtomicCommandWithTarget
 {
-    public class ExecuteCommandExecuteExtractionConfiguration:BasicUICommandExecution,IAtomicCommandWithTarget
+    private ExtractionConfiguration _extractionConfiguration;
+    private SelectedDataSets _selectedDataSet;
+    private Project _project;
+
+    [UseWithObjectConstructor]
+    public ExecuteCommandExecuteExtractionConfiguration(IActivateItems activator, ExtractionConfiguration extractionConfiguration) : this(activator)
     {
-        private ExtractionConfiguration _extractionConfiguration;
-        private SelectedDataSets _selectedDataSet;
-        private Project _project;
+        _extractionConfiguration = extractionConfiguration;
+    }
 
-        [UseWithObjectConstructor]
-        public ExecuteCommandExecuteExtractionConfiguration(IActivateItems activator, ExtractionConfiguration extractionConfiguration) : this(activator)
-        {
-            _extractionConfiguration = extractionConfiguration;
-        }
+    public ExecuteCommandExecuteExtractionConfiguration(IActivateItems activator, Project project) : this(activator)
+    {
+        SetTarget(project);
+    }
 
-        public ExecuteCommandExecuteExtractionConfiguration(IActivateItems activator, Project project) : this(activator)
-        {
-            SetTarget(project);
-        }
+    public ExecuteCommandExecuteExtractionConfiguration(IActivateItems activator) : base(activator)
+    {
+        OverrideCommandName = "Run Extraction...";
+    }
 
-        public ExecuteCommandExecuteExtractionConfiguration(IActivateItems activator) : base(activator)
-        {
-            OverrideCommandName = "Run Extraction...";
-        }
+    public ExecuteCommandExecuteExtractionConfiguration(IActivateItems activator, SelectedDataSets selectedDataSet) : this(activator)
+    {
+        _extractionConfiguration = (ExtractionConfiguration)selectedDataSet.ExtractionConfiguration;
+        _selectedDataSet = selectedDataSet;
 
-        public ExecuteCommandExecuteExtractionConfiguration(IActivateItems activator, SelectedDataSets selectedDataSet) : this(activator)
-        {
-            _extractionConfiguration = (ExtractionConfiguration)selectedDataSet.ExtractionConfiguration;
-            _selectedDataSet = selectedDataSet;
+    }
 
-        }
+    public override string GetCommandHelp()
+    {
+        return "Extract all the datasets in the configuration linking each against the configuration's cohort";
+    }
 
-        public override string GetCommandHelp()
-        {
-            return "Extract all the datasets in the configuration linking each against the configuration's cohort";
-        }
+    public override Image<Rgba32> GetImage(IIconProvider iconProvider)
+    {
+        return iconProvider.GetImage(RDMPConcept.ExtractionConfiguration,OverlayKind.Execute);
+    }
 
-        public override Image<Rgba32> GetImage(IIconProvider iconProvider)
-        {
-            return iconProvider.GetImage(RDMPConcept.ExtractionConfiguration,OverlayKind.Execute);
-        }
+    public IAtomicCommandWithTarget SetTarget(DatabaseEntity target)
+    {
+        _extractionConfiguration = target as ExtractionConfiguration;
+        _project = target as Project;
 
-        public IAtomicCommandWithTarget SetTarget(DatabaseEntity target)
-        {
-            _extractionConfiguration = target as ExtractionConfiguration;
-            _project = target as Project;
+        //if target is ExtractionConfiguration
+        if(_extractionConfiguration != null && !_extractionConfiguration.IsExtractable(out string reason))
+            SetImpossible(reason);
 
-            //if target is ExtractionConfiguration
-            if(_extractionConfiguration != null && !_extractionConfiguration.IsExtractable(out string reason))
-                SetImpossible(reason);
+        if (_project != null && !_project.ExtractionConfigurations.Any(c => c.IsExtractable(out _)))
+            SetImpossible("Project has no ExtractionConfigurations in a ready state for extraction");
 
-            if (_project != null && !_project.ExtractionConfigurations.Any(c => c.IsExtractable(out _)))
-                SetImpossible("Project has no ExtractionConfigurations in a ready state for extraction");
-
-            return this;
-        }
+        return this;
+    }
         
 
-        public override void Execute()
+    public override void Execute()
+    {
+        base.Execute();
+
+        if(_project != null && _extractionConfiguration == null)
         {
-            base.Execute();
-
-            if(_project != null && _extractionConfiguration == null)
-            {
-                var available = _project.ExtractionConfigurations.Where(c=>c.IsExtractable(out _)).Cast<ExtractionConfiguration>().ToArray();
+            var available = _project.ExtractionConfigurations.Where(c=>c.IsExtractable(out _)).Cast<ExtractionConfiguration>().ToArray();
                 
-                if(available.Any())
-                    _extractionConfiguration = SelectOne(available);
+            if(available.Any())
+                _extractionConfiguration = SelectOne(available);
 
-                if(_extractionConfiguration == null)
-                    return;
-            }
-
-            var ui = Activator.Activate<ExecuteExtractionUI, ExtractionConfiguration>(_extractionConfiguration);
-
-            if (_selectedDataSet != null)
-                ui.TickAllFor(_selectedDataSet);
+            if(_extractionConfiguration == null)
+                return;
         }
+
+        var ui = Activator.Activate<ExecuteExtractionUI, ExtractionConfiguration>(_extractionConfiguration);
+
+        if (_selectedDataSet != null)
+            ui.TickAllFor(_selectedDataSet);
     }
 }

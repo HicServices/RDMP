@@ -12,32 +12,31 @@ using Rdmp.UI.ItemActivation;
 using ReusableLibraryCode.Icons.IconProvision;
 using SixLabors.ImageSharp.PixelFormats;
 
-namespace Rdmp.UI.CommandExecution.AtomicCommands
+namespace Rdmp.UI.CommandExecution.AtomicCommands;
+
+public class ExecuteCommandCreateNewPipeline : BasicUICommandExecution,IAtomicCommand
 {
-    public class ExecuteCommandCreateNewPipeline : BasicUICommandExecution,IAtomicCommand
+    private readonly PipelineUseCase _useCase;
+
+    public ExecuteCommandCreateNewPipeline(IActivateItems activator, PipelineUseCase useCase) : base(activator)
     {
-        private readonly PipelineUseCase _useCase;
+        _useCase = useCase;
 
-        public ExecuteCommandCreateNewPipeline(IActivateItems activator, PipelineUseCase useCase) : base(activator)
-        {
-            _useCase = useCase;
+        if(_useCase == null)
+            SetImpossible("Pipelines can only be created under an established use case");
+    }
 
-            if(_useCase == null)
-                SetImpossible("Pipelines can only be created under an established use case");
-        }
+    public override void Execute()
+    {
+        base.Execute();
 
-        public override void Execute()
-        {
-            base.Execute();
+        var newPipe = new Pipeline(Activator.RepositoryLocator.CatalogueRepository);
+        var edit = new ExecuteCommandEditPipelineWithUseCase(Activator, newPipe, _useCase);
+        edit.Execute();
+    }
 
-            var newPipe = new Pipeline(Activator.RepositoryLocator.CatalogueRepository);
-            var edit = new ExecuteCommandEditPipelineWithUseCase(Activator, newPipe, _useCase);
-            edit.Execute();
-        }
-
-        public override Image<Rgba32> GetImage(IIconProvider iconProvider)
-        {
-            return iconProvider.GetImage(RDMPConcept.Pipeline, OverlayKind.Add);
-        }
+    public override Image<Rgba32> GetImage(IIconProvider iconProvider)
+    {
+        return iconProvider.GetImage(RDMPConcept.Pipeline, OverlayKind.Add);
     }
 }

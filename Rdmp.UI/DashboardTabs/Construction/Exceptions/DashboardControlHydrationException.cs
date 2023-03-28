@@ -6,12 +6,11 @@
 
 using System;
 
-namespace Rdmp.UI.DashboardTabs.Construction.Exceptions
+namespace Rdmp.UI.DashboardTabs.Construction.Exceptions;
+
+public class DashboardControlHydrationException : Exception
 {
-    public class DashboardControlHydrationException : Exception
+    public DashboardControlHydrationException(string s, Exception exception):base(s,exception)
     {
-        public DashboardControlHydrationException(string s, Exception exception):base(s,exception)
-        {
-        }
     }
 }

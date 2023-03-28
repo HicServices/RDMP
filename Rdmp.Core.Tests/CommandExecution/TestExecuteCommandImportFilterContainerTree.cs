@@ -19,137 +19,136 @@ using System.Linq;
 using System.Text;
 using Tests.Common;
 
-namespace Rdmp.Core.Tests.CommandExecution
+namespace Rdmp.Core.Tests.CommandExecution;
+
+class TestExecuteCommandImportFilterContainerTree : CommandInvokerTests
 {
-    class TestExecuteCommandImportFilterContainerTree : CommandInvokerTests
+    [Test]
+    public void TestImportTree_FromCohortIdentificationConfiguration_ToSelectedDatasets()
     {
-        [Test]
-        public void TestImportTree_FromCohortIdentificationConfiguration_ToSelectedDatasets()
-        {
-            var sds = WhenIHaveA<SelectedDataSets>();
+        var sds = WhenIHaveA<SelectedDataSets>();
 
-            var cata = sds.ExtractableDataSet.Catalogue;
+        var cata = sds.ExtractableDataSet.Catalogue;
 
-            var cic = new CohortIdentificationConfiguration(Repository,"my cic");
-            cic.CreateRootContainerIfNotExists();
+        var cic = new CohortIdentificationConfiguration(Repository,"my cic");
+        cic.CreateRootContainerIfNotExists();
 
-            var ac = new AggregateConfiguration(Repository,cata,"myagg");
-            ac.CreateRootContainerIfNotExists();
-            cic.RootCohortAggregateContainer.AddChild(ac,1);
+        var ac = new AggregateConfiguration(Repository,cata,"myagg");
+        ac.CreateRootContainerIfNotExists();
+        cic.RootCohortAggregateContainer.AddChild(ac,1);
 
-            var filterToImport = new AggregateFilter(Repository,"MyFilter"){WhereSQL = "true" };
-            ac.RootFilterContainer.AddChild(filterToImport);
+        var filterToImport = new AggregateFilter(Repository,"MyFilter"){WhereSQL = "true" };
+        ac.RootFilterContainer.AddChild(filterToImport);
             
-            //there should be no root container
-            Assert.IsNull(sds.RootFilterContainer);
+        //there should be no root container
+        Assert.IsNull(sds.RootFilterContainer);
             
-            //run the command
-            var mgr = new ConsoleInputManager(RepositoryLocator,new ThrowImmediatelyCheckNotifier());
-            mgr.DisallowInput = true;
-            var cmd = new ExecuteCommandImportFilterContainerTree(mgr,sds,ac);
+        //run the command
+        var mgr = new ConsoleInputManager(RepositoryLocator,new ThrowImmediatelyCheckNotifier());
+        mgr.DisallowInput = true;
+        var cmd = new ExecuteCommandImportFilterContainerTree(mgr,sds,ac);
             
-            Assert.IsFalse(cmd.IsImpossible,cmd.ReasonCommandImpossible);
-            cmd.Execute();
+        Assert.IsFalse(cmd.IsImpossible,cmd.ReasonCommandImpossible);
+        cmd.Execute();
             
-            sds.ClearAllInjections();
-            Assert.IsNotNull(sds.RootFilterContainer);
-            Assert.AreEqual(1,sds.RootFilterContainer.GetFilters().Length);
-            Assert.AreEqual("MyFilter",sds.RootFilterContainer.GetFilters()[0].Name);
-            Assert.AreEqual("true",sds.RootFilterContainer.GetFilters()[0].WhereSQL);
+        sds.ClearAllInjections();
+        Assert.IsNotNull(sds.RootFilterContainer);
+        Assert.AreEqual(1,sds.RootFilterContainer.GetFilters().Length);
+        Assert.AreEqual("MyFilter",sds.RootFilterContainer.GetFilters()[0].Name);
+        Assert.AreEqual("true",sds.RootFilterContainer.GetFilters()[0].WhereSQL);
 
-            Assert.AreNotEqual(filterToImport.GetType(),sds.RootFilterContainer.GetFilters()[0].GetType());
-        }
+        Assert.AreNotEqual(filterToImport.GetType(),sds.RootFilterContainer.GetFilters()[0].GetType());
+    }
 
-        [Test]
-        public void TestImportTree_FromSelectedDatasets_ToCohortIdentificationConfiguration()
-        {
+    [Test]
+    public void TestImportTree_FromSelectedDatasets_ToCohortIdentificationConfiguration()
+    {
 
-            // Import From Selected Dataset
-            var sds = WhenIHaveA<SelectedDataSets>();
-            sds.CreateRootContainerIfNotExists();
+        // Import From Selected Dataset
+        var sds = WhenIHaveA<SelectedDataSets>();
+        sds.CreateRootContainerIfNotExists();
 
-            var filterToImport = new DeployedExtractionFilter(Repository,"MyFilter", (FilterContainer)sds.RootFilterContainer){WhereSQL = "true" };
-            filterToImport.SaveToDatabase();
+        var filterToImport = new DeployedExtractionFilter(Repository,"MyFilter", (FilterContainer)sds.RootFilterContainer){WhereSQL = "true" };
+        filterToImport.SaveToDatabase();
 
-            var cata = sds.ExtractableDataSet.Catalogue;
+        var cata = sds.ExtractableDataSet.Catalogue;
 
-            // Into an Aggregate Configuration
-            var cic = new CohortIdentificationConfiguration(Repository,"my cic");
-            cic.CreateRootContainerIfNotExists();
-            var ac = new AggregateConfiguration(Repository,cata,"myagg");
+        // Into an Aggregate Configuration
+        var cic = new CohortIdentificationConfiguration(Repository,"my cic");
+        cic.CreateRootContainerIfNotExists();
+        var ac = new AggregateConfiguration(Repository,cata,"myagg");
 
-            cic.RootCohortAggregateContainer.AddChild(ac,1);
+        cic.RootCohortAggregateContainer.AddChild(ac,1);
             
-            //there should be no root container
-            Assert.IsNull(ac.RootFilterContainer);
+        //there should be no root container
+        Assert.IsNull(ac.RootFilterContainer);
             
-            //run the command
-            var mgr = new ConsoleInputManager(RepositoryLocator,new ThrowImmediatelyCheckNotifier());
-            mgr.DisallowInput = true;
-            var cmd = new ExecuteCommandImportFilterContainerTree(mgr,ac,sds);
+        //run the command
+        var mgr = new ConsoleInputManager(RepositoryLocator,new ThrowImmediatelyCheckNotifier());
+        mgr.DisallowInput = true;
+        var cmd = new ExecuteCommandImportFilterContainerTree(mgr,ac,sds);
             
-            Assert.IsFalse(cmd.IsImpossible,cmd.ReasonCommandImpossible);
-            cmd.Execute();
+        Assert.IsFalse(cmd.IsImpossible,cmd.ReasonCommandImpossible);
+        cmd.Execute();
             
-            ac.ClearAllInjections();
-            Assert.IsNotNull(ac.RootFilterContainer);
-            Assert.AreEqual(1,ac.RootFilterContainer.GetFilters().Length);
-            Assert.AreEqual("MyFilter",ac.RootFilterContainer.GetFilters()[0].Name);
-            Assert.AreEqual("true",ac.RootFilterContainer.GetFilters()[0].WhereSQL);
+        ac.ClearAllInjections();
+        Assert.IsNotNull(ac.RootFilterContainer);
+        Assert.AreEqual(1,ac.RootFilterContainer.GetFilters().Length);
+        Assert.AreEqual("MyFilter",ac.RootFilterContainer.GetFilters()[0].Name);
+        Assert.AreEqual("true",ac.RootFilterContainer.GetFilters()[0].WhereSQL);
 
-            Assert.AreNotEqual(filterToImport.GetType(),ac.RootFilterContainer.GetFilters()[0].GetType());
+        Assert.AreNotEqual(filterToImport.GetType(),ac.RootFilterContainer.GetFilters()[0].GetType());
             
-
-        }
-
-        
-        [Test]
-        public void TestImportTree_FromCohortIdentificationConfiguration_ToSelectedDatasets_PreserveOperation()
-        {
-            var sds = WhenIHaveA<SelectedDataSets>();
-
-            var cata = sds.ExtractableDataSet.Catalogue;
-
-            var cic = new CohortIdentificationConfiguration(Repository,"my cic");
-            cic.CreateRootContainerIfNotExists();
-
-            var ac = new AggregateConfiguration(Repository,cata,"myagg");
-            ac.CreateRootContainerIfNotExists();
-            cic.RootCohortAggregateContainer.AddChild(ac,1);
-
-            var filterToImport = new AggregateFilter(Repository,"MyFilter"){WhereSQL = "true" };
-            var root = ac.RootFilterContainer;
-            root.AddChild(filterToImport);
-            root.Operation = FilterContainerOperation.OR;
-            root.SaveToDatabase();
-
-            // add 2 subcontainers, these should also get cloned and should preserve the Operation correctly
-            root.AddChild(new AggregateFilterContainer(Repository, FilterContainerOperation.AND));
-            root.AddChild(new AggregateFilterContainer(Repository, FilterContainerOperation.OR));
-
-            //there should be no root container
-            Assert.IsNull(sds.RootFilterContainer);
-            
-            //run the command
-            var mgr = new ConsoleInputManager(RepositoryLocator,new ThrowImmediatelyCheckNotifier());
-            mgr.DisallowInput = true;
-            var cmd = new ExecuteCommandImportFilterContainerTree(mgr,sds,ac);
-            
-            Assert.IsFalse(cmd.IsImpossible,cmd.ReasonCommandImpossible);
-            cmd.Execute();
-            
-            sds.ClearAllInjections();
-            Assert.AreEqual(FilterContainerOperation.OR, sds.RootFilterContainer.Operation);
-            Assert.IsNotNull(sds.RootFilterContainer);
-            Assert.AreEqual(1,sds.RootFilterContainer.GetFilters().Length);
-
-            var subContainers = sds.RootFilterContainer.GetSubContainers();
-            Assert.AreEqual(2, subContainers.Length);
-            Assert.AreEqual(1, subContainers.Count(e=>e.Operation == FilterContainerOperation.AND));
-            Assert.AreEqual(1, subContainers.Count(e => e.Operation == FilterContainerOperation.OR));
-
-
-        }
 
     }
+
+        
+    [Test]
+    public void TestImportTree_FromCohortIdentificationConfiguration_ToSelectedDatasets_PreserveOperation()
+    {
+        var sds = WhenIHaveA<SelectedDataSets>();
+
+        var cata = sds.ExtractableDataSet.Catalogue;
+
+        var cic = new CohortIdentificationConfiguration(Repository,"my cic");
+        cic.CreateRootContainerIfNotExists();
+
+        var ac = new AggregateConfiguration(Repository,cata,"myagg");
+        ac.CreateRootContainerIfNotExists();
+        cic.RootCohortAggregateContainer.AddChild(ac,1);
+
+        var filterToImport = new AggregateFilter(Repository,"MyFilter"){WhereSQL = "true" };
+        var root = ac.RootFilterContainer;
+        root.AddChild(filterToImport);
+        root.Operation = FilterContainerOperation.OR;
+        root.SaveToDatabase();
+
+        // add 2 subcontainers, these should also get cloned and should preserve the Operation correctly
+        root.AddChild(new AggregateFilterContainer(Repository, FilterContainerOperation.AND));
+        root.AddChild(new AggregateFilterContainer(Repository, FilterContainerOperation.OR));
+
+        //there should be no root container
+        Assert.IsNull(sds.RootFilterContainer);
+            
+        //run the command
+        var mgr = new ConsoleInputManager(RepositoryLocator,new ThrowImmediatelyCheckNotifier());
+        mgr.DisallowInput = true;
+        var cmd = new ExecuteCommandImportFilterContainerTree(mgr,sds,ac);
+            
+        Assert.IsFalse(cmd.IsImpossible,cmd.ReasonCommandImpossible);
+        cmd.Execute();
+            
+        sds.ClearAllInjections();
+        Assert.AreEqual(FilterContainerOperation.OR, sds.RootFilterContainer.Operation);
+        Assert.IsNotNull(sds.RootFilterContainer);
+        Assert.AreEqual(1,sds.RootFilterContainer.GetFilters().Length);
+
+        var subContainers = sds.RootFilterContainer.GetSubContainers();
+        Assert.AreEqual(2, subContainers.Length);
+        Assert.AreEqual(1, subContainers.Count(e=>e.Operation == FilterContainerOperation.AND));
+        Assert.AreEqual(1, subContainers.Count(e => e.Operation == FilterContainerOperation.OR));
+
+
+    }
+
 }

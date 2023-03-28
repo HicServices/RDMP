@@ -4,26 +4,25 @@
 // RDMP is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License for more details.
 // You should have received a copy of the GNU General Public License along with RDMP. If not, see <https://www.gnu.org/licenses/>.
 
-namespace Rdmp.Core.Validation.Constraints
+namespace Rdmp.Core.Validation.Constraints;
+
+/// <summary>
+/// Describes the severity of a failing <see cref="Validator"/> <see cref="IConstraint"/> (i.e. a rule in the Data Quality Engine)
+/// </summary>
+public enum Consequence
 {
     /// <summary>
-    /// Describes the severity of a failing <see cref="Validator"/> <see cref="IConstraint"/> (i.e. a rule in the Data Quality Engine)
+    /// When the <see cref="IConstraint"/> is broken then it means important information is missing in the record
     /// </summary>
-    public enum Consequence
-    {
-        /// <summary>
-        /// When the <see cref="IConstraint"/> is broken then it means important information is missing in the record
-        /// </summary>
-        Missing,
+    Missing,
 
-        /// <summary>
-        /// When the <see cref="IConstraint"/> is broken then it means that the wrong important information is present in the cell of the record
-        /// </summary>
-        Wrong,
+    /// <summary>
+    /// When the <see cref="IConstraint"/> is broken then it means that the wrong important information is present in the cell of the record
+    /// </summary>
+    Wrong,
 
-        /// <summary>
-        /// When the <see cref="IConstraint"/> is broken then it means that the entire record should be considered 'bad'
-        /// </summary>
-        InvalidatesRow
-    }
+    /// <summary>
+    /// When the <see cref="IConstraint"/> is broken then it means that the entire record should be considered 'bad'
+    /// </summary>
+    InvalidatesRow
 }

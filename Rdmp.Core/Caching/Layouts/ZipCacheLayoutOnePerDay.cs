@@ -8,18 +8,17 @@ using System.IO;
 using Rdmp.Core.Caching.Pipeline.Destinations;
 using Rdmp.Core.Curation.Data.DataLoad;
 
-namespace Rdmp.Core.Caching.Layouts
+namespace Rdmp.Core.Caching.Layouts;
+
+/// <summary>
+/// Alternative cache layout to BasicCacheLayout in which files are expected to be in a zip file instead of a directory (e.g. in .\Data\Cache\2001-01-01.zip, .\Data\Cache\2001-01-02.zip etc)
+/// </summary>
+public class ZipCacheLayoutOnePerDay : CacheLayout
 {
-    /// <summary>
-    /// Alternative cache layout to BasicCacheLayout in which files are expected to be in a zip file instead of a directory (e.g. in .\Data\Cache\2001-01-01.zip, .\Data\Cache\2001-01-02.zip etc)
-    /// </summary>
-    public class ZipCacheLayoutOnePerDay : CacheLayout
+    public ZipCacheLayoutOnePerDay(DirectoryInfo rootCacheDirectory,ILoadCachePathResolver resolver)
+        : base(rootCacheDirectory, "yyyy-MM-dd", CacheArchiveType.Zip, CacheFileGranularity.Day,resolver)
     {
-        public ZipCacheLayoutOnePerDay(DirectoryInfo rootCacheDirectory,ILoadCachePathResolver resolver)
-            : base(rootCacheDirectory, "yyyy-MM-dd", CacheArchiveType.Zip, CacheFileGranularity.Day,resolver)
-        {
-            
-        }
             
     }
+            
 }

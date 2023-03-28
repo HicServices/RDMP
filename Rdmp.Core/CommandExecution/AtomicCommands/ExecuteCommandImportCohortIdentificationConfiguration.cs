@@ -12,67 +12,66 @@ using SixLabors.ImageSharp;
 using System.Linq;
 using SixLabors.ImageSharp.PixelFormats;
 
-namespace Rdmp.Core.CommandExecution.AtomicCommands
+namespace Rdmp.Core.CommandExecution.AtomicCommands;
+
+/// <summary>
+/// Clone and import one or more <see cref="CohortIdentificationConfiguration"/> into a root or subcontainer of another
+/// </summary>
+public class ExecuteCommandImportCohortIdentificationConfiguration : BasicCommandExecution
 {
-    /// <summary>
-    /// Clone and import one or more <see cref="CohortIdentificationConfiguration"/> into a root or subcontainer of another
-    /// </summary>
-    public class ExecuteCommandImportCohortIdentificationConfiguration : BasicCommandExecution
+    public CohortAggregateContainer IntoContainer { get; }
+    public CohortIdentificationConfiguration[] ToImport{get;}
+
+    public ExecuteCommandImportCohortIdentificationConfiguration(IBasicActivateItems activator,CohortIdentificationConfiguration[] toImport, CohortAggregateContainer intoContainer) : base(activator)
     {
-        public CohortAggregateContainer IntoContainer { get; }
-        public CohortIdentificationConfiguration[] ToImport{get;}
+        Weight = 0.15f;
 
-        public ExecuteCommandImportCohortIdentificationConfiguration(IBasicActivateItems activator,CohortIdentificationConfiguration[] toImport, CohortAggregateContainer intoContainer) : base(activator)
+        ToImport = toImport;
+        IntoContainer = intoContainer;
+
+        if(IntoContainer == null)
         {
-            Weight = 0.15f;
-
-            ToImport = toImport;
-            IntoContainer = intoContainer;
-
-            if(IntoContainer == null)
-            {
-                SetImpossible("You must specify a container");
-                return;
-            }
-
-            if (intoContainer.ShouldBeReadOnly(out string reason))
-            {
-                SetImpossible(reason);
-            }
-
-            // if we don't know what to import yet then we should have the
-            // 'more choices to come' suffix
-            UseTripleDotSuffix = ToImport == null;
-        }
-        public override Image<Rgba32> GetImage(IIconProvider iconProvider)
-        {
-            return iconProvider.GetImage(RDMPConcept.CohortIdentificationConfiguration,OverlayKind.Add);
-        }
-        public override void Execute()
-        {
-            base.Execute();
-
-            var import = ToImport;
-
-            if(import == null)
-                if(!BasicActivator.SelectObjects(new DialogArgs
-                {
-                    WindowTitle = "Add CohortIdentificationConfiguration(s) to Container",
-                    TaskDescription = $"Choose which CohortIdentificationConfiguration(s) to add to the cohort container '{IntoContainer.Name}'.  For each one selected, the entire query tree will be imported.",
-
-                },BasicActivator.RepositoryLocator.CatalogueRepository.GetAllObjects<CohortIdentificationConfiguration>(),out import))
-                    return;
-
-            if(import == null || !import.Any())
-                return;
-
-
-            var merger = new CohortIdentificationConfigurationMerger((CatalogueRepository)BasicActivator.RepositoryLocator.CatalogueRepository);
-            merger.Import(import,IntoContainer);
-
-            Publish(IntoContainer);
-            Emphasise(IntoContainer,int.MaxValue);
+            SetImpossible("You must specify a container");
+            return;
         }
 
+        if (intoContainer.ShouldBeReadOnly(out string reason))
+        {
+            SetImpossible(reason);
+        }
+
+        // if we don't know what to import yet then we should have the
+        // 'more choices to come' suffix
+        UseTripleDotSuffix = ToImport == null;
     }
+    public override Image<Rgba32> GetImage(IIconProvider iconProvider)
+    {
+        return iconProvider.GetImage(RDMPConcept.CohortIdentificationConfiguration,OverlayKind.Add);
+    }
+    public override void Execute()
+    {
+        base.Execute();
+
+        var import = ToImport;
+
+        if(import == null)
+            if(!BasicActivator.SelectObjects(new DialogArgs
+               {
+                   WindowTitle = "Add CohortIdentificationConfiguration(s) to Container",
+                   TaskDescription = $"Choose which CohortIdentificationConfiguration(s) to add to the cohort container '{IntoContainer.Name}'.  For each one selected, the entire query tree will be imported.",
+
+               },BasicActivator.RepositoryLocator.CatalogueRepository.GetAllObjects<CohortIdentificationConfiguration>(),out import))
+                return;
+
+        if(import == null || !import.Any())
+            return;
+
+
+        var merger = new CohortIdentificationConfigurationMerger((CatalogueRepository)BasicActivator.RepositoryLocator.CatalogueRepository);
+        merger.Import(import,IntoContainer);
+
+        Publish(IntoContainer);
+        Emphasise(IntoContainer,int.MaxValue);
+    }
+
 }

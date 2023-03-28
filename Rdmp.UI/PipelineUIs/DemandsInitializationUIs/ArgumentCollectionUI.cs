@@ -22,232 +22,231 @@ using HelpIcon = Rdmp.UI.SimpleControls.HelpIcon;
 using RAGSmiley = Rdmp.UI.ChecksUI.RAGSmiley;
 using ViewSourceCodeDialog = Rdmp.UI.SimpleDialogs.ViewSourceCodeDialog;
 
-namespace Rdmp.UI.PipelineUIs.DemandsInitializationUIs
+namespace Rdmp.UI.PipelineUIs.DemandsInitializationUIs;
+
+/// <summary>
+/// Allows you to specify values for any IArgumentHost class.  This control is used by the user at 'design time' (e.g. when they are building a data load configuration) and the values
+/// are then populated into instantiated runtime instances (not that this control cares about how that happens).  You will see a list of all properties marked with [DemandsInitialization]
+/// on the argument host class.  Selecting the Argument will display the help text associated with the argument (user friendly message telling them what they are supposed to put in for that
+/// property) and an appropriate user control for providing a value (for example an enum will show a dropdown while a string property will show a text box - See ArgumentUI).  
+/// </summary>
+public partial class ArgumentCollectionUI : UserControl 
 {
-    /// <summary>
-    /// Allows you to specify values for any IArgumentHost class.  This control is used by the user at 'design time' (e.g. when they are building a data load configuration) and the values
-    /// are then populated into instantiated runtime instances (not that this control cares about how that happens).  You will see a list of all properties marked with [DemandsInitialization]
-    /// on the argument host class.  Selecting the Argument will display the help text associated with the argument (user friendly message telling them what they are supposed to put in for that
-    /// property) and an appropriate user control for providing a value (for example an enum will show a dropdown while a string property will show a text box - See ArgumentUI).  
-    /// </summary>
-    public partial class ArgumentCollectionUI : UserControl 
+    public Dictionary<IArgument, RequiredPropertyInfo> DemandDictionary;
+    private Type _argumentsAreFor;
+    private IArgumentHost _parent;
+    private ArgumentValueUIFactory _valueUisFactory;
+
+    private IActivateItems _activator;
+
+    public ArgumentCollectionUI()
     {
-        public Dictionary<IArgument, RequiredPropertyInfo> DemandDictionary;
-        private Type _argumentsAreFor;
-        private IArgumentHost _parent;
-        private ArgumentValueUIFactory _valueUisFactory;
+        InitializeComponent();
+    }
 
-        private IActivateItems _activator;
+    /// <summary>
+    /// Reconfigures this UI (can be called multiple times throughout controls lifetime) to facilitate the population of DemandsInitialization
+    /// properties on an underlying type (e.g. if your collection is ProcessTask and your argument type is ProcessTaskArgument then your underlying type could
+    /// be AnySeparatorFileAttacher or MDFAttacher).  Note that while T is IArgumentHost, it also should be tied to one or more interfaces (e.g. IAttacher) and able to host
+    /// any child of that interface of which argumentsAreForUnderlyingType is the currently configured concrete class (e.g. AnySeparatorFileAttacher).
+    /// </summary>
+    /// <param name="activator"></param>
+    /// <param name="parent"></param>
+    /// <param name="argumentsAreForUnderlyingType"></param>
+    /// <param name="catalogueRepository"></param>
+    public void Setup(IActivateItems activator,IArgumentHost parent, Type argumentsAreForUnderlyingType, ICatalogueRepository catalogueRepository)
+    {
+        _parent = parent;
+        _argumentsAreFor = argumentsAreForUnderlyingType;
+        _activator = activator;
+            
+        bool typeLoadable = !(_argumentsAreFor == null);
 
-        public ArgumentCollectionUI()
+        lblTypeUnloadable.Visible = !typeLoadable;
+
+        lblClassName.Visible = typeLoadable;
+        helpIcon1.Visible = typeLoadable;
+        lblArgumentsTitle.Visible = typeLoadable;
+        pArguments.Visible = typeLoadable;
+        lblComponentNotFound.Visible = !pArguments.Visible;
+
+        _valueUisFactory = new ArgumentValueUIFactory();
+
+        if (_argumentsAreFor != null)
+            lblClassName.Text = UsefulStuff.PascalCaseStringToHumanReadable(_argumentsAreFor.Name);
+
+        helpIcon1.Left = lblClassName.Right;
+            
+        if (_argumentsAreFor != null)
         {
-            InitializeComponent();
+            var summary = catalogueRepository.CommentStore.GetTypeDocumentationIfExists(argumentsAreForUnderlyingType);
+
+            if (summary != null)
+                helpIcon1.SetHelpText(_argumentsAreFor.Name, summary);
+            else
+                helpIcon1.ClearHelpText();
+
+            RefreshArgumentList();
         }
 
-        /// <summary>
-        /// Reconfigures this UI (can be called multiple times throughout controls lifetime) to facilitate the population of DemandsInitialization
-        /// properties on an underlying type (e.g. if your collection is ProcessTask and your argument type is ProcessTaskArgument then your underlying type could
-        /// be AnySeparatorFileAttacher or MDFAttacher).  Note that while T is IArgumentHost, it also should be tied to one or more interfaces (e.g. IAttacher) and able to host
-        /// any child of that interface of which argumentsAreForUnderlyingType is the currently configured concrete class (e.g. AnySeparatorFileAttacher).
-        /// </summary>
-        /// <param name="activator"></param>
-        /// <param name="parent"></param>
-        /// <param name="argumentsAreForUnderlyingType"></param>
-        /// <param name="catalogueRepository"></param>
-        public void Setup(IActivateItems activator,IArgumentHost parent, Type argumentsAreForUnderlyingType, ICatalogueRepository catalogueRepository)
-        {
-            _parent = parent;
-            _argumentsAreFor = argumentsAreForUnderlyingType;
-            _activator = activator;
-            
-            bool typeLoadable = !(_argumentsAreFor == null);
-
-            lblTypeUnloadable.Visible = !typeLoadable;
-
-            lblClassName.Visible = typeLoadable;
-            helpIcon1.Visible = typeLoadable;
-            lblArgumentsTitle.Visible = typeLoadable;
-            pArguments.Visible = typeLoadable;
-            lblComponentNotFound.Visible = !pArguments.Visible;
-
-            _valueUisFactory = new ArgumentValueUIFactory();
-
-            if (_argumentsAreFor != null)
-                lblClassName.Text = UsefulStuff.PascalCaseStringToHumanReadable(_argumentsAreFor.Name);
-
-            helpIcon1.Left = lblClassName.Right;
-            
-            if (_argumentsAreFor != null)
-            {
-                var summary = catalogueRepository.CommentStore.GetTypeDocumentationIfExists(argumentsAreForUnderlyingType);
-
-                if (summary != null)
-                    helpIcon1.SetHelpText(_argumentsAreFor.Name, summary);
-                else
-                    helpIcon1.ClearHelpText();
-
-                RefreshArgumentList();
-            }
-
-        }
+    }
         
-        private void RefreshArgumentList()
-        {
-            var argumentFactory = new ArgumentFactory();
-            DemandDictionary = argumentFactory.GetDemandDictionary(_parent, _argumentsAreFor);
+    private void RefreshArgumentList()
+    {
+        var argumentFactory = new ArgumentFactory();
+        DemandDictionary = argumentFactory.GetDemandDictionary(_parent, _argumentsAreFor);
 
-            lblNoArguments.Visible = !DemandDictionary.Any();
-            pArguments.Visible = DemandDictionary.Any();
+        lblNoArguments.Visible = !DemandDictionary.Any();
+        pArguments.Visible = DemandDictionary.Any();
 
-            if (!DemandDictionary.Any())
-                return;
+        if (!DemandDictionary.Any())
+            return;
 
-            pArguments.Controls.Clear();
-            pArguments.SuspendLayout();
+        pArguments.Controls.Clear();
+        pArguments.SuspendLayout();
 
-            float maxArgNameWidth = 0;
+        float maxArgNameWidth = 0;
             
-            if(DemandDictionary.Any())
-            {
-                var g = this.CreateGraphics();
-                maxArgNameWidth = DemandDictionary.Select(a =>
+        if(DemandDictionary.Any())
+        {
+            var g = this.CreateGraphics();
+            maxArgNameWidth = DemandDictionary.Select(a =>
                     g.MeasureString(UsefulStuff.PascalCaseStringToHumanReadable(a.Value.Name), Label.DefaultFont).Width)
-                    .Max();
-            }
-
-
-            foreach (var kvp in DemandDictionary)
-                CreateLine(_parent, kvp.Key, kvp.Value, maxArgNameWidth);
-
-            //headerLabel.SendToBack();
-            pArguments.ResumeLayout(true);
+                .Max();
         }
 
 
-        private Label GetLabelHeader(string caption)
-        {
-            Label label = new Label();
-            label.Text = caption;
-            label.BackColor = Color.DarkGray;
-            label.Dock = DockStyle.Top;
+        foreach (var kvp in DemandDictionary)
+            CreateLine(_parent, kvp.Key, kvp.Value, maxArgNameWidth);
 
-            label.TextAlign = ContentAlignment.MiddleCenter;
+        //headerLabel.SendToBack();
+        pArguments.ResumeLayout(true);
+    }
+
+
+    private Label GetLabelHeader(string caption)
+    {
+        Label label = new Label();
+        label.Text = caption;
+        label.BackColor = Color.DarkGray;
+        label.Dock = DockStyle.Top;
+
+        label.TextAlign = ContentAlignment.MiddleCenter;
             
-            return label;
-        }
+        return label;
+    }
 
-        private void CreateLine(IArgumentHost parent, IArgument argument, RequiredPropertyInfo required, float maxArgNameWidth)
+    private void CreateLine(IArgumentHost parent, IArgument argument, RequiredPropertyInfo required, float maxArgNameWidth)
+    {
+
+        Label name = new Label();
+
+        HelpIcon helpIcon = new HelpIcon();
+        helpIcon.SetHelpText(GetSystemTypeName(argument.GetSystemType())??"Unrecognised Type:" + argument.Type, required.Demand.Description);
+        helpIcon.Dock = DockStyle.Right;
+
+        string spaceSeparatedArgumentName = UsefulStuff.PascalCaseStringToHumanReadable(argument.Name);
+        name.Height = helpIcon.Height;
+        name.Text = spaceSeparatedArgumentName;
+        name.TextAlign = ContentAlignment.MiddleLeft;
+        name.Dock = DockStyle.Left;
+        name.Width = (int)maxArgNameWidth+3 /*padding*/;
+
+        RAGSmiley ragSmiley = new RAGSmiley();
+
+        if (required.Demand.Mandatory && string.IsNullOrWhiteSpace(argument.Value))
+            ragSmiley.Fatal(new Exception("Property " + argument.Name + " is Mandatory"));
+
+        var args = new ArgumentValueUIArgs();
+        args.Parent = parent;
+        args.Type = argument.GetSystemType();
+        args.ContextText = required.Demand.ContextText;
+
+        try
         {
 
-            Label name = new Label();
+            args.InitialValue = argument.GetValueAsSystemType();
+        }
+        catch (Exception e)
+        {
+                
+            //add the text value value and report the error
+            if(_valueUisFactory.CanHandleInvalidStringData(args.Type))
+                args.InitialValue = argument.Value;
+            else
+                args.InitialValue = null;
 
-            HelpIcon helpIcon = new HelpIcon();
-            helpIcon.SetHelpText(GetSystemTypeName(argument.GetSystemType())??"Unrecognised Type:" + argument.Type, required.Demand.Description);
-            helpIcon.Dock = DockStyle.Right;
+            ragSmiley.Fatal(e);
+        }
 
-            string spaceSeparatedArgumentName = UsefulStuff.PascalCaseStringToHumanReadable(argument.Name);
-            name.Height = helpIcon.Height;
-            name.Text = spaceSeparatedArgumentName;
-            name.TextAlign = ContentAlignment.MiddleLeft;
-            name.Dock = DockStyle.Left;
-            name.Width = (int)maxArgNameWidth+3 /*padding*/;
-
-            RAGSmiley ragSmiley = new RAGSmiley();
-
-            if (required.Demand.Mandatory && string.IsNullOrWhiteSpace(argument.Value))
-                ragSmiley.Fatal(new Exception("Property " + argument.Name + " is Mandatory"));
-
-            var args = new ArgumentValueUIArgs();
-            args.Parent = parent;
-            args.Type = argument.GetSystemType();
-            args.ContextText = required.Demand.ContextText;
-
+            
+        args.Required = required;
+        args.CatalogueRepository = (ICatalogueRepository)argument.Repository;
+        args.Setter = (v) =>
+        {
+            ragSmiley.Reset();
+                
             try
             {
+                argument.SetValue(v);
+                argument.SaveToDatabase();
 
-                args.InitialValue = argument.GetValueAsSystemType();
+                argument.GetValueAsSystemType();
+
+                if(required.Demand.Mandatory && (v == null  || string.IsNullOrWhiteSpace(v.ToString())))
+                    ragSmiley.Fatal(new Exception("Property " + argument.Name + " is Mandatory"));
             }
-            catch (Exception e)
+            catch (Exception ex)
             {
-                
-                //add the text value value and report the error
-                if(_valueUisFactory.CanHandleInvalidStringData(args.Type))
-                    args.InitialValue = argument.Value;
-                else
-                    args.InitialValue = null;
-
-                ragSmiley.Fatal(e);
+                ragSmiley.OnCheckPerformed(new CheckEventArgs("Failed to set property properly",CheckResult.Fail,ex));
             }
+        };
+        args.Fatal = ragSmiley.Fatal;
 
-            
-            args.Required = required;
-            args.CatalogueRepository = (ICatalogueRepository)argument.Repository;
-            args.Setter = (v) =>
-            {
-                ragSmiley.Reset();
-                
-                try
-                {
-                    argument.SetValue(v);
-                    argument.SaveToDatabase();
+        var valueui = (Control)_valueUisFactory.Create(_activator, args);
+        valueui.Dock = DockStyle.Fill;
 
-                    argument.GetValueAsSystemType();
+        Panel p = new Panel();
+        p.Height = Math.Max(Math.Max(lblClassName.Height,helpIcon.Height),valueui.Height);
+        p.Dock = DockStyle.Top;
 
-                    if(required.Demand.Mandatory && (v == null  || string.IsNullOrWhiteSpace(v.ToString())))
-                        ragSmiley.Fatal(new Exception("Property " + argument.Name + " is Mandatory"));
-                }
-                catch (Exception ex)
-                {
-                    ragSmiley.OnCheckPerformed(new CheckEventArgs("Failed to set property properly",CheckResult.Fail,ex));
-                }
-            };
-            args.Fatal = ragSmiley.Fatal;
+        name.Location = new Point(0,0);
+        p.Controls.Add(name);
 
-            var valueui = (Control)_valueUisFactory.Create(_activator, args);
-            valueui.Dock = DockStyle.Fill;
+        helpIcon.Left = name.Right;
+        p.Controls.Add(helpIcon);
 
-            Panel p = new Panel();
-            p.Height = Math.Max(Math.Max(lblClassName.Height,helpIcon.Height),valueui.Height);
-            p.Dock = DockStyle.Top;
+        ragSmiley.Dock = DockStyle.Right;
+        p.Controls.Add(ragSmiley);
+        p.Controls.Add(valueui);
 
-            name.Location = new Point(0,0);
-            p.Controls.Add(name);
+        name.Height = p.Height;
 
-            helpIcon.Left = name.Right;
-            p.Controls.Add(helpIcon);
+        Label hr = new Label();
+        hr.AutoSize = false;
+        hr.BorderStyle = BorderStyle.FixedSingle;
+        hr.Height = 1;
+        hr.Dock = DockStyle.Bottom;
+        p.Controls.Add(hr);
 
-            ragSmiley.Dock = DockStyle.Right;
-            p.Controls.Add(ragSmiley);
-            p.Controls.Add(valueui);
+        valueui.BringToFront();
+        pArguments.Controls.Add(p);
+        p.BringToFront();
+    }
 
-            name.Height = p.Height;
+    private string GetSystemTypeName(Type type)
+    {
+        if (typeof(Enum).IsAssignableFrom(type))
+            return "Enum";
 
-            Label hr = new Label();
-            hr.AutoSize = false;
-            hr.BorderStyle = BorderStyle.FixedSingle;
-            hr.Height = 1;
-            hr.Dock = DockStyle.Bottom;
-            p.Controls.Add(hr);
+        if (type == null)
+            return null;
 
-            valueui.BringToFront();
-            pArguments.Controls.Add(p);
-            p.BringToFront();
-        }
+        return type.Name;
+    }
 
-        private string GetSystemTypeName(Type type)
-        {
-            if (typeof(Enum).IsAssignableFrom(type))
-                return "Enum";
-
-            if (type == null)
-                return null;
-
-            return type.Name;
-        }
-
-        private void btnViewSourceCode_Click(object sender, EventArgs e)
-        {
-            new ViewSourceCodeDialog(_argumentsAreFor.Name + ".cs").Show();
-        }
+    private void btnViewSourceCode_Click(object sender, EventArgs e)
+    {
+        new ViewSourceCodeDialog(_argumentsAreFor.Name + ".cs").Show();
     }
 }

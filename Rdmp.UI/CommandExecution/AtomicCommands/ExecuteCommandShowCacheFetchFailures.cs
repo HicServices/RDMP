@@ -15,46 +15,45 @@ using ReusableLibraryCode.Icons.IconProvision;
 using SixLabors.ImageSharp.PixelFormats;
 
 
-namespace Rdmp.UI.CommandExecution.AtomicCommands
+namespace Rdmp.UI.CommandExecution.AtomicCommands;
+
+public class ExecuteCommandShowCacheFetchFailures : BasicUICommandExecution,IAtomicCommand
 {
-    public class ExecuteCommandShowCacheFetchFailures : BasicUICommandExecution,IAtomicCommand
+    private CacheProgress _cacheProgress;
+    private ICacheFetchFailure[] _failures;
+
+    public ExecuteCommandShowCacheFetchFailures(IActivateItems activator, CacheProgress cacheProgress):base(activator)
     {
-        private CacheProgress _cacheProgress;
-        private ICacheFetchFailure[] _failures;
+        _cacheProgress = cacheProgress;
 
-        public ExecuteCommandShowCacheFetchFailures(IActivateItems activator, CacheProgress cacheProgress):base(activator)
-        {
-            _cacheProgress = cacheProgress;
+        _failures = _cacheProgress.CacheFetchFailures.Where(f => f.ResolvedOn == null).ToArray();
 
-            _failures = _cacheProgress.CacheFetchFailures.Where(f => f.ResolvedOn == null).ToArray();
+        if(!_failures.Any())
+            SetImpossible("There are no unresolved CacheFetchFailures");
+    }
 
-            if(!_failures.Any())
-                SetImpossible("There are no unresolved CacheFetchFailures");
-        }
+    public override void Execute()
+    {
+        base.Execute();
 
-        public override void Execute()
-        {
-            base.Execute();
-
-            // for now just show a modal dialog with a data grid view of all the failure rows
+        // for now just show a modal dialog with a data grid view of all the failure rows
             
-            DataTable dt = new DataTable();
-            dt.Columns.Add("FetchRequestStart");
-            dt.Columns.Add("FetchRequestEnd");
-            dt.Columns.Add("ExceptionText");
-            dt.Columns.Add("LastAttempt");
-            dt.Columns.Add("ResolvedOn");
+        DataTable dt = new DataTable();
+        dt.Columns.Add("FetchRequestStart");
+        dt.Columns.Add("FetchRequestEnd");
+        dt.Columns.Add("ExceptionText");
+        dt.Columns.Add("LastAttempt");
+        dt.Columns.Add("ResolvedOn");
 
-            foreach (ICacheFetchFailure f in _failures)
-                dt.Rows.Add(f.FetchRequestStart, f.FetchRequestEnd, f.ExceptionText, f.LastAttempt, f.ResolvedOn);
+        foreach (ICacheFetchFailure f in _failures)
+            dt.Rows.Add(f.FetchRequestStart, f.FetchRequestEnd, f.ExceptionText, f.LastAttempt, f.ResolvedOn);
 
-            DataTableViewerUI ui = new DataTableViewerUI(dt,"Cache Failures");
-            Activator.ShowWindow(ui, true);
-        }
+        DataTableViewerUI ui = new DataTableViewerUI(dt,"Cache Failures");
+        Activator.ShowWindow(ui, true);
+    }
 
-        public override Image<Rgba32> GetImage(IIconProvider iconProvider)
-        {
-            return iconProvider.GetImage(_cacheProgress);
-        }
+    public override Image<Rgba32> GetImage(IIconProvider iconProvider)
+    {
+        return iconProvider.GetImage(_cacheProgress);
     }
 }

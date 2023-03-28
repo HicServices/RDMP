@@ -30,205 +30,204 @@ using ReusableLibraryCode.Checks;
 using ReusableLibraryCode.Progress;
 using TypeGuesser;
 
-namespace Tests.Common.Scenarios
+namespace Tests.Common.Scenarios;
+
+[TestFixture]
+public class TestsRequiringAnExtractionConfiguration : TestsRequiringACohort
 {
-    [TestFixture]
-    public class TestsRequiringAnExtractionConfiguration : TestsRequiringACohort
+    protected ICatalogue _catalogue;
+    protected ITableInfo _tableInfo;
+    protected ExtractableDataSet _extractableDataSet;
+    protected Project _project;
+    protected ExtractionConfiguration _configuration;
+    protected ExtractionInformation[] _extractionInformations;
+    protected List<IColumn> _extractableColumns = new List<IColumn>();
+    protected ExtractDatasetCommand _request;
+
+    private readonly string _testDatabaseName = TestDatabaseNames.GetConsistentName("ExtractionConfiguration");
+
+    protected bool AllowEmptyExtractions = false;
+    protected SelectedDataSets _selectedDataSet;
+    protected ColumnInfo[] _columnInfos;
+        
+    /// <summary>
+    /// Called when pipeline components are created during <see cref="SetupPipeline"/>.  Allows you to make last minute changes to them e.g. before pipeline is executed
+    /// </summary>
+    protected Action<PipelineComponent> AdjustPipelineComponentDelegate { get; set; }
+
+    protected string ProjectDirectory { get; private set; }
+
+    /// <summary>
+    /// The database in which the referenced data is stored, created during <see cref="TestsRequiringACohort.OneTimeSetUp"/>
+    /// </summary>
+    public DiscoveredDatabase Database { get; private set; }
+
+    [SetUp]
+    protected override void SetUp()
     {
-        protected ICatalogue _catalogue;
-        protected ITableInfo _tableInfo;
-        protected ExtractableDataSet _extractableDataSet;
-        protected Project _project;
-        protected ExtractionConfiguration _configuration;
-        protected ExtractionInformation[] _extractionInformations;
-        protected List<IColumn> _extractableColumns = new List<IColumn>();
-        protected ExtractDatasetCommand _request;
+        base.SetUp();
 
-        private readonly string _testDatabaseName = TestDatabaseNames.GetConsistentName("ExtractionConfiguration");
+        Reset();
+    }
 
-        protected bool AllowEmptyExtractions = false;
-        protected SelectedDataSets _selectedDataSet;
-        protected ColumnInfo[] _columnInfos;
-        
-        /// <summary>
-        /// Called when pipeline components are created during <see cref="SetupPipeline"/>.  Allows you to make last minute changes to them e.g. before pipeline is executed
-        /// </summary>
-        protected Action<PipelineComponent> AdjustPipelineComponentDelegate { get; set; }
+    protected void Reset()
+    {
+        _extractableColumns = new List<IColumn>();
 
-        protected string ProjectDirectory { get; private set; }
+        ProjectDirectory = Path.Combine(TestContext.CurrentContext.WorkDirectory, "TestProject");
 
-        /// <summary>
-        /// The database in which the referenced data is stored, created during <see cref="TestsRequiringACohort.OneTimeSetUp"/>
-        /// </summary>
-        public DiscoveredDatabase Database { get; private set; }
+        SetupCatalogueConfigurationEtc();
 
-        [SetUp]
-        protected override void SetUp()
-        {
-            base.SetUp();
+        SetupDataExport();
 
-            Reset();
-        }
-
-        protected void Reset()
-        {
-            _extractableColumns = new List<IColumn>();
-
-            ProjectDirectory = Path.Combine(TestContext.CurrentContext.WorkDirectory, "TestProject");
-
-            SetupCatalogueConfigurationEtc();
-
-            SetupDataExport();
-
-            _configuration.Cohort_ID = _extractableCohort.ID;
-            _configuration.SaveToDatabase();
+        _configuration.Cohort_ID = _extractableCohort.ID;
+        _configuration.SaveToDatabase();
 
 
-            _request = new ExtractDatasetCommand(_configuration, _extractableCohort, new ExtractableDatasetBundle(_extractableDataSet),
-                _extractableColumns, new HICProjectSalt(_project),
-                new ExtractionDirectory(ProjectDirectory, _configuration));
-        }
+        _request = new ExtractDatasetCommand(_configuration, _extractableCohort, new ExtractableDatasetBundle(_extractableDataSet),
+            _extractableColumns, new HICProjectSalt(_project),
+            new ExtractionDirectory(ProjectDirectory, _configuration));
+    }
 
-        private void SetupDataExport()
-        {
-            _extractableDataSet = new ExtractableDataSet(DataExportRepository, _catalogue);
+    private void SetupDataExport()
+    {
+        _extractableDataSet = new ExtractableDataSet(DataExportRepository, _catalogue);
 
-            _project = new Project(DataExportRepository, _testDatabaseName);
-            _project.ProjectNumber = 1;
+        _project = new Project(DataExportRepository, _testDatabaseName);
+        _project.ProjectNumber = 1;
 
-            Directory.CreateDirectory(ProjectDirectory);
-            _project.ExtractionDirectory = ProjectDirectory;
+        Directory.CreateDirectory(ProjectDirectory);
+        _project.ExtractionDirectory = ProjectDirectory;
             
-            _project.SaveToDatabase();
+        _project.SaveToDatabase();
 
-            _configuration = new ExtractionConfiguration(DataExportRepository, _project);
+        _configuration = new ExtractionConfiguration(DataExportRepository, _project);
             
-            //select the dataset for extraction under this configuration
-            _selectedDataSet = new SelectedDataSets(RepositoryLocator.DataExportRepository,_configuration,_extractableDataSet,null);
+        //select the dataset for extraction under this configuration
+        _selectedDataSet = new SelectedDataSets(RepositoryLocator.DataExportRepository,_configuration,_extractableDataSet,null);
 
-            //select all the columns for extraction
-            foreach (var toSelect in _extractionInformations)
-            {
-                var col = new ExtractableColumn(DataExportRepository, _extractableDataSet, _configuration, toSelect, toSelect.Order, toSelect.SelectSQL);
+        //select all the columns for extraction
+        foreach (var toSelect in _extractionInformations)
+        {
+            var col = new ExtractableColumn(DataExportRepository, _extractableDataSet, _configuration, toSelect, toSelect.Order, toSelect.SelectSQL);
 
-                if (col.GetRuntimeName().Equals("PrivateID"))
-                    col.IsExtractionIdentifier = true;
+            if (col.GetRuntimeName().Equals("PrivateID"))
+                col.IsExtractionIdentifier = true;
 
-                col.SaveToDatabase();
+            col.SaveToDatabase();
                 
-                _extractableColumns.Add(col);
-            }
+            _extractableColumns.Add(col);
         }
+    }
 
-        private void SetupCatalogueConfigurationEtc()
+    private void SetupCatalogueConfigurationEtc()
+    {
+        Database = GetCleanedServer(FAnsi.DatabaseType.MicrosoftSQLServer);
+
+        DataTable dt = new DataTable();
+        dt.Columns.Add("PrivateID");
+        dt.Columns.Add("Name");
+        dt.Columns.Add("DateOfBirth");
+
+        dt.Rows.Add(new object[] {_cohortKeysGenerated.Keys.First(), "Dave", "2001-01-01"});
+
+        var tbl = Database.CreateTable("TestTable", dt, new[] { new DatabaseColumnRequest("Name",new DatabaseTypeRequest(typeof(string),50))});
+            
+        CatalogueItem[] cataItems;
+        _catalogue = Import(tbl, out _tableInfo, out _columnInfos, out cataItems,out _extractionInformations);
+            
+        ExtractionInformation _privateID = _extractionInformations.First(e => e.GetRuntimeName().Equals("PrivateID"));
+        _privateID.IsExtractionIdentifier = true;
+        _privateID.SaveToDatabase();
+            
+    }
+
+    protected void ExecuteRunner()
+    {
+        var pipeline = SetupPipeline();
+
+        var runner = new ExtractionRunner(new ThrowImmediatelyActivator(RepositoryLocator),new ExtractionOptions()
         {
-            Database = GetCleanedServer(FAnsi.DatabaseType.MicrosoftSQLServer);
+            Command = CommandLineActivity.run, ExtractionConfiguration = _configuration.ID.ToString(),
+            ExtractGlobals = true, Pipeline = pipeline.ID.ToString()
+        });
 
-            DataTable dt = new DataTable();
-            dt.Columns.Add("PrivateID");
-            dt.Columns.Add("Name");
-            dt.Columns.Add("DateOfBirth");
+        var returnCode = runner.Run(
+            RepositoryLocator,
+            new ThrowImmediatelyDataLoadEventListener(),
+            new ThrowImmediatelyCheckNotifier(),
+            new GracefulCancellationToken());
 
-            dt.Rows.Add(new object[] {_cohortKeysGenerated.Keys.First(), "Dave", "2001-01-01"});
+        Assert.AreEqual(0,returnCode,"Return code from runner was non zero");
+    }
 
-            var tbl = Database.CreateTable("TestTable", dt, new[] { new DatabaseColumnRequest("Name",new DatabaseTypeRequest(typeof(string),50))});
+    protected void Execute(out ExtractionPipelineUseCase pipelineUseCase, out IExecuteDatasetExtractionDestination results, IDataLoadEventListener listener = null)
+    {
+        if (listener == null)
+            listener = new ThrowImmediatelyDataLoadEventListener();
+
+        DataLoadInfo d = new DataLoadInfo("Internal", _testDatabaseName, "IgnoreMe", "", true, new DiscoveredServer(UnitTestLoggingConnectionString));
+
+        Pipeline pipeline = null;
             
-            CatalogueItem[] cataItems;
-            _catalogue = Import(tbl, out _tableInfo, out _columnInfos, out cataItems,out _extractionInformations);
-            
-            ExtractionInformation _privateID = _extractionInformations.First(e => e.GetRuntimeName().Equals("PrivateID"));
-            _privateID.IsExtractionIdentifier = true;
-            _privateID.SaveToDatabase();
-            
-        }
+        //because extractable columns is likely to include chi column, it will be removed from the collection (for a substitution identifier)
+        var before = _extractableColumns.ToArray();
 
-        protected void ExecuteRunner()
+        try
         {
-            var pipeline = SetupPipeline();
+            pipeline = SetupPipeline();
+            pipelineUseCase = new ExtractionPipelineUseCase(new ThrowImmediatelyActivator(RepositoryLocator),_request.Configuration.Project, _request, pipeline, d);
 
-            var runner = new ExtractionRunner(new ThrowImmediatelyActivator(RepositoryLocator),new ExtractionOptions()
-            {
-                Command = CommandLineActivity.run, ExtractionConfiguration = _configuration.ID.ToString(),
-                ExtractGlobals = true, Pipeline = pipeline.ID.ToString()
-            });
+            pipelineUseCase.Execute(listener);
 
-            var returnCode = runner.Run(
-                RepositoryLocator,
-                new ThrowImmediatelyDataLoadEventListener(),
-                new ThrowImmediatelyCheckNotifier(),
-                new GracefulCancellationToken());
+            Assert.IsNotEmpty(pipelineUseCase.Source.Request.QueryBuilder.SQL);
 
-            Assert.AreEqual(0,returnCode,"Return code from runner was non zero");
+            Assert.IsTrue(pipelineUseCase.ExtractCommand.State == ExtractCommandState.Completed);
         }
-
-        protected void Execute(out ExtractionPipelineUseCase pipelineUseCase, out IExecuteDatasetExtractionDestination results, IDataLoadEventListener listener = null)
+        finally
         {
-            if (listener == null)
-                listener = new ThrowImmediatelyDataLoadEventListener();
-
-            DataLoadInfo d = new DataLoadInfo("Internal", _testDatabaseName, "IgnoreMe", "", true, new DiscoveredServer(UnitTestLoggingConnectionString));
-
-            Pipeline pipeline = null;
-            
-            //because extractable columns is likely to include chi column, it will be removed from the collection (for a substitution identifier)
-            var before = _extractableColumns.ToArray();
-
-            try
-            {
-                pipeline = SetupPipeline();
-                pipelineUseCase = new ExtractionPipelineUseCase(new ThrowImmediatelyActivator(RepositoryLocator),_request.Configuration.Project, _request, pipeline, d);
-
-                pipelineUseCase.Execute(listener);
-
-                Assert.IsNotEmpty(pipelineUseCase.Source.Request.QueryBuilder.SQL);
-
-                Assert.IsTrue(pipelineUseCase.ExtractCommand.State == ExtractCommandState.Completed);
-            }
-            finally
-            {
-                if(pipeline != null)
-                    pipeline.DeleteInDatabase();
-            }
-
-            results =  pipelineUseCase.Destination;
-            _extractableColumns = new List<IColumn>(before);
+            if(pipeline != null)
+                pipeline.DeleteInDatabase();
         }
+
+        results =  pipelineUseCase.Destination;
+        _extractableColumns = new List<IColumn>(before);
+    }
 
         
 
-        protected virtual Pipeline SetupPipeline()
-        {
-            var repository = RepositoryLocator.CatalogueRepository;
-            var pipeline = new Pipeline(repository, "Empty extraction pipeline");
+    protected virtual Pipeline SetupPipeline()
+    {
+        var repository = RepositoryLocator.CatalogueRepository;
+        var pipeline = new Pipeline(repository, "Empty extraction pipeline");
 
-            var component = new PipelineComponent(repository, pipeline, typeof(ExecuteDatasetExtractionFlatFileDestination), 0, "Destination");
-            var arguments = component.CreateArgumentsForClassIfNotExists<ExecuteDatasetExtractionFlatFileDestination>().ToArray();
+        var component = new PipelineComponent(repository, pipeline, typeof(ExecuteDatasetExtractionFlatFileDestination), 0, "Destination");
+        var arguments = component.CreateArgumentsForClassIfNotExists<ExecuteDatasetExtractionFlatFileDestination>().ToArray();
             
-            if(arguments.Length < 3)
-                throw new Exception("Expected only 2 arguments for type ExecuteDatasetExtractionFlatFileDestination, did somebody add another [DemandsInitialization]? if so handle it below");
+        if(arguments.Length < 3)
+            throw new Exception("Expected only 2 arguments for type ExecuteDatasetExtractionFlatFileDestination, did somebody add another [DemandsInitialization]? if so handle it below");
 
-            arguments.Single(a => a.Name.Equals("DateFormat")).SetValue("yyyy-MM-dd");
-            arguments.Single(a => a.Name.Equals("DateFormat")).SaveToDatabase();
+        arguments.Single(a => a.Name.Equals("DateFormat")).SetValue("yyyy-MM-dd");
+        arguments.Single(a => a.Name.Equals("DateFormat")).SaveToDatabase();
 
-            arguments.Single(a => a.Name.Equals("FlatFileType")).SetValue(ExecuteExtractionToFlatFileType.CSV);
-            arguments.Single(a => a.Name.Equals("FlatFileType")).SaveToDatabase();
+        arguments.Single(a => a.Name.Equals("FlatFileType")).SetValue(ExecuteExtractionToFlatFileType.CSV);
+        arguments.Single(a => a.Name.Equals("FlatFileType")).SaveToDatabase();
 
-            AdjustPipelineComponentDelegate?.Invoke(component);
+        AdjustPipelineComponentDelegate?.Invoke(component);
             
-            var component2 = new PipelineComponent(repository, pipeline, typeof(ExecuteDatasetExtractionSource), -1, "Source");
-            var arguments2 = component2.CreateArgumentsForClassIfNotExists<ExecuteDatasetExtractionSource>().ToArray();
+        var component2 = new PipelineComponent(repository, pipeline, typeof(ExecuteDatasetExtractionSource), -1, "Source");
+        var arguments2 = component2.CreateArgumentsForClassIfNotExists<ExecuteDatasetExtractionSource>().ToArray();
 
-            arguments2.Single(a => a.Name.Equals("AllowEmptyExtractions")).SetValue(AllowEmptyExtractions);
-            arguments2.Single(a => a.Name.Equals("AllowEmptyExtractions")).SaveToDatabase();
+        arguments2.Single(a => a.Name.Equals("AllowEmptyExtractions")).SetValue(AllowEmptyExtractions);
+        arguments2.Single(a => a.Name.Equals("AllowEmptyExtractions")).SaveToDatabase();
 
-            AdjustPipelineComponentDelegate?.Invoke(component2);
+        AdjustPipelineComponentDelegate?.Invoke(component2);
 
-            //configure the component as the destination
-            pipeline.DestinationPipelineComponent_ID = component.ID;
-            pipeline.SourcePipelineComponent_ID = component2.ID;
-            pipeline.SaveToDatabase();
+        //configure the component as the destination
+        pipeline.DestinationPipelineComponent_ID = component.ID;
+        pipeline.SourcePipelineComponent_ID = component2.ID;
+        pipeline.SaveToDatabase();
 
-            return pipeline;
-        }
+        return pipeline;
     }
 }

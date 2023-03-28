@@ -17,84 +17,83 @@ using Rdmp.Core.DataExport.DataExtraction.UserPicks;
 using ReusableLibraryCode.Checks;
 using Tests.Common;
 
-namespace Rdmp.Core.Tests.DataExport.DataExtraction
+namespace Rdmp.Core.Tests.DataExport.DataExtraction;
+
+class ExtractionSubdirectoryPatternTests : UnitTests
 {
-    class ExtractionSubdirectoryPatternTests : UnitTests
+
+    [Test]
+    public void Test_NoRelativePaths()
     {
+        var dest = new ExecuteDatasetExtractionFlatFileDestination();
 
-        [Test]
-        public void Test_NoRelativePaths()
-        {
-            var dest = new ExecuteDatasetExtractionFlatFileDestination();
+        dest.ExtractionSubdirectoryPattern = "../../troll";
 
-            dest.ExtractionSubdirectoryPattern = "../../troll";
+        var ex = Assert.Throws<Exception>(()=>dest.Check(new ThrowImmediatelyCheckNotifier()));
+        StringAssert.Contains("ExtractionSubdirectoryPattern cannot contain dots",ex.Message);
+    }
 
-            var ex = Assert.Throws<Exception>(()=>dest.Check(new ThrowImmediatelyCheckNotifier()));
-            StringAssert.Contains("ExtractionSubdirectoryPattern cannot contain dots",ex.Message);
-        }
+    [TestCase("bad")]
+    [TestCase("$n")]
+    [TestCase("$d")]
+    [TestCase("$a")]
+    [TestCase("$n")]
+    public void Test_NoConfigToken(string badString)
+    {
+        var dest = new ExecuteDatasetExtractionFlatFileDestination();
 
-        [TestCase("bad")]
-        [TestCase("$n")]
-        [TestCase("$d")]
-        [TestCase("$a")]
-        [TestCase("$n")]
-        public void Test_NoConfigToken(string badString)
-        {
-            var dest = new ExecuteDatasetExtractionFlatFileDestination();
+        dest.ExtractionSubdirectoryPattern = badString;
 
-            dest.ExtractionSubdirectoryPattern = badString;
+        var ex = Assert.Throws<Exception>(()=>dest.Check(new ThrowImmediatelyCheckNotifier()));
+        StringAssert.Contains("ExtractionSubdirectoryPattern must contain a Configuration element",ex.Message);
+    }
 
-            var ex = Assert.Throws<Exception>(()=>dest.Check(new ThrowImmediatelyCheckNotifier()));
-            StringAssert.Contains("ExtractionSubdirectoryPattern must contain a Configuration element",ex.Message);
-        }
+    [TestCase("$c/fff")]
+    [TestCase("$i")]
+    public void Test_NoDatasetToken(string badString)
+    {
+        var dest = new ExecuteDatasetExtractionFlatFileDestination();
 
-        [TestCase("$c/fff")]
-        [TestCase("$i")]
-        public void Test_NoDatasetToken(string badString)
-        {
-            var dest = new ExecuteDatasetExtractionFlatFileDestination();
+        dest.ExtractionSubdirectoryPattern = badString;
 
-            dest.ExtractionSubdirectoryPattern = badString;
+        var ex = Assert.Throws<Exception>(()=>dest.Check(new ThrowImmediatelyCheckNotifier()));
+        StringAssert.Contains("ExtractionSubdirectoryPattern must contain a Dataset element",ex.Message);
+    }
 
-            var ex = Assert.Throws<Exception>(()=>dest.Check(new ThrowImmediatelyCheckNotifier()));
-            StringAssert.Contains("ExtractionSubdirectoryPattern must contain a Dataset element",ex.Message);
-        }
-
-        /*
-         $c - Configuration Name (e.g. 'Cases')
-         $i - Configuration ID (e.g. 459)
-         $d - Dataset name (e.g. 'Prescribing')
-         $a - Dataset acronym (e.g. 'Presc')
-         $n - Dataset ID (e.g. 459)
-         */
+    /*
+     $c - Configuration Name (e.g. 'Cases')
+     $i - Configuration ID (e.g. 459)
+     $d - Dataset name (e.g. 'Prescribing')
+     $a - Dataset acronym (e.g. 'Presc')
+     $n - Dataset ID (e.g. 459)
+     */
 
 
-        [TestCase("$c/$a", "/AAA/C")]
-        [TestCase("$c/$d", "/AAA/BBB")]
-        [TestCase("$c/$n", "/AAA/\\d+")]
-        [TestCase("$i/$a", "/\\d+/C")]
-        [TestCase("$i/$d", "/\\d+/BBB")]
-        [TestCase("$i/$n", "/\\d+/\\d+")]
-        public void Test_ValidPaths(string goodString, string pattern)
-        {
-            var sds = WhenIHaveA<SelectedDataSets>();
+    [TestCase("$c/$a", "/AAA/C")]
+    [TestCase("$c/$d", "/AAA/BBB")]
+    [TestCase("$c/$n", "/AAA/\\d+")]
+    [TestCase("$i/$a", "/\\d+/C")]
+    [TestCase("$i/$d", "/\\d+/BBB")]
+    [TestCase("$i/$n", "/\\d+/\\d+")]
+    public void Test_ValidPaths(string goodString, string pattern)
+    {
+        var sds = WhenIHaveA<SelectedDataSets>();
 
             
 
-            sds.ExtractionConfiguration.Project.ExtractionDirectory = TestContext.CurrentContext.WorkDirectory;
-            sds.ExtractionConfiguration.Name = "AAA";
-            sds.ExtractableDataSet.Catalogue.Name = "BBB";
-            sds.ExtractableDataSet.Catalogue.Acronym = "C";
+        sds.ExtractionConfiguration.Project.ExtractionDirectory = TestContext.CurrentContext.WorkDirectory;
+        sds.ExtractionConfiguration.Name = "AAA";
+        sds.ExtractableDataSet.Catalogue.Name = "BBB";
+        sds.ExtractableDataSet.Catalogue.Acronym = "C";
             
             
-            var cmd = new ExtractDatasetCommand(sds.ExtractionConfiguration, new ExtractableDatasetBundle(sds.ExtractableDataSet));
-            var dest = new ExecuteDatasetExtractionFlatFileDestination();
+        var cmd = new ExtractDatasetCommand(sds.ExtractionConfiguration, new ExtractableDatasetBundle(sds.ExtractableDataSet));
+        var dest = new ExecuteDatasetExtractionFlatFileDestination();
 
-            dest.ExtractionSubdirectoryPattern = goodString;
-            Assert.DoesNotThrow(()=>dest.Check(new ThrowImmediatelyCheckNotifier()));
+        dest.ExtractionSubdirectoryPattern = goodString;
+        Assert.DoesNotThrow(()=>dest.Check(new ThrowImmediatelyCheckNotifier()));
 
-            var answer = dest.GetDirectoryFor(cmd);
-            StringAssert.IsMatch(pattern,answer.FullName.Replace('\\','/'));
-        }
+        var answer = dest.GetDirectoryFor(cmd);
+        StringAssert.IsMatch(pattern,answer.FullName.Replace('\\','/'));
     }
 }

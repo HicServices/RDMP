@@ -12,48 +12,47 @@ using Rdmp.Core.CommandExecution.AtomicCommands;
 using ReusableLibraryCode.Icons.IconProvision;
 using SixLabors.ImageSharp.PixelFormats;
 
-namespace Rdmp.Core
+namespace Rdmp.Core;
+
+public abstract class PluginUserInterface : IPluginUserInterface
 {
-    public abstract class PluginUserInterface : IPluginUserInterface
+    protected readonly IBasicActivateItems BasicActivator;
+
+    public Image<Rgba32> ImageUnknown => BasicActivator.CoreIconProvider.ImageUnknown;
+
+    /// <summary>
+    /// Creates a new instance of your plugin UI.  See notes on <paramref name="itemActivator"/>
+    /// </summary>
+    /// <param name="itemActivator">The UI layer of the client.  May be a console UI activator or a winforms activator.  Use GetType to 
+    /// determine if the currently running UI layer is one you support in your plugin.</param>
+    protected PluginUserInterface(IBasicActivateItems itemActivator)
     {
-        protected readonly IBasicActivateItems BasicActivator;
+        BasicActivator = itemActivator;
+    }
 
-        public Image<Rgba32> ImageUnknown => BasicActivator.CoreIconProvider.ImageUnknown;
+    public virtual object[] GetChildren(object model)
+    {
+        return null;
+    }
 
-        /// <summary>
-        /// Creates a new instance of your plugin UI.  See notes on <paramref name="itemActivator"/>
-        /// </summary>
-        /// <param name="itemActivator">The UI layer of the client.  May be a console UI activator or a winforms activator.  Use GetType to 
-        /// determine if the currently running UI layer is one you support in your plugin.</param>
-        protected PluginUserInterface(IBasicActivateItems itemActivator)
-        {
-            BasicActivator = itemActivator;
-        }
+    /// <summary>
+    /// Override to return a custom set of commands for some objects
+    /// </summary>
+    /// <param name="o">An object that was right clicked or a member of the enum <see cref="RDMPCollection"/> if a right
+    /// click occurs in whitespace</param>
+    /// <returns></returns>
+    public virtual IEnumerable<IAtomicCommand> GetAdditionalRightClickMenuItems(object o)
+    {
+        yield break;
+    }
 
-        public virtual object[] GetChildren(object model)
-        {
-            return null;
-        }
-
-        /// <summary>
-        /// Override to return a custom set of commands for some objects
-        /// </summary>
-        /// <param name="o">An object that was right clicked or a member of the enum <see cref="RDMPCollection"/> if a right
-        /// click occurs in whitespace</param>
-        /// <returns></returns>
-        public virtual IEnumerable<IAtomicCommand> GetAdditionalRightClickMenuItems(object o)
-        {
-            yield break;
-        }
-
-        public virtual Image<Rgba32> GetImage(object concept, OverlayKind kind = OverlayKind.None)
-        {
-            return null;
-        }
-        /// <inheritdoc/>
-        public virtual bool CustomActivate(IMapsDirectlyToDatabaseTable o)
-        {
-            return false;
-        }
+    public virtual Image<Rgba32> GetImage(object concept, OverlayKind kind = OverlayKind.None)
+    {
+        return null;
+    }
+    /// <inheritdoc/>
+    public virtual bool CustomActivate(IMapsDirectlyToDatabaseTable o)
+    {
+        return false;
     }
 }

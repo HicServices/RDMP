@@ -20,255 +20,255 @@ using ReusableLibraryCode;
 using ReusableLibraryCode.Checks;
 using ReusableLibraryCode.Progress;
 
-namespace Rdmp.Core.Reports
+namespace Rdmp.Core.Reports;
+
+/// <summary>
+/// Generates an extract of all the Catalogues and CatalogueItems in your Catalogue database in .dita format.  Dita is apparently all the rage when it comes to metadata
+/// sharing.
+/// </summary>
+public class DitaCatalogueExtractor : ICheckable
 {
-    /// <summary>
-    /// Generates an extract of all the Catalogues and CatalogueItems in your Catalogue database in .dita format.  Dita is apparently all the rage when it comes to metadata
-    /// sharing.
-    /// </summary>
-    public class DitaCatalogueExtractor : ICheckable
-    {
-        //use http://sourceforge.net/projects/dita-ot/files/DITA-OT%20Stable%20Release/DITA%20Open%20Toolkit%201.8/DITA-OT1.8.M2_full_easy_install_bin.zip/download
-        //to convert .dita files into html
+    //use http://sourceforge.net/projects/dita-ot/files/DITA-OT%20Stable%20Release/DITA%20Open%20Toolkit%201.8/DITA-OT1.8.M2_full_easy_install_bin.zip/download
+    //to convert .dita files into html
         
-        private readonly ICatalogueRepository _repository;
-        private readonly DirectoryInfo _folderToCreateIn;
+    private readonly ICatalogueRepository _repository;
+    private readonly DirectoryInfo _folderToCreateIn;
 
-        /// <summary>
-        /// Prepares class to convert all <see cref="Catalogue"/> stored in the <paramref name="repository"/> into .dita files containing dataset/column descriptions.
-        /// </summary>
-        /// <param name="repository"></param>
-        /// <param name="folderToCreateIn"></param>
-        public DitaCatalogueExtractor(ICatalogueRepository repository, DirectoryInfo folderToCreateIn)
-        {
-            _repository = repository;
-            _folderToCreateIn = folderToCreateIn;
-        }
+    /// <summary>
+    /// Prepares class to convert all <see cref="Catalogue"/> stored in the <paramref name="repository"/> into .dita files containing dataset/column descriptions.
+    /// </summary>
+    /// <param name="repository"></param>
+    /// <param name="folderToCreateIn"></param>
+    public DitaCatalogueExtractor(ICatalogueRepository repository, DirectoryInfo folderToCreateIn)
+    {
+        _repository = repository;
+        _folderToCreateIn = folderToCreateIn;
+    }
 
-        /// <summary>
-        /// Generates the dita files and logs progress / errors to the <paramref name="listener"/>
-        /// </summary>
-        /// <param name="listener"></param>
-        public void Extract(IDataLoadEventListener listener)
-        {
-            string xml = "";
-            xml += @"<?xml version=""1.0"" encoding=""UTF-8""?>
+    /// <summary>
+    /// Generates the dita files and logs progress / errors to the <paramref name="listener"/>
+    /// </summary>
+    /// <param name="listener"></param>
+    public void Extract(IDataLoadEventListener listener)
+    {
+        string xml = "";
+        xml += @"<?xml version=""1.0"" encoding=""UTF-8""?>
 <!DOCTYPE map PUBLIC ""-//OASIS//DTD DITA Map//EN""
 ""map.dtd"">" + Environment.NewLine;
-            xml += "<map>" + Environment.NewLine;
-            xml += "<title>HIC Data Catalogue</title>" + Environment.NewLine;
+        xml += "<map>" + Environment.NewLine;
+        xml += "<title>HIC Data Catalogue</title>" + Environment.NewLine;
 
-            xml += @"<topicmeta product=""hicdc"" rev=""1"">" + Environment.NewLine;
-            xml += "<author>Wilfred Bonney; Thomas Nind; Mikhail Ghattas</author>" + Environment.NewLine;
-            xml += "<publisher>Health Informatics Centre (HIC), University of Dundee</publisher>" + Environment.NewLine;
-            xml += "</topicmeta>" + Environment.NewLine;
+        xml += @"<topicmeta product=""hicdc"" rev=""1"">" + Environment.NewLine;
+        xml += "<author>Wilfred Bonney; Thomas Nind; Mikhail Ghattas</author>" + Environment.NewLine;
+        xml += "<publisher>Health Informatics Centre (HIC), University of Dundee</publisher>" + Environment.NewLine;
+        xml += "</topicmeta>" + Environment.NewLine;
             
             
-            xml += @"<topicref href=""introduction.dita""/>" + Environment.NewLine;
-            GenerateIntroductionFile("introduction.dita");
+        xml += @"<topicref href=""introduction.dita""/>" + Environment.NewLine;
+        GenerateIntroductionFile("introduction.dita");
 
-            xml += @"<topicref href=""dataset.dita"">" + Environment.NewLine;
-            GenerateDataSetFile("dataset.dita");
+        xml += @"<topicref href=""dataset.dita"">" + Environment.NewLine;
+        GenerateDataSetFile("dataset.dita");
 
-            xml += Environment.NewLine;
+        xml += Environment.NewLine;
 
-            //get all the catalogues then sort them alphabetically
-            List<Catalogue> catas = new List<Catalogue>(_repository.GetAllObjects<Catalogue>().Where(c => !(c.IsDeprecated || c.IsInternalDataset || c.IsColdStorageDataset)));
-            catas.Sort();
+        //get all the catalogues then sort them alphabetically
+        List<Catalogue> catas = new List<Catalogue>(_repository.GetAllObjects<Catalogue>().Where(c => !(c.IsDeprecated || c.IsInternalDataset || c.IsColdStorageDataset)));
+        catas.Sort();
 
-            Stopwatch sw = Stopwatch.StartNew();
+        Stopwatch sw = Stopwatch.StartNew();
 
-            int cataloguesCompleted = 0;
-            foreach (Catalogue c in catas)
+        int cataloguesCompleted = 0;
+        foreach (Catalogue c in catas)
+        {
+            listener.OnProgress(this, new ProgressEventArgs("Extracting", new ProgressMeasurement(cataloguesCompleted++,ProgressType.Records,catas.Count), sw.Elapsed));
+
+            //ensure that it has an acryonym
+            if(string.IsNullOrWhiteSpace(c.Acronym))
+                throw new Exception("Dita Extraction requires that each catalogue have a unique Acronym, the catalogue " + c.Name + " is missing an Acronym");
+
+            if (c.Name.Contains("\\") || c.Name.Contains("/"))
+                throw new Exception("Dita Extractor does not support catalogues with backslashes or forward slashs in their name");
+
+            //catalogue main file
+            xml += "<topicref href=\"" + GetFileNameForCatalogue(c) + "\">" + Environment.NewLine;
+            CreateCatalogueFile(c);
+
+            //catalogue items
+            List<CatalogueItem> cataItems = c.CatalogueItems.ToList();
+            cataItems.Sort();
+
+            foreach (CatalogueItem ci in cataItems)
             {
-                listener.OnProgress(this, new ProgressEventArgs("Extracting", new ProgressMeasurement(cataloguesCompleted++,ProgressType.Records,catas.Count), sw.Elapsed));
-
-                //ensure that it has an acryonym
-                if(string.IsNullOrWhiteSpace(c.Acronym))
-                    throw new Exception("Dita Extraction requires that each catalogue have a unique Acronym, the catalogue " + c.Name + " is missing an Acronym");
-
-                if (c.Name.Contains("\\") || c.Name.Contains("/"))
-                    throw new Exception("Dita Extractor does not support catalogues with backslashes or forward slashs in their name");
-
-                //catalogue main file
-                xml += "<topicref href=\"" + GetFileNameForCatalogue(c) + "\">" + Environment.NewLine;
-                CreateCatalogueFile(c);
-
-                //catalogue items
-                List<CatalogueItem> cataItems = c.CatalogueItems.ToList();
-                cataItems.Sort();
-
-                foreach (CatalogueItem ci in cataItems)
-                {
-                    xml += "<topicref href=\"" + GetFileNameForCatalogueItem(c,ci) + "\"/>" + Environment.NewLine;
-                    CreateCatalogueItemFile(c,ci);        
-                }
-                xml += "</topicref>" + Environment.NewLine;
-
-                //completed - mostly for end of loop tbh 
-                listener.OnProgress(this, new ProgressEventArgs("Extracting", new ProgressMeasurement(cataloguesCompleted, ProgressType.Records, catas.Count), sw.Elapsed));
+                xml += "<topicref href=\"" + GetFileNameForCatalogueItem(c,ci) + "\"/>" + Environment.NewLine;
+                CreateCatalogueItemFile(c,ci);        
             }
+            xml += "</topicref>" + Environment.NewLine;
 
-            xml += Environment.NewLine;
-            xml += @"</topicref>" + Environment.NewLine;
-            xml += "</map>";
-
-            File.WriteAllText(Path.Combine(_folderToCreateIn.FullName ,"hic_data_catalogue.ditamap"  ),xml);
-
+            //completed - mostly for end of loop tbh 
+            listener.OnProgress(this, new ProgressEventArgs("Extracting", new ProgressMeasurement(cataloguesCompleted, ProgressType.Records, catas.Count), sw.Elapsed));
         }
+
+        xml += Environment.NewLine;
+        xml += @"</topicref>" + Environment.NewLine;
+        xml += "</map>";
+
+        File.WriteAllText(Path.Combine(_folderToCreateIn.FullName ,"hic_data_catalogue.ditamap"  ),xml);
+
+    }
 
       
 
-        private string GetFileNameForCatalogueItem(Catalogue c,CatalogueItem ci)
-        {
-            string parentName = FixName(c.Acronym);
-            string childName = FixName(ci.Name);
-            return parentName + "_" + childName+ ".dita";
-        }
+    private string GetFileNameForCatalogueItem(Catalogue c,CatalogueItem ci)
+    {
+        string parentName = FixName(c.Acronym);
+        string childName = FixName(ci.Name);
+        return parentName + "_" + childName+ ".dita";
+    }
 
-        private string GetFileNameForCatalogue(Catalogue catalogue)
-        {
-            return FixName(catalogue.Name) + ".dita";
-        }
+    private string GetFileNameForCatalogue(Catalogue catalogue)
+    {
+        return FixName(catalogue.Name) + ".dita";
+    }
 
-        private string FixName(string name)
-        {
-            foreach (char invalidCharacter in Path.GetInvalidFileNameChars())
-                name = name.Replace(invalidCharacter, '_');
+    private string FixName(string name)
+    {
+        foreach (char invalidCharacter in Path.GetInvalidFileNameChars())
+            name = name.Replace(invalidCharacter, '_');
 
-            name = name.Replace("(", "");
-            name = name.Replace(")", "");
-            name = name.Replace(' ', '_');
-            name = name.Replace("&", "and");
+        name = name.Replace("(", "");
+        name = name.Replace(")", "");
+        name = name.Replace(' ', '_');
+        name = name.Replace("&", "and");
                 
-            return name.ToLower();
-        }
+        return name.ToLower();
+    }
 
-        private void CreateCatalogueFile(Catalogue c)
-        {
-            string saveLocation = Path.Combine(_folderToCreateIn.FullName, GetFileNameForCatalogue(c));
+    private void CreateCatalogueFile(Catalogue c)
+    {
+        string saveLocation = Path.Combine(_folderToCreateIn.FullName, GetFileNameForCatalogue(c));
 
-            if(File.Exists(saveLocation))
-                throw new Exception("Attempted to create Catalogue named " + saveLocation + " but it already existed (possibly you have two Catalogues with the same name");
+        if(File.Exists(saveLocation))
+            throw new Exception("Attempted to create Catalogue named " + saveLocation + " but it already existed (possibly you have two Catalogues with the same name");
             
-            string xml = "";
+        string xml = "";
 
-            xml += @"<?xml version=""1.0"" encoding=""UTF-8""?>
+        xml += @"<?xml version=""1.0"" encoding=""UTF-8""?>
 <!DOCTYPE concept PUBLIC ""-//OASIS//DTD DITA Concept//EN""
 ""concept.dtd"">";
-            xml += "<concept id=\"" + FixName(c.Acronym) + "\">" + Environment.NewLine;
+        xml += "<concept id=\"" + FixName(c.Acronym) + "\">" + Environment.NewLine;
 
-            xml += "<title>" + FixName(c.Name) + "</title>" + Environment.NewLine;
+        xml += "<title>" + FixName(c.Name) + "</title>" + Environment.NewLine;
 
-            xml += "<conbody>" + Environment.NewLine;
+        xml += "<conbody>" + Environment.NewLine;
 
-            xml += @"<simpletable keycol=""1"">" + Environment.NewLine;
+        xml += @"<simpletable keycol=""1"">" + Environment.NewLine;
 
-            xml += GenerateObjectPropertiesAsRowUsingReflection(c);
+        xml += GenerateObjectPropertiesAsRowUsingReflection(c);
 
 
-            xml += @"</simpletable>" + Environment.NewLine;
+        xml += @"</simpletable>" + Environment.NewLine;
             
-            xml += "</conbody>" + Environment.NewLine;
+        xml += "</conbody>" + Environment.NewLine;
 
-            xml += "</concept>" + Environment.NewLine;
+        xml += "</concept>" + Environment.NewLine;
 
-            File.WriteAllText(saveLocation,xml);
-        }
+        File.WriteAllText(saveLocation,xml);
+    }
 
-        private void CreateCatalogueItemFile(Catalogue c, CatalogueItem ci)
-        {
-            string saveLocation = Path.Combine(_folderToCreateIn.FullName, GetFileNameForCatalogueItem(c,ci));
+    private void CreateCatalogueItemFile(Catalogue c, CatalogueItem ci)
+    {
+        string saveLocation = Path.Combine(_folderToCreateIn.FullName, GetFileNameForCatalogueItem(c,ci));
 
-            if (File.Exists(saveLocation))
-                throw new Exception("Attempted to create CatalogueItem named " + saveLocation + " but it already existed (possibly you have two CatalogueItems with the same name");
+        if (File.Exists(saveLocation))
+            throw new Exception("Attempted to create CatalogueItem named " + saveLocation + " but it already existed (possibly you have two CatalogueItems with the same name");
 
-            string xml = "";
+        string xml = "";
 
-            xml += @"<?xml version=""1.0"" encoding=""UTF-8""?>
+        xml += @"<?xml version=""1.0"" encoding=""UTF-8""?>
 <!DOCTYPE concept PUBLIC ""-//OASIS//DTD DITA Concept//EN""
 ""concept.dtd"">";
 
-            xml+= "<concept id=\"" + FixName(c.Name) + "_" + FixName(ci.Name) + "\">" + Environment.NewLine;
+        xml+= "<concept id=\"" + FixName(c.Name) + "_" + FixName(ci.Name) + "\">" + Environment.NewLine;
 
-            xml += "<title>" + FixName(ci.Name) + "</title>" + Environment.NewLine;
+        xml += "<title>" + FixName(ci.Name) + "</title>" + Environment.NewLine;
 
-            xml += "<conbody>" + Environment.NewLine;
+        xml += "<conbody>" + Environment.NewLine;
 
-            xml += @"<simpletable keycol=""1"">" + Environment.NewLine;
+        xml += @"<simpletable keycol=""1"">" + Environment.NewLine;
 
-            xml += GenerateObjectPropertiesAsRowUsingReflection(ci);
-
-
-            xml += @"</simpletable>" + Environment.NewLine;
-
-            xml += "</conbody>" + Environment.NewLine;
-
-            xml += "</concept>" + Environment.NewLine;
+        xml += GenerateObjectPropertiesAsRowUsingReflection(ci);
 
 
-            File.WriteAllText(saveLocation, xml);
-        }
+        xml += @"</simpletable>" + Environment.NewLine;
 
-        private string GenerateObjectPropertiesAsRowUsingReflection(object o)
+        xml += "</conbody>" + Environment.NewLine;
+
+        xml += "</concept>" + Environment.NewLine;
+
+
+        File.WriteAllText(saveLocation, xml);
+    }
+
+    private string GenerateObjectPropertiesAsRowUsingReflection(object o)
+    {
+        string toReturnXml = "";
+
+        PropertyInfo[] propertyInfo = o.GetType().GetProperties(BindingFlags.Public | BindingFlags.NonPublic | BindingFlags.Instance);
+
+        //generate a strow for each property
+        foreach (PropertyInfo property in propertyInfo)
         {
-            string toReturnXml = "";
-
-            PropertyInfo[] propertyInfo = o.GetType().GetProperties(BindingFlags.Public | BindingFlags.NonPublic | BindingFlags.Instance);
-
-            //generate a strow for each property
-            foreach (PropertyInfo property in propertyInfo)
-            {
-                //do not extract these
-                if(property.GetCustomAttributes(typeof(DoNotExtractProperty)).Any())
-                    continue;
-                if (property.GetCustomAttributes(typeof(NoMappingToDatabase)).Any())
-                    continue;
+            //do not extract these
+            if(property.GetCustomAttributes(typeof(DoNotExtractProperty)).Any())
+                continue;
+            if (property.GetCustomAttributes(typeof(NoMappingToDatabase)).Any())
+                continue;
                 
-                //Check whether property can be written to
-                if (property.CanRead)
-                    if (property.PropertyType.IsValueType || property.PropertyType.IsEnum || property.PropertyType.Equals(typeof(System.String)))
-                    {
-                        toReturnXml += "<strow>" + Environment.NewLine;
-                        toReturnXml += "<stentry>" + GetHtmlEncodedHeader(property.Name) + "</stentry>" + Environment.NewLine;
-                        toReturnXml += "<stentry>" + GetHtmlEncodedValue(property.GetValue(o, null)) + "</stentry>" + Environment.NewLine;
-                        toReturnXml += "</strow>" + Environment.NewLine;
-                    }
-                    //else
-                        //throw new Exception("Didn't know how to treat property called " + property.Name);
-            }
-
-
-            return toReturnXml;
+            //Check whether property can be written to
+            if (property.CanRead)
+                if (property.PropertyType.IsValueType || property.PropertyType.IsEnum || property.PropertyType.Equals(typeof(System.String)))
+                {
+                    toReturnXml += "<strow>" + Environment.NewLine;
+                    toReturnXml += "<stentry>" + GetHtmlEncodedHeader(property.Name) + "</stentry>" + Environment.NewLine;
+                    toReturnXml += "<stentry>" + GetHtmlEncodedValue(property.GetValue(o, null)) + "</stentry>" + Environment.NewLine;
+                    toReturnXml += "</strow>" + Environment.NewLine;
+                }
+            //else
+            //throw new Exception("Didn't know how to treat property called " + property.Name);
         }
 
-        private string GetHtmlEncodedHeader(object header)
-        {
-            header = header ?? "";
 
-            header = header.ToString().Replace("_", " ");
-            header = Thread.CurrentThread.CurrentCulture.TextInfo.ToTitleCase(header.ToString());
+        return toReturnXml;
+    }
 
-            return HttpUtility.HtmlEncode(header);
-        }
+    private string GetHtmlEncodedHeader(object header)
+    {
+        header = header ?? "";
 
-        private string GetHtmlEncodedValue(object value)
-        {
-            value = value ?? "";
-            return HttpUtility.HtmlEncode(value);
-        }
+        header = header.ToString().Replace("_", " ");
+        header = Thread.CurrentThread.CurrentCulture.TextInfo.ToTitleCase(header.ToString());
 
-        private void GenerateDataSetFile(string filename)
-        {
-            string xml = @"<?xml version=""1.0"" encoding=""UTF-8""?>
+        return HttpUtility.HtmlEncode(header);
+    }
+
+    private string GetHtmlEncodedValue(object value)
+    {
+        value = value ?? "";
+        return HttpUtility.HtmlEncode(value);
+    }
+
+    private void GenerateDataSetFile(string filename)
+    {
+        string xml = @"<?xml version=""1.0"" encoding=""UTF-8""?>
 <!DOCTYPE concept PUBLIC ""-//OASIS//DTD DITA Concept//EN""
 ""concept.dtd"">
 <concept id=""datasets"">
 ";
 
-            xml += "<title>HIC-held Datasets</title>" + Environment.NewLine;
-            xml += "<conbody>" +
-                   @"    <p>This section of the document describes the contents of the HIC-held
+        xml += "<title>HIC-held Datasets</title>" + Environment.NewLine;
+        xml += "<conbody>" +
+               @"    <p>This section of the document describes the contents of the HIC-held
     datasets currently made available to researchers and data analysts. HIC’s
     data collection strategy is well-developed, covering long-term collections
     of whole populations, such as Scottish Morbidity Register (SMR)
@@ -277,96 +277,95 @@ namespace Rdmp.Core.Reports
     disease-specific coverage, such as the GoDARTS (Genetics of Diabetes Audit
     and Research in Tayside, Scotland). These datasets comes in various
     formats and are curated, maintained and governed by HIC. </p>" + Environment.NewLine +
-                   "</conbody>" + Environment.NewLine +
-                   "</concept>" + Environment.NewLine;
+               "</conbody>" + Environment.NewLine +
+               "</concept>" + Environment.NewLine;
 
-            File.WriteAllText(Path.Combine(_folderToCreateIn.FullName, filename), xml);
-        }
+        File.WriteAllText(Path.Combine(_folderToCreateIn.FullName, filename), xml);
+    }
 
-        private void GenerateIntroductionFile(string filename)
-        {
-            string xml = @"<?xml version=""1.0"" encoding=""UTF-8""?>
+    private void GenerateIntroductionFile(string filename)
+    {
+        string xml = @"<?xml version=""1.0"" encoding=""UTF-8""?>
 <!DOCTYPE concept PUBLIC ""-//OASIS//DTD DITA Concept//EN""
 ""concept.dtd"">
 <concept id=""introduction"">
 ";
 
-            xml += "<title>Introduction</title>" + Environment.NewLine;
-            xml += "<conbody>placeholder introduction</conbody>" + Environment.NewLine;
+        xml += "<title>Introduction</title>" + Environment.NewLine;
+        xml += "<conbody>placeholder introduction</conbody>" + Environment.NewLine;
 
-            xml += "</concept>" + Environment.NewLine;
+        xml += "</concept>" + Environment.NewLine;
 
-            File.WriteAllText(Path.Combine(_folderToCreateIn.FullName, filename), xml);
-        }
+        File.WriteAllText(Path.Combine(_folderToCreateIn.FullName, filename), xml);
+    }
 
         
-        /// <summary>
-        /// Checks whether the dita file generation is likely to work e.g. that all datasets have unique acronymns etc
-        /// </summary>
-        /// <param name="notifier"></param>
-        public void Check(ICheckNotifier notifier)
+    /// <summary>
+    /// Checks whether the dita file generation is likely to work e.g. that all datasets have unique acronymns etc
+    /// </summary>
+    /// <param name="notifier"></param>
+    public void Check(ICheckNotifier notifier)
+    {
+        var catas = _repository.GetAllObjects<Catalogue>().Where(c => !c.IsInternalDataset && !c.IsColdStorageDataset).ToArray();
+
+        //Catalogues with no acronyms
+        foreach (Catalogue c in catas.Where(c => string.IsNullOrWhiteSpace(c.Acronym)))
         {
-            var catas = _repository.GetAllObjects<Catalogue>().Where(c => !c.IsInternalDataset && !c.IsColdStorageDataset).ToArray();
-
-            //Catalogues with no acronyms
-            foreach (Catalogue c in catas.Where(c => string.IsNullOrWhiteSpace(c.Acronym)))
-            {
-                string suggestion = GetAcronymSuggestionFromCatalogueName(c.Name);
-                bool useSuggestion = notifier.OnCheckPerformed(new CheckEventArgs("Catalogue " + c.Name + " has no Acronym", CheckResult.Fail, null, "Assign it a suggested acronym: '"+suggestion +"'?"));
+            string suggestion = GetAcronymSuggestionFromCatalogueName(c.Name);
+            bool useSuggestion = notifier.OnCheckPerformed(new CheckEventArgs("Catalogue " + c.Name + " has no Acronym", CheckResult.Fail, null, "Assign it a suggested acronym: '"+suggestion +"'?"));
                 
-                if(useSuggestion)
-                {
-                    c.Acronym = suggestion;
-                    c.SaveToDatabase();
-                }
-            }
-
-            //acronym collisions
-            for(int i=0;i<catas.Length;i++)
+            if(useSuggestion)
             {
-                string acronym = catas[i].Acronym;
-
-                for (int j = i + 1; j < catas.Length; j++)
-                {
-                    if (catas[j].Acronym.Equals(acronym))
-                        notifier.OnCheckPerformed(new CheckEventArgs(
-                            string.Format(
-                                "Duplication in acronym between Catalogues {0} and {1}, duplicate acronym value is {2}",
-                                catas[i], catas[j], acronym), CheckResult.Fail, null));
-                }
-                
+                c.Acronym = suggestion;
+                c.SaveToDatabase();
             }
         }
 
-        /// <summary>
-        /// Suggests an appropriate short acryonymn based on the supplied full <paramref name="name"/> e.g. BIO for Biochemistry
-        /// </summary>
-        /// <param name="name"></param>
-        /// <returns></returns>
-        public string GetAcronymSuggestionFromCatalogueName(string name)
+        //acronym collisions
+        for(int i=0;i<catas.Length;i++)
         {
-            //concatenate all the capitals (and digits)
-            string capsConcat = name.Where(c => char.IsUpper(c) || char.IsDigit(c)).Aggregate("", (s, n) => s + n);
+            string acronym = catas[i].Acronym;
 
-            //if the capitals and digits go together to make something that is less than 10 long then suggest that
-            if (capsConcat.Length >1 && capsConcat.Length < 10)
-                return capsConcat;
-
-            //else try to split up stuff and make suggestions based on that
-            var words = Regex.Split(name, "\\s_").Where(s => !string.IsNullOrWhiteSpace(s)).ToArray();
-
-            if(words.Length == 0)
-                throw new Exception("Could not generate acronym suggestion for name '"+ name +"' because split resulted in 0 words");
-
-            //if there is only 1 word in the Catalogue name
-            if(words.Length == 1)
-                if (words[0].Length < 10)
-                    return words[0];        //if the only word is less than 10 long it can be used as acronym anyway (will be the same as catalogue name)
-                else
-                    return words[0].Substring(0, 5); //there's only one word so just suggest using the first 5 letters... suboptimal but hey whatever
-
-            //return the first letter from every word and also add in all numbers that appear after the first letter in the word
-            return words.Aggregate("", (s, n) => s + n.Substring(0, 1) + n.Skip(1).Where(char.IsDigit));
+            for (int j = i + 1; j < catas.Length; j++)
+            {
+                if (catas[j].Acronym.Equals(acronym))
+                    notifier.OnCheckPerformed(new CheckEventArgs(
+                        string.Format(
+                            "Duplication in acronym between Catalogues {0} and {1}, duplicate acronym value is {2}",
+                            catas[i], catas[j], acronym), CheckResult.Fail, null));
+            }
+                
         }
+    }
+
+    /// <summary>
+    /// Suggests an appropriate short acryonymn based on the supplied full <paramref name="name"/> e.g. BIO for Biochemistry
+    /// </summary>
+    /// <param name="name"></param>
+    /// <returns></returns>
+    public string GetAcronymSuggestionFromCatalogueName(string name)
+    {
+        //concatenate all the capitals (and digits)
+        string capsConcat = name.Where(c => char.IsUpper(c) || char.IsDigit(c)).Aggregate("", (s, n) => s + n);
+
+        //if the capitals and digits go together to make something that is less than 10 long then suggest that
+        if (capsConcat.Length >1 && capsConcat.Length < 10)
+            return capsConcat;
+
+        //else try to split up stuff and make suggestions based on that
+        var words = Regex.Split(name, "\\s_").Where(s => !string.IsNullOrWhiteSpace(s)).ToArray();
+
+        if(words.Length == 0)
+            throw new Exception("Could not generate acronym suggestion for name '"+ name +"' because split resulted in 0 words");
+
+        //if there is only 1 word in the Catalogue name
+        if(words.Length == 1)
+            if (words[0].Length < 10)
+                return words[0];        //if the only word is less than 10 long it can be used as acronym anyway (will be the same as catalogue name)
+            else
+                return words[0].Substring(0, 5); //there's only one word so just suggest using the first 5 letters... suboptimal but hey whatever
+
+        //return the first letter from every word and also add in all numbers that appear after the first letter in the word
+        return words.Aggregate("", (s, n) => s + n.Substring(0, 1) + n.Skip(1).Where(char.IsDigit));
     }
 }

@@ -12,47 +12,46 @@ using Rdmp.Core.Providers.Nodes.ProjectCohortNodes;
 using Rdmp.UI.CohortUI.ImportCustomData;
 using Rdmp.UI.ItemActivation;
 
-namespace Rdmp.UI.CommandExecution.Proposals
+namespace Rdmp.UI.CommandExecution.Proposals;
+
+class ProposeExecutionWhenTargetIsProjectSavedCohortsNode:RDMPCommandExecutionProposal<ProjectSavedCohortsNode>
 {
-    class ProposeExecutionWhenTargetIsProjectSavedCohortsNode:RDMPCommandExecutionProposal<ProjectSavedCohortsNode>
+    public ProposeExecutionWhenTargetIsProjectSavedCohortsNode(IActivateItems itemActivator) : base(itemActivator)
     {
-        public ProposeExecutionWhenTargetIsProjectSavedCohortsNode(IActivateItems itemActivator) : base(itemActivator)
-        {
-        }
+    }
 
-        public override bool CanActivate(ProjectSavedCohortsNode target)
-        {
-            return false;
-        }
+    public override bool CanActivate(ProjectSavedCohortsNode target)
+    {
+        return false;
+    }
 
-        public override void Activate(ProjectSavedCohortsNode target)
-        {
+    public override void Activate(ProjectSavedCohortsNode target)
+    {
             
-        }
+    }
 
-        public override ICommandExecution ProposeExecution(ICombineToMakeCommand cmd, ProjectSavedCohortsNode target, InsertOption insertOption = InsertOption.Default)
-        {
-            //drop a cic on a Saved Cohorts Node to commit it to that project
-            var cicCommand = cmd as CohortIdentificationConfigurationCommand;
-            if (cicCommand != null)
-                return
-                    new ExecuteCommandCreateNewCohortByExecutingACohortIdentificationConfiguration(ItemActivator,null).SetTarget(cicCommand.CohortIdentificationConfiguration).SetTarget(target.Project);
+    public override ICommandExecution ProposeExecution(ICombineToMakeCommand cmd, ProjectSavedCohortsNode target, InsertOption insertOption = InsertOption.Default)
+    {
+        //drop a cic on a Saved Cohorts Node to commit it to that project
+        var cicCommand = cmd as CohortIdentificationConfigurationCommand;
+        if (cicCommand != null)
+            return
+                new ExecuteCommandCreateNewCohortByExecutingACohortIdentificationConfiguration(ItemActivator,null).SetTarget(cicCommand.CohortIdentificationConfiguration).SetTarget(target.Project);
             
-            //drop a file on the SavedCohorts node to commit it
-            var fileCommand = cmd as FileCollectionCombineable;
-            if(fileCommand != null && fileCommand.Files.Length == 1)
-                return new ExecuteCommandCreateNewCohortFromFile(ItemActivator,fileCommand.Files[0],null).SetTarget(target.Project);
+        //drop a file on the SavedCohorts node to commit it
+        var fileCommand = cmd as FileCollectionCombineable;
+        if(fileCommand != null && fileCommand.Files.Length == 1)
+            return new ExecuteCommandCreateNewCohortFromFile(ItemActivator,fileCommand.Files[0],null).SetTarget(target.Project);
 
-            //drop a Project Specific Catalogue onto it
-            if (cmd is CatalogueCombineable catalogueCombineable)
-                return new ExecuteCommandCreateNewCohortFromCatalogue(ItemActivator, catalogueCombineable.Catalogue).SetTarget(target.Project);
+        //drop a Project Specific Catalogue onto it
+        if (cmd is CatalogueCombineable catalogueCombineable)
+            return new ExecuteCommandCreateNewCohortFromCatalogue(ItemActivator, catalogueCombineable.Catalogue).SetTarget(target.Project);
 
-            var columnCommand = cmd as ColumnCombineable;
+        var columnCommand = cmd as ColumnCombineable;
 
-            if (columnCommand != null && columnCommand.Column is ExtractionInformation)
-                return new ExecuteCommandCreateNewCohortFromCatalogue(ItemActivator,(ExtractionInformation) columnCommand.Column);
+        if (columnCommand != null && columnCommand.Column is ExtractionInformation)
+            return new ExecuteCommandCreateNewCohortFromCatalogue(ItemActivator,(ExtractionInformation) columnCommand.Column);
 
-            return null;
-        }
+        return null;
     }
 }

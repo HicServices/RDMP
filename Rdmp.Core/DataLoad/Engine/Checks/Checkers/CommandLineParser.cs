@@ -8,157 +8,156 @@ using System;
 using System.Collections.Generic;
 using System.Text;
 
-namespace Rdmp.Core.DataLoad.Engine.Checks.Checkers
+namespace Rdmp.Core.DataLoad.Engine.Checks.Checkers;
+
+class CommandLineParser
 {
-    class CommandLineParser
+    char[] cmd; // source buffer
+    StringBuilder buf; // output buffer
+    int i; // current position within the source buffer
+
+    public CommandLineParser()
     {
-        char[] cmd; // source buffer
-        StringBuilder buf; // output buffer
-        int i; // current position within the source buffer
+        cmd = null;
+        buf = null;
+        i = -1;
+        return;
+    }
 
-        public CommandLineParser()
+    public IEnumerable<string> Parse(string commandLine)
+    {
+        cmd = commandLine.ToCharArray();
+        buf = new StringBuilder();
+        i = 0;
+
+        while (i < cmd.Length)
         {
-            cmd = null;
-            buf = null;
-            i = -1;
-            return;
-        }
+            char ch = cmd[i];
 
-        public IEnumerable<string> Parse(string commandLine)
-        {
-            cmd = commandLine.ToCharArray();
-            buf = new StringBuilder();
-            i = 0;
+            if (char.IsWhiteSpace(ch)) { throw new InvalidOperationException(); }
+            else if (ch == '\\') { ParseEscapeSequence(); }
+            else if (ch == '"') { ParseQuotedWord(); }
+            else { ParseBareWord(); }
 
-            while (i < cmd.Length)
+            if (i >= cmd.Length || char.IsWhiteSpace(cmd[i]))
             {
-                char ch = cmd[i];
+                string arg = buf.ToString();
 
-                if (char.IsWhiteSpace(ch)) { throw new InvalidOperationException(); }
-                else if (ch == '\\') { ParseEscapeSequence(); }
-                else if (ch == '"') { ParseQuotedWord(); }
-                else { ParseBareWord(); }
+                yield return arg;
 
-                if (i >= cmd.Length || char.IsWhiteSpace(cmd[i]))
-                {
-                    string arg = buf.ToString();
-
-                    yield return arg;
-
-                    buf.Length = 0;
-                    ConsumeWhitespace();
-                }
+                buf.Length = 0;
+                ConsumeWhitespace();
             }
         }
+    }
 
-        /// <summary>
-        /// Parse a quoted word
-        /// </summary>
-        private void ParseQuotedWord()
+    /// <summary>
+    /// Parse a quoted word
+    /// </summary>
+    private void ParseQuotedWord()
+    {
+
+        // scan over the lead-in quotation mark w/o adding it to the buffer
+        ++i;
+
+        // scan the contents of the quoted word into the buffer
+        while (i < cmd.Length && cmd[i] != '"')
         {
+            char ch = cmd[i];
+            if (ch == '\\') { ParseEscapeSequence(); }
+            else { buf.Append(ch); ++i; }
+        }
 
-            // scan over the lead-in quotation mark w/o adding it to the buffer
+        // scan over the lead-out quotation mark w/o adding it to the buffer
+        if (i < cmd.Length)
+        {
             ++i;
-
-            // scan the contents of the quoted word into the buffer
-            while (i < cmd.Length && cmd[i] != '"')
-            {
-                char ch = cmd[i];
-                if (ch == '\\') { ParseEscapeSequence(); }
-                else { buf.Append(ch); ++i; }
-            }
-
-            // scan over the lead-out quotation mark w/o adding it to the buffer
-            if (i < cmd.Length)
-            {
-                ++i;
-            }
-            return;
         }
+        return;
+    }
 
-        /// <summary>
-        /// Parse a bareword
-        /// </summary>
-        private void ParseBareWord()
+    /// <summary>
+    /// Parse a bareword
+    /// </summary>
+    private void ParseBareWord()
+    {
+        while (i < cmd.Length)
         {
-            while (i < cmd.Length)
-            {
-                char ch = cmd[i];
-                if (char.IsWhiteSpace(ch)) break; // whitespace terminates a bareword
-                else if (ch == '"') break; // lead-in quote starts a quoted word
-                else if (ch == '\\') break; // escape sequence terminates the bareword
+            char ch = cmd[i];
+            if (char.IsWhiteSpace(ch)) break; // whitespace terminates a bareword
+            else if (ch == '"') break; // lead-in quote starts a quoted word
+            else if (ch == '\\') break; // escape sequence terminates the bareword
 
-                buf.Append(ch); // otherwise, keep reading this word                
+            buf.Append(ch); // otherwise, keep reading this word                
 
-                ++i;
-            }
-            return;
+            ++i;
         }
+        return;
+    }
 
-        /// <summary>
-        /// Parse an escape sequence of one or more backslashes followed an an optional trailing quotation mark
-        /// </summary>
-        private void ParseEscapeSequence()
+    /// <summary>
+    /// Parse an escape sequence of one or more backslashes followed an an optional trailing quotation mark
+    /// </summary>
+    private void ParseEscapeSequence()
+    {
+        //---------------------------------------------------------------------------------------------------------
+        // The rule is that:
+        //
+        // * An even number of backslashes followed by a quotation mark ('"') means that
+        //   - the backslashes are escaped, so half that many get injected into the buffer, and
+        //   - the quotation mark is a lead-in/lead-out quotation mark that marks the start of a quoted word
+        //     which does not get added to the buffer.
+        //
+        // * An odd number of backslashes followed by a quotation mark ('"') means that
+        //   - the backslashes are escaped, so half that many get injected into the buffer, and
+        //   - the quotation mark is escaped. It's a literal quotation mark that also gets injected into the buffer
+        //
+        // * Any number of backslashes that aren't followed by a quotation mark ('"') have no special meaning:
+        //   all of them get added to the buffer as-sis.
+        //
+        //---------------------------------------------------------------------------------------------------------
+
+        //
+        // scan in the backslashes
+        //
+        int p = i; // start of the escape sequence
+        while (i < cmd.Length && cmd[i] == '\\')
         {
-            //---------------------------------------------------------------------------------------------------------
-            // The rule is that:
-            //
-            // * An even number of backslashes followed by a quotation mark ('"') means that
-            //   - the backslashes are escaped, so half that many get injected into the buffer, and
-            //   - the quotation mark is a lead-in/lead-out quotation mark that marks the start of a quoted word
-            //     which does not get added to the buffer.
-            //
-            // * An odd number of backslashes followed by a quotation mark ('"') means that
-            //   - the backslashes are escaped, so half that many get injected into the buffer, and
-            //   - the quotation mark is escaped. It's a literal quotation mark that also gets injected into the buffer
-            //
-            // * Any number of backslashes that aren't followed by a quotation mark ('"') have no special meaning:
-            //   all of them get added to the buffer as-sis.
-            //
-            //---------------------------------------------------------------------------------------------------------
-
-            //
-            // scan in the backslashes
-            //
-            int p = i; // start of the escape sequence
-            while (i < cmd.Length && cmd[i] == '\\')
-            {
-                buf.Append('\\');
-                ++i;
-            }
-
-            //
-            // if the backslash sequence is followed by a quotation mark, it's an escape sequence
-            //
-            if (i < cmd.Length && cmd[i] == '"')
-            {
-                int n = (i - p); // find the number of backslashes seen
-                int quotient = n >> 1; // n divide 2 ( 5 div 2 = 2 , 6 div 2 = 3 )
-                int remainder = n & 1; // n modulo 2 ( 5 mod 2 = 1 , 6 mod 2 = 0 )
-
-                buf.Length -= (quotient + remainder); // remove the unwanted backslashes
-
-                if (remainder != 0)
-                {
-                    // the trailing quotation mark is an escaped, literal quotation mark
-                    // add it to the buffer and increment the pointer
-                    buf.Append('"');
-                    ++i;
-                }
-            }
-            return;
+            buf.Append('\\');
+            ++i;
         }
 
-        /// <summary>
-        /// Consume inter-argument whitespace
-        /// </summary>
-        private void ConsumeWhitespace()
+        //
+        // if the backslash sequence is followed by a quotation mark, it's an escape sequence
+        //
+        if (i < cmd.Length && cmd[i] == '"')
         {
-            while (i < cmd.Length && char.IsWhiteSpace(cmd[i]))
+            int n = (i - p); // find the number of backslashes seen
+            int quotient = n >> 1; // n divide 2 ( 5 div 2 = 2 , 6 div 2 = 3 )
+            int remainder = n & 1; // n modulo 2 ( 5 mod 2 = 1 , 6 mod 2 = 0 )
+
+            buf.Length -= (quotient + remainder); // remove the unwanted backslashes
+
+            if (remainder != 0)
             {
+                // the trailing quotation mark is an escaped, literal quotation mark
+                // add it to the buffer and increment the pointer
+                buf.Append('"');
                 ++i;
             }
-            return;
         }
+        return;
+    }
+
+    /// <summary>
+    /// Consume inter-argument whitespace
+    /// </summary>
+    private void ConsumeWhitespace()
+    {
+        while (i < cmd.Length && char.IsWhiteSpace(cmd[i]))
+        {
+            ++i;
+        }
+        return;
     }
 }

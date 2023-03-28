@@ -13,15 +13,14 @@ using Rdmp.Core.Curation.Data;
 using Rdmp.Core.DataViewing;
 using Rdmp.UI.CommandExecution.AtomicCommands;
 
-namespace Rdmp.UI.Menus
+namespace Rdmp.UI.Menus;
+
+class FilterMenu : RDMPContextMenuStrip
 {
-    class FilterMenu : RDMPContextMenuStrip
+    public FilterMenu(RDMPContextMenuStripArgs args, IFilter filter): base(args, (DatabaseEntity)filter)
     {
-        public FilterMenu(RDMPContextMenuStripArgs args, IFilter filter): base(args, (DatabaseEntity)filter)
-        {
-            Add(new ExecuteCommandViewFilterMatchGraph(_activator, filter));
-            Add(new ExecuteCommandExportObjectsToFile(_activator, new[] {filter}));
-            Add(new ExecuteCommandImportFilterDescriptionsFromShare(_activator, filter));
-        }
+        Add(new ExecuteCommandViewFilterMatchGraph(_activator, filter));
+        Add(new ExecuteCommandExportObjectsToFile(_activator, new[] {filter}));
+        Add(new ExecuteCommandImportFilterDescriptionsFromShare(_activator, filter));
     }
 }

@@ -13,67 +13,66 @@ using ReusableLibraryCode.Icons.IconProvision;
 using SixLabors.ImageSharp;
 using SixLabors.ImageSharp.PixelFormats;
 
-namespace Rdmp.UI.CommandExecution.AtomicCommands
+namespace Rdmp.UI.CommandExecution.AtomicCommands;
+
+public class ExecuteCommandExpandAllNodes : BasicUICommandExecution,IAtomicCommand
 {
-    public class ExecuteCommandExpandAllNodes : BasicUICommandExecution,IAtomicCommand
+    private readonly RDMPCollectionCommonFunctionality _commonFunctionality;
+    private object _rootToExpandFrom;
+
+    public ExecuteCommandExpandAllNodes(IActivateItems activator,RDMPCollectionCommonFunctionality commonFunctionality, object toExpand) : base(activator)
     {
-        private readonly RDMPCollectionCommonFunctionality _commonFunctionality;
-        private object _rootToExpandFrom;
+        _commonFunctionality = commonFunctionality;
+        _rootToExpandFrom = toExpand;
 
-        public ExecuteCommandExpandAllNodes(IActivateItems activator,RDMPCollectionCommonFunctionality commonFunctionality, object toExpand) : base(activator)
+        // if we are expanding everything in the tree that is ok
+        if (_rootToExpandFrom is RDMPCollection)
         {
-            _commonFunctionality = commonFunctionality;
-            _rootToExpandFrom = toExpand;
+            return;
+        }
 
-            // if we are expanding everything in the tree that is ok
-            if (_rootToExpandFrom is RDMPCollection)
+        if(!commonFunctionality.Tree.CanExpand(toExpand))
+            SetImpossible("Node cannot be expanded");
+
+        Weight = 100.4f;
+    }
+
+    public override string GetCommandName()
+    {
+        if (_rootToExpandFrom is RDMPCollection && string.IsNullOrWhiteSpace(OverrideCommandName))
+        {
+            return "Expand All";
+        }
+
+        return base.GetCommandName();
+    }
+    public override void Execute()
+    {
+        base.Execute();
+
+        _commonFunctionality.Tree.Visible = false;
+        try
+        {
+            if(_rootToExpandFrom is RDMPCollection)
             {
+                _commonFunctionality.Tree.ExpandAll();
                 return;
             }
 
-            if(!commonFunctionality.Tree.CanExpand(toExpand))
-                SetImpossible("Node cannot be expanded");
+            _commonFunctionality.ExpandToDepth(int.MaxValue,_rootToExpandFrom);
 
-            Weight = 100.4f;
+            var index = _commonFunctionality.Tree.IndexOf(_rootToExpandFrom);
+            if (index != -1)
+                _commonFunctionality.Tree.EnsureVisible(index);
         }
-
-        public override string GetCommandName()
+        finally
         {
-            if (_rootToExpandFrom is RDMPCollection && string.IsNullOrWhiteSpace(OverrideCommandName))
-            {
-                return "Expand All";
-            }
-
-            return base.GetCommandName();
+            _commonFunctionality.Tree.Visible = true;
         }
-        public override void Execute()
-        {
-            base.Execute();
+    }
 
-            _commonFunctionality.Tree.Visible = false;
-            try
-            {
-                if(_rootToExpandFrom is RDMPCollection)
-                {
-                    _commonFunctionality.Tree.ExpandAll();
-                    return;
-                }
-
-                _commonFunctionality.ExpandToDepth(int.MaxValue,_rootToExpandFrom);
-
-                var index = _commonFunctionality.Tree.IndexOf(_rootToExpandFrom);
-                if (index != -1)
-                    _commonFunctionality.Tree.EnsureVisible(index);
-            }
-            finally
-            {
-                _commonFunctionality.Tree.Visible = true;
-            }
-        }
-
-        public override Image<Rgba32> GetImage(IIconProvider iconProvider)
-        {
-            return Image.Load<Rgba32>(CatalogueIcons.ExpandAllNodes);
-        }
+    public override Image<Rgba32> GetImage(IIconProvider iconProvider)
+    {
+        return Image.Load<Rgba32>(CatalogueIcons.ExpandAllNodes);
     }
 }

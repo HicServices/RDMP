@@ -9,40 +9,39 @@ using System.Windows.Forms;
 using BrightIdeasSoftware;
 using Rdmp.Core;
 
-namespace Rdmp.UI.Collections
+namespace Rdmp.UI.Collections;
+
+/// <summary>
+/// The Tree data model that is served by TreeFactoryGetter in RDMPCollectionCommonFunctionality.  Allows overriding of default TreeListView object model
+/// functionality e.g. sorting.
+/// 
+/// <para>This implementation involves ensuring that ordering tree nodes always respects our OrderableComparer class.  This means that even when you reorder Projects
+/// for example, the order of the subfolders (Cohorts, ExtractionConfigurations) doesn't change (which it would normally if only alphabetical comparing was done).</para>
+/// </summary>
+internal class RDMPCollectionCommonFunctionalityTreeHijacker : TreeListView.Tree
 {
-    /// <summary>
-    /// The Tree data model that is served by TreeFactoryGetter in RDMPCollectionCommonFunctionality.  Allows overriding of default TreeListView object model
-    /// functionality e.g. sorting.
-    /// 
-    /// <para>This implementation involves ensuring that ordering tree nodes always respects our OrderableComparer class.  This means that even when you reorder Projects
-    /// for example, the order of the subfolders (Cohorts, ExtractionConfigurations) doesn't change (which it would normally if only alphabetical comparing was done).</para>
-    /// </summary>
-    internal class RDMPCollectionCommonFunctionalityTreeHijacker : TreeListView.Tree
+    private OLVColumn _lastSortColumn;
+    private SortOrder _lastSortOrder;
+
+    public RDMPCollectionCommonFunctionalityTreeHijacker(TreeListView treeView) : base(treeView)
     {
-        private OLVColumn _lastSortColumn;
-        private SortOrder _lastSortOrder;
-
-        public RDMPCollectionCommonFunctionalityTreeHijacker(TreeListView treeView) : base(treeView)
-        {
                 
-        }
+    }
 
-        public override void Sort(OLVColumn column, SortOrder order)
-        {
-            _lastSortColumn = column;
-            _lastSortOrder = order;
+    public override void Sort(OLVColumn column, SortOrder order)
+    {
+        _lastSortColumn = column;
+        _lastSortOrder = order;
 
-            base.Sort(column, order);
+        base.Sort(column, order);
 
-        }
+    }
 
-        protected override TreeListView.BranchComparer GetBranchComparer()
-        {   
-            return new TreeListView.BranchComparer(
-                new OrderableComparer(
+    protected override TreeListView.BranchComparer GetBranchComparer()
+    {   
+        return new TreeListView.BranchComparer(
+            new OrderableComparer(
                 _lastSortColumn != null ? new ModelObjectComparer(_lastSortColumn, _lastSortOrder) : null)
-                );
-        }
+        );
     }
 }

@@ -15,51 +15,50 @@ using ReusableLibraryCode.Icons.IconProvision;
 using SixLabors.ImageSharp;
 using SixLabors.ImageSharp.PixelFormats;
 
-namespace Rdmp.UI.CommandExecution.AtomicCommands
+namespace Rdmp.UI.CommandExecution.AtomicCommands;
+
+public class ExecuteCommandCreateANOVersion:BasicUICommandExecution,IAtomicCommandWithTarget
 {
-    public class ExecuteCommandCreateANOVersion:BasicUICommandExecution,IAtomicCommandWithTarget
+    private Catalogue _catalogue;
+
+    [UseWithObjectConstructor]
+    public ExecuteCommandCreateANOVersion(IActivateItems activator, Catalogue catalogue) : this(activator) => SetTarget(catalogue);
+
+    public ExecuteCommandCreateANOVersion(IActivateItems activator) : base(activator)
     {
-        private Catalogue _catalogue;
+        UseTripleDotSuffix = true;
+    }
 
-        [UseWithObjectConstructor]
-        public ExecuteCommandCreateANOVersion(IActivateItems activator, Catalogue catalogue) : this(activator) => SetTarget(catalogue);
+    public override Image<Rgba32> GetImage(IIconProvider iconProvider)
+    {
+        return iconProvider.GetImage(RDMPConcept.ANOTable);
+    }
 
-        public ExecuteCommandCreateANOVersion(IActivateItems activator) : base(activator)
-        {
-            UseTripleDotSuffix = true;
-        }
+    public IAtomicCommandWithTarget SetTarget(DatabaseEntity target)
+    {
+        _catalogue = (Catalogue) target;
 
-        public override Image<Rgba32> GetImage(IIconProvider iconProvider)
-        {
-            return iconProvider.GetImage(RDMPConcept.ANOTable);
-        }
+        if(!_catalogue.GetAllExtractionInformation(ExtractionCategory.Any).Any())
+            SetImpossible("Catalogue does not have any Extractable Columns");
 
-        public IAtomicCommandWithTarget SetTarget(DatabaseEntity target)
-        {
-            _catalogue = (Catalogue) target;
+        return this;
+    }
 
-            if(!_catalogue.GetAllExtractionInformation(ExtractionCategory.Any).Any())
-                SetImpossible("Catalogue does not have any Extractable Columns");
+    public override string GetCommandHelp()
+    {
+        return "Create an anonymous version of the dataset.  This will be an initially empty anonymous schema and a load configuration for migrating the data.";
+    }
 
-            return this;
-        }
+    public override void Execute()
+    {
+        if (_catalogue == null)
+            SetTarget(SelectOne<Catalogue>(Activator.CoreChildProvider.AllCatalogues));
 
-        public override string GetCommandHelp()
-        {
-            return "Create an anonymous version of the dataset.  This will be an initially empty anonymous schema and a load configuration for migrating the data.";
-        }
-
-        public override void Execute()
-        {
-            if (_catalogue == null)
-                SetTarget(SelectOne<Catalogue>(Activator.CoreChildProvider.AllCatalogues));
-
-            if(_catalogue == null)
-                return;
+        if(_catalogue == null)
+            return;
             
-            base.Execute();
+        base.Execute();
 
-            Activator.Activate<ForwardEngineerANOCatalogueUI, Catalogue>(_catalogue);
-        }
+        Activator.Activate<ForwardEngineerANOCatalogueUI, Catalogue>(_catalogue);
     }
 }

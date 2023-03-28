@@ -7,15 +7,14 @@
 using Rdmp.Core.Providers.Nodes;
 using Rdmp.UI.CommandExecution.AtomicCommands;
 
-namespace Rdmp.UI.Menus
-{
-    class AllDashboardsNodeMenu : RDMPContextMenuStrip
-    {
+namespace Rdmp.UI.Menus;
 
-        public AllDashboardsNodeMenu(RDMPContextMenuStripArgs args, AllDashboardsNode node)
-            : base(args, node)
-        {
-            Add(new ExecuteCommandCreateNewDashboard(_activator));
-        }
+class AllDashboardsNodeMenu : RDMPContextMenuStrip
+{
+
+    public AllDashboardsNodeMenu(RDMPContextMenuStripArgs args, AllDashboardsNode node)
+        : base(args, node)
+    {
+        Add(new ExecuteCommandCreateNewDashboard(_activator));
     }
 }

@@ -4,12 +4,11 @@
 // RDMP is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License for more details.
 // You should have received a copy of the GNU General Public License along with RDMP. If not, see <https://www.gnu.org/licenses/>.
 
-namespace Rdmp.Core.Providers.Nodes
+namespace Rdmp.Core.Providers.Nodes;
+
+/// <summary>
+/// Abstract base for all collection and proxy nodes in RDMP tree hierarchies e.g. <see cref="AllANOTablesNode"/>
+/// </summary>
+public abstract class Node
 {
-    /// <summary>
-    /// Abstract base for all collection and proxy nodes in RDMP tree hierarchies e.g. <see cref="AllANOTablesNode"/>
-    /// </summary>
-    public abstract class Node
-    {
-    }
 }

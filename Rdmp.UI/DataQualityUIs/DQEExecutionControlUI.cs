@@ -15,64 +15,63 @@ using Rdmp.UI.SimpleControls;
 using Rdmp.UI.TestsAndSetup.ServicePropogation;
 
 
-namespace Rdmp.UI.DataQualityUIs
+namespace Rdmp.UI.DataQualityUIs;
+
+/// <summary>
+/// Form for performing Data Quality Engine executions on a chosen Catalogue. Opening the form will trigger a series of pre run checks and once these have successfully completed you
+/// can then begin the execution by clicking the Start Execution button.
+/// 
+/// <para>While the execution is happening you can view the progress on the right hand side.</para>
+/// 
+/// <para>To view the results of the execution Right Click on the relevant catalogue and select View DQE Results.</para>
+/// </summary>
+public partial class DQEExecutionControlUI : DQEExecutionControl_Design
 {
-    /// <summary>
-    /// Form for performing Data Quality Engine executions on a chosen Catalogue. Opening the form will trigger a series of pre run checks and once these have successfully completed you
-    /// can then begin the execution by clicking the Start Execution button.
-    /// 
-    /// <para>While the execution is happening you can view the progress on the right hand side.</para>
-    /// 
-    /// <para>To view the results of the execution Right Click on the relevant catalogue and select View DQE Results.</para>
-    /// </summary>
-    public partial class DQEExecutionControlUI : DQEExecutionControl_Design
-    {
-        private Catalogue _catalogue;
+    private Catalogue _catalogue;
         
-        public DQEExecutionControlUI()
-        {
-            InitializeComponent();
+    public DQEExecutionControlUI()
+    {
+        InitializeComponent();
             
-            AssociatedCollection = RDMPCollection.Catalogue;
-            checkAndExecuteUI1.CommandGetter += CommandGetter;
-            checkAndExecuteUI1.ExecutionFinished += checkAndExecuteUI1_ExecutionFinished;
-        }
-
-        void checkAndExecuteUI1_ExecutionFinished(object sender, ExecutionEventArgs e)
-        {
-            //refresh
-            SetDatabaseObject(Activator,_catalogue);
-        }
-
-        private RDMPCommandLineOptions CommandGetter(CommandLineActivity commandLineActivity)
-        {
-            return new DqeOptions() { Catalogue = _catalogue.ID.ToString(), Command = commandLineActivity };
-        }
-
-        public override void SetDatabaseObject(IActivateItems activator, Catalogue databaseObject)
-        {
-            base.SetDatabaseObject(activator, databaseObject);
-            _catalogue = databaseObject;
-            checkAndExecuteUI1.SetItemActivator(activator);
-
-            CommonFunctionality.Add(new ExecuteCommandConfigureCatalogueValidationRules(Activator).SetTarget(_catalogue), "Validation Rules...");
-            CommonFunctionality.Add(new ExecuteCommandViewDQEResultsForCatalogue(Activator){OverrideCommandName = "View Results..."}.SetTarget(databaseObject));
-        }
-        
-        public override void ConsultAboutClosing(object sender, FormClosingEventArgs e)
-        {
-            base.ConsultAboutClosing(sender,e);
-            checkAndExecuteUI1.ConsultAboutClosing(sender,e);
-        }
-
-        public override string GetTabName()
-        {
-            return "DQE Execution:" + base.GetTabName();
-        }
+        AssociatedCollection = RDMPCollection.Catalogue;
+        checkAndExecuteUI1.CommandGetter += CommandGetter;
+        checkAndExecuteUI1.ExecutionFinished += checkAndExecuteUI1_ExecutionFinished;
     }
 
-    [TypeDescriptionProvider(typeof(AbstractControlDescriptionProvider<DQEExecutionControl_Design, UserControl>))]
-    public abstract class DQEExecutionControl_Design : RDMPSingleDatabaseObjectControl<Catalogue>
+    void checkAndExecuteUI1_ExecutionFinished(object sender, ExecutionEventArgs e)
     {
+        //refresh
+        SetDatabaseObject(Activator,_catalogue);
     }
+
+    private RDMPCommandLineOptions CommandGetter(CommandLineActivity commandLineActivity)
+    {
+        return new DqeOptions() { Catalogue = _catalogue.ID.ToString(), Command = commandLineActivity };
+    }
+
+    public override void SetDatabaseObject(IActivateItems activator, Catalogue databaseObject)
+    {
+        base.SetDatabaseObject(activator, databaseObject);
+        _catalogue = databaseObject;
+        checkAndExecuteUI1.SetItemActivator(activator);
+
+        CommonFunctionality.Add(new ExecuteCommandConfigureCatalogueValidationRules(Activator).SetTarget(_catalogue), "Validation Rules...");
+        CommonFunctionality.Add(new ExecuteCommandViewDQEResultsForCatalogue(Activator){OverrideCommandName = "View Results..."}.SetTarget(databaseObject));
+    }
+        
+    public override void ConsultAboutClosing(object sender, FormClosingEventArgs e)
+    {
+        base.ConsultAboutClosing(sender,e);
+        checkAndExecuteUI1.ConsultAboutClosing(sender,e);
+    }
+
+    public override string GetTabName()
+    {
+        return "DQE Execution:" + base.GetTabName();
+    }
+}
+
+[TypeDescriptionProvider(typeof(AbstractControlDescriptionProvider<DQEExecutionControl_Design, UserControl>))]
+public abstract class DQEExecutionControl_Design : RDMPSingleDatabaseObjectControl<Catalogue>
+{
 }

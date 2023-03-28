@@ -8,20 +8,20 @@ using NUnit.Framework;
 using Rdmp.Core.Validation;
 using Tests.Common;
 
-namespace Rdmp.Core.Tests.Validation.ValidationPluginTests
-{
-    public class LegacySerializationTest:DatabaseTests
-    {
-        [Test]
-        public void TestLegacyDeserialization()
-        {
-            string s = LegacyXML;
-            Validator.LocatorForXMLDeserialization = RepositoryLocator;
-            Validator v = Validator.LoadFromXml(s);
-            Assert.IsNotNull(v);
-        }
+namespace Rdmp.Core.Tests.Validation.ValidationPluginTests;
 
-        private const string LegacyXML = @"<?xml version=""1.0"" encoding=""utf-16""?>
+public class LegacySerializationTest:DatabaseTests
+{
+  [Test]
+  public void TestLegacyDeserialization()
+  {
+    string s = LegacyXML;
+    Validator.LocatorForXMLDeserialization = RepositoryLocator;
+    Validator v = Validator.LoadFromXml(s);
+    Assert.IsNotNull(v);
+  }
+
+  private const string LegacyXML = @"<?xml version=""1.0"" encoding=""utf-16""?>
 <Validator xmlns:xsd=""http://www.w3.org/2001/XMLSchema"" xmlns:xsi=""http://www.w3.org/2001/XMLSchema-instance"">
   <ItemValidators>
     <ItemValidator>
@@ -138,5 +138,4 @@ namespace Rdmp.Core.Tests.Validation.ValidationPluginTests
     </ItemValidator>
   </ItemValidators>
 </Validator>";
-    }
 }

@@ -7,34 +7,33 @@
 using System;
 using System.ComponentModel;
 
-namespace Rdmp.UI
+namespace Rdmp.UI;
+
+/// <summary>
+/// Allows visual studio designer to work with controls which have abstract base classes in the inheritance hierarchy
+/// </summary>
+/// <typeparam name="TAbstract"></typeparam>
+/// <typeparam name="TBase"></typeparam>
+public class AbstractControlDescriptionProvider<TAbstract, TBase> : TypeDescriptionProvider
 {
-    /// <summary>
-    /// Allows visual studio designer to work with controls which have abstract base classes in the inheritance hierarchy
-    /// </summary>
-    /// <typeparam name="TAbstract"></typeparam>
-    /// <typeparam name="TBase"></typeparam>
-    public class AbstractControlDescriptionProvider<TAbstract, TBase> : TypeDescriptionProvider
+    public AbstractControlDescriptionProvider() : base(TypeDescriptor.GetProvider(typeof(TAbstract)))
     {
-        public AbstractControlDescriptionProvider() : base(TypeDescriptor.GetProvider(typeof(TAbstract)))
-        {
-        }
+    }
 
-        public override Type GetReflectionType(Type objectType, object instance)
-        {
-            if (objectType == typeof(TAbstract))
-                return typeof(TBase);
+    public override Type GetReflectionType(Type objectType, object instance)
+    {
+        if (objectType == typeof(TAbstract))
+            return typeof(TBase);
 
-            return base.GetReflectionType(objectType, instance);
-        }
+        return base.GetReflectionType(objectType, instance);
+    }
 
-        public override object CreateInstance(IServiceProvider provider, Type objectType, Type[] argTypes, object[] args)
-        {
-            if (objectType == typeof(TAbstract))
-                objectType = typeof(TBase);
+    public override object CreateInstance(IServiceProvider provider, Type objectType, Type[] argTypes, object[] args)
+    {
+        if (objectType == typeof(TAbstract))
+            objectType = typeof(TBase);
 
             
-            return base.CreateInstance(provider, objectType, argTypes, args);
-        }
+        return base.CreateInstance(provider, objectType, argTypes, args);
     }
 }

@@ -9,20 +9,19 @@ using Rdmp.Core.Curation.Data;
 using Rdmp.Core.DataExport.Data;
 using Rdmp.Core.DataExport.DataExtraction.Commands;
 
-namespace Rdmp.Core.DataExport.DataExtraction.UserPicks
+namespace Rdmp.Core.DataExport.DataExtraction.UserPicks;
+
+/// <summary>
+/// See ExtractableDatasetBundle
+/// </summary>
+public interface IExtractableDatasetBundle
 {
-    /// <summary>
-    /// See ExtractableDatasetBundle
-    /// </summary>
-    public interface IExtractableDatasetBundle
-    {
-        IExtractableDataSet DataSet { get; }
-        List<SupportingDocument> Documents { get; }
-        List<SupportingSQLTable> SupportingSQL { get; }
-        List<IBundledLookupTable> LookupTables { get; }
+    IExtractableDataSet DataSet { get; }
+    List<SupportingDocument> Documents { get; }
+    List<SupportingSQLTable> SupportingSQL { get; }
+    List<IBundledLookupTable> LookupTables { get; }
 
-        void DropContent(object toDrop);
+    void DropContent(object toDrop);
 
-        Dictionary<object, ExtractCommandState> States { get; }
-    }
+    Dictionary<object, ExtractCommandState> States { get; }
 }

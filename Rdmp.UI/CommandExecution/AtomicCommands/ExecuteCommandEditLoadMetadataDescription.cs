@@ -13,30 +13,29 @@ using Rdmp.UI.ItemActivation;
 using ReusableLibraryCode.Icons.IconProvision;
 using SixLabors.ImageSharp.PixelFormats;
 
-namespace Rdmp.UI.CommandExecution.AtomicCommands
+namespace Rdmp.UI.CommandExecution.AtomicCommands;
+
+internal class ExecuteCommandEditLoadMetadataDescription : BasicUICommandExecution,IAtomicCommand
 {
-    internal class ExecuteCommandEditLoadMetadataDescription : BasicUICommandExecution,IAtomicCommand
+    private LoadMetadata _loadMetadata;
+
+    public ExecuteCommandEditLoadMetadataDescription(IActivateItems activator, LoadMetadata loadMetadata):base(activator)
     {
-        private LoadMetadata _loadMetadata;
+        _loadMetadata = loadMetadata;
+    }
 
-        public ExecuteCommandEditLoadMetadataDescription(IActivateItems activator, LoadMetadata loadMetadata):base(activator)
-        {
-            _loadMetadata = loadMetadata;
-        }
+    public override Image<Rgba32> GetImage(IIconProvider iconProvider)
+    {
+        return iconProvider.GetImage(RDMPConcept.LoadMetadata,OverlayKind.Edit);
+    }
 
-        public override Image<Rgba32> GetImage(IIconProvider iconProvider)
-        {
-            return iconProvider.GetImage(RDMPConcept.LoadMetadata,OverlayKind.Edit);
-        }
+    public override string GetCommandName()
+    {
+        return "Edit Description";
+    }
 
-        public override string GetCommandName()
-        {
-            return "Edit Description";
-        }
-
-        public override void Execute()
-        {
-            Activator.Activate<LoadMetadataUI, LoadMetadata>(_loadMetadata);
-        }
+    public override void Execute()
+    {
+        Activator.Activate<LoadMetadataUI, LoadMetadata>(_loadMetadata);
     }
 }

@@ -13,17 +13,16 @@ using Rdmp.Core.CommandLine.Interactive;
 using ReusableLibraryCode.Checks;
 using Tests.Common;
 
-namespace Rdmp.Core.Tests.CommandLine.Interactive
+namespace Rdmp.Core.Tests.CommandLine.Interactive;
+
+class ConsoleInputManagerTests : UnitTests
 {
-    class ConsoleInputManagerTests : UnitTests
+    [Test]
+    public void TestDisallowInput()
     {
-        [Test]
-        public void TestDisallowInput()
-        {
-            var manager = new ConsoleInputManager(RepositoryLocator, new ThrowImmediatelyCheckNotifier());
-            manager.DisallowInput = true;
+        var manager = new ConsoleInputManager(RepositoryLocator, new ThrowImmediatelyCheckNotifier());
+        manager.DisallowInput = true;
             
-            Assert.Throws<InputDisallowedException>(()=>manager.GetString(new DialogArgs { WindowTitle = "bob" }, null));
-        }
+        Assert.Throws<InputDisallowedException>(()=>manager.GetString(new DialogArgs { WindowTitle = "bob" }, null));
     }
 }

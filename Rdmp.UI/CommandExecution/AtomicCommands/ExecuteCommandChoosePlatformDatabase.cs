@@ -15,46 +15,45 @@ using Rdmp.UI.LocationsMenu;
 using ReusableLibraryCode.Icons.IconProvision;
 using SixLabors.ImageSharp.PixelFormats;
 
-namespace Rdmp.UI.CommandExecution.AtomicCommands
+namespace Rdmp.UI.CommandExecution.AtomicCommands;
+
+public class ExecuteCommandChoosePlatformDatabase : BasicCommandExecution,IAtomicCommand
 {
-    public class ExecuteCommandChoosePlatformDatabase : BasicCommandExecution,IAtomicCommand
+    private IRDMPPlatformRepositoryServiceLocator _repositoryLocator;
+        
+    public ExecuteCommandChoosePlatformDatabase(IActivateItems activator) 
     {
-        private IRDMPPlatformRepositoryServiceLocator _repositoryLocator;
+        if (activator != null)
+            Initialize(activator.RepositoryLocator);
+    }
+
+    public ExecuteCommandChoosePlatformDatabase(IRDMPPlatformRepositoryServiceLocator repositoryLocator)
+    {
+        Initialize(repositoryLocator);
+    }
+
+    private void Initialize(IRDMPPlatformRepositoryServiceLocator locator)
+    {
+        _repositoryLocator = locator;
+        if (!(_repositoryLocator is UserSettingsRepositoryFinder))
+            SetImpossible("Platform databases location is read-only (probably passed as commandline parameter?).");
+    }
+
+    public override string GetCommandHelp()
+    {
+        return "Change which RDMP platform metadata databases you are connected to";
+    }
         
-        public ExecuteCommandChoosePlatformDatabase(IActivateItems activator) 
-        {
-            if (activator != null)
-                Initialize(activator.RepositoryLocator);
-        }
-
-        public ExecuteCommandChoosePlatformDatabase(IRDMPPlatformRepositoryServiceLocator repositoryLocator)
-        {
-            Initialize(repositoryLocator);
-        }
-
-        private void Initialize(IRDMPPlatformRepositoryServiceLocator locator)
-        {
-            _repositoryLocator = locator;
-            if (!(_repositoryLocator is UserSettingsRepositoryFinder))
-                SetImpossible("Platform databases location is read-only (probably passed as commandline parameter?).");
-        }
-
-        public override string GetCommandHelp()
-        {
-            return "Change which RDMP platform metadata databases you are connected to";
-        }
-        
-        public override void Execute()
-        {
-            base.Execute();
+    public override void Execute()
+    {
+        base.Execute();
             
-            var dialog = new ChoosePlatformDatabasesUI(_repositoryLocator);
-            dialog.ShowDialog();
-        }
+        var dialog = new ChoosePlatformDatabasesUI(_repositoryLocator);
+        dialog.ShowDialog();
+    }
 
-        public override Image<Rgba32> GetImage(IIconProvider iconProvider)
-        {
-            return iconProvider.GetImage(RDMPConcept.Database);
-        }
+    public override Image<Rgba32> GetImage(IIconProvider iconProvider)
+    {
+        return iconProvider.GetImage(RDMPConcept.Database);
     }
 }

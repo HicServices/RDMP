@@ -9,77 +9,76 @@ using Rdmp.Core.Curation.Data;
 using Rdmp.Core.Curation.Data.Cache;
 using ReusableLibraryCode.Progress;
 
-namespace Rdmp.Core.Caching.Requests.FetchRequestProvider
+namespace Rdmp.Core.Caching.Requests.FetchRequestProvider;
+
+public class CacheFetchRequestProvider : ICacheFetchRequestProvider
 {
-    public class CacheFetchRequestProvider : ICacheFetchRequestProvider
-    {
-        protected ICacheProgress CacheProgress { get; }
-        public IPermissionWindow PermissionWindow { get; set; }
+    protected ICacheProgress CacheProgress { get; }
+    public IPermissionWindow PermissionWindow { get; set; }
 
-        private ICacheFetchRequest _initialRequest;
-        public ICacheFetchRequest Current { get; private set; }
+    private ICacheFetchRequest _initialRequest;
+    public ICacheFetchRequest Current { get; private set; }
         
-        /// <summary>
-        /// Sets up the class to generate <see cref="ICacheFetchRequest"/> for the given <see cref="ICacheProgress"/>
-        /// </summary>
-        /// <param name="cacheProgress">The cache which the request is for, this must have either an <see cref="ICacheProgress.CacheFillProgress"/> or its
-        /// <see cref="ILoadProgress"/> parent must have a populated <see cref="ILoadProgress.OriginDate"/></param>
-        public CacheFetchRequestProvider(ICacheProgress cacheProgress)
-        {
-            CacheProgress = cacheProgress;
-            PermissionWindow = CacheProgress.PermissionWindow;
-        }
+    /// <summary>
+    /// Sets up the class to generate <see cref="ICacheFetchRequest"/> for the given <see cref="ICacheProgress"/>
+    /// </summary>
+    /// <param name="cacheProgress">The cache which the request is for, this must have either an <see cref="ICacheProgress.CacheFillProgress"/> or its
+    /// <see cref="ILoadProgress"/> parent must have a populated <see cref="ILoadProgress.OriginDate"/></param>
+    public CacheFetchRequestProvider(ICacheProgress cacheProgress)
+    {
+        CacheProgress = cacheProgress;
+        PermissionWindow = CacheProgress.PermissionWindow;
+    }
 
-        /// <summary>
-        /// Creates a new <see cref="ICacheFetchRequest"/> with a valid start date but no End.  To hydrate end you should use a <see cref="ICacheFetchRequestProvider"/>
-        /// </summary>
-        /// <returns></returns>
-        public virtual ICacheFetchRequest CreateInitialRequest()
-        {
-            var lp = CacheProgress.LoadProgress;
+    /// <summary>
+    /// Creates a new <see cref="ICacheFetchRequest"/> with a valid start date but no End.  To hydrate end you should use a <see cref="ICacheFetchRequestProvider"/>
+    /// </summary>
+    /// <returns></returns>
+    public virtual ICacheFetchRequest CreateInitialRequest()
+    {
+        var lp = CacheProgress.LoadProgress;
             
-            // Figure out when to start loading from
-            DateTime startDate;
-            if (CacheProgress.CacheFillProgress.HasValue)
-                startDate = CacheProgress.CacheFillProgress.Value;
-            else if (lp.OriginDate.HasValue)
-                startDate = lp.OriginDate.Value;
-            else
-                throw new Exception("Don't know when to begin loading the cache from. Neither CacheProgress or LoadProgress has a relevant date.");
+        // Figure out when to start loading from
+        DateTime startDate;
+        if (CacheProgress.CacheFillProgress.HasValue)
+            startDate = CacheProgress.CacheFillProgress.Value;
+        else if (lp.OriginDate.HasValue)
+            startDate = lp.OriginDate.Value;
+        else
+            throw new Exception("Don't know when to begin loading the cache from. Neither CacheProgress or LoadProgress has a relevant date.");
 
-            var initialFetchRequest = new CacheFetchRequest(CacheProgress.Repository)
-            {
-                CacheProgress = CacheProgress,
-                ChunkPeriod = CacheProgress.ChunkPeriod,
-                PermissionWindow = this.PermissionWindow,
-                Start = startDate
-            };
-
-            return initialFetchRequest;
-        }
-
-        /// <summary>
-        /// Returns the next <see cref="ICacheFetchRequest"/> based on the <see cref="Current"/>
-        /// </summary>
-        /// <param name="listener"></param>
-        /// <returns></returns>
-        public ICacheFetchRequest GetNext(IDataLoadEventListener listener)
+        var initialFetchRequest = new CacheFetchRequest(CacheProgress.Repository)
         {
-            if (_initialRequest == null)
-                return Current = _initialRequest = CreateInitialRequest();
+            CacheProgress = CacheProgress,
+            ChunkPeriod = CacheProgress.ChunkPeriod,
+            PermissionWindow = this.PermissionWindow,
+            Start = startDate
+        };
 
-            return Current = CreateNext();
-        }
+        return initialFetchRequest;
+    }
 
-        private ICacheFetchRequest CreateNext()
+    /// <summary>
+    /// Returns the next <see cref="ICacheFetchRequest"/> based on the <see cref="Current"/>
+    /// </summary>
+    /// <param name="listener"></param>
+    /// <returns></returns>
+    public ICacheFetchRequest GetNext(IDataLoadEventListener listener)
+    {
+        if (_initialRequest == null)
+            return Current = _initialRequest = CreateInitialRequest();
+
+        return Current = CreateNext();
+    }
+
+    private ICacheFetchRequest CreateNext()
+    {
+        var nextStart = Current.Start.Add(Current.ChunkPeriod);
+        return new CacheFetchRequest(CacheProgress.Repository,nextStart)
         {
-            var nextStart = Current.Start.Add(Current.ChunkPeriod);
-            return new CacheFetchRequest(CacheProgress.Repository,nextStart)
-            {
-                CacheProgress = Current.CacheProgress,
-                PermissionWindow = Current.PermissionWindow,
-                ChunkPeriod = Current.ChunkPeriod
-            };
-        }
+            CacheProgress = Current.CacheProgress,
+            PermissionWindow = Current.PermissionWindow,
+            ChunkPeriod = Current.ChunkPeriod
+        };
     }
 }
