@@ -161,11 +161,11 @@ public class CohortCompilerTests:CohortIdentificationTests
 
                     break;
                 case TestCompilerAddAllTasksTestCase.RootContainer:
-                    tasks = compiler.AddTasksRecursively(new ISqlParameter[0], cohortIdentificationConfiguration.RootCohortAggregateContainer, includeSubcontainers);
+                    tasks = compiler.AddTasksRecursively(Array.Empty<ISqlParameter>(), cohortIdentificationConfiguration.RootCohortAggregateContainer, includeSubcontainers);
                     Assert.AreEqual(includeSubcontainers?6:5,tasks.Count); //all aggregates and root container (but not joinables)
                     break;
                 case TestCompilerAddAllTasksTestCase.Subcontainer:
-                    tasks = compiler.AddTasksRecursively(new ISqlParameter[0], container1, includeSubcontainers);
+                    tasks = compiler.AddTasksRecursively(Array.Empty<ISqlParameter>(), container1, includeSubcontainers);
                     Assert.AreEqual(includeSubcontainers?3:2,tasks.Count); //subcontainer and its aggregates
                     break;
                 default:

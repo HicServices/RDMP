@@ -180,16 +180,16 @@ public partial class ServerDatabaseTableSelector : UserControl
         }
         catch (OperationCanceledException)
         {
-            _listDatabasesAsyncResult = new string[0];
+            _listDatabasesAsyncResult = Array.Empty<string>();
         }
         catch (AggregateException ex )//user cancels
         {
             if (ex.GetExceptionIfExists<OperationCanceledException>() != null)
-                _listDatabasesAsyncResult = new string[0];
+                _listDatabasesAsyncResult = Array.Empty<string>();
             else
             {
                 SetState(ex);
-                _listDatabasesAsyncResult = new string[0];
+                _listDatabasesAsyncResult = Array.Empty<string>();
             }   
         }
     }

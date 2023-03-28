@@ -34,7 +34,7 @@ public class AggregationContainerTask : Compileable,IOrderable
         ContainedConfigurations = compiler.CoreChildProvider.GetChildren(Container).OfType<AggregateConfiguration>().ToArray();
 
         var d = compiler.CoreChildProvider.GetDescendancyListIfAnyFor(Container);
-        _parentContainers = d?.Parents?.OfType<CohortAggregateContainer>()?.ToArray() ?? new CohortAggregateContainer[0];
+        _parentContainers = d?.Parents?.OfType<CohortAggregateContainer>()?.ToArray() ?? Array.Empty<CohortAggregateContainer>();
     }
 
     public override string GetCatalogueName()

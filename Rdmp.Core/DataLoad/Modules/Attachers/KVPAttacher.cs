@@ -139,7 +139,7 @@ public class KVPAttacher :FlatFileAttacher, IDemandToUseAPipeline, IDataFlowDest
     private string[] GetPKs()
     {
         if (string.IsNullOrWhiteSpace(PrimaryKeyColumns))
-            return new string[0];
+            return Array.Empty<string>();
 
         return PrimaryKeyColumns.Split(new[] { ',' }, StringSplitOptions.RemoveEmptyEntries);
     }

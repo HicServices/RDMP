@@ -42,7 +42,7 @@ public partial class LoadEventsTreeView : RDMPUserControl,IObjectCollectionContr
     public LoadEventsTreeViewObjectCollection Collection {get;set;}
                 
     private BackgroundWorker _populateLoadHistory = new BackgroundWorker();
-    private ArchivalDataLoadInfo[] _populateLoadHistoryResults = new ArchivalDataLoadInfo[0];
+    private ArchivalDataLoadInfo[] _populateLoadHistoryResults = Array.Empty<ArchivalDataLoadInfo>();
     private CancellationTokenSource _populateLoadHistoryCancel;
         
 
@@ -274,7 +274,7 @@ public partial class LoadEventsTreeView : RDMPUserControl,IObjectCollectionContr
             }
             catch (OperationCanceledException)//user cancels
             {
-                results = new ArchivalDataLoadInfo[0];
+                results = Array.Empty<ArchivalDataLoadInfo>();
             }
 
             _populateLoadHistoryResults = results;
@@ -306,7 +306,7 @@ public partial class LoadEventsTreeView : RDMPUserControl,IObjectCollectionContr
         pbLoading.Visible = true;
 
         //clear the results
-        _populateLoadHistoryResults = new ArchivalDataLoadInfo[0];
+        _populateLoadHistoryResults = Array.Empty<ArchivalDataLoadInfo>();
 
         _populateLoadHistoryCancel = new CancellationTokenSource();
         _populateLoadHistory.RunWorkerAsync();

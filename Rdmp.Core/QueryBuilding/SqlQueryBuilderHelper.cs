@@ -205,7 +205,7 @@ public class SqlQueryBuilderHelper
         if(qb.SelectColumns.Count == 0)
             throw new QueryBuildingException("There are no columns in the SELECT query");
 
-        var toReturn = new List<ITableInfo>(forceJoinsToTheseTables ?? new ITableInfo[0]);
+        var toReturn = new List<ITableInfo>(forceJoinsToTheseTables ?? Array.Empty<ITableInfo>());
 
         if (forceJoinsToTheseTables != null)
         {

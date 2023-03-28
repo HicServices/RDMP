@@ -66,8 +66,8 @@ public partial class DataReleaseUI : DataReleaseUI_Design
 
     private bool _isExecuting;
     private RDMPCollectionCommonFunctionality _commonFunctionality;
-    private IEnumerable<ExtractionConfiguration> _configurations = new ExtractionConfiguration[0];
-    private IEnumerable<ISelectedDataSets> _selectedDataSets = new ISelectedDataSets[0];
+    private IEnumerable<ExtractionConfiguration> _configurations = Array.Empty<ExtractionConfiguration>();
+    private IEnumerable<ISelectedDataSets> _selectedDataSets = Array.Empty<ISelectedDataSets>();
 
     private ToolStripControlHost _pipelinePanel;
 
@@ -155,7 +155,7 @@ public partial class DataReleaseUI : DataReleaseUI_Design
                 _configurations.Where(c => tlvReleasePotentials.IsChecked(c) || tlvReleasePotentials.IsCheckedIndeterminate(c)).Select(ec => ec.ID).ToArray()
             ),
             SelectedDataSets = ToIdList(
-                _selectedDataSets.All(tlvReleasePotentials.IsChecked) ? new int[0] : tlvReleasePotentials.CheckedObjects.OfType<ISelectedDataSets>().Select(sds => sds.ID).ToArray()
+                _selectedDataSets.All(tlvReleasePotentials.IsChecked) ? Array.Empty<int>() : tlvReleasePotentials.CheckedObjects.OfType<ISelectedDataSets>().Select(sds => sds.ID).ToArray()
             ),
             Command = activityRequested,
             ReleaseGlobals = tlvReleasePotentials.IsChecked(_globalsNode),
@@ -212,7 +212,7 @@ public partial class DataReleaseUI : DataReleaseUI_Design
 
         //figure out the globals
         var ec = _project.ExtractionConfigurations.FirstOrDefault();
-        _globals = ec != null ? ec.GetGlobals() : new IMapsDirectlyToDatabaseTable[0];
+        _globals = ec != null ? ec.GetGlobals() : Array.Empty<IMapsDirectlyToDatabaseTable>();
 
         if (_pipelineSelectionUI1 == null)
         {

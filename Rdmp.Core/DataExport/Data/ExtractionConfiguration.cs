@@ -746,7 +746,7 @@ public class ExtractionConfiguration : DatabaseEntity, IExtractionConfiguration,
         var sds = SelectedDataSets.FirstOrDefault(s=>s.ExtractableDataSet.Catalogue != null);
 
         if(sds == null)
-            return new IMapsDirectlyToDatabaseTable[0];
+            return Array.Empty<IMapsDirectlyToDatabaseTable>();
 
         var cata = sds.ExtractableDataSet.Catalogue;
 
@@ -776,7 +776,7 @@ public class ExtractionConfiguration : DatabaseEntity, IExtractionConfiguration,
     /// <inheritdoc/>
     public IHasDependencies[] GetObjectsDependingOnThis()
     {
-        return new IHasDependencies[0];
+        return Array.Empty<IHasDependencies>();
     }
 
     public DiscoveredServer GetDistinctLoggingDatabase()

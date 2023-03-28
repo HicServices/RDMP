@@ -175,7 +175,7 @@ public class ExecuteCommandDescribe:BasicCommandExecution
     {
         var invoker = new CommandInvoker(BasicActivator);
 
-        var commandCtor = invoker.GetConstructor(commandType, new CommandLineObjectPicker(new string[0],BasicActivator));
+        var commandCtor = invoker.GetConstructor(commandType, new CommandLineObjectPicker(Array.Empty<string>(),BasicActivator));
 
         var sb = new StringBuilder();
 

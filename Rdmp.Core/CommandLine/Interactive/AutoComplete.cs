@@ -15,7 +15,7 @@ class AutoComplete
 
     public AutoComplete(IEnumerable<string> autocompletes)
     {
-        this.autocompletes = autocompletes?.ToArray() ?? new string[0];
+        this.autocompletes = autocompletes?.ToArray() ?? Array.Empty<string>();
     }
 
     public char[] Separators { get;set;} = new []{ ','};

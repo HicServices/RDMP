@@ -233,7 +233,7 @@ public class CatalogueChildProvider : ICoreChildProvider
         // all the objects which are 
         AllMasqueraders = new ConcurrentDictionary<object, HashSet<IMasqueradeAs>>();
 
-        _pluginChildProviders = pluginChildProviders ?? new IChildProvider[0];
+        _pluginChildProviders = pluginChildProviders ?? Array.Empty<IChildProvider>();
 
         ReportProgress("Before object fetches");
 
@@ -997,7 +997,7 @@ public class CatalogueChildProvider : ICoreChildProvider
         //get all the CatalogueItems for this Catalogue (TryGet because Catalogue may not have any items
         var cis = _catalogueToCatalogueItems.TryGetValue(c.ID, out List<CatalogueItem> result)
             ? result.ToArray()
-            : new CatalogueItem[0];
+            : Array.Empty<CatalogueItem>();
 
         //tell the CatalogueItems that we are are their parent
         foreach (CatalogueItem ci in cis)
@@ -1508,7 +1508,7 @@ public class CatalogueChildProvider : ICoreChildProvider
                     return pc.PipelineComponentArguments.ToArray();
                 }
 
-                return new object[0];//return none
+                return Array.Empty<object>();//return none
             }
                 
             
@@ -1674,7 +1674,7 @@ public class CatalogueChildProvider : ICoreChildProvider
         lock(WriteLock)
         {
             return AllMasqueraders.TryGetValue(o,out HashSet<IMasqueradeAs> result) ?
-                (IEnumerable<IMasqueradeAs>) result:new IMasqueradeAs[0];
+                (IEnumerable<IMasqueradeAs>) result:Array.Empty<IMasqueradeAs>();
         }
     }
 

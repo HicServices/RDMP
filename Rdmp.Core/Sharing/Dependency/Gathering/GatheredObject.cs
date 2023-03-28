@@ -168,7 +168,7 @@ public class GatheredObject : IHasDependencies, IMasqueradeAs
 
     public IHasDependencies[] GetObjectsThisDependsOn()
     {
-        return new IHasDependencies[0];
+        return Array.Empty<IHasDependencies>();
     }
 
     public IHasDependencies[] GetObjectsDependingOnThis()

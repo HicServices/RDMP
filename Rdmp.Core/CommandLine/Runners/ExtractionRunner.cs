@@ -132,7 +132,7 @@ public class ExtractionRunner : ManyRunner
         if (_pipeline == null)
         {
             checkNotifier.OnCheckPerformed(new CheckEventArgs("No Pipeline has been picked", CheckResult.Fail));
-            return new ICheckable[0];
+            return Array.Empty<ICheckable>();
         }
 
         checkables.Add(new ProjectChecker(_activator,_configuration.Project)

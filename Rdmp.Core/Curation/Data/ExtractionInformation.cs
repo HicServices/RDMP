@@ -233,7 +233,7 @@ public class ExtractionInformation : ConcreteColumn, IHasDependencies, IInjectKn
     /// <inheritdoc/>
     public IHasDependencies[] GetObjectsThisDependsOn()
     {
-        return ColumnInfo != null? new IHasDependencies[] {ColumnInfo}: new IHasDependencies[0];
+        return ColumnInfo != null? new IHasDependencies[] {ColumnInfo}: Array.Empty<IHasDependencies>();
     }
 
     /// <inheritdoc/>

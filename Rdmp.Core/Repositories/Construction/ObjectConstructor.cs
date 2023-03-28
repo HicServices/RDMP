@@ -281,7 +281,7 @@ public class ObjectConstructor
         if (blankConstructor == null)
             throw new ObjectLacksCompatibleConstructorException("Type '" + t + "' did not contain a blank constructor");
 
-        return (blankConstructor.Invoke(new object[0]));
+        return (blankConstructor.Invoke(Array.Empty<object>()));
     }
 
     /// <summary>

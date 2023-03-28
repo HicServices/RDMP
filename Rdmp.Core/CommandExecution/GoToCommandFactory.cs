@@ -74,7 +74,7 @@ public class GoToCommandFactory : CommandFactoryBase
                     if (dx.AllProjectAssociatedCics != null)
                         return dx.AllProjectAssociatedCics.Where(a => a.CohortIdentificationConfiguration_ID == cic.ID).Select(a => a.Project).Distinct();
 
-                return new CohortIdentificationConfiguration[0];
+                return Array.Empty<CohortIdentificationConfiguration>();
             })
             {
                 OverrideCommandName = "Project(s)",
@@ -147,7 +147,7 @@ public class GoToCommandFactory : CommandFactoryBase
                 if (_activator.CoreChildProvider is DataExportChildProvider dx)
                     return dx.SelectedDataSets.Where(s => s.ExtractableDataSet_ID == eds.ID).Select(s => s.ExtractionConfiguration);
 
-                return new SelectedDataSets[0];
+                return Array.Empty<SelectedDataSets>();
             }){ OverrideCommandName = "Extraction Configuration(s)", OverrideIcon = GetImage(RDMPConcept.ExtractionConfiguration) };
         }
 
@@ -278,7 +278,7 @@ public class GoToCommandFactory : CommandFactoryBase
                 if (_activator.CoreChildProvider is DataExportChildProvider dx)
                     return dx.ExtractionConfigurations.Where(ec => ec.Cohort_ID == cohort.ID);
 
-                return new ExtractionConfiguration[0];
+                return Array.Empty<ExtractionConfiguration>();
             })
             {
                 OverrideCommandName = "Extraction Configuration(s)",
@@ -290,7 +290,7 @@ public class GoToCommandFactory : CommandFactoryBase
                 if (_activator.CoreChildProvider is DataExportChildProvider dx)
                     return dx.Projects.Where(p => p.ProjectNumber == cohort.ExternalProjectNumber);
 
-                return new Project[0];
+                return Array.Empty<Project>();
             })
             {
                 OverrideCommandName = "Project(s)",

@@ -426,7 +426,7 @@ CONSTRAINT AK_" + TableName + @" UNIQUE(" + anonymousColumnName + @")
     /// <inheritdoc/>
     public IHasDependencies[] GetObjectsThisDependsOn()
     {
-        return new IHasDependencies[0];
+        return Array.Empty<IHasDependencies>();
     }
 
     /// <inheritdoc/>

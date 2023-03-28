@@ -4,6 +4,7 @@
 // RDMP is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License for more details.
 // You should have received a copy of the GNU General Public License along with RDMP. If not, see <https://www.gnu.org/licenses/>.
 
+using System;
 using NUnit.Framework;
 using Rdmp.Core.Validation;
 using Rdmp.Core.Validation.Constraints.Primary;
@@ -21,8 +22,8 @@ public class PluginValidationSerializationTest
         iv.PrimaryConstraint = new FishConstraint();
 
         //validation should be working
-        Assert.IsNull(iv.ValidateAll("Fish", new object[0], new string[0]));
-        Assert.IsNotNull(iv.ValidateAll("Potato", new object[0], new string[0]));
+        Assert.IsNull(iv.ValidateAll("Fish", Array.Empty<object>(), Array.Empty<string>()));
+        Assert.IsNotNull(iv.ValidateAll("Potato", Array.Empty<object>(), Array.Empty<string>()));
 
         v.ItemValidators.Add(iv);
 

@@ -609,7 +609,7 @@ public partial class RDMPCollectionCommonFunctionality : IRefreshBusSubscriber
     private IEnumerable ChildrenGetter(object model)
     {
         if (AxeChildren != null && AxeChildren.Contains(model.GetType()))
-            return new object[0];
+            return Array.Empty<object>();
 
         return CoreChildProvider.GetChildren(model);
     }

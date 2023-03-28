@@ -406,7 +406,7 @@ public class CatalogueItem : DatabaseEntity, IDeleteable, IComparable, IHasDepen
                 ||
                 Name.ToLower().Contains(col.GetRuntimeName().ToLower()));
 
-        return new ColumnInfo[0];
+        return Array.Empty<ColumnInfo>();
     }
 
     /// <inheritdoc/>

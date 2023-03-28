@@ -161,7 +161,7 @@ public class SearchablesMatchScorer
 
         }
         else
-            explicitTypesRequested = new string[0];
+            explicitTypesRequested = Array.Empty<string>();
 
         if (cancellationToken.IsCancellationRequested)
             return null;

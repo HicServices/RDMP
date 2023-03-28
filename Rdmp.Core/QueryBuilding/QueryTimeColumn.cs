@@ -120,7 +120,7 @@ public class QueryTimeColumn: IComparable
 
         var firstTable = tablesUsedInQuery.FirstOrDefault();
 
-        var allAvailableLookups = new Lookup[0]; 
+        var allAvailableLookups = Array.Empty<Lookup>(); 
 
         if(firstTable != null)
             allAvailableLookups = firstTable.Repository.GetAllObjects<Lookup>();

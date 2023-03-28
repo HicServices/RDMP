@@ -79,7 +79,7 @@ public class CohortQueryBuilderResult
     public IOrderable StopContainerWhenYouReach { get;set; }
     public int CountOfSubQueries => Dependencies.Count;
     public int CountOfCachedSubQueries { get; private set; }
-    public IReadOnlyCollection<IPluginCohortCompiler> PluginCohortCompilers { get; } = new PluginCohortCompiler[0].ToList().AsReadOnly();
+    public IReadOnlyCollection<IPluginCohortCompiler> PluginCohortCompilers { get; } = Array.Empty<PluginCohortCompiler>().ToList().AsReadOnly();
 
     /// <summary>
     /// Creates a new result for a single <see cref="AggregateConfiguration"/> or <see cref="CohortAggregateContainer"/>

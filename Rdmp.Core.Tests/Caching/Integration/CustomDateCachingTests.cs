@@ -42,12 +42,12 @@ public class CustomDateCachingTests : DatabaseTests
         var sourceComponent = Mock.Of<IPipelineComponent>(x=>
             x.Class == "CachingEngineTests.Integration.TestCacheSource" &&
             x.GetClassAsSystemType()==typeof (TestCacheSource) &&
-            x.GetAllArguments()==new IArgument[0]);
+            x.GetAllArguments()==Array.Empty<IArgument>());
 
         var destinationComponent = Mock.Of<IPipelineComponent>(x=>
             x.Class == "CachingEngineTests.Integration.TestCacheDestination" &&
             x.GetClassAsSystemType()==typeof (TestCacheDestination) &&
-            x.GetAllArguments()==new IArgument[0]);
+            x.GetAllArguments()==Array.Empty<IArgument>());
 
         var pipeline = Mock.Of<IPipeline>(p=>
             p.Repository == CatalogueRepository &&

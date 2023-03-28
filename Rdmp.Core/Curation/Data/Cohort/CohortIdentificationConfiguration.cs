@@ -727,6 +727,6 @@ public class CohortIdentificationConfiguration : DatabaseEntity, ICollectSqlPara
     /// <inheritdoc/>
     public IHasDependencies[] GetObjectsDependingOnThis()
     {
-        return new IHasDependencies[0];
+        return Array.Empty<IHasDependencies>();
     }
 }

@@ -395,7 +395,7 @@ public class MemoryCatalogueRepository : MemoryRepository, ICatalogueRepository,
     public IOrderable[] GetChildren(CohortAggregateContainer parent)
     {
         if (!CohortContainerContents.ContainsKey(parent))
-            return new IOrderable[0];
+            return Array.Empty<IOrderable>();
 
         return CohortContainerContents[parent].OrderBy(o => o.Order).Select(o => o.Orderable).ToArray();
     }
@@ -445,7 +445,7 @@ public class MemoryCatalogueRepository : MemoryRepository, ICatalogueRepository,
     public IContainer[] GetSubContainers(IContainer container)
     {
         if(!WhereSubContainers.ContainsKey(container))
-            return new IContainer[0];
+            return Array.Empty<IContainer>();
 
         return WhereSubContainers[container].ToArray();
     }

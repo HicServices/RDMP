@@ -377,7 +377,7 @@ public class CommandInvoker
 
         try
         {
-            var constructor = GetConstructor(t, new CommandLineObjectPicker(new string[0]{ },_basicActivator));
+            var constructor = GetConstructor(t, new CommandLineObjectPicker(Array.Empty<string>(),_basicActivator));
 
             if (constructor == null)
                 return false;

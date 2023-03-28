@@ -159,7 +159,7 @@ internal class ConsoleGuiContextMenuFactory
         }
 
         if (o == null)
-            return new IAtomicCommand[0];
+            return Array.Empty<IAtomicCommand>();
 
         return
             GetExtraCommands(activator, o)

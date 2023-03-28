@@ -257,7 +257,7 @@ public class DataTableUploadDestination : IPluginDataFlowComponent<DataTable>, I
         foreach (var pkCol in toProcess.PrimaryKey.Select(dc => dc.ColumnName))
             _primaryKey.Add(pkCol);
 
-        toProcess.PrimaryKey = new DataColumn[0];
+        toProcess.PrimaryKey = Array.Empty<DataColumn>();
 
         //also get rid of any ExplicitTypes primary keys
         foreach (var dcr in ExplicitTypes.Where(dcr => dcr.IsPrimaryKey))

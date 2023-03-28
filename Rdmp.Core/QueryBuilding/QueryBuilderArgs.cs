@@ -28,7 +28,7 @@ public class QueryBuilderArgs: QueryBuilderCustomArgs
     public QueryBuilderArgs(QueryBuilderCustomArgs customisations, ISqlParameter[] globals)
     {
         customisations?.Populate(this);
-        Globals = globals ?? new ISqlParameter[0];
+        Globals = globals ?? Array.Empty<ISqlParameter>();
     }
 
     /// <summary>

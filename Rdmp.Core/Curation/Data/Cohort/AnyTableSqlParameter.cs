@@ -209,7 +209,7 @@ public class AnyTableSqlParameter : ReferenceOtherObjectDatabaseEntity, ISqlPara
     /// <inheritdoc/>
     public IHasDependencies[] GetObjectsThisDependsOn()
     {
-        return new IHasDependencies[0];
+        return Array.Empty<IHasDependencies>();
     }
 
     /// <inheritdoc/>
@@ -220,7 +220,7 @@ public class AnyTableSqlParameter : ReferenceOtherObjectDatabaseEntity, ISqlPara
         if (parent != null)
             return new[] {parent};
 
-        return new IHasDependencies[0];
+        return Array.Empty<IHasDependencies>();
     }
 
     /// <summary>

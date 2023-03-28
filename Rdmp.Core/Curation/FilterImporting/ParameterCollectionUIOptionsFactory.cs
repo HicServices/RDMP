@@ -77,7 +77,7 @@ public class ParameterCollectionUIOptionsFactory
             //Add the globals if it is part of a CohortIdentificationConfiguration
             var cic = aggregateConfiguration.GetCohortIdentificationConfigurationIfAny();
 
-            var globals = cic != null ? cic.GetAllParameters() : new ISqlParameter[0];
+            var globals = cic != null ? cic.GetAllParameters() : Array.Empty<ISqlParameter>();
 
             var builder = new CohortQueryBuilder(aggregateConfiguration, globals, coreChildProvider);
             pm = builder.ParameterManager;

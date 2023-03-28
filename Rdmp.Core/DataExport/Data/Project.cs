@@ -229,7 +229,7 @@ public class Project : DatabaseEntity, IProject, ICustomSearchString,ICheckable,
     /// <inheritdoc/>
     public IHasDependencies[] GetObjectsThisDependsOn()
     {
-        return new IHasDependencies[0];
+        return Array.Empty<IHasDependencies>();
     }
     /// <inheritdoc/>
     public IHasDependencies[] GetObjectsDependingOnThis()

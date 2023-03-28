@@ -197,7 +197,7 @@ public class FilterImportWizard
 
             globals = options.GetAllParameters(aggregate);
             var root = aggregate.RootFilterContainer;
-            otherFilters = root == null ? new IFilter[0] : GetAllFiltersRecursively(root, new List<IFilter>()).ToArray();
+            otherFilters = root == null ? Array.Empty<IFilter>() : GetAllFiltersRecursively(root, new List<IFilter>()).ToArray();
             return;
         }
 
@@ -212,7 +212,7 @@ public class FilterImportWizard
             var root = selectedDataSet.RootFilterContainer;
 
             globals = config.GlobalExtractionFilterParameters;
-            otherFilters = root == null ? new IFilter[0] : GetAllFiltersRecursively(root, new List<IFilter>()).ToArray();
+            otherFilters = root == null ? Array.Empty<IFilter>() : GetAllFiltersRecursively(root, new List<IFilter>()).ToArray();
 
             return;
         }
