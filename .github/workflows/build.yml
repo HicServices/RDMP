@@ -87,7 +87,7 @@ jobs:
         run: |
           set -x
           rm -rf coverage
-          dotnet test "Reusable/Tests/ReusableCodeTests/ReusableCodeTests.csproj" --nologo --collect:"XPlat Code Coverage" --no-build --verbosity minimal -c Release --results-directory coverage -- DataCollectionRunSettings.DataCollectors.DataCollector.Configuration.Format=lcov
+          cmd /c dotnet test "Reusable/Tests/ReusableCodeTests/ReusableCodeTests.csproj" --nologo --collect:"XPlat Code Coverage" --no-build --verbosity minimal -c Release --results-directory coverage -- DataCollectionRunSettings.DataCollectors.DataCollector.Configuration.Format=lcov
           mv `find coverage -type f` recode.lcov
       - name: Test Core code
         shell: bash
