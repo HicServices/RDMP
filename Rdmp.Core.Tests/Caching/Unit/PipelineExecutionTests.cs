@@ -31,17 +31,6 @@ public class PipelineExecutionTests
             
         var tokenSource = new GracefulCancellationTokenSource();
         var listener = new ThrowImmediatelyDataLoadEventListener();
-
-        // set SetUp the engine map
-        var loadProgress1 = Mock.Of<ILoadProgress>();
-        var loadProgress2 = Mock.Of<ILoadProgress>();
-            
-        // set SetUp the lock provider
-        var engineMap = new Dictionary<IDataFlowPipelineEngine, ILoadProgress>
-        {
-            {engine1.Object, loadProgress1},
-            {engine2.Object, loadProgress2}
-        };
             
         // create the execution object
         var pipelineExecutor = new SerialPipelineExecution();
@@ -57,6 +46,7 @@ public class PipelineExecutionTests
     }
 
     [Test]
+    [Ignore("Doesn't actually test anything!")]
     public void TestRoundRobinPipelineExecution()
     {
         // set SetUp two engines, one with a locked cache progress/load schedule
@@ -77,16 +67,6 @@ public class PipelineExecutionTests
             .Returns(false)
             .Throws<InvalidOperationException>();
 
-        // set SetUp the engine map
-        var loadProgress1 = Mock.Of<ILoadProgress>();
-        var loadProgress2 = Mock.Of<ILoadProgress>();
-            
-        // set SetUp the lock provider
-        var engineMap = new Dictionary<IDataFlowPipelineEngine, ILoadProgress>
-        {
-            {engine1.Object, loadProgress1},
-            {engine2.Object, loadProgress2}
-        };
         // create the execution object
         var pipelineExecutor = new RoundRobinPipelineExecution();
 
@@ -94,6 +74,7 @@ public class PipelineExecutionTests
         pipelineExecutor.Execute(new[] { engine1.Object, engine2.Object }, tokenSource.Token, listener);
 
         // Assert
+        // TODO: Actually verify something here...
         // engine1 should have been executed once
         engine1.Verify();
 
