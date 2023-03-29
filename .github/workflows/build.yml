@@ -83,11 +83,11 @@ jobs:
             dotnet run -c Release --no-build --project Tools/rdmp/rdmp.csproj -- -f ./scripts/create_dataload.yaml && 
             dotnet run -c Release --no-build --project Tools/rdmp/rdmp.csproj -- -f ./scripts/orphan_extractable_column.yaml && 
       - name: Test Reusable code
-        shell: bash
+        shell: cmd
         run: |
-          rm -rf coverage
+          rd /s/q coverage
           dotnet test "Reusable/Tests/ReusableCodeTests/ReusableCodeTests.csproj" --nologo --collect:"XPlat Code Coverage" --no-build --verbosity minimal -c Release --results-directory coverage -- DataCollectionRunSettings.DataCollectors.DataCollector.Configuration.Format=lcov
-          mv `find coverage -type f` recode.lcov
+          bash -c "mv `find coverage -type f` recode.lcov"
       - name: Test Core code
         shell: bash
         run: |
