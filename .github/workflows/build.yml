@@ -85,8 +85,8 @@ jobs:
       - name: Test Reusable code
         shell: cmd
         run: |
-          rd /s/q coverage
-          dotnet test "Reusable/Tests/ReusableCodeTests/ReusableCodeTests.csproj" --nologo --collect:"XPlat Code Coverage" --no-build --verbosity minimal -c Release --results-directory coverage -- DataCollectionRunSettings.DataCollectors.DataCollector.Configuration.Format=lcov
+          if exist coverage\nul rd /s/q coverage
+          dotnet test Reusable/Tests/ReusableCodeTests/ReusableCodeTests.csproj --nologo --collect:"XPlat Code Coverage" --no-build --verbosity minimal -c Release --results-directory coverage -- DataCollectionRunSettings.DataCollectors.DataCollector.Configuration.Format=lcov
           bash -c "mv `find coverage -type f` recode.lcov"
       - name: Test Core code
         shell: bash
