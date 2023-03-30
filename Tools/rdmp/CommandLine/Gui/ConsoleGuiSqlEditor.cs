@@ -397,19 +397,17 @@ namespace Rdmp.Core.CommandLine.Gui
                 
             }
 
-            // These are renamed in 1.8.2 of Terminal.Gui.  But we cannot upgrade because of this issue:
+            // The next two are renamed in 1.8.2 of Terminal.Gui.  But we could upgrade because of this issue:
             // https://github.com/HicServices/RDMP/pull/1448 . Do not upgrade until you can test the
             // Sql Editor performs correctly in the version you are updating to.  Everything works great
-            // in 1.7.2 so lets stick with that for now
+            // in 1.7.2 so let's stick with that until fixed fully.
 
-            // protected override void SetNormalColor()
-            protected override void ColorNormal()
+            protected override void SetNormalColor()
             {
                 Driver.SetAttribute(_white);
             }
 
-            // protected override void SetNormalColor(List<System.Rune> line, int idx)
-            protected override void ColorNormal(List<System.Rune> line, int idx)
+            protected override void SetNormalColor(List<System.Rune> line, int idx)
             {
                 Driver.SetAttribute(IsKeyword(line, idx) ? _blue : _white);
             }
