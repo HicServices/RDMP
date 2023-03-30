@@ -23,10 +23,10 @@
       <dependency id="HIC.System.Windows.Forms.DataVisualization" version="1.0.1"/>
       <dependency id="Newtonsoft.Json" version="13.0.2"/>
       <dependency id="NHunspell" version="1.2.5554.16953"/>
-      <dependency id="NLog" version="5.1.2"/>
+      <dependency id="NLog" version="5.1.3"/>
       <dependency id="NPOI" version="2.5.5"/>
       <dependency id="ObjectListView.Official" version="2.9.1"/>
-      <dependency id="SixLabors.ImageSharp" version="3.0.0"/>
+      <dependency id="SixLabors.ImageSharp" version="3.0.1"/>
        <dependency id="SixLabors.ImageSharp.Drawing" version="1.0.0-beta15" />       
 			<dependency id="Spectre.Console" version="0.46.0"/>
       <dependency id="SSH.NET" version="2020.0.2"/>
