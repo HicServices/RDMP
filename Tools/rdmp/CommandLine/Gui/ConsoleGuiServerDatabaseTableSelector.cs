@@ -120,7 +120,7 @@ namespace Rdmp.Core.CommandLine.Gui {
                 HostControl = tb;
                 PopupInsideContainer = false;
             }
-            public override void GenerateSuggestions()
+            public override void GenerateSuggestions(int columnOffset=0)
             {
                 // if there is something to pick
                 if (AllSuggestions.Count > 0)
@@ -135,7 +135,7 @@ namespace Rdmp.Core.CommandLine.Gui {
                 }
 
                 // otherwise let the default implementation run
-                base.GenerateSuggestions();
+                base.GenerateSuggestions(columnOffset);
             }
         }
 
