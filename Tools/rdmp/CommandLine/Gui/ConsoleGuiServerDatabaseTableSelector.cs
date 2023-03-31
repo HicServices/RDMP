@@ -121,7 +121,7 @@ public partial class ConsoleGuiServerDatabaseTableSelector {
             HostControl = tb;
             PopupInsideContainer = false;
         }
-        public override void GenerateSuggestions()
+        public override void GenerateSuggestions(int columnOffset=0)
         {
             // if there is something to pick
             if (AllSuggestions.Count > 0)
@@ -136,7 +136,7 @@ public partial class ConsoleGuiServerDatabaseTableSelector {
             }
 
             // otherwise let the default implementation run
-            base.GenerateSuggestions();
+            base.GenerateSuggestions(columnOffset);
         }
     }
 
