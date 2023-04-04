@@ -19,7 +19,7 @@ namespace Rdmp.Core.Curation;
 /// </summary>
 public class SimpleStringValueEncryption : IEncryptStrings
 {
-    private static readonly RSACryptoServiceProvider Turing=new ();
+    private readonly RSACryptoServiceProvider _turing=new ();
         
     private const string Key =
         @"<?xml version=""1.0"" encoding=""utf-16""?>
@@ -36,7 +36,7 @@ public class SimpleStringValueEncryption : IEncryptStrings
 
     public SimpleStringValueEncryption(string parameters)
     {
-        Turing.FromXmlString(parameters ?? Key);
+        _turing.FromXmlString(parameters ?? Key);
     }
 
     /// <summary>
@@ -55,7 +55,7 @@ public class SimpleStringValueEncryption : IEncryptStrings
         keyBlock[0] = (byte)aes.IV.Length;  // Note: this encoding assumes IV cannot exceed 255 bytes!
         Array.Copy(aes.IV,0,keyBlock,1,aes.IV.Length);
         Array.Copy(aes.Key,0,keyBlock,1+aes.IV.Length,aes.Key.Length);
-        var key = Convert.ToBase64String(Turing.Encrypt(keyBlock, true));
+        var key = Convert.ToBase64String(_turing.Encrypt(keyBlock, true));
         return $"$js1${key}${cipherText}$";
     }
         
@@ -72,7 +72,7 @@ public class SimpleStringValueEncryption : IEncryptStrings
             var parts = toDecrypt.Split('$');
             if (parts.Length != 4)
                 throw new CryptographicException("Could not decrypt an encrypted string, it was not in the expected format of $js1$<base64key>$<base64ciphertext>$");
-            var keyBlock = Turing.Decrypt(Convert.FromBase64String(parts[2]),true);
+            var keyBlock = _turing.Decrypt(Convert.FromBase64String(parts[2]),true);
             var ivLength = keyBlock[0];
             var iv = new byte[ivLength];
             var key = new byte[keyBlock.Length - 1 - ivLength];
@@ -87,7 +87,7 @@ public class SimpleStringValueEncryption : IEncryptStrings
         }
         try
         {
-            return Encoding.UTF8.GetString(Turing.Decrypt(ByteConverterGetBytes(toDecrypt), false));
+            return Encoding.UTF8.GetString(_turing.Decrypt(ByteConverterGetBytes(toDecrypt), false));
         }
         catch (CryptographicException e)
         {
