@@ -20,7 +20,6 @@ namespace Rdmp.Core.Curation;
 public class SimpleStringValueEncryption : IEncryptStrings
 {
     private static readonly RSACryptoServiceProvider Turing=new ();
-    private Encoding encoding = Encoding.ASCII;
         
     private const string Key =
         @"<?xml version=""1.0"" encoding=""utf-16""?>
@@ -41,12 +40,23 @@ public class SimpleStringValueEncryption : IEncryptStrings
     }
 
     /// <summary>
-    /// Encrypts using its Public Key then returns a the encrypted byte[] as a string by using BitConverter.ToString()
+    /// Encrypt the payload using a new AES key and IV.  The AES key is then encrypted using the RSA public key and the IV is prepended to the encrypted payload.
+    /// A prefix '$js1$' is added to the encrypted string to indicate that it is encrypted using the new (2023) RDMP default encryption algorithm.
     /// </summary>
     /// <returns></returns>
     public string Encrypt(string toEncrypt)
     {
-        return BitConverter.ToString(Turing.Encrypt(Encoding.UTF8.GetBytes(toEncrypt), false));
+        using var aes = Aes.Create();
+        aes.KeySize = 256;
+        aes.GenerateIV();
+        aes.GenerateKey();
+        var cipherText = Convert.ToBase64String(aes.EncryptCfb(Encoding.UTF8.GetBytes(toEncrypt), aes.IV));
+        var keyBlock = new byte[1+aes.IV.Length+aes.Key.Length];
+        keyBlock[0] = (byte)aes.IV.Length;  // Note: this encoding assumes IV cannot exceed 255 bytes!
+        Array.Copy(aes.IV,0,keyBlock,1,aes.IV.Length);
+        Array.Copy(aes.Key,0,keyBlock,1+aes.IV.Length,aes.Key.Length);
+        var key = Convert.ToBase64String(Turing.Encrypt(keyBlock, true));
+        return $"$js1${key}${cipherText}$";
     }
         
     /// <summary>
@@ -56,6 +66,25 @@ public class SimpleStringValueEncryption : IEncryptStrings
     /// <returns></returns>
     public string Decrypt(string toDecrypt)
     {
+        if (toDecrypt.StartsWith($"$js1$") && toDecrypt.EndsWith("$"))
+        {
+            // Good, it's a new-style AES+RSA encrypted string
+            var parts = toDecrypt.Split('$');
+            if (parts.Length != 4)
+                throw new CryptographicException("Could not decrypt an encrypted string, it was not in the expected format of $js1$<base64key>$<base64ciphertext>$");
+            var keyBlock = Turing.Decrypt(Convert.FromBase64String(parts[2]),true);
+            var ivLength = keyBlock[0];
+            var iv = new byte[ivLength];
+            var key = new byte[keyBlock.Length - 1 - ivLength];
+            Array.Copy(keyBlock,1,iv,0,ivLength);
+            Array.Copy(keyBlock,1+ivLength,key,0,key.Length);
+            var cipherText = Convert.FromBase64String(parts[3]);
+            using var aes = Aes.Create();
+            aes.KeySize = 256;
+            aes.IV = iv;
+            aes.Key = key;
+            return Encoding.UTF8.GetString(aes.DecryptCfb(cipherText, aes.IV));
+        }
         try
         {
             return Encoding.UTF8.GetString(Turing.Decrypt(ByteConverterGetBytes(toDecrypt), false));
@@ -82,6 +111,6 @@ public class SimpleStringValueEncryption : IEncryptStrings
         if (value == null || string.IsNullOrWhiteSpace(value))
             return false;
 
-        return value.Count(c=>c== '-') >= 47;
+        return value.StartsWith("$js1$") || value.Count(c => c == '-') >= 47;
     }
 }

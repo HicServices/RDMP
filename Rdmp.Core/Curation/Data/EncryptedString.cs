@@ -29,11 +29,9 @@ public class EncryptedString : IEncryptedString
     /// <inheritdoc/>
     public string Value
     {
-        get
-        {
+        get =>
             //if there is a password in memory it will be encrypted (probably) so return that, to decrypt call DecryptPassword
-            return _value;
-        }
+            _value;
         set
         {
 
