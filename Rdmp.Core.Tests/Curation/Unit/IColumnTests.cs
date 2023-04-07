@@ -16,138 +16,137 @@ using Rdmp.Core.QueryBuilding;
 using Rdmp.Core.QueryBuilding.SyntaxChecking;
 using ReusableLibraryCode.Checks;
 
-namespace Rdmp.Core.Tests.Curation.Unit
+namespace Rdmp.Core.Tests.Curation.Unit;
+
+[Category("Unit")]
+class IColumnTests
 {
-    [Category("Unit")]
-    class IColumnTests
+
+    /// <summary>
+    /// For tests
+    /// </summary>
+    private class TestColumn:SpontaneousObject,IColumn
     {
-
-        /// <summary>
-        /// For tests
-        /// </summary>
-        private class TestColumn:SpontaneousObject,IColumn
+        public TestColumn():base(new MemoryRepository())
         {
-            public TestColumn():base(new MemoryRepository())
-            {
                 
-            }
-            public string GetRuntimeName()
-            {
-                var helper = new MicrosoftQuerySyntaxHelper();
+        }
+        public string GetRuntimeName()
+        {
+            var helper = new MicrosoftQuerySyntaxHelper();
 
-                return Alias ?? helper.GetRuntimeName(SelectSQL);
-            }
-
-            public ColumnInfo ColumnInfo { get; private set; }
-            public int Order { get; set; }
-
-            [Sql]
-            public string SelectSQL { get; set; }
-            public string Alias { get; set; }
-            public bool HashOnDataRelease { get; private set; }
-            public bool IsExtractionIdentifier { get; private set; }
-            public bool IsPrimaryKey { get; private set; }
-            public void Check(ICheckNotifier notifier)
-            {
-                new ColumnSyntaxChecker(this).Check(notifier);
-            }
+            return Alias ?? helper.GetRuntimeName(SelectSQL);
         }
 
-        [Test]
-        public void GetRuntimeName_Strings_Pass()
-        {
-            var syntax = new MicrosoftQuerySyntaxHelper();
+        public ColumnInfo ColumnInfo { get; private set; }
+        public int Order { get; set; }
 
-            Assert.AreEqual(syntax.GetRuntimeName("[test]"), "test");
-            Assert.AreEqual(syntax.GetRuntimeName("`test`"), "`test`");
-            Assert.AreEqual(syntax.GetRuntimeName("`[test]`"), "`[test]`");
-            Assert.AreEqual(syntax.GetRuntimeName("[mydb].[test]"), "test");
-            Assert.AreEqual(syntax.GetRuntimeName("`mymysqldb`.`test`"), "`test`");
-            Assert.AreEqual(syntax.GetRuntimeName("[mydb]..[test]"), "test");
-            Assert.AreEqual(syntax.GetRuntimeName("[SERVER].[mydb]..[test]"), "test");
+        [Sql]
+        public string SelectSQL { get; set; }
+        public string Alias { get; set; }
+        public bool HashOnDataRelease { get; private set; }
+        public bool IsExtractionIdentifier { get; private set; }
+        public bool IsPrimaryKey { get; private set; }
+        public void Check(ICheckNotifier notifier)
+        {
+            new ColumnSyntaxChecker(this).Check(notifier);
         }
+    }
 
-        [Test]
-        public void GetRuntimeName_IColumns_Pass()
-        {
-            TestColumn tc = new TestColumn();
+    [Test]
+    public void GetRuntimeName_Strings_Pass()
+    {
+        var syntax = new MicrosoftQuerySyntaxHelper();
 
-            tc.Alias = "test";
-            Assert.AreEqual(tc.GetRuntimeName(),"test");
+        Assert.AreEqual(syntax.GetRuntimeName("[test]"), "test");
+        Assert.AreEqual(syntax.GetRuntimeName("`test`"), "`test`");
+        Assert.AreEqual(syntax.GetRuntimeName("`[test]`"), "`[test]`");
+        Assert.AreEqual(syntax.GetRuntimeName("[mydb].[test]"), "test");
+        Assert.AreEqual(syntax.GetRuntimeName("`mymysqldb`.`test`"), "`test`");
+        Assert.AreEqual(syntax.GetRuntimeName("[mydb]..[test]"), "test");
+        Assert.AreEqual(syntax.GetRuntimeName("[SERVER].[mydb]..[test]"), "test");
+    }
 
-            tc.SelectSQL = "MangleQuery([mydb]..[myExcitingField])"; //still has Alias
-            Assert.AreEqual(tc.GetRuntimeName(),"test");
+    [Test]
+    public void GetRuntimeName_IColumns_Pass()
+    {
+        TestColumn tc = new TestColumn();
 
-            tc.Alias = null;
-            tc.SelectSQL = "[mydb]..[myExcitingField]"; 
-            Assert.AreEqual(tc.GetRuntimeName(), "myExcitingField");
+        tc.Alias = "test";
+        Assert.AreEqual(tc.GetRuntimeName(),"test");
+
+        tc.SelectSQL = "MangleQuery([mydb]..[myExcitingField])"; //still has Alias
+        Assert.AreEqual(tc.GetRuntimeName(),"test");
+
+        tc.Alias = null;
+        tc.SelectSQL = "[mydb]..[myExcitingField]"; 
+        Assert.AreEqual(tc.GetRuntimeName(), "myExcitingField");
             
-        }
+    }
 
-        [Test]
-        public void GetRuntimeName_IColumns_ThrowBecauseMissingAliasOnScalarValueFunction()
-        {
-            TestColumn tc = new TestColumn();
+    [Test]
+    public void GetRuntimeName_IColumns_ThrowBecauseMissingAliasOnScalarValueFunction()
+    {
+        TestColumn tc = new TestColumn();
 
-            tc.SelectSQL = "MangleQuery([mydb]..[myExcitingField])";
-            var ex = Assert.Throws<RuntimeNameException>(()=> tc.GetRuntimeName());
-        }
+        tc.SelectSQL = "MangleQuery([mydb]..[myExcitingField])";
+        var ex = Assert.Throws<RuntimeNameException>(()=> tc.GetRuntimeName());
+    }
 
 
-        [Test]
-        public void CheckSyntax_IColumn_Valid()
-        {
-            TestColumn tc = new TestColumn();
+    [Test]
+    public void CheckSyntax_IColumn_Valid()
+    {
+        TestColumn tc = new TestColumn();
             
-            tc.Alias = "[bob smith]";
-            tc.Check(new ThrowImmediatelyCheckNotifier());
-            tc.Alias = "`bob smith`";
-            tc.Check(new ThrowImmediatelyCheckNotifier());
-            tc.Alias = "`[bob smith]`";
-            tc.Check(new ThrowImmediatelyCheckNotifier());
+        tc.Alias = "[bob smith]";
+        tc.Check(new ThrowImmediatelyCheckNotifier());
+        tc.Alias = "`bob smith`";
+        tc.Check(new ThrowImmediatelyCheckNotifier());
+        tc.Alias = "`[bob smith]`";
+        tc.Check(new ThrowImmediatelyCheckNotifier());
 
-        }
+    }
 
 
-        [Test]
-        public void CheckSyntax_IColumn_ThrowBecauseInvalidAlias1()
-        {
-            TestColumn tc = new TestColumn();
-            tc.Alias = "bob smith";
-            var ex = Assert.Throws<SyntaxErrorException>(()=>tc.Check(new ThrowImmediatelyCheckNotifier()));
-            Assert.AreEqual("Whitespace found in unwrapped Alias \"bob smith\"",ex.Message);
+    [Test]
+    public void CheckSyntax_IColumn_ThrowBecauseInvalidAlias1()
+    {
+        TestColumn tc = new TestColumn();
+        tc.Alias = "bob smith";
+        var ex = Assert.Throws<SyntaxErrorException>(()=>tc.Check(new ThrowImmediatelyCheckNotifier()));
+        Assert.AreEqual("Whitespace found in unwrapped Alias \"bob smith\"",ex.Message);
 
-        }
+    }
 
-        [Test]
-        public void CheckSyntax_IColumn_ThrowBecauseInvalidAlias2()
-        {
-            TestColumn tc = new TestColumn();
-            tc.Alias = "`bob";
+    [Test]
+    public void CheckSyntax_IColumn_ThrowBecauseInvalidAlias2()
+    {
+        TestColumn tc = new TestColumn();
+        tc.Alias = "`bob";
 
-            var ex = Assert.Throws<SyntaxErrorException>(() => tc.Check(new ThrowImmediatelyCheckNotifier()));
-            Assert.AreEqual("Invalid characters found in Alias \"`bob\"",ex.Message);
+        var ex = Assert.Throws<SyntaxErrorException>(() => tc.Check(new ThrowImmediatelyCheckNotifier()));
+        Assert.AreEqual("Invalid characters found in Alias \"`bob\"",ex.Message);
            
-        }
-        [Test]
-        public void CheckSyntax_IColumn_ThrowBecauseInvalidAlias3()
-        {
-            TestColumn tc = new TestColumn();
-            tc.Alias = "bob]";
-            var ex = Assert.Throws<SyntaxErrorException>(() => tc.Check(new ThrowImmediatelyCheckNotifier()));
-            Assert.AreEqual("Invalid characters found in Alias \"bob]\"",ex.Message);
+    }
+    [Test]
+    public void CheckSyntax_IColumn_ThrowBecauseInvalidAlias3()
+    {
+        TestColumn tc = new TestColumn();
+        tc.Alias = "bob]";
+        var ex = Assert.Throws<SyntaxErrorException>(() => tc.Check(new ThrowImmediatelyCheckNotifier()));
+        Assert.AreEqual("Invalid characters found in Alias \"bob]\"",ex.Message);
             
-        }
+    }
 
-        [Test] 
+    [Test] 
         
-        public void CheckSyntax_IColumn_ThrowBecauseInvalidSelectSQL()
-        {
-            TestColumn tc = new TestColumn();
-            tc.Alias = "bob";
-            tc.SelectSQL = "GetSomething('here'";
-            var ex = Assert.Throws<SyntaxErrorException>(() => tc.Check(new ThrowImmediatelyCheckNotifier()));
-            Assert.AreEqual("Mismatch in the number of opening '(' and closing ')'",ex.Message);
-        }
+    public void CheckSyntax_IColumn_ThrowBecauseInvalidSelectSQL()
+    {
+        TestColumn tc = new TestColumn();
+        tc.Alias = "bob";
+        tc.SelectSQL = "GetSomething('here'";
+        var ex = Assert.Throws<SyntaxErrorException>(() => tc.Check(new ThrowImmediatelyCheckNotifier()));
+        Assert.AreEqual("Mismatch in the number of opening '(' and closing ')'",ex.Message);
     }
 }

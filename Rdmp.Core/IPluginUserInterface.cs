@@ -10,30 +10,27 @@ using Rdmp.Core.CommandExecution.AtomicCommands;
 using Rdmp.Core.Providers;
 using ReusableLibraryCode.Icons.IconProvision;
 
-namespace Rdmp.Core
+namespace Rdmp.Core;
+
+/// <summary>
+/// Interface for declaring plugins which interact with the RDMP user interface.  Supports injecting custom objects into RDMPCollectionUI trees and inject new
+/// menu items under existing objects e.g. add a new option to the Catalogue right click menu.  See the abstract base for how to do this easily.
+/// </summary>
+public interface IPluginUserInterface : IChildProvider, IIconProvider
 {
     /// <summary>
-    /// Interface for declaring plugins which interact with the RDMP user interface.  Supports injecting custom objects into RDMPCollectionUI trees and inject new
-    /// menu items under existing objects e.g. add a new option to the Catalogue right click menu.  See the abstract base for how to do this easily.
+    /// Return a list of new menu items that should appear under the given treeObject (that was right clicked in a RDMPCollectionUI)
     /// </summary>
+    /// <param name="treeObject"></param>
+    /// <returns></returns>
+    IEnumerable<IAtomicCommand> GetAdditionalRightClickMenuItems(object treeObject);
 
-
-    public interface IPluginUserInterface : IChildProvider, IIconProvider
-    {
-        /// <summary>
-        /// Return a list of new menu items that should appear under the given treeObject (that was right clicked in a RDMPCollectionUI)
-        /// </summary>
-        /// <param name="treeObject"></param>
-        /// <returns></returns>
-        IEnumerable<IAtomicCommand> GetAdditionalRightClickMenuItems(object treeObject);
-
-        /// <summary>
-        /// Implement to provide a custom user interface that should be shown when a given object 
-        /// <paramref name="o"/> is activated.  Return false if you do not want to respond to the object
-        ///  or its Type.
-        /// </summary>
-        /// <param name="o">The object being activated</param>
-        /// <returns></returns>
-        bool CustomActivate(IMapsDirectlyToDatabaseTable o);
-    }
+    /// <summary>
+    /// Implement to provide a custom user interface that should be shown when a given object 
+    /// <paramref name="o"/> is activated.  Return false if you do not want to respond to the object
+    ///  or its Type.
+    /// </summary>
+    /// <param name="o">The object being activated</param>
+    /// <returns></returns>
+    bool CustomActivate(IMapsDirectlyToDatabaseTable o);
 }

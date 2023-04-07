@@ -9,181 +9,180 @@ using System.Linq;
 using Rdmp.Core.Curation.Data;
 using Rdmp.Core.DataExport.Data;
 
-namespace Rdmp.Core.CommandExecution.AtomicCommands
+namespace Rdmp.Core.CommandExecution.AtomicCommands;
+
+public abstract class ExecuteCommandSetColumnSettingBase : BasicCommandExecution, IAtomicCommand
 {
-    public abstract class ExecuteCommandSetColumnSettingBase : BasicCommandExecution, IAtomicCommand
-    {
-        private ICatalogue _catalogue;
-        private ExtractionInformation[] _extractionInformations;
-        private ExtractionInformation[] _alreadyMarked;
+    private ICatalogue _catalogue;
+    private ExtractionInformation[] _extractionInformations;
+    private ExtractionInformation[] _alreadyMarked;
 
-        private readonly IExtractionConfiguration _inConfiguration;
-        private readonly string _commandName;
-        private ConcreteColumn[] _selectedDataSetColumns;
-        private ConcreteColumn[] _alreadyMarkedInConfiguration;
+    private readonly IExtractionConfiguration _inConfiguration;
+    private readonly string _commandName;
+    private ConcreteColumn[] _selectedDataSetColumns;
+    private ConcreteColumn[] _alreadyMarkedInConfiguration;
         
-        /// <summary>
-        /// Explicit columns to pick rather than prompting to choose at runtime
-        /// </summary>
-        private string[] toPick;
-        private readonly string _commandProperty;
+    /// <summary>
+    /// Explicit columns to pick rather than prompting to choose at runtime
+    /// </summary>
+    private string[] toPick;
+    private readonly string _commandProperty;
 
-        /// <summary>
-        /// 
-        /// </summary>
-        /// <param name="activator"></param>
-        /// <param name="catalogue">The dataset you want to change the setting for</param>
-        /// <param name="inConfiguration">Optional - If setting should only be applied to a specific extraction or Null for the Catalogue itself (will affect all future extractions)</param>
-        /// <param name="column">"Optional - The Column name(s) you want to select as the new selection(s).  Comma seperate multiple entries if needed"</param>
-        /// <param name="commandName">Describe what is being changed from user perspective e.g. "Set IsExtractionIdentifier"</param>
-        /// <param name="commandProperty">Name of property being changed by this command e.g "Extraction Identifier"</param>
-        public ExecuteCommandSetColumnSettingBase(
-            IBasicActivateItems activator,ICatalogue catalogue,IExtractionConfiguration inConfiguration,string column,
-            string commandName, string commandProperty
-        ) : base(activator)
+    /// <summary>
+    /// 
+    /// </summary>
+    /// <param name="activator"></param>
+    /// <param name="catalogue">The dataset you want to change the setting for</param>
+    /// <param name="inConfiguration">Optional - If setting should only be applied to a specific extraction or Null for the Catalogue itself (will affect all future extractions)</param>
+    /// <param name="column">"Optional - The Column name(s) you want to select as the new selection(s).  Comma seperate multiple entries if needed"</param>
+    /// <param name="commandName">Describe what is being changed from user perspective e.g. "Set IsExtractionIdentifier"</param>
+    /// <param name="commandProperty">Name of property being changed by this command e.g "Extraction Identifier"</param>
+    public ExecuteCommandSetColumnSettingBase(
+        IBasicActivateItems activator,ICatalogue catalogue,IExtractionConfiguration inConfiguration,string column,
+        string commandName, string commandProperty
+    ) : base(activator)
+    {
+        _catalogue = catalogue;
+        _inConfiguration = inConfiguration;
+        _commandName = commandName;
+        _catalogue.ClearAllInjections();
+        _commandProperty = commandProperty;
+
+        if (inConfiguration != null)
         {
-            _catalogue = catalogue;
-            _inConfiguration = inConfiguration;
-            _commandName = commandName;
-            _catalogue.ClearAllInjections();
-            _commandProperty = commandProperty;
+            SetImpossibleIfReadonly(_inConfiguration);
 
-            if (inConfiguration != null)
+            var allEds = inConfiguration.GetAllExtractableDataSets();
+            var eds = allEds.FirstOrDefault(sds => sds.Catalogue_ID == _catalogue.ID);
+            if (eds == null)
             {
-                SetImpossibleIfReadonly(_inConfiguration);
-
-                var allEds = inConfiguration.GetAllExtractableDataSets();
-                var eds = allEds.FirstOrDefault(sds => sds.Catalogue_ID == _catalogue.ID);
-                if (eds == null)
-                {
-                    SetImpossible($"Catalogue '{_catalogue}' is not part of ExtractionConfiguration '{inConfiguration}'");
-                    return;
-                }
-
-                _selectedDataSetColumns = inConfiguration.GetAllExtractableColumnsFor(eds);
-
-                if (_selectedDataSetColumns.Length == 0)
-                {
-                    SetImpossible($"Catalogue '{_catalogue}' in '{inConfiguration}' does not have any extractable columns");
-                    return;
-                }
-
-                _alreadyMarkedInConfiguration = _selectedDataSetColumns.Where(c => Getter(c)).ToArray();
-            }
-            else
-            {
-                _extractionInformations = _catalogue.GetAllExtractionInformation(ExtractionCategory.Any);
-
-                if (_extractionInformations.Length == 0)
-                {
-                    SetImpossible("Catalogue does not have any extractable columns");
-                    return;
-                }
-
-                _alreadyMarked = _extractionInformations.Where(c=>Getter(c)).ToArray();
+                SetImpossible($"Catalogue '{_catalogue}' is not part of ExtractionConfiguration '{inConfiguration}'");
+                return;
             }
 
-            if (!string.IsNullOrWhiteSpace(column))
+            _selectedDataSetColumns = inConfiguration.GetAllExtractableColumnsFor(eds);
+
+            if (_selectedDataSetColumns.Length == 0)
             {
-                toPick = column.Split(',', StringSplitOptions.RemoveEmptyEntries);
+                SetImpossible($"Catalogue '{_catalogue}' in '{inConfiguration}' does not have any extractable columns");
+                return;
             }
+
+            _alreadyMarkedInConfiguration = _selectedDataSetColumns.Where(c => Getter(c)).ToArray();
+        }
+        else
+        {
+            _extractionInformations = _catalogue.GetAllExtractionInformation(ExtractionCategory.Any);
+
+            if (_extractionInformations.Length == 0)
+            {
+                SetImpossible("Catalogue does not have any extractable columns");
+                return;
+            }
+
+            _alreadyMarked = _extractionInformations.Where(c=>Getter(c)).ToArray();
         }
 
-
-        public override string GetCommandName()
+        if (!string.IsNullOrWhiteSpace(column))
         {
-            if (!string.IsNullOrWhiteSpace(OverrideCommandName))
-                return OverrideCommandName;
-
-            var cols = _alreadyMarked ?? _alreadyMarkedInConfiguration;
-
-            if (cols == null || cols.Length == 0)
-                return _commandName;
-
-            return _commandName + " (" + string.Join(",", cols.Select(e => e.GetRuntimeName())) + ")";
+            toPick = column.Split(',', StringSplitOptions.RemoveEmptyEntries);
         }
-        public override void Execute()
+    }
+
+
+    public override string GetCommandName()
+    {
+        if (!string.IsNullOrWhiteSpace(OverrideCommandName))
+            return OverrideCommandName;
+
+        var cols = _alreadyMarked ?? _alreadyMarkedInConfiguration;
+
+        if (cols == null || cols.Length == 0)
+            return _commandName;
+
+        return _commandName + " (" + string.Join(",", cols.Select(e => e.GetRuntimeName())) + ")";
+    }
+    public override void Execute()
+    {
+        base.Execute();
+
+        var oldCols = _alreadyMarked ?? _alreadyMarkedInConfiguration;
+
+        string initialSearchText = oldCols.Length == 1 ? oldCols[0].GetRuntimeName() : null;
+
+        if (_inConfiguration != null)
         {
-            base.Execute();
+            ChangeFor(initialSearchText, _selectedDataSetColumns);
+            Publish(_inConfiguration);
+        }
+        else
+        {
+            ChangeFor(initialSearchText, _extractionInformations);
+            Publish(_catalogue);
+        }
+    }
+    private void ChangeFor(string initialSearchText, ConcreteColumn[] allColumns)
+    {
+        ConcreteColumn[] selected = null;
 
-            var oldCols = _alreadyMarked ?? _alreadyMarkedInConfiguration;
+        if (toPick != null && toPick.Length > 0)
+        {
+            selected = allColumns.Where(a => toPick.Contains(a.GetRuntimeName())).ToArray();
 
-            string initialSearchText = oldCols.Length == 1 ? oldCols[0].GetRuntimeName() : null;
-
-            if (_inConfiguration != null)
+            if (selected.Length != toPick.Length)
             {
-                ChangeFor(initialSearchText, _selectedDataSetColumns);
-                Publish(_inConfiguration);
-            }
-            else
-            {
-                ChangeFor(initialSearchText, _extractionInformations);
-                Publish(_catalogue);
+                throw new Exception($"Could not find column(s) {string.Join(',', toPick)} amongst available columns ({string.Join(',', allColumns.Select(c => c.GetRuntimeName()))})");
             }
         }
-        private void ChangeFor(string initialSearchText, ConcreteColumn[] allColumns)
+        else
         {
-            ConcreteColumn[] selected = null;
-
-            if (toPick != null && toPick.Length > 0)
-            {
-                selected = allColumns.Where(a => toPick.Contains(a.GetRuntimeName())).ToArray();
-
-                if (selected.Length != toPick.Length)
-                {
-                    throw new Exception($"Could not find column(s) {string.Join(',', toPick)} amongst available columns ({string.Join(',', allColumns.Select(c => c.GetRuntimeName()))})");
-                }
-            }
-            else
-            {
-                if (SelectMany(new DialogArgs { 
+            if (SelectMany(new DialogArgs { 
                     InitialObjectSelection = _alreadyMarked ?? _alreadyMarkedInConfiguration,
                     AllowSelectingNull = true,
                     WindowTitle = $"Set {_commandProperty}",
                     TaskDescription = $"Choose which columns will make up the new {_commandProperty}.  Or select null to clear"
                 }, allColumns, out selected))
-                {
-                    if (selected == null || selected.Length == 0)
-                        if (!YesNo($"Do you want to clear the {_commandProperty}?", $"Clear {_commandProperty}?"))
-                            return;
-                    if(!IsValidSelection(selected))
+            {
+                if (selected == null || selected.Length == 0)
+                    if (!YesNo($"Do you want to clear the {_commandProperty}?", $"Clear {_commandProperty}?"))
                         return;
-                }
-                else
+                if(!IsValidSelection(selected))
                     return;
             }
-
-            foreach (var ec in allColumns)
-            {
-                bool newValue = selected != null && selected.Contains(ec);
-
-                if (Getter(ec) != newValue)
-                {
-                    Setter(ec,newValue);
-                    ec.SaveToDatabase();
-                }
-            }
+            else
+                return;
         }
 
-        /// <summary>
-        /// Value getter to determine if a given <see cref="ConcreteColumn"/> is included in the current selection for your setting
-        /// </summary>
-        /// <param name="c"></param>
-        /// <returns></returns>
-        protected abstract bool Getter(ConcreteColumn c);
+        foreach (var ec in allColumns)
+        {
+            bool newValue = selected != null && selected.Contains(ec);
 
-        /// <summary>
-        /// Value setter to assign new inclusion/exclusion status for the column (if command is executed and a new selection confirmed)
-        /// </summary>
-        /// <param name="c"></param>
-        /// <param name="newValue">New status, true = include in selection, false = exclude</param>
-        protected abstract void Setter(ConcreteColumn c, bool newValue);
-
-        /// <summary>
-        /// Show any warnings if applicable and then return false if user changes their mind about <paramref name="selected"/>
-        /// </summary>
-        /// <param name="selected"></param>
-        /// <returns></returns>
-        protected abstract bool IsValidSelection(ConcreteColumn[] selected);
+            if (Getter(ec) != newValue)
+            {
+                Setter(ec,newValue);
+                ec.SaveToDatabase();
+            }
+        }
     }
+
+    /// <summary>
+    /// Value getter to determine if a given <see cref="ConcreteColumn"/> is included in the current selection for your setting
+    /// </summary>
+    /// <param name="c"></param>
+    /// <returns></returns>
+    protected abstract bool Getter(ConcreteColumn c);
+
+    /// <summary>
+    /// Value setter to assign new inclusion/exclusion status for the column (if command is executed and a new selection confirmed)
+    /// </summary>
+    /// <param name="c"></param>
+    /// <param name="newValue">New status, true = include in selection, false = exclude</param>
+    protected abstract void Setter(ConcreteColumn c, bool newValue);
+
+    /// <summary>
+    /// Show any warnings if applicable and then return false if user changes their mind about <paramref name="selected"/>
+    /// </summary>
+    /// <param name="selected"></param>
+    /// <returns></returns>
+    protected abstract bool IsValidSelection(ConcreteColumn[] selected);
 }

@@ -7,20 +7,19 @@
 using Rdmp.Core.CommandExecution.AtomicCommands;
 using System;
 
-namespace Rdmp.Core.CommandExecution
-{
-    /// <summary>
-    /// Defines an alternative name for <see cref="IAtomicCommand"/> that can be used
-    /// e.g. "ls" instead of "List"
-    /// </summary>
-    [System.AttributeUsage(AttributeTargets.Class,AllowMultiple = true)]
-    public class AliasAttribute : System.Attribute
-    {
+namespace Rdmp.Core.CommandExecution;
 
-        public string Name { get; }
-        public AliasAttribute(string name)
-        {
-            Name = name;
-        }
+/// <summary>
+/// Defines an alternative name for <see cref="IAtomicCommand"/> that can be used
+/// e.g. "ls" instead of "List"
+/// </summary>
+[System.AttributeUsage(AttributeTargets.Class,AllowMultiple = true)]
+public class AliasAttribute : System.Attribute
+{
+
+    public string Name { get; }
+    public AliasAttribute(string name)
+    {
+        Name = name;
     }
 }

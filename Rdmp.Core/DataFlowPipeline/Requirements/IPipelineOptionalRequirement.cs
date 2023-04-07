@@ -6,20 +6,19 @@
 
 using ReusableLibraryCode.Progress;
 
-namespace Rdmp.Core.DataFlowPipeline.Requirements
+namespace Rdmp.Core.DataFlowPipeline.Requirements;
+
+/// <summary>
+/// Optional version of <see cref="IPipelineRequirement{T}"/>
+/// </summary>
+/// <typeparam name="T"></typeparam>
+public interface IPipelineOptionalRequirement<in T>
 {
     /// <summary>
-    /// Optional version of <see cref="IPipelineRequirement{T}"/>
+    /// Initializes your object with some object of type T if it is available in the usage context you are about to be executed under.  Your method will not be
+    /// called if the object is not available
     /// </summary>
-    /// <typeparam name="T"></typeparam>
-    public interface IPipelineOptionalRequirement<in T>
-    {
-        /// <summary>
-        /// Initializes your object with some object of type T if it is available in the usage context you are about to be executed under.  Your method will not be
-        /// called if the object is not available
-        /// </summary>
-        /// <param name="value">An object</param>
-        /// <param name="listener"></param>
-        void PreInitialize(T value, IDataLoadEventListener listener);
-    }
+    /// <param name="value">An object</param>
+    /// <param name="listener"></param>
+    void PreInitialize(T value, IDataLoadEventListener listener);
 }

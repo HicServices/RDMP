@@ -7,48 +7,47 @@
 using System.Collections.Generic;
 using WeifenLuo.WinFormsUI.Docking;
 
-namespace ResearchDataManagementPlatform.WindowManagement
+namespace ResearchDataManagementPlatform.WindowManagement;
+
+/// <summary>
+/// Records the fact that the user visited a specific <see cref="DockContent"/> (Tab)
+/// </summary>
+public class TabNavigation: INavigation
 {
-    /// <summary>
-    /// Records the fact that the user visited a specific <see cref="DockContent"/> (Tab)
-    /// </summary>
-    public class TabNavigation: INavigation
+    public DockContent Tab { get; }
+
+    public bool IsAlive => Tab.ParentForm != null;
+
+    public TabNavigation(DockContent tab)
     {
-        public DockContent Tab { get; }
+        Tab = tab;
+    }
 
-        public bool IsAlive => Tab.ParentForm != null;
+    public void Activate(ActivateItems activateItems)
+    {
+        Tab.Activate();
+    }
 
-        public TabNavigation(DockContent tab)
-        {
-            Tab = tab;
-        }
+    public void Close()
+    {
+        Tab.Close();
+    }
+    public override string ToString()
+    {
+        return Tab.TabText;
+    }
 
-        public void Activate(ActivateItems activateItems)
-        {
-            Tab.Activate();
-        }
+    public override bool Equals(object obj)
+    {
+        return obj is TabNavigation navigation &&
+               EqualityComparer<DockContent>.Default.Equals(Tab, navigation.Tab);
+    }
 
-        public void Close()
+    public override int GetHashCode()
+    {
+        unchecked
         {
-            Tab.Close();
-        }
-        public override string ToString()
-        {
-            return Tab.TabText;
-        }
-
-        public override bool Equals(object obj)
-        {
-            return obj is TabNavigation navigation &&
-                   EqualityComparer<DockContent>.Default.Equals(Tab, navigation.Tab);
-        }
-
-        public override int GetHashCode()
-        {
-            unchecked
-            {
-                return -2031380020 + EqualityComparer<DockContent>.Default.GetHashCode(Tab);
-            }            
-        }
+            return -2031380020 + EqualityComparer<DockContent>.Default.GetHashCode(Tab);
+        }            
     }
 }

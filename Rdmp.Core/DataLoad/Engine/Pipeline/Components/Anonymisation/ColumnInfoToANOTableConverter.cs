@@ -19,223 +19,221 @@ using ReusableLibraryCode.Checks;
 using ReusableLibraryCode.DataAccess;
 using ReusableLibraryCode.Progress;
 
-namespace Rdmp.Core.DataLoad.Engine.Pipeline.Components.Anonymisation
+namespace Rdmp.Core.DataLoad.Engine.Pipeline.Components.Anonymisation;
+
+/// <summary>
+/// Engine class for converting a ColumnInfo and all the data in it into ANO equivalents (See ColumnInfoToANOTableConverterUI).
+/// </summary>
+public class ColumnInfoToANOTableConverter
 {
-    /// <summary>
-    /// Engine class for converting a ColumnInfo and all the data in it into ANO equivalents (See ColumnInfoToANOTableConverterUI).
-    /// </summary>
-    public class ColumnInfoToANOTableConverter
+    private readonly ColumnInfo _colToNuke;
+    private readonly ANOTable _toConformTo;
+    private readonly TableInfo _tableInfo;
+    private ColumnInfo _newANOColumnInfo;
+
+    public ColumnInfoToANOTableConverter(ColumnInfo colToNuke, ANOTable toConformTo)
     {
-        private readonly ColumnInfo _colToNuke;
-        private readonly ANOTable _toConformTo;
-        private readonly TableInfo _tableInfo;
-        private ColumnInfo _newANOColumnInfo;
+        _tableInfo = colToNuke.TableInfo;
+        _colToNuke = colToNuke;
+        _toConformTo = toConformTo;
+    }
 
-        public ColumnInfoToANOTableConverter(ColumnInfo colToNuke, ANOTable toConformTo)
-        {
-            _tableInfo = colToNuke.TableInfo;
-            _colToNuke = colToNuke;
-            _toConformTo = toConformTo;
-        }
+    public bool ConvertEmptyColumnInfo(Func<string, bool> shouldApplySql, ICheckNotifier notifier)
+    {
 
-        public bool ConvertEmptyColumnInfo(Func<string, bool> shouldApplySql, ICheckNotifier notifier)
-        {
+        var tbl = _tableInfo.Discover(DataAccessContext.DataLoad);
 
-            var tbl = _tableInfo.Discover(DataAccessContext.DataLoad);
-
-            int rowcount = tbl.GetRowCount();
+        int rowcount = tbl.GetRowCount();
             
-            if(rowcount>0)
-                throw new NotSupportedException("Table " + _tableInfo + " contains " + rowcount + " rows of data, you cannot use ColumnInfoToANOTableConverter.ConvertEmptyColumnInfo on this table");
+        if(rowcount>0)
+            throw new NotSupportedException("Table " + _tableInfo + " contains " + rowcount + " rows of data, you cannot use ColumnInfoToANOTableConverter.ConvertEmptyColumnInfo on this table");
 
-            using (var con = tbl.Database.Server.GetConnection())
-            {
-                con.Open();
+        using (var con = tbl.Database.Server.GetConnection())
+        {
+            con.Open();
                 
-                if (!IsOldColumnDroppable(con, notifier))
-                    return false;
+            if (!IsOldColumnDroppable(con, notifier))
+                return false;
 
-                EnsureNoTriggerOnTable(tbl);
+            EnsureNoTriggerOnTable(tbl);
 
-                AddNewANOColumnInfo(shouldApplySql, con, notifier);
+            AddNewANOColumnInfo(shouldApplySql, con, notifier);
 
-                DropOldColumn(shouldApplySql, con,null);
+            DropOldColumn(shouldApplySql, con,null);
 
 
-                //synchronize again
-                new TableInfoSynchronizer(_tableInfo).Synchronize(notifier);
-            }
-
-            return true;
+            //synchronize again
+            new TableInfoSynchronizer(_tableInfo).Synchronize(notifier);
         }
-        public bool ConvertFullColumnInfo(Func<string, bool> shouldApplySql, ICheckNotifier notifier)
+
+        return true;
+    }
+    public bool ConvertFullColumnInfo(Func<string, bool> shouldApplySql, ICheckNotifier notifier)
+    {
+        var tbl = _tableInfo.Discover(DataAccessContext.DataLoad);
+
+        using (var con = tbl.Database.Server.GetConnection())
         {
-            var tbl = _tableInfo.Discover(DataAccessContext.DataLoad);
+            con.Open();
 
-            using (var con = tbl.Database.Server.GetConnection())
-            {
-                con.Open();
+            if (!IsOldColumnDroppable(con, notifier))
+                return false;
 
-                if (!IsOldColumnDroppable(con, notifier))
-                    return false;
-
-                EnsureNoTriggerOnTable(tbl);
+            EnsureNoTriggerOnTable(tbl);
                 
-                AddNewANOColumnInfo(shouldApplySql, con, notifier);
+            AddNewANOColumnInfo(shouldApplySql, con, notifier);
 
-                MigrateExistingData(shouldApplySql,con, notifier,tbl);
+            MigrateExistingData(shouldApplySql,con, notifier,tbl);
 
-                DropOldColumn(shouldApplySql, con,null);
+            DropOldColumn(shouldApplySql, con,null);
 
-                //synchronize again
-                new TableInfoSynchronizer(_tableInfo).Synchronize(notifier);
-            }
-
-            return true;
+            //synchronize again
+            new TableInfoSynchronizer(_tableInfo).Synchronize(notifier);
         }
 
-        private void EnsureNoTriggerOnTable(DiscoveredTable tbl)
-        {
-            var triggerFactory = new TriggerImplementerFactory(tbl.Database.Server.DatabaseType);
-            
-            var triggerImplementer = triggerFactory.Create(tbl);
+        return true;
+    }
 
-            if (triggerImplementer.GetTriggerStatus() != TriggerStatus.Missing)
-                throw new NotSupportedException("Table " + _tableInfo + " has a backup trigger on it, this will destroy performance and break when we add the ANOColumn, dropping the trigger is not an option because of the _Archive table still containing identifiable data (and other reasons)");
+    private void EnsureNoTriggerOnTable(DiscoveredTable tbl)
+    {
+        var triggerFactory = new TriggerImplementerFactory(tbl.Database.Server.DatabaseType);
+            
+        var triggerImplementer = triggerFactory.Create(tbl);
+
+        if (triggerImplementer.GetTriggerStatus() != TriggerStatus.Missing)
+            throw new NotSupportedException("Table " + _tableInfo + " has a backup trigger on it, this will destroy performance and break when we add the ANOColumn, dropping the trigger is not an option because of the _Archive table still containing identifiable data (and other reasons)");
+    }
+
+    private void MigrateExistingData(Func<string, bool> shouldApplySql, DbConnection con, ICheckNotifier notifier,DiscoveredTable tbl)
+    {
+        string from = _colToNuke.GetRuntimeName(LoadStage.PostLoad);
+        string to = _newANOColumnInfo.GetRuntimeName(LoadStage.PostLoad);
+            
+
+        //create an empty table for the anonymised data
+        using (DbCommand cmdCreateTempMap = DatabaseCommandHelper.GetCommand(
+                   string.Format("SELECT top 0 {0},{1} into TempANOMap from {2}", from, to, tbl.GetFullyQualifiedName()),
+                   con))
+        {
+            if(!shouldApplySql(cmdCreateTempMap.CommandText))
+                throw new Exception("User decided not to create the TempANOMap table");
+
+            cmdCreateTempMap.ExecuteNonQuery();
         }
 
-        private void MigrateExistingData(Func<string, bool> shouldApplySql, DbConnection con, ICheckNotifier notifier,DiscoveredTable tbl)
+        try
         {
-            string from = _colToNuke.GetRuntimeName(LoadStage.PostLoad);
-            string to = _newANOColumnInfo.GetRuntimeName(LoadStage.PostLoad);
-            
-
-            //create an empty table for the anonymised data
-            using (DbCommand cmdCreateTempMap = DatabaseCommandHelper.GetCommand(
-                string.Format("SELECT top 0 {0},{1} into TempANOMap from {2}", from, to, tbl.GetFullyQualifiedName()),
-                con))
+            using (DataTable dt = new DataTable())
             {
-                if(!shouldApplySql(cmdCreateTempMap.CommandText))
-                    throw new Exception("User decided not to create the TempANOMap table");
-
-                cmdCreateTempMap.ExecuteNonQuery();
-            }
-
-            try
-            {
-                using (DataTable dt = new DataTable())
+                //get the existing data
+                using (DbCommand cmdGetExistingData =
+                       DatabaseCommandHelper.GetCommand(
+                           string.Format("SELECT {0},{1} from {2}", from, to, tbl.GetFullyQualifiedName()), con))
                 {
-                    //get the existing data
-                    using (DbCommand cmdGetExistingData =
-                        DatabaseCommandHelper.GetCommand(
-                            string.Format("SELECT {0},{1} from {2}", from, to, tbl.GetFullyQualifiedName()), con))
+                    using (DbDataAdapter da = DatabaseCommandHelper.GetDataAdapter(cmdGetExistingData))
                     {
-                        using (DbDataAdapter da = DatabaseCommandHelper.GetDataAdapter(cmdGetExistingData))
+                        da.Fill(dt);//into memory
+
+                        //transform it in memory
+                        ANOTransformer transformer = new ANOTransformer(_toConformTo, new FromCheckNotifierToDataLoadEventListener(notifier));
+                        transformer.Transform(dt,dt.Columns[0],dt.Columns[1]);
+
+                        var tempAnoMapTbl = tbl.Database.ExpectTable("TempANOMap");
+
+                        using(var insert = tempAnoMapTbl.BeginBulkInsert())
                         {
-                            da.Fill(dt);//into memory
-
-                            //transform it in memory
-                            ANOTransformer transformer = new ANOTransformer(_toConformTo, new FromCheckNotifierToDataLoadEventListener(notifier));
-                            transformer.Transform(dt,dt.Columns[0],dt.Columns[1]);
-
-                            var tempAnoMapTbl = tbl.Database.ExpectTable("TempANOMap");
-
-                            using(var insert = tempAnoMapTbl.BeginBulkInsert())
-                            {
-                                insert.Upload(dt);
-                            }
+                            insert.Upload(dt);
                         }
                     }
                 }
+            }
                 
 
-                //create an empty table for the anonymised data
-                using (DbCommand cmdUpdateMainTable = DatabaseCommandHelper.GetCommand(
-                    string.Format(
-                        "UPDATE source set source.{1} = map.{1} from {2} source join TempANOMap map on source.{0}=map.{0}",
-                        from, to, tbl.GetFullyQualifiedName()), con))
-                {
-                    if (!shouldApplySql(cmdUpdateMainTable.CommandText))
-                        throw new Exception("User decided not to perform update on table");
-                    cmdUpdateMainTable.ExecuteNonQuery();
-                }
-
-            }
-            finally
+            //create an empty table for the anonymised data
+            using (DbCommand cmdUpdateMainTable = DatabaseCommandHelper.GetCommand(
+                       string.Format(
+                           "UPDATE source set source.{1} = map.{1} from {2} source join TempANOMap map on source.{0}=map.{0}",
+                           from, to, tbl.GetFullyQualifiedName()), con))
             {
-                //always drop the temp anomap
-                using(DbCommand dropMappingTable = DatabaseCommandHelper.GetCommand("DROP TABLE TempANOMap", con))
-                    dropMappingTable.ExecuteNonQuery();
+                if (!shouldApplySql(cmdUpdateMainTable.CommandText))
+                    throw new Exception("User decided not to perform update on table");
+                cmdUpdateMainTable.ExecuteNonQuery();
             }
+
         }
-
-
-
-        private void DropOldColumn(Func<string, bool> shouldApplySql, DbConnection con, DbTransaction transaction)
+        finally
         {
-            string alterSql = "ALTER TABLE " + _tableInfo.Name + " Drop column " + _colToNuke.GetRuntimeName(LoadStage.PostLoad);
-
-            if (shouldApplySql(alterSql))
-            {
-                using(var cmd = DatabaseCommandHelper.GetCommand(alterSql, con,transaction))
-                    cmd.ExecuteNonQuery();
-            }
-            else
-            {
-                throw new Exception("User chose not to drop the old column " + _colToNuke);
-            }
-        }
-
-
-        private bool IsOldColumnDroppable(DbConnection con, ICheckNotifier notifier)
-        {
-            try
-            {
-                DbTransaction transaction = con.BeginTransaction();
-
-                //try dropping it within a transaction
-                DropOldColumn((s) => true, con, transaction);
-
-                //it is droppable - rollback that drop!
-                transaction.Rollback();
-                transaction.Dispose();
-
-                return true;
-            }
-            catch (Exception e)
-            {
-                notifier.OnCheckPerformed(
-                        new CheckEventArgs(
-                            "Could not perform transformation because column " + _colToNuke + " is not droppable",
-                            CheckResult.Fail, e));
-                return false;
-            }
-        }
-
-        private void AddNewANOColumnInfo(Func<string, bool> shouldApplySql, DbConnection con, ICheckNotifier notifier)
-        {
-            string anoColumnNameWillBe = "ANO" + _colToNuke.GetRuntimeName(LoadStage.PostLoad);
-
-            string alterSql = "ALTER TABLE " + _tableInfo.Name + " ADD " + anoColumnNameWillBe + " " + _toConformTo.GetRuntimeDataType(LoadStage.PostLoad);
-
-            if (shouldApplySql(alterSql))
-            {
-                using(var cmd = DatabaseCommandHelper.GetCommand(alterSql, con))
-                    cmd.ExecuteNonQuery();
-
-                TableInfoSynchronizer synchronizer = new TableInfoSynchronizer(_tableInfo);
-                synchronizer.Synchronize(notifier);
-
-                //now get the new ANO columninfo
-                _newANOColumnInfo = _tableInfo.ColumnInfos.Single(c => c.GetRuntimeName().Equals(anoColumnNameWillBe));
-                _newANOColumnInfo.ANOTable_ID = _toConformTo.ID;
-                _newANOColumnInfo.SaveToDatabase();
-            }
-            else
-                throw new Exception("User chose not to apply part of the operation");
-
-
+            //always drop the temp anomap
+            using(DbCommand dropMappingTable = DatabaseCommandHelper.GetCommand("DROP TABLE TempANOMap", con))
+                dropMappingTable.ExecuteNonQuery();
         }
     }
 
+
+
+    private void DropOldColumn(Func<string, bool> shouldApplySql, DbConnection con, DbTransaction transaction)
+    {
+        string alterSql = "ALTER TABLE " + _tableInfo.Name + " Drop column " + _colToNuke.GetRuntimeName(LoadStage.PostLoad);
+
+        if (shouldApplySql(alterSql))
+        {
+            using(var cmd = DatabaseCommandHelper.GetCommand(alterSql, con,transaction))
+                cmd.ExecuteNonQuery();
+        }
+        else
+        {
+            throw new Exception("User chose not to drop the old column " + _colToNuke);
+        }
+    }
+
+
+    private bool IsOldColumnDroppable(DbConnection con, ICheckNotifier notifier)
+    {
+        try
+        {
+            DbTransaction transaction = con.BeginTransaction();
+
+            //try dropping it within a transaction
+            DropOldColumn((s) => true, con, transaction);
+
+            //it is droppable - rollback that drop!
+            transaction.Rollback();
+            transaction.Dispose();
+
+            return true;
+        }
+        catch (Exception e)
+        {
+            notifier.OnCheckPerformed(
+                new CheckEventArgs(
+                    "Could not perform transformation because column " + _colToNuke + " is not droppable",
+                    CheckResult.Fail, e));
+            return false;
+        }
+    }
+
+    private void AddNewANOColumnInfo(Func<string, bool> shouldApplySql, DbConnection con, ICheckNotifier notifier)
+    {
+        string anoColumnNameWillBe = "ANO" + _colToNuke.GetRuntimeName(LoadStage.PostLoad);
+
+        string alterSql = "ALTER TABLE " + _tableInfo.Name + " ADD " + anoColumnNameWillBe + " " + _toConformTo.GetRuntimeDataType(LoadStage.PostLoad);
+
+        if (shouldApplySql(alterSql))
+        {
+            using(var cmd = DatabaseCommandHelper.GetCommand(alterSql, con))
+                cmd.ExecuteNonQuery();
+
+            TableInfoSynchronizer synchronizer = new TableInfoSynchronizer(_tableInfo);
+            synchronizer.Synchronize(notifier);
+
+            //now get the new ANO columninfo
+            _newANOColumnInfo = _tableInfo.ColumnInfos.Single(c => c.GetRuntimeName().Equals(anoColumnNameWillBe));
+            _newANOColumnInfo.ANOTable_ID = _toConformTo.ID;
+            _newANOColumnInfo.SaveToDatabase();
+        }
+        else
+            throw new Exception("User chose not to apply part of the operation");
+
+
+    }
 }

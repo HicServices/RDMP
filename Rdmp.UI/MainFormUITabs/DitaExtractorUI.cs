@@ -14,74 +14,73 @@ using ReusableLibraryCode;
 
 using PopupChecksUI = Rdmp.UI.ChecksUI.PopupChecksUI;
 
-namespace Rdmp.UI.MainFormUITabs
+namespace Rdmp.UI.MainFormUITabs;
+
+/// <summary>
+/// RDMP supports extracting all your metadata into DITA format (http://dita.xml.org/ - DITA OASIS Standard).  This is an XML standard with good tool support.  This form lets you
+/// export your entire metadata descriptive database into a collection of DITA files.  This might be useful to you for some reason (e.g. to produce offline PDFs etc) but really 
+/// the recommended route is to use the built in metadata reports (e.g. MetadataReportUI).  Alternatively you can run queries directly on the RDMP Data Catalogue database
+/// which is a super relational database with many tables (Catalogue, CatalogueItem, SupportingDocument etc etc).
+/// 
+/// <para>NOTE: Make sure that you have set a Resource Acronym for each of your datasets (Catalogues) before attempting to extract in DITA format.</para>
+/// </summary>
+public partial class DitaExtractorUI : RDMPUserControl
 {
-    /// <summary>
-    /// RDMP supports extracting all your metadata into DITA format (http://dita.xml.org/ - DITA OASIS Standard).  This is an XML standard with good tool support.  This form lets you
-    /// export your entire metadata descriptive database into a collection of DITA files.  This might be useful to you for some reason (e.g. to produce offline PDFs etc) but really 
-    /// the recommended route is to use the built in metadata reports (e.g. MetadataReportUI).  Alternatively you can run queries directly on the RDMP Data Catalogue database
-    /// which is a super relational database with many tables (Catalogue, CatalogueItem, SupportingDocument etc etc).
-    /// 
-    /// <para>NOTE: Make sure that you have set a Resource Acronym for each of your datasets (Catalogues) before attempting to extract in DITA format.</para>
-    /// </summary>
-    public partial class DitaExtractorUI : RDMPUserControl
+    public DitaExtractorUI()
     {
-        public DitaExtractorUI()
-        {
-            InitializeComponent();
-        }
+        InitializeComponent();
+    }
 
-        private void btnBrowse_Click(object sender, EventArgs e)
-        {
-            FolderBrowserDialog ofd = new FolderBrowserDialog();
+    private void btnBrowse_Click(object sender, EventArgs e)
+    {
+        FolderBrowserDialog ofd = new FolderBrowserDialog();
             
             
-            DialogResult d = ofd.ShowDialog();
+        DialogResult d = ofd.ShowDialog();
 
-            if (d == DialogResult.OK || d == DialogResult.Yes)
-                tbExtractionDirectory.Text = ofd.SelectedPath;
-        }
+        if (d == DialogResult.OK || d == DialogResult.Yes)
+            tbExtractionDirectory.Text = ofd.SelectedPath;
+    }
 
-        private void btnExtract_Click(object sender, EventArgs e)
+    private void btnExtract_Click(object sender, EventArgs e)
+    {
+        try
         {
-            try
+            DirectoryInfo outputPath = new DirectoryInfo(tbExtractionDirectory.Text);
+
+            if (outputPath.GetFiles("*.dita*").Any())
             {
-                DirectoryInfo outputPath = new DirectoryInfo(tbExtractionDirectory.Text);
-
-                if (outputPath.GetFiles("*.dita*").Any())
-                {
-                    if(Activator.YesNo("There are files already in this directory, do you want to delete them?","Clear Directory?"))
-                        foreach (FileInfo file in outputPath.GetFiles("*.dita*"))
-                            file.Delete();
-                }
-
-                DitaCatalogueExtractor extractor = new DitaCatalogueExtractor(Activator.RepositoryLocator.CatalogueRepository, outputPath);
-                extractor.Extract(progressBarsUI1);
+                if(Activator.YesNo("There are files already in this directory, do you want to delete them?","Clear Directory?"))
+                    foreach (FileInfo file in outputPath.GetFiles("*.dita*"))
+                        file.Delete();
             }
-            catch (Exception ex)
-            {
 
-                MessageBox.Show(ex.Message);
-            }
+            DitaCatalogueExtractor extractor = new DitaCatalogueExtractor(Activator.RepositoryLocator.CatalogueRepository, outputPath);
+            extractor.Extract(progressBarsUI1);
+        }
+        catch (Exception ex)
+        {
+
+            MessageBox.Show(ex.Message);
+        }
             
-        }
+    }
 
-        private void btnShowDirectory_Click(object sender, EventArgs e)
-        {
-            if(string.IsNullOrWhiteSpace(tbExtractionDirectory.Text))
-                return;
+    private void btnShowDirectory_Click(object sender, EventArgs e)
+    {
+        if(string.IsNullOrWhiteSpace(tbExtractionDirectory.Text))
+            return;
 
-            DirectoryInfo d = new DirectoryInfo(tbExtractionDirectory.Text);
+        DirectoryInfo d = new DirectoryInfo(tbExtractionDirectory.Text);
 
-            UsefulStuff.GetInstance().ShowFolderInWindowsExplorer(d);
-        }
+        UsefulStuff.GetInstance().ShowFolderInWindowsExplorer(d);
+    }
 
-        private void btnCheck_Click(object sender, EventArgs e)
-        {
-            var popup = new PopupChecksUI("Checking Dita extraction",false);
+    private void btnCheck_Click(object sender, EventArgs e)
+    {
+        var popup = new PopupChecksUI("Checking Dita extraction",false);
 
-            DitaCatalogueExtractor extractor = new DitaCatalogueExtractor(Activator.RepositoryLocator.CatalogueRepository, null);
-            popup.StartChecking(extractor);
-        }
+        DitaCatalogueExtractor extractor = new DitaCatalogueExtractor(Activator.RepositoryLocator.CatalogueRepository, null);
+        popup.StartChecking(extractor);
     }
 }

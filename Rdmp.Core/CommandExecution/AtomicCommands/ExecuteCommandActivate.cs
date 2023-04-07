@@ -9,57 +9,56 @@ using Rdmp.Core.Curation.Data;
 using ReusableLibraryCode.Icons.IconProvision;
 using SixLabors.ImageSharp.PixelFormats;
 
-namespace Rdmp.Core.CommandExecution.AtomicCommands
+namespace Rdmp.Core.CommandExecution.AtomicCommands;
+
+/// <summary>
+/// Command for double clicking objects.
+/// </summary>
+public class ExecuteCommandActivate : BasicCommandExecution, IAtomicCommand
 {
+    private readonly object _o;
+
     /// <summary>
-    /// Command for double clicking objects.
+    /// Set to true to also emphasise the object being activated
     /// </summary>
-    public class ExecuteCommandActivate : BasicCommandExecution, IAtomicCommand
+    public bool AlsoShow { get; set; }
+
+    public ExecuteCommandActivate(IBasicActivateItems activator, object o) : base(activator)
     {
-        private readonly object _o;
+        _o = o;
 
-        /// <summary>
-        /// Set to true to also emphasise the object being activated
-        /// </summary>
-        public bool AlsoShow { get; set; }
+        var masquerader = _o as IMasqueradeAs;
 
-        public ExecuteCommandActivate(IBasicActivateItems activator, object o) : base(activator)
-        {
-            _o = o;
+        //if we have a masquerader and we cannot activate the masquerader, maybe we can activate what it is masquerading as?
+        if (masquerader != null && !BasicActivator.CanActivate(masquerader))
+            _o = masquerader.MasqueradingAs();
 
-            var masquerader = _o as IMasqueradeAs;
+        if (!BasicActivator.CanActivate(_o))
+            SetImpossible(GlobalStrings.ObjectCannotBeActivated);
 
-            //if we have a masquerader and we cannot activate the masquerader, maybe we can activate what it is masquerading as?
-            if (masquerader != null && !BasicActivator.CanActivate(masquerader))
-                _o = masquerader.MasqueradingAs();
+        Weight = -99.99999f;
+    }
 
-            if (!BasicActivator.CanActivate(_o))
-                SetImpossible(GlobalStrings.ObjectCannotBeActivated);
+    public override Image<Rgba32> GetImage(IIconProvider iconProvider)
+    {
+        if (_o == null)
+            return null;
 
-            Weight = -99.99999f;
-        }
+        return iconProvider.GetImage(_o, OverlayKind.Edit);
+    }
 
-        public override Image<Rgba32> GetImage(IIconProvider iconProvider)
-        {
-            if (_o == null)
-                return null;
+    public override string GetCommandName()
+    {
+        return OverrideCommandName ?? GlobalStrings.Activate;
+    }
 
-            return iconProvider.GetImage(_o, OverlayKind.Edit);
-        }
+    public override void Execute()
+    {
+        base.Execute();
 
-        public override string GetCommandName()
-        {
-            return OverrideCommandName ?? GlobalStrings.Activate;
-        }
+        BasicActivator.Activate(_o);
 
-        public override void Execute()
-        {
-            base.Execute();
-
-            BasicActivator.Activate(_o);
-
-            if (_o is DatabaseEntity d && AlsoShow)
-                Emphasise(d);
-        }
+        if (_o is DatabaseEntity d && AlsoShow)
+            Emphasise(d);
     }
 }

@@ -22,55 +22,54 @@ using Rdmp.UI.ItemActivation.Arranging;
 using Rdmp.UI.LoadExecutionUIs;
 using WeifenLuo.WinFormsUI.Docking;
 
-namespace ResearchDataManagementPlatform.WindowManagement.WindowArranging
+namespace ResearchDataManagementPlatform.WindowManagement.WindowArranging;
+
+/// <inheritdoc/>
+public class WindowArranger : IArrangeWindows
 {
-    /// <inheritdoc/>
-    public class WindowArranger : IArrangeWindows
+    private readonly IActivateItems _activator;
+    private readonly WindowManager _windowManager;
+
+    public WindowArranger(IActivateItems activator, WindowManager windowManager, DockPanel mainDockPanel)
     {
-        private readonly IActivateItems _activator;
-        private readonly WindowManager _windowManager;
-
-        public WindowArranger(IActivateItems activator, WindowManager windowManager, DockPanel mainDockPanel)
-        {
-            _activator = activator;
-            _windowManager =windowManager;
-        }
+        _activator = activator;
+        _windowManager =windowManager;
+    }
         
-        public void SetupEditAnything(object sender, IMapsDirectlyToDatabaseTable o)
-        {            
-            _activator.RequestItemEmphasis(this, new EmphasiseRequest(o));
+    public void SetupEditAnything(object sender, IMapsDirectlyToDatabaseTable o)
+    {            
+        _activator.RequestItemEmphasis(this, new EmphasiseRequest(o));
 
-            var activate = new ExecuteCommandActivate(_activator, o);
+        var activate = new ExecuteCommandActivate(_activator, o);
 
-            //activate it if possible
-            if (!activate.IsImpossible)
-                activate.Execute();
-            else
-                _activator.RequestItemEmphasis(this, new EmphasiseRequest(o, 1)); //otherwise just show it
+        //activate it if possible
+        if (!activate.IsImpossible)
+            activate.Execute();
+        else
+            _activator.RequestItemEmphasis(this, new EmphasiseRequest(o, 1)); //otherwise just show it
         
-        }
+    }
 
-        public void Setup(WindowLayout target)
-        {
-            //Do not reload an existing layout
-            string oldXml = _windowManager.MainForm.GetCurrentLayoutXml();
-            string newXml = target.LayoutData;
+    public void Setup(WindowLayout target)
+    {
+        //Do not reload an existing layout
+        string oldXml = _windowManager.MainForm.GetCurrentLayoutXml();
+        string newXml = target.LayoutData;
 
-            if(AreBasicallyTheSameLayout(oldXml, newXml))
-                return;
+        if(AreBasicallyTheSameLayout(oldXml, newXml))
+            return;
             
-            _windowManager.CloseAllToolboxes();
-            _windowManager.CloseAllWindows();
-            _windowManager.MainForm.LoadFromXml(target);
-        }
+        _windowManager.CloseAllToolboxes();
+        _windowManager.CloseAllWindows();
+        _windowManager.MainForm.LoadFromXml(target);
+    }
 
-        private bool AreBasicallyTheSameLayout(string oldXml, string newXml)
-        {
-            var patStripActive = @"Active.*=[""\-\d]*";
-            oldXml = Regex.Replace(oldXml, patStripActive, "");
-            newXml = Regex.Replace(newXml, patStripActive, "");
+    private bool AreBasicallyTheSameLayout(string oldXml, string newXml)
+    {
+        var patStripActive = @"Active.*=[""\-\d]*";
+        oldXml = Regex.Replace(oldXml, patStripActive, "");
+        newXml = Regex.Replace(newXml, patStripActive, "");
 
-            return oldXml.Equals(newXml, StringComparison.CurrentCultureIgnoreCase);
-        }
+        return oldXml.Equals(newXml, StringComparison.CurrentCultureIgnoreCase);
     }
 }

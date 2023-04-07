@@ -9,34 +9,33 @@ using System.Windows.Forms;
 using Rdmp.Core.CommandExecution.AtomicCommands;
 using Rdmp.UI.ItemActivation;
 
-namespace Rdmp.UI.Menus.MenuItems
+namespace Rdmp.UI.Menus.MenuItems;
+
+/// <summary>
+/// <see cref="ToolStripButton"/> depicting a single <see cref="IAtomicCommand"/>
+/// </summary>
+public class AtomicCommandToolStripItem : ToolStripButton
 {
-    /// <summary>
-    /// <see cref="ToolStripButton"/> depicting a single <see cref="IAtomicCommand"/>
-    /// </summary>
-    public class AtomicCommandToolStripItem : ToolStripButton
+    private readonly IAtomicCommand _command;
+
+    public AtomicCommandToolStripItem(IAtomicCommand command, IActivateItems activator)
     {
-        private readonly IAtomicCommand _command;
+        _command = command;
 
-        public AtomicCommandToolStripItem(IAtomicCommand command, IActivateItems activator)
-        {
-            _command = command;
+        Image = command.GetImage(activator.CoreIconProvider)?.ImageToBitmap();
+        Text = command.GetCommandName();
+        Tag = command;
 
-            Image = command.GetImage(activator.CoreIconProvider)?.ImageToBitmap();
-            Text = command.GetCommandName();
-            Tag = command;
+        //disable if impossible command
+        Enabled = !command.IsImpossible;
 
-            //disable if impossible command
-            Enabled = !command.IsImpossible;
+        ToolTipText = command.IsImpossible ? command.ReasonCommandImpossible : command.GetCommandHelp();
+    }
 
-            ToolTipText = command.IsImpossible ? command.ReasonCommandImpossible : command.GetCommandHelp();
-        }
-
-        protected override void OnClick(EventArgs e)
-        {
-            base.OnClick(e);
+    protected override void OnClick(EventArgs e)
+    {
+        base.OnClick(e);
             
-            _command.Execute();
-        }
+        _command.Execute();
     }
 }

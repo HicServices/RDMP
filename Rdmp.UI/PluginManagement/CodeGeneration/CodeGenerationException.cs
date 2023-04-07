@@ -7,17 +7,16 @@
 using System;
 using MapsDirectlyToDatabaseTable;
 
-namespace Rdmp.UI.PluginManagement.CodeGeneration
+namespace Rdmp.UI.PluginManagement.CodeGeneration;
+
+/// <summary>
+/// Thrown when there is a problem a database table that means <see cref="MapsDirectlyToDatabaseTableClassCodeGenerator"/> can not generate
+/// code for a <see cref="IMapsDirectlyToDatabaseTable"/> compatible with it (e.g. it doesn't have an ID column).
+/// </summary>
+public class CodeGenerationException : Exception
 {
-    /// <summary>
-    /// Thrown when there is a problem a database table that means <see cref="MapsDirectlyToDatabaseTableClassCodeGenerator"/> can not generate
-    /// code for a <see cref="IMapsDirectlyToDatabaseTable"/> compatible with it (e.g. it doesn't have an ID column).
-    /// </summary>
-    public class CodeGenerationException : Exception
+    public CodeGenerationException(string message):base(message)
     {
-        public CodeGenerationException(string message):base(message)
-        {
             
-        }
     }
 }

@@ -10,47 +10,46 @@ using Rdmp.Core.Curation.Data.Pipelines;
 using Rdmp.Core.DataFlowPipeline.Requirements;
 using Rdmp.UI.PipelineUIs.DemandsInitializationUIs.ArgumentValueControls;
 
-namespace Rdmp.UI.PipelineUIs.Pipelines.PluginPipelineUsers
+namespace Rdmp.UI.PipelineUIs.Pipelines.PluginPipelineUsers;
+
+/// <summary>
+/// Turns an IDemandToUseAPipeline plugin class into an IPipelineUser and IPipelineUseCase (both) for use with PipelineSelectionUIFactory
+/// </summary>
+public sealed class PluginPipelineUser : PipelineUseCase,IPipelineUser
 {
-    /// <summary>
-    /// Turns an IDemandToUseAPipeline plugin class into an IPipelineUser and IPipelineUseCase (both) for use with PipelineSelectionUIFactory
-    /// </summary>
-    public sealed class PluginPipelineUser : PipelineUseCase,IPipelineUser
+    private IPipelineUseCase _useCase;
+    public PipelineGetter Getter { get; private set; }
+    public PipelineSetter Setter { get; private set; }
+
+    public PluginPipelineUser(RequiredPropertyInfo demand, ArgumentValueUIArgs args, object demanderInstance)
+        : base(new Type[] { }) //makes it a design time use case
     {
-        private IPipelineUseCase _useCase;
-        public PipelineGetter Getter { get; private set; }
-        public PipelineSetter Setter { get; private set; }
-
-        public PluginPipelineUser(RequiredPropertyInfo demand, ArgumentValueUIArgs args, object demanderInstance)
-            : base(new Type[] { }) //makes it a design time use case
+        Getter = () =>
         {
-            Getter = () =>
-            {
-                var p = (Pipeline)args.InitialValue;
-                return p;
-            };
+            var p = (Pipeline)args.InitialValue;
+            return p;
+        };
 
-            Setter = v =>args.Setter(v);
+        Setter = v =>args.Setter(v);
 
-            var pipeDemander = demanderInstance as IDemandToUseAPipeline;
+        var pipeDemander = demanderInstance as IDemandToUseAPipeline;
 
-            if (pipeDemander == null)
-                throw new NotSupportedException("Class " + demanderInstance.GetType().Name + " does not implement interface IDemandToUseAPipeline despite having a property which is a Pipeline");
+        if (pipeDemander == null)
+            throw new NotSupportedException("Class " + demanderInstance.GetType().Name + " does not implement interface IDemandToUseAPipeline despite having a property which is a Pipeline");
 
-            _useCase = pipeDemander.GetDesignTimePipelineUseCase(demand);
+        _useCase = pipeDemander.GetDesignTimePipelineUseCase(demand);
             
-            ExplicitSource = _useCase.ExplicitSource;
-            ExplicitDestination = _useCase.ExplicitDestination;
+        ExplicitSource = _useCase.ExplicitSource;
+        ExplicitDestination = _useCase.ExplicitDestination;
             
-            foreach (var o in _useCase.GetInitializationObjects())
-                AddInitializationObject(o);
+        foreach (var o in _useCase.GetInitializationObjects())
+            AddInitializationObject(o);
 
-            GenerateContext();
-        }
+        GenerateContext();
+    }
         
-        protected override IDataFlowPipelineContext GenerateContextImpl()
-        {
-            return _useCase.GetContext();
-        }
+    protected override IDataFlowPipelineContext GenerateContextImpl()
+    {
+        return _useCase.GetContext();
     }
 }

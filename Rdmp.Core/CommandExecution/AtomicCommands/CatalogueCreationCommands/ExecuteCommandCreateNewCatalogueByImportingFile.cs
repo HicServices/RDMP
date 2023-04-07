@@ -24,159 +24,158 @@ using Rdmp.Core.Repositories.Construction;
 using ReusableLibraryCode.Icons.IconProvision;
 using SixLabors.ImageSharp.PixelFormats;
 
-namespace Rdmp.Core.CommandExecution.AtomicCommands.CatalogueCreationCommands
+namespace Rdmp.Core.CommandExecution.AtomicCommands.CatalogueCreationCommands;
+
+/// <summary>
+/// Import a file (e.g. CSV, excel etc) into a relational database as a new table using a given <see cref="Pipeline"/> and create a reference to it in RDMP.
+/// </summary>
+public class ExecuteCommandCreateNewCatalogueByImportingFile : CatalogueCreationCommandExecution
 {
-    /// <summary>
-    /// Import a file (e.g. CSV, excel etc) into a relational database as a new table using a given <see cref="Pipeline"/> and create a reference to it in RDMP.
-    /// </summary>
-    public class ExecuteCommandCreateNewCatalogueByImportingFile : CatalogueCreationCommandExecution
+    private DiscoveredDatabase _targetDatabase;
+    private IPipeline _pipeline;
+
+    public FileInfo File { get; private set; }
+
+    private string _extractionIdentifier;
+
+
+    private void CheckFile()
     {
-        private DiscoveredDatabase _targetDatabase;
-        private IPipeline _pipeline;
+        if (File == null)
+            return;
 
-        public FileInfo File { get; private set; }
+        if (!File.Exists)
+            SetImpossible("File does not exist");
+    }
 
-        private string _extractionIdentifier;
+    public ExecuteCommandCreateNewCatalogueByImportingFile(IBasicActivateItems activator, FileInfo file = null) : this(activator, file, null, null, null, null)
+    {
+    }
+
+    [UseWithObjectConstructor]
+    public ExecuteCommandCreateNewCatalogueByImportingFile(IBasicActivateItems activator,
+        [DemandsInitialization("The file to load into the database")]
+        FileInfo file,
+        [DemandsInitialization("Name of a column in the file to be the IsExtractionIdentifier column or Null if it doesn't have one")]
+        string extractionIdentifier,
+        [DemandsInitialization("The database to upload the data into")]
+        DiscoveredDatabase targetDatabase,
+        [DemandsInitialization("Pipeline for reading the source file, applying any transforms and writting to the database")]
+        Pipeline pipeline,
+        [DemandsInitialization(Desc_ProjectSpecificParameter)]
+        Project projectSpecific) : base(activator,projectSpecific,null)
+    {
+        File = file;
+        _extractionIdentifier = extractionIdentifier;
+        _targetDatabase = targetDatabase;
+        _pipeline = pipeline;
+        UseTripleDotSuffix = true;
+        CheckFile();
+    }
 
 
-        private void CheckFile()
+    public ExecuteCommandCreateNewCatalogueByImportingFile(IBasicActivateItems activator, FileCollectionCombineable file) : base(activator)
+    {
+        if (file.Files.Length != 1)
         {
-            if (File == null)
-                return;
-
-            if (!File.Exists)
-                SetImpossible("File does not exist");
+            SetImpossible("Only one file can be imported at once");
+            return;
         }
 
-        public ExecuteCommandCreateNewCatalogueByImportingFile(IBasicActivateItems activator, FileInfo file = null) : this(activator, file, null, null, null, null)
+        File = file.Files[0];
+        UseTripleDotSuffix = true;
+        CheckFile();
+    }
+
+
+    public override void Execute()
+    {
+        base.Execute();
+
+        if(_pipeline == null)
         {
-        }
-
-        [UseWithObjectConstructor]
-        public ExecuteCommandCreateNewCatalogueByImportingFile(IBasicActivateItems activator,
-            [DemandsInitialization("The file to load into the database")]
-            FileInfo file,
-            [DemandsInitialization("Name of a column in the file to be the IsExtractionIdentifier column or Null if it doesn't have one")]
-            string extractionIdentifier,
-            [DemandsInitialization("The database to upload the data into")]
-            DiscoveredDatabase targetDatabase,
-            [DemandsInitialization("Pipeline for reading the source file, applying any transforms and writting to the database")]
-            Pipeline pipeline,
-            [DemandsInitialization(Desc_ProjectSpecificParameter)]
-            Project projectSpecific) : base(activator,projectSpecific,null)
-        {
-            File = file;
-            _extractionIdentifier = extractionIdentifier;
-            _targetDatabase = targetDatabase;
-            _pipeline = pipeline;
-            UseTripleDotSuffix = true;
-            CheckFile();
-        }
-
-
-        public ExecuteCommandCreateNewCatalogueByImportingFile(IBasicActivateItems activator, FileCollectionCombineable file) : base(activator)
-        {
-            if (file.Files.Length != 1)
-            {
-                SetImpossible("Only one file can be imported at once");
-                return;
-            }
-
-            File = file.Files[0];
-            UseTripleDotSuffix = true;
-            CheckFile();
-        }
-
-
-        public override void Execute()
-        {
-            base.Execute();
-
-            if(_pipeline == null)
-            {
-                var pipelines = BasicActivator.RepositoryLocator.CatalogueRepository.GetAllObjects<Pipeline>();
+            var pipelines = BasicActivator.RepositoryLocator.CatalogueRepository.GetAllObjects<Pipeline>();
                 
-                var compatible = UploadFileUseCase.DesignTime().FilterCompatiblePipelines(pipelines).ToArray();
+            var compatible = UploadFileUseCase.DesignTime().FilterCompatiblePipelines(pipelines).ToArray();
 
-                _pipeline = (IPipeline)BasicActivator.SelectOne("File Upload Pipeline", compatible);
+            _pipeline = (IPipeline)BasicActivator.SelectOne("File Upload Pipeline", compatible);
 
-                if (_pipeline == null)
-                    throw new Exception("No pipeline selected for upload");
-            }
+            if (_pipeline == null)
+                throw new Exception("No pipeline selected for upload");
+        }
 
-            var db  = _targetDatabase ?? BasicActivator.SelectDatabase(true,"Target database");
+        var db  = _targetDatabase ?? BasicActivator.SelectDatabase(true,"Target database");
 
-            if(db == null)
-                return;
+        if(db == null)
+            return;
 
-            File = File ?? BasicActivator.SelectFile("File to upload");
+        File = File ?? BasicActivator.SelectFile("File to upload");
             
-            if(File == null)
-                return;
+        if(File == null)
+            return;
 
-            var useCase = new UploadFileUseCase(File, db,BasicActivator);
+        var useCase = new UploadFileUseCase(File, db,BasicActivator);
 
-            var runner = BasicActivator.GetPipelineRunner(
-                GetCreateCatalogueFromFileDialogArgs()
-                ,useCase,_pipeline);
-            runner.PipelineExecutionFinishedsuccessfully += (s, e) => OnPipelineCompleted(s, e, db);
-            runner.Run(BasicActivator.RepositoryLocator,null,null,null);
-        }
+        var runner = BasicActivator.GetPipelineRunner(
+            GetCreateCatalogueFromFileDialogArgs()
+            ,useCase,_pipeline);
+        runner.PipelineExecutionFinishedsuccessfully += (s, e) => OnPipelineCompleted(s, e, db);
+        runner.Run(BasicActivator.RepositoryLocator,null,null,null);
+    }
 
-        public static DialogArgs GetCreateCatalogueFromFileDialogArgs()
+    public static DialogArgs GetCreateCatalogueFromFileDialogArgs()
+    {
+        return new DialogArgs
         {
-            return new DialogArgs
-            {
-                WindowTitle = "Create Catalogue from File",
-                TaskDescription = "Select a Pipeline compatible with the file format you are loading and your intended destination.  If the pipeline completes succesfully a new Catalogue will be created referencing the new table created in your database."
-            };
-        }
+            WindowTitle = "Create Catalogue from File",
+            TaskDescription = "Select a Pipeline compatible with the file format you are loading and your intended destination.  If the pipeline completes succesfully a new Catalogue will be created referencing the new table created in your database."
+        };
+    }
 
-        private void OnPipelineCompleted(object sender, PipelineEngineEventArgs args, DiscoveredDatabase db)
-        {
-            var engine = args.PipelineEngine;
+    private void OnPipelineCompleted(object sender, PipelineEngineEventArgs args, DiscoveredDatabase db)
+    {
+        var engine = args.PipelineEngine;
 
-            //todo figure out what it created
-            var dest = engine.DestinationObject as DataTableUploadDestination;
-            if(dest == null)
-                throw new Exception($"Destination of engine was unexpectedly not a DataTableUploadDestination despite use case {nameof(UploadFileUseCase)}");
+        //todo figure out what it created
+        var dest = engine.DestinationObject as DataTableUploadDestination;
+        if(dest == null)
+            throw new Exception($"Destination of engine was unexpectedly not a DataTableUploadDestination despite use case {nameof(UploadFileUseCase)}");
                         
-            if(string.IsNullOrWhiteSpace(dest.TargetTableName))
-                throw new Exception($"Destination of engine failed to populate {dest.TargetTableName}");
+        if(string.IsNullOrWhiteSpace(dest.TargetTableName))
+            throw new Exception($"Destination of engine failed to populate {dest.TargetTableName}");
 
-            var tbl = db.ExpectTable(dest.TargetTableName);
+        var tbl = db.ExpectTable(dest.TargetTableName);
 
-            if(!tbl.Exists())
-                throw new Exception($"Destination of engine claimed to have created {tbl.GetFullyQualifiedName()} but it did not exist");
+        if(!tbl.Exists())
+            throw new Exception($"Destination of engine claimed to have created {tbl.GetFullyQualifiedName()} but it did not exist");
 
-            var importer = new TableInfoImporter(BasicActivator.RepositoryLocator.CatalogueRepository,tbl);
-            importer.DoImport(out var ti,out _);
+        var importer = new TableInfoImporter(BasicActivator.RepositoryLocator.CatalogueRepository,tbl);
+        importer.DoImport(out var ti,out _);
 
-            var cata = BasicActivator.CreateAndConfigureCatalogue(ti,null,$"Import of file '{File.FullName}' by {Environment.UserName} on {DateTime.Now}",ProjectSpecific,TargetFolder);
+        var cata = BasicActivator.CreateAndConfigureCatalogue(ti,null,$"Import of file '{File.FullName}' by {Environment.UserName} on {DateTime.Now}",ProjectSpecific,TargetFolder);
             
-            if(cata != null)
-            {
-                Publish(cata);
-                Emphasise(cata);
-            }
-        }
-
-        public override Image<Rgba32> GetImage(IIconProvider iconProvider)
+        if(cata != null)
         {
-            return ProjectSpecific != null ?
-                iconProvider.GetImage(RDMPConcept.ProjectCatalogue, OverlayKind.Add) :
-                iconProvider.GetImage(RDMPConcept.Catalogue, OverlayKind.Add);
+            Publish(cata);
+            Emphasise(cata);
         }
+    }
+
+    public override Image<Rgba32> GetImage(IIconProvider iconProvider)
+    {
+        return ProjectSpecific != null ?
+            iconProvider.GetImage(RDMPConcept.ProjectCatalogue, OverlayKind.Add) :
+            iconProvider.GetImage(RDMPConcept.Catalogue, OverlayKind.Add);
+    }
 
 
-        public override string GetCommandHelp()
-        {
-            return GlobalStrings.CreateNewCatalogueByImportingFileHelp;
-        }
+    public override string GetCommandHelp()
+    {
+        return GlobalStrings.CreateNewCatalogueByImportingFileHelp;
+    }
 
-        public override string GetCommandName()
-        {
-            return OverrideCommandName ?? GlobalStrings.CreateNewCatalogueByImportingFile;
-        }
+    public override string GetCommandName()
+    {
+        return OverrideCommandName ?? GlobalStrings.CreateNewCatalogueByImportingFile;
     }
 }

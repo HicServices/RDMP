@@ -11,87 +11,86 @@ using Rdmp.Core.Curation.Data.Aggregation;
 using Rdmp.Core.Curation.Data.Cohort;
 using Rdmp.Core.Providers;
 
-namespace Rdmp.Core.Repositories.Managers.HighPerformance
+namespace Rdmp.Core.Repositories.Managers.HighPerformance;
+
+/// <summary>
+/// Performance class that builds the hierarchy of CohortIdentificationConfiguration children.  This includes containers (CohortAggregateContainer) and subcontainers
+/// and thier contained cohort sets ( AggregateConfiguration).  This is done in memory by fetching all the relevant relationship records with two queries and then
+/// sorting out the already fetched objects in CatalogueChildProvider into the relevant hierarchy.
+/// 
+/// <para>This allows you to use GetSubContainers and GetAggregateConfigurations in bulk without having to use the method on IContainer directly (which goes back to the database).</para>
+/// </summary>
+class CohortContainerManagerFromChildProvider:CohortContainerManager
 {
-    /// <summary>
-    /// Performance class that builds the hierarchy of CohortIdentificationConfiguration children.  This includes containers (CohortAggregateContainer) and subcontainers
-    /// and thier contained cohort sets ( AggregateConfiguration).  This is done in memory by fetching all the relevant relationship records with two queries and then
-    /// sorting out the already fetched objects in CatalogueChildProvider into the relevant hierarchy.
-    /// 
-    /// <para>This allows you to use GetSubContainers and GetAggregateConfigurations in bulk without having to use the method on IContainer directly (which goes back to the database).</para>
-    /// </summary>
-    class CohortContainerManagerFromChildProvider:CohortContainerManager
+    private readonly Dictionary<int, List<IOrderable>> _contents = new Dictionary<int, List<IOrderable>>();
+
+    public CohortContainerManagerFromChildProvider(CatalogueRepository repository,CatalogueChildProvider childProvider):base(repository)
     {
-        private readonly Dictionary<int, List<IOrderable>> _contents = new Dictionary<int, List<IOrderable>>();
+        FetchAllRelationships(childProvider);
+    }
 
-        public CohortContainerManagerFromChildProvider(CatalogueRepository repository,CatalogueChildProvider childProvider):base(repository)
+    /// <summary>
+    /// Returns cached answers without running database queries 
+    /// </summary>
+    /// <param name="parent"></param>
+    /// <returns></returns>
+    public override IOrderable[] GetChildren(CohortAggregateContainer parent)
+    {
+        if (_contents.ContainsKey(parent.ID))
+            return _contents[parent.ID].ToArray();
+
+        return new IOrderable[0];
+    }
+
+    public void FetchAllRelationships(ICoreChildProvider childProvider)
+    {
+        using (var con = CatalogueRepository.GetConnection())
         {
-            FetchAllRelationships(childProvider);
-        }
 
-        /// <summary>
-        /// Returns cached answers without running database queries 
-        /// </summary>
-        /// <param name="parent"></param>
-        /// <returns></returns>
-        public override IOrderable[] GetChildren(CohortAggregateContainer parent)
-        {
-            if (_contents.ContainsKey(parent.ID))
-                return _contents[parent.ID].ToArray();
+            //find all the cohort SET operation subcontainers e.g. UNION Ag1,Ag2,(Agg3 INTERSECT Agg4) would have 2 CohortAggregateContainers (the UNION and the INTERSECT) in which the INTERSECT was the child container of the UNION
+            var r = CatalogueRepository.DiscoveredServer.GetCommand("SELECT [CohortAggregateContainer_ParentID],[CohortAggregateContainer_ChildID] FROM [CohortAggregateSubContainer] ORDER BY CohortAggregateContainer_ParentID", con).ExecuteReader();
 
-            return new IOrderable[0];
-        }
-
-        public void FetchAllRelationships(ICoreChildProvider childProvider)
-        {
-            using (var con = CatalogueRepository.GetConnection())
+            while (r.Read())
             {
+                var currentParentId = Convert.ToInt32(r["CohortAggregateContainer_ParentID"]);
+                var currentChildId = Convert.ToInt32(r["CohortAggregateContainer_ChildID"]);
 
-                //find all the cohort SET operation subcontainers e.g. UNION Ag1,Ag2,(Agg3 INTERSECT Agg4) would have 2 CohortAggregateContainers (the UNION and the INTERSECT) in which the INTERSECT was the child container of the UNION
-                var r = CatalogueRepository.DiscoveredServer.GetCommand("SELECT [CohortAggregateContainer_ParentID],[CohortAggregateContainer_ChildID] FROM [CohortAggregateSubContainer] ORDER BY CohortAggregateContainer_ParentID", con).ExecuteReader();
+                if (!_contents.ContainsKey(currentParentId))
+                    _contents.Add(currentParentId, new List<IOrderable>());
 
-                while (r.Read())
-                {
-                    var currentParentId = Convert.ToInt32(r["CohortAggregateContainer_ParentID"]);
-                    var currentChildId = Convert.ToInt32(r["CohortAggregateContainer_ChildID"]);
-
-                    if (!_contents.ContainsKey(currentParentId))
-                        _contents.Add(currentParentId, new List<IOrderable>());
-
-                    _contents[currentParentId].Add(childProvider.AllCohortAggregateContainers.Single(c => c.ID == currentChildId));
-                }
-                r.Close();
-
-                //now find all the Agg configurations within the containers too, (in the above example we will find Agg1 in the UNION container at order 1 and Agg2 at order 2 and then we find Agg3 and Agg4 in the INTERSECT container)
-                r = CatalogueRepository.DiscoveredServer.GetCommand(@"SELECT [CohortAggregateContainer_ID], [AggregateConfiguration_ID],[Order] FROM [CohortAggregateContainer_AggregateConfiguration] ORDER BY CohortAggregateContainer_ID", con).ExecuteReader();
-
-                while (r.Read())
-                {
-                    var currentParentId = Convert.ToInt32(r["CohortAggregateContainer_ID"]);
-                    var currentChildId = Convert.ToInt32(r["AggregateConfiguration_ID"]);
-                    var currentOrder = Convert.ToInt32(r["Order"]);
-
-                    if (!_contents.ContainsKey(currentParentId))
-                        _contents.Add(currentParentId, new List<IOrderable>());
-
-                    AggregateConfiguration config;
-
-                    try
-                    {
-                        config = childProvider.AllAggregateConfigurations.Single(a => a.ID == currentChildId);
-                    }
-                    catch (Exception)
-                    {
-                        throw new Exception("Error occured trying to find AggregateConfiguration with ID " + currentChildId + " which is allegedly a child of CohortAggregateContainer " + currentParentId);
-                    }
-
-                    config.SetKnownOrder(currentOrder);
-
-                    _contents[currentParentId].Add(config);
-
-                }
-                r.Close();
+                _contents[currentParentId].Add(childProvider.AllCohortAggregateContainers.Single(c => c.ID == currentChildId));
             }
+            r.Close();
+
+            //now find all the Agg configurations within the containers too, (in the above example we will find Agg1 in the UNION container at order 1 and Agg2 at order 2 and then we find Agg3 and Agg4 in the INTERSECT container)
+            r = CatalogueRepository.DiscoveredServer.GetCommand(@"SELECT [CohortAggregateContainer_ID], [AggregateConfiguration_ID],[Order] FROM [CohortAggregateContainer_AggregateConfiguration] ORDER BY CohortAggregateContainer_ID", con).ExecuteReader();
+
+            while (r.Read())
+            {
+                var currentParentId = Convert.ToInt32(r["CohortAggregateContainer_ID"]);
+                var currentChildId = Convert.ToInt32(r["AggregateConfiguration_ID"]);
+                var currentOrder = Convert.ToInt32(r["Order"]);
+
+                if (!_contents.ContainsKey(currentParentId))
+                    _contents.Add(currentParentId, new List<IOrderable>());
+
+                AggregateConfiguration config;
+
+                try
+                {
+                    config = childProvider.AllAggregateConfigurations.Single(a => a.ID == currentChildId);
+                }
+                catch (Exception)
+                {
+                    throw new Exception("Error occured trying to find AggregateConfiguration with ID " + currentChildId + " which is allegedly a child of CohortAggregateContainer " + currentParentId);
+                }
+
+                config.SetKnownOrder(currentOrder);
+
+                _contents[currentParentId].Add(config);
+
+            }
+            r.Close();
         }
     }
 }

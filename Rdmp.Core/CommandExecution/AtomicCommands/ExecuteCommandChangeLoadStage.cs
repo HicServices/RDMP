@@ -9,38 +9,37 @@ using Rdmp.Core.Curation.Data.DataLoad;
 using Rdmp.Core.Providers.Nodes.LoadMetadataNodes;
 using Rdmp.Core.Repositories.Construction;
 
-namespace Rdmp.Core.CommandExecution.AtomicCommands
+namespace Rdmp.Core.CommandExecution.AtomicCommands;
+
+public class ExecuteCommandChangeLoadStage : BasicCommandExecution
 {
-    public class ExecuteCommandChangeLoadStage : BasicCommandExecution
-    {
-        private readonly ProcessTask _sourceProcessTask;
-        private readonly LoadStageNode _targetStage;
+    private readonly ProcessTask _sourceProcessTask;
+    private readonly LoadStageNode _targetStage;
         
-        [UseWithObjectConstructor]
-        public ExecuteCommandChangeLoadStage(IBasicActivateItems activator, ProcessTask processTask, LoadStage stage) :
-            this(activator, new ProcessTaskCombineable(processTask), new LoadStageNode(processTask.LoadMetadata,stage))
-        {
+    [UseWithObjectConstructor]
+    public ExecuteCommandChangeLoadStage(IBasicActivateItems activator, ProcessTask processTask, LoadStage stage) :
+        this(activator, new ProcessTaskCombineable(processTask), new LoadStageNode(processTask.LoadMetadata,stage))
+    {
 
-        }
-        public ExecuteCommandChangeLoadStage(IBasicActivateItems activator, ProcessTaskCombineable sourceProcessTaskCombineable, LoadStageNode targetStage) : base(activator)
-        {
-            _sourceProcessTask = sourceProcessTaskCombineable.ProcessTask;
-            _targetStage = targetStage;
+    }
+    public ExecuteCommandChangeLoadStage(IBasicActivateItems activator, ProcessTaskCombineable sourceProcessTaskCombineable, LoadStageNode targetStage) : base(activator)
+    {
+        _sourceProcessTask = sourceProcessTaskCombineable.ProcessTask;
+        _targetStage = targetStage;
 
-            if(sourceProcessTaskCombineable.ProcessTask.LoadMetadata_ID != targetStage.LoadMetadata.ID)
-                SetImpossible("ProcessTask belongs to a different LoadMetadata");
+        if(sourceProcessTaskCombineable.ProcessTask.LoadMetadata_ID != targetStage.LoadMetadata.ID)
+            SetImpossible("ProcessTask belongs to a different LoadMetadata");
 
-            if (!ProcessTask.IsCompatibleStage(_sourceProcessTask.ProcessTaskType, _targetStage.LoadStage))
-                SetImpossible("Task type '" + _sourceProcessTask.ProcessTaskType +"' cannot run in " + _targetStage.LoadStage);
-        }
+        if (!ProcessTask.IsCompatibleStage(_sourceProcessTask.ProcessTaskType, _targetStage.LoadStage))
+            SetImpossible("Task type '" + _sourceProcessTask.ProcessTaskType +"' cannot run in " + _targetStage.LoadStage);
+    }
 
-        public override void Execute()
-        {
-            base.Execute();
+    public override void Execute()
+    {
+        base.Execute();
 
-            _sourceProcessTask.LoadStage = _targetStage.LoadStage;
-            _sourceProcessTask.SaveToDatabase();
-            Publish(_sourceProcessTask.LoadMetadata);
-        }
+        _sourceProcessTask.LoadStage = _targetStage.LoadStage;
+        _sourceProcessTask.SaveToDatabase();
+        Publish(_sourceProcessTask.LoadMetadata);
     }
 }

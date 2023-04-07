@@ -8,18 +8,17 @@ using Rdmp.Core.CommandLine.Interactive;
 using Rdmp.Core.Repositories;
 using ReusableLibraryCode.Checks;
 
-namespace Rdmp.Core.CommandExecution
-{
-    /// <summary>
-    /// Implementation of <see cref="IBasicActivateItems"/> that writes to console and throws 
-    /// </summary>
-    public class ThrowImmediatelyActivator : ConsoleInputManager
-    {
-        // TODO: This should not inherit from ConsoleInputManager
-        public ThrowImmediatelyActivator(IRDMPPlatformRepositoryServiceLocator repositoryLocator, ICheckNotifier notifier = null):base(repositoryLocator,notifier ?? new ThrowImmediatelyCheckNotifier())
-        {
-            DisallowInput = true;
-        }
+namespace Rdmp.Core.CommandExecution;
 
+/// <summary>
+/// Implementation of <see cref="IBasicActivateItems"/> that writes to console and throws 
+/// </summary>
+public class ThrowImmediatelyActivator : ConsoleInputManager
+{
+    // TODO: This should not inherit from ConsoleInputManager
+    public ThrowImmediatelyActivator(IRDMPPlatformRepositoryServiceLocator repositoryLocator, ICheckNotifier notifier = null):base(repositoryLocator,notifier ?? new ThrowImmediatelyCheckNotifier())
+    {
+        DisallowInput = true;
     }
+
 }

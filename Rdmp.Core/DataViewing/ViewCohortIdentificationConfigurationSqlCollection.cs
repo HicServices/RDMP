@@ -14,87 +14,86 @@ using Rdmp.Core.QueryBuilding;
 using ReusableLibraryCode.DataAccess;
 
 
-namespace Rdmp.Core.DataViewing
+namespace Rdmp.Core.DataViewing;
+
+class ViewCohortIdentificationConfigurationSqlCollection : PersistableObjectCollection, IViewSQLAndResultsCollection
 {
-    class ViewCohortIdentificationConfigurationSqlCollection : PersistableObjectCollection, IViewSQLAndResultsCollection
+    public bool UseQueryCache { get; set; }
+
+    public ViewCohortIdentificationConfigurationSqlCollection()
     {
-        public bool UseQueryCache { get; set; }
+    }
 
-        public ViewCohortIdentificationConfigurationSqlCollection()
-        {
-        }
+    public ViewCohortIdentificationConfigurationSqlCollection(CohortIdentificationConfiguration config) : this()
+    {
+        DatabaseObjects.Add(config);
+    }
 
-        public ViewCohortIdentificationConfigurationSqlCollection(CohortIdentificationConfiguration config) : this()
-        {
-            DatabaseObjects.Add(config);
-        }
-
-        public IEnumerable<DatabaseEntity> GetToolStripObjects()
-        {
-            if (UseQueryCache)
-            {
-                var cache = GetCacheServer();
-                if (cache != null)
-                    yield return cache;
-            }
-        }
-
-        private ExternalDatabaseServer GetCacheServer()
-        {
-            if (CohortIdentificationConfiguration != null && CohortIdentificationConfiguration.QueryCachingServer_ID != null)
-                return CohortIdentificationConfiguration.QueryCachingServer;
-
-            return null;
-        }
-
-
-        public IDataAccessPoint GetDataAccessPoint()
+    public IEnumerable<DatabaseEntity> GetToolStripObjects()
+    {
+        if (UseQueryCache)
         {
             var cache = GetCacheServer();
-
-            if (UseQueryCache && cache != null)
-            {
-                return cache;
-            }
-            else
-            {
-                var builder = new CohortQueryBuilder(CohortIdentificationConfiguration, null);
-                builder.RegenerateSQL();
-                return new SelfCertifyingDataAccessPoint(builder.Results.TargetServer);
-            }
+            if (cache != null)
+                yield return cache;
         }
+    }
 
-        public string GetSql()
+    private ExternalDatabaseServer GetCacheServer()
+    {
+        if (CohortIdentificationConfiguration != null && CohortIdentificationConfiguration.QueryCachingServer_ID != null)
+            return CohortIdentificationConfiguration.QueryCachingServer;
+
+        return null;
+    }
+
+
+    public IDataAccessPoint GetDataAccessPoint()
+    {
+        var cache = GetCacheServer();
+
+        if (UseQueryCache && cache != null)
+        {
+            return cache;
+        }
+        else
         {
             var builder = new CohortQueryBuilder(CohortIdentificationConfiguration, null);
+            builder.RegenerateSQL();
+            return new SelfCertifyingDataAccessPoint(builder.Results.TargetServer);
+        }
+    }
+
+    public string GetSql()
+    {
+        var builder = new CohortQueryBuilder(CohortIdentificationConfiguration, null);
             
-            if (!UseQueryCache && CohortIdentificationConfiguration.QueryCachingServer_ID.HasValue)
-                builder.CacheServer = null;
+        if (!UseQueryCache && CohortIdentificationConfiguration.QueryCachingServer_ID.HasValue)
+            builder.CacheServer = null;
             
 
-            return builder.SQL;
-        }
+        return builder.SQL;
+    }
 
-        public string GetTabName()
-        {
-            return "View " + CohortIdentificationConfiguration;
-        }
+    public string GetTabName()
+    {
+        return "View " + CohortIdentificationConfiguration;
+    }
 
-        public void AdjustAutocomplete(IAutoCompleteProvider autoComplete)
-        {
-        }
+    public void AdjustAutocomplete(IAutoCompleteProvider autoComplete)
+    {
+    }
 
-        CohortIdentificationConfiguration CohortIdentificationConfiguration
+    CohortIdentificationConfiguration CohortIdentificationConfiguration
+    {
+        get
         {
-            get
-            {
-                return DatabaseObjects.OfType<CohortIdentificationConfiguration>().SingleOrDefault();
-            }
+            return DatabaseObjects.OfType<CohortIdentificationConfiguration>().SingleOrDefault();
         }
+    }
 
-        public IQuerySyntaxHelper GetQuerySyntaxHelper()
-        {
-            return GetDataAccessPoint()?.GetQuerySyntaxHelper();
-        }
+    public IQuerySyntaxHelper GetQuerySyntaxHelper()
+    {
+        return GetDataAccessPoint()?.GetQuerySyntaxHelper();
     }
 }

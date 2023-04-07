@@ -8,24 +8,23 @@ using SixLabors.ImageSharp;
 using Rdmp.Core.Curation.Data;
 using SixLabors.ImageSharp.PixelFormats;
 
-namespace Rdmp.Core.Icons.IconProvision.StateBasedIconProviders
+namespace Rdmp.Core.Icons.IconProvision.StateBasedIconProviders;
+
+public class TableInfoStateBasedIconProvider : IObjectStateBasedIconProvider
 {
-    public class TableInfoStateBasedIconProvider : IObjectStateBasedIconProvider
+    private readonly Image<Rgba32> _tableInfo;
+    private readonly Image<Rgba32> _tableInfoTableValuedFunction;
+
+    public TableInfoStateBasedIconProvider()
     {
-        private readonly Image<Rgba32> _tableInfo;
-        private readonly Image<Rgba32> _tableInfoTableValuedFunction;
+        _tableInfo = Image.Load<Rgba32>(CatalogueIcons.TableInfo);
+        _tableInfoTableValuedFunction = Image.Load<Rgba32>(CatalogueIcons.TableInfoTableValuedFunction);
+    }
+    public Image<Rgba32> GetImageIfSupportedObject(object o)
+    {
+        if (o is not TableInfo tableInfo)
+            return null;
 
-        public TableInfoStateBasedIconProvider()
-        {
-            _tableInfo = Image.Load<Rgba32>(CatalogueIcons.TableInfo);
-            _tableInfoTableValuedFunction = Image.Load<Rgba32>(CatalogueIcons.TableInfoTableValuedFunction);
-        }
-        public Image<Rgba32> GetImageIfSupportedObject(object o)
-        {
-            if (o is not TableInfo tableInfo)
-                return null;
-
-            return tableInfo.IsTableValuedFunction ? _tableInfoTableValuedFunction : _tableInfo;
-        }
+        return tableInfo.IsTableValuedFunction ? _tableInfoTableValuedFunction : _tableInfo;
     }
 }

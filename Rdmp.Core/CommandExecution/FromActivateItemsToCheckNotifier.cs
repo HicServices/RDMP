@@ -6,34 +6,33 @@
 
 using ReusableLibraryCode.Checks;
 
-namespace Rdmp.Core.CommandExecution
+namespace Rdmp.Core.CommandExecution;
+
+/// <summary>
+/// Implementation of <see cref="ICheckNotifier"/> which prompts Yes/No for fixes and reports errors through modal call <see cref="IBasicActivateItems.Show(string)"/>
+/// </summary>
+public class FromActivateItemsToCheckNotifier : ICheckNotifier
 {
-    /// <summary>
-    /// Implementation of <see cref="ICheckNotifier"/> which prompts Yes/No for fixes and reports errors through modal call <see cref="IBasicActivateItems.Show(string)"/>
-    /// </summary>
-    public class FromActivateItemsToCheckNotifier : ICheckNotifier
+    private IBasicActivateItems basicActivator;
+
+    public FromActivateItemsToCheckNotifier(IBasicActivateItems basicActivator)
     {
-        private IBasicActivateItems basicActivator;
+        this.basicActivator = basicActivator;
+    }
 
-        public FromActivateItemsToCheckNotifier(IBasicActivateItems basicActivator)
-        {
-            this.basicActivator = basicActivator;
-        }
-
-        public bool OnCheckPerformed(CheckEventArgs args)
-        {
-            if (args.ProposedFix != null)
-                return basicActivator.YesNo(args.ProposedFix, "Apply fix?");
+    public bool OnCheckPerformed(CheckEventArgs args)
+    {
+        if (args.ProposedFix != null)
+            return basicActivator.YesNo(args.ProposedFix, "Apply fix?");
             
-            if(args.Result >= CheckResult.Fail)
-            {
-                if (args.Ex == null)
-                    basicActivator.Show(args.Message);
-                else
-                    basicActivator.ShowException(args.Message, args.Ex);
-            }
-            
-            return false;
+        if(args.Result >= CheckResult.Fail)
+        {
+            if (args.Ex == null)
+                basicActivator.Show(args.Message);
+            else
+                basicActivator.ShowException(args.Message, args.Ex);
         }
+            
+        return false;
     }
 }

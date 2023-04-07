@@ -14,78 +14,77 @@ using Rdmp.Core.Repositories;
 using ReusableLibraryCode.Checks;
 using ReusableLibraryCode.Progress;
 
-namespace Rdmp.Core.DataLoad.Engine.LoadExecution.Components.Runtime
+namespace Rdmp.Core.DataLoad.Engine.LoadExecution.Components.Runtime;
+
+/// <summary>
+/// RuntimeTask that hosts an IMutilateDataTables.  The instance is hydrated from the users configuration (ProcessTask and ProcessTaskArguments) See
+/// RuntimeArgumentCollection
+/// </summary>
+public class MutilateDataTablesRuntimeTask : RuntimeTask, IMEFRuntimeTask
 {
-    /// <summary>
-    /// RuntimeTask that hosts an IMutilateDataTables.  The instance is hydrated from the users configuration (ProcessTask and ProcessTaskArguments) See
-    /// RuntimeArgumentCollection
-    /// </summary>
-    public class MutilateDataTablesRuntimeTask : RuntimeTask, IMEFRuntimeTask
+    //the class (built by reflection) that will do all the heavy lifting
+    public IMutilateDataTables MutilateDataTables { get; set; }
+    public ICheckable MEFPluginClassInstance { get { return MutilateDataTables; } }
+
+    public MutilateDataTablesRuntimeTask(IProcessTask task, RuntimeArgumentCollection args, MEF mef)
+        : base(task, args)
     {
-        //the class (built by reflection) that will do all the heavy lifting
-        public IMutilateDataTables MutilateDataTables { get; set; }
-        public ICheckable MEFPluginClassInstance { get { return MutilateDataTables; } }
+        //All attachers must be marked as mounting stages, and therefore we can pull out the RAW Server and Name 
+        var stageArgs = args.StageSpecificArguments;
 
-        public MutilateDataTablesRuntimeTask(IProcessTask task, RuntimeArgumentCollection args, MEF mef)
-            : base(task, args)
-        {
-            //All attachers must be marked as mounting stages, and therefore we can pull out the RAW Server and Name 
-            var stageArgs = args.StageSpecificArguments;
+        if (stageArgs == null)
+            throw new NullReferenceException("Stage args was null");
+        if(stageArgs.DbInfo == null)
+            throw new NullReferenceException("Stage args had no DbInfo, unable to mutilate tables without a database - mutilator is sad");
 
-            if (stageArgs == null)
-                throw new NullReferenceException("Stage args was null");
-            if(stageArgs.DbInfo == null)
-                throw new NullReferenceException("Stage args had no DbInfo, unable to mutilate tables without a database - mutilator is sad");
+        if(string.IsNullOrWhiteSpace(task.Path))
+            throw new ArgumentException("Path is blank for ProcessTask '"+task+"' - it should be a class name of type " + typeof(IMutilateDataTables).Name);
 
-            if(string.IsNullOrWhiteSpace(task.Path))
-                throw new ArgumentException("Path is blank for ProcessTask '"+task+"' - it should be a class name of type " + typeof(IMutilateDataTables).Name);
-
-            MutilateDataTables = mef.CreateA<IMutilateDataTables>(ProcessTask.Path);
-            SetPropertiesForClass(RuntimeArguments, MutilateDataTables);
-            MutilateDataTables.Initialize(stageArgs.DbInfo, ProcessTask.LoadStage);
-        }
-
-
-
-        public override ExitCodeType Run(IDataLoadJob job, GracefulCancellationToken cancellationToken)
-        {
-            job.OnNotify(this, new NotifyEventArgs(ProgressEventType.Information, "About to run Task '" + ProcessTask.Name + "'"));
-            job.OnNotify(this, new NotifyEventArgs(ProgressEventType.Information, "Mutilate class is" + MutilateDataTables.GetType().FullName));
-
-            try
-            {
-                return MutilateDataTables.Mutilate(job);
-            }
-            catch (Exception e)
-            {
-                job.OnNotify(this, new NotifyEventArgs(ProgressEventType.Error, "Mutilate failed on job " + job + " Mutilator was of type " + MutilateDataTables.GetType().Name + " see InnerException for specifics", e));
-                return ExitCodeType.Error;
-            }
-
-        }
-
-        public override bool Exists()
-        {
-            return true;
-        }
-        
-        public override void Abort(IDataLoadEventListener postLoadEventListener)
-        {
-            LoadCompletedSoDispose(ExitCodeType.Abort, postLoadEventListener);
-        }
-
-        public override void Check(ICheckNotifier checker)
-        {
-            new MandatoryPropertyChecker(MutilateDataTables).Check(checker);
-            MutilateDataTables.Check(checker);
-        }
-
-
-        public override void LoadCompletedSoDispose(ExitCodeType exitCode, IDataLoadEventListener postDataLoadEventListener)
-        {
-            MutilateDataTables.LoadCompletedSoDispose(exitCode, postDataLoadEventListener);
-        }
-
-        
+        MutilateDataTables = mef.CreateA<IMutilateDataTables>(ProcessTask.Path);
+        SetPropertiesForClass(RuntimeArguments, MutilateDataTables);
+        MutilateDataTables.Initialize(stageArgs.DbInfo, ProcessTask.LoadStage);
     }
+
+
+
+    public override ExitCodeType Run(IDataLoadJob job, GracefulCancellationToken cancellationToken)
+    {
+        job.OnNotify(this, new NotifyEventArgs(ProgressEventType.Information, "About to run Task '" + ProcessTask.Name + "'"));
+        job.OnNotify(this, new NotifyEventArgs(ProgressEventType.Information, "Mutilate class is" + MutilateDataTables.GetType().FullName));
+
+        try
+        {
+            return MutilateDataTables.Mutilate(job);
+        }
+        catch (Exception e)
+        {
+            job.OnNotify(this, new NotifyEventArgs(ProgressEventType.Error, "Mutilate failed on job " + job + " Mutilator was of type " + MutilateDataTables.GetType().Name + " see InnerException for specifics", e));
+            return ExitCodeType.Error;
+        }
+
+    }
+
+    public override bool Exists()
+    {
+        return true;
+    }
+        
+    public override void Abort(IDataLoadEventListener postLoadEventListener)
+    {
+        LoadCompletedSoDispose(ExitCodeType.Abort, postLoadEventListener);
+    }
+
+    public override void Check(ICheckNotifier checker)
+    {
+        new MandatoryPropertyChecker(MutilateDataTables).Check(checker);
+        MutilateDataTables.Check(checker);
+    }
+
+
+    public override void LoadCompletedSoDispose(ExitCodeType exitCode, IDataLoadEventListener postDataLoadEventListener)
+    {
+        MutilateDataTables.LoadCompletedSoDispose(exitCode, postDataLoadEventListener);
+    }
+
+        
 }

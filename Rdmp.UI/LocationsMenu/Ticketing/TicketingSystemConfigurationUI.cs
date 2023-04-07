@@ -15,223 +15,222 @@ using Rdmp.UI.TestsAndSetup.ServicePropogation;
 using ReusableLibraryCode.Checks;
 
 
-namespace Rdmp.UI.LocationsMenu.Ticketing
+namespace Rdmp.UI.LocationsMenu.Ticketing;
+
+/// <summary>
+/// The RDMP recognises that there are a wide array of software systems for tracking time worked, issues,project requests, bug reports etc.  The RDMP is designed to support gated 
+/// interactions with ticketing systems (which can be skipped entirely if you do not want the functionality).  This window lets you configure which ticketing system you have, the
+/// credentials needed to access it and where it is located.  You will need to make sure you select the appropriate Type of ticketing system you have.
+/// 
+/// <para>Because there are many different ticketing systems and they can often be configured in diverse ways, the RDMP uses a 'plugin' approach to interacting with ticketing systems.
+/// The scope of functionality includes: </para>
+/// 
+/// <para>1. Validating whether a ticket is valid
+/// 2. Navigating to the ticket when the user clicks 'Show' in a TicketingControlUI (See TicketingControlUI)
+/// 3. Determining whether a given project extraction can go ahead (This lets you drive ethics/approvals process through your normal ticketing system but have RDMP prevent 
+/// releases of data until the ticketing system says its ok). </para>
+/// 
+/// <para>Ticketing systems are entirely optional and you can ignore them if you don't have one or don't want to configure it.  If you do not see a Type that corresponds with your 
+/// ticketing system you might need to write your own Ticketing dll (See ITicketingSystem interface) and upload it as a plugin to the Data Catalogue.</para>
+/// </summary>
+public partial class TicketingSystemConfigurationUI : RDMPUserControl
 {
-    /// <summary>
-    /// The RDMP recognises that there are a wide array of software systems for tracking time worked, issues,project requests, bug reports etc.  The RDMP is designed to support gated 
-    /// interactions with ticketing systems (which can be skipped entirely if you do not want the functionality).  This window lets you configure which ticketing system you have, the
-    /// credentials needed to access it and where it is located.  You will need to make sure you select the appropriate Type of ticketing system you have.
-    /// 
-    /// <para>Because there are many different ticketing systems and they can often be configured in diverse ways, the RDMP uses a 'plugin' approach to interacting with ticketing systems.
-    /// The scope of functionality includes: </para>
-    /// 
-    /// <para>1. Validating whether a ticket is valid
-    /// 2. Navigating to the ticket when the user clicks 'Show' in a TicketingControlUI (See TicketingControlUI)
-    /// 3. Determining whether a given project extraction can go ahead (This lets you drive ethics/approvals process through your normal ticketing system but have RDMP prevent 
-    /// releases of data until the ticketing system says its ok). </para>
-    /// 
-    /// <para>Ticketing systems are entirely optional and you can ignore them if you don't have one or don't want to configure it.  If you do not see a Type that corresponds with your 
-    /// ticketing system you might need to write your own Ticketing dll (See ITicketingSystem interface) and upload it as a plugin to the Data Catalogue.</para>
-    /// </summary>
-    public partial class TicketingSystemConfigurationUI : RDMPUserControl
+    private TicketingSystemConfiguration _ticketingSystemConfiguration;
+    private const string NoneText = "<<NONE>>";
+    public TicketingSystemConfigurationUI()
     {
-        private TicketingSystemConfiguration _ticketingSystemConfiguration;
-        private const string NoneText = "<<NONE>>";
-        public TicketingSystemConfigurationUI()
-        {
-            InitializeComponent();
-        }
+        InitializeComponent();
+    }
 
-        protected override void OnLoad(EventArgs e)
-        {
-            base.OnLoad(e);
+    protected override void OnLoad(EventArgs e)
+    {
+        base.OnLoad(e);
 
-            if(VisualStudioDesignMode)
-                return;
+        if(VisualStudioDesignMode)
+            return;
 
-            RefreshUIFromDatabase();
-        }
+        RefreshUIFromDatabase();
+    }
 
-        bool _bLoading = true;
+    bool _bLoading = true;
 
-        private void RefreshUIFromDatabase()
-        {
-            _bLoading = true;
+    private void RefreshUIFromDatabase()
+    {
+        _bLoading = true;
 
-            var ticketing = _activator.RepositoryLocator.CatalogueRepository.GetAllObjects<TicketingSystemConfiguration>().ToArray();
+        var ticketing = _activator.RepositoryLocator.CatalogueRepository.GetAllObjects<TicketingSystemConfiguration>().ToArray();
 
-            if(ticketing.Length > 1)
-                throw new Exception("You have multiple TicketingSystemConfiguration configured, open the table TicketingSystemConfiguration and delete one of them");
+        if(ticketing.Length > 1)
+            throw new Exception("You have multiple TicketingSystemConfiguration configured, open the table TicketingSystemConfiguration and delete one of them");
 
-            _ticketingSystemConfiguration = ticketing.SingleOrDefault();
-            var mef = _activator.RepositoryLocator.CatalogueRepository.MEF;
+        _ticketingSystemConfiguration = ticketing.SingleOrDefault();
+        var mef = _activator.RepositoryLocator.CatalogueRepository.MEF;
             
-            cbxType.Items.Clear();
-            cbxType.Items.AddRange(mef.GetTypes<ITicketingSystem>().Select(t=>t.FullName).ToArray());
+        cbxType.Items.Clear();
+        cbxType.Items.AddRange(mef.GetTypes<ITicketingSystem>().Select(t=>t.FullName).ToArray());
 
-            ddCredentials.Items.Clear();
-            ddCredentials.Items.Add(NoneText);
-            ddCredentials.Items.AddRange(_activator.RepositoryLocator.CatalogueRepository.GetAllObjects<DataAccessCredentials>().ToArray());
+        ddCredentials.Items.Clear();
+        ddCredentials.Items.Add(NoneText);
+        ddCredentials.Items.AddRange(_activator.RepositoryLocator.CatalogueRepository.GetAllObjects<DataAccessCredentials>().ToArray());
 
-            if (_ticketingSystemConfiguration == null)
-            {
-                gbTicketingSystem.Enabled = false;
-                tbID.Text = "";
-                tbName.Text = "";
-                tbUrl.Text = "";
-                cbxType.Text = "";
-                cbDisabled.Checked = false;
-                btnCreate.Enabled = true;
-                btnDelete.Enabled = false;
-            }
-            else
-            {
-                gbTicketingSystem.Enabled = true;
-
-                tbID.Text = _ticketingSystemConfiguration.ID.ToString();
-                tbName.Text = _ticketingSystemConfiguration.Name;
-                tbUrl.Text = _ticketingSystemConfiguration.Url;
-                cbxType.Text = _ticketingSystemConfiguration.Type;
-                cbDisabled.Checked = !_ticketingSystemConfiguration.IsActive;
-
-                if (_ticketingSystemConfiguration.DataAccessCredentials_ID != null)
-                    ddCredentials.Text =
-                        _ticketingSystemConfiguration.DataAccessCredentials.ToString();
-                else
-                    ddCredentials.Text = NoneText;
-
-                btnCreate.Enabled = false;
-                btnDelete.Enabled = true;
-                btnSave.Enabled = false;
-            }
-            _bLoading = false;
-        }
-
-        private void btnSave_Click(object sender, EventArgs e)
+        if (_ticketingSystemConfiguration == null)
         {
-            _ticketingSystemConfiguration.SaveToDatabase();
+            gbTicketingSystem.Enabled = false;
+            tbID.Text = "";
+            tbName.Text = "";
+            tbUrl.Text = "";
+            cbxType.Text = "";
+            cbDisabled.Checked = false;
+            btnCreate.Enabled = true;
+            btnDelete.Enabled = false;
+        }
+        else
+        {
+            gbTicketingSystem.Enabled = true;
+
+            tbID.Text = _ticketingSystemConfiguration.ID.ToString();
+            tbName.Text = _ticketingSystemConfiguration.Name;
+            tbUrl.Text = _ticketingSystemConfiguration.Url;
+            cbxType.Text = _ticketingSystemConfiguration.Type;
+            cbDisabled.Checked = !_ticketingSystemConfiguration.IsActive;
+
+            if (_ticketingSystemConfiguration.DataAccessCredentials_ID != null)
+                ddCredentials.Text =
+                    _ticketingSystemConfiguration.DataAccessCredentials.ToString();
+            else
+                ddCredentials.Text = NoneText;
+
+            btnCreate.Enabled = false;
+            btnDelete.Enabled = true;
             btnSave.Enabled = false;
+        }
+        _bLoading = false;
+    }
+
+    private void btnSave_Click(object sender, EventArgs e)
+    {
+        _ticketingSystemConfiguration.SaveToDatabase();
+        btnSave.Enabled = false;
+        RefreshUIFromDatabase();
+    }
+
+    private void btnCreate_Click(object sender, EventArgs e)
+    {
+        new TicketingSystemConfiguration(_activator.RepositoryLocator.CatalogueRepository, "New Ticketing System");
+        RefreshUIFromDatabase();
+    }
+
+    private void btnDelete_Click(object sender, EventArgs e)
+    {
+        if (Activator.YesNo("Are you sure you want to delete the Ticketing system from this Catalogue database? there can be only one so be sure before you delete it.","Confirm deleting Ticketing system"))
+        {
+            _ticketingSystemConfiguration.DeleteInDatabase();
             RefreshUIFromDatabase();
         }
+    }
 
-        private void btnCreate_Click(object sender, EventArgs e)
+    private void btnCheck_Click(object sender, EventArgs e)
+    {
+        if(btnSave.Enabled)
+            btnSave_Click(null,null);
+
+        ITicketingSystem instance;
+        try
         {
-            new TicketingSystemConfiguration(_activator.RepositoryLocator.CatalogueRepository, "New Ticketing System");
-            RefreshUIFromDatabase();
+            TicketingSystemFactory factory = new TicketingSystemFactory(_activator.RepositoryLocator.CatalogueRepository);
+            instance = factory.CreateIfExists(_ticketingSystemConfiguration);
+
+            checksUI1.OnCheckPerformed(
+                new CheckEventArgs("successfully created a instance of " + instance.GetType().FullName,
+                    CheckResult.Success));
         }
-
-        private void btnDelete_Click(object sender, EventArgs e)
+        catch (Exception exception)
         {
-            if (Activator.YesNo("Are you sure you want to delete the Ticketing system from this Catalogue database? there can be only one so be sure before you delete it.","Confirm deleting Ticketing system"))
+            checksUI1.OnCheckPerformed(
+                new CheckEventArgs("Could not create ticketing system from your current configuration",
+                    CheckResult.Fail, exception));
+            return;
+        }
+        checksUI1.StartChecking(instance);
+    }
+
+    private void btnEditCredentials_Click(object sender, EventArgs e)
+    {
+        var creds = ddCredentials.SelectedItem as DataAccessCredentials;
+
+        if(creds != null)
+            _activator.CommandExecutionFactory.Activate(creds);
+    }
+
+    private void btnAddCredentials_Click(object sender, EventArgs e)
+    {
+        new DataAccessCredentials(_activator.RepositoryLocator.CatalogueRepository, "New Data Access Credentials");
+        RefreshUIFromDatabase();
+    }
+
+    private void btnDeleteCredentials_Click(object sender, EventArgs e)
+    {
+        try
+        {
+            if(_ticketingSystemConfiguration.DataAccessCredentials_ID != null)
             {
-                _ticketingSystemConfiguration.DeleteInDatabase();
-                RefreshUIFromDatabase();
+                var toDelete = _ticketingSystemConfiguration.DataAccessCredentials;
+
+                if (Activator.YesNo("Confirm deleting Encrypted Credentials " + toDelete.Name + "?","Confirm delete?"))
+                    toDelete.DeleteInDatabase();
             }
         }
-
-        private void btnCheck_Click(object sender, EventArgs e)
-        {
-            if(btnSave.Enabled)
-                btnSave_Click(null,null);
-
-            ITicketingSystem instance;
-            try
-            {
-                TicketingSystemFactory factory = new TicketingSystemFactory(_activator.RepositoryLocator.CatalogueRepository);
-                instance = factory.CreateIfExists(_ticketingSystemConfiguration);
-
-                checksUI1.OnCheckPerformed(
-                    new CheckEventArgs("successfully created a instance of " + instance.GetType().FullName,
-                        CheckResult.Success));
-            }
-            catch (Exception exception)
-            {
-                checksUI1.OnCheckPerformed(
-                    new CheckEventArgs("Could not create ticketing system from your current configuration",
-                        CheckResult.Fail, exception));
-                return;
-            }
-            checksUI1.StartChecking(instance);
+        catch (Exception ex)
+        {  
+            ExceptionViewer.Show(ex);
         }
+        RefreshUIFromDatabase();
+    }
 
-        private void btnEditCredentials_Click(object sender, EventArgs e)
-        {
-            var creds = ddCredentials.SelectedItem as DataAccessCredentials;
-
-            if(creds != null)
-                _activator.CommandExecutionFactory.Activate(creds);
-        }
-
-        private void btnAddCredentials_Click(object sender, EventArgs e)
-        {
-            new DataAccessCredentials(_activator.RepositoryLocator.CatalogueRepository, "New Data Access Credentials");
-            RefreshUIFromDatabase();
-        }
-
-        private void btnDeleteCredentials_Click(object sender, EventArgs e)
-        {
-            try
-            {
-                if(_ticketingSystemConfiguration.DataAccessCredentials_ID != null)
-                {
-                    var toDelete = _ticketingSystemConfiguration.DataAccessCredentials;
-
-                    if (Activator.YesNo("Confirm deleting Encrypted Credentials " + toDelete.Name + "?","Confirm delete?"))
-                        toDelete.DeleteInDatabase();
-                }
-            }
-            catch (Exception ex)
-            {  
-                ExceptionViewer.Show(ex);
-            }
-            RefreshUIFromDatabase();
-        }
-
-        private void tb_TextChanged(object sender, EventArgs e)
-        {
-            if (_bLoading)
-                return;
+    private void tb_TextChanged(object sender, EventArgs e)
+    {
+        if (_bLoading)
+            return;
             
-            _ticketingSystemConfiguration.Name = tbName.Text;
-            _ticketingSystemConfiguration.Url = tbUrl.Text;
-            _ticketingSystemConfiguration.Type = cbxType.Text;
-            btnSave.Enabled = true;
-        }
+        _ticketingSystemConfiguration.Name = tbName.Text;
+        _ticketingSystemConfiguration.Url = tbUrl.Text;
+        _ticketingSystemConfiguration.Type = cbxType.Text;
+        btnSave.Enabled = true;
+    }
 
-        private void ddCredentials_SelectedIndexChanged(object sender, EventArgs e)
+    private void ddCredentials_SelectedIndexChanged(object sender, EventArgs e)
+    {
+        if (_bLoading)
+            return;
+
+
+        var creds = ddCredentials.SelectedItem as DataAccessCredentials;
+
+        if (creds == null)
         {
-            if (_bLoading)
-                return;
-
-
-            var creds = ddCredentials.SelectedItem as DataAccessCredentials;
-
-            if (creds == null)
-            {
-                _ticketingSystemConfiguration.DataAccessCredentials_ID = null;
-                _ticketingSystemConfiguration.SaveToDatabase();
-            }
-            else
-            {
-                _ticketingSystemConfiguration.DataAccessCredentials_ID = creds.ID;
-                _ticketingSystemConfiguration.SaveToDatabase();
-            }
+            _ticketingSystemConfiguration.DataAccessCredentials_ID = null;
+            _ticketingSystemConfiguration.SaveToDatabase();
         }
-
-        private IActivateItems _activator;
-        public override void SetItemActivator(IActivateItems activator)
+        else
         {
-            base.SetItemActivator(activator);
-            _activator = activator;
+            _ticketingSystemConfiguration.DataAccessCredentials_ID = creds.ID;
+            _ticketingSystemConfiguration.SaveToDatabase();
         }
+    }
 
-        private void cbDisabled_CheckedChanged(object sender, EventArgs e)
+    private IActivateItems _activator;
+    public override void SetItemActivator(IActivateItems activator)
+    {
+        base.SetItemActivator(activator);
+        _activator = activator;
+    }
+
+    private void cbDisabled_CheckedChanged(object sender, EventArgs e)
+    {
+        if (_ticketingSystemConfiguration != null)
         {
-            if (_ticketingSystemConfiguration != null)
-            {
-                _ticketingSystemConfiguration.IsActive = !cbDisabled.Checked;
-                _ticketingSystemConfiguration.SaveToDatabase();
-            }   
-        }
+            _ticketingSystemConfiguration.IsActive = !cbDisabled.Checked;
+            _ticketingSystemConfiguration.SaveToDatabase();
+        }   
     }
 }

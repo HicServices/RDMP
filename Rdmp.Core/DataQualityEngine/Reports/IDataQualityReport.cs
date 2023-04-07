@@ -9,15 +9,14 @@ using Rdmp.Core.Curation.Data;
 using ReusableLibraryCode.Checks;
 using ReusableLibraryCode.Progress;
 
-namespace Rdmp.Core.DataQualityEngine.Reports
+namespace Rdmp.Core.DataQualityEngine.Reports;
+
+/// <summary>
+/// Shared interface for any DQE run implementation (currently only CatalogueConstraintReport).  Supports confirming that the report can be run on a given
+/// Catalogue and running it.
+/// </summary>
+public interface IDataQualityReport: ICheckable
 {
-    /// <summary>
-    /// Shared interface for any DQE run implementation (currently only CatalogueConstraintReport).  Supports confirming that the report can be run on a given
-    /// Catalogue and running it.
-    /// </summary>
-    public interface IDataQualityReport: ICheckable
-    {
-        bool CatalogueSupportsReport(ICatalogue c);
-        void GenerateReport(ICatalogue c, IDataLoadEventListener listener,CancellationToken cancellationToken);
-    }
+    bool CatalogueSupportsReport(ICatalogue c);
+    void GenerateReport(ICatalogue c, IDataLoadEventListener listener,CancellationToken cancellationToken);
 }

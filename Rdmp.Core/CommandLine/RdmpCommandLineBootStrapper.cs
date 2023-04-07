@@ -25,196 +25,194 @@ using YamlDotNet.Serialization;
 using CommandLine;
 using ReusableLibraryCode.Progress;
 
-namespace Rdmp.Core.CommandLine
-{
-    /// <summary>
-    /// Parses strings into relevant <see cref="RDMPCommandLineOptions"/> subclasses 
-    /// and runs appropriate <see cref="Runners.Runner"/>
-    /// </summary>
-    public class RdmpCommandLineBootStrapper
-    {
+namespace Rdmp.Core.CommandLine;
 
-        public static int HandleArgumentsWithStandardRunner(string[] args, Logger logger,IRDMPPlatformRepositoryServiceLocator existingLocator = null)
+/// <summary>
+/// Parses strings into relevant <see cref="RDMPCommandLineOptions"/> subclasses 
+/// and runs appropriate <see cref="Runners.Runner"/>
+/// </summary>
+public class RdmpCommandLineBootStrapper
+{
+
+    public static int HandleArgumentsWithStandardRunner(string[] args, Logger logger,IRDMPPlatformRepositoryServiceLocator existingLocator = null)
+    {
+        int returnCode;
+        try
         {
-            int returnCode;
+            returnCode =
+                UsefulStuff.GetParser()
+                    .ParseArguments<
+                        DleOptions,
+                        DqeOptions,
+                        CacheOptions,
+                        ExtractionOptions,
+                        ReleaseOptions,
+                        CohortCreationOptions,
+                        ExecuteCommandOptions>(args)
+                    .MapResult(
+                        //Add new verbs as options here and invoke relevant runner
+                        (DleOptions opts) => Run(opts,null, existingLocator),
+                        (DqeOptions opts) => Run(opts, null, existingLocator),
+                        (CacheOptions opts) => Run(opts, null, existingLocator),
+                        (ExtractionOptions opts) => Run(opts, null, existingLocator),
+                        (ReleaseOptions opts) => Run(opts, null, existingLocator),
+                        (CohortCreationOptions opts) => Run(opts, null, existingLocator),
+                        (ExecuteCommandOptions opts) => RunCmd(opts, existingLocator),
+                        errs => 1);
+
+            logger.Info("Exiting with code " + returnCode);
+            return returnCode;
+        }
+        catch (Exception e)
+        {
+            logger.Error(e.Message);
+            logger.Info(e, "Fatal error occurred so returning -1");
+            return -1;
+        }
+    }
+
+    public static int RunCmd(ExecuteCommandOptions opts, IRDMPPlatformRepositoryServiceLocator existingLocator = null)
+    {
+        if (!string.IsNullOrWhiteSpace(opts.File))
+        {
+            if (!File.Exists(opts.File))
+            {
+                Console.WriteLine($"Could not find file '{opts.File}'");
+                return -55;
+            }
+
+            var content = File.ReadAllText(opts.File);
+
+            if (string.IsNullOrWhiteSpace(content))
+            {
+                Console.WriteLine($"File is empty ('{opts.File}')");
+                return -56;
+            }
+
             try
             {
-                returnCode =
-                    UsefulStuff.GetParser()
-                        .ParseArguments<
-                            DleOptions,
-                            DqeOptions,
-                            CacheOptions,
-                            ExtractionOptions,
-                            ReleaseOptions,
-                            CohortCreationOptions,
-                            ExecuteCommandOptions>(args)
-                        .MapResult(
-                            //Add new verbs as options here and invoke relevant runner
-                            (DleOptions opts) => Run(opts,null, existingLocator),
-                            (DqeOptions opts) => Run(opts, null, existingLocator),
-                            (CacheOptions opts) => Run(opts, null, existingLocator),
-                            (ExtractionOptions opts) => Run(opts, null, existingLocator),
-                            (ReleaseOptions opts) => Run(opts, null, existingLocator),
-                            (CohortCreationOptions opts) => Run(opts, null, existingLocator),
-                            (ExecuteCommandOptions opts) => RunCmd(opts, existingLocator),
-                            errs => 1);
-
-                logger.Info("Exiting with code " + returnCode);
-                return returnCode;
+                var d = new Deserializer();
+                opts.Script = d.Deserialize<RdmpScript>(content);
             }
-            catch (Exception e)
+            catch (Exception ex)
             {
-                logger.Error(e.Message);
-                logger.Info(e, "Fatal error occurred so returning -1");
-                return -1;
+                Console.WriteLine($"Error deserializing '{opts.File}': {ex.Message}");
+                return -57;
             }
         }
 
-        public static int RunCmd(ExecuteCommandOptions opts, IRDMPPlatformRepositoryServiceLocator existingLocator = null)
+        return Run((RDMPCommandLineOptions)opts,null, existingLocator);
+    }
+
+    public static int Run(RDMPCommandLineOptions opts, IRunner explicitRunner = null, IRDMPPlatformRepositoryServiceLocator existingLocator = null)
+    {
+        // if we have already done startup great!
+        var repositoryLocator = existingLocator;
+
+        var listener = new NLogIDataLoadEventListener(false);
+        var checker = new NLogICheckNotifier(true, false);
+
+        var factory = new RunnerFactory();
+
+        // not done startup so check that we can reach stuff
+        if (repositoryLocator == null)
         {
-            if (!string.IsNullOrWhiteSpace(opts.File))
+            opts.PopulateConnectionStringsFromYamlIfMissing(new ThrowImmediatelyCheckNotifier());
+
+            // where RDMP objects are stored
+            repositoryLocator = opts.GetRepositoryLocator();
+
+            if(repositoryLocator == null || repositoryLocator.CatalogueRepository == null)
             {
-                if (!File.Exists(opts.File))
-                {
-                    Console.WriteLine($"Could not find file '{opts.File}'");
-                    return -55;
-                }
+                listener.OnNotify(typeof(RdmpCommandLineBootStrapper), new NotifyEventArgs(ProgressEventType.Error, "No repository has been specified.  Either create a Databases.yaml file or provide repository connection strings/paths as command line arguments"));
+                return REPO_ERROR;
+            }
+                    
 
-                var content = File.ReadAllText(opts.File);
+            if (!CheckRepo(repositoryLocator))
+            {
+                return REPO_ERROR;
+            }
 
-                if (string.IsNullOrWhiteSpace(content))
-                {
-                    Console.WriteLine($"File is empty ('{opts.File}')");
-                    return -56;
-                }
+            CatalogueRepository.SuppressHelpLoading = false;
+            opts.DoStartup(GetEnvironmentInfo(), opts.LogStartup ? (ICheckNotifier)checker : new IgnoreAllErrorsCheckNotifier());
+        }
 
+        //if user wants to run checking chances are they don't want checks to fail becasue of errors logged during startup (MEF shows lots of errors!)
+        if (opts.LogStartup && opts.Command == CommandLineActivity.check)
+            checker.Worst = LogLevel.Info;
+
+        var runner = explicitRunner ??
+                     factory.CreateRunner(new ThrowImmediatelyActivator(repositoryLocator, checker), opts);
+
+        // Let's not worry about global errors during the CreateRunner process
+        // These are mainly UI/GUI and unrelated to the actual process to run
+        if (checker.Worst > LogLevel.Warn)
+            checker.Worst = LogLevel.Warn;
+
+        int runExitCode = runner.Run(repositoryLocator, listener, checker, new GracefulCancellationToken());
+
+        if (opts.Command == CommandLineActivity.check)
+            checker.OnCheckPerformed(checker.Worst <= LogLevel.Warn
+                ? new CheckEventArgs("Checks Passed", CheckResult.Success)
+                : new CheckEventArgs("Checks Failed", CheckResult.Fail));
+
+        if (runExitCode != 0)
+            return runExitCode;
+
+        //or if either listener reports error
+        if (listener.Worst >= LogLevel.Error || checker.Worst >= LogLevel.Error)
+            return -1;
+
+        if (opts.FailOnWarnings && (listener.Worst >= LogLevel.Warn || checker.Worst >= LogLevel.Warn))
+            return 1;
+
+        return 0;
+    }
+
+    /// <summary>
+    /// The error to return when there is a problem contacting the repository databases
+    /// </summary>
+    public const int REPO_ERROR = 7;
+
+    public static EnvironmentInfo GetEnvironmentInfo()
+    {
+        return new EnvironmentInfo(PluginFolders.Main);
+    }
+    public static bool CheckRepo(IRDMPPlatformRepositoryServiceLocator repo)
+    {
+        var logger = LogManager.GetCurrentClassLogger();
+        if (repo is LinkedRepositoryProvider l)
+        {
+            if (l.CatalogueRepository is TableRepository c)
+            {
                 try
                 {
-                    var d = new Deserializer();
-                    opts.Script = d.Deserialize<RdmpScript>(content);
+                    c.DiscoveredServer.TestConnection(15_000);
                 }
                 catch (Exception ex)
                 {
-                    Console.WriteLine($"Error deserializing '{opts.File}': {ex.Message}");
-                    return -57;
+                    logger.Error(ex, $"Could not reach {c.DiscoveredServer} (Database:{c.DiscoveredServer.GetCurrentDatabase()}).  Ensure that you have configured RDMP database connections in Databases.yaml correctly and/or that you have run install to setup platform databases");
+                    return false;
                 }
             }
 
-            return Run((RDMPCommandLineOptions)opts,null, existingLocator);
-        }
-
-        public static int Run(RDMPCommandLineOptions opts, IRunner explicitRunner = null, IRDMPPlatformRepositoryServiceLocator existingLocator = null)
-        {
-            // if we have already done startup great!
-            var repositoryLocator = existingLocator;
-
-            var listener = new NLogIDataLoadEventListener(false);
-            var checker = new NLogICheckNotifier(true, false);
-
-            var factory = new RunnerFactory();
-
-            // not done startup so check that we can reach stuff
-            if (repositoryLocator == null)
+            if (l.DataExportRepository is TableRepository d)
             {
-                opts.PopulateConnectionStringsFromYamlIfMissing(new ThrowImmediatelyCheckNotifier());
-
-                // where RDMP objects are stored
-                repositoryLocator = opts.GetRepositoryLocator();
-
-                if(repositoryLocator == null || repositoryLocator.CatalogueRepository == null)
+                try
                 {
-                    listener.OnNotify(typeof(RdmpCommandLineBootStrapper), new NotifyEventArgs(ProgressEventType.Error, "No repository has been specified.  Either create a Databases.yaml file or provide repository connection strings/paths as command line arguments"));
-                    return REPO_ERROR;
+                    d.DiscoveredServer.TestConnection();
                 }
-                    
-
-                if (!CheckRepo(repositoryLocator))
+                catch (Exception ex)
                 {
-                    return REPO_ERROR;
-                }
+                    logger.Error(ex, $"Could not reach {d.DiscoveredServer} (Database:{d.DiscoveredServer.GetCurrentDatabase()}).  Ensure that you have configured RDMP database connections in Databases.yaml correctly and/or that you have run install to setup platform databases");
+                    return false;
 
-                CatalogueRepository.SuppressHelpLoading = false;
-                opts.DoStartup(GetEnvironmentInfo(), opts.LogStartup ? (ICheckNotifier)checker : new IgnoreAllErrorsCheckNotifier());
-            }
-
-            //if user wants to run checking chances are they don't want checks to fail becasue of errors logged during startup (MEF shows lots of errors!)
-            if (opts.LogStartup && opts.Command == CommandLineActivity.check)
-                checker.Worst = LogLevel.Info;
-
-            var runner = explicitRunner ??
-                         factory.CreateRunner(new ThrowImmediatelyActivator(repositoryLocator, checker), opts);
-
-            // Let's not worry about global errors during the CreateRunner process
-            // These are mainly UI/GUI and unrelated to the actual process to run
-            if (checker.Worst > LogLevel.Warn)
-                checker.Worst = LogLevel.Warn;
-
-            int runExitCode = runner.Run(repositoryLocator, listener, checker, new GracefulCancellationToken());
-
-            if (opts.Command == CommandLineActivity.check)
-                checker.OnCheckPerformed(checker.Worst <= LogLevel.Warn
-                    ? new CheckEventArgs("Checks Passed", CheckResult.Success)
-                    : new CheckEventArgs("Checks Failed", CheckResult.Fail));
-
-            if (runExitCode != 0)
-                return runExitCode;
-
-            //or if either listener reports error
-            if (listener.Worst >= LogLevel.Error || checker.Worst >= LogLevel.Error)
-                return -1;
-
-            if (opts.FailOnWarnings && (listener.Worst >= LogLevel.Warn || checker.Worst >= LogLevel.Warn))
-                return 1;
-
-            return 0;
-        }
-
-        /// <summary>
-        /// The error to return when there is a problem contacting the repository databases
-        /// </summary>
-        public const int REPO_ERROR = 7;
-
-        public static EnvironmentInfo GetEnvironmentInfo()
-        {
-            return new EnvironmentInfo(PluginFolders.Main);
-        }
-        public static bool CheckRepo(IRDMPPlatformRepositoryServiceLocator repo)
-        {
-            var logger = LogManager.GetCurrentClassLogger();
-            if (repo is LinkedRepositoryProvider l)
-            {
-                if (l.CatalogueRepository is TableRepository c)
-                {
-                    try
-                    {
-                        c.DiscoveredServer.TestConnection(15_000);
-                    }
-                    catch (Exception ex)
-                    {
-                        logger.Error(ex, $"Could not reach {c.DiscoveredServer} (Database:{c.DiscoveredServer.GetCurrentDatabase()}).  Ensure that you have configured RDMP database connections in Databases.yaml correctly and/or that you have run install to setup platform databases");
-                        return false;
-                    }
-                }
-
-                if (l.DataExportRepository is TableRepository d)
-                {
-                    try
-                    {
-                        d.DiscoveredServer.TestConnection();
-                    }
-                    catch (Exception ex)
-                    {
-                        logger.Error(ex, $"Could not reach {d.DiscoveredServer} (Database:{d.DiscoveredServer.GetCurrentDatabase()}).  Ensure that you have configured RDMP database connections in Databases.yaml correctly and/or that you have run install to setup platform databases");
-                        return false;
-
-                    }
                 }
             }
-
-            return true;
         }
 
+        return true;
     }
 
 }

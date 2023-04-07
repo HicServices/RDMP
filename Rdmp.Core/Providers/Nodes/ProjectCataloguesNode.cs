@@ -8,42 +8,41 @@ using Rdmp.Core.Curation.Data;
 using Rdmp.Core.DataExport.Data;
 using Rdmp.Core.Curation.Data.Cohort;
 
-namespace Rdmp.Core.Providers.Nodes
+namespace Rdmp.Core.Providers.Nodes;
+
+/// <summary>
+/// Collection of all project specific datasets (<see cref="Catalogue"/>s which can only be used with this <see cref="Project"/>).
+/// </summary>
+public class ProjectCataloguesNode:Node, IOrderable
 {
-    /// <summary>
-    /// Collection of all project specific datasets (<see cref="Catalogue"/>s which can only be used with this <see cref="Project"/>).
-    /// </summary>
-    public class ProjectCataloguesNode:Node, IOrderable
+    public Project Project { get; set; }
+    public int Order { get => 5; set{ } }
+
+    public ProjectCataloguesNode(Project project)
     {
-        public Project Project { get; set; }
-        public int Order { get => 5; set{ } }
+        Project = project;
+    }
 
-        public ProjectCataloguesNode(Project project)
-        {
-            Project = project;
-        }
+    public override string ToString()
+    {
+        return "Project Specific Catalogues";
+    }
 
-        public override string ToString()
-        {
-            return "Project Specific Catalogues";
-        }
+    protected bool Equals(ProjectCataloguesNode other)
+    {
+        return Project.Equals(other.Project);
+    }
 
-        protected bool Equals(ProjectCataloguesNode other)
-        {
-            return Project.Equals(other.Project);
-        }
+    public override bool Equals(object obj)
+    {
+        if (ReferenceEquals(null, obj)) return false;
+        if (ReferenceEquals(this, obj)) return true;
+        if (obj.GetType() != this.GetType()) return false;
+        return Equals((ProjectCataloguesNode) obj);
+    }
 
-        public override bool Equals(object obj)
-        {
-            if (ReferenceEquals(null, obj)) return false;
-            if (ReferenceEquals(this, obj)) return true;
-            if (obj.GetType() != this.GetType()) return false;
-            return Equals((ProjectCataloguesNode) obj);
-        }
-
-        public override int GetHashCode()
-        {
-            return Project.GetHashCode();
-        }
+    public override int GetHashCode()
+    {
+        return Project.GetHashCode();
     }
 }

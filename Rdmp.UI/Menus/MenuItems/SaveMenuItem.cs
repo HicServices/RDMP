@@ -8,40 +8,39 @@ using System;
 using System.Windows.Forms;
 using Rdmp.UI.SimpleControls;
 
-namespace Rdmp.UI.Menus.MenuItems
+namespace Rdmp.UI.Menus.MenuItems;
+
+/// <summary>
+/// Provides a shortcut to save the currently selected ISaveableUI.  This class requires that you track and regularly update the Saveable property to match
+/// the currently selected saveable tab
+/// </summary>
+[System.ComponentModel.DesignerCategory("")]
+public class SaveMenuItem : ToolStripMenuItem
 {
-    /// <summary>
-    /// Provides a shortcut to save the currently selected ISaveableUI.  This class requires that you track and regularly update the Saveable property to match
-    /// the currently selected saveable tab
-    /// </summary>
-    [System.ComponentModel.DesignerCategory("")]
-    public class SaveMenuItem : ToolStripMenuItem
+    private ISaveableUI _saveable;
+
+    public ISaveableUI Saveable
     {
-        private ISaveableUI _saveable;
+        get { return _saveable; }
+        set
+        {
+            _saveable = value;
+            Enabled = value != null;
+        }
+    }
 
-        public ISaveableUI Saveable
-        {
-            get { return _saveable; }
-            set
-            {
-                _saveable = value;
-                Enabled = value != null;
-            }
-        }
+    public SaveMenuItem() : base("Save")
+    {
+        ShortcutKeys = (Keys.Control | Keys.S);
+    }
+    public SaveMenuItem(ISaveableUI saveable) : this()
+    {
+        Saveable = saveable;
+    }
 
-        public SaveMenuItem() : base("Save")
-        {
-            ShortcutKeys = (Keys.Control | Keys.S);
-        }
-        public SaveMenuItem(ISaveableUI saveable) : this()
-        {
-            Saveable = saveable;
-        }
-
-        protected override void OnClick(EventArgs e)
-        {
-            base.OnClick(e);
-            Saveable.GetObjectSaverButton().Save();
-        }
+    protected override void OnClick(EventArgs e)
+    {
+        base.OnClick(e);
+        Saveable.GetObjectSaverButton().Save();
     }
 }

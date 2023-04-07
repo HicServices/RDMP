@@ -4,14 +4,13 @@
 // RDMP is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License for more details.
 // You should have received a copy of the GNU General Public License along with RDMP. If not, see <https://www.gnu.org/licenses/>.
 
-namespace ReusableLibraryCode.Progress
+namespace ReusableLibraryCode.Progress;
+
+public enum ProgressEventType
 {
-    public enum ProgressEventType
-    {
-        Trace = 0,
-        Debug,
-        Information,
-        Warning,
-        Error
-    }
+    Trace = 0,
+    Debug,
+    Information,
+    Warning,
+    Error
 }

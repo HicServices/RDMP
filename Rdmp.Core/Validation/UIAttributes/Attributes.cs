@@ -6,36 +6,32 @@
 
 using Rdmp.Core.Validation.Constraints;
 
-namespace Rdmp.Core.Validation.UIAttributes
+namespace Rdmp.Core.Validation.UIAttributes;
+
+/// <summary>
+/// Attribute for <see cref="IConstraint"/> properties which should not be visible in user interfaces 
+/// </summary>
+public class HideOnValidationUI : System.Attribute
 {
-    /// <summary>
-    /// Attribute for <see cref="IConstraint"/> properties which should not be visible in user interfaces 
-    /// </summary>
-    public class HideOnValidationUI : System.Attribute
-    {
-    }
+}
 
-    /// <summary>
-    /// Attribute for <see cref="IConstraint"/> properties which should store a column name
-    /// </summary>
-    public class ExpectsColumnNameAsInput: System.Attribute
-    {
-    }
+/// <summary>
+/// Attribute for <see cref="IConstraint"/> properties which should store a column name
+/// </summary>
+public class ExpectsColumnNameAsInput: System.Attribute
+{
+}
 
-    /// <summary>
-    /// Attribute for <see cref="IConstraint"/> properties which should a large body of user entered text
-    /// </summary>
-    public class ExpectsLotsOfText : System.Attribute
-    {
-    }
+/// <summary>
+/// Attribute for <see cref="IConstraint"/> properties which should a large body of user entered text
+/// </summary>
+public class ExpectsLotsOfText : System.Attribute
+{
+}
 
-    /// <summary>
-    /// Attribute for <see cref="IConstraint"/> which expects a prediction rule
-    /// </summary>
-    public class ExpectsPredictionRule : System.Attribute
-    {
-    }
-
-    
-
+/// <summary>
+/// Attribute for <see cref="IConstraint"/> which expects a prediction rule
+/// </summary>
+public class ExpectsPredictionRule : System.Attribute
+{
 }

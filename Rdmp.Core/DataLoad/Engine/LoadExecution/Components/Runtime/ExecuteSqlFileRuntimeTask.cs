@@ -13,96 +13,95 @@ using Rdmp.Core.DataLoad.Engine.LoadExecution.Components.Arguments;
 using ReusableLibraryCode.Checks;
 using ReusableLibraryCode.Progress;
 
-namespace Rdmp.Core.DataLoad.Engine.LoadExecution.Components.Runtime
+namespace Rdmp.Core.DataLoad.Engine.LoadExecution.Components.Runtime;
+
+/// <summary>
+/// RuntimeTask that executes a single .sql file specified by the user in a ProcessTask with ProcessTaskType SQLFile.
+/// </summary>
+public class ExecuteSqlFileRuntimeTask : RuntimeTask
 {
-    /// <summary>
-    /// RuntimeTask that executes a single .sql file specified by the user in a ProcessTask with ProcessTaskType SQLFile.
-    /// </summary>
-    public class ExecuteSqlFileRuntimeTask : RuntimeTask
-    {
-        public string Filepath;
-        private IProcessTask _task;
+    public string Filepath;
+    private IProcessTask _task;
                 
-        private LoadStage _loadStage;
+    private LoadStage _loadStage;
 
-        public ExecuteSqlFileRuntimeTask(IProcessTask task, RuntimeArgumentCollection args) : base(task, args)
-        {
-            _task = task;
-            Filepath = task.Path;
-        }
+    public ExecuteSqlFileRuntimeTask(IProcessTask task, RuntimeArgumentCollection args) : base(task, args)
+    {
+        _task = task;
+        Filepath = task.Path;
+    }
         
-        public override ExitCodeType Run(IDataLoadJob job, GracefulCancellationToken cancellationToken)
+    public override ExitCodeType Run(IDataLoadJob job, GracefulCancellationToken cancellationToken)
+    {
+        var db = RuntimeArguments.StageSpecificArguments.DbInfo;
+        _loadStage = RuntimeArguments.StageSpecificArguments.LoadStage;
+
+        if (!Exists())
+            throw new Exception("The sql file " + Filepath + " does not exist");
+
+        string commandText;
+        try
         {
-            var db = RuntimeArguments.StageSpecificArguments.DbInfo;
-            _loadStage = RuntimeArguments.StageSpecificArguments.LoadStage;
+            commandText = File.ReadAllText(Filepath);
 
-            if (!Exists())
-                throw new Exception("The sql file " + Filepath + " does not exist");
-
-            string commandText;
-            try
+            // Any string arguments refer to tokens that are to be replaced in the SQL file
+            foreach (var kvp in RuntimeArguments.GetAllArgumentsOfType<string>())
             {
-                commandText = File.ReadAllText(Filepath);
-
-                // Any string arguments refer to tokens that are to be replaced in the SQL file
-                foreach (var kvp in RuntimeArguments.GetAllArgumentsOfType<string>())
-                {
-                    var value = kvp.Value;
+                var value = kvp.Value;
                     
-                    if (value.Contains("<DatabaseServer>"))
-                        value = value.Replace("<DatabaseServer>", RuntimeArguments.StageSpecificArguments.DbInfo.Server.Name);
+                if (value.Contains("<DatabaseServer>"))
+                    value = value.Replace("<DatabaseServer>", RuntimeArguments.StageSpecificArguments.DbInfo.Server.Name);
 
-                    if (value.Contains("<DatabaseName>"))
-                        value = value.Replace("<DatabaseName>", RuntimeArguments.StageSpecificArguments.DbInfo.GetRuntimeName());
+                if (value.Contains("<DatabaseName>"))
+                    value = value.Replace("<DatabaseName>", RuntimeArguments.StageSpecificArguments.DbInfo.GetRuntimeName());
                     
-                    commandText = commandText.Replace("##" + kvp.Key + "##", value);
-                }
+                commandText = commandText.Replace("##" + kvp.Key + "##", value);
             }
-            catch (Exception e)
-            {
-                throw new Exception("Could not read the sql file at " + Filepath + ": " + e);
-            }
-            
-            job.OnNotify(this, new NotifyEventArgs(ProgressEventType.Information, "Executing script " + Filepath + " ( against " + db + ")"));
-            var executer = new ExecuteSqlInDleStage(job,_loadStage);
-            return executer.Execute(commandText,db);
         }
+        catch (Exception e)
+        {
+            throw new Exception("Could not read the sql file at " + Filepath + ": " + e);
+        }
+            
+        job.OnNotify(this, new NotifyEventArgs(ProgressEventType.Information, "Executing script " + Filepath + " ( against " + db + ")"));
+        var executer = new ExecuteSqlInDleStage(job,_loadStage);
+        return executer.Execute(commandText,db);
+    }
 
         
 
-        public override bool Exists()
-        {
-            return File.Exists(Filepath);
-        }
+    public override bool Exists()
+    {
+        return File.Exists(Filepath);
+    }
         
-        public override void Abort(IDataLoadEventListener postLoadEventListener)
-        {
-        }
+    public override void Abort(IDataLoadEventListener postLoadEventListener)
+    {
+    }
 
-        public override void LoadCompletedSoDispose(ExitCodeType exitCode,IDataLoadEventListener postLoadEventListener)
-        {
+    public override void LoadCompletedSoDispose(ExitCodeType exitCode,IDataLoadEventListener postLoadEventListener)
+    {
             
-        }
+    }
 
-        public override void Check(ICheckNotifier notifier)
+    public override void Check(ICheckNotifier notifier)
+    {
+        if (string.IsNullOrWhiteSpace(Filepath))
         {
-            if (string.IsNullOrWhiteSpace(Filepath))
-            {
-                notifier.OnCheckPerformed(
-                    new CheckEventArgs("ExecuteSqlFileTask " + _task + " does not have a path specified",
-                        CheckResult.Fail));
-                return;
-            }
-            
-            if (!File.Exists(Filepath))
-                notifier.OnCheckPerformed(
-                    new CheckEventArgs(
-                        "File '" + Filepath +
-                        "' does not exist! (the only time this would be legal is if you have an exe or a freaky plugin that creates this file)",
-                        CheckResult.Warning));
-            else
-                notifier.OnCheckPerformed(new CheckEventArgs("Found File '" + Filepath + "'",
-                    CheckResult.Success));
+            notifier.OnCheckPerformed(
+                new CheckEventArgs("ExecuteSqlFileTask " + _task + " does not have a path specified",
+                    CheckResult.Fail));
+            return;
         }
+            
+        if (!File.Exists(Filepath))
+            notifier.OnCheckPerformed(
+                new CheckEventArgs(
+                    "File '" + Filepath +
+                    "' does not exist! (the only time this would be legal is if you have an exe or a freaky plugin that creates this file)",
+                    CheckResult.Warning));
+        else
+            notifier.OnCheckPerformed(new CheckEventArgs("Found File '" + Filepath + "'",
+                CheckResult.Success));
     }
 }

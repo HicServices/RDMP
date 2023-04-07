@@ -8,35 +8,34 @@ using MapsDirectlyToDatabaseTable;
 using System;
 using System.Collections.Generic;
 
-namespace Rdmp.Core.Providers
+namespace Rdmp.Core.Providers;
+
+public static class RdmpEnumerableExtensions
 {
-    public static class RdmpEnumerableExtensions
+    public static Dictionary<TKey, TElement> ToDictionaryEx<TSource, TKey, TElement>(this IEnumerable<TSource> source, Func<TSource, TKey> keySelector, Func<TSource, TElement> elementSelector) where TKey : notnull
     {
-        public static Dictionary<TKey, TElement> ToDictionaryEx<TSource, TKey, TElement>(this IEnumerable<TSource> source, Func<TSource, TKey> keySelector, Func<TSource, TElement> elementSelector) where TKey : notnull
+        Dictionary<TKey, TElement> d = new Dictionary<TKey, TElement>();
+        foreach (TSource element in source)
         {
-            Dictionary<TKey, TElement> d = new Dictionary<TKey, TElement>();
-            foreach (TSource element in source)
+            try
             {
-                try
+                d.Add(keySelector(element), elementSelector(element));
+            }
+            catch (Exception ex)
+            {
+                if(element is IMapsDirectlyToDatabaseTable m)
                 {
-                    d.Add(keySelector(element), elementSelector(element));
+                    throw new Exception($"Failed to add {element} ({m.GetType().Name}, ID={m.ID}) to Dictionary.  Repository was {m.Repository}", ex);
                 }
-                catch (Exception ex)
+                else
                 {
-                    if(element is IMapsDirectlyToDatabaseTable m)
-                    {
-                        throw new Exception($"Failed to add {element} ({m.GetType().Name}, ID={m.ID}) to Dictionary.  Repository was {m.Repository}", ex);
-                    }
-                    else
-                    {
-                        throw new Exception($"Failed to add {element} to Dictionary", ex);
-                    }
+                    throw new Exception($"Failed to add {element} to Dictionary", ex);
+                }
 
                     
-                }
             }
-
-            return d;
         }
+
+        return d;
     }
 }

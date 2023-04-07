@@ -9,64 +9,63 @@ using System.Linq;
 using Rdmp.Core.DataLoad.Engine.Job;
 using ReusableLibraryCode.Progress;
 
-namespace Rdmp.Core.DataLoad.Engine.LoadExecution.Components
-{
-    /// <summary>
-    /// DLE post load disposal operation which deletes all the files in the ForLoading directory.  This is added to the disposal stack and should be executed
-    /// after the archiving of ForLoading (See ArchiveFiles).
-    /// </summary>
-    public class DeleteForLoadingFilesOperation : IDisposeAfterDataLoad
-    {
-        private readonly IDataLoadJob _job;
+namespace Rdmp.Core.DataLoad.Engine.LoadExecution.Components;
 
-        public DeleteForLoadingFilesOperation(IDataLoadJob job)
-        {
-            _job = job;
-        }
+/// <summary>
+/// DLE post load disposal operation which deletes all the files in the ForLoading directory.  This is added to the disposal stack and should be executed
+/// after the archiving of ForLoading (See ArchiveFiles).
+/// </summary>
+public class DeleteForLoadingFilesOperation : IDisposeAfterDataLoad
+{
+    private readonly IDataLoadJob _job;
+
+    public DeleteForLoadingFilesOperation(IDataLoadJob job)
+    {
+        _job = job;
+    }
 
         
-        public void LoadCompletedSoDispose(ExitCodeType exitCode,IDataLoadEventListener postLoadEventListener)
+    public void LoadCompletedSoDispose(ExitCodeType exitCode,IDataLoadEventListener postLoadEventListener)
+    {
+        // We only delete ForLoading files after a successful load
+        if (exitCode == ExitCodeType.Success)
         {
-            // We only delete ForLoading files after a successful load
-            if (exitCode == ExitCodeType.Success)
+            var LoadDirectory = _job.LoadDirectory;
+
+            //if there are no files and there are no directories
+            if (!LoadDirectory.ForLoading.GetFiles().Any() && !LoadDirectory.ForLoading.GetDirectories().Any())
             {
-                var LoadDirectory = _job.LoadDirectory;
+                //just skip it but tell user you are skipping it
+                postLoadEventListener.OnNotify(this, new NotifyEventArgs(ProgressEventType.Information, "No files found in ForLoading so not bothering to try and delete."));
+                return;  
+            }
 
-                //if there are no files and there are no directories
-                if (!LoadDirectory.ForLoading.GetFiles().Any() && !LoadDirectory.ForLoading.GetDirectories().Any())
-                {
-                    //just skip it but tell user you are skipping it
-                    postLoadEventListener.OnNotify(this, new NotifyEventArgs(ProgressEventType.Information, "No files found in ForLoading so not bothering to try and delete."));
-                    return;  
-                }
-
-                // Check if the attacher has communicated its intent to handle archiving
-                var archivingHandledByAttacher = File.Exists(Path.Combine(LoadDirectory.ForLoading.FullName, "attacher_is_handling_archiving"));
+            // Check if the attacher has communicated its intent to handle archiving
+            var archivingHandledByAttacher = File.Exists(Path.Combine(LoadDirectory.ForLoading.FullName, "attacher_is_handling_archiving"));
                     
-                if (!archivingHandledByAttacher && !ArchiveHasBeenCreated())
-                {
-                    postLoadEventListener.OnNotify(this, new NotifyEventArgs(ProgressEventType.Error, "Refusing to delete files in ForLoading: the load has reported success but there is no archive of this dataset (was expecting the archive to be called '" + _job.ArchiveFilepath + "', check LoadMetadata.CacheArchiveType if the file extension is not what you expect)"));
-                    return;   
-                }
+            if (!archivingHandledByAttacher && !ArchiveHasBeenCreated())
+            {
+                postLoadEventListener.OnNotify(this, new NotifyEventArgs(ProgressEventType.Error, "Refusing to delete files in ForLoading: the load has reported success but there is no archive of this dataset (was expecting the archive to be called '" + _job.ArchiveFilepath + "', check LoadMetadata.CacheArchiveType if the file extension is not what you expect)"));
+                return;   
+            }
 
-                _job.OnNotify(this, new NotifyEventArgs(ProgressEventType.Information, "Deleting files in ForLoading (" + LoadDirectory.ForLoading.FullName + ")"));
+            _job.OnNotify(this, new NotifyEventArgs(ProgressEventType.Information, "Deleting files in ForLoading (" + LoadDirectory.ForLoading.FullName + ")"));
                 
-                if (archivingHandledByAttacher)
-                {
-                    LoadDirectory.ForLoading.EnumerateFiles().Where(info => info.Name != "attacher_is_handling_archiving").ToList().ForEach(info => info.Delete());
-                    LoadDirectory.ForLoading.EnumerateDirectories().Where(info => info.Name != "__hidden_from_archiver__").ToList().ForEach(info => info.Delete(true));
-                }
-                else
-                {
-                    LoadDirectory.ForLoading.EnumerateFiles().ToList().ForEach(info => info.Delete());
-                    LoadDirectory.ForLoading.EnumerateDirectories().ToList().ForEach(info => info.Delete(true));
-                }
+            if (archivingHandledByAttacher)
+            {
+                LoadDirectory.ForLoading.EnumerateFiles().Where(info => info.Name != "attacher_is_handling_archiving").ToList().ForEach(info => info.Delete());
+                LoadDirectory.ForLoading.EnumerateDirectories().Where(info => info.Name != "__hidden_from_archiver__").ToList().ForEach(info => info.Delete(true));
+            }
+            else
+            {
+                LoadDirectory.ForLoading.EnumerateFiles().ToList().ForEach(info => info.Delete());
+                LoadDirectory.ForLoading.EnumerateDirectories().ToList().ForEach(info => info.Delete(true));
             }
         }
+    }
 
-        private bool ArchiveHasBeenCreated()
-        {
-            return new FileInfo(_job.ArchiveFilepath).Exists;
-        }
+    private bool ArchiveHasBeenCreated()
+    {
+        return new FileInfo(_job.ArchiveFilepath).Exists;
     }
 }

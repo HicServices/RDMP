@@ -7,17 +7,16 @@
 using System;
 using Rdmp.Core.DataExport.Data;
 
-namespace Rdmp.Core.DataExport
+namespace Rdmp.Core.DataExport;
+
+/// <summary>
+/// Thrown when a given <see cref="IProject"/> doesn't have a <see cref="IProject.ProjectNumber"/> configured yet (null) or that number
+/// did not match an expected value (e.g. <see cref="ExternalCohortDefinitionData.ExternalProjectNumber"/>).
+/// </summary>
+public class ProjectNumberException : Exception
 {
-    /// <summary>
-    /// Thrown when a given <see cref="IProject"/> doesn't have a <see cref="IProject.ProjectNumber"/> configured yet (null) or that number
-    /// did not match an expected value (e.g. <see cref="ExternalCohortDefinitionData.ExternalProjectNumber"/>).
-    /// </summary>
-    public class ProjectNumberException : Exception
+    public ProjectNumberException(string s):base(s)
     {
-        public ProjectNumberException(string s):base(s)
-        {
             
-        }
     }
 }

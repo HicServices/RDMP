@@ -21,108 +21,107 @@ using Rdmp.UI.CommandExecution.AtomicCommands.UIFactory;
 using Rdmp.UI.ItemActivation;
 using Rdmp.UI.SimpleDialogs.NavigateTo;
 
-namespace ResearchDataManagementPlatform.WindowManagement.HomePane
+namespace ResearchDataManagementPlatform.WindowManagement.HomePane;
+
+public partial class HomeBoxUI : UserControl
 {
-    public partial class HomeBoxUI : UserControl
+    private IActivateItems _activator;
+    private bool _doneSetup = false;
+    private Type _openType;
+
+    RDMPCollectionCommonFunctionality CommonTreeFunctionality { get;} = new RDMPCollectionCommonFunctionality();
+
+    public HomeBoxUI()
     {
-        private IActivateItems _activator;
-        private bool _doneSetup = false;
-        private Type _openType;
-
-        RDMPCollectionCommonFunctionality CommonTreeFunctionality { get;} = new RDMPCollectionCommonFunctionality();
-
-        public HomeBoxUI()
-        {
-            InitializeComponent();
-            olvRecent.ItemActivate += OlvRecent_ItemActivate;
-        }
-        public void SetUp(IActivateItems activator,string title, Type openType,AtomicCommandUIFactory factory, params IAtomicCommand[] newCommands)
-        {
-            _openType = openType;
+        InitializeComponent();
+        olvRecent.ItemActivate += OlvRecent_ItemActivate;
+    }
+    public void SetUp(IActivateItems activator,string title, Type openType,AtomicCommandUIFactory factory, params IAtomicCommand[] newCommands)
+    {
+        _openType = openType;
 
             
-            if (!_doneSetup)
-            {
-                _activator = activator;
-                lblTitle.Text = title;
-
-                btnNew.Image = FamFamFamIcons.add.ImageToBitmap();
-                btnNew.Text = "New";
-                btnNew.DisplayStyle = ToolStripItemDisplayStyle.Text;
-
-                btnNewDropdown.Image = FamFamFamIcons.add.ImageToBitmap();
-                btnNewDropdown.Text = "New...";
-                btnNewDropdown.DisplayStyle = ToolStripItemDisplayStyle.Text;
-
-                btnOpen.Text = "Open";
-                btnOpen.DisplayStyle = ToolStripItemDisplayStyle.Text;
-                btnOpen.Click += (s, e) =>
-                {
-                    if(activator.SelectObject(new DialogArgs
-                    {
-                        WindowTitle = "Open"
-                    },activator.GetAll(openType).ToArray(),out var selected))
-                    {
-                        Open(selected);
-                    }
-                };
-
-            
-                //if there's only one command for new
-                if (newCommands.Length == 1)
-                {
-                    //don't use the dropdown
-                    toolStrip1.Items.Remove(btnNewDropdown);
-                    btnNew.Click += (s,e)=>newCommands.Single().Execute();
-                }
-                else
-                {
-                    toolStrip1.Items.Remove(btnNew);
-                    btnNewDropdown.DropDownItems.AddRange(newCommands.Select(factory.CreateMenuItem).Cast<ToolStripItem>().ToArray());    
-                }
-
-                olvName.AspectGetter = (o) => ((HistoryEntry)o).Object.ToString();
-                CommonTreeFunctionality.SetUp(RDMPCollection.None,olvRecent,activator,olvName,olvName,new RDMPCollectionCommonFunctionalitySettings()
-                {
-                    SuppressChildrenAdder = true
-                });
-
-                _doneSetup = true;
-            }
-
-            RefreshHistory();
-        }
-
-        private void RefreshHistory()
+        if (!_doneSetup)
         {
-            olvRecent.ClearObjects();
-            olvRecent.AddObjects(_activator.HistoryProvider.History.Where(h=>h.Object.GetType() == _openType).ToArray());
-        }
+            _activator = activator;
+            lblTitle.Text = title;
 
-        private void Open(IMapsDirectlyToDatabaseTable o)
-        {
-            if (!((DatabaseEntity) o).Exists())
+            btnNew.Image = FamFamFamIcons.add.ImageToBitmap();
+            btnNew.Text = "New";
+            btnNew.DisplayStyle = ToolStripItemDisplayStyle.Text;
+
+            btnNewDropdown.Image = FamFamFamIcons.add.ImageToBitmap();
+            btnNewDropdown.Text = "New...";
+            btnNewDropdown.DisplayStyle = ToolStripItemDisplayStyle.Text;
+
+            btnOpen.Text = "Open";
+            btnOpen.DisplayStyle = ToolStripItemDisplayStyle.Text;
+            btnOpen.Click += (s, e) =>
             {
-                if (_activator.YesNo($"'{o}' no longer exists, remove from Recent list?", "No longer exists"))
+                if(activator.SelectObject(new DialogArgs
+                   {
+                       WindowTitle = "Open"
+                   },activator.GetAll(openType).ToArray(),out var selected))
                 {
-                    _activator.HistoryProvider.Remove(o);
-                    RefreshHistory();
+                    Open(selected);
                 }
-
-                return;
-            }
-
-            var cmd = new ExecuteCommandActivate(_activator, o)
-            {
-                AlsoShow = true
             };
-            cmd.Execute();
+
+            
+            //if there's only one command for new
+            if (newCommands.Length == 1)
+            {
+                //don't use the dropdown
+                toolStrip1.Items.Remove(btnNewDropdown);
+                btnNew.Click += (s,e)=>newCommands.Single().Execute();
+            }
+            else
+            {
+                toolStrip1.Items.Remove(btnNew);
+                btnNewDropdown.DropDownItems.AddRange(newCommands.Select(factory.CreateMenuItem).Cast<ToolStripItem>().ToArray());    
+            }
+
+            olvName.AspectGetter = (o) => ((HistoryEntry)o).Object.ToString();
+            CommonTreeFunctionality.SetUp(RDMPCollection.None,olvRecent,activator,olvName,olvName,new RDMPCollectionCommonFunctionalitySettings()
+            {
+                SuppressChildrenAdder = true
+            });
+
+            _doneSetup = true;
         }
 
-        private void OlvRecent_ItemActivate(object sender, EventArgs e)
+        RefreshHistory();
+    }
+
+    private void RefreshHistory()
+    {
+        olvRecent.ClearObjects();
+        olvRecent.AddObjects(_activator.HistoryProvider.History.Where(h=>h.Object.GetType() == _openType).ToArray());
+    }
+
+    private void Open(IMapsDirectlyToDatabaseTable o)
+    {
+        if (!((DatabaseEntity) o).Exists())
         {
-            if (olvRecent.SelectedObject is HistoryEntry he)
-                Open(he.Object);
+            if (_activator.YesNo($"'{o}' no longer exists, remove from Recent list?", "No longer exists"))
+            {
+                _activator.HistoryProvider.Remove(o);
+                RefreshHistory();
+            }
+
+            return;
         }
+
+        var cmd = new ExecuteCommandActivate(_activator, o)
+        {
+            AlsoShow = true
+        };
+        cmd.Execute();
+    }
+
+    private void OlvRecent_ItemActivate(object sender, EventArgs e)
+    {
+        if (olvRecent.SelectedObject is HistoryEntry he)
+            Open(he.Object);
     }
 }

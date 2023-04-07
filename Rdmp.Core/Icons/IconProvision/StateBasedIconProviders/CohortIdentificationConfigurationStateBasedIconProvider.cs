@@ -8,25 +8,24 @@ using SixLabors.ImageSharp;
 using Rdmp.Core.Curation.Data.Cohort;
 using SixLabors.ImageSharp.PixelFormats;
 
-namespace Rdmp.Core.Icons.IconProvision.StateBasedIconProviders
+namespace Rdmp.Core.Icons.IconProvision.StateBasedIconProviders;
+
+public class CohortIdentificationConfigurationStateBasedIconProvider : IObjectStateBasedIconProvider
 {
-    public class CohortIdentificationConfigurationStateBasedIconProvider : IObjectStateBasedIconProvider
+    private readonly Image<Rgba32> _cohortIdentificationConfiguration;
+    private readonly Image<Rgba32> _frozenCohortIdentificationConfiguration;
+
+    public CohortIdentificationConfigurationStateBasedIconProvider()
     {
-        private readonly Image<Rgba32> _cohortIdentificationConfiguration;
-        private readonly Image<Rgba32> _frozenCohortIdentificationConfiguration;
+        _cohortIdentificationConfiguration = Image.Load<Rgba32>(CatalogueIcons.CohortIdentificationConfiguration);
+        _frozenCohortIdentificationConfiguration = Image.Load<Rgba32>(CatalogueIcons.FrozenCohortIdentificationConfiguration);   
+    }
+    public Image<Rgba32> GetImageIfSupportedObject(object o)
+    {
+        if (o is not CohortIdentificationConfiguration cic)
+            return null;
 
-        public CohortIdentificationConfigurationStateBasedIconProvider()
-        {
-            _cohortIdentificationConfiguration = Image.Load<Rgba32>(CatalogueIcons.CohortIdentificationConfiguration);
-            _frozenCohortIdentificationConfiguration = Image.Load<Rgba32>(CatalogueIcons.FrozenCohortIdentificationConfiguration);   
-        }
-        public Image<Rgba32> GetImageIfSupportedObject(object o)
-        {
-            if (o is not CohortIdentificationConfiguration cic)
-                return null;
+        return cic.Frozen ? _frozenCohortIdentificationConfiguration : _cohortIdentificationConfiguration;
 
-            return cic.Frozen ? _frozenCohortIdentificationConfiguration : _cohortIdentificationConfiguration;
-
-        }
     }
 }

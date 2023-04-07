@@ -4,22 +4,21 @@
 // RDMP is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License for more details.
 // You should have received a copy of the GNU General Public License along with RDMP. If not, see <https://www.gnu.org/licenses/>.
 
-namespace Rdmp.Core.CommandExecution.Combining
-{
-    /// <summary>
-    /// <see cref="ICombineToMakeCommand"/> which contains only Sql and cannot otherwise be combined with other objects
-    /// </summary>
-    public class SqlTextOnlyCombineable:ICombineToMakeCommand
-    {
-        private readonly string _sql;
+namespace Rdmp.Core.CommandExecution.Combining;
 
-        public SqlTextOnlyCombineable(string sql)
-        {
-            _sql = sql;
-        }
-        public string GetSqlString()
-        {
-            return _sql;
-        }
+/// <summary>
+/// <see cref="ICombineToMakeCommand"/> which contains only Sql and cannot otherwise be combined with other objects
+/// </summary>
+public class SqlTextOnlyCombineable:ICombineToMakeCommand
+{
+    private readonly string _sql;
+
+    public SqlTextOnlyCombineable(string sql)
+    {
+        _sql = sql;
+    }
+    public string GetSqlString()
+    {
+        return _sql;
     }
 }

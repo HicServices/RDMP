@@ -18,284 +18,283 @@ using Rdmp.Core.Repositories;
 using ReusableLibraryCode;
 using ReusableLibraryCode.Annotations;
 
-namespace Rdmp.Core.Curation.Data.Cache
+namespace Rdmp.Core.Curation.Data.Cache;
+
+/// <summary>
+/// Records the progress of fetching and caching data from a remote source e.g. a Webservice or Imaging file host.  Each CacheProgress
+/// is tied to a LoadProgress (which itself is tied to a LoadMetadata).  
+/// </summary>
+public class CacheProgress : DatabaseEntity, ICacheProgress
 {
-    /// <summary>
-    /// Records the progress of fetching and caching data from a remote source e.g. a Webservice or Imaging file host.  Each CacheProgress
-    /// is tied to a LoadProgress (which itself is tied to a LoadMetadata).  
-    /// </summary>
-    public class CacheProgress : DatabaseEntity, ICacheProgress
+    #region Database Properties
+
+    private string _name;
+    private int _loadProgressID;
+    private int? _permissionWindowID;
+    private DateTime? _cacheFillProgress;
+    private string _cacheLagPeriod;
+    private int? _pipelineID;
+    private TimeSpan _chunkPeriod;
+    private string _cacheLagPeriodLoadDelay;
+
+    /// <inheritdoc/>
+    [Unique]
+    [NotNull]
+    public string Name
     {
-        #region Database Properties
+        get { return _name; }
+        set { SetField(ref _name, value); }
+    }
 
-        private string _name;
-        private int _loadProgressID;
-        private int? _permissionWindowID;
-        private DateTime? _cacheFillProgress;
-        private string _cacheLagPeriod;
-        private int? _pipelineID;
-        private TimeSpan _chunkPeriod;
-        private string _cacheLagPeriodLoadDelay;
+    /// <inheritdoc/>
+    public int LoadProgress_ID
+    {
+        get { return _loadProgressID; }
+        set { SetField(ref _loadProgressID, value); }
+    }
 
-        /// <inheritdoc/>
-        [Unique]
-        [NotNull]
-        public string Name
+    /// <inheritdoc/>
+    public int? PermissionWindow_ID
+    {
+        get { return _permissionWindowID; }
+        set { SetField(ref  _permissionWindowID, value); }
+    }
+
+    /// <inheritdoc/>
+    public DateTime? CacheFillProgress
+    {
+        get { return _cacheFillProgress; }
+        set { SetField(ref  _cacheFillProgress, value); }
+    }
+
+    ///<inheritdoc/>
+    public string CacheLagPeriod
+    {
+        get { return _cacheLagPeriod; }
+        set { SetField(ref  _cacheLagPeriod, value); }
+    } // stored as string in DB, use GetCacheLagPeriod() to get as CacheLagPeriod
+
+    ///<inheritdoc/>
+    public int? Pipeline_ID
+    {
+        get { return _pipelineID; }
+        set { SetField(ref  _pipelineID, value); }
+    }
+
+    ///<inheritdoc/>
+    public TimeSpan ChunkPeriod
+    {
+        get { return _chunkPeriod; }
+        set { SetField(ref  _chunkPeriod, value); }
+    }
+
+    ///<inheritdoc/>
+    public string CacheLagPeriodLoadDelay
+    {
+        get { return _cacheLagPeriodLoadDelay; }
+        set { SetField(ref  _cacheLagPeriodLoadDelay, value); }
+    } 
+
+    #endregion
+
+    #region Relationships
+
+    ///<inheritdoc/>
+    [NoMappingToDatabase]
+    public IEnumerable<ICacheFetchFailure> CacheFetchFailures {
+        get { return Repository.GetAllObjectsWithParent<CacheFetchFailure>(this); }
+    }
+
+    /// <inheritdoc cref="ICacheProgress.LoadProgress_ID"/>
+    [NoMappingToDatabase]
+    public ILoadProgress LoadProgress
+    {
+        get { return Repository.GetObjectByID<LoadProgress>(LoadProgress_ID); }
+    }
+
+    /// <inheritdoc cref="ICacheProgress.Pipeline_ID"/>
+    [NoMappingToDatabase]
+    public IPipeline Pipeline
+    {
+        get { return Pipeline_ID == null ? null : Repository.GetObjectByID<Pipeline>((int)Pipeline_ID); }
+    }
+
+    /// <inheritdoc cref="ICacheProgress.PermissionWindow_ID"/>
+    [NoMappingToDatabase]
+    public IPermissionWindow PermissionWindow
+    {
+        get
         {
-            get { return _name; }
-            set { SetField(ref _name, value); }
+            return PermissionWindow_ID == null
+                ? null
+                : Repository.GetObjectByID<PermissionWindow>((int) PermissionWindow_ID);
         }
+    }
 
-        /// <inheritdoc/>
-        public int LoadProgress_ID
-        {
-            get { return _loadProgressID; }
-            set { SetField(ref _loadProgressID, value); }
-        }
+    #endregion
+    /// <inheritdoc cref="ICacheProgress.CacheLagPeriod"/>
+    public CacheLagPeriod GetCacheLagPeriod()
+    {
+        if (string.IsNullOrWhiteSpace(CacheLagPeriod))
+            return null;
 
-        /// <inheritdoc/>
-        public int? PermissionWindow_ID
-        {
-            get { return _permissionWindowID; }
-            set { SetField(ref  _permissionWindowID, value); }
-        }
+        return new CacheLagPeriod(CacheLagPeriod);
+    }
 
-        /// <inheritdoc/>
-        public DateTime? CacheFillProgress
-        {
-            get { return _cacheFillProgress; }
-            set { SetField(ref  _cacheFillProgress, value); }
-        }
+    /// <inheritdoc cref="ICacheProgress.CacheLagPeriodLoadDelay"/>
+    public CacheLagPeriod GetCacheLagPeriodLoadDelay()
+    {
+        if (string.IsNullOrWhiteSpace(CacheLagPeriodLoadDelay))
+            return Cache.CacheLagPeriod.Zero;
 
-        ///<inheritdoc/>
-        public string CacheLagPeriod
-        {
-            get { return _cacheLagPeriod; }
-            set { SetField(ref  _cacheLagPeriod, value); }
-        } // stored as string in DB, use GetCacheLagPeriod() to get as CacheLagPeriod
-
-        ///<inheritdoc/>
-        public int? Pipeline_ID
-        {
-            get { return _pipelineID; }
-            set { SetField(ref  _pipelineID, value); }
-        }
-
-        ///<inheritdoc/>
-        public TimeSpan ChunkPeriod
-        {
-            get { return _chunkPeriod; }
-            set { SetField(ref  _chunkPeriod, value); }
-        }
-
-        ///<inheritdoc/>
-        public string CacheLagPeriodLoadDelay
-        {
-            get { return _cacheLagPeriodLoadDelay; }
-            set { SetField(ref  _cacheLagPeriodLoadDelay, value); }
-        } 
-
-        #endregion
-
-        #region Relationships
-
-        ///<inheritdoc/>
-        [NoMappingToDatabase]
-        public IEnumerable<ICacheFetchFailure> CacheFetchFailures {
-            get { return Repository.GetAllObjectsWithParent<CacheFetchFailure>(this); }
-        }
-
-        /// <inheritdoc cref="ICacheProgress.LoadProgress_ID"/>
-        [NoMappingToDatabase]
-        public ILoadProgress LoadProgress
-        {
-            get { return Repository.GetObjectByID<LoadProgress>(LoadProgress_ID); }
-        }
-
-        /// <inheritdoc cref="ICacheProgress.Pipeline_ID"/>
-        [NoMappingToDatabase]
-        public IPipeline Pipeline
-        {
-            get { return Pipeline_ID == null ? null : Repository.GetObjectByID<Pipeline>((int)Pipeline_ID); }
-        }
-
-        /// <inheritdoc cref="ICacheProgress.PermissionWindow_ID"/>
-        [NoMappingToDatabase]
-        public IPermissionWindow PermissionWindow
-        {
-            get
-            {
-                return PermissionWindow_ID == null
-                    ? null
-                    : Repository.GetObjectByID<PermissionWindow>((int) PermissionWindow_ID);
-            }
-        }
-
-        #endregion
-        /// <inheritdoc cref="ICacheProgress.CacheLagPeriod"/>
-        public CacheLagPeriod GetCacheLagPeriod()
-        {
-            if (string.IsNullOrWhiteSpace(CacheLagPeriod))
-                return null;
-
-            return new CacheLagPeriod(CacheLagPeriod);
-        }
-
-        /// <inheritdoc cref="ICacheProgress.CacheLagPeriodLoadDelay"/>
-        public CacheLagPeriod GetCacheLagPeriodLoadDelay()
-        {
-            if (string.IsNullOrWhiteSpace(CacheLagPeriodLoadDelay))
-                return Cache.CacheLagPeriod.Zero;
-
-            return new CacheLagPeriod(CacheLagPeriodLoadDelay);
-        }
+        return new CacheLagPeriod(CacheLagPeriodLoadDelay);
+    }
         
-        /// <inheritdoc cref="ICacheProgress.CacheLagPeriod"/>
-        public void SetCacheLagPeriod(CacheLagPeriod cacheLagPeriod)
+    /// <inheritdoc cref="ICacheProgress.CacheLagPeriod"/>
+    public void SetCacheLagPeriod(CacheLagPeriod cacheLagPeriod)
+    {
+        CacheLagPeriod = (cacheLagPeriod == null) ? "" : cacheLagPeriod.ToString();
+    }
+
+    /// <inheritdoc cref="ICacheProgress.CacheLagPeriodLoadDelay"/>
+    public void SetCacheLagPeriodLoadDelay(CacheLagPeriod cacheLagLoadDelayPeriod)
+    {
+        CacheLagPeriodLoadDelay = (cacheLagLoadDelayPeriod == null) ? "" : cacheLagLoadDelayPeriod.ToString();
+    }
+
+    public CacheProgress()
+    {
+
+    }
+
+    /// <summary>
+    /// Defines that the given <see cref="LoadProgress"/> is a DLE data load that is driven by reading data from a cache.  The instance created can be used
+    /// to describe which pipeline should be run to fill that cache, the period that has been fetched from the remote endpoint so far etc.
+    /// </summary>
+    /// <param name="repository"></param>
+    /// <param name="loadProgress"></param>
+    public CacheProgress(ICatalogueRepository repository, ILoadProgress loadProgress)
+    {
+        repository.InsertAndHydrate(this,new Dictionary<string, object>
         {
-            CacheLagPeriod = (cacheLagPeriod == null) ? "" : cacheLagPeriod.ToString();
-        }
+            {"LoadProgress_ID", loadProgress.ID},
+            {"Name", "New CacheProgress " + Guid.NewGuid()}
+        });
+    }
 
-        /// <inheritdoc cref="ICacheProgress.CacheLagPeriodLoadDelay"/>
-        public void SetCacheLagPeriodLoadDelay(CacheLagPeriod cacheLagLoadDelayPeriod)
+    internal CacheProgress(ICatalogueRepository repository, DbDataReader r)
+        : base(repository, r)
+    {
+        LoadProgress_ID = int.Parse(r["LoadProgress_ID"].ToString());
+        PermissionWindow_ID = ObjectToNullableInt(r["PermissionWindow_ID"]);
+        CacheFillProgress = ObjectToNullableDateTime(r["CacheFillProgress"]);
+        CacheLagPeriod = r["CacheLagPeriod"] as string;
+        CacheLagPeriodLoadDelay = r["CacheLagPeriodLoadDelay"] as string;
+        Pipeline_ID = ObjectToNullableInt(r["Pipeline_ID"]);
+        ChunkPeriod = (TimeSpan)r["ChunkPeriod"];
+        Name = r["Name"].ToString();
+    }
+
+    /// <inheritdoc/>
+    public IEnumerable<ICacheFetchFailure> FetchPage(int start, int batchSize)
+    {
+        List<int> toReturnIds = new List<int>();
+
+        using (var conn = ((CatalogueRepository)Repository).GetConnection())
         {
-            CacheLagPeriodLoadDelay = (cacheLagLoadDelayPeriod == null) ? "" : cacheLagLoadDelayPeriod.ToString();
-        }
-
-        public CacheProgress()
-        {
-
-        }
-
-        /// <summary>
-        /// Defines that the given <see cref="LoadProgress"/> is a DLE data load that is driven by reading data from a cache.  The instance created can be used
-        /// to describe which pipeline should be run to fill that cache, the period that has been fetched from the remote endpoint so far etc.
-        /// </summary>
-        /// <param name="repository"></param>
-        /// <param name="loadProgress"></param>
-        public CacheProgress(ICatalogueRepository repository, ILoadProgress loadProgress)
-        {
-            repository.InsertAndHydrate(this,new Dictionary<string, object>
-            {
-                {"LoadProgress_ID", loadProgress.ID},
-                {"Name", "New CacheProgress " + Guid.NewGuid()}
-            });
-        }
-
-        internal CacheProgress(ICatalogueRepository repository, DbDataReader r)
-            : base(repository, r)
-        {
-            LoadProgress_ID = int.Parse(r["LoadProgress_ID"].ToString());
-            PermissionWindow_ID = ObjectToNullableInt(r["PermissionWindow_ID"]);
-            CacheFillProgress = ObjectToNullableDateTime(r["CacheFillProgress"]);
-            CacheLagPeriod = r["CacheLagPeriod"] as string;
-            CacheLagPeriodLoadDelay = r["CacheLagPeriodLoadDelay"] as string;
-            Pipeline_ID = ObjectToNullableInt(r["Pipeline_ID"]);
-            ChunkPeriod = (TimeSpan)r["ChunkPeriod"];
-            Name = r["Name"].ToString();
-        }
-
-        /// <inheritdoc/>
-        public IEnumerable<ICacheFetchFailure> FetchPage(int start, int batchSize)
-        {
-            List<int> toReturnIds = new List<int>();
-
-            using (var conn = ((CatalogueRepository)Repository).GetConnection())
-            {
-                using(var cmd =
-                    DatabaseCommandHelper.GetCommand(@"SELECT ID FROM CacheFetchFailure 
+            using(var cmd =
+                  DatabaseCommandHelper.GetCommand(@"SELECT ID FROM CacheFetchFailure 
 WHERE CacheProgress_ID = @CacheProgressID AND ResolvedOn IS NULL
 ORDER BY FetchRequestStart
 OFFSET " + start + @" ROWS
 FETCH NEXT " + batchSize + @" ROWS ONLY", conn.Connection,conn.Transaction))
-                {
-                    DatabaseCommandHelper.AddParameterWithValueToCommand("@CacheProgressID",cmd, ID);
-
-                    using (var reader = cmd.ExecuteReader())
-                        while (reader.Read())
-                            toReturnIds.Add(Convert.ToInt32(reader["ID"]));
-                }
-            }
-
-            return Repository.GetAllObjectsInIDList<CacheFetchFailure>(toReturnIds); 
-        }
-
-        ///<inheritdoc/>
-        public TimeSpan GetShortfall()
-        {
-            var lag = GetCacheLagPeriod();
-            var lastExpectedCacheDate = (lag == null) ? DateTime.Today : lag.CalculateStartOfLagPeriodFrom(DateTime.Today);
-
-            TimeSpan shortfall;
-            if (CacheFillProgress != null)
-                shortfall = lastExpectedCacheDate.Subtract(CacheFillProgress.Value);
-            else
             {
-                var load = LoadProgress;
-                if (load.DataLoadProgress.HasValue)
-                    shortfall = lastExpectedCacheDate.Subtract(load.DataLoadProgress.Value);
-                else if (load.OriginDate.HasValue)
-                    shortfall = lastExpectedCacheDate.Subtract(load.OriginDate.Value);
-                else
-                    throw new NotSupportedException("Unknown (no cache progress or load origin date)");
+                DatabaseCommandHelper.AddParameterWithValueToCommand("@CacheProgressID",cmd, ID);
+
+                using (var reader = cmd.ExecuteReader())
+                    while (reader.Read())
+                        toReturnIds.Add(Convert.ToInt32(reader["ID"]));
             }
-
-            return shortfall;
         }
 
-        /// <inheritdoc/>
-        public override string ToString()
+        return Repository.GetAllObjectsInIDList<CacheFetchFailure>(toReturnIds); 
+    }
+
+    ///<inheritdoc/>
+    public TimeSpan GetShortfall()
+    {
+        var lag = GetCacheLagPeriod();
+        var lastExpectedCacheDate = (lag == null) ? DateTime.Today : lag.CalculateStartOfLagPeriodFrom(DateTime.Today);
+
+        TimeSpan shortfall;
+        if (CacheFillProgress != null)
+            shortfall = lastExpectedCacheDate.Subtract(CacheFillProgress.Value);
+        else
         {
-            return Name;
+            var load = LoadProgress;
+            if (load.DataLoadProgress.HasValue)
+                shortfall = lastExpectedCacheDate.Subtract(load.DataLoadProgress.Value);
+            else if (load.OriginDate.HasValue)
+                shortfall = lastExpectedCacheDate.Subtract(load.OriginDate.Value);
+            else
+                throw new NotSupportedException("Unknown (no cache progress or load origin date)");
         }
 
-        /// <summary>
-        /// Returns all the Catalogues in this caches LoadMetadata OR if it has a PermissionWindow then ALL the unique catalogues across ALL the LoadMetadatas of ANY cache that uses the same permission window
-        /// </summary>
-        /// <returns></returns>
-        public Catalogue[] GetAllCataloguesMaximisingOnPermissionWindow()
-        {
-            if(PermissionWindow_ID == null)
-                return LoadProgress.LoadMetadata.GetAllCatalogues().Cast<Catalogue>().Distinct().ToArray();
+        return shortfall;
+    }
+
+    /// <inheritdoc/>
+    public override string ToString()
+    {
+        return Name;
+    }
+
+    /// <summary>
+    /// Returns all the Catalogues in this caches LoadMetadata OR if it has a PermissionWindow then ALL the unique catalogues across ALL the LoadMetadatas of ANY cache that uses the same permission window
+    /// </summary>
+    /// <returns></returns>
+    public Catalogue[] GetAllCataloguesMaximisingOnPermissionWindow()
+    {
+        if(PermissionWindow_ID == null)
+            return LoadProgress.LoadMetadata.GetAllCatalogues().Cast<Catalogue>().Distinct().ToArray();
             
-            return PermissionWindow.CacheProgresses.SelectMany(p => p.LoadProgress.LoadMetadata.GetAllCatalogues()).Cast<Catalogue>().Distinct().ToArray();
-        }
+        return PermissionWindow.CacheProgresses.SelectMany(p => p.LoadProgress.LoadMetadata.GetAllCatalogues()).Cast<Catalogue>().Distinct().ToArray();
+    }
 
-        /// <summary>
-        /// Returns
-        /// </summary>
-        /// <returns></returns>
-        public DiscoveredServer GetDistinctLoggingDatabase()
-        {
-            return CatalogueRepository.GetDefaultLogManager()?.Server ?? throw new Exception("No default logging server configured");
-        }
+    /// <summary>
+    /// Returns
+    /// </summary>
+    /// <returns></returns>
+    public DiscoveredServer GetDistinctLoggingDatabase()
+    {
+        return CatalogueRepository.GetDefaultLogManager()?.Server ?? throw new Exception("No default logging server configured");
+    }
 
-        public DiscoveredServer GetDistinctLoggingDatabase(out IExternalDatabaseServer serverChosen)
-        {
-            serverChosen = CatalogueRepository.GetDefaultFor(PermissableDefaults.LiveLoggingServer_ID);
-            return GetDistinctLoggingDatabase();
-        }
+    public DiscoveredServer GetDistinctLoggingDatabase(out IExternalDatabaseServer serverChosen)
+    {
+        serverChosen = CatalogueRepository.GetDefaultFor(PermissableDefaults.LiveLoggingServer_ID);
+        return GetDistinctLoggingDatabase();
+    }
 
-        /// <summary>
-        /// Returns the unique logging name for <see cref="ArchivalDataLoadInfo"/> runs of this cache
-        /// </summary>
-        /// <returns></returns>
-        public string GetLoggingRunName()
-        {
-            return $"Caching {Name}";
-        }
+    /// <summary>
+    /// Returns the unique logging name for <see cref="ArchivalDataLoadInfo"/> runs of this cache
+    /// </summary>
+    /// <returns></returns>
+    public string GetLoggingRunName()
+    {
+        return $"Caching {Name}";
+    }
 
 
-        public string GetDistinctLoggingTask()
-        {
-            return "caching";
-        }
+    public string GetDistinctLoggingTask()
+    {
+        return "caching";
+    }
 
-        public IEnumerable<ArchivalDataLoadInfo> FilterRuns(IEnumerable<ArchivalDataLoadInfo> runs)
-        {
-            var name = GetLoggingRunName();
+    public IEnumerable<ArchivalDataLoadInfo> FilterRuns(IEnumerable<ArchivalDataLoadInfo> runs)
+    {
+        var name = GetLoggingRunName();
 
-            return runs.Where(r => r.Description?.Equals(name, StringComparison.CurrentCultureIgnoreCase) ?? false);
-        }
+        return runs.Where(r => r.Description?.Equals(name, StringComparison.CurrentCultureIgnoreCase) ?? false);
     }
 }

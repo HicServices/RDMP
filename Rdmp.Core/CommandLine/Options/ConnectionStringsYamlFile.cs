@@ -8,72 +8,71 @@ using System;
 using System.IO;
 using YamlDotNet.Serialization;
 
-namespace Rdmp.Core.CommandLine.Options
+namespace Rdmp.Core.CommandLine.Options;
+
+/// <summary>
+/// Holds connection strings to an RDMP database along with name and description of what those databases
+/// are in the organisation (human readable descriptions).  This class assists with persistence and is designed
+/// to be a helper for <see cref="RDMPCommandLineOptions.ConnectionStringsFile"/>
+/// </summary>
+public class ConnectionStringsYamlFile
 {
     /// <summary>
-    /// Holds connection strings to an RDMP database along with name and description of what those databases
-    /// are in the organisation (human readable descriptions).  This class assists with persistence and is designed
-    /// to be a helper for <see cref="RDMPCommandLineOptions.ConnectionStringsFile"/>
+    /// Connection string to the RDMP main catalogue metadata database
     /// </summary>
-    public class ConnectionStringsYamlFile
+    public string CatalogueConnectionString { get; set; }
+
+    /// <summary>
+    /// Connection string to the RDMP secondary (Data export) metadata database
+    /// </summary>
+    public string DataExportConnectionString { get; set; }
+
+    /// <summary>
+    /// Optional user readable name for these settings e.g. 'Testing Instance'
+    /// </summary>
+    public string Name { get; set; }
+
+    /// <summary>
+    /// Optional user readable description of the role of the instance
+    /// </summary>
+    public string Description { get; set; }
+
+    /// <summary>
+    /// The file on disk that was read to populate the properties in this class
+    /// </summary>
+    [YamlIgnore]
+    public FileInfo FileLoaded { get; set; }
+
+    /// <summary>
+    /// Reads the yaml in <paramref name="f"/> and returns a deserialized instance of
+    /// <see cref="ConnectionStringsYamlFile"/>
+    /// </summary>
+    /// <param name="f"></param>
+    /// <returns></returns>
+    public static ConnectionStringsYamlFile LoadFrom(FileInfo f)
     {
-        /// <summary>
-        /// Connection string to the RDMP main catalogue metadata database
-        /// </summary>
-        public string CatalogueConnectionString { get; set; }
+        var deserializer = new Deserializer();
+        var toReturn = deserializer.Deserialize<ConnectionStringsYamlFile>(File.ReadAllText(f.FullName));
 
-        /// <summary>
-        /// Connection string to the RDMP secondary (Data export) metadata database
-        /// </summary>
-        public string DataExportConnectionString { get; set; }
-
-        /// <summary>
-        /// Optional user readable name for these settings e.g. 'Testing Instance'
-        /// </summary>
-        public string Name { get; set; }
-
-        /// <summary>
-        /// Optional user readable description of the role of the instance
-        /// </summary>
-        public string Description { get; set; }
-
-        /// <summary>
-        /// The file on disk that was read to populate the properties in this class
-        /// </summary>
-        [YamlIgnore]
-        public FileInfo FileLoaded { get; set; }
-
-        /// <summary>
-        /// Reads the yaml in <paramref name="f"/> and returns a deserialized instance of
-        /// <see cref="ConnectionStringsYamlFile"/>
-        /// </summary>
-        /// <param name="f"></param>
-        /// <returns></returns>
-        public static ConnectionStringsYamlFile LoadFrom(FileInfo f)
+        if(toReturn == null || string.IsNullOrWhiteSpace(toReturn.CatalogueConnectionString))
         {
-            var deserializer = new Deserializer();
-            var toReturn = deserializer.Deserialize<ConnectionStringsYamlFile>(File.ReadAllText(f.FullName));
-
-            if(toReturn == null || string.IsNullOrWhiteSpace(toReturn.CatalogueConnectionString))
-            {
-                throw new Exception($"{nameof(CatalogueConnectionString)} is missing from the RDMP connection strings file: '{f.FullName}'");
-            }
-
-            toReturn.FileLoaded = f;
-            return toReturn;
+            throw new Exception($"{nameof(CatalogueConnectionString)} is missing from the RDMP connection strings file: '{f.FullName}'");
         }
-        public static bool TryLoadFrom(FileInfo f, out ConnectionStringsYamlFile result)
+
+        toReturn.FileLoaded = f;
+        return toReturn;
+    }
+    public static bool TryLoadFrom(FileInfo f, out ConnectionStringsYamlFile result)
+    {
+        try
         {
-            try
-            {
-                result = LoadFrom(f);
-                return true;
-            }
-            catch (Exception)
-            {
-                result = null;
-                return false;
-            }
+            result = LoadFrom(f);
+            return true;
+        }
+        catch (Exception)
+        {
+            result = null;
+            return false;
         }
     }
 }

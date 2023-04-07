@@ -15,106 +15,105 @@ using Rdmp.Core.Icons.IconProvision;
 using ReusableLibraryCode.Icons.IconProvision;
 using SixLabors.ImageSharp.PixelFormats;
 
-namespace Rdmp.UI.Tests
+namespace Rdmp.UI.Tests;
+
+[SupportedOSPlatform("windows7.0")]
+class CatalogueIconProviderTests: UITests
 {
-    [SupportedOSPlatform("windows7.0")]
-    class CatalogueIconProviderTests: UITests
+
+    [Test]
+    public void CatalogueIconProvider_HasImage_NoImage()
     {
+        var provider = new CatalogueIconProvider(RepositoryLocator,null);
 
-        [Test]
-        public void CatalogueIconProvider_HasImage_NoImage()
-        {
-            var provider = new CatalogueIconProvider(RepositoryLocator,null);
+        var img = provider.GetImage(new System.Object(), OverlayKind.None);
 
-            var img = provider.GetImage(new System.Object(), OverlayKind.None);
+        Assert.IsFalse(provider.HasIcon(new object()));
+    }
 
-            Assert.IsFalse(provider.HasIcon(new object()));
-        }
-
-        [Test]
-        public void CatalogueIconProvider_HasImage_AllObjectsHave()
-        {
-            int objectCount = 0;
-            var provider = new DataExportIconProvider(RepositoryLocator,null);
+    [Test]
+    public void CatalogueIconProvider_HasImage_AllObjectsHave()
+    {
+        int objectCount = 0;
+        var provider = new DataExportIconProvider(RepositoryLocator,null);
             
-            foreach (DatabaseEntity obj in WhenIHaveAll())
-            {
-                var img = provider.GetImage(obj, OverlayKind.None);
-
-                if (obj is IDisableable d)
-                {
-                    d.IsDisabled = true;
-
-                    Assert.IsTrue(IsBlackAndWhite(provider.GetImage(obj,OverlayKind.Add)),$"Grayscaling failed for Object of Type '{obj.GetType().Name}' did not have an image");
-                    
-                    d.IsDisabled = false;
-                    Assert.IsFalse(IsBlackAndWhite(provider.GetImage(obj,OverlayKind.Add)),$"Enabled Object of Type '{obj.GetType().Name}' was unexpectedly Grayscale");
-                }
-                    
-                Assert.IsTrue(provider.HasIcon(obj),$"Object of Type '{obj.GetType().Name}' did not have an image");
-                objectCount++;
-            }
-
-            Console.WriteLine($"Generated images for {objectCount} objects");
-        }
-
-
-        [Test]
-        public void TestGrayscale()
+        foreach (DatabaseEntity obj in WhenIHaveAll())
         {
-            var provider = new CatalogueIconProvider(RepositoryLocator,null);
+            var img = provider.GetImage(obj, OverlayKind.None);
 
-            var ac = WhenIHaveA<AggregateConfiguration>();
+            if (obj is IDisableable d)
+            {
+                d.IsDisabled = true;
 
-            Assert.IsFalse(IsBlackAndWhite(provider.GetImage(ac)),"Image was unexpectedly Grayscale");
-
-            ac.IsDisabled = true;
-            Assert.IsTrue(IsBlackAndWhite(provider.GetImage(ac)),"Image was expected to be Grayscale but wasn't'");
+                Assert.IsTrue(IsBlackAndWhite(provider.GetImage(obj,OverlayKind.Add)),$"Grayscaling failed for Object of Type '{obj.GetType().Name}' did not have an image");
+                    
+                d.IsDisabled = false;
+                Assert.IsFalse(IsBlackAndWhite(provider.GetImage(obj,OverlayKind.Add)),$"Enabled Object of Type '{obj.GetType().Name}' was unexpectedly Grayscale");
+            }
+                    
+            Assert.IsTrue(provider.HasIcon(obj),$"Object of Type '{obj.GetType().Name}' did not have an image");
+            objectCount++;
         }
+
+        Console.WriteLine($"Generated images for {objectCount} objects");
+    }
+
+
+    [Test]
+    public void TestGrayscale()
+    {
+        var provider = new CatalogueIconProvider(RepositoryLocator,null);
+
+        var ac = WhenIHaveA<AggregateConfiguration>();
+
+        Assert.IsFalse(IsBlackAndWhite(provider.GetImage(ac)),"Image was unexpectedly Grayscale");
+
+        ac.IsDisabled = true;
+        Assert.IsTrue(IsBlackAndWhite(provider.GetImage(ac)),"Image was expected to be Grayscale but wasn't'");
+    }
 
         
-        /// <summary>
-        /// Exposes a potential infinite loop / stack overflow where an object is masquerading as an IMasquerade
-        /// </summary>
-        [Test]
-        public void Test_ObjectMasqueradingAsSelf()
+    /// <summary>
+    /// Exposes a potential infinite loop / stack overflow where an object is masquerading as an IMasquerade
+    /// </summary>
+    [Test]
+    public void Test_ObjectMasqueradingAsSelf()
+    {
+        var me = new IAmMe();
+
+        var provider = new CatalogueIconProvider(RepositoryLocator,null);
+        provider.GetImage(me, OverlayKind.Add);
+
+        Assert.IsFalse(provider.HasIcon(me));
+    }
+    private class IAmMe : IMasqueradeAs
+    {
+        public object MasqueradingAs()
         {
-            var me = new IAmMe();
-
-            var provider = new CatalogueIconProvider(RepositoryLocator,null);
-            provider.GetImage(me, OverlayKind.Add);
-
-            Assert.IsFalse(provider.HasIcon(me));
+            return this;
         }
-        private class IAmMe : IMasqueradeAs
-        {
-            public object MasqueradingAs()
-            {
-                return this;
-            }
-        }
+    }
 
 
-        private bool IsBlackAndWhite(SixLabors.ImageSharp.Image<Rgba32> img)
+    private bool IsBlackAndWhite(SixLabors.ImageSharp.Image<Rgba32> img)
+    {
+        var foundColoured = false;
+        img.ProcessPixelRows(pixels =>
         {
-            var foundColoured = false;
-            img.ProcessPixelRows(pixels =>
+            for (var y = 0; y < pixels.Height; y++)
             {
-                for (var y = 0; y < pixels.Height; y++)
+                foreach (ref var pixel in pixels.GetRowSpan(y))
                 {
-                    foreach (ref var pixel in pixels.GetRowSpan(y))
+                    if (pixel.R != pixel.G || pixel.G != pixel.B)
                     {
-                        if (pixel.R != pixel.G || pixel.G != pixel.B)
-                        {
-                            foundColoured = true;
-                            return;
-                        }
+                        foundColoured = true;
+                        return;
                     }
                 }
-            });
-            return !foundColoured;
-        }
-
-
+            }
+        });
+        return !foundColoured;
     }
+
+
 }

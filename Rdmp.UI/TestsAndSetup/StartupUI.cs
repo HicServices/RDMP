@@ -24,335 +24,334 @@ using SixLabors.ImageSharp;
 using SixLabors.ImageSharp.PixelFormats;
 using WideMessageBox = Rdmp.UI.SimpleDialogs.WideMessageBox;
 
-namespace Rdmp.UI.TestsAndSetup
+namespace Rdmp.UI.TestsAndSetup;
+
+/// <summary>
+/// Shows every when RDMP application is first launched.  Tells you whether there are any problems with your current platform databases.
+/// If you get an error (Red face) then clicking it will show a log of the startup process.
+/// </summary>
+public partial class StartupUI : Form, ICheckNotifier
 {
     /// <summary>
-    /// Shows every when RDMP application is first launched.  Tells you whether there are any problems with your current platform databases.
-    /// If you get an error (Red face) then clicking it will show a log of the startup process.
+    /// True if we failed to reach the catalogue database
     /// </summary>
-    public partial class StartupUI : Form, ICheckNotifier
+    public bool CouldNotReachTier1Database { get; private set; }
+
+    private readonly Startup _startup;
+    //Constructor
+    public StartupUI(Startup startup)
     {
-        /// <summary>
-        /// True if we failed to reach the catalogue database
-        /// </summary>
-        public bool CouldNotReachTier1Database { get; private set; }
+        _startup = startup;
+            
+        InitializeComponent();
+            
+        if(_startup == null)
+            return;
 
-        private readonly Startup _startup;
-        //Constructor
-        public StartupUI(Startup startup)
+        Text = $"RDMP - v{typeof(Rdmp.Core.PluginUserInterface).Assembly.GetName().Version}";// + FileVersionInfo.GetVersionInfo(Assembly.GetExecutingAssembly().Location).FileVersion;
+            
+        _startup.DatabaseFound += StartupDatabaseFound;
+        _startup.MEFFileDownloaded += StartupMEFFileDownloaded;
+        _startup.PluginPatcherFound += StartupPluginPatcherFound;
+
+        pbDisconnected.Image = CatalogueIcons.ExternalDatabaseServer.ImageToBitmap();
+
+        this.Icon = IconFactory.Instance.GetIcon(Image.Load<Rgba32>(CatalogueIcons.Main));
+    }
+
+    public bool DoNotContinue { get; set; }
+
+    void StartupDatabaseFound(object sender, PlatformDatabaseFoundEventArgs eventArgs)
+    {
+        if(IsDisposed || !IsHandleCreated)
+            return;
+
+        if (InvokeRequired)
         {
-            _startup = startup;
-            
-            InitializeComponent();
-            
-            if(_startup == null)
-                return;
-
-            Text = $"RDMP - v{typeof(Rdmp.Core.PluginUserInterface).Assembly.GetName().Version}";// + FileVersionInfo.GetVersionInfo(Assembly.GetExecutingAssembly().Location).FileVersion;
-            
-            _startup.DatabaseFound += StartupDatabaseFound;
-            _startup.MEFFileDownloaded += StartupMEFFileDownloaded;
-            _startup.PluginPatcherFound += StartupPluginPatcherFound;
-
-            pbDisconnected.Image = CatalogueIcons.ExternalDatabaseServer.ImageToBitmap();
-
-            this.Icon = IconFactory.Instance.GetIcon(Image.Load<Rgba32>(CatalogueIcons.Main));
+            Invoke(new MethodInvoker(() => StartupDatabaseFound(sender, eventArgs)));
+            return;
         }
 
-        public bool DoNotContinue { get; set; }
+        HandleDatabaseFoundOnSimpleUI(eventArgs);
+    }
 
-        void StartupDatabaseFound(object sender, PlatformDatabaseFoundEventArgs eventArgs)
+    private void StartupMEFFileDownloaded(object sender, MEFFileDownloadProgressEventArgs eventArgs)
+    {
+        if (InvokeRequired)
         {
-            if(IsDisposed || !IsHandleCreated)
-                return;
-
-            if (InvokeRequired)
-            {
-                Invoke(new MethodInvoker(() => StartupDatabaseFound(sender, eventArgs)));
-                return;
-            }
-
-            HandleDatabaseFoundOnSimpleUI(eventArgs);
+            Invoke(new MethodInvoker(() => StartupMEFFileDownloaded(sender, eventArgs)));
+            return;
         }
-
-        private void StartupMEFFileDownloaded(object sender, MEFFileDownloadProgressEventArgs eventArgs)
-        {
-            if (InvokeRequired)
-            {
-                Invoke(new MethodInvoker(() => StartupMEFFileDownloaded(sender, eventArgs)));
-                return;
-            }
                         
-            //25% to 50% is downloading MEF
-            pbLoadProgress.Value = (int) (250 + ((float)eventArgs.CurrentDllNumber / (float)eventArgs.DllsSeenInCatalogue * 250f));
+        //25% to 50% is downloading MEF
+        pbLoadProgress.Value = (int) (250 + ((float)eventArgs.CurrentDllNumber / (float)eventArgs.DllsSeenInCatalogue * 250f));
 
-            lblProgress.Text = "Downloading MEF File " + eventArgs.FileBeingProcessed;
+        lblProgress.Text = "Downloading MEF File " + eventArgs.FileBeingProcessed;
             
-            if (eventArgs.Status == MEFFileDownloadEventStatus.OtherError)
-                ragSmiley1.Fatal(eventArgs.Exception);
-        }
+        if (eventArgs.Status == MEFFileDownloadEventStatus.OtherError)
+            ragSmiley1.Fatal(eventArgs.Exception);
+    }
 
-        private void StartupPluginPatcherFound(object sender, PluginPatcherFoundEventArgs eventArgs)
+    private void StartupPluginPatcherFound(object sender, PluginPatcherFoundEventArgs eventArgs)
+    {
+        if (InvokeRequired)
         {
-            if (InvokeRequired)
-            {
-                Invoke(new MethodInvoker(() => StartupPluginPatcherFound(sender, eventArgs)));
-                return;
-            }
+            Invoke(new MethodInvoker(() => StartupPluginPatcherFound(sender, eventArgs)));
+            return;
+        }
                         
-            pbLoadProgress.Value = 800;//80% done
+        pbLoadProgress.Value = 800;//80% done
+    }
+
+    private bool escapePressed = false;
+    private int countDownToClose = 5;
+
+    private void StartupComplete()
+    {
+        if(InvokeRequired)
+        {
+            this.Invoke(new MethodInvoker(StartupComplete));
+            return;
+        }
+            
+        if (_startup != null && _startup.RepositoryLocator != null && _startup.RepositoryLocator.CatalogueRepository != null)
+            WideMessageBox.CommentStore = _startup.RepositoryLocator.CatalogueRepository.CommentStore;
+            
+        //when things go badly leave the form
+        if(ragSmiley1.IsFatal() || CouldNotReachTier1Database)
+            return;
+
+        Timer t = new Timer
+        {
+            Interval = 1000
+        };
+        t.Tick += TimerTick;
+        t.Start();
+
+        pbLoadProgress.Value = 1000;
+    }
+
+    void TimerTick(object sender, EventArgs e)
+    {
+        var t = (Timer) sender;
+            
+        if(escapePressed)
+        {
+            t.Stop();
+            return;
         }
 
-        private bool escapePressed = false;
-        private int countDownToClose = 5;
+        countDownToClose --;
 
-        private void StartupComplete()
+        lblProgress.Text = string.Format("Startup Complete... Closing in {0}s (Esc to cancel)",countDownToClose);
+
+        if (!UserSettings.Wait5SecondsAfterStartupUI || countDownToClose == 0)
         {
-            if(InvokeRequired)
+            t.Stop();
+            Close();
+        }
+    }
+
+    protected override void OnLoad(EventArgs e)
+    {
+        base.OnLoad(e);
+
+        if (_startup == null)
+            return;
+
+        StartOrRestart(false);
+            
+    }
+
+    private void StartOrRestart(bool forceClearRepositorySettings)
+    {
+        pbLoadProgress.Maximum = 1000;
+
+        if (_startup.RepositoryLocator == null || forceClearRepositorySettings)
+        {
+            try
             {
-                this.Invoke(new MethodInvoker(StartupComplete));
-                return;
+                lblProgress.Text = "Constructing UserSettingsRepositoryFinder";
+                UserSettingsRepositoryFinder finder = new UserSettingsRepositoryFinder();
+                _startup.RepositoryLocator = finder;
             }
-            
-            if (_startup != null && _startup.RepositoryLocator != null && _startup.RepositoryLocator.CatalogueRepository != null)
-                WideMessageBox.CommentStore = _startup.RepositoryLocator.CatalogueRepository.CommentStore;
-            
-            //when things go badly leave the form
-            if(ragSmiley1.IsFatal() || CouldNotReachTier1Database)
-                return;
-
-            Timer t = new Timer
+            catch (Exception ex)
             {
-                Interval = 1000
-            };
-            t.Tick += TimerTick;
-            t.Start();
-
-            pbLoadProgress.Value = 1000;
-        }
-
-        void TimerTick(object sender, EventArgs e)
-        {
-            var t = (Timer) sender;
-            
-            if(escapePressed)
-            {
-                t.Stop();
-                return;
-            }
-
-            countDownToClose --;
-
-            lblProgress.Text = string.Format("Startup Complete... Closing in {0}s (Esc to cancel)",countDownToClose);
-
-            if (!UserSettings.Wait5SecondsAfterStartupUI || countDownToClose == 0)
-            {
-                t.Stop();
-                Close();
+                lblProgress.Text = "Constructing UserSettingsRepositoryFinder Failed";
+                ragSmiley1.Fatal(ex);
             }
         }
 
-        protected override void OnLoad(EventArgs e)
-        {
-            base.OnLoad(e);
-
-            if (_startup == null)
-                return;
-
-            StartOrRestart(false);
+        escapePressed = false;
+        countDownToClose = 5;
+        lastStatus = RDMPPlatformDatabaseStatus.Healthy;
             
-        }
+        //10% progress because we connected to user settings
+        pbLoadProgress.Value = 100;
 
-        private void StartOrRestart(bool forceClearRepositorySettings)
-        {
-            pbLoadProgress.Maximum = 1000;
+        lblProgress.Text = "Awaiting Platform Database Discovery...";
 
-            if (_startup.RepositoryLocator == null || forceClearRepositorySettings)
+        Task t = new Task(
+            () =>
             {
                 try
                 {
-                    lblProgress.Text = "Constructing UserSettingsRepositoryFinder";
-                    UserSettingsRepositoryFinder finder = new UserSettingsRepositoryFinder();
-                    _startup.RepositoryLocator = finder;
+                    _startup.DoStartup(this);
+                    StartupComplete();
                 }
                 catch (Exception ex)
                 {
-                    lblProgress.Text = "Constructing UserSettingsRepositoryFinder Failed";
-                    ragSmiley1.Fatal(ex);
+                    if(IsDisposed || !IsHandleCreated)
+                        ExceptionViewer.Show(ex);
+                    else
+                        Invoke(new MethodInvoker(() => ragSmiley1.Fatal(ex)));
                 }
+
             }
+        );
+        t.Start();
+    }
 
-            escapePressed = false;
-            countDownToClose = 5;
-            lastStatus = RDMPPlatformDatabaseStatus.Healthy;
-            
-            //10% progress because we connected to user settings
-            pbLoadProgress.Value = 100;
+    RDMPPlatformDatabaseStatus lastStatus = RDMPPlatformDatabaseStatus.Healthy;
+    private ChoosePlatformDatabasesUI _choosePlatformsUI;
+    private bool _haveWarnedAboutOutOfDate = false;
 
-            lblProgress.Text = "Awaiting Platform Database Discovery...";
+    private void HandleDatabaseFoundOnSimpleUI(PlatformDatabaseFoundEventArgs eventArgs)
+    {
+        //if status got worse
+        if (eventArgs.Status < lastStatus )
+            lastStatus = eventArgs.Status;
 
-            Task t = new Task(
-                () =>
-                    {
-                        try
-                        {
-                            _startup.DoStartup(this);
-                            StartupComplete();
-                        }
-                        catch (Exception ex)
-                        {
-                            if(IsDisposed || !IsHandleCreated)
-                                ExceptionViewer.Show(ex);
-                            else
-                                Invoke(new MethodInvoker(() => ragSmiley1.Fatal(ex)));
-                        }
+        //if we are unable to reach a tier 1 database don't report anything else
+        if(CouldNotReachTier1Database)
+            return;
 
-                    }
-                );
-            t.Start();
-        }
+        lblProgress.Text = eventArgs.Patcher.Name + " database status was " + eventArgs.Status;
 
-        RDMPPlatformDatabaseStatus lastStatus = RDMPPlatformDatabaseStatus.Healthy;
-        private ChoosePlatformDatabasesUI _choosePlatformsUI;
-        private bool _haveWarnedAboutOutOfDate = false;
-
-        private void HandleDatabaseFoundOnSimpleUI(PlatformDatabaseFoundEventArgs eventArgs)
+        switch (eventArgs.Status)
         {
-            //if status got worse
-            if (eventArgs.Status < lastStatus )
-                lastStatus = eventArgs.Status;
+            case RDMPPlatformDatabaseStatus.Unreachable:
 
-            //if we are unable to reach a tier 1 database don't report anything else
-            if(CouldNotReachTier1Database)
-                return;
+                if (eventArgs.Patcher.Tier == 1)
+                {
+                    pbDisconnected.Visible = true;
 
-            lblProgress.Text = eventArgs.Patcher.Name + " database status was " + eventArgs.Status;
-
-            switch (eventArgs.Status)
-            {
-                case RDMPPlatformDatabaseStatus.Unreachable:
-
-                    if (eventArgs.Patcher.Tier == 1)
-                    {
-                        pbDisconnected.Visible = true;
-
-                        if (eventArgs.Repository == null)
-                            lblProgress.Text = "RDMP Platform Databases are not set";
-                        else
-                            lblProgress.Text = "Could not reach " + eventArgs.Patcher.Name;
-
-                        CouldNotReachTier1Database = true;
-
-                        ragSmiley1.Fatal(new Exception(string.Format("Core Platform Database was {0} ({1})",eventArgs.Status , eventArgs.Patcher.Name), eventArgs.Exception));
-                    }
+                    if (eventArgs.Repository == null)
+                        lblProgress.Text = "RDMP Platform Databases are not set";
                     else
-                        ragSmiley1.Warning(new Exception(string.Format("Tier {0} Database was {1} ({2})",eventArgs.Patcher.Tier ,eventArgs.Status , eventArgs.Patcher.Name), eventArgs.Exception));
-                    break;
+                        lblProgress.Text = "Could not reach " + eventArgs.Patcher.Name;
 
-                    case RDMPPlatformDatabaseStatus.Broken:
-                    if (eventArgs.Patcher.Tier == 1)
-                        ragSmiley1.Fatal(new Exception(string.Format("Core Platform Database was {0} ({1})",eventArgs.Status , eventArgs.Patcher.Name), eventArgs.Exception));
-                    else
-                        ragSmiley1.Warning(new Exception(string.Format("Tier {0} Database was {1} ({2})",eventArgs.Patcher.Tier ,eventArgs.Status , eventArgs.Patcher.Name), eventArgs.Exception));
-                    break;
+                    CouldNotReachTier1Database = true;
 
-                case RDMPPlatformDatabaseStatus.RequiresPatching:
+                    ragSmiley1.Fatal(new Exception(string.Format("Core Platform Database was {0} ({1})",eventArgs.Status , eventArgs.Patcher.Name), eventArgs.Exception));
+                }
+                else
+                    ragSmiley1.Warning(new Exception(string.Format("Tier {0} Database was {1} ({2})",eventArgs.Patcher.Tier ,eventArgs.Status , eventArgs.Patcher.Name), eventArgs.Exception));
+                break;
+
+            case RDMPPlatformDatabaseStatus.Broken:
+                if (eventArgs.Patcher.Tier == 1)
+                    ragSmiley1.Fatal(new Exception(string.Format("Core Platform Database was {0} ({1})",eventArgs.Status , eventArgs.Patcher.Name), eventArgs.Exception));
+                else
+                    ragSmiley1.Warning(new Exception(string.Format("Tier {0} Database was {1} ({2})",eventArgs.Patcher.Tier ,eventArgs.Status , eventArgs.Patcher.Name), eventArgs.Exception));
+                break;
+
+            case RDMPPlatformDatabaseStatus.RequiresPatching:
                     
-                    if (MessageBox.Show("Patching Required on database of type " + eventArgs.Patcher.Name, "Patch",
-                            MessageBoxButtons.YesNo) == DialogResult.Yes)
-                    {
-                        PatchingUI.ShowIfRequired(
-                            eventArgs.Repository.DiscoveredServer.GetCurrentDatabase(),
-                            eventArgs.Repository, eventArgs.Patcher);
-                        DoNotContinue = true;
-                    }
-                    else
-                    {
-                        MessageBox.Show("Patching was cancelled, application will exit");
-                        Application.Exit();
-                    }
-
-                    break;
-                case RDMPPlatformDatabaseStatus.Healthy:
-                    ragSmiley1.OnCheckPerformed(new CheckEventArgs(eventArgs.SummariseAsString(),CheckResult.Success));
-                    return;
-                case RDMPPlatformDatabaseStatus.SoftwareOutOfDate:
-                        if(!_haveWarnedAboutOutOfDate)
-                        {
-                            MessageBox.Show("The RDMP database you are connecting to is running a newer schema to your software, please consider updating the software to the latest version");
-                            _haveWarnedAboutOutOfDate = true;
-                        }
-                    return;
-                default:
-                    throw new ArgumentOutOfRangeException();
-            }
-        }
-
-        //MEF only!
-        public bool OnCheckPerformed(CheckEventArgs args)
-        {
-            if(InvokeRequired)
-            {
-
-                Invoke(new MethodInvoker(() => OnCheckPerformed(args)));
-                return false;
-            }
-            
-            //if the message starts with a percentage translate it into the progress bars movement
-            Regex progressHackMessage = new Regex("^(\\d+)%");
-            var match = progressHackMessage.Match(args.Message);
-
-            if (match.Success)
-            {
-                var percent = float.Parse(match.Groups[1].Value);
-                pbLoadProgress.Value = (int) (500 + (percent*2.5));//500-750
-            }
-             
-            switch (args.Result)
-            {
-                case CheckResult.Success:
-                    break;
-                case CheckResult.Warning:
-                case CheckResult.Fail:
-                    
-                    //MEF failures are only really warnings
-                    args.Result = CheckResult.Warning;
-                    break;
-                default:
-                    throw new ArgumentOutOfRangeException();
-            }
-            lblProgress.Text = args.Message;
-
-            return ragSmiley1.OnCheckPerformed(args);
-        }
-
-        
-        private void StartupUIMainForm_KeyUp(object sender, KeyEventArgs e)
-        {
-            if (e.KeyCode == Keys.Escape)
-                escapePressed = true;
-        }
-
-        private void StartupUIMainForm_FormClosing(object sender, FormClosingEventArgs e)
-        {
-            if(_choosePlatformsUI != null && _choosePlatformsUI.ChangesMade)
-                DoNotContinue = true;
-
-            if (e.CloseReason == CloseReason.UserClosing)
-                if ( ragSmiley1.IsFatal())
+                if (MessageBox.Show("Patching Required on database of type " + eventArgs.Patcher.Name, "Patch",
+                        MessageBoxButtons.YesNo) == DialogResult.Yes)
+                {
+                    PatchingUI.ShowIfRequired(
+                        eventArgs.Repository.DiscoveredServer.GetCurrentDatabase(),
+                        eventArgs.Repository, eventArgs.Patcher);
                     DoNotContinue = true;
-        }
-        
-        private void BtnChoosePlatformDatabases_Click(object sender, EventArgs e)
-        {
-            _choosePlatformsUI = new ChoosePlatformDatabasesUI(_startup.RepositoryLocator);
-            _choosePlatformsUI.ShowDialog();
-            
-        }
+                }
+                else
+                {
+                    MessageBox.Show("Patching was cancelled, application will exit");
+                    Application.Exit();
+                }
 
-        private void pbDisconnected_Click(object sender, EventArgs e)
-        {
-            ragSmiley1.ShowMessagesIfAny();
+                break;
+            case RDMPPlatformDatabaseStatus.Healthy:
+                ragSmiley1.OnCheckPerformed(new CheckEventArgs(eventArgs.SummariseAsString(),CheckResult.Success));
+                return;
+            case RDMPPlatformDatabaseStatus.SoftwareOutOfDate:
+                if(!_haveWarnedAboutOutOfDate)
+                {
+                    MessageBox.Show("The RDMP database you are connecting to is running a newer schema to your software, please consider updating the software to the latest version");
+                    _haveWarnedAboutOutOfDate = true;
+                }
+                return;
+            default:
+                throw new ArgumentOutOfRangeException();
         }
+    }
+
+    //MEF only!
+    public bool OnCheckPerformed(CheckEventArgs args)
+    {
+        if(InvokeRequired)
+        {
+
+            Invoke(new MethodInvoker(() => OnCheckPerformed(args)));
+            return false;
+        }
+            
+        //if the message starts with a percentage translate it into the progress bars movement
+        Regex progressHackMessage = new Regex("^(\\d+)%");
+        var match = progressHackMessage.Match(args.Message);
+
+        if (match.Success)
+        {
+            var percent = float.Parse(match.Groups[1].Value);
+            pbLoadProgress.Value = (int) (500 + (percent*2.5));//500-750
+        }
+             
+        switch (args.Result)
+        {
+            case CheckResult.Success:
+                break;
+            case CheckResult.Warning:
+            case CheckResult.Fail:
+                    
+                //MEF failures are only really warnings
+                args.Result = CheckResult.Warning;
+                break;
+            default:
+                throw new ArgumentOutOfRangeException();
+        }
+        lblProgress.Text = args.Message;
+
+        return ragSmiley1.OnCheckPerformed(args);
+    }
+
+        
+    private void StartupUIMainForm_KeyUp(object sender, KeyEventArgs e)
+    {
+        if (e.KeyCode == Keys.Escape)
+            escapePressed = true;
+    }
+
+    private void StartupUIMainForm_FormClosing(object sender, FormClosingEventArgs e)
+    {
+        if(_choosePlatformsUI != null && _choosePlatformsUI.ChangesMade)
+            DoNotContinue = true;
+
+        if (e.CloseReason == CloseReason.UserClosing)
+            if ( ragSmiley1.IsFatal())
+                DoNotContinue = true;
+    }
+        
+    private void BtnChoosePlatformDatabases_Click(object sender, EventArgs e)
+    {
+        _choosePlatformsUI = new ChoosePlatformDatabasesUI(_startup.RepositoryLocator);
+        _choosePlatformsUI.ShowDialog();
+            
+    }
+
+    private void pbDisconnected_Click(object sender, EventArgs e)
+    {
+        ragSmiley1.ShowMessagesIfAny();
     }
 }

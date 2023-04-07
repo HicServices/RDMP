@@ -4,25 +4,24 @@
 // RDMP is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License for more details.
 // You should have received a copy of the GNU General Public License along with RDMP. If not, see <https://www.gnu.org/licenses/>.
 
-namespace ReusableLibraryCode.DataAccess
+namespace ReusableLibraryCode.DataAccess;
+
+/// <summary>
+/// Encrypted Password string.  It is expected that GetDecryptedPassword method will throw Exception if the current user doesn't have access
+/// to the resources required to decrypt the Password (e.g. access to an RSA private key)
+/// </summary>
+public interface IEncryptedPasswordHost
 {
     /// <summary>
-    /// Encrypted Password string.  It is expected that GetDecryptedPassword method will throw Exception if the current user doesn't have access
-    /// to the resources required to decrypt the Password (e.g. access to an RSA private key)
+    /// The encrypted password stored in memory (and possibly in the database).  This property should never return a clear text password.  Use <see cref="GetDecryptedPassword"/> 
+    /// to get the decrypted string.
     /// </summary>
-    public interface IEncryptedPasswordHost
-    {
-        /// <summary>
-        /// The encrypted password stored in memory (and possibly in the database).  This property should never return a clear text password.  Use <see cref="GetDecryptedPassword"/> 
-        /// to get the decrypted string.
-        /// </summary>
-        string Password { get; set; }
+    string Password { get; set; }
         
-        /// <summary>
-        /// Decrypts the encrypted Password property.  This method will throw an Exception if the user doesn't have access to the resources required
-        /// to decrypt the Password (e.g. access to an RSA private key).
-        /// </summary>
-        /// <returns></returns>
-        string GetDecryptedPassword();
-    }
+    /// <summary>
+    /// Decrypts the encrypted Password property.  This method will throw an Exception if the user doesn't have access to the resources required
+    /// to decrypt the Password (e.g. access to an RSA private key).
+    /// </summary>
+    /// <returns></returns>
+    string GetDecryptedPassword();
 }

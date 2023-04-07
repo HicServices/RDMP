@@ -9,16 +9,13 @@ using Rdmp.Core.DataFlowPipeline;
 using Rdmp.Core.DataLoad.Engine.Job;
 using Rdmp.Core.DataLoad.Engine.LoadExecution.Components;
 
-namespace Rdmp.Core.DataLoad.Engine.LoadExecution
-{
-    /// <summary>
-    /// See SingleJobExecution
-    /// </summary>
-    public interface IDataLoadExecution
-    {
-        List<IDataLoadComponent> Components { get; }
-        ExitCodeType Run(IDataLoadJob job, GracefulCancellationToken executionCancellationToken);
-    }
+namespace Rdmp.Core.DataLoad.Engine.LoadExecution;
 
-    
+/// <summary>
+/// See SingleJobExecution
+/// </summary>
+public interface IDataLoadExecution
+{
+    List<IDataLoadComponent> Components { get; }
+    ExitCodeType Run(IDataLoadJob job, GracefulCancellationToken executionCancellationToken);
 }

@@ -13,27 +13,26 @@ using Rdmp.UI.ItemActivation;
 using ReusableLibraryCode.Icons.IconProvision;
 using SixLabors.ImageSharp.PixelFormats;
 
-namespace Rdmp.UI.CommandExecution.AtomicCommands
+namespace Rdmp.UI.CommandExecution.AtomicCommands;
+
+public class ExecuteCommandReOrderColumns:BasicUICommandExecution,IAtomicCommand
 {
-    public class ExecuteCommandReOrderColumns:BasicUICommandExecution,IAtomicCommand
+    private readonly Catalogue _catalogue;
+
+    public ExecuteCommandReOrderColumns(IActivateItems activator, Catalogue catalogue): base(activator)
     {
-        private readonly Catalogue _catalogue;
+        _catalogue = catalogue;
+    }
 
-        public ExecuteCommandReOrderColumns(IActivateItems activator, Catalogue catalogue): base(activator)
-        {
-            _catalogue = catalogue;
-        }
+    public override Image<Rgba32> GetImage(IIconProvider iconProvider)
+    {
+        return iconProvider.GetImage(RDMPConcept.ReOrder);
+    }
 
-        public override Image<Rgba32> GetImage(IIconProvider iconProvider)
-        {
-            return iconProvider.GetImage(RDMPConcept.ReOrder);
-        }
+    public override void Execute()
+    {
+        base.Execute();
 
-        public override void Execute()
-        {
-            base.Execute();
-
-            Activator.Activate<ReOrderCatalogueItemsUI, Catalogue>(_catalogue);
-        }
+        Activator.Activate<ReOrderCatalogueItemsUI, Catalogue>(_catalogue);
     }
 }

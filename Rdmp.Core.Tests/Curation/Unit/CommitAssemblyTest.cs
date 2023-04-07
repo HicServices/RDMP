@@ -8,27 +8,26 @@ using System;
 using NUnit.Framework;
 using Rdmp.Core.DataLoad.Modules;
 
-namespace Rdmp.Core.Tests.Curation.Unit
+namespace Rdmp.Core.Tests.Curation.Unit;
+
+[Category("Unit")]
+public class CommitAssemblyTest
 {
-    [Category("Unit")]
-    public class CommitAssemblyTest
+    [Test]
+    public void TestGetTypeByName()
     {
-        [Test]
-        public void TestGetTypeByName()
-        {
-            const ScheduleStrategy s = ScheduleStrategy.Test;
-            Console.Write(s.GetType().FullName);
+        const ScheduleStrategy s = ScheduleStrategy.Test;
+        Console.Write(s.GetType().FullName);
             
-            var t = Type.GetType(s.GetType().AssemblyQualifiedName);
+        var t = Type.GetType(s.GetType().AssemblyQualifiedName);
             
-            Assert.AreEqual(s.GetType(),t);
-        }
-        public enum ScheduleStrategy
-        {
-            NotSet,
-            Override,
-            Test,
-            Continuous
-        };
+        Assert.AreEqual(s.GetType(),t);
     }
+    public enum ScheduleStrategy
+    {
+        NotSet,
+        Override,
+        Test,
+        Continuous
+    };
 }

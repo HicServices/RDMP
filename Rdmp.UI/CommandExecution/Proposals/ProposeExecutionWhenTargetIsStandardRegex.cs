@@ -9,28 +9,27 @@ using Rdmp.Core.Curation.Data;
 using Rdmp.UI.ItemActivation;
 using Rdmp.UI.Validation;
 
-namespace Rdmp.UI.CommandExecution.Proposals
+namespace Rdmp.UI.CommandExecution.Proposals;
+
+class ProposeExecutionWhenTargetIsStandardRegex:RDMPCommandExecutionProposal<StandardRegex>
 {
-    class ProposeExecutionWhenTargetIsStandardRegex:RDMPCommandExecutionProposal<StandardRegex>
+    public ProposeExecutionWhenTargetIsStandardRegex(IActivateItems itemActivator) : base(itemActivator)
     {
-        public ProposeExecutionWhenTargetIsStandardRegex(IActivateItems itemActivator) : base(itemActivator)
-        {
-        }
+    }
 
-        public override bool CanActivate(StandardRegex target)
-        {
-            return true;
-        }
+    public override bool CanActivate(StandardRegex target)
+    {
+        return true;
+    }
 
-        public override void Activate(StandardRegex target)
-        {
-            ItemActivator.Activate<StandardRegexUI, StandardRegex>(target);
-        }
+    public override void Activate(StandardRegex target)
+    {
+        ItemActivator.Activate<StandardRegexUI, StandardRegex>(target);
+    }
 
-        public override ICommandExecution ProposeExecution(ICombineToMakeCommand cmd, StandardRegex target, InsertOption insertOption = InsertOption.Default)
-        {
-            //no drag and drop support
-            return null;
-        }
+    public override ICommandExecution ProposeExecution(ICombineToMakeCommand cmd, StandardRegex target, InsertOption insertOption = InsertOption.Default)
+    {
+        //no drag and drop support
+        return null;
     }
 }

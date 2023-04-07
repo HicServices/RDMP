@@ -24,539 +24,538 @@ using ReusableLibraryCode.Checks;
 using ReusableLibraryCode.Progress;
 using Tests.Common;
 
-namespace Rdmp.Core.Tests.DataLoad.Engine.Integration.PipelineTests.Components
+namespace Rdmp.Core.Tests.DataLoad.Engine.Integration.PipelineTests.Components;
+
+class ColumnSwapperTests:DatabaseTests
 {
-    class ColumnSwapperTests:DatabaseTests
+    [TestCase(true)]
+    [TestCase(false)]
+    public void TestColumnSwapper_NormalUseCase(bool keepInputColumnToo)
     {
-        [TestCase(true)]
-        [TestCase(false)]
-        public void TestColumnSwapper_NormalUseCase(bool keepInputColumnToo)
-        {
-            using var dt = new DataTable();
-            dt.Columns.Add("In");
-            dt.Columns.Add("Out");
+        using var dt = new DataTable();
+        dt.Columns.Add("In");
+        dt.Columns.Add("Out");
 
-            dt.Rows.Add("A", 1);
-            dt.Rows.Add("B", 2);
-            dt.Rows.Add("C", 3);
-            dt.Rows.Add("D", 4);
-            dt.Rows.Add("D", 5); //oh dear D maps to 2 out values that's a violation! but if we don't see a D it doesn't matter
+        dt.Rows.Add("A", 1);
+        dt.Rows.Add("B", 2);
+        dt.Rows.Add("C", 3);
+        dt.Rows.Add("D", 4);
+        dt.Rows.Add("D", 5); //oh dear D maps to 2 out values that's a violation! but if we don't see a D it doesn't matter
 
-            var db = GetCleanedServer(DatabaseType.MicrosoftSQLServer);
+        var db = GetCleanedServer(DatabaseType.MicrosoftSQLServer);
             
-            Import(db.CreateTable("Map", dt),out var map,out var mapCols);
+        Import(db.CreateTable("Map", dt),out var map,out var mapCols);
 
-            var swapper = new ColumnSwapper();
-            swapper.MappingFromColumn = mapCols.Single(c => c.GetRuntimeName().Equals("In"));
-            swapper.MappingToColumn = mapCols.Single(c => c.GetRuntimeName().Equals("Out"));
-            swapper.KeepInputColumnToo = keepInputColumnToo;
+        var swapper = new ColumnSwapper();
+        swapper.MappingFromColumn = mapCols.Single(c => c.GetRuntimeName().Equals("In"));
+        swapper.MappingToColumn = mapCols.Single(c => c.GetRuntimeName().Equals("Out"));
+        swapper.KeepInputColumnToo = keepInputColumnToo;
 
-            swapper.Check(new ThrowImmediatelyCheckNotifier());
+        swapper.Check(new ThrowImmediatelyCheckNotifier());
 
-            using var dtToSwap = new DataTable();
+        using var dtToSwap = new DataTable();
 
-            dtToSwap.Columns.Add("In");
-            dtToSwap.Columns.Add("Name");
-            dtToSwap.Columns.Add("Age");
+        dtToSwap.Columns.Add("In");
+        dtToSwap.Columns.Add("Name");
+        dtToSwap.Columns.Add("Age");
 
-            dtToSwap.Rows.Add("A", "Dave", 30);
-            dtToSwap.Rows.Add("A", "Dave", 30);
-            dtToSwap.Rows.Add("B", "Frank", 50);
+        dtToSwap.Rows.Add("A", "Dave", 30);
+        dtToSwap.Rows.Add("A", "Dave", 30);
+        dtToSwap.Rows.Add("B", "Frank", 50);
 
-            var resultDt = swapper.ProcessPipelineData(dtToSwap, new ThrowImmediatelyDataLoadEventListener(), new GracefulCancellationToken());
+        var resultDt = swapper.ProcessPipelineData(dtToSwap, new ThrowImmediatelyDataLoadEventListener(), new GracefulCancellationToken());
 
-            //in should be there or not depending on the setting KeepInputColumnToo
-            Assert.AreEqual(keepInputColumnToo, resultDt.Columns.Contains("In"));
+        //in should be there or not depending on the setting KeepInputColumnToo
+        Assert.AreEqual(keepInputColumnToo, resultDt.Columns.Contains("In"));
 
-            AreBasicallyEquals(1, resultDt.Rows[0]["Out"]);
-            Assert.AreEqual("Dave", resultDt.Rows[0]["Name"]);
+        AreBasicallyEquals(1, resultDt.Rows[0]["Out"]);
+        Assert.AreEqual("Dave", resultDt.Rows[0]["Name"]);
 
-            AreBasicallyEquals(1, resultDt.Rows[1]["Out"]);
-            Assert.AreEqual("Dave", resultDt.Rows[1]["Name"]);
+        AreBasicallyEquals(1, resultDt.Rows[1]["Out"]);
+        Assert.AreEqual("Dave", resultDt.Rows[1]["Name"]);
 
-            AreBasicallyEquals(2, resultDt.Rows[2]["Out"]);
-            Assert.AreEqual("Frank", resultDt.Rows[2]["Name"]);
+        AreBasicallyEquals(2, resultDt.Rows[2]["Out"]);
+        Assert.AreEqual("Frank", resultDt.Rows[2]["Name"]);
 
-            if (keepInputColumnToo)
-            {
-                Assert.AreEqual("A", resultDt.Rows[0]["In"]);
-                Assert.AreEqual("A", resultDt.Rows[1]["In"]);
-                Assert.AreEqual("B", resultDt.Rows[2]["In"]);
-            }
-        }
-
-        [TestCase(true)]
-        [TestCase(false)]
-        public void TestColumnSwapper_AlternateColumnNames(bool keepInputColumnToo)
+        if (keepInputColumnToo)
         {
-            using var dtMap = new DataTable();
-            dtMap.Columns.Add("In");
-            dtMap.Columns.Add("Out");
+            Assert.AreEqual("A", resultDt.Rows[0]["In"]);
+            Assert.AreEqual("A", resultDt.Rows[1]["In"]);
+            Assert.AreEqual("B", resultDt.Rows[2]["In"]);
+        }
+    }
 
-            dtMap.Rows.Add("A", 1);
-            dtMap.Rows.Add("B", 2);
-            dtMap.Rows.Add("C", 3);
-            dtMap.Rows.Add("D", 4);
-            dtMap.Rows.Add("D", 5); //oh dear D maps to 2 out values that's a violation! but if we don't see a D it doesn't matter
+    [TestCase(true)]
+    [TestCase(false)]
+    public void TestColumnSwapper_AlternateColumnNames(bool keepInputColumnToo)
+    {
+        using var dtMap = new DataTable();
+        dtMap.Columns.Add("In");
+        dtMap.Columns.Add("Out");
 
-            var db = GetCleanedServer(DatabaseType.MicrosoftSQLServer);
+        dtMap.Rows.Add("A", 1);
+        dtMap.Rows.Add("B", 2);
+        dtMap.Rows.Add("C", 3);
+        dtMap.Rows.Add("D", 4);
+        dtMap.Rows.Add("D", 5); //oh dear D maps to 2 out values that's a violation! but if we don't see a D it doesn't matter
 
-            Import(db.CreateTable("Map", dtMap), out var map, out var mapCols);
+        var db = GetCleanedServer(DatabaseType.MicrosoftSQLServer);
 
-            var swapper = new ColumnSwapper();
-            swapper.MappingFromColumn = mapCols.Single(c => c.GetRuntimeName().Equals("In"));
-            swapper.MappingToColumn = mapCols.Single(c => c.GetRuntimeName().Equals("Out"));
-            swapper.KeepInputColumnToo = keepInputColumnToo;
+        Import(db.CreateTable("Map", dtMap), out var map, out var mapCols);
 
-            swapper.Check(new ThrowImmediatelyCheckNotifier());
+        var swapper = new ColumnSwapper();
+        swapper.MappingFromColumn = mapCols.Single(c => c.GetRuntimeName().Equals("In"));
+        swapper.MappingToColumn = mapCols.Single(c => c.GetRuntimeName().Equals("Out"));
+        swapper.KeepInputColumnToo = keepInputColumnToo;
 
-            using var dtToSwap = new DataTable();
+        swapper.Check(new ThrowImmediatelyCheckNotifier());
 
-            dtToSwap.Columns.Add("In2");
-            dtToSwap.Columns.Add("Name");
-            dtToSwap.Columns.Add("Age");
+        using var dtToSwap = new DataTable();
 
-            dtToSwap.Rows.Add("A", "Dave", 30);
-            dtToSwap.Rows.Add("A", "Dave", 30);
-            dtToSwap.Rows.Add("B", "Frank", 50);
+        dtToSwap.Columns.Add("In2");
+        dtToSwap.Columns.Add("Name");
+        dtToSwap.Columns.Add("Age");
 
-            // Our pipeline data does not have a column called In but instead it is called In2
-            var ex = Assert.Throws<Exception>(() => swapper.ProcessPipelineData(dtToSwap, new ThrowImmediatelyDataLoadEventListener(), new GracefulCancellationToken()));
-            Assert.AreEqual("DataTable did not contain a field called 'In'", ex.Message);
+        dtToSwap.Rows.Add("A", "Dave", 30);
+        dtToSwap.Rows.Add("A", "Dave", 30);
+        dtToSwap.Rows.Add("B", "Frank", 50);
+
+        // Our pipeline data does not have a column called In but instead it is called In2
+        var ex = Assert.Throws<Exception>(() => swapper.ProcessPipelineData(dtToSwap, new ThrowImmediatelyDataLoadEventListener(), new GracefulCancellationToken()));
+        Assert.AreEqual("DataTable did not contain a field called 'In'", ex.Message);
             
-            // Tell the swapper about the new name
-            swapper.InputFromColumn = "In2";
-            swapper.OutputToColumn = "Out2";
+        // Tell the swapper about the new name
+        swapper.InputFromColumn = "In2";
+        swapper.OutputToColumn = "Out2";
 
-            var resultDt = swapper.ProcessPipelineData(dtToSwap, new ThrowImmediatelyDataLoadEventListener(), new GracefulCancellationToken());
+        var resultDt = swapper.ProcessPipelineData(dtToSwap, new ThrowImmediatelyDataLoadEventListener(), new GracefulCancellationToken());
 
-            //in should be there or not depending on the setting KeepInputColumnToo
-            Assert.AreEqual(keepInputColumnToo, resultDt.Columns.Contains("In2"));
+        //in should be there or not depending on the setting KeepInputColumnToo
+        Assert.AreEqual(keepInputColumnToo, resultDt.Columns.Contains("In2"));
 
-            AreBasicallyEquals(1, resultDt.Rows[0]["Out2"]);
-            Assert.AreEqual("Dave", resultDt.Rows[0]["Name"]);
+        AreBasicallyEquals(1, resultDt.Rows[0]["Out2"]);
+        Assert.AreEqual("Dave", resultDt.Rows[0]["Name"]);
 
-            AreBasicallyEquals(1, resultDt.Rows[1]["Out2"]);
-            Assert.AreEqual("Dave", resultDt.Rows[1]["Name"]);
+        AreBasicallyEquals(1, resultDt.Rows[1]["Out2"]);
+        Assert.AreEqual("Dave", resultDt.Rows[1]["Name"]);
 
-            AreBasicallyEquals(2, resultDt.Rows[2]["Out2"]);
-            Assert.AreEqual("Frank", resultDt.Rows[2]["Name"]);
+        AreBasicallyEquals(2, resultDt.Rows[2]["Out2"]);
+        Assert.AreEqual("Frank", resultDt.Rows[2]["Name"]);
 
-            if (keepInputColumnToo)
-            {
-                Assert.AreEqual("A", resultDt.Rows[0]["In2"]);
-                Assert.AreEqual("A", resultDt.Rows[1]["In2"]);
-                Assert.AreEqual("B", resultDt.Rows[2]["In2"]);
-            }
-        }
-
-
-        [TestCase(true)]
-        [TestCase(false)]
-        public void TestColumnSwapper_InPlaceSwapNoNewCols(bool keepInputColumnToo)
+        if (keepInputColumnToo)
         {
-            using var dtMap = new DataTable();
-            dtMap.Columns.Add("In");
-            dtMap.Columns.Add("Out");
-
-            dtMap.Rows.Add("A", 1);
-            dtMap.Rows.Add("B", 2);
-            dtMap.Rows.Add("C", 3);
-            dtMap.Rows.Add("D", 4);
-            dtMap.Rows.Add("D", 5); //oh dear D maps to 2 out values that's a violation! but if we don't see a D it doesn't matter
-
-            var db = GetCleanedServer(DatabaseType.MicrosoftSQLServer);
-
-            Import(db.CreateTable("Map", dtMap), out var map, out var mapCols);
-
-            var swapper = new ColumnSwapper();
-            swapper.MappingFromColumn = mapCols.Single(c => c.GetRuntimeName().Equals("In"));
-            swapper.MappingToColumn = mapCols.Single(c => c.GetRuntimeName().Equals("Out"));
-            swapper.KeepInputColumnToo = keepInputColumnToo;
-
-            swapper.Check(new ThrowImmediatelyCheckNotifier());
-
-            using var dtToSwap = new DataTable();
-
-            dtToSwap.Columns.Add("In2");
-            dtToSwap.Columns.Add("Name");
-            dtToSwap.Columns.Add("Age");
-
-            dtToSwap.Rows.Add("A", "Dave", 30);
-            dtToSwap.Rows.Add("A", "Dave", 30);
-            dtToSwap.Rows.Add("B", "Frank", 50);
-
-            // Tell the swapper about the new name
-            swapper.InputFromColumn = "In2";
-            swapper.OutputToColumn = "In2";
-
-            var resultDt = swapper.ProcessPipelineData(dtToSwap, new ThrowImmediatelyDataLoadEventListener(), new GracefulCancellationToken());
-
-            // in ALWAYS be there, because it is an in place update - ignore KeepInputColumnToo
-            Assert.True(resultDt.Columns.Contains("In2"));
-
-            AreBasicallyEquals(1, resultDt.Rows[0]["In2"]);
-            Assert.AreEqual("Dave", resultDt.Rows[0]["Name"]);
-
-            AreBasicallyEquals(1, resultDt.Rows[1]["In2"]);
-            Assert.AreEqual("Dave", resultDt.Rows[1]["Name"]);
-
-            AreBasicallyEquals(2, resultDt.Rows[2]["In2"]);
-            Assert.AreEqual("Frank", resultDt.Rows[2]["Name"]);
+            Assert.AreEqual("A", resultDt.Rows[0]["In2"]);
+            Assert.AreEqual("A", resultDt.Rows[1]["In2"]);
+            Assert.AreEqual("B", resultDt.Rows[2]["In2"]);
         }
+    }
 
-        [TestCase(AliasResolutionStrategy.CrashIfAliasesFound)]
-        [TestCase(AliasResolutionStrategy.MultiplyInputDataRowsByAliases)]
-        public void TestColumnSwapper_Aliases(AliasResolutionStrategy strategy)
+
+    [TestCase(true)]
+    [TestCase(false)]
+    public void TestColumnSwapper_InPlaceSwapNoNewCols(bool keepInputColumnToo)
+    {
+        using var dtMap = new DataTable();
+        dtMap.Columns.Add("In");
+        dtMap.Columns.Add("Out");
+
+        dtMap.Rows.Add("A", 1);
+        dtMap.Rows.Add("B", 2);
+        dtMap.Rows.Add("C", 3);
+        dtMap.Rows.Add("D", 4);
+        dtMap.Rows.Add("D", 5); //oh dear D maps to 2 out values that's a violation! but if we don't see a D it doesn't matter
+
+        var db = GetCleanedServer(DatabaseType.MicrosoftSQLServer);
+
+        Import(db.CreateTable("Map", dtMap), out var map, out var mapCols);
+
+        var swapper = new ColumnSwapper();
+        swapper.MappingFromColumn = mapCols.Single(c => c.GetRuntimeName().Equals("In"));
+        swapper.MappingToColumn = mapCols.Single(c => c.GetRuntimeName().Equals("Out"));
+        swapper.KeepInputColumnToo = keepInputColumnToo;
+
+        swapper.Check(new ThrowImmediatelyCheckNotifier());
+
+        using var dtToSwap = new DataTable();
+
+        dtToSwap.Columns.Add("In2");
+        dtToSwap.Columns.Add("Name");
+        dtToSwap.Columns.Add("Age");
+
+        dtToSwap.Rows.Add("A", "Dave", 30);
+        dtToSwap.Rows.Add("A", "Dave", 30);
+        dtToSwap.Rows.Add("B", "Frank", 50);
+
+        // Tell the swapper about the new name
+        swapper.InputFromColumn = "In2";
+        swapper.OutputToColumn = "In2";
+
+        var resultDt = swapper.ProcessPipelineData(dtToSwap, new ThrowImmediatelyDataLoadEventListener(), new GracefulCancellationToken());
+
+        // in ALWAYS be there, because it is an in place update - ignore KeepInputColumnToo
+        Assert.True(resultDt.Columns.Contains("In2"));
+
+        AreBasicallyEquals(1, resultDt.Rows[0]["In2"]);
+        Assert.AreEqual("Dave", resultDt.Rows[0]["Name"]);
+
+        AreBasicallyEquals(1, resultDt.Rows[1]["In2"]);
+        Assert.AreEqual("Dave", resultDt.Rows[1]["Name"]);
+
+        AreBasicallyEquals(2, resultDt.Rows[2]["In2"]);
+        Assert.AreEqual("Frank", resultDt.Rows[2]["Name"]);
+    }
+
+    [TestCase(AliasResolutionStrategy.CrashIfAliasesFound)]
+    [TestCase(AliasResolutionStrategy.MultiplyInputDataRowsByAliases)]
+    public void TestColumnSwapper_Aliases(AliasResolutionStrategy strategy)
+    {
+        using var dt = new DataTable();
+        dt.Columns.Add("In");
+        dt.Columns.Add("Out");
+
+        dt.Rows.Add("A", 1);
+        dt.Rows.Add("B", 2);
+        dt.Rows.Add("C", 3);
+        dt.Rows.Add("D", 4);
+        dt.Rows.Add("D", 5); //oh dear D maps to 2 out values that's a violation! but if we don't see a D it doesn't matter
+
+        var db = GetCleanedServer(DatabaseType.MicrosoftSQLServer);
+
+        Import(db.CreateTable("Map", dt), out var map, out var mapCols);
+
+        var swapper = new ColumnSwapper();
+        swapper.MappingFromColumn = mapCols.Single(c => c.GetRuntimeName().Equals("In"));
+        swapper.MappingToColumn = mapCols.Single(c => c.GetRuntimeName().Equals("Out"));
+        swapper.AliasResolutionStrategy = strategy;
+
+        swapper.Check(new ThrowImmediatelyCheckNotifier());
+
+        using var dtToSwap = new DataTable();
+
+        dtToSwap.Columns.Add("In");
+        dtToSwap.Columns.Add("Name");
+        dtToSwap.Columns.Add("Age");
+
+        dtToSwap.Rows.Add("A", "Dave", 30);
+        dtToSwap.Rows.Add("D", "Dandy", 60);
+
+        switch (strategy)
         {
-            using var dt = new DataTable();
-            dt.Columns.Add("In");
-            dt.Columns.Add("Out");
+            case AliasResolutionStrategy.CrashIfAliasesFound:
+                Assert.Throws<AliasException>(()=>swapper.ProcessPipelineData(dtToSwap, new ThrowImmediatelyDataLoadEventListener(), new GracefulCancellationToken()));
+                break;
+            case AliasResolutionStrategy.MultiplyInputDataRowsByAliases:
 
-            dt.Rows.Add("A", 1);
-            dt.Rows.Add("B", 2);
-            dt.Rows.Add("C", 3);
-            dt.Rows.Add("D", 4);
-            dt.Rows.Add("D", 5); //oh dear D maps to 2 out values that's a violation! but if we don't see a D it doesn't matter
-
-            var db = GetCleanedServer(DatabaseType.MicrosoftSQLServer);
-
-            Import(db.CreateTable("Map", dt), out var map, out var mapCols);
-
-            var swapper = new ColumnSwapper();
-            swapper.MappingFromColumn = mapCols.Single(c => c.GetRuntimeName().Equals("In"));
-            swapper.MappingToColumn = mapCols.Single(c => c.GetRuntimeName().Equals("Out"));
-            swapper.AliasResolutionStrategy = strategy;
-
-            swapper.Check(new ThrowImmediatelyCheckNotifier());
-
-            using var dtToSwap = new DataTable();
-
-            dtToSwap.Columns.Add("In");
-            dtToSwap.Columns.Add("Name");
-            dtToSwap.Columns.Add("Age");
-
-            dtToSwap.Rows.Add("A", "Dave", 30);
-            dtToSwap.Rows.Add("D", "Dandy", 60);
-
-            switch (strategy)
-            {
-                case AliasResolutionStrategy.CrashIfAliasesFound:
-                    Assert.Throws<AliasException>(()=>swapper.ProcessPipelineData(dtToSwap, new ThrowImmediatelyDataLoadEventListener(), new GracefulCancellationToken()));
-                    break;
-                case AliasResolutionStrategy.MultiplyInputDataRowsByAliases:
-
-                    var resultDt = swapper.ProcessPipelineData(dtToSwap, new ThrowImmediatelyDataLoadEventListener(), new GracefulCancellationToken());
-
-                    AreBasicallyEquals(1, resultDt.Rows[0]["Out"]);
-                    Assert.AreEqual("Dave", resultDt.Rows[0]["Name"]);
-                    
-                    //we get the first alias (4)
-                    AreBasicallyEquals(4, resultDt.Rows[1]["Out"]);
-                    Assert.AreEqual("Dandy", resultDt.Rows[1]["Name"]);
-                    AreBasicallyEquals(60, resultDt.Rows[1]["Age"]);
-
-                    //and the second alias (5)
-                    AreBasicallyEquals(5, resultDt.Rows[2]["Out"]);
-                    Assert.AreEqual("Dandy", resultDt.Rows[2]["Name"]);
-                    AreBasicallyEquals(60, resultDt.Rows[1]["Age"]);
-                    break;
-                default:
-                    throw new ArgumentOutOfRangeException("strategy");
-            }
-            
-        }
-
-        [TestCase(true)]
-        [TestCase(false)]
-        public void TestColumnSwapper_MissingMappings(bool crashIfNoMappingsFound)
-        {
-            using var dt = new DataTable();
-            dt.Columns.Add("In");
-            dt.Columns.Add("Out");
-
-            dt.Rows.Add("A", 1);
-            dt.Rows.Add("B", 2);
-            dt.Rows.Add("C", 3);
-            dt.Rows.Add("D", 4);
-            dt.Rows.Add("D", 5); //oh dear D maps to 2 out values that's a violation! but if we don't see a D it doesn't matter
-
-            var db = GetCleanedServer(DatabaseType.MicrosoftSQLServer);
-
-            Import(db.CreateTable("Map", dt), out var map, out var mapCols);
-
-            var swapper = new ColumnSwapper();
-            swapper.MappingFromColumn = mapCols.Single(c => c.GetRuntimeName().Equals("In"));
-            swapper.MappingToColumn = mapCols.Single(c => c.GetRuntimeName().Equals("Out"));
-            swapper.CrashIfNoMappingsFound = crashIfNoMappingsFound;
-            swapper.WHERELogic = swapper.MappingToColumn.GetFullyQualifiedName() + " < 2"; //throws out all rows but A
-
-            swapper.Check(new ThrowImmediatelyCheckNotifier());
-
-            using var dtToSwap = new DataTable();
-
-            dtToSwap.Columns.Add("In");
-            dtToSwap.Columns.Add("Name");
-            dtToSwap.Columns.Add("Age");
-
-            dtToSwap.Rows.Add("A", "Dave", 30);
-            dtToSwap.Rows.Add("B", "Frank", 50);
-
-            if(crashIfNoMappingsFound)
-                Assert.Throws<KeyNotFoundException>(() => swapper.ProcessPipelineData(dtToSwap, new ThrowImmediatelyDataLoadEventListener(), null));
-            else
-            {
                 var resultDt = swapper.ProcessPipelineData(dtToSwap, new ThrowImmediatelyDataLoadEventListener(), new GracefulCancellationToken());
 
-                Assert.AreEqual(1, resultDt.Rows.Count);
                 AreBasicallyEquals(1, resultDt.Rows[0]["Out"]);
                 Assert.AreEqual("Dave", resultDt.Rows[0]["Name"]);
-            }
+                    
+                //we get the first alias (4)
+                AreBasicallyEquals(4, resultDt.Rows[1]["Out"]);
+                Assert.AreEqual("Dandy", resultDt.Rows[1]["Name"]);
+                AreBasicallyEquals(60, resultDt.Rows[1]["Age"]);
+
+                //and the second alias (5)
+                AreBasicallyEquals(5, resultDt.Rows[2]["Out"]);
+                Assert.AreEqual("Dandy", resultDt.Rows[2]["Name"]);
+                AreBasicallyEquals(60, resultDt.Rows[1]["Age"]);
+                break;
+            default:
+                throw new ArgumentOutOfRangeException("strategy");
         }
+            
+    }
 
-        [Test]
-        public void TestColumnSwapper_ProjectSpecificMappings()
+    [TestCase(true)]
+    [TestCase(false)]
+    public void TestColumnSwapper_MissingMappings(bool crashIfNoMappingsFound)
+    {
+        using var dt = new DataTable();
+        dt.Columns.Add("In");
+        dt.Columns.Add("Out");
+
+        dt.Rows.Add("A", 1);
+        dt.Rows.Add("B", 2);
+        dt.Rows.Add("C", 3);
+        dt.Rows.Add("D", 4);
+        dt.Rows.Add("D", 5); //oh dear D maps to 2 out values that's a violation! but if we don't see a D it doesn't matter
+
+        var db = GetCleanedServer(DatabaseType.MicrosoftSQLServer);
+
+        Import(db.CreateTable("Map", dt), out var map, out var mapCols);
+
+        var swapper = new ColumnSwapper();
+        swapper.MappingFromColumn = mapCols.Single(c => c.GetRuntimeName().Equals("In"));
+        swapper.MappingToColumn = mapCols.Single(c => c.GetRuntimeName().Equals("Out"));
+        swapper.CrashIfNoMappingsFound = crashIfNoMappingsFound;
+        swapper.WHERELogic = swapper.MappingToColumn.GetFullyQualifiedName() + " < 2"; //throws out all rows but A
+
+        swapper.Check(new ThrowImmediatelyCheckNotifier());
+
+        using var dtToSwap = new DataTable();
+
+        dtToSwap.Columns.Add("In");
+        dtToSwap.Columns.Add("Name");
+        dtToSwap.Columns.Add("Age");
+
+        dtToSwap.Rows.Add("A", "Dave", 30);
+        dtToSwap.Rows.Add("B", "Frank", 50);
+
+        if(crashIfNoMappingsFound)
+            Assert.Throws<KeyNotFoundException>(() => swapper.ProcessPipelineData(dtToSwap, new ThrowImmediatelyDataLoadEventListener(), null));
+        else
         {
-            using var dt = new DataTable();
-            dt.Columns.Add("In");
-            dt.Columns.Add("Out");
-            dt.Columns.Add("Proj");
-
-            //Anonymise A and B differently depending on ProjectNumber (valid project numbers are 1 and 2)
-            dt.Rows.Add("A", 1,1);
-            dt.Rows.Add("A", 2,2);
-            dt.Rows.Add("B", 3,1);
-            dt.Rows.Add("B", 4,2);
-
-            var db = GetCleanedServer(DatabaseType.MicrosoftSQLServer);
-
-            Import(db.CreateTable("Map", dt), out var map, out var mapCols);
-
-            var swapper = new ColumnSwapper();
-            swapper.MappingFromColumn = mapCols.Single(c => c.GetRuntimeName().Equals("In"));
-            swapper.MappingToColumn = mapCols.Single(c => c.GetRuntimeName().Equals("Out"));
-            swapper.WHERELogic = "Proj = $n";
-            
-            // initialize with a mock that returns ProjectNumber 1
-            swapper.PreInitialize(GetMockExtractDatasetCommand(), new ThrowImmediatelyDataLoadEventListener());
-
-            swapper.Check(new ThrowImmediatelyCheckNotifier());
-
-            using var dtToSwap = new DataTable();
-
-            dtToSwap.Columns.Add("In");
-            dtToSwap.Columns.Add("Name");
-            dtToSwap.Columns.Add("Age");
-
-            dtToSwap.Rows.Add("A", "Dave", 30);
-            dtToSwap.Rows.Add("B", "Frank", 50);
-
-            using var resultDt = swapper.ProcessPipelineData(dtToSwap, new ThrowImmediatelyDataLoadEventListener(), new GracefulCancellationToken());
-
-            Assert.AreEqual(2, resultDt.Rows.Count);
-
-            // Should have project specific results for A of 1 and for B of 3 because the ProjectNumber is 1
-            AreBasicallyEquals(1, resultDt.Rows[0]["Out"]);
-            Assert.AreEqual("Dave", resultDt.Rows[0]["Name"]);
-            AreBasicallyEquals(3, resultDt.Rows[1]["Out"]);
-            Assert.AreEqual("Frank", resultDt.Rows[1]["Name"]);
-        }
-
-        /// <summary>
-        /// Tests ColumnSwapper when there are null values in the input <see cref="DataTable"/> being processed
-        /// </summary>
-        [Test]
-        public void TestColumnSwapper_InputTableNulls()
-        {
-            using var dt = new DataTable();
-            dt.Columns.Add("In");
-            dt.Columns.Add("Out");
-
-            dt.Rows.Add(1, 1);
-            dt.Rows.Add(2, 2);
-
-            var db = GetCleanedServer(DatabaseType.MicrosoftSQLServer);
-            
-            Import(db.CreateTable("Map", dt), out var map, out var mapCols);
-
-            var swapper = new ColumnSwapper();
-            swapper.MappingFromColumn = mapCols.Single(c => c.GetRuntimeName().Equals("In"));
-            swapper.MappingToColumn = mapCols.Single(c => c.GetRuntimeName().Equals("Out"));
-
-            swapper.Check(new ThrowImmediatelyCheckNotifier());
-
-            using var dtToSwap = new DataTable();
-
-            dtToSwap.Columns.Add("In",typeof(int));
-            dtToSwap.Columns.Add("Name");
-            dtToSwap.Columns.Add("Age");
-
-            dtToSwap.Rows.Add(1, "Dave", 30);
-            dtToSwap.Rows.Add(null, "Bob", 30);
-
-            var resultDt = swapper.ProcessPipelineData(dtToSwap, new ThrowImmediatelyDataLoadEventListener(), new GracefulCancellationToken());
-
-            Assert.AreEqual(2, resultDt.Rows.Count);
-            AreBasicallyEquals(1, resultDt.Rows[0]["Out"]);
-            Assert.AreEqual("Dave", resultDt.Rows[0]["Name"]);
-            
-            AreBasicallyEquals(DBNull.Value, resultDt.Rows[1]["Out"]);
-            Assert.AreEqual("Bob", resultDt.Rows[1]["Name"]);
-            
-
-        }
-        /// <summary>
-        /// Tests ColumnSwapper when there are null values in the database mapping table
-        /// </summary>
-        [Test]
-        public void TestColumnSwapper_MappingTableNulls()
-        {
-            using var dt = new DataTable();
-            dt.Columns.Add("In");
-            dt.Columns.Add("Out");
-
-            dt.Rows.Add(1, 1);
-            dt.Rows.Add(DBNull.Value, 3); // this value should be ignored
-            dt.Rows.Add(2, 2);
-
-            var db = GetCleanedServer(DatabaseType.MicrosoftSQLServer);
-
-            Import(db.CreateTable("Map", dt), out var map, out var mapCols);
-
-            var swapper = new ColumnSwapper();
-            swapper.MappingFromColumn = mapCols.Single(c => c.GetRuntimeName().Equals("In"));
-            swapper.MappingToColumn = mapCols.Single(c => c.GetRuntimeName().Equals("Out"));
-
-            swapper.Check(new ThrowImmediatelyCheckNotifier());
-
-            using var dtToSwap = new DataTable();
-
-            dtToSwap.Columns.Add("In",typeof(int));
-            dtToSwap.Columns.Add("Name");
-            dtToSwap.Columns.Add("Age");
-
-            dtToSwap.Rows.Add(1, "Dave", 30);
-            dtToSwap.Rows.Add(null, "Bob", 30);
-
-            var toMem = new ToMemoryDataLoadEventListener(true);
-
-            var resultDt = swapper.ProcessPipelineData(dtToSwap,toMem , new GracefulCancellationToken());
-
-            //this is the primary thing we are testing here
-            Assert.Contains("Discarded 1 Null key values read from mapping table",toMem.GetAllMessagesByProgressEventType()[ProgressEventType.Warning].Select(m=>m.Message).ToArray());
-
-            Assert.AreEqual(2, resultDt.Rows.Count);
-            AreBasicallyEquals(1, resultDt.Rows[0]["Out"]);
-            Assert.AreEqual("Dave", resultDt.Rows[0]["Name"]);
-            
-            AreBasicallyEquals(DBNull.Value, resultDt.Rows[1]["Out"]);
-            Assert.AreEqual("Bob", resultDt.Rows[1]["Name"]);
-        }
-        /// <summary>
-        /// Tests the systems ability to compare an integer in the input data table with a string in the database
-        /// </summary>
-        [Test]
-        public void TestColumnSwapper_MixedDatatypes_StringInDatabase()
-        {
-            using var dt = new DataTable();
-            dt.Columns.Add("In");
-            dt.Columns.Add("Out");
-
-            dt.Rows.Add("1" /*string*/, 2);
-            dt.Rows.Add("2", 3);
-            dt.Rows.Add("3", 4);
-            dt.SetDoNotReType(true);
-
-            var db = GetCleanedServer(DatabaseType.MicrosoftSQLServer);
-
-            DiscoveredTable mapTbl;
-
-            Import(mapTbl = db.CreateTable("Map", dt), out var map, out var mapCols);
-
-            Assert.AreEqual(typeof(string),mapTbl.DiscoverColumn("In").DataType.GetCSharpDataType(), "Expected map to be of string datatype");
-
-            var swapper = new ColumnSwapper();
-            swapper.MappingFromColumn = mapCols.Single(c => c.GetRuntimeName().Equals("In"));
-            swapper.MappingToColumn = mapCols.Single(c => c.GetRuntimeName().Equals("Out"));
-
-            swapper.Check(new ThrowImmediatelyCheckNotifier());
-
-            using var dtToSwap = new DataTable();
-
-            dtToSwap.Columns.Add("In");
-            dtToSwap.Columns.Add("Name");
-            dtToSwap.Rows.Add(1 /*int*/, "Dave");
-            
             var resultDt = swapper.ProcessPipelineData(dtToSwap, new ThrowImmediatelyDataLoadEventListener(), new GracefulCancellationToken());
 
             Assert.AreEqual(1, resultDt.Rows.Count);
-            AreBasicallyEquals(2, resultDt.Rows[0]["Out"]);
+            AreBasicallyEquals(1, resultDt.Rows[0]["Out"]);
             Assert.AreEqual("Dave", resultDt.Rows[0]["Name"]);
         }
+    }
+
+    [Test]
+    public void TestColumnSwapper_ProjectSpecificMappings()
+    {
+        using var dt = new DataTable();
+        dt.Columns.Add("In");
+        dt.Columns.Add("Out");
+        dt.Columns.Add("Proj");
+
+        //Anonymise A and B differently depending on ProjectNumber (valid project numbers are 1 and 2)
+        dt.Rows.Add("A", 1,1);
+        dt.Rows.Add("A", 2,2);
+        dt.Rows.Add("B", 3,1);
+        dt.Rows.Add("B", 4,2);
+
+        var db = GetCleanedServer(DatabaseType.MicrosoftSQLServer);
+
+        Import(db.CreateTable("Map", dt), out var map, out var mapCols);
+
+        var swapper = new ColumnSwapper();
+        swapper.MappingFromColumn = mapCols.Single(c => c.GetRuntimeName().Equals("In"));
+        swapper.MappingToColumn = mapCols.Single(c => c.GetRuntimeName().Equals("Out"));
+        swapper.WHERELogic = "Proj = $n";
+            
+        // initialize with a mock that returns ProjectNumber 1
+        swapper.PreInitialize(GetMockExtractDatasetCommand(), new ThrowImmediatelyDataLoadEventListener());
+
+        swapper.Check(new ThrowImmediatelyCheckNotifier());
+
+        using var dtToSwap = new DataTable();
+
+        dtToSwap.Columns.Add("In");
+        dtToSwap.Columns.Add("Name");
+        dtToSwap.Columns.Add("Age");
+
+        dtToSwap.Rows.Add("A", "Dave", 30);
+        dtToSwap.Rows.Add("B", "Frank", 50);
+
+        using var resultDt = swapper.ProcessPipelineData(dtToSwap, new ThrowImmediatelyDataLoadEventListener(), new GracefulCancellationToken());
+
+        Assert.AreEqual(2, resultDt.Rows.Count);
+
+        // Should have project specific results for A of 1 and for B of 3 because the ProjectNumber is 1
+        AreBasicallyEquals(1, resultDt.Rows[0]["Out"]);
+        Assert.AreEqual("Dave", resultDt.Rows[0]["Name"]);
+        AreBasicallyEquals(3, resultDt.Rows[1]["Out"]);
+        Assert.AreEqual("Frank", resultDt.Rows[1]["Name"]);
+    }
+
+    /// <summary>
+    /// Tests ColumnSwapper when there are null values in the input <see cref="DataTable"/> being processed
+    /// </summary>
+    [Test]
+    public void TestColumnSwapper_InputTableNulls()
+    {
+        using var dt = new DataTable();
+        dt.Columns.Add("In");
+        dt.Columns.Add("Out");
+
+        dt.Rows.Add(1, 1);
+        dt.Rows.Add(2, 2);
+
+        var db = GetCleanedServer(DatabaseType.MicrosoftSQLServer);
+            
+        Import(db.CreateTable("Map", dt), out var map, out var mapCols);
+
+        var swapper = new ColumnSwapper();
+        swapper.MappingFromColumn = mapCols.Single(c => c.GetRuntimeName().Equals("In"));
+        swapper.MappingToColumn = mapCols.Single(c => c.GetRuntimeName().Equals("Out"));
+
+        swapper.Check(new ThrowImmediatelyCheckNotifier());
+
+        using var dtToSwap = new DataTable();
+
+        dtToSwap.Columns.Add("In",typeof(int));
+        dtToSwap.Columns.Add("Name");
+        dtToSwap.Columns.Add("Age");
+
+        dtToSwap.Rows.Add(1, "Dave", 30);
+        dtToSwap.Rows.Add(null, "Bob", 30);
+
+        var resultDt = swapper.ProcessPipelineData(dtToSwap, new ThrowImmediatelyDataLoadEventListener(), new GracefulCancellationToken());
+
+        Assert.AreEqual(2, resultDt.Rows.Count);
+        AreBasicallyEquals(1, resultDt.Rows[0]["Out"]);
+        Assert.AreEqual("Dave", resultDt.Rows[0]["Name"]);
+            
+        AreBasicallyEquals(DBNull.Value, resultDt.Rows[1]["Out"]);
+        Assert.AreEqual("Bob", resultDt.Rows[1]["Name"]);
+            
+
+    }
+    /// <summary>
+    /// Tests ColumnSwapper when there are null values in the database mapping table
+    /// </summary>
+    [Test]
+    public void TestColumnSwapper_MappingTableNulls()
+    {
+        using var dt = new DataTable();
+        dt.Columns.Add("In");
+        dt.Columns.Add("Out");
+
+        dt.Rows.Add(1, 1);
+        dt.Rows.Add(DBNull.Value, 3); // this value should be ignored
+        dt.Rows.Add(2, 2);
+
+        var db = GetCleanedServer(DatabaseType.MicrosoftSQLServer);
+
+        Import(db.CreateTable("Map", dt), out var map, out var mapCols);
+
+        var swapper = new ColumnSwapper();
+        swapper.MappingFromColumn = mapCols.Single(c => c.GetRuntimeName().Equals("In"));
+        swapper.MappingToColumn = mapCols.Single(c => c.GetRuntimeName().Equals("Out"));
+
+        swapper.Check(new ThrowImmediatelyCheckNotifier());
+
+        using var dtToSwap = new DataTable();
+
+        dtToSwap.Columns.Add("In",typeof(int));
+        dtToSwap.Columns.Add("Name");
+        dtToSwap.Columns.Add("Age");
+
+        dtToSwap.Rows.Add(1, "Dave", 30);
+        dtToSwap.Rows.Add(null, "Bob", 30);
+
+        var toMem = new ToMemoryDataLoadEventListener(true);
+
+        var resultDt = swapper.ProcessPipelineData(dtToSwap,toMem , new GracefulCancellationToken());
+
+        //this is the primary thing we are testing here
+        Assert.Contains("Discarded 1 Null key values read from mapping table",toMem.GetAllMessagesByProgressEventType()[ProgressEventType.Warning].Select(m=>m.Message).ToArray());
+
+        Assert.AreEqual(2, resultDt.Rows.Count);
+        AreBasicallyEquals(1, resultDt.Rows[0]["Out"]);
+        Assert.AreEqual("Dave", resultDt.Rows[0]["Name"]);
+            
+        AreBasicallyEquals(DBNull.Value, resultDt.Rows[1]["Out"]);
+        Assert.AreEqual("Bob", resultDt.Rows[1]["Name"]);
+    }
+    /// <summary>
+    /// Tests the systems ability to compare an integer in the input data table with a string in the database
+    /// </summary>
+    [Test]
+    public void TestColumnSwapper_MixedDatatypes_StringInDatabase()
+    {
+        using var dt = new DataTable();
+        dt.Columns.Add("In");
+        dt.Columns.Add("Out");
+
+        dt.Rows.Add("1" /*string*/, 2);
+        dt.Rows.Add("2", 3);
+        dt.Rows.Add("3", 4);
+        dt.SetDoNotReType(true);
+
+        var db = GetCleanedServer(DatabaseType.MicrosoftSQLServer);
+
+        DiscoveredTable mapTbl;
+
+        Import(mapTbl = db.CreateTable("Map", dt), out var map, out var mapCols);
+
+        Assert.AreEqual(typeof(string),mapTbl.DiscoverColumn("In").DataType.GetCSharpDataType(), "Expected map to be of string datatype");
+
+        var swapper = new ColumnSwapper();
+        swapper.MappingFromColumn = mapCols.Single(c => c.GetRuntimeName().Equals("In"));
+        swapper.MappingToColumn = mapCols.Single(c => c.GetRuntimeName().Equals("Out"));
+
+        swapper.Check(new ThrowImmediatelyCheckNotifier());
+
+        using var dtToSwap = new DataTable();
+
+        dtToSwap.Columns.Add("In");
+        dtToSwap.Columns.Add("Name");
+        dtToSwap.Rows.Add(1 /*int*/, "Dave");
+            
+        var resultDt = swapper.ProcessPipelineData(dtToSwap, new ThrowImmediatelyDataLoadEventListener(), new GracefulCancellationToken());
+
+        Assert.AreEqual(1, resultDt.Rows.Count);
+        AreBasicallyEquals(2, resultDt.Rows[0]["Out"]);
+        Assert.AreEqual("Dave", resultDt.Rows[0]["Name"]);
+    }
 
         
-        /// <summary>
-        /// Tests the systems ability to compare a string input data table with an integer in the database
-        /// </summary>
-        [Test]
-        public void TestColumnSwapper_MixedDatatypes_IntegerInDatabase()
-        {
-            using var dt = new DataTable();
-            dt.Columns.Add("In");
-            dt.Columns.Add("Out");
+    /// <summary>
+    /// Tests the systems ability to compare a string input data table with an integer in the database
+    /// </summary>
+    [Test]
+    public void TestColumnSwapper_MixedDatatypes_IntegerInDatabase()
+    {
+        using var dt = new DataTable();
+        dt.Columns.Add("In");
+        dt.Columns.Add("Out");
 
-            dt.Rows.Add(1 /*int*/, 2);
-            dt.Rows.Add(2, 3);
-            dt.Rows.Add(3, 4);
+        dt.Rows.Add(1 /*int*/, 2);
+        dt.Rows.Add(2, 3);
+        dt.Rows.Add(3, 4);
 
-            var db = GetCleanedServer(DatabaseType.MicrosoftSQLServer);
+        var db = GetCleanedServer(DatabaseType.MicrosoftSQLServer);
             
-            DiscoveredTable mapTbl;
+        DiscoveredTable mapTbl;
 
-            Import(mapTbl = db.CreateTable("Map", dt), out var map, out var mapCols);
+        Import(mapTbl = db.CreateTable("Map", dt), out var map, out var mapCols);
 
-            Assert.AreEqual(typeof(int),mapTbl.DiscoverColumn("In").DataType.GetCSharpDataType(), "Expected map to be of int datatype");
+        Assert.AreEqual(typeof(int),mapTbl.DiscoverColumn("In").DataType.GetCSharpDataType(), "Expected map to be of int datatype");
 
-            var swapper = new ColumnSwapper();
-            swapper.MappingFromColumn = mapCols.Single(c => c.GetRuntimeName().Equals("In"));
-            swapper.MappingToColumn = mapCols.Single(c => c.GetRuntimeName().Equals("Out"));
+        var swapper = new ColumnSwapper();
+        swapper.MappingFromColumn = mapCols.Single(c => c.GetRuntimeName().Equals("In"));
+        swapper.MappingToColumn = mapCols.Single(c => c.GetRuntimeName().Equals("Out"));
 
-            swapper.Check(new ThrowImmediatelyCheckNotifier());
+        swapper.Check(new ThrowImmediatelyCheckNotifier());
 
-            using var dtToSwap = new DataTable();
+        using var dtToSwap = new DataTable();
 
-            dtToSwap.Columns.Add("In");
-            dtToSwap.Columns.Add("Name");
-            dtToSwap.Rows.Add("1" /*string*/, "Dave");
+        dtToSwap.Columns.Add("In");
+        dtToSwap.Columns.Add("Name");
+        dtToSwap.Rows.Add("1" /*string*/, "Dave");
             
-            var resultDt = swapper.ProcessPipelineData(dtToSwap, new ThrowImmediatelyDataLoadEventListener(), new GracefulCancellationToken());
+        var resultDt = swapper.ProcessPipelineData(dtToSwap, new ThrowImmediatelyDataLoadEventListener(), new GracefulCancellationToken());
 
-            Assert.AreEqual(1, resultDt.Rows.Count);
-            AreBasicallyEquals(2, resultDt.Rows[0]["Out"]);
-            Assert.AreEqual("Dave", resultDt.Rows[0]["Name"]);
-        }
+        Assert.AreEqual(1, resultDt.Rows.Count);
+        AreBasicallyEquals(2, resultDt.Rows[0]["Out"]);
+        Assert.AreEqual("Dave", resultDt.Rows[0]["Name"]);
+    }
 
-        private IExtractDatasetCommand GetMockExtractDatasetCommand()
-        {
-            var mockPj = Mock.Of<IProject>(p =>
-                p.Name == "My Project" &&
-                p.ProjectNumber == 1
-            );
+    private IExtractDatasetCommand GetMockExtractDatasetCommand()
+    {
+        var mockPj = Mock.Of<IProject>(p =>
+            p.Name == "My Project" &&
+            p.ProjectNumber == 1
+        );
 
-            var mockConfig = Mock.Of<IExtractionConfiguration>(c =>
-                c.Project == mockPj);
+        var mockConfig = Mock.Of<IExtractionConfiguration>(c =>
+            c.Project == mockPj);
 
-            var mockSelectedDatasets = Mock.Of<ISelectedDataSets>(sds =>
-                sds.ExtractionConfiguration == mockConfig
-            );
+        var mockSelectedDatasets = Mock.Of<ISelectedDataSets>(sds =>
+            sds.ExtractionConfiguration == mockConfig
+        );
 
-            var mockExtractDsCmd = Mock.Of<IExtractDatasetCommand>(d =>
-                d.Project == mockPj &&
-                d.Configuration == mockConfig &&
-                d.SelectedDataSets == mockSelectedDatasets
-            );
+        var mockExtractDsCmd = Mock.Of<IExtractDatasetCommand>(d =>
+            d.Project == mockPj &&
+            d.Configuration == mockConfig &&
+            d.SelectedDataSets == mockSelectedDatasets
+        );
 
-            return mockExtractDsCmd;
-        }
+        return mockExtractDsCmd;
     }
 }

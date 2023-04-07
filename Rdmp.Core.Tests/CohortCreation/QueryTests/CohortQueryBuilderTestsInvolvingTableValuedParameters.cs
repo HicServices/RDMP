@@ -11,64 +11,64 @@ using Rdmp.Core.Curation.Data.Cohort;
 using Rdmp.Core.QueryBuilding;
 using Tests.Common;
 
-namespace Rdmp.Core.Tests.CohortCreation.QueryTests
+namespace Rdmp.Core.Tests.CohortCreation.QueryTests;
+
+public class CohortQueryBuilderTestsInvolvingTableValuedParameters:DatabaseTests
 {
-    public class CohortQueryBuilderTestsInvolvingTableValuedParameters:DatabaseTests
-    {
-        private TestableTableValuedFunction _function = new TestableTableValuedFunction();
+    private TestableTableValuedFunction _function = new TestableTableValuedFunction();
         
-        public void CreateFunction()
-        {
-            _function.Create(GetCleanedServer(DatabaseType.MicrosoftSQLServer), CatalogueRepository);
-        }
+    public void CreateFunction()
+    {
+        _function.Create(GetCleanedServer(DatabaseType.MicrosoftSQLServer), CatalogueRepository);
+    }
 
-        [Test]
-        public void CohortGenerationDifferingTableValuedParametersTest()
-        {
-            CreateFunction();
+    [Test]
+    public void CohortGenerationDifferingTableValuedParametersTest()
+    {
+        CreateFunction();
 
-            //In this example we have 2 configurations which both target the same table valued function but which must have different parameter values
-            var config1 = new AggregateConfiguration(CatalogueRepository,_function.Cata, "CohortGenerationDifferingTableValuedParametersTest_1");
-            config1.CountSQL = null;
-            config1.SaveToDatabase();
+        //In this example we have 2 configurations which both target the same table valued function but which must have different parameter values
+        var config1 = new AggregateConfiguration(CatalogueRepository,_function.Cata, "CohortGenerationDifferingTableValuedParametersTest_1");
+        config1.CountSQL = null;
+        config1.SaveToDatabase();
 
-            var config2 = new AggregateConfiguration(CatalogueRepository,_function.Cata, "CohortGenerationDifferingTableValuedParametersTest_2");
-            config2.CountSQL = null;
-            config2.SaveToDatabase();
+        var config2 = new AggregateConfiguration(CatalogueRepository,_function.Cata, "CohortGenerationDifferingTableValuedParametersTest_2");
+        config2.CountSQL = null;
+        config2.SaveToDatabase();
             
-            var cic = new CohortIdentificationConfiguration(CatalogueRepository,"CohortGenerationDifferingTableValuedParametersTest");
+        var cic = new CohortIdentificationConfiguration(CatalogueRepository,"CohortGenerationDifferingTableValuedParametersTest");
             
-            cic.EnsureNamingConvention(config1);
-            cic.EnsureNamingConvention(config2);
+        cic.EnsureNamingConvention(config1);
+        cic.EnsureNamingConvention(config2);
 
-            try
-            {
-                //make the string column the extraction identifier
-                _function.ExtractionInformations[1].IsExtractionIdentifier = true;
-                _function.ExtractionInformations[1].SaveToDatabase();
+        try
+        {
+            //make the string column the extraction identifier
+            _function.ExtractionInformations[1].IsExtractionIdentifier = true;
+            _function.ExtractionInformations[1].SaveToDatabase();
                 
-                //add the extraction identtifier as the only dimension one ach of the aggregate configurations that we will use for the cohort identification query
-                new AggregateDimension(CatalogueRepository,_function.ExtractionInformations[1], config1);
-                new AggregateDimension(CatalogueRepository,_function.ExtractionInformations[1], config2);
+            //add the extraction identtifier as the only dimension one ach of the aggregate configurations that we will use for the cohort identification query
+            new AggregateDimension(CatalogueRepository,_function.ExtractionInformations[1], config1);
+            new AggregateDimension(CatalogueRepository,_function.ExtractionInformations[1], config2);
 
-                Assert.IsNull(cic.RootCohortAggregateContainer_ID);
+            Assert.IsNull(cic.RootCohortAggregateContainer_ID);
                 
-                //create a root container for it
-                CohortAggregateContainer container = new CohortAggregateContainer(CatalogueRepository,SetOperation.INTERSECT);
+            //create a root container for it
+            CohortAggregateContainer container = new CohortAggregateContainer(CatalogueRepository,SetOperation.INTERSECT);
 
-                //set the container as the root container for the cohort identification task object
-                cic.RootCohortAggregateContainer_ID = container.ID;
-                cic.SaveToDatabase();
+            //set the container as the root container for the cohort identification task object
+            cic.RootCohortAggregateContainer_ID = container.ID;
+            cic.SaveToDatabase();
 
-                //put both the aggregates into the container
-                container.AddChild(config1, 0);
-                container.AddChild(config2, 1);
+            //put both the aggregates into the container
+            container.AddChild(config1, 0);
+            container.AddChild(config2, 1);
 
-                CohortQueryBuilder builder = new CohortQueryBuilder(cic,null);
-                Assert.AreEqual(
-                    CollapseWhitespace(
+            CohortQueryBuilder builder = new CohortQueryBuilder(cic,null);
+            Assert.AreEqual(
+                CollapseWhitespace(
                     string.Format(
-@"DECLARE @startNumber AS int;
+                        @"DECLARE @startNumber AS int;
 SET @startNumber=5;
 DECLARE @stopNumber AS int;
 SET @stopNumber=10;
@@ -93,23 +93,23 @@ SET @name='fish';
 	[" + TestDatabaseNames.Prefix+@"ScratchArea]..MyAwesomeFunction(@startNumber,@stopNumber,@name) AS MyAwesomeFunction
 )
 ",cic.ID)), 
- CollapseWhitespace(builder.SQL));
+                CollapseWhitespace(builder.SQL));
 
-                //now override JUST @name
-                var param1 = new AnyTableSqlParameter(CatalogueRepository,config1, "DECLARE @name AS varchar(50);");
-                param1.Value = "'lobster'";
-                param1.SaveToDatabase();
+            //now override JUST @name
+            var param1 = new AnyTableSqlParameter(CatalogueRepository,config1, "DECLARE @name AS varchar(50);");
+            param1.Value = "'lobster'";
+            param1.SaveToDatabase();
                 
-                var param2 = new AnyTableSqlParameter(CatalogueRepository,config2, "DECLARE @name AS varchar(50);");
-                param2.Value = "'monkey'";
-                param2.SaveToDatabase();
+            var param2 = new AnyTableSqlParameter(CatalogueRepository,config2, "DECLARE @name AS varchar(50);");
+            param2.Value = "'monkey'";
+            param2.SaveToDatabase();
 
-                CohortQueryBuilder builder2 = new CohortQueryBuilder(cic,null);
+            CohortQueryBuilder builder2 = new CohortQueryBuilder(cic,null);
 
-                Assert.AreEqual(
-                    CollapseWhitespace(
+            Assert.AreEqual(
+                CollapseWhitespace(
                     string.Format(
-@"DECLARE @startNumber AS int;
+                        @"DECLARE @startNumber AS int;
 SET @startNumber=5;
 DECLARE @stopNumber AS int;
 SET @stopNumber=10;
@@ -136,15 +136,14 @@ SET @name_2='monkey';
 	[" + TestDatabaseNames.Prefix+@"ScratchArea]..MyAwesomeFunction(@startNumber,@stopNumber,@name_2) AS MyAwesomeFunction
 )
 ",cic.ID)),
- CollapseWhitespace(builder2.SQL));
-            }
-            finally
-            {
-                cic.DeleteInDatabase();
-                config1.DeleteInDatabase();
-                config2.DeleteInDatabase();
+                CollapseWhitespace(builder2.SQL));
+        }
+        finally
+        {
+            cic.DeleteInDatabase();
+            config1.DeleteInDatabase();
+            config2.DeleteInDatabase();
                 
-            }
         }
     }
 }

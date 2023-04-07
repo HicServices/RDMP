@@ -15,95 +15,94 @@ using Rdmp.Core.Repositories.Construction;
 using ReusableLibraryCode.Icons.IconProvision;
 using SixLabors.ImageSharp.PixelFormats;
 
-namespace Rdmp.Core.CommandExecution.AtomicCommands
+namespace Rdmp.Core.CommandExecution.AtomicCommands;
+
+/// <summary>
+/// View/run the extraction SQL for a given <see cref="Catalogue"/> in a given <see cref="ExtractionConfiguration"/>
+/// </summary>
+public class ExecuteCommandViewExtractionSql : ExecuteCommandViewDataBase, IAtomicCommandWithTarget
 {
-    /// <summary>
-    /// View/run the extraction SQL for a given <see cref="Catalogue"/> in a given <see cref="ExtractionConfiguration"/>
-    /// </summary>
-    public class ExecuteCommandViewExtractionSql : ExecuteCommandViewDataBase, IAtomicCommandWithTarget
+    private IExtractionConfiguration _extractionConfiguration;
+    private ISelectedDataSets _selectedDataSet;
+
+    [UseWithObjectConstructor]
+    public ExecuteCommandViewExtractionSql(IBasicActivateItems activator,
+
+        [DemandsInitialization("The extraction configuration you want to know about")]
+        ExtractionConfiguration ec,
+
+        [DemandsInitialization("The dataset for whom you want to see the extraction SQL")]
+        Catalogue c,
+
+        [DemandsInitialization(ToFileDescription)]
+        FileInfo toFile = null) : base(activator, toFile)
     {
-        private IExtractionConfiguration _extractionConfiguration;
-        private ISelectedDataSets _selectedDataSet;
+        _extractionConfiguration = ec;
 
-        [UseWithObjectConstructor]
-        public ExecuteCommandViewExtractionSql(IBasicActivateItems activator,
+        _selectedDataSet = ec.SelectedDataSets.FirstOrDefault(sds => sds.GetCatalogue().Equals(c));
 
-            [DemandsInitialization("The extraction configuration you want to know about")]
-            ExtractionConfiguration ec,
-
-            [DemandsInitialization("The dataset for whom you want to see the extraction SQL")]
-            Catalogue c,
-
-            [DemandsInitialization(ToFileDescription)]
-            FileInfo toFile = null) : base(activator, toFile)
+        if (_selectedDataSet == null)
         {
-            _extractionConfiguration = ec;
+            SetImpossible($"Catalogue '{c}' is not listed as a selected dataset in '{ec}'");
+        }
+    }
 
-            _selectedDataSet = ec.SelectedDataSets.FirstOrDefault(sds => sds.GetCatalogue().Equals(c));
+    public ExecuteCommandViewExtractionSql(IBasicActivateItems activator,
+        ExtractionConfiguration extractionConfiguration)
+        : base(activator, null)
+    {
+        _extractionConfiguration = extractionConfiguration;
+    }
 
-            if (_selectedDataSet == null)
-            {
-                SetImpossible($"Catalogue '{c}' is not listed as a selected dataset in '{ec}'");
-            }
+    public ExecuteCommandViewExtractionSql(IBasicActivateItems activator,
+        SelectedDataSets sds)
+        : base(activator, null)
+    {
+        _extractionConfiguration = sds.ExtractionConfiguration;
+        _selectedDataSet = sds;
+    }
+    public ExecuteCommandViewExtractionSql(IBasicActivateItems activator) : base(activator, null)
+    {
+    }
+
+    public override string GetCommandHelp()
+    {
+        return "Shows the SQL that will be executed for the given dataset when it is extracted including the linkage with the cohort table";
+    }
+
+    public override Image<Rgba32> GetImage(IIconProvider iconProvider)
+    {
+        return iconProvider.GetImage(RDMPConcept.SQL, OverlayKind.Execute);
+    }
+
+    public IAtomicCommandWithTarget SetTarget(DatabaseEntity target)
+    {
+        if (target is SelectedDataSets)
+        {
+            _selectedDataSet = target as SelectedDataSets;
+
+            if (_selectedDataSet != null)
+                //must have datasets and have a cohort configured
+                if (_selectedDataSet.ExtractionConfiguration.Cohort_ID == null)
+                    SetImpossible("No cohort has been selected for ExtractionConfiguration");
         }
 
-        public ExecuteCommandViewExtractionSql(IBasicActivateItems activator,
-            ExtractionConfiguration extractionConfiguration)
-            : base(activator, null)
-        {
-            _extractionConfiguration = extractionConfiguration;
-        }
+        if (target is ExtractionConfiguration)
+            _extractionConfiguration = target as ExtractionConfiguration;
 
-        public ExecuteCommandViewExtractionSql(IBasicActivateItems activator,
-            SelectedDataSets sds)
-            : base(activator, null)
-        {
-            _extractionConfiguration = sds.ExtractionConfiguration;
-            _selectedDataSet = sds;
-        }
-        public ExecuteCommandViewExtractionSql(IBasicActivateItems activator) : base(activator, null)
-        {
-        }
+        return this;
+    }
 
-        public override string GetCommandHelp()
-        {
-            return "Shows the SQL that will be executed for the given dataset when it is extracted including the linkage with the cohort table";
-        }
+    protected override IViewSQLAndResultsCollection GetCollection()
+    {
+        var sds = _selectedDataSet;
 
-        public override Image<Rgba32> GetImage(IIconProvider iconProvider)
-        {
-            return iconProvider.GetImage(RDMPConcept.SQL, OverlayKind.Execute);
-        }
+        if (sds == null && _extractionConfiguration != null)
+            sds = SelectOne(BasicActivator.RepositoryLocator.DataExportRepository.GetAllObjectsWithParent<SelectedDataSets>(_extractionConfiguration));
 
-        public IAtomicCommandWithTarget SetTarget(DatabaseEntity target)
-        {
-            if (target is SelectedDataSets)
-            {
-                _selectedDataSet = target as SelectedDataSets;
+        if (_selectedDataSet == null)
+            return null;
 
-                if (_selectedDataSet != null)
-                    //must have datasets and have a cohort configured
-                    if (_selectedDataSet.ExtractionConfiguration.Cohort_ID == null)
-                        SetImpossible("No cohort has been selected for ExtractionConfiguration");
-            }
-
-            if (target is ExtractionConfiguration)
-                _extractionConfiguration = target as ExtractionConfiguration;
-
-            return this;
-        }
-
-        protected override IViewSQLAndResultsCollection GetCollection()
-        {
-            var sds = _selectedDataSet;
-
-            if (sds == null && _extractionConfiguration != null)
-                sds = SelectOne(BasicActivator.RepositoryLocator.DataExportRepository.GetAllObjectsWithParent<SelectedDataSets>(_extractionConfiguration));
-
-            if (_selectedDataSet == null)
-                return null;
-
-            return new ViewSelectedDatasetExtractionUICollection(sds);
-        }
+        return new ViewSelectedDatasetExtractionUICollection(sds);
     }
 }

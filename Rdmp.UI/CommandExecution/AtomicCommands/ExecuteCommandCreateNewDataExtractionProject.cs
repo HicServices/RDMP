@@ -16,55 +16,54 @@ using ReusableLibraryCode.Icons.IconProvision;
 using SixLabors.ImageSharp.PixelFormats;
 using Rdmp.Core.Curation.Data;
 
-namespace Rdmp.UI.CommandExecution.AtomicCommands
+namespace Rdmp.UI.CommandExecution.AtomicCommands;
+
+public class ExecuteCommandCreateNewDataExtractionProject : BasicUICommandExecution, IAtomicCommand
 {
-    public class ExecuteCommandCreateNewDataExtractionProject : BasicUICommandExecution, IAtomicCommand
+    /// <summary>
+    /// The folder to put the new <see cref="Project"/> in.  Defaults to <see cref="FolderHelper.Root"/>
+    /// </summary>
+    public string Folder { get; set; } = FolderHelper.Root;
+
+    public ExecuteCommandCreateNewDataExtractionProject(IActivateItems activator) : base(activator)
     {
-        /// <summary>
-        /// The folder to put the new <see cref="Project"/> in.  Defaults to <see cref="FolderHelper.Root"/>
-        /// </summary>
-        public string Folder { get; set; } = FolderHelper.Root;
+        UseTripleDotSuffix = true;
+    }
 
-        public ExecuteCommandCreateNewDataExtractionProject(IActivateItems activator) : base(activator)
+    public override void Execute()
+    {
+        base.Execute();
+        var wizard = new CreateNewDataExtractionProjectUI(Activator);
+        if (wizard.ShowDialog() == DialogResult.OK && wizard.ProjectCreatedIfAny != null)
         {
-            UseTripleDotSuffix = true;
-        }
+            var p = wizard.ProjectCreatedIfAny;
 
-        public override void Execute()
-        {
-            base.Execute();
-            var wizard = new CreateNewDataExtractionProjectUI(Activator);
-            if (wizard.ShowDialog() == DialogResult.OK && wizard.ProjectCreatedIfAny != null)
-            {
-                var p = wizard.ProjectCreatedIfAny;
+            p.Folder = Folder;
+            p.SaveToDatabase();
 
-                p.Folder = Folder;
-                p.SaveToDatabase();
+            Publish(p);
+            Activator.RequestItemEmphasis(this, new EmphasiseRequest(p, int.MaxValue));
 
-                Publish(p);
-                Activator.RequestItemEmphasis(this, new EmphasiseRequest(p, int.MaxValue));
-
-                if (wizard.ExtractionConfigurationCreatedIfAny != null)
-                { 
-                    //now execute it
-                    var executeCommand = new ExecuteCommandExecuteExtractionConfiguration(Activator).SetTarget(wizard.ExtractionConfigurationCreatedIfAny);
-                    if (!executeCommand.IsImpossible)
-                        executeCommand.Execute();
-                }
-
+            if (wizard.ExtractionConfigurationCreatedIfAny != null)
+            { 
+                //now execute it
+                var executeCommand = new ExecuteCommandExecuteExtractionConfiguration(Activator).SetTarget(wizard.ExtractionConfigurationCreatedIfAny);
+                if (!executeCommand.IsImpossible)
+                    executeCommand.Execute();
             }
-        }
 
-        public override Image<Rgba32> GetImage(IIconProvider iconProvider)
-        {
-            return iconProvider.GetImage(RDMPConcept.Project, OverlayKind.Add);
         }
+    }
 
-        public override string GetCommandHelp()
-        {
-            return
-                "This will open a window which will guide you in the steps for creating a Data Extraction Project.\r\n" +
-                "You will be asked to choose a Cohort, the Catalogues to extract and the destination folder.";
-        }
+    public override Image<Rgba32> GetImage(IIconProvider iconProvider)
+    {
+        return iconProvider.GetImage(RDMPConcept.Project, OverlayKind.Add);
+    }
+
+    public override string GetCommandHelp()
+    {
+        return
+            "This will open a window which will guide you in the steps for creating a Data Extraction Project.\r\n" +
+            "You will be asked to choose a Cohort, the Catalogues to extract and the destination folder.";
     }
 }

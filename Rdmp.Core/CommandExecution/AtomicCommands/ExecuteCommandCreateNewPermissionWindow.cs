@@ -12,49 +12,48 @@ using ReusableLibraryCode.Icons.IconProvision;
 using SixLabors.ImageSharp.PixelFormats;
 
 
-namespace Rdmp.Core.CommandExecution.AtomicCommands
+namespace Rdmp.Core.CommandExecution.AtomicCommands;
+
+public class ExecuteCommandCreateNewPermissionWindow : BasicCommandExecution, IAtomicCommandWithTarget
 {
-    public class ExecuteCommandCreateNewPermissionWindow : BasicCommandExecution, IAtomicCommandWithTarget
+    private CacheProgress _cacheProgressToSetOnIfAny;
+
+    public ExecuteCommandCreateNewPermissionWindow(IBasicActivateItems activator) : base(activator)
     {
-        private CacheProgress _cacheProgressToSetOnIfAny;
 
-        public ExecuteCommandCreateNewPermissionWindow(IBasicActivateItems activator) : base(activator)
+    }
+
+    public override Image<Rgba32> GetImage(IIconProvider iconProvider)
+    {
+        return iconProvider.GetImage(RDMPConcept.PermissionWindow, OverlayKind.Add);
+    }
+
+    public override string GetCommandHelp()
+    {
+        return "Creates a new time window restriction on when loads can occur";
+    }
+
+    public IAtomicCommandWithTarget SetTarget(DatabaseEntity target)
+    {
+        _cacheProgressToSetOnIfAny = target as CacheProgress;
+        return this;
+    }
+
+    public override void Execute()
+    {
+        base.Execute();
+
+        if (TypeText("Permission Window Name", "Enter name for the PermissionWindow e.g. 'Nightly Loads'", 1000,null,out string name))
         {
+            var newWindow = new PermissionWindow(BasicActivator.RepositoryLocator.CatalogueRepository);
+            newWindow.Name = name;
+            newWindow.SaveToDatabase();
 
-        }
+            if (_cacheProgressToSetOnIfAny != null)
+                new ExecuteCommandSetPermissionWindow(BasicActivator, _cacheProgressToSetOnIfAny).SetTarget(newWindow).Execute();
 
-        public override Image<Rgba32> GetImage(IIconProvider iconProvider)
-        {
-            return iconProvider.GetImage(RDMPConcept.PermissionWindow, OverlayKind.Add);
-        }
-
-        public override string GetCommandHelp()
-        {
-            return "Creates a new time window restriction on when loads can occur";
-        }
-
-        public IAtomicCommandWithTarget SetTarget(DatabaseEntity target)
-        {
-            _cacheProgressToSetOnIfAny = target as CacheProgress;
-            return this;
-        }
-
-        public override void Execute()
-        {
-            base.Execute();
-
-            if (TypeText("Permission Window Name", "Enter name for the PermissionWindow e.g. 'Nightly Loads'", 1000,null,out string name))
-            {
-                var newWindow = new PermissionWindow(BasicActivator.RepositoryLocator.CatalogueRepository);
-                newWindow.Name = name;
-                newWindow.SaveToDatabase();
-
-                if (_cacheProgressToSetOnIfAny != null)
-                    new ExecuteCommandSetPermissionWindow(BasicActivator, _cacheProgressToSetOnIfAny).SetTarget(newWindow).Execute();
-
-                Publish(newWindow);
-                Activate(newWindow);
-            }
+            Publish(newWindow);
+            Activate(newWindow);
         }
     }
 }

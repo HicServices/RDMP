@@ -7,18 +7,17 @@
 using System;
 using ReusableLibraryCode.Checks;
 
-namespace Rdmp.UI.ChecksUI
-{
-    /// <summary>
-    /// Event arguments for when a <see cref="ICheckable"/> UI finishes checking an object.
-    /// </summary>
-    public class AllChecksCompleteHandlerArgs: EventArgs
-    {
-        public ToMemoryCheckNotifier CheckResults { get; private set; }
+namespace Rdmp.UI.ChecksUI;
 
-        public AllChecksCompleteHandlerArgs(ToMemoryCheckNotifier checkResults)
-        {
-            CheckResults = checkResults;
-        }
+/// <summary>
+/// Event arguments for when a <see cref="ICheckable"/> UI finishes checking an object.
+/// </summary>
+public class AllChecksCompleteHandlerArgs: EventArgs
+{
+    public ToMemoryCheckNotifier CheckResults { get; private set; }
+
+    public AllChecksCompleteHandlerArgs(ToMemoryCheckNotifier checkResults)
+    {
+        CheckResults = checkResults;
     }
 }

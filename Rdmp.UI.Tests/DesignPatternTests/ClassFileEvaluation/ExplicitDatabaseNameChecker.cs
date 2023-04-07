@@ -10,63 +10,62 @@ using System.IO;
 using System.Linq;
 using NUnit.Framework;
 
-namespace Rdmp.UI.Tests.DesignPatternTests.ClassFileEvaluation
+namespace Rdmp.UI.Tests.DesignPatternTests.ClassFileEvaluation;
+
+public class ExplicitDatabaseNameChecker
 {
-    public class ExplicitDatabaseNameChecker
+    public void FindProblems(List<string> csFilesFound)
     {
-        public void FindProblems(List<string> csFilesFound)
-        {
-            Dictionary<string,string> problemFiles = new Dictionary<string, string>();
-            List<string> prohibitedStrings = new List<string>();
+        Dictionary<string,string> problemFiles = new Dictionary<string, string>();
+        List<string> prohibitedStrings = new List<string>();
             
-            List<string> ignoreList = new List<string>();
-            ignoreList.Add("ExplicitDatabaseNameChecker.cs"); //us obviously since we do contain that text!
-            ignoreList.Add("DatabaseCreationProgramOptions.cs"); //allowed because it is the usage text for the program.
-            ignoreList.Add("AutomationServiceOptions.cs");//allowed because it is the usage text for the program.
-            ignoreList.Add("DatabaseTests.cs"); //allowed because it is telling user about how you can setup database tests support
-            ignoreList.Add("ChoosePlatformDatabasesUI.Designer.cs"); //allowed because it is a suggestion to user about what prefix to use
-            ignoreList.Add("PluginPackagerProgramOptions.cs"); //allwed because it's a suggestion to the user about command line arguments
-            ignoreList.Add("DocumentationCrossExaminationTest.cs"); //allowed because its basically a list of comments that are allowed despite not appearing in the codebase
-            ignoreList.Add("ResearchDataManagementPlatformOptions.cs"); //allowed because it's an Example
+        List<string> ignoreList = new List<string>();
+        ignoreList.Add("ExplicitDatabaseNameChecker.cs"); //us obviously since we do contain that text!
+        ignoreList.Add("DatabaseCreationProgramOptions.cs"); //allowed because it is the usage text for the program.
+        ignoreList.Add("AutomationServiceOptions.cs");//allowed because it is the usage text for the program.
+        ignoreList.Add("DatabaseTests.cs"); //allowed because it is telling user about how you can setup database tests support
+        ignoreList.Add("ChoosePlatformDatabasesUI.Designer.cs"); //allowed because it is a suggestion to user about what prefix to use
+        ignoreList.Add("PluginPackagerProgramOptions.cs"); //allwed because it's a suggestion to the user about command line arguments
+        ignoreList.Add("DocumentationCrossExaminationTest.cs"); //allowed because its basically a list of comments that are allowed despite not appearing in the codebase
+        ignoreList.Add("ResearchDataManagementPlatformOptions.cs"); //allowed because it's an Example
 
 
-            ignoreList.AddRange(
-                new string[]
-                {
-                    "DleOptions.cs",
-                    "CacheOptions.cs",
-                    "RDMPCommandLineOptions.cs",
-                    "Settings.Designer.cs",
-                    "PlatformDatabaseCreationOptions.cs",
-                    "PackOptions.cs",
-                    "PasswordEncryptionKeyLocation.cs"
-
-
-
-                }); //allowed because it's default arguments for CLI
-
-            prohibitedStrings.Add("TEST_");
-            prohibitedStrings.Add("RDMP_");
-
-            foreach (string file in csFilesFound)
+        ignoreList.AddRange(
+            new string[]
             {
-                if (ignoreList.Any(str=>str.Equals(Path.GetFileName(file))))
-                    continue;
-                
-                var contents = File.ReadAllText(file);
-                
-                foreach (string prohibited in prohibitedStrings)
-                    if (contents.Contains(prohibited))
-                    {
-                        problemFiles.Add(file, prohibited);
-                        break;
-                    }
-            }
+                "DleOptions.cs",
+                "CacheOptions.cs",
+                "RDMPCommandLineOptions.cs",
+                "Settings.Designer.cs",
+                "PlatformDatabaseCreationOptions.cs",
+                "PackOptions.cs",
+                "PasswordEncryptionKeyLocation.cs"
 
-            foreach (var kvp in problemFiles)
-                Console.WriteLine("FAIL: File '" + kvp.Key + "' contains a reference to an explicitly prohibited database name string ('" + kvp.Value + "')");
 
-            Assert.AreEqual(0,problemFiles.Count);
+
+            }); //allowed because it's default arguments for CLI
+
+        prohibitedStrings.Add("TEST_");
+        prohibitedStrings.Add("RDMP_");
+
+        foreach (string file in csFilesFound)
+        {
+            if (ignoreList.Any(str=>str.Equals(Path.GetFileName(file))))
+                continue;
+                
+            var contents = File.ReadAllText(file);
+                
+            foreach (string prohibited in prohibitedStrings)
+                if (contents.Contains(prohibited))
+                {
+                    problemFiles.Add(file, prohibited);
+                    break;
+                }
         }
+
+        foreach (var kvp in problemFiles)
+            Console.WriteLine("FAIL: File '" + kvp.Key + "' contains a reference to an explicitly prohibited database name string ('" + kvp.Value + "')");
+
+        Assert.AreEqual(0,problemFiles.Count);
     }
 }

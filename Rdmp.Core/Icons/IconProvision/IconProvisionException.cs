@@ -6,30 +6,29 @@
 
 using System;
 
-namespace Rdmp.Core.Icons.IconProvision
+namespace Rdmp.Core.Icons.IconProvision;
+
+/// <summary>
+/// Exception thrown when an icon cannot be properly provided for an object or setting up an icon
+/// cache fails
+/// </summary>
+public class IconProvisionException:Exception
 {
     /// <summary>
-    /// Exception thrown when an icon cannot be properly provided for an object or setting up an icon
-    /// cache fails
+    /// Creates a new instance with the given message
     /// </summary>
-    public class IconProvisionException:Exception
+    /// <param name="msg">Text of the error</param>
+    public IconProvisionException(string msg) : base(msg)
     {
-        /// <summary>
-        /// Creates a new instance with the given message
-        /// </summary>
-        /// <param name="msg">Text of the error</param>
-        public IconProvisionException(string msg) : base(msg)
-        {
             
-        }
-        /// <summary>
-        /// Creates a new instance with the given message and inner exception
-        /// </summary>
-        /// <param name="msg">Text of the error</param>
-        /// <param name="ex">Inner exception triggering the situation</param>
-        public IconProvisionException(string msg, Exception ex):base(msg,ex)
-        {
+    }
+    /// <summary>
+    /// Creates a new instance with the given message and inner exception
+    /// </summary>
+    /// <param name="msg">Text of the error</param>
+    /// <param name="ex">Inner exception triggering the situation</param>
+    public IconProvisionException(string msg, Exception ex):base(msg,ex)
+    {
             
-        }
     }
 }

@@ -11,22 +11,22 @@ using Rdmp.Core.Repositories;
 using ReusableLibraryCode;
 using ReusableLibraryCode.DataAccess;
 
-namespace Tests.Common
+namespace Tests.Common;
+
+public class TestableTableValuedFunction
 {
-    public class TestableTableValuedFunction
+    public ITableInfo TableInfoCreated;
+    public ColumnInfo[] ColumnInfosCreated;
+    public string CreateFunctionSQL;
+    public ICatalogue Cata;
+    public CatalogueItem[] CataItems;
+    public ExtractionInformation[] ExtractionInformations;
+
+
+    public void Create(DiscoveredDatabase databaseICanCreateRandomTablesIn, ICatalogueRepository catalogueRepository)
     {
-        public ITableInfo TableInfoCreated;
-        public ColumnInfo[] ColumnInfosCreated;
-        public string CreateFunctionSQL;
-        public ICatalogue Cata;
-        public CatalogueItem[] CataItems;
-        public ExtractionInformation[] ExtractionInformations;
 
-
-        public void Create(DiscoveredDatabase databaseICanCreateRandomTablesIn, ICatalogueRepository catalogueRepository)
-        {
-
-            CreateFunctionSQL = @"
+        CreateFunctionSQL = @"
 if exists (select 1 from sys.objects where name = 'MyAwesomeFunction')
     drop function MyAwesomeFunction
 GO
@@ -60,39 +60,38 @@ BEGIN
 	RETURN 
 END
 ";
-            using (var con = databaseICanCreateRandomTablesIn.Server.GetConnection())
-            {
-                con.Open();
-                UsefulStuff.ExecuteBatchNonQuery(CreateFunctionSQL, con);
-            }
-            var tbl = databaseICanCreateRandomTablesIn.ExpectTableValuedFunction("MyAwesomeFunction");
-            TableValuedFunctionImporter importer = new TableValuedFunctionImporter(catalogueRepository, tbl);
-            importer.DoImport(out TableInfoCreated, out ColumnInfosCreated);
-
-            importer.ParametersCreated[0].Value = "5";
-            importer.ParametersCreated[0].SaveToDatabase();
-
-            importer.ParametersCreated[1].Value = "10";
-            importer.ParametersCreated[1].SaveToDatabase();
-
-            importer.ParametersCreated[2].Value = "'fish'";
-            importer.ParametersCreated[2].SaveToDatabase();
-
-
-            ForwardEngineerCatalogue forwardEngineerCatalogue = new ForwardEngineerCatalogue(TableInfoCreated, ColumnInfosCreated);
-            forwardEngineerCatalogue.ExecuteForwardEngineering(out Cata, out CataItems, out ExtractionInformations);
-        }
-
-        public void Destroy()
+        using (var con = databaseICanCreateRandomTablesIn.Server.GetConnection())
         {
-            var credentials = (DataAccessCredentials)TableInfoCreated.GetCredentialsIfExists(DataAccessContext.InternalDataProcessing);
-
-            TableInfoCreated.DeleteInDatabase();
-
-            if(credentials != null)
-                credentials.DeleteInDatabase();
-
-            Cata.DeleteInDatabase();
+            con.Open();
+            UsefulStuff.ExecuteBatchNonQuery(CreateFunctionSQL, con);
         }
+        var tbl = databaseICanCreateRandomTablesIn.ExpectTableValuedFunction("MyAwesomeFunction");
+        TableValuedFunctionImporter importer = new TableValuedFunctionImporter(catalogueRepository, tbl);
+        importer.DoImport(out TableInfoCreated, out ColumnInfosCreated);
+
+        importer.ParametersCreated[0].Value = "5";
+        importer.ParametersCreated[0].SaveToDatabase();
+
+        importer.ParametersCreated[1].Value = "10";
+        importer.ParametersCreated[1].SaveToDatabase();
+
+        importer.ParametersCreated[2].Value = "'fish'";
+        importer.ParametersCreated[2].SaveToDatabase();
+
+
+        ForwardEngineerCatalogue forwardEngineerCatalogue = new ForwardEngineerCatalogue(TableInfoCreated, ColumnInfosCreated);
+        forwardEngineerCatalogue.ExecuteForwardEngineering(out Cata, out CataItems, out ExtractionInformations);
+    }
+
+    public void Destroy()
+    {
+        var credentials = (DataAccessCredentials)TableInfoCreated.GetCredentialsIfExists(DataAccessContext.InternalDataProcessing);
+
+        TableInfoCreated.DeleteInDatabase();
+
+        if(credentials != null)
+            credentials.DeleteInDatabase();
+
+        Cata.DeleteInDatabase();
     }
 }

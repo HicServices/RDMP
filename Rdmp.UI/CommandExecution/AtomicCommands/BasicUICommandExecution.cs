@@ -12,46 +12,45 @@ using Rdmp.Core.Curation.Data.Defaults;
 using Rdmp.UI.ItemActivation;
 
 
-namespace Rdmp.UI.CommandExecution.AtomicCommands
+namespace Rdmp.UI.CommandExecution.AtomicCommands;
+
+public abstract class BasicUICommandExecution:BasicCommandExecution
 {
-    public abstract class BasicUICommandExecution:BasicCommandExecution
+    protected readonly IActivateItems Activator;
+
+    protected BasicUICommandExecution(IActivateItems activator):base(activator)
     {
-        protected readonly IActivateItems Activator;
-
-        protected BasicUICommandExecution(IActivateItems activator):base(activator)
-        {
-            Activator = activator;
-        }
+        Activator = activator;
+    }
         
-        protected FileInfo SelectSaveFile(string filter)
-        {
-            var sfd = new SaveFileDialog();
-            sfd.Filter = filter;
-            if (sfd.ShowDialog() == DialogResult.OK)
-                return new FileInfo(sfd.FileName);
+    protected FileInfo SelectSaveFile(string filter)
+    {
+        var sfd = new SaveFileDialog();
+        sfd.Filter = filter;
+        if (sfd.ShowDialog() == DialogResult.OK)
+            return new FileInfo(sfd.FileName);
 
-            return null;
-        }
+        return null;
+    }
 
-        protected FileInfo SelectOpenFile(string filter)
-        {
-            var ofd = new OpenFileDialog();
-            ofd.Filter = filter;
-            if (ofd.ShowDialog() == DialogResult.OK)
-                return new FileInfo(ofd.FileName);
+    protected FileInfo SelectOpenFile(string filter)
+    {
+        var ofd = new OpenFileDialog();
+        ofd.Filter = filter;
+        if (ofd.ShowDialog() == DialogResult.OK)
+            return new FileInfo(ofd.FileName);
 
-            return null;
-        }
+        return null;
+    }
 
-        internal void SetDefaultIfNotExists(ExternalDatabaseServer newServer, PermissableDefaults permissableDefault, bool askYesNo)
-        {
-            var defaults = Activator.RepositoryLocator.CatalogueRepository;
+    internal void SetDefaultIfNotExists(ExternalDatabaseServer newServer, PermissableDefaults permissableDefault, bool askYesNo)
+    {
+        var defaults = Activator.RepositoryLocator.CatalogueRepository;
 
-            var current = defaults.GetDefaultFor(permissableDefault);
+        var current = defaults.GetDefaultFor(permissableDefault);
             
-            if(current == null)
-                if(!askYesNo || YesNo($"Set as the default {permissableDefault} server?", "Set as default"))
-                    defaults.SetDefault(permissableDefault,newServer);
-        }
+        if(current == null)
+            if(!askYesNo || YesNo($"Set as the default {permissableDefault} server?", "Set as default"))
+                defaults.SetDefault(permissableDefault,newServer);
     }
 }

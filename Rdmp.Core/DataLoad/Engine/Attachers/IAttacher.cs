@@ -10,17 +10,16 @@ using Rdmp.Core.DataFlowPipeline;
 using Rdmp.Core.DataLoad.Engine.Job;
 using ReusableLibraryCode.Checks;
 
-namespace Rdmp.Core.DataLoad.Engine.Attachers
+namespace Rdmp.Core.DataLoad.Engine.Attachers;
+
+/// <summary>
+/// See Attacher
+/// </summary>
+public interface IAttacher: IDisposeAfterDataLoad, ICheckable
 {
-    /// <summary>
-    /// See Attacher
-    /// </summary>
-    public interface IAttacher: IDisposeAfterDataLoad, ICheckable
-    {
-        ExitCodeType Attach(IDataLoadJob job, GracefulCancellationToken cancellationToken);
-        void Initialize(ILoadDirectory directory, DiscoveredDatabase dbInfo);
+    ExitCodeType Attach(IDataLoadJob job, GracefulCancellationToken cancellationToken);
+    void Initialize(ILoadDirectory directory, DiscoveredDatabase dbInfo);
         
-        ILoadDirectory LoadDirectory { get; set; }
-        bool RequestsExternalDatabaseCreation { get; }
-    }
+    ILoadDirectory LoadDirectory { get; set; }
+    bool RequestsExternalDatabaseCreation { get; }
 }

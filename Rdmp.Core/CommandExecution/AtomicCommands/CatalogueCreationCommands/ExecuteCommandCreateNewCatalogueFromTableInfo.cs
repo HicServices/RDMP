@@ -12,37 +12,36 @@ using Rdmp.Core.Icons.IconProvision;
 using ReusableLibraryCode.Icons.IconProvision;
 using SixLabors.ImageSharp.PixelFormats;
 
-namespace Rdmp.Core.CommandExecution.AtomicCommands.CatalogueCreationCommands
+namespace Rdmp.Core.CommandExecution.AtomicCommands.CatalogueCreationCommands;
+
+public class ExecuteCommandCreateNewCatalogueFromTableInfo : CatalogueCreationCommandExecution
 {
-    public class ExecuteCommandCreateNewCatalogueFromTableInfo : CatalogueCreationCommandExecution
+    private TableInfo _tableInfo;
+
+    public ExecuteCommandCreateNewCatalogueFromTableInfo(IBasicActivateItems activator, TableInfo tableInfo) : base(activator)
     {
-        private TableInfo _tableInfo;
+        _tableInfo = tableInfo;
 
-        public ExecuteCommandCreateNewCatalogueFromTableInfo(IBasicActivateItems activator, TableInfo tableInfo) : base(activator)
-        {
-            _tableInfo = tableInfo;
-
-            if (activator.CoreChildProvider.AllCatalogues.Any(c => c.Name.Equals(tableInfo.GetRuntimeName())))
-                SetImpossible("There is already a Catalogue called '" + tableInfo.GetRuntimeName() + "'");
-        }
+        if (activator.CoreChildProvider.AllCatalogues.Any(c => c.Name.Equals(tableInfo.GetRuntimeName())))
+            SetImpossible("There is already a Catalogue called '" + tableInfo.GetRuntimeName() + "'");
+    }
 
 
-        public override void Execute()
-        {
-            base.Execute();
+    public override void Execute()
+    {
+        base.Execute();
 
-            var cata = BasicActivator.CreateAndConfigureCatalogue(_tableInfo,null,"Existing Table",ProjectSpecific,TargetFolder);
+        var cata = BasicActivator.CreateAndConfigureCatalogue(_tableInfo,null,"Existing Table",ProjectSpecific,TargetFolder);
             
-            if (cata is DatabaseEntity de)
-            {
-                Publish(de);
-                Emphasise(de);
-            }
-        }
-
-        public override Image<Rgba32> GetImage(IIconProvider iconProvider)
+        if (cata is DatabaseEntity de)
         {
-            return iconProvider.GetImage(RDMPConcept.Catalogue, OverlayKind.Shortcut);
+            Publish(de);
+            Emphasise(de);
         }
+    }
+
+    public override Image<Rgba32> GetImage(IIconProvider iconProvider)
+    {
+        return iconProvider.GetImage(RDMPConcept.Catalogue, OverlayKind.Shortcut);
     }
 }

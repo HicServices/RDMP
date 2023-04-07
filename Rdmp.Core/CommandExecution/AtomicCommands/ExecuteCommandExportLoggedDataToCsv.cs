@@ -15,46 +15,46 @@ using Rdmp.Core.Logging;
 using Rdmp.Core.Repositories.Construction;
 using ReusableLibraryCode.DataAccess;
 
-namespace Rdmp.Core.CommandExecution.AtomicCommands
+namespace Rdmp.Core.CommandExecution.AtomicCommands;
+
+public class ExecuteCommandExportLoggedDataToCsv : BasicCommandExecution
 {
-    public class ExecuteCommandExportLoggedDataToCsv : BasicCommandExecution
-    {
-        private LogViewerFilter _filter;
-        private ExternalDatabaseServer[] _loggingServers;
+    private LogViewerFilter _filter;
+    private ExternalDatabaseServer[] _loggingServers;
         
-        [UseWithObjectConstructor]
-        public ExecuteCommandExportLoggedDataToCsv(IBasicActivateItems activator,LoggingTables table, int idIfAny)
+    [UseWithObjectConstructor]
+    public ExecuteCommandExportLoggedDataToCsv(IBasicActivateItems activator,LoggingTables table, int idIfAny)
         : this(activator,new LogViewerFilter(table,idIfAny <= 0 ? (int?) null:idIfAny))
-        {
+    {
             
-        }
+    }
 
-        public ExecuteCommandExportLoggedDataToCsv(IBasicActivateItems activator, LogViewerFilter filter) : base(activator)
-        {
-            _filter = filter ?? new LogViewerFilter(LoggingTables.DataLoadTask);
-            _loggingServers = BasicActivator.RepositoryLocator.CatalogueRepository.GetAllDatabases<LoggingDatabasePatcher>();
+    public ExecuteCommandExportLoggedDataToCsv(IBasicActivateItems activator, LogViewerFilter filter) : base(activator)
+    {
+        _filter = filter ?? new LogViewerFilter(LoggingTables.DataLoadTask);
+        _loggingServers = BasicActivator.RepositoryLocator.CatalogueRepository.GetAllDatabases<LoggingDatabasePatcher>();
 
-            if(!_loggingServers.Any())
-                SetImpossible("There are no logging servers");
-        }
+        if(!_loggingServers.Any())
+            SetImpossible("There are no logging servers");
+    }
 
-        public override string GetCommandName()
-        {
-            return "Export to CSV";
-        }
+    public override string GetCommandName()
+    {
+        return "Export to CSV";
+    }
 
-        public override void Execute()
-        {
-            var db = SelectOne(_loggingServers,null,true);
-            var server = db.Discover(DataAccessContext.Logging).Server;
+    public override void Execute()
+    {
+        var db = SelectOne(_loggingServers,null,true);
+        var server = db.Discover(DataAccessContext.Logging).Server;
             
-            if (db != null)
+        if (db != null)
+        {
+            using (var con = server.GetConnection())
             {
-                using (var con = server.GetConnection())
-                {
-                    con.Open();
+                con.Open();
 
-                    string sql = String.Format(@"SELECT * FROM (
+                string sql = String.Format(@"SELECT * FROM (
 SELECT [dataLoadRunID]
       ,eventType
       ,[description]
@@ -75,13 +75,12 @@ SELECT [dataLoadRunID]
  ) as x
 order by time ASC", LoggingTables.ProgressLog, LoggingTables.FatalError, _filter.GetWhereSql());
 
-                    var output = BasicActivator.SelectFile("Output CSV file");
+                var output = BasicActivator.SelectFile("Output CSV file");
 
-                    var extract = new ExtractTableVerbatim(server, sql, output.Name, output.Directory, ",",
-                        CultureInfo.CurrentCulture.DateTimeFormat.FullDateTimePattern);
+                var extract = new ExtractTableVerbatim(server, sql, output.Name, output.Directory, ",",
+                    CultureInfo.CurrentCulture.DateTimeFormat.FullDateTimePattern);
                     
-                    extract.DoExtraction();
-                }
+                extract.DoExtraction();
             }
         }
     }

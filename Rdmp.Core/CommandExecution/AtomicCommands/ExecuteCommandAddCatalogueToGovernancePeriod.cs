@@ -8,39 +8,38 @@ using System.Linq;
 using Rdmp.Core.Curation.Data;
 using Rdmp.Core.Curation.Data.Governance;
 
-namespace Rdmp.Core.CommandExecution.AtomicCommands
+namespace Rdmp.Core.CommandExecution.AtomicCommands;
+
+public class ExecuteCommandAddCatalogueToGovernancePeriod:BasicCommandExecution
 {
-    public class ExecuteCommandAddCatalogueToGovernancePeriod:BasicCommandExecution
+    private GovernancePeriod _governancePeriod;
+    private ICatalogue[] _catalogues;
+
+    public ExecuteCommandAddCatalogueToGovernancePeriod(IBasicActivateItems activator, GovernancePeriod governancePeriod, ICatalogue c):base(activator)
     {
-        private GovernancePeriod _governancePeriod;
-        private ICatalogue[] _catalogues;
+        _governancePeriod = governancePeriod;
+        _catalogues = new []{c};
 
-        public ExecuteCommandAddCatalogueToGovernancePeriod(IBasicActivateItems activator, GovernancePeriod governancePeriod, ICatalogue c):base(activator)
-        {
-            _governancePeriod = governancePeriod;
-            _catalogues = new []{c};
-
-            if(_governancePeriod.GovernedCatalogues.Contains(c))
-                SetImpossible("Catalogue is already governed by that period");
-        }
-        public ExecuteCommandAddCatalogueToGovernancePeriod(IBasicActivateItems activator, GovernancePeriod governancePeriod, ICatalogue[] catalogues):base(activator)
-        {
-            _governancePeriod = governancePeriod;
-            _catalogues = catalogues;
-            _catalogues = catalogues.Except(_governancePeriod.GovernedCatalogues).ToArray();
+        if(_governancePeriod.GovernedCatalogues.Contains(c))
+            SetImpossible("Catalogue is already governed by that period");
+    }
+    public ExecuteCommandAddCatalogueToGovernancePeriod(IBasicActivateItems activator, GovernancePeriod governancePeriod, ICatalogue[] catalogues):base(activator)
+    {
+        _governancePeriod = governancePeriod;
+        _catalogues = catalogues;
+        _catalogues = catalogues.Except(_governancePeriod.GovernedCatalogues).ToArray();
             
-            if(!_catalogues.Any())
-                SetImpossible("All Catalogues are already in the Governance Period");
-        }
+        if(!_catalogues.Any())
+            SetImpossible("All Catalogues are already in the Governance Period");
+    }
 
-        public override void Execute()
-        {
-            base.Execute();
+    public override void Execute()
+    {
+        base.Execute();
 
-            foreach(var catalogue in _catalogues)
-                BasicActivator.RepositoryLocator.CatalogueRepository.GovernanceManager.Link(_governancePeriod,catalogue);
+        foreach(var catalogue in _catalogues)
+            BasicActivator.RepositoryLocator.CatalogueRepository.GovernanceManager.Link(_governancePeriod,catalogue);
 
-            Publish(_governancePeriod);
-        }
+        Publish(_governancePeriod);
     }
 }

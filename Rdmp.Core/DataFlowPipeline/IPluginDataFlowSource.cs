@@ -6,16 +6,13 @@
 
 using ReusableLibraryCode.Checks;
 
-namespace Rdmp.Core.DataFlowPipeline
+namespace Rdmp.Core.DataFlowPipeline;
+
+/// <summary>
+/// MEF discoverable version of IDataFlowSource
+/// </summary>
+/// <typeparam name="T"></typeparam>
+public interface IPluginDataFlowSource<T>:IDataFlowSource<T>,ICheckable
 {
-    /// <summary>
-    /// MEF discoverable version of IDataFlowSource
-    /// </summary>
-    /// <typeparam name="T"></typeparam>
-    
-    
-    public interface IPluginDataFlowSource<T>:IDataFlowSource<T>,ICheckable
-    {
         
-    }
 }

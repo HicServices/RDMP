@@ -8,44 +8,43 @@ using System;
 using Rdmp.Core.CommandExecution;
 using Rdmp.Core.CommandLine.Options;
 
-namespace Rdmp.Core.CommandLine.Runners
+namespace Rdmp.Core.CommandLine.Runners;
+
+/// <summary>
+/// Constructs the respective <see cref="IRunner"/> based on the supplied <see cref="RDMPCommandLineOptions"/> Type
+/// </summary>
+public class RunnerFactory
 {
-    /// <summary>
-    /// Constructs the respective <see cref="IRunner"/> based on the supplied <see cref="RDMPCommandLineOptions"/> Type
-    /// </summary>
-    public class RunnerFactory
+    public IRunner CreateRunner(IBasicActivateItems activator,RDMPCommandLineOptions command)
     {
-        public IRunner CreateRunner(IBasicActivateItems activator,RDMPCommandLineOptions command)
-        {
-            if (command.Command == CommandLineActivity.none)
-                throw new Exception("No command has been set on '" + command.GetType().Name + "'");
+        if (command.Command == CommandLineActivity.none)
+            throw new Exception("No command has been set on '" + command.GetType().Name + "'");
             
-            if (command is DleOptions dleOpts)
-                return new DleRunner(dleOpts);
+        if (command is DleOptions dleOpts)
+            return new DleRunner(dleOpts);
 
-            if(command is DqeOptions dqeOpts)
-                return new DqeRunner(dqeOpts);
+        if(command is DqeOptions dqeOpts)
+            return new DqeRunner(dqeOpts);
 
-            if(command is CacheOptions cacheOpts )
-                return new CacheRunner(cacheOpts);
+        if(command is CacheOptions cacheOpts )
+            return new CacheRunner(cacheOpts);
             
-            if (command is ExtractionOptions extractionOpts )
-                return new ExtractionRunner(activator,extractionOpts);
+        if (command is ExtractionOptions extractionOpts )
+            return new ExtractionRunner(activator,extractionOpts);
 
-            if(command is ReleaseOptions releaseOpts )
-                return new ReleaseRunner(releaseOpts);
+        if(command is ReleaseOptions releaseOpts )
+            return new ReleaseRunner(releaseOpts);
 
-            if (command is CohortCreationOptions cohortOpts )
-                return new CohortCreationRunner(cohortOpts);
+        if (command is CohortCreationOptions cohortOpts )
+            return new CohortCreationRunner(cohortOpts);
 
-            if(command is PackOptions packOpts )
-                return new PackPluginRunner(packOpts);
+        if(command is PackOptions packOpts )
+            return new PackPluginRunner(packOpts);
             
-            if(command is ExecuteCommandOptions executeOpts)
-                return new ExecuteCommandRunner(executeOpts);
+        if(command is ExecuteCommandOptions executeOpts)
+            return new ExecuteCommandRunner(executeOpts);
             
-            throw new Exception("RDMPCommandLineOptions Type '" + command.GetType() + "'");
-        }
-        
+        throw new Exception("RDMPCommandLineOptions Type '" + command.GetType() + "'");
     }
+        
 }

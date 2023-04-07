@@ -6,42 +6,40 @@
 
 using ReusableLibraryCode.Settings;
 
-namespace ReusableLibraryCode.Checks
+namespace ReusableLibraryCode.Checks;
+
+/// <summary>
+/// Describes an error that can surface during RDMPs execution as a result of state e.g. user is trying to extract to a db but the
+/// destination table already exists.
+/// </summary>
+public class ErrorCode
 {
+
     /// <summary>
-    /// Describes an error that can surface during RDMPs execution as a result of state e.g. user is trying to extract to a db but the
-    /// destination table already exists.
+    /// A fixed code for uniquely identifying this error type
     /// </summary>
-    public class ErrorCode
+    public string Code { get; }
+
+    /// <summary>
+    /// The string to display to the user in the event that the error occurs.  This is likely to contain one or more
+    /// placeholders e.g. {0} that will be populated with relevant info at the time it occurs (e.g. table names)
+    /// </summary>
+    public string Message { get; }
+
+    /// <summary>
+    /// The severity level at which the error is reported.  Can be overriden by <see cref="UserSettings"/>
+    /// </summary>
+    public CheckResult DefaultTreatment { get; }
+
+    public ErrorCode(string code, string message, CheckResult defaultTreatment)
     {
-
-        /// <summary>
-        /// A fixed code for uniquely identifying this error type
-        /// </summary>
-        public string Code { get; }
-
-        /// <summary>
-        /// The string to display to the user in the event that the error occurs.  This is likely to contain one or more
-        /// placeholders e.g. {0} that will be populated with relevant info at the time it occurs (e.g. table names)
-        /// </summary>
-        public string Message { get; }
-
-        /// <summary>
-        /// The severity level at which the error is reported.  Can be overriden by <see cref="UserSettings"/>
-        /// </summary>
-        public CheckResult DefaultTreatment { get; }
-
-        public ErrorCode(string code, string message, CheckResult defaultTreatment)
-        {
-            Code = code;
-            Message = message;
-            DefaultTreatment = defaultTreatment;
-        }
-
-        public override string ToString()
-        {
-            return Code;
-        }
+        Code = code;
+        Message = message;
+        DefaultTreatment = defaultTreatment;
     }
-    
+
+    public override string ToString()
+    {
+        return Code;
+    }
 }

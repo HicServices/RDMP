@@ -14,23 +14,22 @@ using Rdmp.UI.ProjectUI;
 using ReusableLibraryCode;
 using ReusableLibraryCode.Icons.IconProvision;
 
-namespace Rdmp.UI.Menus
+namespace Rdmp.UI.Menus;
+
+[System.ComponentModel.DesignerCategory("")]
+class ExtractionConfigurationMenu:RDMPContextMenuStrip
 {
-    [System.ComponentModel.DesignerCategory("")]
-    class ExtractionConfigurationMenu:RDMPContextMenuStrip
+    public ExtractionConfigurationMenu(RDMPContextMenuStripArgs args, ExtractionConfiguration extractionConfiguration)
+        : base( args,extractionConfiguration)
     {
-        public ExtractionConfigurationMenu(RDMPContextMenuStripArgs args, ExtractionConfiguration extractionConfiguration)
-            : base( args,extractionConfiguration)
-        {
-            Items.Add("Edit", null, (s, e) => _activator.Activate<ExtractionConfigurationUI, ExtractionConfiguration>(extractionConfiguration));
+        Items.Add("Edit", null, (s, e) => _activator.Activate<ExtractionConfigurationUI, ExtractionConfiguration>(extractionConfiguration));
 
-            Add(new ExecuteCommandRelease(_activator) { Weight = -99.5f}.SetTarget(extractionConfiguration));
-            Add(new ExecuteCommandRefreshExtractionConfigurationsCohort(_activator, extractionConfiguration));
+        Add(new ExecuteCommandRelease(_activator) { Weight = -99.5f}.SetTarget(extractionConfiguration));
+        Add(new ExecuteCommandRefreshExtractionConfigurationsCohort(_activator, extractionConfiguration));
 
-            Add(new ExecuteCommandOpenExtractionDirectory(_activator, extractionConfiguration));
+        Add(new ExecuteCommandOpenExtractionDirectory(_activator, extractionConfiguration));
 
-            ReBrandActivateAs("Configure/Run Extract...", RDMPConcept.ExtractionConfiguration, OverlayKind.Execute);
-        }
-
+        ReBrandActivateAs("Configure/Run Extract...", RDMPConcept.ExtractionConfiguration, OverlayKind.Execute);
     }
+
 }

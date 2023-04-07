@@ -4,21 +4,20 @@
 // RDMP is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License for more details.
 // You should have received a copy of the GNU General Public License along with RDMP. If not, see <https://www.gnu.org/licenses/>.
 
-namespace Rdmp.Core.Curation.Data
+namespace Rdmp.Core.Curation.Data;
+
+/// <summary>
+/// The direction to sort the results of an Aggregate Graph
+/// </summary>
+public enum AggregateTopXOrderByDirection
 {
     /// <summary>
-    /// The direction to sort the results of an Aggregate Graph
+    /// Alphabetically A->Z numerically 0->99999
     /// </summary>
-    public enum AggregateTopXOrderByDirection
-    {
-        /// <summary>
-        /// Alphabetically A->Z numerically 0->99999
-        /// </summary>
-        Ascending,
+    Ascending,
 
-        /// <summary>
-        /// Alphabetically Z->A numerically 99999->0
-        /// </summary>
-        Descending
-    }
+    /// <summary>
+    /// Alphabetically Z->A numerically 99999->0
+    /// </summary>
+    Descending
 }

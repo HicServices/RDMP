@@ -8,31 +8,30 @@ using SixLabors.ImageSharp;
 using Rdmp.Core.Curation.Data.Pipelines;
 using SixLabors.ImageSharp.PixelFormats;
 
-namespace Rdmp.Core.Icons.IconProvision.StateBasedIconProviders
+namespace Rdmp.Core.Icons.IconProvision.StateBasedIconProviders;
+
+public class PipelineComponentStateBasedIconProvider : IObjectStateBasedIconProvider
 {
-    public class PipelineComponentStateBasedIconProvider : IObjectStateBasedIconProvider
+    private readonly Image<Rgba32> _component;
+    private readonly Image<Rgba32> _source;
+    private readonly Image<Rgba32> _destination;
+
+    public PipelineComponentStateBasedIconProvider()
     {
-        private readonly Image<Rgba32> _component;
-        private readonly Image<Rgba32> _source;
-        private readonly Image<Rgba32> _destination;
+        _component = Image.Load<Rgba32>(CatalogueIcons.PipelineComponent);
+        _source = Image.Load<Rgba32>(CatalogueIcons.PipelineComponentSource);
+        _destination = Image.Load<Rgba32>(CatalogueIcons.PipelineComponentDestination);
+    }
+    public Image<Rgba32> GetImageIfSupportedObject(object o)
+    {
+        if (o is not PipelineComponent pc) return null;
 
-        public PipelineComponentStateBasedIconProvider()
-        {
-            _component = Image.Load<Rgba32>(CatalogueIcons.PipelineComponent);
-            _source = Image.Load<Rgba32>(CatalogueIcons.PipelineComponentSource);
-            _destination = Image.Load<Rgba32>(CatalogueIcons.PipelineComponentDestination);
-        }
-        public Image<Rgba32> GetImageIfSupportedObject(object o)
-        {
-            if (o is not PipelineComponent pc) return null;
+        if (pc.Class != null && pc.Class.EndsWith("Source"))
+            return _source;
+        if (pc.Class != null && pc.Class.EndsWith("Destination"))
+            return _destination;
 
-            if (pc.Class != null && pc.Class.EndsWith("Source"))
-                return _source;
-            if (pc.Class != null && pc.Class.EndsWith("Destination"))
-                return _destination;
+        return _component;
 
-            return _component;
-
-        }
     }
 }

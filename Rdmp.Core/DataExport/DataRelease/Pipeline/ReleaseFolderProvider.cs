@@ -14,109 +14,108 @@ using Rdmp.Core.DataFlowPipeline.Requirements;
 using ReusableLibraryCode.Checks;
 using ReusableLibraryCode.Progress;
 
-namespace Rdmp.Core.DataExport.DataRelease.Pipeline
+namespace Rdmp.Core.DataExport.DataRelease.Pipeline;
+
+/// <summary>
+/// Middle component for preparing the Release Folders for the Release Pipeline.
+/// Some destination components will complain if this is not present!
+/// </summary>
+public class ReleaseFolderProvider : IPluginDataFlowComponent<ReleaseAudit>, IPipelineRequirement<Project>, IPipelineRequirement<ReleaseData>
 {
-    /// <summary>
-    /// Middle component for preparing the Release Folders for the Release Pipeline.
-    /// Some destination components will complain if this is not present!
-    /// </summary>
-    public class ReleaseFolderProvider : IPluginDataFlowComponent<ReleaseAudit>, IPipelineRequirement<Project>, IPipelineRequirement<ReleaseData>
+    private Project _project;
+    private ReleaseData _releaseData;
+    private DirectoryInfo _releaseFolder;
+
+    [DemandsNestedInitialization()]
+    public ReleaseFolderSettings FolderSettings { get; set; }
+
+    public ReleaseAudit ProcessPipelineData(ReleaseAudit releaseAudit, IDataLoadEventListener listener, GracefulCancellationToken cancellationToken)
     {
-        private Project _project;
-        private ReleaseData _releaseData;
-        private DirectoryInfo _releaseFolder;
+        if (releaseAudit == null)
+            return null;
 
-        [DemandsNestedInitialization()]
-        public ReleaseFolderSettings FolderSettings { get; set; }
+        if(_releaseFolder == null)
+            PrepareAndCheckReleaseFolder(new FromDataLoadEventListenerToCheckNotifier(listener));
 
-        public ReleaseAudit ProcessPipelineData(ReleaseAudit releaseAudit, IDataLoadEventListener listener, GracefulCancellationToken cancellationToken)
+        releaseAudit.ReleaseFolder = _releaseFolder;
+        return releaseAudit;
+    }
+
+    public void Dispose(IDataLoadEventListener listener, Exception pipelineFailureExceptionIfAny)
+    {
+    }
+
+    public void Abort(IDataLoadEventListener listener)
+    {
+        listener.OnNotify(this, new NotifyEventArgs(ProgressEventType.Warning, "This component cannot Abort!"));
+    }
+
+    public void Check(ICheckNotifier notifier)
+    {
+        ((ICheckable)FolderSettings).Check(notifier);
+        PrepareAndCheckReleaseFolder(notifier);
+    }
+
+    public void PreInitialize(Project value, IDataLoadEventListener listener)
+    {
+        _project = value;
+    }
+
+    public void PreInitialize(ReleaseData value, IDataLoadEventListener listener)
+    {
+        _releaseData = value;
+    }
+
+    private void PrepareAndCheckReleaseFolder(ICheckNotifier notifier)
+    {
+        if (FolderSettings.CustomReleaseFolder != null && !String.IsNullOrWhiteSpace(FolderSettings.CustomReleaseFolder.FullName))
         {
-            if (releaseAudit == null)
-                return null;
-
-            if(_releaseFolder == null)
-                PrepareAndCheckReleaseFolder(new FromDataLoadEventListenerToCheckNotifier(listener));
-
-            releaseAudit.ReleaseFolder = _releaseFolder;
-            return releaseAudit;
+            _releaseFolder = FolderSettings.CustomReleaseFolder;
+        }
+        else
+        {
+            _releaseFolder = GetFromProjectFolder(_project);
         }
 
-        public void Dispose(IDataLoadEventListener listener, Exception pipelineFailureExceptionIfAny)
+        if (_releaseFolder.Exists && _releaseFolder.EnumerateFileSystemInfos().Any())
         {
-        }
-
-        public void Abort(IDataLoadEventListener listener)
-        {
-            listener.OnNotify(this, new NotifyEventArgs(ProgressEventType.Warning, "This component cannot Abort!"));
-        }
-
-        public void Check(ICheckNotifier notifier)
-        {
-            ((ICheckable)FolderSettings).Check(notifier);
-            PrepareAndCheckReleaseFolder(notifier);
-        }
-
-        public void PreInitialize(Project value, IDataLoadEventListener listener)
-        {
-            _project = value;
-        }
-
-        public void PreInitialize(ReleaseData value, IDataLoadEventListener listener)
-        {
-            _releaseData = value;
-        }
-
-        private void PrepareAndCheckReleaseFolder(ICheckNotifier notifier)
-        {
-            if (FolderSettings.CustomReleaseFolder != null && !String.IsNullOrWhiteSpace(FolderSettings.CustomReleaseFolder.FullName))
-            {
-                _releaseFolder = FolderSettings.CustomReleaseFolder;
-            }
+            if (notifier.OnCheckPerformed(new CheckEventArgs(String.Format("Release folder {0} already exists!", _releaseFolder.FullName), CheckResult.Fail, null, "Do you want to delete it? You should check the contents first.")))
+                _releaseFolder.Delete(true);
             else
-            {
-                _releaseFolder = GetFromProjectFolder(_project);
-            }
-
-            if (_releaseFolder.Exists && _releaseFolder.EnumerateFileSystemInfos().Any())
-            {
-                if (notifier.OnCheckPerformed(new CheckEventArgs(String.Format("Release folder {0} already exists!", _releaseFolder.FullName), CheckResult.Fail, null, "Do you want to delete it? You should check the contents first.")))
-                    _releaseFolder.Delete(true);
-                else
-                    return;
-            }
-
-            if (FolderSettings.CreateReleaseDirectoryIfNotFound)
-                _releaseFolder.Create();
-            else
-                throw new Exception("Intended release directory was not found and I was forbidden to create it: " +
-                                    _releaseFolder.FullName);
+                return;
         }
 
-        public DirectoryInfo GetFromProjectFolder(IProject p)
+        if (FolderSettings.CreateReleaseDirectoryIfNotFound)
+            _releaseFolder.Create();
+        else
+            throw new Exception("Intended release directory was not found and I was forbidden to create it: " +
+                                _releaseFolder.FullName);
+    }
+
+    public DirectoryInfo GetFromProjectFolder(IProject p)
+    {
+        if (string.IsNullOrWhiteSpace(p.ExtractionDirectory))
+            return null;
+
+        var prefix = DateTime.UtcNow.ToString("yyyy-MM-dd");
+        string suffix = String.Empty;
+        if (_releaseData != null && _releaseData.ConfigurationsForRelease != null && _releaseData.ConfigurationsForRelease.Keys.Any())
         {
-            if (string.IsNullOrWhiteSpace(p.ExtractionDirectory))
-                return null;
-
-            var prefix = DateTime.UtcNow.ToString("yyyy-MM-dd");
-            string suffix = String.Empty;
-            if (_releaseData != null && _releaseData.ConfigurationsForRelease != null && _releaseData.ConfigurationsForRelease.Keys.Any())
-            {
-                var releaseTicket = _releaseData.ConfigurationsForRelease.Keys.First().ReleaseTicket;
-                if (_releaseData.ConfigurationsForRelease.Keys.All(x => x.ReleaseTicket == releaseTicket))
-                    suffix = releaseTicket;
-                else
-                    throw new Exception("Multiple release tickets seen, this is not allowed!");
-            }
-
-            if (String.IsNullOrWhiteSpace(suffix))
-            {
-                if (String.IsNullOrWhiteSpace(p.MasterTicket))
-                    suffix = p.ID + "_" + p.Name;
-                else
-                    suffix = p.MasterTicket;
-            }
-
-            return new DirectoryInfo(Path.Combine(p.ExtractionDirectory, prefix + "_" + suffix));
+            var releaseTicket = _releaseData.ConfigurationsForRelease.Keys.First().ReleaseTicket;
+            if (_releaseData.ConfigurationsForRelease.Keys.All(x => x.ReleaseTicket == releaseTicket))
+                suffix = releaseTicket;
+            else
+                throw new Exception("Multiple release tickets seen, this is not allowed!");
         }
+
+        if (String.IsNullOrWhiteSpace(suffix))
+        {
+            if (String.IsNullOrWhiteSpace(p.MasterTicket))
+                suffix = p.ID + "_" + p.Name;
+            else
+                suffix = p.MasterTicket;
+        }
+
+        return new DirectoryInfo(Path.Combine(p.ExtractionDirectory, prefix + "_" + suffix));
     }
 }

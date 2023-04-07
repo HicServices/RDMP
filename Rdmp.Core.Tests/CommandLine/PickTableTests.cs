@@ -14,28 +14,27 @@ using System.Collections.Generic;
 using System.Text;
 using Tests.Common;
 
-namespace Rdmp.Core.Tests.CommandLine
+namespace Rdmp.Core.Tests.CommandLine;
+
+class PickTableTests : UnitTests
 {
-    class PickTableTests : UnitTests
+
+    [Test]
+    public void TestPickTable()
     {
+        var pick = new PickTable();
+        var result = pick.Parse(@"Table:v_cool:Schema:dbo:IsView:True:DatabaseType:MicrosoftSQLServer:Name:MyDb:Server=localhost\sqlexpress;Trusted_Connection=True;",0);
 
-        [Test]
-        public void TestPickTable()
-        {
-            var pick = new PickTable();
-            var result = pick.Parse(@"Table:v_cool:Schema:dbo:IsView:True:DatabaseType:MicrosoftSQLServer:Name:MyDb:Server=localhost\sqlexpress;Trusted_Connection=True;",0);
-
-            Assert.IsNotNull(result.Table);
+        Assert.IsNotNull(result.Table);
             
-            Assert.AreEqual(TableType.View,result.Table.TableType);
-            Assert.AreEqual("dbo",result.Table.Schema);
+        Assert.AreEqual(TableType.View,result.Table.TableType);
+        Assert.AreEqual("dbo",result.Table.Schema);
 
-            Assert.AreEqual("v_cool",result.Table.GetRuntimeName());
-            Assert.AreEqual("MyDb",result.Table.Database.GetRuntimeName());
-            Assert.AreEqual("localhost\\sqlexpress",result.Table.Database.Server.Name);
-            Assert.AreEqual(DatabaseType.MicrosoftSQLServer,result.Table.Database.Server.DatabaseType);
-            Assert.IsNull(result.Table.Database.Server.ExplicitPasswordIfAny);
-            Assert.IsNull(result.Table.Database.Server.ExplicitUsernameIfAny);
-        }
+        Assert.AreEqual("v_cool",result.Table.GetRuntimeName());
+        Assert.AreEqual("MyDb",result.Table.Database.GetRuntimeName());
+        Assert.AreEqual("localhost\\sqlexpress",result.Table.Database.Server.Name);
+        Assert.AreEqual(DatabaseType.MicrosoftSQLServer,result.Table.Database.Server.DatabaseType);
+        Assert.IsNull(result.Table.Database.Server.ExplicitPasswordIfAny);
+        Assert.IsNull(result.Table.Database.Server.ExplicitUsernameIfAny);
     }
 }

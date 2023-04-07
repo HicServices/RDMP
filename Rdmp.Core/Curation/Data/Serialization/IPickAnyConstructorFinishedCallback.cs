@@ -4,17 +4,16 @@
 // RDMP is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License for more details.
 // You should have received a copy of the GNU General Public License along with RDMP. If not, see <https://www.gnu.org/licenses/>.
 
-namespace Rdmp.Core.Curation.Data.Serialization
+namespace Rdmp.Core.Curation.Data.Serialization;
+
+/// <summary>
+/// For use with classes who intend to be constructed by <see cref="PickAnyConstructorJsonConverter"/>.  If you implement this interface then the callback notify you after your 
+/// constructor has been called and properties populated. 
+/// </summary>
+public interface IPickAnyConstructorFinishedCallback
 {
     /// <summary>
-    /// For use with classes who intend to be constructed by <see cref="PickAnyConstructorJsonConverter"/>.  If you implement this interface then the callback notify you after your 
-    /// constructor has been called and properties populated. 
+    /// Called after a <see cref="PickAnyConstructorJsonConverter"/> finishes constructing and populating your instance
     /// </summary>
-    public interface IPickAnyConstructorFinishedCallback
-    {
-        /// <summary>
-        /// Called after a <see cref="PickAnyConstructorJsonConverter"/> finishes constructing and populating your instance
-        /// </summary>
-        void AfterConstruction();
-    }
+    void AfterConstruction();
 }

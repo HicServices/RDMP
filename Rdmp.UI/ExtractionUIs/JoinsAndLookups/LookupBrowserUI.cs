@@ -18,112 +18,111 @@ using ReusableLibraryCode.DataAccess;
 
 using ScintillaNET;
 
-namespace Rdmp.UI.ExtractionUIs.JoinsAndLookups
+namespace Rdmp.UI.ExtractionUIs.JoinsAndLookups;
+
+public partial class LookupBrowserUI : LookupBrowserUI_Design
 {
-    public partial class LookupBrowserUI : LookupBrowserUI_Design
+    public LookupBrowserUI()
     {
-        public LookupBrowserUI()
-        {
-            InitializeComponent();
+        InitializeComponent();
 
-            dataGridView1.ColumnAdded += (s, e) => e.Column.FillWeight = 1;
-        }
+        dataGridView1.ColumnAdded += (s, e) => e.Column.FillWeight = 1;
+    }
 
-        private ColumnInfo _keyColumn;
-        private ColumnInfo _descriptionColumn;
-        private TableInfo _tableInfo;
-        private Scintilla _scintilla;
+    private ColumnInfo _keyColumn;
+    private ColumnInfo _descriptionColumn;
+    private TableInfo _tableInfo;
+    private Scintilla _scintilla;
 
-        public override void SetDatabaseObject(IActivateItems activator, Lookup databaseObject)
-        {
-            base.SetDatabaseObject(activator, databaseObject);
+    public override void SetDatabaseObject(IActivateItems activator, Lookup databaseObject)
+    {
+        base.SetDatabaseObject(activator, databaseObject);
 
-            _keyColumn = databaseObject.PrimaryKey;
-            _descriptionColumn = databaseObject.Description;
-            _tableInfo = _keyColumn.TableInfo;
+        _keyColumn = databaseObject.PrimaryKey;
+        _descriptionColumn = databaseObject.Description;
+        _tableInfo = _keyColumn.TableInfo;
 
-            lblCode.Text = _keyColumn.GetRuntimeName();
-            lblDescription.Text = _descriptionColumn.GetRuntimeName();
+        lblCode.Text = _keyColumn.GetRuntimeName();
+        lblDescription.Text = _descriptionColumn.GetRuntimeName();
 
-            ScintillaTextEditorFactory factory = new ScintillaTextEditorFactory();
-            _scintilla = factory.Create();
+        ScintillaTextEditorFactory factory = new ScintillaTextEditorFactory();
+        _scintilla = factory.Create();
 
-            gbScintilla.Controls.Add(_scintilla);
+        gbScintilla.Controls.Add(_scintilla);
 
-            try
-            {
-                SendQuery();
-            }
-            catch (System.Exception ex)
-            {
-                CommonFunctionality.Fatal("Could not connect to database",ex);
-            }
-        }
-
-        public string GetCommand()
-        {
-            var repo = new MemoryCatalogueRepository();
-
-            var qb = new QueryBuilder("distinct", null);
-            qb.AddColumn(new ColumnInfoToIColumn(repo,_keyColumn) { Order = 0 });
-            qb.AddColumn(new ColumnInfoToIColumn(repo,_descriptionColumn) { Order = 1 });
-            qb.TopX = 100;
-
-
-            var container = new SpontaneouslyInventedFilterContainer(repo,null, null, FilterContainerOperation.AND);
-
-            if(!string.IsNullOrWhiteSpace(tbCode.Text))
-            {
-                var codeFilter = new SpontaneouslyInventedFilter(repo,container, _keyColumn.GetFullyQualifiedName() + " LIKE '" + tbCode.Text + "%'", "Key Starts", "", null);
-                container.AddChild(codeFilter);
-            }
-            
-            if(!string.IsNullOrWhiteSpace(tbDescription.Text))
-            {
-                var codeFilter = new SpontaneouslyInventedFilter(repo,container, _descriptionColumn.GetFullyQualifiedName() + " LIKE '%" + tbDescription.Text + "%'", "Description Contains", "", null);
-                container.AddChild(codeFilter);
-            }
-            
-            qb.RootFilterContainer = container;
-
-            return qb.SQL;
-        }
-
-        private void tb_TextChanged(object sender, System.EventArgs e)
+        try
         {
             SendQuery();
         }
-
-        private void SendQuery()
+        catch (System.Exception ex)
         {
-            var tbl = _tableInfo.Discover(DataAccessContext.InternalDataProcessing);
-            var server = tbl.Database.Server;
-            using (var con = server.GetConnection())
-            {
-                con.Open();
-                var sql = GetCommand();
-
-                _scintilla.ReadOnly = false;
-                _scintilla.Text = sql;
-                _scintilla.ReadOnly = true;
-
-                var da = server.GetDataAdapter(sql, con);
-
-                var dt = new DataTable();
-                da.Fill(dt);
-
-                dataGridView1.DataSource = dt;
-
-
-                //set autosize mode
-                foreach (DataGridViewColumn column in dataGridView1.Columns)
-                    column.AutoSizeMode = DataGridViewAutoSizeColumnMode.AllCells;
-            }
+            CommonFunctionality.Fatal("Could not connect to database",ex);
         }
     }
 
-    [TypeDescriptionProvider(typeof(AbstractControlDescriptionProvider<LookupBrowserUI_Design, UserControl>))]
-    public abstract class LookupBrowserUI_Design: RDMPSingleDatabaseObjectControl<Lookup>
+    public string GetCommand()
     {
+        var repo = new MemoryCatalogueRepository();
+
+        var qb = new QueryBuilder("distinct", null);
+        qb.AddColumn(new ColumnInfoToIColumn(repo,_keyColumn) { Order = 0 });
+        qb.AddColumn(new ColumnInfoToIColumn(repo,_descriptionColumn) { Order = 1 });
+        qb.TopX = 100;
+
+
+        var container = new SpontaneouslyInventedFilterContainer(repo,null, null, FilterContainerOperation.AND);
+
+        if(!string.IsNullOrWhiteSpace(tbCode.Text))
+        {
+            var codeFilter = new SpontaneouslyInventedFilter(repo,container, _keyColumn.GetFullyQualifiedName() + " LIKE '" + tbCode.Text + "%'", "Key Starts", "", null);
+            container.AddChild(codeFilter);
+        }
+            
+        if(!string.IsNullOrWhiteSpace(tbDescription.Text))
+        {
+            var codeFilter = new SpontaneouslyInventedFilter(repo,container, _descriptionColumn.GetFullyQualifiedName() + " LIKE '%" + tbDescription.Text + "%'", "Description Contains", "", null);
+            container.AddChild(codeFilter);
+        }
+            
+        qb.RootFilterContainer = container;
+
+        return qb.SQL;
     }
+
+    private void tb_TextChanged(object sender, System.EventArgs e)
+    {
+        SendQuery();
+    }
+
+    private void SendQuery()
+    {
+        var tbl = _tableInfo.Discover(DataAccessContext.InternalDataProcessing);
+        var server = tbl.Database.Server;
+        using (var con = server.GetConnection())
+        {
+            con.Open();
+            var sql = GetCommand();
+
+            _scintilla.ReadOnly = false;
+            _scintilla.Text = sql;
+            _scintilla.ReadOnly = true;
+
+            var da = server.GetDataAdapter(sql, con);
+
+            var dt = new DataTable();
+            da.Fill(dt);
+
+            dataGridView1.DataSource = dt;
+
+
+            //set autosize mode
+            foreach (DataGridViewColumn column in dataGridView1.Columns)
+                column.AutoSizeMode = DataGridViewAutoSizeColumnMode.AllCells;
+        }
+    }
+}
+
+[TypeDescriptionProvider(typeof(AbstractControlDescriptionProvider<LookupBrowserUI_Design, UserControl>))]
+public abstract class LookupBrowserUI_Design: RDMPSingleDatabaseObjectControl<Lookup>
+{
 }

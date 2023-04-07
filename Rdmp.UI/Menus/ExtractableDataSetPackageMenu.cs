@@ -15,38 +15,37 @@ using Rdmp.Core.Providers;
 using Rdmp.UI.SimpleDialogs;
 using ReusableLibraryCode.Icons.IconProvision;
 
-namespace Rdmp.UI.Menus
+namespace Rdmp.UI.Menus;
+
+[System.ComponentModel.DesignerCategory("")]
+class ExtractableDataSetPackageMenu : RDMPContextMenuStrip
 {
-    [System.ComponentModel.DesignerCategory("")]
-    class ExtractableDataSetPackageMenu : RDMPContextMenuStrip
+    private readonly ExtractableDataSetPackage _package;
+    private readonly DataExportChildProvider _childProvider;
+
+    public ExtractableDataSetPackageMenu(RDMPContextMenuStripArgs args, ExtractableDataSetPackage package): base(args, package)
     {
-        private readonly ExtractableDataSetPackage _package;
-        private readonly DataExportChildProvider _childProvider;
+        _package = package;
+        _childProvider = (DataExportChildProvider) _activator.CoreChildProvider;
+        Items.Add("Add ExtractableDataSet(s) to Package", _activator.CoreIconProvider.GetImage(RDMPConcept.ExtractableDataSet, OverlayKind.Link).ImageToBitmap(), AddExtractableDatasetToPackage);
 
-        public ExtractableDataSetPackageMenu(RDMPContextMenuStripArgs args, ExtractableDataSetPackage package): base(args, package)
+    }
+
+    private void AddExtractableDatasetToPackage(object sender, EventArgs e)
+    {
+        var packageManager = _activator.RepositoryLocator.DataExportRepository;
+        var notInPackage = _childProvider.ExtractableDataSets.Except(packageManager.GetAllDataSets(_package, _childProvider.ExtractableDataSets));
+
+        if(_activator.SelectObjects(new DialogArgs
+           {
+               TaskDescription = "Which datasets should become part of the package.  When adding a package to an ExtractionConfiguration all datasets will be added at once."
+           }, notInPackage.ToArray(), out var selected))
         {
-            _package = package;
-            _childProvider = (DataExportChildProvider) _activator.CoreChildProvider;
-            Items.Add("Add ExtractableDataSet(s) to Package", _activator.CoreIconProvider.GetImage(RDMPConcept.ExtractableDataSet, OverlayKind.Link).ImageToBitmap(), AddExtractableDatasetToPackage);
+            foreach (ExtractableDataSet ds in selected)
+                packageManager.AddDataSetToPackage(_package, ds);
 
-        }
-
-        private void AddExtractableDatasetToPackage(object sender, EventArgs e)
-        {
-            var packageManager = _activator.RepositoryLocator.DataExportRepository;
-            var notInPackage = _childProvider.ExtractableDataSets.Except(packageManager.GetAllDataSets(_package, _childProvider.ExtractableDataSets));
-
-            if(_activator.SelectObjects(new DialogArgs
-            {
-                TaskDescription = "Which datasets should become part of the package.  When adding a package to an ExtractionConfiguration all datasets will be added at once."
-            }, notInPackage.ToArray(), out var selected))
-            {
-                foreach (ExtractableDataSet ds in selected)
-                    packageManager.AddDataSetToPackage(_package, ds);
-
-                //package contents changed
-                Publish(_package);
-            }
+            //package contents changed
+            Publish(_package);
         }
     }
 }

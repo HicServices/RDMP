@@ -6,32 +6,31 @@
 
 using Rdmp.Core.Curation.Data.Pipelines;
 
-namespace Rdmp.Core.DataFlowPipeline.Events
+namespace Rdmp.Core.DataFlowPipeline.Events;
+
+/// <summary>
+/// Handler for events which relate to an IDataFlowPipelineEngine (starting / completing etc)
+/// </summary>
+/// <param name="sender"></param>
+/// <param name="args"></param>
+public delegate void PipelineEngineEventHandler(object sender, PipelineEngineEventArgs args);
+
+/// <summary>
+/// Events that relate to an <see cref="IDataFlowPipelineEngine"/>
+/// </summary>
+public class PipelineEngineEventArgs
 {
     /// <summary>
-    /// Handler for events which relate to an IDataFlowPipelineEngine (starting / completing etc)
+    /// The sender of the event
     /// </summary>
-    /// <param name="sender"></param>
-    /// <param name="args"></param>
-    public delegate void PipelineEngineEventHandler(object sender, PipelineEngineEventArgs args);
+    public IDataFlowPipelineEngine PipelineEngine { get; private set; }
 
     /// <summary>
-    /// Events that relate to an <see cref="IDataFlowPipelineEngine"/>
+    /// Describes an event happening on <paramref name="sender"/>
     /// </summary>
-    public class PipelineEngineEventArgs
+    /// <param name="sender"></param>
+    public PipelineEngineEventArgs(IDataFlowPipelineEngine sender)
     {
-        /// <summary>
-        /// The sender of the event
-        /// </summary>
-        public IDataFlowPipelineEngine PipelineEngine { get; private set; }
-
-        /// <summary>
-        /// Describes an event happening on <paramref name="sender"/>
-        /// </summary>
-        /// <param name="sender"></param>
-        public PipelineEngineEventArgs(IDataFlowPipelineEngine sender)
-        {
-            PipelineEngine = sender;
-        }
+        PipelineEngine = sender;
     }
 }

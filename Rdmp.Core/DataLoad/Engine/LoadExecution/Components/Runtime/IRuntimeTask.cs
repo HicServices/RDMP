@@ -9,18 +9,17 @@ using Rdmp.Core.DataLoad.Engine.LoadExecution.Components.Arguments;
 using ReusableLibraryCode.Checks;
 using ReusableLibraryCode.Progress;
 
-namespace Rdmp.Core.DataLoad.Engine.LoadExecution.Components.Runtime
+namespace Rdmp.Core.DataLoad.Engine.LoadExecution.Components.Runtime;
+
+/// <summary>
+/// See RuntimeTask
+/// </summary>
+public interface IRuntimeTask : IDataLoadComponent,ICheckable
 {
-    /// <summary>
-    /// See RuntimeTask
-    /// </summary>
-    public interface IRuntimeTask : IDataLoadComponent,ICheckable
-    {
-        bool Exists();
-        void Abort(IDataLoadEventListener postLoadEventListener);
+    bool Exists();
+    void Abort(IDataLoadEventListener postLoadEventListener);
 
-        IProcessTask ProcessTask { get; }
+    IProcessTask ProcessTask { get; }
 
-        RuntimeArgumentCollection RuntimeArguments { get; }
-    }
+    RuntimeArgumentCollection RuntimeArguments { get; }
 }

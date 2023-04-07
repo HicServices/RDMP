@@ -7,30 +7,29 @@
 using System.Collections.Generic;
 using Rdmp.Core.Curation.Data.Cohort;
 
-namespace Rdmp.Core.CommandExecution.Combining
+namespace Rdmp.Core.CommandExecution.Combining;
+
+/// <summary>
+/// <see cref="ICombineToMakeCommand"/> for an object of type <see cref="CohortAggregateContainer"/>
+/// </summary>
+public class CohortAggregateContainerCombineable : ICombineToMakeCommand
 {
-    /// <summary>
-    /// <see cref="ICombineToMakeCommand"/> for an object of type <see cref="CohortAggregateContainer"/>
-    /// </summary>
-    public class CohortAggregateContainerCombineable : ICombineToMakeCommand
+    public CohortAggregateContainer ParentContainerIfAny { get; private set; }
+    public CohortAggregateContainer AggregateContainer { get; private set; }
+    public List<CohortAggregateContainer> AllSubContainersRecursively  { get; private set; }
+
+    public CohortAggregateContainerCombineable(CohortAggregateContainer aggregateContainer)
     {
-        public CohortAggregateContainer ParentContainerIfAny { get; private set; }
-        public CohortAggregateContainer AggregateContainer { get; private set; }
-        public List<CohortAggregateContainer> AllSubContainersRecursively  { get; private set; }
+        AggregateContainer = aggregateContainer;
+        AllSubContainersRecursively = AggregateContainer.GetAllSubContainersRecursively();
 
-        public CohortAggregateContainerCombineable(CohortAggregateContainer aggregateContainer)
-        {
-            AggregateContainer = aggregateContainer;
-            AllSubContainersRecursively = AggregateContainer.GetAllSubContainersRecursively();
-
-            ParentContainerIfAny = AggregateContainer.GetParentContainerIfAny();
-        }
+        ParentContainerIfAny = AggregateContainer.GetParentContainerIfAny();
+    }
 
         
 
-        public string GetSqlString()
-        {
-            return null;
-        }
+    public string GetSqlString()
+    {
+        return null;
     }
 }

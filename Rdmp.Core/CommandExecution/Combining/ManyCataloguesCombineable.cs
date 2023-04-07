@@ -6,31 +6,30 @@
 
 using Rdmp.Core.Curation.Data;
 
-namespace Rdmp.Core.CommandExecution.Combining
+namespace Rdmp.Core.CommandExecution.Combining;
+
+/// <summary>
+/// <see cref="ICombineToMakeCommand"/> for a collection of type <see cref="Catalogue"/>
+/// </summary>
+public class ManyCataloguesCombineable : ICombineToMakeCommand
 {
     /// <summary>
-    /// <see cref="ICombineToMakeCommand"/> for a collection of type <see cref="Catalogue"/>
+    /// The <see cref="Catalogue"/> that are being selected for combining (e.g. by dragging)
     /// </summary>
-    public class ManyCataloguesCombineable : ICombineToMakeCommand
+    public Catalogue[] Catalogues { get; set; }
+
+    /// <summary>
+    /// Creates new instance populating <see cref="Catalogues"/>
+    /// </summary>
+    /// <param name="catalogues"></param>
+    public ManyCataloguesCombineable(Catalogue[] catalogues)
     {
-        /// <summary>
-        /// The <see cref="Catalogue"/> that are being selected for combining (e.g. by dragging)
-        /// </summary>
-        public Catalogue[] Catalogues { get; set; }
+        Catalogues = catalogues;
+    }
 
-        /// <summary>
-        /// Creates new instance populating <see cref="Catalogues"/>
-        /// </summary>
-        /// <param name="catalogues"></param>
-        public ManyCataloguesCombineable(Catalogue[] catalogues)
-        {
-            Catalogues = catalogues;
-        }
-
-        /// <inheritdoc/>
-        public string GetSqlString()
-        {
-            return null;
-        }
+    /// <inheritdoc/>
+    public string GetSqlString()
+    {
+        return null;
     }
 }

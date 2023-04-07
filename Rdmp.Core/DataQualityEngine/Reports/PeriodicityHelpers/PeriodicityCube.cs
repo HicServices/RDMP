@@ -8,41 +8,40 @@ using System.Collections.Generic;
 using Rdmp.Core.DataQualityEngine.Data;
 using Rdmp.Core.Validation.Constraints;
 
-namespace Rdmp.Core.DataQualityEngine.Reports.PeriodicityHelpers
+namespace Rdmp.Core.DataQualityEngine.Reports.PeriodicityHelpers;
+
+/// <summary>
+/// Records the number of records passing / failing validation with each consquence (See PeriodicityState).
+/// 
+/// <para>This class handles the Consequence dimension (See PeriodicityCubesOverTime for the time aspect handling).</para>
+/// </summary>
+public class PeriodicityCube
 {
-    /// <summary>
-    /// Records the number of records passing / failing validation with each consquence (See PeriodicityState).
-    /// 
-    /// <para>This class handles the Consequence dimension (See PeriodicityCubesOverTime for the time aspect handling).</para>
-    /// </summary>
-    public class PeriodicityCube
+    readonly Dictionary<Consequence, PeriodicityState> _consequenceCube = new Dictionary<Consequence, PeriodicityState>();
+    readonly PeriodicityState _passingValidation;
+
+    public PeriodicityCube(int year, int month)
     {
-        readonly Dictionary<Consequence, PeriodicityState> _consequenceCube = new Dictionary<Consequence, PeriodicityState>();
-        readonly PeriodicityState _passingValidation;
+        _passingValidation = new PeriodicityState(year, month, null);
 
-        public PeriodicityCube(int year, int month)
-        {
-            _passingValidation = new PeriodicityState(year, month, null);
+        _consequenceCube.Add(Consequence.Missing, new PeriodicityState(year, month, Consequence.Missing));
+        _consequenceCube.Add(Consequence.Wrong, new PeriodicityState(year, month, Consequence.Wrong));
+        _consequenceCube.Add(Consequence.InvalidatesRow, new PeriodicityState(year, month, Consequence.InvalidatesRow));
 
-            _consequenceCube.Add(Consequence.Missing, new PeriodicityState(year, month, Consequence.Missing));
-            _consequenceCube.Add(Consequence.Wrong, new PeriodicityState(year, month, Consequence.Wrong));
-            _consequenceCube.Add(Consequence.InvalidatesRow, new PeriodicityState(year, month, Consequence.InvalidatesRow));
+    }
+    public PeriodicityState GetStateForConsequence(Consequence? consequence)
+    {
+        if (consequence == null)
+            return _passingValidation;
 
-        }
-        public PeriodicityState GetStateForConsequence(Consequence? consequence)
-        {
-            if (consequence == null)
-                return _passingValidation;
+        return _consequenceCube[(Consequence)consequence];
+    }
 
-            return _consequenceCube[(Consequence)consequence];
-        }
+    public void CommitToDatabase(Evaluation evaluation, string pivotCategory)
+    {
+        foreach (PeriodicityState state in _consequenceCube.Values)
+            state.Commit(evaluation, pivotCategory);
 
-        public void CommitToDatabase(Evaluation evaluation, string pivotCategory)
-        {
-            foreach (PeriodicityState state in _consequenceCube.Values)
-                state.Commit(evaluation, pivotCategory);
-
-            _passingValidation.Commit(evaluation, pivotCategory);
-        }
+        _passingValidation.Commit(evaluation, pivotCategory);
     }
 }

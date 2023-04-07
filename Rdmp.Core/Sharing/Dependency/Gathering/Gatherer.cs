@@ -15,151 +15,150 @@ using Rdmp.Core.Curation.Data.DataLoad;
 using Rdmp.Core.DataExport.Data;
 using Rdmp.Core.Repositories;
 
-namespace Rdmp.Core.Sharing.Dependency.Gathering
+namespace Rdmp.Core.Sharing.Dependency.Gathering;
+
+/// <summary>
+/// Gathers dependencies of a given object in a more advanced/selective way than simply using methods of IHasDependencies
+/// </summary>
+public class Gatherer
 {
-    /// <summary>
-    /// Gathers dependencies of a given object in a more advanced/selective way than simply using methods of IHasDependencies
-    /// </summary>
-    public class Gatherer
+    private readonly IRDMPPlatformRepositoryServiceLocator _repositoryLocator;
+        
+    readonly Dictionary<Type, Func<IMapsDirectlyToDatabaseTable, GatheredObject>> _functions = new Dictionary<Type, Func<IMapsDirectlyToDatabaseTable, GatheredObject>>();
+
+    public Gatherer(IRDMPPlatformRepositoryServiceLocator repositoryLocator)
     {
-        private readonly IRDMPPlatformRepositoryServiceLocator _repositoryLocator;
-        
-        readonly Dictionary<Type, Func<IMapsDirectlyToDatabaseTable, GatheredObject>> _functions = new Dictionary<Type, Func<IMapsDirectlyToDatabaseTable, GatheredObject>>();
+        _repositoryLocator = repositoryLocator;
 
-        public Gatherer(IRDMPPlatformRepositoryServiceLocator repositoryLocator)
-        {
-            _repositoryLocator = repositoryLocator;
+        _functions.Add(typeof(Catalogue), o => GatherDependencies((Catalogue)o));
+        _functions.Add(typeof(ColumnInfo),o=>GatherDependencies((ColumnInfo)o));
+        _functions.Add(typeof(ANOTable), o => GatherDependencies((ANOTable)o));
+        _functions.Add(typeof(Curation.Data.Plugin), o => GatherDependencies((Curation.Data.Plugin)o));
 
-            _functions.Add(typeof(Catalogue), o => GatherDependencies((Catalogue)o));
-            _functions.Add(typeof(ColumnInfo),o=>GatherDependencies((ColumnInfo)o));
-            _functions.Add(typeof(ANOTable), o => GatherDependencies((ANOTable)o));
-            _functions.Add(typeof(Curation.Data.Plugin), o => GatherDependencies((Curation.Data.Plugin)o));
+        _functions.Add(typeof(LoadMetadata), o => GatherDependencies((LoadMetadata)o));
 
-            _functions.Add(typeof(LoadMetadata), o => GatherDependencies((LoadMetadata)o));
-
-            _functions.Add(typeof(ExtractionFilter), o => GatherDependencies((IFilter)o));
-            _functions.Add(typeof(DeployedExtractionFilter), o => GatherDependencies((IFilter)o));
-            _functions.Add(typeof(AggregateFilter), o => GatherDependencies((IFilter)o));
-        }
-
-        public IMapsDirectlyToDatabaseTable[] GetAllObjectsInAllDatabases()
-        {
-            var allCatalogueObjects = _repositoryLocator.CatalogueRepository.GetAllObjectsInDatabase();
-            var allDataExportObjects = _repositoryLocator.DataExportRepository.GetAllObjectsInDatabase();
-            return allCatalogueObjects.Union(allDataExportObjects).ToArray();
-        }
-
-        /// <summary>
-        /// Invokes the relevant overload if it exists. 
-        /// <seealso cref="CanGatherDependencies"/>
-        /// </summary>
-        /// <param name="databaseEntity"></param>
-        /// <returns></returns>
-        public bool CanGatherDependencies(IMapsDirectlyToDatabaseTable databaseEntity)
-        {
-            return _functions.ContainsKey(databaseEntity.GetType());
-        }
-
-        public GatheredObject GatherDependencies(IMapsDirectlyToDatabaseTable o)
-        {
-            return _functions[o.GetType()](o);
-        }
-
-        public GatheredObject GatherDependencies(ANOTable anoTable)
-        {
-            var root = new GatheredObject(anoTable.Server);
-            root.Children.Add(new GatheredObject(anoTable));
-
-            return root;
-        }
-
-        public GatheredObject GatherDependencies(Curation.Data.Plugin plugin)
-        {
-            var root = new GatheredObject(plugin);
-
-            foreach (var lma in plugin.LoadModuleAssemblies)
-                root.Children.Add(new GatheredObject(lma));
-            
-            return root;
-        }
-
-        public GatheredObject GatherDependencies(LoadMetadata loadMetadata)
-        {
-            //Share the LoadMetadata
-            var root = new GatheredObject(loadMetadata);
-
-            //and the catalogues behind the load
-            foreach (var cata in loadMetadata.GetAllCatalogues()) 
-                root.Children.Add(GatherDependencies(cata));
-
-            //and the load operations
-            foreach (IProcessTask processTask in loadMetadata.ProcessTasks)
-            {
-                var gpt = new GatheredObject(processTask);
-                root.Children.Add(gpt);
-
-                foreach (IArgument a in processTask.GetAllArguments())
-                {
-                    var ga = new GatheredObject(a);
-                    gpt.Children.Add(ga);
-                }
-            }
-
-            return root;
-        }
-
-        public GatheredObject GatherDependencies(Catalogue catalogue)
-        {
-            var root = new GatheredObject(catalogue);
-
-            foreach (var cis in catalogue.CatalogueItems)
-                root.Children.Add(new GatheredObject(cis));
-            
-            return root;
-        }
-        
-        public GatheredObject GatherDependencies(IFilter filter)
-        {
-            var root = new GatheredObject(filter);
-            
-            foreach (var param in filter.GetAllParameters())
-                root.Children.Add(new GatheredObject((IMapsDirectlyToDatabaseTable) param));
-            
-            return root;
-        }
-
-        /// <summary>
-        /// Gathers dependencies of ColumnInfo, this includes all [Sql] properties on any object in data export / catalogue databases
-        /// which references the fully qualified name of the ColumnInfo as well as its immediate network friends that should share its
-        /// runtime name e.g. CatalogueItem and ExtractionInformation.
-        /// </summary>
-        /// <param name="c"></param>
-        /// <returns></returns>
-        public GatheredObject GatherDependencies(ColumnInfo c)
-        {
-            var allObjects = GetAllObjectsInAllDatabases();
-
-            var propertyFinder = new AttributePropertyFinder<SqlAttribute>(allObjects);
-
-            var root = new GatheredObject(c);
-            
-            foreach (var o in allObjects)
-            {
-                //don't add a reference to the thing we are gathering dependencies on!
-                if(Equals(o,c))
-                    continue;
-                
-                foreach (var propertyInfo in propertyFinder.GetProperties(o))
-                {
-                    var sql = (string)propertyInfo.GetValue(o);
-
-                    if (sql != null && sql.Contains(c.Name))
-                        root.Children.Add(new GatheredObject(o));
-                }
-            }
-            
-            return root;
-        }
-
+        _functions.Add(typeof(ExtractionFilter), o => GatherDependencies((IFilter)o));
+        _functions.Add(typeof(DeployedExtractionFilter), o => GatherDependencies((IFilter)o));
+        _functions.Add(typeof(AggregateFilter), o => GatherDependencies((IFilter)o));
     }
+
+    public IMapsDirectlyToDatabaseTable[] GetAllObjectsInAllDatabases()
+    {
+        var allCatalogueObjects = _repositoryLocator.CatalogueRepository.GetAllObjectsInDatabase();
+        var allDataExportObjects = _repositoryLocator.DataExportRepository.GetAllObjectsInDatabase();
+        return allCatalogueObjects.Union(allDataExportObjects).ToArray();
+    }
+
+    /// <summary>
+    /// Invokes the relevant overload if it exists. 
+    /// <seealso cref="CanGatherDependencies"/>
+    /// </summary>
+    /// <param name="databaseEntity"></param>
+    /// <returns></returns>
+    public bool CanGatherDependencies(IMapsDirectlyToDatabaseTable databaseEntity)
+    {
+        return _functions.ContainsKey(databaseEntity.GetType());
+    }
+
+    public GatheredObject GatherDependencies(IMapsDirectlyToDatabaseTable o)
+    {
+        return _functions[o.GetType()](o);
+    }
+
+    public GatheredObject GatherDependencies(ANOTable anoTable)
+    {
+        var root = new GatheredObject(anoTable.Server);
+        root.Children.Add(new GatheredObject(anoTable));
+
+        return root;
+    }
+
+    public GatheredObject GatherDependencies(Curation.Data.Plugin plugin)
+    {
+        var root = new GatheredObject(plugin);
+
+        foreach (var lma in plugin.LoadModuleAssemblies)
+            root.Children.Add(new GatheredObject(lma));
+            
+        return root;
+    }
+
+    public GatheredObject GatherDependencies(LoadMetadata loadMetadata)
+    {
+        //Share the LoadMetadata
+        var root = new GatheredObject(loadMetadata);
+
+        //and the catalogues behind the load
+        foreach (var cata in loadMetadata.GetAllCatalogues()) 
+            root.Children.Add(GatherDependencies(cata));
+
+        //and the load operations
+        foreach (IProcessTask processTask in loadMetadata.ProcessTasks)
+        {
+            var gpt = new GatheredObject(processTask);
+            root.Children.Add(gpt);
+
+            foreach (IArgument a in processTask.GetAllArguments())
+            {
+                var ga = new GatheredObject(a);
+                gpt.Children.Add(ga);
+            }
+        }
+
+        return root;
+    }
+
+    public GatheredObject GatherDependencies(Catalogue catalogue)
+    {
+        var root = new GatheredObject(catalogue);
+
+        foreach (var cis in catalogue.CatalogueItems)
+            root.Children.Add(new GatheredObject(cis));
+            
+        return root;
+    }
+        
+    public GatheredObject GatherDependencies(IFilter filter)
+    {
+        var root = new GatheredObject(filter);
+            
+        foreach (var param in filter.GetAllParameters())
+            root.Children.Add(new GatheredObject((IMapsDirectlyToDatabaseTable) param));
+            
+        return root;
+    }
+
+    /// <summary>
+    /// Gathers dependencies of ColumnInfo, this includes all [Sql] properties on any object in data export / catalogue databases
+    /// which references the fully qualified name of the ColumnInfo as well as its immediate network friends that should share its
+    /// runtime name e.g. CatalogueItem and ExtractionInformation.
+    /// </summary>
+    /// <param name="c"></param>
+    /// <returns></returns>
+    public GatheredObject GatherDependencies(ColumnInfo c)
+    {
+        var allObjects = GetAllObjectsInAllDatabases();
+
+        var propertyFinder = new AttributePropertyFinder<SqlAttribute>(allObjects);
+
+        var root = new GatheredObject(c);
+            
+        foreach (var o in allObjects)
+        {
+            //don't add a reference to the thing we are gathering dependencies on!
+            if(Equals(o,c))
+                continue;
+                
+            foreach (var propertyInfo in propertyFinder.GetProperties(o))
+            {
+                var sql = (string)propertyInfo.GetValue(o);
+
+                if (sql != null && sql.Contains(c.Name))
+                    root.Children.Add(new GatheredObject(o));
+            }
+        }
+            
+        return root;
+    }
+
 }

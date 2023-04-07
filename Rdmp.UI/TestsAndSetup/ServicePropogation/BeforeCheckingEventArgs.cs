@@ -9,22 +9,21 @@ using Rdmp.UI.ChecksUI;
 using ReusableLibraryCode.Checks;
 
 
-namespace Rdmp.UI.TestsAndSetup.ServicePropogation
+namespace Rdmp.UI.TestsAndSetup.ServicePropogation;
+
+public class BeforeCheckingEventArgs : EventArgs
 {
-    public class BeforeCheckingEventArgs : EventArgs
+    public ICheckable Checkable { get; private set; }
+    public ICheckNotifier CheckNotifier{ get; private set; }
+
+    /// <summary>
+    /// True to cancel the checking process
+    /// </summary>
+    public bool Cancel { get; set; }
+
+    public BeforeCheckingEventArgs(RAGSmileyToolStrip checkNotifier, ICheckable checkable)
     {
-        public ICheckable Checkable { get; private set; }
-        public ICheckNotifier CheckNotifier{ get; private set; }
-
-        /// <summary>
-        /// True to cancel the checking process
-        /// </summary>
-        public bool Cancel { get; set; }
-
-        public BeforeCheckingEventArgs(RAGSmileyToolStrip checkNotifier, ICheckable checkable)
-        {
-            Checkable = checkable;
-            CheckNotifier = checkNotifier;
-        }
+        Checkable = checkable;
+        CheckNotifier = checkNotifier;
     }
 }

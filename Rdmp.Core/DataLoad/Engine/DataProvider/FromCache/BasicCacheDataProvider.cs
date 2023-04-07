@@ -9,28 +9,27 @@ using Rdmp.Core.Curation;
 using Rdmp.Core.DataFlowPipeline;
 using Rdmp.Core.DataLoad.Engine.Job;
 
-namespace Rdmp.Core.DataLoad.Engine.DataProvider.FromCache
+namespace Rdmp.Core.DataLoad.Engine.DataProvider.FromCache;
+
+/// <summary>
+/// Simple implementation of abstract CachedFileRetriever which unzips/copies data out of the cache into the ForLoading directory according to
+/// the current IDataLoadJob coverage dates (workload).
+/// </summary>
+public class BasicCacheDataProvider : CachedFileRetriever
 {
-    /// <summary>
-    /// Simple implementation of abstract CachedFileRetriever which unzips/copies data out of the cache into the ForLoading directory according to
-    /// the current IDataLoadJob coverage dates (workload).
-    /// </summary>
-    public class BasicCacheDataProvider : CachedFileRetriever
+    public override void Initialize(ILoadDirectory directory, DiscoveredDatabase dbInfo)
     {
-        public override void Initialize(ILoadDirectory directory, DiscoveredDatabase dbInfo)
-        {
             
-        }
+    }
 
-        public override ExitCodeType Fetch(IDataLoadJob job, GracefulCancellationToken cancellationToken)
-        {
-            var scheduledJob = ConvertToScheduledJob(job);
+    public override ExitCodeType Fetch(IDataLoadJob job, GracefulCancellationToken cancellationToken)
+    {
+        var scheduledJob = ConvertToScheduledJob(job);
             
-            var workload = GetDataLoadWorkload(scheduledJob);
-            ExtractJobs(scheduledJob);
+        var workload = GetDataLoadWorkload(scheduledJob);
+        ExtractJobs(scheduledJob);
 
-            job.PushForDisposal(new DeleteCachedFilesOperation(scheduledJob, workload));
-            return ExitCodeType.Success;
-        }
+        job.PushForDisposal(new DeleteCachedFilesOperation(scheduledJob, workload));
+        return ExitCodeType.Success;
     }
 }

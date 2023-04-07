@@ -12,41 +12,40 @@ using NUnit.Framework;
 using Rdmp.Core.Curation.Data;
 using Rdmp.Core.Repositories;
 
-namespace Rdmp.UI.Tests.DesignPatternTests
+namespace Rdmp.UI.Tests.DesignPatternTests;
+
+public class InterfaceDeclarationsCorrect
 {
-    public class InterfaceDeclarationsCorrect
+    public void FindProblems(MEF mef)
     {
-        public void FindProblems(MEF mef)
+        List<string> excusables = new List<string>()
         {
-            List<string> excusables = new List<string>()
-            {
-                "IPlugin",
-                "IDataAccessCredentials",
-                "IProcessTask" //this is inherited by IRuntimeTask too which isn't an IMapsDirectlyToDatabaseTable
-            };
-            List<string> problems = new List<string>();
+            "IPlugin",
+            "IDataAccessCredentials",
+            "IProcessTask" //this is inherited by IRuntimeTask too which isn't an IMapsDirectlyToDatabaseTable
+        };
+        List<string> problems = new List<string>();
 
-            foreach (var dbEntities in mef.GetAllTypes().Where(t => typeof(DatabaseEntity).IsAssignableFrom(t)))
-            {
-                var matchingInterface = typeof(Catalogue).Assembly.GetTypes().SingleOrDefault(t=>t.Name.Equals("I" + dbEntities.Name));
+        foreach (var dbEntities in mef.GetAllTypes().Where(t => typeof(DatabaseEntity).IsAssignableFrom(t)))
+        {
+            var matchingInterface = typeof(Catalogue).Assembly.GetTypes().SingleOrDefault(t=>t.Name.Equals("I" + dbEntities.Name));
 
-                if (matchingInterface != null)
+            if (matchingInterface != null)
+            {
+                if (excusables.Contains(matchingInterface.Name))
+                    continue;
+
+                if (!typeof (IMapsDirectlyToDatabaseTable).IsAssignableFrom(matchingInterface))
                 {
-                    if (excusables.Contains(matchingInterface.Name))
-                        continue;
-
-                    if (!typeof (IMapsDirectlyToDatabaseTable).IsAssignableFrom(matchingInterface))
-                    {
-                        problems.Add("FAIL: Interface '" + matchingInterface.Name + "' does not inherit IMapsDirectlyToDatabaseTable");
-                    }
+                    problems.Add("FAIL: Interface '" + matchingInterface.Name + "' does not inherit IMapsDirectlyToDatabaseTable");
                 }
-
             }
 
-            foreach (string problem in problems)
-                Console.WriteLine(problem);
-
-                Assert.AreEqual(0,problems.Count);
         }
+
+        foreach (string problem in problems)
+            Console.WriteLine(problem);
+
+        Assert.AreEqual(0,problems.Count);
     }
 }

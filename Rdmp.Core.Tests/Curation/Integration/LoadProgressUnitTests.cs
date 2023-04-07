@@ -15,83 +15,82 @@ using System;
 using System.IO;
 using Tests.Common;
 
-namespace Rdmp.Core.Tests.Curation.Integration
+namespace Rdmp.Core.Tests.Curation.Integration;
+
+public class LoadProgressUnitTests : UnitTests
 {
-    public class LoadProgressUnitTests : UnitTests
+    [Test]
+    public void LoadProgress_Checks_BadDates()
     {
-        [Test]
-        public void LoadProgress_Checks_BadDates()
-        {
-            var lp = WhenIHaveA<LoadProgress>();
+        var lp = WhenIHaveA<LoadProgress>();
 
-            lp.Check(new ThrowImmediatelyCheckNotifier());
+        lp.Check(new ThrowImmediatelyCheckNotifier());
 
-            //Bad Origin Date
-            lp.OriginDate = DateTime.Now.AddDays(1);
-            Assert.Throws<Exception>(()=>lp.Check(new ThrowImmediatelyCheckNotifier()));
+        //Bad Origin Date
+        lp.OriginDate = DateTime.Now.AddDays(1);
+        Assert.Throws<Exception>(()=>lp.Check(new ThrowImmediatelyCheckNotifier()));
 
-            //Back to normal
-            lp.RevertToDatabaseState();
-            lp.Check(new ThrowImmediatelyCheckNotifier());
+        //Back to normal
+        lp.RevertToDatabaseState();
+        lp.Check(new ThrowImmediatelyCheckNotifier());
 
-            //Bad ProgressDate
-            lp.DataLoadProgress = DateTime.Now.AddDays(1);
-            Assert.Throws<Exception>(()=>lp.Check(new ThrowImmediatelyCheckNotifier()));
+        //Bad ProgressDate
+        lp.DataLoadProgress = DateTime.Now.AddDays(1);
+        Assert.Throws<Exception>(()=>lp.Check(new ThrowImmediatelyCheckNotifier()));
                         
-            //Back to normal
-            lp.RevertToDatabaseState();
-            lp.Check(new ThrowImmediatelyCheckNotifier());
+        //Back to normal
+        lp.RevertToDatabaseState();
+        lp.Check(new ThrowImmediatelyCheckNotifier());
 
-            // valid progress (1 year)
-            lp.OriginDate = new DateTime(2001,1,1);
-            lp.DataLoadProgress = new DateTime(2002,1,1);
-            lp.Check(new ThrowImmediatelyCheckNotifier());
-        }
+        // valid progress (1 year)
+        lp.OriginDate = new DateTime(2001,1,1);
+        lp.DataLoadProgress = new DateTime(2002,1,1);
+        lp.Check(new ThrowImmediatelyCheckNotifier());
+    }
 
-        [Test]
-        public void LoadProgress_JobFactory_NoDates()
+    [Test]
+    public void LoadProgress_JobFactory_NoDates()
+    {
+        var lp = WhenIHaveA<LoadProgress>();
+
+            
+
+        lp.OriginDate = new DateTime(2001,1,1);
+            
+        // We are fully up-to-date
+        lp.DataLoadProgress = DateTime.Now;
+            
+        lp.Check(new ThrowImmediatelyCheckNotifier());
+            
+        var stratFactory = new JobDateGenerationStrategyFactory(new AnyAvailableLoadProgressSelectionStrategy(lp.LoadMetadata));
+        var strat = stratFactory.Create(lp,new ThrowImmediatelyDataLoadEventListener());
+            
+        var dir = LoadDirectory.CreateDirectoryStructure(new DirectoryInfo(TestContext.CurrentContext.WorkDirectory),"LoadProgress_JobFactory_NoDates",true);
+            
+        var lmd = lp.LoadMetadata;
+        lmd.LocationOfFlatFiles = dir.RootPath.FullName;
+            
+        foreach(var cata in lmd.GetAllCatalogues())
         {
-            var lp = WhenIHaveA<LoadProgress>();
-
-            
-
-            lp.OriginDate = new DateTime(2001,1,1);
-            
-            // We are fully up-to-date
-            lp.DataLoadProgress = DateTime.Now;
-            
-            lp.Check(new ThrowImmediatelyCheckNotifier());
-            
-            var stratFactory = new JobDateGenerationStrategyFactory(new AnyAvailableLoadProgressSelectionStrategy(lp.LoadMetadata));
-            var strat = stratFactory.Create(lp,new ThrowImmediatelyDataLoadEventListener());
-            
-            var dir = LoadDirectory.CreateDirectoryStructure(new DirectoryInfo(TestContext.CurrentContext.WorkDirectory),"LoadProgress_JobFactory_NoDates",true);
-            
-            var lmd = lp.LoadMetadata;
-            lmd.LocationOfFlatFiles = dir.RootPath.FullName;
-            
-            foreach(var cata in lmd.GetAllCatalogues())
-            {
-                cata.LoggingDataTask = "ff";
-                cata.SaveToDatabase();
-            }
-            
-            lmd.SaveToDatabase();
-            
-            var jobFactory = new SingleScheduledJobFactory(lp,strat,999,lp.LoadMetadata,null);
-            var job = jobFactory.Create(RepositoryLocator, new ThrowImmediatelyDataLoadEventListener(), null);
-
-            Assert.IsNull(job);
-
-            // We have 1 day to load (date is the last fully loaded date)
-            lp.DataLoadProgress = DateTime.Now.AddDays(-2);
-            lp.SaveToDatabase();
-             
-            strat = stratFactory.Create(lp,new ThrowImmediatelyDataLoadEventListener());
-            jobFactory =  new SingleScheduledJobFactory(lp,strat,999,lp.LoadMetadata,null);
-
-            job = jobFactory.Create(RepositoryLocator,new ThrowImmediatelyDataLoadEventListener(),null);
-            Assert.AreEqual(1,((ScheduledDataLoadJob)job).DatesToRetrieve.Count);
+            cata.LoggingDataTask = "ff";
+            cata.SaveToDatabase();
         }
+            
+        lmd.SaveToDatabase();
+            
+        var jobFactory = new SingleScheduledJobFactory(lp,strat,999,lp.LoadMetadata,null);
+        var job = jobFactory.Create(RepositoryLocator, new ThrowImmediatelyDataLoadEventListener(), null);
+
+        Assert.IsNull(job);
+
+        // We have 1 day to load (date is the last fully loaded date)
+        lp.DataLoadProgress = DateTime.Now.AddDays(-2);
+        lp.SaveToDatabase();
+             
+        strat = stratFactory.Create(lp,new ThrowImmediatelyDataLoadEventListener());
+        jobFactory =  new SingleScheduledJobFactory(lp,strat,999,lp.LoadMetadata,null);
+
+        job = jobFactory.Create(RepositoryLocator,new ThrowImmediatelyDataLoadEventListener(),null);
+        Assert.AreEqual(1,((ScheduledDataLoadJob)job).DatesToRetrieve.Count);
     }
 }

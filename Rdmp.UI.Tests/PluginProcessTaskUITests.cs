@@ -13,81 +13,80 @@ using Rdmp.Core.Curation.Data.DataLoad;
 using Rdmp.Core.DataLoad.Modules.Attachers;
 using Rdmp.UI.DataLoadUIs.LoadMetadataUIs.ProcessTasks;
 
-namespace Rdmp.UI.Tests
+namespace Rdmp.UI.Tests;
+
+class PluginProcessTaskUITests : UITests
 {
-    class PluginProcessTaskUITests : UITests
+    [OneTimeSetUp]
+    protected override void OneTimeSetUp()
     {
-        [OneTimeSetUp]
-        protected override void OneTimeSetUp()
-        {
-            base.OneTimeSetUp();
+        base.OneTimeSetUp();
 
-            SetupMEF();
-        }
+        SetupMEF();
+    }
 
-        [Test,UITimeout(20000)]
-        public void PluginProcessTaskUI_NoClass()
-        {
-            AndLaunch<PluginProcessTaskUI>(WhenIHaveA<ProcessTask>());
-            AssertErrorWasShown(ExpectedErrorType.KilledForm,"No class has been specified");
-        }
+    [Test,UITimeout(20000)]
+    public void PluginProcessTaskUI_NoClass()
+    {
+        AndLaunch<PluginProcessTaskUI>(WhenIHaveA<ProcessTask>());
+        AssertErrorWasShown(ExpectedErrorType.KilledForm,"No class has been specified");
+    }
 
-        [Test,UITimeout(20000)]
-        public void PluginProcessTaskUI_ClassNotFound()
-        {
-            var pt = WhenIHaveA<ProcessTask>();
-            pt.Path = "ArmageddonAttacher";
-            pt.SaveToDatabase();
+    [Test,UITimeout(20000)]
+    public void PluginProcessTaskUI_ClassNotFound()
+    {
+        var pt = WhenIHaveA<ProcessTask>();
+        pt.Path = "ArmageddonAttacher";
+        pt.SaveToDatabase();
 
-            AndLaunch<PluginProcessTaskUI>(pt);
-            AssertErrorWasShown(ExpectedErrorType.KilledForm,"Could not find Type 'ArmageddonAttacher' for ProcessTask ");
-        }
+        AndLaunch<PluginProcessTaskUI>(pt);
+        AssertErrorWasShown(ExpectedErrorType.KilledForm,"Could not find Type 'ArmageddonAttacher' for ProcessTask ");
+    }
 
-        [Test,UITimeout(20000)]
-        public void PluginProcessTaskUI_ClassIsLegit()
-        {
-            var pt = WhenIHaveA<ProcessTask>();
-            pt.Path = typeof(DelimitedFlatFileAttacher).FullName;
-            pt.SaveToDatabase();
+    [Test,UITimeout(20000)]
+    public void PluginProcessTaskUI_ClassIsLegit()
+    {
+        var pt = WhenIHaveA<ProcessTask>();
+        pt.Path = typeof(DelimitedFlatFileAttacher).FullName;
+        pt.SaveToDatabase();
 
-            AndLaunch<PluginProcessTaskUI>(pt);
-            AssertNoErrors(ExpectedErrorType.Any);
-        }
+        AndLaunch<PluginProcessTaskUI>(pt);
+        AssertNoErrors(ExpectedErrorType.Any);
+    }
         
-        [Test,UITimeout(20000)]
-        public void PluginProcessTaskUI_InvalidParameter_Date()
-        {
-            MEF.AddTypeToCatalogForTesting(typeof(OmgDates));
-            var pt = WhenIHaveA<ProcessTask>();
-            pt.Path = typeof(OmgDates).FullName;
-            var arg = pt.CreateArgumentsForClassIfNotExists<OmgDates>().Single();
+    [Test,UITimeout(20000)]
+    public void PluginProcessTaskUI_InvalidParameter_Date()
+    {
+        MEF.AddTypeToCatalogForTesting(typeof(OmgDates));
+        var pt = WhenIHaveA<ProcessTask>();
+        pt.Path = typeof(OmgDates).FullName;
+        var arg = pt.CreateArgumentsForClassIfNotExists<OmgDates>().Single();
             
-            //set the argument value to 2001
-            arg.SetValue(new DateTime(2001,01,01));
-            pt.SaveToDatabase();
+        //set the argument value to 2001
+        arg.SetValue(new DateTime(2001,01,01));
+        pt.SaveToDatabase();
 
-            AndLaunch<PluginProcessTaskUI>(pt);
-            AssertNoErrors(ExpectedErrorType.Any);
+        AndLaunch<PluginProcessTaskUI>(pt);
+        AssertNoErrors(ExpectedErrorType.Any);
 
-            //there should be a text box with our argumetn value in it
-            var tb = GetControl<TextBox>().Single(t => t.Text.Contains("2001"));
+        //there should be a text box with our argumetn value in it
+        var tb = GetControl<TextBox>().Single(t => t.Text.Contains("2001"));
 
-            //set the text to something nasty that won't compile
-            tb.Text = "hahahah fff";
+        //set the text to something nasty that won't compile
+        tb.Text = "hahahah fff";
             
-            Publish(pt);
-            AssertNoErrors(ExpectedErrorType.Any);
+        Publish(pt);
+        AssertNoErrors(ExpectedErrorType.Any);
 
-            AndLaunch<PluginProcessTaskUI>(pt);
+        AndLaunch<PluginProcessTaskUI>(pt);
 
-            AssertNoErrors(ExpectedErrorType.Any);
-        }
+        AssertNoErrors(ExpectedErrorType.Any);
+    }
 
-        class OmgDates
-        {
-            [DemandsInitialization("A Date")]
-            public DateTime MyDate { get; set; }
+    class OmgDates
+    {
+        [DemandsInitialization("A Date")]
+        public DateTime MyDate { get; set; }
 
-        }
     }
 }

@@ -12,38 +12,37 @@ using Rdmp.Core.CohortCreation.Execution;
 using Rdmp.Core.Curation.Data.Cohort;
 using ReusableLibraryCode.DataAccess;
 
-namespace Rdmp.Core.CohortCreation
+namespace Rdmp.Core.CohortCreation;
+
+/// <summary>
+/// A cohort identification container (AggregateContainer) or sub query (AggregateConfiguration) that is running in a CohortCompiler and will be 
+/// given the results of the execution (CohortIdentificationTaskExecution).
+/// </summary>
+public interface ICompileable:IOrderable
 {
-    /// <summary>
-    /// A cohort identification container (AggregateContainer) or sub query (AggregateConfiguration) that is running in a CohortCompiler and will be 
-    /// given the results of the execution (CohortIdentificationTaskExecution).
-    /// </summary>
-    public interface ICompileable:IOrderable
-    {
-        IMapsDirectlyToDatabaseTable Child { get; }
-        int Timeout { get; set; }
+    IMapsDirectlyToDatabaseTable Child { get; }
+    int Timeout { get; set; }
 
-        CancellationToken CancellationToken { get; set; }
-        CancellationTokenSource CancellationTokenSource { get; set; }
-        CompilationState State { set; get; }
+    CancellationToken CancellationToken { get; set; }
+    CancellationTokenSource CancellationTokenSource { get; set; }
+    CompilationState State { set; get; }
         
-        event EventHandler StateChanged;
-        Exception CrashMessage { get; set; }
+    event EventHandler StateChanged;
+    Exception CrashMessage { get; set; }
 
-        string Log { get; set; }
+    string Log { get; set; }
 
-        int FinalRowCount { get; set; }
-        int? CumulativeRowCount { get; set; }
+    int FinalRowCount { get; set; }
+    int? CumulativeRowCount { get; set; }
 
-        IDataAccessPoint[] GetDataAccessPoints();
+    IDataAccessPoint[] GetDataAccessPoints();
 
-        Stopwatch Stopwatch { get; set; }
-        TimeSpan? ElapsedTime { get; }
+    Stopwatch Stopwatch { get; set; }
+    TimeSpan? ElapsedTime { get; }
 
-        bool IsEnabled();
+    bool IsEnabled();
 
-        string GetCachedQueryUseCount();
+    string GetCachedQueryUseCount();
 
-        void SetKnownContainer(CohortAggregateContainer parent, bool isFirstInContainer);
-    }
+    void SetKnownContainer(CohortAggregateContainer parent, bool isFirstInContainer);
 }

@@ -9,19 +9,18 @@ using NUnit.Framework;
 using Rdmp.Core.Reports.ExtractionTime;
 using Tests.Common.Scenarios;
 
-namespace Rdmp.Core.Tests.Reports.ExtractionTime
+namespace Rdmp.Core.Tests.Reports.ExtractionTime;
+
+class WordDataReleaseFileGeneratorTests:TestsRequiringAnExtractionConfiguration
 {
-    class WordDataReleaseFileGeneratorTests:TestsRequiringAnExtractionConfiguration
+    [Test]
+    public void Test_WordDataReleaseFileGenerator_Normal()
     {
-        [Test]
-        public void Test_WordDataReleaseFileGenerator_Normal()
-        {
-            var report = new WordDataReleaseFileGenerator(_configuration,_configuration.DataExportRepository);
+        var report = new WordDataReleaseFileGenerator(_configuration,_configuration.DataExportRepository);
 
-            var filename = Path.Combine(TestContext.CurrentContext.WorkDirectory,"release.doc");
-            report.GenerateWordFile(filename);
+        var filename = Path.Combine(TestContext.CurrentContext.WorkDirectory,"release.doc");
+        report.GenerateWordFile(filename);
 
-            Assert.IsTrue(File.Exists(filename));
-        }
+        Assert.IsTrue(File.Exists(filename));
     }
 }

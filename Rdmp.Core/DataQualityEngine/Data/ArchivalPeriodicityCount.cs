@@ -4,14 +4,13 @@
 // RDMP is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License for more details.
 // You should have received a copy of the GNU General Public License along with RDMP. If not, see <https://www.gnu.org/licenses/>.
 
-namespace Rdmp.Core.DataQualityEngine.Data
+namespace Rdmp.Core.DataQualityEngine.Data;
+
+/// <summary>
+/// Total number of records in any given month of a DQE evaluation which passed validation and the total number overall for that month. 
+/// </summary>
+public class ArchivalPeriodicityCount
 {
-    /// <summary>
-    /// Total number of records in any given month of a DQE evaluation which passed validation and the total number overall for that month. 
-    /// </summary>
-    public class ArchivalPeriodicityCount
-    {
-        public int CountGood;
-        public int Total;
-    }
+    public int CountGood;
+    public int Total;
 }

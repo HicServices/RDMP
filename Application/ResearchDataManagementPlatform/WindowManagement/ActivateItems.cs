@@ -75,997 +75,996 @@ using WeifenLuo.WinFormsUI.Docking;
 using Image = SixLabors.ImageSharp.Image;
 using Rectangle = System.Drawing.Rectangle;
 
-namespace ResearchDataManagementPlatform.WindowManagement
+namespace ResearchDataManagementPlatform.WindowManagement;
+
+/// <summary>
+/// Central class for RDMP main application, this class provides acceess to all the main systems in RDMP user interface such as Emphasis, the RefreshBus, Child 
+/// provision etc.  See IActivateItems for full details
+/// </summary>
+public class ActivateItems : BasicActivateItems, IActivateItems, IRefreshBusSubscriber
 {
-    /// <summary>
-    /// Central class for RDMP main application, this class provides acceess to all the main systems in RDMP user interface such as Emphasis, the RefreshBus, Child 
-    /// provision etc.  See IActivateItems for full details
-    /// </summary>
-    public class ActivateItems : BasicActivateItems, IActivateItems, IRefreshBusSubscriber
+    private readonly DockPanel _mainDockPanel;
+    private readonly WindowManager _windowManager;
+
+    public WindowFactory WindowFactory { get; private set; }
+
+
+    public ITheme Theme { get; private set; }
+
+    public RefreshBus RefreshBus { get; private set; }
+        
+    readonly UIObjectConstructor _constructor = new UIObjectConstructor();
+
+    public IArrangeWindows WindowArranger { get; private set; }
+        
+    public override void Publish(IMapsDirectlyToDatabaseTable databaseEntity)
     {
-        private readonly DockPanel _mainDockPanel;
-        private readonly WindowManager _windowManager;
+        if(databaseEntity is DatabaseEntity de)
+            RefreshBus.Publish(this,new RefreshObjectEventArgs(de));
+    }
 
-        public WindowFactory WindowFactory { get; private set; }
-
-
-        public ITheme Theme { get; private set; }
-
-        public RefreshBus RefreshBus { get; private set; }
-        
-        readonly UIObjectConstructor _constructor = new UIObjectConstructor();
-
-        public IArrangeWindows WindowArranger { get; private set; }
-        
-        public override void Publish(IMapsDirectlyToDatabaseTable databaseEntity)
+    public override void Show(string title, string message)
+    {
+        // if on wrong Thread
+        if (_mainDockPanel?.InvokeRequired ?? false)
         {
-            if(databaseEntity is DatabaseEntity de)
-                RefreshBus.Publish(this,new RefreshObjectEventArgs(de));
+            _mainDockPanel.Invoke(() => Show(title, message));
+            return;
         }
 
-        public override void Show(string title, string message)
-        {
-            // if on wrong Thread
-            if (_mainDockPanel?.InvokeRequired ?? false)
-            {
-                _mainDockPanel.Invoke(() => Show(title, message));
-                return;
-            }
+        WideMessageBox.Show(title,message,Environment.StackTrace,true,null,WideMessageBoxTheme.Help);
+    }
 
-            WideMessageBox.Show(title,message,Environment.StackTrace,true,null,WideMessageBoxTheme.Help);
+    public ICombineableFactory CommandFactory { get; private set; }
+    public ICommandExecutionFactory CommandExecutionFactory { get; private set; }
+    public HistoryProvider HistoryProvider { get; private set; }
+
+    public List<IProblemProvider> ProblemProviders { get; private set; }
+
+    public ActivateItems(ITheme theme,RefreshBus refreshBus, DockPanel mainDockPanel, IRDMPPlatformRepositoryServiceLocator repositoryLocator, WindowFactory windowFactory, WindowManager windowManager, ICheckNotifier globalErrorCheckNotifier):base(repositoryLocator,globalErrorCheckNotifier)
+    {
+        Theme = theme;
+        IsWinForms = true;
+        InteractiveDeletes = true;
+        WindowFactory = windowFactory;
+        _mainDockPanel = mainDockPanel;
+        _windowManager = windowManager;
+        RefreshBus = refreshBus;
+
+        RefreshBus.ChildProvider = CoreChildProvider;
+            
+        HistoryProvider = new HistoryProvider(repositoryLocator);
+            
+        WindowArranger = new WindowArranger(this,_windowManager,_mainDockPanel);
+            
+        CommandFactory = new RDMPCombineableFactory();
+        CommandExecutionFactory = new RDMPCommandExecutionFactory(this);
+
+        ProblemProviders = new List<IProblemProvider>();
+        ProblemProviders.Add(new DataExportProblemProvider());
+        ProblemProviders.Add(new CatalogueProblemProvider());
+        RefreshProblemProviders();
+
+        RefreshBus.Subscribe(this);
+            
+        // We can run subprocesses
+        IsAbleToLaunchSubprocesses = true;
+    }
+
+    protected override ICoreChildProvider GetChildProvider()
+    {
+        var provider = base.GetChildProvider();
+
+        if (RefreshBus != null)
+        {
+            RefreshBus.ChildProvider = provider;
         }
 
-        public ICombineableFactory CommandFactory { get; private set; }
-        public ICommandExecutionFactory CommandExecutionFactory { get; private set; }
-        public HistoryProvider HistoryProvider { get; private set; }
-
-        public List<IProblemProvider> ProblemProviders { get; private set; }
-
-        public ActivateItems(ITheme theme,RefreshBus refreshBus, DockPanel mainDockPanel, IRDMPPlatformRepositoryServiceLocator repositoryLocator, WindowFactory windowFactory, WindowManager windowManager, ICheckNotifier globalErrorCheckNotifier):base(repositoryLocator,globalErrorCheckNotifier)
-        {
-            Theme = theme;
-            IsWinForms = true;
-            InteractiveDeletes = true;
-            WindowFactory = windowFactory;
-            _mainDockPanel = mainDockPanel;
-            _windowManager = windowManager;
-            RefreshBus = refreshBus;
-
-            RefreshBus.ChildProvider = CoreChildProvider;
-            
-            HistoryProvider = new HistoryProvider(repositoryLocator);
-            
-            WindowArranger = new WindowArranger(this,_windowManager,_mainDockPanel);
-            
-            CommandFactory = new RDMPCombineableFactory();
-            CommandExecutionFactory = new RDMPCommandExecutionFactory(this);
-
-            ProblemProviders = new List<IProblemProvider>();
-            ProblemProviders.Add(new DataExportProblemProvider());
-            ProblemProviders.Add(new CatalogueProblemProvider());
-            RefreshProblemProviders();
-
-            RefreshBus.Subscribe(this);
-            
-            // We can run subprocesses
-            IsAbleToLaunchSubprocesses = true;
-        }
-
-        protected override ICoreChildProvider GetChildProvider()
-        {
-            var provider = base.GetChildProvider();
-
-            if (RefreshBus != null)
-            {
-                RefreshBus.ChildProvider = provider;
-            }
-
-            return provider;
-        }
+        return provider;
+    }
         
 
-        public Form ShowWindow(Control singleControlForm, bool asDocument = false)
-        { 
-            // if on wrong Thread
-            if (_mainDockPanel?.InvokeRequired ?? false)
-            {
-                return _mainDockPanel.Invoke<Form>(() => ShowWindow(singleControlForm, asDocument));
-            }
+    public Form ShowWindow(Control singleControlForm, bool asDocument = false)
+    { 
+        // if on wrong Thread
+        if (_mainDockPanel?.InvokeRequired ?? false)
+        {
+            return _mainDockPanel.Invoke<Form>(() => ShowWindow(singleControlForm, asDocument));
+        }
 
-            int width = singleControlForm.Size.Width + SystemInformation.BorderSize.Width;
-            int height = singleControlForm.Size.Height + SystemInformation.BorderSize.Height;
+        int width = singleControlForm.Size.Width + SystemInformation.BorderSize.Width;
+        int height = singleControlForm.Size.Height + SystemInformation.BorderSize.Height;
 
-            //use the .Text or fallback on .Name 
-            string name = string.IsNullOrWhiteSpace(singleControlForm.Text)
-                ? singleControlForm.Name ?? singleControlForm.GetType().Name//or worst case scenario use the type name!
-                : singleControlForm.Text;
+        //use the .Text or fallback on .Name 
+        string name = string.IsNullOrWhiteSpace(singleControlForm.Text)
+            ? singleControlForm.Name ?? singleControlForm.GetType().Name//or worst case scenario use the type name!
+            : singleControlForm.Text;
 
-            if(singleControlForm is Form && asDocument)
-                throw new Exception("Control '" + singleControlForm + "' is a Form and asDocument was passed as true.  When asDocument is true you must be a Control not a Form e.g. inherit from RDMPUserControl instead of RDMPForm");
+        if(singleControlForm is Form && asDocument)
+            throw new Exception("Control '" + singleControlForm + "' is a Form and asDocument was passed as true.  When asDocument is true you must be a Control not a Form e.g. inherit from RDMPUserControl instead of RDMPForm");
 
-            var c = singleControlForm as RDMPUserControl;
+        var c = singleControlForm as RDMPUserControl;
             
-            if(c != null)
-                c.SetItemActivator(this);
+        if(c != null)
+            c.SetItemActivator(this);
 
-            var content = WindowFactory.Create(this,singleControlForm,name , null);
+        var content = WindowFactory.Create(this,singleControlForm,name , null);
             
-            if (asDocument)
-                content.Show(_mainDockPanel,DockState.Document);
-            else
-                content.Show(_mainDockPanel,new Rectangle(0,0,width,height));
+        if (asDocument)
+            content.Show(_mainDockPanel,DockState.Document);
+        else
+            content.Show(_mainDockPanel,new Rectangle(0,0,width,height));
             
-            return content;
+        return content;
+    }
+                
+    public override void RequestItemEmphasis(object sender, EmphasiseRequest request)
+    {
+        // if on wrong Thread
+        if (_mainDockPanel?.InvokeRequired ?? false)
+        {
+            _mainDockPanel.Invoke(() => RequestItemEmphasis(sender, request));
+            return;
+        }
+
+        AdjustEmphasiseRequest(request);
+
+        //ensure a relevant Toolbox is available
+        var descendancy = CoreChildProvider.GetDescendancyListIfAnyFor(request.ObjectToEmphasise);
+        object root = null;
+
+        if (descendancy != null)
+            root = descendancy.Parents.FirstOrDefault();
+        else
+            root = request.ObjectToEmphasise; //assume maybe o is a root object itself?
+
+        if (root is CohortIdentificationConfiguration cic)
+            Activate<CohortIdentificationConfigurationUI, CohortIdentificationConfiguration>(cic);
+        else
+        if (root != null)
+            _windowManager.ShowCollectionWhichSupportsRootObjectType(root);
+
+        //really should be a listener now btw since we just launched the relevant Toolbox if it wasn't there before
+        //Look at assignments to Sender, the invocation list can change the Sender!
+        var args = new EmphasiseEventArgs(request);
+        base.OnEmphasise(this,args);
+            
+        //might be different than sender that was passed in
+        if(args.Sender is DockContent content)
+            content.Activate();
+
+        //user is being shown the given object so track it as a recent (e.g. GoTo etc)
+        if(args.Request.ObjectToEmphasise is IMapsDirectlyToDatabaseTable m)
+            HistoryProvider.Add(m);
+    }
+
+    public override bool SelectEnum(DialogArgs args, Type enumType, out Enum chosen)
+    {
+        // if on wrong Thread
+        if (_mainDockPanel?.InvokeRequired ?? false)
+        {
+            Enum result = default;
+            var rtn = _mainDockPanel.Invoke<bool>(()=>SelectEnum(args, enumType, out result));
+            chosen = result;
+            return rtn;
+        }
+
+        return SelectObject(args, Enum.GetValues(enumType).Cast<Enum>().ToArray(), out chosen);
+    }
+
+    public override bool SelectType(DialogArgs args, Type[] available,out Type chosen)
+    {
+        return SelectObject(args, available, out chosen);
+    }
+
+    public override bool CanActivate(object target)
+    {
+        return CommandExecutionFactory.CanActivate(target);
+    }
+    protected override void ActivateImpl(object o)
+    {
+        // if on wrong Thread
+        if (_mainDockPanel?.InvokeRequired ?? false)
+        {
+            _mainDockPanel.Invoke(() => ActivateImpl(o));
+            return;
+        }
+
+        if (CommandExecutionFactory.CanActivate(o))
+            CommandExecutionFactory.Activate(o);
+    }
+
+    public bool IsRootObjectOfCollection(RDMPCollection collection, object rootObject)
+    {
+        //if the collection an arbitrary one then it is definetly not the root collection for anyone
+        if (collection == RDMPCollection.None)
+            return false;
+
+        return _windowManager.GetCollectionForRootObject(rootObject) == collection;
+    }
+
+    /// <summary>
+    /// Consults all currently configured IProblemProviders and returns true if any report a problem with the object
+    /// </summary>
+    /// <param name="model"></param>
+    /// <returns></returns>
+    public bool HasProblem(object model)
+    {
+        return ProblemProviders.Any(p => p.HasProblem(model));
+    }
+
+    /// <summary>
+    /// Consults all currently configured IProblemProviders and returns the first Problem reported by any about the object or null
+    /// if there are no problems reported.
+    /// </summary>
+    /// <param name="model"></param>
+    /// <returns></returns>
+    public string DescribeProblemIfAny(object model)
+    {
+        return ProblemProviders.Select(p => p.DescribeProblem(model)).FirstOrDefault(desc => desc != null);
+    }
+        
+    public string GetDocumentation(Type type)
+    {
+        return RepositoryLocator.CatalogueRepository.CommentStore.GetTypeDocumentationIfExists(type);
+    }
+
+    public string CurrentDirectory { get { return Environment.CurrentDirectory; }}
+    public DialogResult ShowDialog(Form form)
+    {
+        // if on wrong Thread
+        if (_mainDockPanel?.InvokeRequired ?? false)
+        {
+            return _mainDockPanel.Invoke(() => ShowDialog(form));
+        }
+
+        return form.ShowDialog();
+    }
+
+    public void KillForm(Form f, Exception reason)
+    {
+        // if on wrong Thread
+        if (f.InvokeRequired)
+        {
+            f.Invoke(() => KillForm(f,reason));
+            return;
+        }
+
+        f.Close();
+        ExceptionViewer.Show("Window Closed",reason);
+    }
+    public void KillForm(Form f, string reason)
+    {
+        // if on wrong Thread
+        if (f.InvokeRequired)
+        {
+            f.Invoke(() => KillForm(f, reason));
+            return;
+        }
+
+        f.Close();
+        ExceptionViewer.Show("Window Closed",reason);
+    }
+    public void OnRuleRegistered(IBinderRule rule)
+    {
+        //no special action required
+    }
+
+    /// <summary>
+    /// Asks the user if they want to reload a fresh copy with a Yes/No message box.
+    /// </summary>
+    /// <param name="databaseEntity"></param>
+    /// <returns></returns>
+    public bool ShouldReloadFreshCopy(DatabaseEntity databaseEntity)
+    {
+        return YesNo(databaseEntity + " is out of date with database, would you like to reload a fresh copy?",
+            "Object Changed");
+    }
+
+    public T Activate<T, T2>(T2 databaseObject)
+        where T : RDMPSingleDatabaseObjectControl<T2>, new()
+        where T2 : DatabaseEntity
+    {
+        return Activate<T, T2>(databaseObject, CoreIconProvider.GetImage(databaseObject));
+    }
+        
+    public T Activate<T>(IPersistableObjectCollection collection)
+        where T: Control,IObjectCollectionControl,new()
+
+    {
+        //if the window is already open
+        if (PopExisting(typeof(T), collection, out var existingHostedControlInstance))
+        {
+            //just update its state
+            var existing = (T) existingHostedControlInstance;
+            existing.SetCollection(this,collection);
+
+            return existing;
         }
                 
-        public override void RequestItemEmphasis(object sender, EmphasiseRequest request)
+
+        var uiInstance = new T();
+        Activate(uiInstance, collection);
+        return uiInstance;
+    }
+
+
+    private T Activate<T, T2>(T2 databaseObject, Image<Rgba32> tabImage)
+        where T : RDMPSingleDatabaseObjectControl<T2>, new()
+        where T2 : DatabaseEntity
+    {
+        if (PopExisting(typeof(T), databaseObject, out var existingHostedControlInstance))
+            return (T)existingHostedControlInstance;
+
+        var uiInstance = new T();
+        var floatable = WindowFactory.Create(this,RefreshBus, uiInstance, tabImage, databaseObject);
+        floatable.Show(_mainDockPanel, DockState.Document);
+        uiInstance.SetDatabaseObject(this, databaseObject);
+
+        SetTabText(floatable,uiInstance);
+
+        return uiInstance;
+    }
+
+    private bool PopExisting(Type windowType, IMapsDirectlyToDatabaseTable databaseObject, out Control existingHostedControlInstance)
+    {
+        var existing = _windowManager.GetActiveWindowIfAnyFor(windowType, databaseObject);
+        existingHostedControlInstance = null;
+
+        if (existing != null)
         {
-            // if on wrong Thread
-            if (_mainDockPanel?.InvokeRequired ?? false)
-            {
-                _mainDockPanel.Invoke(() => RequestItemEmphasis(sender, request));
-                return;
-            }
+            existingHostedControlInstance = existing.Control;
+            existing.Activate();
 
-            AdjustEmphasiseRequest(request);
-
-            //ensure a relevant Toolbox is available
-            var descendancy = CoreChildProvider.GetDescendancyListIfAnyFor(request.ObjectToEmphasise);
-            object root = null;
-
-            if (descendancy != null)
-                root = descendancy.Parents.FirstOrDefault();
-            else
-                root = request.ObjectToEmphasise; //assume maybe o is a root object itself?
-
-            if (root is CohortIdentificationConfiguration cic)
-                Activate<CohortIdentificationConfigurationUI, CohortIdentificationConfiguration>(cic);
-            else
-            if (root != null)
-                _windowManager.ShowCollectionWhichSupportsRootObjectType(root);
-
-            //really should be a listener now btw since we just launched the relevant Toolbox if it wasn't there before
-            //Look at assignments to Sender, the invocation list can change the Sender!
-            var args = new EmphasiseEventArgs(request);
-            base.OnEmphasise(this,args);
-            
-            //might be different than sender that was passed in
-            if(args.Sender is DockContent content)
-                content.Activate();
-
-            //user is being shown the given object so track it as a recent (e.g. GoTo etc)
-            if(args.Request.ObjectToEmphasise is IMapsDirectlyToDatabaseTable m)
-                HistoryProvider.Add(m);
+            // only refresh if there are changes to the underlying object
+            if(databaseObject is IRevertable r && r.HasLocalChanges().Evaluation == ChangeDescription.DatabaseCopyDifferent)
+                existing.HandleUserRequestingTabRefresh(this);
         }
 
-        public override bool SelectEnum(DialogArgs args, Type enumType, out Enum chosen)
+        return existing != null;
+    }
+
+    private bool PopExisting(Type windowType, IPersistableObjectCollection collection, out Control existingHostedControlInstance)
+    {
+        var existing = _windowManager.GetActiveWindowIfAnyFor(windowType, collection);
+        existingHostedControlInstance = null;
+
+        if (existing != null)
         {
-            // if on wrong Thread
-            if (_mainDockPanel?.InvokeRequired ?? false)
-            {
-                Enum result = default;
-                var rtn = _mainDockPanel.Invoke<bool>(()=>SelectEnum(args, enumType, out result));
-                chosen = result;
-                return rtn;
-            }
-
-            return SelectObject(args, Enum.GetValues(enumType).Cast<Enum>().ToArray(), out chosen);
-        }
-
-        public override bool SelectType(DialogArgs args, Type[] available,out Type chosen)
-        {
-            return SelectObject(args, available, out chosen);
-        }
-
-        public override bool CanActivate(object target)
-        {
-            return CommandExecutionFactory.CanActivate(target);
-        }
-        protected override void ActivateImpl(object o)
-        {
-            // if on wrong Thread
-            if (_mainDockPanel?.InvokeRequired ?? false)
-            {
-                _mainDockPanel.Invoke(() => ActivateImpl(o));
-                return;
-            }
-
-            if (CommandExecutionFactory.CanActivate(o))
-                CommandExecutionFactory.Activate(o);
-        }
-
-        public bool IsRootObjectOfCollection(RDMPCollection collection, object rootObject)
-        {
-            //if the collection an arbitrary one then it is definetly not the root collection for anyone
-            if (collection == RDMPCollection.None)
-                return false;
-
-            return _windowManager.GetCollectionForRootObject(rootObject) == collection;
-        }
-
-        /// <summary>
-        /// Consults all currently configured IProblemProviders and returns true if any report a problem with the object
-        /// </summary>
-        /// <param name="model"></param>
-        /// <returns></returns>
-        public bool HasProblem(object model)
-        {
-            return ProblemProviders.Any(p => p.HasProblem(model));
-        }
-
-        /// <summary>
-        /// Consults all currently configured IProblemProviders and returns the first Problem reported by any about the object or null
-        /// if there are no problems reported.
-        /// </summary>
-        /// <param name="model"></param>
-        /// <returns></returns>
-        public string DescribeProblemIfAny(object model)
-        {
-            return ProblemProviders.Select(p => p.DescribeProblem(model)).FirstOrDefault(desc => desc != null);
-        }
-        
-        public string GetDocumentation(Type type)
-        {
-            return RepositoryLocator.CatalogueRepository.CommentStore.GetTypeDocumentationIfExists(type);
-        }
-
-        public string CurrentDirectory { get { return Environment.CurrentDirectory; }}
-        public DialogResult ShowDialog(Form form)
-        {
-            // if on wrong Thread
-            if (_mainDockPanel?.InvokeRequired ?? false)
-            {
-                return _mainDockPanel.Invoke(() => ShowDialog(form));
-            }
-
-            return form.ShowDialog();
-        }
-
-        public void KillForm(Form f, Exception reason)
-        {
-            // if on wrong Thread
-            if (f.InvokeRequired)
-            {
-                f.Invoke(() => KillForm(f,reason));
-                return;
-            }
-
-            f.Close();
-            ExceptionViewer.Show("Window Closed",reason);
-        }
-        public void KillForm(Form f, string reason)
-        {
-            // if on wrong Thread
-            if (f.InvokeRequired)
-            {
-                f.Invoke(() => KillForm(f, reason));
-                return;
-            }
-
-            f.Close();
-            ExceptionViewer.Show("Window Closed",reason);
-        }
-        public void OnRuleRegistered(IBinderRule rule)
-        {
-            //no special action required
-        }
-
-        /// <summary>
-        /// Asks the user if they want to reload a fresh copy with a Yes/No message box.
-        /// </summary>
-        /// <param name="databaseEntity"></param>
-        /// <returns></returns>
-        public bool ShouldReloadFreshCopy(DatabaseEntity databaseEntity)
-        {
-            return YesNo(databaseEntity + " is out of date with database, would you like to reload a fresh copy?",
-                           "Object Changed");
-        }
-
-        public T Activate<T, T2>(T2 databaseObject)
-            where T : RDMPSingleDatabaseObjectControl<T2>, new()
-            where T2 : DatabaseEntity
-        {
-            return Activate<T, T2>(databaseObject, CoreIconProvider.GetImage(databaseObject));
-        }
-        
-        public T Activate<T>(IPersistableObjectCollection collection)
-            where T: Control,IObjectCollectionControl,new()
-
-        {
-            //if the window is already open
-            if (PopExisting(typeof(T), collection, out var existingHostedControlInstance))
-            {
-                //just update its state
-                var existing = (T) existingHostedControlInstance;
-                existing.SetCollection(this,collection);
-
-                return existing;
-            }
+            existingHostedControlInstance = existing.Control;
+            existing.Activate();
                 
-
-            var uiInstance = new T();
-            Activate(uiInstance, collection);
-            return uiInstance;
+            // only refresh if there are changes to some of the underlying objects
+            if(collection.DatabaseObjects.OfType<IRevertable>().Any(r=>r.HasLocalChanges().Evaluation == ChangeDescription.DatabaseCopyDifferent))
+                existing.HandleUserRequestingTabRefresh(this);
         }
 
+        return existing != null;
+    }
+    public DockContent Activate(DeserializeInstruction instruction, IActivateItems activator)
+    {
+        if (instruction.DatabaseObject != null && instruction.ObjectCollection != null)
+            throw new ArgumentException("DeserializeInstruction cannot have both a DatabaseObject and an ObjectCollection");
 
-        private T Activate<T, T2>(T2 databaseObject, Image<Rgba32> tabImage)
-            where T : RDMPSingleDatabaseObjectControl<T2>, new()
-            where T2 : DatabaseEntity
+        var c = (Control)_constructor.Construct(instruction.UIControlType,activator,true);
+
+        var uiInstance = c as IRDMPSingleDatabaseObjectControl;
+        var uiCollection = c as IObjectCollectionControl;
+
+        //it has a database object so call SetDatabaseObject
+        if (uiCollection != null)
+            //if we get here then Instruction wasn't for a 
+            return Activate(uiCollection, instruction.ObjectCollection);
+        else
+        if (uiInstance != null)
         {
-            if (PopExisting(typeof(T), databaseObject, out var existingHostedControlInstance))
-                return (T)existingHostedControlInstance;
+            var databaseObject = instruction.DatabaseObject;
 
-            var uiInstance = new T();
-            var floatable = WindowFactory.Create(this,RefreshBus, uiInstance, tabImage, databaseObject);
+            //the database object is gone? deleted maybe
+            if (databaseObject == null)
+                return null;
+
+            DockContent floatable = WindowFactory.Create(this,RefreshBus, uiInstance,CoreIconProvider.GetImage(databaseObject), databaseObject);
+
             floatable.Show(_mainDockPanel, DockState.Document);
-            uiInstance.SetDatabaseObject(this, databaseObject);
-
-            SetTabText(floatable,uiInstance);
-
-            return uiInstance;
-        }
-
-        private bool PopExisting(Type windowType, IMapsDirectlyToDatabaseTable databaseObject, out Control existingHostedControlInstance)
-        {
-            var existing = _windowManager.GetActiveWindowIfAnyFor(windowType, databaseObject);
-            existingHostedControlInstance = null;
-
-            if (existing != null)
+            try
             {
-                existingHostedControlInstance = existing.Control;
-                existing.Activate();
-
-                // only refresh if there are changes to the underlying object
-                if(databaseObject is IRevertable r && r.HasLocalChanges().Evaluation == ChangeDescription.DatabaseCopyDifferent)
-                    existing.HandleUserRequestingTabRefresh(this);
+                uiInstance.SetDatabaseObject(this,(DatabaseEntity) databaseObject);
+                SetTabText(floatable,uiInstance);
+            }
+            catch (Exception e)
+            {
+                floatable.Close();
+                throw new Exception("SetDatabaseObject failed on Control of Type '"+instruction.UIControlType.Name+"', control closed, see inner Exception for details",e);
             }
 
-            return existing != null;
-        }
-
-        private bool PopExisting(Type windowType, IPersistableObjectCollection collection, out Control existingHostedControlInstance)
-        {
-            var existing = _windowManager.GetActiveWindowIfAnyFor(windowType, collection);
-            existingHostedControlInstance = null;
-
-            if (existing != null)
-            {
-                existingHostedControlInstance = existing.Control;
-                existing.Activate();
-                
-                // only refresh if there are changes to some of the underlying objects
-                if(collection.DatabaseObjects.OfType<IRevertable>().Any(r=>r.HasLocalChanges().Evaluation == ChangeDescription.DatabaseCopyDifferent))
-                    existing.HandleUserRequestingTabRefresh(this);
-            }
-
-            return existing != null;
-        }
-        public DockContent Activate(DeserializeInstruction instruction, IActivateItems activator)
-        {
-            if (instruction.DatabaseObject != null && instruction.ObjectCollection != null)
-                throw new ArgumentException("DeserializeInstruction cannot have both a DatabaseObject and an ObjectCollection");
-
-            var c = (Control)_constructor.Construct(instruction.UIControlType,activator,true);
-
-            var uiInstance = c as IRDMPSingleDatabaseObjectControl;
-            var uiCollection = c as IObjectCollectionControl;
-
-            //it has a database object so call SetDatabaseObject
-            if (uiCollection != null)
-                //if we get here then Instruction wasn't for a 
-                return Activate(uiCollection, instruction.ObjectCollection);
-            else
-            if (uiInstance != null)
-            {
-                var databaseObject = instruction.DatabaseObject;
-
-                //the database object is gone? deleted maybe
-                if (databaseObject == null)
-                    return null;
-
-                DockContent floatable = WindowFactory.Create(this,RefreshBus, uiInstance,CoreIconProvider.GetImage(databaseObject), databaseObject);
-
-                floatable.Show(_mainDockPanel, DockState.Document);
-                try
-                {
-                    uiInstance.SetDatabaseObject(this,(DatabaseEntity) databaseObject);
-                    SetTabText(floatable,uiInstance);
-                }
-                catch (Exception e)
-                {
-                    floatable.Close();
-                    throw new Exception("SetDatabaseObject failed on Control of Type '"+instruction.UIControlType.Name+"', control closed, see inner Exception for details",e);
-                }
-
-                return floatable;
-            }
-            else
-            {
-                return (DockContent)activator.ShowWindow(c, true);
-            }
-        }
-
-        private void SetTabText(DockContent floatable, INamedTab tab)
-        {
-            string tabText = tab.GetTabName();
-            string tabToolTipText = tab.GetTabToolTip();
-
-            floatable.TabText = tabText;
-
-            // set tool tip to the full tab name or custom representation
-            floatable.ToolTipText = string.IsNullOrEmpty(tabToolTipText) ? tabText : tabToolTipText;
-
-            if (floatable != null && floatable.ParentForm != null)
-                floatable.ParentForm.Text = tabText + " - RDMP";
-        }
-
-        public PersistableObjectCollectionDockContent Activate(IObjectCollectionControl collectionControl, IPersistableObjectCollection objectCollection)
-        {
-            var floatable = WindowFactory.Create(this,collectionControl,objectCollection, null);
-            floatable.Show(_mainDockPanel, DockState.Document);
             return floatable;
         }
-
-        public void RefreshBus_RefreshObject(object sender, RefreshObjectEventArgs e)
+        else
         {
-            // if we don't want to do selective refresh or can't (because partial refreshes are not supported on the type)
-            if(HardRefresh || !UserSettings.SelectiveRefresh || !CoreChildProvider.SelectiveRefresh(e.Object))
-            {
-                //update the child provider with a full refresh
-                GetChildProvider();
-                HardRefresh = false;
-            }
-            RefreshProblemProviders();
+            return (DockContent)activator.ShowWindow(c, true);
+        }
+    }
+
+    private void SetTabText(DockContent floatable, INamedTab tab)
+    {
+        string tabText = tab.GetTabName();
+        string tabToolTipText = tab.GetTabToolTip();
+
+        floatable.TabText = tabText;
+
+        // set tool tip to the full tab name or custom representation
+        floatable.ToolTipText = string.IsNullOrEmpty(tabToolTipText) ? tabText : tabToolTipText;
+
+        if (floatable != null && floatable.ParentForm != null)
+            floatable.ParentForm.Text = tabText + " - RDMP";
+    }
+
+    public PersistableObjectCollectionDockContent Activate(IObjectCollectionControl collectionControl, IPersistableObjectCollection objectCollection)
+    {
+        var floatable = WindowFactory.Create(this,collectionControl,objectCollection, null);
+        floatable.Show(_mainDockPanel, DockState.Document);
+        return floatable;
+    }
+
+    public void RefreshBus_RefreshObject(object sender, RefreshObjectEventArgs e)
+    {
+        // if we don't want to do selective refresh or can't (because partial refreshes are not supported on the type)
+        if(HardRefresh || !UserSettings.SelectiveRefresh || !CoreChildProvider.SelectiveRefresh(e.Object))
+        {
+            //update the child provider with a full refresh
+            GetChildProvider();
+            HardRefresh = false;
+        }
+        RefreshProblemProviders();
+    }
+
+    private void RefreshProblemProviders()
+    {
+        foreach (IProblemProvider p in ProblemProviders)
+            p.RefreshProblems(CoreChildProvider);
+    }
+
+    /// <inheritdoc/>
+    public override bool YesNo(DialogArgs args,out bool chosen)
+    {
+        // if on wrong Thread
+        if (_mainDockPanel?.InvokeRequired ?? false)
+        {
+            bool result = default;
+            var rtn = _mainDockPanel.Invoke<bool>(() => YesNo(args, out result));
+            chosen = result;
+            return rtn;
         }
 
-        private void RefreshProblemProviders()
+        var dr = MessageBox.Show(args.TaskDescription ?? args.EntryLabel, args.WindowTitle, MessageBoxButtons.YesNo);
+
+        if (dr == DialogResult.Yes)
         {
-            foreach (IProblemProvider p in ProblemProviders)
-                p.RefreshProblems(CoreChildProvider);
-        }
-
-        /// <inheritdoc/>
-        public override bool YesNo(DialogArgs args,out bool chosen)
-        {
-            // if on wrong Thread
-            if (_mainDockPanel?.InvokeRequired ?? false)
-            {
-                bool result = default;
-                var rtn = _mainDockPanel.Invoke<bool>(() => YesNo(args, out result));
-                chosen = result;
-                return rtn;
-            }
-
-            var dr = MessageBox.Show(args.TaskDescription ?? args.EntryLabel, args.WindowTitle, MessageBoxButtons.YesNo);
-
-            if (dr == DialogResult.Yes)
-            {
-                chosen = true;
-                return true;
-            }
-
-            if (dr == DialogResult.No)
-            {
-                chosen = false;
-                return true;
-            }
-
-            chosen = false;
-            return false;
-        }
-
-        public override bool TypeText(DialogArgs args, int maxLength, string initialText, out string text, bool requireSaneHeaderText)
-        {
-            // if on wrong Thread
-            if (_mainDockPanel?.InvokeRequired ?? false)
-            {
-                string result = default;
-                var rtn = _mainDockPanel.Invoke<bool>(() => TypeText(args,maxLength,initialText,out result,requireSaneHeaderText));
-                text = result;
-                return rtn;
-            }
-
-            var textTyper = new TypeTextOrCancelDialog(args, maxLength, initialText, allowBlankText: false, multiLine: maxLength > MultiLineLengthThreshold)
-            {
-                RequireSaneHeaderText = requireSaneHeaderText
-            };
-
-            text = textTyper.ShowDialog() == DialogResult.OK ? textTyper.ResultText : null;
-            return !string.IsNullOrWhiteSpace(text);
-        }
-
-        public override DiscoveredDatabase SelectDatabase(bool allowDatabaseCreation, string taskDescription)
-        {
-            // if on wrong Thread
-            if (_mainDockPanel?.InvokeRequired ?? false)
-            {
-                return  _mainDockPanel.Invoke(() => SelectDatabase(allowDatabaseCreation,taskDescription));
-            }
-
-            var dialog = new ServerDatabaseTableSelectorDialog(taskDescription,false,true,this);
-            dialog.ShowDialog();
-            
-            if (dialog.DialogResult != DialogResult.OK)
-                return null;
-
-            return dialog.SelectedDatabase;
-        }
-
-        public override DiscoveredTable SelectTable(bool allowDatabaseCreation, string taskDescription)
-        {
-            // if on wrong Thread
-            if (_mainDockPanel?.InvokeRequired ?? false)
-            {
-                return _mainDockPanel.Invoke(() => SelectTable(allowDatabaseCreation, taskDescription));
-            }
-
-            var dialog = new ServerDatabaseTableSelectorDialog(taskDescription,true,true,this);
-            dialog.AllowTableValuedFunctionSelection = true;
-            
-            dialog.ShowDialog();
-
-            if (dialog.DialogResult != DialogResult.OK)
-                return null;
-
-            return dialog.SelectedTable;
-        }
-
-        public override void ShowException(string errorText, Exception exception)
-        {
-            // if on wrong Thread
-            if (_mainDockPanel?.InvokeRequired ?? false)
-            {
-                _mainDockPanel.Invoke(() => ShowException(errorText, exception));
-                return;
-            }
-
-            ExceptionViewer.Show(errorText, exception);
-        }
-
-        public override void Wait(string title, Task task, CancellationTokenSource cts)
-        {
-            // if on wrong Thread
-            if (_mainDockPanel?.InvokeRequired ?? false)
-            {
-                _mainDockPanel.Invoke(() => Wait(title,task,cts));
-                return;
-            }
-
-            var ui = new WaitUI(title,task,cts);
-            ui.ShowDialog();
-        }
-
-
-        public override IEnumerable<Type> GetIgnoredCommands()
-        {
-            yield return typeof(ExecuteCommandRefreshObject);
-            yield return typeof(ExecuteCommandChangeExtractability);
-            yield return typeof (ExecuteCommandOpenInExplorer);
-            yield return typeof (ExecuteCommandCreateNewFileBasedProcessTask);
-        }
-
-        
-        public override IMapsDirectlyToDatabaseTable SelectOne(DialogArgs args, IMapsDirectlyToDatabaseTable[] availableObjects)
-        {
-            // if on wrong Thread
-            if (_mainDockPanel?.InvokeRequired ?? false)
-            {
-                return _mainDockPanel.Invoke(() => SelectOne(args, availableObjects));
-            }
-
-            if (!availableObjects.Any())
-            {
-                MessageBox.Show($"There are no compatible objects in your RMDP for:{Environment.NewLine}{args}");
-                return null;
-            }
-
-            //if there is only one object available to select
-            if (availableObjects.Length == 1)
-                if(args.AllowAutoSelect)
-                {
-                    return availableObjects[0];
-                }
-
-            if(SelectObject(args,availableObjects, out var selected))
-            {
-                return selected;
-            }
-
-            return null; //user didn't select one of the IMapsDirectlyToDatabaseTable objects shown in the dialog
-        }
-
-        public override bool SelectObject<T>(DialogArgs args, T[] available, out T selected)
-        {
-            // if on wrong Thread
-            if (_mainDockPanel?.InvokeRequired ?? false)
-            {
-                T result = default;
-                var rtn = _mainDockPanel.Invoke<bool>(() => SelectObject(args, available, out result));
-                selected = result;
-                return rtn;
-            }
-
-            var pick = new SelectDialog<T>(args,this,available,false);
-
-            if (pick.ShowDialog() == DialogResult.OK)
-            {
-                selected = pick.Selected;
-                return true;
-            }
-
-            selected = default(T);
-            return false;
-        }
-
-        public override bool SelectObjects<T>(DialogArgs args, T[] available, out T[] selected)
-        {
-            // if on wrong Thread
-            if (_mainDockPanel?.InvokeRequired ?? false)
-            {
-                T[] result = default;
-                var rtn = _mainDockPanel.Invoke<bool>(() => SelectObjects(args, available, out result));
-                selected = result;
-                return rtn;
-            }
-
-            var pick = new SelectDialog<T>(args,this, available, false);
-            pick.AllowMultiSelect = true;
-
-            if (pick.ShowDialog() == DialogResult.OK)
-            {
-                selected = pick.MultiSelected.ToArray();
-                return true;
-            }
-
-            selected = default(T[]);
-            return false;
-        }
-        public override DirectoryInfo SelectDirectory(string prompt)
-        {
-            // if on wrong Thread
-            if (_mainDockPanel?.InvokeRequired ?? false)
-            {
-                return _mainDockPanel.Invoke(() => SelectDirectory(prompt));
-            }
-
-            using (var fb = new FolderBrowserDialog())
-            {
-                if (fb.ShowDialog() == DialogResult.OK)
-                    return new DirectoryInfo(fb.SelectedPath);
-            
-                return null;
-            }
-        }
-
-        public override FileInfo SelectFile(string prompt)
-        {
-            // if on wrong Thread
-            if (_mainDockPanel?.InvokeRequired ?? false)
-            {
-                return _mainDockPanel.Invoke(() => SelectFile(prompt));
-            }
-
-            return SelectFile(prompt, null, null);
-        }
-
-        public override FileInfo SelectFile(string prompt, string patternDescription, string pattern)
-        {
-            // if on wrong Thread
-            if (_mainDockPanel?.InvokeRequired ?? false)
-            {
-                return _mainDockPanel.Invoke(() => SelectFile(prompt, patternDescription,pattern));
-            }
-
-            using (var fb = new OpenFileDialog {CheckFileExists = false,Multiselect = false})
-            {
-                if (patternDescription != null && pattern != null)
-                    fb.Filter = patternDescription + "|" + pattern;
-
-                if (fb.ShowDialog() == DialogResult.OK)
-                {
-                    // entering "null" in a winforms file dialog will return something like "D:\Blah\null"
-                    if (string.Equals(Path.GetFileName(fb.FileName),"null", StringComparison.CurrentCultureIgnoreCase))
-                        return null;
-
-                    return new FileInfo(fb.FileName);
-                }
-            
-                return null;
-            }        
-        }
-        
-        public override FileInfo[] SelectFiles(string prompt, string patternDescription, string pattern)
-        {
-            // if on wrong Thread
-            if (_mainDockPanel?.InvokeRequired ?? false)
-            {
-                return _mainDockPanel.Invoke(() => SelectFiles(prompt, patternDescription, pattern));
-            }
-
-            using (var fb = new OpenFileDialog {CheckFileExists = false,Multiselect = true})
-            {
-                if (patternDescription != null && pattern != null)
-                    fb.Filter = patternDescription + "|" + pattern;
-
-                if (fb.ShowDialog() == DialogResult.OK)
-                    return fb.FileNames.Select(f=>new FileInfo(f)).ToArray();
-            
-                return null;
-            }
-        }
-
-        protected override bool SelectValueTypeImpl(DialogArgs args, Type paramType, object initialValue, out object chosen)
-        {
-            // if on wrong Thread
-            if (_mainDockPanel?.InvokeRequired ?? false)
-            {
-                object result = default;
-                var rtn = _mainDockPanel.Invoke<bool>(() => SelectValueTypeImpl(args, paramType, initialValue, out result));
-                chosen = result;
-                return rtn;
-            }
-
-            //whatever else it is use string
-            var typeTextDialog = new TypeTextOrCancelDialog(args,1000,initialValue?.ToString());
-
-            if (typeTextDialog.ShowDialog() == DialogResult.OK)
-            {
-                chosen = UsefulStuff.ChangeType(typeTextDialog.ResultText, paramType);
-                return true;
-            }
-
-            chosen = null;
-            return false;
-        }
-
-        public override IMapsDirectlyToDatabaseTable[] SelectMany(DialogArgs args, Type arrayElementType,
-            IMapsDirectlyToDatabaseTable[] availableObjects)
-        {
-            // if on wrong Thread
-            if (_mainDockPanel?.InvokeRequired ?? false)
-            {
-                return _mainDockPanel.Invoke(() => SelectMany(args, arrayElementType, availableObjects));
-            }
-
-            if (!availableObjects.Any())
-            {
-                MessageBox.Show("There are no '" + arrayElementType.Name + "' objects in your RMDP");
-                return null;
-            }
-
-            var selectDialog = new SelectDialog<IMapsDirectlyToDatabaseTable>(args, this, availableObjects, false);
-            selectDialog.AllowMultiSelect = true;
-            
-            if (selectDialog.ShowDialog() == DialogResult.OK)
-            {
-                var ms = selectDialog.MultiSelected.ToList();
-                var toReturn = Array.CreateInstance(arrayElementType, ms.Count);
-
-                for(int i = 0;i<ms.Count;i++)
-                    toReturn.SetValue(ms[i],i);
-                
-                return toReturn.Cast<IMapsDirectlyToDatabaseTable>().ToArray();
-            }
-
-            return null;
-        }
-
-        public override List<CommandInvokerDelegate> GetDelegates()
-        {
-            return new List<CommandInvokerDelegate>
-            {
-                new CommandInvokerDelegate(typeof(IActivateItems),true,(p)=>this)
-            };
-        }
-        public void StartSession(string sessionName, IEnumerable<IMapsDirectlyToDatabaseTable> initialObjects, string initialSearch)
-        {
-            if(initialObjects == null)
-            {
-                initialObjects =  SelectMany(new DialogArgs
-                {
-                    WindowTitle = sessionName.StartsWith(ExecuteCommandStartSession.FindResultsTitle) ? "Find Multiple" : "Session Objects",
-                    TaskDescription = "Pick which objects you want added to the session window.  You can always add more later",
-                    InitialSearchText = initialSearch,
-
-                    IsFind = sessionName.StartsWith(ExecuteCommandStartSession.FindResultsTitle),
-                },typeof(IMapsDirectlyToDatabaseTable),CoreChildProvider.GetAllSearchables().Keys.ToArray())?.ToList();
-
-                if(initialObjects == null || initialObjects.Count() == 0)
-                {
-                    // user cancelled picking objects
-                    return;
-                }
-            }
-
-            var panel = WindowFactory.Create(this,new SessionCollectionUI(),new SessionCollection(sessionName)
-            {
-                DatabaseObjects = initialObjects.ToList()
-            },Image.Load<Rgba32>(CatalogueIcons.WindowLayout));
-            panel.Show(_mainDockPanel,DockState.DockLeft);
-        }
-
-        
-        /// <inheritdoc/>
-        public IEnumerable<SessionCollectionUI> GetSessions()
-        {
-            return _windowManager.GetAllWindows<SessionCollectionUI>();
-        }
-
-        public override IPipelineRunner GetPipelineRunner(DialogArgs args,IPipelineUseCase useCase, IPipeline pipeline)
-        {
-            ConfigureAndExecutePipelineUI configureAndExecuteDialog = new ConfigureAndExecutePipelineUI(args,useCase, this);
-            configureAndExecuteDialog.Dock = DockStyle.Fill;
-            
-            return configureAndExecuteDialog;
-        }
-
-        public override CohortCreationRequest GetCohortCreationRequest(ExternalCohortTable externalCohortTable, IProject project, string cohortInitialDescription)
-        {
-            // if on wrong Thread
-            if (_mainDockPanel?.InvokeRequired ?? false)
-            {
-                return _mainDockPanel.Invoke(() => GetCohortCreationRequest(externalCohortTable, project, cohortInitialDescription));
-            }
-
-            var ui = new CohortCreationRequestUI(this,externalCohortTable,project);
-                
-            if(!string.IsNullOrWhiteSpace(cohortInitialDescription))
-                ui.CohortDescription = cohortInitialDescription + " (" + Environment.UserName + " - " + DateTime.Now + ")";
-
-            if (ui.ShowDialog() != DialogResult.OK)
-                return null;
-
-            return ui.Result;
-        }
-
-        public override ICatalogue CreateAndConfigureCatalogue(ITableInfo tableInfo, ColumnInfo[] extractionIdentifierColumns, string initialDescription, IProject projectSpecific, string folder)
-        {
-            // if on wrong Thread
-            if (_mainDockPanel?.InvokeRequired ?? false)
-            {
-                return _mainDockPanel.Invoke(() => CreateAndConfigureCatalogue(tableInfo, extractionIdentifierColumns, initialDescription,projectSpecific,folder));
-            }
-
-            var ui = new ConfigureCatalogueExtractabilityUI(this, tableInfo, initialDescription, projectSpecific);
-            ui.TargetFolder = folder;
-            ui.ShowDialog();
-            
-            return ui.CatalogueCreatedIfAny;
-        }
-        public override ExternalDatabaseServer CreateNewPlatformDatabase(ICatalogueRepository catalogueRepository, PermissableDefaults defaultToSet, IPatcher patcher, DiscoveredDatabase db)
-        {
-            // if on wrong Thread
-            if (_mainDockPanel?.InvokeRequired ?? false)
-            {
-                return _mainDockPanel.Invoke(() => CreateNewPlatformDatabase(catalogueRepository, defaultToSet, patcher, db));
-            }
-
-            //launch the winforms UI for creating a database
-            return CreatePlatformDatabase.CreateNewExternalServer(catalogueRepository,defaultToSet,patcher);
-        }
-
-        public override bool ShowCohortWizard(out CohortIdentificationConfiguration cic)
-        {
-            // if on wrong Thread
-            if (_mainDockPanel?.InvokeRequired ?? false)
-            {
-                CohortIdentificationConfiguration result = default;
-                var rtn = _mainDockPanel.Invoke<bool>(() => ShowCohortWizard(out result));
-                cic = result;
-                return rtn;
-            }
-
-            var wizard = new CreateNewCohortIdentificationConfigurationUI(this);
-
-            if (wizard.ShowDialog() == DialogResult.OK)
-            {
-                cic = wizard.CohortIdentificationCriteriaCreatedIfAny;
-            }
-            else
-            {
-                cic = null;
-            }
-
-            // Wizard was shown so that's a thing
+            chosen = true;
             return true;
         }
 
-        public override void SelectAnythingThen(DialogArgs args, Action<IMapsDirectlyToDatabaseTable> callback)
+        if (dr == DialogResult.No)
         {
-            // if on wrong Thread
-            if (_mainDockPanel?.InvokeRequired ?? false)
-            { 
-                _mainDockPanel.Invoke(() => SelectAnythingThen(args,callback));
-                return;
+            chosen = false;
+            return true;
+        }
+
+        chosen = false;
+        return false;
+    }
+
+    public override bool TypeText(DialogArgs args, int maxLength, string initialText, out string text, bool requireSaneHeaderText)
+    {
+        // if on wrong Thread
+        if (_mainDockPanel?.InvokeRequired ?? false)
+        {
+            string result = default;
+            var rtn = _mainDockPanel.Invoke<bool>(() => TypeText(args,maxLength,initialText,out result,requireSaneHeaderText));
+            text = result;
+            return rtn;
+        }
+
+        var textTyper = new TypeTextOrCancelDialog(args, maxLength, initialText, allowBlankText: false, multiLine: maxLength > MultiLineLengthThreshold)
+        {
+            RequireSaneHeaderText = requireSaneHeaderText
+        };
+
+        text = textTyper.ShowDialog() == DialogResult.OK ? textTyper.ResultText : null;
+        return !string.IsNullOrWhiteSpace(text);
+    }
+
+    public override DiscoveredDatabase SelectDatabase(bool allowDatabaseCreation, string taskDescription)
+    {
+        // if on wrong Thread
+        if (_mainDockPanel?.InvokeRequired ?? false)
+        {
+            return  _mainDockPanel.Invoke(() => SelectDatabase(allowDatabaseCreation,taskDescription));
+        }
+
+        var dialog = new ServerDatabaseTableSelectorDialog(taskDescription,false,true,this);
+        dialog.ShowDialog();
+            
+        if (dialog.DialogResult != DialogResult.OK)
+            return null;
+
+        return dialog.SelectedDatabase;
+    }
+
+    public override DiscoveredTable SelectTable(bool allowDatabaseCreation, string taskDescription)
+    {
+        // if on wrong Thread
+        if (_mainDockPanel?.InvokeRequired ?? false)
+        {
+            return _mainDockPanel.Invoke(() => SelectTable(allowDatabaseCreation, taskDescription));
+        }
+
+        var dialog = new ServerDatabaseTableSelectorDialog(taskDescription,true,true,this);
+        dialog.AllowTableValuedFunctionSelection = true;
+            
+        dialog.ShowDialog();
+
+        if (dialog.DialogResult != DialogResult.OK)
+            return null;
+
+        return dialog.SelectedTable;
+    }
+
+    public override void ShowException(string errorText, Exception exception)
+    {
+        // if on wrong Thread
+        if (_mainDockPanel?.InvokeRequired ?? false)
+        {
+            _mainDockPanel.Invoke(() => ShowException(errorText, exception));
+            return;
+        }
+
+        ExceptionViewer.Show(errorText, exception);
+    }
+
+    public override void Wait(string title, Task task, CancellationTokenSource cts)
+    {
+        // if on wrong Thread
+        if (_mainDockPanel?.InvokeRequired ?? false)
+        {
+            _mainDockPanel.Invoke(() => Wait(title,task,cts));
+            return;
+        }
+
+        var ui = new WaitUI(title,task,cts);
+        ui.ShowDialog();
+    }
+
+
+    public override IEnumerable<Type> GetIgnoredCommands()
+    {
+        yield return typeof(ExecuteCommandRefreshObject);
+        yield return typeof(ExecuteCommandChangeExtractability);
+        yield return typeof (ExecuteCommandOpenInExplorer);
+        yield return typeof (ExecuteCommandCreateNewFileBasedProcessTask);
+    }
+
+        
+    public override IMapsDirectlyToDatabaseTable SelectOne(DialogArgs args, IMapsDirectlyToDatabaseTable[] availableObjects)
+    {
+        // if on wrong Thread
+        if (_mainDockPanel?.InvokeRequired ?? false)
+        {
+            return _mainDockPanel.Invoke(() => SelectOne(args, availableObjects));
+        }
+
+        if (!availableObjects.Any())
+        {
+            MessageBox.Show($"There are no compatible objects in your RMDP for:{Environment.NewLine}{args}");
+            return null;
+        }
+
+        //if there is only one object available to select
+        if (availableObjects.Length == 1)
+            if(args.AllowAutoSelect)
+            {
+                return availableObjects[0];
             }
 
-            var select = new SelectDialog<IMapsDirectlyToDatabaseTable>(
-                args, this, CoreChildProvider.GetAllSearchables().Select(k => k.Key), false);
+        if(SelectObject(args,availableObjects, out var selected))
+        {
+            return selected;
+        }
 
-            if(select.ShowDialog() == DialogResult.OK && select.Selected != null)
+        return null; //user didn't select one of the IMapsDirectlyToDatabaseTable objects shown in the dialog
+    }
+
+    public override bool SelectObject<T>(DialogArgs args, T[] available, out T selected)
+    {
+        // if on wrong Thread
+        if (_mainDockPanel?.InvokeRequired ?? false)
+        {
+            T result = default;
+            var rtn = _mainDockPanel.Invoke<bool>(() => SelectObject(args, available, out result));
+            selected = result;
+            return rtn;
+        }
+
+        var pick = new SelectDialog<T>(args,this,available,false);
+
+        if (pick.ShowDialog() == DialogResult.OK)
+        {
+            selected = pick.Selected;
+            return true;
+        }
+
+        selected = default(T);
+        return false;
+    }
+
+    public override bool SelectObjects<T>(DialogArgs args, T[] available, out T[] selected)
+    {
+        // if on wrong Thread
+        if (_mainDockPanel?.InvokeRequired ?? false)
+        {
+            T[] result = default;
+            var rtn = _mainDockPanel.Invoke<bool>(() => SelectObjects(args, available, out result));
+            selected = result;
+            return rtn;
+        }
+
+        var pick = new SelectDialog<T>(args,this, available, false);
+        pick.AllowMultiSelect = true;
+
+        if (pick.ShowDialog() == DialogResult.OK)
+        {
+            selected = pick.MultiSelected.ToArray();
+            return true;
+        }
+
+        selected = default(T[]);
+        return false;
+    }
+    public override DirectoryInfo SelectDirectory(string prompt)
+    {
+        // if on wrong Thread
+        if (_mainDockPanel?.InvokeRequired ?? false)
+        {
+            return _mainDockPanel.Invoke(() => SelectDirectory(prompt));
+        }
+
+        using (var fb = new FolderBrowserDialog())
+        {
+            if (fb.ShowDialog() == DialogResult.OK)
+                return new DirectoryInfo(fb.SelectedPath);
+            
+            return null;
+        }
+    }
+
+    public override FileInfo SelectFile(string prompt)
+    {
+        // if on wrong Thread
+        if (_mainDockPanel?.InvokeRequired ?? false)
+        {
+            return _mainDockPanel.Invoke(() => SelectFile(prompt));
+        }
+
+        return SelectFile(prompt, null, null);
+    }
+
+    public override FileInfo SelectFile(string prompt, string patternDescription, string pattern)
+    {
+        // if on wrong Thread
+        if (_mainDockPanel?.InvokeRequired ?? false)
+        {
+            return _mainDockPanel.Invoke(() => SelectFile(prompt, patternDescription,pattern));
+        }
+
+        using (var fb = new OpenFileDialog {CheckFileExists = false,Multiselect = false})
+        {
+            if (patternDescription != null && pattern != null)
+                fb.Filter = patternDescription + "|" + pattern;
+
+            if (fb.ShowDialog() == DialogResult.OK)
             {
-                callback(select.Selected);
+                // entering "null" in a winforms file dialog will return something like "D:\Blah\null"
+                if (string.Equals(Path.GetFileName(fb.FileName),"null", StringComparison.CurrentCultureIgnoreCase))
+                    return null;
+
+                return new FileInfo(fb.FileName);
+            }
+            
+            return null;
+        }        
+    }
+        
+    public override FileInfo[] SelectFiles(string prompt, string patternDescription, string pattern)
+    {
+        // if on wrong Thread
+        if (_mainDockPanel?.InvokeRequired ?? false)
+        {
+            return _mainDockPanel.Invoke(() => SelectFiles(prompt, patternDescription, pattern));
+        }
+
+        using (var fb = new OpenFileDialog {CheckFileExists = false,Multiselect = true})
+        {
+            if (patternDescription != null && pattern != null)
+                fb.Filter = patternDescription + "|" + pattern;
+
+            if (fb.ShowDialog() == DialogResult.OK)
+                return fb.FileNames.Select(f=>new FileInfo(f)).ToArray();
+            
+            return null;
+        }
+    }
+
+    protected override bool SelectValueTypeImpl(DialogArgs args, Type paramType, object initialValue, out object chosen)
+    {
+        // if on wrong Thread
+        if (_mainDockPanel?.InvokeRequired ?? false)
+        {
+            object result = default;
+            var rtn = _mainDockPanel.Invoke<bool>(() => SelectValueTypeImpl(args, paramType, initialValue, out result));
+            chosen = result;
+            return rtn;
+        }
+
+        //whatever else it is use string
+        var typeTextDialog = new TypeTextOrCancelDialog(args,1000,initialValue?.ToString());
+
+        if (typeTextDialog.ShowDialog() == DialogResult.OK)
+        {
+            chosen = UsefulStuff.ChangeType(typeTextDialog.ResultText, paramType);
+            return true;
+        }
+
+        chosen = null;
+        return false;
+    }
+
+    public override IMapsDirectlyToDatabaseTable[] SelectMany(DialogArgs args, Type arrayElementType,
+        IMapsDirectlyToDatabaseTable[] availableObjects)
+    {
+        // if on wrong Thread
+        if (_mainDockPanel?.InvokeRequired ?? false)
+        {
+            return _mainDockPanel.Invoke(() => SelectMany(args, arrayElementType, availableObjects));
+        }
+
+        if (!availableObjects.Any())
+        {
+            MessageBox.Show("There are no '" + arrayElementType.Name + "' objects in your RMDP");
+            return null;
+        }
+
+        var selectDialog = new SelectDialog<IMapsDirectlyToDatabaseTable>(args, this, availableObjects, false);
+        selectDialog.AllowMultiSelect = true;
+            
+        if (selectDialog.ShowDialog() == DialogResult.OK)
+        {
+            var ms = selectDialog.MultiSelected.ToList();
+            var toReturn = Array.CreateInstance(arrayElementType, ms.Count);
+
+            for(int i = 0;i<ms.Count;i++)
+                toReturn.SetValue(ms[i],i);
+                
+            return toReturn.Cast<IMapsDirectlyToDatabaseTable>().ToArray();
+        }
+
+        return null;
+    }
+
+    public override List<CommandInvokerDelegate> GetDelegates()
+    {
+        return new List<CommandInvokerDelegate>
+        {
+            new CommandInvokerDelegate(typeof(IActivateItems),true,(p)=>this)
+        };
+    }
+    public void StartSession(string sessionName, IEnumerable<IMapsDirectlyToDatabaseTable> initialObjects, string initialSearch)
+    {
+        if(initialObjects == null)
+        {
+            initialObjects =  SelectMany(new DialogArgs
+            {
+                WindowTitle = sessionName.StartsWith(ExecuteCommandStartSession.FindResultsTitle) ? "Find Multiple" : "Session Objects",
+                TaskDescription = "Pick which objects you want added to the session window.  You can always add more later",
+                InitialSearchText = initialSearch,
+
+                IsFind = sessionName.StartsWith(ExecuteCommandStartSession.FindResultsTitle),
+            },typeof(IMapsDirectlyToDatabaseTable),CoreChildProvider.GetAllSearchables().Keys.ToArray())?.ToList();
+
+            if(initialObjects == null || initialObjects.Count() == 0)
+            {
+                // user cancelled picking objects
+                return;
             }
         }
 
-        public override void ShowData(IViewSQLAndResultsCollection collection)
+        var panel = WindowFactory.Create(this,new SessionCollectionUI(),new SessionCollection(sessionName)
         {
-            // if on wrong Thread
-            if (_mainDockPanel?.InvokeRequired ?? false)
-            {
-                _mainDockPanel.Invoke(() => ShowData(collection));
-                return;
-            }
+            DatabaseObjects = initialObjects.ToList()
+        },Image.Load<Rgba32>(CatalogueIcons.WindowLayout));
+        panel.Show(_mainDockPanel,DockState.DockLeft);
+    }
 
-            Activate<ViewSQLAndResultsWithDataGridUI>(collection);
+        
+    /// <inheritdoc/>
+    public IEnumerable<SessionCollectionUI> GetSessions()
+    {
+        return _windowManager.GetAllWindows<SessionCollectionUI>();
+    }
+
+    public override IPipelineRunner GetPipelineRunner(DialogArgs args,IPipelineUseCase useCase, IPipeline pipeline)
+    {
+        ConfigureAndExecutePipelineUI configureAndExecuteDialog = new ConfigureAndExecutePipelineUI(args,useCase, this);
+        configureAndExecuteDialog.Dock = DockStyle.Fill;
+            
+        return configureAndExecuteDialog;
+    }
+
+    public override CohortCreationRequest GetCohortCreationRequest(ExternalCohortTable externalCohortTable, IProject project, string cohortInitialDescription)
+    {
+        // if on wrong Thread
+        if (_mainDockPanel?.InvokeRequired ?? false)
+        {
+            return _mainDockPanel.Invoke(() => GetCohortCreationRequest(externalCohortTable, project, cohortInitialDescription));
         }
 
-        public override void ShowLogs(ILoggedActivityRootObject rootObject)
-        {
-            // if on wrong Thread
-            if (_mainDockPanel?.InvokeRequired ?? false)
-            {
-                _mainDockPanel.Invoke(() => ShowLogs(rootObject));
-                return;
-            }
+        var ui = new CohortCreationRequestUI(this,externalCohortTable,project);
+                
+        if(!string.IsNullOrWhiteSpace(cohortInitialDescription))
+            ui.CohortDescription = cohortInitialDescription + " (" + Environment.UserName + " - " + DateTime.Now + ")";
 
-            Activate<LoadEventsTreeView>(new LoadEventsTreeViewObjectCollection(rootObject));
+        if (ui.ShowDialog() != DialogResult.OK)
+            return null;
+
+        return ui.Result;
+    }
+
+    public override ICatalogue CreateAndConfigureCatalogue(ITableInfo tableInfo, ColumnInfo[] extractionIdentifierColumns, string initialDescription, IProject projectSpecific, string folder)
+    {
+        // if on wrong Thread
+        if (_mainDockPanel?.InvokeRequired ?? false)
+        {
+            return _mainDockPanel.Invoke(() => CreateAndConfigureCatalogue(tableInfo, extractionIdentifierColumns, initialDescription,projectSpecific,folder));
         }
 
-        public override void ShowLogs(ExternalDatabaseServer loggingServer, LogViewerFilter filter)
+        var ui = new ConfigureCatalogueExtractabilityUI(this, tableInfo, initialDescription, projectSpecific);
+        ui.TargetFolder = folder;
+        ui.ShowDialog();
+            
+        return ui.CatalogueCreatedIfAny;
+    }
+    public override ExternalDatabaseServer CreateNewPlatformDatabase(ICatalogueRepository catalogueRepository, PermissableDefaults defaultToSet, IPatcher patcher, DiscoveredDatabase db)
+    {
+        // if on wrong Thread
+        if (_mainDockPanel?.InvokeRequired ?? false)
         {
-            // if on wrong Thread
-            if (_mainDockPanel?.InvokeRequired ?? false)
-            {
-                _mainDockPanel.Invoke(() => ShowLogs(loggingServer,filter));
-                return;
-            }
-
-
-            LoggingTabUI loggingTabUI =  Activate<LoggingTabUI, ExternalDatabaseServer>(loggingServer);
-            if(filter != null)
-                loggingTabUI.SetFilter(filter);
+            return _mainDockPanel.Invoke(() => CreateNewPlatformDatabase(catalogueRepository, defaultToSet, patcher, db));
         }
 
-        public override void ShowGraph(AggregateConfiguration aggregate)
-        {
-            // if on wrong Thread
-            if (_mainDockPanel?.InvokeRequired ?? false)
-            {
-                _mainDockPanel.Invoke(() => ShowGraph(aggregate));
-                return;
-            }
+        //launch the winforms UI for creating a database
+        return CreatePlatformDatabase.CreateNewExternalServer(catalogueRepository,defaultToSet,patcher);
+    }
 
-            var graph = Activate<AggregateGraphUI, AggregateConfiguration>(aggregate);
-            graph.LoadGraphAsync();
+    public override bool ShowCohortWizard(out CohortIdentificationConfiguration cic)
+    {
+        // if on wrong Thread
+        if (_mainDockPanel?.InvokeRequired ?? false)
+        {
+            CohortIdentificationConfiguration result = default;
+            var rtn = _mainDockPanel.Invoke<bool>(() => ShowCohortWizard(out result));
+            cic = result;
+            return rtn;
         }
 
-        public override void LaunchSubprocess(ProcessStartInfo startInfo)
-        {
-            // if on wrong Thread
-            if (_mainDockPanel?.InvokeRequired ?? false)
-            {
-                _mainDockPanel.Invoke(() => LaunchSubprocess(startInfo));
-                return;
-            }
+        var wizard = new CreateNewCohortIdentificationConfigurationUI(this);
 
-            var ctrl = new ConsoleControl.ConsoleControl();
-            ShowWindow(ctrl, true);
-            ctrl.StartProcess(startInfo);
+        if (wizard.ShowDialog() == DialogResult.OK)
+        {
+            cic = wizard.CohortIdentificationCriteriaCreatedIfAny;
+        }
+        else
+        {
+            cic = null;
         }
 
-        public override void ShowData(System.Data.DataTable table)
+        // Wizard was shown so that's a thing
+        return true;
+    }
+
+    public override void SelectAnythingThen(DialogArgs args, Action<IMapsDirectlyToDatabaseTable> callback)
+    {
+        // if on wrong Thread
+        if (_mainDockPanel?.InvokeRequired ?? false)
         { 
-            // if on wrong Thread
-            if (_mainDockPanel?.InvokeRequired ?? false)
-            {
-                _mainDockPanel.Invoke(() => ShowData(table));
-                return;
-            }
-
-            var ui = new DataTableViewerUI(table, "Table");
-            ShowDialog(new SingleControlForm(ui, true));
+            _mainDockPanel.Invoke(() => SelectAnythingThen(args,callback));
+            return;
         }
+
+        var select = new SelectDialog<IMapsDirectlyToDatabaseTable>(
+            args, this, CoreChildProvider.GetAllSearchables().Select(k => k.Key), false);
+
+        if(select.ShowDialog() == DialogResult.OK && select.Selected != null)
+        {
+            callback(select.Selected);
+        }
+    }
+
+    public override void ShowData(IViewSQLAndResultsCollection collection)
+    {
+        // if on wrong Thread
+        if (_mainDockPanel?.InvokeRequired ?? false)
+        {
+            _mainDockPanel.Invoke(() => ShowData(collection));
+            return;
+        }
+
+        Activate<ViewSQLAndResultsWithDataGridUI>(collection);
+    }
+
+    public override void ShowLogs(ILoggedActivityRootObject rootObject)
+    {
+        // if on wrong Thread
+        if (_mainDockPanel?.InvokeRequired ?? false)
+        {
+            _mainDockPanel.Invoke(() => ShowLogs(rootObject));
+            return;
+        }
+
+        Activate<LoadEventsTreeView>(new LoadEventsTreeViewObjectCollection(rootObject));
+    }
+
+    public override void ShowLogs(ExternalDatabaseServer loggingServer, LogViewerFilter filter)
+    {
+        // if on wrong Thread
+        if (_mainDockPanel?.InvokeRequired ?? false)
+        {
+            _mainDockPanel.Invoke(() => ShowLogs(loggingServer,filter));
+            return;
+        }
+
+
+        LoggingTabUI loggingTabUI =  Activate<LoggingTabUI, ExternalDatabaseServer>(loggingServer);
+        if(filter != null)
+            loggingTabUI.SetFilter(filter);
+    }
+
+    public override void ShowGraph(AggregateConfiguration aggregate)
+    {
+        // if on wrong Thread
+        if (_mainDockPanel?.InvokeRequired ?? false)
+        {
+            _mainDockPanel.Invoke(() => ShowGraph(aggregate));
+            return;
+        }
+
+        var graph = Activate<AggregateGraphUI, AggregateConfiguration>(aggregate);
+        graph.LoadGraphAsync();
+    }
+
+    public override void LaunchSubprocess(ProcessStartInfo startInfo)
+    {
+        // if on wrong Thread
+        if (_mainDockPanel?.InvokeRequired ?? false)
+        {
+            _mainDockPanel.Invoke(() => LaunchSubprocess(startInfo));
+            return;
+        }
+
+        var ctrl = new ConsoleControl.ConsoleControl();
+        ShowWindow(ctrl, true);
+        ctrl.StartProcess(startInfo);
+    }
+
+    public override void ShowData(System.Data.DataTable table)
+    { 
+        // if on wrong Thread
+        if (_mainDockPanel?.InvokeRequired ?? false)
+        {
+            _mainDockPanel.Invoke(() => ShowData(table));
+            return;
+        }
+
+        var ui = new DataTableViewerUI(table, "Table");
+        ShowDialog(new SingleControlForm(ui, true));
     }
 }

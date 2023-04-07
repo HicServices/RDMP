@@ -11,34 +11,33 @@ using Rdmp.Core.Providers.Nodes.ProjectCohortNodes;
 using Rdmp.UI.CommandExecution.AtomicCommands;
 using Rdmp.UI.ItemActivation;
 
-namespace Rdmp.UI.CommandExecution.Proposals
+namespace Rdmp.UI.CommandExecution.Proposals;
+
+class ProposeExecutionWhenTargetIsProjectCohortIdentificationConfigurationAssociationsNode : RDMPCommandExecutionProposal<ProjectCohortIdentificationConfigurationAssociationsNode>
 {
-    class ProposeExecutionWhenTargetIsProjectCohortIdentificationConfigurationAssociationsNode : RDMPCommandExecutionProposal<ProjectCohortIdentificationConfigurationAssociationsNode>
+    public ProposeExecutionWhenTargetIsProjectCohortIdentificationConfigurationAssociationsNode(IActivateItems itemActivator) : base(itemActivator)
     {
-        public ProposeExecutionWhenTargetIsProjectCohortIdentificationConfigurationAssociationsNode(IActivateItems itemActivator) : base(itemActivator)
-        {
-        }
+    }
 
-        public override bool CanActivate(ProjectCohortIdentificationConfigurationAssociationsNode target)
-        {
-            return false;
-        }
+    public override bool CanActivate(ProjectCohortIdentificationConfigurationAssociationsNode target)
+    {
+        return false;
+    }
 
-        public override void Activate(ProjectCohortIdentificationConfigurationAssociationsNode target)
-        {
+    public override void Activate(ProjectCohortIdentificationConfigurationAssociationsNode target)
+    {
             
-        }
+    }
 
-        public override ICommandExecution ProposeExecution(ICombineToMakeCommand cmd, ProjectCohortIdentificationConfigurationAssociationsNode target,
-            InsertOption insertOption = InsertOption.Default)
+    public override ICommandExecution ProposeExecution(ICombineToMakeCommand cmd, ProjectCohortIdentificationConfigurationAssociationsNode target,
+        InsertOption insertOption = InsertOption.Default)
+    {
+        var cicCommand = cmd as CohortIdentificationConfigurationCommand;
+        if (cicCommand != null)
         {
-            var cicCommand = cmd as CohortIdentificationConfigurationCommand;
-            if (cicCommand != null)
-            {
-                return new ExecuteCommandAssociateCohortIdentificationConfigurationWithProject(ItemActivator).SetTarget(cicCommand.CohortIdentificationConfiguration).SetTarget(target.Project);
-            }
-
-            return null;
+            return new ExecuteCommandAssociateCohortIdentificationConfigurationWithProject(ItemActivator).SetTarget(cicCommand.CohortIdentificationConfiguration).SetTarget(target.Project);
         }
+
+        return null;
     }
 }

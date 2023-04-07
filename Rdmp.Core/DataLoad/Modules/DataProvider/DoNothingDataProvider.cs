@@ -12,33 +12,32 @@ using Rdmp.Core.DataLoad.Engine.Job;
 using ReusableLibraryCode.Checks;
 using ReusableLibraryCode.Progress;
 
-namespace Rdmp.Core.DataLoad.Modules.DataProvider
+namespace Rdmp.Core.DataLoad.Modules.DataProvider;
+
+/// <summary>
+/// IDataProvider that announces itself to the event stream during data load Fetch but otherwise does nothing.
+/// </summary>
+public class DoNothingDataProvider : IDataProvider
 {
-    /// <summary>
-    /// IDataProvider that announces itself to the event stream during data load Fetch but otherwise does nothing.
-    /// </summary>
-    public class DoNothingDataProvider : IDataProvider
+    public void Initialize(ILoadDirectory directory, DiscoveredDatabase dbInfo)
     {
-        public void Initialize(ILoadDirectory directory, DiscoveredDatabase dbInfo)
-        {
             
-        }
+    }
 
-        public ExitCodeType Fetch(IDataLoadJob job, GracefulCancellationToken cancellationToken)
-        {
-            job.OnNotify(this, new NotifyEventArgs(ProgressEventType.Warning,"DoNothingDataProvider did nothing!"));
-            return ExitCodeType.Success;
+    public ExitCodeType Fetch(IDataLoadJob job, GracefulCancellationToken cancellationToken)
+    {
+        job.OnNotify(this, new NotifyEventArgs(ProgressEventType.Warning,"DoNothingDataProvider did nothing!"));
+        return ExitCodeType.Success;
             
-        }
+    }
         
-        public void LoadCompletedSoDispose(ExitCodeType exitCode,IDataLoadEventListener postLoadEventListener)
-        {
-        }
+    public void LoadCompletedSoDispose(ExitCodeType exitCode,IDataLoadEventListener postLoadEventListener)
+    {
+    }
 
         
-        public void Check(ICheckNotifier notifier)
-        {
+    public void Check(ICheckNotifier notifier)
+    {
             
-        }
     }
 }

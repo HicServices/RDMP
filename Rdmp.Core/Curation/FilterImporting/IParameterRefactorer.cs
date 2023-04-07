@@ -6,20 +6,19 @@
 
 using Rdmp.Core.Curation.Data;
 
-namespace Rdmp.Core.Curation.FilterImporting
+namespace Rdmp.Core.Curation.FilterImporting;
+
+/// <summary>
+/// Handles changing a <see cref="ISqlParameter.ParameterName"/> and enforcing rules about valid names
+/// </summary>
+public interface IParameterRefactorer
 {
     /// <summary>
-    /// Handles changing a <see cref="ISqlParameter.ParameterName"/> and enforcing rules about valid names
+    /// Renames the <paramref name="parameter"/> <see cref="ISqlParameter.ParameterName"/>
     /// </summary>
-    public interface IParameterRefactorer
-    {
-        /// <summary>
-        /// Renames the <paramref name="parameter"/> <see cref="ISqlParameter.ParameterName"/>
-        /// </summary>
-        /// <param name="parameter"></param>
-        /// <param name="oldName"></param>
-        /// <param name="newName"></param>
-        /// <returns>true if you changed the parameters owner</returns>
-        bool HandleRename(ISqlParameter parameter, string oldName, string newName);
-    }
+    /// <param name="parameter"></param>
+    /// <param name="oldName"></param>
+    /// <param name="newName"></param>
+    /// <returns>true if you changed the parameters owner</returns>
+    bool HandleRename(ISqlParameter parameter, string oldName, string newName);
 }

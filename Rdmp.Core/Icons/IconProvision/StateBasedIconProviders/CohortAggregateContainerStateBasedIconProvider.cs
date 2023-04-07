@@ -9,39 +9,38 @@ using SixLabors.ImageSharp;
 using Rdmp.Core.Curation.Data.Cohort;
 using SixLabors.ImageSharp.PixelFormats;
 
-namespace Rdmp.Core.Icons.IconProvision.StateBasedIconProviders
+namespace Rdmp.Core.Icons.IconProvision.StateBasedIconProviders;
+
+public class CohortAggregateContainerStateBasedIconProvider : IObjectStateBasedIconProvider
 {
-    public class CohortAggregateContainerStateBasedIconProvider : IObjectStateBasedIconProvider
+    private readonly Image<Rgba32> _union;
+    private readonly Image<Rgba32> _intersect;
+    private readonly Image<Rgba32> _except;
+
+    public CohortAggregateContainerStateBasedIconProvider()
     {
-        private readonly Image<Rgba32> _union;
-        private readonly Image<Rgba32> _intersect;
-        private readonly Image<Rgba32> _except;
+        _union = Image.Load<Rgba32>(CatalogueIcons.UNION);
+        _intersect = Image.Load<Rgba32>(CatalogueIcons.INTERSECT);
+        _except = Image.Load<Rgba32>(CatalogueIcons.EXCEPT);            
+    }
+    public Image<Rgba32> GetImageIfSupportedObject(object o)
+    {
+        return o switch
+        {
+            Type when o.Equals(typeof(CohortAggregateContainer)) => _intersect,
+            SetOperation operation => GetImage(operation),
+            _ => o is not CohortAggregateContainer container ? null : GetImage(container.Operation)
+        };
+    }
 
-        public CohortAggregateContainerStateBasedIconProvider()
+    private Image<Rgba32> GetImage(SetOperation operation)
+    {
+        return operation switch
         {
-            _union = Image.Load<Rgba32>(CatalogueIcons.UNION);
-            _intersect = Image.Load<Rgba32>(CatalogueIcons.INTERSECT);
-            _except = Image.Load<Rgba32>(CatalogueIcons.EXCEPT);            
-        }
-        public Image<Rgba32> GetImageIfSupportedObject(object o)
-        {
-            return o switch
-            {
-                Type when o.Equals(typeof(CohortAggregateContainer)) => _intersect,
-                SetOperation operation => GetImage(operation),
-                _ => o is not CohortAggregateContainer container ? null : GetImage(container.Operation)
-            };
-        }
-
-        private Image<Rgba32> GetImage(SetOperation operation)
-        {
-            return operation switch
-            {
-                SetOperation.UNION => _union,
-                SetOperation.INTERSECT => _intersect,
-                SetOperation.EXCEPT => _except,
-                _ => throw new ArgumentOutOfRangeException()
-            };
-        }
+            SetOperation.UNION => _union,
+            SetOperation.INTERSECT => _intersect,
+            SetOperation.EXCEPT => _except,
+            _ => throw new ArgumentOutOfRangeException()
+        };
     }
 }

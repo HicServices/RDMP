@@ -7,20 +7,19 @@
 using System.ComponentModel;
 using Rdmp.Core.Validation.UIAttributes;
 
-namespace Rdmp.Core.Validation.Constraints.Secondary
+namespace Rdmp.Core.Validation.Constraints.Secondary;
+
+public abstract class SecondaryConstraint : ISecondaryConstraint
 {
-    public abstract class SecondaryConstraint : ISecondaryConstraint
-    {
-        /// <inheritdoc/>
-        public Consequence? Consequence { get; set; }
+    /// <inheritdoc/>
+    public Consequence? Consequence { get; set; }
 
-        [Description("Optional, Allows you to record why you have set this rule as a future reminder")]
-        [ExpectsLotsOfText]
-        public string Rationale { get; set; }
+    [Description("Optional, Allows you to record why you have set this rule as a future reminder")]
+    [ExpectsLotsOfText]
+    public string Rationale { get; set; }
 
-        public abstract void RenameColumn(string originalName, string newName);
-        public abstract string GetHumanReadableDescriptionOfValidation();
-        public abstract ValidationFailure Validate(object value, object[] otherColumns, string[] otherColumnNames);
+    public abstract void RenameColumn(string originalName, string newName);
+    public abstract string GetHumanReadableDescriptionOfValidation();
+    public abstract ValidationFailure Validate(object value, object[] otherColumns, string[] otherColumnNames);
         
-    }
 }

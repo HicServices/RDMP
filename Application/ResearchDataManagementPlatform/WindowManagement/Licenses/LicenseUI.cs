@@ -11,69 +11,67 @@ using Rdmp.UI.SimpleDialogs;
 using ReusableLibraryCode.Settings;
 
 
-namespace ResearchDataManagementPlatform.WindowManagement.Licenses
+namespace ResearchDataManagementPlatform.WindowManagement.Licenses;
+
+/// <summary>
+/// Displays the open source license for RDMP and so shows the license for all the third party plugins.  You must either accept or decline the license .
+/// Declining will close the Form.  This form is shown for the first time on startup or again any time you have declined the conditions.
+/// </summary>
+public partial class LicenseUI : Form
 {
-
-    /// <summary>
-    /// Displays the open source license for RDMP and so shows the license for all the third party plugins.  You must either accept or decline the license .
-    /// Declining will close the Form.  This form is shown for the first time on startup or again any time you have declined the conditions.
-    /// </summary>
-    public partial class LicenseUI : Form
+    public LicenseUI()
     {
-        public LicenseUI()
-        {
-            InitializeComponent();
+        InitializeComponent();
 
-            try
+        try
+        {
+            _main = new License("LICENSE");
+            _thirdParth = new License("LIBRARYLICENSES");
+
+            rtLicense.Text = _main.GetLicenseText();
+            rtLicense.KeyDown += (s, e) =>
             {
-                _main = new License("LICENSE");
-                _thirdParth = new License("LIBRARYLICENSES");
+                if (e.KeyCode == Keys.Enter)
+                    btnAccept_Click(btnAccept, new EventArgs());
 
-                rtLicense.Text = _main.GetLicenseText();
-                rtLicense.KeyDown += (s, e) =>
-                {
-                    if (e.KeyCode == Keys.Enter)
-                        btnAccept_Click(btnAccept, new EventArgs());
-
-                    // prevents it going BONG!
-                    e.SuppressKeyPress = true;
-                };
+                // prevents it going BONG!
+                e.SuppressKeyPress = true;
+            };
 
 
-                rtThirdPartyLicense.Text = _thirdParth.GetLicenseText();
-            }
-            catch (Exception ex)
-            {
-                ExceptionViewer.Show(ex);   
-            }
+            rtThirdPartyLicense.Text = _thirdParth.GetLicenseText();
         }
-
-        private bool allowClose = false;
-
-        private License _main;
-        private License _thirdParth;
-
-        private void btnAccept_Click(object sender, EventArgs e)
+        catch (Exception ex)
         {
-            UserSettings.LicenseAccepted = _thirdParth.GetHashOfLicense();
-            allowClose = true;
-            this.Close();
+            ExceptionViewer.Show(ex);   
         }
+    }
 
-        private void btnDecline_Click(object sender, EventArgs e)
-        {
-            UserSettings.LicenseAccepted = null;
-            allowClose = true;
-            Process.GetCurrentProcess().Kill();
-        }
+    private bool allowClose = false;
 
-        private void LicenseUI_FormClosing(object sender, FormClosingEventArgs e)
+    private License _main;
+    private License _thirdParth;
+
+    private void btnAccept_Click(object sender, EventArgs e)
+    {
+        UserSettings.LicenseAccepted = _thirdParth.GetHashOfLicense();
+        allowClose = true;
+        this.Close();
+    }
+
+    private void btnDecline_Click(object sender, EventArgs e)
+    {
+        UserSettings.LicenseAccepted = null;
+        allowClose = true;
+        Process.GetCurrentProcess().Kill();
+    }
+
+    private void LicenseUI_FormClosing(object sender, FormClosingEventArgs e)
+    {
+        if (UserSettings.LicenseAccepted != _thirdParth.GetHashOfLicense() && !allowClose)
         {
-            if (UserSettings.LicenseAccepted != _thirdParth.GetHashOfLicense() && !allowClose)
-            {
-                e.Cancel = true;
-                MessageBox.Show("You have not accepted/declined the license");
-            }
+            e.Cancel = true;
+            MessageBox.Show("You have not accepted/declined the license");
         }
     }
 }

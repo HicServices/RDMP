@@ -9,45 +9,44 @@ using NUnit.Framework;
 using Rdmp.Core.Caching.Pipeline.Destinations;
 using Rdmp.Core.DataLoad.Engine.Job.Scheduling;
 
-namespace Rdmp.Core.Tests.DataLoad.Engine.Unit
+namespace Rdmp.Core.Tests.DataLoad.Engine.Unit;
+
+[Category("Unit")]
+public class SchedulingTests
 {
-    [Category("Unit")]
-    public class SchedulingTests
+    [Test]
+    public void TestLoadDateCalculation_DayGranularity()
     {
-        [Test]
-        public void TestLoadDateCalculation_DayGranularity()
-        {
-            // We have cached a bit into 11/12/15
-            var cacheFillProgress = new DateTime(2015, 12, 11, 15, 0, 0);
+        // We have cached a bit into 11/12/15
+        var cacheFillProgress = new DateTime(2015, 12, 11, 15, 0, 0);
 
-            // We should be loading SetUp to and including 10/12/15, not touching 11/12/15
-            var lastLoadDate = SingleScheduleCacheDateTrackingStrategy.CalculateLastLoadDate(CacheFileGranularity.Day, cacheFillProgress);
+        // We should be loading SetUp to and including 10/12/15, not touching 11/12/15
+        var lastLoadDate = SingleScheduleCacheDateTrackingStrategy.CalculateLastLoadDate(CacheFileGranularity.Day, cacheFillProgress);
 
-            Assert.AreEqual(new DateTime(2015, 12, 10, 0, 0, 0).Ticks, lastLoadDate.Ticks);
-        }
+        Assert.AreEqual(new DateTime(2015, 12, 10, 0, 0, 0).Ticks, lastLoadDate.Ticks);
+    }
 
-        [Test]
-        public void TestLoadDateCalculation_DayGranularityAtMonthBoundary()
-        {
-            // We have cached a bit into 1/12/15
-            var cacheFillProgress = new DateTime(2015, 12, 1, 15, 0, 0);
+    [Test]
+    public void TestLoadDateCalculation_DayGranularityAtMonthBoundary()
+    {
+        // We have cached a bit into 1/12/15
+        var cacheFillProgress = new DateTime(2015, 12, 1, 15, 0, 0);
 
-            // We should be loading SetUp to and including 30/11/15, not touching 1/12/15
-            var lastLoadDate = SingleScheduleCacheDateTrackingStrategy.CalculateLastLoadDate(CacheFileGranularity.Day, cacheFillProgress);
+        // We should be loading SetUp to and including 30/11/15, not touching 1/12/15
+        var lastLoadDate = SingleScheduleCacheDateTrackingStrategy.CalculateLastLoadDate(CacheFileGranularity.Day, cacheFillProgress);
 
-            Assert.AreEqual(new DateTime(2015, 11, 30, 0, 0, 0).Ticks, lastLoadDate.Ticks);
-        }
+        Assert.AreEqual(new DateTime(2015, 11, 30, 0, 0, 0).Ticks, lastLoadDate.Ticks);
+    }
 
-        [Test]
-        public void TestLoadDateCalculation_HourGranularity()
-        {
-            // We have cached a bit into 11/12/15 15:00
-            var cacheFillProgress = new DateTime(2015, 12, 11, 15, 30, 0);
+    [Test]
+    public void TestLoadDateCalculation_HourGranularity()
+    {
+        // We have cached a bit into 11/12/15 15:00
+        var cacheFillProgress = new DateTime(2015, 12, 11, 15, 30, 0);
 
-            // We should be loading SetUp to and including 11/12/15 14:00, not touching 11/12/15 15:00
-            var lastLoadDate = SingleScheduleCacheDateTrackingStrategy.CalculateLastLoadDate(CacheFileGranularity.Hour, cacheFillProgress);
+        // We should be loading SetUp to and including 11/12/15 14:00, not touching 11/12/15 15:00
+        var lastLoadDate = SingleScheduleCacheDateTrackingStrategy.CalculateLastLoadDate(CacheFileGranularity.Hour, cacheFillProgress);
 
-            Assert.AreEqual(new DateTime(2015, 12, 11, 14, 0, 0).Ticks, lastLoadDate.Ticks);
-        }
+        Assert.AreEqual(new DateTime(2015, 12, 11, 14, 0, 0).Ticks, lastLoadDate.Ticks);
     }
 }

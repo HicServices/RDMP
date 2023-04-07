@@ -8,45 +8,44 @@ using BrightIdeasSoftware;
 using MapsDirectlyToDatabaseTable;
 using Rdmp.Core.Curation.Data;
 
-namespace Rdmp.UI.Collections.Providers
+namespace Rdmp.UI.Collections.Providers;
+
+/// <summary>
+/// Handles creating the ID column in a tree list view where the ID is populated for all models of Type IMapsDirectlyToDatabaseTable and null
+/// for all others
+/// </summary>
+public class IDColumnProvider
 {
-    /// <summary>
-    /// Handles creating the ID column in a tree list view where the ID is populated for all models of Type IMapsDirectlyToDatabaseTable and null
-    /// for all others
-    /// </summary>
-    public class IDColumnProvider
+    private readonly TreeListView _tree;
+
+    public IDColumnProvider(TreeListView tree)
     {
-        private readonly TreeListView _tree;
+        _tree = tree;
+    }
 
-        public IDColumnProvider(TreeListView tree)
+    private object IDColumnAspectGetter(object rowObject)
+    {
+        // unwrap masqueraders to see if underlying object has an ID
+        if(rowObject is IMasqueradeAs m)
         {
-            _tree = tree;
+            return IDColumnAspectGetter(m.MasqueradingAs());
         }
 
-        private object IDColumnAspectGetter(object rowObject)
+        if (rowObject is IMapsDirectlyToDatabaseTable imaps)
         {
-            // unwrap masqueraders to see if underlying object has an ID
-            if(rowObject is IMasqueradeAs m)
-            {
-                return IDColumnAspectGetter(m.MasqueradingAs());
-            }
-
-            if (rowObject is IMapsDirectlyToDatabaseTable imaps)
-            {
-                return imaps.ID;
-            }
-
-            return null;
+            return imaps.ID;
         }
 
-        public OLVColumn CreateColumn()
-        {
-            var toReturn = new OLVColumn();
-            toReturn.Text = "ID";
-            toReturn.IsVisible = false;
-            toReturn.AspectGetter += IDColumnAspectGetter;
-            toReturn.IsEditable = false;
-            return toReturn;
-        }
+        return null;
+    }
+
+    public OLVColumn CreateColumn()
+    {
+        var toReturn = new OLVColumn();
+        toReturn.Text = "ID";
+        toReturn.IsVisible = false;
+        toReturn.AspectGetter += IDColumnAspectGetter;
+        toReturn.IsEditable = false;
+        return toReturn;
     }
 }

@@ -7,15 +7,14 @@
 using System.IO;
 using Rdmp.Core.DataExport.Data;
 
-namespace Rdmp.Core.DataExport.DataExtraction
+namespace Rdmp.Core.DataExport.DataExtraction;
+
+/// <summary>
+/// See ExtractionDirectory
+/// </summary>
+public interface IExtractionDirectory
 {
-    /// <summary>
-    /// See ExtractionDirectory
-    /// </summary>
-    public interface IExtractionDirectory
-    {
-        DirectoryInfo GetDirectoryForDataset(IExtractableDataSet dataset);
-        DirectoryInfo GetGlobalsDirectory();
-        DirectoryInfo GetDirectoryForCohortCustomData();
-    }
+    DirectoryInfo GetDirectoryForDataset(IExtractableDataSet dataset);
+    DirectoryInfo GetGlobalsDirectory();
+    DirectoryInfo GetDirectoryForCohortCustomData();
 }

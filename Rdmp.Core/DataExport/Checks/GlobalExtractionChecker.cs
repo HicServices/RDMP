@@ -16,56 +16,55 @@ using Rdmp.Core.Logging;
 using ReusableLibraryCode.Checks;
 using ReusableLibraryCode.Progress;
 
-namespace Rdmp.Core.DataExport.Checks
+namespace Rdmp.Core.DataExport.Checks;
+
+/// <summary>
+/// Checks that all the globals (<see cref="SupportingDocument"/> / <see cref="SupportingSQLTable"/>) that would be fetched as part of an
+/// <see cref="ExtractionConfiguration"/> are accessible.
+/// </summary>
+public class GlobalExtractionChecker : ICheckable
 {
+    private readonly ExtractionConfiguration _configuration;
+    private readonly ExtractGlobalsCommand _command;
+    private readonly IPipeline _alsoCheckPipeline;
+    private readonly IBasicActivateItems _activator;
+
     /// <summary>
-    /// Checks that all the globals (<see cref="SupportingDocument"/> / <see cref="SupportingSQLTable"/>) that would be fetched as part of an
-    /// <see cref="ExtractionConfiguration"/> are accessible.
+    /// Prepares to check the globals extractable artifacts that should be fetched when extracting the <paramref name="configuration"/>
     /// </summary>
-    public class GlobalExtractionChecker : ICheckable
+    /// <param name="activator"></param>
+    /// <param name="configuration"></param>
+    public GlobalExtractionChecker(IBasicActivateItems activator,ExtractionConfiguration configuration) : this (activator,configuration, null, null)
+    { }
+
+
+    /// <inheritdoc cref="GlobalExtractionChecker(IBasicActivateItems,ExtractionConfiguration)"/>
+    public GlobalExtractionChecker(IBasicActivateItems activator,ExtractionConfiguration configuration, ExtractGlobalsCommand command, IPipeline alsoCheckPipeline)
     {
-        private readonly ExtractionConfiguration _configuration;
-        private readonly ExtractGlobalsCommand _command;
-        private readonly IPipeline _alsoCheckPipeline;
-        private readonly IBasicActivateItems _activator;
+        this._configuration = configuration;
+        this._command = command;
+        this._alsoCheckPipeline = alsoCheckPipeline;
+        _activator = activator;
+    }
 
-        /// <summary>
-        /// Prepares to check the globals extractable artifacts that should be fetched when extracting the <paramref name="configuration"/>
-        /// </summary>
-        /// <param name="activator"></param>
-        /// <param name="configuration"></param>
-        public GlobalExtractionChecker(IBasicActivateItems activator,ExtractionConfiguration configuration) : this (activator,configuration, null, null)
-        { }
+    /// <summary>
+    /// Checks that all globals pass thier respective checkers (<see cref="SupportingSQLTableChecker"/> and <see cref="SupportingDocumentsFetcher"/>) and that
+    /// the <see cref="Pipeline"/> (if any) is capable of extracting the globals.
+    /// </summary>
+    /// <param name="notifier"></param>
+    public void Check(ICheckNotifier notifier)
+    {
+        foreach (SupportingSQLTable table in _configuration.GetGlobals().OfType<SupportingSQLTable>())
+            new SupportingSQLTableChecker(table).Check(notifier);
 
+        foreach (SupportingDocument document in _configuration.GetGlobals().OfType<SupportingDocument>())
+            new SupportingDocumentsFetcher(document).Check(notifier);
 
-        /// <inheritdoc cref="GlobalExtractionChecker(IBasicActivateItems,ExtractionConfiguration)"/>
-        public GlobalExtractionChecker(IBasicActivateItems activator,ExtractionConfiguration configuration, ExtractGlobalsCommand command, IPipeline alsoCheckPipeline)
+        if (_alsoCheckPipeline != null && _command != null)
         {
-            this._configuration = configuration;
-            this._command = command;
-            this._alsoCheckPipeline = alsoCheckPipeline;
-            _activator = activator;
-        }
-
-        /// <summary>
-        /// Checks that all globals pass thier respective checkers (<see cref="SupportingSQLTableChecker"/> and <see cref="SupportingDocumentsFetcher"/>) and that
-        /// the <see cref="Pipeline"/> (if any) is capable of extracting the globals.
-        /// </summary>
-        /// <param name="notifier"></param>
-        public void Check(ICheckNotifier notifier)
-        {
-            foreach (SupportingSQLTable table in _configuration.GetGlobals().OfType<SupportingSQLTable>())
-                new SupportingSQLTableChecker(table).Check(notifier);
-
-            foreach (SupportingDocument document in _configuration.GetGlobals().OfType<SupportingDocument>())
-                new SupportingDocumentsFetcher(document).Check(notifier);
-
-            if (_alsoCheckPipeline != null && _command != null)
-            {
-                var engine = new ExtractionPipelineUseCase(_activator,_configuration.Project, _command, _alsoCheckPipeline, DataLoadInfo.Empty)
-                                    .GetEngine(_alsoCheckPipeline, new FromCheckNotifierToDataLoadEventListener(notifier));
-                engine.Check(notifier);
-            }
+            var engine = new ExtractionPipelineUseCase(_activator,_configuration.Project, _command, _alsoCheckPipeline, DataLoadInfo.Empty)
+                .GetEngine(_alsoCheckPipeline, new FromCheckNotifierToDataLoadEventListener(notifier));
+            engine.Check(notifier);
         }
     }
 }

@@ -4,20 +4,19 @@
 // RDMP is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License for more details.
 // You should have received a copy of the GNU General Public License along with RDMP. If not, see <https://www.gnu.org/licenses/>.
 
-namespace Rdmp.UI.TransparentHelpSystem.ProgressTracking
-{
-    /// <summary>
-    /// Implementation of <see cref="IHelpWorkflowProgressProvider"/> which always returns true (show workflow).
-    /// </summary>
-    public class NullHelpWorkflowProgressProvider : IHelpWorkflowProgressProvider
-    {
-        public bool ShouldShowUserWorkflow(HelpWorkflow workflow)
-        {
-            return true;
-        }
+namespace Rdmp.UI.TransparentHelpSystem.ProgressTracking;
 
-        public void Completed(HelpWorkflow helpWorkflow)
-        {
-        }
+/// <summary>
+/// Implementation of <see cref="IHelpWorkflowProgressProvider"/> which always returns true (show workflow).
+/// </summary>
+public class NullHelpWorkflowProgressProvider : IHelpWorkflowProgressProvider
+{
+    public bool ShouldShowUserWorkflow(HelpWorkflow workflow)
+    {
+        return true;
+    }
+
+    public void Completed(HelpWorkflow helpWorkflow)
+    {
     }
 }

@@ -9,36 +9,35 @@ using Rdmp.Core.DataFlowPipeline;
 using ReusableLibraryCode.Checks;
 using ReusableLibraryCode.Progress;
 
-namespace Rdmp.Core.DataExport.DataRelease.Pipeline
+namespace Rdmp.Core.DataExport.DataRelease.Pipeline;
+
+/// <summary>
+/// To be used at design time only. Using this in runtime will generate Not Implemented Exceptions.
+/// </summary>
+/// <typeparam name="T">The ReleaseAudit object passed around in the pipeline</typeparam>
+public class NullReleaseSource<T> : FixedReleaseSource<ReleaseAudit>
 {
-    /// <summary>
-    /// To be used at design time only. Using this in runtime will generate Not Implemented Exceptions.
-    /// </summary>
-    /// <typeparam name="T">The ReleaseAudit object passed around in the pipeline</typeparam>
-    public class NullReleaseSource<T> : FixedReleaseSource<ReleaseAudit>
+    protected override ReleaseAudit GetChunkImpl(IDataLoadEventListener listener, GracefulCancellationToken cancellationToken)
     {
-        protected override ReleaseAudit GetChunkImpl(IDataLoadEventListener listener, GracefulCancellationToken cancellationToken)
-        {
-            throw new NotImplementedException();
-        }
+        throw new NotImplementedException();
+    }
 
-        public override void Dispose(IDataLoadEventListener listener, Exception pipelineFailureExceptionIfAny)
-        {
-            throw new NotImplementedException();
-        }
+    public override void Dispose(IDataLoadEventListener listener, Exception pipelineFailureExceptionIfAny)
+    {
+        throw new NotImplementedException();
+    }
 
-        public override void Abort(IDataLoadEventListener listener)
-        {
-            throw new NotImplementedException();
-        }
+    public override void Abort(IDataLoadEventListener listener)
+    {
+        throw new NotImplementedException();
+    }
 
-        protected override void RunSpecificChecks(ICheckNotifier notifier, bool isRunTime)
-        {
-        }
+    protected override void RunSpecificChecks(ICheckNotifier notifier, bool isRunTime)
+    {
+    }
 
-        public override string ToString()
-        {
-            return "Fixed Release Source";
-        }
+    public override string ToString()
+    {
+        return "Fixed Release Source";
     }
 }

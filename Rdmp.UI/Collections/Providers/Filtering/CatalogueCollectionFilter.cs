@@ -11,34 +11,33 @@ using Rdmp.Core.DataExport.Data;
 using Rdmp.Core.Providers;
 using ReusableLibraryCode.Settings;
 
-namespace Rdmp.UI.Collections.Providers.Filtering
+namespace Rdmp.UI.Collections.Providers.Filtering;
+
+/// <summary>
+/// Filters objects in a <see cref="CatalogueCollectionUI"/> based on whether the <see cref="Catalogue"/> is marked
+/// with various flags (e.g. <see cref="Catalogue.IsDeprecated"/>
+/// </summary>
+public class CatalogueCollectionFilter : IModelFilter
 {
-    /// <summary>
-    /// Filters objects in a <see cref="CatalogueCollectionUI"/> based on whether the <see cref="Catalogue"/> is marked
-    /// with various flags (e.g. <see cref="Catalogue.IsDeprecated"/>
-    /// </summary>
-    public class CatalogueCollectionFilter : IModelFilter
+    public ICoreChildProvider ChildProvider { get; set; }
+    private readonly bool _isInternal;
+    private readonly bool _isDeprecated;
+    private readonly bool _isColdStorage;
+    private readonly bool _isProjectSpecific;
+    private readonly bool _isNonExtractable;
+
+    public CatalogueCollectionFilter(ICoreChildProvider childProvider)
     {
-        public ICoreChildProvider ChildProvider { get; set; }
-        private readonly bool _isInternal;
-        private readonly bool _isDeprecated;
-        private readonly bool _isColdStorage;
-        private readonly bool _isProjectSpecific;
-        private readonly bool _isNonExtractable;
+        ChildProvider = childProvider;
+        _isInternal = UserSettings.ShowInternalCatalogues;
+        _isDeprecated = UserSettings.ShowDeprecatedCatalogues;
+        _isColdStorage = UserSettings.ShowColdStorageCatalogues;
+        _isProjectSpecific = UserSettings.ShowProjectSpecificCatalogues;
+        _isNonExtractable = UserSettings.ShowNonExtractableCatalogues;
+    }
 
-        public CatalogueCollectionFilter(ICoreChildProvider childProvider)
-        {
-            ChildProvider = childProvider;
-            _isInternal = UserSettings.ShowInternalCatalogues;
-            _isDeprecated = UserSettings.ShowDeprecatedCatalogues;
-            _isColdStorage = UserSettings.ShowColdStorageCatalogues;
-            _isProjectSpecific = UserSettings.ShowProjectSpecificCatalogues;
-            _isNonExtractable = UserSettings.ShowNonExtractableCatalogues;
-        }
-
-        public bool Filter(object modelObject)
-        {
-            return SearchablesMatchScorer.Filter(modelObject, ChildProvider.GetDescendancyListIfAnyFor(modelObject), _isInternal, _isDeprecated, _isColdStorage, _isProjectSpecific, _isNonExtractable);
-        }
+    public bool Filter(object modelObject)
+    {
+        return SearchablesMatchScorer.Filter(modelObject, ChildProvider.GetDescendancyListIfAnyFor(modelObject), _isInternal, _isDeprecated, _isColdStorage, _isProjectSpecific, _isNonExtractable);
     }
 }

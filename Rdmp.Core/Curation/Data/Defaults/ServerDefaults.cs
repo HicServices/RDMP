@@ -9,27 +9,26 @@ using System.Collections.Generic;
 using Rdmp.Core.Repositories;
 using ReusableLibraryCode;
 
-namespace Rdmp.Core.Curation.Data.Defaults
-{
-    public static class ServerDefaults
-    {        
-        /// <summary>
-        /// The value that will actually be stored in the ServerDefaults table as a dictionary (see constructor for population
-        /// </summary>
-        public static readonly Dictionary<PermissableDefaults, string> StringExpansionDictionary = new Dictionary<PermissableDefaults, string>();
+namespace Rdmp.Core.Curation.Data.Defaults;
 
-        static ServerDefaults()
-        {
-            StringExpansionDictionary.Add(PermissableDefaults.LiveLoggingServer_ID, "Catalogue.LiveLoggingServer_ID");
-            StringExpansionDictionary.Add(PermissableDefaults.IdentifierDumpServer_ID, "TableInfo.IdentifierDumpServer_ID");
-            StringExpansionDictionary.Add(PermissableDefaults.CohortIdentificationQueryCachingServer_ID, "CIC.QueryCachingServer_ID");
-            StringExpansionDictionary.Add(PermissableDefaults.ANOStore, "ANOTable.Server_ID");
+public static class ServerDefaults
+{        
+    /// <summary>
+    /// The value that will actually be stored in the ServerDefaults table as a dictionary (see constructor for population
+    /// </summary>
+    public static readonly Dictionary<PermissableDefaults, string> StringExpansionDictionary = new Dictionary<PermissableDefaults, string>();
 
-            StringExpansionDictionary.Add(PermissableDefaults.WebServiceQueryCachingServer_ID, "WebServiceQueryCache");
+    static ServerDefaults()
+    {
+        StringExpansionDictionary.Add(PermissableDefaults.LiveLoggingServer_ID, "Catalogue.LiveLoggingServer_ID");
+        StringExpansionDictionary.Add(PermissableDefaults.IdentifierDumpServer_ID, "TableInfo.IdentifierDumpServer_ID");
+        StringExpansionDictionary.Add(PermissableDefaults.CohortIdentificationQueryCachingServer_ID, "CIC.QueryCachingServer_ID");
+        StringExpansionDictionary.Add(PermissableDefaults.ANOStore, "ANOTable.Server_ID");
+
+        StringExpansionDictionary.Add(PermissableDefaults.WebServiceQueryCachingServer_ID, "WebServiceQueryCache");
             
-            //this doesn't actually map to a field in the database, it is a bit of an abuse fo the defaults system
-            StringExpansionDictionary.Add(PermissableDefaults.DQE, "DQE");
-            StringExpansionDictionary.Add(PermissableDefaults.RAWDataLoadServer, "RAWDataLoadServer");
-        }        
-    }
+        //this doesn't actually map to a field in the database, it is a bit of an abuse fo the defaults system
+        StringExpansionDictionary.Add(PermissableDefaults.DQE, "DQE");
+        StringExpansionDictionary.Add(PermissableDefaults.RAWDataLoadServer, "RAWDataLoadServer");
+    }        
 }

@@ -9,68 +9,67 @@ using SixLabors.ImageSharp;
 using FAnsi;
 using SixLabors.ImageSharp.PixelFormats;
 
-namespace ReusableLibraryCode.Icons.IconProvision
+namespace ReusableLibraryCode.Icons.IconProvision;
+
+/// <summary>
+/// Provides overlay and basic icons for all DatabaseTypes
+/// </summary>
+public class DatabaseTypeIconProvider
 {
-    /// <summary>
-    /// Provides overlay and basic icons for all DatabaseTypes
-    /// </summary>
-    public class DatabaseTypeIconProvider
+    private readonly Image<Rgba32> _msBig;
+    private readonly Image<Rgba32> _msOverlay;
+
+    private readonly Image<Rgba32> _oraBig;
+    private readonly Image<Rgba32> _oraOverlay;
+
+    private readonly Image<Rgba32> _mysBig;
+    private readonly Image<Rgba32> _mysOverlay;
+
+    private readonly Image<Rgba32> _postgresBig;
+    private readonly Image<Rgba32> _postgresOverlay;
+        
+    private readonly Image<Rgba32> _unknownBig;
+    private readonly Image<Rgba32> _unknownOverlay;
+        
+    public DatabaseTypeIconProvider()
     {
-        private readonly Image<Rgba32> _msBig;
-        private readonly Image<Rgba32> _msOverlay;
+        _msBig = Image.Load<Rgba32>(DatabaseProviderIcons.Microsoft);
+        _msOverlay = Image.Load<Rgba32>(DatabaseProviderIcons.MicrosoftOverlay);
 
-        private readonly Image<Rgba32> _oraBig;
-        private readonly Image<Rgba32> _oraOverlay;
+        _mysBig = Image.Load<Rgba32>(DatabaseProviderIcons.MySql);
+        _mysOverlay = Image.Load<Rgba32>(DatabaseProviderIcons.MySqlOverlay);
 
-        private readonly Image<Rgba32> _mysBig;
-        private readonly Image<Rgba32> _mysOverlay;
+        _oraBig = Image.Load<Rgba32>(DatabaseProviderIcons.Oracle);
+        _oraOverlay = Image.Load<Rgba32>(DatabaseProviderIcons.OracleOverlay);
 
-        private readonly Image<Rgba32> _postgresBig;
-        private readonly Image<Rgba32> _postgresOverlay;
-        
-        private readonly Image<Rgba32> _unknownBig;
-        private readonly Image<Rgba32> _unknownOverlay;
-        
-        public DatabaseTypeIconProvider()
+        _postgresBig = Image.Load<Rgba32>(DatabaseProviderIcons.PostgreSql);
+        _postgresOverlay = Image.Load<Rgba32>(DatabaseProviderIcons.PostgreSqlOverlay);
+
+        _unknownBig = Image.Load<Rgba32>(DatabaseProviderIcons.Unknown);
+        _unknownOverlay = Image.Load<Rgba32>(DatabaseProviderIcons.UnknownOverlay);
+    }
+
+    public Image<Rgba32> GetOverlay(DatabaseType type)
+    {
+        return type switch
         {
-            _msBig = Image.Load<Rgba32>(DatabaseProviderIcons.Microsoft);
-            _msOverlay = Image.Load<Rgba32>(DatabaseProviderIcons.MicrosoftOverlay);
+            DatabaseType.MicrosoftSQLServer => _msOverlay,
+            DatabaseType.MySql => _mysOverlay,
+            DatabaseType.Oracle => _oraOverlay,
+            DatabaseType.PostgreSql => _postgresOverlay,
+            _ => _unknownOverlay
+        };
+    }
 
-            _mysBig = Image.Load<Rgba32>(DatabaseProviderIcons.MySql);
-            _mysOverlay = Image.Load<Rgba32>(DatabaseProviderIcons.MySqlOverlay);
-
-            _oraBig = Image.Load<Rgba32>(DatabaseProviderIcons.Oracle);
-            _oraOverlay = Image.Load<Rgba32>(DatabaseProviderIcons.OracleOverlay);
-
-            _postgresBig = Image.Load<Rgba32>(DatabaseProviderIcons.PostgreSql);
-            _postgresOverlay = Image.Load<Rgba32>(DatabaseProviderIcons.PostgreSqlOverlay);
-
-            _unknownBig = Image.Load<Rgba32>(DatabaseProviderIcons.Unknown);
-            _unknownOverlay = Image.Load<Rgba32>(DatabaseProviderIcons.UnknownOverlay);
-        }
-
-        public Image<Rgba32> GetOverlay(DatabaseType type)
+    public Image<Rgba32> GetImage(DatabaseType type)
+    {
+        return type switch
         {
-            return type switch
-            {
-                DatabaseType.MicrosoftSQLServer => _msOverlay,
-                DatabaseType.MySql => _mysOverlay,
-                DatabaseType.Oracle => _oraOverlay,
-                DatabaseType.PostgreSql => _postgresOverlay,
-                _ => _unknownOverlay
-            };
-        }
-
-        public Image<Rgba32> GetImage(DatabaseType type)
-        {
-            return type switch
-            {
-                DatabaseType.MicrosoftSQLServer => _msBig,
-                DatabaseType.MySql => _mysBig,
-                DatabaseType.Oracle => _oraBig,
-                DatabaseType.PostgreSql => _postgresBig,
-                _ => _unknownBig
-            };
-        }
+            DatabaseType.MicrosoftSQLServer => _msBig,
+            DatabaseType.MySql => _mysBig,
+            DatabaseType.Oracle => _oraBig,
+            DatabaseType.PostgreSql => _postgresBig,
+            _ => _unknownBig
+        };
     }
 }

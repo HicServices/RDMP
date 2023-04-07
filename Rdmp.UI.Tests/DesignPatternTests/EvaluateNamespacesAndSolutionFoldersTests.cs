@@ -16,369 +16,368 @@ using Rdmp.UI.Tests.DesignPatternTests.ClassFileEvaluation;
 using ReusableLibraryCode.VisualStudioSolutionFileProcessing;
 using Tests.Common;
 
-namespace Rdmp.UI.Tests.DesignPatternTests
+namespace Rdmp.UI.Tests.DesignPatternTests;
+
+public class EvaluateNamespacesAndSolutionFoldersTests : DatabaseTests
 {
-    public class EvaluateNamespacesAndSolutionFoldersTests : DatabaseTests
+    private const string SolutionName = "HIC.DataManagementPlatform.sln";
+    public List<string> csFilesFound = new List<string>();
+
+    public static string[] Ignorelist = new[]
     {
-        private const string SolutionName = "HIC.DataManagementPlatform.sln";
-        public List<string> csFilesFound = new List<string>();
+        "Program.cs",
+        "Settings.Designer.cs",
+        "Class1.cs",
+        "Images.Designer.cs",
+        "ToolTips.Designer.cs",
+        "Resources.Designer.cs",
+        "ProjectInstaller.cs",
+        "ProjectInstaller.Designer.cs",
+        "TableView.cs",
+        "TreeView.cs"
+    };
 
-        public static string[] Ignorelist = new[]
+    [Test]
+    public void EvaluateNamespacesAndSolutionFolders()
+    {
+        var slndir = new DirectoryInfo(System.AppDomain.CurrentDomain.BaseDirectory);
+
+        while (slndir != null)
         {
-            "Program.cs",
-            "Settings.Designer.cs",
-            "Class1.cs",
-            "Images.Designer.cs",
-            "ToolTips.Designer.cs",
-            "Resources.Designer.cs",
-            "ProjectInstaller.cs",
-            "ProjectInstaller.Designer.cs",
-            "TableView.cs",
-            "TreeView.cs"
-        };
+            if (slndir.GetFiles().Any(f => f.Name.Equals(SolutionName)))
+                break;
 
-        [Test]
-        public void EvaluateNamespacesAndSolutionFolders()
+            Console.WriteLine("Looking for solution folder in directory " + slndir.FullName);
+
+            slndir = slndir.Parent;
+        }
+        Assert.IsNotNull(slndir, "Failed to find " + SolutionName + " in any parent directories");
+
+        Console.WriteLine("Found solution folder in directory:" + slndir.FullName);
+
+        var sln = new VisualStudioSolutionFile(slndir,slndir.GetFiles().Single(f => f.Name.Equals(SolutionName)));
+
+        ProcessFolderRecursive(sln.RootFolders, slndir);
+
+        foreach (VisualStudioProjectReference rootLevelProjects in sln.RootProjects)
+            FindProjectInFolder(rootLevelProjects, slndir);
+
+        var foundProjects = new Dictionary<VisualStudioProjectReference, List<string>>();
+
+        foreach (VisualStudioProjectReference project in sln.Projects)
+            foundProjects.Add(project, new List<string>());
+
+        FindUnreferencedProjectsRescursively(foundProjects, slndir);
+
+        foreach (KeyValuePair<VisualStudioProjectReference, List<string>> kvp in foundProjects)
         {
-            var slndir = new DirectoryInfo(System.AppDomain.CurrentDomain.BaseDirectory);
+            if (kvp.Value.Count == 0)
+                Error("FAIL: Did not find project " + kvp.Key.Name + " while traversing solution directories and subdirectories");
 
-            while (slndir != null)
-            {
-                if (slndir.GetFiles().Any(f => f.Name.Equals(SolutionName)))
-                    break;
+            if (kvp.Value.Count > 1)
+                Error("FAIL: Found 2+ copies of project " + kvp.Key.Name + " while traversing solution directories and subdirectories:" + Environment.NewLine + string.Join(Environment.NewLine, kvp.Value));
+        }
 
-                Console.WriteLine("Looking for solution folder in directory " + slndir.FullName);
+        Assert.AreEqual(0, errors.Count);
 
-                slndir = slndir.Parent;
-            }
-            Assert.IsNotNull(slndir, "Failed to find " + SolutionName + " in any parent directories");
+        //      DependenciesEvaluation dependencies = new DependenciesEvaluation();
+        //     dependencies.FindProblems(sln);
 
-            Console.WriteLine("Found solution folder in directory:" + slndir.FullName);
+        InterfaceDeclarationsCorrect interfaces = new InterfaceDeclarationsCorrect();
+        interfaces.FindProblems(CatalogueRepository.MEF);
 
-            var sln = new VisualStudioSolutionFile(slndir,slndir.GetFiles().Single(f => f.Name.Equals(SolutionName)));
+        AllImportantClassesDocumented documented = new AllImportantClassesDocumented();
+        documented.FindProblems(csFilesFound);
 
-            ProcessFolderRecursive(sln.RootFolders, slndir);
+        var uiStandardisationTest = new UserInterfaceStandardisationChecker();
+        uiStandardisationTest.FindProblems(csFilesFound, RepositoryLocator.CatalogueRepository.MEF);
 
-            foreach (VisualStudioProjectReference rootLevelProjects in sln.RootProjects)
-                FindProjectInFolder(rootLevelProjects, slndir);
+        var crossExamination = new DocumentationCrossExaminationTest(slndir);
+        crossExamination.FindProblems(csFilesFound);
 
-            var foundProjects = new Dictionary<VisualStudioProjectReference, List<string>>();
+        //Assuming all files are present and correct we can now evaluate the RDMP specific stuff:
+        var otherTestRunner = new RDMPFormInitializationTests();
+        otherTestRunner.FindUninitializedForms(csFilesFound);
 
-            foreach (VisualStudioProjectReference project in sln.Projects)
-                foundProjects.Add(project, new List<string>());
+        var propertyChecker = new SuspiciousRelationshipPropertyUse(CatalogueRepository.MEF);
+        propertyChecker.FindPropertyMisuse(csFilesFound);
 
-            FindUnreferencedProjectsRescursively(foundProjects, slndir);
-
-            foreach (KeyValuePair<VisualStudioProjectReference, List<string>> kvp in foundProjects)
-            {
-                if (kvp.Value.Count == 0)
-                    Error("FAIL: Did not find project " + kvp.Key.Name + " while traversing solution directories and subdirectories");
-
-                if (kvp.Value.Count > 1)
-                    Error("FAIL: Found 2+ copies of project " + kvp.Key.Name + " while traversing solution directories and subdirectories:" + Environment.NewLine + string.Join(Environment.NewLine, kvp.Value));
-            }
-
-            Assert.AreEqual(0, errors.Count);
-
-      //      DependenciesEvaluation dependencies = new DependenciesEvaluation();
-      //     dependencies.FindProblems(sln);
-
-            InterfaceDeclarationsCorrect interfaces = new InterfaceDeclarationsCorrect();
-            interfaces.FindProblems(CatalogueRepository.MEF);
-
-            AllImportantClassesDocumented documented = new AllImportantClassesDocumented();
-            documented.FindProblems(csFilesFound);
-
-            var uiStandardisationTest = new UserInterfaceStandardisationChecker();
-            uiStandardisationTest.FindProblems(csFilesFound, RepositoryLocator.CatalogueRepository.MEF);
-
-            var crossExamination = new DocumentationCrossExaminationTest(slndir);
-            crossExamination.FindProblems(csFilesFound);
-
-            //Assuming all files are present and correct we can now evaluate the RDMP specific stuff:
-            var otherTestRunner = new RDMPFormInitializationTests();
-            otherTestRunner.FindUninitializedForms(csFilesFound);
-
-            var propertyChecker = new SuspiciousRelationshipPropertyUse(CatalogueRepository.MEF);
-            propertyChecker.FindPropertyMisuse(csFilesFound);
-
-            var explicitDatabaseNamesChecker = new ExplicitDatabaseNameChecker();
-            explicitDatabaseNamesChecker.FindProblems(csFilesFound);
+        var explicitDatabaseNamesChecker = new ExplicitDatabaseNameChecker();
+        explicitDatabaseNamesChecker.FindProblems(csFilesFound);
             
-            var noMappingToDatabaseComments = new AutoCommentsEvaluator();
-            noMappingToDatabaseComments.FindProblems(CatalogueRepository.MEF, csFilesFound);
+        var noMappingToDatabaseComments = new AutoCommentsEvaluator();
+        noMappingToDatabaseComments.FindProblems(CatalogueRepository.MEF, csFilesFound);
 
-            var copyrightHeaderEvaluator = new CopyrightHeaderEvaluator();
-            copyrightHeaderEvaluator.FindProblems(csFilesFound);
+        var copyrightHeaderEvaluator = new CopyrightHeaderEvaluator();
+        copyrightHeaderEvaluator.FindProblems(csFilesFound);
 
-            //foreach (var file in slndir.EnumerateFiles("*.cs", SearchOption.AllDirectories))
-            //{
+        //foreach (var file in slndir.EnumerateFiles("*.cs", SearchOption.AllDirectories))
+        //{
                 
-            //    if (file.Name.StartsWith("AssemblyInfo") || file.Name.StartsWith("TemporaryGenerated") || file.Name.EndsWith("Designer.cs"))
-            //        continue;
+        //    if (file.Name.StartsWith("AssemblyInfo") || file.Name.StartsWith("TemporaryGenerated") || file.Name.EndsWith("Designer.cs"))
+        //        continue;
 
-            //    var line = File.ReadLines(file.FullName).FirstOrDefault();
-            //    if (line != null && line.StartsWith("// Copyright"))
-            //        continue;
+        //    var line = File.ReadLines(file.FullName).FirstOrDefault();
+        //    if (line != null && line.StartsWith("// Copyright"))
+        //        continue;
 
 
 
-            //    Console.WriteLine(file.FullName);
-            //}
+        //    Console.WriteLine(file.FullName);
+        //}
 
-        }
+    }
 
-        private void FindUnreferencedProjectsRescursively(Dictionary<VisualStudioProjectReference, List<string>> projects, DirectoryInfo dir)
+    private void FindUnreferencedProjectsRescursively(Dictionary<VisualStudioProjectReference, List<string>> projects, DirectoryInfo dir)
+    {
+        foreach (var subdir in dir.EnumerateDirectories())
+            FindUnreferencedProjectsRescursively(projects, subdir);
+
+        var projFiles = dir.EnumerateFiles("*.csproj");
+
+        foreach (FileInfo projFile in projFiles)
         {
-            foreach (var subdir in dir.EnumerateDirectories())
-                FindUnreferencedProjectsRescursively(projects, subdir);
+            if (projFile.Directory.FullName.Contains("CodeTutorials"))
+                continue;
 
-            var projFiles = dir.EnumerateFiles("*.csproj");
+            var key = projects.Keys.SingleOrDefault(p => (p.Name + ".csproj").Equals(projFile.Name));
+            if (key == null)
+                Error("FAIL:Unreferenced csproj file spotted :" + projFile.FullName);
+            else
+                projects[key].Add(projFile.FullName);
+        }
+    }
 
-            foreach (FileInfo projFile in projFiles)
+    private void ProcessFolderRecursive(IEnumerable<VisualStudioSolutionFolder> folders, DirectoryInfo currentPhysicalDirectory)
+    {
+
+        //Process root folders
+        foreach (VisualStudioSolutionFolder solutionFolder in folders)
+        {
+            var physicalSolutionFolder = currentPhysicalDirectory.EnumerateDirectories().SingleOrDefault(d => d.Name.Equals(solutionFolder.Name));
+
+            if (physicalSolutionFolder == null)
             {
-                if (projFile.Directory.FullName.Contains("CodeTutorials"))
-                    continue;
-
-                var key = projects.Keys.SingleOrDefault(p => (p.Name + ".csproj").Equals(projFile.Name));
-                if (key == null)
-                    Error("FAIL:Unreferenced csproj file spotted :" + projFile.FullName);
-                else
-                    projects[key].Add(projFile.FullName);
+                Error("FAIL: Solution Folder exists called " + solutionFolder.Name + " but there is no corresponding physical folder in " + currentPhysicalDirectory.FullName);
+                continue;
             }
+
+            foreach (VisualStudioProjectReference p in solutionFolder.ChildrenProjects)
+                FindProjectInFolder(p, physicalSolutionFolder);
+
+            if (solutionFolder.ChildrenFolders.Any())
+                ProcessFolderRecursive(solutionFolder.ChildrenFolders, physicalSolutionFolder);
         }
+    }
 
-        private void ProcessFolderRecursive(IEnumerable<VisualStudioSolutionFolder> folders, DirectoryInfo currentPhysicalDirectory)
+    private void FindProjectInFolder(VisualStudioProjectReference p, DirectoryInfo physicalSolutionFolder)
+    {
+        var physicalProjectFolder = physicalSolutionFolder.EnumerateDirectories().SingleOrDefault(f => f.Name.Equals(p.Name));
+
+        if (physicalProjectFolder == null)
+            Error("FAIL: Physical folder " + p.Name + " does not exist in directory " + physicalSolutionFolder.FullName);
+        else
         {
-
-            //Process root folders
-            foreach (VisualStudioSolutionFolder solutionFolder in folders)
-            {
-                var physicalSolutionFolder = currentPhysicalDirectory.EnumerateDirectories().SingleOrDefault(d => d.Name.Equals(solutionFolder.Name));
-
-                if (physicalSolutionFolder == null)
-                {
-                    Error("FAIL: Solution Folder exists called " + solutionFolder.Name + " but there is no corresponding physical folder in " + currentPhysicalDirectory.FullName);
-                    continue;
-                }
-
-                foreach (VisualStudioProjectReference p in solutionFolder.ChildrenProjects)
-                    FindProjectInFolder(p, physicalSolutionFolder);
-
-                if (solutionFolder.ChildrenFolders.Any())
-                    ProcessFolderRecursive(solutionFolder.ChildrenFolders, physicalSolutionFolder);
-            }
-        }
-
-        private void FindProjectInFolder(VisualStudioProjectReference p, DirectoryInfo physicalSolutionFolder)
-        {
-            var physicalProjectFolder = physicalSolutionFolder.EnumerateDirectories().SingleOrDefault(f => f.Name.Equals(p.Name));
-
-            if (physicalProjectFolder == null)
-                Error("FAIL: Physical folder " + p.Name + " does not exist in directory " + physicalSolutionFolder.FullName);
+            var csProjFile = physicalProjectFolder.EnumerateFiles("*.csproj").SingleOrDefault(f => f.Name.Equals(p.Name + ".csproj"));
+            if (csProjFile == null)
+                Error("FAIL: .csproj file " + p.Name + ".csproj" + " was not found in folder " + physicalProjectFolder.FullName);
             else
             {
-                var csProjFile = physicalProjectFolder.EnumerateFiles("*.csproj").SingleOrDefault(f => f.Name.Equals(p.Name + ".csproj"));
-                if (csProjFile == null)
-                    Error("FAIL: .csproj file " + p.Name + ".csproj" + " was not found in folder " + physicalProjectFolder.FullName);
-                else
-                {
-                    var tidy = new CsProjFileTidy(csProjFile);
+                var tidy = new CsProjFileTidy(csProjFile);
 
-                    foreach (string str in tidy.UntidyMessages)
-                        Error(str);
+                foreach (string str in tidy.UntidyMessages)
+                    Error(str);
 
-                    foreach (var found in tidy.csFilesFound)
-                        if (csFilesFound.Any(otherFile => Path.GetFileName(otherFile).Equals(Path.GetFileName(found))))
-                            if (!Ignorelist.Contains(Path.GetFileName(found)))
-                                Error("Found 2+ files called " + Path.GetFileName(found));
+                foreach (var found in tidy.csFilesFound)
+                    if (csFilesFound.Any(otherFile => Path.GetFileName(otherFile).Equals(Path.GetFileName(found))))
+                        if (!Ignorelist.Contains(Path.GetFileName(found)))
+                            Error("Found 2+ files called " + Path.GetFileName(found));
 
-                    csFilesFound.AddRange(tidy.csFilesFound);
-                }
+                csFilesFound.AddRange(tidy.csFilesFound);
             }
-        }
-
-        List<string> errors = new List<string>();
-        private void Error(string s)
-        {
-            Console.WriteLine(s);
-            errors.Add(s);
         }
     }
 
-    public class CopyrightHeaderEvaluator
+    List<string> errors = new List<string>();
+    private void Error(string s)
     {
-        public void FindProblems(List<string> csFilesFound)
+        Console.WriteLine(s);
+        errors.Add(s);
+    }
+}
+
+public class CopyrightHeaderEvaluator
+{
+    public void FindProblems(List<string> csFilesFound)
+    {
+        Dictionary<string, string> suggestedNewFileContents = new Dictionary<string, string>(StringComparer.CurrentCultureIgnoreCase);
+
+        foreach (var file in csFilesFound)
         {
-            Dictionary<string, string> suggestedNewFileContents = new Dictionary<string, string>(StringComparer.CurrentCultureIgnoreCase);
+            if (file.Contains(".Designer.cs") || EvaluateNamespacesAndSolutionFoldersTests.Ignorelist.Contains(file))
+                continue;
 
-            foreach (var file in csFilesFound)
+            bool changes = false;
+
+            StringBuilder sbSuggestedText = new StringBuilder();
+
+            var text = File.ReadAllLines(file);
+
+            if (text[0] != @"// Copyright (c) The University of Dundee 2018-2021"
+                && text[0] != @"// Copyright (c) The University of Dundee 2018-2019"
+                && text[0] != @"// This code is adapted from https://www.codeproject.com/Articles/1182358/Using-Autocomplete-in-Windows-Console-Applications")
             {
-                if (file.Contains(".Designer.cs") || EvaluateNamespacesAndSolutionFoldersTests.Ignorelist.Contains(file))
-                    continue;
-
-                bool changes = false;
-
-                StringBuilder sbSuggestedText = new StringBuilder();
-
-                var text = File.ReadAllLines(file);
-
-                if (text[0] != @"// Copyright (c) The University of Dundee 2018-2021"
-                    && text[0] != @"// Copyright (c) The University of Dundee 2018-2019"
-                    && text[0] != @"// This code is adapted from https://www.codeproject.com/Articles/1182358/Using-Autocomplete-in-Windows-Console-Applications")
-                {
-                    changes = true;
-                    sbSuggestedText.AppendLine(@"// Copyright (c) The University of Dundee 2018-2021");
-                    sbSuggestedText.AppendLine(@"// This file is part of the Research Data Management Platform (RDMP).");
-                    sbSuggestedText.AppendLine(
-                        @"// RDMP is free software: you can redistribute it and/or modify it under the terms of the GNU General Public License as published by the Free Software Foundation, either version 3 of the License, or (at your option) any later version.");
-                    sbSuggestedText.AppendLine(
-                        @"// RDMP is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License for more details.");
-                    sbSuggestedText.AppendLine(@"// You should have received a copy of the GNU General Public License along with RDMP. If not, see <https://www.gnu.org/licenses/>.");
-                    sbSuggestedText.AppendLine();
-                    sbSuggestedText.AppendJoin(Environment.NewLine,text);
-                }
-
-                if (changes)
-                    suggestedNewFileContents.Add(file, sbSuggestedText.ToString());
+                changes = true;
+                sbSuggestedText.AppendLine(@"// Copyright (c) The University of Dundee 2018-2021");
+                sbSuggestedText.AppendLine(@"// This file is part of the Research Data Management Platform (RDMP).");
+                sbSuggestedText.AppendLine(
+                    @"// RDMP is free software: you can redistribute it and/or modify it under the terms of the GNU General Public License as published by the Free Software Foundation, either version 3 of the License, or (at your option) any later version.");
+                sbSuggestedText.AppendLine(
+                    @"// RDMP is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License for more details.");
+                sbSuggestedText.AppendLine(@"// You should have received a copy of the GNU General Public License along with RDMP. If not, see <https://www.gnu.org/licenses/>.");
+                sbSuggestedText.AppendLine();
+                sbSuggestedText.AppendJoin(Environment.NewLine,text);
             }
 
-            Assert.AreEqual(0,suggestedNewFileContents.Count,"The following files did not contain copyright:" + Environment.NewLine + string.Join(Environment.NewLine,suggestedNewFileContents.Keys.Select(Path.GetFileName)));
-
-            //drag your debugger stack pointer to here to mess up all your files to match the suggestedNewFileContents :)
-            foreach (KeyValuePair<string, string> suggestedNewFileContent in suggestedNewFileContents)
-                File.WriteAllText(suggestedNewFileContent.Key, suggestedNewFileContent.Value);
+            if (changes)
+                suggestedNewFileContents.Add(file, sbSuggestedText.ToString());
         }
+
+        Assert.AreEqual(0,suggestedNewFileContents.Count,"The following files did not contain copyright:" + Environment.NewLine + string.Join(Environment.NewLine,suggestedNewFileContents.Keys.Select(Path.GetFileName)));
+
+        //drag your debugger stack pointer to here to mess up all your files to match the suggestedNewFileContents :)
+        foreach (KeyValuePair<string, string> suggestedNewFileContent in suggestedNewFileContents)
+            File.WriteAllText(suggestedNewFileContent.Key, suggestedNewFileContent.Value);
     }
+}
 
-    public class AutoCommentsEvaluator
+public class AutoCommentsEvaluator
+{
+    public void FindProblems(MEF mef, List<string> csFilesFound)
     {
-        public void FindProblems(MEF mef, List<string> csFilesFound)
+        Dictionary<string, string> suggestedNewFileContents = new Dictionary<string, string>(StringComparer.CurrentCultureIgnoreCase);
+
+        foreach (var f in csFilesFound)
         {
-            Dictionary<string, string> suggestedNewFileContents = new Dictionary<string, string>(StringComparer.CurrentCultureIgnoreCase);
+            if(f.Contains(".Designer.cs"))
+                continue;
 
-            foreach (var f in csFilesFound)
+            bool changes = false;
+
+            StringBuilder sbSuggestedText = new StringBuilder();
+
+            var text = File.ReadAllLines(f);
+            bool areInSummary = false;
+            bool paraOpened = false;
+
+            for (int i = 0; i < text.Length; i++)
             {
-                if(f.Contains(".Designer.cs"))
-                    continue;
-
-                bool changes = false;
-
-                StringBuilder sbSuggestedText = new StringBuilder();
-
-                var text = File.ReadAllLines(f);
-                bool areInSummary = false;
-                bool paraOpened = false;
-
-                for (int i = 0; i < text.Length; i++)
-                {
                     
-                    //////////////////////////////////No Mapping Properties////////////////////////////////////////////////////
-                    if (text[i].Trim().Equals("[NoMappingToDatabase]"))
+                //////////////////////////////////No Mapping Properties////////////////////////////////////////////////////
+                if (text[i].Trim().Equals("[NoMappingToDatabase]"))
+                {
+                    var currentClassName = GetUniqueTypeName(Path.GetFileNameWithoutExtension(f));
+
+                    Type t = mef.GetType(currentClassName);
+
+                    //if the previous line isn't a summary comment
+                    if (!text[i - 1].Trim().StartsWith("///"))
                     {
-                        var currentClassName = GetUniqueTypeName(Path.GetFileNameWithoutExtension(f));
+                        string next = text[i + 1];
 
-                        Type t = mef.GetType(currentClassName);
-
-                        //if the previous line isn't a summary comment
-                        if (!text[i - 1].Trim().StartsWith("///"))
+                        var m = Regex.Match(next, @"(.*)public\b(.*)\s+(.*)\b");
+                        if (m.Success)
                         {
-                            string next = text[i + 1];
-
-                            var m = Regex.Match(next, @"(.*)public\b(.*)\s+(.*)\b");
-                            if (m.Success)
-                            {
                                 
-                                var whitespace = m.Groups[1].Value;
-                                var type = m.Groups[2].Value;
-                                var member = m.Groups[3].Value;
+                            var whitespace = m.Groups[1].Value;
+                            var type = m.Groups[2].Value;
+                            var member = m.Groups[3].Value;
 
-                                Assert.IsTrue(string.IsNullOrWhiteSpace(whitespace));
-                                Assert.IsNotNull(t);
+                            Assert.IsTrue(string.IsNullOrWhiteSpace(whitespace));
+                            Assert.IsNotNull(t);
 
-                                if (t.GetProperty(member + "_ID") != null)
-                                {
-                                    changes = true;
-                                    sbSuggestedText.AppendLine(whitespace + string.Format("/// <inheritdoc cref=\"{0}\"/>",member + "_ID"));
-                                }
-                                else
-                                {
-                                    sbSuggestedText.AppendLine(text[i]);
-                                    continue;
-                                }
-
+                            if (t.GetProperty(member + "_ID") != null)
+                            {
+                                changes = true;
+                                sbSuggestedText.AppendLine(whitespace + string.Format("/// <inheritdoc cref=\"{0}\"/>",member + "_ID"));
                             }
+                            else
+                            {
+                                sbSuggestedText.AppendLine(text[i]);
+                                continue;
+                            }
+
                         }
                     }
+                }
 
 
-                    if (text[i].Trim().Equals("/// <summary>"))
+                if (text[i].Trim().Equals("/// <summary>"))
+                {
+                    areInSummary = true;
+                    paraOpened = false;
+                }
+
+                if (text[i].Trim().Equals("/// </summary>"))
+                {
+                    if (paraOpened)
                     {
-                        areInSummary = true;
+                        //
+                        sbSuggestedText.Insert(sbSuggestedText.Length - 2, "</para>");
                         paraOpened = false;
                     }
 
-                    if (text[i].Trim().Equals("/// </summary>"))
-                    {
-                        if (paraOpened)
-                        {
-                            //
-                            sbSuggestedText.Insert(sbSuggestedText.Length - 2, "</para>");
-                            paraOpened = false;
-                        }
-
-                        areInSummary = false;
-                    }
-
-                    //if we have a paragraph break in the summary comments and the next line isn't an end summary
-                    if (areInSummary && text[i].Trim().Equals("///") && !text[i+1].Trim().Equals("/// </summary>"))
-                    {
-                        if(paraOpened)
-                        {
-                            sbSuggestedText.Insert(sbSuggestedText.Length - 2, "</para>");
-                            paraOpened = false;
-                        }
-
-                        //there should be a para tag
-                        if (!text[i + 1].Contains("<para>") && text[i + 1].Contains("///"))
-                        {
-                            changes = true;
-                            
-                            //add current line
-                            sbSuggestedText.AppendLine(text[i]); 
-
-                            //add the para tag
-                            string nextLine = text[i + 1].Insert(text[i+1].IndexOf("///")+4,"<para>");
-                            sbSuggestedText.AppendLine(nextLine);
-                            i++;
-                            paraOpened = true;
-                            continue;
-                        }
-                    }
-
-                    sbSuggestedText.AppendLine(text[i]);
+                    areInSummary = false;
                 }
 
-                if (changes)
-                    suggestedNewFileContents.Add(f, sbSuggestedText.ToString());
+                //if we have a paragraph break in the summary comments and the next line isn't an end summary
+                if (areInSummary && text[i].Trim().Equals("///") && !text[i+1].Trim().Equals("/// </summary>"))
+                {
+                    if(paraOpened)
+                    {
+                        sbSuggestedText.Insert(sbSuggestedText.Length - 2, "</para>");
+                        paraOpened = false;
+                    }
+
+                    //there should be a para tag
+                    if (!text[i + 1].Contains("<para>") && text[i + 1].Contains("///"))
+                    {
+                        changes = true;
+                            
+                        //add current line
+                        sbSuggestedText.AppendLine(text[i]); 
+
+                        //add the para tag
+                        string nextLine = text[i + 1].Insert(text[i+1].IndexOf("///")+4,"<para>");
+                        sbSuggestedText.AppendLine(nextLine);
+                        i++;
+                        paraOpened = true;
+                        continue;
+                    }
+                }
+
+                sbSuggestedText.AppendLine(text[i]);
             }
 
-            Assert.IsEmpty(suggestedNewFileContents);
-
-            //drag your debugger stack pointer to here to mess up all your files to match the suggestedNewFileContents :)
-            foreach (KeyValuePair<string, string> suggestedNewFileContent in suggestedNewFileContents)
-                File.WriteAllText(suggestedNewFileContent.Key, suggestedNewFileContent.Value);
+            if (changes)
+                suggestedNewFileContents.Add(f, sbSuggestedText.ToString());
         }
 
-        private string GetUniqueTypeName(string typename)
+        Assert.IsEmpty(suggestedNewFileContents);
+
+        //drag your debugger stack pointer to here to mess up all your files to match the suggestedNewFileContents :)
+        foreach (KeyValuePair<string, string> suggestedNewFileContent in suggestedNewFileContents)
+            File.WriteAllText(suggestedNewFileContent.Key, suggestedNewFileContent.Value);
+    }
+
+    private string GetUniqueTypeName(string typename)
+    {
+        switch (typename)
         {
-            switch (typename)
-            {
-                case "ColumnInfo": return "Rdmp.Core.Curation.Data.ColumnInfo";
-                case "IFilter": return "Rdmp.Core.Curation.Data.IFilter";
-            }
-
-            return typename;
+            case "ColumnInfo": return "Rdmp.Core.Curation.Data.ColumnInfo";
+            case "IFilter": return "Rdmp.Core.Curation.Data.IFilter";
         }
+
+        return typename;
     }
 }

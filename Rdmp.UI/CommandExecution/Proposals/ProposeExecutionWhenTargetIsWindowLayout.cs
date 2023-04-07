@@ -8,28 +8,27 @@ using Rdmp.Core.CommandExecution;
 using Rdmp.Core.Curation.Data;
 using Rdmp.UI.ItemActivation;
 
-namespace Rdmp.UI.CommandExecution.Proposals
+namespace Rdmp.UI.CommandExecution.Proposals;
+
+class ProposeExecutionWhenTargetIsWindowLayout : RDMPCommandExecutionProposal<WindowLayout>
 {
-    class ProposeExecutionWhenTargetIsWindowLayout : RDMPCommandExecutionProposal<WindowLayout>
+    public ProposeExecutionWhenTargetIsWindowLayout(IActivateItems itemActivator)
+        : base(itemActivator)
     {
-        public ProposeExecutionWhenTargetIsWindowLayout(IActivateItems itemActivator)
-            : base(itemActivator)
-        {
-        }
+    }
 
-        public override bool CanActivate(WindowLayout target)
-        {
-            return true;
-        }
+    public override bool CanActivate(WindowLayout target)
+    {
+        return true;
+    }
 
-        public override void Activate(WindowLayout target)
-        {
-            ItemActivator.WindowArranger.Setup(target);
-        }
+    public override void Activate(WindowLayout target)
+    {
+        ItemActivator.WindowArranger.Setup(target);
+    }
 
-        public override ICommandExecution ProposeExecution(ICombineToMakeCommand cmd, WindowLayout target, InsertOption insertOption = InsertOption.Default)
-        {
-            return null;
-        }
+    public override ICommandExecution ProposeExecution(ICombineToMakeCommand cmd, WindowLayout target, InsertOption insertOption = InsertOption.Default)
+    {
+        return null;
     }
 }

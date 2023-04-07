@@ -14,174 +14,173 @@ using Rdmp.Core.Curation.Data;
 using ReusableLibraryCode.Icons.IconProvision;
 using SixLabors.ImageSharp.PixelFormats;
 
-namespace Rdmp.Core.CommandExecution.AtomicCommands
+namespace Rdmp.Core.CommandExecution.AtomicCommands;
+
+public class ExecuteCommandShow : BasicCommandExecution, IAtomicCommand
 {
-    public class ExecuteCommandShow : BasicCommandExecution, IAtomicCommand
+    private IMapsDirectlyToDatabaseTable _objectToShow;
+    /// <summary>
+    /// Alternative to <see cref="_objectToShow"/> where there might be many objects and it could be expensive to fetch them so only do so when command is executed
+    /// </summary>
+    private Func<IEnumerable<IMapsDirectlyToDatabaseTable>> _getObjectsFunc;
+    private IMapsDirectlyToDatabaseTable[] _objectsToPickFrom;
+
+
+    private readonly int _expansionDepth;
+    public bool UseIconAndTypeName;
+    private Type _objectType;
+
+    public ExecuteCommandShow(IBasicActivateItems activator, IMapsDirectlyToDatabaseTable objectToShow, int expansionDepth, bool useIconAndTypeName = false) : base(activator)
     {
-        private IMapsDirectlyToDatabaseTable _objectToShow;
-        /// <summary>
-        /// Alternative to <see cref="_objectToShow"/> where there might be many objects and it could be expensive to fetch them so only do so when command is executed
-        /// </summary>
-        private Func<IEnumerable<IMapsDirectlyToDatabaseTable>> _getObjectsFunc;
-        private IMapsDirectlyToDatabaseTable[] _objectsToPickFrom;
+        _objectToShow = objectToShow;
+        _objectType = _objectToShow?.GetType();
+        _expansionDepth = expansionDepth;
+        UseIconAndTypeName = useIconAndTypeName;
+
+        if (_objectToShow == null)
+            SetImpossible("No objects found");
+
+        Weight = 50.3f;
+    }
 
 
-        private readonly int _expansionDepth;
-        public bool UseIconAndTypeName;
-        private Type _objectType;
-
-        public ExecuteCommandShow(IBasicActivateItems activator, IMapsDirectlyToDatabaseTable objectToShow, int expansionDepth, bool useIconAndTypeName = false) : base(activator)
+    public ExecuteCommandShow(IBasicActivateItems activator, IEnumerable<IMapsDirectlyToDatabaseTable> objectsToPickFrom, int expansionDepth, bool useIconAndTypeName = false) : base(activator)
+    {
+        if (objectsToPickFrom == null)
         {
-            _objectToShow = objectToShow;
-            _objectType = _objectToShow?.GetType();
-            _expansionDepth = expansionDepth;
-            UseIconAndTypeName = useIconAndTypeName;
-
-            if (_objectToShow == null)
-                SetImpossible("No objects found");
-
-            Weight = 50.3f;
+            SetImpossible("No objects found");
+            return;
         }
 
+        var obs = objectsToPickFrom.ToArray();
 
-        public ExecuteCommandShow(IBasicActivateItems activator, IEnumerable<IMapsDirectlyToDatabaseTable> objectsToPickFrom, int expansionDepth, bool useIconAndTypeName = false) : base(activator)
+        //no objects!
+        if (obs.Length == 0)
+            SetImpossible("No objects found");
+        else
+        if (obs.Length == 1)
         {
-            if (objectsToPickFrom == null)
-            {
-                SetImpossible("No objects found");
+            //one object only
+            _objectToShow = objectsToPickFrom.Single();
+            _objectType = _objectToShow.GetType();
+        }
+        else
+        {
+            //many objects, let's assume they are of the same type for display purposes
+            _objectType = objectsToPickFrom.First().GetType();
+            _objectsToPickFrom = obs;
+        }
+
+        _expansionDepth = expansionDepth;
+        UseIconAndTypeName = useIconAndTypeName;
+
+        Weight = 50.3f;
+    }
+
+    /// <summary>
+    /// Lazy constructor where the object to navigate to is not fetched until the command is definetly for sure running (see <see cref="Execute"/>)
+    /// </summary>
+    /// <param name="activator"></param>
+    /// <param name="getObjectsFunc"></param>
+    public ExecuteCommandShow(IBasicActivateItems activator, Func<IEnumerable<IMapsDirectlyToDatabaseTable>> getObjectsFunc) : base(activator)
+    {
+        _getObjectsFunc = getObjectsFunc;
+
+        Weight = 50.3f;
+    }
+
+    public ExecuteCommandShow(IBasicActivateItems activator, int? foreignKey, Type typeToFetch):base(activator)
+    {
+        if(!foreignKey.HasValue)
+            SetImpossible("No object exists");
+
+        _getObjectsFunc = ()=> foreignKey.HasValue ?
+            new IMapsDirectlyToDatabaseTable[]{activator.RepositoryLocator.GetObjectByID(typeToFetch,foreignKey.Value) } :
+            new IMapsDirectlyToDatabaseTable[0];
+
+        OverrideCommandName = typeToFetch.Name + "(s)";
+
+        Weight = 50.3f;
+    }
+
+    public override string GetCommandName()
+    {
+        if (!string.IsNullOrWhiteSpace(OverrideCommandName))
+            return base.GetCommandName();
+
+        return UseIconAndTypeName && _objectType != null ? "Show " + _objectType.Name + "(s)": base.GetCommandName();
+    }
+
+    public override void Execute()
+    {
+        FetchDestinationObjects();
+
+        base.Execute();
+        var show = _objectToShow;
+
+        if (show == null && _objectsToPickFrom != null)
+        {
+            show = SelectOne(_objectsToPickFrom.Cast<DatabaseEntity>().ToList());
+
+            if (show == null)
                 return;
-            }
+        }
+        BasicActivator.RequestItemEmphasis(this,new EmphasiseRequest(show, _expansionDepth));
+    }
 
-            var obs = objectsToPickFrom.ToArray();
+    /// <summary>
+    /// If late loading is setup for this command, this will execute the delegate code and update the command status to indicate whether there are any objects (and which objects) can be navigated to.  This method will be called automatically on Execute if not called before
+    /// </summary>
+    public void FetchDestinationObjects()
+    {
+        // If we have a lazy func to call when only on command execution, nows the time
+        if(_getObjectsFunc != null && _objectsToPickFrom == null)
+        {
+            var pick = _getObjectsFunc()?.ToArray() ?? new IMapsDirectlyToDatabaseTable[0];
 
-            //no objects!
-            if (obs.Length == 0)
+            if (!pick.Any())
+            {
+                // base.Execute() will throw since the late load of objects returned nothing
                 SetImpossible("No objects found");
-            else
-            if (obs.Length == 1)
+            }
+            else if(pick.Length == 1)
             {
-                //one object only
-                _objectToShow = objectsToPickFrom.Single();
-                _objectType = _objectToShow.GetType();
+                _objectToShow = pick[0];
             }
             else
             {
-                //many objects, let's assume they are of the same type for display purposes
-                _objectType = objectsToPickFrom.First().GetType();
-                _objectsToPickFrom = obs;
+                _objectsToPickFrom = pick;
+                _objectType = _objectsToPickFrom.First().GetType();
             }
-
-            _expansionDepth = expansionDepth;
-            UseIconAndTypeName = useIconAndTypeName;
-
-            Weight = 50.3f;
         }
 
-        /// <summary>
-        /// Lazy constructor where the object to navigate to is not fetched until the command is definetly for sure running (see <see cref="Execute"/>)
-        /// </summary>
-        /// <param name="activator"></param>
-        /// <param name="getObjectsFunc"></param>
-        public ExecuteCommandShow(IBasicActivateItems activator, Func<IEnumerable<IMapsDirectlyToDatabaseTable>> getObjectsFunc) : base(activator)
-        {
-            _getObjectsFunc = getObjectsFunc;
+    }
 
-            Weight = 50.3f;
-        }
+    public override string GetCommandHelp()
+    {
+        return "Opens the containing toolbox collection and shows the object";
+    }
 
-        public ExecuteCommandShow(IBasicActivateItems activator, int? foreignKey, Type typeToFetch):base(activator)
-        {
-            if(!foreignKey.HasValue)
-                SetImpossible("No object exists");
+    public override Image<Rgba32> GetImage(IIconProvider iconProvider)
+    {
+        if (OverrideIcon != null)
+            return base.GetImage(iconProvider);
 
-            _getObjectsFunc = ()=> foreignKey.HasValue ?
-                new IMapsDirectlyToDatabaseTable[]{activator.RepositoryLocator.GetObjectByID(typeToFetch,foreignKey.Value) } :
-                new IMapsDirectlyToDatabaseTable[0];
+        return UseIconAndTypeName && 
+               // if there is something to show
+               (_objectType != null || _objectToShow != null) ?
+            // return its icon
+            iconProvider.GetImage((object)_objectToShow ?? _objectType) : null;
+    }
 
-            OverrideCommandName = typeToFetch.Name + "(s)";
-
-            Weight = 50.3f;
-        }
-
-        public override string GetCommandName()
-        {
-            if (!string.IsNullOrWhiteSpace(OverrideCommandName))
-                return base.GetCommandName();
-
-            return UseIconAndTypeName && _objectType != null ? "Show " + _objectType.Name + "(s)": base.GetCommandName();
-        }
-
-        public override void Execute()
-        {
-            FetchDestinationObjects();
-
-            base.Execute();
-            var show = _objectToShow;
-
-            if (show == null && _objectsToPickFrom != null)
-            {
-                show = SelectOne(_objectsToPickFrom.Cast<DatabaseEntity>().ToList());
-
-                if (show == null)
-                    return;
-            }
-            BasicActivator.RequestItemEmphasis(this,new EmphasiseRequest(show, _expansionDepth));
-        }
-
-        /// <summary>
-        /// If late loading is setup for this command, this will execute the delegate code and update the command status to indicate whether there are any objects (and which objects) can be navigated to.  This method will be called automatically on Execute if not called before
-        /// </summary>
-        public void FetchDestinationObjects()
-        {
-            // If we have a lazy func to call when only on command execution, nows the time
-            if(_getObjectsFunc != null && _objectsToPickFrom == null)
-            {
-                var pick = _getObjectsFunc()?.ToArray() ?? new IMapsDirectlyToDatabaseTable[0];
-
-                if (!pick.Any())
-                {
-                    // base.Execute() will throw since the late load of objects returned nothing
-                    SetImpossible("No objects found");
-                }
-                else if(pick.Length == 1)
-                {
-                    _objectToShow = pick[0];
-                }
-                else
-                {
-                    _objectsToPickFrom = pick;
-                    _objectType = _objectsToPickFrom.First().GetType();
-                }
-            }
-
-        }
-
-        public override string GetCommandHelp()
-        {
-            return "Opens the containing toolbox collection and shows the object";
-        }
-
-        public override Image<Rgba32> GetImage(IIconProvider iconProvider)
-        {
-            if (OverrideIcon != null)
-                return base.GetImage(iconProvider);
-
-            return UseIconAndTypeName && 
-                // if there is something to show
-                (_objectType != null || _objectToShow != null) ?
-                // return its icon
-                iconProvider.GetImage((object)_objectToShow ?? _objectType) : null;
-        }
-
-        /// <summary>
-        /// Resolves any lamdas and returns what object(s) would be shown (if any)
-        /// by running this command.  This method may be expensive to run
-        /// </summary>
-        /// <returns></returns>
-        public IEnumerable<IMapsDirectlyToDatabaseTable> GetObjects()
-        {
-            FetchDestinationObjects();
-            return new[] {_objectToShow} ?? _objectsToPickFrom ?? Enumerable.Empty<IMapsDirectlyToDatabaseTable>();
-        }
+    /// <summary>
+    /// Resolves any lamdas and returns what object(s) would be shown (if any)
+    /// by running this command.  This method may be expensive to run
+    /// </summary>
+    /// <returns></returns>
+    public IEnumerable<IMapsDirectlyToDatabaseTable> GetObjects()
+    {
+        FetchDestinationObjects();
+        return new[] {_objectToShow} ?? _objectsToPickFrom ?? Enumerable.Empty<IMapsDirectlyToDatabaseTable>();
     }
 }

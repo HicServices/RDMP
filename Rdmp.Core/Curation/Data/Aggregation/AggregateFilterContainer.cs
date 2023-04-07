@@ -13,160 +13,159 @@ using Rdmp.Core.Curation.Data.Cohort;
 using Rdmp.Core.Curation.FilterImporting.Construction;
 using Rdmp.Core.Repositories;
 
-namespace Rdmp.Core.Curation.Data.Aggregation
+namespace Rdmp.Core.Curation.Data.Aggregation;
+
+/// <summary>
+/// All AggregateFilters must be contained within an AggregateFilterContainer at Query Generation time.  This tells QueryBuilder how to use brackets and whether to AND / OR 
+/// the various filter lines.  The AggregateFilterContainer serves the same purpose as the FilterContainer in Data Export Manager but for AggregateConfigurations (GROUP BY queries)
+/// 
+/// <para>FilterContainers are fully hierarchical and must be fetched from the database via recursion from the SubContainer table (AggregateFilterSubContainer). 
+/// The class deals with all this transparently via GetSubContainers.</para>
+/// </summary>
+public class AggregateFilterContainer : ConcreteContainer, IDisableable
 {
-    /// <summary>
-    /// All AggregateFilters must be contained within an AggregateFilterContainer at Query Generation time.  This tells QueryBuilder how to use brackets and whether to AND / OR 
-    /// the various filter lines.  The AggregateFilterContainer serves the same purpose as the FilterContainer in Data Export Manager but for AggregateConfigurations (GROUP BY queries)
-    /// 
-    /// <para>FilterContainers are fully hierarchical and must be fetched from the database via recursion from the SubContainer table (AggregateFilterSubContainer). 
-    /// The class deals with all this transparently via GetSubContainers.</para>
-    /// </summary>
-    public class AggregateFilterContainer : ConcreteContainer, IDisableable
+    #region Database Properties
+        
+    private bool _isDisabled;
+        
+
+    /// <inheritdoc/>
+    public bool IsDisabled
     {
-        #region Database Properties
-        
-        private bool _isDisabled;
-        
+        get { return _isDisabled; }
+        set { SetField(ref _isDisabled, value); }
+    }
 
-        /// <inheritdoc/>
-        public bool IsDisabled
+    #endregion
+
+    public AggregateFilterContainer()
+    {
+
+    }
+
+    /// <summary>
+    /// Creates a new IContainer in the dtabase for use with an <see cref="AggregateConfiguration"/>
+    /// </summary>
+    /// <param name="repository"></param>
+    /// <param name="operation"></param>
+    public AggregateFilterContainer(ICatalogueRepository repository, FilterContainerOperation operation):base(repository.FilterManager)
+    {
+        repository.InsertAndHydrate(this,new Dictionary<string, object>(){{"Operation" ,operation.ToString()}});
+    }
+
+
+    internal AggregateFilterContainer(ICatalogueRepository repository, DbDataReader r): base(repository.FilterManager,repository, r)
+    {
+        IsDisabled = Convert.ToBoolean(r["IsDisabled"]);
+    }
+
+    /// <inheritdoc/>
+    public override string ToString()
+    {
+        return Operation.ToString();
+    }
+
+
+    /// <inheritdoc/>
+    public override Catalogue GetCatalogueIfAny()
+    {
+        var agg = GetAggregate();
+        return agg != null?agg.Catalogue:null;
+    }
+
+    /// <summary>
+    /// Returns true if the filter container belongs to a parent <see cref="CohortIdentificationConfiguration"/> that is frozen
+    /// </summary>
+    /// <param name="reason"></param>
+    /// <returns></returns>
+    public override bool ShouldBeReadOnly(out string reason)
+    {
+        var cic = GetAggregate()?.GetCohortIdentificationConfigurationIfAny();
+        if (cic == null)
         {
-            get { return _isDisabled; }
-            set { SetField(ref _isDisabled, value); }
+            reason = null;
+            return false;
         }
 
-        #endregion
+        return cic.ShouldBeReadOnly(out reason);
+    }
 
-        public AggregateFilterContainer()
-        {
-
-        }
-
-        /// <summary>
-        /// Creates a new IContainer in the dtabase for use with an <see cref="AggregateConfiguration"/>
-        /// </summary>
-        /// <param name="repository"></param>
-        /// <param name="operation"></param>
-        public AggregateFilterContainer(ICatalogueRepository repository, FilterContainerOperation operation):base(repository.FilterManager)
-        {
-            repository.InsertAndHydrate(this,new Dictionary<string, object>(){{"Operation" ,operation.ToString()}});
-        }
-
-
-        internal AggregateFilterContainer(ICatalogueRepository repository, DbDataReader r): base(repository.FilterManager,repository, r)
-        {
-            IsDisabled = Convert.ToBoolean(r["IsDisabled"]);
-        }
-
-        /// <inheritdoc/>
-        public override string ToString()
-        {
-            return Operation.ToString();
-        }
-
-
-        /// <inheritdoc/>
-        public override Catalogue GetCatalogueIfAny()
-        {
-            var agg = GetAggregate();
-            return agg != null?agg.Catalogue:null;
-        }
-
-        /// <summary>
-        /// Returns true if the filter container belongs to a parent <see cref="CohortIdentificationConfiguration"/> that is frozen
-        /// </summary>
-        /// <param name="reason"></param>
-        /// <returns></returns>
-        public override bool ShouldBeReadOnly(out string reason)
-        {
-            var cic = GetAggregate()?.GetCohortIdentificationConfigurationIfAny();
-            if (cic == null)
-            {
-                reason = null;
-                return false;
-            }
-
-            return cic.ShouldBeReadOnly(out reason);
-        }
-
-        /// <summary>
-        /// Creates a copy of the current AggregateFilterContainer including new copies of all subcontainers, filters (including those in subcontainers) and paramaters of those 
-        /// filters.  This is a recursive operation that will clone the entire tree no matter how deep.
-        /// </summary>
-        /// <returns></returns>
-        public override IContainer DeepCloneEntireTreeRecursivelyIncludingFilters()
-        {
-            //clone ourselves
-            AggregateFilterContainer clone = ShallowClone();
+    /// <summary>
+    /// Creates a copy of the current AggregateFilterContainer including new copies of all subcontainers, filters (including those in subcontainers) and paramaters of those 
+    /// filters.  This is a recursive operation that will clone the entire tree no matter how deep.
+    /// </summary>
+    /// <returns></returns>
+    public override IContainer DeepCloneEntireTreeRecursivelyIncludingFilters()
+    {
+        //clone ourselves
+        AggregateFilterContainer clone = ShallowClone();
             
-            //clone our filters
-            foreach (AggregateFilter filterToClone in GetFilters())
-            {
-                //clone it
-                AggregateFilter cloneFilter = filterToClone.ShallowClone(clone);
+        //clone our filters
+        foreach (AggregateFilter filterToClone in GetFilters())
+        {
+            //clone it
+            AggregateFilter cloneFilter = filterToClone.ShallowClone(clone);
 
-                //clone parameters
-                foreach (AggregateFilterParameter parameterToClone in filterToClone.GetAllParameters())
-                    parameterToClone.ShallowClone(cloneFilter);
-            }
-
-            //now clone all subcontainers
-            foreach (AggregateFilterContainer toCloneSubcontainer in GetSubContainers())
-            {
-                //clone the subcontainer recursively
-                var clonedSubcontainer =
-                    toCloneSubcontainer.DeepCloneEntireTreeRecursivelyIncludingFilters();
-
-                //get the returned filter subcontainer and assocaite it with the cloned version of this
-                clone.AddChild(clonedSubcontainer);
-            }
-
-            //return the cloned version
-            return clone;
+            //clone parameters
+            foreach (AggregateFilterParameter parameterToClone in filterToClone.GetAllParameters())
+                parameterToClone.ShallowClone(cloneFilter);
         }
 
-        private AggregateFilterContainer ShallowClone()
+        //now clone all subcontainers
+        foreach (AggregateFilterContainer toCloneSubcontainer in GetSubContainers())
         {
-            var container = new AggregateFilterContainer(CatalogueRepository, Operation);
-            CopyShallowValuesTo(container);
-            return container;
+            //clone the subcontainer recursively
+            var clonedSubcontainer =
+                toCloneSubcontainer.DeepCloneEntireTreeRecursivelyIncludingFilters();
+
+            //get the returned filter subcontainer and assocaite it with the cloned version of this
+            clone.AddChild(clonedSubcontainer);
         }
 
-        /// <summary>
-        /// Returns the AggregateConfiguration for which this container is either the root container for or part of the root container subcontainer tree.
-        /// Returns null if the container is somehow an orphan. 
-        /// </summary>
-        /// <returns></returns>
-        public AggregateConfiguration GetAggregate()
+        //return the cloned version
+        return clone;
+    }
+
+    private AggregateFilterContainer ShallowClone()
+    {
+        var container = new AggregateFilterContainer(CatalogueRepository, Operation);
+        CopyShallowValuesTo(container);
+        return container;
+    }
+
+    /// <summary>
+    /// Returns the AggregateConfiguration for which this container is either the root container for or part of the root container subcontainer tree.
+    /// Returns null if the container is somehow an orphan. 
+    /// </summary>
+    /// <returns></returns>
+    public AggregateConfiguration GetAggregate()
+    {
+        var aggregateConfiguration = Repository.GetAllObjectsWhere<AggregateConfiguration>("RootFilterContainer_ID",ID).SingleOrDefault();
+
+        if (aggregateConfiguration != null)
+            return aggregateConfiguration;
+
+        var parentContainer = GetParentContainerIfAny();
+
+        if (parentContainer == null)
+            return null;
+
+        return ((AggregateFilterContainer)parentContainer).GetAggregate();
+    }
+
+    public override IFilterFactory GetFilterFactory()
+    {
+        return new AggregateFilterFactory(CatalogueRepository);
+    }
+
+    public override void DeleteInDatabase()
+    {
+        base.DeleteInDatabase();
+
+        foreach(var ac in Repository.GetAllObjectsWhere<AggregateConfiguration>(nameof(AggregateConfiguration.RootFilterContainer_ID),ID))
         {
-            var aggregateConfiguration = Repository.GetAllObjectsWhere<AggregateConfiguration>("RootFilterContainer_ID",ID).SingleOrDefault();
-
-            if (aggregateConfiguration != null)
-                return aggregateConfiguration;
-
-            var parentContainer = GetParentContainerIfAny();
-
-            if (parentContainer == null)
-                return null;
-
-            return ((AggregateFilterContainer)parentContainer).GetAggregate();
-        }
-
-        public override IFilterFactory GetFilterFactory()
-        {
-            return new AggregateFilterFactory(CatalogueRepository);
-        }
-
-        public override void DeleteInDatabase()
-        {
-            base.DeleteInDatabase();
-
-            foreach(var ac in Repository.GetAllObjectsWhere<AggregateConfiguration>(nameof(AggregateConfiguration.RootFilterContainer_ID),ID))
-            {
-                ac.RootFilterContainer_ID = null;
-                ac.SaveToDatabase();
-            }
+            ac.RootFilterContainer_ID = null;
+            ac.SaveToDatabase();
         }
     }
 }

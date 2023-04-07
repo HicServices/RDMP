@@ -10,82 +10,78 @@ using Rdmp.Core.Validation;
 using Rdmp.Core.Validation.Constraints;
 using Rdmp.Core.Validation.Constraints.Primary;
 
-namespace Rdmp.Core.Tests.Validation
+namespace Rdmp.Core.Tests.Validation;
+/*
+ * Unit-tests for the ItemValidator.
+ * Using CHI in this case.
+ * 
+ * Note: Normally the Host Validator instance would set the TargetProprty of its ItemValidator(s).
+ * Here, we do it explicitly in the SetUp() method.
+ * 
+ */
+
+[Category("Unit")]
+public class ItemValidatorTest
 {
-    /*
-     * Unit-tests for the ItemValidator.
-     * Using CHI in this case.
-     * 
-     * Note: Normally the Host Validator instance would set the TargetProprty of its ItemValidator(s).
-     * Here, we do it explicitly in the SetUp() method.
-     * 
-     */
+    private ItemValidator _v;
 
-
-    [Category("Unit")]
-    public class ItemValidatorTest
+    [SetUp]
+    public void SetUp()
     {
-        private ItemValidator _v;
+        _v = new ItemValidator();
+        _v.TargetProperty = "chi";
+    }
 
-        [SetUp]
-        public void SetUp()
-        {
-            _v = new ItemValidator();
-            _v.TargetProperty = "chi";
-        }
+    [Test]
+    public void ValidateAll_IsTypeIncompatible_ThrowsException()
+    {
+        _v.PrimaryConstraint = (PrimaryConstraint)Validator.CreateConstraint("chi",Consequence.Wrong);
+        _v.ExpectedType = typeof(int);
 
-        [Test]
-        public void ValidateAll_IsTypeIncompatible_ThrowsException()
-        {
-            _v.PrimaryConstraint = (PrimaryConstraint)Validator.CreateConstraint("chi",Consequence.Wrong);
-            _v.ExpectedType = typeof(int);
+        Assert.NotNull(_v.ValidateAll(DateTime.Now,  new object[0], new string[0]));
+    }
 
-            Assert.NotNull(_v.ValidateAll(DateTime.Now,  new object[0], new string[0]));
-        }
-
-        [Test]
-        public void ValidateAll_IsTypeIncompatible_GivesReason()
-        {
-            _v.PrimaryConstraint = (PrimaryConstraint)Validator.CreateConstraint("chi",Consequence.Wrong);
-            _v.ExpectedType = typeof(DateTime);
+    [Test]
+    public void ValidateAll_IsTypeIncompatible_GivesReason()
+    {
+        _v.PrimaryConstraint = (PrimaryConstraint)Validator.CreateConstraint("chi",Consequence.Wrong);
+        _v.ExpectedType = typeof(DateTime);
             
-            ValidationFailure result = _v.ValidateAll(DateTime.Now, new object[0], new string[0]);
+        ValidationFailure result = _v.ValidateAll(DateTime.Now, new object[0], new string[0]);
 
-            Assert.IsNotNull(result);
-            Assert.IsTrue(result.Message.StartsWith("Incompatible type"));
-            Assert.IsTrue(result.Message.Contains(typeof(DateTime).Name));
+        Assert.IsNotNull(result);
+        Assert.IsTrue(result.Message.StartsWith("Incompatible type"));
+        Assert.IsTrue(result.Message.Contains(typeof(DateTime).Name));
             
-        }
+    }
         
-        [Test]
-        public void ValidateAll_ValidData_Succeeds()
-        {
-            _v.PrimaryConstraint = new Chi();
+    [Test]
+    public void ValidateAll_ValidData_Succeeds()
+    {
+        _v.PrimaryConstraint = new Chi();
          
-            Assert.IsNull(_v.ValidateAll(TestConstants._VALID_CHI, new object[0], new string[0]));
-        }
+        Assert.IsNull(_v.ValidateAll(TestConstants._VALID_CHI, new object[0], new string[0]));
+    }
 
-        [Test]
-        public void ValidateAll_InvalidData_ThrowsException()
-        {
-            _v.PrimaryConstraint = (PrimaryConstraint)Validator.CreateConstraint("chi",Consequence.Wrong);
+    [Test]
+    public void ValidateAll_InvalidData_ThrowsException()
+    {
+        _v.PrimaryConstraint = (PrimaryConstraint)Validator.CreateConstraint("chi",Consequence.Wrong);
 
-            Assert.NotNull(_v.ValidateAll(TestConstants._INVALID_CHI_CHECKSUM, new object[0], new string[0]));
-        }
+        Assert.NotNull(_v.ValidateAll(TestConstants._INVALID_CHI_CHECKSUM, new object[0], new string[0]));
+    }
 
-        [Test]
-        public void ValidateAll_InvalidData_GivesReason()
-        {
-            _v.PrimaryConstraint = (PrimaryConstraint)Validator.CreateConstraint("chi",Consequence.Wrong);
+    [Test]
+    public void ValidateAll_InvalidData_GivesReason()
+    {
+        _v.PrimaryConstraint = (PrimaryConstraint)Validator.CreateConstraint("chi",Consequence.Wrong);
 
-            ValidationFailure result = _v.ValidateAll(TestConstants._INVALID_CHI_CHECKSUM, new object[0], new string[0]);
+        ValidationFailure result = _v.ValidateAll(TestConstants._INVALID_CHI_CHECKSUM, new object[0], new string[0]);
             
-            Assert.AreEqual("CHI check digit did not match", result.Message);
+        Assert.AreEqual("CHI check digit did not match", result.Message);
             
-        }
+    }
 
 
     
-    }
-
 }

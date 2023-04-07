@@ -17,55 +17,54 @@ using ReusableLibraryCode.Checks;
 using ReusableLibraryCode.Progress;
 using Tests.Common;
 
-namespace Rdmp.Core.Tests.CommandExecution
+namespace Rdmp.Core.Tests.CommandExecution;
+
+/// <summary>
+/// Base class for all tests which test RDMP CLI command line arguments to run <see cref="BasicCommandExecution"/> derrived
+/// classes
+/// </summary>
+public abstract class CommandCliTests : UnitTests
 {
-    /// <summary>
-    /// Base class for all tests which test RDMP CLI command line arguments to run <see cref="BasicCommandExecution"/> derrived
-    /// classes
-    /// </summary>
-    public abstract class CommandCliTests : UnitTests
+    protected override void OneTimeSetUp()
     {
-        protected override void OneTimeSetUp()
+        base.OneTimeSetUp();
+
+        SetupMEF();
+    }
+
+    protected CommandInvoker GetInvoker()
+    {
+        var invoker = new CommandInvoker(new ConsoleInputManager(RepositoryLocator,new ThrowImmediatelyCheckNotifier())
         {
-            base.OneTimeSetUp();
+            DisallowInput = true
+        });
+        invoker.CommandImpossible +=(s,c)=> throw new Exception(c.Command.ReasonCommandImpossible);
 
-            SetupMEF();
-        }
-
-        protected CommandInvoker GetInvoker()
-        {
-            var invoker = new CommandInvoker(new ConsoleInputManager(RepositoryLocator,new ThrowImmediatelyCheckNotifier())
-            {
-                DisallowInput = true
-            });
-            invoker.CommandImpossible +=(s,c)=> throw new Exception(c.Command.ReasonCommandImpossible);
-
-            return invoker;
-        }
+        return invoker;
+    }
         
-        protected Mock<IBasicActivateItems> GetMockActivator()
-        {
-            var mock = new Mock<IBasicActivateItems>();
-            mock.Setup(m => m.RepositoryLocator).Returns(RepositoryLocator);
-            mock.Setup(m => m.GetDelegates()).Returns(new List<CommandInvokerDelegate>());
-            mock.Setup(m => m.Show(It.IsAny<string>()));
-            return mock;
-        }
+    protected Mock<IBasicActivateItems> GetMockActivator()
+    {
+        var mock = new Mock<IBasicActivateItems>();
+        mock.Setup(m => m.RepositoryLocator).Returns(RepositoryLocator);
+        mock.Setup(m => m.GetDelegates()).Returns(new List<CommandInvokerDelegate>());
+        mock.Setup(m => m.Show(It.IsAny<string>()));
+        return mock;
+    }
 
-        /// <summary>
-        /// Runs the provided string which should start after the cmd e.g. the bit after rdmp cmd
-        /// </summary>
-        /// <param name="command">1 string per piece following rdmp cmd.  Element 0 should be the Type of command to run</param>
-        /// <returns></returns>
-        protected int Run(params string[] command)
-        {
-            var opts = new ExecuteCommandOptions();
-            opts.CommandName = command[0];
-            opts.CommandArgs = command.Skip(1).ToArray();
+    /// <summary>
+    /// Runs the provided string which should start after the cmd e.g. the bit after rdmp cmd
+    /// </summary>
+    /// <param name="command">1 string per piece following rdmp cmd.  Element 0 should be the Type of command to run</param>
+    /// <returns></returns>
+    protected int Run(params string[] command)
+    {
+        var opts = new ExecuteCommandOptions();
+        opts.CommandName = command[0];
+        opts.CommandArgs = command.Skip(1).ToArray();
             
-            var runner = new ExecuteCommandRunner(opts);
-            return runner.Run(RepositoryLocator, new ThrowImmediatelyDataLoadEventListener(),
-                new ThrowImmediatelyCheckNotifier(), new GracefulCancellationToken());
-        }
+        var runner = new ExecuteCommandRunner(opts);
+        return runner.Run(RepositoryLocator, new ThrowImmediatelyDataLoadEventListener(),
+            new ThrowImmediatelyCheckNotifier(), new GracefulCancellationToken());
     }
 }

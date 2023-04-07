@@ -6,15 +6,14 @@
 
 using Rdmp.UI.TestsAndSetup.ServicePropogation;
 
-namespace Rdmp.UI.SimpleControls
+namespace Rdmp.UI.SimpleControls;
+
+/// <summary>
+/// Indicates that the control hosts a <see cref="ObjectSaverButton"/> and that Ctr+S should result in saving.
+///
+/// <para>This interface is used in reflection to automatically add saving support if you are a <see cref="RDMPSingleDatabaseObjectControl{T}"/>. </para>
+/// </summary>
+public interface ISaveableUI
 {
-    /// <summary>
-    /// Indicates that the control hosts a <see cref="ObjectSaverButton"/> and that Ctr+S should result in saving.
-    ///
-    /// <para>This interface is used in reflection to automatically add saving support if you are a <see cref="RDMPSingleDatabaseObjectControl{T}"/>. </para>
-    /// </summary>
-    public interface ISaveableUI
-    {
-        ObjectSaverButton GetObjectSaverButton();
-    }
+    ObjectSaverButton GetObjectSaverButton();
 }

@@ -6,17 +6,16 @@
 
 using Rdmp.Core.Curation.Data.Cohort;
 
-namespace Rdmp.Core.Curation.Data
+namespace Rdmp.Core.Curation.Data;
+
+/// <summary>
+/// Marks an object which may be in a state that means the user should not edit it e.g. a filter that is part of an extraction configuration that has been released and frozen
+/// </summary>
+public interface IMightBeReadOnly
 {
     /// <summary>
-    /// Marks an object which may be in a state that means the user should not edit it e.g. a filter that is part of an extraction configuration that has been released and frozen
+    /// Returns true if changes to the container should be forbidden e.g. because the parent object is frozen (like <see cref="CohortIdentificationConfiguration.Frozen"/>)
     /// </summary>
-    public interface IMightBeReadOnly
-    {
-        /// <summary>
-        /// Returns true if changes to the container should be forbidden e.g. because the parent object is frozen (like <see cref="CohortIdentificationConfiguration.Frozen"/>)
-        /// </summary>
-        /// <returns></returns>
-        bool ShouldBeReadOnly(out string reason);
-    }
+    /// <returns></returns>
+    bool ShouldBeReadOnly(out string reason);
 }

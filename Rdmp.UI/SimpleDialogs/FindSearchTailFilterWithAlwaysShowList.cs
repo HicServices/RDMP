@@ -14,48 +14,47 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading;
 
-namespace Rdmp.UI.SimpleDialogs
+namespace Rdmp.UI.SimpleDialogs;
+
+internal class FindSearchTailFilterWithAlwaysShowList : IListFilter
 {
-    internal class FindSearchTailFilterWithAlwaysShowList : IListFilter
+    private List<IMapsDirectlyToDatabaseTable> _scoringObjects;
+
+    public IEnumerable<object> AlwaysShow { get; }
+    public CancellationToken CancellationToken { get; }
+
+    public FindSearchTailFilterWithAlwaysShowList(IBasicActivateItems activator, IEnumerable<object> alwaysShow, IEnumerable<IMapsDirectlyToDatabaseTable> allObjects, string text,int maxToTake, CancellationToken cancellationToken) 
     {
-        private List<IMapsDirectlyToDatabaseTable> _scoringObjects;
+        AlwaysShow = alwaysShow;
+        CancellationToken = cancellationToken;
 
-        public IEnumerable<object> AlwaysShow { get; }
-        public CancellationToken CancellationToken { get; }
-
-        public FindSearchTailFilterWithAlwaysShowList(IBasicActivateItems activator, IEnumerable<object> alwaysShow, IEnumerable<IMapsDirectlyToDatabaseTable> allObjects, string text,int maxToTake, CancellationToken cancellationToken) 
+        if(string.IsNullOrEmpty(text))
         {
-            AlwaysShow = alwaysShow;
-            CancellationToken = cancellationToken;
+            _scoringObjects = allObjects.Take(maxToTake).ToList();
+        }
+        else
+        {
+            var searchThese = allObjects.ToDictionary(o => o, activator.CoreChildProvider.GetDescendancyListIfAnyFor);
 
-            if(string.IsNullOrEmpty(text))
+            var scorer = new SearchablesMatchScorer();
+            scorer.TypeNames = new HashSet<string>(allObjects.Select(m => m.GetType().Name).Distinct(), StringComparer.CurrentCultureIgnoreCase);
+            var matches = scorer.ScoreMatches(searchThese, text, cancellationToken,null);
+
+            // we were cancelled
+            if (matches == null)
             {
-                _scoringObjects = allObjects.Take(maxToTake).ToList();
-            }
-            else
-            {
-                var searchThese = allObjects.ToDictionary(o => o, activator.CoreChildProvider.GetDescendancyListIfAnyFor);
-
-                var scorer = new SearchablesMatchScorer();
-                scorer.TypeNames = new HashSet<string>(allObjects.Select(m => m.GetType().Name).Distinct(), StringComparer.CurrentCultureIgnoreCase);
-                var matches = scorer.ScoreMatches(searchThese, text, cancellationToken,null);
-
-                // we were cancelled
-                if (matches == null)
-                {
-                    _scoringObjects = new List<IMapsDirectlyToDatabaseTable>();
-                    return;
-                }
-
-                _scoringObjects = scorer.ShortList(matches, maxToTake, activator);
+                _scoringObjects = new List<IMapsDirectlyToDatabaseTable>();
+                return;
             }
 
+            _scoringObjects = scorer.ShortList(matches, maxToTake, activator);
         }
 
+    }
 
-        public IEnumerable Filter(IEnumerable modelObjects)
-        {
-            return _scoringObjects.Union(AlwaysShow);
-        }
+
+    public IEnumerable Filter(IEnumerable modelObjects)
+    {
+        return _scoringObjects.Union(AlwaysShow);
     }
 }

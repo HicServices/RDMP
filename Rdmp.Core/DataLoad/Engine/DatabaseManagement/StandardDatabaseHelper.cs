@@ -9,41 +9,40 @@ using FAnsi.Discovery;
 using Rdmp.Core.Curation.Data;
 using Rdmp.Core.Curation.Data.EntityNaming;
 
-namespace Rdmp.Core.DataLoad.Engine.DatabaseManagement
+namespace Rdmp.Core.DataLoad.Engine.DatabaseManagement;
+
+/// <summary>
+/// Stores the location of all the databases (RAW, STAGING, LIVE) available during a Data Load (See LoadMetadata).
+/// </summary>
+public class StandardDatabaseHelper
 {
-    /// <summary>
-    /// Stores the location of all the databases (RAW, STAGING, LIVE) available during a Data Load (See LoadMetadata).
-    /// </summary>
-    public class StandardDatabaseHelper
+    public INameDatabasesAndTablesDuringLoads DatabaseNamer { get; set; }
+
+    public Dictionary<LoadBubble, DiscoveredDatabase> DatabaseInfoList = new Dictionary<LoadBubble, DiscoveredDatabase>();
+
+    //Constructor
+    internal StandardDatabaseHelper(DiscoveredDatabase liveDatabase, INameDatabasesAndTablesDuringLoads namer,DiscoveredServer rawServer)
     {
-        public INameDatabasesAndTablesDuringLoads DatabaseNamer { get; set; }
-
-        public Dictionary<LoadBubble, DiscoveredDatabase> DatabaseInfoList = new Dictionary<LoadBubble, DiscoveredDatabase>();
-
-        //Constructor
-        internal StandardDatabaseHelper(DiscoveredDatabase liveDatabase, INameDatabasesAndTablesDuringLoads namer,DiscoveredServer rawServer)
-        {
-            DatabaseNamer = namer;
+        DatabaseNamer = namer;
 
             
 
-            foreach (LoadBubble stage in new[] {LoadBubble.Raw, LoadBubble.Staging, LoadBubble.Live,})
-            {
-                var stageName = DatabaseNamer.GetDatabaseName(liveDatabase.GetRuntimeName(), stage);
-                DatabaseInfoList.Add(stage, stage == LoadBubble.Raw ? rawServer.ExpectDatabase(stageName) : liveDatabase.Server.ExpectDatabase(stageName));
-                
-            }
-        }
-
-
-        // Indexer declaration.
-        // If index is out of range, the temps array will throw the exception.
-        public DiscoveredDatabase this[LoadBubble index]
+        foreach (LoadBubble stage in new[] {LoadBubble.Raw, LoadBubble.Staging, LoadBubble.Live,})
         {
-            get
-            {
-                return DatabaseInfoList[index];
-            }
+            var stageName = DatabaseNamer.GetDatabaseName(liveDatabase.GetRuntimeName(), stage);
+            DatabaseInfoList.Add(stage, stage == LoadBubble.Raw ? rawServer.ExpectDatabase(stageName) : liveDatabase.Server.ExpectDatabase(stageName));
+                
+        }
+    }
+
+
+    // Indexer declaration.
+    // If index is out of range, the temps array will throw the exception.
+    public DiscoveredDatabase this[LoadBubble index]
+    {
+        get
+        {
+            return DatabaseInfoList[index];
         }
     }
 }

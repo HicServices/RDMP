@@ -16,54 +16,54 @@ using Rdmp.Core.DataExport.DataExtraction.UserPicks;
 using Tests.Common;
 using Tests.Common.Scenarios;
 
-namespace Rdmp.Core.Tests.DataExport.Cloning
+namespace Rdmp.Core.Tests.DataExport.Cloning;
+
+public class CloneExtractionConfigurationTests:TestsRequiringAnExtractionConfiguration
 {
-    public class CloneExtractionConfigurationTests:TestsRequiringAnExtractionConfiguration
+
+    [Test]
+    [TestCase(false)]
+    [TestCase(true)]
+    public void CloneWithFilters(bool introduceOrphanExtractionInformation)
     {
+        if (introduceOrphanExtractionInformation)
+            IntroduceOrphan();
 
-        [Test]
-        [TestCase(false)]
-        [TestCase(true)]
-        public void CloneWithFilters(bool introduceOrphanExtractionInformation)
+        Assert.IsEmpty(_configuration.ReleaseLog);
+
+        var filter = new ExtractionFilter(CatalogueRepository, "FilterByFish", _extractionInformations[0]);
+        try
         {
-            if (introduceOrphanExtractionInformation)
-                IntroduceOrphan();
+            //setup a filter with a parameter
+            filter.WhereSQL = "Fish = @fish";
 
-            Assert.IsEmpty(_configuration.ReleaseLog);
+            new ParameterCreator(new ExtractionFilterFactory(_extractionInformations[0]), null, null).CreateAll(filter,null);
+            filter.SaveToDatabase();
 
-            var filter = new ExtractionFilter(CatalogueRepository, "FilterByFish", _extractionInformations[0]);
-            try
-            {
-                //setup a filter with a parameter
-                filter.WhereSQL = "Fish = @fish";
+            Assert.IsTrue(filter.ExtractionFilterParameters.Count()==1);
 
-                new ParameterCreator(new ExtractionFilterFactory(_extractionInformations[0]), null, null).CreateAll(filter,null);
-                filter.SaveToDatabase();
+            //create a root container
+            var container =  new FilterContainer(DataExportRepository);
+            _selectedDataSet.RootFilterContainer_ID = container.ID;
+            _selectedDataSet.SaveToDatabase();
 
-                Assert.IsTrue(filter.ExtractionFilterParameters.Count()==1);
+            //create a deployed filter
+            var importer = new FilterImporter(new DeployedExtractionFilterFactory(DataExportRepository), null);
+            var deployedFilter = (DeployedExtractionFilter)importer.ImportFilter(container, filter, null);
+            deployedFilter.FilterContainer_ID = container.ID;
+            deployedFilter.Name = "FilterByFishDeployed";
+            deployedFilter.SaveToDatabase();
 
-                //create a root container
-                var container =  new FilterContainer(DataExportRepository);
-                _selectedDataSet.RootFilterContainer_ID = container.ID;
-                _selectedDataSet.SaveToDatabase();
+            var param = deployedFilter.ExtractionFilterParameters[0];
+            param.Value = "'jormungander'";
+            param.SaveToDatabase();
 
-                //create a deployed filter
-                var importer = new FilterImporter(new DeployedExtractionFilterFactory(DataExportRepository), null);
-                var deployedFilter = (DeployedExtractionFilter)importer.ImportFilter(container, filter, null);
-                deployedFilter.FilterContainer_ID = container.ID;
-                deployedFilter.Name = "FilterByFishDeployed";
-                deployedFilter.SaveToDatabase();
-
-                var param = deployedFilter.ExtractionFilterParameters[0];
-                param.Value = "'jormungander'";
-                param.SaveToDatabase();
-
-                ExtractDatasetCommand request = new ExtractDatasetCommand(_configuration,new ExtractableDatasetBundle(_extractableDataSet));
-                request.GenerateQueryBuilder();
-                Assert.AreEqual(
-                    CollapseWhitespace(
-string.Format(
-@"DECLARE @fish AS varchar(50);
+            ExtractDatasetCommand request = new ExtractDatasetCommand(_configuration,new ExtractableDatasetBundle(_extractableDataSet));
+            request.GenerateQueryBuilder();
+            Assert.AreEqual(
+                CollapseWhitespace(
+                    string.Format(
+                        @"DECLARE @fish AS varchar(50);
 SET @fish='jormungander';
 /*The ID of the cohort in [{0}CohortDatabase]..[Cohort]*/
 DECLARE @CohortDefinitionID AS int;
@@ -87,80 +87,79 @@ Fish = @fish
 AND
 [{0}CohortDatabase]..[Cohort].[cohortDefinition_id]=-599
 "
-  , TestDatabaseNames.Prefix))
-  ,CollapseWhitespace(request.QueryBuilder.SQL));
-
-                ExtractionConfiguration deepClone = _configuration.DeepCloneWithNewIDs();
-                Assert.AreEqual(deepClone.Cohort_ID,_configuration.Cohort_ID);
-                Assert.AreNotEqual(deepClone.ID,_configuration.ID);
-                try
-                {
-                    ExtractDatasetCommand request2 = new ExtractDatasetCommand(deepClone, new ExtractableDatasetBundle(_extractableDataSet));
-                    request2.GenerateQueryBuilder();
-                
-                    Assert.AreEqual(request.QueryBuilder.SQL,request2.QueryBuilder.SQL);
-
-                }
-                finally
-                {
-                    deepClone.DeleteInDatabase();
-                }
-            }
-            finally 
-            {
-                
-                filter.DeleteInDatabase();
-            }
-        }
-
-
-        [Test]
-        public void CloneWithExtractionProgress()
-        {
-            var sds = _configuration.SelectedDataSets[0];
-            var ci = sds.GetCatalogue().CatalogueItems.First();
-            var origProgress = new ExtractionProgress(DataExportRepository, sds, null, DateTime.Now, 10, "fff drrr", ci.ID);
-            origProgress.ProgressDate = new DateTime(2001, 01, 01);
-            origProgress.SaveToDatabase();
+                        , TestDatabaseNames.Prefix))
+                ,CollapseWhitespace(request.QueryBuilder.SQL));
 
             ExtractionConfiguration deepClone = _configuration.DeepCloneWithNewIDs();
-            Assert.AreEqual(deepClone.Cohort_ID, _configuration.Cohort_ID);
-            Assert.AreNotEqual(deepClone.ID, _configuration.ID);
-
-            var clonedSds = deepClone.SelectedDataSets.Single(s => s.ExtractableDataSet_ID == sds.ExtractableDataSet_ID);
-
-            var clonedProgress = clonedSds.ExtractionProgressIfAny;
-
-            Assert.IsNotNull(clonedProgress);
-            Assert.IsNull(clonedProgress.StartDate);
-            Assert.IsNull(clonedProgress.ProgressDate, "Cloning a ExtractionProgress should reset its ProgressDate back to null in anticipation of it being extracted again");
-            
-            Assert.AreEqual(clonedProgress.EndDate, origProgress.EndDate);
-            Assert.AreEqual(clonedProgress.NumberOfDaysPerBatch, origProgress.NumberOfDaysPerBatch);
-            Assert.AreEqual(clonedProgress.Name, origProgress.Name);
-            Assert.AreEqual(clonedProgress.ExtractionInformation_ID, origProgress.ExtractionInformation_ID);
-
-
-            deepClone.DeleteInDatabase();
-
-            // remove the progress so that it doesn't trip other tests
-            origProgress.DeleteInDatabase();
-        }
-
-
-        public void IntroduceOrphan()
-        {
-            var cols = _configuration.GetAllExtractableColumnsFor(_extractableDataSet).Cast<ExtractableColumn>().ToArray();
-
-            var name = cols.Single(c => c.GetRuntimeName().Equals("Name"));
-
-            using (var con = DataExportTableRepository.GetConnection())
+            Assert.AreEqual(deepClone.Cohort_ID,_configuration.Cohort_ID);
+            Assert.AreNotEqual(deepClone.ID,_configuration.ID);
+            try
             {
-                DataExportTableRepository.DiscoveredServer.GetCommand(
-                    "UPDATE ExtractableColumn set CatalogueExtractionInformation_ID = " + int.MaxValue + " where ID = " +
-                    name.ID, con).ExecuteNonQuery();
-            }
+                ExtractDatasetCommand request2 = new ExtractDatasetCommand(deepClone, new ExtractableDatasetBundle(_extractableDataSet));
+                request2.GenerateQueryBuilder();
+                
+                Assert.AreEqual(request.QueryBuilder.SQL,request2.QueryBuilder.SQL);
 
+            }
+            finally
+            {
+                deepClone.DeleteInDatabase();
+            }
         }
+        finally 
+        {
+                
+            filter.DeleteInDatabase();
+        }
+    }
+
+
+    [Test]
+    public void CloneWithExtractionProgress()
+    {
+        var sds = _configuration.SelectedDataSets[0];
+        var ci = sds.GetCatalogue().CatalogueItems.First();
+        var origProgress = new ExtractionProgress(DataExportRepository, sds, null, DateTime.Now, 10, "fff drrr", ci.ID);
+        origProgress.ProgressDate = new DateTime(2001, 01, 01);
+        origProgress.SaveToDatabase();
+
+        ExtractionConfiguration deepClone = _configuration.DeepCloneWithNewIDs();
+        Assert.AreEqual(deepClone.Cohort_ID, _configuration.Cohort_ID);
+        Assert.AreNotEqual(deepClone.ID, _configuration.ID);
+
+        var clonedSds = deepClone.SelectedDataSets.Single(s => s.ExtractableDataSet_ID == sds.ExtractableDataSet_ID);
+
+        var clonedProgress = clonedSds.ExtractionProgressIfAny;
+
+        Assert.IsNotNull(clonedProgress);
+        Assert.IsNull(clonedProgress.StartDate);
+        Assert.IsNull(clonedProgress.ProgressDate, "Cloning a ExtractionProgress should reset its ProgressDate back to null in anticipation of it being extracted again");
+            
+        Assert.AreEqual(clonedProgress.EndDate, origProgress.EndDate);
+        Assert.AreEqual(clonedProgress.NumberOfDaysPerBatch, origProgress.NumberOfDaysPerBatch);
+        Assert.AreEqual(clonedProgress.Name, origProgress.Name);
+        Assert.AreEqual(clonedProgress.ExtractionInformation_ID, origProgress.ExtractionInformation_ID);
+
+
+        deepClone.DeleteInDatabase();
+
+        // remove the progress so that it doesn't trip other tests
+        origProgress.DeleteInDatabase();
+    }
+
+
+    public void IntroduceOrphan()
+    {
+        var cols = _configuration.GetAllExtractableColumnsFor(_extractableDataSet).Cast<ExtractableColumn>().ToArray();
+
+        var name = cols.Single(c => c.GetRuntimeName().Equals("Name"));
+
+        using (var con = DataExportTableRepository.GetConnection())
+        {
+            DataExportTableRepository.DiscoveredServer.GetCommand(
+                "UPDATE ExtractableColumn set CatalogueExtractionInformation_ID = " + int.MaxValue + " where ID = " +
+                name.ID, con).ExecuteNonQuery();
+        }
+
     }
 }

@@ -7,25 +7,24 @@
 using System;
 using NUnit.Framework;
 
-namespace Rdmp.Core.Tests.Curation
-{
-    [Category("Unit")]
-    public class LazyTest
-    {
-        [Test]
-        public void TestLazy()
-        {
-            Lazy<string> s = new Lazy<string>(GetStringNull);
-            
-            Assert.IsFalse(s.IsValueCreated);
-            Console.WriteLine(s.Value);
-            Assert.IsNull(s.Value);
-            Assert.IsTrue(s.IsValueCreated);
-        }
+namespace Rdmp.Core.Tests.Curation;
 
-        private string GetStringNull()
-        {
-            return null;
-        }
+[Category("Unit")]
+public class LazyTest
+{
+    [Test]
+    public void TestLazy()
+    {
+        Lazy<string> s = new Lazy<string>(GetStringNull);
+            
+        Assert.IsFalse(s.IsValueCreated);
+        Console.WriteLine(s.Value);
+        Assert.IsNull(s.Value);
+        Assert.IsTrue(s.IsValueCreated);
+    }
+
+    private string GetStringNull()
+    {
+        return null;
     }
 }

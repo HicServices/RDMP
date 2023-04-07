@@ -6,23 +6,22 @@
 
 using Rdmp.Core.DataQualityEngine.Data;
 
-namespace Rdmp.UI.CatalogueSummary.DataQualityReporting
+namespace Rdmp.UI.CatalogueSummary.DataQualityReporting;
+
+/// <summary>
+/// Interface for all UI charts that depict DQE results in <see cref="CatalogueDQEResultsUI"/>
+/// </summary>
+public interface IDataQualityReportingChart
 {
     /// <summary>
-    /// Interface for all UI charts that depict DQE results in <see cref="CatalogueDQEResultsUI"/>
+    /// Clears the currently shown results in the UI
     /// </summary>
-    public interface IDataQualityReportingChart
-    {
-        /// <summary>
-        /// Clears the currently shown results in the UI
-        /// </summary>
-        void ClearGraph();
+    void ClearGraph();
 
-        /// <summary>
-        /// Updates the currently shown results to depict those gathered during the <paramref name="evaluation"/>
-        /// </summary>
-        /// <param name="evaluation"></param>
-        /// <param name="pivotCategoryValue">The pivot value within the results to show or "ALL" for all records gathered</param>
-        void SelectEvaluation(Evaluation evaluation, string pivotCategoryValue);
-    }
+    /// <summary>
+    /// Updates the currently shown results to depict those gathered during the <paramref name="evaluation"/>
+    /// </summary>
+    /// <param name="evaluation"></param>
+    /// <param name="pivotCategoryValue">The pivot value within the results to show or "ALL" for all records gathered</param>
+    void SelectEvaluation(Evaluation evaluation, string pivotCategoryValue);
 }

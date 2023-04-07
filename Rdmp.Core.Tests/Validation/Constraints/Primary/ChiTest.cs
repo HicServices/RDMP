@@ -9,50 +9,48 @@ using Rdmp.Core.Validation;
 using Rdmp.Core.Validation.Constraints;
 using Rdmp.Core.Validation.Constraints.Primary;
 
-namespace Rdmp.Core.Tests.Validation.Constraints.Primary
+namespace Rdmp.Core.Tests.Validation.Constraints.Primary;
+
+[Category("Unit")]
+class ChiTest : ValidationTests
 {
+    private IPrimaryConstraint _chi;
 
-    [Category("Unit")]
-    class ChiTest : ValidationTests
+    [SetUp]
+    protected override void SetUp()
     {
-        private IPrimaryConstraint _chi;
+        base.SetUp();
 
-        [SetUp]
-        protected override void SetUp()
-        {
-            base.SetUp();
-
-            _chi = (IPrimaryConstraint)Validator.CreateConstraint("chi",Consequence.Wrong);
-        }
-
-        [TestCase("")]
-        [TestCase(" ")]
-        [TestCase("banana")]
-        [TestCase("092567")]
-        [TestCase("020445037")]
-        [TestCase("000000000")]
-        [TestCase("02044503731")]
-        public void Validate_InvalidChi_ThrowsException(string code)
-        {
-            Assert.NotNull(_chi.Validate(code));
-        }
-
-        [TestCase(null)]
-        [TestCase("0204450373")]
-        public void Validate_ValidChi_Success(string code)
-        {
-            Assert.IsNull(_chi.Validate(code));
-        }
-
-        [Test]
-        public void Validate_InvalidChi_ExceptionContainsRequiredInfo()
-        {
-            ValidationFailure result = _chi.Validate("banana");
-            
-            Assert.NotNull(result.SourceConstraint);
-            Assert.AreEqual(typeof(Chi), result.SourceConstraint.GetType());
-            
-        }
-
+        _chi = (IPrimaryConstraint)Validator.CreateConstraint("chi",Consequence.Wrong);
     }
-} 
+
+    [TestCase("")]
+    [TestCase(" ")]
+    [TestCase("banana")]
+    [TestCase("092567")]
+    [TestCase("020445037")]
+    [TestCase("000000000")]
+    [TestCase("02044503731")]
+    public void Validate_InvalidChi_ThrowsException(string code)
+    {
+        Assert.NotNull(_chi.Validate(code));
+    }
+
+    [TestCase(null)]
+    [TestCase("0204450373")]
+    public void Validate_ValidChi_Success(string code)
+    {
+        Assert.IsNull(_chi.Validate(code));
+    }
+
+    [Test]
+    public void Validate_InvalidChi_ExceptionContainsRequiredInfo()
+    {
+        ValidationFailure result = _chi.Validate("banana");
+            
+        Assert.NotNull(result.SourceConstraint);
+        Assert.AreEqual(typeof(Chi), result.SourceConstraint.GetType());
+            
+    }
+
+}

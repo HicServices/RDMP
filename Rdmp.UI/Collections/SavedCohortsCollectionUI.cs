@@ -14,75 +14,74 @@ using Rdmp.UI.ItemActivation;
 using Rdmp.UI.Refreshing;
 using System;
 
-namespace Rdmp.UI.Collections
+namespace Rdmp.UI.Collections;
+
+/// <summary>
+/// RDMP Collection which shows all the Cohorts that have been committed to RDMP accross all Projects / Cohort Sources.
+/// </summary>
+public partial class SavedCohortsCollectionUI : RDMPCollectionUI, ILifetimeSubscriber
 {
-    /// <summary>
-    /// RDMP Collection which shows all the Cohorts that have been committed to RDMP accross all Projects / Cohort Sources.
-    /// </summary>
-    public partial class SavedCohortsCollectionUI : RDMPCollectionUI, ILifetimeSubscriber
+    public SavedCohortsCollectionUI()
     {
-        public SavedCohortsCollectionUI()
-        {
-            InitializeComponent();
+        InitializeComponent();
 
-            olvProjectNumber.AspectGetter = AspectGetter_ProjectNumber;
-            olvVersion.AspectGetter = AspectGetter_Version;
-            olvVersion.IsEditable = false;
-            olvProjectNumber.IsEditable = false;
-        }
+        olvProjectNumber.AspectGetter = AspectGetter_ProjectNumber;
+        olvVersion.AspectGetter = AspectGetter_Version;
+        olvVersion.IsEditable = false;
+        olvProjectNumber.IsEditable = false;
+    }
 
-        private object AspectGetter_Version(object rowObject)
-        {
-            var c = rowObject as ExtractableCohort;
+    private object AspectGetter_Version(object rowObject)
+    {
+        var c = rowObject as ExtractableCohort;
 
-            if (c != null)
-                return c.ExternalVersion;
+        if (c != null)
+            return c.ExternalVersion;
 
-            return null;
-        }
+        return null;
+    }
 
-        private object AspectGetter_ProjectNumber(object rowObject)
-        {
-            var c = rowObject as ExtractableCohort;
+    private object AspectGetter_ProjectNumber(object rowObject)
+    {
+        var c = rowObject as ExtractableCohort;
 
-            if (c != null)
-                return c.ExternalProjectNumber;
+        if (c != null)
+            return c.ExternalProjectNumber;
 
-            return null;
-        }
+        return null;
+    }
 
-        public override void SetItemActivator(IActivateItems activator)
-        {
-            base.SetItemActivator(activator);
+    public override void SetItemActivator(IActivateItems activator)
+    {
+        base.SetItemActivator(activator);
 
-            CommonTreeFunctionality.SetUp(RDMPCollection.SavedCohorts, tlvSavedCohorts,Activator,olvName,olvName);
+        CommonTreeFunctionality.SetUp(RDMPCollection.SavedCohorts, tlvSavedCohorts,Activator,olvName,olvName);
             
-            tlvSavedCohorts.AddObject(((DataExportChildProvider)Activator.CoreChildProvider).RootCohortsNode);
+        tlvSavedCohorts.AddObject(((DataExportChildProvider)Activator.CoreChildProvider).RootCohortsNode);
 
-            SetupToolStrip();
+        SetupToolStrip();
 
-            Activator.RefreshBus.EstablishLifetimeSubscription(this);
+        Activator.RefreshBus.EstablishLifetimeSubscription(this);
 
-            CommonTreeFunctionality.SetupColumnTracking( olvName, new Guid("6857032b-4b28-4f92-8b38-f532f11c7a44"));
-            CommonTreeFunctionality.SetupColumnTracking( olvVersion, new Guid("637fcb62-8395-4b36-a5ce-76ed3194b4e0"));
-            CommonTreeFunctionality.SetupColumnTracking( olvProjectNumber, new Guid("8378f8cf-b08d-4656-a16e-760eed71fe3a"));
-        }
+        CommonTreeFunctionality.SetupColumnTracking( olvName, new Guid("6857032b-4b28-4f92-8b38-f532f11c7a44"));
+        CommonTreeFunctionality.SetupColumnTracking( olvVersion, new Guid("637fcb62-8395-4b36-a5ce-76ed3194b4e0"));
+        CommonTreeFunctionality.SetupColumnTracking( olvProjectNumber, new Guid("8378f8cf-b08d-4656-a16e-760eed71fe3a"));
+    }
 
-        public void RefreshBus_RefreshObject(object sender, RefreshObjectEventArgs e)
-        {
-            SetupToolStrip();
-        }
+    public void RefreshBus_RefreshObject(object sender, RefreshObjectEventArgs e)
+    {
+        SetupToolStrip();
+    }
 
-        private void SetupToolStrip()
-        {
-            CommonFunctionality.ClearToolStrip();
-            CommonFunctionality.Add(new ExecuteCommandCreateNewCohortFromFile(Activator,null),GlobalStrings.FromFile,null,"New...");
-            CommonFunctionality.Add(new ExecuteCommandCreateNewCohortByExecutingACohortIdentificationConfiguration(Activator,null),"From Query",null,"New...");
-        }
+    private void SetupToolStrip()
+    {
+        CommonFunctionality.ClearToolStrip();
+        CommonFunctionality.Add(new ExecuteCommandCreateNewCohortFromFile(Activator,null),GlobalStrings.FromFile,null,"New...");
+        CommonFunctionality.Add(new ExecuteCommandCreateNewCohortByExecutingACohortIdentificationConfiguration(Activator,null),"From Query",null,"New...");
+    }
 
-        public static bool IsRootObject(object root)
-        {
-            return root is AllCohortsNode;
-        }
+    public static bool IsRootObject(object root)
+    {
+        return root is AllCohortsNode;
     }
 }

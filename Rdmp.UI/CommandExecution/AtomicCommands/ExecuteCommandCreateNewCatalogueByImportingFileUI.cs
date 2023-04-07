@@ -15,24 +15,23 @@ using System.Text;
 using System.Threading.Tasks;
 using Rdmp.UI.SimpleDialogs.SimpleFileImporting;
 
-namespace Rdmp.UI.CommandExecution.AtomicCommands
+namespace Rdmp.UI.CommandExecution.AtomicCommands;
+
+public class ExecuteCommandCreateNewCatalogueByImportingFileUI : ExecuteCommandCreateNewCatalogueByImportingFile
 {
-    public class ExecuteCommandCreateNewCatalogueByImportingFileUI : ExecuteCommandCreateNewCatalogueByImportingFile
+    private readonly IActivateItems _activator;
+
+    public ExecuteCommandCreateNewCatalogueByImportingFileUI(IActivateItems activator,FileInfo file = null) :base(activator,file)
     {
-        private readonly IActivateItems _activator;
+        this._activator = activator;
+    }
+    public override void Execute()
+    {
+        if(IsImpossible)
+            throw new ImpossibleCommandException(this, ReasonCommandImpossible);
 
-        public ExecuteCommandCreateNewCatalogueByImportingFileUI(IActivateItems activator,FileInfo file = null) :base(activator,file)
-        {
-            this._activator = activator;
-        }
-        public override void Execute()
-        {
-            if(IsImpossible)
-                throw new ImpossibleCommandException(this, ReasonCommandImpossible);
-
-            var ui = new CreateNewCatalogueByImportingFileUI(_activator,this);
-            ui.SetProjectSpecific(ProjectSpecific);
-            ui.ShowDialog();
-        }
+        var ui = new CreateNewCatalogueByImportingFileUI(_activator,this);
+        ui.SetProjectSpecific(ProjectSpecific);
+        ui.ShowDialog();
     }
 }

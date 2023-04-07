@@ -10,16 +10,15 @@ using Rdmp.Core.Icons.IconProvision;
 using Rdmp.UI.CommandExecution.AtomicCommands;
 using ReusableLibraryCode.Icons.IconProvision;
 
-namespace Rdmp.UI.Menus
+namespace Rdmp.UI.Menus;
+
+internal class CacheProgressMenu : RDMPContextMenuStrip
 {
-    internal class CacheProgressMenu : RDMPContextMenuStrip
+    public CacheProgressMenu(RDMPContextMenuStripArgs args, CacheProgress cacheProgress)
+        : base(args, cacheProgress)
     {
-        public CacheProgressMenu(RDMPContextMenuStripArgs args, CacheProgress cacheProgress)
-            : base(args, cacheProgress)
-        {
-            Add(new ExecuteCommandEditCacheProgress(args.ItemActivator, cacheProgress));
+        Add(new ExecuteCommandEditCacheProgress(args.ItemActivator, cacheProgress));
                         
-            ReBrandActivateAs("Execute Caching",RDMPConcept.CacheProgress,OverlayKind.Execute);
-        }
+        ReBrandActivateAs("Execute Caching",RDMPConcept.CacheProgress,OverlayKind.Execute);
     }
 }

@@ -19,87 +19,86 @@ using Rdmp.Core.QueryBuilding;
 using Rdmp.Core.Repositories;
 using Tests.Common;
 
-namespace Rdmp.Core.Tests.Curation.CrossPlatformParameterTests
+namespace Rdmp.Core.Tests.Curation.CrossPlatformParameterTests;
+
+public class BasicParameterUseTests:DatabaseTests
 {
-    public class BasicParameterUseTests:DatabaseTests
+    [Test]
+    [TestCase(DatabaseType.MySql)]
+    [TestCase(DatabaseType.MicrosoftSQLServer)]
+    public void Test_DatabaseTypeQueryWithParameter_IntParameter(DatabaseType dbType)
     {
-        [Test]
-        [TestCase(DatabaseType.MySql)]
-        [TestCase(DatabaseType.MicrosoftSQLServer)]
-        public void Test_DatabaseTypeQueryWithParameter_IntParameter(DatabaseType dbType)
+        //Pick the destination server
+        var tableName = TestDatabaseNames.GetConsistentName("tbl");
+            
+        //make sure there's a database ready to receive the data
+        var db = GetCleanedServer(dbType);
+        db.Create(true);
+
+
+        //this is the table we are uploading
+        var dt = new DataTable();
+        dt.Columns.Add("numbercol");
+        dt.Rows.Add(10);
+        dt.Rows.Add(15);
+        dt.Rows.Add(20);
+        dt.Rows.Add(25);
+        dt.TableName = tableName;
+        try
         {
-            //Pick the destination server
-            var tableName = TestDatabaseNames.GetConsistentName("tbl");
+            ///////////////////////UPLOAD THE DataTable TO THE DESTINATION////////////////////////////////////////////
+            var uploader = new DataTableUploadDestination();
+            uploader.PreInitialize(db,new ThrowImmediatelyDataLoadJob());
+            uploader.ProcessPipelineData(dt, new ThrowImmediatelyDataLoadJob(), new GracefulCancellationToken());
+            uploader.Dispose(new ThrowImmediatelyDataLoadJob(),null );
+
+            var tbl = db.ExpectTable(tableName);
+
+            var importer = new TableInfoImporter(CatalogueRepository, tbl);
+            importer.DoImport(out var ti,out var ci);
             
-            //make sure there's a database ready to receive the data
-            var db = GetCleanedServer(dbType);
-            db.Create(true);
+            var engineer = new ForwardEngineerCatalogue(ti, ci);
+            engineer.ExecuteForwardEngineering(out var cata, out var cis, out var ei);
+            /////////////////////////////////////////////////////////////////////////////////////////////////////////
 
+            /////////////////////////////////THE ACTUAL PROPER TEST////////////////////////////////////
+            //create an extraction filter
+            var extractionInformation = ei.Single();
+            var filter = new ExtractionFilter(CatalogueRepository, "Filter by numbers", extractionInformation);
+            filter.WhereSQL = extractionInformation.SelectSQL + " = @n";
+            filter.SaveToDatabase();
 
-            //this is the table we are uploading
-            var dt = new DataTable();
-            dt.Columns.Add("numbercol");
-            dt.Rows.Add(10);
-            dt.Rows.Add(15);
-            dt.Rows.Add(20);
-            dt.Rows.Add(25);
-            dt.TableName = tableName;
-            try
-            {
-                ///////////////////////UPLOAD THE DataTable TO THE DESTINATION////////////////////////////////////////////
-                var uploader = new DataTableUploadDestination();
-                uploader.PreInitialize(db,new ThrowImmediatelyDataLoadJob());
-                uploader.ProcessPipelineData(dt, new ThrowImmediatelyDataLoadJob(), new GracefulCancellationToken());
-                uploader.Dispose(new ThrowImmediatelyDataLoadJob(),null );
+            //create the parameters for filter (no globals, masters or scope adjacent parameters)
+            new ParameterCreator(filter.GetFilterFactory(), null, null).CreateAll(filter,null);
 
-                var tbl = db.ExpectTable(tableName);
-
-                var importer = new TableInfoImporter(CatalogueRepository, tbl);
-                importer.DoImport(out var ti,out var ci);
-            
-                var engineer = new ForwardEngineerCatalogue(ti, ci);
-                engineer.ExecuteForwardEngineering(out var cata, out var cis, out var ei);
-                /////////////////////////////////////////////////////////////////////////////////////////////////////////
-
-                /////////////////////////////////THE ACTUAL PROPER TEST////////////////////////////////////
-                //create an extraction filter
-                var extractionInformation = ei.Single();
-                var filter = new ExtractionFilter(CatalogueRepository, "Filter by numbers", extractionInformation);
-                filter.WhereSQL = extractionInformation.SelectSQL + " = @n";
-                filter.SaveToDatabase();
-
-                //create the parameters for filter (no globals, masters or scope adjacent parameters)
-                new ParameterCreator(filter.GetFilterFactory(), null, null).CreateAll(filter,null);
-
-                var p = filter.GetAllParameters().Single();
-                Assert.AreEqual("@n",p.ParameterName);
-                p.ParameterSQL = p.ParameterSQL.Replace("varchar(50)", "int"); //make it int
-                p.Value = "20";
-                p.SaveToDatabase();
+            var p = filter.GetAllParameters().Single();
+            Assert.AreEqual("@n",p.ParameterName);
+            p.ParameterSQL = p.ParameterSQL.Replace("varchar(50)", "int"); //make it int
+            p.Value = "20";
+            p.SaveToDatabase();
                 
-                var qb = new QueryBuilder(null, null);
-                qb.AddColumn(extractionInformation);
-                qb.RootFilterContainer = new SpontaneouslyInventedFilterContainer(new MemoryCatalogueRepository(), null, new[] { filter }, FilterContainerOperation.AND);
+            var qb = new QueryBuilder(null, null);
+            qb.AddColumn(extractionInformation);
+            qb.RootFilterContainer = new SpontaneouslyInventedFilterContainer(new MemoryCatalogueRepository(), null, new[] { filter }, FilterContainerOperation.AND);
             
-                using(var con = db.Server.GetConnection())
-                {
-                    con.Open();
-
-                    string sql = qb.SQL;
-
-                    var cmd = db.Server.GetCommand(sql, con);
-                    var r = cmd.ExecuteReader();
-                    Assert.IsTrue(r.Read());
-                    Assert.AreEqual(
-                        20,
-                        r[extractionInformation.GetRuntimeName()]);
-                }
-                ///////////////////////////////////////////////////////////////////////////////////////
-            }
-            finally
+            using(var con = db.Server.GetConnection())
             {
-                db.Drop();
+                con.Open();
+
+                string sql = qb.SQL;
+
+                var cmd = db.Server.GetCommand(sql, con);
+                var r = cmd.ExecuteReader();
+                Assert.IsTrue(r.Read());
+                Assert.AreEqual(
+                    20,
+                    r[extractionInformation.GetRuntimeName()]);
             }
+            ///////////////////////////////////////////////////////////////////////////////////////
+        }
+        finally
+        {
+            db.Drop();
         }
     }
 }

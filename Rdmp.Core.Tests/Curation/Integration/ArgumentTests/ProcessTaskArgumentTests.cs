@@ -17,393 +17,392 @@ using Rdmp.Core.DataFlowPipeline;
 using Rdmp.Core.DataLoad;
 using Tests.Common;
 
-namespace Rdmp.Core.Tests.Curation.Integration.ArgumentTests
+namespace Rdmp.Core.Tests.Curation.Integration.ArgumentTests;
+
+public class ProcessTaskArgumentTests:DatabaseTests
 {
-    public class ProcessTaskArgumentTests:DatabaseTests
+    [Test]
+    [TestCase(true)]
+    [TestCase(false)]
+    public void TypeOfTableInfo(bool declareAsInterface)
     {
-        [Test]
-        [TestCase(true)]
-        [TestCase(false)]
-        public void TypeOfTableInfo(bool declareAsInterface)
-        {
-            string tableInfoName = "TableInfoFor_" + new StackTrace().GetFrame(0).GetMethod().Name;
+        string tableInfoName = "TableInfoFor_" + new StackTrace().GetFrame(0).GetMethod().Name;
 
-            TableInfo toCleanup = CatalogueRepository.GetAllObjects<TableInfo>().SingleOrDefault(t => t.Name.Equals(tableInfoName));
+        TableInfo toCleanup = CatalogueRepository.GetAllObjects<TableInfo>().SingleOrDefault(t => t.Name.Equals(tableInfoName));
             
-            if(toCleanup != null)
-                toCleanup.DeleteInDatabase();
+        if(toCleanup != null)
+            toCleanup.DeleteInDatabase();
 
-            var loadMetadata = new LoadMetadata(CatalogueRepository);
+        var loadMetadata = new LoadMetadata(CatalogueRepository);
 
-            try
-            { 
-                var pt = new ProcessTask(CatalogueRepository, loadMetadata, LoadStage.AdjustStaging);
-                var pta = new ProcessTaskArgument(CatalogueRepository, pt);
+        try
+        { 
+            var pt = new ProcessTask(CatalogueRepository, loadMetadata, LoadStage.AdjustStaging);
+            var pta = new ProcessTaskArgument(CatalogueRepository, pt);
 
-                if(declareAsInterface)
-                    pta.SetType(typeof(ITableInfo));
-                else
-                    pta.SetType(typeof (TableInfo));
+            if(declareAsInterface)
+                pta.SetType(typeof(ITableInfo));
+            else
+                pta.SetType(typeof (TableInfo));
 
-                var tableInfo = new TableInfo(CatalogueRepository, tableInfoName);
-                try
-                {
-                    pta.SetValue(tableInfo);
-                    pta.SaveToDatabase();
-
-                    var newInstanceOfPTA = CatalogueRepository.GetObjectByID<ProcessTaskArgument>(pta.ID);
-
-                    Assert.AreEqual(newInstanceOfPTA.Value,pta.Value);
-
-                    TableInfo t1 = (TableInfo) pta.GetValueAsSystemType();
-                    TableInfo t2 = (TableInfo)newInstanceOfPTA.GetValueAsSystemType();
-
-                    Assert.AreEqual(t1.ID,t2.ID);
-                }
-                finally
-                {
-                    tableInfo.DeleteInDatabase();
-                }
-            }
-            finally
-            {
-                loadMetadata.DeleteInDatabase();
-            }
-        }
-        [Test]
-        public void TypeOfPreLoadDiscardedColumn()
-        {
-            string methodName = new StackTrace().GetFrame(0).GetMethod().Name;
-            string tableInfoName = "TableInfoFor_" + methodName;
-            string preLoadDiscardedColumnName = "PreLoadDiscardedColumnFor_" + methodName; 
-
-            TableInfo toCleanup = CatalogueRepository.GetAllObjects<TableInfo>().SingleOrDefault(t => t.Name.Equals(tableInfoName));
-            PreLoadDiscardedColumn toCleanupCol = CatalogueRepository.GetAllObjects<PreLoadDiscardedColumn>()
-                    .SingleOrDefault(c => c.RuntimeColumnName.Equals(preLoadDiscardedColumnName));
-            
-            //must delete pre load discarded first
-            if (toCleanupCol != null)
-                toCleanupCol.DeleteInDatabase();
-
-            if (toCleanup != null)
-                toCleanup.DeleteInDatabase();
-
-            var lmd = new LoadMetadata(CatalogueRepository);
-
+            var tableInfo = new TableInfo(CatalogueRepository, tableInfoName);
             try
             {
-                var pt = new ProcessTask(CatalogueRepository, lmd, LoadStage.AdjustStaging);
-                var pta = new ProcessTaskArgument(CatalogueRepository, pt);
-
-                pta.SetType(typeof(PreLoadDiscardedColumn));
-
-                var tableInfo = new TableInfo(CatalogueRepository, tableInfoName);
-
-                PreLoadDiscardedColumn preloadDiscardedColumn = new PreLoadDiscardedColumn(CatalogueRepository, tableInfo, preLoadDiscardedColumnName);
-                try
-                {
-                    pta.SetValue(preloadDiscardedColumn);
-                    pta.SaveToDatabase();
-
-                    var newInstanceOfPTA = CatalogueRepository.GetObjectByID<ProcessTaskArgument>(pta.ID);
-                    Assert.AreEqual(newInstanceOfPTA.Value, pta.Value);
-
-                    PreLoadDiscardedColumn p1 = (PreLoadDiscardedColumn)pta.GetValueAsSystemType();
-                    PreLoadDiscardedColumn p2 = (PreLoadDiscardedColumn)newInstanceOfPTA.GetValueAsSystemType();
-
-                    Assert.AreEqual(p1.ID, p2.ID);
-                }
-                finally
-                {
-                    preloadDiscardedColumn.DeleteInDatabase();
-                    tableInfo.DeleteInDatabase();
-                }
-            }
-            finally
-            {
-                lmd.DeleteInDatabase();
-            }
-        }
-
-        [Test]
-        public void TableInfoType_FetchAfterDelete_ReturnsNull()
-        {
-            string tableInfoName = "TableInfoFor_" + new StackTrace().GetFrame(0).GetMethod().Name;
-
-            TableInfo toCleanup = CatalogueRepository.GetAllObjects<TableInfo>().SingleOrDefault(t => t.Name.Equals(tableInfoName));
-
-            if (toCleanup != null)
-                toCleanup.DeleteInDatabase();
-
-            var lmd = new LoadMetadata(CatalogueRepository);
-
-            try
-            {
-                var pt = new ProcessTask(CatalogueRepository, lmd, LoadStage.AdjustStaging);
-                var pta = new ProcessTaskArgument(CatalogueRepository, pt);
-
-                //Prepare to receive a TableInfo object
-                pta.SetType(typeof(TableInfo));
-
-                var tableInfo = new TableInfo(CatalogueRepository, tableInfoName);
-              
-                //Heres the TableInfo object
                 pta.SetValue(tableInfo);
                 pta.SaveToDatabase();
 
-                //Lolz I just deleted it out of the database
+                var newInstanceOfPTA = CatalogueRepository.GetObjectByID<ProcessTaskArgument>(pta.ID);
+
+                Assert.AreEqual(newInstanceOfPTA.Value,pta.Value);
+
+                TableInfo t1 = (TableInfo) pta.GetValueAsSystemType();
+                TableInfo t2 = (TableInfo)newInstanceOfPTA.GetValueAsSystemType();
+
+                Assert.AreEqual(t1.ID,t2.ID);
+            }
+            finally
+            {
                 tableInfo.DeleteInDatabase();
-
-                //give the object back now please? - returns null because it's gone (new behaviour)
-                Assert.IsNull(pta.GetValueAsSystemType());
-
-                //old behaviour
-                /*var ex = Assert.Throws<KeyNotFoundException>(()=>pta.GetValueAsSystemType());
-                StringAssert.Contains("Could not find TableInfo with ID",ex.Message);*/
-            }
-            finally
-            {
-                lmd.DeleteInDatabase();
             }
         }
-
-        [Test]
-        public void LieToProcessTaskArgumentAboutWhatTypeIs_Throws()
+        finally
         {
-            string tableInfoName = "TableInfoFor_" + new StackTrace().GetFrame(0).GetMethod().Name;
-
-            TableInfo toCleanup = CatalogueRepository.GetAllObjects<TableInfo>().SingleOrDefault(t => t.Name.Equals(tableInfoName));
-
-            if (toCleanup != null)
-                toCleanup.DeleteInDatabase();
-
-            var lmd = new LoadMetadata(CatalogueRepository);
-
-            try
-            {
-                var pt = new ProcessTask(CatalogueRepository, lmd, LoadStage.AdjustStaging);
-                var pta = new ProcessTaskArgument(CatalogueRepository, pt);
-                var tableInfo = new TableInfo(CatalogueRepository, tableInfoName);
-                try
-                {
-                    //tell it that we are going to give it a PreLoadDiscardedColumn
-                    pta.SetType(typeof(PreLoadDiscardedColumn));
-                    //then surprise! heres a TableInfo!
-                    var ex = Assert.Throws<Exception>(()=>pta.SetValue(tableInfo));
-                    StringAssert.Contains("has an incompatible Type specified (Rdmp.Core.Curation.Data.DataLoad.PreLoadDiscardedColumn)",ex.Message);
-
-                }
-                finally
-                {
-                    tableInfo.DeleteInDatabase();
-                }
-            }
-            finally
-            {
-                
-                lmd.DeleteInDatabase();
-            }
+            loadMetadata.DeleteInDatabase();
         }
+    }
+    [Test]
+    public void TypeOfPreLoadDiscardedColumn()
+    {
+        string methodName = new StackTrace().GetFrame(0).GetMethod().Name;
+        string tableInfoName = "TableInfoFor_" + methodName;
+        string preLoadDiscardedColumnName = "PreLoadDiscardedColumnFor_" + methodName; 
 
-        private ProcessTaskArgument CreateNewProcessTaskArgumentInDatabase(out LoadMetadata lmd)
+        TableInfo toCleanup = CatalogueRepository.GetAllObjects<TableInfo>().SingleOrDefault(t => t.Name.Equals(tableInfoName));
+        PreLoadDiscardedColumn toCleanupCol = CatalogueRepository.GetAllObjects<PreLoadDiscardedColumn>()
+            .SingleOrDefault(c => c.RuntimeColumnName.Equals(preLoadDiscardedColumnName));
+            
+        //must delete pre load discarded first
+        if (toCleanupCol != null)
+            toCleanupCol.DeleteInDatabase();
+
+        if (toCleanup != null)
+            toCleanup.DeleteInDatabase();
+
+        var lmd = new LoadMetadata(CatalogueRepository);
+
+        try
         {
-            lmd = new LoadMetadata(CatalogueRepository);
-
             var pt = new ProcessTask(CatalogueRepository, lmd, LoadStage.AdjustStaging);
-            return new ProcessTaskArgument(CatalogueRepository, pt);
-        }
+            var pta = new ProcessTaskArgument(CatalogueRepository, pt);
 
-        [Test]
-        public void TestEncryptedPasswordHostArgumentType()
-        {
-            LoadMetadata lmd = null;
-            ProcessTaskArgument pta = null;
+            pta.SetType(typeof(PreLoadDiscardedColumn));
 
+            var tableInfo = new TableInfo(CatalogueRepository, tableInfoName);
+
+            PreLoadDiscardedColumn preloadDiscardedColumn = new PreLoadDiscardedColumn(CatalogueRepository, tableInfo, preLoadDiscardedColumnName);
             try
             {
-                pta = CreateNewProcessTaskArgumentInDatabase(out lmd);
-                pta.SetType(typeof(EncryptedString));
-                pta.SetValue(new EncryptedString(CatalogueRepository) { Value = "test123" });
+                pta.SetValue(preloadDiscardedColumn);
                 pta.SaveToDatabase();
 
-                var loadedPta = CatalogueRepository.GetObjectByID<ProcessTaskArgument>(pta.ID);
-                var value = loadedPta.GetValueAsSystemType() as EncryptedString;
-                Assert.NotNull(value);
-                Assert.AreEqual("test123", value.GetDecryptedValue());
+                var newInstanceOfPTA = CatalogueRepository.GetObjectByID<ProcessTaskArgument>(pta.ID);
+                Assert.AreEqual(newInstanceOfPTA.Value, pta.Value);
+
+                PreLoadDiscardedColumn p1 = (PreLoadDiscardedColumn)pta.GetValueAsSystemType();
+                PreLoadDiscardedColumn p2 = (PreLoadDiscardedColumn)newInstanceOfPTA.GetValueAsSystemType();
+
+                Assert.AreEqual(p1.ID, p2.ID);
             }
             finally
             {
-                if (pta != null)
-                {
-                    var processTask = CatalogueRepository.GetObjectByID<ProcessTask>(pta.ProcessTask_ID);
-                    processTask.DeleteInDatabase();
-                }
-
-                if (lmd != null)
-                    lmd.DeleteInDatabase();
+                preloadDiscardedColumn.DeleteInDatabase();
+                tableInfo.DeleteInDatabase();
             }
         }
-
-        [Test]
-        public void TestArgumentCreation()
+        finally
         {
-
-            LoadMetadata lmd = new LoadMetadata(CatalogueRepository,"TestArgumentCreation");
-            var pt = new ProcessTask(CatalogueRepository, lmd, LoadStage.AdjustRaw);
-            pt.CreateArgumentsForClassIfNotExists<TestArgumentedClass>();
-            try
-            {
-                var arg = pt.ProcessTaskArguments.Single();
-
-                Assert.AreEqual("MyBool", arg.Name);
-                Assert.AreEqual("System.Boolean", arg.Type);
-                Assert.AreEqual("Fishes", arg.Description);
-                Assert.AreEqual("True",arg.Value);
-                Assert.AreEqual(true, arg.GetValueAsSystemType());
-
-            }
-            finally
-            {
-                pt.DeleteInDatabase();
-                lmd.DeleteInDatabase();
-            }
+            lmd.DeleteInDatabase();
         }
-
-        [Test]
-        public void TestNestedDemandsGetPutIntoDatabaseAndCanBeBroughtBack()
-        {
-            var pipe = new Pipeline(CatalogueRepository, "NestedPipe");
-            var pc = new PipelineComponent(CatalogueRepository, pipe, typeof (BasicDataReleaseDestination), -1,
-                "Coconuts");
-            pipe.DestinationPipelineComponent_ID = pc.ID;
-            pipe.SaveToDatabase();
-
-            //some of the DemandsInitialization on BasicDataReleaseDestination should be nested
-            var f = new ArgumentFactory();
-            Assert.True(
-                f.GetRequiredProperties(typeof(BasicDataReleaseDestination)).Any(r => r.ParentPropertyInfo != null));
-
-            //new pc should have no arguments
-            Assert.That(pc.GetAllArguments(), Is.Empty);
-
-            //we create them (the root and nested ones!)
-            var args = pc.CreateArgumentsForClassIfNotExists<BasicDataReleaseDestination>();
-            
-            //and get all arguments / create arguments for class should have handled that 
-            Assert.That(pc.GetAllArguments().Any());
-
-            var match = args.Single(a => a.Name == "ReleaseSettings.DeleteFilesOnSuccess");
-            match.SetValue(true);
-            match.SaveToDatabase();
-
-            var useCase = ReleaseUseCase.DesignTime();
-
-            var factory = new DataFlowPipelineEngineFactory(useCase,RepositoryLocator.CatalogueRepository.MEF);
-            var destInstance = factory.CreateDestinationIfExists(pipe);
-
-            Assert.AreEqual(true, ((BasicDataReleaseDestination)destInstance).ReleaseSettings.DeleteFilesOnSuccess);
-        }
-
-
-        [Test]
-        public void TestArgumentWithTypeThatIsEnum()
-        {
-            var pipe = new Pipeline(CatalogueRepository, "p");
-            var pc = new PipelineComponent(CatalogueRepository, pipe, typeof(BasicDataReleaseDestination), -1,
-                "c");
-
-            var arg = new PipelineComponentArgument(CatalogueRepository, pc);
-            
-            try
-            {
-                arg.SetType(typeof(ExitCodeType));
-                arg.SetValue(ExitCodeType.OperationNotRequired);
-
-                //should have set Value string to the ID of the object
-                Assert.AreEqual(arg.Value, ExitCodeType.OperationNotRequired.ToString());
-
-                arg.SaveToDatabase();
-
-                //but as system Type should return the server
-                Assert.AreEqual(arg.GetValueAsSystemType(), ExitCodeType.OperationNotRequired);
-            }
-            finally
-            {
-                pipe.DeleteInDatabase();
-            }
-        }
-
-        [Test]
-        [TestCase(true)]
-        [TestCase(false)]
-        public void TestArgumentWithTypeThatIsInterface(bool useInterfaceDeclaration)
-        {
-            var pipe = new Pipeline(CatalogueRepository, "p");
-            var pc = new PipelineComponent(CatalogueRepository, pipe, typeof(BasicDataReleaseDestination), -1,
-                "c");
-
-            var arg = new PipelineComponentArgument(CatalogueRepository, pc);
-
-            var server = new ExternalDatabaseServer(CatalogueRepository, "fish",null);
-
-            try
-            {
-                arg.SetType(useInterfaceDeclaration ? typeof (IExternalDatabaseServer) : typeof (ExternalDatabaseServer));
-
-                arg.SetValue(server);
-
-                //should have set Value string to the ID of the object
-                Assert.AreEqual(arg.Value,server.ID.ToString());
-
-                arg.SaveToDatabase();
-
-                //but as system Type should return the server
-                Assert.AreEqual(arg.GetValueAsSystemType(),server);
-            }
-            finally
-            {
-                pipe.DeleteInDatabase();
-                server.DeleteInDatabase();
-            }
-        }
-
-        [Test]
-        public void TestArgumentThatIsDictionary()
-        {
-            var pipe = new Pipeline(CatalogueRepository, "p");
-            var pc = new PipelineComponent(CatalogueRepository, pipe, typeof(BasicDataReleaseDestination), -1,
-                "c");
-
-            try
-            {
-                var arg = new PipelineComponentArgument(CatalogueRepository, pc);
-                arg.Name = "MyNames";
-                arg.SetType(typeof(Dictionary<TableInfo,string>));
-                arg.SaveToDatabase();
-                
-                Assert.AreEqual(typeof(Dictionary<TableInfo, string>), arg.GetConcreteSystemType());
-
-                var ti1 = new TableInfo(CatalogueRepository, "test1");
-                var ti2 = new TableInfo(CatalogueRepository, "test2");
-
-                var val = new Dictionary<TableInfo, string>();
-                val.Add(ti1,"Fish");
-                val.Add(ti2,"Fish");
-            
-                arg.SetValue(val);
-            
-                arg.SaveToDatabase();
-
-                var val2 = (Dictionary<TableInfo, string>) arg.GetValueAsSystemType();
-                Assert.AreEqual(2,val2.Count);
-                Assert.AreEqual("Fish", val2[ti1]);
-                Assert.AreEqual("Fish", val2[ti2]);
-              }
-            finally
-            {
-                pipe.DeleteInDatabase();
-            }
-        }
-
     }
+
+    [Test]
+    public void TableInfoType_FetchAfterDelete_ReturnsNull()
+    {
+        string tableInfoName = "TableInfoFor_" + new StackTrace().GetFrame(0).GetMethod().Name;
+
+        TableInfo toCleanup = CatalogueRepository.GetAllObjects<TableInfo>().SingleOrDefault(t => t.Name.Equals(tableInfoName));
+
+        if (toCleanup != null)
+            toCleanup.DeleteInDatabase();
+
+        var lmd = new LoadMetadata(CatalogueRepository);
+
+        try
+        {
+            var pt = new ProcessTask(CatalogueRepository, lmd, LoadStage.AdjustStaging);
+            var pta = new ProcessTaskArgument(CatalogueRepository, pt);
+
+            //Prepare to receive a TableInfo object
+            pta.SetType(typeof(TableInfo));
+
+            var tableInfo = new TableInfo(CatalogueRepository, tableInfoName);
+              
+            //Heres the TableInfo object
+            pta.SetValue(tableInfo);
+            pta.SaveToDatabase();
+
+            //Lolz I just deleted it out of the database
+            tableInfo.DeleteInDatabase();
+
+            //give the object back now please? - returns null because it's gone (new behaviour)
+            Assert.IsNull(pta.GetValueAsSystemType());
+
+            //old behaviour
+            /*var ex = Assert.Throws<KeyNotFoundException>(()=>pta.GetValueAsSystemType());
+            StringAssert.Contains("Could not find TableInfo with ID",ex.Message);*/
+        }
+        finally
+        {
+            lmd.DeleteInDatabase();
+        }
+    }
+
+    [Test]
+    public void LieToProcessTaskArgumentAboutWhatTypeIs_Throws()
+    {
+        string tableInfoName = "TableInfoFor_" + new StackTrace().GetFrame(0).GetMethod().Name;
+
+        TableInfo toCleanup = CatalogueRepository.GetAllObjects<TableInfo>().SingleOrDefault(t => t.Name.Equals(tableInfoName));
+
+        if (toCleanup != null)
+            toCleanup.DeleteInDatabase();
+
+        var lmd = new LoadMetadata(CatalogueRepository);
+
+        try
+        {
+            var pt = new ProcessTask(CatalogueRepository, lmd, LoadStage.AdjustStaging);
+            var pta = new ProcessTaskArgument(CatalogueRepository, pt);
+            var tableInfo = new TableInfo(CatalogueRepository, tableInfoName);
+            try
+            {
+                //tell it that we are going to give it a PreLoadDiscardedColumn
+                pta.SetType(typeof(PreLoadDiscardedColumn));
+                //then surprise! heres a TableInfo!
+                var ex = Assert.Throws<Exception>(()=>pta.SetValue(tableInfo));
+                StringAssert.Contains("has an incompatible Type specified (Rdmp.Core.Curation.Data.DataLoad.PreLoadDiscardedColumn)",ex.Message);
+
+            }
+            finally
+            {
+                tableInfo.DeleteInDatabase();
+            }
+        }
+        finally
+        {
+                
+            lmd.DeleteInDatabase();
+        }
+    }
+
+    private ProcessTaskArgument CreateNewProcessTaskArgumentInDatabase(out LoadMetadata lmd)
+    {
+        lmd = new LoadMetadata(CatalogueRepository);
+
+        var pt = new ProcessTask(CatalogueRepository, lmd, LoadStage.AdjustStaging);
+        return new ProcessTaskArgument(CatalogueRepository, pt);
+    }
+
+    [Test]
+    public void TestEncryptedPasswordHostArgumentType()
+    {
+        LoadMetadata lmd = null;
+        ProcessTaskArgument pta = null;
+
+        try
+        {
+            pta = CreateNewProcessTaskArgumentInDatabase(out lmd);
+            pta.SetType(typeof(EncryptedString));
+            pta.SetValue(new EncryptedString(CatalogueRepository) { Value = "test123" });
+            pta.SaveToDatabase();
+
+            var loadedPta = CatalogueRepository.GetObjectByID<ProcessTaskArgument>(pta.ID);
+            var value = loadedPta.GetValueAsSystemType() as EncryptedString;
+            Assert.NotNull(value);
+            Assert.AreEqual("test123", value.GetDecryptedValue());
+        }
+        finally
+        {
+            if (pta != null)
+            {
+                var processTask = CatalogueRepository.GetObjectByID<ProcessTask>(pta.ProcessTask_ID);
+                processTask.DeleteInDatabase();
+            }
+
+            if (lmd != null)
+                lmd.DeleteInDatabase();
+        }
+    }
+
+    [Test]
+    public void TestArgumentCreation()
+    {
+
+        LoadMetadata lmd = new LoadMetadata(CatalogueRepository,"TestArgumentCreation");
+        var pt = new ProcessTask(CatalogueRepository, lmd, LoadStage.AdjustRaw);
+        pt.CreateArgumentsForClassIfNotExists<TestArgumentedClass>();
+        try
+        {
+            var arg = pt.ProcessTaskArguments.Single();
+
+            Assert.AreEqual("MyBool", arg.Name);
+            Assert.AreEqual("System.Boolean", arg.Type);
+            Assert.AreEqual("Fishes", arg.Description);
+            Assert.AreEqual("True",arg.Value);
+            Assert.AreEqual(true, arg.GetValueAsSystemType());
+
+        }
+        finally
+        {
+            pt.DeleteInDatabase();
+            lmd.DeleteInDatabase();
+        }
+    }
+
+    [Test]
+    public void TestNestedDemandsGetPutIntoDatabaseAndCanBeBroughtBack()
+    {
+        var pipe = new Pipeline(CatalogueRepository, "NestedPipe");
+        var pc = new PipelineComponent(CatalogueRepository, pipe, typeof (BasicDataReleaseDestination), -1,
+            "Coconuts");
+        pipe.DestinationPipelineComponent_ID = pc.ID;
+        pipe.SaveToDatabase();
+
+        //some of the DemandsInitialization on BasicDataReleaseDestination should be nested
+        var f = new ArgumentFactory();
+        Assert.True(
+            f.GetRequiredProperties(typeof(BasicDataReleaseDestination)).Any(r => r.ParentPropertyInfo != null));
+
+        //new pc should have no arguments
+        Assert.That(pc.GetAllArguments(), Is.Empty);
+
+        //we create them (the root and nested ones!)
+        var args = pc.CreateArgumentsForClassIfNotExists<BasicDataReleaseDestination>();
+            
+        //and get all arguments / create arguments for class should have handled that 
+        Assert.That(pc.GetAllArguments().Any());
+
+        var match = args.Single(a => a.Name == "ReleaseSettings.DeleteFilesOnSuccess");
+        match.SetValue(true);
+        match.SaveToDatabase();
+
+        var useCase = ReleaseUseCase.DesignTime();
+
+        var factory = new DataFlowPipelineEngineFactory(useCase,RepositoryLocator.CatalogueRepository.MEF);
+        var destInstance = factory.CreateDestinationIfExists(pipe);
+
+        Assert.AreEqual(true, ((BasicDataReleaseDestination)destInstance).ReleaseSettings.DeleteFilesOnSuccess);
+    }
+
+
+    [Test]
+    public void TestArgumentWithTypeThatIsEnum()
+    {
+        var pipe = new Pipeline(CatalogueRepository, "p");
+        var pc = new PipelineComponent(CatalogueRepository, pipe, typeof(BasicDataReleaseDestination), -1,
+            "c");
+
+        var arg = new PipelineComponentArgument(CatalogueRepository, pc);
+            
+        try
+        {
+            arg.SetType(typeof(ExitCodeType));
+            arg.SetValue(ExitCodeType.OperationNotRequired);
+
+            //should have set Value string to the ID of the object
+            Assert.AreEqual(arg.Value, ExitCodeType.OperationNotRequired.ToString());
+
+            arg.SaveToDatabase();
+
+            //but as system Type should return the server
+            Assert.AreEqual(arg.GetValueAsSystemType(), ExitCodeType.OperationNotRequired);
+        }
+        finally
+        {
+            pipe.DeleteInDatabase();
+        }
+    }
+
+    [Test]
+    [TestCase(true)]
+    [TestCase(false)]
+    public void TestArgumentWithTypeThatIsInterface(bool useInterfaceDeclaration)
+    {
+        var pipe = new Pipeline(CatalogueRepository, "p");
+        var pc = new PipelineComponent(CatalogueRepository, pipe, typeof(BasicDataReleaseDestination), -1,
+            "c");
+
+        var arg = new PipelineComponentArgument(CatalogueRepository, pc);
+
+        var server = new ExternalDatabaseServer(CatalogueRepository, "fish",null);
+
+        try
+        {
+            arg.SetType(useInterfaceDeclaration ? typeof (IExternalDatabaseServer) : typeof (ExternalDatabaseServer));
+
+            arg.SetValue(server);
+
+            //should have set Value string to the ID of the object
+            Assert.AreEqual(arg.Value,server.ID.ToString());
+
+            arg.SaveToDatabase();
+
+            //but as system Type should return the server
+            Assert.AreEqual(arg.GetValueAsSystemType(),server);
+        }
+        finally
+        {
+            pipe.DeleteInDatabase();
+            server.DeleteInDatabase();
+        }
+    }
+
+    [Test]
+    public void TestArgumentThatIsDictionary()
+    {
+        var pipe = new Pipeline(CatalogueRepository, "p");
+        var pc = new PipelineComponent(CatalogueRepository, pipe, typeof(BasicDataReleaseDestination), -1,
+            "c");
+
+        try
+        {
+            var arg = new PipelineComponentArgument(CatalogueRepository, pc);
+            arg.Name = "MyNames";
+            arg.SetType(typeof(Dictionary<TableInfo,string>));
+            arg.SaveToDatabase();
+                
+            Assert.AreEqual(typeof(Dictionary<TableInfo, string>), arg.GetConcreteSystemType());
+
+            var ti1 = new TableInfo(CatalogueRepository, "test1");
+            var ti2 = new TableInfo(CatalogueRepository, "test2");
+
+            var val = new Dictionary<TableInfo, string>();
+            val.Add(ti1,"Fish");
+            val.Add(ti2,"Fish");
+            
+            arg.SetValue(val);
+            
+            arg.SaveToDatabase();
+
+            var val2 = (Dictionary<TableInfo, string>) arg.GetValueAsSystemType();
+            Assert.AreEqual(2,val2.Count);
+            Assert.AreEqual("Fish", val2[ti1]);
+            Assert.AreEqual("Fish", val2[ti2]);
+        }
+        finally
+        {
+            pipe.DeleteInDatabase();
+        }
+    }
+
 }
