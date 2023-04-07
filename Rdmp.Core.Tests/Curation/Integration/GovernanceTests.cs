@@ -20,11 +20,25 @@ namespace Rdmp.Core.Tests.Curation.Integration;
 
 public class GovernanceTests:DatabaseTests
 {
+    [OneTimeTearDown]
+    protected void OneTimeTearDown()
+    {
+        //delete all governance periods
+        foreach (var governancePeriod in toCleanup)
+            try
+            {
+                governancePeriod.DeleteInDatabase();
+            }
+            catch (Exception e)
+            {
+                Console.WriteLine($"Ignoring exception {e.Message} during clean up");
+            }
+    }
+
     [Test]
     public void TestCreatingGovernance_StartsAtToday()
     {
         var gov = GetGov();
-
         Assert.NotNull(gov);
         Assert.AreEqual(gov.StartDate,DateTime.Now.Date);
     }

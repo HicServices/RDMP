@@ -4,16 +4,15 @@
 // RDMP is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License for more details.
 // You should have received a copy of the GNU General Public License along with RDMP. If not, see <https://www.gnu.org/licenses/>.
 
-namespace ReusableLibraryCode.DataAccess
+namespace ReusableLibraryCode.DataAccess;
+
+/// <summary>
+/// Username and Encrypted Password for use connecting to something.
+/// </summary>
+public interface IDataAccessCredentials : IEncryptedPasswordHost
 {
     /// <summary>
-    /// Username and Encrypted Password for use connecting to something.
+    /// The user account name to supply when sending the credentials
     /// </summary>
-    public interface IDataAccessCredentials : IEncryptedPasswordHost
-    {
-        /// <summary>
-        /// The user account name to supply when sending the credentials
-        /// </summary>
-        string Username { get;}
-    }
+    string Username { get;}
 }

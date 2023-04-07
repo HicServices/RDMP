@@ -147,7 +147,6 @@ public class DatabaseTests
 
     public DatabaseTests()
     {
-
         var opts = new PlatformDatabaseCreationOptions()
         {
             ServerName = TestDatabaseSettings.ServerName,
@@ -466,6 +465,21 @@ public class DatabaseTests
     {
 
     }
+
+    [TearDown]
+    protected void TearDown()
+    {
+        foreach (var discoveredDatabase in forCleanup)
+            try
+            {
+                if (discoveredDatabase.Exists())
+                    discoveredDatabase.Drop();
+            }
+            catch (Exception e)
+            {
+                Console.WriteLine($"Ignoring exception {e.Message} during db clean up");
+            }
+    }
    
     private void StartupOnDatabaseFound(object sender, PlatformDatabaseFoundEventArgs args)
     { 
@@ -739,7 +753,7 @@ delete from {1}..Project
 
         Assert.IsTrue(database.Exists());
 
-        //if it had non standard naming mark it for deletion on cleanup
+        //if it had non standard naming mark it for deletion on clean-up
         if (!isStandardDb)
             forCleanup.Add(database);
 

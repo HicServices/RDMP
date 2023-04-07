@@ -684,9 +684,9 @@ ALTER TABLE DroppedColumnsTable add color varchar(1)
         Assert.AreEqual(14, table.DiscoverColumn("StringNotNull").DataType.GetLengthIfString());
 
     }
-    [TestCase(DatabaseType.MicrosoftSQLServer, "didn�t")]
-    [TestCase(DatabaseType.MySql, "didn�t")]
-    [TestCase(DatabaseType.Oracle, "didn�t")]
+    [TestCase(DatabaseType.MicrosoftSQLServer, "didnt")]
+    [TestCase(DatabaseType.MySql, "didnt")]
+    [TestCase(DatabaseType.Oracle, "didnt")]
     [TestCase(DatabaseType.MicrosoftSQLServer, "didn't")]
     [TestCase(DatabaseType.MySql, "didn't")]
     [TestCase(DatabaseType.Oracle, "didn't")]

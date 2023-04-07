@@ -4,27 +4,26 @@
 // RDMP is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License for more details.
 // You should have received a copy of the GNU General Public License along with RDMP. If not, see <https://www.gnu.org/licenses/>.
 
-namespace ReusableLibraryCode.Performance
+namespace ReusableLibraryCode.Performance;
+
+/// <summary>
+/// Documents an SQL query logged by ComprehensiveQueryPerformanceCounter including the number of times the query was constructed 
+/// 
+/// <para>See ComprehensiveQueryPerformanceCounter / DatabaseCommandHelper for more info.</para>
+/// </summary>
+public class QueryPerformed
 {
-    /// <summary>
-    /// Documents an SQL query logged by ComprehensiveQueryPerformanceCounter including the number of times the query was constructed 
-    /// 
-    /// <para>See ComprehensiveQueryPerformanceCounter / DatabaseCommandHelper for more info.</para>
-    /// </summary>
-    public class QueryPerformed
+    public string QueryText;
+    public int TimesSeen = 0;
+
+    public QueryPerformed(string queryText)
     {
-        public string QueryText;
-        public int TimesSeen = 0;
-
-        public QueryPerformed(string queryText)
-        {
-            QueryText = queryText;
-        }
-
-        public void IncrementSeenCount()
-        {
-            TimesSeen++;
-        }
-
+        QueryText = queryText;
     }
+
+    public void IncrementSeenCount()
+    {
+        TimesSeen++;
+    }
+
 }

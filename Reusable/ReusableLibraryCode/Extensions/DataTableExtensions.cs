@@ -9,31 +9,30 @@ using System.Globalization;
 using System.IO;
 using CsvHelper;
 
-namespace ReusableLibraryCode.Extensions
+namespace ReusableLibraryCode.Extensions;
+
+public static class DataTableExtensions
 {
-    public static class DataTableExtensions
+    /// <summary>
+    /// Formats the data in the <paramref name="dt"/> to CSV format to the file <paramref name="path"/>
+    /// </summary>
+    /// <param name="dt"></param>
+    /// <param name="path"></param>
+    public static void SaveAsCsv(this DataTable dt,string path)
     {
-        /// <summary>
-        /// Formats the data in the <paramref name="dt"/> to CSV format to the file <paramref name="path"/>
-        /// </summary>
-        /// <param name="dt"></param>
-        /// <param name="path"></param>
-        public static void SaveAsCsv(this DataTable dt,string path)
+        using (CsvWriter csvWriter = new CsvWriter(new StreamWriter(path),CultureInfo.CurrentCulture))
         {
-            using (CsvWriter csvWriter = new CsvWriter(new StreamWriter(path),CultureInfo.CurrentCulture))
+            foreach (DataColumn column in dt.Columns)
+                csvWriter.WriteField(column.ColumnName);
+
+            csvWriter.NextRecord();
+
+            foreach (DataRow row in dt.Rows)
             {
-                foreach (DataColumn column in dt.Columns)
-                    csvWriter.WriteField(column.ColumnName);
+                for (var i = 0; i < dt.Columns.Count; i++)
+                    csvWriter.WriteField(row[i]);
 
                 csvWriter.NextRecord();
-
-                foreach (DataRow row in dt.Rows)
-                {
-                    for (var i = 0; i < dt.Columns.Count; i++)
-                        csvWriter.WriteField(row[i]);
-
-                    csvWriter.NextRecord();
-                }
             }
         }
     }

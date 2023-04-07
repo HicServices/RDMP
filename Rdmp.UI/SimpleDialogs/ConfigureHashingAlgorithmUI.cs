@@ -65,7 +65,7 @@ public partial class ConfigureHashingAlgorithmUI : RDMPForm
         try
         {
             QueryPreview.ReadOnly = false;
-            QueryPreview.Text = String.Format(pattern, "[TEST]..[ExampleColumn]", "123");
+            QueryPreview.Text = pattern.Replace("{0}", "[TEST]..[ExampleColumn]").Replace("{1}", "123");
             Activator.RepositoryLocator.DataExportRepository.DataExportPropertyManager.SetValue(DataExportProperty.HashingAlgorithmPattern, pattern);
                 
         }

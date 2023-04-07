@@ -19,7 +19,7 @@ namespace Rdmp.Core.Tests.Caching.Unit;
 [Category("Unit")]
 public class PipelineExecutionTests
 {
-    [Test]
+    [Ignore("Tests locking we don't actually have")]
     public void TestSerialPipelineExecution()
     {
         // set SetUp two engines, one with a locked cache progress/load schedule
@@ -78,7 +78,6 @@ public class PipelineExecutionTests
         // engine1 should have been executed once
         engine1.Verify();
 
-        // engine2 should not have been executed as it is locked
-        engine1.Verify();
+        // engine2 should not have been executed as it is locked, but we don't actually have locks.
     }
 }

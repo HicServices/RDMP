@@ -6,12 +6,11 @@
 
 using System;
 
-namespace MapsDirectlyToDatabaseTable
+namespace MapsDirectlyToDatabaseTable;
+
+internal class EmptyDisposeable : IDisposable
 {
-    internal class EmptyDisposeable : IDisposable
+    public void Dispose()
     {
-        public void Dispose()
-        {
-        }
     }
 }
