@@ -471,9 +471,15 @@ public class DatabaseTests
     protected void TearDown()
     {
         foreach (var discoveredDatabase in forCleanup)
-        {
-            discoveredDatabase.Drop();
-        }
+            try
+            {
+                if (discoveredDatabase.Exists())
+                    discoveredDatabase.Drop();
+            }
+            catch (Exception e)
+            {
+                Console.WriteLine($"Ignoring exception {e.Message} during db clean up");
+            }
     }
    
     private void StartupOnDatabaseFound(object sender, PlatformDatabaseFoundEventArgs args)
