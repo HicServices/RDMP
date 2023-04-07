@@ -7,51 +7,50 @@
 using MapsDirectlyToDatabaseTable;
 using ReusableLibraryCode.DataAccess;
 
-namespace Rdmp.UI.SubComponents.EmptyLineElements
+namespace Rdmp.UI.SubComponents.EmptyLineElements;
+
+class CohortIdentificationHeader
 {
-    class CohortIdentificationHeader
+    public string GetCatalogueName()
     {
-        public string GetCatalogueName()
-        {
-            return "";
-        }
+        return "";
+    }
 
-        public IMapsDirectlyToDatabaseTable Child
-        {
-            get { return null; }
-        }
+    public IMapsDirectlyToDatabaseTable Child
+    {
+        get { return null; }
+    }
 
-        public IDataAccessPoint[] GetDataAccessPoints()
-        {
-            return null;
-        }
+    public IDataAccessPoint[] GetDataAccessPoints()
+    {
+        return null;
+    }
 
-        public override string ToString()
-        {
-            return "Cohort Query Results (Counts are unique people)";
-        }
+    public override string ToString()
+    {
+        return "Cohort Query Results (Counts are unique people)";
+    }
 
-        public string FinalRowCount()
-        {
-            return "";
-        }
-        public int? CumulativeRowCount { set; get; }
+    public string FinalRowCount()
+    {
+        return "";
+    }
+    public int? CumulativeRowCount { set; get; }
 
-        public string GetStateDescription()
-        {
-            return "";
-        }
+    public string GetStateDescription()
+    {
+        return "";
+    }
 
-        public string Order()
-        {
-            return "";
-        }
+    public string Order()
+    {
+        return "";
+    }
         
-        public string ElapsedTime = "";
+    public string ElapsedTime = "";
 
-        public string GetCachedQueryUseCount()
-        {
-            return "";
-        }
+    public string GetCachedQueryUseCount()
+    {
+        return "";
     }
 }

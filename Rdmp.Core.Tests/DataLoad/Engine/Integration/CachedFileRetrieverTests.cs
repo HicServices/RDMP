@@ -24,187 +24,186 @@ using Rdmp.Core.Logging;
 using ReusableLibraryCode.Progress;
 using Tests.Common;
 
-namespace Rdmp.Core.Tests.DataLoad.Engine.Integration
+namespace Rdmp.Core.Tests.DataLoad.Engine.Integration;
+
+public class CachedFileRetrieverTests : DatabaseTests
 {
-    public class CachedFileRetrieverTests : DatabaseTests
+    private ILoadProgress _lpMock;
+    private ICacheProgress _cpMock;
+
+    public CachedFileRetrieverTests()
     {
-        private ILoadProgress _lpMock;
-        private ICacheProgress _cpMock;
-
-        public CachedFileRetrieverTests()
-        {
-            _cpMock = Mock.Of<ICacheProgress>();
-            _lpMock = Mock.Of<ILoadProgress>(l=>l.CacheProgress == _cpMock);
-        }
+        _cpMock = Mock.Of<ICacheProgress>();
+        _lpMock = Mock.Of<ILoadProgress>(l=>l.CacheProgress == _cpMock);
+    }
                
-        [Test(Description = "RDMPDEV-185: Tests the scenario where the files in ForLoading do not match the files that are expected given the job specification. In this case the load process should not continue, otherwise the wrong data will be loaded.")]
-        public void AttemptToLoadDataWithFilesInForLoading_DisagreementBetweenCacheAndForLoading()
+    [Test(Description = "RDMPDEV-185: Tests the scenario where the files in ForLoading do not match the files that are expected given the job specification. In this case the load process should not continue, otherwise the wrong data will be loaded.")]
+    public void AttemptToLoadDataWithFilesInForLoading_DisagreementBetweenCacheAndForLoading()
+    {
+        var tempDirPath = Path.Combine(Path.GetTempPath(), Path.GetRandomFileName());
+        var tempDir = Directory.CreateDirectory(tempDirPath);
+
+        try
         {
-            var tempDirPath = Path.Combine(Path.GetTempPath(), Path.GetRandomFileName());
-            var tempDir = Directory.CreateDirectory(tempDirPath);
+            // Different file in ForLoading than exists in cache
+            var loadDirectory = LoadDirectory.CreateDirectoryStructure(tempDir, "CachedFileRetriever");
+            var cachedFilePath = Path.Combine(loadDirectory.Cache.FullName, "2016-01-02.zip");
+            File.WriteAllText(cachedFilePath, "");
+            File.WriteAllText(Path.Combine(loadDirectory.ForLoading.FullName, "2016-01-01.zip"), "");
 
-            try
-            {
-                // Different file in ForLoading than exists in cache
-                var loadDirectory = LoadDirectory.CreateDirectoryStructure(tempDir, "CachedFileRetriever");
-                var cachedFilePath = Path.Combine(loadDirectory.Cache.FullName, "2016-01-02.zip");
-                File.WriteAllText(cachedFilePath, "");
-                File.WriteAllText(Path.Combine(loadDirectory.ForLoading.FullName, "2016-01-01.zip"), "");
-
-                // Set SetUp retriever
-                var cacheLayout = new ZipCacheLayoutOnePerDay(loadDirectory.Cache, new NoSubdirectoriesCachePathResolver());
+            // Set SetUp retriever
+            var cacheLayout = new ZipCacheLayoutOnePerDay(loadDirectory.Cache, new NoSubdirectoriesCachePathResolver());
                 
-                var retriever = new TestCachedFileRetriever()
-                {
-                    ExtractFilesFromArchive = false,
-                    LoadProgress = _lpMock,
-                    Layout = cacheLayout
-                };
+            var retriever = new TestCachedFileRetriever()
+            {
+                ExtractFilesFromArchive = false,
+                LoadProgress = _lpMock,
+                Layout = cacheLayout
+            };
                 
-                // Set SetUp job
-                var job = CreateTestJob(loadDirectory); 
-                job.DatesToRetrieve = new List<DateTime>
-                {
-                    new DateTime(2016, 01, 02)
-                };
-
-                // Should fail after determining that the files in ForLoading do not match the job specification
-                var ex = Assert.Throws<InvalidOperationException>(() => retriever.Fetch(job, new GracefulCancellationToken()));
-                Assert.IsTrue(ex.Message.StartsWith("The files in ForLoading do not match what this job expects to be loading from the cache."), ex.Message + Environment.NewLine + Environment.NewLine + ex.StackTrace);
-            }
-            finally
+            // Set SetUp job
+            var job = CreateTestJob(loadDirectory); 
+            job.DatesToRetrieve = new List<DateTime>
             {
-                tempDir.Delete(true);
-            }
+                new DateTime(2016, 01, 02)
+            };
+
+            // Should fail after determining that the files in ForLoading do not match the job specification
+            var ex = Assert.Throws<InvalidOperationException>(() => retriever.Fetch(job, new GracefulCancellationToken()));
+            Assert.IsTrue(ex.Message.StartsWith("The files in ForLoading do not match what this job expects to be loading from the cache."), ex.Message + Environment.NewLine + Environment.NewLine + ex.StackTrace);
         }
-
-        [Test(Description = "RDMPDEV-185: Tests the scenario where the files in ForLoading match the files that are expected given the job specification, e.g. a load has after the cache has been populated and a subsequent load with *exactly the same parameters* has been triggered. In this case the load can proceed.")]
-        public void AttemptToLoadDataWithFilesInForLoading_AgreementBetweenForLoadingAndCache()
+        finally
         {
-            var tempDirPath = Path.Combine(Path.GetTempPath(), Path.GetRandomFileName());
-            var tempDir = Directory.CreateDirectory(tempDirPath);
-
-            try
-            {
-                // File in cache is the same file as in ForLoading (20160101.zip)
-                var loadDirectory = LoadDirectory.CreateDirectoryStructure(tempDir, "CachedFileRetriever");
-                var cachedFilePath = Path.Combine(loadDirectory.Cache.FullName, "2016-01-01.zip");
-                File.WriteAllText(cachedFilePath, "");
-                File.WriteAllText(Path.Combine(loadDirectory.ForLoading.FullName, "2016-01-01.zip"), "");
-
-
-                // Set SetUp retriever
-                var cacheLayout = new ZipCacheLayoutOnePerDay(loadDirectory.Cache, new NoSubdirectoriesCachePathResolver());
-
-                var retriever = new TestCachedFileRetriever()
-                {
-                    ExtractFilesFromArchive = false,
-                    LoadProgress = _lpMock,
-                    Layout =  cacheLayout
-                    
-                };
-                
-                // Set SetUp job
-                var job = CreateTestJob(loadDirectory); 
-                job.DatesToRetrieve = new List<DateTime>
-                {
-                    new DateTime(2016, 01, 01)
-                };
-
-                // Should complete successfully, the file in ForLoading matches the job specification
-                retriever.Fetch(job, new GracefulCancellationToken());
-
-                // And ForLoading should still have the file in it (i.e. it hasn't mysteriously disappeared)
-                Assert.IsTrue(File.Exists(Path.Combine(loadDirectory.ForLoading.FullName, "2016-01-01.zip")));
-            }
-            finally
-            {
-                tempDir.Delete(true);
-            }
-        }
-
-        [Test(Description = "RDMPDEV-185: Tests the default scenario where there are no files in ForLoading.")]
-        public void AttemptToLoadDataWithoutFilesInForLoading()
-        {
-            var tempDirPath = Path.Combine(Path.GetTempPath(), Path.GetRandomFileName());
-            var tempDir = Directory.CreateDirectory(tempDirPath);
-
-            try
-            {
-                // File in cache only, no files in ForLoading
-                var loadDirectory = LoadDirectory.CreateDirectoryStructure(tempDir, "CachedFileRetriever");
-                var cachedFilePath = Path.Combine(loadDirectory.Cache.FullName, "2016-01-01.zip");
-                File.WriteAllText(cachedFilePath, "");
-
-
-                // Set SetUp retriever
-                var cacheLayout = new ZipCacheLayoutOnePerDay(loadDirectory.Cache, new NoSubdirectoriesCachePathResolver());
-
-                var retriever = new TestCachedFileRetriever()
-                {
-                    ExtractFilesFromArchive = false,
-                    LoadProgress = _lpMock,
-                    Layout = cacheLayout
-
-                };
-
-                // Set SetUp job
-                var job = CreateTestJob(loadDirectory);
-                job.DatesToRetrieve = new List<DateTime>
-                {
-                    new DateTime(2016, 01, 01)
-                };
-
-                // Should complete successfully, there are no files in ForLoading to worry about
-                retriever.Fetch(job, new GracefulCancellationToken());
-
-                // And the retriever should have copied the cached archive file into ForLoading
-                Assert.IsTrue(File.Exists(Path.Combine(loadDirectory.ForLoading.FullName, "2016-01-01.zip")));
-            }
-            finally
-            {
-                tempDir.Delete(true);
-            }
-        }
-
-        private ScheduledDataLoadJob CreateTestJob(ILoadDirectory directory)
-        {
-            var catalogue = Mock.Of<ICatalogue>(c => 
-            c.GetTableInfoList(false) == new TableInfo[0] &&
-            c.GetLookupTableInfoList()==new TableInfo[0] &&
-            c.LoggingDataTask == "TestLogging"
-            );
-            
-            var logManager = Mock.Of<ILogManager>();
-            var loadMetadata = Mock.Of<ILoadMetadata>(lm => lm.GetAllCatalogues()==new[] { catalogue });
-
-            var j = new ScheduledDataLoadJob(RepositoryLocator, "Test job", logManager, loadMetadata, directory, new ThrowImmediatelyDataLoadEventListener(), null);
-            j.LoadProgress = _lpMock;
-            return j;
+            tempDir.Delete(true);
         }
     }
 
-    internal class TestCachedFileRetriever : CachedFileRetriever
+    [Test(Description = "RDMPDEV-185: Tests the scenario where the files in ForLoading match the files that are expected given the job specification, e.g. a load has after the cache has been populated and a subsequent load with *exactly the same parameters* has been triggered. In this case the load can proceed.")]
+    public void AttemptToLoadDataWithFilesInForLoading_AgreementBetweenForLoadingAndCache()
     {
-        public ICacheLayout Layout;
+        var tempDirPath = Path.Combine(Path.GetTempPath(), Path.GetRandomFileName());
+        var tempDir = Directory.CreateDirectory(tempDirPath);
 
-        public override void Initialize(ILoadDirectory directory, DiscoveredDatabase dbInfo)
+        try
         {
+            // File in cache is the same file as in ForLoading (20160101.zip)
+            var loadDirectory = LoadDirectory.CreateDirectoryStructure(tempDir, "CachedFileRetriever");
+            var cachedFilePath = Path.Combine(loadDirectory.Cache.FullName, "2016-01-01.zip");
+            File.WriteAllText(cachedFilePath, "");
+            File.WriteAllText(Path.Combine(loadDirectory.ForLoading.FullName, "2016-01-01.zip"), "");
+
+
+            // Set SetUp retriever
+            var cacheLayout = new ZipCacheLayoutOnePerDay(loadDirectory.Cache, new NoSubdirectoriesCachePathResolver());
+
+            var retriever = new TestCachedFileRetriever()
+            {
+                ExtractFilesFromArchive = false,
+                LoadProgress = _lpMock,
+                Layout =  cacheLayout
+                    
+            };
+                
+            // Set SetUp job
+            var job = CreateTestJob(loadDirectory); 
+            job.DatesToRetrieve = new List<DateTime>
+            {
+                new DateTime(2016, 01, 01)
+            };
+
+            // Should complete successfully, the file in ForLoading matches the job specification
+            retriever.Fetch(job, new GracefulCancellationToken());
+
+            // And ForLoading should still have the file in it (i.e. it hasn't mysteriously disappeared)
+            Assert.IsTrue(File.Exists(Path.Combine(loadDirectory.ForLoading.FullName, "2016-01-01.zip")));
+        }
+        finally
+        {
+            tempDir.Delete(true);
+        }
+    }
+
+    [Test(Description = "RDMPDEV-185: Tests the default scenario where there are no files in ForLoading.")]
+    public void AttemptToLoadDataWithoutFilesInForLoading()
+    {
+        var tempDirPath = Path.Combine(Path.GetTempPath(), Path.GetRandomFileName());
+        var tempDir = Directory.CreateDirectory(tempDirPath);
+
+        try
+        {
+            // File in cache only, no files in ForLoading
+            var loadDirectory = LoadDirectory.CreateDirectoryStructure(tempDir, "CachedFileRetriever");
+            var cachedFilePath = Path.Combine(loadDirectory.Cache.FullName, "2016-01-01.zip");
+            File.WriteAllText(cachedFilePath, "");
+
+
+            // Set SetUp retriever
+            var cacheLayout = new ZipCacheLayoutOnePerDay(loadDirectory.Cache, new NoSubdirectoriesCachePathResolver());
+
+            var retriever = new TestCachedFileRetriever()
+            {
+                ExtractFilesFromArchive = false,
+                LoadProgress = _lpMock,
+                Layout = cacheLayout
+
+            };
+
+            // Set SetUp job
+            var job = CreateTestJob(loadDirectory);
+            job.DatesToRetrieve = new List<DateTime>
+            {
+                new DateTime(2016, 01, 01)
+            };
+
+            // Should complete successfully, there are no files in ForLoading to worry about
+            retriever.Fetch(job, new GracefulCancellationToken());
+
+            // And the retriever should have copied the cached archive file into ForLoading
+            Assert.IsTrue(File.Exists(Path.Combine(loadDirectory.ForLoading.FullName, "2016-01-01.zip")));
+        }
+        finally
+        {
+            tempDir.Delete(true);
+        }
+    }
+
+    private ScheduledDataLoadJob CreateTestJob(ILoadDirectory directory)
+    {
+        var catalogue = Mock.Of<ICatalogue>(c => 
+            c.GetTableInfoList(false) == new TableInfo[0] &&
+            c.GetLookupTableInfoList()==new TableInfo[0] &&
+            c.LoggingDataTask == "TestLogging"
+        );
             
-        }
+        var logManager = Mock.Of<ILogManager>();
+        var loadMetadata = Mock.Of<ILoadMetadata>(lm => lm.GetAllCatalogues()==new[] { catalogue });
 
-        public override ExitCodeType Fetch(IDataLoadJob dataLoadJob, GracefulCancellationToken cancellationToken)
-        {
-            var scheduledJob = ConvertToScheduledJob(dataLoadJob);
-            GetDataLoadWorkload(scheduledJob);
-            ExtractJobs(scheduledJob);
+        var j = new ScheduledDataLoadJob(RepositoryLocator, "Test job", logManager, loadMetadata, directory, new ThrowImmediatelyDataLoadEventListener(), null);
+        j.LoadProgress = _lpMock;
+        return j;
+    }
+}
+
+internal class TestCachedFileRetriever : CachedFileRetriever
+{
+    public ICacheLayout Layout;
+
+    public override void Initialize(ILoadDirectory directory, DiscoveredDatabase dbInfo)
+    {
             
-            return ExitCodeType.Success;
-        }
+    }
 
-        protected override ICacheLayout CreateCacheLayout(ICacheProgress cacheProgress, IDataLoadEventListener listener)
-        {
-            return Layout;
-        }
+    public override ExitCodeType Fetch(IDataLoadJob dataLoadJob, GracefulCancellationToken cancellationToken)
+    {
+        var scheduledJob = ConvertToScheduledJob(dataLoadJob);
+        GetDataLoadWorkload(scheduledJob);
+        ExtractJobs(scheduledJob);
+            
+        return ExitCodeType.Success;
+    }
+
+    protected override ICacheLayout CreateCacheLayout(ICacheProgress cacheProgress, IDataLoadEventListener listener)
+    {
+        return Layout;
     }
 }

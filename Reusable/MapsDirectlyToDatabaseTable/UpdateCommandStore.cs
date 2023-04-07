@@ -14,66 +14,65 @@ using FAnsi.Discovery.QuerySyntax;
 using FAnsi.Implementation;
 using ReusableLibraryCode;
 
-namespace MapsDirectlyToDatabaseTable
+namespace MapsDirectlyToDatabaseTable;
+
+/// <summary>
+/// Stores DbCommands for saving IMapsDirectlyToDatabaseTable objects to the database.
+/// 
+/// <para>Each time a novel IMapsDirectlyToDatabaseTable object Type is encountered an UPDATE sql command (DbCommand) is created for saving the object back to
+/// the database (using DbCommandBuilder).  Since this operation (figuring out the UPDATE command) is slow and we might be saving lots of objects we cache
+/// the command so that we can apply it to all objects of that Type as they are saved.</para>
+/// </summary>
+public class UpdateCommandStore
 {
-    /// <summary>
-    /// Stores DbCommands for saving IMapsDirectlyToDatabaseTable objects to the database.
-    /// 
-    /// <para>Each time a novel IMapsDirectlyToDatabaseTable object Type is encountered an UPDATE sql command (DbCommand) is created for saving the object back to
-    /// the database (using DbCommandBuilder).  Since this operation (figuring out the UPDATE command) is slow and we might be saving lots of objects we cache
-    /// the command so that we can apply it to all objects of that Type as they are saved.</para>
-    /// </summary>
-    public class UpdateCommandStore
+    public Dictionary<Type, DbCommand> UpdateCommands { get; private set; }
+
+    public UpdateCommandStore()
     {
-        public Dictionary<Type, DbCommand> UpdateCommands { get; private set; }
+        UpdateCommands = new Dictionary<Type, DbCommand>();
+    }
 
-        public UpdateCommandStore()
+    public DbCommand this[IMapsDirectlyToDatabaseTable o]
+    {
+        get
         {
-            UpdateCommands = new Dictionary<Type, DbCommand>();
+            return UpdateCommands[o.GetType()];
         }
+    }
+    public DbCommand this[Type t]
+    {
+        get
+        {
+            return UpdateCommands[t];
+        }
+    }
+    public void Add(Type o, DbConnectionStringBuilder builder, DbConnection connection, DbTransaction transaction)
+    {
+        var syntax = ImplementationManager.GetImplementation(builder).GetQuerySyntaxHelper();
 
-        public DbCommand this[IMapsDirectlyToDatabaseTable o]
-        {
-            get
-            {
-                return UpdateCommands[o.GetType()];
-            }
-        }
-        public DbCommand this[Type t]
-        {
-            get
-            {
-                return UpdateCommands[t];
-            }
-        }
-        public void Add(Type o, DbConnectionStringBuilder builder, DbConnection connection, DbTransaction transaction)
-        {
-            var syntax = ImplementationManager.GetImplementation(builder).GetQuerySyntaxHelper();
-
-            var command = DatabaseCommandHelper.GetCommand("UPDATE " + syntax.EnsureWrapped(o.Name) + " SET {0} WHERE ID=@ID;" , connection, transaction);
+        var command = DatabaseCommandHelper.GetCommand("UPDATE " + syntax.EnsureWrapped(o.Name) + " SET {0} WHERE ID=@ID;" , connection, transaction);
                         
-            var props = TableRepository.GetPropertyInfos(o);
+        var props = TableRepository.GetPropertyInfos(o);
 
-            foreach(PropertyInfo p in props)
-                command.Parameters.Add(DatabaseCommandHelper.GetParameter("@"+p.Name,command));
+        foreach(PropertyInfo p in props)
+            command.Parameters.Add(DatabaseCommandHelper.GetParameter("@"+p.Name,command));
 
-            command.CommandText = string.Format(command.CommandText,string.Join(",",props.Where(p=>p.Name != "ID").Select(p=> $"{syntax.EnsureWrapped(p.Name)}=@{p.Name}")));
+        command.CommandText = string.Format(command.CommandText,string.Join(",",props.Where(p=>p.Name != "ID").Select(p=> $"{syntax.EnsureWrapped(p.Name)}=@{p.Name}")));
             
-            UpdateCommands.Add(o, command);
-        }
+        UpdateCommands.Add(o, command);
+    }
 
-        public bool ContainsKey(IMapsDirectlyToDatabaseTable toCreate)
-        {
-            return UpdateCommands.ContainsKey(toCreate.GetType());
-        }
-        public bool ContainsKey(Type toCreate)
-        {
-            return UpdateCommands.ContainsKey(toCreate);
-        }
+    public bool ContainsKey(IMapsDirectlyToDatabaseTable toCreate)
+    {
+        return UpdateCommands.ContainsKey(toCreate.GetType());
+    }
+    public bool ContainsKey(Type toCreate)
+    {
+        return UpdateCommands.ContainsKey(toCreate);
+    }
 
-        public void Clear()
-        {
-            UpdateCommands.Clear();
-        }
+    public void Clear()
+    {
+        UpdateCommands.Clear();
     }
 }

@@ -6,17 +6,14 @@
 
 using ReusableLibraryCode.Checks;
 
-namespace Rdmp.Core.DataFlowPipeline
+namespace Rdmp.Core.DataFlowPipeline;
+
+/// <summary>
+/// MEF discoverable version of for IDataFlowComponent.  Also forces you to write a Check implementation in which you confirm or deny that your component is in a runnable
+/// state.
+/// </summary>
+/// <typeparam name="T"></typeparam>
+public interface IPluginDataFlowComponent<T>:IDataFlowComponent<T>,ICheckable
 {
-    /// <summary>
-    /// MEF discoverable version of for IDataFlowComponent.  Also forces you to write a Check implementation in which you confirm or deny that your component is in a runnable
-    /// state.
-    /// </summary>
-    /// <typeparam name="T"></typeparam>
-    
-    
-    public interface IPluginDataFlowComponent<T>:IDataFlowComponent<T>,ICheckable
-    {
         
-    }
 }

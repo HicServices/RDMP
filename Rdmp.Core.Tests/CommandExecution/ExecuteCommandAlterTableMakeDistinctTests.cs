@@ -18,49 +18,48 @@ using System.Text;
 using System.Threading.Tasks;
 using Tests.Common;
 
-namespace Rdmp.Core.Tests.CommandExecution
+namespace Rdmp.Core.Tests.CommandExecution;
+
+class ExecuteCommandAlterTableMakeDistinctTests : DatabaseTests
 {
-    class ExecuteCommandAlterTableMakeDistinctTests : DatabaseTests
+
+    [TestCase(DatabaseType.MicrosoftSQLServer)]
+    [TestCase(DatabaseType.MySql)]
+    [TestCase(DatabaseType.PostgreSql)]
+    public void Test(DatabaseType dbType)
     {
+        var db = GetCleanedServer(dbType);
 
-        [TestCase(DatabaseType.MicrosoftSQLServer)]
-        [TestCase(DatabaseType.MySql)]
-        [TestCase(DatabaseType.PostgreSql)]
-        public void Test(DatabaseType dbType)
-        {
-            var db = GetCleanedServer(dbType);
+        var dt = new DataTable();
+        dt.Columns.Add("fff");
+        dt.Rows.Add("1");
+        dt.Rows.Add("1");
+        dt.Rows.Add("2");
+        dt.Rows.Add("2");
+        dt.Rows.Add("2");
 
-            var dt = new DataTable();
-            dt.Columns.Add("fff");
-            dt.Rows.Add("1");
-            dt.Rows.Add("1");
-            dt.Rows.Add("2");
-            dt.Rows.Add("2");
-            dt.Rows.Add("2");
+        var tbl = db.CreateTable("MyTable", dt);
 
-            var tbl = db.CreateTable("MyTable", dt);
+        Import(tbl, out ITableInfo tblInfo,out _);
 
-            Import(tbl, out ITableInfo tblInfo,out _);
+        Assert.AreEqual(5, tbl.GetRowCount());
 
-            Assert.AreEqual(5, tbl.GetRowCount());
+        var activator = new ConsoleInputManager(RepositoryLocator, new ThrowImmediatelyCheckNotifier()) { DisallowInput = true };
 
-            var activator = new ConsoleInputManager(RepositoryLocator, new ThrowImmediatelyCheckNotifier()) { DisallowInput = true };
+        var cmd = new ExecuteCommandAlterTableMakeDistinct(activator, tblInfo, 700, true);
 
-            var cmd = new ExecuteCommandAlterTableMakeDistinct(activator, tblInfo, 700, true);
+        Assert.IsFalse(cmd.IsImpossible, cmd.ReasonCommandImpossible);
 
-            Assert.IsFalse(cmd.IsImpossible, cmd.ReasonCommandImpossible);
+        cmd.Execute();
 
-            cmd.Execute();
-
-            Assert.AreEqual(2, tbl.GetRowCount());
+        Assert.AreEqual(2, tbl.GetRowCount());
             
-            tbl.CreatePrimaryKey(tbl.DiscoverColumn("fff"));
+        tbl.CreatePrimaryKey(tbl.DiscoverColumn("fff"));
 
-            cmd = new ExecuteCommandAlterTableMakeDistinct(activator, tblInfo, 700, true);
+        cmd = new ExecuteCommandAlterTableMakeDistinct(activator, tblInfo, 700, true);
 
-            var ex = Assert.Throws<Exception>(()=>cmd.Execute());
+        var ex = Assert.Throws<Exception>(()=>cmd.Execute());
 
-            Assert.AreEqual("Table 'MyTable' has primary key columns so cannot contain duplication", ex.Message);
-        }
+        Assert.AreEqual("Table 'MyTable' has primary key columns so cannot contain duplication", ex.Message);
     }
 }

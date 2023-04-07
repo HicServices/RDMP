@@ -5,12 +5,11 @@
 // You should have received a copy of the GNU General Public License along with RDMP. If not, see <https://www.gnu.org/licenses/>.
 
 
-namespace Rdmp.Core.Validation.Constraints.Primary
+namespace Rdmp.Core.Validation.Constraints.Primary;
+
+/// <summary>
+/// Abstract base that allows plugin developers to create new <see cref="PrimaryConstraint"/> rules
+/// </summary>
+public abstract class PluginPrimaryConstraint : PrimaryConstraint
 {
-    /// <summary>
-    /// Abstract base that allows plugin developers to create new <see cref="PrimaryConstraint"/> rules
-    /// </summary>
-    public abstract class PluginPrimaryConstraint : PrimaryConstraint
-    {
-    }
 }

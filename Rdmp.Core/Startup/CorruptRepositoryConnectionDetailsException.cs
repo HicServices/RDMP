@@ -8,28 +8,27 @@ using Rdmp.Core.Repositories;
 using System;
 using System.Runtime.Serialization;
 
-namespace Rdmp.Core.Startup
+namespace Rdmp.Core.Startup;
+
+/// <summary>
+/// Thrown when the connection details to an <see cref="IRDMPPlatformRepositoryServiceLocator"/>
+/// </summary>
+[Serializable]
+public class CorruptRepositoryConnectionDetailsException : Exception
 {
-    /// <summary>
-    /// Thrown when the connection details to an <see cref="IRDMPPlatformRepositoryServiceLocator"/>
-    /// </summary>
-    [Serializable]
-    public class CorruptRepositoryConnectionDetailsException : Exception
+    public CorruptRepositoryConnectionDetailsException()
     {
-        public CorruptRepositoryConnectionDetailsException()
-        {
-        }
+    }
 
-        public CorruptRepositoryConnectionDetailsException(string message) : base(message)
-        {
-        }
+    public CorruptRepositoryConnectionDetailsException(string message) : base(message)
+    {
+    }
 
-        public CorruptRepositoryConnectionDetailsException(string message, Exception innerException) : base(message, innerException)
-        {
-        }
+    public CorruptRepositoryConnectionDetailsException(string message, Exception innerException) : base(message, innerException)
+    {
+    }
 
-        protected CorruptRepositoryConnectionDetailsException(SerializationInfo info, StreamingContext context) : base(info, context)
-        {
-        }
+    protected CorruptRepositoryConnectionDetailsException(SerializationInfo info, StreamingContext context) : base(info, context)
+    {
     }
 }

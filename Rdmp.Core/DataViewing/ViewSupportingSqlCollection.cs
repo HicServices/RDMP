@@ -11,54 +11,53 @@ using ReusableLibraryCode.DataAccess;
 using System.Collections.Generic;
 using System.Linq;
 
-namespace Rdmp.Core.DataViewing
+namespace Rdmp.Core.DataViewing;
+
+class ViewSupportingSqlCollection : PersistableObjectCollection, IViewSQLAndResultsCollection
 {
-    class ViewSupportingSqlCollection : PersistableObjectCollection, IViewSQLAndResultsCollection
+
+    public SupportingSQLTable SupportingSQLTable { get => DatabaseObjects.OfType<SupportingSQLTable>().FirstOrDefault(); }
+
+    public ViewSupportingSqlCollection(SupportingSQLTable supportingSql)
+    {
+        DatabaseObjects.Add(supportingSql);
+    }
+
+    /// <summary>
+    /// Persistence constructor 
+    /// </summary>
+    public ViewSupportingSqlCollection()
     {
 
-        public SupportingSQLTable SupportingSQLTable { get => DatabaseObjects.OfType<SupportingSQLTable>().FirstOrDefault(); }
+    }
 
-        public ViewSupportingSqlCollection(SupportingSQLTable supportingSql)
-        {
-            DatabaseObjects.Add(supportingSql);
-        }
+    public void AdjustAutocomplete(IAutoCompleteProvider autoComplete)
+    {
+    }
 
-        /// <summary>
-        /// Persistence constructor 
-        /// </summary>
-        public ViewSupportingSqlCollection()
-        {
+    public IDataAccessPoint GetDataAccessPoint()
+    {
+        return SupportingSQLTable.ExternalDatabaseServer;
+    }
 
-        }
+    public IQuerySyntaxHelper GetQuerySyntaxHelper()
+    {
+        var syntax = SupportingSQLTable.ExternalDatabaseServer?.DatabaseType ?? FAnsi.DatabaseType.MicrosoftSQLServer;
+        return new QuerySyntaxHelperFactory().Create(syntax);
+    }
 
-        public void AdjustAutocomplete(IAutoCompleteProvider autoComplete)
-        {
-        }
+    public string GetSql()
+    {
+        return SupportingSQLTable.SQL;
+    }
 
-        public IDataAccessPoint GetDataAccessPoint()
-        {
-            return SupportingSQLTable.ExternalDatabaseServer;
-        }
+    public string GetTabName()
+    {
+        return SupportingSQLTable.Name;
+    }
 
-        public IQuerySyntaxHelper GetQuerySyntaxHelper()
-        {
-            var syntax = SupportingSQLTable.ExternalDatabaseServer?.DatabaseType ?? FAnsi.DatabaseType.MicrosoftSQLServer;
-            return new QuerySyntaxHelperFactory().Create(syntax);
-        }
-
-        public string GetSql()
-        {
-            return SupportingSQLTable.SQL;
-        }
-
-        public string GetTabName()
-        {
-            return SupportingSQLTable.Name;
-        }
-
-        public IEnumerable<DatabaseEntity> GetToolStripObjects()
-        {
-            yield return SupportingSQLTable;
-        }
+    public IEnumerable<DatabaseEntity> GetToolStripObjects()
+    {
+        yield return SupportingSQLTable;
     }
 }

@@ -10,29 +10,28 @@ using Rdmp.UI.ItemActivation;
 using Rdmp.UI.Menus.MenuItems;
 using Rdmp.UI.SimpleDialogs;
 
-namespace ResearchDataManagementPlatform.Menus.MenuItems
+namespace ResearchDataManagementPlatform.Menus.MenuItems;
+
+internal class DataExportMenu : RDMPToolStripMenuItem
 {
-    internal class DataExportMenu : RDMPToolStripMenuItem
+    public DataExportMenu(IActivateItems activator):base(activator,"Data Export Options")
     {
-        public DataExportMenu(IActivateItems activator):base(activator,"Data Export Options")
-        {
 
-            Enabled = _activator.RepositoryLocator.DataExportRepository != null;
+        Enabled = _activator.RepositoryLocator.DataExportRepository != null;
 
-            DropDownItems.Add(new ToolStripMenuItem("Configure Disclaimer", null, ConfigureDisclaimer));
-            DropDownItems.Add(new ToolStripMenuItem("Configure Hashing Algorithm", null, ConfigureHashingAlgorithm));
-        }
+        DropDownItems.Add(new ToolStripMenuItem("Configure Disclaimer", null, ConfigureDisclaimer));
+        DropDownItems.Add(new ToolStripMenuItem("Configure Hashing Algorithm", null, ConfigureHashingAlgorithm));
+    }
 
-        private void ConfigureHashingAlgorithm(object sender, EventArgs e)
-        {
-            var hash = new ConfigureHashingAlgorithmUI(_activator);
-            hash.ShowDialog();
-        }
+    private void ConfigureHashingAlgorithm(object sender, EventArgs e)
+    {
+        var hash = new ConfigureHashingAlgorithmUI(_activator);
+        hash.ShowDialog();
+    }
 
-        private void ConfigureDisclaimer(object sender, EventArgs e)
-        {
-            var disclaimer = new ConfigureDisclaimerUI(_activator);
-            disclaimer.ShowDialog();
-        }
+    private void ConfigureDisclaimer(object sender, EventArgs e)
+    {
+        var disclaimer = new ConfigureDisclaimerUI(_activator);
+        disclaimer.ShowDialog();
     }
 }

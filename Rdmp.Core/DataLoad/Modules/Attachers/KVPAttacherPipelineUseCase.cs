@@ -9,28 +9,27 @@ using Rdmp.Core.Curation.Data.Pipelines;
 using Rdmp.Core.DataFlowPipeline;
 using Rdmp.Core.DataFlowPipeline.Requirements;
 
-namespace Rdmp.Core.DataLoad.Modules.Attachers
+namespace Rdmp.Core.DataLoad.Modules.Attachers;
+
+/// <summary>
+/// Use case for the user configured pipeline for reading from a flat file.  Used by KVPAttacher (See KVPAttacher) to allow the user control over how the 
+/// source file format is read (e.g. csv, fixed width, excel etc).
+/// </summary>
+public sealed class KVPAttacherPipelineUseCase : PipelineUseCase
 {
-    /// <summary>
-    /// Use case for the user configured pipeline for reading from a flat file.  Used by KVPAttacher (See KVPAttacher) to allow the user control over how the 
-    /// source file format is read (e.g. csv, fixed width, excel etc).
-    /// </summary>
-    public sealed class KVPAttacherPipelineUseCase : PipelineUseCase
+    public KVPAttacherPipelineUseCase(KVPAttacher kvpAttacher,FlatFileToLoad file)
     {
-        public KVPAttacherPipelineUseCase(KVPAttacher kvpAttacher,FlatFileToLoad file)
-        {
-            ExplicitDestination = kvpAttacher;
-            AddInitializationObject(file);
+        ExplicitDestination = kvpAttacher;
+        AddInitializationObject(file);
             
-            GenerateContext();
-        }
+        GenerateContext();
+    }
 
-        protected override IDataFlowPipelineContext GenerateContextImpl()
-        {
-            var context = new DataFlowPipelineContextFactory<DataTable>().Create(PipelineUsage.FixedDestination);
-            context.MustHaveSource = typeof(IDataFlowSource<DataTable>);
+    protected override IDataFlowPipelineContext GenerateContextImpl()
+    {
+        var context = new DataFlowPipelineContextFactory<DataTable>().Create(PipelineUsage.FixedDestination);
+        context.MustHaveSource = typeof(IDataFlowSource<DataTable>);
 
-            return context;
-        }
+        return context;
     }
 }

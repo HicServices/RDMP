@@ -10,72 +10,71 @@ using System.Linq;
 using Rdmp.Core.Curation.Data;
 using Rdmp.Core.DataExport.Data;
 
-namespace Rdmp.Core.DataExport.DataExtraction.UserPicks
+namespace Rdmp.Core.DataExport.DataExtraction.UserPicks;
+
+/// <summary>
+/// The dataset and all additional content related to that dataset within an ExtractionConfiguration which is about to be extracted.  This includes
+/// SupportingDocuments, Lookup tables etc).  This is a mutable class and allows you to 'DropContent' if you do not want to extract given parts (e.g. skip
+/// the lookups).
+/// </summary>
+public class ExtractableDatasetBundle : Bundle, IExtractableDatasetBundle
 {
-    /// <summary>
-    /// The dataset and all additional content related to that dataset within an ExtractionConfiguration which is about to be extracted.  This includes
-    /// SupportingDocuments, Lookup tables etc).  This is a mutable class and allows you to 'DropContent' if you do not want to extract given parts (e.g. skip
-    /// the lookups).
-    /// </summary>
-    public class ExtractableDatasetBundle : Bundle, IExtractableDatasetBundle
+    //The main dataset being extracted
+    public IExtractableDataSet DataSet { get; private set; }
+
+    //all the rest of the stuff that goes with the dataset
+    public List<SupportingDocument> Documents { get; private set; }
+    public List<SupportingSQLTable> SupportingSQL { get; private set; }
+    public List<IBundledLookupTable> LookupTables { get; private set; }
+        
+
+    public ExtractableDatasetBundle(IExtractableDataSet dataSet, SupportingDocument[] documents, SupportingSQLTable[] supportingSQL, ITableInfo[] lookupTables) : 
+        base(
+            new [] {(object)dataSet}.Union(documents).Union(supportingSQL).Union(lookupTables).ToArray() //pass all the objects to the base class so it can allocate initial States
+        )
     {
-        //The main dataset being extracted
-        public IExtractableDataSet DataSet { get; private set; }
+        DataSet = dataSet;
+        Documents = documents.ToList();
+        SupportingSQL = supportingSQL.ToList();
+        LookupTables = lookupTables.Select(t => new BundledLookupTable(t)).Cast<IBundledLookupTable>().ToList();
+    }
 
-        //all the rest of the stuff that goes with the dataset
-        public List<SupportingDocument> Documents { get; private set; }
-        public List<SupportingSQLTable> SupportingSQL { get; private set; }
-        public List<IBundledLookupTable> LookupTables { get; private set; }
+    public ExtractableDatasetBundle(IExtractableDataSet dataSet)
+        : this(dataSet, new SupportingDocument[0], new SupportingSQLTable[0], new TableInfo[0])
+    {
+    }
         
+    public override string ToString()
+    {
+        return DataSet + " Bundle";
+    }
 
-        public ExtractableDatasetBundle(IExtractableDataSet dataSet, SupportingDocument[] documents, SupportingSQLTable[] supportingSQL, ITableInfo[] lookupTables) : 
-            base(
-                new [] {(object)dataSet}.Union(documents).Union(supportingSQL).Union(lookupTables).ToArray() //pass all the objects to the base class so it can allocate initial States
-            )
+    protected override void OnDropContent(object toDrop)
+    {
+        if(toDrop is ExtractableDataSet)
+            throw new NotSupportedException("Cannot drop "+toDrop+" from Bundle "+this+", you cannot perform an extraction without the dataset component (only documents/lookups etc are optional)");
+
+        var drop = toDrop as SupportingDocument;
+        if (drop != null)
         {
-            DataSet = dataSet;
-            Documents = documents.ToList();
-            SupportingSQL = supportingSQL.ToList();
-            LookupTables = lookupTables.Select(t => new BundledLookupTable(t)).Cast<IBundledLookupTable>().ToList();
+            Documents.Remove(drop);
+            return;
         }
 
-        public ExtractableDatasetBundle(IExtractableDataSet dataSet)
-            : this(dataSet, new SupportingDocument[0], new SupportingSQLTable[0], new TableInfo[0])
+        var item = toDrop as SupportingSQLTable;
+        if (item != null)
         {
-        }
-        
-        public override string ToString()
-        {
-            return DataSet + " Bundle";
+            SupportingSQL.Remove(item);
+            return;
         }
 
-        protected override void OnDropContent(object toDrop)
+        var table = toDrop as BundledLookupTable;
+        if (table != null)
         {
-            if(toDrop is ExtractableDataSet)
-                throw new NotSupportedException("Cannot drop "+toDrop+" from Bundle "+this+", you cannot perform an extraction without the dataset component (only documents/lookups etc are optional)");
-
-            var drop = toDrop as SupportingDocument;
-            if (drop != null)
-            {
-                Documents.Remove(drop);
-                return;
-            }
-
-            var item = toDrop as SupportingSQLTable;
-            if (item != null)
-            {
-                SupportingSQL.Remove(item);
-                return;
-            }
-
-            var table = toDrop as BundledLookupTable;
-            if (table != null)
-            {
-                LookupTables.Remove(table);
-                return;
-            }
-
-            throw new NotSupportedException("Did not know how to drop object of type " + toDrop);
+            LookupTables.Remove(table);
+            return;
         }
+
+        throw new NotSupportedException("Did not know how to drop object of type " + toDrop);
     }
 }

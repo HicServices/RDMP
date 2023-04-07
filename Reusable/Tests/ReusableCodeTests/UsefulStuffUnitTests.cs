@@ -8,26 +8,25 @@ using NUnit.Framework;
 using ReusableLibraryCode;
 using System.Linq;
 
-namespace ReusableCodeTests
+namespace ReusableCodeTests;
+
+public class UsefulStuffUnitTests
 {
-    public class UsefulStuffUnitTests
+    [TestCase("[ff ff]", "ff ff")]
+    [TestCase("`ff ff`", "ff ff")]
+    [TestCase("'ff ff'", "ff ff")]
+    [TestCase("\"ff ff\"", "ff ff")]
+    [TestCase("ff ff", "ff ff")]
+    [TestCase("ab.cd", "cd")]
+    [TestCase("[aa]..[ff],", "ff")]
+    [TestCase("[bb]..[ff],", "ff")]
+    [TestCase("[c d]..[we ef],", "we ef")]
+    public void TestGetArrayOfColumnNamesFromStringPastedInByUser(string input, string expectedOutput)
     {
-        [TestCase("[ff ff]", "ff ff")]
-        [TestCase("`ff ff`", "ff ff")]
-        [TestCase("'ff ff'", "ff ff")]
-        [TestCase("\"ff ff\"", "ff ff")]
-        [TestCase("ff ff", "ff ff")]
-        [TestCase("ab.cd", "cd")]
-        [TestCase("[aa]..[ff],", "ff")]
-        [TestCase("[bb]..[ff],", "ff")]
-        [TestCase("[c d]..[we ef],", "we ef")]
-        public void TestGetArrayOfColumnNamesFromStringPastedInByUser(string input, string expectedOutput)
+        foreach(var suffix in new[] { "","\n", "\r","\r\n",",\r\n"})
         {
-            foreach(var suffix in new[] { "","\n", "\r","\r\n",",\r\n"})
-            {
-                var output = UsefulStuff.GetInstance().GetArrayOfColumnNamesFromStringPastedInByUser(input + suffix);
-                Assert.AreEqual(expectedOutput, output.Single());
-            }
+            var output = UsefulStuff.GetInstance().GetArrayOfColumnNamesFromStringPastedInByUser(input + suffix);
+            Assert.AreEqual(expectedOutput, output.Single());
         }
     }
 }

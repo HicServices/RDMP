@@ -16,302 +16,301 @@ using Rdmp.Core.DataLoad.Engine.Job;
 using Rdmp.Core.DataLoad.Modules.Mutilators;
 using Tests.Common;
 
-namespace Rdmp.Core.Tests.DataLoad.Engine.Integration
+namespace Rdmp.Core.Tests.DataLoad.Engine.Integration;
+
+public class SafePrimaryKeyCollisionResolverMutilationTests:DatabaseTests
 {
-    public class SafePrimaryKeyCollisionResolverMutilationTests:DatabaseTests
+    [TestCase(DatabaseType.MicrosoftSQLServer,true)]
+    [TestCase(DatabaseType.MySql,true)]
+    [TestCase(DatabaseType.MicrosoftSQLServer, false)]
+    [TestCase(DatabaseType.MySql, false)]
+    public void SafePrimaryKeyCollisionResolverMutilationTests_NoDifference_NoRecordsDeleted(DatabaseType dbType,bool bothNull)
     {
-        [TestCase(DatabaseType.MicrosoftSQLServer,true)]
-        [TestCase(DatabaseType.MySql,true)]
-        [TestCase(DatabaseType.MicrosoftSQLServer, false)]
-        [TestCase(DatabaseType.MySql, false)]
-        public void SafePrimaryKeyCollisionResolverMutilationTests_NoDifference_NoRecordsDeleted(DatabaseType dbType,bool bothNull)
-        {
-            var db = GetCleanedServer(dbType);
+        var db = GetCleanedServer(dbType);
 
-            DataTable dt = new DataTable();
-            dt.Columns.Add("PK");
-            dt.Columns.Add("ResolveOn");
-            dt.Columns.Add("AnotherCol");
+        DataTable dt = new DataTable();
+        dt.Columns.Add("PK");
+        dt.Columns.Add("ResolveOn");
+        dt.Columns.Add("AnotherCol");
             
-            dt.Rows.Add(1, bothNull?null:"fish", "cat");
-            dt.Rows.Add(1, bothNull ? null : "fish", "flop");
-            dt.Rows.Add(2, "fish", "flop");
-            dt.Rows.Add(3, "dave", "franl");
+        dt.Rows.Add(1, bothNull?null:"fish", "cat");
+        dt.Rows.Add(1, bothNull ? null : "fish", "flop");
+        dt.Rows.Add(2, "fish", "flop");
+        dt.Rows.Add(3, "dave", "franl");
 
-            var tbl = db.CreateTable("MyTable", dt);
+        var tbl = db.CreateTable("MyTable", dt);
 
-            Import(tbl,out var ti,out var cis);
+        Import(tbl,out var ti,out var cis);
 
-            var pk = cis.Single(c => c.GetRuntimeName().Equals("PK"));
-            pk.IsPrimaryKey = true;
-            pk.SaveToDatabase();
+        var pk = cis.Single(c => c.GetRuntimeName().Equals("PK"));
+        pk.IsPrimaryKey = true;
+        pk.SaveToDatabase();
             
-            var resolveOn = cis.Single(c => c.GetRuntimeName().Equals("ResolveOn"));
+        var resolveOn = cis.Single(c => c.GetRuntimeName().Equals("ResolveOn"));
 
-            var mutilation = new SafePrimaryKeyCollisionResolverMutilation();
-            mutilation.ColumnToResolveOn = resolveOn;
+        var mutilation = new SafePrimaryKeyCollisionResolverMutilation();
+        mutilation.ColumnToResolveOn = resolveOn;
             
-            mutilation.PreferLargerValues = true;
-            mutilation.PreferNulls = false;
+        mutilation.PreferLargerValues = true;
+        mutilation.PreferNulls = false;
             
-            mutilation.Initialize(db, LoadStage.AdjustRaw);
-            mutilation.Mutilate(new ThrowImmediatelyDataLoadJob(new HICDatabaseConfiguration(db.Server)));
+        mutilation.Initialize(db, LoadStage.AdjustRaw);
+        mutilation.Mutilate(new ThrowImmediatelyDataLoadJob(new HICDatabaseConfiguration(db.Server)));
 
-            Assert.AreEqual(4,tbl.GetRowCount());
-        }
-        [TestCase(DatabaseType.MicrosoftSQLServer,false)]
-        [TestCase(DatabaseType.MySql,false)]
-        [TestCase(DatabaseType.MicrosoftSQLServer, true)]
-        [TestCase(DatabaseType.MySql, true)]
-        public void SafePrimaryKeyCollisionResolverMutilationTests_PreferNull_RecordsDeleted(DatabaseType dbType,bool preferNulls)
-        {
-            var db = GetCleanedServer(dbType);
+        Assert.AreEqual(4,tbl.GetRowCount());
+    }
+    [TestCase(DatabaseType.MicrosoftSQLServer,false)]
+    [TestCase(DatabaseType.MySql,false)]
+    [TestCase(DatabaseType.MicrosoftSQLServer, true)]
+    [TestCase(DatabaseType.MySql, true)]
+    public void SafePrimaryKeyCollisionResolverMutilationTests_PreferNull_RecordsDeleted(DatabaseType dbType,bool preferNulls)
+    {
+        var db = GetCleanedServer(dbType);
 
-            DataTable dt = new DataTable();
-            dt.Columns.Add("PK");
-            dt.Columns.Add("ResolveOn");
-            dt.Columns.Add("AnotherCol");
+        DataTable dt = new DataTable();
+        dt.Columns.Add("PK");
+        dt.Columns.Add("ResolveOn");
+        dt.Columns.Add("AnotherCol");
 
-            dt.Rows.Add(1, null, "cat");
-            dt.Rows.Add(1, "fish", "flop");
-            dt.Rows.Add(2, "fish", "flop");
-            dt.Rows.Add(3, "dave", "franl");
+        dt.Rows.Add(1, null, "cat");
+        dt.Rows.Add(1, "fish", "flop");
+        dt.Rows.Add(2, "fish", "flop");
+        dt.Rows.Add(3, "dave", "franl");
 
-            var tbl = db.CreateTable("MyTable", dt);
+        var tbl = db.CreateTable("MyTable", dt);
 
-            Import(tbl, out var ti, out var cis);
+        Import(tbl, out var ti, out var cis);
 
-            var pk = cis.Single(c => c.GetRuntimeName().Equals("PK"));
-            pk.IsPrimaryKey = true;
-            pk.SaveToDatabase();
+        var pk = cis.Single(c => c.GetRuntimeName().Equals("PK"));
+        pk.IsPrimaryKey = true;
+        pk.SaveToDatabase();
 
-            var resolveOn = cis.Single(c => c.GetRuntimeName().Equals("ResolveOn"));
+        var resolveOn = cis.Single(c => c.GetRuntimeName().Equals("ResolveOn"));
 
-            var mutilation = new SafePrimaryKeyCollisionResolverMutilation();
-            mutilation.ColumnToResolveOn = resolveOn;
+        var mutilation = new SafePrimaryKeyCollisionResolverMutilation();
+        mutilation.ColumnToResolveOn = resolveOn;
 
-            mutilation.PreferLargerValues = true;
-            mutilation.PreferNulls = preferNulls;
+        mutilation.PreferLargerValues = true;
+        mutilation.PreferNulls = preferNulls;
 
-            mutilation.Initialize(db, LoadStage.AdjustRaw);
-            mutilation.Mutilate(new ThrowImmediatelyDataLoadJob(new HICDatabaseConfiguration(db.Server)));
+        mutilation.Initialize(db, LoadStage.AdjustRaw);
+        mutilation.Mutilate(new ThrowImmediatelyDataLoadJob(new HICDatabaseConfiguration(db.Server)));
 
-            Assert.AreEqual(3, tbl.GetRowCount());
-            var result = tbl.GetDataTable();
+        Assert.AreEqual(3, tbl.GetRowCount());
+        var result = tbl.GetDataTable();
             
-            //if you prefer nulls you shouldn't want this one
-            Assert.AreEqual(preferNulls? 0:1 ,result.Rows.Cast<DataRow>().Count(r=>(int)r["PK"] == 1 && r["ResolveOn"] as string == "fish" && r["AnotherCol"] as string == "flop" ));
+        //if you prefer nulls you shouldn't want this one
+        Assert.AreEqual(preferNulls? 0:1 ,result.Rows.Cast<DataRow>().Count(r=>(int)r["PK"] == 1 && r["ResolveOn"] as string == "fish" && r["AnotherCol"] as string == "flop" ));
 
-            //if you prefer nulls you should have this one
-            Assert.AreEqual(preferNulls ? 1 : 0, result.Rows.Cast<DataRow>().Count(r => (int)r["PK"] == 1 && r["ResolveOn"] == DBNull.Value && r["AnotherCol"] as string == "cat"));
-        }
-        [TestCase(DatabaseType.MicrosoftSQLServer)]
-        [TestCase(DatabaseType.MySql)]
-        public void SafePrimaryKeyCollisionResolverMutilationTests_WithDatabaseNamer_RecordsDeleted(DatabaseType dbType)
-        {
-            var db = GetCleanedServer(dbType);
+        //if you prefer nulls you should have this one
+        Assert.AreEqual(preferNulls ? 1 : 0, result.Rows.Cast<DataRow>().Count(r => (int)r["PK"] == 1 && r["ResolveOn"] == DBNull.Value && r["AnotherCol"] as string == "cat"));
+    }
+    [TestCase(DatabaseType.MicrosoftSQLServer)]
+    [TestCase(DatabaseType.MySql)]
+    public void SafePrimaryKeyCollisionResolverMutilationTests_WithDatabaseNamer_RecordsDeleted(DatabaseType dbType)
+    {
+        var db = GetCleanedServer(dbType);
 
-            DataTable dt = new DataTable();
-            dt.Columns.Add("PK");
-            dt.Columns.Add("ResolveOn");
-            dt.Columns.Add("AnotherCol");
+        DataTable dt = new DataTable();
+        dt.Columns.Add("PK");
+        dt.Columns.Add("ResolveOn");
+        dt.Columns.Add("AnotherCol");
 
-            dt.Rows.Add(1, null, "cat");
-            dt.Rows.Add(1, "fish", "flop");
-            dt.Rows.Add(2, "fish", "flop");
-            dt.Rows.Add(3, "dave", "franl");
+        dt.Rows.Add(1, null, "cat");
+        dt.Rows.Add(1, "fish", "flop");
+        dt.Rows.Add(2, "fish", "flop");
+        dt.Rows.Add(3, "dave", "franl");
 
-            var tbl = db.CreateTable("MyTable", dt);
+        var tbl = db.CreateTable("MyTable", dt);
 
-            Import(tbl, out var ti, out var cis);
+        Import(tbl, out var ti, out var cis);
 
-            tbl.Rename("AAAA");
-            var namer = RdmpMockFactory.Mock_INameDatabasesAndTablesDuringLoads(db,"AAAA");
+        tbl.Rename("AAAA");
+        var namer = RdmpMockFactory.Mock_INameDatabasesAndTablesDuringLoads(db,"AAAA");
 
-            var pk = cis.Single(c => c.GetRuntimeName().Equals("PK"));
-            pk.IsPrimaryKey = true;
-            pk.SaveToDatabase();
+        var pk = cis.Single(c => c.GetRuntimeName().Equals("PK"));
+        pk.IsPrimaryKey = true;
+        pk.SaveToDatabase();
 
-            var resolveOn = cis.Single(c => c.GetRuntimeName().Equals("ResolveOn"));
+        var resolveOn = cis.Single(c => c.GetRuntimeName().Equals("ResolveOn"));
 
-            var mutilation = new SafePrimaryKeyCollisionResolverMutilation();
-            mutilation.ColumnToResolveOn = resolveOn;
+        var mutilation = new SafePrimaryKeyCollisionResolverMutilation();
+        mutilation.ColumnToResolveOn = resolveOn;
 
-            mutilation.PreferLargerValues = true;
-            mutilation.PreferNulls = true;
+        mutilation.PreferLargerValues = true;
+        mutilation.PreferNulls = true;
 
-            mutilation.Initialize(db, LoadStage.AdjustRaw);
-            mutilation.Mutilate(new ThrowImmediatelyDataLoadJob(new HICDatabaseConfiguration(db.Server,namer), ti));
+        mutilation.Initialize(db, LoadStage.AdjustRaw);
+        mutilation.Mutilate(new ThrowImmediatelyDataLoadJob(new HICDatabaseConfiguration(db.Server,namer), ti));
 
-            Assert.AreEqual(3, tbl.GetRowCount());
-            var result = tbl.GetDataTable();
+        Assert.AreEqual(3, tbl.GetRowCount());
+        var result = tbl.GetDataTable();
 
-            //if you prefer nulls you shouldn't want this one
-            Assert.AreEqual( 0 , result.Rows.Cast<DataRow>().Count(r => (int)r["PK"] == 1 && r["ResolveOn"] as string == "fish" && r["AnotherCol"] as string == "flop"));
+        //if you prefer nulls you shouldn't want this one
+        Assert.AreEqual( 0 , result.Rows.Cast<DataRow>().Count(r => (int)r["PK"] == 1 && r["ResolveOn"] as string == "fish" && r["AnotherCol"] as string == "flop"));
 
-            //if you prefer nulls you should have this one
-            Assert.AreEqual(1, result.Rows.Cast<DataRow>().Count(r => (int)r["PK"] == 1 && r["ResolveOn"] == DBNull.Value && r["AnotherCol"] as string == "cat"));
-        }
-
-
-        [TestCase(DatabaseType.MicrosoftSQLServer, false)]
-        [TestCase(DatabaseType.MySql, false)]
-        [TestCase(DatabaseType.MicrosoftSQLServer, true)]
-        [TestCase(DatabaseType.MySql, true)]
-        public void SafePrimaryKeyCollisionResolverMutilationTests_PreferLarger_RecordsDeleted(DatabaseType dbType, bool preferLarger)
-        {
-            var db = GetCleanedServer(dbType);
-
-            DataTable dt = new DataTable();
-            dt.Columns.Add("PK");
-            dt.Columns.Add("ResolveOn");
-            dt.Columns.Add("AnotherCol");
-
-            dt.Rows.Add(1, null, "cat");
-            dt.Rows.Add(1, "a", "flop");
-            dt.Rows.Add(1, "b", "flop");
-            dt.Rows.Add(2, "fish", "flop");
-            dt.Rows.Add(3, "dave", "franl");
-
-            var tbl = db.CreateTable("MyTable", dt);
-
-            Import(tbl, out var ti, out var cis);
-
-            var pk = cis.Single(c => c.GetRuntimeName().Equals("PK"));
-            pk.IsPrimaryKey = true;
-            pk.SaveToDatabase();
-
-            var resolveOn = cis.Single(c => c.GetRuntimeName().Equals("ResolveOn"));
-
-            var mutilation = new SafePrimaryKeyCollisionResolverMutilation();
-            mutilation.ColumnToResolveOn = resolveOn;
-
-            mutilation.PreferLargerValues = preferLarger;
-            mutilation.PreferNulls = false; 
-
-            mutilation.Initialize(db, LoadStage.AdjustRaw);
-            mutilation.Mutilate(new ThrowImmediatelyDataLoadJob(new HICDatabaseConfiguration(db.Server)));
-
-            Assert.AreEqual(3, tbl.GetRowCount());
-            var result = tbl.GetDataTable();
-
-            //if you like larger values (alphabetically) then you want the 'b'
-            Assert.AreEqual(preferLarger ? 1 : 0, result.Rows.Cast<DataRow>().Count(r => (int)r["PK"] == 1 && r["ResolveOn"] as string == "b" && r["AnotherCol"] as string == "flop"));
-            Assert.AreEqual(preferLarger ? 0 : 1, result.Rows.Cast<DataRow>().Count(r => (int)r["PK"] == 1 && r["ResolveOn"] as string == "a" && r["AnotherCol"] as string == "flop"));
-
-            //either way you shouldn't have the null one
-            Assert.AreEqual(0, result.Rows.Cast<DataRow>().Count(r => (int)r["PK"] == 1 && r["ResolveOn"] == DBNull.Value && r["AnotherCol"] as string == "cat"));
-        }
+        //if you prefer nulls you should have this one
+        Assert.AreEqual(1, result.Rows.Cast<DataRow>().Count(r => (int)r["PK"] == 1 && r["ResolveOn"] == DBNull.Value && r["AnotherCol"] as string == "cat"));
+    }
 
 
+    [TestCase(DatabaseType.MicrosoftSQLServer, false)]
+    [TestCase(DatabaseType.MySql, false)]
+    [TestCase(DatabaseType.MicrosoftSQLServer, true)]
+    [TestCase(DatabaseType.MySql, true)]
+    public void SafePrimaryKeyCollisionResolverMutilationTests_PreferLarger_RecordsDeleted(DatabaseType dbType, bool preferLarger)
+    {
+        var db = GetCleanedServer(dbType);
 
-        [TestCase(DatabaseType.MicrosoftSQLServer, false)]
-        [TestCase(DatabaseType.MySql, false)]
-        [TestCase(DatabaseType.MicrosoftSQLServer, true)]
-        [TestCase(DatabaseType.MySql, true)]
-        public void SafePrimaryKeyCollisionResolverMutilationTests_PreferLarger_Dates_RecordsDeleted(DatabaseType dbType, bool preferLarger)
-        {
-            var db = GetCleanedServer(dbType);
+        DataTable dt = new DataTable();
+        dt.Columns.Add("PK");
+        dt.Columns.Add("ResolveOn");
+        dt.Columns.Add("AnotherCol");
 
-            DataTable dt = new DataTable();
-            dt.Columns.Add("PK");
-            dt.Columns.Add("ResolveOn");
-            dt.Columns.Add("AnotherCol");
+        dt.Rows.Add(1, null, "cat");
+        dt.Rows.Add(1, "a", "flop");
+        dt.Rows.Add(1, "b", "flop");
+        dt.Rows.Add(2, "fish", "flop");
+        dt.Rows.Add(3, "dave", "franl");
 
-            dt.Rows.Add(1, null, "cat");
-            dt.Rows.Add(1, new DateTime(2001,01,01), "flop");
-            dt.Rows.Add(1, new DateTime(2002, 01, 01), "flop");
-            dt.Rows.Add(2, null, "flop");
-            dt.Rows.Add(3, null, "franl");
+        var tbl = db.CreateTable("MyTable", dt);
 
-            var tbl = db.CreateTable("MyTable", dt);
+        Import(tbl, out var ti, out var cis);
 
-            Import(tbl, out var ti, out var cis);
+        var pk = cis.Single(c => c.GetRuntimeName().Equals("PK"));
+        pk.IsPrimaryKey = true;
+        pk.SaveToDatabase();
 
-            var pk = cis.Single(c => c.GetRuntimeName().Equals("PK"));
-            pk.IsPrimaryKey = true;
-            pk.SaveToDatabase();
+        var resolveOn = cis.Single(c => c.GetRuntimeName().Equals("ResolveOn"));
 
-            var resolveOn = cis.Single(c => c.GetRuntimeName().Equals("ResolveOn"));
+        var mutilation = new SafePrimaryKeyCollisionResolverMutilation();
+        mutilation.ColumnToResolveOn = resolveOn;
 
-            var mutilation = new SafePrimaryKeyCollisionResolverMutilation();
-            mutilation.ColumnToResolveOn = resolveOn;
+        mutilation.PreferLargerValues = preferLarger;
+        mutilation.PreferNulls = false; 
 
-            mutilation.PreferLargerValues = preferLarger;
-            mutilation.PreferNulls = false;
+        mutilation.Initialize(db, LoadStage.AdjustRaw);
+        mutilation.Mutilate(new ThrowImmediatelyDataLoadJob(new HICDatabaseConfiguration(db.Server)));
 
-            mutilation.Initialize(db, LoadStage.AdjustRaw);
-            mutilation.Mutilate(new ThrowImmediatelyDataLoadJob(new HICDatabaseConfiguration(db.Server)));
+        Assert.AreEqual(3, tbl.GetRowCount());
+        var result = tbl.GetDataTable();
 
-            Assert.AreEqual(3, tbl.GetRowCount());
-            var result = tbl.GetDataTable();
+        //if you like larger values (alphabetically) then you want the 'b'
+        Assert.AreEqual(preferLarger ? 1 : 0, result.Rows.Cast<DataRow>().Count(r => (int)r["PK"] == 1 && r["ResolveOn"] as string == "b" && r["AnotherCol"] as string == "flop"));
+        Assert.AreEqual(preferLarger ? 0 : 1, result.Rows.Cast<DataRow>().Count(r => (int)r["PK"] == 1 && r["ResolveOn"] as string == "a" && r["AnotherCol"] as string == "flop"));
 
-            //if you like larger values then you want 2002 thats larger than 2001
-            Assert.AreEqual(preferLarger ? 1 : 0, result.Rows.Cast<DataRow>().Count(r => (int)r["PK"] == 1 && Equals(r["ResolveOn"], new DateTime(2002,01,01)) && r["AnotherCol"] as string == "flop"));
-            Assert.AreEqual(preferLarger ? 0 : 1, result.Rows.Cast<DataRow>().Count(r => (int)r["PK"] == 1 && Equals(r["ResolveOn"], new DateTime(2001,01,01))  && r["AnotherCol"] as string == "flop"));
+        //either way you shouldn't have the null one
+        Assert.AreEqual(0, result.Rows.Cast<DataRow>().Count(r => (int)r["PK"] == 1 && r["ResolveOn"] == DBNull.Value && r["AnotherCol"] as string == "cat"));
+    }
 
-            //either way you shouldn't have the null one
-            Assert.AreEqual(0, result.Rows.Cast<DataRow>().Count(r => (int)r["PK"] == 1 && r["ResolveOn"] == DBNull.Value && r["AnotherCol"] as string == "cat"));
-        }
 
-        [TestCase(DatabaseType.MicrosoftSQLServer, false)]
-        [TestCase(DatabaseType.MySql, false)]
-        [TestCase(DatabaseType.MicrosoftSQLServer, true)]
-        [TestCase(DatabaseType.MySql, true)]
-        public void SafePrimaryKeyCollisionResolverMutilationTests_PreferLarger_ComboKey_RecordsDeleted(DatabaseType dbType, bool preferLarger)
-        {
-            var db = GetCleanedServer(dbType);
 
-            DataTable dt = new DataTable();
-            dt.Columns.Add("PK1");
-            dt.Columns.Add("PK2");
-            dt.Columns.Add("ResolveOn");
-            dt.Columns.Add("AnotherCol");
+    [TestCase(DatabaseType.MicrosoftSQLServer, false)]
+    [TestCase(DatabaseType.MySql, false)]
+    [TestCase(DatabaseType.MicrosoftSQLServer, true)]
+    [TestCase(DatabaseType.MySql, true)]
+    public void SafePrimaryKeyCollisionResolverMutilationTests_PreferLarger_Dates_RecordsDeleted(DatabaseType dbType, bool preferLarger)
+    {
+        var db = GetCleanedServer(dbType);
 
-            dt.Rows.Add(1,1, null, "cat");
-            dt.Rows.Add(1,1, new DateTime(2001, 01, 01), "flop");
-            dt.Rows.Add(1,1, new DateTime(2002, 01, 01), "flop");
+        DataTable dt = new DataTable();
+        dt.Columns.Add("PK");
+        dt.Columns.Add("ResolveOn");
+        dt.Columns.Add("AnotherCol");
 
-            dt.Rows.Add(1, 2, null, "cat");
-            dt.Rows.Add(1, 2, null, "cat");
-            dt.Rows.Add(1, 3, new DateTime(2001, 01, 01), "flop");
-            dt.Rows.Add(1, 4, new DateTime(2002, 01, 01), "flop");
+        dt.Rows.Add(1, null, "cat");
+        dt.Rows.Add(1, new DateTime(2001,01,01), "flop");
+        dt.Rows.Add(1, new DateTime(2002, 01, 01), "flop");
+        dt.Rows.Add(2, null, "flop");
+        dt.Rows.Add(3, null, "franl");
 
-            dt.Rows.Add(2,1, null, "flop");
-            dt.Rows.Add(3,1, null, "franl");
+        var tbl = db.CreateTable("MyTable", dt);
 
-            var tbl = db.CreateTable("MyTable", dt);
+        Import(tbl, out var ti, out var cis);
 
-            Import(tbl, out var ti, out var cis);
+        var pk = cis.Single(c => c.GetRuntimeName().Equals("PK"));
+        pk.IsPrimaryKey = true;
+        pk.SaveToDatabase();
 
-            var pk = cis.Single(c => c.GetRuntimeName().Equals("PK1"));
-            pk.IsPrimaryKey = true;
-            pk.SaveToDatabase();
+        var resolveOn = cis.Single(c => c.GetRuntimeName().Equals("ResolveOn"));
 
-            var pk2 = cis.Single(c => c.GetRuntimeName().Equals("PK2"));
-            pk2.IsPrimaryKey = true;
-            pk2.SaveToDatabase();
+        var mutilation = new SafePrimaryKeyCollisionResolverMutilation();
+        mutilation.ColumnToResolveOn = resolveOn;
 
-            var resolveOn = cis.Single(c => c.GetRuntimeName().Equals("ResolveOn"));
+        mutilation.PreferLargerValues = preferLarger;
+        mutilation.PreferNulls = false;
 
-            var mutilation = new SafePrimaryKeyCollisionResolverMutilation();
-            mutilation.ColumnToResolveOn = resolveOn;
+        mutilation.Initialize(db, LoadStage.AdjustRaw);
+        mutilation.Mutilate(new ThrowImmediatelyDataLoadJob(new HICDatabaseConfiguration(db.Server)));
 
-            mutilation.PreferLargerValues = preferLarger;
-            mutilation.PreferNulls = false;
+        Assert.AreEqual(3, tbl.GetRowCount());
+        var result = tbl.GetDataTable();
 
-            mutilation.Initialize(db, LoadStage.AdjustRaw);
-            mutilation.Mutilate(new ThrowImmediatelyDataLoadJob(new HICDatabaseConfiguration(db.Server)));
+        //if you like larger values then you want 2002 thats larger than 2001
+        Assert.AreEqual(preferLarger ? 1 : 0, result.Rows.Cast<DataRow>().Count(r => (int)r["PK"] == 1 && Equals(r["ResolveOn"], new DateTime(2002,01,01)) && r["AnotherCol"] as string == "flop"));
+        Assert.AreEqual(preferLarger ? 0 : 1, result.Rows.Cast<DataRow>().Count(r => (int)r["PK"] == 1 && Equals(r["ResolveOn"], new DateTime(2001,01,01))  && r["AnotherCol"] as string == "flop"));
 
-            Assert.AreEqual(7, tbl.GetRowCount());
-            var result = tbl.GetDataTable();
+        //either way you shouldn't have the null one
+        Assert.AreEqual(0, result.Rows.Cast<DataRow>().Count(r => (int)r["PK"] == 1 && r["ResolveOn"] == DBNull.Value && r["AnotherCol"] as string == "cat"));
+    }
 
-            //if you like larger values then you want 2002 thats larger than 2001
-            Assert.AreEqual(preferLarger ? 1 : 0, result.Rows.Cast<DataRow>().Count(r => (int)r["PK1"] == 1 && (int)r["PK2"] == 1 && Equals(r["ResolveOn"], new DateTime(2002, 01, 01)) && r["AnotherCol"] as string == "flop"));
-            Assert.AreEqual(preferLarger ? 0 : 1, result.Rows.Cast<DataRow>().Count(r => (int)r["PK1"] == 1 && (int)r["PK2"] == 1 && Equals(r["ResolveOn"], new DateTime(2001, 01, 01)) && r["AnotherCol"] as string == "flop"));
+    [TestCase(DatabaseType.MicrosoftSQLServer, false)]
+    [TestCase(DatabaseType.MySql, false)]
+    [TestCase(DatabaseType.MicrosoftSQLServer, true)]
+    [TestCase(DatabaseType.MySql, true)]
+    public void SafePrimaryKeyCollisionResolverMutilationTests_PreferLarger_ComboKey_RecordsDeleted(DatabaseType dbType, bool preferLarger)
+    {
+        var db = GetCleanedServer(dbType);
 
-            //either way you shouldn't have the null one
-            Assert.AreEqual(0, result.Rows.Cast<DataRow>().Count(r => (int)r["PK1"] == 1 && (int)r["PK2"] == 1 && r["ResolveOn"] == DBNull.Value && r["AnotherCol"] as string == "cat"));
-        }
+        DataTable dt = new DataTable();
+        dt.Columns.Add("PK1");
+        dt.Columns.Add("PK2");
+        dt.Columns.Add("ResolveOn");
+        dt.Columns.Add("AnotherCol");
+
+        dt.Rows.Add(1,1, null, "cat");
+        dt.Rows.Add(1,1, new DateTime(2001, 01, 01), "flop");
+        dt.Rows.Add(1,1, new DateTime(2002, 01, 01), "flop");
+
+        dt.Rows.Add(1, 2, null, "cat");
+        dt.Rows.Add(1, 2, null, "cat");
+        dt.Rows.Add(1, 3, new DateTime(2001, 01, 01), "flop");
+        dt.Rows.Add(1, 4, new DateTime(2002, 01, 01), "flop");
+
+        dt.Rows.Add(2,1, null, "flop");
+        dt.Rows.Add(3,1, null, "franl");
+
+        var tbl = db.CreateTable("MyTable", dt);
+
+        Import(tbl, out var ti, out var cis);
+
+        var pk = cis.Single(c => c.GetRuntimeName().Equals("PK1"));
+        pk.IsPrimaryKey = true;
+        pk.SaveToDatabase();
+
+        var pk2 = cis.Single(c => c.GetRuntimeName().Equals("PK2"));
+        pk2.IsPrimaryKey = true;
+        pk2.SaveToDatabase();
+
+        var resolveOn = cis.Single(c => c.GetRuntimeName().Equals("ResolveOn"));
+
+        var mutilation = new SafePrimaryKeyCollisionResolverMutilation();
+        mutilation.ColumnToResolveOn = resolveOn;
+
+        mutilation.PreferLargerValues = preferLarger;
+        mutilation.PreferNulls = false;
+
+        mutilation.Initialize(db, LoadStage.AdjustRaw);
+        mutilation.Mutilate(new ThrowImmediatelyDataLoadJob(new HICDatabaseConfiguration(db.Server)));
+
+        Assert.AreEqual(7, tbl.GetRowCount());
+        var result = tbl.GetDataTable();
+
+        //if you like larger values then you want 2002 thats larger than 2001
+        Assert.AreEqual(preferLarger ? 1 : 0, result.Rows.Cast<DataRow>().Count(r => (int)r["PK1"] == 1 && (int)r["PK2"] == 1 && Equals(r["ResolveOn"], new DateTime(2002, 01, 01)) && r["AnotherCol"] as string == "flop"));
+        Assert.AreEqual(preferLarger ? 0 : 1, result.Rows.Cast<DataRow>().Count(r => (int)r["PK1"] == 1 && (int)r["PK2"] == 1 && Equals(r["ResolveOn"], new DateTime(2001, 01, 01)) && r["AnotherCol"] as string == "flop"));
+
+        //either way you shouldn't have the null one
+        Assert.AreEqual(0, result.Rows.Cast<DataRow>().Count(r => (int)r["PK1"] == 1 && (int)r["PK2"] == 1 && r["ResolveOn"] == DBNull.Value && r["AnotherCol"] as string == "cat"));
     }
 }

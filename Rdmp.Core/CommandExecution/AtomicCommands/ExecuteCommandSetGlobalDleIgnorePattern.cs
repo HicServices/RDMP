@@ -12,59 +12,57 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 
-namespace Rdmp.Core.CommandExecution.AtomicCommands
+namespace Rdmp.Core.CommandExecution.AtomicCommands;
+
+public class ExecuteCommandSetGlobalDleIgnorePattern : BasicCommandExecution
 {
-
-    public class ExecuteCommandSetGlobalDleIgnorePattern : BasicCommandExecution
-    {
-        private readonly string _pattern;
-        private readonly bool _explicitPatternProvided;
+    private readonly string _pattern;
+    private readonly bool _explicitPatternProvided;
         
-        [UseWithObjectConstructor]
-        public ExecuteCommandSetGlobalDleIgnorePattern(IBasicActivateItems activator, string pattern):base(activator)
-        {
-            this._pattern = pattern;
-            //if pattern is null but this constructor is used then we shouldn't ask them again what they want
-            _explicitPatternProvided = true;
-        }
+    [UseWithObjectConstructor]
+    public ExecuteCommandSetGlobalDleIgnorePattern(IBasicActivateItems activator, string pattern):base(activator)
+    {
+        this._pattern = pattern;
+        //if pattern is null but this constructor is used then we shouldn't ask them again what they want
+        _explicitPatternProvided = true;
+    }
 
-        /// <summary>
-        /// Constructor for when we should prompt user in Gui for what the pattern should be if/when command is executed
-        /// </summary>
-        /// <param name="activator"></param>
-        public ExecuteCommandSetGlobalDleIgnorePattern(IBasicActivateItems activator):base(activator)
-        {
+    /// <summary>
+    /// Constructor for when we should prompt user in Gui for what the pattern should be if/when command is executed
+    /// </summary>
+    /// <param name="activator"></param>
+    public ExecuteCommandSetGlobalDleIgnorePattern(IBasicActivateItems activator):base(activator)
+    {
              
-        }
+    }
 
-        public override void Execute()
+    public override void Execute()
+    {
+        base.Execute();
+
+        var existing = HICDatabaseConfiguration.GetGlobalIgnorePatternIfAny(BasicActivator.RepositoryLocator.CatalogueRepository);
+
+        if(existing == null)
         {
-            base.Execute();
-
-            var existing = HICDatabaseConfiguration.GetGlobalIgnorePatternIfAny(BasicActivator.RepositoryLocator.CatalogueRepository);
-
-            if(existing == null)
+            existing = new StandardRegex(BasicActivator.RepositoryLocator.CatalogueRepository)
             {
-                existing = new StandardRegex(BasicActivator.RepositoryLocator.CatalogueRepository)
-                {
-                    ConceptName = StandardRegex.DataLoadEngineGlobalIgnorePattern,
-                    Description = "Regex that will be applied as an ignore when running the data load engine",
-                    Regex = "^ignore_.*"
+                ConceptName = StandardRegex.DataLoadEngineGlobalIgnorePattern,
+                Description = "Regex that will be applied as an ignore when running the data load engine",
+                Regex = "^ignore_.*"
 
-                };
-                existing.SaveToDatabase();
-            }
+            };
+            existing.SaveToDatabase();
+        }
                 
-            if(_explicitPatternProvided)
-            {
-                existing.Regex = _pattern;
-                existing.SaveToDatabase();
-            }
-            else
-            {
-                Publish(existing);
-                Activate(existing);
-            }
+        if(_explicitPatternProvided)
+        {
+            existing.Regex = _pattern;
+            existing.SaveToDatabase();
+        }
+        else
+        {
+            Publish(existing);
+            Activate(existing);
         }
     }
 }

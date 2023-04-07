@@ -15,83 +15,82 @@ using Rdmp.Core.QueryCaching.Aggregation;
 using Rdmp.Core.QueryCaching.Aggregation.Arguments;
 using ReusableLibraryCode.DataAccess;
 
-namespace Rdmp.Core.CohortCreation.Execution
+namespace Rdmp.Core.CohortCreation.Execution;
+
+/// <summary>
+/// A single AggregateConfiguration being executed by a CohortCompiler.  The AggregateConfiguration will be a query like 'select distinct patientId from 
+/// TableX where ...'.  The  query result table can/will be commited as a CacheCommitIdentifierList to  the CachedAggregateConfigurationResultsManager.
+/// </summary>
+public class AggregationTask:CacheableTask
 {
-    /// <summary>
-    /// A single AggregateConfiguration being executed by a CohortCompiler.  The AggregateConfiguration will be a query like 'select distinct patientId from 
-    /// TableX where ...'.  The  query result table can/will be commited as a CacheCommitIdentifierList to  the CachedAggregateConfigurationResultsManager.
-    /// </summary>
-    public class AggregationTask:CacheableTask
+    public AggregateConfiguration Aggregate { get; private set; }
+
+    private string _catalogueName;
+    private CohortIdentificationConfiguration _cohortIdentificationConfiguration;
+    private List<CohortAggregateContainer> _allParentContainers;
+
+    public AggregationTask(AggregateConfiguration aggregate, CohortCompiler compiler): base(compiler)
     {
-        public AggregateConfiguration Aggregate { get; private set; }
+        Aggregate = aggregate;
+        _catalogueName = aggregate.Catalogue.Name;
+        _cohortIdentificationConfiguration = compiler.CohortIdentificationConfiguration;
 
-        private string _catalogueName;
-        private CohortIdentificationConfiguration _cohortIdentificationConfiguration;
-        private List<CohortAggregateContainer> _allParentContainers;
+        var container = aggregate.GetCohortAggregateContainerIfAny();
 
-        public AggregationTask(AggregateConfiguration aggregate, CohortCompiler compiler): base(compiler)
+        if(container != null)
         {
-            Aggregate = aggregate;
-            _catalogueName = aggregate.Catalogue.Name;
-            _cohortIdentificationConfiguration = compiler.CohortIdentificationConfiguration;
-
-            var container = aggregate.GetCohortAggregateContainerIfAny();
-
-            if(container != null)
-            {
-                _allParentContainers = container.GetAllParentContainers().ToList();
-                _allParentContainers.Add(container);
-            }
+            _allParentContainers = container.GetAllParentContainers().ToList();
+            _allParentContainers.Add(container);
         }
+    }
 
 
-        public override string GetCatalogueName()
-        {
-            return _catalogueName;
-        }
+    public override string GetCatalogueName()
+    {
+        return _catalogueName;
+    }
 
-        public override IMapsDirectlyToDatabaseTable Child
-        {
-            get { return Aggregate; }
-        }
+    public override IMapsDirectlyToDatabaseTable Child
+    {
+        get { return Aggregate; }
+    }
 
 
-        public override string ToString()
-        {
-            string name = Aggregate.ToString();
+    public override string ToString()
+    {
+        string name = Aggregate.ToString();
 
-            string expectedTrimStart = _cohortIdentificationConfiguration.GetNamingConventionPrefixForConfigurations();
+        string expectedTrimStart = _cohortIdentificationConfiguration.GetNamingConventionPrefixForConfigurations();
 
-            if (name.StartsWith(expectedTrimStart))
-                return name.Substring(expectedTrimStart.Length);
+        if (name.StartsWith(expectedTrimStart))
+            return name.Substring(expectedTrimStart.Length);
 
-            return name;
-        }
+        return name;
+    }
 
-        public override IDataAccessPoint[] GetDataAccessPoints()
-        {
-            return Aggregate.Catalogue.GetTableInfoList(false);
-        }
+    public override IDataAccessPoint[] GetDataAccessPoints()
+    {
+        return Aggregate.Catalogue.GetTableInfoList(false);
+    }
 
-        public override bool IsEnabled()
-        {
-            //aggregate is not disabled and none of the parent containers are disabled either
-            return !Aggregate.IsDisabled && !_allParentContainers.Any(c=>c.IsDisabled);
-        }
+    public override bool IsEnabled()
+    {
+        //aggregate is not disabled and none of the parent containers are disabled either
+        return !Aggregate.IsDisabled && !_allParentContainers.Any(c=>c.IsDisabled);
+    }
 
-        public override AggregateConfiguration GetAggregateConfiguration()
-        {
-            return Aggregate;
-        }
+    public override AggregateConfiguration GetAggregateConfiguration()
+    {
+        return Aggregate;
+    }
 
-        public override CacheCommitArguments GetCacheArguments(string sql, DataTable results, DatabaseColumnRequest[] explicitTypes)
-        {
-            return new CacheCommitIdentifierList(Aggregate, sql, results, explicitTypes.Single(), Timeout);
-        }
+    public override CacheCommitArguments GetCacheArguments(string sql, DataTable results, DatabaseColumnRequest[] explicitTypes)
+    {
+        return new CacheCommitIdentifierList(Aggregate, sql, results, explicitTypes.Single(), Timeout);
+    }
 
-        public override void ClearYourselfFromCache(CachedAggregateConfigurationResultsManager manager)
-        {
-            manager.DeleteCacheEntryIfAny(Aggregate, AggregateOperation.IndexedExtractionIdentifierList);
-        }
+    public override void ClearYourselfFromCache(CachedAggregateConfigurationResultsManager manager)
+    {
+        manager.DeleteCacheEntryIfAny(Aggregate, AggregateOperation.IndexedExtractionIdentifierList);
     }
 }

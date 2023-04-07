@@ -16,57 +16,56 @@ using Rdmp.Core.DataLoad.Engine.DatabaseManagement.EntityNaming;
 using Rdmp.Core.DataLoad.Engine.Job;
 using Tests.Common;
 
-namespace Rdmp.Core.Tests.DataLoad.Engine.DatabaseManagement.EntityNaming
+namespace Rdmp.Core.Tests.DataLoad.Engine.DatabaseManagement.EntityNaming;
+
+class HICDatabaseConfigurationTests: UnitTests
 {
-    class HICDatabaseConfigurationTests: UnitTests
+
+    /// <summary>
+    /// Tests the ability of <see cref="HICDatabaseConfiguration"/> to predict where tables will exist
+    /// during a load at various stages (RAW, STAGING etc).  This is largely controlled by what tables the
+    /// <see cref="IDataLoadJob"/> says it loads and what the names should be according to
+    /// the <see cref="INameDatabasesAndTablesDuringLoads"/>
+    /// </summary>
+    /// <param name="testLookup"></param>
+    [TestCase(true)]
+    [TestCase(false)]
+    public void TestHICDatabaseConfiguration_ExpectTables(bool testLookup)
     {
+        var conf = new HICDatabaseConfiguration(new DiscoveredServer("localhost", "mydb",
+            DatabaseType.MicrosoftSQLServer, null, null), new FixedStagingDatabaseNamer("mydb"));
 
-        /// <summary>
-        /// Tests the ability of <see cref="HICDatabaseConfiguration"/> to predict where tables will exist
-        /// during a load at various stages (RAW, STAGING etc).  This is largely controlled by what tables the
-        /// <see cref="IDataLoadJob"/> says it loads and what the names should be according to
-        /// the <see cref="INameDatabasesAndTablesDuringLoads"/>
-        /// </summary>
-        /// <param name="testLookup"></param>
-        [TestCase(true)]
-        [TestCase(false)]
-        public void TestHICDatabaseConfiguration_ExpectTables(bool testLookup)
-        {
-            var conf = new HICDatabaseConfiguration(new DiscoveredServer("localhost", "mydb",
-                DatabaseType.MicrosoftSQLServer, null, null), new FixedStagingDatabaseNamer("mydb"));
+        var ti = WhenIHaveA<TableInfo>();
+        var lookup = WhenIHaveA<TableInfo>();
+        lookup.Name = "MyHeartyLookup";
+        lookup.Database = "LookupsDb";
+        lookup.SaveToDatabase();
 
-            var ti = WhenIHaveA<TableInfo>();
-            var lookup = WhenIHaveA<TableInfo>();
-            lookup.Name = "MyHeartyLookup";
-            lookup.Database = "LookupsDb";
-            lookup.SaveToDatabase();
-
-            var job = Mock.Of<IDataLoadJob>(m=>
-                m.RegularTablesToLoad == new List<ITableInfo>(new []{ti}) &&
-                m.LookupTablesToLoad == new List<ITableInfo>(new []{lookup}));
+        var job = Mock.Of<IDataLoadJob>(m=>
+            m.RegularTablesToLoad == new List<ITableInfo>(new []{ti}) &&
+            m.LookupTablesToLoad == new List<ITableInfo>(new []{lookup}));
             
-            var result = conf.ExpectTables(job, LoadBubble.Raw, testLookup).ToArray();
+        var result = conf.ExpectTables(job, LoadBubble.Raw, testLookup).ToArray();
 
-            Assert.AreEqual(testLookup ? 2 : 1,result.Length);
-            StringAssert.AreEqualIgnoringCase("mydb_RAW",result[0].Database.GetRuntimeName());
-            StringAssert.AreEqualIgnoringCase("My_Table",result[0].GetRuntimeName());
+        Assert.AreEqual(testLookup ? 2 : 1,result.Length);
+        StringAssert.AreEqualIgnoringCase("mydb_RAW",result[0].Database.GetRuntimeName());
+        StringAssert.AreEqualIgnoringCase("My_Table",result[0].GetRuntimeName());
 
-            if (testLookup)
-            {
-                StringAssert.AreEqualIgnoringCase("mydb_RAW",result[1].Database.GetRuntimeName());
-                StringAssert.AreEqualIgnoringCase("MyHeartyLookup",result[1].GetRuntimeName());
-            }
+        if (testLookup)
+        {
+            StringAssert.AreEqualIgnoringCase("mydb_RAW",result[1].Database.GetRuntimeName());
+            StringAssert.AreEqualIgnoringCase("MyHeartyLookup",result[1].GetRuntimeName());
+        }
 
-            result = conf.ExpectTables(job, LoadBubble.Staging, testLookup).ToArray();
-            Assert.AreEqual(testLookup ? 2 : 1,result.Length);
-            StringAssert.AreEqualIgnoringCase("DLE_STAGING",result[0].Database.GetRuntimeName());
-            StringAssert.AreEqualIgnoringCase("mydb_My_Table_STAGING",result[0].GetRuntimeName());
+        result = conf.ExpectTables(job, LoadBubble.Staging, testLookup).ToArray();
+        Assert.AreEqual(testLookup ? 2 : 1,result.Length);
+        StringAssert.AreEqualIgnoringCase("DLE_STAGING",result[0].Database.GetRuntimeName());
+        StringAssert.AreEqualIgnoringCase("mydb_My_Table_STAGING",result[0].GetRuntimeName());
 
-            if (testLookup)
-            {
-                StringAssert.AreEqualIgnoringCase("DLE_STAGING",result[1].Database.GetRuntimeName());
-                StringAssert.AreEqualIgnoringCase("mydb_MyHeartyLookup_STAGING",result[1].GetRuntimeName());
-            }
+        if (testLookup)
+        {
+            StringAssert.AreEqualIgnoringCase("DLE_STAGING",result[1].Database.GetRuntimeName());
+            StringAssert.AreEqualIgnoringCase("mydb_MyHeartyLookup_STAGING",result[1].GetRuntimeName());
         }
     }
 }

@@ -16,167 +16,166 @@ using ReusableLibraryCode.Icons.IconProvision;
 using ReusableLibraryCode.Settings;
 using SixLabors.ImageSharp.PixelFormats;
 
-namespace Rdmp.Core.CommandExecution.AtomicCommands
+namespace Rdmp.Core.CommandExecution.AtomicCommands;
+
+/// <summary>
+/// Creates a new persistent database query configuration for identifying cohort sets of patients.
+/// </summary>
+public class ExecuteCommandCreateNewCohortIdentificationConfiguration : BasicCommandExecution, IAtomicCommandWithTarget
 {
+    private Project _associateWithProject;
+    private string _name;
+
     /// <summary>
-    /// Creates a new persistent database query configuration for identifying cohort sets of patients.
+    /// True to prompt the user to pick a Project if no explicit Project is configured
+    /// yet on this command.
     /// </summary>
-    public class ExecuteCommandCreateNewCohortIdentificationConfiguration : BasicCommandExecution, IAtomicCommandWithTarget
-    {
-        private Project _associateWithProject;
-        private string _name;
-
-        /// <summary>
-        /// True to prompt the user to pick a Project if no explicit Project is configured
-        /// yet on this command.
-        /// </summary>
-        public bool PromptToPickAProject { get; set; } = false;
+    public bool PromptToPickAProject { get; set; } = false;
         
-        /// <summary>
-        /// The folder to put the new <see cref="CohortIdentificationConfiguration"/> in.  Defaults to <see cref="FolderHelper.Root"/>
-        /// </summary>
-        public string Folder { get; set; } = FolderHelper.Root;
+    /// <summary>
+    /// The folder to put the new <see cref="CohortIdentificationConfiguration"/> in.  Defaults to <see cref="FolderHelper.Root"/>
+    /// </summary>
+    public string Folder { get; set; } = FolderHelper.Root;
 
-        /// <summary>
-        /// Name to give the root component of new cics created by this command (usually an EXCEPT but not always - see Cohort Configuration Wizard)
-        /// </summary>
-        public static string RootContainerName = "Root Container";
-        /// <summary>
-        /// Name to give the inclusion component of new cics created by this command
-        /// </summary>
-        public static string InclusionCriteriaName = "Inclusion Criteria";
+    /// <summary>
+    /// Name to give the root component of new cics created by this command (usually an EXCEPT but not always - see Cohort Configuration Wizard)
+    /// </summary>
+    public static string RootContainerName = "Root Container";
+    /// <summary>
+    /// Name to give the inclusion component of new cics created by this command
+    /// </summary>
+    public static string InclusionCriteriaName = "Inclusion Criteria";
 
-        /// <summary>
-        /// Name to give the exclusion component of new cics created by this command
-        /// </summary>
-        public static string ExclusionCriteriaName = "Exclusion Criteria";
+    /// <summary>
+    /// Name to give the exclusion component of new cics created by this command
+    /// </summary>
+    public static string ExclusionCriteriaName = "Exclusion Criteria";
 
-        public ExecuteCommandCreateNewCohortIdentificationConfiguration(IBasicActivateItems activator) : base(activator)
+    public ExecuteCommandCreateNewCohortIdentificationConfiguration(IBasicActivateItems activator) : base(activator)
+    {
+        if (!activator.CoreChildProvider.AllCatalogues.Any())
+            SetImpossible("There are no datasets loaded yet into RDMP");
+
+        UseTripleDotSuffix = true;
+    }
+
+    [UseWithObjectConstructor]
+    public ExecuteCommandCreateNewCohortIdentificationConfiguration(IBasicActivateItems activator, string name): this(activator)
+    {
+        _name = name;
+    }
+
+    public override Image<Rgba32> GetImage(IIconProvider iconProvider)
+    {
+        return iconProvider.GetImage(RDMPConcept.CohortIdentificationConfiguration, OverlayKind.Add);
+    }
+
+    public IAtomicCommandWithTarget SetTarget(DatabaseEntity target)
+    {
+        _associateWithProject = target as Project;
+        return this;
+    }
+
+    public override void Execute()
+    {
+        base.Execute();
+
+        var proj = _associateWithProject;
+
+        if(proj == null && BasicActivator.IsInteractive && PromptToPickAProject)
         {
-            if (!activator.CoreChildProvider.AllCatalogues.Any())
-                SetImpossible("There are no datasets loaded yet into RDMP");
+            var projects = BasicActivator.RepositoryLocator.DataExportRepository.GetAllObjects<Project>();
 
-            UseTripleDotSuffix = true;
-        }
-
-        [UseWithObjectConstructor]
-        public ExecuteCommandCreateNewCohortIdentificationConfiguration(IBasicActivateItems activator, string name): this(activator)
-        {
-            _name = name;
-        }
-
-        public override Image<Rgba32> GetImage(IIconProvider iconProvider)
-        {
-            return iconProvider.GetImage(RDMPConcept.CohortIdentificationConfiguration, OverlayKind.Add);
-        }
-
-        public IAtomicCommandWithTarget SetTarget(DatabaseEntity target)
-        {
-            _associateWithProject = target as Project;
-            return this;
-        }
-
-        public override void Execute()
-        {
-            base.Execute();
-
-            var proj = _associateWithProject;
-
-            if(proj == null && BasicActivator.IsInteractive && PromptToPickAProject)
+            if(projects.Any())
             {
-                var projects = BasicActivator.RepositoryLocator.DataExportRepository.GetAllObjects<Project>();
-
-                if(projects.Any())
+                proj = (Project)BasicActivator.SelectOne(new DialogArgs
                 {
-                    proj = (Project)BasicActivator.SelectOne(new DialogArgs
-                    {
-                        WindowTitle = "Associate with Project",
-                        TaskDescription = "Do you want to associate this new query with a Project? if not select Null or Cancel.",
-                        AllowSelectingNull = true,
-                    }, projects);
-                }
+                    WindowTitle = "Associate with Project",
+                    TaskDescription = "Do you want to associate this new query with a Project? if not select Null or Cancel.",
+                    AllowSelectingNull = true,
+                }, projects);
             }
+        }
 
-            CohortIdentificationConfiguration cic;
+        CohortIdentificationConfiguration cic;
             
-            //if user wants to see the wizard and isn't using the CLI constructor
-            if (UserSettings.ShowCohortWizard && string.IsNullOrWhiteSpace(_name))
+        //if user wants to see the wizard and isn't using the CLI constructor
+        if (UserSettings.ShowCohortWizard && string.IsNullOrWhiteSpace(_name))
+        {
+            //try showing wizard if we can't
+            if(!BasicActivator.ShowCohortWizard( out cic))
             {
-                //try showing wizard if we can't
-                if(!BasicActivator.ShowCohortWizard( out cic))
-                {
-                    // No wizards are available, just generate a basic one
-                    cic = GenerateBasicCohortIdentificationConfiguration();
-                }
-            }
-            else
-            {
-                // user doesn't want to see the wizard
+                // No wizards are available, just generate a basic one
                 cic = GenerateBasicCohortIdentificationConfiguration();
             }
+        }
+        else
+        {
+            // user doesn't want to see the wizard
+            cic = GenerateBasicCohortIdentificationConfiguration();
+        }
                 
-            if (cic == null)
-                return;
+        if (cic == null)
+            return;
 
-            cic.Folder = Folder;
-            cic.SaveToDatabase();
+        cic.Folder = Folder;
+        cic.SaveToDatabase();
 
-            if (proj != null)
-            {
-                var assoc = proj.AssociateWithCohortIdentification(cic);
-                Publish(assoc);
-                Emphasise(assoc, int.MaxValue);
+        if (proj != null)
+        {
+            var assoc = proj.AssociateWithCohortIdentification(cic);
+            Publish(assoc);
+            Emphasise(assoc, int.MaxValue);
 
-            }
-            else
-            {
-                Publish(cic);
-                Emphasise(cic, int.MaxValue);
-            }
-
-            Activate(cic);
+        }
+        else
+        {
+            Publish(cic);
+            Emphasise(cic, int.MaxValue);
         }
 
-        private CohortIdentificationConfiguration  GenerateBasicCohortIdentificationConfiguration()
-        {
-            var name = _name;
+        Activate(cic);
+    }
 
-            if(name == null)
-                if (!BasicActivator.TypeText(new DialogArgs
+    private CohortIdentificationConfiguration  GenerateBasicCohortIdentificationConfiguration()
+    {
+        var name = _name;
+
+        if(name == null)
+            if (!BasicActivator.TypeText(new DialogArgs
                 {
-                  WindowTitle = "New Cohort Builder Query",
-                  TaskDescription = "Enter a name for the Cohort Builder Query.",
-                  EntryLabel = "Name"
+                    WindowTitle = "New Cohort Builder Query",
+                    TaskDescription = "Enter a name for the Cohort Builder Query.",
+                    EntryLabel = "Name"
                 },255,null, out name,false))
-                    return null;
+                return null;
 
-            var cic = new CohortIdentificationConfiguration(BasicActivator.RepositoryLocator.CatalogueRepository, name);
-            cic.CreateRootContainerIfNotExists();
-            var root = cic.RootCohortAggregateContainer;
-            root.Name = RootContainerName;
-            root.Operation = SetOperation.EXCEPT;
-            root.SaveToDatabase();
+        var cic = new CohortIdentificationConfiguration(BasicActivator.RepositoryLocator.CatalogueRepository, name);
+        cic.CreateRootContainerIfNotExists();
+        var root = cic.RootCohortAggregateContainer;
+        root.Name = RootContainerName;
+        root.Operation = SetOperation.EXCEPT;
+        root.SaveToDatabase();
 
-            var inclusion = new CohortAggregateContainer(BasicActivator.RepositoryLocator.CatalogueRepository, SetOperation.UNION);
-            inclusion.Name = InclusionCriteriaName;
-            inclusion.Order = 0;
-            inclusion.SaveToDatabase();
+        var inclusion = new CohortAggregateContainer(BasicActivator.RepositoryLocator.CatalogueRepository, SetOperation.UNION);
+        inclusion.Name = InclusionCriteriaName;
+        inclusion.Order = 0;
+        inclusion.SaveToDatabase();
 
-            var exclusion = new CohortAggregateContainer(BasicActivator.RepositoryLocator.CatalogueRepository, SetOperation.UNION);
-            exclusion.Name = ExclusionCriteriaName;
-            exclusion.Order = 1;
-            exclusion.SaveToDatabase();
+        var exclusion = new CohortAggregateContainer(BasicActivator.RepositoryLocator.CatalogueRepository, SetOperation.UNION);
+        exclusion.Name = ExclusionCriteriaName;
+        exclusion.Order = 1;
+        exclusion.SaveToDatabase();
 
-            root.AddChild(inclusion);
-            root.AddChild(exclusion);
+        root.AddChild(inclusion);
+        root.AddChild(exclusion);
 
-            return cic;
-        }
+        return cic;
+    }
 
-        public override string GetCommandHelp()
-        {
-            return
-                "Creating a cohort identification configuration which includes/excludes patients based on the data in your database tables ";
-        }
+    public override string GetCommandHelp()
+    {
+        return
+            "Creating a cohort identification configuration which includes/excludes patients based on the data in your database tables ";
     }
 }

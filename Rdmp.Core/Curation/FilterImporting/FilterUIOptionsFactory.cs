@@ -9,32 +9,31 @@ using Rdmp.Core.Curation.Data;
 using Rdmp.Core.Curation.Data.Aggregation;
 using Rdmp.Core.DataExport.Data;
 
-namespace Rdmp.Core.Curation.FilterImporting
+namespace Rdmp.Core.Curation.FilterImporting;
+
+/// <summary>
+/// Factory for providing the correct implementation of <see cref="FilterUIOptions"/> based on the Type of the
+/// provided <see cref="IFilter"/>.
+/// </summary>
+public class FilterUIOptionsFactory
 {
-    /// <summary>
-    /// Factory for providing the correct implementation of <see cref="FilterUIOptions"/> based on the Type of the
-    /// provided <see cref="IFilter"/>.
-    /// </summary>
-    public class FilterUIOptionsFactory
+    public FilterUIOptions Create(IFilter filter)
     {
-        public FilterUIOptions Create(IFilter filter)
-        {
-            var aggregateFilter = filter as AggregateFilter;
-            var deployedExtractionFilter = filter as DeployedExtractionFilter;
-            var masterCatalogueFilter = filter as ExtractionFilter;
+        var aggregateFilter = filter as AggregateFilter;
+        var deployedExtractionFilter = filter as DeployedExtractionFilter;
+        var masterCatalogueFilter = filter as ExtractionFilter;
 
-            if (aggregateFilter != null)
-                return new AggregateFilterUIOptions(aggregateFilter);
+        if (aggregateFilter != null)
+            return new AggregateFilterUIOptions(aggregateFilter);
 
-            if (deployedExtractionFilter != null)
-                return new DeployedExtractionFilterUIOptions(deployedExtractionFilter);
+        if (deployedExtractionFilter != null)
+            return new DeployedExtractionFilterUIOptions(deployedExtractionFilter);
 
-            if (masterCatalogueFilter != null)
-                return new ExtractionFilterUIOptions(masterCatalogueFilter);
+        if (masterCatalogueFilter != null)
+            return new ExtractionFilterUIOptions(masterCatalogueFilter);
 
-            throw new Exception("Expected IFilter '" + filter +
-                                    "' to be either an AggregateFilter, DeployedExtractionFilter or a master ExtractionFilter but it was " +
-                                    filter.GetType().Name);
-        }
+        throw new Exception("Expected IFilter '" + filter +
+                            "' to be either an AggregateFilter, DeployedExtractionFilter or a master ExtractionFilter but it was " +
+                            filter.GetType().Name);
     }
 }

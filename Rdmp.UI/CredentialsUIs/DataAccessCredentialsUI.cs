@@ -13,32 +13,31 @@ using Rdmp.UI.SimpleControls;
 using Rdmp.UI.TestsAndSetup.ServicePropogation;
 
 
-namespace Rdmp.UI.CredentialsUIs
+namespace Rdmp.UI.CredentialsUIs;
+
+/// <summary>
+/// Allows you to change a stored username/password (DataAccessCredentials).  For more information about how passwords are encrypted See PasswordEncryptionKeyLocationUI
+/// </summary>
+public partial class DataAccessCredentialsUI : DataAccessCredentialsUI_Design, ISaveableUI
 {
-    /// <summary>
-    /// Allows you to change a stored username/password (DataAccessCredentials).  For more information about how passwords are encrypted See PasswordEncryptionKeyLocationUI
-    /// </summary>
-    public partial class DataAccessCredentialsUI : DataAccessCredentialsUI_Design, ISaveableUI
+    public DataAccessCredentialsUI()
     {
-        public DataAccessCredentialsUI()
-        {
-            InitializeComponent();
+        InitializeComponent();
 
-            AssociatedCollection = RDMPCollection.Tables;
-        }
+        AssociatedCollection = RDMPCollection.Tables;
+    }
         
-        protected override void SetBindings(BinderWithErrorProviderFactory rules, DataAccessCredentials databaseObject)
-        {
-            base.SetBindings(rules, databaseObject);
-            
-            Bind(tbName,"Text","Name",c=>c.Name);
-            Bind(tbUsername, "Text", "Username", c => c.Username);
-            Bind(tbPassword, "Text", "Password", c => c.Password);
-        }
-    }
-
-    [TypeDescriptionProvider(typeof(AbstractControlDescriptionProvider<DataAccessCredentialsUI_Design, UserControl>))]
-    public abstract class DataAccessCredentialsUI_Design:RDMPSingleDatabaseObjectControl<DataAccessCredentials>
+    protected override void SetBindings(BinderWithErrorProviderFactory rules, DataAccessCredentials databaseObject)
     {
+        base.SetBindings(rules, databaseObject);
+            
+        Bind(tbName,"Text","Name",c=>c.Name);
+        Bind(tbUsername, "Text", "Username", c => c.Username);
+        Bind(tbPassword, "Text", "Password", c => c.Password);
     }
+}
+
+[TypeDescriptionProvider(typeof(AbstractControlDescriptionProvider<DataAccessCredentialsUI_Design, UserControl>))]
+public abstract class DataAccessCredentialsUI_Design:RDMPSingleDatabaseObjectControl<DataAccessCredentials>
+{
 }

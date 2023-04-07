@@ -7,20 +7,19 @@
 using System;
 using MapsDirectlyToDatabaseTable;
 
-namespace Rdmp.Core.DataExport.DataRelease.Audit
+namespace Rdmp.Core.DataExport.DataRelease.Audit;
+
+/// <summary>
+/// See ReleaseLogEntry
+/// </summary>
+public interface IReleaseLog : IMapsDirectlyToDatabaseTable
 {
-    /// <summary>
-    /// See ReleaseLogEntry
-    /// </summary>
-    public interface IReleaseLog : IMapsDirectlyToDatabaseTable
-    {
-        int CumulativeExtractionResults_ID { get; }
-        string Username { get; }
-        DateTime DateOfRelease { get; }
-        string MD5OfDatasetFile { get; }
-        string DatasetState { get; }
-        string EnvironmentState { get; }
-        bool IsPatch { get; }
-        string ReleaseFolder { get; }
-    }
+    int CumulativeExtractionResults_ID { get; }
+    string Username { get; }
+    DateTime DateOfRelease { get; }
+    string MD5OfDatasetFile { get; }
+    string DatasetState { get; }
+    string EnvironmentState { get; }
+    bool IsPatch { get; }
+    string ReleaseFolder { get; }
 }

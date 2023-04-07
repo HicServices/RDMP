@@ -7,27 +7,26 @@
 using Rdmp.Core.Curation.Data;
 using Rdmp.Core.DataExport.Data;
 
-namespace Rdmp.Core.CommandExecution.Combining
+namespace Rdmp.Core.CommandExecution.Combining;
+
+/// <summary>
+/// Makes <see cref="Project"/> objects draggable.  Cache any relevant slow to fetch
+/// info here so that it is available for rapid query as user waves it around over 
+/// potential drop targets
+/// </summary>
+public class ProjectCombineable : ICombineToMakeCommand, IHasFolderCombineable
 {
-    /// <summary>
-    /// Makes <see cref="Project"/> objects draggable.  Cache any relevant slow to fetch
-    /// info here so that it is available for rapid query as user waves it around over 
-    /// potential drop targets
-    /// </summary>
-    public class ProjectCombineable : ICombineToMakeCommand, IHasFolderCombineable
+    public Project  Project { get; private set; }
+
+    public IHasFolder Folderable => Project;
+
+    public ProjectCombineable(Project project)
     {
-        public Project  Project { get; private set; }
+        Project = project;
+    }
 
-        public IHasFolder Folderable => Project;
-
-        public ProjectCombineable(Project project)
-        {
-            Project = project;
-        }
-
-        public string GetSqlString()
-        {
-            return "";
-        }
+    public string GetSqlString()
+    {
+        return "";
     }
 }

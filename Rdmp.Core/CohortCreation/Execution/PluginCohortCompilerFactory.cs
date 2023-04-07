@@ -9,23 +9,22 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 
-namespace Rdmp.Core.CohortCreation.Execution
+namespace Rdmp.Core.CohortCreation.Execution;
+
+internal class PluginCohortCompilerFactory
 {
-    internal class PluginCohortCompilerFactory
+    private MEF _mef;
+
+    public PluginCohortCompilerFactory(MEF mef)
     {
-        private MEF _mef;
+        this._mef = mef;
+    }
 
-        public PluginCohortCompilerFactory(MEF mef)
-        {
-            this._mef = mef;
-        }
-
-        internal IReadOnlyCollection<IPluginCohortCompiler> CreateAll()
-        {
-            return _mef
-                    .GetTypes<IPluginCohortCompiler>()
-                    .Select(Activator.CreateInstance)
-                    .Cast<IPluginCohortCompiler>().ToList().AsReadOnly();
-        }
+    internal IReadOnlyCollection<IPluginCohortCompiler> CreateAll()
+    {
+        return _mef
+            .GetTypes<IPluginCohortCompiler>()
+            .Select(Activator.CreateInstance)
+            .Cast<IPluginCohortCompiler>().ToList().AsReadOnly();
     }
 }

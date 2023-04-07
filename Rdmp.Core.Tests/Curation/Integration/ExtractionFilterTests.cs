@@ -10,35 +10,34 @@ using Rdmp.Core.Curation.Data;
 using System;
 using Tests.Common;
 
-namespace Rdmp.Core.Tests.Curation.Integration
+namespace Rdmp.Core.Tests.Curation.Integration;
+
+public class ExtractionFilterTests : DatabaseTests
 {
-    public class ExtractionFilterTests : DatabaseTests
+    [Test]
+    public void TestExtractionFilterDeleting_WhenItHas_ExtractionFilterParameterSet_DirectlyFails()
     {
-        [Test]
-        public void TestExtractionFilterDeleting_WhenItHas_ExtractionFilterParameterSet_DirectlyFails()
-        {
-            var filter = GetFilterWithParameterSet();
-            var ex = Assert.Throws<Exception>(()=>filter.DeleteInDatabase());
-            Assert.AreEqual("Cannot delete 'Age' because there are one or more ExtractionFilterParameterSet declared on it", ex.Message);
-        }
+        var filter = GetFilterWithParameterSet();
+        var ex = Assert.Throws<Exception>(()=>filter.DeleteInDatabase());
+        Assert.AreEqual("Cannot delete 'Age' because there are one or more ExtractionFilterParameterSet declared on it", ex.Message);
+    }
 
-        private ExtractionFilter GetFilterWithParameterSet()
-        {
-            var cata = new Catalogue(CatalogueRepository, "myCata");
-            var cataItem = new CatalogueItem(CatalogueRepository, cata, "MyCol");
+    private ExtractionFilter GetFilterWithParameterSet()
+    {
+        var cata = new Catalogue(CatalogueRepository, "myCata");
+        var cataItem = new CatalogueItem(CatalogueRepository, cata, "MyCol");
 
-            var table = new TableInfo(CatalogueRepository, "myTbl");
-            var col = new ColumnInfo(CatalogueRepository, "myCol", "varchar(10)", table);
+        var table = new TableInfo(CatalogueRepository, "myTbl");
+        var col = new ColumnInfo(CatalogueRepository, "myCol", "varchar(10)", table);
 
-            var ei = new ExtractionInformation(CatalogueRepository, cataItem, col, "[myTbl].[mycol]");
-            var filter = new ExtractionFilter(CatalogueRepository, "Age", ei);
-            filter.WhereSQL = "Age >= @age";
-            new ExtractionFilterParameter(CatalogueRepository, "DECLARE @age int", filter);
+        var ei = new ExtractionInformation(CatalogueRepository, cataItem, col, "[myTbl].[mycol]");
+        var filter = new ExtractionFilter(CatalogueRepository, "Age", ei);
+        filter.WhereSQL = "Age >= @age";
+        new ExtractionFilterParameter(CatalogueRepository, "DECLARE @age int", filter);
 
-            var paramSet = new ExtractionFilterParameterSet(CatalogueRepository, filter, "Old");
-            paramSet.CreateNewValueEntries();
+        var paramSet = new ExtractionFilterParameterSet(CatalogueRepository, filter, "Old");
+        paramSet.CreateNewValueEntries();
             
-            return filter;
-        }
+        return filter;
     }
 }

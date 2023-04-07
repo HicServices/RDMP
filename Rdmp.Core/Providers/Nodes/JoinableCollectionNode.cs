@@ -9,98 +9,97 @@ using Rdmp.Core.Curation.Data.Cohort;
 using Rdmp.Core.Curation.Data.Cohort.Joinables;
 using ReusableLibraryCode.DataAccess;
 
-namespace Rdmp.Core.Providers.Nodes
+namespace Rdmp.Core.Providers.Nodes;
+
+/// <summary>
+/// Collection of queries which can be joined against when building cohorts (e.g. to find all hospital admissions within 6 
+/// months of a prescription for drug X).  See <see cref="JoinableCohortAggregateConfiguration"/>.
+/// </summary>
+public class JoinableCollectionNode:Node,IOrderable
 {
-    /// <summary>
-    /// Collection of queries which can be joined against when building cohorts (e.g. to find all hospital admissions within 6 
-    /// months of a prescription for drug X).  See <see cref="JoinableCohortAggregateConfiguration"/>.
-    /// </summary>
-    public class JoinableCollectionNode:Node,IOrderable
+    public CohortIdentificationConfiguration Configuration { get; set; }
+    public JoinableCohortAggregateConfiguration[] Joinables { get; set; }
+
+    public JoinableCollectionNode(CohortIdentificationConfiguration configuration, JoinableCohortAggregateConfiguration[] joinables)
     {
-        public CohortIdentificationConfiguration Configuration { get; set; }
-        public JoinableCohortAggregateConfiguration[] Joinables { get; set; }
+        Configuration = configuration;
+        Joinables = joinables;
+    }
 
-        public JoinableCollectionNode(CohortIdentificationConfiguration configuration, JoinableCohortAggregateConfiguration[] joinables)
-        {
-            Configuration = configuration;
-            Joinables = joinables;
-        }
+    public string GetCatalogueName()
+    {
+        return "";
+    }
 
-        public string GetCatalogueName()
-        {
-            return "";
-        }
+    public IMapsDirectlyToDatabaseTable Child
+    {
+        get { return null; }
+    }
 
-        public IMapsDirectlyToDatabaseTable Child
-        {
-            get { return null; }
-        }
+    public IDataAccessPoint[] GetDataAccessPoints()
+    {
+        return null;
+    }
 
-        public IDataAccessPoint[] GetDataAccessPoints()
-        {
-            return null;
-        }
+    public override string ToString()
+    {
+        return "Patient Index Table(s)";
+    }
 
-        public override string ToString()
-        {
-            return "Patient Index Table(s)";
-        }
-
-        public string FinalRowCount()
-        {
-            return "";
-        }
-        public int? CumulativeRowCount { set; get; }
+    public string FinalRowCount()
+    {
+        return "";
+    }
+    public int? CumulativeRowCount { set; get; }
         
 
-        public string GetStateDescription()
-        {
-            return "";
-        }
+    public string GetStateDescription()
+    {
+        return "";
+    }
 
-        public string Order()
-        {
-            return "";
-        }
+    public string Order()
+    {
+        return "";
+    }
         
-        public string ElapsedTime = "";
+    public string ElapsedTime = "";
 
-        public string GetCachedQueryUseCount()
-        {
-            return "";
-        }
+    public string GetCachedQueryUseCount()
+    {
+        return "";
+    }
 
-        public string DescribePurpose()
-        {
+    public string DescribePurpose()
+    {
 
-            return @"Drop Aggregates (datasets) here to create patient index tables (Tables with interesting
+        return @"Drop Aggregates (datasets) here to create patient index tables (Tables with interesting
 patient specific dates/fields which you need to use in other datasets). For example if you are
 interested in studying hospitalisations for condition X and all other patient identification 
 criteria are 'in the 6 months' / 'in the 12 months' post hospitalisation date per patient)";
-        }
+    }
 
-        protected bool Equals(JoinableCollectionNode other)
-        {
-            return Equals(Configuration, other.Configuration);
-        }
+    protected bool Equals(JoinableCollectionNode other)
+    {
+        return Equals(Configuration, other.Configuration);
+    }
 
-        public override bool Equals(object obj)
-        {
-            if (ReferenceEquals(null, obj)) return false;
-            if (ReferenceEquals(this, obj)) return true;
-            if (obj.GetType() != this.GetType()) return false;
-            return Equals((JoinableCollectionNode) obj);
-        }
+    public override bool Equals(object obj)
+    {
+        if (ReferenceEquals(null, obj)) return false;
+        if (ReferenceEquals(this, obj)) return true;
+        if (obj.GetType() != this.GetType()) return false;
+        return Equals((JoinableCollectionNode) obj);
+    }
 
-        public override int GetHashCode()
-        {
-            return (Configuration != null ? Configuration.GetHashCode() : 0) * GetType().GetHashCode();
-        }
+    public override int GetHashCode()
+    {
+        return (Configuration != null ? Configuration.GetHashCode() : 0) * GetType().GetHashCode();
+    }
 
-        int IOrderable.Order
-        {
-            get { return 9999; }
-            set { }
-        }
+    int IOrderable.Order
+    {
+        get { return 9999; }
+        set { }
     }
 }

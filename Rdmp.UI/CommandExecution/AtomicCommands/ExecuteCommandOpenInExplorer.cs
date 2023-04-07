@@ -13,42 +13,41 @@ using ReusableLibraryCode;
 using ReusableLibraryCode.Icons.IconProvision;
 using SixLabors.ImageSharp.PixelFormats;
 
-namespace Rdmp.UI.CommandExecution.AtomicCommands
+namespace Rdmp.UI.CommandExecution.AtomicCommands;
+
+public class ExecuteCommandOpenInExplorer:BasicUICommandExecution,IAtomicCommand
 {
-    public class ExecuteCommandOpenInExplorer:BasicUICommandExecution,IAtomicCommand
-    {
-        private readonly FileInfo _file;
-        private readonly DirectoryInfo _dir;
+    private readonly FileInfo _file;
+    private readonly DirectoryInfo _dir;
         
-        public ExecuteCommandOpenInExplorer(IActivateItems activator,DirectoryInfo dir) : base(activator)
-        {
-            _dir = dir; 
+    public ExecuteCommandOpenInExplorer(IActivateItems activator,DirectoryInfo dir) : base(activator)
+    {
+        _dir = dir; 
 
-            if (_dir == null || !_dir.Exists)
-                SetImpossible("Directory not found");
-        }
-        public ExecuteCommandOpenInExplorer(IActivateItems activator, FileInfo file): base(activator)
-        {
-            _file = file;
+        if (_dir == null || !_dir.Exists)
+            SetImpossible("Directory not found");
+    }
+    public ExecuteCommandOpenInExplorer(IActivateItems activator, FileInfo file): base(activator)
+    {
+        _file = file;
 
-            if(_file == null || !_file.Exists)
-                SetImpossible("File not found");
-        }
+        if(_file == null || !_file.Exists)
+            SetImpossible("File not found");
+    }
 
-        public override void Execute()
-        {
-            base.Execute();
+    public override void Execute()
+    {
+        base.Execute();
 
-            if(_file != null)
-                UsefulStuff.GetInstance().ShowFileInWindowsExplorer(_file);
+        if(_file != null)
+            UsefulStuff.GetInstance().ShowFileInWindowsExplorer(_file);
 
-            if(_dir != null)
-                UsefulStuff.GetInstance().ShowFolderInWindowsExplorer(_dir);
-        }
+        if(_dir != null)
+            UsefulStuff.GetInstance().ShowFolderInWindowsExplorer(_dir);
+    }
 
-        public override Image<Rgba32> GetImage(IIconProvider iconProvider)
-        {
-            return iconProvider.GetImage(RDMPConcept.CatalogueFolder);
-        }
+    public override Image<Rgba32> GetImage(IIconProvider iconProvider)
+    {
+        return iconProvider.GetImage(RDMPConcept.CatalogueFolder);
     }
 }

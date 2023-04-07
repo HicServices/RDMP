@@ -14,32 +14,30 @@ using Rdmp.Core.DataLoad.Engine.LoadExecution.Components;
 using ReusableLibraryCode.Progress;
 using Tests.Common;
 
-namespace Rdmp.Core.Tests.DataLoad.Engine.Integration
+namespace Rdmp.Core.Tests.DataLoad.Engine.Integration;
+
+public class SingleJobPipelineTests : DatabaseTests
 {
-    public class SingleJobPipelineTests : DatabaseTests
+    public void LoadNotRequiredStopsPipelineGracefully()
     {
-        public void LoadNotRequiredStopsPipelineGracefully()
-        {
-            var component = new NotRequiredComponent();
+        var component = new NotRequiredComponent();
 
-            var pipeline = new SingleJobExecution(new List<IDataLoadComponent> {component});
+        var pipeline = new SingleJobExecution(new List<IDataLoadComponent> {component});
 
-            var job = Mock.Of<IDataLoadJob>();
-            var jobTokenSource = new GracefulCancellationTokenSource();
-            pipeline.Run(job, jobTokenSource.Token);
-        }
+        var job = Mock.Of<IDataLoadJob>();
+        var jobTokenSource = new GracefulCancellationTokenSource();
+        pipeline.Run(job, jobTokenSource.Token);
+    }
+}
+
+internal class NotRequiredComponent : DataLoadComponent
+{
+    public override ExitCodeType Run(IDataLoadJob job, GracefulCancellationToken cancellationToken)
+    {
+        return ExitCodeType.OperationNotRequired;
     }
 
-    internal class NotRequiredComponent : DataLoadComponent
+    public override void LoadCompletedSoDispose(ExitCodeType exitCode, IDataLoadEventListener postDataLoadEventListener)
     {
-        public override ExitCodeType Run(IDataLoadJob job, GracefulCancellationToken cancellationToken)
-        {
-            return ExitCodeType.OperationNotRequired;
-        }
-
-        public override void LoadCompletedSoDispose(ExitCodeType exitCode, IDataLoadEventListener postDataLoadEventListener)
-        {
-        }
     }
-
 }

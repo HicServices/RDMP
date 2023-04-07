@@ -17,89 +17,88 @@ using System.Text;
 using System.Threading.Tasks;
 using Tests.Common;
 
-namespace Rdmp.Core.Tests.DataExport.Data
+namespace Rdmp.Core.Tests.DataExport.Data;
+
+internal class ExtractableCohortAuditLogBuilderTests : UnitTests
 {
-    internal class ExtractableCohortAuditLogBuilderTests : UnitTests
+    [Test]
+    public void AuditLogReFetch_FileInfo()
     {
-        [Test]
-        public void AuditLogReFetch_FileInfo()
-        {
-            var builder = new ExtractableCohortAuditLogBuilder();
+        var builder = new ExtractableCohortAuditLogBuilder();
             
-            var fi = new FileInfo("durdur.txt");
-            var desc = builder.GetDescription(fi);
+        var fi = new FileInfo("durdur.txt");
+        var desc = builder.GetDescription(fi);
 
-            var moqCohort = Mock.Of<IExtractableCohort>(e => e.AuditLog == desc);
-            var fi2 = builder.GetObjectIfAny(moqCohort, RepositoryLocator);
+        var moqCohort = Mock.Of<IExtractableCohort>(e => e.AuditLog == desc);
+        var fi2 = builder.GetObjectIfAny(moqCohort, RepositoryLocator);
 
-            Assert.IsNotNull(fi2);
-            Assert.IsInstanceOf<FileInfo>(fi2);
-            Assert.AreEqual(fi.FullName, ((FileInfo)fi2).FullName);
-        }
+        Assert.IsNotNull(fi2);
+        Assert.IsInstanceOf<FileInfo>(fi2);
+        Assert.AreEqual(fi.FullName, ((FileInfo)fi2).FullName);
+    }
 
 
-        [Test]
-        public void AuditLogReFetch_CohortIdentificationConfiguration()
-        {
-            var builder = new ExtractableCohortAuditLogBuilder();
+    [Test]
+    public void AuditLogReFetch_CohortIdentificationConfiguration()
+    {
+        var builder = new ExtractableCohortAuditLogBuilder();
 
-            var cic = WhenIHaveA<CohortIdentificationConfiguration>();
-            var desc = builder.GetDescription(cic);
+        var cic = WhenIHaveA<CohortIdentificationConfiguration>();
+        var desc = builder.GetDescription(cic);
 
-            var moqCohort = Mock.Of<IExtractableCohort>(e => e.AuditLog == desc);
-            var cic2 = builder.GetObjectIfAny(moqCohort, RepositoryLocator);
+        var moqCohort = Mock.Of<IExtractableCohort>(e => e.AuditLog == desc);
+        var cic2 = builder.GetObjectIfAny(moqCohort, RepositoryLocator);
 
-            Assert.IsNotNull(cic2);
-            Assert.IsInstanceOf<CohortIdentificationConfiguration>(cic2);
-            Assert.AreEqual(cic,cic2);
-        }
+        Assert.IsNotNull(cic2);
+        Assert.IsInstanceOf<CohortIdentificationConfiguration>(cic2);
+        Assert.AreEqual(cic,cic2);
+    }
 
-        [Test]
-        public void AuditLogReFetch_ExtractionInformation()
-        {
-            var builder = new ExtractableCohortAuditLogBuilder();
+    [Test]
+    public void AuditLogReFetch_ExtractionInformation()
+    {
+        var builder = new ExtractableCohortAuditLogBuilder();
 
-            var ei = WhenIHaveA<ExtractionInformation>();
-            var desc = builder.GetDescription(ei);
+        var ei = WhenIHaveA<ExtractionInformation>();
+        var desc = builder.GetDescription(ei);
 
-            var moqCohort = Mock.Of<IExtractableCohort>(e => e.AuditLog == desc);
-            var ei2 = builder.GetObjectIfAny(moqCohort, RepositoryLocator);
+        var moqCohort = Mock.Of<IExtractableCohort>(e => e.AuditLog == desc);
+        var ei2 = builder.GetObjectIfAny(moqCohort, RepositoryLocator);
 
-            Assert.IsNotNull(ei2);
-            Assert.IsInstanceOf<ExtractionInformation>(ei2);
-            Assert.AreEqual(ei, ei2);
-        }
+        Assert.IsNotNull(ei2);
+        Assert.IsInstanceOf<ExtractionInformation>(ei2);
+        Assert.AreEqual(ei, ei2);
+    }
 
-        [Test]
-        public void AuditLogReFetch_WhenAuditLogIsNull()
-        {
-            var builder = new ExtractableCohortAuditLogBuilder();
-            var moqCohort = Mock.Of<IExtractableCohort>(e => e.AuditLog == null);
-            Assert.IsNull(builder.GetObjectIfAny(moqCohort, RepositoryLocator));
-        }
-        [Test]
-        public void AuditLogReFetch_WhenAuditLogIsRubbish()
-        {
-            var builder = new ExtractableCohortAuditLogBuilder();
-            var moqCohort = Mock.Of<IExtractableCohort>(e => e.AuditLog == "troll doll dur I invented this cohort myself");
-            Assert.IsNull(builder.GetObjectIfAny(moqCohort, RepositoryLocator));
-        }
+    [Test]
+    public void AuditLogReFetch_WhenAuditLogIsNull()
+    {
+        var builder = new ExtractableCohortAuditLogBuilder();
+        var moqCohort = Mock.Of<IExtractableCohort>(e => e.AuditLog == null);
+        Assert.IsNull(builder.GetObjectIfAny(moqCohort, RepositoryLocator));
+    }
+    [Test]
+    public void AuditLogReFetch_WhenAuditLogIsRubbish()
+    {
+        var builder = new ExtractableCohortAuditLogBuilder();
+        var moqCohort = Mock.Of<IExtractableCohort>(e => e.AuditLog == "troll doll dur I invented this cohort myself");
+        Assert.IsNull(builder.GetObjectIfAny(moqCohort, RepositoryLocator));
+    }
 
-        [Test]
-        public void AuditLogReFetch_WhenSourceIsDeleted()
-        {
-            var builder = new ExtractableCohortAuditLogBuilder();
+    [Test]
+    public void AuditLogReFetch_WhenSourceIsDeleted()
+    {
+        var builder = new ExtractableCohortAuditLogBuilder();
 
-            var ei = WhenIHaveA<ExtractionInformation>();
-            var desc = builder.GetDescription(ei);
+        var ei = WhenIHaveA<ExtractionInformation>();
+        var desc = builder.GetDescription(ei);
 
-            var moqCohort = Mock.Of<IExtractableCohort>(e => e.AuditLog == desc);
+        var moqCohort = Mock.Of<IExtractableCohort>(e => e.AuditLog == desc);
             
-            // delete the source
-            ei.DeleteInDatabase();
+        // delete the source
+        ei.DeleteInDatabase();
             
-            // should now return null
-            Assert.IsNull(builder.GetObjectIfAny(moqCohort, RepositoryLocator));
-        }
+        // should now return null
+        Assert.IsNull(builder.GetObjectIfAny(moqCohort, RepositoryLocator));
     }
 }

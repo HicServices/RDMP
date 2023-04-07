@@ -10,44 +10,43 @@ using System.Threading.Tasks;
 using System.Windows.Forms;
 using Timer = System.Windows.Forms.Timer;
 
-namespace Rdmp.UI.SimpleDialogs
+namespace Rdmp.UI.SimpleDialogs;
+
+public sealed partial class WaitUI : Form
 {
-    public sealed partial class WaitUI : Form
+    private readonly string _caption;
+    private readonly Task _task;
+    private readonly CancellationTokenSource _cancellationTokenSource;
+    Timer timer = new Timer();
+
+    public WaitUI(string caption, Task task, CancellationTokenSource cancellationTokenSource)
     {
-        private readonly string _caption;
-        private readonly Task _task;
-        private readonly CancellationTokenSource _cancellationTokenSource;
-        Timer timer = new Timer();
+        _caption = caption;
+        _task = task;
+        _cancellationTokenSource = cancellationTokenSource;
+        InitializeComponent();
 
-        public WaitUI(string caption, Task task, CancellationTokenSource cancellationTokenSource)
+        label1.Text = caption;
+        this.SetClientSizeCore(pictureBox1.Width + label1.PreferredWidth + button1.Width + 10, button1.Height);
+
+        button1.Left = label1.Right;
+        timer.Interval = 500;
+        timer.Start();
+        timer.Tick += TimerTick;
+    }
+
+    private void TimerTick(object sender, EventArgs e)
+    {
+        if (_task.IsCompleted)
         {
-            _caption = caption;
-            _task = task;
-            _cancellationTokenSource = cancellationTokenSource;
-            InitializeComponent();
-
-            label1.Text = caption;
-            this.SetClientSizeCore(pictureBox1.Width + label1.PreferredWidth + button1.Width + 10, button1.Height);
-
-            button1.Left = label1.Right;
-            timer.Interval = 500;
-            timer.Start();
-            timer.Tick += TimerTick;
+            timer.Stop();
+            this.Close();
         }
-
-        private void TimerTick(object sender, EventArgs e)
-        {
-            if (_task.IsCompleted)
-            {
-                timer.Stop();
-                this.Close();
-            }
-        }
+    }
         
-        private void button1_Click(object sender, EventArgs e)
-        {
-            _cancellationTokenSource.Cancel();
-            button1.Enabled = false;
-        }
+    private void button1_Click(object sender, EventArgs e)
+    {
+        _cancellationTokenSource.Cancel();
+        button1.Enabled = false;
     }
 }

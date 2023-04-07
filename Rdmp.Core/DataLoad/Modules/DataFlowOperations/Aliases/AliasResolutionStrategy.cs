@@ -4,21 +4,20 @@
 // RDMP is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License for more details.
 // You should have received a copy of the GNU General Public License along with RDMP. If not, see <https://www.gnu.org/licenses/>.
 
-namespace Rdmp.Core.DataLoad.Modules.DataFlowOperations.Aliases
+namespace Rdmp.Core.DataLoad.Modules.DataFlowOperations.Aliases;
+
+/// <summary>
+/// Determines how a system responds to M to 1 mapping (where a patient is known by multiple different identifiers over time).
+/// </summary>
+public enum AliasResolutionStrategy
 {
     /// <summary>
-    /// Determines how a system responds to M to 1 mapping (where a patient is known by multiple different identifiers over time).
+    /// If a multi mapping / alias is found for an input row then throw an exception
     /// </summary>
-    public enum AliasResolutionStrategy
-    {
-        /// <summary>
-        /// If a multi mapping / alias is found for an input row then throw an exception
-        /// </summary>
-        CrashIfAliasesFound,
+    CrashIfAliasesFound,
 
-        /// <summary>
-        /// If a multi mapping / alias is found for an input row generate multiple output rows (1 for each alias)
-        /// </summary>
-        MultiplyInputDataRowsByAliases
-    }
+    /// <summary>
+    /// If a multi mapping / alias is found for an input row generate multiple output rows (1 for each alias)
+    /// </summary>
+    MultiplyInputDataRowsByAliases
 }

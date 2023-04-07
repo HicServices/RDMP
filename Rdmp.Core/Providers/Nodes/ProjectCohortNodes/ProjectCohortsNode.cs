@@ -7,50 +7,49 @@
 using Rdmp.Core.Curation.Data.Cohort;
 using Rdmp.Core.DataExport.Data;
 
-namespace Rdmp.Core.Providers.Nodes.ProjectCohortNodes
+namespace Rdmp.Core.Providers.Nodes.ProjectCohortNodes;
+
+public class ProjectCohortsNode:Node,IOrderable
 {
-    public class ProjectCohortsNode:Node,IOrderable
+    public Project Project { get; set; }
+
+    public ProjectCohortsNode(Project project)
     {
-        public Project Project { get; set; }
+        Project = project;
+    }
 
-        public ProjectCohortsNode(Project project)
-        {
-            Project = project;
-        }
+    public override string ToString()
+    {
+        return "Project Cohorts";
+    }
 
-        public override string ToString()
-        {
-            return "Project Cohorts";
-        }
+    public int Order { get { return 1; } set { } }
 
-        public int Order { get { return 1; } set { } }
+    protected bool Equals(ProjectCohortsNode other)
+    {
+        return Project.Equals(other.Project);
+    }
 
-        protected bool Equals(ProjectCohortsNode other)
-        {
-            return Project.Equals(other.Project);
-        }
+    public override bool Equals(object obj)
+    {
+        if (ReferenceEquals(null, obj)) return false;
+        if (ReferenceEquals(this, obj)) return true;
+        if (obj.GetType() != this.GetType()) return false;
+        return Equals((ProjectCohortsNode) obj);
+    }
 
-        public override bool Equals(object obj)
-        {
-            if (ReferenceEquals(null, obj)) return false;
-            if (ReferenceEquals(this, obj)) return true;
-            if (obj.GetType() != this.GetType()) return false;
-            return Equals((ProjectCohortsNode) obj);
-        }
+    public override int GetHashCode()
+    {
+        return Project.GetHashCode();
+    }
 
-        public override int GetHashCode()
-        {
-            return Project.GetHashCode();
-        }
+    public static bool operator ==(ProjectCohortsNode left, ProjectCohortsNode right)
+    {
+        return Equals(left, right);
+    }
 
-        public static bool operator ==(ProjectCohortsNode left, ProjectCohortsNode right)
-        {
-            return Equals(left, right);
-        }
-
-        public static bool operator !=(ProjectCohortsNode left, ProjectCohortsNode right)
-        {
-            return !Equals(left, right);
-        }
+    public static bool operator !=(ProjectCohortsNode left, ProjectCohortsNode right)
+    {
+        return !Equals(left, right);
     }
 }

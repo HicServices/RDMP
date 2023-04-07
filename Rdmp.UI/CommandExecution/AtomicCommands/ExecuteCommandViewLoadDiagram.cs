@@ -14,31 +14,30 @@ using ReusableLibraryCode.Icons.IconProvision;
 using SixLabors.ImageSharp;
 using SixLabors.ImageSharp.PixelFormats;
 
-namespace Rdmp.UI.CommandExecution.AtomicCommands
+namespace Rdmp.UI.CommandExecution.AtomicCommands;
+
+internal class ExecuteCommandViewLoadDiagram :BasicUICommandExecution, IAtomicCommand
 {
-    internal class ExecuteCommandViewLoadDiagram :BasicUICommandExecution, IAtomicCommand
+    private readonly LoadMetadata _loadMetadata;
+
+    public ExecuteCommandViewLoadDiagram(IActivateItems activator, LoadMetadata loadMetadata) : base(activator)
     {
-        private readonly LoadMetadata _loadMetadata;
-
-        public ExecuteCommandViewLoadDiagram(IActivateItems activator, LoadMetadata loadMetadata) : base(activator)
-        {
-            _loadMetadata = loadMetadata;
+        _loadMetadata = loadMetadata;
             
-            if(!_loadMetadata.GetAllCatalogues().Any())
-                SetImpossible("Load does not have any associated Catalogues (no tables are loaded by the load)");
+        if(!_loadMetadata.GetAllCatalogues().Any())
+            SetImpossible("Load does not have any associated Catalogues (no tables are loaded by the load)");
 
-        }
+    }
 
-        public override Image<Rgba32> GetImage(IIconProvider iconProvider)
-        {
-            return Image.Load<Rgba32>(CatalogueIcons.LoadBubble);
-        }
+    public override Image<Rgba32> GetImage(IIconProvider iconProvider)
+    {
+        return Image.Load<Rgba32>(CatalogueIcons.LoadBubble);
+    }
 
-        public override void Execute()
-        {
-            base.Execute();
+    public override void Execute()
+    {
+        base.Execute();
 
-            Activator.Activate<LoadDiagramUI, LoadMetadata>(_loadMetadata);
-        }
+        Activator.Activate<LoadDiagramUI, LoadMetadata>(_loadMetadata);
     }
 }

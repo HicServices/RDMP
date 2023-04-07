@@ -10,34 +10,33 @@ using Rdmp.Core.Curation.Data.Pipelines;
 using ReusableLibraryCode;
 using ReusableLibraryCode.Comments;
 
-namespace Rdmp.Core.Providers.Nodes.PipelineNodes
+namespace Rdmp.Core.Providers.Nodes.PipelineNodes;
+
+/// <summary>
+/// Collection of all the Pipelines compatible with a given use case. 
+/// </summary>
+public class StandardPipelineUseCaseNode : SingletonNode,IKnowWhatIAm
 {
-    /// <summary>
-    /// Collection of all the Pipelines compatible with a given use case. 
-    /// </summary>
-    public class StandardPipelineUseCaseNode : SingletonNode,IKnowWhatIAm
+    private readonly CommentStore _commentStore;
+    public PipelineUseCase UseCase { get; set; }
+    public List<Pipeline> Pipelines { get; } = new List<Pipeline>();
+
+    public StandardPipelineUseCaseNode(string caption, PipelineUseCase useCase,CommentStore commentStore) : base(caption)
     {
-        private readonly CommentStore _commentStore;
-        public PipelineUseCase UseCase { get; set; }
-        public List<Pipeline> Pipelines { get; } = new List<Pipeline>();
-
-        public StandardPipelineUseCaseNode(string caption, PipelineUseCase useCase,CommentStore commentStore) : base(caption)
-        {
-            _commentStore = commentStore;
-            UseCase = useCase;
-        }
+        _commentStore = commentStore;
+        UseCase = useCase;
+    }
         
-        public string WhatIsThis()
-        {
-            var useCaseType = UseCase.GetType();
+    public string WhatIsThis()
+    {
+        var useCaseType = UseCase.GetType();
 
-            string useCaseDescription = string.Format("{0} \r\n {1}",
-                useCaseType.Name,
-                _commentStore.GetTypeDocumentationIfExists(useCaseType, false, true));
+        string useCaseDescription = string.Format("{0} \r\n {1}",
+            useCaseType.Name,
+            _commentStore.GetTypeDocumentationIfExists(useCaseType, false, true));
 
-            return "Collection of all the Pipelines compatible with a given use case.  This node's use case is:" 
-                   + Environment.NewLine
-                   +useCaseDescription;
-        }
+        return "Collection of all the Pipelines compatible with a given use case.  This node's use case is:" 
+               + Environment.NewLine
+               +useCaseDescription;
     }
 }

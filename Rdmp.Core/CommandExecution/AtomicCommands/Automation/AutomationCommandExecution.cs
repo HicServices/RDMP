@@ -11,73 +11,72 @@ using Rdmp.Core.CommandLine.Options;
 using Rdmp.Core.Repositories;
 using Rdmp.Core.Startup;
 
-namespace Rdmp.Core.CommandExecution.AtomicCommands.Automation
+namespace Rdmp.Core.CommandExecution.AtomicCommands.Automation;
+
+public abstract class AutomationCommandExecution : BasicCommandExecution
 {
-    public abstract class AutomationCommandExecution : BasicCommandExecution
+    protected readonly Func<RDMPCommandLineOptions> CommandGetter;
+    public readonly string AutomationServiceExecutable = EnvironmentInfo.IsLinux ? "rdmp" : "rdmp.exe";
+
+    private TableRepository _cataTableRepo;
+    private TableRepository _dataExportTableRepo;
+    private YamlRepository _yamlRepository;
+
+
+    protected AutomationCommandExecution(IBasicActivateItems activator, Func<RDMPCommandLineOptions> commandGetter) : base(activator)
     {
-        protected readonly Func<RDMPCommandLineOptions> CommandGetter;
-        public readonly string AutomationServiceExecutable = EnvironmentInfo.IsLinux ? "rdmp" : "rdmp.exe";
+        CommandGetter = commandGetter;
 
-        private TableRepository _cataTableRepo;
-        private TableRepository _dataExportTableRepo;
-        private YamlRepository _yamlRepository;
-
-
-        protected AutomationCommandExecution(IBasicActivateItems activator, Func<RDMPCommandLineOptions> commandGetter) : base(activator)
-        {
-            CommandGetter = commandGetter;
-
-            // repository locator must be one of these types for us to properly assemble 
-            // CLI args
-            _cataTableRepo = activator.RepositoryLocator.CatalogueRepository as TableRepository;
-            _yamlRepository = activator.RepositoryLocator.CatalogueRepository as YamlRepository;
-            _dataExportTableRepo = activator.RepositoryLocator.DataExportRepository as TableRepository;
+        // repository locator must be one of these types for us to properly assemble 
+        // CLI args
+        _cataTableRepo = activator.RepositoryLocator.CatalogueRepository as TableRepository;
+        _yamlRepository = activator.RepositoryLocator.CatalogueRepository as YamlRepository;
+        _dataExportTableRepo = activator.RepositoryLocator.DataExportRepository as TableRepository;
             
-            if (_yamlRepository == null && (_cataTableRepo == null || _dataExportTableRepo == null))
-                SetImpossible("Current repository is not not TableRepository/YamlRepository");
+        if (_yamlRepository == null && (_cataTableRepo == null || _dataExportTableRepo == null))
+            SetImpossible("Current repository is not not TableRepository/YamlRepository");
             
-        }
+    }
 
-        /// <summary>
-        /// Generates command line arguments for the current engine
-        /// </summary>
-        /// <param name="argsOnly"></param>
-        /// <returns></returns>
-        public string GetCommandText(bool argsOnly = false)
+    /// <summary>
+    /// Generates command line arguments for the current engine
+    /// </summary>
+    /// <param name="argsOnly"></param>
+    /// <returns></returns>
+    public string GetCommandText(bool argsOnly = false)
+    {
+        using(Parser p = new Parser())
         {
-            using(Parser p = new Parser())
-            {
-                var options = CommandGetter();
+            var options = CommandGetter();
 
-                PopulateConnectionStringOptions(options);
+            PopulateConnectionStringOptions(options);
 
-                if (argsOnly)
-                    return p.FormatCommandLine(options);
+            if (argsOnly)
+                return p.FormatCommandLine(options);
 
-                return AutomationServiceExecutable + " " + p.FormatCommandLine(options);
-            }
+            return AutomationServiceExecutable + " " + p.FormatCommandLine(options);
         }
+    }
 
-        private void PopulateConnectionStringOptions(RDMPCommandLineOptions options)
+    private void PopulateConnectionStringOptions(RDMPCommandLineOptions options)
+    {
+        if (BasicActivator == null)
+            return;
+
+        // if backing database uses a directory
+        if(_yamlRepository != null)
         {
-            if (BasicActivator == null)
-                return;
-
-            // if backing database uses a directory
-            if(_yamlRepository != null)
-            {
-                // assemble CLI args that also say to use a directory
-                options.Dir = _yamlRepository.Directory.FullName;
-                return;
-            }
+            // assemble CLI args that also say to use a directory
+            options.Dir = _yamlRepository.Directory.FullName;
+            return;
+        }
                 
-            // if backing database uses a specific connection string
-            // then use the same connection string for CLI args
-            if (string.IsNullOrWhiteSpace(options.CatalogueConnectionString))
-                options.CatalogueConnectionString = _cataTableRepo.ConnectionStringBuilder.ConnectionString;
+        // if backing database uses a specific connection string
+        // then use the same connection string for CLI args
+        if (string.IsNullOrWhiteSpace(options.CatalogueConnectionString))
+            options.CatalogueConnectionString = _cataTableRepo.ConnectionStringBuilder.ConnectionString;
 
-            if (string.IsNullOrWhiteSpace(options.DataExportConnectionString))
-                options.DataExportConnectionString = _dataExportTableRepo.ConnectionStringBuilder.ConnectionString;
-        }
+        if (string.IsNullOrWhiteSpace(options.DataExportConnectionString))
+            options.DataExportConnectionString = _dataExportTableRepo.ConnectionStringBuilder.ConnectionString;
     }
 }

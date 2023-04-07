@@ -6,18 +6,17 @@
 
 using System;
 
-namespace MapsDirectlyToDatabaseTable.Versioning
-{
-    /// <summary>
-    /// Thrown when an SQL update patch supplied by an IPatcher is not formed correctly
-    /// </summary>
-    public class InvalidPatchException : Exception
-    {
-        public string ScriptName { get; set; }
+namespace MapsDirectlyToDatabaseTable.Versioning;
 
-        public InvalidPatchException(string scriptName, string message, Exception exception=null):base(message,exception)
-        {
-            ScriptName = scriptName;
-        }
+/// <summary>
+/// Thrown when an SQL update patch supplied by an IPatcher is not formed correctly
+/// </summary>
+public class InvalidPatchException : Exception
+{
+    public string ScriptName { get; set; }
+
+    public InvalidPatchException(string scriptName, string message, Exception exception=null):base(message,exception)
+    {
+        ScriptName = scriptName;
     }
 }

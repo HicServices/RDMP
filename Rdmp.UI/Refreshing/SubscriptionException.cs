@@ -6,17 +6,16 @@
 
 using System;
 
-namespace Rdmp.UI.Refreshing
+namespace Rdmp.UI.Refreshing;
+
+/// <summary>
+/// Thrown when a <see cref="IRefreshBusSubscriber"/> performs an illegal activity (e.g. subscribing twice or attempting to trigger a new publish
+/// while in a event handler responding to an ongoing publish).
+/// </summary>
+public class SubscriptionException : Exception
 {
-    /// <summary>
-    /// Thrown when a <see cref="IRefreshBusSubscriber"/> performs an illegal activity (e.g. subscribing twice or attempting to trigger a new publish
-    /// while in a event handler responding to an ongoing publish).
-    /// </summary>
-    public class SubscriptionException : Exception
+    public SubscriptionException(string message): base(message)
     {
-        public SubscriptionException(string message): base(message)
-        {
             
-        }
     }
 }

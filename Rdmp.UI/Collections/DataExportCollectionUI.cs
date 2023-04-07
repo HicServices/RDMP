@@ -22,146 +22,146 @@ using Rdmp.UI.Refreshing;
 using ReusableLibraryCode.Icons;
 using ReusableLibraryCode.Icons.IconProvision;
 
-namespace Rdmp.UI.Collections
+namespace Rdmp.UI.Collections;
+
+/// <summary>
+/// Contains a list of all the currently configured data export projects you have.  A data export Project is a collection of one or more datasets combined with a cohort (or multiple
+/// if you have sub ExtractionConfigurations within the same Project e.g. cases/controls).
+/// 
+/// <para>Data in these datasets will be linked against the cohort and anonymised on extraction (to flat files / database etc).</para>
+/// </summary>
+public partial class DataExportCollectionUI : RDMPCollectionUI, ILifetimeSubscriber
 {
-    /// <summary>
-    /// Contains a list of all the currently configured data export projects you have.  A data export Project is a collection of one or more datasets combined with a cohort (or multiple
-    /// if you have sub ExtractionConfigurations within the same Project e.g. cases/controls).
-    /// 
-    /// <para>Data in these datasets will be linked against the cohort and anonymised on extraction (to flat files / database etc).</para>
-    /// </summary>
-    public partial class DataExportCollectionUI : RDMPCollectionUI, ILifetimeSubscriber
+    private bool _isFirstTime = true;
+
+    private const string NewMenu = "New...";
+
+    public DataExportCollectionUI()
     {
-        private bool _isFirstTime = true;
-
-        private const string NewMenu = "New...";
-
-        public DataExportCollectionUI()
-        {
-            InitializeComponent();
+        InitializeComponent();
 
 
-            olvProjectNumber.IsEditable = false;
-            olvProjectNumber.AspectGetter = ProjectNumberAspectGetter;
+        olvProjectNumber.IsEditable = false;
+        olvProjectNumber.AspectGetter = ProjectNumberAspectGetter;
 
-            olvCohortSource.IsEditable = false;
-            olvCohortSource.AspectGetter = CohortSourceAspectGetter;
+        olvCohortSource.IsEditable = false;
+        olvCohortSource.AspectGetter = CohortSourceAspectGetter;
 
-            olvCohortVersion.IsEditable = false;
-            olvCohortVersion.AspectGetter = CohortVersionAspectGetter;
-        }
+        olvCohortVersion.IsEditable = false;
+        olvCohortVersion.AspectGetter = CohortVersionAspectGetter;
+    }
 
-        private object CohortSourceAspectGetter(object rowObject)
-        {
-            //if it is a cohort or something masquerading as a cohort
-            var masquerader = rowObject as IMasqueradeAs;
-            var cohort = masquerader != null
-                ? masquerader.MasqueradingAs() as ExtractableCohort
-                : rowObject as ExtractableCohort;
+    private object CohortSourceAspectGetter(object rowObject)
+    {
+        //if it is a cohort or something masquerading as a cohort
+        var masquerader = rowObject as IMasqueradeAs;
+        var cohort = masquerader != null
+            ? masquerader.MasqueradingAs() as ExtractableCohort
+            : rowObject as ExtractableCohort;
 
-            //serve up the ExternalCohortTable name
-            if (cohort != null)
-                return cohort.ExternalCohortTable.Name;
+        //serve up the ExternalCohortTable name
+        if (cohort != null)
+            return cohort.ExternalCohortTable.Name;
 
-            return null;
-        }
+        return null;
+    }
 
-        private object ProjectNumberAspectGetter(object rowObject)
-        {
-            var p = rowObject as Project;
+    private object ProjectNumberAspectGetter(object rowObject)
+    {
+        var p = rowObject as Project;
             
-            var masquerade = rowObject as IMasqueradeAs;
+        var masquerade = rowObject as IMasqueradeAs;
 
-            if (p != null)
-                return p.ProjectNumber;
+        if (p != null)
+            return p.ProjectNumber;
 
-            if(masquerade != null)
-            {
-                var c = masquerade.MasqueradingAs() as ExtractableCohort;
-                if (c != null)
-                    return c.ExternalProjectNumber;
-            }
-
-            return null;
+        if(masquerade != null)
+        {
+            var c = masquerade.MasqueradingAs() as ExtractableCohort;
+            if (c != null)
+                return c.ExternalProjectNumber;
         }
 
-        private object CohortVersionAspectGetter(object rowObject)
+        return null;
+    }
+
+    private object CohortVersionAspectGetter(object rowObject)
+    {
+        var masquerade = rowObject as IMasqueradeAs;
+
+        if (masquerade != null)
         {
-            var masquerade = rowObject as IMasqueradeAs;
-
-            if (masquerade != null)
-            {
-                var c = masquerade.MasqueradingAs() as ExtractableCohort;
-                if (c != null)
-                    return c.ExternalVersion;
-            }
-
-            return null;
+            var c = masquerade.MasqueradingAs() as ExtractableCohort;
+            if (c != null)
+                return c.ExternalVersion;
         }
 
-        public override void SetItemActivator(IActivateItems activator)
-        {
-            base.SetItemActivator(activator);
+        return null;
+    }
 
-            CommonTreeFunctionality.SetUp(
-                RDMPCollection.DataExport, 
-                tlvDataExport,
-                Activator,
-                olvName,
-                olvName
-                );
+    public override void SetItemActivator(IActivateItems activator)
+    {
+        base.SetItemActivator(activator);
 
-            CommonTreeFunctionality.WhitespaceRightClickMenuCommandsGetter = (a) => GetWhitespaceRightClickMenu();
+        CommonTreeFunctionality.SetUp(
+            RDMPCollection.DataExport, 
+            tlvDataExport,
+            Activator,
+            olvName,
+            olvName
+        );
+
+        CommonTreeFunctionality.WhitespaceRightClickMenuCommandsGetter = (a) => GetWhitespaceRightClickMenu();
             
-            CommonTreeFunctionality.MaintainRootObjects = new Type[]{typeof(ExtractableDataSetPackage),typeof(FolderNode<Project>)};
+        CommonTreeFunctionality.MaintainRootObjects = new Type[]{typeof(ExtractableDataSetPackage),typeof(FolderNode<Project>)};
 
-            var dataExportChildProvider = activator.CoreChildProvider as DataExportChildProvider;
+        var dataExportChildProvider = activator.CoreChildProvider as DataExportChildProvider;
+
+        if(dataExportChildProvider != null)
+        {
+            tlvDataExport.AddObjects(dataExportChildProvider.AllPackages);
+            tlvDataExport.AddObject(dataExportChildProvider.ProjectRootFolder);
+        }
+            
+        if (_isFirstTime)
+        {
+            CommonTreeFunctionality.SetupColumnTracking(olvName, new Guid("00a384ce-08fa-43fd-9cf3-7ddbbf5cec1c"));
+            CommonTreeFunctionality.SetupColumnTracking(olvProjectNumber, new Guid("2a1764d4-8871-4488-b068-8940b777f90e"));
+            CommonTreeFunctionality.SetupColumnTracking(olvCohortSource, new Guid("c4dabcc3-ccc9-4c9b-906b-e8106e8b616c"));
+            CommonTreeFunctionality.SetupColumnTracking(olvCohortVersion, new Guid("2d0f8d32-090d-4d2b-8cfe-b6d16f5cc419"));
 
             if(dataExportChildProvider != null)
             {
-                tlvDataExport.AddObjects(dataExportChildProvider.AllPackages);
-                tlvDataExport.AddObject(dataExportChildProvider.ProjectRootFolder);
+                tlvDataExport.Expand(dataExportChildProvider.ProjectRootFolder);
             }
-            
-            if (_isFirstTime)
-            {
-                CommonTreeFunctionality.SetupColumnTracking(olvName, new Guid("00a384ce-08fa-43fd-9cf3-7ddbbf5cec1c"));
-                CommonTreeFunctionality.SetupColumnTracking(olvProjectNumber, new Guid("2a1764d4-8871-4488-b068-8940b777f90e"));
-                CommonTreeFunctionality.SetupColumnTracking(olvCohortSource, new Guid("c4dabcc3-ccc9-4c9b-906b-e8106e8b616c"));
-                CommonTreeFunctionality.SetupColumnTracking(olvCohortVersion, new Guid("2d0f8d32-090d-4d2b-8cfe-b6d16f5cc419"));
-
-                if(dataExportChildProvider != null)
-                {
-                    tlvDataExport.Expand(dataExportChildProvider.ProjectRootFolder);
-                }
                 
-                _isFirstTime = false;
-            }
-
-            SetupToolStrip();
-
-            Activator.RefreshBus.EstablishLifetimeSubscription(this);
-
+            _isFirstTime = false;
         }
 
-        public void RefreshBus_RefreshObject(object sender, RefreshObjectEventArgs e)
-        {
-            SetupToolStrip();
-        }
+        SetupToolStrip();
 
-        private void SetupToolStrip()
-        {
-            CommonFunctionality.ClearToolStrip();
-            CommonFunctionality.Add(new ExecuteCommandCreateNewDataExtractionProject(Activator),"Project",null,NewMenu);
-            CommonFunctionality.Add(new ToolStripSeparator(),NewMenu);
+        Activator.RefreshBus.EstablishLifetimeSubscription(this);
 
-            CommonFunctionality.Add(new ExecuteCommandCreateNewCohortIdentificationConfiguration(Activator)
-                { PromptToPickAProject = true}, "Cohort Builder Query", null, NewMenu);
+    }
 
-            var uiFactory = new AtomicCommandUIFactory(Activator);
-            var cohortSubmenu = new ToolStripMenuItem("Cohort");
-            cohortSubmenu.DropDownItems.AddRange(
-                new[] {
+    public void RefreshBus_RefreshObject(object sender, RefreshObjectEventArgs e)
+    {
+        SetupToolStrip();
+    }
+
+    private void SetupToolStrip()
+    {
+        CommonFunctionality.ClearToolStrip();
+        CommonFunctionality.Add(new ExecuteCommandCreateNewDataExtractionProject(Activator),"Project",null,NewMenu);
+        CommonFunctionality.Add(new ToolStripSeparator(),NewMenu);
+
+        CommonFunctionality.Add(new ExecuteCommandCreateNewCohortIdentificationConfiguration(Activator)
+            { PromptToPickAProject = true}, "Cohort Builder Query", null, NewMenu);
+
+        var uiFactory = new AtomicCommandUIFactory(Activator);
+        var cohortSubmenu = new ToolStripMenuItem("Cohort");
+        cohortSubmenu.DropDownItems.AddRange(
+            new[] {
                 
                 // from cic
                 uiFactory.CreateMenuItem(new ExecuteCommandCreateNewCohortByExecutingACohortIdentificationConfiguration(Activator, null) { OverrideCommandName = "From Cohort Builder Query" }),
@@ -174,55 +174,52 @@ namespace Rdmp.UI.Collections
                 
                 // from table
                 uiFactory.CreateMenuItem(new ExecuteCommandCreateNewCohortFromTable(Activator,null) { OverrideCommandName = "From Table" })
-                });
-            CommonFunctionality.Add(cohortSubmenu, NewMenu);
-            CommonFunctionality.Add(new ToolStripSeparator(), NewMenu);
+            });
+        CommonFunctionality.Add(cohortSubmenu, NewMenu);
+        CommonFunctionality.Add(new ToolStripSeparator(), NewMenu);
 
-            CommonFunctionality.Add(new ExecuteCommandCreateNewExtractionConfigurationForProject(Activator),"Extraction Configuration",null,NewMenu);
-            CommonFunctionality.Add(new ToolStripSeparator(), NewMenu);
+        CommonFunctionality.Add(new ExecuteCommandCreateNewExtractionConfigurationForProject(Activator),"Extraction Configuration",null,NewMenu);
+        CommonFunctionality.Add(new ToolStripSeparator(), NewMenu);
             
-            var mi = new ToolStripMenuItem("Project Specific Catalogue",Activator.CoreIconProvider.GetImage(RDMPConcept.ProjectCatalogue,OverlayKind.Add).ImageToBitmap());
+        var mi = new ToolStripMenuItem("Project Specific Catalogue",Activator.CoreIconProvider.GetImage(RDMPConcept.ProjectCatalogue,OverlayKind.Add).ImageToBitmap());
 
-            var factory = new AtomicCommandUIFactory(Activator);
-            mi.DropDownItems.Add(factory.CreateMenuItem(new ExecuteCommandCreateNewCatalogueByImportingFileUI(Activator)
-            {
-                OverrideCommandName = "From File...",
-                PromptForProject = true
-            }));
-
-            mi.DropDownItems.Add(factory.CreateMenuItem(new ExecuteCommandCreateNewCatalogueByImportingExistingDataTable(Activator)
-            {
-                OverrideCommandName = "From Database...",
-                PromptForProject = true
-            }));
-
-            CommonFunctionality.Add(mi,NewMenu);
-            CommonFunctionality.Add(new ExecuteCommandCreateNewExtractableDataSetPackage(Activator), "Package", null, NewMenu);
-        }
-
-
-        private IAtomicCommand[] GetWhitespaceRightClickMenu()
+        var factory = new AtomicCommandUIFactory(Activator);
+        mi.DropDownItems.Add(factory.CreateMenuItem(new ExecuteCommandCreateNewCatalogueByImportingFileUI(Activator)
         {
+            OverrideCommandName = "From File...",
+            PromptForProject = true
+        }));
 
-            return new IAtomicCommand[]
-               {
-                    new ExecuteCommandCreateNewDataExtractionProject(Activator) { OverrideCommandName = "Add New Project",Weight = -10 },
-                    new ExecuteCommandCreateNewCohortIdentificationConfiguration(Activator) { PromptToPickAProject = true, OverrideCommandName = "Add New Cohort Builder Query" ,Weight = -4.95f },
-                    new ExecuteCommandCreateNewCohortByExecutingACohortIdentificationConfiguration(Activator, null) { OverrideCommandName = "From Cohort Builder Query",SuggestedCategory = "Add New Cohort", Weight = -4.9f},
-                    new ExecuteCommandCreateNewCohortFromFile(Activator, null) { OverrideCommandName = "From File" ,SuggestedCategory = "Add New Cohort",Weight = -4.8f},
-                    new ExecuteCommandCreateNewCohortFromCatalogue(Activator,(Catalogue)null) { OverrideCommandName = "From Catalogue" ,SuggestedCategory = "Add New Cohort",Weight = -4.7f},
-                    new ExecuteCommandCreateNewCohortFromTable(Activator,null) { OverrideCommandName = "From Table" ,SuggestedCategory = "Add New Cohort",Weight = -4.6f},
-                    new ExecuteCommandCreateNewExtractionConfigurationForProject(Activator){OverrideCommandName = "Add New Extraction Configuration" ,Weight = -2f},
-                    new ExecuteCommandCreateNewCatalogueByImportingFileUI(Activator) { OverrideCommandName = "From File...",SuggestedCategory = "Add New Project Specific Catalogue" ,Weight = -1.9f},
-                    new ExecuteCommandCreateNewCatalogueByImportingExistingDataTable(Activator) { OverrideCommandName = "From Database...",SuggestedCategory = "Add New Project Specific Catalogue" ,Weight = -1.8f},
-                    new ExecuteCommandCreateNewExtractableDataSetPackage(Activator){ OverrideCommandName = "Add New Package" , Weight = -1.7f}
-               };
-        }
-        public static bool IsRootObject(object root)
+        mi.DropDownItems.Add(factory.CreateMenuItem(new ExecuteCommandCreateNewCatalogueByImportingExistingDataTable(Activator)
         {
-            return root is FolderNode<Project> || root is ExtractableDataSetPackage;
-        }
+            OverrideCommandName = "From Database...",
+            PromptForProject = true
+        }));
+
+        CommonFunctionality.Add(mi,NewMenu);
+        CommonFunctionality.Add(new ExecuteCommandCreateNewExtractableDataSetPackage(Activator), "Package", null, NewMenu);
     }
 
-    
+
+    private IAtomicCommand[] GetWhitespaceRightClickMenu()
+    {
+
+        return new IAtomicCommand[]
+        {
+            new ExecuteCommandCreateNewDataExtractionProject(Activator) { OverrideCommandName = "Add New Project",Weight = -10 },
+            new ExecuteCommandCreateNewCohortIdentificationConfiguration(Activator) { PromptToPickAProject = true, OverrideCommandName = "Add New Cohort Builder Query" ,Weight = -4.95f },
+            new ExecuteCommandCreateNewCohortByExecutingACohortIdentificationConfiguration(Activator, null) { OverrideCommandName = "From Cohort Builder Query",SuggestedCategory = "Add New Cohort", Weight = -4.9f},
+            new ExecuteCommandCreateNewCohortFromFile(Activator, null) { OverrideCommandName = "From File" ,SuggestedCategory = "Add New Cohort",Weight = -4.8f},
+            new ExecuteCommandCreateNewCohortFromCatalogue(Activator,(Catalogue)null) { OverrideCommandName = "From Catalogue" ,SuggestedCategory = "Add New Cohort",Weight = -4.7f},
+            new ExecuteCommandCreateNewCohortFromTable(Activator,null) { OverrideCommandName = "From Table" ,SuggestedCategory = "Add New Cohort",Weight = -4.6f},
+            new ExecuteCommandCreateNewExtractionConfigurationForProject(Activator){OverrideCommandName = "Add New Extraction Configuration" ,Weight = -2f},
+            new ExecuteCommandCreateNewCatalogueByImportingFileUI(Activator) { OverrideCommandName = "From File...",SuggestedCategory = "Add New Project Specific Catalogue" ,Weight = -1.9f},
+            new ExecuteCommandCreateNewCatalogueByImportingExistingDataTable(Activator) { OverrideCommandName = "From Database...",SuggestedCategory = "Add New Project Specific Catalogue" ,Weight = -1.8f},
+            new ExecuteCommandCreateNewExtractableDataSetPackage(Activator){ OverrideCommandName = "Add New Package" , Weight = -1.7f}
+        };
+    }
+    public static bool IsRootObject(object root)
+    {
+        return root is FolderNode<Project> || root is ExtractableDataSetPackage;
+    }
 }

@@ -17,66 +17,65 @@ using Rdmp.Core.Icons.IconProvision;
 using ReusableLibraryCode.Icons.IconProvision;
 using SixLabors.ImageSharp.PixelFormats;
 
-namespace Rdmp.Core.CommandExecution.AtomicCommands
+namespace Rdmp.Core.CommandExecution.AtomicCommands;
+
+public class ExecuteCommandImportTableInfo : BasicCommandExecution
 {
-    public class ExecuteCommandImportTableInfo : BasicCommandExecution
+    private readonly DiscoveredTable _table;
+    private readonly bool _createCatalogue;
+
+    public ExecuteCommandImportTableInfo(IBasicActivateItems activator,
+
+        [DemandsInitialization("The table or view you want to reference from RDMP.  See PickTable for syntax")]
+        DiscoveredTable table,
+        [DemandsInitialization("True to create a Catalogue as well as a TableInfo")]
+        bool createCatalogue) : base(activator)
     {
-        private readonly DiscoveredTable _table;
-        private readonly bool _createCatalogue;
+        _table = table;
+        _createCatalogue = createCatalogue;
+    }
 
-        public ExecuteCommandImportTableInfo(IBasicActivateItems activator,
+    public override void Execute()
+    {
+        base.Execute();
 
-            [DemandsInitialization("The table or view you want to reference from RDMP.  See PickTable for syntax")]
-            DiscoveredTable table,
-            [DemandsInitialization("True to create a Catalogue as well as a TableInfo")]
-            bool createCatalogue) : base(activator)
-        {
-            _table = table;
-            _createCatalogue = createCatalogue;
-        }
-
-        public override void Execute()
-        {
-            base.Execute();
-
-            ICatalogue c = null;
-            ITableInfoImporter importer;
-            DiscoveredTable t;
+        ICatalogue c = null;
+        ITableInfoImporter importer;
+        DiscoveredTable t;
             
-            t = _table ?? SelectTable(false,"Select table to import");
+        t = _table ?? SelectTable(false,"Select table to import");
 
-            if(t == null)
-                return;
+        if(t == null)
+            return;
 
-            //if it isn't a table valued function
-            if (t is DiscoveredTableValuedFunction)
-                importer = new TableValuedFunctionImporter(BasicActivator.RepositoryLocator.CatalogueRepository, (DiscoveredTableValuedFunction) t);
-            else
-                importer = new TableInfoImporter(BasicActivator.RepositoryLocator.CatalogueRepository, t);
+        //if it isn't a table valued function
+        if (t is DiscoveredTableValuedFunction)
+            importer = new TableValuedFunctionImporter(BasicActivator.RepositoryLocator.CatalogueRepository, (DiscoveredTableValuedFunction) t);
+        else
+            importer = new TableInfoImporter(BasicActivator.RepositoryLocator.CatalogueRepository, t);
             
-            importer.DoImport(out var ti, out ColumnInfo[] cis);
+        importer.DoImport(out var ti, out ColumnInfo[] cis);
 
-            BasicActivator.Show($"Successfully imported new TableInfo { ti.Name} with ID {ti.ID}");
+        BasicActivator.Show($"Successfully imported new TableInfo { ti.Name} with ID {ti.ID}");
 
-            if (_createCatalogue)
-            {
-                var forwardEngineer = new ForwardEngineerCatalogue(ti, cis);
-                forwardEngineer.ExecuteForwardEngineering(out c, out _, out _);
-
-                BasicActivator.Show($"Successfully imported new Catalogue { c.Name} with ID {c.ID}");
-            }
-
-            Publish((IMapsDirectlyToDatabaseTable)c ?? ti);
-        }
-
-        public override string GetCommandName()
+        if (_createCatalogue)
         {
-            return "Import existing table (as new TableInfo)";
+            var forwardEngineer = new ForwardEngineerCatalogue(ti, cis);
+            forwardEngineer.ExecuteForwardEngineering(out c, out _, out _);
+
+            BasicActivator.Show($"Successfully imported new Catalogue { c.Name} with ID {c.ID}");
         }
 
-        public override Image<Rgba32> GetImage(IIconProvider iconProvider)
-        {
-            return iconProvider.GetImage(RDMPConcept.TableInfo,OverlayKind.Add);
-        }
+        Publish((IMapsDirectlyToDatabaseTable)c ?? ti);
+    }
+
+    public override string GetCommandName()
+    {
+        return "Import existing table (as new TableInfo)";
+    }
+
+    public override Image<Rgba32> GetImage(IIconProvider iconProvider)
+    {
+        return iconProvider.GetImage(RDMPConcept.TableInfo,OverlayKind.Add);
     }
 }

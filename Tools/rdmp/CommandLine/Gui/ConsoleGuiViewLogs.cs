@@ -14,261 +14,260 @@ using System.Linq;
 using Terminal.Gui;
 using Terminal.Gui.Trees;
 
-namespace Rdmp.Core.CommandLine.Gui
+namespace Rdmp.Core.CommandLine.Gui;
+
+internal class ConsoleGuiViewLogs : Window, ITreeBuilder<object>
 {
-    internal class ConsoleGuiViewLogs : Window, ITreeBuilder<object>
+    private IBasicActivateItems _activator;
+    private ArchivalDataLoadInfo[] _archivalDataLoadInfos = new ArchivalDataLoadInfo[0];
+    private TreeView<object> _treeView;
+    private TextField _tbToFetch;
+    private ILoggedActivityRootObject _rootObject;
+    private TextField _tbcontains;
+
+    public ConsoleGuiViewLogs(IBasicActivateItems activator, ILoggedActivityRootObject rootObject)
     {
-        private IBasicActivateItems _activator;
-        private ArchivalDataLoadInfo[] _archivalDataLoadInfos = new ArchivalDataLoadInfo[0];
-        private TreeView<object> _treeView;
-        private TextField _tbToFetch;
-        private ILoggedActivityRootObject _rootObject;
-        private TextField _tbcontains;
+        this._activator = activator;
+        Modal = true;
+        this._rootObject = rootObject;
 
-        public ConsoleGuiViewLogs(IBasicActivateItems activator, ILoggedActivityRootObject rootObject)
+        ColorScheme = ConsoleMainWindow.ColorScheme;
+
+        var lbl = new Label($"Logs for '{rootObject}'");
+        Add(lbl);
+
+        var lblToFetch = new Label("Max:")
         {
-            this._activator = activator;
-            Modal = true;
-            this._rootObject = rootObject;
+            X = Pos.Right(lbl) + 1,
+        };
 
-            ColorScheme = ConsoleMainWindow.ColorScheme;
+        Add(lblToFetch);
 
-            var lbl = new Label($"Logs for '{rootObject}'");
-            Add(lbl);
+        _tbToFetch = new TextField()
+        {
+            X = Pos.Right(lblToFetch),
+            Text = "1000",
+            Width = 10
+        };
 
-            var lblToFetch = new Label("Max:")
-            {
-                X = Pos.Right(lbl) + 1,
-            };
+        Add(_tbToFetch);
 
-            Add(lblToFetch);
+        var btnFetch = new Button()
+        {
+            X = Pos.Right(_tbToFetch),
+            Text = "Go"
+        };
 
-            _tbToFetch = new TextField()
-            {
-                X = Pos.Right(lblToFetch),
-                Text = "1000",
-                Width = 10
-            };
+        btnFetch.Clicked += FetchLogs;
 
-            Add(_tbToFetch);
+        Add(btnFetch);
 
-            var btnFetch = new Button()
-            {
-                X = Pos.Right(_tbToFetch),
-                Text = "Go"
-            };
+        var lblFilter = new Label("Filter:")
+        {
+            Y = Pos.Bottom(lbl)
+        };
 
-            btnFetch.Clicked += FetchLogs;
+        Add(lblFilter);
 
-            Add(btnFetch);
+        var btnAll = new Button("All")
+        {
+            Y = Pos.Bottom(lbl),
+            X = Pos.Right(lblFilter)
+        };
+        btnAll.Clicked += BtnAll_Clicked;
+        Add(btnAll);
 
-            var lblFilter = new Label("Filter:")
-            {
-                Y = Pos.Bottom(lbl)
-            };
+        var btnFailing = new Button("Failing")
+        {
+            Y = Pos.Bottom(lbl),
+            X = Pos.Right(btnAll)
+        };
+        btnFailing.Clicked += BtnFailing_Clicked;
+        Add(btnFailing);
 
-            Add(lblFilter);
-
-            var btnAll = new Button("All")
-            {
-                Y = Pos.Bottom(lbl),
-                X = Pos.Right(lblFilter)
-            };
-            btnAll.Clicked += BtnAll_Clicked;
-            Add(btnAll);
-
-            var btnFailing = new Button("Failing")
-            {
-                Y = Pos.Bottom(lbl),
-                X = Pos.Right(btnAll)
-            };
-            btnFailing.Clicked += BtnFailing_Clicked;
-            Add(btnFailing);
-
-            var btnPassing = new Button("Passing")
-            {
-                Y = Pos.Bottom(lbl),
-                X = Pos.Right(btnFailing)
-            };
-            btnPassing.Clicked += BtnPassing_Clicked;
-            Add(btnPassing);
+        var btnPassing = new Button("Passing")
+        {
+            Y = Pos.Bottom(lbl),
+            X = Pos.Right(btnFailing)
+        };
+        btnPassing.Clicked += BtnPassing_Clicked;
+        Add(btnPassing);
 
 
-            var lblcontains = new Label("Contains:")
-            {
-                Y = Pos.Bottom(lbl),
-                X = Pos.Right(btnPassing) + 1
-            };
+        var lblcontains = new Label("Contains:")
+        {
+            Y = Pos.Bottom(lbl),
+            X = Pos.Right(btnPassing) + 1
+        };
 
-            Add(lblcontains);
+        Add(lblcontains);
 
-            _tbcontains = new TextField()
-            {
-                Y = Pos.Bottom(lbl),
-                X = Pos.Right(lblcontains),
-                Width = 10
-            };
-            _tbcontains.TextChanged += Tbcontains_TextChanged;
-            Add(_tbcontains);
+        _tbcontains = new TextField()
+        {
+            Y = Pos.Bottom(lbl),
+            X = Pos.Right(lblcontains),
+            Width = 10
+        };
+        _tbcontains.TextChanged += Tbcontains_TextChanged;
+        Add(_tbcontains);
 
-            _treeView = new TreeView<object>()
-            {
-                X = 0,
-                Y = Pos.Bottom(lblFilter),
-                Width = Dim.Fill(),
-                Height = Dim.Fill(1),
-            };
-            _treeView.TreeBuilder = this;
-            _treeView.ObjectActivated += _treeView_ObjectActivated; ;
-            Add(_treeView);
+        _treeView = new TreeView<object>()
+        {
+            X = 0,
+            Y = Pos.Bottom(lblFilter),
+            Width = Dim.Fill(),
+            Height = Dim.Fill(1),
+        };
+        _treeView.TreeBuilder = this;
+        _treeView.ObjectActivated += _treeView_ObjectActivated; ;
+        Add(_treeView);
 
-            var close = new Button("Quit")
-            {
-                Y = Pos.Bottom(_treeView),
-                X = 0
-            };
-            close.Clicked += Quit;
+        var close = new Button("Quit")
+        {
+            Y = Pos.Bottom(_treeView),
+            X = 0
+        };
+        close.Clicked += Quit;
 
-            Add(close);
+        Add(close);
 
-            FetchLogs();
+        FetchLogs();
+    }
+
+    private void Tbcontains_TextChanged(NStack.ustring obj)
+    {
+        _treeView.ClearObjects();
+
+        if (string.IsNullOrWhiteSpace(_tbcontains.Text?.ToString()))
+        {
+            _treeView.AddObjects(_archivalDataLoadInfos);
         }
-
-        private void Tbcontains_TextChanged(NStack.ustring obj)
+        else
         {
-            _treeView.ClearObjects();
-
-            if (string.IsNullOrWhiteSpace(_tbcontains.Text?.ToString()))
-            {
-                _treeView.AddObjects(_archivalDataLoadInfos);
-            }
-            else
-            {
-                _treeView.AddObjects(_archivalDataLoadInfos.Where(a => a.Description?.Contains(_tbcontains.Text.ToString()) ?? false));
-            }
+            _treeView.AddObjects(_archivalDataLoadInfos.Where(a => a.Description?.Contains(_tbcontains.Text.ToString()) ?? false));
+        }
             
-            _treeView.RebuildTree();
-            _treeView.SetNeedsDisplay();
+        _treeView.RebuildTree();
+        _treeView.SetNeedsDisplay();
+    }
+
+    private void FetchLogs()
+    {
+        int fetch;
+
+        if (!int.TryParse(_tbToFetch.Text.ToString(), out fetch))
+        {
+            fetch = 1000;
         }
 
-        private void FetchLogs()
+        // no negative sized batches!
+        fetch = Math.Max(0, fetch);
+
+        try
         {
-            int fetch;
 
-            if (!int.TryParse(_tbToFetch.Text.ToString(), out fetch))
-            {
-                fetch = 1000;
-            }
+            var db = _rootObject.GetDistinctLoggingDatabase();
+            var task = _rootObject.GetDistinctLoggingTask();
 
-            // no negative sized batches!
-            fetch = Math.Max(0, fetch);
+            var lm = new LogManager(db);
+            _archivalDataLoadInfos = _rootObject.FilterRuns(lm.GetArchivalDataLoadInfos(task, null, null, fetch)).ToArray();
 
-            try
-            {
-
-                var db = _rootObject.GetDistinctLoggingDatabase();
-                var task = _rootObject.GetDistinctLoggingTask();
-
-                var lm = new LogManager(db);
-                _archivalDataLoadInfos = _rootObject.FilterRuns(lm.GetArchivalDataLoadInfos(task, null, null, fetch)).ToArray();
-
-                _treeView.ClearObjects();
-                _treeView.AddObjects(_archivalDataLoadInfos);
-            }
-            catch (Exception ex)
-            {
-                _activator.ShowException("Failed to fetch logs",ex);
-            }
-        }
-
-        private void _treeView_ObjectActivated(ObjectActivatedEventArgs<object> obj)
-        {
-            _activator.Show(_treeView.AspectGetter(_treeView.SelectedObject));
-        }
-
-        private void BtnFailing_Clicked()
-        {
-            _treeView.ClearObjects();
-            _treeView.AddObjects(_archivalDataLoadInfos.Where(a => a.HasErrors || !a.EndTime.HasValue));
-        }
-
-        private void BtnPassing_Clicked()
-        {
-            _treeView.ClearObjects();
-            _treeView.AddObjects(_archivalDataLoadInfos.Where(a => !a.HasErrors && a.EndTime.HasValue));
-        }
-
-        private void BtnAll_Clicked()
-        {
             _treeView.ClearObjects();
             _treeView.AddObjects(_archivalDataLoadInfos);
         }
-
-        public bool SupportsCanExpand => true;
-
-        public bool CanExpand(object model)
+        catch (Exception ex)
         {
-            return model is ArchivalDataLoadInfo || (model is Category c && c.GetChildren().Any()) || model is ArchivalTableLoadInfo;
+            _activator.ShowException("Failed to fetch logs",ex);
+        }
+    }
+
+    private void _treeView_ObjectActivated(ObjectActivatedEventArgs<object> obj)
+    {
+        _activator.Show(_treeView.AspectGetter(_treeView.SelectedObject));
+    }
+
+    private void BtnFailing_Clicked()
+    {
+        _treeView.ClearObjects();
+        _treeView.AddObjects(_archivalDataLoadInfos.Where(a => a.HasErrors || !a.EndTime.HasValue));
+    }
+
+    private void BtnPassing_Clicked()
+    {
+        _treeView.ClearObjects();
+        _treeView.AddObjects(_archivalDataLoadInfos.Where(a => !a.HasErrors && a.EndTime.HasValue));
+    }
+
+    private void BtnAll_Clicked()
+    {
+        _treeView.ClearObjects();
+        _treeView.AddObjects(_archivalDataLoadInfos);
+    }
+
+    public bool SupportsCanExpand => true;
+
+    public bool CanExpand(object model)
+    {
+        return model is ArchivalDataLoadInfo || (model is Category c && c.GetChildren().Any()) || model is ArchivalTableLoadInfo;
+    }
+
+    public IEnumerable<object> GetChildren(object model)
+    {
+        if (model is ArchivalDataLoadInfo dli)
+        {
+            yield return new Category(dli, LoggingTables.TableLoadRun);
+            yield return new Category(dli, LoggingTables.FatalError);
+            yield return new Category(dli, LoggingTables.ProgressLog);
         }
 
-        public IEnumerable<object> GetChildren(object model)
+        if (model is Category c)
         {
-            if (model is ArchivalDataLoadInfo dli)
-            {
-                yield return new Category(dli, LoggingTables.TableLoadRun);
-                yield return new Category(dli, LoggingTables.FatalError);
-                yield return new Category(dli, LoggingTables.ProgressLog);
-            }
-
-            if (model is Category c)
-            {
-                foreach (var child in c.GetChildren())
-                    yield return child;
-            }
-
-            if (model is ArchivalTableLoadInfo ti)
-                foreach (var source in ti.DataSources)
-                    yield return source;
+            foreach (var child in c.GetChildren())
+                yield return child;
         }
 
-        private void Quit()
+        if (model is ArchivalTableLoadInfo ti)
+            foreach (var source in ti.DataSources)
+                yield return source;
+    }
+
+    private void Quit()
+    {
+        Application.RequestStop();
+    }
+
+    private class Category
+    {
+        private LoggingTables _type;
+        private ArchivalDataLoadInfo _dli;
+
+        public Category(ArchivalDataLoadInfo dli, LoggingTables type)
         {
-            Application.RequestStop();
+            _dli = dli;
+            _type = type;
+        }
+        public override string ToString()
+        {
+            switch (_type)
+            {
+                case LoggingTables.FatalError: return $"Errors ({_dli.Errors.Count:N0})";
+                case LoggingTables.TableLoadRun: return $"Tables Loaded ({_dli.TableLoadInfos.Count:N0})";
+                case LoggingTables.ProgressLog: return $"Progress Log ({_dli.Progress.Count:N0})";
+            }
+
+            return base.ToString();
         }
 
-        private class Category
+        internal IEnumerable<object> GetChildren()
         {
-            private LoggingTables _type;
-            private ArchivalDataLoadInfo _dli;
-
-            public Category(ArchivalDataLoadInfo dli, LoggingTables type)
+            switch (_type)
             {
-                _dli = dli;
-                _type = type;
-            }
-            public override string ToString()
-            {
-                switch (_type)
-                {
-                    case LoggingTables.FatalError: return $"Errors ({_dli.Errors.Count:N0})";
-                    case LoggingTables.TableLoadRun: return $"Tables Loaded ({_dli.TableLoadInfos.Count:N0})";
-                    case LoggingTables.ProgressLog: return $"Progress Log ({_dli.Progress.Count:N0})";
-                }
-
-                return base.ToString();
+                case LoggingTables.FatalError: return _dli.Errors;
+                case LoggingTables.TableLoadRun: return _dli.TableLoadInfos;
+                case LoggingTables.ProgressLog: return _dli.Progress;
             }
 
-            internal IEnumerable<object> GetChildren()
-            {
-                switch (_type)
-                {
-                    case LoggingTables.FatalError: return _dli.Errors;
-                    case LoggingTables.TableLoadRun: return _dli.TableLoadInfos;
-                    case LoggingTables.ProgressLog: return _dli.Progress;
-                }
-
-                return Enumerable.Empty<object>();
-            }
+            return Enumerable.Empty<object>();
         }
     }
 }

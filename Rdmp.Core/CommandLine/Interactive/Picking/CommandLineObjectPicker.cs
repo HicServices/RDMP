@@ -11,79 +11,78 @@ using System.Linq;
 using Rdmp.Core.CommandExecution;
 using Rdmp.Core.Repositories;
 
-namespace Rdmp.Core.CommandLine.Interactive.Picking
+namespace Rdmp.Core.CommandLine.Interactive.Picking;
+
+/// <summary>
+/// Parses arguments given along with the "cmd" command to rdmp.exe (<see cref="Rdmp.Core.CommandLine.Options.ExecuteCommandOptions"/>).  This
+/// allows the user to launch certain commands (<see cref="Rdmp.Core.CommandExecution.BasicCommandExecution"/>) from the CLI.
+/// </summary>
+public class CommandLineObjectPicker
 {
+    public IReadOnlyCollection<CommandLineObjectPickerArgumentValue> Arguments { get; }
+        
+    public CommandLineObjectPickerArgumentValue this[int i] => Arguments.ElementAt(i);
+
+    public int Length => Arguments.Count;
+
+    private readonly HashSet<PickObjectBase> _pickers = new HashSet<PickObjectBase>();
+
     /// <summary>
-    /// Parses arguments given along with the "cmd" command to rdmp.exe (<see cref="Rdmp.Core.CommandLine.Options.ExecuteCommandOptions"/>).  This
-    /// allows the user to launch certain commands (<see cref="Rdmp.Core.CommandExecution.BasicCommandExecution"/>) from the CLI.
+    /// Constructs a picker with all possible formats and immediately parse the provided <paramref name="args"/>
     /// </summary>
-    public class CommandLineObjectPicker
+    /// <param name="args"></param>
+    /// <param name="activator"></param>
+    public CommandLineObjectPicker(IEnumerable<string> args,
+        IBasicActivateItems activator)
     {
-        public IReadOnlyCollection<CommandLineObjectPickerArgumentValue> Arguments { get; }
-        
-        public CommandLineObjectPickerArgumentValue this[int i] => Arguments.ElementAt(i);
+        _pickers.Add(new PickObjectByID(activator));
+        _pickers.Add(new PickObjectByName(activator));
+        _pickers.Add(new PickObjectByQuery(activator));
+        _pickers.Add(new PickDatabase());
+        _pickers.Add(new PickTable());
+        _pickers.Add(new PickType(activator));
+        Arguments = new ReadOnlyCollection<CommandLineObjectPickerArgumentValue>(args.Select(ParseValue).ToList());
+    }
 
-        public int Length => Arguments.Count;
+    /// <summary>
+    /// Constructs a picker with only the passed format(s) (<paramref name="pickers"/>) and immediately parse the provided <paramref name="args"/>
+    /// </summary>
+    /// <param name="args"></param>
+    /// <param name="repositoryLocator"></param>
+    /// <param name="pickers"></param>
+    public CommandLineObjectPicker(string[] args,IRDMPPlatformRepositoryServiceLocator repositoryLocator, IEnumerable<PickObjectBase> pickers)
+    {
+        foreach(PickObjectBase p in pickers)
+            _pickers.Add(p);
 
-        private readonly HashSet<PickObjectBase> _pickers = new HashSet<PickObjectBase>();
+        Arguments = new ReadOnlyCollection<CommandLineObjectPickerArgumentValue>(args.Select(ParseValue).ToList());
+    }
 
-        /// <summary>
-        /// Constructs a picker with all possible formats and immediately parse the provided <paramref name="args"/>
-        /// </summary>
-        /// <param name="args"></param>
-        /// <param name="activator"></param>
-        public CommandLineObjectPicker(IEnumerable<string> args,
-            IBasicActivateItems activator)
-        {
-            _pickers.Add(new PickObjectByID(activator));
-            _pickers.Add(new PickObjectByName(activator));
-            _pickers.Add(new PickObjectByQuery(activator));
-            _pickers.Add(new PickDatabase());
-            _pickers.Add(new PickTable());
-            _pickers.Add(new PickType(activator));
-            Arguments = new ReadOnlyCollection<CommandLineObjectPickerArgumentValue>(args.Select(ParseValue).ToList());
-        }
+    private CommandLineObjectPickerArgumentValue ParseValue(string arg,int idx)
+    {
+        //find a picker that recognizes the format
+        var pickers = _pickers.Where(p => p.IsMatch(arg, idx)).ToArray();
 
-        /// <summary>
-        /// Constructs a picker with only the passed format(s) (<paramref name="pickers"/>) and immediately parse the provided <paramref name="args"/>
-        /// </summary>
-        /// <param name="args"></param>
-        /// <param name="repositoryLocator"></param>
-        /// <param name="pickers"></param>
-        public CommandLineObjectPicker(string[] args,IRDMPPlatformRepositoryServiceLocator repositoryLocator, IEnumerable<PickObjectBase> pickers)
-        {
-            foreach(PickObjectBase p in pickers)
-                _pickers.Add(p);
-
-            Arguments = new ReadOnlyCollection<CommandLineObjectPickerArgumentValue>(args.Select(ParseValue).ToList());
-        }
-
-        private CommandLineObjectPickerArgumentValue ParseValue(string arg,int idx)
-        {
-            //find a picker that recognizes the format
-            var pickers = _pickers.Where(p => p.IsMatch(arg, idx)).ToArray();
-
-            if (pickers.Any())
-                return pickers.First().Parse(arg, idx).Merge(pickers.Skip(1).Select(p=>p.Parse(arg,idx)));
+        if (pickers.Any())
+            return pickers.First().Parse(arg, idx).Merge(pickers.Skip(1).Select(p=>p.Parse(arg,idx)));
             
-            //nobody recognized it, use the raw value (maybe it's just a regular string, int etc).  Delay hard typing it till we know
-            //what constructor we are trying to match it to.
-            return new CommandLineObjectPickerArgumentValue(arg,idx);
-        }
+        //nobody recognized it, use the raw value (maybe it's just a regular string, int etc).  Delay hard typing it till we know
+        //what constructor we are trying to match it to.
+        return new CommandLineObjectPickerArgumentValue(arg,idx);
+    }
         
-        /// <summary>
-        /// Returns true if the given <paramref name="idx"/> exists and is populated with a value of the expected <paramref name="paramType"/>
-        /// </summary>
-        /// <param name="idx"></param>
-        /// <param name="paramType"></param>
-        /// <returns></returns>
-        public bool HasArgumentOfType(int idx, Type paramType)
-        {
-            //if the index is greater than the number of arguments we have
-            if (idx >= Arguments.Count)
-                return false;
+    /// <summary>
+    /// Returns true if the given <paramref name="idx"/> exists and is populated with a value of the expected <paramref name="paramType"/>
+    /// </summary>
+    /// <param name="idx"></param>
+    /// <param name="paramType"></param>
+    /// <returns></returns>
+    public bool HasArgumentOfType(int idx, Type paramType)
+    {
+        //if the index is greater than the number of arguments we have
+        if (idx >= Arguments.Count)
+            return false;
 
-            return Arguments.ElementAt(idx).HasValueOfType(paramType);
-        }
+        return Arguments.ElementAt(idx).HasValueOfType(paramType);
     }
 }

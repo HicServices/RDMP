@@ -6,7 +6,6 @@
 
 using Rdmp.Core.CommandLine.Options;
 
-namespace Rdmp.UI.SimpleControls
-{
-    public delegate RDMPCommandLineOptions CommandGetterHandler(CommandLineActivity activityRequested);
-}
+namespace Rdmp.UI.SimpleControls;
+
+public delegate RDMPCommandLineOptions CommandGetterHandler(CommandLineActivity activityRequested);

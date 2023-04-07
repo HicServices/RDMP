@@ -7,16 +7,15 @@
 using MapsDirectlyToDatabaseTable;
 using Rdmp.Core.Curation.Data;
 
-namespace Rdmp.UI.ItemActivation.Arranging
+namespace Rdmp.UI.ItemActivation.Arranging;
+
+/// <summary>
+/// Facilitates opening/closing lots of windows at once to achieve a specific goal (e.g. running a data load).  Basically sets up the tabs for a user friendly
+/// consistent experience for the called user task.
+/// </summary>
+public interface IArrangeWindows
 {
-    /// <summary>
-    /// Facilitates opening/closing lots of windows at once to achieve a specific goal (e.g. running a data load).  Basically sets up the tabs for a user friendly
-    /// consistent experience for the called user task.
-    /// </summary>
-    public interface IArrangeWindows
-    {
-        //basic case where you only want to Emphasise and Activate it (after closing all other windows)
-        void SetupEditAnything(object sender, IMapsDirectlyToDatabaseTable o);
-        void Setup(WindowLayout target);
-    }
+    //basic case where you only want to Emphasise and Activate it (after closing all other windows)
+    void SetupEditAnything(object sender, IMapsDirectlyToDatabaseTable o);
+    void Setup(WindowLayout target);
 }

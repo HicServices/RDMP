@@ -7,14 +7,13 @@
 using System;
 using System.Runtime.InteropServices;
 
-namespace Rdmp.UI
+namespace Rdmp.UI;
+
+/// <summary>
+/// Static class for DllImport methods.
+/// </summary>
+public class NativeMethods
 {
-    /// <summary>
-    /// Static class for DllImport methods.
-    /// </summary>
-    public class NativeMethods
-    {
-        [DllImport("user32.dll", CharSet = CharSet.Auto)]
-        public static extern int GetScrollPos(IntPtr hWnd, System.Windows.Forms.Orientation nBar);
-    }
+    [DllImport("user32.dll", CharSet = CharSet.Auto)]
+    public static extern int GetScrollPos(IntPtr hWnd, System.Windows.Forms.Orientation nBar);
 }

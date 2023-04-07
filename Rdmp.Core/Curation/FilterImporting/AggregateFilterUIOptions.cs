@@ -10,46 +10,45 @@ using Rdmp.Core.Curation.Data.Aggregation;
 using Rdmp.Core.QueryBuilding.Options;
 using Rdmp.Core.QueryBuilding;
 
-namespace Rdmp.Core.Curation.FilterImporting
+namespace Rdmp.Core.Curation.FilterImporting;
+
+/// <inheritdoc/>
+public class AggregateFilterUIOptions : FilterUIOptions
 {
-    /// <inheritdoc/>
-    public class AggregateFilterUIOptions : FilterUIOptions
+    private ISqlParameter[] _globals;
+    private ITableInfo[] _tables;
+    private IColumn[] _columns;
+
+    public AggregateFilterUIOptions(AggregateFilter aggregateFilter) : base(aggregateFilter)
     {
-        private ISqlParameter[] _globals;
-        private ITableInfo[] _tables;
-        private IColumn[] _columns;
+        var aggregateConfiguration = aggregateFilter.GetAggregate();
 
-        public AggregateFilterUIOptions(AggregateFilter aggregateFilter) : base(aggregateFilter)
-        {
-            var aggregateConfiguration = aggregateFilter.GetAggregate();
+        if (aggregateConfiguration == null)
+            throw new Exception("AggregateFilter '" + aggregateFilter + "' (ID=" + aggregateFilter.ID + ") does not belong to any AggregateConfiguration, is it somehow an orphan?");
 
-            if (aggregateConfiguration == null)
-                throw new Exception("AggregateFilter '" + aggregateFilter + "' (ID=" + aggregateFilter.ID + ") does not belong to any AggregateConfiguration, is it somehow an orphan?");
+        //it part of an AggregateConfiguration so get the same factory that is used by AggregateEditorUI to tell us about the globals and the columns
+        var options = new AggregateBuilderOptionsFactory().Create(aggregateConfiguration);
+        _globals = options.GetAllParameters(aggregateConfiguration);
 
-            //it part of an AggregateConfiguration so get the same factory that is used by AggregateEditorUI to tell us about the globals and the columns
-            var options = new AggregateBuilderOptionsFactory().Create(aggregateConfiguration);
-            _globals = options.GetAllParameters(aggregateConfiguration);
+        //get all the tables 
+        _tables = aggregateConfiguration.Catalogue.GetTableInfoList(true);
 
-            //get all the tables 
-            _tables = aggregateConfiguration.Catalogue.GetTableInfoList(true);
+        //but also add the ExtractionInformations and AggregateDimensions - in the case of PatientIndex table join usages (duplicates are ignored by _autoCompleteProvider)
+        _columns = options.GetAvailableWHEREColumns(aggregateConfiguration);
+    }
 
-            //but also add the ExtractionInformations and AggregateDimensions - in the case of PatientIndex table join usages (duplicates are ignored by _autoCompleteProvider)
-            _columns = options.GetAvailableWHEREColumns(aggregateConfiguration);
-        }
+    public override ITableInfo[] GetTableInfos()
+    {
+        return _tables;
+    }
 
-        public override ITableInfo[] GetTableInfos()
-        {
-            return _tables;
-        }
+    public override ISqlParameter[] GetGlobalParametersInFilterScope()
+    {
+        return _globals;
+    }
 
-        public override ISqlParameter[] GetGlobalParametersInFilterScope()
-        {
-            return _globals;
-        }
-
-        public override IColumn[] GetIColumnsInFilterScope()
-        {
-            return _columns;
-        }
+    public override IColumn[] GetIColumnsInFilterScope()
+    {
+        return _columns;
     }
 }

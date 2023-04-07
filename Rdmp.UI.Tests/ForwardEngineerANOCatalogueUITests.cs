@@ -9,38 +9,37 @@ using Rdmp.Core.Curation.Data;
 using Rdmp.UI.ANOEngineeringUIs;
 using Rdmp.UI.CommandExecution.AtomicCommands;
 
-namespace Rdmp.UI.Tests
+namespace Rdmp.UI.Tests;
+
+class ForwardEngineerANOCatalogueUITests : UITests
 {
-    class ForwardEngineerANOCatalogueUITests : UITests
+    [Test,UITimeout(50000)]
+    public void Test_ForwardEngineerANOCatalogueUI_NormalState()
     {
-        [Test,UITimeout(50000)]
-        public void Test_ForwardEngineerANOCatalogueUI_NormalState()
-        {
-            SetupMEF();
+        SetupMEF();
 
-            var eiChi = WhenIHaveA<ExtractionInformation>();
-            var cata = eiChi.CatalogueItem.Catalogue;
+        var eiChi = WhenIHaveA<ExtractionInformation>();
+        var cata = eiChi.CatalogueItem.Catalogue;
             
-            AndLaunch<ForwardEngineerANOCatalogueUI>(cata);
+        AndLaunch<ForwardEngineerANOCatalogueUI>(cata);
 
-            AssertNoErrors(ExpectedErrorType.Any);
-        }
-
-        [Test, UITimeout(50000)]
-        public void Test_ForwardEngineerANOCatalogueUI_NoColumns()
-        {
-            SetupMEF();
-
-            var cata = WhenIHaveA<Catalogue>();
-
-            //shouldn't be possible to launch the UI
-            AssertCommandIsImpossible(new ExecuteCommandCreateANOVersion(ItemActivator, cata), "does not have any Extractable Columns");
-
-            //and if we are depersisting it that should be angry
-            AndLaunch<ForwardEngineerANOCatalogueUI>(cata);
-
-            AssertErrorWasShown(ExpectedErrorType.Fatal, "Could not generate a valid query for the Catalogue");
-        }
-
+        AssertNoErrors(ExpectedErrorType.Any);
     }
+
+    [Test, UITimeout(50000)]
+    public void Test_ForwardEngineerANOCatalogueUI_NoColumns()
+    {
+        SetupMEF();
+
+        var cata = WhenIHaveA<Catalogue>();
+
+        //shouldn't be possible to launch the UI
+        AssertCommandIsImpossible(new ExecuteCommandCreateANOVersion(ItemActivator, cata), "does not have any Extractable Columns");
+
+        //and if we are depersisting it that should be angry
+        AndLaunch<ForwardEngineerANOCatalogueUI>(cata);
+
+        AssertErrorWasShown(ExpectedErrorType.Fatal, "Could not generate a valid query for the Catalogue");
+    }
+
 }

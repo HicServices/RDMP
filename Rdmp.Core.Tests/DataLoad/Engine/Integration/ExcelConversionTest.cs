@@ -16,104 +16,114 @@ using Rdmp.Core.DataLoad.Engine.Job;
 using Rdmp.Core.DataLoad.Modules.DataProvider.FlatFileManipulation;
 using ReusableLibraryCode.Progress;
 
-namespace Rdmp.Core.Tests.DataLoad.Engine.Integration
+namespace Rdmp.Core.Tests.DataLoad.Engine.Integration;
+
+[Category("Unit")]
+public class ExcelConversionTest
 {
-    [Category("Unit")]
-    public class ExcelConversionTest
+    private readonly Stack<DirectoryInfo> _dirsToCleanUp = new Stack<DirectoryInfo>();
+    private DirectoryInfo _parentDir;
+        
+    [OneTimeSetUp]
+    protected virtual void OneTimeSetUp()
     {
-        private readonly Stack<DirectoryInfo> _dirsToCleanUp = new Stack<DirectoryInfo>();
-        private DirectoryInfo _parentDir;
+        var testDir = new DirectoryInfo(TestContext.CurrentContext.TestDirectory);
+        _parentDir = testDir.CreateSubdirectory("ExcelConversionTest");
+        _dirsToCleanUp.Push(_parentDir);
+    }
+
+    [OneTimeTearDown]
+    protected virtual void OneTimeTearDown()
+    {
+        while (_dirsToCleanUp.Count > 0)
+        {
+            var dir = _dirsToCleanUp.Pop();
+            if (dir.Exists)
+                dir.Delete(true);
+        }
+    }
         
-        [OneTimeSetUp]
-        protected virtual void OneTimeSetUp()
-        {
-            var testDir = new DirectoryInfo(TestContext.CurrentContext.TestDirectory);
-            _parentDir = testDir.CreateSubdirectory("ExcelConversionTest");
-            _dirsToCleanUp.Push(_parentDir);
-        }
+    private LoadDirectory CreateLoadDirectoryForTest(string directoryName)
+    {
+        var loadDirectory = LoadDirectory.CreateDirectoryStructure(_parentDir, directoryName,true);
+        _dirsToCleanUp.Push(loadDirectory.RootPath);
+        return loadDirectory;
+    }
+
+    [Test]
+    public void TestExcelFunctionality_OnSimpleXlsx()
+    {
+        var LoadDirectory = CreateLoadDirectoryForTest("TestExcelFunctionality_OnSimpleXlsx");
+
+        //clean SetUp anything in the test project folders forloading directory
+        foreach (FileInfo fileInfo in LoadDirectory.ForLoading.GetFiles())
+            fileInfo.Delete();
+
+        string targetFile = Path.Combine(LoadDirectory.ForLoading.FullName, "Test.xlsx");
+
+        FileInfo fi = new FileInfo(Path.Combine(TestContext.CurrentContext.TestDirectory, "DataLoad", "Engine",
+            "Resources", "Test.xlsx"));
+
+        FileAssert.Exists(fi);
+
+        fi.CopyTo(targetFile, true);
+
+        TestConversionFor(targetFile, "*.xlsx", 5, LoadDirectory);
+    }
+
+    [Test]
+    public void TestExcelFunctionality_DodgyFileExtension()
+    {
+        var LoadDirectory = CreateLoadDirectoryForTest("TestExcelFunctionality_DodgyFileExtension");
+
+        //clean SetUp anything in the test project folders forloading directory
+        foreach (FileInfo fileInfo in LoadDirectory.ForLoading.GetFiles())
+            fileInfo.Delete();
+
+        string targetFile = Path.Combine(LoadDirectory.ForLoading.FullName, "Test.xml");
+        FileInfo fi = new FileInfo(Path.Combine(TestContext.CurrentContext.TestDirectory, "DataLoad", "Engine",
+            "Resources", "XmlTestForExcel.xml"));
+
+        FileAssert.Exists(fi);
+
+        fi.CopyTo(targetFile, true);
+
+        var ex = Assert.Throws<Exception>(()=>TestConversionFor(targetFile, "*.fish", 1, LoadDirectory));
+
+        Assert.IsTrue(ex.Message.StartsWith("Did not find any files matching Pattern '*.fish' in directory"));
+    }
         
-        private LoadDirectory CreateLoadDirectoryForTest(string directoryName)
+    private void TestConversionFor(string targetFile, string fileExtensionToConvert, int expectedNumberOfSheets, LoadDirectory directory)
+    {
+        FileInfo f = new FileInfo(targetFile);
+
+        try
         {
-            var loadDirectory = LoadDirectory.CreateDirectoryStructure(_parentDir, directoryName,true);
-            _dirsToCleanUp.Push(loadDirectory.RootPath);
-            return loadDirectory;
-        }
+            Assert.IsTrue(f.Exists);
+            Assert.IsTrue(f.Length > 100);
 
-        [Test]
-        public void TestExcelFunctionality_OnSimpleXlsx()
-        {
-            var LoadDirectory = CreateLoadDirectoryForTest("TestExcelFunctionality_OnSimpleXlsx");
+            ExcelToCSVFilesConverter converter = new ExcelToCSVFilesConverter();
 
-            //clean SetUp anything in the test project folders forloading directory
-            foreach (FileInfo fileInfo in LoadDirectory.ForLoading.GetFiles())
-                fileInfo.Delete();
+            var job = new ThrowImmediatelyDataLoadJob(new ThrowImmediatelyDataLoadEventListener(){ThrowOnWarning =  true, WriteToConsole =  true});
+            job.LoadDirectory = directory;
 
-            string targetFile = Path.Combine(LoadDirectory.ForLoading.FullName, "Test.xlsx");
+            converter.ExcelFilePattern = fileExtensionToConvert;
+            converter.Fetch(job, new GracefulCancellationToken());
 
-            FileInfo fi = new FileInfo(Path.Combine(TestContext.CurrentContext.TestDirectory, "DataLoad", "Engine",
-                "Resources", "Test.xlsx"));
+            FileInfo[] filesCreated = directory.ForLoading.GetFiles("*.csv");
 
-            FileAssert.Exists(fi);
+            Assert.AreEqual(expectedNumberOfSheets,filesCreated.Length);
 
-            fi.CopyTo(targetFile, true);
-
-            TestConversionFor(targetFile, "*.xlsx", 5, LoadDirectory);
-        }
-
-        [Test]
-        public void TestExcelFunctionality_DodgyFileExtension()
-        {
-            var LoadDirectory = CreateLoadDirectoryForTest("TestExcelFunctionality_DodgyFileExtension");
-
-            //clean SetUp anything in the test project folders forloading directory
-            foreach (FileInfo fileInfo in LoadDirectory.ForLoading.GetFiles())
-                fileInfo.Delete();
-
-            string targetFile = Path.Combine(LoadDirectory.ForLoading.FullName, "Test.xml");
-            FileInfo fi = new FileInfo(Path.Combine(TestContext.CurrentContext.TestDirectory, "DataLoad", "Engine",
-                "Resources", "XmlTestForExcel.xml"));
-
-            FileAssert.Exists(fi);
-
-            fi.CopyTo(targetFile, true);
-
-            var ex = Assert.Throws<Exception>(()=>TestConversionFor(targetFile, "*.fish", 1, LoadDirectory));
-
-            Assert.IsTrue(ex.Message.StartsWith("Did not find any files matching Pattern '*.fish' in directory"));
-        }
-        
-        private void TestConversionFor(string targetFile, string fileExtensionToConvert, int expectedNumberOfSheets, LoadDirectory directory)
-        {
-            FileInfo f = new FileInfo(targetFile);
-
-            try
+            foreach (FileInfo fileCreated in filesCreated)
             {
-                Assert.IsTrue(f.Exists);
-                Assert.IsTrue(f.Length > 100);
-
-                ExcelToCSVFilesConverter converter = new ExcelToCSVFilesConverter();
-
-                var job = new ThrowImmediatelyDataLoadJob(new ThrowImmediatelyDataLoadEventListener(){ThrowOnWarning =  true, WriteToConsole =  true});
-                job.LoadDirectory = directory;
-
-                converter.ExcelFilePattern = fileExtensionToConvert;
-                converter.Fetch(job, new GracefulCancellationToken());
-
-                FileInfo[] filesCreated = directory.ForLoading.GetFiles("*.csv");
-
-                Assert.AreEqual(expectedNumberOfSheets,filesCreated.Length);
-
-                foreach (FileInfo fileCreated in filesCreated)
-                {
-                    Assert.IsTrue(Regex.IsMatch(fileCreated.Name, "Sheet[0-9].csv"));
-                    Assert.GreaterOrEqual(fileCreated.Length, 100);
-                    fileCreated.Delete();
-                }
+                Assert.IsTrue(Regex.IsMatch(fileCreated.Name, "Sheet[0-9].csv"));
+                Assert.GreaterOrEqual(fileCreated.Length, 100);
+                fileCreated.Delete();
             }
-            finally
-            {
-                f.Delete();
-            }
+        }
+        finally
+        {
+            f.Delete();
         }
     }
 }

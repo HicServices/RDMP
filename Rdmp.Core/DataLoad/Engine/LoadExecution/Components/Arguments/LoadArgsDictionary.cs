@@ -11,40 +11,39 @@ using Rdmp.Core.Curation.Data.DataLoad;
 using Rdmp.Core.Curation.Data.DataLoad.Extensions;
 using Rdmp.Core.DataLoad.Engine.DatabaseManagement;
 
-namespace Rdmp.Core.DataLoad.Engine.LoadExecution.Components.Arguments
+namespace Rdmp.Core.DataLoad.Engine.LoadExecution.Components.Arguments;
+
+/// <summary>
+/// Creates StageArgs for each LoadStage based on the supplied LoadMetadata (load configuration).  This tells the DLE where each database is etc in the 
+/// RAW => STAGING => LIVE model rdmp uses for data loading.
+/// </summary>
+public class LoadArgsDictionary
 {
-    /// <summary>
-    /// Creates StageArgs for each LoadStage based on the supplied LoadMetadata (load configuration).  This tells the DLE where each database is etc in the 
-    /// RAW => STAGING => LIVE model rdmp uses for data loading.
-    /// </summary>
-    public class LoadArgsDictionary
-    {
-        private readonly ILoadMetadata _loadMetadata;
-        private readonly StandardDatabaseHelper _dbDeployInfo;
+    private readonly ILoadMetadata _loadMetadata;
+    private readonly StandardDatabaseHelper _dbDeployInfo;
         
-        public Dictionary<LoadStage, IStageArgs> LoadArgs { get; private set; }
+    public Dictionary<LoadStage, IStageArgs> LoadArgs { get; private set; }
 
-        public LoadArgsDictionary(ILoadMetadata loadMetadata, StandardDatabaseHelper dbDeployInfo)
+    public LoadArgsDictionary(ILoadMetadata loadMetadata, StandardDatabaseHelper dbDeployInfo)
+    {
+        if(string.IsNullOrWhiteSpace(loadMetadata.LocationOfFlatFiles))
+            throw new Exception(@"No Project Directory (LocationOfFlatFiles) has been configured on LoadMetadata " + loadMetadata.Name);
+
+        _dbDeployInfo = dbDeployInfo;
+        _loadMetadata = loadMetadata;
+
+        LoadArgs = new Dictionary<LoadStage, IStageArgs>();
+        foreach (LoadStage loadStage in Enum.GetValues(typeof(LoadStage)))
         {
-            if(string.IsNullOrWhiteSpace(loadMetadata.LocationOfFlatFiles))
-                throw new Exception(@"No Project Directory (LocationOfFlatFiles) has been configured on LoadMetadata " + loadMetadata.Name);
-
-            _dbDeployInfo = dbDeployInfo;
-            _loadMetadata = loadMetadata;
-
-            LoadArgs = new Dictionary<LoadStage, IStageArgs>();
-            foreach (LoadStage loadStage in Enum.GetValues(typeof(LoadStage)))
-            {
-                LoadArgs.Add(loadStage, CreateLoadArgs(loadStage));
-            }
+            LoadArgs.Add(loadStage, CreateLoadArgs(loadStage));
         }
+    }
 
-        protected IStageArgs CreateLoadArgs(LoadStage loadStage)
-        {
-            return
-                new StageArgs(loadStage,
+    protected IStageArgs CreateLoadArgs(LoadStage loadStage)
+    {
+        return
+            new StageArgs(loadStage,
                 _dbDeployInfo[loadStage.ToLoadBubble()]
                 , new LoadDirectory(_loadMetadata.LocationOfFlatFiles.TrimEnd(new[] { '\\' })));
-        }
     }
 }

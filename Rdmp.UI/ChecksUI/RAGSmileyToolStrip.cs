@@ -13,200 +13,200 @@ using Rdmp.Core.Icons.IconProvision;
 using Rdmp.UI.SimpleDialogs;
 using ReusableLibraryCode.Checks;
 
-namespace Rdmp.UI.ChecksUI
+namespace Rdmp.UI.ChecksUI;
+
+/// <inheritdoc cref="IRAGSmiley" />
+public partial class RAGSmileyToolStrip : ToolStripButton,  IRAGSmiley
 {
-    /// <inheritdoc cref="IRAGSmiley" />
-    public partial class RAGSmileyToolStrip : ToolStripButton,  IRAGSmiley
+    private readonly Control _host;
+    private CheckResult _worst;
+    private Exception _exception;
+    YesNoYesToAllDialog dialog;
+
+    public RAGSmileyToolStrip(Control host)
     {
-        private readonly Control _host;
-        private CheckResult _worst;
-        private Exception _exception;
-        YesNoYesToAllDialog dialog;
+        _host = host;
+        _worst = CheckResult.Success;
 
-        public RAGSmileyToolStrip(Control host)
+        //until first check is run
+        Enabled = false;
+        Text = "Checks";
+        Image = _green;
+
+        timer = new Timer();
+        timer.Interval = 500;
+        timer.Tick += T_Tick;
+        timer.Start();
+    }
+
+    private void T_Tick(object sender, EventArgs e)
+    {
+        if(IsDisposed)
         {
-            _host = host;
-            _worst = CheckResult.Success;
-
-            //until first check is run
-            Enabled = false;
-            Text = "Checks";
-            Image = _green;
-
-            timer = new Timer();
-            timer.Interval = 500;
-            timer.Tick += T_Tick;
-            timer.Start();
+            timer.Stop();
+            timer.Dispose();
         }
-
-        private void T_Tick(object sender, EventArgs e)
+        else
         {
-            if(IsDisposed)
-            {
-                timer.Stop();
-                timer.Dispose();
-            }
-            else
-            {
-                switch (_worst)
-                {
-                    case CheckResult.Success:
-
-                        Image = _green;
-                        Tag = null;
-                        break;
-
-                    case CheckResult.Warning:
-
-                        Image = _yellow;
-                        Tag = _exception;
-                        Enabled = true;
-                        break;
-
-                    case CheckResult.Fail:
-
-                        Image = _red;
-                        Tag = _exception;
-                        Enabled = true;
-                        break;
-                }
-            }
-        }
-
-        public bool IsGreen()
-        {
-            return _worst == CheckResult.Success;
-        }
-
-        public bool IsWarning()
-        {
-            return _worst == CheckResult.Warning;
-        }
-
-        public bool IsFatal()
-        {
-            return _worst == CheckResult.Fail;
-        }
-
-        private Bitmap _green = Images.TinyGreen.ImageToBitmap();
-        private Bitmap _yellow = Images.TinyYellow.ImageToBitmap();
-        private Bitmap _red = Images.TinyRed.ImageToBitmap();
-
-        private ToMemoryCheckNotifier memoryCheckNotifier = new ToMemoryCheckNotifier();
-        private Task _checkTask;
-        private object oTaskLock = new object();
-        private Timer timer;
-
-        protected override void OnClick(EventArgs e)
-        {
-            base.OnClick(e);
-
-            Exception tag = Tag as Exception;
-
-            if (PopupMessagesIfAny(tag))
-                return;
-
-            if (tag != null)
-                ExceptionViewer.Show(tag);
-        }
-
-        public void Warning(Exception ex)
-        {            
-            if (IsFatal())
-                return;
-
-            _worst = CheckResult.Warning;
-            _exception = ex;
-        }
-
-
-        public void Fatal(Exception ex)
-        {
-            _worst = CheckResult.Fail;
-            _exception = ex;
-        }
-
-        public void Reset()
-        {            
-            //reset the checks too so as not to leave old check results kicking about
-            memoryCheckNotifier = new ToMemoryCheckNotifier();
-            _worst = CheckResult.Success;
-            _exception = null;
-        }
-
-        public bool OnCheckPerformed(CheckEventArgs args)
-        {            
-            //record in memory
-            memoryCheckNotifier.OnCheckPerformed(args);
-            
-
-            if (dialog != null)
-            {
-                if(!string.IsNullOrWhiteSpace(args.ProposedFix))
-                    if (dialog.ShowDialog(string.Format("Problem:{0}\r\n\r\nFix:{1}",args.Message,args.ProposedFix), "Apply Fix?") == DialogResult.Yes)
-                    {
-                        ElevateState(CheckResult.Warning);
-                        memoryCheckNotifier.OnCheckPerformed(new CheckEventArgs("Fix will be applied",CheckResult.Warning));
-                        return true;
-                    }
-            }
-
-            ElevateState(args.Result);
-
-            if (args.Ex != null)
-                _exception = args.Ex;
-
-            return false;
-        }
-
-        public void ElevateState(CheckResult result)
-        {
-            switch (result)
+            switch (_worst)
             {
                 case CheckResult.Success:
+
+                    Image = _green;
+                    Tag = null;
                     break;
+
                 case CheckResult.Warning:
-                    Warning(null);
+
+                    Image = _yellow;
+                    Tag = _exception;
+                    Enabled = true;
                     break;
+
                 case CheckResult.Fail:
-                    Fatal(null);
+
+                    Image = _red;
+                    Tag = _exception;
+                    Enabled = true;
                     break;
-                default:
-                    throw new ArgumentOutOfRangeException();
             }
         }
+    }
 
-        private bool PopupMessagesIfAny(Exception tag)
+    public bool IsGreen()
+    {
+        return _worst == CheckResult.Success;
+    }
+
+    public bool IsWarning()
+    {
+        return _worst == CheckResult.Warning;
+    }
+
+    public bool IsFatal()
+    {
+        return _worst == CheckResult.Fail;
+    }
+
+    private Bitmap _green = Images.TinyGreen.ImageToBitmap();
+    private Bitmap _yellow = Images.TinyYellow.ImageToBitmap();
+    private Bitmap _red = Images.TinyRed.ImageToBitmap();
+
+    private ToMemoryCheckNotifier memoryCheckNotifier = new ToMemoryCheckNotifier();
+    private Task _checkTask;
+    private object oTaskLock = new object();
+    private Timer timer;
+
+    protected override void OnClick(EventArgs e)
+    {
+        base.OnClick(e);
+
+        Exception tag = Tag as Exception;
+
+        if (PopupMessagesIfAny(tag))
+            return;
+
+        if (tag != null)
+            ExceptionViewer.Show(tag);
+    }
+
+    public void Warning(Exception ex)
+    {            
+        if (IsFatal())
+            return;
+
+        _worst = CheckResult.Warning;
+        _exception = ex;
+    }
+
+
+    public void Fatal(Exception ex)
+    {
+        _worst = CheckResult.Fail;
+        _exception = ex;
+    }
+
+    public void Reset()
+    {            
+        //reset the checks too so as not to leave old check results kicking about
+        memoryCheckNotifier = new ToMemoryCheckNotifier();
+        _worst = CheckResult.Success;
+        _exception = null;
+    }
+
+    public bool OnCheckPerformed(CheckEventArgs args)
+    {            
+        //record in memory
+        memoryCheckNotifier.OnCheckPerformed(args);
+            
+
+        if (dialog != null)
         {
-            if (memoryCheckNotifier.Messages.Any())
-            {
-                var popup = new PopupChecksUI("Record of events", false);
-                new ReplayCheckable(memoryCheckNotifier).Check(popup);
-
-                //if we have a tagged Exception that isn't included in the ToMemoryCheckNotifier we should show the user that one too
-                if (tag != null && memoryCheckNotifier.Messages.All(m=>m.Ex != tag))
-                    popup.OnCheckPerformed(new CheckEventArgs(tag.Message, CheckResult.Fail, tag));
-
-                return true;
-            }
-
-            return false;
+            if(!string.IsNullOrWhiteSpace(args.ProposedFix))
+                if (dialog.ShowDialog(string.Format("Problem:{0}\r\n\r\nFix:{1}",args.Message,args.ProposedFix), "Apply Fix?") == DialogResult.Yes)
+                {
+                    ElevateState(CheckResult.Warning);
+                    memoryCheckNotifier.OnCheckPerformed(new CheckEventArgs("Fix will be applied",CheckResult.Warning));
+                    return true;
+                }
         }
 
-        public void StartChecking(ICheckable checkable)
-        {
-            lock (oTaskLock)
-            {
+        ElevateState(args.Result);
 
-                //if there is already a Task and it has not completed
-                if (_checkTask != null && !_checkTask.IsCompleted)
-                    return;
+        if (args.Ex != null)
+            _exception = args.Ex;
+
+        return false;
+    }
+
+    public void ElevateState(CheckResult result)
+    {
+        switch (result)
+        {
+            case CheckResult.Success:
+                break;
+            case CheckResult.Warning:
+                Warning(null);
+                break;
+            case CheckResult.Fail:
+                Fatal(null);
+                break;
+            default:
+                throw new ArgumentOutOfRangeException();
+        }
+    }
+
+    private bool PopupMessagesIfAny(Exception tag)
+    {
+        if (memoryCheckNotifier.Messages.Any())
+        {
+            var popup = new PopupChecksUI("Record of events", false);
+            new ReplayCheckable(memoryCheckNotifier).Check(popup);
+
+            //if we have a tagged Exception that isn't included in the ToMemoryCheckNotifier we should show the user that one too
+            if (tag != null && memoryCheckNotifier.Messages.All(m=>m.Ex != tag))
+                popup.OnCheckPerformed(new CheckEventArgs(tag.Message, CheckResult.Fail, tag));
+
+            return true;
+        }
+
+        return false;
+    }
+
+    public void StartChecking(ICheckable checkable)
+    {
+        lock (oTaskLock)
+        {
+
+            //if there is already a Task and it has not completed
+            if (_checkTask != null && !_checkTask.IsCompleted)
+                return;
                 
-                dialog = new YesNoYesToAllDialog();
+            dialog = new YesNoYesToAllDialog();
 
-                //else start a new Task
-                Reset();
-                _checkTask = new Task(() =>
+            //else start a new Task
+            Reset();
+            _checkTask = new Task(() =>
                 {
                     try
                     {
@@ -217,9 +217,8 @@ namespace Rdmp.UI.ChecksUI
                         Fatal(new Exception("Entire Checking Process Failed", ex));
                     }
                 }
-                    );
-                _checkTask.Start();
-            }
+            );
+            _checkTask.Start();
         }
     }
 }

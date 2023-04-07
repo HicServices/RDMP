@@ -15,91 +15,90 @@ using ReusableLibraryCode.Checks;
 
 using PopupChecksUI = Rdmp.UI.ChecksUI.PopupChecksUI;
 
-namespace Rdmp.UI
+namespace Rdmp.UI;
+
+/// <summary>
+/// Small UI control for capturing and displaying Exceptions that should not be directly brought directly to the users attention
+/// but which should none the less be visible.
+/// </summary>
+[System.ComponentModel.DesignerCategory("")]
+public class ExceptionCounterUI : ToolStripButton,ICheckNotifier
 {
-    /// <summary>
-    /// Small UI control for capturing and displaying Exceptions that should not be directly brought directly to the users attention
-    /// but which should none the less be visible.
-    /// </summary>
-    [System.ComponentModel.DesignerCategory("")]
-    public class ExceptionCounterUI : ToolStripButton,ICheckNotifier
+    private const float EmSize = 8f;
+
+    private ToMemoryCheckNotifier _events = new ToMemoryCheckNotifier(new NLogICheckNotifier(true,false));
+        
+    private const float NotifyWidth = 15;
+
+    public ExceptionCounterUI()
     {
-        private const float EmSize = 8f;
+        Image = Images.exclamation.ImageToBitmap();
+        Enabled = false;
+        ToolTipText = "Application Errors";
+    }
+    protected override void OnPaint(PaintEventArgs e)
+    {
+        e.Graphics.SmoothingMode = SmoothingMode.AntiAlias;
 
-        private ToMemoryCheckNotifier _events = new ToMemoryCheckNotifier(new NLogICheckNotifier(true,false));
-        
-        private const float NotifyWidth = 15;
-
-        public ExceptionCounterUI()
-        {
-            Image = Images.exclamation.ImageToBitmap();
-            Enabled = false;
-            ToolTipText = "Application Errors";
-        }
-        protected override void OnPaint(PaintEventArgs e)
-        {
-            e.Graphics.SmoothingMode = SmoothingMode.AntiAlias;
-
-            base.OnPaint(e);
+        base.OnPaint(e);
             
-            int exceptionCount = Math.Min(_events.Messages.Count, 10);
+        int exceptionCount = Math.Min(_events.Messages.Count, 10);
 
-            if(exceptionCount > 0)
-            {
-                string msg = exceptionCount == 10?"!":exceptionCount.ToString();
+        if(exceptionCount > 0)
+        {
+            string msg = exceptionCount == 10?"!":exceptionCount.ToString();
 
-                var f = new Font(FontFamily.GenericMonospace, EmSize,FontStyle.Bold);
+            var f = new Font(FontFamily.GenericMonospace, EmSize,FontStyle.Bold);
 
-                var xStart = (Width - NotifyWidth)/2;
-                var yStart = (Height - NotifyWidth) / 2;
+            var xStart = (Width - NotifyWidth)/2;
+            var yStart = (Height - NotifyWidth) / 2;
                 
-                var darkRed = new SolidBrush(Color.FromArgb(206, 10, 26));
+            var darkRed = new SolidBrush(Color.FromArgb(206, 10, 26));
 
-                e.Graphics.FillEllipse(darkRed, xStart, yStart+1, NotifyWidth-2, NotifyWidth-2);
-                e.Graphics.DrawString(msg,f,Brushes.White,new RectangleF(xStart + 2,yStart,NotifyWidth,NotifyWidth));
-            }
+            e.Graphics.FillEllipse(darkRed, xStart, yStart+1, NotifyWidth-2, NotifyWidth-2);
+            e.Graphics.DrawString(msg,f,Brushes.White,new RectangleF(xStart + 2,yStart,NotifyWidth,NotifyWidth));
         }
+    }
 
-        protected override void OnClick(EventArgs e)
+    protected override void OnClick(EventArgs e)
+    {
+        if (_events.Messages.Any())
         {
-            if (_events.Messages.Any())
+            var popup = new PopupChecksUI("Exceptions", false);
+            popup.Check(new ReplayCheckable(_events));
+
+            popup.FormClosed += (s, ea) =>
             {
-                var popup = new PopupChecksUI("Exceptions", false);
-                popup.Check(new ReplayCheckable(_events));
-
-                popup.FormClosed += (s, ea) =>
-                {
-                    _events = new ToMemoryCheckNotifier();
-                    Enabled = false;
-                    Invalidate();
-                };
-            }
-        }
-        
-        public bool OnCheckPerformed(CheckEventArgs args)
-        {
-            //handle cross thread invocations
-            var p = GetCurrentParent();
-
-            if(p!= null && p.InvokeRequired)
-            {
-                p.BeginInvoke(new MethodInvoker(()=>{OnCheckPerformed(args);}));
-                return false;
-            }
-
-            _events.OnCheckPerformed(args);
-
-            try
-            {
-                Enabled = true;
+                _events = new ToMemoryCheckNotifier();
+                Enabled = false;
                 Invalidate();
-            }
-            catch (Exception)
-            {
-                //thrown if cross thread
-            }
-            return false;
-
+            };
         }
+    }
+        
+    public bool OnCheckPerformed(CheckEventArgs args)
+    {
+        //handle cross thread invocations
+        var p = GetCurrentParent();
+
+        if(p!= null && p.InvokeRequired)
+        {
+            p.BeginInvoke(new MethodInvoker(()=>{OnCheckPerformed(args);}));
+            return false;
+        }
+
+        _events.OnCheckPerformed(args);
+
+        try
+        {
+            Enabled = true;
+            Invalidate();
+        }
+        catch (Exception)
+        {
+            //thrown if cross thread
+        }
+        return false;
+
     }
 }

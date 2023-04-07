@@ -19,137 +19,136 @@ using Rdmp.UI.TestsAndSetup.ServicePropogation;
 using ReusableLibraryCode.Checks;
 
 
-namespace Rdmp.UI.ANOEngineeringUIs
+namespace Rdmp.UI.ANOEngineeringUIs;
+
+/// <summary>
+/// Displays the live status of an ANOTable (is it pushed or not) and how many rows it has.  Also allows dropping/changing the anonymisation schema (number of
+/// integers / characters to use in anonymous format) when the ANOTable is not pushed to the ANOStore.Database.
+/// </summary>
+public partial class ANOTableUI : ANOTableUI_Design
 {
-    /// <summary>
-    /// Displays the live status of an ANOTable (is it pushed or not) and how many rows it has.  Also allows dropping/changing the anonymisation schema (number of
-    /// integers / characters to use in anonymous format) when the ANOTable is not pushed to the ANOStore.Database.
-    /// </summary>
-    public partial class ANOTableUI : ANOTableUI_Design
+    private ANOTable _anoTable;
+    private readonly ErrorProvider _serverErrorProvider = new ErrorProvider();
+
+    public ANOTableUI()
     {
-        private ANOTable _anoTable;
-        private readonly ErrorProvider _serverErrorProvider = new ErrorProvider();
+        InitializeComponent();
+        AssociatedCollection = RDMPCollection.Catalogue;
+    }
 
-        public ANOTableUI()
-        {
-            InitializeComponent();
-            AssociatedCollection = RDMPCollection.Catalogue;
-        }
+    public override void SetDatabaseObject(IActivateItems activator, ANOTable databaseObject)
+    {
+        _anoTable = databaseObject;
+        base.SetDatabaseObject(activator, databaseObject);
 
-        public override void SetDatabaseObject(IActivateItems activator, ANOTable databaseObject)
-        {
-            _anoTable = databaseObject;
-            base.SetDatabaseObject(activator, databaseObject);
+        llServer.Text = _anoTable.Server.Name;
 
-            llServer.Text = _anoTable.Server.Name;
-
-            CommonFunctionality.AddChecks(databaseObject);
-            CommonFunctionality.StartChecking();
+        CommonFunctionality.AddChecks(databaseObject);
+        CommonFunctionality.StartChecking();
             
-            SetEnabledness();
+        SetEnabledness();
 
-            CommonFunctionality.AddHelp(tbSuffix,"ANOTable.Suffix");
-            CommonFunctionality.AddHelp(llServer, "ANOTable.Server_ID");
-            CommonFunctionality.AddHelpString(tbInputDataType,"DataType", "Datatype for private identifiers being mapped e.g. varchar(100)");
-            CommonFunctionality.AddHelp(nIntegers, "ANOTable.NumberOfIntegersToUseInAnonymousRepresentation");
-            CommonFunctionality.AddHelp(nCharacters, "ANOTable.NumberOfCharactersToUseInAnonymousRepresentation");
+        CommonFunctionality.AddHelp(tbSuffix,"ANOTable.Suffix");
+        CommonFunctionality.AddHelp(llServer, "ANOTable.Server_ID");
+        CommonFunctionality.AddHelpString(tbInputDataType,"DataType", "Datatype for private identifiers being mapped e.g. varchar(100)");
+        CommonFunctionality.AddHelp(nIntegers, "ANOTable.NumberOfIntegersToUseInAnonymousRepresentation");
+        CommonFunctionality.AddHelp(nCharacters, "ANOTable.NumberOfCharactersToUseInAnonymousRepresentation");
 
-            if (!_anoTable.Server.WasCreatedBy(new ANOStorePatcher()))
-                _serverErrorProvider.SetError(llServer, "Server is not an ANO server");
-            else
-                _serverErrorProvider.Clear();
-        }
-
-        protected override void SetBindings(BinderWithErrorProviderFactory rules, ANOTable databaseObject)
-        {
-            base.SetBindings(rules, databaseObject);
-
-            Bind(tbID,"Text","ID",a=>a.ID);
-            Bind(nIntegers,"Value","NumberOfIntegersToUseInAnonymousRepresentation",a=>a.NumberOfIntegersToUseInAnonymousRepresentation);
-            Bind(nCharacters,"Value","NumberOfCharactersToUseInAnonymousRepresentation",a=>a.NumberOfCharactersToUseInAnonymousRepresentation);
-            Bind(tbName,"Text","TableName",a=>a.TableName);
-            Bind(tbSuffix,"Text","Suffix",a=>a.Suffix);
-        }
-
-        private void SetEnabledness()
-        {
-            DiscoveredTable pushedTable;
-            try
-            {
-                pushedTable = _anoTable.GetPushedTable();
-            }
-            catch (Exception e)
-            {
-                CommonFunctionality.Fatal("Could not reach ANO Server",e);
-                return;
-            }
-
-            bool isPushed = pushedTable != null;
-
-            nIntegers.Enabled = !isPushed;
-            nCharacters.Enabled = !isPushed;
-            btnFinalise.Enabled = !isPushed;
-            tbInputDataType.Enabled = !isPushed;
-
-            btnDropANOTable.Enabled = isPushed;
-            gbPushedTable.Visible = isPushed;
-
-            if (isPushed)
-            {
-
-                tbInputDataType.Text = _anoTable.GetRuntimeDataType(LoadStage.AdjustRaw);
-
-                lblANOTableName.Text = pushedTable.GetRuntimeName();
-                var cols = pushedTable.DiscoverColumns();
-
-                lblPrivate.Text = cols[0].GetRuntimeName() + " " + cols[0].DataType.SQLType;
-                lblPublic.Text = cols[1].GetRuntimeName() + " " + cols[1].DataType.SQLType;
-
-                lblRowCount.Text = pushedTable.GetRowCount() + " rows";
-            }
-        }
-
-        private void btnFinalise_Click(object sender, EventArgs e)
-        {
-            ragSmiley1.Reset();
-            _anoTable.PushToANOServerAsNewTable(tbInputDataType.Text,ragSmiley1);
-            SetEnabledness();
-        }
-
-        private void btnDropANOTable_Click(object sender, EventArgs e)
-        {
-            ragSmiley1.Reset();
-            try
-            {
-                _anoTable.DeleteANOTableInANOStore();
-            }
-            catch (Exception exception)
-            {
-                ragSmiley1.OnCheckPerformed(new CheckEventArgs("Drop failed", CheckResult.Fail, exception));
-            }
-            SetEnabledness();
-        }
-
-        private void nIntegers_ValueChanged(object sender, EventArgs e)
-        {
-            _anoTable.NumberOfIntegersToUseInAnonymousRepresentation = (int) nIntegers.Value;
-
-        }
-
-        private void nCharacters_ValueChanged(object sender, EventArgs e)
-        {
-            _anoTable.NumberOfCharactersToUseInAnonymousRepresentation = (int)nCharacters.Value;
-        }
-
-        private void llServer_LinkClicked(object sender, LinkLabelLinkClickedEventArgs e)
-        {
-            var cmd = new ExecuteCommandShow(Activator, _anoTable.Server, 0);
-            cmd.Execute();
-        }
+        if (!_anoTable.Server.WasCreatedBy(new ANOStorePatcher()))
+            _serverErrorProvider.SetError(llServer, "Server is not an ANO server");
+        else
+            _serverErrorProvider.Clear();
     }
-    
-    [TypeDescriptionProvider(typeof(AbstractControlDescriptionProvider<ANOTableUI_Design, UserControl>))]
-    public abstract class ANOTableUI_Design : RDMPSingleDatabaseObjectControl<ANOTable>
+
+    protected override void SetBindings(BinderWithErrorProviderFactory rules, ANOTable databaseObject)
     {
+        base.SetBindings(rules, databaseObject);
+
+        Bind(tbID,"Text","ID",a=>a.ID);
+        Bind(nIntegers,"Value","NumberOfIntegersToUseInAnonymousRepresentation",a=>a.NumberOfIntegersToUseInAnonymousRepresentation);
+        Bind(nCharacters,"Value","NumberOfCharactersToUseInAnonymousRepresentation",a=>a.NumberOfCharactersToUseInAnonymousRepresentation);
+        Bind(tbName,"Text","TableName",a=>a.TableName);
+        Bind(tbSuffix,"Text","Suffix",a=>a.Suffix);
     }
+
+    private void SetEnabledness()
+    {
+        DiscoveredTable pushedTable;
+        try
+        {
+            pushedTable = _anoTable.GetPushedTable();
+        }
+        catch (Exception e)
+        {
+            CommonFunctionality.Fatal("Could not reach ANO Server",e);
+            return;
+        }
+
+        bool isPushed = pushedTable != null;
+
+        nIntegers.Enabled = !isPushed;
+        nCharacters.Enabled = !isPushed;
+        btnFinalise.Enabled = !isPushed;
+        tbInputDataType.Enabled = !isPushed;
+
+        btnDropANOTable.Enabled = isPushed;
+        gbPushedTable.Visible = isPushed;
+
+        if (isPushed)
+        {
+
+            tbInputDataType.Text = _anoTable.GetRuntimeDataType(LoadStage.AdjustRaw);
+
+            lblANOTableName.Text = pushedTable.GetRuntimeName();
+            var cols = pushedTable.DiscoverColumns();
+
+            lblPrivate.Text = cols[0].GetRuntimeName() + " " + cols[0].DataType.SQLType;
+            lblPublic.Text = cols[1].GetRuntimeName() + " " + cols[1].DataType.SQLType;
+
+            lblRowCount.Text = pushedTable.GetRowCount() + " rows";
+        }
+    }
+
+    private void btnFinalise_Click(object sender, EventArgs e)
+    {
+        ragSmiley1.Reset();
+        _anoTable.PushToANOServerAsNewTable(tbInputDataType.Text,ragSmiley1);
+        SetEnabledness();
+    }
+
+    private void btnDropANOTable_Click(object sender, EventArgs e)
+    {
+        ragSmiley1.Reset();
+        try
+        {
+            _anoTable.DeleteANOTableInANOStore();
+        }
+        catch (Exception exception)
+        {
+            ragSmiley1.OnCheckPerformed(new CheckEventArgs("Drop failed", CheckResult.Fail, exception));
+        }
+        SetEnabledness();
+    }
+
+    private void nIntegers_ValueChanged(object sender, EventArgs e)
+    {
+        _anoTable.NumberOfIntegersToUseInAnonymousRepresentation = (int) nIntegers.Value;
+
+    }
+
+    private void nCharacters_ValueChanged(object sender, EventArgs e)
+    {
+        _anoTable.NumberOfCharactersToUseInAnonymousRepresentation = (int)nCharacters.Value;
+    }
+
+    private void llServer_LinkClicked(object sender, LinkLabelLinkClickedEventArgs e)
+    {
+        var cmd = new ExecuteCommandShow(Activator, _anoTable.Server, 0);
+        cmd.Execute();
+    }
+}
+    
+[TypeDescriptionProvider(typeof(AbstractControlDescriptionProvider<ANOTableUI_Design, UserControl>))]
+public abstract class ANOTableUI_Design : RDMPSingleDatabaseObjectControl<ANOTable>
+{
 }

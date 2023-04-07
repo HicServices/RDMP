@@ -23,87 +23,85 @@ using Rdmp.Core.Repositories;
 using ReusableLibraryCode.Checks;
 using ReusableLibraryCode.Progress;
 
-namespace Rdmp.Core.CommandLine.Runners
+namespace Rdmp.Core.CommandLine.Runners;
+
+/// <summary>
+/// <see cref="IRunner"/> for the Data Load Engine.  Supports both check and execute commands.
+/// </summary>
+public class DleRunner:Runner
 {
+    private readonly DleOptions _options;
 
-    /// <summary>
-    /// <see cref="IRunner"/> for the Data Load Engine.  Supports both check and execute commands.
-    /// </summary>
-    public class DleRunner:Runner
+    public DleRunner(DleOptions options)
     {
-        private readonly DleOptions _options;
-
-        public DleRunner(DleOptions options)
-        {
-            _options = options;
-        }
-        
-        public override int Run(IRDMPPlatformRepositoryServiceLocator locator, IDataLoadEventListener listener, ICheckNotifier checkNotifier,GracefulCancellationToken token)
-        {
-            ILoadProgress loadProgress = GetObjectFromCommandLineString<LoadProgress>(locator, _options.LoadProgress);
-            ILoadMetadata loadMetadata = GetObjectFromCommandLineString<LoadMetadata>(locator,_options.LoadMetadata);
-
-            if (loadMetadata == null && loadProgress != null)
-                    loadMetadata = loadProgress.LoadMetadata;
-                
-            if(loadMetadata == null)
-                throw new ArgumentException("No Load Metadata specified");
-            
-            if(loadProgress != null && loadProgress.LoadMetadata_ID != loadMetadata.ID)
-                throw new ArgumentException("The supplied LoadProgress does not belong to the supplied LoadMetadata load");
-            
-            var databaseConfiguration = new HICDatabaseConfiguration(loadMetadata);
-            var flags = new HICLoadConfigurationFlags();
-            
-            flags.ArchiveData = !_options.DoNotArchiveData;
-            flags.DoLoadToStaging = !_options.StopAfterRAW;
-            flags.DoMigrateFromStagingToLive = !_options.StopAfterSTAGING;
-
-            var checkable = new CheckEntireDataLoadProcess(loadMetadata, databaseConfiguration, flags, locator.CatalogueRepository.MEF); 
-
-            switch (_options.Command)
-            {
-                case CommandLineActivity.run:
-                    
-                    var loggingServer = loadMetadata.GetDistinctLoggingDatabase();
-                    var logManager = new LogManager(loggingServer);
-                    
-                    // Create the pipeline to pass into the DataLoadProcess object
-                    var dataLoadFactory = new HICDataLoadFactory(loadMetadata, databaseConfiguration,flags,locator.CatalogueRepository, logManager);
-
-                    IDataLoadExecution execution = dataLoadFactory.Create(listener);
-                    IDataLoadProcess dataLoadProcess;
-
-                    if (loadMetadata.LoadProgresses.Any())
-                    {
-                        //Then the load is designed to run X days of source data at a time
-                        //Load Progress
-                        ILoadProgressSelectionStrategy whichLoadProgress = loadProgress != null ? (ILoadProgressSelectionStrategy) new SingleLoadProgressSelectionStrategy(loadProgress) : new AnyAvailableLoadProgressSelectionStrategy(loadMetadata);
-
-                        var jobDateFactory = new JobDateGenerationStrategyFactory(whichLoadProgress);
-                    
-                        dataLoadProcess = _options.Iterative
-                            ? (IDataLoadProcess)new IterativeScheduledDataLoadProcess(locator, loadMetadata, checkable, execution, jobDateFactory, whichLoadProgress, _options.DaysToLoad, logManager, listener, databaseConfiguration) :
-                                new SingleJobScheduledDataLoadProcess(locator, loadMetadata, checkable, execution, jobDateFactory, whichLoadProgress, _options.DaysToLoad, logManager, listener, databaseConfiguration);
-                    }
-                    else
-                        //OnDemand
-                        dataLoadProcess = new DataLoadProcess(locator, loadMetadata, checkable, logManager, listener, execution, databaseConfiguration);
-
-                    var exitCode = dataLoadProcess.Run(token);
-            
-                    //return 0 for success or load not required otherwise return the exit code (which will be non zero so error)
-                    return exitCode == ExitCodeType.Success || exitCode == ExitCodeType.OperationNotRequired? 0: (int)exitCode;
-                case CommandLineActivity.check:
-                    
-                    checkable.Check(checkNotifier);
-                    
-                    return 0;
-                default:
-                    throw new ArgumentOutOfRangeException();
-            }
-        }
-
-        
+        _options = options;
     }
+        
+    public override int Run(IRDMPPlatformRepositoryServiceLocator locator, IDataLoadEventListener listener, ICheckNotifier checkNotifier,GracefulCancellationToken token)
+    {
+        ILoadProgress loadProgress = GetObjectFromCommandLineString<LoadProgress>(locator, _options.LoadProgress);
+        ILoadMetadata loadMetadata = GetObjectFromCommandLineString<LoadMetadata>(locator,_options.LoadMetadata);
+
+        if (loadMetadata == null && loadProgress != null)
+            loadMetadata = loadProgress.LoadMetadata;
+                
+        if(loadMetadata == null)
+            throw new ArgumentException("No Load Metadata specified");
+            
+        if(loadProgress != null && loadProgress.LoadMetadata_ID != loadMetadata.ID)
+            throw new ArgumentException("The supplied LoadProgress does not belong to the supplied LoadMetadata load");
+            
+        var databaseConfiguration = new HICDatabaseConfiguration(loadMetadata);
+        var flags = new HICLoadConfigurationFlags();
+            
+        flags.ArchiveData = !_options.DoNotArchiveData;
+        flags.DoLoadToStaging = !_options.StopAfterRAW;
+        flags.DoMigrateFromStagingToLive = !_options.StopAfterSTAGING;
+
+        var checkable = new CheckEntireDataLoadProcess(loadMetadata, databaseConfiguration, flags, locator.CatalogueRepository.MEF); 
+
+        switch (_options.Command)
+        {
+            case CommandLineActivity.run:
+                    
+                var loggingServer = loadMetadata.GetDistinctLoggingDatabase();
+                var logManager = new LogManager(loggingServer);
+                    
+                // Create the pipeline to pass into the DataLoadProcess object
+                var dataLoadFactory = new HICDataLoadFactory(loadMetadata, databaseConfiguration,flags,locator.CatalogueRepository, logManager);
+
+                IDataLoadExecution execution = dataLoadFactory.Create(listener);
+                IDataLoadProcess dataLoadProcess;
+
+                if (loadMetadata.LoadProgresses.Any())
+                {
+                    //Then the load is designed to run X days of source data at a time
+                    //Load Progress
+                    ILoadProgressSelectionStrategy whichLoadProgress = loadProgress != null ? (ILoadProgressSelectionStrategy) new SingleLoadProgressSelectionStrategy(loadProgress) : new AnyAvailableLoadProgressSelectionStrategy(loadMetadata);
+
+                    var jobDateFactory = new JobDateGenerationStrategyFactory(whichLoadProgress);
+                    
+                    dataLoadProcess = _options.Iterative
+                        ? (IDataLoadProcess)new IterativeScheduledDataLoadProcess(locator, loadMetadata, checkable, execution, jobDateFactory, whichLoadProgress, _options.DaysToLoad, logManager, listener, databaseConfiguration) :
+                        new SingleJobScheduledDataLoadProcess(locator, loadMetadata, checkable, execution, jobDateFactory, whichLoadProgress, _options.DaysToLoad, logManager, listener, databaseConfiguration);
+                }
+                else
+                    //OnDemand
+                    dataLoadProcess = new DataLoadProcess(locator, loadMetadata, checkable, logManager, listener, execution, databaseConfiguration);
+
+                var exitCode = dataLoadProcess.Run(token);
+            
+                //return 0 for success or load not required otherwise return the exit code (which will be non zero so error)
+                return exitCode == ExitCodeType.Success || exitCode == ExitCodeType.OperationNotRequired? 0: (int)exitCode;
+            case CommandLineActivity.check:
+                    
+                checkable.Check(checkNotifier);
+                    
+                return 0;
+            default:
+                throw new ArgumentOutOfRangeException();
+        }
+    }
+
+        
 }

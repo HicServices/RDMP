@@ -9,22 +9,21 @@ using Rdmp.Core.Curation.Data;
 using Rdmp.Core.Repositories;
 using ReusableLibraryCode.Checks;
 
-namespace Rdmp.Core.DataExport.DataRelease.Potential
-{
-    /// <summary>
-    /// Determines the releasability of global objects (e.g. <see cref="SupportingDocument"/>) that should have been extracted as
-    /// part of a project extraction.
-    /// </summary>
-    public class FlatFileGlobalsReleasePotential : GlobalReleasePotential
-    {
-        public FlatFileGlobalsReleasePotential(IRDMPPlatformRepositoryServiceLocator repositoryLocator, ISupplementalExtractionResults globalResult, IMapsDirectlyToDatabaseTable globalToCheck)
-            : base(repositoryLocator, globalResult, globalToCheck)
-        {
-        }
+namespace Rdmp.Core.DataExport.DataRelease.Potential;
 
-        protected override void CheckDestination(ICheckNotifier notifier, ISupplementalExtractionResults globalResult)
-        {
-            CheckFileExists(notifier, globalResult.DestinationDescription);
-        }
+/// <summary>
+/// Determines the releasability of global objects (e.g. <see cref="SupportingDocument"/>) that should have been extracted as
+/// part of a project extraction.
+/// </summary>
+public class FlatFileGlobalsReleasePotential : GlobalReleasePotential
+{
+    public FlatFileGlobalsReleasePotential(IRDMPPlatformRepositoryServiceLocator repositoryLocator, ISupplementalExtractionResults globalResult, IMapsDirectlyToDatabaseTable globalToCheck)
+        : base(repositoryLocator, globalResult, globalToCheck)
+    {
+    }
+
+    protected override void CheckDestination(ICheckNotifier notifier, ISupplementalExtractionResults globalResult)
+    {
+        CheckFileExists(notifier, globalResult.DestinationDescription);
     }
 }

@@ -9,92 +9,91 @@ using System.IO;
 using Rdmp.Core.Curation.Data;
 using ReusableLibraryCode.Checks;
 
-namespace Rdmp.Core.Curation
+namespace Rdmp.Core.Curation;
+
+/// <summary>
+/// Copies SupportingDocuments associated with a project extraction request to the output directory.
+/// </summary>
+public class SupportingDocumentsFetcher
 {
-    /// <summary>
-    /// Copies SupportingDocuments associated with a project extraction request to the output directory.
-    /// </summary>
-    public class SupportingDocumentsFetcher
+    private readonly SupportingDocument _document;
+    private readonly Catalogue _catalogue;
+    private readonly bool _singleDocument;
+
+    public SupportingDocumentsFetcher(Catalogue catalogue)
     {
-        private readonly SupportingDocument _document;
-        private readonly Catalogue _catalogue;
-        private readonly bool _singleDocument;
+        _catalogue = catalogue;
+    }
 
-        public SupportingDocumentsFetcher(Catalogue catalogue)
-        {
-            _catalogue = catalogue;
-        }
+    public SupportingDocumentsFetcher(SupportingDocument document)
+    {
+        _document = document;
+        _catalogue = document.Repository.GetObjectByID<Catalogue>(document.Catalogue_ID);
+        _singleDocument = true;
+    }
 
-        public SupportingDocumentsFetcher(SupportingDocument document)
-        {
-            _document = document;
-            _catalogue = document.Repository.GetObjectByID<Catalogue>(document.Catalogue_ID);
-            _singleDocument = true;
-        }
+    public string ExtractToDirectory(DirectoryInfo directory)
+    {
+        if (_document != null)
+            return ExtractToDirectory(directory, _document);
 
-        public string ExtractToDirectory(DirectoryInfo directory)
-        {
-            if (_document != null)
-                return ExtractToDirectory(directory, _document);
+        throw new Exception("SupportingDocument was not specified!");
+    }
 
-            throw new Exception("SupportingDocument was not specified!");
-        }
+    private string ExtractToDirectory(DirectoryInfo directory, SupportingDocument supportingDocument)
+    {
+        if(!supportingDocument.IsReleasable())
+            throw new Exception("Cannot extract SupportingDocument " + supportingDocument + " because it was not evaluated as IsReleasable()");
 
-        private string ExtractToDirectory(DirectoryInfo directory, SupportingDocument supportingDocument)
-        {
-            if(!supportingDocument.IsReleasable())
-                throw new Exception("Cannot extract SupportingDocument " + supportingDocument + " because it was not evaluated as IsReleasable()");
+        FileInfo toCopy = supportingDocument.GetFileName();
 
-            FileInfo toCopy = supportingDocument.GetFileName();
+        if (!Directory.Exists(Path.Combine(directory.FullName, "SupportingDocuments")))
+            Directory.CreateDirectory(Path.Combine(directory.FullName, "SupportingDocuments"));
 
-            if (!Directory.Exists(Path.Combine(directory.FullName, "SupportingDocuments")))
-                Directory.CreateDirectory(Path.Combine(directory.FullName, "SupportingDocuments"));
+        if(!toCopy.Exists)
+            throw new FileNotFoundException("Could not find supporting document '" + supportingDocument + "' which was expected to be at path:" + toCopy.FullName);
 
-            if(!toCopy.Exists)
-                throw new FileNotFoundException("Could not find supporting document '" + supportingDocument + "' which was expected to be at path:" + toCopy.FullName);
-
-            //copy with overwritte
-            File.Copy(toCopy.FullName, Path.Combine(directory.FullName, "SupportingDocuments", toCopy.Name), true);
+        //copy with overwritte
+        File.Copy(toCopy.FullName, Path.Combine(directory.FullName, "SupportingDocuments", toCopy.Name), true);
             
-            return Path.Combine(directory.FullName, "SupportingDocuments", toCopy.Name);
-        }
+        return Path.Combine(directory.FullName, "SupportingDocuments", toCopy.Name);
+    }
 
-        public void Check(ICheckNotifier notifier)
+    public void Check(ICheckNotifier notifier)
+    {
+        if (_singleDocument)
+            CheckDocument(_document, notifier);
+        else
         {
-            if (_singleDocument)
-                CheckDocument(_document, notifier);
+            foreach (SupportingDocument supportingDocument in _catalogue.GetAllSupportingDocuments(FetchOptions.ExtractableGlobalsAndLocals))
+                CheckDocument(supportingDocument, notifier);
+        }
+    }
+
+    private void CheckDocument(SupportingDocument document, ICheckNotifier notifier)
+    {
+        if (document == null)
+        {
+            notifier.OnCheckPerformed(new CheckEventArgs("SupportingDocument has not been set", CheckResult.Fail));
+            return;
+        }
+            
+        try
+        {
+            var toCopy = document.GetFileName();
+
+            if (toCopy != null && toCopy.Exists)
+                notifier.OnCheckPerformed(
+                    new CheckEventArgs("Found SupportingDocument " + toCopy.Name + " and it exists",
+                        CheckResult.Success));
             else
-            {
-                foreach (SupportingDocument supportingDocument in _catalogue.GetAllSupportingDocuments(FetchOptions.ExtractableGlobalsAndLocals))
-                    CheckDocument(supportingDocument, notifier);
-            }
+                notifier.OnCheckPerformed(
+                    new CheckEventArgs($"SupportingDocument {document }(ID={ document.ID }) does not map to an existing file despite being flagged as Extractable.  Expected it to exist and be at '{toCopy}'",
+                        CheckResult.Fail));
         }
-
-        private void CheckDocument(SupportingDocument document, ICheckNotifier notifier)
+        catch (Exception e)
         {
-            if (document == null)
-            {
-                notifier.OnCheckPerformed(new CheckEventArgs("SupportingDocument has not been set", CheckResult.Fail));
-                return;
-            }
-            
-            try
-            {
-                var toCopy = document.GetFileName();
-
-                if (toCopy != null && toCopy.Exists)
-                    notifier.OnCheckPerformed(
-                        new CheckEventArgs("Found SupportingDocument " + toCopy.Name + " and it exists",
-                            CheckResult.Success));
-                else
-                    notifier.OnCheckPerformed(
-                        new CheckEventArgs($"SupportingDocument {document }(ID={ document.ID }) does not map to an existing file despite being flagged as Extractable.  Expected it to exist and be at '{toCopy}'",
-                            CheckResult.Fail));
-            }
-            catch (Exception e)
-            {
-                notifier.OnCheckPerformed(new CheckEventArgs("Could not check supporting documents of " + _catalogue, CheckResult.Fail, e));
-            }
+            notifier.OnCheckPerformed(new CheckEventArgs("Could not check supporting documents of " + _catalogue, CheckResult.Fail, e));
         }
     }
 }

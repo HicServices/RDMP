@@ -4,13 +4,12 @@
 // RDMP is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License for more details.
 // You should have received a copy of the GNU General Public License along with RDMP. If not, see <https://www.gnu.org/licenses/>.
 
-namespace Rdmp.Core.CommandExecution
+namespace Rdmp.Core.CommandExecution;
+
+/// <summary>
+/// Object which can be converted into an <see cref="ICombineToMakeCommand"/> e.g. by starting a dragg operation on it.
+/// </summary>
+public interface ICombineableSource
 {
-    /// <summary>
-    /// Object which can be converted into an <see cref="ICombineToMakeCommand"/> e.g. by starting a dragg operation on it.
-    /// </summary>
-    public interface ICombineableSource
-    {
-        ICombineToMakeCommand GetCombineable();
-    }
+    ICombineToMakeCommand GetCombineable();
 }

@@ -10,34 +10,33 @@ using Rdmp.Core.Icons.IconOverlays;
 using ReusableLibraryCode.Icons.IconProvision;
 using SixLabors.ImageSharp.PixelFormats;
 
-namespace Rdmp.Core.Icons.IconProvision.StateBasedIconProviders
+namespace Rdmp.Core.Icons.IconProvision.StateBasedIconProviders;
+
+public class ExtractableDataSetStateBasedIconProvider : IObjectStateBasedIconProvider
 {
-    public class ExtractableDataSetStateBasedIconProvider : IObjectStateBasedIconProvider
+    private readonly IconOverlayProvider _overlayProvider;
+    private readonly CatalogueStateBasedIconProvider _catalogueIconProvider;
+    private readonly Image<Rgba32> _disabled;
+
+    public ExtractableDataSetStateBasedIconProvider(IconOverlayProvider overlayProvider, CatalogueStateBasedIconProvider catalogueIconProvider)
     {
-        private readonly IconOverlayProvider _overlayProvider;
-        private readonly CatalogueStateBasedIconProvider _catalogueIconProvider;
-        private readonly Image<Rgba32> _disabled;
+        _catalogueIconProvider = catalogueIconProvider;
+        _disabled = Image.Load<Rgba32>(CatalogueIcons.ExtractableDataSetDisabled);
+        this._overlayProvider = overlayProvider;
+    }
 
-        public ExtractableDataSetStateBasedIconProvider(IconOverlayProvider overlayProvider, CatalogueStateBasedIconProvider catalogueIconProvider)
-        {
-            _catalogueIconProvider = catalogueIconProvider;
-            _disabled = Image.Load<Rgba32>(CatalogueIcons.ExtractableDataSetDisabled);
-            this._overlayProvider = overlayProvider;
-        }
+    public Image<Rgba32> GetImageIfSupportedObject(object o)
+    {
+        if (o is not ExtractableDataSet ds)
+            return null;
 
-        public Image<Rgba32> GetImageIfSupportedObject(object o)
-        {
-            if (o is not ExtractableDataSet ds)
-                return null;
+        var cataOne = _catalogueIconProvider.GetImageIfSupportedObject(ds.Catalogue);
 
-            var cataOne = _catalogueIconProvider.GetImageIfSupportedObject(ds.Catalogue);
+        if (cataOne == null)
+            return null;
 
-            if (cataOne == null)
-                return null;
+        var withE = _overlayProvider.GetOverlay(cataOne, OverlayKind.BigE);
 
-            var withE = _overlayProvider.GetOverlay(cataOne, OverlayKind.BigE);
-
-            return ds.IsCatalogueDeprecated || ds.DisableExtraction ? _disabled : withE;
-        }
+        return ds.IsCatalogueDeprecated || ds.DisableExtraction ? _disabled : withE;
     }
 }

@@ -16,155 +16,154 @@ using Rdmp.Core.Repositories.Construction;
 using ReusableLibraryCode.Icons.IconProvision;
 using SixLabors.ImageSharp.PixelFormats;
 
-namespace Rdmp.Core.CommandExecution.AtomicCommands
+namespace Rdmp.Core.CommandExecution.AtomicCommands;
+
+public class ExecuteCommandAddNewCatalogueItem : BasicCommandExecution,IAtomicCommand
 {
-    public class ExecuteCommandAddNewCatalogueItem : BasicCommandExecution,IAtomicCommand
+    private Catalogue _catalogue;
+    private ColumnInfo[] _columnInfos;
+    private HashSet<int> _existingColumnInfos;
+
+    /// <summary>
+    /// The category to assign for newly created <see cref="ExtractionInformation"/>.
+    /// Defaults to <see cref="ExtractionCategory.Core"/>.  Set to null to make them non extractable
+    /// </summary>
+    public ExtractionCategory? Category { get; set; } = ExtractionCategory.Core;
+
+    public ExecuteCommandAddNewCatalogueItem(IBasicActivateItems activator, Catalogue catalogue,ColumnInfoCombineable colInfo) : this(activator,catalogue,colInfo.ColumnInfos)
     {
-        private Catalogue _catalogue;
-        private ColumnInfo[] _columnInfos;
-        private HashSet<int> _existingColumnInfos;
-
-        /// <summary>
-        /// The category to assign for newly created <see cref="ExtractionInformation"/>.
-        /// Defaults to <see cref="ExtractionCategory.Core"/>.  Set to null to make them non extractable
-        /// </summary>
-        public ExtractionCategory? Category { get; set; } = ExtractionCategory.Core;
-
-        public ExecuteCommandAddNewCatalogueItem(IBasicActivateItems activator, Catalogue catalogue,ColumnInfoCombineable colInfo) : this(activator,catalogue,colInfo.ColumnInfos)
-        {
             
-        }
+    }
 
-        [UseWithObjectConstructor]
-        public ExecuteCommandAddNewCatalogueItem(IBasicActivateItems activator, Catalogue catalogue,params ColumnInfo[] columnInfos) : base(activator)
+    [UseWithObjectConstructor]
+    public ExecuteCommandAddNewCatalogueItem(IBasicActivateItems activator, Catalogue catalogue,params ColumnInfo[] columnInfos) : base(activator)
+    {
+        _catalogue = catalogue;
+
+        _existingColumnInfos = GetColumnInfos(_catalogue);
+
+        _columnInfos = columnInfos;
+
+        if(_existingColumnInfos != null && _columnInfos.Length > 0 && _columnInfos.All(c => AlreadyInCatalogue(c,_existingColumnInfos)))
+            SetImpossible("ColumnInfo(s) are already in Catalogue");
+    }
+
+    private HashSet<int> GetColumnInfos(Catalogue catalogue)
+    {
+        if (catalogue == null)
+            return null;
+
+        return new HashSet<int>(catalogue.CatalogueItems.Select(ci => ci.ColumnInfo_ID).Where(col => col.HasValue).Select(v => v.Value).Distinct().ToArray());
+    }
+
+    public override string GetCommandHelp()
+    {
+        return "Creates a new virtual column in the dataset, this is the first stage to making a new column extractable or defining a new extraction transform";
+    }
+
+    public override void Execute()
+    {
+        base.Execute();
+
+        var c = _catalogue;
+        var existingColumnInfos = _existingColumnInfos;
+
+        var repo = BasicActivator.RepositoryLocator.CatalogueRepository;
+
+        if (c == null)
         {
-            _catalogue = catalogue;
-
-            _existingColumnInfos = GetColumnInfos(_catalogue);
-
-            _columnInfos = columnInfos;
-
-            if(_existingColumnInfos != null && _columnInfos.Length > 0 && _columnInfos.All(c => AlreadyInCatalogue(c,_existingColumnInfos)))
-                SetImpossible("ColumnInfo(s) are already in Catalogue");
-        }
-
-        private HashSet<int> GetColumnInfos(Catalogue catalogue)
-        {
-            if (catalogue == null)
-                return null;
-
-            return new HashSet<int>(catalogue.CatalogueItems.Select(ci => ci.ColumnInfo_ID).Where(col => col.HasValue).Select(v => v.Value).Distinct().ToArray());
-        }
-
-        public override string GetCommandHelp()
-        {
-            return "Creates a new virtual column in the dataset, this is the first stage to making a new column extractable or defining a new extraction transform";
-        }
-
-        public override void Execute()
-        {
-            base.Execute();
-
-            var c = _catalogue;
-            var existingColumnInfos = _existingColumnInfos;
-
-            var repo = BasicActivator.RepositoryLocator.CatalogueRepository;
-
-            if (c == null)
-            {
-                if (BasicActivator.SelectObject(new DialogArgs() {
+            if (BasicActivator.SelectObject(new DialogArgs() {
                     WindowTitle = "Add CatalogueItem",
                     TaskDescription = "Select which Catalogue you want to add the CatalogueItem to."
 
-                    }, BasicActivator.RepositoryLocator.CatalogueRepository.GetAllObjects<Catalogue>(), out var selected))
-                {
-                    c = selected;
-                    existingColumnInfos = GetColumnInfos(c);
-                }
-                else
-                {
-                    // user cancelled selecting a Catalogue
-                    return;
-                }
-            }
-            //if we have not got an explicit one to import let the user pick one
-            if (_columnInfos.Length == 0)
+                }, BasicActivator.RepositoryLocator.CatalogueRepository.GetAllObjects<Catalogue>(), out var selected))
             {
-                string text;
-
-                //get them to pick a column info
-                var columnInfo = (ColumnInfo)BasicActivator.SelectOne(new DialogArgs
-                {
-                    TaskDescription = "Select which column the new CatalogueItem will describe/extract",
-                    WindowTitle = "Choose underlying Column"
-                },BasicActivator.CoreChildProvider.AllColumnInfos);
-
-                if (columnInfo == null)
-                {
-                    return;
-                }   
-                
-                //get them to type a name for it (based on the ColumnInfo if picked)
-                if(TypeText("Name", "Type a name for the new CatalogueItem", 500,columnInfo?.GetRuntimeName(),out text))
-                {
-                    var ci = new CatalogueItem(BasicActivator.RepositoryLocator.CatalogueRepository, c, "New CatalogueItem " + Guid.NewGuid());
-                    ci.Name = text;
-
-                    //set the associated column if they did pick it
-                    if(columnInfo != null)
-                    {
-                        ci.SetColumnInfo(columnInfo);
-                        CreateExtractionInformation(repo,ci,columnInfo);                        
-                    }
-
-                    ci.SaveToDatabase();
-
-                    Publish(c);
-                    Emphasise(ci,int.MaxValue);
-                }
+                c = selected;
+                existingColumnInfos = GetColumnInfos(c);
             }
             else
             {
-                foreach (ColumnInfo columnInfo in _columnInfos)
+                // user cancelled selecting a Catalogue
+                return;
+            }
+        }
+        //if we have not got an explicit one to import let the user pick one
+        if (_columnInfos.Length == 0)
+        {
+            string text;
+
+            //get them to pick a column info
+            var columnInfo = (ColumnInfo)BasicActivator.SelectOne(new DialogArgs
+            {
+                TaskDescription = "Select which column the new CatalogueItem will describe/extract",
+                WindowTitle = "Choose underlying Column"
+            },BasicActivator.CoreChildProvider.AllColumnInfos);
+
+            if (columnInfo == null)
+            {
+                return;
+            }   
+                
+            //get them to type a name for it (based on the ColumnInfo if picked)
+            if(TypeText("Name", "Type a name for the new CatalogueItem", 500,columnInfo?.GetRuntimeName(),out text))
+            {
+                var ci = new CatalogueItem(BasicActivator.RepositoryLocator.CatalogueRepository, c, "New CatalogueItem " + Guid.NewGuid());
+                ci.Name = text;
+
+                //set the associated column if they did pick it
+                if(columnInfo != null)
                 {
-                    if(AlreadyInCatalogue(columnInfo, existingColumnInfos))
-                        continue;
-
-                    var ci = new CatalogueItem(repo, c, columnInfo.GetRuntimeName());
                     ci.SetColumnInfo(columnInfo);
-                    ci.SaveToDatabase();
-
-                    // also make extractable
-                    CreateExtractionInformation(repo, ci, columnInfo);
+                    CreateExtractionInformation(repo,ci,columnInfo);                        
                 }
+
+                ci.SaveToDatabase();
 
                 Publish(c);
+                Emphasise(ci,int.MaxValue);
             }
         }
-
-        private void CreateExtractionInformation(ICatalogueRepository repo, CatalogueItem ci, ColumnInfo columnInfo)
+        else
         {
-            // also make extractable
-            if (Category != null)
+            foreach (ColumnInfo columnInfo in _columnInfos)
             {
-                var ei = new ExtractionInformation(repo, ci, columnInfo, columnInfo.GetFullyQualifiedName());
+                if(AlreadyInCatalogue(columnInfo, existingColumnInfos))
+                    continue;
 
-                if (ei.ExtractionCategory != Category)
-                {
-                    ei.ExtractionCategory = Category.Value;
-                    ei.SaveToDatabase();
-                }
+                var ci = new CatalogueItem(repo, c, columnInfo.GetRuntimeName());
+                ci.SetColumnInfo(columnInfo);
+                ci.SaveToDatabase();
+
+                // also make extractable
+                CreateExtractionInformation(repo, ci, columnInfo);
+            }
+
+            Publish(c);
+        }
+    }
+
+    private void CreateExtractionInformation(ICatalogueRepository repo, CatalogueItem ci, ColumnInfo columnInfo)
+    {
+        // also make extractable
+        if (Category != null)
+        {
+            var ei = new ExtractionInformation(repo, ci, columnInfo, columnInfo.GetFullyQualifiedName());
+
+            if (ei.ExtractionCategory != Category)
+            {
+                ei.ExtractionCategory = Category.Value;
+                ei.SaveToDatabase();
             }
         }
+    }
 
-        private bool AlreadyInCatalogue(ColumnInfo candidate, HashSet<int> existingColumnInfos)
-        {
-            return existingColumnInfos.Contains(candidate.ID);
-        }
+    private bool AlreadyInCatalogue(ColumnInfo candidate, HashSet<int> existingColumnInfos)
+    {
+        return existingColumnInfos.Contains(candidate.ID);
+    }
 
-        public override Image<Rgba32> GetImage(IIconProvider iconProvider)
-        {
-            return iconProvider.GetImage(RDMPConcept.CatalogueItem, OverlayKind.Add);
-        }
+    public override Image<Rgba32> GetImage(IIconProvider iconProvider)
+    {
+        return iconProvider.GetImage(RDMPConcept.CatalogueItem, OverlayKind.Add);
     }
 }

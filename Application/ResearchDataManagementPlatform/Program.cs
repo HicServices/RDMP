@@ -17,59 +17,58 @@ using Rdmp.UI.TestsAndSetup;
 using ReusableLibraryCode;
 using ReusableLibraryCode.Checks;
 
-namespace ResearchDataManagementPlatform
+namespace ResearchDataManagementPlatform;
+
+static class Program
 {
-    static class Program
-    {
-        [DllImport("kernel32.dll")]
-        [return: MarshalAs(UnmanagedType.Bool)]
-        private static extern bool AttachConsole([MarshalAs(UnmanagedType.U4)] int dwProcessId);
+    [DllImport("kernel32.dll")]
+    [return: MarshalAs(UnmanagedType.Bool)]
+    private static extern bool AttachConsole([MarshalAs(UnmanagedType.U4)] int dwProcessId);
   
-        /// <summary>
-        /// The main entry point for the application.
-        /// </summary>
-        [STAThread]
-        static void Main(string[] args)
+    /// <summary>
+    /// The main entry point for the application.
+    /// </summary>
+    [STAThread]
+    static void Main(string[] args)
+    {
+        // if user has the command line built and runnable from the windows
+        // client then don't load the dlls (or we end up with 2 copies!).
+        SafeDirectoryCatalog.IgnoreDll = (f) => Path.GetFileName(f.DirectoryName).Equals("cli");
+
+        try
         {
-            // if user has the command line built and runnable from the windows
-            // client then don't load the dlls (or we end up with 2 copies!).
-            SafeDirectoryCatalog.IgnoreDll = (f) => Path.GetFileName(f.DirectoryName).Equals("cli");
-
-            try
-            {
-                AttachConsole(-1);
-            }
-            catch (Exception)
-            {
-                Console.WriteLine("Couldn't redirect console. Nevermind");
-            }
-
-            Startup.PreStartup();
-
-            UsefulStuff.GetParser()
-                       .ParseArguments<ResearchDataManagementPlatformOptions>(args)
-                       .MapResult(RunApp, err => -1);
+            AttachConsole(-1);
+        }
+        catch (Exception)
+        {
+            Console.WriteLine("Couldn't redirect console. Nevermind");
         }
 
-        private static object RunApp(ResearchDataManagementPlatformOptions arg)
+        Startup.PreStartup();
+
+        UsefulStuff.GetParser()
+            .ParseArguments<ResearchDataManagementPlatformOptions>(args)
+            .MapResult(RunApp, err => -1);
+    }
+
+    private static object RunApp(ResearchDataManagementPlatformOptions arg)
+    {
+        try
         {
-            try
-            {
-                arg.PopulateConnectionStringsFromYamlIfMissing(new ThrowImmediatelyCheckNotifier());
-            }
-            catch(Exception ex)
-            {
-                ExceptionViewer.Show(ex);
-                return -500;
-            }
-
-            RDMPBootStrapper<RDMPMainForm> bootStrapper =
-                new RDMPBootStrapper<RDMPMainForm>(
-                    new EnvironmentInfo(PluginFolders.Main | PluginFolders.Windows),
-                    arg);
-
-            bootStrapper.Show(false);
-            return 0;
+            arg.PopulateConnectionStringsFromYamlIfMissing(new ThrowImmediatelyCheckNotifier());
         }
+        catch(Exception ex)
+        {
+            ExceptionViewer.Show(ex);
+            return -500;
+        }
+
+        RDMPBootStrapper<RDMPMainForm> bootStrapper =
+            new RDMPBootStrapper<RDMPMainForm>(
+                new EnvironmentInfo(PluginFolders.Main | PluginFolders.Windows),
+                arg);
+
+        bootStrapper.Show(false);
+        return 0;
     }
 }

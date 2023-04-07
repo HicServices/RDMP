@@ -9,34 +9,33 @@ using Rdmp.Core.Curation.Data;
 using Rdmp.Core.Curation.Data.DataLoad;
 using Rdmp.Core.Providers.Nodes.UsedByNodes;
 
-namespace Rdmp.Core.Providers.Nodes.LoadMetadataNodes
+namespace Rdmp.Core.Providers.Nodes.LoadMetadataNodes;
+
+class OverrideRawServerNode:ObjectUsedByOtherObjectNode<LoadMetadata,ExternalDatabaseServer>,IDeletableWithCustomMessage
 {
-    class OverrideRawServerNode:ObjectUsedByOtherObjectNode<LoadMetadata,ExternalDatabaseServer>,IDeletableWithCustomMessage
+    public OverrideRawServerNode(LoadMetadata user, ExternalDatabaseServer objectBeingUsed) : base(user, objectBeingUsed)
     {
-        public OverrideRawServerNode(LoadMetadata user, ExternalDatabaseServer objectBeingUsed) : base(user, objectBeingUsed)
-        {
 
-        }
+    }
 
-        public void DeleteInDatabase()
-        {
-            User.OverrideRAWServer_ID = null;
-            User.SaveToDatabase();
-        }
+    public void DeleteInDatabase()
+    {
+        User.OverrideRAWServer_ID = null;
+        User.SaveToDatabase();
+    }
 
-        public override string ToString()
-        {
-            return "Override RAW:" + ObjectBeingUsed.Name;
-        }
+    public override string ToString()
+    {
+        return "Override RAW:" + ObjectBeingUsed.Name;
+    }
 
-        public string GetDeleteMessage()
-        {
-            return "remove explicit RAW server";
-        }
-        /// <inheritdoc/>
-        public string GetDeleteVerb()
-        {
-            return "Remove";
-        }
+    public string GetDeleteMessage()
+    {
+        return "remove explicit RAW server";
+    }
+    /// <inheritdoc/>
+    public string GetDeleteVerb()
+    {
+        return "Remove";
     }
 }

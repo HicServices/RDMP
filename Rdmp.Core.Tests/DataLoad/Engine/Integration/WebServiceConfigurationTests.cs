@@ -8,16 +8,15 @@ using NUnit.Framework;
 using Rdmp.Core.DataLoad.Modules.DataProvider;
 using Tests.Common;
 
-namespace Rdmp.Core.Tests.DataLoad.Engine.Integration
+namespace Rdmp.Core.Tests.DataLoad.Engine.Integration;
+
+public class WebServiceConfigurationTests : DatabaseTests
 {
-    public class WebServiceConfigurationTests : DatabaseTests
+    [Test]
+    public void TestXmlSerialization()
     {
-        [Test]
-        public void TestXmlSerialization()
-        {
-            var config = new WebServiceConfiguration(CatalogueRepository) {Username = "foo", Password = "bar"};
-            var state = config.SaveStateToString();
-            config.RestoreStateFrom(state);
-        }
+        var config = new WebServiceConfiguration(CatalogueRepository) {Username = "foo", Password = "bar"};
+        var state = config.SaveStateToString();
+        config.RestoreStateFrom(state);
     }
 }

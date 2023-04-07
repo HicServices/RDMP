@@ -10,62 +10,61 @@ using Rdmp.Core.Curation.Data;
 using Rdmp.Core.Curation.Data.Spontaneous;
 using ReusableLibraryCode.Checks;
 
-namespace Rdmp.Core.Curation.FilterImporting
+namespace Rdmp.Core.Curation.FilterImporting;
+
+/// <summary>
+/// Handles renaming a parameter in the WHERE SQL of its parent (if it has one).  Use this when you want the user to be able to change the name of a parameter and for this
+/// to be carried through to the parent without having any knowledge available to what that parent is or even if it has one
+/// </summary>
+public class ParameterRefactorer : IParameterRefactorer
 {
-    /// <summary>
-    /// Handles renaming a parameter in the WHERE SQL of its parent (if it has one).  Use this when you want the user to be able to change the name of a parameter and for this
-    /// to be carried through to the parent without having any knowledge available to what that parent is or even if it has one
-    /// </summary>
-    public class ParameterRefactorer : IParameterRefactorer
+    public HashSet<IFilter> RefactoredFilters { get; private set; }
+
+    public ParameterRefactorer()
     {
-        public HashSet<IFilter> RefactoredFilters { get; private set; }
-
-        public ParameterRefactorer()
-        {
-            RefactoredFilters = new HashSet<IFilter>();
-        }
-
-        public bool HandleRename(ISqlParameter parameter, string oldName, string newName)
-        {
-            if (string.IsNullOrWhiteSpace(newName))
-                return false;
-
-            if (string.IsNullOrWhiteSpace(oldName))
-                return false;
-
-            //they are the same name!
-            if (oldName.Equals(newName))
-                return false;
-
-            if (!parameter.ParameterName.Equals(newName))
-                throw new ArgumentException("Expected parameter " + parameter + " to have name '" + newName + "' but its value was " + parameter.ParameterName + ", this means someone was lying about the rename event");
-
-            var owner = parameter.GetOwnerIfAny();
-
-            var filter = owner as IFilter;
-
-            if (filter == null || filter is SpontaneousObject)
-                return false;
-
-            //There is no WHERE SQL anyway
-            if (string.IsNullOrWhiteSpace(filter.WhereSQL))
-                return false;
-
-            string before = filter.WhereSQL;
-            string after = ParameterCreator.RenameParameterInSQL(before, oldName, newName);
-
-            //no change was actually made
-            if (before.Equals(after))
-                return false;
-
-            filter.WhereSQL = after;
-            filter.SaveToDatabase();
-
-            if (!RefactoredFilters.Contains(filter))
-                RefactoredFilters.Add(filter);
-
-            return true;
-        }
-
+        RefactoredFilters = new HashSet<IFilter>();
     }
+
+    public bool HandleRename(ISqlParameter parameter, string oldName, string newName)
+    {
+        if (string.IsNullOrWhiteSpace(newName))
+            return false;
+
+        if (string.IsNullOrWhiteSpace(oldName))
+            return false;
+
+        //they are the same name!
+        if (oldName.Equals(newName))
+            return false;
+
+        if (!parameter.ParameterName.Equals(newName))
+            throw new ArgumentException("Expected parameter " + parameter + " to have name '" + newName + "' but its value was " + parameter.ParameterName + ", this means someone was lying about the rename event");
+
+        var owner = parameter.GetOwnerIfAny();
+
+        var filter = owner as IFilter;
+
+        if (filter == null || filter is SpontaneousObject)
+            return false;
+
+        //There is no WHERE SQL anyway
+        if (string.IsNullOrWhiteSpace(filter.WhereSQL))
+            return false;
+
+        string before = filter.WhereSQL;
+        string after = ParameterCreator.RenameParameterInSQL(before, oldName, newName);
+
+        //no change was actually made
+        if (before.Equals(after))
+            return false;
+
+        filter.WhereSQL = after;
+        filter.SaveToDatabase();
+
+        if (!RefactoredFilters.Contains(filter))
+            RefactoredFilters.Add(filter);
+
+        return true;
+    }
+
 }

@@ -4,22 +4,21 @@
 // RDMP is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License for more details.
 // You should have received a copy of the GNU General Public License along with RDMP. If not, see <https://www.gnu.org/licenses/>.
 
-namespace ReusableLibraryCode.VisualStudioSolutionFileProcessing
-{
-    /// <summary>
-    /// A csproj file referenced by a .sln file (See VisualStudioSolutionFile)
-    /// </summary>
-    public class VisualStudioProjectReference
-    {
-        public string Guid;
-        public string Path;
-        public string Name;
+namespace ReusableLibraryCode.VisualStudioSolutionFileProcessing;
 
-        public VisualStudioProjectReference(string name, string path, string guid)
-        {
-            Name = name.Trim();
-            Path = path.Trim();
-            Guid = guid.Trim();
-        }
+/// <summary>
+/// A csproj file referenced by a .sln file (See VisualStudioSolutionFile)
+/// </summary>
+public class VisualStudioProjectReference
+{
+    public string Guid;
+    public string Path;
+    public string Name;
+
+    public VisualStudioProjectReference(string name, string path, string guid)
+    {
+        Name = name.Trim();
+        Path = path.Trim();
+        Guid = guid.Trim();
     }
 }

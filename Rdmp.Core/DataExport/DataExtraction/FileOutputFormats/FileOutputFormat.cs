@@ -6,29 +6,28 @@
 
 using System.Data;
 
-namespace Rdmp.Core.DataExport.DataExtraction.FileOutputFormats
+namespace Rdmp.Core.DataExport.DataExtraction.FileOutputFormats;
+
+public abstract class FileOutputFormat:IFileOutputFormat
 {
-    public abstract class FileOutputFormat:IFileOutputFormat
+    public abstract string GetFileExtension();
+
+    public string OutputFilename { get; private set; }
+
+    /// <summary>
+    /// The number of decimal places to round floating point numbers to.  This only applies to data in the pipeline which is hard typed Float and not to string values
+    /// </summary>
+    public int? RoundFloatsTo { get; internal set; }
+
+    public abstract void Open();
+    public abstract void Open(bool append);
+    public abstract void WriteHeaders(DataTable t);
+    public abstract void Append(DataRow r);
+    public abstract void Flush();
+    public abstract void Close();
+
+    protected FileOutputFormat(string outputFilename)
     {
-        public abstract string GetFileExtension();
-
-        public string OutputFilename { get; private set; }
-
-        /// <summary>
-        /// The number of decimal places to round floating point numbers to.  This only applies to data in the pipeline which is hard typed Float and not to string values
-        /// </summary>
-        public int? RoundFloatsTo { get; internal set; }
-
-        public abstract void Open();
-        public abstract void Open(bool append);
-        public abstract void WriteHeaders(DataTable t);
-        public abstract void Append(DataRow r);
-        public abstract void Flush();
-        public abstract void Close();
-
-        protected FileOutputFormat(string outputFilename)
-        {
-            OutputFilename = outputFilename;
-        }
+        OutputFilename = outputFilename;
     }
 }

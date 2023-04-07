@@ -10,34 +10,34 @@ using Rdmp.Core.Curation.Data.EntityNaming;
 using ReusableLibraryCode.Checks;
 using TypeGuesser;
 
-namespace Rdmp.Core.DataLoad.Modules.Mutilators.Dilution.Operations
+namespace Rdmp.Core.DataLoad.Modules.Mutilators.Dilution.Operations;
+
+/// <summary>
+///  Dilutes data in the ColumnToDilute by rounding all dates to the middle of the quarter they appear in (column type must be date and is not changed by
+/// this DilutionOperation). Data type of column must be date and will not be changed by this DilutionOperation.
+/// </summary>
+public class RoundDateToMiddleOfQuarter : DilutionOperation
 {
-    /// <summary>
-    ///  Dilutes data in the ColumnToDilute by rounding all dates to the middle of the quarter they appear in (column type must be date and is not changed by
-    /// this DilutionOperation). Data type of column must be date and will not be changed by this DilutionOperation.
-    /// </summary>
-    public class RoundDateToMiddleOfQuarter : DilutionOperation
+    public RoundDateToMiddleOfQuarter() :
+        base(new DatabaseTypeRequest(typeof(DateTime)))
     {
-        public RoundDateToMiddleOfQuarter() :
-            base(new DatabaseTypeRequest(typeof(DateTime)))
-        {
-        }
+    }
 
-        public override void Check(ICheckNotifier notifier)
-        {
-            base.Check(notifier);
+    public override void Check(ICheckNotifier notifier)
+    {
+        base.Check(notifier);
 
-            //confirm type safety
-            if (!ColumnToDilute.SqlDataType.ToLower().Contains("date"))
-                notifier.OnCheckPerformed(new CheckEventArgs(
-                    "ColumnToDilute '" + ColumnToDilute.RuntimeColumnName +
-                    "' has operation RoundDateToMiddleOfQuarter configured but its datatype is " +
-                    ColumnToDilute.SqlDataType, CheckResult.Fail, null));
-        }
+        //confirm type safety
+        if (!ColumnToDilute.SqlDataType.ToLower().Contains("date"))
+            notifier.OnCheckPerformed(new CheckEventArgs(
+                "ColumnToDilute '" + ColumnToDilute.RuntimeColumnName +
+                "' has operation RoundDateToMiddleOfQuarter configured but its datatype is " +
+                ColumnToDilute.SqlDataType, CheckResult.Fail, null));
+    }
         
-        public override string GetMutilationSql(INameDatabasesAndTablesDuringLoads namer)
-        {
-            return String.Format(@"IF OBJECT_ID('dbo.RoundDateToMiddleOfQuarter') IS NOT NULL
+    public override string GetMutilationSql(INameDatabasesAndTablesDuringLoads namer)
+    {
+        return String.Format(@"IF OBJECT_ID('dbo.RoundDateToMiddleOfQuarter') IS NOT NULL
   DROP FUNCTION RoundDateToMiddleOfQuarter
 GO
 
@@ -70,7 +70,6 @@ GO
 
 UPDATE {0} SET {1}=dbo.RoundDateToMiddleOfQuarter({1})
 GO",
-   ColumnToDilute.TableInfo.GetRuntimeName(LoadStage.AdjustStaging, namer), ColumnToDilute.GetRuntimeName());
-        }
+            ColumnToDilute.TableInfo.GetRuntimeName(LoadStage.AdjustStaging, namer), ColumnToDilute.GetRuntimeName());
     }
 }

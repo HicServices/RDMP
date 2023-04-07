@@ -4,26 +4,25 @@
 // RDMP is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License for more details.
 // You should have received a copy of the GNU General Public License along with RDMP. If not, see <https://www.gnu.org/licenses/>.
 
-namespace Rdmp.Core.DataLoad.Triggers
+namespace Rdmp.Core.DataLoad.Triggers;
+
+/// <summary>
+/// Describes the status of the archive trigger on live data tables loaded by the RDMP dle (see <see cref="ITriggerImplementer"/>)
+/// </summary>
+public enum TriggerStatus
 {
     /// <summary>
-    /// Describes the status of the archive trigger on live data tables loaded by the RDMP dle (see <see cref="ITriggerImplementer"/>)
+    /// The trigger is present on the live table
     /// </summary>
-    public enum TriggerStatus
-    {
-        /// <summary>
-        /// The trigger is present on the live table
-        /// </summary>
-        Enabled,
+    Enabled,
 
-        /// <summary>
-        /// The trigger is present but disabled
-        /// </summary>
-        Disabled,
+    /// <summary>
+    /// The trigger is present but disabled
+    /// </summary>
+    Disabled,
 
-        /// <summary>
-        /// The trigger does not exist on the live table
-        /// </summary>
-        Missing
-    }
+    /// <summary>
+    /// The trigger does not exist on the live table
+    /// </summary>
+    Missing
 }

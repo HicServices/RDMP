@@ -13,41 +13,40 @@ using ResearchDataManagementPlatform.WindowManagement.ContentWindowTracking.Pers
 
 using WeifenLuo.WinFormsUI.Docking;
 
-namespace ResearchDataManagementPlatform.WindowManagement.ExtenderFunctionality
+namespace ResearchDataManagementPlatform.WindowManagement.ExtenderFunctionality;
+
+/// <summary>
+/// Determines the window style of tabs dragged out of the main RDMPMainForm window to create new windows of that tab only.  Currently the only change is to allow the user to resize
+///  and maximise new tab windows
+/// </summary>
+[TechnicalUI]
+[System.ComponentModel.DesignerCategory("")]
+public class CustomFloatWindow:FloatWindow
 {
-    /// <summary>
-    /// Determines the window style of tabs dragged out of the main RDMPMainForm window to create new windows of that tab only.  Currently the only change is to allow the user to resize
-    ///  and maximise new tab windows
-    /// </summary>
-    [TechnicalUI]
-    [System.ComponentModel.DesignerCategory("")]
-    public class CustomFloatWindow:FloatWindow
+    protected internal CustomFloatWindow(DockPanel dockPanel, DockPane pane) : base(dockPanel, pane)
     {
-        protected internal CustomFloatWindow(DockPanel dockPanel, DockPane pane) : base(dockPanel, pane)
-        {
-            Initialize();
+        Initialize();
             
-        }
-        protected internal CustomFloatWindow(DockPanel dockPanel, DockPane pane, Rectangle bounds): base(dockPanel, pane, bounds)
+    }
+    protected internal CustomFloatWindow(DockPanel dockPanel, DockPane pane, Rectangle bounds): base(dockPanel, pane, bounds)
+    {
+        Initialize();
+    }
+
+    private void Initialize()
+    {
+        FormBorderStyle = FormBorderStyle.Sizable;
+
+        var saveToolStripMenuItem = new SaveMenuItem();
+        var singleObjectControlTab = this.DockPanel.ActiveDocument as RDMPSingleControlTab;
+
+        if (singleObjectControlTab == null)
         {
-            Initialize();
+            saveToolStripMenuItem.Saveable = null;
+            return;
         }
 
-        private void Initialize()
-        {
-            FormBorderStyle = FormBorderStyle.Sizable;
-
-            var saveToolStripMenuItem = new SaveMenuItem();
-            var singleObjectControlTab = this.DockPanel.ActiveDocument as RDMPSingleControlTab;
-
-            if (singleObjectControlTab == null)
-            {
-                saveToolStripMenuItem.Saveable = null;
-                return;
-            }
-
-            var saveable = singleObjectControlTab.Control as ISaveableUI;
-            saveToolStripMenuItem.Saveable = saveable;
-        }
+        var saveable = singleObjectControlTab.Control as ISaveableUI;
+        saveToolStripMenuItem.Saveable = saveable;
     }
 }

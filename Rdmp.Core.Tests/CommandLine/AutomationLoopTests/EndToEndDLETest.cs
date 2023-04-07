@@ -15,51 +15,50 @@ using Tests.Common;
 using Tests.Common.Scenarios;
 using TypeGuesser;
 
-namespace Rdmp.Core.Tests.CommandLine.AutomationLoopTests
+namespace Rdmp.Core.Tests.CommandLine.AutomationLoopTests;
+
+public class EndToEndDLETest : TestsRequiringADle
 {
-    public class EndToEndDLETest : TestsRequiringADle
+    [Test]
+    public void RunEndToEndDLETest()
     {
-        [Test]
-        public void RunEndToEndDLETest()
+        const int timeoutInMilliseconds = 120000;
+        CreateFileInForLoading("loadmeee.csv",500,new Random(500));
+        RunDLE(timeoutInMilliseconds);
+    }
+
+    [TestCaseSource(typeof(All),nameof(All.DatabaseTypes))]
+    public void TestDle_DodgyColumnNames(DatabaseType dbType)
+    {
+        var db = GetCleanedServer(dbType);
+
+        var tbl = db.CreateTable("Troll Select * Loll",new DatabaseColumnRequest[]
         {
-            const int timeoutInMilliseconds = 120000;
-            CreateFileInForLoading("loadmeee.csv",500,new Random(500));
-            RunDLE(timeoutInMilliseconds);
-        }
+            new DatabaseColumnRequest("group by",new DatabaseTypeRequest(typeof(string),100)){IsPrimaryKey = true}, 
+            new DatabaseColumnRequest(",,,,",new DatabaseTypeRequest(typeof(string))), 
+        });
 
-        [TestCaseSource(typeof(All),nameof(All.DatabaseTypes))]
-        public void TestDle_DodgyColumnNames(DatabaseType dbType)
+        CreateFileInForLoading("Troll.csv", new string[]
         {
-            var db = GetCleanedServer(dbType);
+            "group by,\",,,,\"",
+            "fish,fishon"
+        });
 
-            var tbl = db.CreateTable("Troll Select * Loll",new DatabaseColumnRequest[]
-            {
-                new DatabaseColumnRequest("group by",new DatabaseTypeRequest(typeof(string),100)){IsPrimaryKey = true}, 
-                new DatabaseColumnRequest(",,,,",new DatabaseTypeRequest(typeof(string))), 
-            });
+        var cata = Import(tbl);
+        var lmd = new LoadMetadata(CatalogueRepository, nameof(TestDle_DodgyColumnNames));
+        lmd.LocationOfFlatFiles = LoadDirectory.RootPath.FullName;
+        lmd.SaveToDatabase();
 
-            CreateFileInForLoading("Troll.csv", new string[]
-            {
-                "group by,\",,,,\"",
-                "fish,fishon"
-            });
+        CreateFlatFileAttacher(lmd,"Troll.csv",cata.GetTableInfoList(false).Single());
 
-            var cata = Import(tbl);
-            var lmd = new LoadMetadata(CatalogueRepository, nameof(TestDle_DodgyColumnNames));
-            lmd.LocationOfFlatFiles = LoadDirectory.RootPath.FullName;
-            lmd.SaveToDatabase();
+        cata.LoadMetadata_ID = lmd.ID;
+        cata.SaveToDatabase();
 
-            CreateFlatFileAttacher(lmd,"Troll.csv",cata.GetTableInfoList(false).Single());
+        Assert.AreEqual(0,tbl.GetRowCount());
 
-            cata.LoadMetadata_ID = lmd.ID;
-            cata.SaveToDatabase();
+        RunDLE(lmd,30000,true);
 
-            Assert.AreEqual(0,tbl.GetRowCount());
-
-            RunDLE(lmd,30000,true);
-
-            Assert.AreEqual(1,tbl.GetRowCount());
-            Assert.AreEqual("fishon",tbl.GetDataTable().Rows[0][",,,,"]);
-        }
+        Assert.AreEqual(1,tbl.GetRowCount());
+        Assert.AreEqual("fishon",tbl.GetDataTable().Rows[0][",,,,"]);
     }
 }

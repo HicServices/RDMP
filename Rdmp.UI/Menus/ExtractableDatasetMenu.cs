@@ -10,31 +10,30 @@ using Rdmp.Core.Providers;
 using System.Linq;
 using Rdmp.Core.Icons.IconProvision;
 
-namespace Rdmp.UI.Menus
+namespace Rdmp.UI.Menus;
+
+[System.ComponentModel.DesignerCategory("")]
+class ExtractableDatasetMenu:RDMPContextMenuStrip
 {
-    [System.ComponentModel.DesignerCategory("")]
-    class ExtractableDatasetMenu:RDMPContextMenuStrip
+    private readonly ExtractableDataSet _dataset;
+
+    public ExtractableDatasetMenu(RDMPContextMenuStripArgs args, ExtractableDataSet dataset)
+        : base(args,dataset)
     {
-        private readonly ExtractableDataSet _dataset;
+        _dataset = dataset;
 
-        public ExtractableDatasetMenu(RDMPContextMenuStripArgs args, ExtractableDataSet dataset)
-            : base(args,dataset)
-        {
-            _dataset = dataset;
+        if (_dataset.DisableExtraction)
+            Items.Add("ReEnable Extraction", _activator.CoreIconProvider.GetImage(RDMPConcept.ExtractableDataSet).ImageToBitmap(),
+                (s, e) => SetDisabled(false));
+        else
+            Items.Add("Disable Extraction (temporarily)", CatalogueIcons.ExtractableDataSetDisabled.ImageToBitmap(),
+                (s, e) => SetDisabled(true));
+    }
 
-            if (_dataset.DisableExtraction)
-                Items.Add("ReEnable Extraction", _activator.CoreIconProvider.GetImage(RDMPConcept.ExtractableDataSet).ImageToBitmap(),
-                    (s, e) => SetDisabled(false));
-            else
-                Items.Add("Disable Extraction (temporarily)", CatalogueIcons.ExtractableDataSetDisabled.ImageToBitmap(),
-                    (s, e) => SetDisabled(true));
-        }
-
-        private void SetDisabled(bool disable)
-        {
-            _dataset.DisableExtraction = disable;
-            _dataset.SaveToDatabase();
-            Publish(_dataset);
-        }
+    private void SetDisabled(bool disable)
+    {
+        _dataset.DisableExtraction = disable;
+        _dataset.SaveToDatabase();
+        Publish(_dataset);
     }
 }

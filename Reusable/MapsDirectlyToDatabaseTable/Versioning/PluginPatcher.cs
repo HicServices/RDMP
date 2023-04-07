@@ -4,22 +4,20 @@
 // RDMP is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License for more details.
 // You should have received a copy of the GNU General Public License along with RDMP. If not, see <https://www.gnu.org/licenses/>.
 
-namespace MapsDirectlyToDatabaseTable.Versioning
-{
-    /// <summary>
-    /// MEF discoverable version of IPatcher
-    /// </summary>
-    
-    public class PluginPatcher : Patcher
-    {
-        public PluginPatcher():base(3,null)
-        {
-            
-        }
+namespace MapsDirectlyToDatabaseTable.Versioning;
 
-        public PluginPatcher(string subdirectory):base(3,subdirectory)
-        {
+/// <summary>
+/// MEF discoverable version of IPatcher
+/// </summary>
+public class PluginPatcher : Patcher
+{
+    public PluginPatcher():base(3,null)
+    {
             
-        }
+    }
+
+    public PluginPatcher(string subdirectory):base(3,subdirectory)
+    {
+            
     }
 }

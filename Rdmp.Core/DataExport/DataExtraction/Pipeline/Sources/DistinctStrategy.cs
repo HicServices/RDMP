@@ -4,27 +4,26 @@
 // RDMP is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License for more details.
 // You should have received a copy of the GNU General Public License along with RDMP. If not, see <https://www.gnu.org/licenses/>.
 
-namespace Rdmp.Core.DataExport.DataExtraction.Pipeline.Sources
+namespace Rdmp.Core.DataExport.DataExtraction.Pipeline.Sources;
+
+/// <summary>
+/// Range of strategies to eliminate identical record duplication when extracting data sets from RDMP
+/// </summary>
+public enum DistinctStrategy
 {
     /// <summary>
-    /// Range of strategies to eliminate identical record duplication when extracting data sets from RDMP
+    /// Do not distinct the records extracted
     /// </summary>
-    public enum DistinctStrategy
-    {
-        /// <summary>
-        /// Do not distinct the records extracted
-        /// </summary>
-        None = 0,
+    None = 0,
 
-        /// <summary>
-        /// Apply a DISTINCT keyword to the SELECT statement
-        /// </summary>
-        SqlDistinct,
+    /// <summary>
+    /// Apply a DISTINCT keyword to the SELECT statement
+    /// </summary>
+    SqlDistinct,
 
-        /// <summary>
-        /// Apply an ORDER BY release id and apply the DISTINCT in memory as batches are read
-        /// </summary>
-        OrderByAndDistinctInMemory,
+    /// <summary>
+    /// Apply an ORDER BY release id and apply the DISTINCT in memory as batches are read
+    /// </summary>
+    OrderByAndDistinctInMemory,
         
-    }
 }

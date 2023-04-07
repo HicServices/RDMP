@@ -8,42 +8,41 @@ using System;
 using System.Linq;
 using Rdmp.Core.DataExport.Data;
 
-namespace Rdmp.Core.CommandExecution.Combining
+namespace Rdmp.Core.CommandExecution.Combining;
+
+/// <summary>
+/// <see cref="ICombineToMakeCommand"/> for an object of type <see cref="ExtractableCohort"/>
+/// </summary>
+public class ExtractableCohortCombineable : ICombineToMakeCommand
 {
-    /// <summary>
-    /// <see cref="ICombineToMakeCommand"/> for an object of type <see cref="ExtractableCohort"/>
-    /// </summary>
-    public class ExtractableCohortCombineable : ICombineToMakeCommand
+    public int ExternalProjectNumber { get; set; }
+    public ExtractableCohort Cohort { get; set; }
+
+    public Exception ErrorGettingCohortData { get; private set; }
+        
+    public IExtractionConfiguration[] CompatibleExtractionConfigurations { get; set; }
+    public Project[] CompatibleProjects { get; set; }
+
+    public ExtractableCohortCombineable(ExtractableCohort extractableCohort)
     {
-        public int ExternalProjectNumber { get; set; }
-        public ExtractableCohort Cohort { get; set; }
+        Cohort = extractableCohort;
 
-        public Exception ErrorGettingCohortData { get; private set; }
-        
-        public IExtractionConfiguration[] CompatibleExtractionConfigurations { get; set; }
-        public Project[] CompatibleProjects { get; set; }
-
-        public ExtractableCohortCombineable(ExtractableCohort extractableCohort)
+        try
         {
-            Cohort = extractableCohort;
-
-            try
-            {
-                ExternalProjectNumber = Cohort.GetExternalData(2).ExternalProjectNumber;
-            }
-            catch (Exception e)
-            {
-                ErrorGettingCohortData = e;
-                return;
-            }
-
-            CompatibleProjects = extractableCohort.Repository.GetAllObjectsWhere<Project>("ProjectNumber" , ExternalProjectNumber);
-            CompatibleExtractionConfigurations = CompatibleProjects.SelectMany(p => p.ExtractionConfigurations).ToArray();
+            ExternalProjectNumber = Cohort.GetExternalData(2).ExternalProjectNumber;
         }
-        
-        public string GetSqlString()
+        catch (Exception e)
         {
-            return Cohort.WhereSQL();
+            ErrorGettingCohortData = e;
+            return;
         }
+
+        CompatibleProjects = extractableCohort.Repository.GetAllObjectsWhere<Project>("ProjectNumber" , ExternalProjectNumber);
+        CompatibleExtractionConfigurations = CompatibleProjects.SelectMany(p => p.ExtractionConfigurations).ToArray();
+    }
+        
+    public string GetSqlString()
+    {
+        return Cohort.WhereSQL();
     }
 }

@@ -7,16 +7,15 @@
 using MapsDirectlyToDatabaseTable.Injection;
 using Rdmp.Core.Curation;
 
-namespace Rdmp.Core.Repositories.Managers
+namespace Rdmp.Core.Repositories.Managers;
+
+/// <summary>
+/// Handles persisting encryption certificate for public/private key encryption.
+/// </summary>
+public interface IEncryptionManager:IInjectKnown
 {
     /// <summary>
-    /// Handles persisting encryption certificate for public/private key encryption.
+    /// Enables encryption/decryption of strings using a custom RSA key stored in a secure location on disk
     /// </summary>
-    public interface IEncryptionManager:IInjectKnown
-    {
-        /// <summary>
-        /// Enables encryption/decryption of strings using a custom RSA key stored in a secure location on disk
-        /// </summary>
-        IEncryptStrings GetEncrypter();
-    }
+    IEncryptStrings GetEncrypter();
 }

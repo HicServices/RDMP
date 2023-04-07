@@ -6,28 +6,27 @@
 
 using System;
 
-namespace MapsDirectlyToDatabaseTable
+namespace MapsDirectlyToDatabaseTable;
+
+/// <summary>
+/// Event args for the <see cref="IRepository.SaveToDatabase(IMapsDirectlyToDatabaseTable)"/> operation.
+/// See also <see cref="IRepository.Saving"/>
+/// </summary>
+public class SaveEventArgs : EventArgs
 {
     /// <summary>
-    /// Event args for the <see cref="IRepository.SaveToDatabase(IMapsDirectlyToDatabaseTable)"/> operation.
-    /// See also <see cref="IRepository.Saving"/>
+    /// Set to true to prevent the save writting to database/disk.
     /// </summary>
-    public class SaveEventArgs : EventArgs
+    public bool Cancel { get; set; }
+
+    /// <summary>
+    /// The object that is about to be saved to database/disk
+    /// </summary>
+    public IMapsDirectlyToDatabaseTable BeingSaved { get;}
+
+    public SaveEventArgs(IMapsDirectlyToDatabaseTable o)
     {
-        /// <summary>
-        /// Set to true to prevent the save writting to database/disk.
-        /// </summary>
-        public bool Cancel { get; set; }
-
-        /// <summary>
-        /// The object that is about to be saved to database/disk
-        /// </summary>
-        public IMapsDirectlyToDatabaseTable BeingSaved { get;}
-
-        public SaveEventArgs(IMapsDirectlyToDatabaseTable o)
-        {
-            BeingSaved = o;
-        }
-
+        BeingSaved = o;
     }
+
 }

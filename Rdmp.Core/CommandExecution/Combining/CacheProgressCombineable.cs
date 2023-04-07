@@ -6,23 +6,22 @@
 
 using Rdmp.Core.Curation.Data.Cache;
 
-namespace Rdmp.Core.CommandExecution.Combining
+namespace Rdmp.Core.CommandExecution.Combining;
+
+/// <summary>
+/// <see cref="ICombineToMakeCommand"/> for an object of type <see cref="CacheProgress"/>
+/// </summary>
+public class CacheProgressCombineable : ICombineToMakeCommand
 {
-    /// <summary>
-    /// <see cref="ICombineToMakeCommand"/> for an object of type <see cref="CacheProgress"/>
-    /// </summary>
-    public class CacheProgressCombineable : ICombineToMakeCommand
+    public CacheProgress CacheProgress { get; private set; }
+
+    public CacheProgressCombineable(CacheProgress cacheProgress)
     {
-        public CacheProgress CacheProgress { get; private set; }
+        CacheProgress = cacheProgress;
+    }
 
-        public CacheProgressCombineable(CacheProgress cacheProgress)
-        {
-            CacheProgress = cacheProgress;
-        }
-
-        public string GetSqlString()
-        {
-            return null;
-        }
+    public string GetSqlString()
+    {
+        return null;
     }
 }

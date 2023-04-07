@@ -7,26 +7,25 @@
 using System.IO;
 using Rdmp.Core.DataExport.Data;
 
-namespace Rdmp.Core.DataExport.DataExtraction.Commands
+namespace Rdmp.Core.DataExport.DataExtraction.Commands;
+
+/// <summary>
+/// Input object to Extraction Pipelines.  Typically this is a dataset that needs to be linked with a cohort and extracted into the ExtractionDirectory. 
+/// Also includes the ongoing ExtractCommandState that the IExtractCommand is in in the Pipeline e.g. WaitingForSQLServer etc.
+/// </summary>
+public interface IExtractCommand
 {
+    DirectoryInfo GetExtractionDirectory();
+    IExtractionConfiguration Configuration { get; }
+    string DescribeExtractionImplementation();
+
+    ExtractCommandState State { get; }
+    void ElevateState(ExtractCommandState newState);
+
     /// <summary>
-    /// Input object to Extraction Pipelines.  Typically this is a dataset that needs to be linked with a cohort and extracted into the ExtractionDirectory. 
-    /// Also includes the ongoing ExtractCommandState that the IExtractCommand is in in the Pipeline e.g. WaitingForSQLServer etc.
+    /// Flag that can be set by sources that support resume.  This indicates that the request is for the next
+    /// set of new data that has not been succesfully outputted yet and should be appended to the destination 
+    /// instead of overwritting.
     /// </summary>
-    public interface IExtractCommand
-    {
-        DirectoryInfo GetExtractionDirectory();
-        IExtractionConfiguration Configuration { get; }
-        string DescribeExtractionImplementation();
-
-        ExtractCommandState State { get; }
-        void ElevateState(ExtractCommandState newState);
-
-        /// <summary>
-        /// Flag that can be set by sources that support resume.  This indicates that the request is for the next
-        /// set of new data that has not been succesfully outputted yet and should be appended to the destination 
-        /// instead of overwritting.
-        /// </summary>
-        bool IsBatchResume{ get; set; }
-    }
+    bool IsBatchResume{ get; set; }
 }

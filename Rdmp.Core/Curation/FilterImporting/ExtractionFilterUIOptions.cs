@@ -8,43 +8,42 @@ using Rdmp.Core;
 using Rdmp.Core.Curation.Data;
 using Rdmp.Core.QueryBuilding;
 
-namespace Rdmp.Core.Curation.FilterImporting
+namespace Rdmp.Core.Curation.FilterImporting;
+
+/// <inheritdoc/>
+public class ExtractionFilterUIOptions : FilterUIOptions
 {
-    /// <inheritdoc/>
-    public class ExtractionFilterUIOptions : FilterUIOptions
+    private ISqlParameter[] _globals;
+    private ITableInfo[] _tables;
+    private IColumn[] _columns;
+
+    public ExtractionFilterUIOptions(ExtractionFilter masterCatalogueFilter) : base(masterCatalogueFilter)
     {
-        private ISqlParameter[] _globals;
-        private ITableInfo[] _tables;
-        private IColumn[] _columns;
+        var c = masterCatalogueFilter.ExtractionInformation.CatalogueItem.Catalogue;
 
-        public ExtractionFilterUIOptions(ExtractionFilter masterCatalogueFilter) : base(masterCatalogueFilter)
-        {
-            var c = masterCatalogueFilter.ExtractionInformation.CatalogueItem.Catalogue;
+        var colInfo = masterCatalogueFilter.GetColumnInfoIfExists();
 
-            var colInfo = masterCatalogueFilter.GetColumnInfoIfExists();
+        if (colInfo == null)
+            throw new MissingColumnInfoException("No ColumnInfo found for filter '" + masterCatalogueFilter + "'");
 
-            if (colInfo == null)
-                throw new MissingColumnInfoException("No ColumnInfo found for filter '" + masterCatalogueFilter + "'");
+        _globals = colInfo.TableInfo.GetAllParameters();
+        _tables = c.GetTableInfoList(false);
+        _columns = c.GetAllExtractionInformation(ExtractionCategory.Any);
 
-            _globals = colInfo.TableInfo.GetAllParameters();
-            _tables = c.GetTableInfoList(false);
-            _columns = c.GetAllExtractionInformation(ExtractionCategory.Any);
+    }
 
-        }
+    public override ITableInfo[] GetTableInfos()
+    {
+        return _tables;
+    }
 
-        public override ITableInfo[] GetTableInfos()
-        {
-            return _tables;
-        }
+    public override ISqlParameter[] GetGlobalParametersInFilterScope()
+    {
+        return _globals;
+    }
 
-        public override ISqlParameter[] GetGlobalParametersInFilterScope()
-        {
-            return _globals;
-        }
-
-        public override IColumn[] GetIColumnsInFilterScope()
-        {
-            return _columns;
-        }
+    public override IColumn[] GetIColumnsInFilterScope()
+    {
+        return _columns;
     }
 }

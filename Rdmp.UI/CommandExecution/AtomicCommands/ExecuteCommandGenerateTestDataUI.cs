@@ -7,20 +7,19 @@
 using Rdmp.UI.ItemActivation;
 using Rdmp.UI.SimpleDialogs.Reports;
 
-namespace Rdmp.UI.CommandExecution.AtomicCommands
+namespace Rdmp.UI.CommandExecution.AtomicCommands;
+
+public class ExecuteCommandGenerateTestDataUI : BasicUICommandExecution
 {
-    public class ExecuteCommandGenerateTestDataUI : BasicUICommandExecution
+    public ExecuteCommandGenerateTestDataUI(IActivateItems activator) : base(activator)
     {
-        public ExecuteCommandGenerateTestDataUI(IActivateItems activator) : base(activator)
-        {
-        }
+    }
 
-        public override void Execute()
-        {
-            base.Execute();
+    public override void Execute()
+    {
+        base.Execute();
 
-            var dialog = new GenerateTestDataUI(Activator,this);
-            dialog.Show();
-        }
+        var dialog = new GenerateTestDataUI(Activator,this);
+        dialog.Show();
     }
 }

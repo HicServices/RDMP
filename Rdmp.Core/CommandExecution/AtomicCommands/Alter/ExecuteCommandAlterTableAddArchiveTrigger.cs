@@ -10,51 +10,50 @@ using Rdmp.Core.DataLoad.Triggers;
 using Rdmp.Core.DataLoad.Triggers.Implementations;
 using ReusableLibraryCode.Checks;
 
-namespace Rdmp.Core.CommandExecution.AtomicCommands.Alter
+namespace Rdmp.Core.CommandExecution.AtomicCommands.Alter;
+
+/// <summary>
+/// Creates a backup trigger and accompanying _Archive table on the live database for a given table
+/// </summary>
+public class ExecuteCommandAlterTableAddArchiveTrigger : AlterTableCommandExecution
 {
-    /// <summary>
-    /// Creates a backup trigger and accompanying _Archive table on the live database for a given table
-    /// </summary>
-    public class ExecuteCommandAlterTableAddArchiveTrigger : AlterTableCommandExecution
+    private readonly ITriggerImplementer _triggerImplementer;
+
+    public ExecuteCommandAlterTableAddArchiveTrigger(IBasicActivateItems activator, TableInfo tableInfo) : base(activator,tableInfo)
     {
-        private readonly ITriggerImplementer _triggerImplementer;
-
-        public ExecuteCommandAlterTableAddArchiveTrigger(IBasicActivateItems activator, TableInfo tableInfo) : base(activator,tableInfo)
-        {
-            if(IsImpossible)
-                return;
+        if(IsImpossible)
+            return;
                 
-            if (!Table.DiscoverColumns().Any(c => c.IsPrimaryKey))
-            {
-                SetImpossible(GlobalStrings.TableHasNoPrimaryKey);
-                return;
-            }
-
-            var factory = new TriggerImplementerFactory(TableInfo.DatabaseType);
-            _triggerImplementer = factory.Create(Table);
-            var currentStatus = _triggerImplementer.GetTriggerStatus();
-
-            if (currentStatus != TriggerStatus.Missing)
-                SetImpossible(GlobalStrings.TriggerStatusIsCurrently , currentStatus.S());
-        }
-
-        public override void Execute()
+        if (!Table.DiscoverColumns().Any(c => c.IsPrimaryKey))
         {
-            base.Execute();
-            
-            if (!Synchronize())
-                return;
-           
-            if (YesNo(GlobalStrings.CreateArchiveTableYesNo, GlobalStrings.CreateArchiveTableCaption))
-            {
-                _triggerImplementer.CreateTrigger(new ThrowImmediatelyCheckNotifier());
-                Show(GlobalStrings.CreateArchiveTableSuccess , TableInfo.GetRuntimeName() + "_Archive ");
-            }
-
-            Synchronize();
-
-            Publish(TableInfo);
+            SetImpossible(GlobalStrings.TableHasNoPrimaryKey);
+            return;
         }
 
+        var factory = new TriggerImplementerFactory(TableInfo.DatabaseType);
+        _triggerImplementer = factory.Create(Table);
+        var currentStatus = _triggerImplementer.GetTriggerStatus();
+
+        if (currentStatus != TriggerStatus.Missing)
+            SetImpossible(GlobalStrings.TriggerStatusIsCurrently , currentStatus.S());
     }
+
+    public override void Execute()
+    {
+        base.Execute();
+            
+        if (!Synchronize())
+            return;
+           
+        if (YesNo(GlobalStrings.CreateArchiveTableYesNo, GlobalStrings.CreateArchiveTableCaption))
+        {
+            _triggerImplementer.CreateTrigger(new ThrowImmediatelyCheckNotifier());
+            Show(GlobalStrings.CreateArchiveTableSuccess , TableInfo.GetRuntimeName() + "_Archive ");
+        }
+
+        Synchronize();
+
+        Publish(TableInfo);
+    }
+
 }

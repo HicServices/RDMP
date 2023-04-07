@@ -9,71 +9,70 @@ using Rdmp.Core.Curation.Data;
 using Rdmp.Core.Curation.Data.DataLoad;
 using System.IO;
 
-namespace Rdmp.Core.CommandExecution.AtomicCommands
+namespace Rdmp.Core.CommandExecution.AtomicCommands;
+
+/// <summary>
+/// Creates the expected and required flat file layout for a <see cref="LoadMetadata"/>
+/// </summary>
+public class ExecuteCommandCreateNewDataLoadDirectory : BasicCommandExecution
 {
     /// <summary>
-    /// Creates the expected and required flat file layout for a <see cref="LoadMetadata"/>
+    /// The load if any to create the folder structure for
     /// </summary>
-    public class ExecuteCommandCreateNewDataLoadDirectory : BasicCommandExecution
+    public LoadMetadata LoadMetadata { get; }
+
+    /// <summary>
+    /// The directory to create or null to do the operation
+    /// interactively.
+    /// </summary>
+    public DirectoryInfo Dir { get; }
+
+    public ExecuteCommandCreateNewDataLoadDirectory(IBasicActivateItems activator,
+        [DemandsInitialization("Optional load for which you are creating the folder structure.  Will have its LocationOfFlatFiles set to the new dir if passed")]
+        LoadMetadata load,
+        [DemandsInitialization("The directory to create new load folders in.")]
+        DirectoryInfo dir):base(activator)
     {
-        /// <summary>
-        /// The load if any to create the folder structure for
-        /// </summary>
-        public LoadMetadata LoadMetadata { get; }
+        LoadMetadata = load;
+        Dir = dir;
+    }
 
-        /// <summary>
-        /// The directory to create or null to do the operation
-        /// interactively.
-        /// </summary>
-        public DirectoryInfo Dir { get; }
+    public override void Execute()
+    {
+        base.Execute();
 
-        public ExecuteCommandCreateNewDataLoadDirectory(IBasicActivateItems activator,
-            [DemandsInitialization("Optional load for which you are creating the folder structure.  Will have its LocationOfFlatFiles set to the new dir if passed")]
-            LoadMetadata load,
-            [DemandsInitialization("The directory to create new load folders in.")]
-            DirectoryInfo dir):base(activator)
+        var d = Dir;
+        string newFolderName = null;
+
+        // if called with an explicit full dir then that is where we create load folders
+        // otherwise get them to pick something that exists and then name a new folder to
+        // create
+
+        if (d == null)
         {
-            LoadMetadata = load;
-            Dir = dir;
-        }
-
-        public override void Execute()
-        {
-            base.Execute();
-
-            var d = Dir;
-            string newFolderName = null;
-
-            // if called with an explicit full dir then that is where we create load folders
-            // otherwise get them to pick something that exists and then name a new folder to
-            // create
+            d = BasicActivator.SelectDirectory("Directory to create in");
 
             if (d == null)
+                return;
+
+            if (!BasicActivator.TypeText("New Folder Name","Name",255,null,out newFolderName, false))
             {
-                d = BasicActivator.SelectDirectory("Directory to create in");
-
-                if (d == null)
-                    return;
-
-                if (!BasicActivator.TypeText("New Folder Name","Name",255,null,out newFolderName, false))
-                {
-                    return;
-                }
+                return;
             }
+        }
 
-            var loadDir =
-                string.IsNullOrWhiteSpace(newFolderName) ?
+        var loadDir =
+            string.IsNullOrWhiteSpace(newFolderName) ?
                 LoadDirectory.CreateDirectoryStructure(d.Parent, d.Name, true) :
                 LoadDirectory.CreateDirectoryStructure(d, newFolderName, true);
 
-            // if we have a load then update the path to this location we just created
-            if(LoadMetadata != null)
-            {
-                LoadMetadata.LocationOfFlatFiles = loadDir.RootPath.FullName;
-                LoadMetadata.SaveToDatabase();
-                Publish(LoadMetadata);
-            }
+        // if we have a load then update the path to this location we just created
+        if(LoadMetadata != null)
+        {
+            LoadMetadata.LocationOfFlatFiles = loadDir.RootPath.FullName;
+            LoadMetadata.SaveToDatabase();
+            Publish(LoadMetadata);
         }
-
     }
+
 }

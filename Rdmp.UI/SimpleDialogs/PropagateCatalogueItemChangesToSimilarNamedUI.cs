@@ -20,255 +20,254 @@ using Rdmp.UI.TestsAndSetup.ServicePropogation;
 using ReusableLibraryCode;
 using ScintillaNET;
 
-namespace Rdmp.UI.SimpleDialogs
+namespace Rdmp.UI.SimpleDialogs;
+
+/// <summary>
+/// It is highly likely that you will have columns in different datasets which are conceptually the same (e.g. patient identifier).  Maintaining a central description of this concept is
+/// important, it is no use having 10 slightly different descriptions of 'PatientCareNumber' for example.
+/// 
+/// <para>This dialog appears any time you save a description of a column/transform (CatalogueItem) and there is another column in any of your other datasets which has the same name.  It shows
+/// you the other columns that share the same name and lets you view their descriptions and the differences between their descriptions and your new description.  To view the changes
+/// select one of the properties you changed on the right listbox (e.g. Description) and then scroll through the objects on the left to view the differences in descriptions.</para>
+/// 
+/// <para>Next you must decide whether your new description applies to all the other objects too or whether the software made a mistake and actually you want to maintain the unique descriptions
+/// (for example it is likely if you have a column EventDate it might have different descriptions in each dataset).</para>
+/// 
+/// <para>Select either:
+/// Cancel - Nothing will be saved and your column description change will be lost
+/// No (Save only this one) - Only the original column description you were modifying will be saved
+/// Yes (Copy over changes) - The original column and ALL OTHER TICKED columns will all be set to have the same description (that you originally saved).</para>
+/// </summary>
+public partial class PropagateCatalogueItemChangesToSimilarNamedUI : RDMPForm
 {
-    /// <summary>
-    /// It is highly likely that you will have columns in different datasets which are conceptually the same (e.g. patient identifier).  Maintaining a central description of this concept is
-    /// important, it is no use having 10 slightly different descriptions of 'PatientCareNumber' for example.
-    /// 
-    /// <para>This dialog appears any time you save a description of a column/transform (CatalogueItem) and there is another column in any of your other datasets which has the same name.  It shows
-    /// you the other columns that share the same name and lets you view their descriptions and the differences between their descriptions and your new description.  To view the changes
-    /// select one of the properties you changed on the right listbox (e.g. Description) and then scroll through the objects on the left to view the differences in descriptions.</para>
-    /// 
-    /// <para>Next you must decide whether your new description applies to all the other objects too or whether the software made a mistake and actually you want to maintain the unique descriptions
-    /// (for example it is likely if you have a column EventDate it might have different descriptions in each dataset).</para>
-    /// 
-    /// <para>Select either:
-    /// Cancel - Nothing will be saved and your column description change will be lost
-    /// No (Save only this one) - Only the original column description you were modifying will be saved
-    /// Yes (Copy over changes) - The original column and ALL OTHER TICKED columns will all be set to have the same description (that you originally saved).</para>
-    /// </summary>
-    public partial class PropagateCatalogueItemChangesToSimilarNamedUI : RDMPForm
-    {
-        private readonly CatalogueItem _catalogueItemBeingSaved;
-        private Scintilla previewOldValue;
-        private Scintilla previewNewValue;
+    private readonly CatalogueItem _catalogueItemBeingSaved;
+    private Scintilla previewOldValue;
+    private Scintilla previewNewValue;
         
-        public PropagateCatalogueItemChangesToSimilarNamedUI(IActivateItems activator, CatalogueItem catalogueItemBeingSaved, out bool shouldDialogBeDisplayed): base(activator)
+    public PropagateCatalogueItemChangesToSimilarNamedUI(IActivateItems activator, CatalogueItem catalogueItemBeingSaved, out bool shouldDialogBeDisplayed): base(activator)
+    {
+        _catalogueItemBeingSaved = catalogueItemBeingSaved;
+        InitializeComponent();
+
+        if (VisualStudioDesignMode || catalogueItemBeingSaved == null)
         {
-            _catalogueItemBeingSaved = catalogueItemBeingSaved;
-            InitializeComponent();
+            shouldDialogBeDisplayed = false;
+            return;
+        }
 
-            if (VisualStudioDesignMode || catalogueItemBeingSaved == null)
-            {
-                shouldDialogBeDisplayed = false;
-                return;
-            }
+        olvCatalogueItemName.AspectGetter = CatalogueItemName_AspectGetter;
+        olvCatalogueItemState.AspectGetter = CatalogueItemState_AspectGetter;
+        olvCatalogueItemName.ImageGetter += ci=>activator.CoreIconProvider.GetImage(ci).ImageToBitmap();
 
-            olvCatalogueItemName.AspectGetter = CatalogueItemName_AspectGetter;
-            olvCatalogueItemState.AspectGetter = CatalogueItemState_AspectGetter;
-            olvCatalogueItemName.ImageGetter += ci=>activator.CoreIconProvider.GetImage(ci).ImageToBitmap();
+        var changedProperties = DetermineChangedProperties(catalogueItemBeingSaved);
 
-            var changedProperties = DetermineChangedProperties(catalogueItemBeingSaved);
+        CatalogueItem[] otherCatalogueItemsThatShareName = GetAllCatalogueItemsSharingNameWith(catalogueItemBeingSaved);
 
-            CatalogueItem[] otherCatalogueItemsThatShareName = GetAllCatalogueItemsSharingNameWith(catalogueItemBeingSaved);
+        //if Name changed then they probably dont want to also rename all associated CatalogueItems
+        shouldDialogBeDisplayed = !changedProperties.Any(prop => prop.Name.Equals("Name"));
 
-            //if Name changed then they probably dont want to also rename all associated CatalogueItems
-            shouldDialogBeDisplayed = !changedProperties.Any(prop => prop.Name.Equals("Name"));
+        if (otherCatalogueItemsThatShareName.Length == 0)
+            shouldDialogBeDisplayed = false;
 
-            if (otherCatalogueItemsThatShareName.Length == 0)
-                shouldDialogBeDisplayed = false;
+        if (!changedProperties.Any())
+            shouldDialogBeDisplayed = false;
 
-            if (!changedProperties.Any())
-                shouldDialogBeDisplayed = false;
+        if(!shouldDialogBeDisplayed)
+            return;
 
-            if(!shouldDialogBeDisplayed)
-                return;
+        previewOldValue = new ScintillaTextEditorFactory().Create();
+        previewOldValue.ReadOnly = true;
 
-            previewOldValue = new ScintillaTextEditorFactory().Create();
+        previewNewValue = new ScintillaTextEditorFactory().Create();
+        previewNewValue.ReadOnly = true;
+
+        splitContainer2.Panel1.Controls.Add(previewOldValue);
+        splitContainer2.Panel2.Controls.Add(previewNewValue);
+
+        olvProperties.AddObjects(changedProperties);
+        if (changedProperties.Count == 1)
+        {
+            olvProperties.CheckAll();
+            olvProperties.SelectedObject = changedProperties[0];
+        }
+
+        //Add the objects to the controls and set up default selection
+        olvCatalogues.AddObjects(otherCatalogueItemsThatShareName);
+        if (otherCatalogueItemsThatShareName.Length == 1)
+        {
+            olvCatalogues.CheckAll();
+            olvCatalogues.SelectedObject = otherCatalogueItemsThatShareName[0];
+        }
+            
+        olvCatalogues.CellRightClick += olvCatalogues_CellRightClick;
+
+        RDMPCollectionCommonFunctionality.SetupColumnTracking(olvCatalogues, olvCatalogueItemName, new Guid("c5741da2-07d9-4bfb-952d-8b6df77271bf"));
+        RDMPCollectionCommonFunctionality.SetupColumnTracking(olvCatalogues, olvCatalogueItemState, new Guid("fd7ad4a8-7448-4fff-8059-3759fe0c4d87"));
+
+        RDMPCollectionCommonFunctionality.SetupColumnTracking(olvProperties, olvPropertyName, new Guid("b56adceb-2cd5-4f77-9be7-07fb38baad18"));
+    }
+
+
+    void olvCatalogues_CellRightClick(object sender, BrightIdeasSoftware.CellRightClickEventArgs e)
+    {
+        var ci = olvCatalogues.SelectedObject as CatalogueItem;
+        if(ci == null)
+            return;
+
+        var menu =  new RDMPContextMenuStrip(new RDMPContextMenuStripArgs(Activator), ci);
+        menu.Show(Cursor.Position);
+    }
+
+    private object CatalogueItemName_AspectGetter(object rowObject)
+    {
+        var ci = rowObject as CatalogueItem;
+        return ci.Catalogue.Name + "." + ci.Name;
+    }
+
+
+    private object CatalogueItemState_AspectGetter(object rowobject)
+    {
+        var pi = olvProperties.Objects.Cast<PropertyInfo>().ToArray();
+        if (pi.Length == 1)
+        {
+            var r = pi[0].GetValue(rowobject);
+            if (r == null || r == DBNull.Value || string.IsNullOrWhiteSpace(r.ToString()))
+                return "Empty";
+
+            var beingChanged = pi[0].GetValue(_catalogueItemBeingSaved);
+
+            if (beingChanged != null && r.Equals(beingChanged))
+                return "Identical";
+
+            return "Different";
+        }
+
+        return null;
+    }
+
+    public static List<PropertyInfo> DetermineChangedProperties(CatalogueItem newVersionInMemory)
+    {
+        return newVersionInMemory.HasLocalChanges().Differences.Select(d => d.Property).ToList();
+    }
+
+    private CatalogueItem[] GetAllCatalogueItemsSharingNameWith(CatalogueItem catalogueItemBeingSaved)
+    {
+        return Activator.CoreChildProvider.AllCatalogueItems
+            .Where(ci=>
+                ci.Name.Equals(catalogueItemBeingSaved.Name,StringComparison.CurrentCultureIgnoreCase) 
+                && ci.ID != catalogueItemBeingSaved.ID)
+            .ToArray();
+    }
+
+    private void clbCatalogues_SelectedIndexChanged(object sender, EventArgs e)
+    {
+        displayPreview();
+    }
+
+    private void clbChangedProperties_SelectedIndexChanged(object sender, EventArgs e)
+    {
+        displayPreview();
+
+    }
+
+    public void displayPreview()
+    {
+            
+        var pi = olvProperties.SelectedObject as PropertyInfo;
+        var ci  = olvCatalogues.SelectedObject as CatalogueItem;
+
+        if (pi != null && ci != null)
+        {
+            previewOldValue.ReadOnly = false;
+            previewOldValue.Text = Convert.ToString(pi.GetValue(ci, null));
             previewOldValue.ReadOnly = true;
 
-            previewNewValue = new ScintillaTextEditorFactory().Create();
+            previewNewValue.ReadOnly = false;
+            previewNewValue.Text = Convert.ToString(pi.GetValue(_catalogueItemBeingSaved, null));
             previewNewValue.ReadOnly = true;
 
-            splitContainer2.Panel1.Controls.Add(previewOldValue);
-            splitContainer2.Panel2.Controls.Add(previewNewValue);
-
-            olvProperties.AddObjects(changedProperties);
-            if (changedProperties.Count == 1)
-            {
-                olvProperties.CheckAll();
-                olvProperties.SelectedObject = changedProperties[0];
-            }
-
-            //Add the objects to the controls and set up default selection
-            olvCatalogues.AddObjects(otherCatalogueItemsThatShareName);
-            if (otherCatalogueItemsThatShareName.Length == 1)
-            {
-                olvCatalogues.CheckAll();
-                olvCatalogues.SelectedObject = otherCatalogueItemsThatShareName[0];
-            }
-            
-            olvCatalogues.CellRightClick += olvCatalogues_CellRightClick;
-
-            RDMPCollectionCommonFunctionality.SetupColumnTracking(olvCatalogues, olvCatalogueItemName, new Guid("c5741da2-07d9-4bfb-952d-8b6df77271bf"));
-            RDMPCollectionCommonFunctionality.SetupColumnTracking(olvCatalogues, olvCatalogueItemState, new Guid("fd7ad4a8-7448-4fff-8059-3759fe0c4d87"));
-
-            RDMPCollectionCommonFunctionality.SetupColumnTracking(olvProperties, olvPropertyName, new Guid("b56adceb-2cd5-4f77-9be7-07fb38baad18"));
-        }
-
-
-        void olvCatalogues_CellRightClick(object sender, BrightIdeasSoftware.CellRightClickEventArgs e)
-        {
-            var ci = olvCatalogues.SelectedObject as CatalogueItem;
-            if(ci == null)
-                return;
-
-            var menu =  new RDMPContextMenuStrip(new RDMPContextMenuStripArgs(Activator), ci);
-            menu.Show(Cursor.Position);
-        }
-
-        private object CatalogueItemName_AspectGetter(object rowObject)
-        {
-            var ci = rowObject as CatalogueItem;
-            return ci.Catalogue.Name + "." + ci.Name;
-        }
-
-
-        private object CatalogueItemState_AspectGetter(object rowobject)
-        {
-            var pi = olvProperties.Objects.Cast<PropertyInfo>().ToArray();
-            if (pi.Length == 1)
-            {
-                var r = pi[0].GetValue(rowobject);
-                if (r == null || r == DBNull.Value || string.IsNullOrWhiteSpace(r.ToString()))
-                    return "Empty";
-
-                var beingChanged = pi[0].GetValue(_catalogueItemBeingSaved);
-
-                if (beingChanged != null && r.Equals(beingChanged))
-                    return "Identical";
-
-                return "Different";
-            }
-
-            return null;
-        }
-
-        public static List<PropertyInfo> DetermineChangedProperties(CatalogueItem newVersionInMemory)
-        {
-            return newVersionInMemory.HasLocalChanges().Differences.Select(d => d.Property).ToList();
-        }
-
-        private CatalogueItem[] GetAllCatalogueItemsSharingNameWith(CatalogueItem catalogueItemBeingSaved)
-        {
-            return Activator.CoreChildProvider.AllCatalogueItems
-                .Where(ci=>
-                        ci.Name.Equals(catalogueItemBeingSaved.Name,StringComparison.CurrentCultureIgnoreCase) 
-                        && ci.ID != catalogueItemBeingSaved.ID)
-                        .ToArray();
-        }
-
-        private void clbCatalogues_SelectedIndexChanged(object sender, EventArgs e)
-        {
-            displayPreview();
-        }
-
-        private void clbChangedProperties_SelectedIndexChanged(object sender, EventArgs e)
-        {
-           displayPreview();
+            highlightDifferencesBetweenPreviewPanes();
 
         }
-
-        public void displayPreview()
-        {
-            
-            var pi = olvProperties.SelectedObject as PropertyInfo;
-            var ci  = olvCatalogues.SelectedObject as CatalogueItem;
-
-            if (pi != null && ci != null)
-            {
-                previewOldValue.ReadOnly = false;
-                previewOldValue.Text = Convert.ToString(pi.GetValue(ci, null));
-                previewOldValue.ReadOnly = true;
-
-                previewNewValue.ReadOnly = false;
-                previewNewValue.Text = Convert.ToString(pi.GetValue(_catalogueItemBeingSaved, null));
-                previewNewValue.ReadOnly = true;
-
-                highlightDifferencesBetweenPreviewPanes();
-
-            }
-        }
-
-        private void cbSelectAllCatalogues_CheckedChanged(object sender, EventArgs e)
-        {
-            if(cbSelectAllCatalogues.Checked)
-                olvCatalogues.CheckAll();
-            else
-                olvCatalogues.UncheckAll();
-        }
-
-        private void cbSelectAllFields_CheckedChanged(object sender, EventArgs e)
-        {
-            if (cbSelectAllFields.Checked)
-                olvProperties.CheckAll();
-            else
-                olvProperties.UncheckAll();
-        }
-
-        private void highlightDifferencesBetweenPreviewPanes()
-        {
-            string sOld = previewOldValue.Text;
-            string sNew = previewNewValue.Text;
-
-            var highlighter = new ScintillaLineHighlightingHelper();
-
-            highlighter.ClearAll(previewNewValue);
-            highlighter.ClearAll(previewOldValue);
-
-            Diff diff = new Diff();
-            foreach (Diff.Item item in diff.DiffText(sOld, sNew))
-            {
-                
-                for (int i = item.StartA; i < item.StartA + item.deletedA; i++)
-                    highlighter.HighlightLine(previewOldValue,i,Color.Pink);
-                
-                //if it is single line change
-                for (int i = item.StartB; i < item.StartB + item.insertedB; i++)
-                    highlighter.HighlightLine(previewNewValue, i, Color.LawnGreen);
-
-            }
-        }
-
-        //yes = do save and do propogate
-        private void btnYes_Click(object sender, EventArgs e)
-        {
-            this.DialogResult = DialogResult.Yes;
-
-            
-            foreach (CatalogueItem ci in olvCatalogues.CheckedObjects)
-            {
-                foreach (PropertyInfo p in olvProperties.CheckedObjects)
-                    p.SetValue(ci, p.GetValue(_catalogueItemBeingSaved, null), null);
-
-                ci.SaveToDatabase();
-            }
-
-            this.Close();
-        }
-
-        //no = do save but dont propogate
-        private void btnNo_Click(object sender, EventArgs e)
-        {
-            DialogResult = DialogResult.No;
-            this.Close();
-        }
-
-        //cancel = dont save this and dont propogate
-        private void btnCancel_Click(object sender, EventArgs e)
-        {
-            DialogResult = DialogResult.Cancel;
-            this.Close();
-            
-        }
-
-        private void olv_ItemActivate(object sender, EventArgs e)
-        {
-            var olv = (ObjectListView)sender;
-            if(olv.SelectedObject != null)
-                olv.ToggleCheckObject(olv.SelectedObject);
-        }
-        
     }
+
+    private void cbSelectAllCatalogues_CheckedChanged(object sender, EventArgs e)
+    {
+        if(cbSelectAllCatalogues.Checked)
+            olvCatalogues.CheckAll();
+        else
+            olvCatalogues.UncheckAll();
+    }
+
+    private void cbSelectAllFields_CheckedChanged(object sender, EventArgs e)
+    {
+        if (cbSelectAllFields.Checked)
+            olvProperties.CheckAll();
+        else
+            olvProperties.UncheckAll();
+    }
+
+    private void highlightDifferencesBetweenPreviewPanes()
+    {
+        string sOld = previewOldValue.Text;
+        string sNew = previewNewValue.Text;
+
+        var highlighter = new ScintillaLineHighlightingHelper();
+
+        highlighter.ClearAll(previewNewValue);
+        highlighter.ClearAll(previewOldValue);
+
+        Diff diff = new Diff();
+        foreach (Diff.Item item in diff.DiffText(sOld, sNew))
+        {
+                
+            for (int i = item.StartA; i < item.StartA + item.deletedA; i++)
+                highlighter.HighlightLine(previewOldValue,i,Color.Pink);
+                
+            //if it is single line change
+            for (int i = item.StartB; i < item.StartB + item.insertedB; i++)
+                highlighter.HighlightLine(previewNewValue, i, Color.LawnGreen);
+
+        }
+    }
+
+    //yes = do save and do propogate
+    private void btnYes_Click(object sender, EventArgs e)
+    {
+        this.DialogResult = DialogResult.Yes;
+
+            
+        foreach (CatalogueItem ci in olvCatalogues.CheckedObjects)
+        {
+            foreach (PropertyInfo p in olvProperties.CheckedObjects)
+                p.SetValue(ci, p.GetValue(_catalogueItemBeingSaved, null), null);
+
+            ci.SaveToDatabase();
+        }
+
+        this.Close();
+    }
+
+    //no = do save but dont propogate
+    private void btnNo_Click(object sender, EventArgs e)
+    {
+        DialogResult = DialogResult.No;
+        this.Close();
+    }
+
+    //cancel = dont save this and dont propogate
+    private void btnCancel_Click(object sender, EventArgs e)
+    {
+        DialogResult = DialogResult.Cancel;
+        this.Close();
+            
+    }
+
+    private void olv_ItemActivate(object sender, EventArgs e)
+    {
+        var olv = (ObjectListView)sender;
+        if(olv.SelectedObject != null)
+            olv.ToggleCheckObject(olv.SelectedObject);
+    }
+        
 }

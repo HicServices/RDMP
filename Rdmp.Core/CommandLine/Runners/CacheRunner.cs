@@ -17,71 +17,70 @@ using Rdmp.Core.Repositories;
 using ReusableLibraryCode.Checks;
 using ReusableLibraryCode.Progress;
 
-namespace Rdmp.Core.CommandLine.Runners
+namespace Rdmp.Core.CommandLine.Runners;
+
+/// <summary>
+/// Automation task that runs a single CacheProgress until it is up-to-date (all available data read) or crashes.
+/// </summary>
+public class CacheRunner : Runner
 {
-    /// <summary>
-    /// Automation task that runs a single CacheProgress until it is up-to-date (all available data read) or crashes.
-    /// </summary>
-    public class CacheRunner : Runner
-    {
-        private readonly CacheOptions _options;
+    private readonly CacheOptions _options;
         
-        public CacheRunner(CacheOptions options)
-        {
-            _options = options;
-        }
+    public CacheRunner(CacheOptions options)
+    {
+        _options = options;
+    }
 
-        public override int Run(IRDMPPlatformRepositoryServiceLocator repositoryLocator, IDataLoadEventListener listener,ICheckNotifier checkNotifier, GracefulCancellationToken token)
-        {
+    public override int Run(IRDMPPlatformRepositoryServiceLocator repositoryLocator, IDataLoadEventListener listener,ICheckNotifier checkNotifier, GracefulCancellationToken token)
+    {
             
 
-            CacheProgress cp = GetObjectFromCommandLineString<CacheProgress>(repositoryLocator,_options.CacheProgress);
-            string dataLoadTask = cp.GetDistinctLoggingTask();
+        CacheProgress cp = GetObjectFromCommandLineString<CacheProgress>(repositoryLocator,_options.CacheProgress);
+        string dataLoadTask = cp.GetDistinctLoggingTask();
 
-            var defaults = repositoryLocator.CatalogueRepository;
-            var loggingServer = defaults.GetDefaultFor(PermissableDefaults.LiveLoggingServer_ID);
+        var defaults = repositoryLocator.CatalogueRepository;
+        var loggingServer = defaults.GetDefaultFor(PermissableDefaults.LiveLoggingServer_ID);
 
-            if (loggingServer == null)
-                throw new NotSupportedException("No default logging server specified, you must specify one in ");
+        if (loggingServer == null)
+            throw new NotSupportedException("No default logging server specified, you must specify one in ");
 
-            var logManager = new LogManager(loggingServer);
+        var logManager = new LogManager(loggingServer);
 
-            logManager.CreateNewLoggingTaskIfNotExists(dataLoadTask);
+        logManager.CreateNewLoggingTaskIfNotExists(dataLoadTask);
 
-            switch (_options.Command)
-            {
-                case CommandLineActivity.run:
+        switch (_options.Command)
+        {
+            case CommandLineActivity.run:
 
-                    //Setup dual listeners for the Cache process, one ticks the lifeline one very message and one logs to the logging db
-                    var toLog = new ToLoggingDatabaseDataLoadEventListener(this, logManager, dataLoadTask, cp.GetLoggingRunName());
-                    var forkListener = new ForkDataLoadEventListener(toLog, listener);
-                    try
-                    {
-                        var cachingHost = new CachingHost(repositoryLocator.CatalogueRepository);
-                        cachingHost.RetryMode = _options.RetryMode;
-                        cachingHost.CacheProgress =  cp; //run the cp
+                //Setup dual listeners for the Cache process, one ticks the lifeline one very message and one logs to the logging db
+                var toLog = new ToLoggingDatabaseDataLoadEventListener(this, logManager, dataLoadTask, cp.GetLoggingRunName());
+                var forkListener = new ForkDataLoadEventListener(toLog, listener);
+                try
+                {
+                    var cachingHost = new CachingHost(repositoryLocator.CatalogueRepository);
+                    cachingHost.RetryMode = _options.RetryMode;
+                    cachingHost.CacheProgress =  cp; //run the cp
 
-                        //By default caching host will block 
-                        cachingHost.TerminateIfOutsidePermissionWindow = true;
+                    //By default caching host will block 
+                    cachingHost.TerminateIfOutsidePermissionWindow = true;
 
-                        cachingHost.Start(forkListener, token);
-                    }
-                    finally
-                    {
-                        //finish everything
-                        toLog.FinalizeTableLoadInfos();
-                    }
+                    cachingHost.Start(forkListener, token);
+                }
+                finally
+                {
+                    //finish everything
+                    toLog.FinalizeTableLoadInfos();
+                }
 
-                    break;
-                case CommandLineActivity.check:
-                    var checkable = new CachingPreExecutionChecker(cp);
-                    checkable.Check(checkNotifier);
-                    break;
-                default:
-                    throw new ArgumentOutOfRangeException();
-            }
-            
-            return 0;
+                break;
+            case CommandLineActivity.check:
+                var checkable = new CachingPreExecutionChecker(cp);
+                checkable.Check(checkNotifier);
+                break;
+            default:
+                throw new ArgumentOutOfRangeException();
         }
+            
+        return 0;
     }
 }

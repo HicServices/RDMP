@@ -11,128 +11,127 @@ using System.Linq;
 using System.Text;
 using System.Text.RegularExpressions;
 
-namespace Rdmp.Core.DataExport.DataExtraction.FileOutputFormats
+namespace Rdmp.Core.DataExport.DataExtraction.FileOutputFormats;
+
+/// <summary>
+/// Helper class for writing data to CSV files.  This is a simplified version of Rfc4180Writer in that it simply strips out all problem fields rather
+/// than applying proper escaping etc.  This is done because some researcher end point tools / scripts do not support the full specification of CSV and
+/// it is easier to provide them with a file where problem symbols are not present than explain that they have to join multiple lines together when it is
+/// bounded by quotes.
+/// </summary>
+public class CSVOutputFormat : FileOutputFormat
 {
-    /// <summary>
-    /// Helper class for writing data to CSV files.  This is a simplified version of Rfc4180Writer in that it simply strips out all problem fields rather
-    /// than applying proper escaping etc.  This is done because some researcher end point tools / scripts do not support the full specification of CSV and
-    /// it is easier to provide them with a file where problem symbols are not present than explain that they have to join multiple lines together when it is
-    /// bounded by quotes.
-    /// </summary>
-    public class CSVOutputFormat : FileOutputFormat
+    public string Separator { get; set; }
+    public string DateFormat { get; set; }
+
+    public int SeparatorsStrippedOut { get; private set; }
+    private static readonly string[] ThingsToStripOut = { "\r", "\n", "\t","\""};
+    private StreamWriter _sw;
+    private StringBuilder _sbWriteOutLinesBuffer;
+    private const string _illegalCharactersReplacement = " ";
+
+    public CSVOutputFormat(string outputFilename,string separator, string dateFormat): base(outputFilename)
     {
-        public string Separator { get; set; }
-        public string DateFormat { get; set; }
+        Separator = separator;
+        DateFormat = dateFormat;
+    }
 
-        public int SeparatorsStrippedOut { get; private set; }
-        private static readonly string[] ThingsToStripOut = { "\r", "\n", "\t","\""};
-        private StreamWriter _sw;
-        private StringBuilder _sbWriteOutLinesBuffer;
-        private const string _illegalCharactersReplacement = " ";
+    public override string GetFileExtension() 
+    {
+        return ".csv";
+    }
 
-        public CSVOutputFormat(string outputFilename,string separator, string dateFormat): base(outputFilename)
-        {
-            Separator = separator;
-            DateFormat = dateFormat;
-        }
+    public override void Open()
+    {
+        _sw = new StreamWriter(OutputFilename);
+        _sbWriteOutLinesBuffer = new StringBuilder();
+    }
+    public override void Open(bool append)
+    {
+        _sw = new StreamWriter(OutputFilename,append);
+        _sbWriteOutLinesBuffer = new StringBuilder();
+    }
 
-        public override string GetFileExtension() 
-        {
-            return ".csv";
-        }
-
-        public override void Open()
-        {
-            _sw = new StreamWriter(OutputFilename);
-            _sbWriteOutLinesBuffer = new StringBuilder();
-        }
-        public override void Open(bool append)
-        {
-            _sw = new StreamWriter(OutputFilename,append);
-            _sbWriteOutLinesBuffer = new StringBuilder();
-        }
-
-        public override void WriteHeaders(DataTable t)
-        {
-            //write headers separated by separator
-            _sw.Write(string.Join(Separator, t.Columns.Cast<DataColumn>().Select(c => c.ColumnName).ToArray()));
+    public override void WriteHeaders(DataTable t)
+    {
+        //write headers separated by separator
+        _sw.Write(string.Join(Separator, t.Columns.Cast<DataColumn>().Select(c => c.ColumnName).ToArray()));
             
-            _sw.WriteLine();
-
-        }
-
-        public override void Append(DataRow r)
-        {
-            //write headers separated by separator
-            _sbWriteOutLinesBuffer.Append(string.Join(Separator, r.ItemArray.Select(CleanString)));
-
-            //write the new line
-            _sbWriteOutLinesBuffer.Append(Environment.NewLine);
-        }
-
-        public override void Flush()
-        {
-            _sw.Write(_sbWriteOutLinesBuffer.ToString());
-            _sbWriteOutLinesBuffer.Clear();
-            _sw.Flush();
-        }
-
-        public override void Close()
-        {
-            _sw?.Flush();
-            _sw?.Close();
-            _sw?.Dispose();
-        }
-
-        public string CleanString(object o)
-        {
-            int numberOfSeparatorsStrippedOutThisPass = 0;
-
-            string toReturn = CleanString(o, Separator, out numberOfSeparatorsStrippedOutThisPass, DateFormat,RoundFloatsTo);
-
-            SeparatorsStrippedOut += numberOfSeparatorsStrippedOutThisPass;
-
-            return toReturn;
-        }
-
-
-        public static string CleanString(object o, string separator, out int separatorsStrippedOut, string dateFormat, int? roundFloatsTo)
-        {
-            if (o is DateTime)
-            {
-                DateTime dt = (DateTime)o;
-                separatorsStrippedOut = 0;
-                return dt.ToString(dateFormat);
-            }
-
-            if(roundFloatsTo.HasValue)
-            {
-                separatorsStrippedOut = 0;
-                switch(o)
-                {
-                    case float f : return f.ToString("N" + roundFloatsTo.Value);
-                    case decimal dec : return dec.ToString("N" + roundFloatsTo.Value);
-                    case double d: return d.ToString("N" + roundFloatsTo.Value);
-                }
-            }
-
-            //in order to kep a count 
-            Regex regexReplace = new Regex(Regex.Escape(separator));
-
-            separatorsStrippedOut = 0;
-
-            while (o.ToString().Contains(separator))
-            {
-                o = regexReplace.Replace(o.ToString(), _illegalCharactersReplacement, 1);
-                separatorsStrippedOut++;
-            }
-
-            if (o is string)
-                foreach (string cToStripOut in ThingsToStripOut)
-                    o = o.ToString().Replace(cToStripOut, _illegalCharactersReplacement);
-
-            return o.ToString().Trim();
-        }
+        _sw.WriteLine();
 
     }
+
+    public override void Append(DataRow r)
+    {
+        //write headers separated by separator
+        _sbWriteOutLinesBuffer.Append(string.Join(Separator, r.ItemArray.Select(CleanString)));
+
+        //write the new line
+        _sbWriteOutLinesBuffer.Append(Environment.NewLine);
+    }
+
+    public override void Flush()
+    {
+        _sw.Write(_sbWriteOutLinesBuffer.ToString());
+        _sbWriteOutLinesBuffer.Clear();
+        _sw.Flush();
+    }
+
+    public override void Close()
+    {
+        _sw?.Flush();
+        _sw?.Close();
+        _sw?.Dispose();
+    }
+
+    public string CleanString(object o)
+    {
+        int numberOfSeparatorsStrippedOutThisPass = 0;
+
+        string toReturn = CleanString(o, Separator, out numberOfSeparatorsStrippedOutThisPass, DateFormat,RoundFloatsTo);
+
+        SeparatorsStrippedOut += numberOfSeparatorsStrippedOutThisPass;
+
+        return toReturn;
+    }
+
+
+    public static string CleanString(object o, string separator, out int separatorsStrippedOut, string dateFormat, int? roundFloatsTo)
+    {
+        if (o is DateTime)
+        {
+            DateTime dt = (DateTime)o;
+            separatorsStrippedOut = 0;
+            return dt.ToString(dateFormat);
+        }
+
+        if(roundFloatsTo.HasValue)
+        {
+            separatorsStrippedOut = 0;
+            switch(o)
+            {
+                case float f : return f.ToString("N" + roundFloatsTo.Value);
+                case decimal dec : return dec.ToString("N" + roundFloatsTo.Value);
+                case double d: return d.ToString("N" + roundFloatsTo.Value);
+            }
+        }
+
+        //in order to kep a count 
+        Regex regexReplace = new Regex(Regex.Escape(separator));
+
+        separatorsStrippedOut = 0;
+
+        while (o.ToString().Contains(separator))
+        {
+            o = regexReplace.Replace(o.ToString(), _illegalCharactersReplacement, 1);
+            separatorsStrippedOut++;
+        }
+
+        if (o is string)
+            foreach (string cToStripOut in ThingsToStripOut)
+                o = o.ToString().Replace(cToStripOut, _illegalCharactersReplacement);
+
+        return o.ToString().Trim();
+    }
+
 }

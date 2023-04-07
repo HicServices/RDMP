@@ -12,55 +12,54 @@ using Rdmp.Core.Icons.IconProvision;
 using ReusableLibraryCode.Icons.IconProvision;
 using SixLabors.ImageSharp.PixelFormats;
 
-namespace Rdmp.Core.CommandExecution.AtomicCommands
+namespace Rdmp.Core.CommandExecution.AtomicCommands;
+
+public class ExecuteCommandOverrideRawServer:BasicCommandExecution,IAtomicCommand,IAtomicCommandWithTarget
 {
-    public class ExecuteCommandOverrideRawServer:BasicCommandExecution,IAtomicCommand,IAtomicCommandWithTarget
+    private readonly LoadMetadata _loadMetadata;
+    private ExternalDatabaseServer _server;
+    private ExternalDatabaseServer[] _available;
+
+    public ExecuteCommandOverrideRawServer(IBasicActivateItems activator,LoadMetadata loadMetadata) : base(activator)
     {
-        private readonly LoadMetadata _loadMetadata;
-        private ExternalDatabaseServer _server;
-        private ExternalDatabaseServer[] _available;
+        _loadMetadata = loadMetadata;
+        _available =
+            activator.CoreChildProvider.AllExternalServers.Where(s => string.IsNullOrWhiteSpace(s.CreatedByAssembly)).ToArray();
 
-        public ExecuteCommandOverrideRawServer(IBasicActivateItems activator,LoadMetadata loadMetadata) : base(activator)
+        if(!_available.Any())
+            SetImpossible("There are no compatible servers");
+    }
+
+    public override void Execute()
+    {
+        base.Execute();
+
+        if (_server == null)
         {
-            _loadMetadata = loadMetadata;
-            _available =
-                activator.CoreChildProvider.AllExternalServers.Where(s => string.IsNullOrWhiteSpace(s.CreatedByAssembly)).ToArray();
-
-            if(!_available.Any())
-                SetImpossible("There are no compatible servers");
+            if (SelectOne(_available,out ExternalDatabaseServer selected))
+                _server = selected;
+            else
+                return;
         }
 
-        public override void Execute()
-        {
-            base.Execute();
+        _loadMetadata.OverrideRAWServer_ID = _server == null ? null : (int?)_server.ID;
+        _loadMetadata.SaveToDatabase();
 
-            if (_server == null)
-            {
-                if (SelectOne(_available,out ExternalDatabaseServer selected))
-                    _server = selected;
-                else
-                    return;
-            }
+        Publish(_loadMetadata);
+    }
 
-            _loadMetadata.OverrideRAWServer_ID = _server == null ? null : (int?)_server.ID;
-            _loadMetadata.SaveToDatabase();
+    public override Image<Rgba32> GetImage(IIconProvider iconProvider)
+    {
+        return iconProvider.GetImage(RDMPConcept.ExternalDatabaseServer, OverlayKind.Link);
+    }
 
-            Publish(_loadMetadata);
-        }
+    public IAtomicCommandWithTarget SetTarget(DatabaseEntity target)
+    {
+        var candidate = target as ExternalDatabaseServer;
 
-        public override Image<Rgba32> GetImage(IIconProvider iconProvider)
-        {
-            return iconProvider.GetImage(RDMPConcept.ExternalDatabaseServer, OverlayKind.Link);
-        }
+        if (candidate != null && _available.Contains(candidate))
+            _server = candidate;
 
-        public IAtomicCommandWithTarget SetTarget(DatabaseEntity target)
-        {
-            var candidate = target as ExternalDatabaseServer;
-
-            if (candidate != null && _available.Contains(candidate))
-                _server = candidate;
-
-            return this;
-        }
+        return this;
     }
 }

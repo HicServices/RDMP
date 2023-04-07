@@ -8,30 +8,29 @@ using NUnit.Framework;
 using Rdmp.Core.Curation.Data;
 using Rdmp.UI.MainFormUITabs.SubComponents;
 
-namespace Rdmp.UI.Tests
+namespace Rdmp.UI.Tests;
+
+class ExternalDatabaseServerUITests : UITests
 {
-    class ExternalDatabaseServerUITests : UITests
+    [Test, UITimeout(50000)]
+    public void Test_ExternalDatabaseServerUITests_NormalState()
     {
-        [Test, UITimeout(50000)]
-        public void Test_ExternalDatabaseServerUITests_NormalState()
-        {
-            SetupMEF();
+        SetupMEF();
 
-            var server = WhenIHaveA<ExternalDatabaseServer>();
-            var ui = AndLaunch<ExternalDatabaseServerUI>(server);
+        var server = WhenIHaveA<ExternalDatabaseServer>();
+        var ui = AndLaunch<ExternalDatabaseServerUI>(server);
 
-            AssertNoErrors(ExpectedErrorType.Any);
+        AssertNoErrors(ExpectedErrorType.Any);
 
-            ui.tbUsername.Text = "fish";
-            Assert.AreEqual("fish", server.Username);
+        ui.tbUsername.Text = "fish";
+        Assert.AreEqual("fish", server.Username);
 
-            ui.GetObjectSaverButton().Save();
-            Assert.AreEqual("fish", server.Username);
+        ui.GetObjectSaverButton().Save();
+        Assert.AreEqual("fish", server.Username);
 
-            ui.tbUsername.Text = "";
-            ui.GetObjectSaverButton().Save();
-            Assert.AreEqual("", server.Username);
-        }
-        
+        ui.tbUsername.Text = "";
+        ui.GetObjectSaverButton().Save();
+        Assert.AreEqual("", server.Username);
     }
+        
 }

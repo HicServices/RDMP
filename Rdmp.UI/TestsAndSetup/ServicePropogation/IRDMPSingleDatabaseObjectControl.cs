@@ -10,13 +10,12 @@ using Rdmp.Core.Curation.Data;
 using Rdmp.UI.ItemActivation;
 using Rdmp.UI.SingleControlForms;
 
-namespace Rdmp.UI.TestsAndSetup.ServicePropogation
-{
-    public interface IRDMPSingleDatabaseObjectControl : IContainerControl, INamedTab, IConsultableBeforeClosing,IRDMPControl
-    {
-        DatabaseEntity DatabaseObject { get; }
+namespace Rdmp.UI.TestsAndSetup.ServicePropogation;
 
-        void SetDatabaseObject(IActivateItems activator, DatabaseEntity databaseObject);
-        Type GetTypeOfT();
-    }
+public interface IRDMPSingleDatabaseObjectControl : IContainerControl, INamedTab, IConsultableBeforeClosing,IRDMPControl
+{
+    DatabaseEntity DatabaseObject { get; }
+
+    void SetDatabaseObject(IActivateItems activator, DatabaseEntity databaseObject);
+    Type GetTypeOfT();
 }

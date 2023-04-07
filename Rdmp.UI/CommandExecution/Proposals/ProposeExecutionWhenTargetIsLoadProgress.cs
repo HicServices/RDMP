@@ -9,27 +9,26 @@ using Rdmp.Core.Curation.Data;
 using Rdmp.UI.DataLoadUIs.LoadMetadataUIs.LoadProgressAndCacheUIs;
 using Rdmp.UI.ItemActivation;
 
-namespace Rdmp.UI.CommandExecution.Proposals
+namespace Rdmp.UI.CommandExecution.Proposals;
+
+class ProposeExecutionWhenTargetIsLoadProgress:RDMPCommandExecutionProposal<LoadProgress>
 {
-    class ProposeExecutionWhenTargetIsLoadProgress:RDMPCommandExecutionProposal<LoadProgress>
+    public ProposeExecutionWhenTargetIsLoadProgress(IActivateItems itemActivator) : base(itemActivator)
     {
-        public ProposeExecutionWhenTargetIsLoadProgress(IActivateItems itemActivator) : base(itemActivator)
-        {
-        }
+    }
 
-        public override bool CanActivate(LoadProgress target)
-        {
-            return true;
-        }
+    public override bool CanActivate(LoadProgress target)
+    {
+        return true;
+    }
 
-        public override void Activate(LoadProgress target)
-        {
-            ItemActivator.Activate<LoadProgressUI, LoadProgress>(target);
-        }
+    public override void Activate(LoadProgress target)
+    {
+        ItemActivator.Activate<LoadProgressUI, LoadProgress>(target);
+    }
 
-        public override ICommandExecution ProposeExecution(ICombineToMakeCommand cmd, LoadProgress target, InsertOption insertOption = InsertOption.Default)
-        {
-            return null;
-        }
+    public override ICommandExecution ProposeExecution(ICombineToMakeCommand cmd, LoadProgress target, InsertOption insertOption = InsertOption.Default)
+    {
+        return null;
     }
 }

@@ -13,90 +13,89 @@ using Rdmp.Core.QueryBuilding;
 using Rdmp.Core.Repositories;
 using Tests.Common;
 
-namespace Rdmp.Core.Tests.DataLoad.Engine.Integration
+namespace Rdmp.Core.Tests.DataLoad.Engine.Integration;
+
+public class TableInfoJoiningQueryBuilderTests:DatabaseTests
 {
-    public class TableInfoJoiningQueryBuilderTests:DatabaseTests
+    [Test]
+    public void OpportunisticJoinRequired()
     {
-        [Test]
-        public void OpportunisticJoinRequired()
-        {
-            var memory = new MemoryRepository();
+        var memory = new MemoryRepository();
             
-            //tables and columns
-            TableInfo head = new TableInfo(CatalogueRepository,"Head");
-            ColumnInfo col1 = new ColumnInfo(CatalogueRepository,"TestResultSetNumber","int",head);
-            ColumnInfo col2 = new ColumnInfo(CatalogueRepository, "PK", "int", head);
+        //tables and columns
+        TableInfo head = new TableInfo(CatalogueRepository,"Head");
+        ColumnInfo col1 = new ColumnInfo(CatalogueRepository,"TestResultSetNumber","int",head);
+        ColumnInfo col2 = new ColumnInfo(CatalogueRepository, "PK", "int", head);
 
-            TableInfo result = new TableInfo(CatalogueRepository, "[biochemistry]..[Result]");
-            ColumnInfo col3 = new ColumnInfo(CatalogueRepository, "FK", "int", result);
-            ColumnInfo col4 = new ColumnInfo(CatalogueRepository, "Code", "varchar(10)", result);
-            ColumnInfo col5 = new ColumnInfo(CatalogueRepository, "[biochemistry]..[Result].[OmgBob]", "varchar(10)", result);
+        TableInfo result = new TableInfo(CatalogueRepository, "[biochemistry]..[Result]");
+        ColumnInfo col3 = new ColumnInfo(CatalogueRepository, "FK", "int", result);
+        ColumnInfo col4 = new ColumnInfo(CatalogueRepository, "Code", "varchar(10)", result);
+        ColumnInfo col5 = new ColumnInfo(CatalogueRepository, "[biochemistry]..[Result].[OmgBob]", "varchar(10)", result);
 
-            //we can join on col2 = col3
-            new JoinInfo(CatalogueRepository,col3, col2, ExtractionJoinType.Right, "");
+        //we can join on col2 = col3
+        new JoinInfo(CatalogueRepository,col3, col2, ExtractionJoinType.Right, "");
 
-            //CASE 1 : Only 1 column used so no join needed
-            var queryBuilder = new QueryBuilder(null, null);
-            var icol1 = new ColumnInfoToIColumn(memory,col1);
-            icol1.Order = 1;
-            queryBuilder.AddColumn(icol1);
+        //CASE 1 : Only 1 column used so no join needed
+        var queryBuilder = new QueryBuilder(null, null);
+        var icol1 = new ColumnInfoToIColumn(memory,col1);
+        icol1.Order = 1;
+        queryBuilder.AddColumn(icol1);
 
-            var tablesUsed = SqlQueryBuilderHelper.GetTablesUsedInQuery(queryBuilder, out var primary,null);
+        var tablesUsed = SqlQueryBuilderHelper.GetTablesUsedInQuery(queryBuilder, out var primary,null);
             
-            Assert.AreEqual(1,tablesUsed.Count);
-            Assert.AreEqual(head,tablesUsed[0]);
+        Assert.AreEqual(1,tablesUsed.Count);
+        Assert.AreEqual(head,tablesUsed[0]);
 
-            //CASE 2 : 2 columns used one from each table so join is needed
-            queryBuilder = new QueryBuilder(null, null);
-            queryBuilder.AddColumn(new ColumnInfoToIColumn(memory,col1));
+        //CASE 2 : 2 columns used one from each table so join is needed
+        queryBuilder = new QueryBuilder(null, null);
+        queryBuilder.AddColumn(new ColumnInfoToIColumn(memory,col1));
 
-            var icol4 = new ColumnInfoToIColumn(memory,col4);
-            icol4.Order = 2;
-            queryBuilder.AddColumn(icol4);
+        var icol4 = new ColumnInfoToIColumn(memory,col4);
+        icol4.Order = 2;
+        queryBuilder.AddColumn(icol4);
 
-            tablesUsed = SqlQueryBuilderHelper.GetTablesUsedInQuery(queryBuilder, out primary, null);
+        tablesUsed = SqlQueryBuilderHelper.GetTablesUsedInQuery(queryBuilder, out primary, null);
             
-            Assert.AreEqual(2, tablesUsed.Count);
-            Assert.AreEqual(head, tablesUsed[0]);
-            Assert.AreEqual(result, tablesUsed[1]);
+        Assert.AreEqual(2, tablesUsed.Count);
+        Assert.AreEqual(head, tablesUsed[0]);
+        Assert.AreEqual(result, tablesUsed[1]);
 
-            Assert.AreEqual(CollapseWhitespace(@"SELECT 
+        Assert.AreEqual(CollapseWhitespace(@"SELECT 
 TestResultSetNumber,
 Code
 FROM 
 [biochemistry]..[Result] Right JOIN Head ON FK = PK"),CollapseWhitespace(queryBuilder.SQL));
 
-            var memoryRepository = new MemoryCatalogueRepository();
+        var memoryRepository = new MemoryCatalogueRepository();
 
-            var spontContainer = new SpontaneouslyInventedFilterContainer(memoryRepository,null, null, FilterContainerOperation.AND);
+        var spontContainer = new SpontaneouslyInventedFilterContainer(memoryRepository,null, null, FilterContainerOperation.AND);
 
-            var spontFilter = new SpontaneouslyInventedFilter(memoryRepository,spontContainer, "[biochemistry]..[Result].[OmgBob] = 'T'",
-                "My Filter", "Causes spontaneous requirement for joining compeltely", null);
-            spontContainer.AddChild(spontFilter);
+        var spontFilter = new SpontaneouslyInventedFilter(memoryRepository,spontContainer, "[biochemistry]..[Result].[OmgBob] = 'T'",
+            "My Filter", "Causes spontaneous requirement for joining compeltely", null);
+        spontContainer.AddChild(spontFilter);
 
 
-            //CASE 3 : Only 1 column from Head but filter contains a reference to Result column
-            queryBuilder = new QueryBuilder(null, null);
-            queryBuilder.AddColumn(new ColumnInfoToIColumn(memory,col1));
+        //CASE 3 : Only 1 column from Head but filter contains a reference to Result column
+        queryBuilder = new QueryBuilder(null, null);
+        queryBuilder.AddColumn(new ColumnInfoToIColumn(memory,col1));
 
-            //without the filter
-            tablesUsed = SqlQueryBuilderHelper.GetTablesUsedInQuery(queryBuilder, out primary, null);
-            Assert.AreEqual(1, tablesUsed.Count);
+        //without the filter
+        tablesUsed = SqlQueryBuilderHelper.GetTablesUsedInQuery(queryBuilder, out primary, null);
+        Assert.AreEqual(1, tablesUsed.Count);
             
-            //set the filter
-            queryBuilder.RootFilterContainer = spontContainer;
+        //set the filter
+        queryBuilder.RootFilterContainer = spontContainer;
 
-            //this is super sneaky but makes the queryBuilder populate its Filters property... basically your not supposed to use SqlQueryBuilderHelper for this kind of thing
-            Console.WriteLine(queryBuilder.SQL);
-            queryBuilder.ParameterManager.ClearNonGlobals();
+        //this is super sneaky but makes the queryBuilder populate its Filters property... basically your not supposed to use SqlQueryBuilderHelper for this kind of thing
+        Console.WriteLine(queryBuilder.SQL);
+        queryBuilder.ParameterManager.ClearNonGlobals();
 
-            //with the filter
-            tablesUsed = SqlQueryBuilderHelper.GetTablesUsedInQuery(queryBuilder, out primary,null);
-            Assert.AreEqual(2, tablesUsed.Count);
+        //with the filter
+        tablesUsed = SqlQueryBuilderHelper.GetTablesUsedInQuery(queryBuilder, out primary,null);
+        Assert.AreEqual(2, tablesUsed.Count);
 
             
-
-        }
 
     }
+
 }

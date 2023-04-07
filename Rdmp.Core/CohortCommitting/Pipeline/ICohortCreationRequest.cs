@@ -12,21 +12,20 @@ using Rdmp.Core.DataExport.Data;
 using Rdmp.Core.DataFlowPipeline.Requirements;
 using ReusableLibraryCode.Checks;
 
-namespace Rdmp.Core.CohortCommitting.Pipeline
-{
-    /// <summary>
-    /// See CohortCreationRequest
-    ///  </summary>
-    public interface ICohortCreationRequest : ICheckable, IHasDesignTimeMode, IPipelineUseCase
-    {
-        IProject Project { get; }
-        ICohortDefinition NewCohortDefinition { get; set; }
-        ExtractionInformation ExtractionIdentifierColumn { get; set; }
-        CohortIdentificationConfiguration CohortIdentificationConfiguration { get; set; }
-        ExtractableCohort CohortCreatedIfAny { get; }
-        FlatFileToLoad FileToLoad { get; set; }
+namespace Rdmp.Core.CohortCommitting.Pipeline;
 
-        int ImportAsExtractableCohort(bool deprecateOldCohortOnSuccess, bool migrateUsages);
-        void PushToServer(IManagedConnection transaction);
-    }
+/// <summary>
+/// See CohortCreationRequest
+///  </summary>
+public interface ICohortCreationRequest : ICheckable, IHasDesignTimeMode, IPipelineUseCase
+{
+    IProject Project { get; }
+    ICohortDefinition NewCohortDefinition { get; set; }
+    ExtractionInformation ExtractionIdentifierColumn { get; set; }
+    CohortIdentificationConfiguration CohortIdentificationConfiguration { get; set; }
+    ExtractableCohort CohortCreatedIfAny { get; }
+    FlatFileToLoad FileToLoad { get; set; }
+
+    int ImportAsExtractableCohort(bool deprecateOldCohortOnSuccess, bool migrateUsages);
+    void PushToServer(IManagedConnection transaction);
 }

@@ -12,58 +12,58 @@ using Rdmp.Core.QueryBuilding;
 using Rdmp.Core.Repositories;
 using Tests.Common;
 
-namespace Rdmp.Core.Tests.Curation.Integration.TableValuedFunctionTests
+namespace Rdmp.Core.Tests.Curation.Integration.TableValuedFunctionTests;
+
+public class AggregationTests :DatabaseTests
 {
-    public class AggregationTests :DatabaseTests
+    private TestableTableValuedFunction _function;
+
+    private void CreateFunction(ICatalogueRepository repo)
     {
-        private TestableTableValuedFunction _function;
+        _function = new TestableTableValuedFunction();
+        _function.Create(GetCleanedServer(FAnsi.DatabaseType.MicrosoftSQLServer), repo);
+    }
 
-        private void CreateFunction(ICatalogueRepository repo)
-        {
-            _function = new TestableTableValuedFunction();
-            _function.Create(GetCleanedServer(FAnsi.DatabaseType.MicrosoftSQLServer), repo);
-        }
+    [Test]
+    public void GenerateAggregateManuallyTest()
+    {
+        CreateFunction(CatalogueRepository);
 
-        [Test]
-        public void GenerateAggregateManuallyTest()
-        {
-            CreateFunction(CatalogueRepository);
+        //do a count * on the query builder
+        AggregateBuilder queryBuilder = new AggregateBuilder("", "count(*)", null,new[] { _function.TableInfoCreated });
 
-            //do a count * on the query builder
-            AggregateBuilder queryBuilder = new AggregateBuilder("", "count(*)", null,new[] { _function.TableInfoCreated });
+        Assert.IsTrue(queryBuilder.SQL.Contains(@"SELECT"));
+        Assert.IsTrue(queryBuilder.SQL.Contains(@"count(*)"));
 
-            Assert.IsTrue(queryBuilder.SQL.Contains(@"SELECT"));
-            Assert.IsTrue(queryBuilder.SQL.Contains(@"count(*)"));
+        Assert.IsTrue(queryBuilder.SQL.Contains(@"DECLARE @name AS varchar(50);"));
+        Assert.IsTrue(queryBuilder.SQL.Contains(@"SET @name='fish';"));
 
-            Assert.IsTrue(queryBuilder.SQL.Contains(@"DECLARE @name AS varchar(50);"));
-            Assert.IsTrue(queryBuilder.SQL.Contains(@"SET @name='fish';"));
+        Assert.IsTrue(queryBuilder.SQL.Contains("..MyAwesomeFunction(@startNumber,@stopNumber,@name) AS MyAwesomeFunction"));
 
-            Assert.IsTrue(queryBuilder.SQL.Contains("..MyAwesomeFunction(@startNumber,@stopNumber,@name) AS MyAwesomeFunction"));
-
-            Console.WriteLine(queryBuilder.SQL);
-        }
+        Console.WriteLine(queryBuilder.SQL);
+    }
         
-        [TestCase(false)]
-        [TestCase(true)]
-        public void GenerateAggregateViaAggregateConfigurationTest(bool memoryRepo)
-        {
-            ICatalogueRepository repo = memoryRepo ? (ICatalogueRepository) new MemoryCatalogueRepository() : CatalogueRepository;
-            CreateFunction(repo);
+    [TestCase(false)]
+    [TestCase(true)]
+    public void GenerateAggregateViaAggregateConfigurationTest(bool memoryRepo)
+    {
+        ICatalogueRepository repo = memoryRepo ? (ICatalogueRepository) new MemoryCatalogueRepository() : CatalogueRepository;
+        CreateFunction(repo);
 
-            var agg = new AggregateConfiguration(repo, _function.Cata, "MyExcitingAggregate");
+        var agg = new AggregateConfiguration(repo, _function.Cata, "MyExcitingAggregate");
             
-            try
-            {
-                agg.HavingSQL = "count(*)>1";
-                agg.SaveToDatabase();
+        try
+        {
+            agg.HavingSQL = "count(*)>1";
+            agg.SaveToDatabase();
 
-                var aggregateForcedJoin = repo.AggregateForcedJoinManager;
-                aggregateForcedJoin.CreateLinkBetween(agg, _function.TableInfoCreated);
+            var aggregateForcedJoin = repo.AggregateForcedJoinManager;
+            aggregateForcedJoin.CreateLinkBetween(agg, _function.TableInfoCreated);
 
-                AggregateBuilder queryBuilder = agg.GetQueryBuilder();
+            AggregateBuilder queryBuilder = agg.GetQueryBuilder();
                 
-                Assert.AreEqual(
-                    @"DECLARE @startNumber AS int;
+            Assert.AreEqual(
+                @"DECLARE @startNumber AS int;
 SET @startNumber=5;
 DECLARE @stopNumber AS int;
 SET @stopNumber=10;
@@ -77,50 +77,49 @@ FROM
 HAVING
 count(*)>1", queryBuilder.SQL);
                 
-            }
-            finally
-            {
-                agg.DeleteInDatabase();
-            }
         }
-
-        [Test]
-        public void GenerateAggregateUsingOverridenParametersTest()
+        finally
         {
-            CreateFunction(CatalogueRepository);
+            agg.DeleteInDatabase();
+        }
+    }
 
-            var agg = new AggregateConfiguration(CatalogueRepository, _function.Cata, "MyExcitingAggregate");
+    [Test]
+    public void GenerateAggregateUsingOverridenParametersTest()
+    {
+        CreateFunction(CatalogueRepository);
 
-            try
-            {
-                var param = new AnyTableSqlParameter(CatalogueRepository, agg, "DECLARE @name AS varchar(50);");
-                param.Value = "'lobster'";
-                param.SaveToDatabase();
+        var agg = new AggregateConfiguration(CatalogueRepository, _function.Cata, "MyExcitingAggregate");
 
-                var aggregateForcedJoin = new AggregateForcedJoin(CatalogueTableRepository);
-                aggregateForcedJoin.CreateLinkBetween(agg, _function.TableInfoCreated);
+        try
+        {
+            var param = new AnyTableSqlParameter(CatalogueRepository, agg, "DECLARE @name AS varchar(50);");
+            param.Value = "'lobster'";
+            param.SaveToDatabase();
 
-                //do a count * on the query builder
-                AggregateBuilder queryBuilder = agg.GetQueryBuilder();
+            var aggregateForcedJoin = new AggregateForcedJoin(CatalogueTableRepository);
+            aggregateForcedJoin.CreateLinkBetween(agg, _function.TableInfoCreated);
 
-                Assert.IsTrue(queryBuilder.SQL.Contains(@"SELECT"));
-                Assert.IsTrue(queryBuilder.SQL.Contains(@"count(*)"));
+            //do a count * on the query builder
+            AggregateBuilder queryBuilder = agg.GetQueryBuilder();
 
-                //should have this version of things 
-                Assert.IsTrue(queryBuilder.SQL.Contains(@"DECLARE @name AS varchar(50);"));
-                Assert.IsTrue(queryBuilder.SQL.Contains(@"SET @name='lobster';"));
+            Assert.IsTrue(queryBuilder.SQL.Contains(@"SELECT"));
+            Assert.IsTrue(queryBuilder.SQL.Contains(@"count(*)"));
 
-                //isntead of this verison of things
-                Assert.IsFalse(queryBuilder.SQL.Contains(@"SET @name='fish';"));
+            //should have this version of things 
+            Assert.IsTrue(queryBuilder.SQL.Contains(@"DECLARE @name AS varchar(50);"));
+            Assert.IsTrue(queryBuilder.SQL.Contains(@"SET @name='lobster';"));
 
-                Assert.IsTrue(queryBuilder.SQL.Contains("..MyAwesomeFunction(@startNumber,@stopNumber,@name) AS MyAwesomeFunction"));
+            //isntead of this verison of things
+            Assert.IsFalse(queryBuilder.SQL.Contains(@"SET @name='fish';"));
 
-                Console.WriteLine(queryBuilder.SQL);
-            }
-            finally
-            {
-                agg.DeleteInDatabase();
-            }
+            Assert.IsTrue(queryBuilder.SQL.Contains("..MyAwesomeFunction(@startNumber,@stopNumber,@name) AS MyAwesomeFunction"));
+
+            Console.WriteLine(queryBuilder.SQL);
+        }
+        finally
+        {
+            agg.DeleteInDatabase();
         }
     }
 }

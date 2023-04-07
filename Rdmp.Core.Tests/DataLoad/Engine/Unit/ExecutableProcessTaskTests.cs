@@ -13,35 +13,34 @@ using Rdmp.Core.Curation.Data.Spontaneous;
 using Rdmp.Core.DataLoad.Engine.LoadExecution.Components.Arguments;
 using Rdmp.Core.DataLoad.Engine.LoadExecution.Components.Runtime;
 
-namespace Rdmp.Core.Tests.DataLoad.Engine.Unit
+namespace Rdmp.Core.Tests.DataLoad.Engine.Unit;
+
+[Category("Unit")]
+class ExecutableProcessTaskTests
 {
-    [Category("Unit")]
-    class ExecutableProcessTaskTests
+    [Test]
+    public void TestCreateArgString()
     {
-        [Test]
-        public void TestCreateArgString()
-        {
-            const string db = "my-db";
+        const string db = "my-db";
 
-            var customArgs = new List<SpontaneouslyInventedArgument>();
-            customArgs.Add(new SpontaneouslyInventedArgument(new MemoryRepository(), "DatabaseName", db));
+        var customArgs = new List<SpontaneouslyInventedArgument>();
+        customArgs.Add(new SpontaneouslyInventedArgument(new MemoryRepository(), "DatabaseName", db));
 
-            var processTask = Mock.Of<IProcessTask>();
-            var task = new ExecutableRuntimeTask(processTask, new RuntimeArgumentCollection(customArgs.ToArray(), null));
+        var processTask = Mock.Of<IProcessTask>();
+        var task = new ExecutableRuntimeTask(processTask, new RuntimeArgumentCollection(customArgs.ToArray(), null));
             
-            var argString = task.CreateArgString();
-            var expectedArgString = "--database-name=" + db;
+        var argString = task.CreateArgString();
+        var expectedArgString = "--database-name=" + db;
 
-            Assert.AreEqual(expectedArgString, argString);
-        }
+        Assert.AreEqual(expectedArgString, argString);
+    }
 
-        [Test]
-        public void TestConstructionFromProcessTask()
-        {
-            var processTask = Mock.Of<IProcessTask>(pt => pt.Path=="path");
+    [Test]
+    public void TestConstructionFromProcessTask()
+    {
+        var processTask = Mock.Of<IProcessTask>(pt => pt.Path=="path");
 
-            var runtimeTask = new ExecutableRuntimeTask(processTask, null);
-            Assert.AreEqual("path", runtimeTask.ExeFilepath);
-        }
+        var runtimeTask = new ExecutableRuntimeTask(processTask, null);
+        Assert.AreEqual("path", runtimeTask.ExeFilepath);
     }
 }

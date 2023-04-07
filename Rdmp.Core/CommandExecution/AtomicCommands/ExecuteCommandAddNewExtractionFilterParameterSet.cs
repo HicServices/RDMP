@@ -15,39 +15,38 @@ using System.Text;
 using System.Threading.Tasks;
 using SixLabors.ImageSharp.PixelFormats;
 
-namespace Rdmp.Core.CommandExecution.AtomicCommands
+namespace Rdmp.Core.CommandExecution.AtomicCommands;
+
+/// <summary>
+/// Creates a new set of paramter values that model a concept (e.g. dementia 
+/// ICD codes).  The filter must have parameters defined in it and the value
+/// set must provide accurate values for those parameters to model the concept
+/// </summary>
+public class ExecuteCommandAddNewExtractionFilterParameterSet : BasicCommandExecution
 {
-    /// <summary>
-    /// Creates a new set of paramter values that model a concept (e.g. dementia 
-    /// ICD codes).  The filter must have parameters defined in it and the value
-    /// set must provide accurate values for those parameters to model the concept
-    /// </summary>
-    public class ExecuteCommandAddNewExtractionFilterParameterSet : BasicCommandExecution
+    private ExtractionFilter _filter;
+
+    public ExecuteCommandAddNewExtractionFilterParameterSet(IBasicActivateItems activator, ExtractionFilter filter):base(activator)
     {
-        private ExtractionFilter _filter;
+        _filter = filter;
 
-        public ExecuteCommandAddNewExtractionFilterParameterSet(IBasicActivateItems activator, ExtractionFilter filter):base(activator)
+        if(!_filter.GetAllParameters().Any())
         {
-            _filter = filter;
-
-            if(!_filter.GetAllParameters().Any())
-            {
-                SetImpossible("Filter has no parameters");
-            }
+            SetImpossible("Filter has no parameters");
         }
+    }
 
-        public override void Execute()
-        {
-            base.Execute();
+    public override void Execute()
+    {
+        base.Execute();
 
-            var parameterSet = new ExtractionFilterParameterSet(BasicActivator.RepositoryLocator.CatalogueRepository, _filter);
-            parameterSet.CreateNewValueEntries();
-            Publish(_filter);
-            Activate(parameterSet);            
-        }
-        public override Image<Rgba32> GetImage(IIconProvider iconProvider)
-        {
-            return iconProvider.GetImage(RDMPConcept.ExtractionFilterParameterSet, OverlayKind.Add);
-        }
+        var parameterSet = new ExtractionFilterParameterSet(BasicActivator.RepositoryLocator.CatalogueRepository, _filter);
+        parameterSet.CreateNewValueEntries();
+        Publish(_filter);
+        Activate(parameterSet);            
+    }
+    public override Image<Rgba32> GetImage(IIconProvider iconProvider)
+    {
+        return iconProvider.GetImage(RDMPConcept.ExtractionFilterParameterSet, OverlayKind.Add);
     }
 }

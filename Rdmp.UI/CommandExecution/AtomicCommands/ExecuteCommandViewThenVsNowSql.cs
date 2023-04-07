@@ -17,48 +17,47 @@ using ReusableLibraryCode.Icons.IconProvision;
 using Rdmp.UI.SimpleDialogs.SqlDialogs;
 using SixLabors.ImageSharp.PixelFormats;
 
-namespace Rdmp.UI.CommandExecution.AtomicCommands
+namespace Rdmp.UI.CommandExecution.AtomicCommands;
+
+internal class ExecuteCommandViewThenVsNowSql : BasicUICommandExecution, IAtomicCommand
 {
-    internal class ExecuteCommandViewThenVsNowSql : BasicUICommandExecution, IAtomicCommand
+    private readonly SelectedDataSets _selectedDataSet;
+    private FlatFileReleasePotential _releasePotential;
+
+    public ExecuteCommandViewThenVsNowSql(IActivateItems activator, SelectedDataSets selectedDataSet):base(activator)
     {
-        private readonly SelectedDataSets _selectedDataSet;
-        private FlatFileReleasePotential _releasePotential;
+        _selectedDataSet = selectedDataSet;
+    }
 
-        public ExecuteCommandViewThenVsNowSql(IActivateItems activator, SelectedDataSets selectedDataSet):base(activator)
-        {
-            _selectedDataSet = selectedDataSet;
-        }
+    public override void Execute()
+    {
+        base.Execute();
 
-        public override void Execute()
-        {
-            base.Execute();
+        var rp = new FlatFileReleasePotential(Activator.RepositoryLocator, _selectedDataSet);
 
-            var rp = new FlatFileReleasePotential(Activator.RepositoryLocator, _selectedDataSet);
+        rp.Check(new IgnoreAllErrorsCheckNotifier());
 
-            rp.Check(new IgnoreAllErrorsCheckNotifier());
+        if (string.IsNullOrWhiteSpace(rp.SqlCurrentConfiguration))
+            Show("Could not generate Sql for dataset");
+        else
+        if(string.IsNullOrWhiteSpace(rp.SqlExtracted))
+            Show("Dataset has never been extracted");
+        else
+        if(rp.SqlCurrentConfiguration == rp.SqlExtracted)
+            Show("No differences");
+        else
+            _releasePotential = rp;
 
-            if (string.IsNullOrWhiteSpace(rp.SqlCurrentConfiguration))
-                Show("Could not generate Sql for dataset");
-            else
-            if(string.IsNullOrWhiteSpace(rp.SqlExtracted))
-                Show("Dataset has never been extracted");
-            else
-            if(rp.SqlCurrentConfiguration == rp.SqlExtracted)
-                Show("No differences");
-            else
-                _releasePotential = rp;
-
-            if (_releasePotential == null)
-                return;
+        if (_releasePotential == null)
+            return;
 
 
-            var dialog = new SQLBeforeAndAfterViewer(_releasePotential.SqlCurrentConfiguration, _releasePotential.SqlExtracted, "Current Configuration", "Configuration when last run", "Sql Executed", MessageBoxButtons.OK);
-            dialog.Show();
-        }
+        var dialog = new SQLBeforeAndAfterViewer(_releasePotential.SqlCurrentConfiguration, _releasePotential.SqlExtracted, "Current Configuration", "Configuration when last run", "Sql Executed", MessageBoxButtons.OK);
+        dialog.Show();
+    }
 
-        public override Image<Rgba32> GetImage(IIconProvider iconProvider)
-        {
-            return iconProvider.GetImage(RDMPConcept.Diff);
-        }
+    public override Image<Rgba32> GetImage(IIconProvider iconProvider)
+    {
+        return iconProvider.GetImage(RDMPConcept.Diff);
     }
 }

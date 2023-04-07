@@ -6,20 +6,19 @@
 
 using ReusableLibraryCode.Checks;
 
-namespace ReusableLibraryCode
+namespace ReusableLibraryCode;
+
+/// <summary>
+/// Interface for classes that are able to summarise themselves for display to a user
+/// </summary>
+public interface IHasSummary
 {
     /// <summary>
-    /// Interface for classes that are able to summarise themselves for display to a user
+    /// Gets a user friendly summary of the objects current state
     /// </summary>
-    public interface IHasSummary
-    {
-        /// <summary>
-        /// Gets a user friendly summary of the objects current state
-        /// </summary>
-        /// <param name="title">Short description (should not have newlines)</param>
-        /// <param name="body">Long description which can contain newlines</param>
-        /// <param name="stackTrace">Optional stack trace where error occurred (set to null if not applicable)</param>
-        /// <param name="level">How servere the situation is/was</param>
-        void GetSummary(out string title, out string body,out string stackTrace, out CheckResult level);
-    }
+    /// <param name="title">Short description (should not have newlines)</param>
+    /// <param name="body">Long description which can contain newlines</param>
+    /// <param name="stackTrace">Optional stack trace where error occurred (set to null if not applicable)</param>
+    /// <param name="level">How servere the situation is/was</param>
+    void GetSummary(out string title, out string body,out string stackTrace, out CheckResult level);
 }

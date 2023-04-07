@@ -15,74 +15,73 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 
-namespace Rdmp.Core.DataViewing
+namespace Rdmp.Core.DataViewing;
+
+class ViewSelectedDatasetExtractionUICollection : PersistableObjectCollection, IViewSQLAndResultsCollection
 {
-    class ViewSelectedDatasetExtractionUICollection : PersistableObjectCollection, IViewSQLAndResultsCollection
+    private ExtractDatasetCommand _request;
+
+    ISelectedDataSets SelectedDataset{get => DatabaseObjects.OfType<ISelectedDataSets>().FirstOrDefault();}
+
+    public ViewSelectedDatasetExtractionUICollection()
     {
-        private ExtractDatasetCommand _request;
+    }
 
-        ISelectedDataSets SelectedDataset{get => DatabaseObjects.OfType<ISelectedDataSets>().FirstOrDefault();}
+    public ViewSelectedDatasetExtractionUICollection(ISelectedDataSets dataset) : this()
+    {
+        DatabaseObjects.Add(dataset);
+    }
 
-        public ViewSelectedDatasetExtractionUICollection()
-        {
-        }
-
-        public ViewSelectedDatasetExtractionUICollection(ISelectedDataSets dataset) : this()
-        {
-            DatabaseObjects.Add(dataset);
-        }
-
-        public string GetSql()
-        {
-            BuildRequest();
+    public string GetSql()
+    {
+        BuildRequest();
             
-            //get the SQL from the query builder 
-            return _request.QueryBuilder.SQL;
-        }
+        //get the SQL from the query builder 
+        return _request.QueryBuilder.SQL;
+    }
 
-        private void BuildRequest()
-        {
-            if(_request != null)
-                return;
+    private void BuildRequest()
+    {
+        if(_request != null)
+            return;
 
-            var ec = SelectedDataset.ExtractionConfiguration;
+        var ec = SelectedDataset.ExtractionConfiguration;
 
-            if(ec.Cohort_ID == null)
-                throw new Exception("No cohort has been defined for this ExtractionConfiguration");
+        if(ec.Cohort_ID == null)
+            throw new Exception("No cohort has been defined for this ExtractionConfiguration");
 
-            //We are generating what the extraction SQL will be like, that only requires the dataset so empty bundle is fine
-            _request = new ExtractDatasetCommand(ec,new ExtractableDatasetBundle(SelectedDataset.ExtractableDataSet));
-            _request.GenerateQueryBuilder();
-            _request.QueryBuilder.RegenerateSQL();
-        }
+        //We are generating what the extraction SQL will be like, that only requires the dataset so empty bundle is fine
+        _request = new ExtractDatasetCommand(ec,new ExtractableDatasetBundle(SelectedDataset.ExtractableDataSet));
+        _request.GenerateQueryBuilder();
+        _request.QueryBuilder.RegenerateSQL();
+    }
 
-        public IDataAccessPoint GetDataAccessPoint()
-        {
-            BuildRequest();
+    public IDataAccessPoint GetDataAccessPoint()
+    {
+        BuildRequest();
 
-            return _request?.QueryBuilder?.TablesUsedInQuery?.FirstOrDefault();
-        }
+        return _request?.QueryBuilder?.TablesUsedInQuery?.FirstOrDefault();
+    }
 
-        public IEnumerable<DatabaseEntity> GetToolStripObjects()
-        {
-            yield return (DatabaseEntity)SelectedDataset;
-        }
+    public IEnumerable<DatabaseEntity> GetToolStripObjects()
+    {
+        yield return (DatabaseEntity)SelectedDataset;
+    }
 
-        public string GetTabName()
-        {
-            return "Extract " + SelectedDataset;
-        }
+    public string GetTabName()
+    {
+        return "Extract " + SelectedDataset;
+    }
 
-        public void AdjustAutocomplete(IAutoCompleteProvider autoComplete)
-        {
+    public void AdjustAutocomplete(IAutoCompleteProvider autoComplete)
+    {
             
-        }
+    }
 
-        public IQuerySyntaxHelper GetQuerySyntaxHelper()
-        {
-            BuildRequest();
+    public IQuerySyntaxHelper GetQuerySyntaxHelper()
+    {
+        BuildRequest();
 
-            return _request.QueryBuilder.QuerySyntaxHelper;
-        }
+        return _request.QueryBuilder.QuerySyntaxHelper;
     }
 }

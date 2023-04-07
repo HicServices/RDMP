@@ -10,30 +10,28 @@ using Rdmp.Core.Validation;
 using Rdmp.Core.Validation.Constraints;
 using Rdmp.Core.Validation.Constraints.Secondary;
 
-namespace Rdmp.Core.Tests.Validation.Constraints.Primary
+namespace Rdmp.Core.Tests.Validation.Constraints.Primary;
+
+[Category("Unit")]
+class BoundsValidationIntegerTest : ValidationTests
 {
 
-    [Category("Unit")]
-    class BoundsValidationIntegerTest : ValidationTests
+    [Test]
+    public void simple_integer_bounds()
     {
+        var v = new Validator();
 
-        [Test]
-        public void simple_integer_bounds()
-        {
-            var v = new Validator();
+        var b = (BoundDouble)Validator.CreateConstraint("bounddouble",Consequence.Wrong);
+        b.Lower = 5;
+        b.Upper = 120;
 
-            var b = (BoundDouble)Validator.CreateConstraint("bounddouble",Consequence.Wrong);
-            b.Lower = 5;
-            b.Upper = 120;
+        var i = new ItemValidator();
+        i.AddSecondaryConstraint(b);
+        v.AddItemValidator(i, "number", typeof(int));
 
-            var i = new ItemValidator();
-            i.AddSecondaryConstraint(b);
-            v.AddItemValidator(i, "number", typeof(int));
+        var d = new Dictionary<string, object>();
+        d.Add("number", 119);
 
-            var d = new Dictionary<string, object>();
-            d.Add("number", 119);
-
-            Assert.IsNull(v.Validate(d));
-        }
+        Assert.IsNull(v.Validate(d));
     }
 }

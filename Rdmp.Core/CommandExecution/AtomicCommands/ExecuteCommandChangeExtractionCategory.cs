@@ -13,95 +13,93 @@ using Rdmp.Core.Repositories.Construction;
 using ReusableLibraryCode.Icons.IconProvision;
 using SixLabors.ImageSharp.PixelFormats;
 
-namespace Rdmp.Core.CommandExecution.AtomicCommands
+namespace Rdmp.Core.CommandExecution.AtomicCommands;
+
+public class ExecuteCommandChangeExtractionCategory : BasicCommandExecution
 {
-    public class ExecuteCommandChangeExtractionCategory : BasicCommandExecution
+    ExtractionInformation[] _extractionInformations;
+    private bool _isProjectSpecific;
+    private readonly ExtractionCategory? _category;
+
+    [UseWithObjectConstructor]
+    public ExecuteCommandChangeExtractionCategory(IBasicActivateItems activator,ExtractionInformation[] eis, ExtractionCategory? category = null) : base(activator)
     {
-        ExtractionInformation[] _extractionInformations;
-        private bool _isProjectSpecific;
-        private readonly ExtractionCategory? _category;
+        eis = (eis??new ExtractionInformation[0]).Where(e => e != null).ToArray();
 
-        [UseWithObjectConstructor]
-        public ExecuteCommandChangeExtractionCategory(IBasicActivateItems activator,ExtractionInformation[] eis, ExtractionCategory? category = null) : base(activator)
+        if (eis.Length == 0)
+            SetImpossible("No ExtractionInformations found");
+
+        _extractionInformations = eis;
+        this._category = category;
+
+        _isProjectSpecific = false;
+
+        var cata = _extractionInformations.Select(ei => ei.CatalogueItem.Catalogue).Distinct().ToArray();
+        if (cata.Length == 1)
         {
-            eis = (eis??new ExtractionInformation[0]).Where(e => e != null).ToArray();
-
-            if (eis.Length == 0)
-                SetImpossible("No ExtractionInformations found");
-
-            _extractionInformations = eis;
-            this._category = category;
-
-            _isProjectSpecific = false;
-
-            var cata = _extractionInformations.Select(ei => ei.CatalogueItem.Catalogue).Distinct().ToArray();
-            if (cata.Length == 1)
-            {
-                _isProjectSpecific = cata[0].IsProjectSpecific(BasicActivator.RepositoryLocator.DataExportRepository);
-            }
-
-            // if project specific only let them set to project specific
-            if (_category != null && _isProjectSpecific && _category != ExtractionCategory.ProjectSpecific)
-            {
-                // user is trying to set to Core
-                if (_category == ExtractionCategory.Core)
-                {
-                    // surely they meant project specific!
-                    _category = ExtractionCategory.ProjectSpecific;
-                }
-                else
-                {
-                    SetImpossible("CatalogueItems can only be ProjectSpecific extraction category");
-                }
-            }
+            _isProjectSpecific = cata[0].IsProjectSpecific(BasicActivator.RepositoryLocator.DataExportRepository);
         }
 
-        public override string GetCommandName()
+        // if project specific only let them set to project specific
+        if (_category != null && _isProjectSpecific && _category != ExtractionCategory.ProjectSpecific)
         {
-            if(_extractionInformations == null || _extractionInformations.Length <= 1)
-                return "Set ExtractionCategory";
-
-            return "Set ALL to ExtractionCategory";
-        }
-
-        public override Image<Rgba32> GetImage(IIconProvider iconProvider)
-        {
-            return iconProvider.GetImage(RDMPConcept.ExtractionInformation);
-        }
-
-        public override void Execute()
-        {
-            base.Execute();
-            
-            var c = _category;
-
-            if (c == null && BasicActivator.SelectValueType("New Extraction Category", typeof(ExtractionCategory), ExtractionCategory.Core, out object category))
-                c = (ExtractionCategory)category;
-
-            if (c == null)
-                return;
-
-            // if project specific only let them set to project specific
-            if (_isProjectSpecific && c != ExtractionCategory.ProjectSpecific)
+            // user is trying to set to Core
+            if (_category == ExtractionCategory.Core)
             {
-                throw new Exception("All CatalogueItems in a ProjectSpecific Catalogues must have ExtractionCategory of 'ProjectSpecific'");
+                // surely they meant project specific!
+                _category = ExtractionCategory.ProjectSpecific;
             }
-
-            if(ExecuteWithCommit(()=>ExecuteImpl(c.Value), $"Set ExtractionCategory to '{c}'", _extractionInformations))
+            else
             {
-                //publish the root Catalogue
-                Publish(_extractionInformations.First());
-            }
-        }
-
-        private void ExecuteImpl(ExtractionCategory category)
-        {
-            foreach (var ei in _extractionInformations)
-            {
-                ei.ExtractionCategory = category;
-                ei.SaveToDatabase();
+                SetImpossible("CatalogueItems can only be ProjectSpecific extraction category");
             }
         }
     }
-}
 
+    public override string GetCommandName()
+    {
+        if(_extractionInformations == null || _extractionInformations.Length <= 1)
+            return "Set ExtractionCategory";
+
+        return "Set ALL to ExtractionCategory";
+    }
+
+    public override Image<Rgba32> GetImage(IIconProvider iconProvider)
+    {
+        return iconProvider.GetImage(RDMPConcept.ExtractionInformation);
+    }
+
+    public override void Execute()
+    {
+        base.Execute();
+            
+        var c = _category;
+
+        if (c == null && BasicActivator.SelectValueType("New Extraction Category", typeof(ExtractionCategory), ExtractionCategory.Core, out object category))
+            c = (ExtractionCategory)category;
+
+        if (c == null)
+            return;
+
+        // if project specific only let them set to project specific
+        if (_isProjectSpecific && c != ExtractionCategory.ProjectSpecific)
+        {
+            throw new Exception("All CatalogueItems in a ProjectSpecific Catalogues must have ExtractionCategory of 'ProjectSpecific'");
+        }
+
+        if(ExecuteWithCommit(()=>ExecuteImpl(c.Value), $"Set ExtractionCategory to '{c}'", _extractionInformations))
+        {
+            //publish the root Catalogue
+            Publish(_extractionInformations.First());
+        }
+    }
+
+    private void ExecuteImpl(ExtractionCategory category)
+    {
+        foreach (var ei in _extractionInformations)
+        {
+            ei.ExtractionCategory = category;
+            ei.SaveToDatabase();
+        }
+    }
+}

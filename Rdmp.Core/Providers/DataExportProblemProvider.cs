@@ -9,105 +9,104 @@ using Rdmp.Core.DataExport.Data;
 using Rdmp.Core.Providers.Nodes;
 using Rdmp.Core.Providers.Nodes.ProjectCohortNodes;
 
-namespace Rdmp.Core.Providers
+namespace Rdmp.Core.Providers;
+
+/// <summary>
+/// Identifies all rapidly detectable problems with the configurations of Data Export items
+/// </summary>
+public class DataExportProblemProvider:ProblemProvider
 {
-    /// <summary>
-    /// Identifies all rapidly detectable problems with the configurations of Data Export items
-    /// </summary>
-    public class DataExportProblemProvider:ProblemProvider
-    {
-        private DataExportChildProvider _exportChildProvider;
+    private DataExportChildProvider _exportChildProvider;
         
-        /// <inheritdoc/>
-        public override void RefreshProblems(ICoreChildProvider childProvider)
+    /// <inheritdoc/>
+    public override void RefreshProblems(ICoreChildProvider childProvider)
+    {
+        _exportChildProvider = childProvider as DataExportChildProvider;
+    }
+
+
+    /// <inheritdoc/>
+    protected override string DescribeProblemImpl(object o)
+    {
+        return o switch
         {
-            _exportChildProvider = childProvider as DataExportChildProvider;
+            Project project => DescribeProblem(project),
+            ProjectSavedCohortsNode node => DescribeProblem(node),
+            ExtractionConfigurationsNode node => DescribeProblem(node),
+            SelectedDataSets sets => DescribeProblem(sets),
+            ExtractionConfiguration configuration => DescribeProblem(configuration),
+            ExternalCohortTable table => DescribeProblem(table),
+            ExtractionDirectoryNode node => DescribeProblem(node),
+            _ => null
+        };
+    }
+
+    private string DescribeProblem(ExternalCohortTable externalCohortTable)
+    {
+        if (_exportChildProvider != null && _exportChildProvider.ForbidListedSources.Contains(externalCohortTable))
+            return "Cohort Source database was unreachable";
+
+        return null;
+    }
+
+    private string DescribeProblem(ExtractionConfiguration extractionConfiguration)
+    {
+        if (extractionConfiguration.Cohort_ID == null)
+            return "Configuration has no Cohort configured. You must add a Saved Cohort to enable extraction.";
+
+        if (_exportChildProvider != null)
+            if (!_exportChildProvider.GetDatasets(extractionConfiguration).Any()) //there are no selected datasets!
+                return "Configuration has no selected datasets. Add existing Datasets or Packages to enable extraction.";
+
+        return null;
+    }
+
+    private string DescribeProblem(SelectedDataSets selectedDataSets)
+    {
+        if (_exportChildProvider.IsMissingExtractionIdentifier(selectedDataSets))
+            return "There are no IsExtractionIdentifier columns in dataset";
+
+        if (selectedDataSets.GetCatalogue()?.IsDeprecated ?? false)
+            return "Dataset is deprecated";
+
+        return null;
+    }
+
+    private string DescribeProblem(ExtractionConfigurationsNode extractionConfigurationsNode)
+    {
+        if (_exportChildProvider.Projects.Contains(extractionConfigurationsNode.Project))
+            if (!_exportChildProvider.GetConfigurations(extractionConfigurationsNode.Project).Any())
+                return "Project has no ExtractionConfigurations. Add a new ExtractionConfiguration to define how data is extracted for this Project.";
+
+        return null;
+    }
+
+    private string DescribeProblem(ProjectSavedCohortsNode projectSavedCohortsNode)
+    {
+        if (_exportChildProvider.ProjectHasNoSavedCohorts(projectSavedCohortsNode.Project))
+            return "Project has no Cohorts. Commit new Cohort(s) from File/Cohort Query Builder to use with this Project's ExtractionConfigurations";
+
+        return null;
+    }
+
+
+    private string DescribeProblem(ExtractionDirectoryNode edn)
+    {
+        if(edn.GetDirectoryInfoIfAny() == null)
+        {
+            return "No Extraction Directory has been specified";
         }
 
+        return null;
+    }
+    private string DescribeProblem(Project project)
+    {
+        if (project.ProjectNumber == null)
+            return "Project has no ProjectNumber";
 
-        /// <inheritdoc/>
-        protected override string DescribeProblemImpl(object o)
-        {
-            return o switch
-            {
-                Project project => DescribeProblem(project),
-                ProjectSavedCohortsNode node => DescribeProblem(node),
-                ExtractionConfigurationsNode node => DescribeProblem(node),
-                SelectedDataSets sets => DescribeProblem(sets),
-                ExtractionConfiguration configuration => DescribeProblem(configuration),
-                ExternalCohortTable table => DescribeProblem(table),
-                ExtractionDirectoryNode node => DescribeProblem(node),
-                _ => null
-            };
-        }
+        if (string.IsNullOrWhiteSpace(project.ExtractionDirectory))
+            return "Project has no Extraction Directory configured";
 
-        private string DescribeProblem(ExternalCohortTable externalCohortTable)
-        {
-            if (_exportChildProvider != null && _exportChildProvider.ForbidListedSources.Contains(externalCohortTable))
-                return "Cohort Source database was unreachable";
-
-            return null;
-        }
-
-        private string DescribeProblem(ExtractionConfiguration extractionConfiguration)
-        {
-            if (extractionConfiguration.Cohort_ID == null)
-                return "Configuration has no Cohort configured. You must add a Saved Cohort to enable extraction.";
-
-            if (_exportChildProvider != null)
-                if (!_exportChildProvider.GetDatasets(extractionConfiguration).Any()) //there are no selected datasets!
-                    return "Configuration has no selected datasets. Add existing Datasets or Packages to enable extraction.";
-
-            return null;
-        }
-
-        private string DescribeProblem(SelectedDataSets selectedDataSets)
-        {
-            if (_exportChildProvider.IsMissingExtractionIdentifier(selectedDataSets))
-                return "There are no IsExtractionIdentifier columns in dataset";
-
-            if (selectedDataSets.GetCatalogue()?.IsDeprecated ?? false)
-                return "Dataset is deprecated";
-
-            return null;
-        }
-
-        private string DescribeProblem(ExtractionConfigurationsNode extractionConfigurationsNode)
-        {
-            if (_exportChildProvider.Projects.Contains(extractionConfigurationsNode.Project))
-                if (!_exportChildProvider.GetConfigurations(extractionConfigurationsNode.Project).Any())
-                    return "Project has no ExtractionConfigurations. Add a new ExtractionConfiguration to define how data is extracted for this Project.";
-
-            return null;
-        }
-
-        private string DescribeProblem(ProjectSavedCohortsNode projectSavedCohortsNode)
-        {
-            if (_exportChildProvider.ProjectHasNoSavedCohorts(projectSavedCohortsNode.Project))
-                return "Project has no Cohorts. Commit new Cohort(s) from File/Cohort Query Builder to use with this Project's ExtractionConfigurations";
-
-            return null;
-        }
-
-
-        private string DescribeProblem(ExtractionDirectoryNode edn)
-        {
-            if(edn.GetDirectoryInfoIfAny() == null)
-            {
-                return "No Extraction Directory has been specified";
-            }
-
-            return null;
-        }
-        private string DescribeProblem(Project project)
-        {
-            if (project.ProjectNumber == null)
-                return "Project has no ProjectNumber";
-
-            if (string.IsNullOrWhiteSpace(project.ExtractionDirectory))
-                return "Project has no Extraction Directory configured";
-
-            return null;
-        }
+        return null;
     }
 }

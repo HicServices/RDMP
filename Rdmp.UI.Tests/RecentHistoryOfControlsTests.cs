@@ -8,26 +8,25 @@ using System;
 using NUnit.Framework;
 
 
-namespace Rdmp.UI.Tests
+namespace Rdmp.UI.Tests;
+
+[Category("Unit")]
+public class RecentHistoryOfControlsTests
 {
-    [Category("Unit")]
-    public class RecentHistoryOfControlsTests
+    [Test]
+    public void TestOverflowPrevention()
     {
-        [Test]
-        public void TestOverflowPrevention()
-        {
-            var t = new System.Windows.Forms.TextBox();
+        var t = new System.Windows.Forms.TextBox();
 
-            var c = new RecentHistoryOfControls(t,new Guid("b3ccaf14-702a-438a-8cf4-d550d6d7775d"));
+        var c = new RecentHistoryOfControls(t,new Guid("b3ccaf14-702a-438a-8cf4-d550d6d7775d"));
 
-            c.Clear();
-            int overFlowCounter = 100000;
+        c.Clear();
+        int overFlowCounter = 100000;
 
-            for (int i = 0; i < overFlowCounter; i++)
-                c.AddResult("testOverflowValue" + Guid.NewGuid(), i%1000 == 0);//only save every X values added for performance
+        for (int i = 0; i < overFlowCounter; i++)
+            c.AddResult("testOverflowValue" + Guid.NewGuid(), i%1000 == 0);//only save every X values added for performance
 
-            c.Clear();
-        }
-
+        c.Clear();
     }
+
 }

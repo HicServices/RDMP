@@ -8,35 +8,34 @@ using System;
 using FAnsi;
 using FAnsi.Discovery;
 
-namespace Rdmp.Core.DataLoad.Triggers.Implementations
+namespace Rdmp.Core.DataLoad.Triggers.Implementations;
+
+/// <summary>
+/// Handles the creation of the appropriate <see cref="ITriggerImplementer"/> for any given <see cref="DatabaseType"/>
+/// </summary>
+public class TriggerImplementerFactory
 {
-    /// <summary>
-    /// Handles the creation of the appropriate <see cref="ITriggerImplementer"/> for any given <see cref="DatabaseType"/>
-    /// </summary>
-    public class TriggerImplementerFactory
+    private readonly DatabaseType _databaseType;
+
+    public TriggerImplementerFactory(DatabaseType databaseType)
     {
-        private readonly DatabaseType _databaseType;
+        _databaseType = databaseType;
+    }
 
-        public TriggerImplementerFactory(DatabaseType databaseType)
+    public ITriggerImplementer Create(DiscoveredTable table, bool createDataLoadRunIDAlso = true)
+    {
+        switch (_databaseType)
         {
-            _databaseType = databaseType;
-        }
-
-        public ITriggerImplementer Create(DiscoveredTable table, bool createDataLoadRunIDAlso = true)
-        {
-            switch (_databaseType)
-            {
-                case DatabaseType.MicrosoftSQLServer:
-                    return new MicrosoftSQLTriggerImplementer(table, createDataLoadRunIDAlso);
-                case DatabaseType.MySql:
-                    return new MySqlTriggerImplementer(table, createDataLoadRunIDAlso);
-                case DatabaseType.Oracle:
-                    return new OracleTriggerImplementer(table, createDataLoadRunIDAlso);
-                case DatabaseType.PostgreSql:
-                    return new PostgreSqlTriggerImplementer(table, createDataLoadRunIDAlso);
-                default:
-                    throw new ArgumentOutOfRangeException("databaseType");
-            }
+            case DatabaseType.MicrosoftSQLServer:
+                return new MicrosoftSQLTriggerImplementer(table, createDataLoadRunIDAlso);
+            case DatabaseType.MySql:
+                return new MySqlTriggerImplementer(table, createDataLoadRunIDAlso);
+            case DatabaseType.Oracle:
+                return new OracleTriggerImplementer(table, createDataLoadRunIDAlso);
+            case DatabaseType.PostgreSql:
+                return new PostgreSqlTriggerImplementer(table, createDataLoadRunIDAlso);
+            default:
+                throw new ArgumentOutOfRangeException("databaseType");
         }
     }
 }

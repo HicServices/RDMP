@@ -13,66 +13,65 @@ using Rdmp.Core.DataLoad.Engine.LoadExecution.Components.Arguments;
 using Rdmp.Core.DataLoad.Engine.LoadExecution.Components.Runtime;
 using Rdmp.Core.Repositories;
 
-namespace Rdmp.Core.DataLoad.Engine.LoadExecution.Components
+namespace Rdmp.Core.DataLoad.Engine.LoadExecution.Components;
+
+/// <summary>
+/// Converts multiple user defined DLE ProcessTasks into a single hydrated CompositeDataLoadComponent.  This involves converting the ProcessTasks
+/// (which are user defined class names, argument values etc) into instances of IRuntimeTask.  You can either call CreateCompositeDataLoadComponentFor
+/// to create a generic CompositeDataLoadComponent containing all the IRuntimeTasks or you can get the IRuntimeTask list directly and use it yourself in
+/// a more advanced DataLoadComponent (e.g. PopulateRAW - See usages in HICDataLoadFactory)
+/// </summary>
+public class RuntimeTaskPackager
 {
-    /// <summary>
-    /// Converts multiple user defined DLE ProcessTasks into a single hydrated CompositeDataLoadComponent.  This involves converting the ProcessTasks
-    /// (which are user defined class names, argument values etc) into instances of IRuntimeTask.  You can either call CreateCompositeDataLoadComponentFor
-    /// to create a generic CompositeDataLoadComponent containing all the IRuntimeTasks or you can get the IRuntimeTask list directly and use it yourself in
-    /// a more advanced DataLoadComponent (e.g. PopulateRAW - See usages in HICDataLoadFactory)
-    /// </summary>
-    public class RuntimeTaskPackager
+    public readonly IEnumerable<IProcessTask> ProcessTasks;
+    private readonly Dictionary<LoadStage, IStageArgs> _loadArgsDictionary;
+    private readonly IEnumerable<ICatalogue> _cataloguesToLoad;
+    private readonly ICatalogueRepository _repository;
+
+    public RuntimeTaskPackager(IEnumerable<IProcessTask> processTasks, Dictionary<LoadStage, IStageArgs> loadArgsDictionary, IEnumerable<ICatalogue> cataloguesToLoad, ICatalogueRepository repository)
     {
-        public readonly IEnumerable<IProcessTask> ProcessTasks;
-        private readonly Dictionary<LoadStage, IStageArgs> _loadArgsDictionary;
-        private readonly IEnumerable<ICatalogue> _cataloguesToLoad;
-        private readonly ICatalogueRepository _repository;
+        ProcessTasks = processTasks;
+        _loadArgsDictionary = loadArgsDictionary;
+        _cataloguesToLoad = cataloguesToLoad;
+        _repository = repository;
+    }
 
-        public RuntimeTaskPackager(IEnumerable<IProcessTask> processTasks, Dictionary<LoadStage, IStageArgs> loadArgsDictionary, IEnumerable<ICatalogue> cataloguesToLoad, ICatalogueRepository repository)
-        {
-            ProcessTasks = processTasks;
-            _loadArgsDictionary = loadArgsDictionary;
-            _cataloguesToLoad = cataloguesToLoad;
-            _repository = repository;
-        }
+    public List<IRuntimeTask> GetRuntimeTasksForStage(LoadStage loadStage)
+    {
+        var runtimeTasks = new List<IRuntimeTask>();
+        var tasksForThisLoadStage = ProcessTasks.Where(task => task.LoadStage == loadStage).ToList();
 
-        public List<IRuntimeTask> GetRuntimeTasksForStage(LoadStage loadStage)
-        {
-            var runtimeTasks = new List<IRuntimeTask>();
-            var tasksForThisLoadStage = ProcessTasks.Where(task => task.LoadStage == loadStage).ToList();
+        if (!tasksForThisLoadStage.Any())
+            return runtimeTasks;
 
-            if (!tasksForThisLoadStage.Any())
-                return runtimeTasks;
-
-            var factory = new Runtime.RuntimeTaskFactory(_repository);
-            foreach (var processTask in tasksForThisLoadStage)
-                runtimeTasks.Add(factory.Create(processTask, _loadArgsDictionary[processTask.LoadStage]));
+        var factory = new Runtime.RuntimeTaskFactory(_repository);
+        foreach (var processTask in tasksForThisLoadStage)
+            runtimeTasks.Add(factory.Create(processTask, _loadArgsDictionary[processTask.LoadStage]));
             
 
-            runtimeTasks = runtimeTasks.OrderBy(task => task.ProcessTask.Order).ToList();
-            return runtimeTasks;
-        }
+        runtimeTasks = runtimeTasks.OrderBy(task => task.ProcessTask.Order).ToList();
+        return runtimeTasks;
+    }
 
-        public IEnumerable<IRuntimeTask> GetAllRuntimeTasks()
-        {
-            var runtimeTasks = new List<IRuntimeTask>();
+    public IEnumerable<IRuntimeTask> GetAllRuntimeTasks()
+    {
+        var runtimeTasks = new List<IRuntimeTask>();
 
-            foreach (LoadStage loadStage in Enum.GetValues(typeof (LoadStage)))
-                runtimeTasks.AddRange(GetRuntimeTasksForStage(loadStage));
+        foreach (LoadStage loadStage in Enum.GetValues(typeof (LoadStage)))
+            runtimeTasks.AddRange(GetRuntimeTasksForStage(loadStage));
 
-            return runtimeTasks;
-        }
+        return runtimeTasks;
+    }
 
-        public CompositeDataLoadComponent CreateCompositeDataLoadComponentFor(LoadStage loadStage,string descriptionForComponent)
-        {
-            RuntimeTaskFactory factory = new RuntimeTaskFactory(_repository);
+    public CompositeDataLoadComponent CreateCompositeDataLoadComponentFor(LoadStage loadStage,string descriptionForComponent)
+    {
+        RuntimeTaskFactory factory = new RuntimeTaskFactory(_repository);
 
-            var tasks = new List<IDataLoadComponent>();
+        var tasks = new List<IDataLoadComponent>();
 
-            foreach (var task in GetRuntimeTasksForStage(loadStage))
-                tasks.Add(factory.Create(task.ProcessTask, _loadArgsDictionary[loadStage]));
+        foreach (var task in GetRuntimeTasksForStage(loadStage))
+            tasks.Add(factory.Create(task.ProcessTask, _loadArgsDictionary[loadStage]));
 
-            return new CompositeDataLoadComponent(tasks) { Description = descriptionForComponent };
-        }
+        return new CompositeDataLoadComponent(tasks) { Description = descriptionForComponent };
     }
 }

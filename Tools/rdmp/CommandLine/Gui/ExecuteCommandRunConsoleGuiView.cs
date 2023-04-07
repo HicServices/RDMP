@@ -8,30 +8,28 @@ using Rdmp.Core.CommandExecution;
 using System;
 using Terminal.Gui;
 
-namespace Rdmp.Core.CommandLine.Gui
+namespace Rdmp.Core.CommandLine.Gui;
+
+internal class ExecuteCommandRunConsoleGuiView : BasicCommandExecution
 {
-    
-    internal class ExecuteCommandRunConsoleGuiView : BasicCommandExecution
+    private readonly Func<Window> windowConstructor;
+
+    /// <summary>
+    /// Command for running a console gui UI.
+    /// </summary>
+    /// <param name="activator"></param>
+    /// <param name="windowConstructor">Called only when/if the command is executed</param>
+    public ExecuteCommandRunConsoleGuiView(IBasicActivateItems activator, Func<Window> windowConstructor):base(activator)
     {
-        private readonly Func<Window> windowConstructor;
+        this.windowConstructor = windowConstructor;
+    }
 
-        /// <summary>
-        /// Command for running a console gui UI.
-        /// </summary>
-        /// <param name="activator"></param>
-        /// <param name="windowConstructor">Called only when/if the command is executed</param>
-        public ExecuteCommandRunConsoleGuiView(IBasicActivateItems activator, Func<Window> windowConstructor):base(activator)
-        {
-            this.windowConstructor = windowConstructor;
-        }
-
-        public override void Execute()
-        {
-            base.Execute();
+    public override void Execute()
+    {
+        base.Execute();
             
-            var window = windowConstructor();
+        var window = windowConstructor();
 
-            Application.Run(window, ConsoleMainWindow.ExceptionPopup);
-        }
+        Application.Run(window, ConsoleMainWindow.ExceptionPopup);
     }
 }

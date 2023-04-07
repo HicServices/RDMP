@@ -12,43 +12,42 @@ using Rdmp.UI.SubComponents.Graphs;
 using ReusableLibraryCode.Icons.IconProvision;
 using SixLabors.ImageSharp.PixelFormats;
 
-namespace Rdmp.UI.CommandExecution.AtomicCommands
+namespace Rdmp.UI.CommandExecution.AtomicCommands;
+
+public class ExecuteCommandViewCohortAggregateGraph:BasicUICommandExecution,IAtomicCommand
 {
-    public class ExecuteCommandViewCohortAggregateGraph:BasicUICommandExecution,IAtomicCommand
+    private readonly CohortSummaryAggregateGraphObjectCollection _collection;
+    private float DEFAULT_WEIGHT = 2.6f;
+
+    public ExecuteCommandViewCohortAggregateGraph(IActivateItems activator, CohortSummaryAggregateGraphObjectCollection collection) : base(activator)
     {
-        private readonly CohortSummaryAggregateGraphObjectCollection _collection;
-        private float DEFAULT_WEIGHT = 2.6f;
+        Weight = DEFAULT_WEIGHT;
 
-        public ExecuteCommandViewCohortAggregateGraph(IActivateItems activator, CohortSummaryAggregateGraphObjectCollection collection) : base(activator)
-        {
-            Weight = DEFAULT_WEIGHT;
+        _collection = collection;
 
-            _collection = collection;
+        if(collection.CohortIfAny != null && collection.CohortIfAny.IsJoinablePatientIndexTable())
+            SetImpossible("Graphs cannot be generated for Patient Index tables");
+    }
 
-            if(collection.CohortIfAny != null && collection.CohortIfAny.IsJoinablePatientIndexTable())
-                SetImpossible("Graphs cannot be generated for Patient Index tables");
-        }
+    public override string GetCommandHelp()
+    {
+        return "Shows a subset of the main graph as it applies to the people in your cohort";
+    }
 
-        public override string GetCommandHelp()
-        {
-            return "Shows a subset of the main graph as it applies to the people in your cohort";
-        }
+    public override string GetCommandName()
+    {
+        return _collection.Graph.Name;
+    }
 
-        public override string GetCommandName()
-        {
-            return _collection.Graph.Name;
-        }
+    public override Image<Rgba32> GetImage(IIconProvider iconProvider)
+    {
+        return iconProvider.GetImage(RDMPConcept.AggregateGraph);
+    }
 
-        public override Image<Rgba32> GetImage(IIconProvider iconProvider)
-        {
-            return iconProvider.GetImage(RDMPConcept.AggregateGraph);
-        }
+    public override void Execute()
+    {
+        base.Execute();
 
-        public override void Execute()
-        {
-            base.Execute();
-
-            Activator.Activate<CohortSummaryAggregateGraphUI>(_collection);
-        }
+        Activator.Activate<CohortSummaryAggregateGraphUI>(_collection);
     }
 }

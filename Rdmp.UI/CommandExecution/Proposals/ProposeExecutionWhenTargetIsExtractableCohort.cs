@@ -9,28 +9,27 @@ using Rdmp.Core.DataExport.Data;
 using Rdmp.UI.CohortUI;
 using Rdmp.UI.ItemActivation;
 
-namespace Rdmp.UI.CommandExecution.Proposals
+namespace Rdmp.UI.CommandExecution.Proposals;
+
+class ProposeExecutionWhenTargetIsExtractableCohort : RDMPCommandExecutionProposal<ExtractableCohort>
 {
-    class ProposeExecutionWhenTargetIsExtractableCohort : RDMPCommandExecutionProposal<ExtractableCohort>
+    public ProposeExecutionWhenTargetIsExtractableCohort(IActivateItems activator):base(activator)
     {
-        public ProposeExecutionWhenTargetIsExtractableCohort(IActivateItems activator):base(activator)
-        {
-        }
+    }
 
-        public override bool CanActivate(ExtractableCohort target)
-        {
-            return true;
-        }
+    public override bool CanActivate(ExtractableCohort target)
+    {
+        return true;
+    }
 
-        public override void Activate(ExtractableCohort target)
-        {
-            ItemActivator.Activate<ExtractableCohortUI, ExtractableCohort>(target);
-        }
+    public override void Activate(ExtractableCohort target)
+    {
+        ItemActivator.Activate<ExtractableCohortUI, ExtractableCohort>(target);
+    }
 
-        public override ICommandExecution ProposeExecution(ICombineToMakeCommand cmd, ExtractableCohort target, InsertOption insertOption = InsertOption.Default)
-        {
-            //no command possible, dragged command must have been something else
-            return null;
-        }
+    public override ICommandExecution ProposeExecution(ICombineToMakeCommand cmd, ExtractableCohort target, InsertOption insertOption = InsertOption.Default)
+    {
+        //no command possible, dragged command must have been something else
+        return null;
     }
 }

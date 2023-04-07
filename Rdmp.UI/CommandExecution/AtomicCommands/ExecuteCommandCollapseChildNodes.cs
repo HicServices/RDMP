@@ -13,78 +13,77 @@ using ReusableLibraryCode.Icons.IconProvision;
 using SixLabors.ImageSharp;
 using SixLabors.ImageSharp.PixelFormats;
 
-namespace Rdmp.UI.CommandExecution.AtomicCommands
+namespace Rdmp.UI.CommandExecution.AtomicCommands;
+
+public class ExecuteCommandCollapseChildNodes : BasicUICommandExecution,IAtomicCommand
 {
-    public class ExecuteCommandCollapseChildNodes : BasicUICommandExecution,IAtomicCommand
+    private readonly RDMPCollectionCommonFunctionality _commonFunctionality;
+    private readonly object _rootToCollapseTo;
+
+    public ExecuteCommandCollapseChildNodes(IActivateItems activator,RDMPCollectionCommonFunctionality commonFunctionality, object rootToCollapseTo) : base(activator)
     {
-        private readonly RDMPCollectionCommonFunctionality _commonFunctionality;
-        private readonly object _rootToCollapseTo;
+        _commonFunctionality = commonFunctionality;
+        _rootToCollapseTo = rootToCollapseTo;
 
-        public ExecuteCommandCollapseChildNodes(IActivateItems activator,RDMPCollectionCommonFunctionality commonFunctionality, object rootToCollapseTo) : base(activator)
+        // collapse all with no node selected collapses whole tree
+        if (_rootToCollapseTo is RDMPCollection)
         {
-            _commonFunctionality = commonFunctionality;
-            _rootToCollapseTo = rootToCollapseTo;
+            return;
+        }
 
-            // collapse all with no node selected collapses whole tree
+        if (!_commonFunctionality.Tree.IsExpanded(rootToCollapseTo))
+            SetImpossible("Node is not expanded");
+
+        Weight = 100.4f;
+    }
+
+    public override string GetCommandName()
+    {
+        if (_rootToCollapseTo is RDMPCollection && string.IsNullOrWhiteSpace(OverrideCommandName))
+        {
+            return "Collapse All";
+        }
+
+        return base.GetCommandName();
+    }
+
+    public override void Execute()
+    {
+        base.Execute();
+            
+        _commonFunctionality.Tree.BeginUpdate();
+        try
+        {
+
             if (_rootToCollapseTo is RDMPCollection)
             {
+                _commonFunctionality.Tree.CollapseAll();
                 return;
             }
 
-            if (!_commonFunctionality.Tree.IsExpanded(rootToCollapseTo))
-                SetImpossible("Node is not expanded");
+            //collapse all children
+            foreach (object o in _commonFunctionality.CoreChildProvider.GetAllChildrenRecursively(_rootToCollapseTo))
+                if (_commonFunctionality.Tree.IsExpanded(o))
+                    _commonFunctionality.Tree.Collapse(o);
 
-            Weight = 100.4f;
+            //and collapse the root
+            _commonFunctionality.Tree.Collapse(_rootToCollapseTo);
+
+            //then expand it to depth 1
+            _commonFunctionality.ExpandToDepth(1,_rootToCollapseTo);
+
+            var index = _commonFunctionality.Tree.IndexOf(_rootToCollapseTo);
+            if(index != -1)
+                _commonFunctionality.Tree.EnsureVisible(index);
         }
-
-        public override string GetCommandName()
+        finally
         {
-            if (_rootToCollapseTo is RDMPCollection && string.IsNullOrWhiteSpace(OverrideCommandName))
-            {
-                return "Collapse All";
-            }
-
-            return base.GetCommandName();
+            _commonFunctionality.Tree.EndUpdate();
         }
+    }
 
-        public override void Execute()
-        {
-            base.Execute();
-            
-            _commonFunctionality.Tree.BeginUpdate();
-            try
-            {
-
-                if (_rootToCollapseTo is RDMPCollection)
-                {
-                    _commonFunctionality.Tree.CollapseAll();
-                    return;
-                }
-
-                //collapse all children
-                foreach (object o in _commonFunctionality.CoreChildProvider.GetAllChildrenRecursively(_rootToCollapseTo))
-                    if (_commonFunctionality.Tree.IsExpanded(o))
-                        _commonFunctionality.Tree.Collapse(o);
-
-                //and collapse the root
-                _commonFunctionality.Tree.Collapse(_rootToCollapseTo);
-
-                //then expand it to depth 1
-                _commonFunctionality.ExpandToDepth(1,_rootToCollapseTo);
-
-                var index = _commonFunctionality.Tree.IndexOf(_rootToCollapseTo);
-                if(index != -1)
-                    _commonFunctionality.Tree.EnsureVisible(index);
-            }
-            finally
-            {
-                _commonFunctionality.Tree.EndUpdate();
-            }
-        }
-
-        public override Image<Rgba32> GetImage(IIconProvider iconProvider)
-        {
-            return Image.Load<Rgba32>(CatalogueIcons.collapseAllNodes);
-        }
+    public override Image<Rgba32> GetImage(IIconProvider iconProvider)
+    {
+        return Image.Load<Rgba32>(CatalogueIcons.collapseAllNodes);
     }
 }

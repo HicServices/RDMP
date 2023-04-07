@@ -6,18 +6,17 @@
 
 using Rdmp.Core;
 
-namespace ResearchDataManagementPlatform.WindowManagement.Events
-{
-    /// <summary>
-    /// Arguments for when an RDMPCollection has been made visible (opened)
-    /// </summary>
-    public class RDMPCollectionCreatedEventHandlerArgs
-    {
-        public readonly RDMPCollection Collection;
+namespace ResearchDataManagementPlatform.WindowManagement.Events;
 
-        public RDMPCollectionCreatedEventHandlerArgs(RDMPCollection collection)
-        {
-            Collection = collection;
-        }
+/// <summary>
+/// Arguments for when an RDMPCollection has been made visible (opened)
+/// </summary>
+public class RDMPCollectionCreatedEventHandlerArgs
+{
+    public readonly RDMPCollection Collection;
+
+    public RDMPCollectionCreatedEventHandlerArgs(RDMPCollection collection)
+    {
+        Collection = collection;
     }
 }

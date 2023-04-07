@@ -8,26 +8,25 @@ using Rdmp.Core.CommandExecution.AtomicCommands;
 using Rdmp.UI.ItemActivation;
 using Rdmp.UI.LocationsMenu;
 
-namespace Rdmp.UI.CommandExecution.AtomicCommands
+namespace Rdmp.UI.CommandExecution.AtomicCommands;
+
+public class ExecuteCommandConfigureDefaultServers : BasicUICommandExecution,IAtomicCommand
 {
-    public class ExecuteCommandConfigureDefaultServers : BasicUICommandExecution,IAtomicCommand
+    public ExecuteCommandConfigureDefaultServers(IActivateItems activator) : base(activator)
     {
-        public ExecuteCommandConfigureDefaultServers(IActivateItems activator) : base(activator)
-        {
 
-        }
+    }
 
-        public override string GetCommandHelp()
-        {
-            return "Change which server is the default for a given use case e.g. Logging, DQE etc";
-        }
+    public override string GetCommandHelp()
+    {
+        return "Change which server is the default for a given use case e.g. Logging, DQE etc";
+    }
 
-        public override void Execute()
-        {
-            base.Execute();
+    public override void Execute()
+    {
+        base.Execute();
 
-            var manageServers = new ServerDefaultsUI(Activator);
-            manageServers.Show();
-        }
+        var manageServers = new ServerDefaultsUI(Activator);
+        manageServers.Show();
     }
 }

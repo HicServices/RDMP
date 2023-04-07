@@ -10,27 +10,26 @@ using Rdmp.Core.Icons.IconOverlays;
 using ReusableLibraryCode.Icons.IconProvision;
 using SixLabors.ImageSharp.PixelFormats;
 
-namespace Rdmp.Core.Icons.IconProvision.StateBasedIconProviders
+namespace Rdmp.Core.Icons.IconProvision.StateBasedIconProviders;
+
+public class ExtractableCohortStateBasedIconProvider : IObjectStateBasedIconProvider
 {
-    public class ExtractableCohortStateBasedIconProvider : IObjectStateBasedIconProvider
+    private readonly IconOverlayProvider _overlayProvider;
+    private readonly Image<Rgba32> _basicIcon;
+
+    public ExtractableCohortStateBasedIconProvider(IconOverlayProvider overlayProvider)
     {
-        private readonly IconOverlayProvider _overlayProvider;
-        private readonly Image<Rgba32> _basicIcon;
+        _overlayProvider = overlayProvider;
+        _basicIcon = Image.Load<Rgba32>(CatalogueIcons.ExtractableCohort);
+    }
 
-        public ExtractableCohortStateBasedIconProvider(IconOverlayProvider overlayProvider)
-        {
-            _overlayProvider = overlayProvider;
-            _basicIcon = Image.Load<Rgba32>(CatalogueIcons.ExtractableCohort);
-        }
+    public Image<Rgba32> GetImageIfSupportedObject(object o)
+    {
+        if (o is ExtractableCohort cohort)
+            return cohort.IsDeprecated
+                ? _overlayProvider.GetOverlay(_basicIcon, OverlayKind.Deprecated)
+                : _basicIcon;
 
-        public Image<Rgba32> GetImageIfSupportedObject(object o)
-        {
-            if (o is ExtractableCohort cohort)
-                return cohort.IsDeprecated
-                    ? _overlayProvider.GetOverlay(_basicIcon, OverlayKind.Deprecated)
-                    : _basicIcon;
-
-            return null;
-        }
+        return null;
     }
 }

@@ -7,23 +7,22 @@
 using MapsDirectlyToDatabaseTable;
 using Rdmp.Core.CommandLine.Runners;
 
-namespace Rdmp.Core.CommandLine.Options
-{
-    /// <summary>
-    /// Describes a series of commands to run in sequence.
-    /// </summary>
-    public  class RdmpScript
-    {        
-        /// <summary>
-        /// Commands which should be run by a <see cref="ExecuteCommandRunner"/>
-        /// </summary>
-        /// <value></value>
-        public string[] Commands {get;set;}
+namespace Rdmp.Core.CommandLine.Options;
 
-        /// <summary>
-        /// True (default) to use a <see cref="NewObjectPool"/> to track objects created as the script is run
-        /// to improve argument matching when there are multiple objects that match a parameter e.g. CatalogueItem:chi
-        /// </summary>
-        public bool UseScope { get; set; } = true;
-    }
+/// <summary>
+/// Describes a series of commands to run in sequence.
+/// </summary>
+public  class RdmpScript
+{        
+    /// <summary>
+    /// Commands which should be run by a <see cref="ExecuteCommandRunner"/>
+    /// </summary>
+    /// <value></value>
+    public string[] Commands {get;set;}
+
+    /// <summary>
+    /// True (default) to use a <see cref="NewObjectPool"/> to track objects created as the script is run
+    /// to improve argument matching when there are multiple objects that match a parameter e.g. CatalogueItem:chi
+    /// </summary>
+    public bool UseScope { get; set; } = true;
 }

@@ -11,168 +11,167 @@ using System.Linq;
 using FAnsi.Discovery;
 using ReusableLibraryCode.Settings;
 
-namespace Rdmp.Core.Logging.PastEvents
+namespace Rdmp.Core.Logging.PastEvents;
+
+/// <summary>
+/// Readonly historical version of DataLoadInfo.  The central hierarchical RDMP logging database records activites across all areas of the program in a central
+/// place.  You can process these records programatically via LogManager.  This class contains public properties for each of the sub concepts (Errors, Progress
+/// messages, Tables loaded etc).  See Logging.cd for more information
+/// </summary>
+public class ArchivalDataLoadInfo : IArchivalLoggingRecordOfPastEvent, IComparable
 {
-    /// <summary>
-    /// Readonly historical version of DataLoadInfo.  The central hierarchical RDMP logging database records activites across all areas of the program in a central
-    /// place.  You can process these records programatically via LogManager.  This class contains public properties for each of the sub concepts (Errors, Progress
-    /// messages, Tables loaded etc).  See Logging.cd for more information
-    /// </summary>
-    public class ArchivalDataLoadInfo : IArchivalLoggingRecordOfPastEvent, IComparable
+    private readonly DiscoveredDatabase _loggingDatabase;
+
+    public int ID { get; private set; }
+    public int DataLoadTaskID { get; set; }
+    public const int MaxDescriptionLength = 300;
+
+    public DateTime StartTime { get; internal set; }
+    public DateTime? EndTime { get; internal set; }
+
+    public bool HasErrors => _knownErrors.Value.Any();
+
+    public string ToShortString()
     {
-        private readonly DiscoveredDatabase _loggingDatabase;
+        var s = ToString();
+        if (s.Length > ArchivalDataLoadInfo.MaxDescriptionLength)
+            return s.Substring(0, ArchivalDataLoadInfo.MaxDescriptionLength) + "...";
+        return s;
+    }
 
-        public int ID { get; private set; }
-        public int DataLoadTaskID { get; set; }
-        public const int MaxDescriptionLength = 300;
-
-        public DateTime StartTime { get; internal set; }
-        public DateTime? EndTime { get; internal set; }
-
-        public bool HasErrors => _knownErrors.Value.Any();
-
-        public string ToShortString()
+    public override string ToString()
+    {
+        string elapsed = "";
+        if (EndTime != null)
         {
-            var s = ToString();
-            if (s.Length > ArchivalDataLoadInfo.MaxDescriptionLength)
-                return s.Substring(0, ArchivalDataLoadInfo.MaxDescriptionLength) + "...";
-            return s;
+            var ts = EndTime.Value.Subtract(StartTime);
+            elapsed = $" ({ts.TotalHours:N0}:{ts.Minutes:D2}:{ts.Seconds:D2})";
         }
 
-        public override string ToString()
-        {
-            string elapsed = "";
-            if (EndTime != null)
-            {
-                var ts = EndTime.Value.Subtract(StartTime);
-                elapsed = $" ({ts.TotalHours:N0}:{ts.Minutes:D2}:{ts.Seconds:D2})";
-            }
-
-            return Description + "(ID="+ID +") - " + StartTime + " - " + (EndTime != null ? EndTime.ToString() : "<DidNotFinish>") + elapsed;
-        }
+        return Description + "(ID="+ID +") - " + StartTime + " - " + (EndTime != null ? EndTime.ToString() : "<DidNotFinish>") + elapsed;
+    }
 
     
-        /// <summary>
-        /// All tables loaded during the run
-        /// </summary>
-        public List<ArchivalTableLoadInfo>  TableLoadInfos { get { return _knownTableInfos.Value; }}
-        /// <summary>
-        /// All errors that occured during the run
-        /// </summary>
-        public List<ArchivalFatalError> Errors { get { return _knownErrors.Value; } }
-        /// <summary>
-        /// All progress messages recorded during the run
-        /// </summary>
-        public List<ArchivalProgressLog> Progress { get { return _knownProgress.Value; } }
+    /// <summary>
+    /// All tables loaded during the run
+    /// </summary>
+    public List<ArchivalTableLoadInfo>  TableLoadInfos { get { return _knownTableInfos.Value; }}
+    /// <summary>
+    /// All errors that occured during the run
+    /// </summary>
+    public List<ArchivalFatalError> Errors { get { return _knownErrors.Value; } }
+    /// <summary>
+    /// All progress messages recorded during the run
+    /// </summary>
+    public List<ArchivalProgressLog> Progress { get { return _knownProgress.Value; } }
 
-        readonly Lazy<List<ArchivalTableLoadInfo>> _knownTableInfos;
-        readonly Lazy<List<ArchivalFatalError>> _knownErrors;
-        readonly Lazy<List<ArchivalProgressLog>> _knownProgress;
+    readonly Lazy<List<ArchivalTableLoadInfo>> _knownTableInfos;
+    readonly Lazy<List<ArchivalFatalError>> _knownErrors;
+    readonly Lazy<List<ArchivalProgressLog>> _knownProgress;
         
-        public string Description { get; set; }
+    public string Description { get; set; }
 
-        /// <summary>
-        /// Creates a blank unknown instance not associated with a logging database
-        /// Use this constructor for testing only.
-        /// </summary>
-        internal ArchivalDataLoadInfo()
-        {
+    /// <summary>
+    /// Creates a blank unknown instance not associated with a logging database
+    /// Use this constructor for testing only.
+    /// </summary>
+    internal ArchivalDataLoadInfo()
+    {
 
-        }
+    }
         
-        internal ArchivalDataLoadInfo(DbDataReader r,DiscoveredDatabase loggingDatabase)
-        {
-            _loggingDatabase = loggingDatabase;
-            ID = Convert.ToInt32(r["ID"]);
-            DataLoadTaskID = Convert.ToInt32(r["dataLoadTaskID"]);
+    internal ArchivalDataLoadInfo(DbDataReader r,DiscoveredDatabase loggingDatabase)
+    {
+        _loggingDatabase = loggingDatabase;
+        ID = Convert.ToInt32(r["ID"]);
+        DataLoadTaskID = Convert.ToInt32(r["dataLoadTaskID"]);
             
-            //populate basic facts from the table
-            StartTime = (DateTime)r["startTime"];
-            if (r["endTime"] == null || r["endTime"] == DBNull.Value)
-                EndTime = null;
+        //populate basic facts from the table
+        StartTime = (DateTime)r["startTime"];
+        if (r["endTime"] == null || r["endTime"] == DBNull.Value)
+            EndTime = null;
+        else
+            EndTime = Convert.ToDateTime(r["endTime"]);
+
+        Description = r["description"] as string;
+
+        _knownTableInfos = new Lazy<List<ArchivalTableLoadInfo>>(GetTableInfos);
+        _knownErrors = new Lazy<List<ArchivalFatalError>>(GetErrors);
+        _knownProgress = new Lazy<List<ArchivalProgressLog>>(GetProgress);
+    }
+
+
+    public int CompareTo(object obj)
+    {
+        var other = obj as ArchivalDataLoadInfo;
+        if (other != null)
+            if (StartTime == other.StartTime)
+                return 0;
             else
-                EndTime = Convert.ToDateTime(r["endTime"]);
+                return StartTime > other.StartTime ? 1 : -1;
 
-            Description = r["description"] as string;
+        return System.String.Compare(ToString(), obj.ToString(), System.StringComparison.Ordinal);
+    }
 
-            _knownTableInfos = new Lazy<List<ArchivalTableLoadInfo>>(GetTableInfos);
-            _knownErrors = new Lazy<List<ArchivalFatalError>>(GetErrors);
-            _knownProgress = new Lazy<List<ArchivalProgressLog>>(GetProgress);
-        }
+    private List<ArchivalTableLoadInfo> GetTableInfos()
+    {
+        List<ArchivalTableLoadInfo> toReturn = new List<ArchivalTableLoadInfo>();
 
-
-        public int CompareTo(object obj)
+        using (var con = _loggingDatabase.Server.GetConnection())
         {
-            var other = obj as ArchivalDataLoadInfo;
-            if (other != null)
-                if (StartTime == other.StartTime)
-                    return 0;
-                else
-                    return StartTime > other.StartTime ? 1 : -1;
+            con.Open();
 
-            return System.String.Compare(ToString(), obj.ToString(), System.StringComparison.Ordinal);
-        }
-
-        private List<ArchivalTableLoadInfo> GetTableInfos()
-        {
-            List<ArchivalTableLoadInfo> toReturn = new List<ArchivalTableLoadInfo>();
-
-            using (var con = _loggingDatabase.Server.GetConnection())
-            {
-                con.Open();
-
-                using(var cmd =  _loggingDatabase.Server.GetCommand("SELECT * FROM TableLoadRun WHERE dataLoadRunID=" +ID , con))
-                    using(var r = cmd.ExecuteReader())
-                        while(r.Read())
-                        {
-                            var audit = new ArchivalTableLoadInfo(this, r, _loggingDatabase);
+            using(var cmd =  _loggingDatabase.Server.GetCommand("SELECT * FROM TableLoadRun WHERE dataLoadRunID=" +ID , con))
+            using(var r = cmd.ExecuteReader())
+                while(r.Read())
+                {
+                    var audit = new ArchivalTableLoadInfo(this, r, _loggingDatabase);
                         
-                            if((audit.Inserts??0) <= 0 && (audit.Updates??0) <= 0 && (audit.Deletes??0) <= 0 && UserSettings.HideEmptyTableLoadRunAudits)
-                            {
-                                continue;
-                            }
-                            else
-                            {
-                                toReturn.Add(audit);
-                            }
-                        }   
-            }
-
-            return toReturn;
+                    if((audit.Inserts??0) <= 0 && (audit.Updates??0) <= 0 && (audit.Deletes??0) <= 0 && UserSettings.HideEmptyTableLoadRunAudits)
+                    {
+                        continue;
+                    }
+                    else
+                    {
+                        toReturn.Add(audit);
+                    }
+                }   
         }
 
-        private List<ArchivalProgressLog> GetProgress()
+        return toReturn;
+    }
+
+    private List<ArchivalProgressLog> GetProgress()
+    {
+        List<ArchivalProgressLog> toReturn = new List<ArchivalProgressLog>();
+
+        using (var con = _loggingDatabase.Server.GetConnection())
         {
-            List<ArchivalProgressLog> toReturn = new List<ArchivalProgressLog>();
+            con.Open();
 
-            using (var con = _loggingDatabase.Server.GetConnection())
-            {
-                con.Open();
-
-                using (var cmd = _loggingDatabase.Server.GetCommand("SELECT * FROM ProgressLog WHERE dataLoadRunID=" + ID, con))
-                    using (var r = cmd.ExecuteReader())
-                        while (r.Read())
-                            toReturn.Add(new ArchivalProgressLog(r));
-            }
-
-            return toReturn;
+            using (var cmd = _loggingDatabase.Server.GetCommand("SELECT * FROM ProgressLog WHERE dataLoadRunID=" + ID, con))
+            using (var r = cmd.ExecuteReader())
+                while (r.Read())
+                    toReturn.Add(new ArchivalProgressLog(r));
         }
 
-        private List<ArchivalFatalError> GetErrors()
+        return toReturn;
+    }
+
+    private List<ArchivalFatalError> GetErrors()
+    {
+        List<ArchivalFatalError> toReturn = new List<ArchivalFatalError>();
+
+        using (var con = _loggingDatabase.Server.GetConnection())
         {
-            List<ArchivalFatalError> toReturn = new List<ArchivalFatalError>();
+            con.Open();
 
-            using (var con = _loggingDatabase.Server.GetConnection())
-            {
-                con.Open();
-
-                using(var cmd = _loggingDatabase.Server.GetCommand("SELECT * FROM FatalError WHERE dataLoadRunID=" + ID, con))
-                    using(var r = cmd.ExecuteReader())
-                        while (r.Read())
-                            toReturn.Add(new ArchivalFatalError(r));
-            }
-
-            return toReturn;
+            using(var cmd = _loggingDatabase.Server.GetCommand("SELECT * FROM FatalError WHERE dataLoadRunID=" + ID, con))
+            using(var r = cmd.ExecuteReader())
+                while (r.Read())
+                    toReturn.Add(new ArchivalFatalError(r));
         }
+
+        return toReturn;
     }
 }

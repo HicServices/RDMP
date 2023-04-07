@@ -15,46 +15,45 @@ using Rdmp.UI.ItemActivation;
 using ReusableLibraryCode.Icons.IconProvision;
 using SixLabors.ImageSharp.PixelFormats;
 
-namespace Rdmp.UI.CommandExecution.AtomicCommands
+namespace Rdmp.UI.CommandExecution.AtomicCommands;
+
+public class ExecuteCommandViewCatalogueExtractionSqlUI:BasicUICommandExecution,IAtomicCommandWithTarget
 {
-    public class ExecuteCommandViewCatalogueExtractionSqlUI:BasicUICommandExecution,IAtomicCommandWithTarget
+    private Catalogue _catalogue;
+
+    [UseWithObjectConstructor]
+    public ExecuteCommandViewCatalogueExtractionSqlUI(IActivateItems activator,Catalogue catalogue): this(activator)
     {
-        private Catalogue _catalogue;
+        _catalogue = catalogue;
+    }
 
-        [UseWithObjectConstructor]
-        public ExecuteCommandViewCatalogueExtractionSqlUI(IActivateItems activator,Catalogue catalogue): this(activator)
-        {
-            _catalogue = catalogue;
-        }
+    public ExecuteCommandViewCatalogueExtractionSqlUI(IActivateItems activator) : base(activator)
+    {
+    }
 
-        public ExecuteCommandViewCatalogueExtractionSqlUI(IActivateItems activator) : base(activator)
-        {
-        }
+    public override string GetCommandHelp()
+    {
+        return "View the query that would be executed during extraction of the dataset with the current extractable columns/transforms";
+    }
 
-        public override string GetCommandHelp()
-        {
-            return "View the query that would be executed during extraction of the dataset with the current extractable columns/transforms";
-        }
+    public override Image<Rgba32> GetImage(IIconProvider iconProvider)
+    {
+        return iconProvider.GetImage(RDMPConcept.SQL);
+    }
 
-        public override Image<Rgba32> GetImage(IIconProvider iconProvider)
-        {
-            return iconProvider.GetImage(RDMPConcept.SQL);
-        }
-
-        public IAtomicCommandWithTarget SetTarget(DatabaseEntity target)
-        {
-            _catalogue = (Catalogue) target;
+    public IAtomicCommandWithTarget SetTarget(DatabaseEntity target)
+    {
+        _catalogue = (Catalogue) target;
             
-            //if the catalogue has no extractable columns
-            if(!_catalogue.GetAllExtractionInformation(ExtractionCategory.Any).Any())
-                SetImpossible("Catalogue has no ExtractionInformations");
+        //if the catalogue has no extractable columns
+        if(!_catalogue.GetAllExtractionInformation(ExtractionCategory.Any).Any())
+            SetImpossible("Catalogue has no ExtractionInformations");
 
-            return this;
-        }
+        return this;
+    }
 
-        public override void Execute()
-        {
-            Activator.Activate<ViewExtractionSqlUI, Catalogue>(_catalogue);
-        }
+    public override void Execute()
+    {
+        Activator.Activate<ViewExtractionSqlUI, Catalogue>(_catalogue);
     }
 }

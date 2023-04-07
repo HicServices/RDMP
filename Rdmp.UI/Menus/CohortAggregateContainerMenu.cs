@@ -12,59 +12,58 @@ using Rdmp.Core.Icons.IconProvision;
 using Rdmp.UI.CommandExecution.AtomicCommands;
 using Rdmp.UI.SubComponents.Graphs;
 
-namespace Rdmp.UI.Menus
+namespace Rdmp.UI.Menus;
+
+internal class CohortAggregateContainerMenu : RDMPContextMenuStrip
 {
-    internal class CohortAggregateContainerMenu : RDMPContextMenuStrip
+    private CohortAggregateContainer _container;
+
+    public CohortAggregateContainerMenu(RDMPContextMenuStripArgs args, CohortAggregateContainer container): base( args, container)
     {
-        private CohortAggregateContainer _container;
+        _container = container;
 
-        public CohortAggregateContainerMenu(RDMPContextMenuStripArgs args, CohortAggregateContainer container): base( args, container)
+        // Don't add the 'Edit' button but do allow double clicking
+        args.SkipCommand<ExecuteCommandActivate>();
+
+        var cic = _container.GetCohortIdentificationConfiguration();
+
+        //Add Graph results of container commands
+
+        //this requires cache to exist (and be populated for the container)
+        if (cic != null && cic.QueryCachingServer_ID != null)
         {
-            _container = container;
+            var matchIdentifiers = new ToolStripMenuItem("Graph All Records For Matching Patients", _activator.CoreIconProvider.GetImage(RDMPConcept.AggregateGraph).ImageToBitmap());
 
-            // Don't add the 'Edit' button but do allow double clicking
-            args.SkipCommand<ExecuteCommandActivate>();
+            var availableGraphs = _activator.CoreChildProvider.AllAggregateConfigurations.Where(g => !g.IsCohortIdentificationAggregate).ToArray();
+            var allCatalogues = _activator.CoreChildProvider.AllCatalogues;
 
-            var cic = _container.GetCohortIdentificationConfiguration();
-
-            //Add Graph results of container commands
-
-            //this requires cache to exist (and be populated for the container)
-            if (cic != null && cic.QueryCachingServer_ID != null)
+            if (availableGraphs.Any())
             {
-                var matchIdentifiers = new ToolStripMenuItem("Graph All Records For Matching Patients", _activator.CoreIconProvider.GetImage(RDMPConcept.AggregateGraph).ImageToBitmap());
 
-                var availableGraphs = _activator.CoreChildProvider.AllAggregateConfigurations.Where(g => !g.IsCohortIdentificationAggregate).ToArray();
-                var allCatalogues = _activator.CoreChildProvider.AllCatalogues;
-
-                if (availableGraphs.Any())
+                foreach (var cata in allCatalogues.OrderBy(c => c.Name))
                 {
-
-                    foreach (var cata in allCatalogues.OrderBy(c => c.Name))
-                    {
-                        var cataGraphs = availableGraphs.Where(g => g.Catalogue_ID == cata.ID).ToArray();
+                    var cataGraphs = availableGraphs.Where(g => g.Catalogue_ID == cata.ID).ToArray();
                         
-                        //if there are no graphs belonging to the Catalogue skip it
-                        if(!cataGraphs.Any())
-                            continue;
+                    //if there are no graphs belonging to the Catalogue skip it
+                    if(!cataGraphs.Any())
+                        continue;
 
-                        //otherwise create a subheading for it
-                        var catalogueSubheading = new ToolStripMenuItem(cata.Name, CatalogueIcons.Catalogue.ImageToBitmap());
+                    //otherwise create a subheading for it
+                    var catalogueSubheading = new ToolStripMenuItem(cata.Name, CatalogueIcons.Catalogue.ImageToBitmap());
 
-                        //add graph for each in the Catalogue
-                        foreach (var graph in cataGraphs)
-                            Add(
-                                new ExecuteCommandViewCohortAggregateGraph(_activator,
-                                    new CohortSummaryAggregateGraphObjectCollection(container, graph)), Keys.None,
-                                catalogueSubheading);
+                    //add graph for each in the Catalogue
+                    foreach (var graph in cataGraphs)
+                        Add(
+                            new ExecuteCommandViewCohortAggregateGraph(_activator,
+                                new CohortSummaryAggregateGraphObjectCollection(container, graph)), Keys.None,
+                            catalogueSubheading);
 
-                        matchIdentifiers.DropDownItems.Add(catalogueSubheading);
-                    }
-
-                    Items.Add(matchIdentifiers);
+                    matchIdentifiers.DropDownItems.Add(catalogueSubheading);
                 }
+
+                Items.Add(matchIdentifiers);
             }
         }
-
     }
+
 }

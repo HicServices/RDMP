@@ -9,70 +9,69 @@ using Rdmp.Core.CommandExecution.Combining;
 using Rdmp.Core.DataExport.Data;
 using Rdmp.Core.Repositories.Construction;
 
-namespace Rdmp.Core.CommandExecution.AtomicCommands
+namespace Rdmp.Core.CommandExecution.AtomicCommands;
+
+public class ExecuteCommandAddCohortToExtractionConfiguration : BasicCommandExecution
 {
-    public class ExecuteCommandAddCohortToExtractionConfiguration : BasicCommandExecution
+    private readonly ExtractableCohortCombineable _sourceExtractableCohortComand;
+    private readonly ExtractionConfiguration _targetExtractionConfiguration;
+
+    [UseWithObjectConstructor]
+    public ExecuteCommandAddCohortToExtractionConfiguration(IBasicActivateItems activator, ExtractableCohort cohort, ExtractionConfiguration targetExtractionConfiguration)
+        : this(activator, new ExtractableCohortCombineable(cohort), targetExtractionConfiguration)
     {
-        private readonly ExtractableCohortCombineable _sourceExtractableCohortComand;
-        private readonly ExtractionConfiguration _targetExtractionConfiguration;
 
-        [UseWithObjectConstructor]
-        public ExecuteCommandAddCohortToExtractionConfiguration(IBasicActivateItems activator, ExtractableCohort cohort, ExtractionConfiguration targetExtractionConfiguration)
-            : this(activator, new ExtractableCohortCombineable(cohort), targetExtractionConfiguration)
+    }
+
+    public ExecuteCommandAddCohortToExtractionConfiguration(IBasicActivateItems activator, ExtractableCohortCombineable sourceExtractableCohortComand, ExtractionConfiguration targetExtractionConfiguration) : base(activator)
+    {
+        _sourceExtractableCohortComand = sourceExtractableCohortComand;
+        _targetExtractionConfiguration = targetExtractionConfiguration;
+
+        if(_sourceExtractableCohortComand.Cohort.IsDeprecated)
         {
-
+            SetImpossible("Cohort is deprecated");
+            return;
         }
 
-        public ExecuteCommandAddCohortToExtractionConfiguration(IBasicActivateItems activator, ExtractableCohortCombineable sourceExtractableCohortComand, ExtractionConfiguration targetExtractionConfiguration) : base(activator)
+        if(_sourceExtractableCohortComand.ErrorGettingCohortData != null)
         {
-            _sourceExtractableCohortComand = sourceExtractableCohortComand;
-            _targetExtractionConfiguration = targetExtractionConfiguration;
+            SetImpossible("Could not fetch Cohort data:" + _sourceExtractableCohortComand.ErrorGettingCohortData.Message);
+            return;
+        }
 
-            if(_sourceExtractableCohortComand.Cohort.IsDeprecated)
-            {
-                SetImpossible("Cohort is deprecated");
-                return;
-            }
+        if (_targetExtractionConfiguration.IsReleased)
+        {
+            SetImpossible("Extraction is Frozen because it has been released and is readonly, try cloning it instead");
+            return;
+        }
 
-            if(_sourceExtractableCohortComand.ErrorGettingCohortData != null)
-            {
-                SetImpossible("Could not fetch Cohort data:" + _sourceExtractableCohortComand.ErrorGettingCohortData.Message);
-                return;
-            }
+        if (!sourceExtractableCohortComand.CompatibleExtractionConfigurations.Contains(_targetExtractionConfiguration))
+        {
+            SetImpossible("Cohort has project number " + sourceExtractableCohortComand.ExternalProjectNumber + " so can only be added to ExtractionConfigurations belonging to Projects with that same number");
+            return;
+        }
 
-            if (_targetExtractionConfiguration.IsReleased)
-            {
-                SetImpossible("Extraction is Frozen because it has been released and is readonly, try cloning it instead");
-                return;
-            }
-
-            if (!sourceExtractableCohortComand.CompatibleExtractionConfigurations.Contains(_targetExtractionConfiguration))
-            {
-                SetImpossible("Cohort has project number " + sourceExtractableCohortComand.ExternalProjectNumber + " so can only be added to ExtractionConfigurations belonging to Projects with that same number");
-                return;
-            }
-
-            if(_targetExtractionConfiguration.Cohort_ID != null)
-            {
-                if(_targetExtractionConfiguration.Cohort_ID == sourceExtractableCohortComand.Cohort.ID)
-                    SetImpossible("ExtractionConfiguration already uses this cohort");
-                else
-                    SetImpossible("ExtractionConfiguration already uses a different cohort (delete the relationship to the old cohort first)");
+        if(_targetExtractionConfiguration.Cohort_ID != null)
+        {
+            if(_targetExtractionConfiguration.Cohort_ID == sourceExtractableCohortComand.Cohort.ID)
+                SetImpossible("ExtractionConfiguration already uses this cohort");
+            else
+                SetImpossible("ExtractionConfiguration already uses a different cohort (delete the relationship to the old cohort first)");
                 
-                return;
-            }
+            return;
+        }
 
             
-        }
+    }
 
-        public override void Execute()
-        {
-            base.Execute();
+    public override void Execute()
+    {
+        base.Execute();
 
-            _targetExtractionConfiguration.Cohort_ID = _sourceExtractableCohortComand.Cohort.ID;
-            _targetExtractionConfiguration.SaveToDatabase();
-            Publish(_targetExtractionConfiguration);
+        _targetExtractionConfiguration.Cohort_ID = _sourceExtractableCohortComand.Cohort.ID;
+        _targetExtractionConfiguration.SaveToDatabase();
+        Publish(_targetExtractionConfiguration);
 
-        }
     }
 }

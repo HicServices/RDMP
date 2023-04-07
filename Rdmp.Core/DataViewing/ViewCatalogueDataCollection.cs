@@ -16,105 +16,104 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 
-namespace Rdmp.Core.DataViewing
+namespace Rdmp.Core.DataViewing;
+
+/// <summary>
+/// Collection for generating SQL around the extractable columns of a catalogue
+/// </summary>
+public class ViewCatalogueDataCollection : PersistableObjectCollection, IViewSQLAndResultsCollection
 {
+    QueryBuilder builder;
+
+    public Catalogue Catalogue {get => DatabaseObjects.OfType<Catalogue>().FirstOrDefault();}
+
+    public IFilter[] Filters {get => DatabaseObjects.OfType<IFilter>().ToArray();}
+        
+    public ExtractionInformation[] ExtractionInformations {get => DatabaseObjects.OfType<ExtractionInformation>().ToArray();}
+
     /// <summary>
-    /// Collection for generating SQL around the extractable columns of a catalogue
+    /// The number of records to fetch (or null to fetch all records)
     /// </summary>
-    public class ViewCatalogueDataCollection : PersistableObjectCollection, IViewSQLAndResultsCollection
+    public int? TopX { get; set; }
+
+    public ViewCatalogueDataCollection(Catalogue catalogue)
     {
-        QueryBuilder builder;
+        DatabaseObjects.Add(catalogue);
+    }
 
-        public Catalogue Catalogue {get => DatabaseObjects.OfType<Catalogue>().FirstOrDefault();}
+    /// <summary>
+    /// Persistence constructor 
+    /// </summary>
+    public ViewCatalogueDataCollection()
+    {
 
-        public IFilter[] Filters {get => DatabaseObjects.OfType<IFilter>().ToArray();}
+    }
         
-        public ExtractionInformation[] ExtractionInformations {get => DatabaseObjects.OfType<ExtractionInformation>().ToArray();}
+    private void BuildBuilder()
+    {
+        if(builder != null)
+            return;
 
-        /// <summary>
-        /// The number of records to fetch (or null to fetch all records)
-        /// </summary>
-        public int? TopX { get; set; }
-
-        public ViewCatalogueDataCollection(Catalogue catalogue)
-        {
-            DatabaseObjects.Add(catalogue);
-        }
-
-        /// <summary>
-        /// Persistence constructor 
-        /// </summary>
-        public ViewCatalogueDataCollection()
-        {
-
-        }
-        
-        private void BuildBuilder()
-        {
-            if(builder != null)
-                return;
-
-            builder = new QueryBuilder(null,null);
+        builder = new QueryBuilder(null,null);
             
-            if(TopX.HasValue)
-                builder.TopX = TopX.Value;
+        if(TopX.HasValue)
+            builder.TopX = TopX.Value;
 
-            var cols = ExtractionInformations;
+        var cols = ExtractionInformations;
 
-            // if there are no explicit columns use all
-            if (!cols.Any())
-            {
-                cols = 
-                    Catalogue.GetAllExtractionInformation(ExtractionCategory.Core)
+        // if there are no explicit columns use all
+        if (!cols.Any())
+        {
+            cols = 
+                Catalogue.GetAllExtractionInformation(ExtractionCategory.Core)
                     .Union(Catalogue.GetAllExtractionInformation(ExtractionCategory.ProjectSpecific))
                     .ToArray();
-            }
-
-            builder.AddColumnRange(cols);
-
-            List<ExtractionFilter> filters = new List<ExtractionFilter>();
-
-            foreach (ExtractionFilter f in Filters)
-                filters.Add(f);
-
-            builder.RootFilterContainer = new SpontaneouslyInventedFilterContainer(new MemoryCatalogueRepository(), null,filters.ToArray(),FilterContainerOperation.AND);
-            builder.RegenerateSQL();
         }
 
-        public void AdjustAutocomplete(IAutoCompleteProvider autoComplete)
-        {
-            BuildBuilder();
+        builder.AddColumnRange(cols);
 
-            foreach(var t in builder.TablesUsedInQuery)
-                autoComplete.Add(t);
-        }
+        List<ExtractionFilter> filters = new List<ExtractionFilter>();
 
-        public IDataAccessPoint GetDataAccessPoint()
-        {
-            BuildBuilder();
-            return builder.TablesUsedInQuery.FirstOrDefault();
-        }
+        foreach (ExtractionFilter f in Filters)
+            filters.Add(f);
 
-        public IQuerySyntaxHelper GetQuerySyntaxHelper()
-        {
-            BuildBuilder();
-            return builder.QuerySyntaxHelper;
-        }
+        builder.RootFilterContainer = new SpontaneouslyInventedFilterContainer(new MemoryCatalogueRepository(), null,filters.ToArray(),FilterContainerOperation.AND);
+        builder.RegenerateSQL();
+    }
 
-        public string GetSql()
-        {
-            BuildBuilder();
-            return builder.SQL;
-        }
+    public void AdjustAutocomplete(IAutoCompleteProvider autoComplete)
+    {
+        BuildBuilder();
 
-        public string GetTabName()
-        {
-            return Catalogue.Name;
-        }
+        foreach(var t in builder.TablesUsedInQuery)
+            autoComplete.Add(t);
+    }
 
-        public IEnumerable<DatabaseEntity> GetToolStripObjects()
-        {
-            yield return Catalogue;
-        }
+    public IDataAccessPoint GetDataAccessPoint()
+    {
+        BuildBuilder();
+        return builder.TablesUsedInQuery.FirstOrDefault();
+    }
+
+    public IQuerySyntaxHelper GetQuerySyntaxHelper()
+    {
+        BuildBuilder();
+        return builder.QuerySyntaxHelper;
+    }
+
+    public string GetSql()
+    {
+        BuildBuilder();
+        return builder.SQL;
+    }
+
+    public string GetTabName()
+    {
+        return Catalogue.Name;
+    }
+
+    public IEnumerable<DatabaseEntity> GetToolStripObjects()
+    {
+        yield return Catalogue;
     }
 }

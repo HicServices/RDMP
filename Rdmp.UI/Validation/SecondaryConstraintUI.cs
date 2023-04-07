@@ -21,295 +21,294 @@ using Rdmp.Core.Validation.Constraints.Secondary.Predictor;
 using Rdmp.Core.Validation.UIAttributes;
 using ReusableLibraryCode;
 
-namespace Rdmp.UI.Validation
+namespace Rdmp.UI.Validation;
+
+internal delegate void RequestDeletionHandler(object sender);
+
+/// <summary>
+/// Part of <see cref="ValidationSetupUI"/>, this control is for configuring/viewing a single validation rule on a column/transform of a dataset (Catalogue).  For example it might be a NotNull
+/// validation constraint which means rows with a null value in this field will fail validation.  Why would you do this you ask? when you can have a database constraint in your data
+/// repository that prevents null values? well sometimes research data is quite dirty and if a problematic field(especially if it is a non-essential column) is sometimes worth allowing
+/// it through even though it's null and highlighting problem records with the validation rule NotNull.
+/// 
+/// <para>Other secondary constraints include Regex patterns, standard regexes (See StandardRegexUI), referential integrity constraints etc.</para>
+/// 
+/// <para>Each constraint has a Consequence (Missing, Wrong, Invalidates Row) these are used to classify the state of each row in the Data Quality Engine when running validation.  For example
+/// if you have 2 cells in a row that are both failing validation, one with a consequence of Missing and one with a consequence of Wrong then the entire row is classified as 'Wrong' 
+/// overall.</para>
+/// </summary>
+public partial class SecondaryConstraintUI : UserControl
 {
-    internal delegate void RequestDeletionHandler(object sender);
+    private readonly string[] _otherColumns;
+
+    private readonly ICatalogueRepository _repository;
 
     /// <summary>
-    /// Part of <see cref="ValidationSetupUI"/>, this control is for configuring/viewing a single validation rule on a column/transform of a dataset (Catalogue).  For example it might be a NotNull
-    /// validation constraint which means rows with a null value in this field will fail validation.  Why would you do this you ask? when you can have a database constraint in your data
-    /// repository that prevents null values? well sometimes research data is quite dirty and if a problematic field(especially if it is a non-essential column) is sometimes worth allowing
-    /// it through even though it's null and highlighting problem records with the validation rule NotNull.
-    /// 
-    /// <para>Other secondary constraints include Regex patterns, standard regexes (See StandardRegexUI), referential integrity constraints etc.</para>
-    /// 
-    /// <para>Each constraint has a Consequence (Missing, Wrong, Invalidates Row) these are used to classify the state of each row in the Data Quality Engine when running validation.  For example
-    /// if you have 2 cells in a row that are both failing validation, one with a consequence of Missing and one with a consequence of Wrong then the entire row is classified as 'Wrong' 
-    /// overall.</para>
+    /// this UI exists to modify this property, the secondary constraint, it is entirely driven by reflection so should handle any SecondaryConstraint you throw at it
     /// </summary>
-    public partial class SecondaryConstraintUI : UserControl
-    {
-        private readonly string[] _otherColumns;
+    public SecondaryConstraint SecondaryConstriant;
 
-        private readonly ICatalogueRepository _repository;
+    /// <summary>
+    /// A record of the writeable properties in the SecondaryConstraint you threw at it
+    /// </summary>
+    PropertyInfo[] _requiredProperties;
 
-        /// <summary>
-        /// this UI exists to modify this property, the secondary constraint, it is entirely driven by reflection so should handle any SecondaryConstraint you throw at it
-        /// </summary>
-        public SecondaryConstraint SecondaryConstriant;
-
-        /// <summary>
-        /// A record of the writeable properties in the SecondaryConstraint you threw at it
-        /// </summary>
-        PropertyInfo[] _requiredProperties;
-
-        internal event RequestDeletionHandler RequestDeletion;
+    internal event RequestDeletionHandler RequestDeletion;
 
         
 
-        private bool loadingComplete = false;
-        public SecondaryConstraintUI(ICatalogueRepository repository,SecondaryConstraint secondaryConstriant, string[] otherColumns)
+    private bool loadingComplete = false;
+    public SecondaryConstraintUI(ICatalogueRepository repository,SecondaryConstraint secondaryConstriant, string[] otherColumns)
+    {
+        const int rowHeight = 30;
+        //the amount of additional space required to accomodate description labels
+        int inflation = 0;
+        _repository = repository;
+        this.SecondaryConstriant = secondaryConstriant;
+            
+        _otherColumns = otherColumns;
+
+        InitializeComponent();
+            
+        if (repository == null)
+            return;
+
+        cbxConsequence.DataSource = Enum.GetValues(typeof(Consequence));
+        cbxConsequence.SelectedItem = secondaryConstriant.Consequence;
+
+        //put the name of the secondary constraint into the header
+        this.lblType.Text = SecondaryConstriant.GetType().Name;
+
+        lblConsequence.Left = lblType.Right + 5;
+        cbxConsequence.Left = lblConsequence.Right + 5;
+            
+        //work out what properties can be set on this constraint and create the relevant controls using reflection
+        _requiredProperties = secondaryConstriant.GetType().GetProperties().Where(p =>
+            p.CanRead && p.CanWrite && p.GetSetMethod(true).IsPublic
+
+            && p.Name != "Name"//skip this one, it is Writeable in order to support XMLSerialization... 
+            && p.Name != "Consequence"//skip this one because it is dealt with explicitly
+            && !p.IsDefined(typeof (HideOnValidationUI), true)
+        ).ToArray();
+
+        for (int i = 0; i < _requiredProperties.Length;i++ )
         {
-            const int rowHeight = 30;
-            //the amount of additional space required to accomodate description labels
-            int inflation = 0;
-            _repository = repository;
-            this.SecondaryConstriant = secondaryConstriant;
-            
-            _otherColumns = otherColumns;
+            var currentRowPanel = new Panel();
+            currentRowPanel.Bounds = new Rectangle(0,0,tableLayoutPanel1.Width,rowHeight);
+            currentRowPanel.Anchor = AnchorStyles.Top | AnchorStyles.Left | AnchorStyles.Right;
+            currentRowPanel.Margin = Padding.Empty;
+                
+            tableLayoutPanel1.CellBorderStyle = TableLayoutPanelCellBorderStyle.Inset;
+                
+            tableLayoutPanel1.Controls.Add(currentRowPanel,0,i+1);
+                
+                
+            Label lblName = new Label();
+            lblName.Text = _requiredProperties[i].Name;
+            lblName.AutoSize = true;
+                
+            object currentValue = _requiredProperties[i].GetValue(SecondaryConstriant, null);
 
-            InitializeComponent();
-            
-            if (repository == null)
-                return;
 
-            cbxConsequence.DataSource = Enum.GetValues(typeof(Consequence));
-            cbxConsequence.SelectedItem = secondaryConstriant.Consequence;
-
-            //put the name of the secondary constraint into the header
-            this.lblType.Text = SecondaryConstriant.GetType().Name;
-
-            lblConsequence.Left = lblType.Right + 5;
-            cbxConsequence.Left = lblConsequence.Right + 5;
-            
-            //work out what properties can be set on this constraint and create the relevant controls using reflection
-            _requiredProperties = secondaryConstriant.GetType().GetProperties().Where(p =>
-                p.CanRead && p.CanWrite && p.GetSetMethod(true).IsPublic
-
-                && p.Name != "Name"//skip this one, it is Writeable in order to support XMLSerialization... 
-                && p.Name != "Consequence"//skip this one because it is dealt with explicitly
-                && !p.IsDefined(typeof (HideOnValidationUI), true)
-                ).ToArray();
-
-            for (int i = 0; i < _requiredProperties.Length;i++ )
+            //Hard Typed properties - Bool
+            if (_requiredProperties[i].PropertyType == typeof(bool))
             {
-                var currentRowPanel = new Panel();
-                currentRowPanel.Bounds = new Rectangle(0,0,tableLayoutPanel1.Width,rowHeight);
-                currentRowPanel.Anchor = AnchorStyles.Top | AnchorStyles.Left | AnchorStyles.Right;
-                currentRowPanel.Margin = Padding.Empty;
-                
-                tableLayoutPanel1.CellBorderStyle = TableLayoutPanelCellBorderStyle.Inset;
-                
-                tableLayoutPanel1.Controls.Add(currentRowPanel,0,i+1);
-                
-                
-                Label lblName = new Label();
-                lblName.Text = _requiredProperties[i].Name;
-                lblName.AutoSize = true;
-                
-                object currentValue = _requiredProperties[i].GetValue(SecondaryConstriant, null);
-
-
-                //Hard Typed properties - Bool
-                if (_requiredProperties[i].PropertyType == typeof(bool))
-                {
-                    CheckBox boolControl = new CheckBox();
-                    boolControl.Text = _requiredProperties[i].Name;
-                    boolControl.Tag = i;
-                    boolControl.Checked = (bool)currentValue;
+                CheckBox boolControl = new CheckBox();
+                boolControl.Text = _requiredProperties[i].Name;
+                boolControl.Tag = i;
+                boolControl.Checked = (bool)currentValue;
                     
-                    boolControl.CheckStateChanged += (s, e) => _requiredProperties[(int) boolControl.Tag].SetValue(SecondaryConstriant, boolControl.Checked,null);
-                    currentRowPanel.Controls.Add(boolControl);
-                }
-                else
-                    if (_requiredProperties[i].PropertyType == typeof(PredictionRule))//Hard Typed property PredictionRule
+                boolControl.CheckStateChanged += (s, e) => _requiredProperties[(int) boolControl.Tag].SetValue(SecondaryConstriant, boolControl.Checked,null);
+                currentRowPanel.Controls.Add(boolControl);
+            }
+            else
+            if (_requiredProperties[i].PropertyType == typeof(PredictionRule))//Hard Typed property PredictionRule
+            {
+                //for prediction rules fields
+                ComboBox cbx = new ComboBox();
+                cbx.Items.AddRange(Validator.GetPredictionExtraTypes());
+                cbx.Items.Add("");
+                cbx.DropDownStyle = ComboBoxStyle.DropDownList;
+                cbx.DisplayMember = "Name";
+                cbx.Tag = i;
+                cbx.SelectedIndexChanged += (s, e) => _requiredProperties[(int)cbx.Tag].SetValue(SecondaryConstriant, cbx.SelectedItem is Type ? Activator.CreateInstance((Type)cbx.SelectedItem) : null);
+                cbx.Width = 200;
+
+                //The dropdown box is a list of Types but we are actually instantiating a value when user selects it (for XML Serialization).  Consequently we must now get the Type for selection purposes
+                if (currentValue != null)
+                    cbx.SelectedItem = currentValue.GetType();
+                    
+                currentRowPanel.Controls.Add(lblName);
+                    
+                cbx.Left = lblName.Right + 5;
+                currentRowPanel.Controls.Add(cbx);
+            }
+            else
+            {
+                
+                //it's a value control (basically anything that can be represented by text (i.e. not a boolean))
+                Control valueControl;
+                
+                //if it is expects a column then create a dropdown box 
+                if (_requiredProperties[i].IsDefined(typeof (ExpectsColumnNameAsInput), true))
                 {
-                    //for prediction rules fields
+                    //for column fields
                     ComboBox cbx = new ComboBox();
-                    cbx.Items.AddRange(Validator.GetPredictionExtraTypes());
+                    cbx.Items.AddRange(_otherColumns);
                     cbx.Items.Add("");
                     cbx.DropDownStyle = ComboBoxStyle.DropDownList;
-                    cbx.DisplayMember = "Name";
                     cbx.Tag = i;
-                    cbx.SelectedIndexChanged += (s, e) => _requiredProperties[(int)cbx.Tag].SetValue(SecondaryConstriant, cbx.SelectedItem is Type ? Activator.CreateInstance((Type)cbx.SelectedItem) : null);
-                    cbx.Width = 200;
+                    cbx.SelectedIndexChanged += (s, e) => _requiredProperties[(int)cbx.Tag].SetValue(SecondaryConstriant, UsefulStuff.ChangeType(cbx.SelectedItem, _requiredProperties[(int)cbx.Tag].PropertyType), null);
+                    cbx.Width = 350;
+                        
+                    valueControl = cbx;
 
-                    //The dropdown box is a list of Types but we are actually instantiating a value when user selects it (for XML Serialization).  Consequently we must now get the Type for selection purposes
-                    if (currentValue != null)
-                        cbx.SelectedItem = currentValue.GetType();
-                    
-                    currentRowPanel.Controls.Add(lblName);
-                    
-                    cbx.Left = lblName.Right + 5;
-                    currentRowPanel.Controls.Add(cbx);
                 }
                 else
+                if (typeof(IMapsDirectlyToDatabaseTable).IsAssignableFrom(_requiredProperties[i].PropertyType))//it is a Catalogue type 
                 {
-                
-                    //it's a value control (basically anything that can be represented by text (i.e. not a boolean))
-                    Control valueControl;
-                
-                    //if it is expects a column then create a dropdown box 
-                    if (_requiredProperties[i].IsDefined(typeof (ExpectsColumnNameAsInput), true))
-                    {
-                        //for column fields
-                        ComboBox cbx = new ComboBox();
-                        cbx.Items.AddRange(_otherColumns);
-                        cbx.Items.Add("");
-                        cbx.DropDownStyle = ComboBoxStyle.DropDownList;
-                        cbx.Tag = i;
-                        cbx.SelectedIndexChanged += (s, e) => _requiredProperties[(int)cbx.Tag].SetValue(SecondaryConstriant, UsefulStuff.ChangeType(cbx.SelectedItem, _requiredProperties[(int)cbx.Tag].PropertyType), null);
-                        cbx.Width = 350;
+                    ComboBox dd = new ComboBox();
+                    dd.Tag = i;
+                    dd.Width = 350;
+                    dd.AutoCompleteSource = AutoCompleteSource.ListItems;
+                    dd.AutoCompleteMode = AutoCompleteMode.Suggest;
+                    var entities = _repository.GetAllObjects(_requiredProperties[i].PropertyType).ToArray();
                         
-                        valueControl = cbx;
-
+                    if (!entities.Any())
+                    {
+                        if (_requiredProperties[i].PropertyType == typeof(StandardRegex))
+                            MessageBox.Show("You currently do not have any standard regex concepts in your database.  These can be created from the Table(Advanced) collection.",
+                                "No StandardRegex configured in your Catalogue");
+                        else
+                            MessageBox.Show("You currently do not have any " + _requiredProperties[i].PropertyType + " in your database","Catalogue Entity Collection Empty");
                     }
                     else
-                    if (typeof(IMapsDirectlyToDatabaseTable).IsAssignableFrom(_requiredProperties[i].PropertyType))//it is a Catalogue type 
                     {
-                        ComboBox dd = new ComboBox();
-                        dd.Tag = i;
-                        dd.Width = 350;
-                        dd.AutoCompleteSource = AutoCompleteSource.ListItems;
-                        dd.AutoCompleteMode = AutoCompleteMode.Suggest;
-                        var entities = _repository.GetAllObjects(_requiredProperties[i].PropertyType).ToArray();
-                        
-                        if (!entities.Any())
-                        {
-                            if (_requiredProperties[i].PropertyType == typeof(StandardRegex))
-                                MessageBox.Show("You currently do not have any standard regex concepts in your database.  These can be created from the Table(Advanced) collection.",
-                                "No StandardRegex configured in your Catalogue");
-                            else
-                                MessageBox.Show("You currently do not have any " + _requiredProperties[i].PropertyType + " in your database","Catalogue Entity Collection Empty");
-                        }
-                        else
-                        {
-                            dd.Items.Add("<<Clear>>");
-                            dd.Items.AddRange(entities);
-                            dd.SelectedIndexChanged += (s, e) => _requiredProperties[(int)dd.Tag].SetValue(SecondaryConstriant, dd.SelectedItem as IMapsDirectlyToDatabaseTable, null);
-                        }
-
-                        //See if it has a value
-                        IRevertable v = _requiredProperties[i].GetValue(SecondaryConstriant, null) as IRevertable;
-
-                        //It has a value, this is a dropdown control right here though so if the revertable state out of date then it means someone else made a change to the database while we were picking columns
-                        if(v != null)
-                            v.RevertToDatabaseState(); 
-
-                        valueControl = dd;
-
-                    }
-                    else //otherwise create a textbox
-                    {
-                        //for string fields
-                        valueControl = new TextBox();
-
-                        //if they edit this then write it to the SecondaryConstraint... we can't put i in directly because it goes out of scope so instead we stuff it into Tag and then
-                        //get it back at delegate execution time when they change the text.
-                        valueControl.Tag = i;
-                        valueControl.TextChanged += setTextOrParseableProperty;
-
-                        if (_requiredProperties[i].IsDefined(typeof (ExpectsLotsOfText), true))
-                            valueControl.Width = 300;
-
+                        dd.Items.Add("<<Clear>>");
+                        dd.Items.AddRange(entities);
+                        dd.SelectedIndexChanged += (s, e) => _requiredProperties[(int)dd.Tag].SetValue(SecondaryConstriant, dd.SelectedItem as IMapsDirectlyToDatabaseTable, null);
                     }
 
-                    if (currentValue != null)
-                        valueControl.Text = _requiredProperties[i].GetValue(SecondaryConstriant, null).ToString().Replace("00:00:00","");
+                    //See if it has a value
+                    IRevertable v = _requiredProperties[i].GetValue(SecondaryConstriant, null) as IRevertable;
 
-                    currentRowPanel.Controls.Add(lblName);
+                    //It has a value, this is a dropdown control right here though so if the revertable state out of date then it means someone else made a change to the database while we were picking columns
+                    if(v != null)
+                        v.RevertToDatabaseState(); 
 
-                    valueControl.Left = lblName.Right + 5;
-                    currentRowPanel.Controls.Add(valueControl);
+                    valueControl = dd;
+
+                }
+                else //otherwise create a textbox
+                {
+                    //for string fields
+                    valueControl = new TextBox();
+
+                    //if they edit this then write it to the SecondaryConstraint... we can't put i in directly because it goes out of scope so instead we stuff it into Tag and then
+                    //get it back at delegate execution time when they change the text.
+                    valueControl.Tag = i;
+                    valueControl.TextChanged += setTextOrParseableProperty;
+
+                    if (_requiredProperties[i].IsDefined(typeof (ExpectsLotsOfText), true))
+                        valueControl.Width = 300;
+
                 }
 
-                var desc = _requiredProperties[i].GetCustomAttribute<DescriptionAttribute>();
+                if (currentValue != null)
+                    valueControl.Text = _requiredProperties[i].GetValue(SecondaryConstriant, null).ToString().Replace("00:00:00","");
+
+                currentRowPanel.Controls.Add(lblName);
+
+                valueControl.Left = lblName.Right + 5;
+                currentRowPanel.Controls.Add(valueControl);
+            }
+
+            var desc = _requiredProperties[i].GetCustomAttribute<DescriptionAttribute>();
                 
-                if (desc != null)
-                {
-                    var lbl = new Label();
+            if (desc != null)
+            {
+                var lbl = new Label();
 
-                    lbl.AutoSize = true;
-                    lbl.Text = desc.Description;
+                lbl.AutoSize = true;
+                lbl.Text = desc.Description;
 
-                    lbl.Font = new Font(lbl.Font,FontStyle.Italic);
+                lbl.Font = new Font(lbl.Font,FontStyle.Italic);
 
-                    //make some space for it
-                    inflation += lbl.Height -7;
-                    lbl.Top = rowHeight - 7;
+                //make some space for it
+                inflation += lbl.Height -7;
+                lbl.Top = rowHeight - 7;
                     
-                    currentRowPanel.Controls.Add(lbl);
-                    currentRowPanel.Height = rowHeight + lbl.Height;
-                }
+                currentRowPanel.Controls.Add(lbl);
+                currentRowPanel.Height = rowHeight + lbl.Height;
             }
-
-            //first row
-            tableLayoutPanel1.RowStyles[0].SizeType = SizeType.AutoSize;
-
-            Height = (_requiredProperties.Length * rowHeight) + 45 + inflation;
-
-            loadingComplete = true;
-
         }
 
-        private void setTextOrParseableProperty(object sender, EventArgs e)
+        //first row
+        tableLayoutPanel1.RowStyles[0].SizeType = SizeType.AutoSize;
+
+        Height = (_requiredProperties.Length * rowHeight) + 45 + inflation;
+
+        loadingComplete = true;
+
+    }
+
+    private void setTextOrParseableProperty(object sender, EventArgs e)
+    {
+        Control senderAsControl = (Control) sender;
+        int propertyIdx = (int) senderAsControl.Tag;
+
+        try
         {
-            Control senderAsControl = (Control) sender;
-            int propertyIdx = (int) senderAsControl.Tag;
-
-            try
-            {
-                if (string.IsNullOrWhiteSpace(senderAsControl.Text))
-                    _requiredProperties[propertyIdx].SetValue(SecondaryConstriant, null, null);
-                else
-                {
-                    Type underlyingType = _requiredProperties[propertyIdx].PropertyType;
-                    _requiredProperties[propertyIdx].SetValue(SecondaryConstriant, UsefulStuff.ChangeType(senderAsControl.Text, underlyingType), null);        
-                }
-
-                
-                
-                senderAsControl.ForeColor = Color.Black;
-                lblException.Text = "";
-            }
-            catch (Exception ex)
-            {
-                senderAsControl.ForeColor = Color.Red;
-
-                //find the innermost exception
-                int overflow = 0;
-                string msg = ex.Message;
-                while (ex.InnerException != null && overflow < 3) //only display up to 3 exception messages
-                {
-                    ex = ex.InnerException;
-
-                    if(ex != null)
-                        msg += "," + ex.Message;
-
-                    overflow++;
-                }
-                
-                lblException.Text = msg.Trim(',');
-            }
-            
-        }
-
-        private void btnDelete_Click(object sender, EventArgs e)
-        {
-            if (RequestDeletion != null)
-                RequestDeletion(this);
+            if (string.IsNullOrWhiteSpace(senderAsControl.Text))
+                _requiredProperties[propertyIdx].SetValue(SecondaryConstriant, null, null);
             else
-                throw new Exception("User requested to delete but nobody is listening to the RequestDeletion event!");
+            {
+                Type underlyingType = _requiredProperties[propertyIdx].PropertyType;
+                _requiredProperties[propertyIdx].SetValue(SecondaryConstriant, UsefulStuff.ChangeType(senderAsControl.Text, underlyingType), null);        
+            }
+
+                
+                
+            senderAsControl.ForeColor = Color.Black;
+            lblException.Text = "";
         }
+        catch (Exception ex)
+        {
+            senderAsControl.ForeColor = Color.Red;
+
+            //find the innermost exception
+            int overflow = 0;
+            string msg = ex.Message;
+            while (ex.InnerException != null && overflow < 3) //only display up to 3 exception messages
+            {
+                ex = ex.InnerException;
+
+                if(ex != null)
+                    msg += "," + ex.Message;
+
+                overflow++;
+            }
+                
+            lblException.Text = msg.Trim(',');
+        }
+            
+    }
+
+    private void btnDelete_Click(object sender, EventArgs e)
+    {
+        if (RequestDeletion != null)
+            RequestDeletion(this);
+        else
+            throw new Exception("User requested to delete but nobody is listening to the RequestDeletion event!");
+    }
 
         
-        private void cbxConsequence_SelectedIndexChanged(object sender, EventArgs e)
-        {
-            if (!loadingComplete)
-                return;
+    private void cbxConsequence_SelectedIndexChanged(object sender, EventArgs e)
+    {
+        if (!loadingComplete)
+            return;
 
-            if (cbxConsequence.SelectedItem != null)
-                SecondaryConstriant.Consequence = (Consequence)cbxConsequence.SelectedItem;
-        }
+        if (cbxConsequence.SelectedItem != null)
+            SecondaryConstriant.Consequence = (Consequence)cbxConsequence.SelectedItem;
     }
 }

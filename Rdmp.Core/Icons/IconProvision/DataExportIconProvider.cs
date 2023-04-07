@@ -13,42 +13,41 @@ using Rdmp.Core.Icons.IconProvision.StateBasedIconProviders;
 using ReusableLibraryCode.Icons.IconProvision;
 using SixLabors.ImageSharp.PixelFormats;
 
-namespace Rdmp.Core.Icons.IconProvision
+namespace Rdmp.Core.Icons.IconProvision;
+
+public class DataExportIconProvider : CatalogueIconProvider
 {
-    public class DataExportIconProvider : CatalogueIconProvider
+    public DataExportIconProvider(IRDMPPlatformRepositoryServiceLocator repositoryLocator, IIconProvider[] pluginIconProviders) : base(repositoryLocator, pluginIconProviders)
     {
-        public DataExportIconProvider(IRDMPPlatformRepositoryServiceLocator repositoryLocator, IIconProvider[] pluginIconProviders) : base(repositoryLocator, pluginIconProviders)
+        //Calls to the Resource manager cause file I/O (I think or at the least CPU use anyway) so cache them all at once  
+        StateBasedIconProviders.Add(new ExtractableDataSetStateBasedIconProvider(OverlayProvider,CatalogueStateBasedIconProvider));
+        StateBasedIconProviders.Add(new ExtractionConfigurationStateBasedIconProvider(this));
+    }
+
+    protected override Image<Rgba32> GetImageImpl(object concept, OverlayKind kind = OverlayKind.None)
+    {
+        if (concept is LinkedCohortNode)
+            return base.GetImageImpl(RDMPConcept.ExtractableCohort, OverlayKind.Link);
+
+        if (concept as Type == typeof(SelectedDataSets))
+            return base.GetImageImpl(RDMPConcept.ExtractableDataSet);
+
+        if (concept is SelectedDataSets sds)
+            return base.GetImageImpl(sds.ExtractableDataSet);
+
+        if (concept is PackageContentNode pcn)
+            return base.GetImageImpl(pcn.DataSet);
+
+        if (concept is ProjectCohortIdentificationConfigurationAssociation)
         {
-            //Calls to the Resource manager cause file I/O (I think or at the least CPU use anyway) so cache them all at once  
-            StateBasedIconProviders.Add(new ExtractableDataSetStateBasedIconProvider(OverlayProvider,CatalogueStateBasedIconProvider));
-            StateBasedIconProviders.Add(new ExtractionConfigurationStateBasedIconProvider(this));
+            var cic = ((ProjectCohortIdentificationConfigurationAssociation)concept).CohortIdentificationConfiguration;
+            //return image based on cic (will include frozen graphic if frozen)
+            return cic != null ? GetImageImpl(cic, OverlayKind.Link) :
+                //it's an orphan or user cannot fetch the cic for some reason
+                GetImageImpl(RDMPConcept.CohortIdentificationConfiguration, OverlayKind.Link);
         }
 
-        protected override Image<Rgba32> GetImageImpl(object concept, OverlayKind kind = OverlayKind.None)
-        {
-            if (concept is LinkedCohortNode)
-                return base.GetImageImpl(RDMPConcept.ExtractableCohort, OverlayKind.Link);
-
-            if (concept as Type == typeof(SelectedDataSets))
-                return base.GetImageImpl(RDMPConcept.ExtractableDataSet);
-
-            if (concept is SelectedDataSets sds)
-                return base.GetImageImpl(sds.ExtractableDataSet);
-
-            if (concept is PackageContentNode pcn)
-                return base.GetImageImpl(pcn.DataSet);
-
-            if (concept is ProjectCohortIdentificationConfigurationAssociation)
-            {
-                var cic = ((ProjectCohortIdentificationConfigurationAssociation)concept).CohortIdentificationConfiguration;
-                //return image based on cic (will include frozen graphic if frozen)
-                return cic != null ? GetImageImpl(cic, OverlayKind.Link) :
-                    //it's an orphan or user cannot fetch the cic for some reason
-                    GetImageImpl(RDMPConcept.CohortIdentificationConfiguration, OverlayKind.Link);
-            }
-
-            //fallback on parent implementation if none of the above unique snowflake cases are met
-            return base.GetImageImpl(concept, kind);
-        }
+        //fallback on parent implementation if none of the above unique snowflake cases are met
+        return base.GetImageImpl(concept, kind);
     }
 }

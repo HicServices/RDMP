@@ -14,20 +14,19 @@ using Rdmp.Core.Logging;
 using Rdmp.Core.Repositories;
 using ReusableLibraryCode.Progress;
 
-namespace Rdmp.Core.DataLoad.Engine.Job.Scheduling
+namespace Rdmp.Core.DataLoad.Engine.Job.Scheduling;
+
+/// <summary>
+/// DataLoadJob that is part of an ongoing data load where only specific dates are loaded.  Typically this involves advancing the head of a LoadProgress
+/// (e.g. 'Load the next 5 days of LoadProgress - Tayside Biochemistry Load').
+/// </summary>
+public class ScheduledDataLoadJob : DataLoadJob
 {
-    /// <summary>
-    /// DataLoadJob that is part of an ongoing data load where only specific dates are loaded.  Typically this involves advancing the head of a LoadProgress
-    /// (e.g. 'Load the next 5 days of LoadProgress - Tayside Biochemistry Load').
-    /// </summary>
-    public class ScheduledDataLoadJob : DataLoadJob
-    {
-        public ILoadProgress LoadProgress { get; set; }
-        public List<DateTime> DatesToRetrieve { get; set; }
+    public ILoadProgress LoadProgress { get; set; }
+    public List<DateTime> DatesToRetrieve { get; set; }
         
-        public ScheduledDataLoadJob(IRDMPPlatformRepositoryServiceLocator repositoryLocator, string description, ILogManager logManager, ILoadMetadata loadMetadata, ILoadDirectory directory, IDataLoadEventListener listener,HICDatabaseConfiguration configuration)
-            : base(repositoryLocator, description, logManager, loadMetadata, directory, listener, configuration)
-        {
-        }
+    public ScheduledDataLoadJob(IRDMPPlatformRepositoryServiceLocator repositoryLocator, string description, ILogManager logManager, ILoadMetadata loadMetadata, ILoadDirectory directory, IDataLoadEventListener listener,HICDatabaseConfiguration configuration)
+        : base(repositoryLocator, description, logManager, loadMetadata, directory, listener, configuration)
+    {
     }
 }

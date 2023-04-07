@@ -14,40 +14,39 @@ using ReusableLibraryCode;
 using ReusableLibraryCode.Icons.IconProvision;
 using SixLabors.ImageSharp.PixelFormats;
 
-namespace Rdmp.Core.CommandExecution.AtomicCommands.Automation
+namespace Rdmp.Core.CommandExecution.AtomicCommands.Automation;
+
+public class ExecuteCommandRunDetached : AutomationCommandExecution, IAtomicCommand
 {
-    public class ExecuteCommandRunDetached : AutomationCommandExecution, IAtomicCommand
+    private string _rdmpBinaryPath;
+
+    public ExecuteCommandRunDetached(IBasicActivateItems activator, Func<RDMPCommandLineOptions> commandGetter)
+        : base(activator, commandGetter)
     {
-        private string _rdmpBinaryPath;
+        _rdmpBinaryPath = Path.Combine(UsefulStuff.GetExecutableDirectory().FullName, "cli", AutomationServiceExecutable);
 
-        public ExecuteCommandRunDetached(IBasicActivateItems activator, Func<RDMPCommandLineOptions> commandGetter)
-            : base(activator, commandGetter)
+        if (!File.Exists(_rdmpBinaryPath))
+            SetImpossible($"{_rdmpBinaryPath} did not exist");
+
+        if (!BasicActivator.IsAbleToLaunchSubprocesses)
         {
-            _rdmpBinaryPath = Path.Combine(UsefulStuff.GetExecutableDirectory().FullName, "cli", AutomationServiceExecutable);
-
-            if (!File.Exists(_rdmpBinaryPath))
-                SetImpossible($"{_rdmpBinaryPath} did not exist");
-
-            if (!BasicActivator.IsAbleToLaunchSubprocesses)
-            {
-                SetImpossible($"Client does not support launching subprocesses");
-            }
+            SetImpossible($"Client does not support launching subprocesses");
         }
+    }
 
-        public override string GetCommandHelp()
-        {
-            return "Generates the execute command line invocation (including arguments)";
-        }
+    public override string GetCommandHelp()
+    {
+        return "Generates the execute command line invocation (including arguments)";
+    }
 
-        public override Image<Rgba32> GetImage(IIconProvider iconProvider)
-        {
-            return Image.Load<Rgba32>(CatalogueIcons.Exe);
-        }
+    public override Image<Rgba32> GetImage(IIconProvider iconProvider)
+    {
+        return Image.Load<Rgba32>(CatalogueIcons.Exe);
+    }
 
-        public override void Execute()
-        {
-            base.Execute();
-            BasicActivator.LaunchSubprocess(new ProcessStartInfo(_rdmpBinaryPath, GetCommandText(true)));
-        }
+    public override void Execute()
+    {
+        base.Execute();
+        BasicActivator.LaunchSubprocess(new ProcessStartInfo(_rdmpBinaryPath, GetCommandText(true)));
     }
 }

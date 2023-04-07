@@ -13,31 +13,30 @@ using Rdmp.Core.Icons.IconProvision;
 using ReusableLibraryCode.Icons.IconProvision;
 using SixLabors.ImageSharp.PixelFormats;
 
-namespace Rdmp.Core.CommandExecution.AtomicCommands.Automation
+namespace Rdmp.Core.CommandExecution.AtomicCommands.Automation;
+
+public class ExecuteCommandGenerateRunCommand : AutomationCommandExecution, IAtomicCommand
 {
-    public class ExecuteCommandGenerateRunCommand : AutomationCommandExecution, IAtomicCommand
+    public ExecuteCommandGenerateRunCommand(IBasicActivateItems activator, Func<RDMPCommandLineOptions> commandGetter)
+        : base(activator, commandGetter)
     {
-        public ExecuteCommandGenerateRunCommand(IBasicActivateItems activator, Func<RDMPCommandLineOptions> commandGetter)
-            : base(activator, commandGetter)
-        {
 
-        }
+    }
 
-        public override string GetCommandHelp()
-        {
-            return "Generates the execute command line invocation (including arguments)";
-        }
+    public override string GetCommandHelp()
+    {
+        return "Generates the execute command line invocation (including arguments)";
+    }
 
-        public override Image<Rgba32> GetImage(IIconProvider iconProvider)
-        {
-            return iconProvider.GetImage(RDMPConcept.Clipboard);
-        }
+    public override Image<Rgba32> GetImage(IIconProvider iconProvider)
+    {
+        return iconProvider.GetImage(RDMPConcept.Clipboard);
+    }
 
-        public override void Execute()
-        {
-            base.Execute();
+    public override void Execute()
+    {
+        base.Execute();
 
-            BasicActivator.Show(GetCommandText());
-        }
+        BasicActivator.Show(GetCommandText());
     }
 }

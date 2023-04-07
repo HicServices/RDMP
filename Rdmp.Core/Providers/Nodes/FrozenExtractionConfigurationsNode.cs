@@ -8,43 +8,42 @@ using System;
 using Rdmp.Core.Curation.Data.Cohort;
 using Rdmp.Core.DataExport.Data;
 
-namespace Rdmp.Core.Providers.Nodes
+namespace Rdmp.Core.Providers.Nodes;
+
+/// <summary>
+/// Collection of all previously extracted (and now readonly) <see cref="ExtractionConfiguration"/>s in a given <see cref="Project"/>
+/// </summary>
+class FrozenExtractionConfigurationsNode:Node , IOrderable
 {
-    /// <summary>
-    /// Collection of all previously extracted (and now readonly) <see cref="ExtractionConfiguration"/>s in a given <see cref="Project"/>
-    /// </summary>
-    class FrozenExtractionConfigurationsNode:Node , IOrderable
+    public Project Project { get; set; }
+
+    public FrozenExtractionConfigurationsNode(Project project)
     {
-        public Project Project { get; set; }
-
-        public FrozenExtractionConfigurationsNode(Project project)
-        {
-            Project = project;
-        }
-
-        public override string ToString()
-        {
-            return "Frozen Extraction Configurations";
-        }
-
-        protected bool Equals(FrozenExtractionConfigurationsNode other)
-        {
-            return Equals(Project, other.Project);
-        }
-
-        public override bool Equals(object obj)
-        {
-            if (ReferenceEquals(null, obj)) return false;
-            if (ReferenceEquals(this, obj)) return true;
-            if (obj.GetType() != this.GetType()) return false;
-            return Equals((FrozenExtractionConfigurationsNode) obj);
-        }
-
-        public override int GetHashCode()
-        {
-            return (Project != null ? Project.GetHashCode() : 0);
-        }
-
-        public int Order { get { return 6000; } set{} }
+        Project = project;
     }
+
+    public override string ToString()
+    {
+        return "Frozen Extraction Configurations";
+    }
+
+    protected bool Equals(FrozenExtractionConfigurationsNode other)
+    {
+        return Equals(Project, other.Project);
+    }
+
+    public override bool Equals(object obj)
+    {
+        if (ReferenceEquals(null, obj)) return false;
+        if (ReferenceEquals(this, obj)) return true;
+        if (obj.GetType() != this.GetType()) return false;
+        return Equals((FrozenExtractionConfigurationsNode) obj);
+    }
+
+    public override int GetHashCode()
+    {
+        return (Project != null ? Project.GetHashCode() : 0);
+    }
+
+    public int Order { get { return 6000; } set{} }
 }
