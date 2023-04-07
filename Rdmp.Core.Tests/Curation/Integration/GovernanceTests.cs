@@ -25,7 +25,14 @@ public class GovernanceTests:DatabaseTests
     {
         //delete all governance periods
         foreach (var governancePeriod in toCleanup)
-            governancePeriod.DeleteInDatabase();
+            try
+            {
+                governancePeriod.DeleteInDatabase();
+            }
+            catch (Exception e)
+            {
+                Console.WriteLine($"Ignoring exception {e.Message} during clean up");
+            }
     }
 
     [Test]
