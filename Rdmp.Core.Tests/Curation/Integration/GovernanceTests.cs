@@ -20,6 +20,14 @@ namespace Rdmp.Core.Tests.Curation.Integration;
 
 public class GovernanceTests:DatabaseTests
 {
+    [OneTimeTearDown]
+    protected void OneTimeTearDown()
+    {
+        //delete all governance periods
+        foreach (var governancePeriod in toCleanup)
+            governancePeriod.DeleteInDatabase();
+    }
+
     [Test]
     public void TestCreatingGovernance_StartsAtToday()
     {

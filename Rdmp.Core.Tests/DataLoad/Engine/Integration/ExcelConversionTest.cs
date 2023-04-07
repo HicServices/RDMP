@@ -31,6 +31,17 @@ public class ExcelConversionTest
         _parentDir = testDir.CreateSubdirectory("ExcelConversionTest");
         _dirsToCleanUp.Push(_parentDir);
     }
+
+    [OneTimeTearDown]
+    protected virtual void OneTimeTearDown()
+    {
+        while (_dirsToCleanUp.Count > 0)
+        {
+            var dir = _dirsToCleanUp.Pop();
+            if (dir.Exists)
+                dir.Delete(true);
+        }
+    }
         
     private LoadDirectory CreateLoadDirectoryForTest(string directoryName)
     {

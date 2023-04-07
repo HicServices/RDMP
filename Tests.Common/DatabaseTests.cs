@@ -466,6 +466,15 @@ public class DatabaseTests
     {
 
     }
+
+    [TearDown]
+    protected void TearDown()
+    {
+        foreach (var discoveredDatabase in forCleanup)
+        {
+            discoveredDatabase.Drop();
+        }
+    }
    
     private void StartupOnDatabaseFound(object sender, PlatformDatabaseFoundEventArgs args)
     { 
@@ -739,7 +748,7 @@ delete from {1}..Project
 
         Assert.IsTrue(database.Exists());
 
-        //if it had non standard naming mark it for deletion on cleanup
+        //if it had non standard naming mark it for deletion on clean-up
         if (!isStandardDb)
             forCleanup.Add(database);
 

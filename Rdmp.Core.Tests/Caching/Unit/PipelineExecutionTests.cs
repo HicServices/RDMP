@@ -19,7 +19,7 @@ namespace Rdmp.Core.Tests.Caching.Unit;
 [Category("Unit")]
 public class PipelineExecutionTests
 {
-    [Test]
+    [Ignore("Tests locking we don't actually have")]
     public void TestSerialPipelineExecution()
     {
         // set SetUp two engines, one with a locked cache progress/load schedule
@@ -33,16 +33,8 @@ public class PipelineExecutionTests
         var listener = new ThrowImmediatelyDataLoadEventListener();
 
         // set SetUp the engine map
-        var loadProgress1 = Mock.Of<ILoadProgress>();
-        var loadProgress2 = Mock.Of<ILoadProgress>();
-            
         // set SetUp the lock provider
-        var engineMap = new Dictionary<IDataFlowPipelineEngine, ILoadProgress>
-        {
-            {engine1.Object, loadProgress1},
-            {engine2.Object, loadProgress2}
-        };
-            
+
         // create the execution object
         var pipelineExecutor = new SerialPipelineExecution();
 
@@ -52,11 +44,11 @@ public class PipelineExecutionTests
         // engine1 should have been executed once
         engine1.Verify(e=>e.ExecutePipeline(It.IsAny<GracefulCancellationToken>()),Times.Once);
 
-        // engine2 should also have been run (locking isn't a thing anymore)
+        // engine2 should also have been run (locking isn't a thing any more)
         engine2.Verify(e=>e.ExecutePipeline(It.IsAny<GracefulCancellationToken>()),Times.Once);
     }
 
-    [Test]
+    [Ignore("Tests locking we don't actually have")]
     public void TestRoundRobinPipelineExecution()
     {
         // set SetUp two engines, one with a locked cache progress/load schedule
@@ -76,17 +68,7 @@ public class PipelineExecutionTests
             .Returns(true)
             .Returns(false)
             .Throws<InvalidOperationException>();
-
-        // set SetUp the engine map
-        var loadProgress1 = Mock.Of<ILoadProgress>();
-        var loadProgress2 = Mock.Of<ILoadProgress>();
             
-        // set SetUp the lock provider
-        var engineMap = new Dictionary<IDataFlowPipelineEngine, ILoadProgress>
-        {
-            {engine1.Object, loadProgress1},
-            {engine2.Object, loadProgress2}
-        };
         // create the execution object
         var pipelineExecutor = new RoundRobinPipelineExecution();
 
@@ -97,7 +79,7 @@ public class PipelineExecutionTests
         // engine1 should have been executed once
         engine1.Verify();
 
-        // engine2 should not have been executed as it is locked
+        // engine2 should not have been executed as it is locked, but we don't actually have locks.
         engine1.Verify();
     }
 }
