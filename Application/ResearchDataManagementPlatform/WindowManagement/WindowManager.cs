@@ -6,7 +6,6 @@
 
 using System;
 using System.Collections.Generic;
-using System.Drawing;
 using System.Linq;
 using Rdmp.Core;
 using Rdmp.Core.CommandExecution;

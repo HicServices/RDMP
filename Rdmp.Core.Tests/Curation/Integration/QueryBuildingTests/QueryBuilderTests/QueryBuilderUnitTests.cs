@@ -8,8 +8,6 @@ using NUnit.Framework;
 using Rdmp.Core.Curation.Data;
 using Rdmp.Core.QueryBuilding;
 using System;
-using System.Collections.Generic;
-using System.Text;
 using Tests.Common;
 
 namespace Rdmp.Core.Tests.Curation.Integration.QueryBuildingTests.QueryBuilderTests;

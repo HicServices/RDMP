@@ -16,7 +16,6 @@ using Rdmp.Core.Icons.IconProvision;
 using Rdmp.Core.MapsDirectlyToDatabaseTable;
 using Rdmp.UI.ItemActivation;
 using Rdmp.UI.TestsAndSetup.ServicePropogation;
-using ReusableLibraryCode.Icons;
 
 namespace Rdmp.UI.ExtractionUIs.JoinsAndLookups;
 

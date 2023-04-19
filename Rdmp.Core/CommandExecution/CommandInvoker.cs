@@ -9,7 +9,6 @@ using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Reflection;
-using System.Runtime.Serialization;
 using System.Text.RegularExpressions;
 using FAnsi.Discovery;
 using Rdmp.Core.CommandExecution.AtomicCommands;

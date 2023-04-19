@@ -6,11 +6,7 @@
 
 using NUnit.Framework;
 using Rdmp.Core.Curation.Data.Cohort;
-using System;
-using System.Collections.Generic;
 using System.Linq;
-using System.Text;
-using Tests.Common;
 
 namespace Rdmp.Core.Tests.CohortCreation;
 

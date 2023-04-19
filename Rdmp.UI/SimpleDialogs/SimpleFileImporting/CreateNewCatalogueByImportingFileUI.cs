@@ -13,7 +13,6 @@ using System.Threading;
 using System.Threading.Tasks;
 using System.Windows.Forms;
 using FAnsi.Discovery;
-using Rdmp.Core.CommandExecution.AtomicCommands;
 using Rdmp.Core.CommandExecution.AtomicCommands.CatalogueCreationCommands;
 using Rdmp.Core.Curation;
 using Rdmp.Core.Curation.Data;
@@ -33,7 +32,6 @@ using Rdmp.UI.TestsAndSetup.ServicePropogation;
 using Rdmp.UI.TransparentHelpSystem;
 using Rdmp.UI.Tutorials;
 using ReusableLibraryCode.Checks;
-using ReusableLibraryCode.Icons;
 using ReusableLibraryCode.Progress;
 
 namespace Rdmp.UI.SimpleDialogs.SimpleFileImporting;

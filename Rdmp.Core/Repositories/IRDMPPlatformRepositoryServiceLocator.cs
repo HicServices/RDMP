@@ -5,7 +5,6 @@
 // You should have received a copy of the GNU General Public License along with RDMP. If not, see <https://www.gnu.org/licenses/>.
 
 using Rdmp.Core.DataQualityEngine.Data;
-using Rdmp.Core.Providers;
 using System;
 using System.Collections.Generic;
 using Rdmp.Core.MapsDirectlyToDatabaseTable;

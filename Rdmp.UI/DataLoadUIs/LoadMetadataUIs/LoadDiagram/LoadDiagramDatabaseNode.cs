@@ -15,7 +15,6 @@ using Rdmp.Core.Icons.IconProvision;
 using Rdmp.Core.Providers.Nodes;
 using Rdmp.UI.DataLoadUIs.LoadMetadataUIs.LoadDiagram.StateDiscovery;
 using ReusableLibraryCode;
-using ReusableLibraryCode.Icons;
 
 namespace Rdmp.UI.DataLoadUIs.LoadMetadataUIs.LoadDiagram;
 

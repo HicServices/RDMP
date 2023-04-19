@@ -27,7 +27,6 @@ using Rdmp.Core.QueryBuilding;
 using Rdmp.Core.QueryCaching.Aggregation;
 using Rdmp.Core.QueryCaching.Aggregation.Arguments;
 using Rdmp.Core.Reports;
-using Rdmp.UI.CommandExecution.AtomicCommands;
 using Rdmp.UI.ItemActivation;
 using Rdmp.UI.ScintillaHelper;
 using Rdmp.UI.SimpleDialogs;
@@ -37,7 +36,6 @@ using ReusableLibraryCode.Checks;
 using ReusableLibraryCode.DataAccess;
 using ReusableLibraryCode.Extensions;
 using ScintillaNET;
-using SixLabors.ImageSharp.PixelFormats;
 
 namespace Rdmp.UI.AggregationUIs;
 

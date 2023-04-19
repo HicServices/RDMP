@@ -6,19 +6,13 @@
 
 using Rdmp.Core.CommandExecution;
 using Rdmp.Core.CommandExecution.AtomicCommands;
-using Rdmp.Core.CommandExecution.AtomicCommands.CatalogueCreationCommands;
-using Rdmp.Core.CommandLine.Gui.Windows;
-using Rdmp.Core.CommandLine.Gui.Windows.RunnerWindows;
-using Rdmp.Core.CommandLine.Options;
 using Rdmp.Core.Curation.Data;
-using Rdmp.Core.Curation.Data.Cache;
 using Rdmp.Core.Curation.Data.Cohort;
 using Rdmp.Core.Curation.Data.DataLoad;
 using Rdmp.Core.Databases;
 using Rdmp.Core.DataExport.Data;
 using Rdmp.Core.Providers;
 using Rdmp.Core.Providers.Nodes;
-using Rdmp.Core.Providers.Nodes.CohortNodes;
 using ReusableLibraryCode.Settings;
 using System;
 using System.Collections.Generic;

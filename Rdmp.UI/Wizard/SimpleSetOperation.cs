@@ -8,7 +8,6 @@ using System;
 using System.Windows.Forms;
 using Rdmp.Core.Curation.Data.Cohort;
 using Rdmp.UI.ItemActivation;
-using ReusableLibraryCode.Icons;
 
 namespace Rdmp.UI.Wizard;
 

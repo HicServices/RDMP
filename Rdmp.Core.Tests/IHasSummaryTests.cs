@@ -7,10 +7,6 @@
 using NUnit.Framework;
 using Rdmp.Core.Curation.Data;
 using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using Tests.Common;
 
 namespace Rdmp.Core.Tests;

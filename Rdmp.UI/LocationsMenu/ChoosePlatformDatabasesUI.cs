@@ -13,7 +13,6 @@ using System.Threading.Tasks;
 using System.Windows.Forms;
 using FAnsi;
 using Rdmp.Core.CommandLine.DatabaseCreation;
-using Rdmp.Core.CommandLine.Interactive;
 using Rdmp.Core.CommandLine.Options;
 using Rdmp.Core.Curation.Checks;
 using Rdmp.Core.Curation.Data.Pipelines;

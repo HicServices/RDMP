@@ -8,9 +8,7 @@ using Rdmp.Core.CommandExecution;
 using Rdmp.Core.CommandExecution.AtomicCommands;
 using Rdmp.UI.Collections;
 using Rdmp.UI.ItemActivation;
-using Rdmp.UI.SimpleDialogs;
 using System.Linq;
-using System.Windows.Forms;
 using Rdmp.Core.MapsDirectlyToDatabaseTable;
 
 namespace Rdmp.UI.CommandExecution.AtomicCommands;

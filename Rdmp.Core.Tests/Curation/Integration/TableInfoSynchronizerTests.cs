@@ -11,7 +11,6 @@ using NUnit.Framework;
 using Rdmp.Core.Curation;
 using Rdmp.Core.Curation.Data;
 using ReusableLibraryCode.Checks;
-using ReusableLibraryCode.DataAccess;
 using Tests.Common;
 using TypeGuesser;
 

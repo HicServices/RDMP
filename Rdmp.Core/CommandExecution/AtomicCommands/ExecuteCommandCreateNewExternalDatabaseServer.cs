@@ -6,11 +6,9 @@
 
 using System;
 using SixLabors.ImageSharp;
-using System.Linq;
 using FAnsi.Discovery;
 using Rdmp.Core.Curation.Data;
 using Rdmp.Core.Curation.Data.Defaults;
-using Rdmp.Core.Databases;
 using Rdmp.Core.Icons.IconOverlays;
 using Rdmp.Core.Icons.IconProvision;
 using Rdmp.Core.Icons.IconProvision.StateBasedIconProviders;

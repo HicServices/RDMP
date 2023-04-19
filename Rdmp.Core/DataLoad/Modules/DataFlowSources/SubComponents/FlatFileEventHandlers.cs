@@ -7,7 +7,6 @@
 using System;
 using System.IO;
 using CsvHelper;
-using CsvHelper.Configuration;
 using Rdmp.Core.DataFlowPipeline.Requirements;
 using Rdmp.Core.DataLoad.Modules.Exceptions;
 using ReusableLibraryCode.Progress;

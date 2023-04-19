@@ -9,10 +9,8 @@ using System.IO;
 using System.Linq;
 using Rdmp.Core.Icons.IconProvision;
 using Rdmp.Core.Repositories.Construction;
-using Rdmp.Core.Repositories.Managers;
 using ReusableLibraryCode.Icons.IconProvision;
 using SixLabors.ImageSharp.PixelFormats;
-using Plugin = Rdmp.Core.Curation.Data.Plugin;
 
 namespace Rdmp.Core.CommandExecution.AtomicCommands;
 

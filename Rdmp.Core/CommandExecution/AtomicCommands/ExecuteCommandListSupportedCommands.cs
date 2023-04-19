@@ -7,7 +7,6 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text;
 using Rdmp.Core.Curation.Data;
 using ReusableLibraryCode.Checks;
 

@@ -6,7 +6,6 @@
 
 using System;
 using System.IO;
-using System.Linq;
 using System.Runtime.InteropServices;
 using CommandLine;
 using Rdmp.Core.Curation.Data;

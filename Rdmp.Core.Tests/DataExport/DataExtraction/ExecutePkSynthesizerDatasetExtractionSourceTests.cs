@@ -10,7 +10,6 @@ using System.Linq;
 using System.Text.RegularExpressions;
 using FAnsi.Discovery;
 using NUnit.Framework;
-using Rdmp.Core.CommandExecution;
 using Rdmp.Core.CommandExecution.AtomicCommands;
 using Rdmp.Core.Curation.Data;
 using Rdmp.Core.DataExport.Data;

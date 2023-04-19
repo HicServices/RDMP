@@ -5,13 +5,11 @@
 // You should have received a copy of the GNU General Public License along with RDMP. If not, see <https://www.gnu.org/licenses/>.
 
 using System;
-using System.Data.Common;
 using System.IO;
 using System.Security.Cryptography;
 using System.Xml.Serialization;
 using Rdmp.Core.Curation;
 using Rdmp.Core.MapsDirectlyToDatabaseTable.Injection;
-using ReusableLibraryCode;
 
 namespace Rdmp.Core.Repositories.Managers;
 

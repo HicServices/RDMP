@@ -6,7 +6,6 @@
 
 using System;
 using NUnit.Framework;
-using Rdmp.Core.DataLoad.Modules;
 
 namespace Rdmp.Core.Tests.Curation.Unit;
 

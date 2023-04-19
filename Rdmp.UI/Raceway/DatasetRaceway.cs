@@ -12,8 +12,6 @@ using System.Windows.Forms;
 using Rdmp.Core.CommandExecution;
 using Rdmp.Core.Curation.Data;
 using Rdmp.Core.Curation.Data.Dashboarding;
-using Rdmp.Core.DataExport.Data;
-using Rdmp.Core.DataQualityEngine;
 using Rdmp.Core.DataQualityEngine.Data;
 using Rdmp.Core.Icons.IconProvision;
 using Rdmp.Core.Providers;
@@ -22,9 +20,7 @@ using Rdmp.UI.DashboardTabs.Construction;
 using Rdmp.UI.ItemActivation;
 using Rdmp.UI.Refreshing;
 using Rdmp.UI.TestsAndSetup.ServicePropogation;
-using ReusableLibraryCode.Icons;
 using ReusableLibraryCode.Icons.IconProvision;
-using SixLabors.ImageSharp.PixelFormats;
 
 namespace Rdmp.UI.Raceway;
 

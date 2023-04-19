@@ -14,23 +14,16 @@ using BrightIdeasSoftware;
 using Rdmp.Core;
 using Rdmp.Core.CommandExecution;
 using Rdmp.Core.Curation.Data;
-using Rdmp.Core.Curation.Data.Spontaneous;
 using Rdmp.Core.DataViewing;
 using Rdmp.Core.Icons.IconProvision;
 using Rdmp.Core.MapsDirectlyToDatabaseTable;
-using Rdmp.Core.QueryBuilding;
-using Rdmp.Core.Repositories;
 using Rdmp.UI.CommandExecution.AtomicCommands;
-using Rdmp.UI.DataViewing;
 using Rdmp.UI.ItemActivation;
 using Rdmp.UI.ScintillaHelper;
 using Rdmp.UI.TestsAndSetup.ServicePropogation;
-using ReusableLibraryCode.DataAccess;
-using ReusableLibraryCode.Icons;
 using ReusableLibraryCode.Icons.IconProvision;
 
 using ScintillaNET;
-using SixLabors.ImageSharp;
 using SixLabors.ImageSharp.PixelFormats;
 
 namespace Rdmp.UI.ExtractionUIs;

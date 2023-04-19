@@ -7,11 +7,7 @@
 using NUnit.Framework;
 using Rdmp.Core.CommandLine.Interactive.Picking;
 using Rdmp.Core.Curation.Data;
-using System;
-using System.Collections.Generic;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using Rdmp.Core.MapsDirectlyToDatabaseTable;
 using Tests.Common;
 

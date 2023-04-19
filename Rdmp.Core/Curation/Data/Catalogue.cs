@@ -31,7 +31,6 @@ using ReusableLibraryCode;
 using ReusableLibraryCode.Annotations;
 using ReusableLibraryCode.Checks;
 using ReusableLibraryCode.DataAccess;
-using YamlDotNet.Serialization;
 
 namespace Rdmp.Core.Curation.Data;
 

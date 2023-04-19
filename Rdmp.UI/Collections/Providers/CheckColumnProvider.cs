@@ -12,7 +12,6 @@ using System.Windows.Forms;
 using BrightIdeasSoftware;
 using Rdmp.Core.Icons.IconProvision;
 using ReusableLibraryCode.Checks;
-using ReusableLibraryCode.Settings;
 
 namespace Rdmp.UI.Collections.Providers;
 

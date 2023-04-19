@@ -11,7 +11,6 @@ using System.Linq;
 using FAnsi;
 using FAnsi.Discovery;
 using FAnsi.Discovery.TableCreation;
-using Moq;
 using NUnit.Framework;
 using Rdmp.Core.DataFlowPipeline;
 using Rdmp.Core.DataLoad.Engine.Pipeline.Destinations;
@@ -684,9 +683,9 @@ ALTER TABLE DroppedColumnsTable add color varchar(1)
         Assert.AreEqual(14, table.DiscoverColumn("StringNotNull").DataType.GetLengthIfString());
 
     }
-    [TestCase(DatabaseType.MicrosoftSQLServer, "didn’t")]
-    [TestCase(DatabaseType.MySql, "didn’t")]
-    [TestCase(DatabaseType.Oracle, "didn’t")]
+    [TestCase(DatabaseType.MicrosoftSQLServer, "didnï¿½t")]
+    [TestCase(DatabaseType.MySql, "didnï¿½t")]
+    [TestCase(DatabaseType.Oracle, "didnï¿½t")]
     [TestCase(DatabaseType.MicrosoftSQLServer, "didn't")]
     [TestCase(DatabaseType.MySql, "didn't")]
     [TestCase(DatabaseType.Oracle, "didn't")]

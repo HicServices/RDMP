@@ -14,7 +14,6 @@ using Rdmp.Core.Repositories;
 using ReusableLibraryCode;
 using ReusableLibraryCode.Annotations;
 using ReusableLibraryCode.DataAccess;
-using static Rdmp.Core.Curation.Data.EncryptedPasswordHost;
 
 namespace Rdmp.Core.Curation.Data;
 

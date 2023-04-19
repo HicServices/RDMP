@@ -10,7 +10,6 @@ using System.Drawing;
 using System.IO;
 using System.Text.RegularExpressions;
 using System.Windows.Forms;
-using Rdmp.UI.SimpleDialogs;
 using ReusableLibraryCode;
 
 

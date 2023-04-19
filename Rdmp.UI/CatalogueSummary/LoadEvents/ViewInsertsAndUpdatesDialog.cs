@@ -9,7 +9,6 @@ using System.Collections.Generic;
 using System.Drawing;
 using System.Linq;
 using System.Windows.Forms;
-using FAnsi.Implementations.MicrosoftSQL;
 using Rdmp.Core.Curation.Data;
 using Rdmp.Core.DataLoad.Triggers;
 using Rdmp.Core.Logging.PastEvents;

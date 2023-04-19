@@ -11,10 +11,8 @@ using Rdmp.Core.Curation.Data.Spontaneous;
 using Rdmp.Core.QueryBuilding;
 using Rdmp.Core.Repositories;
 using ReusableLibraryCode.DataAccess;
-using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text;
 
 namespace Rdmp.Core.DataViewing;
 

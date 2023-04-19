@@ -5,7 +5,6 @@
 // You should have received a copy of the GNU General Public License along with RDMP. If not, see <https://www.gnu.org/licenses/>.
 
 using System;
-using System.Configuration;
 using System.Linq;
 using FAnsi.Discovery;
 using ReusableLibraryCode.Exceptions;

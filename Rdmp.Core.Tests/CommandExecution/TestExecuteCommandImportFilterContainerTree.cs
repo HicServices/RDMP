@@ -5,7 +5,6 @@
 // You should have received a copy of the GNU General Public License along with RDMP. If not, see <https://www.gnu.org/licenses/>.
 
 using NUnit.Framework;
-using Rdmp.Core.CommandExecution;
 using Rdmp.Core.CommandExecution.AtomicCommands;
 using Rdmp.Core.CommandLine.Interactive;
 using Rdmp.Core.Curation.Data;
@@ -13,11 +12,7 @@ using Rdmp.Core.Curation.Data.Aggregation;
 using Rdmp.Core.Curation.Data.Cohort;
 using Rdmp.Core.DataExport.Data;
 using ReusableLibraryCode.Checks;
-using System;
-using System.Collections.Generic;
 using System.Linq;
-using System.Text;
-using Tests.Common;
 
 namespace Rdmp.Core.Tests.CommandExecution;
 

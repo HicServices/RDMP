@@ -14,7 +14,6 @@ using Rdmp.Core.QueryCaching.Aggregation.Arguments;
 using System;
 using System.Collections.Generic;
 using System.Data;
-using System.Globalization;
 using System.Linq;
 using System.Threading;
 using Rdmp.Core.MapsDirectlyToDatabaseTable;

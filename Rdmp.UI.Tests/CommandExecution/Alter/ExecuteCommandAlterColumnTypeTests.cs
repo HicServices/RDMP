@@ -7,13 +7,8 @@
 using FAnsi;
 using FAnsi.Discovery;
 using NUnit.Framework;
-using Rdmp.Core.Curation.Data;
 using Rdmp.Core.Repositories;
-using System;
-using System.Collections.Generic;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using Rdmp.Core.CommandExecution.AtomicCommands.Alter;
 using Tests.Common;
 using TypeGuesser;

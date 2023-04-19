@@ -7,7 +7,6 @@
 using System;
 using Rdmp.Core.CommandLine.Options;
 using Rdmp.Core.Curation.Data;
-using Rdmp.Core.Curation.Data.Pipelines;
 using Rdmp.Core.DataFlowPipeline;
 using Rdmp.Core.DataLoad.Triggers;
 using Rdmp.Core.DataQualityEngine.Reports;

@@ -6,7 +6,6 @@
 
 using FAnsi.Discovery;
 using Rdmp.Core.CommandExecution;
-using Rdmp.Core.Curation.Data;
 using System.Collections.Generic;
 using Rdmp.Core.MapsDirectlyToDatabaseTable;
 

@@ -10,7 +10,6 @@ using Rdmp.Core.Curation.Data.DataLoad;
 using Rdmp.Core.Curation.Data.Defaults;
 using Rdmp.Core.DataLoad.Engine.Checks.Checkers;
 using ReusableLibraryCode.Checks;
-using System;
 using System.Linq;
 using Tests.Common;
 

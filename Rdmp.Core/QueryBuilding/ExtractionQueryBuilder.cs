@@ -7,7 +7,6 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text;
 using FAnsi.Discovery.QuerySyntax;
 using Rdmp.Core.DataExport;
 using Rdmp.Core.DataExport.Data;
