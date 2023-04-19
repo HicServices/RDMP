@@ -9,8 +9,7 @@
 
 | Package | Source Code | License | Purpose | Additional Risk Assessment |
 | ------- | ------------| ------- | ------- | -------------------------- |
-| coverlet.collector | [GitHub](https://github.com/coverlet-coverage/coverlet) | [MIT](https://opensource.org/licenses/MIT) | Collects code coverage information | |
-| [DockPanelSuite](http://dockpanelsuite.com/) | [GitHub](https://github.com/dockpanelsuite/dockpanelsuite) | [MIT](https://opensource.org/licenses/MIT)  | Provides Window layout and docking for RDMP. | There are no powershell initialization files in the package which can be run by the NuGet installer.|
+| [DockPanelSuite.ThemeVS2015](http://dockpanelsuite.com/) | [GitHub](https://github.com/dockpanelsuite/dockpanelsuite) | [MIT](https://opensource.org/licenses/MIT)  | Provides Window layout and docking for RDMP. | There are no powershell initialization files in the package which can be run by the NuGet installer.|
 | [ObjectListView.Official](http://objectlistview.sourceforge.net/cs/index.html) | [Svn](http://objectlistview.sourceforge.net/cs/download.html#bleeding-edge-source) | [GPL 3.0](https://www.gnu.org/licenses/gpl-3.0.html) | Provides tree layout for user interfaces in main client application |
 | fernandreu.ScintillaNET | [GitHub](https://github.com/fernandreu/ScintillaNET) | [MIT](https://opensource.org/licenses/MIT) | Provides text editor component with highlighting etc |
 | NHunspell | [SourceForge](https://sourceforge.net/p/nhunspell/code/ci/default/tree/) | LGPL / MPL  | Adds spell check support to ScintillaNET text editor |
@@ -25,9 +24,6 @@
 | HIC.BadMedicine | [GitHub](https://github.com/HicServices/BadMedicine) | [GPL 3.0](https://www.gnu.org/licenses/gpl-3.0.html) | Generate Test Datasets for tests/exericses |
 | SSH.NET  | [GitHub](https://github.com/sshnet/SSH.NET)  | [MIT](https://github.com/sshnet/SSH.NET/blob/develop/LICENSE) | Enables fetching files from SFTP servers |
 | Moq 4 | [GitHub](https://github.com/moq/moq4) |[BSD 3](https://github.com/moq/moq4/blob/master/License.txt)  | Mock objects during unit testing |
-| [Nunit](https://nunit.org/) |[GitHub](https://github.com/nunit/nunit) | [MIT](https://opensource.org/licenses/MIT) | Unit testing |
-| Microsoft.NET.Test.Sdk | [GitHub](https://github.com/microsoft/vstest/) | [MIT](https://opensource.org/licenses/MIT) | Required for running tests| |
-| NUnit3TestAdapter | [GitHub](https://github.com/nunit/nunit3-vs-adapter)| [MIT](https://opensource.org/licenses/MIT) | Run unit tests from within Visual Studio |
 | [Newtonsoft.Json](https://www.newtonsoft.com/json) | [GitHub](https://github.com/JamesNK/Newtonsoft.Json) | [MIT](https://opensource.org/licenses/MIT) | Serialization of objects for sharing/transmission |
 | YamlDotNet | [GitHub](https://github.com/aaubry/YamlDotNet)  | [MIT](https://opensource.org/licenses/MIT) |Loading configuration files|
 | [SecurityCodeScan.VS2019](https://security-code-scan.github.io/) | [GitHub](https://github.com/security-code-scan/security-code-scan) | [GPL 3.0](https://www.gnu.org/licenses/gpl-3.0.html)| Performs static build time analysis for vulnerabilities in the codebase (e.g. Sql injection)| |
@@ -50,7 +46,7 @@
 | Spectre.Console | [GitHub](https://github.com/spectreconsole/spectre.console) | [MIT](https://opensource.org/licenses/MIT) | Allows richer command line interactions| |
 | HIC.System.Windows.Forms.DataVisualization | [GitHub](https://github.com/HicServices/winforms-datavisualization) |[MIT](https://opensource.org/licenses/MIT) | Dotnet core support for DQE charts |  |
 | System.DirectoryServices.Protocols | [GitHub](https://github.com/dotnet/runtime) | MIT | Required dependency of Oracle when using LDAP auth |
-| Autoupdater.NET | [GitHub](https://github.com/ravibpatel/AutoUpdater.NET) | MIT | Manages updating of the RDMP windows client directly from the RDMP GitHub Releases|
+| Autoupdater.NET.Official | [GitHub](https://github.com/ravibpatel/AutoUpdater.NET) | MIT | Manages updating of the RDMP windows client directly from the RDMP GitHub Releases|
 | ConsoleControl | [GitHub](https://github.com/dwmkerr/consolecontrol)  | MIT | Runs RDMP cli subprocesses|
 
 
