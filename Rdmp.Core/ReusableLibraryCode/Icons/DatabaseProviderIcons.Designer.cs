@@ -36,7 +36,7 @@ namespace Rdmp.Core.ReusableLibraryCode.Icons {
         public static global::System.Resources.ResourceManager ResourceManager {
             get {
                 if (object.ReferenceEquals(resourceMan, null)) {
-                    global::System.Resources.ResourceManager temp = new global::System.Resources.ResourceManager("ReusableLibraryCode.Icons.DatabaseProviderIcons", typeof(DatabaseProviderIcons).Assembly);
+                    global::System.Resources.ResourceManager temp = new global::System.Resources.ResourceManager("Rdmp.Core.ReusableLibraryCode.Icons.DatabaseProviderIcons", typeof(DatabaseProviderIcons).Assembly);
                     resourceMan = temp;
                 }
                 return resourceMan;
