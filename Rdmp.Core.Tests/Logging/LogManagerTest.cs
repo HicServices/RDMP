@@ -10,12 +10,12 @@ using System.Threading.Tasks;
 using FAnsi.Discovery;
 using NUnit.Framework;
 using Rdmp.Core.Logging;
-using ReusableLibraryCode;
 using Tests.Common;
 using FAnsi;
 using Rdmp.Core.Databases;
 using Rdmp.Core.MapsDirectlyToDatabaseTable.Versioning;
-using ReusableLibraryCode.Checks;
+using Rdmp.Core.ReusableLibraryCode;
+using Rdmp.Core.ReusableLibraryCode.Checks;
 
 namespace Rdmp.Core.Tests.Logging;
 

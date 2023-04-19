@@ -15,8 +15,8 @@ using Rdmp.Core.DataFlowPipeline.Requirements;
 using Rdmp.Core.DataFlowPipeline.Requirements.Exceptions;
 using Rdmp.Core.Repositories;
 using Rdmp.Core.Repositories.Construction;
-using ReusableLibraryCode.Checks;
-using ReusableLibraryCode.Progress;
+using Rdmp.Core.ReusableLibraryCode.Checks;
+using Rdmp.Core.ReusableLibraryCode.Progress;
 
 namespace Rdmp.Core.DataFlowPipeline;
 

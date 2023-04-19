@@ -7,8 +7,8 @@
 using System;
 using System.Diagnostics;
 using System.Windows.Forms;
+using Rdmp.Core.ReusableLibraryCode.Settings;
 using Rdmp.UI.SimpleDialogs;
-using ReusableLibraryCode.Settings;
 
 
 namespace ResearchDataManagementPlatform.WindowManagement.Licenses;

@@ -12,7 +12,7 @@ using FAnsi.Discovery;
 using FAnsi.Discovery.Constraints;
 using Rdmp.Core.Curation.Data;
 using Rdmp.Core.Curation.Data.EntityNaming;
-using ReusableLibraryCode.DataAccess;
+using Rdmp.Core.ReusableLibraryCode.DataAccess;
 
 namespace Rdmp.Core.DataLoad.Engine.Migration;
 

@@ -31,9 +31,9 @@ using Rdmp.Core.Providers.Nodes.SharingNodes;
 using Rdmp.Core.Repositories;
 using Rdmp.Core.Repositories.Managers;
 using Rdmp.Core.Repositories.Managers.HighPerformance;
-using ReusableLibraryCode.Checks;
-using ReusableLibraryCode.Comments;
-using ReusableLibraryCode.Settings;
+using Rdmp.Core.ReusableLibraryCode.Checks;
+using Rdmp.Core.ReusableLibraryCode.Comments;
+using Rdmp.Core.ReusableLibraryCode.Settings;
 
 namespace Rdmp.Core.Providers;
 

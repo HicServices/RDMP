@@ -11,7 +11,7 @@ using System.Linq;
 using Rdmp.Core.Curation.Data;
 using Rdmp.Core.MapsDirectlyToDatabaseTable;
 using Rdmp.Core.Repositories;
-using ReusableLibraryCode;
+using Rdmp.Core.ReusableLibraryCode;
 
 namespace Rdmp.Core.DataQualityEngine.Data;
 

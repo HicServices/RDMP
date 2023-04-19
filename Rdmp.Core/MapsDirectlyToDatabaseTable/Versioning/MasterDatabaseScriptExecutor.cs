@@ -12,8 +12,8 @@ using System.Security.Cryptography;
 using System.Text;
 using FAnsi;
 using FAnsi.Discovery;
-using ReusableLibraryCode;
-using ReusableLibraryCode.Checks;
+using Rdmp.Core.ReusableLibraryCode;
+using Rdmp.Core.ReusableLibraryCode.Checks;
 using TypeGuesser;
 using Version = System.Version;
 

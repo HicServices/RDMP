@@ -15,8 +15,8 @@ using Rdmp.Core.Logging;
 using Rdmp.Core.MapsDirectlyToDatabaseTable;
 using Rdmp.Core.MapsDirectlyToDatabaseTable.Versioning;
 using Rdmp.Core.Repositories.Managers;
+using Rdmp.Core.ReusableLibraryCode.Comments;
 using Rdmp.Core.Ticketing;
-using ReusableLibraryCode.Comments;
 
 namespace Rdmp.Core.Repositories;
 

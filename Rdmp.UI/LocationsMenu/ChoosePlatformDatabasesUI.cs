@@ -18,13 +18,13 @@ using Rdmp.Core.Curation.Checks;
 using Rdmp.Core.Curation.Data.Pipelines;
 using Rdmp.Core.MapsDirectlyToDatabaseTable;
 using Rdmp.Core.Repositories;
+using Rdmp.Core.ReusableLibraryCode;
+using Rdmp.Core.ReusableLibraryCode.Checks;
+using Rdmp.Core.ReusableLibraryCode.Settings;
 using Rdmp.Core.Startup;
 using Rdmp.UI.ChecksUI;
 using Rdmp.UI.DataLoadUIs.ModuleUIs;
 using Rdmp.UI.SimpleDialogs;
-using ReusableLibraryCode;
-using ReusableLibraryCode.Checks;
-using ReusableLibraryCode.Settings;
 using YamlDotNet.Serialization;
 
 namespace Rdmp.UI.LocationsMenu;

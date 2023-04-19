@@ -27,8 +27,8 @@ using Rdmp.Core.MapsDirectlyToDatabaseTable;
 using Rdmp.Core.MapsDirectlyToDatabaseTable.Versioning;
 using Rdmp.Core.Repositories.Construction;
 using Rdmp.Core.Repositories.Managers;
-using ReusableLibraryCode;
-using ReusableLibraryCode.Comments;
+using Rdmp.Core.ReusableLibraryCode;
+using Rdmp.Core.ReusableLibraryCode.Comments;
 
 namespace Rdmp.Core.Repositories;
 

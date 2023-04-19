@@ -8,7 +8,7 @@ using Rdmp.Core.Curation.Data;
 using Rdmp.Core.Curation.Data.Aggregation;
 using Rdmp.Core.MapsDirectlyToDatabaseTable;
 using Rdmp.Core.Repositories.Construction;
-using ReusableLibraryCode;
+using Rdmp.Core.ReusableLibraryCode;
 
 namespace Rdmp.Core.CommandExecution.AtomicCommands;
 

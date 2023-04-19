@@ -14,7 +14,7 @@ using Rdmp.Core.MapsDirectlyToDatabaseTable;
 using Rdmp.Core.MapsDirectlyToDatabaseTable.Attributes;
 using Rdmp.Core.MapsDirectlyToDatabaseTable.Injection;
 using Rdmp.Core.Repositories;
-using ReusableLibraryCode;
+using Rdmp.Core.ReusableLibraryCode;
 
 namespace Rdmp.Core.Curation.Data;
 

@@ -13,14 +13,12 @@ using Rdmp.Core.Curation.Data.Pipelines;
 using Rdmp.Core.DataFlowPipeline;
 using Rdmp.Core.MapsDirectlyToDatabaseTable;
 using Rdmp.Core.Repositories;
+using Rdmp.Core.ReusableLibraryCode.Progress;
 using Rdmp.UI.CommandExecution.AtomicCommands.UIFactory;
 using Rdmp.UI.ItemActivation;
 using Rdmp.UI.PipelineUIs.DataObjects;
 using Rdmp.UI.PipelineUIs.Pipelines.Models;
 using Rdmp.UI.SimpleDialogs;
-using ReusableLibraryCode.Progress;
-
-
 using RAGSmiley = Rdmp.UI.ChecksUI.RAGSmiley;
 
 namespace Rdmp.UI.PipelineUIs.Pipelines;

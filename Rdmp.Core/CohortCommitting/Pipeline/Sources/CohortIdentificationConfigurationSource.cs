@@ -17,9 +17,9 @@ using Rdmp.Core.Curation.Data.Cohort;
 using Rdmp.Core.DataFlowPipeline;
 using Rdmp.Core.DataFlowPipeline.Requirements;
 using Rdmp.Core.QueryCaching.Aggregation;
-using ReusableLibraryCode.Checks;
-using ReusableLibraryCode.Progress;
-using ReusableLibraryCode.Settings;
+using Rdmp.Core.ReusableLibraryCode.Checks;
+using Rdmp.Core.ReusableLibraryCode.Progress;
+using Rdmp.Core.ReusableLibraryCode.Settings;
 
 namespace Rdmp.Core.CohortCommitting.Pipeline.Sources;
 

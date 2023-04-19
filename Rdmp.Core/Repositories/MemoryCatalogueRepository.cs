@@ -21,11 +21,11 @@ using Rdmp.Core.MapsDirectlyToDatabaseTable;
 using Rdmp.Core.MapsDirectlyToDatabaseTable.Versioning;
 using Rdmp.Core.Providers.Nodes;
 using Rdmp.Core.Repositories.Managers;
+using Rdmp.Core.ReusableLibraryCode.Comments;
+using Rdmp.Core.ReusableLibraryCode.DataAccess;
+using Rdmp.Core.ReusableLibraryCode.Settings;
 using Rdmp.Core.Sharing.Dependency;
 using Rdmp.Core.Validation.Dependency;
-using ReusableLibraryCode.Comments;
-using ReusableLibraryCode.DataAccess;
-using ReusableLibraryCode.Settings;
 using IContainer = Rdmp.Core.Curation.Data.IContainer;
 
 namespace Rdmp.Core.Repositories;

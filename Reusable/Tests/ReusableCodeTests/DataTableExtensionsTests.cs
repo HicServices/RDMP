@@ -7,7 +7,7 @@
 using System.Data;
 using System.IO;
 using NUnit.Framework;
-using ReusableLibraryCode.Extensions;
+using Rdmp.Core.ReusableLibraryCode.Extensions;
 
 namespace ReusableCodeTests;
 

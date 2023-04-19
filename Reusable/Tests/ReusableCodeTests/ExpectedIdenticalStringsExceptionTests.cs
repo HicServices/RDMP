@@ -6,7 +6,7 @@
 
 using System;
 using NUnit.Framework;
-using ReusableLibraryCode.Exceptions;
+using Rdmp.Core.ReusableLibraryCode.Exceptions;
 
 namespace ReusableCodeTests;
 

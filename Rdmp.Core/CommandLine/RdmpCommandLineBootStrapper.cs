@@ -12,14 +12,14 @@ using Rdmp.Core.DataFlowPipeline;
 using Rdmp.Core.Logging.Listeners.NLogListeners;
 using Rdmp.Core.Repositories;
 using Rdmp.Core.Startup;
-using ReusableLibraryCode;
-using ReusableLibraryCode.Checks;
 using System;
 using System.IO;
 using YamlDotNet.Serialization;
 using CommandLine;
 using Rdmp.Core.MapsDirectlyToDatabaseTable;
-using ReusableLibraryCode.Progress;
+using Rdmp.Core.ReusableLibraryCode;
+using Rdmp.Core.ReusableLibraryCode.Checks;
+using Rdmp.Core.ReusableLibraryCode.Progress;
 
 namespace Rdmp.Core.CommandLine;
 

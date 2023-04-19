@@ -13,7 +13,7 @@ using Rdmp.Core.MapsDirectlyToDatabaseTable.Versioning;
 using Rdmp.Core.QueryBuilding;
 using Rdmp.Core.QueryCaching.Aggregation;
 using Rdmp.Core.QueryCaching.Aggregation.Arguments;
-using ReusableLibraryCode.Checks;
+using Rdmp.Core.ReusableLibraryCode.Checks;
 using Tests.Common;
 
 namespace Rdmp.Core.Tests.CohortCreation.QueryTests;

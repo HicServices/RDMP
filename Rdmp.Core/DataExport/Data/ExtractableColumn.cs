@@ -12,7 +12,7 @@ using Rdmp.Core.MapsDirectlyToDatabaseTable;
 using Rdmp.Core.MapsDirectlyToDatabaseTable.Injection;
 using Rdmp.Core.QueryBuilding;
 using Rdmp.Core.Repositories;
-using ReusableLibraryCode.Annotations;
+using Rdmp.Core.ReusableLibraryCode.Annotations;
 
 namespace Rdmp.Core.DataExport.Data;
 

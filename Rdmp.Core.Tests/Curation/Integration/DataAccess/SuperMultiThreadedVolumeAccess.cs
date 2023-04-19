@@ -14,7 +14,7 @@ using NUnit.Framework;
 using Rdmp.Core.Curation.Data;
 using Rdmp.Core.MapsDirectlyToDatabaseTable;
 using Rdmp.Core.MapsDirectlyToDatabaseTable.Revertable;
-using ReusableLibraryCode;
+using Rdmp.Core.ReusableLibraryCode;
 using Tests.Common;
 
 namespace Rdmp.Core.Tests.Curation.Integration.DataAccess;

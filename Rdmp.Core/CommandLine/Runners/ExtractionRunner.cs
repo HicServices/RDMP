@@ -21,8 +21,8 @@ using Rdmp.Core.DataExport.DataExtraction.Pipeline.Sources;
 using Rdmp.Core.DataExport.DataExtraction.UserPicks;
 using Rdmp.Core.Logging;
 using Rdmp.Core.Logging.Listeners;
-using ReusableLibraryCode.Checks;
-using ReusableLibraryCode.Progress;
+using Rdmp.Core.ReusableLibraryCode.Checks;
+using Rdmp.Core.ReusableLibraryCode.Progress;
 
 namespace Rdmp.Core.CommandLine.Runners;
 

@@ -9,7 +9,7 @@ using System.Collections.Generic;
 using System.Linq;
 using Rdmp.Core.DataFlowPipeline;
 using Rdmp.Core.DataFlowPipeline.Requirements;
-using ReusableLibraryCode.Progress;
+using Rdmp.Core.ReusableLibraryCode.Progress;
 
 namespace Rdmp.Core.Curation.Data.Pipelines;
 

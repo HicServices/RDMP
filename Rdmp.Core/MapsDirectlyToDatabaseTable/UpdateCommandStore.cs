@@ -10,7 +10,7 @@ using System.Data.Common;
 using System.Linq;
 using System.Reflection;
 using FAnsi.Implementation;
-using ReusableLibraryCode;
+using Rdmp.Core.ReusableLibraryCode;
 
 namespace Rdmp.Core.MapsDirectlyToDatabaseTable;
 

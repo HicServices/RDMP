@@ -16,7 +16,7 @@ using Rdmp.Core.Curation.Data.Governance;
 using Rdmp.Core.MapsDirectlyToDatabaseTable;
 using Rdmp.Core.Providers.Nodes;
 using Rdmp.Core.Providers.Nodes.LoadMetadataNodes;
-using ReusableLibraryCode.Settings;
+using Rdmp.Core.ReusableLibraryCode.Settings;
 using TypeGuesser;
 
 namespace Rdmp.Core.Providers;

@@ -26,8 +26,8 @@ using Rdmp.Core.DataExport.DataExtraction.UserPicks;
 using Rdmp.Core.DataFlowPipeline;
 using Rdmp.Core.Logging;
 using Rdmp.Core.QueryBuilding;
-using ReusableLibraryCode.Checks;
-using ReusableLibraryCode.Progress;
+using Rdmp.Core.ReusableLibraryCode.Checks;
+using Rdmp.Core.ReusableLibraryCode.Progress;
 using TypeGuesser;
 
 namespace Tests.Common.Scenarios;

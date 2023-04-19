@@ -9,8 +9,8 @@ using System.Data;
 using System.Data.Common;
 using System.Diagnostics;
 using Rdmp.Core.DataFlowPipeline;
-using ReusableLibraryCode;
-using ReusableLibraryCode.Progress;
+using Rdmp.Core.ReusableLibraryCode;
+using Rdmp.Core.ReusableLibraryCode.Progress;
 
 namespace Rdmp.Core.DataLoad.Engine.Pipeline.Sources;
 

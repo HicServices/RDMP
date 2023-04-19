@@ -16,8 +16,8 @@ using Rdmp.Core.CommandLine.Options;
 using Rdmp.Core.Curation.Data;
 using Rdmp.Core.Logging.Listeners.NLogListeners;
 using Rdmp.Core.MapsDirectlyToDatabaseTable.Versioning;
-using ReusableLibraryCode;
-using ReusableLibraryCode.Checks;
+using Rdmp.Core.ReusableLibraryCode;
+using Rdmp.Core.ReusableLibraryCode.Checks;
 
 namespace Rdmp.Core;
 

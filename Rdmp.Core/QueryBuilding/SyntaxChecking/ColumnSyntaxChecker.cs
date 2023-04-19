@@ -8,7 +8,7 @@ using System;
 using System.Data;
 using System.Linq;
 using System.Text.RegularExpressions;
-using ReusableLibraryCode.Checks;
+using Rdmp.Core.ReusableLibraryCode.Checks;
 
 namespace Rdmp.Core.QueryBuilding.SyntaxChecking;
 

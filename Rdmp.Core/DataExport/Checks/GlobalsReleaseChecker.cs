@@ -15,7 +15,7 @@ using Rdmp.Core.DataExport.DataRelease.Potential;
 using Rdmp.Core.MapsDirectlyToDatabaseTable;
 using Rdmp.Core.Repositories;
 using Rdmp.Core.Repositories.Construction;
-using ReusableLibraryCode.Checks;
+using Rdmp.Core.ReusableLibraryCode.Checks;
 
 namespace Rdmp.Core.DataExport.Checks;
 

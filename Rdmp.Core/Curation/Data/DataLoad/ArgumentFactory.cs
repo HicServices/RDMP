@@ -9,7 +9,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Reflection;
 using Rdmp.Core.MapsDirectlyToDatabaseTable;
-using ReusableLibraryCode.Exceptions;
+using Rdmp.Core.ReusableLibraryCode.Exceptions;
 
 namespace Rdmp.Core.Curation.Data.DataLoad;
 

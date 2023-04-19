@@ -10,7 +10,7 @@ using NUnit.Framework;
 using Rdmp.Core.CohortCommitting;
 using Rdmp.Core.DataExport.Data;
 using Rdmp.Core.Repositories;
-using ReusableLibraryCode.Checks;
+using Rdmp.Core.ReusableLibraryCode.Checks;
 using Tests.Common;
 
 namespace Rdmp.Core.Tests.DataExport.Data;

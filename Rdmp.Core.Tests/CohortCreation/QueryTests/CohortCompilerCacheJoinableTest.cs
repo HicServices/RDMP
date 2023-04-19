@@ -12,13 +12,13 @@ using Rdmp.Core.Curation.Data.Aggregation;
 using Rdmp.Core.Curation.Data.Cohort;
 using Rdmp.Core.Curation.Data.Cohort.Joinables;
 using Rdmp.Core.Databases;
-using ReusableLibraryCode.Checks;
 using System;
 using System.Data;
 using System.Linq;
 using Rdmp.Core.MapsDirectlyToDatabaseTable.Versioning;
 using Tests.Common.Scenarios;
 using Rdmp.Core.QueryCaching.Aggregation;
+using Rdmp.Core.ReusableLibraryCode.Checks;
 using static Rdmp.Core.CohortCreation.Execution.CohortCompilerRunner;
 
 namespace Rdmp.Core.Tests.CohortCreation.QueryTests;

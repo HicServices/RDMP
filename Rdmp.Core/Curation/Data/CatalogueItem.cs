@@ -18,8 +18,8 @@ using Rdmp.Core.MapsDirectlyToDatabaseTable.Injection;
 using Rdmp.Core.MapsDirectlyToDatabaseTable.Revertable;
 using Rdmp.Core.QueryBuilding;
 using Rdmp.Core.Repositories;
-using ReusableLibraryCode;
-using ReusableLibraryCode.Annotations;
+using Rdmp.Core.ReusableLibraryCode;
+using Rdmp.Core.ReusableLibraryCode.Annotations;
 
 namespace Rdmp.Core.Curation.Data;
 

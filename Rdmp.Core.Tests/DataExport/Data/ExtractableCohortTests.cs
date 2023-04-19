@@ -5,9 +5,9 @@
 // You should have received a copy of the GNU General Public License along with RDMP. If not, see <https://www.gnu.org/licenses/>.
 
 using NUnit.Framework;
-using ReusableLibraryCode.Checks;
-using ReusableLibraryCode.Settings;
 using System;
+using Rdmp.Core.ReusableLibraryCode.Checks;
+using Rdmp.Core.ReusableLibraryCode.Settings;
 using Tests.Common.Scenarios;
 
 namespace Rdmp.Core.Tests.DataExport.Data;

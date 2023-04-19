@@ -7,9 +7,9 @@
 using FAnsi;
 using NUnit.Framework;
 using Rdmp.Core.Databases;
-using ReusableLibraryCode.Checks;
 using System;
 using Rdmp.Core.MapsDirectlyToDatabaseTable.Versioning;
+using Rdmp.Core.ReusableLibraryCode.Checks;
 using Tests.Common;
 
 namespace Rdmp.Core.Tests.Databases;

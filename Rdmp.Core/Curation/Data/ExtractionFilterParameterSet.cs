@@ -10,7 +10,7 @@ using System.Data.Common;
 using System.Linq;
 using Rdmp.Core.MapsDirectlyToDatabaseTable;
 using Rdmp.Core.Repositories;
-using ReusableLibraryCode.Annotations;
+using Rdmp.Core.ReusableLibraryCode.Annotations;
 
 namespace Rdmp.Core.Curation.Data;
 

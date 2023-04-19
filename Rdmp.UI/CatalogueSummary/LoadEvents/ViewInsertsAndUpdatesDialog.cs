@@ -12,10 +12,8 @@ using System.Windows.Forms;
 using Rdmp.Core.Curation.Data;
 using Rdmp.Core.DataLoad.Triggers;
 using Rdmp.Core.Logging.PastEvents;
+using Rdmp.Core.ReusableLibraryCode.Checks;
 using Rdmp.UI.SimpleDialogs;
-using ReusableLibraryCode.Checks;
-
-
 using Rdmp.UI.SimpleDialogs.SqlDialogs;
 using WideMessageBox = Rdmp.UI.SimpleDialogs.WideMessageBox;
 

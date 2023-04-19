@@ -20,10 +20,10 @@ using Rdmp.Core.DataFlowPipeline.Requirements;
 using Rdmp.Core.DataLoad.Engine.Pipeline.Components;
 using Rdmp.Core.DataLoad.Engine.Pipeline.Sources;
 using Rdmp.Core.QueryBuilding;
-using ReusableLibraryCode;
-using ReusableLibraryCode.Checks;
-using ReusableLibraryCode.DataAccess;
-using ReusableLibraryCode.Progress;
+using Rdmp.Core.ReusableLibraryCode;
+using Rdmp.Core.ReusableLibraryCode.Checks;
+using Rdmp.Core.ReusableLibraryCode.DataAccess;
+using Rdmp.Core.ReusableLibraryCode.Progress;
 using IContainer = Rdmp.Core.Curation.Data.IContainer;
 
 namespace Rdmp.Core.DataExport.DataExtraction.Pipeline.Sources;

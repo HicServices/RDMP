@@ -6,9 +6,9 @@
 
 using Rdmp.Core.Curation.Data;
 using Rdmp.Core.DataFlowPipeline;
-using ReusableLibraryCode.Progress;
 using System;
 using Rdmp.Core.MapsDirectlyToDatabaseTable;
+using Rdmp.Core.ReusableLibraryCode.Progress;
 
 namespace Rdmp.Core.DataExport.Data;
 

@@ -7,9 +7,9 @@
 using Moq;
 using NUnit.Framework;
 using Rdmp.Core.Reports;
-using ReusableLibraryCode.Checks;
-using ReusableLibraryCode.Comments;
-using ReusableLibraryCode.Icons.IconProvision;
+using Rdmp.Core.ReusableLibraryCode.Checks;
+using Rdmp.Core.ReusableLibraryCode.Comments;
+using Rdmp.Core.ReusableLibraryCode.Icons.IconProvision;
 using SixLabors.ImageSharp;
 using SixLabors.ImageSharp.PixelFormats;
 using SixLabors.ImageSharp.Drawing.Processing;

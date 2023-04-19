@@ -25,9 +25,9 @@ using Rdmp.Core.Providers.Nodes.UsedByProject;
 using Rdmp.Core.Repositories;
 using Rdmp.Core.Repositories.Managers;
 using Rdmp.Core.Repositories.Managers.HighPerformance;
-using ReusableLibraryCode.Checks;
-using ReusableLibraryCode.DataAccess;
-using ReusableLibraryCode.Settings;
+using Rdmp.Core.ReusableLibraryCode.Checks;
+using Rdmp.Core.ReusableLibraryCode.DataAccess;
+using Rdmp.Core.ReusableLibraryCode.Settings;
 
 namespace Rdmp.Core.Providers;
 

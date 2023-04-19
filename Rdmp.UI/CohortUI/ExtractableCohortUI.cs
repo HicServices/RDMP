@@ -15,14 +15,13 @@ using Rdmp.Core.CommandExecution;
 using Rdmp.Core.CommandExecution.AtomicCommands;
 using Rdmp.Core.DataExport.Data;
 using Rdmp.Core.Providers;
+using Rdmp.Core.ReusableLibraryCode;
 using Rdmp.UI.Collections;
 using Rdmp.UI.Copying;
 using Rdmp.UI.ItemActivation;
 using Rdmp.UI.ScintillaHelper;
 using Rdmp.UI.SimpleControls;
 using Rdmp.UI.TestsAndSetup.ServicePropogation;
-using ReusableLibraryCode;
-
 using ScintillaNET;
 
 namespace Rdmp.UI.CohortUI;

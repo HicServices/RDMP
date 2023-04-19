@@ -6,7 +6,7 @@
 
 using System.ComponentModel;
 using Rdmp.Core.MapsDirectlyToDatabaseTable.Revertable;
-using ReusableLibraryCode.Annotations;
+using Rdmp.Core.ReusableLibraryCode.Annotations;
 
 namespace Rdmp.Core.MapsDirectlyToDatabaseTable;
 

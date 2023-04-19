@@ -6,8 +6,8 @@
 
 using Rdmp.Core.Curation.Data;
 using Rdmp.Core.MapsDirectlyToDatabaseTable;
-using ReusableLibraryCode.Checks;
-using ReusableLibraryCode.Exceptions;
+using Rdmp.Core.ReusableLibraryCode.Checks;
+using Rdmp.Core.ReusableLibraryCode.Exceptions;
 
 namespace Rdmp.Core.Curation.Checks;
 

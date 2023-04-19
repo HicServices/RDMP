@@ -17,7 +17,6 @@ using Rdmp.Core.Providers;
 using Rdmp.UI.Collections;
 using Rdmp.UI.ItemActivation;
 using Rdmp.UI.Theme;
-using ReusableLibraryCode.Settings;
 using System;
 using System.Collections;
 using System.Collections.Generic;
@@ -30,6 +29,7 @@ using System.Threading.Tasks;
 using System.Windows.Forms;
 using Rdmp.Core.MapsDirectlyToDatabaseTable;
 using Rdmp.Core.MapsDirectlyToDatabaseTable.Attributes;
+using Rdmp.Core.ReusableLibraryCode.Settings;
 
 namespace Rdmp.UI.SimpleDialogs;
 // IMPORTANT: To edit this in Designer rename 'SelectDialog`1.resx' to 'SelectDialog.resx'

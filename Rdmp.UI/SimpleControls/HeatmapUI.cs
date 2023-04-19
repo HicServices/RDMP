@@ -11,8 +11,8 @@ using System.Drawing.Imaging;
 using System.Linq;
 using System.Text.RegularExpressions;
 using System.Windows.Forms;
+using Rdmp.Core.ReusableLibraryCode.Settings;
 using Rdmp.UI.SimpleDialogs;
-using ReusableLibraryCode.Settings;
 
 namespace Rdmp.UI.SimpleControls;
 

@@ -7,7 +7,7 @@
 using System;
 using NLog;
 using Rdmp.Core.Logging.Listeners.Extensions;
-using ReusableLibraryCode.Progress;
+using Rdmp.Core.ReusableLibraryCode.Progress;
 
 namespace Rdmp.Core.Logging.Listeners;
 

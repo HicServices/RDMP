@@ -20,8 +20,8 @@ using Rdmp.Core.MapsDirectlyToDatabaseTable;
 using Rdmp.Core.Providers;
 using Rdmp.Core.QueryBuilding.Parameters;
 using Rdmp.Core.QueryCaching.Aggregation;
-using ReusableLibraryCode.DataAccess;
-using ReusableLibraryCode.Settings;
+using Rdmp.Core.ReusableLibraryCode.DataAccess;
+using Rdmp.Core.ReusableLibraryCode.Settings;
 
 namespace Rdmp.Core.QueryBuilding;
 

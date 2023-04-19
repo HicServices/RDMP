@@ -12,7 +12,7 @@ using Rdmp.Core.Curation;
 using Rdmp.Core.Curation.Data.Cohort;
 using Rdmp.Core.MapsDirectlyToDatabaseTable;
 using Rdmp.Core.MapsDirectlyToDatabaseTable.Revertable;
-using ReusableLibraryCode.Checks;
+using Rdmp.Core.ReusableLibraryCode.Checks;
 using Tests.Common;
 
 namespace Rdmp.Core.Tests.Curation.Integration.TableValuedFunctionTests;

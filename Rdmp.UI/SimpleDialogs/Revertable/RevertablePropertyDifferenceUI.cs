@@ -7,9 +7,9 @@
 using System.Drawing;
 using Rdmp.Core.Curation.Data;
 using Rdmp.Core.MapsDirectlyToDatabaseTable.Revertable;
+using Rdmp.Core.ReusableLibraryCode;
 using Rdmp.UI.ScintillaHelper;
 using Rdmp.UI.TestsAndSetup.ServicePropogation;
-using ReusableLibraryCode;
 using ScintillaNET;
 
 namespace Rdmp.UI.SimpleDialogs.Revertable;

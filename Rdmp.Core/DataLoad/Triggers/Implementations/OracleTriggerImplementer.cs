@@ -8,8 +8,8 @@ using System.Linq;
 using FAnsi.Discovery;
 using FAnsi.Discovery.QuerySyntax;
 using Oracle.ManagedDataAccess.Client;
-using ReusableLibraryCode.Exceptions;
-using ReusableLibraryCode.Settings;
+using Rdmp.Core.ReusableLibraryCode.Exceptions;
+using Rdmp.Core.ReusableLibraryCode.Settings;
 
 namespace Rdmp.Core.DataLoad.Triggers.Implementations;
 

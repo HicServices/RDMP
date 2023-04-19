@@ -14,7 +14,7 @@ using Rdmp.Core.Curation.Data.DataLoad;
 using Rdmp.Core.DataExport.Data;
 using Rdmp.Core.MapsDirectlyToDatabaseTable;
 using Rdmp.Core.Repositories;
-using ReusableLibraryCode.Settings;
+using Rdmp.Core.ReusableLibraryCode.Settings;
 
 namespace Rdmp.UI.Collections.Providers;
 

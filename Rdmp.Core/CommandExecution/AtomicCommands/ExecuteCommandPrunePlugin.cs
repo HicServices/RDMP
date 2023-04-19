@@ -7,11 +7,11 @@
 using NLog;
 using Rdmp.Core.Repositories.Construction;
 using Rdmp.Core.Startup;
-using ReusableLibraryCode;
 using System.Collections.Generic;
 using System.IO.Compression;
 using System.Linq;
 using System.Text.RegularExpressions;
+using Rdmp.Core.ReusableLibraryCode;
 
 namespace Rdmp.Core.CommandExecution.AtomicCommands;
 
@@ -26,7 +26,7 @@ public class ExecuteCommandPrunePlugin : BasicCommandExecution
 
 
     [UseWithObjectConstructor]
-    public ExecuteCommandPrunePlugin(string file) : base()
+    public ExecuteCommandPrunePlugin(string file)
     {
         this.file = file;
     }

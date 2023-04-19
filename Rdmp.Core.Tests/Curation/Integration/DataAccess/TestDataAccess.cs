@@ -17,9 +17,9 @@ using Rdmp.Core.Curation.Data;
 using Rdmp.Core.MapsDirectlyToDatabaseTable;
 using Rdmp.Core.Repositories;
 using Rdmp.Core.Repositories.Managers;
-using ReusableLibraryCode;
-using ReusableLibraryCode.DataAccess;
-using ReusableLibraryCode.Exceptions;
+using Rdmp.Core.ReusableLibraryCode;
+using Rdmp.Core.ReusableLibraryCode.DataAccess;
+using Rdmp.Core.ReusableLibraryCode.Exceptions;
 using Tests.Common;
 
 namespace Rdmp.Core.Tests.Curation.Integration.DataAccess;

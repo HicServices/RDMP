@@ -10,12 +10,12 @@ using Rdmp.Core.CommandExecution.AtomicCommands;
 using Rdmp.Core.CommandExecution.AtomicCommands.CohortCreationCommands;
 using Rdmp.Core.Curation.Data.Cohort;
 using Rdmp.Core.Providers;
-using ReusableLibraryCode;
 using System;
 using System.Collections.Generic;
 using System.Data;
 using System.Linq;
 using Rdmp.Core.MapsDirectlyToDatabaseTable;
+using Rdmp.Core.ReusableLibraryCode;
 using Terminal.Gui;
 
 namespace Rdmp.Core.CommandLine.Gui;

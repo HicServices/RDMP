@@ -11,11 +11,11 @@ using Rdmp.Core.CommandExecution.AtomicCommands;
 using Rdmp.Core.Curation.Data;
 using Rdmp.Core.Icons.IconProvision;
 using Rdmp.Core.MapsDirectlyToDatabaseTable;
+using Rdmp.Core.ReusableLibraryCode.Checks;
+using Rdmp.Core.ReusableLibraryCode.Settings;
 using Rdmp.UI;
 using Rdmp.UI.SimpleDialogs;
 using Rdmp.UI.Theme;
-using ReusableLibraryCode.Checks;
-using ReusableLibraryCode.Settings;
 
 namespace ResearchDataManagementPlatform.WindowManagement.TopBar;
 

@@ -7,7 +7,7 @@
 using System;
 using System.Windows.Forms;
 using FAnsi;
-using ReusableLibraryCode.Icons.IconProvision;
+using Rdmp.Core.ReusableLibraryCode.Icons.IconProvision;
 
 namespace Rdmp.UI.SimpleControls;
 

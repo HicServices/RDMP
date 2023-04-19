@@ -6,7 +6,7 @@
 
 using System.Collections.Generic;
 using Rdmp.Core.DataFlowPipeline;
-using ReusableLibraryCode.Checks;
+using Rdmp.Core.ReusableLibraryCode.Checks;
 
 namespace Rdmp.Core.Curation.Data.Pipelines;
 

@@ -18,10 +18,10 @@ using Rdmp.Core.MapsDirectlyToDatabaseTable;
 using Rdmp.Core.MapsDirectlyToDatabaseTable.Attributes;
 using Rdmp.Core.QueryBuilding;
 using Rdmp.Core.Repositories;
+using Rdmp.Core.ReusableLibraryCode;
+using Rdmp.Core.ReusableLibraryCode.Annotations;
+using Rdmp.Core.ReusableLibraryCode.Checks;
 using Rdmp.Core.Ticketing;
-using ReusableLibraryCode;
-using ReusableLibraryCode.Annotations;
-using ReusableLibraryCode.Checks;
 
 namespace Rdmp.Core.Curation.Data.Cohort;
 

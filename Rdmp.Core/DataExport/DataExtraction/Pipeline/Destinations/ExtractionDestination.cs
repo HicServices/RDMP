@@ -13,18 +13,18 @@ using Rdmp.Core.DataFlowPipeline;
 using Rdmp.Core.DataFlowPipeline.Requirements;
 using Rdmp.Core.Logging;
 using Rdmp.Core.Repositories;
-using ReusableLibraryCode.Progress;
 using System;
 using System.Data;
 using System.IO;
 using System.Diagnostics;
 using Rdmp.Core.DataExport.DataExtraction.UserPicks;
-using ReusableLibraryCode.DataAccess;
 using Rdmp.Core.Curation;
 using Microsoft.Data.SqlClient;
 using FAnsi.Discovery;
 using Rdmp.Core.MapsDirectlyToDatabaseTable;
-using ReusableLibraryCode.Checks;
+using Rdmp.Core.ReusableLibraryCode.Checks;
+using Rdmp.Core.ReusableLibraryCode.DataAccess;
+using Rdmp.Core.ReusableLibraryCode.Progress;
 
 namespace Rdmp.Core.DataExport.DataExtraction.Pipeline.Destinations;
 

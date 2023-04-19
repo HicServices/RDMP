@@ -8,7 +8,7 @@ using System.Collections.Generic;
 using Rdmp.Core.CommandExecution.AtomicCommands;
 using Rdmp.Core.MapsDirectlyToDatabaseTable;
 using Rdmp.Core.Providers;
-using ReusableLibraryCode.Icons.IconProvision;
+using Rdmp.Core.ReusableLibraryCode.Icons.IconProvision;
 
 namespace Rdmp.Core;
 

@@ -8,13 +8,13 @@ using Rdmp.Core.CommandLine.Interactive.Picking;
 using Rdmp.Core.Curation.Data;
 using Rdmp.Core.Curation.Data.ImportExport;
 using Rdmp.Core.Repositories.Construction;
-using ReusableLibraryCode.Checks;
-using ReusableLibraryCode.Settings;
 using System;
 using System.Globalization;
 using System.Linq;
 using System.Reflection;
 using System.Text;
+using Rdmp.Core.ReusableLibraryCode.Checks;
+using Rdmp.Core.ReusableLibraryCode.Settings;
 
 namespace Rdmp.Core.CommandExecution.AtomicCommands;
 

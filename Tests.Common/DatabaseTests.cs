@@ -29,9 +29,6 @@ using Rdmp.Core.Databases;
 using Rdmp.Core.Repositories;
 using Rdmp.Core.Startup;
 using Rdmp.Core.Startup.Events;
-using ReusableLibraryCode;
-using ReusableLibraryCode.Checks;
-using ReusableLibraryCode.DataAccess;
 using YamlDotNet.Serialization;
 using FAnsi.Discovery.ConnectionStringDefaults;
 using Rdmp.Core.Curation.Data.DataLoad;
@@ -46,6 +43,9 @@ using Rdmp.Core.DataExport.DataRelease.Audit;
 using Rdmp.Core.DataExport.Data;
 using Rdmp.Core.MapsDirectlyToDatabaseTable;
 using Rdmp.Core.MapsDirectlyToDatabaseTable.Versioning;
+using Rdmp.Core.ReusableLibraryCode;
+using Rdmp.Core.ReusableLibraryCode.Checks;
+using Rdmp.Core.ReusableLibraryCode.DataAccess;
 
 namespace Tests.Common;
 

@@ -8,8 +8,8 @@ using System;
 using System.Collections.Generic;
 using Rdmp.Core.MapsDirectlyToDatabaseTable;
 using Rdmp.Core.Repositories;
-using ReusableLibraryCode.Comments;
-using ReusableLibraryCode.Settings;
+using Rdmp.Core.ReusableLibraryCode.Comments;
+using Rdmp.Core.ReusableLibraryCode.Settings;
 
 namespace Rdmp.Core.Startup;
 

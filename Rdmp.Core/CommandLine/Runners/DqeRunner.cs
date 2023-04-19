@@ -11,8 +11,8 @@ using Rdmp.Core.DataFlowPipeline;
 using Rdmp.Core.DataLoad.Triggers;
 using Rdmp.Core.DataQualityEngine.Reports;
 using Rdmp.Core.Repositories;
-using ReusableLibraryCode.Checks;
-using ReusableLibraryCode.Progress;
+using Rdmp.Core.ReusableLibraryCode.Checks;
+using Rdmp.Core.ReusableLibraryCode.Progress;
 
 namespace Rdmp.Core.CommandLine.Runners;
 
