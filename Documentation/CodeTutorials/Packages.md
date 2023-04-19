@@ -45,7 +45,6 @@
 | System.Resources.Extensions | [GitHub](https://github.com/dotnet/corefx) | [MIT](https://opensource.org/licenses/MIT) | Allows [publishing with dotnet publish on machines with netcoreapp3.0 SDK installed](https://github.com/microsoft/msbuild/issues/4704#issuecomment-530034240) | |
 | Spectre.Console | [GitHub](https://github.com/spectreconsole/spectre.console) | [MIT](https://opensource.org/licenses/MIT) | Allows richer command line interactions| |
 | HIC.System.Windows.Forms.DataVisualization | [GitHub](https://github.com/HicServices/winforms-datavisualization) |[MIT](https://opensource.org/licenses/MIT) | Dotnet core support for DQE charts |  |
-| System.DirectoryServices.Protocols | [GitHub](https://github.com/dotnet/runtime) | MIT | Required dependency of Oracle when using LDAP auth |
 | Autoupdater.NET.Official | [GitHub](https://github.com/ravibpatel/AutoUpdater.NET) | MIT | Manages updating of the RDMP windows client directly from the RDMP GitHub Releases|
 | ConsoleControl | [GitHub](https://github.com/dwmkerr/consolecontrol)  | MIT | Runs RDMP cli subprocesses|
 | Terminal.Gui                            | [GitHub](https://github.com/gui-cs/Terminal.Gui)                           | [MIT](https://opensource.org/licenses/MIT)                                                     | Console user-interface|
