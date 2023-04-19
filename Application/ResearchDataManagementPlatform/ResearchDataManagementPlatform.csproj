@@ -142,6 +142,5 @@
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\..\Rdmp.UI\Rdmp.UI.csproj" />
-    <ProjectReference Include="..\..\Reusable\ReusableLibraryCode\ReusableLibraryCode.csproj" />
   </ItemGroup>
 </Project>

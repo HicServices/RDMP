@@ -65,7 +65,6 @@
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\Rdmp.Core\Rdmp.Core.csproj" />
-    <ProjectReference Include="..\Reusable\ReusableLibraryCode\ReusableLibraryCode.csproj" />
   </ItemGroup>
   <ItemGroup>
     <Compile Update="ChecksUI\ChecksUI.cs">

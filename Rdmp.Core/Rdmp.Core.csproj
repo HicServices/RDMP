@@ -297,9 +297,6 @@
     <PackageReference Include="YamlDotNet" Version="13.1.0" />
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\Reusable\ReusableLibraryCode\ReusableLibraryCode.csproj" />
-  </ItemGroup>
-  <ItemGroup>
     <Content Include="Curation\KeywordHelp.txt">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
