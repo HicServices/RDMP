@@ -7,9 +7,9 @@
 using System;
 using Microsoft.Data.SqlClient;
 using FAnsi.Discovery;
-using MapsDirectlyToDatabaseTable.Versioning;
 using Rdmp.Core.CommandExecution;
 using Rdmp.Core.Databases;
+using Rdmp.Core.MapsDirectlyToDatabaseTable.Versioning;
 using Rdmp.Core.Repositories;
 using ReusableLibraryCode.Checks;
 

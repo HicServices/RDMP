@@ -4,7 +4,6 @@
 // RDMP is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License for more details.
 // You should have received a copy of the GNU General Public License along with RDMP. If not, see <https://www.gnu.org/licenses/>.
 
-using MapsDirectlyToDatabaseTable;
 using NUnit.Framework;
 using Rdmp.Core.CommandLine.Runners;
 using Rdmp.Core.Curation.Data;
@@ -15,6 +14,7 @@ using ReusableLibraryCode.Checks;
 using ReusableLibraryCode.Progress;
 using System.Collections.Generic;
 using System.Linq;
+using Rdmp.Core.MapsDirectlyToDatabaseTable;
 using Tests.Common;
 
 namespace Rdmp.Core.Tests.CommandLine;

@@ -19,8 +19,6 @@ using FAnsi.Implementations.MicrosoftSQL;
 using FAnsi.Implementations.MySql;
 using FAnsi.Implementations.Oracle;
 using FAnsi.Implementations.PostgreSql;
-using MapsDirectlyToDatabaseTable;
-using MapsDirectlyToDatabaseTable.Versioning;
 using MySqlConnector;
 using NUnit.Framework;
 using Rdmp.Core.CommandLine.DatabaseCreation;
@@ -46,6 +44,8 @@ using Rdmp.Core.Curation.Data.Aggregation;
 using Rdmp.Core.Curation.Data.ImportExport;
 using Rdmp.Core.DataExport.DataRelease.Audit;
 using Rdmp.Core.DataExport.Data;
+using Rdmp.Core.MapsDirectlyToDatabaseTable;
+using Rdmp.Core.MapsDirectlyToDatabaseTable.Versioning;
 
 namespace Tests.Common;
 

@@ -8,8 +8,8 @@ using System.Globalization;
 using System.Reflection;
 using System.Text.RegularExpressions;
 using FAnsi.Extensions;
-using MapsDirectlyToDatabaseTable;
 using Rdmp.Core.Curation.Data;
+using Rdmp.Core.MapsDirectlyToDatabaseTable;
 
 namespace Rdmp.UI.SimpleDialogs;
 

@@ -7,9 +7,9 @@
 using System;
 using System.Linq;
 using System.Text.RegularExpressions;
-using MapsDirectlyToDatabaseTable.Versioning;
 using NUnit.Framework;
 using Rdmp.Core.Curation.Data;
+using Rdmp.Core.MapsDirectlyToDatabaseTable.Versioning;
 using Rdmp.Core.Startup;
 using Rdmp.Core.Validation;
 using Rdmp.Core.Validation.Constraints.Secondary;

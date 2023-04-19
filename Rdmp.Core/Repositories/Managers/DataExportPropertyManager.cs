@@ -7,7 +7,7 @@
 using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Data.Common;
-using MapsDirectlyToDatabaseTable;
+using Rdmp.Core.MapsDirectlyToDatabaseTable;
 using ReusableLibraryCode;
 
 namespace Rdmp.Core.Repositories.Managers;

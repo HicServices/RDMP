@@ -9,9 +9,9 @@ using System.Collections.Generic;
 using System.Data.Common;
 using System.IO;
 using System.Text.RegularExpressions;
-using MapsDirectlyToDatabaseTable;
 using Rdmp.Core.Curation.Data.ImportExport;
 using Rdmp.Core.Curation.Data.Serialization;
+using Rdmp.Core.MapsDirectlyToDatabaseTable;
 using Rdmp.Core.Repositories;
 using ReusableLibraryCode.Annotations;
 

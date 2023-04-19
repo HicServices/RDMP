@@ -11,7 +11,6 @@ using System.Data.Common;
 using System.Drawing;
 using System.Linq;
 using System.Windows.Forms;
-using MapsDirectlyToDatabaseTable;
 using Rdmp.Core.Curation.Data;
 using Rdmp.Core.Curation.Data.DataLoad;
 using Rdmp.Core.Curation.Data.Defaults;
@@ -27,6 +26,7 @@ using ReusableLibraryCode.Progress;
 
 using Rdmp.UI.SimpleDialogs.SqlDialogs;
 using Rdmp.Core;
+using Rdmp.Core.MapsDirectlyToDatabaseTable;
 
 namespace Rdmp.UI.DataLoadUIs.ANOUIs.ANOTableManagement;
 

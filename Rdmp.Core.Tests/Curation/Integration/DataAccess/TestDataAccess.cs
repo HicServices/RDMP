@@ -14,13 +14,13 @@ using FAnsi.Discovery.QuerySyntax;
 using FAnsi.Implementations.MicrosoftSQL;
 using NUnit.Framework;
 using Rdmp.Core.Curation.Data;
+using Rdmp.Core.MapsDirectlyToDatabaseTable;
 using Rdmp.Core.Repositories;
 using Rdmp.Core.Repositories.Managers;
 using ReusableLibraryCode;
 using ReusableLibraryCode.DataAccess;
 using ReusableLibraryCode.Exceptions;
 using Tests.Common;
-using MapsDirectlyToDatabaseTable;
 
 namespace Rdmp.Core.Tests.Curation.Integration.DataAccess;
 

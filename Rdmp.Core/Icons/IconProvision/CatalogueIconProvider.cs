@@ -10,7 +10,6 @@ using System.Linq;
 using SixLabors.ImageSharp;
 using FAnsi;
 using FAnsi.Discovery;
-using MapsDirectlyToDatabaseTable;
 using Rdmp.Core.CohortCommitting.Pipeline;
 using Rdmp.Core.Curation.Data;
 using Rdmp.Core.Curation.Data.Cohort.Joinables;
@@ -24,6 +23,7 @@ using Rdmp.Core.Repositories;
 using Rdmp.Core.Icons.IconProvision.StateBasedIconProviders;
 using ReusableLibraryCode.Icons.IconProvision;
 using Rdmp.Core.CommandExecution.AtomicCommands;
+using Rdmp.Core.MapsDirectlyToDatabaseTable;
 using SixLabors.ImageSharp.PixelFormats;
 
 namespace Rdmp.Core.Icons.IconProvision;

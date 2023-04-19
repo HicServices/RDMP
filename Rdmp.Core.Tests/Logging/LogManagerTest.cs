@@ -14,8 +14,8 @@ using Rdmp.Core.Logging;
 using ReusableLibraryCode;
 using Tests.Common;
 using FAnsi;
-using MapsDirectlyToDatabaseTable.Versioning;
 using Rdmp.Core.Databases;
+using Rdmp.Core.MapsDirectlyToDatabaseTable.Versioning;
 using ReusableLibraryCode.Checks;
 
 namespace Rdmp.Core.Tests.Logging;

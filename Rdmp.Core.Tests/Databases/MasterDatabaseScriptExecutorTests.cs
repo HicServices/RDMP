@@ -5,11 +5,11 @@
 // You should have received a copy of the GNU General Public License along with RDMP. If not, see <https://www.gnu.org/licenses/>.
 
 using FAnsi;
-using MapsDirectlyToDatabaseTable.Versioning;
 using NUnit.Framework;
 using Rdmp.Core.Databases;
 using ReusableLibraryCode.Checks;
 using System;
+using Rdmp.Core.MapsDirectlyToDatabaseTable.Versioning;
 using Tests.Common;
 
 namespace Rdmp.Core.Tests.Databases;

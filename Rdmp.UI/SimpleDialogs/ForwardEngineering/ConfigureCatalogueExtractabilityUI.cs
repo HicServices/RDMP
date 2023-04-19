@@ -11,7 +11,6 @@ using System.Linq;
 using System.Windows.Forms;
 using BrightIdeasSoftware;
 using FAnsi.Discovery;
-using MapsDirectlyToDatabaseTable;
 using Rdmp.Core.CommandExecution;
 using Rdmp.Core.CommandExecution.AtomicCommands;
 using Rdmp.Core.CommandExecution.AtomicCommands.Alter;

@@ -12,7 +12,6 @@ using Rdmp.Core.Curation.Data;
 using Rdmp.Core.Repositories.Managers;
 using ReusableLibraryCode.DataAccess;
 using Tests.Common;
-using MapsDirectlyToDatabaseTable;
 
 namespace Rdmp.Core.Tests.Curation.Integration;
 

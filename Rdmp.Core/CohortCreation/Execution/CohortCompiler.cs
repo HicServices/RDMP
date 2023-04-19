@@ -10,7 +10,6 @@ using System.Diagnostics;
 using System.Linq;
 using System.Threading;
 using FAnsi.Discovery;
-using MapsDirectlyToDatabaseTable;
 using Rdmp.Core.QueryBuilding;
 using Rdmp.Core.CohortCreation.Execution.Joinables;
 using Rdmp.Core.Curation.Data;
@@ -23,6 +22,7 @@ using Rdmp.Core.QueryCaching.Aggregation.Arguments;
 using ReusableLibraryCode.Checks;
 using ReusableLibraryCode.DataAccess;
 using System.Threading.Tasks;
+using Rdmp.Core.MapsDirectlyToDatabaseTable;
 
 namespace Rdmp.Core.CohortCreation.Execution;
 

@@ -9,9 +9,9 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Reflection;
 using FAnsi.Discovery;
-using MapsDirectlyToDatabaseTable;
 using Rdmp.Core.Curation.Data;
 using Rdmp.Core.Curation.Data.Spontaneous;
+using Rdmp.Core.MapsDirectlyToDatabaseTable;
 using ReusableLibraryCode.Checks;
 
 namespace Rdmp.Core.Curation.Checks;

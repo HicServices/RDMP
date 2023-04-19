@@ -11,10 +11,10 @@ using System.Linq;
 using NUnit.Framework;
 using Rdmp.Core.Curation.Data;
 using Rdmp.Core.Curation.Data.Governance;
+using Rdmp.Core.MapsDirectlyToDatabaseTable;
 using Rdmp.Core.Repositories;
 using ReusableLibraryCode.Checks;
 using Tests.Common;
-using MapsDirectlyToDatabaseTable;
 
 namespace Rdmp.Core.Tests.Curation.Integration;
 
