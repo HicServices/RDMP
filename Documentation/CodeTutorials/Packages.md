@@ -9,7 +9,7 @@
 
 | Package | Source Code | License | Purpose | Additional Risk Assessment |
 | ------- | ------------| ------- | ------- | -------------------------- |
-| [DockPanelSuite.Theme.VS2015](http://dockpanelsuite.com/) | [GitHub](https://github.com/dockpanelsuite/dockpanelsuite) | [MIT](https://opensource.org/licenses/MIT)  | Provides Window layout and docking for RDMP. | There are no powershell initialization files in the package which can be run by the NuGet installer.|
+| [DockPanelSuite.ThemeVS2015](http://dockpanelsuite.com/) | [GitHub](https://github.com/dockpanelsuite/dockpanelsuite) | [MIT](https://opensource.org/licenses/MIT)  | Provides Window layout and docking for RDMP. | There are no powershell initialization files in the package which can be run by the NuGet installer.|
 | [ObjectListView.Official](http://objectlistview.sourceforge.net/cs/index.html) | [Svn](http://objectlistview.sourceforge.net/cs/download.html#bleeding-edge-source) | [GPL 3.0](https://www.gnu.org/licenses/gpl-3.0.html) | Provides tree layout for user interfaces in main client application |
 | fernandreu.ScintillaNET | [GitHub](https://github.com/fernandreu/ScintillaNET) | [MIT](https://opensource.org/licenses/MIT) | Provides text editor component with highlighting etc |
 | NHunspell | [SourceForge](https://sourceforge.net/p/nhunspell/code/ci/default/tree/) | LGPL / MPL  | Adds spell check support to ScintillaNET text editor |
