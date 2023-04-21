@@ -11,33 +11,32 @@ using NUnit.Framework;
 
 namespace Rdmp.Core.Tests.ReusableCodeTests;
 
-class ChangeLogIsCorrectTests
+internal class ChangeLogIsCorrectTests
 {
-    [TestCase("../../../../../../CHANGELOG.md")]
-    public void TestChangeLogContents(string changeLogPath)
+    [Test]
+    public void TestChangeLogContents()
     {
-        if (changeLogPath != null && !Path.IsPathRooted(changeLogPath))
-            changeLogPath = Path.Combine(TestContext.CurrentContext.TestDirectory, changeLogPath);
+        var opts = new EnumerationOptions() { MatchCasing = MatchCasing.CaseInsensitive };
+        var dir = new DirectoryInfo(TestContext.CurrentContext.TestDirectory);
+        var log = dir.GetFiles("changelog.md", opts).SingleOrDefault();
+        while (log == null && dir.Parent != null)
+        {
+            dir = dir.Parent;
+            log = dir.GetFiles("changelog.md", opts).SingleOrDefault();
+        }
+        Assert.IsNotNull(log,"CHANGELOG.md not found");
 
-        if (!File.Exists(changeLogPath))
-            Assert.Fail($"Could not find file {changeLogPath}");
-
-        var fi = new FileInfo(changeLogPath);
-
-        var assemblyInfo = Path.Combine(fi.Directory.FullName, "SharedAssemblyInfo.cs");
+        var assemblyInfo = Path.Combine(log.Directory.FullName, "SharedAssemblyInfo.cs");
 
         if (!File.Exists(assemblyInfo))
             Assert.Fail($"Could not find file {assemblyInfo}");
 
-        var match = Regex.Match(File.ReadAllText(assemblyInfo), @"AssemblyInformationalVersion\(""(.*)""\)");
+        var match = Regex.Match(File.ReadAllText(assemblyInfo), @"AssemblyInformationalVersion\(""([^-]+).*""\)");
         Assert.IsTrue(match.Success, $"Could not find AssemblyInformationalVersion tag in {assemblyInfo}");
 
         var currentVersion = match.Groups[1].Value;
 
-        // When looking for the header in the change logs don't worry about -rc1 -rc2 etc
-        if (currentVersion.Contains('-')) currentVersion = currentVersion[..currentVersion.IndexOf('-')];
-
-        Assert.IsTrue(File.ReadLines(changeLogPath).Any(l => l.Contains($"## [{currentVersion}]")),
-            $"{changeLogPath} did not contain a header for the current version '{currentVersion}'");
+        Assert.IsTrue(File.ReadLines(log.FullName).Any(l => l.Contains($"## [{currentVersion}]")),
+            $"{log.FullName} did not contain a header for the current version '{currentVersion}'");
     }
 }

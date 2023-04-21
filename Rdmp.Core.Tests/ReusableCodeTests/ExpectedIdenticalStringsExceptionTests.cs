@@ -97,18 +97,17 @@ ACTUAL  :e cosmic cycle wherein our wor...
             @" For what could be the
 meaning 
 of the queer clay bas-relief and the disjointed jottings, ramblings, and cuttings which I found? Had
-my uncle, in his latter years become credulous of the most superficial impostures? ",
+my uncle, in his latter years become credulous of the most superficial impostures? ".Replace("\r",""),
             @" For what could be the
 meaning 
 if the queer clay bas-relief and the disjointed jottings, ramblings, and cuttings which I found? Had
-my uncle, in his latter years become credulous of the most superficial impostures? ");
+my uncle, in his latter years become credulous of the most superficial impostures? ".Replace("\r",""));
 
-        //line endings change the location in the string that is different.  It also means more preview
-        //text is available since newline characters consume more/less of the preview allowance.
+        // .Replace above forces Unix-style strings for test consistency
         Assert.AreEqual($@"These are different
-Strings differ at index {(Environment.NewLine == "\r\n"?38:34)}
-EXPECTED:d be the{eol}meaning {eol}of the que...
-ACTUAL  :d be the{eol}meaning {eol}if the que...
+Strings differ at index 34
+EXPECTED:d be the\nmeaning \nof the que...
+ACTUAL  :d be the\nmeaning \nif the que...
 -----------------------------^", ex.Message);
     }
 }
