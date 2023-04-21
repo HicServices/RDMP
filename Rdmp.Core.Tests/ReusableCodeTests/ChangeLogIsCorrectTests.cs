@@ -4,11 +4,12 @@
 // RDMP is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License for more details.
 // You should have received a copy of the GNU General Public License along with RDMP. If not, see <https://www.gnu.org/licenses/>.
 
-using NUnit.Framework;
 using System.IO;
+using System.Linq;
 using System.Text.RegularExpressions;
+using NUnit.Framework;
 
-namespace ReusableCodeTests;
+namespace Rdmp.Core.Tests.ReusableCodeTests;
 
 class ChangeLogIsCorrectTests
 {
@@ -31,17 +32,12 @@ class ChangeLogIsCorrectTests
         var match = Regex.Match(File.ReadAllText(assemblyInfo), @"AssemblyInformationalVersion\(""(.*)""\)");
         Assert.IsTrue(match.Success, $"Could not find AssemblyInformationalVersion tag in {assemblyInfo}");
 
-        string currentVersion = match.Groups[1].Value;
+        var currentVersion = match.Groups[1].Value;
 
         // When looking for the header in the change logs don't worry about -rc1 -rc2 etc
-        if (currentVersion.Contains('-'))
-        {
-            currentVersion = currentVersion.Substring(0, currentVersion.IndexOf('-'));
-        }
+        if (currentVersion.Contains('-')) currentVersion = currentVersion[..currentVersion.IndexOf('-')];
 
-        var changeLog = File.ReadAllText(changeLogPath);
-
-        Assert.IsTrue(changeLog.Contains($"## [{currentVersion}]"), $"{changeLogPath} did not contain a header for the current version '{currentVersion}'");
-
+        Assert.IsTrue(File.ReadLines(changeLogPath).Any(l => l.Contains($"## [{currentVersion}]")),
+            $"{changeLogPath} did not contain a header for the current version '{currentVersion}'");
     }
 }

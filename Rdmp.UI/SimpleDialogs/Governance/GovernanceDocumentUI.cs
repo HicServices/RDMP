@@ -59,7 +59,7 @@ public partial class GovernanceDocumentUI : GovernanceDocumentUI_Design, ISaveab
     {
         try
         {
-            UsefulStuff.GetInstance().ShowFileInWindowsExplorer(new FileInfo(tbPath.Text));
+            UsefulStuff.GetInstance().ShowPathInWindowsExplorer(new FileInfo(tbPath.Text));
         }
         catch (Exception exception)
         {

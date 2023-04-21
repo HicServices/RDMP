@@ -40,10 +40,10 @@ public class ExecuteCommandOpenInExplorer:BasicUICommandExecution,IAtomicCommand
         base.Execute();
 
         if(_file != null)
-            UsefulStuff.GetInstance().ShowFileInWindowsExplorer(_file);
+            UsefulStuff.GetInstance().ShowPathInWindowsExplorer(_file);
 
         if(_dir != null)
-            UsefulStuff.GetInstance().ShowFolderInWindowsExplorer(_dir);
+            UsefulStuff.GetInstance().ShowPathInWindowsExplorer(_dir);
     }
 
     public override Image<Rgba32> GetImage(IIconProvider iconProvider)

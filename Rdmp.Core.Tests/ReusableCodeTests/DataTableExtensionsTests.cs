@@ -9,7 +9,7 @@ using System.IO;
 using NUnit.Framework;
 using Rdmp.Core.ReusableLibraryCode.Extensions;
 
-namespace ReusableCodeTests;
+namespace Rdmp.Core.Tests.ReusableCodeTests;
 
 [Category("Unit")]
 class DataTableExtensionsTests
@@ -19,7 +19,7 @@ class DataTableExtensionsTests
     {
         var path = Path.Combine(TestContext.CurrentContext.TestDirectory, "out.csv");
 
-        DataTable dt = new DataTable();
+        using var dt = new DataTable();
         dt.Columns.Add("Phrase");
         dt.Columns.Add("Car");
 
@@ -41,7 +41,7 @@ class DataTableExtensionsTests
     {
         var path = Path.Combine(TestContext.CurrentContext.TestDirectory,"out.csv");
 
-        DataTable dt = new DataTable();
+        using var dt = new DataTable();
         dt.Columns.Add("Phrase");
         dt.Columns.Add("Car");
 
@@ -63,7 +63,7 @@ class DataTableExtensionsTests
     {
         var path = Path.Combine(TestContext.CurrentContext.TestDirectory, "out.csv");
 
-        DataTable dt = new DataTable();
+        using var dt = new DataTable();
         dt.Columns.Add("Phrase");
         dt.Columns.Add("Car");
 

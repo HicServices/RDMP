@@ -9,7 +9,7 @@ using NUnit.Framework;
 using Rdmp.Core.ReusableLibraryCode;
 using Tests.Common;
 
-namespace ReusableCodeTests;
+namespace Rdmp.Core.Tests.ReusableCodeTests;
 
 public class UsefulStuffTests:DatabaseTests
 {

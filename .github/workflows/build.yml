@@ -75,12 +75,6 @@ jobs:
             dotnet run -c Release --no-build --project Tools/rdmp/rdmp.csproj -- -f ./scripts/create_cohort.yaml &&
             dotnet run -c Release --no-build --project Tools/rdmp/rdmp.csproj -- -f ./scripts/create_dataload.yaml && 
             dotnet run -c Release --no-build --project Tools/rdmp/rdmp.csproj -- -f ./scripts/orphan_extractable_column.yaml && 
-      - name: Test Reusable code
-        shell: bash
-        run: |
-          rm -rf coverage
-          dotnet test "Reusable/Tests/ReusableCodeTests/ReusableCodeTests.csproj" --nologo --collect:"XPlat Code Coverage" --no-build --verbosity minimal -c Release --results-directory coverage -- DataCollectionRunSettings.DataCollectors.DataCollector.Configuration.Format=lcov
-          mv `find coverage -type f` recode.lcov
       - name: Test Core code
         shell: bash
         run: |
@@ -96,11 +90,6 @@ jobs:
         run:  |
               echo "UseFileSystemRepo: true" >> Tests.Common/TestDatabases.txt
               cat Tests.Common/TestDatabases.txt
-      - name: Test Reusable (with file system repo)
-        shell: bash
-        run: |
-          dotnet test "Reusable/Tests/ReusableCodeTests/ReusableCodeTests.csproj" --nologo --collect:"XPlat Code Coverage" --no-build --verbosity minimal -c Release --results-directory coverage -- DataCollectionRunSettings.DataCollectors.DataCollector.Configuration.Format=lcov
-          mv `find coverage -type f` recodefs.lcov
       - name: Test Core (with file system repo)
         shell: bash
         run: |
@@ -113,7 +102,7 @@ jobs:
           mv `find coverage -type f` uifs.lcov
       
       - name: Merge LCovs
-        run: lcov-result-merger "{ui,core,recode}{,fs}.lcov" all.lcov
+        run: lcov-result-merger "{ui,core}{,fs}.lcov" all.lcov
       - name: Coveralls
         uses: coverallsapp/github-action@master
         with:

@@ -88,7 +88,7 @@ public partial class SupportingDocumentUI : SupportingDocumentUI_Design, ISaveab
         if (_supportingDocument != null)
             try
             {
-                UsefulStuff.GetInstance().ShowFileInWindowsExplorer(_supportingDocument.GetFileName());
+                UsefulStuff.GetInstance().ShowPathInWindowsExplorer(_supportingDocument.GetFileName());
             }
             catch (Exception ex)
             {

@@ -32,7 +32,7 @@ public class PathLinkLabel : Label
         if(!string.IsNullOrWhiteSpace(Text))
             try
             {
-                UsefulStuff.GetInstance().ShowFolderInWindowsExplorer(new DirectoryInfo(Text));
+                UsefulStuff.GetInstance().ShowPathInWindowsExplorer(new DirectoryInfo(Text));
             }
             catch (Exception exception)
             {

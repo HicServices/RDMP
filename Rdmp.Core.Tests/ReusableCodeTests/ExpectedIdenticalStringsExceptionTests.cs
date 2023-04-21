@@ -8,11 +8,13 @@ using System;
 using NUnit.Framework;
 using Rdmp.Core.ReusableLibraryCode.Exceptions;
 
-namespace ReusableCodeTests;
+namespace Rdmp.Core.Tests.ReusableCodeTests;
 
 [Category("Unit")]
 public class ExpectedIdenticalStringsExceptionTests
 {
+    // Escaped newline for string checks:
+    private static readonly string eol = Environment.NewLine.Replace("\r","\\r").Replace("\n","\\n");
 
     [Test]
     public void CompletelyDifferentCase()
@@ -62,11 +64,6 @@ ACTUAL  :fish fly high
         var ex = new ExpectedIdenticalStringsException("These are different", @"fi
 sh", "fish");
 
-            
-            
-        string eol = Environment.NewLine.Replace("\r","\\r").Replace("\n","\\n");
-
-
         Assert.AreEqual(
             $@"These are different
 Strings differ at index 2
@@ -108,27 +105,10 @@ my uncle, in his latter years become credulous of the most superficial imposture
 
         //line endings change the location in the string that is different.  It also means more preview
         //text is available since newline characters consume more/less of the preview allowance.
-        if (Environment.NewLine == "\r\n")
-        {
-            Assert.AreEqual(
-                $@"These are different
-Strings differ at index 38
-EXPECTED: the\r\nmeaning \r\nof the que...
-ACTUAL  : the\r\nmeaning \r\nif the que...
------------------------------^"
-                , ex.Message);
-        }
-        else
-        {
-            Assert.AreEqual(
-                $@"These are different
-Strings differ at index 34
-EXPECTED:d be the\nmeaning \nof the que...
-ACTUAL  :d be the\nmeaning \nif the que...
------------------------------^"
-                , ex.Message);
-        }
-
-            
+        Assert.AreEqual($@"These are different
+Strings differ at index {(Environment.NewLine == "\r\n"?38:34)}
+EXPECTED:d be the{eol}meaning {eol}of the que...
+ACTUAL  :d be the{eol}meaning {eol}if the que...
+-----------------------------^", ex.Message);
     }
 }

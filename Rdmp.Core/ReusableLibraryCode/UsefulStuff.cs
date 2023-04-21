@@ -29,17 +29,11 @@ namespace Rdmp.Core.ReusableLibraryCode;
 /// </summary>
 public class UsefulStuff
 {
-    private static UsefulStuff _instance;
+    private static readonly UsefulStuff _instance=new();
     public static Regex RegexThingsThatAreNotNumbersOrLetters = new Regex("[^0-9A-Za-z]+");
     public static Regex RegexThingsThatAreNotNumbersOrLettersOrUnderscores = new Regex("[^0-9A-Za-z_]+");
         
-    public static UsefulStuff GetInstance()
-    {
-        if (_instance == null)
-            _instance = new UsefulStuff();
-
-        return _instance;
-    }
+    public static UsefulStuff GetInstance() => _instance;
 
     public static bool IsBadName(string name)
     {
@@ -88,18 +82,18 @@ public class UsefulStuff
         {
             try
             {
-                string sDateAsString = iO.ToString();
+                var sDateAsString = iO.ToString();
 
                 if (sDateAsString.Length == 8)
                 {
-                    sDateAsString = sDateAsString.Substring(0, 2) + "/" + sDateAsString.Substring(2, 2) + "/" +
-                                    sDateAsString.Substring(4, 4);
+                    sDateAsString =
+                        $"{sDateAsString[..2]}/{sDateAsString.Substring(2, 2)}/{sDateAsString.Substring(4, 4)}";
                     sDate = Convert.ToDateTime(sDateAsString);
                 }
                 else if (sDateAsString.Length == 6)
                 {
-                    sDateAsString = sDateAsString.Substring(0, 2) + "/" + sDateAsString.Substring(2, 2) + "/" +
-                                    sDateAsString.Substring(4, 2);
+                    sDateAsString =
+                        $"{sDateAsString[..2]}/{sDateAsString.Substring(2, 2)}/{sDateAsString.Substring(4, 2)}";
                     sDate = Convert.ToDateTime(sDateAsString);
                 }
                 else
@@ -107,7 +101,7 @@ public class UsefulStuff
             }
             catch (Exception)
             {
-                throw new Exception("Cannot recognise date format :" + iO);
+                throw new Exception($"Cannot recognise date format :{iO}");
 
             }
         }
@@ -127,24 +121,24 @@ public class UsefulStuff
         if (string.IsNullOrWhiteSpace(text))
             yield break;
 
-        string[] split = text.Split(new char[] { '\r', '\n', ',' }, StringSplitOptions.RemoveEmptyEntries);
+        var split = text.Split(new char[] { '\r', '\n', ',' }, StringSplitOptions.RemoveEmptyEntries);
 
 
         //trim off [db]..[tbl] 1 
-        for (int i = 0; i < split.Length; i++)
+        for (var i = 0; i < split.Length; i++)
             split[i] = Regex.Replace(split[i], @"\s+[\d\s]*$", "");    
             
         //identifies the last word in a collection of multiple words (requires you .Trim() so we dont get ending whitespace match)
-        Regex regexLastWord = new Regex("\\s[^\\s]*$");
-        foreach (string s in split)
+        var regexLastWord = new Regex("\\s[^\\s]*$");
+        foreach (var s in split)
         {
             //clean the string
 
-            string toAdd = s.Trim();
+            var toAdd = s.Trim();
             if (toAdd.Contains("."))
-                toAdd = toAdd.Substring(toAdd.LastIndexOf(".") + 1);
+                toAdd = toAdd[(toAdd.LastIndexOf(".") + 1)..];
                 
-            bool gotDelimitedMatch = false;
+            var gotDelimitedMatch = false;
 
             // if user has really horrible names like with spaces and stuff
             // then try expect them to have quoted them and pull out the capture
@@ -183,15 +177,13 @@ public class UsefulStuff
     {
         long n;
         DateTime d;
-        bool ok = false;
+        var ok = false;
 
-        if (Int64.TryParse(sCHI, out n) && sCHI.Length == 10)
-        {
-            string sDate = sCHI.Substring(0, 2) + "/" + sCHI.Substring(2, 2) + "/" + sCHI.Substring(4, 2);
-            string sCheck = sCHI.Substring(sCHI.Length - 1);
-            if (DateTime.TryParse(sDate, out d) && GetCHICheckDigit(sCHI) == sCheck)
-                ok = true;
-        }
+        if (!long.TryParse(sCHI, out n) || sCHI.Length != 10) return ok;
+        var sDate = $"{sCHI[..2]}/{sCHI.Substring(2, 2)}/{sCHI.Substring(4, 2)}";
+        var sCheck = sCHI[^1..];
+        if (DateTime.TryParse(sDate, out d) && GetCHICheckDigit(sCHI) == sCheck)
+            ok = true;
 
         return ok;
     }
@@ -205,7 +197,7 @@ public class UsefulStuff
 
         sum = 0;
         c = (int)'0';
-        for (int i = 0; i < lsCHI - 1; i++)
+        for (var i = 0; i < lsCHI - 1; i++)
             sum += ((int)(sCHI.Substring(i, 1)[0]) - c) * (lsCHI - i);
         sum = sum % 11;
 
@@ -230,13 +222,9 @@ public class UsefulStuff
     {
         try
         {
-            using (var hashProvider = SHA512.Create())
-            {
-                using (var stream = File.OpenRead(filename))
-                {
-                    return BitConverter.ToString(hashProvider.ComputeHash(stream));
-                }
-            }
+            using var hashProvider = SHA512.Create();
+            using var stream = File.OpenRead(filename);
+            return BitConverter.ToString(hashProvider.ComputeHash(stream));
         }
         catch (IOException)
         {
@@ -245,8 +233,7 @@ public class UsefulStuff
 
             if (retryCount-- > 0)
                 return HashFile(filename, retryCount);//try it again (recursively)
-            else
-                throw;
+            throw;
         }
 
 
@@ -254,40 +241,35 @@ public class UsefulStuff
      
     public static bool RequiresLength(string columnType)
     {
-        columnType = columnType.ToLower();
-
-        switch (columnType)
+        return columnType.ToLower() switch
         {
-            case "binary": return true;
-            case "bit": return false;
-            case "char": return true;
-            case "image": return true;
-            case "nchar": return true;
-            case "nvarchar": return true;
-            case "varbinary": return true;
-            case "varchar": return true;
-            case "numeric": return true;
-
-            default: return false;
-        }
+            "binary" => true,
+            "bit" => false,
+            "char" => true,
+            "image" => true,
+            "nchar" => true,
+            "nvarchar" => true,
+            "varbinary" => true,
+            "varchar" => true,
+            "numeric" => true,
+            _ => false
+        };
     }
 
     public static bool HasPrecisionAndScale(string columnType)
     {
-        columnType = columnType.ToLower();
-
-        switch (columnType)
+        return columnType.ToLower() switch
         {
-            case "decimal": return true;
-            case "numeric": return true;
-            default: return false;
-        }
+            "decimal" => true,
+            "numeric" => true,
+            _ => false
+        };
     }
         
     public static string RemoveIllegalFilenameCharacters(string value)
     {
         if (!string.IsNullOrWhiteSpace(value))
-            foreach (char invalidFileNameChar in System.IO.Path.GetInvalidFileNameChars())
+            foreach (var invalidFileNameChar in Path.GetInvalidFileNameChars())
                 value = value.Replace(invalidFileNameChar.ToString(), "");
 
         return value;
@@ -296,8 +278,7 @@ public class UsefulStuff
         
     public static void ExecuteBatchNonQuery(string sql, DbConnection conn, DbTransaction transaction = null, int timeout = 30)
     {
-        Dictionary<int, Stopwatch> whoCares;
-        ExecuteBatchNonQuery(sql, conn, transaction, out whoCares, timeout);
+        ExecuteBatchNonQuery(sql, conn, transaction, out _, timeout);
     }
 
     /// <summary>
@@ -312,9 +293,9 @@ public class UsefulStuff
     {
         performanceFigures = new Dictionary<int, Stopwatch>();
 
-        string sqlBatch = string.Empty;
-        DbCommand cmd = DatabaseCommandHelper.GetCommand(string.Empty, conn, transaction);
-        bool hadToOpen = false;
+        var sqlBatch = string.Empty;
+        var cmd = DatabaseCommandHelper.GetCommand(string.Empty, conn, transaction);
+        var hadToOpen = false;
 
         if (conn.State != ConnectionState.Open)
         {
@@ -323,12 +304,12 @@ public class UsefulStuff
             hadToOpen = true;
         }
 
-        int lineNumber = 1;
+        var lineNumber = 1;
 
         sql += "\nGO";   // make sure last batch is executed.
         try
         {
-            foreach (string line in sql.Split(new[] { "\n", "\r" }, StringSplitOptions.RemoveEmptyEntries))
+            foreach (var line in sql.Split(new[] { "\n", "\r" }, StringSplitOptions.RemoveEmptyEntries))
             {
                 lineNumber++;
 
@@ -350,7 +331,7 @@ public class UsefulStuff
                 }
                 else
                 {
-                    sqlBatch += line + "\n";
+                    sqlBatch += $"{line}\n";
                 }
             }
         }
@@ -374,45 +355,41 @@ public class UsefulStuff
     /// <param name="outputDirectory">The directory to put the generated file in.  Defaults to %appdata%/RDMP </param>
     public static FileInfo SprayFile(Assembly assembly, string manifestName, string file, string outputDirectory = null)
     {
-        if(outputDirectory == null)
-            outputDirectory = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData), "RDMP");
+        outputDirectory ??= Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData), "RDMP");
 
-        Stream fileToSpray = assembly.GetManifestResourceStream(manifestName);
+        using var fileToSpray = assembly.GetManifestResourceStream(manifestName);
 
         if (fileToSpray == null)
-            throw new Exception("assembly.GetManifestResourceStream returned null for manifest name " + manifestName + " in assembly " + assembly);
+            throw new Exception(
+                $"assembly.GetManifestResourceStream returned null for manifest name {manifestName} in assembly {assembly}");
 
         //get the bytes
-        byte[] buffer = new byte[fileToSpray.Length];
+        var buffer = new byte[fileToSpray.Length];
         fileToSpray.Read(buffer, 0, buffer.Length);
 
         if (!Directory.Exists(outputDirectory))
             Directory.CreateDirectory(outputDirectory);
 
-        FileInfo target = new FileInfo(Path.Combine(outputDirectory,file));
+        var target = new FileInfo(Path.Combine(outputDirectory,file));
 
         File.WriteAllBytes(target.FullName, buffer);
-
-        fileToSpray.Close();
-        fileToSpray.Dispose();
-            
         return target;
     }
 
     public static string GetHumanReadableByteSize(long len)
     {
-        string[] sizes = { "bytes", "KB", "MB", "GB" };
+        string[] sizes = { "bytes", "KB", "MB", "GB", "TB", "PB" };
             
-        int order = 0;
+        var order = 0;
         while (len >= 1024 && order + 1 < sizes.Length)
         {
             order++;
-            len = len / 1024;
+            len /= 1024;
         }
 
         // Adjust the format string to your preferences. For example "{0:0.#}{1}" would
         // show a single decimal place, and no space.
-        return String.Format("{0:0.##} {1}", len, sizes[order]);
+        return $"{len:0.##} {sizes[order]}";
     }
 
     public static bool VerifyFileExists(string path, int timeout)
@@ -441,13 +418,13 @@ public class UsefulStuff
 
     public string DataTableToHtmlDataTable(DataTable dt)
     {
-        StringBuilder sb = new StringBuilder();
+        var sb = new StringBuilder();
 
         sb.AppendLine("<Table>");
         sb.Append("<TR>");
 
         foreach (DataColumn column in dt.Columns)
-            sb.Append("<TD>" + column.ColumnName + "</TD>");
+            sb.Append($"<TD>{column.ColumnName}</TD>");
 
         sb.AppendLine("</TR>");
 
@@ -456,7 +433,7 @@ public class UsefulStuff
             sb.Append("<TR>");
 
             foreach (var cellObject in row.ItemArray)
-                sb.Append("<TD>" + cellObject.ToString() + "</TD>");
+                sb.Append($"<TD>{cellObject}</TD>");
                 
             sb.AppendLine("</TR>");
         }
@@ -468,54 +445,47 @@ public class UsefulStuff
 
     public string DataTableToCsv(DataTable dt)
     {
-        StringBuilder sb = new StringBuilder();
+        var sb = new StringBuilder();
 
-        using (CsvWriter w = new CsvWriter(new StringWriter(sb),CultureInfo.CurrentCulture))
+        using var w = new CsvWriter(new StringWriter(sb),CultureInfo.CurrentCulture);
+        foreach (DataColumn column in dt.Columns)
+            w.WriteField(column.ColumnName);
+
+        w.NextRecord();
+
+        foreach (DataRow row in dt.Rows)
         {
-            foreach (DataColumn column in dt.Columns)
-                w.WriteField(column.ColumnName);
+            foreach (var cellObject in row.ItemArray)
+                w.WriteField(cellObject);
 
             w.NextRecord();
-
-            foreach (DataRow row in dt.Rows)
-            {
-                foreach (var cellObject in row.ItemArray)
-                    w.WriteField(cellObject);
-
-                w.NextRecord();
-            }
-
-            w.Flush();
         }
-            
+
+        w.Flush();
+
         return sb.ToString();
     }
-    public void ShowFolderInWindowsExplorer(DirectoryInfo directoryInfo)
+    public void ShowPathInWindowsExplorer(FileSystemInfo fileInfo)
     {
-        string argument = " \"" + directoryInfo.FullName + "\"";
+        var argument = $"{(fileInfo is FileInfo?"/select,":"")} \"{fileInfo.FullName}\"";
         Process.Start("explorer.exe", argument);
     }
 
-    public void ShowFileInWindowsExplorer(FileInfo fileInfo)
-    {
-        string argument = "/select, \"" + fileInfo.FullName + "\"";
-        Process.Start("explorer.exe", argument);
-    }
-
-    public string GetClipboardFormatedHtmlStringFromHtmlString(string s)
+    public string GetClipboardFormattedHtmlStringFromHtmlString(string s)
     {
         const int maxLength = 9999999;
         if(s.Length > maxLength)
-            throw new ArgumentException("String s is too long, the maximum length is " + maxLength + " but argument s was length " + s.Length,"s");
+            throw new ArgumentException(
+                $"String s is too long, the maximum length is {maxLength} but argument s was length {s.Length}",nameof(s));
 
-        var guidStart = Guid.NewGuid().ToString().Substring(0,7);
-        var guidEnd = Guid.NewGuid().ToString().Substring(0, 7);
+        var guidStart = Guid.NewGuid().ToString()[..7];
+        var guidEnd = Guid.NewGuid().ToString()[..7];
 
         //one in a million that the first 7 digits of the guid are the same as one another or exist in the data string
         if (s.Contains(guidStart) || s.Contains(guidEnd) || guidStart.Equals(guidEnd))
-            return GetClipboardFormatedHtmlStringFromHtmlString(s);//but possible I guess so try again
+            return GetClipboardFormattedHtmlStringFromHtmlString(s);//but possible I guess so try again
 
-        string template = "Version:1.0\r\nStartHTML:"+guidStart + "\r\nEndHTML:" +guidEnd +"\r\n";
+        var template = $"Version:1.0\r\nStartHTML:{guidStart}\r\nEndHTML:{guidEnd}\r\n";
 
         s = template
             .Replace(guidStart, template.Length.ToString("0000000"))
@@ -537,7 +507,7 @@ public class UsefulStuff
         if (givenType.IsGenericType && givenType.GetGenericTypeDefinition() == genericType)
             return true;
 
-        Type baseType = givenType.BaseType;
+        var baseType = givenType.BaseType;
         if (baseType == null) return false;
 
         return IsAssignableToGenericType(baseType, genericType);
@@ -575,7 +545,7 @@ public class UsefulStuff
 
         return
             string.Join(newline ?? Environment.NewLine,
-                Regex.Split(input, @"(.{1," + maxLen + @"})(?:\s|$)")
+                Regex.Split(input, $@"(.{{1,{maxLen}}})(?:\s|$)")
                     .Where(x => x.Length > 0)
                     .Select(x => x.Trim()));
     }
@@ -584,20 +554,23 @@ public class UsefulStuff
     public void ConfirmContentsOfDirectoryAreTheSame(DirectoryInfo first, DirectoryInfo other)
     {
         if (first.EnumerateFiles().Count() != other.EnumerateFiles().Count())
-            throw new Exception("found different number of files in Globals directory " + first.FullName + " and " + other.FullName);
+            throw new Exception(
+                $"found different number of files in Globals directory {first.FullName} and {other.FullName}");
 
         var filesInFirst = first.EnumerateFiles().ToArray();
         var filesInOther = other.EnumerateFiles().ToArray();
 
-        for (int i = 0; i < filesInFirst.Length; i++)
+        for (var i = 0; i < filesInFirst.Length; i++)
         {
-            FileInfo file1 = filesInFirst[i];
-            FileInfo file2 = filesInOther[i];
+            var file1 = filesInFirst[i];
+            var file2 = filesInOther[i];
             if (!file1.Name.Equals(file2.Name))
-                throw new Exception("Although there were the same number of files in Globals directories " + first.FullName + " and " + other.FullName + ", there were differing file names (" + file1.Name + " and " + file2.Name + ")");
+                throw new Exception(
+                    $"Although there were the same number of files in Globals directories {first.FullName} and {other.FullName}, there were differing file names ({file1.Name} and {file2.Name})");
 
             if (!UsefulStuff.HashFile(file1.FullName).Equals(UsefulStuff.HashFile(file2.FullName)))
-                throw new Exception("File found in Globals directory which has a different MD5 from another Globals file.  Files were \"" + file1.FullName + "\" and \"" + file2.FullName + "\"");
+                throw new Exception(
+                    $"File found in Globals directory which has a different MD5 from another Globals file.  Files were \"{file1.FullName}\" and \"{file2.FullName}\"");
         }
     }
 
@@ -628,7 +601,7 @@ public class UsefulStuff
     /// <returns></returns>
     public static object ChangeType(object value, Type conversionType)
     {
-        Type t = Nullable.GetUnderlyingType(conversionType) ?? conversionType;
+        var t = Nullable.GetUnderlyingType(conversionType) ?? conversionType;
 
         if (t == typeof(DateTime) && value is string s)
         {

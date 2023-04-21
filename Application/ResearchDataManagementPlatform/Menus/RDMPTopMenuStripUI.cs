@@ -220,7 +220,7 @@ public partial class RDMPTopMenuStripUI : RDMPUserControl
             
         try
         {
-            UsefulStuff.GetInstance().ShowFolderInWindowsExplorer(UsefulStuff.GetExecutableDirectory());
+            UsefulStuff.GetInstance().ShowPathInWindowsExplorer(UsefulStuff.GetExecutableDirectory());
         }
         catch (Exception exception)
         {
@@ -486,7 +486,7 @@ public partial class RDMPTopMenuStripUI : RDMPUserControl
     {
         var file = new FileInfo(Path.GetTempFileName());
         File.WriteAllText(file.FullName,string.Join(Environment.NewLine,Activator.RepositoryLocator.CatalogueRepository.MEF.GetAllTypes().Select(t=>t.FullName)));
-        UsefulStuff.GetInstance().ShowFileInWindowsExplorer(file);
+        UsefulStuff.GetInstance().ShowPathInWindowsExplorer(file);
     }
 
     private void NewToolStripMenuItem_Click(object sender, EventArgs e)

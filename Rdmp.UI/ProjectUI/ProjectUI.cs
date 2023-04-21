@@ -293,7 +293,7 @@ public partial class ProjectUI : ProjectUI_Design, ISaveableUI
         {
             try
             {
-                UsefulStuff.GetInstance().ShowFolderInWindowsExplorer(new DirectoryInfo(tbExtractionDirectory.Text));
+                UsefulStuff.GetInstance().ShowPathInWindowsExplorer(new DirectoryInfo(tbExtractionDirectory.Text));
             }
             catch (Exception ex)
             {

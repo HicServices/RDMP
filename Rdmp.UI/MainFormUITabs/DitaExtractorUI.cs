@@ -72,7 +72,7 @@ public partial class DitaExtractorUI : RDMPUserControl
 
         DirectoryInfo d = new DirectoryInfo(tbExtractionDirectory.Text);
 
-        UsefulStuff.GetInstance().ShowFolderInWindowsExplorer(d);
+        UsefulStuff.GetInstance().ShowPathInWindowsExplorer(d);
     }
 
     private void btnCheck_Click(object sender, EventArgs e)

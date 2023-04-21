@@ -824,7 +824,7 @@ public partial class AggregateGraphUI : AggregateGraph_Design
                 heatmapUI.SaveImage(heatmapPath, ImageFormat.Jpeg);
             }
                 
-            UsefulStuff.GetInstance().ShowFileInWindowsExplorer(new FileInfo(sfd.FileName));
+            UsefulStuff.GetInstance().ShowPathInWindowsExplorer(new FileInfo(sfd.FileName));
         }
     }
 
@@ -834,7 +834,7 @@ public partial class AggregateGraphUI : AggregateGraph_Design
         {
             string s = UsefulStuff.GetInstance().DataTableToHtmlDataTable(_dt);
 
-            var formatted = UsefulStuff.GetInstance().GetClipboardFormatedHtmlStringFromHtmlString(s);
+            var formatted = UsefulStuff.GetInstance().GetClipboardFormattedHtmlStringFromHtmlString(s);
             
             Clipboard.SetText(formatted,TextDataFormat.Html);
         }

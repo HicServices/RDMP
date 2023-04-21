@@ -173,7 +173,7 @@ public class DocXHelper
     /// <param name="fileInfo"></param>
     protected void ShowFile(FileInfo fileInfo)
     {
-        UsefulStuff.GetInstance().ShowFileInWindowsExplorer(fileInfo);
+        UsefulStuff.GetInstance().ShowPathInWindowsExplorer(fileInfo);
     }
     /// <summary>
     /// Opens windows explorer to show the document
