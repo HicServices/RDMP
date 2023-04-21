@@ -11,7 +11,7 @@ using Rdmp.Core.Curation.Data;
 using Rdmp.Core.Curation.Data.DataLoad;
 using Rdmp.Core.DataLoad.Engine.DataProvider.FromCache;
 using Rdmp.Core.DataLoad.Engine.Job.Scheduling.Exceptions;
-using ReusableLibraryCode.Progress;
+using Rdmp.Core.ReusableLibraryCode.Progress;
 
 namespace Rdmp.Core.Caching.Layouts;
 

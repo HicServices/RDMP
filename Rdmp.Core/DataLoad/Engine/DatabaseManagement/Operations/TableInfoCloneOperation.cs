@@ -12,8 +12,8 @@ using Rdmp.Core.Curation.Data.DataLoad;
 using Rdmp.Core.Curation.Data.DataLoad.Extensions;
 using Rdmp.Core.DataLoad.Engine.DatabaseManagement.EntityNaming;
 using Rdmp.Core.DataLoad.Triggers;
-using ReusableLibraryCode.DataAccess;
-using ReusableLibraryCode.Progress;
+using Rdmp.Core.ReusableLibraryCode.DataAccess;
+using Rdmp.Core.ReusableLibraryCode.Progress;
 
 namespace Rdmp.Core.DataLoad.Engine.DatabaseManagement.Operations;
 

@@ -11,18 +11,15 @@ using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 using System.Windows.Forms;
-using MapsDirectlyToDatabaseTable;
 using Rdmp.Core.CommandExecution;
 using Rdmp.Core.Curation.Data;
 using Rdmp.Core.Curation.Data.Aggregation;
 using Rdmp.Core.DataQualityEngine;
 using Rdmp.Core.Icons.IconProvision;
 using Rdmp.Core.Reports;
+using Rdmp.Core.ReusableLibraryCode.Progress;
 using Rdmp.UI.ItemActivation;
-using Rdmp.UI.Menus;
 using Rdmp.UI.TestsAndSetup.ServicePropogation;
-using ReusableLibraryCode.Icons;
-using ReusableLibraryCode.Progress;
 
 namespace Rdmp.UI.SimpleDialogs.Reports;
 

@@ -7,7 +7,6 @@
 using System.Data;
 using System.IO;
 using System.Linq;
-using System.Text.RegularExpressions;
 using NUnit.Framework;
 using Rdmp.Core.Curation.Data;
 using Rdmp.Core.Curation.Data.DataLoad;
@@ -20,8 +19,8 @@ using Rdmp.Core.DataLoad.Engine.Job;
 using Rdmp.Core.DataLoad.Engine.LoadExecution;
 using Rdmp.Core.DataLoad.Engine.LoadProcess;
 using Rdmp.Core.Logging;
-using ReusableLibraryCode.Checks;
-using ReusableLibraryCode.Progress;
+using Rdmp.Core.ReusableLibraryCode.Checks;
+using Rdmp.Core.ReusableLibraryCode.Progress;
 
 namespace Rdmp.Core.Tests.DataLoad.Engine.Integration;
 

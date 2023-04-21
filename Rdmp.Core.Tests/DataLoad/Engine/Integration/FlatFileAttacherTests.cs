@@ -21,7 +21,7 @@ using Rdmp.Core.DataLoad.Engine.DatabaseManagement.EntityNaming;
 using Rdmp.Core.DataLoad.Engine.Job;
 using Rdmp.Core.DataLoad.Modules.Attachers;
 using Rdmp.Core.DataLoad.Modules.Exceptions;
-using ReusableLibraryCode.Progress;
+using Rdmp.Core.ReusableLibraryCode.Progress;
 using Tests.Common;
 using TypeGuesser;
 

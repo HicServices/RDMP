@@ -8,8 +8,8 @@ using System;
 using FAnsi.Discovery;
 using Rdmp.Core.Curation.Data;
 using Rdmp.Core.Curation.Data.DataLoad;
-using ReusableLibraryCode.Checks;
-using ReusableLibraryCode.Progress;
+using Rdmp.Core.ReusableLibraryCode.Checks;
+using Rdmp.Core.ReusableLibraryCode.Progress;
 
 namespace Rdmp.Core.DataLoad.Modules.Mutilators;
 

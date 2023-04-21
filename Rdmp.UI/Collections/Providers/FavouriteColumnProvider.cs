@@ -10,7 +10,6 @@ using BrightIdeasSoftware;
 using Rdmp.Core.Curation.Data;
 using Rdmp.Core.Icons.IconProvision;
 using Rdmp.UI.ItemActivation;
-using ReusableLibraryCode.Settings;
 
 namespace Rdmp.UI.Collections.Providers;
 

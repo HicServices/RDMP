@@ -11,7 +11,7 @@ using Rdmp.Core.Curation.Data;
 using Rdmp.Core.DataLoad.Engine.Job.Scheduling;
 using Rdmp.Core.DataLoad.Engine.Job.Scheduling.Exceptions;
 using Rdmp.Core.DataLoad.Engine.LoadProcess.Scheduling.Strategy;
-using ReusableLibraryCode.Progress;
+using Rdmp.Core.ReusableLibraryCode.Progress;
 
 namespace Rdmp.Core.Tests.DataLoad.Engine.Unit;
 

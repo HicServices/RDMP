@@ -8,9 +8,8 @@ using Rdmp.Core.CommandExecution;
 using Rdmp.Core.CommandExecution.AtomicCommands;
 using Rdmp.Core.CommandExecution.Combining;
 using Rdmp.Core.Providers.Nodes;
-using Rdmp.UI.CommandExecution.AtomicCommands;
+using Rdmp.Core.ReusableLibraryCode;
 using Rdmp.UI.ItemActivation;
-using ReusableLibraryCode;
 
 namespace Rdmp.UI.CommandExecution.Proposals;
 
@@ -24,7 +23,7 @@ class ProposeExecutionWhenTargetIsAllPluginsNode : RDMPCommandExecutionProposal<
     public override void Activate(AllPluginsNode target)
     {
         if(ItemActivator.RepositoryLocator.CatalogueRepository.MEF.DownloadDirectory.Exists)
-            UsefulStuff.GetInstance().ShowFolderInWindowsExplorer(ItemActivator.RepositoryLocator.CatalogueRepository.MEF.DownloadDirectory);
+            UsefulStuff.GetInstance().ShowPathInWindowsExplorer(ItemActivator.RepositoryLocator.CatalogueRepository.MEF.DownloadDirectory);
     }
 
     public override bool CanActivate(AllPluginsNode target)

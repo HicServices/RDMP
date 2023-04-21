@@ -9,17 +9,16 @@ using System.Threading;
 using FAnsi;
 using FAnsi.Discovery;
 using NUnit.Framework;
-using Rdmp.Core.Curation.Data;
 using Rdmp.Core.DataLoad.Triggers;
 using Rdmp.Core.DataLoad.Triggers.Exceptions;
 using Rdmp.Core.DataLoad.Triggers.Implementations;
-using ReusableLibraryCode.Checks;
-using ReusableLibraryCode.Exceptions;
 using Tests.Common;
 using System.Collections.Generic;
 using TypeGuesser;
 using System.Linq;
 using System.Data;
+using Rdmp.Core.ReusableLibraryCode.Checks;
+using Rdmp.Core.ReusableLibraryCode.Exceptions;
 
 namespace Rdmp.Core.Tests.Curation.Integration;
 

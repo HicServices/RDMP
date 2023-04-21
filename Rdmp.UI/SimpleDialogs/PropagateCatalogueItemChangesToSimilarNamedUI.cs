@@ -12,12 +12,12 @@ using System.Reflection;
 using System.Windows.Forms;
 using BrightIdeasSoftware;
 using Rdmp.Core.Curation.Data;
+using Rdmp.Core.ReusableLibraryCode;
 using Rdmp.UI.Collections;
 using Rdmp.UI.ItemActivation;
 using Rdmp.UI.Menus;
 using Rdmp.UI.ScintillaHelper;
 using Rdmp.UI.TestsAndSetup.ServicePropogation;
-using ReusableLibraryCode;
 using ScintillaNET;
 
 namespace Rdmp.UI.SimpleDialogs;

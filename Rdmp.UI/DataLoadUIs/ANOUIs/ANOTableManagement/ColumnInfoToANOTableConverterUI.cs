@@ -11,7 +11,6 @@ using System.Data.Common;
 using System.Drawing;
 using System.Linq;
 using System.Windows.Forms;
-using MapsDirectlyToDatabaseTable;
 using Rdmp.Core.Curation.Data;
 using Rdmp.Core.Curation.Data.DataLoad;
 using Rdmp.Core.Curation.Data.Defaults;
@@ -21,12 +20,12 @@ using Rdmp.Core.DataLoad.Engine.Pipeline.Components.Anonymisation;
 using Rdmp.UI.ItemActivation;
 using Rdmp.UI.Refreshing;
 using Rdmp.UI.TestsAndSetup.ServicePropogation;
-using ReusableLibraryCode.Checks;
-using ReusableLibraryCode.DataAccess;
-using ReusableLibraryCode.Progress;
-
 using Rdmp.UI.SimpleDialogs.SqlDialogs;
 using Rdmp.Core;
+using Rdmp.Core.MapsDirectlyToDatabaseTable;
+using Rdmp.Core.ReusableLibraryCode.Checks;
+using Rdmp.Core.ReusableLibraryCode.DataAccess;
+using Rdmp.Core.ReusableLibraryCode.Progress;
 
 namespace Rdmp.UI.DataLoadUIs.ANOUIs.ANOTableManagement;
 

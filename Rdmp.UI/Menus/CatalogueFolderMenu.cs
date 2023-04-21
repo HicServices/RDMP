@@ -5,7 +5,6 @@
 // You should have received a copy of the GNU General Public License along with RDMP. If not, see <https://www.gnu.org/licenses/>.
 
 using System.Linq;
-using Rdmp.Core;
 using Rdmp.Core.CommandExecution;
 using Rdmp.Core.CommandExecution.AtomicCommands.CatalogueCreationCommands;
 using Rdmp.Core.Curation.Data;

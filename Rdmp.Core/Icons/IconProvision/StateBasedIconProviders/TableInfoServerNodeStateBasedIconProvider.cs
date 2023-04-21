@@ -7,7 +7,7 @@
 using SixLabors.ImageSharp;
 using Rdmp.Core.Icons.IconOverlays;
 using Rdmp.Core.Providers.Nodes;
-using ReusableLibraryCode.Icons.IconProvision;
+using Rdmp.Core.ReusableLibraryCode.Icons.IconProvision;
 using SixLabors.ImageSharp.PixelFormats;
 
 namespace Rdmp.Core.Icons.IconProvision.StateBasedIconProviders;

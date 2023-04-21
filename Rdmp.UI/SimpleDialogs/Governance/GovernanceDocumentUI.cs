@@ -10,11 +10,10 @@ using System.IO;
 using System.Windows.Forms;
 using Rdmp.Core;
 using Rdmp.Core.Curation.Data.Governance;
+using Rdmp.Core.ReusableLibraryCode;
 using Rdmp.UI.Rules;
 using Rdmp.UI.SimpleControls;
 using Rdmp.UI.TestsAndSetup.ServicePropogation;
-using ReusableLibraryCode;
-
 
 
 namespace Rdmp.UI.SimpleDialogs.Governance;
@@ -60,7 +59,7 @@ public partial class GovernanceDocumentUI : GovernanceDocumentUI_Design, ISaveab
     {
         try
         {
-            UsefulStuff.GetInstance().ShowFileInWindowsExplorer(new FileInfo(tbPath.Text));
+            UsefulStuff.GetInstance().ShowPathInWindowsExplorer(new FileInfo(tbPath.Text));
         }
         catch (Exception exception)
         {

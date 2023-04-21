@@ -8,11 +8,11 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using Rdmp.Core.CommandExecution.AtomicCommands.CatalogueCreationCommands;
+using Rdmp.Core.ReusableLibraryCode.Settings;
 using Rdmp.UI.CommandExecution.AtomicCommands;
 using Rdmp.UI.ItemActivation;
 using Rdmp.UI.TransparentHelpSystem;
 using Rdmp.UI.TransparentHelpSystem.ProgressTracking;
-using ReusableLibraryCode.Settings;
 
 namespace Rdmp.UI.Tutorials;
 

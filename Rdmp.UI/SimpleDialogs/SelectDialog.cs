@@ -5,8 +5,6 @@
 // You should have received a copy of the GNU General Public License along with RDMP. If not, see <https://www.gnu.org/licenses/>.
 
 using BrightIdeasSoftware;
-using MapsDirectlyToDatabaseTable;
-using MapsDirectlyToDatabaseTable.Attributes;
 using Rdmp.Core;
 using Rdmp.Core.CommandExecution;
 using Rdmp.Core.Curation.Data;
@@ -17,11 +15,8 @@ using Rdmp.Core.Icons.IconOverlays;
 using Rdmp.Core.Icons.IconProvision;
 using Rdmp.Core.Providers;
 using Rdmp.UI.Collections;
-using Rdmp.UI.Collections.Providers;
 using Rdmp.UI.ItemActivation;
 using Rdmp.UI.Theme;
-using ReusableLibraryCode.Icons;
-using ReusableLibraryCode.Settings;
 using System;
 using System.Collections;
 using System.Collections.Generic;
@@ -32,6 +27,9 @@ using System.Text.RegularExpressions;
 using System.Threading;
 using System.Threading.Tasks;
 using System.Windows.Forms;
+using Rdmp.Core.MapsDirectlyToDatabaseTable;
+using Rdmp.Core.MapsDirectlyToDatabaseTable.Attributes;
+using Rdmp.Core.ReusableLibraryCode.Settings;
 
 namespace Rdmp.UI.SimpleDialogs;
 // IMPORTANT: To edit this in Designer rename 'SelectDialog`1.resx' to 'SelectDialog.resx'

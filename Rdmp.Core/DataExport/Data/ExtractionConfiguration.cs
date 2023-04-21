@@ -9,8 +9,6 @@ using System.Collections.Generic;
 using System.Data.Common;
 using System.Linq;
 using FAnsi.Discovery;
-using MapsDirectlyToDatabaseTable;
-using MapsDirectlyToDatabaseTable.Attributes;
 using Rdmp.Core.Curation.Data;
 using Rdmp.Core.Curation.Data.Cohort;
 using Rdmp.Core.Curation.Data.Defaults;
@@ -20,11 +18,13 @@ using Rdmp.Core.DataExport.DataExtraction.Pipeline.Sources;
 using Rdmp.Core.DataExport.DataRelease.Audit;
 using Rdmp.Core.Logging;
 using Rdmp.Core.Logging.PastEvents;
+using Rdmp.Core.MapsDirectlyToDatabaseTable;
+using Rdmp.Core.MapsDirectlyToDatabaseTable.Attributes;
 using Rdmp.Core.QueryBuilding;
 using Rdmp.Core.Repositories;
-using ReusableLibraryCode;
-using ReusableLibraryCode.Annotations;
-using ReusableLibraryCode.DataAccess;
+using Rdmp.Core.ReusableLibraryCode;
+using Rdmp.Core.ReusableLibraryCode.Annotations;
+using Rdmp.Core.ReusableLibraryCode.DataAccess;
 
 namespace Rdmp.Core.DataExport.Data;
 

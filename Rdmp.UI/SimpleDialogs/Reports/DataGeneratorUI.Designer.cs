@@ -1,6 +1,4 @@
-﻿using ReusableLibraryCode.Progress;
-
-namespace Rdmp.UI.SimpleDialogs.Reports
+﻿namespace Rdmp.UI.SimpleDialogs.Reports
 {
     partial class DataGeneratorUI
     {

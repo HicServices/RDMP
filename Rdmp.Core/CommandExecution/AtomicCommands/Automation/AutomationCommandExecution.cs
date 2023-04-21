@@ -6,8 +6,8 @@
 
 using System;
 using CommandLine;
-using MapsDirectlyToDatabaseTable;
 using Rdmp.Core.CommandLine.Options;
+using Rdmp.Core.MapsDirectlyToDatabaseTable;
 using Rdmp.Core.Repositories;
 using Rdmp.Core.Startup;
 

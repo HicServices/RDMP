@@ -10,9 +10,7 @@ using System.Drawing;
 using System.IO;
 using System.Text.RegularExpressions;
 using System.Windows.Forms;
-using Rdmp.UI.SimpleDialogs;
-using ReusableLibraryCode;
-
+using Rdmp.Core.ReusableLibraryCode;
 
 
 namespace Rdmp.UI.SimpleDialogs;

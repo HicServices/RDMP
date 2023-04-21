@@ -9,21 +9,19 @@ using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Reflection;
-using System.Runtime.Serialization;
 using System.Text.RegularExpressions;
 using FAnsi.Discovery;
-using MapsDirectlyToDatabaseTable;
-using MapsDirectlyToDatabaseTable.Attributes;
-using MapsDirectlyToDatabaseTable.Versioning;
 using Rdmp.Core.CommandExecution.AtomicCommands;
 using Rdmp.Core.CommandLine.Interactive.Picking;
 using Rdmp.Core.Curation;
 using Rdmp.Core.Curation.Data;
 using Rdmp.Core.Curation.Data.DataLoad;
 using Rdmp.Core.Curation.Data.Pipelines;
+using Rdmp.Core.MapsDirectlyToDatabaseTable;
+using Rdmp.Core.MapsDirectlyToDatabaseTable.Versioning;
 using Rdmp.Core.Repositories;
 using Rdmp.Core.Repositories.Construction;
-using ReusableLibraryCode.Checks;
+using Rdmp.Core.ReusableLibraryCode.Checks;
 
 namespace Rdmp.Core.CommandExecution;
 

@@ -8,8 +8,8 @@ using System;
 using System.Drawing;
 using System.IO;
 using System.Windows.Forms;
+using Rdmp.Core.ReusableLibraryCode;
 using Rdmp.UI.SimpleDialogs;
-using ReusableLibraryCode;
 using Cursors = System.Windows.Forms.Cursors;
 
 namespace Rdmp.UI.LinkLabels;
@@ -32,7 +32,7 @@ public class PathLinkLabel : Label
         if(!string.IsNullOrWhiteSpace(Text))
             try
             {
-                UsefulStuff.GetInstance().ShowFolderInWindowsExplorer(new DirectoryInfo(Text));
+                UsefulStuff.GetInstance().ShowPathInWindowsExplorer(new DirectoryInfo(Text));
             }
             catch (Exception exception)
             {

@@ -7,15 +7,10 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using MapsDirectlyToDatabaseTable;
 using Rdmp.Core;
-using Rdmp.Core.CommandExecution;
 using Rdmp.Core.Curation.Data.Dashboarding;
 using Rdmp.UI;
 using Rdmp.UI.Collections;
-using Rdmp.UI.ItemActivation;
-using ReusableLibraryCode.Checks;
-
 using WeifenLuo.WinFormsUI.Docking;
 
 namespace ResearchDataManagementPlatform.WindowManagement.ContentWindowTracking.Persistence;

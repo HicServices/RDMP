@@ -12,18 +12,15 @@ using FAnsi.Discovery.QuerySyntax;
 using FAnsi.Implementations.MicrosoftSQL;
 using Rdmp.Core;
 using Rdmp.Core.Curation.Data;
+using Rdmp.Core.ReusableLibraryCode.Checks;
 using Rdmp.UI.AutoComplete;
 using Rdmp.UI.ChecksUI;
-using Rdmp.UI.CommandExecution.AtomicCommands;
 using Rdmp.UI.Copying;
 using Rdmp.UI.ItemActivation;
 using Rdmp.UI.Rules;
 using Rdmp.UI.ScintillaHelper;
 using Rdmp.UI.SimpleControls;
 using Rdmp.UI.TestsAndSetup.ServicePropogation;
-using ReusableLibraryCode.Checks;
-
-
 using ScintillaNET;
 
 namespace Rdmp.UI.ExtractionUIs;

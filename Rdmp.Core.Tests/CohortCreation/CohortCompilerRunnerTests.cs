@@ -9,14 +9,14 @@ using System.Linq;
 using System.Threading;
 using FAnsi;
 using FAnsi.Discovery;
-using MapsDirectlyToDatabaseTable.Versioning;
 using NUnit.Framework;
 using Rdmp.Core.CohortCreation.Execution;
 using Rdmp.Core.Curation.Data;
 using Rdmp.Core.Curation.Data.Aggregation;
 using Rdmp.Core.Curation.Data.Cohort;
 using Rdmp.Core.Databases;
-using ReusableLibraryCode.Checks;
+using Rdmp.Core.MapsDirectlyToDatabaseTable.Versioning;
+using Rdmp.Core.ReusableLibraryCode.Checks;
 using Tests.Common;
 
 namespace Rdmp.Core.Tests.CohortCreation;

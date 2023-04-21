@@ -9,8 +9,6 @@ using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Data.Common;
 using System.Linq;
-using MapsDirectlyToDatabaseTable;
-using MapsDirectlyToDatabaseTable.Versioning;
 using Rdmp.Core.Curation.Data;
 using Rdmp.Core.Curation.Data.Aggregation;
 using Rdmp.Core.Curation.Data.Cache;
@@ -25,10 +23,12 @@ using Rdmp.Core.Curation.Data.Pipelines;
 using Rdmp.Core.Curation.Data.Referencing;
 using Rdmp.Core.Curation.Data.Remoting;
 using Rdmp.Core.Logging;
+using Rdmp.Core.MapsDirectlyToDatabaseTable;
+using Rdmp.Core.MapsDirectlyToDatabaseTable.Versioning;
 using Rdmp.Core.Repositories.Construction;
 using Rdmp.Core.Repositories.Managers;
-using ReusableLibraryCode;
-using ReusableLibraryCode.Comments;
+using Rdmp.Core.ReusableLibraryCode;
+using Rdmp.Core.ReusableLibraryCode.Comments;
 
 namespace Rdmp.Core.Repositories;
 

@@ -15,8 +15,8 @@ using Rdmp.Core.Curation.Data.Cache;
 using Rdmp.Core.Curation.Data.DataLoad;
 using Rdmp.Core.DataQualityEngine.Data;
 using Rdmp.Core.Repositories;
-using ReusableLibraryCode.Checks;
-using ReusableLibraryCode.Progress;
+using Rdmp.Core.ReusableLibraryCode.Checks;
+using Rdmp.Core.ReusableLibraryCode.Progress;
 
 namespace Rdmp.Core.DataQualityEngine.Reports;
 

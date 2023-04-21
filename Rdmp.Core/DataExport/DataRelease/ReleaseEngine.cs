@@ -15,8 +15,8 @@ using Rdmp.Core.DataExport.DataRelease.Pipeline;
 using Rdmp.Core.DataExport.DataRelease.Potential;
 using Rdmp.Core.Reports.ExtractionTime;
 using Rdmp.Core.Repositories;
-using ReusableLibraryCode;
-using ReusableLibraryCode.Progress;
+using Rdmp.Core.ReusableLibraryCode;
+using Rdmp.Core.ReusableLibraryCode.Progress;
 
 namespace Rdmp.Core.DataExport.DataRelease;
 

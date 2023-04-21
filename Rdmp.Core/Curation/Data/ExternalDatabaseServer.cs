@@ -10,18 +10,18 @@ using System.Data.Common;
 using FAnsi;
 using FAnsi.Discovery;
 using FAnsi.Discovery.QuerySyntax;
-using MapsDirectlyToDatabaseTable;
-using MapsDirectlyToDatabaseTable.Attributes;
-using MapsDirectlyToDatabaseTable.Versioning;
 using Rdmp.Core.Curation.Data.Defaults;
 using Rdmp.Core.Curation.Data.ImportExport;
 using Rdmp.Core.Curation.Data.Serialization;
 using Rdmp.Core.Databases;
 using Rdmp.Core.Logging;
+using Rdmp.Core.MapsDirectlyToDatabaseTable;
+using Rdmp.Core.MapsDirectlyToDatabaseTable.Attributes;
+using Rdmp.Core.MapsDirectlyToDatabaseTable.Versioning;
 using Rdmp.Core.Repositories;
-using ReusableLibraryCode.Annotations;
-using ReusableLibraryCode.Checks;
-using ReusableLibraryCode.DataAccess;
+using Rdmp.Core.ReusableLibraryCode.Annotations;
+using Rdmp.Core.ReusableLibraryCode.Checks;
+using Rdmp.Core.ReusableLibraryCode.DataAccess;
 
 namespace Rdmp.Core.Curation.Data;
 

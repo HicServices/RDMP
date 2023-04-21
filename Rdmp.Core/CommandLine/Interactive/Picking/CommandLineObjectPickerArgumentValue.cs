@@ -10,12 +10,12 @@ using System.Collections.ObjectModel;
 using System.IO;
 using System.Linq;
 using FAnsi.Discovery;
-using MapsDirectlyToDatabaseTable;
 using NLog;
 using Rdmp.Core.Curation.Data;
 using Rdmp.Core.Curation.Data.DataLoad;
-using ReusableLibraryCode;
-using ReusableLibraryCode.Checks;
+using Rdmp.Core.MapsDirectlyToDatabaseTable;
+using Rdmp.Core.ReusableLibraryCode;
+using Rdmp.Core.ReusableLibraryCode.Checks;
 
 namespace Rdmp.Core.CommandLine.Interactive.Picking;
 

@@ -11,8 +11,8 @@ using Rdmp.Core.DataLoad.Engine.DataProvider;
 using Rdmp.Core.DataLoad.Engine.Job;
 using Rdmp.Core.DataLoad.Engine.LoadExecution.Components.Arguments;
 using Rdmp.Core.Repositories;
-using ReusableLibraryCode.Checks;
-using ReusableLibraryCode.Progress;
+using Rdmp.Core.ReusableLibraryCode.Checks;
+using Rdmp.Core.ReusableLibraryCode.Progress;
 
 namespace Rdmp.Core.DataLoad.Engine.LoadExecution.Components.Runtime;
 

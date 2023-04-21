@@ -9,7 +9,7 @@ using System.Linq;
 using Rdmp.Core.Caching.Layouts;
 using Rdmp.Core.Curation.Data;
 using Rdmp.Core.DataLoad.Engine.LoadProcess.Scheduling.Strategy;
-using ReusableLibraryCode.Progress;
+using Rdmp.Core.ReusableLibraryCode.Progress;
 
 namespace Rdmp.Core.DataLoad.Engine.Job.Scheduling;
 

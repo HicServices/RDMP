@@ -7,11 +7,11 @@
 using System;
 using System.Collections.Generic;
 using System.Data.Common;
-using MapsDirectlyToDatabaseTable;
-using MapsDirectlyToDatabaseTable.Attributes;
+using Rdmp.Core.MapsDirectlyToDatabaseTable;
+using Rdmp.Core.MapsDirectlyToDatabaseTable.Attributes;
 using Rdmp.Core.Repositories;
-using ReusableLibraryCode.Annotations;
-using ReusableLibraryCode.DataAccess;
+using Rdmp.Core.ReusableLibraryCode.Annotations;
+using Rdmp.Core.ReusableLibraryCode.DataAccess;
 
 namespace Rdmp.Core.Curation.Data.Remoting;
 

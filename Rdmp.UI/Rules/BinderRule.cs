@@ -7,7 +7,7 @@
 using System;
 using System.ComponentModel;
 using System.Windows.Forms;
-using MapsDirectlyToDatabaseTable;
+using Rdmp.Core.MapsDirectlyToDatabaseTable;
 using Rdmp.UI.ItemActivation;
 
 namespace Rdmp.UI.Rules;

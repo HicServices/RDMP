@@ -5,18 +5,12 @@
 // You should have received a copy of the GNU General Public License along with RDMP. If not, see <https://www.gnu.org/licenses/>.
 
 using System;
-using System.Diagnostics;
-using System.Linq;
-using System.Reflection;
-using MapsDirectlyToDatabaseTable;
 using NLog;
-using Rdmp.Core.CommandExecution;
-using Rdmp.Core.CommandLine.Gui.Windows;
 using Rdmp.Core.CommandLine.Runners;
 using Rdmp.Core.DataFlowPipeline;
 using Rdmp.Core.Repositories;
-using ReusableLibraryCode.Checks;
-using ReusableLibraryCode.Progress;
+using Rdmp.Core.ReusableLibraryCode.Checks;
+using Rdmp.Core.ReusableLibraryCode.Progress;
 using Terminal.Gui;
 
 namespace Rdmp.Core.CommandLine.Gui;

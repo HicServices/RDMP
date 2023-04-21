@@ -8,7 +8,7 @@ using FAnsi;
 using NUnit.Framework;
 using Rdmp.Core.Curation.Data;
 using Rdmp.Core.QueryBuilding;
-using ReusableLibraryCode.Settings;
+using Rdmp.Core.ReusableLibraryCode.Settings;
 
 namespace Rdmp.Core.Tests.Curation.Integration.QueryBuildingTests.AggregateBuilderTests;
 

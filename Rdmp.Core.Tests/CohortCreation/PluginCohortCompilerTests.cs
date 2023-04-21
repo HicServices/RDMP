@@ -9,7 +9,6 @@ using NUnit.Framework;
 using Rdmp.Core.CohortCommitting.Pipeline.Sources;
 using Rdmp.Core.CohortCreation.Execution;
 using Rdmp.Core.CommandExecution.AtomicCommands;
-using Rdmp.Core.CommandExecution.AtomicCommands.CatalogueCreationCommands;
 using Rdmp.Core.CommandExecution.Combining;
 using Rdmp.Core.CommandLine.Interactive;
 using Rdmp.Core.Curation.Data;
@@ -17,10 +16,10 @@ using Rdmp.Core.Curation.Data.Cohort;
 using Rdmp.Core.Curation.Data.Cohort.Joinables;
 using Rdmp.Core.DataFlowPipeline;
 using Rdmp.Core.Tests.CohortCreation.QueryTests;
-using ReusableLibraryCode.Checks;
-using ReusableLibraryCode.Progress;
 using System;
 using System.Data;
+using Rdmp.Core.ReusableLibraryCode.Checks;
+using Rdmp.Core.ReusableLibraryCode.Progress;
 
 namespace Rdmp.Core.Tests.CohortCreation;
 

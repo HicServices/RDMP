@@ -15,11 +15,11 @@ using Rdmp.Core.Curation.Data;
 using Rdmp.Core.Curation.Data.DataLoad;
 using Rdmp.Core.DataFlowPipeline;
 using Rdmp.Core.DataLoad.Modules.Attachers;
-using ReusableLibraryCode.Checks;
-using ReusableLibraryCode.Progress;
 using System;
 using System.IO;
 using System.Linq;
+using Rdmp.Core.ReusableLibraryCode.Checks;
+using Rdmp.Core.ReusableLibraryCode.Progress;
 
 namespace Tests.Common.Scenarios;
 

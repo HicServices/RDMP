@@ -12,10 +12,9 @@ using Rdmp.Core.Curation.Data;
 using Rdmp.Core.DataExport.Data;
 using Rdmp.Core.DataExport.DataExtraction.Commands;
 using Rdmp.Core.DataExport.DataExtraction.Pipeline.Destinations;
-using ReusableLibraryCode.Checks;
-using ReusableLibraryCode.Progress;
+using Rdmp.Core.ReusableLibraryCode.Checks;
+using Rdmp.Core.ReusableLibraryCode.Progress;
 using Tests.Common;
-using Tests.Common.Scenarios;
 
 namespace Rdmp.Core.Tests.DataExport.DataExtraction;
 

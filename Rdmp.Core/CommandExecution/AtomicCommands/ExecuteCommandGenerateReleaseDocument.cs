@@ -7,13 +7,12 @@
 using System;
 using SixLabors.ImageSharp;
 using System.Linq;
-using Rdmp.Core.CommandLine.Options;
 using Rdmp.Core.CommandLine.Runners;
 using Rdmp.Core.DataExport.Data;
 using Rdmp.Core.Icons.IconProvision;
 using Rdmp.Core.Reports.ExtractionTime;
-using ReusableLibraryCode.Checks;
-using ReusableLibraryCode.Icons.IconProvision;
+using Rdmp.Core.ReusableLibraryCode.Checks;
+using Rdmp.Core.ReusableLibraryCode.Icons.IconProvision;
 using SixLabors.ImageSharp.PixelFormats;
 
 

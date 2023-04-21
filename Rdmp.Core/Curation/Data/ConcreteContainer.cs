@@ -7,8 +7,8 @@
 using System;
 using System.Collections.Generic;
 using System.Data.Common;
-using MapsDirectlyToDatabaseTable;
 using Rdmp.Core.Curation.FilterImporting.Construction;
+using Rdmp.Core.MapsDirectlyToDatabaseTable;
 using Rdmp.Core.Repositories.Managers;
 
 namespace Rdmp.Core.Curation.Data;

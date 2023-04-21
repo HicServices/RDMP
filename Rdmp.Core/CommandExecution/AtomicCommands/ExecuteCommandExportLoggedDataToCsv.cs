@@ -5,7 +5,6 @@
 // You should have received a copy of the GNU General Public License along with RDMP. If not, see <https://www.gnu.org/licenses/>.
 
 using System;
-using System.Data;
 using System.Globalization;
 using System.Linq;
 using Rdmp.Core.Curation.Data;
@@ -13,7 +12,7 @@ using Rdmp.Core.Databases;
 using Rdmp.Core.DataExport.DataExtraction;
 using Rdmp.Core.Logging;
 using Rdmp.Core.Repositories.Construction;
-using ReusableLibraryCode.DataAccess;
+using Rdmp.Core.ReusableLibraryCode.DataAccess;
 
 namespace Rdmp.Core.CommandExecution.AtomicCommands;
 

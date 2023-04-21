@@ -19,6 +19,7 @@ using Rdmp.Core.Curation.Data.DataLoad;
 using Rdmp.Core.DataLoad.Engine.DatabaseManagement.EntityNaming;
 using Rdmp.Core.DataViewing;
 using Rdmp.Core.Icons.IconProvision;
+using Rdmp.Core.ReusableLibraryCode.Icons.IconProvision;
 using Rdmp.UI.Collections;
 using Rdmp.UI.Collections.Providers.Copying;
 using Rdmp.UI.CommandExecution;
@@ -27,7 +28,6 @@ using Rdmp.UI.DataLoadUIs.LoadMetadataUIs.LoadDiagram.StateDiscovery;
 using Rdmp.UI.DataViewing;
 using Rdmp.UI.ItemActivation;
 using Rdmp.UI.TestsAndSetup.ServicePropogation;
-using ReusableLibraryCode.Icons.IconProvision;
 
 
 namespace Rdmp.UI.DataLoadUIs.LoadMetadataUIs.LoadDiagram;

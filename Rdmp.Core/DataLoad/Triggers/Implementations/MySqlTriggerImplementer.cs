@@ -9,9 +9,9 @@ using System.Linq;
 using System.Text.RegularExpressions;
 using FAnsi.Discovery;
 using FAnsi.Discovery.QuerySyntax;
-using ReusableLibraryCode.Checks;
-using ReusableLibraryCode.Exceptions;
-using ReusableLibraryCode.Settings;
+using Rdmp.Core.ReusableLibraryCode.Checks;
+using Rdmp.Core.ReusableLibraryCode.Exceptions;
+using Rdmp.Core.ReusableLibraryCode.Settings;
 
 namespace Rdmp.Core.DataLoad.Triggers.Implementations;
 

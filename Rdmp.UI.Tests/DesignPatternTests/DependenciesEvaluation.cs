@@ -11,7 +11,7 @@ using System.Linq;
 using System.Text.RegularExpressions;
 using System.Xml;
 using NUnit.Framework;
-using ReusableLibraryCode.VisualStudioSolutionFileProcessing;
+using Rdmp.Core.ReusableLibraryCode.VisualStudioSolutionFileProcessing;
 
 namespace Rdmp.UI.Tests.DesignPatternTests;
 

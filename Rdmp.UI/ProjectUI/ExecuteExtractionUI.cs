@@ -12,7 +12,6 @@ using System.Drawing;
 using System.Linq;
 using System.Windows.Forms;
 using BrightIdeasSoftware;
-using MapsDirectlyToDatabaseTable;
 using Rdmp.Core;
 using Rdmp.Core.CommandExecution.AtomicCommands;
 using Rdmp.Core.CommandLine.Options;
@@ -22,8 +21,10 @@ using Rdmp.Core.DataExport.Data;
 using Rdmp.Core.DataExport.DataExtraction;
 using Rdmp.Core.DataExport.DataExtraction.Commands;
 using Rdmp.Core.DataExport.DataExtraction.Pipeline;
+using Rdmp.Core.MapsDirectlyToDatabaseTable;
 using Rdmp.Core.Providers.Nodes;
 using Rdmp.Core.Providers.Nodes.UsedByNodes;
+using Rdmp.Core.ReusableLibraryCode.Checks;
 using Rdmp.UI.ChecksUI;
 using Rdmp.UI.Collections;
 using Rdmp.UI.CommandExecution.AtomicCommands;
@@ -33,7 +34,6 @@ using Rdmp.UI.PipelineUIs.Pipelines.PluginPipelineUsers;
 using Rdmp.UI.TestsAndSetup.ServicePropogation;
 using Rdmp.UI.TransparentHelpSystem;
 using Rdmp.UI.TransparentHelpSystem.ProgressTracking;
-using ReusableLibraryCode.Checks;
 
 namespace Rdmp.UI.ProjectUI;
 

@@ -7,8 +7,8 @@
 using System;
 using System.Data.Common;
 using NUnit.Framework;
-using ReusableLibraryCode;
-using ReusableLibraryCode.DataAccess;
+using Rdmp.Core.ReusableLibraryCode;
+using Rdmp.Core.ReusableLibraryCode.DataAccess;
 using Tests.Common.Scenarios;
 
 namespace Rdmp.Core.Tests.Curation.Anonymisation;

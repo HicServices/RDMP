@@ -7,10 +7,10 @@
 using System;
 using System.Diagnostics;
 using System.Threading;
-using MapsDirectlyToDatabaseTable;
 using Rdmp.Core.CohortCreation.Execution;
 using Rdmp.Core.Curation.Data.Cohort;
-using ReusableLibraryCode.DataAccess;
+using Rdmp.Core.MapsDirectlyToDatabaseTable;
+using Rdmp.Core.ReusableLibraryCode.DataAccess;
 
 namespace Rdmp.Core.CohortCreation;
 

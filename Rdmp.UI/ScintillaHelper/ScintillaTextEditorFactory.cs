@@ -13,11 +13,10 @@ using System.Windows.Forms;
 using FAnsi.Discovery.QuerySyntax;
 using NHunspell;
 using Rdmp.Core.CommandExecution;
+using Rdmp.Core.ReusableLibraryCode;
+using Rdmp.Core.ReusableLibraryCode.Settings;
 using Rdmp.UI.CommandExecution;
 using Rdmp.UI.SimpleDialogs;
-using ReusableLibraryCode;
-using ReusableLibraryCode.Settings;
-
 using ScintillaNET;
 
 namespace Rdmp.UI.ScintillaHelper;

@@ -5,10 +5,10 @@
 // You should have received a copy of the GNU General Public License along with RDMP. If not, see <https://www.gnu.org/licenses/>.
 
 using System.Collections.Generic;
-using MapsDirectlyToDatabaseTable;
 using Rdmp.Core.CommandExecution.AtomicCommands;
+using Rdmp.Core.MapsDirectlyToDatabaseTable;
 using Rdmp.Core.Providers;
-using ReusableLibraryCode.Icons.IconProvision;
+using Rdmp.Core.ReusableLibraryCode.Icons.IconProvision;
 
 namespace Rdmp.Core;
 

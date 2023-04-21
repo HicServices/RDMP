@@ -13,7 +13,6 @@ using System.Threading;
 using System.Threading.Tasks;
 using System.Windows.Forms;
 using FAnsi.Discovery;
-using Rdmp.Core.CommandExecution.AtomicCommands;
 using Rdmp.Core.CommandExecution.AtomicCommands.CatalogueCreationCommands;
 using Rdmp.Core.Curation;
 using Rdmp.Core.Curation.Data;
@@ -25,6 +24,8 @@ using Rdmp.Core.DataLoad.Engine.Pipeline;
 using Rdmp.Core.DataLoad.Engine.Pipeline.Destinations;
 using Rdmp.Core.DataLoad.Modules.DataFlowSources;
 using Rdmp.Core.Icons.IconProvision;
+using Rdmp.Core.ReusableLibraryCode.Checks;
+using Rdmp.Core.ReusableLibraryCode.Progress;
 using Rdmp.UI.ItemActivation;
 using Rdmp.UI.Refreshing;
 using Rdmp.UI.SimpleDialogs.ForwardEngineering;
@@ -32,9 +33,6 @@ using Rdmp.UI.SingleControlForms;
 using Rdmp.UI.TestsAndSetup.ServicePropogation;
 using Rdmp.UI.TransparentHelpSystem;
 using Rdmp.UI.Tutorials;
-using ReusableLibraryCode.Checks;
-using ReusableLibraryCode.Icons;
-using ReusableLibraryCode.Progress;
 
 namespace Rdmp.UI.SimpleDialogs.SimpleFileImporting;
 

@@ -10,8 +10,8 @@ using System.IO;
 using System.Linq;
 using Rdmp.Core.Curation;
 using Rdmp.Core.Curation.Data;
+using Rdmp.Core.ReusableLibraryCode.Progress;
 using Renci.SshNet;
-using ReusableLibraryCode.Progress;
 
 namespace Rdmp.Core.DataLoad.Modules.FTP;
 

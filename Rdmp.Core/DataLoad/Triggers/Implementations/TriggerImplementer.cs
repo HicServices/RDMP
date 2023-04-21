@@ -11,8 +11,8 @@ using System.Text.RegularExpressions;
 using FAnsi.Discovery;
 using FAnsi.Discovery.QuerySyntax;
 using Rdmp.Core.DataLoad.Triggers.Exceptions;
-using ReusableLibraryCode.Checks;
-using ReusableLibraryCode.Settings;
+using Rdmp.Core.ReusableLibraryCode.Checks;
+using Rdmp.Core.ReusableLibraryCode.Settings;
 using TypeGuesser;
 
 namespace Rdmp.Core.DataLoad.Triggers.Implementations;

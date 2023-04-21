@@ -8,7 +8,6 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text.RegularExpressions;
-using FAnsi;
 using NUnit.Framework;
 using Rdmp.Core.Databases;
 using Tests.Common;

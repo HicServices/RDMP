@@ -16,8 +16,8 @@ using Rdmp.Core.DataLoad.Engine.DatabaseManagement.Operations;
 using Rdmp.Core.DataLoad.Engine.LoadProcess;
 using Rdmp.Core.Logging;
 using Rdmp.Core.Repositories;
-using ReusableLibraryCode;
-using ReusableLibraryCode.Progress;
+using Rdmp.Core.ReusableLibraryCode;
+using Rdmp.Core.ReusableLibraryCode.Progress;
 
 namespace Rdmp.Core.DataLoad.Engine.Job;
 

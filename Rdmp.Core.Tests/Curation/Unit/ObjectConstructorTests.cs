@@ -9,7 +9,6 @@ using System.Collections.Generic;
 using System.Linq;
 using NUnit.Framework;
 using Rdmp.Core.Curation.Data;
-using Rdmp.Core.Repositories;
 using Rdmp.Core.Repositories.Construction;
 using Tests.Common;
 

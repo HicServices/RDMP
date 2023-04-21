@@ -8,16 +8,14 @@ using System;
 using System.Collections.Generic;
 using System.Reflection;
 using System.Windows.Forms;
-using Rdmp.UI.Collections;
+using Rdmp.Core.ReusableLibraryCode;
+using Rdmp.Core.ReusableLibraryCode.Checks;
+using Rdmp.Core.ReusableLibraryCode.Settings;
 using Rdmp.UI.CommandExecution.AtomicCommands;
 using Rdmp.UI.ItemActivation;
 using Rdmp.UI.TestsAndSetup.ServicePropogation;
-using ReusableLibraryCode;
-using ReusableLibraryCode.Checks;
-using ReusableLibraryCode.Settings;
 using ScintillaNET;
 using static BrightIdeasSoftware.ObjectListView;
-using static ReusableLibraryCode.Checks.CheckEventArgs;
 
 namespace Rdmp.UI.SimpleDialogs;
 

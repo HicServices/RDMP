@@ -7,25 +7,17 @@
 using System;
 using System.IO;
 using System.Linq;
-using System.Reflection;
 using CommandLine;
-using MapsDirectlyToDatabaseTable;
-using MapsDirectlyToDatabaseTable.Versioning;
 using NLog;
-using Rdmp.Core.CommandExecution;
 using Rdmp.Core.CommandLine;
 using Rdmp.Core.CommandLine.DatabaseCreation;
 using Rdmp.Core.CommandLine.Gui;
 using Rdmp.Core.CommandLine.Options;
-using Rdmp.Core.CommandLine.Runners;
 using Rdmp.Core.Curation.Data;
-using Rdmp.Core.DataFlowPipeline;
 using Rdmp.Core.Logging.Listeners.NLogListeners;
-using Rdmp.Core.Repositories;
-using Rdmp.Core.Startup;
-using ReusableLibraryCode;
-using ReusableLibraryCode.Checks;
-using YamlDotNet.Serialization;
+using Rdmp.Core.MapsDirectlyToDatabaseTable.Versioning;
+using Rdmp.Core.ReusableLibraryCode;
+using Rdmp.Core.ReusableLibraryCode.Checks;
 
 namespace Rdmp.Core;
 

@@ -9,13 +9,13 @@ using System.Collections.Generic;
 using System.Linq;
 using FAnsi;
 using FAnsi.Discovery.QuerySyntax;
-using MapsDirectlyToDatabaseTable;
 using Rdmp.Core.Curation.Data;
 using Rdmp.Core.Curation.Data.Dashboarding;
 using Rdmp.Core.Curation.Data.Spontaneous;
+using Rdmp.Core.MapsDirectlyToDatabaseTable;
 using Rdmp.Core.QueryBuilding;
 using Rdmp.Core.Repositories;
-using ReusableLibraryCode.DataAccess;
+using Rdmp.Core.ReusableLibraryCode.DataAccess;
 
 namespace Rdmp.Core.DataViewing;
 

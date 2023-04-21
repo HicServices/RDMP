@@ -12,7 +12,7 @@ using Rdmp.Core.CohortCommitting;
 using Rdmp.Core.CohortCommitting.Pipeline;
 using Rdmp.Core.CohortCommitting.Pipeline.Destinations.IdentifierAllocation;
 using Rdmp.Core.DataExport.Data;
-using ReusableLibraryCode.Checks;
+using Rdmp.Core.ReusableLibraryCode.Checks;
 using Tests.Common;
 using TypeGuesser;
 

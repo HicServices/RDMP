@@ -10,8 +10,7 @@ using FAnsi.Discovery;
 using NUnit.Framework;
 using Rdmp.Core.Curation;
 using Rdmp.Core.Curation.Data;
-using ReusableLibraryCode.Checks;
-using ReusableLibraryCode.DataAccess;
+using Rdmp.Core.ReusableLibraryCode.Checks;
 using Tests.Common;
 using TypeGuesser;
 

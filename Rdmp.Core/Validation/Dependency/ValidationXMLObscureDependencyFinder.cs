@@ -9,12 +9,12 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Reflection;
 using System.Text.RegularExpressions;
-using MapsDirectlyToDatabaseTable;
 using Rdmp.Core.Curation.Data;
+using Rdmp.Core.MapsDirectlyToDatabaseTable;
 using Rdmp.Core.Repositories;
+using Rdmp.Core.ReusableLibraryCode;
 using Rdmp.Core.Validation.Constraints.Secondary;
 using Rdmp.Core.Validation.Dependency.Exceptions;
-using ReusableLibraryCode;
 
 namespace Rdmp.Core.Validation.Dependency;
 

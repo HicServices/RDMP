@@ -7,7 +7,6 @@
 using System;
 using System.Linq;
 using System.Windows.Forms;
-using BrightIdeasSoftware;
 using Rdmp.Core;
 using Rdmp.Core.CommandExecution.AtomicCommands;
 using Rdmp.Core.Curation.Data;
@@ -17,11 +16,9 @@ using Rdmp.Core.Providers;
 using Rdmp.Core.Providers.Nodes;
 using Rdmp.Core.Providers.Nodes.PipelineNodes;
 using Rdmp.Core.Providers.Nodes.SharingNodes;
-using Rdmp.UI.CommandExecution.AtomicCommands;
 using Rdmp.UI.ItemActivation;
 using Rdmp.UI.LocationsMenu;
 using Rdmp.UI.Refreshing;
-using ReusableLibraryCode.Settings;
 
 namespace Rdmp.UI.Collections;
 

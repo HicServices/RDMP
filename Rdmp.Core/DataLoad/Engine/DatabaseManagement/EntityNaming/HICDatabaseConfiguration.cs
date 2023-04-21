@@ -10,14 +10,13 @@ using System.Linq;
 using System.Text.RegularExpressions;
 using FAnsi;
 using FAnsi.Discovery;
-using MapsDirectlyToDatabaseTable;
 using Rdmp.Core.Curation.Data;
 using Rdmp.Core.Curation.Data.DataLoad;
 using Rdmp.Core.Curation.Data.Defaults;
 using Rdmp.Core.Curation.Data.EntityNaming;
 using Rdmp.Core.DataLoad.Engine.Job;
 using Rdmp.Core.Repositories;
-using ReusableLibraryCode.DataAccess;
+using Rdmp.Core.ReusableLibraryCode.DataAccess;
 
 namespace Rdmp.Core.DataLoad.Engine.DatabaseManagement.EntityNaming;
 

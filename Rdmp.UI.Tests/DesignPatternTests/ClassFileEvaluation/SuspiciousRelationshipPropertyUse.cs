@@ -11,13 +11,12 @@ using System.Linq;
 using System.Reflection;
 using System.Runtime.CompilerServices;
 using System.Text.RegularExpressions;
-using MapsDirectlyToDatabaseTable;
 using NUnit.Framework;
 using Rdmp.Core.Curation.Data;
 using Rdmp.Core.Curation.Data.Spontaneous;
 using Rdmp.Core.DataExport.Data;
+using Rdmp.Core.MapsDirectlyToDatabaseTable;
 using Rdmp.Core.Repositories;
-using ReusableLibraryCode;
 
 namespace Rdmp.UI.Tests.DesignPatternTests.ClassFileEvaluation;
 

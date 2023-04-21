@@ -5,10 +5,10 @@
 // You should have received a copy of the GNU General Public License along with RDMP. If not, see <https://www.gnu.org/licenses/>.
 
 using System;
-using MapsDirectlyToDatabaseTable;
 using Rdmp.Core.Curation.Data;
 using Rdmp.Core.Curation.Data.Pipelines;
 using Rdmp.Core.Curation.Data.Spontaneous;
+using Rdmp.Core.MapsDirectlyToDatabaseTable;
 
 namespace Rdmp.Core.Providers.Nodes.PipelineNodes;
 

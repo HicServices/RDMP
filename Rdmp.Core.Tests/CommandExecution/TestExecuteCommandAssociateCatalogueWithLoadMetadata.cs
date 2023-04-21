@@ -9,9 +9,6 @@ using Rdmp.Core.CommandExecution.AtomicCommands;
 using Rdmp.Core.CommandLine.Interactive.Picking;
 using Rdmp.Core.Curation.Data;
 using Rdmp.Core.Curation.Data.DataLoad;
-using System;
-using System.Collections.Generic;
-using System.Text;
 
 namespace Rdmp.Core.Tests.CommandExecution;
 

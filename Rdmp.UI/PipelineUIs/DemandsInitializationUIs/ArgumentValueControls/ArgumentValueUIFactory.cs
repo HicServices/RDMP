@@ -9,10 +9,10 @@ using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 using System.Windows.Forms;
-using MapsDirectlyToDatabaseTable;
 using Rdmp.Core.Curation.Data;
 using Rdmp.Core.Curation.Data.DataLoad;
 using Rdmp.Core.Curation.Data.Pipelines;
+using Rdmp.Core.MapsDirectlyToDatabaseTable;
 using Rdmp.Core.Repositories;
 using Rdmp.UI.ItemActivation;
 

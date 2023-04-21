@@ -8,10 +8,9 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Windows.Forms;
-using MapsDirectlyToDatabaseTable;
 using Rdmp.Core.CommandExecution;
+using Rdmp.Core.MapsDirectlyToDatabaseTable;
 using Rdmp.UI.ItemActivation;
-using Rdmp.UI.SimpleDialogs;
 
 namespace Rdmp.UI.SimpleControls;
 

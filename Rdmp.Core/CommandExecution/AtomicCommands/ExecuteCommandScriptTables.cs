@@ -8,11 +8,11 @@ using FAnsi;
 using FAnsi.Discovery;
 using Rdmp.Core.Curation.Data;
 using Rdmp.Core.Icons.IconProvision;
-using ReusableLibraryCode.DataAccess;
-using ReusableLibraryCode.Icons.IconProvision;
 using SixLabors.ImageSharp;
 using System.IO;
 using System.Text;
+using Rdmp.Core.ReusableLibraryCode.DataAccess;
+using Rdmp.Core.ReusableLibraryCode.Icons.IconProvision;
 using SixLabors.ImageSharp.PixelFormats;
 
 namespace Rdmp.Core.CommandExecution.AtomicCommands;

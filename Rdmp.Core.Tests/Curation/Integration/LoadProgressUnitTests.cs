@@ -9,10 +9,10 @@ using Rdmp.Core.Curation;
 using Rdmp.Core.Curation.Data;
 using Rdmp.Core.DataLoad.Engine.Job.Scheduling;
 using Rdmp.Core.DataLoad.Engine.LoadProcess.Scheduling.Strategy;
-using ReusableLibraryCode.Checks;
-using ReusableLibraryCode.Progress;
 using System;
 using System.IO;
+using Rdmp.Core.ReusableLibraryCode.Checks;
+using Rdmp.Core.ReusableLibraryCode.Progress;
 using Tests.Common;
 
 namespace Rdmp.Core.Tests.Curation.Integration;

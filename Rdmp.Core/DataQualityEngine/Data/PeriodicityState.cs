@@ -7,9 +7,8 @@
 using System;
 using System.Collections.Generic;
 using System.Data;
-using MapsDirectlyToDatabaseTable;
+using Rdmp.Core.ReusableLibraryCode;
 using Rdmp.Core.Validation.Constraints;
-using ReusableLibraryCode;
 
 namespace Rdmp.Core.DataQualityEngine.Data;
 

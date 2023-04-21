@@ -10,9 +10,9 @@ using System.Text;
 using FAnsi.Discovery;
 using Rdmp.Core.Curation.Data.DataLoad;
 using Rdmp.Core.DataLoad.Engine.Job.Scheduling;
-using ReusableLibraryCode.Checks;
-using ReusableLibraryCode.DataAccess;
-using ReusableLibraryCode.Progress;
+using Rdmp.Core.ReusableLibraryCode.Checks;
+using Rdmp.Core.ReusableLibraryCode.DataAccess;
+using Rdmp.Core.ReusableLibraryCode.Progress;
 
 namespace Rdmp.Core.DataLoad.Modules.LoadProgressUpdating;
 

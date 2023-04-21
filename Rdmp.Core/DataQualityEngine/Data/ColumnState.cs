@@ -6,7 +6,7 @@
 
 using System;
 using System.Data.Common;
-using ReusableLibraryCode;
+using Rdmp.Core.ReusableLibraryCode;
 
 namespace Rdmp.Core.DataQualityEngine.Data;
 

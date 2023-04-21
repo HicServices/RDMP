@@ -12,16 +12,16 @@ using System.Threading;
 using FAnsi;
 using FAnsi.Discovery;
 using FAnsi.Discovery.QuerySyntax;
-using MapsDirectlyToDatabaseTable;
 using Rdmp.Core.CohortCreation.Execution;
 using Rdmp.Core.Curation.Data;
 using Rdmp.Core.Curation.Data.Aggregation;
 using Rdmp.Core.Curation.Data.Cohort;
+using Rdmp.Core.MapsDirectlyToDatabaseTable;
 using Rdmp.Core.Providers;
 using Rdmp.Core.QueryBuilding.Parameters;
 using Rdmp.Core.QueryCaching.Aggregation;
-using ReusableLibraryCode.DataAccess;
-using ReusableLibraryCode.Settings;
+using Rdmp.Core.ReusableLibraryCode.DataAccess;
+using Rdmp.Core.ReusableLibraryCode.Settings;
 
 namespace Rdmp.Core.QueryBuilding;
 

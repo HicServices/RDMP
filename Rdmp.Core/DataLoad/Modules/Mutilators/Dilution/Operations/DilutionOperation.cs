@@ -7,7 +7,7 @@
 using Rdmp.Core.Curation.Data.DataLoad;
 using Rdmp.Core.Curation.Data.EntityNaming;
 using Rdmp.Core.DataLoad.Modules.Mutilators.Dilution.Exceptions;
-using ReusableLibraryCode.Checks;
+using Rdmp.Core.ReusableLibraryCode.Checks;
 using TypeGuesser;
 
 namespace Rdmp.Core.DataLoad.Modules.Mutilators.Dilution.Operations;

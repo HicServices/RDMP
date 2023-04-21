@@ -8,12 +8,12 @@ using System;
 using System.Collections.Generic;
 using System.Data.Common;
 using FAnsi.Discovery;
-using MapsDirectlyToDatabaseTable;
-using MapsDirectlyToDatabaseTable.Attributes;
+using Rdmp.Core.MapsDirectlyToDatabaseTable;
+using Rdmp.Core.MapsDirectlyToDatabaseTable.Attributes;
 using Rdmp.Core.Repositories;
+using Rdmp.Core.ReusableLibraryCode.Annotations;
+using Rdmp.Core.ReusableLibraryCode.DataAccess;
 using Rdmp.Core.Ticketing;
-using ReusableLibraryCode.Annotations;
-using ReusableLibraryCode.DataAccess;
 
 namespace Rdmp.Core.Curation.Data;
 

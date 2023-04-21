@@ -6,16 +6,13 @@
 
 using System;
 using System.Collections.Generic;
-using System.IO;
 using System.Linq;
 using FAnsi.Discovery.QuerySyntax;
 using Rdmp.Core.Curation.Data;
 using Rdmp.Core.Curation.Data.Aggregation;
 using Rdmp.Core.Curation.Data.Dashboarding;
-using Rdmp.Core.DataExport.DataExtraction;
-using Rdmp.Core.Providers;
 using Rdmp.Core.QueryBuilding;
-using ReusableLibraryCode.DataAccess;
+using Rdmp.Core.ReusableLibraryCode.DataAccess;
 
 namespace Rdmp.Core.DataViewing;
 

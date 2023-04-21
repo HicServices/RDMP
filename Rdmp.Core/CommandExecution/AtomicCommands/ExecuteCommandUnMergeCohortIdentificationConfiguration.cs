@@ -8,9 +8,7 @@ using Rdmp.Core.Curation.Data.Cohort;
 using Rdmp.Core.Repositories;
 using Rdmp.Core.Repositories.Construction;
 using System;
-using System.Collections.Generic;
 using System.Linq;
-using System.Text;
 
 namespace Rdmp.Core.CommandExecution.AtomicCommands;
 
