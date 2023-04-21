@@ -9,8 +9,8 @@ using Rdmp.Core.Caching.Pipeline;
 using Rdmp.Core.Curation.Checks;
 using Rdmp.Core.Curation.Data.Cache;
 using Rdmp.Core.Curation.Data.Pipelines;
-using ReusableLibraryCode.Checks;
-using ReusableLibraryCode.Progress;
+using Rdmp.Core.ReusableLibraryCode.Checks;
+using Rdmp.Core.ReusableLibraryCode.Progress;
 
 namespace Rdmp.Core.Caching;
 

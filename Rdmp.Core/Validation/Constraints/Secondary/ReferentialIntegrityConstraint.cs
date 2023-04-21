@@ -9,12 +9,12 @@ using System.Collections.Generic;
 using System.ComponentModel;
 using System.Data.Common;
 using System.Xml.Serialization;
-using MapsDirectlyToDatabaseTable;
 using Rdmp.Core.Curation.Data;
+using Rdmp.Core.MapsDirectlyToDatabaseTable;
+using Rdmp.Core.ReusableLibraryCode;
+using Rdmp.Core.ReusableLibraryCode.Checks;
+using Rdmp.Core.ReusableLibraryCode.DataAccess;
 using Rdmp.Core.Validation.UIAttributes;
-using ReusableLibraryCode;
-using ReusableLibraryCode.Checks;
-using ReusableLibraryCode.DataAccess;
 
 namespace Rdmp.Core.Validation.Constraints.Secondary;
 

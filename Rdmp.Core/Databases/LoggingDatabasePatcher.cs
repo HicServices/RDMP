@@ -5,10 +5,10 @@
 // You should have received a copy of the GNU General Public License along with RDMP. If not, see <https://www.gnu.org/licenses/>.
 
 using FAnsi.Discovery;
-using MapsDirectlyToDatabaseTable.Versioning;
 using System;
 using System.Collections.Generic;
 using System.Text;
+using Rdmp.Core.MapsDirectlyToDatabaseTable.Versioning;
 using TypeGuesser;
 
 namespace Rdmp.Core.Databases;

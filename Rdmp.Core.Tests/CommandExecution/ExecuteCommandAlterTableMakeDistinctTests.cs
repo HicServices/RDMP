@@ -9,13 +9,9 @@ using NUnit.Framework;
 using Rdmp.Core.CommandExecution.AtomicCommands.Alter;
 using Rdmp.Core.CommandLine.Interactive;
 using Rdmp.Core.Curation.Data;
-using ReusableLibraryCode.Checks;
 using System;
-using System.Collections.Generic;
 using System.Data;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+using Rdmp.Core.ReusableLibraryCode.Checks;
 using Tests.Common;
 
 namespace Rdmp.Core.Tests.CommandExecution;

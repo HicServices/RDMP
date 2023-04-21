@@ -7,9 +7,7 @@
 using System;
 using System.Collections.Generic;
 using System.Text.RegularExpressions;
-using MapsDirectlyToDatabaseTable;
 using Rdmp.Core.CommandExecution;
-using Rdmp.Core.Repositories;
 
 namespace Rdmp.Core.CommandLine.Interactive.Picking;
 

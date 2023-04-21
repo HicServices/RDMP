@@ -9,9 +9,8 @@ using System.IO;
 using System.Linq;
 using System.Windows.Forms;
 using Rdmp.Core.Reports;
+using Rdmp.Core.ReusableLibraryCode;
 using Rdmp.UI.TestsAndSetup.ServicePropogation;
-using ReusableLibraryCode;
-
 using PopupChecksUI = Rdmp.UI.ChecksUI.PopupChecksUI;
 
 namespace Rdmp.UI.MainFormUITabs;
@@ -73,7 +72,7 @@ public partial class DitaExtractorUI : RDMPUserControl
 
         DirectoryInfo d = new DirectoryInfo(tbExtractionDirectory.Text);
 
-        UsefulStuff.GetInstance().ShowFolderInWindowsExplorer(d);
+        UsefulStuff.GetInstance().ShowPathInWindowsExplorer(d);
     }
 
     private void btnCheck_Click(object sender, EventArgs e)

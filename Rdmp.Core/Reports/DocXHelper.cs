@@ -6,13 +6,11 @@
 
 using System;
 using SixLabors.ImageSharp;
-using System.Drawing.Imaging;
 using System.IO;
 using NPOI.OpenXmlFormats.Wordprocessing;
 using NPOI.Util;
-using NPOI.XWPF.Model;
 using NPOI.XWPF.UserModel;
-using ReusableLibraryCode;
+using Rdmp.Core.ReusableLibraryCode;
 
 namespace Rdmp.Core.Reports;
 
@@ -175,7 +173,7 @@ public class DocXHelper
     /// <param name="fileInfo"></param>
     protected void ShowFile(FileInfo fileInfo)
     {
-        UsefulStuff.GetInstance().ShowFileInWindowsExplorer(fileInfo);
+        UsefulStuff.GetInstance().ShowPathInWindowsExplorer(fileInfo);
     }
     /// <summary>
     /// Opens windows explorer to show the document

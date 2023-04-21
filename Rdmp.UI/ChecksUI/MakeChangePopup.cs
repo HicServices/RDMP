@@ -6,9 +6,8 @@
 
 using System;
 using System.Windows.Forms;
+using Rdmp.Core.ReusableLibraryCode.Checks;
 using Rdmp.UI.SimpleDialogs;
-using ReusableLibraryCode.Checks;
-
 using WideMessageBox = Rdmp.UI.SimpleDialogs.WideMessageBox;
 
 namespace Rdmp.UI.ChecksUI;

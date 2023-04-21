@@ -21,8 +21,7 @@ using Rdmp.Core.DataLoad.Engine.Job;
 using Rdmp.Core.DataLoad.Engine.Migration;
 using Rdmp.Core.DataLoad.Triggers.Implementations;
 using Rdmp.Core.Logging;
-using ReusableLibraryCode.Checks;
-using Tests.Common;
+using Rdmp.Core.ReusableLibraryCode.Checks;
 using Tests.Common.Scenarios;
 
 namespace Rdmp.Core.Tests.DataLoad.Engine.Integration.CrossDatabaseTypeTests;

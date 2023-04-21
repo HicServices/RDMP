@@ -10,7 +10,6 @@ using System.IO;
 using System.Linq;
 using System.Windows.Forms;
 using AutoUpdaterDotNET;
-using MapsDirectlyToDatabaseTable;
 using Rdmp.Core.CommandExecution;
 using Rdmp.Core.CommandExecution.AtomicCommands;
 using Rdmp.Core.CommandExecution.AtomicCommands.CatalogueCreationCommands;
@@ -19,9 +18,11 @@ using Rdmp.Core.CommandLine.Options;
 using Rdmp.Core.Curation.Data.Cohort;
 using Rdmp.Core.Databases;
 using Rdmp.Core.DataQualityEngine;
-using Rdmp.Core.DataViewing;
 using Rdmp.Core.Logging;
 using Rdmp.Core.Reports;
+using Rdmp.Core.ReusableLibraryCode;
+using Rdmp.Core.ReusableLibraryCode.Checks;
+using Rdmp.Core.ReusableLibraryCode.Settings;
 using Rdmp.UI;
 using Rdmp.UI.ChecksUI;
 using Rdmp.UI.CommandExecution.AtomicCommands;
@@ -34,7 +35,6 @@ using Rdmp.UI.PluginManagement.CodeGeneration;
 using Rdmp.UI.SimpleControls;
 using Rdmp.UI.SimpleDialogs;
 using Rdmp.UI.SimpleDialogs.NavigateTo;
-using Rdmp.UI.SingleControlForms;
 using Rdmp.UI.TestsAndSetup;
 using Rdmp.UI.TestsAndSetup.ServicePropogation;
 using Rdmp.UI.Tutorials;
@@ -42,9 +42,6 @@ using ResearchDataManagementPlatform.Menus.MenuItems;
 using ResearchDataManagementPlatform.WindowManagement;
 using ResearchDataManagementPlatform.WindowManagement.ContentWindowTracking.Persistence;
 using ResearchDataManagementPlatform.WindowManagement.Licenses;
-using ReusableLibraryCode;
-using ReusableLibraryCode.Checks;
-using ReusableLibraryCode.Settings;
 using WeifenLuo.WinFormsUI.Docking;
 
 namespace ResearchDataManagementPlatform.Menus;
@@ -223,7 +220,7 @@ public partial class RDMPTopMenuStripUI : RDMPUserControl
             
         try
         {
-            UsefulStuff.GetInstance().ShowFolderInWindowsExplorer(UsefulStuff.GetExecutableDirectory());
+            UsefulStuff.GetInstance().ShowPathInWindowsExplorer(UsefulStuff.GetExecutableDirectory());
         }
         catch (Exception exception)
         {
@@ -489,7 +486,7 @@ public partial class RDMPTopMenuStripUI : RDMPUserControl
     {
         var file = new FileInfo(Path.GetTempFileName());
         File.WriteAllText(file.FullName,string.Join(Environment.NewLine,Activator.RepositoryLocator.CatalogueRepository.MEF.GetAllTypes().Select(t=>t.FullName)));
-        UsefulStuff.GetInstance().ShowFileInWindowsExplorer(file);
+        UsefulStuff.GetInstance().ShowPathInWindowsExplorer(file);
     }
 
     private void NewToolStripMenuItem_Click(object sender, EventArgs e)

@@ -9,7 +9,7 @@ using System.Collections.Generic;
 using System.Linq;
 using FAnsi.Discovery;
 using Rdmp.Core.Logging;
-using ReusableLibraryCode.Checks;
+using Rdmp.Core.ReusableLibraryCode.Checks;
 
 namespace Rdmp.Core.Tests.Logging;
 

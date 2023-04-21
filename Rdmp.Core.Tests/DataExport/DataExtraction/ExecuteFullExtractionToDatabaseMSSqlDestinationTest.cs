@@ -17,7 +17,6 @@ using Rdmp.Core.Curation.Data.Pipelines;
 using Rdmp.Core.DataExport.Data;
 using Rdmp.Core.DataExport.DataExtraction.Pipeline.Destinations;
 using Rdmp.Core.DataExport.DataExtraction.Pipeline.Sources;
-using Rdmp.Core.Repositories;
 using Tests.Common;
 using Tests.Common.Scenarios;
 

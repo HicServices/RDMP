@@ -10,9 +10,9 @@ using System.Linq;
 using Rdmp.Core.CommandExecution.Combining;
 using Rdmp.Core.CommandLine.Runners;
 using Rdmp.Core.Icons.IconProvision;
-using ReusableLibraryCode.Checks;
-using ReusableLibraryCode.Icons.IconProvision;
-using ReusableLibraryCode.Progress;
+using Rdmp.Core.ReusableLibraryCode.Checks;
+using Rdmp.Core.ReusableLibraryCode.Icons.IconProvision;
+using Rdmp.Core.ReusableLibraryCode.Progress;
 using SixLabors.ImageSharp.PixelFormats;
 
 namespace Rdmp.Core.CommandExecution.AtomicCommands;

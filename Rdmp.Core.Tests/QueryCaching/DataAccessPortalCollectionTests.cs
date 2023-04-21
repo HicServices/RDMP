@@ -5,8 +5,6 @@
 // You should have received a copy of the GNU General Public License along with RDMP. If not, see <https://www.gnu.org/licenses/>.
 
 using System;
-using System.Collections.Generic;
-using System.Text;
 using FAnsi;
 using FAnsi.Implementation;
 using FAnsi.Implementations.MicrosoftSQL;
@@ -16,7 +14,7 @@ using FAnsi.Implementations.PostgreSql;
 using Moq;
 using NUnit.Framework;
 using Rdmp.Core.QueryBuilding;
-using ReusableLibraryCode.DataAccess;
+using Rdmp.Core.ReusableLibraryCode.DataAccess;
 
 namespace Rdmp.Core.Tests.QueryCaching;
 

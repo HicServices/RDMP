@@ -34,12 +34,6 @@ jobs:
         id: version
         shell: cmd
         run: perl -ne "print \"::set-output name=rdmpversion::$1\" if /AssemblyVersion\(\"([0-9.]+)\"\)/;" SharedAssemblyInfo.cs
-      - uses: actions/cache@v3
-        with:
-          path: ~/.nuget/packages
-          key: ${{ runner.os }}-nuget-${{ hashFiles('**/packages.lock.json') }}
-          restore-keys: |
-            ${{ runner.os }}-nuget-
       - name: Setup .NET Core
         uses: actions/setup-dotnet@v3.0.3
         with:
@@ -59,16 +53,15 @@ jobs:
           mysql-version: '8.0'
           root-password: 'YourStrong!Passw0rd'
           auto-start: true
-      - name: Create MySql Logging Db
-        run: dotnet run -c Release --project Tools/rdmp/rdmp.csproj -- createnewexternaldatabaseserver LiveLoggingServer_ID "DatabaseType:MySQL:Server=127.0.0.1;Uid=root;Pwd=YourStrong!Passw0rd;Database=rdmp_logging2" --dir ~/rdmp/rdmp-yaml/
-      - name: Create MySql DQE Db
-        run: dotnet run -c Release --project Tools/rdmp/rdmp.csproj -- createnewexternaldatabaseserver DQE "DatabaseType:MySQL:Server=127.0.0.1;Uid=root;Pwd=YourStrong!Passw0rd;Database=rdmp_dqe" --dir ~/rdmp/rdmp-yaml/
-      - name: Create MySql Cohort Building Query Caching Db
-        run: dotnet run -c Release --project Tools/rdmp/rdmp.csproj -- createnewexternaldatabaseserver CohortIdentificationQueryCachingServer_ID "DatabaseType:MySQL:Server=127.0.0.1;Uid=root;Pwd=YourStrong!Passw0rd;Database=rdmp_cache" --dir ~/rdmp/rdmp-yaml/
       - name: Build
         run: dotnet build --configuration Release --verbosity minimal
+      - name: Create MySql Logging, DQE and Cohort Building Cache Db
+        run: |
+          dotnet run -c Release --no-build --project Tools/rdmp/rdmp.csproj -- createnewexternaldatabaseserver LiveLoggingServer_ID "DatabaseType:MySQL:Server=127.0.0.1;Uid=root;Pwd=YourStrong!Passw0rd;Database=rdmp_logging2" --dir ~/rdmp/rdmp-yaml/
+          dotnet run -c Release --no-build --project Tools/rdmp/rdmp.csproj -- createnewexternaldatabaseserver DQE "DatabaseType:MySQL:Server=127.0.0.1;Uid=root;Pwd=YourStrong!Passw0rd;Database=rdmp_dqe" --dir ~/rdmp/rdmp-yaml/
+          dotnet run -c Release --no-build --project Tools/rdmp/rdmp.csproj -- createnewexternaldatabaseserver CohortIdentificationQueryCachingServer_ID "DatabaseType:MySQL:Server=127.0.0.1;Uid=root;Pwd=YourStrong!Passw0rd;Database=rdmp_cache" --dir ~/rdmp/rdmp-yaml/
       - name: Initialise RDMP
-        run: dotnet run -c Release --project Tools/rdmp/rdmp.csproj -- install --createdatabasetimeout 180 "(localdb)\MSSQLLocalDB" TEST_ -e
+        run: dotnet run -c Release --no-build --project Tools/rdmp/rdmp.csproj -- install --createdatabasetimeout 180 "(localdb)\MSSQLLocalDB" TEST_ -e
       - name: Populate Databases.yaml 
         shell: bash
         run: |
@@ -78,16 +71,10 @@ jobs:
           EOF
       - name: Run integration test scripts
         run: |
-            dotnet run -c Release --project Tools/rdmp/rdmp.csproj -- -f ./scripts/create_list_destroy_catalogue.yaml &&
+            dotnet run -c Release --no-build --project Tools/rdmp/rdmp.csproj -- -f ./scripts/create_list_destroy_catalogue.yaml &&
             dotnet run -c Release --no-build --project Tools/rdmp/rdmp.csproj -- -f ./scripts/create_cohort.yaml &&
             dotnet run -c Release --no-build --project Tools/rdmp/rdmp.csproj -- -f ./scripts/create_dataload.yaml && 
             dotnet run -c Release --no-build --project Tools/rdmp/rdmp.csproj -- -f ./scripts/orphan_extractable_column.yaml && 
-      - name: Test Reusable code
-        shell: bash
-        run: |
-          rm -rf coverage
-          dotnet test "Reusable/Tests/ReusableCodeTests/ReusableCodeTests.csproj" --nologo --collect:"XPlat Code Coverage" --no-build --verbosity minimal -c Release --results-directory coverage -- DataCollectionRunSettings.DataCollectors.DataCollector.Configuration.Format=lcov
-          mv `find coverage -type f` recode.lcov
       - name: Test Core code
         shell: bash
         run: |
@@ -103,11 +90,6 @@ jobs:
         run:  |
               echo "UseFileSystemRepo: true" >> Tests.Common/TestDatabases.txt
               cat Tests.Common/TestDatabases.txt
-      - name: Test Reusable (with file system repo)
-        shell: bash
-        run: |
-          dotnet test "Reusable/Tests/ReusableCodeTests/ReusableCodeTests.csproj" --nologo --collect:"XPlat Code Coverage" --no-build --verbosity minimal -c Release --results-directory coverage -- DataCollectionRunSettings.DataCollectors.DataCollector.Configuration.Format=lcov
-          mv `find coverage -type f` recodefs.lcov
       - name: Test Core (with file system repo)
         shell: bash
         run: |
@@ -120,7 +102,7 @@ jobs:
           mv `find coverage -type f` uifs.lcov
       
       - name: Merge LCovs
-        run: lcov-result-merger "{ui,core,recode}{,fs}.lcov" all.lcov
+        run: lcov-result-merger "{ui,core}{,fs}.lcov" all.lcov
       - name: Coveralls
         uses: coverallsapp/github-action@master
         with:

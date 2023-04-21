@@ -6,7 +6,7 @@
 
 using System;
 using System.Data.Common;
-using MapsDirectlyToDatabaseTable;
+using Rdmp.Core.MapsDirectlyToDatabaseTable;
 using Rdmp.Core.Repositories;
 
 namespace Rdmp.Core.Curation.Data.Referencing;

@@ -6,14 +6,14 @@
 
 using System;
 using System.Collections.Generic;
-using System.Drawing;
 using System.Linq;
-using MapsDirectlyToDatabaseTable;
 using Rdmp.Core;
 using Rdmp.Core.CommandExecution;
 using Rdmp.Core.Curation.Data.Dashboarding;
 using Rdmp.Core.Icons.IconProvision;
+using Rdmp.Core.MapsDirectlyToDatabaseTable;
 using Rdmp.Core.Repositories;
+using Rdmp.Core.ReusableLibraryCode.Checks;
 using Rdmp.UI;
 using Rdmp.UI.Collections;
 using Rdmp.UI.Refreshing;
@@ -25,7 +25,6 @@ using Rdmp.UI.Theme;
 using ResearchDataManagementPlatform.WindowManagement.ContentWindowTracking.Persistence;
 using ResearchDataManagementPlatform.WindowManagement.Events;
 using ResearchDataManagementPlatform.WindowManagement.HomePane;
-using ReusableLibraryCode.Checks;
 using SixLabors.ImageSharp;
 using SixLabors.ImageSharp.PixelFormats;
 using WeifenLuo.WinFormsUI.Docking;

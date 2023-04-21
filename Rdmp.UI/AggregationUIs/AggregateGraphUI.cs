@@ -27,17 +27,15 @@ using Rdmp.Core.QueryBuilding;
 using Rdmp.Core.QueryCaching.Aggregation;
 using Rdmp.Core.QueryCaching.Aggregation.Arguments;
 using Rdmp.Core.Reports;
-using Rdmp.UI.CommandExecution.AtomicCommands;
+using Rdmp.Core.ReusableLibraryCode;
+using Rdmp.Core.ReusableLibraryCode.Checks;
+using Rdmp.Core.ReusableLibraryCode.DataAccess;
+using Rdmp.Core.ReusableLibraryCode.Extensions;
 using Rdmp.UI.ItemActivation;
 using Rdmp.UI.ScintillaHelper;
 using Rdmp.UI.SimpleDialogs;
 using Rdmp.UI.TestsAndSetup.ServicePropogation;
-using ReusableLibraryCode;
-using ReusableLibraryCode.Checks;
-using ReusableLibraryCode.DataAccess;
-using ReusableLibraryCode.Extensions;
 using ScintillaNET;
-using SixLabors.ImageSharp.PixelFormats;
 
 namespace Rdmp.UI.AggregationUIs;
 
@@ -826,7 +824,7 @@ public partial class AggregateGraphUI : AggregateGraph_Design
                 heatmapUI.SaveImage(heatmapPath, ImageFormat.Jpeg);
             }
                 
-            UsefulStuff.GetInstance().ShowFileInWindowsExplorer(new FileInfo(sfd.FileName));
+            UsefulStuff.GetInstance().ShowPathInWindowsExplorer(new FileInfo(sfd.FileName));
         }
     }
 
@@ -836,7 +834,7 @@ public partial class AggregateGraphUI : AggregateGraph_Design
         {
             string s = UsefulStuff.GetInstance().DataTableToHtmlDataTable(_dt);
 
-            var formatted = UsefulStuff.GetInstance().GetClipboardFormatedHtmlStringFromHtmlString(s);
+            var formatted = UsefulStuff.GetInstance().GetClipboardFormattedHtmlStringFromHtmlString(s);
             
             Clipboard.SetText(formatted,TextDataFormat.Html);
         }

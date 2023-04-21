@@ -7,7 +7,6 @@
 using System;
 using System.Collections.Generic;
 using SixLabors.ImageSharp;
-using System.Linq;
 using System.Text.RegularExpressions;
 using FAnsi.Discovery;
 using FAnsi.Discovery.QuerySyntax;

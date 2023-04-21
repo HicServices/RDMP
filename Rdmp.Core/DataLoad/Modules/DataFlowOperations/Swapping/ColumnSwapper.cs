@@ -15,10 +15,6 @@ using Rdmp.Core.DataFlowPipeline;
 using Rdmp.Core.DataLoad.Modules.DataFlowOperations.Aliases;
 using Rdmp.Core.DataLoad.Modules.DataFlowOperations.Aliases.Exceptions;
 using Rdmp.Core.Repositories;
-using ReusableLibraryCode.Checks;
-using ReusableLibraryCode.DataAccess;
-using ReusableLibraryCode.Progress;
-using System.ComponentModel;
 using TypeGuesser;
 using System.Globalization;
 using TypeGuesser.Deciders;
@@ -26,6 +22,9 @@ using Rdmp.Core.DataFlowPipeline.Requirements;
 using Rdmp.Core.DataExport.DataExtraction.Commands;
 using Rdmp.Core.CohortCommitting.Pipeline;
 using Rdmp.Core.DataExport.Data;
+using Rdmp.Core.ReusableLibraryCode.Checks;
+using Rdmp.Core.ReusableLibraryCode.DataAccess;
+using Rdmp.Core.ReusableLibraryCode.Progress;
 
 namespace Rdmp.Core.DataLoad.Modules.DataFlowOperations.Swapping;
 

@@ -11,11 +11,11 @@ using System.Reflection;
 using System.Windows.Forms;
 using Rdmp.Core;
 using Rdmp.Core.Curation.Data;
+using Rdmp.Core.ReusableLibraryCode;
 using Rdmp.UI.ItemActivation;
 using Rdmp.UI.Rules;
 using Rdmp.UI.SimpleControls;
 using Rdmp.UI.TestsAndSetup.ServicePropogation;
-using ReusableLibraryCode;
 
 
 namespace Rdmp.UI.SimpleDialogs;
@@ -88,7 +88,7 @@ public partial class SupportingDocumentUI : SupportingDocumentUI_Design, ISaveab
         if (_supportingDocument != null)
             try
             {
-                UsefulStuff.GetInstance().ShowFileInWindowsExplorer(_supportingDocument.GetFileName());
+                UsefulStuff.GetInstance().ShowPathInWindowsExplorer(_supportingDocument.GetFileName());
             }
             catch (Exception ex)
             {

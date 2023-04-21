@@ -10,7 +10,6 @@ using Rdmp.Core.Curation;
 using Rdmp.Core.Curation.Data;
 using Rdmp.Core.Validation;
 using Rdmp.Core.Validation.Constraints.Secondary;
-using ReusableLibraryCode.DataAccess;
 using Tests.Common;
 
 namespace Rdmp.Core.Tests.Curation.Integration.Validation;

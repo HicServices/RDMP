@@ -6,7 +6,7 @@
 
 using System;
 using System.Collections.Generic;
-using MapsDirectlyToDatabaseTable;
+using Rdmp.Core.MapsDirectlyToDatabaseTable;
 using Rdmp.Core.QueryBuilding;
 
 namespace Rdmp.Core.Curation.Data.Spontaneous;

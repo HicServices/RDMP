@@ -11,7 +11,7 @@ using Rdmp.Core.Caching.Layouts;
 using Rdmp.Core.Caching.Pipeline.Destinations;
 using Rdmp.Core.Caching.Requests;
 using Rdmp.Core.DataFlowPipeline;
-using ReusableLibraryCode.Progress;
+using Rdmp.Core.ReusableLibraryCode.Progress;
 
 namespace Rdmp.Core.DataLoad.Modules.DataFlowDestinations;
 

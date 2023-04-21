@@ -5,11 +5,9 @@
 // You should have received a copy of the GNU General Public License along with RDMP. If not, see <https://www.gnu.org/licenses/>.
 
 using System;
-using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Windows.Forms;
-using MapsDirectlyToDatabaseTable;
 using Rdmp.Core.CohortCommitting.Pipeline;
 using Rdmp.Core.CohortCommitting.Pipeline.Sources;
 using Rdmp.Core.CommandExecution;
@@ -22,15 +20,11 @@ using Rdmp.Core.DataFlowPipeline;
 using Rdmp.Core.DataFlowPipeline.Requirements;
 using Rdmp.Core.DataLoad.Modules.DataFlowSources;
 using Rdmp.Core.Icons.IconProvision;
-using Rdmp.Core.Repositories;
+using Rdmp.Core.ReusableLibraryCode.Progress;
 using Rdmp.UI.CohortUI.CohortSourceManagement;
-using Rdmp.UI.CommandExecution.AtomicCommands;
 using Rdmp.UI.ItemActivation;
-using Rdmp.UI.SimpleDialogs;
 using Rdmp.UI.SingleControlForms;
 using Rdmp.UI.TestsAndSetup.ServicePropogation;
-using ReusableLibraryCode.Icons;
-using ReusableLibraryCode.Progress;
 
 namespace Rdmp.UI.Wizard;
 

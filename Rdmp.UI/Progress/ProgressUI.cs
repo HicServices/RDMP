@@ -12,11 +12,11 @@ using System.Linq;
 using System.Windows.Forms;
 using BrightIdeasSoftware;
 using Rdmp.Core.Icons.IconProvision;
+using Rdmp.Core.ReusableLibraryCode.Progress;
+using Rdmp.Core.ReusableLibraryCode.Settings;
 using Rdmp.UI.Collections;
 using Rdmp.UI.SimpleDialogs;
 using Rdmp.UI.Theme;
-using ReusableLibraryCode.Progress;
-using ReusableLibraryCode.Settings;
 
 namespace Rdmp.UI.Progress;
 

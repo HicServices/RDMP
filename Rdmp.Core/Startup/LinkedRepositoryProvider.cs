@@ -7,9 +7,9 @@
 using System;
 using System.Collections.Generic;
 using Microsoft.Data.SqlClient;
-using MapsDirectlyToDatabaseTable;
 using Rdmp.Core.Curation.Data;
 using Rdmp.Core.DataExport;
+using Rdmp.Core.MapsDirectlyToDatabaseTable;
 using Rdmp.Core.Repositories;
 using Rdmp.Core.Repositories.Construction;
 using Rdmp.Core.Sharing.Dependency;

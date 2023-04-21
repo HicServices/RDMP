@@ -9,14 +9,11 @@ using System.Collections.Generic;
 using System.Drawing;
 using System.Linq;
 using System.Windows.Forms;
-using FAnsi.Implementations.MicrosoftSQL;
 using Rdmp.Core.Curation.Data;
 using Rdmp.Core.DataLoad.Triggers;
 using Rdmp.Core.Logging.PastEvents;
+using Rdmp.Core.ReusableLibraryCode.Checks;
 using Rdmp.UI.SimpleDialogs;
-using ReusableLibraryCode.Checks;
-
-
 using Rdmp.UI.SimpleDialogs.SqlDialogs;
 using WideMessageBox = Rdmp.UI.SimpleDialogs.WideMessageBox;
 

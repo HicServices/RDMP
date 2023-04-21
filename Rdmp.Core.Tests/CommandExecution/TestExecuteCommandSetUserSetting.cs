@@ -7,11 +7,8 @@
 using NUnit.Framework;
 using Rdmp.Core.CommandExecution.AtomicCommands;
 using Rdmp.Core.CommandLine.Interactive.Picking;
-using ReusableLibraryCode.Checks;
-using ReusableLibraryCode.Settings;
-using System;
-using System.Collections.Generic;
-using System.Text;
+using Rdmp.Core.ReusableLibraryCode.Checks;
+using Rdmp.Core.ReusableLibraryCode.Settings;
 
 namespace Rdmp.Core.Tests.CommandExecution;
 
