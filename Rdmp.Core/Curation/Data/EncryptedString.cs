@@ -75,7 +75,7 @@ public class EncryptedString : IEncryptedString
         if (_encrypter.IsStringEncrypted(Value))
             return _encrypter.Decrypt(Value);
 
-        //its not decrypted... how did that happen
+        //it's not decrypted... how did that happen
         throw new Exception("Found Value in memory that was not encrypted");
     }
 
