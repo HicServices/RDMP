@@ -54,6 +54,7 @@ namespace Tests.Common;
 /// Base class for all integration tests which need to read/write to a database (sql server, mysql or oracle).
 /// </summary>
 [TestFixture]
+[NonParallelizable]
 [Category("Database")]
 public class DatabaseTests
 {
@@ -61,7 +62,7 @@ public class DatabaseTests
     protected static TestDatabasesSettings TestDatabaseSettings;
     private static bool HaveTriedCreatingTestDatabases;
 
-        public ICatalogueRepository CatalogueRepository => RepositoryLocator.CatalogueRepository;
+    public ICatalogueRepository CatalogueRepository => RepositoryLocator.CatalogueRepository;
 
     /// <summary>
     /// Gets an <see cref="ICatalogueRepository"/> that points to a 
@@ -74,20 +75,20 @@ public class DatabaseTests
             if (RepositoryLocator.CatalogueRepository is CatalogueRepository tableRepository)
                 return tableRepository;
 
-                Assert.Inconclusive("CatalogueRepository is not a TableRepository");
-                return null;
-            }
+            Assert.Inconclusive("CatalogueRepository is not a TableRepository");
+            return null;
         }
-        public IDataExportRepository DataExportRepository => RepositoryLocator.DataExportRepository;
+    }
+    public IDataExportRepository DataExportRepository => RepositoryLocator.DataExportRepository;
 
-        /// <summary>
-        /// Gets an <see cref="IDataExportRepository"/> that points to a 
-        /// database server or throws with <see cref="Assert.Inconclusive()"/>
-        /// </summary>
-        public DataExportRepository DataExportTableRepository
+    /// <summary>
+    /// Gets an <see cref="IDataExportRepository"/> that points to a 
+    /// database server or throws with <see cref="Assert.Inconclusive()"/>
+    /// </summary>
+    public DataExportRepository DataExportTableRepository
+    {
+        get
         {
-            get
-            {
 
             if (RepositoryLocator.DataExportRepository is DataExportRepository tableRepository)
                 return tableRepository;
@@ -313,8 +314,8 @@ public class DatabaseTests
         var catalogueDatabaseName = ((TableRepository) repositoryLocator.CatalogueRepository).DiscoveredServer.GetCurrentDatabase().GetRuntimeName();
         var dataExportDatabaseName = ((TableRepository) repositoryLocator.DataExportRepository).DiscoveredServer.GetCurrentDatabase().GetRuntimeName();
 
-            UsefulStuff.ExecuteBatchNonQuery(string.Format(BlitzDatabases, catalogueDatabaseName, dataExportDatabaseName),con.Connection,con.Transaction);
-        }
+        UsefulStuff.ExecuteBatchNonQuery(string.Format(BlitzDatabases, catalogueDatabaseName, dataExportDatabaseName),con.Connection,con.Transaction);
+    }
 
     /// <summary>
     /// Deletes all data tables except <see cref="ServerDefaults"/>, <see cref="ExternalDatabaseServer"/> and some other core tables which are required for access to
@@ -334,8 +335,8 @@ public class DatabaseTests
         var catalogueDatabaseName = ((TableRepository)RepositoryLocator.CatalogueRepository).DiscoveredServer.GetCurrentDatabase().GetRuntimeName();
         var dataExportDatabaseName = ((TableRepository)RepositoryLocator.DataExportRepository).DiscoveredServer.GetCurrentDatabase().GetRuntimeName();
 
-            UsefulStuff.ExecuteBatchNonQuery(string.Format(BlitzDatabasesLite, catalogueDatabaseName, dataExportDatabaseName), con.Connection, con.Transaction);
-        }
+        UsefulStuff.ExecuteBatchNonQuery(string.Format(BlitzDatabasesLite, catalogueDatabaseName, dataExportDatabaseName), con.Connection, con.Transaction);
+    }
 
     private void BlitzMainDataTables(YamlRepository y)
     {
@@ -483,33 +484,33 @@ public class DatabaseTests
             if (args.Exception != null && args.Status!=RDMPPlatformDatabaseStatus.Healthy && args.Status!=RDMPPlatformDatabaseStatus.SoftwareOutOfDate)
                 Assert.Fail(args.SummariseAsString());
 
-            switch (args.Status)
-            {
-                //it's a healthy message, jolly good
-                case RDMPPlatformDatabaseStatus.Healthy:
-                    return;
-                case RDMPPlatformDatabaseStatus.SoftwareOutOfDate:
-                    Assert.Fail(@"Your TEST database schema is out of date with the API version you are testing with, 'run rdmp.exe install ...' to install the version which matches your nuget package.");
-                    break;
-                //it's a tier appropriate fatal error message
-                case RDMPPlatformDatabaseStatus.Broken:
-                case RDMPPlatformDatabaseStatus.Unreachable:
-                //it's slightly dodgy about its version numbers
-                case RDMPPlatformDatabaseStatus.RequiresPatching:
-                    Assert.Fail(args.SummariseAsString());
-                    break;
-            }
-        }
-
-        private void StartupOnPluginPatcherFound(object sender, PluginPatcherFoundEventArgs args)
+        switch (args.Status)
         {
-            Assert.IsTrue(args.Status == PluginPatcherStatus.Healthy, "PluginPatcherStatus is {0} for plugin {1}{2}{3}", args.Status, args.Type.Name, Environment.NewLine, (args.Exception == null ? "No exception" : ExceptionHelper.ExceptionToListOfInnerMessages(args.Exception)));
+            //it's a healthy message, jolly good
+            case RDMPPlatformDatabaseStatus.Healthy:
+                return;
+            case RDMPPlatformDatabaseStatus.SoftwareOutOfDate:
+                Assert.Fail(@"Your TEST database schema is out of date with the API version you are testing with, 'run rdmp.exe install ...' to install the version which matches your nuget package.");
+                break;
+            //it's a tier appropriate fatal error message
+            case RDMPPlatformDatabaseStatus.Broken:
+            case RDMPPlatformDatabaseStatus.Unreachable:
+            //it's slightly dodgy about its version numbers
+            case RDMPPlatformDatabaseStatus.RequiresPatching:
+                Assert.Fail(args.SummariseAsString());
+                break;
         }
+    }
 
-        private void StartupOnMEFFileDownloaded(object sender, MEFFileDownloadProgressEventArgs args)
-        {
-            Assert.IsTrue(args.Status is MEFFileDownloadEventStatus.Success or MEFFileDownloadEventStatus.FailedDueToFileLock, "MEFFileDownloadEventStatus is {0} for plugin {1}{2}{3}", args.Status, args.FileBeingProcessed, Environment.NewLine, (args.Exception == null ? "No exception" : ExceptionHelper.ExceptionToListOfInnerMessages(args.Exception)));
-        }
+    private void StartupOnPluginPatcherFound(object sender, PluginPatcherFoundEventArgs args)
+    {
+        Assert.IsTrue(args.Status == PluginPatcherStatus.Healthy, "PluginPatcherStatus is {0} for plugin {1}{2}{3}", args.Status, args.Type.Name, Environment.NewLine, (args.Exception == null ? "No exception" : ExceptionHelper.ExceptionToListOfInnerMessages(args.Exception)));
+    }
+
+    private void StartupOnMEFFileDownloaded(object sender, MEFFileDownloadProgressEventArgs args)
+    {
+        Assert.IsTrue(args.Status is MEFFileDownloadEventStatus.Success or MEFFileDownloadEventStatus.FailedDueToFileLock, "MEFFileDownloadEventStatus is {0} for plugin {1}{2}{3}", args.Status, args.FileBeingProcessed, Environment.NewLine, (args.Exception == null ? "No exception" : ExceptionHelper.ExceptionToListOfInnerMessages(args.Exception)));
+    }
         
         
     public const string BlitzDatabases = @"
@@ -759,24 +760,24 @@ delete from {1}..Project
         return database;
     }
 
-        private static DiscoveredServer MsScratch,MyScratch,PostScratch,OracleScratch;
-        protected (IManagedConnection trans, DiscoveredDatabase) GetScratchDatabase(DatabaseType type)
+    private static DiscoveredServer MsScratch,MyScratch,PostScratch,OracleScratch;
+    protected (IManagedConnection trans, DiscoveredDatabase) GetScratchDatabase(DatabaseType type)
+    {
+        var server = type switch
         {
-            var server = type switch
-            {
-                DatabaseType.MicrosoftSQLServer => MsScratch ??= GetCleanedServer(type).Server,
-                DatabaseType.MySql => MyScratch ??= GetCleanedServer(type).Server,
-                DatabaseType.PostgreSql => PostScratch ??= GetCleanedServer(type).Server,
-                DatabaseType.Oracle => OracleScratch ??= GetCleanedServer(type).Server,
-                _ => throw new ArgumentOutOfRangeException(nameof(type))
-            };
-            var trans = server.BeginNewTransactedConnection();
-            return (trans,server.GetCurrentDatabase());
-        }
+            DatabaseType.MicrosoftSQLServer => MsScratch ??= GetCleanedServer(type).Server,
+            DatabaseType.MySql => MyScratch ??= GetCleanedServer(type).Server,
+            DatabaseType.PostgreSql => PostScratch ??= GetCleanedServer(type).Server,
+            DatabaseType.Oracle => OracleScratch ??= GetCleanedServer(type).Server,
+            _ => throw new ArgumentOutOfRangeException(nameof(type))
+        };
+        var trans = server.BeginNewTransactedConnection();
+        return (trans,server.GetCurrentDatabase());
+    }
 
-        protected void DeleteTables(DiscoveredDatabase database)
-        {
-            var syntax = database.Server.GetQuerySyntaxHelper();
+    protected void DeleteTables(DiscoveredDatabase database)
+    {
+        var syntax = database.Server.GetQuerySyntaxHelper();
 
         if (database.Server.DatabaseType == DatabaseType.MicrosoftSQLServer)
             using (var con = database.Server.GetConnection())

@@ -4,15 +4,14 @@
 // RDMP is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License for more details.
 // You should have received a copy of the GNU General Public License along with RDMP. If not, see <https://www.gnu.org/licenses/>.
 
-using Rdmp.Core.ReusableLibraryCode;
-using Rdmp.Core.ReusableLibraryCode.Settings;
-
 namespace Rdmp.Core.CommandLine.Gui;
 
 using FAnsi;
 using FAnsi.Discovery;
-using Rdmp.Core.CommandExecution;
-using Rdmp.Core.Curation.Data;
+using CommandExecution;
+using Curation.Data;
+using ReusableLibraryCode;
+using ReusableLibraryCode.Settings;
 using System;
 using System.Collections.Generic;
 using System.Data.Common;
@@ -114,7 +113,7 @@ public partial class ConsoleGuiServerDatabaseTableSelector {
         }
     }
 
-    class NoWordMeansShowAllAutocomplete : TextFieldAutocomplete
+    sealed class NoWordMeansShowAllAutocomplete : TextFieldAutocomplete
     {
         public NoWordMeansShowAllAutocomplete(TextField tb)
         {
@@ -127,7 +126,7 @@ public partial class ConsoleGuiServerDatabaseTableSelector {
             if (AllSuggestions.Count > 0)
             {
                 // and no current word
-                var currentWord = GetCurrentWord();
+                var currentWord = GetCurrentWord(columnOffset);
                 if (string.IsNullOrWhiteSpace(currentWord))
                 {
                     Suggestions = AllSuggestions.AsReadOnly();
@@ -136,14 +135,14 @@ public partial class ConsoleGuiServerDatabaseTableSelector {
             }
 
             // otherwise let the default implementation run
-            base.GenerateSuggestions(columnOffset);
+            base.GenerateSuggestions();
         }
     }
 
     private void AddNoWordMeansShowAllAutocomplete(TextField tb)
     {
         var prop = typeof(TextField).GetProperty(nameof(TextField.Autocomplete));
-        prop.SetValue(tb, new NoWordMeansShowAllAutocomplete(tb));
+        prop?.SetValue(tb, new NoWordMeansShowAllAutocomplete(tb));
 
         tb.Autocomplete.MaxWidth = tb.Frame.Width;
     }

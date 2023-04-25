@@ -12,5 +12,4 @@ namespace ResearchDataManagementPlatform.Updates;
 public class GithubReleases
 {
     public GHRelease[] Entries { get; set; }
-
 }

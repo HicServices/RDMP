@@ -42,28 +42,28 @@ public class RDMPBootStrapper<T> where T : RDMPForm, new()
 
     public HashSet<string> IgnoreExceptions = new HashSet<string>(StringComparer.CurrentCultureIgnoreCase){ 
             
-            // This error seems to come from ObjectTreeView but seems harmless
-            "Value cannot be null. (Parameter 'owningItem')"
-            };
+        // This error seems to come from ObjectTreeView but seems harmless
+        "Value cannot be null. (Parameter 'owningItem')"
+    };
 
-        // ReSharper disable once InconsistentNaming - LibHarmony API requires __result as name
-        private static bool ScintillaPatch(out string __result)
-        {
-            __result= $@"{AppDomain.CurrentDomain.BaseDirectory}\x64";
-            return false;
-        }
+    // ReSharper disable once InconsistentNaming - LibHarmony API requires __result as name
+    private static bool ScintillaPatch(out string __result)
+    {
+        __result= $@"{AppDomain.CurrentDomain.BaseDirectory}\x64";
+        return false;
+    }
 
-        public void Show(bool requiresDataExportDatabaseToo)
-        {
-            Application.EnableVisualStyles();
-            Application.SetCompatibleTextRenderingDefault(false);
+    public void Show(bool requiresDataExportDatabaseToo)
+    {
+        Application.EnableVisualStyles();
+        Application.SetCompatibleTextRenderingDefault(false);
 
-            // JS 2023-03-13: Patch Scintilla for flaky file location shenanigans
-            var harmony = new Harmony("uk.ac.dundee.hic.rdmp");
-            harmony.Patch(typeof(Scintilla).GetMethod("LocateNativeDllDirectory",BindingFlags.Static|BindingFlags.NonPublic),
-                prefix: new HarmonyMethod(typeof(RDMPBootStrapper<RDMPForm>).GetMethod(nameof(ScintillaPatch),
+        // JS 2023-03-13: Patch Scintilla for flaky file location shenanigans
+        var harmony = new Harmony("uk.ac.dundee.hic.rdmp");
+        harmony.Patch(typeof(Scintilla).GetMethod("LocateNativeDllDirectory",BindingFlags.Static|BindingFlags.NonPublic),
+            prefix: new HarmonyMethod(typeof(RDMPBootStrapper<RDMPForm>).GetMethod(nameof(ScintillaPatch),
                 BindingFlags.NonPublic | BindingFlags.Static)));
-            Scintilla.SetDestroyHandleBehavior(true);
+        Scintilla.SetDestroyHandleBehavior(true);
 
         //tell me when you blow up somewhere in the windows API instead of somewhere sensible
         Application.ThreadException += (s,e)=>{

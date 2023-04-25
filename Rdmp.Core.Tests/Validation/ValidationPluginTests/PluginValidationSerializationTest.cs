@@ -21,9 +21,9 @@ public class PluginValidationSerializationTest
         var iv = new ItemValidator("fish");
         iv.PrimaryConstraint = new FishConstraint();
 
-            //validation should be working
-            Assert.IsNull(iv.ValidateAll("Fish", Array.Empty<object>(), Array.Empty<string>()));
-            Assert.IsNotNull(iv.ValidateAll("Potato", Array.Empty<object>(), Array.Empty<string>()));
+        //validation should be working
+        Assert.IsNull(iv.ValidateAll("Fish", Array.Empty<object>(), Array.Empty<string>()));
+        Assert.IsNotNull(iv.ValidateAll("Potato", Array.Empty<object>(), Array.Empty<string>()));
 
         v.ItemValidators.Add(iv);
 

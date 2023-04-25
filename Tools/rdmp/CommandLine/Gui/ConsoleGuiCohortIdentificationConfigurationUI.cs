@@ -156,10 +156,10 @@ public partial class ConsoleGuiCohortIdentificationConfigurationUI {
             return;
         var col = tableview1.Table.Columns[obj.Col];
 
-            if (col.ColumnName.Equals("Name"))
-            {
-                var factory = new ConsoleGuiContextMenuFactory(_activator);
-                var menu = factory.Create(Array.Empty<object>(), o);
+        if (col.ColumnName.Equals("Name"))
+        {
+            var factory = new ConsoleGuiContextMenuFactory(_activator);
+            var menu = factory.Create(Array.Empty<object>(), o);
                 
             if(menu != null)
             {

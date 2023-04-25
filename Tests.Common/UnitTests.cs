@@ -100,18 +100,18 @@ public class UnitTests
     {
     }
 
-        /// <summary>
-        /// Creates a minimum viable object of Type T.  This includes the object and any dependencies e.g. a 
-        /// <see cref="ColumnInfo"/> cannot exist without a <see cref="TableInfo"/>.  
-        /// </summary>
-        /// <typeparam name="T">Type of object you want to create</typeparam>
-        /// <returns></returns>
-        /// <exception cref="NotSupportedException">If there is not yet an implementation for the given T.  Feel free to write one.</exception>
-        //[MethodImpl(MethodImplOptions.AggressiveInlining)]
-        protected T WhenIHaveA<T>() where T : DatabaseEntity
-        {
-            return WhenIHaveA<T>(Repository);
-        }
+    /// <summary>
+    /// Creates a minimum viable object of Type T.  This includes the object and any dependencies e.g. a 
+    /// <see cref="ColumnInfo"/> cannot exist without a <see cref="TableInfo"/>.  
+    /// </summary>
+    /// <typeparam name="T">Type of object you want to create</typeparam>
+    /// <returns></returns>
+    /// <exception cref="NotSupportedException">If there is not yet an implementation for the given T.  Feel free to write one.</exception>
+    //[MethodImpl(MethodImplOptions.AggressiveInlining)]
+    protected T WhenIHaveA<T>() where T : DatabaseEntity
+    {
+        return WhenIHaveA<T>(Repository);
+    }
 
 
     /// <summary>

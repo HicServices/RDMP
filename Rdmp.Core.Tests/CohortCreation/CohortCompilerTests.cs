@@ -159,18 +159,18 @@ public class CohortCompilerTests:CohortIdentificationTests
                     Assert.AreEqual(joinable,tasks.OfType<JoinableTask>().Single().Joinable); //should be a single joinable
                     Assert.AreEqual(includeSubcontainers?7:6,tasks.Count); //all joinables, aggregates and root container 
 
-                        break;
-                    case TestCompilerAddAllTasksTestCase.RootContainer:
-                        tasks = compiler.AddTasksRecursively(Array.Empty<ISqlParameter>(), cohortIdentificationConfiguration.RootCohortAggregateContainer, includeSubcontainers);
-                        Assert.AreEqual(includeSubcontainers?6:5,tasks.Count); //all aggregates and root container (but not joinables)
-                        break;
-                    case TestCompilerAddAllTasksTestCase.Subcontainer:
-                        tasks = compiler.AddTasksRecursively(Array.Empty<ISqlParameter>(), container1, includeSubcontainers);
-                        Assert.AreEqual(includeSubcontainers?3:2,tasks.Count); //subcontainer and its aggregates
-                        break;
-                    default:
-                        throw new ArgumentOutOfRangeException("testCase");
-                }
+                    break;
+                case TestCompilerAddAllTasksTestCase.RootContainer:
+                    tasks = compiler.AddTasksRecursively(Array.Empty<ISqlParameter>(), cohortIdentificationConfiguration.RootCohortAggregateContainer, includeSubcontainers);
+                    Assert.AreEqual(includeSubcontainers?6:5,tasks.Count); //all aggregates and root container (but not joinables)
+                    break;
+                case TestCompilerAddAllTasksTestCase.Subcontainer:
+                    tasks = compiler.AddTasksRecursively(Array.Empty<ISqlParameter>(), container1, includeSubcontainers);
+                    Assert.AreEqual(includeSubcontainers?3:2,tasks.Count); //subcontainer and its aggregates
+                    break;
+                default:
+                    throw new ArgumentOutOfRangeException("testCase");
+            }
 
 
             rootcontainer.RemoveChild(aggregate1);

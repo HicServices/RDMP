@@ -38,16 +38,16 @@ public class CustomDateCachingTests : DatabaseTests
         mef.AddTypeToCatalogForTesting(typeof(TestCacheSource));
         mef.AddTypeToCatalogForTesting(typeof(TestCacheDestination));
 
-            // Create a pipeline that will record the cache chunks
-                        var sourceComponent = Mock.Of<IPipelineComponent>(x=>
-                x.Class == "CachingEngineTests.Integration.TestCacheSource" &&
-                x.GetClassAsSystemType()==typeof (TestCacheSource) &&
-                x.GetAllArguments()==Array.Empty<IArgument>());
+        // Create a pipeline that will record the cache chunks
+        var sourceComponent = Mock.Of<IPipelineComponent>(x=>
+            x.Class == "CachingEngineTests.Integration.TestCacheSource" &&
+            x.GetClassAsSystemType()==typeof (TestCacheSource) &&
+            x.GetAllArguments()==Array.Empty<IArgument>());
 
-            var destinationComponent = Mock.Of<IPipelineComponent>(x=>
-                x.Class == "CachingEngineTests.Integration.TestCacheDestination" &&
-                x.GetClassAsSystemType()==typeof (TestCacheDestination) &&
-                x.GetAllArguments()==Array.Empty<IArgument>());
+        var destinationComponent = Mock.Of<IPipelineComponent>(x=>
+            x.Class == "CachingEngineTests.Integration.TestCacheDestination" &&
+            x.GetClassAsSystemType()==typeof (TestCacheDestination) &&
+            x.GetAllArguments()==Array.Empty<IArgument>());
 
         var pipeline = Mock.Of<IPipeline>(p=>
             p.Repository == CatalogueRepository &&

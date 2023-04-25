@@ -34,26 +34,26 @@ public partial class DQEPivotCategorySelector : UserControl
         if (evaluation == null)
             return;
 
-           foreach (var category in evaluation.GetPivotCategoryValues())
-           {
-               var rb = new RadioButton
-               {
-                   Text = category,
-                   Tag = category
-               };
-
-               if(rb.Text== "ALL")
-                   rb.Checked = true;//always select this one by default first
-
-               rb.CheckedChanged+= OnCheckedChanged;
-               flowLayoutPanel1.Controls.Add(rb);
-           }
-        }
-
-        private void OnCheckedChanged(object sender, EventArgs eventArgs)
+        foreach (var category in evaluation.GetPivotCategoryValues())
         {
-            SelectedPivotCategory = (string) ((RadioButton)sender).Tag;
-            PivotCategorySelectionChanged?.Invoke();
+            var rb = new RadioButton
+            {
+                Text = category,
+                Tag = category
+            };
+
+            if(rb.Text== "ALL")
+                rb.Checked = true;//always select this one by default first
+
+            rb.CheckedChanged+= OnCheckedChanged;
+            flowLayoutPanel1.Controls.Add(rb);
         }
+    }
+
+    private void OnCheckedChanged(object sender, EventArgs eventArgs)
+    {
+        SelectedPivotCategory = (string) ((RadioButton)sender).Tag;
+        PivotCategorySelectionChanged?.Invoke();
+    }
 
 }

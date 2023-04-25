@@ -155,24 +155,23 @@ public class TestsRequiringADle:TestsRequiringA
         RunDLE(TestLoadMetadata,timeoutInMilliseconds,false);
     }
 
-        /// <summary>
-        /// Runs the data load engine for the given <paramref name="lmd"/>
-        /// </summary>
-        /// <param name="lmd"></param>
-        /// <param name="timeoutInMilliseconds"></param>
-        /// <param name="checks">True to run the pre load checks with accept all proposed fixes</param>
-        public void RunDLE(LoadMetadata lmd, int timeoutInMilliseconds, bool checks)
+    /// <summary>
+    /// Runs the data load engine for the given <paramref name="lmd"/>
+    /// </summary>
+    /// <param name="lmd"></param>
+    /// <param name="timeoutInMilliseconds"></param>
+    /// <param name="checks">True to run the pre load checks with accept all proposed fixes</param>
+    public void RunDLE(LoadMetadata lmd, int timeoutInMilliseconds, bool checks)
+    {
+        var timeout = new CancellationTokenSource(timeoutInMilliseconds).Token;
+        if(checks)
         {
-            var timeout = new CancellationTokenSource(timeoutInMilliseconds).Token;
-            if(checks)
-            {
-                //Get DleRunner to run pre load checks (includes trigger creation etc)
-                var checker = new DleRunner(new DleOptions() { LoadMetadata = lmd.ID.ToString(), Command = CommandLineActivity.check});
-                checker.Run(RepositoryLocator,new ThrowImmediatelyDataLoadEventListener(), new AcceptAllCheckNotifier(), new GracefulCancellationToken(timeout,timeout));
-            }
-
-            var runner = new DleRunner(new DleOptions() { LoadMetadata = lmd.ID.ToString(), Command = CommandLineActivity.run});
-            runner.Run(RepositoryLocator,new ThrowImmediatelyDataLoadEventListener(), new ThrowImmediatelyCheckNotifier(), new GracefulCancellationToken(timeout,timeout));
+            //Get DleRunner to run pre load checks (includes trigger creation etc)
+            var checker = new DleRunner(new DleOptions() { LoadMetadata = lmd.ID.ToString(), Command = CommandLineActivity.check});
+            checker.Run(RepositoryLocator,new ThrowImmediatelyDataLoadEventListener(), new AcceptAllCheckNotifier(), new GracefulCancellationToken(timeout,timeout));
         }
+
+        var runner = new DleRunner(new DleOptions() { LoadMetadata = lmd.ID.ToString(), Command = CommandLineActivity.run});
+        runner.Run(RepositoryLocator,new ThrowImmediatelyDataLoadEventListener(), new ThrowImmediatelyCheckNotifier(), new GracefulCancellationToken(timeout,timeout));
     }
 }

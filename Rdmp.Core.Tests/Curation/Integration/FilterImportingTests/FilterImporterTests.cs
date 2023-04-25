@@ -52,9 +52,9 @@ public class FilterImporterTests : UnitTests
         var master = Mock.Of<IFilter>(x => x.GetQuerySyntaxHelper()==new MicrosoftQuerySyntaxHelper());
         master.Name = "Space Odyssey";
 
-            //An existing IFilter that is in the scope that is being imported into (e.g. a data extract configuration)
-            var existing = Mock.Of<IFilter>(f=>
-                f.Name == "Space Odyssey" &&
+        //An existing IFilter that is in the scope that is being imported into (e.g. a data extract configuration)
+        var existing = Mock.Of<IFilter>(f=>
+            f.Name == "Space Odyssey" &&
             f.GetAllParameters()==Array.Empty<ISqlParameter>());// has no parameters
 
         //The factory will return this value

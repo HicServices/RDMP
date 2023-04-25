@@ -428,17 +428,17 @@ public partial class ProgressUI : UserControl, IDataLoadEventListener
             renderer.Filter = null;
     }
 
-        private void SetFilterFromTextBox()
-        {
-            var alwaysShow = olvProgressEvents.Objects == null ? Array.Empty<ProgressUIEntry>() :
-                olvProgressEvents.Objects.OfType<ProgressUIEntry>().Where(p => p.Sender == GlobalRunError).ToArray();
-            olvProgressEvents.ModelFilter = new TextMatchFilterWithAlwaysShowList(alwaysShow, olvProgressEvents, tbTextFilter.Text, StringComparison.CurrentCultureIgnoreCase);
-        }
-        public void SetFatal()
-        {
-            lblCrashed.Visible = true;
-            lblCrashed.BringToFront();
-        }
+    private void SetFilterFromTextBox()
+    {
+        var alwaysShow = olvProgressEvents.Objects == null ? Array.Empty<ProgressUIEntry>() :
+            olvProgressEvents.Objects.OfType<ProgressUIEntry>().Where(p => p.Sender == GlobalRunError).ToArray();
+        olvProgressEvents.ModelFilter = new TextMatchFilterWithAlwaysShowList(alwaysShow, olvProgressEvents, tbTextFilter.Text, StringComparison.CurrentCultureIgnoreCase);
+    }
+    public void SetFatal()
+    {
+        lblCrashed.Visible = true;
+        lblCrashed.BringToFront();
+    }
 
     internal void SetSuccess()
     {
@@ -453,7 +453,7 @@ public partial class ProgressUI : UserControl, IDataLoadEventListener
     public NotifyEventArgs GetWorst()
     {
             
-            var worstEntry = (olvProgressEvents.Objects ?? Array.Empty<object>()).OfType<ProgressUIEntry>().Union(NotificationQueue).OrderByDescending(e=>e.ProgressEventType).FirstOrDefault();
+        var worstEntry = (olvProgressEvents.Objects ?? Array.Empty<object>()).OfType<ProgressUIEntry>().Union(NotificationQueue).OrderByDescending(e=>e.ProgressEventType).FirstOrDefault();
             
         if(worstEntry == null)
             return null;

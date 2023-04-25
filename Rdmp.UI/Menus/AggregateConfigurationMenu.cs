@@ -41,15 +41,15 @@ class AggregateConfigurationMenu :RDMPContextMenuStrip
                 //find other non cohort aggregates (graphs) 
                 AggregateConfiguration[] graphsAvailableInCatalogue;
 
-                    try
-                    {
-                        graphsAvailableInCatalogue = CohortSummaryQueryBuilder.GetAllCompatibleSummariesForCohort(aggregate);
-                    }
-                    catch (System.Exception)
-                    {
-                        // Occurs if the AggregateConfiguration is badly set up e.g. has too many extraction identifiers
-                        graphsAvailableInCatalogue = Array.Empty<AggregateConfiguration>();
-                    }
+                try
+                {
+                    graphsAvailableInCatalogue = CohortSummaryQueryBuilder.GetAllCompatibleSummariesForCohort(aggregate);
+                }
+                catch (System.Exception)
+                {
+                    // Occurs if the AggregateConfiguration is badly set up e.g. has too many extraction identifiers
+                    graphsAvailableInCatalogue = Array.Empty<AggregateConfiguration>();
+                }
 
                 //and offer graph generation for the cohort subsets
                 var matchRecords = new ToolStripMenuItem("Graph Matching Records Only",_activator.CoreIconProvider.GetImage(RDMPConcept.AggregateGraph).ImageToBitmap());

@@ -22,12 +22,12 @@ public class RDMPCollectionCommonFunctionalitySettings
     /// </summary>
     public bool AddFavouriteColumn { get; set; }
 
-        /// <summary>
-        /// True to add an extra column (not visible by default) to the tree view which the ID property of objects that are
-        ///  <see cref="IMapsDirectlyToDatabaseTable"/>
-        ///  <para>Defaults to true</para>
-        /// </summary>
-        public bool AddIDColumn { get; set; }
+    /// <summary>
+    /// True to add an extra column (not visible by default) to the tree view which the ID property of objects that are
+    ///  <see cref="IMapsDirectlyToDatabaseTable"/>
+    ///  <para>Defaults to true</para>
+    /// </summary>
+    public bool AddIDColumn { get; set; }
 
     /// <summary>
     /// False to automatically set up tree hierarchy children based on the <see cref="ICoreChildProvider"/> in the

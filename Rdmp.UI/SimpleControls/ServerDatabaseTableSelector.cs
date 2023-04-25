@@ -173,26 +173,26 @@ public partial class ServerDatabaseTableSelector : UserControl
 
         ResetState();
 
-            _workerRefreshDatabasesToken = new CancellationTokenSource();
-            try
-            {
-                _listDatabasesAsyncResult = _helper.ListDatabasesAsync(builder, _workerRefreshDatabasesToken.Token);
-            }
-            catch (OperationCanceledException)
-            {
-                _listDatabasesAsyncResult = Array.Empty<string>();
-            }
-            catch (AggregateException ex )//user cancels
-            {
-                if (ex.GetExceptionIfExists<OperationCanceledException>() != null)
-                    _listDatabasesAsyncResult = Array.Empty<string>();
-                else
-                {
-                    SetState(ex);
-                    _listDatabasesAsyncResult = Array.Empty<string>();
-                }   
-            }
+        _workerRefreshDatabasesToken = new CancellationTokenSource();
+        try
+        {
+            _listDatabasesAsyncResult = _helper.ListDatabasesAsync(builder, _workerRefreshDatabasesToken.Token);
         }
+        catch (OperationCanceledException)
+        {
+            _listDatabasesAsyncResult = Array.Empty<string>();
+        }
+        catch (AggregateException ex )//user cancels
+        {
+            if (ex.GetExceptionIfExists<OperationCanceledException>() != null)
+                _listDatabasesAsyncResult = Array.Empty<string>();
+            else
+            {
+                SetState(ex);
+                _listDatabasesAsyncResult = Array.Empty<string>();
+            }   
+        }
+    }
 
     private void ResetState()
     {

@@ -216,15 +216,15 @@ public class IdentifierDumpFunctionalityTests:TestsRequiringFullAnonymisationSui
 
     }
 
-        [Test]
-        public void IdentifierDumperCheckFails_StagingNotCalled()
+    [Test]
+    public void IdentifierDumperCheckFails_StagingNotCalled()
+    {
+        var preDiscardedColumn1 = new PreLoadDiscardedColumn(CatalogueRepository, tableInfoCreated, "forename")
         {
-            var preDiscardedColumn1 = new PreLoadDiscardedColumn(CatalogueRepository, tableInfoCreated, "forename")
-                {
-                    Destination = DiscardedColumnDestination.StoreInIdentifiersDump,
-                    SqlDataType = "varchar(50)"
-                };
-            preDiscardedColumn1.SaveToDatabase();
+            Destination = DiscardedColumnDestination.StoreInIdentifiersDump,
+            SqlDataType = "varchar(50)"
+        };
+        preDiscardedColumn1.SaveToDatabase();
 
         //give it the correct server
         tableInfoCreated.IdentifierDumpServer_ID = IdentifierDump_ExternalDatabaseServer.ID;

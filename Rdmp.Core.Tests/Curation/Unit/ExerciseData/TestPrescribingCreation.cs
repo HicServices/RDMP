@@ -45,9 +45,9 @@ public class TestPrescribingCreation
         Assert.IsTrue(finished);
         Assert.AreEqual(numberOfRecords, finishedWithRecords);
 
-            Assert.GreaterOrEqual(File.ReadLines(f.FullName).Count(), numberOfRecords);//can be newlines in middle of file
-            f.Delete();
-        }
+        Assert.GreaterOrEqual(File.ReadLines(f.FullName).Count(), numberOfRecords);//can be newlines in middle of file
+        f.Delete();
+    }
 
 
 }
