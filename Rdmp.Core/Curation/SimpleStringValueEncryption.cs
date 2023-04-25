@@ -46,6 +46,10 @@ public class SimpleStringValueEncryption : IEncryptStrings
     /// <returns></returns>
     public string Encrypt(string toEncrypt)
     {
+        // Fall back on bad encryption if no private key is configured
+        if (_turing.KeySize < 1024)
+            return string.Join('-',
+                _turing.Encrypt(Encoding.UTF8.GetBytes(toEncrypt), false).Select(octet => octet.ToString("X2")));
         using var aes = Aes.Create();
         aes.KeySize = 256;
         aes.GenerateIV();

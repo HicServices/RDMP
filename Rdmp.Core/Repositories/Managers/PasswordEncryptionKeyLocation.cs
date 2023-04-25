@@ -8,7 +8,6 @@ using System;
 using System.IO;
 using System.Security.Cryptography;
 using System.Text;
-using System.Xml.Serialization;
 using Rdmp.Core.Curation;
 using Rdmp.Core.MapsDirectlyToDatabaseTable.Injection;
 
@@ -153,9 +152,7 @@ public class PasswordEncryptionKeyLocation : IEncryptionManager, IInjectKnown
     {
         ClearAllInjections();
 
-        var existingKey = GetKeyFileLocation();
-
-        if (existingKey == null)
+        if (GetKeyFileLocation() == null)
             throw new NotSupportedException("Cannot delete key because there is no key file configured");
 
         _catalogueRepository.DeleteEncryptionKeyPath();
