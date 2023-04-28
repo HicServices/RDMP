@@ -71,10 +71,10 @@ public class Startup
     }
     #endregion
 
-    #region Database Discovery
-    public void DoStartup(ICheckNotifier notifier)
-    {
-        bool foundCatalogue = false;
+        #region Database Discovery
+        public void DoStartup(ICheckNotifier notifier)
+        {
+            var foundCatalogue = false;
 
         notifier.OnCheckPerformed(new CheckEventArgs("Loading core assemblies",CheckResult.Success));
 
@@ -91,14 +91,14 @@ public class Startup
             DatabaseFound(this, new PlatformDatabaseFoundEventArgs(null,cataloguePatcher, RDMPPlatformDatabaseStatus.Broken,e));
         }
 
-        if (foundCatalogue)
-            try
-            {
-                //setup connection string keywords
-                foreach (ConnectionStringKeyword keyword in RepositoryLocator.CatalogueRepository.GetAllObjects<ConnectionStringKeyword>())
+            if (foundCatalogue)
+                try
                 {
-                    var tomem = new ToMemoryCheckNotifier(notifier);
-                    keyword.Check(tomem);
+                    //setup connection string keywords
+                    foreach (var keyword in RepositoryLocator.CatalogueRepository.GetAllObjects<ConnectionStringKeyword>())
+                    {
+                        var tomem = new ToMemoryCheckNotifier(notifier);
+                        keyword.Check(tomem);
 
                     //don't add broken keywords!
                     if (tomem.GetWorst() >= CheckResult.Fail)
@@ -146,11 +146,11 @@ public class Startup
             Validator.RefreshExtraTypes(MEFSafeDirectoryCatalog,notifier);
     }
 
-    private void FindTier3Databases(ICatalogueRepository catalogueRepository,ICheckNotifier notifier)
-    {
-        foreach (PluginPatcher patcher in _patcherManager.GetTier3Patchers(catalogueRepository.MEF,PluginPatcherFound))
-            FindWithPatcher(patcher,notifier);
-    }
+        private void FindTier3Databases(ICatalogueRepository catalogueRepository,ICheckNotifier notifier)
+        {
+            foreach (var patcher in _patcherManager.GetTier3Patchers(catalogueRepository.MEF,PluginPatcherFound))
+                FindWithPatcher(patcher,notifier);
+        }
 
     private bool Find(IRepository repository, IPatcher patcher,ICheckNotifier notifier)
     {
@@ -161,13 +161,13 @@ public class Startup
             return false;
         }
 
-        // it's not a database we are getting this data from then assume its good to go
-        if (repository is not ITableRepository tableRepository)
-            return true;
+            // it's not a database we are getting this data from then assume it's good to go
+            if (repository is not ITableRepository tableRepository)
+                return true;
                 
-        //check we can reach it
-        var db = tableRepository.DiscoveredServer.GetCurrentDatabase();
-        notifier.OnCheckPerformed(new CheckEventArgs(string.Format("Connecting to {0} on {1}",db.GetRuntimeName(),db.Server.Name) ,CheckResult.Success));
+            //check we can reach it
+            var db = tableRepository.DiscoveredServer.GetCurrentDatabase();
+            notifier.OnCheckPerformed(new CheckEventArgs($"Connecting to {db.GetRuntimeName()} on {db.Server.Name}",CheckResult.Success));
 
         //is it reachable
         try
@@ -182,40 +182,28 @@ public class Startup
         }
 
 
-        Patch.PatchingState patchingRequired;
-        try
-        {
-            //is it up-to-date on patches?
-            Version databaseVersion;
-            Patch[] patchesInDatabase;
-            SortedDictionary<string, Patch> allPatchesInAssembly;
-                
-            patchingRequired = Patch.IsPatchingRequired(tableRepository.DiscoveredServer.GetCurrentDatabase(), patcher, out databaseVersion, out patchesInDatabase,out allPatchesInAssembly);
-        }
-        catch (Exception e)
-        {
-            //database is broken (maybe the version of the db is ahead of the host assembly?)
-            DatabaseFound(this, new PlatformDatabaseFoundEventArgs(tableRepository, patcher, RDMPPlatformDatabaseStatus.Broken, e));
-            return false;
-        }
+            Patch.PatchingState patchingRequired;
+            try
+            {
+                //is it up-to-date on patches?
+                patchingRequired = Patch.IsPatchingRequired(tableRepository.DiscoveredServer.GetCurrentDatabase(),
+                    patcher, out _, out _, out _);
+            }
+            catch (Exception e)
+            {
+                //database is broken (maybe the version of the db is ahead of the host assembly?)
+                DatabaseFound(this, new PlatformDatabaseFoundEventArgs(tableRepository, patcher, RDMPPlatformDatabaseStatus.Broken, e));
+                return false;
+            }
 
-        // if we are suppressing patching
-        if (patchingRequired == Patch.PatchingState.Required && SkipPatching)
-            patchingRequired = Patch.PatchingState.NotRequired;
-
-        switch(patchingRequired)
-        {
-            case Patch.PatchingState.NotRequired:
-                DatabaseFound(this, new PlatformDatabaseFoundEventArgs(tableRepository, patcher, RDMPPlatformDatabaseStatus.Healthy));
-                break;
-            case Patch.PatchingState.Required: 
-                DatabaseFound(this, new PlatformDatabaseFoundEventArgs(tableRepository, patcher, RDMPPlatformDatabaseStatus.RequiresPatching));
-                break;
-            case Patch.PatchingState.SoftwareBehindDatabase:
-                DatabaseFound(this, new PlatformDatabaseFoundEventArgs(tableRepository, patcher, RDMPPlatformDatabaseStatus.SoftwareOutOfDate));
-                break;
-            default : throw new ArgumentOutOfRangeException("patchingRequired");
-        }          
+            DatabaseFound(this,
+                new PlatformDatabaseFoundEventArgs(tableRepository, patcher, patchingRequired switch
+                {
+                    Patch.PatchingState.NotRequired => RDMPPlatformDatabaseStatus.Healthy,
+                    Patch.PatchingState.Required    => SkipPatching ? RDMPPlatformDatabaseStatus.Healthy : RDMPPlatformDatabaseStatus.RequiresPatching,
+                    Patch.PatchingState.SoftwareBehindDatabase  => RDMPPlatformDatabaseStatus.SoftwareOutOfDate,
+                    _ => throw new ArgumentOutOfRangeException(nameof(patchingRequired))
+                }));
 
         return true;
     }
@@ -232,15 +220,15 @@ public class Startup
                     .ExpectServer(server, DataAccessContext.InternalDataProcessing)
                     .Builder;
 
-                Find(new CatalogueRepository(builder), patcher,notifier);
-            }
-            catch (Exception e)
-            {
-                notifier.OnCheckPerformed(new CheckEventArgs("Could not resolve ExternalDatabaseServer '" + server + "'",CheckResult.Warning,e));
+                    Find(new CatalogueRepository(builder), patcher,notifier);
+                }
+                catch (Exception e)
+                {
+                    notifier.OnCheckPerformed(new CheckEventArgs($"Could not resolve ExternalDatabaseServer '{server}'",CheckResult.Warning,e));
+                }
             }
         }
-    }
-    #endregion
+        #endregion
 
 
     #region MEF
@@ -263,27 +251,28 @@ public class Startup
             new DirectoryInfo(AppDomain.CurrentDomain.BaseDirectory)
         };
 
-        for (int i = 0; i < compatiblePlugins.Length; i++)
-        {
-            var subDirName = compatiblePlugins[i].GetPluginDirectoryName(downloadDirectory);
-            var subdir = Directory.CreateDirectory(subDirName);
+            for (var i = 0; i < compatiblePlugins.Length; i++)
+            {
+                var subDirName = compatiblePlugins[i].GetPluginDirectoryName(downloadDirectory);
+                var subdir = Directory.CreateDirectory(subDirName);
 
             dirs.Add(subdir);
                                                              
-            var existingFiles = subdir.GetFiles("*"+PackPluginRunner.PluginPackageSuffix).ToList();
+                var existingFiles = subdir.GetFiles($"*{PackPluginRunner.PluginPackageSuffix}").ToList();
 
-            //if we have not downloaded this yet
-            if(!existingFiles.Any(f=>f.Name.Equals(compatiblePlugins[i].Name)))
-                compatiblePlugins[i].LoadModuleAssemblies.SingleOrDefault()?.DownloadAssembly(subdir); 
-            else
-                notifier.OnCheckPerformed(new CheckEventArgs("Found existing file '" + compatiblePlugins[i].Name +"' so didn't bother downloading it.",CheckResult.Success));
+                //if we have not downloaded this yet
+                if(!existingFiles.Any(f=>f.Name.Equals(compatiblePlugins[i].Name)))
+                    compatiblePlugins[i].LoadModuleAssemblies.SingleOrDefault()?.DownloadAssembly(subdir); 
+                else
+                    notifier.OnCheckPerformed(new CheckEventArgs(
+                        $"Found existing file '{compatiblePlugins[i].Name}' so didn't bother downloading it.",CheckResult.Success));
                                 
-            foreach(var archive in  subdir.GetFiles("*"+PackPluginRunner.PluginPackageSuffix).ToList())
-            {                    
-                //get rid of any old out dirs
-                var outDir = subdir.EnumerateDirectories("out").SingleOrDefault();
+                foreach(var archive in  subdir.GetFiles($"*{PackPluginRunner.PluginPackageSuffix}").ToList())
+                {                    
+                    //get rid of any old out dirs
+                    var outDir = subdir.EnumerateDirectories("out").SingleOrDefault();
                     
-                bool mustUnzip = true;
+                    var mustUnzip = true;
 
                 //if there's already an unpacked version
                 if(outDir is { Exists: true })
@@ -297,18 +286,20 @@ public class Startup
                 else
                     outDir = subdir.CreateSubdirectory("out");
 
-                if(mustUnzip)
-                    using(var zf = ZipFile.OpenRead(archive.FullName))
-                        try
-                        {
-                            zf.ExtractToDirectory(outDir.FullName);
-                        }
-                        catch(Exception ex)
-                        {
-                            notifier.OnCheckPerformed(new CheckEventArgs("Could not extract Plugin to '" + outDir.FullName+"'",CheckResult.Warning,ex));
-                        }
-                else
-                    notifier.OnCheckPerformed(new CheckEventArgs("Found existing directory '" + outDir.FullName+"' so didn't bother unzipping.",CheckResult.Success));
+                    if(mustUnzip)
+                        using(var zf = ZipFile.OpenRead(archive.FullName))
+                            try
+                            {
+                                zf.ExtractToDirectory(outDir.FullName);
+                            }
+                            catch(Exception ex)
+                            {
+                                notifier.OnCheckPerformed(new CheckEventArgs(
+                                    $"Could not extract Plugin to '{outDir.FullName}'",CheckResult.Warning,ex));
+                            }
+                    else
+                        notifier.OnCheckPerformed(new CheckEventArgs(
+                            $"Found existing directory '{outDir.FullName}' so didn't bother unzipping.",CheckResult.Success));
 
                 toLoad.AddRange(_environmentInfo.GetPluginSubDirectories(outDir.CreateSubdirectory("lib"), notifier));
 
@@ -319,24 +310,24 @@ public class Startup
             }
         }
 
-        //The only Directories in MEF folder should be Plugin subdirectories, any that don't correspond with a plugin should be deleted 
-        foreach (DirectoryInfo unexpectedDirectory in downloadDirectory.GetDirectories().Where(expected=>!dirs.Any(d=>d.FullName.Equals(expected.FullName))))
-        {
-            try
+            //The only Directories in MEF folder should be Plugin subdirectories, any that don't correspond with a plugin should be deleted 
+            foreach (var unexpectedDirectory in downloadDirectory.GetDirectories().Where(expected=>!dirs.Any(d=>d.FullName.Equals(expected.FullName))))
             {
-                unexpectedDirectory.Delete(true);
-                notifier.OnCheckPerformed(new CheckEventArgs("Deleted unreferenced plugin folder " + unexpectedDirectory.FullName, CheckResult.Success));
+                try
+                {
+                    unexpectedDirectory.Delete(true);
+                    notifier.OnCheckPerformed(new CheckEventArgs(
+                        $"Deleted unreferenced plugin folder {unexpectedDirectory.FullName}", CheckResult.Success));
 
+                }
+                catch (Exception ex)
+                {
+                    notifier.OnCheckPerformed(
+                        new CheckEventArgs(
+                            $"Found unreferenced (no Plugin) folder {unexpectedDirectory.FullName} but we were unable to delete it (possibly because it is in use, try closing all your local RDMP applications and restarting this one)",
+                            CheckResult.Fail, ex));
+                }
             }
-            catch (Exception ex)
-            {
-                notifier.OnCheckPerformed(
-                    new CheckEventArgs(
-                        "Found unreferenced (no Plugin) folder " + unexpectedDirectory.FullName +
-                        " but we were unable to delete it (possibly because it is in use, try closing all your local RDMP applications and restarting this one)",
-                        CheckResult.Fail, ex));
-            }
-        }
 
         AssemblyResolver.SetupAssemblyResolver(toLoad.ToArray());
             
@@ -349,10 +340,10 @@ public class Startup
         if(!CatalogueRepository.SuppressHelpLoading)
             catalogueRepository.CommentStore.ReadComments(Environment.CurrentDirectory,"SourceCodeForSelfAwareness.zip");
 
-        sw.Stop();
-        notifier.OnCheckPerformed(new CheckEventArgs("Help loading took:" + sw.Elapsed, CheckResult.Success));
-    }
-    #endregion
+            sw.Stop();
+            notifier.OnCheckPerformed(new CheckEventArgs($"Help loading took:{sw.Elapsed}", CheckResult.Success));
+        }
+        #endregion
 
     /// <summary>
     /// <para>

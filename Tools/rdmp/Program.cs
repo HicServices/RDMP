@@ -8,6 +8,7 @@ using System;
 using System.IO;
 using System.Linq;
 using CommandLine;
+using MapsDirectlyToDatabaseTable.Versioning;
 using NLog;
 using Rdmp.Core.CommandLine;
 using Rdmp.Core.CommandLine.DatabaseCreation;
@@ -15,9 +16,8 @@ using Rdmp.Core.CommandLine.Gui;
 using Rdmp.Core.CommandLine.Options;
 using Rdmp.Core.Curation.Data;
 using Rdmp.Core.Logging.Listeners.NLogListeners;
-using Rdmp.Core.MapsDirectlyToDatabaseTable.Versioning;
-using Rdmp.Core.ReusableLibraryCode;
-using Rdmp.Core.ReusableLibraryCode.Checks;
+using ReusableLibraryCode;
+using ReusableLibraryCode.Checks;
 
 namespace Rdmp.Core;
 
@@ -177,17 +177,19 @@ class Program
                 
             var db = e.Repository.DiscoveredServer.GetCurrentDatabase();
                      
-            if(e.Status == Startup.Events.RDMPPlatformDatabaseStatus.RequiresPatching)
+            switch (e.Status)
             {
-                var mds = new MasterDatabaseScriptExecutor(db);
-                mds.PatchDatabase(e.Patcher, checker, (p) => true, () => opts.BackupDatabase);
+                case Startup.Events.RDMPPlatformDatabaseStatus.RequiresPatching:
+                {
+                    var mds = new MasterDatabaseScriptExecutor(db);
+                    mds.PatchDatabase(e.Patcher, checker, (p) => true, () => opts.BackupDatabase);
+                    break;
+                }
+                case <= Startup.Events.RDMPPlatformDatabaseStatus.Broken:
+                    checker.OnCheckPerformed(new CheckEventArgs($"Database {db} had status {e.Status}",CheckResult.Fail));
+                    badTimes = true;
+                    break;
             }
-
-            if(e.Status <= Startup.Events.RDMPPlatformDatabaseStatus.Broken)
-            {
-                checker.OnCheckPerformed(new CheckEventArgs($"Database {db} had status {e.Status}",CheckResult.Fail));
-                badTimes = true;
-            }                    
         };
 
         start.DoStartup(new IgnoreAllErrorsCheckNotifier());
