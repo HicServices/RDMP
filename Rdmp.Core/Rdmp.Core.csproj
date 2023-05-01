@@ -276,7 +276,7 @@
     <PackageReference Include="HIC.BadMedicine" Version="1.1.2" />
     <PackageReference Include="HIC.FAnsiSql" Version="3.0.1" />
     <PackageReference Include="Newtonsoft.Json" Version="13.0.3" />
-    <PackageReference Include="NLog" Version="5.1.3" />
+    <PackageReference Include="NLog" Version="5.1.4" />
     <PackageReference Include="NPOI" Version="2.5.5" />
     <PackageReference Include="SixLabors.ImageSharp" Version="3.0.1" />
     <PackageReference Include="SixLabors.ImageSharp.Drawing" Version="1.0.0-beta15" />
