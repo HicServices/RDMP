@@ -13,9 +13,6 @@ namespace Rdmp.Core.MapsDirectlyToDatabaseTable;
 /// </summary>
 public interface IMightBeDeprecated:IRevertable
 {
-    public string Guid;
-    public string Name;
-
     /// <summary>
     /// Bit flag indicating whether the object should be considered Deprecated (i.e. do not use anymore).  This is preferred to deleting it.  The implications
     /// of this are that it no longer appears in UIs by default and that warnings may appear when trying to interact with it.

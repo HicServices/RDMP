@@ -220,7 +220,7 @@ public partial class RDMPTopMenuStripUI : RDMPUserControl
             
         try
         {
-            UsefulStuff.GetInstance().ShowPathInWindowsExplorer(UsefulStuff.GetExecutableDirectory());
+            UsefulStuff.ShowPathInWindowsExplorer(UsefulStuff.GetExecutableDirectory());
         }
         catch (Exception exception)
         {
@@ -467,9 +467,7 @@ public partial class RDMPTopMenuStripUI : RDMPUserControl
 
         // Give user a chance to change the URL that is updating from
         if(!Activator.TypeText("Update Location","Url:",int.MaxValue,url,out url,false))
-        {
             return;
-        }
 
         try
         {
@@ -485,8 +483,8 @@ public partial class RDMPTopMenuStripUI : RDMPUserControl
     private void ListAllTypesToolStripMenuItem_Click(object sender, EventArgs e)
     {
         var file = new FileInfo(Path.GetTempFileName());
-        File.WriteAllText(file.FullName,string.Join(Environment.NewLine,Activator.RepositoryLocator.CatalogueRepository.MEF.GetAllTypes().Select(t=>t.FullName)));
-        UsefulStuff.GetInstance().ShowPathInWindowsExplorer(file);
+        File.WriteAllLines(file.FullName,Activator.RepositoryLocator.CatalogueRepository.MEF.GetAllTypes().Select(t=>t.FullName));
+        UsefulStuff.ShowPathInWindowsExplorer(file);
     }
 
     private void NewToolStripMenuItem_Click(object sender, EventArgs e)

@@ -8,11 +8,7 @@ using System.Linq;
 using NUnit.Framework;
 using Rdmp.Core.ReusableLibraryCode;
 
-<<<<<<<< HEAD:Rdmp.Core.Tests/ReusableCodeTests/UsefulStuffUnitTests.cs
 namespace Rdmp.Core.Tests.ReusableCodeTests;
-========
-namespace Rdmp.Core.Tests.ReusableLibraryCode;
->>>>>>>> 760280ef5 (Tidyup):Rdmp.Core.Tests/ReusableLibraryCode/UsefulStuffUnitTests.cs
 
 public class UsefulStuffUnitTests
 {

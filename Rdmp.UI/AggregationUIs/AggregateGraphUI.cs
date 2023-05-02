@@ -237,7 +237,7 @@ public partial class AggregateGraphUI : AggregateGraph_Design
     {
         try
         {
-            int timeout = 10000;
+            var timeout = 10000;
 
             while (!IsHandleCreated && timeout > 0)
             {
@@ -255,8 +255,8 @@ public partial class AggregateGraphUI : AggregateGraph_Design
                 lblLoadStage.Text = "Generating Query...";
             }));
 
-            AggregateContinuousDateAxis axis = AggregateConfiguration.GetAxisIfAny();
-            AggregateBuilder builder = GetQueryBuilder(AggregateConfiguration);
+            var axis = AggregateConfiguration.GetAxisIfAny();
+            var builder = GetQueryBuilder(AggregateConfiguration);
 
             UpdateQueryViewerScreenWithQuery(builder.SQL);
 
@@ -279,7 +279,7 @@ public partial class AggregateGraphUI : AggregateGraph_Design
 
                 this.Invoke(new MethodInvoker(() => { lblLoadStage.Text = "Executing Query..."; }));
 
-                DbDataAdapter adapter = server.GetDataAdapter(_cmd);
+                var adapter = server.GetDataAdapter(_cmd);
                 adapter.Fill(_dt);
                 _cmd = null;
 
@@ -339,7 +339,7 @@ public partial class AggregateGraphUI : AggregateGraph_Design
 
     private void PopulateGraphResults(QueryTimeColumn countColumn, AggregateContinuousDateAxis axis)
     {
-        bool haveSetSource = false;
+        var haveSetSource = false;
         if(chart1.Legends.Count == 0) 
             chart1.Legends.Add(new Legend());
 
@@ -347,9 +347,9 @@ public partial class AggregateGraphUI : AggregateGraph_Design
         chart1.Titles.Add(_aggregateConfiguration.Name);
 
         //last column is always the X axis, then for each column before it add a series with Y values coming from that column
-        for (int i = 0; i < _dt.Columns.Count - 1; i++)
+        for (var i = 0; i < _dt.Columns.Count - 1; i++)
         {
-            int index = i;
+            var index = i;
                 
             if (!haveSetSource)
             {
@@ -549,9 +549,9 @@ public partial class AggregateGraphUI : AggregateGraph_Design
         lblLoadStage.Text = $"Data Binding Chart ({_dt.Columns.Count} columns)";
         lblLoadStage.Refresh();
 
-        int cells = _dt.Columns.Count * _dt.Rows.Count;
+        var cells = _dt.Columns.Count * _dt.Rows.Count;
 
-        bool abandon = false;
+        var abandon = false;
 
         if(cells > MAXIMUM_CELLS_BEFORE_WARNING)
             if(Silent)
@@ -639,9 +639,9 @@ public partial class AggregateGraphUI : AggregateGraph_Design
             return;
         }
 
-        string imgSavePath = Path.Combine(subdir.FullName, $"{nameOfFile}.png");
-        string dataSavePath = Path.Combine(subdir.FullName, $"{nameOfFile}.csv");
-        string querySavePath = Path.Combine(subdir.FullName, $"{nameOfFile}.sql");
+        var imgSavePath = Path.Combine(subdir.FullName, $"{nameOfFile}.png");
+        var dataSavePath = Path.Combine(subdir.FullName, $"{nameOfFile}.csv");
+        var querySavePath = Path.Combine(subdir.FullName, $"{nameOfFile}.sql");
         try
         {
             chart1.SaveImage(imgSavePath, ChartImageFormat.Png);
@@ -808,7 +808,7 @@ public partial class AggregateGraphUI : AggregateGraph_Design
         
     private void MiSaveImagesClick(object sender, EventArgs e)
     {
-        SaveFileDialog sfd = new SaveFileDialog();
+        var sfd = new SaveFileDialog();
         sfd.FileName = "Chart.jpg";
         sfd.Filter = "Jpeg|*.jpg";
         if (sfd.ShowDialog() == DialogResult.OK)
@@ -819,12 +819,12 @@ public partial class AggregateGraphUI : AggregateGraph_Design
             {
                 var directory = Path.GetDirectoryName(sfd.FileName);
                 var filename = $"{Path.GetFileNameWithoutExtension(sfd.FileName)}_HeatMap.jpg";
-                string heatmapPath = Path.Combine(directory, filename);
+                var heatmapPath = Path.Combine(directory, filename);
 
                 heatmapUI.SaveImage(heatmapPath, ImageFormat.Jpeg);
             }
                 
-            UsefulStuff.GetInstance().ShowPathInWindowsExplorer(new FileInfo(sfd.FileName));
+            UsefulStuff.ShowPathInWindowsExplorer(new FileInfo(sfd.FileName));
         }
     }
 
@@ -832,7 +832,7 @@ public partial class AggregateGraphUI : AggregateGraph_Design
     {
         if(sender == miClipboardWord)
         {
-            string s = UsefulStuff.GetInstance().DataTableToHtmlDataTable(_dt);
+            var s = UsefulStuff.GetInstance().DataTableToHtmlDataTable(_dt);
 
             var formatted = UsefulStuff.GetInstance().GetClipboardFormattedHtmlStringFromHtmlString(s);
             
@@ -841,7 +841,7 @@ public partial class AggregateGraphUI : AggregateGraph_Design
 
         if (sender == miClipboardCsv)
         {
-            string s = UsefulStuff.GetInstance().DataTableToCsv(_dt);
+            var s = UsefulStuff.DataTableToCsv(_dt);
             Clipboard.SetText(s);
         }
     }
@@ -860,7 +860,7 @@ public partial class AggregateGraphUI : AggregateGraph_Design
     {
         try
         {
-            CachedAggregateConfigurationResultsManager cacheManager = GetCacheManager();
+            var cacheManager = GetCacheManager();
 
             var args = new CacheCommitExtractableAggregate(AggregateConfiguration, QueryEditor.Text, (DataTable)dataGridView1.DataSource,Timeout);
             cacheManager.CommitResults(args);

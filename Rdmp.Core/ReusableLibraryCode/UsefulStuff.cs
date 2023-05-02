@@ -419,30 +419,29 @@ public class UsefulStuff
         return sb.ToString();
     }
 
-    public string DataTableToCsv(DataTable dt)
+    public static string DataTableToCsv(DataTable dt)
     {
         var sb = new StringBuilder();
 
         using var w = new CsvWriter(new StringWriter(sb),CultureInfo.CurrentCulture);
-            foreach (DataColumn column in dt.Columns)
-                w.WriteField(column.ColumnName);
+        foreach (DataColumn column in dt.Columns)
+            w.WriteField(column.ColumnName);
+
+        w.NextRecord();
+
+        foreach (DataRow row in dt.Rows)
+        {
+            foreach (var cellObject in row.ItemArray)
+                w.WriteField(cellObject);
 
             w.NextRecord();
-
-            foreach (DataRow row in dt.Rows)
-            {
-                foreach (var cellObject in row.ItemArray)
-                    w.WriteField(cellObject);
-
-                w.NextRecord();
-            }
-
-            w.Flush();
         }
-            
+
+        w.Flush();
+        
         return sb.ToString();
     }
-    public void ShowPathInWindowsExplorer(FileSystemInfo fileInfo)
+    public static void ShowPathInWindowsExplorer(FileSystemInfo fileInfo)
     {
         var argument = $"{(fileInfo is FileInfo?"/select,":"")} \"{fileInfo.FullName}\"";
         Process.Start("explorer.exe", argument);

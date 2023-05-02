@@ -85,37 +85,34 @@ public partial class SupportingDocumentUI : SupportingDocumentUI_Design, ISaveab
         
     private void btnOpen_Click(object sender, EventArgs e)
     {
-        if (_supportingDocument != null)
-            try
-            {
-                UsefulStuff.GetInstance().ShowPathInWindowsExplorer(_supportingDocument.GetFileName());
-            }
-            catch (Exception ex)
-            {
-
-                MessageBox.Show("unable to open file:" + ex.Message);
-            }
+        if (_supportingDocument == null) return;
+        try
+        {
+            UsefulStuff.ShowPathInWindowsExplorer(_supportingDocument.GetFileName());
+        }
+        catch (Exception ex)
+        {
+            MessageBox.Show($"unable to open file:{ex.Message}");
+        }
     }
         
     private void SetUriPropertyOn( TextBox tb,string propertyToSet,object toSetOn)
     {
-        if (toSetOn != null)
+        if (toSetOn == null) return;
+        try
         {
-            try
-            {
-                Uri u = new Uri(tb.Text);
+            Uri u = new Uri(tb.Text);
 
-                tb.ForeColor = Color.Black;
+            tb.ForeColor = Color.Black;
 
-                PropertyInfo target = toSetOn.GetType().GetProperty(propertyToSet);
+            PropertyInfo target = toSetOn.GetType().GetProperty(propertyToSet);
 
-                target.SetValue(toSetOn, new Uri(tb.Text), null);
-                tb.ForeColor = Color.Black;
-            }
-            catch (UriFormatException)
-            {
-                tb.ForeColor = Color.Red;
-            }
+            target.SetValue(toSetOn, new Uri(tb.Text), null);
+            tb.ForeColor = Color.Black;
+        }
+        catch (UriFormatException)
+        {
+            tb.ForeColor = Color.Red;
         }
     }
         

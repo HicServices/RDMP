@@ -44,7 +44,7 @@ public partial class PasswordEncryptionKeyLocationUI : RDMPUserControl
     {
         base.OnLoad(e);
 
-        if (VisualStudioDesignMode) //dont go looking up the key if you are visual studio in designer mode!
+        if (VisualStudioDesignMode) //don't go looking up the key if you are visual studio in designer mode!
             return;
 
         _location = new PasswordEncryptionKeyLocation((CatalogueRepository) Activator.RepositoryLocator.CatalogueRepository);
@@ -54,7 +54,7 @@ public partial class PasswordEncryptionKeyLocationUI : RDMPUserControl
 
     private void SetEnabledness()
     {
-        string keyLocation = _location.GetKeyFileLocation();
+        var keyLocation = _location.GetKeyFileLocation();
         tbCertificate.Text = keyLocation;
 
         btnShowDirectory.Enabled = keyLocation != null;
@@ -83,7 +83,7 @@ public partial class PasswordEncryptionKeyLocationUI : RDMPUserControl
     {
         try
         {
-            UsefulStuff.GetInstance().ShowPathInWindowsExplorer(new FileInfo(tbCertificate.Text));
+            UsefulStuff.ShowPathInWindowsExplorer(new FileInfo(tbCertificate.Text));
         }
         catch (Exception exception)
         {
@@ -95,11 +95,13 @@ public partial class PasswordEncryptionKeyLocationUI : RDMPUserControl
     {
         try
         {
-            SaveFileDialog sfd = new SaveFileDialog();
-            sfd.FileName = "MyRDMPKey.key";
-            sfd.Filter = "*.key|RDMP RSA Parameters Key File";
-            sfd.CreatePrompt = true;
-            sfd.CheckPathExists = true;
+            using var sfd = new SaveFileDialog
+            {
+                FileName = "MyRDMPKey.key",
+                CreatePrompt = true,
+                Filter = "*.key|RDMP RSA Parameters Key File",
+                CheckPathExists = true
+            };
 
             if (sfd.ShowDialog() == DialogResult.OK)
                 _location.CreateNewKeyFile(sfd.FileName);

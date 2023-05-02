@@ -15,35 +15,24 @@ using SixLabors.ImageSharp.PixelFormats;
 
 namespace Rdmp.UI.CommandExecution.AtomicCommands;
 
-public class ExecuteCommandOpenInExplorer:BasicUICommandExecution,IAtomicCommand
+public class ExecuteCommandOpenInExplorer:BasicUICommandExecution
 {
-    private readonly FileInfo _file;
-    private readonly DirectoryInfo _dir;
+    private readonly FileSystemInfo _info;
         
-    public ExecuteCommandOpenInExplorer(IActivateItems activator,DirectoryInfo dir) : base(activator)
+    public ExecuteCommandOpenInExplorer(IActivateItems activator,FileSystemInfo info) : base(activator)
     {
-        _dir = dir; 
+        _info = info; 
 
-        if (_dir == null || !_dir.Exists)
-            SetImpossible("Directory not found");
-    }
-    public ExecuteCommandOpenInExplorer(IActivateItems activator, FileInfo file): base(activator)
-    {
-        _file = file;
-
-        if(_file == null || !_file.Exists)
-            SetImpossible("File not found");
+        if (_info is not { Exists: true })
+            SetImpossible("Path not found");
     }
 
     public override void Execute()
     {
         base.Execute();
 
-        if(_file != null)
-            UsefulStuff.GetInstance().ShowPathInWindowsExplorer(_file);
-
-        if(_dir != null)
-            UsefulStuff.GetInstance().ShowPathInWindowsExplorer(_dir);
+        if(_info != null)
+            UsefulStuff.ShowPathInWindowsExplorer(_info);
     }
 
     public override Image<Rgba32> GetImage(IIconProvider iconProvider)

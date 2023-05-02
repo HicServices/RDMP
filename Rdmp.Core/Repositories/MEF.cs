@@ -27,10 +27,9 @@ public class MEF
 {
     public DirectoryInfo DownloadDirectory { get; private set; }
 
-    public bool HaveDownloadedAllAssemblies = false;
+    public bool HaveDownloadedAllAssemblies;
     public SafeDirectoryCatalog SafeDirectoryCatalog;
-
-    ObjectConstructor o = new ObjectConstructor();
+    readonly ObjectConstructor o = new();
                 
     private readonly string _localPath = null;
 

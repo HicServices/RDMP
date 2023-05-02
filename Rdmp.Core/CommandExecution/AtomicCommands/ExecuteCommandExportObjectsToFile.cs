@@ -140,6 +140,6 @@ public class ExecuteCommandExportObjectsToFile : BasicCommandExecution
 
 
         if (ShowInExplorer && TargetDirectoryInfo != null)
-            UsefulStuff.GetInstance().ShowPathInWindowsExplorer(TargetDirectoryInfo);
+            UsefulStuff.ShowPathInWindowsExplorer(TargetDirectoryInfo);
     }
 }

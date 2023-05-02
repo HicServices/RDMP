@@ -168,22 +168,6 @@ public class DocXHelper
     }
 
     /// <summary>
-    /// Opens windows explorer to show the file
-    /// </summary>
-    /// <param name="fileInfo"></param>
-    protected void ShowFile(FileInfo fileInfo)
-    {
-        UsefulStuff.GetInstance().ShowFileInWindowsExplorer(fileInfo);
-    }
-    /// <summary>
-    /// Opens windows explorer to show the document
-    /// </summary>
-    /// <param name="document"></param>
-    protected void ShowFile(XWPFDocumentFile document)
-    {
-        ShowFile(document.FileInfo);
-    }
-    /// <summary>
     /// Creates a new document in Work Area (temp) - see <see cref="GetUniqueFilenameInWorkArea(string, string)"/>
     /// </summary>
     /// <param name="filename"></param>
@@ -199,7 +183,7 @@ public class DocXHelper
     /// <param name="fileInfo"></param>
     protected void ShowFile(FileInfo fileInfo)
     {
-        UsefulStuff.GetInstance().ShowPathInWindowsExplorer(fileInfo);
+        UsefulStuff.ShowPathInWindowsExplorer(fileInfo);
     }
     /// <summary>
     /// Opens windows explorer to show the document
@@ -208,16 +192,6 @@ public class DocXHelper
     protected void ShowFile(XWPFDocumentFile document)
     {
         ShowFile(document.FileInfo);
-    }
-    /// <summary>
-    /// Creates a new document in Work Area (temp) - see <see cref="GetUniqueFilenameInWorkArea(string, string)"/>
-    /// </summary>
-    /// <param name="filename"></param>
-    /// <returns></returns>
-    protected XWPFDocumentFile GetNewDocFile(string filename)
-    {
-        FileInfo fi = GetUniqueFilenameInWorkArea(filename);
-        return new XWPFDocumentFile(fi,new FileStream(fi.FullName,FileMode.Create));
     }
 
     protected void AddFooter(XWPFDocument document,string text,int textFontSize)
