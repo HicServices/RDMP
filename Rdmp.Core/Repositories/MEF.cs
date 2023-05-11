@@ -133,7 +133,7 @@ public class MEF
         }
                 
         //we know about it now!
-        SafeDirectoryCatalog.AddType(type,toReturn);
+        SafeDirectoryCatalog.AddType(toReturn, type);
 
         return toReturn;
 

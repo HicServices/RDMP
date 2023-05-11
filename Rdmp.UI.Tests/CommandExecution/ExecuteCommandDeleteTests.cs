@@ -21,7 +21,7 @@ class ExecuteCommandDeleteTests : UITests
     {
         SetupMEF();
         var invoker = new CommandInvoker(ItemActivator);
-        Assert.IsTrue(invoker.IsSupported(typeof(ExecuteCommandDelete)));
+        Assert.IsNull(invoker.WhyCommandNotSupported(typeof(ExecuteCommandDelete)));
     }
 
     /// <summary>

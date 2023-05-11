@@ -81,10 +81,6 @@ public class RunUITests:DatabaseTests
     [Test]
     public void AllCommandsCompatible()
     {
-        Console.WriteLine("Looking in" + typeof (ExecuteCommandCreateNewExtractableDataSetPackage).Assembly);
-        Console.WriteLine("Looking in" + typeof(ExecuteCommandViewCohortAggregateGraph).Assembly);
-        Console.WriteLine("Looking in" + typeof(ExecuteCommandAddToSession).Assembly);
-
         var uiTests = new UITests();
         var activator = new TestActivateItems(uiTests, new MemoryDataExportRepository());
         activator.RepositoryLocator.CatalogueRepository.MEF = CatalogueRepository.MEF;
@@ -93,56 +89,54 @@ public class RunUITests:DatabaseTests
 
         var commandCaller = new CommandInvoker(activator);
             
-        Assert.IsTrue(commandCaller.IsSupported(typeof(ExecuteCommandDelete)));
+        Assert.IsTrue(commandCaller.WhyCommandNotSupported(typeof(ExecuteCommandDelete)) is null);
 
         var notSupported = RepositoryLocator.CatalogueRepository.MEF.GetAllTypes()
             .Where(t=>typeof(IAtomicCommand).IsAssignableFrom(t) && !t.IsAbstract && !t.IsInterface) //must be something we would normally expect to be a supported Type
-            .Where(t => !commandCaller.IsSupported(t)) //but for some reason isn't
-            .Except(allowedToBeIncompatible) //and isn't a permissable one
+            .Except(allowedToBeIncompatible) //and isn't a permissible one
+            .Where(t => commandCaller.WhyCommandNotSupported(t) is not null) //but for some reason isn't
             .ToArray();
             
         Assert.AreEqual(0,notSupported.Length,"The following commands were not compatible with RunUI:" + Environment.NewLine + string.Join(Environment.NewLine,notSupported.Select(t=>t.Name)));
-
-        var supported = RepositoryLocator.CatalogueRepository.MEF.GetAllTypes().Where(commandCaller.IsSupported).ToArray();
-
-        Console.WriteLine("The following commands are supported:" + Environment.NewLine + string.Join(Environment.NewLine,supported.Select(cmd=>cmd.Name)));
-
     }
 
-    [TestCase(typeof(ExecuteCommandDelete))]
-    [TestCase(typeof(ExecuteCommandList))]
-    [TestCase(typeof(ExecuteCommandExportLoggedDataToCsv))]
-    [TestCase(typeof(TestCommand_DiscoveredDatabase))]
-    [TestCase(typeof(TestCommand_LotsOfParameters))]
-    [TestCase(typeof(TestCommand_TypeParameter))]
-    public void Test_IsSupported_BasicActivator(Type t)
+    [Test]
+    public void Test_IsSupported_BasicActivator()
     {
         IBasicActivateItems basic = new ConsoleInputManager(RepositoryLocator,new ThrowImmediatelyCheckNotifier());
 
         var commandCaller = new CommandInvoker(basic);
-            
-        Assert.IsTrue(commandCaller.IsSupported(t));
+        foreach (var t in new[]
+                 {
+                     typeof(ExecuteCommandDelete), typeof(ExecuteCommandList),
+                     typeof(ExecuteCommandExportLoggedDataToCsv), typeof(TestCommandDiscoveredDatabase),
+                     typeof(TestCommandLotsOfParameters), typeof(TestCommandTypeParameter)
+                 })
+        {
+            var isSupported = commandCaller.WhyCommandNotSupported(t);
+            Assert.IsTrue(isSupported is null,$"Unsupported type {t} due to {isSupported}");
+        }
     }
 
-    private class TestCommand_DiscoveredDatabase:BasicCommandExecution
+    private class TestCommandDiscoveredDatabase:BasicCommandExecution
     {   
-        public TestCommand_DiscoveredDatabase(IActivateItems activator,DiscoveredDatabase db):base(activator)
+        public TestCommandDiscoveredDatabase(IBasicActivateItems activator,DiscoveredDatabase _):base(activator)
         {
                 
         }
     }
 
-    private class TestCommand_LotsOfParameters : BasicCommandExecution
+    private class TestCommandLotsOfParameters : BasicCommandExecution
     {
-        public TestCommand_LotsOfParameters(IRDMPPlatformRepositoryServiceLocator repositoryLocator, DiscoveredDatabase databaseToCreateInto, DirectoryInfo projectDirectory):base()
+        public TestCommandLotsOfParameters(IRDMPPlatformRepositoryServiceLocator _1, DiscoveredDatabase _2, DirectoryInfo _3):base()
         {
                 
         }
     }
 
-    private class TestCommand_TypeParameter : BasicCommandExecution
+    private class TestCommandTypeParameter : BasicCommandExecution
     {
-        public TestCommand_TypeParameter(IRDMPPlatformRepositoryServiceLocator repositoryLocator, Type myType):base()
+        public TestCommandTypeParameter(IRDMPPlatformRepositoryServiceLocator _1, Type _2):base()
         {
                 
         }
