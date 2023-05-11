@@ -53,13 +53,14 @@ public class PackageListIsCorrectTests
             .Select(m => m.Groups[1].Value).ToHashSet(StringComparer.InvariantCultureIgnoreCase);
 
         // Then subtract those listed in PACKAGES.md (should be empty)
-        var undocumentedPackages = usedPackages.Except(packagesMarkdown).Select(BuildRecommendedMarkdownLine);
+        var undocumentedPackages = usedPackages.Except(packagesMarkdown).Select(BuildRecommendedMarkdownLine).ToList();
         undocumented.AppendJoin(Environment.NewLine, undocumentedPackages);
 
         var unusedPackages = packagesMarkdown.Except(usedPackages).ToArray();
         Assert.IsEmpty(unusedPackages,
             $"The following packages are listed in PACKAGES.md but are not used in any csproj file: {string.Join(", ", unusedPackages)}");
-        Assert.IsEmpty(undocumented.ToString());
+        Assert.Zero(undocumentedPackages.Count,
+            $"One or more packages not documented in PACKAGES.md. Recommended addition:{Environment.NewLine}{undocumented}");
     }
 
     /// <summary>
@@ -67,7 +68,7 @@ public class PackageListIsCorrectTests
     /// </summary>
     /// <param name="package"></param>
     /// <returns></returns>
-    private static object BuildRecommendedMarkdownLine(string package) => $"Package {package} is not documented in PACKAGES.md. Recommended line is:\r\n| {package} | [GitHub]() | LICENCE GOES HERE | |";
+    private static object BuildRecommendedMarkdownLine(string package) => $"| {package} | [GitHub]() | LICENCE GOES HERE | |";
 
     /// <summary>
     /// Find the root of this repo, which is usually the directory containing the .sln file
