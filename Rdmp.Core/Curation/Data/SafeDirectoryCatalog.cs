@@ -413,26 +413,21 @@ public class SafeDirectoryCatalog
 "yamldotnet.dll"
     };
 
-    /// <summary>
-    /// Assemblies successfully loaded
-    /// </summary>
-    public readonly ConcurrentDictionary<string, Assembly> GoodAssemblies = new ();
-    public readonly ConcurrentDictionary<Assembly,Type[]> TypesByAssembly = new ();
 
-    private object oTypesLock = new object();
-    public HashSet<Type> Types = new HashSet<Type>();
-    public ConcurrentDictionary<string,Type> TypesByName = new ();
+    private readonly object _oTypesLock = new();
+    private readonly HashSet<Type> _types = new();
+    public readonly ConcurrentDictionary<string,Type> TypesByName = new ();
 
     /// <summary>
     /// The number of ignored dlls that were skipped because another copy was already seen
     /// with the same major/minor/build version
     /// </summary>
-    public int DuplicateDllsIgnored { get; set; } = 0;
+    public int DuplicateDllsIgnored { get; }
 
     /// <summary>
     /// Assemblies which could not be loaded
     /// </summary>
-    public Dictionary<string,Exception> BadAssembliesDictionary { get; set; }
+    public Dictionary<string,Exception> BadAssembliesDictionary { get; }
         
     /// <summary>
     /// Delegate for skipping certain dlls
@@ -450,9 +445,15 @@ public class SafeDirectoryCatalog
 
         foreach (var assembly in AppDomain.CurrentDomain.GetAssemblies())
         {
-            TypesByAssembly.TryAdd(assembly, assembly.GetTypes());
-            foreach (var type in assembly.GetTypes())
-                AddType(type);
+            try
+            {
+                foreach (var type in assembly.GetTypes())
+                    AddType(type);
+            }
+            catch (ReflectionTypeLoadException e)
+            {
+                Console.WriteLine(e);
+            }
         }
 
         var files = new HashSet<FileInfo>();
@@ -525,7 +526,7 @@ public class SafeDirectoryCatalog
         try
         {
             ass = AssemblyResolver.LoadFile(f);
-            AddTypes(f, ass, ass.GetTypes(), listener);
+            AddTypes(f, ass.GetTypes(), listener);
         }
         catch (ReflectionTypeLoadException ex)
         {
@@ -539,7 +540,7 @@ public class SafeDirectoryCatalog
                     ex.Types.Length,
                     f.Name));
 
-                AddTypes(f, ass, ex.Types, listener); //the assembly is bad but at least some of the Types were legit
+                AddTypes(f, ex.Types, listener); //the assembly is bad but at least some of the Types were legit
             }
             else
                 AddBadAssembly(f, ex, listener); //the assembly could not be loaded properly
@@ -602,41 +603,30 @@ public class SafeDirectoryCatalog
         listener?.OnCheckPerformed(new CheckEventArgs(ErrorCodes.CouldNotLoadDll, null,ex,f.FullName));
     }
 
-    private void AddTypes(FileInfo f, Assembly ass, Type[] types, ICheckNotifier listener)
+    private void AddTypes(FileInfo f, Type[] types, ICheckNotifier listener)
     {
-        types = types.Where(t => t != null).ToArray();
-        TypesByAssembly.TryAdd(ass,types);
-            
-        foreach(var t in types)
-            if(t.FullName != null && !TypesByName.ContainsKey(t.FullName))
-                AddType(t.FullName,t);
-
-        GoodAssemblies.TryAdd(f.FullName, ass);
+        foreach(var t in types.Where(t => t is { FullName: not null } && !TypesByName.ContainsKey(t.FullName)))
+            AddType(t);
 
         //tell them as we go how far we are through
         listener?.OnCheckPerformed(new CheckEventArgs($"Successfully loaded Assembly {f.FullName} into memory", CheckResult.Success));
     }
 
-    internal void AddType(Type type)
+    internal void AddType(Type type, string typeNameOrAlias=null)
     {
-        AddType(type.FullName,type);
-    }
-
-    internal void AddType(string typeNameOrAlias, Type type)
-    {
+        typeNameOrAlias??=type.FullName;
         //only add it if it is novel
-        if (!TypesByName.ContainsKey(typeNameOrAlias))
-            TypesByName.TryAdd(typeNameOrAlias, type);
+        TypesByName.TryAdd(typeNameOrAlias, type);
 
-        lock (oTypesLock)
+        lock (_oTypesLock)
         {
-            Types.Add(type);
+            _types.Add(type);
         }
     }
 
     public IEnumerable<Type> GetAllTypes()
     {
-        lock(oTypesLock)
-            return Types;
+        lock(_oTypesLock)
+            return _types.AsEnumerable();
     }
 }
