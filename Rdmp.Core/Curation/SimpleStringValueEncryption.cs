@@ -74,7 +74,7 @@ public class SimpleStringValueEncryption : IEncryptStrings
         {
             // Good, it's a new-style AES+RSA encrypted string
             var parts = toDecrypt.Split('$');
-            if (parts.Length != 4)
+            if (parts.Length != 5)
                 throw new CryptographicException("Could not decrypt an encrypted string, it was not in the expected format of $js1$<base64key>$<base64ciphertext>$");
             var keyBlock = _turing.Decrypt(Convert.FromBase64String(parts[2]),true);
             var ivLength = keyBlock[0];
