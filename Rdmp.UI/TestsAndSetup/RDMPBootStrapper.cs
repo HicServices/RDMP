@@ -4,16 +4,13 @@
 // RDMP is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License for more details.
 // You should have received a copy of the GNU General Public License along with RDMP. If not, see <https://www.gnu.org/licenses/>.
 
-using HarmonyLib;
 using System;
 using System.Collections.Generic;
-using System.Reflection;
 using System.Windows.Forms;
 using Rdmp.Core.ReusableLibraryCode;
 using Rdmp.Core.Startup;
 using Rdmp.UI.SimpleDialogs;
 using Rdmp.UI.TestsAndSetup.ServicePropogation;
-using ScintillaNET;
 
 namespace Rdmp.UI.TestsAndSetup;
 
@@ -40,30 +37,16 @@ public class RDMPBootStrapper<T> where T : RDMPForm, new()
 
     }
 
-    public HashSet<string> IgnoreExceptions = new HashSet<string>(StringComparer.CurrentCultureIgnoreCase){ 
+    private readonly HashSet<string> IgnoreExceptions = new(StringComparer.InvariantCultureIgnoreCase){ 
             
         // This error seems to come from ObjectTreeView but seems harmless
         "Value cannot be null. (Parameter 'owningItem')"
     };
 
-    // ReSharper disable once InconsistentNaming - LibHarmony API requires __result as name
-    private static bool ScintillaPatch(out string __result)
-    {
-        __result= $@"{AppDomain.CurrentDomain.BaseDirectory}\x64";
-        return false;
-    }
-
     public void Show(bool requiresDataExportDatabaseToo)
     {
         Application.EnableVisualStyles();
         Application.SetCompatibleTextRenderingDefault(false);
-
-        // JS 2023-03-13: Patch Scintilla for flaky file location shenanigans
-        var harmony = new Harmony("uk.ac.dundee.hic.rdmp");
-        harmony.Patch(typeof(Scintilla).GetMethod("LocateNativeDllDirectory",BindingFlags.Static|BindingFlags.NonPublic),
-            prefix: new HarmonyMethod(typeof(RDMPBootStrapper<RDMPForm>).GetMethod(nameof(ScintillaPatch),
-                BindingFlags.NonPublic | BindingFlags.Static)));
-        Scintilla.SetDestroyHandleBehavior(true);
 
         //tell me when you blow up somewhere in the windows API instead of somewhere sensible
         Application.ThreadException += (s,e)=>{
