@@ -450,6 +450,10 @@ public class SafeDirectoryCatalog
                 foreach (var type in assembly.GetTypes())
                     AddType(type);
             }
+            catch (FileNotFoundException e)
+            {
+                Console.WriteLine(e);
+            }
             catch (ReflectionTypeLoadException e)
             {
                 Console.WriteLine(e);
