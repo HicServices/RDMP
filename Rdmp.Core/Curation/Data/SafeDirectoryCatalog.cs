@@ -446,20 +446,8 @@ public class SafeDirectoryCatalog
         foreach (var assembly in AppDomain.CurrentDomain.GetAssemblies())
         {
             foreach (var type in assembly.GetTypes())
-                try // TODO JS: Remove once FAnsiSql updated
-                {
-                        AddType(type);
-                }
-                catch (FileNotFoundException e)
-                {
-                    Console.WriteLine(e);
-                }
-                catch (ReflectionTypeLoadException e)
-                {
-                    Console.WriteLine(e);
-                }
+                AddType(type);
         }
-
         var files = new HashSet<FileInfo>();
                        
         foreach (var directory in directories)
