@@ -30,6 +30,8 @@ public class ThrowImmediatelyActivator : BasicActivateItems
     {
     }
 
+    public override bool IsInteractive => false;
+
     public override bool YesNo(DialogArgs args, out bool chosen) => throw new InputDisallowedException(nameof(YesNo));
 
     public override DiscoveredTable SelectTable(bool allowDatabaseCreation, string taskDescription) => throw new InputDisallowedException(nameof(SelectTable));
