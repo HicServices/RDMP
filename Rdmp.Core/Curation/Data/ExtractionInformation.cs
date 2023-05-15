@@ -139,10 +139,8 @@ public class ExtractionInformation : ConcreteColumn, IHasDependencies, IInjectKn
             repository.SaveSpecificPropertyOnlyToDatabase(catalogueItem, "ColumnInfo_ID", column.ID);
         else
         if (catalogueItem.ColumnInfo_ID != column.ID)
-            throw new ArgumentException("Cannot create an ExtractionInformation for CatalogueItem " +
-                                        catalogueItem + " with ColumnInfo " + column +
-                                        " because the CatalogueItem is already associated with a different ColumnInfo: " +
-                                        catalogueItem.ColumnInfo);
+            throw new ArgumentException(
+                $"Cannot create an ExtractionInformation for CatalogueItem {catalogueItem} with ColumnInfo {column} because the CatalogueItem is already associated with a different ColumnInfo: {catalogueItem.ColumnInfo}");
         ClearAllInjections();
     }
 
@@ -158,7 +156,7 @@ public class ExtractionInformation : ConcreteColumn, IHasDependencies, IInjectKn
             var cata = catalogueItem.Catalogue;
             cata.ClearAllInjections();
                 
-            var eiMax = cata.GetAllExtractionInformation(ExtractionCategory.Any).OrderByDescending(ei => ei.Order).FirstOrDefault();
+            var eiMax = cata.GetAllExtractionInformation(ExtractionCategory.Any).MaxBy(ei => ei.Order);
 
             return eiMax == null ? 1 : eiMax.Order + 1;
         }
@@ -172,11 +170,10 @@ public class ExtractionInformation : ConcreteColumn, IHasDependencies, IInjectKn
     {
         SelectSQL = r["SelectSQL"].ToString();
 
-        ExtractionCategory cat;
-        if (ExtractionCategory.TryParse(r["ExtractionCategory"].ToString(), out cat))
+        if (Enum.TryParse(r["ExtractionCategory"].ToString(), out ExtractionCategory cat))
             ExtractionCategory = cat;
         else
-            throw new Exception("Unrecognised ExtractionCategory \"" + r["ExtractionCategory"] + "\"");
+            throw new Exception($"Unrecognised ExtractionCategory \"{r["ExtractionCategory"]}\"");
 
         Order = int.Parse(r["Order"].ToString());
 
@@ -222,7 +219,7 @@ public class ExtractionInformation : ConcreteColumn, IHasDependencies, IInjectKn
         }
         catch (Exception)
         {
-            return "BROKEN ExtractionInformation:" + SelectSQL;
+            return $"BROKEN ExtractionInformation:{SelectSQL}";
         }
     }
     /// <inheritdoc/>
