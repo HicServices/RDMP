@@ -203,12 +203,12 @@ public class ExtractionInformation : ConcreteColumn, IHasDependencies, IInjectKn
     /// <inheritdoc/>
     public void InjectKnown(ColumnInfo instance)
     {
-        _knownColumninfo = new Lazy<ColumnInfo>(()=>instance);
+        _knownColumninfo = new Lazy<ColumnInfo>(instance);
     }
     /// <inheritdoc/>
     public void InjectKnown(CatalogueItem instance)
     {
-        _knownCatalogueItem = new Lazy<CatalogueItem>(() => instance);
+        _knownCatalogueItem = new Lazy<CatalogueItem>(instance);
     }
     /// <inheritdoc/>
     public override string ToString()

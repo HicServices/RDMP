@@ -534,7 +534,7 @@ public class ColumnInfo : DatabaseEntity, IComparable, IResolveDuplication, IHas
     ///<inheritdoc/>
     public void InjectKnown(TableInfo instance)
     {
-        _knownTableInfo = new Lazy<TableInfo>(() => instance);
+        _knownTableInfo = new Lazy<TableInfo>(instance);
     }
 
     ///<inheritdoc/>

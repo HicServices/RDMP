@@ -28,24 +28,22 @@ public class SelectedDataSetsForcedJoin : DatabaseEntity, ISelectedDataSetsForce
     /// <inheritdoc/>
     public int SelectedDataSets_ID
     {
-        get { return _selectedDataSets_ID; }
-        set { SetField(ref _selectedDataSets_ID, value); }
+        get => _selectedDataSets_ID;
+        set => SetField(ref _selectedDataSets_ID, value);
     }
 
     /// <inheritdoc/>
     public int TableInfo_ID
     {
-        get { return _tableInfo_ID; }
-        set { SetField(ref _tableInfo_ID, value); }
+        get => _tableInfo_ID;
+        set => SetField(ref _tableInfo_ID, value);
     }
 
     #region Relationships
     /// <inheritdoc cref="TableInfo_ID"/>
     [NoMappingToDatabase]
-    public TableInfo TableInfo
-    {
-        get { return _knownTableInfo.Value; }
-    }
+    public TableInfo TableInfo => _knownTableInfo.Value;
+
     #endregion
 
 
@@ -85,7 +83,7 @@ public class SelectedDataSetsForcedJoin : DatabaseEntity, ISelectedDataSetsForce
     /// <inheritdoc/>
     public void InjectKnown(TableInfo instance)
     {
-        _knownTableInfo = new Lazy<TableInfo>(()=>instance);
+        _knownTableInfo = new Lazy<TableInfo>(instance);
     }
     /// <inheritdoc/>
     public void ClearAllInjections()

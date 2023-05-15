@@ -153,9 +153,9 @@ public class SelectedDataSets : DatabaseEntity, ISelectedDataSets, IInjectKnown<
     public void InjectKnown(IExtractableDataSet instance)
     {
         if(instance.ID != ExtractableDataSet_ID)
-            throw new ArgumentException($"That is not our dataset, our dataset has ID {ExtractableDataSet_ID}","ds");
+            throw new ArgumentException($"That is not our dataset, our dataset has ID {ExtractableDataSet_ID}",nameof(instance));
 
-        _extractableDataSet = new Lazy<IExtractableDataSet>(()=>instance);
+        _extractableDataSet = new Lazy<IExtractableDataSet>(instance);
     }
 
     /// <inheritdoc/>
@@ -171,7 +171,7 @@ public class SelectedDataSets : DatabaseEntity, ISelectedDataSets, IInjectKnown<
     /// <inheritdoc/>
     public void InjectKnown(ISelectedDataSetsForcedJoin[] instances)
     {
-        _selectedDatasetsForcedJoins = new Lazy<ISelectedDataSetsForcedJoin[]>(() => instances);
+        _selectedDatasetsForcedJoins = new Lazy<ISelectedDataSetsForcedJoin[]>(instances);
     }
     /// <inheritdoc/>
     public void ClearAllInjections()

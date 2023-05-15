@@ -337,18 +337,14 @@ public class UsefulStuff
     {
         outputDirectory ??= Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData), "RDMP");
 
-        using var fileToSpray = assembly.GetManifestResourceStream(manifestName);
-
-        if (fileToSpray == null)
-            throw new Exception(
+        using var fileToSpray = assembly.GetManifestResourceStream(manifestName) ?? throw new Exception(
                 $"assembly.GetManifestResourceStream returned null for manifest name {manifestName} in assembly {assembly}");
-
         if (!Directory.Exists(outputDirectory))
             Directory.CreateDirectory(outputDirectory);
 
         var target = new FileInfo(Path.Combine(outputDirectory,file));
-        using var dest = target.OpenWrite();
-        fileToSpray.CopyTo(dest);
+        using var destination = target.OpenWrite();
+        fileToSpray.CopyTo(destination,1<<20);
         return target;
     }
 

@@ -452,7 +452,7 @@ public class TableInfo : DatabaseEntity,ITableInfo,INamed, IHasFullyQualifiedNam
     /// <inheritdoc/>
     public void InjectKnown(ColumnInfo[] instance)
     {
-        _knownColumnInfos = new Lazy<ColumnInfo[]>(() => instance);
+        _knownColumnInfos = new Lazy<ColumnInfo[]>(instance);
     }
 
     /// <inheritdoc/>

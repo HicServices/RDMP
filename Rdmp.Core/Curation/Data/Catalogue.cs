@@ -1228,7 +1228,7 @@ public class Catalogue : DatabaseEntity, IComparable, ICatalogue, IInjectKnown<C
     /// <inheritdoc/>
     public void InjectKnown(CatalogueItem[] instance)
     {
-        _knownCatalogueItems = new Lazy<CatalogueItem[]>(() => instance);
+        _knownCatalogueItems = new Lazy<CatalogueItem[]>(instance);
     }
 
     /// <summary>
