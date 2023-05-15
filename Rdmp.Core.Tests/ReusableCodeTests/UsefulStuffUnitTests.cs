@@ -38,4 +38,13 @@ public class UsefulStuffUnitTests
             Assert.AreEqual(expectedOutput, output.Single());
         }
     }
+
+
+    [Test]
+    public void ClipboardHtmlTest()
+    {
+        const string test = "Version:1.0\r\nStartHTML:000051\r\nEndHTML:0000000055\r\nTest";
+        Assert.AreEqual(test, UsefulStuff.GetClipboardFormattedHtmlStringFromHtmlString("Test"));
+    }
+
 }
