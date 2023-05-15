@@ -834,7 +834,7 @@ public partial class AggregateGraphUI : AggregateGraph_Design
         {
             var s = UsefulStuff.GetInstance().DataTableToHtmlDataTable(_dt);
 
-            var formatted = UsefulStuff.GetInstance().GetClipboardFormattedHtmlStringFromHtmlString(s);
+            var formatted = UsefulStuff.GetClipboardFormattedHtmlStringFromHtmlString(s);
             
             Clipboard.SetText(formatted,TextDataFormat.Html);
         }
