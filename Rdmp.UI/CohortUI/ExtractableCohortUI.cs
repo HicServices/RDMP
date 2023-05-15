@@ -93,7 +93,7 @@ public partial class ExtractableCohortUI :ExtractableCohortUI_Design, ISaveableU
     {
         InitializeComponent();
             
-        if (VisualStudioDesignMode) //dont add the QueryEditor if we are in design time (visual studio) because it breaks
+        if (VisualStudioDesignMode) //don't add the QueryEditor if we are in design time (visual studio) because it breaks
             return;
 
         auditLogEditor = new ScintillaTextEditorFactory().Create(new RDMPCombineableFactory(), SyntaxLanguage.LogFile);

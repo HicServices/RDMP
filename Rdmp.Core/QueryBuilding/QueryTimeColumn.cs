@@ -264,7 +264,7 @@ public class QueryTimeColumn: IComparable
             toReturn = toReturn.Replace(tableName, JoinHelper.GetLookupTableAlias(LookupTableAlias));
         }
 
-        //actually dont need to do anything special for LookupForeignKeys
+        //actually don't need to do anything special for LookupForeignKeys
 
         return toReturn;
     }

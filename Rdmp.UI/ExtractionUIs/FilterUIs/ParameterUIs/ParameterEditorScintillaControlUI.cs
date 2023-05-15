@@ -47,7 +47,7 @@ public partial class ParameterEditorScintillaControlUI : RDMPUserControl
     {
         InitializeComponent();
 
-        if (VisualStudioDesignMode) //dont add the QueryEditor if we are in design time (visual studio) because it breaks
+        if (VisualStudioDesignMode) //don't add the QueryEditor if we are in design time (visual studio) because it breaks
             return;
 
         QueryEditor = new ScintillaTextEditorFactory().Create(new RDMPCombineableFactory());

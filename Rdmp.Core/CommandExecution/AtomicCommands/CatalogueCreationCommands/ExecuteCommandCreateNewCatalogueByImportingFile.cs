@@ -58,7 +58,7 @@ public class ExecuteCommandCreateNewCatalogueByImportingFile : CatalogueCreation
         string extractionIdentifier,
         [DemandsInitialization("The database to upload the data into")]
         DiscoveredDatabase targetDatabase,
-        [DemandsInitialization("Pipeline for reading the source file, applying any transforms and writting to the database")]
+        [DemandsInitialization("Pipeline for reading the source file, applying any transforms and writing to the database")]
         Pipeline pipeline,
         [DemandsInitialization(Desc_ProjectSpecificParameter)]
         Project projectSpecific) : base(activator,projectSpecific,null)

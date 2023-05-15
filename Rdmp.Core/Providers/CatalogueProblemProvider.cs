@@ -42,7 +42,7 @@ public class CatalogueProblemProvider : ProblemProvider
     {
         _childProvider = childProvider;
             
-        //Take all the catalogue items which DONT have an associated ColumnInfo (should hopefully be quite rare)
+        //Take all the catalogue items which DON'T have an associated ColumnInfo (should hopefully be quite rare)
         var orphans = _childProvider.AllCatalogueItems.Where(ci => ci.ColumnInfo_ID == null);
             
         //now identify those which have an ExtractionInformation (that's a problem! they are extractable but orphaned)

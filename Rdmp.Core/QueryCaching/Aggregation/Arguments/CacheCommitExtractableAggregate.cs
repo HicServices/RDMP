@@ -24,7 +24,8 @@ public class CacheCommitExtractableAggregate : CacheCommitArguments
         : base(AggregateOperation.ExtractableAggregateResults, configuration, sql, results, timeout)
     {
         if (results.Columns.Count == 0)
-            throw new ArgumentException("The DataTable that you claimed was an " + Operation + " had zero columns and therefore cannot be cached");
+            throw new ArgumentException(
+                $"The DataTable that you claimed was an {Operation} had zero columns and therefore cannot be cached");
 
         string[] suspectDimensions =
             configuration.AggregateDimensions
@@ -32,18 +33,17 @@ public class CacheCommitExtractableAggregate : CacheCommitArguments
                 .Select(d => d.GetRuntimeName())
                 .ToArray();
         if (suspectDimensions.Any())
-            throw new NotSupportedException("Aggregate " + configuration +
-                                            " contains dimensions marked as IsExtractionIdentifier or HashOnDataRelease (" +
-                                            string.Join(",", suspectDimensions) +
-                                            ") so the aggregate cannot be cached.  This would/could result in private patient identifiers appearing on your website!");
+            throw new NotSupportedException(
+                $"Aggregate {configuration} contains dimensions marked as IsExtractionIdentifier or HashOnDataRelease ({string.Join(",", suspectDimensions)}) so the aggregate cannot be cached.  This would/could result in private patient identifiers appearing on your website!");
 
         if (!configuration.IsExtractable)
-            throw new NotSupportedException("Aggregate " + configuration + " is not marked as IsExtractable therefore cannot be cached for publication on website");
+            throw new NotSupportedException(
+                $"Aggregate {configuration} is not marked as IsExtractable therefore cannot be cached for publication on website");
             
     }
 
     public override void CommitTableDataCompleted(DiscoveredTable resultingTable)
     {
-        //no need to do anything here we dont need index or anything else
+        //no need to do anything here we don't need index or anything else
     }
 }

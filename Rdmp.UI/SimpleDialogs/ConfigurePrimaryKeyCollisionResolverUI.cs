@@ -55,7 +55,7 @@ public partial class ConfigurePrimaryKeyCollisionResolverUI : RDMPForm
         _table = table;
         InitializeComponent();
 
-        if (VisualStudioDesignMode || table == null) //dont add the QueryEditor if we are in design time (visual studio) because it breaks
+        if (VisualStudioDesignMode || table == null) //don't add the QueryEditor if we are in design time (visual studio) because it breaks
             return;
 
         QueryEditor = new ScintillaTextEditorFactory().Create();

@@ -125,7 +125,7 @@ public class UsefulStuff
         for (var i = 0; i < split.Length; i++)
             split[i] = Regex.Replace(split[i], @"\s+[\d\s]*$", "");    
             
-        //identifies the last word in a collection of multiple words (requires you .Trim() so we dont get ending whitespace match)
+        //identifies the last word in a collection of multiple words (requires you .Trim() so we don't get ending whitespace match)
         var regexLastWord = new Regex("\\s[^\\s]*$");
         foreach (var s in split)
         {

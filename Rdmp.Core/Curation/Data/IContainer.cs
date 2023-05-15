@@ -85,7 +85,7 @@ public interface IContainer: IRevertable,IMightBeReadOnly
     /// </summary>
     void MakeIntoAnOrphan();
 
-    //ContainerHelper implements these if you are writting a sane IContainer you can instantiate the helper and use its methods
+    //ContainerHelper implements these if you are writing a sane IContainer you can instantiate the helper and use its methods
 
 
     /// <summary>

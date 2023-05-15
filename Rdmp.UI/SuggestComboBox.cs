@@ -118,7 +118,7 @@ public class SuggestComboBox : ComboBox
     private bool _changingVisibility = false;
     void _suggLb_VisibleChanged(object sender, EventArgs e)
     {
-        //dont fire event if its already being fired (needed because Controls.Remove will make visible false)
+        //don't fire event if its already being fired (needed because Controls.Remove will make visible false)
         if(_changingVisibility)
             return;
 

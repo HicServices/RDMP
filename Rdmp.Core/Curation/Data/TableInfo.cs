@@ -321,8 +321,8 @@ public class TableInfo : DatabaseEntity,ITableInfo,INamed, IHasFullyQualifiedNam
     /// </summary>
     /// <param name="credentials">Credentials to use (username / encrypted password)</param>
     /// <param name="context">When the credentials can be used (Use Any for any case)</param>
-    /// <param name="allowOverwritting">False will throw if there is already credentials declared for the table/context</param>
-    public void SetCredentials(DataAccessCredentials credentials, DataAccessContext context, bool allowOverwritting = false)
+    /// <param name="allowOverwriting">False will throw if there is already credentials declared for the table/context</param>
+    public void SetCredentials(DataAccessCredentials credentials, DataAccessContext context, bool allowOverwriting = false)
     {
         var existingCredentials = CatalogueRepository.TableInfoCredentialsManager.GetCredentialsIfExistsFor(this, context);
             
@@ -336,11 +336,11 @@ public class TableInfo : DatabaseEntity,ITableInfo,INamed, IHasFullyQualifiedNam
 
             //user is trying to set the same credentials again
             if(existingCredentials.Equals(credentials))
-                return;//dont bother
+                return;//don't bother
 
-            if(!allowOverwritting)
+            if(!allowOverwriting)
                 throw new Exception(
-                    $"Cannot overwrite existing credentials {existingCredentials.Name} with new credentials {credentials.Name} with context {context} because allowOverwritting was false");
+                    $"Cannot overwrite existing credentials {existingCredentials.Name} with new credentials {credentials.Name} with context {context} because allowOverwriting was false");
 
             //allow overwriting is on
             //remove the existing link

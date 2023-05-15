@@ -544,7 +544,7 @@ public static class UserSettings
         {
             var value = AppSettings.GetValueOrDefault("LastColumnSort_" + controlGuid.ToString("N"), null);
 
-            //if we dont have a value
+            //if we don't have a value
             if (string.IsNullOrWhiteSpace(value))
                 return null;
 

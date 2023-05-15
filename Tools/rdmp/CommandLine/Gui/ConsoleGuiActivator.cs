@@ -94,7 +94,7 @@ internal class ConsoleGuiActivator : BasicActivateItems
     {
         GetDialogDimensions(out var w, out var h);
 
-        // dont use the full height if your just asking a yes/no question with no big description
+        // don't use the full height if you're just asking a yes/no question with no big description
         h = Math.Min(5+((args.TaskDescription?.Length ??0) / 20), h);
 
         int result = MessageBox.Query(w, h, args.WindowTitle ?? "", args.TaskDescription ?? "", "yes", "no", "cancel");

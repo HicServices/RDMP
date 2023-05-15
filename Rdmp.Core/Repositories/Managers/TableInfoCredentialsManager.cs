@@ -33,7 +33,7 @@ class TableInfoCredentialsManager : ITableInfoCredentialsManager
     //Cannot query Find all links between [collection of access points] and [collection of credentials] yet (probably never need to do this)
 
     /// <summary>
-    /// Creates a new helper class instance for writting/deleting credential usages for <see cref="TableInfo"/> objects in the <paramref name="repository"/>
+    /// Creates a new helper class instance for writing/deleting credential usages for <see cref="TableInfo"/> objects in the <paramref name="repository"/>
     /// </summary>
     /// <param name="repository"></param>
     public TableInfoCredentialsManager(CatalogueRepository repository)
@@ -244,7 +244,7 @@ class TableInfoCredentialsManager : ITableInfoCredentialsManager
     private Dictionary<DataAccessContext, int> GetLinksFromReader(DbDataReader r)
     {
         var toReturn = new Dictionary<DataAccessContext, int>();
-        //gets the first liscenced usage
+        //gets the first licenced usage
         while (r.Read())
         {
             //get the context
@@ -254,7 +254,7 @@ class TableInfoCredentialsManager : ITableInfoCredentialsManager
             if (!DataAccessContext.TryParse((string)r["Context"], out context))
                 throw new Exception("Invalid DataAccessContext " + r["Context"]);
 
-            //there is only one credentials per context per table info so dont worry about key collisions they should be impossible
+            //there is only one credential per context per table info so don't worry about key collisions they should be impossible
             toReturn.Add(context, Convert.ToInt32(r["DataAccessCredentials_ID"]));
         }
 

@@ -424,7 +424,7 @@ public class FlatFileAttacherTests : DatabaseTests
     [TestCase(DatabaseType.Oracle,"01/27/2001","en-us","en-us")]
     [TestCase(DatabaseType.Oracle,"01/27/2001","en-us","en-GB")]
 
-    public void Test_FlatFileAttcher_AmbiguousDates(DatabaseType type,string val,string attacherCulture, string threadCulture)
+    public void Test_FlatFileAttacher_AmbiguousDates(DatabaseType type,string val,string attacherCulture, string threadCulture)
     { 
         Thread.CurrentThread.CurrentCulture = new CultureInfo(threadCulture);
 
