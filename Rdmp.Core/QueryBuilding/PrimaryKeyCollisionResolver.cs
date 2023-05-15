@@ -72,17 +72,8 @@ WHERE DuplicateCount > 1";
         primaryKeys = primaryKeys.TrimEnd(',');
 
 
-        var sql = "/*Notice how entities are not fully indexed with Database, this is because this code will run on RAW servers, prior to reaching STAGING/LIVE - the place where there are primary keys*/" + Environment.NewLine;
-
-        sql += WithCTE + Environment.NewLine;
-        sql += "AS" + Environment.NewLine;
-        sql += "(" + Environment.NewLine;
-        sql += SelectRownum + " OVER(" + Environment.NewLine;
-        sql += "\t PARTITION BY" + Environment.NewLine;
-        sql += "\t\t " + primaryKeys + Environment.NewLine;
-        sql += "\t ORDER BY"  + Environment.NewLine;
-
-        sql += "\t /*Priority in which order they should be used to resolve duplication of the primary key values, order by:*/"  + Environment.NewLine;
+        var sql =
+            $"/*Notice how entities are not fully indexed with Database, this is because this code will run on RAW servers, prior to reaching STAGING/LIVE - the place where there are primary keys*/{Environment.NewLine}{WithCTE}{Environment.NewLine}AS{Environment.NewLine}({Environment.NewLine}{SelectRownum} OVER({Environment.NewLine}\t PARTITION BY{Environment.NewLine}\t\t {primaryKeys}{Environment.NewLine}\t ORDER BY{Environment.NewLine}\t /*Priority in which order they should be used to resolve duplication of the primary key values, order by:*/{Environment.NewLine}";
             
         resolvers = new List<IResolveDuplication>();
 
@@ -94,9 +85,9 @@ WHERE DuplicateCount > 1";
                 $"The ColumnInfos of TableInfo {_tableInfo} do not have primary key resolution orders configured (do not know which order to use non primary key column values in to resolve collisions).  Fix this by right clicking a TableInfo in CatalogueManager and selecting 'Configure Primary Key Collision Resolution'.");
 
         //order by the priority of columns 
-        foreach (IResolveDuplication column in resolvers.OrderBy(col => col.DuplicateRecordResolutionOrder))
+        foreach (var column in resolvers.OrderBy(col => col.DuplicateRecordResolutionOrder))
         {
-            if(column is ColumnInfo && ((ColumnInfo)column).IsPrimaryKey )
+            if(column is ColumnInfo { IsPrimaryKey: true })
                 throw new Exception(
                     $"Column {column.GetRuntimeName()} is flagged as primary key when it also has a DuplicateRecordResolutionOrder, primary keys cannot be used to resolve duplication since they are the hash!  Resolve this in the CatalogueManager by right clicking the offending TableInfo {_tableInfo.GetRuntimeName()} and editing the resolution order");
                 
@@ -104,13 +95,8 @@ WHERE DuplicateCount > 1";
         }
 
         //trim the last remaining open bracket
-        sql = sql.TrimEnd(new[] {',','\r','\n'}) + Environment.NewLine;
-
-        sql += $") AS DuplicateCount{Environment.NewLine}";
-        sql += $"FROM {tableNameInRAW}{Environment.NewLine}";
-        sql += $"){Environment.NewLine}";
-
-        sql += DeleteBit;
+        sql =
+            $"{sql.TrimEnd(',', '\r', '\n')}{Environment.NewLine}) AS DuplicateCount{Environment.NewLine}FROM {tableNameInRAW}{Environment.NewLine}){Environment.NewLine}{DeleteBit}";
 
         return sql;
     }
