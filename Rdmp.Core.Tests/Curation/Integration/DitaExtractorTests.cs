@@ -7,6 +7,7 @@
 using System;
 using System.IO;
 using System.Linq;
+using MathNet.Numerics;
 using NUnit.Framework;
 using Rdmp.Core.Curation.Data;
 using Rdmp.Core.Reports;
@@ -35,23 +36,19 @@ class DitaExtractorTests : DatabaseTests
             Random random = new Random();
                 
             //delete all catalogues with duplicate names
-            Catalogue[] catalogues = CatalogueRepository.GetAllObjects<Catalogue>().ToArray();
+            var catalogues = CatalogueRepository.GetAllObjects<Catalogue>().ToArray();
 
-            foreach (var cata in catalogues)
-                if (catalogues.Count(c => c.Name.Equals(cata.Name)) > 1)
-                {
-                    Console.WriteLine(
-                        $"Deleting Catalogue Called {cata.Name} (because there are multiple Catalogues with this name) in Catalogue database");
-                    cata.DeleteInDatabase();
-                }
+            foreach (var cata in catalogues.GroupBy(c=>c.Name).Where(g=>g.Count()>1).SelectMany(y => y))
+            {
+                cata.DeleteInDatabase();
+            }
 
-            //make sure all Catalogues have acroynms, if they dont then assign them a super random one
-            foreach (Catalogue cata in CatalogueRepository.GetAllObjects<Catalogue>())
-                if (string.IsNullOrWhiteSpace(cata.Acronym))
-                {
-                    cata.Acronym = "RANDOMACRONYM_" + random.Next(10000);
-                    cata.SaveToDatabase();
-                }
+            //make sure all Catalogues have acronyms, if they don't then assign them a super random one
+            foreach (var cata in CatalogueRepository.GetAllObjects<Catalogue>().Where(c=>string.IsNullOrWhiteSpace(c.Acronym)))
+            {
+                cata.Acronym = $"RANDOMACRONYM_{random.Next(10000)}";
+                cata.SaveToDatabase();
+            }
         }
         catch (Exception e)
         {
