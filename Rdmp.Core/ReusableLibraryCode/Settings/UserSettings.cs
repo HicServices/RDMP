@@ -558,8 +558,7 @@ public static class UserSettings
             if (string.IsNullOrWhiteSpace(args[0]) || string.IsNullOrWhiteSpace(args[1]))
                 return null;
 
-            bool ascending;
-            if (bool.TryParse(args[1], out ascending))
+            if (bool.TryParse(args[1], out var ascending))
                 return Tuple.Create(args[0], ascending);
         }
 

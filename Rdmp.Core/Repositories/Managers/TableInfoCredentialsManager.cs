@@ -100,8 +100,7 @@ class TableInfoCredentialsManager : ITableInfoCredentialsManager
         using (var con = _repository.GetConnection())
         {
             using (var cmd = DatabaseCommandHelper.GetCommand(
-                       "SELECT DataAccessCredentials_ID,Context FROM DataAccessCredentials_TableInfo WHERE TableInfo_ID = @tid and (Context =@context OR Context=" +
-                       ((int) DataAccessContext.Any) + ") ", con.Connection, con.Transaction))
+                       $"SELECT DataAccessCredentials_ID,Context FROM DataAccessCredentials_TableInfo WHERE TableInfo_ID = @tid and (Context =@context OR Context={((int)DataAccessContext.Any)}) ", con.Connection, con.Transaction))
             {
                 cmd.Parameters.Add(DatabaseCommandHelper.GetParameter("@tid", cmd));
                 cmd.Parameters["@tid"].Value = tableInfo.ID;
@@ -248,11 +247,9 @@ class TableInfoCredentialsManager : ITableInfoCredentialsManager
         while (r.Read())
         {
             //get the context
-            DataAccessContext context;
-
             //if it's not a valid context something has gone very wrong
-            if (!DataAccessContext.TryParse((string)r["Context"], out context))
-                throw new Exception("Invalid DataAccessContext " + r["Context"]);
+            if (!Enum.TryParse((string)r["Context"], out DataAccessContext context))
+                throw new Exception($"Invalid DataAccessContext {r["Context"]}");
 
             //there is only one credential per context per table info so don't worry about key collisions they should be impossible
             toReturn.Add(context, Convert.ToInt32(r["DataAccessCredentials_ID"]));
@@ -277,7 +274,8 @@ class TableInfoCredentialsManager : ITableInfoCredentialsManager
                 return matchingOnPassword.Single();
 
             if (matchingOnPassword.Length > 1)
-                throw new Exception("Found " + matchingOnPassword.Length + " DataAccessCredentials that matched the supplied username/password - does your database have massive duplication in it?");
+                throw new Exception(
+                    $"Found {matchingOnPassword.Length} DataAccessCredentials that matched the supplied username/password - does your database have massive duplication in it?");
 
             //there are 0 that match on password
             return null;
@@ -291,7 +289,7 @@ class TableInfoCredentialsManager : ITableInfoCredentialsManager
         //if it's not a valid context something has gone very wrong
         DataAccessContext context;
         if (!DataAccessContext.TryParse((string) r["Context"], out context))
-            throw new Exception("Invalid DataAccessContext " + r["Context"]);
+            throw new Exception($"Invalid DataAccessContext {r["Context"]}");
 
         return context;
     }

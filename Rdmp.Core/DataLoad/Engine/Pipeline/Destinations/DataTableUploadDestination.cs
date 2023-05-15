@@ -76,7 +76,7 @@ public class DataTableUploadDestination : IPluginDataFlowComponent<DataTable>, I
     private IBulkCopy _bulkcopy;
     private int _affectedRows = 0;
         
-    Stopwatch swTimeSpentWritting = new Stopwatch();
+    Stopwatch swTimeSpentWriting = new Stopwatch();
     Stopwatch swMeasuringStrings = new Stopwatch();
 
     private DiscoveredServer _loggingDatabaseSettings;
@@ -155,7 +155,7 @@ public class DataTableUploadDestination : IPluginDataFlowComponent<DataTable>, I
             bool tableAlreadyExistsButEmpty = false;
 
             if (!_database.Exists())
-                throw new Exception("Database " + _database + " does not exist");
+                throw new Exception($"Database {_database} does not exist");
 
             _discoveredTable = _database.ExpectTable(TargetTableName);
 
@@ -166,15 +166,18 @@ public class DataTableUploadDestination : IPluginDataFlowComponent<DataTable>, I
                     
                 if(!AllowLoadingPopulatedTables)
                     if (_discoveredTable.IsEmpty())
-                        listener.OnNotify(this, new NotifyEventArgs(ProgressEventType.Warning, "Found table " + TargetTableName + " already, normally this would forbid you from loading it (data duplication / no primary key etc) but it is empty so we are happy to load it, it will not be created"));
+                        listener.OnNotify(this, new NotifyEventArgs(ProgressEventType.Warning,
+                            $"Found table {TargetTableName} already, normally this would forbid you from loading it (data duplication / no primary key etc) but it is empty so we are happy to load it, it will not be created"));
                     else
-                        throw new Exception("There is already a table called " + TargetTableName + " at the destination " + _database);
+                        throw new Exception(
+                            $"There is already a table called {TargetTableName} at the destination {_database}");
                     
                 if (AllowResizingColumnsAtUploadTime)
                     _dataTypeDictionary = _discoveredTable.DiscoverColumns().ToDictionary(k => k.GetRuntimeName(), v => v.GetGuesser(),StringComparer.CurrentCultureIgnoreCase);
             }
             else
-                listener.OnNotify(this, new NotifyEventArgs(ProgressEventType.Information, "Determined that the table name " + TargetTableName + " is unique at destination " + _database));
+                listener.OnNotify(this, new NotifyEventArgs(ProgressEventType.Information,
+                    $"Determined that the table name {TargetTableName} is unique at destination {_database}"));
                 
             //create connection to destination
             if (!tableAlreadyExistsButEmpty)
@@ -186,7 +189,8 @@ public class DataTableUploadDestination : IPluginDataFlowComponent<DataTable>, I
                 else
                     _database.CreateTable(TargetTableName, toProcess, ExplicitTypes.ToArray(), true, adjuster);
 
-                listener.OnNotify(this, new NotifyEventArgs(ProgressEventType.Information, "Created table " + TargetTableName + " successfully."));
+                listener.OnNotify(this, new NotifyEventArgs(ProgressEventType.Information,
+                    $"Created table {TargetTableName} successfully."));
             }
 
             _managedConnection = _server.BeginNewTransactedConnection();
@@ -201,12 +205,12 @@ public class DataTableUploadDestination : IPluginDataFlowComponent<DataTable>, I
                 ResizeColumnsIfRequired(toProcess, listener);
 
             //push the data
-            swTimeSpentWritting.Start();
+            swTimeSpentWriting.Start();
 
             _affectedRows += _bulkcopy.Upload(toProcess);
                     
-            swTimeSpentWritting.Stop();
-            listener.OnProgress(this, new ProgressEventArgs("Uploading to " + TargetTableName, new ProgressMeasurement(_affectedRows, ProgressType.Records), swTimeSpentWritting.Elapsed));
+            swTimeSpentWriting.Stop();
+            listener.OnProgress(this, new ProgressEventArgs($"Uploading to {TargetTableName}", new ProgressMeasurement(_affectedRows, ProgressType.Records), swTimeSpentWriting.Elapsed));
         }
         catch (Exception e)
         {
@@ -215,7 +219,7 @@ public class DataTableUploadDestination : IPluginDataFlowComponent<DataTable>, I
             if (LoggingServer != null)
                 _dataLoadInfo.LogFatalError(GetType().Name, ExceptionHelper.ExceptionToListOfInnerMessages(e, true));
 
-            throw new Exception("Failed to write rows (in transaction) to table " + TargetTableName, e);
+            throw new Exception($"Failed to write rows (in transaction) to table {TargetTableName}", e);
         }
 
         return null;
@@ -270,10 +274,10 @@ public class DataTableUploadDestination : IPluginDataFlowComponent<DataTable>, I
     private void EnsureTableHasDataInIt(DataTable toProcess)
     {
         if(toProcess.Columns.Count == 0)
-            throw new Exception("DataTable '" + toProcess + "' had no Columns!");
+            throw new Exception($"DataTable '{toProcess}' had no Columns!");
 
         if (toProcess.Rows.Count == 0)
-            throw new Exception("DataTable '" + toProcess + "' had no Rows!");
+            throw new Exception($"DataTable '{toProcess}' had no Rows!");
     }
 
     private void ResizeColumnsIfRequired(DataTable toProcess, IDataLoadEventListener listener)
@@ -327,7 +331,8 @@ public class DataTableUploadDestination : IPluginDataFlowComponent<DataTable>, I
                     continue;
                 }
                     
-                listener.OnNotify(this, new NotifyEventArgs(ProgressEventType.Warning, "Resizing column '" + column + "' from '" + col.DataType.SQLType + "' to '" + newSqlType + "'"));
+                listener.OnNotify(this, new NotifyEventArgs(ProgressEventType.Warning,
+                    $"Resizing column '{column}' from '{col.DataType.SQLType}' to '{newSqlType}'"));
 
                 //try changing the Type to the legit type
                 col.DataType.AlterTypeTo(newSqlType, _managedConnection.ManagedTransaction, AlterTimeout);
@@ -417,7 +422,8 @@ public class DataTableUploadDestination : IPluginDataFlowComponent<DataTable>, I
 
                 //make sure we found all of them
                 if(pkColumnsToCreate.Length != _primaryKey.Count)
-                    throw new Exception("Could not find primary key column(s) " + string.Join(",",_primaryKey) + " in table " + _discoveredTable);
+                    throw new Exception(
+                        $"Could not find primary key column(s) {string.Join(",", _primaryKey)} in table {_discoveredTable}");
 
                 //create the primary key to match user provided columns
                 _discoveredTable.CreatePrimaryKey(AlterTimeout, pkColumnsToCreate);
@@ -457,7 +463,8 @@ public class DataTableUploadDestination : IPluginDataFlowComponent<DataTable>, I
             var logManager = new LogManager(_loggingDatabaseSettings);
             logManager.CreateNewLoggingTaskIfNotExists("Internal");
 
-            _dataLoadInfo = (DataLoadInfo) logManager.CreateDataLoadInfo("Internal", GetType().Name, "Loading table " + tableName, "", false);
+            _dataLoadInfo = (DataLoadInfo) logManager.CreateDataLoadInfo("Internal", GetType().Name,
+                $"Loading table {tableName}", "", false);
             _loggingDatabaseListener = new ToLoggingDatabaseDataLoadEventListener(logManager, _dataLoadInfo);
         }
     }

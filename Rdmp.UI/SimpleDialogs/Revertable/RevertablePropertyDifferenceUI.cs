@@ -32,8 +32,7 @@ public partial class RevertablePropertyDifferenceUI : RDMPUserControl
             return;
             
         //For documentation/control previewing
-        if(_difference==null)
-            _difference = new RevertablePropertyDifference(typeof(Catalogue).GetProperty("Name"),"Biochemistry","byochemistry");
+        _difference ??= new RevertablePropertyDifference(typeof(Catalogue).GetProperty("Name"), "Biochemistry", "byochemistry");
 
         CreateScintillaComponents(
             _difference.DatabaseValue != null ? _difference.DatabaseValue.ToString() : "<Null>",
