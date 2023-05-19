@@ -339,6 +339,7 @@ public class UsefulStuff
 
         using var fileToSpray = assembly.GetManifestResourceStream(manifestName) ?? throw new Exception(
                 $"assembly.GetManifestResourceStream returned null for manifest name {manifestName} in assembly {assembly}");
+
         if (!Directory.Exists(outputDirectory))
             Directory.CreateDirectory(outputDirectory);
 
