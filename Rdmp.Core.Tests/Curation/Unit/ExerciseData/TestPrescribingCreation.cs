@@ -6,6 +6,7 @@
 
 using System;
 using System.IO;
+using System.Linq;
 using BadMedicine;
 using BadMedicine.Datasets;
 using NUnit.Framework;
@@ -44,9 +45,7 @@ public class TestPrescribingCreation
         Assert.IsTrue(finished);
         Assert.AreEqual(numberOfRecords, finishedWithRecords);
 
-        Assert.GreaterOrEqual(File.ReadAllLines(f.FullName).Length, numberOfRecords);//can be newlines in middle of file
-
-        Console.WriteLine("Created file: " + f.FullName);
+        Assert.GreaterOrEqual(File.ReadLines(f.FullName).Count(), numberOfRecords);//can be newlines in middle of file
         f.Delete();
     }
 

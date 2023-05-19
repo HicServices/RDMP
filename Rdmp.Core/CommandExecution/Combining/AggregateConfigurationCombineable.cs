@@ -4,6 +4,7 @@
 // RDMP is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License for more details.
 // You should have received a copy of the GNU General Public License along with RDMP. If not, see <https://www.gnu.org/licenses/>.
 
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using Rdmp.Core.Curation.Data;
@@ -76,7 +77,7 @@ public class AggregateConfigurationCombineable : ICombineToMakeCommand
         CohortIdentificationConfigurationIfAny = Aggregate.GetCohortIdentificationConfigurationIfAny();
             
         //assume no join users
-        JoinableUsersIfAny = new AggregateConfiguration[0];
+        JoinableUsersIfAny = Array.Empty<AggregateConfiguration>();
 
         //unless there's a cic
         if(CohortIdentificationConfigurationIfAny != null)

@@ -90,7 +90,7 @@ public class ItemValidator
             }
             catch (Exception ex)
             {
-                throw new Exception($"Error processing Secondary Constraint validator of Type {secondaryConstraint.GetType().Name} on column {TargetProperty}.  Value being validated was '{columnValue}'",ex);
+                throw new InvalidOperationException($"Error processing Secondary Constraint validator of Type {secondaryConstraint.GetType().Name} on column {TargetProperty}.  Value being validated was '{columnValue}'",ex);
             }
         }
 

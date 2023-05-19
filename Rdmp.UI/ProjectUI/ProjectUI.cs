@@ -22,7 +22,6 @@ using Rdmp.UI.SimpleControls;
 using Rdmp.UI.SimpleDialogs;
 using Rdmp.UI.TestsAndSetup.ServicePropogation;
 
-
 namespace Rdmp.UI.ProjectUI;
 
 /// <summary>
@@ -289,16 +288,14 @@ public partial class ProjectUI : ProjectUI_Design, ISaveableUI
 
     private void btnShowExtractionDirectory_Click(object sender, EventArgs e)
     {
-        if (!string.IsNullOrWhiteSpace(tbExtractionDirectory.Text))
+        if (string.IsNullOrWhiteSpace(tbExtractionDirectory.Text)) return;
+        try
         {
-            try
-            {
-                UsefulStuff.GetInstance().ShowPathInWindowsExplorer(new DirectoryInfo(tbExtractionDirectory.Text));
-            }
-            catch (Exception ex)
-            {
-                MessageBox.Show(ex.Message);
-            }
+            UsefulStuff.ShowPathInWindowsExplorer(new DirectoryInfo(tbExtractionDirectory.Text));
+        }
+        catch (Exception ex)
+        {
+            MessageBox.Show(ex.Message);
         }
     }
 

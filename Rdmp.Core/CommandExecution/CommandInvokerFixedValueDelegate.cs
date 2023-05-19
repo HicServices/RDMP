@@ -21,6 +21,6 @@ class CommandInvokerFixedValueDelegate : CommandInvokerDelegate
 
     public override bool CanHandle(Type t)
     {
-        return true;
+        return HandledType==t;
     }
 }

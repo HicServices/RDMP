@@ -228,7 +228,7 @@ public class ExecuteCommandImportFilterContainerTree : BasicCommandExecution
     private IEnumerable<AggregateConfiguration> GetEligibleChildren(CohortIdentificationConfiguration arg)
     {
         if(arg.RootCohortAggregateContainer_ID == null)
-            return new AggregateConfiguration[0];
+            return Array.Empty<AggregateConfiguration>();
 
         return arg.RootCohortAggregateContainer.GetAllAggregateConfigurationsRecursively()
             .Where(ac=>ac.Catalogue_ID == _catalogue.ID && ac.RootFilterContainer_ID != null);

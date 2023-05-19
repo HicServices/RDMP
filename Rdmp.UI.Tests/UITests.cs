@@ -33,31 +33,29 @@ public class UITests : UnitTests
         
     public Control LastUserInterfaceLaunched { get; set; }
 
-    protected TestActivateItems ItemActivator
-    {
-        get
-        {
-            InitializeItemActivator();
-
-            return _itemActivator;
-        }
-    }
+    protected TestActivateItems ItemActivator => _itemActivator?? InitializeItemActivator();
 
     /// <summary>
     /// Generates the <see cref="ItemActivator"/> (if it hasn't already been initialized).  This is normally done automatically
     /// for you (e.g. when calling <see cref="AndLaunch{T}(DatabaseEntity, bool)"/>).
     /// </summary>
-    protected void InitializeItemActivator()
+    private TestActivateItems InitializeItemActivator()
     {
-        if (_itemActivator == null)
+        _itemActivator = new TestActivateItems(this,Repository)
         {
-            _itemActivator = new TestActivateItems(this,Repository);
-            _itemActivator.RepositoryLocator.CatalogueRepository.MEF = MEF;
-                    
-            //if mef was loaded for this test then this is supported otherwise not
-            if(MEF != null)
-                _itemActivator.CommandExecutionFactory = new RDMPCommandExecutionFactory(_itemActivator);
-        }
+            RepositoryLocator =
+            {
+                CatalogueRepository =
+                {
+                    MEF = MEF
+                }
+            }
+        };
+
+        //if mef was loaded for this test then this is supported otherwise not
+        if(MEF != null)
+            _itemActivator.CommandExecutionFactory = new RDMPCommandExecutionFactory(_itemActivator);
+        return _itemActivator;
     }
         
     /// <summary>
@@ -74,29 +72,19 @@ public class UITests : UnitTests
     /// <exception cref="NotSupportedException">Thrown when calling this method multiple times within a single test</exception>
     public T AndLaunch<T>(DatabaseEntity o,bool setDatabaseObject=true) where T : Control, IRDMPSingleDatabaseObjectControl, new()
     {
-        Console.WriteLine("Launched " + typeof(T).Name);
-   
         T ui = new T();
-            
         AndLaunch(ui);
-
         if(setDatabaseObject)
             ui.SetDatabaseObject(ItemActivator, o);
-
         return ui;
     }
 
 
     public T AndLaunch<T>() where T : RDMPCollectionUI,new()
     {
-        Console.WriteLine("Launched " + typeof(T).Name);
-
         T ui = new T();
-
         AndLaunch(ui);
-
         ui.SetItemActivator(ItemActivator);
-
         return ui;
     }
     public void AndLaunch(Control ui)
@@ -125,8 +113,7 @@ public class UITests : UnitTests
     [SetUp]
     protected void ClearResults()
     {
-        if(_itemActivator != null)
-            _itemActivator.Results.Clear();
+        _itemActivator?.Results.Clear();
 
         _checkResults = null;
             
@@ -155,7 +142,7 @@ public class UITests : UnitTests
         if(string.IsNullOrWhiteSpace(cmd.ReasonCommandImpossible))
             Assert.Fail("Command was impossible but no reason was given!!!");
 
-        Assert.Fail("Command was Impossible because:" + cmd.ReasonCommandImpossible);
+        Assert.Fail($"Command was Impossible because:{cmd.ReasonCommandImpossible}");
     }
         
     private void CommonFunctionalityOnBeforeChecking(object sender, EventArgs eventArgs)
@@ -268,7 +255,7 @@ public class UITests : UnitTests
 
                 break;
             default:
-                throw new ArgumentOutOfRangeException("expectedErrorLevel");
+                throw new ArgumentOutOfRangeException(nameof(expectedErrorLevel));
         }
     }
 
@@ -298,31 +285,21 @@ public class UITests : UnitTests
     private List<string> GetErrorProviderErrorsShown(ErrorProvider errorProvider)
     {
         //https://referencesource.microsoft.com/#system.windows.forms/winforms/Managed/System/WinForms/ErrorProvider.cs.html,11db4fca371f280c
-        List<string> toReturn = new List<string>();
 
         var hashtable = (Hashtable) typeof (ErrorProvider).GetField("_items",BindingFlags.Instance | BindingFlags.NonPublic).GetValue(errorProvider);
 
-        foreach (var entry in hashtable.Values)
-            toReturn.Add((string)entry.GetType().GetField("_error", BindingFlags.Instance | BindingFlags.NonPublic).GetValue(entry));
-
-        return toReturn;
+        return (hashtable.Values.Cast<object>()
+            .Select(entry =>
+                (string)entry.GetType()
+                    .GetField("_error", BindingFlags.Instance | BindingFlags.NonPublic)
+                    .GetValue(entry))).ToList();
     }
 
     private List<ErrorProvider> GetErrorProviders(Control arg)
     {
-        List<ErrorProvider> toReturn = new List<ErrorProvider>();
-
-
         var errorProviderFields = arg.GetType().GetFields(BindingFlags.Instance | BindingFlags.NonPublic).Where(f => f.FieldType == typeof(ErrorProvider));
-            
-        foreach (FieldInfo f in errorProviderFields)
-        {
-            var instance = f.GetValue(arg);
-            if(instance != null)
-                toReturn.Add((ErrorProvider)instance);
-        }
 
-        return toReturn;
+        return errorProviderFields.Select(f => f.GetValue(arg)).Where(instance => instance != null).Cast<ErrorProvider>().ToList();
     }
 
     /// <summary>
@@ -338,8 +315,8 @@ public class UITests : UnitTests
 
     private List<T> GetControl<T>(Control c, List<T> list) where T:Control
     {
-        if(c is T)
-            list.Add((T)c);
+        if(c is T control)
+            list.Add(control);
 
         foreach (Control child in c.Controls)
             GetControl(child, list);
@@ -398,24 +375,14 @@ public class UITests : UnitTests
         var methods = typeof (UITests).GetMethods(BindingFlags.Public | BindingFlags.NonPublic | BindingFlags.Instance);
         var methodWhenIHaveA = methods.Single(m => m.Name.Equals("WhenIHaveA") && !m.GetParameters().Any());
 
-        List<DatabaseEntity> objectsToTest = new List<DatabaseEntity>();
-
-        foreach (Type t in types)
-        {
-            //ignore these types too
-            if (SkipTheseTypes.Contains(t.Name) || t.Name.StartsWith("Spontaneous") ||
-                typeof (SpontaneousObject).IsAssignableFrom(t))
-                continue;
-
-            //ensure that the method supports the Type
-            var genericWhenIHaveA = methodWhenIHaveA.MakeGenericMethod(t);
-            var instance = (DatabaseEntity) genericWhenIHaveA.Invoke(this, null);
-
-            objectsToTest.Add(instance);
-        }
+        List<DatabaseEntity> objectsToTest = (types
+            .Where(t => !SkipTheseTypes.Contains(t.Name) && !t.Name.StartsWith("Spontaneous") &&
+                        !typeof(SpontaneousObject).IsAssignableFrom(t))
+            .Select(t => methodWhenIHaveA.MakeGenericMethod(t))
+            .Select(genericWhenIHaveA => (DatabaseEntity)genericWhenIHaveA.Invoke(this, null))).ToList();
 
         //sets up all the child providers etc
-        InitializeItemActivator();
+        _itemActivator=InitializeItemActivator();
 
         foreach(DatabaseEntity o in objectsToTest)
         {
@@ -439,7 +406,8 @@ public class UITests : UnitTests
                 }
                 catch(Exception ex)
                 {
-                    throw new Exception("Failed to construct '" + uiType +"'.  Code to reproduce is:" + Environment.NewLine + ShowCode(o.GetType(),uiType),ex);
+                    throw new Exception(
+                        $"Failed to construct '{uiType}'.  Code to reproduce is:{Environment.NewLine}{ShowCode(o.GetType(), uiType)}",ex);
                 }
                     
 
@@ -454,21 +422,21 @@ public class UITests : UnitTests
         StringBuilder sb = new StringBuilder();
             
         sb.AppendLine("using NUnit.Framework;");
-        sb.AppendLine("using " + t.Namespace +";");
-        sb.AppendLine("using " + uiType.Namespace +";");
+        sb.AppendLine($"using {t.Namespace};");
+        sb.AppendLine($"using {uiType.Namespace};");
         sb.AppendLine();
 
-        sb.AppendLine("namespace " + uiType.Namespace.Replace("Rdmp.UI","Rdmp.UI.Tests"));
+        sb.AppendLine($"namespace {uiType.Namespace.Replace("Rdmp.UI", "Rdmp.UI.Tests")}");
         sb.AppendLine("{");
 
-        sb.AppendLine("\tpublic class " + uiType.Name +"Tests :UITests");
+        sb.AppendLine($"\tpublic class {uiType.Name}Tests :UITests");
         sb.AppendLine("\t{");
 
         sb.AppendLine("\t\t[Test,UITimeout(20000)]");
-        sb.AppendLine("\t\tpublic void Test_" + uiType.Name + "_Constructor()");
+        sb.AppendLine($"\t\tpublic void Test_{uiType.Name}_Constructor()");
         sb.AppendLine("\t\t{");
-        sb.AppendLine("\t\t\tvar o = WhenIHaveA<" + t.Name +">();");
-        sb.AppendLine("\t\t\tvar ui = AndLaunch<" + uiType.Name +">(o);");
+        sb.AppendLine($"\t\t\tvar o = WhenIHaveA<{t.Name}>();");
+        sb.AppendLine($"\t\t\tvar ui = AndLaunch<{uiType.Name}>(o);");
 
         sb.AppendLine("\t\t\tAssert.IsNotNull(ui);");
         sb.AppendLine("\t\t\t//AssertNoErrors(ExpectedErrorType.Fatal);");
@@ -485,7 +453,7 @@ public class UITests : UnitTests
 public enum ExpectedErrorType
 {
     /// <summary>
-    /// Form must have been made a request to be forceably closed (this is the highest level of error a form can instigate).
+    /// Form must have been made a request to be forcibly closed (this is the highest level of error a form can instigate).
     /// </summary>
     KilledForm,
 

@@ -8,7 +8,6 @@ using System;
 using System.Windows.Forms;
 using Rdmp.Core.MapsDirectlyToDatabaseTable.Revertable;
 
-
 namespace Rdmp.UI.SimpleDialogs.Revertable;
 
 /// <summary>

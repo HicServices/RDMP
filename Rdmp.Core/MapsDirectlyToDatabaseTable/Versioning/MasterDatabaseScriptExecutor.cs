@@ -72,12 +72,11 @@ public class MasterDatabaseScriptExecutor
                 if (Database.Server.DatabaseType == DatabaseType.MicrosoftSQLServer && BinaryCollation)
                 {
                     var master = Database.Server.ExpectDatabase("master");
-                    using (var con = master.Server.GetConnection())
-                    {
-                        con.Open();
-                        using(var cmd = Database.Server.GetCommand("CREATE DATABASE " + Database + " COLLATE Latin1_General_BIN2", con))
-                            cmd.ExecuteNonQuery();
-                    }
+                    using var con = master.Server.GetConnection();
+                    con.Open();
+                    using var cmd = Database.Server.GetCommand(
+                        $"CREATE DATABASE {Database} COLLATE Latin1_General_BIN2", con);
+                    cmd.ExecuteNonQuery();
                 }    
                 else
                     Database.Create();
@@ -86,7 +85,7 @@ public class MasterDatabaseScriptExecutor
                     throw new Exception(
                         "Create database failed without Exception! (It did not Exist after creation)");
 
-                notifier.OnCheckPerformed(new CheckEventArgs("Database " + Database + " created", CheckResult.Success, null));
+                notifier.OnCheckPerformed(new CheckEventArgs($"Database {Database} created", CheckResult.Success, null));
             }
 
             if(Database.Server.DatabaseType == DatabaseType.MicrosoftSQLServer)
@@ -222,7 +221,7 @@ public class MasterDatabaseScriptExecutor
             {
                 notifier.OnCheckPerformed(new CheckEventArgs("About to backup database", CheckResult.Success, null));
 
-                Database.CreateBackup("Full backup of " + Database);
+                Database.CreateBackup($"Full backup of {Database}");
             
                 notifier.OnCheckPerformed(new CheckEventArgs("Database backed up", CheckResult.Success, null));
                 
@@ -259,14 +258,14 @@ public class MasterDatabaseScriptExecutor
                     }
                         
 
-                    notifier.OnCheckPerformed(new CheckEventArgs("Executed patch " + patch.Value, CheckResult.Success, null));
+                    notifier.OnCheckPerformed(new CheckEventArgs($"Executed patch {patch.Value}", CheckResult.Success, null));
                 }
                 else
-                    throw new Exception("User decided not to execute patch " + patch.Key + " - aborting ");
+                    throw new Exception($"User decided not to execute patch {patch.Key} - aborting ");
             }
                 
             SetVersion("Patching",maxPatchVersion.ToString());
-            notifier.OnCheckPerformed(new CheckEventArgs("Updated database version to " + maxPatchVersion.ToString(), CheckResult.Success, null));
+            notifier.OnCheckPerformed(new CheckEventArgs($"Updated database version to {maxPatchVersion}", CheckResult.Success, null));
 
             //all went fine
             notifier.OnCheckPerformed(new CheckEventArgs("All patches applied, transaction committed", CheckResult.Success, null));
@@ -324,15 +323,13 @@ public class MasterDatabaseScriptExecutor
                 if (!allPatchesInAssembly.Any(a => a.Value.Equals(patch)))
                 {
                     notifier.OnCheckPerformed(new CheckEventArgs(
-                        "The database contains an unexplained patch called " + patch.locationInAssembly +
-                        " (it is not in " + patcher.GetDbAssembly().FullName + " ) so how did it get there?", CheckResult.Warning,
+                        $"The database contains an unexplained patch called {patch.locationInAssembly} (it is not in {patcher.GetDbAssembly().FullName} ) so how did it get there?", CheckResult.Warning,
                         null));
                 }
                 else if (!allPatchesInAssembly[patch.locationInAssembly].GetScriptBody().Equals(patch.GetScriptBody()))
                 {
                     notifier.OnCheckPerformed(new CheckEventArgs(
-                        "The contents of patch " + patch.locationInAssembly +
-                        " are different between live database and the database patching assembly", CheckResult.Warning,
+                        $"The contents of patch {patch.locationInAssembly} are different between live database and the database patching assembly", CheckResult.Warning,
                         null));
 
                     //do not apply this patch
@@ -341,7 +338,8 @@ public class MasterDatabaseScriptExecutor
                 else
                 {
                     //we found it and it was intact
-                    notifier.OnCheckPerformed(new CheckEventArgs("Patch " + patch.locationInAssembly + " was previously installed successfully so no need to touch it",CheckResult.Success, null));
+                    notifier.OnCheckPerformed(new CheckEventArgs(
+                        $"Patch {patch.locationInAssembly} was previously installed successfully so no need to touch it",CheckResult.Success, null));
                     
                     //do not apply this patch
                     toApply.Remove(patch.locationInAssembly);
@@ -360,11 +358,7 @@ public class MasterDatabaseScriptExecutor
         {
             stop = true;
             notifier.OnCheckPerformed(new CheckEventArgs(
-                "Patch " + missedOpportunity.locationInAssembly +
-                " cannot be applied because its version number is " + missedOpportunity.DatabaseVersionNumber +
-                " but the current database is at version " + databaseVersion
-                + Environment.NewLine
-                + " Contents of patch was:" + Environment.NewLine +missedOpportunity.EntireScript
+                $"Patch {missedOpportunity.locationInAssembly} cannot be applied because its version number is {missedOpportunity.DatabaseVersionNumber} but the current database is at version {databaseVersion}{Environment.NewLine} Contents of patch was:{Environment.NewLine}{missedOpportunity.EntireScript}"
                 , CheckResult.Fail, null));
         }
 
@@ -372,7 +366,7 @@ public class MasterDatabaseScriptExecutor
         foreach (Patch futurePatch in toApply.Values.Where(patch => patch.DatabaseVersionNumber > hostAssemblyVersion))
         {
             notifier.OnCheckPerformed(new CheckEventArgs(
-                "Cannot apply patch "+futurePatch.locationInAssembly+" because its database version number is "+futurePatch.DatabaseVersionNumber+" which is higher than the currently loaded host assembly (" +patcher.GetDbAssembly().FullName+ "). ", CheckResult.Fail, null));
+                $"Cannot apply patch {futurePatch.locationInAssembly} because its database version number is {futurePatch.DatabaseVersionNumber} which is higher than the currently loaded host assembly ({patcher.GetDbAssembly().FullName}). ", CheckResult.Fail, null));
             stop = true;
                 
         }

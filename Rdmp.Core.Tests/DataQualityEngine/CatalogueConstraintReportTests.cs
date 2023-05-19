@@ -38,18 +38,18 @@ public class CatalogueConstraintReportTests : TestsRequiringAnExtractionConfigur
     }
 
     [TestCaseSource(typeof(All), nameof(All.DatabaseTypesWithBoolFlags))]
-    public void ValidateBulkTestData(DatabaseType dbType, bool testCancellingValiationEarly)
+    public void ValidateBulkTestData(DatabaseType dbType, bool testCancellingValidationEarly)
     {
-        int numberOfRecordsToGenerate = 10000;
-        DateTime startTime = DateTime.Now;
+        var numberOfRecordsToGenerate = 10000;
+        var startTime = DateTime.Now;
 
-        BulkTestsData testData = new BulkTestsData(CatalogueRepository,GetCleanedServer(FAnsi.DatabaseType.MicrosoftSQLServer),numberOfRecordsToGenerate); 
+        var testData = new BulkTestsData(CatalogueRepository,GetCleanedServer(FAnsi.DatabaseType.MicrosoftSQLServer),numberOfRecordsToGenerate); 
         testData.SetupTestData();
         testData.ImportAsCatalogue();
 
-        DQERepository dqeRepository = GetDqeRepository(dbType);
+        var dqeRepository = GetDqeRepository(dbType);
 
-        //the shouldn't be any lingering results in the database
+        //there shouldn't be any lingering results in the database
         Assert.IsNull(dqeRepository.GetMostRecentEvaluationFor(_catalogue));
 
         //set some validation rules
@@ -60,20 +60,22 @@ public class CatalogueConstraintReportTests : TestsRequiringAnExtractionConfigur
         testData.catalogue.TimeCoverage_ExtractionInformation_ID = toBeTimePeriodicityCol.ID;
             
         //do the validation
-        CatalogueConstraintReport report = new CatalogueConstraintReport(testData.catalogue, SpecialFieldNames.DataLoadRunID);
-        report.ExplicitDQERepository = dqeRepository;
+        var report = new CatalogueConstraintReport(testData.catalogue, SpecialFieldNames.DataLoadRunID)
+        {
+            ExplicitDQERepository = dqeRepository
+        };
 
         report.Check(new ThrowImmediatelyCheckNotifier());
 
-        CancellationTokenSource source = new CancellationTokenSource();
+        var source = new CancellationTokenSource();
 
-        if (testCancellingValiationEarly)
+        if (testCancellingValidationEarly)
             source.Cancel();
 
-        ToMemoryDataLoadEventListener listener = new ToMemoryDataLoadEventListener(false);
+        var listener = new ToMemoryDataLoadEventListener(false);
         report.GenerateReport(testData.catalogue, listener, source.Token);
 
-        if(testCancellingValiationEarly)
+        if(testCancellingValidationEarly)
         {
             Assert.IsTrue(listener.EventsReceivedBySender[report].Count(m=>m.Exception is OperationCanceledException) == 1);
             testData.DeleteCatalogue();
@@ -81,26 +83,26 @@ public class CatalogueConstraintReportTests : TestsRequiringAnExtractionConfigur
         }
             
         Assert.IsTrue(listener.EventsReceivedBySender[report].All(m => m.Exception == null),
-            String.Join(Environment.NewLine,
+            string.Join(Environment.NewLine,
                 listener.EventsReceivedBySender[report].Where(m => m.Exception != null).Select(m=>m.Exception)));//all messages must have null exceptions
             
             
-        //get the reuslts now
+        //get the results now
         var results = dqeRepository.GetMostRecentEvaluationFor(testData.catalogue);
 
         Assert.IsNotNull(results);
 
-        //the sum of all consquences across all data load run ids should be the record count
+        //the sum of all consequences across all data load run ids should be the record count
         Assert.AreEqual(10000,results.RowStates.Sum(r=>r.Missing + r.Invalid + r.Wrong + r.Correct));
 
         //there should be at least 5 data load run ids (should be around 12 actually - see BulkTestData but theoretically everyone could magically - all 10,000 into 5 decades - or even less but those statistics must be astronomical)
-        Assert.GreaterOrEqual(results.RowStates.Count(),5);
+        Assert.GreaterOrEqual(results.RowStates.Length,5);
 
         //there should be lots of column results too
-        Assert.GreaterOrEqual(results.ColumnStates.Count(),5);
+        Assert.GreaterOrEqual(results.ColumnStates.Length,5);
 
         //Did it log?
-        LogManager logManager = new LogManager(CatalogueRepository.GetDefaultFor(PermissableDefaults.LiveLoggingServer_ID));
+        var logManager = new LogManager(CatalogueRepository.GetDefaultFor(PermissableDefaults.LiveLoggingServer_ID));
         var log = logManager.GetArchivalDataLoadInfos("DQE").FirstOrDefault();
         Assert.IsNotNull(log);
         Assert.GreaterOrEqual(log.StartTime, startTime);

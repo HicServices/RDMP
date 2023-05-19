@@ -10,7 +10,8 @@
 	<NoWarn>1701;1702;CS1591;NU1701</NoWarn>
     <DebugType>embedded</DebugType>
     <DebugSymbols>true</DebugSymbols>
-    <PublishSingleFile>false</PublishSingleFile>
+    <PublishSingleFile>true</PublishSingleFile>
+    <PublishReadyToRun>true</PublishReadyToRun>
   </PropertyGroup>
   <PropertyGroup>
     
@@ -37,7 +38,6 @@
       <PrivateAssets>all</PrivateAssets>
       <IncludeAssets>runtime; build; native; contentfiles; analyzers</IncludeAssets>
     </PackageReference>
-    <PackageReference Include="HIC.BadMedicine" Version="1.1.2" />
     <PackageReference Include="System.Resources.Extensions" Version="4.6.0" />
   </ItemGroup>
   <ItemGroup>
@@ -66,14 +66,6 @@
     <Compile Update="Menus\RDMPTopMenuStripUI.Designer.cs">
       <DependentUpon>RDMPTopMenuStripUI.cs</DependentUpon>
     </Compile>
-    <Content Include="..\..\Rdmp.UI\Hunspellx64.dll">
-      <Link>Hunspellx64.dll</Link>
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </Content>
-    <Content Include="..\..\Rdmp.UI\Hunspellx86.dll">
-      <Link>Hunspellx86.dll</Link>
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </Content>
     <Content Include="Icon\main.ico" />
     <Content Include="Icon\main.png">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
@@ -116,18 +108,6 @@
     <EmbeddedResource Include="..\..\LIBRARYLICENSES">
       <Link>WindowManagement\Licenses\LIBRARYLICENSES</Link>
     </EmbeddedResource>
-    <Content Include="..\..\Rdmp.UI\en_US.aff">
-      <Link>en_US.aff</Link>
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </Content>
-    <Content Include="..\..\Rdmp.UI\en_US.dic">
-      <Link>en_US.dic</Link>
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </Content>
-    <Content Include="..\..\Rdmp.UI\hyph_en_US.dic">
-      <Link>hyph_en_US.dic</Link>
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </Content>
     <None Include="DockingInfrastructure.cd" />
     <None Include="Properties\Settings.settings">
       <Generator>SettingsSingleFileGenerator</Generator>

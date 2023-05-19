@@ -159,7 +159,7 @@ public partial class ConsoleGuiCohortIdentificationConfigurationUI {
         if (col.ColumnName.Equals("Name"))
         {
             var factory = new ConsoleGuiContextMenuFactory(_activator);
-            var menu = factory.Create(new object[0], o);
+            var menu = factory.Create(Array.Empty<object>(), o);
                 
             if(menu != null)
             {

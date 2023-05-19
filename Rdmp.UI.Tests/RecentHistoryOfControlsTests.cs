@@ -24,7 +24,7 @@ public class RecentHistoryOfControlsTests
         int overFlowCounter = 100000;
 
         for (int i = 0; i < overFlowCounter; i++)
-            c.AddResult("testOverflowValue" + Guid.NewGuid(), i%1000 == 0);//only save every X values added for performance
+            c.AddResult($"testOverflowValue{Guid.NewGuid()}", i%1000 == 0);//only save every X values added for performance
 
         c.Clear();
     }

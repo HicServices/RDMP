@@ -8,7 +8,6 @@ using System;
 using System.Linq;
 using Rdmp.Core.ReusableLibraryCode;
 
-
 namespace Rdmp.UI.SimpleDialogs;
 
 /// <summary>

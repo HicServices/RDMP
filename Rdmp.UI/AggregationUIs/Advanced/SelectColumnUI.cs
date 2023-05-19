@@ -34,7 +34,7 @@ namespace Rdmp.UI.AggregationUIs.Advanced;
 
 /// <summary>
 /// Allows you to pick which columns are used to build an AggregateConfiguration.  This includes all AggregateDimensions (and the count column) as well as all available columns which could
-/// be included.  This UI handles column selection / editting for both regular Aggregate Graphs, Cohort Sets and Patient Index Tables (because they are all actually just AggregateConfiguration
+/// be included.  This UI handles column selection / editing for both regular Aggregate Graphs, Cohort Sets and Patient Index Tables (because they are all actually just AggregateConfiguration
 /// objects anyway). 
 /// 
 /// <para>Ticking a column includes it in the configuration, unticking it deletes it.  If you have ticked an ExtractionInformation it will become an AggregateDimension which means when you change its
@@ -50,8 +50,8 @@ public partial class SelectColumnUI : RDMPUserControl
     private List<IColumn> _availableColumns;
     private List<IColumn> _includedColumns;
 
-    internal IReadOnlyCollection<IColumn> AvailableColumns { get { return new ReadOnlyCollection<IColumn>(_availableColumns);} }
-    internal IReadOnlyCollection<IColumn> IncludedColumns { get { return new ReadOnlyCollection<IColumn>(_includedColumns); } }
+    internal IReadOnlyCollection<IColumn> AvailableColumns => new ReadOnlyCollection<IColumn>(_availableColumns);
+    internal IReadOnlyCollection<IColumn> IncludedColumns => new ReadOnlyCollection<IColumn>(_includedColumns);
 
     public QuerySyntaxHelper _querySyntaxHelper = new MicrosoftQuerySyntaxHelper();
 

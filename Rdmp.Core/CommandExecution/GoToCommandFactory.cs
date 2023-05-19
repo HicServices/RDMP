@@ -4,6 +4,7 @@
 // RDMP is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License for more details.
 // You should have received a copy of the GNU General Public License along with RDMP. If not, see <https://www.gnu.org/licenses/>.
 
+using System;
 using System.Collections.Generic;
 using SixLabors.ImageSharp;
 using System.Linq;
@@ -73,7 +74,7 @@ public class GoToCommandFactory : CommandFactoryBase
                     if (dx.AllProjectAssociatedCics != null)
                         return dx.AllProjectAssociatedCics.Where(a => a.CohortIdentificationConfiguration_ID == cic.ID).Select(a => a.Project).Distinct();
 
-                return new CohortIdentificationConfiguration[0];
+                return Array.Empty<CohortIdentificationConfiguration>();
             })
             {
                 OverrideCommandName = "Project(s)",
@@ -146,7 +147,7 @@ public class GoToCommandFactory : CommandFactoryBase
                 if (_activator.CoreChildProvider is DataExportChildProvider dx)
                     return dx.SelectedDataSets.Where(s => s.ExtractableDataSet_ID == eds.ID).Select(s => s.ExtractionConfiguration);
 
-                return new SelectedDataSets[0];
+                return Array.Empty<SelectedDataSets>();
             }){ OverrideCommandName = "Extraction Configuration(s)", OverrideIcon = GetImage(RDMPConcept.ExtractionConfiguration) };
         }
 
@@ -277,7 +278,7 @@ public class GoToCommandFactory : CommandFactoryBase
                 if (_activator.CoreChildProvider is DataExportChildProvider dx)
                     return dx.ExtractionConfigurations.Where(ec => ec.Cohort_ID == cohort.ID);
 
-                return new ExtractionConfiguration[0];
+                return Array.Empty<ExtractionConfiguration>();
             })
             {
                 OverrideCommandName = "Extraction Configuration(s)",
@@ -289,7 +290,7 @@ public class GoToCommandFactory : CommandFactoryBase
                 if (_activator.CoreChildProvider is DataExportChildProvider dx)
                     return dx.Projects.Where(p => p.ProjectNumber == cohort.ExternalProjectNumber);
 
-                return new Project[0];
+                return Array.Empty<Project>();
             })
             {
                 OverrideCommandName = "Project(s)",

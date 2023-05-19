@@ -4,6 +4,7 @@
 // RDMP is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License for more details.
 // You should have received a copy of the GNU General Public License along with RDMP. If not, see <https://www.gnu.org/licenses/>.
 
+using System;
 using System.Collections.Generic;
 using System.Linq;
 
@@ -17,9 +18,11 @@ namespace Rdmp.Core.ReusableLibraryCode.Checks;
 public class ToMemoryCheckNotifier : ICheckNotifier
 {
     private readonly ICheckNotifier _childToPassEventsTo;
-    public List<CheckEventArgs> Messages { get; private set; }
+    public List<CheckEventArgs> Messages { get; } = new();
 
-    public object lockList = new object();
+    private readonly object _lockList = new();
+
+    private CheckResult _worst = CheckResult.Success;
 
     /// <summary>
     /// Sometimes you want to know what the messages and the worst event encountered were but you still want to pass the messages to a third party e.g.
@@ -35,38 +38,29 @@ public class ToMemoryCheckNotifier : ICheckNotifier
 
     public ToMemoryCheckNotifier()
     {
-        Messages  = new List<CheckEventArgs>();
     }
 
     public bool OnCheckPerformed(CheckEventArgs args)
     {
-        lock (lockList)
-        {
-            Messages.Add(args);
-        }
-
+        var fix = false;
         if (_childToPassEventsTo != null)
         {
-            bool fix = _childToPassEventsTo.OnCheckPerformed(args);
+            fix = _childToPassEventsTo.OnCheckPerformed(args);
 
             //if child accepted the fix
             if(fix && !string.IsNullOrWhiteSpace(args.ProposedFix) && args.Result == CheckResult.Fail)
                 args.Result = CheckResult.Warning;
-                
-            return fix;
         }
 
-        return false;
-    }
-
-    public CheckResult GetWorst()
-    {
-        lock (lockList)
+        lock (_lockList)
         {
-            if (!Messages.Any())
-                return CheckResult.Success;
-
-            return Messages.Max(e => e.Result);
+            if (args.Result > _worst)
+                _worst = args.Result;
+            Messages.Add(args);
         }
+
+        return fix;
     }
+
+    public CheckResult GetWorst() => _worst;
 }

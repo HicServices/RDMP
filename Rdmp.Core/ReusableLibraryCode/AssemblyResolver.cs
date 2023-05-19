@@ -15,9 +15,9 @@ namespace Rdmp.Core.ReusableLibraryCode;
 
 /// <summary>
 /// Create a resolver for when assemblies cannot be properly loaded through the usual mechanism
-/// and the bidingredirect is not available.
+/// and the bindingredirect is not available.
 /// </summary>
-public class AssemblyResolver
+public static class AssemblyResolver
 {
     private static Dictionary<string,Assembly> assemblyResolveAttempts = new Dictionary<string, Assembly>(); 
 

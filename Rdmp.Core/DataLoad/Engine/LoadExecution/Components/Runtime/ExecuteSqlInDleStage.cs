@@ -49,11 +49,11 @@ internal class ExecuteSqlInDleStage
             foreach (KeyValuePair<int, Stopwatch> section in performance)
                 _job.OnNotify(this,
                     new NotifyEventArgs(ProgressEventType.Information,
-                        "Batch ending on line  \"" + section.Key + "\" finished after " + section.Value.Elapsed));
+                        $"Batch ending on line  \"{section.Key}\" finished after {section.Value.Elapsed}"));
         }
         catch (Exception e)
         {
-            throw new Exception("Failed to execute the query: " + e);
+            throw new Exception($"Failed to execute the query: {e}");
         }
 
         return ExitCodeType.Success;
@@ -61,7 +61,8 @@ internal class ExecuteSqlInDleStage
     private string GetEntityForMatch(Match match,IQuerySyntaxHelper syntaxHelper)
     {
         if (match.Groups.Count != 3)
-            throw new ExecuteSqlFileRuntimeTaskException("Regex Match in Sql File had " + match.Groups.Count + " Groups, expected 3,  Match was:'" + match.Value + "'");
+            throw new ExecuteSqlFileRuntimeTaskException(
+                $"Regex Match in Sql File had {match.Groups.Count} Groups, expected 3,  Match was:'{match.Value}'");
 
         char entity;
         int id;
@@ -72,7 +73,8 @@ internal class ExecuteSqlInDleStage
         }
         catch (Exception e)
         {
-            throw new ExecuteSqlFileRuntimeTaskException("Error performing substitution in Sql File, Failed to replace match " + match.Value + " due to parse expectations" ,e);
+            throw new ExecuteSqlFileRuntimeTaskException(
+                $"Error performing substitution in Sql File, Failed to replace match {match.Value} due to parse expectations",e);
         }
             
         var tables = _job.RegularTablesToLoad.Union(_job.LookupTablesToLoad);
@@ -85,7 +87,8 @@ internal class ExecuteSqlInDleStage
                 var toReturnTable = tables.SingleOrDefault(t => t.ID == id);
 
                 if (toReturnTable == null)
-                    throw new ExecuteSqlFileRuntimeTaskException("Failed to find a TableInfo in the load with ID "+id + ".  All TableInfo IDs referenced in script must be part of the LoadMetadata");
+                    throw new ExecuteSqlFileRuntimeTaskException(
+                        $"Failed to find a TableInfo in the load with ID {id}.  All TableInfo IDs referenced in script must be part of the LoadMetadata");
 
                 return toReturnTable.GetRuntimeName(_loadStage, namer);
 
@@ -94,7 +97,8 @@ internal class ExecuteSqlInDleStage
                 var toReturnColumn = tables.SelectMany(t=>t.ColumnInfos).SingleOrDefault(t => t.ID == id);
 
                 if (toReturnColumn == null)
-                    throw new ExecuteSqlFileRuntimeTaskException("Failed to find a ColumnInfo in the load with ID " + id + ".  All ColumnInfo IDs referenced in script must be part of the LoadMetadata");
+                    throw new ExecuteSqlFileRuntimeTaskException(
+                        $"Failed to find a ColumnInfo in the load with ID {id}.  All ColumnInfo IDs referenced in script must be part of the LoadMetadata");
 
                 var db = toReturnColumn.TableInfo.GetDatabaseRuntimeName(_loadStage, namer);
                 var tbl = toReturnColumn.TableInfo.GetRuntimeName(_loadStage, namer);
@@ -103,7 +107,8 @@ internal class ExecuteSqlInDleStage
                 return syntaxHelper.EnsureFullyQualified(db, null, tbl, col);
 
             default :
-                throw new ExecuteSqlFileRuntimeTaskException("Error performing substitution in Sql File, Unexpected Type char in regex:" + entity);
+                throw new ExecuteSqlFileRuntimeTaskException(
+                    $"Error performing substitution in Sql File, Unexpected Type char in regex:{entity}");
         }
     }
 

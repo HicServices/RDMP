@@ -496,7 +496,7 @@ description as {syntax.EnsureWrapped("Description")},
     /// <returns></returns>
     public IHasDependencies[] GetObjectsThisDependsOn()
     {
-        return new IHasDependencies[0];
+        return Array.Empty<IHasDependencies>();
     }
 
     /// <summary>

@@ -463,15 +463,15 @@ class ConsoleMainWindow
 
             // don't show cic children (this is consistent with 'AxeChildren' in main collection RDMP client for Cohort Builder)
             if (model is CohortIdentificationConfiguration)
-                return new object[0];
+                return Array.Empty<object>();
 
             //sub brackets
-            return _activator.CoreChildProvider.GetChildren(model) ?? new object[0];
+            return _activator.CoreChildProvider.GetChildren(model) ?? Array.Empty<object>();
         }
         catch (Exception ex)
         {
             _activator.ShowException("Error getting node children",ex);
-            return new object[0];
+            return Array.Empty<object>();
         }
     }
 

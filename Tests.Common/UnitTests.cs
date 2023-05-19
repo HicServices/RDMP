@@ -9,6 +9,7 @@ using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Reflection;
+using System.Runtime.CompilerServices;
 using FAnsi;
 using FAnsi.Implementation;
 using FAnsi.Implementations.MicrosoftSQL;
@@ -106,6 +107,7 @@ public class UnitTests
     /// <typeparam name="T">Type of object you want to create</typeparam>
     /// <returns></returns>
     /// <exception cref="NotSupportedException">If there is not yet an implementation for the given T.  Feel free to write one.</exception>
+    //[MethodImpl(MethodImplOptions.AggressiveInlining)]
     protected T WhenIHaveA<T>() where T : DatabaseEntity
     {
         return WhenIHaveA<T>(Repository);

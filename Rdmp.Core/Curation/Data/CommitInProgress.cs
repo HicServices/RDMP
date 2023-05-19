@@ -30,7 +30,7 @@ public class CommitInProgress : IDisposable
     private ISerializer _serializer;
 
     /// <summary>
-    /// True when <see cref="TryFinish(IBasicActivateItems)"/> is confirmed to definetly be happening.  Controls
+    /// True when <see cref="TryFinish(IBasicActivateItems)"/> is confirmed to definitely be happening.  Controls
     /// save suppression
     /// </summary>
     private bool _finishing;
@@ -82,10 +82,10 @@ public class CommitInProgress : IDisposable
         }
 
         // how can we be tracking an object that was not created yet?
-        if (originalStates.ContainsKey(e.Object))
+        if (originalStates.TryGetValue(e.Object, out var state))
         {
             // oh well just pretend it magicked into existence
-            originalStates[e.Object].Type = MementoType.Add;
+            state.Type = MementoType.Add;
         }
         else
         {
@@ -178,7 +178,7 @@ public class CommitInProgress : IDisposable
             // object name or count of the number of objects
             var collectionDescription = changes.Count == 1 ?
                 changes.Single().Key.ToString() :
-                changes.Count + "object(s)";
+                changes.Count + " object(s)";
 
             if (activator.TypeText(new DialogArgs
                 { 
@@ -195,12 +195,12 @@ public class CommitInProgress : IDisposable
             }
         }
 
-        // We couldn't describe the changes, thats bad...
+        // We couldn't describe the changes, that's bad...
         if (description == null)
             return null;
 
         // Ok user has typed in a description (or system generated one) and we are
-        // definetly going to do this
+        // definitely going to do this
 
         _finishing = true;
 
@@ -208,7 +208,7 @@ public class CommitInProgress : IDisposable
 
         foreach(var m in changes.OrderBy(c => c.Value.Item1.Order))
         {
-            new Memento(cataRepo, c, m.Value.Item1.Type, m.Key, m.Value.Item1.OldYaml, m.Value.Item2);
+            _=new Memento(cataRepo, c, m.Value.Item1.Type, m.Key, m.Value.Item1.OldYaml, m.Value.Item2);
         }
             
         // if we created a bunch of db transactions (one per database/server known about) for this commit
@@ -256,6 +256,7 @@ public class CommitInProgress : IDisposable
 
     public void Dispose()
     {
+        GC.SuppressFinalize(this);
         foreach (var repo in _repositories)
         {
             repo.Deleting += Deleting;

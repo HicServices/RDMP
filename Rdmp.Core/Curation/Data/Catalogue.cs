@@ -35,7 +35,7 @@ using Rdmp.Core.Ticketing;
 namespace Rdmp.Core.Curation.Data;
 
 /// <inheritdoc cref="ICatalogue"/>
-public class Catalogue : DatabaseEntity, IComparable, ICatalogue, ICheckable, IInjectKnown<CatalogueItem[]>,IInjectKnown<CatalogueExtractabilityStatus>, IHasFolder
+public class Catalogue : DatabaseEntity, IComparable, ICatalogue, IInjectKnown<CatalogueItem[]>,IInjectKnown<CatalogueExtractabilityStatus>
 {
     #region Database Properties
         

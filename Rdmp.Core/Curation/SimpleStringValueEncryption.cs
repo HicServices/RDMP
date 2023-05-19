@@ -5,23 +5,21 @@
 // You should have received a copy of the GNU General Public License along with RDMP. If not, see <https://www.gnu.org/licenses/>.
 
 using System;
-using System.IO;
 using System.Linq;
 using System.Security.Cryptography;
 using System.Text;
-using System.Xml.Serialization;
 
 namespace Rdmp.Core.Curation;
 
 /// <summary>
-/// Core RDMP implementation of RSA puublic/private key encryption.  In order to be secure you should create a private key (See PasswordEncryptionKeyLocationUI).  If
+/// Core RDMP implementation of RSA public/private key encryption.  In order to be secure you should create a private key (See PasswordEncryptionKeyLocationUI).  If
 /// no private key is configured then the default Key will be used (this is not secure and anyone with access to the RDMP source code could decrypt your strings - which
 ///  is open source!). Strings are encrypted based on the key file.  Note that because RSA is a good encryption technique you will get a different output (encrypted) string
 /// value for repeated calls to Encrypt even with the same input string.
 /// </summary>
 public class SimpleStringValueEncryption : IEncryptStrings
 {
-    private Encoding encoding = Encoding.ASCII;
+    private readonly RSACryptoServiceProvider _turing=new ();
         
     private const string Key =
         @"<?xml version=""1.0"" encoding=""utf-16""?>
@@ -36,29 +34,33 @@ public class SimpleStringValueEncryption : IEncryptStrings
     <D>Y8zC8dUF7gI9zeeAkKfReInauV6wpg4iVh7jaTDN5DAmKFURTAyv6Il6LEyr07JB</D>
 </RSAParameters>";
 
-    /// <summary>
-    /// The private key file parameters required to encrypt/decrypt strings.  These will either be read from the secure location on disk (<see cref="Repositories.Managers.PasswordEncryptionKeyLocation"/>) or
-    /// will match the the default decryption certificate (<see cref="Key"/>).
-    /// </summary>
-    public RSAParameters PrivateKey { get; set; }
-
-    public SimpleStringValueEncryption(RSAParameters? parameters)
+    public SimpleStringValueEncryption(string parameters)
     {
-        //use the memory one no parameters passed
-        PrivateKey = parameters ?? (RSAParameters)new XmlSerializer(typeof(RSAParameters)).Deserialize(new StringReader(Key));
+        _turing.FromXmlString(parameters ?? Key);
     }
 
     /// <summary>
-    /// Encrypts using its Public Key then returns a the encrypted byte[] as a string by using BitConverter.ToString()
+    /// Encrypt the payload using a new AES key and IV.  The AES key is then encrypted using the RSA public key and the IV is prepended to the encrypted payload.
+    /// A prefix '$js1$' is added to the encrypted string to indicate that it is encrypted using the new (2023) RDMP default encryption algorithm.
     /// </summary>
     /// <returns></returns>
     public string Encrypt(string toEncrypt)
     {
-        using (RSACryptoServiceProvider RSA = new RSACryptoServiceProvider())
-        {
-            RSA.ImportParameters(PrivateKey);
-            return BitConverter.ToString(RSA.Encrypt(encoding.GetBytes(toEncrypt), false));
-        }
+        // Fall back on bad encryption if no private key is configured
+        if (_turing.KeySize < 1024)
+            return string.Join('-',
+                _turing.Encrypt(Encoding.UTF8.GetBytes(toEncrypt), false).Select(octet => octet.ToString("X2")));
+        using var aes = Aes.Create();
+        aes.KeySize = 256;
+        aes.GenerateIV();
+        aes.GenerateKey();
+        var cipherText = Convert.ToBase64String(aes.EncryptCfb(Encoding.UTF8.GetBytes(toEncrypt), aes.IV));
+        var keyBlock = new byte[1+aes.IV.Length+aes.Key.Length];
+        keyBlock[0] = (byte)aes.IV.Length;  // Note: this encoding assumes IV cannot exceed 255 bytes!
+        Array.Copy(aes.IV,0,keyBlock,1,aes.IV.Length);
+        Array.Copy(aes.Key,0,keyBlock,1+aes.IV.Length,aes.Key.Length);
+        var key = Convert.ToBase64String(_turing.Encrypt(keyBlock, true));
+        return $"$js1${key}${cipherText}$";
     }
         
     /// <summary>
@@ -68,27 +70,41 @@ public class SimpleStringValueEncryption : IEncryptStrings
     /// <returns></returns>
     public string Decrypt(string toDecrypt)
     {
-        using (RSACryptoServiceProvider RSA = new RSACryptoServiceProvider())
+        if (toDecrypt.StartsWith($"$js1$") && toDecrypt.EndsWith("$"))
         {
-            RSA.ImportParameters(PrivateKey);
-
-            try
-            {
-                return encoding.GetString(RSA.Decrypt(ByteConverterGetBytes(toDecrypt), false));
-            }
-            catch (CryptographicException e)
-            {
-                throw new CryptographicException("Could not decrypt an encrypted string, possibly you are trying to decrypt it after having changed the PrivateKey to a different one than at the time it was encrypted?",e);
-            }
+            // Good, it's a new-style AES+RSA encrypted string
+            var parts = toDecrypt.Split('$');
+            if (parts.Length != 5)
+                throw new CryptographicException("Could not decrypt an encrypted string, it was not in the expected format of $js1$<base64key>$<base64ciphertext>$");
+            var keyBlock = _turing.Decrypt(Convert.FromBase64String(parts[2]),true);
+            var ivLength = keyBlock[0];
+            var iv = new byte[ivLength];
+            var key = new byte[keyBlock.Length - 1 - ivLength];
+            Array.Copy(keyBlock,1,iv,0,ivLength);
+            Array.Copy(keyBlock,1+ivLength,key,0,key.Length);
+            var cipherText = Convert.FromBase64String(parts[3]);
+            using var aes = Aes.Create();
+            aes.KeySize = 256;
+            aes.IV = iv;
+            aes.Key = key;
+            return Encoding.UTF8.GetString(aes.DecryptCfb(cipherText, aes.IV));
+        }
+        try
+        {
+            return Encoding.UTF8.GetString(_turing.Decrypt(ByteConverterGetBytes(toDecrypt), false));
+        }
+        catch (CryptographicException e)
+        {
+            throw new CryptographicException("Could not decrypt an encrypted string, possibly you are trying to decrypt it after having changed the PrivateKey to a different one than at the time it was encrypted?",e);
         }
     }
 
     private static byte[] ByteConverterGetBytes(string encodedstring)
     {
-        String[] arr = encodedstring.Split('-');
-        byte[] array = new byte[arr.Length];
+        var arr = encodedstring.Split('-');
+        var array = new byte[arr.Length];
 
-        for (int i = 0; i < arr.Length; i++)
+        for (var i = 0; i < arr.Length; i++)
             array[i] = Convert.ToByte(arr[i], 16);
 
         return array;
@@ -99,6 +115,6 @@ public class SimpleStringValueEncryption : IEncryptStrings
         if (value == null || string.IsNullOrWhiteSpace(value))
             return false;
 
-        return value.Count(c=>c== '-') >= 47;
+        return value.StartsWith("$js1$") || value.Count(c => c == '-') >= 47;
     }
 }

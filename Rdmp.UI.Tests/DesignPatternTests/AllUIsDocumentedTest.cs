@@ -21,8 +21,6 @@ namespace Rdmp.UI.Tests.DesignPatternTests;
 
 public class AllUIsDocumentedTest : UnitTests
 {
-    private int evaluatedClasses = 0;
-
     [Test]
     public void EveryClassInAppropriateNamespace()
     {
@@ -78,16 +76,13 @@ public class AllUIsDocumentedTest : UnitTests
             if (type.Namespace.Contains(".Tests"))
                 continue;
 
-            //theese guys can be wherever they want
+            //these guys can be wherever they want
             if (_exemptNamespaces.Any(e => type.Namespace.Contains(e)))
                 continue;
 
             if (!legalNamespaces.Any(ns=>type.Namespace.Contains(ns)))
-                yield return "Expected Type '" + type.Name + "' to be in namespace(s) '" + string.Join("' or '",legalNamespaces) + "' but it was in '" + type.Namespace + "'";
-                
-            evaluatedClasses++;
+                yield return
+                    $"Expected Type '{type.Name}' to be in namespace(s) '{string.Join("' or '", legalNamespaces)}' but it was in '{type.Namespace}'";
         }
-
-        Console.WriteLine("Evaluated " + evaluatedClasses + " classes for namespace compatibility");
     }
 }

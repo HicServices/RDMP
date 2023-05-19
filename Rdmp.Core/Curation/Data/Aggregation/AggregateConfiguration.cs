@@ -33,7 +33,7 @@ namespace Rdmp.Core.Curation.Data.Aggregation;
 /// <para>AggregateConfigurations can be used with an AggregateBuilder to produce runnable SQL which will return a DataTable containing results appropriate to the
 /// query being built.</para>
 /// 
-/// <para>There are Three types of AggregateConfiguration (these are configurations - not seperate classes):</para>
+/// <para>There are Three types of AggregateConfiguration (these are configurations - not separate classes):</para>
 /// <para>1. 'Aggregate Graph' - Produce summary information about a dataset designed to be displayed in a graph e.g. number of records each year by healthboard</para>
 /// <para>2. 'Cohort Aggregate' - Produce a list of unique patient identifiers from a dataset (e.g. 'all patients with HBA1c test code > 50 in biochemistry')</para>
 /// <para>3. 'Joinable PatientIndex Table' - Produce a patient identifier fact table for joining to other Cohort Aggregates during cohort building (See JoinableCohortAggregateConfiguration)</para>
@@ -373,10 +373,7 @@ public class AggregateConfiguration : DatabaseEntity, ICheckable, IOrderable, IC
     /// with other data if it is a 'patient index table'.
     /// </summary>
     [NoMappingToDatabase]
-    public bool IsCohortIdentificationAggregate
-    {
-        get { return Name.StartsWith(CohortIdentificationConfiguration.CICPrefix); }
-    }
+    public bool IsCohortIdentificationAggregate => Name.StartsWith(CohortIdentificationConfiguration.CICPrefix);
 
     /// <summary>
     /// Creates a new AggregateConfiguration (graph, cohort set or patient index table) in the ICatalogueRepository
@@ -480,7 +477,7 @@ public class AggregateConfiguration : DatabaseEntity, ICheckable, IOrderable, IC
     public override string ToString()
     {
         //strip the cic section from the front
-        return Regex.Replace(Name, CohortIdentificationConfiguration.CICPrefix + @"\d+_?", "");
+        return Regex.Replace(Name, $@"{CohortIdentificationConfiguration.CICPrefix}\d+_?", "");
     }
 
     public bool ShouldBeReadOnly(out string reason)
@@ -526,12 +523,13 @@ public class AggregateConfiguration : DatabaseEntity, ICheckable, IOrderable, IC
     public AggregateBuilder GetQueryBuilder(int? topX = null)
     {
         if(string.IsNullOrWhiteSpace(CountSQL))
-            throw new NotSupportedException("Cannot generate an AggregateBuilder because the AggregateConfiguration '" + this + "' has no Count SQL, usually this is the case for 'Cohort Set' Aggregates or 'Patient Index Table' Aggregates.  In either case you should use CohortQueryBuilder instead of AggregateBuilder");
+            throw new NotSupportedException(
+                $"Cannot generate an AggregateBuilder because the AggregateConfiguration '{this}' has no Count SQL, usually this is the case for 'Cohort Set' Aggregates or 'Patient Index Table' Aggregates.  In either case you should use CohortQueryBuilder instead of AggregateBuilder");
 
         var allForcedJoins = ForcedJoins.ToArray();
 
         AggregateBuilder builder;
-        var limitationSQLIfAny = topX == null ? null : "TOP " + topX.Value;
+        var limitationSQLIfAny = topX == null ? null : $"TOP {topX.Value}";
 
         if (allForcedJoins.Any())
             builder = new AggregateBuilder(limitationSQLIfAny, CountSQL, this, allForcedJoins);
@@ -624,7 +622,7 @@ public class AggregateConfiguration : DatabaseEntity, ICheckable, IOrderable, IC
         try
         {
             var qb = GetQueryBuilder();
-            notifier.OnCheckPerformed(new CheckEventArgs("successfully generated Aggregate SQL:" + qb.SQL,
+            notifier.OnCheckPerformed(new CheckEventArgs($"successfully generated Aggregate SQL:{qb.SQL}",
                 CheckResult.Success));
         }
         catch (Exception e)
@@ -753,14 +751,14 @@ public class AggregateConfiguration : DatabaseEntity, ICheckable, IOrderable, IC
     public override void DeleteInDatabase()
     {
         var container = GetCohortAggregateContainerIfAny();
-               
-        if(container != null)
-            container.RemoveChild(this);
+
+        container?.RemoveChild(this);
 
         var isAJoinable = Repository.GetAllObjectsWithParent<JoinableCohortAggregateConfiguration>(this).SingleOrDefault();
         if(isAJoinable != null)
             if (isAJoinable.Users.Any())
-                throw new NotSupportedException("Cannot Delete AggregateConfiguration '" + this + "' because it is a Joinable Patient Index Table AND it has join users.  You must first remove the join usages and then you can delete it.");
+                throw new NotSupportedException(
+                    $"Cannot Delete AggregateConfiguration '{this}' because it is a Joinable Patient Index Table AND it has join users.  You must first remove the join usages and then you can delete it.");
             else
                 isAJoinable.DeleteInDatabase();
 

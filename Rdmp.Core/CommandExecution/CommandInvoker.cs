@@ -5,6 +5,7 @@
 // You should have received a copy of the GNU General Public License along with RDMP. If not, see <https://www.gnu.org/licenses/>.
 
 using System;
+using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
@@ -55,7 +56,7 @@ public class CommandInvoker
 
         AddDelegate(typeof(ICatalogueRepository), true, (p) => _repositoryLocator.CatalogueRepository);
         AddDelegate(typeof(IDataExportRepository), true, (p) => _repositoryLocator.DataExportRepository);
-        AddDelegate(typeof(IBasicActivateItems), true, (p) => _basicActivator);
+        AddDelegate(_basicActivator.GetType() , true, (p) => _basicActivator);
         AddDelegate(typeof(IRDMPPlatformRepositoryServiceLocator), true, (p) => _repositoryLocator);
         AddDelegate(typeof(DirectoryInfo), false, (p) => _basicActivator.SelectDirectory($"Enter Directory for '{p.Name}'"));
         AddDelegate(typeof(FileInfo), false, (p) => _basicActivator.SelectFile($"Enter File for '{p.Name}'"));
@@ -74,7 +75,7 @@ public class CommandInvoker
                 {
                     WindowTitle = $"Type needed for {p.Name}",
                     InitialSearchText = p.DefaultValue?.ToString(),
-                }, p.DemandIfAny?.TypeOf, out Type chosen)
+                }, p.DemandIfAny?.TypeOf, out var chosen)
                 ? chosen 
                 : throw new OperationCanceledException());
 
@@ -104,12 +105,12 @@ public class CommandInvoker
             new DialogArgs { 
                 WindowTitle = GetPromptFor(p),
                 InitialSearchText = p.DefaultValue?.ToString(),
-            } , p.Type, out Enum chosen)?chosen:null);
+            } , p.Type, out var chosen)?chosen:null);
 
 
         _argumentDelegates.Add(new CommandInvokerArrayDelegate(typeof(IMapsDirectlyToDatabaseTable),false,(p)=>
         {
-            IMapsDirectlyToDatabaseTable[] available = GetAllObjectsOfType(p.Type.GetElementType());                
+            var available = GetAllObjectsOfType(p.Type.GetElementType());                
             var result = _basicActivator.SelectMany(
                 new DialogArgs
                 {
@@ -122,7 +123,7 @@ public class CommandInvoker
                 return null;
                 
             var typedArray = Array.CreateInstance(p.Type.GetElementType(),result.Length);
-            for(int i=0;i<typedArray.Length;i++)
+            for(var i=0;i<typedArray.Length;i++)
                 typedArray.SetValue(result[i],i);
                      
             return typedArray;
@@ -142,12 +143,11 @@ public class CommandInvoker
             (p) => _basicActivator.SelectOne(GetPromptFor(p),
                 _basicActivator.GetAll<IMapsDirectlyToDatabaseTable>()
                     .Where(p.Type.IsInstanceOfType)
-                    .Cast<IMapsDirectlyToDatabaseTable>()
                     .ToArray()));
 
         AddDelegate(typeof(IPatcher),false, (p) =>
             {
-                if(!_basicActivator.SelectType("Select Patcher (if any)", typeof(IPatcher), out Type patcherType))
+                if(!_basicActivator.SelectType("Select Patcher (if any)", typeof(IPatcher), out var patcherType))
                     throw new OperationCanceledException();
 
                 if (patcherType == null)
@@ -165,7 +165,7 @@ public class CommandInvoker
         );
 
         _argumentDelegates.Add(new CommandInvokerValueTypeDelegate((p)=>
-            _basicActivator.SelectValueType(GetPromptFor(p), p.Type, p.DefaultValue, out object chosen) 
+            _basicActivator.SelectValueType(GetPromptFor(p), p.Type, p.DefaultValue, out var chosen) 
                 ? chosen 
                 : throw new OperationCanceledException()));
 
@@ -180,7 +180,7 @@ public class CommandInvoker
                     WindowTitle = "Value needed for parameter",
                     EntryLabel = GetPromptFor(p),
                 }
-                , 1000, p.DefaultValue?.ToString(), out string result, false)
+                , 1000, p.DefaultValue?.ToString(), out var result, false)
                 ? result
                 : throw new OperationCanceledException();
     }
@@ -206,7 +206,7 @@ public class CommandInvoker
         
     public IEnumerable<Type> GetSupportedCommands()
     {
-        return _basicActivator.RepositoryLocator.CatalogueRepository?.MEF?.GetAllTypes()?.Where(IsSupported) ?? throw new Exception("MEF property has not been initialized on the activator");
+        return _basicActivator.RepositoryLocator.CatalogueRepository?.MEF?.GetAllTypes()?.Where(t=>WhyCommandNotSupported(t) is null) ?? throw new Exception("MEF property has not been initialized on the activator");
     }
 
     /// <summary>
@@ -221,10 +221,10 @@ public class CommandInvoker
     }
     private void ExecuteCommand(ConstructorInfo constructorInfo, CommandLineObjectPicker picker)
     {
-        List<object> parameterValues = new List<object>();
-        bool complainAboutExtraParameters = true;
+        var parameterValues = new List<object>();
+        var complainAboutExtraParameters = true;
 
-        int idx = 0;
+        var idx = 0;
 
         //for each parameter on the constructor we want to invoke
         foreach (var parameterInfo in constructorInfo.GetParameters())
@@ -327,26 +327,39 @@ public class CommandInvoker
                     new DialogArgs
                     {
                         WindowTitle = p.Name,
-                        InitialObjectSelection = p.DefaultValue == null ? null :
-                            ((IEnumerable<T>)p.DefaultValue).Cast<IMapsDirectlyToDatabaseTable>().ToArray()
-
+                        InitialObjectSelection = ((IEnumerable<T>)p.DefaultValue)?.Cast<IMapsDirectlyToDatabaseTable>().ToArray()
                     }, typeof(T), _basicActivator.GetAll(p.Type).Cast<IMapsDirectlyToDatabaseTable>().ToArray())
                 ?.Cast<T>()?.ToArray() ?? throw new OperationCanceledException();
     }
 
-    public bool IsSupported(ConstructorInfo c)
+    public string WhyCommandNotSupported(ConstructorInfo c)
     {
-        return c.GetCustomAttribute<UseWithCommandLineAttribute>() != null || c.GetParameters().All(IsSupported);
+        return c.GetCustomAttribute<UseWithCommandLineAttribute>() != null
+            ? null
+            : c.GetParameters().Select(WhyCommandNotSupported).SkipWhile(string.IsNullOrEmpty).FirstOrDefault();
     }
 
-    public bool IsSupported(ParameterInfo p)
+    public string WhyCommandNotSupported(ParameterInfo p)
     {
-        return GetDelegate(new RequiredArgument(p)) != null;
+        return GetDelegate(new RequiredArgument(p)) != null ? "":$"No delegate for {p.ParameterType}";
     }
 
-    public CommandInvokerDelegate GetDelegate(RequiredArgument required)
+    private readonly ConcurrentDictionary<RequiredArgument, CommandInvokerDelegate> _delegateCache = new();
+    public CommandInvokerDelegate GetDelegate(RequiredArgument argument)
     {
-        var match =  _argumentDelegates.FirstOrDefault(k=>k.CanHandle(required.Type));
+        return _delegateCache.GetOrAdd(argument, GetDelegateCacheMiss);
+    }
+    private CommandInvokerDelegate GetDelegateCacheMiss(RequiredArgument required)
+    {
+        // Special-case IMapsDirectlyToDatabaseTable and Enum, because the pickers can generate arbitrary subtypes of that
+
+        CommandInvokerDelegate match;
+        if (required.Type.IsAssignableTo(typeof(IMapsDirectlyToDatabaseTable)))
+            match=_argumentDelegates.FirstOrDefault(k => k.CanHandle(typeof(IMapsDirectlyToDatabaseTable))); 
+        else if (required.Type.IsAssignableTo(typeof(Enum)))
+            match = _argumentDelegates.FirstOrDefault(k => k.CanHandle(typeof(Enum)));
+        else
+            match=_argumentDelegates.FirstOrDefault(k => k.CanHandle(required.Type));
 
         if(match != null)
         {
@@ -363,29 +376,31 @@ public class CommandInvoker
         // return delegate anyway (could be null)
         return match;
     }
-    public bool IsSupported(Type t)
+    public string WhyCommandNotSupported(Type t)
     {
-        bool acceptableType = typeof(IAtomicCommand).IsAssignableFrom(t) && !t.IsAbstract && !t.IsInterface;
-
-        if (!acceptableType)
-            return false;
+        if (t.IsAbstract)
+            return "Abstract";
+        if (t.IsInterface)
+            return "Interface";
+        if (!typeof(IAtomicCommand).IsAssignableFrom(t))
+            return "Not a command";
 
         if (_basicActivator.GetIgnoredCommands().Contains(t))
-            return false;
+            return "Ignored";
 
         try
         {
-            var constructor = GetConstructor(t, new CommandLineObjectPicker(new string[0]{ },_basicActivator));
+            var constructor = GetConstructor(t, new CommandLineObjectPicker(Array.Empty<string>(),_basicActivator));
 
             if (constructor == null)
-                return false;
+                return "No constructor";
 
-            return IsSupported(constructor);
+            return WhyCommandNotSupported(constructor);
 
         }
-        catch (Exception)
+        catch (Exception e)
         {
-            return false;
+            return e.Message;
         }
     }
 
@@ -430,7 +445,7 @@ public class CommandInvoker
     private IMapsDirectlyToDatabaseTable[] GetAllObjectsOfType(Type type)
     {
         if (type.IsAbstract || type.IsInterface)
-            return _basicActivator.GetAll(type).Cast<IMapsDirectlyToDatabaseTable>().ToArray();
+            return _basicActivator.GetAll(type).ToArray();
 
         if (_repositoryLocator.CatalogueRepository.SupportsObjectType(type))
             return  _repositoryLocator.CatalogueRepository.GetAllObjects(type).ToArray();

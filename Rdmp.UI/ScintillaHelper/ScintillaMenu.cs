@@ -7,7 +7,7 @@
 using System;
 using System.ComponentModel;
 using System.Windows.Forms;
-using NHunspell;
+using WeCantSpell.Hunspell;
 using Rdmp.Core.ReusableLibraryCode.Settings;
 using ScintillaNET;
 
@@ -32,7 +32,7 @@ class ScintillaMenu:ContextMenuStrip
     /// Spell checker for the hosted control.  If set then right clicks will spell check the word
     /// under the caret and show suggestions
     /// </summary>
-    public Hunspell Hunspell { get; set; }
+    public WordList Hunspell { get; set; }
 
     public ScintillaMenu(Scintilla scintilla, bool spellCheck) : base()
     {
@@ -116,24 +116,17 @@ class ScintillaMenu:ContextMenuStrip
         _miSpelling.DropDown.Items.Clear();
         _miSpelling.Enabled = false;
 
-        //if we are checking spelling
-        if (Hunspell != null)
-        {
-            //get current word
-            var word = GetCurrentWord();
+        // Only proceed if we are checking spelling
+        if (Hunspell == null) return;
+        //get current word
+        var word = GetCurrentWord();
 
-            if(!string.IsNullOrWhiteSpace(word))
-            {
-                if(!Hunspell.Spell(word))
-                {
-                    foreach(var suggested in Hunspell.Suggest(word))
-                    {
-                        var mi = new ToolStripMenuItem(suggested, null, (s, ev) => { SetWord( word, suggested);});
-                        _miSpelling.DropDownItems.Add(mi);
-                        _miSpelling.Enabled = true;
-                    }                        
-                }
-            }
+        if (string.IsNullOrWhiteSpace(word) || Hunspell.Check(word)) return;
+        foreach(var suggested in Hunspell.Suggest(word))
+        {
+            var mi = new ToolStripMenuItem(suggested, null, (s, ev) => { SetWord( word, suggested);});
+            _miSpelling.DropDownItems.Add(mi);
+            _miSpelling.Enabled = true;
         }
     }
 

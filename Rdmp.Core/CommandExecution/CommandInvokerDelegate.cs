@@ -33,10 +33,10 @@ public class CommandInvokerDelegate
     /// Set to true to require <see cref="HandledType"/> to exactly match candidates.  False to identify
     /// compatible objects using <see cref="Type.IsAssignableFrom(Type?)"/>.  Defaults to false.
     /// </summary>
-    public bool RequireExactMatch { get; internal set; }
+    public bool RequireExactMatch { get; internal init; }
 
     /// <summary>
-    /// Defines a new <see cref="Type"/> which we know how to get instances at runtime to fulfill
+    /// Defines a new <see cref="Type"/> which we know how to get instances at runtime to fulfil
     /// </summary>
     /// <param name="handledType"></param>
     /// <param name="isAuto"></param>
@@ -55,9 +55,6 @@ public class CommandInvokerDelegate
     /// <returns></returns>
     public virtual bool CanHandle(Type t)
     {
-        if (RequireExactMatch)
-            return HandledType == t;
-
-        return HandledType.IsAssignableFrom(t);
+        return HandledType==t || (!RequireExactMatch && HandledType.IsAssignableTo(t));
     }
 }

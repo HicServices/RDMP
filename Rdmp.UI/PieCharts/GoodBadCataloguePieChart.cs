@@ -152,7 +152,7 @@ public partial class GoodBadCataloguePieChart : RDMPUserControl, IDashboardableC
             if (catalogues.Any())
                 return catalogues.SelectMany(c => c.CatalogueItems).Where(ci => _collection.Include(ci)).ToArray();//get the extractable columns
             else
-                return new CatalogueItem[0];//there weren't any so Catalogues so wont be any ExtractionInformationsEither
+                return Array.Empty<CatalogueItem>();//there weren't any so Catalogues so wont be any ExtractionInformationsEither
         }
         else
             return  _collection.GetSingleCatalogueModeCatalogue().CatalogueItems;

@@ -17,17 +17,17 @@ namespace Rdmp.UI.Tests.DesignPatternTests.ClassFileEvaluation;
 class DocumentationCrossExaminationTest
 {
     private readonly DirectoryInfo _slndir;
-    Regex matchComments = new Regex(@"///[^;\r\n]*");
+    private static readonly Regex MatchComments = new Regex(@"///[^;\r\n]*",RegexOptions.Compiled|RegexOptions.CultureInvariant);
 
     private string[] _mdFiles;
-    Regex matchMdReferences = new Regex(@"`(.*)`");
+    private static readonly Regex MatchMdReferences = new Regex(@"`(.*)`",RegexOptions.Compiled|RegexOptions.CultureInvariant);
 
-    public const bool ReWriteMarkdownToReferenceGlossary = true;
+    private const bool ReWriteMarkdownToReferenceGlossary = true;
 
     //words that are in Pascal case and you can use in comments despite not being in the codebase... this is an ironic variable to be honest
     //since the very fact that you add something to _ignorelist means that it is in the codebase after all!
-    #region Ignorelist Terms
-    private string[] _ignorelist = new []
+    #region IgnoreList Terms
+    private static readonly HashSet<string> IgnoreList = new()
     {
         "ExecuteAggregateGraph",
         "ExtractMetadata",
@@ -279,7 +279,7 @@ class DocumentationCrossExaminationTest
 
     public void FindProblems(List<string> csFilesFound)
     {
-        //find all non coment code and extract all unique tokens
+        //find all non comment code and extract all unique tokens
 
         //find all .md files and extract all `` code blocks
 
@@ -309,7 +309,7 @@ class DocumentationCrossExaminationTest
             foreach (string line in File.ReadAllLines(file))
             {
                 //if it is a comment
-                if (matchComments.IsMatch(line))
+                if (MatchComments.IsMatch(line))
                 {
                     if (isDesignerFile)
                         continue;
@@ -340,7 +340,7 @@ class DocumentationCrossExaminationTest
             fileCommentTokens.Add(mdFile,new HashSet<string>());
             var fileContents = File.ReadAllText(mdFile);
                 
-            foreach (Match m in matchMdReferences.Matches(fileContents))
+            foreach (Match m in MatchMdReferences.Matches(fileContents))
             foreach (Match word in Regex.Matches(m.Groups[1].Value, @"([A-Z]\w+){2,}"))
                 fileCommentTokens[mdFile].Add(word.Value);
 
@@ -350,42 +350,25 @@ class DocumentationCrossExaminationTest
         }
 
 
-        foreach (KeyValuePair<string, HashSet<string>> kvp in fileCommentTokens)
+        foreach (var (filename,tokens) in fileCommentTokens)
         {
-            foreach (string s in kvp.Value)
-            {
-                if(!codeTokens.Contains(s) && !codeTokens.Contains("ExecuteCommand"+s))
-                {
-                    if (_ignorelist.Contains(s))
-                        continue;
-
-                    //it's SHOUTY TEXT
-                    if (s.ToUpper() == s)
-                        continue;
-
-                    //if it's a plural e.g. TableInfos then we are still ok if we find TableInfo
-                    if (s.Length > 2 && s.EndsWith("s"))
-                    {
-                        if (codeTokens.Contains(s.Substring(0, s.Length - 1)))
-                            continue;
-                    }
-                        
-                    problems.Add("FATAL PROBLEM: File '" + kvp.Key +"' talks about something which isn't in the codebase, called a:" +Environment.NewLine + s);
-                        
-                }
-            }
+            problems.AddRange(tokens
+                .Where(token => !codeTokens.Contains(token) && !codeTokens.Contains($"ExecuteCommand{token}"))
+                .Where(token => !IgnoreList.Contains(token))
+                .Where(token => token.ToUpper() != token)
+                .Where(token => token.Length <= 2 || !token.EndsWith("s") || !codeTokens.Contains(token[..^1]))
+                .Select(token =>
+                    $"FATAL PROBLEM: File '{filename}' talks about something which isn't in the codebase, called a:{Environment.NewLine}{token}"));
         }
 
         if (problems.Any())
         {
             Console.WriteLine("Found problem words in comments (Scroll down to see by file then if you think they are fine add them to DocumentationCrossExaminationTest._ignorelist):");
             foreach (var pLine in problems.Where(l=>l.Contains('\n')).Select(p => p.Split('\n')))
-                Console.WriteLine("\"" + pLine[1] + "\",");
-                
+                Console.WriteLine($"\"{pLine[1]}\",");
+            foreach (string problem in problems)
+                Console.WriteLine(problem);
         }
-
-        foreach (string problem in problems)
-            Console.WriteLine(problem);
 
         Assert.AreEqual(0,problems.Count,"Expected there to be nothing talked about in comments that doesn't appear in the codebase somewhere");
     }
@@ -394,7 +377,7 @@ class DocumentationCrossExaminationTest
     {
         string codeBlocks = Path.Combine(TestContext.CurrentContext.TestDirectory,"../../../DesignPatternTests/MarkdownCodeBlockTests.cs");
 
-        Console.WriteLine("Starting " + mdFile);
+        Console.WriteLine($"Starting {mdFile}");
 
         var codeBlocksContent = File.ReadAllText(codeBlocks);
 
@@ -447,11 +430,7 @@ class DocumentationCrossExaminationTest
 
             Assert.AreEqual(code.Trim(), docs.Trim(),        
                 $"Code in the documentation markdown (actual) did not match the corresponding compiled code (expected) for code guid {kvp.Key} markdown file was {mdFile} and code file was {codeBlocks}");
-
-            Console.WriteLine("Validated markdown block " + kvp.Key);
         }
-            
-        Console.WriteLine("Validated " + markdownCodeBlocks.Count + " markdown blocks");
     }
 
     private void EnsureMaximumGlossaryUse(string mdFile, List<string> problems)
@@ -519,7 +498,7 @@ class DocumentationCrossExaminationTest
                         string relPath = diff.OriginalString;
 
                         if (!relPath.StartsWith("."))
-                            relPath = "./" + relPath;
+                            relPath = $"./{relPath}";
 
                         string suggestedLine = $"[{match.Value}]: {relPath}#{match.Value}";
 

@@ -158,17 +158,20 @@ public class AutoCompleteProvider : IAutoCompleteProvider
         var fullSql = syntaxHelper.EnsureFullyQualified(dbName, null, runtimeName);
 
 
-        foreach (IHasStageSpecificRuntimeName o in tableInfo.GetColumnsAtStage(loadStage))
+        foreach (var o in tableInfo.GetColumnsAtStage(loadStage))
         {
-            var preDiscarded = o as PreLoadDiscardedColumn;
-            var columnInfo = o as ColumnInfo;
-
-            if (preDiscarded != null)
-                Add(preDiscarded, tableInfo, dbName);
-            else
-            if (columnInfo != null)
-                Add(columnInfo, tableInfo, dbName, loadStage, syntaxHelper);
-            else throw new Exception("Expected IHasStageSpecificRuntimeName returned by TableInfo.GetColumnsAtStage to return only ColumnInfos and PreLoadDiscardedColumns.  It returned a '" + o.GetType().Name + "'");
+            switch (o)
+            {
+                case PreLoadDiscardedColumn preDiscarded:
+                    Add(preDiscarded, tableInfo, dbName);
+                    break;
+                case ColumnInfo columnInfo:
+                    Add(columnInfo, tableInfo, dbName, loadStage, syntaxHelper);
+                    break;
+                default:
+                    throw new Exception(
+                        $"Expected IHasStageSpecificRuntimeName returned by TableInfo.GetColumnsAtStage to return only ColumnInfos and PreLoadDiscardedColumns.  It returned a '{o.GetType().Name}'");
+            }
         }
 
         AddUnlessDuplicate(fullSql);

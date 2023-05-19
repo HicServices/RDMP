@@ -39,7 +39,7 @@ class CohortContainerManagerFromChildProvider:CohortContainerManager
         if (_contents.ContainsKey(parent.ID))
             return _contents[parent.ID].ToArray();
 
-        return new IOrderable[0];
+        return Array.Empty<IOrderable>();
     }
 
     public void FetchAllRelationships(ICoreChildProvider childProvider)

@@ -81,11 +81,9 @@ public class PermissionWindow : DatabaseEntity, IPermissionWindow
     private string SerializePermissionWindowPeriods()
     {
         var serializer = new XmlSerializer(typeof (List<PermissionWindowPeriod>));
-        using (var output = new StringWriter())
-        {
-            serializer.Serialize(output, PermissionWindowPeriods);
-            return output.ToString();
-        }
+        using var output = new StringWriter();
+        serializer.Serialize(output, PermissionWindowPeriods);
+        return output.ToString();
     }
 
     private void DeserializePermissionWindowPeriods(string permissionPeriodConfig)
@@ -101,16 +99,12 @@ public class PermissionWindow : DatabaseEntity, IPermissionWindow
     /// <inheritdoc/>
     public bool WithinPermissionWindow()
     {
-        if (!PermissionWindowPeriods.Any())
-            return true;
-
         return WithinPermissionWindow(DateTime.UtcNow);
     }
 
     /// <inheritdoc/>
     public virtual bool WithinPermissionWindow(DateTime dateTimeUTC)
     {
-            
         if (!PermissionWindowPeriods.Any())
             return true;
 

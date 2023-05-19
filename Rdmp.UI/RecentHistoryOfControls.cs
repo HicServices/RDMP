@@ -6,6 +6,7 @@
 
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Windows.Forms;
 using Rdmp.Core.ReusableLibraryCode.Settings;
 
@@ -18,14 +19,15 @@ namespace Rdmp.UI;
 public class RecentHistoryOfControls
 {
     private readonly Guid _controlGuid;
-    private  List<string> _recentValues;
+    private readonly HashSet<string> _rvContents;
+    private readonly List<string> _recentValues;
 
     public RecentHistoryOfControls(TextBox c, Guid controlGuid):this(controlGuid)
     {
-        var vals = new AutoCompleteStringCollection();
-        vals.AddRange(_recentValues.ToArray());
+        var values = new AutoCompleteStringCollection();
+        values.AddRange(_recentValues.ToArray());
 
-        c.AutoCompleteCustomSource = vals;
+        c.AutoCompleteCustomSource = values;
         c.AutoCompleteSource = AutoCompleteSource.CustomSource;
         c.AutoCompleteMode = AutoCompleteMode.Suggest;
         c.Leave += (sender, args) => AddResult(c.Text);
@@ -33,10 +35,10 @@ public class RecentHistoryOfControls
 
     public RecentHistoryOfControls(ComboBox c, Guid controlGuid):this(controlGuid)
     {
-        var vals = new AutoCompleteStringCollection();
-        vals.AddRange(_recentValues.ToArray());
+        var values = new AutoCompleteStringCollection();
+        values.AddRange(_recentValues.ToArray());
 
-        c.AutoCompleteCustomSource = vals;
+        c.AutoCompleteCustomSource = values;
 
         if (c.DropDownStyle == ComboBoxStyle.DropDownList)
         {
@@ -54,15 +56,16 @@ public class RecentHistoryOfControls
     {
         _controlGuid = controlGuid;
         _recentValues = new List<string>(UserSettings.GetHistoryForControl(controlGuid));
+        _rvContents = new(_recentValues);
     }
 
     public void AddResult( string value,bool save = true)
     {
         // bump it to the top
-        if(_recentValues.Contains(value))
-        {
+        if(_rvContents.Contains(value))
             _recentValues.Remove(value);
-        }
+        else
+            _rvContents.Add(value);
         _recentValues.Add(value);
         if (save)
             Save();
@@ -82,18 +85,19 @@ public class RecentHistoryOfControls
     public void SetValueToMostRecentlySavedValue(TextBox c)
     {
         if (c.AutoCompleteCustomSource.Count > 0)
-            c.Text = c.AutoCompleteCustomSource[c.AutoCompleteCustomSource.Count - 1]; //set the current text to the last used text
+            c.Text = c.AutoCompleteCustomSource[^1]; //set the current text to the last used text
     }
     public void SetValueToMostRecentlySavedValue(ComboBox c)
     {
         if (c.AutoCompleteCustomSource.Count > 0)
-            c.Text = c.AutoCompleteCustomSource[c.AutoCompleteCustomSource.Count - 1]; //set the current text to the last used text
+            c.Text = c.AutoCompleteCustomSource[^1]; //set the current text to the last used text
     }
 
     public void AddHistoryAsItemsToComboBox(ComboBox c)
     {
-        if (c.AutoCompleteCustomSource.Count > 0)
-            foreach (string s in c.AutoCompleteCustomSource)
-                c.Items.Add(s);
+        if (c.AutoCompleteCustomSource.Count <= 0) return;
+        var items=new string[c.AutoCompleteCustomSource.Count];
+        c.AutoCompleteCustomSource.CopyTo(items, 0);
+        c.Items.AddRange(items.Cast<object>().ToArray());
     }
 }

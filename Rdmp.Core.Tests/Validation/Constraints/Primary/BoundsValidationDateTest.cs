@@ -329,7 +329,6 @@ class BoundsValidationDateTest: ValidationTests
     }
 
     [Test]
-    [Ignore("Thomas, can you fix please?")]
     public void f_invalid_comparator_field_evokes_exception()
     {
         var v = new Validator();

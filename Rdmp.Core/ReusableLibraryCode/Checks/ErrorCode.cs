@@ -12,7 +12,7 @@ namespace Rdmp.Core.ReusableLibraryCode.Checks;
 /// Describes an error that can surface during RDMPs execution as a result of state e.g. user is trying to extract to a db but the
 /// destination table already exists.
 /// </summary>
-public class ErrorCode
+public sealed class ErrorCode
 {
 
     /// <summary>

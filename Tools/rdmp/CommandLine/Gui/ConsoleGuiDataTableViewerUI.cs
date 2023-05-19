@@ -16,6 +16,7 @@ namespace Rdmp.Core.CommandLine.Gui;
 
 using System.Data;
 
+
 public partial class ConsoleGuiDataTableViewerUI {
         
     public ConsoleGuiDataTableViewerUI(DataTable tbl) {

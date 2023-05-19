@@ -12,6 +12,15 @@ namespace Rdmp.Core.Tests.ReusableCodeTests;
 
 public class UsefulStuffUnitTests
 {
+    [TestCase("BadValue", false)]
+    [TestCase("120356785", false)]
+    [TestCase("1203567850", false)]
+    [TestCase("1203567855", true)]
+    public void ChiValidationTests(string chi, bool valid)
+    {
+        Assert.AreEqual(valid,UsefulStuff.GetInstance().CHIisOK(chi),"Validation gave incorrect answer for CHI '{0}'",chi);
+    }
+
     [TestCase("[ff ff]", "ff ff")]
     [TestCase("`ff ff`", "ff ff")]
     [TestCase("'ff ff'", "ff ff")]

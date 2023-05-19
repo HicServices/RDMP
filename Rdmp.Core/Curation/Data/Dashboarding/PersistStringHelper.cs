@@ -136,7 +136,8 @@ public class PersistStringHelper
         }
         catch (Exception e)
         {
-            throw new PersistenceException("Could not match ObjectCollection delimiters in persistenceString '" + persistenceString + "'", e);
+            throw new PersistenceException(
+                $"Could not match ObjectCollection delimiters in persistenceString '{persistenceString}'", e);
         }
     }
          
@@ -160,15 +161,16 @@ public class PersistStringHelper
             var objectTokens = objectString.Split(Separator);
                 
             if (objectTokens.Length != 3)
-                throw new PersistenceException("Could not figure out what database object to fetch because the list contained an item with an invalid number of tokens (" + objectTokens.Length + " tokens).  The current object string is:" + Environment.NewLine + objectString);
+                throw new PersistenceException(
+                    $"Could not figure out what database object to fetch because the list contained an item with an invalid number of tokens ({objectTokens.Length} tokens).  The current object string is:{Environment.NewLine}{objectString}");
 
             var dbObj = repositoryLocator.GetArbitraryDatabaseObject(objectTokens[0], objectTokens[1], Int32.Parse(objectTokens[2]));
 
             if (dbObj != null)
                 toReturn.Add(dbObj);
             else
-                throw new PersistenceException("DatabaseObject '" + objectString +
-                                               "' has been deleted meaning IPersistableObjectCollection could not be properly created/populated");
+                throw new PersistenceException(
+                    $"DatabaseObject '{objectString}' has been deleted meaning IPersistableObjectCollection could not be properly created/populated");
         }
 
         return toReturn;

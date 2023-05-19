@@ -32,12 +32,9 @@ public partial class DitaExtractorUI : RDMPUserControl
 
     private void btnBrowse_Click(object sender, EventArgs e)
     {
-        FolderBrowserDialog ofd = new FolderBrowserDialog();
-            
-            
-        DialogResult d = ofd.ShowDialog();
-
-        if (d == DialogResult.OK || d == DialogResult.Yes)
+        using var ofd = new FolderBrowserDialog();
+        
+        if (ofd.ShowDialog() is DialogResult.OK or DialogResult.Yes)
             tbExtractionDirectory.Text = ofd.SelectedPath;
     }
 
@@ -45,21 +42,19 @@ public partial class DitaExtractorUI : RDMPUserControl
     {
         try
         {
-            DirectoryInfo outputPath = new DirectoryInfo(tbExtractionDirectory.Text);
+            var outputPath = new DirectoryInfo(tbExtractionDirectory.Text);
 
-            if (outputPath.GetFiles("*.dita*").Any())
+            if (outputPath.GetFiles("*.dita*").Any() && Activator.YesNo("There are files already in this directory, do you want to delete them?","Clear Directory?"))
             {
-                if(Activator.YesNo("There are files already in this directory, do you want to delete them?","Clear Directory?"))
-                    foreach (FileInfo file in outputPath.GetFiles("*.dita*"))
-                        file.Delete();
+                foreach (var file in outputPath.GetFiles("*.dita*"))
+                    file.Delete();
             }
 
-            DitaCatalogueExtractor extractor = new DitaCatalogueExtractor(Activator.RepositoryLocator.CatalogueRepository, outputPath);
+            var extractor = new DitaCatalogueExtractor(Activator.RepositoryLocator.CatalogueRepository, outputPath);
             extractor.Extract(progressBarsUI1);
         }
         catch (Exception ex)
         {
-
             MessageBox.Show(ex.Message);
         }
             
@@ -70,16 +65,15 @@ public partial class DitaExtractorUI : RDMPUserControl
         if(string.IsNullOrWhiteSpace(tbExtractionDirectory.Text))
             return;
 
-        DirectoryInfo d = new DirectoryInfo(tbExtractionDirectory.Text);
-
-        UsefulStuff.GetInstance().ShowPathInWindowsExplorer(d);
+        var d = new DirectoryInfo(tbExtractionDirectory.Text);
+        UsefulStuff.ShowPathInWindowsExplorer(d);
     }
 
     private void btnCheck_Click(object sender, EventArgs e)
     {
         var popup = new PopupChecksUI("Checking Dita extraction",false);
 
-        DitaCatalogueExtractor extractor = new DitaCatalogueExtractor(Activator.RepositoryLocator.CatalogueRepository, null);
+        var extractor = new DitaCatalogueExtractor(Activator.RepositoryLocator.CatalogueRepository, null);
         popup.StartChecking(extractor);
     }
 }

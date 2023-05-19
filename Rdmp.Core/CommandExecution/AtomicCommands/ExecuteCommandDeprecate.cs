@@ -5,15 +5,15 @@
 // You should have received a copy of the GNU General Public License along with RDMP. If not, see <https://www.gnu.org/licenses/>.
 
 using Rdmp.Core.Curation.Data;
-using Rdmp.Core.Repositories.Construction;
 using Rdmp.Core.MapsDirectlyToDatabaseTable;
+using Rdmp.Core.Repositories.Construction;
 
 namespace Rdmp.Core.CommandExecution.AtomicCommands;
 
-public class ExecuteCommandDeprecate : BasicCommandExecution, IAtomicCommand
+public class ExecuteCommandDeprecate : BasicCommandExecution
 {
     private readonly IMightBeDeprecated[] _o;
-    private bool _desiredState;
+    private readonly bool _desiredState;
       
     [UseWithObjectConstructor]
     public ExecuteCommandDeprecate(IBasicActivateItems itemActivator, 
@@ -55,17 +55,13 @@ public class ExecuteCommandDeprecate : BasicCommandExecution, IAtomicCommand
             o.SaveToDatabase();
         }
 
-        if (BasicActivator.IsInteractive && _o.Length == 1 && _o[0] is Catalogue)
+        if (!BasicActivator.IsInteractive || _o.Length != 1 || _o[0] is not Catalogue || !_desiredState ||
+            !BasicActivator.YesNo("Do you have a replacement Catalogue you want to link?", "Replacement")) return;
+        var cmd = new ExecuteCommandReplacedBy(BasicActivator, _o[0], null)
         {
-            if (_desiredState == true && BasicActivator.YesNo("Do you have a replacement Catalogue you want to link?", "Replacement"))
-            {
-                var cmd = new ExecuteCommandReplacedBy(BasicActivator, _o[0], null)
-                {
-                    PromptToPickReplacement = true
-                };
-                cmd.Execute();
-            }
-        }
+            PromptToPickReplacement = true
+        };
+        cmd.Execute();
     }
 
     private string GetDescription()

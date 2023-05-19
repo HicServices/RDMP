@@ -32,8 +32,10 @@ jobs:
         uses: actions/checkout@v3
       - name: Determine RDMP build version
         id: version
-        shell: cmd
-        run: perl -ne "print \"::set-output name=rdmpversion::$1\" if /AssemblyVersion\(\"([0-9.]+)\"\)/;" SharedAssemblyInfo.cs
+        shell: bash
+        run: perl -ne "print \"rdmpversion=\$1\n\" if /AssemblyInformationalVersion\(\"([0-9a-z.-]+)\"\)/;" SharedAssemblyInfo.cs >> $GITHUB_OUTPUT
+      - name: Check output
+        run: echo ${{ steps.version.outputs.rdmpversion }}
       - name: Setup .NET Core
         uses: actions/setup-dotnet@v3.0.3
         with:
@@ -75,34 +77,24 @@ jobs:
             dotnet run -c Release --no-build --project Tools/rdmp/rdmp.csproj -- -f ./scripts/create_cohort.yaml &&
             dotnet run -c Release --no-build --project Tools/rdmp/rdmp.csproj -- -f ./scripts/create_dataload.yaml && 
             dotnet run -c Release --no-build --project Tools/rdmp/rdmp.csproj -- -f ./scripts/orphan_extractable_column.yaml && 
-      - name: Test Core code
+      - name: Test (DB)
         shell: bash
         run: |
-          dotnet test "./Rdmp.Core.Tests/Rdmp.Core.Tests.csproj" --nologo --collect:"XPlat Code Coverage" --no-build --verbosity minimal -c Release --results-directory coverage -- DataCollectionRunSettings.DataCollectors.DataCollector.Configuration.Format=lcov
-          mv `find coverage -type f` core.lcov
-      - name: Test UI code
-        shell: bash
-        run: |
-          dotnet test "./Rdmp.UI.Tests/Rdmp.UI.Tests.csproj" --nologo --collect:"XPlat Code Coverage" --no-build --verbosity minimal -c Release --results-directory coverage -- DataCollectionRunSettings.DataCollectors.DataCollector.Configuration.Format=lcov
-          mv `find coverage -type f` ui.lcov
+          rm -rf coverage          
+          dotnet test Rdmp.UI.Tests/Rdmp.UI.Tests.csproj --nologo --collect:"XPlat Code Coverage" --no-build --verbosity minimal -c Release --results-directory coverage -- DataCollectionRunSettings.DataCollectors.DataCollector.Configuration.Format=lcov
+          mv `find coverage -type f` db-ui.lcov
+          dotnet test Rdmp.Core.Tests/Rdmp.Core.Tests.csproj --nologo --collect:"XPlat Code Coverage" --no-build --verbosity minimal -c Release --results-directory coverage -- DataCollectionRunSettings.DataCollectors.DataCollector.Configuration.Format=lcov
+          mv `find coverage -type f` db-core.lcov
       - name: Test with local file system
         shell: bash
         run:  |
-              echo "UseFileSystemRepo: true" >> Tests.Common/TestDatabases.txt
-              cat Tests.Common/TestDatabases.txt
-      - name: Test Core (with file system repo)
-        shell: bash
-        run: |
-          dotnet test "./Rdmp.Core.Tests/Rdmp.Core.Tests.csproj" --nologo --collect:"XPlat Code Coverage" --no-build --verbosity minimal -c Release --results-directory coverage -- DataCollectionRunSettings.DataCollectors.DataCollector.Configuration.Format=lcov
-          mv `find coverage -type f` corefs.lcov
-      - name: Test UI (with file system repo)
-        shell: bash
-        run: |
-          dotnet test "./Rdmp.UI.Tests/Rdmp.UI.Tests.csproj" --nologo --collect:"XPlat Code Coverage" --no-build --verbosity minimal -c Release --results-directory coverage -- DataCollectionRunSettings.DataCollectors.DataCollector.Configuration.Format=lcov
-          mv `find coverage -type f` uifs.lcov
-      
+          echo "UseFileSystemRepo: true" >> Tests.Common/TestDatabases.txt
+          dotnet test Rdmp.UI.Tests/Rdmp.UI.Tests.csproj --nologo --collect:"XPlat Code Coverage" --no-build --verbosity minimal -c Release --results-directory coverage -- DataCollectionRunSettings.DataCollectors.DataCollector.Configuration.Format=lcov
+          mv `find coverage -type f` fs-ui.lcov
+          dotnet test Rdmp.Core.Tests/Rdmp.Core.Tests.csproj --nologo --collect:"XPlat Code Coverage" --no-build --verbosity minimal -c Release --results-directory coverage -- DataCollectionRunSettings.DataCollectors.DataCollector.Configuration.Format=lcov
+          mv `find coverage -type f` fs-core.lcov
       - name: Merge LCovs
-        run: lcov-result-merger "{ui,core}{,fs}.lcov" all.lcov
+        run: lcov-result-merger "{db,fs}-{ui,core}.lcov" all.lcov
       - name: Coveralls
         uses: coverallsapp/github-action@master
         with:
@@ -112,9 +104,9 @@ jobs:
       
       - name: Package
         run: |
-          dotnet publish Application/ResearchDataManagementPlatform/ResearchDataManagementPlatform.csproj -r win-x64 --self-contained -c Release -o PublishWinForms -p:GenerateDocumentationFile=false -p:PublishSingleFile=false --verbosity minimal --nologo
-          dotnet publish Tools/rdmp/rdmp.csproj -r win-x64 --self-contained -c Release -o PublishWindows -p:GenerateDocumentationFile=false -p:PublishSingleFile=false --verbosity minimal --nologo
-          dotnet publish Tools/rdmp/rdmp.csproj -r linux-x64 --self-contained -c Release -o PublishLinux -p:GenerateDocumentationFile=false -p:PublishSingleFile=false --verbosity minimal --nologo
+          dotnet publish Application/ResearchDataManagementPlatform/ResearchDataManagementPlatform.csproj -r win-x64 --self-contained -c Release -o PublishWinForms -p:GenerateDocumentationFile=false -p:PublishSingleFile=true -p:PublishReadyToRun=true --verbosity minimal --nologo
+          dotnet publish Tools/rdmp/rdmp.csproj -r win-x64 --self-contained -c Release -o PublishWindows -p:GenerateDocumentationFile=false -p:PublishSingleFile=true -p:PublishReadyToRun=true --verbosity minimal --nologo
+          dotnet publish Tools/rdmp/rdmp.csproj -r linux-x64 --self-contained -c Release -o PublishLinux -p:GenerateDocumentationFile=false -p:PublishSingleFile=true -p:PublishReadyToRun=true --verbosity minimal --nologo
       - name: BundleSource
         shell: bash
         run: |
@@ -130,7 +122,7 @@ jobs:
           signtool=${signtool[${#signtool[@]}-1]}
           signtool=`echo $signtool | sed -e 's#^/c#c:#' | tr / \\\\`
           echo ${{ secrets.DIGICERT_PFX }} | base64 --decode > GitHubActionsWorkflow.pfx
-          echo '"'$signtool'"' 'Sign  /f GitHubActionsWorkflow.pfx /fd sha256 /tr http://timestamp.digicert.com /td sha256 /p ${{ secrets.DIGICERT_PASSWORD }} PublishWindows/*.exe PublishWinForms/*.exe PublishWinForms/Hunspell*.dll' | cmd
+          echo '"'$signtool'"' 'Sign  /f GitHubActionsWorkflow.pfx /fd sha256 /tr http://timestamp.digicert.com /td sha256 /p ${{ secrets.DIGICERT_PASSWORD }} PublishWindows/*.exe PublishWinForms/*.exe' | cmd
           mkdir -p dist
           cmd /c wix\\build.cmd ${{ steps.version.outputs.rdmpversion }}
           echo '"'$signtool'"' 'Sign  /f GitHubActionsWorkflow.pfx /fd sha256 /tr http://timestamp.digicert.com /td sha256 /p ${{ secrets.DIGICERT_PASSWORD }} dist/rdmp.msi' | cmd
@@ -182,18 +174,15 @@ jobs:
           rm dist/rdmp-${{ steps.version.outputs.rdmpversion }}-cli-linux-x64.tar
 
       - name: Build Nuget packages
+        shell: bash
         run: |
-          nuget pack Plugins/Plugin/Plugin.nuspec -Properties Configuration=Release -IncludeReferencedProjects -Symbols -Version ${{ steps.version.outputs.rdmpversion }}
-          nuget pack Plugins/Plugin.UI/Plugin.UI.nuspec -Properties Configuration=Release -IncludeReferencedProjects -Symbols -Version ${{ steps.version.outputs.rdmpversion }}
-          nuget pack Plugins/Plugin.Test/Plugin.Test.nuspec -Properties Configuration=Release -IncludeReferencedProjects -Symbols -Version ${{ steps.version.outputs.rdmpversion }}
-          nuget pack Application/ResearchDataManagementPlatform/RDMP.nuspec -Properties Configuration=Release -Version ${{ steps.version.outputs.rdmpversion }}
-
-      - name: Push Nuget packages
+          for i in Rdmp.Core/Rdmp.Core.csproj Rdmp.UI/Rdmp.UI.csproj Tests.Common/Tests.Common.csproj
+          do
+          dotnet pack $i -c Release --include-symbols --nologo -o . -v:m -p:Version=${{ steps.version.outputs.rdmpversion }}
+          done
+      - name: Upload Nuget packages
         if: contains(github.ref, 'refs/tags/v')
-        run: |
-          nuget push HIC.RDMP.Plugin.${{ steps.version.outputs.rdmpversion }}.nupkg -skipDuplicate -Source https://api.nuget.org/v3/index.json -ApiKey ${{ secrets.NUGET_KEY }}
-          nuget push HIC.RDMP.Plugin.UI.${{ steps.version.outputs.rdmpversion }}.nupkg -skipDuplicate -Source https://api.nuget.org/v3/index.json -ApiKey ${{ secrets.NUGET_KEY }}
-          nuget push HIC.RDMP.Plugin.Test.${{ steps.version.outputs.rdmpversion }}.nupkg -skipDuplicate -Source https://api.nuget.org/v3/index.json -ApiKey ${{ secrets.NUGET_KEY }}
+        run: dotnet nuget push HIC.RDMP.Plugin*${{ steps.version.outputs.rdmpversion }}.nupkg -s https://api.nuget.org/v3/index.json --skip-duplicate -k ${{ secrets.NUGET_KEY }}
 
       - name: Calculate SHA256SUMS
         run: '&{foreach ($i in Get-ChildItem dist -Exclude *SUMS|Get-FileHash) { echo "$($i.Hash) $(echo $i | Split-Path -Leaf)" }} > dist/SHA256SUMS'

@@ -4,6 +4,7 @@
 // RDMP is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License for more details.
 // You should have received a copy of the GNU General Public License along with RDMP. If not, see <https://www.gnu.org/licenses/>.
 
+using System;
 using System.Collections.Generic;
 using Rdmp.Core.Curation.FilterImporting.Construction;
 using Rdmp.Core.Repositories;
@@ -62,7 +63,7 @@ public class SpontaneouslyInventedFilter:ConcreteFilter
     public override int? FilterContainer_ID { get; set; }
     public override ISqlParameter[] GetAllParameters()
     {
-        return _filterParametersIfAny??new ISqlParameter[0];
+        return _filterParametersIfAny??Array.Empty<ISqlParameter>();
     }
 
     public override IContainer FilterContainer

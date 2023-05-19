@@ -13,6 +13,7 @@ using Rdmp.Core.Curation.Data;
 using Rdmp.Core.Curation.Data.Spontaneous;
 using Rdmp.Core.MapsDirectlyToDatabaseTable.Revertable;
 using Rdmp.Core.Repositories;
+using Rdmp.Core.ReusableLibraryCode.Checks;
 using Tests.Common;
 
 namespace Rdmp.Core.Tests.Curation;
@@ -28,7 +29,7 @@ class UnitTestsAllObjectsSupported:UnitTests
     {
         //load all DatabaseEntity types
         MEF mef = new MEF();
-        mef.Setup(new SafeDirectoryCatalog(TestContext.CurrentContext.TestDirectory));
+        mef.Setup(new SafeDirectoryCatalog(new IgnoreAllErrorsCheckNotifier(), TestContext.CurrentContext.TestDirectory));
 
         var types = mef.GetAllTypes()
             .Where(t => typeof (DatabaseEntity).IsAssignableFrom(t) && !t.IsAbstract && !t.IsInterface).ToArray();

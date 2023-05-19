@@ -33,17 +33,16 @@ public class RDMPFormInitializationTests
         
     public void FindUninitializedForms(List<string> csFiles )
     {
-        foreach (string file in csFiles)
+        foreach (var readToEnd in csFiles.Select(File.ReadAllText))
         {
-            var readToEnd = File.ReadAllText(file);
             DealWithRDMPForms(readToEnd);
             DealWithRDMPUserControls(readToEnd);
         }
             
-        List<string> rdmpFormClassNames = _rdmpFormClassNames;
+        var rdmpFormClassNames = _rdmpFormClassNames;
 
         //look for "new (myclass1|myclass2)\s*\("
-        StringBuilder sbFindInstantiations = new StringBuilder();
+        var sbFindInstantiations = new StringBuilder();
         sbFindInstantiations.Append("new (");
         sbFindInstantiations.Append(string.Join("|", rdmpFormClassNames.Select(Regex.Escape)));
         sbFindInstantiations.Append(")\\s*\\(");
@@ -56,46 +55,36 @@ public class RDMPFormInitializationTests
     private void DealWithRDMPUserControls(string readToEnd)
     {
         var match = rdmpControlClasses.Match(readToEnd);
-        if (match.Success)
-        {
-            string className = match.Groups[1].Value.Trim();
-            Console.WriteLine("Class " + className + " is an RDMPUSerControl");
-
-            ComplainIfUsesVisualStudioDesignerDetectionMagic(readToEnd);
-            ComplainIfAccessesRepositoryLocatorInConstructor(readToEnd, className);
-
-        }
+        if (!match.Success) return;
+        var className = match.Groups[1].Value.Trim();
+        ComplainIfUsesVisualStudioDesignerDetectionMagic(readToEnd);
+        ComplainIfAccessesRepositoryLocatorInConstructor(readToEnd, className);
     }
 
     private void DealWithRDMPForms(string readToEnd)
     {
         var match = rdmpFormClasses.Match(readToEnd);
-        if (match.Success)
-        {
-            string className = match.Groups[1].Value.Trim();
-            Console.WriteLine("Class " + className + " is an RDMPForm");
-
-            _rdmpFormClassNames.Add(className);
-
-            ComplainIfUsesVisualStudioDesignerDetectionMagic(readToEnd);
-            ComplainIfAccessesRepositoryLocatorInConstructor(readToEnd, className);
-        }
+        if (!match.Success) return;
+        var className = match.Groups[1].Value.Trim();
+        _rdmpFormClassNames.Add(className);
+        ComplainIfUsesVisualStudioDesignerDetectionMagic(readToEnd);
+        ComplainIfAccessesRepositoryLocatorInConstructor(readToEnd, className);
     }
 
     private void ComplainIfAccessesRepositoryLocatorInConstructor(string readToEnd, string className)
     {
         //find constructor
-        Regex constructorRegex = GetConstructoRegex(className);
+        var constructorRegex = GetConstructorRegex(className);
 
         var matchConstructor = constructorRegex.Match(readToEnd);
         if (matchConstructor.Success)
         {
-            int curlyBracerCount = -1;
-            int index = 0;
+            var curlyBracerCount = -1;
+            var index = 0;
 
-            string substring = readToEnd.Substring(matchConstructor.Index);
+            var substring = readToEnd[matchConstructor.Index..];
 
-            StringBuilder sbConstructor = new StringBuilder();
+            var sbConstructor = new StringBuilder();
             while (curlyBracerCount != 0 && index < substring.Length)
             {
                 if (substring[index] == '{')
@@ -116,44 +105,25 @@ public class RDMPFormInitializationTests
 
             var constructor = sbConstructor.ToString();
 
-            //find other method the constructor calls
-            foreach (Match m in methodCalls.Matches(constructor))
-            {
-                string methodName = m.Groups[1].Value;
-
-                if (methodIgnoreList.Contains(methodName))
-                    continue;
-
-                Console.WriteLine("Constructor calls method:" + m.Groups[1].Value);
-            }
-
-
             if (Regex.IsMatch(constructor,"[^.]RepositoryLocator") || constructor.Contains("_repositoryLocator"))
-                Assert.Fail("Constructor of class " + className +
-                            " contains a reference to RepositoryLocator, this property cannot be used until OnLoad is called");
+                Assert.Fail(
+                    $"Constructor of class {className} contains a reference to RepositoryLocator, this property cannot be used until OnLoad is called");
         }
         else
         {
-            Console.WriteLine("Class " + className + " is an RDMPForm/RDMPUserControl but doesn't have a constructor!");
+            Console.WriteLine($"Class {className} is an RDMPForm/RDMPUserControl but doesn't have a constructor!");
         }
     }
 
     private void ComplainIfUsesVisualStudioDesignerDetectionMagic(string readToEnd)
     {
-        if (readToEnd.Contains("LicenseManager.UsageMode"))
-        {
-            int lineNumber = readToEnd.Substring(0, readToEnd.IndexOf("LicenseManager.UsageMode")).Count(c => c == '\n');
+        if (!readToEnd.Contains("LicenseManager.UsageMode")) return;
+        var lineNumber = readToEnd[..readToEnd.IndexOf("LicenseManager.UsageMode")].Count(c => c == '\n');
 
-            string msg =
-                "FAIL: Use protected variable VisualStudioDesignMode instead of LicenseManager.UsageMode (line number:" +
-                lineNumber + ")";
-            Console.WriteLine(msg);
-            _fails.Add(msg);
-        }
+        var msg =
+            $"FAIL: Use protected variable VisualStudioDesignMode instead of LicenseManager.UsageMode (line number:{lineNumber})";
+        Console.WriteLine(msg);
+        _fails.Add(msg);
     }
-    private Regex GetConstructoRegex(string className)
-    {
-        return new Regex("(public|private)\\s+" + className + "\\s*\\(.*\\{", RegexOptions.Singleline);
-    }
-
+    private static Regex GetConstructorRegex(string className) => new Regex($"(public|private)\\s+{className}\\s*\\(.*\\{{", RegexOptions.Singleline);
 }

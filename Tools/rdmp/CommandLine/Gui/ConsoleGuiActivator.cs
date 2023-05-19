@@ -158,7 +158,7 @@ internal class ConsoleGuiActivator : BasicActivateItems
         var dlg = new ConsoleGuiSelectMany(this, args.WindowTitle, availableObjects);
         Application.Run(dlg, ConsoleMainWindow.ExceptionPopup);
 
-        return dlg.ResultOk ? dlg.Result.Cast<IMapsDirectlyToDatabaseTable>().ToArray() : new IMapsDirectlyToDatabaseTable[0];
+        return dlg.ResultOk ? dlg.Result.Cast<IMapsDirectlyToDatabaseTable>().ToArray() : Array.Empty<IMapsDirectlyToDatabaseTable>();
     }
 
     public override IMapsDirectlyToDatabaseTable SelectOne(DialogArgs args, IMapsDirectlyToDatabaseTable[] availableObjects)

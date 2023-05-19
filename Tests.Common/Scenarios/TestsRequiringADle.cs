@@ -18,6 +18,7 @@ using Rdmp.Core.DataLoad.Modules.Attachers;
 using System;
 using System.IO;
 using System.Linq;
+using System.Threading;
 using Rdmp.Core.ReusableLibraryCode.Checks;
 using Rdmp.Core.ReusableLibraryCode.Progress;
 
@@ -162,14 +163,15 @@ public class TestsRequiringADle:TestsRequiringA
     /// <param name="checks">True to run the pre load checks with accept all proposed fixes</param>
     public void RunDLE(LoadMetadata lmd, int timeoutInMilliseconds, bool checks)
     {
+        var timeout = new CancellationTokenSource(timeoutInMilliseconds).Token;
         if(checks)
         {
             //Get DleRunner to run pre load checks (includes trigger creation etc)
             var checker = new DleRunner(new DleOptions() { LoadMetadata = lmd.ID.ToString(), Command = CommandLineActivity.check});
-            checker.Run(RepositoryLocator,new ThrowImmediatelyDataLoadEventListener(), new AcceptAllCheckNotifier(), new GracefulCancellationToken());
+            checker.Run(RepositoryLocator,new ThrowImmediatelyDataLoadEventListener(), new AcceptAllCheckNotifier(), new GracefulCancellationToken(timeout,timeout));
         }
 
         var runner = new DleRunner(new DleOptions() { LoadMetadata = lmd.ID.ToString(), Command = CommandLineActivity.run});
-        runner.Run(RepositoryLocator,new ThrowImmediatelyDataLoadEventListener(), new ThrowImmediatelyCheckNotifier(), new GracefulCancellationToken());
+        runner.Run(RepositoryLocator,new ThrowImmediatelyDataLoadEventListener(), new ThrowImmediatelyCheckNotifier(), new GracefulCancellationToken(timeout,timeout));
     }
 }

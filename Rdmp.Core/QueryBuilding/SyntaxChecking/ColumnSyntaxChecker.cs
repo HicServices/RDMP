@@ -17,6 +17,8 @@ namespace Rdmp.Core.QueryBuilding.SyntaxChecking;
 /// </summary>
 public class ColumnSyntaxChecker : SyntaxChecker
 {
+    private static readonly Regex RegexIsWrapped = new (@"^[\[`].*[\]`]$", RegexOptions.Compiled);
+
     private readonly IColumn _column;
 
     /// <summary>
@@ -34,21 +36,20 @@ public class ColumnSyntaxChecker : SyntaxChecker
     /// <param name="notifier"></param>
     public override void Check(ICheckNotifier notifier)
     {
-        string regexIsWrapped = @"^[\[`].*[\]`]$";
-        char[] invalidColumnValues = new[] { ',', '[', ']', '`', '.' };
-        char[] whiteSpace = new[] { ' ', '\t', '\n', '\r' };
+        var invalidColumnValues = new[] { ',', '[', ']', '`', '.' };
+        var whiteSpace = new[] { ' ', '\t', '\n', '\r' };
 
-        char[] openingCharacters = new[] { '[', '(' };
-        char[] closingCharacters = new[] { ']', ')' };
+        var openingCharacters = new[] { '[', '(' };
+        var closingCharacters = new[] { ']', ')' };
 
         //it has an alias
-        if (!String.IsNullOrWhiteSpace(_column.Alias))
-            if (!Regex.IsMatch(_column.Alias, regexIsWrapped)) //alias is NOT wrapped
-                if (_column.Alias.Any(invalidColumnValues.Contains)) //there are invalid characters
-                    throw new SyntaxErrorException("Invalid characters found in Alias \"" + _column.Alias + "\"");
-                else
-                if (_column.Alias.Any(whiteSpace.Contains))
-                    throw new SyntaxErrorException("Whitespace found in unwrapped Alias \"" + _column.Alias + "\"");
+        if (!string.IsNullOrWhiteSpace(_column.Alias) && !RegexIsWrapped.IsMatch(_column.Alias))
+            //alias is NOT wrapped
+            if (_column.Alias.Any(invalidColumnValues.Contains)) //there are invalid characters
+                throw new SyntaxErrorException($"Invalid characters found in Alias \"{_column.Alias}\"");
+            else
+            if (_column.Alias.Any(whiteSpace.Contains))
+                throw new SyntaxErrorException($"Whitespace found in unwrapped Alias \"{_column.Alias}\"");
 
         ParityCheckCharacterPairs(openingCharacters, closingCharacters, _column.SelectSQL);
     }

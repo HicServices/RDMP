@@ -174,7 +174,7 @@ public class ExecuteCommandDescribe:BasicCommandExecution
     {
         var invoker = new CommandInvoker(BasicActivator);
 
-        var commandCtor = invoker.GetConstructor(commandType, new CommandLineObjectPicker(new string[0],BasicActivator));
+        var commandCtor = invoker.GetConstructor(commandType, new CommandLineObjectPicker(Array.Empty<string>(),BasicActivator));
 
         var sb = new StringBuilder();
 
@@ -202,13 +202,13 @@ public class ExecuteCommandDescribe:BasicCommandExecution
             sbParameters.Append(dynamicCtorAttribute.ParameterHelpBreakdown);
         }
         else
-        if (commandCtor == null || !invoker.IsSupported(commandCtor))
+        if (commandCtor == null || invoker.WhyCommandNotSupported(commandCtor) is not null)
         {
             sb.AppendLine($"Command '{commandType.Name}' is not supported by the current input type ({BasicActivator.GetType().Name})");
 
             if (commandCtor != null)
             {
-                var unsupported = commandCtor.GetParameters().Where(p => !invoker.IsSupported(p)).ToArray();
+                var unsupported = commandCtor.GetParameters().Where(p => invoker.WhyCommandNotSupported(p) is not null).ToArray();
 
                 if (unsupported.Any())
                     sb.AppendLine("The following parameter types (required by the command's constructor) were not supported:" + Environment.NewLine + string.Join(Environment.NewLine, unsupported.Select(p => $"{p.Name}({p.ParameterType})")));

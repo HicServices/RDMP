@@ -15,4 +15,8 @@ namespace Rdmp.Core.MapsDirectlyToDatabaseTable.Attributes;
 [AttributeUsage(AttributeTargets.Property, Inherited = false, AllowMultiple = false)]
 public class SqlAttribute : Attribute
 {
+    /// <summary>
+    /// True to skip the component when executing (but still show it at design time).
+    /// </summary>
+    bool IsDisabled { get; set; }
 }

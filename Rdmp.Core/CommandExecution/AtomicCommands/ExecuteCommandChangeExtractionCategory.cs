@@ -24,7 +24,7 @@ public class ExecuteCommandChangeExtractionCategory : BasicCommandExecution
     [UseWithObjectConstructor]
     public ExecuteCommandChangeExtractionCategory(IBasicActivateItems activator,ExtractionInformation[] eis, ExtractionCategory? category = null) : base(activator)
     {
-        eis = (eis??new ExtractionInformation[0]).Where(e => e != null).ToArray();
+        eis = (eis??Array.Empty<ExtractionInformation>()).Where(e => e != null).ToArray();
 
         if (eis.Length == 0)
             SetImpossible("No ExtractionInformations found");

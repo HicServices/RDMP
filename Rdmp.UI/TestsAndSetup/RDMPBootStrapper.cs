@@ -11,7 +11,6 @@ using Rdmp.Core.ReusableLibraryCode;
 using Rdmp.Core.Startup;
 using Rdmp.UI.SimpleDialogs;
 using Rdmp.UI.TestsAndSetup.ServicePropogation;
-using ScintillaNET;
 
 namespace Rdmp.UI.TestsAndSetup;
 
@@ -38,18 +37,16 @@ public class RDMPBootStrapper<T> where T : RDMPForm, new()
 
     }
 
-    public HashSet<string> IgnoreExceptions = new HashSet<string>(StringComparer.CurrentCultureIgnoreCase){ 
+    private readonly HashSet<string> IgnoreExceptions = new(StringComparer.InvariantCultureIgnoreCase){ 
             
         // This error seems to come from ObjectTreeView but seems harmless
-        "Value cannot be null. (Parameter 'owningItem')",
+        "Value cannot be null. (Parameter 'owningItem')"
     };
 
     public void Show(bool requiresDataExportDatabaseToo)
     {
         Application.EnableVisualStyles();
         Application.SetCompatibleTextRenderingDefault(false);
-
-        Scintilla.SetDestroyHandleBehavior(true);
 
         //tell me when you blow up somewhere in the windows API instead of somewhere sensible
         Application.ThreadException += (s,e)=>{

@@ -244,14 +244,14 @@ internal class YamlRepositoryTests
         var t = UnitTests.WhenIHaveA<TableInfo>(repo1);
 
         Assert.IsEmpty(creds.GetAllTableInfosThatUseThis().SelectMany(v=>v.Value));
-        Assert.IsNull(t.GetCredentialsIfExists(ReusableLibraryCode.DataAccess.DataAccessContext.DataLoad));
-        Assert.IsNull(t.GetCredentialsIfExists(ReusableLibraryCode.DataAccess.DataAccessContext.InternalDataProcessing));
+        Assert.IsNull(t.GetCredentialsIfExists(Rdmp.Core.ReusableLibraryCode.DataAccess.DataAccessContext.DataLoad));
+        Assert.IsNull(t.GetCredentialsIfExists(Rdmp.Core.ReusableLibraryCode.DataAccess.DataAccessContext.InternalDataProcessing));
 
-        repo1.TableInfoCredentialsManager.CreateLinkBetween(creds,t,ReusableLibraryCode.DataAccess.DataAccessContext.DataLoad);
+        repo1.TableInfoCredentialsManager.CreateLinkBetween(creds,t, Core.ReusableLibraryCode.DataAccess.DataAccessContext.DataLoad);
 
         Assert.AreEqual(t,creds.GetAllTableInfosThatUseThis().SelectMany(v => v.Value).Single());
-        Assert.AreEqual(creds,t.GetCredentialsIfExists(ReusableLibraryCode.DataAccess.DataAccessContext.DataLoad));
-        Assert.IsNull(t.GetCredentialsIfExists(ReusableLibraryCode.DataAccess.DataAccessContext.InternalDataProcessing));
+        Assert.AreEqual(creds,t.GetCredentialsIfExists(Rdmp.Core.ReusableLibraryCode.DataAccess.DataAccessContext.DataLoad));
+        Assert.IsNull(t.GetCredentialsIfExists(Rdmp.Core.ReusableLibraryCode.DataAccess.DataAccessContext.InternalDataProcessing));
 
 
         // A fresh repo loaded from the same directory should have persisted object relationships
@@ -259,8 +259,8 @@ internal class YamlRepositoryTests
         t = repo2.GetObjectByID<TableInfo>(t.ID);
 
         Assert.AreEqual(t, creds.GetAllTableInfosThatUseThis().SelectMany(v => v.Value).Single());
-        Assert.AreEqual(creds, t.GetCredentialsIfExists(ReusableLibraryCode.DataAccess.DataAccessContext.DataLoad));
-        Assert.IsNull(t.GetCredentialsIfExists(ReusableLibraryCode.DataAccess.DataAccessContext.InternalDataProcessing));
+        Assert.AreEqual(creds, t.GetCredentialsIfExists(Rdmp.Core.ReusableLibraryCode.DataAccess.DataAccessContext.DataLoad));
+        Assert.IsNull(t.GetCredentialsIfExists(Rdmp.Core.ReusableLibraryCode.DataAccess.DataAccessContext.InternalDataProcessing));
 
 
     }

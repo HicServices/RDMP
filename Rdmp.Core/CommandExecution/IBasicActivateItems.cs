@@ -37,7 +37,7 @@ namespace Rdmp.Core.CommandExecution;
 public interface IBasicActivateItems
 {
     /// <summary>
-    /// True for activators that can illicit immediate responses from users.  False for activators designed to run unattended e.g. command line/scripting
+    /// True for activators that can elicit immediate responses from users.  False for activators designed to run unattended e.g. command line/scripting
     /// </summary>
     bool IsInteractive {get;}
 

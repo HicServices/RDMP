@@ -262,7 +262,7 @@ public class JoinInfo : DatabaseEntity, IJoin,IHasDependencies
     /// <inheritdoc/>
     public IHasDependencies[] GetObjectsDependingOnThis()
     {
-        return new IHasDependencies[0];
+        return Array.Empty<IHasDependencies>();
     }
 
     /// <inheritdoc/>

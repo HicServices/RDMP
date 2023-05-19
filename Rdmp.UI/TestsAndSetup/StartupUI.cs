@@ -5,6 +5,8 @@
 // You should have received a copy of the GNU General Public License along with RDMP. If not, see <https://www.gnu.org/licenses/>.
 
 using System;
+using System.Linq;
+using System.Reflection;
 using System.Text.RegularExpressions;
 using System.Threading.Tasks;
 using System.Windows.Forms;
@@ -44,7 +46,7 @@ public partial class StartupUI : Form, ICheckNotifier
         if(_startup == null)
             return;
 
-        Text = $"RDMP - v{typeof(Rdmp.Core.PluginUserInterface).Assembly.GetName().Version}";// + FileVersionInfo.GetVersionInfo(Assembly.GetExecutingAssembly().Location).FileVersion;
+        Text = $"RDMP - v{GetVersion()}";
             
         _startup.DatabaseFound += StartupDatabaseFound;
         _startup.MEFFileDownloaded += StartupMEFFileDownloaded;
@@ -54,6 +56,22 @@ public partial class StartupUI : Form, ICheckNotifier
 
         this.Icon = IconFactory.Instance.GetIcon(Image.Load<Rgba32>(CatalogueIcons.Main));
     }
+
+
+    public static string GetVersion()
+    {
+        try
+        {
+            return typeof(StartupUI).Assembly.CustomAttributes
+                .FirstOrDefault(a => a.AttributeType == typeof(AssemblyInformationalVersionAttribute))
+                ?.ToString().Split('"')[1];
+        }
+        catch (Exception)
+        {
+            return "unknown version";
+        }
+    }
+
 
     public bool DoNotContinue { get; set; }
 
@@ -82,7 +100,7 @@ public partial class StartupUI : Form, ICheckNotifier
         //25% to 50% is downloading MEF
         pbLoadProgress.Value = (int) (250 + ((float)eventArgs.CurrentDllNumber / (float)eventArgs.DllsSeenInCatalogue * 250f));
 
-        lblProgress.Text = "Downloading MEF File " + eventArgs.FileBeingProcessed;
+        lblProgress.Text = $"Downloading MEF File {eventArgs.FileBeingProcessed}";
             
         if (eventArgs.Status == MEFFileDownloadEventStatus.OtherError)
             ragSmiley1.Fatal(eventArgs.Exception);
@@ -110,7 +128,7 @@ public partial class StartupUI : Form, ICheckNotifier
             return;
         }
             
-        if (_startup != null && _startup.RepositoryLocator != null && _startup.RepositoryLocator.CatalogueRepository != null)
+        if (_startup is { RepositoryLocator.CatalogueRepository: { } })
             WideMessageBox.CommentStore = _startup.RepositoryLocator.CatalogueRepository.CommentStore;
             
         //when things go badly leave the form
@@ -139,13 +157,11 @@ public partial class StartupUI : Form, ICheckNotifier
 
         countDownToClose --;
 
-        lblProgress.Text = string.Format("Startup Complete... Closing in {0}s (Esc to cancel)",countDownToClose);
+        lblProgress.Text = $"Startup Complete... Closing in {countDownToClose}s (Esc to cancel)";
 
-        if (!UserSettings.Wait5SecondsAfterStartupUI || countDownToClose == 0)
-        {
-            t.Stop();
-            Close();
-        }
+        if (UserSettings.Wait5SecondsAfterStartupUI && countDownToClose != 0) return;
+        t.Stop();
+        Close();
     }
 
     protected override void OnLoad(EventArgs e)
@@ -222,7 +238,7 @@ public partial class StartupUI : Form, ICheckNotifier
         if(CouldNotReachTier1Database)
             return;
 
-        lblProgress.Text = eventArgs.Patcher.Name + " database status was " + eventArgs.Status;
+        lblProgress.Text = $"{eventArgs.Patcher.Name} database status was {eventArgs.Status}";
 
         switch (eventArgs.Status)
         {
@@ -232,29 +248,30 @@ public partial class StartupUI : Form, ICheckNotifier
                 {
                     pbDisconnected.Visible = true;
 
-                    if (eventArgs.Repository == null)
-                        lblProgress.Text = "RDMP Platform Databases are not set";
-                    else
-                        lblProgress.Text = "Could not reach " + eventArgs.Patcher.Name;
+                    lblProgress.Text = eventArgs.Repository == null ? "RDMP Platform Databases are not set" : $"Could not reach {eventArgs.Patcher.Name}";
 
                     CouldNotReachTier1Database = true;
 
-                    ragSmiley1.Fatal(new Exception(string.Format("Core Platform Database was {0} ({1})",eventArgs.Status , eventArgs.Patcher.Name), eventArgs.Exception));
+                    ragSmiley1.Fatal(new Exception(
+                        $"Core Platform Database was {eventArgs.Status} ({eventArgs.Patcher.Name})", eventArgs.Exception));
                 }
                 else
-                    ragSmiley1.Warning(new Exception(string.Format("Tier {0} Database was {1} ({2})",eventArgs.Patcher.Tier ,eventArgs.Status , eventArgs.Patcher.Name), eventArgs.Exception));
+                    ragSmiley1.Warning(new Exception(
+                        $"Tier {eventArgs.Patcher.Tier} Database was {eventArgs.Status} ({eventArgs.Patcher.Name})", eventArgs.Exception));
                 break;
 
             case RDMPPlatformDatabaseStatus.Broken:
                 if (eventArgs.Patcher.Tier == 1)
-                    ragSmiley1.Fatal(new Exception(string.Format("Core Platform Database was {0} ({1})",eventArgs.Status , eventArgs.Patcher.Name), eventArgs.Exception));
+                    ragSmiley1.Fatal(new Exception(
+                        $"Core Platform Database was {eventArgs.Status} ({eventArgs.Patcher.Name})", eventArgs.Exception));
                 else
-                    ragSmiley1.Warning(new Exception(string.Format("Tier {0} Database was {1} ({2})",eventArgs.Patcher.Tier ,eventArgs.Status , eventArgs.Patcher.Name), eventArgs.Exception));
+                    ragSmiley1.Warning(new Exception(
+                        $"Tier {eventArgs.Patcher.Tier} Database was {eventArgs.Status} ({eventArgs.Patcher.Name})", eventArgs.Exception));
                 break;
 
             case RDMPPlatformDatabaseStatus.RequiresPatching:
                     
-                if (MessageBox.Show("Patching Required on database of type " + eventArgs.Patcher.Name, "Patch",
+                if (MessageBox.Show($"Patching Required on database of type {eventArgs.Patcher.Name}", "Patch",
                         MessageBoxButtons.YesNo) == DialogResult.Yes)
                 {
                     PatchingUI.ShowIfRequired(
@@ -331,7 +348,7 @@ public partial class StartupUI : Form, ICheckNotifier
 
     private void StartupUIMainForm_FormClosing(object sender, FormClosingEventArgs e)
     {
-        if(_choosePlatformsUI != null && _choosePlatformsUI.ChangesMade)
+        if(_choosePlatformsUI is { ChangesMade: true })
             DoNotContinue = true;
 
         if (e.CloseReason == CloseReason.UserClosing)

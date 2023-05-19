@@ -18,7 +18,7 @@ class TestExecuteCommandImportTableInfo : CommandCliTests
     {
             
         var ex = Assert.Throws<Exception>(() => GetInvoker().ExecuteCommand(typeof(ExecuteCommandImportTableInfo),
-            new CommandLineObjectPicker(new string[0], GetActivator())));
+            new CommandLineObjectPicker(Array.Empty<string>(), GetActivator())));
 
         StringAssert.StartsWith("Expected parameter at index 0 to be a FAnsi.Discovery.DiscoveredTable (for parameter 'table') but it was Missing",ex.Message);
     }

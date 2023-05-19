@@ -12,6 +12,7 @@ using System.IO;
 using System.Linq;
 using System.Text.RegularExpressions;
 using FAnsi;
+using FAnsi.Connections;
 using FAnsi.Discovery;
 using FAnsi.Discovery.Constraints;
 using FAnsi.Implementation;
@@ -53,6 +54,7 @@ namespace Tests.Common;
 /// Base class for all integration tests which need to read/write to a database (sql server, mysql or oracle).
 /// </summary>
 [TestFixture]
+[NonParallelizable]
 [Category("Database")]
 public class DatabaseTests
 {
@@ -60,10 +62,7 @@ public class DatabaseTests
     protected static TestDatabasesSettings TestDatabaseSettings;
     private static bool HaveTriedCreatingTestDatabases;
 
-    public ICatalogueRepository CatalogueRepository
-    {
-        get { return RepositoryLocator.CatalogueRepository; }
-    }
+    public ICatalogueRepository CatalogueRepository => RepositoryLocator.CatalogueRepository;
 
     /// <summary>
     /// Gets an <see cref="ICatalogueRepository"/> that points to a 
@@ -80,10 +79,8 @@ public class DatabaseTests
             return null;
         }
     }
-    public IDataExportRepository DataExportRepository 
-    {
-        get { return RepositoryLocator.DataExportRepository; }
-    }
+    public IDataExportRepository DataExportRepository => RepositoryLocator.DataExportRepository;
+
     /// <summary>
     /// Gets an <see cref="IDataExportRepository"/> that points to a 
     /// database server or throws with <see cref="Assert.Inconclusive()"/>
@@ -317,7 +314,7 @@ public class DatabaseTests
         var catalogueDatabaseName = ((TableRepository) repositoryLocator.CatalogueRepository).DiscoveredServer.GetCurrentDatabase().GetRuntimeName();
         var dataExportDatabaseName = ((TableRepository) repositoryLocator.DataExportRepository).DiscoveredServer.GetCurrentDatabase().GetRuntimeName();
 
-        UsefulStuff.ExecuteBatchNonQuery(string.Format(BlitzDatabases, catalogueDatabaseName, dataExportDatabaseName),con.Connection);
+        UsefulStuff.ExecuteBatchNonQuery(string.Format(BlitzDatabases, catalogueDatabaseName, dataExportDatabaseName),con.Connection,con.Transaction);
     }
 
     /// <summary>
@@ -338,7 +335,7 @@ public class DatabaseTests
         var catalogueDatabaseName = ((TableRepository)RepositoryLocator.CatalogueRepository).DiscoveredServer.GetCurrentDatabase().GetRuntimeName();
         var dataExportDatabaseName = ((TableRepository)RepositoryLocator.DataExportRepository).DiscoveredServer.GetCurrentDatabase().GetRuntimeName();
 
-        UsefulStuff.ExecuteBatchNonQuery(string.Format(BlitzDatabasesLite, catalogueDatabaseName, dataExportDatabaseName), con.Connection);
+        UsefulStuff.ExecuteBatchNonQuery(string.Format(BlitzDatabasesLite, catalogueDatabaseName, dataExportDatabaseName), con.Connection, con.Transaction);
     }
 
     private void BlitzMainDataTables(YamlRepository y)
@@ -482,35 +479,37 @@ public class DatabaseTests
             }
     }
    
-    private void StartupOnDatabaseFound(object sender, PlatformDatabaseFoundEventArgs args)
-    { 
-        //its a healthy message, jolly good
-        if (args.Status == RDMPPlatformDatabaseStatus.Healthy)
-            return;
+        private void StartupOnDatabaseFound(object sender, PlatformDatabaseFoundEventArgs args)
+        {
+            if (args.Exception != null && args.Status!=RDMPPlatformDatabaseStatus.Healthy && args.Status!=RDMPPlatformDatabaseStatus.SoftwareOutOfDate)
+                Assert.Fail(args.SummariseAsString());
 
-        if(args.Status == RDMPPlatformDatabaseStatus.SoftwareOutOfDate)
-            Assert.Fail(@"Your TEST database schema is out of date with the API version you are testing with, 'run rdmp.exe install ...' to install the version which matches your nuget package.");
-
-        if (args.Exception != null)
-            Assert.Fail(args.SummariseAsString());
-
-        //it's a tier appropriate fatal error message
-        if (args.Status == RDMPPlatformDatabaseStatus.Broken || args.Status == RDMPPlatformDatabaseStatus.Unreachable)
-            Assert.Fail(args.SummariseAsString());
-
-        //it's slightly dodgy abouits's version numbers
-        if (args.Status == RDMPPlatformDatabaseStatus.RequiresPatching)
-            Assert.Fail(args.SummariseAsString());
-
+        switch (args.Status)
+        {
+            //it's a healthy message, jolly good
+            case RDMPPlatformDatabaseStatus.Healthy:
+                return;
+            case RDMPPlatformDatabaseStatus.SoftwareOutOfDate:
+                Assert.Fail(@"Your TEST database schema is out of date with the API version you are testing with, 'run rdmp.exe install ...' to install the version which matches your nuget package.");
+                break;
+            //it's a tier appropriate fatal error message
+            case RDMPPlatformDatabaseStatus.Broken:
+            case RDMPPlatformDatabaseStatus.Unreachable:
+            //it's slightly dodgy about its version numbers
+            case RDMPPlatformDatabaseStatus.RequiresPatching:
+                Assert.Fail(args.SummariseAsString());
+                break;
+        }
     }
+
     private void StartupOnPluginPatcherFound(object sender, PluginPatcherFoundEventArgs args)
     {
-        Assert.IsTrue(args.Status == PluginPatcherStatus.Healthy, "PluginPatcherStatus is " + args.Status + " for plugin " + args.Type.Name + Environment.NewLine + (args.Exception == null ? "No exception" : ExceptionHelper.ExceptionToListOfInnerMessages(args.Exception)));
+        Assert.IsTrue(args.Status == PluginPatcherStatus.Healthy, "PluginPatcherStatus is {0} for plugin {1}{2}{3}", args.Status, args.Type.Name, Environment.NewLine, (args.Exception == null ? "No exception" : ExceptionHelper.ExceptionToListOfInnerMessages(args.Exception)));
     }
 
     private void StartupOnMEFFileDownloaded(object sender, MEFFileDownloadProgressEventArgs args)
     {
-        Assert.IsTrue(args.Status == MEFFileDownloadEventStatus.Success || args.Status == MEFFileDownloadEventStatus.FailedDueToFileLock, "MEFFileDownloadEventStatus is " + args.Status + " for plugin " + args.FileBeingProcessed + Environment.NewLine + (args.Exception == null ? "No exception" : ExceptionHelper.ExceptionToListOfInnerMessages(args.Exception)));
+        Assert.IsTrue(args.Status is MEFFileDownloadEventStatus.Success or MEFFileDownloadEventStatus.FailedDueToFileLock, "MEFFileDownloadEventStatus is {0} for plugin {1}{2}{3}", args.Status, args.FileBeingProcessed, Environment.NewLine, (args.Exception == null ? "No exception" : ExceptionHelper.ExceptionToListOfInnerMessages(args.Exception)));
     }
         
         
@@ -759,6 +758,21 @@ delete from {1}..Project
             forCleanup.Add(database);
 
         return database;
+    }
+
+    private static DiscoveredServer MsScratch,MyScratch,PostScratch,OracleScratch;
+    protected (IManagedConnection trans, DiscoveredDatabase) GetScratchDatabase(DatabaseType type)
+    {
+        var server = type switch
+        {
+            DatabaseType.MicrosoftSQLServer => MsScratch ??= GetCleanedServer(type).Server,
+            DatabaseType.MySql => MyScratch ??= GetCleanedServer(type).Server,
+            DatabaseType.PostgreSql => PostScratch ??= GetCleanedServer(type).Server,
+            DatabaseType.Oracle => OracleScratch ??= GetCleanedServer(type).Server,
+            _ => throw new ArgumentOutOfRangeException(nameof(type))
+        };
+        var trans = server.BeginNewTransactedConnection();
+        return (trans,server.GetCurrentDatabase());
     }
 
     protected void DeleteTables(DiscoveredDatabase database)

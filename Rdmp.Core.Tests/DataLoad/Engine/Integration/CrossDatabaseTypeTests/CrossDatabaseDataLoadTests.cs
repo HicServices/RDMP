@@ -93,7 +93,7 @@ class CrossDatabaseDataLoadTests : DataLoadEngineTestsBase
         if(raw.Exists())
             raw.Drop();
             
-        var dt = new DataTable("MyTable");
+        using var dt = new DataTable("MyTable");
         dt.Columns.Add("Name");
         dt.Columns.Add("DateOfBirth");
         dt.Columns.Add("FavouriteColour");
@@ -103,43 +103,44 @@ class CrossDatabaseDataLoadTests : DataLoadEngineTestsBase
         var nameCol = new DatabaseColumnRequest("Name", new DatabaseTypeRequest(typeof (string), 20), false){IsPrimaryKey = true};
 
         if (testCase == TestCase.DodgyCollation)
-            if(databaseType == DatabaseType.MicrosoftSQLServer)
-                nameCol.Collation = "Latin1_General_CS_AS_KS_WS";
-            else if (databaseType == DatabaseType.MySql)
-                nameCol.Collation = "latin1_german1_ci";
-
+            nameCol.Collation = databaseType switch
+            {
+                DatabaseType.MicrosoftSQLServer => "Latin1_General_CS_AS_KS_WS",
+                DatabaseType.MySql => "latin1_german1_ci",
+                _ => nameCol.Collation
+            };
 
         DiscoveredTable tbl;
-        if (testCase == TestCase.WithNonPrimaryKeyIdentityColumn)
+        switch (testCase)
         {
-            tbl = db.CreateTable("MyTable",new []
+            case TestCase.WithNonPrimaryKeyIdentityColumn:
             {
-                new DatabaseColumnRequest("ID",new DatabaseTypeRequest(typeof(int)),false){IsPrimaryKey = false,IsAutoIncrement = true}, 
-                nameCol, 
-                new DatabaseColumnRequest("DateOfBirth",new DatabaseTypeRequest(typeof(DateTime)),false){IsPrimaryKey = true}, 
-                new DatabaseColumnRequest("FavouriteColour",new DatabaseTypeRequest(typeof(string))), 
-            });
+                tbl = db.CreateTable("MyTable",new []
+                {
+                    new DatabaseColumnRequest("ID",new DatabaseTypeRequest(typeof(int)),false){IsPrimaryKey = false,IsAutoIncrement = true}, 
+                    nameCol, 
+                    new DatabaseColumnRequest("DateOfBirth",new DatabaseTypeRequest(typeof(DateTime)),false){IsPrimaryKey = true}, 
+                    new DatabaseColumnRequest("FavouriteColour",new DatabaseTypeRequest(typeof(string))), 
+                });
                 
-            using (var blk = tbl.BeginBulkInsert())
-                blk.Upload(dt);
+                using (var blk = tbl.BeginBulkInsert())
+                    blk.Upload(dt);
 
-            Assert.AreEqual(1,tbl.DiscoverColumns().Count(c=>c.GetRuntimeName().Equals("ID",StringComparison.CurrentCultureIgnoreCase)),"Table created did not contain ID column");
-                
-        }
-        else
-        if (testCase == TestCase.AllPrimaryKeys)
-        {
-            dt.PrimaryKey = dt.Columns.Cast<DataColumn>().ToArray();
-            tbl = db.CreateTable("MyTable",dt,new []{nameCol}); //upload the column as is 
-            Assert.IsTrue(tbl.DiscoverColumns().All(c => c.IsPrimaryKey));
-        }
-        else
-        {
-            tbl = db.CreateTable("MyTable", dt, new[]
-            {
-                nameCol,
-                new DatabaseColumnRequest("DateOfBirth",new DatabaseTypeRequest(typeof(DateTime)),false){IsPrimaryKey = true}
-            });
+                Assert.AreEqual(1,tbl.DiscoverColumns().Count(c=>c.GetRuntimeName().Equals("ID",StringComparison.CurrentCultureIgnoreCase)),"Table created did not contain ID column");
+                break;
+            }
+            case TestCase.AllPrimaryKeys:
+                dt.PrimaryKey = dt.Columns.Cast<DataColumn>().ToArray();
+                tbl = db.CreateTable("MyTable",dt,new []{nameCol}); //upload the column as is 
+                Assert.IsTrue(tbl.DiscoverColumns().All(c => c.IsPrimaryKey));
+                break;
+            default:
+                tbl = db.CreateTable("MyTable", dt, new[]
+                {
+                    nameCol,
+                    new DatabaseColumnRequest("DateOfBirth",new DatabaseTypeRequest(typeof(DateTime)),false){IsPrimaryKey = true}
+                });
+                break;
         }
 
         Assert.AreEqual(2, tbl.GetRowCount());

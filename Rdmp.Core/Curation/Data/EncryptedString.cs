@@ -29,11 +29,9 @@ public class EncryptedString : IEncryptedString
     /// <inheritdoc/>
     public string Value
     {
-        get
-        {
+        get =>
             //if there is a password in memory it will be encrypted (probably) so return that, to decrypt call DecryptPassword
-            return _value;
-        }
+            _value;
         set
         {
 
@@ -48,7 +46,8 @@ public class EncryptedString : IEncryptedString
                 catch (Exception e)
                 {
                     if (e.Message.Contains("Bad Length") || e.Message.Contains("data too large for key size"))
-                        throw new InvalidOperationException("The free text Value supplied to this class was too long to be encrypted (Length of string was " + value.Length + ")", e);
+                        throw new InvalidOperationException(
+                            $"The free text Value supplied to this class was too long to be encrypted (Length of string was {value.Length})", e);
 
                     //it's some other exception
                     throw;
@@ -76,7 +75,7 @@ public class EncryptedString : IEncryptedString
         if (_encrypter.IsStringEncrypted(Value))
             return _encrypter.Decrypt(Value);
 
-        //its not decrypted... how did that happen
+        //it's not decrypted... how did that happen
         throw new Exception("Found Value in memory that was not encrypted");
     }
 

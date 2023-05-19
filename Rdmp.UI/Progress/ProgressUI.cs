@@ -430,7 +430,7 @@ public partial class ProgressUI : UserControl, IDataLoadEventListener
 
     private void SetFilterFromTextBox()
     {
-        var alwaysShow = olvProgressEvents.Objects == null ? new ProgressUIEntry[0] :
+        var alwaysShow = olvProgressEvents.Objects == null ? Array.Empty<ProgressUIEntry>() :
             olvProgressEvents.Objects.OfType<ProgressUIEntry>().Where(p => p.Sender == GlobalRunError).ToArray();
         olvProgressEvents.ModelFilter = new TextMatchFilterWithAlwaysShowList(alwaysShow, olvProgressEvents, tbTextFilter.Text, StringComparison.CurrentCultureIgnoreCase);
     }
@@ -453,7 +453,7 @@ public partial class ProgressUI : UserControl, IDataLoadEventListener
     public NotifyEventArgs GetWorst()
     {
             
-        var worstEntry = (olvProgressEvents.Objects ?? new object[0]).OfType<ProgressUIEntry>().Union(NotificationQueue).OrderByDescending(e=>e.ProgressEventType).FirstOrDefault();
+        var worstEntry = (olvProgressEvents.Objects ?? Array.Empty<object>()).OfType<ProgressUIEntry>().Union(NotificationQueue).OrderByDescending(e=>e.ProgressEventType).FirstOrDefault();
             
         if(worstEntry == null)
             return null;

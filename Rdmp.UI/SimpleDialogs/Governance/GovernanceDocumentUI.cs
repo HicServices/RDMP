@@ -15,7 +15,6 @@ using Rdmp.UI.Rules;
 using Rdmp.UI.SimpleControls;
 using Rdmp.UI.TestsAndSetup.ServicePropogation;
 
-
 namespace Rdmp.UI.SimpleDialogs.Governance;
 
 /// <summary>
@@ -46,8 +45,10 @@ public partial class GovernanceDocumentUI : GovernanceDocumentUI_Design, ISaveab
 
     private void btnBrowse_Click(object sender, EventArgs e)
     {
-        OpenFileDialog ofd = new OpenFileDialog();
-        ofd.CheckFileExists = true;
+        OpenFileDialog ofd = new()
+        {
+            CheckFileExists = true
+        };
 
         if (ofd.ShowDialog() == DialogResult.OK)
         {
@@ -59,7 +60,7 @@ public partial class GovernanceDocumentUI : GovernanceDocumentUI_Design, ISaveab
     {
         try
         {
-            UsefulStuff.GetInstance().ShowPathInWindowsExplorer(new FileInfo(tbPath.Text));
+            UsefulStuff.ShowPathInWindowsExplorer(new FileInfo(tbPath.Text));
         }
         catch (Exception exception)
         {

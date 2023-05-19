@@ -15,7 +15,7 @@ namespace Tests.Common.Scenarios;
 /// </summary>
 public class FromToDatabaseTests:DatabaseTests
 {
-    protected readonly string Suffix;
+    private readonly string _suffix;
     protected DiscoveredDatabase From;
     protected DiscoveredDatabase To;
 
@@ -26,7 +26,7 @@ public class FromToDatabaseTests:DatabaseTests
 
     public FromToDatabaseTests(string suffix = "_STAGING")
     {
-        Suffix = suffix;
+        _suffix = suffix;
     }
 
     [OneTimeSetUp]
@@ -46,7 +46,7 @@ public class FromToDatabaseTests:DatabaseTests
     protected void SetupFromTo(DatabaseType dbType)
     {
         To = GetCleanedServer(dbType);
-        From = To.Server.ExpectDatabase(To.GetRuntimeName() + Suffix);
+        From = To.Server.ExpectDatabase(To.GetRuntimeName() + _suffix);
             
         // ensure the test staging and live databases are empty
         if(!From.Exists())

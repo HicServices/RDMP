@@ -25,7 +25,7 @@ public class ParameterCreatorTests
         var factory = new Mock<IFilterFactory>();
         factory.Verify(m => m.CreateNewParameter(It.IsAny<IFilter>(), It.IsAny<string>()),Times.Never);
 
-        var creator = new ParameterCreator(factory.Object, new ISqlParameter[0], null);
+        var creator = new ParameterCreator(factory.Object, Array.Empty<ISqlParameter>(), null);
         creator.CreateAll(f,null);
 
         factory.Verify();

@@ -17,7 +17,7 @@ using SixLabors.ImageSharp.PixelFormats;
 
 namespace Rdmp.UI.CommandExecution.AtomicCommands;
 
-internal class ExecuteCommandOpenExtractionDirectory : BasicUICommandExecution,IAtomicCommand
+internal class ExecuteCommandOpenExtractionDirectory : BasicUICommandExecution
 {
     private FileInfo _file;
     private DirectoryInfo _dir;

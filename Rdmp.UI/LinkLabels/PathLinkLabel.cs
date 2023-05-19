@@ -22,32 +22,32 @@ public class PathLinkLabel : Label
     protected override void OnMouseHover(EventArgs e)
     {
         base.OnMouseHover(e);
-        this.Cursor = Cursors.Hand;
+        Cursor = Cursors.Hand;
     }
 
     protected override void OnClick(EventArgs e)
     {
         base.OnClick(e);
 
-        if(!string.IsNullOrWhiteSpace(Text))
-            try
-            {
-                UsefulStuff.GetInstance().ShowPathInWindowsExplorer(new DirectoryInfo(Text));
-            }
-            catch (Exception exception)
-            {
-                ExceptionViewer.Show(exception);
-            }
+        if (string.IsNullOrWhiteSpace(Text)) return;
+        try
+        {
+            UsefulStuff.ShowPathInWindowsExplorer(new DirectoryInfo(Text));
+        }
+        catch (Exception exception)
+        {
+            ExceptionViewer.Show(exception);
+        }
     }
         
     protected override void OnPaint(PaintEventArgs e)
     {
         //paint background
-        using (SolidBrush b = new SolidBrush(BackColor))
-            e.Graphics.FillRectangle(b, Bounds);
+        using SolidBrush b = new(BackColor);
+        e.Graphics.FillRectangle(b, Bounds);
             
         //paint text
-        using(Font f = new Font(Font, FontStyle.Underline))
-            TextRenderer.DrawText(e.Graphics, Text, f, ClientRectangle, Color.Blue, TextFormatFlags.PathEllipsis);
+        using Font f = new(Font, FontStyle.Underline);
+        TextRenderer.DrawText(e.Graphics, Text, f, ClientRectangle, Color.Blue, TextFormatFlags.PathEllipsis);
     }
 }
