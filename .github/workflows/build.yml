@@ -180,7 +180,9 @@ jobs:
           do
           dotnet pack $i -c Release --include-symbols --nologo -o . -v:m -p:Version=${{ steps.version.outputs.rdmpversion }}
           done
-          dotnet nuget push HIC.RDMP.Plugin*${{ steps.version.outputs.rdmpversion }}.nupkg -s https://api.nuget.org/v3/index.json --skip-duplicate -k ${{ secrets.NUGET_KEY }}
+      - name: Upload Nuget packages
+        if: contains(github.ref, 'refs/tags/v')
+        run: dotnet nuget push HIC.RDMP.Plugin*${{ steps.version.outputs.rdmpversion }}.nupkg -s https://api.nuget.org/v3/index.json --skip-duplicate -k ${{ secrets.NUGET_KEY }}
 
       - name: Calculate SHA256SUMS
         run: '&{foreach ($i in Get-ChildItem dist -Exclude *SUMS|Get-FileHash) { echo "$($i.Hash) $(echo $i | Split-Path -Leaf)" }} > dist/SHA256SUMS'
