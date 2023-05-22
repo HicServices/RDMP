@@ -1,4 +1,4 @@
-﻿<Project Sdk="Microsoft.NET.Sdk">
+<Project Sdk="Microsoft.NET.Sdk">
   <PropertyGroup>
     <PackageId>HIC.RDMP.Plugin.UI</PackageId>
     <id>HIC.RDMP.Plugin.UI</id>
@@ -47,7 +47,7 @@
       <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
     </PackageReference>
     <PackageReference Include="ObjectListView.Repack.NET6Plus" Version="2.9.4" />
-    <PackageReference Include="Scintilla.NET" Version="5.3.2.6" />
+    <PackageReference Include="Scintilla.NET" Version="5.3.2.7" />
     <PackageReference Include="SecurityCodeScan.VS2019" Version="5.6.7">
       <PrivateAssets>all</PrivateAssets>
       <IncludeAssets>runtime; build; native; contentfiles; analyzers</IncludeAssets>
