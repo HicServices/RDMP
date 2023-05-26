@@ -37,7 +37,7 @@ jobs:
       - name: Check output
         run: echo ${{ steps.version.outputs.rdmpversion }}
       - name: Setup .NET Core
-        uses: actions/setup-dotnet@v3.0.3
+        uses: actions/setup-dotnet@v3.1.0
         with:
           dotnet-version: 6.0.x
       - name: Install MS SQL 2019 Express LocalDB
