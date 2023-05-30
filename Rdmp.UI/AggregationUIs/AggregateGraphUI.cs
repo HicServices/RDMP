@@ -708,8 +708,8 @@ public partial class AggregateGraphUI : AggregateGraph_Design
     }
 
     /// <summary>
-    /// Normally you dont need to worry about double subscriptions but this graph gets recycled during MetadataReport generation with different aggregates one
-    /// after the other which violetates the 1 subscription per control rule (see base.SetDatabaseObject)
+    /// Normally you don't need to worry about double subscriptions but this graph gets recycled during MetadataReport generation with different aggregates one
+    /// after the other which violates the 1 subscription per control rule (see base.SetDatabaseObject)
     /// </summary>
     private bool menuInitialized = false;
 
@@ -834,7 +834,7 @@ public partial class AggregateGraphUI : AggregateGraph_Design
         {
             var s = UsefulStuff.GetInstance().DataTableToHtmlDataTable(_dt);
 
-            var formatted = UsefulStuff.GetInstance().GetClipboardFormattedHtmlStringFromHtmlString(s);
+            var formatted = UsefulStuff.GetClipboardFormattedHtmlStringFromHtmlString(s);
             
             Clipboard.SetText(formatted,TextDataFormat.Html);
         }

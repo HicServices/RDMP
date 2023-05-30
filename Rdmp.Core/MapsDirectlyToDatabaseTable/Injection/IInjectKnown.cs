@@ -31,7 +31,7 @@ public interface IInjectKnown
 /// 
 ///     public void InjectKnown(byte[] instance)
 ///     {
-///         _knownBytes = new Lazy&lt;byte[]&gt;(()=>instance);
+///         _knownBytes = new Lazy&lt;byte[]&gt;(instance);
 ///     }
 /// 
 ///     public void ClearAllInjections()

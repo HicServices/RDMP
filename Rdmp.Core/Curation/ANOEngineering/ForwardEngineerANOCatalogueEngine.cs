@@ -213,7 +213,7 @@ public class ForwardEngineerANOCatalogueEngine
                             //also refactor any other column names that might be referenced by the transform SQL e.g. it could be a combo column name where forename + surname is the value of the ExtractionInformation
                             foreach (var kvpOtherCols in _parenthoodDictionary.Where(kvp=>kvp.Key is ColumnInfo))
                             {
-                                //if it's one we have already done, dont do it again
+                                //if it's one we have already done, don't do it again
                                 if(Equals(kvpOtherCols.Value, newColumnInfo))
                                     continue;
 

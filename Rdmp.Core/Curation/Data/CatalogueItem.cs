@@ -284,7 +284,7 @@ public class CatalogueItem : DatabaseEntity, IDeleteable, IComparable, IHasDepen
     /// <inheritdoc/>
     public void InjectKnown(Catalogue instance)
     {
-        _knownCatalogue = new Lazy<Catalogue>(()=>instance);
+        _knownCatalogue = new Lazy<Catalogue>(instance);
     }
 
     /// <inheritdoc/>
@@ -316,12 +316,12 @@ public class CatalogueItem : DatabaseEntity, IDeleteable, IComparable, IHasDepen
     /// <inheritdoc/>
     public void InjectKnown(ExtractionInformation instance)
     {
-        _knownExtractionInformation = new Lazy<ExtractionInformation>(()=>instance);
+        _knownExtractionInformation = new Lazy<ExtractionInformation>(instance);
     }
     /// <inheritdoc/>
     public void InjectKnown(ColumnInfo instance)
     {
-        _knownColumnInfo = new Lazy<ColumnInfo>(()=>instance);
+        _knownColumnInfo = new Lazy<ColumnInfo>(instance);
     }
 
     /// <inheritdoc/>

@@ -280,7 +280,7 @@ public partial class LoadEventsTreeView : RDMPUserControl,IObjectCollectionContr
         }
         catch (Exception exception)
         {
-            CommonFunctionality.Fatal("Failed to popualte load history",exception);
+            CommonFunctionality.Fatal("Failed to populate load history",exception);
         }
     }
 

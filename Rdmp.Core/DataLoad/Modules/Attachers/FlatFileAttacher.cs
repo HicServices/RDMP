@@ -24,7 +24,7 @@ namespace Rdmp.Core.DataLoad.Modules.Attachers;
 /// <summary>
 /// Base class for an Attacher which expects to be passed a Filepath which is the location of a textual file in which values for a single DataTable are stored
 ///  (e.g. csv or fixed width etc).  This attacher requires that the RAW database server be setup and contain the correct tables for loading (it is likely that 
-/// the DataLoadEngine handles all this - as a user you dont need to worry about this).
+/// the DataLoadEngine handles all this - as a user you don't need to worry about this).
 /// </summary>
 public abstract class FlatFileAttacher : Attacher, IPluginAttacher
 {

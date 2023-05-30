@@ -448,7 +448,7 @@ public class AggregateConfiguration : DatabaseEntity, ICheckable, IOrderable, IC
     /// </summary>
     public void InjectKnown(JoinableCohortAggregateConfiguration instance)
     {
-        _knownJoinableCohortAggregateConfiguration = new Lazy<JoinableCohortAggregateConfiguration>(()=>instance);
+        _knownJoinableCohortAggregateConfiguration = new Lazy<JoinableCohortAggregateConfiguration>(instance);
     }
 
     /// <inheritdoc/>
@@ -461,12 +461,12 @@ public class AggregateConfiguration : DatabaseEntity, ICheckable, IOrderable, IC
 
     public void InjectKnown(AggregateDimension[] instance)
     {
-        _knownAggregateDimensions = new Lazy<AggregateDimension[]>(() => instance);
+        _knownAggregateDimensions = new Lazy<AggregateDimension[]>(instance);
     }
 
     public void InjectKnown(Catalogue instance)
     {
-        _knownCatalogue = new Lazy<Catalogue>(() => instance);
+        _knownCatalogue = new Lazy<Catalogue>(instance);
     }
 
     /// <summary>

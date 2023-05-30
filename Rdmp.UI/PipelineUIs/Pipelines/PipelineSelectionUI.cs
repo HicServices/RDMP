@@ -100,7 +100,7 @@ public partial class PipelineSelectionUI : UserControl, IPipelineSelectionUI
         _repository = repository;
         InitializeComponent();
             
-        if (LicenseManager.UsageMode == LicenseUsageMode.Designtime) //dont connect to database in design mode
+        if (LicenseManager.UsageMode == LicenseUsageMode.Designtime) //don't connect to database in design mode
             return;
 
         RefreshPipelineList();

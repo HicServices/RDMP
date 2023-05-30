@@ -17,7 +17,7 @@ namespace Rdmp.Core.Tests.Curation;
 class DublinCoreTests
 {
     [Test]
-    public void TestWrittingDocument()
+    public void TestWritingDocument()
     {
         var def = new DublinCoreDefinition()
         {

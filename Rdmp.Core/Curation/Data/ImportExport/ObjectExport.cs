@@ -78,16 +78,13 @@ public class ObjectExport : ReferenceOtherObjectDatabaseEntity, IInjectKnown<IMa
 
     public void InjectKnown(IMapsDirectlyToDatabaseTable instance)
     {
-        _knownReferenceTo = new Lazy<IMapsDirectlyToDatabaseTable>(()=>instance);
+        _knownReferenceTo = new Lazy<IMapsDirectlyToDatabaseTable>(instance);
     }
 
     /// <inheritdoc/>
     public override string ToString()
     {
-        if (_knownReferenceTo != null)
-            return "E::" + _knownReferenceTo.Value;
-
-        return "E::" + ReferencedObjectType +"::" + SharingUID;
+        return _knownReferenceTo != null ? $"E::{_knownReferenceTo.Value}" : $"E::{ReferencedObjectType}::{SharingUID}";
     }
 
     private Lazy<IMapsDirectlyToDatabaseTable> _knownReferenceTo;

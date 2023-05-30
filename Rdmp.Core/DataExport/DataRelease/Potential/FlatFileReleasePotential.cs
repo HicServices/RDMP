@@ -53,35 +53,35 @@ public class FlatFileReleasePotential : ReleasePotential
             return true;//extract is missing
 
         if (!ExtractFile.Extension.Equals(".csv"))
-            throw new Exception("Extraction file had extension '" + ExtractFile.Extension + "' (expected .csv)");
+            throw new Exception($"Extraction file had extension '{ExtractFile.Extension}' (expected .csv)");
 
         if (!metadataFile.Exists)
             return true;
 
-        //see if there is any other polution in the extract directory
+        //see if there is any other pollution in the extract directory
         FileInfo unexpectedFile = ExtractFile.Directory.EnumerateFiles().FirstOrDefault(f =>
             !(f.Name.Equals(ExtractFile.Name) || f.Name.Equals(metadataFile.Name)));
 
         if (unexpectedFile != null)
-            throw new Exception("Unexpected file found in extract directory " + unexpectedFile.FullName + " (pollution of extract directory is not permitted)");
+            throw new Exception(
+                $"Unexpected file found in extract directory {unexpectedFile.FullName} (pollution of extract directory is not permitted)");
 
         DirectoryInfo unexpectedDirectory = ExtractFile.Directory.EnumerateDirectories().FirstOrDefault(d =>
             !(d.Name.Equals("Lookups") || d.Name.Equals("SupportingDocuments") || d.Name.Equals(SupportingSQLTable.ExtractionFolderName)));
 
         if (unexpectedDirectory != null)
-            throw new Exception("Unexpected directory found in extraction directory " + unexpectedDirectory.FullName + " (pollution of extract directory is not permitted)");
+            throw new Exception(
+                $"Unexpected directory found in extraction directory {unexpectedDirectory.FullName} (pollution of extract directory is not permitted)");
 
         return false;
     }
 
     private void ThrowIfPollutionFoundInConfigurationRootExtractionFolder()
     {
-        Debug.Assert(ExtractDirectory.Parent != null, "Dont call this method until you have determined that an extracted file was actually produced!");
+        Debug.Assert(ExtractDirectory.Parent != null, "Don't call this method until you have determined that an extracted file was actually produced!");
 
         if (ExtractDirectory.Parent.GetFiles().Any())
-            throw new Exception("The following pollutants were found in the extraction directory\" " +
-                                ExtractDirectory.Parent.FullName +
-                                "\" pollutants were:" +
-                                ExtractDirectory.Parent.GetFiles().Aggregate("", (s, n) => s + "\"" + n + "\""));
+            throw new Exception(
+                $"The following pollutants were found in the extraction directory\" {ExtractDirectory.Parent.FullName}\" pollutants were:{ExtractDirectory.Parent.GetFiles().Aggregate("", (s, n) => $"{s}\"{n}\"")}");
     }
 }

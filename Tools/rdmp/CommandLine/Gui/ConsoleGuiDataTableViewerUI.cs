@@ -12,10 +12,9 @@
 //      You can make changes to this file and they will not be overwritten when saving.
 //  </auto-generated>
 // -----------------------------------------------------------------------------
-namespace Rdmp.Core.CommandLine.Gui;
-
 using System.Data;
 
+namespace Rdmp.Core.CommandLine.Gui;
 
 public partial class ConsoleGuiDataTableViewerUI {
         

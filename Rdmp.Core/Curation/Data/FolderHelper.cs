@@ -111,7 +111,7 @@ public static class FolderHelper
                 }
                 else
                 {
-                    // we may already have created this as part of a subgroup e.g. seeing \1\2 then seeing \1 alone (we dont want multiple copies of \1 folder).
+                    // we may already have created this as part of a subgroup e.g. seeing \1\2 then seeing \1 alone (we don't want multiple copies of \1 folder).
                     var existing = currentBranch.ChildFolders.FirstOrDefault(f => f.Name.Equals(nextFolder, StringComparison.CurrentCultureIgnoreCase));
                         
                     if(existing == null)

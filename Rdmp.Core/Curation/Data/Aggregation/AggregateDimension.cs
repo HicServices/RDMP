@@ -200,12 +200,12 @@ public class AggregateDimension : DatabaseEntity, ISaveable, IDeleteable, IColum
 
     public void InjectKnown(ExtractionInformation instance)
     {
-        _knownExtractionInformation = new Lazy<ExtractionInformation>(()=>instance);
+        _knownExtractionInformation = new Lazy<ExtractionInformation>(instance);
     }
         
     public void InjectKnown(AggregateConfiguration ac)
     {
-        _knownAggregateConfiguration = new Lazy<AggregateConfiguration>(()=>ac);
+        _knownAggregateConfiguration = new Lazy<AggregateConfiguration>(ac);
     }
 
     public void ClearAllInjections()

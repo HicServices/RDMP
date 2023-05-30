@@ -124,7 +124,8 @@ public class ParameterManager
     private void AddParametersFor(ICollectSqlParameters collector, List<ISqlParameter> toAddTo)
     {
         if (State == ParameterManagerLifecycleState.Finalized)
-            throw new InvalidOperationException("Cannot add new " + collector.GetType().Name + " level parameters because state is " + State);
+            throw new InvalidOperationException(
+                $"Cannot add new {collector.GetType().Name} level parameters because state is {State}");
 
         State = ParameterManagerLifecycleState.ParameterDiscovery;
 
@@ -152,7 +153,7 @@ public class ParameterManager
         var emptyParameter = toReturn.FirstOrDefault(t => string.IsNullOrWhiteSpace(t.Parameter.Value));
         if(emptyParameter != null)
         {
-            string exceptionMessage = "No Value defined for Parameter " + emptyParameter.Parameter.ParameterName;
+            string exceptionMessage = $"No Value defined for Parameter {emptyParameter.Parameter.ParameterName}";
             var asConcreteObject = emptyParameter.Parameter as IMapsDirectlyToDatabaseTable;
                 
             //problem was in a freaky parameter e.g. a constant one that doesn't come from database (rare to happen I would expect)
@@ -190,7 +191,8 @@ public class ParameterManager
                     !toAdd.Parameter.ParameterSQL.Trim()
                         .Equals(duplicate.Parameter.ParameterSQL.Trim(), StringComparison.CurrentCultureIgnoreCase))
                 //to lower them so that we don't complain about 'AS VARCHAR(50)' vs 'as varchar(50)'
-                ThrowExceptionForParameterPair("Found multiple parameters called " + toAdd.Parameter + " but with differing SQL:" + toAdd.Parameter.ParameterSQL + " vs " + duplicate.Parameter.ParameterSQL, toAdd, duplicate);
+                ThrowExceptionForParameterPair(
+                    $"Found multiple parameters called {toAdd.Parameter} but with differing SQL:{toAdd.Parameter.ParameterSQL} vs {duplicate.Parameter.ParameterSQL}", toAdd, duplicate);
 
 
             //if values differ!
@@ -203,11 +205,10 @@ public class ParameterManager
                     existingParameters.Add(toAdd);
                 }
                 else
-                    ThrowExceptionForParameterPair("Found 2+ parameters with the name " + toAdd +
-                                                   " but differing Values of \"" + toAdd.Parameter.Value + "\" and \"" +
-                                                   duplicate.Parameter.Value + "\"",toAdd,duplicate);
+                    ThrowExceptionForParameterPair(
+                        $"Found 2+ parameters with the name {toAdd} but differing Values of \"{toAdd.Parameter.Value}\" and \"{duplicate.Parameter.Value}\"",toAdd,duplicate);
             }
-            //if we get here then its a duplicate but it is an exact duplicate so dont worry
+            //if we get here then its a duplicate but it is an exact duplicate so don't worry
         }
         else
             existingParameters.Add(toAdd); //its not a duplicate so add it to the list of RequiredParameters 
@@ -220,27 +221,27 @@ public class ParameterManager
 
         List<IMapsDirectlyToDatabaseTable> concreteObjects = new List<IMapsDirectlyToDatabaseTable>();
 
-        string desc1 = "(Type:" + parameter1.Parameter.GetType();
-        string desc2 = "(Type:" + parameter2.Parameter.GetType();
+        string desc1 = $"(Type:{parameter1.Parameter.GetType()}";
+        string desc2 = $"(Type:{parameter2.Parameter.GetType()}";
 
 
         if(concrete1 != null)
         {
             concreteObjects.Add(concrete1);
-            desc1 += " ID:" + concrete1.ID;
+            desc1 += $" ID:{concrete1.ID}";
         }
 
         if(concrete2 != null)
         {
 
             concreteObjects.Add(concrete2);
-            desc2 += " ID:" + concrete2.ID;
+            desc2 += $" ID:{concrete2.ID}";
         }
 
         desc1 += ")";
         desc2 += ")";
 
-        exceptionMessage += ".  Problem objects were " + parameter1 + desc1 + " and " + parameter2 + " " + desc2;
+        exceptionMessage += $".  Problem objects were {parameter1}{desc1} and {parameter2} {desc2}";
             
         throw new QueryBuildingException(exceptionMessage,concreteObjects);
     }
@@ -258,10 +259,12 @@ public class ParameterManager
             throw new InvalidOperationException("Cannot import parameters into yourself!");
 
         if(State == ParameterManagerLifecycleState.Finalized)
-            throw new InvalidOperationException("Cannot import parameters because state of ParameterManager is already " + ParameterManagerLifecycleState.Finalized);
+            throw new InvalidOperationException(
+                $"Cannot import parameters because state of ParameterManager is already {ParameterManagerLifecycleState.Finalized}");
 
         if(toImport.ParametersFoundSoFarInQueryGeneration[ParameterLevel.CompositeQueryLevel].Any())
-            throw new ArgumentException("Cannot import from ParameterManager because it has 1+ " + ParameterLevel.CompositeQueryLevel +" parameters in it too!");
+            throw new ArgumentException(
+                $"Cannot import from ParameterManager because it has 1+ {ParameterLevel.CompositeQueryLevel} parameters in it too!");
             
         parameterNameSubstitutions = new Dictionary<string, string>();
 
@@ -307,7 +310,8 @@ public class ParameterManager
                         continue;//override will replace both so don't bother importing it
                     else
                         //there's an override with the same name but different datatypes (that's a problem)
-                        throw new QueryBuildingException("Parameter " + parameterToImport + " has the same name as an existing parameter with a global override but differing declarations (normally we would handle with a rename but we can't because of the overriding global)",new object[]{existing,parameterToImport,overridingGlobal});
+                        throw new QueryBuildingException(
+                            $"Parameter {parameterToImport} has the same name as an existing parameter with a global override but differing declarations (normally we would handle with a rename but we can't because of the overriding global)",new object[]{existing,parameterToImport,overridingGlobal});
 
                 //one already exists so we will have to do a parameter rename
 
@@ -315,12 +319,13 @@ public class ParameterManager
                 int newSuffix = GetSuffixForRenaming(toImportParameterName);
 
                 //Add the rename operation to the audit
-                parameterNameSubstitutions.Add(toImportParameterName, parameterToImport.ParameterName + "_" + newSuffix);
+                parameterNameSubstitutions.Add(toImportParameterName, $"{parameterToImport.ParameterName}_{newSuffix}");
 
                 //do the rename operation into a spontaneous object because modifying the ISqlParameter directly could corrupt it for other users (especially if SuperCaching is on! See RDMPDEV-668)
                 var spont = new SpontaneouslyInventedSqlParameter(
                     _memoryRepository,
-                    parameterToImport.ParameterSQL.Replace(toImportParameterName, parameterToImport.ParameterName + "_" + newSuffix),
+                    parameterToImport.ParameterSQL.Replace(toImportParameterName,
+                        $"{parameterToImport.ParameterName}_{newSuffix}"),
                     parameterToImport.Value,
                     parameterToImport.Comment,
                     parameterToImport.GetQuerySyntaxHelper()
@@ -364,7 +369,7 @@ public class ParameterManager
         //while we have parameter called @p_2, @p_3 etc etc keep adding
         while (
             ParametersFoundSoFarInQueryGeneration[ParameterLevel.CompositeQueryLevel].Any(
-                p => p.ParameterName.Equals(toImportParameterName + "_" + counter, StringComparison.CurrentCultureIgnoreCase)))
+                p => p.ParameterName.Equals($"{toImportParameterName}_{counter}", StringComparison.CurrentCultureIgnoreCase)))
             counter++;
 
         //we have now found a unique number
@@ -508,7 +513,8 @@ public class ParameterManager
     {
         var collisions = GetCollisions(other);
         if(collisions.Any())
-            throw new QueryBuildingException("PatientIndexTables cannot have parameters with the same name as their users.  Offending parameter(s) were " + string.Join(",",collisions));
+            throw new QueryBuildingException(
+                $"PatientIndexTables cannot have parameters with the same name as their users.  Offending parameter(s) were {string.Join(",", collisions)}");
 
         foreach (ParameterLevel l in Enum.GetValues(typeof(ParameterLevel)))
         {

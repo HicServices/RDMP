@@ -180,7 +180,7 @@ public class CohortQueryBuilder
 
         _sql = Results.Sql;
   
-        //Still finalise the ParameterManager even if we are not writting out the parameters so that it is in the Finalized state
+        //Still finalise the ParameterManager even if we are not writing out the parameters so that it is in the Finalized state
         var finalParameters = ParameterManager.GetFinalResolvedParametersList();
 
         if(!DoNotWriteOutParameters)

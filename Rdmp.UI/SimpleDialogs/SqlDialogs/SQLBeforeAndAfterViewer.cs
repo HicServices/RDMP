@@ -31,7 +31,7 @@ public partial class SQLBeforeAndAfterViewer : Form
 
         bool designMode = (LicenseManager.UsageMode == LicenseUsageMode.Designtime);
 
-        if (designMode) //dont add the QueryEditor if we are in design time (visual studio) because it breaks
+        if (designMode) //don't add the QueryEditor if we are in design time (visual studio) because it breaks
             return;
 
         QueryEditorBefore = new ScintillaTextEditorFactory().Create();

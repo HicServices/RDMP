@@ -36,13 +36,13 @@ public partial class ResolveFatalErrors : RDMPForm
         _toResolve = toResolve;
         InitializeComponent();
 
-        if (VisualStudioDesignMode || logManager == null) //dont add the QueryEditor if we are in design time (visual studio) because it breaks
+        if (VisualStudioDesignMode || logManager == null) //don't add the QueryEditor if we are in design time (visual studio) because it breaks
             return;
 
         Explanation = new ScintillaTextEditorFactory().Create(new RDMPCombineableFactory());
         Explanation.ReadOnly = false;
 
-        //if there is only 1 explanation already recorded then we should populate the explanation textbox with thsi
+        //if there is only 1 explanation already recorded then we should populate the explanation textbox with this
         if (toResolve.Select(e => e.Explanation).Distinct().Count() == 1)
             Explanation.Text = toResolve.First().Explanation;
 

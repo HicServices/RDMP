@@ -221,7 +221,7 @@ public class PreLoadDiscardedColumn : DatabaseEntity, IPreLoadDiscardedColumn, I
 
     public void InjectKnown(ITableInfo instance)
     {
-        _knownTableInfo = new Lazy<ITableInfo>(() => instance);
+        _knownTableInfo = new Lazy<ITableInfo>(instance);
     }
 
     public void ClearAllInjections()

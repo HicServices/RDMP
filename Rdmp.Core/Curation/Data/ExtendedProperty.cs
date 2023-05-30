@@ -189,7 +189,7 @@ public class ExtendedProperty  : Argument,IReferenceOtherObjectWithPersist, IInj
 
     public void InjectKnown(IMapsDirectlyToDatabaseTable instance)
     {
-        _knownReferenceTo = new Lazy<IMapsDirectlyToDatabaseTable>(()=>instance);
+        _knownReferenceTo = new Lazy<IMapsDirectlyToDatabaseTable>(instance);
     }
 
     /// <inheritdoc/>

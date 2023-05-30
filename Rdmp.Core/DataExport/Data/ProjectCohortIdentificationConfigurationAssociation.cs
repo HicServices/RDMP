@@ -99,7 +99,7 @@ public class ProjectCohortIdentificationConfigurationAssociation : DatabaseEntit
 
     public void InjectKnown(CohortIdentificationConfiguration instance)
     {
-        _knownCic = new Lazy<CohortIdentificationConfiguration>(() => instance);
+        _knownCic = new Lazy<CohortIdentificationConfiguration>(instance);
     }
 
     public void ClearAllInjections()

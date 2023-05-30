@@ -58,8 +58,8 @@ class FatalErrorLoggingTest : DatabaseTests
         string fileContents = "TestStringThatCouldBeSomethingInAFile";
         byte[] hashAsBytes;
 
-        MemoryStream memory = new MemoryStream();
-        StreamWriter writeToMemory = new StreamWriter(memory);
+        using var memory = new MemoryStream();
+        using var writeToMemory = new StreamWriter(memory);
         writeToMemory.Write(fileContents);
         memory.Flush();
         memory.Position = 0;
@@ -71,24 +71,21 @@ class FatalErrorLoggingTest : DatabaseTests
 
         DataSource[] ds = new DataSource[] { new DataSource("nothing", DateTime.Now) };
 
-        ds[0].MD5 = hashAsBytes; //MD5 is a property so confirm write and read are the same - and dont bomb
+        ds[0].MD5 = hashAsBytes; //MD5 is a property so confirm write and read are the same - and don't bomb
 
         Assert.AreEqual(ds[0].MD5, hashAsBytes);
 
-        DataLoadInfo d = new DataLoadInfo("Internal", "HICSSISLibraryTests.FataErrorLoggingTest",
+        var d = new DataLoadInfo("Internal", "HICSSISLibraryTests.FatalErrorLoggingTest",
             "Test case for fatal error generation",
             "No rollback is possible/required as no database rows are actually inserted",
             true,
             new DiscoveredServer(UnitTestLoggingConnectionString));
 
-        TableLoadInfo t = new TableLoadInfo(d, "Unit test only", "Unit test only", ds, 5);
+        var t = new TableLoadInfo(d, "Unit test only", "Unit test only", ds, 5);
         t.Inserts += 5; //simulate that it crashed after 3
         t.CloseAndArchive();
 
         d.CloseAndMarkComplete();
-            
-            
-            
     }
     
 

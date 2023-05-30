@@ -81,5 +81,4 @@ public class UsefulStuffTests:DatabaseTests
         Assert.AreEqual("test String", UsefulStuff.PascalCaseStringToHumanReadable("_testString"));
         Assert.AreEqual("test String", UsefulStuff.PascalCaseStringToHumanReadable("_testString_"));
     }
-
 }

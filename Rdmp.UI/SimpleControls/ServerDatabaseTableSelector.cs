@@ -308,7 +308,7 @@ public partial class ServerDatabaseTableSelector : UserControl
     private bool _clearingTable = false;
     private void cbxTable_SelectedIndexChanged(object sender, EventArgs e)
     {
-        //dont clear both!
+        //don't clear both!
         if (_clearingTable)
             return;
         _clearingTable = true;
@@ -322,7 +322,7 @@ public partial class ServerDatabaseTableSelector : UserControl
 
     private void cbxTableValueFunctions_SelectedIndexChanged(object sender, EventArgs e)
     {
-        //dont clear both!
+        //don't clear both!
         if (_clearingTable)
             return;
 

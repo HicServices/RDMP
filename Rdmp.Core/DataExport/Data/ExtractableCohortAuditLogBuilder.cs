@@ -24,7 +24,7 @@ public class ExtractableCohortAuditLogBuilder
 
     /// <summary>
     /// regex for picking up <see cref="CohortIdentificationConfiguration"/> IDs from audit log based on a legacy way of
-    /// writting that ID into the <see cref="ExtractableCohort.AuditLog"/>
+    /// writing that ID into the <see cref="ExtractableCohort.AuditLog"/>
     /// </summary>
     Regex _legacyCic = new Regex(@"Created by running cic ([\d]+)");
 

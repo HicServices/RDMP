@@ -45,7 +45,7 @@ public partial class ReOrderCatalogueItemsUI : ReOrderCatalogueItems_Design
     private int currentOrderStartReorderAtIndex = -1;
 
     /// <summary>
-    /// This is a collection of all the items found in the desired order and their ofset in the desired order relative to the first one
+    /// This is a collection of all the items found in the desired order and their offset in the desired order relative to the first one
     /// </summary>
     private List<ExtractionInformation> itemsToReOrderAndOffsetRelativeToFirst;
 
@@ -58,7 +58,7 @@ public partial class ReOrderCatalogueItemsUI : ReOrderCatalogueItems_Design
         splitContainer1.Panel2Collapsed = true;
         AssociatedCollection = RDMPCollection.Catalogue;
         helpIcon1.SetHelpText("Re Order",
-            "Instructions: In simple mode you can view your columns and drag and drop them to reorder them.  In Advanced mode you can also Paste (Ctrl + V)  a list of column names into Desired Order (dont worry about trimming commas or table prefixes etc).  The first item in the list should be the point at which you want to start reordering at e.g. CHI or the last record if you want to move columns to the end then paste in the rest of the columns that you want to move after this first item."
+            "Instructions: In simple mode you can view your columns and drag and drop them to reorder them.  In Advanced mode you can also Paste (Ctrl + V)  a list of column names into Desired Order (don't worry about trimming commas or table prefixes etc).  The first item in the list should be the point at which you want to start reordering at e.g. CHI or the last record if you want to move columns to the end then paste in the rest of the columns that you want to move after this first item."
         );
 
         RDMPCollectionCommonFunctionality.SetupColumnTracking(olvExtractionInformations,olvColumns, new Guid("35946a6e-ebe4-496a-a944-1ddb10b5f8c5"));

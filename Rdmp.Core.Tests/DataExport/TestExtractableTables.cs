@@ -107,13 +107,13 @@ public class TestExtractableTables : TestsRequiringACohort
             object expectedValue = property.GetValue(expected, null);
             object actualValue = property.GetValue(actual, null);
 
-            if(expectedValue is SqlCommand && actualValue is SqlCommand) //dont compare sql commands they will be subtly different or just refer to different objects iwth the exact same values
+            if(expectedValue is SqlCommand && actualValue is SqlCommand) //don't compare sql commands they will be subtly different or just refer to different objects iwth the exact same values
                 continue;
 
-            if (actualValue is IList)
-                AssertListsAreEquals(property, (IList)actualValue, (IList)expectedValue);
+            if (actualValue is IList list)
+                AssertListsAreEquals(property, list, (IList)expectedValue);
             else if (!Equals(expectedValue, actualValue))
-                Assert.Fail("Property {0}.{1} does not match. Expected: {2} but was: {3}", property.DeclaringType.Name, property.Name, expectedValue, actualValue);
+                Assert.Fail("Property {0}.{1} does not match. Expected: {2} but was: {3}", property.DeclaringType?.Name, property.Name, expectedValue, actualValue);
         }
     }
 

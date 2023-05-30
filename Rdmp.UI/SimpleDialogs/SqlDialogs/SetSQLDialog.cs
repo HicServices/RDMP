@@ -33,7 +33,7 @@ public partial class SetSQLDialog : Form
             
         _designMode = (LicenseManager.UsageMode == LicenseUsageMode.Designtime);
 
-        if (_designMode) //dont add the QueryEditor if we are in design time (visual studio) because it breaks
+        if (_designMode) //don't add the QueryEditor if we are in design time (visual studio) because it breaks
             return;
 
         QueryEditor = new ScintillaTextEditorFactory().Create(commandFactory);

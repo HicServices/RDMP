@@ -193,7 +193,7 @@ $c - Configuration Extraction Directory  (e.g. c:\MyProject\Extractions\Extr_16)
             return;
         }
 
-        // What we will be writting into the file/path names in place of the private identifier
+        // What we will be writing into the file/path names in place of the private identifier
         var releaseSub = UsefulStuff.RemoveIllegalFilenameCharacters(releaseIdentifier.ToString());
 
         var patternAfterTokenInsertion = Pattern.Replace("$p",privateIdentifier.ToString());

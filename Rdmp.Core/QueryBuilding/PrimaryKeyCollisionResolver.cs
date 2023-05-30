@@ -58,30 +58,22 @@ WHERE DuplicateCount > 1";
 
     private string GenerateSQL(out ColumnInfo[] pks, out List<IResolveDuplication> resolvers)
     {
-        string sql = "";
         string tableNameInRAW = GetTableName();
 
         var cols = _tableInfo.ColumnInfos.ToArray();
         pks = cols.Where(col => col.IsPrimaryKey).ToArray();
             
         if(!pks.Any())
-            throw new Exception("TableInfo " + _tableInfo.GetRuntimeName() + " does not have any primary keys defined so cannot resolve primary key collisions");
+            throw new Exception(
+                $"TableInfo {_tableInfo.GetRuntimeName()} does not have any primary keys defined so cannot resolve primary key collisions");
 
-        string primaryKeys = pks.Aggregate("", (s, n) => s + _querySyntaxHelper.EnsureWrapped(n.GetRuntimeName(LoadStage.AdjustRaw)) + ",");
-        primaryKeys = primaryKeys.TrimEnd(new[] {','});
+        var primaryKeys = pks.Aggregate("", (s, n) =>
+            $"{s}{_querySyntaxHelper.EnsureWrapped(n.GetRuntimeName(LoadStage.AdjustRaw))},");
+        primaryKeys = primaryKeys.TrimEnd(',');
 
 
-        sql += "/*Notice how entities are not fully indexed with Database, this is because this code will run on RAW servers, prior to reaching STAGING/LIVE - the place where there are primary keys*/" + Environment.NewLine;
-
-        sql += WithCTE + Environment.NewLine;
-        sql += "AS" + Environment.NewLine;
-        sql += "(" + Environment.NewLine;
-        sql += SelectRownum + " OVER(" + Environment.NewLine;
-        sql += "\t PARTITION BY" + Environment.NewLine;
-        sql += "\t\t " + primaryKeys + Environment.NewLine;
-        sql += "\t ORDER BY"  + Environment.NewLine;
-
-        sql += "\t /*Priority in which order they should be used to resolve duplication of the primary key values, order by:*/"  + Environment.NewLine;
+        var sql =
+            $"/*Notice how entities are not fully indexed with Database, this is because this code will run on RAW servers, prior to reaching STAGING/LIVE - the place where there are primary keys*/{Environment.NewLine}{WithCTE}{Environment.NewLine}AS{Environment.NewLine}({Environment.NewLine}{SelectRownum} OVER({Environment.NewLine}\t PARTITION BY{Environment.NewLine}\t\t {primaryKeys}{Environment.NewLine}\t ORDER BY{Environment.NewLine}\t /*Priority in which order they should be used to resolve duplication of the primary key values, order by:*/{Environment.NewLine}";
             
         resolvers = new List<IResolveDuplication>();
 
@@ -89,25 +81,22 @@ WHERE DuplicateCount > 1";
         resolvers.AddRange(_tableInfo.PreLoadDiscardedColumns.Where(c => c.DuplicateRecordResolutionOrder != null));
 
         if (!resolvers.Any())
-            throw new Exception("The ColumnInfos of TableInfo " + _tableInfo + " do not have primary key resolution orders configured (do not know which order to use non primary key column values in to resolve collisions).  Fix this by right clicking a TableInfo in CatalogueManager and selecting 'Configure Primary Key Collision Resolution'.");
+            throw new Exception(
+                $"The ColumnInfos of TableInfo {_tableInfo} do not have primary key resolution orders configured (do not know which order to use non primary key column values in to resolve collisions).  Fix this by right clicking a TableInfo in CatalogueManager and selecting 'Configure Primary Key Collision Resolution'.");
 
         //order by the priority of columns 
-        foreach (IResolveDuplication column in resolvers.OrderBy(col => col.DuplicateRecordResolutionOrder))
+        foreach (var column in resolvers.OrderBy(col => col.DuplicateRecordResolutionOrder))
         {
-            if(column is ColumnInfo && ((ColumnInfo)column).IsPrimaryKey )
-                throw new Exception("Column " + column.GetRuntimeName() + " is flagged as primary key when it also has a DuplicateRecordResolutionOrder, primary keys cannot be used to resolve duplication since they are the hash!  Resolve this in the CatalogueManager by right clicking the offending TableInfo " + _tableInfo.GetRuntimeName() + " and editing the resolution order");
+            if(column is ColumnInfo { IsPrimaryKey: true })
+                throw new Exception(
+                    $"Column {column.GetRuntimeName()} is flagged as primary key when it also has a DuplicateRecordResolutionOrder, primary keys cannot be used to resolve duplication since they are the hash!  Resolve this in the CatalogueManager by right clicking the offending TableInfo {_tableInfo.GetRuntimeName()} and editing the resolution order");
                 
             sql = AppendRelevantOrderBySql(sql, column);
         }
 
         //trim the last remaining open bracket
-        sql = sql.TrimEnd(new[] {',','\r','\n'}) + Environment.NewLine;
-
-        sql += ") AS DuplicateCount" + Environment.NewLine;
-        sql += "FROM " + tableNameInRAW + Environment.NewLine;
-        sql += ")" + Environment.NewLine;
-
-        sql += DeleteBit;
+        sql =
+            $"{sql.TrimEnd(',', '\r', '\n')}{Environment.NewLine}) AS DuplicateCount{Environment.NewLine}FROM {tableNameInRAW}{Environment.NewLine}){Environment.NewLine}{DeleteBit}";
 
         return sql;
     }
@@ -123,7 +112,7 @@ WHERE DuplicateCount > 1";
 
         string direction = col.DuplicateRecordResolutionIsAscending ? " ASC" : " DESC";
 
-        //dont bother adding these because they are hic generated
+        //don't bother adding these because they are hic generated
         if (SpecialFieldNames.IsHicPrefixed(colname))
             return sql;
 
@@ -133,13 +122,12 @@ WHERE DuplicateCount > 1";
         {
             //character strings are compared first by LENGTH (to prefer longer data)
             //then by alphabetical comparison to prefer things towards the start of the alphabet (because this makes sense?!)
-            return 
-                sql +
-                "LEN(ISNULL(" + colname + "," + GetNullSubstituteForComparisonsWithDataType(col.Data_type, true) + "))" + direction + "," + Environment.NewLine +
-                "ISNULL(" + colname + "," + GetNullSubstituteForComparisonsWithDataType(col.Data_type, true) + ")" + direction + "," + Environment.NewLine;
+            return
+                $"{sql}LEN(ISNULL({colname},{GetNullSubstituteForComparisonsWithDataType(col.Data_type, true)})){direction},{Environment.NewLine}ISNULL({colname},{GetNullSubstituteForComparisonsWithDataType(col.Data_type, true)}){direction},{Environment.NewLine}";
         }
 
-        return sql + "ISNULL(" + colname + "," + GetNullSubstituteForComparisonsWithDataType(col.Data_type, true) + ")" + direction + "," + Environment.NewLine;
+        return
+            $"{sql}ISNULL({colname},{GetNullSubstituteForComparisonsWithDataType(col.Data_type, true)}){direction},{Environment.NewLine}";
     }
 
     /// <summary>
@@ -152,13 +140,14 @@ WHERE DuplicateCount > 1";
         var pks = _tableInfo.ColumnInfos.Where(col => col.IsPrimaryKey).ToArray();
 
         string sql = "";
-        sql += "select case when exists(" + Environment.NewLine;
-        sql += "select 1 FROM" + Environment.NewLine;
+        sql += $"select case when exists({Environment.NewLine}";
+        sql += $"select 1 FROM{Environment.NewLine}";
         sql += tableNameInRAW + Environment.NewLine;
-        sql += "group by " + pks.Aggregate("", (s, n) => s + _querySyntaxHelper.EnsureWrapped(n.GetRuntimeName(LoadStage.AdjustRaw)) + ",") + Environment.NewLine;
+        sql +=
+            $"group by {pks.Aggregate("", (s, n) => $"{s}{_querySyntaxHelper.EnsureWrapped(n.GetRuntimeName(LoadStage.AdjustRaw))},")}{Environment.NewLine}";
         sql = sql.TrimEnd(new[] {',','\r','\n'}) + Environment.NewLine;
-        sql += "having count(*) > 1" + Environment.NewLine;
-        sql += ") then 1 else 0 end" + Environment.NewLine;
+        sql += $"having count(*) > 1{Environment.NewLine}";
+        sql += $") then 1 else 0 end{Environment.NewLine}";
 
         return sql;
     }
@@ -179,32 +168,35 @@ WHERE DuplicateCount > 1";
         string commaSeparatedCols = String.Join(",", resolvers.Select(c => _querySyntaxHelper.EnsureWrapped(c.GetRuntimeName(LoadStage.AdjustRaw))));
 
         //add all the columns to the WITH CTE bit
-        basicSQL = basicSQL.Replace(WithCTE,"WITH CTE (" + commaSeparatedPKs + "," + commaSeparatedCols + ",DuplicateCount)");
-        basicSQL = basicSQL.Replace(SelectRownum, "\t SELECT " + commaSeparatedPKs + "," + commaSeparatedCols + ",ROW_NUMBER()");
+        basicSQL = basicSQL.Replace(WithCTE, $"WITH CTE ({commaSeparatedPKs},{commaSeparatedCols},DuplicateCount)");
+        basicSQL = basicSQL.Replace(SelectRownum, $"\t SELECT {commaSeparatedPKs},{commaSeparatedCols},ROW_NUMBER()");
         basicSQL = basicSQL.Replace(DeleteBit, "");
 
-        basicSQL += "select" + Environment.NewLine;
-        basicSQL += "\tCase when DuplicateCount = 1 then 'Retained' else 'Deleted' end as PlannedOperation,*" + Environment.NewLine;
-        basicSQL += "FROM CTE" + Environment.NewLine;
-        basicSQL += "where" + Environment.NewLine;
-        basicSQL += "exists" + Environment.NewLine;
-        basicSQL += "(" + Environment.NewLine;
-        basicSQL += "\tselect 1" + Environment.NewLine;
-        basicSQL += "\tfrom" + Environment.NewLine;
-        basicSQL += "\t\t"+ GetTableName() + " child" + Environment.NewLine;
-        basicSQL += "\twhere" + Environment.NewLine;
+        basicSQL += $"select{Environment.NewLine}";
+        basicSQL +=
+            $"\tCase when DuplicateCount = 1 then 'Retained' else 'Deleted' end as PlannedOperation,*{Environment.NewLine}";
+        basicSQL += $"FROM CTE{Environment.NewLine}";
+        basicSQL += $"where{Environment.NewLine}";
+        basicSQL += $"exists{Environment.NewLine}";
+        basicSQL += $"({Environment.NewLine}";
+        basicSQL += $"\tselect 1{Environment.NewLine}";
+        basicSQL += $"\tfrom{Environment.NewLine}";
+        basicSQL += $"\t\t{GetTableName()} child{Environment.NewLine}";
+        basicSQL += $"\twhere{Environment.NewLine}";
 
         //add the child.pk1 = CTE.pk1 bit to restrict preview only to rows that are going to get compared for nukage
         basicSQL += String.Join("\r\n\t\tand",pks.Select(pk =>  ("\t\tchild." + _querySyntaxHelper.EnsureWrapped(pk.GetRuntimeName(LoadStage.AdjustRaw)) + "= CTE." + _querySyntaxHelper.EnsureWrapped(pk.GetRuntimeName(LoadStage.AdjustRaw)))));
 
-        basicSQL += "\tgroup by" + Environment.NewLine;
-        basicSQL += String.Join(",\r\n", pks.Select( pk => "\t\t" + _querySyntaxHelper.EnsureWrapped(pk.GetRuntimeName(LoadStage.AdjustRaw))));
+        basicSQL += $"\tgroup by{Environment.NewLine}";
+        basicSQL += String.Join(",\r\n", pks.Select( pk =>
+            $"\t\t{_querySyntaxHelper.EnsureWrapped(pk.GetRuntimeName(LoadStage.AdjustRaw))}"));
 
-        basicSQL += "\t\t" + Environment.NewLine;
-        basicSQL += "\thaving count(*)>1" + Environment.NewLine;
-        basicSQL += ")" + Environment.NewLine;
+        basicSQL += $"\t\t{Environment.NewLine}";
+        basicSQL += $"\thaving count(*)>1{Environment.NewLine}";
+        basicSQL += $"){Environment.NewLine}";
 
-        basicSQL += "order by " + String.Join(",\r\n", pks.Select(pk => _querySyntaxHelper.EnsureWrapped(pk.GetRuntimeName(LoadStage.AdjustRaw))));
+        basicSQL +=
+            $"order by {String.Join(",\r\n", pks.Select(pk => _querySyntaxHelper.EnsureWrapped(pk.GetRuntimeName(LoadStage.AdjustRaw))))}";
         basicSQL += ",DuplicateCount";
 
         return basicSQL;
@@ -250,7 +242,7 @@ WHERE DuplicateCount > 1";
             dataType.Contains("spacial"))
             return ValueType.Freaky;
 
-        throw new Exception("Could not figure out the ValueType of SQL Type \"" + dataType + "\"");
+        throw new Exception($"Could not figure out the ValueType of SQL Type \"{dataType}\"");
 
 
     }
@@ -347,13 +339,15 @@ WHERE DuplicateCount > 1";
                 return "'23:59:59'";
 
         if (valueType == ValueType.Freaky)
-            throw new NotSupportedException("Cannot predict null value substitution for freaky datatypes like " + datatype);
+            throw new NotSupportedException(
+                $"Cannot predict null value substitution for freaky datatypes like {datatype}");
 
         if (valueType == ValueType.Binary)
-            throw new NotSupportedException("Cannot predict null value substitution for binary datatypes like " + datatype);
+            throw new NotSupportedException(
+                $"Cannot predict null value substitution for binary datatypes like {datatype}");
 
 
-        throw new NotSupportedException("Didn't know what minimum value type to use for " + datatype);
+        throw new NotSupportedException($"Didn't know what minimum value type to use for {datatype}");
 
     }
 

@@ -79,7 +79,7 @@ public class ANOTransformer
             // fill with ANO versions (found by primary key)
             object valueToReplace = table.Rows[i][srcColumn.ColumnName];
 
-            //dont bother substituting nulls (because they wont have a sub!)
+            //don't bother substituting nulls (because they won't have a sub!)
             if (valueToReplace == DBNull.Value)
                 continue;
                 
