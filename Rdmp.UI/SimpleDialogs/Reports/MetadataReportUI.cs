@@ -109,7 +109,7 @@ public partial class MetadataReportUI : RDMPForm
 
 
         //only graph extractable aggregates
-        foreach (AggregateConfiguration aggregate in catalogue.AggregateConfigurations.Where(config=>config.IsExtractable))
+        foreach (var aggregate in catalogue.AggregateConfigurations.Where(config=>config.IsExtractable))
         {
             if (_firstTime)
             {
@@ -129,7 +129,8 @@ public partial class MetadataReportUI : RDMPForm
 
             if (aggregateGraph1.Crashed)
             {
-                progressBarsUI1.OnNotify(this, new NotifyEventArgs(ProgressEventType.Error,"Aggregate with ID " + aggregate.ID + " crashed",aggregateGraph1.Exception));
+                progressBarsUI1.OnNotify(this, new NotifyEventArgs(ProgressEventType.Error,
+                    $"Aggregate with ID {aggregate.ID} crashed",aggregateGraph1.Exception));
                 continue;
             }
 

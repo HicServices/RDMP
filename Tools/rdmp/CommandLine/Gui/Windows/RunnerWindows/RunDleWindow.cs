@@ -43,7 +43,7 @@ class RunDleWindow : RunEngineWindow<DleOptions>
 
             opts.LoadProgress = lp.ID.ToString();
 
-            if (BasicActivator.SelectValueType("Days to Load", typeof(int), lp.DefaultNumberOfDaysToLoadEachTime, out object chosen))
+            if (BasicActivator.SelectValueType("Days to Load", typeof(int), lp.DefaultNumberOfDaysToLoadEachTime, out var chosen))
                 opts.DaysToLoad = (int)chosen;
             else
                 return;

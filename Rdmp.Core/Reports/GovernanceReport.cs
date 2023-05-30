@@ -41,7 +41,7 @@ public class GovernanceReport:DocXHelper
 
         using (var s = new StreamWriter(f.FullName))
         {
-            using (CsvWriter writer = new CsvWriter(s, _csvConfig))
+            using (var writer = new CsvWriter(s, _csvConfig))
             {
                 writer.WriteField("Extractable Datasets");
                 writer.NextRecord();
@@ -54,9 +54,9 @@ public class GovernanceReport:DocXHelper
                 writer.NextRecord();
 
 
-                Dictionary<GovernancePeriod, ICatalogue[]> govs = _repository.GetAllObjects<GovernancePeriod>().ToDictionary(period => period, period => period.GovernedCatalogues.ToArray());
+                var govs = _repository.GetAllObjects<GovernancePeriod>().ToDictionary(period => period, period => period.GovernedCatalogues.ToArray());
             
-                foreach (Catalogue catalogue in _repository.GetAllObjects<Catalogue>()
+                foreach (var catalogue in _repository.GetAllObjects<Catalogue>()
                              .Where(c=>c.CatalogueItems.Any(ci=>ci.ExtractionInformation != null))
                              .OrderBy(c=>c.Name))
                 {
@@ -72,7 +72,8 @@ public class GovernanceReport:DocXHelper
                     if (activeGovs.Any())
                         relevantGovernance = string.Join("," , activeGovs.Select(gov => gov.Name));
                     else if (expiredGovs.Any())
-                        relevantGovernance = "No Current Governance (Expired Governances: " + string.Join(",", expiredGovs.Select(gov => gov.Name)) + ")";
+                        relevantGovernance =
+                            $"No Current Governance (Expired Governances: {string.Join(",", expiredGovs.Select(gov => gov.Name))})";
                     else
                         relevantGovernance = "No Governance Required";
 
@@ -114,7 +115,7 @@ public class GovernanceReport:DocXHelper
         description = description.Replace("\n"," ");
 
         if (description.Length >= 100)
-            return description.Substring(0, 100) + "...";
+            return $"{description.Substring(0, 100)}...";
         else
             return description;
     }
@@ -136,7 +137,7 @@ public class GovernanceReport:DocXHelper
         writer.WriteField("Documents");
         writer.NextRecord();
             
-        foreach (KeyValuePair<GovernancePeriod, ICatalogue[]> kvp in govs)
+        foreach (var kvp in govs)
         {
             //if governance period does not have any Catalogues associated with it skip it
             if (!kvp.Value.Any())

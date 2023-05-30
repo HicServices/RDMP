@@ -25,10 +25,10 @@ public class SpontaneouslyInventedArgument : SpontaneousObject, IArgument
 
     public string Name { get; set; }
     public string Description { get; set; }
-    public string Value { get { return _value.ToString(); }}
+    public string Value => _value.ToString();
 
 
-    public string Type { get { return _value.GetType().FullName; }}
+    public string Type => _value.GetType().FullName;
 
     public void SetValue(object o)
     {

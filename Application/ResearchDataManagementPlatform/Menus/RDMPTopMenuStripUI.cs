@@ -121,7 +121,7 @@ public partial class RDMPTopMenuStripUI : RDMPUserControl
             if (!ConnectionStringsYamlFile.TryLoadFrom(yaml, out var connectionStrings))
                 continue;
 
-            bool isSameAsCurrent = origYamlFile?.FileLoaded == null ? false : yaml.FullName.Equals(origYamlFile.FileLoaded.FullName);
+            var isSameAsCurrent = origYamlFile?.FileLoaded == null ? false : yaml.FullName.Equals(origYamlFile.FileLoaded.FullName);
 
             var launchNew = new ToolStripMenuItem(connectionStrings.Name ?? yaml.Name, null, (s, e) => { LaunchNew(connectionStrings); })
             {
@@ -169,7 +169,7 @@ public partial class RDMPTopMenuStripUI : RDMPUserControl
 
     private void setTicketingSystemToolStripMenuItem_Click(object sender, EventArgs e)
     {
-        TicketingSystemConfigurationUI ui = new TicketingSystemConfigurationUI();
+        var ui = new TicketingSystemConfigurationUI();
         Activator.ShowWindow(ui, true);
     }
 
@@ -195,9 +195,9 @@ public partial class RDMPTopMenuStripUI : RDMPUserControl
 
     private void dITAExtractionToolStripMenuItem_Click(object sender, EventArgs e)
     {
-        Form f = new Form();
+        var f = new Form();
         f.Text = "DITA Extraction of Catalogue Metadata";
-        DitaExtractorUI d = new DitaExtractorUI();
+        var d = new DitaExtractorUI();
         d.SetItemActivator(Activator);
         f.Width = d.Width + 10;
         f.Height = d.Height + 50;
@@ -278,7 +278,7 @@ public partial class RDMPTopMenuStripUI : RDMPUserControl
         _windowManager.Navigation.Changed += (s,e)=>UpdateForwardBackEnabled();
 
         var tracker = new TutorialTracker(Activator);
-        foreach (Tutorial t in tracker.TutorialsAvailable)
+        foreach (var t in tracker.TutorialsAvailable)
             tutorialsToolStripMenuItem.DropDownItems.Add(new LaunchTutorialMenuItem(tutorialsToolStripMenuItem, Activator, t, tracker));
 
         tutorialsToolStripMenuItem.DropDownItems.Add(new ToolStripSeparator());
@@ -362,7 +362,7 @@ public partial class RDMPTopMenuStripUI : RDMPUserControl
         //if user wants to emphasise on tab change and there's an object we can emphasise associated with the control
         if (singleObject != null && UserSettings.EmphasiseOnTabChanged && singleObject.DatabaseObject != null)
         {
-            bool? isCicChild = Activator.CoreChildProvider.GetDescendancyListIfAnyFor(singleObject.DatabaseObject)?.Parents?.Any(p=>p is CohortIdentificationConfiguration);
+            var isCicChild = Activator.CoreChildProvider.GetDescendancyListIfAnyFor(singleObject.DatabaseObject)?.Parents?.Any(p=>p is CohortIdentificationConfiguration);
 
             //don't emphasise things that live under cics because it doesn't result in a collection being opened but instead opens the cic Tab (which could result in you being unable to get to your original tab!)
             if(isCicChild == false)

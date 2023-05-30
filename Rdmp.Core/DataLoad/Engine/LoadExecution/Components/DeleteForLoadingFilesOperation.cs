@@ -45,11 +45,13 @@ public class DeleteForLoadingFilesOperation : IDisposeAfterDataLoad
                     
             if (!archivingHandledByAttacher && !ArchiveHasBeenCreated())
             {
-                postLoadEventListener.OnNotify(this, new NotifyEventArgs(ProgressEventType.Error, "Refusing to delete files in ForLoading: the load has reported success but there is no archive of this dataset (was expecting the archive to be called '" + _job.ArchiveFilepath + "', check LoadMetadata.CacheArchiveType if the file extension is not what you expect)"));
+                postLoadEventListener.OnNotify(this, new NotifyEventArgs(ProgressEventType.Error,
+                    $"Refusing to delete files in ForLoading: the load has reported success but there is no archive of this dataset (was expecting the archive to be called '{_job.ArchiveFilepath}', check LoadMetadata.CacheArchiveType if the file extension is not what you expect)"));
                 return;   
             }
 
-            _job.OnNotify(this, new NotifyEventArgs(ProgressEventType.Information, "Deleting files in ForLoading (" + LoadDirectory.ForLoading.FullName + ")"));
+            _job.OnNotify(this, new NotifyEventArgs(ProgressEventType.Information,
+                $"Deleting files in ForLoading ({LoadDirectory.ForLoading.FullName})"));
                 
             if (archivingHandledByAttacher)
             {

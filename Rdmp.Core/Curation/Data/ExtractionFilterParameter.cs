@@ -34,21 +34,21 @@ public class ExtractionFilterParameter : DatabaseEntity, IDeleteable, ISqlParame
     [Sql]
     public string Value
     {
-        get { return _value; }
-        set { SetField(ref _value, value); }
+        get => _value;
+        set => SetField(ref _value, value);
     }
     /// <inheritdoc/>
     public string Comment
     {
-        get { return _comment; }
-        set { SetField(ref _comment, value); }
+        get => _comment;
+        set => SetField(ref _comment, value);
     }
     /// <inheritdoc/>
     [Sql]
     public string ParameterSQL
     {
-        get { return _parameterSQL; }
-        set { SetField(ref _parameterSQL, value); }
+        get => _parameterSQL;
+        set => SetField(ref _parameterSQL, value);
     }
 
     /// <summary>
@@ -57,8 +57,8 @@ public class ExtractionFilterParameter : DatabaseEntity, IDeleteable, ISqlParame
     [Relationship(typeof(ExtractionFilter), RelationshipType.LocalReference)]
     public int ExtractionFilter_ID
     {
-        get { return _extractionFilterID; }
-        set {SetField(ref _extractionFilterID , value); }
+        get => _extractionFilterID;
+        set => SetField(ref _extractionFilterID , value);
     }
 
     #endregion
@@ -68,17 +68,13 @@ public class ExtractionFilterParameter : DatabaseEntity, IDeleteable, ISqlParame
     /// extracts the name ofthe parameter from the SQL
     /// </summary>
     [NoMappingToDatabase]
-    public string ParameterName {
-        get { return QuerySyntaxHelper.GetParameterNameFromDeclarationSQL(ParameterSQL); }
-    }
+    public string ParameterName => QuerySyntaxHelper.GetParameterNameFromDeclarationSQL(ParameterSQL);
 
     #region Relationships
     /// <inheritdoc cref="ExtractionFilter_ID"/>
     [NoMappingToDatabase]
-    public ExtractionFilter ExtractionFilter
-    {
-        get { return Repository.GetObjectByID<ExtractionFilter>(ExtractionFilter_ID); }
-    }
+    public ExtractionFilter ExtractionFilter => Repository.GetObjectByID<ExtractionFilter>(ExtractionFilter_ID);
+
     #endregion
 
     public ExtractionFilterParameter()
@@ -115,7 +111,7 @@ public class ExtractionFilterParameter : DatabaseEntity, IDeleteable, ISqlParame
     /// <inheritdoc/>
     public override string ToString()
     {
-        return ParameterName + " = " + Value;
+        return $"{ParameterName} = {Value}";
     }
 
     /// <inheritdoc cref="ParameterSyntaxChecker"/>

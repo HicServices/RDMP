@@ -45,7 +45,7 @@ public class TestActivateItems: BasicActivateItems, IActivateItems, ITheme
     private static CommentStore _commentStore;
     private List<IProblemProvider> _problemProviders;
 
-    public ITheme Theme { get {return this;}}
+    public ITheme Theme => this;
     public RefreshBus RefreshBus { get; private set; }
     public IArrangeWindows WindowArranger { get; private set; }
 
@@ -111,7 +111,7 @@ public class TestActivateItems: BasicActivateItems, IActivateItems, ITheme
 
     public T Activate<T>(IPersistableObjectCollection collection) where T : Control, IObjectCollectionControl, new()
     {
-        T t = new T();
+        var t = new T();
         _uiTests.AndLaunch(t);
         t.SetCollection(this, collection);
         return t;
@@ -158,7 +158,8 @@ public class TestActivateItems: BasicActivateItems, IActivateItems, ITheme
         return RepositoryLocator.CatalogueRepository.CommentStore.GetTypeDocumentationIfExists(type);
     }
 
-    public string CurrentDirectory { get { return TestContext.CurrentContext.TestDirectory; }}
+    public string CurrentDirectory => TestContext.CurrentContext.TestDirectory;
+
     public DialogResult ShowDialog(Form form)
     {
         Results.WindowsShown.Add(form);
@@ -184,7 +185,8 @@ public class TestActivateItems: BasicActivateItems, IActivateItems, ITheme
     {
         if(ShouldReloadFreshCopyDelegate == null)
         {
-            Assert.Fail("Object " + databaseEntity + " was out of date with the database, normally user would be asked to load a new copy but since this is a test the test will be failed.  Solve this either by calling SaveToDatabase before launching your UI or by setting the ShouldReloadFreshCopyDelegate delegate (if the MessageBox showing is how the live system should respond)");
+            Assert.Fail(
+                $"Object {databaseEntity} was out of date with the database, normally user would be asked to load a new copy but since this is a test the test will be failed.  Solve this either by calling SaveToDatabase before launching your UI or by setting the ShouldReloadFreshCopyDelegate delegate (if the MessageBox showing is how the live system should respond)");
             return false;
         }
 
@@ -215,7 +217,7 @@ public class TestActivateItems: BasicActivateItems, IActivateItems, ITheme
         }
                 
 
-        throw new Exception("Did not expect to be asked a question but we were asked :" + args);
+        throw new Exception($"Did not expect to be asked a question but we were asked :{args}");
     }
 
 

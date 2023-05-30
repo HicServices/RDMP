@@ -49,7 +49,7 @@ abstract class BinderRule<T> : IBinderRule where T : IMapsDirectlyToDatabaseTabl
         var currentValue = PropertyToCheck(ToTest);
         var typeToTest = ToTest.GetType();
 
-        string valid = IsValid(currentValue, typeToTest);
+        var valid = IsValid(currentValue, typeToTest);
 
         if (!string.IsNullOrWhiteSpace(valid))
             ErrorProvider.SetError(Control, valid);

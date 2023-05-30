@@ -125,10 +125,10 @@ public partial class RacewayRenderAreaUI : UserControl,INotifyMeOfEditState
     {
         base.OnMouseClick(e);
 
-        foreach (KeyValuePair<Rectangle, Catalogue> kvp in rectNoDQE.Where(r => r.Key.Contains(e.Location)))
+        foreach (var kvp in rectNoDQE.Where(r => r.Key.Contains(e.Location)))
             _activator.RequestItemEmphasis(this, new EmphasiseRequest(kvp.Value));
 
-        foreach (KeyValuePair<Rectangle, Catalogue> kvp in rectDeleteButtons.Where(r => r.Key.Contains(e.Location)).ToList())
+        foreach (var kvp in rectDeleteButtons.Where(r => r.Key.Contains(e.Location)).ToList())
         {
             if (RequestDeletion != null)
             {
@@ -266,9 +266,9 @@ public partial class RacewayRenderAreaUI : UserControl,INotifyMeOfEditState
         if (_buckets == null)
             return;
 
-        float eachBucketHasThisManyPixelsOfX = ((float)Width) / _buckets.Length;
+        var eachBucketHasThisManyPixelsOfX = ((float)Width) / _buckets.Length;
 
-        float heightReservedForAxis = e.Graphics.MeasureString("TEST",Font).Height + 2;
+        var heightReservedForAxis = e.Graphics.MeasureString("TEST",Font).Height + 2;
 
         var mousePosition = PointToClient(new Point(MousePosition.X, MousePosition.Y));
             
@@ -286,14 +286,14 @@ public partial class RacewayRenderAreaUI : UserControl,INotifyMeOfEditState
         lock (oPeriodicityDictionaryLock)
         {
                 
-            float eachRaceLaneHasThisMuchYSpace = Math.Max(MinimumRowHeight,Math.Min(MaximumRaceLaneRenderSpace, (float)Height/(_periodicityDictionary.Count +1)));
+            var eachRaceLaneHasThisMuchYSpace = Math.Max(MinimumRowHeight,Math.Min(MaximumRaceLaneRenderSpace, (float)Height/(_periodicityDictionary.Count +1)));
 
 
             float startDrawingLaneAtY = 0;
             _allowScrollDown = false;
 
-            int index = 0;
-            foreach (var kvp in _periodicityDictionary.OrderBy(kvp => kvp.Value == null ? "zzzzzz" + kvp.Key.Name : kvp.Key.Name))
+            var index = 0;
+            foreach (var kvp in _periodicityDictionary.OrderBy(kvp => kvp.Value == null ? $"zzzzzz{kvp.Key.Name}" : kvp.Key.Name))
             {
                 index++;
 
@@ -320,35 +320,35 @@ public partial class RacewayRenderAreaUI : UserControl,INotifyMeOfEditState
                 else
                 if (dictionary == null)
                 {
-                    var textWidth = DrawErrorText("No DQE Evaluation for " + catalogue,true,e, startDrawingLaneAtY, eachRaceLaneHasThisMuchYSpace, middleLineOfCatalogueLabelY);
+                    var textWidth = DrawErrorText($"No DQE Evaluation for {catalogue}",true,e, startDrawingLaneAtY, eachRaceLaneHasThisMuchYSpace, middleLineOfCatalogueLabelY);
                     rectNoDQE.Add(new Rectangle(0, (int)startDrawingLaneAtY, (int)textWidth, (int)eachRaceLaneHasThisMuchYSpace),kvp.Key);
                 }
                 else
                 if (!dictionary.Any())
                 {
-                    var textWidth = DrawErrorText("Table(s) were empty for " + catalogue, true, e, startDrawingLaneAtY, eachRaceLaneHasThisMuchYSpace, middleLineOfCatalogueLabelY);
+                    var textWidth = DrawErrorText($"Table(s) were empty for {catalogue}", true, e, startDrawingLaneAtY, eachRaceLaneHasThisMuchYSpace, middleLineOfCatalogueLabelY);
                     rectNoDQE.Add(new Rectangle(0, (int)startDrawingLaneAtY, (int)textWidth, (int)eachRaceLaneHasThisMuchYSpace), kvp.Key);
                 }
                 else
                 {
                     //get the maximum number of rows regardless of consequence found in any data month
-                    int maxRowsInAnyMonth = dictionary.Max(r=>r.Value.Total);
+                    var maxRowsInAnyMonth = dictionary.Max(r=>r.Value.Total);
                             
-                    for (int i = 0; i < _buckets.Length; i++)
+                    for (var i = 0; i < _buckets.Length; i++)
                     {
                             
                         Brush brush;
                         float lineHeightPercentage;
 
-                        int good = 0;
-                        int total = 0;
+                        var good = 0;
+                        var total = 0;
 
                         if (dictionary.ContainsKey(_buckets[i]))
                         {   
                             good = dictionary[_buckets[i]].CountGood;
                             total = dictionary[_buckets[i]].Total;
 
-                            float ratioGood = (float)good / total;
+                            var ratioGood = (float)good / total;
 
                             brush = _brushes[(int) (ratioGood*100)];
 
@@ -376,9 +376,8 @@ public partial class RacewayRenderAreaUI : UserControl,INotifyMeOfEditState
                         if (fullRectHitbox.Contains(mousePosition))
                         {
                             hoverLabel = _buckets[i].ToString("Y");
-                            hoverValue = 
-                                string.Format("{0:n0}",good) + "/" +
-                                string.Format("{0:n0}",total);
+                            hoverValue =
+                                $"{string.Format("{0:n0}", good)}/{string.Format("{0:n0}", total)}";
                         }
                     }
 
@@ -428,19 +427,19 @@ public partial class RacewayRenderAreaUI : UserControl,INotifyMeOfEditState
         }
 
         float currentX = 0;
-        float startDrawingAxisAtY = Height - heightReservedForAxis;
+        var startDrawingAxisAtY = Height - heightReservedForAxis;
 
-        for (int i = 0; i < _buckets.Length; i++)
+        for (var i = 0; i < _buckets.Length; i++)
         {
-            DateTime bucket = _buckets[i];
+            var bucket = _buckets[i];
             var bucketLabel = bucket.ToString("yyyy-MM");
 
-            float idealBucketRenderLocation = i*eachBucketHasThisManyPixelsOfX;
+            var idealBucketRenderLocation = i*eachBucketHasThisManyPixelsOfX;
 
             if(currentX > idealBucketRenderLocation)
                 continue; //had to skip bucket because we don't have space to render it
 
-            float requiredSpaceForLabel = e.Graphics.MeasureString(bucketLabel, Font).Width;
+            var requiredSpaceForLabel = e.Graphics.MeasureString(bucketLabel, Font).Width;
 
             //draw this label because there is space
             e.Graphics.DrawString(bucketLabel, Font, Brushes.White, idealBucketRenderLocation, startDrawingAxisAtY);

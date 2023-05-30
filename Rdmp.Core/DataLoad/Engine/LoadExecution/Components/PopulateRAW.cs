@@ -63,7 +63,8 @@ public class PopulateRAW : CompositeDataLoadComponent
             var numAttachersRequiringDbCreation = attachers.Count(attacher => attacher.RequestsExternalDatabaseCreation);
 
             if (numAttachersRequiringDbCreation > 0 && numAttachersRequiringDbCreation < attachingProcesses.Length)
-                throw new Exception("If there are multiple attachers then they should all agree on whether they require database creation or not: " + attachers.Aggregate("", (s, attacher) => s + " " + attacher.GetType().Name + ":" + attacher.RequestsExternalDatabaseCreation));
+                throw new Exception(
+                    $"If there are multiple attachers then they should all agree on whether they require database creation or not: {attachers.Aggregate("", (s, attacher) => $"{s} {attacher.GetType().Name}:{attacher.RequestsExternalDatabaseCreation}")}");
         }
 
         return (attachingProcesses[0]).Attacher.RequestsExternalDatabaseCreation;
@@ -93,13 +94,14 @@ public class PopulateRAW : CompositeDataLoadComponent
         var raw = _databaseConfiguration.DeployInfo[LoadBubble.Raw];
 
         if (!raw.Exists())
-            job.OnNotify(this, new NotifyEventArgs(ProgressEventType.Error, "The Mounting stage has not created the " + raw.GetRuntimeName() + " database."));
+            job.OnNotify(this, new NotifyEventArgs(ProgressEventType.Error,
+                $"The Mounting stage has not created the {raw.GetRuntimeName()} database."));
 
         var rawDbInfo = _databaseConfiguration.DeployInfo[LoadBubble.Raw];
             
         if (_databaseConfiguration.ExpectTables(job,LoadBubble.Raw,true).All(t=>t.IsEmpty()))
         {
-            var message = "The Mounting stage has not populated the RAW database (" + rawDbInfo + ") with any data";
+            var message = $"The Mounting stage has not populated the RAW database ({rawDbInfo}) with any data";
             job.OnNotify(this, new NotifyEventArgs(ProgressEventType.Error, message));
             throw new Exception(message);
                 

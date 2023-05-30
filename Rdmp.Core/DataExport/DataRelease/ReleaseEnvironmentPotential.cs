@@ -44,7 +44,7 @@ public class ReleaseEnvironmentPotential : ICheckable
         var configuration = _repository.CatalogueRepository.GetAllObjectsWhere<TicketingSystemConfiguration>("IsActive",1).SingleOrDefault();
         if (configuration == null) return;
 
-        TicketingSystemFactory factory = new TicketingSystemFactory(_repository.CatalogueRepository);
+        var factory = new TicketingSystemFactory(_repository.CatalogueRepository);
 
 
         ITicketingSystem ticketingSystem;
@@ -85,9 +85,9 @@ public class ReleaseEnvironmentPotential : ICheckable
     {
         MakeAssessment();
 
-        var message = "Environment Releasability is " + Assesment;
+        var message = $"Environment Releasability is {Assesment}";
         if (!string.IsNullOrWhiteSpace(Reason))
-            message += " - " + Reason;
+            message += $" - {Reason}";
 
         notifier.OnCheckPerformed(new CheckEventArgs(message, GetCheckResultFor(Assesment), Exception));
     }

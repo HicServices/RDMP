@@ -35,7 +35,7 @@ public class ValidatorTest
     public void GetItemValidator_InitialisedState_ReturnsNullItemValidator()
     {
         var validator = new Validator();
-        ItemValidator itemValidator = validator.GetItemValidator("non-existent");
+        var itemValidator = validator.GetItemValidator("non-existent");
 
         Assert.Null(itemValidator);
     }
@@ -43,13 +43,13 @@ public class ValidatorTest
     [Test]
     public void PassValidatorArray_Passes()
     {
-        Validator v = new Validator();
+        var v = new Validator();
         v.AddItemValidator(new ItemValidator(), "chi",null);
         v.ItemValidators[0].PrimaryConstraint = new Chi();
 
-        DataTable dt = new DataTable();
+        var dt = new DataTable();
         dt.Columns.Add("chi");
-        DataRow dr = dt.Rows.Add();
+        var dr = dt.Rows.Add();
 
         dr["chi"] = TestConstants._VALID_CHI;
 
@@ -90,7 +90,7 @@ public class ValidatorTest
         try
         {
             validator.Validate(_domainObjectWithValidChi);
-            Assert.Fail("Expecting a " + typeof(ValidationFailure).ToString());
+            Assert.Fail($"Expecting a {typeof(ValidationFailure)}");
         }
         catch (MissingFieldException exception)
         {
@@ -122,7 +122,7 @@ public class ValidatorTest
         var validator = CreateSimpleChiValidator();
         Consequence? lastRowConsequence;
         //run once
-        VerboseValidationResults results = validator.ValidateVerboseAdditive(_domainObjectWithInvalidChi, null, out lastRowConsequence);
+        var results = validator.ValidateVerboseAdditive(_domainObjectWithInvalidChi, null, out lastRowConsequence);
 
         Assert.IsNotNull(results);
 
@@ -138,19 +138,19 @@ public class ValidatorTest
     [Test]
     public void Test_XML_Generation()
     {
-        Validator v = new Validator();
-        ItemValidator iv = new ItemValidator();
+        var v = new Validator();
+        var iv = new ItemValidator();
         iv.TargetProperty = "Name";
         iv.ExpectedType = typeof(string);
         iv.PrimaryConstraint = new Alpha();
             
         v.ItemValidators.Add(iv);
 
-        string answer = v.SaveToXml(false);
+        var answer = v.SaveToXml(false);
 
-        Validator v2 = Validator.LoadFromXml(answer);
+        var v2 = Validator.LoadFromXml(answer);
 
-        string answer2 = v2.SaveToXml(false);
+        var answer2 = v2.SaveToXml(false);
             
         Assert.AreEqual(answer,answer2);
     }
@@ -168,7 +168,7 @@ public class ValidatorTest
     [TestCase("date", typeof(Date))]
     public void CreatePrimaryConstraint_All_IsOfExpectedType(string name, Type expected)
     {
-        IConstraint constraint = Validator.CreateConstraint(name,Consequence.Wrong);
+        var constraint = Validator.CreateConstraint(name,Consequence.Wrong);
 
         Assert.IsInstanceOf(typeof(IPrimaryConstraint), constraint);
         Assert.IsInstanceOf(expected, constraint);
@@ -180,7 +180,7 @@ public class ValidatorTest
     [TestCase("regularexpression", typeof(RegularExpression))]
     public void CreateSecondaryConstraint_All_IsOfExpectedType(string name, Type expected)
     {
-        IConstraint constraint = Validator.CreateConstraint(name,Consequence.Wrong);
+        var constraint = Validator.CreateConstraint(name,Consequence.Wrong);
 
         Assert.IsInstanceOf(typeof(ISecondaryConstraint), constraint);
         Assert.IsInstanceOf(expected, constraint);
@@ -189,18 +189,18 @@ public class ValidatorTest
     [Test]
     public void RenameColumn_ThreeColumns_HasCorrectName()
     {
-        Validator v = new Validator();
+        var v = new Validator();
         v.AddItemValidator(new ItemValidator(),"OldCol2",typeof(string));
 
 
         //this constraint ensures that OldCol2 is between OldCol1 and OldcCol3
-        BoundDate boundDate = new BoundDate();
+        var boundDate = new BoundDate();
         boundDate.LowerFieldName = "OldCol1";
         boundDate.UpperFieldName = "OldCol3";
 
         v.ItemValidators[0].SecondaryConstraints.Add(boundDate);
 
-        Dictionary<string, string> dictionary  = new Dictionary<string, string>();
+        var dictionary  = new Dictionary<string, string>();
         dictionary.Add("OldCol2","NewCol2");
 
         //before and after rename of col2

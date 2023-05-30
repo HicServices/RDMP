@@ -67,10 +67,10 @@ class LoadProgressAnnotation
     {
         string originText;
         double anchorX;
-        double maxY = GetMaxY(_dt);
+        var maxY = GetMaxY(_dt);
 
         //display the text labels half way allong the chart
-        double textAnchorY = maxY * fractionalHeightOfLabel;
+        var textAnchorY = maxY * fractionalHeightOfLabel;
 
         if (date == null)
         {
@@ -101,7 +101,7 @@ class LoadProgressAnnotation
 
         text = new TextAnnotation();
 
-        text.Text = label +":" + Environment.NewLine + originText;
+        text.Text = $"{label}:{Environment.NewLine}{originText}";
         text.IsSizeAlwaysRelative = false;
         text.AxisX = chart.ChartAreas[0].AxisX;
         text.AxisY = chart.ChartAreas[0].AxisY;
@@ -119,10 +119,10 @@ class LoadProgressAnnotation
         var year = value.Year;
         var month = value.Month;
 
-        for (int i = 0; i < dt.Rows.Count; i++)
+        for (var i = 0; i < dt.Rows.Count; i++)
         {
-            int currentYear = Convert.ToInt32(dt.Rows[i]["Year"]);
-            int currentMonth = Convert.ToInt32(dt.Rows[i]["Month"]);
+            var currentYear = Convert.ToInt32(dt.Rows[i]["Year"]);
+            var currentMonth = Convert.ToInt32(dt.Rows[i]["Month"]);
 
             //we have overstepped
             if (year < currentYear)
@@ -142,12 +142,12 @@ class LoadProgressAnnotation
 
     private double GetMaxY(DataTable dt)
     {
-        int max = 0;
-        int colCount = dt.Columns.Count;
+        var max = 0;
+        var colCount = dt.Columns.Count;
         foreach (DataRow r in dt.Rows)
         {
-            int totalForRow = 0;
-            for (int i = 3; i < colCount; i++)
+            var totalForRow = 0;
+            for (var i = 3; i < colCount; i++)
                 totalForRow += Convert.ToInt32(r[i]);
 
             max = Math.Max(max, totalForRow);
@@ -162,7 +162,7 @@ class LoadProgressAnnotation
         {
             var newDate = GetDateFromX((int)LineAnnotationOrigin.X);
 
-            if (MessageBox.Show("Set new LoadProgress Origin date to " + newDate + "?", "Change Origin Date?", MessageBoxButtons.YesNo) == DialogResult.Yes)
+            if (MessageBox.Show($"Set new LoadProgress Origin date to {newDate}?", "Change Origin Date?", MessageBoxButtons.YesNo) == DialogResult.Yes)
             {
                 _lp.OriginDate = newDate;
                 _lp.SaveToDatabase();
@@ -173,7 +173,7 @@ class LoadProgressAnnotation
         {
             var newDate = GetDateFromX((int)LineAnnotationFillProgress.X);
 
-            if (MessageBox.Show("Set new LoadProgress Fill date to " + newDate + "?", "Change Fill Date?", MessageBoxButtons.YesNo) == DialogResult.Yes)
+            if (MessageBox.Show($"Set new LoadProgress Fill date to {newDate}?", "Change Fill Date?", MessageBoxButtons.YesNo) == DialogResult.Yes)
             {
                 _lp.DataLoadProgress = newDate;
                 _lp.SaveToDatabase();
@@ -189,7 +189,7 @@ class LoadProgressAnnotation
 
             var newDate = GetDateFromX((int)LineAnnotationCacheProgress.X);
 
-            if (MessageBox.Show("Set new CacheProgress date to " + newDate + "?", "Change Cache Progress Date?", MessageBoxButtons.YesNo) == DialogResult.Yes)
+            if (MessageBox.Show($"Set new CacheProgress date to {newDate}?", "Change Cache Progress Date?", MessageBoxButtons.YesNo) == DialogResult.Yes)
             {
                 cp.CacheFillProgress = newDate;
                 cp.SaveToDatabase();
@@ -202,8 +202,8 @@ class LoadProgressAnnotation
         x = Math.Max(0, x - 1);//subtract 1 because X axis on chart starts at 1 but data table starts at 0, also prevents them dragging it super negative
         x = Math.Min(x, _dt.Rows.Count - 1);
 
-        int year = Convert.ToInt32(_dt.Rows[x]["Year"]);
-        int month = Convert.ToInt32(_dt.Rows[x]["Month"]);
+        var year = Convert.ToInt32(_dt.Rows[x]["Year"]);
+        var month = Convert.ToInt32(_dt.Rows[x]["Month"]);
 
         return  new DateTime(year, month, 1);
 

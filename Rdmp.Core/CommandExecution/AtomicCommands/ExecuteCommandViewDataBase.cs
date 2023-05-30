@@ -47,7 +47,7 @@ public abstract class ExecuteCommandViewDataBase : BasicCommandExecution
             return;
 
 
-        FileInfo toFile = ToFile;
+        var toFile = ToFile;
 
         if (AskForFile)
         {

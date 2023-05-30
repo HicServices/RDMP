@@ -153,6 +153,6 @@ public class SelectSQLRefactorerTests:UnitTests
 
         Assert.AreEqual(1,refactorer.RefactorTableName(col,oldName,newName));
 
-        Assert.AreEqual( newName + ".[A]",col.Name);
+        Assert.AreEqual($"{newName}.[A]",col.Name);
     }
 }

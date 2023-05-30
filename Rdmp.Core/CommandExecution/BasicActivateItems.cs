@@ -94,7 +94,7 @@ public abstract class BasicActivateItems : IBasicActivateItems
     }
     public bool YesNo(DialogArgs args)
     {
-        return YesNo(args, out bool chosen) && chosen;
+        return YesNo(args, out var chosen) && chosen;
     }
 
     public bool Confirm(string text, string caption)
@@ -194,7 +194,7 @@ public abstract class BasicActivateItems : IBasicActivateItems
 
         var constructor = new ObjectConstructor();
 
-        foreach (Type pluginType in RepositoryLocator.CatalogueRepository.MEF.GetTypes<IPluginUserInterface>())
+        foreach (var pluginType in RepositoryLocator.CatalogueRepository.MEF.GetTypes<IPluginUserInterface>())
         {
             try
             {
@@ -307,7 +307,7 @@ public abstract class BasicActivateItems : IBasicActivateItems
     }
     public bool SelectType(DialogArgs args, Type baseTypeIfAny, bool allowAbstract, bool allowInterfaces, out Type chosen)
     {
-        Type[] available =
+        var available =
             RepositoryLocator.CatalogueRepository.MEF.GetAllTypes()
                 .Where(t => 
                     (baseTypeIfAny == null || baseTypeIfAny.IsAssignableFrom(t)) &&
@@ -404,7 +404,7 @@ public abstract class BasicActivateItems : IBasicActivateItems
     {
         if (IsInteractive && InteractiveDeletes)
         {
-            bool didDelete = InteractiveDelete(deleteable);
+            var didDelete = InteractiveDelete(deleteable);
 
             if (didDelete)
             {
@@ -483,16 +483,16 @@ public abstract class BasicActivateItems : IBasicActivateItems
         string overrideConfirmationText = null;
 
         if (customMessageDeletable != null)
-            overrideConfirmationText = "Are you sure you want to " +customMessageDeletable.GetDeleteMessage() +"?";
+            overrideConfirmationText = $"Are you sure you want to {customMessageDeletable.GetDeleteMessage()}?";
 
         //it has already been deleted before
         if (databaseObject != null && !databaseObject.Exists())
             return false;
 
-        string idText = "";
+        var idText = "";
 
         if (databaseObject != null)
-            idText = " ID=" + databaseObject.ID;
+            idText = $" ID={databaseObject.ID}";
 
         if (databaseObject != null)
         {
@@ -500,7 +500,7 @@ public abstract class BasicActivateItems : IBasicActivateItems
             if(exports.Any(e=>e.Exists()))
                 if(YesNo("This object has been shared as an ObjectExport.  Deleting it may prevent you loading any saved copies.  Do you want to delete the ObjectExport definition?","Delete ObjectExport"))
                 {
-                    foreach(ObjectExport e in exports)
+                    foreach(var e in exports)
                         e.DeleteInDatabase(); 
                 }
                 else
@@ -509,9 +509,9 @@ public abstract class BasicActivateItems : IBasicActivateItems
                         
         if (
             YesNo(
-                overrideConfirmationText?? ("Are you sure you want to delete '" + deleteable + "'?")
-                +Environment.NewLine + "(" + deleteable.GetType().Name + idText +")",
-                "Delete " + deleteable.GetType().Name))
+                overrideConfirmationText??
+                $"{("Are you sure you want to delete '" + deleteable + "'?")}{Environment.NewLine}({deleteable.GetType().Name}{idText})",
+                $"Delete {deleteable.GetType().Name}"))
         {
             deleteable.DeleteInDatabase();
                 
@@ -526,8 +526,8 @@ public abstract class BasicActivateItems : IBasicActivateItems
                 databaseObject = databaseObject ?? ((IMasqueradeAs)deleteable).MasqueradingAs() as DatabaseEntity;
 
             if (databaseObject == null)
-                throw new NotSupportedException("IDeletable " + deleteable +
-                                                " was not a DatabaseObject and it did not have a Parent in its tree which was a DatabaseObject (DescendancyList)");
+                throw new NotSupportedException(
+                    $"IDeletable {deleteable} was not a DatabaseObject and it did not have a Parent in its tree which was a DatabaseObject (DescendancyList)");
             return true;
         }
 
@@ -550,21 +550,21 @@ public abstract class BasicActivateItems : IBasicActivateItems
         var underlying = Nullable.GetUnderlyingType(paramType);
         if ((underlying ?? paramType).IsEnum)
         {
-            bool ok = SelectEnum(args, underlying?? paramType, out Enum enumChosen);
+            var ok = SelectEnum(args, underlying?? paramType, out var enumChosen);
             chosen = enumChosen;
             return ok;
         }
 
         if (paramType == typeof(bool) || paramType == typeof(bool?))
         {
-            bool ok = YesNo(args, out bool boolChosen);
+            var ok = YesNo(args, out var boolChosen);
             chosen = boolChosen;
             return ok;
         }
 
         if (paramType == typeof(string))
         {
-            bool ok = TypeText(args, int.MaxValue, initialValue?.ToString(),out string stringChosen,false);
+            var ok = TypeText(args, int.MaxValue, initialValue?.ToString(),out var stringChosen,false);
             chosen = stringChosen;
             return ok;
 
@@ -706,7 +706,7 @@ public abstract class BasicActivateItems : IBasicActivateItems
 
 
         if(projectNumber == null)
-            if(this.SelectValueType("enter project number",typeof(int),0,out object chosen))
+            if(this.SelectValueType("enter project number",typeof(int),0,out var chosen))
             {
                 projectNumber = (int)chosen;
             }
@@ -714,7 +714,7 @@ public abstract class BasicActivateItems : IBasicActivateItems
                 throw new Exception("User chose not to enter a Project number and none was provided");
 
             
-        if(this.SelectValueType("enter version number for cohort",typeof(int),0,out object chosenVersion))
+        if(this.SelectValueType("enter version number for cohort",typeof(int),0,out var chosenVersion))
         {
             version = (int)chosenVersion;
         }
@@ -730,7 +730,7 @@ public abstract class BasicActivateItems : IBasicActivateItems
     {
         // Create a new Catalogue based on the table info
         var engineer = new ForwardEngineerCatalogue(tableInfo,tableInfo.ColumnInfos);
-        engineer.ExecuteForwardEngineering(out ICatalogue cata, out _, out ExtractionInformation[] eis);
+        engineer.ExecuteForwardEngineering(out var cata, out _, out var eis);
 
         // if we know the linkable private identifier column(s)
         if(extractionIdentifierColumns != null && extractionIdentifierColumns.Any())
@@ -777,10 +777,11 @@ public abstract class BasicActivateItems : IBasicActivateItems
         if (db == null)
             throw new ArgumentException($"Database must be picked before calling {nameof(CreateNewPlatformDatabase)} when using {nameof(BasicActivateItems)}",nameof(db));
 
-        MasterDatabaseScriptExecutor executor = new MasterDatabaseScriptExecutor(db);
+        var executor = new MasterDatabaseScriptExecutor(db);
         executor.CreateAndPatchDatabase(patcher, new AcceptAllCheckNotifier() { WriteToConsole = true});
 
-        var eds = new ExternalDatabaseServer(catalogueRepository,"New " + (defaultToSet == PermissableDefaults.None ? "" :  defaultToSet.ToString()) + "Server",patcher);
+        var eds = new ExternalDatabaseServer(catalogueRepository,
+            $"New {(defaultToSet == PermissableDefaults.None ? "" : defaultToSet.ToString())}Server",patcher);
         eds.SetProperties(db);
 
         if (defaultToSet != PermissableDefaults.None)
@@ -854,7 +855,7 @@ public abstract class BasicActivateItems : IBasicActivateItems
             }
         }
 
-        throw new ArgumentException("Did not know what repository to use to fetch objects of Type '" + type + "'");
+        throw new ArgumentException($"Did not know what repository to use to fetch objects of Type '{type}'");
     }
 
     public abstract void LaunchSubprocess(ProcessStartInfo startInfo);

@@ -87,7 +87,7 @@ public class CohortMandatoryFilterImportingTests : CohortIdentificationTests
     [TestCase(false)]
     public void ImportCatalogueWithSingleFilterThatHasAParameter(bool createAGlobalOverrideBeforeHand)
     {
-        string parameterSQL = "DECLARE @dragonCount as varchar(100)";
+        var parameterSQL = "DECLARE @dragonCount as varchar(100)";
 
         var filter = new ExtractionFilter(CatalogueRepository, "MyMandatoryFilter", testData.extractionInformations[0]);
         filter.IsMandatory = true;

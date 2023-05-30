@@ -23,11 +23,11 @@ public class ViewCatalogueDataCollection : PersistableObjectCollection, IViewSQL
 {
     QueryBuilder builder;
 
-    public Catalogue Catalogue {get => DatabaseObjects.OfType<Catalogue>().FirstOrDefault();}
+    public Catalogue Catalogue => DatabaseObjects.OfType<Catalogue>().FirstOrDefault();
 
-    public IFilter[] Filters {get => DatabaseObjects.OfType<IFilter>().ToArray();}
-        
-    public ExtractionInformation[] ExtractionInformations {get => DatabaseObjects.OfType<ExtractionInformation>().ToArray();}
+    public IFilter[] Filters => DatabaseObjects.OfType<IFilter>().ToArray();
+
+    public ExtractionInformation[] ExtractionInformations => DatabaseObjects.OfType<ExtractionInformation>().ToArray();
 
     /// <summary>
     /// The number of records to fetch (or null to fetch all records)
@@ -70,7 +70,7 @@ public class ViewCatalogueDataCollection : PersistableObjectCollection, IViewSQL
 
         builder.AddColumnRange(cols);
 
-        List<ExtractionFilter> filters = new List<ExtractionFilter>();
+        var filters = new List<ExtractionFilter>();
 
         foreach (ExtractionFilter f in Filters)
             filters.Add(f);

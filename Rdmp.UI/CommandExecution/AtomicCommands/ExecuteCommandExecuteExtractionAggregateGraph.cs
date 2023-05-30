@@ -22,7 +22,7 @@ public class ExecuteCommandExecuteExtractionAggregateGraph : BasicUICommandExecu
     {
         _collection = collection;
 
-        if (_collection.IsImpossible(out string reason))
+        if (_collection.IsImpossible(out var reason))
             SetImpossible(reason);
     }
 

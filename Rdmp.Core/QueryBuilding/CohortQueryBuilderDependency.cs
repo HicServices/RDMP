@@ -123,7 +123,7 @@ public class CohortQueryBuilderDependency
     {
         cancellationToken.ThrowIfCancellationRequested();
 
-        bool isSolitaryPatientIndexTable = CohortSet.IsJoinablePatientIndexTable();
+        var isSolitaryPatientIndexTable = CohortSet.IsJoinablePatientIndexTable();
             
         // if it is a plugin aggregate we only want to ever serve up the cached SQL
         var pluginCohortCompiler = _pluginCohortCompilers.FirstOrDefault(c => c.ShouldRun(CohortSet));
@@ -246,13 +246,13 @@ public class CohortQueryBuilderDependency
             // unless it is a plugin driven aggregate we need to assemble the SQL to check if the cache is stale
             if (pluginCohortCompiler == null)
             {
-                string parameterSql = QueryBuilder.GetParameterDeclarationSQL(sql.ParametersUsed.Clone().GetFinalResolvedParametersList());
-                string hitTestSql = parameterSql + sql.Sql;
+                var parameterSql = QueryBuilder.GetParameterDeclarationSQL(sql.ParametersUsed.Clone().GetFinalResolvedParametersList());
+                var hitTestSql = parameterSql + sql.Sql;
                 existingTable = parent.CacheManager.GetLatestResultsTable(aggregate, aggregateType, hitTestSql);
             }
             else
             {
-                existingTable = parent.CacheManager.GetLatestResultsTableUnsafe(aggregate, aggregateType, out string oldDescription);
+                existingTable = parent.CacheManager.GetLatestResultsTableUnsafe(aggregate, aggregateType, out var oldDescription);
 
                 if (pluginCohortCompiler.IsStale(aggregate, oldDescription))
                 {
@@ -279,8 +279,8 @@ public class CohortQueryBuilderDependency
         //if there is a cached entry matching the cacheless SQL then we can just do a select from it (in theory)
         if (existingTable != null)
         {
-            string sqlCachFetch = CachedAggregateConfigurationResultsManager.CachingPrefix + aggregate.Name + @"*/" + Environment.NewLine +
-                                  "select * from " + existingTable.GetFullyQualifiedName() + Environment.NewLine;
+            var sqlCachFetch =
+                $@"{CachedAggregateConfigurationResultsManager.CachingPrefix}{aggregate.Name}*/{Environment.NewLine}select * from {existingTable.GetFullyQualifiedName()}{Environment.NewLine}";
 
             //Cache fetch does not require any parameters
             return new CohortQueryBuilderDependencySql(sqlCachFetch,new ParameterManager());

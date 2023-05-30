@@ -54,14 +54,14 @@ int? Optional, if <root> is logging server this can be a specific audit id to sh
             }
         }
 
-        LoggingTables table = LoggingTables.None;
+        var table = LoggingTables.None;
             
         if(picker.Length >= 1)
             if(Enum.TryParse(picker[0].RawValue, out table))
                 _filter = new LogViewerFilter(table);
             
         if(picker.Length >= 2)
-            if(int.TryParse(picker[0].RawValue, out int id))
+            if(int.TryParse(picker[0].RawValue, out var id))
             {
                 _filter = new LogViewerFilter(table,id);
             }

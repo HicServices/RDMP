@@ -46,7 +46,7 @@ public sealed class ExtractionAggregateGraphUI:AggregateGraphUI ,IObjectCollecti
         var repo = new MemoryCatalogueRepository();
 
         //we are hijacking the query builder creation for this graph
-        AggregateBuilder toReturn =  base.GetQueryBuilder(aggregateConfiguration);
+        var toReturn =  base.GetQueryBuilder(aggregateConfiguration);
             
         //instead of only filtering on the filters of the Aggregate, also filter on the configurations data extraction filters AND on the cohort ID
         var spontedContainer = new SpontaneouslyInventedFilterContainer(repo,null, null, FilterContainerOperation.AND);
@@ -60,10 +60,10 @@ public sealed class ExtractionAggregateGraphUI:AggregateGraphUI ,IObjectCollecti
             spontedContainer.AddChild(Request.QueryBuilder.RootFilterContainer);//add those too
 
         //now also add the cohort where statement
-        string cohortWhereSql = Request.ExtractableCohort.WhereSQL();
+        var cohortWhereSql = Request.ExtractableCohort.WhereSQL();
 
         var spontedFilter = new SpontaneouslyInventedFilter(repo,spontedContainer, cohortWhereSql, "Cohort ID Filter",
-            "Cohort ID Filter (" + Request.ExtractableCohort + ")", null);
+            $"Cohort ID Filter ({Request.ExtractableCohort})", null);
 
         //now we need to figure out what impromptu joins are going on in the main query extraction 
         //Normally we have an impromptu join e.g. Inner Join MyCohortTable on CHI = MyCohortTable.CHI 
@@ -83,7 +83,7 @@ public sealed class ExtractionAggregateGraphUI:AggregateGraphUI ,IObjectCollecti
         if(!customLines.Any())
             throw new Exception("Expected there to be at least 1 custom join line returned by the ISqlQueryBuilder fetched with Request.GetQueryBuilder but it had 0 so how did it know what cohort table to join against?");
 
-        foreach (CustomLine line in customLines)
+        foreach (var line in customLines)
             toReturn.AddCustomLine(line.Text,QueryComponent.JoinInfoJoin);
             
         spontedContainer.AddChild(spontedFilter);

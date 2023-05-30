@@ -47,5 +47,6 @@ public class ProjectCohortIdentificationConfigurationAssociationsNode:Node,IOrde
         return (Project != null ? Project.GetHashCode() : 0);
     }
 
-    public int Order { get { return 1; } set{} }
+    public int Order { get => 1;
+        set{} }
 }

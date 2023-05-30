@@ -34,7 +34,7 @@ public partial class CheckAndExecuteUI : RDMPUserControl, IConsultableBeforeClos
     public CommandGetterHandler CommandGetter;
 
     public bool ChecksPassed { get; private set; }
-    public bool IsExecuting { get { return _runningTask != null && !_runningTask.IsCompleted; } }
+    public bool IsExecuting => _runningTask != null && !_runningTask.IsCompleted;
 
     /// <summary>
     /// Called every time the execution of the runner completes (does not get called if the runner was detached - running 
@@ -48,8 +48,8 @@ public partial class CheckAndExecuteUI : RDMPUserControl, IConsultableBeforeClos
 
     public bool AllowsYesNoToAll
     {
-        get { return checksUI1.AllowsYesNoToAll; }
-        set { checksUI1.AllowsYesNoToAll = value; }
+        get => checksUI1.AllowsYesNoToAll;
+        set => checksUI1.AllowsYesNoToAll = value;
     }
 
     public override void SetItemActivator(IActivateItems activator)
@@ -134,7 +134,7 @@ public partial class CheckAndExecuteUI : RDMPUserControl, IConsultableBeforeClos
                 //find the worst check state
                 var worst = toMemory.GetWorst();
                 //update the rag smiley to reflect whether it has passed
-                ragChecks.OnCheckPerformed(new CheckEventArgs("Checks resulted in " + worst ,worst));
+                ragChecks.OnCheckPerformed(new CheckEventArgs($"Checks resulted in {worst}",worst));
                 //update the bit flag
                 ChecksPassed = worst <= CheckResult.Warning;
                 
@@ -180,7 +180,7 @@ public partial class CheckAndExecuteUI : RDMPUserControl, IConsultableBeforeClos
         loadProgressUI1.Clear();
         loadProgressUI1.ShowRunning(true);
 
-        int exitCode = 0;
+        var exitCode = 0;
             
         _runningTask =
             //run the data load in a Thread
@@ -219,9 +219,10 @@ public partial class CheckAndExecuteUI : RDMPUserControl, IConsultableBeforeClos
     {
         try
         {
-            int exitCode = runner.Run(Activator.RepositoryLocator, loadProgressUI1, new FromDataLoadEventListenerToCheckNotifier(loadProgressUI1), _cancellationTokenSource.Token);
+            var exitCode = runner.Run(Activator.RepositoryLocator, loadProgressUI1, new FromDataLoadEventListenerToCheckNotifier(loadProgressUI1), _cancellationTokenSource.Token);
 
-            loadProgressUI1.OnNotify(this,new NotifyEventArgs(exitCode == 0 ? ProgressEventType.Information : ProgressEventType.Error,"Exit code was " + exitCode));
+            loadProgressUI1.OnNotify(this,new NotifyEventArgs(exitCode == 0 ? ProgressEventType.Information : ProgressEventType.Error,
+                $"Exit code was {exitCode}"));
 
             return exitCode;
         }

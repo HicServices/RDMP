@@ -31,28 +31,28 @@ public class LookupCompositeJoinInfo : DatabaseEntity, ISupplementalJoin
     /// </summary>
     public int OriginalLookup_ID
     {
-        get { return _originalLookup_ID; }
-        set { SetField(ref _originalLookup_ID, value); }
+        get => _originalLookup_ID;
+        set => SetField(ref _originalLookup_ID, value);
     }
 
     /// <inheritdoc cref="IJoin.ForeignKey"/>
     public int ForeignKey_ID
     {
-        get { return _foreignKey_ID; }
-        set { SetField(ref _foreignKey_ID, value); }
+        get => _foreignKey_ID;
+        set => SetField(ref _foreignKey_ID, value);
     }
     /// <inheritdoc cref="IJoin.PrimaryKey"/>
     public int PrimaryKey_ID
     {
-        get { return _primaryKey_ID; }
-        set { SetField(ref _primaryKey_ID, value); }
+        get => _primaryKey_ID;
+        set => SetField(ref _primaryKey_ID, value);
     }
 
     /// <inheritdoc/>
     public string Collation
     {
-        get { return _collation; }
-        set { SetField(ref _collation, value); }
+        get => _collation;
+        set => SetField(ref _collation, value);
     }
 
     #endregion
@@ -61,13 +61,12 @@ public class LookupCompositeJoinInfo : DatabaseEntity, ISupplementalJoin
 
     /// <inheritdoc cref="IJoin.ForeignKey"/>
     [NoMappingToDatabase]
-    public ColumnInfo ForeignKey { get { return Repository.GetObjectByID<ColumnInfo>(ForeignKey_ID); } }
+    public ColumnInfo ForeignKey => Repository.GetObjectByID<ColumnInfo>(ForeignKey_ID);
 
     /// <inheritdoc cref="IJoin.PrimaryKey"/>
     [NoMappingToDatabase]
-    public ColumnInfo PrimaryKey {
-        get { return Repository.GetObjectByID<ColumnInfo>(PrimaryKey_ID); }
-    }
+    public ColumnInfo PrimaryKey => Repository.GetObjectByID<ColumnInfo>(PrimaryKey_ID);
+
     #endregion
 
     public LookupCompositeJoinInfo()
@@ -113,7 +112,7 @@ public class LookupCompositeJoinInfo : DatabaseEntity, ISupplementalJoin
     private string _cachedToString = null;
     private string ToStringCached()
     {
-        return _cachedToString ?? (_cachedToString = ForeignKey.Name + " = " + PrimaryKey.Name);
+        return _cachedToString ?? (_cachedToString = $"{ForeignKey.Name} = {PrimaryKey.Name}");
     }
 
     /// <inheritdoc/>

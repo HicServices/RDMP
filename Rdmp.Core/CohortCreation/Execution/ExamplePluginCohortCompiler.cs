@@ -24,7 +24,7 @@ namespace Rdmp.Core.CohortCreation.Execution;
 /// </summary>
 public class ExamplePluginCohortCompiler : PluginCohortCompiler
 {
-    public const string ExampleAPIName = ApiPrefix + "GenerateRandomChisExample";
+    public const string ExampleAPIName = $"{ApiPrefix}GenerateRandomChisExample";
 
     public override void Run(AggregateConfiguration ac, CachedAggregateConfigurationResultsManager cache,CancellationToken token)
     {
@@ -45,7 +45,7 @@ public class ExamplePluginCohortCompiler : PluginCohortCompiler
 
     private void RunAsPatientIndexTable(AggregateConfiguration ac, CachedAggregateConfigurationResultsManager cache, CancellationToken token)
     {
-        using DataTable dt = new DataTable();
+        using var dt = new DataTable();
         dt.Columns.Add("chi", typeof(string));
         dt.Columns.Add("dateOfBirth", typeof(DateTime));
         dt.Columns.Add("dateOfDeath", typeof(DateTime));
@@ -85,7 +85,7 @@ public class ExamplePluginCohortCompiler : PluginCohortCompiler
     {
         // You can persist configuration info about how to query the API any way
         // you want.  Here we just use the Description field
-        return int.TryParse(ac.Description, out int result) ? result: 5;
+        return int.TryParse(ac.Description, out var result) ? result: 5;
     }
 
     public override bool ShouldRun(ICatalogue cata)

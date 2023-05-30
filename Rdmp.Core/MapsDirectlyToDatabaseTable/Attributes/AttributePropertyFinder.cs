@@ -22,11 +22,11 @@ public class AttributePropertyFinder<T> : IAttributePropertyFinder where T : Att
 
     public AttributePropertyFinder(IEnumerable<IMapsDirectlyToDatabaseTable> objects) 
     {
-        foreach (Type type in objects.Select(o => o.GetType()).Distinct())
+        foreach (var type in objects.Select(o => o.GetType()).Distinct())
         {
-            PropertyInfo[] propertyInfos = type.GetProperties();
+            var propertyInfos = type.GetProperties();
 
-            foreach (PropertyInfo property in propertyInfos)
+            foreach (var property in propertyInfos)
             {
                 //if property has sql flag
                 if (property.GetCustomAttributes(typeof(T), true).Any())

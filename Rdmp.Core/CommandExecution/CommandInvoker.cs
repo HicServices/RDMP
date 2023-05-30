@@ -280,7 +280,7 @@ public class CommandInvoker
         }
 
         if(picker != null && idx < picker.Length && complainAboutExtraParameters)
-            throw new Exception("Unrecognised extra parameter " + picker[idx].RawValue);
+            throw new Exception($"Unrecognised extra parameter {picker[idx].RawValue}");
 
         var instance = (IAtomicCommand)constructorInfo.Invoke(parameterValues.ToArray());
         

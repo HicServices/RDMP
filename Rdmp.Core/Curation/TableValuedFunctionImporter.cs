@@ -6,6 +6,7 @@
 
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using FAnsi.Discovery;
 using FAnsi.Discovery.QuerySyntax;
 using Rdmp.Core.Curation.Data;
@@ -59,11 +60,12 @@ public class TableValuedFunctionImporter : ITableInfoImporter
         _usageContext = usageContext;
 
         if (!_tableValuedFunction.Exists())
-            throw new Exception("Could not find tableValuedFunction with name '" + _tableValuedFunction.GetRuntimeName() + "' (.Exists() returned false)");
+            throw new Exception(
+                $"Could not find tableValuedFunction with name '{_tableValuedFunction.GetRuntimeName()}' (.Exists() returned false)");
 
         _tableValuedFunctionName = _tableValuedFunction.GetRuntimeName();
                  
-        _parameters = _tableValuedFunction.DiscoverParameters();
+        _parameters = _tableValuedFunction.DiscoverParameters().ToArray();
 
         ParametersCreated = new List<AnyTableSqlParameter>();
             
@@ -77,13 +79,9 @@ public class TableValuedFunctionImporter : ITableInfoImporter
             
         var wrappedSchema = string.IsNullOrWhiteSpace(_schema) ? "" : syntax.EnsureWrapped(_schema);
 
-        string finalName = syntax.EnsureWrapped(_database) + "." + wrappedSchema + "." + _tableValuedFunctionName + "(";
+        var finalName =
+            $"{syntax.EnsureWrapped(_database)}.{wrappedSchema}.{_tableValuedFunctionName}({string.Join(',', _parameters.Select(p => p.ParameterName))}) AS {_tableValuedFunctionName}"; //give it an alias so all the children ColumnInfos can be fully specified
 
-        foreach (DiscoveredParameter parameter in _parameters)
-            finalName += parameter.ParameterName + ",";
-
-        finalName = finalName.Trim(',') + ") AS " + _tableValuedFunctionName;//give it an alias so all the children ColumnInfos can be fully specified
-            
         tableInfoCreated = new TableInfo(_repository,finalName);
         tableInfoCreated.Server = _server;
         tableInfoCreated.Database = _database;
@@ -119,15 +117,15 @@ public class TableValuedFunctionImporter : ITableInfoImporter
 
     private ColumnInfo[] CreateColumnInfosBasedOnReturnColumnsOfFunction(ITableInfo parent)
     {
-        List<ColumnInfo> newColumnInfosToReturn = new List<ColumnInfo>();
+        var newColumnInfosToReturn = new List<ColumnInfo>();
 
-        foreach (DiscoveredColumn discoveredColumn in _tableValuedFunction.DiscoverColumns())
+        foreach (var discoveredColumn in _tableValuedFunction.DiscoverColumns())
         {
             var toAdd = CreateNewColumnInfo(parent, discoveredColumn);
             newColumnInfosToReturn.Add(toAdd);
         }
             
-        foreach (DiscoveredParameter discoveredParameter in _tableValuedFunction.DiscoverParameters())
+        foreach (var discoveredParameter in _tableValuedFunction.DiscoverParameters())
             CreateParameter(parent,discoveredParameter);
                 
         return newColumnInfosToReturn.ToArray();

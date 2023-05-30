@@ -34,7 +34,7 @@ class ProjectConsistentGuidReleaseIdentifierAllocatorTests:DatabaseTests
         var defTable = ect.DiscoverDefinitionTable();
         var cohortTable = ect.DiscoverCohortTable();
 
-        Project p = new Project(DataExportRepository,"MyProject");
+        var p = new Project(DataExportRepository,"MyProject");
         p.ProjectNumber = 10;
         p.SaveToDatabase();
 
@@ -139,7 +139,7 @@ class ProjectConsistentGuidReleaseIdentifierAllocatorTests:DatabaseTests
         using (var con = db.Server.GetConnection())
         {
             con.Open();
-            db.Server.GetCommand("UPDATE " + cohortTable + " SET ReleaseId='0x0127' WHERE ReleaseId='0x0128'", con).ExecuteScalar();
+            db.Server.GetCommand($"UPDATE {cohortTable} SET ReleaseId='0x0127' WHERE ReleaseId='0x0128'", con).ExecuteScalar();
         }
 
         //should be happy now again

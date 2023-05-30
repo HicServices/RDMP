@@ -53,13 +53,13 @@ public abstract class Compileable:ICompileable
             if(h != null)
                 h(this,new EventArgs());
         }
-        get { return _state; }
+        get => _state;
     }
 
     public virtual int Order
     {
-        get { return ((IOrderable) Child).Order; }
-        set { ((IOrderable) Child).Order = value; }
+        get => ((IOrderable) Child).Order;
+        set => ((IOrderable) Child).Order = value;
     }
 
     public event EventHandler StateChanged;

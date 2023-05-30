@@ -19,7 +19,7 @@ public partial class DatabaseTypeUI : UserControl
 
     public DatabaseType DatabaseType
     {
-        get { return _databaseType; }
+        get => _databaseType;
         set
         {
             _databaseType = value;

@@ -23,7 +23,7 @@ public partial class KeyDropLocationUI : UserControl
         
     public JoinKeyType KeyType
     {
-        get { return _keyType; }
+        get => _keyType;
         set
         {
             _keyType = value;

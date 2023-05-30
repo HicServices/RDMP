@@ -22,7 +22,7 @@ public class CohortCompilerTests:CohortIdentificationTests
     [Test]
     public void AddSameTaskTwice_StaysAtOne()
     {
-        CohortCompiler compiler = new CohortCompiler(cohortIdentificationConfiguration);
+        var compiler = new CohortCompiler(cohortIdentificationConfiguration);
         container1.AddChild(aggregate1,0);
         try
         {
@@ -67,7 +67,7 @@ public class CohortCompilerTests:CohortIdentificationTests
     [Test]
     public void AddContainer_StaysAtOne()
     {
-        CohortCompiler compiler = new CohortCompiler(cohortIdentificationConfiguration);
+        var compiler = new CohortCompiler(cohortIdentificationConfiguration);
         rootcontainer.AddChild(aggregate1, 1);
 
         compiler.AddTask(rootcontainer, null);//add the root container
@@ -136,7 +136,7 @@ public class CohortCompilerTests:CohortIdentificationTests
 
             //Joinable:aggregate5 (patient index table, the other Aggregates could JOIN to this)
 
-            CohortCompiler compiler = new CohortCompiler(cohortIdentificationConfiguration);
+            var compiler = new CohortCompiler(cohortIdentificationConfiguration);
             rootcontainer.AddChild(aggregate1, 1);
             rootcontainer.AddChild(container1);
             container1.Order = 2;

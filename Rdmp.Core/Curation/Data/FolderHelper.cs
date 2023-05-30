@@ -52,13 +52,14 @@ public static class FolderHelper
             reason = "An attempt was made to set Catalogue Folder to null, every Catalogue must have a folder, set it to \\ if you want the root";
         else
         if (!candidatePath.StartsWith("\\"))
-            reason = "All catalogue paths must start with \\.  Invalid path was:" + candidatePath;
+            reason = $"All catalogue paths must start with \\.  Invalid path was:{candidatePath}";
         else
         if (candidatePath.Contains("\\\\"))//if it contains double slash
-            reason = "Catalogue paths cannot contain double slashes '\\\\', Invalid path was:" + candidatePath;
+            reason = $"Catalogue paths cannot contain double slashes '\\\\', Invalid path was:{candidatePath}";
         else
         if (candidatePath.Contains("/"))//if it contains double slash
-            reason = "Catalogue paths must use backwards slashes not forward slashes, Invalid path was:" + candidatePath;
+            reason =
+                $"Catalogue paths must use backwards slashes not forward slashes, Invalid path was:{candidatePath}";
 
         return reason == null;
     }

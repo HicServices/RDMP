@@ -36,7 +36,7 @@ public class ExecuteCommandUseCredentialsToAccessTableInfoData : BasicCommandExe
             var usage = _credentials.GetAllTableInfosThatUseThis();
                 
             if(usage[DataAccessContext.Any].Contains(targetTableInfo))
-                SetImpossible(_credentials + " is already used to access " + targetTableInfo + " under Any context");
+                SetImpossible($"{_credentials} is already used to access {targetTableInfo} under Any context");
         }
     }
 

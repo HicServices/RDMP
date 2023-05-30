@@ -263,7 +263,7 @@ public class UnitTests
         if (typeof (T) == typeof(ObjectImport))
         {
             ShareManager sm;
-            ObjectExport export = WhenIHaveA<ObjectExport>(repository, out sm);
+            var export = WhenIHaveA<ObjectExport>(repository, out sm);
             return (T)(object)sm.GetImportAs(export.SharingUID, WhenIHaveA<Catalogue>(repository));
         }
             
@@ -709,7 +709,7 @@ public class UnitTests
         if(firstIteration)
             _alreadyChecked.Clear();
 
-        foreach (PropertyInfo property in memObj.GetType().GetProperties())
+        foreach (var property in memObj.GetType().GetProperties())
         {
             if (IgnorePropertiesWhenDiffing.Contains(property.Name) || property.Name.EndsWith("_ID"))
                 continue;
@@ -774,7 +774,7 @@ public class UnitTests
 
         Assert.AreEqual(memObjectsArr.Count(), dbObjectsArr.Count());
 
-        for (int i = 0; i < memObjectsArr.Count(); i++)
+        for (var i = 0; i < memObjectsArr.Count(); i++)
             UnitTests.AssertAreEqual(memObjectsArr[i], dbObjectsArr[i],firstIteration);
     }
 
@@ -801,7 +801,7 @@ public class UnitTests
 
         var methodWhenIHaveA = GetWhenIHaveAMethod();
             
-        foreach (Type t in types)
+        foreach (var t in types)
         {
             //ignore these types too
             if (SkipTheseTypes.Contains(t.Name) || t.Name.StartsWith("Spontaneous") ||

@@ -27,7 +27,8 @@ public class FilterGraphObjectCollection : PersistableObjectCollection
     public FilterGraphObjectCollection(AggregateConfiguration graph, ConcreteFilter filter):this()
     {
         if (graph.IsCohortIdentificationAggregate)
-            throw new ArgumentException("Graph '" + graph + "' is a Cohort Identification Aggregate, this is not allowed.  Aggregat must be a graph aggregate");
+            throw new ArgumentException(
+                $"Graph '{graph}' is a Cohort Identification Aggregate, this is not allowed.  Aggregat must be a graph aggregate");
         DatabaseObjects.Add(graph);
         DatabaseObjects.Add(filter);
     }
@@ -43,7 +44,7 @@ public class FilterGraphObjectCollection : PersistableObjectCollection
 
     public void HandleRefreshObject(RefreshObjectEventArgs e)
     {
-        foreach (IMapsDirectlyToDatabaseTable o in DatabaseObjects)
+        foreach (var o in DatabaseObjects)
             if (o.Equals(e.Object))
                 ((IRevertable) o).RevertToDatabaseState();
     }

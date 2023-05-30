@@ -32,7 +32,7 @@ class CommandLineParser
 
         while (i < cmd.Length)
         {
-            char ch = cmd[i];
+            var ch = cmd[i];
 
             if (char.IsWhiteSpace(ch)) { throw new InvalidOperationException(); }
             else if (ch == '\\') { ParseEscapeSequence(); }
@@ -41,7 +41,7 @@ class CommandLineParser
 
             if (i >= cmd.Length || char.IsWhiteSpace(cmd[i]))
             {
-                string arg = buf.ToString();
+                var arg = buf.ToString();
 
                 yield return arg;
 
@@ -63,7 +63,7 @@ class CommandLineParser
         // scan the contents of the quoted word into the buffer
         while (i < cmd.Length && cmd[i] != '"')
         {
-            char ch = cmd[i];
+            var ch = cmd[i];
             if (ch == '\\') { ParseEscapeSequence(); }
             else { buf.Append(ch); ++i; }
         }
@@ -83,7 +83,7 @@ class CommandLineParser
     {
         while (i < cmd.Length)
         {
-            char ch = cmd[i];
+            var ch = cmd[i];
             if (char.IsWhiteSpace(ch)) break; // whitespace terminates a bareword
             else if (ch == '"') break; // lead-in quote starts a quoted word
             else if (ch == '\\') break; // escape sequence terminates the bareword
@@ -120,7 +120,7 @@ class CommandLineParser
         //
         // scan in the backslashes
         //
-        int p = i; // start of the escape sequence
+        var p = i; // start of the escape sequence
         while (i < cmd.Length && cmd[i] == '\\')
         {
             buf.Append('\\');
@@ -132,9 +132,9 @@ class CommandLineParser
         //
         if (i < cmd.Length && cmd[i] == '"')
         {
-            int n = (i - p); // find the number of backslashes seen
-            int quotient = n >> 1; // n divide 2 ( 5 div 2 = 2 , 6 div 2 = 3 )
-            int remainder = n & 1; // n modulo 2 ( 5 mod 2 = 1 , 6 mod 2 = 0 )
+            var n = (i - p); // find the number of backslashes seen
+            var quotient = n >> 1; // n divide 2 ( 5 div 2 = 2 , 6 div 2 = 3 )
+            var remainder = n & 1; // n modulo 2 ( 5 mod 2 = 1 , 6 mod 2 = 0 )
 
             buf.Length -= (quotient + remainder); // remove the unwanted backslashes
 

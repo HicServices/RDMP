@@ -41,7 +41,7 @@ public abstract class ManyRunner: Runner
     {
         RepositoryLocator = repositoryLocator;
         Token = token;
-        List<Task> tasks = new List<Task>();
+        var tasks = new List<Task>();
 
         Semaphore semaphore = null;
         if (_options.MaxConcurrentExtractions != null)
@@ -55,14 +55,14 @@ public abstract class ManyRunner: Runner
                 break;
             case CommandLineActivity.run:
                         
-                object[] runnables = GetRunnables();
+                var runnables = GetRunnables();
 
-                foreach (object runnable in runnables)
+                foreach (var runnable in runnables)
                 {
                     if (semaphore != null)
                         semaphore.WaitOne();
 
-                    object r = runnable;
+                    var r = runnable;
                     tasks.Add(Task.Run(() =>
                     {
                         try
@@ -83,13 +83,13 @@ public abstract class ManyRunner: Runner
                 lock (_oLock)
                     _checksDictionary.Clear();
 
-                ICheckable[] checkables = GetCheckables(checkNotifier);
-                foreach (ICheckable checkable in checkables)
+                var checkables = GetCheckables(checkNotifier);
+                foreach (var checkable in checkables)
                 {
                     if (semaphore != null)
                         semaphore.WaitOne();
 
-                    ICheckable checkable1 = checkable;
+                    var checkable1 = checkable;
                     var memory = new ToMemoryCheckNotifier(checkNotifier);
 
                     lock (_oLock)
@@ -165,7 +165,7 @@ public abstract class ManyRunner: Runner
             if (arr.Length == 1)
                 return arr[0].Value;
 
-            throw new InvalidOperationException("There were " + arr.Length + " Checkers of type " + typeof(T));
+            throw new InvalidOperationException($"There were {arr.Length} Checkers of type {typeof(T)}");
         }
     }
 

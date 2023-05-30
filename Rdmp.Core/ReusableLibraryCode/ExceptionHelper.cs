@@ -19,12 +19,12 @@ public static class ExceptionHelper
     [Pure]
     public static string ExceptionToListOfInnerMessages(Exception e, bool includeStackTrace=false)
     {
-        string message = e.Message;
+        var message = e.Message;
         if (includeStackTrace)
             message += Environment.NewLine + e.StackTrace;
 
         if (e is ReflectionTypeLoadException)
-            foreach (Exception loaderException in ((ReflectionTypeLoadException) e).LoaderExceptions)
+            foreach (var loaderException in ((ReflectionTypeLoadException) e).LoaderExceptions)
                 message += Environment.NewLine + ExceptionToListOfInnerMessages(loaderException, includeStackTrace);
 
         if (e.InnerException != null)

@@ -103,7 +103,7 @@ public partial class ParameterCollectionUI : RDMPUserControl
     private void olvParameters_AboutToCreateGroups(object sender, CreateGroupsEventArgs e)
     {
 
-        Dictionary<string, int> order = new Dictionary<string, int>()
+        var order = new Dictionary<string, int>()
         {
             {ParameterLevel.Global.ToString(),0},
             {ParameterLevel.CompositeQueryLevel.ToString(),1},
@@ -116,7 +116,7 @@ public partial class ParameterCollectionUI : RDMPUserControl
 
         var currentGroup = e.Groups.SingleOrDefault(g => g.Header.Equals(Options.CurrentLevel.ToString()));
         if (currentGroup != null)
-            currentGroup.Header = currentGroup.Header + " (current)";
+            currentGroup.Header = $"{currentGroup.Header} (current)";
 
         e.Groups = e.Groups.OrderBy(g => g.SortValue).ToList();
             
@@ -196,8 +196,8 @@ public partial class ParameterCollectionUI : RDMPUserControl
 
     public static Form ShowAsDialog(IActivateItems activator,ParameterCollectionUIOptions options, bool modal = false)
     {
-        Form f = new Form();
-        f.Text = "Parameters For:" + options.Collector;
+        var f = new Form();
+        f.Text = $"Parameters For:{options.Collector}";
         var ui = new ParameterCollectionUI();
         f.Width = ui.Width;
         f.Height = ui.Height;
@@ -228,10 +228,10 @@ public partial class ParameterCollectionUI : RDMPUserControl
 
     private void miAddParameter_Click(object sender, EventArgs e)
     {
-        Random r = new Random();
+        var r = new Random();
 
 #pragma warning disable SCS0005 // Weak random generator: This is only used to create an initial value for a parameter.
-        var dialog  = new TypeTextOrCancelDialog("Parameter Name", "Name", 100, "@MyParam" + r.Next());
+        var dialog  = new TypeTextOrCancelDialog("Parameter Name", "Name", 100, $"@MyParam{r.Next()}");
 #pragma warning restore SCS0005 // Weak random generator
         if (dialog.ShowDialog() == DialogResult.OK)
         {
@@ -251,9 +251,9 @@ public partial class ParameterCollectionUI : RDMPUserControl
         if(deletables.Any() && e.KeyCode == Keys.Delete)
         {
             if (deletables.Length == 1)
-                dr = Activator.YesNo("Confirm deleting " + deletables[0], "Confirm Delete?");
+                dr = Activator.YesNo($"Confirm deleting {deletables[0]}", "Confirm Delete?");
             else
-                dr =  Activator.YesNo("Confirm deleting " + deletables.Length + " Parameters?", "Confirm delete");
+                dr =  Activator.YesNo($"Confirm deleting {deletables.Length} Parameters?", "Confirm delete");
 
             if(dr)
             {
@@ -355,7 +355,7 @@ public partial class ParameterCollectionUI : RDMPUserControl
     }
     void olvParameters_CellToolTipShowing(object sender, ToolTipShowingEventArgs e)
     {
-        ISqlParameter sqlParameter = (ISqlParameter)e.Model;
+        var sqlParameter = (ISqlParameter)e.Model;
 
         e.IsBalloon = true;
         e.AutoPopDelay = 32767;
@@ -383,7 +383,8 @@ public partial class ParameterCollectionUI : RDMPUserControl
         if (Options.IsHigherLevel(sqlParameter))
         {
             e.Title = "Parameter is declared at a higher level";
-            e.Text = "This parameter is declared at "+ Options.ParameterManager.GetLevelForParameter(sqlParameter) +" level which is higher than the level you are editing ("+Options.CurrentLevel+").  You cannot change higher level parameters from here, look at the 'Owner' column to see which object the global belongs to";
+            e.Text =
+                $"This parameter is declared at {Options.ParameterManager.GetLevelForParameter(sqlParameter)} level which is higher than the level you are editing ({Options.CurrentLevel}).  You cannot change higher level parameters from here, look at the 'Owner' column to see which object the global belongs to";
             return;
         }
     }
@@ -418,7 +419,7 @@ public partial class ParameterCollectionUI : RDMPUserControl
         if (owner == null)
             return null;
 
-        return owner.GetType().Name + ":" + owner;
+        return $"{owner.GetType().Name}:{owner}";
     }
 
     private void olvParameters_SelectedIndexChanged(object sender, EventArgs e)

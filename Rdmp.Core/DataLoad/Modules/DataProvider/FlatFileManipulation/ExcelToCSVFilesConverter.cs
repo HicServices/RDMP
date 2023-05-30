@@ -104,7 +104,7 @@ public class ExcelToCSVFilesConverter: IPluginDataProvider
 
                     //make it sensible
                     newName =
-                        $"{new MicrosoftQuerySyntaxHelper().GetSensibleEntityNameFromString(newName)}.csv";
+                        $"{MicrosoftQuerySyntaxHelper.Instance.GetSensibleEntityNameFromString(newName)}.csv";
 
                     var savePath = Path.Combine(job.LoadDirectory.ForLoading.FullName, newName);
                     var dt = source.GetAllData(sheet, job);

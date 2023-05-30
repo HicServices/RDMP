@@ -97,11 +97,11 @@ public class ArbitraryTableExtractionUICollection : PersistableObjectCollection,
         switch (response.Location)
         {
             case QueryComponent.SELECT:
-                return "Select " + response.SQL + " * from " + _table.GetFullyQualifiedName();
+                return $"Select {response.SQL} * from {_table.GetFullyQualifiedName()}";
             case QueryComponent.WHERE:
-                return "Select * from " + _table.GetFullyQualifiedName() + " WHERE " + response.SQL;
+                return $"Select * from {_table.GetFullyQualifiedName()} WHERE {response.SQL}";
             case QueryComponent.Postfix:
-                return "Select * from " + _table.GetFullyQualifiedName() + " " + response.SQL;
+                return $"Select * from {_table.GetFullyQualifiedName()} {response.SQL}";
             default:
                 throw new ArgumentOutOfRangeException();
         }
@@ -109,7 +109,7 @@ public class ArbitraryTableExtractionUICollection : PersistableObjectCollection,
 
     public string GetTabName()
     {
-        return "View " + _table.GetRuntimeName();
+        return $"View {_table.GetRuntimeName()}";
     }
 
     public void AdjustAutocomplete(IAutoCompleteProvider autoComplete)
@@ -119,13 +119,13 @@ public class ArbitraryTableExtractionUICollection : PersistableObjectCollection,
 
     public string Server
     {
-        get { return _arguments[ServerKey]; }
-        set { _arguments[ServerKey] = value; }
+        get => _arguments[ServerKey];
+        set => _arguments[ServerKey] = value;
     }
     public string Database
     {
-        get { return _arguments[DatabaseKey]; }
-        set { _arguments[DatabaseKey] = value; }
+        get => _arguments[DatabaseKey];
+        set => _arguments[DatabaseKey] = value;
     }
 
 
@@ -149,7 +149,7 @@ public class ArbitraryTableExtractionUICollection : PersistableObjectCollection,
             return true;
         }
 
-        reason = "Table " + _table + " did not exist";
+        reason = $"Table {_table} did not exist";
         return false;
 
     }

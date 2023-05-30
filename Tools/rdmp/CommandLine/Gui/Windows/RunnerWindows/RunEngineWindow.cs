@@ -161,7 +161,7 @@ class RunEngineWindow<T> : Window, IListDataSource where T : RDMPCommandLineOpti
     {
         ClearOutput();
 
-        string expectedFileName = "rdmp" + (EnvironmentInfo.IsLinux ? "" : ".exe");
+        var expectedFileName = $"rdmp{(EnvironmentInfo.IsLinux ? "" : ".exe")}";
 
         // try in the location we ran from 
         var binary = Path.Combine(UsefulStuff.GetExecutableDirectory().FullName, expectedFileName);
@@ -169,7 +169,7 @@ class RunEngineWindow<T> : Window, IListDataSource where T : RDMPCommandLineOpti
         if (!File.Exists(binary))
         {
             // the program that launched this code isn't rdmp.exe.  Maybe rdmp is in the current directory though
-            binary = "./" + expectedFileName;
+            binary = $"./{expectedFileName}";
         }
 
         if (!File.Exists(binary))

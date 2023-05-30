@@ -95,7 +95,7 @@ class TableInfoCredentialsManager : ITableInfoCredentialsManager
     /// <inheritdoc/>
     public DataAccessCredentials GetCredentialsIfExistsFor(ITableInfo tableInfo, DataAccessContext context)
     {
-        int toReturn = -1;
+        var toReturn = -1;
 
         using (var con = _repository.GetConnection())
         {
@@ -174,7 +174,7 @@ class TableInfoCredentialsManager : ITableInfoCredentialsManager
                     while (r.Read())
                     {
                         //get the context
-                        DataAccessContext context = GetContext(r);
+                        var context = GetContext(r);
 
                         var tid = Convert.ToInt32(r["TableInfo_ID"]);
                         var cid = Convert.ToInt32(r["DataAccessCredentials_ID"]);
@@ -202,7 +202,7 @@ class TableInfoCredentialsManager : ITableInfoCredentialsManager
     /// <inheritdoc/>
     public Dictionary<DataAccessContext, List<ITableInfo>> GetAllTablesUsingCredentials(DataAccessCredentials credentials)
     {
-        Dictionary<DataAccessContext,List<int>> toReturn = new Dictionary<DataAccessContext, List<int>>();
+        var toReturn = new Dictionary<DataAccessContext, List<int>>();
 
         toReturn.Add(DataAccessContext.Any, new List<int>());
         toReturn.Add(DataAccessContext.DataExport, new List<int>());
@@ -223,7 +223,7 @@ class TableInfoCredentialsManager : ITableInfoCredentialsManager
                     while (r.Read())
                     {
                         //get the context
-                        DataAccessContext context = GetContext(r);
+                        var context = GetContext(r);
                         
                         //add the TableInfo under that context
                         toReturn[context].Add((int)r["TableInfo_ID"]);
@@ -262,7 +262,7 @@ class TableInfoCredentialsManager : ITableInfoCredentialsManager
     public DataAccessCredentials GetCredentialByUsernameAndPasswordIfExists(string username, string password)
     {
         //see if we already have a record of this user
-        DataAccessCredentials[] existingCredentials = _repository.GetAllObjects<DataAccessCredentials>().Where(c => c.Username.Equals(username)).ToArray();
+        var existingCredentials = _repository.GetAllObjects<DataAccessCredentials>().Where(c => c.Username.Equals(username)).ToArray();
 
         //found an existing credential that matched on username
         if (existingCredentials.Any())

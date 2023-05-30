@@ -44,7 +44,7 @@ internal class RowPeeker
                     return tbl;
                 }
 
-                DataRow newRow = chunk.NewRow();
+                var newRow = chunk.NewRow();
                 // We "clone" the row
                 newRow.ItemArray = _peekedRecord.ItemArray;
                 //add the peeked record

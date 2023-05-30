@@ -30,7 +30,7 @@ public class ExecuteCommandShowXmlDoc : BasicUICommandExecution,IAtomicCommand
         _help = activator.RepositoryLocator.CatalogueRepository.CommentStore.GetDocumentationIfExists(classOrProperty, true,true);
 
         if(string.IsNullOrWhiteSpace(_help))
-            SetImpossible("No help available for keyword '" + classOrProperty+"'");
+            SetImpossible($"No help available for keyword '{classOrProperty}'");
     }
     public override Image<Rgba32> GetImage(IIconProvider iconProvider)
     {

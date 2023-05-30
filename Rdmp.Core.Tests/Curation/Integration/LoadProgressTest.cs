@@ -40,8 +40,8 @@ public class LoadProgressTest : DatabaseTests
 
         var loadMetadata = new LoadMetadata(CatalogueRepository);
 
-        LoadProgress progress = new LoadProgress(CatalogueRepository, loadMetadata);
-        LoadProgress progressCopy = CatalogueRepository.GetObjectByID<LoadProgress>(progress.ID);
+        var progress = new LoadProgress(CatalogueRepository, loadMetadata);
+        var progressCopy = CatalogueRepository.GetObjectByID<LoadProgress>(progress.ID);
             
         progressCopy.Name = "fish";
         progressCopy.OriginDate = new DateTime(2001,01,01);

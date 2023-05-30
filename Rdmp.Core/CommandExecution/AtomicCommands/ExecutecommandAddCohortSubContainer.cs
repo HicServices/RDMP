@@ -22,7 +22,7 @@ public class ExecuteCommandAddCohortSubContainer : BasicCommandExecution,IAtomic
 
         this._container = container;
 
-        if (container.ShouldBeReadOnly(out string reason))
+        if (container.ShouldBeReadOnly(out var reason))
         {
             SetImpossible(reason);
         }

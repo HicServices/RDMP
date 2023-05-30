@@ -53,14 +53,14 @@ public class DataLoadProgressUpdateInfo : ICustomUIDrivenClass, ICheckable
 
         ExecuteScalarSQL = "";
 
-        for (int i = 1; i < lines.Length; i++)
+        for (var i = 1; i < lines.Length; i++)
             ExecuteScalarSQL += lines[i] + Environment.NewLine;
     }
 
     public string SaveStateToString()
     {
-        StringBuilder sb = new StringBuilder();
-        sb.AppendLine(Strategy + ";" + Timeout);
+        var sb = new StringBuilder();
+        sb.AppendLine($"{Strategy};{Timeout}");
         sb.AppendLine(ExecuteScalarSQL??"");
             
         return sb.ToString();
@@ -95,7 +95,8 @@ public class DataLoadProgressUpdateInfo : ICustomUIDrivenClass, ICheckable
                 }
                 catch (SqlException e)
                 {
-                    throw new DataLoadProgressUpdateException("Failed to execute the following SQL in the RAW database:" + ExecuteScalarSQL, e);
+                    throw new DataLoadProgressUpdateException(
+                        $"Failed to execute the following SQL in the RAW database:{ExecuteScalarSQL}", e);
                 }
                 break;
             case DataLoadProgressUpdateStrategy.DoNothing:
@@ -122,7 +123,8 @@ public class DataLoadProgressUpdateInfo : ICustomUIDrivenClass, ICheckable
         {
             con.Open();
 
-            listener.OnNotify(this, new NotifyEventArgs(ProgressEventType.Information, "About to execute SQL to determine the maximum date for data loaded:" + ExecuteScalarSQL));
+            listener.OnNotify(this, new NotifyEventArgs(ProgressEventType.Information,
+                $"About to execute SQL to determine the maximum date for data loaded:{ExecuteScalarSQL}"));
 
             using(var cmd = server.GetCommand(ExecuteScalarSQL, con))
             {
@@ -137,7 +139,8 @@ public class DataLoadProgressUpdateInfo : ICustomUIDrivenClass, ICheckable
                 }
                 catch (Exception e)
                 {
-                    throw new DataLoadProgressUpdateException("ExecuteScalarSQL specified for determining the maximum date of data loaded returned a value that was not a Date:" + scalarValue, e);
+                    throw new DataLoadProgressUpdateException(
+                        $"ExecuteScalarSQL specified for determining the maximum date of data loaded returned a value that was not a Date:{scalarValue}", e);
                 }
             }
                 
@@ -152,8 +155,7 @@ public class DataLoadProgressUpdateInfo : ICustomUIDrivenClass, ICheckable
             if (string.IsNullOrWhiteSpace(ExecuteScalarSQL))
                 notifier.OnCheckPerformed(
                     new CheckEventArgs(
-                        "Strategy is " + Strategy +
-                        " but there is no ExecuteScalarSQL, ExecuteScalarSQL should be a SELECT statement that returns a specific value that reflects the maximum date in the load e.g. Select MAX(MyDate) FROM MyTable",
+                        $"Strategy is {Strategy} but there is no ExecuteScalarSQL, ExecuteScalarSQL should be a SELECT statement that returns a specific value that reflects the maximum date in the load e.g. Select MAX(MyDate) FROM MyTable",
                         CheckResult.Fail));
 
         // TODO: These checks are VERY Sql Server specific!
@@ -162,16 +164,14 @@ public class DataLoadProgressUpdateInfo : ICustomUIDrivenClass, ICheckable
             if (ExecuteScalarSQL.Contains("..") || ExecuteScalarSQL.Contains(".[dbo].") || ExecuteScalarSQL.Contains(".dbo."))
                 notifier.OnCheckPerformed(
                     new CheckEventArgs(
-                        "Strategy is " + Strategy +
-                        " but the SQL looks like it references explicit tables, In general RAW queries should use unqualified table names i.e. 'Select MAX(dt) FROM MyTable' NOT 'Select MAX(dt) FROM [MyLIVEDatabase]..[MyTable]'",
+                        $"Strategy is {Strategy} but the SQL looks like it references explicit tables, In general RAW queries should use unqualified table names i.e. 'Select MAX(dt) FROM MyTable' NOT 'Select MAX(dt) FROM [MyLIVEDatabase]..[MyTable]'",
                         CheckResult.Warning));
 
         if (Strategy == DataLoadProgressUpdateStrategy.ExecuteScalarSQLInLIVE)
             if (!(ExecuteScalarSQL.Contains("..") || ExecuteScalarSQL.Contains(".[dbo].") || ExecuteScalarSQL.Contains(".dbo.")))
                 notifier.OnCheckPerformed(
                     new CheckEventArgs(
-                        "Strategy is " + Strategy +
-                        " but the SQL does not contain '..' or '.[dbo].' or '.dbo.', LIVE update queries should use fully table names i.e. 'Select MAX(dt) FROM [MyLIVEDatabase]..[MyTable]' NOT 'Select MAX(dt) FROM MyTable'",
+                        $"Strategy is {Strategy} but the SQL does not contain '..' or '.[dbo].' or '.dbo.', LIVE update queries should use fully table names i.e. 'Select MAX(dt) FROM [MyLIVEDatabase]..[MyTable]' NOT 'Select MAX(dt) FROM MyTable'",
                         CheckResult.Warning));
                         
     }

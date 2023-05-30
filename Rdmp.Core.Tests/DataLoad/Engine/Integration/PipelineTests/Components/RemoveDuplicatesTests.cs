@@ -18,7 +18,7 @@ public class RemoveDuplicatesTests
     [Test]
     public void TestRemovingDuplicatesFromDataTable()
     {
-        DataTable dt = new DataTable();
+        var dt = new DataTable();
         dt.Columns.Add("Col1");
         dt.Columns.Add("Col2",typeof(int));
 
@@ -55,7 +55,7 @@ public class RemoveDuplicatesTests
     [Test]
     public void TestMultipleBatches()
     {
-        DataTable dt = new DataTable();
+        var dt = new DataTable();
         dt.Columns.Add("Col1");
         dt.Columns.Add("Col2", typeof(int));
 
@@ -63,7 +63,7 @@ public class RemoveDuplicatesTests
         dt.Rows.Add("Fish", 123);
 
 
-        DataTable dt2 = new DataTable();
+        var dt2 = new DataTable();
         dt2.Columns.Add("Col1");
         dt2.Columns.Add("Col2", typeof(int));
 
@@ -83,7 +83,7 @@ public class RemoveDuplicatesTests
     [Test]
     public void TestNulls()
     {
-        DataTable dt = new DataTable();
+        var dt = new DataTable();
         dt.Columns.Add("Col1");
         dt.Columns.Add("Col2", typeof(int));
 

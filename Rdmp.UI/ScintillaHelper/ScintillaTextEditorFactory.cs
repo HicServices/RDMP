@@ -176,7 +176,7 @@ public class ScintillaTextEditorFactory
 
         var clientPoint = editor.PointToClient(new Point(dragEventArgs.X, dragEventArgs.Y));
         //get where the mouse is hovering over
-        int pos = editor.CharPositionFromPoint(clientPoint.X, clientPoint.Y);
+        var pos = editor.CharPositionFromPoint(clientPoint.X, clientPoint.Y);
 
         var command = commandFactory.Create(dragEventArgs);
 
@@ -229,11 +229,11 @@ public class ScintillaTextEditorFactory
         // Word = 0
         scintilla.SetKeywords(0, @"add alter as authorization backup begin bigint binary bit break browse bulk by cascade case catch char check checkpoint close clustered column commit compute constraint containstable continue create current current_date cursor cursor database date datetime datetime2 datetimeoffset dbcc deallocate decimal declare default delete deny desc disk distinct distributed double drop dump else end errlvl escape except exec execute exit external fetch file fillfactor float for foreign freetext freetexttable from full function goto grant group having hierarchyid holdlock identity identity_insert identitycol if image index insert int intersect into key kill lineno load merge money national nchar nocheck nocount nolock nonclustered ntext numeric nvarchar of off offsets on open opendatasource openquery openrowset openxml option order over percent plan precision primary print proc procedure public raiserror read readtext real reconfigure references replication restore restrict return revert revoke rollback rowcount rowguidcol rule save schema securityaudit select set setuser shutdown smalldatetime smallint smallmoney sql_variant statistics table table tablesample text textsize then time timestamp tinyint to top tran transaction trigger truncate try union unique uniqueidentifier update updatetext use user values varbinary varchar varying view waitfor when where while with writetext xml go ");
 
-        string word2 =
+        var word2 =
             @"ascii cast charindex ceiling coalesce collate contains convert current_time current_timestamp current_user floor isnull max min nullif object_id session_user substring system_user tsequal";
 
         if (syntaxHelper != null)
-            word2 += " "+string.Join(' ', syntaxHelper.GetSQLFunctionsDictionary().Keys);
+            word2 += $" {string.Join(' ', syntaxHelper.GetSQLFunctionsDictionary().Keys)}";
             
         // Word2 = 1
         scintilla.SetKeywords(1, word2);

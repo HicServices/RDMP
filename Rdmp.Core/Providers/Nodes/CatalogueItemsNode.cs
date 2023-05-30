@@ -22,7 +22,7 @@ public class CatalogueItemsNode : Node, IOrderable
     public ExtractionCategory? Category { get; }
     public int Order
     {
-        get { return Category.HasValue ? (int)Category +1: 20; }
+        get => Category.HasValue ? (int)Category +1: 20;
         set { } // no setter, we are orderable to enforce specific order in tree
     }
 

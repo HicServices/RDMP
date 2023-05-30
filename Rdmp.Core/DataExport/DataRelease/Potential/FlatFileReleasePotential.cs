@@ -59,14 +59,14 @@ public class FlatFileReleasePotential : ReleasePotential
             return true;
 
         //see if there is any other pollution in the extract directory
-        FileInfo unexpectedFile = ExtractFile.Directory.EnumerateFiles().FirstOrDefault(f =>
+        var unexpectedFile = ExtractFile.Directory.EnumerateFiles().FirstOrDefault(f =>
             !(f.Name.Equals(ExtractFile.Name) || f.Name.Equals(metadataFile.Name)));
 
         if (unexpectedFile != null)
             throw new Exception(
                 $"Unexpected file found in extract directory {unexpectedFile.FullName} (pollution of extract directory is not permitted)");
 
-        DirectoryInfo unexpectedDirectory = ExtractFile.Directory.EnumerateDirectories().FirstOrDefault(d =>
+        var unexpectedDirectory = ExtractFile.Directory.EnumerateDirectories().FirstOrDefault(d =>
             !(d.Name.Equals("Lookups") || d.Name.Equals("SupportingDocuments") || d.Name.Equals(SupportingSQLTable.ExtractionFolderName)));
 
         if (unexpectedDirectory != null)

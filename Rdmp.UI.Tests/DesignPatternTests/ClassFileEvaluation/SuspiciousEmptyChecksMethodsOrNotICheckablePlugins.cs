@@ -21,9 +21,9 @@ public class SuspiciousEmptyChecksMethodsOrNotICheckablePlugins
     public void FindProblems(List<string> csFilesFound)
     {
         const string checkMethodSignature = @"void Check(ICheckNotifier notifier)";
-        Regex testPattern = new Regex(@"(\b|[a-z])Test(\b|[A-Z])");
+        var testPattern = new Regex(@"(\b|[a-z])Test(\b|[A-Z])");
 
-        foreach (string file in csFilesFound)
+        foreach (var file in csFilesFound)
         {
             if (testPattern.IsMatch(file))
                 continue;
@@ -33,18 +33,19 @@ public class SuspiciousEmptyChecksMethodsOrNotICheckablePlugins
             if (!contents.Contains("[DemandsInitialization(\"") && !contents.Contains("[DemandsNestedInitialization(\""))
                 continue;
 
-            Console.WriteLine("Found Demander:" + file);
+            Console.WriteLine($"Found Demander:{file}");
 
-            int index = contents.IndexOf(checkMethodSignature);
+            var index = contents.IndexOf(checkMethodSignature);
 
             if(index == -1)
             {
-                _fails.Add("FAIL:File " + file + " does not have a Check method implementation but contains the text [DemandsInitialization");
+                _fails.Add(
+                    $"FAIL:File {file} does not have a Check method implementation but contains the text [DemandsInitialization");
                 continue;
             }
 
-            int curlyBracerCount = -1;
-            StringBuilder sbChecksMethodBody = new StringBuilder();
+            var curlyBracerCount = -1;
+            var sbChecksMethodBody = new StringBuilder();
             while (curlyBracerCount != 0 && index < contents.Length)
             {
                 if (contents[index] == '{')
@@ -65,13 +66,13 @@ public class SuspiciousEmptyChecksMethodsOrNotICheckablePlugins
 
             var methodBody = sbChecksMethodBody.ToString();
 
-            Console.WriteLine("Demander Check Method Is:" + Environment.NewLine + methodBody);
+            Console.WriteLine($"Demander Check Method Is:{Environment.NewLine}{methodBody}");
 
             if (!methodBody.Contains(";"))
-                _fails.Add("FAIL:Method body of Checks in file " + file + " is empty (does not contain any semicolons)");
+                _fails.Add($"FAIL:Method body of Checks in file {file} is empty (does not contain any semicolons)");
         }
 
-        foreach (string fail in _fails)
+        foreach (var fail in _fails)
             Console.WriteLine(fail);
 
         Assert.AreEqual(0, _fails.Count);

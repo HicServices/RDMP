@@ -35,8 +35,8 @@ public class Plugin : DatabaseEntity,INamed
     [NotNull]
     public string Name
     {
-        get { return _name; }
-        set { SetField(ref  _name, value); }
+        get => _name;
+        set => SetField(ref  _name, value);
     }
 
     /// <summary>
@@ -44,8 +44,8 @@ public class Plugin : DatabaseEntity,INamed
     /// </summary>
     public string UploadedFromDirectory
     {
-        get { return _uploadedFromDirectory; }
-        set { SetField(ref  _uploadedFromDirectory, value); }
+        get => _uploadedFromDirectory;
+        set => SetField(ref  _uploadedFromDirectory, value);
     }
 
         
@@ -59,7 +59,7 @@ public class Plugin : DatabaseEntity,INamed
     /// <returns></returns>
     public string GetShortName()
     {
-        Regex regexSuffix = new Regex(@"(\.\d*)*(\.nupkg)?$");
+        var regexSuffix = new Regex(@"(\.\d*)*(\.nupkg)?$");
         return regexSuffix.Replace(Name,"");
     }
 
@@ -69,8 +69,8 @@ public class Plugin : DatabaseEntity,INamed
     /// </summary>
     public Version PluginVersion
     {
-        get { return _pluginVersion; }
-        set { SetField(ref  _pluginVersion, value); }
+        get => _pluginVersion;
+        set => SetField(ref  _pluginVersion, value);
     }
 
     /// <summary>
@@ -79,8 +79,8 @@ public class Plugin : DatabaseEntity,INamed
     /// </summary>
     public Version RdmpVersion
     {
-        get { return _rdmpVersion; }
-        set { SetField(ref  _rdmpVersion, value); }
+        get => _rdmpVersion;
+        set => SetField(ref  _rdmpVersion, value);
     }
 
     #endregion
@@ -149,10 +149,8 @@ public class Plugin : DatabaseEntity,INamed
     /// Gets all the dlls and source code(if available) stored as <see cref="LoadModuleAssembly"/> in the catalogue database
     /// </summary>
     [NoMappingToDatabase]
-    public IEnumerable<LoadModuleAssembly> LoadModuleAssemblies { get
-    {
-        return Repository.GetAllObjectsWithParent<LoadModuleAssembly>(this);
-    } }
+    public IEnumerable<LoadModuleAssembly> LoadModuleAssemblies => Repository.GetAllObjectsWithParent<LoadModuleAssembly>(this);
+
     #endregion
 
     /// <summary>

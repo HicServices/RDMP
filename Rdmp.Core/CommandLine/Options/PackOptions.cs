@@ -17,10 +17,11 @@ namespace Rdmp.Core.CommandLine.Options;
 [Verb("pack",HelpText = "Uploads a new RDMP plugin into the database")]
 public class PackOptions:RDMPCommandLineOptions
 {
-    [Option('f',"file",Required = true, HelpText = "The " + PackPluginRunner.PluginPackageSuffix + " plugin file to add")]
+    [Option('f',"file",Required = true, HelpText = $"The {PackPluginRunner.PluginPackageSuffix} plugin file to add")]
     public string File { get; set; }
 
-    [Option('p',"prune", HelpText = "Modifies the " + PackPluginRunner.PluginPackageSuffix + " plugin file by removing duplicate dlls or those already contained in RDMP core before uploading to database")]
+    [Option('p',"prune", HelpText =
+        $"Modifies the {PackPluginRunner.PluginPackageSuffix} plugin file by removing duplicate dlls or those already contained in RDMP core before uploading to database")]
     public bool Prune { get; set; }
 
     [Usage]
@@ -30,7 +31,7 @@ public class PackOptions:RDMPCommandLineOptions
         {
             yield return new Example("Commit Plugin to Rdmp", new PackOptions
             {
-                File = @"MyPlugin" + PackPluginRunner.PluginPackageSuffix,
+                File = $@"MyPlugin{PackPluginRunner.PluginPackageSuffix}",
                 CatalogueConnectionString = ExampleCatalogueConnectionString,
                 DataExportConnectionString = ExampleDataExportConnectionString
             });

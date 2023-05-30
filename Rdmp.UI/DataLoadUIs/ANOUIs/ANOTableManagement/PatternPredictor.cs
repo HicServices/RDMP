@@ -155,15 +155,15 @@ FROM
                 {
                     reader.Read();
 
-                    int longestString = int.Parse(reader[0].ToString());
-                    int largestNumberOfCharactersSpotted = int.Parse(reader[1].ToString());
+                    var longestString = int.Parse(reader[0].ToString());
+                    var largestNumberOfCharactersSpotted = int.Parse(reader[1].ToString());
 
-                    string resultPattern = "";
+                    var resultPattern = "";
 
-                    for (int i = 0; i < largestNumberOfCharactersSpotted; i++)
+                    for (var i = 0; i < largestNumberOfCharactersSpotted; i++)
                         resultPattern += 'Z';
 
-                    for (int i = 0; i < longestString - largestNumberOfCharactersSpotted; i++)
+                    for (var i = 0; i < longestString - largestNumberOfCharactersSpotted; i++)
                         resultPattern += '9';
 
                     //double up on the first character type (ask chris hall about this)

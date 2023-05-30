@@ -98,7 +98,7 @@ public class AtomicCommandFactory : CommandFactoryBase
         }
         if (Is(o,out Catalogue c))
         {
-            bool isApiCall = c.IsApiCall();
+            var isApiCall = c.IsApiCall();
 
             if (!isApiCall)
             {
@@ -278,7 +278,7 @@ public class AtomicCommandFactory : CommandFactoryBase
             
         if(Is(o,out  IContainer container))
         {
-            string targetOperation = container.Operation == FilterContainerOperation.AND ? "OR" : "AND";
+            var targetOperation = container.Operation == FilterContainerOperation.AND ? "OR" : "AND";
             yield return new ExecuteCommandSet(_activator,container,nameof(IContainer.Operation),targetOperation){OverrideCommandName = $"Set Operation to {targetOperation}" };               
 
             yield return new ExecuteCommandCreateNewFilter(_activator,container.GetFilterFactory(),container) { SuggestedCategory = Add, OverrideCommandName = "New Filter" };
@@ -311,7 +311,8 @@ public class AtomicCommandFactory : CommandFactoryBase
         if(Is(o,out AllDataAccessCredentialsNode _))
         {
             yield return new ExecuteCommandNewObject(_activator,
-                ()=>new DataAccessCredentials(_activator.RepositoryLocator.CatalogueRepository, "New Blank Credentials " + Guid.NewGuid()))
+                ()=>new DataAccessCredentials(_activator.RepositoryLocator.CatalogueRepository,
+                    $"New Blank Credentials {Guid.NewGuid()}"))
             {
                 OverrideCommandName= "Add New Credentials"
             };
@@ -587,7 +588,7 @@ public class AtomicCommandFactory : CommandFactoryBase
 
         if(Is(o, out ArbitraryFolderNode f))
             if(f.CommandGetter != null)
-                foreach(IAtomicCommand cmd in f.CommandGetter())
+                foreach(var cmd in f.CommandGetter())
                     yield return cmd;
 
         if(Is(o, out CacheProgress cp))

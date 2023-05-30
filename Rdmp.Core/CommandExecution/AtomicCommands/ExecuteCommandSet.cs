@@ -75,7 +75,7 @@ public class ExecuteCommandSet:BasicCommandExecution
 
             if (suggestions.Any())
             {
-                StringBuilder msg = new StringBuilder($"Unknown Property '{property}'");
+                var msg = new StringBuilder($"Unknown Property '{property}'");
                 msg.AppendLine();
                 msg.AppendLine("Did you mean:");
                 foreach (var s in suggestions)
@@ -163,7 +163,7 @@ public class ExecuteCommandSet:BasicCommandExecution
             
         if(_getValueAtExecuteTime)
         {
-            bool populatedNewValueWithRelationship = false;
+            var populatedNewValueWithRelationship = false;
 
             // If the property we are getting a value for is a foreign key ID field then we should show the user the compatible objects
             var rel = _property.GetCustomAttribute(typeof(RelationshipAttribute)) as RelationshipAttribute;
@@ -205,7 +205,7 @@ public class ExecuteCommandSet:BasicCommandExecution
                 
             if(!populatedNewValueWithRelationship)
             {
-                if (BasicActivator.SelectValueType(GetDialogArgs(on), _property.PropertyType, _property.GetValue(on), out object chosen))
+                if (BasicActivator.SelectValueType(GetDialogArgs(on), _property.PropertyType, _property.GetValue(on), out var chosen))
                 {
                     NewValue = chosen;
                 }

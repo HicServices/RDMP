@@ -67,7 +67,7 @@ public class SelectedDataSetsChecker : ICheckable
         var project = config.Project;
         const int timeout = 5;
 
-        notifier.OnCheckPerformed(new CheckEventArgs("Inspecting dataset " + ds, CheckResult.Success));
+        notifier.OnCheckPerformed(new CheckEventArgs($"Inspecting dataset {ds}", CheckResult.Success));
 
         var selectedcols = new List<IColumn>(config.GetAllExtractableColumnsFor(ds));
 
@@ -75,7 +75,7 @@ public class SelectedDataSetsChecker : ICheckable
         {
             notifier.OnCheckPerformed(
                 new CheckEventArgs(
-                    "Dataset " + ds + " in configuration '" + config + "' has no selected columns",
+                    $"Dataset {ds} in configuration '{config}' has no selected columns",
                     CheckResult.Fail));
 
             return;
@@ -133,15 +133,14 @@ public class SelectedDataSetsChecker : ICheckable
         {
             notifier.OnCheckPerformed(
                 new CheckEventArgs(
-                    "Could not generate valid extraction SQL for dataset " + ds +
-                    " in configuration " + config, CheckResult.Fail, e));
+                    $"Could not generate valid extraction SQL for dataset {ds} in configuration {config}", CheckResult.Fail, e));
             return;
         }
 
         var server = request.GetDistinctLiveDatabaseServer();
-        bool serverExists = server.Exists();
+        var serverExists = server.Exists();
 
-        notifier.OnCheckPerformed(new CheckEventArgs("Server " + server + " Exists:" + serverExists,
+        notifier.OnCheckPerformed(new CheckEventArgs($"Server {server} Exists:{serverExists}",
             serverExists ? CheckResult.Success : CheckResult.Fail));
 
         var cohortServer = request.ExtractableCohort.ExternalCohortTable.Discover();
@@ -153,7 +152,7 @@ public class SelectedDataSetsChecker : ICheckable
         }
 
         //when 2+ columns have the same Name it's a problem
-        foreach (IGrouping<string, IColumn> grouping in request.ColumnsToExtract.GroupBy(c=>c.GetRuntimeName()).Where(g=>g.Count()>1))
+        foreach (var grouping in request.ColumnsToExtract.GroupBy(c=>c.GetRuntimeName()).Where(g=>g.Count()>1))
             notifier.OnCheckPerformed(new CheckEventArgs($"There are { grouping.Count() } columns in the extract ({request.DatasetBundle?.DataSet}) called '{ grouping.Key }'",CheckResult.Fail));
 
 
@@ -165,14 +164,14 @@ public class SelectedDataSetsChecker : ICheckable
         }
 
         //when 2+ columns have the same Order it's a problem because
-        foreach (IGrouping<int, IColumn> grouping in request.ColumnsToExtract.GroupBy(c=>c.Order).Where(g=>g.Count()>1))
+        foreach (var grouping in request.ColumnsToExtract.GroupBy(c=>c.Order).Where(g=>g.Count()>1))
             notifier.OnCheckPerformed(new CheckEventArgs($"There are { grouping.Count() } columns in the extract ({request.DatasetBundle?.DataSet}) that share the same Order '{ grouping.Key }'",CheckResult.Fail));
 
         // Warn user if stuff is out of sync with the Catalogue version (changes have happened to the master but not propgated to the copy in this extraction)
         var outOfSync = selectedcols.OfType<ExtractableColumn>().Where(c => c.IsOutOfSync()).ToArray();
         if(outOfSync.Any())
-            notifier.OnCheckPerformed(new CheckEventArgs($"'{ds}' columns out of sync with CatalogueItem version(s): { Environment.NewLine + string.Join(',', outOfSync.Select(o => o.ToString() + Environment.NewLine)) }" +
-                                                         $"{ Environment.NewLine } Extraction Configuration: '{config}' ", CheckResult.Warning));
+            notifier.OnCheckPerformed(new CheckEventArgs(
+                $"'{ds}' columns out of sync with CatalogueItem version(s): {Environment.NewLine + string.Join(',', outOfSync.Select(o => o.ToString() + Environment.NewLine))}{Environment.NewLine} Extraction Configuration: '{config}' ", CheckResult.Warning));
 
         var nonSelectedCore = cata.GetAllExtractionInformation(ExtractionCategory.Core)
             .Union(cata.GetAllExtractionInformation(ExtractionCategory.ProjectSpecific))
@@ -181,8 +180,8 @@ public class SelectedDataSetsChecker : ICheckable
             .ToArray();
 
         if (nonSelectedCore.Any())
-            notifier.OnCheckPerformed(new CheckEventArgs($"'{ds}' Core columns not selected for extractions: { Environment.NewLine + string.Join(',', nonSelectedCore.Select(o => o.ToString() + Environment.NewLine)) }" +
-                                                         $"{ Environment.NewLine } Extraction Configuration: '{config}' ", CheckResult.Warning));
+            notifier.OnCheckPerformed(new CheckEventArgs(
+                $"'{ds}' Core columns not selected for extractions: {Environment.NewLine + string.Join(',', nonSelectedCore.Select(o => o.ToString() + Environment.NewLine))}{Environment.NewLine} Extraction Configuration: '{config}' ", CheckResult.Warning));
 
         ComplainIfUserHasHotSwappedCohort(notifier, cohort);
 
@@ -209,12 +208,12 @@ public class SelectedDataSetsChecker : ICheckable
                         cmd.CommandTimeout = timeout;
                         notifier.OnCheckPerformed(
                             new CheckEventArgs(
-                                "/*About to send Request SQL :*/" + Environment.NewLine + request.QueryBuilder.SQL,
+                                $"/*About to send Request SQL :*/{Environment.NewLine}{request.QueryBuilder.SQL}",
                                 CheckResult.Success));
                     }
                     catch (QueryBuildingException e)
                     {
-                        notifier.OnCheckPerformed(new CheckEventArgs("Failed to assemble query for dataset " + ds,
+                        notifier.OnCheckPerformed(new CheckEventArgs($"Failed to assemble query for dataset {ds}",
                             CheckResult.Fail, e));
                         return;
                     }
@@ -224,11 +223,12 @@ public class SelectedDataSetsChecker : ICheckable
                         using (var r = cmd.ExecuteReader())
                         {
                             if (r.Read())
-                                notifier.OnCheckPerformed(new CheckEventArgs("Read at least 1 row successfully from dataset " + ds,
+                                notifier.OnCheckPerformed(new CheckEventArgs(
+                                    $"Read at least 1 row successfully from dataset {ds}",
                                     CheckResult.Success));
                             else
-                                notifier.OnCheckPerformed(new CheckEventArgs("Dataset " + ds + " is completely empty (when linked with the cohort). " +
-                                                                             "Extraction may fail if the Source does not allow empty extractions",
+                                notifier.OnCheckPerformed(new CheckEventArgs(
+                                    $"Dataset {ds} is completely empty (when linked with the cohort). Extraction may fail if the Source does not allow empty extractions",
                                     CheckResult.Warning));
                         }
                     }
@@ -257,7 +257,7 @@ public class SelectedDataSetsChecker : ICheckable
             new SupportingDocumentsFetcher(supportingDocument).Check(notifier);
 
         //check catalogue locals
-        foreach (SupportingSQLTable table in cata.GetAllSupportingSQLTablesForCatalogue(fetchOptions))
+        foreach (var table in cata.GetAllSupportingSQLTablesForCatalogue(fetchOptions))
             new SupportingSQLTableChecker(table).Check(notifier);
 
         if (_alsoCheckPipeline != null)

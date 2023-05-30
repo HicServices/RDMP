@@ -39,12 +39,12 @@ public class Patch : IComparable
     public override string ToString()
     {
         if (string.IsNullOrWhiteSpace(Description))
-            return "Patch " + DatabaseVersionNumber;
+            return $"Patch {DatabaseVersionNumber}";
 
         if(Description.Length> 100)
-            return "Patch " + DatabaseVersionNumber + "("+Description.Substring(0,100)+"...)";
+            return $"Patch {DatabaseVersionNumber}({Description.Substring(0, 100)}...)";
 
-        return "Patch " + DatabaseVersionNumber + "(" + Description+")";
+        return $"Patch {DatabaseVersionNumber}({Description})";
 
     }
 
@@ -55,9 +55,9 @@ public class Patch : IComparable
         var idx = lines[0].IndexOf(VersionKey);
 
         if (idx == -1)
-            throw new InvalidPatchException(locationInAssembly,"Script does not start with " + VersionKey);
+            throw new InvalidPatchException(locationInAssembly, $"Script does not start with {VersionKey}");
 
-        string versionNumber = lines[0].Substring(idx + VersionKey.Length).Trim(':',' ','\n','\r','/','*');
+        var versionNumber = lines[0].Substring(idx + VersionKey.Length).Trim(':',' ','\n','\r','/','*');
 
         try
         {
@@ -65,7 +65,8 @@ public class Patch : IComparable
         }
         catch (Exception e)
         {
-            throw new InvalidPatchException(locationInAssembly,"Could not process the scripts --Version: entry ('"+versionNumber +"') into a valid C# Version object",e);
+            throw new InvalidPatchException(locationInAssembly,
+                $"Could not process the scripts --Version: entry ('{versionNumber}') into a valid C# Version object",e);
         }
 
         if(lines.Length >=2)
@@ -73,9 +74,10 @@ public class Patch : IComparable
             idx = lines[1].IndexOf(DescriptionKey);
 
             if (idx == -1 )
-                throw new InvalidPatchException(locationInAssembly,"Second line of patch scripts must start with " + DescriptionKey);
+                throw new InvalidPatchException(locationInAssembly,
+                    $"Second line of patch scripts must start with {DescriptionKey}");
 
-            string description = lines[1].Substring(idx + DescriptionKey.Length).Trim(':', ' ', '\n', '\r', '/', '*');
+            var description = lines[1].Substring(idx + DescriptionKey.Length).Trim(':', ' ', '\n', '\r', '/', '*');
             Description = description;
         } 
     }
@@ -102,7 +104,7 @@ public class Patch : IComparable
         if (y == null)
             return false;
 
-        bool equal = x.locationInAssembly.Equals(y.locationInAssembly);
+        var equal = x.locationInAssembly.Equals(y.locationInAssembly);
 
 
         if (!equal)
@@ -112,8 +114,7 @@ public class Patch : IComparable
             return true;
         else
             throw new InvalidPatchException(x.locationInAssembly,
-                "Patches x and y are being compared and they have the same location in assembly (" +
-                x.locationInAssembly + ")  but different Verison numbers", null);
+                $"Patches x and y are being compared and they have the same location in assembly ({x.locationInAssembly})  but different Verison numbers", null);
     }
     public int CompareTo(object obj)
     {
@@ -122,7 +123,7 @@ public class Patch : IComparable
             return -System.String.Compare(((Patch)obj).locationInAssembly, locationInAssembly, System.StringComparison.Ordinal); //sort alphabetically (reverse)
         }
 
-        throw new Exception("Cannot compare " + this.GetType().Name + " to " + obj.GetType().Name);
+        throw new Exception($"Cannot compare {this.GetType().Name} to {obj.GetType().Name}");
     }
 
     /// <summary>
@@ -153,12 +154,12 @@ public class Patch : IComparable
     {
         databaseVersion = DatabaseVersionProvider.GetVersionFromDatabase(database);
 
-        MasterDatabaseScriptExecutor scriptExecutor = new MasterDatabaseScriptExecutor(database);
+        var scriptExecutor = new MasterDatabaseScriptExecutor(database);
         patchesInDatabase = scriptExecutor.GetPatchesRun();
 
         allPatchesInAssembly = patcher.GetAllPatchesInAssembly(database);
 
-        AssemblyName databaseAssemblyName = patcher.GetDbAssembly().GetName();
+        var databaseAssemblyName = patcher.GetDbAssembly().GetName();
             
         if (databaseAssemblyName.Version < databaseVersion)
             return PatchingState.SoftwareBehindDatabase;

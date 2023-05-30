@@ -102,9 +102,9 @@ public partial class CreateNewCatalogueByImportingFileUI : RDMPForm
 
     private void btnBrowse_Click(object sender, EventArgs e)
     {
-        OpenFileDialog ofd = new OpenFileDialog();
+        var ofd = new OpenFileDialog();
         ofd.Filter = "Comma Separated Values|*.csv|Excel File|*.xls*|Text File|*.txt|All Files|*.*";
-        DialogResult result = ofd.ShowDialog();
+        var result = ofd.ShowDialog();
 
         if (result == DialogResult.OK)
             SelectFile(new FileInfo(ofd.FileName));
@@ -278,7 +278,7 @@ public partial class CreateNewCatalogueByImportingFileUI : RDMPForm
     private void ddPipeline_SelectedIndexChanged(object sender, EventArgs e)
     {
 
-        DataFlowPipelineEngineFactory factory = GetFactory();
+        var factory = GetFactory();
 
         var p = ddPipeline.SelectedItem as Pipeline;
 
@@ -309,7 +309,7 @@ public partial class CreateNewCatalogueByImportingFileUI : RDMPForm
             SetupState(State.DatabaseSelected);
         else
         {
-            if(Activator.YesNo("Create Database '" + db.GetRuntimeName() +"'","Create Database"))
+            if(Activator.YesNo($"Create Database '{db.GetRuntimeName()}'","Create Database"))
             {
                 db.Server.CreateDatabase(db.GetRuntimeName());
                 SetupState(State.DatabaseSelected);
@@ -337,7 +337,7 @@ public partial class CreateNewCatalogueByImportingFileUI : RDMPForm
 
         if(preview != null)
         {
-            DataTableViewerUI dtv = new DataTableViewerUI(preview,"Preview");
+            var dtv = new DataTableViewerUI(preview,"Preview");
             SingleControlForm.ShowDialog(dtv);
         }
     }
@@ -375,7 +375,7 @@ public partial class CreateNewCatalogueByImportingFileUI : RDMPForm
             var engine = GetFactory().Create(p, new FromCheckNotifierToDataLoadEventListener(ragSmileyExecute));
             engine.Initialize(new FlatFileToLoad(_selectedFile), db,Activator);
 
-            bool crashed = false;
+            var crashed = false;
 
             var dest = (DataTableUploadDestination) engine.DestinationObject;
             dest.TableNamerDelegate = () => tbTableName.Text;
@@ -436,7 +436,8 @@ public partial class CreateNewCatalogueByImportingFileUI : RDMPForm
 
     private void ForwardEngineer(DiscoveredTable targetTableName)
     {
-        var extractionPicker = new ConfigureCatalogueExtractabilityUI(Activator, new TableInfoImporter(Activator.RepositoryLocator.CatalogueRepository, targetTableName), "File '" + _selectedFile.FullName + "'", _projectSpecific)
+        var extractionPicker = new ConfigureCatalogueExtractabilityUI(Activator, new TableInfoImporter(Activator.RepositoryLocator.CatalogueRepository, targetTableName),
+            $"File '{_selectedFile.FullName}'", _projectSpecific)
         {
             TargetFolder = TargetFolder,
             TableCreated = targetTableName
@@ -448,9 +449,8 @@ public partial class CreateNewCatalogueByImportingFileUI : RDMPForm
         {
             Activator.RefreshBus.Publish(this, new RefreshObjectEventArgs(de));
             
-            MessageBox.Show("Successfully imported new Dataset '" + catalogue + "'." +
-                            "\r\n" +
-                            "The edit functionality will now open.");
+            MessageBox.Show(
+                $"Successfully imported new Dataset '{catalogue}'.\r\nThe edit functionality will now open.");
 
             Activator.WindowArranger.SetupEditAnything(this, catalogue);
                 

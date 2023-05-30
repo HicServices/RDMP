@@ -35,7 +35,7 @@ public class GoodBadCataloguePieChartObjectCollection : PersistableObjectCollect
     public bool IncludeDeprecatedCatalogueItems { get; set; }
 
 
-    public bool IsSingleCatalogueMode{get { return DatabaseObjects.Any(); }}
+    public bool IsSingleCatalogueMode => DatabaseObjects.Any();
 
 
     /// <summary>
@@ -47,7 +47,7 @@ public class GoodBadCataloguePieChartObjectCollection : PersistableObjectCollect
     /// <returns></returns>
     public bool Include(Catalogue c, IDataExportRepository repo)
     {
-        bool returnValue = true;
+        var returnValue = true;
 
         var status = c.GetExtractabilityStatus(repo);
 
@@ -78,7 +78,7 @@ public class GoodBadCataloguePieChartObjectCollection : PersistableObjectCollect
     /// <returns></returns>
     public bool Include(CatalogueItem ci)
     {
-        bool returnValue = true;
+        var returnValue = true;
 
         var ei = ci.ExtractionInformation;
 

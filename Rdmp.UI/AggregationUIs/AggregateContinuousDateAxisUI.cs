@@ -33,7 +33,7 @@ public partial class AggregateContinuousDateAxisUI : UserControl
     [DesignerSerializationVisibility(DesignerSerializationVisibility.Hidden)]
     public AggregateDimension Dimension
     {
-        get { return _dimension; }
+        get => _dimension;
         set
         {
             _dimension = value;
@@ -105,7 +105,7 @@ public partial class AggregateContinuousDateAxisUI : UserControl
         if (updating || _axis == null)
             return;
 
-        TextBox s = (TextBox) sender;
+        var s = (TextBox) sender;
 
         if (string.IsNullOrWhiteSpace(s.Text))
         {
@@ -116,10 +116,10 @@ public partial class AggregateContinuousDateAxisUI : UserControl
             _errorProvider.Clear();
 
         //if user enters a date then put 
-        if (DateTime.TryParse(s.Text, out DateTime dt))
+        if (DateTime.TryParse(s.Text, out var dt))
         {
             updating = true;
-            s.Text = "'" + dt.ToString("yyyy-MM-dd") + "'";
+            s.Text = $"'{dt:yyyy-MM-dd}'";
             updating = false;
         }
 

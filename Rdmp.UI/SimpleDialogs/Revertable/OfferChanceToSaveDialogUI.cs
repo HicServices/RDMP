@@ -33,12 +33,13 @@ public partial class OfferChanceToSaveDialogUI : Form
         if (revertable == null)
             return;
 
-        Text = "Save changes to " + revertable.GetType().Name + " " + revertable + " (ID = " + revertable.ID + ")";
+        Text = $"Save changes to {revertable.GetType().Name} {revertable} (ID = {revertable.ID})";
 
-        lblFirstPrompt.Text = "Would you like to save changes to " + revertable.GetType().Name + " '" + revertable + "' (ID=" + revertable.ID + ")";
+        lblFirstPrompt.Text =
+            $"Would you like to save changes to {revertable.GetType().Name} '{revertable}' (ID={revertable.ID})";
             
         tableLayoutPanel1.RowCount = differences.Differences.Count;
-        for (int index = 0; index < differences.Differences.Count; index++)
+        for (var index = 0; index < differences.Differences.Count; index++)
         {
             var d = differences.Differences[index];
             var toAdd = new RevertablePropertyDifferenceUI(d);
@@ -46,7 +47,7 @@ public partial class OfferChanceToSaveDialogUI : Form
             tableLayoutPanel1.Controls.Add(toAdd,0,index);
         }
 
-        for (int i = 0; i < tableLayoutPanel1.RowStyles.Count; i++)
+        for (var i = 0; i < tableLayoutPanel1.RowStyles.Count; i++)
             tableLayoutPanel1.RowStyles[i].SizeType = SizeType.AutoSize;
     }
 

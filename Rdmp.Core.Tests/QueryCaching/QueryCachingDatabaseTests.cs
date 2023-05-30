@@ -30,7 +30,7 @@ public class QueryCachingDatabaseTests:DatabaseTests
         if(DiscoveredQueryCachingDatabase.Exists())
             DiscoveredQueryCachingDatabase.Drop();
 
-        MasterDatabaseScriptExecutor scripter = new MasterDatabaseScriptExecutor(DiscoveredQueryCachingDatabase);
+        var scripter = new MasterDatabaseScriptExecutor(DiscoveredQueryCachingDatabase);
         var p = new QueryCachingPatcher();
         scripter.CreateAndPatchDatabase(p, new ThrowImmediatelyCheckNotifier());
 

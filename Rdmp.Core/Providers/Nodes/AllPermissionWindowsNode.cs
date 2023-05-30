@@ -18,5 +18,6 @@ public class AllPermissionWindowsNode:SingletonNode,IOrderable
     {
     }
 
-    public int Order { get { return 0; } set{} }
+    public int Order { get => 0;
+        set{} }
 }

@@ -29,7 +29,7 @@ public class ExecuteCommandMoveFilterIntoContainer : BasicCommandExecution
         if(!filterCombineable.AllContainersInEntireTreeFromRootDown.Contains(targetContainer))
             SetImpossible("Filters can only be moved within their own container tree");
 
-        if(targetContainer.ShouldBeReadOnly(out string reason))
+        if(targetContainer.ShouldBeReadOnly(out var reason))
             SetImpossible(reason);
     }
 

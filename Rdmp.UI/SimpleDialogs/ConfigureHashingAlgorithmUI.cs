@@ -54,13 +54,13 @@ public partial class ConfigureHashingAlgorithmUI : RDMPForm
             return;
 
         //get the current hashing algorithm
-        string value = Activator.RepositoryLocator.DataExportRepository.DataExportPropertyManager.GetValue(DataExportProperty.HashingAlgorithmPattern);
+        var value = Activator.RepositoryLocator.DataExportRepository.DataExportPropertyManager.GetValue(DataExportProperty.HashingAlgorithmPattern);
         tbHashingAlgorithm.Text = value;
     }
 
     private void tbHashingAlgorithm_TextChanged(object sender, EventArgs e)
     {
-        string pattern = tbHashingAlgorithm.Text;
+        var pattern = tbHashingAlgorithm.Text;
 
         try
         {
@@ -82,11 +82,11 @@ public partial class ConfigureHashingAlgorithmUI : RDMPForm
 
     private void btnReferenceColumn_Click(object sender, EventArgs e)
     {
-        tbHashingAlgorithm.Text = tbHashingAlgorithm.Text + "{0}";
+        tbHashingAlgorithm.Text = $"{tbHashingAlgorithm.Text}{{0}}";
     }
 
     private void btnReferenceSalt_Click(object sender, EventArgs e)
     {
-        tbHashingAlgorithm.Text = tbHashingAlgorithm.Text + "{1}";
+        tbHashingAlgorithm.Text = $"{tbHashingAlgorithm.Text}{{1}}";
     }
 }

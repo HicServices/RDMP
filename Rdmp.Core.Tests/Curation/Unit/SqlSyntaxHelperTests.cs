@@ -19,7 +19,7 @@ public class SqlSyntaxHelperTests
     public void GetNullSubstituteTests()
     {
 
-        var ti = Mock.Of<ITableInfo>(t=>t.GetQuerySyntaxHelper() == new MicrosoftQuerySyntaxHelper());
+        var ti = Mock.Of<ITableInfo>(t=>t.GetQuerySyntaxHelper() == MicrosoftQuerySyntaxHelper.Instance);
 
         var pk = new PrimaryKeyCollisionResolver(ti);
 
@@ -39,7 +39,7 @@ public class SqlSyntaxHelperTests
     [Test]
     public void SplitMethod()
     {
-        var syntaxHelper = new MicrosoftQuerySyntaxHelper();
+        var syntaxHelper = MicrosoftQuerySyntaxHelper.Instance;
 
         string contents;
         string method;

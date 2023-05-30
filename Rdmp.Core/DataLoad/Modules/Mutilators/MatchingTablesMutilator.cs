@@ -47,7 +47,7 @@ public abstract class MatchingTablesMutilator : IPluginMutilateDataTables
     public void Initialize(DiscoveredDatabase dbInfo, LoadStage loadStage)
     {
         if(_allowedStages!= null && !_allowedStages.Contains(loadStage))
-            throw new NotSupportedException("Mutilation " + GetType() + " is not allowed at stage " + loadStage);
+            throw new NotSupportedException($"Mutilation {GetType()} is not allowed at stage {loadStage}");
 
         _loadStage = loadStage;
         DbInfo = dbInfo;
@@ -79,15 +79,18 @@ public abstract class MatchingTablesMutilator : IPluginMutilateDataTables
         var tbl = DbInfo.ExpectTable(tableInfo.GetRuntimeName(_loadStage, job.Configuration.DatabaseNamer));
 
         if (!tbl.Exists())
-            job.OnNotify(this, new NotifyEventArgs(ProgressEventType.Error, "Expected table " + tbl + " did not exist in RAW"));
+            job.OnNotify(this, new NotifyEventArgs(ProgressEventType.Error,
+                $"Expected table {tbl} did not exist in RAW"));
         else
         {
-            job.OnNotify(this, new NotifyEventArgs(ProgressEventType.Information, "About to run " + GetType() + " mutilation on table " + tbl));
-            Stopwatch sw = new Stopwatch();
+            job.OnNotify(this, new NotifyEventArgs(ProgressEventType.Information,
+                $"About to run {GetType()} mutilation on table {tbl}"));
+            var sw = new Stopwatch();
             sw.Start();
             MutilateTable(job, tableInfo, tbl);
             sw.Stop();
-            job.OnNotify(this, new NotifyEventArgs(ProgressEventType.Information, GetType() + " mutilation on table " + tbl + " completed after " + sw.ElapsedMilliseconds + " ms"));
+            job.OnNotify(this, new NotifyEventArgs(ProgressEventType.Information,
+                $"{GetType()} mutilation on table {tbl} completed after {sw.ElapsedMilliseconds} ms"));
         }
     }
 

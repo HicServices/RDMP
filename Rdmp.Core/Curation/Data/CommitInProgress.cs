@@ -177,8 +177,7 @@ public class CommitInProgress : IDisposable
         {
             // object name or count of the number of objects
             var collectionDescription = changes.Count == 1 ?
-                changes.Single().Key.ToString() :
-                changes.Count + " object(s)";
+                changes.Single().Key.ToString() : $"{changes.Count} object(s)";
 
             if (activator.TypeText(new DialogArgs
                 { 

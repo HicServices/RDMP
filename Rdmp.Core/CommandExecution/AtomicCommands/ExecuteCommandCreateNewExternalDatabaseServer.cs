@@ -50,7 +50,7 @@ public class ExecuteCommandCreateNewExternalDatabaseServer : BasicCommandExecuti
         var existingDefault = BasicActivator.ServerDefaults.GetDefaultFor(_defaultToSet);
 
         if (existingDefault != null)
-            SetImpossible("There is already an existing " + _defaultToSet + " database");
+            SetImpossible($"There is already an existing {_defaultToSet} database");
     }
 
     public override string GetCommandName()
@@ -93,7 +93,8 @@ public class ExecuteCommandCreateNewExternalDatabaseServer : BasicCommandExecuti
 
         //user wants to create a new server e.g. a new Logging server
         if (_patcher == null)
-            ServerCreatedIfAny = new ExternalDatabaseServer(BasicActivator.RepositoryLocator.CatalogueRepository, "New ExternalDatabaseServer " + Guid.NewGuid(), _patcher);
+            ServerCreatedIfAny = new ExternalDatabaseServer(BasicActivator.RepositoryLocator.CatalogueRepository,
+                $"New ExternalDatabaseServer {Guid.NewGuid()}", _patcher);
         else
         {
             //create the new server

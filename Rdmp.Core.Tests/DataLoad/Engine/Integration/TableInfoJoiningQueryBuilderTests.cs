@@ -23,14 +23,14 @@ public class TableInfoJoiningQueryBuilderTests:DatabaseTests
         var memory = new MemoryRepository();
             
         //tables and columns
-        TableInfo head = new TableInfo(CatalogueRepository,"Head");
-        ColumnInfo col1 = new ColumnInfo(CatalogueRepository,"TestResultSetNumber","int",head);
-        ColumnInfo col2 = new ColumnInfo(CatalogueRepository, "PK", "int", head);
+        var head = new TableInfo(CatalogueRepository,"Head");
+        var col1 = new ColumnInfo(CatalogueRepository,"TestResultSetNumber","int",head);
+        var col2 = new ColumnInfo(CatalogueRepository, "PK", "int", head);
 
-        TableInfo result = new TableInfo(CatalogueRepository, "[biochemistry]..[Result]");
-        ColumnInfo col3 = new ColumnInfo(CatalogueRepository, "FK", "int", result);
-        ColumnInfo col4 = new ColumnInfo(CatalogueRepository, "Code", "varchar(10)", result);
-        ColumnInfo col5 = new ColumnInfo(CatalogueRepository, "[biochemistry]..[Result].[OmgBob]", "varchar(10)", result);
+        var result = new TableInfo(CatalogueRepository, "[biochemistry]..[Result]");
+        var col3 = new ColumnInfo(CatalogueRepository, "FK", "int", result);
+        var col4 = new ColumnInfo(CatalogueRepository, "Code", "varchar(10)", result);
+        var col5 = new ColumnInfo(CatalogueRepository, "[biochemistry]..[Result].[OmgBob]", "varchar(10)", result);
 
         //we can join on col2 = col3
         new JoinInfo(CatalogueRepository,col3, col2, ExtractionJoinType.Right, "");

@@ -23,7 +23,7 @@ public class ExtractionFilterUIOptions : FilterUIOptions
         var colInfo = masterCatalogueFilter.GetColumnInfoIfExists();
 
         if (colInfo == null)
-            throw new MissingColumnInfoException("No ColumnInfo found for filter '" + masterCatalogueFilter + "'");
+            throw new MissingColumnInfoException($"No ColumnInfo found for filter '{masterCatalogueFilter}'");
 
         _globals = colInfo.TableInfo.GetAllParameters();
         _tables = c.GetTableInfoList(false);

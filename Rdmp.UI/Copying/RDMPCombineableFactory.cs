@@ -66,7 +66,7 @@ public class RDMPCombineableFactory:ICombineableFactory
 
     public ICombineToMakeCommand Create(object modelObject)
     {
-        IMasqueradeAs masquerader = modelObject as IMasqueradeAs;
+        var masquerader = modelObject as IMasqueradeAs;
 
         if (masquerader != null)
             modelObject = masquerader.MasqueradingAs();
@@ -188,7 +188,7 @@ public class RDMPCombineableFactory:ICombineableFactory
 
         var array = (IEnumerable)modelObject;
 
-        List<T> toReturn = new List<T>();
+        var toReturn = new List<T>();
 
         foreach (var o in array)
         {

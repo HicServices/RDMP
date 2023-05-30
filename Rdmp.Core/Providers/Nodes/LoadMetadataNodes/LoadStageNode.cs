@@ -15,7 +15,8 @@ public class LoadStageNode : Node,IOrderable
     public LoadStage LoadStage { get; private set; }
 
     //prevent reordering
-    public int Order { get { return (int)LoadStage; } set { } }
+    public int Order { get => (int)LoadStage;
+        set { } }
 
     public LoadStageNode(LoadMetadata loadMetadata, LoadStage loadStage)
     {

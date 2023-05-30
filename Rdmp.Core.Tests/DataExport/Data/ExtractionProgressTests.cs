@@ -104,7 +104,7 @@ class ExtractionProgressTests : TestsRequiringAnExtractionConfiguration
 
         _request.GenerateQueryBuilder();
 
-        Execute(out _, out IExecuteDatasetExtractionDestination result);
+        Execute(out _, out var result);
 
         Assert.IsTrue(result.GeneratesFiles);
         var fileContents = File.ReadAllText(result.OutputFile);

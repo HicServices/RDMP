@@ -33,7 +33,7 @@ public class MEFCheckerTests:UnitTests
     [Test]
     public void FindClass_EmptyString()
     {
-        MEFChecker m = new MEFChecker(Repository.MEF, "", s => Assert.Fail()); 
+        var m = new MEFChecker(Repository.MEF, "", s => Assert.Fail()); 
         var ex =  Assert.Throws<Exception>(()=>m.Check(new ThrowImmediatelyCheckNotifier()));
         Assert.AreEqual("MEFChecker was asked to check for the existence of an Export class but the _classToFind string was empty",ex.Message);
     }
@@ -41,14 +41,14 @@ public class MEFCheckerTests:UnitTests
     [Test]
     public void FindClass_CorrectNamespace()
     {
-        MEFChecker m = new MEFChecker(Repository.MEF, "Rdmp.Core.DataLoad.Modules.Attachers.AnySeparatorFileAttacher", s => Assert.Fail());
+        var m = new MEFChecker(Repository.MEF, "Rdmp.Core.DataLoad.Modules.Attachers.AnySeparatorFileAttacher", s => Assert.Fail());
         m.Check(new ThrowImmediatelyCheckNotifier());
     }
 
     [Test]
     public void FindClass_WrongNamespace()
     {
-        MEFChecker m = new MEFChecker(Repository.MEF, "CatalogueLibrary.AnySeparatorFileAttacher", s => Assert.Pass());
+        var m = new MEFChecker(Repository.MEF, "CatalogueLibrary.AnySeparatorFileAttacher", s => Assert.Pass());
         m.Check(new AcceptAllCheckNotifier());
 
         Assert.Fail("Expected the class not to be found but to be identified under the correct namespace (above)");
@@ -57,7 +57,7 @@ public class MEFCheckerTests:UnitTests
     [Test]
     public void FindClass_NonExistant()
     {
-        MEFChecker m = new MEFChecker(Repository.MEF, "CatalogueLibrary.UncleSam", s => Assert.Fail());
+        var m = new MEFChecker(Repository.MEF, "CatalogueLibrary.UncleSam", s => Assert.Fail());
         var ex = Assert.Throws<Exception>(()=>m.Check(new ThrowImmediatelyCheckNotifier()));
         StringAssert.Contains("Could not find MEF class called CatalogueLibrary.UncleSam in LoadModuleAssembly.GetAllTypes() and couldn't even find any with the same basic name",ex.Message);
     }

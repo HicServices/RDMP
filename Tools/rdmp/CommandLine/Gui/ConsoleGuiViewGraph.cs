@@ -138,11 +138,11 @@ class ConsoleGuiViewGraph : ConsoleGuiSqlEditor
 
         var colors = GetColors(dt.Columns.Count - 1);
 
-        for (int i=1;i<dt.Columns.Count;i++)
+        for (var i=1;i<dt.Columns.Count;i++)
         {
 
             var series = new PathAnnotation() { LineColor = colors[i - 1],BeforeSeries = true };
-            int row = 0;
+            var row = 0;
 
             foreach (DataRow dr in dt.Rows)
             {
@@ -167,7 +167,7 @@ class ConsoleGuiViewGraph : ConsoleGuiSqlEditor
 
         var legend = GetLegend(dt,boundsWidth,boundsHeight);
 
-        for (int i = 1; i < dt.Columns.Count; i++)
+        for (var i = 1; i < dt.Columns.Count; i++)
         {
             legend.AddEntry(new GraphCellToRender('.', colors[i - 1]), dt.Columns[i].ColumnName);
         }
@@ -201,8 +201,8 @@ class ConsoleGuiViewGraph : ConsoleGuiSqlEditor
         var softStiple = new GraphCellToRender('\u2591');
         var mediumStiple = new GraphCellToRender('\u2592');
 
-        int row = 0;
-        int widestCategory = 0;
+        var row = 0;
+        var widestCategory = 0;
 
         float min = 0;
         float max = 1;
@@ -234,7 +234,7 @@ class ConsoleGuiViewGraph : ConsoleGuiSqlEditor
         // Configure Axis, Margins etc
 
         // make sure whole graph fits on axis
-        float xIncrement = (max - min) / (boundsWidth);
+        var xIncrement = (max - min) / (boundsWidth);
 
         // 1 bar per row of console
         graphView.CellSize = new PointF(xIncrement, 1);
@@ -280,7 +280,7 @@ class ConsoleGuiViewGraph : ConsoleGuiSqlEditor
 
         var toReturn = new List<Attribute>();
 
-        for (int i = 0; i < numberNeeded; i++)
+        for (var i = 0; i < numberNeeded; i++)
         {
             toReturn.Add(colors[i % colors.Length]);
         }
@@ -290,7 +290,7 @@ class ConsoleGuiViewGraph : ConsoleGuiSqlEditor
 
     private void SetupMultiBarSeries(DataTable dt, string countColumnName, int boundsWidth, int boundsHeight)
     {
-        int numberOfBars = dt.Columns.Count - 1;
+        var numberOfBars = dt.Columns.Count - 1;
         var colors = GetColors(numberOfBars).ToArray();
         var mediumStiple = '\u2592';
         graphView.GraphColor = Driver.MakeAttribute(Color.White, Color.Black);
@@ -298,7 +298,7 @@ class ConsoleGuiViewGraph : ConsoleGuiSqlEditor
         // Configure legend
         var legend = GetLegend(dt,boundsWidth,boundsHeight);
 
-        for(int i=1;i < dt.Columns.Count; i++)
+        for(var i=1;i < dt.Columns.Count; i++)
         {
             legend.AddEntry(new GraphCellToRender(mediumStiple, colors[i-1]), dt.Columns[i].ColumnName);
         }
@@ -332,7 +332,7 @@ class ConsoleGuiViewGraph : ConsoleGuiSqlEditor
         // Configure Axis, Margins etc
 
         // make sure whole graph fits on axis
-        float yIncrement = (max - min) / (boundsHeight - 2/*MarginBottom*/);
+        var yIncrement = (max - min) / (boundsHeight - 2/*MarginBottom*/);
 
         // 1 bar per row of console
         graphView.CellSize = new PointF(1, yIncrement);

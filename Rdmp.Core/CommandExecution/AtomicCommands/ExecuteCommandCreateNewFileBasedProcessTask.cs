@@ -44,7 +44,7 @@ public class ExecuteCommandCreateNewFileBasedProcessTask : BasicCommandExecution
             SetImpossible("Only SQLFile and Executable task types are supported by this command");
 
         if (!ProcessTask.IsCompatibleStage(taskType, loadStage))
-            SetImpossible("You cannot run "+taskType+" in " + loadStage);
+            SetImpossible($"You cannot run {taskType} in {loadStage}");
 
         _file = file;
     }
@@ -57,7 +57,7 @@ public class ExecuteCommandCreateNewFileBasedProcessTask : BasicCommandExecution
         {
             if (_taskType == ProcessTaskType.SQLFile)
             {
-                if (BasicActivator.TypeText("Enter a name for the SQL file", "File name", 100, "myscript.sql",out string selected,false))
+                if (BasicActivator.TypeText("Enter a name for the SQL file", "File name", 100, "myscript.sql",out var selected,false))
                 {
                     var target = Path.Combine(_LoadDirectory.ExecutablesPath.FullName, selected);
 
@@ -85,7 +85,7 @@ public class ExecuteCommandCreateNewFileBasedProcessTask : BasicCommandExecution
                     throw new FileNotFoundException("File did not exist");
             }
             else
-                throw new ArgumentOutOfRangeException("Unexpected _taskType:" + _taskType);
+                throw new ArgumentOutOfRangeException($"Unexpected _taskType:{_taskType}");
         }
 
         var task = new ProcessTask((ICatalogueRepository)_loadMetadata.Repository, _loadMetadata, _loadStage);
@@ -96,7 +96,7 @@ public class ExecuteCommandCreateNewFileBasedProcessTask : BasicCommandExecution
 
     private void SaveAndShow(ProcessTask task)
     {
-        task.Name = "Run '" + Path.GetFileName(task.Path) +"'";
+        task.Name = $"Run '{Path.GetFileName(task.Path)}'";
         task.SaveToDatabase();
 
         Publish(_loadMetadata);

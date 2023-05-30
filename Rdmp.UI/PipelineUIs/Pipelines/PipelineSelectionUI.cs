@@ -35,7 +35,7 @@ public partial class PipelineSelectionUI : UserControl, IPipelineSelectionUI
     public bool showAll = false;
     public IPipeline Pipeline
     {
-        get { return _pipeline; }
+        get => _pipeline;
         set
         {
             _pipeline = value;
@@ -47,8 +47,8 @@ public partial class PipelineSelectionUI : UserControl, IPipelineSelectionUI
 
     public override string Text
     {
-        get { return gbPrompt.Text; }
-        set { gbPrompt.Text = value; }
+        get => gbPrompt.Text;
+        set => gbPrompt.Text = value;
     }
 
     /// <summary>
@@ -127,7 +127,7 @@ public partial class PipelineSelectionUI : UserControl, IPipelineSelectionUI
         }
 
         var render = ddPipelines.Items[e.Index].ToString();
-        bool isIncompatible = e.Index > ddPipelines.Items.IndexOf(ShowAll);
+        var isIncompatible = e.Index > ddPipelines.Items.IndexOf(ShowAll);
 
 
         if (Equals(ddPipelines.Items[e.Index],ShowAll))
@@ -137,7 +137,7 @@ public partial class PipelineSelectionUI : UserControl, IPipelineSelectionUI
 
             if(showAll)
             {
-                render = "✓ " + render;
+                render = $"\u2713 {render}";
             }   
 
             TextRenderer.DrawText(e.Graphics, render, italic , new Rectangle(new Point(e.Bounds.Left, e.Bounds.Top + 1), e.Bounds.Size), Color.CornflowerBlue, TextFormatFlags.Left);
@@ -192,7 +192,7 @@ public partial class PipelineSelectionUI : UserControl, IPipelineSelectionUI
 
     private void btnCreateNewPipeline_Click(object sender, EventArgs e)
     {
-        Pipeline = new Pipeline(_repository, "TO DO:Name this pipeline!" + Guid.NewGuid());
+        Pipeline = new Pipeline(_repository, $"TO DO:Name this pipeline!{Guid.NewGuid()}");
         ddPipelines.Items.Add(Pipeline);
         ddPipelines.SelectedItem = Pipeline;
 
@@ -217,7 +217,7 @@ public partial class PipelineSelectionUI : UserControl, IPipelineSelectionUI
 
     private void btnDeletePipeline_Click(object sender, EventArgs e)
     {
-        if(MessageBox.Show("Are you sure you want to delete " + Pipeline.Name + "? ","Confirm deleting pipeline?",MessageBoxButtons.YesNoCancel) == DialogResult.Yes)
+        if(MessageBox.Show($"Are you sure you want to delete {Pipeline.Name}? ","Confirm deleting pipeline?",MessageBoxButtons.YesNoCancel) == DialogResult.Yes)
         {
             Pipeline.DeleteInDatabase();
             Pipeline = null;

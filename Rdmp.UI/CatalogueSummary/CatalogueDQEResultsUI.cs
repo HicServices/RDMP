@@ -46,7 +46,7 @@ public partial class CatalogueDQEResultsUI : CatalogueSummaryScreen_Design
     {
         dqePivotCategorySelector1.LoadOptions(evaluation);
 
-        string category = dqePivotCategorySelector1.SelectedPivotCategory;
+        var category = dqePivotCategorySelector1.SelectedPivotCategory;
             
         timePeriodicityChart1.SelectEvaluation(evaluation,category??"ALL");
         columnStatesChart1.SelectEvaluation(evaluation, category ?? "ALL");
@@ -58,7 +58,7 @@ public partial class CatalogueDQEResultsUI : CatalogueSummaryScreen_Design
         if(_lastSelected ==  null)
             return;
             
-        string category = dqePivotCategorySelector1.SelectedPivotCategory;
+        var category = dqePivotCategorySelector1.SelectedPivotCategory;
 
         timePeriodicityChart1.SelectEvaluation(_lastSelected, category ?? "ALL");
         columnStatesChart1.SelectEvaluation(_lastSelected, category ?? "ALL");
@@ -88,7 +88,7 @@ public partial class CatalogueDQEResultsUI : CatalogueSummaryScreen_Design
         if (dqeRepository != null)
         {
             //get evaluations for the catalogue
-            Evaluation[] evaluations = dqeRepository.GetAllEvaluationsFor(databaseObject).ToArray();
+            var evaluations = dqeRepository.GetAllEvaluationsFor(databaseObject).ToArray();
 
             //there have been some evaluations
             evaluationTrackBar1.Evaluations = evaluations;
@@ -100,7 +100,7 @@ public partial class CatalogueDQEResultsUI : CatalogueSummaryScreen_Design
 
     public override string GetTabName()
     {
-        return "DQE:"+ base.GetTabName();
+        return $"DQE:{base.GetTabName()}";
             
     }
 }

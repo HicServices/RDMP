@@ -67,7 +67,7 @@ public partial class ConfigureDatasetUI : ConfigureDatasetUI_Design,ILifetimeSub
         olvSelectedCatalogue.AspectGetter += SelectedCatalogue_AspectGetter;
         olvSelectedCategory.AspectGetter += SelectedCategory_AspectGetter;
 
-        SimpleDropSink dropSink = (SimpleDropSink) olvSelected.DropSink;
+        var dropSink = (SimpleDropSink) olvSelected.DropSink;
             
         dropSink.CanDropOnItem = false;
         dropSink.CanDropBetween = true;
@@ -177,15 +177,16 @@ public partial class ConfigureDatasetUI : ConfigureDatasetUI_Design,ILifetimeSub
 
     private object AvailableColumnCategoryAspectGetter(object rowObject)
     {
-        ExtractionInformation ei = (ExtractionInformation)rowObject;
+        var ei = (ExtractionInformation)rowObject;
 
         var cata = ei.CatalogueItem.Catalogue;
 
         string toReturn = null;
 
-        toReturn = ei.ExtractionCategory == ExtractionCategory.ProjectSpecific ? ei.ExtractionCategory + "::" + cata.Name : ei.ExtractionCategory.ToString();
+        toReturn = ei.ExtractionCategory == ExtractionCategory.ProjectSpecific ? $"{ei.ExtractionCategory}::{cata.Name}"
+            : ei.ExtractionCategory.ToString();
 
-        toReturn = cata.IsDeprecated ? toReturn + " (DEPRECATED)" : toReturn;
+        toReturn = cata.IsDeprecated ? $"{toReturn} (DEPRECATED)" : toReturn;
 
         return toReturn;
     }
@@ -219,13 +220,13 @@ public partial class ConfigureDatasetUI : ConfigureDatasetUI_Design,ILifetimeSub
         HashSet<ExtractionInformation> toAdd = new ();
 
         //add all the extractable columns from the current Catalogue
-        foreach (ExtractionInformation e in cata.GetAllExtractionInformation(ExtractionCategory.Any))
+        foreach (var e in cata.GetAllExtractionInformation(ExtractionCategory.Any))
             toAdd.Add(e);
 
         if(UserSettings.ShowProjectSpecificColumns)
         {
             //plus all the Project Specific columns
-            foreach (ExtractionInformation e in _config.Project.GetAllProjectCatalogueColumns(Activator.CoreChildProvider, ExtractionCategory.ProjectSpecific))
+            foreach (var e in _config.Project.GetAllProjectCatalogueColumns(Activator.CoreChildProvider, ExtractionCategory.ProjectSpecific))
                 toAdd.Add(e);
         }
 
@@ -251,7 +252,7 @@ public partial class ConfigureDatasetUI : ConfigureDatasetUI_Design,ILifetimeSub
         //on the right
 
         //add the already included ones on the right
-        ExtractableColumn[] allExtractableColumns = _config.GetAllExtractableColumnsFor(_dataSet);
+        var allExtractableColumns = _config.GetAllExtractableColumnsFor(_dataSet);
 
         // Tell our columns about their CatalogueItems by using CoreChildProvider
         // Prevents later queries to db to figure out things like column name etc
@@ -305,7 +306,7 @@ public partial class ConfigureDatasetUI : ConfigureDatasetUI_Design,ILifetimeSub
     /// <returns></returns>
     private bool IsAlreadySelected(IColumn info)
     {
-        IEnumerable<ConcreteColumn> selectedColumns = olvSelected.Objects.Cast<ConcreteColumn>();
+        var selectedColumns = olvSelected.Objects.Cast<ConcreteColumn>();
 
         //compare regular columns on their ID in the catalogue
         return selectedColumns.OfType<ExtractableColumn>().Any(ec => ec.CatalogueExtractionInformation_ID == info.ID);
@@ -348,7 +349,7 @@ public partial class ConfigureDatasetUI : ConfigureDatasetUI_Design,ILifetimeSub
         olvSelected.BeginUpdate();
         try
         {
-            foreach (ConcreteColumn c in concreteColumn)
+            foreach (var c in concreteColumn)
                 if(c != null)
                 {
                     c.DeleteInDatabase();
@@ -380,18 +381,18 @@ public partial class ConfigureDatasetUI : ConfigureDatasetUI_Design,ILifetimeSub
         try
         {
             //for each column we are adding
-            foreach (IColumn c in columns)
+            foreach (var c in columns)
             {
                 //make sure it is up to date with database
 
-                IRevertable r = c as IRevertable;
+                var r = c as IRevertable;
 
                 //if the column is out of date
                 if (r != null && r.HasLocalChanges().Evaluation == ChangeDescription.DatabaseCopyDifferent)
                     r.RevertToDatabaseState();//get a fresh copy
 
                 //add to the config
-                ExtractableColumn addMe = _config.AddColumnToExtraction(_dataSet, c);
+                var addMe = _config.AddColumnToExtraction(_dataSet, c);
 
                 //update on the UI
                 olvSelected.AddObject(addMe);
@@ -434,7 +435,7 @@ public partial class ConfigureDatasetUI : ConfigureDatasetUI_Design,ILifetimeSub
 
     public override string GetTabName()
     {
-        return "Edit:" + base.GetTabName();
+        return $"Edit:{base.GetTabName()}";
     }
 
     private void olvAvailable_ItemActivate(object sender, EventArgs e)
@@ -501,7 +502,7 @@ public partial class ConfigureDatasetUI : ConfigureDatasetUI_Design,ILifetimeSub
         if (e.SourceModels == null || e.SourceModels.Count != 1)
             return;
 
-        ExtractableColumn sourceColumn = (ExtractableColumn)e.SourceModels[0];
+        var sourceColumn = (ExtractableColumn)e.SourceModels[0];
             
         HandleReorder(sourceColumn,(IOrderable) e.TargetModel,e.DropTargetLocation);
     }
@@ -514,14 +515,14 @@ public partial class ConfigureDatasetUI : ConfigureDatasetUI_Design,ILifetimeSub
         if (targetOrderable == null)
             return;
 
-        int destinationOrder = targetOrderable.Order;
+        var destinationOrder = targetOrderable.Order;
 
         switch (location)
         {
             case DropTargetLocation.AboveItem:
 
                 //bump down the other columns
-                foreach (ConcreteColumn c in olvSelected.Objects.OfType<ConcreteColumn>().ToArray())
+                foreach (var c in olvSelected.Objects.OfType<ConcreteColumn>().ToArray())
                     if (c.Order >= destinationOrder && !Equals(c, sourceColumn))
                     {
                         c.Order++;
@@ -535,7 +536,7 @@ public partial class ConfigureDatasetUI : ConfigureDatasetUI_Design,ILifetimeSub
             case DropTargetLocation.BelowItem:
 
                 //bump up other columns
-                foreach (ConcreteColumn c in olvSelected.Objects.OfType<ConcreteColumn>().ToArray())
+                foreach (var c in olvSelected.Objects.OfType<ConcreteColumn>().ToArray())
                     if (c.Order <= destinationOrder && !Equals(c, sourceColumn))
                     {
                         c.Order--;
@@ -664,7 +665,7 @@ public partial class ConfigureDatasetUI : ConfigureDatasetUI_Design,ILifetimeSub
         //identify the existing force joins
         var existingForceJoins = new HashSet<SelectedDataSetsForcedJoin>(SelectedDataSet.Repository.GetAllObjectsWithParent<SelectedDataSetsForcedJoin>(SelectedDataSet));
 
-        foreach (AvailableForceJoinNode node in nodes)
+        foreach (var node in nodes)
         {
             var forceJoin = existingForceJoins.SingleOrDefault(j => j.TableInfo_ID == node.TableInfo.ID);
             if (forceJoin != null)
@@ -674,7 +675,7 @@ public partial class ConfigureDatasetUI : ConfigureDatasetUI_Design,ILifetimeSub
             }
         }
 
-        foreach (SelectedDataSetsForcedJoin redundantForcedJoin in existingForceJoins)
+        foreach (var redundantForcedJoin in existingForceJoins)
             redundantForcedJoin.DeleteInDatabase();
 
         foreach (var node in nodes)
@@ -790,7 +791,7 @@ public partial class ConfigureDatasetUI : ConfigureDatasetUI_Design,ILifetimeSub
         else if (sender == tbSearchTables)
             tree = olvJoin;
         else
-            throw new Exception("Unexpected sender " + sender);
+            throw new Exception($"Unexpected sender {sender}");
 
         tree.ModelFilter = string.IsNullOrWhiteSpace(senderTb.Text) ? null : new TextMatchFilter(tree, senderTb.Text);
         tree.UseFiltering = !string.IsNullOrWhiteSpace(senderTb.Text);

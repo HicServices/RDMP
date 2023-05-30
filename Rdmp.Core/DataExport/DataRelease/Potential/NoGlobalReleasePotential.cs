@@ -24,7 +24,8 @@ public class NoGlobalReleasePotential : GlobalReleasePotential
 
     public override void Check(ICheckNotifier notifier)
     {
-        notifier.OnCheckPerformed(new CheckEventArgs(RelatedGlobal + " is " + Releaseability.NeverBeenSuccessfullyExecuted, CheckResult.Fail));
+        notifier.OnCheckPerformed(new CheckEventArgs(
+            $"{RelatedGlobal} is {Releaseability.NeverBeenSuccessfullyExecuted}", CheckResult.Fail));
         Releasability = Releaseability.NeverBeenSuccessfullyExecuted;
     }
 

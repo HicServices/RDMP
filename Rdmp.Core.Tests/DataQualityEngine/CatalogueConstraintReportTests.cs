@@ -132,7 +132,7 @@ public class CatalogueConstraintReportTests : TestsRequiringAnExtractionConfigur
 
         try
         {
-            CatalogueConstraintReport report = new CatalogueConstraintReport(_catalogue, SpecialFieldNames.DataLoadRunID);
+            var report = new CatalogueConstraintReport(_catalogue, SpecialFieldNames.DataLoadRunID);
 
             var e = Assert.Throws<Exception>(() => report.Check(new ThrowImmediatelyCheckNotifier()));
             Assert.IsTrue(
@@ -160,7 +160,7 @@ public class CatalogueConstraintReportTests : TestsRequiringAnExtractionConfigur
             
         try
         {
-            CatalogueConstraintReport report = new CatalogueConstraintReport(_catalogue, SpecialFieldNames.DataLoadRunID);
+            var report = new CatalogueConstraintReport(_catalogue, SpecialFieldNames.DataLoadRunID);
 
             var e = Assert.Throws<Exception>(()=> report.Check(new ThrowImmediatelyCheckNotifier()));
             Assert.IsTrue(
@@ -179,7 +179,7 @@ public class CatalogueConstraintReportTests : TestsRequiringAnExtractionConfigur
     public void SupportsValidation_NoValidatorXML()
     {
 
-        CatalogueConstraintReport report = new CatalogueConstraintReport(_catalogue, SpecialFieldNames.DataLoadRunID);
+        var report = new CatalogueConstraintReport(_catalogue, SpecialFieldNames.DataLoadRunID);
         _catalogue.ValidatorXML = null;
 
         //it has no validator XML currently 
@@ -192,7 +192,7 @@ public class CatalogueConstraintReportTests : TestsRequiringAnExtractionConfigur
     [Test]
     public void SupportsValidation_BadXML()
     {
-        CatalogueConstraintReport report = new CatalogueConstraintReport(_catalogue, SpecialFieldNames.DataLoadRunID);
+        var report = new CatalogueConstraintReport(_catalogue, SpecialFieldNames.DataLoadRunID);
 
         _catalogue.ValidatorXML = "fish";
         //it has no validator XML currently 
@@ -206,7 +206,7 @@ public class CatalogueConstraintReportTests : TestsRequiringAnExtractionConfigur
     public void SupportsValidation_MadeUpColumnName()
     {
 
-        CatalogueConstraintReport report = new CatalogueConstraintReport(_catalogue, SpecialFieldNames.DataLoadRunID);
+        var report = new CatalogueConstraintReport(_catalogue, SpecialFieldNames.DataLoadRunID);
 
         _catalogue.ValidatorXML = dodgyColumnXML;
         //it has no validator XML currently 
@@ -219,7 +219,7 @@ public class CatalogueConstraintReportTests : TestsRequiringAnExtractionConfigur
     [Test]
     public void SupportsValidation_GoodButNoDataLoadRunID()
     {
-        CatalogueConstraintReport report = new CatalogueConstraintReport(_catalogue, SpecialFieldNames.DataLoadRunID);
+        var report = new CatalogueConstraintReport(_catalogue, SpecialFieldNames.DataLoadRunID);
 
         _catalogue.ValidatorXML = validColumnXML;
             

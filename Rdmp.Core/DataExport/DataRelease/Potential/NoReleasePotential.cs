@@ -34,6 +34,7 @@ public class NoReleasePotential : ReleasePotential
     {
         base.Check(notifier);
 
-        notifier.OnCheckPerformed(new CheckEventArgs(SelectedDataSet + " is " + Releaseability.NeverBeenSuccessfullyExecuted, CheckResult.Fail));
+        notifier.OnCheckPerformed(new CheckEventArgs(
+            $"{SelectedDataSet} is {Releaseability.NeverBeenSuccessfullyExecuted}", CheckResult.Fail));
     }
 }

@@ -42,7 +42,7 @@ public class FlatFileAttacherTests : DatabaseTests
         var workingDir = new DirectoryInfo(TestContext.CurrentContext.TestDirectory);
         parentDir = workingDir.CreateSubdirectory("FlatFileAttacherTests");
 
-        DirectoryInfo toCleanup = parentDir.GetDirectories().SingleOrDefault(d => d.Name.Equals("Test_CSV_Attachment"));
+        var toCleanup = parentDir.GetDirectories().SingleOrDefault(d => d.Name.Equals("Test_CSV_Attachment"));
         if(toCleanup != null)
             toCleanup.Delete(true);
 
@@ -55,7 +55,8 @@ public class FlatFileAttacherTests : DatabaseTests
         {
             con.Open();
                 
-            var cmdCreateTable = _database.Server.GetCommand("CREATE Table "+_database.GetRuntimeName()+"..Bob([name] [varchar](500),[name2] [varchar](500))" ,con);
+            var cmdCreateTable = _database.Server.GetCommand(
+                $"CREATE Table {_database.GetRuntimeName()}..Bob([name] [varchar](500),[name2] [varchar](500))",con);
             cmdCreateTable.ExecuteNonQuery();
         }
 
@@ -70,7 +71,7 @@ public class FlatFileAttacherTests : DatabaseTests
     public void Test_CSV_Attachment(string separator, bool overrideHeaders)
     {
             
-        string filename = Path.Combine(LoadDirectory.ForLoading.FullName, "bob.csv");
+        var filename = Path.Combine(LoadDirectory.ForLoading.FullName, "bob.csv");
         var sw = new StreamWriter(filename);
 
         sw.WriteLine("name,name2");
@@ -82,7 +83,7 @@ public class FlatFileAttacherTests : DatabaseTests
         sw.Dispose();
 
 
-        string filename2 = Path.Combine(LoadDirectory.ForLoading.FullName, "bob2.csv");
+        var filename2 = Path.Combine(LoadDirectory.ForLoading.FullName, "bob2.csv");
         var sw2 = new StreamWriter(filename2);
 
         sw2.WriteLine("name,name2");
@@ -152,7 +153,7 @@ public class FlatFileAttacherTests : DatabaseTests
     [Test]
     public void Test_ExplicitDateTimeFormat_Attachment()
     {
-        string filename = Path.Combine(LoadDirectory.ForLoading.FullName, "bob.csv");
+        var filename = Path.Combine(LoadDirectory.ForLoading.FullName, "bob.csv");
         var sw = new StreamWriter(filename);
 
         sw.WriteLine("name,name2");
@@ -204,7 +205,7 @@ public class FlatFileAttacherTests : DatabaseTests
     [Test]
     public void TabTestWithOverrideHeaders()
     {
-        string filename = Path.Combine(LoadDirectory.ForLoading.FullName, "bob.csv");
+        var filename = Path.Combine(LoadDirectory.ForLoading.FullName, "bob.csv");
         var sw = new StreamWriter(filename);
 
         sw.WriteLine("Face\tBasher");
@@ -249,7 +250,7 @@ public class FlatFileAttacherTests : DatabaseTests
     [TestCase(false)]
     public void TabTestWithOverrideHeaders_IncludePath(bool columnExistsInRaw)
     {
-        string filename = Path.Combine(LoadDirectory.ForLoading.FullName, "bob.csv");
+        var filename = Path.Combine(LoadDirectory.ForLoading.FullName, "bob.csv");
         var sw = new StreamWriter(filename);
 
         sw.WriteLine("Face\tBasher");
@@ -308,7 +309,7 @@ public class FlatFileAttacherTests : DatabaseTests
     [TestCase(false)]
     public void TestTableInfo(bool usenamer)
     {
-        string filename = Path.Combine(LoadDirectory.ForLoading.FullName, "bob.csv");
+        var filename = Path.Combine(LoadDirectory.ForLoading.FullName, "bob.csv");
         var sw = new StreamWriter(filename);
 
         sw.WriteLine("name,name2");
@@ -344,7 +345,7 @@ public class FlatFileAttacherTests : DatabaseTests
         {
 
             con.Open();
-            var r = _database.Server.GetCommand("Select name,name2 from " + _table.GetRuntimeName(), con).ExecuteReader();
+            var r = _database.Server.GetCommand($"Select name,name2 from {_table.GetRuntimeName()}", con).ExecuteReader();
             Assert.IsTrue(r.Read());
             Assert.AreEqual("Bob", r["name"]);
             Assert.AreEqual("Munchousain", r["name2"]);
@@ -364,7 +365,7 @@ public class FlatFileAttacherTests : DatabaseTests
     [Test]
     public void Test_FlatFileAttacher_IgnoreColumns()
     {
-        string filename = Path.Combine(LoadDirectory.ForLoading.FullName, "bob.csv");
+        var filename = Path.Combine(LoadDirectory.ForLoading.FullName, "bob.csv");
         var sw = new StreamWriter(filename);
 
         sw.WriteLine("name,name2,address");
@@ -393,7 +394,7 @@ public class FlatFileAttacherTests : DatabaseTests
         {
 
             con.Open();
-            var r = _database.Server.GetCommand("Select name,name2 from " + _table.GetRuntimeName(), con).ExecuteReader();
+            var r = _database.Server.GetCommand($"Select name,name2 from {_table.GetRuntimeName()}", con).ExecuteReader();
             Assert.IsTrue(r.Read());
             Assert.AreEqual("Bob", r["name"]);
             Assert.AreEqual("Munchousain", r["name2"]);
@@ -428,7 +429,7 @@ public class FlatFileAttacherTests : DatabaseTests
     { 
         Thread.CurrentThread.CurrentCulture = new CultureInfo(threadCulture);
 
-        string filename = Path.Combine(LoadDirectory.ForLoading.FullName, "bob.csv");
+        var filename = Path.Combine(LoadDirectory.ForLoading.FullName, "bob.csv");
         var sw = new StreamWriter(filename);
 
         sw.WriteLine("dob");

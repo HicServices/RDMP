@@ -62,7 +62,7 @@ public class ExtractableAggregateCachingTests:QueryCachingDatabaseTests
                 
         Assert.IsTrue(ex.Message.StartsWith("The DataTable that you claimed was an ExtractableAggregateResults had zero columns and therefore cannot be cached"));
             
-        DataTable dt = new DataTable();
+        var dt = new DataTable();
         dt.Columns.Add("Col1");
         dt.Rows.Add("fishy!");
 
@@ -82,7 +82,7 @@ public class ExtractableAggregateCachingTests:QueryCachingDatabaseTests
         _extractionInformation.IsExtractionIdentifier = true;
         _extractionInformation.SaveToDatabase();
 
-        AggregateDimension dim = new AggregateDimension(CatalogueRepository, _extractionInformation, _config);
+        var dim = new AggregateDimension(CatalogueRepository, _extractionInformation, _config);
         _config.ClearAllInjections();
 
         var ex3 = Assert.Throws<NotSupportedException>(() => _manager.CommitResults(new CacheCommitExtractableAggregate(_config, "I've got a lovely bunch of coconuts", dt, 30)));
@@ -103,10 +103,10 @@ public class ExtractableAggregateCachingTests:QueryCachingDatabaseTests
         using (var con = DataAccessPortal.GetInstance().ExpectServer(QueryCachingDatabaseServer, DataAccessContext.InternalDataProcessing).GetConnection())
         {
                 
-            IHasFullyQualifiedNameToo table = _manager.GetLatestResultsTableUnsafe(_config, AggregateOperation.ExtractableAggregateResults);
+            var table = _manager.GetLatestResultsTableUnsafe(_config, AggregateOperation.ExtractableAggregateResults);
     
             con.Open();
-            using(var cmd = DatabaseCommandHelper.GetCommand("Select * from " + table.GetFullyQualifiedName(), con))
+            using(var cmd = DatabaseCommandHelper.GetCommand($"Select * from {table.GetFullyQualifiedName()}", con))
             using (var r = cmd.ExecuteReader())
             {
                 Assert.IsTrue(r.Read());

@@ -39,16 +39,16 @@ public class AggregateFilter : ConcreteFilter,IDisableable
     /// <inheritdoc/>
     public override int? ClonedFromExtractionFilter_ID
     {
-        get { return _clonedFromExtractionFilterID; }
-        set { SetField(ref _clonedFromExtractionFilterID , value); }
+        get => _clonedFromExtractionFilterID;
+        set => SetField(ref _clonedFromExtractionFilterID , value);
     }
 
     /// <inheritdoc/>
     [Relationship(typeof(AggregateFilterContainer),RelationshipType.SharedObject)]
     public override int? FilterContainer_ID
     {
-        get { return _filterContainerID; }
-        set { SetField(ref  _filterContainerID, value); }
+        get => _filterContainerID;
+        set => SetField(ref  _filterContainerID, value);
     }
 
 
@@ -58,15 +58,15 @@ public class AggregateFilter : ConcreteFilter,IDisableable
     /// </summary>
     public int? AssociatedColumnInfo_ID
     {
-        get { return _associatedColumnInfoID; }
-        set { SetField(ref  _associatedColumnInfoID, value); }
+        get => _associatedColumnInfoID;
+        set => SetField(ref  _associatedColumnInfoID, value);
     }
 
     /// <inheritdoc/>
     public bool IsDisabled
     {
-        get { return _isDisabled; }
-        set { SetField(ref  _isDisabled, value); }
+        get => _isDisabled;
+        set => SetField(ref  _isDisabled, value);
     }
     #endregion
 
@@ -85,7 +85,7 @@ public class AggregateFilter : ConcreteFilter,IDisableable
         
     ///<inheritdoc/>
     [NoMappingToDatabase]
-    public override IContainer FilterContainer { get { return FilterContainer_ID.HasValue? Repository.GetObjectByID<AggregateFilterContainer>(FilterContainer_ID.Value):null;}}
+    public override IContainer FilterContainer => FilterContainer_ID.HasValue? Repository.GetObjectByID<AggregateFilterContainer>(FilterContainer_ID.Value):null;
 
     #endregion
 
@@ -102,7 +102,7 @@ public class AggregateFilter : ConcreteFilter,IDisableable
     /// <param name="container"></param>
     public AggregateFilter(ICatalogueRepository repository, string name=null, AggregateFilterContainer container=null)
     {
-        name = name ?? "New AggregateFilter" + Guid.NewGuid();
+        name = name ?? $"New AggregateFilter{Guid.NewGuid()}";
             
         repository.InsertAndHydrate(this,new Dictionary<string, object>
         {
@@ -119,7 +119,7 @@ public class AggregateFilter : ConcreteFilter,IDisableable
         IsMandatory = (bool)r["IsMandatory"];
         ClonedFromExtractionFilter_ID = ObjectToNullableInt(r["ClonedFromExtractionFilter_ID"]);
 
-        object associatedColumnInfo_ID = r["AssociatedColumnInfo_ID"];
+        var associatedColumnInfo_ID = r["AssociatedColumnInfo_ID"];
         if (associatedColumnInfo_ID != DBNull.Value)
             AssociatedColumnInfo_ID = int.Parse(associatedColumnInfo_ID.ToString());
 
@@ -164,7 +164,8 @@ public class AggregateFilter : ConcreteFilter,IDisableable
         var agg = GetAggregate();
 
         if(agg == null)
-            throw new Exception("Cannot determine the Catalogue for AggregateFilter " + this + " because GetAggregate returned null, possibly the Filter does not belong to any AggregateFilterContainer (i.e. it is an orphan?)");
+            throw new Exception(
+                $"Cannot determine the Catalogue for AggregateFilter {this} because GetAggregate returned null, possibly the Filter does not belong to any AggregateFilterContainer (i.e. it is an orphan?)");
 
         return agg.Catalogue;
     }

@@ -30,7 +30,7 @@ public class ExecuteCommandAddCatalogueToCohortIdentificationAsPatientIndexTable
     {
         _catalogue = catalogue;
         if(!_catalogue.Catalogue.IsApiCall() && !_catalogue.ContainsAtLeastOneExtractionIdentifier)
-            SetImpossible("Catalogue " + _catalogue.Catalogue + " does not contain any IsExtractionIdentifier columns");
+            SetImpossible($"Catalogue {_catalogue.Catalogue} does not contain any IsExtractionIdentifier columns");
     }
 
     public override string GetCommandHelp()
@@ -51,7 +51,7 @@ public class ExecuteCommandAddCatalogueToCohortIdentificationAsPatientIndexTable
             _catalogue = new CatalogueCombineable(cata);
         }
             
-        AggregateConfigurationCombineable aggregateCommand = _catalogue.GenerateAggregateConfigurationFor(BasicActivator,_configuration);
+        var aggregateCommand = _catalogue.GenerateAggregateConfigurationFor(BasicActivator,_configuration);
 
         var joinableCommandExecution = new ExecuteCommandConvertAggregateConfigurationToPatientIndexTable(BasicActivator, aggregateCommand, _configuration);
         joinableCommandExecution.Execute();

@@ -40,7 +40,7 @@ class PrematureLoadEnderTests:DatabaseTests
     {
         var database = GetCleanedServer(type);
 
-        DataTable dt = new DataTable();
+        var dt = new DataTable();
         dt.Columns.Add("Fish");
 
         database.CreateTable("MyTable", dt);
@@ -59,7 +59,7 @@ class PrematureLoadEnderTests:DatabaseTests
     {
         var database = GetCleanedServer(type);
 
-        DataTable dt = new DataTable();
+        var dt = new DataTable();
         dt.Columns.Add("Fish");
         dt.Rows.Add("myval");
 

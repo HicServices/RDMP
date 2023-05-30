@@ -282,8 +282,8 @@ public class CohortIdentificationConfigurationUICommon
     {
         var manager = new CachedAggregateConfigurationResultsManager(QueryCachingServer);
 
-        int successes = 0;
-        foreach (ICacheableTask t in tasks)
+        var successes = 0;
+        foreach (var t in tasks)
             try
             {
                 t.ClearYourselfFromCache(manager);
@@ -292,7 +292,7 @@ public class CohortIdentificationConfigurationUICommon
             }
             catch (Exception exception)
             {
-                Activator.ShowException("Could not clear cache for task " + t, exception);
+                Activator.ShowException($"Could not clear cache for task {t}", exception);
             }
 
         RecreateAllTasks();
@@ -339,8 +339,8 @@ public class CohortIdentificationConfigurationUICommon
             var aliveCount = Compiler.GetAliveThreadCount();
             if (aliveCount > 0)
             {
-                Activator.Show("Confirm Close", "There are " + aliveCount +
-                                " Tasks currently executing, you must cancel them before closing");
+                Activator.Show("Confirm Close",
+                    $"There are {aliveCount} Tasks currently executing, you must cancel them before closing");
                 
                 return true;
             }

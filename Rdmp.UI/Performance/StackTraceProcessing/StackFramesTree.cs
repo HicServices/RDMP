@@ -80,7 +80,7 @@ class StackFramesTree
         if (!HasSourceCode)
             return CurrentFrame;
             
-        return Path.GetFileNameWithoutExtension(Filename) + "." + Method;
+        return $"{Path.GetFileNameWithoutExtension(Filename)}.{Method}";
     }
         
     public void AddSubframes(string[] lines, QueryPerformed query)

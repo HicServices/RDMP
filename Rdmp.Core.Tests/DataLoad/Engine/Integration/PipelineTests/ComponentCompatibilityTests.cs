@@ -27,7 +27,7 @@ public class ComponentCompatibilityTests :UnitTests
     [Test]
     public void GetComponentsCompatibleWithBulkInsertContext()
     {
-        Type[] array = MEF.GetTypes<IDataFlowComponent<DataTable>>().ToArray();
+        var array = MEF.GetTypes<IDataFlowComponent<DataTable>>().ToArray();
 
         Assert.Greater(array.Count(),0);
     }
@@ -35,7 +35,7 @@ public class ComponentCompatibilityTests :UnitTests
     [Test]
     public void HowDoesMEFHandleTypeNames()
     {
-        string expected = "Rdmp.Core.DataFlowPipeline.IDataFlowSource(System.Data.DataTable)";
+        var expected = "Rdmp.Core.DataFlowPipeline.IDataFlowSource(System.Data.DataTable)";
 
         Assert.AreEqual(expected, MEF.GetMEFNameForType(typeof(IDataFlowSource<DataTable>)));
     }

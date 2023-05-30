@@ -135,7 +135,7 @@ public class TestCacheSource : CacheSource<TestCacheChunk>
     public override TestCacheChunk DoGetChunk(ICacheFetchRequest request, IDataLoadEventListener listener, GracefulCancellationToken cancellationToken)
     {
         var c = new TestCacheChunk(Request.Start);
-        listener.OnNotify(this, new NotifyEventArgs(ProgressEventType.Information, "!!" + request.Start.ToString("g")));
+        listener.OnNotify(this, new NotifyEventArgs(ProgressEventType.Information, $"!!{request.Start:g}"));
         return c;
     }
 

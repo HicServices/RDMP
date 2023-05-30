@@ -33,35 +33,35 @@ public partial class ServerDatabaseTableSelector : UserControl
 
     public string Server
     {
-        get { return cbxServer.Text; }
-        set { cbxServer.Text = value; }
+        get => cbxServer.Text;
+        set => cbxServer.Text = value;
     }
 
     public string Database
     {
-        get { return cbxDatabase.Text; }
-        set { cbxDatabase.Text = value; }
+        get => cbxDatabase.Text;
+        set => cbxDatabase.Text = value;
     }
 
     public string Table
     {
-        private get { return cbxTable.Text; }
-        set { cbxTable.Text = value; }
+        private get => cbxTable.Text;
+        set => cbxTable.Text = value;
     }
 
     public string Username
     {
-        get { return tbUsername.Text; }
-        set { tbUsername.Text = value; }
+        get => tbUsername.Text;
+        set => tbUsername.Text = value;
     }
 
     public string Password
     {
-        get { return tbPassword.Text; }
-        set { tbPassword.Text = value; }
+        get => tbPassword.Text;
+        set => tbPassword.Text = value;
     }
 
-    private string TableValuedFunction { get { return cbxTableValueFunctions.Text; } }
+    private string TableValuedFunction => cbxTableValueFunctions.Text;
 
     public event Action SelectionChanged;
     private IDiscoveredServerHelper _helper;
@@ -114,7 +114,7 @@ public partial class ServerDatabaseTableSelector : UserControl
         var database = (string)((object[])e.Argument)[1];
 
         var discoveredDatabase = new DiscoveredServer(builder).ExpectDatabase(database);
-        IDiscoveredDatabaseHelper databaseHelper = discoveredDatabase.Helper;
+        var databaseHelper = discoveredDatabase.Helper;
 
         _workerRefreshTablesToken = new CancellationTokenSource();
 
@@ -126,7 +126,7 @@ public partial class ServerDatabaseTableSelector : UserControl
                 var openTask = con.OpenAsync(_workerRefreshTablesToken.Token);
                 openTask.Wait(_workerRefreshTablesToken.Token);
 
-                List<DiscoveredTable> result = new List<DiscoveredTable>();
+                var result = new List<DiscoveredTable>();
 
                 result.AddRange(databaseHelper.ListTables(discoveredDatabase, syntaxHelper, con, database, true));
                 result.AddRange(databaseHelper.ListTableValuedFunctions(discoveredDatabase, syntaxHelper, con, database));
@@ -263,7 +263,7 @@ public partial class ServerDatabaseTableSelector : UserControl
 
     public bool AllowTableValuedFunctionSelection
     {
-        get { return _allowTableValuedFunctionSelection; }
+        get => _allowTableValuedFunctionSelection;
         set
         {
             _allowTableValuedFunctionSelection = value;
@@ -275,12 +275,11 @@ public partial class ServerDatabaseTableSelector : UserControl
     }
 
     public DatabaseType DatabaseType {
-        get { return databaseTypeUI1.DatabaseType; }
-        set { databaseTypeUI1.DatabaseType = value; }
-
+        get => databaseTypeUI1.DatabaseType;
+        set => databaseTypeUI1.DatabaseType = value;
     }
 
-    public DiscoveredServer Result { get { return new DiscoveredServer(GetBuilder()); } }
+    public DiscoveredServer Result => new(GetBuilder());
 
     public bool TableShouldBeNovel
     {

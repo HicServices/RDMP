@@ -65,7 +65,7 @@ public class BasicParameterUseTests:DatabaseTests
             //create an extraction filter
             var extractionInformation = ei.Single();
             var filter = new ExtractionFilter(CatalogueRepository, "Filter by numbers", extractionInformation);
-            filter.WhereSQL = extractionInformation.SelectSQL + " = @n";
+            filter.WhereSQL = $"{extractionInformation.SelectSQL} = @n";
             filter.SaveToDatabase();
 
             //create the parameters for filter (no globals, masters or scope adjacent parameters)
@@ -85,7 +85,7 @@ public class BasicParameterUseTests:DatabaseTests
             {
                 con.Open();
 
-                string sql = qb.SQL;
+                var sql = qb.SQL;
 
                 var cmd = db.Server.GetCommand(sql, con);
                 var r = cmd.ExecuteReader();

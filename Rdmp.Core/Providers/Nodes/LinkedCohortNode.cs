@@ -63,7 +63,7 @@ public class LinkedCohortNode : Node,IMasqueradeAs, IDeletableWithCustomMessage
 
     public string GetDeleteMessage()
     {
-        return "remove cohort from ExtractionConfiguration '" + Configuration + "'";
+        return $"remove cohort from ExtractionConfiguration '{Configuration}'";
     }
 
     /// <inheritdoc/>

@@ -30,7 +30,7 @@ public partial class DataGeneratorUI : UserControl
 
     public IDataGenerator Generator
     {
-        get { return _generator; }
+        get => _generator;
         set
         {
             _generator = value;
@@ -61,7 +61,7 @@ public partial class DataGeneratorUI : UserControl
 
         sizeAtBeginGeneration = GetSize();
 
-        var fi = new FileInfo(Path.Combine(target.FullName, Generator.GetType().Name + ".csv"));
+        var fi = new FileInfo(Path.Combine(target.FullName, $"{Generator.GetType().Name}.csv"));
 
         Thread = new Thread(() => Generator.GenerateTestDataFile(cohort, fi, sizeAtBeginGeneration));
         Thread.Start();
@@ -76,7 +76,7 @@ public partial class DataGeneratorUI : UserControl
             return;
         }
 
-        double percentProgress = e.RowsWritten/(double)sizeAtBeginGeneration * 100.0;
+        var percentProgress = e.RowsWritten/(double)sizeAtBeginGeneration * 100.0;
         progressBar1.Value = (int)percentProgress;
 
         if (e.IsFinished)
@@ -90,7 +90,9 @@ public partial class DataGeneratorUI : UserControl
             TrackBarMouseUp();
     }
 
-    public bool Generate { get {return cbGenerate.Checked;} set{cbGenerate.Checked = value;} }
+    public bool Generate { get => cbGenerate.Checked;
+        set => cbGenerate.Checked = value;
+    }
 
     private void CbGenerate_CheckedChanged(object sender, EventArgs e)
     {

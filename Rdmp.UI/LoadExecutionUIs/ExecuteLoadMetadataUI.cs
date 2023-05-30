@@ -178,7 +178,7 @@ public partial class ExecuteLoadMetadataUI : DatasetLoadControl_Design
 
     public override string GetTabName()
     {
-        return "Execution:"+ base.GetTabName();
+        return $"Execution:{base.GetTabName()}";
     }
 
     private void cbRunIteratively_CheckedChanged(object sender, EventArgs e)

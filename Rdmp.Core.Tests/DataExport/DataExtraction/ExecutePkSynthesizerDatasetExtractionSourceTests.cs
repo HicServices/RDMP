@@ -128,7 +128,7 @@ public class ExecutePkSynthesizerDatasetExtractionSourceTests : TestsRequiringAn
         
     private void SetupJoin()
     {
-        DataTable dt = new DataTable();
+        var dt = new DataTable();
 
         dt.Columns.Add("Name");
         dt.Columns.Add("Description");
@@ -139,8 +139,8 @@ public class ExecutePkSynthesizerDatasetExtractionSourceTests : TestsRequiringAn
 
         var lookupCata = Import(tbl);
 
-        ExtractionInformation fkEi = _catalogue.GetAllExtractionInformation(ExtractionCategory.Any).Single(n => n.GetRuntimeName() == "Name");
-        ColumnInfo pk = lookupCata.GetTableInfoList(false).Single().ColumnInfos.Single(n => n.GetRuntimeName() == "Name");
+        var fkEi = _catalogue.GetAllExtractionInformation(ExtractionCategory.Any).Single(n => n.GetRuntimeName() == "Name");
+        var pk = lookupCata.GetTableInfoList(false).Single().ColumnInfos.Single(n => n.GetRuntimeName() == "Name");
             
         new JoinInfo(CatalogueRepository,fkEi.ColumnInfo, pk, ExtractionJoinType.Left, null);
 
@@ -154,7 +154,7 @@ public class ExecutePkSynthesizerDatasetExtractionSourceTests : TestsRequiringAn
 
     private void SetupLookupTable()
     {
-        DataTable dt = new DataTable();
+        var dt = new DataTable();
 
         dt.Columns.Add("Name");
         dt.Columns.Add("Description");
@@ -165,10 +165,10 @@ public class ExecutePkSynthesizerDatasetExtractionSourceTests : TestsRequiringAn
 
         var lookupCata = Import(tbl);
 
-        ExtractionInformation fkEi = _catalogue.GetAllExtractionInformation(ExtractionCategory.Any).Single(n => n.GetRuntimeName() == "Name");
-        ColumnInfo pk = lookupCata.GetTableInfoList(false).Single().ColumnInfos.Single(n => n.GetRuntimeName() == "Name");
+        var fkEi = _catalogue.GetAllExtractionInformation(ExtractionCategory.Any).Single(n => n.GetRuntimeName() == "Name");
+        var pk = lookupCata.GetTableInfoList(false).Single().ColumnInfos.Single(n => n.GetRuntimeName() == "Name");
 
-        ColumnInfo descLine1 = lookupCata.GetTableInfoList(false).Single().ColumnInfos.Single(n => n.GetRuntimeName() == "Description");
+        var descLine1 = lookupCata.GetTableInfoList(false).Single().ColumnInfos.Single(n => n.GetRuntimeName() == "Description");
 
         var cmd = new ExecuteCommandCreateLookup(CatalogueRepository, fkEi, descLine1, pk, null, true); 
         cmd.Execute();
@@ -176,7 +176,7 @@ public class ExecutePkSynthesizerDatasetExtractionSourceTests : TestsRequiringAn
 
     private ExtractDatasetCommand SetupExtractDatasetCommand(string testTableName, string[] pkExtractionColumns, string[] pkColumnInfos = null, bool withLookup = false, bool withJoin = false)
     {
-        DataTable dt = new DataTable();
+        var dt = new DataTable();
 
         dt.Columns.Add("PrivateID");
         dt.Columns.Add("Name");
@@ -194,7 +194,7 @@ public class ExecutePkSynthesizerDatasetExtractionSourceTests : TestsRequiringAn
 
         _catalogue = Import(tbl, out var tableInfo, out var columnInfos, out var cataItems, out var extractionInformations);
 
-        ExtractionInformation privateID = extractionInformations.First(e => e.GetRuntimeName().Equals("PrivateID"));
+        var privateID = extractionInformations.First(e => e.GetRuntimeName().Equals("PrivateID"));
         privateID.IsExtractionIdentifier = true;
         privateID.SaveToDatabase();
 
@@ -209,7 +209,7 @@ public class ExecutePkSynthesizerDatasetExtractionSourceTests : TestsRequiringAn
 
         foreach (var pkExtractionColumn in pkExtractionColumns)
         {
-            ExtractionInformation column = extractionInformations.First(e => e.GetRuntimeName().Equals(pkExtractionColumn));
+            var column = extractionInformations.First(e => e.GetRuntimeName().Equals(pkExtractionColumn));
             column.IsPrimaryKey = true;
             column.SaveToDatabase();
         }

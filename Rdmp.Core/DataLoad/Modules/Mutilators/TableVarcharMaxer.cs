@@ -49,7 +49,7 @@ public class TableVarcharMaxer : MatchingTablesMutilator
             }
             catch (Exception e)
             {
-                notifier.OnCheckPerformed(new CheckEventArgs("DestinationType ("+DestinationType+") is not supported", CheckResult.Warning,e));
+                notifier.OnCheckPerformed(new CheckEventArgs($"DestinationType ({DestinationType}) is not supported", CheckResult.Warning,e));
             }
         }
     }
@@ -63,11 +63,13 @@ public class TableVarcharMaxer : MatchingTablesMutilator
                 try
                 {
                     col.DataType.AlterTypeTo(DestinationType);
-                    job.OnNotify(this, new NotifyEventArgs(ProgressEventType.Information, "converted column " + col + " to " + DestinationType));
+                    job.OnNotify(this, new NotifyEventArgs(ProgressEventType.Information,
+                        $"converted column {col} to {DestinationType}"));
                 }
                 catch (Exception e)
                 {
-                    job.OnNotify(this, new NotifyEventArgs(ProgressEventType.Error, "Failed to convert column " + col + " of data type " + col.DataType + " to destination type " + DestinationType, e));
+                    job.OnNotify(this, new NotifyEventArgs(ProgressEventType.Error,
+                        $"Failed to convert column {col} of data type {col.DataType} to destination type {DestinationType}", e));
                 }
             }
         }

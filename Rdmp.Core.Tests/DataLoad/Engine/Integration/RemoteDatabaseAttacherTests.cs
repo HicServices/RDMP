@@ -34,7 +34,7 @@ public class RemoteDatabaseAttacherTests:DatabaseTests
     {
         var db = GetCleanedServer(dbType);
 
-        DataTable dt = new DataTable();
+        var dt = new DataTable();
 
         dt.Columns.Add("Fish");
         dt.Columns.Add("hic_Heroism");

@@ -56,7 +56,7 @@ public class TransposerTests
         var transposer = new Transposer();
         var actual = transposer.ProcessPipelineData(dt, new ThrowImmediatelyDataLoadJob(), new GracefulCancellationToken());
 
-        DataTable expectedResult = new DataTable();
+        var expectedResult = new DataTable();
 
         expectedResult.Columns.Add("recipe");
         expectedResult.Columns.Add("protein");
@@ -67,11 +67,11 @@ public class TransposerTests
         expectedResult.Rows.Add("Chips", "30", "2", "0");
         expectedResult.Rows.Add("Gateau", "40", "33", "5");
 
-        for (int i = 0; i < actual.Columns.Count; i++)
+        for (var i = 0; i < actual.Columns.Count; i++)
             Assert.AreEqual(expectedResult.Columns[i].ColumnName, actual.Columns[i].ColumnName);
 
-        for (int i = 0; i < expectedResult.Rows.Count; i++)
-        for (int j = 0; j < actual.Columns.Count; j++)
+        for (var i = 0; i < expectedResult.Rows.Count; i++)
+        for (var j = 0; j < actual.Columns.Count; j++)
             Assert.AreEqual(expectedResult.Rows[i][j], actual.Rows[i][j]);
 
     }

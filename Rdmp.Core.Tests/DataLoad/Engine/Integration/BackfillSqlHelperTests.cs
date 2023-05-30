@@ -110,13 +110,13 @@ LEFT JOIN [{0}]..[Headers] TimePeriodicityTable ON TimePeriodicityTable.ID = j1.
             throw new InvalidOperationException("Primary Key column is required.");
 
         var pkConstraint = String.Format("CONSTRAINT PK_{0} PRIMARY KEY ({1})", tableName, pkColumn);
-        var stagingTableDefinition = columnDefinitions + ", " + pkConstraint;
+        var stagingTableDefinition = $"{columnDefinitions}, {pkConstraint}";
         var liveTableDefinition = columnDefinitions + String.Format(", "+SpecialFieldNames.ValidFrom+" DATETIME, "+SpecialFieldNames.DataLoadRunID+" int, " + pkConstraint);
 
         if (fkConstraintString != null)
         {
-            stagingTableDefinition += ", " + fkConstraintString;
-            liveTableDefinition += ", " + fkConstraintString;
+            stagingTableDefinition += $", {fkConstraintString}";
+            liveTableDefinition += $", {fkConstraintString}";
         }
 
         CreateTableWithColumnDefinitions(From,tableName, stagingTableDefinition);
@@ -160,7 +160,7 @@ LEFT JOIN [{0}]..[Headers] TimePeriodicityTable ON TimePeriodicityTable.ID = j1.
 
     public void CreateTableWithColumnDefinitions(DiscoveredDatabase db, string tableName, string columnDefinitions, DbConnection conn)
     {
-        var sql = "CREATE TABLE " + tableName + " (" + columnDefinitions + ")";
+        var sql = $"CREATE TABLE {tableName} ({columnDefinitions})";
         db.Server.GetCommand(sql, conn).ExecuteNonQuery();
     }
 }

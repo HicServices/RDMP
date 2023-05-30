@@ -53,7 +53,7 @@ public class GlobalsBundle:Bundle
         }
 
 
-        throw new NotSupportedException("Did not know how to drop object of type "+toDrop.GetType());
+        throw new NotSupportedException($"Did not know how to drop object of type {toDrop.GetType()}");
 
     }
 }

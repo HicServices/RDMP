@@ -80,8 +80,8 @@ public sealed class ExtractionPipelineUseCase : PipelineUseCase
         {
             bool runSuccessful;
             bool runAgain;
-            int totalFailureCount = 0;
-            int consecutiveFailureCount = 0;
+            var totalFailureCount = 0;
+            var consecutiveFailureCount = 0;
 
             do
             {
@@ -200,7 +200,8 @@ public sealed class ExtractionPipelineUseCase : PipelineUseCase
             try
             {
                 engine.ExecutePipeline(Token ?? new GracefulCancellationToken());
-                listener.OnNotify(Destination, new NotifyEventArgs(ProgressEventType.Information, "Extraction completed successfully into : " + Destination.GetDestinationDescription()));
+                listener.OnNotify(Destination, new NotifyEventArgs(ProgressEventType.Information,
+                    $"Extraction completed successfully into : {Destination.GetDestinationDescription()}"));
             }
             catch (Exception e)
             {
@@ -312,7 +313,7 @@ public sealed class ExtractionPipelineUseCase : PipelineUseCase
         {
             ExtractCommand.ElevateState(ExtractCommandState.Warning);
                     
-            foreach (Exception e in wordDataWriter.ExceptionsGeneratingWordFile)
+            foreach (var e in wordDataWriter.ExceptionsGeneratingWordFile)
                 listener.OnNotify(wordDataWriter, new NotifyEventArgs(ProgressEventType.Warning, "Word metadata document creation caused exception", e));
         }
         else

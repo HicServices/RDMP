@@ -36,8 +36,8 @@ public class AggregateFilterParameter : DatabaseEntity, ISqlParameter
     [Relationship(typeof(AggregateFilter),RelationshipType.SharedObject)]
     public int AggregateFilter_ID
     {
-        get { return _aggregateFilterID; }
-        set { SetField(ref  _aggregateFilterID, value); }
+        get => _aggregateFilterID;
+        set => SetField(ref  _aggregateFilterID, value);
     } // changing this is required for cloning functionality i.e. clone parameter then point it to new parent
 
         
@@ -45,23 +45,23 @@ public class AggregateFilterParameter : DatabaseEntity, ISqlParameter
     [Sql]
     public string ParameterSQL
     {
-        get { return _parameterSQL; }
-        set { SetField(ref  _parameterSQL, value); }
+        get => _parameterSQL;
+        set => SetField(ref  _parameterSQL, value);
     }
          
     /// <inheritdoc/>
     [Sql]
     public string Value
     {
-        get { return _value; }
-        set { SetField(ref  _value, value); }
+        get => _value;
+        set => SetField(ref  _value, value);
     }
 
     /// <inheritdoc/>
     public string Comment
     {
-        get { return _comment; }
-        set { SetField(ref  _comment, value); }
+        get => _comment;
+        set => SetField(ref  _comment, value);
     }
 
     #endregion
@@ -70,18 +70,15 @@ public class AggregateFilterParameter : DatabaseEntity, ISqlParameter
 
     /// <inheritdoc cref="AggregateFilter_ID"/>
     [NoMappingToDatabase]
-    public AggregateFilter AggregateFilter{ get { return Repository.GetObjectByID<AggregateFilter>(AggregateFilter_ID); }}
-        
+    public AggregateFilter AggregateFilter => Repository.GetObjectByID<AggregateFilter>(AggregateFilter_ID);
+
     #endregion
 
     /// <summary>
     /// extracts the name ofthe parameter from the SQL
     /// </summary>
     [NoMappingToDatabase]
-    public string ParameterName
-    {
-        get { return QuerySyntaxHelper.GetParameterNameFromDeclarationSQL(ParameterSQL); }
-    }
+    public string ParameterName => QuerySyntaxHelper.GetParameterNameFromDeclarationSQL(ParameterSQL);
 
     public AggregateFilterParameter()
     {
@@ -116,7 +113,7 @@ public class AggregateFilterParameter : DatabaseEntity, ISqlParameter
     /// <inheritdoc/>
     public override string ToString()
     {
-        return ParameterName + " = " + Value;
+        return $"{ParameterName} = {Value}";
     }
 
     /// <inheritdoc cref="ParameterSyntaxChecker"/>

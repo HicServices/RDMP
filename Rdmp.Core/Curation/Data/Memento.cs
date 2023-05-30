@@ -28,29 +28,30 @@ public class Memento : ReferenceOtherObjectDatabaseEntity
 
     public string BeforeYaml
     {
-        get { return _beforeYaml; }
-        set { SetField(ref _beforeYaml, value); }
+        get => _beforeYaml;
+        set => SetField(ref _beforeYaml, value);
     }
     public string AfterYaml
     {
-        get { return _afterYaml; }
-        set { SetField(ref _afterYaml, value); }
+        get => _afterYaml;
+        set => SetField(ref _afterYaml, value);
     }
     public int Commit_ID
     {
-        get { return _commit_ID; }
-        set { SetField(ref _commit_ID, value); }
+        get => _commit_ID;
+        set => SetField(ref _commit_ID, value);
     }
     public MementoType Type
     {
-        get { return _type; }
-        set { SetField(ref _type, value); }
+        get => _type;
+        set => SetField(ref _type, value);
     }
     #endregion
 
     #region Relationships
     [NoMappingToDatabase]
-    public Commit Commit { get => Repository.GetObjectByID<Commit>(Commit_ID); }
+    public Commit Commit => Repository.GetObjectByID<Commit>(Commit_ID);
+
     #endregion
 
     public Memento()

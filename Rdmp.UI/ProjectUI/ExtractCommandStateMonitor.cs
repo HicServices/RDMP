@@ -35,7 +35,7 @@ internal class ExtractCommandStateMonitor
 
         var toUpdateSubstates = CommandSubStates[cmd];
 
-        foreach (KeyValuePair<object, ExtractCommandState> substate in cmd.DatasetBundle.States.ToArray())
+        foreach (var substate in cmd.DatasetBundle.States.ToArray())
         {
             if(!toUpdateSubstates.ContainsKey(substate.Key))
                 toUpdateSubstates.Add(substate.Key,substate.Value);

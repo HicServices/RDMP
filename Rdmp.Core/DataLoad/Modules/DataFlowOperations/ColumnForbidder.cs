@@ -41,9 +41,10 @@ public class ColumnForbidder : IPluginDataFlowComponent<DataTable>
         foreach (var c in toProcess.Columns.Cast<DataColumn>().Select(c => c.ColumnName))
             if (checkPattern.IsMatch(c))
                 if(string.IsNullOrWhiteSpace(Rationale))
-                    throw new Exception("Column " + c + " matches forbidlist regex");
+                    throw new Exception($"Column {c} matches forbidlist regex");
                 else
-                    throw new Exception(Rationale + Environment.NewLine + "Exception generated because Column " + c + " matches forbidlist regex" );
+                    throw new Exception(
+                        $"{Rationale}{Environment.NewLine}Exception generated because Column {c} matches forbidlist regex");
 
         return toProcess;
     }

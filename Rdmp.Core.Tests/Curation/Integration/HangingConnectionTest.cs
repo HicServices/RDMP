@@ -71,9 +71,10 @@ public class HangingConnectionTest:DatabaseTests
             while (r.Read())
                 if (r["DBName"].Equals(testDbName))
                 {
-                    object[] vals = new object[r.VisibleFieldCount];
+                    var vals = new object[r.VisibleFieldCount];
                     r.GetValues(vals);
-                    throw new Exception("Someone is locking " + testDbName + ":" + Environment.NewLine + string.Join(",", vals));
+                    throw new Exception(
+                        $"Someone is locking {testDbName}:{Environment.NewLine}{string.Join(",", vals)}");
                         
                 }
         }

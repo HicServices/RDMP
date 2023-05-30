@@ -71,11 +71,11 @@ public class ToLoggingDatabaseDataLoadEventListener : IDataLoadEventListener
                 DataLoadInfo.LogProgress(Logging.DataLoadInfo.ProgressEventType.OnInformation, sender.ToString(), e.Message);
                 break;
             case ProgressEventType.Warning:
-                string msg = e.Message + (e.Exception == null?"": Environment.NewLine + ExceptionHelper.ExceptionToListOfInnerMessages(e.Exception,true));
+                var msg = e.Message + (e.Exception == null?"": Environment.NewLine + ExceptionHelper.ExceptionToListOfInnerMessages(e.Exception,true));
                 DataLoadInfo.LogProgress(Logging.DataLoadInfo.ProgressEventType.OnWarning,sender.ToString(), msg);
                 break;
             case ProgressEventType.Error:
-                string err = e.Message + (e.Exception == null ? "" : Environment.NewLine + ExceptionHelper.ExceptionToListOfInnerMessages(e.Exception, true));
+                var err = e.Message + (e.Exception == null ? "" : Environment.NewLine + ExceptionHelper.ExceptionToListOfInnerMessages(e.Exception, true));
                 DataLoadInfo.LogFatalError(sender.ToString(),err);
                 break;
             default:

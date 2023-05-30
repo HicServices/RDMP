@@ -39,9 +39,9 @@ class ExamplePluginCohortCompilerUI : PluginUserInterface
 
         // Launch a UI that prompts a new value to be entered
         if (BasicActivator.TypeText("Generate random CHIs", "Number of Chis:", 100, number.ToString(),
-                out string result, false))
+                out var result, false))
         {
-            if (int.TryParse(result, out int newCount))
+            if (int.TryParse(result, out var newCount))
             {
                 ac.Description = newCount.ToString();
                 ac.SaveToDatabase();

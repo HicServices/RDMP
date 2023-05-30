@@ -202,7 +202,7 @@ public class HICPipelineTests : DatabaseTests
                 DatabaseToLoad.Drop();
 
             // check if RAW has been created and remove it
-            var raw = _server.ExpectDatabase(DatabaseToLoad.GetRuntimeName() + "_RAW");
+            var raw = _server.ExpectDatabase($"{DatabaseToLoad.GetRuntimeName()}_RAW");
             if (raw.Exists())
                 raw.Drop();
         }

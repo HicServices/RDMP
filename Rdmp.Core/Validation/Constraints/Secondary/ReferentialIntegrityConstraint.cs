@@ -36,7 +36,7 @@ public class ReferentialIntegrityConstraint : SecondaryConstraint, ICheckable
     [HideOnValidationUI]
     public int OtherColumnInfoID
     {
-        get { return _otherColumnInfoID; }
+        get => _otherColumnInfoID;
         set
         {
             _otherColumnInfoID = value;
@@ -50,7 +50,7 @@ public class ReferentialIntegrityConstraint : SecondaryConstraint, ICheckable
     [XmlIgnore]
     public ColumnInfo OtherColumnInfo
     {
-        get { return _otherColumnInfo; }
+        get => _otherColumnInfo;
         set
         {
             _otherColumnInfo = value;
@@ -91,12 +91,14 @@ public class ReferentialIntegrityConstraint : SecondaryConstraint, ICheckable
             return
                 "Fetches all the values held in OtherColumnInfo and confirms that the values in this field are also in that collection (use cases for this constraint include cross database/server referential integrity or any time when you don't want to explicitly declare a foreign key in your database due to data quality issues)";
 
-        TableInfo tableInfo = OtherColumnInfo.TableInfo;
+        var tableInfo = OtherColumnInfo.TableInfo;
 
         if (InvertLogic)
-            return "Fetches all the values held in " + OtherColumnInfo + " on server " + tableInfo.Server + " and confirms that the values in this field ARE NOT in that collection";
+            return
+                $"Fetches all the values held in {OtherColumnInfo} on server {tableInfo.Server} and confirms that the values in this field ARE NOT in that collection";
             
-        return "Fetches all the values held in " + OtherColumnInfo + " on server " + tableInfo.Server + " and confirms that the values in this field are also in that collection";
+        return
+            $"Fetches all the values held in {OtherColumnInfo} on server {tableInfo.Server} and confirms that the values in this field are also in that collection";
     }
 
     /// <summary>
@@ -117,7 +119,7 @@ public class ReferentialIntegrityConstraint : SecondaryConstraint, ICheckable
         if (value == null || value == DBNull.Value)
             return null;
 
-        bool contained = _uniqueValues.Contains(value.ToString());
+        var contained = _uniqueValues.Contains(value.ToString());
             
         //it is in the hashset
         if (contained)
@@ -126,8 +128,7 @@ public class ReferentialIntegrityConstraint : SecondaryConstraint, ICheckable
             else
                 //the logic is inverted!
                 return new ValidationFailure(
-                    "Value '" + value + "' was found in row and also in the column " +
-                    OtherColumnInfo + " (InvertLogic was set to true meaning that OtherColumnInfo is an exclusion list)", this);
+                    $"Value '{value}' was found in row and also in the column {OtherColumnInfo} (InvertLogic was set to true meaning that OtherColumnInfo is an exclusion list)", this);
             
         //it was not contained in the hashset
 
@@ -138,8 +139,7 @@ public class ReferentialIntegrityConstraint : SecondaryConstraint, ICheckable
         //it is not contained and we have not inverted the logic so this is a validation failure, the value was not found in the referential integrity column OtherColumnInfo
         return
             new ValidationFailure(
-                "Value '" + value + "' was found in row but not in corresponding referential integrity column " +
-                OtherColumnInfo, this);
+                $"Value '{value}' was found in row but not in corresponding referential integrity column {OtherColumnInfo}", this);
     }
 
         
@@ -164,8 +164,7 @@ public class ReferentialIntegrityConstraint : SecondaryConstraint, ICheckable
             try
             {
                 using (var cmd = DatabaseCommandHelper.GetCommand(
-                           "SELECT TOP 1 " + OtherColumnInfo + " FROM " + tableInfo + " WHERE " + OtherColumnInfo +
-                           " IS NOT NULL", con))
+                           $"SELECT TOP 1 {OtherColumnInfo} FROM {tableInfo} WHERE {OtherColumnInfo} IS NOT NULL", con))
                 {
                     cmd.CommandTimeout = 5;
                     itemToValidate = cmd.ExecuteScalar();
@@ -176,10 +175,10 @@ public class ReferentialIntegrityConstraint : SecondaryConstraint, ICheckable
             {
                 if (e.HResult == -2) // timeout
                     checker.OnCheckPerformed(
-                        new CheckEventArgs("Timeout when trying to access lookup table: " + tableInfo, CheckResult.Warning, e));
+                        new CheckEventArgs($"Timeout when trying to access lookup table: {tableInfo}", CheckResult.Warning, e));
                 else
                     checker.OnCheckPerformed(
-                        new CheckEventArgs("Failed to query validation lookup table: " + tableInfo, CheckResult.Fail, e));
+                        new CheckEventArgs($"Failed to query validation lookup table: {tableInfo}", CheckResult.Fail, e));
 
                 return;
             }
@@ -187,7 +186,7 @@ public class ReferentialIntegrityConstraint : SecondaryConstraint, ICheckable
 
         if (itemToValidate == null)
         {
-            checker.OnCheckPerformed(new CheckEventArgs("No validation items were found in " + OtherColumnInfo, CheckResult.Fail));
+            checker.OnCheckPerformed(new CheckEventArgs($"No validation items were found in {OtherColumnInfo}", CheckResult.Fail));
             return;
         }
 
@@ -217,7 +216,7 @@ public class ReferentialIntegrityConstraint : SecondaryConstraint, ICheckable
 
         //Get the values off the server
         var tableInfo = OtherColumnInfo.TableInfo;
-        string sqlToFetchValues = "Select distinct " + OtherColumnInfo + " from " + tableInfo;
+        var sqlToFetchValues = $"Select distinct {OtherColumnInfo} from {tableInfo}";
 
         //open connection
         using (var con = GetConnectionToOtherTable(tableInfo))
@@ -229,7 +228,7 @@ public class ReferentialIntegrityConstraint : SecondaryConstraint, ICheckable
                 using(var cmd = DatabaseCommandHelper.GetCommand(sqlToFetchValues, con))
                 using (var reader = cmd.ExecuteReader())
                 {
-                    string runtimeName = OtherColumnInfo.GetRuntimeName();
+                    var runtimeName = OtherColumnInfo.GetRuntimeName();
 
                     //store the values in the HashSet
                     while (reader.Read())
@@ -247,7 +246,8 @@ public class ReferentialIntegrityConstraint : SecondaryConstraint, ICheckable
             }
             catch (Exception e)
             {
-                throw new Exception("Failed to execute SQL '" + sqlToFetchValues + "' under context " + DataAccessContext.InternalDataProcessing,e);
+                throw new Exception(
+                    $"Failed to execute SQL '{sqlToFetchValues}' under context {DataAccessContext.InternalDataProcessing}",e);
             }
         }
 

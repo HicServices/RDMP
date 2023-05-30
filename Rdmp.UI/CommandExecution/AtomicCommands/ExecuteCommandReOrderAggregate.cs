@@ -27,7 +27,8 @@ internal class ExecuteCommandReOrderAggregate : BasicUICommandExecution
 
         if(_parentContainer == null)
         {
-            SetImpossible("Target Aggregate " + targetAggregateConfiguration + " is not part of any cohort identification set containers");
+            SetImpossible(
+                $"Target Aggregate {targetAggregateConfiguration} is not part of any cohort identification set containers");
             return;
         }
 
@@ -55,7 +56,7 @@ internal class ExecuteCommandReOrderAggregate : BasicUICommandExecution
         _targetOrder = target;
         _insertOption = insertOption;
             
-        if(target is IMightBeReadOnly ro && ro.ShouldBeReadOnly(out string reason))
+        if(target is IMightBeReadOnly ro && ro.ShouldBeReadOnly(out var reason))
             SetImpossible(reason);
     }
 
@@ -66,7 +67,7 @@ internal class ExecuteCommandReOrderAggregate : BasicUICommandExecution
         var source = _sourceAggregateCommand.Aggregate;
         _sourceAggregateCommand.ContainerIfAny.RemoveChild(source);
 
-        int targetOrder = _targetOrder.Order;
+        var targetOrder = _targetOrder.Order;
             
         _parentContainer.CreateInsertionPointAtOrder(source,targetOrder , _insertOption == InsertOption.InsertAbove);
         _parentContainer.AddChild(source, targetOrder);

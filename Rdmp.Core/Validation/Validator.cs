@@ -148,7 +148,7 @@ public class Validator
         if(currentResults == null)
             currentResults = new VerboseValidationResults(ItemValidators.ToArray());
 
-        ValidationFailure result = ValidateAgainstDomainObject();
+        var result = ValidateAgainstDomainObject();
 
         if (result != null)
             worstConsequence = currentResults.ProcessException(result);
@@ -218,7 +218,7 @@ public class Validator
         {
             _extraTypes = null;
 
-            List<Type> extraTypes = new List<Type>();
+            var extraTypes = new List<Type>();
 
             //Get all the Types in the assembly that are compatible with Constraint (primary or secondary)
             extraTypes.AddRange(mef.GetAllTypes().Where(
@@ -344,7 +344,7 @@ public class Validator
         var eList = new List<ValidationFailure>();
 
         //for all the columns we need to validate
-        foreach (ItemValidator itemValidator in ItemValidators)
+        foreach (var itemValidator in ItemValidators)
         {
                 
             object o;
@@ -384,16 +384,16 @@ public class Validator
         string[] names = null;
         object[] values = null;
             
-        object o = _domainObject;
+        var o = _domainObject;
 
         if (o is DbDataReader)
         {
-            DbDataReader reader = (DbDataReader)o;
+            var reader = (DbDataReader)o;
 
             names = new string[reader.FieldCount];
             values = new object[reader.FieldCount];
 
-            for (int i = 0; i < reader.FieldCount; i++)
+            for (var i = 0; i < reader.FieldCount; i++)
             {
                 names[i] = reader.GetName(i);
 
@@ -406,12 +406,12 @@ public class Validator
 
         if (o is DataRow)
         {
-            DataRow row = (DataRow) o;
+            var row = (DataRow) o;
 
             names = new string[row.Table.Columns.Count];
             values = new object[row.Table.Columns.Count];
 
-            for (int i = 0; i < row.Table.Columns.Count; i++)
+            for (var i = 0; i < row.Table.Columns.Count; i++)
             {
                 names[i] = row.Table.Columns[i].ColumnName;
 
@@ -424,7 +424,7 @@ public class Validator
         #endregion
 
             
-        foreach (ItemValidator itemValidator in ItemValidators)
+        foreach (var itemValidator in ItemValidators)
         {
                 
             if(itemValidator.TargetProperty == null)
@@ -450,7 +450,7 @@ public class Validator
                     result = itemValidator.ValidateAll(((DataRow)o)[itemValidator.TargetProperty], values, names);
                 else
                 {
-                    Dictionary<string, object> propertiesDictionary = DomainObjectPropertiesToDictionary(o);
+                    var propertiesDictionary = DomainObjectPropertiesToDictionary(o);
                         
                     if (propertiesDictionary.ContainsKey(itemValidator.TargetProperty))
                     {
@@ -502,13 +502,13 @@ public class Validator
 
     public void RenameColumns(Dictionary<string, string> renameDictionary)
     {
-        foreach(KeyValuePair<string,string>kvp in renameDictionary)
+        foreach(var kvp in renameDictionary)
             RenameColumn(kvp.Key,kvp.Value);
     }
 
     public void RenameColumn(string oldName, string newName)
     {
-        foreach (ItemValidator itemValidator in this.ItemValidators)
+        foreach (var itemValidator in this.ItemValidators)
         {
             if (itemValidator.TargetProperty == oldName)
                 itemValidator.TargetProperty = newName;

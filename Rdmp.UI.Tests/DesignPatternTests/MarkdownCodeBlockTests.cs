@@ -96,13 +96,13 @@ class MarkdownCodeBlockTests
             #region c9aeab3ddaf643e5967c3e2352c388f0
             private void AddChildren(ExtractionConfigurationsNode extractionConfigurationsNode, DescendancyList descendancy)
             {
-                HashSet<object> children = new HashSet<object>();
+                var children = new HashSet<object>();
 
                 var frozenConfigurationsNode = new FrozenExtractionConfigurationsNode(extractionConfigurationsNode.Project);
                 children.Add(frozenConfigurationsNode);
 
                 var configs = ExtractionConfigurations.Where(c => c.Project_ID == extractionConfigurationsNode.Project.ID).ToArray();
-                foreach (ExtractionConfiguration config in configs)
+                foreach (var config in configs)
                 {
                     AddChildren(config, descendancy.Add(config));
                     children.Add(config);
@@ -127,7 +127,7 @@ class MarkdownCodeBlockTests
             #region 0bac9aa7f8874a25bc1fe1361b91f6e5
             private void AddChildren(ExtractionConfigurationsNode extractionConfigurationsNode, DescendancyList descendancy)
             {
-                HashSet<object> children = new HashSet<object>();
+                var children = new HashSet<object>();
 
                 //Create a frozen extraction configurations folder as a subfolder of each ExtractionConfigurationsNode
                 var frozenConfigurationsNode = new FrozenExtractionConfigurationsNode(extractionConfigurationsNode.Project);
@@ -140,7 +140,7 @@ class MarkdownCodeBlockTests
 
                 //Add ExtractionConfigurations which are not released (frozen)
                 var configs = ExtractionConfigurations.Where(c => c.Project_ID == extractionConfigurationsNode.Project.ID).ToArray();
-                foreach (ExtractionConfiguration config in configs.Where(c=>!c.IsReleased))
+                foreach (var config in configs.Where(c=>!c.IsReleased))
                 {
                     AddChildren(config, descendancy.Add(config));
                     children.Add(config);
@@ -151,11 +151,11 @@ class MarkdownCodeBlockTests
 
             private void AddChildren(FrozenExtractionConfigurationsNode frozenExtractionConfigurationsNode, DescendancyList descendancy)
             {
-                HashSet<object> children = new HashSet<object>();
+                var children = new HashSet<object>();
 
                 //Add ExtractionConfigurations which are not released (frozen)
                 var configs = ExtractionConfigurations.Where(c => c.Project_ID == frozenExtractionConfigurationsNode.Project.ID).ToArray();
-                foreach (ExtractionConfiguration config in configs.Where(c => c.IsReleased))
+                foreach (var config in configs.Where(c => c.IsReleased))
                 {
                     AddChildren(config, descendancy.Add(config));
                     children.Add(config);

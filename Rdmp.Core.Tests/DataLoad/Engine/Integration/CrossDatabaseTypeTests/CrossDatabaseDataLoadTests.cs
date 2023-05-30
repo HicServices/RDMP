@@ -89,7 +89,7 @@ class CrossDatabaseDataLoadTests : DataLoadEngineTestsBase
             
         var db = GetCleanedServer(databaseType);
 
-        var raw = db.Server.ExpectDatabase(db.GetRuntimeName() + "_RAW");
+        var raw = db.Server.ExpectDatabase($"{db.GetRuntimeName()}_RAW");
         if(raw.Exists())
             raw.Drop();
             
@@ -154,7 +154,7 @@ class CrossDatabaseDataLoadTests : DataLoadEngineTestsBase
             lmd.SaveToDatabase();
         }   
 
-        ITableInfo ti = Import(tbl, lmd,logManager);
+        var ti = Import(tbl, lmd,logManager);
             
         var projectDirectory = SetupLoadDirectory(lmd);
 
@@ -265,13 +265,13 @@ MrMurder,2001-01-01,Yella");
         {
             Directory.Delete(lmd.LocationOfFlatFiles, true);
 
-            foreach (Catalogue c in RepositoryLocator.CatalogueRepository.GetAllObjects<Catalogue>())
+            foreach (var c in RepositoryLocator.CatalogueRepository.GetAllObjects<Catalogue>())
                 c.DeleteInDatabase();
 
-            foreach (TableInfo t in RepositoryLocator.CatalogueRepository.GetAllObjects<TableInfo>())
+            foreach (var t in RepositoryLocator.CatalogueRepository.GetAllObjects<TableInfo>())
                 t.DeleteInDatabase();
 
-            foreach (LoadMetadata l in RepositoryLocator.CatalogueRepository.GetAllObjects<LoadMetadata>())
+            foreach (var l in RepositoryLocator.CatalogueRepository.GetAllObjects<LoadMetadata>())
                 l.DeleteInDatabase();
         }
 
@@ -348,8 +348,8 @@ MrMurder,2001-01-01,Yella");
         //create a new load
         var lmd = new LoadMetadata(CatalogueRepository, "MyLoading2");
             
-        ITableInfo childTableInfo = Import(childTbl, lmd, logManager);
-        ITableInfo parentTableInfo = Import(parentTbl,lmd,logManager);
+        var childTableInfo = Import(childTbl, lmd, logManager);
+        var parentTableInfo = Import(parentTbl,lmd,logManager);
 
         var projectDirectory = SetupLoadDirectory(lmd);
 
@@ -420,13 +420,13 @@ MrMurder,2001-01-01,Yella");
         {
             Directory.Delete(lmd.LocationOfFlatFiles,true);
 
-            foreach (Catalogue c in RepositoryLocator.CatalogueRepository.GetAllObjects<Catalogue>())
+            foreach (var c in RepositoryLocator.CatalogueRepository.GetAllObjects<Catalogue>())
                 c.DeleteInDatabase();
 
-            foreach (TableInfo t in RepositoryLocator.CatalogueRepository.GetAllObjects<TableInfo>())
+            foreach (var t in RepositoryLocator.CatalogueRepository.GetAllObjects<TableInfo>())
                 t.DeleteInDatabase();
 
-            foreach (LoadMetadata l in RepositoryLocator.CatalogueRepository.GetAllObjects<LoadMetadata>())
+            foreach (var l in RepositoryLocator.CatalogueRepository.GetAllObjects<LoadMetadata>())
                 l.DeleteInDatabase();
         }
     }

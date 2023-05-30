@@ -16,10 +16,7 @@ class CohortIdentificationHeader
         return "";
     }
 
-    public IMapsDirectlyToDatabaseTable Child
-    {
-        get { return null; }
-    }
+    public IMapsDirectlyToDatabaseTable Child => null;
 
     public IDataAccessPoint[] GetDataAccessPoints()
     {

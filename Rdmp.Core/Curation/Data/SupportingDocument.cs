@@ -41,8 +41,8 @@ public class SupportingDocument : DatabaseEntity,INamed, ISupportingObject
     [Unique]
     public string Name
     {
-        get { return _name; }
-        set { SetField(ref _name, value); }
+        get => _name;
+        set => SetField(ref _name, value);
     }
 
     /// <summary>
@@ -51,8 +51,8 @@ public class SupportingDocument : DatabaseEntity,INamed, ISupportingObject
     [AdjustableLocation]
     public Uri URL
     {
-        get { return _uRL; }
-        set { SetField(ref _uRL, value); }
+        get => _uRL;
+        set => SetField(ref _uRL, value);
     }
 
     /// <summary>
@@ -60,8 +60,8 @@ public class SupportingDocument : DatabaseEntity,INamed, ISupportingObject
     /// </summary>
     public string Description
     {
-        get { return _description; }
-        set { SetField(ref _description, value); }
+        get => _description;
+        set => SetField(ref _description, value);
     }
 
     /// <summary>
@@ -69,8 +69,8 @@ public class SupportingDocument : DatabaseEntity,INamed, ISupportingObject
     /// </summary>
     public bool Extractable
     {
-        get { return _extractable; }
-        set { SetField(ref _extractable, value); }
+        get => _extractable;
+        set => SetField(ref _extractable, value);
     }
 
     /// <summary>
@@ -78,8 +78,8 @@ public class SupportingDocument : DatabaseEntity,INamed, ISupportingObject
     /// </summary>
     public string Ticket
     {
-        get { return _ticket; }
-        set { SetField(ref _ticket, value); }
+        get => _ticket;
+        set => SetField(ref _ticket, value);
     }
 
     /// <summary>
@@ -88,8 +88,8 @@ public class SupportingDocument : DatabaseEntity,INamed, ISupportingObject
     /// </summary>
     public bool IsGlobal
     {
-        get { return _isGlobal; }
-        set { SetField(ref _isGlobal, value); }
+        get => _isGlobal;
+        set => SetField(ref _isGlobal, value);
     }
 
     /// <summary>
@@ -97,8 +97,8 @@ public class SupportingDocument : DatabaseEntity,INamed, ISupportingObject
     /// </summary>
     public int Catalogue_ID
     {
-        get { return _catalogueID; }
-        set { SetField(ref _catalogueID , value); }
+        get => _catalogueID;
+        set => SetField(ref _catalogueID , value);
     }
 
     #endregion
@@ -170,7 +170,7 @@ public class SupportingDocument : DatabaseEntity,INamed, ISupportingObject
 
         if (URL.IsUnc)
         {
-            return new FileInfo(@"\\" + URL.Host + unescaped);
+            return new FileInfo($@"\\{URL.Host}{unescaped}");
         }
 
         return new FileInfo(unescaped);

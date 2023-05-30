@@ -40,16 +40,16 @@ public class DeployedExtractionFilter : ConcreteFilter
     /// <inheritdoc/>
     public override int? ClonedFromExtractionFilter_ID
     {
-        get { return _clonedFromExtractionFilterID; }
-        set { SetField(ref _clonedFromExtractionFilterID , value); }
+        get => _clonedFromExtractionFilterID;
+        set => SetField(ref _clonedFromExtractionFilterID , value);
     }
         
     /// <inheritdoc/>
     [Relationship(typeof(FilterContainer), RelationshipType.SharedObject)]
     public override int? FilterContainer_ID
     {
-        get { return _filterContainerID; }
-        set { SetField(ref _filterContainerID , value); }
+        get => _filterContainerID;
+        set => SetField(ref _filterContainerID , value);
     }
 
     #endregion
@@ -59,18 +59,11 @@ public class DeployedExtractionFilter : ConcreteFilter
     /// Returns all parameters declared against this filter (does not include other parameters in scope e.g. globals)
     /// </summary>
     [NoMappingToDatabase]
-    public DeployedExtractionFilterParameter[] ExtractionFilterParameters
-    {
-        get
-        {
-            return
-                Repository.GetAllObjectsWhere<DeployedExtractionFilterParameter>("ExtractionFilter_ID" , ID).ToArray();
-        }
-    }
+    public DeployedExtractionFilterParameter[] ExtractionFilterParameters => Repository.GetAllObjectsWhere<DeployedExtractionFilterParameter>("ExtractionFilter_ID" , ID).ToArray();
 
     /// <inheritdoc/>
     [NoMappingToDatabase]
-    public override IContainer FilterContainer { get { return FilterContainer_ID.HasValue ? Repository.GetObjectByID<FilterContainer>(FilterContainer_ID.Value) : null; } }
+    public override IContainer FilterContainer => FilterContainer_ID.HasValue ? Repository.GetObjectByID<FilterContainer>(FilterContainer_ID.Value) : null;
 
     #endregion
 

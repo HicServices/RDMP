@@ -100,7 +100,7 @@ class ScintillaMenu:ContextMenuStrip
     {
         base.OnOpening(e);
 
-        bool textIsSelected = !string.IsNullOrWhiteSpace(_scintilla.SelectedText);
+        var textIsSelected = !string.IsNullOrWhiteSpace(_scintilla.SelectedText);
 
         _miUndo.Enabled = _scintilla.CanUndo;
         _miRedo.Enabled = _scintilla.CanRedo;

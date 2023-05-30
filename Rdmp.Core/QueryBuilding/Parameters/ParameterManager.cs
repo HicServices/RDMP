@@ -117,7 +117,7 @@ public class ParameterManager
         if(!collectors.Any())
             return;
 
-        foreach (ICollectSqlParameters collector in collectors)
+        foreach (var collector in collectors)
             AddParametersFor(collector, toAddTo);
     }
 
@@ -144,8 +144,8 @@ public class ParameterManager
             
         var toReturn = new List<ParameterFoundAtLevel>();
 
-        foreach (KeyValuePair<ParameterLevel, List<ISqlParameter>> kvp in ParametersFoundSoFarInQueryGeneration)
-        foreach (ISqlParameter sqlParameter in kvp.Value)
+        foreach (var kvp in ParametersFoundSoFarInQueryGeneration)
+        foreach (var sqlParameter in kvp.Value)
             AddParameterToCollection(new ParameterFoundAtLevel(sqlParameter,kvp.Key), toReturn);
                 
 
@@ -153,7 +153,7 @@ public class ParameterManager
         var emptyParameter = toReturn.FirstOrDefault(t => string.IsNullOrWhiteSpace(t.Parameter.Value));
         if(emptyParameter != null)
         {
-            string exceptionMessage = $"No Value defined for Parameter {emptyParameter.Parameter.ParameterName}";
+            var exceptionMessage = $"No Value defined for Parameter {emptyParameter.Parameter.ParameterName}";
             var asConcreteObject = emptyParameter.Parameter as IMapsDirectlyToDatabaseTable;
                 
             //problem was in a freaky parameter e.g. a constant one that doesn't come from database (rare to happen I would expect)
@@ -219,10 +219,10 @@ public class ParameterManager
         var concrete1 = parameter1.Parameter as IMapsDirectlyToDatabaseTable;
         var concrete2 = parameter2.Parameter as IMapsDirectlyToDatabaseTable;
 
-        List<IMapsDirectlyToDatabaseTable> concreteObjects = new List<IMapsDirectlyToDatabaseTable>();
+        var concreteObjects = new List<IMapsDirectlyToDatabaseTable>();
 
-        string desc1 = $"(Type:{parameter1.Parameter.GetType()}";
-        string desc2 = $"(Type:{parameter2.Parameter.GetType()}";
+        var desc1 = $"(Type:{parameter1.Parameter.GetType()}";
+        var desc2 = $"(Type:{parameter2.Parameter.GetType()}";
 
 
         if(concrete1 != null)
@@ -270,7 +270,7 @@ public class ParameterManager
 
         ////////////////////////////////////////////////////////////Handle TableInfo level parameters//////////////////////////////////////
         //for each table valued parameter (TableInfo level)
-        foreach (ISqlParameter parameterToImport in toImport.ParametersFoundSoFarInQueryGeneration[ParameterLevel.TableInfo])
+        foreach (var parameterToImport in toImport.ParametersFoundSoFarInQueryGeneration[ParameterLevel.TableInfo])
         {
             //it does not already exist
             if (!ParametersFoundSoFarInQueryGeneration[ParameterLevel.CompositeQueryLevel].Any(p => p.ParameterName.Equals(parameterToImport.ParameterName,StringComparison.CurrentCultureIgnoreCase)))
@@ -284,9 +284,9 @@ public class ParameterManager
 
         //////////////////////////////////////////////////////Handle all the other parameters//////////////////////////////////////////////
         //for each Query Level parameter
-        foreach (ISqlParameter parameterToImport in toImport.GetFinalResolvedParametersList())
+        foreach (var parameterToImport in toImport.GetFinalResolvedParametersList())
         {
-            string toImportParameterName = parameterToImport.ParameterName;
+            var toImportParameterName = parameterToImport.ParameterName;
             var existing = ParametersFoundSoFarInQueryGeneration[ParameterLevel.CompositeQueryLevel].SingleOrDefault(p => p.ParameterName.Equals(toImportParameterName, StringComparison.CurrentCultureIgnoreCase));
                 
             if (existing == null)
@@ -316,7 +316,7 @@ public class ParameterManager
                 //one already exists so we will have to do a parameter rename
 
                 //get the next number going e.g. _2 or _3 etc
-                int newSuffix = GetSuffixForRenaming(toImportParameterName);
+                var newSuffix = GetSuffixForRenaming(toImportParameterName);
 
                 //Add the rename operation to the audit
                 parameterNameSubstitutions.Add(toImportParameterName, $"{parameterToImport.ParameterName}_{newSuffix}");
@@ -342,20 +342,20 @@ public class ParameterManager
         if (first == null || other == null)
             throw new NullReferenceException("You cannot pass null parameters into this method");
 
-        string sql1 = first.ParameterSQL ?? "";
-        string sql2 = other.ParameterSQL ?? "";
+        var sql1 = first.ParameterSQL ?? "";
+        var sql2 = other.ParameterSQL ?? "";
 
         return sql1.Trim().Equals(sql2.Trim(), StringComparison.CurrentCultureIgnoreCase);
     }
 
     private static bool AreIdentical(ISqlParameter first, ISqlParameter other)
     {
-        bool sameSql = AreDeclaredTheSame(first, other);
+        var sameSql = AreDeclaredTheSame(first, other);
             
-        string value1 = first.Value ?? "";
-        string value2 = other.Value??"";
+        var value1 = first.Value ?? "";
+        var value2 = other.Value??"";
 
-        bool sameValue = value1.Trim().Equals(value2.Trim(), StringComparison.CurrentCultureIgnoreCase);
+        var sameValue = value1.Trim().Equals(value2.Trim(), StringComparison.CurrentCultureIgnoreCase);
 
         return sameSql && sameValue;
     }
@@ -363,7 +363,7 @@ public class ParameterManager
     private int GetSuffixForRenaming(string toImportParameterName)
     {
         //start at 2
-        int counter = 2;
+        var counter = 2;
 
 
         //while we have parameter called @p_2, @p_3 etc etc keep adding
@@ -384,19 +384,19 @@ public class ParameterManager
     /// <returns></returns>
     public ISqlParameter[] GetOverridenParameters()
     {
-        List<ISqlParameter> toReturn = new List<ISqlParameter>();
+        var toReturn = new List<ISqlParameter>();
 
         var levels = (ParameterLevel[])Enum.GetValues(typeof (ParameterLevel));
 
         //for each level
-        for (int i = 0; i < levels.Length; i++)
+        for (var i = 0; i < levels.Length; i++)
         {
             var currentLevel = levels[i];
 
             //for each parameter
             foreach (var p1 in ParametersFoundSoFarInQueryGeneration[currentLevel])
                 //for each level above this
-                for (int j = i + 1; j < levels.Length; j++)
+                for (var j = i + 1; j < levels.Length; j++)
                 {
                     var comparisonLevel = levels[j];
                         
@@ -446,7 +446,7 @@ public class ParameterManager
     /// <param name="deleteable"></param>
     public void RemoveParameter(ISqlParameter deleteable)
     {
-        foreach (List<ISqlParameter> parameters in ParametersFoundSoFarInQueryGeneration.Values)
+        foreach (var parameters in ParametersFoundSoFarInQueryGeneration.Values)
             if (parameters.Contains(deleteable))
                 parameters.Remove(deleteable);
     }
@@ -493,7 +493,7 @@ public class ParameterManager
     public string[] GetCollisions(ParameterManager other)
     {
         var pm = new ParameterManager();
-        pm.ImportAndElevateResolvedParametersFromSubquery(this,out Dictionary<string,string> subs);
+        pm.ImportAndElevateResolvedParametersFromSubquery(this,out var subs);
             
         //not sure how there could be collisions given we went into a fresh one but I guess it would count
         if(subs.Keys.Any())

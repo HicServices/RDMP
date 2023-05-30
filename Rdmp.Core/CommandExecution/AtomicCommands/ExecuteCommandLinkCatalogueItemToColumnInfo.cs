@@ -37,7 +37,7 @@ public class ExecuteCommandLinkCatalogueItemToColumnInfo : BasicCommandExecution
         _catalogueItem = catalogueItem;
             
         if (catalogueItem.ColumnInfo_ID != null)
-            SetImpossible( "CatalogueItem " + catalogueItem + " is already associated with a different ColumnInfo");
+            SetImpossible($"CatalogueItem {catalogueItem} is already associated with a different ColumnInfo");
 
         if(cmd.ColumnInfos.Length >1)
         {
@@ -74,7 +74,7 @@ public class ExecuteCommandLinkCatalogueItemToColumnInfo : BasicCommandExecution
 
     public override string GetCommandName()
     {
-        return "Set Column Info" + (_catalogueItem.ColumnInfo_ID == null ? "(Currently MISSING)" : "");
+        return $"Set Column Info{(_catalogueItem.ColumnInfo_ID == null ? "(Currently MISSING)" : "")}";
     }
 
     public override Image<Rgba32> GetImage(IIconProvider iconProvider)

@@ -22,10 +22,7 @@ public partial class SetSQLDialog : Form
     public Scintilla QueryEditor;
     private bool _designMode;
 
-    public string Result
-    {
-        get { return QueryEditor.Text; }
-    }
+    public string Result => QueryEditor.Text;
 
     public SetSQLDialog(string originalSQL, ICombineableFactory commandFactory)
     {

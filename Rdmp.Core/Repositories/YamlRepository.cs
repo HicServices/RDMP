@@ -453,7 +453,7 @@ public class YamlRepository : MemoryDataExportRepository
                 foreach(var credentialUsage in tableToCredentialUsage.Value)
                 {
                     var credential = GetObjectByIDIfExists<DataAccessCredentials>(credentialUsage.Value);
-                    DataAccessContext usage = credentialUsage.Key;
+                    var usage = credentialUsage.Key;
 
                     // Credentials deleted on the sly
                     if (credential == null)
@@ -472,7 +472,7 @@ public class YamlRepository : MemoryDataExportRepository
     {
         var serializer = new Serializer();
 
-        Dictionary<int, Dictionary<DataAccessContext, int>> ids = 
+        var ids = 
             CredentialsDictionary.ToDictionary(
                 k => k.Key.ID,
                 v => v.Value.ToDictionary(k => k.Key, v => v.Value.ID));

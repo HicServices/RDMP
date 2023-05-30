@@ -27,7 +27,8 @@ public class ExcludeRight3OfUKPostcodes: DilutionOperation
         base.Check(notifier);
 
         if(!ColumnToDilute.SqlDataType.ToLower().Contains("char"))
-            notifier.OnCheckPerformed(new CheckEventArgs("IPreLoadDiscardedColumn " + ColumnToDilute + " is of datatype " + ColumnToDilute.SqlDataType + " which is incompatible with this dilution operation (it must be char/varchar)", CheckResult.Fail));
+            notifier.OnCheckPerformed(new CheckEventArgs(
+                $"IPreLoadDiscardedColumn {ColumnToDilute} is of datatype {ColumnToDilute.SqlDataType} which is incompatible with this dilution operation (it must be char/varchar)", CheckResult.Fail));
     }
         
     public override string GetMutilationSql(INameDatabasesAndTablesDuringLoads namer)

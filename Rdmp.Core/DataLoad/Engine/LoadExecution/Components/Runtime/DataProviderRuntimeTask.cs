@@ -23,15 +23,16 @@ namespace Rdmp.Core.DataLoad.Engine.LoadExecution.Components.Runtime;
 public class DataProviderRuntimeTask : RuntimeTask, IMEFRuntimeTask
 {
     public IDataProvider Provider { get; private set; }
-    public ICheckable MEFPluginClassInstance { get { return Provider; } }
+    public ICheckable MEFPluginClassInstance => Provider;
 
     public DataProviderRuntimeTask(IProcessTask task, RuntimeArgumentCollection args, MEF mef)
         : base(task, args)
     {
-        string classNameToInstantiate = task.Path;
+        var classNameToInstantiate = task.Path;
 
         if (string.IsNullOrWhiteSpace(task.Path))
-            throw new ArgumentException("Path is blank for ProcessTask '" + task + "' - it should be a class name of type " + typeof(IDataProvider).Name);
+            throw new ArgumentException(
+                $"Path is blank for ProcessTask '{task}' - it should be a class name of type {typeof(IDataProvider).Name}");
 
         Provider = mef.CreateA<IDataProvider>(classNameToInstantiate);
 
@@ -41,7 +42,7 @@ public class DataProviderRuntimeTask : RuntimeTask, IMEFRuntimeTask
         }
         catch (Exception e)
         {
-            throw new Exception("Error when trying to set the properties for '" + task.Name + "'", e);
+            throw new Exception($"Error when trying to set the properties for '{task.Name}'", e);
         }
 
         Provider.Initialize(args.StageSpecificArguments.RootDir, RuntimeArguments.StageSpecificArguments.DbInfo);
@@ -49,9 +50,10 @@ public class DataProviderRuntimeTask : RuntimeTask, IMEFRuntimeTask
 
     public override ExitCodeType Run(IDataLoadJob job, GracefulCancellationToken cancellationToken)
     {
-        job.OnNotify(this, new NotifyEventArgs(ProgressEventType.Information, "About to run Task '" + ProcessTask.Name + "'"));
+        job.OnNotify(this, new NotifyEventArgs(ProgressEventType.Information, $"About to run Task '{ProcessTask.Name}'"));
 
-        job.OnNotify(this, new NotifyEventArgs(ProgressEventType.Information, "About to fetch data using class " + Provider.GetType().FullName));
+        job.OnNotify(this, new NotifyEventArgs(ProgressEventType.Information,
+            $"About to fetch data using class {Provider.GetType().FullName}"));
 
         return Provider.Fetch(job, cancellationToken);
     }

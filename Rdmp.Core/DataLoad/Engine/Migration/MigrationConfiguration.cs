@@ -47,9 +47,9 @@ public class MigrationConfiguration
             var fromTableName = tableInfo.GetRuntimeName(_fromBubble, _namer);
             var toTableName = tableInfo.GetRuntimeName(_toBubble, _namer);
 
-            DiscoveredTable fromTable = _fromDatabaseInfo.ExpectTable(fromTableName); //Staging doesn't have schema e.g. even if live schema is not dbo STAGING will be
+            var fromTable = _fromDatabaseInfo.ExpectTable(fromTableName); //Staging doesn't have schema e.g. even if live schema is not dbo STAGING will be
 
-            DiscoveredTable toTable = DataAccessPortal.GetInstance()
+            var toTable = DataAccessPortal.GetInstance()
                 .ExpectDatabase(tableInfo, DataAccessContext.DataLoad)
                 .ExpectTable(toTableName,tableInfo.Schema);
 
@@ -57,7 +57,8 @@ public class MigrationConfiguration
                 if(lookupTableInfos.Contains(tableInfo))//its a lookup table which doesn't exist in from (Staging) - nevermind
                     continue;
                 else
-                    throw new Exception("Table " + fromTableName + " was not found on on server " + _fromDatabaseInfo.Server + " (Database " + _fromDatabaseInfo + ")"); //its not a lookup table if it isn't in STAGING thats a problem!
+                    throw new Exception(
+                        $"Table {fromTableName} was not found on on server {_fromDatabaseInfo.Server} (Database {_fromDatabaseInfo})"); //its not a lookup table if it isn't in STAGING thats a problem!
 
             columnSet.Add(new MigrationColumnSet(fromTable,toTable, migrationFieldProcessor));
         }

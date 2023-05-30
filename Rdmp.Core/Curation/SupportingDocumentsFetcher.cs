@@ -43,15 +43,17 @@ public class SupportingDocumentsFetcher
     private string ExtractToDirectory(DirectoryInfo directory, SupportingDocument supportingDocument)
     {
         if(!supportingDocument.IsReleasable())
-            throw new Exception("Cannot extract SupportingDocument " + supportingDocument + " because it was not evaluated as IsReleasable()");
+            throw new Exception(
+                $"Cannot extract SupportingDocument {supportingDocument} because it was not evaluated as IsReleasable()");
 
-        FileInfo toCopy = supportingDocument.GetFileName();
+        var toCopy = supportingDocument.GetFileName();
 
         if (!Directory.Exists(Path.Combine(directory.FullName, "SupportingDocuments")))
             Directory.CreateDirectory(Path.Combine(directory.FullName, "SupportingDocuments"));
 
         if(!toCopy.Exists)
-            throw new FileNotFoundException("Could not find supporting document '" + supportingDocument + "' which was expected to be at path:" + toCopy.FullName);
+            throw new FileNotFoundException(
+                $"Could not find supporting document '{supportingDocument}' which was expected to be at path:{toCopy.FullName}");
 
         //copy with overwritte
         File.Copy(toCopy.FullName, Path.Combine(directory.FullName, "SupportingDocuments", toCopy.Name), true);
@@ -65,7 +67,7 @@ public class SupportingDocumentsFetcher
             CheckDocument(_document, notifier);
         else
         {
-            foreach (SupportingDocument supportingDocument in _catalogue.GetAllSupportingDocuments(FetchOptions.ExtractableGlobalsAndLocals))
+            foreach (var supportingDocument in _catalogue.GetAllSupportingDocuments(FetchOptions.ExtractableGlobalsAndLocals))
                 CheckDocument(supportingDocument, notifier);
         }
     }
@@ -84,7 +86,7 @@ public class SupportingDocumentsFetcher
 
             if (toCopy != null && toCopy.Exists)
                 notifier.OnCheckPerformed(
-                    new CheckEventArgs("Found SupportingDocument " + toCopy.Name + " and it exists",
+                    new CheckEventArgs($"Found SupportingDocument {toCopy.Name} and it exists",
                         CheckResult.Success));
             else
                 notifier.OnCheckPerformed(
@@ -93,7 +95,7 @@ public class SupportingDocumentsFetcher
         }
         catch (Exception e)
         {
-            notifier.OnCheckPerformed(new CheckEventArgs("Could not check supporting documents of " + _catalogue, CheckResult.Fail, e));
+            notifier.OnCheckPerformed(new CheckEventArgs($"Could not check supporting documents of {_catalogue}", CheckResult.Fail, e));
         }
     }
 }

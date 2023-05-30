@@ -135,7 +135,7 @@ public partial class ExecuteExtractionUI : ExecuteExtractionUI_Design
             
         root.SetOption(">>", stage2);
         stage2.SetOption(">>", checkAndExecuteUI1.HelpStages.First());
-        for (int i = 0; i < checkAndExecuteUI1.HelpStages.Count - 1; i++)
+        for (var i = 0; i < checkAndExecuteUI1.HelpStages.Count - 1; i++)
         {
             checkAndExecuteUI1.HelpStages[i].SetOption(">>", checkAndExecuteUI1.HelpStages[i+1]);
         }
@@ -356,7 +356,7 @@ public partial class ExecuteExtractionUI : ExecuteExtractionUI_Design
     {
         _bundledStuff = new HashSet<ObjectUsedByOtherObjectNode<ISelectedDataSets, IMapsDirectlyToDatabaseTable>>();
 
-        foreach (ISelectedDataSets sds in _datasets)
+        foreach (var sds in _datasets)
         {
             var eds = sds.ExtractableDataSet;
 

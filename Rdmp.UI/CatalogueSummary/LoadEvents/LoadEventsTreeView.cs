@@ -113,7 +113,8 @@ public partial class LoadEventsTreeView : RDMPUserControl,IObjectCollectionContr
 
         var ti = rowObject as ArchivalTableLoadInfo;
         if (ti != null)
-            return ti.TargetTable + "(I="+ WithCommas(ti.Inserts)  + " U=" + WithCommas(ti.Updates) + " D=" +WithCommas(ti.Deletes)+")";
+            return
+                $"{ti.TargetTable}(I={WithCommas(ti.Inserts)} U={WithCommas(ti.Updates)} D={WithCommas(ti.Deletes)})";
 
         var pr = rowObject as ArchivalProgressLog;
         if (pr != null)
@@ -173,7 +174,7 @@ public partial class LoadEventsTreeView : RDMPUserControl,IObjectCollectionContr
 
     private IEnumerable ChildrenGetter(object model)
     {
-        List<object> children = new List<object>();
+        var children = new List<object>();
 
         var dli = model as ArchivalDataLoadInfo;
 
@@ -413,7 +414,7 @@ public partial class LoadEventsTreeView : RDMPUserControl,IObjectCollectionContr
         {
             var selectedObjects = treeView1.SelectedObjects;
 
-            StringBuilder sb = new StringBuilder();
+            var sb = new StringBuilder();
 
             foreach (var o in selectedObjects)
                 sb.AppendLine(o.ToString());
@@ -434,7 +435,7 @@ public partial class LoadEventsTreeView : RDMPUserControl,IObjectCollectionContr
 
     public string GetTabName()
     {
-        return "Logs:" + Collection?.RootObject?.ToString();
+        return $"Logs:{Collection?.RootObject}";
     }
 
     public string GetTabToolTip()

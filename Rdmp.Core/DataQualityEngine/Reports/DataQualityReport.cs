@@ -20,7 +20,7 @@ public abstract class DataQualityReport : IDataQualityReport
     {
         _catalogue = c;
 
-        ToMemoryCheckNotifier checkNotifier = new ToMemoryCheckNotifier();
+        var checkNotifier = new ToMemoryCheckNotifier();
         Check(checkNotifier);
 
         return checkNotifier.GetWorst() <= CheckResult.Warning;

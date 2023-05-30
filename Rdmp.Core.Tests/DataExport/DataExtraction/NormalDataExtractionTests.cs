@@ -36,8 +36,8 @@ public class NormalDataExtractionTests:TestsRequiringAnExtractionConfiguration
         var r = (ExecuteDatasetExtractionFlatFileDestination)result;
 
         //this should be what is in the file, the private identifier and the 1 that was put into the table in the first place (see parent class for the test data setup)
-        Assert.AreEqual(@"ReleaseID,Name,DateOfBirth
-" + _cohortKeysGenerated[_cohortKeysGenerated.Keys.First()] + @",Dave,2001-01-01", File.ReadAllText(r.OutputFile).Trim()); 
+        Assert.AreEqual($@"ReleaseID,Name,DateOfBirth
+{_cohortKeysGenerated[_cohortKeysGenerated.Keys.First()]},Dave,2001-01-01", File.ReadAllText(r.OutputFile).Trim()); 
 
         Assert.AreEqual(1, _request.QueryBuilder.SelectColumns.Count(c => c.IColumn is ReleaseIdentifierSubstitution));
         File.Delete(r.OutputFile);
@@ -47,7 +47,7 @@ public class NormalDataExtractionTests:TestsRequiringAnExtractionConfiguration
     [Test]
     public void DodgyCharactersInCatalogueName()
     {
-        string beforeName = _catalogue.Name;
+        var beforeName = _catalogue.Name;
         try
         {
             _catalogue.Name = "Fish;#:::FishFish";

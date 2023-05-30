@@ -62,33 +62,30 @@ public class AnyTableSqlParameter : ReferenceOtherObjectDatabaseEntity, ISqlPara
     [Sql]
     public string ParameterSQL
     {
-        get { return _parameterSQL; }
-        set { SetField(ref  _parameterSQL, value); }
+        get => _parameterSQL;
+        set => SetField(ref  _parameterSQL, value);
     }
 
     /// <inheritdoc/>
     [Sql]
     public string Value
     {
-        get { return _value; }
-        set { SetField(ref  _value, value); }
+        get => _value;
+        set => SetField(ref  _value, value);
     }
 
     /// <inheritdoc/>
     public string Comment
     {
-        get { return _comment; }
-        set { SetField(ref  _comment, value); }
+        get => _comment;
+        set => SetField(ref  _comment, value);
     }
 
     #endregion
 
     /// <inheritdoc/>
     [NoMappingToDatabase]
-    public string ParameterName
-    {
-        get { return QuerySyntaxHelper.GetParameterNameFromDeclarationSQL(ParameterSQL); }
-    }
+    public string ParameterName => QuerySyntaxHelper.GetParameterNameFromDeclarationSQL(ParameterSQL);
 
     /// <summary>
     /// The default value to give to parameters when creating new blank/unknown role
@@ -130,7 +127,7 @@ public class AnyTableSqlParameter : ReferenceOtherObjectDatabaseEntity, ISqlPara
     /// <inheritdoc/>
     public override string ToString()
     {
-        return ParameterName + " = " + Value;
+        return $"{ParameterName} = {Value}";
     }
 
     /// <inheritdoc cref="ParameterSyntaxChecker"/>
@@ -145,7 +142,7 @@ public class AnyTableSqlParameter : ReferenceOtherObjectDatabaseEntity, ISqlPara
         var parentWithQuerySyntaxHelper = GetOwnerIfAny() as IHasQuerySyntaxHelper;
 
         if (parentWithQuerySyntaxHelper == null)
-            throw new AmbiguousDatabaseTypeException("Could not figure out what the query syntax helper is for " + this);
+            throw new AmbiguousDatabaseTypeException($"Could not figure out what the query syntax helper is for {this}");
 
         return parentWithQuerySyntaxHelper.GetQuerySyntaxHelper();
     }
@@ -230,7 +227,7 @@ public class AnyTableSqlParameter : ReferenceOtherObjectDatabaseEntity, ISqlPara
     /// <returns></returns>
     public static string GetDefaultDeclaration(string parameterName)
     {
-        return "DECLARE " + parameterName + " as varchar(10)";
+        return $"DECLARE {parameterName} as varchar(10)";
     }
 
     /// <inheritdoc cref="GetValuePromptDialogArgs(IFilter, ISqlParameter)"/>
@@ -250,13 +247,13 @@ public class AnyTableSqlParameter : ReferenceOtherObjectDatabaseEntity, ISqlPara
         if (parameter == null)
             return null;
 
-        string windowTitle = $"Set '{parameter.ParameterName}' value";
+        var windowTitle = $"Set '{parameter.ParameterName}' value";
         if (filter != null)
         {
             windowTitle += $" for '{filter.Name}'";
         }
 
-        string desc = $"Enter a value for the parameter '{parameter.ParameterName}'.";
+        var desc = $"Enter a value for the parameter '{parameter.ParameterName}'.";
         if (!string.IsNullOrWhiteSpace(parameter.Comment))
         {
             desc += $"{parameter.ParameterName} is '{parameter.Comment}'";

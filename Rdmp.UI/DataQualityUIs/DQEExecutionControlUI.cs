@@ -67,7 +67,7 @@ public partial class DQEExecutionControlUI : DQEExecutionControl_Design
 
     public override string GetTabName()
     {
-        return "DQE Execution:" + base.GetTabName();
+        return $"DQE Execution:{base.GetTabName()}";
     }
 }
 

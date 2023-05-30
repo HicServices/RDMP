@@ -32,18 +32,18 @@ public class RDMPCommandExecutionFactory : ICommandExecutionFactory
     {
         _activator = activator;
 
-        foreach (Type proposerType in _activator.RepositoryLocator.CatalogueRepository.MEF.GetTypes<ICommandExecutionProposal>())
+        foreach (var proposerType in _activator.RepositoryLocator.CatalogueRepository.MEF.GetTypes<ICommandExecutionProposal>())
         {
             try
             {
-                ObjectConstructor constructor = new ObjectConstructor();
+                var constructor = new ObjectConstructor();
                 _proposers.Add((ICommandExecutionProposal)constructor.Construct(proposerType,activator));
 
             }
             catch (Exception ex)
             {
                 activator.GlobalErrorCheckNotifier.OnCheckPerformed(
-                    new CheckEventArgs("Could not instantiate ICommandExecutionProposal '" + proposerType + "'",
+                    new CheckEventArgs($"Could not instantiate ICommandExecutionProposal '{proposerType}'",
                         CheckResult.Fail, ex));
             }
         }
@@ -53,7 +53,7 @@ public class RDMPCommandExecutionFactory : ICommandExecutionFactory
     {
         lock (oLockCachedAnswers)
         {
-            CachedDropTarget proposition = new CachedDropTarget(targetModel, insertOption);
+            var proposition = new CachedDropTarget(targetModel, insertOption);
 
             //typically user might start a drag and then drag it all over the place so cache answers to avoid hammering database/loading donuts
             if (_cachedAnswers.ContainsKey(cmd))
@@ -97,7 +97,7 @@ public class RDMPCommandExecutionFactory : ICommandExecutionFactory
         if (targetModel is PreLoadDiscardedColumnsNode targetPreLoadDiscardedColumnsNode)
             return CreateWhenTargetIsPreLoadDiscardedColumnsNode(cmd, targetPreLoadDiscardedColumnsNode);
 
-        foreach (ICommandExecutionProposal proposals in _proposers.Where(p => p.IsCompatibleTarget(targetModel)))
+        foreach (var proposals in _proposers.Where(p => p.IsCompatibleTarget(targetModel)))
         {
             var ce = proposals.ProposeExecution(cmd, targetModel, insertOption);
             if (ce != null)
@@ -111,7 +111,7 @@ public class RDMPCommandExecutionFactory : ICommandExecutionFactory
 
     public void Activate(object target)
     {
-        foreach (ICommandExecutionProposal proposals in _proposers.Where(p => p.IsCompatibleTarget(target)))
+        foreach (var proposals in _proposers.Where(p => p.IsCompatibleTarget(target)))
             proposals.Activate(target);
     }
 

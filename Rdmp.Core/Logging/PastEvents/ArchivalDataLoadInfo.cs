@@ -35,35 +35,38 @@ public class ArchivalDataLoadInfo : IArchivalLoggingRecordOfPastEvent, IComparab
     {
         var s = ToString();
         if (s.Length > ArchivalDataLoadInfo.MaxDescriptionLength)
-            return s.Substring(0, ArchivalDataLoadInfo.MaxDescriptionLength) + "...";
+            return $"{s.Substring(0, ArchivalDataLoadInfo.MaxDescriptionLength)}...";
         return s;
     }
 
     public override string ToString()
     {
-        string elapsed = "";
+        var elapsed = "";
         if (EndTime != null)
         {
             var ts = EndTime.Value.Subtract(StartTime);
             elapsed = $" ({ts.TotalHours:N0}:{ts.Minutes:D2}:{ts.Seconds:D2})";
         }
 
-        return Description + "(ID="+ID +") - " + StartTime + " - " + (EndTime != null ? EndTime.ToString() : "<DidNotFinish>") + elapsed;
+        return
+            $"{Description}(ID={ID}) - {StartTime} - {(EndTime != null ? EndTime.ToString() : "<DidNotFinish>")}{elapsed}";
     }
 
     
     /// <summary>
     /// All tables loaded during the run
     /// </summary>
-    public List<ArchivalTableLoadInfo>  TableLoadInfos { get { return _knownTableInfos.Value; }}
+    public List<ArchivalTableLoadInfo>  TableLoadInfos => _knownTableInfos.Value;
+
     /// <summary>
     /// All errors that occured during the run
     /// </summary>
-    public List<ArchivalFatalError> Errors { get { return _knownErrors.Value; } }
+    public List<ArchivalFatalError> Errors => _knownErrors.Value;
+
     /// <summary>
     /// All progress messages recorded during the run
     /// </summary>
-    public List<ArchivalProgressLog> Progress { get { return _knownProgress.Value; } }
+    public List<ArchivalProgressLog> Progress => _knownProgress.Value;
 
     readonly Lazy<List<ArchivalTableLoadInfo>> _knownTableInfos;
     readonly Lazy<List<ArchivalFatalError>> _knownErrors;
@@ -115,13 +118,13 @@ public class ArchivalDataLoadInfo : IArchivalLoggingRecordOfPastEvent, IComparab
 
     private List<ArchivalTableLoadInfo> GetTableInfos()
     {
-        List<ArchivalTableLoadInfo> toReturn = new List<ArchivalTableLoadInfo>();
+        var toReturn = new List<ArchivalTableLoadInfo>();
 
         using (var con = _loggingDatabase.Server.GetConnection())
         {
             con.Open();
 
-            using(var cmd =  _loggingDatabase.Server.GetCommand("SELECT * FROM TableLoadRun WHERE dataLoadRunID=" +ID , con))
+            using(var cmd =  _loggingDatabase.Server.GetCommand($"SELECT * FROM TableLoadRun WHERE dataLoadRunID={ID}", con))
             using(var r = cmd.ExecuteReader())
                 while(r.Read())
                 {
@@ -143,13 +146,13 @@ public class ArchivalDataLoadInfo : IArchivalLoggingRecordOfPastEvent, IComparab
 
     private List<ArchivalProgressLog> GetProgress()
     {
-        List<ArchivalProgressLog> toReturn = new List<ArchivalProgressLog>();
+        var toReturn = new List<ArchivalProgressLog>();
 
         using (var con = _loggingDatabase.Server.GetConnection())
         {
             con.Open();
 
-            using (var cmd = _loggingDatabase.Server.GetCommand("SELECT * FROM ProgressLog WHERE dataLoadRunID=" + ID, con))
+            using (var cmd = _loggingDatabase.Server.GetCommand($"SELECT * FROM ProgressLog WHERE dataLoadRunID={ID}", con))
             using (var r = cmd.ExecuteReader())
                 while (r.Read())
                     toReturn.Add(new ArchivalProgressLog(r));
@@ -160,13 +163,13 @@ public class ArchivalDataLoadInfo : IArchivalLoggingRecordOfPastEvent, IComparab
 
     private List<ArchivalFatalError> GetErrors()
     {
-        List<ArchivalFatalError> toReturn = new List<ArchivalFatalError>();
+        var toReturn = new List<ArchivalFatalError>();
 
         using (var con = _loggingDatabase.Server.GetConnection())
         {
             con.Open();
 
-            using(var cmd = _loggingDatabase.Server.GetCommand("SELECT * FROM FatalError WHERE dataLoadRunID=" + ID, con))
+            using(var cmd = _loggingDatabase.Server.GetCommand($"SELECT * FROM FatalError WHERE dataLoadRunID={ID}", con))
             using(var r = cmd.ExecuteReader())
                 while (r.Read())
                     toReturn.Add(new ArchivalFatalError(r));

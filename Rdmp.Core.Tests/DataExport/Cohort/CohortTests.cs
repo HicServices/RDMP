@@ -43,7 +43,7 @@ public class CohortTests : TestsRequiringACohort
     [Test]
     public void TestSelf_RecordAllFailures()
     {
-        RecordAllFailures failures = new RecordAllFailures();
+        var failures = new RecordAllFailures();
         failures.FailureMessages.Add("Hi there Thomas, How's it going?");
 
         Assert.IsFalse(failures.AnyFailMessageLike("Carmageddon"));
@@ -70,9 +70,9 @@ public class CohortTests : TestsRequiringACohort
         {
             return FailureMessages.Any(m =>
                 {
-                    bool found = bitsTofind.Any();
+                    var found = bitsTofind.Any();
 
-                    foreach(string s in bitsTofind) 
+                    foreach(var s in bitsTofind) 
                         if(!m.ToLower().Contains(s.ToLower()))
                             found = false;
 

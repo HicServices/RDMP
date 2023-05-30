@@ -42,7 +42,7 @@ public class MemoryRepository : IRepository
         NextObjectId++;
         toCreate.ID = NextObjectId;
             
-        foreach (KeyValuePair<string, object> kvp in constructorParameters)
+        foreach (var kvp in constructorParameters)
         {
             var val = kvp.Value;
 
@@ -122,7 +122,7 @@ public class MemoryRepository : IRepository
         }
         catch(InvalidOperationException e)
         {
-            throw new KeyNotFoundException("Could not find " + typeof(T).Name + " with ID " + id,e);
+            throw new KeyNotFoundException($"Could not find {typeof(T).Name} with ID {id}",e);
         }
     }
 
@@ -162,7 +162,7 @@ public class MemoryRepository : IRepository
     public T[] GetAllObjectsWithParent<T>(IMapsDirectlyToDatabaseTable parent) where T : IMapsDirectlyToDatabaseTable
     {
         //e.g. Catalogue_ID
-        string propertyName = parent.GetType().Name + "_ID";
+        var propertyName = $"{parent.GetType().Name}_ID";
 
         var prop = typeof(T).GetProperty(propertyName);
         return Objects.Keys.OfType<T>().Where(o => prop.GetValue(o) as int? == parent.ID).Cast<T>().OrderBy(o => o.ID).ToArray();
@@ -171,7 +171,7 @@ public class MemoryRepository : IRepository
     public T[] GetAllObjectsWithParent<T, T2>(T2 parent) where T : IMapsDirectlyToDatabaseTable, IInjectKnown<T2> where T2 : IMapsDirectlyToDatabaseTable
     {
         //e.g. Catalogue_ID
-        string propertyName = typeof (T2).Name + "_ID";
+        var propertyName = $"{typeof(T2).Name}_ID";
 
         var prop = typeof (T).GetProperty(propertyName);
         return Objects.Keys.OfType<T>().Where(o => prop.GetValue(o) as int? == parent.ID).Cast<T>().OrderBy(o => o.ID).ToArray();

@@ -85,11 +85,11 @@ public class BoundDouble :  Bound
 
     private bool IsWithinRange(double d, object[] otherColumns, string[] otherColumnNames)
     {
-        object low = LookupFieldNamed(LowerFieldName, otherColumns, otherColumnNames);
-        object up = LookupFieldNamed(UpperFieldName, otherColumns, otherColumnNames);
+        var low = LookupFieldNamed(LowerFieldName, otherColumns, otherColumnNames);
+        var up = LookupFieldNamed(UpperFieldName, otherColumns, otherColumnNames);
 
-        double l = Convert.ToDouble(low);
-        double u = Convert.ToDouble(up);
+        var l = Convert.ToDouble(low);
+        var u = Convert.ToDouble(up);
 
         if (Inclusive)
         {
@@ -141,22 +141,23 @@ public class BoundDouble :  Bound
 
     private string BetweenMessage(double d, string l, string u)
     {
-        return "Value " + Wrap(d.ToString()) + " out of range. Expected a value between " + Wrap(l) + " and " + Wrap(u) + (Inclusive ? " inclusively" : " exclusively") + ".";
+        return
+            $"Value {Wrap(d.ToString())} out of range. Expected a value between {Wrap(l)} and {Wrap(u)}{(Inclusive ? " inclusively" : " exclusively")}.";
     }
 
     private string GreaterThanMessage(double d, string s)
     {
-        return "Value " + Wrap(d.ToString()) + " out of range. Expected a value greater than " + Wrap(s) + ".";
+        return $"Value {Wrap(d.ToString())} out of range. Expected a value greater than {Wrap(s)}.";
     }
 
     private string LessThanMessage(double d, string s)
     {
-        return "Value " + Wrap(d.ToString()) + " out of range. Expected a value less than " + Wrap(s) + ".";
+        return $"Value {Wrap(d.ToString())} out of range. Expected a value less than {Wrap(s)}.";
     }
 
     private string Wrap(string s)
     {
-        return "[" + s + "]";
+        return $"[{s}]";
     }
         
     public BoundDouble And(int upper)
@@ -173,20 +174,20 @@ public class BoundDouble :  Bound
 
     public override string GetHumanReadableDescriptionOfValidation()
     {
-        string result = base.GetHumanReadableDescriptionOfValidation();
+        var result = base.GetHumanReadableDescriptionOfValidation();
 
 
         if (Lower != double.MinValue)
             if (Inclusive)
-                result += " >=" + Lower;
+                result += $" >={Lower}";
             else
-                result += " >" + Lower;
+                result += $" >{Lower}";
 
         if (Upper != double.MaxValue)
             if (Inclusive)
-                result += " <=" + Upper;
+                result += $" <={Upper}";
             else
-                result += " <" + Upper;
+                result += $" <{Upper}";
 
         return result;
     }

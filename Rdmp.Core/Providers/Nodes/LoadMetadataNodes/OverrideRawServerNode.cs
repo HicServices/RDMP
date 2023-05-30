@@ -26,7 +26,7 @@ class OverrideRawServerNode:ObjectUsedByOtherObjectNode<LoadMetadata,ExternalDat
 
     public override string ToString()
     {
-        return "Override RAW:" + ObjectBeingUsed.Name;
+        return $"Override RAW:{ObjectBeingUsed.Name}";
     }
 
     public string GetDeleteMessage()

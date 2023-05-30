@@ -18,7 +18,8 @@ namespace Rdmp.Core.Providers.Nodes.LoadMetadataNodes;
 public class AllCataloguesUsedByLoadMetadataNode : Node, IOrderable
 {
     public LoadMetadata LoadMetadata { get; private set; }
-    public int Order { get { return 1; } set { } }
+    public int Order { get => 1;
+        set { } }
     public List<Catalogue> UsedCatalogues { get; set; }
 
     public AllCataloguesUsedByLoadMetadataNode(LoadMetadata lmd)

@@ -98,7 +98,7 @@ argValue    New value for argument e.g. Null, True, Catalogue:5 etc")]
         }
         catch (Exception e)
         {
-            SetImpossible("Failed to get system Type of argument:" + e);
+            SetImpossible($"Failed to get system Type of argument:{e}");
             return;
         }
 

@@ -19,10 +19,7 @@ public class BackfillMigrationFieldProcessor : IMigrationFieldProcessor
 {
     public bool NoBackupTrigger 
     { 
-        get
-        {
-            return false;
-        }
+        get => false;
         set 
         {
             if(!value)

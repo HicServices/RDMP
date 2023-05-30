@@ -41,7 +41,7 @@ public class AutoCompleteProviderWin : AutoCompleteProvider
         queryEditor.AutoCOrder = Order.Custom;
         queryEditor.AutoCAutoHide = false;
 
-        for (int i = 0; i < Images.Length; i++)
+        for (var i = 0; i < Images.Length; i++)
         {
             queryEditor.RegisterRgbaImage(i, Images[i].ImageToBitmap());
         }
@@ -58,7 +58,7 @@ public class AutoCompleteProviderWin : AutoCompleteProvider
     private void ShowAutocomplete(Scintilla scintilla,bool all)
     {
         // Find the word start
-        string word = scintilla.GetWordFromPosition(scintilla.CurrentPosition)?.Trim();
+        var word = scintilla.GetWordFromPosition(scintilla.CurrentPosition)?.Trim();
             
         if (string.IsNullOrWhiteSpace(word) && !all)
         {

@@ -30,7 +30,7 @@ public class AggregateDataBasedTests:DatabaseTests
 {
     private DataTable GetTestDataTable()
     {
-        DataTable dt = new DataTable();
+        var dt = new DataTable();
         dt.TableName = "AggregateDataBasedTests";
 
         dt.Columns.Add("EventDate");
@@ -85,13 +85,13 @@ public class AggregateDataBasedTests:DatabaseTests
     private void Destroy(DiscoveredTable tbl, params IDeleteable[] deletablesInOrderOfDeletion)
     {
         tbl.Drop();
-        foreach (IDeleteable deleteable in deletablesInOrderOfDeletion)
+        foreach (var deleteable in deletablesInOrderOfDeletion)
             deleteable.DeleteInDatabase();
     }
 
     private DataTable GetResultForBuilder(AggregateBuilder builder, DiscoveredTable tbl)
     {
-        string sql = builder.SQL;
+        var sql = builder.SQL;
 
         using (var con = tbl.Database.Server.GetConnection())
         {

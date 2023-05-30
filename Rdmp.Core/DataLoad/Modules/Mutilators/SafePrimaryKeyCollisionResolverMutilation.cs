@@ -41,15 +41,15 @@ False - Delete the larger value")]
 
     public void DeleteRows(DiscoveredTable tbl,ColumnInfo[] primaryKeys,IDataLoadEventListener listener)
     {
-        string join = string.Join(" AND ", primaryKeys.Select(k => "t1." + k.GetRuntimeName() + "=t2." + k.GetRuntimeName()));
+        var join = string.Join(" AND ", primaryKeys.Select(k => $"t1.{k.GetRuntimeName()}=t2.{k.GetRuntimeName()}"));
 
 
-        string t1DotColumn = "t1." + ColumnToResolveOn.GetRuntimeName(_loadStage);
-        string t2DotColumn = "t2." + ColumnToResolveOn.GetRuntimeName(_loadStage);
+        var t1DotColumn = $"t1.{ColumnToResolveOn.GetRuntimeName(_loadStage)}";
+        var t2DotColumn = $"t2.{ColumnToResolveOn.GetRuntimeName(_loadStage)}";
 
         //FYI - we are considering whether to delete records from table {0}
 
-        string deleteConditional = 
+        var deleteConditional = 
             PreferNulls?
                 //delete rows {0} where {0} is not null and {1} is null - leaving only the null records {1}
                 string.Format("({0} IS NOT NULL AND {1} IS NULL)",t1DotColumn,t2DotColumn):
@@ -77,8 +77,9 @@ False - Delete the larger value")]
             {
                 cmd.CommandTimeout = Timeout;
 
-                int affectedRows = cmd.ExecuteNonQuery();
-                listener.OnNotify(this,new NotifyEventArgs(ProgressEventType.Information, "Deleted " + affectedRows + " rows"));
+                var affectedRows = cmd.ExecuteNonQuery();
+                listener.OnNotify(this,new NotifyEventArgs(ProgressEventType.Information,
+                    $"Deleted {affectedRows} rows"));
             }
         }
     }
@@ -86,7 +87,8 @@ False - Delete the larger value")]
     public void Check(ICheckNotifier notifier)
     {
         if(ColumnToResolveOn != null && ColumnToResolveOn.IsPrimaryKey)
-            notifier.OnCheckPerformed(new CheckEventArgs("You cannot use "+ ColumnToResolveOn + " to resolve primary key collisions because it is part of the primary key",CheckResult.Fail));
+            notifier.OnCheckPerformed(new CheckEventArgs(
+                $"You cannot use {ColumnToResolveOn} to resolve primary key collisions because it is part of the primary key",CheckResult.Fail));
     }
 
     public void LoadCompletedSoDispose(ExitCodeType exitCode, IDataLoadEventListener postLoadEventsListener)

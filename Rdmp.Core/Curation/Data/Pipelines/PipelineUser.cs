@@ -47,7 +47,7 @@ public class PipelineUser:IPipelineUser
         User = user;
 
         if(property.PropertyType != typeof (int?))
-            throw new NotSupportedException("Property " + property + " must be of PropertyType nullable int");
+            throw new NotSupportedException($"Property {property} must be of PropertyType nullable int");
 
         //if user passed in an explicit one
         _catalogueRepository = repository;
@@ -65,7 +65,8 @@ public class PipelineUser:IPipelineUser
                 _catalogueRepository = dataExportRepo.CatalogueRepository;
 
             if (_catalogueRepository == null)
-                throw new Exception("Repository of Host '" + User + "' was not an ICatalogueRepository or a IDataExportRepository.  user came from a Repository called '" + user.Repository.GetType().Name + "' in this case you will need to specify the ICatalogueRepository property to this method so we know where to fetch Pipelines from");
+                throw new Exception(
+                    $"Repository of Host '{User}' was not an ICatalogueRepository or a IDataExportRepository.  user came from a Repository called '{user.Repository.GetType().Name}' in this case you will need to specify the ICatalogueRepository property to this method so we know where to fetch Pipelines from");
                 
         }
         Getter = Get;

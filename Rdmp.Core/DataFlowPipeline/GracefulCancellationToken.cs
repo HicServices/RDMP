@@ -48,26 +48,17 @@ public class GracefulCancellationToken
     /// <summary>
     /// True if <see cref="AbortToken"/> has been set
     /// </summary>
-    public bool IsAbortRequested 
-    {
-        get { return AbortToken.IsCancellationRequested; }
-    }
-        
+    public bool IsAbortRequested => AbortToken.IsCancellationRequested;
+
     /// <summary>
     /// True if <see cref="StopToken"/> has been set
     /// </summary>
-    public bool IsStopRequested
-    {
-        get { return StopToken.IsCancellationRequested; }
-    }
+    public bool IsStopRequested => StopToken.IsCancellationRequested;
 
     /// <summary>
     /// True if either <see cref="AbortToken"/> or <see cref="StopToken"/> has been set
     /// </summary>
-    public bool IsCancellationRequested
-    {
-        get { return IsAbortRequested || IsStopRequested; }
-    }
+    public bool IsCancellationRequested => IsAbortRequested || IsStopRequested;
 
     /// <summary>
     /// Throws OperationCanceledException if either <see cref="AbortToken"/> or <see cref="StopToken"/> has been set

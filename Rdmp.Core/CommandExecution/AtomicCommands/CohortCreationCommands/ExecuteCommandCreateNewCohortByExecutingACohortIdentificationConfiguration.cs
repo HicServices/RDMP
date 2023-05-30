@@ -91,7 +91,7 @@ public class ExecuteCommandCreateNewCohortByExecutingACohortIdentificationConfig
 
         request.CohortIdentificationConfiguration = cic;
 
-        var configureAndExecute = GetConfigureAndExecuteControl(request, "Execute CIC " + cic + " and commmit results",cic);
+        var configureAndExecute = GetConfigureAndExecuteControl(request, $"Execute CIC {cic} and commmit results",cic);
 
         configureAndExecute.PipelineExecutionFinishedsuccessfully += (s,u)=>OnImportCompletedSuccessfully(s,u,cic);
 

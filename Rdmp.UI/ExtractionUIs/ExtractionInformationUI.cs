@@ -62,7 +62,7 @@ public partial class ExtractionInformationUI : ExtractionInformationUI_Design, I
     private bool _namesMatchedWhenDialogWasLaunched = false;
 
     private bool isFirstTimeSetupCalled = true;
-    private IQuerySyntaxHelper _querySyntaxHelper = new MicrosoftQuerySyntaxHelper();
+    private IQuerySyntaxHelper _querySyntaxHelper = MicrosoftQuerySyntaxHelper.Instance;
 
     RAGSmileyToolStrip ragSmiley1;
     private bool _isLoading;
@@ -91,8 +91,8 @@ public partial class ExtractionInformationUI : ExtractionInformationUI_Design, I
         //alias prefix is ' as ' so make sure user doesn't start a new line with "bobbob\r\nas fish" since this won't be recognised, solve the problem by inserting the original alias
         if (_querySyntaxHelper.AliasPrefix.StartsWith(" "))
         {
-            string before = QueryEditor.Text;
-            string after = Regex.Replace(before, "^" + _querySyntaxHelper.AliasPrefix.TrimStart(),
+            var before = QueryEditor.Text;
+            var after = Regex.Replace(before, $"^{_querySyntaxHelper.AliasPrefix.TrimStart()}",
                 _querySyntaxHelper.AliasPrefix, RegexOptions.IgnoreCase | RegexOptions.Multiline);
 
             if (!before.Equals(after))
@@ -258,11 +258,11 @@ public partial class ExtractionInformationUI : ExtractionInformationUI_Design, I
         // regex:
         // \s* = don't capture whitespace before or after the comment so we can consistently add a single space front and back for the block comment
         // .*? = lazy capture of comment text, so we don't eat repeated whitespace at the end of the comment (matched by the second \s* outside the capture group)
-        var commentRegex = new Regex(@"--\s*(?<comment>.*?)\s*" + Environment.NewLine);
+        var commentRegex = new Regex($@"--\s*(?<comment>.*?)\s*{Environment.NewLine}");
         if (commentRegex.Matches(QueryEditor.Text).Count > 0)
         {
             MessageBox.Show("Line comments are not allowed in the query, these will be automatically converted to block comments.", "Line comments");
-            QueryEditor.Text = commentRegex.Replace(QueryEditor.Text, "/* ${comment} */" + Environment.NewLine);
+            QueryEditor.Text = commentRegex.Replace(QueryEditor.Text, $"/* ${{comment}} */{Environment.NewLine}");
         }
     }
         

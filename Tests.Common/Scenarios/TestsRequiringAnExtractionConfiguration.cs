@@ -124,7 +124,7 @@ public class TestsRequiringAnExtractionConfiguration : TestsRequiringACohort
     {
         Database = GetCleanedServer(FAnsi.DatabaseType.MicrosoftSQLServer);
 
-        DataTable dt = new DataTable();
+        var dt = new DataTable();
         dt.Columns.Add("PrivateID");
         dt.Columns.Add("Name");
         dt.Columns.Add("DateOfBirth");
@@ -136,7 +136,7 @@ public class TestsRequiringAnExtractionConfiguration : TestsRequiringACohort
         CatalogueItem[] cataItems;
         _catalogue = Import(tbl, out _tableInfo, out _columnInfos, out cataItems,out _extractionInformations);
             
-        ExtractionInformation _privateID = _extractionInformations.First(e => e.GetRuntimeName().Equals("PrivateID"));
+        var _privateID = _extractionInformations.First(e => e.GetRuntimeName().Equals("PrivateID"));
         _privateID.IsExtractionIdentifier = true;
         _privateID.SaveToDatabase();
             
@@ -165,7 +165,7 @@ public class TestsRequiringAnExtractionConfiguration : TestsRequiringACohort
     {
         listener ??= new ThrowImmediatelyDataLoadEventListener();
 
-        DataLoadInfo d = new DataLoadInfo("Internal", _testDatabaseName, "IgnoreMe", "", true, new DiscoveredServer(UnitTestLoggingConnectionString));
+        var d = new DataLoadInfo("Internal", _testDatabaseName, "IgnoreMe", "", true, new DiscoveredServer(UnitTestLoggingConnectionString));
 
         Pipeline pipeline = null;
             

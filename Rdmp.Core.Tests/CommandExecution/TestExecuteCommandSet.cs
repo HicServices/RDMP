@@ -19,7 +19,8 @@ class TestExecuteCommandSet : CommandCliTests
     {
         var cata = new Catalogue(Repository.CatalogueRepository, "Bob");
 
-        GetInvoker().ExecuteCommand(typeof(ExecuteCommandSet),new CommandLineObjectPicker(new []{"Catalogue:" + cata.ID,"Description","Some long description"}, GetActivator()));
+        GetInvoker().ExecuteCommand(typeof(ExecuteCommandSet),new CommandLineObjectPicker(new []{
+            $"Catalogue:{cata.ID}","Description","Some long description"}, GetActivator()));
 
         cata.RevertToDatabaseState();
         Assert.AreEqual("Some long description",cata.Description);
@@ -33,7 +34,8 @@ class TestExecuteCommandSet : CommandCliTests
         cata.Description = "something cool";
         cata.SaveToDatabase();
 
-        GetInvoker().ExecuteCommand(typeof(ExecuteCommandSet),new CommandLineObjectPicker(new []{"Catalogue:" + cata.ID,"Description","NULL"}, GetActivator()));
+        GetInvoker().ExecuteCommand(typeof(ExecuteCommandSet),new CommandLineObjectPicker(new []{
+            $"Catalogue:{cata.ID}","Description","NULL"}, GetActivator()));
 
         cata.RevertToDatabaseState();
         Assert.IsNull(cata.Description);
@@ -53,7 +55,7 @@ class TestExecuteCommandSet : CommandCliTests
         var t3 = WhenIHaveA<TableInfo>();
         var t4 = WhenIHaveA<TableInfo>();
 
-        var ids = t1.ID + "," + t2.ID + "," + t3.ID + "," + t4.ID;
+        var ids = $"{t1.ID},{t2.ID},{t3.ID},{t4.ID}";
 
         Assert.IsNull(pta.Value);
         Assert.IsNull(pta.GetValueAsSystemType());

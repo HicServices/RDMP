@@ -32,7 +32,7 @@ public class PayloadTest:DatabaseTests
     [Test]
     public void TestPayloadInjection()
     {
-        BulkTestsData b = new BulkTestsData(CatalogueRepository,GetCleanedServer(FAnsi.DatabaseType.MicrosoftSQLServer),10);
+        var b = new BulkTestsData(CatalogueRepository,GetCleanedServer(FAnsi.DatabaseType.MicrosoftSQLServer),10);
         b.SetupTestData();
         b.ImportAsCatalogue();
 
@@ -56,7 +56,7 @@ public class PayloadTest:DatabaseTests
 
         var config = new HICDatabaseConfiguration(GetCleanedServer(FAnsi.DatabaseType.MicrosoftSQLServer).Server);
         var factory = new HICDataLoadFactory(lmd, config, new HICLoadConfigurationFlags(), CatalogueRepository, lm);
-        IDataLoadExecution execution = factory.Create(new ThrowImmediatelyDataLoadEventListener());
+        var execution = factory.Create(new ThrowImmediatelyDataLoadEventListener());
 
         var proceedure = new DataLoadProcess(RepositoryLocator, lmd, null, lm, new ThrowImmediatelyDataLoadEventListener(), execution, config);
 
@@ -74,7 +74,7 @@ public class PayloadTest:DatabaseTests
 
         public override ExitCodeType Attach(IDataLoadJob job, GracefulCancellationToken cancellationToken)
         {
-            job.OnNotify(this,new NotifyEventArgs(ProgressEventType.Information, "Found Payload:" + job.Payload));
+            job.OnNotify(this,new NotifyEventArgs(ProgressEventType.Information, $"Found Payload:{job.Payload}"));
             PayloadTest.Success = ReferenceEquals(payload, job.Payload);
 
             return ExitCodeType.OperationNotRequired;

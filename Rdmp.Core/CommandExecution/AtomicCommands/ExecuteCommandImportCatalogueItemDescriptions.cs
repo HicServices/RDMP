@@ -34,7 +34,7 @@ public class ExecuteCommandImportCatalogueItemDescriptions : BasicCommandExecuti
             if (!SelectOne(BasicActivator.CoreChildProvider.AllCatalogues, out other))
                 return;
 
-        foreach (CatalogueItem ci in ToPopulate.CatalogueItems)
+        foreach (var ci in ToPopulate.CatalogueItems)
         {
 
             var match = other.CatalogueItems.FirstOrDefault(o =>

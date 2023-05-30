@@ -23,8 +23,8 @@ public class ImportFileTests:DatabaseTests
     [Test]
     public void ImportFile()
     {
-        string file = Path.GetTempFileName();
-        string databaseName = TestDatabaseNames.GetConsistentName(GetType().Name);
+        var file = Path.GetTempFileName();
+        var databaseName = TestDatabaseNames.GetConsistentName(GetType().Name);
             
         try
         {
@@ -62,7 +62,7 @@ public class ImportFileTests:DatabaseTests
             var dt = source.GetChunk(new ThrowImmediatelyDataLoadEventListener(), new GracefulCancellationToken());
                 
             var tbl = database.CreateTable(dt.TableName, dt);
-            string tableName = tbl.GetRuntimeName();
+            var tableName = tbl.GetRuntimeName();
 
             source.Dispose(new ThrowImmediatelyDataLoadEventListener(), null);
 
@@ -84,10 +84,10 @@ public class ImportFileTests:DatabaseTests
             {
                 con.Open();
 
-                SqlCommand cmdReadData =
+                var cmdReadData =
                     new SqlCommand(
-                        "Select * from " + tablesInDatabase[0].GetRuntimeName() + " WHERE Name='Frank'", con);
-                SqlDataReader r = cmdReadData.ExecuteReader();
+                        $"Select * from {tablesInDatabase[0].GetRuntimeName()} WHERE Name='Frank'", con);
+                var r = cmdReadData.ExecuteReader();
 
                 //expected 1 record only
                 Assert.IsTrue(r.Read());

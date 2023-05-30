@@ -27,7 +27,7 @@ public class CopyPasteProvider
     {
         if (keyEventArgs.KeyCode == Keys.C && keyEventArgs.Control)
         {
-            RDMPCombineableFactory commandFactory = new RDMPCombineableFactory();
+            var commandFactory = new RDMPCombineableFactory();
 
             var command = commandFactory.Create(_tree.SelectedObject);
 

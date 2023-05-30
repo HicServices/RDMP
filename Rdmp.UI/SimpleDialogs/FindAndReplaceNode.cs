@@ -4,6 +4,7 @@
 // RDMP is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License for more details.
 // You should have received a copy of the GNU General Public License along with RDMP. If not, see <https://www.gnu.org/licenses/>.
 
+using System;
 using System.Globalization;
 using System.Reflection;
 using System.Text.RegularExpressions;
@@ -24,7 +25,7 @@ internal class FindAndReplaceNode:IMasqueradeAs
     {
         Instance = instance;
         Property = property;
-        PropertyName = instance.GetType().Name + "." + property.Name;
+        PropertyName = $"{instance.GetType().Name}.{property.Name}";
 
         _currentValue = Property.GetValue(Instance);
     }
@@ -53,8 +54,9 @@ internal class FindAndReplaceNode:IMasqueradeAs
 
     public void FindAndReplace(string find, string replace, bool ignoreCase)
     {
-        if(_currentValue.ToString().Contains(find,ignoreCase? CompareOptions.IgnoreCase:CompareOptions.None ))
-            SetValue(_currentValue.ToString().Replace(find, replace,ignoreCase ? RegexOptions.IgnoreCase: RegexOptions.None));
+        var current=_currentValue.ToString();
+        if(current?.Contains(find,ignoreCase?StringComparison.CurrentCultureIgnoreCase:StringComparison.CurrentCulture)==true)
+            SetValue(current.Replace(find, replace,ignoreCase ? StringComparison.CurrentCultureIgnoreCase:StringComparison.CurrentCulture));
     }
     #region Equality Members
     protected bool Equals(FindAndReplaceNode other)

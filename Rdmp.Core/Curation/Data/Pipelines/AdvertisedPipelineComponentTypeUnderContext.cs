@@ -82,7 +82,7 @@ public class AdvertisedPipelineComponentTypeUnderContext
 
     public string GetReasonIncompatible()
     {
-        string toReturn = _allowableReason;
+        var toReturn = _allowableReason;
 
         if (unmetRequirements.Any())
         {
@@ -92,8 +92,7 @@ public class AdvertisedPipelineComponentTypeUnderContext
                 toReturn += "The";
 
             toReturn +=
-                " following types are required by the component but not available as input objects to the pipeline " +
-                string.Join(",", unmetRequirements);
+                $" following types are required by the component but not available as input objects to the pipeline {string.Join(",", unmetRequirements)}";
 
         }
 

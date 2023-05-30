@@ -143,10 +143,10 @@ public class BulkTestsData
     /// <returns></returns>
     public ICatalogue ImportAsCatalogue()
     {
-        TableInfoImporter f = new TableInfoImporter(_repository, BulkDataDatabase.ExpectTable(BulkDataTable));
+        var f = new TableInfoImporter(_repository, BulkDataDatabase.ExpectTable(BulkDataTable));
         f.DoImport(out tableInfo,out columnInfos);
 
-        ForwardEngineerCatalogue forwardEngineer = new ForwardEngineerCatalogue(tableInfo,columnInfos);
+        var forwardEngineer = new ForwardEngineerCatalogue(tableInfo,columnInfos);
         forwardEngineer.ExecuteForwardEngineering(out var c,out catalogueItems, out extractionInformations);
         this.catalogue = c;
 
@@ -174,7 +174,7 @@ public class BulkTestsData
             }
             catch (CredentialsInUseException e)
             {
-                Console.WriteLine("Ignored Potential Exception:" + e);
+                Console.WriteLine($"Ignored Potential Exception:{e}");
             }
 
         if(catalogue.Exists())
@@ -183,7 +183,7 @@ public class BulkTestsData
 
     public void SetupValidationOnCatalogue()
     {
-        Validator v = new Validator();
+        var v = new Validator();
         var iv = new ItemValidator("chi");
         iv.PrimaryConstraint = new Chi();
         iv.PrimaryConstraint.Consequence = Consequence.Wrong;

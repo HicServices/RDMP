@@ -31,8 +31,7 @@ internal class HousekeepingTests : DatabaseTests
         {
             con.Open();
             var cmd = server.GetCommand(
-                "CREATE TRIGGER dbo.[TestTable_OnUpdate] ON [dbo].[" + tableName +
-                "] AFTER DELETE AS RAISERROR('MESSAGE',16,10)", con);
+                $"CREATE TRIGGER dbo.[TestTable_OnUpdate] ON [dbo].[{tableName}] AFTER DELETE AS RAISERROR('MESSAGE',16,10)", con);
 
             cmd.ExecuteNonQuery();
         }
@@ -52,8 +51,7 @@ internal class HousekeepingTests : DatabaseTests
             con.Open();
             var cmd =
                 new SqlCommand(
-                    "USE [" + databaseName + "]; DISABLE TRIGGER TestTable_OnUpdate ON [" + databaseName + "]..[" +
-                    tableName + "]", con);
+                    $"USE [{databaseName}]; DISABLE TRIGGER TestTable_OnUpdate ON [{databaseName}]..[{tableName}]", con);
             cmd.ExecuteNonQuery();
         }
 

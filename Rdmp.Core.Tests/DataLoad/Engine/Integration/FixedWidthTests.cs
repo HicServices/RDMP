@@ -23,7 +23,7 @@ public class FixedWidthTests :DatabaseTests
 {
     private FixedWidthFormatFile CreateFormatFile()
     {
-        FileInfo fileInfo = new FileInfo(Path.Combine(TestContext.CurrentContext.TestDirectory,@"FixedWidthFormat.csv"));
+        var fileInfo = new FileInfo(Path.Combine(TestContext.CurrentContext.TestDirectory,@"FixedWidthFormat.csv"));
 
         File.WriteAllText(fileInfo.FullName, LoadDirectory.ExampleFixedWidthFormatFileContents);
             
@@ -35,7 +35,7 @@ public class FixedWidthTests :DatabaseTests
     [Test]
     public void TestLoadingFormat()
     {
-        FixedWidthFormatFile formatFile = CreateFormatFile();
+        var formatFile = CreateFormatFile();
 
         Assert.AreEqual(8,formatFile.FormatColumns.Length);
 
@@ -93,11 +93,11 @@ public class FixedWidthTests :DatabaseTests
     [Test]
     public void TestLoadingFormatThenFile()
     {
-        FixedWidthFormatFile formatFile = CreateFormatFile();
+        var formatFile = CreateFormatFile();
 
-        string tempFileToCreate = Path.Combine(TestContext.CurrentContext.TestDirectory,"unitTestFixedWidthFile.txt");
+        var tempFileToCreate = Path.Combine(TestContext.CurrentContext.TestDirectory,"unitTestFixedWidthFile.txt");
 
-        StreamWriter streamWriter = File.CreateText(tempFileToCreate);
+        var streamWriter = File.CreateText(tempFileToCreate);
         try
         {
             streamWriter.WriteLine("002644099999Akerman             Frank               FM 380512004040120090501");
@@ -105,7 +105,7 @@ public class FixedWidthTests :DatabaseTests
             streamWriter.Flush();
             streamWriter.Close();
                 
-            DataTable dataTable = formatFile.GetDataTableFromFlatFile(new FileInfo(tempFileToCreate));
+            var dataTable = formatFile.GetDataTableFromFlatFile(new FileInfo(tempFileToCreate));
             Assert.AreEqual(dataTable.Rows.Count,2);
             Assert.AreEqual("0026440", dataTable.Rows[0]["gmc"]);
             Assert.AreEqual("99999", dataTable.Rows[0]["gp_code"]);
@@ -138,22 +138,22 @@ public class FixedWidthTests :DatabaseTests
     public void TestHeaderMatching(FixedWidthTestCase testCase)
     {
         //Create the format file
-        string flatFileColumn = "myNumber";
+        var flatFileColumn = "myNumber";
 
         if (testCase == FixedWidthTestCase.MisnamedHeaders)
             flatFileColumn = "chickenDippers";
 
-        FileInfo formatFile = new FileInfo(Path.Combine(TestContext.CurrentContext.TestDirectory,"Format.csv"));
+        var formatFile = new FileInfo(Path.Combine(TestContext.CurrentContext.TestDirectory,"Format.csv"));
 
-        File.WriteAllText(formatFile.FullName, @"From,To,Field,Size,DateFormat
-1,5," + flatFileColumn + ",5");
+        File.WriteAllText(formatFile.FullName, $@"From,To,Field,Size,DateFormat
+1,5,{flatFileColumn},5");
 
 
         //Create the working directory that will be processed
         var workingDir = new DirectoryInfo(TestContext.CurrentContext.TestDirectory);
         var parentDir = workingDir.CreateSubdirectory("FixedWidthTests");
 
-        DirectoryInfo toCleanup = parentDir.GetDirectories().SingleOrDefault(d => d.Name.Equals("TestHeaderMatching"));
+        var toCleanup = parentDir.GetDirectories().SingleOrDefault(d => d.Name.Equals("TestHeaderMatching"));
         if (toCleanup != null)
             toCleanup.Delete(true);
 

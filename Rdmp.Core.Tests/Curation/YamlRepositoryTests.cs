@@ -28,7 +28,7 @@ internal class YamlRepositoryTests
     [Test]
     public void BlankConstructorsForEveryone()
     {
-        StringBuilder sb = new StringBuilder();
+        var sb = new StringBuilder();
 
         foreach(var t in new YamlRepository(GetUniqueDirectory()).GetCompatibleTypes())
         {

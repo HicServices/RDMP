@@ -57,8 +57,8 @@ public class CachingHostTests : UnitTests
 
             
         //Create a time period that we are outwith (1 hour ago to 30 minutes ago).
-        TimeSpan start = DateTime.Now.TimeOfDay.Subtract(new TimeSpan(0,1,0,0));
-        TimeSpan stop = DateTime.Now.TimeOfDay.Subtract(new TimeSpan(0,0,30,0));
+        var start = DateTime.Now.TimeOfDay.Subtract(new TimeSpan(0,1,0,0));
+        var stop = DateTime.Now.TimeOfDay.Subtract(new TimeSpan(0,0,30,0));
         permissionWindow.SetPermissionWindowPeriods(new List<PermissionWindowPeriod>(new []
         {
             new PermissionWindowPeriod(
@@ -125,7 +125,7 @@ internal class ExpectedNotificationListener : IDataLoadEventListener
 
     public void OnNotify(object sender, NotifyEventArgs e)
     {
-        Console.WriteLine(sender + " sent message: " + e.Message);
+        Console.WriteLine($"{sender} sent message: {e.Message}");
 
         if (e.Message.Equals(_expectedNotificationString))
             OnReceivedMessage();

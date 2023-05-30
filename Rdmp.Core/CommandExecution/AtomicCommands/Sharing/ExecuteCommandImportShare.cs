@@ -53,7 +53,7 @@ public abstract class ExecuteCommandImportShare : BasicCommandExecution, IAtomic
         var json = File.ReadAllText(_shareDefinitionFile.FullName);
         var shareManager = new ShareManager(BasicActivator.RepositoryLocator);
 
-        List<ShareDefinition> shareDefinitions = shareManager.GetShareDefinitionList(json);
+        var shareDefinitions = shareManager.GetShareDefinitionList(json);
 
         ExecuteImpl(shareManager, shareDefinitions);
     }

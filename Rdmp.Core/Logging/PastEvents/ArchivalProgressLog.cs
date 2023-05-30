@@ -33,7 +33,7 @@ public class ArchivalProgressLog : IArchivalLoggingRecordOfPastEvent, IComparabl
     }
     public override string ToString()
     {
-        return Date + " - " + Description;
+        return $"{Date} - {Description}";
     }
 
     public int CompareTo(object obj)

@@ -29,7 +29,7 @@ public partial class ExtractionFilterParameterSetUI : ExtractionFilterParameterS
         
     public ExtractionFilterParameterSet ExtractionFilterParameterSet
     {
-        get { return _extractionFilterParameterSet; }
+        get => _extractionFilterParameterSet;
         private set
         {
             _extractionFilterParameterSet = value;
@@ -43,7 +43,7 @@ public partial class ExtractionFilterParameterSetUI : ExtractionFilterParameterS
         tbName.Text = ExtractionFilterParameterSet.Name;
         tbDescription.Text = ExtractionFilterParameterSet.Description;
 
-        ParameterCollectionUIOptionsFactory factory = new ParameterCollectionUIOptionsFactory();
+        var factory = new ParameterCollectionUIOptionsFactory();
         var options = factory.Create(ExtractionFilterParameterSet);
         parameterCollectionUI1.SetUp(options,Activator);
     }

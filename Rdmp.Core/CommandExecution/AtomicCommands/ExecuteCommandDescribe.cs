@@ -93,7 +93,7 @@ public class ExecuteCommandDescribe:BasicCommandExecution
     {
         if(_nonDatabaseObjectToDescribe != null)
         {
-            string summary = BuildDescribe(_nonDatabaseObjectToDescribe, out string title);
+            var summary = BuildDescribe(_nonDatabaseObjectToDescribe, out var title);
 
             return title + Environment.NewLine + summary;
         }
@@ -111,14 +111,14 @@ public class ExecuteCommandDescribe:BasicCommandExecution
         else
         if(_nonDatabaseObjectToDescribe != null)
         {
-            var description = BuildDescribe(_nonDatabaseObjectToDescribe,out string title);
+            var description = BuildDescribe(_nonDatabaseObjectToDescribe,out var title);
             Show(title, description);
         }
         else
         {
-            StringBuilder sb = new StringBuilder();
+            var sb = new StringBuilder();
 
-            foreach (IMapsDirectlyToDatabaseTable o in _databaseObjectToDescribe)
+            foreach (var o in _databaseObjectToDescribe)
             {
                 BuildDescribe(o, sb);
             }
@@ -139,7 +139,7 @@ public class ExecuteCommandDescribe:BasicCommandExecution
     private static void BuildDescribe(IMapsDirectlyToDatabaseTable o, StringBuilder sb)
     {
 
-        foreach (PropertyInfo p in o.GetType().GetProperties())
+        foreach (var p in o.GetType().GetProperties())
         {
             // don't describe helper properties
             if(p.GetCustomAttributes(typeof(NoMappingToDatabase)).Any())
@@ -190,7 +190,7 @@ public class ExecuteCommandDescribe:BasicCommandExecution
         var sbSyntaxes = new StringBuilder();
         sbSyntaxes.AppendLine();
         sbSyntaxes.AppendLine("The following syntaxes may be used for parameters in this query:");
-        bool anySyntaxes = false;
+        var anySyntaxes = false;
 
         // Usage
         if (dynamicCtorAttribute != null)
@@ -211,7 +211,8 @@ public class ExecuteCommandDescribe:BasicCommandExecution
                 var unsupported = commandCtor.GetParameters().Where(p => invoker.WhyCommandNotSupported(p) is not null).ToArray();
 
                 if (unsupported.Any())
-                    sb.AppendLine("The following parameter types (required by the command's constructor) were not supported:" + Environment.NewLine + string.Join(Environment.NewLine, unsupported.Select(p => $"{p.Name}({p.ParameterType})")));
+                    sb.AppendLine(
+                        $"The following parameter types (required by the command's constructor) were not supported:{Environment.NewLine}{string.Join(Environment.NewLine, unsupported.Select(p => $"{p.Name}({p.ParameterType})"))}");
             }
         }
         else
@@ -219,7 +220,7 @@ public class ExecuteCommandDescribe:BasicCommandExecution
             // For each thing the constructor takes
             var parameters = commandCtor.GetParameters();
 
-            foreach (ParameterInfo p in parameters)
+            foreach (var p in parameters)
             {
                 var req = new RequiredArgument(p);
 
@@ -259,7 +260,7 @@ public class ExecuteCommandDescribe:BasicCommandExecution
     {
         if(parameters.Any(selector))
         {
-            sbSyntaxes.AppendLine(Environment.NewLine + title + ":");
+            sbSyntaxes.AppendLine($"{Environment.NewLine}{title}:");
             sbSyntaxes.AppendLine("Formats:");
             foreach (var p in pickers)
                 sbSyntaxes.AppendLine(p.Format);
@@ -277,8 +278,8 @@ public class ExecuteCommandDescribe:BasicCommandExecution
 
     private string FormatParameterDescription(RequiredArgument req,ConstructorInfo ctor)
     {
-        int nameColWidth = ctor.GetParameters().Max(p=>p.Name.Length);
-        int typeColWidth = ctor.GetParameters().Max(p=>p.ParameterType.Name.Length);
+        var nameColWidth = ctor.GetParameters().Max(p=>p.Name.Length);
+        var typeColWidth = ctor.GetParameters().Max(p=>p.ParameterType.Name.Length);
 
         try
         {
@@ -325,12 +326,12 @@ public class ExecuteCommandDescribe:BasicCommandExecution
         
     private string Wrap(string longString, int width, int indent)
     {
-        string[] words = longString.Split(' ');
+        var words = longString.Split(' ');
 
-        StringBuilder newSentence = new StringBuilder(longString.Length);
+        var newSentence = new StringBuilder(longString.Length);
 
-        StringBuilder line = new StringBuilder(width);
-        foreach (string word in words)
+        var line = new StringBuilder(width);
+        foreach (var word in words)
         {
             if ((line.Length + word.Length) >= width)
             {
@@ -357,13 +358,13 @@ public class ExecuteCommandDescribe:BasicCommandExecution
         var help = BasicActivator.CommentStore ?? CreateCommentStore();
 
         // Basic info about command
-        sb.AppendLine("Name: " + commandType.Name);
+        sb.AppendLine($"Name: {commandType.Name}");
 
 
         var aliases = commandType.GetCustomAttributes(false).OfType<AliasAttribute>().ToArray();
         if(aliases.Any())
         {
-            sb.AppendLine("Aliases:" + string.Join(',',aliases.Select(a=>a.Name).ToArray()));
+            sb.AppendLine($"Aliases:{string.Join(',', aliases.Select(a => a.Name).ToArray())}");
         }
                 
         var helpText = help.GetTypeDocumentationIfExists(commandType);
@@ -371,7 +372,7 @@ public class ExecuteCommandDescribe:BasicCommandExecution
         if(helpText != null)
         {
             sb.AppendLine();
-            sb.AppendLine("Description: " + Environment.NewLine + helpText);
+            sb.AppendLine($"Description: {Environment.NewLine}{helpText}");
         }
 
         sb.AppendLine();

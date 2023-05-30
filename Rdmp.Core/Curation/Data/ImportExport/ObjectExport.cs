@@ -33,13 +33,13 @@ public class ObjectExport : ReferenceOtherObjectDatabaseEntity, IInjectKnown<IMa
     /// </summary>
     public string SharingUID
     {
-        get { return _sharingUID; }
-        set { SetField(ref _sharingUID, value); }
+        get => _sharingUID;
+        set => SetField(ref _sharingUID, value);
     }
         
     /// <inheritdoc cref="SharingUID"/>
     [NoMappingToDatabase]
-    public Guid SharingUIDAsGuid { get { return Guid.Parse(SharingUID); }}
+    public Guid SharingUIDAsGuid => Guid.Parse(SharingUID);
 
     public ObjectExport()
     {

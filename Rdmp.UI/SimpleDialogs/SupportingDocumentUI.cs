@@ -101,11 +101,11 @@ public partial class SupportingDocumentUI : SupportingDocumentUI_Design, ISaveab
         if (toSetOn == null) return;
         try
         {
-            Uri u = new Uri(tb.Text);
+            var u = new Uri(tb.Text);
 
             tb.ForeColor = Color.Black;
 
-            PropertyInfo target = toSetOn.GetType().GetProperty(propertyToSet);
+            var target = toSetOn.GetType().GetProperty(propertyToSet);
 
             target.SetValue(toSetOn, new Uri(tb.Text), null);
             tb.ForeColor = Color.Black;
@@ -124,7 +124,7 @@ public partial class SupportingDocumentUI : SupportingDocumentUI_Design, ISaveab
 
     private void btnBrowse_Click(object sender, EventArgs e)
     {
-        OpenFileDialog ofd = new OpenFileDialog();
+        var ofd = new OpenFileDialog();
         ofd.CheckFileExists = true;
         if (ofd.ShowDialog() == DialogResult.OK)
             tbUrl.Text = ofd.FileName;

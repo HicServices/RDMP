@@ -29,7 +29,7 @@ public class MandatoryPropertyChecker:ICheckable
         foreach (var propertyInfo in _classInstanceToCheck.GetType().GetProperties())
         {
             //see if any demand initialization
-            DemandsInitializationAttribute demand = System.Attribute.GetCustomAttributes(propertyInfo).OfType<DemandsInitializationAttribute>().FirstOrDefault();
+            var demand = System.Attribute.GetCustomAttributes(propertyInfo).OfType<DemandsInitializationAttribute>().FirstOrDefault();
 
             //this one does
             if (demand != null)
@@ -38,7 +38,8 @@ public class MandatoryPropertyChecker:ICheckable
                 {
                     var value = propertyInfo.GetValue(_classInstanceToCheck);
                     if (value == null || string.IsNullOrEmpty(value.ToString()))
-                        notifier.OnCheckPerformed(new CheckEventArgs( "DemandsInitialization Property '" + propertyInfo.Name + "' is marked Mandatory but does not have a value", CheckResult.Fail));
+                        notifier.OnCheckPerformed(new CheckEventArgs(
+                            $"DemandsInitialization Property '{propertyInfo.Name}' is marked Mandatory but does not have a value", CheckResult.Fail));
 
                 }
             }

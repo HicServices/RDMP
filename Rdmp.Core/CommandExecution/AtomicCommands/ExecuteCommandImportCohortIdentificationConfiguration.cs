@@ -35,7 +35,7 @@ public class ExecuteCommandImportCohortIdentificationConfiguration : BasicComman
             return;
         }
 
-        if (intoContainer.ShouldBeReadOnly(out string reason))
+        if (intoContainer.ShouldBeReadOnly(out var reason))
         {
             SetImpossible(reason);
         }

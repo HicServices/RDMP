@@ -52,7 +52,7 @@ public class ExecuteCommandRunSupportingSql : ExecuteCommandViewDataBase
         {
 
             // does the query look dangerous, if so give them a choice to back out
-            bool requireConfirm = Regex.IsMatch(SupportingSQLTable.SQL, @"\b(update|delete|drop|truncate)\b", RegexOptions.IgnoreCase);
+            var requireConfirm = Regex.IsMatch(SupportingSQLTable.SQL, @"\b(update|delete|drop|truncate)\b", RegexOptions.IgnoreCase);
 
             if (requireConfirm)
             {

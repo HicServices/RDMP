@@ -29,9 +29,9 @@ public class SuffixBasedNamer : INameDatabasesAndTablesDuringLoads
         switch (stage)
         {
             case LoadBubble.Raw:
-                return rootDatabaseName + "_RAW";
+                return $"{rootDatabaseName}_RAW";
             case LoadBubble.Staging:
-                return rootDatabaseName + "_STAGING";
+                return $"{rootDatabaseName}_STAGING";
             case LoadBubble.Live:
                 return rootDatabaseName;
             default:
@@ -43,7 +43,7 @@ public class SuffixBasedNamer : INameDatabasesAndTablesDuringLoads
     public virtual string GetName(string tableName, LoadBubble convention)
     {
         if (!Suffixes.ContainsKey(convention))
-            throw new ArgumentException("Do not have a suffix for convention: " + convention);
+            throw new ArgumentException($"Do not have a suffix for convention: {convention}");
 
         return tableName + Suffixes[convention];
     }

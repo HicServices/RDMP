@@ -43,10 +43,11 @@ public class ColumnInfoToANOTableConverter
 
         var tbl = _tableInfo.Discover(DataAccessContext.DataLoad);
 
-        int rowcount = tbl.GetRowCount();
+        var rowcount = tbl.GetRowCount();
             
         if(rowcount>0)
-            throw new NotSupportedException("Table " + _tableInfo + " contains " + rowcount + " rows of data, you cannot use ColumnInfoToANOTableConverter.ConvertEmptyColumnInfo on this table");
+            throw new NotSupportedException(
+                $"Table {_tableInfo} contains {rowcount} rows of data, you cannot use ColumnInfoToANOTableConverter.ConvertEmptyColumnInfo on this table");
 
         using (var con = tbl.Database.Server.GetConnection())
         {
@@ -101,17 +102,18 @@ public class ColumnInfoToANOTableConverter
         var triggerImplementer = triggerFactory.Create(tbl);
 
         if (triggerImplementer.GetTriggerStatus() != TriggerStatus.Missing)
-            throw new NotSupportedException("Table " + _tableInfo + " has a backup trigger on it, this will destroy performance and break when we add the ANOColumn, dropping the trigger is not an option because of the _Archive table still containing identifiable data (and other reasons)");
+            throw new NotSupportedException(
+                $"Table {_tableInfo} has a backup trigger on it, this will destroy performance and break when we add the ANOColumn, dropping the trigger is not an option because of the _Archive table still containing identifiable data (and other reasons)");
     }
 
     private void MigrateExistingData(Func<string, bool> shouldApplySql, DbConnection con, ICheckNotifier notifier,DiscoveredTable tbl)
     {
-        string from = _colToNuke.GetRuntimeName(LoadStage.PostLoad);
-        string to = _newANOColumnInfo.GetRuntimeName(LoadStage.PostLoad);
+        var from = _colToNuke.GetRuntimeName(LoadStage.PostLoad);
+        var to = _newANOColumnInfo.GetRuntimeName(LoadStage.PostLoad);
             
 
         //create an empty table for the anonymised data
-        using (DbCommand cmdCreateTempMap = DatabaseCommandHelper.GetCommand(
+        using (var cmdCreateTempMap = DatabaseCommandHelper.GetCommand(
                    string.Format("SELECT top 0 {0},{1} into TempANOMap from {2}", from, to, tbl.GetFullyQualifiedName()),
                    con))
         {
@@ -123,19 +125,19 @@ public class ColumnInfoToANOTableConverter
 
         try
         {
-            using (DataTable dt = new DataTable())
+            using (var dt = new DataTable())
             {
                 //get the existing data
-                using (DbCommand cmdGetExistingData =
+                using (var cmdGetExistingData =
                        DatabaseCommandHelper.GetCommand(
                            string.Format("SELECT {0},{1} from {2}", from, to, tbl.GetFullyQualifiedName()), con))
                 {
-                    using (DbDataAdapter da = DatabaseCommandHelper.GetDataAdapter(cmdGetExistingData))
+                    using (var da = DatabaseCommandHelper.GetDataAdapter(cmdGetExistingData))
                     {
                         da.Fill(dt);//into memory
 
                         //transform it in memory
-                        ANOTransformer transformer = new ANOTransformer(_toConformTo, new FromCheckNotifierToDataLoadEventListener(notifier));
+                        var transformer = new ANOTransformer(_toConformTo, new FromCheckNotifierToDataLoadEventListener(notifier));
                         transformer.Transform(dt,dt.Columns[0],dt.Columns[1]);
 
                         var tempAnoMapTbl = tbl.Database.ExpectTable("TempANOMap");
@@ -150,7 +152,7 @@ public class ColumnInfoToANOTableConverter
                 
 
             //create an empty table for the anonymised data
-            using (DbCommand cmdUpdateMainTable = DatabaseCommandHelper.GetCommand(
+            using (var cmdUpdateMainTable = DatabaseCommandHelper.GetCommand(
                        string.Format(
                            "UPDATE source set source.{1} = map.{1} from {2} source join TempANOMap map on source.{0}=map.{0}",
                            from, to, tbl.GetFullyQualifiedName()), con))
@@ -164,7 +166,7 @@ public class ColumnInfoToANOTableConverter
         finally
         {
             //always drop the temp anomap
-            using(DbCommand dropMappingTable = DatabaseCommandHelper.GetCommand("DROP TABLE TempANOMap", con))
+            using(var dropMappingTable = DatabaseCommandHelper.GetCommand("DROP TABLE TempANOMap", con))
                 dropMappingTable.ExecuteNonQuery();
         }
     }
@@ -173,7 +175,7 @@ public class ColumnInfoToANOTableConverter
 
     private void DropOldColumn(Func<string, bool> shouldApplySql, DbConnection con, DbTransaction transaction)
     {
-        string alterSql = "ALTER TABLE " + _tableInfo.Name + " Drop column " + _colToNuke.GetRuntimeName(LoadStage.PostLoad);
+        var alterSql = $"ALTER TABLE {_tableInfo.Name} Drop column {_colToNuke.GetRuntimeName(LoadStage.PostLoad)}";
 
         if (shouldApplySql(alterSql))
         {
@@ -182,7 +184,7 @@ public class ColumnInfoToANOTableConverter
         }
         else
         {
-            throw new Exception("User chose not to drop the old column " + _colToNuke);
+            throw new Exception($"User chose not to drop the old column {_colToNuke}");
         }
     }
 
@@ -191,7 +193,7 @@ public class ColumnInfoToANOTableConverter
     {
         try
         {
-            DbTransaction transaction = con.BeginTransaction();
+            var transaction = con.BeginTransaction();
 
             //try dropping it within a transaction
             DropOldColumn((s) => true, con, transaction);
@@ -206,7 +208,7 @@ public class ColumnInfoToANOTableConverter
         {
             notifier.OnCheckPerformed(
                 new CheckEventArgs(
-                    "Could not perform transformation because column " + _colToNuke + " is not droppable",
+                    $"Could not perform transformation because column {_colToNuke} is not droppable",
                     CheckResult.Fail, e));
             return false;
         }
@@ -214,16 +216,17 @@ public class ColumnInfoToANOTableConverter
 
     private void AddNewANOColumnInfo(Func<string, bool> shouldApplySql, DbConnection con, ICheckNotifier notifier)
     {
-        string anoColumnNameWillBe = "ANO" + _colToNuke.GetRuntimeName(LoadStage.PostLoad);
+        var anoColumnNameWillBe = $"ANO{_colToNuke.GetRuntimeName(LoadStage.PostLoad)}";
 
-        string alterSql = "ALTER TABLE " + _tableInfo.Name + " ADD " + anoColumnNameWillBe + " " + _toConformTo.GetRuntimeDataType(LoadStage.PostLoad);
+        var alterSql =
+            $"ALTER TABLE {_tableInfo.Name} ADD {anoColumnNameWillBe} {_toConformTo.GetRuntimeDataType(LoadStage.PostLoad)}";
 
         if (shouldApplySql(alterSql))
         {
             using(var cmd = DatabaseCommandHelper.GetCommand(alterSql, con))
                 cmd.ExecuteNonQuery();
 
-            TableInfoSynchronizer synchronizer = new TableInfoSynchronizer(_tableInfo);
+            var synchronizer = new TableInfoSynchronizer(_tableInfo);
             synchronizer.Synchronize(notifier);
 
             //now get the new ANO columninfo

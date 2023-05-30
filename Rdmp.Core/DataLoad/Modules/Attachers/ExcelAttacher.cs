@@ -53,25 +53,25 @@ public class ExcelAttacher:FlatFileAttacher
         _hostedSource.AddFilenameColumnNamed = AddFilenameColumnNamed;
 
         _hostedSource.PreInitialize(new FlatFileToLoad(fileToLoad),listener);
-        listener.OnNotify(this, new NotifyEventArgs(ProgressEventType.Information,  "About to start processing " + fileToLoad.FullName));
+        listener.OnNotify(this, new NotifyEventArgs(ProgressEventType.Information,
+            $"About to start processing {fileToLoad.FullName}"));
 
         _dataTable = _hostedSource.GetChunk(listener, cancellationToken);
 
         if (!string.IsNullOrEmpty(ForceReplacementHeaders))
         {
             //split headers by , (and trim leading/trailing whitespace).
-            string[] replacementHeadersSplit = ForceReplacementHeaders.Split(',').Select(h=>string.IsNullOrWhiteSpace(h)?h:h.Trim()).ToArray();
+            var replacementHeadersSplit = ForceReplacementHeaders.Split(',').Select(h=>string.IsNullOrWhiteSpace(h)?h:h.Trim()).ToArray();
 
-            listener.OnNotify(this,new NotifyEventArgs(ProgressEventType.Information, "Force headers will make the following header changes:" + GenerateASCIIArtOfSubstitutions(replacementHeadersSplit, _dataTable.Columns)));
+            listener.OnNotify(this,new NotifyEventArgs(ProgressEventType.Information,
+                $"Force headers will make the following header changes:{GenerateASCIIArtOfSubstitutions(replacementHeadersSplit, _dataTable.Columns)}"));
                 
             if (replacementHeadersSplit.Length != _dataTable.Columns.Count)
                 listener.OnNotify(this,
                     new NotifyEventArgs(ProgressEventType.Error,
-                        "ForceReplacementHeaders was set but it had " + replacementHeadersSplit.Length +
-                        " column header names while the file had " + _dataTable.Columns.Count +
-                        " (there must be the same number of replacement headers as headers in the excel file)"));
+                        $"ForceReplacementHeaders was set but it had {replacementHeadersSplit.Length} column header names while the file had {_dataTable.Columns.Count} (there must be the same number of replacement headers as headers in the excel file)"));
             else
-                for (int i = 0; i < replacementHeadersSplit.Length; i++)
+                for (var i = 0; i < replacementHeadersSplit.Length; i++)
                     _dataTable.Columns[i].ColumnName = replacementHeadersSplit[i];//rename the columns to match the forced replacments
         }
 
@@ -82,16 +82,16 @@ public class ExcelAttacher:FlatFileAttacher
 
     private string GenerateASCIIArtOfSubstitutions(string[] replacementHeadersSplit, DataColumnCollection columns)
     {
-        StringBuilder sb = new StringBuilder("");
+        var sb = new StringBuilder("");
 
-        int max = Math.Max(replacementHeadersSplit.Length, columns.Count);
+        var max = Math.Max(replacementHeadersSplit.Length, columns.Count);
 
-        for (int i = 0; i < max; i++)
+        for (var i = 0; i < max; i++)
         {
-            string replacement = i >= replacementHeadersSplit.Length ? "???" : replacementHeadersSplit[i];
-            string original = i >= columns.Count ? "???" : columns[i].ColumnName;
+            var replacement = i >= replacementHeadersSplit.Length ? "???" : replacementHeadersSplit[i];
+            var original = i >= columns.Count ? "???" : columns[i].ColumnName;
 
-            sb.Append(Environment.NewLine + "[" + i + "]" + original + ">>>" + replacement);
+            sb.Append($"{Environment.NewLine}[{i}]{original}>>>{replacement}");
         }
 
         return sb.ToString();
@@ -120,13 +120,14 @@ public class ExcelAttacher:FlatFileAttacher
                         if (AllowExtraColumnsInTargetWithoutComplainingOfColumnMismatch)//it is an extra destination column, see if that is allowed
                             targetRow[column.ColumnName] = DBNull.Value;
                         else
-                            throw new Exception("Could not find column " + column.ColumnName +
-                                                " in the source table we loaded from Excel, this should have been picked up earlier in GenerateColumnNameMismatchErrors");
+                            throw new Exception(
+                                $"Could not find column {column.ColumnName} in the source table we loaded from Excel, this should have been picked up earlier in GenerateColumnNameMismatchErrors");
                     }
                 }
                 catch (Exception e)
                 {
-                    throw new Exception("Could not import values into RAW DataTable structure (from Excel DataTable structure):"+ string.Join(",",dr.ItemArray),e);
+                    throw new Exception(
+                        $"Could not import values into RAW DataTable structure (from Excel DataTable structure):{string.Join(",", dr.ItemArray)}",e);
                 }
 
             _haveServedData = true;
@@ -147,12 +148,7 @@ public class ExcelAttacher:FlatFileAttacher
             //or there are unmatched columns in the destination (and we are not happy just leaving those as null)
             (columnsInDataTableButNotInExcel.Any() && ! AllowExtraColumnsInTargetWithoutComplainingOfColumnMismatch))
             throw new Exception(
-                "Mismatch between RAW table " + TableName + " and Excel file \"" + _fileToLoad.FullName + "\":" + Environment.NewLine +
-                "Columns in Excel file but not in DataTable " + TableName + ":" + Environment.NewLine +
-                columnsExcelButNotInDataTable.Aggregate("", (s, n) => s + n + ",").TrimEnd(',') + Environment.NewLine +
-                "Columns in DataTable but not in Excel file \"" + _fileToLoad.FullName + "\":" + Environment.NewLine +
-                columnsInDataTableButNotInExcel.Aggregate("", (s, n) => s + n + ",").TrimEnd(',') + Environment.NewLine + Environment.NewLine
-
+                $"Mismatch between RAW table {TableName} and Excel file \"{_fileToLoad.FullName}\":{Environment.NewLine}Columns in Excel file but not in DataTable {TableName}:{Environment.NewLine}{columnsExcelButNotInDataTable.Aggregate("", (s, n) => $"{s}{n},").TrimEnd(',')}{Environment.NewLine}Columns in DataTable but not in Excel file \"{_fileToLoad.FullName}\":{Environment.NewLine}{columnsInDataTableButNotInExcel.Aggregate("", (s, n) => $"{s}{n},").TrimEnd(',')}{Environment.NewLine}{Environment.NewLine}"
             );
     }
 
@@ -164,8 +160,8 @@ public class ExcelAttacher:FlatFileAttacher
 
     protected override void ConfirmFlatFileHeadersAgainstDataTable(DataTable loadTarget, IDataLoadJob job)
     {
-        string[] colsInTarget = loadTarget.Columns.Cast<DataColumn>().Select(c => c.ColumnName).ToArray();
-        string[] colsInSource = _dataTable.Columns.Cast<DataColumn>().Select(c => c.ColumnName).ToArray();
+        var colsInTarget = loadTarget.Columns.Cast<DataColumn>().Select(c => c.ColumnName).ToArray();
+        var colsInSource = _dataTable.Columns.Cast<DataColumn>().Select(c => c.ColumnName).ToArray();
 
 
         GenerateColumnNameMismatchErrors(

@@ -87,7 +87,7 @@ public class DialogArgs
 
     public override string ToString()
     {
-        StringBuilder sb = new StringBuilder();
+        var sb = new StringBuilder();
 
         if (!string.IsNullOrEmpty(WindowTitle))
             sb.AppendLine($"Title:{WindowTitle}");

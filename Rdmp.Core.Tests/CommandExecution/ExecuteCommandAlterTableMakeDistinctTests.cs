@@ -36,7 +36,7 @@ class ExecuteCommandAlterTableMakeDistinctTests : DatabaseTests
 
         var tbl = db.CreateTable("MyTable", dt);
 
-        Import(tbl, out ITableInfo tblInfo,out _);
+        Import(tbl, out var tblInfo,out _);
 
         Assert.AreEqual(5, tbl.GetRowCount());
 

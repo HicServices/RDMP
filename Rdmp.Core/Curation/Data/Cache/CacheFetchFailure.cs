@@ -31,43 +31,43 @@ public class CacheFetchFailure : DatabaseEntity, ICacheFetchFailure
     /// <inheritdoc/>
     public int CacheProgress_ID
     {
-        get { return _cacheProgressID; }
-        set { SetField(ref  _cacheProgressID, value); }
+        get => _cacheProgressID;
+        set => SetField(ref  _cacheProgressID, value);
     }
 
     /// <inheritdoc/>
     public DateTime FetchRequestStart
     {
-        get { return _fetchRequestStart; }
-        set { SetField(ref  _fetchRequestStart, value); }
+        get => _fetchRequestStart;
+        set => SetField(ref  _fetchRequestStart, value);
     }
 
     /// <inheritdoc cref="ICacheFetchFailure.FetchRequestStart"/>
     public DateTime FetchRequestEnd
     {
-        get { return _fetchRequestEnd; }
-        set { SetField(ref  _fetchRequestEnd, value); }
+        get => _fetchRequestEnd;
+        set => SetField(ref  _fetchRequestEnd, value);
     }
 
     /// <inheritdoc/>
     public string ExceptionText
     {
-        get { return _exceptionText; }
-        set { SetField(ref  _exceptionText, value); }
+        get => _exceptionText;
+        set => SetField(ref  _exceptionText, value);
     }
 
     /// <inheritdoc/>
     public DateTime LastAttempt
     {
-        get { return _lastAttempt; }
-        set { SetField(ref  _lastAttempt, value); }
+        get => _lastAttempt;
+        set => SetField(ref  _lastAttempt, value);
     }
 
     /// <inheritdoc/>
     public DateTime? ResolvedOn
     {
-        get { return _resolvedOn; }
-        set { SetField(ref  _resolvedOn, value); }
+        get => _resolvedOn;
+        set => SetField(ref  _resolvedOn, value);
     }
 
     #endregion

@@ -35,7 +35,7 @@ public abstract class DelimitedFileSourceTestsBase
         var filename = Path.Combine(TestContext.CurrentContext.TestDirectory, "DelimitedFileSourceTests_Errors.txt");
 
         if(!File.Exists(filename))
-            Assert.Fail("No Divert file was generated at expected path " + filename);
+            Assert.Fail($"No Divert file was generated at expected path {filename}");
 
         var contents = File.ReadAllText(filename);
         Assert.AreEqual(expectedContents, contents);
@@ -53,7 +53,7 @@ public abstract class DelimitedFileSourceTestsBase
 
     protected DataTable RunGetChunk(FlatFileToLoad file, Action<DelimitedFlatFileDataFlowSource> adjust = null)
     {
-        DelimitedFlatFileDataFlowSource source = new DelimitedFlatFileDataFlowSource();
+        var source = new DelimitedFlatFileDataFlowSource();
         source.PreInitialize(file, new ThrowImmediatelyDataLoadEventListener());
         source.Separator = ",";
         source.StronglyTypeInput = true;//makes the source interpret the file types properly

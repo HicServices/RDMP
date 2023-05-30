@@ -32,7 +32,7 @@ public class ExecuteCommandMoveCohortAggregateContainerIntoSubContainer : BasicC
         if(_sourceCohortAggregateContainer.AggregateContainer.Equals(_targetCohortAggregateContainer))
             SetImpossible("Cannot move a container into itself");
             
-        if(_targetCohortAggregateContainer.ShouldBeReadOnly(out string reason))
+        if(_targetCohortAggregateContainer.ShouldBeReadOnly(out var reason))
             SetImpossible(reason);
     }
 

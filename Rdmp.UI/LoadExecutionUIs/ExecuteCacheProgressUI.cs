@@ -52,7 +52,7 @@ public partial class ExecuteCacheProgressUI : CachingEngineUI_Design
         CommonFunctionality.AddToMenu(new ExecuteCommandEditCacheProgress(activator, databaseObject), "Edit");
         CommonFunctionality.AddToMenu(new ExecuteCommandShowCacheFetchFailures(activator, databaseObject), "View Cache Failures");
             
-        bool failures = _cacheProgress.CacheFetchFailures.Any(f => f.ResolvedOn == null);
+        var failures = _cacheProgress.CacheFetchFailures.Any(f => f.ResolvedOn == null);
         cbFailures.Enabled = failures;
             
         checkAndExecuteUI1.SetItemActivator(activator);

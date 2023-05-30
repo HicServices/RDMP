@@ -37,15 +37,15 @@ public class AggregateTopX : DatabaseEntity, IAggregateTopX
     /// </summary>
     public int AggregateConfiguration_ID
     {
-        get { return _aggregateConfigurationID; }
-        set { SetField(ref _aggregateConfigurationID , value); }
+        get => _aggregateConfigurationID;
+        set => SetField(ref _aggregateConfigurationID , value);
     }
 
     /// <inheritdoc/>
     public int TopX
     {
-        get { return _topX; }
-        set { SetField(ref _topX, value); }
+        get => _topX;
+        set => SetField(ref _topX, value);
     }
 
     /// <summary>
@@ -53,15 +53,15 @@ public class AggregateTopX : DatabaseEntity, IAggregateTopX
     /// </summary>
     public int? OrderByDimensionIfAny_ID
     {
-        get { return _orderByDimensionIfAny_ID; }
-        set { SetField(ref _orderByDimensionIfAny_ID, value); }
+        get => _orderByDimensionIfAny_ID;
+        set => SetField(ref _orderByDimensionIfAny_ID, value);
     }
 
     /// <inheritdoc/>
     public AggregateTopXOrderByDirection OrderByDirection
     {
-        get { return _orderByDirection; }
-        set { SetField(ref _orderByDirection, value); }
+        get => _orderByDirection;
+        set => SetField(ref _orderByDirection, value);
     }
     #endregion
 
@@ -82,7 +82,7 @@ public class AggregateTopX : DatabaseEntity, IAggregateTopX
 
     /// <inheritdoc cref="OrderByDimensionIfAny_ID"/>
     [NoMappingToDatabase]
-    public IColumn OrderByColumn { get { return OrderByDimensionIfAny; } }
+    public IColumn OrderByColumn => OrderByDimensionIfAny;
 
     #endregion
 

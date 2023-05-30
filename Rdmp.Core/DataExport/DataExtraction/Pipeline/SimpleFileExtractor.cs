@@ -63,7 +63,7 @@ $c - Configuration Extraction Directory  (e.g. c:\MyProject\Extractions\Extr_16)
 
         try
         {
-            notifier.OnCheckPerformed(new CheckEventArgs("Output path is:" + GetDestinationDirectory(), CheckResult.Success));
+            notifier.OnCheckPerformed(new CheckEventArgs($"Output path is:{GetDestinationDirectory()}", CheckResult.Success));
         }
         catch (Exception ex)
         {
@@ -130,7 +130,7 @@ $c - Configuration Extraction Directory  (e.g. c:\MyProject\Extractions\Extr_16)
     /// </summary>
     public virtual void MoveAll(DirectoryInfo destinationDirectory, IDataLoadEventListener listener, GracefulCancellationToken cancellationToken)
     {
-        bool atLeastOne = false;
+        var atLeastOne = false;
 
         var infos = new List<FileSystemInfo>();
             
@@ -179,7 +179,7 @@ $c - Configuration Extraction Directory  (e.g. c:\MyProject\Extractions\Extr_16)
     /// </summary>
     public virtual void MovePatient(object privateIdentifier, object releaseIdentifier, DirectoryInfo destinationDirectory, IDataLoadEventListener listener, GracefulCancellationToken cancellationToken)
     {
-        bool atLeastOne = false;
+        var atLeastOne = false;
 
         if(privateIdentifier == DBNull.Value || string.IsNullOrWhiteSpace(privateIdentifier?.ToString()))
         {
@@ -231,18 +231,18 @@ $c - Configuration Extraction Directory  (e.g. c:\MyProject\Extractions\Extr_16)
     {
         if (!Directory.Exists( destFolder ))
             Directory.CreateDirectory( destFolder );
-        string[] files = Directory.GetFiles( sourceFolder );
-        foreach (string file in files)
+        var files = Directory.GetFiles( sourceFolder );
+        foreach (var file in files)
         {
-            string name = Path.GetFileName( file );
-            string dest = Path.Combine( destFolder, name );
+            var name = Path.GetFileName( file );
+            var dest = Path.Combine( destFolder, name );
             File.Copy( file, dest,Overwrite );
         }
-        string[] folders = Directory.GetDirectories( sourceFolder );
-        foreach (string folder in folders)
+        var folders = Directory.GetDirectories( sourceFolder );
+        foreach (var folder in folders)
         {
-            string name = Path.GetFileName( folder );
-            string dest = Path.Combine( destFolder, name );
+            var name = Path.GetFileName( folder );
+            var dest = Path.Combine( destFolder, name );
             CopyFolder( folder, dest );
         }
     }

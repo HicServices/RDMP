@@ -19,7 +19,7 @@ class HowDoWeAchieveMd5Test:DatabaseTests
     [TestCase(DatabaseType.MySql)]
     public void TestMd5String(DatabaseType type)
     {
-        DataTable dt = new DataTable();
+        var dt = new DataTable();
         dt.Columns.Add("F");
         dt.Rows.Add(new[] {"Fish"});
 
@@ -28,7 +28,8 @@ class HowDoWeAchieveMd5Test:DatabaseTests
 
         var col = tbl.DiscoverColumn("F");
 
-        var sql = "SELECT " + tbl.GetQuerySyntaxHelper().HowDoWeAchieveMd5(col.GetFullyQualifiedName()) + " FROM " + tbl.GetFullyQualifiedName();
+        var sql =
+            $"SELECT {tbl.GetQuerySyntaxHelper().HowDoWeAchieveMd5(col.GetFullyQualifiedName())} FROM {tbl.GetFullyQualifiedName()}";
 
 
         using (var con = db.Server.GetConnection())
@@ -38,7 +39,7 @@ class HowDoWeAchieveMd5Test:DatabaseTests
             var value = cmd.ExecuteScalar();
 
 
-            Console.WriteLine("Value was:" + value);
+            Console.WriteLine($"Value was:{value}");
 
             Assert.IsNotNull(value);
             Assert.AreNotEqual("Fish",value);
@@ -51,7 +52,7 @@ class HowDoWeAchieveMd5Test:DatabaseTests
     [TestCase(DatabaseType.MySql)]
     public void TestMd5Date(DatabaseType type)
     {
-        DataTable dt = new DataTable();
+        var dt = new DataTable();
         dt.Columns.Add("F");
         dt.Rows.Add(new[] { "2001-01-01" });
 
@@ -64,7 +65,8 @@ class HowDoWeAchieveMd5Test:DatabaseTests
         Assert.AreEqual(typeof(DateTime),tbl.GetQuerySyntaxHelper().TypeTranslater.GetCSharpTypeForSQLDBType(col.DataType.SQLType));
 
 
-        var sql = "SELECT " + tbl.GetQuerySyntaxHelper().HowDoWeAchieveMd5(col.GetFullyQualifiedName()) + " FROM " + tbl.GetFullyQualifiedName();
+        var sql =
+            $"SELECT {tbl.GetQuerySyntaxHelper().HowDoWeAchieveMd5(col.GetFullyQualifiedName())} FROM {tbl.GetFullyQualifiedName()}";
 
 
         using (var con = db.Server.GetConnection())
@@ -74,7 +76,7 @@ class HowDoWeAchieveMd5Test:DatabaseTests
             var value = cmd.ExecuteScalar();
 
 
-            Console.WriteLine("Value was:" + value);
+            Console.WriteLine($"Value was:{value}");
 
             Assert.IsNotNull(value);
             Assert.GreaterOrEqual(value.ToString().Length, 32);

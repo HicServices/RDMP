@@ -33,22 +33,22 @@ public class LoadProgress : DatabaseEntity, ILoadProgress, ICheckable
     /// <inheritdoc/>
     public bool IsDisabled
     {
-        get { return _isDisabled; }
-        set { SetField(ref _isDisabled, value); }
+        get => _isDisabled;
+        set => SetField(ref _isDisabled, value);
     }
     /// <inheritdoc/>
     [NotNull]
     [Unique]
     public string Name
     {
-        get { return _name; }
-        set { SetField(ref _name, value); }
+        get => _name;
+        set => SetField(ref _name, value);
     }
     /// <inheritdoc/>
     public DateTime? OriginDate
     {
-        get { return _originDate; }
-        set { SetField(ref _originDate, value); }
+        get => _originDate;
+        set => SetField(ref _originDate, value);
     }
 
     /// <summary>
@@ -57,44 +57,39 @@ public class LoadProgress : DatabaseEntity, ILoadProgress, ICheckable
     [Obsolete("Do not use")]
     public string LoadPeriodicity
     {
-        get { return _loadPeriodicity; }
-        set { SetField(ref _loadPeriodicity, value); }
+        get => _loadPeriodicity;
+        set => SetField(ref _loadPeriodicity, value);
     }
     /// <inheritdoc/>
     public DateTime? DataLoadProgress
     {
-        get { return _dataLoadProgress; }
-        set { SetField(ref _dataLoadProgress, value); }
+        get => _dataLoadProgress;
+        set => SetField(ref _dataLoadProgress, value);
     }
     /// <inheritdoc/>
     public int LoadMetadata_ID
     {
-        get { return _loadMetadata_ID; }
-        set { SetField(ref _loadMetadata_ID, value); }
+        get => _loadMetadata_ID;
+        set => SetField(ref _loadMetadata_ID, value);
     }
 
     /// <inheritdoc/>
     public int DefaultNumberOfDaysToLoadEachTime
     {
-        get { return _defaultNumberOfDaysToLoadEachTime; }
-        set { SetField(ref _defaultNumberOfDaysToLoadEachTime, value); }
+        get => _defaultNumberOfDaysToLoadEachTime;
+        set => SetField(ref _defaultNumberOfDaysToLoadEachTime, value);
     }
 
     #endregion
     #region Relationships
     /// <inheritdoc/>
     [NoMappingToDatabase]
-    public ILoadMetadata LoadMetadata { get { return Repository.GetObjectByID<LoadMetadata>(LoadMetadata_ID); }}
+    public ILoadMetadata LoadMetadata => Repository.GetObjectByID<LoadMetadata>(LoadMetadata_ID);
 
     /// <inheritdoc/>
     [NoMappingToDatabase]
-    public ICacheProgress CacheProgress
-    {
-        get
-        {
-            return Repository.GetAllObjectsWithParent<CacheProgress>(this).SingleOrDefault();
-        }
-    }
+    public ICacheProgress CacheProgress => Repository.GetAllObjectsWithParent<CacheProgress>(this).SingleOrDefault();
+
     #endregion
 
     public LoadProgress()
@@ -128,7 +123,7 @@ public class LoadProgress : DatabaseEntity, ILoadProgress, ICheckable
     /// <inheritdoc/>
     public override string ToString()
     {
-        return Name + " ID=" + ID;
+        return $"{Name} ID={ID}";
     }
 
     public void Check(ICheckNotifier notifier)

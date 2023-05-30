@@ -48,8 +48,8 @@ public class ExtractionInformation : ConcreteColumn, IHasDependencies, IInjectKn
     /// </summary>
     public int CatalogueItem_ID
     {
-        get { return _catalogueItemID; }
-        set { SetField(ref _catalogueItemID , value); }
+        get => _catalogueItemID;
+        set => SetField(ref _catalogueItemID , value);
     }
 
     /// <summary>
@@ -57,7 +57,7 @@ public class ExtractionInformation : ConcreteColumn, IHasDependencies, IInjectKn
     /// </summary>
     public ExtractionCategory ExtractionCategory
     {
-        get { return _extractionCategory; }
+        get => _extractionCategory;
         set
         {
             if (value == ExtractionCategory.Any)
@@ -73,14 +73,9 @@ public class ExtractionInformation : ConcreteColumn, IHasDependencies, IInjectKn
     //These fields are fetched (cached version) from lookup link table - ExtractionInformation can only exist where there is a relationship between a CatalogueItem and a ColumnInfo
     /// <inheritdoc cref="CatalogueItem_ID"/>
     [NoMappingToDatabase]
-    public CatalogueItem CatalogueItem
-    {
-        get
-        {
-            //Cache answer the first time it is requested (or injected)
-            return _knownCatalogueItem.Value;
-        }
-    }
+    public CatalogueItem CatalogueItem =>
+        //Cache answer the first time it is requested (or injected)
+        _knownCatalogueItem.Value;
 
     /// <summary>
     /// The ColumnInfo that underlies this extractable column.  ExtractionInformation allows for transforms, governance rules and indicates extractability (Core / Supplemental etc)
@@ -92,22 +87,15 @@ public class ExtractionInformation : ConcreteColumn, IHasDependencies, IInjectKn
     /// checking this field.</para> 
     /// </summary>
     [NoMappingToDatabase]
-    public override ColumnInfo ColumnInfo
-    {
-        get
-        {
-            return _knownColumninfo.Value;
-        }
-    }
+    public override ColumnInfo ColumnInfo => _knownColumninfo.Value;
 
     /// <summary>
     /// Gets all WHERE logic that can be used to reduce the number of records matched/extracted etc in cohort creation, project extractions etc.  These are master catalogue level
     /// filters (<see cref="ExtractionFilter"/>) and act as templates that can be imported/cloned into other use cases (e.g. cohort identification, extraction etc).
     /// </summary>
     [NoMappingToDatabase]
-    public IEnumerable<ExtractionFilter> ExtractionFilters {
-        get { return Repository.GetAllObjectsWithParent<ExtractionFilter>(this); }
-    }
+    public IEnumerable<ExtractionFilter> ExtractionFilters => Repository.GetAllObjectsWithParent<ExtractionFilter>(this);
+
     #endregion
 
     public ExtractionInformation()
@@ -236,7 +224,7 @@ public class ExtractionInformation : ConcreteColumn, IHasDependencies, IInjectKn
     /// <inheritdoc/>
     public IHasDependencies[] GetObjectsDependingOnThis()
     {
-        List<IHasDependencies> dependencies = new List<IHasDependencies>();
+        var dependencies = new List<IHasDependencies>();
             
         dependencies.AddRange(ExtractionFilters);
         dependencies.Add(CatalogueItem);
@@ -276,7 +264,7 @@ public class ExtractionInformation : ConcreteColumn, IHasDependencies, IInjectKn
 
     public override string GetSummary(bool includeName, bool includeID)
     {
-        StringBuilder sb = new StringBuilder();
+        var sb = new StringBuilder();
 
         sb.AppendLine($"Transforms Data: {FormatForSummary(IsProperTransform())}");
         sb.AppendLine(base.GetSummary(includeName, includeID));

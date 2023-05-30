@@ -49,7 +49,7 @@ class AlphaNumericTest : ValidationTests
     [Test]
     public void Validate_Invalid_ExceptionContainsRequiredInfo()
     {
-        ValidationFailure result = _alphanum.Validate(" ");
+        var result = _alphanum.Validate(" ");
             
         Assert.NotNull(result.SourceConstraint);
         Assert.AreEqual(typeof(AlphaNumeric), result.SourceConstraint.GetType());

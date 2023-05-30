@@ -33,7 +33,7 @@ public class SqlQueryBuilderHelper
     {
         //Note: This returns IsDisabled objects since it is used by cloning systems
 
-        List<IFilter> toAdd = new List<IFilter>();
+        var toAdd = new List<IFilter>();
 
         //if there is a container
         if (currentContainer != null)
@@ -73,7 +73,7 @@ public class SqlQueryBuilderHelper
     /// <returns></returns>
     public static List<JoinInfo> FindRequiredJoins(ISqlQueryBuilder qb)
     {
-        List<JoinInfo> Joins = new List<JoinInfo>();
+        var Joins = new List<JoinInfo>();
 
         if (qb.TablesUsedInQuery == null)
             throw new NullReferenceException("You must populate TablesUsedInQuery before calling FindRequiredJoins, try calling GetTablesUsedInQuery");
@@ -89,7 +89,8 @@ public class SqlQueryBuilderHelper
         }
         catch (Exception e)
         {
-            throw new Exception("Tables (" + string.Join(",",qb.TablesUsedInQuery)+") do not seem to come from the same repository",e);
+            throw new Exception(
+                $"Tables ({string.Join(",", qb.TablesUsedInQuery)}) do not seem to come from the same repository",e);
         }
 
         foreach (TableInfo table1 in qb.TablesUsedInQuery)
@@ -98,19 +99,19 @@ public class SqlQueryBuilderHelper
                 if (table1.ID != table2.ID) //each table must join with a single other table
                 {
                     //figure out which of the users columns is from table 1 to join using
-                    JoinInfo[] availableJoins = cataRepository.JoinManager.GetAllJoinInfosBetweenColumnInfoSets(
+                    var availableJoins = cataRepository.JoinManager.GetAllJoinInfosBetweenColumnInfoSets(
                         table1.ColumnInfos.ToArray(),
                         table2.ColumnInfos.ToArray());
 
                     if (availableJoins.Length == 0)
                         continue; //try another table
 
-                    bool comboJoinResolved = false;
+                    var comboJoinResolved = false;
 
                     //if there are more than 1 join info between the two tables then we need to either do a combo join or complain to user
                     if (availableJoins.Length > 1)
                     {
-                        string additionalErrorMessageWhyWeCantDoComboJoin = "";
+                        var additionalErrorMessageWhyWeCantDoComboJoin = "";
                         //if there are multiple joins but they all join between the same 2 tables in the same direction
                         if(availableJoins.Select(j=>j.PrimaryKey.TableInfo_ID).Distinct().Count() ==1
                            &&
@@ -118,7 +119,7 @@ public class SqlQueryBuilderHelper
                             if (availableJoins.Select(j => j.ExtractionJoinType).Distinct().Count() == 1)
                             {
                                 //add as combo join
-                                for(int i =1 ; i<availableJoins.Length;i++)
+                                for(var i =1 ; i<availableJoins.Length;i++)
                                     availableJoins[0].AddQueryBuildingTimeComboJoinDiscovery(availableJoins[i]);
                                 comboJoinResolved = true;
                             }
@@ -131,12 +132,11 @@ public class SqlQueryBuilderHelper
                                 " The Joins do not go in the same direction e.g. Table1.FK=>Table=2.PK and then a reverse relationship Table2.FK=>Table1.PK, in this case the system cannot do a Combo AND based join";
                         }
 
-                        string possibleJoinsWere = availableJoins.Select(s => "JoinInfo[" + s.ToString() + "]").Aggregate((a, b) => a + Environment.NewLine + b);
+                        var possibleJoinsWere = availableJoins.Select(s => $"JoinInfo[{s}]").Aggregate((a, b) => a + Environment.NewLine + b);
 
                         if(!comboJoinResolved)
-                            throw new QueryBuildingException("Found " + availableJoins.Length + " possible Joins for " + table1.Name +
-                                                             " and " + table2.Name + ", did not know which to use.  Available joins were:" + Environment.NewLine + possibleJoinsWere +
-                                                             Environment.NewLine + " It was not possible to configure a Composite Join because:" + Environment.NewLine + additionalErrorMessageWhyWeCantDoComboJoin);
+                            throw new QueryBuildingException(
+                                $"Found {availableJoins.Length} possible Joins for {table1.Name} and {table2.Name}, did not know which to use.  Available joins were:{Environment.NewLine}{possibleJoinsWere}{Environment.NewLine} It was not possible to configure a Composite Join because:{Environment.NewLine}{additionalErrorMessageWhyWeCantDoComboJoin}");
                     }
                         
                     if (!Joins.Contains(availableJoins[0]))
@@ -146,19 +146,21 @@ public class SqlQueryBuilderHelper
         }
 
         if (qb.TablesUsedInQuery.Count - GetDistinctRequiredLookups(qb).Count() - Joins.Count > 1)
-            throw new QueryBuildingException("There were " + qb.TablesUsedInQuery.Count + " Tables involved in assembling this query ( "+qb.TablesUsedInQuery.Aggregate("",(s,n)=>s+n+",").TrimEnd(',')+") of which  " + GetDistinctRequiredLookups(qb).Count() + " were Lookups and " + Joins.Count + " were JoinInfos, this leaves 2+ tables unjoined (no JoinInfo found)");
+            throw new QueryBuildingException(
+                $"There were {qb.TablesUsedInQuery.Count} Tables involved in assembling this query ( {qb.TablesUsedInQuery.Aggregate("", (s, n) => $"{s}{n},").TrimEnd(',')}) of which  {GetDistinctRequiredLookups(qb).Count()} were Lookups and {Joins.Count} were JoinInfos, this leaves 2+ tables unjoined (no JoinInfo found)");
 
 
         //make sure there are not multiple primary key tables (those should be configured as lookups
         if (Joins.Count > 0 && qb.PrimaryExtractionTable == null)
         {
-            List<string> primaryKeyTables = new List<string>(Joins.Select(p => p.PrimaryKey.TableInfo.Name).Distinct());
+            var primaryKeyTables = new List<string>(Joins.Select(p => p.PrimaryKey.TableInfo.Name).Distinct());
 
             if (primaryKeyTables.Count > 1)
             {
                 //there are multiple primary key tables... see if we are configured to support them
-                string primaryKeyTablesAsString = primaryKeyTables.Aggregate((a, b) => a + "," + b);
-                throw new QueryBuildingException("Found " + primaryKeyTables.Count + " primary key tables but PrimaryExtractionTable (Fix this by setting one TableInfo as 'IsPrimaryExtractionTable'), primary key tables identified include: " + primaryKeyTablesAsString);
+                var primaryKeyTablesAsString = primaryKeyTables.Aggregate((a, b) => $"{a},{b}");
+                throw new QueryBuildingException(
+                    $"Found {primaryKeyTables.Count} primary key tables but PrimaryExtractionTable (Fix this by setting one TableInfo as 'IsPrimaryExtractionTable'), primary key tables identified include: {primaryKeyTablesAsString}");
             }
         }
 
@@ -224,7 +226,7 @@ public class SqlQueryBuilderHelper
 
 
         //get all the tables based on selected columns
-        foreach (QueryTimeColumn toExtract in qb.SelectColumns)
+        foreach (var toExtract in qb.SelectColumns)
         {
             if (toExtract.UnderlyingColumn == null)
                 continue;
@@ -232,7 +234,7 @@ public class SqlQueryBuilderHelper
             if (qb.CheckSyntax)
                 toExtract.CheckSyntax();
 
-            TableInfo table = toExtract.UnderlyingColumn.TableInfo;
+            var table = toExtract.UnderlyingColumn.TableInfo;
 
             if (!toReturn.Contains(table))
             {
@@ -243,18 +245,17 @@ public class SqlQueryBuilderHelper
                         primaryExtractionTable = table;
                     else
                         primaryExtractionTable = PickBestPrimaryExtractionTable(qb,primaryExtractionTable, table)
-                                                 ?? throw new QueryBuildingException("There are multiple tables marked as IsPrimaryExtractionTable:" +
-                                                     primaryExtractionTable.Name + "(ID=" + primaryExtractionTable.ID +
-                                                     ") and " + table.Name + "(ID=" + table.ID + ")"); ;
+                                                 ?? throw new QueryBuildingException(
+                                                     $"There are multiple tables marked as IsPrimaryExtractionTable:{primaryExtractionTable.Name}(ID={primaryExtractionTable.ID}) and {table.Name}(ID={table.ID})"); ;
             }
         }
 
         //get other tables we might need because they are referenced by filters
         if(qb.Filters != null && qb.Filters.Any())
         {
-            foreach (IFilter filter in qb.Filters)
+            foreach (var filter in qb.Filters)
             {
-                ColumnInfo col = filter.GetColumnInfoIfExists();
+                var col = filter.GetColumnInfoIfExists();
                 if (col != null)
                 {
                     var tableInfoOfFilter = col.TableInfo;
@@ -322,7 +323,7 @@ public class SqlQueryBuilderHelper
         {
             var available = table.CatalogueRepository.JoinManager.GetAllJoinInfosWhereTableContains(table, JoinInfoType.AnyKey);
                 
-            foreach (JoinInfo newAvailableJoin in available)
+            foreach (var newAvailableJoin in available)
             {
                 foreach (var availableTable in new TableInfo[]{newAvailableJoin.PrimaryKey.TableInfo,newAvailableJoin.ForeignKey.TableInfo})
                 {
@@ -330,7 +331,8 @@ public class SqlQueryBuilderHelper
                     if (!toReturn.Contains(availableTable))
                     {
                         //are there any filters which reference the available TableInfo
-                        if (filters.Any(f =>f.WhereSQL != null && f.WhereSQL.ToLower().Contains(availableTable.Name.ToLower() + ".")))
+                        if (filters.Any(f =>f.WhereSQL != null && f.WhereSQL.ToLower().Contains(
+                                $"{availableTable.Name.ToLower()}.")))
                         {
                             toReturn.Add(availableTable);
                         }
@@ -353,7 +355,7 @@ public class SqlQueryBuilderHelper
     public static string GetFROMSQL(ISqlQueryBuilder qb)
     {
         //add the from bit
-        string toReturn = "FROM " + Environment.NewLine;
+        var toReturn = $"FROM {Environment.NewLine}";
 
         if(qb.TablesUsedInQuery.Count == 0)
             throw new QueryBuildingException("There are no tables involved in the query: We were asked to compute the FROM SQL but qb.TablesUsedInQuery was of length 0");
@@ -378,7 +380,8 @@ public class SqlQueryBuilderHelper
                     
                 //has user tried to make a lookup table the primary table!
                 if(TableIsLookupTable(firstTable,qb))
-                    throw new QueryBuildingException("Lookup tables cannot be marked IsPrimaryExtractionTable (Offender ="+firstTable+")");
+                    throw new QueryBuildingException(
+                        $"Lookup tables cannot be marked IsPrimaryExtractionTable (Offender ={firstTable})");
             }
             else
             {
@@ -395,7 +398,8 @@ public class SqlQueryBuilderHelper
                 if (winners.Count() == 1)
                     firstTable = winners[0];
                 else
-                    throw new QueryBuildingException("There were " + qb.TablesUsedInQuery.Count + " Tables ("+String.Join(",",qb.TablesUsedInQuery)+") involved in the query, some of them might have been lookup tables but there was no clear table to start joining from, either mark one of the TableInfos IsPrimaryExtractionTable or refine your query columns / create new lookup relationships");
+                    throw new QueryBuildingException(
+                        $"There were {qb.TablesUsedInQuery.Count} Tables ({String.Join(",", qb.TablesUsedInQuery)}) involved in the query, some of them might have been lookup tables but there was no clear table to start joining from, either mark one of the TableInfos IsPrimaryExtractionTable or refine your query columns / create new lookup relationships");
             }
                 
             toReturn += firstTable.Name; //simple case "FROM tableX"
@@ -407,7 +411,7 @@ public class SqlQueryBuilderHelper
             toReturn += qb.PrimaryExtractionTable.Name;
                 
             //now find any joins which involve the primary extraction table
-            for (int i = 0; i < qb.JoinsUsedInQuery.Count; i++)
+            for (var i = 0; i < qb.JoinsUsedInQuery.Count; i++)
                 if (qb.JoinsUsedInQuery[i].PrimaryKey.TableInfo_ID == qb.PrimaryExtractionTable.ID)
                 {
                     var fkTableId = qb.JoinsUsedInQuery[i].ForeignKey.TableInfo_ID;
@@ -435,7 +439,7 @@ public class SqlQueryBuilderHelper
                 }
 
             //now add any joins which don't involve the primary table
-            for (int i = 0; i < qb.JoinsUsedInQuery.Count; i++)
+            for (var i = 0; i < qb.JoinsUsedInQuery.Count; i++)
                 if (qb.JoinsUsedInQuery[i].ForeignKey.TableInfo_ID != qb.PrimaryExtractionTable.ID &&
                     qb.JoinsUsedInQuery[i].PrimaryKey.TableInfo_ID != qb.PrimaryExtractionTable.ID)
                 {
@@ -475,14 +479,14 @@ public class SqlQueryBuilderHelper
             toReturn += JoinHelper.GetJoinSQL(qb.JoinsUsedInQuery[0]) + Environment.NewLine; //"FROM ForeignKeyTable JOIN PrimaryKeyTable ON ..."
 
             //any subsequent joins
-            for (int i = 1; i < qb.JoinsUsedInQuery.Count; i++)
+            for (var i = 1; i < qb.JoinsUsedInQuery.Count; i++)
             {
                 toReturn += JoinHelper.GetJoinSQLForeignKeySideOnly(qb.JoinsUsedInQuery[i]) + Environment.NewLine; //right side only (ForeignKeyTable)
             }
         }
 
         //any subsequent lookup joins
-        foreach (QueryTimeColumn column in qb.SelectColumns)
+        foreach (var column in qb.SelectColumns)
         {
             if (
                 (column.IsLookupForeignKey && column.IsLookupForeignKeyActuallyUsed(qb.SelectColumns))
@@ -517,14 +521,16 @@ public class SqlQueryBuilderHelper
     /// <param name="positionToInsert"></param>
     public static CustomLine AddCustomLine(ISqlQueryBuilder builder, string text, QueryComponent positionToInsert)
     {
-        CustomLine toAdd = new CustomLine(text, positionToInsert);
+        var toAdd = new CustomLine(text, positionToInsert);
 
         if(positionToInsert == QueryComponent.GroupBy || positionToInsert == QueryComponent.OrderBy || positionToInsert == QueryComponent.FROM || positionToInsert == QueryComponent.Having)
-            throw new QueryBuildingException("Cannot inject custom lines into QueryBuilders at location " + positionToInsert);
+            throw new QueryBuildingException(
+                $"Cannot inject custom lines into QueryBuilders at location {positionToInsert}");
 
         if (positionToInsert == QueryComponent.WHERE)
             if (text.Trim().StartsWith("AND ") || text.Trim().StartsWith("OR "))
-                throw new Exception("Custom filters are always AND, you should not specify the operator AND/OR, you passed\"" + text + "\"");
+                throw new Exception(
+                    $"Custom filters are always AND, you should not specify the operator AND/OR, you passed\"{text}\"");
 
         builder.CustomLines.Add(toAdd);
         return toAdd;
@@ -537,7 +543,7 @@ public class SqlQueryBuilderHelper
     /// <returns>WHERE block or empty string if there are no <see cref="IContainer"/></returns>
     public static string GetWHERESQL(ISqlQueryBuilder qb)
     {
-        string toReturn = "";
+        var toReturn = "";
 
         //if the root filter container is disabled don't render it
         if (!IsEnabled(qb.RootFilterContainer))
@@ -546,17 +552,18 @@ public class SqlQueryBuilderHelper
         var emptyFilters = qb.Filters.Where(f => string.IsNullOrWhiteSpace(f.WhereSQL)).ToArray();
 
         if (emptyFilters.Any())
-            throw new QueryBuildingException("The following empty filters were found in the query:" + Environment.NewLine + string.Join(Environment.NewLine, emptyFilters.Select(f => f.Name)));
+            throw new QueryBuildingException(
+                $"The following empty filters were found in the query:{Environment.NewLine}{string.Join(Environment.NewLine, emptyFilters.Select(f => f.Name))}");
             
         //recursively iterate the filter containers joining them up with their operation (AND or OR) and doing tab indentation etc
         if (qb.Filters.Any())
         {
-            string filtersSql = WriteContainerTreeRecursively(toReturn, 0, qb.RootFilterContainer, qb);
+            var filtersSql = WriteContainerTreeRecursively(toReturn, 0, qb.RootFilterContainer, qb);
 
             if(!string.IsNullOrWhiteSpace(filtersSql))
             {
                 toReturn += Environment.NewLine;
-                toReturn += "WHERE" + Environment.NewLine;
+                toReturn += $"WHERE{Environment.NewLine}";
                 toReturn += filtersSql;
             }
         }
@@ -566,26 +573,26 @@ public class SqlQueryBuilderHelper
 
     private static string WriteContainerTreeRecursively(string toReturn, int tabDepth, IContainer currentContainer, ISqlQueryBuilder qb)
     {
-        string tabs = "";
+        var tabs = "";
         //see how far we have to tab in
-        for (int i = 0; i < tabDepth; i++)
+        for (var i = 0; i < tabDepth; i++)
             tabs += "\t";
 
         //get all the filters in the current container
-        IFilter[] filtersInContainer = currentContainer.GetFilters().Where(IsEnabled).ToArray();
+        var filtersInContainer = currentContainer.GetFilters().Where(IsEnabled).ToArray();
 
         //see if we have subcontainers
-        IContainer[] subcontainers = currentContainer.GetSubContainers().Where(IsEnabled).ToArray();
+        var subcontainers = currentContainer.GetSubContainers().Where(IsEnabled).ToArray();
 
         //if there are no filters or subcontainers return nothing
         if (!filtersInContainer.Any() && !subcontainers.Any())
             return "";
 
         //output starting bracket
-        toReturn += tabs + "(" + Environment.NewLine;
+        toReturn += $"{tabs}({Environment.NewLine}";
             
         //write out subcontainers
-        for (int i = 0; i < subcontainers.Length; i++)
+        for (var i = 0; i < subcontainers.Length; i++)
         {
             toReturn = WriteContainerTreeRecursively(toReturn, tabDepth + 1, subcontainers[i], qb);
 
@@ -599,12 +606,12 @@ public class SqlQueryBuilderHelper
             toReturn += currentContainer.Operation + Environment.NewLine;
 
         //output each filter also make sure it is tabbed in correctly
-        for (int i = 0; i < filtersInContainer.Count(); i++)
+        for (var i = 0; i < filtersInContainer.Count(); i++)
         {
             if (qb.CheckSyntax)
                 filtersInContainer[i].Check(new ThrowImmediatelyCheckNotifier());
 
-            toReturn += tabs + @"/*" + filtersInContainer[i].Name + @"*/" + Environment.NewLine;
+            toReturn += $@"{tabs}/*{filtersInContainer[i].Name}*/{Environment.NewLine}";
 
             // the filter may span multiple lines, so collapse it to a single line cleaning up any whitespace issues, e.g. to avoid double spaces in the collapsed version
             var trimmedFilters = (filtersInContainer[i].WhereSQL??"")
@@ -619,7 +626,7 @@ public class SqlQueryBuilderHelper
 
         }
 
-        toReturn += tabs + ")" + Environment.NewLine;
+        toReturn += $"{tabs}){Environment.NewLine}";
 
         return toReturn;
     }
@@ -661,8 +668,8 @@ public class SqlQueryBuilderHelper
 
         var databaseTypes = tablesUsedInQuery.Select(t => t.DatabaseType).Distinct().ToArray();
         if(databaseTypes.Length > 1)
-            throw new QueryBuildingException("Cannot build query because there are multiple DatabaseTypes involved in the query:" + string.Join(",",
-                tablesUsedInQuery.Select(t=>t.GetRuntimeName() + "(" + t.DatabaseType + ")")));
+            throw new QueryBuildingException(
+                $"Cannot build query because there are multiple DatabaseTypes involved in the query:{string.Join(",", tablesUsedInQuery.Select(t => $"{t.GetRuntimeName()}({t.DatabaseType})"))}");
 
         return DatabaseCommandHelper.For(databaseTypes.Single()).GetQuerySyntaxHelper();
     }
@@ -725,7 +732,7 @@ public class SqlQueryBuilderHelper
                 yield return new CustomLine("AND" , QueryComponent.WHERE); //otherwise just AND it with every other filter we currently have configured
 
             //add user custom Filter lines
-            for (int i = 0; i < lines.Count(); i++)
+            for (var i = 0; i < lines.Count(); i++)
             {
                 yield return lines[i];
 
@@ -736,7 +743,7 @@ public class SqlQueryBuilderHelper
         }
             
         //not a custom filter (which requires ANDing - see above) so this is the rest of the cases
-        foreach (CustomLine line in lines)
+        foreach (var line in lines)
             yield return line;
     }
 }

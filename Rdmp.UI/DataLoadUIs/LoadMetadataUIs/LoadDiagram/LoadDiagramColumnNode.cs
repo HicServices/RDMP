@@ -51,7 +51,8 @@ public class LoadDiagramColumnNode : Node,ICombineableSource, IHasLoadDiagramSta
         if (colInfo != null)
             _expectedDataType = colInfo.GetRuntimeDataType(_bubble.ToLoadStage());
         else
-            throw new Exception("Expected _column to be ColumnInfo or PreLoadDiscardedColumn but it was:" + _column.GetType().Name);
+            throw new Exception(
+                $"Expected _column to be ColumnInfo or PreLoadDiscardedColumn but it was:{_column.GetType().Name}");
     }
 
     public bool IsDynamicColumn
@@ -120,7 +121,7 @@ public class LoadDiagramColumnNode : Node,ICombineableSource, IHasLoadDiagramSta
     {
         unchecked
         {
-            int hashCode = (int) _bubble;
+            var hashCode = (int) _bubble;
             hashCode = (hashCode*397) ^ (_tableNode != null ? _tableNode.GetHashCode() : 0);
             hashCode = (hashCode*397) ^ (ColumnName != null ? ColumnName.GetHashCode() : 0);
             return hashCode;

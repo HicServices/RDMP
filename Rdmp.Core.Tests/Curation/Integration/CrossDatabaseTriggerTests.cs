@@ -52,7 +52,7 @@ public class CrossDatabaseTriggerTests : DatabaseTests
 
         Assert.AreEqual(4, tbl.DiscoverColumns().Length);
 
-        var archiveTable = tbl.Database.ExpectTable(tbl.GetRuntimeName() + "_Archive");
+        var archiveTable = tbl.Database.ExpectTable($"{tbl.GetRuntimeName()}_Archive");
         Assert.IsTrue(archiveTable.Exists());
 
         Assert.AreEqual(7,archiveTable.DiscoverColumns().Count());

@@ -83,7 +83,8 @@ public partial class DashboardLayoutUI : DashboardLayoutUI_Design
             }
             catch (DashboardControlHydrationException e)
             {
-                if(Activator.YesNo("Error Hydrating Control '" + c+ "', Do you want to delete the control? (No will attempt to clear the control state but leave it on the Dashboard).  Exception was:"+Environment.NewLine + e.Message,"Delete Broken Control?"))
+                if(Activator.YesNo(
+                       $"Error Hydrating Control '{c}', Do you want to delete the control? (No will attempt to clear the control state but leave it on the Dashboard).  Exception was:{Environment.NewLine}{e.Message}","Delete Broken Control?"))
                 {
                     c.DeleteInDatabase();
                     continue;

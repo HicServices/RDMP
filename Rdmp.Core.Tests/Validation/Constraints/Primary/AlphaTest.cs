@@ -50,7 +50,7 @@ class AlphaTest : ValidationTests
     public void Validate_Invalid_ExceptionContainsRequiredInfo()
     {
             
-        ValidationFailure result = _alpha.Validate("9");
+        var result = _alpha.Validate("9");
             
         Assert.NotNull(result.SourceConstraint);
         Assert.AreEqual(typeof(Alpha), result.SourceConstraint.GetType());

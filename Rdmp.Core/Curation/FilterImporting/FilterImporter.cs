@@ -56,14 +56,15 @@ public class FilterImporter
         var extractionFilter = fromMaster as ExtractionFilter;
 
         if(extractionFilter != null && extractionFilter.ExtractionInformation.ColumnInfo == null) 
-            throw new Exception("Could not import filter "+extractionFilter+" because it could not be traced back to a ColumnInfo");
+            throw new Exception(
+                $"Could not import filter {extractionFilter} because it could not be traced back to a ColumnInfo");
 
         //If user is trying to publish a filter into the Catalogue as a new master top level filter, make sure it is properly documented
         if (_factory is ExtractionFilterFactory)
         {
             string reason;
             if(!IsProperlyDocumented(fromMaster, out reason))
-                throw new Exception("Cannot clone filter called '"+fromMaster.Name+"' because:" + reason);
+                throw new Exception($"Cannot clone filter called '{fromMaster.Name}' because:{reason}");
         }
 
         //Handle problems with existing filters
@@ -73,10 +74,10 @@ public class FilterImporter
             throw new ArgumentException("Master filter (that you are trying to import) cannot be part of the existing filters collection!");
 
         //Ensure that the new filter has a unique name within the scope
-        string name = fromMaster.Name;
+        var name = fromMaster.Name;
             
         while (existingFiltersAlreadyInScope.Any(f => f.Name.Equals(name)))
-            name = "Copy of " + name;
+            name = $"Copy of {name}";
 
         //create the filter 
         var newFilter = _factory.CreateNewFilter(name);
@@ -93,7 +94,8 @@ public class FilterImporter
         //if we are up cloning we are publishing a child into being a new master catalogue filter (ExtractionFilter) 
         if (newFilter is ExtractionFilter)
         {
-            newFilter.Description += Environment.NewLine + " Published by " + Environment.UserName + " on " + DateTime.Now + " from object " + fromMaster.GetType().Name + " with ID " + fromMaster.ID;
+            newFilter.Description +=
+                $"{Environment.NewLine} Published by {Environment.UserName} on {DateTime.Now} from object {fromMaster.GetType().Name} with ID {fromMaster.ID}";
             fromMaster.ClonedFromExtractionFilter_ID = newFilter.ID;//Make the newly created master our parent (since we are published)
         }
 
@@ -124,11 +126,11 @@ public class FilterImporter
     /// <returns></returns>
     public IFilter[] ImportAllFilters(IContainer containerToImportInto, IFilter[] allMasters, IFilter[] existingFiltersAlreadyInScope)
     {
-        List<IFilter> createdSoFar = new List<IFilter>();
+        var createdSoFar = new List<IFilter>();
 
         existingFiltersAlreadyInScope = existingFiltersAlreadyInScope ?? Array.Empty<IFilter>();
 
-        foreach (IFilter master in allMasters)
+        foreach (var master in allMasters)
         {
             var added = ImportFilter(containerToImportInto,master, createdSoFar.Union(existingFiltersAlreadyInScope).ToArray());
             createdSoFar.Add(added);
@@ -159,12 +161,12 @@ public class FilterImporter
         if (reason == null)
         {
             //check to see if there's a problem with the parameters
-            foreach (ISqlParameter filterParameter in filter.GetAllParameters())
+            foreach (var filterParameter in filter.GetAllParameters())
             {
                 string reasonParameterRejected;
                 if (!ExtractionFilterParameter.IsProperlyDocumented(filterParameter, out reasonParameterRejected))
                 {
-                    reason = "Parameter '" + filterParameter.ParameterName + "' was rejected :" + reasonParameterRejected;
+                    reason = $"Parameter '{filterParameter.ParameterName}' was rejected :{reasonParameterRejected}";
                     break;
                 }
             }

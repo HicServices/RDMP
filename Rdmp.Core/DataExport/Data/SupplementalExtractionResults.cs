@@ -32,59 +32,59 @@ public class SupplementalExtractionResults : ReferenceOtherObjectDatabaseEntity,
     /// <inheritdoc/>
     public int? CumulativeExtractionResults_ID
     {
-        get { return _cumulativeExtractionResults_ID; }
-        set { SetField(ref _cumulativeExtractionResults_ID, value); }
+        get => _cumulativeExtractionResults_ID;
+        set => SetField(ref _cumulativeExtractionResults_ID, value);
     }
     /// <inheritdoc/>
     public int? ExtractionConfiguration_ID
     {
-        get { return _extractionConfiguration_ID; }
-        set { SetField(ref _extractionConfiguration_ID, value); }
+        get => _extractionConfiguration_ID;
+        set => SetField(ref _extractionConfiguration_ID, value);
     }
     /// <inheritdoc/>
     public string DestinationDescription
     {
-        get { return _destinationDescription; }
-        set { SetField(ref _destinationDescription, value); }
+        get => _destinationDescription;
+        set => SetField(ref _destinationDescription, value);
     }
     /// <inheritdoc/>
     public int RecordsExtracted
     {
-        get { return _recordsExtracted; }
-        set { SetField(ref _recordsExtracted, value); }
+        get => _recordsExtracted;
+        set => SetField(ref _recordsExtracted, value);
     }
 
     /// <inheritdoc/>
     public DateTime DateOfExtraction
     {
-        get { return _dateOfExtraction; }
-        private set { SetField(ref _dateOfExtraction, value); }
+        get => _dateOfExtraction;
+        private set => SetField(ref _dateOfExtraction, value);
     }
 
     /// <inheritdoc/>
     public string Exception
     {
-        get { return _exception; }
-        set { SetField(ref _exception, value); }
+        get => _exception;
+        set => SetField(ref _exception, value);
     }
     /// <inheritdoc/>
     public string SQLExecuted
     {
-        get { return _sQLExecuted; }
-        set { SetField(ref _sQLExecuted, value); }
+        get => _sQLExecuted;
+        set => SetField(ref _sQLExecuted, value);
     }
     /// <inheritdoc/>
     public string ExtractedName
     {
-        get { return _extractedName; }
-        set { SetField(ref _extractedName, value); }
+        get => _extractedName;
+        set => SetField(ref _extractedName, value);
     }
 
     /// <inheritdoc/>
     public string DestinationType
     {
-        get { return _destinationType; }
-        private set { SetField(ref _destinationType, value); }
+        get => _destinationType;
+        private set => SetField(ref _destinationType, value);
     }
 
     #endregion
@@ -109,7 +109,7 @@ public class SupplementalExtractionResults : ReferenceOtherObjectDatabaseEntity,
     public SupplementalExtractionResults(IDataExportRepository repository, IExtractionConfiguration configuration, string sql, IMapsDirectlyToDatabaseTable extractedObject)
     {
         Repository = repository;
-        string name = extractedObject.GetType().FullName;
+        var name = extractedObject.GetType().FullName;
 
         if (extractedObject is INamed)
             name = (extractedObject as INamed).Name;
@@ -139,7 +139,7 @@ public class SupplementalExtractionResults : ReferenceOtherObjectDatabaseEntity,
     {
         Repository = repository;
 
-        string name = extractedObject.GetType().FullName;
+        var name = extractedObject.GetType().FullName;
 
         if (extractedObject is INamed)
             name = (extractedObject as INamed).Name;

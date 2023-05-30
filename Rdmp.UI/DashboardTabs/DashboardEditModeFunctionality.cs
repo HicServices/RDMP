@@ -21,7 +21,7 @@ public class DashboardEditModeFunctionality
 
     public bool EditMode
     {
-        get { return _editMode; }
+        get => _editMode;
         set
         {
             _editMode = value; 
@@ -89,7 +89,7 @@ public class DashboardEditModeFunctionality
                 
                 
             //save changes
-            foreach (KeyValuePair<DashboardControl, DashboardableControlHostPanel> kvp in _layoutUI.ControlDictionary)
+            foreach (var kvp in _layoutUI.ControlDictionary)
             {
                 if (kvp.Value == _actionUnderwayOnControl)
                 {

@@ -31,10 +31,7 @@ public class JoinableCollectionNode:Node,IOrderable
         return "";
     }
 
-    public IMapsDirectlyToDatabaseTable Child
-    {
-        get { return null; }
-    }
+    public IMapsDirectlyToDatabaseTable Child => null;
 
     public IDataAccessPoint[] GetDataAccessPoints()
     {
@@ -99,7 +96,7 @@ criteria are 'in the 6 months' / 'in the 12 months' post hospitalisation date pe
 
     int IOrderable.Order
     {
-        get { return 9999; }
+        get => 9999;
         set { }
     }
 }

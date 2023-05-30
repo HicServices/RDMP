@@ -62,7 +62,7 @@ public partial class SecondaryConstraintUI : UserControl
     {
         const int rowHeight = 30;
         //the amount of additional space required to accomodate description labels
-        int inflation = 0;
+        var inflation = 0;
         _repository = repository;
         this.SecondaryConstriant = secondaryConstriant;
             
@@ -91,7 +91,7 @@ public partial class SecondaryConstraintUI : UserControl
             && !p.IsDefined(typeof (HideOnValidationUI), true)
         ).ToArray();
 
-        for (int i = 0; i < _requiredProperties.Length;i++ )
+        for (var i = 0; i < _requiredProperties.Length;i++ )
         {
             var currentRowPanel = new Panel();
             currentRowPanel.Bounds = new Rectangle(0,0,tableLayoutPanel1.Width,rowHeight);
@@ -103,17 +103,17 @@ public partial class SecondaryConstraintUI : UserControl
             tableLayoutPanel1.Controls.Add(currentRowPanel,0,i+1);
                 
                 
-            Label lblName = new Label();
+            var lblName = new Label();
             lblName.Text = _requiredProperties[i].Name;
             lblName.AutoSize = true;
                 
-            object currentValue = _requiredProperties[i].GetValue(SecondaryConstriant, null);
+            var currentValue = _requiredProperties[i].GetValue(SecondaryConstriant, null);
 
 
             //Hard Typed properties - Bool
             if (_requiredProperties[i].PropertyType == typeof(bool))
             {
-                CheckBox boolControl = new CheckBox();
+                var boolControl = new CheckBox();
                 boolControl.Text = _requiredProperties[i].Name;
                 boolControl.Tag = i;
                 boolControl.Checked = (bool)currentValue;
@@ -125,7 +125,7 @@ public partial class SecondaryConstraintUI : UserControl
             if (_requiredProperties[i].PropertyType == typeof(PredictionRule))//Hard Typed property PredictionRule
             {
                 //for prediction rules fields
-                ComboBox cbx = new ComboBox();
+                var cbx = new ComboBox();
                 cbx.Items.AddRange(Validator.GetPredictionExtraTypes());
                 cbx.Items.Add("");
                 cbx.DropDownStyle = ComboBoxStyle.DropDownList;
@@ -153,7 +153,7 @@ public partial class SecondaryConstraintUI : UserControl
                 if (_requiredProperties[i].IsDefined(typeof (ExpectsColumnNameAsInput), true))
                 {
                     //for column fields
-                    ComboBox cbx = new ComboBox();
+                    var cbx = new ComboBox();
                     cbx.Items.AddRange(_otherColumns);
                     cbx.Items.Add("");
                     cbx.DropDownStyle = ComboBoxStyle.DropDownList;
@@ -167,7 +167,7 @@ public partial class SecondaryConstraintUI : UserControl
                 else
                 if (typeof(IMapsDirectlyToDatabaseTable).IsAssignableFrom(_requiredProperties[i].PropertyType))//it is a Catalogue type 
                 {
-                    ComboBox dd = new ComboBox();
+                    var dd = new ComboBox();
                     dd.Tag = i;
                     dd.Width = 350;
                     dd.AutoCompleteSource = AutoCompleteSource.ListItems;
@@ -180,7 +180,8 @@ public partial class SecondaryConstraintUI : UserControl
                             MessageBox.Show("You currently do not have any standard regex concepts in your database.  These can be created from the Table(Advanced) collection.",
                                 "No StandardRegex configured in your Catalogue");
                         else
-                            MessageBox.Show("You currently do not have any " + _requiredProperties[i].PropertyType + " in your database","Catalogue Entity Collection Empty");
+                            MessageBox.Show(
+                                $"You currently do not have any {_requiredProperties[i].PropertyType} in your database","Catalogue Entity Collection Empty");
                     }
                     else
                     {
@@ -190,7 +191,7 @@ public partial class SecondaryConstraintUI : UserControl
                     }
 
                     //See if it has a value
-                    IRevertable v = _requiredProperties[i].GetValue(SecondaryConstriant, null) as IRevertable;
+                    var v = _requiredProperties[i].GetValue(SecondaryConstriant, null) as IRevertable;
 
                     //It has a value, this is a dropdown control right here though so if the revertable state out of date then it means someone else made a change to the database while we were picking columns
                     if(v != null)
@@ -254,8 +255,8 @@ public partial class SecondaryConstraintUI : UserControl
 
     private void setTextOrParseableProperty(object sender, EventArgs e)
     {
-        Control senderAsControl = (Control) sender;
-        int propertyIdx = (int) senderAsControl.Tag;
+        var senderAsControl = (Control) sender;
+        var propertyIdx = (int) senderAsControl.Tag;
 
         try
         {
@@ -263,7 +264,7 @@ public partial class SecondaryConstraintUI : UserControl
                 _requiredProperties[propertyIdx].SetValue(SecondaryConstriant, null, null);
             else
             {
-                Type underlyingType = _requiredProperties[propertyIdx].PropertyType;
+                var underlyingType = _requiredProperties[propertyIdx].PropertyType;
                 _requiredProperties[propertyIdx].SetValue(SecondaryConstriant, UsefulStuff.ChangeType(senderAsControl.Text, underlyingType), null);        
             }
 
@@ -277,14 +278,14 @@ public partial class SecondaryConstraintUI : UserControl
             senderAsControl.ForeColor = Color.Red;
 
             //find the innermost exception
-            int overflow = 0;
-            string msg = ex.Message;
+            var overflow = 0;
+            var msg = ex.Message;
             while (ex.InnerException != null && overflow < 3) //only display up to 3 exception messages
             {
                 ex = ex.InnerException;
 
                 if(ex != null)
-                    msg += "," + ex.Message;
+                    msg += $",{ex.Message}";
 
                 overflow++;
             }

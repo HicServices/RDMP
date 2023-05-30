@@ -41,15 +41,16 @@ public class BasicAnonymisationEngine :IPluginDataFlowComponent<DataTable>,IPipe
         _dumper.CreateSTAGINGTable();
 
         //columns we expect to ANO
-        foreach (ColumnInfo columnInfo in target.ColumnInfos)
+        foreach (var columnInfo in target.ColumnInfos)
         {
-            string columnName = columnInfo.GetRuntimeName();
+            var columnName = columnInfo.GetRuntimeName();
 
             if (columnInfo.ANOTable_ID != null)
             {
                 //The metadata says this column should be ANOd
                 if (!columnName.StartsWith(ANOTable.ANOPrefix))
-                    throw new Exception("ColumnInfo  " + columnName + " does not start with ANO but is marked as an ANO column (ID=" + columnInfo.ID + ")");
+                    throw new Exception(
+                        $"ColumnInfo  {columnName} does not start with ANO but is marked as an ANO column (ID={columnInfo.ID})");
 
                 //if the column is ANOGp then look for column Gp in the input columns (DataTable toProcess)
                 columnName = columnName.Substring(ANOTable.ANOPrefix.Length);
@@ -65,7 +66,7 @@ public class BasicAnonymisationEngine :IPluginDataFlowComponent<DataTable>,IPipe
 
     public DataTable ProcessPipelineData( DataTable toProcess, IDataLoadEventListener listener, GracefulCancellationToken cancellationToken)
     {
-        bool didAno = false;
+        var didAno = false;
 
         stopwatch_TimeSpentTransforming.Start();
             
@@ -77,9 +78,8 @@ public class BasicAnonymisationEngine :IPluginDataFlowComponent<DataTable>,IPipe
         var missingColumns = columnsToAnonymise.Keys.Where(k => !toProcess.Columns.Cast<DataColumn>().Any(c => c.ColumnName.Equals(k))).ToArray();
 
         if(missingColumns.Any())
-            throw new KeyNotFoundException("The following columns (which have ANO Transforms on them) were missing from the DataTable:" + Environment.NewLine
-                +string.Join(Environment.NewLine,missingColumns) + Environment.NewLine + "The columns found in the DataTable were:" +Environment.NewLine 
-                +string.Join(Environment.NewLine, toProcess.Columns.Cast<DataColumn>().Select(c => c.ColumnName)));
+            throw new KeyNotFoundException(
+                $"The following columns (which have ANO Transforms on them) were missing from the DataTable:{Environment.NewLine}{string.Join(Environment.NewLine, missingColumns)}{Environment.NewLine}The columns found in the DataTable were:{Environment.NewLine}{string.Join(Environment.NewLine, toProcess.Columns.Cast<DataColumn>().Select(c => c.ColumnName))}");
 
         //Dump Identifiers
         stopwatch_TimeSpentDumping.Start();
@@ -91,15 +91,15 @@ public class BasicAnonymisationEngine :IPluginDataFlowComponent<DataTable>,IPipe
            
         //Process ANO Identifier Substitutions
         //for each column with an ANOTrasformer
-        foreach (KeyValuePair<string, ANOTransformer> kvp in columnsToAnonymise)
+        foreach (var kvp in columnsToAnonymise)
         {
             didAno = true;
 
             var column = kvp.Key;
-            ANOTransformer transformer = kvp.Value;
+            var transformer = kvp.Value;
 
             //add an ANO version
-            DataColumn ANOColumn = new DataColumn(ANOTable.ANOPrefix + column);
+            var ANOColumn = new DataColumn(ANOTable.ANOPrefix + column);
             toProcess.Columns.Add(ANOColumn);
 
             //populate ANO version

@@ -31,12 +31,11 @@ public class StandardPipelineUseCaseNode : SingletonNode,IKnowWhatIAm
     {
         var useCaseType = UseCase.GetType();
 
-        string useCaseDescription = string.Format("{0} \r\n {1}",
+        var useCaseDescription = string.Format("{0} \r\n {1}",
             useCaseType.Name,
             _commentStore.GetTypeDocumentationIfExists(useCaseType, false, true));
 
-        return "Collection of all the Pipelines compatible with a given use case.  This node's use case is:" 
-               + Environment.NewLine
-               +useCaseDescription;
+        return
+            $"Collection of all the Pipelines compatible with a given use case.  This node's use case is:{Environment.NewLine}{useCaseDescription}";
     }
 }

@@ -131,14 +131,14 @@ public class SearchablesMatchScorer
             //add the explicit types only if the search text does not contain any explicit type names
             if(string.IsNullOrWhiteSpace(searchText) || !TypeNames.Intersect(searchText.Split(' '),StringComparer.CurrentCultureIgnoreCase).Any())
                 foreach (var showOnlyType in showOnlyTypes) 
-                    searchText = searchText + " " + showOnlyType.Name;
+                    searchText = $"{searchText} {showOnlyType.Name}";
 
         //Search the tokens for also inclusions e.g. "Pipeline" becomes "Pipeline PipelineCompatibleWithUseCaseNode"
         if (!string.IsNullOrWhiteSpace(searchText))
             foreach(var s in searchText.Split(' ').ToArray())
                 if (AlsoIncludes.ContainsKey(s))
                     foreach(var v in AlsoIncludes[s])
-                        searchText += " " + v.Name;
+                        searchText += $" {v.Name}";
 
         //if we have nothing to search for return no results
         if (ReturnEmptyResultWhenNoSearchTerms && string.IsNullOrWhiteSpace(searchText) && ID == null)
@@ -156,7 +156,7 @@ public class SearchablesMatchScorer
             explicitTypesRequested = TypeNames.Intersect(tokens,StringComparer.CurrentCultureIgnoreCase).ToArray();
 
             //else it's a regex
-            foreach (string token in tokens.Except(TypeNames,StringComparer.CurrentCultureIgnoreCase))
+            foreach (var token in tokens.Except(TypeNames,StringComparer.CurrentCultureIgnoreCase))
                 regexes.Add(new Regex(Regex.Escape(token), RegexOptions.IgnoreCase));
 
         }
@@ -183,7 +183,7 @@ public class SearchablesMatchScorer
 
     private int ScoreMatches(KeyValuePair<IMapsDirectlyToDatabaseTable, DescendancyList> kvp, List<Regex> regexes, string[] explicitTypeNames, CancellationToken cancellationToken)
     {
-        int score = 0;
+        var score = 0;
 
         if (cancellationToken.IsCancellationRequested)
             return 0;
@@ -242,10 +242,10 @@ public class SearchablesMatchScorer
         if (kvp.Value != null)
         {
             var parents = kvp.Value.Parents;
-            int numberOfParents = parents.Length;
+            var numberOfParents = parents.Length;
 
             //for each prime after the first apply it as a multiple of the parent match
-            for (int i = 1; i < Weights.Length; i++)
+            for (var i = 1; i < Weights.Length; i++)
             {
                 //if we have run out of parents
                 if (i > numberOfParents)
@@ -268,7 +268,7 @@ public class SearchablesMatchScorer
         if (regexes.Any())
             return 0;
 
-        Catalogue catalogueIfAny = GetCatalogueIfAnyInDescendancy(kvp);
+        var catalogueIfAny = GetCatalogueIfAnyInDescendancy(kvp);
 
         if (catalogueIfAny != null && catalogueIfAny.IsDeprecated)
             return score /10;
@@ -308,13 +308,13 @@ public class SearchablesMatchScorer
     private int CountMatchToString(List<Regex> regexes, object key)
     {
         var s = key as ICustomSearchString;
-        string matchOn = s != null ? s.GetSearchString() : key.ToString();
+        var matchOn = s != null ? s.GetSearchString() : key.ToString();
 
         return MatchCount(regexes, matchOn);
     }
     private int MatchCount(List<Regex> regexes, string str)
     {
-        int matches = 0;
+        var matches = 0;
 
         //exact matches
         foreach (var match in regexes.Where(r => r.ToString().Equals(str,StringComparison.CurrentCultureIgnoreCase)).ToArray())
@@ -365,8 +365,8 @@ public class SearchablesMatchScorer
                 return true;
         }
 
-        bool isProjectSpecific = cata.IsProjectSpecific(null);
-        bool isExtractable = cata.GetExtractabilityStatus(null) != null && cata.GetExtractabilityStatus(null).IsExtractable;
+        var isProjectSpecific = cata.IsProjectSpecific(null);
+        var isExtractable = cata.GetExtractabilityStatus(null) != null && cata.GetExtractabilityStatus(null).IsExtractable;
 
         return (isExtractable && !cata.IsColdStorageDataset && !cata.IsDeprecated && !cata.IsInternalDataset && !isProjectSpecific) ||
                ((includeColdStorage && cata.IsColdStorageDataset) ||

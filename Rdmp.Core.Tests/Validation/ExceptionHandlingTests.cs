@@ -30,7 +30,7 @@ class ExceptionHandlingTests
         validator.AddItemValidator(chi, "chi", typeof(string));
 
         var age = new ItemValidator();
-        BoundDouble ageConstraint = (BoundDouble)Validator.CreateConstraint("bounddouble",Consequence.Wrong);
+        var ageConstraint = (BoundDouble)Validator.CreateConstraint("bounddouble",Consequence.Wrong);
         ageConstraint.Lower = 0;
         ageConstraint.Upper = 30;
         age.AddSecondaryConstraint(ageConstraint);
@@ -41,7 +41,7 @@ class ExceptionHandlingTests
         row.Add("age", 31);
         row.Add("gender", "F");
 
-        ValidationFailure result =  validator.Validate(row);
+        var result =  validator.Validate(row);
 
         Assert.AreEqual(2, result.GetExceptionList().Count);
             

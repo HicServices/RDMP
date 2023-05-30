@@ -58,8 +58,8 @@ public class ANOTable : DatabaseEntity, ISaveable, IDeleteable,ICheckable,IRever
     /// </summary>
     public string TableName
     {
-        get { return _tableName; }
-        set { SetField(ref  _tableName, value); }
+        get => _tableName;
+        set => SetField(ref  _tableName, value);
     }
 
     /// <summary>
@@ -68,8 +68,8 @@ public class ANOTable : DatabaseEntity, ISaveable, IDeleteable,ICheckable,IRever
     /// </summary>
     public int NumberOfIntegersToUseInAnonymousRepresentation
     {
-        get { return _numberOfIntegersToUseInAnonymousRepresentation; }
-        set { SetField(ref  _numberOfIntegersToUseInAnonymousRepresentation, value); }
+        get => _numberOfIntegersToUseInAnonymousRepresentation;
+        set => SetField(ref  _numberOfIntegersToUseInAnonymousRepresentation, value);
     }
 
     /// <summary>
@@ -78,8 +78,8 @@ public class ANOTable : DatabaseEntity, ISaveable, IDeleteable,ICheckable,IRever
     /// </summary>
     public int NumberOfCharactersToUseInAnonymousRepresentation
     {
-        get { return _numberOfCharactersToUseInAnonymousRepresentation; }
-        set { SetField(ref  _numberOfCharactersToUseInAnonymousRepresentation, value); }
+        get => _numberOfCharactersToUseInAnonymousRepresentation;
+        set => SetField(ref  _numberOfCharactersToUseInAnonymousRepresentation, value);
     }
 
     /// <summary>
@@ -89,8 +89,8 @@ public class ANOTable : DatabaseEntity, ISaveable, IDeleteable,ICheckable,IRever
     [Relationship(typeof(ExternalDatabaseServer),RelationshipType.SharedObject)]
     public int Server_ID
     {
-        get { return _serverID; }
-        set { SetField(ref  _serverID, value); }
+        get => _serverID;
+        set => SetField(ref  _serverID, value);
     }
 
     /// <summary>
@@ -100,8 +100,8 @@ public class ANOTable : DatabaseEntity, ISaveable, IDeleteable,ICheckable,IRever
     /// </summary>
     public string Suffix
     {
-        get { return _suffix; }
-        set { SetField(ref _suffix, value); }
+        get => _suffix;
+        set => SetField(ref _suffix, value);
     }
     #endregion
 
@@ -109,9 +109,8 @@ public class ANOTable : DatabaseEntity, ISaveable, IDeleteable,ICheckable,IRever
 
     /// <inheritdoc cref="Server_ID"/>
     [NoMappingToDatabase]
-    public ExternalDatabaseServer Server {
-        get { return Repository.GetObjectByID<ExternalDatabaseServer>(Server_ID); }
-    }
+    public ExternalDatabaseServer Server => Repository.GetObjectByID<ExternalDatabaseServer>(Server_ID);
+
     #endregion
     public ANOTable()
     {
@@ -216,11 +215,11 @@ public class ANOTable : DatabaseEntity, ISaveable, IDeleteable,ICheckable,IRever
         try
         {
             if (!IsTablePushed())
-                notifier.OnCheckPerformed(new CheckEventArgs("Could not find table " + TableName + " on server " + Server,CheckResult.Warning));
+                notifier.OnCheckPerformed(new CheckEventArgs($"Could not find table {TableName} on server {Server}",CheckResult.Warning));
         }
         catch (Exception e)
         {
-            notifier.OnCheckPerformed(new CheckEventArgs("Failed to get list of tables on server " + Server,CheckResult.Fail, e));
+            notifier.OnCheckPerformed(new CheckEventArgs($"Failed to get list of tables on server {Server}",CheckResult.Fail, e));
         }
     }
 
@@ -265,7 +264,8 @@ public class ANOTable : DatabaseEntity, ISaveable, IDeleteable,ICheckable,IRever
 
         if (tbl != null && tbl.Exists())
             if(!tbl.IsEmpty())
-                throw new Exception("Cannot delete ANOTable because it references " + TableName + " which is a table on server " + Server + " which contains rows, deleting this reference would leave that table as an orphan, we can only delete when there are 0 rows in the table");
+                throw new Exception(
+                    $"Cannot delete ANOTable because it references {TableName} which is a table on server {Server} which contains rows, deleting this reference would leave that table as an orphan, we can only delete when there are 0 rows in the table");
             else
                 tbl.Drop();
     }
@@ -282,23 +282,20 @@ public class ANOTable : DatabaseEntity, ISaveable, IDeleteable,ICheckable,IRever
         var server = DataAccessPortal.GetInstance().ExpectServer(Server, DataAccessContext.DataLoad);
 
         //matches varchar(100) and has capture group 100
-        Regex regexGetLengthOfCharType =new Regex(@".*char.*\((\d*)\)");
-        Match match = regexGetLengthOfCharType.Match(identifiableDatatype);
+        var regexGetLengthOfCharType =new Regex(@".*char.*\((\d*)\)");
+        var match = regexGetLengthOfCharType.Match(identifiableDatatype);
 
         //if user supplies varchar(100) and says he wants 3 ints and 3 chars in his anonymous identifiers he will soon run out of combinations 
             
         if (match.Success)
         {
-            int length = Convert.ToInt32(match.Groups[1].Value);
+            var length = Convert.ToInt32(match.Groups[1].Value);
 
             if (length >
                 NumberOfCharactersToUseInAnonymousRepresentation + NumberOfIntegersToUseInAnonymousRepresentation)
                 notifier.OnCheckPerformed(
                     new CheckEventArgs(
-                        "You asked to create a table with a datatype of length " + length + "(" + identifiableDatatype +
-                        ") but you did not allocate an equal or greater number of anonymous identifier types (NumberOfCharactersToUseInAnonymousRepresentation + NumberOfIntegersToUseInAnonymousRepresentation=" +
-                        (NumberOfCharactersToUseInAnonymousRepresentation +
-                         NumberOfIntegersToUseInAnonymousRepresentation) + ")", CheckResult.Warning));
+                        $"You asked to create a table with a datatype of length {length}({identifiableDatatype}) but you did not allocate an equal or greater number of anonymous identifier types (NumberOfCharactersToUseInAnonymousRepresentation + NumberOfIntegersToUseInAnonymousRepresentation={(NumberOfCharactersToUseInAnonymousRepresentation + NumberOfIntegersToUseInAnonymousRepresentation)})", CheckResult.Warning));
         }
 
         var con = forceConnection ?? server.GetConnection();//use the forced connection or open a new one
@@ -310,37 +307,35 @@ public class ANOTable : DatabaseEntity, ISaveable, IDeleteable,ICheckable,IRever
         }
         catch (Exception e)
         {
-            notifier.OnCheckPerformed(new CheckEventArgs("Could not connect to ano server " + Server,CheckResult.Fail,e));
+            notifier.OnCheckPerformed(new CheckEventArgs($"Could not connect to ano server {Server}",CheckResult.Fail,e));
             return;
         }
 
         //if table name is ANOChi there are 2 columns Chi and ANOChi in it
-        string anonymousColumnName = TableName;
-        string identifiableColumnName = TableName.Substring("ANO".Length);
+        var anonymousColumnName = TableName;
+        var identifiableColumnName = TableName.Substring("ANO".Length);
 
-        string anonymousDatatype = "varchar(" +
-                                   (NumberOfCharactersToUseInAnonymousRepresentation +
-                                    NumberOfIntegersToUseInAnonymousRepresentation + "_".Length + Suffix.Length) + ")";
+        var anonymousDatatype =
+            $"varchar({(NumberOfCharactersToUseInAnonymousRepresentation + NumberOfIntegersToUseInAnonymousRepresentation + "_".Length + Suffix.Length)})";
 
 
-        var sql = "CREATE TABLE " + TableName + Environment.NewLine + " (" + Environment.NewLine +
-                  identifiableColumnName + " " + identifiableDatatype + " NOT NULL," + Environment.NewLine +
-                  anonymousColumnName + " " + anonymousDatatype +  "NOT NULL";
+        var sql =
+            $"CREATE TABLE {TableName}{Environment.NewLine} ({Environment.NewLine}{identifiableColumnName} {identifiableDatatype} NOT NULL,{Environment.NewLine}{anonymousColumnName} {anonymousDatatype}NOT NULL";
 
-        sql += @",
-CONSTRAINT PK_" + TableName+ @" PRIMARY KEY CLUSTERED 
+        sql += $@",
+CONSTRAINT PK_{TableName} PRIMARY KEY CLUSTERED 
 (
-        "+identifiableColumnName+@" ASC
+        {identifiableColumnName} ASC
 ),
-CONSTRAINT AK_" + TableName + @" UNIQUE(" + anonymousColumnName + @")
+CONSTRAINT AK_{TableName} UNIQUE({anonymousColumnName})
 )";
 
 
-        using (DbCommand cmd = server.GetCommand(sql, con))
+        using (var cmd = server.GetCommand(sql, con))
         {
             cmd.Transaction = forceTransaction;
 
-            notifier.OnCheckPerformed(new CheckEventArgs("Decided appropriate create statement is:" + cmd.CommandText, CheckResult.Success));
+            notifier.OnCheckPerformed(new CheckEventArgs($"Decided appropriate create statement is:{cmd.CommandText}", CheckResult.Success));
             try
             {
                 cmd.ExecuteNonQuery();
@@ -352,8 +347,7 @@ CONSTRAINT AK_" + TableName + @" UNIQUE(" + anonymousColumnName + @")
             {
                 notifier.OnCheckPerformed(
                     new CheckEventArgs(
-                        "Failed to successfully create the anonymous/identifier mapping Table in the ANO database on server " +
-                        Server, CheckResult.Fail, e));
+                        $"Failed to successfully create the anonymous/identifier mapping Table in the ANO database on server {Server}", CheckResult.Fail, e));
                 return;
             }
         }
@@ -388,18 +382,20 @@ CONSTRAINT AK_" + TableName + @" UNIQUE(" + anonymousColumnName + @")
         {
             var server = DataAccessPortal.GetInstance().ExpectServer(Server, DataAccessContext.DataLoad);
                 
-            DiscoveredColumn[] columnsFoundInANO = server.GetCurrentDatabase().ExpectTable(TableName).DiscoverColumns();
+            var columnsFoundInANO = server.GetCurrentDatabase().ExpectTable(TableName).DiscoverColumns();
 
-            string expectedIdentifiableName = TableName.Substring("ANO".Length);
+            var expectedIdentifiableName = TableName.Substring("ANO".Length);
 
-            DiscoveredColumn anonymous = columnsFoundInANO.SingleOrDefault(c => c.GetRuntimeName().Equals(TableName));
-            DiscoveredColumn identifiable = columnsFoundInANO.SingleOrDefault(c=>c.GetRuntimeName().Equals(expectedIdentifiableName));
+            var anonymous = columnsFoundInANO.SingleOrDefault(c => c.GetRuntimeName().Equals(TableName));
+            var identifiable = columnsFoundInANO.SingleOrDefault(c=>c.GetRuntimeName().Equals(expectedIdentifiableName));
                 
             if(anonymous == null)
-                throw new Exception("Could not find a column called " + TableName + " in table " + TableName + " on server " + Server + " (Columns found were " + string.Join(",", columnsFoundInANO.Select(c=>c.GetRuntimeName()).ToArray()) + ")");
+                throw new Exception(
+                    $"Could not find a column called {TableName} in table {TableName} on server {Server} (Columns found were {string.Join(",", columnsFoundInANO.Select(c => c.GetRuntimeName()).ToArray())})");
 
             if (identifiable == null)
-                throw new Exception("Could not find a column called " + expectedIdentifiableName + " in table " + TableName + " on server " + Server + " (Columns found were " + string.Join(",", columnsFoundInANO.Select(c => c.GetRuntimeName()).ToArray()) + ")");
+                throw new Exception(
+                    $"Could not find a column called {expectedIdentifiableName} in table {TableName} on server {Server} (Columns found were {string.Join(",", columnsFoundInANO.Select(c => c.GetRuntimeName()).ToArray())})");
 
             _identifiableDataType = identifiable.DataType.SQLType;
             _anonymousDataType = anonymous.DataType.SQLType;

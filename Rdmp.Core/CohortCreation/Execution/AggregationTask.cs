@@ -50,17 +50,14 @@ public class AggregationTask:CacheableTask
         return _catalogueName;
     }
 
-    public override IMapsDirectlyToDatabaseTable Child
-    {
-        get { return Aggregate; }
-    }
+    public override IMapsDirectlyToDatabaseTable Child => Aggregate;
 
 
     public override string ToString()
     {
-        string name = Aggregate.ToString();
+        var name = Aggregate.ToString();
 
-        string expectedTrimStart = _cohortIdentificationConfiguration.GetNamingConventionPrefixForConfigurations();
+        var expectedTrimStart = _cohortIdentificationConfiguration.GetNamingConventionPrefixForConfigurations();
 
         if (name.StartsWith(expectedTrimStart))
             return name.Substring(expectedTrimStart.Length);

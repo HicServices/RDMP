@@ -67,7 +67,7 @@ public class PackageContentNode:Node,IDeletableWithCustomMessage, IMasqueradeAs
     /// <inheritdoc/>
     public string GetDeleteMessage()
     {
-        return "remove '" + DataSet + "' from Pacakge";
+        return $"remove '{DataSet}' from Pacakge";
     }
 
     /// <inheritdoc/>

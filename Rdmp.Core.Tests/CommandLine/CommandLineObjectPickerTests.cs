@@ -42,7 +42,7 @@ class CommandLineObjectPickerTests : UnitTests
     [Test]
     public void Test_RandomGarbage_GeneratesRawValueOnly()
     {
-        string str = $"Shiver me timbers";
+        var str = $"Shiver me timbers";
         var picker = new CommandLineObjectPicker(new []{str}, GetActivator());
 
         Assert.AreEqual(str,picker[0].RawValue); 
@@ -169,7 +169,7 @@ class CommandLineObjectPickerTests : UnitTests
         new Catalogue(mem.CatalogueRepository, "mycata2"); //ID = 2
         new Catalogue(mem.CatalogueRepository, "mycata3"); //ID = 3
 
-        PickObjectBase picker = (PickObjectBase) oc.Construct(pickerType, GetActivator(new RepositoryProvider(mem)));
+        var picker = (PickObjectBase) oc.Construct(pickerType, GetActivator(new RepositoryProvider(mem)));
 
         Assert.IsNotEmpty(picker.Help,"No Help for picker {0}",picker);
         Assert.IsNotEmpty(picker.Format,"No Format for picker {0}",picker);

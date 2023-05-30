@@ -39,8 +39,8 @@ public class RepositoryProvider : IRDMPPlatformRepositoryServiceLocator
         
     public IMapsDirectlyToDatabaseTable GetArbitraryDatabaseObject(string repositoryTypeName, string databaseObjectTypeName, int objectId)
     {
-        IRepository repository = GetRepository(repositoryTypeName);
-        Type objectType = GetTypeByName(databaseObjectTypeName, typeof(IMapsDirectlyToDatabaseTable));
+        var repository = GetRepository(repositoryTypeName);
+        var objectType = GetTypeByName(databaseObjectTypeName, typeof(IMapsDirectlyToDatabaseTable));
 
         if (!repository.StillExists(objectType, objectId))
             return null;
@@ -54,8 +54,8 @@ public class RepositoryProvider : IRDMPPlatformRepositoryServiceLocator
         if (string.IsNullOrWhiteSpace(repositoryTypeName) || string.IsNullOrWhiteSpace(databaseObjectTypeName))
             return false;
 
-        IRepository repository = GetRepository(repositoryTypeName);
-        Type objectType = GetTypeByName(databaseObjectTypeName, typeof(IMapsDirectlyToDatabaseTable));
+        var repository = GetRepository(repositoryTypeName);
+        var objectType = GetTypeByName(databaseObjectTypeName, typeof(IMapsDirectlyToDatabaseTable));
 
         return repository.StillExists(objectType, objectID);
     }
@@ -70,7 +70,8 @@ public class RepositoryProvider : IRDMPPlatformRepositoryServiceLocator
         if (typeof(IDataExportRepository).IsAssignableFrom(repoType))
             return DataExportRepository;
 
-        throw new NotSupportedException("Did not know what instance of IRepository to use for IRepository Type '" + repoType + "' , expected it to either be CatalogueRepository or DataExportRepository");
+        throw new NotSupportedException(
+            $"Did not know what instance of IRepository to use for IRepository Type '{repoType}' , expected it to either be CatalogueRepository or DataExportRepository");
 
     }
         
@@ -86,13 +87,12 @@ public class RepositoryProvider : IRDMPPlatformRepositoryServiceLocator
             toReturn = CatalogueRepository.MEF.GetType(s, expectedBaseClassType);
 
             if (toReturn == null)
-                throw new TypeLoadException("Could not find Type called '" + s + "'");
+                throw new TypeLoadException($"Could not find Type called '{s}'");
 
             if (expectedBaseClassType != null)
                 if (!expectedBaseClassType.IsAssignableFrom(toReturn))
-                    throw new TypeLoadException("Found Type '" + s +
-                                                "' which we managed to find but it did not match an expected base Type (" +
-                                                expectedBaseClassType + ")");
+                    throw new TypeLoadException(
+                        $"Found Type '{s}' which we managed to find but it did not match an expected base Type ({expectedBaseClassType})");
 
             //cache known type to not hammer reflection all the time!
             _cachedTypesByNameDictionary.Add(s, toReturn);
@@ -108,7 +108,7 @@ public class RepositoryProvider : IRDMPPlatformRepositoryServiceLocator
         if(DataExportRepository.SupportsObjectType(typeof(T)))
             return DataExportRepository.GetObjectByID<T>(value);
         else
-            throw new ArgumentException("Did not know what repository to use to fetch objects of Type '" + typeof(T) + "'");
+            throw new ArgumentException($"Did not know what repository to use to fetch objects of Type '{typeof(T)}'");
     }
 
     /// <inheritdoc/>
@@ -119,7 +119,7 @@ public class RepositoryProvider : IRDMPPlatformRepositoryServiceLocator
         if(DataExportRepository.SupportsObjectType(t))
             return DataExportRepository.GetObjectByID(t,value);
         else
-            throw new ArgumentException("Did not know what repository to use to fetch objects of Type '" + t + "'");
+            throw new ArgumentException($"Did not know what repository to use to fetch objects of Type '{t}'");
     }
     public virtual IEnumerable<IRepository> GetAllRepositories()
     {

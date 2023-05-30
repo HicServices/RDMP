@@ -51,20 +51,20 @@ internal class ViewSourceCodeToolTip : ToolTip
         try
         {
             var elements = e.ToolTipText.Split(new string[]{"|"}, StringSplitOptions.RemoveEmptyEntries);
-            string filename = elements[0];
-            int linenumber = int.Parse(elements[1]);
+            var filename = elements[0];
+            var linenumber = int.Parse(elements[1]);
 
             linenumber = Math.Max(0,linenumber-1);
 
             var lines = ReadAllLinesCached(filename);
 
             if(lines == null)
-                throw new FileNotFoundException("Could not find source code for file:" + Path.GetFileName(filename));
+                throw new FileNotFoundException($"Could not find source code for file:{Path.GetFileName(filename)}");
 
             //get height of any given line
             var coreLineHeight = e.Graphics.MeasureString("I've got a lovely bunch of coconuts" , e.Font).Height + (LINE_PADDING*2f);
 
-            int midpointY = HEIGHT/2;
+            var midpointY = HEIGHT/2;
 
             //white background
             e.Graphics.FillRectangle(Brushes.White, 0, 0, WIDTH, HEIGHT);
@@ -119,7 +119,7 @@ internal class ViewSourceCodeToolTip : ToolTip
             //otherwise get it from SourceCodeForSelfAwareness.zip / Plugin zip source codes
             else
             {
-                string contentsInOneLine = ViewSourceCodeDialog.GetSourceForFile(Path.GetFileName(filename));
+                var contentsInOneLine = ViewSourceCodeDialog.GetSourceForFile(Path.GetFileName(filename));
 
                 if (contentsInOneLine == null)
                     return null;

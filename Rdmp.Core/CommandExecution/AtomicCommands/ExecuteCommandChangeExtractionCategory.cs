@@ -75,7 +75,7 @@ public class ExecuteCommandChangeExtractionCategory : BasicCommandExecution
             
         var c = _category;
 
-        if (c == null && BasicActivator.SelectValueType("New Extraction Category", typeof(ExtractionCategory), ExtractionCategory.Core, out object category))
+        if (c == null && BasicActivator.SelectValueType("New Extraction Category", typeof(ExtractionCategory), ExtractionCategory.Core, out var category))
             c = (ExtractionCategory)category;
 
         if (c == null)

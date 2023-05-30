@@ -20,7 +20,7 @@ class FatalErrorLoggingTest : DatabaseTests
     public void CreateNewDataLoadTask()
     {
             
-        LogManager lm = new LogManager(new DiscoveredServer(UnitTestLoggingConnectionString));
+        var lm = new LogManager(new DiscoveredServer(UnitTestLoggingConnectionString));
             
         lm.CreateNewLoggingTaskIfNotExists("Fish");
 
@@ -35,16 +35,16 @@ class FatalErrorLoggingTest : DatabaseTests
     [TestCase]
     public void FataErrorLoggingTest()
     {
-        DataLoadInfo d = new DataLoadInfo("Internal", "HICSSISLibraryTests.FataErrorLoggingTest",
+        var d = new DataLoadInfo("Internal", "HICSSISLibraryTests.FataErrorLoggingTest",
             "Test case for fatal error generation",
             "No rollback is possible/required as no database rows are actually inserted",
             true, new DiscoveredServer(UnitTestLoggingConnectionString));
            
-        DataSource[] ds = new DataSource[]{ new DataSource("nothing",DateTime.Now)};
+        var ds = new DataSource[]{ new DataSource("nothing",DateTime.Now)};
 
             
 
-        TableLoadInfo t = new TableLoadInfo(d, "Unit test only", "Unit test only", ds, 5);
+        var t = new TableLoadInfo(d, "Unit test only", "Unit test only", ds, 5);
         t.Inserts += 3; //simulate that it crashed after 3
 
         d.LogFatalError("HICSSISLibraryTests.FataErrorLoggingTest","Some terrible event happened");
@@ -55,7 +55,7 @@ class FatalErrorLoggingTest : DatabaseTests
     [Test]
     public void MD5Test()
     {
-        string fileContents = "TestStringThatCouldBeSomethingInAFile";
+        var fileContents = "TestStringThatCouldBeSomethingInAFile";
         byte[] hashAsBytes;
 
         using var memory = new MemoryStream();
@@ -69,7 +69,7 @@ class FatalErrorLoggingTest : DatabaseTests
             hashAsBytes = md5.ComputeHash(memory);    
         }
 
-        DataSource[] ds = new DataSource[] { new DataSource("nothing", DateTime.Now) };
+        var ds = new DataSource[] { new DataSource("nothing", DateTime.Now) };
 
         ds[0].MD5 = hashAsBytes; //MD5 is a property so confirm write and read are the same - and don't bomb
 

@@ -19,7 +19,7 @@ public class GetDatabaseDiagramBinaryTest:DatabaseTests
     {
         using (var con = CatalogueTableRepository.GetConnection())
         {
-            using(DbCommand cmd = DatabaseCommandHelper.GetCommand(
+            using(var cmd = DatabaseCommandHelper.GetCommand(
                       "SELECT definition  FROM sysdiagrams where name = 'Catalogue_Data_Diagram' ",
                       con.Connection, con.Transaction))
             using (var reader = cmd.ExecuteReader())
@@ -38,7 +38,7 @@ public class GetDatabaseDiagramBinaryTest:DatabaseTests
 
     public static string ByteArrayToString(byte[] ba)
     {
-        string hex = BitConverter.ToString(ba);
+        var hex = BitConverter.ToString(ba);
         return hex.Replace("-", "");
     }
 }

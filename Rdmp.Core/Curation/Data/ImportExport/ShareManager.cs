@@ -68,7 +68,8 @@ public class ShareManager
             return server.ID;
         }
 
-        throw new SharingException("No default implementation exists for LocalReferenceGetterDelegate for property " + property.Name);
+        throw new SharingException(
+            $"No default implementation exists for LocalReferenceGetterDelegate for property {property.Name}");
 
     }
 
@@ -79,7 +80,7 @@ public class ShareManager
     /// <returns></returns>
     public string GetPersistenceString(IMapsDirectlyToDatabaseTable o)
     {
-        StringBuilder sb = new StringBuilder();
+        var sb = new StringBuilder();
         sb.Append(o.GetType().Name);
         sb.Append(PersistenceSeparator);
         sb.Append(o.ID);
@@ -108,7 +109,7 @@ public class ShareManager
         var elements = persistenceString.Split(new []{PersistenceSeparator},StringSplitOptions.None);
             
         if(elements.Length < 4)
-            throw new Exception("Malformed persistenceString:" + persistenceString);
+            throw new Exception($"Malformed persistenceString:{persistenceString}");
             
         //elements[0];//type name of the class we are fetching
         //elements[1]; //ID of the class
@@ -129,7 +130,7 @@ public class ShareManager
         var o = RepositoryLocator.GetArbitraryDatabaseObject(elements[2], elements[0], int.Parse(elements[1]));
 
         if(o == null)
-            throw new Exception("Could not find object for persistenceString:" + persistenceString);
+            throw new Exception($"Could not find object for persistenceString:{persistenceString}");
             
         return o;
     }
@@ -353,9 +354,9 @@ public class ShareManager
     /// <returns></returns>
     internal IEnumerable<IMapsDirectlyToDatabaseTable> ImportSharedObject(List<ShareDefinition> toImport, bool deleteExisting)
     {
-        List<IMapsDirectlyToDatabaseTable> created = new List<IMapsDirectlyToDatabaseTable>();
+        var created = new List<IMapsDirectlyToDatabaseTable>();
 
-        foreach (ShareDefinition sd in toImport)
+        foreach (var sd in toImport)
         {
             try
             {
@@ -369,13 +370,14 @@ public class ShareManager
                 var instance = (IMapsDirectlyToDatabaseTable) objectConstructor.ConstructIfPossible(sd.Type, this, sd);
 
                 if(instance == null)
-                    throw new ObjectLacksCompatibleConstructorException("Could not find a ShareManager constructor for '" + sd.Type +"'");
+                    throw new ObjectLacksCompatibleConstructorException(
+                        $"Could not find a ShareManager constructor for '{sd.Type}'");
                     
                 created.Add(instance);
             }
             catch (Exception e)
             {
-                throw new Exception("Error constructing " + sd.Type, e);
+                throw new Exception($"Error constructing {sd.Type}", e);
             }
         }
 
@@ -394,16 +396,17 @@ public class ShareManager
     public int? GetLocalReference(PropertyInfo property, RelationshipAttribute relationshipAttribute, ShareDefinition shareDefinition)
     {
         if(property.DeclaringType == null)
-            throw new Exception("DeclaringType on Property '" + property + "' is null");
+            throw new Exception($"DeclaringType on Property '{property}' is null");
 
         if (relationshipAttribute.Type != RelationshipType.LocalReference)
-            throw new Exception("Relationship was of Type " + relationshipAttribute.Type + " expected " + RelationshipType.LocalReference);
+            throw new Exception(
+                $"Relationship was of Type {relationshipAttribute.Type} expected {RelationshipType.LocalReference}");
 
         if(LocalReferenceGetter == null)
             throw new Exception(
                 string.Format("No LocalReferenceGetter has been set, cannot populate Property {0} {1}",
                     property.Name,
-                    " on class " + property.DeclaringType.Name));
+                    $" on class {property.DeclaringType.Name}"));
 
         return LocalReferenceGetter(property, relationshipAttribute, shareDefinition);
     }
@@ -416,10 +419,10 @@ public class ShareManager
     public void ImportPropertiesOnly(IMapsDirectlyToDatabaseTable o, ShareDefinition shareDefinition)
     {
         if (shareDefinition.Type != o.GetType())
-            throw new Exception("Share Definition is not for a " + o.GetType());
+            throw new Exception($"Share Definition is not for a {o.GetType()}");
 
-        AttributePropertyFinder<RelationshipAttribute> relationshipPropertyFinder = new AttributePropertyFinder<RelationshipAttribute>(o);
-        AttributePropertyFinder<DoNotImportDescriptionsAttribute> skipPropertyFinder = new AttributePropertyFinder<DoNotImportDescriptionsAttribute>(o);
+        var relationshipPropertyFinder = new AttributePropertyFinder<RelationshipAttribute>(o);
+        var skipPropertyFinder = new AttributePropertyFinder<DoNotImportDescriptionsAttribute>(o);
 
 
         //for each property that isn't [NoMappingToDatabase]
@@ -464,17 +467,17 @@ public class ShareManager
         else if (RepositoryLocator.DataExportRepository.SupportsObjectType(typeof(T)))
             repo = RepositoryLocator.DataExportRepository;
         else
-            throw new NotSupportedException("No Repository supported object type '" + typeof(T) + "'");
+            throw new NotSupportedException($"No Repository supported object type '{typeof(T)}'");
 
         //Make a dictionary of the normal properties we are supposed to be importing
-        Dictionary<string,object> propertiesDictionary = shareDefinition.GetDictionaryForImport();
+        var propertiesDictionary = shareDefinition.GetDictionaryForImport();
 
         //for finding properties decorated with [Relationship]
         var finder = new AttributePropertyFinder<RelationshipAttribute>(toCreate);
             
         //If we have already got a local copy of this shared object?
         //either as an import or as an export
-        T actual = (T)GetExistingImportObject(shareDefinition.SharingGuid) ?? (T)GetExistingExportObject(shareDefinition.SharingGuid);
+        var actual = (T)GetExistingImportObject(shareDefinition.SharingGuid) ?? (T)GetExistingExportObject(shareDefinition.SharingGuid);
             
         //we already have a copy imported of the shared object
         if (actual != null)
@@ -482,7 +485,7 @@ public class ShareManager
             //It's an UPDATE i.e. take the new shared properties and apply them to the database copy / memory copy
 
             //copy all the values out of the share definition / database copy
-            foreach (PropertyInfo prop in TableRepository.GetPropertyInfos(typeof(T)))
+            foreach (var prop in TableRepository.GetPropertyInfos(typeof(T)))
             {
                 //don't update any ID columns or any with relationships on UPDATE
                 if (propertiesDictionary.ContainsKey(prop.Name) && finder.GetAttribute(prop) == null)
@@ -504,9 +507,9 @@ public class ShareManager
             //It's an INSERT i.e. create a new database copy with the correct foreign key values and update the memory copy
                 
             //for each relationship property on the class we are trying to hydrate
-            foreach (PropertyInfo property in TableRepository.GetPropertyInfos(typeof(T)))
+            foreach (var property in TableRepository.GetPropertyInfos(typeof(T)))
             {
-                RelationshipAttribute relationshipAttribute = finder.GetAttribute(property);
+                var relationshipAttribute = finder.GetAttribute(property);
 
                 //if it has a relationship attribute then we would expect the ShareDefinition to include a dependency relationship with the sharing UID of the parent
                 //and also that we had already imported it since dependencies must be imported in order
@@ -529,10 +532,11 @@ public class ShareManager
                                 }
                                 else
                                     //otherwise we are missing a required shared object being referenced. That's bad news.
-                                    throw new Exception("Share Definition for object of Type " + typeof(T) + " is missing an expected RelationshipProperty called " + property.Name);
+                                    throw new Exception(
+                                        $"Share Definition for object of Type {typeof(T)} is missing an expected RelationshipProperty called {property.Name}");
 
                             //Get the SharingUID of the parent for this property
-                            Guid importGuidOfParent = shareDefinition.RelationshipProperties[relationshipAttribute];
+                            var importGuidOfParent = shareDefinition.RelationshipProperties[relationshipAttribute];
 
                             //Confirm that we have a local import of the parent
                             var parentImport = GetExistingImport(importGuidOfParent);
@@ -541,10 +545,8 @@ public class ShareManager
                             if (parentImport == null)
                                 //and it isn't optional
                                 if (relationshipAttribute.Type == RelationshipType.SharedObject)
-                                    throw new Exception("Cannot import an object of type " + typeof(T) +
-                                                        " because the ShareDefinition specifies a relationship to an object that has not yet been imported (A " +
-                                                        relationshipAttribute.Cref + " with a SharingUID of " +
-                                                        importGuidOfParent);
+                                    throw new Exception(
+                                        $"Cannot import an object of type {typeof(T)} because the ShareDefinition specifies a relationship to an object that has not yet been imported (A {relationshipAttribute.Cref} with a SharingUID of {importGuidOfParent}");
                                 else
                                     newValue = null; //it was optional and missing so just set to null
                             else

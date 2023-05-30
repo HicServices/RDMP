@@ -303,7 +303,7 @@ public partial class LoadDiagramUI : LoadDiagram_Design
 
         tlvLoadedTables.Expand(currentObject);
 
-        foreach (object o in ChildrenGetter(currentObject))
+        foreach (var o in ChildrenGetter(currentObject))
             ExpandToDepth(expansionDepth -1,o);
     }
 
@@ -337,7 +337,7 @@ public partial class LoadDiagramUI : LoadDiagram_Design
 
     public override string GetTabName()
     {
-        return "Load Diagram (" + _loadMetadata + ")";
+        return $"Load Diagram ({_loadMetadata})";
     }
 
     private Task taskDiscoverState;

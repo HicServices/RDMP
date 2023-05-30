@@ -78,7 +78,7 @@ public class DublinCoreDefinition
         var dcAttr = new XAttribute(XNamespace.Xmlns + "dc", dc);
         var dctermsAttr = new XAttribute(XNamespace.Xmlns + "dcterms",dcterms);
             
-        XDocument doc = new XDocument(new XElement("metadata",xsiAttr,dcAttr,dctermsAttr));
+        var doc = new XDocument(new XElement("metadata",xsiAttr,dcAttr,dctermsAttr));
         doc.Root.Add(new XElement(dc + "title", Title));
         doc.Root.Add(new XElement(dcterms + "alternative", Alternative));
         doc.Root.Add(new XElement(dc + "subject", Subject));
@@ -94,7 +94,7 @@ public class DublinCoreDefinition
 
         doc.Root.Add(new XElement(dc + "format", new XAttribute(xsi + "type", "dcterms:IMT"), Format));
             
-        using(StreamWriter sw = new StreamWriter(to))
+        using(var sw = new StreamWriter(to))
             sw.Write(doc.ToString(SaveOptions.None));
     }
 
@@ -105,7 +105,7 @@ public class DublinCoreDefinition
     public void LoadFrom(XElement element)
     {
         if(element.Name != "metadata")
-            throw new XmlSyntaxException("Expected metadata element but got " + element);
+            throw new XmlSyntaxException($"Expected metadata element but got {element}");
 
         var descendants = element.Descendants().ToArray();
         Title = GetElement(descendants, "title",true);
@@ -143,7 +143,7 @@ public class DublinCoreDefinition
 
         if (match == null)
             if(mandatory)
-                throw new XmlSyntaxException("Failed to find mandatory tag " + tagLocalName);
+                throw new XmlSyntaxException($"Failed to find mandatory tag {tagLocalName}");
             else
                 return null;
 

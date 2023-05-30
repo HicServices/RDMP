@@ -41,5 +41,6 @@ public class LoadMetadataScheduleNode : Node,IOrderable
         return (LoadMetadata != null ? LoadMetadata.GetHashCode() : 0);
     }
 
-    public int Order { get { return 0; } set{} }
+    public int Order { get => 0;
+        set{} }
 }

@@ -187,7 +187,7 @@ public partial  class ChecksUI : UserControl, ICheckNotifier
 
     public bool OnCheckPerformed(CheckEventArgs args)
     {
-        bool shouldApplyFix = DoesUserWantToApplyFix(args);
+        var shouldApplyFix = DoesUserWantToApplyFix(args);
 
         AddToListbox(shouldApplyFix
             ? new CheckEventArgs($"Fix will be applied for message:{args.Message}", CheckResult.Warning, args.Ex)

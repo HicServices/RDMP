@@ -77,7 +77,7 @@ AND {syntax.EnsureWrapped("Operation")} = '{operation}'", con))
                 using(var r = cmd.ExecuteReader())
                     if (r.Read())
                     {
-                        string tableName =  r["TableName"].ToString();
+                        var tableName =  r["TableName"].ToString();
                         sql = r["SqlExecuted"] as string;
                         return _database.ExpectTable(tableName);
                     }
@@ -121,7 +121,7 @@ WHERE
                     {
                         if (IsMatchOnSqlExecuted(r, currentSql))
                         {
-                            string tableName = r["TableName"].ToString();
+                            var tableName = r["TableName"].ToString();
                             return _database.ExpectTable(tableName);
                         }
 
@@ -136,8 +136,8 @@ WHERE
     private bool IsMatchOnSqlExecuted(DbDataReader r, string currentSql)
     {
         //replace all whitespace with single whitespace 
-        string standardisedDatabaseSql = Regex.Replace(r["SqlExecuted"].ToString(), @"\s+", " ");
-        string standardisedUsersSql = Regex.Replace(currentSql,@"\s+"," ");
+        var standardisedDatabaseSql = Regex.Replace(r["SqlExecuted"].ToString(), @"\s+", " ");
+        var standardisedUsersSql = Regex.Replace(currentSql,@"\s+"," ");
 
         var match = standardisedDatabaseSql.ToLower().Trim().Equals(standardisedUsersSql.ToLower().Trim());
 
@@ -167,7 +167,7 @@ WHERE
         {
             con.Open();
                 
-            string nameWeWillGiveTableInCache = operation + "_AggregateConfiguration" + configuration.ID;
+            var nameWeWillGiveTableInCache = $"{operation}_AggregateConfiguration{configuration.ID}";
 
             //either it has no name or it already has name we want so its ok
             arguments.Results.TableName = nameWeWillGiveTableInCache;
@@ -219,12 +219,12 @@ WHERE
                     
                 //delete the record!
                 using (var cmd = DatabaseCommandHelper.GetCommand(
-                           $"DELETE FROM {mgrTable.GetFullyQualifiedName()} WHERE AggregateConfiguration_ID = " +
-                           configuration.ID + " AND Operation = '" + operation + "'", con))
+                           $"DELETE FROM {mgrTable.GetFullyQualifiedName()} WHERE AggregateConfiguration_ID = {configuration.ID} AND Operation = '{operation}'", con))
                 {
-                    int deletedRows = cmd.ExecuteNonQuery();
+                    var deletedRows = cmd.ExecuteNonQuery();
                     if(deletedRows != 1)
-                        throw new Exception("Expected exactly 1 record in CachedAggregateConfigurationResults to be deleted when erasing its record of operation " + operation + " but there were " + deletedRows +" affected records");
+                        throw new Exception(
+                            $"Expected exactly 1 record in CachedAggregateConfigurationResults to be deleted when erasing its record of operation {operation} but there were {deletedRows} affected records");
                 }
 
                 return true;

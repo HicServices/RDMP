@@ -38,9 +38,7 @@ public sealed class ReleaseUseCase : PipelineUseCase
 
         if (releaseTypes.Count(t => t != typeof (NoReleasePotential)) > 1)
             throw new Exception(
-                "You cannot release multiple configurations which have been extracted in multiple ways; e.g. " +
-                "one to DB and one to disk.  Your datasets have been extracted in the following ways:" +
-                Environment.NewLine + string.Join("," + Environment.NewLine, releaseTypes.Select(t => t.Name)));
+                $"You cannot release multiple configurations which have been extracted in multiple ways; e.g. one to DB and one to disk.  Your datasets have been extracted in the following ways:{Environment.NewLine}{string.Join($",{Environment.NewLine}", releaseTypes.Select(t => t.Name))}");
 
         var releasePotentialWithKnownDestination =
             releasePotentials.FirstOrDefault(rp => rp.DatasetExtractionResult != null);
@@ -57,7 +55,7 @@ public sealed class ReleaseUseCase : PipelineUseCase
             var destinationUsedAtExtraction =
                 (IExecuteDatasetExtractionDestination)constructor.Construct(destinationType, catalogueRepository);
 
-            FixedReleaseSource<ReleaseAudit> fixedReleaseSource =
+            var fixedReleaseSource =
                 destinationUsedAtExtraction.GetReleaseSource(catalogueRepository);
 
             ExplicitSource = fixedReleaseSource;

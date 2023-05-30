@@ -83,13 +83,14 @@ public class LinkedRepositoryProvider : RepositoryProvider
     {
         LoadPluginRepositoryFindersIfNotLoaded();
 
-        foreach (IPluginRepositoryFinder repoFinder in _pluginRepositoryFinders)
+        foreach (var repoFinder in _pluginRepositoryFinders)
         {
             if (repoFinder.GetRepositoryType().FullName.Equals(s))
             {
                 var toReturn = repoFinder.GetRepositoryIfAny();
                 if (toReturn == null)
-                    throw new NotSupportedException("IPluginRepositoryFinder '" + repoFinder + "' said that it was the correct repository finder for repository of type '" + s + "' but it was unable to find an existing repository instance (GetRepositoryIfAny returned null)");
+                    throw new NotSupportedException(
+                        $"IPluginRepositoryFinder '{repoFinder}' said that it was the correct repository finder for repository of type '{s}' but it was unable to find an existing repository instance (GetRepositoryIfAny returned null)");
 
                 return toReturn;
             }
@@ -108,7 +109,7 @@ public class LinkedRepositoryProvider : RepositoryProvider
         var constructor = new ObjectConstructor();
 
         //it's a plugin?
-        foreach (Type type in CatalogueRepository.MEF.GetTypes<IPluginRepositoryFinder>())
+        foreach (var type in CatalogueRepository.MEF.GetTypes<IPluginRepositoryFinder>())
             _pluginRepositoryFinders.Add((IPluginRepositoryFinder)constructor.Construct(type, this));
     }
 

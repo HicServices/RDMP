@@ -65,18 +65,18 @@ public class PlatformDatabaseCreation
 
         var builder = options.GetBuilder(databaseName);
 
-        DiscoveredDatabase db = new DiscoveredServer(builder).ExpectDatabase(builder.InitialCatalog);
+        var db = new DiscoveredServer(builder).ExpectDatabase(builder.InitialCatalog);
 
         if (options.DropDatabases && db.Exists())
         {
-            Console.WriteLine("Dropping Database:" + builder.InitialCatalog);
+            Console.WriteLine($"Dropping Database:{builder.InitialCatalog}");
             db.Drop();
         }
 
-        MasterDatabaseScriptExecutor executor = new MasterDatabaseScriptExecutor(db);
+        var executor = new MasterDatabaseScriptExecutor(db);
         executor.BinaryCollation = options.BinaryCollation;
         executor.CreateAndPatchDatabase(patcher,new AcceptAllCheckNotifier());
-        Console.WriteLine("Created " + builder.InitialCatalog + " on server " + builder.DataSource);
+        Console.WriteLine($"Created {builder.InitialCatalog} on server {builder.DataSource}");
             
         return builder;
     }

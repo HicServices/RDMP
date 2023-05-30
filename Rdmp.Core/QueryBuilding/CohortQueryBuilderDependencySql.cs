@@ -54,7 +54,7 @@ public class CohortQueryBuilderDependencySql
         compositeLevelParameterManager.ImportAndElevateResolvedParametersFromSubquery(ParametersUsed, out renameOperations);
 
         //rename in the SQL too!
-        foreach (KeyValuePair<string, string> kvp in renameOperations)
+        foreach (var kvp in renameOperations)
             Sql = ParameterCreator.RenameParameterInSQL(Sql, kvp.Key, kvp.Value);
             
         _hasBeenUsed = true;

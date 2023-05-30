@@ -68,16 +68,17 @@ public class DatabaseCloner : IDisposeAfterDataLoad
 
             var table = destDbInfo.ExpectTable(tableName);
 
-            string[] existingColumns = tableInfo.ColumnInfos.Select(c => c.GetRuntimeName(LoadStage.AdjustRaw)).ToArray();
+            var existingColumns = tableInfo.ColumnInfos.Select(c => c.GetRuntimeName(LoadStage.AdjustRaw)).ToArray();
 
-            foreach (PreLoadDiscardedColumn preLoadDiscardedColumn in tableInfo.PreLoadDiscardedColumns)
+            foreach (var preLoadDiscardedColumn in tableInfo.PreLoadDiscardedColumns)
             {
                 //this column does not get dropped so will be in live TableInfo
                 if (preLoadDiscardedColumn.Destination == DiscardedColumnDestination.Dilute)
                     continue;
 
                 if (existingColumns.Any(e=>e.Equals(preLoadDiscardedColumn.GetRuntimeName(LoadStage.AdjustRaw))))
-                    throw new Exception("There is a column called " + preLoadDiscardedColumn.GetRuntimeName(LoadStage.AdjustRaw) + " as both a PreLoadDiscardedColumn and in the TableInfo (live table), you should either drop the column from the live table or remove it as a PreLoadDiscarded column");
+                    throw new Exception(
+                        $"There is a column called {preLoadDiscardedColumn.GetRuntimeName(LoadStage.AdjustRaw)} as both a PreLoadDiscardedColumn and in the TableInfo (live table), you should either drop the column from the live table or remove it as a PreLoadDiscarded column");
 
                 //add all the preload discarded columns because they could be routed to ANO store or sent to oblivion
                 AddColumnToTable(table, preLoadDiscardedColumn.RuntimeColumnName, preLoadDiscardedColumn.SqlDataType, listener);
@@ -86,7 +87,7 @@ public class DatabaseCloner : IDisposeAfterDataLoad
             //deal with anonymisation transforms e.g. ANOCHI of datatype varchar(12) would have to become a column called CHI of datatype varchar(10) on creation in RAW
             var columnInfosWithANOTransforms = tableInfo.ColumnInfos.Where(c => c.ANOTable_ID != null).ToArray();
             if(columnInfosWithANOTransforms.Any())
-                foreach (ColumnInfo col in columnInfosWithANOTransforms)
+                foreach (var col in columnInfosWithANOTransforms)
                 {
                     var liveName = col.GetRuntimeName(LoadStage.PostLoad);
                     var rawName = col.GetRuntimeName(LoadStage.AdjustRaw);

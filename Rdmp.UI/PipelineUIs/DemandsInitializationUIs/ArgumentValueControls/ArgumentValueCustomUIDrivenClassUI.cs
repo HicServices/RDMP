@@ -38,29 +38,31 @@ public partial class ArgumentValueCustomUIDrivenClassUI : UserControl, IArgument
 
         try
         {
-            Type t = _args.Type;
+            var t = _args.Type;
 
-            string expectedUIClassName = t.FullName + "UI";
+            var expectedUIClassName = $"{t.FullName}UI";
 
             _uiType = _args.CatalogueRepository.MEF.GetType(expectedUIClassName);
 
             //if we did not find one with the exact name (including namespace), try getting it just by the end of its name (omit namespace)
             if (_uiType == null)
             {
-                string shortUIClassName = t.Name + "UI";
+                var shortUIClassName = $"{t.Name}UI";
                 var candidates = _args.CatalogueRepository.MEF.GetAllTypes().Where(type => type.Name.Equals(shortUIClassName)).ToArray();
 
                 if (candidates.Length > 1)
-                    throw new Exception("Found " + candidates.Length + " classes called '" + shortUIClassName + "' : (" + string.Join(",", candidates.Select(c => c.Name)) + ")");
+                    throw new Exception(
+                        $"Found {candidates.Length} classes called '{shortUIClassName}' : ({string.Join(",", candidates.Select(c => c.Name))})");
 
                 if (candidates.Length == 0)
-                    throw new Exception("Could not find UI class called " + shortUIClassName + " make sure that it exists, is public and is marked with class attribute ");
+                    throw new Exception(
+                        $"Could not find UI class called {shortUIClassName} make sure that it exists, is public and is marked with class attribute ");
 
                 _uiType = candidates[0];
             }
 
     
-            btnLaunchCustomUI.Text = "Launch Custom UI (" + _uiType.Name + ")";
+            btnLaunchCustomUI.Text = $"Launch Custom UI ({_uiType.Name})";
             btnLaunchCustomUI.Width = btnLaunchCustomUI.PreferredSize.Width;
         }
         catch (Exception)
@@ -77,7 +79,7 @@ public partial class ArgumentValueCustomUIDrivenClassUI : UserControl, IArgument
 
             var uiInstance = Activator.CreateInstance(_uiType);
                 
-            ICustomUI instanceAsCustomUI = (ICustomUI) uiInstance;
+            var instanceAsCustomUI = (ICustomUI) uiInstance;
             instanceAsCustomUI.CatalogueRepository = _args.CatalogueRepository;
 
             instanceAsCustomUI.SetGenericUnderlyingObjectTo(dataClassInstance);

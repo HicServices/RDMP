@@ -127,8 +127,8 @@ public class RichTextBoxEx : RichTextBox
     [DefaultValue(false)]
     public new bool DetectUrls
     {
-        get { return base.DetectUrls; }
-        set { base.DetectUrls = value; }
+        get => base.DetectUrls;
+        set => base.DetectUrls = value;
     }
 
     /// <summary>
@@ -189,7 +189,7 @@ public class RichTextBoxEx : RichTextBox
         var suffix = string.Concat(text.Reverse().TakeWhile(c => c == '\r' || c == '\n' || c == ' ' || c == '\t').Reverse());
             
         this.SelectionStart = position;
-        this.SelectedRtf = @"{\rtf1\ansi "+text.TrimEnd() +@"\v #"+hyperlink+@"\v0}";
+        this.SelectedRtf = $@"{{\rtf1\ansi {text.TrimEnd()}\v #{hyperlink}\v0}}";
         this.Select(position, text.Length + hyperlink.Length + 1);
         this.SetSelectionLink(true);
         this.Select(position + text.Length + hyperlink.Length + 1, 0);
@@ -220,31 +220,31 @@ public class RichTextBoxEx : RichTextBox
 
     private void SetSelectionStyle(UInt32 mask, UInt32 effect)
     {
-        CHARFORMAT2_STRUCT cf = new CHARFORMAT2_STRUCT();
+        var cf = new CHARFORMAT2_STRUCT();
         cf.cbSize = (UInt32)Marshal.SizeOf(cf);
         cf.dwMask = mask;
         cf.dwEffects = effect;
 
-        IntPtr wpar = new IntPtr(SCF_SELECTION);
-        IntPtr lpar = Marshal.AllocCoTaskMem( Marshal.SizeOf( cf ) ); 
+        var wpar = new IntPtr(SCF_SELECTION);
+        var lpar = Marshal.AllocCoTaskMem( Marshal.SizeOf( cf ) ); 
         Marshal.StructureToPtr(cf, lpar, false);
 
-        IntPtr res = SendMessage(Handle, EM_SETCHARFORMAT, wpar, lpar);
+        var res = SendMessage(Handle, EM_SETCHARFORMAT, wpar, lpar);
 
         Marshal.FreeCoTaskMem(lpar);
     }
 
     private int GetSelectionStyle(UInt32 mask, UInt32 effect)
     {
-        CHARFORMAT2_STRUCT cf = new CHARFORMAT2_STRUCT();
+        var cf = new CHARFORMAT2_STRUCT();
         cf.cbSize = (UInt32)Marshal.SizeOf(cf);
         cf.szFaceName = new char[32];
 
-        IntPtr wpar = new IntPtr(SCF_SELECTION);
-        IntPtr lpar = 	Marshal.AllocCoTaskMem( Marshal.SizeOf( cf ) ); 
+        var wpar = new IntPtr(SCF_SELECTION);
+        var lpar = 	Marshal.AllocCoTaskMem( Marshal.SizeOf( cf ) ); 
         Marshal.StructureToPtr(cf, lpar, false);
 
-        IntPtr res = SendMessage(Handle, EM_GETCHARFORMAT, wpar, lpar);
+        var res = SendMessage(Handle, EM_GETCHARFORMAT, wpar, lpar);
 
         cf = (CHARFORMAT2_STRUCT)Marshal.PtrToStructure(lpar, typeof(CHARFORMAT2_STRUCT));
 

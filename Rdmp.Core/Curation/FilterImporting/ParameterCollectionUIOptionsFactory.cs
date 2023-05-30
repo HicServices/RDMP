@@ -46,7 +46,7 @@ public class ParameterCollectionUIOptionsFactory
     {
         var pm = new ParameterManager();
 
-        foreach (ISqlParameter globalFilterParameter in globalFilterParameters)
+        foreach (var globalFilterParameter in globalFilterParameters)
             pm.AddGlobalParameter(globalFilterParameter);
 
         pm.AddParametersFor(value, ParameterLevel.QueryLevel);
@@ -127,7 +127,7 @@ public class ParameterCollectionUIOptionsFactory
 
         if (host is IFilter)
         {
-            FilterUIOptionsFactory factory = new FilterUIOptionsFactory();
+            var factory = new FilterUIOptionsFactory();
             var globals = factory.Create((IFilter)host).GetGlobalParametersInFilterScope();
 
             return Create((IFilter)host, globals);
@@ -175,7 +175,7 @@ public class ParameterCollectionUIOptionsFactory
     private ISqlParameter CreateNewParameterForExtractionConfiguration(ICollectSqlParameters collector, string parameterName)
     {
         if (!parameterName.StartsWith("@"))
-            parameterName = "@" + parameterName;
+            parameterName = $"@{parameterName}";
 
         var ec = (ExtractionConfiguration)collector;
         return new GlobalExtractionFilterParameter((IDataExportRepository)ec.Repository, ec, AnyTableSqlParameter.GetDefaultDeclaration(parameterName));

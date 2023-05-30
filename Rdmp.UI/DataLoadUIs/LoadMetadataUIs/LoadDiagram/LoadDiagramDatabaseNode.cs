@@ -86,7 +86,7 @@ public class LoadDiagramDatabaseNode : Node,IHasLoadDiagramState, IKnowWhatIAm
 
         //also discover any unplanned tables if not live
         if(_bubble != LoadBubble.Live)
-            foreach (DiscoveredTable discoveredTable in Database.DiscoverTables(true))
+            foreach (var discoveredTable in Database.DiscoverTables(true))
             {
                 //it's an anticipated one
                 if(_anticipatedChildren.Any(c=>c.TableName.Equals(discoveredTable.GetRuntimeName(),StringComparison.CurrentCultureIgnoreCase)))

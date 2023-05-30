@@ -38,7 +38,8 @@ public class RefreshBus
     public void Publish(object sender, RefreshObjectEventArgs e)
     {
         if(PublishInProgress)
-            throw new SubscriptionException("Refresh Publish Cascade error.  Subscriber " + sender + " just attempted a publish during an existing publish execution, cylic inception publishing is not allowed, you cannot respond to a refresh callback by issuing more refresh publishes");
+            throw new SubscriptionException(
+                $"Refresh Publish Cascade error.  Subscriber {sender} just attempted a publish during an existing publish execution, cylic inception publishing is not allowed, you cannot respond to a refresh callback by issuing more refresh publishes");
 
         lock (oPublishLock)
         {
@@ -79,7 +80,8 @@ public class RefreshBus
     public void Subscribe(IRefreshBusSubscriber subscriber)
     {
         if (subscribers.Contains(subscriber))
-            throw new SubscriptionException("You cannot subscribe to the RefreshBus more than once. Subscriber '" + subscriber + "' just attempted to register a second time its type was(" + subscriber.GetType().Name + ")");
+            throw new SubscriptionException(
+                $"You cannot subscribe to the RefreshBus more than once. Subscriber '{subscriber}' just attempted to register a second time its type was({subscriber.GetType().Name})");
             
         RefreshObject += subscriber.RefreshBus_RefreshObject;
 
@@ -89,7 +91,8 @@ public class RefreshBus
     public void Unsubscribe(IRefreshBusSubscriber unsubscriber)
     {
         if(!subscribers.Contains(unsubscriber))
-            throw new SubscriptionException("You cannot unsubscribe from the RefreshBus if never subscribed in the first place. '" + unsubscriber + "' just attempted to unsubscribe when it wasn't subscribed in the first place its type was (" + unsubscriber.GetType().Name + ")");
+            throw new SubscriptionException(
+                $"You cannot unsubscribe from the RefreshBus if never subscribed in the first place. '{unsubscriber}' just attempted to unsubscribe when it wasn't subscribed in the first place its type was ({unsubscriber.GetType().Name})");
 
         RefreshObject -= unsubscriber.RefreshBus_RefreshObject;
         subscribers.Remove(unsubscriber);
@@ -147,9 +150,7 @@ public class RefreshBus
         if(existingSubscription != null)
             if (!existingSubscription.OriginalObject.Equals(originalObject))//wait a minute! they subscribed for a different object!
                 throw new ArgumentException(
-                    "user " + user +
-                    " attempted to subscribe twice for self destruct but with two different objects '" +
-                    existingSubscription.OriginalObject + "' and '" + originalObject + "'", "user");
+                    $"user {user} attempted to subscribe twice for self destruct but with two different objects '{existingSubscription.OriginalObject}' and '{originalObject}'", "user");
             else
                 return;//they subscribed for the same object it's all ok
 

@@ -39,8 +39,8 @@ public class ExecuteCommandAlterColumnType : BasicCommandExecution
 
         var col = columnInfo.Discover(DataAccessContext.InternalDataProcessing);
         var fansiType = col.DataType;
-        string oldSqlType = fansiType.SQLType;
-        string newSqlType = _datatype;
+        var oldSqlType = fansiType.SQLType;
+        var newSqlType = _datatype;
 
         if(newSqlType == null)
         {
@@ -68,7 +68,7 @@ public class ExecuteCommandAlterColumnType : BasicCommandExecution
         columnInfo.Data_type = newSqlType;
         columnInfo.SaveToDatabase();
 
-        var archive = col.Table.Database.ExpectTable(col.Table + "_Archive");
+        var archive = col.Table.Database.ExpectTable($"{col.Table}_Archive");
 
         if (archive.Exists())
         {

@@ -34,7 +34,7 @@ public class ForwardEngineerANOCataloguePlanManager : ICheckable, IPickAnyConstr
 
     public ICatalogue Catalogue
     {
-        get { return _catalogue; }
+        get => _catalogue;
         set
         {
             _catalogue = value;
@@ -72,7 +72,7 @@ public class ForwardEngineerANOCataloguePlanManager : ICheckable, IPickAnyConstr
             
         DilutionOperations = new List<IDilutionOperation>();
 
-        ObjectConstructor constructor = new ObjectConstructor();
+        var constructor = new ObjectConstructor();
 
         foreach (var operationType in repositoryLocator.CatalogueRepository.MEF.GetTypes<IDilutionOperation>())
             DilutionOperations.Add((IDilutionOperation)constructor.Construct(operationType));
@@ -89,7 +89,7 @@ public class ForwardEngineerANOCataloguePlanManager : ICheckable, IPickAnyConstr
     public ColumnInfoANOPlan GetPlanForColumnInfo(ColumnInfo col)
     {
         if(!Plans.ContainsKey(col))
-            throw new Exception("No plan found for column " + col);
+            throw new Exception($"No plan found for column {col}");
 
         return Plans[col];
     }
@@ -106,7 +106,7 @@ public class ForwardEngineerANOCataloguePlanManager : ICheckable, IPickAnyConstr
             notifier.OnCheckPerformed(new CheckEventArgs("No TargetDatabase has been set", CheckResult.Fail));
         else
         if (!TargetDatabase.Exists())
-            notifier.OnCheckPerformed(new CheckEventArgs("TargetDatabase '"+TargetDatabase+"' does not exist", CheckResult.Fail));
+            notifier.OnCheckPerformed(new CheckEventArgs($"TargetDatabase '{TargetDatabase}' does not exist", CheckResult.Fail));
 
         var toMigrateTables = TableInfos.Except(SkippedTables).ToArray();
 
@@ -118,15 +118,17 @@ public class ForwardEngineerANOCataloguePlanManager : ICheckable, IPickAnyConstr
             var joinInfos = GetJoinInfosRequiredCatalogue();
             notifier.OnCheckPerformed(new CheckEventArgs("Generated Catalogue SQL succesfully", CheckResult.Success));
 
-            foreach (JoinInfo joinInfo in joinInfos)
-                notifier.OnCheckPerformed(new CheckEventArgs("Found required JoinInfo '" + joinInfo + "' that will have to be migrated",CheckResult.Success));
+            foreach (var joinInfo in joinInfos)
+                notifier.OnCheckPerformed(new CheckEventArgs(
+                    $"Found required JoinInfo '{joinInfo}' that will have to be migrated",CheckResult.Success));
 
-            foreach (Lookup lookup in GetLookupsRequiredCatalogue())
+            foreach (var lookup in GetLookupsRequiredCatalogue())
             {
-                notifier.OnCheckPerformed(new CheckEventArgs("Found required Lookup '" + lookup + "' that will have to be migrated", CheckResult.Success));
+                notifier.OnCheckPerformed(new CheckEventArgs(
+                    $"Found required Lookup '{lookup}' that will have to be migrated", CheckResult.Success));
 
                 //for each key involved in the lookup
-                foreach (ColumnInfo c in new[] { lookup.ForeignKey ,lookup.PrimaryKey,lookup.Description})
+                foreach (var c in new[] { lookup.ForeignKey ,lookup.PrimaryKey,lookup.Description})
                 {
                     //lookup / table has already been migrated 
                     if(SkippedTables.Any(t=>t.ID == c.TableInfo_ID))
@@ -134,7 +136,8 @@ public class ForwardEngineerANOCataloguePlanManager : ICheckable, IPickAnyConstr
 
                     //make sure that the plan is sensible
                     if (GetPlanForColumnInfo(c).Plan != Plan.PassThroughUnchanged)
-                        notifier.OnCheckPerformed(new CheckEventArgs("ColumnInfo '" + c + "' is part of a Lookup so must PassThroughUnchanged", CheckResult.Fail));
+                        notifier.OnCheckPerformed(new CheckEventArgs(
+                            $"ColumnInfo '{c}' is part of a Lookup so must PassThroughUnchanged", CheckResult.Fail));
                             
                 }
             }
@@ -148,7 +151,7 @@ public class ForwardEngineerANOCataloguePlanManager : ICheckable, IPickAnyConstr
         {
             var dateColumnPlan = GetPlanForColumnInfo(DateColumn);
             if(dateColumnPlan.Plan != Plan.PassThroughUnchanged)
-                if(notifier.OnCheckPerformed(new CheckEventArgs("Plan for " + DateColumn + " must be PassThroughUnchanged",CheckResult.Fail,null,"Set plan to PassThroughUnchanged")))
+                if(notifier.OnCheckPerformed(new CheckEventArgs($"Plan for {DateColumn} must be PassThroughUnchanged",CheckResult.Fail,null,"Set plan to PassThroughUnchanged")))
                     dateColumnPlan.Plan = Plan.PassThroughUnchanged;
 
             //get a count of the number of non lookup used tables
@@ -157,8 +160,7 @@ public class ForwardEngineerANOCataloguePlanManager : ICheckable, IPickAnyConstr
             if (usedTables > 1)
                 notifier.OnCheckPerformed(
                     new CheckEventArgs(
-                        "You cannot have a date based migration because you are trying to migrate " + usedTables +
-                        " TableInfos at once", CheckResult.Fail));
+                        $"You cannot have a date based migration because you are trying to migrate {usedTables} TableInfos at once", CheckResult.Fail));
 
         }
             
@@ -168,26 +170,30 @@ public class ForwardEngineerANOCataloguePlanManager : ICheckable, IPickAnyConstr
             
         var refactorer = new SelectSQLRefactorer();
 
-        foreach (ExtractionInformation e in _allExtractionInformations)
+        foreach (var e in _allExtractionInformations)
             if (!refactorer.IsRefactorable(e))
-                notifier.OnCheckPerformed(new CheckEventArgs("ExtractionInformation '" + e + "' is a not refactorable due to reason:" + refactorer.GetReasonNotRefactorable(e), CheckResult.Fail));
+                notifier.OnCheckPerformed(new CheckEventArgs(
+                    $"ExtractionInformation '{e}' is a not refactorable due to reason:{refactorer.GetReasonNotRefactorable(e)}", CheckResult.Fail));
             
         notifier.OnCheckPerformed(new CheckEventArgs($"Preparing to evaluate {toMigrateTables.Length}' tables ({string.Join(",",toMigrateTables.Select(t=>t.GetFullyQualifiedName()))})", CheckResult.Success));
 
         foreach (TableInfo tableInfo in toMigrateTables)
         {
-            notifier.OnCheckPerformed(new CheckEventArgs("Evaluating TableInfo '" + tableInfo + "'", CheckResult.Success));
+            notifier.OnCheckPerformed(new CheckEventArgs($"Evaluating TableInfo '{tableInfo}'", CheckResult.Success));
 
             if (TargetDatabase != null && TargetDatabase.ExpectTable(tableInfo.GetRuntimeName()).Exists())
-                notifier.OnCheckPerformed(new CheckEventArgs("Table '" + tableInfo + "' already exists in Database '" + TargetDatabase + "'", CheckResult.Fail));
+                notifier.OnCheckPerformed(new CheckEventArgs(
+                    $"Table '{tableInfo}' already exists in Database '{TargetDatabase}'", CheckResult.Fail));
 
             var pks = tableInfo.ColumnInfos.Where(c => c.IsPrimaryKey).ToArray();
 
             if (!pks.Any())
-                notifier.OnCheckPerformed(new CheckEventArgs("TableInfo '" + tableInfo + "' does not have any Primary Keys, it cannot be anonymised", CheckResult.Fail));
+                notifier.OnCheckPerformed(new CheckEventArgs(
+                    $"TableInfo '{tableInfo}' does not have any Primary Keys, it cannot be anonymised", CheckResult.Fail));
                 
             if (tableInfo.IsTableValuedFunction)
-                notifier.OnCheckPerformed(new CheckEventArgs("TableInfo '" + tableInfo + "' is an IsTableValuedFunction so cannot be anonymised", CheckResult.Fail));
+                notifier.OnCheckPerformed(new CheckEventArgs(
+                    $"TableInfo '{tableInfo}' is an IsTableValuedFunction so cannot be anonymised", CheckResult.Fail));
 
             EnsureNotAlreadySharedLocally(notifier, tableInfo);
             EnsureNotAlreadySharedLocally(notifier, Catalogue);
@@ -207,8 +213,9 @@ public class ForwardEngineerANOCataloguePlanManager : ICheckable, IPickAnyConstr
 
             if (existingImportReference != null)
             {
-                T existingImportInstance = m.Repository.GetObjectByID<T>(existingImportReference.ReferencedObjectID);
-                notifier.OnCheckPerformed(new CheckEventArgs(typeof(T) + " '" + m + "' is already locally shared as '" + existingImportInstance + "'", CheckResult.Fail));
+                var existingImportInstance = m.Repository.GetObjectByID<T>(existingImportReference.ReferencedObjectID);
+                notifier.OnCheckPerformed(new CheckEventArgs(
+                    $"{typeof(T)} '{m}' is already locally shared as '{existingImportInstance}'", CheckResult.Fail));
             }
         }
     }
@@ -222,7 +229,7 @@ public class ForwardEngineerANOCataloguePlanManager : ICheckable, IPickAnyConstr
 
         //generate plans for novel ColumnInfos
         foreach (TableInfo tableInfo in TableInfos)
-        foreach (ColumnInfo columnInfo in tableInfo.ColumnInfos)
+        foreach (var columnInfo in tableInfo.ColumnInfos)
             if (!Plans.ContainsKey(columnInfo))
                 Plans.Add(columnInfo, new ColumnInfoANOPlan(columnInfo));
 

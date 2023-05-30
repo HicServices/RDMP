@@ -87,16 +87,14 @@ public class GlobalsReleaseChecker : ICheckable
             var unexpectedDirectories = folder.EnumerateDirectories().Where(d => !d.Name.Equals("SupportingDocuments")).ToList();
 
             if (unexpectedDirectories.Any())
-                notifier.OnCheckPerformed(new CheckEventArgs("Unexpected directories found in extraction directory (" + 
-                                                             String.Join(",", unexpectedDirectories.Select(d => d.FullName)) + 
-                                                             ". Pollution of extract directory is not permitted.", CheckResult.Fail));
+                notifier.OnCheckPerformed(new CheckEventArgs(
+                    $"Unexpected directories found in extraction directory ({String.Join(",", unexpectedDirectories.Select(d => d.FullName))}. Pollution of extract directory is not permitted.", CheckResult.Fail));
 
             var unexpectedFiles = folder.EnumerateFiles("*.*", SearchOption.AllDirectories).Where(f => allExtracted.All(ae => ae.DestinationDescription != f.FullName)).ToList();
 
             if (unexpectedFiles.Any())
-                notifier.OnCheckPerformed(new CheckEventArgs("Unexpected files found in extract directory (" +
-                                                             String.Join(",", unexpectedFiles.Select(d => d.FullName)) + 
-                                                             "). Pollution of extract directory is not permitted.", CheckResult.Fail));
+                notifier.OnCheckPerformed(new CheckEventArgs(
+                    $"Unexpected files found in extract directory ({String.Join(",", unexpectedFiles.Select(d => d.FullName))}). Pollution of extract directory is not permitted.", CheckResult.Fail));
         }
     }
 

@@ -98,10 +98,10 @@ public partial class PerformanceCounterResultsUI : UserControl
         Roots = new List<StackFramesTree>();
 
         _worstOffenderCount = performanceCounter.DictionaryOfQueries.Values.Sum(k => k.TimesSeen);
-        Regex isSystemCall = new Regex(@"^\s*(at)?\s*System.Windows.Forms");
+        var isSystemCall = new Regex(@"^\s*(at)?\s*System.Windows.Forms");
 
         //for each documented query point (which has a stack trace)
-        foreach (string stackTrace in performanceCounter.DictionaryOfQueries.Keys)
+        foreach (var stackTrace in performanceCounter.DictionaryOfQueries.Keys)
         {
             //get the query
             var query = performanceCounter.DictionaryOfQueries[stackTrace];
@@ -117,14 +117,14 @@ public partial class PerformanceCounterResultsUI : UserControl
             if(collapseToMethod)
             {
                     
-                List<string> uniqueMethodLines = new List<string>();
+                var uniqueMethodLines = new List<string>();
 
-                string lastMethodName = StackFramesTree.GetMethodName(lines[0]);
+                var lastMethodName = StackFramesTree.GetMethodName(lines[0]);
                 uniqueMethodLines.Add(lines[0]);
                     
-                for (int i = 1; i < lines.Length; i++)
+                for (var i = 1; i < lines.Length; i++)
                 {
-                    string currentMethodName = StackFramesTree.GetMethodName(lines[i]);
+                    var currentMethodName = StackFramesTree.GetMethodName(lines[i]);
                         
                     //if there is no method name or it is not new
                     if(currentMethodName == null || lastMethodName.Equals(currentMethodName))

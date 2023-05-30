@@ -152,7 +152,7 @@ public class DataTableUploadDestination : IPluginDataFlowComponent<DataTable>, I
             
         if (_firstTime)
         {
-            bool tableAlreadyExistsButEmpty = false;
+            var tableAlreadyExistsButEmpty = false;
 
             if (!_database.Exists())
                 throw new Exception($"Database {_database} does not exist");
@@ -227,7 +227,7 @@ public class DataTableUploadDestination : IPluginDataFlowComponent<DataTable>, I
 
     private void RemoveInvalidCharactersInSchema(DataTable toProcess)
     {
-        char[] invalidSymbols = new[] { '.'} ;
+        var invalidSymbols = new[] { '.'} ;
 
         if(!string.IsNullOrWhiteSpace(toProcess.TableName) && invalidSymbols.Any(c=>toProcess.TableName.Contains(c)))
         {
@@ -288,13 +288,13 @@ public class DataTableUploadDestination : IPluginDataFlowComponent<DataTable>, I
         var typeTranslater = tbl.GetQuerySyntaxHelper().TypeTranslater;
             
         //Get the current estimates from the datatype computer
-        Dictionary<string, string> oldTypes = _dataTypeDictionary.ToDictionary(k => k.Key, v => typeTranslater.GetSQLDBTypeForCSharpType(v.Value.Guess),StringComparer.CurrentCultureIgnoreCase);
+        var oldTypes = _dataTypeDictionary.ToDictionary(k => k.Key, v => typeTranslater.GetSQLDBTypeForCSharpType(v.Value.Guess),StringComparer.CurrentCultureIgnoreCase);
 
         //columns in 
-        List<string> sharedColumns = new List<string>();
+        var sharedColumns = new List<string>();
 
         //for each destination column
-        foreach (string col in _dataTypeDictionary.Keys)
+        foreach (var col in _dataTypeDictionary.Keys)
             //if it appears in the toProcess DataTable
             if (toProcess.Columns.Contains(col))
                 sharedColumns.Add(col); //it is a shared column
@@ -314,10 +314,10 @@ public class DataTableUploadDestination : IPluginDataFlowComponent<DataTable>, I
         foreach (DataColumn column in toProcess.Columns)
         {
             //get what is required for the current batch and the current type that is configured in the live table
-            string oldSqlType = oldTypes[column.ColumnName];
-            string newSqlType = typeTranslater.GetSQLDBTypeForCSharpType(_dataTypeDictionary[column.ColumnName].Guess);
+            var oldSqlType = oldTypes[column.ColumnName];
+            var newSqlType = typeTranslater.GetSQLDBTypeForCSharpType(_dataTypeDictionary[column.ColumnName].Guess);
 
-            bool changesMade = false;
+            var changesMade = false;
 
             //if the SQL data type has degraded e.g. varchar(10) to varchar(50) or datetime to varchar(20)
             if(oldSqlType != newSqlType)
@@ -325,7 +325,7 @@ public class DataTableUploadDestination : IPluginDataFlowComponent<DataTable>, I
                 var col = tbl.DiscoverColumn(column.ColumnName,_managedConnection.ManagedTransaction);
 
 
-                if(AbandonAlter(col.DataType.SQLType,newSqlType, out string reason))
+                if(AbandonAlter(col.DataType.SQLType,newSqlType, out var reason))
                 {
                     listener.OnNotify(this, new NotifyEventArgs(ProgressEventType.Warning, $"Considered resizing column '{column}' from '{col.DataType.SQLType }' to '{ newSqlType }' but decided not to because:{reason}"));
                     continue;
@@ -359,9 +359,9 @@ public class DataTableUploadDestination : IPluginDataFlowComponent<DataTable>, I
     {
         var basicallyDecimalAlready = new List<string>(){ "real","double","float","single"};
 
-        var first = basicallyDecimalAlready.FirstOrDefault(c=>oldSqlType.Contains(c,CompareOptions.IgnoreCase));
+        var first = basicallyDecimalAlready.FirstOrDefault(c=>oldSqlType.Contains(c,StringComparison.InvariantCultureIgnoreCase));
 
-        if(first != null && newSqlType.Contains("decimal",CompareOptions.IgnoreCase))
+        if(first != null && newSqlType.Contains("decimal",StringComparison.InvariantCultureIgnoreCase))
         {
             reason = $"Resizing from {first} to decimal is a bad idea and likely to fail";
             return true;
@@ -418,7 +418,7 @@ public class DataTableUploadDestination : IPluginDataFlowComponent<DataTable>, I
             if(allColumns.All(c=>!c.IsPrimaryKey))
             {
                 //find the columns the user decorated in his DataTable
-                DiscoveredColumn[] pkColumnsToCreate = allColumns.Where(c => _primaryKey.Any(pk => pk.Equals(c.GetRuntimeName(), StringComparison.CurrentCultureIgnoreCase))).ToArray();
+                var pkColumnsToCreate = allColumns.Where(c => _primaryKey.Any(pk => pk.Equals(c.GetRuntimeName(), StringComparison.CurrentCultureIgnoreCase))).ToArray();
 
                 //make sure we found all of them
                 if(pkColumnsToCreate.Length != _primaryKey.Count)

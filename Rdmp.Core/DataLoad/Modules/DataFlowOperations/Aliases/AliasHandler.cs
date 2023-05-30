@@ -43,7 +43,7 @@ public class AliasHandler : IPluginDataFlowComponent<DataTable>
 
     public DataTable ProcessPipelineData(DataTable toProcess, IDataLoadEventListener listener,GracefulCancellationToken cancellationToken)
     {
-        List<object[]> newRows = new List<object[]>();
+        var newRows = new List<object[]>();
 
         if(_aliasDictionary == null)
             _aliasDictionary = GenerateAliasTable(TimeoutForAssemblingAliasTable);
@@ -51,11 +51,12 @@ public class AliasHandler : IPluginDataFlowComponent<DataTable>
         var idx = toProcess.Columns.IndexOf(AliasColumnInInputDataTables);
 
         if(idx == -1)
-            throw new KeyNotFoundException("You asked to resolve aliases on a column called '" + AliasColumnInInputDataTables + "' but no column by that name appeared in the DataTable being processed.  Columns in that table were:" + string.Join(",",toProcess.Columns.Cast<DataColumn>().Select(c=>c.ColumnName)));
+            throw new KeyNotFoundException(
+                $"You asked to resolve aliases on a column called '{AliasColumnInInputDataTables}' but no column by that name appeared in the DataTable being processed.  Columns in that table were:{string.Join(",", toProcess.Columns.Cast<DataColumn>().Select(c => c.ColumnName))}");
 
         var elements = toProcess.Columns.Count;
 
-        int matchesFound = 0;
+        var matchesFound = 0;
             
         foreach (DataRow r in toProcess.Rows)
         {
@@ -65,15 +66,16 @@ public class AliasHandler : IPluginDataFlowComponent<DataTable>
                 switch (ResolutionStrategy)
                 {
                     case AliasResolutionStrategy.CrashIfAliasesFound:
-                        throw new AliasException("Found Alias in input data and ResolutionStrategy is " + ResolutionStrategy + ", aliased value was " + r[AliasColumnInInputDataTables]);
+                        throw new AliasException(
+                            $"Found Alias in input data and ResolutionStrategy is {ResolutionStrategy}, aliased value was {r[AliasColumnInInputDataTables]}");
 
                     case AliasResolutionStrategy.MultiplyInputDataRowsByAliases:
                             
                         //Get all aliases for the input value
-                        foreach (object alias in _aliasDictionary[r[AliasColumnInInputDataTables]])
+                        foreach (var alias in _aliasDictionary[r[AliasColumnInInputDataTables]])
                         {
                             //Create a copy of the input row
-                            object[] newRow = new object[elements];
+                            var newRow = new object[elements];
                             r.ItemArray.CopyTo(newRow,0);
 
                             //Set the aliasable element to the alias
@@ -91,11 +93,13 @@ public class AliasHandler : IPluginDataFlowComponent<DataTable>
         }
 
         if (newRows.Any())
-            listener.OnNotify(this, new NotifyEventArgs(ProgressEventType.Warning, "Found " + matchesFound + " aliased input values, resolved by adding " +  newRows.Count + " additional duplicate rows to the dataset"));
+            listener.OnNotify(this, new NotifyEventArgs(ProgressEventType.Warning,
+                $"Found {matchesFound} aliased input values, resolved by adding {newRows.Count} additional duplicate rows to the dataset"));
         else
-            listener.OnNotify(this, new NotifyEventArgs(ProgressEventType.Information, "No Aliases found for identifiers in column " + AliasColumnInInputDataTables));
+            listener.OnNotify(this, new NotifyEventArgs(ProgressEventType.Information,
+                $"No Aliases found for identifiers in column {AliasColumnInInputDataTables}"));
             
-        foreach (object[] newRow in newRows)
+        foreach (var newRow in newRows)
             toProcess.Rows.Add(newRow);
 
         return toProcess;
@@ -114,16 +118,16 @@ public class AliasHandler : IPluginDataFlowComponent<DataTable>
 
     public void Check(ICheckNotifier notifier)
     {
-        int timeout = 5;
+        var timeout = 5;
         try
         {
             var result = GenerateAliasTable(timeout);
-            notifier.OnCheckPerformed(new CheckEventArgs("Found " + result.Count + " aliases",CheckResult.Success));
+            notifier.OnCheckPerformed(new CheckEventArgs($"Found {result.Count} aliases",CheckResult.Success));
         }
         catch (Exception e)
         {
             var isTimeout = e.Message.ToLower().Contains("timeout");
-            notifier.OnCheckPerformed(new CheckEventArgs("Failed to generate alias table after " + timeout + "s",isTimeout ? CheckResult.Warning : CheckResult.Fail, e));
+            notifier.OnCheckPerformed(new CheckEventArgs($"Failed to generate alias table after {timeout}s",isTimeout ? CheckResult.Warning : CheckResult.Fail, e));
         }
             
     }
@@ -148,7 +152,7 @@ public class AliasHandler : IPluginDataFlowComponent<DataTable>
 
                 using(var r = cmd.ExecuteReader())
                 {
-                    bool haveCheckedColumns = false;
+                    var haveCheckedColumns = false;
 
                     while (r.Read())
                     {
@@ -162,25 +166,29 @@ public class AliasHandler : IPluginDataFlowComponent<DataTable>
                             }
                             catch (IndexOutOfRangeException)
                             {
-                                throw new AliasTableFetchException("Alias table did not contain a column called '" + AliasColumnInInputDataTables + "' " + expectation);
+                                throw new AliasTableFetchException(
+                                    $"Alias table did not contain a column called '{AliasColumnInInputDataTables}' {expectation}");
                             }
 
                             if(idx == -1)
                             {
-                                throw new AliasTableFetchException("Alias table did not contain a column called '" + AliasColumnInInputDataTables + "' " + expectation);
+                                throw new AliasTableFetchException(
+                                    $"Alias table did not contain a column called '{AliasColumnInInputDataTables}' {expectation}");
                             }
 
                             if(idx != 0)
-                                throw new AliasTableFetchException("Alias table DID contain column '" + AliasColumnInInputDataTables + "' but it was not the first column in the result set " + expectation);
+                                throw new AliasTableFetchException(
+                                    $"Alias table DID contain column '{AliasColumnInInputDataTables}' but it was not the first column in the result set {expectation}");
 
                             if(r.FieldCount != 2)
-                                throw new AliasTableFetchException("Alias table SQL resulted in " + r.FieldCount + " fields being returned, we expect exactly 2 " + expectation);
+                                throw new AliasTableFetchException(
+                                    $"Alias table SQL resulted in {r.FieldCount} fields being returned, we expect exactly 2 {expectation}");
 
                             haveCheckedColumns = true;
                         }
 
-                        object input = r[0];
-                        object alias = r[1];
+                        var input = r[0];
+                        var alias = r[1];
                             
                         if(input == null || input == DBNull.Value || alias == null || alias == DBNull.Value)
                             throw new AliasTableFetchException("Alias table contained nulls");

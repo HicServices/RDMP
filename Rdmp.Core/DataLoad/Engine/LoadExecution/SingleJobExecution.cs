@@ -35,7 +35,8 @@ public class SingleJobExecution : IDataLoadExecution
     public ExitCodeType Run(IDataLoadJob job, GracefulCancellationToken cancellationToken)
     {
         job.StartLogging();
-        job.OnNotify(this, new NotifyEventArgs(ProgressEventType.Information, "Starting load for " + job.LoadMetadata.Name));
+        job.OnNotify(this, new NotifyEventArgs(ProgressEventType.Information,
+            $"Starting load for {job.LoadMetadata.Name}"));
 
         try
         {
@@ -60,16 +61,18 @@ public class SingleJobExecution : IDataLoadExecution
                     }
 
                     if (exitCodeType != ExitCodeType.Success)
-                        throw new Exception("Component " + component.Description + " returned result " + exitCodeType);
+                        throw new Exception($"Component {component.Description} returned result {exitCodeType}");
                 }
                 catch (OperationCanceledException e)
                 {
-                    job.OnNotify(this, new NotifyEventArgs(ProgressEventType.Warning, component.Description + " has been cancelled by the user", e));
+                    job.OnNotify(this, new NotifyEventArgs(ProgressEventType.Warning,
+                        $"{component.Description} has been cancelled by the user", e));
                     throw;
                 }
                 catch (Exception e)
                 {
-                    job.OnNotify(this, new NotifyEventArgs(ProgressEventType.Error, component.Description + " crashed while running Job ", e));
+                    job.OnNotify(this, new NotifyEventArgs(ProgressEventType.Error,
+                        $"{component.Description} crashed while running Job ", e));
                     job.OnNotify(this, new NotifyEventArgs(ProgressEventType.Error, "Job crashed", e));
                     TryDispose(ExitCodeType.Error, job);
                     return ExitCodeType.Error;
@@ -78,11 +81,12 @@ public class SingleJobExecution : IDataLoadExecution
 
             TryDispose(ExitCodeType.Success, job);
 
-            job.OnNotify(this, new NotifyEventArgs(ProgressEventType.Information, "Completed job " + job.JobID));
+            job.OnNotify(this, new NotifyEventArgs(ProgressEventType.Information, $"Completed job {job.JobID}"));
                 
             if(job.CrashAtEndMessages.Count > 0)
             {
-                job.OnNotify(this, new NotifyEventArgs(ProgressEventType.Warning, $"There were {job.CrashAtEndMessages.Count} {nameof(IDataLoadJob.CrashAtEndMessages)} registered for job " + job.JobID));
+                job.OnNotify(this, new NotifyEventArgs(ProgressEventType.Warning,
+                    $"There were {job.CrashAtEndMessages.Count} {nameof(IDataLoadJob.CrashAtEndMessages)} registered for job {job.JobID}"));
 
                 // pop the messages into the handler
                 foreach (var m in job.CrashAtEndMessages)
@@ -99,7 +103,8 @@ public class SingleJobExecution : IDataLoadExecution
         catch (OperationCanceledException)
         {
             if (cancellationToken.IsAbortRequested)
-                job.OnNotify(this, new NotifyEventArgs(ProgressEventType.Information, "Job " + job.JobID + "cancelled in pipeline"));
+                job.OnNotify(this, new NotifyEventArgs(ProgressEventType.Information,
+                    $"Job {job.JobID}cancelled in pipeline"));
 
             TryDispose(cancellationToken.IsAbortRequested ? ExitCodeType.Abort : ExitCodeType.Success, job);
             throw;
@@ -116,7 +121,8 @@ public class SingleJobExecution : IDataLoadExecution
         }
         catch (Exception e)
         {
-            job.OnNotify(this, new NotifyEventArgs(ProgressEventType.Error, "Job " + job.JobID + " crashed again during disposing", e));
+            job.OnNotify(this, new NotifyEventArgs(ProgressEventType.Error,
+                $"Job {job.JobID} crashed again during disposing", e));
             throw;
         }
     }

@@ -78,7 +78,7 @@ public partial class ViewExtractionSqlUI : ViewExtractionSql_Design
     private void rb_Click(object sender, EventArgs e)
     {
         //treat as radio button
-        foreach (ToolStripButton item in new[] {rbCore, rbSupplemental, rbSpecialApproval, rbInternal})
+        foreach (var item in new[] {rbCore, rbSupplemental, rbSpecialApproval, rbInternal})
             item.Checked = item == sender;
 
         RefreshUIFromDatabase();
@@ -104,7 +104,7 @@ public partial class ViewExtractionSqlUI : ViewExtractionSql_Design
             //only allow reordering when all are visible or only internal are visible otherwise user could select core only and do a reorder leaving supplemental columns as freaky orphans all down at the bottom fo the SQL!
             bLoading = true;
 
-            List<ExtractionInformation> extractionInformations = GetSelectedExtractionInformations();
+            var extractionInformations = GetSelectedExtractionInformations();
                 
             //add the available filters
             SetupAvailableFilters(extractionInformations);
@@ -137,11 +137,11 @@ public partial class ViewExtractionSqlUI : ViewExtractionSql_Design
 
         //remove deleted ones
         if (olvFilters.Objects != null)
-            foreach (ExtractionFilter f in olvFilters.Objects.Cast<ExtractionFilter>().Except(filters).ToArray())
+            foreach (var f in olvFilters.Objects.Cast<ExtractionFilter>().Except(filters).ToArray())
                 olvFilters.RemoveObject(f);
 
         //add new ones
-        foreach (ExtractionFilter f in filters)
+        foreach (var f in filters)
             if (olvFilters.IndexOf(f) == -1)
                 olvFilters.AddObject(f);
     }
@@ -216,7 +216,7 @@ public partial class ViewExtractionSqlUI : ViewExtractionSql_Design
         
     public override string GetTabName()
     {
-        return base.GetTabName() + "(SQL)";
+        return $"{base.GetTabName()}(SQL)";
     }
 
     private void olv_ItemActivate(object sender, EventArgs e)

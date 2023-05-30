@@ -33,7 +33,7 @@ public class DeleteCachedFilesOperation : UpdateProgressIfLoadsuccessful
 
         base.LoadCompletedSoDispose(exitCode, postLoadEventListener);
 
-        foreach (KeyValuePair<DateTime, FileInfo> keyValuePair in _cacheFileMappings)
+        foreach (var keyValuePair in _cacheFileMappings)
         {
             if (keyValuePair.Value == null)
                 continue;
@@ -44,7 +44,8 @@ public class DeleteCachedFilesOperation : UpdateProgressIfLoadsuccessful
             }
             catch (IOException e)
             {
-                Job.LogWarning(GetType().FullName, "Could not delete cached file " + keyValuePair.Value + " (" + e.Message + ")make sure to delete it manually otherwise Schedule and file system will be desynched");
+                Job.LogWarning(GetType().FullName,
+                    $"Could not delete cached file {keyValuePair.Value} ({e.Message})make sure to delete it manually otherwise Schedule and file system will be desynched");
             }
         }
     }

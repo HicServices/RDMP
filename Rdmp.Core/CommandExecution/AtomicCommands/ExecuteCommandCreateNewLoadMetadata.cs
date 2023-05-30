@@ -59,7 +59,7 @@ public class ExecuteCommandCreateNewLoadMetadata : BasicCommandExecution, IAtomi
                     return; //user cancelled
 
             //create the load
-            var lmd = new LoadMetadata(_catalogue.CatalogueRepository, "Loading " + _catalogue.Name);
+            var lmd = new LoadMetadata(_catalogue.CatalogueRepository, $"Loading {_catalogue.Name}");
 
             lmd.EnsureLoggingWorksFor(_catalogue);
 

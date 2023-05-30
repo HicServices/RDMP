@@ -27,9 +27,10 @@ public class MakeChangePopup:ICheckNotifier
 
     public static bool ShowYesNoMessageBoxToApplyFix(YesNoYesToAllDialog dialog, string problem, string proposedChange)
     {
-        string message = "The following configuration problem was detected:" + Environment.NewLine + "\"" + problem + "\"" + Environment.NewLine;
+        var message =
+            $"The following configuration problem was detected:{Environment.NewLine}\"{problem}\"{Environment.NewLine}";
         message += Environment.NewLine;
-        message += " The proposed fix is to:" + Environment.NewLine + "\"" + proposedChange + "\"" + Environment.NewLine;
+        message += $" The proposed fix is to:{Environment.NewLine}\"{proposedChange}\"{Environment.NewLine}";
         message += Environment.NewLine;
         message += "Would you like to apply this fix?";
 

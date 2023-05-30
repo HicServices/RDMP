@@ -17,7 +17,7 @@ namespace Rdmp.UI.CatalogueSummary.LoadEvents;
 /// </summary>
 public class LoadEventsTreeViewObjectCollection : PersistableObjectCollection
 {
-    public ILoggedActivityRootObject RootObject { get => DatabaseObjects.OfType<ILoggedActivityRootObject>().FirstOrDefault(); }
+    public ILoggedActivityRootObject RootObject => DatabaseObjects.OfType<ILoggedActivityRootObject>().FirstOrDefault();
 
     public LoadEventsTreeViewObjectCollection()
     {

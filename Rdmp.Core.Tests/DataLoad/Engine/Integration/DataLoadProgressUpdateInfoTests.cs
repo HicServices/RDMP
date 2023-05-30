@@ -26,7 +26,7 @@ public class DataLoadProgressUpdateInfoTests :DatabaseTests
     #region Setup Methods
     public DataLoadProgressUpdateInfoTests()
     {
-        ICatalogue cata = Mock.Of<ICatalogue>(
+        var cata = Mock.Of<ICatalogue>(
             c=> c.LoggingDataTask == "NothingTask" && 
                 c.GetTableInfoList(false) == Array.Empty<TableInfo>() &&
                 c.GetLookupTableInfoList() == Array.Empty<TableInfo>());

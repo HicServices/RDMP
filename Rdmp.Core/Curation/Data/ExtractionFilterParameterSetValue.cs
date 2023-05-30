@@ -32,8 +32,8 @@ public class ExtractionFilterParameterSetValue: DatabaseEntity, ISqlParameter, I
     /// </summary>
     public int ExtractionFilterParameterSet_ID
     {
-        get { return _extractionFilterParameterSetID; }
-        set { SetField(ref _extractionFilterParameterSetID , value); }
+        get => _extractionFilterParameterSetID;
+        set => SetField(ref _extractionFilterParameterSetID , value);
     }
 
     /// <summary>
@@ -41,16 +41,16 @@ public class ExtractionFilterParameterSetValue: DatabaseEntity, ISqlParameter, I
     /// </summary>
     public int ExtractionFilterParameter_ID
     {
-        get { return _extractionFilterParameterID; }
-        set { SetField(ref _extractionFilterParameterID , value); }
+        get => _extractionFilterParameterID;
+        set => SetField(ref _extractionFilterParameterID , value);
     }
 
     /// <inheritdoc/>
     [Sql]
     public string Value
     {
-        get { return _value; }
-        set {SetField(ref _value, value);}
+        get => _value;
+        set => SetField(ref _value, value);
     }
     #endregion
 
@@ -61,13 +61,7 @@ public class ExtractionFilterParameterSetValue: DatabaseEntity, ISqlParameter, I
     /// <inheritdoc/>
     /// <remarks>Readonly, fetched from associated <see cref="ExtractionFilterParameter_ID"/></remarks>
     [NoMappingToDatabase]
-    public string ParameterName
-    {
-        get
-        {
-            return _knownExtractionFilterParameter.Value.ParameterName;
-        }
-    }
+    public string ParameterName => _knownExtractionFilterParameter.Value.ParameterName;
 
     /// <inheritdoc/>
     /// <remarks>Readonly, fetched from associated <see cref="ExtractionFilterParameter_ID"/></remarks>
@@ -75,10 +69,7 @@ public class ExtractionFilterParameterSetValue: DatabaseEntity, ISqlParameter, I
     [NoMappingToDatabase]
     public string ParameterSQL
     {
-        get
-        {
-            return _knownExtractionFilterParameter.Value.ParameterSQL;
-        }
+        get => _knownExtractionFilterParameter.Value.ParameterSQL;
         set { }
     }
 
@@ -87,10 +78,7 @@ public class ExtractionFilterParameterSetValue: DatabaseEntity, ISqlParameter, I
     [NoMappingToDatabase]
     public string Comment
     {
-        get
-        {
-            return _knownExtractionFilterParameter.Value.Comment;
-        }
+        get => _knownExtractionFilterParameter.Value.Comment;
         set {  }
     }
 
@@ -108,11 +96,11 @@ public class ExtractionFilterParameterSetValue: DatabaseEntity, ISqlParameter, I
 
     /// <inheritdoc cref="ExtractionFilterParameterSet_ID"/>
     [NoMappingToDatabase]
-    public ExtractionFilterParameterSet ExtractionFilterParameterSet { get {return Repository.GetObjectByID<ExtractionFilterParameterSet>(ExtractionFilterParameterSet_ID);} }
+    public ExtractionFilterParameterSet ExtractionFilterParameterSet => Repository.GetObjectByID<ExtractionFilterParameterSet>(ExtractionFilterParameterSet_ID);
 
     /// <inheritdoc cref="ExtractionFilterParameter_ID"/>
     [NoMappingToDatabase]
-    public ExtractionFilterParameter ExtractionFilterParameter { get { return _knownExtractionFilterParameter.Value; } }
+    public ExtractionFilterParameter ExtractionFilterParameter => _knownExtractionFilterParameter.Value;
 
     #endregion
 
@@ -168,7 +156,7 @@ public class ExtractionFilterParameterSetValue: DatabaseEntity, ISqlParameter, I
 
     public override string ToString()
     {
-        return ParameterName + " = " + Value;
+        return $"{ParameterName} = {Value}";
     }
 
     public void InjectKnown(ExtractionFilterParameter instance)

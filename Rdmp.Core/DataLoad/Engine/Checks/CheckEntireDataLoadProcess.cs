@@ -45,7 +45,7 @@ public class CheckEntireDataLoadProcess :  ICheckable
         _mef.CheckForVersionMismatches(notifier);
 
         //If the load is a progressable (loaded over time) then make sure any associated caches are compatible with the load ProcessTasks
-        foreach (ILoadProgress loadProgress in LoadMetadata.LoadProgresses)
+        foreach (var loadProgress in LoadMetadata.LoadProgresses)
         {
             loadProgress.Check(notifier);
 
@@ -59,7 +59,8 @@ public class CheckEntireDataLoadProcess :  ICheckable
                 }
                 catch (Exception e)
                 {
-                    notifier.OnCheckPerformed(new CheckEventArgs("Load contains a CacheProgress '" + cp + "' but we were unable to generate an ICacheLayout, see Inner Exception for details",CheckResult.Fail,e));
+                    notifier.OnCheckPerformed(new CheckEventArgs(
+                        $"Load contains a CacheProgress '{cp}' but we were unable to generate an ICacheLayout, see Inner Exception for details",CheckResult.Fail,e));
                 }
             }
         }

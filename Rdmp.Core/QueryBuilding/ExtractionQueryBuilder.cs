@@ -52,7 +52,8 @@ public class ExtractionQueryBuilder
         var databaseType = request.Catalogue.GetDistinctLiveDatabaseServerType();
 
         if(databaseType == null)
-            throw new NotSupportedException("Catalogue " + request.Catalogue + " did not know what DatabaseType it hosted, how can we extract from it! does it have no TableInfos?");
+            throw new NotSupportedException(
+                $"Catalogue {request.Catalogue} did not know what DatabaseType it hosted, how can we extract from it! does it have no TableInfos?");
 
         var syntaxHelper = new QuerySyntaxHelperFactory().Create(databaseType.Value);
 
@@ -63,7 +64,8 @@ public class ExtractionQueryBuilder
         switch (request.ColumnsToExtract.Count(c => c.IsExtractionIdentifier))
         { 
             //no extraction identifiers
-            case 0: throw new Exception("There are no Columns in this dataset ("+request+") marked as IsExtractionIdentifier"); 
+            case 0: throw new Exception(
+                $"There are no Columns in this dataset ({request}) marked as IsExtractionIdentifier"); 
                     
             //a single extraction identifier e.g. CHI X died on date Y with conditions a,b and c
             case 1: substitutions.Add(new ReleaseIdentifierSubstitution(memoryRepository,request.ColumnsToExtract.FirstOrDefault(c => c.IsExtractionIdentifier), request.ExtractableCohort, false,syntaxHelper));
@@ -71,25 +73,25 @@ public class ExtractionQueryBuilder
 
             //multiple extraction identifiers e.g. Mother X had Babies A, B, C where A,B and C are all CHIs that must be subbed for ProCHIs
             default:
-                foreach (IColumn columnToSubstituteForReleaseIdentifier in request.ColumnsToExtract.Where(c=>c.IsExtractionIdentifier))
+                foreach (var columnToSubstituteForReleaseIdentifier in request.ColumnsToExtract.Where(c=>c.IsExtractionIdentifier))
                     substitutions.Add(new ReleaseIdentifierSubstitution(memoryRepository, columnToSubstituteForReleaseIdentifier, request.ExtractableCohort, true,syntaxHelper));
                 break;
         }
             
-        string hashingAlgorithm = _repository.DataExportPropertyManager.GetValue(DataExportProperty.HashingAlgorithmPattern);
+        var hashingAlgorithm = _repository.DataExportPropertyManager.GetValue(DataExportProperty.HashingAlgorithmPattern);
         if (string.IsNullOrWhiteSpace(hashingAlgorithm))
             hashingAlgorithm = null;
 
         //identify any tables we are supposed to force join to
         var forcedJoins = request.SelectedDataSets.SelectedDataSetsForcedJoins;
 
-        QueryBuilder queryBuilder = new QueryBuilder("DISTINCT ", hashingAlgorithm, forcedJoins.Select(s => s.TableInfo).ToArray());
+        var queryBuilder = new QueryBuilder("DISTINCT ", hashingAlgorithm, forcedJoins.Select(s => s.TableInfo).ToArray());
         queryBuilder.TopX = request.TopX;
             
         queryBuilder.SetSalt(request.Salt.GetSalt());
 
         //add the constant parameters
-        foreach (ConstantParameter parameter in GetConstantParameters(syntaxHelper,request.Configuration, request.ExtractableCohort))
+        foreach (var parameter in GetConstantParameters(syntaxHelper,request.Configuration, request.ExtractableCohort))
             queryBuilder.ParameterManager.AddGlobalParameter(parameter);
 
         //add the global parameters
@@ -108,7 +110,7 @@ public class ExtractionQueryBuilder
         //add the users selected filters
         queryBuilder.RootFilterContainer = request.Configuration.GetFilterContainerFor(request.DatasetBundle.DataSet);
             
-        ExternalCohortTable externalCohortTable = _repository.GetObjectByID<ExternalCohortTable>(request.ExtractableCohort.ExternalCohortTable_ID);
+        var externalCohortTable = _repository.GetObjectByID<ExternalCohortTable>(request.ExtractableCohort.ExternalCohortTable_ID);
 
         if (request.ExtractableCohort != null)
         {
@@ -116,9 +118,10 @@ public class ExtractionQueryBuilder
             string cohortJoin;
 
             if (substitutions.Count == 1)
-                cohortJoin = " INNER JOIN " + externalCohortTable.TableName + " ON " + substitutions.Single().JoinSQL;
+                cohortJoin = $" INNER JOIN {externalCohortTable.TableName} ON {substitutions.Single().JoinSQL}";
             else
-                cohortJoin = " INNER JOIN " + externalCohortTable.TableName + " ON " + string.Join(" OR ", substitutions.Select(s => s.JoinSQL));
+                cohortJoin =
+                    $" INNER JOIN {externalCohortTable.TableName} ON {string.Join(" OR ", substitutions.Select(s => s.JoinSQL))}";
 
             //add the JOIN in after any other joins
             queryBuilder.AddCustomLine(cohortJoin, QueryComponent.JoinInfoJoin);
@@ -146,7 +149,7 @@ public class ExtractionQueryBuilder
         // this is a batch resume if we have made some progress already
         request.IsBatchResume = batch.ProgressDate.HasValue;
 
-        DateTime start = batch.ProgressDate ?? batch.StartDate ?? throw new QueryBuildingException($"It was not possible to build a batch extraction query for '{request}' because there is no {nameof(ExtractionProgress.StartDate)} or {nameof(ExtractionProgress.ProgressDate)} set on the {nameof(ExtractionProgress)}");
+        var start = batch.ProgressDate ?? batch.StartDate ?? throw new QueryBuildingException($"It was not possible to build a batch extraction query for '{request}' because there is no {nameof(ExtractionProgress.StartDate)} or {nameof(ExtractionProgress.ProgressDate)} set on the {nameof(ExtractionProgress)}");
             
         if(batch.NumberOfDaysPerBatch <= 0)
         {
@@ -156,7 +159,7 @@ public class ExtractionQueryBuilder
         var ei = batch.ExtractionInformation;
 
             
-        DateTime end = start.AddDays(batch.NumberOfDaysPerBatch);
+        var end = start.AddDays(batch.NumberOfDaysPerBatch);
 
         // Don't load into the future / past end of dataset
         if(end > (batch.EndDate ?? DateTime.Now))
@@ -203,12 +206,12 @@ public class ExtractionQueryBuilder
         if(!syntaxHelper.SupportsEmbeddedParameters())
             return new List<ConstantParameter>();
 
-        List<ConstantParameter> toReturn = new List<ConstantParameter>();
+        var toReturn = new List<ConstantParameter>();
 
         if(syntaxHelper.DatabaseType == FAnsi.DatabaseType.Oracle)
             return toReturn;
 
-        IProject project = configuration.Project;
+        var project = configuration.Project;
 
         if (project.ProjectNumber == null)
             throw new ProjectNumberException("Project number has not been entered, cannot create constant paramaters");
@@ -216,13 +219,15 @@ public class ExtractionQueryBuilder
         if(extractableCohort == null)
             throw new Exception("Cohort has not been selected, cannot create constant parameters");
 
-        IExternalCohortTable externalCohortTable = extractableCohort.ExternalCohortTable;
+        var externalCohortTable = extractableCohort.ExternalCohortTable;
 
         var declarationSqlCohortId = syntaxHelper.GetParameterDeclaration("@CohortDefinitionID", new DatabaseTypeRequest(typeof (int)));
         var declarationSqlProjectNumber = syntaxHelper.GetParameterDeclaration("@ProjectNumber", new DatabaseTypeRequest(typeof(int)));
 
-        toReturn.Add(new ConstantParameter(declarationSqlCohortId, extractableCohort.OriginID.ToString(), "The ID of the cohort in " + externalCohortTable.TableName, syntaxHelper));
-        toReturn.Add(new ConstantParameter(declarationSqlProjectNumber, project.ProjectNumber.ToString(), "The project number of project " + project.Name, syntaxHelper));
+        toReturn.Add(new ConstantParameter(declarationSqlCohortId, extractableCohort.OriginID.ToString(),
+            $"The ID of the cohort in {externalCohortTable.TableName}", syntaxHelper));
+        toReturn.Add(new ConstantParameter(declarationSqlProjectNumber, project.ProjectNumber.ToString(),
+            $"The project number of project {project.Name}", syntaxHelper));
 
         return toReturn;
     }

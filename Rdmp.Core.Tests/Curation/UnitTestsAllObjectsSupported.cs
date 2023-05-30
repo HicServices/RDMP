@@ -28,7 +28,7 @@ class UnitTestsAllObjectsSupported:UnitTests
     public void TestAllSupported()
     {
         //load all DatabaseEntity types
-        MEF mef = new MEF();
+        var mef = new MEF();
         mef.Setup(new SafeDirectoryCatalog(new IgnoreAllErrorsCheckNotifier(), TestContext.CurrentContext.TestDirectory));
 
         var types = mef.GetAllTypes()
@@ -37,9 +37,9 @@ class UnitTestsAllObjectsSupported:UnitTests
         var methods = typeof(UnitTests).GetMethods(BindingFlags.NonPublic | BindingFlags.Instance);
         var method = methods.Single(m => m.Name.Equals("WhenIHaveA") && !m.GetParameters().Any());
              
-        List<Type> notSupported = new List<Type>();
+        var notSupported = new List<Type>();
             
-        foreach (Type t in types)
+        foreach (var t in types)
         {
             //ignore these types too
             if (SkipTheseTypes.Contains(t.Name) || t.Name.StartsWith("Spontaneous") || typeof(SpontaneousObject).IsAssignableFrom(t))
@@ -73,12 +73,13 @@ class UnitTestsAllObjectsSupported:UnitTests
                 }
                 catch (Exception e)
                 {
-                    throw new Exception("Implementation of WhenIHaveA<" + t.Name + "> is flawed",e);
+                    throw new Exception($"Implementation of WhenIHaveA<{t.Name}> is flawed",e);
                 }
             }
 
         }
 
-        Assert.IsEmpty(notSupported, "The following Types were not supported by WhenIHaveA<T>:" +Environment.NewLine + string.Join(Environment.NewLine,notSupported.Select(t=>t.Name)));
+        Assert.IsEmpty(notSupported,
+            $"The following Types were not supported by WhenIHaveA<T>:{Environment.NewLine}{string.Join(Environment.NewLine, notSupported.Select(t => t.Name))}");
     }
 }

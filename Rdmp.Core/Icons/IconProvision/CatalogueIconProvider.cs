@@ -170,7 +170,7 @@ public class CatalogueIconProvider : ICoreIconProvider
             return GetImageImpl(bmp, kind);
         }
 
-        string conceptTypeName = concept.GetType().Name;
+        var conceptTypeName = concept.GetType().Name;
 
         RDMPConcept t;
 

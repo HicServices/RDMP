@@ -26,9 +26,9 @@ public class ProcessTaskArgumentTests:DatabaseTests
     [TestCase(false)]
     public void TypeOfTableInfo(bool declareAsInterface)
     {
-        string tableInfoName = "TableInfoFor_" + new StackTrace().GetFrame(0).GetMethod().Name;
+        var tableInfoName = $"TableInfoFor_{new StackTrace().GetFrame(0).GetMethod().Name}";
 
-        TableInfo toCleanup = CatalogueRepository.GetAllObjects<TableInfo>().SingleOrDefault(t => t.Name.Equals(tableInfoName));
+        var toCleanup = CatalogueRepository.GetAllObjects<TableInfo>().SingleOrDefault(t => t.Name.Equals(tableInfoName));
             
         if(toCleanup != null)
             toCleanup.DeleteInDatabase();
@@ -55,8 +55,8 @@ public class ProcessTaskArgumentTests:DatabaseTests
 
                 Assert.AreEqual(newInstanceOfPTA.Value,pta.Value);
 
-                TableInfo t1 = (TableInfo) pta.GetValueAsSystemType();
-                TableInfo t2 = (TableInfo)newInstanceOfPTA.GetValueAsSystemType();
+                var t1 = (TableInfo) pta.GetValueAsSystemType();
+                var t2 = (TableInfo)newInstanceOfPTA.GetValueAsSystemType();
 
                 Assert.AreEqual(t1.ID,t2.ID);
             }
@@ -73,12 +73,12 @@ public class ProcessTaskArgumentTests:DatabaseTests
     [Test]
     public void TypeOfPreLoadDiscardedColumn()
     {
-        string methodName = new StackTrace().GetFrame(0).GetMethod().Name;
-        string tableInfoName = "TableInfoFor_" + methodName;
-        string preLoadDiscardedColumnName = "PreLoadDiscardedColumnFor_" + methodName; 
+        var methodName = new StackTrace().GetFrame(0).GetMethod().Name;
+        var tableInfoName = $"TableInfoFor_{methodName}";
+        var preLoadDiscardedColumnName = $"PreLoadDiscardedColumnFor_{methodName}"; 
 
-        TableInfo toCleanup = CatalogueRepository.GetAllObjects<TableInfo>().SingleOrDefault(t => t.Name.Equals(tableInfoName));
-        PreLoadDiscardedColumn toCleanupCol = CatalogueRepository.GetAllObjects<PreLoadDiscardedColumn>()
+        var toCleanup = CatalogueRepository.GetAllObjects<TableInfo>().SingleOrDefault(t => t.Name.Equals(tableInfoName));
+        var toCleanupCol = CatalogueRepository.GetAllObjects<PreLoadDiscardedColumn>()
             .SingleOrDefault(c => c.RuntimeColumnName.Equals(preLoadDiscardedColumnName));
             
         //must delete pre load discarded first
@@ -99,7 +99,7 @@ public class ProcessTaskArgumentTests:DatabaseTests
 
             var tableInfo = new TableInfo(CatalogueRepository, tableInfoName);
 
-            PreLoadDiscardedColumn preloadDiscardedColumn = new PreLoadDiscardedColumn(CatalogueRepository, tableInfo, preLoadDiscardedColumnName);
+            var preloadDiscardedColumn = new PreLoadDiscardedColumn(CatalogueRepository, tableInfo, preLoadDiscardedColumnName);
             try
             {
                 pta.SetValue(preloadDiscardedColumn);
@@ -108,8 +108,8 @@ public class ProcessTaskArgumentTests:DatabaseTests
                 var newInstanceOfPTA = CatalogueRepository.GetObjectByID<ProcessTaskArgument>(pta.ID);
                 Assert.AreEqual(newInstanceOfPTA.Value, pta.Value);
 
-                PreLoadDiscardedColumn p1 = (PreLoadDiscardedColumn)pta.GetValueAsSystemType();
-                PreLoadDiscardedColumn p2 = (PreLoadDiscardedColumn)newInstanceOfPTA.GetValueAsSystemType();
+                var p1 = (PreLoadDiscardedColumn)pta.GetValueAsSystemType();
+                var p2 = (PreLoadDiscardedColumn)newInstanceOfPTA.GetValueAsSystemType();
 
                 Assert.AreEqual(p1.ID, p2.ID);
             }
@@ -128,9 +128,9 @@ public class ProcessTaskArgumentTests:DatabaseTests
     [Test]
     public void TableInfoType_FetchAfterDelete_ReturnsNull()
     {
-        string tableInfoName = "TableInfoFor_" + new StackTrace().GetFrame(0).GetMethod().Name;
+        var tableInfoName = $"TableInfoFor_{new StackTrace().GetFrame(0).GetMethod().Name}";
 
-        TableInfo toCleanup = CatalogueRepository.GetAllObjects<TableInfo>().SingleOrDefault(t => t.Name.Equals(tableInfoName));
+        var toCleanup = CatalogueRepository.GetAllObjects<TableInfo>().SingleOrDefault(t => t.Name.Equals(tableInfoName));
 
         if (toCleanup != null)
             toCleanup.DeleteInDatabase();
@@ -170,9 +170,9 @@ public class ProcessTaskArgumentTests:DatabaseTests
     [Test]
     public void LieToProcessTaskArgumentAboutWhatTypeIs_Throws()
     {
-        string tableInfoName = "TableInfoFor_" + new StackTrace().GetFrame(0).GetMethod().Name;
+        var tableInfoName = $"TableInfoFor_{new StackTrace().GetFrame(0).GetMethod().Name}";
 
-        TableInfo toCleanup = CatalogueRepository.GetAllObjects<TableInfo>().SingleOrDefault(t => t.Name.Equals(tableInfoName));
+        var toCleanup = CatalogueRepository.GetAllObjects<TableInfo>().SingleOrDefault(t => t.Name.Equals(tableInfoName));
 
         if (toCleanup != null)
             toCleanup.DeleteInDatabase();
@@ -248,7 +248,7 @@ public class ProcessTaskArgumentTests:DatabaseTests
     public void TestArgumentCreation()
     {
 
-        LoadMetadata lmd = new LoadMetadata(CatalogueRepository,"TestArgumentCreation");
+        var lmd = new LoadMetadata(CatalogueRepository,"TestArgumentCreation");
         var pt = new ProcessTask(CatalogueRepository, lmd, LoadStage.AdjustRaw);
         pt.CreateArgumentsForClassIfNotExists<TestArgumentedClass>();
         try

@@ -25,7 +25,7 @@ public class ExecuteCommandAlterTableName : AlterTableCommandExecution
 
         if (!_refactorer.IsRefactorable(TableInfo))
         {
-            SetImpossible("Cannot rename table because " + _refactorer.GetReasonNotRefactorable(TableInfo));
+            SetImpossible($"Cannot rename table because {_refactorer.GetReasonNotRefactorable(TableInfo)}");
             return;
         }
     }
@@ -34,7 +34,7 @@ public class ExecuteCommandAlterTableName : AlterTableCommandExecution
     {
         base.Execute();
 
-        if (TypeText("Rename Table (in database)", "New Name:", 500, TableInfo.GetRuntimeName(), out string newName, true))
+        if (TypeText("Rename Table (in database)", "New Name:", 500, TableInfo.GetRuntimeName(), out var newName, true))
         {
             //rename the underlying table
             Table.Rename(newName);

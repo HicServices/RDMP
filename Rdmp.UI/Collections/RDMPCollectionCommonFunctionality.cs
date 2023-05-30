@@ -287,7 +287,7 @@ public partial class RDMPCollectionCommonFunctionality : IRefreshBusSubscriber
             SetupColumnSortTracking(Tree, TreeGuids.ContainsKey(collection) ? TreeGuids[collection] : Guid.Empty);
         }
         else
-            foreach (OLVColumn c in Tree.AllColumns)
+            foreach (var c in Tree.AllColumns)
                 c.Sortable = false;
     }
 
@@ -300,7 +300,7 @@ public partial class RDMPCollectionCommonFunctionality : IRefreshBusSubscriber
 
         e.AutoPopDelay = 32767;
 
-        if(GetToolTip(activator, model,out string title, out string body, out bool isBad))
+        if(GetToolTip(activator, model,out var title, out var body, out var isBad))
         {
             e.StandardIcon = isBad ? ToolTipControl.StandardIcons.Error : ToolTipControl.StandardIcons.Info;
             e.Title = title;
@@ -321,7 +321,7 @@ public partial class RDMPCollectionCommonFunctionality : IRefreshBusSubscriber
     /// <returns></returns>
     public static bool GetToolTip(IActivateItems activator, object model, out string title, out string body, out bool isBad)
     {
-        string problem = activator.DescribeProblemIfAny(model);
+        var problem = activator.DescribeProblemIfAny(model);
         title = GetToolTipTitle(model);
 
         if (!string.IsNullOrWhiteSpace(problem))
@@ -366,7 +366,7 @@ public partial class RDMPCollectionCommonFunctionality : IRefreshBusSubscriber
         if(cache.ContainsKey(sum))
             return cache[sum];
 
-        StringBuilder sb = new StringBuilder();
+        var sb = new StringBuilder();
         sb.AppendLine(sum.GetSummary(false, false));
 
         var gotoF = new GoToCommandFactory(activator);
@@ -384,7 +384,7 @@ public partial class RDMPCollectionCommonFunctionality : IRefreshBusSubscriber
 
                 if(val.Length>100)
                 {
-                    val = val.Substring(0,100) + "...";
+                    val = $"{val.Substring(0, 100)}...";
                 }
 
                 sb.AppendLine($"{kvp.Key}: {val}");
@@ -451,7 +451,7 @@ public partial class RDMPCollectionCommonFunctionality : IRefreshBusSubscriber
 
     void Tree_FormatRow(object sender, FormatRowEventArgs e)
     {
-        bool hasProblems = _activator.HasProblem(e.Model);
+        var hasProblems = _activator.HasProblem(e.Model);
 
         var disableable = e.Model as IDisableable;
 
@@ -560,7 +560,7 @@ public partial class RDMPCollectionCommonFunctionality : IRefreshBusSubscriber
         }
 
         //tree doesn't contain object even after expanding parents
-        int index = Tree.IndexOf(args.Request.ObjectToEmphasise);
+        var index = Tree.IndexOf(args.Request.ObjectToEmphasise);
 
         if(index == -1)
             return;
@@ -599,7 +599,7 @@ public partial class RDMPCollectionCommonFunctionality : IRefreshBusSubscriber
 
         Tree.Expand(currentObject);
 
-        foreach (object o in ChildrenGetter(currentObject))
+        foreach (var o in ChildrenGetter(currentObject))
             ExpandToDepth(expansionDepth -1,o);
     }
 
@@ -623,7 +623,7 @@ public partial class RDMPCollectionCommonFunctionality : IRefreshBusSubscriber
 
     private Bitmap ImageGetter(object rowObject)
     {
-        bool hasProblems = _activator.HasProblem(rowObject);
+        var hasProblems = _activator.HasProblem(rowObject);
             
         return CoreIconProvider.GetImage(rowObject,hasProblems?OverlayKind.Problem:OverlayKind.None).ImageToBitmap();
     }
@@ -664,7 +664,7 @@ public partial class RDMPCollectionCommonFunctionality : IRefreshBusSubscriber
             if (o != null)
             {
                 //is o masquerading as someone else?
-                IMasqueradeAs masquerader = o as IMasqueradeAs;
+                var masquerader = o as IMasqueradeAs;
 
                 //if so this is who he is pretending to be
                 object masqueradingAs = null;
@@ -696,7 +696,7 @@ public partial class RDMPCollectionCommonFunctionality : IRefreshBusSubscriber
             {
                 //it's a right click in whitespace (nothing right clicked)
 
-                AtomicCommandUIFactory factory = new AtomicCommandUIFactory(_activator);
+                var factory = new AtomicCommandUIFactory(_activator);
 
                 if (WhitespaceRightClickMenuCommandsGetter != null)
                 {
@@ -730,17 +730,17 @@ public partial class RDMPCollectionCommonFunctionality : IRefreshBusSubscriber
         
     private ContextMenuStrip GetMenuWithCompatibleConstructorIfExists(object o, IMasqueradeAs oMasquerader = null)
     {
-        RDMPContextMenuStripArgs args = new RDMPContextMenuStripArgs(_activator,Tree,o);
+        var args = new RDMPContextMenuStripArgs(_activator,Tree,o);
         args.Masquerader = oMasquerader ?? o as IMasqueradeAs;
 
         var objectConstructor = new ObjectConstructor();
 
-        Type oType = o.GetType();
+        var oType = o.GetType();
 
         //if we have encountered this object type before
         if (_cachedMenuCompatibility.ContainsKey(oType))
         {
-            Type compatibleMenu = _cachedMenuCompatibility[oType];
+            var compatibleMenu = _cachedMenuCompatibility[oType];
                 
             //we know there are no menus compatible with o
             if (compatibleMenu == null)
@@ -751,7 +751,7 @@ public partial class RDMPCollectionCommonFunctionality : IRefreshBusSubscriber
                 
 
         //now find the first RDMPContextMenuStrip with a compatible constructor
-        foreach (Type menuType in _activator.RepositoryLocator.CatalogueRepository.MEF.GetTypes<RDMPContextMenuStrip>())
+        foreach (var menuType in _activator.RepositoryLocator.CatalogueRepository.MEF.GetTypes<RDMPContextMenuStrip>())
         {
             if (menuType.IsAbstract || menuType.IsInterface || menuType == typeof(RDMPContextMenuStrip))
                 continue;
@@ -803,12 +803,12 @@ public partial class RDMPCollectionCommonFunctionality : IRefreshBusSubscriber
 
     private void OrderMenuItems(ToolStripItemCollection coll)
     {
-        Dictionary<int, List<ToolStripItem>> itemsByBucket = new Dictionary<int, List<ToolStripItem>>();
+        var itemsByBucket = new Dictionary<int, List<ToolStripItem>>();
 
         // Create buckets for every item in every context menu
         foreach(ToolStripItem oItem in coll)
         {
-            int bucket = (int)GetWeight(oItem);
+            var bucket = (int)GetWeight(oItem);
 
             if (!itemsByBucket.ContainsKey(bucket))
             {
@@ -822,7 +822,7 @@ public partial class RDMPCollectionCommonFunctionality : IRefreshBusSubscriber
             
         var buckets = itemsByBucket.OrderBy(kvp => kvp.Key).ToArray();
 
-        for(int i =0;i< buckets.Length;i++)
+        for(var i =0;i< buckets.Length;i++)
         {
             // add all the items
             foreach(var item in buckets[i].Value.OrderBy(i=>GetWeight(i)))
@@ -901,7 +901,7 @@ public partial class RDMPCollectionCommonFunctionality : IRefreshBusSubscriber
         RefreshContextMenuStrip();
 
         //also refresh anyone who is masquerading as e.Object
-        foreach (IMasqueradeAs masquerader in _activator.CoreChildProvider.GetMasqueradersOf(e.Object))
+        foreach (var masquerader in _activator.CoreChildProvider.GetMasqueradersOf(e.Object))
             RefreshObject(masquerader, e.Exists);
             
     }

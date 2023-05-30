@@ -184,13 +184,13 @@ public partial class ChoosePlatformDatabasesUI : Form
         if (e.KeyCode == Keys.V && e.Control)
         {
             //check to see what he is pasting
-            string toPaste = Clipboard.GetText();
+            var toPaste = Clipboard.GetText();
 
             //he is pasting something with newlines
             if (toPaste.Contains(Environment.NewLine))
             {
                 //see if he is trying to paste two lines at once, in whichcase surpress Windows and paste it across the two text boxes
-                string[] toPasteArray = toPaste.Split(Environment.NewLine.ToCharArray(), StringSplitOptions.RemoveEmptyEntries);
+                var toPasteArray = toPaste.Split(Environment.NewLine.ToCharArray(), StringSplitOptions.RemoveEmptyEntries);
                 if (toPasteArray.Length == 2)
                 {
                     tbCatalogueConnectionString.Text = toPasteArray[0];
@@ -275,7 +275,7 @@ public partial class ChoosePlatformDatabasesUI : Form
                 CreateDatabaseTimeout = int.TryParse(tbCreateDatabaseTimeout.Text, out var timeout) ? timeout:30
             };
 
-            bool failed = false;
+            var failed = false;
 
             var task = new Task(() =>
             {
@@ -397,7 +397,7 @@ public partial class ChoosePlatformDatabasesUI : Form
 
         try
         {
-            int result =  int.Parse(tb.Text);
+            var result =  int.Parse(tb.Text);
 
             if(sender == tbSeed)
                 _seed = result;

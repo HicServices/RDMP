@@ -18,7 +18,7 @@ public class RunnerFactory
     public IRunner CreateRunner(IBasicActivateItems activator,RDMPCommandLineOptions command)
     {
         if (command.Command == CommandLineActivity.none)
-            throw new Exception("No command has been set on '" + command.GetType().Name + "'");
+            throw new Exception($"No command has been set on '{command.GetType().Name}'");
             
         if (command is DleOptions dleOpts)
             return new DleRunner(dleOpts);
@@ -44,7 +44,7 @@ public class RunnerFactory
         if(command is ExecuteCommandOptions executeOpts)
             return new ExecuteCommandRunner(executeOpts);
             
-        throw new Exception("RDMPCommandLineOptions Type '" + command.GetType() + "'");
+        throw new Exception($"RDMPCommandLineOptions Type '{command.GetType()}'");
     }
         
 }

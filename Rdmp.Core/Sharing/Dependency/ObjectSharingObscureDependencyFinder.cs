@@ -28,7 +28,8 @@ public class ObjectSharingObscureDependencyFinder : IObscureDependencyFinder
     public void ThrowIfDeleteDisallowed(IMapsDirectlyToDatabaseTable oTableWrapperObject)
     {
         if (_shareManager.IsExportedObject(oTableWrapperObject))
-            throw new Exception("You cannot Delete '" + oTableWrapperObject + "' because it is an Exported object declared in the ObjectExport table");
+            throw new Exception(
+                $"You cannot Delete '{oTableWrapperObject}' because it is an Exported object declared in the ObjectExport table");
     }
 
     public void HandleCascadeDeletesForDeletedObject(IMapsDirectlyToDatabaseTable oTableWrapperObject)

@@ -33,10 +33,10 @@ class TypeTextOrCancelDialogTests : UITests
     [Test]
     public void Test_TypeTextOrCancelDialog_LargeStrings()
     {
-        StringBuilder sb = new StringBuilder();
+        var sb = new StringBuilder();
 
         //send TypeTextOrCancelDialog a million characters
-        for (int i = 0; i < 1_000_000; i++)
+        for (var i = 0; i < 1_000_000; i++)
             sb.Append("f");
 
         var s = sb.ToString();

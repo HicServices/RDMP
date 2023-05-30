@@ -30,21 +30,21 @@ public class CoalescerTests:DatabaseTests
     {
         var db = GetCleanedServer(type, "TestCoalescer");
 
-        int batchCount = 1000;
+        var batchCount = 1000;
 
-        DataTable dt = new DataTable("TestCoalescer_RampantNullness");
+        var dt = new DataTable("TestCoalescer_RampantNullness");
         dt.Columns.Add("pk");
         dt.Columns.Add("f1");
         dt.Columns.Add("f2");
         dt.Columns.Add("f3");
         dt.Columns.Add("f4");
 
-        Random r = new Random();
+        var r = new Random();
 
-        for (int i = 0; i < batchCount; i++)
+        for (var i = 0; i < batchCount; i++)
         {
-            int randInt = r.Next(250);
-            int randCompleteness = r.Next(4);
+            var randInt = r.Next(250);
+            var randCompleteness = r.Next(4);
 
             dt.Rows.Add(new object[] { randInt, randInt, randInt, randInt, randInt });
             dt.Rows.Add(new object[] { randInt, DBNull.Value, DBNull.Value, DBNull.Value, randInt });
@@ -95,7 +95,7 @@ public class CoalescerTests:DatabaseTests
             namer = RdmpMockFactory.Mock_INameDatabasesAndTablesDuringLoads(db, "AAAA");
         }
             
-        HICDatabaseConfiguration configuration = new HICDatabaseConfiguration(db.Server,namer);
+        var configuration = new HICDatabaseConfiguration(db.Server,namer);
             
         var coalescer = new Coalescer();
         coalescer.TableRegexPattern = new Regex(".*");

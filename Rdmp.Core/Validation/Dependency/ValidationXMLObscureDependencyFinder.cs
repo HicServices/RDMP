@@ -55,7 +55,7 @@ public class ValidationXMLObscureDependencyFinder:IObscureDependencyFinder
         initialized = true;
 
         //get all the SecondaryConstraints
-        foreach (Type constraintType in _mef.GetAllTypes().Where(c => typeof(ISecondaryConstraint).IsAssignableFrom(c)))
+        foreach (var constraintType in _mef.GetAllTypes().Where(c => typeof(ISecondaryConstraint).IsAssignableFrom(c)))
         {
             //get all properties and fields which map to a database object
             var props = constraintType.GetProperties().Where(p => typeof(IMapsDirectlyToDatabaseTable).IsAssignableFrom(p.PropertyType)).ToList();
@@ -65,8 +65,8 @@ public class ValidationXMLObscureDependencyFinder:IObscureDependencyFinder
             if (!props.Any() && !fields.Any())
                 continue;
 
-            string constraintName = constraintType.Name;
-            string pattern = Regex.Escape("<SecondaryConstraint xsi:type=\"" + constraintName + "\">");
+            var constraintName = constraintType.Name;
+            var pattern = Regex.Escape($"<SecondaryConstraint xsi:type=\"{constraintName}\">");
 
             //anything
             pattern += ".*";
@@ -129,26 +129,27 @@ public class ValidationXMLObscureDependencyFinder:IObscureDependencyFinder
                 
             //check for undeletable dependants
             if (dependants != null)
-                foreach (IMapsDirectlyToDatabaseTable child in dependants.OfType<IMapsDirectlyToDatabaseTable>())
+                foreach (var child in dependants.OfType<IMapsDirectlyToDatabaseTable>())
                     ThrowIfDeleteDisallowed(child, depth + 1);
         }
 
         //these regular expressions will let us identifiy suspicious Catalogues based on the validation
-        List<Regex> checkers = new List<Regex>();
+        var checkers = new List<Regex>();
 
-        foreach (Suspect suspect in TheUsualSuspects)
+        foreach (var suspect in TheUsualSuspects)
             checkers.Add(new Regex(string.Format(suspect.Pattern, oTableWrapperObject.ID), RegexOptions.Singleline));
 
         var firstPassSuspects = new HashSet<Catalogue>();
 
         //get all catalogues with some validation XML and see if the checker matches any of them
-        foreach (Catalogue catalogue in repository.GetAllObjects<Catalogue>().Where(c => !string.IsNullOrWhiteSpace(c.ValidatorXML)))
+        foreach (var catalogue in repository.GetAllObjects<Catalogue>().Where(c => !string.IsNullOrWhiteSpace(c.ValidatorXML)))
             if (checkers.Any(checker => checker.IsMatch(catalogue.ValidatorXML)))
                 firstPassSuspects.Add(catalogue);
 
-        foreach (Catalogue firstPassSuspect in firstPassSuspects)
+        foreach (var firstPassSuspect in firstPassSuspects)
             if (DeserializeToSeeIfThereIsADependency(oTableWrapperObject, firstPassSuspect))
-                throw new ValidationXmlDependencyException("The ValidationXML of Catalogue " + firstPassSuspect + " contains a reference to the object you are trying to delete:" + oTableWrapperObject);
+                throw new ValidationXmlDependencyException(
+                    $"The ValidationXML of Catalogue {firstPassSuspect} contains a reference to the object you are trying to delete:{oTableWrapperObject}");
     }
 
     private bool DeserializeToSeeIfThereIsADependency(IMapsDirectlyToDatabaseTable oTableWrapperObject, Catalogue firstPassSuspect)
@@ -180,18 +181,18 @@ public class ValidationXMLObscureDependencyFinder:IObscureDependencyFinder
         IEnumerable<ISecondaryConstraint> constraints = validator.ItemValidators.SelectMany(iv => iv.SecondaryConstraints);
 
         //get those that are associated with the usual suspects
-        foreach (ISecondaryConstraint constraint in constraints)
+        foreach (var constraint in constraints)
         {
-            Suspect suspect = TheUsualSuspects.SingleOrDefault(s => s.Type == constraint.GetType());
+            var suspect = TheUsualSuspects.SingleOrDefault(s => s.Type == constraint.GetType());
 
             if (suspect == null)
                 continue;
 
-            foreach (PropertyInfo p in suspect.SuspectProperties)
+            foreach (var p in suspect.SuspectProperties)
                 if (oTableWrapperObject.Equals(p.GetValue(constraint)))
                     return true;
 
-            foreach (FieldInfo f in suspect.SuspectFields)
+            foreach (var f in suspect.SuspectFields)
                 if (oTableWrapperObject.Equals(f.GetValue(constraint)))
                     return true;
 

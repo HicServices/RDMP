@@ -28,10 +28,10 @@ public class PostgreSqlTriggerImplementer : TriggerImplementer
     public PostgreSqlTriggerImplementer(DiscoveredTable table, bool createDataLoadRunIDAlso):base(table,createDataLoadRunIDAlso)
     {
         _schema = string.IsNullOrWhiteSpace(_table.Schema) ? table.GetQuerySyntaxHelper().GetDefaultSchemaIfAny():_table.Schema;
-        _triggerRuntimeName = _table.GetRuntimeName() + "_OnUpdate";
+        _triggerRuntimeName = $"{_table.GetRuntimeName()}_OnUpdate";
             
-        _procedureRuntimeName = _table.GetRuntimeName() + "_OnUpdateProc";
-        _procedureNameFullyQualified = _schema + ".\"" + _procedureRuntimeName + "\"";
+        _procedureRuntimeName = $"{_table.GetRuntimeName()}_OnUpdateProc";
+        _procedureNameFullyQualified = $"{_schema}.\"{_procedureRuntimeName}\"";
     }
 
     public override void DropTrigger(out string problemsDroppingTrigger, out string thingsThatWorkedDroppingTrigger)
@@ -45,31 +45,32 @@ public class PostgreSqlTriggerImplementer : TriggerImplementer
             {
                 con.Open();
 
-                using(var cmd = _server.GetCommand("DROP TRIGGER IF EXISTS \"" + _triggerRuntimeName + "\" ON " + _table.GetFullyQualifiedName(), con))
+                using(var cmd = _server.GetCommand(
+                          $"DROP TRIGGER IF EXISTS \"{_triggerRuntimeName}\" ON {_table.GetFullyQualifiedName()}", con))
                 {
                     cmd.CommandTimeout = UserSettings.ArchiveTriggerTimeout;
                     cmd.ExecuteNonQuery();
                 }
 
-                using(var cmd = _server.GetCommand("DROP FUNCTION IF EXISTS  " + _procedureNameFullyQualified, con))
+                using(var cmd = _server.GetCommand($"DROP FUNCTION IF EXISTS  {_procedureNameFullyQualified}", con))
                 {
                     cmd.CommandTimeout = UserSettings.ArchiveTriggerTimeout;
                     cmd.ExecuteNonQuery();
                 }
 
-                thingsThatWorkedDroppingTrigger = "Droppped trigger " + _triggerRuntimeName;
+                thingsThatWorkedDroppingTrigger = $"Droppped trigger {_triggerRuntimeName}";
             }
         }
         catch (Exception exception)
         {
             //this is not a problem really since it is likely that DLE chose to recreate the trigger because it was FUBARed or missing, this is just belt and braces try and drop anything that is lingering, whether or not it is there
-            problemsDroppingTrigger += "Failed to drop Trigger:" + exception.Message + Environment.NewLine;
+            problemsDroppingTrigger += $"Failed to drop Trigger:{exception.Message}{Environment.NewLine}";
         }
     }
 
     public override string CreateTrigger(ICheckNotifier notifier)
     {
-        string creationSql = base.CreateTrigger(notifier);
+        var creationSql = base.CreateTrigger(notifier);
 
         CreateProcedure(notifier);
             
@@ -170,7 +171,7 @@ LANGUAGE 'plpgsql';"
             END;",
                 _archiveTable.GetFullyQualifiedName()                                                                          
                 , string.Join(",", _columns.Select(c => syntax.EnsureWrapped(c.GetRuntimeName()))),         
-                string.Join(",", _columns.Select(c => "OLD." + syntax.EnsureWrapped(c.GetRuntimeName()))),
+                string.Join(",", _columns.Select(c => $"OLD.{syntax.EnsureWrapped(c.GetRuntimeName())}")),
                 syntax.EnsureWrapped(SpecialFieldNames.ValidFrom));
 
     }

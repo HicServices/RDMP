@@ -66,7 +66,7 @@ public class CohortContainerAndCloningTests : CohortIdentificationTests
         try
         {
             //there should be 1 child
-            AggregateConfiguration[] aggregateConfigurations = rootcontainer.GetAggregateConfigurations();
+            var aggregateConfigurations = rootcontainer.GetAggregateConfigurations();
             Assert.AreEqual(1, aggregateConfigurations.Length);
 
             //child should follow naming convention
@@ -134,7 +134,7 @@ public class CohortContainerAndCloningTests : CohortIdentificationTests
             Assert.AreNotEqual(cloneParameter.ID, param.ID);
 
             //it has a different ID and is part of an aggregate filter container (It is presumed to be involved with cohort identification cohortIdentificationConfiguration) which means it will be called cic_X_
-            string cohortAggregateSql = new CohortQueryBuilder(clone,null,null).SQL;
+            var cohortAggregateSql = new CohortQueryBuilder(clone,null,null).SQL;
 
 
 //the basic aggregate has the filter, parameter and group by
@@ -166,14 +166,14 @@ order by
 //4. should have a distinct on the identifier column
 
             Assert.AreEqual(
-                @"DECLARE @sex AS varchar(50);
+                $@"DECLARE @sex AS varchar(50);
 SET @sex='M';
-/*cic_"+cohortIdentificationConfiguration.ID+@"_UnitTestAggregate1*/
+/*cic_{cohortIdentificationConfiguration.ID}_UnitTestAggregate1*/
 SELECT
 distinct
-["+TestDatabaseNames.Prefix+@"ScratchArea].[dbo].[BulkData].[chi]
+[{TestDatabaseNames.Prefix}ScratchArea].[dbo].[BulkData].[chi]
 FROM 
-["+TestDatabaseNames.Prefix+@"ScratchArea].[dbo].[BulkData]
+[{TestDatabaseNames.Prefix}ScratchArea].[dbo].[BulkData]
 WHERE
 (
 /*MyFilter*/

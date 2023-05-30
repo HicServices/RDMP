@@ -74,7 +74,7 @@ internal class NightmareDatasets : DataGenerator
 
 
         // Based on DLS figures see: https://github.com/HicServices/RDMP/issues/1224
-        for (int i = 0; i < 500 * Factor; i++)
+        for (var i = 0; i < 500 * Factor; i++)
         {
             var cata = new Catalogue(_repos.CatalogueRepository, $"Catalogue {GetRandomGPCode(r)}");
             cata.Description = GetRandomSentence(r);
@@ -82,8 +82,8 @@ internal class NightmareDatasets : DataGenerator
             Catalogues.Add(1,cata);
 
             // half of datasets have linkage identifiers
-            bool hasExtractionIdentifier = false;
-            bool first = true;
+            var hasExtractionIdentifier = false;
+            var first = true;
 
             // 14497 CatalogueItem
             // 8922 ExtractionInformation
@@ -128,7 +128,7 @@ internal class NightmareDatasets : DataGenerator
             
         // There are 500 tables associated with Catalogues
         // but also 250 tables that are not linked to any Catalogues
-        for (int i = 0; i < 250 * Factor; i++)
+        for (var i = 0; i < 250 * Factor; i++)
         {
             CreateTable();
         }
@@ -136,10 +136,10 @@ internal class NightmareDatasets : DataGenerator
         // open a connection to the cohort db for creating external cohorts
         using var con = ect.Discover().Server.GetManagedConnection();
             
-        for (int i = 0; i < 200 * Factor; i++)
+        for (var i = 0; i < 200 * Factor; i++)
         {
             // each project
-            Project p = new Project(_repos.DataExportRepository, $"Project {i}");
+            var p = new Project(_repos.DataExportRepository, $"Project {i}");
             p.ProjectNumber = r.Next(50) == 0 ? 5:i;  // it's ok for some projects to have the same number
             p.ExtractionDirectory = extractionDir;
             p.SaveToDatabase();
@@ -148,9 +148,10 @@ internal class NightmareDatasets : DataGenerator
             // has an average of 5 ExtractionConfigurations but could have 0 to 10
             var numberOfConfigs = GetGaussianInt(0, 10);
 
-            for(int c = 0;c< numberOfConfigs; c++)
+            for(var c = 0;c< numberOfConfigs; c++)
             {
-                var config = new ExtractionConfiguration(_repos.DataExportRepository, p, "Extraction " + GetRandomGPCode(r));
+                var config = new ExtractionConfiguration(_repos.DataExportRepository, p,
+                    $"Extraction {GetRandomGPCode(r)}");
                 if (r.Next(2) == 0)
                     config.RequestTicket = GetRandomGPCode(r); // some have request tickets
                 if (r.Next(4) == 0)
@@ -159,7 +160,7 @@ internal class NightmareDatasets : DataGenerator
 
                 // average of 8 Catalogues per extraction
                 var numberOfsds = GetGaussianInt(0, 16);
-                for (int s = 0; s < numberOfsds; s++)
+                for (var s = 0; s < numberOfsds; s++)
                 {
                     var ds = ExtractableDatasets.GetRandom(r);
                     config.AddDatasetToConfiguration(ds, out var sds);
@@ -203,9 +204,10 @@ internal class NightmareDatasets : DataGenerator
         }
 
         // 200 cics
-        for (int i = 0; i < 200 * Factor; i++)
+        for (var i = 0; i < 200 * Factor; i++)
         {
-            var cic = new CohortIdentificationConfiguration(_repos.CatalogueRepository, "Cohort Query " + GetRandomGPCode(r));
+            var cic = new CohortIdentificationConfiguration(_repos.CatalogueRepository,
+                $"Cohort Query {GetRandomGPCode(r)}");
                 
             // 25% of cics are associated with a specific project
             if(r.Next(4) == 0)
@@ -220,7 +222,7 @@ internal class NightmareDatasets : DataGenerator
     {
 
         var numberOfFilters = GetGaussianInt(0, 2);
-        for (int f = 0; f < numberOfFilters; f++)
+        for (var f = 0; f < numberOfFilters; f++)
         {
             var filter = new DeployedExtractionFilter(_repos.DataExportRepository,
                 $"Filter {Guid.NewGuid()}", null)
@@ -258,7 +260,7 @@ internal class NightmareDatasets : DataGenerator
         Tables.Add(1, ti);
 
         var numberOfColumns = GetGaussianInt(1, 48);
-        for (int j = 0; j < numberOfColumns; j++)
+        for (var j = 0; j < numberOfColumns; j++)
         {
             yield return new ColumnInfo(_repos.CatalogueRepository, $"MyCol{ColumnsCount++}", "varchar(10)", ti);
         }

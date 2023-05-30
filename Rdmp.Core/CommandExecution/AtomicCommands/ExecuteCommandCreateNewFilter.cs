@@ -37,7 +37,7 @@ public class ExecuteCommandCreateNewFilter : BasicCommandExecution, IAtomicComma
         
     public bool OfferCatalogueFilters
     {
-        get { return offerCatalogueFilters; }
+        get => offerCatalogueFilters;
         set
         {
             if(value)
@@ -111,7 +111,7 @@ where    Optional SQL to set for the filter.  If <basedOn> is not null this will
         }
 
         // the index that string arguments begin at (Name and WhereSql)
-        int stringArgsStartAt = 2;
+        var stringArgsStartAt = 2;
 
         if (picker.Length > 1)
         {
@@ -210,7 +210,7 @@ where    Optional SQL to set for the filter.  If <basedOn> is not null this will
         base.Execute();
 
         IFilter f;
-        IContainer container = _container;
+        var container = _container;
 
         if (_host != null && container == null)
         {
@@ -234,7 +234,7 @@ where    Optional SQL to set for the filter.  If <basedOn> is not null this will
         }
         else
         {
-            f = _factory.CreateNewFilter("New Filter " + Guid.NewGuid());
+            f = _factory.CreateNewFilter($"New Filter {Guid.NewGuid()}");
         }
 
         if (container != null)

@@ -37,7 +37,7 @@ public class ANOMigrationTests : TestsRequiringANOStore
             
         DeleteANOEndpoint();
             
-        ANOTable remnantANO = CatalogueRepository.GetAllObjects<ANOTable>().SingleOrDefault(a => a.TableName.Equals("ANOCondition"));
+        var remnantANO = CatalogueRepository.GetAllObjects<ANOTable>().SingleOrDefault(a => a.TableName.Equals("ANOCondition"));
 
         if (remnantANO != null)
             remnantANO.DeleteInDatabase();
@@ -84,7 +84,7 @@ INSERT [ANOMigration] ([AdmissionDate], [DischargeDate], [Condition1], [Conditio
         }
 
         var table = db.ExpectTable(TableName);
-        TableInfoImporter importer = new TableInfoImporter(CatalogueRepository, table);
+        var importer = new TableInfoImporter(CatalogueRepository, table);
         importer.DoImport(out _tableInfo,out _columnInfos);
 
         //Configure the structure of the ANO transform we want - identifiers should have 3 characters and 2 ints and end with _C
@@ -120,8 +120,8 @@ INSERT [ANOMigration] ([AdmissionDate], [DischargeDate], [Condition1], [Conditio
     public void ConvertPrimaryKeyColumn()
     {
         //The table we created above should have a column called Condition2 in it, we will migrate this data to ANO land
-        ColumnInfo condition = _columnInfos.Single(c => c.GetRuntimeName().Equals("Condition1"));
-        ColumnInfoToANOTableConverter converter = new ColumnInfoToANOTableConverter(condition, _anoConditionTable);
+        var condition = _columnInfos.Single(c => c.GetRuntimeName().Equals("Condition1"));
+        var converter = new ColumnInfoToANOTableConverter(condition, _anoConditionTable);
         var ex = Assert.Throws<Exception>(()=>converter.ConvertFullColumnInfo((s) => true, new ThrowImmediatelyCheckNotifier())); //say  yes to everything it proposes 
 
         StringAssert.IsMatch(@"Could not perform transformation because column \[(.*)\]\.\[dbo\]\.\[.*\]\.\[Condition1\] is not droppable",ex.Message);

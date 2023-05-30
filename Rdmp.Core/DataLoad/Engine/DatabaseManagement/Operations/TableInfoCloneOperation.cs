@@ -92,15 +92,15 @@ public class TableInfoCloneOperation
     public void CloneTable(DiscoveredDatabase srcDatabaseInfo, DiscoveredDatabase destDatabaseInfo, DiscoveredTable sourceTable, string destTableName, bool dropHICColumns, bool dropIdentityColumns, bool allowNulls, PreLoadDiscardedColumn[] dilutionColumns)
     {
         if (!sourceTable.Exists())
-            throw new Exception("Table " + sourceTable + " does not exist on " + srcDatabaseInfo);
+            throw new Exception($"Table {sourceTable} does not exist on {srcDatabaseInfo}");
 
 
         //new table will start with the same name as the as the old scripted one
-        DiscoveredTable newTable = destDatabaseInfo.ExpectTable(destTableName);
+        var newTable = destDatabaseInfo.ExpectTable(destTableName);
             
         var sql = sourceTable.ScriptTableCreation(allowNulls, allowNulls, false /*False because we want to drop these columns entirely not just flip to int*/,newTable); 
             
-        _listener.OnNotify(this,new NotifyEventArgs(ProgressEventType.Information,"Creating table with SQL:" + sql));
+        _listener.OnNotify(this,new NotifyEventArgs(ProgressEventType.Information, $"Creating table with SQL:{sql}"));
 
         using (var con = destDatabaseInfo.Server.GetConnection())
         {
@@ -110,11 +110,12 @@ public class TableInfoCloneOperation
         }
 
         if (!newTable.Exists())
-            throw new Exception("Table '" + newTable + "' not found in " + destDatabaseInfo + " despite running table creation SQL!");
+            throw new Exception(
+                $"Table '{newTable}' not found in {destDatabaseInfo} despite running table creation SQL!");
             
-        foreach (DiscoveredColumn column in newTable.DiscoverColumns())
+        foreach (var column in newTable.DiscoverColumns())
         {
-            bool drop = false;
+            var drop = false;
             var colName = column.GetRuntimeName();
 
             if (column.IsAutoIncrement)

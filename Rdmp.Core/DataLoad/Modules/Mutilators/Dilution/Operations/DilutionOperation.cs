@@ -33,7 +33,8 @@ public abstract class DilutionOperation : IPluginDilutionOperation
             throw new DilutionColumnNotSetException("ColumnToDilute has not been set yet, this is the column which will be diluted and is usually set by the DilutionOperationFactory but it is null");
 
         if (string.IsNullOrWhiteSpace(ColumnToDilute.SqlDataType))
-            notifier.OnCheckPerformed(new CheckEventArgs("IPreLoadDiscardedColumn " + ColumnToDilute + " is of unknown datatype", CheckResult.Fail));
+            notifier.OnCheckPerformed(new CheckEventArgs(
+                $"IPreLoadDiscardedColumn {ColumnToDilute} is of unknown datatype", CheckResult.Fail));
     }
 
     public override string ToString()

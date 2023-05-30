@@ -27,8 +27,8 @@ public class TestBiochemistryCreation
 
         var f = new FileInfo(Path.Combine(TestContext.CurrentContext.TestDirectory,"DeleteMeTestBiochemistry.csv"));
 
-        bool finished = false;
-        int finishedWithRecords = -1;
+        var finished = false;
+        var finishedWithRecords = -1;
 
         var biochem = new Biochemistry(new Random(500));
         biochem.RowsGenerated += (s, e) =>
@@ -45,7 +45,7 @@ public class TestBiochemistryCreation
 
         Assert.GreaterOrEqual(File.ReadAllLines(f.FullName).Length, numberOfRecords);//can be newlines in middle of file
 
-        Console.WriteLine("Created file: " + f.FullName);
+        Console.WriteLine($"Created file: {f.FullName}");
         f.Delete();
     }
 }

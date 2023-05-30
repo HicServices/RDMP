@@ -26,7 +26,7 @@ class QueryBuilderUnitTests:UnitTests
         c2.TableInfo.IsPrimaryExtractionTable = true;
         c2.TableInfo.SaveToDatabase();
 
-        QueryBuilder builder = new QueryBuilder(null, null);
+        var builder = new QueryBuilder(null, null);
         builder.AddColumn(new ColumnInfoToIColumn(Repository,c1));
         builder.AddColumn(new ColumnInfoToIColumn(Repository, c2));
 
@@ -48,7 +48,7 @@ class QueryBuilderUnitTests:UnitTests
 
         var j1 = new JoinInfo(Repository, c2, c1, ExtractionJoinType.Inner, null);
 
-        QueryBuilder builder = new QueryBuilder(null, null);
+        var builder = new QueryBuilder(null, null);
         builder.AddColumn(new ColumnInfoToIColumn(Repository, c1));
         builder.AddColumn(new ColumnInfoToIColumn(Repository, c2));
 
@@ -103,7 +103,7 @@ class QueryBuilderUnitTests:UnitTests
         var j4 = new JoinInfo(Repository, c4, c3, ExtractionJoinType.Inner, null);
 
 
-        QueryBuilder builder = new QueryBuilder(null, null);
+        var builder = new QueryBuilder(null, null);
         builder.AddColumn(new ColumnInfoToIColumn(Repository, c1));
         builder.AddColumn(new ColumnInfoToIColumn(Repository, c2)); 
         builder.AddColumn(new ColumnInfoToIColumn(Repository, c3));

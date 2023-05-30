@@ -11,7 +11,9 @@ namespace Tests.Common;
 
 public class TestDatabasesSettings
 {
-    public string Prefix { get { return TestDatabaseNames.Prefix; } set { TestDatabaseNames.Prefix = value; } }
+    public string Prefix { get => TestDatabaseNames.Prefix;
+        set => TestDatabaseNames.Prefix = value;
+    }
 
     public string ServerName { get; set; }
     public string Username { get; set; }

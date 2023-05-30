@@ -63,7 +63,7 @@ public class WebServiceConfiguration : EncryptedPasswordHost, ICustomUIDrivenCla
         }
         catch (Exception e)
         {
-            throw new Exception("Deserialisation failed: " + value, e);
+            throw new Exception($"Deserialisation failed: {value}", e);
         }
     }
 
@@ -71,7 +71,7 @@ public class WebServiceConfiguration : EncryptedPasswordHost, ICustomUIDrivenCla
     {
         var sb = new StringBuilder();
 
-        XmlSerializer serializer = new XmlSerializer(GetType());
+        var serializer = new XmlSerializer(GetType());
 
         using (var sw = XmlWriter.Create(sb, new XmlWriterSettings { Indent = true }))
             serializer.Serialize(sw, this);

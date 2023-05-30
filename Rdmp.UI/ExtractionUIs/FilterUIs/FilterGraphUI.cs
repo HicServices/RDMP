@@ -68,6 +68,6 @@ public partial class FilterGraphUI : AggregateGraphUI, IObjectCollectionControl
     }
     public override string GetTabName()
     {
-        return "Filter Graph '" + _collection.GetFilter() + "'";
+        return $"Filter Graph '{_collection.GetFilter()}'";
     }
 }

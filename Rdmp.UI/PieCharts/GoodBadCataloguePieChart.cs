@@ -90,7 +90,7 @@ public partial class GoodBadCataloguePieChart : RDMPUserControl, IDashboardableC
         lblNoIssues.Visible = false;
 
         if (_collection.IsSingleCatalogueMode)
-            gbWhatThisIs.Text = "Column Descriptions in " + _collection.GetSingleCatalogueModeCatalogue();
+            gbWhatThisIs.Text = $"Column Descriptions in {_collection.GetSingleCatalogueModeCatalogue()}";
         else
             gbWhatThisIs.Text = "Column Descriptions";
 
@@ -101,7 +101,7 @@ public partial class GoodBadCataloguePieChart : RDMPUserControl, IDashboardableC
     {
         try
         {
-            CatalogueItem[] catalogueItems = GetCatalogueItems();
+            var catalogueItems = GetCatalogueItems();
 
             if (!catalogueItems.Any())
             {
@@ -112,21 +112,21 @@ public partial class GoodBadCataloguePieChart : RDMPUserControl, IDashboardableC
                 return;
             }
 
-            int countPopulated = 0;
-            int countNotPopulated = 0;
+            var countPopulated = 0;
+            var countNotPopulated = 0;
                     
-            foreach (CatalogueItem ci in catalogueItems)
+            foreach (var ci in catalogueItems)
                 if (string.IsNullOrWhiteSpace(ci.Description))
                     countNotPopulated++;
                 else
                     countPopulated++;
 
-            DataTable dt = new DataTable();
+            var dt = new DataTable();
             dt.Columns.Add("Count");
             dt.Columns.Add("State");
 
-            dt.Rows.Add(new object[] { countNotPopulated, "Missing (" + countNotPopulated + ")" });
-            dt.Rows.Add(new object[] { countPopulated, "Populated (" + countPopulated + ")" });
+            dt.Rows.Add(new object[] { countNotPopulated, $"Missing ({countNotPopulated})" });
+            dt.Rows.Add(new object[] { countPopulated, $"Populated ({countPopulated})" });
                 
             chart1.Series[0].XValueMember = dt.Columns[1].ColumnName;
             chart1.Series[0].YValueMembers = dt.Columns[0].ColumnName;
@@ -138,7 +138,7 @@ public partial class GoodBadCataloguePieChart : RDMPUserControl, IDashboardableC
         }
         catch (Exception e)
         {
-            ExceptionViewer.Show(this.GetType().Name + " failed to load data", e);
+            ExceptionViewer.Show($"{this.GetType().Name} failed to load data", e);
         }
     }
 

@@ -44,7 +44,7 @@ public class RuntimeTaskFactory
             case ProcessTaskType.MutilateDataTable:
                 return new MutilateDataTablesRuntimeTask(task, args, _repository.MEF);
             default:
-                throw new Exception("Cannot create runtime task: Unknown process task type '" + task.ProcessTaskType + "'");
+                throw new Exception($"Cannot create runtime task: Unknown process task type '{task.ProcessTaskType}'");
         }
     }
 }

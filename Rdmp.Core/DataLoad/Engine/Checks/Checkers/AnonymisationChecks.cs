@@ -28,7 +28,7 @@ public class AnonymisationChecks : ICheckable
         //check ANO stuff is synchronized
         notifier.OnCheckPerformed(new CheckEventArgs("Preparing to synchronize ANO configuration", CheckResult.Success, null));
 
-        ANOTableInfoSynchronizer synchronizer = new ANOTableInfoSynchronizer(_tableInfo);
+        var synchronizer = new ANOTableInfoSynchronizer(_tableInfo);
 
         try
         {
@@ -36,7 +36,8 @@ public class AnonymisationChecks : ICheckable
         }
         catch (Exception e)
         {
-            notifier.OnCheckPerformed(new CheckEventArgs("Synchronization of Anonymsiation configurations of table " + _tableInfo.GetRuntimeName() + " failed with Exception", CheckResult.Fail, e, null));
+            notifier.OnCheckPerformed(new CheckEventArgs(
+                $"Synchronization of Anonymsiation configurations of table {_tableInfo.GetRuntimeName()} failed with Exception", CheckResult.Fail, e, null));
         }
 
         if(_tableInfo.IdentifierDumpServer_ID != null)

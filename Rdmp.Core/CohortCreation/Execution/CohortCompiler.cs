@@ -38,7 +38,7 @@ public class CohortCompiler
 {
     private CohortIdentificationConfiguration _cic;
     public CohortIdentificationConfiguration CohortIdentificationConfiguration {
-        get { return _cic;}
+        get => _cic;
         set {
             _cic = value;
             BuildPluginCohortCompilerList();
@@ -187,7 +187,7 @@ public class CohortCompiler
         }
                 
 
-        foreach (IOrderable c in container.GetOrderedContents())
+        foreach (var c in container.GetOrderedContents())
         {
             if(c is CohortAggregateContainer aggregateContainer && !aggregateContainer.IsDisabled)
             {
@@ -214,15 +214,14 @@ public class CohortCompiler
         var aggregate = runnable as AggregateConfiguration;
         var container = runnable as CohortAggregateContainer;
         var joinable = runnable as JoinableCohortAggregateConfiguration;
-        IMapsDirectlyToDatabaseTable obj = aggregate ?? container ?? (IMapsDirectlyToDatabaseTable)joinable;
+        var obj = aggregate ?? container ?? (IMapsDirectlyToDatabaseTable)joinable;
 
 
         if (obj == null)
             throw new NotSupportedException(
-                "Expected c to be either AggregateConfiguration or CohortAggregateContainer but it was " +
-                runnable.GetType().Name);
+                $"Expected c to be either AggregateConfiguration or CohortAggregateContainer but it was {runnable.GetType().Name}");
 
-        CancellationTokenSource source = new CancellationTokenSource();
+        var source = new CancellationTokenSource();
         ICompileable task;
 
         //thing that will produce the SQL
@@ -264,7 +263,7 @@ public class CohortCompiler
         if (parent != null)
         {
             //tell the task what the container is for UI purposes really
-            bool isFirstInContainer = parent.GetOrderedContents().First().Equals(runnable);
+            var isFirstInContainer = parent.GetOrderedContents().First().Equals(runnable);
             task.SetKnownContainer(parent, isFirstInContainer);
 
             //but...
@@ -296,7 +295,7 @@ public class CohortCompiler
         lock (Tasks)
         {
             //we have seen this entity before (by ID & entity type)
-            foreach (ICompileable c in Tasks.Keys.Where(k =>k.Child.Equals(obj) && k != task).ToArray())
+            foreach (var c in Tasks.Keys.Where(k =>k.Child.Equals(obj) && k != task).ToArray())
             {
                 // the task is already setup ready to go somehow
                 if(c.CancellationTokenSource == source)
@@ -313,8 +312,8 @@ public class CohortCompiler
             Tasks.Add(task, null);
         }
 
-        string newsql = "";
-        string cumulativeSql = "";
+        var newsql = "";
+        var cumulativeSql = "";
 
         try
         {
@@ -374,7 +373,7 @@ public class CohortCompiler
 
     public void LaunchScheduledTasksAsync(int timeout,bool cacheOnCompletion)
     {
-        foreach (KeyValuePair<ICompileable, CohortIdentificationTaskExecution> kvp in Tasks)
+        foreach (var kvp in Tasks)
             if (kvp.Key.State == CompilationState.NotScheduled)
                 KickOff(kvp.Key, kvp.Value, timeout, cacheOnCompletion);
     }
@@ -414,7 +413,7 @@ public class CohortCompiler
 
             var explicitTypes = new List<DatabaseColumnRequest>();
 
-            AggregateConfiguration configuration = cacheableTask.GetAggregateConfiguration();
+            var configuration = cacheableTask.GetAggregateConfiguration();
             try
             {
                 //the identifier column that we read from
@@ -426,13 +425,13 @@ public class CohortCompiler
                         identifiers.Length, string.Join(",", identifiers.Select(i => i.GetRuntimeName()))));
 
                 var identifierDimension = identifiers[0];
-                ColumnInfo identifierColumnInfo = identifierDimension.ColumnInfo;
+                var identifierColumnInfo = identifierDimension.ColumnInfo;
                 var destinationDataType = GetDestinationType(identifierColumnInfo.Data_type,cacheableTask,queryCachingServer);
                     
                 explicitTypes.Add(new DatabaseColumnRequest(identifierDimension.GetRuntimeName(), destinationDataType));
 
                 //make other non transform Types have explicit values
-                foreach(AggregateDimension d in configuration.AggregateDimensions)
+                foreach(var d in configuration.AggregateDimensions)
                 {
                     if(d != identifierDimension)
                     {
@@ -450,7 +449,7 @@ public class CohortCompiler
                 throw new Exception("Error occurred trying to find the data type of the identifier column when attempting to submit the result data table to the cache", e);
             }
 
-            CacheCommitArguments args = cacheableTask.GetCacheArguments(sql, Tasks[cacheableTask].Identifiers, explicitTypes.ToArray());
+            var args = cacheableTask.GetCacheArguments(sql, Tasks[cacheableTask].Identifiers, explicitTypes.ToArray());
 
             manager.CommitResults(args);
         }
@@ -558,7 +557,7 @@ public class CohortCompiler
             return "Unknown";
 
         var execution = Tasks[task];
-        return execution.SubqueriesCached + "/" + execution.SubQueries;
+        return $"{execution.SubqueriesCached}/{execution.SubQueries}";
     }
 
     public bool AreaAllQueriesCached(ICompileable task )

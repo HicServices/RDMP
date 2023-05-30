@@ -47,8 +47,8 @@ public class GovernancePeriod : DatabaseEntity, ICheckable,INamed
     /// </summary>
     public DateTime StartDate
     {
-        get { return _startDate; }
-        set { SetField(ref  _startDate, value); }
+        get => _startDate;
+        set => SetField(ref  _startDate, value);
     }
 
     /// <summary>
@@ -56,8 +56,8 @@ public class GovernancePeriod : DatabaseEntity, ICheckable,INamed
     /// </summary>
     public DateTime? EndDate
     {
-        get { return _endDate; }
-        set { SetField(ref  _endDate, value); }
+        get => _endDate;
+        set => SetField(ref  _endDate, value);
     }
 
     /// <inheritdoc/>
@@ -65,8 +65,8 @@ public class GovernancePeriod : DatabaseEntity, ICheckable,INamed
     [NotNull]
     public string Name
     {
-        get { return _name; }
-        set { SetField(ref  _name, value); }
+        get => _name;
+        set => SetField(ref  _name, value);
     }
 
     /// <summary>
@@ -74,8 +74,8 @@ public class GovernancePeriod : DatabaseEntity, ICheckable,INamed
     /// </summary>
     public string Description
     {
-        get { return _description; }
-        set { SetField(ref  _description, value); }
+        get => _description;
+        set => SetField(ref  _description, value);
     }
 
     /// <summary>
@@ -83,8 +83,8 @@ public class GovernancePeriod : DatabaseEntity, ICheckable,INamed
     /// </summary>
     public string Ticket
     {
-        get { return _ticket; }
-        set { SetField(ref  _ticket, value); }
+        get => _ticket;
+        set => SetField(ref  _ticket, value);
     }
 
     #endregion
@@ -96,18 +96,13 @@ public class GovernancePeriod : DatabaseEntity, ICheckable,INamed
     /// <see cref="GovernancePeriod"/>
     /// </summary>
     [NoMappingToDatabase]
-    public IEnumerable<GovernanceDocument> GovernanceDocuments {
-        get { return Repository.GetAllObjectsWithParent<GovernanceDocument>(this); }
-    }
+    public IEnumerable<GovernanceDocument> GovernanceDocuments => Repository.GetAllObjectsWithParent<GovernanceDocument>(this);
 
     /// <summary>
     /// All datasets to which this governance grants permission to hold
     /// </summary>
     [NoMappingToDatabase]
-    public IEnumerable<ICatalogue> GovernedCatalogues
-    {
-        get { return _manager.GetAllGovernedCatalogues(this); }
-    }
+    public IEnumerable<ICatalogue> GovernedCatalogues => _manager.GetAllGovernedCatalogues(this);
 
     #endregion
 
@@ -125,7 +120,7 @@ public class GovernancePeriod : DatabaseEntity, ICheckable,INamed
     {
         repository.InsertAndHydrate(this, new Dictionary<string, object>
         {
-            {"Name", name ?? "GovernancePeriod"+Guid.NewGuid()},
+            {"Name", name ?? $"GovernancePeriod{Guid.NewGuid()}" },
             {"StartDate",DateTime.Now.Date}
         });
 
@@ -160,12 +155,12 @@ public class GovernancePeriod : DatabaseEntity, ICheckable,INamed
     public void Check(ICheckNotifier notifier)
     {
         if (EndDate == null)
-            notifier.OnCheckPerformed(new CheckEventArgs("There is no end date for GovernancePeriod " + Name,CheckResult.Warning));
+            notifier.OnCheckPerformed(new CheckEventArgs($"There is no end date for GovernancePeriod {Name}",CheckResult.Warning));
         else
         if (EndDate <= StartDate)
-            notifier.OnCheckPerformed(new CheckEventArgs("GovernancePeriod " + Name + " expires before it begins!", CheckResult.Fail));
+            notifier.OnCheckPerformed(new CheckEventArgs($"GovernancePeriod {Name} expires before it begins!", CheckResult.Fail));
         else
-            notifier.OnCheckPerformed(new CheckEventArgs("GovernancePeriod " + Name + " expiry date is after the start date", CheckResult.Success));
+            notifier.OnCheckPerformed(new CheckEventArgs($"GovernancePeriod {Name} expiry date is after the start date", CheckResult.Success));
             
         foreach (var doc in GovernanceDocuments)
             doc.Check(notifier);

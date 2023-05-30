@@ -58,7 +58,8 @@ public class LoadDirectory : ILoadDirectory
         DataPath = new DirectoryInfo(Path.Combine(RootPath.FullName, "Data"));
 
         if (!DataPath.Exists)
-            throw new DirectoryNotFoundException("Could not find directory '" + DataPath.FullName + "', every LoadDirectory must have a Data folder, the root folder was:" + RootPath);
+            throw new DirectoryNotFoundException(
+                $"Could not find directory '{DataPath.FullName}', every LoadDirectory must have a Data folder, the root folder was:{RootPath}");
 
         ForLoading = FindFolderInPathOrThrow(DataPath, "ForLoading");
         ForArchiving = FindFolderInPathOrThrow(DataPath, "ForArchiving");
@@ -73,10 +74,11 @@ public class LoadDirectory : ILoadDirectory
 
     private DirectoryInfo FindFolderInPathOrThrow(DirectoryInfo path, string folderName)
     {
-        DirectoryInfo d = path.EnumerateDirectories(folderName, SearchOption.TopDirectoryOnly).FirstOrDefault();
+        var d = path.EnumerateDirectories(folderName, SearchOption.TopDirectoryOnly).FirstOrDefault();
 
         if (d == null)
-            throw new DirectoryNotFoundException("This dataset requires the directory '" + folderName + "' located at " + Path.Combine(path.FullName, folderName));
+            throw new DirectoryNotFoundException(
+                $"This dataset requires the directory '{folderName}' located at {Path.Combine(path.FullName, folderName)}");
 
         return d;
     }
@@ -96,7 +98,8 @@ public class LoadDirectory : ILoadDirectory
         var projectDir = new DirectoryInfo(Path.Combine(parentDir.FullName, dirName));
 
         if (!overrideExistsCheck && projectDir.Exists && projectDir.GetFileSystemInfos().Any())
-            throw new Exception("The directory " + projectDir.FullName + " already exists (and we don't want to accidentally nuke anything)");
+            throw new Exception(
+                $"The directory {projectDir.FullName} already exists (and we don't want to accidentally nuke anything)");
             
         projectDir.Create();
 
@@ -105,7 +108,7 @@ public class LoadDirectory : ILoadDirectory
         dataDir.CreateSubdirectory("ForArchiving");
         dataDir.CreateSubdirectory("Cache");
 
-        StreamWriter swExampleFixedWidth = new StreamWriter(Path.Combine(dataDir.FullName, "ExampleFixedWidthFormatFile.csv"));
+        var swExampleFixedWidth = new StreamWriter(Path.Combine(dataDir.FullName, "ExampleFixedWidthFormatFile.csv"));
         swExampleFixedWidth.Write(ExampleFixedWidthFormatFileContents);
         swExampleFixedWidth.Flush();
         swExampleFixedWidth.Close();

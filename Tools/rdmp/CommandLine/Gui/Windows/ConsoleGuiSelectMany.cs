@@ -96,7 +96,7 @@ public class ConsoleGuiSelectMany : Window
         lv.SetSource(all);
 
         // since we changed the source we need to remark the originally ticked ones
-        for(int i=0;i<ticked.Length;i++)
+        for(var i=0;i<ticked.Length;i++)
         {
             lv.Source.SetMark(i, true);
         }

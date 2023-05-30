@@ -117,7 +117,8 @@ public class StagingBackfillMutilator : IPluginMutilateDataTables
         // Infinite recursion check
         var seenBefore = joinPathToTimeTable.Intersect(joinsWithThisTableAsChild).ToList();
         if (seenBefore.Any())
-            throw new InvalidOperationException("Join loop: I've seen join(s) " + string.Join(",", seenBefore.Select(j => j.PrimaryKey + " -> " + j.ForeignKey)) + " before so we must have hit a loop (and will never complete the recursion).");
+            throw new InvalidOperationException(
+                $"Join loop: I've seen join(s) {string.Join(",", seenBefore.Select(j => $"{j.PrimaryKey} -> {j.ForeignKey}"))} before so we must have hit a loop (and will never complete the recursion).");
 
         // Process this table and its children (we need info about the children in order to join and detect childless rows)
         var joinsWithThisTableAsParent = allJoinInfos.Where(info => info.PrimaryKey.TableInfo_ID == tiCurrent.ID).ToList();
@@ -190,7 +191,7 @@ FROM
 LiveDataForUpdating LEFT JOIN {2} AS CurrentTable {3}",
             GetLiveDataToUpdateStaging(tiCurrent, joinPathToTimeTable),
             queryHelper.BuildUpdateClauseForRow("LiveDataForUpdating", "CurrentTable"),
-            "[" + _dbInfo.GetRuntimeName() + "]..[" + tiCurrent.GetRuntimeName() + "]",
+            $"[{_dbInfo.GetRuntimeName()}]..[{tiCurrent.GetRuntimeName()}]",
             mcsQueryHelper.BuildJoinClause("LiveDataForUpdating", "CurrentTable"));
 
         using (var connection = (SqlConnection)_dbInfo.Server.GetConnection())
@@ -207,7 +208,8 @@ LiveDataForUpdating LEFT JOIN {2} AS CurrentTable {3}",
         string deleteSql;
         if (!joinsToProcess.Any())
         {
-            deleteSql = "WITH " + GetCurrentOldEntriesSQL(tiCurrent, joinPathToTimeTable) + ", EntriesToDelete AS (SELECT * FROM CurrentOldEntries)";
+            deleteSql =
+                $"WITH {GetCurrentOldEntriesSQL(tiCurrent, joinPathToTimeTable)}, EntriesToDelete AS (SELECT * FROM CurrentOldEntries)";
         }
         else
         {
@@ -220,26 +222,24 @@ LiveDataForUpdating LEFT JOIN {2} AS CurrentTable {3}",
             {
                 var childTable = childJoin.ForeignKey.TableInfo;
                 joins.Add(string.Format("LEFT JOIN {0} {1} ON CurrentOldEntries.{2} = {1}.{3}",
-                    "[" + _dbInfo.GetRuntimeName() + "]..[" + childTable.GetRuntimeName() + "]",
+                    $"[{_dbInfo.GetRuntimeName()}]..[{childTable.GetRuntimeName()}]",
                     childTable.GetRuntimeName(),
                     childJoin.PrimaryKey.GetRuntimeName(),
                     childJoin.ForeignKey.GetRuntimeName()
                 ));
 
-                wheres.Add(childTable.GetRuntimeName() + "." + childJoin.ForeignKey.GetRuntimeName() + " IS NULL");
+                wheres.Add($"{childTable.GetRuntimeName()}.{childJoin.ForeignKey.GetRuntimeName()} IS NULL");
             }
 
-            deleteSql = "WITH " + GetCurrentOldEntriesSQL(tiCurrent, joinPathToTimeTable) +
-                        ", EntriesToDelete AS (SELECT DISTINCT CurrentOldEntries.* FROM CurrentOldEntries " + string.Join(" ", joins) +
-                        " WHERE " +
-                        string.Join(" AND ", wheres) + ")";
+            deleteSql =
+                $"WITH {GetCurrentOldEntriesSQL(tiCurrent, joinPathToTimeTable)}, EntriesToDelete AS (SELECT DISTINCT CurrentOldEntries.* FROM CurrentOldEntries {string.Join(" ", joins)} WHERE {string.Join(" AND ", wheres)})";
         }
 
         deleteSql += string.Format(@"
 DELETE CurrentTable
 FROM {0} CurrentTable
 RIGHT JOIN EntriesToDelete {1}",
-            "[" + _dbInfo.GetRuntimeName() + "]..[" + tiCurrent.GetRuntimeName() + "]",
+            $"[{_dbInfo.GetRuntimeName()}]..[{tiCurrent.GetRuntimeName()}]",
             mcsQueryHelper.BuildJoinClause("EntriesToDelete", "CurrentTable"));
 
         using (var connection = (SqlConnection)_dbInfo.Server.GetConnection())

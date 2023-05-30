@@ -53,7 +53,7 @@ False - Trigger an error reporting the missing table(s)
     public override void Check(ICheckNotifier notifier)
     {
         if (!RemoteSource.Discover(DataAccessContext.DataLoad).Exists())
-            throw new Exception("Database " + RemoteSource.Database + " did not exist on the remote server");
+            throw new Exception($"Database {RemoteSource.Database} did not exist on the remote server");
     }
 
     public override void LoadCompletedSoDispose(ExitCodeType exitCode, IDataLoadEventListener postLoadEventListener)
@@ -89,7 +89,8 @@ False - Trigger an error reporting the missing table(s)
                     continue;
                 }else
                 {
-                    throw new Exception("Loadable table " + table + " was NOT found on the remote DB and IgnoreMissingTables is false");
+                    throw new Exception(
+                        $"Loadable table {table} was NOT found on the remote DB and IgnoreMissingTables is false");
                 }   
             }
                     
@@ -97,17 +98,18 @@ False - Trigger an error reporting the missing table(s)
             if(LoadRawColumnsOnly)
             {
                 var rawColumns = LoadRawColumnsOnly ? tableInfo.GetColumnsAtStage(LoadStage.AdjustRaw) : tableInfo.ColumnInfos;
-                sql = "SELECT " + String.Join(",", rawColumns.Select(c=>
-                    syntaxFrom.EnsureWrapped(c.GetRuntimeName(LoadStage.AdjustRaw)))) + " FROM " + syntaxFrom.EnsureWrapped(table);
+                sql =
+                    $"SELECT {String.Join(",", rawColumns.Select(c => syntaxFrom.EnsureWrapped(c.GetRuntimeName(LoadStage.AdjustRaw))))} FROM {syntaxFrom.EnsureWrapped(table)}";
             }
             else
             {
-                sql = "SELECT * FROM " + syntaxFrom.EnsureWrapped(table);
+                sql = $"SELECT * FROM {syntaxFrom.EnsureWrapped(table)}";
             }
 
-            job.OnNotify(this, new NotifyEventArgs(ProgressEventType.Information, "About to execute SQL:" + Environment.NewLine + sql));
+            job.OnNotify(this, new NotifyEventArgs(ProgressEventType.Information,
+                $"About to execute SQL:{Environment.NewLine}{sql}"));
 
-            var source = new DbDataCommandDataFlowSource(sql, "Fetch data from " + dbFrom + " to populate RAW table " + table, dbFrom.Server.Builder, Timeout == 0 ? 50000 : Timeout);
+            var source = new DbDataCommandDataFlowSource(sql, $"Fetch data from {dbFrom} to populate RAW table {table}", dbFrom.Server.Builder, Timeout == 0 ? 50000 : Timeout);
 
             var destination = new SqlBulkInsertDestination(_dbInfo, table, Enumerable.Empty<string>());
                 
@@ -116,15 +118,12 @@ False - Trigger an error reporting the missing table(s)
 
             var engine = new DataFlowPipelineEngine<DataTable>(context, source, destination, job);
 
-            ITableLoadInfo loadInfo = job.DataLoadInfo.CreateTableLoadInfo("Truncate RAW table " + table,
-                _dbInfo.Server.Name + "." + _dbInfo.GetRuntimeName() + "." + table,
+            var loadInfo = job.DataLoadInfo.CreateTableLoadInfo($"Truncate RAW table {table}",
+                $"{_dbInfo.Server.Name}.{_dbInfo.GetRuntimeName()}.{table}",
                 new[]
                 {
                     new DataSource(
-                        "Remote SqlServer Servername=" + dbFrom.Server + ";Database=" + _dbInfo.GetRuntimeName() +
-
-                        //Either list the table or the query depending on what is populated
-                        (table != null ? " Table=" + table : " Query = " + sql), DateTime.Now)
+                        $"Remote SqlServer Servername={dbFrom.Server};Database={_dbInfo.GetRuntimeName()}{(table != null ? $" Table={table}" : $" Query = {sql}")}", DateTime.Now)
                 }, -1);
 
             engine.Initialize(loadInfo);
@@ -132,10 +131,12 @@ False - Trigger an error reporting the missing table(s)
 
             if (source.TotalRowsRead == 0)
             {
-                job.OnNotify(this, new NotifyEventArgs(ProgressEventType.Information, "No rows were read from the remote table " + table + "."));
+                job.OnNotify(this, new NotifyEventArgs(ProgressEventType.Information,
+                    $"No rows were read from the remote table {table}."));
             }
 
-            job.OnNotify(this, new NotifyEventArgs(source.TotalRowsRead > 0 ? ProgressEventType.Information : ProgressEventType.Warning, "Finished after reading " + source.TotalRowsRead + " rows"));
+            job.OnNotify(this, new NotifyEventArgs(source.TotalRowsRead > 0 ? ProgressEventType.Information : ProgressEventType.Warning,
+                $"Finished after reading {source.TotalRowsRead} rows"));
         }
 
         return ExitCodeType.Success;

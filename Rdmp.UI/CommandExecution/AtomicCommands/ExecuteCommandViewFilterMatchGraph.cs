@@ -41,7 +41,7 @@ internal class ExecuteCommandViewFilterMatchGraph : BasicUICommandExecution,IAto
 
         if (!compatibleGraphs.Any())
         {
-            SetImpossible("No graphs defined in Catalogue '" + cata + "'");
+            SetImpossible($"No graphs defined in Catalogue '{cata}'");
             return;
         }
 

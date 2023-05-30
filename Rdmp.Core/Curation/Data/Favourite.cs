@@ -29,8 +29,8 @@ public class Favourite:ReferenceOtherObjectDatabaseEntity
     /// </summary>
     public string Username
     {
-        get { return _username; }
-        set { SetField(ref _username , value); }
+        get => _username;
+        set => SetField(ref _username , value);
     }
 
     /// <summary>
@@ -38,8 +38,8 @@ public class Favourite:ReferenceOtherObjectDatabaseEntity
     /// </summary>
     public DateTime FavouritedDate
     {
-        get { return _favouritedDate; }
-        set { SetField(ref _favouritedDate, value); }
+        get => _favouritedDate;
+        set => SetField(ref _favouritedDate, value);
     }
     #endregion
 

@@ -27,7 +27,8 @@ public class LoadArgsDictionary
     public LoadArgsDictionary(ILoadMetadata loadMetadata, StandardDatabaseHelper dbDeployInfo)
     {
         if(string.IsNullOrWhiteSpace(loadMetadata.LocationOfFlatFiles))
-            throw new Exception(@"No Project Directory (LocationOfFlatFiles) has been configured on LoadMetadata " + loadMetadata.Name);
+            throw new Exception(
+                $@"No Project Directory (LocationOfFlatFiles) has been configured on LoadMetadata {loadMetadata.Name}");
 
         _dbDeployInfo = dbDeployInfo;
         _loadMetadata = loadMetadata;

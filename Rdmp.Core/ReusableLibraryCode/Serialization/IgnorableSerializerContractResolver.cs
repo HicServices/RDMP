@@ -64,7 +64,7 @@ public class IgnorableSerializerContractResolver : DefaultContractResolver
     /// <returns></returns>
     protected override JsonProperty CreateProperty(MemberInfo member, MemberSerialization memberSerialization)
     {
-        JsonProperty property = base.CreateProperty(member, memberSerialization);
+        var property = base.CreateProperty(member, memberSerialization);
 
         if (this.IsIgnored(property.DeclaringType, property.PropertyName)
             // need to check basetype as well for EF -- @per comment by user576838 - LT: but it can be null, so check that too!

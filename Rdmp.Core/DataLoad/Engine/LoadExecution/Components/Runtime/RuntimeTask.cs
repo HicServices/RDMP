@@ -45,20 +45,23 @@ public abstract class RuntimeTask : DataLoadComponent, IRuntimeTask,ICheckable
     public void SetPropertiesForClass(RuntimeArgumentCollection args, object toSetPropertiesOf)
     {
         if (toSetPropertiesOf == null)
-            throw new NullReferenceException(ProcessTask.Path + " instance has not been created yet! Call SetProperties after the factory has created the instance.");
+            throw new NullReferenceException(
+                $"{ProcessTask.Path} instance has not been created yet! Call SetProperties after the factory has created the instance.");
             
         if (UsefulStuff.IsAssignableToGenericType(toSetPropertiesOf.GetType(),typeof (IPipelineRequirement<>)))
-            throw new Exception("ProcessTask '" + ProcessTask.Name + "' was was an instance of Class '" + ProcessTask.Path + "' which declared an IPipelineRequirement<>.  RuntimeTask classes are not the same as IDataFlowComponents, IDataFlowComponents can make IPipelineRequirement requests but RuntimeTasks cannot");
+            throw new Exception(
+                $"ProcessTask '{ProcessTask.Name}' was was an instance of Class '{ProcessTask.Path}' which declared an IPipelineRequirement<>.  RuntimeTask classes are not the same as IDataFlowComponents, IDataFlowComponents can make IPipelineRequirement requests but RuntimeTasks cannot");
 
         if (UsefulStuff.IsAssignableToGenericType(toSetPropertiesOf.GetType(), typeof(IPipelineOptionalRequirement<>)))
-            throw new Exception("ProcessTask '" + ProcessTask.Name + "' was was an instance of Class '" + ProcessTask.Path + "' which declared an IPipelineOptionalRequirement<>.  RuntimeTask classes are not the same as IDataFlowComponents, IDataFlowComponents can make IPipelineRequirement requests but RuntimeTasks cannot");
+            throw new Exception(
+                $"ProcessTask '{ProcessTask.Name}' was was an instance of Class '{ProcessTask.Path}' which declared an IPipelineOptionalRequirement<>.  RuntimeTask classes are not the same as IDataFlowComponents, IDataFlowComponents can make IPipelineRequirement requests but RuntimeTasks cannot");
 
 
         //get all possible properties that we could set
         foreach (var propertyInfo in toSetPropertiesOf.GetType().GetProperties())
         {
             //see if any demand initialization
-            DemandsInitializationAttribute initialization = (DemandsInitializationAttribute)System.Attribute.GetCustomAttributes(propertyInfo).FirstOrDefault(a => a is DemandsInitializationAttribute) ;
+            var initialization = (DemandsInitializationAttribute)System.Attribute.GetCustomAttributes(propertyInfo).FirstOrDefault(a => a is DemandsInitializationAttribute) ;
 
             //this one does
             if (initialization != null)
@@ -73,15 +76,14 @@ public abstract class RuntimeTask : DataLoadComponent, IRuntimeTask,ICheckable
                 }
                 catch (NotSupportedException e)
                 {
-                    throw new Exception("Class " + toSetPropertiesOf.GetType().Name + " has a property " + propertyInfo.Name +
-                                        " but is of unexpected type " + propertyInfo.GetType(), e);
+                    throw new Exception(
+                        $"Class {toSetPropertiesOf.GetType().Name} has a property {propertyInfo.Name} but is of unexpected type {propertyInfo.GetType()}", e);
                 }
                 catch (KeyNotFoundException e)
                 {
                     if(initialization.Mandatory)
                         throw new ArgumentException(
-                            "Class " + toSetPropertiesOf.GetType().Name + " has a Mandatory property '" + propertyInfo.Name +
-                            "' marked with DemandsInitialization but no corresponding argument was provided in ArgumentCollection", e);
+                            $"Class {toSetPropertiesOf.GetType().Name} has a Mandatory property '{propertyInfo.Name}' marked with DemandsInitialization but no corresponding argument was provided in ArgumentCollection", e);
                 }
             }
         }

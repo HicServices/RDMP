@@ -47,7 +47,7 @@ public class ExecuteCommandDelete : BasicCommandExecution
         if (_deletables.Any( d => d is CohortAggregateContainer c && c.IsRootContainer()))
             SetImpossible("Cannot delete root containers");
             
-        string reason = "";
+        var reason = "";
 
         if (_deletables.Any(d => d is IMightBeReadOnly ro && ro.ShouldBeReadOnly(out reason)))
             SetImpossible(reason);
@@ -108,7 +108,7 @@ public class ExecuteCommandDelete : BasicCommandExecution
             return $"Delete '{_deletables.Single()}'";
 
 
-        return $"Delete {_deletables.Count} objects (" + _deletables.ToBeautifulString() + ")";
+        return $"Delete {_deletables.Count} objects ({_deletables.ToBeautifulString()})";
     }
 
     private void ExecuteImpl()
@@ -138,7 +138,7 @@ public class ExecuteCommandDelete : BasicCommandExecution
 
         try
         {
-            foreach (IDeleteable d in _deletables)
+            foreach (var d in _deletables)
                 if (!(d is DatabaseEntity exists) ||
                     exists.Exists()) //don't delete stuff that doesn't exist!
                     d.DeleteInDatabase();

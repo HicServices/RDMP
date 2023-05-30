@@ -39,7 +39,7 @@ public class FixedWidthAttacher : FlatFileAttacher
     {
         bHaveAlreadySubmittedData = false;
 
-        FixedWidthFormatFile format = new FixedWidthFormatFile(PathToFormatFile);
+        var format = new FixedWidthFormatFile(PathToFormatFile);
         _flatFile = format.GetDataTableFromFlatFile(fileToLoad);
     }
 
@@ -50,10 +50,7 @@ public class FixedWidthAttacher : FlatFileAttacher
             if (!loadTarget.Columns.Contains(col.ColumnName))//We use notify error here rather than throwing an Exception because there could be many dodgy /misnamed columns so tell the user about all of them
                 job.OnNotify(this,
                     new NotifyEventArgs(ProgressEventType.Error,
-                        "Format file (" + PathToFormatFile.FullName + ") indicated there would be a header called '" +
-                        col.ColumnName +
-                        "' but the column did not appear in the RAW database table (Columns in RAW were " +
-                        string.Join(",", loadTarget.Columns.Cast<DataColumn>().Select(c => c.ColumnName)) + ")")); 
+                        $"Format file ({PathToFormatFile.FullName}) indicated there would be a header called '{col.ColumnName}' but the column did not appear in the RAW database table (Columns in RAW were {string.Join(",", loadTarget.Columns.Cast<DataColumn>().Select(c => c.ColumnName))})")); 
     }
 
     private bool bHaveAlreadySubmittedData;
@@ -74,7 +71,7 @@ public class FixedWidthAttacher : FlatFileAttacher
         //copy data from the flat file data table into the destination data table and let parent do the rest
         foreach (DataRow row in _flatFile.Rows)
         {
-            DataRow dataRow = destination.Rows.Add();
+            var dataRow = destination.Rows.Add();
 
             foreach (DataColumn column in _flatFile.Columns)
                 dataRow[column.ColumnName] = row[column.ColumnName];

@@ -22,7 +22,7 @@ public class CredentialsTests : DatabaseTests
     {
         base.OneTimeSetUp();
 
-        foreach (TableInfo table in CatalogueRepository.GetAllObjects<TableInfo>())
+        foreach (var table in CatalogueRepository.GetAllObjects<TableInfo>())
         {
             if (table.Name.Equals("GetCredentialsFromATableInfo")
                 ||
@@ -43,7 +43,7 @@ public class CredentialsTests : DatabaseTests
                 table.DeleteInDatabase();
         }
 
-        foreach (DataAccessCredentials cred in CatalogueRepository.GetAllObjects<DataAccessCredentials>())
+        foreach (var cred in CatalogueRepository.GetAllObjects<DataAccessCredentials>())
         {
             if(cred.Name.Equals("bob")
                ||
@@ -103,7 +103,7 @@ public class CredentialsTests : DatabaseTests
     [Test]
     public void TestThe_Any_EnumValue_CannotRequestAnyCredentials()
     {
-        TableInfo tableInfo = new TableInfo(CatalogueRepository, "GetCredentialsFromATableInfo");
+        var tableInfo = new TableInfo(CatalogueRepository, "GetCredentialsFromATableInfo");
         tableInfo.Name = "My Exciting Table";
 
         var creds = new DataAccessCredentials(CatalogueRepository);
@@ -130,7 +130,7 @@ public class CredentialsTests : DatabaseTests
     [Test]
     public void TestThe_Any_EnumValue()
     {
-        TableInfo tableInfo = new TableInfo(CatalogueRepository, "GetCredentialsFromATableInfo");
+        var tableInfo = new TableInfo(CatalogueRepository, "GetCredentialsFromATableInfo");
         tableInfo.Name = "My Exciting Table";
         tableInfo.SaveToDatabase();
 
@@ -162,7 +162,7 @@ public class CredentialsTests : DatabaseTests
     [Test]
     public void Test_Any_PrioritisingTheMoreAppropriateCredential()
     {
-        TableInfo tableInfo = new TableInfo(CatalogueRepository, "GetCredentialsFromATableInfo");
+        var tableInfo = new TableInfo(CatalogueRepository, "GetCredentialsFromATableInfo");
         tableInfo.Name = "Tableinfo1";
         tableInfo.SaveToDatabase();
 
@@ -223,7 +223,7 @@ public class CredentialsTests : DatabaseTests
     public void GetCredentialsFromATableInfo()
     {
 
-        TableInfo tableInfo = new TableInfo(CatalogueRepository, "GetCredentialsFromATableInfo");
+        var tableInfo = new TableInfo(CatalogueRepository, "GetCredentialsFromATableInfo");
         tableInfo.Name = "My Exciting Table";
 
         var creds = new DataAccessCredentials(CatalogueRepository);
@@ -236,7 +236,7 @@ public class CredentialsTests : DatabaseTests
             tableInfo.SaveToDatabase();
 
             //Go via TableInfo and get credentials
-            DataAccessCredentials creds2 = (DataAccessCredentials)tableInfo.GetCredentialsIfExists(DataAccessContext.InternalDataProcessing);
+            var creds2 = (DataAccessCredentials)tableInfo.GetCredentialsIfExists(DataAccessContext.InternalDataProcessing);
             Assert.AreEqual(creds2.Name, creds.Name);
         }
         finally
@@ -250,8 +250,8 @@ public class CredentialsTests : DatabaseTests
     public void Create2TableInfosThatShareTheSameCredentialAndTestDeletingIt_ThrowsThatCredentialsHasDependencies()
     {
         //Get all TableInfos that share this credential
-        TableInfo tableInfo1 = new TableInfo(CatalogueRepository, "Dependency1");
-        TableInfo tableInfo2 = new TableInfo(CatalogueRepository, "Dependency2");
+        var tableInfo1 = new TableInfo(CatalogueRepository, "Dependency1");
+        var tableInfo2 = new TableInfo(CatalogueRepository, "Dependency2");
         var creds = new DataAccessCredentials(CatalogueRepository, "bob");
 
         try
@@ -281,8 +281,8 @@ public class CredentialsTests : DatabaseTests
     {
 
         //Get all TableInfos that share this credential
-        TableInfo tableInfo1 = new TableInfo(CatalogueRepository, "Create2TableInfosThatShareTheSameCredentialAndTestDeletingIt1");
-        TableInfo tableInfo2 = new TableInfo(CatalogueRepository, "Create2TableInfosThatShareTheSameCredentialAndTestDeletingIt2");
+        var tableInfo1 = new TableInfo(CatalogueRepository, "Create2TableInfosThatShareTheSameCredentialAndTestDeletingIt1");
+        var tableInfo2 = new TableInfo(CatalogueRepository, "Create2TableInfosThatShareTheSameCredentialAndTestDeletingIt2");
         var creds = new DataAccessCredentials(CatalogueRepository, "bob");
 
         tableInfo1.SetCredentials(creds, DataAccessContext.InternalDataProcessing);
@@ -291,7 +291,7 @@ public class CredentialsTests : DatabaseTests
         tableInfo2.SaveToDatabase();
 
 
-        ITableInfo[] TablesThatUseCredential = creds.GetAllTableInfosThatUseThis()[DataAccessContext.InternalDataProcessing].ToArray();
+        var TablesThatUseCredential = creds.GetAllTableInfosThatUseThis()[DataAccessContext.InternalDataProcessing].ToArray();
 
         Assert.Contains(tableInfo1, TablesThatUseCredential);
         Assert.Contains(tableInfo2, TablesThatUseCredential); 
@@ -304,10 +304,10 @@ public class CredentialsTests : DatabaseTests
     [Test]
     public void GetConnectionStringFromCatalogueWhereOneTableInfoUsesACredentialsOverride()
     {
-        Catalogue c = new Catalogue(CatalogueRepository, "GetConnectionStringFromCatalogueWhereOneTableInfoUsesACredentialsOverride");
-        CatalogueItem ci = new CatalogueItem(CatalogueRepository, c,"GetConnectionStringFromCatalogueWhereOneTableInfoUsesACredentialsOverride");
-        TableInfo t = new TableInfo(CatalogueRepository, "Test");
-        ColumnInfo col = new ColumnInfo(CatalogueRepository, "[mydatabase].[dbo].test.col","varchar(10)", t);
+        var c = new Catalogue(CatalogueRepository, "GetConnectionStringFromCatalogueWhereOneTableInfoUsesACredentialsOverride");
+        var ci = new CatalogueItem(CatalogueRepository, c,"GetConnectionStringFromCatalogueWhereOneTableInfoUsesACredentialsOverride");
+        var t = new TableInfo(CatalogueRepository, "Test");
+        var col = new ColumnInfo(CatalogueRepository, "[mydatabase].[dbo].test.col","varchar(10)", t);
             
         var extractionInformation = new ExtractionInformation(CatalogueRepository, ci, col, col.Name);
 
@@ -372,7 +372,7 @@ public class CredentialsTests : DatabaseTests
         var credCount = CatalogueRepository.GetAllObjects<DataAccessCredentials>().Length;
 
         //if there is a username then we need to associate it with the TableInfo we just created
-        DataAccessCredentialsFactory credentialsFactory = new DataAccessCredentialsFactory(CatalogueRepository);
+        var credentialsFactory = new DataAccessCredentialsFactory(CatalogueRepository);
         var cred = credentialsFactory.Create(t1, "blarg", "flarg",DataAccessContext.Any);
         var cred2 = credentialsFactory.Create(t2, "blarg", "flarg", DataAccessContext.Any);
 

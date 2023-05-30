@@ -65,30 +65,30 @@ public class TableInfo : DatabaseEntity,ITableInfo,INamed, IHasFullyQualifiedNam
     [NotNull]
     public string Name
     {
-        get { return _name; }
-        set { SetField(ref _name, value); }
+        get => _name;
+        set => SetField(ref _name, value);
     }
 
     /// <inheritdoc/>
     public DatabaseType DatabaseType
     {
-        get { return _databaseType; }
-        set { SetField(ref _databaseType, value); }
+        get => _databaseType;
+        set => SetField(ref _databaseType, value);
     }
 
     /// <inheritdoc/>
     public string Server
     {
-        get { return _server; }
-        set { SetField(ref _server, value); }
+        get => _server;
+        set => SetField(ref _server, value);
     }
 
     /// <inheritdoc/>
     [Sql]
     public string Database
     {
-        get { return _database; }
-        set { SetField(ref _database, value); }
+        get => _database;
+        set => SetField(ref _database, value);
     }
 
     /// <summary>
@@ -97,8 +97,8 @@ public class TableInfo : DatabaseEntity,ITableInfo,INamed, IHasFullyQualifiedNam
     [Obsolete("Not used for anything")]
     public string State
     {
-        get { return _state; }
-        set { SetField(ref _state, value); }
+        get => _state;
+        set => SetField(ref _state, value);
     }
 
     /// <summary>
@@ -108,41 +108,41 @@ public class TableInfo : DatabaseEntity,ITableInfo,INamed, IHasFullyQualifiedNam
     [DoNotExtractProperty]
     public string ValidationXml
     {
-        get { return _validationXml; }
-        set { SetField(ref _validationXml, value); }
+        get => _validationXml;
+        set => SetField(ref _validationXml, value);
     }
                 
     /// <inheritdoc/>
     public bool IsPrimaryExtractionTable
     {
-        get { return _isPrimaryExtractionTable; }
-        set { SetField(ref _isPrimaryExtractionTable, value); }
+        get => _isPrimaryExtractionTable;
+        set => SetField(ref _isPrimaryExtractionTable, value);
     }
 
     /// <inheritdoc/>
     public int? IdentifierDumpServer_ID
     {
-        get { return _identifierDumpServer_ID; }
-        set { SetField(ref _identifierDumpServer_ID, value); }
+        get => _identifierDumpServer_ID;
+        set => SetField(ref _identifierDumpServer_ID, value);
     }
 
     /// <inheritdoc/>
     public bool IsTableValuedFunction
     {
-        get { return _isTableValuedFunction; }
-        set { SetField(ref _isTableValuedFunction, value); }
+        get => _isTableValuedFunction;
+        set => SetField(ref _isTableValuedFunction, value);
     }
 
     /// <inheritdoc/>
     public string Schema
     {
-        get { return _schema; }
-        set { SetField(ref _schema, value); }
+        get => _schema;
+        set => SetField(ref _schema, value);
     }
 
     public bool IsView {
-        get { return _isView; }
-        set { SetField(ref _isView, value); }
+        get => _isView;
+        set => SetField(ref _isView, value);
     }
 
     #endregion
@@ -155,26 +155,18 @@ public class TableInfo : DatabaseEntity,ITableInfo,INamed, IHasFullyQualifiedNam
     #region Relationships
     /// <inheritdoc/>
     [NoMappingToDatabase]
-    public ColumnInfo[] ColumnInfos { get
-    {
-        return _knownColumnInfos.Value;
-    }}
+    public ColumnInfo[] ColumnInfos => _knownColumnInfos.Value;
 
     /// <inheritdoc/>
     [NoMappingToDatabase]
-    public PreLoadDiscardedColumn[] PreLoadDiscardedColumns { get
-    {
-        return Repository.GetAllObjectsWithParent<PreLoadDiscardedColumn>(this);
-    }}
-        
+    public PreLoadDiscardedColumn[] PreLoadDiscardedColumns => Repository.GetAllObjectsWithParent<PreLoadDiscardedColumn>(this);
+
     /// <inheritdoc cref="IdentifierDumpServer_ID"/>
     [NoMappingToDatabase]
-    public ExternalDatabaseServer IdentifierDumpServer { get
-    {
-        return IdentifierDumpServer_ID == null
+    public ExternalDatabaseServer IdentifierDumpServer =>
+        IdentifierDumpServer_ID == null
             ? null
             : Repository.GetObjectByID<ExternalDatabaseServer>((int) IdentifierDumpServer_ID);
-    }}
 
     #endregion
 
@@ -254,7 +246,7 @@ public class TableInfo : DatabaseEntity,ITableInfo,INamed, IHasFullyQualifiedNam
             return -(obj.ToString().CompareTo(this.ToString())); //sort alphabetically (reverse)
         }
 
-        throw new Exception("Cannot compare " + this.GetType().Name + " to " + obj.GetType().Name);
+        throw new Exception($"Cannot compare {this.GetType().Name} to {obj.GetType().Name}");
     }
 
 
@@ -295,7 +287,7 @@ public class TableInfo : DatabaseEntity,ITableInfo,INamed, IHasFullyQualifiedNam
         if (tableNamingScheme == null)
             tableNamingScheme = new FixedStagingDatabaseNamer(Database);
 
-        string baseName = GetQuerySyntaxHelper().GetRuntimeName(Name);
+        var baseName = GetQuerySyntaxHelper().GetRuntimeName(Name);
 
         return tableNamingScheme.GetName(baseName, bubble);
     }
@@ -379,12 +371,12 @@ public class TableInfo : DatabaseEntity,ITableInfo,INamed, IHasFullyQualifiedNam
 
         try
         {
-            TableInfoSynchronizer synchronizer = new TableInfoSynchronizer(this);
+            var synchronizer = new TableInfoSynchronizer(this);
             synchronizer.Synchronize(notifier);
         }
         catch (Exception e)
         {
-            notifier.OnCheckPerformed(new CheckEventArgs("Synchronization failed on TableInfo " + this,CheckResult.Fail, e));
+            notifier.OnCheckPerformed(new CheckEventArgs($"Synchronization failed on TableInfo {this}",CheckResult.Fail, e));
         }
     }
 
@@ -423,11 +415,11 @@ public class TableInfo : DatabaseEntity,ITableInfo,INamed, IHasFullyQualifiedNam
     {
         //if it is AdjustRaw then it will also have the pre load discarded columns
         if (loadStage <= LoadStage.AdjustRaw)
-            foreach (PreLoadDiscardedColumn discardedColumn in PreLoadDiscardedColumns.Where(c => c.Destination != DiscardedColumnDestination.Dilute))
+            foreach (var discardedColumn in PreLoadDiscardedColumns.Where(c => c.Destination != DiscardedColumnDestination.Dilute))
                 yield return discardedColumn;
 
         //also add column infos
-        foreach (ColumnInfo c in ColumnInfos)
+        foreach (var c in ColumnInfos)
             if (loadStage <= LoadStage.AdjustRaw && SpecialFieldNames.IsHicPrefixed(c))
                 continue;
             else
@@ -509,19 +501,19 @@ public class TableInfo : DatabaseEntity,ITableInfo,INamed, IHasFullyQualifiedNam
 
         if(!tbl.Database.Server.Exists())
         {
-            reason = "Server " + tbl.Database.Server + " did not exist";
+            reason = $"Server {tbl.Database.Server} did not exist";
             return false;
         }
 
         if(!tbl.Database.Exists())
         {
-            reason = "Database " + tbl.Database + " did not exist";
+            reason = $"Database {tbl.Database} did not exist";
             return false;
         }
 
         if(!tbl.Exists())
         {
-            reason = "Table " + tbl.GetFullyQualifiedName() + " did not exist";
+            reason = $"Table {tbl.GetFullyQualifiedName()} did not exist";
             return false;
         }
                 

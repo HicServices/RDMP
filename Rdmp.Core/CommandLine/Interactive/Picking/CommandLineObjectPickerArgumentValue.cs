@@ -134,7 +134,7 @@ public class CommandLineObjectPickerArgumentValue
             if (element != typeof(IDeleteable))
             {
                 var typedArray = Array.CreateInstance(element, DatabaseEntities.Count);
-                for (int i = 0; i < DatabaseEntities.Count; i++)
+                for (var i = 0; i < DatabaseEntities.Count; i++)
                     typedArray.SetValue(DatabaseEntities[i],i);
 
                 return typedArray;
@@ -215,7 +215,7 @@ public class CommandLineObjectPickerArgumentValue
     {
         try
         {
-            bool canBeNull = !paramType.IsValueType || Nullable.GetUnderlyingType(paramType) != null;
+            var canBeNull = !paramType.IsValueType || Nullable.GetUnderlyingType(paramType) != null;
 
             if (ExplicitNull && canBeNull)
                 return true;

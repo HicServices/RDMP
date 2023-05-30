@@ -28,8 +28,8 @@ public class Tutorial
 
     public bool UserHasSeen
     {
-        get { return UserSettings.GetTutorialDone(Guid); }
-        set {  UserSettings.SetTutorialDone(Guid,value); }
+        get => UserSettings.GetTutorialDone(Guid);
+        set => UserSettings.SetTutorialDone(Guid,value);
     }
 
     public Tutorial(string name, ICommandExecution commandExecutionExecution, Guid guid)

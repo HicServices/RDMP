@@ -30,30 +30,20 @@ public class UpdateCommandStore
         UpdateCommands = new Dictionary<Type, DbCommand>();
     }
 
-    public DbCommand this[IMapsDirectlyToDatabaseTable o]
-    {
-        get
-        {
-            return UpdateCommands[o.GetType()];
-        }
-    }
-    public DbCommand this[Type t]
-    {
-        get
-        {
-            return UpdateCommands[t];
-        }
-    }
+    public DbCommand this[IMapsDirectlyToDatabaseTable o] => UpdateCommands[o.GetType()];
+
+    public DbCommand this[Type t] => UpdateCommands[t];
+
     public void Add(Type o, DbConnectionStringBuilder builder, DbConnection connection, DbTransaction transaction)
     {
         var syntax = ImplementationManager.GetImplementation(builder).GetQuerySyntaxHelper();
 
-        var command = DatabaseCommandHelper.GetCommand("UPDATE " + syntax.EnsureWrapped(o.Name) + " SET {0} WHERE ID=@ID;" , connection, transaction);
+        var command = DatabaseCommandHelper.GetCommand($"UPDATE {syntax.EnsureWrapped(o.Name)} SET {{0}} WHERE ID=@ID;", connection, transaction);
                         
         var props = TableRepository.GetPropertyInfos(o);
 
-        foreach(PropertyInfo p in props)
-            command.Parameters.Add(DatabaseCommandHelper.GetParameter("@"+p.Name,command));
+        foreach(var p in props)
+            command.Parameters.Add(DatabaseCommandHelper.GetParameter($"@{p.Name}",command));
 
         command.CommandText = string.Format(command.CommandText,string.Join(",",props.Where(p=>p.Name != "ID").Select(p=> $"{syntax.EnsureWrapped(p.Name)}=@{p.Name}")));
             

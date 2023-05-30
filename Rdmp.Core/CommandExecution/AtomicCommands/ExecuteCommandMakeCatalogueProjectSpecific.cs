@@ -52,13 +52,14 @@ public class ExecuteCommandMakeCatalogueProjectSpecific : BasicCommandExecution,
 
         var eds = BasicActivator.RepositoryLocator.DataExportRepository.GetAllObjectsWithParent<ExtractableDataSet>(_catalogue).SingleOrDefault();
             
-        IExtractionConfiguration alreadyInConfiguration = eds.ExtractionConfigurations.FirstOrDefault(ec => ec.Project_ID != _project.ID);
+        var alreadyInConfiguration = eds.ExtractionConfigurations.FirstOrDefault(ec => ec.Project_ID != _project.ID);
 
         if(alreadyInConfiguration != null)
-            throw new Exception("Cannot make " + _catalogue + " Project Specific because it is already a part of ExtractionConfiguration " + alreadyInConfiguration + " (Project=" + alreadyInConfiguration.Project +") and possibly others");
+            throw new Exception(
+                $"Cannot make {_catalogue} Project Specific because it is already a part of ExtractionConfiguration {alreadyInConfiguration} (Project={alreadyInConfiguration.Project}) and possibly others");
 
         eds.Project_ID = _project.ID;
-        foreach (ExtractionInformation ei in _catalogue.GetAllExtractionInformation(ExtractionCategory.Any))
+        foreach (var ei in _catalogue.GetAllExtractionInformation(ExtractionCategory.Any))
         {
             ei.ExtractionCategory = ExtractionCategory.ProjectSpecific;
             ei.SaveToDatabase();

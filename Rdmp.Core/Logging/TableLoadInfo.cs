@@ -24,9 +24,7 @@ public class TableLoadInfo : ITableLoadInfo
 {
     private bool _isClosed = false;
 
-    public bool IsClosed {
-        get { return _isClosed; } 
-    }
+    public bool IsClosed => _isClosed;
 
     private int _errorRows; // incremented only through RowErrorLogging class
     private string _suggestedRollbackCommand;
@@ -42,12 +40,7 @@ public class TableLoadInfo : ITableLoadInfo
     private DiscoveredServer _databaseSettings;
     private string _notes;
 
-    public DiscoveredServer DatabaseSettings
-    {
-        get { 
-            return _databaseSettings ;
-        }
-    }
+    public DiscoveredServer DatabaseSettings => _databaseSettings;
 
     #endregion
 
@@ -104,7 +97,7 @@ public class TableLoadInfo : ITableLoadInfo
                 DataSources = sources;
 
                 //for each of the sources, create them in the DataSource table
-                foreach (DataSource s in DataSources)
+                foreach (var s in DataSources)
                 {
                     using (var cmdInsertDs = _databaseSettings.GetCommand("INSERT INTO DataSource (source,tableLoadRunID,originDate,MD5) " +
                                                                           "VALUES (@source,@tableLoadRunID,@originDate,@MD5); SELECT @@IDENTITY;", con))
@@ -163,63 +156,24 @@ public class TableLoadInfo : ITableLoadInfo
     /// <summary>
     /// Gets the number of ErrorRows during this data run so far, this is automatically increased by the RowErrorLogging class
     /// </summary>
-    public int ErrorRows
-    {
-        get
-        {
-          
-            return _errorRows;
-        }
-    }
+    public int ErrorRows => _errorRows;
 
 
-    public string SuggestedRollbackCommand
-    {
-        get
-        {
-             
-            return _suggestedRollbackCommand;
-        }
-    }
+    public string SuggestedRollbackCommand => _suggestedRollbackCommand;
 
 
-    public int ID
-    {
-        get
-        {
-             
-            return _id;
-        }
-    }
+    public int ID => _id;
 
-    public DateTime StartTime
-    {
-        get
-        {
-              
-            return _startTime;
-        }
-    }
+    public DateTime StartTime => _startTime;
 
 
-    public DateTime EndTime
-    {
-        get
-        {
-             
-            return _endTime;
-        }
-    }
+    public DateTime EndTime => _endTime;
 
 
     public string Notes
     {
-        get
-        {
-
-            return _notes;
-        }
-        set { _notes = value; }
+        get => _notes;
+        set => _notes = value;
     }
 
     public bool IsLegacyLoggingSchema { get; }
@@ -241,12 +195,13 @@ public class TableLoadInfo : ITableLoadInfo
                     _databaseSettings.AddParameterWithValueToCommand("@notes", cmdCloseRecord, string.IsNullOrWhiteSpace(this.Notes) ? DBNull.Value : this.Notes);
                     _databaseSettings.AddParameterWithValueToCommand("@ID", cmdCloseRecord, this.ID);
 
-                    int affectedRows = cmdCloseRecord.ExecuteNonQuery();
+                    var affectedRows = cmdCloseRecord.ExecuteNonQuery();
 
                     if(affectedRows != 1)
-                        throw new Exception("Error closing TableLoadInfo in database, the UPDATE command affected " + affectedRows + " when we expected 1 (will attempt to rollback transaction)");
+                        throw new Exception(
+                            $"Error closing TableLoadInfo in database, the UPDATE command affected {affectedRows} when we expected 1 (will attempt to rollback transaction)");
 
-                    foreach (DataSource s in DataSources)
+                    foreach (var s in DataSources)
                         MarkDataSourceAsArchived(s, con);
 
                     con.ManagedTransaction.CommitAndCloseConnection();

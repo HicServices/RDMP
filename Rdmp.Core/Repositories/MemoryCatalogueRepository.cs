@@ -36,13 +36,13 @@ namespace Rdmp.Core.Repositories;
 /// </summary>
 public class MemoryCatalogueRepository : MemoryRepository, ICatalogueRepository, IServerDefaults,ITableInfoCredentialsManager, IAggregateForcedJoinManager, ICohortContainerManager, IFilterManager, IGovernanceManager
 {
-    public IAggregateForcedJoinManager AggregateForcedJoinManager { get { return this; } }
-    public IGovernanceManager GovernanceManager { get { return this; }}
-    public ITableInfoCredentialsManager TableInfoCredentialsManager { get { return this; }}
-    public ICohortContainerManager CohortContainerManager { get { return this; }}
+    public IAggregateForcedJoinManager AggregateForcedJoinManager => this;
+    public IGovernanceManager GovernanceManager => this;
+    public ITableInfoCredentialsManager TableInfoCredentialsManager => this;
+    public ICohortContainerManager CohortContainerManager => this;
     public IEncryptionManager EncryptionManager { get; private set; }
 
-    public IFilterManager FilterManager { get { return this; }}
+    public IFilterManager FilterManager => this;
     public IPluginManager PluginManager { get; private set; }
 
     public IJoinManager JoinManager { get; private set; }
@@ -64,9 +64,9 @@ public class MemoryCatalogueRepository : MemoryRepository, ICatalogueRepository,
     public CommentStore CommentStore { get; set; }
 
     public IObscureDependencyFinder ObscureDependencyFinder { get; set; }
-    public string ConnectionString { get { return null; } }
-    public DbConnectionStringBuilder ConnectionStringBuilder { get { return null; } }
-    public DiscoveredServer DiscoveredServer { get { return null; }}
+    public string ConnectionString => null;
+    public DbConnectionStringBuilder ConnectionStringBuilder => null;
+    public DiscoveredServer DiscoveredServer => null;
 
     /// <summary>
     /// Path to RSA private key encryption certificate for decrypting encrypted credentials.
@@ -240,7 +240,7 @@ public class MemoryCatalogueRepository : MemoryRepository, ICatalogueRepository,
 
         var toRemove = CredentialsDictionary[tableInfo].Where(v=>Equals(v.Value ,credentials)).Select(k=>k.Key).ToArray();
 
-        foreach (DataAccessContext context in toRemove)
+        foreach (var context in toRemove)
             CredentialsDictionary[tableInfo].Remove(context);
     }
 
@@ -271,11 +271,11 @@ public class MemoryCatalogueRepository : MemoryRepository, ICatalogueRepository,
     {
         var toreturn = new Dictionary<ITableInfo, List<DataAccessCredentialUsageNode>>();
 
-        foreach (KeyValuePair<ITableInfo, Dictionary<DataAccessContext, DataAccessCredentials>> kvp in CredentialsDictionary)
+        foreach (var kvp in CredentialsDictionary)
         {
             toreturn.Add(kvp.Key, new List<DataAccessCredentialUsageNode>());
 
-            foreach (KeyValuePair<DataAccessContext, DataAccessCredentials> forNode in kvp.Value)
+            foreach (var forNode in kvp.Value)
                 toreturn[kvp.Key].Add(new DataAccessCredentialUsageNode(forNode.Value, kvp.Key, forNode.Key));
         }
 
@@ -290,8 +290,8 @@ public class MemoryCatalogueRepository : MemoryRepository, ICatalogueRepository,
         foreach (DataAccessContext context in Enum.GetValues(typeof (DataAccessContext)))
             toreturn.Add(context, new List<ITableInfo>());
 
-        foreach (KeyValuePair<ITableInfo, Dictionary<DataAccessContext, DataAccessCredentials>> kvp in CredentialsDictionary)
-        foreach (KeyValuePair<DataAccessContext, DataAccessCredentials> forNode in kvp.Value)
+        foreach (var kvp in CredentialsDictionary)
+        foreach (var forNode in kvp.Value)
             toreturn[forNode.Key].Add(kvp.Key);
             
         return toreturn;

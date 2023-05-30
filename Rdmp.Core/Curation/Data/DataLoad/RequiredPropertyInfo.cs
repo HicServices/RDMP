@@ -49,11 +49,5 @@ public class RequiredPropertyInfo
     /// <summary>
     /// The property name.  If the property is a nested one (i.e. DemandsNestedInitialization) then returns the full expression parent.property
     /// </summary>
-    public string Name
-    {
-        get
-        {
-            return ParentPropertyInfo == null ? PropertyInfo.Name : ParentPropertyInfo.Name + "." + PropertyInfo.Name;
-        }
-    }
+    public string Name => ParentPropertyInfo == null ? PropertyInfo.Name : $"{ParentPropertyInfo.Name}.{PropertyInfo.Name}";
 }

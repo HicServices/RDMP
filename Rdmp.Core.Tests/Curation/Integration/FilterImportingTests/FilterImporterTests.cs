@@ -25,11 +25,11 @@ public class FilterImporterTests : UnitTests
     {
         //Thing we will be cloning
         var master = Mock.Of<IFilter>(x => 
-            x.GetQuerySyntaxHelper() == new MicrosoftQuerySyntaxHelper() && 
+            x.GetQuerySyntaxHelper() == MicrosoftQuerySyntaxHelper.Instance && 
             x.Name == "Space Odyssey");
             
         //The factory will return this value
-        var constructed = Mock.Of<IFilter>(x => x.GetQuerySyntaxHelper()==new MicrosoftQuerySyntaxHelper());
+        var constructed = Mock.Of<IFilter>(x => x.GetQuerySyntaxHelper()==MicrosoftQuerySyntaxHelper.Instance);
 
         //The factory Mock
         var factory = new Mock<IFilterFactory>();
@@ -49,7 +49,7 @@ public class FilterImporterTests : UnitTests
     public void FilterCreated_CopyBecauseExistsAlready()
     {
         //The thing we will be importing
-        var master = Mock.Of<IFilter>(x => x.GetQuerySyntaxHelper()==new MicrosoftQuerySyntaxHelper());
+        var master = Mock.Of<IFilter>(x => x.GetQuerySyntaxHelper()==MicrosoftQuerySyntaxHelper.Instance);
         master.Name = "Space Odyssey";
 
         //An existing IFilter that is in the scope that is being imported into (e.g. a data extract configuration)
@@ -58,7 +58,7 @@ public class FilterImporterTests : UnitTests
             f.GetAllParameters()==Array.Empty<ISqlParameter>());// has no parameters
 
         //The factory will return this value
-        var constructed = Mock.Of<IFilter>(x => x.GetQuerySyntaxHelper()==new MicrosoftQuerySyntaxHelper());
+        var constructed = Mock.Of<IFilter>(x => x.GetQuerySyntaxHelper()==MicrosoftQuerySyntaxHelper.Instance);
 
         //The factory Mock
         var factory = new Mock<IFilterFactory>();
@@ -77,11 +77,11 @@ public class FilterImporterTests : UnitTests
     [Test]
     public void FilterCreated_Parameters()
     {
-        var master = Mock.Of<IFilter>(x => x.GetQuerySyntaxHelper()==new MicrosoftQuerySyntaxHelper());
+        var master = Mock.Of<IFilter>(x => x.GetQuerySyntaxHelper()==MicrosoftQuerySyntaxHelper.Instance);
         master.Name = "Space Odyssey";
         master.WhereSQL = "@hall = 'active'";
             
-        var constructed = Mock.Of<IFilter>(x => x.GetQuerySyntaxHelper()==new MicrosoftQuerySyntaxHelper());
+        var constructed = Mock.Of<IFilter>(x => x.GetQuerySyntaxHelper()==MicrosoftQuerySyntaxHelper.Instance);
         var constructedParameter = Mock.Of<ISqlParameter>();
 
         var factory = new Mock<IFilterFactory>();
@@ -100,13 +100,13 @@ public class FilterImporterTests : UnitTests
     {
         //The filter we are cloning
         var master = Mock.Of<IFilter>(x =>
-            x.GetQuerySyntaxHelper()==new MicrosoftQuerySyntaxHelper() && 
+            x.GetQuerySyntaxHelper()==MicrosoftQuerySyntaxHelper.Instance && 
             x.Name == "Space Odyssey" && 
             x.WhereSQL == "@hall = 'active'");
 
         //The existing parameter declared on the filter we are cloning
         var masterParameter = Mock.Of<ISqlParameter>(
-            x => x.GetQuerySyntaxHelper() == new MicrosoftQuerySyntaxHelper() &&
+            x => x.GetQuerySyntaxHelper() == MicrosoftQuerySyntaxHelper.Instance &&
                  x.ParameterName=="@hall" && 
                  x.Comment == "SomeComment" &&
                  x.Value == "500" &&
@@ -118,7 +118,7 @@ public class FilterImporterTests : UnitTests
             
             
         //The return values for our Mock factory
-        var constructed = Mock.Of<IFilter>(x => x.GetQuerySyntaxHelper()==new MicrosoftQuerySyntaxHelper());
+        var constructed = Mock.Of<IFilter>(x => x.GetQuerySyntaxHelper()==MicrosoftQuerySyntaxHelper.Instance);
         var constructedParameter = Mock.Of<ISqlParameter>();
         constructedParameter.ParameterSQL = "DECLARE @hall AS int";
 
@@ -147,7 +147,7 @@ public class FilterImporterTests : UnitTests
     public void FilterCreated_ParametersRenamingDueToExistingParameterInScopeWithSameName()
     {
         //The filter we are cloning
-        var master = Mock.Of<IFilter>(x => x.GetQuerySyntaxHelper()==new MicrosoftQuerySyntaxHelper());
+        var master = Mock.Of<IFilter>(x => x.GetQuerySyntaxHelper()==MicrosoftQuerySyntaxHelper.Instance);
         master.Name = "Space Odyssey";
         master.WhereSQL = "@hall = 'active'";
 
@@ -156,12 +156,12 @@ public class FilterImporterTests : UnitTests
 
         //The filter to which the above existing parameter belongs
         var existing = Mock.Of<IFilter>(x => 
-            x.GetQuerySyntaxHelper()==new MicrosoftQuerySyntaxHelper()&&
+            x.GetQuerySyntaxHelper()==MicrosoftQuerySyntaxHelper.Instance&&
             x.GetAllParameters()==new[] { existingParameter });
         existing.Name = "Space Odyssey";
             
         //The return value for our Mock factory
-        var constructed = Mock.Of<IFilter>(x => x.GetQuerySyntaxHelper()==new MicrosoftQuerySyntaxHelper());
+        var constructed = Mock.Of<IFilter>(x => x.GetQuerySyntaxHelper()==MicrosoftQuerySyntaxHelper.Instance);
         var constructedParameter = Mock.Of<ISqlParameter>();
             
         //The mocked factory
@@ -184,7 +184,7 @@ public class FilterImporterTests : UnitTests
     public void FilterCreated_ParametersRenamingDueToExistingParameterInScopeWithSameName_MasterContainsMasterParameter()
     {
         //The filter we are cloning
-        var master = Mock.Of<IFilter>(x => x.GetQuerySyntaxHelper()==new MicrosoftQuerySyntaxHelper());
+        var master = Mock.Of<IFilter>(x => x.GetQuerySyntaxHelper()==MicrosoftQuerySyntaxHelper.Instance);
         master.Name = "Space Odyssey";
         master.WhereSQL = "@hall = 'active'";
 
@@ -202,12 +202,12 @@ public class FilterImporterTests : UnitTests
 
         //The filter to which the above existing parameter belongs
         var existing = Mock.Of<IFilter>(x => 
-            x.GetQuerySyntaxHelper()==new MicrosoftQuerySyntaxHelper() &&
+            x.GetQuerySyntaxHelper()==MicrosoftQuerySyntaxHelper.Instance &&
             x.GetAllParameters()==new[] { existingParameter });
         existing.Name = "Space Odyssey";
 
         //The return value for our Mock factory
-        var constructed = Mock.Of<IFilter>(x => x.GetQuerySyntaxHelper()==new MicrosoftQuerySyntaxHelper());
+        var constructed = Mock.Of<IFilter>(x => x.GetQuerySyntaxHelper()==MicrosoftQuerySyntaxHelper.Instance);
         var constructedParameter = Mock.Of<ISqlParameter>();
 
         //The mocked factory

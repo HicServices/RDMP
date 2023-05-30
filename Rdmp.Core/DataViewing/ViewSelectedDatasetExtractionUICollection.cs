@@ -21,7 +21,7 @@ class ViewSelectedDatasetExtractionUICollection : PersistableObjectCollection, I
 {
     private ExtractDatasetCommand _request;
 
-    ISelectedDataSets SelectedDataset{get => DatabaseObjects.OfType<ISelectedDataSets>().FirstOrDefault();}
+    ISelectedDataSets SelectedDataset => DatabaseObjects.OfType<ISelectedDataSets>().FirstOrDefault();
 
     public ViewSelectedDatasetExtractionUICollection()
     {
@@ -70,7 +70,7 @@ class ViewSelectedDatasetExtractionUICollection : PersistableObjectCollection, I
 
     public string GetTabName()
     {
-        return "Extract " + SelectedDataset;
+        return $"Extract {SelectedDataset}";
     }
 
     public void AdjustAutocomplete(IAutoCompleteProvider autoComplete)

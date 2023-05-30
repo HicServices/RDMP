@@ -27,7 +27,7 @@ public class SafePrimaryKeyCollisionResolverMutilationTests:DatabaseTests
     {
         var db = GetCleanedServer(dbType);
 
-        DataTable dt = new DataTable();
+        var dt = new DataTable();
         dt.Columns.Add("PK");
         dt.Columns.Add("ResolveOn");
         dt.Columns.Add("AnotherCol");
@@ -66,7 +66,7 @@ public class SafePrimaryKeyCollisionResolverMutilationTests:DatabaseTests
     {
         var db = GetCleanedServer(dbType);
 
-        DataTable dt = new DataTable();
+        var dt = new DataTable();
         dt.Columns.Add("PK");
         dt.Columns.Add("ResolveOn");
         dt.Columns.Add("AnotherCol");
@@ -110,7 +110,7 @@ public class SafePrimaryKeyCollisionResolverMutilationTests:DatabaseTests
     {
         var db = GetCleanedServer(dbType);
 
-        DataTable dt = new DataTable();
+        var dt = new DataTable();
         dt.Columns.Add("PK");
         dt.Columns.Add("ResolveOn");
         dt.Columns.Add("AnotherCol");
@@ -161,7 +161,7 @@ public class SafePrimaryKeyCollisionResolverMutilationTests:DatabaseTests
     {
         var db = GetCleanedServer(dbType);
 
-        DataTable dt = new DataTable();
+        var dt = new DataTable();
         dt.Columns.Add("PK");
         dt.Columns.Add("ResolveOn");
         dt.Columns.Add("AnotherCol");
@@ -212,7 +212,7 @@ public class SafePrimaryKeyCollisionResolverMutilationTests:DatabaseTests
     {
         var db = GetCleanedServer(dbType);
 
-        DataTable dt = new DataTable();
+        var dt = new DataTable();
         dt.Columns.Add("PK");
         dt.Columns.Add("ResolveOn");
         dt.Columns.Add("AnotherCol");
@@ -261,7 +261,7 @@ public class SafePrimaryKeyCollisionResolverMutilationTests:DatabaseTests
     {
         var db = GetCleanedServer(dbType);
 
-        DataTable dt = new DataTable();
+        var dt = new DataTable();
         dt.Columns.Add("PK1");
         dt.Columns.Add("PK2");
         dt.Columns.Add("ResolveOn");

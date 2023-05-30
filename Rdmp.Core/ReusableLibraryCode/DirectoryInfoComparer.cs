@@ -48,15 +48,15 @@ public static class DirectoryInfoExtensions
         }
 
         // Copy each file into its new directory.
-        foreach (FileInfo fi in source.GetFiles())
+        foreach (var fi in source.GetFiles())
         {
             fi.CopyTo(Path.Combine(target.ToString(), fi.Name), true);
         }
 
         // Copy each subdirectory using recursion.
-        foreach (DirectoryInfo diSourceSubDir in source.GetDirectories())
+        foreach (var diSourceSubDir in source.GetDirectories())
         {
-            DirectoryInfo nextTargetSubDir = target.CreateSubdirectory(diSourceSubDir.Name);
+            var nextTargetSubDir = target.CreateSubdirectory(diSourceSubDir.Name);
             diSourceSubDir.CopyAll(nextTargetSubDir);
         }
     }

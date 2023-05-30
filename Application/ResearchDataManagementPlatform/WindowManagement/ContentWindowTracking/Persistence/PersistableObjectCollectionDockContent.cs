@@ -32,7 +32,7 @@ public class PersistableObjectCollectionDockContent : RDMPSingleControlTab
         
     private PersistStringHelper persistStringHelper = new PersistStringHelper();
 
-    public IPersistableObjectCollection Collection { get { return _control.GetCollection(); } }
+    public IPersistableObjectCollection Collection => _control.GetCollection();
 
     public PersistableObjectCollectionDockContent(IActivateItems activator, IObjectCollectionControl control, IPersistableObjectCollection collection):base(activator.RefreshBus)
     {
@@ -52,7 +52,7 @@ public class PersistableObjectCollectionDockContent : RDMPSingleControlTab
         const char s = PersistStringHelper.Separator;
 
         //Looks something like this  RDMPObjectCollection:MyCoolControlUI:MyControlUIsBundleOfObjects:[CatalogueRepository:AggregateConfiguration:105,CatalogueRepository:AggregateConfiguration:102,CatalogueRepository:AggregateConfiguration:101]###EXTRA_TEXT###I've got a lovely bunch of coconuts
-        StringBuilder sb = new StringBuilder();
+        var sb = new StringBuilder();
 
         //Output <Prefix>:<The Control Type>:<The Type name of the Collection - must be new()>:
         sb.Append(Prefix + s + _control.GetType().FullName + s  + collection.GetType().Name + s);

@@ -27,18 +27,18 @@ public class DataTableUploadDestinationTests:DatabaseTests
     public void DataTableChangesLengths_NoReAlter()
     {
         var token = new GracefulCancellationToken();
-        DiscoveredDatabase db = GetCleanedServer(FAnsi.DatabaseType.MicrosoftSQLServer);
+        var db = GetCleanedServer(FAnsi.DatabaseType.MicrosoftSQLServer);
         var toConsole = new ThrowImmediatelyDataLoadEventListener();
 
-        DataTableUploadDestination destination = new DataTableUploadDestination();
+        var destination = new DataTableUploadDestination();
         destination.PreInitialize(db, toConsole);
             
-        DataTable dt1 = new DataTable();
+        var dt1 = new DataTable();
         dt1.Columns.Add("name", typeof (string));
         dt1.Rows.Add(new []{"Fish"});
         dt1.TableName = "DataTableUploadDestinationTests";
 
-        DataTable dt2 = new DataTable();
+        var dt2 = new DataTable();
         dt2.Columns.Add("name", typeof (string));
         dt2.Rows.Add(new []{"BigFish"});
         dt2.TableName = "DataTableUploadDestinationTests";
@@ -46,7 +46,7 @@ public class DataTableUploadDestinationTests:DatabaseTests
         destination.ProcessPipelineData( dt1, toConsole,token);
         var ex = Assert.Throws<Exception>(()=>destination.ProcessPipelineData( dt2, toConsole,token));
 
-        string expectedText =
+        var expectedText =
             "BulkInsert failed on data row 1 the complaint was about source column <<name>> which had value <<BigFish>> destination data type was <<varchar(4)>>";
             
         Assert.IsNotNull(ex.InnerException);
@@ -62,24 +62,24 @@ public class DataTableUploadDestinationTests:DatabaseTests
     public void DataTableChangesLengths_RandomColumnOrder(bool createIdentity,int numberOfRandomisations)
     {
         var token = new GracefulCancellationToken();
-        DiscoveredDatabase db = GetCleanedServer(FAnsi.DatabaseType.MicrosoftSQLServer);
+        var db = GetCleanedServer(FAnsi.DatabaseType.MicrosoftSQLServer);
 
         var tbl = db.ExpectTable("RandomOrderTable");
         var random = new Random();
 
-        for (int i =0;i<numberOfRandomisations;i++)
+        for (var i =0;i<numberOfRandomisations;i++)
         {
             if (tbl.Exists())
                 tbl.Drop();
 
             var toConsole = new ThrowImmediatelyDataLoadEventListener();
 
-            int errorIsInColumnOrder = random.Next(3);
-            string errorColumn = "";
+            var errorIsInColumnOrder = random.Next(3);
+            var errorColumn = "";
 
-            string sql = "CREATE TABLE RandomOrderTable (";
+            var sql = "CREATE TABLE RandomOrderTable (";
 
-            List<string> leftToCreate = new List<string>();
+            var leftToCreate = new List<string>();
 
             leftToCreate.Add("name varchar(50),");
             leftToCreate.Add("color varchar(50),");
@@ -88,13 +88,13 @@ public class DataTableUploadDestinationTests:DatabaseTests
             if(createIdentity)
                 leftToCreate.Add("id int IDENTITY(1,1),");
 
-            bool invalid = false;
+            var invalid = false;
 
-            for (int j = 0; j < (createIdentity ? 4 : 3); j++)
+            for (var j = 0; j < (createIdentity ? 4 : 3); j++)
             {
                 var toAddNext = random.Next(leftToCreate.Count);
 
-                string colSql = leftToCreate[toAddNext];
+                var colSql = leftToCreate[toAddNext];
 
                 leftToCreate.Remove(colSql);
 
@@ -114,9 +114,9 @@ public class DataTableUploadDestinationTests:DatabaseTests
             if(invalid)
                 continue;
 
-            sql = sql.TrimEnd(',') + ")";
+            sql = $"{sql.TrimEnd(',')})";
 
-            Console.Write("About to execute:" + sql);
+            Console.Write($"About to execute:{sql}");
                 
             //problem is with the column name which appears at order 0 in the destination dataset (name with width 1)
             using (var con = db.Server.GetConnection())
@@ -127,11 +127,11 @@ public class DataTableUploadDestinationTests:DatabaseTests
 
 
             //the bulk insert is
-            DataTableUploadDestination destination = new DataTableUploadDestination();
+            var destination = new DataTableUploadDestination();
             destination.PreInitialize(db, toConsole);
 
             //order is inverted where name comes out at the end column (index 2)
-            DataTable dt1 = new DataTable();
+            var dt1 = new DataTable();
             dt1.Columns.Add("age", typeof (string));
             dt1.Columns.Add("color", typeof (string));
             dt1.Columns.Add("name", typeof (string));
@@ -141,10 +141,11 @@ public class DataTableUploadDestinationTests:DatabaseTests
 
             var ex = Assert.Throws<Exception>(() => destination.ProcessPipelineData(dt1, toConsole, token));
 
-            string exceptionMessage = ex.InnerException.Message;
+            var exceptionMessage = ex.InnerException.Message;
             var interestingBit = exceptionMessage.Substring(exceptionMessage.IndexOf(": <<") + ": ".Length);
                 
-            string expectedErrorMessage = "<<" + errorColumn + ">> which had value <<"+dt1.Rows[0][errorColumn]+">> destination data type was <<varchar(1)>>";
+            var expectedErrorMessage =
+                $"<<{errorColumn}>> which had value <<{dt1.Rows[0][errorColumn]}>> destination data type was <<varchar(1)>>";
             StringAssert.Contains(expectedErrorMessage,interestingBit);
 
             destination.Dispose(new ThrowImmediatelyDataLoadEventListener(), ex);
@@ -159,13 +160,13 @@ public class DataTableUploadDestinationTests:DatabaseTests
     public void DataTableChangesLengths_DropColumns()
     {
         var token = new GracefulCancellationToken();
-        DiscoveredDatabase db = GetCleanedServer(FAnsi.DatabaseType.MicrosoftSQLServer);
+        var db = GetCleanedServer(FAnsi.DatabaseType.MicrosoftSQLServer);
 
         var tbl = db.ExpectTable("DroppedColumnsTable");
         if(tbl.Exists())
             tbl.Drop();
 
-        string sql = @"CREATE TABLE DroppedColumnsTable (
+        var sql = @"CREATE TABLE DroppedColumnsTable (
 name varchar(50),
 color varchar(50),
 age varchar(50)
@@ -175,7 +176,7 @@ ALTER TABLE DroppedColumnsTable Drop column color
 ALTER TABLE DroppedColumnsTable add color varchar(1)
 ";
 
-        Console.Write("About to execute:" + sql);
+        Console.Write($"About to execute:{sql}");
 
         //problem is with the column name which appears at order 0 in the destination dataset (name with width 1)
         using (var con = db.Server.GetConnection())
@@ -185,11 +186,11 @@ ALTER TABLE DroppedColumnsTable add color varchar(1)
         }
             
         //the bulk insert is
-        DataTableUploadDestination destination = new DataTableUploadDestination();
+        var destination = new DataTableUploadDestination();
         destination.PreInitialize(db, new ThrowImmediatelyDataLoadEventListener());
 
         //order is inverted where name comes out at the end column (index 2)
-        DataTable dt1 = new DataTable();
+        var dt1 = new DataTable();
         dt1.Columns.Add("age", typeof(string));
         dt1.Columns.Add("color", typeof(string));
         dt1.Columns.Add("name", typeof(string));
@@ -199,10 +200,10 @@ ALTER TABLE DroppedColumnsTable add color varchar(1)
 
         var ex = Assert.Throws<Exception>(() => destination.ProcessPipelineData(dt1, new ThrowImmediatelyDataLoadEventListener(), token));
 
-        string exceptionMessage = ex.InnerException.Message;
+        var exceptionMessage = ex.InnerException.Message;
         var interestingBit = exceptionMessage.Substring(exceptionMessage.IndexOf(": <<") + ": ".Length);
 
-        string expectedErrorMessage = "<<color>> which had value <<blue>> destination data type was <<varchar(1)>>";
+        var expectedErrorMessage = "<<color>> which had value <<blue>> destination data type was <<varchar(1)>>";
         StringAssert.Contains(expectedErrorMessage, interestingBit);
             
         destination.Dispose(new ThrowImmediatelyDataLoadEventListener(), ex);
@@ -215,13 +216,13 @@ ALTER TABLE DroppedColumnsTable add color varchar(1)
     public void DataTableEmpty_ThrowHelpfulException()
     {
         var token = new GracefulCancellationToken();
-        DiscoveredDatabase db = GetCleanedServer(FAnsi.DatabaseType.MicrosoftSQLServer);
+        var db = GetCleanedServer(FAnsi.DatabaseType.MicrosoftSQLServer);
         var toConsole = new ThrowImmediatelyDataLoadEventListener();
 
-        DataTableUploadDestination destination = new DataTableUploadDestination();
+        var destination = new DataTableUploadDestination();
         destination.PreInitialize(db, toConsole);
 
-        DataTable dt1 = new DataTable();
+        var dt1 = new DataTable();
         dt1.TableName = "MyEmptyTable";
         var ex = Assert.Throws<Exception>(() => destination.ProcessPipelineData(dt1, toConsole, token));
 
@@ -233,13 +234,13 @@ ALTER TABLE DroppedColumnsTable add color varchar(1)
     public void DataTableNoRows_ThrowHelpfulException()
     {
         var token = new GracefulCancellationToken();
-        DiscoveredDatabase db = GetCleanedServer(FAnsi.DatabaseType.MicrosoftSQLServer);
+        var db = GetCleanedServer(FAnsi.DatabaseType.MicrosoftSQLServer);
         var toConsole = new ThrowImmediatelyDataLoadEventListener();
 
-        DataTableUploadDestination destination = new DataTableUploadDestination();
+        var destination = new DataTableUploadDestination();
         destination.PreInitialize(db, toConsole);
 
-        DataTable dt1 = new DataTable();
+        var dt1 = new DataTable();
         dt1.Columns.Add("GoTeamGo");
         dt1.TableName = "MyEmptyTable";
         var ex = Assert.Throws<Exception>(() => destination.ProcessPipelineData(dt1, toConsole, token));
@@ -252,20 +253,20 @@ ALTER TABLE DroppedColumnsTable add color varchar(1)
     public void DataTableChangesLengths_AllowAlter()
     {
         var token = new GracefulCancellationToken();
-        DiscoveredDatabase db = GetCleanedServer(FAnsi.DatabaseType.MicrosoftSQLServer);
+        var db = GetCleanedServer(FAnsi.DatabaseType.MicrosoftSQLServer);
         var toConsole = new ThrowImmediatelyDataLoadEventListener();
         var toMemory = new ToMemoryDataLoadEventListener(true);
 
-        DataTableUploadDestination destination = new DataTableUploadDestination();
+        var destination = new DataTableUploadDestination();
         destination.PreInitialize(db, toConsole);
         destination.AllowResizingColumnsAtUploadTime = true;
 
-        DataTable dt1 = new DataTable();
+        var dt1 = new DataTable();
         dt1.Columns.Add("name", typeof(string));
         dt1.Rows.Add(new[] { "Fish" });
         dt1.TableName = "DataTableUploadDestinationTests";
 
-        DataTable dt2 = new DataTable();
+        var dt2 = new DataTable();
         dt2.Columns.Add("name", typeof(string));
         dt2.Rows.Add(new[] { "BigFish" });
         dt2.TableName = "DataTableUploadDestinationTests";
@@ -286,14 +287,14 @@ ALTER TABLE DroppedColumnsTable add color varchar(1)
     public void DoubleResizingBetweenIntAndDouble()
     {
         var token = new GracefulCancellationToken();
-        DiscoveredDatabase db = GetCleanedServer(FAnsi.DatabaseType.MicrosoftSQLServer);
+        var db = GetCleanedServer(FAnsi.DatabaseType.MicrosoftSQLServer);
         var toConsole = new ThrowImmediatelyDataLoadEventListener();
 
-        DataTableUploadDestination destination = new DataTableUploadDestination();
+        var destination = new DataTableUploadDestination();
         destination.PreInitialize(db, toConsole);
         destination.AllowResizingColumnsAtUploadTime = true;
 
-        DataTable dt1 = new DataTable();
+        var dt1 = new DataTable();
         dt1.Columns.Add("mynum", typeof(double));
         dt1.Rows.Add(new object[] {1});
         dt1.Rows.Add(new object[] { 5 });
@@ -317,14 +318,14 @@ ALTER TABLE DroppedColumnsTable add color varchar(1)
     public void BatchResizing(string expectedDatatypeInDatabase,object batch1Value,object batch2Value)
     {
         var token = new GracefulCancellationToken();
-        DiscoveredDatabase db = GetCleanedServer(FAnsi.DatabaseType.MicrosoftSQLServer);
+        var db = GetCleanedServer(FAnsi.DatabaseType.MicrosoftSQLServer);
         var toConsole = new ThrowImmediatelyDataLoadEventListener();
 
-        DataTableUploadDestination destination = new DataTableUploadDestination();
+        var destination = new DataTableUploadDestination();
         destination.PreInitialize(db, toConsole);
         destination.AllowResizingColumnsAtUploadTime = true;
 
-        DataTable dt1 = new DataTable();
+        var dt1 = new DataTable();
         dt1.Columns.Add("mycol");
         dt1.Rows.Add(new[] {batch1Value});
             
@@ -333,7 +334,7 @@ ALTER TABLE DroppedColumnsTable add color varchar(1)
         {
             destination.ProcessPipelineData(dt1, toConsole, token);
             
-            DataTable dt2 = new DataTable();
+            var dt2 = new DataTable();
             dt2.Columns.Add("mycol");
             dt2.Rows.Add(new object[] { batch2Value });
 
@@ -353,14 +354,14 @@ ALTER TABLE DroppedColumnsTable add color varchar(1)
     public void BatchResizing_WithExplicitWriteTypes(string expectedDatatypeInDatabase, object batch1Value, object batch2Value, string batch1SqlType)
     {
         var token = new GracefulCancellationToken();
-        DiscoveredDatabase db = GetCleanedServer(FAnsi.DatabaseType.MicrosoftSQLServer);
+        var db = GetCleanedServer(FAnsi.DatabaseType.MicrosoftSQLServer);
         var toConsole = new ThrowImmediatelyDataLoadEventListener();
 
-        DataTableUploadDestination destination = new DataTableUploadDestination();
+        var destination = new DataTableUploadDestination();
         destination.PreInitialize(db, toConsole);
         destination.AllowResizingColumnsAtUploadTime = true;
 
-        DataTable dt1 = new DataTable();
+        var dt1 = new DataTable();
         dt1.Columns.Add("mycol");
         dt1.Rows.Add(new[] { batch1Value });
 
@@ -370,7 +371,7 @@ ALTER TABLE DroppedColumnsTable add color varchar(1)
             destination.AddExplicitWriteType("mycol", batch1SqlType);
             destination.ProcessPipelineData(dt1, toConsole, token);
 
-            DataTable dt2 = new DataTable();
+            var dt2 = new DataTable();
             dt2.Columns.Add("mycol");
             dt2.Rows.Add(new object[] { batch2Value });
 
@@ -390,20 +391,20 @@ ALTER TABLE DroppedColumnsTable add color varchar(1)
     public void VeryLongStringIsVarcharMax()
     {
         var token = new GracefulCancellationToken();
-        DiscoveredDatabase db = GetCleanedServer(FAnsi.DatabaseType.MicrosoftSQLServer);
+        var db = GetCleanedServer(FAnsi.DatabaseType.MicrosoftSQLServer);
         var toConsole = new ThrowImmediatelyDataLoadEventListener();
 
-        DataTableUploadDestination destination = new DataTableUploadDestination();
+        var destination = new DataTableUploadDestination();
         destination.PreInitialize(db, toConsole);
         destination.AllowResizingColumnsAtUploadTime = true;
 
 
-        string longBitOfText = "";
+        var longBitOfText = "";
 
-        for (int i = 0; i < 9000; i++)
+        for (var i = 0; i < 9000; i++)
             longBitOfText += 'A';
 
-        DataTable dt1 = new DataTable();
+        var dt1 = new DataTable();
         dt1.Columns.Add("myText");
         dt1.Rows.Add(new object[] { longBitOfText });
 
@@ -424,20 +425,20 @@ ALTER TABLE DroppedColumnsTable add color varchar(1)
     public void DecimalResizing(bool negative)
     {
         var token = new GracefulCancellationToken();
-        DiscoveredDatabase db = GetCleanedServer(FAnsi.DatabaseType.MicrosoftSQLServer);
+        var db = GetCleanedServer(FAnsi.DatabaseType.MicrosoftSQLServer);
         var toConsole = new ThrowImmediatelyDataLoadEventListener();
         var toMemory = new ToMemoryDataLoadEventListener(true);
 
-        DataTableUploadDestination destination = new DataTableUploadDestination();
+        var destination = new DataTableUploadDestination();
         destination.PreInitialize(db, toConsole);
         destination.AllowResizingColumnsAtUploadTime = true;
 
-        DataTable dt1 = new DataTable();
+        var dt1 = new DataTable();
         dt1.Columns.Add("mynum", typeof(string));
         dt1.Rows.Add(new[] { "1.51" });
         dt1.TableName = "DataTableUploadDestinationTests";
 
-        DataTable dt2 = new DataTable();
+        var dt2 = new DataTable();
         dt2.Columns.Add("mynum", typeof(string));
         dt2.Rows.Add(new[] { negative ? "-999.99" : "999.99" });
         dt2.Rows.Add(new[] { "00000.00000" });
@@ -478,16 +479,16 @@ ALTER TABLE DroppedColumnsTable add color varchar(1)
     public void DataTypeEstimation(string expectedDatatypeInDatabase, object[] rowValues, object[] expectedValuesReadFromDatabase)
     {
         var token = new GracefulCancellationToken();
-        DiscoveredDatabase db = GetCleanedServer(FAnsi.DatabaseType.MicrosoftSQLServer);
+        var db = GetCleanedServer(FAnsi.DatabaseType.MicrosoftSQLServer);
         var toConsole = new ThrowImmediatelyDataLoadEventListener();
             
-        DataTableUploadDestination destination = new DataTableUploadDestination();
+        var destination = new DataTableUploadDestination();
         destination.PreInitialize(db, toConsole);
 
-        DataTable dt1 = new DataTable();
+        var dt1 = new DataTable();
         dt1.Columns.Add("myCol", typeof(string));
 
-        foreach (object rowValue in rowValues)
+        foreach (var rowValue in rowValues)
             dt1.Rows.Add(new[] {rowValue});
             
         dt1.TableName = "DataTableUploadDestinationTests";
@@ -503,7 +504,7 @@ ALTER TABLE DroppedColumnsTable add color varchar(1)
             con.Open();
             using(var cmd = DatabaseCommandHelper.GetCommand("Select * from DataTableUploadDestinationTests", con))
             using(var r = cmd.ExecuteReader())
-                foreach (object e in expectedValuesReadFromDatabase)
+                foreach (var e in expectedValuesReadFromDatabase)
                 {
                     Assert.IsTrue(r.Read());
                     Assert.AreEqual(e, r["myCol"]);
@@ -519,14 +520,14 @@ ALTER TABLE DroppedColumnsTable add color varchar(1)
     public void DecimalZeros(bool sendTheZero)
     {
         var token = new GracefulCancellationToken();
-        DiscoveredDatabase db = GetCleanedServer(DatabaseType.MicrosoftSQLServer);
+        var db = GetCleanedServer(DatabaseType.MicrosoftSQLServer);
         var toConsole = new ThrowImmediatelyDataLoadEventListener();
             
-        DataTableUploadDestination destination = new DataTableUploadDestination();
+        var destination = new DataTableUploadDestination();
         destination.PreInitialize(db, toConsole);
         destination.AllowResizingColumnsAtUploadTime = true;
 
-        DataTable dt1 = new DataTable();
+        var dt1 = new DataTable();
         dt1.Columns.Add("mynum", typeof(string));
         dt1.Rows.Add(new[] { "0.000742548000424313" });
 
@@ -712,14 +713,14 @@ ALTER TABLE DroppedColumnsTable add color varchar(1)
     public void DodgyTypes()
     {
         var token = new GracefulCancellationToken();
-        DiscoveredDatabase db = GetCleanedServer(FAnsi.DatabaseType.MicrosoftSQLServer);
+        var db = GetCleanedServer(FAnsi.DatabaseType.MicrosoftSQLServer);
         var toConsole = new ThrowImmediatelyDataLoadEventListener();
 
-        DataTableUploadDestination destination = new DataTableUploadDestination();
+        var destination = new DataTableUploadDestination();
         destination.PreInitialize(db, toConsole);
         destination.AllowResizingColumnsAtUploadTime = true;
 
-        DataTable dt1 = new DataTable();
+        var dt1 = new DataTable();
         dt1.Columns.Add("col1", typeof(double));
         dt1.Columns.Add("col2", typeof(double));
         dt1.Columns.Add("col3", typeof(bool));
@@ -754,20 +755,20 @@ ALTER TABLE DroppedColumnsTable add color varchar(1)
     public void TypeAlteringlResizing()
     {
         var token = new GracefulCancellationToken();
-        DiscoveredDatabase db = GetCleanedServer(FAnsi.DatabaseType.MicrosoftSQLServer);
+        var db = GetCleanedServer(FAnsi.DatabaseType.MicrosoftSQLServer);
         var toConsole = new ThrowImmediatelyDataLoadEventListener();
         var toMemory = new ToMemoryDataLoadEventListener(true);
 
-        DataTableUploadDestination destination = new DataTableUploadDestination();
+        var destination = new DataTableUploadDestination();
         destination.PreInitialize(db, toConsole);
         destination.AllowResizingColumnsAtUploadTime = true;
 
-        DataTable dt1 = new DataTable();
+        var dt1 = new DataTable();
         dt1.Columns.Add("mynum", typeof(string));
         dt1.Rows.Add(new[] { "true" });
         dt1.TableName = "DataTableUploadDestinationTests";
 
-        DataTable dt2 = new DataTable();
+        var dt2 = new DataTable();
         dt2.Columns.Add("mynum", typeof(string));
         dt2.Rows.Add(new[] { "999" });
         dt2.TableName = "DataTableUploadDestinationTests";
@@ -792,11 +793,11 @@ ALTER TABLE DroppedColumnsTable add color varchar(1)
 
         var toConsole = new ThrowImmediatelyDataLoadEventListener();
 
-        DataTableUploadDestination destination = new DataTableUploadDestination();
+        var destination = new DataTableUploadDestination();
         destination.PreInitialize(db, toConsole);
         destination.AllowResizingColumnsAtUploadTime = true;
             
-        DataTable dt = new DataTable();
+        var dt = new DataTable();
         dt.Columns.Add("mystringcol", typeof(string));
         dt.Columns.Add("mynum", typeof(string));
         dt.Columns.Add("mydate", typeof (string));
@@ -845,16 +846,16 @@ ALTER TABLE DroppedColumnsTable add color varchar(1)
         var toConsole = new ThrowImmediatelyDataLoadEventListener();
         var toMemory = new ToMemoryDataLoadEventListener(true);
 
-        DataTableUploadDestination destination = new DataTableUploadDestination();
+        var destination = new DataTableUploadDestination();
         destination.PreInitialize(db, toConsole);
         destination.AllowResizingColumnsAtUploadTime = true;
 
-        DataTable dt1 = new DataTable();
+        var dt1 = new DataTable();
         dt1.Columns.Add("mynum", typeof(string));
         dt1.Rows.Add(new[] { "true" });
         dt1.TableName = "DataTableUploadDestinationTests";
 
-        DataTable dt2 = new DataTable();
+        var dt2 = new DataTable();
         dt2.Columns.Add("mynum", typeof(string));
         dt2.Rows.Add(new[] { "999" });
         dt2.TableName = "DataTableUploadDestinationTests";
@@ -874,7 +875,7 @@ ALTER TABLE DroppedColumnsTable add color varchar(1)
             var r = db.Server.GetCommand(tbl.GetTopXSql(10), con).ExecuteReader();
 
             //technically these can come out in a random order
-            List<int> numbersRead = new List<int>();
+            var numbersRead = new List<int>();
             Assert.IsTrue(r.Read());
             numbersRead.Add((int) r["mynum"]);
             Assert.IsTrue(r.Read());
@@ -946,7 +947,7 @@ ALTER TABLE DroppedColumnsTable add color varchar(1)
         destination.AllowResizingColumnsAtUploadTime = true;
         destination.PreInitialize(db,new ThrowImmediatelyDataLoadEventListener());
 
-        DataTable dt1 = new DataTable();
+        var dt1 = new DataTable();
         dt1.TableName = "MyTable";
         dt1.Columns.Add("Name");
         dt1.Rows.Add("Fish");
@@ -955,7 +956,7 @@ ALTER TABLE DroppedColumnsTable add color varchar(1)
 
         destination.ProcessPipelineData(dt1, new ThrowImmediatelyDataLoadEventListener(),new GracefulCancellationToken());
             
-        DataTable dt2 = new DataTable();
+        var dt2 = new DataTable();
         dt2.TableName = "MyTable";
         dt2.Columns.Add("Name");
         dt2.Rows.Add("Fish Monkey Fish Fish"); //notice that this is longer so the column must be resized
@@ -1034,7 +1035,7 @@ ALTER TABLE DroppedColumnsTable add color varchar(1)
     {
         var db = GetCleanedServer(dbType);
 
-        DataTable dt = new DataTable("ff");
+        var dt = new DataTable("ff");
         dt.Columns.Add("mycol");
         dt.Rows.Add("-4.10235746055587E-05"); //this string is untyped
 
@@ -1081,7 +1082,7 @@ ALTER TABLE DroppedColumnsTable add color varchar(1)
     {
         var db = GetCleanedServer(dbType);
 
-        DataTable dt = new DataTable("ForceStringTable");
+        var dt = new DataTable("ForceStringTable");
         dt.Columns.Add("hb_extract");
         dt.Columns.Add("Name");
 
@@ -1144,22 +1145,22 @@ ALTER TABLE DroppedColumnsTable add color varchar(1)
     public void TwoBatch_BooleanResizingTest(DatabaseType dbType, bool giveNullValuesOnly)
     {
         var token = new GracefulCancellationToken();
-        DiscoveredDatabase db = GetCleanedServer(dbType);
+        var db = GetCleanedServer(dbType);
         var toConsole = new ThrowImmediatelyDataLoadEventListener();
         var toMemory = new ToMemoryDataLoadEventListener(true);
 
-        DataTableUploadDestination destination = new DataTableUploadDestination();
+        var destination = new DataTableUploadDestination();
         destination.PreInitialize(db, toConsole);
         destination.AllowResizingColumnsAtUploadTime = true;
 
-        DataTable dt1 = new DataTable();
+        var dt1 = new DataTable();
         dt1.Columns.Add("TestedCol", typeof(string));
         dt1.Columns.Add("OtherCol", typeof(string));
         dt1.Rows.Add(new[] { giveNullValuesOnly ? null : "true", "1.51" });
 
         dt1.TableName = "DataTableUploadDestinationTests";
 
-        DataTable dt2 = new DataTable();
+        var dt2 = new DataTable();
         dt2.Columns.Add("TestedCol", typeof(string));
         dt2.Columns.Add("OtherCol", typeof(string));
 
@@ -1212,15 +1213,15 @@ ALTER TABLE DroppedColumnsTable add color varchar(1)
     public void TwoBatch_MiscellaneousTest(DatabaseType dbType, string v1,string v2,Type expectedTypeForBatch1,Type expectedTypeForBatch2)
     {
         var token = new GracefulCancellationToken();
-        DiscoveredDatabase db = GetCleanedServer(dbType);
+        var db = GetCleanedServer(dbType);
         var toConsole = new ThrowImmediatelyDataLoadEventListener();
         var toMemory = new ToMemoryDataLoadEventListener(true);
 
-        DataTableUploadDestination destination = new DataTableUploadDestination();
+        var destination = new DataTableUploadDestination();
         destination.PreInitialize(db, toConsole);
         destination.AllowResizingColumnsAtUploadTime = true;
 
-        DataTable dt1 = new DataTable();
+        var dt1 = new DataTable();
         dt1.Columns.Add("TestedCol", typeof(string));
         dt1.Rows.Add(new[] { v1 });
 
@@ -1229,7 +1230,7 @@ ALTER TABLE DroppedColumnsTable add color varchar(1)
 
         dt1.TableName = "DataTableUploadDestinationTests";
 
-        DataTable dt2 = new DataTable();
+        var dt2 = new DataTable();
         dt2.Columns.Add("TestedCol", typeof(string));
 
         dt2.Rows.Add(new[] { v2 });
@@ -1268,22 +1269,22 @@ ALTER TABLE DroppedColumnsTable add color varchar(1)
     public void TwoBatch_ExplicitRealDataType()
     {
         var token = new GracefulCancellationToken();
-        DiscoveredDatabase db = GetCleanedServer(DatabaseType.MicrosoftSQLServer);
+        var db = GetCleanedServer(DatabaseType.MicrosoftSQLServer);
         var toConsole = new ThrowImmediatelyDataLoadEventListener();
         var toMemory = new ToMemoryDataLoadEventListener(true);
 
-        DataTableUploadDestination destination = new DataTableUploadDestination();
+        var destination = new DataTableUploadDestination();
         destination.PreInitialize(db, toConsole);
         destination.AllowResizingColumnsAtUploadTime = true;
         destination.AddExplicitWriteType("FloatCol","real");
 
-        DataTable dt1 = new DataTable();
+        var dt1 = new DataTable();
         dt1.Columns.Add("FloatCol", typeof(string));
         dt1.Rows.Add(new[] { "1.51" });
 
         dt1.TableName = "DataTableUploadDestinationTests";
 
-        DataTable dt2 = new DataTable();
+        var dt2 = new DataTable();
         dt2.Columns.Add("FloatCol", typeof(string));
         dt2.Rows.Add(new[] { "99.9999" });
 

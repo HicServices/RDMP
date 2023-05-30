@@ -59,7 +59,7 @@ public class ExecuteDatasetExtractionFlatFileDestination : ExtractionDestination
         switch (FlatFileType)
         {
             case ExecuteExtractionToFlatFileType.CSV:
-                OutputFile = Path.Combine(DirectoryPopulated.FullName, GetFilename() + ".csv");
+                OutputFile = Path.Combine(DirectoryPopulated.FullName, $"{GetFilename()}.csv");
                 if (request.Configuration != null)
                     _output = new CSVOutputFormat(OutputFile, request.Configuration.Separator, DateFormat);
                 else
@@ -71,7 +71,8 @@ public class ExecuteDatasetExtractionFlatFileDestination : ExtractionDestination
                 throw new ArgumentOutOfRangeException();
         }
 
-        listener.OnNotify(this, new NotifyEventArgs(ProgressEventType.Information, "Setup data extraction destination as " + OutputFile + " (will not exist yet)"));
+        listener.OnNotify(this, new NotifyEventArgs(ProgressEventType.Information,
+            $"Setup data extraction destination as {OutputFile} (will not exist yet)"));
     }
     
     protected override void Open(DataTable toProcess, IDataLoadEventListener job, GracefulCancellationToken cancellationToken)
@@ -81,7 +82,7 @@ public class ExecuteDatasetExtractionFlatFileDestination : ExtractionDestination
             if (File.Exists(_output.OutputFilename))
             {
                 // if it is a batch resume then create a backup of the file as it looked at the start of the process
-                _backupFile = _output.OutputFilename + ".bak";
+                _backupFile = $"{_output.OutputFilename}.bak";
                 job.OnNotify(this, new NotifyEventArgs(ProgressEventType.Information, $"Creating {_backupFile}"));
                 File.Copy(_output.OutputFilename, _backupFile, true);
             }
@@ -109,9 +110,9 @@ public class ExecuteDatasetExtractionFlatFileDestination : ExtractionDestination
             LinesWritten++;
 
             if (LinesWritten % 1000 == 0)
-                job.OnProgress(this, new ProgressEventArgs("Write to file " + OutputFile, new ProgressMeasurement(LinesWritten, ProgressType.Records), stopwatch.Elapsed));
+                job.OnProgress(this, new ProgressEventArgs($"Write to file {OutputFile}", new ProgressMeasurement(LinesWritten, ProgressType.Records), stopwatch.Elapsed));
         }
-        job.OnProgress(this, new ProgressEventArgs("Write to file " + OutputFile, new ProgressMeasurement(LinesWritten, ProgressType.Records), stopwatch.Elapsed));
+        job.OnProgress(this, new ProgressEventArgs($"Write to file {OutputFile}", new ProgressMeasurement(LinesWritten, ProgressType.Records), stopwatch.Elapsed));
 
     }
     protected override void Flush(IDataLoadEventListener job, GracefulCancellationToken cancellationToken, Stopwatch stopwatch)
@@ -221,12 +222,13 @@ public class ExecuteDatasetExtractionFlatFileDestination : ExtractionDestination
         }
         try
         {
-            string result = DateTime.Now.ToString(DateFormat);
-            notifier.OnCheckPerformed(new CheckEventArgs("DateFormat '" + DateFormat + "' is valid, dates will look like:" + result, CheckResult.Success));
+            var result = DateTime.Now.ToString(DateFormat);
+            notifier.OnCheckPerformed(new CheckEventArgs(
+                $"DateFormat '{DateFormat}' is valid, dates will look like:{result}", CheckResult.Success));
         }
         catch (Exception e)
         {
-            notifier.OnCheckPerformed(new CheckEventArgs("DateFormat '" + DateFormat + "' was invalid",CheckResult.Fail, e));
+            notifier.OnCheckPerformed(new CheckEventArgs($"DateFormat '{DateFormat}' was invalid",CheckResult.Fail, e));
         }
 
         var dsRequest = _request as ExtractDatasetCommand;
@@ -234,7 +236,8 @@ public class ExecuteDatasetExtractionFlatFileDestination : ExtractionDestination
         if (UseAcronymForFileNaming && dsRequest != null)
         {
             if(string.IsNullOrWhiteSpace(dsRequest.Catalogue.Acronym))
-                notifier.OnCheckPerformed(new CheckEventArgs("Catalogue '" + dsRequest.Catalogue +"' does not have an Acronym but UseAcronymForFileNaming is true",CheckResult.Fail));
+                notifier.OnCheckPerformed(new CheckEventArgs(
+                    $"Catalogue '{dsRequest.Catalogue}' does not have an Acronym but UseAcronymForFileNaming is true",CheckResult.Fail));
         }
 
         if (CleanExtractionFolderBeforeExtraction)

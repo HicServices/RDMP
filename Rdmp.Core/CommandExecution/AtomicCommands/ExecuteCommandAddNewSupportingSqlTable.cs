@@ -70,7 +70,8 @@ public class ExecuteCommandAddNewSupportingSqlTable : BasicCommandExecution,IAto
             }
         }
 
-        var newSqlTable = new SupportingSQLTable((ICatalogueRepository)c.Repository, c, name ?? "New Supporting SQL Table " + Guid.NewGuid());
+        var newSqlTable = new SupportingSQLTable((ICatalogueRepository)c.Repository, c, name ??
+            $"New Supporting SQL Table {Guid.NewGuid()}");
 
         Activate(newSqlTable);
         Publish(c);

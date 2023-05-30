@@ -25,7 +25,7 @@ public class ExecuteCommandRename : BasicCommandExecution,IAtomicCommand
         if(nameable is ITableInfo)
             SetImpossible("TableInfos cannot not be renamed");
             
-        if (nameable is IMightBeReadOnly ro && ro.ShouldBeReadOnly(out string reason))
+        if (nameable is IMightBeReadOnly ro && ro.ShouldBeReadOnly(out var reason))
             SetImpossible(reason);
 
         Weight = 50.2f;
@@ -45,7 +45,7 @@ public class ExecuteCommandRename : BasicCommandExecution,IAtomicCommand
         if (!_explicitNewValuePassed)
         {
                 
-            if (TypeText("Rename " + _nameable.GetType().Name, "Name", 500, _nameable.Name,out string text))
+            if (TypeText($"Rename {_nameable.GetType().Name}", "Name", 500, _nameable.Name,out var text))
             {
                 while(UsefulStuff.IsBadName(text))
                 {
@@ -60,7 +60,7 @@ public class ExecuteCommandRename : BasicCommandExecution,IAtomicCommand
 
                     //type a new one then
                         
-                    if(!TypeText("Rename " + _nameable.GetType().Name, "Name", 2000, _nameable.Name, out text))
+                    if(!TypeText($"Rename {_nameable.GetType().Name}", "Name", 2000, _nameable.Name, out text))
                         return;
                 }
 

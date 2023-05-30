@@ -40,7 +40,8 @@ public class Transposer : IPluginDataFlowComponent<DataTable>
             throw new NotSupportedException("Error, we received multiple batches, Transposer only works when all the data arrives in a single DataTable");
             
         if(toProcess.Rows.Count == 0 || toProcess.Columns.Count == 0)
-            throw new NotSupportedException("DataTable toProcess had " + toProcess.Rows.Count + " rows and " + toProcess.Columns.Count + " columns, thus it cannot be transposed");
+            throw new NotSupportedException(
+                $"DataTable toProcess had {toProcess.Rows.Count} rows and {toProcess.Columns.Count} columns, thus it cannot be transposed");
 
         _haveServedResult = true;
 
@@ -64,7 +65,7 @@ public class Transposer : IPluginDataFlowComponent<DataTable>
 
     private DataTable GenerateTransposedTable(DataTable inputTable)
     {
-        DataTable outputTable = new DataTable();
+        var outputTable = new DataTable();
 
         // Add columns by looping rows
 
@@ -74,7 +75,7 @@ public class Transposer : IPluginDataFlowComponent<DataTable>
         // Header row's second column onwards, 'inputTable's first column taken
         foreach (DataRow inRow in inputTable.Rows)
         {
-            string newColName = inRow[0].ToString();
+            var newColName = inRow[0].ToString();
 
             if (MakeHeaderNamesSane)
                 newColName = QuerySyntaxHelper.MakeHeaderNameSensible(newColName);
@@ -83,15 +84,15 @@ public class Transposer : IPluginDataFlowComponent<DataTable>
         }
 
         // Add rows by looping columns        
-        for (int rCount = 1; rCount <= inputTable.Columns.Count - 1; rCount++)
+        for (var rCount = 1; rCount <= inputTable.Columns.Count - 1; rCount++)
         {
-            DataRow newRow = outputTable.NewRow();
+            var newRow = outputTable.NewRow();
 
             // First column is inputTable's Header row's second column
             newRow[0] = inputTable.Columns[rCount].ColumnName;
-            for (int cCount = 0; cCount <= inputTable.Rows.Count - 1; cCount++)
+            for (var cCount = 0; cCount <= inputTable.Rows.Count - 1; cCount++)
             {
-                string colValue = inputTable.Rows[cCount][rCount].ToString();
+                var colValue = inputTable.Rows[cCount][rCount].ToString();
                 newRow[cCount + 1] = colValue;
             }
             outputTable.Rows.Add(newRow);

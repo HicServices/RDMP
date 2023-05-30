@@ -103,12 +103,12 @@ public partial class TimePeriodicityChart : RDMPUserControl,IDataQualityReportin
 
     private void AddGapAnnotations(DataTable dt)
     {
-        DateTime lastBucket = DateTime.MinValue;
-        int bucketNumber = 0;
+        var lastBucket = DateTime.MinValue;
+        var bucketNumber = 0;
 
         foreach (DataRow dr in dt.Rows)
         {
-            DateTime currentBucket = new DateTime((int) dr["Year"],(int) dr["Month"],1);
+            var currentBucket = new DateTime((int) dr["Year"],(int) dr["Month"],1);
             var diff = currentBucket.Subtract(lastBucket);
 
             bucketNumber++;
@@ -131,7 +131,7 @@ public partial class TimePeriodicityChart : RDMPUserControl,IDataQualityReportin
                 line.EndCap = LineAnchorCapStyle.None;
 
                 var text = new TextAnnotation();
-                text.Text = diff.TotalDays +"d gap";
+                text.Text = $"{diff.TotalDays}d gap";
                 text.IsSizeAlwaysRelative = false;
                 text.AxisX = chart1.ChartAreas[0].AxisX;
                 text.AxisY = chart1.ChartAreas[0].AxisY;
@@ -153,7 +153,7 @@ public partial class TimePeriodicityChart : RDMPUserControl,IDataQualityReportin
 
         var evaluations = evaluation.GetAllDQEGraphAnnotations(_pivotCategoryValue).Where(a => a.AnnotationIsForGraph == DQEGraphType.TimePeriodicityGraph);
             
-        foreach (DQEGraphAnnotation annotation in evaluations)
+        foreach (var annotation in evaluations)
         {
             var a = new DQEGraphAnnotationUI(annotation,chart1);
             chart1.Annotations.Add(a.Annotation);
@@ -196,7 +196,7 @@ public partial class TimePeriodicityChart : RDMPUserControl,IDataQualityReportin
                 WindowTitle = "Add Annotation",
                 TaskDescription = "Type some annotation text(will be saved to the database for other data analysts to see)",
                 EntryLabel = "Annotation:"
-            }, 500, null, out string result, false))
+            }, 500, null, out var result, false))
         {
             //create new annotation in the database
             new DQEGraphAnnotation(_currentEvaluation.DQERepository,pointStartX, pointStartY, pointEndX, pointEndY, result, _currentEvaluation, DQEGraphType.TimePeriodicityGraph, _pivotCategoryValue);
@@ -234,7 +234,7 @@ public partial class TimePeriodicityChart : RDMPUserControl,IDataQualityReportin
                          .Distinct() //distinct because we get a line and a text for each - works because all .Equals are on ID of underlying object
                          .ToArray())//use ToArray so we can modify it in for loop
             {
-                if(Activator.YesNo("Delete annotation '" + ui.TextAnnotation.Text +"'", "Confirm deleting annotation from database"))
+                if(Activator.YesNo($"Delete annotation '{ui.TextAnnotation.Text}'", "Confirm deleting annotation from database"))
                     ui.Delete(chart1);//delete it is what we are actually doing
             }
     }

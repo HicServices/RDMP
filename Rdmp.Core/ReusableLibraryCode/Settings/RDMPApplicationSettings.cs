@@ -156,7 +156,7 @@ internal class RDMPApplicationSettings : ISettings
                 else if (type == typeof(decimal))
                 {
 
-                    string savedDecimal = Convert.ToString(str);
+                    var savedDecimal = Convert.ToString(str);
 
 
                     value = Convert.ToDecimal(savedDecimal, System.Globalization.CultureInfo.InvariantCulture);
@@ -223,7 +223,7 @@ internal class RDMPApplicationSettings : ISettings
 
                 else
                 {
-                    throw new ArgumentException("Value of type " + type + " is not supported.");
+                    throw new ArgumentException($"Value of type {type} is not supported.");
                 }
             }
             catch (FormatException)
@@ -262,7 +262,7 @@ internal class RDMPApplicationSettings : ISettings
         }
         catch (Exception ex)
         {
-            Console.WriteLine("Unable to clear all defaults. Message: " + ex.Message);
+            Console.WriteLine($"Unable to clear all defaults. Message: {ex.Message}");
         }
     }
 

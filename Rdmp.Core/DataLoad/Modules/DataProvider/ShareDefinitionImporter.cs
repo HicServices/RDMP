@@ -38,19 +38,21 @@ public class ShareDefinitionImporter: IPluginDataProvider
 
     public ExitCodeType Fetch(IDataLoadJob job, GracefulCancellationToken cancellationToken)
     {
-        int imported = 0;
+        var imported = 0;
         try
         {
             var shareManager = new ShareManager(job.RepositoryLocator);
 
             foreach (var shareDefinitionFile in job.LoadDirectory.ForLoading.EnumerateFiles("*.sd"))
             {
-                job.OnNotify(this,new NotifyEventArgs(ProgressEventType.Information, "Found '" + shareDefinitionFile.Name + "'"));
+                job.OnNotify(this,new NotifyEventArgs(ProgressEventType.Information,
+                    $"Found '{shareDefinitionFile.Name}'"));
                 using (var stream = File.Open(shareDefinitionFile.FullName, FileMode.Open))
                     shareManager.ImportSharedObject(stream);
 
                 imported++;
-                job.OnNotify(this, new NotifyEventArgs(ProgressEventType.Information, "Imported '" + shareDefinitionFile.Name + "' Succesfully"));
+                job.OnNotify(this, new NotifyEventArgs(ProgressEventType.Information,
+                    $"Imported '{shareDefinitionFile.Name}' Succesfully"));
             }
         }
         catch (SharingException ex)
@@ -58,7 +60,8 @@ public class ShareDefinitionImporter: IPluginDataProvider
             job.OnNotify(this,new NotifyEventArgs(ProgressEventType.Warning, "Error occured importing ShareDefinitions",ex));
         }
 
-        job.OnNotify(this, new NotifyEventArgs(imported == 0 ? ProgressEventType.Warning : ProgressEventType.Information, "Imported " + imported + " ShareDefinition files"));
+        job.OnNotify(this, new NotifyEventArgs(imported == 0 ? ProgressEventType.Warning : ProgressEventType.Information,
+            $"Imported {imported} ShareDefinition files"));
 
         return ExitCodeType.Success;
     }

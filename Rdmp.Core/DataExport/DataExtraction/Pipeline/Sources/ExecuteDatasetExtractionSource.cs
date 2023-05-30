@@ -108,7 +108,7 @@ OrderByAndDistinctInMemory - Adds an ORDER BY statement to the query and applies
         if(request.QueryBuilder == null)
             request.GenerateQueryBuilder();
             
-        foreach (ReleaseIdentifierSubstitution substitution in Request.ReleaseIdentifierSubstitutions)
+        foreach (var substitution in Request.ReleaseIdentifierSubstitutions)
             _extractionIdentifiersidx.Add(substitution.GetRuntimeName());
             
         UniqueReleaseIdentifiersEncountered = new HashSet<object>();
@@ -130,11 +130,8 @@ OrderByAndDistinctInMemory - Adds an ORDER BY statement to the query and applies
         GlobalsRequest = request;
     }
 
-    public bool WasCancelled
-    {
-        get { return _cancel; }
-    }
-        
+    public bool WasCancelled => _cancel;
+
     private Stopwatch _timeSpentValidating;
     private int _rowsValidated = 0;
 
@@ -180,10 +177,11 @@ OrderByAndDistinctInMemory - Adds an ORDER BY statement to the query and applies
             StartAudit(Request.QueryBuilder.SQL);
                
             if(Request.DatasetBundle.DataSet.DisableExtraction)
-                throw new Exception("Cannot extract " + Request.DatasetBundle.DataSet + " because DisableExtraction is set to true");
+                throw new Exception(
+                    $"Cannot extract {Request.DatasetBundle.DataSet} because DisableExtraction is set to true");
 
             _hostedSource = new DbDataCommandDataFlowSource(GetCommandSQL(listener),
-                "ExecuteDatasetExtraction " + Request.DatasetBundle.DataSet,
+                $"ExecuteDatasetExtraction {Request.DatasetBundle.DataSet}",
                 Request.GetDistinctLiveDatabaseServer().Builder, 
                 ExecutionTimeout);
 
@@ -232,8 +230,8 @@ OrderByAndDistinctInMemory - Adds an ORDER BY statement to the query and applies
             
         //if the first chunk is null
         if (firstChunk && chunk == null && !AllowEmptyExtractions)
-            throw new Exception("There is no data to load, query returned no rows, query was:" + Environment.NewLine + 
-                                (_hostedSource.Sql??Request.QueryBuilder.SQL));
+            throw new Exception(
+                $"There is no data to load, query returned no rows, query was:{Environment.NewLine}{(_hostedSource.Sql ?? Request.QueryBuilder.SQL)}");
             
         //not the first chunk anymore
         firstChunk = false;
@@ -241,7 +239,8 @@ OrderByAndDistinctInMemory - Adds an ORDER BY statement to the query and applies
         //data exhausted
         if (chunk == null)
         {
-            listener.OnNotify(this,new NotifyEventArgs(ProgressEventType.Information, "Data exhausted after reading " + _rowsRead + " rows of data ("+UniqueReleaseIdentifiersEncountered.Count + " unique release identifiers seen)"));
+            listener.OnNotify(this,new NotifyEventArgs(ProgressEventType.Information,
+                $"Data exhausted after reading {_rowsRead} rows of data ({UniqueReleaseIdentifiersEncountered.Count} unique release identifiers seen)"));
             if (Request != null)
                 Request.CumulativeExtractionResults.DistinctReleaseIdentifiersEncountered = Request.IsBatchResume ? -1 : UniqueReleaseIdentifiersEncountered.Count;
             return null;
@@ -254,7 +253,7 @@ OrderByAndDistinctInMemory - Adds an ORDER BY statement to the query and applies
 
 
         //see if the SqlDataReader has a column with the same name as the ReleaseIdentifierSQL (if so then we can use it to count the number of distinct subjects written out to the csv)
-        bool includesReleaseIdentifier = _extractionIdentifiersidx.Count > 0;
+        var includesReleaseIdentifier = _extractionIdentifiersidx.Count > 0;
 
 
         //first line - let's see what columns we wrote out
@@ -296,13 +295,14 @@ OrderByAndDistinctInMemory - Adds an ORDER BY statement to the query and applies
         _timeSpentCalculatingDISTINCT.Start();
         //record unique release identifiers found
         if (includesReleaseIdentifier)
-            foreach (string idx in _extractionIdentifiersidx)
+            foreach (var idx in _extractionIdentifiersidx)
             {
                 foreach (DataRow r in chunk.Rows)
                 {
                     if (r[idx] == DBNull.Value)
                         if (_extractionIdentifiersidx.Count == 1)
-                            throw new Exception("Null release identifier found in extract of dataset " + Request.DatasetBundle.DataSet);
+                            throw new Exception(
+                                $"Null release identifier found in extract of dataset {Request.DatasetBundle.DataSet}");
                         else
                             continue; //there are multiple extraction identifiers thats fine if one or two are null
 
@@ -386,7 +386,7 @@ OrderByAndDistinctInMemory - Adds an ORDER BY statement to the query and applies
                 var substitution =  Request.ReleaseIdentifierSubstitutions.First();
 
                 //add a line at the end of the query to ORDER BY the ReleaseId column (e.g. PROCHI)
-                var orderBySql = "ORDER BY " + substitution.SelectSQL;
+                var orderBySql = $"ORDER BY {substitution.SelectSQL}";
 
                 // don't add the line if it is already there (e.g. because of Retry)
                 if(!Request.QueryBuilder.CustomLines.Any(l=>string.Equals(l.Text,orderBySql)))
@@ -397,7 +397,7 @@ OrderByAndDistinctInMemory - Adds an ORDER BY statement to the query and applies
                 throw new ArgumentOutOfRangeException();
         }
 
-        string sql = Request.QueryBuilder.SQL;
+        var sql = Request.QueryBuilder.SQL;
 
         sql = HackExtractionSQL(sql,listener);
 
@@ -408,7 +408,8 @@ OrderByAndDistinctInMemory - Adds an ORDER BY statement to the query and applies
             sql = sql.Replace(" JOIN ", " HASH JOIN ");
         }
 
-        listener.OnNotify(this, new NotifyEventArgs(ProgressEventType.Information, "/*Decided on extraction SQL:*/"+Environment.NewLine + sql));
+        listener.OnNotify(this, new NotifyEventArgs(ProgressEventType.Information,
+            $"/*Decided on extraction SQL:*/{Environment.NewLine}{sql}"));
             
         return sql;
     }
@@ -464,7 +465,7 @@ OrderByAndDistinctInMemory - Adds an ORDER BY statement to the query and applies
 
             var extractionResults = new CumulativeExtractionResults(dataExportRepo, Request.Configuration, Request.DatasetBundle.DataSet, sql);
 
-            string filterDescriptions = RecursivelyListAllFilterNames(Request.Configuration.GetFilterContainerFor(Request.DatasetBundle.DataSet));
+            var filterDescriptions = RecursivelyListAllFilterNames(Request.Configuration.GetFilterContainerFor(Request.DatasetBundle.DataSet));
 
             extractionResults.FiltersUsed = filterDescriptions.TrimEnd(',');
             extractionResults.SaveToDatabase();
@@ -490,15 +491,15 @@ OrderByAndDistinctInMemory - Adds an ORDER BY statement to the query and applies
         if (filterContainer == null)
             return "";
 
-        string toReturn = "";
+        var toReturn = "";
 
         if (filterContainer.GetSubContainers() != null)
-            foreach (IContainer subContainer in filterContainer.GetSubContainers())
+            foreach (var subContainer in filterContainer.GetSubContainers())
                 toReturn += RecursivelyListAllFilterNames(subContainer);
 
         if(filterContainer.GetFilters() != null)
-            foreach (IFilter f in filterContainer.GetFilters())
-                toReturn += f.Name +',';
+            foreach (var f in filterContainer.GetFilters())
+                toReturn += $"{f.Name},";
 
         return toReturn;
     }
@@ -517,7 +518,7 @@ OrderByAndDistinctInMemory - Adds an ORDER BY statement to the query and applies
         if(Request == ExtractDatasetCommand.EmptyCommand)
             return new DataTable();
 
-        DataTable toReturn = new DataTable();
+        var toReturn = new DataTable();
         var server = _catalogue.GetDistinctLiveDatabaseServer(DataAccessContext.DataExport,false);
 
         using (var con = server.GetConnection())

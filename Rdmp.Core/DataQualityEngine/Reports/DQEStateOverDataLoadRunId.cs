@@ -62,13 +62,13 @@ public class DQEStateOverDataLoadRunId
         //ensure unconstrained columns have it
         if (!AllColumnStates.ContainsKey(dataLoadRunID))
         {
-            List<ColumnState> allColumns = new List<ColumnState>();
+            var allColumns = new List<ColumnState>();
 
-            foreach (IColumn col in queryBuilder.SelectColumns.Select(s => s.IColumn))
+            foreach (var col in queryBuilder.SelectColumns.Select(s => s.IColumn))
             {
 
-                string runtimeName = col.GetRuntimeName();
-                string validationXML = "";
+                var runtimeName = col.GetRuntimeName();
+                var validationXML = "";
 
                 var itemValidator = validator.ItemValidators.SingleOrDefault(iv => iv.TargetProperty.Equals(runtimeName));
 
@@ -152,7 +152,7 @@ public class DQEStateOverDataLoadRunId
         IEnumerable<int> novelDataLoadRunIDs = RowsPassingValidationByDataLoadRunID.Keys;
 
         //now for every load batch we encountered in our evaluations
-        foreach (int dataLoadRunID in novelDataLoadRunIDs)
+        foreach (var dataLoadRunID in novelDataLoadRunIDs)
         {
             //record the row states calculation (how many total rows are good/bad/ugly etc)
             evaluation.AddRowState(dataLoadRunID,

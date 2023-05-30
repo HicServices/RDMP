@@ -24,7 +24,7 @@ public class AllUIsDocumentedTest : UnitTests
     [Test]
     public void EveryClassInAppropriateNamespace()
     {
-        List<string> Errors = new List<string>();
+        var Errors = new List<string>();
 
         Assembly.Load(typeof(RacewayRenderAreaUI).Assembly.FullName);
         Assembly.Load(typeof(ExtractionConfigurationUI).Assembly.FullName);
@@ -50,8 +50,8 @@ public class AllUIsDocumentedTest : UnitTests
         Errors.AddRange(EnforceTypeBelongsInNamespace(typeof(ContextMenuStrip), "Menus"));
         Errors.AddRange(EnforceTypeBelongsInNamespace(typeof(ToolStripMenuItem), "Menus.MenuItems"));
             
-        foreach (string error in Errors)
-            Console.WriteLine("FATAL NAMESPACE ERROR FAILURE:" + error);
+        foreach (var error in Errors)
+            Console.WriteLine($"FATAL NAMESPACE ERROR FAILURE:{error}");
 
         Assert.AreEqual(Errors.Count,0);
     }
@@ -67,7 +67,7 @@ public class AllUIsDocumentedTest : UnitTests
     {
 
         SetupMEF();
-        foreach (Type type in MEF.GetAllTypes().Where(InterfaceType.IsAssignableFrom))
+        foreach (var type in MEF.GetAllTypes().Where(InterfaceType.IsAssignableFrom))
         {
             if (type.Namespace == null) 
                 continue;

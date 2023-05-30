@@ -20,7 +20,7 @@ public static class Rfc4180Writer
     {
         if (includeHeaders)
         {
-            IEnumerable<string> headerValues = sourceTable.Columns
+            var headerValues = sourceTable.Columns
                 .OfType<DataColumn>()
                 .Select(column => QuoteValue(column.ColumnName));
 
@@ -83,7 +83,7 @@ public static class Rfc4180Writer
         if (value == null)
             return "NULL";
 
-        return String.Concat("\"", value, "\"");
+        return $"\"{value}\"";
 
     }
 }

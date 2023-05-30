@@ -24,7 +24,7 @@ class BoundDateTest
         b.LowerFieldName = "dob";
         b.Upper = DateTime.MaxValue;
 
-        ValidationFailure result = CallValidateOnValidData("admission_date", b);
+        var result = CallValidateOnValidData("admission_date", b);
 
         Assert.IsNull(result);
     }
@@ -37,8 +37,8 @@ class BoundDateTest
         Assert.IsTrue(b.Inclusive);
 
 
-        object[] cols = new object[] { DateTime.Parse("2007-10-09 00:00:00.0000000") };
-        string[] names = new string[]{"dob2"};
+        var cols = new object[] { DateTime.Parse("2007-10-09 00:00:00.0000000") };
+        var names = new string[]{"dob2"};
         b.LowerFieldName = "dob2";
 
         Assert.IsNull(b.Validate(DateTime.Parse("2007-10-09 00:00:00.0000000"),cols,names));
@@ -65,7 +65,7 @@ class BoundDateTest
         b.LowerFieldName = "dob";
         b.Upper = DateTime.MaxValue;
             
-        ValidationFailure result = CallValidateOnInvalidData("admission_date", b);
+        var result = CallValidateOnInvalidData("admission_date", b);
 
         if(result == null)
             Assert.Fail("Expected validation exception, but none came");
@@ -85,9 +85,9 @@ class BoundDateTest
 
         b.UpperFieldName = "appointmentDate";
 
-        object[] cols = new object[] { DBNull.Value};
+        var cols = new object[] { DBNull.Value};
 
-        String[] names= new string[]{"appointmentDate"};
+        var names= new string[]{"appointmentDate"};
 
         b.Validate(null,cols,names);
     }
@@ -95,13 +95,13 @@ class BoundDateTest
 
     private ValidationFailure CallValidateOnValidData(string targetProperty, BoundDate b)
     {
-        Dictionary<string, object> d = TestConstants.AdmissionDateOccursAfterDob;
+        var d = TestConstants.AdmissionDateOccursAfterDob;
         return CallValidate(targetProperty, b, d);
     }
 
     private ValidationFailure CallValidateOnInvalidData(string targetProperty, BoundDate b)
     {
-        Dictionary<string, object> d = TestConstants.AdmissionDateOccursBeforeDob;
+        var d = TestConstants.AdmissionDateOccursBeforeDob;
         return CallValidate(targetProperty, b, d);
     }
 

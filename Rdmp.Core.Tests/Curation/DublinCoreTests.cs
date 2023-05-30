@@ -69,7 +69,7 @@ class DublinCoreTests
     [Test]
     public void TestReadingDocument()
     {
-        string xml =
+        var xml =
             @"<?xml version=""1.0""?>
 
 <metadata

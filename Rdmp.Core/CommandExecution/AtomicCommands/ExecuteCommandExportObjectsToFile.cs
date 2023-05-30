@@ -118,7 +118,7 @@ public class ExecuteCommandExportObjectsToFile : BasicCommandExecution
             var d = _gatherer.GatherDependencies(_toExport[0]);
 
             var shareDefinitions = d.ToShareDefinitionWithChildren(_shareManager);
-            string serial = JsonConvertExtensions.SerializeObject(shareDefinitions, _repositoryLocator);
+            var serial = JsonConvertExtensions.SerializeObject(shareDefinitions, _repositoryLocator);
             File.WriteAllText(TargetFileInfo.FullName, serial);
 
             return;
@@ -130,10 +130,10 @@ public class ExecuteCommandExportObjectsToFile : BasicCommandExecution
         foreach (var o in _toExport)
         {
             var d = _gatherer.GatherDependencies(o);
-            var filename = QuerySyntaxHelper.MakeHeaderNameSensible(o.ToString()) + ".sd";
+            var filename = $"{QuerySyntaxHelper.MakeHeaderNameSensible(o.ToString())}.sd";
 
             var shareDefinitions = d.ToShareDefinitionWithChildren(_shareManager);
-            string serial = JsonConvertExtensions.SerializeObject(shareDefinitions, _repositoryLocator);
+            var serial = JsonConvertExtensions.SerializeObject(shareDefinitions, _repositoryLocator);
             var f = Path.Combine(TargetDirectoryInfo.FullName, filename);
             File.WriteAllText(f, serial);
         }

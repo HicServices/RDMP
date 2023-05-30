@@ -64,10 +64,10 @@ public class WordDataReleaseFileGenerator : DocXHelper
             //actually changes it to landscape :)
             SetLandscape(document);
                                
-            InsertHeader(document, "Project:"+ Project.Name,1);
+            InsertHeader(document, $"Project:{Project.Name}",1);
             InsertHeader(document, Configuration.Name,2);
                 
-            string disclaimer = _repository.DataExportPropertyManager.GetValue(DataExportProperty.ReleaseDocumentDisclaimer);
+            var disclaimer = _repository.DataExportPropertyManager.GetValue(DataExportProperty.ReleaseDocumentDisclaimer);
 
             if(disclaimer != null)
                 InsertParagraph(document,disclaimer);
@@ -91,11 +91,11 @@ public class WordDataReleaseFileGenerator : DocXHelper
 
     private void CreateTopTable1(XWPFDocument document)
     {
-        bool hasTicket = !string.IsNullOrWhiteSpace(Project.MasterTicket);
-        bool hasProchi = Cohort.GetReleaseIdentifier().ToLower().Contains("prochi");
+        var hasTicket = !string.IsNullOrWhiteSpace(Project.MasterTicket);
+        var hasProchi = Cohort.GetReleaseIdentifier().ToLower().Contains("prochi");
 
-        int currentRow = 0;
-        int requiredRows = 1;
+        var currentRow = 0;
+        var requiredRows = 1;
 
         if (hasProchi)
             requiredRows++;
@@ -135,7 +135,8 @@ public class WordDataReleaseFileGenerator : DocXHelper
         {
             con.Open();
 
-            string sql = "SELECT  TOP 1 LEFT(" + Cohort.GetReleaseIdentifier() + ",3) FROM " + ect.TableName + " WHERE " + Cohort.WhereSQL();
+            var sql =
+                $"SELECT  TOP 1 LEFT({Cohort.GetReleaseIdentifier()},3) FROM {ect.TableName} WHERE {Cohort.WhereSQL()}";
 
             using(var cmd = db.Server.GetCommand(sql, con))
             {
@@ -149,7 +150,7 @@ public class WordDataReleaseFileGenerator : DocXHelper
     {
         var table = InsertTable(document, 2, 4);
             
-        int tableLine = 0;
+        var tableLine = 0;
 
         SetTableCell(table,tableLine, 0, "Version");
         SetTableCell(table,tableLine, 1, "Description");
@@ -169,7 +170,7 @@ public class WordDataReleaseFileGenerator : DocXHelper
     {
         var table = InsertTable(document, ExtractionResults.Length + 1, 5);
             
-        int tableLine = 0;
+        var tableLine = 0;
 
         SetTableCell(table,tableLine, 0, "Data Requirement");
         SetTableCell(table,tableLine, 1, "Notes");
@@ -204,9 +205,9 @@ public class WordDataReleaseFileGenerator : DocXHelper
         if (result.DestinationDescription.StartsWith(Project.ExtractionDirectory,
                 StringComparison.CurrentCultureIgnoreCase))
         {
-            string relative = result.DestinationDescription.Substring(Project.ExtractionDirectory.Length).Replace('\\', '/');
+            var relative = result.DestinationDescription.Substring(Project.ExtractionDirectory.Length).Replace('\\', '/');
                 
-            return "./" + relative.Trim('/');
+            return $"./{relative.Trim('/')}";
         }
 
         return result.DestinationDescription;

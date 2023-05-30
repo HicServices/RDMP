@@ -36,7 +36,7 @@ class ThemeExtender
     {
         string color = null;
 
-        XElement environmentElement = _xml.Root.Element("Theme").Elements("Category").FirstOrDefault(item => item.Attribute("Name").Value == category);
+        var environmentElement = _xml.Root.Element("Theme").Elements("Category").FirstOrDefault(item => item.Attribute("Name").Value == category);
 
         if (environmentElement != null)
         {
@@ -49,7 +49,7 @@ class ThemeExtender
         if (color == null)
             return Color.Transparent;
 
-        return ColorTranslator.FromHtml("#" + color);
+        return ColorTranslator.FromHtml($"#{color}");
     }
 
     public void ApplyTo(ToolStrip item)

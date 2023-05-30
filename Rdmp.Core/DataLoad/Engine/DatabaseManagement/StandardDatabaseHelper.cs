@@ -27,7 +27,7 @@ public class StandardDatabaseHelper
 
             
 
-        foreach (LoadBubble stage in new[] {LoadBubble.Raw, LoadBubble.Staging, LoadBubble.Live,})
+        foreach (var stage in new[] {LoadBubble.Raw, LoadBubble.Staging, LoadBubble.Live,})
         {
             var stageName = DatabaseNamer.GetDatabaseName(liveDatabase.GetRuntimeName(), stage);
             DatabaseInfoList.Add(stage, stage == LoadBubble.Raw ? rawServer.ExpectDatabase(stageName) : liveDatabase.Server.ExpectDatabase(stageName));
@@ -38,11 +38,5 @@ public class StandardDatabaseHelper
 
     // Indexer declaration.
     // If index is out of range, the temps array will throw the exception.
-    public DiscoveredDatabase this[LoadBubble index]
-    {
-        get
-        {
-            return DatabaseInfoList[index];
-        }
-    }
+    public DiscoveredDatabase this[LoadBubble index] => DatabaseInfoList[index];
 }

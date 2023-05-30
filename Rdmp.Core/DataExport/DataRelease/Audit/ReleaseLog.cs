@@ -29,50 +29,50 @@ public class ReleaseLog : DatabaseEntity,IReleaseLog
 {
     public int CumulativeExtractionResults_ID
     {
-        get { return _cumulativeExtractionResultsID; }
-        set { SetField(ref _cumulativeExtractionResultsID, value); }
+        get => _cumulativeExtractionResultsID;
+        set => SetField(ref _cumulativeExtractionResultsID, value);
     }
 
     public string Username
     {
-        get { return _username; }
-        set { SetField(ref _username , value); }
+        get => _username;
+        set => SetField(ref _username , value);
     }
 
     public DateTime DateOfRelease
     {
-        get { return _dateOfRelease; }
-        set { SetField(ref  _dateOfRelease, value); }
+        get => _dateOfRelease;
+        set => SetField(ref  _dateOfRelease, value);
     }
 
     public string MD5OfDatasetFile
     {
-        get { return _md5OfDatasetFile; }
-        set { SetField(ref  _md5OfDatasetFile, value); }
+        get => _md5OfDatasetFile;
+        set => SetField(ref  _md5OfDatasetFile, value);
     }
 
     public string DatasetState
     {
-        get { return _datasetState; }
-        set { SetField(ref _datasetState, value); }
+        get => _datasetState;
+        set => SetField(ref _datasetState, value);
     }
 
     public string EnvironmentState
     {
-        get { return _environmentState; }
-        set { SetField(ref _environmentState, value); }
+        get => _environmentState;
+        set => SetField(ref _environmentState, value);
     }
 
     public bool IsPatch
     {
-        get { return _isPatch; }
-        set { SetField(ref _isPatch, value); }
+        get => _isPatch;
+        set => SetField(ref _isPatch, value);
     }
 
     public string ReleaseFolder
     {
-        get { return _releaseFolder; }
-        set { SetField(ref _releaseFolder , value); }
+        get => _releaseFolder;
+        set => SetField(ref _releaseFolder , value);
     }
 
 

@@ -244,7 +244,7 @@ class ConsoleGuiSqlEditor : Window
 
     private void TbTimeout_TextChanged(NStack.ustring value)
     {
-        if(int.TryParse(value.ToString(),out int newTimeout))
+        if(int.TryParse(value.ToString(),out var newTimeout))
             _timeout = newTimeout < 0 ? DefaultTimeout : newTimeout;
         else
             _timeout = DefaultTimeout;
@@ -308,7 +308,7 @@ class ConsoleGuiSqlEditor : Window
     {
         try
         {
-            string sql = textView.Text.ToString();
+            var sql = textView.Text.ToString();
 
             if(string.IsNullOrWhiteSpace(sql))
             {
@@ -430,7 +430,7 @@ class ConsoleGuiSqlEditor : Window
                 string.Join("", line),
                 "\\b");
 
-            int count = 0;
+            var count = 0;
             string current = null;
 
             foreach (var word in words)

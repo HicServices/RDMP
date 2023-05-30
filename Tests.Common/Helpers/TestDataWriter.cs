@@ -22,9 +22,9 @@ public class TestDataWriter : CacheFilesystemDestination
 
         var toCreateFilesIn = layout.Resolver.GetLoadCacheDirectory(CacheDirectory);
             
-        foreach (FileInfo file in toProcess.Files)
+        foreach (var file in toProcess.Files)
         {
-            string destination = Path.Combine(toCreateFilesIn.FullName, file.Name);
+            var destination = Path.Combine(toCreateFilesIn.FullName, file.Name);
 
             if(File.Exists(destination))
                 File.Delete(destination);

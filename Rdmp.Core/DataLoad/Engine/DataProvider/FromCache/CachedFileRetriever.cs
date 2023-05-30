@@ -43,7 +43,7 @@ public abstract class CachedFileRetriever : ICachedDataProvider
     public event CacheFileNotFoundHandler CacheFileNotFound;
     protected virtual void OnCacheFileNotFound(string message, Exception ex)
     {
-        CacheFileNotFoundHandler handler = CacheFileNotFound;
+        var handler = CacheFileNotFound;
         if (handler != null) handler(this, message, ex);
     }
     #endregion
@@ -86,10 +86,12 @@ public abstract class CachedFileRetriever : ICachedDataProvider
             var fileInfo = cacheLayout.GetArchiveFileInfoForDate(date,job);
                 
             if (fileInfo == null)
-                OnCacheFileNotFound("Could not find cached file for date '" + date + "' for CacheLayout.ArchiveType " + cacheLayout.ArchiveType + " in cache at " + job.LoadDirectory.Cache.FullName, null);
+                OnCacheFileNotFound(
+                    $"Could not find cached file for date '{date}' for CacheLayout.ArchiveType {cacheLayout.ArchiveType} in cache at {job.LoadDirectory.Cache.FullName}", null);
             else
             if (!fileInfo.Exists)
-                OnCacheFileNotFound("Could not find cached file '" + fileInfo.FullName + "' for date " + date + " in cache at " + job.LoadDirectory.Cache.FullName, null);
+                OnCacheFileNotFound(
+                    $"Could not find cached file '{fileInfo.FullName}' for date {date} in cache at {job.LoadDirectory.Cache.FullName}", null);
 
             _workload.Add(date, fileInfo);
         }
@@ -105,7 +107,8 @@ public abstract class CachedFileRetriever : ICachedDataProvider
         foreach (var path in absoluteFilePaths)
         {
             if (!path.FullName.StartsWith(directory.FullName))
-                throw new InvalidOperationException("The file must be within " + directory.FullName + " (or a subdirectory thereof)");
+                throw new InvalidOperationException(
+                    $"The file must be within {directory.FullName} (or a subdirectory thereof)");
 
             relativeFilePaths.Add(path.FullName.Replace(directory.FullName, ""));
         }
@@ -142,7 +145,7 @@ public abstract class CachedFileRetriever : ICachedDataProvider
         var layout = CreateCacheLayout((ScheduledDataLoadJob)dataLoadJob);
 
         //extract all the jobs into the forLoading directory
-        foreach (KeyValuePair<DateTime, FileInfo> job in _workload)
+        foreach (var job in _workload)
         {
             if (job.Value == null)
                 continue;
@@ -154,7 +157,8 @@ public abstract class CachedFileRetriever : ICachedDataProvider
             }
             else
             {
-                dataLoadJob.OnNotify(this, new NotifyEventArgs(ProgressEventType.Information, "Archive identified:" + job.Value.FullName));
+                dataLoadJob.OnNotify(this, new NotifyEventArgs(ProgressEventType.Information,
+                    $"Archive identified:{job.Value.FullName}"));
 
                 // just copy the archives across
                 var relativePath = GetPathRelativeToCacheRoot(dataLoadJob.LoadDirectory.Cache, job.Value);
@@ -189,7 +193,8 @@ public abstract class CachedFileRetriever : ICachedDataProvider
     public bool Validate(ILoadDirectory destination)
     {
         if (destination.Cache == null)
-            throw new NullReferenceException("Destination " + destination.RootPath.FullName + " does not have a 'Cache' folder");
+            throw new NullReferenceException(
+                $"Destination {destination.RootPath.FullName} does not have a 'Cache' folder");
 
         if (!destination.Cache.Exists)
             throw new DirectoryNotFoundException(destination.Cache.FullName);
@@ -232,15 +237,15 @@ public abstract class CachedFileRetriever : ICachedDataProvider
                 return;
             }
 
-            notifier.OnCheckPerformed(new CheckEventArgs("Archive type is:" + layout.ArchiveType,CheckResult.Success));
-            notifier.OnCheckPerformed(new CheckEventArgs("DateFormat is:" + layout.DateFormat, CheckResult.Success));
-            notifier.OnCheckPerformed(new CheckEventArgs("Granularity is:" + layout.CacheFileGranularity, CheckResult.Success));
+            notifier.OnCheckPerformed(new CheckEventArgs($"Archive type is:{layout.ArchiveType}",CheckResult.Success));
+            notifier.OnCheckPerformed(new CheckEventArgs($"DateFormat is:{layout.DateFormat}", CheckResult.Success));
+            notifier.OnCheckPerformed(new CheckEventArgs($"Granularity is:{layout.CacheFileGranularity}", CheckResult.Success));
 
-            notifier.OnCheckPerformed(new CheckEventArgs("CacheLayout is:" + layout, CheckResult.Success));
+            notifier.OnCheckPerformed(new CheckEventArgs($"CacheLayout is:{layout}", CheckResult.Success));
 
             var filesFound = layout.CheckCacheFilesAvailability(new FromCheckNotifierToDataLoadEventListener(notifier));
 
-            notifier.OnCheckPerformed(new CheckEventArgs("Files Found In Cache:" + filesFound,filesFound ? CheckResult.Success : CheckResult.Warning));
+            notifier.OnCheckPerformed(new CheckEventArgs($"Files Found In Cache:{filesFound}",filesFound ? CheckResult.Success : CheckResult.Warning));
 
             var d = layout.GetLoadCacheDirectory(new FromCheckNotifierToDataLoadEventListener(notifier));
 
@@ -250,11 +255,11 @@ public abstract class CachedFileRetriever : ICachedDataProvider
                 return;
             }
                 
-            notifier.OnCheckPerformed(new CheckEventArgs("Cache Directory Is:" + d.FullName,CheckResult.Success));
+            notifier.OnCheckPerformed(new CheckEventArgs($"Cache Directory Is:{d.FullName}",CheckResult.Success));
         }
         catch (Exception ex)
         {
-            notifier.OnCheckPerformed(new CheckEventArgs("Checking failed on " + this, CheckResult.Fail, ex));
+            notifier.OnCheckPerformed(new CheckEventArgs($"Checking failed on {this}", CheckResult.Fail, ex));
         }
     }
 

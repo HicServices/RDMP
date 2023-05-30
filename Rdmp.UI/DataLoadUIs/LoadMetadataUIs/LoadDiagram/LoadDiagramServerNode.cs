@@ -41,18 +41,18 @@ public class LoadDiagramServerNode:TableInfoServerNode,IKnowWhatIAm, IOrderable
         _database = database;
         _loadTables = loadTables;
         _config = config;
-        string serverName = database.Server.Name;
+        var serverName = database.Server.Name;
 
         switch (bubble)
         {
             case LoadBubble.Raw:
-                _description = "RAW Server:" + serverName;
+                _description = $"RAW Server:{serverName}";
                 break;
             case LoadBubble.Staging:
-                _description = "STAGING Server:" + serverName;
+                _description = $"STAGING Server:{serverName}";
                 break;
             case LoadBubble.Live:
-                _description = "LIVE Server:" + serverName;
+                _description = $"LIVE Server:{serverName}";
                 break;
             default:
                 throw new ArgumentOutOfRangeException("bubble");
@@ -64,15 +64,16 @@ public class LoadDiagramServerNode:TableInfoServerNode,IKnowWhatIAm, IOrderable
             var servers = loadTables.Select(t => t.Server).Distinct().ToArray();
             if (servers.Length > 1)
             {
-                _description = "Ambiguous LIVE Servers:" + string.Join(",", servers);
-                ErrorDescription = "The TableInfo collection that underly the Catalogues in this data load configuration are on different servers.  The servers they believe they live on are:" +  string.Join(",", servers) + ".  All TableInfos in a load must belong on the same server or the load will not work.";
+                _description = $"Ambiguous LIVE Servers:{string.Join(",", servers)}";
+                ErrorDescription =
+                    $"The TableInfo collection that underly the Catalogues in this data load configuration are on different servers.  The servers they believe they live on are:{string.Join(",", servers)}.  All TableInfos in a load must belong on the same server or the load will not work.";
             }
 
-            string[] databases = _loadTables.Select(t => t.GetDatabaseRuntimeName()).Distinct().ToArray();
+            var databases = _loadTables.Select(t => t.GetDatabaseRuntimeName()).Distinct().ToArray();
 
             _liveDatabaseDictionary = new Dictionary<DiscoveredDatabase, TableInfo[]>();
 
-            foreach (string dbname in databases)
+            foreach (var dbname in databases)
                 _liveDatabaseDictionary.Add(_database.Server.ExpectDatabase(dbname),_loadTables.Where(t => t.GetDatabaseRuntimeName().Equals(dbname,StringComparison.CurrentCultureIgnoreCase)).ToArray());
         }
 
@@ -96,7 +97,7 @@ public class LoadDiagramServerNode:TableInfoServerNode,IKnowWhatIAm, IOrderable
         
     public void DiscoverState()
     {
-        foreach (LoadDiagramDatabaseNode db in Children)
+        foreach (var db in Children)
             db.DiscoverState();
     }
     #region equality
@@ -117,7 +118,7 @@ public class LoadDiagramServerNode:TableInfoServerNode,IKnowWhatIAm, IOrderable
     {
         unchecked
         {
-            int hashCode = base.GetHashCode();
+            var hashCode = base.GetHashCode();
             hashCode = (hashCode*397) ^ (int) _bubble;
             hashCode = (hashCode*397) ^ (_database != null ? _database.GetHashCode() : 0);
             return hashCode;
@@ -143,5 +144,6 @@ public class LoadDiagramServerNode:TableInfoServerNode,IKnowWhatIAm, IOrderable
 
     public int Order
     {
-        get { return (int) _bubble;} set{} }
+        get => (int) _bubble;
+        set{} }
 }

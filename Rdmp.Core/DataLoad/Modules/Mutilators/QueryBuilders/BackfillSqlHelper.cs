@@ -48,7 +48,7 @@ public class BackfillSqlHelper
         if (!joinPath.Any())
             return string.Format(@"SELECT {0}.*, {0}.{1} AS TimePeriodicityField FROM {2} {0}",
                 tableAlias, _timePeriodicityField.GetRuntimeName(),
-                "[" + dbInfo.GetRuntimeName() + "]..[" + tableInfo.GetRuntimeName() + "]");
+                $"[{dbInfo.GetRuntimeName()}]..[{tableInfo.GetRuntimeName()}]");
 
         // Ensure that the TimePeriodicityTable is at the end of the path (to make constructing the join a bit easier)
         if (joinPath[0].ForeignKey.TableInfo_ID == _tiWithTimeColumn.ID || joinPath[0].PrimaryKey.TableInfo_ID == _tiWithTimeColumn.ID)
@@ -60,7 +60,7 @@ public class BackfillSqlHelper
         var sql = string.Format(@"SELECT {0}.*, {1}.{2} AS TimePeriodicityField 
 FROM {3} {4}",
             tableAlias, timePeriodTableAlias, _timePeriodicityField.GetRuntimeName(),
-            "[" + dbInfo.GetRuntimeName() + "]..[" + tableInfo.GetRuntimeName() + "]",
+            $"[{dbInfo.GetRuntimeName()}]..[{tableInfo.GetRuntimeName()}]",
             tableAlias);
 
         // Is our table a parent or child? The join is composed differently.
@@ -73,12 +73,12 @@ FROM {3} {4}",
             if (ascending)
             {
                 var parentTable = join.PrimaryKey.TableInfo;
-                var childTableAlias = (i == 0) ? tableAlias : "j" + i;
-                var parentTableAlias = (i == (joinPath.Count - 1)) ? timePeriodTableAlias : "j" + (i + 1);
+                var childTableAlias = (i == 0) ? tableAlias : $"j{i}";
+                var parentTableAlias = (i == (joinPath.Count - 1)) ? timePeriodTableAlias : $"j{(i + 1)}";
 
                 sql += string.Format(@"
 LEFT JOIN {0} {1} ON {1}.{3} = {2}.{4}",
-                    "[" + dbInfo.GetRuntimeName() + "]..[" + parentTable.GetRuntimeName() + "]",
+                    $"[{dbInfo.GetRuntimeName()}]..[{parentTable.GetRuntimeName()}]",
                     parentTableAlias,
                     childTableAlias,
                     join.PrimaryKey.GetRuntimeName(),
@@ -87,12 +87,12 @@ LEFT JOIN {0} {1} ON {1}.{3} = {2}.{4}",
             else
             {
                 var childTable = join.ForeignKey.TableInfo;
-                var parentTableAlias = (i == 0) ? tableAlias : "j" + (i + 1);
-                var childTableAlias = (i == (joinPath.Count - 1)) ? timePeriodTableAlias : "j" + i;
+                var parentTableAlias = (i == 0) ? tableAlias : $"j{(i + 1)}";
+                var childTableAlias = (i == (joinPath.Count - 1)) ? timePeriodTableAlias : $"j{i}";
 
                 sql += string.Format(@"
 LEFT JOIN {0} {1} ON {2}.{3} = {1}.{4}",
-                    "[" + dbInfo.GetRuntimeName() + "]..[" + childTable.GetRuntimeName() + "]",
+                    $"[{dbInfo.GetRuntimeName()}]..[{childTable.GetRuntimeName()}]",
                     childTableAlias,
                     parentTableAlias,
                     join.PrimaryKey.GetRuntimeName(),
@@ -109,20 +109,16 @@ LEFT JOIN {0} {1} ON {2}.{3} = {1}.{4}",
     {
         // All rows in STAGING tiCurrent + the time from the TimePeriodicity table
         var toLoadWithTimeSQL =
-            "(" +
-            CreateSqlForJoinToTimePeriodicityTable("CurrentTable", tiCurrent, "TimePeriodicityTable", _stagingDbInfo, joinPathToTimeTable) +
-            ") AS ToLoadWithTime";
+            $"({CreateSqlForJoinToTimePeriodicityTable("CurrentTable", tiCurrent, "TimePeriodicityTable", _stagingDbInfo, joinPathToTimeTable)}) AS ToLoadWithTime";
 
         // All rows in LIVE tiCurrent + the time from the TimePeriodicity table
         var loadedWithTimeSQL =
-            "(" +
-            CreateSqlForJoinToTimePeriodicityTable("LiveCurrentTable", tiCurrent, "LiveTimePeriodicityTable", _liveDbInfo, joinPathToTimeTable) +
-            ") AS LoadedWithTime";
+            $"({CreateSqlForJoinToTimePeriodicityTable("LiveCurrentTable", tiCurrent, "LiveTimePeriodicityTable", _liveDbInfo, joinPathToTimeTable)}) AS LoadedWithTime";
 
         var pksForCurrent = tiCurrent.ColumnInfos.Where(info => info.IsPrimaryKey);
         var pkEquality = string.Join(" AND ",
             pksForCurrent.Select(
-                info => "ToLoadWithTime." + info.GetRuntimeName() + " = LoadedWithTime." + info.GetRuntimeName()));
+                info => $"ToLoadWithTime.{info.GetRuntimeName()} = LoadedWithTime.{info.GetRuntimeName()}"));
 
         // Join to leave valid STAGING rows which are stale, or whose relation with the TimePeriodicity field has been severed and as such should be deleted anyway (since we can't assign a date to the record)
         var cte = string.Format(@"

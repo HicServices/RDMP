@@ -33,14 +33,14 @@ public partial class DataTableViewerUI : UserControl
 
         try
         {
-            using (DbConnection con = DataAccessPortal.GetInstance().ExpectServer(source, DataAccessContext.DataExport).GetConnection())
+            using (var con = DataAccessPortal.GetInstance().ExpectServer(source, DataAccessContext.DataExport).GetConnection())
             {
                 con.Open();
 
                 using(var cmd = DatabaseCommandHelper.GetCommand(sql, con))
                 using (var da = DatabaseCommandHelper.GetDataAdapter(cmd))
                 {
-                    DataTable dt = new DataTable();
+                    var dt = new DataTable();
                     da.Fill(dt);
                     dataGridView1.DataSource = dt;
                 }
@@ -48,7 +48,7 @@ public partial class DataTableViewerUI : UserControl
         }
         catch (Exception e)
         {
-            ExceptionViewer.Show("Failed to connect to source " + source + " and execute SQL: "+Environment.NewLine + sql,e);
+            ExceptionViewer.Show($"Failed to connect to source {source} and execute SQL: {Environment.NewLine}{sql}",e);
         }
 
         this.Text = caption;

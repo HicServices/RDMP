@@ -65,12 +65,12 @@ public partial class FindAndReplaceUI : RDMPUserControl
         olvAllObjects.CellEditFinished += OlvAllObjectsCellEditFinished;
 
         //Create all the nodes up front
-        foreach (IMapsDirectlyToDatabaseTable o in _allObjects.Where(_adjustableLocationPropertyFinder.ObjectContainsProperty))
-        foreach (PropertyInfo propertyInfo in _adjustableLocationPropertyFinder.GetProperties(o))
+        foreach (var o in _allObjects.Where(_adjustableLocationPropertyFinder.ObjectContainsProperty))
+        foreach (var propertyInfo in _adjustableLocationPropertyFinder.GetProperties(o))
             _locationNodes.Add( new FindAndReplaceNode(o,propertyInfo));
 
-        foreach (IMapsDirectlyToDatabaseTable o in _allObjects.Where(_sqlPropertyFinder.ObjectContainsProperty))
-        foreach (PropertyInfo propertyInfo in _sqlPropertyFinder.GetProperties(o))
+        foreach (var o in _allObjects.Where(_sqlPropertyFinder.ObjectContainsProperty))
+        foreach (var propertyInfo in _sqlPropertyFinder.GetProperties(o))
             _sqlNodes.Add(new FindAndReplaceNode(o, propertyInfo));
 
         olvAllObjects.BeginUpdate();
@@ -81,7 +81,7 @@ public partial class FindAndReplaceUI : RDMPUserControl
     private void GetAllObjects(IActivateItems activator)
     {
 
-        Gatherer g = new Gatherer(activator.RepositoryLocator);
+        var g = new Gatherer(activator.RepositoryLocator);
 
         //We get these from the child provider because some objects (those below go off looking stuff up if you get them
         //and do not inject known good values first)

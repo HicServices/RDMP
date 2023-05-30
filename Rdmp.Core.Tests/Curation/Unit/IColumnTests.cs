@@ -33,7 +33,7 @@ class IColumnTests
         }
         public string GetRuntimeName()
         {
-            var helper = new MicrosoftQuerySyntaxHelper();
+            var helper = MicrosoftQuerySyntaxHelper.Instance;
 
             return Alias ?? helper.GetRuntimeName(SelectSQL);
         }
@@ -56,7 +56,7 @@ class IColumnTests
     [Test]
     public void GetRuntimeName_Strings_Pass()
     {
-        var syntax = new MicrosoftQuerySyntaxHelper();
+        var syntax = MicrosoftQuerySyntaxHelper.Instance;
 
         Assert.AreEqual(syntax.GetRuntimeName("[test]"), "test");
         Assert.AreEqual(syntax.GetRuntimeName("`test`"), "`test`");
@@ -70,7 +70,7 @@ class IColumnTests
     [Test]
     public void GetRuntimeName_IColumns_Pass()
     {
-        TestColumn tc = new TestColumn();
+        var tc = new TestColumn();
 
         tc.Alias = "test";
         Assert.AreEqual(tc.GetRuntimeName(),"test");
@@ -87,7 +87,7 @@ class IColumnTests
     [Test]
     public void GetRuntimeName_IColumns_ThrowBecauseMissingAliasOnScalarValueFunction()
     {
-        TestColumn tc = new TestColumn();
+        var tc = new TestColumn();
 
         tc.SelectSQL = "MangleQuery([mydb]..[myExcitingField])";
         var ex = Assert.Throws<RuntimeNameException>(()=> tc.GetRuntimeName());
@@ -97,7 +97,7 @@ class IColumnTests
     [Test]
     public void CheckSyntax_IColumn_Valid()
     {
-        TestColumn tc = new TestColumn();
+        var tc = new TestColumn();
             
         tc.Alias = "[bob smith]";
         tc.Check(new ThrowImmediatelyCheckNotifier());
@@ -112,7 +112,7 @@ class IColumnTests
     [Test]
     public void CheckSyntax_IColumn_ThrowBecauseInvalidAlias1()
     {
-        TestColumn tc = new TestColumn();
+        var tc = new TestColumn();
         tc.Alias = "bob smith";
         var ex = Assert.Throws<SyntaxErrorException>(()=>tc.Check(new ThrowImmediatelyCheckNotifier()));
         Assert.AreEqual("Whitespace found in unwrapped Alias \"bob smith\"",ex.Message);
@@ -122,7 +122,7 @@ class IColumnTests
     [Test]
     public void CheckSyntax_IColumn_ThrowBecauseInvalidAlias2()
     {
-        TestColumn tc = new TestColumn();
+        var tc = new TestColumn();
         tc.Alias = "`bob";
 
         var ex = Assert.Throws<SyntaxErrorException>(() => tc.Check(new ThrowImmediatelyCheckNotifier()));
@@ -132,7 +132,7 @@ class IColumnTests
     [Test]
     public void CheckSyntax_IColumn_ThrowBecauseInvalidAlias3()
     {
-        TestColumn tc = new TestColumn();
+        var tc = new TestColumn();
         tc.Alias = "bob]";
         var ex = Assert.Throws<SyntaxErrorException>(() => tc.Check(new ThrowImmediatelyCheckNotifier()));
         Assert.AreEqual("Invalid characters found in Alias \"bob]\"",ex.Message);
@@ -143,7 +143,7 @@ class IColumnTests
         
     public void CheckSyntax_IColumn_ThrowBecauseInvalidSelectSQL()
     {
-        TestColumn tc = new TestColumn();
+        var tc = new TestColumn();
         tc.Alias = "bob";
         tc.SelectSQL = "GetSomething('here'";
         var ex = Assert.Throws<SyntaxErrorException>(() => tc.Check(new ThrowImmediatelyCheckNotifier()));

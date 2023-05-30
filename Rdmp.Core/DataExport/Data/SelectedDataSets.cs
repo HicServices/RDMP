@@ -32,13 +32,13 @@ public class SelectedDataSets : DatabaseEntity, ISelectedDataSets, IInjectKnown<
     /// <inheritdoc/>
     public int ExtractionConfiguration_ID
     {
-        get { return _extractionConfiguration_ID; }
-        set { SetField(ref _extractionConfiguration_ID, value); }
+        get => _extractionConfiguration_ID;
+        set => SetField(ref _extractionConfiguration_ID, value);
     }
     /// <inheritdoc/>
     public int ExtractableDataSet_ID
     {
-        get { return _extractableDataSet_ID; }
+        get => _extractableDataSet_ID;
         set
         {
             ClearAllInjections();
@@ -48,8 +48,8 @@ public class SelectedDataSets : DatabaseEntity, ISelectedDataSets, IInjectKnown<
     /// <inheritdoc/>
     public int? RootFilterContainer_ID
     {
-        get { return _rootFilterContainer_ID; }
-        set { SetField(ref _rootFilterContainer_ID, value); }
+        get => _rootFilterContainer_ID;
+        set => SetField(ref _rootFilterContainer_ID, value);
     }
 
 
@@ -59,34 +59,27 @@ public class SelectedDataSets : DatabaseEntity, ISelectedDataSets, IInjectKnown<
 
     /// <inheritdoc cref="RootFilterContainer_ID"/>
     [NoMappingToDatabase]
-    public IContainer RootFilterContainer
-    {
-        get
-        {
-            return RootFilterContainer_ID == null
-                ? null
-                : Repository.GetObjectByID<FilterContainer>(RootFilterContainer_ID.Value);
-        }
-    }
+    public IContainer RootFilterContainer =>
+        RootFilterContainer_ID == null
+            ? null
+            : Repository.GetObjectByID<FilterContainer>(RootFilterContainer_ID.Value);
 
     /// <inheritdoc cref="ExtractionConfiguration_ID"/>
     [NoMappingToDatabase]
-    public IExtractionConfiguration ExtractionConfiguration { get { return _extractionConfiguration.Value; } }
+    public IExtractionConfiguration ExtractionConfiguration => _extractionConfiguration.Value;
 
     /// <inheritdoc cref="ExtractableDataSet_ID"/>
     [NoMappingToDatabase]
-    public IExtractableDataSet ExtractableDataSet {get { return _extractableDataSet.Value; }
-    }
+    public IExtractableDataSet ExtractableDataSet => _extractableDataSet.Value;
 
     /// <inheritdoc/>
     [NoMappingToDatabase]
-    public ISelectedDataSetsForcedJoin[] SelectedDataSetsForcedJoins {
-        get { return _selectedDatasetsForcedJoins.Value; }}
+    public ISelectedDataSetsForcedJoin[] SelectedDataSetsForcedJoins => _selectedDatasetsForcedJoins.Value;
 
 
     /// <inheritdoc/>
     [NoMappingToDatabase]
-    public IExtractionProgress ExtractionProgressIfAny { get => DataExportRepository.GetAllObjectsWithParent<ExtractionProgress>(this).SingleOrDefault(); }
+    public IExtractionProgress ExtractionProgressIfAny => DataExportRepository.GetAllObjectsWithParent<ExtractionProgress>(this).SingleOrDefault();
 
     #endregion
 

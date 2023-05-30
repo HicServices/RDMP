@@ -32,13 +32,16 @@ public class ParameterEditorScintillaSection
 
         var prototype = ConstantParameter.Parse(originalText, _querySyntaxHelper);
         if(prototype.Value != parameter.Value)
-            throw new ArgumentException("Parameter " + parameter + " was inconsistent with the SQL passed to us based on QueryBuilder.DeconstructStringIntoParameter, they had different Values");
+            throw new ArgumentException(
+                $"Parameter {parameter} was inconsistent with the SQL passed to us based on QueryBuilder.DeconstructStringIntoParameter, they had different Values");
 
         if (prototype.ParameterSQL != parameter.ParameterSQL)
-            throw new ArgumentException("Parameter " + parameter + " was inconsistent with the SQL passed to us based on QueryBuilder.DeconstructStringIntoParameter, they had different ParameterSQL");
+            throw new ArgumentException(
+                $"Parameter {parameter} was inconsistent with the SQL passed to us based on QueryBuilder.DeconstructStringIntoParameter, they had different ParameterSQL");
 
         if (prototype.Comment != parameter.Comment)
-            throw new ArgumentException("Parameter " + parameter + " was inconsistent with the SQL passed to us based on QueryBuilder.DeconstructStringIntoParameter, they had different Comment");
+            throw new ArgumentException(
+                $"Parameter {parameter} was inconsistent with the SQL passed to us based on QueryBuilder.DeconstructStringIntoParameter, they had different Comment");
 
     }
 
@@ -57,7 +60,7 @@ public class ParameterEditorScintillaSection
     {
         try
         {
-            string oldName = Parameter.ParameterName;
+            var oldName = Parameter.ParameterName;
                 
             ConstantParameter newPrototype;
             newPrototype = ConstantParameter.Parse(sql, _querySyntaxHelper);

@@ -43,7 +43,7 @@ public class FavouritesProvider
 
     public void RemoveFavourite(object sender, IMapsDirectlyToDatabaseTable o)
     {
-        Favourite toRemove = CurrentFavourites.SingleOrDefault(f => f.IsReferenceTo(o));
+        var toRemove = CurrentFavourites.SingleOrDefault(f => f.IsReferenceTo(o));
 
         if (toRemove != null)
         {

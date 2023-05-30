@@ -223,16 +223,17 @@ public partial class AggregateEditorUI : AggregateEditor_Design,ISaveableUI
     private void DetermineFromTables()
     {
         //implicit use
-        List<string> uniqueUsedTables = new List<string>();
+        var uniqueUsedTables = new List<string>();
 
         foreach (var d in _aggregate.AggregateDimensions)
         {
             var colInfo = d.ExtractionInformation.ColumnInfo;
                 
             if (colInfo == null)
-                throw new Exception("Aggregate Configuration " + _aggregate + " (Catalogue '" +_aggregate.Catalogue+ "') has a Dimension '"+d+"' which is an orphan (someone deleted the ColumnInfo)");
+                throw new Exception(
+                    $"Aggregate Configuration {_aggregate} (Catalogue '{_aggregate.Catalogue}') has a Dimension '{d}' which is an orphan (someone deleted the ColumnInfo)");
 
-            string toAdd = colInfo.TableInfo.ToString();
+            var toAdd = colInfo.TableInfo.ToString();
 
             if (!uniqueUsedTables.Contains(toAdd))
                 uniqueUsedTables.Add(toAdd);
@@ -279,7 +280,7 @@ public partial class AggregateEditorUI : AggregateEditor_Design,ISaveableUI
         e.Column.PutAspectByName(e.RowObject,e.NewValue);
 
         if (countColumn != null)
-            _aggregate.CountSQL = countColumn.SelectSQL + (countColumn.Alias != null ? " as " + countColumn.Alias : "");
+            _aggregate.CountSQL = countColumn.SelectSQL + (countColumn.Alias != null ? $" as {countColumn.Alias}" : "");
         else if (revertable != null)
         {
             if (revertable.HasLocalChanges().Evaluation == ChangeDescription.DatabaseCopyDifferent)
@@ -369,7 +370,7 @@ public partial class AggregateEditorUI : AggregateEditor_Design,ISaveableUI
         _querySyntaxHelper.SplitLineIntoSelectSQLAndAlias(_aggregate.CountSQL, out col, out alias);
 
         if (string.IsNullOrWhiteSpace(alias))
-            _aggregate.CountSQL = col + _querySyntaxHelper.AliasPrefix+ " MyCount";
+            _aggregate.CountSQL = $"{col}{_querySyntaxHelper.AliasPrefix} MyCount";
     }
 
     private void btnClearPivotDimension_Click(object sender, EventArgs e)
@@ -405,10 +406,9 @@ public partial class AggregateEditorUI : AggregateEditor_Design,ISaveableUI
 
         if(axisDimensions.Length >1)
             if (Activator.YesNo(
-                    "Aggregate " + _aggregate +
-                    " has more than 1 dimension, this is highly illegal, shall I delete all the axis configurations for you?",
+                    $"Aggregate {_aggregate} has more than 1 dimension, this is highly illegal, shall I delete all the axis configurations for you?",
                     "Delete all axis?"))
-                foreach (AggregateDimension a in axisDimensions)
+                foreach (var a in axisDimensions)
                     a.AggregateContinuousDateAxis.DeleteInDatabase();
             else
                 return;

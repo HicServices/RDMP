@@ -28,7 +28,7 @@ public class ShareLoadMetadataTests : UnitTests
     public void GatherAndShare_LoadMetadata_EmptyLoadMetadata()
     {
         //create an object
-        LoadMetadata lmd = new LoadMetadata(Repository, "MyLmd");
+        var lmd = new LoadMetadata(Repository, "MyLmd");
 
         var lmd2 = ShareToNewRepository(lmd);
             
@@ -86,7 +86,7 @@ public class ShareLoadMetadataTests : UnitTests
     public void GatherAndShare_LoadMetadata_WithRealProcessTask()
     {
         //create an object
-        LoadMetadata lmd1 = WhenIHaveA<LoadMetadata>();
+        var lmd1 = WhenIHaveA<LoadMetadata>();
 
         SetupMEF();
             
@@ -115,7 +115,7 @@ public class ShareLoadMetadataTests : UnitTests
 
         AssertAreEqual(pt1.GetAllArguments(),pt2.GetAllArguments());
 
-        RuntimeTaskFactory f = new RuntimeTaskFactory(Repository);
+        var f = new RuntimeTaskFactory(Repository);
 
         var stg = Mock.Of<IStageArgs>(x => x.LoadStage==LoadStage.Mounting);
 
@@ -131,11 +131,11 @@ public class ShareLoadMetadataTests : UnitTests
     public void GatherAndShare_LoadMetadata_WithReferenceProcessTaskArgument()
     {
         //create an object
-        LoadMetadata lmd1 = WhenIHaveA<LoadMetadata>();
+        var lmd1 = WhenIHaveA<LoadMetadata>();
 
         //setup Reflection / MEF
         SetupMEF();
-        RuntimeTaskFactory f = new RuntimeTaskFactory(Repository);
+        var f = new RuntimeTaskFactory(Repository);
         var stg = Mock.Of<IStageArgs>(x =>
             x.LoadStage==LoadStage.Mounting &&
             x.DbInfo == new DiscoveredServer(new SqlConnectionStringBuilder()).ExpectDatabase("d"));
@@ -154,18 +154,18 @@ public class ShareLoadMetadataTests : UnitTests
         pta.SaveToDatabase();
 
         //check that reflection can assemble the master ProcessTask
-        MutilateDataTablesRuntimeTask t = (MutilateDataTablesRuntimeTask) f.Create(pt1, stg);
+        var t = (MutilateDataTablesRuntimeTask) f.Create(pt1, stg);
         Assert.IsNotNull(((SafePrimaryKeyCollisionResolverMutilation)t.MEFPluginClassInstance).ColumnToResolveOn);
             
         //share to the second repository (which won't have that ColumnInfo)
         var lmd2 = ShareToNewRepository(lmd1);
             
         //create a new reflection factory for the new repo
-        RuntimeTaskFactory f2 = new RuntimeTaskFactory(lmd2.CatalogueRepository);
+        var f2 = new RuntimeTaskFactory(lmd2.CatalogueRepository);
         lmd2.CatalogueRepository.MEF = MEF;
             
         //when we create the shared instance it should not have a valid value for ColumnInfo (since it wasn't - and shouldn't be shared)
-        MutilateDataTablesRuntimeTask t2 = (MutilateDataTablesRuntimeTask) f2.Create(lmd2.ProcessTasks.Single(), stg);
+        var t2 = (MutilateDataTablesRuntimeTask) f2.Create(lmd2.ProcessTasks.Single(), stg);
         Assert.IsNull(((SafePrimaryKeyCollisionResolverMutilation)t2.MEFPluginClassInstance).ColumnToResolveOn);
 
     }

@@ -27,15 +27,18 @@ namespace Rdmp.Core.ReusableLibraryCode;
 /// <summary>
 /// Contains lots of generically useful static methods
 /// </summary>
-public class UsefulStuff
+public static class UsefulStuff
 {
-    private static readonly UsefulStuff Instance=new();
     public static readonly Regex RegexThingsThatAreNotNumbersOrLetters = new Regex("[^0-9A-Za-z]+",RegexOptions.Compiled|RegexOptions.CultureInvariant);
     public static readonly Regex RegexThingsThatAreNotNumbersOrLettersOrUnderscores = new Regex("[^0-9A-Za-z_]+",RegexOptions.Compiled|RegexOptions.CultureInvariant);
-        
-    public static UsefulStuff GetInstance() => Instance;
 
-    private UsefulStuff() {}
+    public static bool IsBasicallyNull(this string result)
+    {
+        return string.IsNullOrWhiteSpace(result) ||
+               // if user types the literal string null then return null (typically interpreted as - 'I don't want to pick one')
+               // but not the same as task cancellation
+               string.Equals(result, "null", StringComparison.CurrentCultureIgnoreCase);
+    }
 
     public static bool IsBadName(string name)
     {
@@ -72,7 +75,7 @@ public class UsefulStuff
     }
 
 
-    internal DateTime LooseConvertToDate(object iO)
+    internal static DateTime LooseConvertToDate(object iO)
     {
         DateTime sDate;
 
@@ -112,7 +115,7 @@ public class UsefulStuff
     private static readonly Regex RBacktickQuotes = new Regex("`([^']+)`$");
     private static readonly Regex RSquareBrackets = new Regex(@"\[([^[]+)]$");
     private static readonly Regex RNoPunctuation = new Regex(@"^([\w\s]+)$");
-    public IEnumerable<string> GetArrayOfColumnNamesFromStringPastedInByUser(string text)
+    public static IEnumerable<string> GetArrayOfColumnNamesFromStringPastedInByUser(string text)
     {
 
         if (string.IsNullOrWhiteSpace(text))
@@ -168,7 +171,7 @@ public class UsefulStuff
         }
     }
 
-    public bool CHIisOK(string sCHI)
+    public static bool CHIisOK(string sCHI)
     {
         if (!long.TryParse(sCHI, NumberStyles.None,CultureInfo.InvariantCulture, out _) || sCHI.Length != 10) return false;
         return DateTime.TryParse($"{sCHI[..2]}/{sCHI[2..4]}/{sCHI[4..6]}", out _) && GetCHICheckDigit(sCHI) == sCHI[^1];
@@ -389,7 +392,7 @@ public class UsefulStuff
 
     }
 
-    public string DataTableToHtmlDataTable(DataTable dt)
+    public static string DataTableToHtmlDataTable(DataTable dt)
     {
         var sb = new StringBuilder();
 
@@ -514,7 +517,7 @@ public class UsefulStuff
     }
         
 
-    public void ConfirmContentsOfDirectoryAreTheSame(DirectoryInfo first, DirectoryInfo other)
+    public static void ConfirmContentsOfDirectoryAreTheSame(DirectoryInfo first, DirectoryInfo other)
     {
         if (first.EnumerateFiles().Count() != other.EnumerateFiles().Count())
             throw new Exception(

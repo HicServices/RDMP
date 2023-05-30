@@ -37,38 +37,38 @@ public class Project : DatabaseEntity, IProject, ICustomSearchString,ICheckable,
     [Unique]
     public string Name
     {
-        get { return _name; }
-        set { SetField(ref _name, value); }
+        get => _name;
+        set => SetField(ref _name, value);
     }
     /// <inheritdoc/>
     public string MasterTicket
     {
-        get { return _masterTicket; }
-        set { SetField(ref _masterTicket, value); }
+        get => _masterTicket;
+        set => SetField(ref _masterTicket, value);
     }
 
     /// <inheritdoc/>
     [AdjustableLocation]
     public string ExtractionDirectory
     {
-        get { return _extractionDirectory; }
-        set { SetField(ref _extractionDirectory, value); }
+        get => _extractionDirectory;
+        set => SetField(ref _extractionDirectory, value);
     }
 
     /// <inheritdoc/>
     [UsefulProperty]
     public int? ProjectNumber
     {
-        get { return _projectNumber; }
-        set { SetField(ref _projectNumber, value); }
+        get => _projectNumber;
+        set => SetField(ref _projectNumber, value);
     }
 
     /// <inheritdoc/>
     [UsefulProperty]
     public string Folder
     {
-        get { return _folder; }
-        set { SetField(ref _folder, FolderHelper.Adjust(value)); }
+        get => _folder;
+        set => SetField(ref _folder, FolderHelper.Adjust(value));
     }
 
     #endregion
@@ -77,26 +77,16 @@ public class Project : DatabaseEntity, IProject, ICustomSearchString,ICheckable,
 
     /// <inheritdoc/>
     [NoMappingToDatabase]
-    public IExtractionConfiguration[] ExtractionConfigurations
-    {
-        get
-        {
-            return Repository.GetAllObjectsWithParent<ExtractionConfiguration>(this)
-                .Cast<IExtractionConfiguration>()
-                .ToArray();
-        }
-    }
+    public IExtractionConfiguration[] ExtractionConfigurations =>
+        Repository.GetAllObjectsWithParent<ExtractionConfiguration>(this)
+            .Cast<IExtractionConfiguration>()
+            .ToArray();
 
 
     /// <inheritdoc/>
     [NoMappingToDatabase]
-    public IProjectCohortIdentificationConfigurationAssociation[] ProjectCohortIdentificationConfigurationAssociations
-    {
-        get
-        {
-            return Repository.GetAllObjectsWithParent<ProjectCohortIdentificationConfigurationAssociation>(this);
-        }
-    }
+    public IProjectCohortIdentificationConfigurationAssociation[] ProjectCohortIdentificationConfigurationAssociations => Repository.GetAllObjectsWithParent<ProjectCohortIdentificationConfigurationAssociation>(this);
+
     #endregion
 
     public Project()
@@ -134,7 +124,8 @@ public class Project : DatabaseEntity, IProject, ICustomSearchString,ICheckable,
                 {
                     throw;
                 }
-                throw new Exception("Could not create a new Project because there is already another Project in the system (" + offender + ") which is missing a Project Number.  All projects must have a ProjectNumber, there can be 1 Project at a time which does not have a number and that is one that is being built by the user right now.  Either delete Project " + offender + " or give it a project number", ex);
+                throw new Exception(
+                    $"Could not create a new Project because there is already another Project in the system ({offender}) which is missing a Project Number.  All projects must have a ProjectNumber, there can be 1 Project at a time which does not have a number and that is one that is being built by the user right now.  Either delete Project {offender} or give it a project number", ex);
 
             }
 
@@ -177,7 +168,7 @@ public class Project : DatabaseEntity, IProject, ICustomSearchString,ICheckable,
         if (ProjectNumber == null)
             return Name;
 
-        return ProjectNumber + "_" + Name + "_" + MasterTicket;
+        return $"{ProjectNumber}_{Name}_{MasterTicket}";
     }
         
     /// <summary>

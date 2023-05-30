@@ -29,7 +29,7 @@ public class TriggerChecks : ICheckable
     {
         _server = table.Database.Server;
         _table = table;
-        _archiveTable = table.Database.ExpectTable(_table.GetRuntimeName() + "_Archive",_table.Schema);
+        _archiveTable = table.Database.ExpectTable($"{_table.GetRuntimeName()}_Archive",_table.Schema);
     }
 
     ///<inheritdoc/>
@@ -37,8 +37,8 @@ public class TriggerChecks : ICheckable
     {
         if (_table.Exists() && _archiveTable.Exists())
         {
-            string[] liveCols = _table.DiscoverColumns().Select(c => c.GetRuntimeName()).ToArray();
-            string[] archiveCols = _archiveTable.DiscoverColumns().Select(c => c.GetRuntimeName()).ToArray();
+            var liveCols = _table.DiscoverColumns().Select(c => c.GetRuntimeName()).ToArray();
+            var archiveCols = _archiveTable.DiscoverColumns().Select(c => c.GetRuntimeName()).ToArray();
 
             var passed = CheckColumnOrderInTablesAndArchiveMatch(liveCols, archiveCols, notifier);
 
@@ -76,8 +76,7 @@ public class TriggerChecks : ICheckable
             {
                 notifier.OnCheckPerformed(
                     new CheckEventArgs(
-                        "Archive table for table " + _table +
-                        " is corrupt, see inner Exception for specific errors", CheckResult.Fail, e));
+                        $"Archive table for table {_table} is corrupt, see inner Exception for specific errors", CheckResult.Fail, e));
                 return;
             }
             catch (Exception e)
@@ -88,7 +87,8 @@ public class TriggerChecks : ICheckable
         }
 
         if(present)
-            notifier.OnCheckPerformed(new CheckEventArgs("Trigger presence/intactness for table " + _table + " matched expected presence",CheckResult.Success, null));
+            notifier.OnCheckPerformed(new CheckEventArgs(
+                $"Trigger presence/intactness for table {_table} matched expected presence",CheckResult.Success, null));
         else
             NotifyFail(null, notifier, implementer); //try creating it
             
@@ -97,7 +97,7 @@ public class TriggerChecks : ICheckable
 
     private bool CheckColumnOrderInTablesAndArchiveMatch(string[] liveCols, string[] archiveCols, ICheckNotifier notifier)
     {
-        bool passed = true;
+        var passed = true;
 
         foreach (var requiredArchiveColumns in new[] { "hic_validTo", "hic_userID", "hic_status" })
             if (!archiveCols.Any(c=>c.Equals(requiredArchiveColumns,StringComparison.CurrentCultureIgnoreCase)))
@@ -105,7 +105,7 @@ public class TriggerChecks : ICheckable
 
                 notifier.OnCheckPerformed(
                     new CheckEventArgs(
-                        "Column " + requiredArchiveColumns + " was not found in " + _archiveTable,
+                        $"Column {requiredArchiveColumns} was not found in {_archiveTable}",
                         CheckResult.Fail));
                 passed = false;
             }
@@ -115,8 +115,7 @@ public class TriggerChecks : ICheckable
         {
 
             notifier.OnCheckPerformed(new CheckEventArgs(
-                "Column " + missingColumn + " in table " + _table +
-                " was not found in the  _Archive table",
+                $"Column {missingColumn} in table {_table} was not found in the  _Archive table",
                 CheckResult.Fail, null));
             passed = false;
         }
@@ -126,9 +125,9 @@ public class TriggerChecks : ICheckable
 
     private void NotifyFail(Exception e, ICheckNotifier notifier,ITriggerImplementer microsoftSQLTrigger)
     {
-        bool shouldCreate = notifier.OnCheckPerformed(new CheckEventArgs(
-            "Trigger error encountered when checking integrity of table " + _table,
-            CheckResult.Warning, e, "Drop and then Re-Create Trigger on table " + _table));
+        var shouldCreate = notifier.OnCheckPerformed(new CheckEventArgs(
+            $"Trigger error encountered when checking integrity of table {_table}",
+            CheckResult.Warning, e, $"Drop and then Re-Create Trigger on table {_table}"));
 
         if (shouldCreate)
         {

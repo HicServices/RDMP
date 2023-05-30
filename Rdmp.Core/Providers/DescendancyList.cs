@@ -73,7 +73,7 @@ public class DescendancyList
     /// <summary>
     /// True if the list is empty (i.e. there are no <see cref="Parents"/>)
     /// </summary>
-    public bool IsEmpty { get { return !Parents.Any(); } }
+    public bool IsEmpty => !Parents.Any();
 
     /// <summary>
     /// Returns a new instance of DescendancyList that includes the new parent appended to the end of parent hierarchy. You can only add to the end so 
@@ -84,7 +84,7 @@ public class DescendancyList
     public DescendancyList Add(object anotherKnownParent)
     {
         if(Parents.Contains(anotherKnownParent))
-            throw new ArgumentException("DecendancyList already contains '" + anotherKnownParent + "'");
+            throw new ArgumentException($"DecendancyList already contains '{anotherKnownParent}'");
 
         var list = new List<object>(Parents);
         list.Add(anotherKnownParent);
@@ -128,7 +128,7 @@ public class DescendancyList
     }
     public override string ToString()
     {
-        return "<<"+ string.Join("=>", Parents) + ">>";
+        return $"<<{string.Join("=>", Parents)}>>";
     }
 
     /// <summary>

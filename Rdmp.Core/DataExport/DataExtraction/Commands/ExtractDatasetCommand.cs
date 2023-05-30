@@ -34,7 +34,7 @@ public class ExtractDatasetCommand : ExtractCommand, IExtractDatasetCommand
 
     public IExtractableDatasetBundle DatasetBundle
     {
-        get { return _datasetBundle; }
+        get => _datasetBundle;
         set
         {
             _datasetBundle = value; 
@@ -117,7 +117,8 @@ public class ExtractDatasetCommand : ExtractCommand, IExtractDatasetCommand
         var selectedDataSets = configuration.SelectedDataSets.Where(ds => ds.ExtractableDataSet_ID == dataset.ID).ToArray();
 
         if (selectedDataSets.Length != 1)
-            throw new Exception("Could not find 1 ISelectedDataSets for ExtractionConfiguration '" + configuration + "' | Dataset '" + dataset +"'");
+            throw new Exception(
+                $"Could not find 1 ISelectedDataSets for ExtractionConfiguration '{configuration}' | Dataset '{dataset}'");
 
         SelectedDataSets = selectedDataSets[0];
 

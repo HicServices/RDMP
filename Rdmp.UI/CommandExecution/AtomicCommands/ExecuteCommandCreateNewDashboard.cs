@@ -30,7 +30,7 @@ internal class ExecuteCommandCreateNewDashboard : BasicUICommandExecution, IAtom
     {
         base.Execute();
 
-        if(TypeText("Dashboard Name","Name",out string name))
+        if(TypeText("Dashboard Name","Name",out var name))
         {
             var l = new DashboardLayout(Activator.RepositoryLocator.CatalogueRepository, name);
             Publish(l);

@@ -41,11 +41,11 @@ public class ExceptionCounterUI : ToolStripButton,ICheckNotifier
 
         base.OnPaint(e);
             
-        int exceptionCount = Math.Min(_events.Messages.Count, 10);
+        var exceptionCount = Math.Min(_events.Messages.Count, 10);
 
         if(exceptionCount > 0)
         {
-            string msg = exceptionCount == 10?"!":exceptionCount.ToString();
+            var msg = exceptionCount == 10?"!":exceptionCount.ToString();
 
             var f = new Font(FontFamily.GenericMonospace, EmSize,FontStyle.Bold);
 

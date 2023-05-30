@@ -83,7 +83,7 @@ public partial class ANOTableUI : ANOTableUI_Design
             return;
         }
 
-        bool isPushed = pushedTable != null;
+        var isPushed = pushedTable != null;
 
         nIntegers.Enabled = !isPushed;
         nCharacters.Enabled = !isPushed;
@@ -101,10 +101,10 @@ public partial class ANOTableUI : ANOTableUI_Design
             lblANOTableName.Text = pushedTable.GetRuntimeName();
             var cols = pushedTable.DiscoverColumns();
 
-            lblPrivate.Text = cols[0].GetRuntimeName() + " " + cols[0].DataType.SQLType;
-            lblPublic.Text = cols[1].GetRuntimeName() + " " + cols[1].DataType.SQLType;
+            lblPrivate.Text = $"{cols[0].GetRuntimeName()} {cols[0].DataType.SQLType}";
+            lblPublic.Text = $"{cols[1].GetRuntimeName()} {cols[1].DataType.SQLType}";
 
-            lblRowCount.Text = pushedTable.GetRowCount() + " rows";
+            lblRowCount.Text = $"{pushedTable.GetRowCount()} rows";
         }
     }
 

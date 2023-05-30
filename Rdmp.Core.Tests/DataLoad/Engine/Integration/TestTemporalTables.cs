@@ -63,7 +63,7 @@ INSERT INTO Employee(EmployeeID,Name,Position,Department,Address,AnnualSalary) V
         var logServer = defaults.GetDefaultFor(PermissableDefaults.LiveLoggingServer_ID);
         var logManager = new LogManager(logServer);
             
-        var raw = db.Server.ExpectDatabase(db.GetRuntimeName() + "_RAW");
+        var raw = db.Server.ExpectDatabase($"{db.GetRuntimeName()}_RAW");
         if(raw.Exists())
             raw.Drop();
 
@@ -72,7 +72,7 @@ INSERT INTO Employee(EmployeeID,Name,Position,Department,Address,AnnualSalary) V
         lmd.IgnoreTrigger = true;
         lmd.SaveToDatabase();
               
-        ITableInfo ti = Import(tbl, lmd,logManager);
+        var ti = Import(tbl, lmd,logManager);
             
         var projectDirectory = SetupLoadDirectory(lmd);
 

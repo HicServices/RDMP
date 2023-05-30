@@ -86,7 +86,8 @@ public class CreateNewCohortDatabaseWizard
 
         if (!_targetDatabase.Exists())
         {
-            notifier.OnCheckPerformed(new CheckEventArgs("Did not find database "+_targetDatabase +" on server so creating it",CheckResult.Success));
+            notifier.OnCheckPerformed(new CheckEventArgs(
+                $"Did not find database {_targetDatabase} on server so creating it",CheckResult.Success));
             _targetDatabase.Create();
         }
             

@@ -53,9 +53,10 @@ public class PersistenceDecisionFactory
         var tokens = persistString.Split(PersistStringHelper.Separator);
 
         if (tokens.Length != 2)
-            throw new PersistenceException("Unexpected number of tokens (" + tokens.Length + ") for Persistence of Type " + RDMPSingleControlTab.BasicPrefix);
+            throw new PersistenceException(
+                $"Unexpected number of tokens ({tokens.Length}) for Persistence of Type {RDMPSingleControlTab.BasicPrefix}");
 
-        Type controlType = GetTypeByName(tokens[1], typeof(Control), repositoryLocator);
+        var controlType = GetTypeByName(tokens[1], typeof(Control), repositoryLocator);
 
         return new DeserializeInstruction(controlType);
     }
@@ -77,10 +78,11 @@ public class PersistenceDecisionFactory
         var tokens = persistString.Split(PersistStringHelper.Separator);
 
         if (tokens.Length != 5)
-            throw new PersistenceException("Unexpected number of tokens (" + tokens.Length + ") for Persistence of Type " + PersistableSingleDatabaseObjectDockContent.Prefix);
+            throw new PersistenceException(
+                $"Unexpected number of tokens ({tokens.Length}) for Persistence of Type {PersistableSingleDatabaseObjectDockContent.Prefix}");
             
-        Type controlType = GetTypeByName(tokens[1], typeof(Control), repositoryLocator);
-        IMapsDirectlyToDatabaseTable o = repositoryLocator.GetArbitraryDatabaseObject(tokens[2], tokens[3], int.Parse(tokens[4]));
+        var controlType = GetTypeByName(tokens[1], typeof(Control), repositoryLocator);
+        var o = repositoryLocator.GetArbitraryDatabaseObject(tokens[2], tokens[3], int.Parse(tokens[4]));
             
         return new DeserializeInstruction(controlType,o);
 
@@ -92,7 +94,7 @@ public class PersistenceDecisionFactory
             return null;
             
         if(!persistString.Contains(PersistStringHelper.ExtraText))
-            throw new PersistenceException("Persistence string did not contain '" + PersistStringHelper.ExtraText);
+            throw new PersistenceException($"Persistence string did not contain '{PersistStringHelper.ExtraText}");
 
         //Looks something like this  RDMPObjectCollection:MyCoolControlUI:MyControlUIsBundleOfObjects:[CatalogueRepository:AggregateConfiguration:105,CatalogueRepository:AggregateConfiguration:102,CatalogueRepository:AggregateConfiguration:101]###EXTRA_TEXT###I've got a lovely bunch of coconuts
         var tokens = persistString.Split(PersistStringHelper.Separator);
@@ -100,11 +102,12 @@ public class PersistenceDecisionFactory
         var uiType = GetTypeByName(tokens[1],typeof(Control),repositoryLocator);
         var collectionType = GetTypeByName(tokens[2], typeof (IPersistableObjectCollection), repositoryLocator);
 
-        ObjectConstructor objectConstructor = new ObjectConstructor();
-        IPersistableObjectCollection collectionInstance = (IPersistableObjectCollection)objectConstructor.Construct(collectionType);
+        var objectConstructor = new ObjectConstructor();
+        var collectionInstance = (IPersistableObjectCollection)objectConstructor.Construct(collectionType);
                 
         if(collectionInstance.DatabaseObjects == null)
-            throw new PersistenceException("Constructor of Type '" +collectionType + "' did not initialise property DatabaseObjects");
+            throw new PersistenceException(
+                $"Constructor of Type '{collectionType}' did not initialise property DatabaseObjects");
             
         var allObjectsString = _persistStringHelper.MatchCollectionInString(persistString);
 
@@ -121,11 +124,12 @@ public class PersistenceDecisionFactory
         var toReturn = repositoryLocator.CatalogueRepository.MEF.GetType(s);
 
         if (toReturn == null)
-            throw new TypeLoadException("Could not find Type called '" + s + "'");
+            throw new TypeLoadException($"Could not find Type called '{s}'");
 
         if (expectedBaseClassType != null)
             if (!expectedBaseClassType.IsAssignableFrom(toReturn))
-                throw new TypeLoadException("Persistence string included a reference to Type '" + s + "' which we managed to find but it did not match an expected base Type (" + expectedBaseClassType + ")");
+                throw new TypeLoadException(
+                    $"Persistence string included a reference to Type '{s}' which we managed to find but it did not match an expected base Type ({expectedBaseClassType})");
 
         return toReturn;
     }

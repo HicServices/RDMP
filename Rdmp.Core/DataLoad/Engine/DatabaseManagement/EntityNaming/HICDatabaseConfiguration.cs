@@ -34,10 +34,7 @@ public class HICDatabaseConfiguration
     public StandardDatabaseHelper DeployInfo { get; set; }
     public bool RequiresStagingTableCreation { get; set; }
 
-    public INameDatabasesAndTablesDuringLoads DatabaseNamer
-    {
-        get { return DeployInfo.DatabaseNamer; }
-    }
+    public INameDatabasesAndTablesDuringLoads DatabaseNamer => DeployInfo.DatabaseNamer;
 
     /// <summary>
     /// Optional Regex for fields which will be ignored at migration time between STAGING and LIVE (e.g. hic_ columns).  This prevents incidental fields like
@@ -124,11 +121,11 @@ public class HICDatabaseConfiguration
     {
         var db = DeployInfo.DatabaseInfoList[stage];
 
-        foreach (ITableInfo t in job.RegularTablesToLoad)
+        foreach (var t in job.RegularTablesToLoad)
             yield return db.ExpectTable(t.GetRuntimeName(stage, DatabaseNamer));
             
         if(includeLookups)
-            foreach (ITableInfo t in job.LookupTablesToLoad)
+            foreach (var t in job.LookupTablesToLoad)
                 yield return db.ExpectTable(t.GetRuntimeName(stage, DatabaseNamer));
     }
 }

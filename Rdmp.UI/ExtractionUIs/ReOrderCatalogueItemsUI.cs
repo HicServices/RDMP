@@ -83,7 +83,7 @@ public partial class ReOrderCatalogueItemsUI : ReOrderCatalogueItems_Design
     {
         olvExtractionInformations.ClearObjects();
 
-        List<ExtractionInformation> info = new List<ExtractionInformation>(_catalogue.GetAllExtractionInformation(ExtractionCategory.Any));
+        var info = new List<ExtractionInformation>(_catalogue.GetAllExtractionInformation(ExtractionCategory.Any));
         info.Sort();
 
         olvExtractionInformations.AddObjects(info.ToArray());
@@ -108,7 +108,7 @@ public partial class ReOrderCatalogueItemsUI : ReOrderCatalogueItems_Design
         {
             lock (oDrawLock)
             {
-                lbDesiredOrder.Items.AddRange(UsefulStuff.GetInstance().GetArrayOfColumnNamesFromStringPastedInByUser(Clipboard.GetText()).ToArray());
+                lbDesiredOrder.Items.AddRange(UsefulStuff.GetArrayOfColumnNamesFromStringPastedInByUser(Clipboard.GetText()).ToArray());
                 RecomputeOrderAndHighlight();
             }
         }
@@ -137,12 +137,12 @@ public partial class ReOrderCatalogueItemsUI : ReOrderCatalogueItems_Design
         if (lbDesiredOrder.Items.Count == 0)
             return;
 
-        string startReorderingHere = lbDesiredOrder.Items[0].ToString();
+        var startReorderingHere = lbDesiredOrder.Items[0].ToString();
             
         //find the location of the first item in the desired order
         var extractionInformations = olvExtractionInformations.Objects.Cast<ExtractionInformation>().ToArray();
             
-        for (int i = 0; i < extractionInformations.Length; i++)
+        for (var i = 0; i < extractionInformations.Length; i++)
         {
             var extractionInformation = extractionInformations[i];
 
@@ -158,9 +158,9 @@ public partial class ReOrderCatalogueItemsUI : ReOrderCatalogueItems_Design
         //find the rest of the items in the desired order
         itemsToReOrderAndOffsetRelativeToFirst = new List<ExtractionInformation>();
 
-        for (int i = 1; i < lbDesiredOrder.Items.Count; i++)
+        for (var i = 1; i < lbDesiredOrder.Items.Count; i++)
         {
-            bool bFound = false;
+            var bFound = false;
 
             foreach (ExtractionInformation info in olvExtractionInformations.Objects)
             {
@@ -186,9 +186,9 @@ public partial class ReOrderCatalogueItemsUI : ReOrderCatalogueItems_Design
         var extractionInformations = olvExtractionInformations.Objects.Cast<ExtractionInformation>().ToArray();
 
         //for all the things that appear above the thing the user wants first in his dream order
-        for (int i = 0;i < currentOrderStartReorderAtIndex;i++)
+        for (var i = 0;i < currentOrderStartReorderAtIndex;i++)
         {
-            ExtractionInformation considerMoving = extractionInformations[i];
+            var considerMoving = extractionInformations[i];
 
             //if it doesnt feature in the users dream list order then move it across
             if (!itemsToReOrderAndOffsetRelativeToFirst.Contains(considerMoving))
@@ -205,15 +205,15 @@ public partial class ReOrderCatalogueItemsUI : ReOrderCatalogueItems_Design
         indexOfStartOfReordingInNewOrderListbox = lbNewOrder.Items.Count-1;
 
         //move everything in the users dream list
-        foreach (ExtractionInformation extractionInformation in itemsToReOrderAndOffsetRelativeToFirst)
+        foreach (var extractionInformation in itemsToReOrderAndOffsetRelativeToFirst)
             lbNewOrder.Items.Add(extractionInformation);
 
         //move everything that doesnt feature in the users dream list (but that occurred after the first thing they wanted)
 
         //for all the things that appear above the thing the user wants first in his dream order
-        for (int i = currentOrderStartReorderAtIndex + 1; i < extractionInformations.Length; i++)
+        for (var i = currentOrderStartReorderAtIndex + 1; i < extractionInformations.Length; i++)
         {
-            ExtractionInformation considerMoving = extractionInformations[i];
+            var considerMoving = extractionInformations[i];
 
             //if it doesnt feature in the users dream list order then move it across
             if (!itemsToReOrderAndOffsetRelativeToFirst.Contains(considerMoving))
@@ -293,9 +293,9 @@ public partial class ReOrderCatalogueItemsUI : ReOrderCatalogueItems_Design
             return;
         }
 
-        for (int i = 0; i < lbNewOrder.Items.Count; i++)
+        for (var i = 0; i < lbNewOrder.Items.Count; i++)
         {
-            ExtractionInformation info = (ExtractionInformation) lbNewOrder.Items[i];
+            var info = (ExtractionInformation) lbNewOrder.Items[i];
             info.Order = i + 1;
             info.SaveToDatabase();
         }
@@ -346,7 +346,7 @@ public partial class ReOrderCatalogueItemsUI : ReOrderCatalogueItems_Design
         else
             throw new NotSupportedException();
 
-        for (int i = 0; i < currentOrder.Count; i++)
+        for (var i = 0; i < currentOrder.Count; i++)
         {
             currentOrder[i].Order = i;
             currentOrder[i].SaveToDatabase();

@@ -24,7 +24,7 @@ public class MutilateDataTablesRuntimeTask : RuntimeTask, IMEFRuntimeTask
 {
     //the class (built by reflection) that will do all the heavy lifting
     public IMutilateDataTables MutilateDataTables { get; set; }
-    public ICheckable MEFPluginClassInstance { get { return MutilateDataTables; } }
+    public ICheckable MEFPluginClassInstance => MutilateDataTables;
 
     public MutilateDataTablesRuntimeTask(IProcessTask task, RuntimeArgumentCollection args, MEF mef)
         : base(task, args)
@@ -38,7 +38,8 @@ public class MutilateDataTablesRuntimeTask : RuntimeTask, IMEFRuntimeTask
             throw new NullReferenceException("Stage args had no DbInfo, unable to mutilate tables without a database - mutilator is sad");
 
         if(string.IsNullOrWhiteSpace(task.Path))
-            throw new ArgumentException("Path is blank for ProcessTask '"+task+"' - it should be a class name of type " + typeof(IMutilateDataTables).Name);
+            throw new ArgumentException(
+                $"Path is blank for ProcessTask '{task}' - it should be a class name of type {typeof(IMutilateDataTables).Name}");
 
         MutilateDataTables = mef.CreateA<IMutilateDataTables>(ProcessTask.Path);
         SetPropertiesForClass(RuntimeArguments, MutilateDataTables);
@@ -49,8 +50,9 @@ public class MutilateDataTablesRuntimeTask : RuntimeTask, IMEFRuntimeTask
 
     public override ExitCodeType Run(IDataLoadJob job, GracefulCancellationToken cancellationToken)
     {
-        job.OnNotify(this, new NotifyEventArgs(ProgressEventType.Information, "About to run Task '" + ProcessTask.Name + "'"));
-        job.OnNotify(this, new NotifyEventArgs(ProgressEventType.Information, "Mutilate class is" + MutilateDataTables.GetType().FullName));
+        job.OnNotify(this, new NotifyEventArgs(ProgressEventType.Information, $"About to run Task '{ProcessTask.Name}'"));
+        job.OnNotify(this, new NotifyEventArgs(ProgressEventType.Information,
+            $"Mutilate class is{MutilateDataTables.GetType().FullName}"));
 
         try
         {
@@ -58,7 +60,8 @@ public class MutilateDataTablesRuntimeTask : RuntimeTask, IMEFRuntimeTask
         }
         catch (Exception e)
         {
-            job.OnNotify(this, new NotifyEventArgs(ProgressEventType.Error, "Mutilate failed on job " + job + " Mutilator was of type " + MutilateDataTables.GetType().Name + " see InnerException for specifics", e));
+            job.OnNotify(this, new NotifyEventArgs(ProgressEventType.Error,
+                $"Mutilate failed on job {job} Mutilator was of type {MutilateDataTables.GetType().Name} see InnerException for specifics", e));
             return ExitCodeType.Error;
         }
 

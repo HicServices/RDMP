@@ -59,5 +59,6 @@ public class ExtractionDirectoryNode : Node,IDirectoryInfoNode, IOrderable
         return new DirectoryInfo(Project.ExtractionDirectory);
     }
 
-    public int Order{ get { return 4; } set { }}
+    public int Order{ get => 4;
+        set { }}
 }

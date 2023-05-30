@@ -142,7 +142,8 @@ public partial class GovernancePeriodUI : GovernancePeriodUI_Design,ISaveableUI
             }
             catch (Exception ex)
             {
-                ExceptionViewer.Show("Could not add relationship to Catalogues:" + string.Join(',',selected.Select(c=>c.Name)), ex);
+                ExceptionViewer.Show(
+                    $"Could not add relationship to Catalogues:{string.Join(',', selected.Select(c => c.Name))}", ex);
             }
         }
     }
@@ -160,7 +161,8 @@ public partial class GovernancePeriodUI : GovernancePeriodUI_Design,ISaveableUI
             var toDelete = olvCatalogues.SelectedObject as Catalogue;
 
             if(toDelete != null)
-                if(Activator.YesNo("Are you sure you want to erase the fact that '" + _governancePeriod.Name + "' provides governance over Catalogue '" + toDelete + "'","Confirm Deleting Governance Relationship?"))
+                if(Activator.YesNo(
+                       $"Are you sure you want to erase the fact that '{_governancePeriod.Name}' provides governance over Catalogue '{toDelete}'","Confirm Deleting Governance Relationship?"))
                 {
                     _governancePeriod.DeleteGovernanceRelationshipTo(toDelete);
                     olvCatalogues.RemoveObject(toDelete);
@@ -172,7 +174,7 @@ public partial class GovernancePeriodUI : GovernancePeriodUI_Design,ISaveableUI
         
     private void btnImportCatalogues_Click(object sender, EventArgs e)
     {
-        GovernancePeriod[] toImportFrom = Activator.RepositoryLocator.CatalogueRepository.GetAllObjects<GovernancePeriod>()
+        var toImportFrom = Activator.RepositoryLocator.CatalogueRepository.GetAllObjects<GovernancePeriod>()
             .Where(gov => gov.ID != _governancePeriod.ID)
             .ToArray();
 
@@ -189,14 +191,14 @@ public partial class GovernancePeriodUI : GovernancePeriodUI_Design,ISaveableUI
                TaskDescription = "Select another GovernancePeriod.  All Catalogues currently associated with that period will be added to this period (they will still be covered by their previous period(s) too)",
            }, toImportFrom,out var selected))
         { 
-            ICatalogue[] toAdd = selected.GovernedCatalogues.ToArray();
+            var toAdd = selected.GovernedCatalogues.ToArray();
 
             //do not add any we already have
             toAdd = toAdd.Except(olvCatalogues.Objects.Cast<Catalogue>()).ToArray();
 
             if (!toAdd.Any())
-                MessageBox.Show("Selected GovernancePeriod '" + selected.Name +
-                                "' does not govern any novel Catalogues (Catalogues already in your configuration are not repeat imported)");
+                MessageBox.Show(
+                    $"Selected GovernancePeriod '{selected.Name}' does not govern any novel Catalogues (Catalogues already in your configuration are not repeat imported)");
             else
             {
                 AddCatalogues(toAdd);

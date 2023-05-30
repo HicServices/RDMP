@@ -82,7 +82,8 @@ class CohortContainerManagerFromChildProvider:CohortContainerManager
                 }
                 catch (Exception)
                 {
-                    throw new Exception("Error occured trying to find AggregateConfiguration with ID " + currentChildId + " which is allegedly a child of CohortAggregateContainer " + currentParentId);
+                    throw new Exception(
+                        $"Error occured trying to find AggregateConfiguration with ID {currentChildId} which is allegedly a child of CohortAggregateContainer {currentParentId}");
                 }
 
                 config.SetKnownOrder(currentOrder);

@@ -32,8 +32,8 @@ public class ExtractionFilterParameterSet:DatabaseEntity, ICollectSqlParameters,
     [NotNull]
     public string Name
     {
-        get { return _name; }
-        set { SetField(ref _name , value);}
+        get => _name;
+        set => SetField(ref _name , value);
     }
        
     /// <summary>
@@ -41,8 +41,8 @@ public class ExtractionFilterParameterSet:DatabaseEntity, ICollectSqlParameters,
     /// </summary>
     public string Description
     {
-        get { return _description; }
-        set { SetField(ref _description , value);}
+        get => _description;
+        set => SetField(ref _description , value);
     }
 
     /// <summary>
@@ -50,8 +50,8 @@ public class ExtractionFilterParameterSet:DatabaseEntity, ICollectSqlParameters,
     /// </summary>
     public int ExtractionFilter_ID
     {
-        get { return _extractionFilterID; }
-        set { SetField(ref _extractionFilterID, value); }
+        get => _extractionFilterID;
+        set => SetField(ref _extractionFilterID, value);
     }
 
     #endregion
@@ -60,13 +60,13 @@ public class ExtractionFilterParameterSet:DatabaseEntity, ICollectSqlParameters,
 
     /// <inheritdoc cref ="ExtractionFilter_ID"/>
     [NoMappingToDatabase]
-    public ExtractionFilter ExtractionFilter { get {return Repository.GetObjectByID<ExtractionFilter>(ExtractionFilter_ID);} }
-        
+    public ExtractionFilter ExtractionFilter => Repository.GetObjectByID<ExtractionFilter>(ExtractionFilter_ID);
+
     /// <summary>
     /// Gets all the individual parameter values required for populating the filter to achieve this concept (e.g. 'Diabetes Drugs' might have 2 parameter values @DrugList='123.122.1,1.2... etc' and @DrugCodeFormat='bnf')
     /// </summary>
     [NoMappingToDatabase]
-    public IEnumerable<ExtractionFilterParameterSetValue> Values { get {return Repository.GetAllObjectsWithParent<ExtractionFilterParameterSetValue>(this);} }
+    public IEnumerable<ExtractionFilterParameterSetValue> Values => Repository.GetAllObjectsWithParent<ExtractionFilterParameterSetValue>(this);
 
     #endregion
 
@@ -92,7 +92,7 @@ public class ExtractionFilterParameterSet:DatabaseEntity, ICollectSqlParameters,
     /// <param name="name"></param>
     public ExtractionFilterParameterSet(ICatalogueRepository repository, ExtractionFilter filter, string name = null)
     {
-        name = name ?? "New ExtractionFilterParameterSet " + Guid.NewGuid();
+        name = name ?? $"New ExtractionFilterParameterSet {Guid.NewGuid()}";
 
         repository.InsertAndHydrate(this,new Dictionary<string, object>()
         {
@@ -124,7 +124,7 @@ public class ExtractionFilterParameterSet:DatabaseEntity, ICollectSqlParameters,
 
         var personalChildren = Values.ToArray();
 
-        foreach (ExtractionFilterParameter catalogueParameter in existingCatalogueParameters)
+        foreach (var catalogueParameter in existingCatalogueParameters)
             if (personalChildren.All(c => c.ExtractionFilterParameter_ID != catalogueParameter.ID))
                 yield return catalogueParameter;
     }
@@ -134,7 +134,7 @@ public class ExtractionFilterParameterSet:DatabaseEntity, ICollectSqlParameters,
     /// <returns></returns>
     public ExtractionFilterParameterSetValue[] CreateNewValueEntries()
     {
-        List<ExtractionFilterParameterSetValue> toReturn = new List<ExtractionFilterParameterSetValue>();
+        var toReturn = new List<ExtractionFilterParameterSetValue>();
 
         foreach (var catalogueParameter in GetMissingEntries())
             //we have a master that does not have any child values yet

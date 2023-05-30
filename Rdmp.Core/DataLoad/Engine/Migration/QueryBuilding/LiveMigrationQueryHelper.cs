@@ -25,8 +25,8 @@ public class LiveMigrationQueryHelper : MigrationQueryHelper
 
     public override string BuildUpdateClauseForRow(string sourceAlias, string destAlias)
     {
-        var parts = ColumnsToMigrate.FieldsToUpdate.Select(name => destAlias + ".[" + name + "] = " + sourceAlias + ".[" + name + "]").ToList();
-        parts.Add(destAlias + "." + SpecialFieldNames.DataLoadRunID + " = " + _dataLoadRunID);
+        var parts = ColumnsToMigrate.FieldsToUpdate.Select(name => $"{destAlias}.[{name}] = {sourceAlias}.[{name}]").ToList();
+        parts.Add($"{destAlias}.{SpecialFieldNames.DataLoadRunID} = {_dataLoadRunID}");
 
         return String.Join(", ", parts);
     }
@@ -42,7 +42,7 @@ public class LiveMigrationQueryHelper : MigrationQueryHelper
         var inserts = new List<KeyValuePair<string, string>>();
 
         columnsToMigrate.FieldsToUpdate.ToList().ForEach(column =>
-            inserts.Add(new KeyValuePair<string, string>("[" + column + "]", "source.[" + column + "]")));
+            inserts.Add(new KeyValuePair<string, string>($"[{column}]", $"source.[{column}]")));
 
         inserts.Add(new KeyValuePair<string, string>(SpecialFieldNames.DataLoadRunID, dataLoadRunID.ToString()));
 

@@ -31,7 +31,7 @@ public class ExecuteCommandChangeLoadStage : BasicCommandExecution
             SetImpossible("ProcessTask belongs to a different LoadMetadata");
 
         if (!ProcessTask.IsCompatibleStage(_sourceProcessTask.ProcessTaskType, _targetStage.LoadStage))
-            SetImpossible("Task type '" + _sourceProcessTask.ProcessTaskType +"' cannot run in " + _targetStage.LoadStage);
+            SetImpossible($"Task type '{_sourceProcessTask.ProcessTaskType}' cannot run in {_targetStage.LoadStage}");
     }
 
     public override void Execute()

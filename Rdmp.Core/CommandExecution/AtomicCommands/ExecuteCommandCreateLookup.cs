@@ -85,7 +85,7 @@ public class ExecuteCommandCreateLookup : BasicCommandExecution
 
         foreach (var descCol in _lookupDescriptionColumns)
         {
-            Lookup lookup = new Lookup(_catalogueRepository, descCol, _fkToPkTuples.First().Item1, _fkToPkTuples.First().Item2, ExtractionJoinType.Left, _collation);
+            var lookup = new Lookup(_catalogueRepository, descCol, _fkToPkTuples.First().Item1, _fkToPkTuples.First().Item2, ExtractionJoinType.Left, _collation);
 
             foreach (var supplementalKeyPair in _fkToPkTuples.Skip(1))
                 new LookupCompositeJoinInfo(_catalogueRepository, lookup, supplementalKeyPair.Item1, supplementalKeyPair.Item2, _collation);
@@ -95,9 +95,9 @@ public class ExecuteCommandCreateLookup : BasicCommandExecution
                 string proposedName;
 
                 if (_lookupDescriptionColumns.Length == 1)
-                    proposedName = _foreignKeyExtractionInformation.GetRuntimeName() + "_Desc";
+                    proposedName = $"{_foreignKeyExtractionInformation.GetRuntimeName()}_Desc";
                 else
-                    proposedName = _foreignKeyExtractionInformation.GetRuntimeName() + "_" + descCol.GetRuntimeName();
+                    proposedName = $"{_foreignKeyExtractionInformation.GetRuntimeName()}_{descCol.GetRuntimeName()}";
 
                 var newCatalogueItem = new CatalogueItem(_catalogueRepository, _catalogue, proposedName);
                 newCatalogueItem.SetColumnInfo(descCol);

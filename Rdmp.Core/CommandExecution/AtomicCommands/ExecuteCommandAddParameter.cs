@@ -47,7 +47,7 @@ public class ExecuteCommandAddParameter : BasicCommandExecution, IAtomicCommand
 
     public override void Execute()
     {
-        ParameterCollectionUIOptionsFactory factory = new ParameterCollectionUIOptionsFactory();
+        var factory = new ParameterCollectionUIOptionsFactory();
         var options = factory.Create(_collector, BasicActivator.CoreChildProvider);
 
         var n = _parameterName;
@@ -62,7 +62,7 @@ public class ExecuteCommandAddParameter : BasicCommandExecution, IAtomicCommand
                     EntryLabel = "Name",
                     TaskDescription = "A name is required for the paramater.  It must start with '@' e.g. @myparameter.  Do not add spaces or start the name with a number.",
                     WindowTitle = "Add Paramater"
-                }, 99,"@myVariable", out string name,false))
+                }, 99,"@myVariable", out var name,false))
             {
                 // user did type a name
                 n = name;
@@ -83,7 +83,7 @@ public class ExecuteCommandAddParameter : BasicCommandExecution, IAtomicCommand
                     EntryLabel = "DataType",
                     TaskDescription = "What data type are you storing in the parameter (e.g. datetime2)",
                     WindowTitle = "Parameter Data Type"
-                }, 99, "varchar(10)", out string datatype, false))
+                }, 99, "varchar(10)", out var datatype, false))
             {
                 // user did type
                 d = datatype;
@@ -103,7 +103,7 @@ public class ExecuteCommandAddParameter : BasicCommandExecution, IAtomicCommand
                     EntryLabel = "Value",
                     TaskDescription = "What value should the parameter have.  Ensure if you are using text that it is appropriately quoted",
                     WindowTitle = "Parameter Value"
-                }, int.MaxValue, AnyTableSqlParameter.DefaultValue, out string value, false))
+                }, int.MaxValue, AnyTableSqlParameter.DefaultValue, out var value, false))
             {
                 // user did type
                 v = value;

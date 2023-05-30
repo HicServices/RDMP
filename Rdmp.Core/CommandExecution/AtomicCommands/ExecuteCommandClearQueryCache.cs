@@ -61,7 +61,7 @@ public class ExecuteCommandClearQueryCache : BasicCommandExecution
         base.Execute();
 
         var cacheManager = new CachedAggregateConfigurationResultsManager(_cic.QueryCachingServer);
-        int deleted = 0;
+        var deleted = 0;
 
         foreach(var ag in _cic.RootCohortAggregateContainer.GetAllAggregateConfigurationsRecursively())
         {
@@ -83,7 +83,7 @@ public class ExecuteCommandClearQueryCache : BasicCommandExecution
     private int GetCacheCount()
     {
         var cacheManager = new CachedAggregateConfigurationResultsManager(_cic.QueryCachingServer);
-        int found = 0;
+        var found = 0;
 
         foreach (var ag in _cic.RootCohortAggregateContainer.GetAllAggregateConfigurationsRecursively())
         {

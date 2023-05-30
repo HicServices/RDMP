@@ -41,7 +41,7 @@ public class ExtractableCohortAuditLogBuilder
     /// <returns></returns>
     public string GetDescription(CohortIdentificationConfiguration cic)
     {
-        return InCohortIdentificationConfiguration + " '" + cic + "' (ID=" + cic.ID + ")";
+        return $"{InCohortIdentificationConfiguration} '{cic}' (ID={cic.ID})";
     }
 
     /// <summary>
@@ -52,12 +52,13 @@ public class ExtractableCohortAuditLogBuilder
     /// <returns></returns>
     public string GetDescription(ExtractionInformation extractionIdentifierColumn)
     {
-        return InExtractionInformation + " '" + extractionIdentifierColumn.CatalogueItem.Catalogue + "." + extractionIdentifierColumn.GetRuntimeName() + "'  (ID=" + extractionIdentifierColumn.ID + ")";
+        return
+            $"{InExtractionInformation} '{extractionIdentifierColumn.CatalogueItem.Catalogue}.{extractionIdentifierColumn.GetRuntimeName()}'  (ID={extractionIdentifierColumn.ID})";
     }
 
     internal string GetDescription(DiscoveredColumn col)
     {
-        return InColumn + " '" + col.GetFullyQualifiedName() + "'";
+        return $"{InColumn} '{col.GetFullyQualifiedName()}'";
     }
 
     /// <summary>
@@ -68,7 +69,7 @@ public class ExtractableCohortAuditLogBuilder
     /// <returns></returns>
     public string GetDescription(FileInfo file)
     {
-        return InFile + " '" + file.FullName + "'";
+        return $"{InFile} '{file.FullName}'";
     }
 
     /// <summary>

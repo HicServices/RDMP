@@ -34,12 +34,13 @@ public class ArchivalFatalError : IArchivalLoggingRecordOfPastEvent,IHasSummary
     {
         var s = ToString();
         if (s.Length > ArchivalDataLoadInfo.MaxDescriptionLength)
-            return s.Substring(0, ArchivalDataLoadInfo.MaxDescriptionLength) + "...";
+            return $"{s.Substring(0, ArchivalDataLoadInfo.MaxDescriptionLength)}...";
         return s;
     }
     public override string ToString()
     {
-        return Source + " - " + Description + (string.IsNullOrWhiteSpace(Explanation)?"(UNRESOLVED)":"(RESOLVED:"+Explanation+")");
+        return
+            $"{Source} - {Description}{(string.IsNullOrWhiteSpace(Explanation) ? "(UNRESOLVED)" : $"(RESOLVED:{Explanation})")}";
     }
     public int CompareTo(object obj)
     {

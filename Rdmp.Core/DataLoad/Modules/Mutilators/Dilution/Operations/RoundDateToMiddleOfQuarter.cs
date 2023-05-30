@@ -30,9 +30,7 @@ public class RoundDateToMiddleOfQuarter : DilutionOperation
         //confirm type safety
         if (!ColumnToDilute.SqlDataType.ToLower().Contains("date"))
             notifier.OnCheckPerformed(new CheckEventArgs(
-                "ColumnToDilute '" + ColumnToDilute.RuntimeColumnName +
-                "' has operation RoundDateToMiddleOfQuarter configured but its datatype is " +
-                ColumnToDilute.SqlDataType, CheckResult.Fail, null));
+                $"ColumnToDilute '{ColumnToDilute.RuntimeColumnName}' has operation RoundDateToMiddleOfQuarter configured but its datatype is {ColumnToDilute.SqlDataType}", CheckResult.Fail, null));
     }
         
     public override string GetMutilationSql(INameDatabasesAndTablesDuringLoads namer)

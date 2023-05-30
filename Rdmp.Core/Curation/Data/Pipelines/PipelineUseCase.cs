@@ -30,7 +30,8 @@ public abstract class PipelineUseCase : IPipelineUseCase
     public IDataFlowPipelineContext GetContext()
     {
         if(_context == null)
-            throw new Exception("Context has not been initialized yet for use case " + GetType() + " make sure to add a call to GenerateContext method in the constructor (and mark class as sealed)");
+            throw new Exception(
+                $"Context has not been initialized yet for use case {GetType()} make sure to add a call to GenerateContext method in the constructor (and mark class as sealed)");
 
         return _context;
     }
@@ -83,7 +84,7 @@ public abstract class PipelineUseCase : IPipelineUseCase
     protected PipelineUseCase(Type[] designTimeInitializationObjectTypes)
     {
         IsDesignTime = true;
-        foreach (Type t in designTimeInitializationObjectTypes)
+        foreach (var t in designTimeInitializationObjectTypes)
             InitializationObjects.Add(t);
     }
 

@@ -73,7 +73,7 @@ public class EndToEndTableValuedFunction:DatabaseTests
         CreateANormalCatalogue();
             
         //create a cohort database using wizard
-        CreateNewCohortDatabaseWizard cohortDatabaseWizard = new CreateNewCohortDatabaseWizard(_discoveredCohortDatabase,CatalogueRepository,DataExportRepository,false);
+        var cohortDatabaseWizard = new CreateNewCohortDatabaseWizard(_discoveredCohortDatabase,CatalogueRepository,DataExportRepository,false);
             
         _externalCohortTable = cohortDatabaseWizard.CreateDatabase(
             new PrivateIdentifierPrototype(_nonTvfExtractionIdentifier)
@@ -279,7 +279,7 @@ end
             con.Open();
             var r = db.Server.GetCommand(sql, con).ExecuteReader();
 
-            int rowsReturned = 0;
+            var rowsReturned = 0;
 
             while (r.Read())
             {
@@ -414,7 +414,7 @@ end
         var selected = new SelectedDataSets(DataExportRepository, config, tvfExtractable, null);
 
         //make all columns part of the extraction
-        foreach (ExtractionInformation e in _tvfCatalogue.GetAllExtractionInformation(ExtractionCategory.Any))
+        foreach (var e in _tvfCatalogue.GetAllExtractionInformation(ExtractionCategory.Any))
             config.AddColumnToExtraction(tvfExtractable, e);
             
         //the default value should be 10

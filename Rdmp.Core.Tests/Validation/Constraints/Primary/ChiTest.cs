@@ -46,7 +46,7 @@ class ChiTest : ValidationTests
     [Test]
     public void Validate_InvalidChi_ExceptionContainsRequiredInfo()
     {
-        ValidationFailure result = _chi.Validate("banana");
+        var result = _chi.Validate("banana");
             
         Assert.NotNull(result.SourceConstraint);
         Assert.AreEqual(typeof(Chi), result.SourceConstraint.GetType());

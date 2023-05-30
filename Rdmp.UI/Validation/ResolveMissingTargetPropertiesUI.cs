@@ -61,15 +61,15 @@ public partial class ResolveMissingTargetPropertiesUI : Form
 
     private void DeleteSelectedReferences()
     {
-        ItemValidator[] itemValidators = lbMissingReferences.SelectedItems.Cast<ItemValidator>().ToArray();
+        var itemValidators = lbMissingReferences.SelectedItems.Cast<ItemValidator>().ToArray();
             
         if (itemValidators.Length > 0)
         {
-            foreach (ItemValidator iv in itemValidators)
+            foreach (var iv in itemValidators)
             {
                 AdjustedValidator.RemoveItemValidator(iv.TargetProperty);
                 lbMissingReferences.Items.Remove(iv);
-                tbOperations.AppendText("Deleted Missing Reference:" + Environment.NewLine);
+                tbOperations.AppendText($"Deleted Missing Reference:{Environment.NewLine}");
                 tbOperations.AppendText(iv.TargetProperty + Environment.NewLine);
             }
 
@@ -81,7 +81,7 @@ public partial class ResolveMissingTargetPropertiesUI : Form
 
     private void lbMissingReferences_MouseDown(object sender, MouseEventArgs e)
     {
-        int indexFromPoint = lbMissingReferences.IndexFromPoint(e.X, e.Y);
+        var indexFromPoint = lbMissingReferences.IndexFromPoint(e.X, e.Y);
 
         if (indexFromPoint != ListBox.NoMatches)
         {
@@ -111,21 +111,21 @@ public partial class ResolveMissingTargetPropertiesUI : Form
 
     private void lbAvailableColumns_DragDrop(object sender, DragEventArgs e)
     {
-        ItemValidator missingReference = e.Data.GetData(typeof (ItemValidator)) as ItemValidator;
+        var missingReference = e.Data.GetData(typeof (ItemValidator)) as ItemValidator;
             
             
-        int indexFromPoint = lbAvailableColumns.IndexFromPoint(lbAvailableColumns.PointToClient(new Point(e.X,e.Y)));
+        var indexFromPoint = lbAvailableColumns.IndexFromPoint(lbAvailableColumns.PointToClient(new Point(e.X,e.Y)));
 
         if (indexFromPoint != ListBox.NoMatches && missingReference != null)
         {
-            string oldName = missingReference.TargetProperty;
-            string newName = (string) lbAvailableColumns.Items[indexFromPoint];
+            var oldName = missingReference.TargetProperty;
+            var newName = (string) lbAvailableColumns.Items[indexFromPoint];
 
             AdjustedValidator.RenameColumn(oldName,newName);
 
-            tbOperations.AppendText("Renamed Missing Reference:" + Environment.NewLine);
+            tbOperations.AppendText($"Renamed Missing Reference:{Environment.NewLine}");
             tbOperations.AppendText(oldName + Environment.NewLine);
-            tbOperations.AppendText("To:" + Environment.NewLine);
+            tbOperations.AppendText($"To:{Environment.NewLine}");
             tbOperations.AppendText(newName + Environment.NewLine);
 
             lbMissingReferences.Items.Remove(missingReference);
@@ -145,7 +145,7 @@ public partial class ResolveMissingTargetPropertiesUI : Form
 
     private void cbSelectAll_CheckedChanged(object sender, EventArgs e)
     {
-        for(int i = 0;i<lbMissingReferences.Items.Count;i++)
+        for(var i = 0;i<lbMissingReferences.Items.Count;i++)
             lbMissingReferences.SetSelected(i,cbSelectAll.Checked);
     }
 

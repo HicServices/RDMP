@@ -31,7 +31,7 @@ class ArbitraryFolderNodeTests:UITests
 
         var menu1 = common.GetMenuIfExists(node);
         Assert.IsNotNull(menu1);
-        int count1 = menu1.Items.Count;
+        var count1 = menu1.Items.Count;
         //some you get for free e.g. Expand/Collapse
         Assert.GreaterOrEqual(count1,2);
 
@@ -40,7 +40,7 @@ class ArbitraryFolderNodeTests:UITests
 
         var menu2 = common.GetMenuIfExists(node);
 
-        int count2 = menu2.Items.Count;
+        var count2 = menu2.Items.Count;
 
         // expect 2 new entries in the context menu.  The "Do Nothing" command added above
         // and a tool strip seperator to divide the menu commands from the common commands

@@ -150,14 +150,16 @@ public class CachingHost
                         listener.OnNotify(this, new NotifyEventArgs(ProgressEventType.Information, "Download completed successfully."));
                         return;
                     default:
-                        listener.OnNotify(this, new NotifyEventArgs(ProgressEventType.Information, "Download ended: " + result));
+                        listener.OnNotify(this, new NotifyEventArgs(ProgressEventType.Information,
+                            $"Download ended: {result}"));
                         return;
                 }
             }
         }
         catch (OperationCanceledException)
         {
-            listener.OnNotify(this, new NotifyEventArgs(ProgressEventType.Warning, "Cache download cancelled: " + downloader));
+            listener.OnNotify(this, new NotifyEventArgs(ProgressEventType.Warning,
+                $"Cache download cancelled: {downloader}"));
         }
     }
 }

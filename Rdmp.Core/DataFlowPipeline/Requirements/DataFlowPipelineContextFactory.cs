@@ -25,7 +25,7 @@ public class DataFlowPipelineContextFactory<T>
     /// <returns></returns>
     public DataFlowPipelineContext<T> Create(PipelineUsage flags)
     {
-        DataFlowPipelineContext<T> toReturn = new DataFlowPipelineContext<T>();
+        var toReturn = new DataFlowPipelineContext<T>();
 
         //context has a fixed destination so we cannot allow any alternate destinations to sneak in
         if (flags.HasFlag(PipelineUsage.FixedDestination))

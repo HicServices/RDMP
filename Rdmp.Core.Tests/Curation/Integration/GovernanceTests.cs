@@ -51,7 +51,7 @@ public class GovernanceTests:DatabaseTests
 
         var gov = GetGov();
         gov.Name = "Fish";
-        GovernancePeriod freshCopy = CatalogueRepository.GetObjectByID<GovernancePeriod>(gov.ID);
+        var freshCopy = CatalogueRepository.GetObjectByID<GovernancePeriod>(gov.ID);
             
         //local change not applied yet
         Assert.AreNotEqual(gov.Name,freshCopy.Name);
@@ -117,10 +117,10 @@ public class GovernanceTests:DatabaseTests
     [TestCase(false)]
     public void GovernsCatalogue(bool memoryRepository)
     {
-        ICatalogueRepository repo = memoryRepository ? (ICatalogueRepository) new MemoryCatalogueRepository() : CatalogueRepository;
+        var repo = memoryRepository ? (ICatalogueRepository) new MemoryCatalogueRepository() : CatalogueRepository;
 
         var gov = GetGov(repo);
-        Catalogue c = new Catalogue(repo, "GovernedCatalogue");
+        var c = new Catalogue(repo, "GovernedCatalogue");
         try
         {
             Assert.AreEqual(gov.GovernedCatalogues.Count(), 0);
@@ -144,7 +144,7 @@ public class GovernanceTests:DatabaseTests
     [Test]
     public void GovernsSameCatalogueTwice()
     {
-        Catalogue c = new Catalogue(CatalogueRepository, "GovernedCatalogue");
+        var c = new Catalogue(CatalogueRepository, "GovernedCatalogue");
             
         var gov = GetGov();
         Assert.AreEqual(gov.GovernedCatalogues.Count(), 0);//should be no governanced catalogues for this governancer yet
@@ -157,7 +157,7 @@ public class GovernanceTests:DatabaseTests
     List<GovernancePeriod> toCleanup = new List<GovernancePeriod>();
     private GovernancePeriod GetGov(ICatalogueRepository repo = null)
     {
-        GovernancePeriod gov = new GovernancePeriod(repo??CatalogueRepository);
+        var gov = new GovernancePeriod(repo??CatalogueRepository);
         toCleanup.Add(gov);
 
         return gov;

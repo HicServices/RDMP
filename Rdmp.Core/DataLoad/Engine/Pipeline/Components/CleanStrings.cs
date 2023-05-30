@@ -34,19 +34,20 @@ public class CleanStrings : IPluginDataFlowComponent<DataTable>, IPipelineRequir
         StartAgain:
         foreach (DataRow row in toProcess.Rows)
         {
-            for (int i = 0; i < columnsToClean.Count; i++)
+            for (var i = 0; i < columnsToClean.Count; i++)
             {
-                string toClean = columnsToClean[i];
+                var toClean = columnsToClean[i];
                 string val = null;
                 try
                 {
-                    object o = row[toClean];
+                    var o = row[toClean];
 
                     if(o == DBNull.Value || o == null)
                         continue;
 
                     if(!(o is string))
-                        throw new ArgumentException("Despite being marked as a string column, object found in column " + toClean + " was of type " + o.GetType());
+                        throw new ArgumentException(
+                            $"Despite being marked as a string column, object found in column {toClean} was of type {o.GetType()}");
 
                     val = o as string;
                 }
@@ -96,18 +97,17 @@ public class CleanStrings : IPluginDataFlowComponent<DataTable>, IPipelineRequir
         if (target == null)
             throw new Exception("Without TableInfo we cannot figure out what columns to clean");
 
-        _taskDescription = "Clean Strings " + target.GetRuntimeName() + ":";
+        _taskDescription = $"Clean Strings {target.GetRuntimeName()}:";
 
-        foreach (ColumnInfo col in target.ColumnInfos)
+        foreach (var col in target.ColumnInfos)
             if (col.Data_type != null && col.Data_type.Contains("char"))
                 columnsToClean.Add(col.GetRuntimeName());
         if (columnsToClean.Any())
             listener.OnNotify(this, new NotifyEventArgs(ProgressEventType.Information,
-                "Preparing to perform clean " + columnsToClean.Count + " string columns (" +
-                string.Join(",", columnsToClean) + ") in table " + target.GetRuntimeName()));
+                $"Preparing to perform clean {columnsToClean.Count} string columns ({string.Join(",", columnsToClean)}) in table {target.GetRuntimeName()}"));
         else
             listener.OnNotify(this, new NotifyEventArgs(ProgressEventType.Information,
-                "Skipping CleanString on table " + target.GetRuntimeName() + " because there are no String columns in the table"));
+                $"Skipping CleanString on table {target.GetRuntimeName()} because there are no String columns in the table"));
     }
 
         

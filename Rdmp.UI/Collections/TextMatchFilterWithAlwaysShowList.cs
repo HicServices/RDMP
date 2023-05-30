@@ -24,16 +24,16 @@ public class TextMatchFilterWithAlwaysShowList : TextMatchFilter
     {
         if(!string.IsNullOrWhiteSpace(text) && text.Contains(" "))
         {
-            List<IModelFilter> filters = new List<IModelFilter>();
+            var filters = new List<IModelFilter>();
                 
             _tokens = text.Split(' ');
-            foreach (string token in _tokens)
+            foreach (var token in _tokens)
                 filters.Add(new TextMatchFilter(olv,token,comparison));
 
             _compositeFilter = new CompositeAllFilter(filters);
         }
 
-        foreach (object o in alwaysShow)
+        foreach (var o in alwaysShow)
             AlwaysShow.Add(o);
     }
 
@@ -45,7 +45,7 @@ public class TextMatchFilterWithAlwaysShowList : TextMatchFilter
     public override bool Filter(object modelObject)
     {
         //gets us the highlight and composite match if the user put in spaces
-        bool showing = _compositeFilter != null ? _compositeFilter.Filter(modelObject) : base.Filter(modelObject);
+        var showing = _compositeFilter != null ? _compositeFilter.Filter(modelObject) : base.Filter(modelObject);
 
         //if its in the always show it
         if (AlwaysShow.Contains(modelObject))

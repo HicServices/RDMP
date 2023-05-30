@@ -101,7 +101,7 @@ public partial class RAGSmileyToolStrip : ToolStripButton,  IRAGSmiley
     {
         base.OnClick(e);
 
-        Exception tag = Tag as Exception;
+        var tag = Tag as Exception;
 
         if (PopupMessagesIfAny(tag))
             return;

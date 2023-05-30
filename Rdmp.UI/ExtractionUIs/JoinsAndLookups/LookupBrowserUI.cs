@@ -44,7 +44,7 @@ public partial class LookupBrowserUI : LookupBrowserUI_Design
         lblCode.Text = _keyColumn.GetRuntimeName();
         lblDescription.Text = _descriptionColumn.GetRuntimeName();
 
-        ScintillaTextEditorFactory factory = new ScintillaTextEditorFactory();
+        var factory = new ScintillaTextEditorFactory();
         _scintilla = factory.Create();
 
         gbScintilla.Controls.Add(_scintilla);
@@ -73,13 +73,15 @@ public partial class LookupBrowserUI : LookupBrowserUI_Design
 
         if(!string.IsNullOrWhiteSpace(tbCode.Text))
         {
-            var codeFilter = new SpontaneouslyInventedFilter(repo,container, _keyColumn.GetFullyQualifiedName() + " LIKE '" + tbCode.Text + "%'", "Key Starts", "", null);
+            var codeFilter = new SpontaneouslyInventedFilter(repo,container,
+                $"{_keyColumn.GetFullyQualifiedName()} LIKE '{tbCode.Text}%'", "Key Starts", "", null);
             container.AddChild(codeFilter);
         }
             
         if(!string.IsNullOrWhiteSpace(tbDescription.Text))
         {
-            var codeFilter = new SpontaneouslyInventedFilter(repo,container, _descriptionColumn.GetFullyQualifiedName() + " LIKE '%" + tbDescription.Text + "%'", "Description Contains", "", null);
+            var codeFilter = new SpontaneouslyInventedFilter(repo,container,
+                $"{_descriptionColumn.GetFullyQualifiedName()} LIKE '%{tbDescription.Text}%'", "Description Contains", "", null);
             container.AddChild(codeFilter);
         }
             

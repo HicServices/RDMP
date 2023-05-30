@@ -119,7 +119,8 @@ public class DelimitedFileSourceTests_ResolvedAccordingToStrategy : DelimitedFil
                 var dt2 = RunGetChunk(file, strategy, true);
                 Assert.AreEqual(2,dt2.Rows.Count);
 
-                AssertDivertFileIsExactly("Bob,He's also dynamite, seen him do a lot of good work,30" +Environment.NewLine);
+                AssertDivertFileIsExactly(
+                    $"Bob,He's also dynamite, seen him do a lot of good work,30{Environment.NewLine}");
 
                 break;
             default:
@@ -154,7 +155,8 @@ public class DelimitedFileSourceTests_ResolvedAccordingToStrategy : DelimitedFil
                 var dt2 = RunGetChunk(file, strategy, true);
                 Assert.AreEqual(2,dt2.Rows.Count);
 
-                AssertDivertFileIsExactly("Frank,Is the greatest,100,Frank,Is the greatest,100" + Environment.NewLine + "Bob,He's also dynamite, seen him do a lot of good work,30" +Environment.NewLine + "Bob2,He's also dynamite2, seen him do a lot of good work2,30" +Environment.NewLine);
+                AssertDivertFileIsExactly(
+                    $"Frank,Is the greatest,100,Frank,Is the greatest,100{Environment.NewLine}Bob,He's also dynamite, seen him do a lot of good work,30{Environment.NewLine}Bob2,He's also dynamite2, seen him do a lot of good work2,30{Environment.NewLine}");
 
                 break;
             default:
@@ -196,7 +198,7 @@ public class DelimitedFileSourceTests_ResolvedAccordingToStrategy : DelimitedFil
                 var dt2 = RunGetChunk(file, adjust);
                 Assert.AreEqual(2, dt2.Rows.Count);
 
-                AssertDivertFileIsExactly("Other People To Investigate" + Environment.NewLine);
+                AssertDivertFileIsExactly($"Other People To Investigate{Environment.NewLine}");
 
                 break;
             default:
@@ -236,7 +238,7 @@ public class DelimitedFileSourceTests_ResolvedAccordingToStrategy : DelimitedFil
                 var dt2 = RunGetChunk(file, adjust);
                 Assert.AreEqual(1, dt2.Rows.Count);
 
-                AssertDivertFileIsExactly("Bob"+Environment.NewLine);
+                AssertDivertFileIsExactly($"Bob{Environment.NewLine}");
 
                 break;
             default:

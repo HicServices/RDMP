@@ -27,7 +27,7 @@ public class ExecuteCommandAddJoinInfo : BasicUICommandExecution, IAtomicCommand
 
     public override string GetCommandName()
     {
-        return "Configure JoinInfo where '" + _tableInfo + "' is a Primary Key Table";
+        return $"Configure JoinInfo where '{_tableInfo}' is a Primary Key Table";
     }
 
     public override string GetCommandHelp()

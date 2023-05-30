@@ -19,7 +19,7 @@ public class CommentStoreWithKeywords : CommentStore
     {
         base.ReadComments(directoriesToLookInForComments);
             
-        FileInfo keywords = new FileInfo("./Curation/KeywordHelp.txt");
+        var keywords = new FileInfo("./Curation/KeywordHelp.txt");
 
         if(keywords.Exists)
             AddToHelp(File.ReadAllText(keywords.FullName));
@@ -37,7 +37,8 @@ public class CommentStoreWithKeywords : CommentStore
             var split = line.Split(':');
 
             if (split.Length != 2)
-                throw new Exception("Malformed line in Resources.KeywordHelp, line is:" + Environment.NewLine + line + Environment.NewLine + "We expected it to have exactly one colon in it");
+                throw new Exception(
+                    $"Malformed line in Resources.KeywordHelp, line is:{Environment.NewLine}{line}{Environment.NewLine}We expected it to have exactly one colon in it");
 
             if (!ContainsKey(split[0]))
                 Add(split[0], split[1]);

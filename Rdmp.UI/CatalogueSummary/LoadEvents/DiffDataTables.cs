@@ -30,7 +30,7 @@ public partial class DiffDataTables : UserControl
 
     public void PopulateWith(DataTable dt1, DataTable dt2)
     {
-        DataTable dtResult = new DataTable();
+        var dtResult = new DataTable();
 
         foreach (DataColumn col in dt1.Columns)
             dtResult.Columns.Add(col.ColumnName);
@@ -41,11 +41,11 @@ public partial class DiffDataTables : UserControl
         if(dt1.Rows.Count != dt2.Rows.Count)
             throw new NotSupportedException("Exected DataTables to have the same number of rows");
 
-        for (int r = 0; r < dt1.Rows.Count; r++)
+        for (var r = 0; r < dt1.Rows.Count; r++)
         {
-            DataRow copyToRow = dtResult.Rows.Add();
+            var copyToRow = dtResult.Rows.Add();
 
-            for (int c = 0; c < dt1.Columns.Count; c++)
+            for (var c = 0; c < dt1.Columns.Count; c++)
             {
                 var val1 = dt1.Rows[r][c] != null ?dt1.Rows[r][c].ToString():"";
                 var val2 = dt2.Rows[r][c] != null ? dt2.Rows[r][c].ToString() : "";

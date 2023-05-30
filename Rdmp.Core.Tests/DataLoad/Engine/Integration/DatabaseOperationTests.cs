@@ -30,15 +30,15 @@ class DatabaseOperationTests : DatabaseTests
     // This no longer copies between servers, but the original test didn't guarantee that would happen anyway
     public void CloneDatabaseAndTable()
     {
-        string testLiveDatabaseName = TestDatabaseNames.GetConsistentName("TEST");
+        var testLiveDatabaseName = TestDatabaseNames.GetConsistentName("TEST");
             
         var testDb = DiscoveredServerICanCreateRandomDatabasesAndTablesOn.ExpectDatabase(testLiveDatabaseName);
-        var raw = DiscoveredServerICanCreateRandomDatabasesAndTablesOn.ExpectDatabase(testLiveDatabaseName + "_RAW");
+        var raw = DiscoveredServerICanCreateRandomDatabasesAndTablesOn.ExpectDatabase($"{testLiveDatabaseName}_RAW");
 
-        foreach (DiscoveredDatabase db in new[] { raw ,testDb})
+        foreach (var db in new[] { raw ,testDb})
             if (db.Exists())
             {
-                foreach (DiscoveredTable table in db.DiscoverTables(true))
+                foreach (var table in db.DiscoverTables(true))
                     table.Drop();
 
                 db.Drop();
@@ -64,10 +64,11 @@ class DatabaseOperationTests : DatabaseTests
             var cloneDb = cloner.CreateDatabaseForStage(LoadBubble.Raw);
 
             //confirm database appeared
-            Assert.IsTrue(DiscoveredServerICanCreateRandomDatabasesAndTablesOn.ExpectDatabase(testLiveDatabaseName + "_RAW").Exists());
+            Assert.IsTrue(DiscoveredServerICanCreateRandomDatabasesAndTablesOn.ExpectDatabase(
+                $"{testLiveDatabaseName}_RAW").Exists());
 
             //now create a catalogue and wire it SetUp to the table TEST on the test database server 
-            Catalogue cata = SetupATestCatalogue(builder, testLiveDatabaseName, "Table_1"); 
+            var cata = SetupATestCatalogue(builder, testLiveDatabaseName, "Table_1"); 
 
             //now clone the catalogue data structures to MachineName
             foreach (TableInfo tableInfo in cata.GetTableInfoList(false))
@@ -98,7 +99,7 @@ class DatabaseOperationTests : DatabaseTests
     {
         //create a new catalogue for test data (in the test data catalogue)
         var cat = new Catalogue(CatalogueRepository, "DeleteMe");
-        TableInfoImporter importer = new TableInfoImporter(CatalogueRepository, builder.DataSource, database, table, DatabaseType.MicrosoftSQLServer, builder.UserID, builder.Password);
+        var importer = new TableInfoImporter(CatalogueRepository, builder.DataSource, database, table, DatabaseType.MicrosoftSQLServer, builder.UserID, builder.Password);
         importer.DoImport(out var tableInfo, out var columnInfos);
 
         toCleanUp.Push(cat);
@@ -112,7 +113,7 @@ class DatabaseOperationTests : DatabaseTests
         toCleanUp.Push(tableInfo);
             
         //for each column we will add a new one to the 
-        foreach (ColumnInfo col in columnInfos)
+        foreach (var col in columnInfos)
         {
             //create it with the same name
             var cataItem = new CatalogueItem(CatalogueRepository, cat, col.Name.Substring(col.Name.LastIndexOf(".") + 1).Trim('[', ']', '`'));

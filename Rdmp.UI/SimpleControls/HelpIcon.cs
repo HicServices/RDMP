@@ -21,7 +21,8 @@ public partial class HelpIcon : UserControl
     /// <summary>
     /// Returns the text that will be displayed when the user hovers over the control (this may be truncated if the text provided to <see cref="SetHelpText"/> was very long)
     /// </summary>
-    public string HoverText{get=>_hoverText;}
+    public string HoverText => _hoverText;
+
     private string _hoverText;
 
     private string _title;
@@ -72,7 +73,7 @@ public partial class HelpIcon : UserControl
             return hoverText;
 
         //enforce a maximum of 150 characters
-        return hoverText.Substring(0, MaxHoverTextLength-3) + "...";
+        return $"{hoverText.Substring(0, MaxHoverTextLength - 3)}...";
     }
 
     private void HelpIcon_MouseClick(object sender, MouseEventArgs e)

@@ -38,8 +38,8 @@ public partial class RevertablePropertyDifferenceUI : RDMPUserControl
             _difference.DatabaseValue != null ? _difference.DatabaseValue.ToString() : "<Null>",
             _difference.LocalValue != null ? _difference.LocalValue.ToString() : "<Null>");
 
-        lblDbProperty.Text = _difference.Property.Name + " in Database";
-        lblMemoryProperty.Text = _difference.Property.Name + " in Memory";
+        lblDbProperty.Text = $"{_difference.Property.Name} in Database";
+        lblMemoryProperty.Text = $"{_difference.Property.Name} in Memory";
     }
         
     private Scintilla QueryEditorBefore;
@@ -66,19 +66,19 @@ public partial class RevertablePropertyDifferenceUI : RDMPUserControl
         if (textAfter == null)
             textAfter = "";
 
-        Diff diff = new Diff();
+        var diff = new Diff();
 
         var highlighter = new ScintillaLineHighlightingHelper();
             
         highlighter.ClearAll(QueryEditorAfter);
         highlighter.ClearAll(QueryEditorBefore);
 
-        foreach (Diff.Item item in diff.DiffText(textBefore, textAfter))
+        foreach (var item in diff.DiffText(textBefore, textAfter))
         {
-            for (int i = item.StartA; i < item.StartA + item.deletedA; i++)
+            for (var i = item.StartA; i < item.StartA + item.deletedA; i++)
                 highlighter.HighlightLine(QueryEditorBefore,i, Color.Pink);
                     
-            for (int i = item.StartB; i < item.StartB+item.insertedB; i++)
+            for (var i = item.StartB; i < item.StartB+item.insertedB; i++)
                 highlighter.HighlightLine(QueryEditorAfter, i, Color.LawnGreen);
         }
             

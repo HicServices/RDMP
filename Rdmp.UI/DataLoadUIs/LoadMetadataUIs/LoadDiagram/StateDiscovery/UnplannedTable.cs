@@ -16,7 +16,7 @@ public class UnplannedTable:IHasLoadDiagramState
 {
     public DiscoveredTable Table { get; private set; }
     public readonly DiscoveredColumn[] Columns;
-    public LoadDiagramState State { get{return LoadDiagramState.New;}}
+    public LoadDiagramState State => LoadDiagramState.New;
 
     public UnplannedTable(DiscoveredTable table)
     {

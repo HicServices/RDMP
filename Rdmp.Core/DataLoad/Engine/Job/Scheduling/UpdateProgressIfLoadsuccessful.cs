@@ -41,9 +41,11 @@ public class UpdateProgressIfLoadsuccessful : IUpdateLoadProgress
         var progress = Job.LoadProgress;
 
         if (progress.DataLoadProgress > DateToSetProgressTo)
-            throw new DataLoadProgressUpdateException("Cannot set DataLoadProgress to " + DateToSetProgressTo + " because it is less than the currently recorded progress:"+progress.DataLoadProgress);
+            throw new DataLoadProgressUpdateException(
+                $"Cannot set DataLoadProgress to {DateToSetProgressTo} because it is less than the currently recorded progress:{progress.DataLoadProgress}");
 
-        postLoadEventListener.OnNotify(this, new NotifyEventArgs(ProgressEventType.Information, "Updating DataLoadProgress of '" + progress + "' to " + DateToSetProgressTo));
+        postLoadEventListener.OnNotify(this, new NotifyEventArgs(ProgressEventType.Information,
+            $"Updating DataLoadProgress of '{progress}' to {DateToSetProgressTo}"));
         progress.DataLoadProgress = DateToSetProgressTo;
             
         progress.SaveToDatabase();

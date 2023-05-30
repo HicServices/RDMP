@@ -56,7 +56,7 @@ public class ExtractCatalogueMetadata : IPluginDataFlowComponent<DataTable>, IPi
                 throw new Exception("Could not find Source Folder. Does the project have an Extraction Directory defined?");
 
             var outputFolder = sourceFolder.Parent.CreateSubdirectory(ExtractionDirectory.METADATA_FOLDER_NAME);
-            var outputFile = new FileInfo(Path.Combine(outputFolder.FullName, toProcess.TableName + ".sd"));
+            var outputFile = new FileInfo(Path.Combine(outputFolder.FullName, $"{toProcess.TableName}.sd"));
 
             catalogue.Name = toProcess.TableName;
             var cmd = new ExecuteCommandExportObjectsToFile(_activator, catalogue, outputFile);
@@ -69,7 +69,7 @@ public class ExtractCatalogueMetadata : IPluginDataFlowComponent<DataTable>, IPi
 
     public string GetTableName()
     {
-        string tblName = MetadataNamingPattern;
+        var tblName = MetadataNamingPattern;
         var project = _request.Configuration.Project;
 
         tblName = tblName.Replace("$p", project.Name);
@@ -108,7 +108,8 @@ public class ExtractCatalogueMetadata : IPluginDataFlowComponent<DataTable>, IPi
             var dsRequest = _request as ExtractDatasetCommand;
 
             if (dsRequest != null && string.IsNullOrWhiteSpace(dsRequest.Catalogue.Acronym))
-                notifier.OnCheckPerformed(new CheckEventArgs("Catalogue '" + dsRequest.Catalogue + "' does not have an Acronym but MetadataNamingPattern contains $a", CheckResult.Fail));
+                notifier.OnCheckPerformed(new CheckEventArgs(
+                    $"Catalogue '{dsRequest.Catalogue}' does not have an Acronym but MetadataNamingPattern contains $a", CheckResult.Fail));
         }
     }
 

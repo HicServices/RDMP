@@ -29,8 +29,8 @@ public class DashboardObjectUse: ReferenceOtherObjectDatabaseEntity
     /// </summary>
     public int DashboardControl_ID
     {
-        get { return _dashboardControlID; }
-        set { SetField(ref _dashboardControlID , value); }
+        get => _dashboardControlID;
+        set => SetField(ref _dashboardControlID , value);
     }
 
 

@@ -34,20 +34,21 @@ public class AllKeywordsDescribedTest :DatabaseTests
         //ensures the DQERepository gets a chance to add its help text
         new DQERepository(CatalogueRepository);
 
-        List<string> problems = new List<string>();
+        var problems = new List<string>();
 
         var databaseTypes = typeof(Catalogue).Assembly.GetTypes().Where(t => typeof(IMapsDirectlyToDatabaseTable).IsAssignableFrom(t) && !t.IsInterface && !t.IsAbstract && !t.Name.StartsWith("Spontaneous") && !t.Name.Contains("Proxy")).ToArray();
             
         foreach (var type in databaseTypes)
         {
-            var docs = CatalogueRepository.CommentStore[type.Name]??CatalogueRepository.CommentStore["I"+type.Name];
+            var docs = CatalogueRepository.CommentStore[type.Name]??CatalogueRepository.CommentStore[$"I{type.Name}"];
                 
             if(string.IsNullOrWhiteSpace(docs))
-                problems.Add("Type " + type.Name + " does not have an entry in the help dictionary (maybe the class doesn't have documentation? - try adding /// <summary> style comments to the class)");
+                problems.Add(
+                    $"Type {type.Name} does not have an entry in the help dictionary (maybe the class doesn't have documentation? - try adding /// <summary> style comments to the class)");
                 
         }
-        foreach (string problem in problems)
-            Console.WriteLine("Fatal Problem:" + problem);
+        foreach (var problem in problems)
+            Console.WriteLine($"Fatal Problem:{problem}");
 
         Assert.AreEqual(0,problems.Count);
     }
@@ -55,7 +56,7 @@ public class AllKeywordsDescribedTest :DatabaseTests
     [Test]
     public void AllForeignKeysDescribed()
     {
-        List<string> allKeys = new List<string>();
+        var allKeys = new List<string>();
 
         //ensures the DQERepository gets a chance to add its help text
         new DQERepository(CatalogueRepository);
@@ -64,15 +65,15 @@ public class AllKeywordsDescribedTest :DatabaseTests
         allKeys.AddRange(GetForeignKeys(DataExportTableRepository.DiscoveredServer));
         allKeys.AddRange(GetForeignKeys(new DiscoveredServer(DataQualityEngineConnectionString)));
 
-        List<string> problems = new List<string>();
-        foreach (string fkName in allKeys)
+        var problems = new List<string>();
+        foreach (var fkName in allKeys)
         {
             if (!CatalogueRepository.CommentStore.ContainsKey(fkName))
-                problems.Add(fkName + " is a foreign Key (which does not CASCADE) but does not have any HelpText");
+                problems.Add($"{fkName} is a foreign Key (which does not CASCADE) but does not have any HelpText");
         }
             
-        foreach (string problem in problems)
-            Console.WriteLine("Fatal Problem:" + problem);
+        foreach (var problem in problems)
+            Console.WriteLine($"Fatal Problem:{problem}");
 
         Assert.AreEqual(0, problems.Count, @"Add a description for each of these to KeywordHelp.txt");
     }
@@ -80,7 +81,7 @@ public class AllKeywordsDescribedTest :DatabaseTests
     [Test]
     public void AllUserIndexesDescribed()
     {
-        List<string> allIndexes = new List<string>();
+        var allIndexes = new List<string>();
 
         //ensures the DQERepository gets a chance to add its help text
         new DQERepository(CatalogueRepository);
@@ -89,15 +90,15 @@ public class AllKeywordsDescribedTest :DatabaseTests
         allIndexes.AddRange(GetIndexes(DataExportTableRepository.DiscoveredServer));
         allIndexes.AddRange(GetIndexes(new DiscoveredServer(DataQualityEngineConnectionString)));
 
-        List<string> problems = new List<string>();
-        foreach (string idx in allIndexes)
+        var problems = new List<string>();
+        foreach (var idx in allIndexes)
         {
             if (!CatalogueRepository.CommentStore.ContainsKey(idx))
-                problems.Add(idx + " is an index but does not have any HelpText");
+                problems.Add($"{idx} is an index but does not have any HelpText");
         }
             
-        foreach (string problem in problems)
-            Console.WriteLine("Fatal Problem:" + problem);
+        foreach (var problem in problems)
+            Console.WriteLine($"Fatal Problem:{problem}");
 
         Assert.AreEqual(0,problems.Count,@"Add a description for each of these to KeywordHelp.txt");
             

@@ -90,7 +90,7 @@ public abstract class BasicCommandExecution : ICommandExecution,IAtomicCommand
         if (m == null)
             return;
 
-        if (m.ShouldBeReadOnly(out string reason))
+        if (m.ShouldBeReadOnly(out var reason))
         {
             SetImpossible($"{(m is IContainer ? "Container" : ('\'' + m.ToString() + '\''))} is readonly beacause:{reason}");
         }
@@ -121,7 +121,7 @@ public abstract class BasicCommandExecution : ICommandExecution,IAtomicCommand
     public virtual string GetCommandName()
     {
         if (!string.IsNullOrWhiteSpace(OverrideCommandName))
-            return UseTripleDotSuffix ? OverrideCommandName + "..." : OverrideCommandName;
+            return UseTripleDotSuffix ? $"{OverrideCommandName}..." : OverrideCommandName;
 
         var name = GetType().Name;
         var adjusted = name.Replace(ExecuteCommandPrefix, "");
@@ -296,7 +296,7 @@ public abstract class BasicCommandExecution : ICommandExecution,IAtomicCommand
         return SelectOne(new DialogArgs { 
             InitialSearchText = initialSearchText,
             AllowAutoSelect = allowAutoSelect,
-        },availableObjects, out T selected) ? selected : null;
+        },availableObjects, out var selected) ? selected : null;
 
     }
 
@@ -309,7 +309,7 @@ public abstract class BasicCommandExecution : ICommandExecution,IAtomicCommand
     /// <returns></returns>
     protected T SelectOne<T>(DialogArgs args, IList<T> availableObjects) where T : DatabaseEntity
     {
-        return SelectOne(args, availableObjects, out T selected) ? selected : null;
+        return SelectOne(args, availableObjects, out var selected) ? selected : null;
     }
 
     /// <summary>
@@ -325,7 +325,7 @@ public abstract class BasicCommandExecution : ICommandExecution,IAtomicCommand
         return SelectOne(new DialogArgs { 
             InitialSearchText = initialSearchText,
             AllowAutoSelect = allowAutoSelect,
-        },repository.GetAllObjects<T>().ToList(),out T answer) ? answer: null;
+        },repository.GetAllObjects<T>().ToList(),out var answer) ? answer: null;
     }
 
     /// <summary>
@@ -445,7 +445,7 @@ public abstract class BasicCommandExecution : ICommandExecution,IAtomicCommand
             
         var constructor = constructorSelector(objectConstructor);
 
-        List<object> constructorValues = new List<object>();
+        var constructorValues = new List<object>();
 
         var pickerEnumerator = pickerArgsIfAny?.GetEnumerator();
 

@@ -79,7 +79,7 @@ public class ExecuteCommandExtractMetadata : BasicCommandExecution
         var fileNaming =  _fileNaming;
 
         if (fileNaming == null)
-            if(!BasicActivator.TypeText("File naming", "File Naming", 1000, "$Name" + template.Extension, out fileNaming, false))
+            if(!BasicActivator.TypeText("File naming", "File Naming", 1000, $"$Name{template.Extension}", out fileNaming, false))
                 return;
             
         if (string.IsNullOrWhiteSpace(fileNaming))

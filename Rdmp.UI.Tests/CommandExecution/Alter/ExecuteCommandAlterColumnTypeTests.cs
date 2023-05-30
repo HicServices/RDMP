@@ -73,7 +73,7 @@ class ExecuteCommandAlterColumnTypeTests:DatabaseTests
         //should have started out as 10
         Assert.AreEqual(10, myCol.DataType.GetLengthIfString());
 
-        string oldType = myCol.DataType.SQLType;
+        var oldType = myCol.DataType.SQLType;
         //we want the new type to be 50 long
         var newType = oldType.Replace("10", "50");
         activator.TypeTextResponse = newType;

@@ -48,7 +48,8 @@ public class ExtractionTimeTimeCoverageAggregator
         }
         catch (Exception e)
         {
-            throw new Exception("Could not resolve TimeCoverage_ExtractionInformation for Catalogue '"+ catalogue +"',time coverage ExtractionInformationID was:" +catalogue.TimeCoverage_ExtractionInformation_ID,e);
+            throw new Exception(
+                $"Could not resolve TimeCoverage_ExtractionInformation for Catalogue '{catalogue}',time coverage ExtractionInformationID was:{catalogue.TimeCoverage_ExtractionInformation_ID}",e);
         }
 
         _expectedExtractionIdentifierInOutputBuffer = cohort.GetQuerySyntaxHelper().GetRuntimeName(cohort.GetReleaseIdentifier());
@@ -65,11 +66,12 @@ public class ExtractionTimeTimeCoverageAggregator
         //check that the listed extraction field that has timeliness information in it is actually included in the column collection
         if (!haveCheckedTimeFieldExists)
             if (!row.Table.Columns.Contains(_expectedTimeFieldInOutputBuffer))
-                throw new MissingFieldException("Catalogue " + _catalogue.Name + " specifies that the time periodicity field of the dataset is called " + _expectedTimeFieldInOutputBuffer + " but the pipeline did not contain a field with this name, the fileds in the pipeline are (" + string.Join(",",row.Table.Columns.Cast<DataColumn>().Select(c=>c.ColumnName))+")");
+                throw new MissingFieldException(
+                    $"Catalogue {_catalogue.Name} specifies that the time periodicity field of the dataset is called {_expectedTimeFieldInOutputBuffer} but the pipeline did not contain a field with this name, the fileds in the pipeline are ({string.Join(",", row.Table.Columns.Cast<DataColumn>().Select(c => c.ColumnName))})");
             else
                 haveCheckedTimeFieldExists = true;
 
-        object value = row[_expectedTimeFieldInOutputBuffer];
+        var value = row[_expectedTimeFieldInOutputBuffer];
 
         if (value == DBNull.Value)
         {
@@ -115,7 +117,7 @@ public class ExtractionTimeTimeCoverageAggregator
                 }
                 else
                 {
-                    string valueAsString = (string) value;
+                    var valueAsString = (string) value;
                         
                     //trim off times
                     if (Regex.IsMatch(valueAsString,"[0-2][0-9]:[0-5][0-9]:[0-5][0-9]"))
@@ -162,13 +164,13 @@ public class ExtractionTimeTimeCoverageAggregator
     private void ExtendBucketsToEncompas(DateTime key)
     {
 
-        int addCount = 0;
-        int somethingHasGoneWrongIfAddedThisManyBuckets = 100000;
+        var addCount = 0;
+        var somethingHasGoneWrongIfAddedThisManyBuckets = 100000;
 
         if(Buckets.Keys.Max() < key)
         {
             //extend upwards
-            DateTime toAdd = Buckets.Keys.Max();
+            var toAdd = Buckets.Keys.Max();
 
             while (toAdd != key && addCount < somethingHasGoneWrongIfAddedThisManyBuckets)
             {
@@ -181,7 +183,7 @@ public class ExtractionTimeTimeCoverageAggregator
         if(Buckets.Keys.Min() >key)
         {
             //extend downwards
-            DateTime toAdd = Buckets.Keys.Min();
+            var toAdd = Buckets.Keys.Min();
 
             while (toAdd != key && addCount < somethingHasGoneWrongIfAddedThisManyBuckets)
             {
@@ -192,11 +194,12 @@ public class ExtractionTimeTimeCoverageAggregator
         }
         else
         {
-            throw new Exception("Could not work out how to extend agregation buckets where dictionary of datetimes had a max of "  +Buckets.Keys.Max() + " and a min of" +Buckets.Keys.Min() + " which could not be extended in either direction to encompas" +key);
+            throw new Exception(
+                $"Could not work out how to extend agregation buckets where dictionary of datetimes had a max of {Buckets.Keys.Max()} and a min of{Buckets.Keys.Min()} which could not be extended in either direction to encompas{key}");
         }
 
         if(addCount == somethingHasGoneWrongIfAddedThisManyBuckets)
-            throw new Exception("Added " + addCount + " buckets without reaching the key... oops"); 
+            throw new Exception($"Added {addCount} buckets without reaching the key... oops"); 
     }
 
     public static bool HasColumn(DbDataReader Reader, string ColumnName)

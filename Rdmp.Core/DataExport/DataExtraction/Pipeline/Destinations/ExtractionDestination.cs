@@ -110,14 +110,15 @@ e.g. /$i/$a")]
     /// <inheritdoc/>
     public virtual string GetFilename()
     {
-        string filename = _request.ToString();
+        var filename = _request.ToString();
 
         var datasetCommand = _request as IExtractDatasetCommand;
         if (datasetCommand != null && UseAcronymForFileNaming)
         {
             filename = datasetCommand.Catalogue.Acronym;
             if (string.IsNullOrWhiteSpace(filename))
-                throw new Exception("Catalogue '" + datasetCommand.Catalogue + "' does not have an Acronym but UseAcronymForFileNaming is true");
+                throw new Exception(
+                    $"Catalogue '{datasetCommand.Catalogue}' does not have an Acronym but UseAcronymForFileNaming is true");
         }
 
         return filename;
@@ -161,7 +162,8 @@ e.g. /$i/$a")]
         WriteRows(toProcess,job,cancellationToken, stopwatch);
             
         if (TableLoadInfo.IsClosed)
-            throw new Exception("TableLoadInfo was closed so could not write number of rows (" + LinesWritten + ") to audit object - most likely the extraction crashed?");
+            throw new Exception(
+                $"TableLoadInfo was closed so could not write number of rows ({LinesWritten}) to audit object - most likely the extraction crashed?");
         else
             TableLoadInfo.Inserts = LinesWritten;
 
@@ -278,13 +280,13 @@ e.g. /$i/$a")]
         var lookupDir = rootDir.CreateSubdirectory("Lookups");
                        
         //extract the documents
-        foreach (SupportingDocument doc in datasetBundle.Documents)
+        foreach (var doc in datasetBundle.Documents)
             datasetBundle.States[doc] = TryExtractSupportingDocument(doc,rootDir, job)
                 ? ExtractCommandState.Completed
                 : ExtractCommandState.Crashed;
 
         //extract supporting SQL
-        foreach (SupportingSQLTable sql in datasetBundle.SupportingSQL)
+        foreach (var sql in datasetBundle.SupportingSQL)
             datasetBundle.States[sql] = TryExtractSupportingSQLTable(sql,supportingSQLFolder, _request.Configuration, job, _dataLoadInfo)
                 ? ExtractCommandState.Completed
                 : ExtractCommandState.Crashed;
@@ -331,20 +333,21 @@ e.g. /$i/$a")]
 
     protected bool TryExtractLookupTable(BundledLookupTable lookup, DirectoryInfo lookupDir,IDataLoadEventListener job)
     {
-        Stopwatch sw = new Stopwatch();
+        var sw = new Stopwatch();
         sw.Start();
 
-        job.OnNotify(this, new NotifyEventArgs(ProgressEventType.Information, "About to extract lookup " + lookup));
+        job.OnNotify(this, new NotifyEventArgs(ProgressEventType.Information, $"About to extract lookup {lookup}"));
             
         try
         {
-            TryExtractLookupTableImpl(lookup,lookupDir,_request.Configuration,job,out int linesWritten, out string destinationDescription);
+            TryExtractLookupTableImpl(lookup,lookupDir,_request.Configuration,job,out var linesWritten, out var destinationDescription);
 
             sw.Stop();
-            job.OnProgress(this, new ProgressEventArgs("Lookup " + lookup, new ProgressMeasurement(linesWritten, ProgressType.Records), sw.Elapsed));
+            job.OnProgress(this, new ProgressEventArgs($"Lookup {lookup}", new ProgressMeasurement(linesWritten, ProgressType.Records), sw.Elapsed));
 
             //audit in the log the extraction
-            var tableLoadInfo = _dataLoadInfo.CreateTableLoadInfo("", destinationDescription, new[] { new DataSource("SELECT * FROM " + lookup.TableInfo.Name, DateTime.Now) }, -1);
+            var tableLoadInfo = _dataLoadInfo.CreateTableLoadInfo("", destinationDescription, new[] { new DataSource(
+                $"SELECT * FROM {lookup.TableInfo.Name}", DateTime.Now) }, -1);
             tableLoadInfo.Inserts = linesWritten;
             tableLoadInfo.CloseAndArchive();
                 
@@ -352,7 +355,8 @@ e.g. /$i/$a")]
             if (_request is ExtractDatasetCommand)
             {
                 var result = (_request as ExtractDatasetCommand).CumulativeExtractionResults;
-                var supplementalResult = result.AddSupplementalExtractionResult("SELECT * FROM " + lookup.TableInfo.Name, lookup.TableInfo);
+                var supplementalResult = result.AddSupplementalExtractionResult(
+                    $"SELECT * FROM {lookup.TableInfo.Name}", lookup.TableInfo);
                 supplementalResult.CompleteAudit(this.GetType(), destinationDescription, linesWritten,false,false);
             }
 
@@ -361,7 +365,8 @@ e.g. /$i/$a")]
         }
         catch (Exception e)
         {
-            job.OnNotify(this, new NotifyEventArgs(ProgressEventType.Error, "Error occurred trying to extract lookup " + lookup + " on server " + lookup.TableInfo.Server, e));
+            job.OnNotify(this, new NotifyEventArgs(ProgressEventType.Error,
+                $"Error occurred trying to extract lookup {lookup} on server {lookup.TableInfo.Server}", e));
 
             return false;
         }
@@ -376,9 +381,10 @@ e.g. /$i/$a")]
     /// <returns></returns>
     protected virtual bool TryExtractSupportingDocument(SupportingDocument doc, DirectoryInfo directory, IDataLoadEventListener listener)
     {
-        SupportingDocumentsFetcher fetcher = new SupportingDocumentsFetcher(doc);
+        var fetcher = new SupportingDocumentsFetcher(doc);
 
-        listener.OnNotify(this, new NotifyEventArgs(ProgressEventType.Information, "Preparing to copy " + doc + " to directory " + directory.FullName));
+        listener.OnNotify(this, new NotifyEventArgs(ProgressEventType.Information,
+            $"Preparing to copy {doc} to directory {directory.FullName}"));
         try
         {
             var outputPath = fetcher.ExtractToDirectory(directory);
@@ -404,7 +410,8 @@ e.g. /$i/$a")]
         }
         catch (Exception e)
         {
-            listener.OnNotify(this, new NotifyEventArgs(ProgressEventType.Error, "Failed to copy file " + doc + " to directory " + directory.FullName, e));
+            listener.OnNotify(this, new NotifyEventArgs(ProgressEventType.Error,
+                $"Failed to copy file {doc} to directory {directory.FullName}", e));
             return false;
         }
     }
@@ -413,16 +420,17 @@ e.g. /$i/$a")]
     {
         try
         {
-            listener.OnNotify(this, new NotifyEventArgs(ProgressEventType.Information, "Preparing to extract Supporting SQL " + sql + " to directory " + directory.FullName));
+            listener.OnNotify(this, new NotifyEventArgs(ProgressEventType.Information,
+                $"Preparing to extract Supporting SQL {sql} to directory {directory.FullName}"));
 
-            Stopwatch sw = new Stopwatch();
+            var sw = new Stopwatch();
             sw.Start();
 
             //start auditing it as a table load
-            string target = Path.Combine(directory.FullName, sql.Name + ".csv");
+            var target = Path.Combine(directory.FullName, $"{sql.Name}.csv");
             var tableLoadInfo = dataLoadInfo.CreateTableLoadInfo("", target, new[] { new DataSource(sql.SQL, DateTime.Now) }, -1);
 
-            TryExtractSupportingSQLTableImpl(sql,directory,configuration,listener, out int sqlLinesWritten,out string description);
+            TryExtractSupportingSQLTableImpl(sql,directory,configuration,listener, out var sqlLinesWritten,out var description);
                 
             sw.Stop();
 
@@ -449,17 +457,20 @@ e.g. /$i/$a")]
                 extractGlobalsCommand.ExtractionResults.Add(result);
             }
 
-            listener.OnProgress(this, new ProgressEventArgs("Extract " + sql, new ProgressMeasurement(sqlLinesWritten, ProgressType.Records), sw.Elapsed));
-            listener.OnNotify(this, new NotifyEventArgs(ProgressEventType.Information, "Extracted " + sqlLinesWritten + " records from SupportingSQL " + sql + " into directory " + directory.FullName));
+            listener.OnProgress(this, new ProgressEventArgs($"Extract {sql}", new ProgressMeasurement(sqlLinesWritten, ProgressType.Records), sw.Elapsed));
+            listener.OnNotify(this, new NotifyEventArgs(ProgressEventType.Information,
+                $"Extracted {sqlLinesWritten} records from SupportingSQL {sql} into directory {directory.FullName}"));
 
             return true;
         }
         catch (Exception e)
         {
             if (e is SqlException)
-                listener.OnNotify(this, new NotifyEventArgs(ProgressEventType.Error, "Failed to run extraction SQL (make sure to fully specify all database/table/column objects completely):" + Environment.NewLine + sql.SQL, e));
+                listener.OnNotify(this, new NotifyEventArgs(ProgressEventType.Error,
+                    $"Failed to run extraction SQL (make sure to fully specify all database/table/column objects completely):{Environment.NewLine}{sql.SQL}", e));
             else
-                listener.OnNotify(this, new NotifyEventArgs(ProgressEventType.Error, "Failed to extract " + sql + " into directory " + directory.FullName, e));
+                listener.OnNotify(this, new NotifyEventArgs(ProgressEventType.Error,
+                    $"Failed to extract {sql} into directory {directory.FullName}", e));
 
             return false;
         }

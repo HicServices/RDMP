@@ -79,7 +79,7 @@ public partial class ExeProcessTaskUI : ExeProcessTaskUI_Design
             
         //populate the UI with the args
         _runtimeTask = (ExecutableRuntimeTask)factory.Create(_processTask, argsDictionary.LoadArgs[_processTask.LoadStage]);
-        tbExeCommand.Text = _runtimeTask.ExeFilepath + " " + _runtimeTask.CreateArgString();
+        tbExeCommand.Text = $"{_runtimeTask.ExeFilepath} {_runtimeTask.CreateArgString()}";
 
         return _runtimeTask;
     }

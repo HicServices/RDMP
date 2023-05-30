@@ -46,13 +46,14 @@ public class ExtractableDatasetBundle : Bundle, IExtractableDatasetBundle
         
     public override string ToString()
     {
-        return DataSet + " Bundle";
+        return $"{DataSet} Bundle";
     }
 
     protected override void OnDropContent(object toDrop)
     {
         if(toDrop is ExtractableDataSet)
-            throw new NotSupportedException("Cannot drop "+toDrop+" from Bundle "+this+", you cannot perform an extraction without the dataset component (only documents/lookups etc are optional)");
+            throw new NotSupportedException(
+                $"Cannot drop {toDrop} from Bundle {this}, you cannot perform an extraction without the dataset component (only documents/lookups etc are optional)");
 
         var drop = toDrop as SupportingDocument;
         if (drop != null)
@@ -75,6 +76,6 @@ public class ExtractableDatasetBundle : Bundle, IExtractableDatasetBundle
             return;
         }
 
-        throw new NotSupportedException("Did not know how to drop object of type " + toDrop);
+        throw new NotSupportedException($"Did not know how to drop object of type {toDrop}");
     }
 }

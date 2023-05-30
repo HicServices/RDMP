@@ -32,7 +32,7 @@ public class CachingPreExecutionChecker : ICheckable
         try
         {
             if (_cacheProgress.Pipeline_ID == null)
-                throw new Exception("CacheProgress " + _cacheProgress.ID + " doesn't have a caching pipeline!");
+                throw new Exception($"CacheProgress {_cacheProgress.ID} doesn't have a caching pipeline!");
 
             IPipeline pipeline = null;
             try
@@ -41,7 +41,8 @@ public class CachingPreExecutionChecker : ICheckable
             }
             catch (Exception e)
             {
-                notifier.OnCheckPerformed(new CheckEventArgs("Error when trying to load Pipeline ID = " + _cacheProgress.Pipeline_ID.Value, CheckResult.Fail, e));
+                notifier.OnCheckPerformed(new CheckEventArgs(
+                    $"Error when trying to load Pipeline ID = {_cacheProgress.Pipeline_ID.Value}", CheckResult.Fail, e));
             }
 
             if (pipeline == null)
@@ -62,9 +63,7 @@ public class CachingPreExecutionChecker : ICheckable
             if (_cacheProgress.PermissionWindow_ID != null && !_cacheProgress.PermissionWindow.WithinPermissionWindow(DateTime.UtcNow))
             {
                 notifier.OnCheckPerformed(new CheckEventArgs(
-                    "Current time is " + DateTime.UtcNow +
-                    " which is not a permitted time according to the configured PermissionWindow " + _cacheProgress.PermissionWindow.Description + 
-                    " of the CacheProgress " + _cacheProgress,
+                    $"Current time is {DateTime.UtcNow} which is not a permitted time according to the configured PermissionWindow {_cacheProgress.PermissionWindow.Description} of the CacheProgress {_cacheProgress}",
                     CheckResult.Warning));
             }
 
@@ -75,16 +74,13 @@ public class CachingPreExecutionChecker : ICheckable
                 {
                     notifier.OnCheckPerformed(
                         new CheckEventArgs(
-                            "CacheProgress reports that it has loaded up till " + _cacheProgress.CacheFillProgress +
-                            " which is in the future.  So we don't need to load this cache.", CheckResult.Warning));
+                            $"CacheProgress reports that it has loaded up till {_cacheProgress.CacheFillProgress} which is in the future.  So we don't need to load this cache.", CheckResult.Warning));
                 }
                 else
                 {
                     notifier.OnCheckPerformed(
                         new CheckEventArgs(
-                            "CacheProgress reports that it has loaded up till " + _cacheProgress.CacheFillProgress +
-                            " but there is a lag period of " + _cacheProgress.CacheLagPeriod +
-                            " which means we are not due to load any cached data yet.", CheckResult.Warning));
+                            $"CacheProgress reports that it has loaded up till {_cacheProgress.CacheFillProgress} but there is a lag period of {_cacheProgress.CacheLagPeriod} which means we are not due to load any cached data yet.", CheckResult.Warning));
                 }
 
             var factory = new CachingPipelineUseCase(_cacheProgress);
@@ -105,8 +101,7 @@ public class CachingPreExecutionChecker : ICheckable
         {
             notifier.OnCheckPerformed(
                 new CheckEventArgs(
-                    "Entire checking process for cache progress " + _cacheProgress +
-                    " crashed, see Exception for details", CheckResult.Fail, e));
+                    $"Entire checking process for cache progress {_cacheProgress} crashed, see Exception for details", CheckResult.Fail, e));
         }
     }
 }

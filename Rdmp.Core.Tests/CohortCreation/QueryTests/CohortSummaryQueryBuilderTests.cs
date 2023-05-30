@@ -52,7 +52,8 @@ public class CohortSummaryQueryBuilderTests:DatabaseTests
         col2 = new ColumnInfo(CatalogueRepository, "myOtherCol", "varchar(10)", t);
 
            
-        acCohort = new AggregateConfiguration(CatalogueRepository, c, CohortIdentificationConfiguration.CICPrefix + "Agg1_Cohort");
+        acCohort = new AggregateConfiguration(CatalogueRepository, c,
+            $"{CohortIdentificationConfiguration.CICPrefix}Agg1_Cohort");
         acDataset = new AggregateConfiguration(CatalogueRepository, c, "Agg2_Dataset");
 
         ei_Year = new ExtractionInformation(CatalogueRepository, ci2, col2, "Year");
@@ -118,7 +119,7 @@ public class CohortSummaryQueryBuilderTests:DatabaseTests
     [Test]
     public void QueryGeneration_BasicQuery()
     {
-        string sql = acDataset.GetQueryBuilder().SQL;
+        var sql = acDataset.GetQueryBuilder().SQL;
 
         Assert.AreEqual(@"/*Agg2_Dataset*/
 SELECT
@@ -246,7 +247,7 @@ Year"), CollapseWhitespace(builder.SQL));
         acDataset.RootFilterContainer_ID = container1.ID;
         acDataset.SaveToDatabase();
 
-        AggregateFilter filter1 = new AggregateFilter(CatalogueRepository, "Filter1", container1);
+        var filter1 = new AggregateFilter(CatalogueRepository, "Filter1", container1);
         filter1.WhereSQL = "@bob = 'bob'";
         filter1.SaveToDatabase();
 
@@ -257,7 +258,7 @@ Year"), CollapseWhitespace(builder.SQL));
         acCohort.RootFilterContainer_ID = container2.ID;
         acCohort.SaveToDatabase();
 
-        AggregateFilter filter2 = new AggregateFilter(CatalogueRepository, "Filter2", container2);
+        var filter2 = new AggregateFilter(CatalogueRepository, "Filter2", container2);
         filter2.WhereSQL = "@bob = 'fish'";
         filter2.SaveToDatabase();
 

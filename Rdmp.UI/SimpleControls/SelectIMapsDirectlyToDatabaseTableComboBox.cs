@@ -23,7 +23,7 @@ public partial class SelectIMapsDirectlyToDatabaseTableComboBox : UserControl
 
     public IMapsDirectlyToDatabaseTable SelectedItem
     {
-        get { return suggestComboBox1.SelectedItem as IMapsDirectlyToDatabaseTable; }
+        get => suggestComboBox1.SelectedItem as IMapsDirectlyToDatabaseTable;
         set
         {
             if (value != null && !_available.Contains(value))
@@ -74,7 +74,7 @@ public partial class SelectIMapsDirectlyToDatabaseTableComboBox : UserControl
 
         try
         {
-            int before = suggestComboBox1.SelectedIndex;
+            var before = suggestComboBox1.SelectedIndex;
             suggestComboBox1.DataSource = available;
 
             //if it was clear before don't take item 0

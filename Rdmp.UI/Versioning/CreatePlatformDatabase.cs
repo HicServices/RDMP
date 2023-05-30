@@ -118,7 +118,7 @@ public partial class CreatePlatformDatabase : Form
 
     private bool silentlyApplyPatchCallback(Patch p)
     {
-        checksUI1.OnCheckPerformed(new CheckEventArgs("About to apply patch " + p.locationInAssembly, CheckResult.Success, null));
+        checksUI1.OnCheckPerformed(new CheckEventArgs($"About to apply patch {p.locationInAssembly}", CheckResult.Success, null));
         return true;
     }
         
@@ -138,7 +138,7 @@ public partial class CreatePlatformDatabase : Form
         
     public static ExternalDatabaseServer CreateNewExternalServer(ICatalogueRepository repository,PermissableDefaults defaultToSet, IPatcher patcher)
     {
-        CreatePlatformDatabase createPlatform = new CreatePlatformDatabase(patcher);
+        var createPlatform = new CreatePlatformDatabase(patcher);
         createPlatform.ShowDialog();
 
         var db = createPlatform.DatabaseCreatedIfAny;

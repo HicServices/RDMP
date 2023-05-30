@@ -38,10 +38,7 @@ public class SpontaneouslyInventedSqlParameter : SpontaneousObject, ISqlParamete
         Comment = comment;
     }
 
-    public string ParameterName
-    {
-        get { return QuerySyntaxHelper.GetParameterNameFromDeclarationSQL(ParameterSQL); }
-    }
+    public string ParameterName => QuerySyntaxHelper.GetParameterNameFromDeclarationSQL(ParameterSQL);
 
     public IMapsDirectlyToDatabaseTable GetOwnerIfAny()
     {

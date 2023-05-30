@@ -36,8 +36,8 @@ public class StandardRegex : DatabaseEntity, ICheckable
     /// </summary>
     public string ConceptName
     {
-        get { return _conceptName; }
-        set { SetField(ref _conceptName, value); }
+        get => _conceptName;
+        set => SetField(ref _conceptName, value);
     }
 
     /// <summary>
@@ -45,8 +45,8 @@ public class StandardRegex : DatabaseEntity, ICheckable
     /// </summary>
     public string Regex
     {
-        get { return _regex; }
-        set { SetField(ref _regex, value); }
+        get => _regex;
+        set => SetField(ref _regex, value);
     }
 
     /// <summary>
@@ -54,8 +54,8 @@ public class StandardRegex : DatabaseEntity, ICheckable
     /// </summary>
     public string Description
     {
-        get { return _description; }
-        set { SetField(ref _description, value); }
+        get => _description;
+        set => SetField(ref _description, value);
     }
 
     #endregion
@@ -74,7 +74,7 @@ public class StandardRegex : DatabaseEntity, ICheckable
     {
         repository.InsertAndHydrate(this,new Dictionary<string, object>
         {
-            {"ConceptName", "New StandardRegex" + Guid.NewGuid()},
+            {"ConceptName", $"New StandardRegex{Guid.NewGuid()}" },
             {"Regex", ".*"}
         });
     }

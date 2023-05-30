@@ -76,8 +76,8 @@ This will not help you avoid bad data as the full file structure must still be r
     [DemandsInitialization("The separator that delimits the file", Mandatory = true)]
     public string Separator
     {
-        get { return _separator; }
-        set { _separator = value == "\\t"?"\t":value; } //automatically switch \\t into \t (user inputs \t it turns to whitespace tab when executing)
+        get => _separator;
+        set => _separator = value == "\\t"?"\t":value; //automatically switch \\t into \t (user inputs \t it turns to whitespace tab when executing)
     }
 
     [DemandsInitialization(ForceHeaders_DemandDescription)]
@@ -180,7 +180,7 @@ This will not help you avoid bad data as the full file structure must still be r
         {
             _listener = listener;
 
-            int rowsRead = 0;
+            var rowsRead = 0;
 
             if (_fileToLoad == null)
                 throw new Exception(
@@ -213,15 +213,14 @@ This will not help you avoid bad data as the full file structure must still be r
                 //Now we must read some data
                 if (StronglyTypeInput && StronglyTypeInputBatchSize != 0)
                 {
-                    int batchSizeToLoad = StronglyTypeInputBatchSize == -1
+                    var batchSizeToLoad = StronglyTypeInputBatchSize == -1
                         ? int.MaxValue
                         : StronglyTypeInputBatchSize;
 
                     if(batchSizeToLoad < MinimumStronglyTypeInputBatchSize)
                         listener.OnNotify(this,
                             new NotifyEventArgs(ProgressEventType.Warning,
-                                "You set StronglyTypeInputBatchSize to " + batchSizeToLoad +
-                                " this may be too small!", null));
+                                $"You set StronglyTypeInputBatchSize to {batchSizeToLoad} this may be too small!", null));
 
                     //user want's to strongly type input with a custom batch size
                     rowsRead = IterativelyBatchLoadDataIntoDataTable(_workingTable, batchSizeToLoad);
@@ -257,7 +256,7 @@ This will not help you avoid bad data as the full file structure must still be r
             //rows were read so return a copy of the DataTable, because we will continually reload the same DataTable schema throughout the file we don't want to give up our reference to good headers incase someone mutlates it
             var copy =  _workingTable.Copy();
 
-            foreach (DataColumn unamed in Headers.UnamedColumns)
+            foreach (var unamed in Headers.UnamedColumns)
                 copy.Columns.Remove(unamed.ColumnName);
                 
             return copy;
@@ -301,7 +300,7 @@ This will not help you avoid bad data as the full file structure must still be r
         if(Headers == null)
         {
             //get a chunk
-            DataTable toReturn = GetChunk(new ThrowImmediatelyDataLoadEventListener(), new GracefulCancellationToken());
+            var toReturn = GetChunk(new ThrowImmediatelyDataLoadEventListener(), new GracefulCancellationToken());
 
             //clear these to close the file and reset state to 'I need to open the file again state'
             CloseReader();
@@ -322,9 +321,9 @@ This will not help you avoid bad data as the full file structure must still be r
     public void Check(ICheckNotifier notifier)
     {
         if (Separator == null)
-            notifier.OnCheckPerformed(new CheckEventArgs("Separator argument has not been set on " + GetType().Name, CheckResult.Fail));
+            notifier.OnCheckPerformed(new CheckEventArgs($"Separator argument has not been set on {GetType().Name}", CheckResult.Fail));
         else
-            notifier.OnCheckPerformed(new CheckEventArgs("Separator on " + GetType().Name + " is " + Separator, CheckResult.Success));
+            notifier.OnCheckPerformed(new CheckEventArgs($"Separator on {GetType().Name} is {Separator}", CheckResult.Success));
 
         if (!StronglyTypeInput)
             notifier.OnCheckPerformed(
@@ -355,9 +354,7 @@ This will not help you avoid bad data as the full file structure must still be r
         {
             notifier.OnCheckPerformed(
                 new CheckEventArgs(
-                    "File " + _fileToLoad.File.Name + " has a prohibitted file extension " +
-                    _fileToLoad.File.Extension +
-                    " (this class is designed to handle .csv, .tsv, .txt etc - basically anything that is delimitted by characters and not some freaky binary/fixed width file type",
+                    $"File {_fileToLoad.File.Name} has a prohibitted file extension {_fileToLoad.File.Extension} (this class is designed to handle .csv, .tsv, .txt etc - basically anything that is delimitted by characters and not some freaky binary/fixed width file type",
                     CheckResult.Fail));
             return;
         }
@@ -372,9 +369,10 @@ This will not help you avoid bad data as the full file structure must still be r
     private void ExpectFileExtension(ICheckNotifier notifier, string expectedExtension, string actualExtension)
     {
         if (expectedExtension.Equals(actualExtension))
-            notifier.OnCheckPerformed(new CheckEventArgs("File extension matched expectations (" + expectedExtension + ")",CheckResult.Success));
+            notifier.OnCheckPerformed(new CheckEventArgs($"File extension matched expectations ({expectedExtension})",CheckResult.Success));
         else
-            notifier.OnCheckPerformed(new CheckEventArgs("Unexpected file extension '"+actualExtension+"' (expected " + expectedExtension + ") ", CheckResult.Warning));
+            notifier.OnCheckPerformed(new CheckEventArgs(
+                $"Unexpected file extension '{actualExtension}' (expected {expectedExtension}) ", CheckResult.Warning));
     }
         
     protected void OpenFile(FileInfo fileToLoad)
@@ -384,9 +382,10 @@ This will not help you avoid bad data as the full file structure must still be r
 
         //if it is blank or null (although tab is allowed)
         if(string.IsNullOrWhiteSpace(Separator)  && Separator != "\t")
-            throw new Exception("Could not open file " + fileToLoad.FullName + " because the file Separator has not been set yet, make sure to set all relevant [DemandsInitialization] properties");
+            throw new Exception(
+                $"Could not open file {fileToLoad.FullName} because the file Separator has not been set yet, make sure to set all relevant [DemandsInitialization] properties");
 
-        StreamReader sr = new StreamReader(fileToLoad.FullName);
+        var sr = new StreamReader(fileToLoad.FullName);
         _reader = new CsvReader(sr, new CsvConfiguration(Culture)
         {
             Delimiter = Separator,

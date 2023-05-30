@@ -70,7 +70,7 @@ public class ExecuteCommandCreateNewClassBasedProcessTask : BasicCommandExecutio
         if(_type == null)
         {
                 
-            if(BasicActivator.SelectType("Process Type",GetProcessTaskTypes(),out Type chosen))
+            if(BasicActivator.SelectType("Process Type",GetProcessTaskTypes(),out var chosen))
             {
                 SetType(chosen);
             }
@@ -78,7 +78,7 @@ public class ExecuteCommandCreateNewClassBasedProcessTask : BasicCommandExecutio
                 return;
         }
 
-        ProcessTask newTask = new ProcessTask(BasicActivator.RepositoryLocator.CatalogueRepository,_loadMetadata, _loadStage);
+        var newTask = new ProcessTask(BasicActivator.RepositoryLocator.CatalogueRepository,_loadMetadata, _loadStage);
         newTask.Path = _type.FullName;
         newTask.ProcessTaskType = _processTaskType;
         newTask.Name = _type.Name;

@@ -45,7 +45,7 @@ public class ForwardEngineerANOCatalogueTwoTableTests : TestsRequiringANOStore
     {
         base.SetUp();
 
-        string sql =
+        var sql =
             @"CREATE TABLE [dbo].[Tests](
 	[chi] [varchar](10) NULL,
 	[Date] [datetime] NULL,
@@ -187,7 +187,7 @@ GO";
             Assert.DoesNotThrow(()=>cmd.ExecuteNonQuery());
         }
 
-        Console.WriteLine("Final migrated combo dataset SQL was:" + qb.SQL);
+        Console.WriteLine($"Final migrated combo dataset SQL was:{qb.SQL}");
 
         Assert.IsTrue(_comboCata.CatalogueItems.Any(ci => ci.Name.Equals("Measuree")));
         Assert.IsTrue(engine2.NewCatalogue.CatalogueItems.Any(ci => ci.Name.Equals("Measuree")),"ANO Catalogue did not respect the original CatalogueItem Name"); 

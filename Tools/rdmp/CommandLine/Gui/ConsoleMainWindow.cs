@@ -158,7 +158,7 @@ class ConsoleMainWindow
 
         top.Add (statusBar);
 
-        string scheme = UserSettings.ConsoleColorScheme;
+        var scheme = UserSettings.ConsoleColorScheme;
 
         if (scheme == "green")
         {
@@ -268,7 +268,7 @@ class ConsoleMainWindow
 
         if (model is IDisableable d)
         {
-            return d.IsDisabled ? d.ToString() + " (Disabled)" : d.ToString();
+            return d.IsDisabled ? $"{d} (Disabled)" : d.ToString();
         }
 
         if (model is IArgument arg)
@@ -523,7 +523,8 @@ class ConsoleMainWindow
     private void Run()
     {
         var commandInvoker = new CommandInvoker(_activator);
-        commandInvoker.CommandImpossible += (o, e) => { _activator.Show("Command Impossible because:" + e.Command.ReasonCommandImpossible);};
+        commandInvoker.CommandImpossible += (o, e) => { _activator.Show(
+            $"Command Impossible because:{e.Command.ReasonCommandImpossible}");};
             
         var commands = commandInvoker.GetSupportedCommands();
 
@@ -541,7 +542,8 @@ class ConsoleMainWindow
     private void New()
     {
         var commandInvoker = new CommandInvoker(_activator);
-        commandInvoker.CommandImpossible += (o, e) => { _activator.Show("Command Impossible because:" + e.Command.ReasonCommandImpossible);};
+        commandInvoker.CommandImpossible += (o, e) => { _activator.Show(
+            $"Command Impossible because:{e.Command.ReasonCommandImpossible}");};
             
         try
         {

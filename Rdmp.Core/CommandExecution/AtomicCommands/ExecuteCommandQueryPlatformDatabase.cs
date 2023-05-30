@@ -44,7 +44,8 @@ public class ExecuteCommandQueryPlatformDatabase : ExecuteCommandViewDataBase
 
         var patcherType = activator.RepositoryLocator.CatalogueRepository.MEF.
             // find the database type the user wants to query (the Patcher suffix is optional)
-            GetTypes<IPatcher>().FirstOrDefault(t => t.Name.Equals(databaseType) || t.Name.Equals(databaseType + "Patcher"));
+            GetTypes<IPatcher>().FirstOrDefault(t => t.Name.Equals(databaseType) || t.Name.Equals(
+                $"{databaseType}Patcher"));
 
         if (patcherType == null)
         {

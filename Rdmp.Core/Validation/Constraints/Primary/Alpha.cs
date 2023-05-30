@@ -26,7 +26,7 @@ public class Alpha : PrimaryConstraint
 
         if (!match.Success)
         {
-            return new ValidationFailure("Value [" + value + "] contains characters other than alphabetic",this);
+            return new ValidationFailure($"Value [{value}] contains characters other than alphabetic",this);
         }
 
         return null;
@@ -39,7 +39,7 @@ public class Alpha : PrimaryConstraint
 
     public override string GetHumanReadableDescriptionOfValidation()
     {
-        return "Checks to see if input strings contain nothing but characters by using pattern " + RegExp;
+        return $"Checks to see if input strings contain nothing but characters by using pattern {RegExp}";
     }
 
 }

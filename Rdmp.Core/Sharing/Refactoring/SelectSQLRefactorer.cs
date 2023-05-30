@@ -34,15 +34,17 @@ public class SelectSQLRefactorer
         var ci = column.ColumnInfo;
 
         if(ci == null)
-            throw new RefactoringException("Cannot refactor '"+column+"' because its ColumnInfo was null");
+            throw new RefactoringException($"Cannot refactor '{column}' because its ColumnInfo was null");
 
-        string fullyQualifiedName = tableName.GetFullyQualifiedName();
+        var fullyQualifiedName = tableName.GetFullyQualifiedName();
             
         if(!column.SelectSQL.Contains(fullyQualifiedName))
-            throw new RefactoringException("IColumn '" + column + "' did not contain the fully specified table name during refactoring ('" + fullyQualifiedName +"'");
+            throw new RefactoringException(
+                $"IColumn '{column}' did not contain the fully specified table name during refactoring ('{fullyQualifiedName}'");
 
         if(!newFullySpecifiedTableName.Contains("."))
-            throw new RefactoringException("Replacement table name was not fully specified, value passed was '" + newFullySpecifiedTableName +"' which did not contain any dots");
+            throw new RefactoringException(
+                $"Replacement table name was not fully specified, value passed was '{newFullySpecifiedTableName}' which did not contain any dots");
 
         column.SelectSQL = column.SelectSQL.Replace(fullyQualifiedName, newFullySpecifiedTableName);
         Save(column);
@@ -57,13 +59,15 @@ public class SelectSQLRefactorer
     /// <param name="newFullySpecifiedTableName"></param>
     public void RefactorTableName(ColumnInfo column, IHasFullyQualifiedNameToo tableName, string newFullySpecifiedTableName)
     {
-        string fullyQualifiedName = tableName.GetFullyQualifiedName();
+        var fullyQualifiedName = tableName.GetFullyQualifiedName();
 
         if (!column.Name.StartsWith(fullyQualifiedName))
-            throw new RefactoringException("ColumnInfo '" + column + "' did not start with the fully specified table name during refactoring ('" + fullyQualifiedName + "'");
+            throw new RefactoringException(
+                $"ColumnInfo '{column}' did not start with the fully specified table name during refactoring ('{fullyQualifiedName}'");
 
         if (!newFullySpecifiedTableName.Contains("."))
-            throw new RefactoringException("Replacement table name was not fully specified, value passed was '" + newFullySpecifiedTableName + "' which did not contain any dots");
+            throw new RefactoringException(
+                $"Replacement table name was not fully specified, value passed was '{newFullySpecifiedTableName}' which did not contain any dots");
 
         column.Name = column.Name.Replace(fullyQualifiedName, newFullySpecifiedTableName);
         column.SaveToDatabase();
@@ -86,16 +90,18 @@ public class SelectSQLRefactorer
     /// <param name="strict">Determines behaviour when column SelectSQL does not contain a reference to columnName.  True will throw a RefactoringException, false will return without making any changes</param>
     public void RefactorColumnName(IColumn column, IHasFullyQualifiedNameToo columnName, string newFullySpecifiedColumnName,bool strict = true)
     {
-        string fullyQualifiedName = columnName.GetFullyQualifiedName();
+        var fullyQualifiedName = columnName.GetFullyQualifiedName();
 
         if (!column.SelectSQL.Contains(fullyQualifiedName))
             if(strict)
-                throw new RefactoringException("IColumn '" + column + "' did not contain the fully specified column name during refactoring ('" + fullyQualifiedName + "'");
+                throw new RefactoringException(
+                    $"IColumn '{column}' did not contain the fully specified column name during refactoring ('{fullyQualifiedName}'");
             else
                 return;
                 
         if (newFullySpecifiedColumnName.Count(c=>c == '.')<2)
-            throw new RefactoringException("Replacement column name was not fully specified, value passed was '" + newFullySpecifiedColumnName + "' which should have had at least 2 dots");
+            throw new RefactoringException(
+                $"Replacement column name was not fully specified, value passed was '{newFullySpecifiedColumnName}' which should have had at least 2 dots");
 
         column.SelectSQL = column.SelectSQL.Replace(fullyQualifiedName, newFullySpecifiedColumnName);
 
@@ -124,15 +130,17 @@ public class SelectSQLRefactorer
         var ci = column.ColumnInfo;
 
         if (ci == null)
-            return "Cannot refactor '" + column + "' because its ColumnInfo was null";
+            return $"Cannot refactor '{column}' because its ColumnInfo was null";
 
         if (!column.SelectSQL.Contains(ci.Name))
-            return "IColumn '" + column + "' did not contain the fully specified column name of its underlying ColumnInfo ('"+ci.Name+"') during refactoring";
+            return
+                $"IColumn '{column}' did not contain the fully specified column name of its underlying ColumnInfo ('{ci.Name}') during refactoring";
             
-        string fullyQualifiedName = ci.TableInfo.GetFullyQualifiedName();
+        var fullyQualifiedName = ci.TableInfo.GetFullyQualifiedName();
 
         if (!column.SelectSQL.Contains(fullyQualifiedName))
-            return "IColumn '" + column + "' did not contain the fully specified table name ('" + fullyQualifiedName + "') during refactoring";
+            return
+                $"IColumn '{column}' did not contain the fully specified table name ('{fullyQualifiedName}') during refactoring";
 
         return null;
     }
@@ -195,7 +203,7 @@ public class SelectSQLRefactorer
         if(!IsRefactorable(tableInfo))
             throw new RefactoringException(string.Format("TableInfo {0} is not refactorable because {1}",tableInfo,GetReasonNotRefactorable(tableInfo)));
                         
-        int updatesMade = 0;
+        var updatesMade = 0;
             
         //if it's a new name
         if(tableInfo.Name != newFullyQualifiedTableName)
@@ -206,7 +214,7 @@ public class SelectSQLRefactorer
         }
             
         //Rename all ColumnInfos that belong to this TableInfo 
-        foreach (ColumnInfo columnInfo in tableInfo.ColumnInfos)
+        foreach (var columnInfo in tableInfo.ColumnInfos)
             updatesMade += RefactorTableName(columnInfo,oldFullyQualifiedTableName,newFullyQualifiedTableName);
                 
         return updatesMade;      
@@ -222,13 +230,13 @@ public class SelectSQLRefactorer
     /// <returns>Total number of changes made including <paramref name="columnInfo"/> and any <see cref="ExtractionInformation"/> declared on it</returns>
     public int RefactorTableName(ColumnInfo columnInfo, string oldFullyQualifiedTableName, string newFullyQualifiedTableName)
     {
-        int updatesMade = 0;
+        var updatesMade = 0;
             
         //run what they asked for
         updatesMade += RefactorTableNameImpl(columnInfo,oldFullyQualifiedTableName,newFullyQualifiedTableName);
 
         //these are all the things that could appear spattered throughout the old columns
-        List<string> oldPrefixes = new List<string>{".." ,".dbo.",".[dbo]."};
+        var oldPrefixes = new List<string>{".." ,".dbo.",".[dbo]."};
 
         //this is what they said they wanted in the refactoring
         var newPrefix = oldPrefixes.FirstOrDefault(newFullyQualifiedTableName.Contains);
@@ -248,15 +256,15 @@ public class SelectSQLRefactorer
 
     private int RefactorTableNameImpl(ColumnInfo columnInfo, string oldFullyQualifiedTableName, string newFullyQualifiedTableName)
     {
-        int updatesMade = 0;
+        var updatesMade = 0;
                         
-        ExtractionInformation[] extractionInformations = columnInfo.ExtractionInformations.ToArray();
+        var extractionInformations = columnInfo.ExtractionInformations.ToArray();
 
-        foreach (ExtractionInformation extractionInformation in extractionInformations)
+        foreach (var extractionInformation in extractionInformations)
         {
             if (extractionInformation.SelectSQL.Contains(oldFullyQualifiedTableName))
             {
-                string newvalue = extractionInformation.SelectSQL.Replace(oldFullyQualifiedTableName, newFullyQualifiedTableName);
+                var newvalue = extractionInformation.SelectSQL.Replace(oldFullyQualifiedTableName, newFullyQualifiedTableName);
                         
                 if(!extractionInformation.SelectSQL.Equals(newvalue))
                 {
@@ -270,7 +278,7 @@ public class SelectSQLRefactorer
         //rename ColumnInfos
         if(columnInfo.Name.StartsWith(oldFullyQualifiedTableName))
         {
-            columnInfo.Name = Regex.Replace(columnInfo.Name , "^" + Regex.Escape(oldFullyQualifiedTableName),newFullyQualifiedTableName);
+            columnInfo.Name = Regex.Replace(columnInfo.Name , $"^{Regex.Escape(oldFullyQualifiedTableName)}",newFullyQualifiedTableName);
             columnInfo.SaveToDatabase();
             updatesMade++;
         }

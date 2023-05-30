@@ -110,9 +110,9 @@ public class LogManagerTest : DatabaseTests
         Assert.Greater(loadHistoryForTask.Count(load => load.TableLoadInfos.Count == 1), 0);//some with some table loads
             
             
-        Console.WriteLine("Records fetched:"+loadHistoryForTask.Length);
-        Console.WriteLine("Errors fetched:" + loadHistoryForTask.Aggregate(0, (p, c) => p + c.Errors.Count));
-        Console.WriteLine("Progress fetched:" + loadHistoryForTask.Aggregate(0, (p, c) => p + c.Progress.Count));
+        Console.WriteLine($"Records fetched:{loadHistoryForTask.Length}");
+        Console.WriteLine($"Errors fetched:{loadHistoryForTask.Aggregate(0, (p, c) => p + c.Errors.Count)}");
+        Console.WriteLine($"Progress fetched:{loadHistoryForTask.Aggregate(0, (p, c) => p + c.Progress.Count)}");
 
     }
 
@@ -152,12 +152,12 @@ public class LogManagerTest : DatabaseTests
 
         Assert.Greater(loadHistoryForTask.Progress.Count,0);//some with some progress
             
-        Console.WriteLine("Errors fetched:" + loadHistoryForTask.Errors.Count);
-        Console.WriteLine("Progress fetched:" + loadHistoryForTask.Progress.Count);
+        Console.WriteLine($"Errors fetched:{loadHistoryForTask.Errors.Count}");
+        Console.WriteLine($"Progress fetched:{loadHistoryForTask.Progress.Count}");
 
 
-        int totalErrors = loadHistoryForTask.Errors.Count;
-        Console.WriteLine("total errors:" + totalErrors);
+        var totalErrors = loadHistoryForTask.Errors.Count;
+        Console.WriteLine($"total errors:{totalErrors}");
     }
 
 
@@ -165,7 +165,7 @@ public class LogManagerTest : DatabaseTests
     public void TestLastLoadStatusassemblage_MostRecent()
     {
         var server = new DiscoveredServer(UnitTestLoggingConnectionString);
-        LogManager lm = new LogManager(server);
+        var lm = new LogManager(server);
 
         var mostRecent = lm.GetArchivalDataLoadInfos(_dataLoadTaskName).First();
         var all = lm.GetArchivalDataLoadInfos(_dataLoadTaskName).ToArray();
@@ -183,7 +183,7 @@ public class LogManagerTest : DatabaseTests
     public void TestLogging_CreateTasks_MixedCases()
     {
         var server = new DiscoveredServer(UnitTestLoggingConnectionString);
-        LogManager lm = new LogManager(server);
+        var lm = new LogManager(server);
 
             
         lm.CreateNewLoggingTaskIfNotExists("ff");

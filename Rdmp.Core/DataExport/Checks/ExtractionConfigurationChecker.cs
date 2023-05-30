@@ -61,19 +61,19 @@ public class ExtractionConfigurationChecker:ICheckable
     {
         var projectDirectory = new DirectoryInfo(_config.Project.ExtractionDirectory);
 
-        notifier.OnCheckPerformed(new CheckEventArgs("Found Frozen/Released configuration '" + _config + "'", CheckResult.Success));
+        notifier.OnCheckPerformed(new CheckEventArgs($"Found Frozen/Released configuration '{_config}'", CheckResult.Success));
 
-        foreach (DirectoryInfo directoryInfo in projectDirectory.GetDirectories(ExtractionDirectory.GetExtractionDirectoryPrefix(_config) + "*").ToArray())
+        foreach (var directoryInfo in projectDirectory.GetDirectories(
+                     $"{ExtractionDirectory.GetExtractionDirectoryPrefix(_config)}*").ToArray())
         {
             string firstFileFound;
 
             if (DirectoryIsEmpty(directoryInfo, out firstFileFound))
             {
-                bool deleteIt =
+                var deleteIt =
                     notifier.OnCheckPerformed(
                         new CheckEventArgs(
-                            "Found empty folder " + directoryInfo.Name +
-                            " which is left over extracted folder after data release", CheckResult.Warning, null,
+                            $"Found empty folder {directoryInfo.Name} which is left over extracted folder after data release", CheckResult.Warning, null,
                             "Delete empty folder"));
 
                 if (deleteIt)
@@ -82,8 +82,7 @@ public class ExtractionConfigurationChecker:ICheckable
             else
                 notifier.OnCheckPerformed(
                     new CheckEventArgs(
-                        "Found non-empty folder " + directoryInfo.Name +
-                        " which is left over extracted folder after data release (First file found was '" + firstFileFound + "' but there may be others)", CheckResult.Fail));
+                        $"Found non-empty folder {directoryInfo.Name} which is left over extracted folder after data release (First file found was '{firstFileFound}' but there may be others)", CheckResult.Fail));
         }
     }
 
@@ -96,7 +95,7 @@ public class ExtractionConfigurationChecker:ICheckable
             return false;
         }
 
-        foreach (DirectoryInfo directory in d.GetDirectories())
+        foreach (var directory in d.GetDirectories())
             if (!DirectoryIsEmpty(directory, out firstFileFound))
                 return false;
 
@@ -107,7 +106,7 @@ public class ExtractionConfigurationChecker:ICheckable
     private void CheckInProgressConfiguration(ICheckNotifier notifier)
     {
         var repo = (IDataExportRepository)_config.Repository;
-        notifier.OnCheckPerformed(new CheckEventArgs("Found configuration '" + _config + "'", CheckResult.Success));
+        notifier.OnCheckPerformed(new CheckEventArgs($"Found configuration '{_config}'", CheckResult.Success));
 
         var datasets = _config.GetAllExtractableDataSets().ToArray();
 
@@ -115,21 +114,20 @@ public class ExtractionConfigurationChecker:ICheckable
             if (dataSet.DisableExtraction)
                 notifier.OnCheckPerformed(
                     new CheckEventArgs(
-                        "Dataset " + dataSet +
-                        " is set to DisableExtraction=true, probably someone doesn't want you extracting this dataset at the moment",
+                        $"Dataset {dataSet} is set to DisableExtraction=true, probably someone doesn't want you extracting this dataset at the moment",
                         CheckResult.Fail));
 
         if (!datasets.Any())
             notifier.OnCheckPerformed(
                 new CheckEventArgs(
-                    "There are no datasets selected for open configuration '" + _config + "'",
+                    $"There are no datasets selected for open configuration '{_config}'",
                     CheckResult.Fail));
 
         if (_config.Cohort_ID == null)
         {
             notifier.OnCheckPerformed(
                 new CheckEventArgs(
-                    "Open configuration '" + _config + "' does not have a cohort yet",
+                    $"Open configuration '{_config}' does not have a cohort yet",
                     CheckResult.Fail));
             return;
         }
@@ -140,18 +138,18 @@ public class ExtractionConfigurationChecker:ICheckable
         {
             notifier.OnCheckPerformed(
                 new CheckEventArgs(
-                    "Cohort '" + cohort + "' is marked IsDeprecated",
+                    $"Cohort '{cohort}' is marked IsDeprecated",
                     CheckResult.Fail));
         }
 
         if (CheckDatasets)
-            foreach (ISelectedDataSets s in _config.SelectedDataSets)
+            foreach (var s in _config.SelectedDataSets)
                 new SelectedDataSetsChecker(_activator,s).Check(notifier);
 
         //globals
         if (CheckGlobals)
             if (datasets.Any())
-                foreach (SupportingSQLTable table in _config.GetGlobals().OfType<SupportingSQLTable>())
+                foreach (var table in _config.GetGlobals().OfType<SupportingSQLTable>())
                     new SupportingSQLTableChecker(table).Check(notifier);
     }
 }

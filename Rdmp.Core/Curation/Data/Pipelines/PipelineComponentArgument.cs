@@ -29,8 +29,8 @@ public class PipelineComponentArgument : Argument, IPipelineComponentArgument
     /// <inheritdoc/>
     public int PipelineComponent_ID
     {
-        get { return _pipelineComponentID; }
-        set { SetField(ref  _pipelineComponentID, value); }
+        get => _pipelineComponentID;
+        set => SetField(ref  _pipelineComponentID, value);
     }
 
     #endregion
@@ -39,10 +39,7 @@ public class PipelineComponentArgument : Argument, IPipelineComponentArgument
 
     /// <inheritdoc cref="PipelineComponent_ID"/>
     [NoMappingToDatabase]
-    public IPipelineComponent PipelineComponent { get
-    {
-        return Repository.GetObjectByID<PipelineComponent>(PipelineComponent_ID);
-    }}
+    public IPipelineComponent PipelineComponent => Repository.GetObjectByID<PipelineComponent>(PipelineComponent_ID);
 
     #endregion
 
@@ -62,7 +59,7 @@ public class PipelineComponentArgument : Argument, IPipelineComponentArgument
     {
         repository.InsertAndHydrate(this, new Dictionary<string, object>() { 
             {"PipelineComponent_ID",parent.ID},
-            {"Name", "Parameter" + Guid.NewGuid()},
+            {"Name", $"Parameter{Guid.NewGuid()}" },
             {"Type", typeof (string).ToString()} });
     }
 

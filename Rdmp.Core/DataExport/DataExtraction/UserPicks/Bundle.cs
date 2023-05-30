@@ -19,17 +19,14 @@ public abstract class Bundle
 {
     public Dictionary<object, ExtractCommandState> States { get; private set; }
 
-    public object[] Contents
-    {
-        get { return States.Keys.ToArray(); }
-    }
-        
+    public object[] Contents => States.Keys.ToArray();
+
     protected Bundle(object[] finalObjectsDoNotAddToThisLater)
     {
         //Add states for all objects
         States = new Dictionary<object, ExtractCommandState>();
 
-        foreach (object o in finalObjectsDoNotAddToThisLater)
+        foreach (var o in finalObjectsDoNotAddToThisLater)
             States.Add(o, ExtractCommandState.NotLaunched);
     }
         

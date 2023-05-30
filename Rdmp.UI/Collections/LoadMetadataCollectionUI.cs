@@ -58,8 +58,8 @@ public partial class LoadMetadataCollectionUI : RDMPCollectionUI, ILifetimeSubsc
 {
     private bool _isFirstTime = true;
 
-    public LoadMetadata SelectedLoadMetadata { get { return tlvLoadMetadata.SelectedObject as LoadMetadata; } }
-        
+    public LoadMetadata SelectedLoadMetadata => tlvLoadMetadata.SelectedObject as LoadMetadata;
+
     public LoadMetadataCollectionUI()
     {
         InitializeComponent();

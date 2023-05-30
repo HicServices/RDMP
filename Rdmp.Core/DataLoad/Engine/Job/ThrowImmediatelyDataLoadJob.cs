@@ -56,7 +56,7 @@ public class ThrowImmediatelyDataLoadJob: IDataLoadJob
     public string ArchiveFilepath { get; private set; }
     public List<ITableInfo> RegularTablesToLoad { get; set; } = new List<ITableInfo>();
     public List<ITableInfo> LookupTablesToLoad { get; set; } = new List<ITableInfo>();
-    public IRDMPPlatformRepositoryServiceLocator RepositoryLocator { get { return null; }}
+    public IRDMPPlatformRepositoryServiceLocator RepositoryLocator => null;
 
     public void StartLogging()
     {

@@ -53,7 +53,7 @@ public class TriggerTests :DatabaseTests
         var implementer = GetImplementer();
 
         //most likely doesn't exist but may do
-        implementer.DropTrigger(out string _, out string _);
+        implementer.DropTrigger(out var _, out var _);
 
         Assert.AreEqual(TriggerStatus.Missing, implementer.GetTriggerStatus());
     }
@@ -198,7 +198,7 @@ public class TriggerTests :DatabaseTests
         Assert.AreEqual(4,_archiveTable.GetRowCount());
 
         Import(_table,out var ti,out var cols);
-        DiffDatabaseDataFetcher fetcher = new DiffDatabaseDataFetcher(1,ti,7,100);
+        var fetcher = new DiffDatabaseDataFetcher(1,ti,7,100);
             
         fetcher.FetchData(new AcceptAllCheckNotifier());
         Assert.AreEqual(4,fetcher.Updates_New.Rows[0]["bubbles"]);

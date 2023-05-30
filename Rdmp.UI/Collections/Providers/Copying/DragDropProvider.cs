@@ -125,7 +125,7 @@ public class DragDropProvider:SimpleDragSource
             }
             catch (Exception exception)
             {
-                ExceptionViewer.Show("ExecuteCommand " + execution.GetType().Name + " failed, See Exception for details", exception);
+                ExceptionViewer.Show($"ExecuteCommand {execution.GetType().Name} failed, See Exception for details", exception);
             }
     }
 
@@ -142,13 +142,13 @@ public class DragDropProvider:SimpleDragSource
         {
             //get file list
             var files = dataObject.GetFileDropList().Cast<string>().Select(s => new FileInfo(s)).ToArray();
-            ICombineToMakeCommand fileCommand = _commandFactory.Create(files);
+            var fileCommand = _commandFactory.Create(files);
 
             //if command factory supports generating file based commands
             if (fileCommand != null)
             {
                 //does the execution factory permit the combination of a file command with the drop target
-                ICommandExecution execution = _commandExecutionFactory.Create(fileCommand, dropTargetModel);
+                var execution = _commandExecutionFactory.Create(fileCommand, dropTargetModel);
                 return execution;
             }
         }
@@ -169,7 +169,7 @@ public class DragDropProvider:SimpleDragSource
             var toReturn = (OLVDataObject)base.StartDrag(olv, button, item);
                 
             //can we process it into a command?
-            ICombineToMakeCommand command = _commandFactory.Create(toReturn);
+            var command = _commandFactory.Create(toReturn);
 
             if (command == null)
                 return null;//it couldn't become a command so leave it as a model object

@@ -35,20 +35,20 @@ class DataLoadTaskHelper
         {
             con.Open();
 
-            var datasetName = "Test_" + taskName;
-            var datasetCmd = _loggingServer.GetCommand("INSERT INTO DataSet (dataSetID) VALUES ('" + datasetName + "')", con);
+            var datasetName = $"Test_{taskName}";
+            var datasetCmd = _loggingServer.GetCommand($"INSERT INTO DataSet (dataSetID) VALUES ('{datasetName}')", con);
             datasetCmd.ExecuteNonQuery();
-            _sqlToCleanUp.Push("DELETE FROM DataSet WHERE dataSetID = '" + datasetName + "'");
+            _sqlToCleanUp.Push($"DELETE FROM DataSet WHERE dataSetID = '{datasetName}'");
 
             var taskCmd =
                 _loggingServer.GetCommand(
-                    "INSERT INTO DataLoadTask VALUES (100, '" + taskName + "', '" + taskName + "',@date, '" + datasetName + "', 1, 1, '" + datasetName + "')",
+                    $"INSERT INTO DataLoadTask VALUES (100, '{taskName}', '{taskName}',@date, '{datasetName}', 1, 1, '{datasetName}')",
                     con);
 
             _loggingServer.AddParameterWithValueToCommand("@date", taskCmd, DateTime.Now);
 
             taskCmd.ExecuteNonQuery();
-            _sqlToCleanUp.Push("DELETE FROM DataLoadTask WHERE dataSetID = '" + datasetName + "'");
+            _sqlToCleanUp.Push($"DELETE FROM DataLoadTask WHERE dataSetID = '{datasetName}'");
         }
     }
 

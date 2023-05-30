@@ -36,8 +36,8 @@ public class ExternalCohortTable : DatabaseEntity, IDataAccessCredentials, IExte
     [Unique]
     public string Name
     {
-        get { return _name; }
-        set { SetField(ref _name, value); }
+        get => _name;
+        set => SetField(ref _name, value);
     }
 
     #endregion
@@ -48,15 +48,15 @@ public class ExternalCohortTable : DatabaseEntity, IDataAccessCredentials, IExte
     /// <inheritdoc/>
     public string DefinitionTableForeignKeyField
     {
-        get { return _definitionTableForeignKeyField; }
-        set { SetField(ref _definitionTableForeignKeyField, Qualify(Database ?? string.Empty, TableName?? string.Empty, value)); }
+        get => _definitionTableForeignKeyField;
+        set => SetField(ref _definitionTableForeignKeyField, Qualify(Database ?? string.Empty, TableName?? string.Empty, value));
     }
 
     /// <inheritdoc/>
     public string TableName
     {
-        get { return _tableName; }
-        set { SetField(ref _tableName, Qualify(Database?? string.Empty, value?? string.Empty)); }
+        get => _tableName;
+        set => SetField(ref _tableName, Qualify(Database?? string.Empty, value?? string.Empty));
     }
 
     private string Qualify(string db, string tbl, string col = null)
@@ -85,15 +85,15 @@ public class ExternalCohortTable : DatabaseEntity, IDataAccessCredentials, IExte
     /// <inheritdoc/>
     public string DefinitionTableName
     {
-        get { return _definitionTableName; }
-        set { SetField(ref _definitionTableName, Qualify(Database?? string.Empty, value?? string.Empty)); }
+        get => _definitionTableName;
+        set => SetField(ref _definitionTableName, Qualify(Database?? string.Empty, value?? string.Empty));
     }
 
     /// <inheritdoc/>
     public string PrivateIdentifierField
     {
-        get { return _privateIdentifierField; }
-        set { SetField(ref _privateIdentifierField, Qualify(Database?? string.Empty,TableName, value?? string.Empty)); }
+        get => _privateIdentifierField;
+        set => SetField(ref _privateIdentifierField, Qualify(Database?? string.Empty,TableName, value?? string.Empty));
     }
 
     /// <inheritdoc/>
@@ -102,8 +102,8 @@ public class ExternalCohortTable : DatabaseEntity, IDataAccessCredentials, IExte
     /// </summary>
     public string ReleaseIdentifierField
     {
-        get { return _releaseIdentifierField; }
-        set { SetField(ref _releaseIdentifierField, Qualify(Database?? string.Empty, TableName, value?? string.Empty)); }
+        get => _releaseIdentifierField;
+        set => SetField(ref _releaseIdentifierField, Qualify(Database?? string.Empty, TableName, value?? string.Empty));
     }
 
     /// <summary>
@@ -150,7 +150,7 @@ public class ExternalCohortTable : DatabaseEntity, IDataAccessCredentials, IExte
         SelfCertifyingDataAccessPoint = new SelfCertifyingDataAccessPoint(repository.CatalogueRepository, databaseType);
         Repository.InsertAndHydrate(this, new Dictionary<string, object>
         {
-            {"Name", name ?? "NewExternalSource" + Guid.NewGuid()},
+            {"Name", name ?? $"NewExternalSource{Guid.NewGuid()}" },
             {"DatabaseType",databaseType.ToString()}
         });
     }
@@ -252,11 +252,11 @@ public class ExternalCohortTable : DatabaseEntity, IDataAccessCredentials, IExte
     {
         var server = DataAccessPortal.GetInstance().ExpectServer(this, DataAccessContext.DataExport);
             
-        using (DbConnection con = server.GetConnection())
+        using (var con = server.GetConnection())
         {
             con.Open();
 
-            string sql = @"select count(*) from " + DefinitionTableName + " where id = " + originID;
+            var sql = $@"select count(*) from {DefinitionTableName} where id = {originID}";
 
             using(var cmdGetDescriptionOfCohortFromConsus = server.GetCommand(sql, con))
                 try
@@ -266,9 +266,7 @@ public class ExternalCohortTable : DatabaseEntity, IDataAccessCredentials, IExte
                 catch (Exception e)
                 {
                     throw new Exception(
-                        "Could not connect to server " + Server + " (Database '" + Database +
-                        "') which is the data source of ExternalCohortTable (source) called '" + Name + "' (ID=" + ID +
-                        ")", e);
+                        $"Could not connect to server {Server} (Database '{Database}') which is the data source of ExternalCohortTable (source) called '{Name}' (ID={ID})", e);
                 }
         }
 
@@ -279,35 +277,38 @@ public class ExternalCohortTable : DatabaseEntity, IDataAccessCredentials, IExte
         {
             var database = Discover();
 
-            DiscoveredTable cohortTable = DiscoverCohortTable();
+            var cohortTable = DiscoverCohortTable();
             if (cohortTable.Exists())
             {
-                notifier.OnCheckPerformed(new CheckEventArgs("Found table " + cohortTable + " in database " + Database, CheckResult.Success, null));
+                notifier.OnCheckPerformed(new CheckEventArgs($"Found table {cohortTable} in database {Database}", CheckResult.Success, null));
                     
                 DiscoverPrivateIdentifier();
                 DiscoverReleaseIdentifier();
                 DiscoverDefinitionTableForeignKey();
             }
             else
-                notifier.OnCheckPerformed(new CheckEventArgs("Could not find table " + TableName + " in database " + Database, CheckResult.Fail, null));
+                notifier.OnCheckPerformed(new CheckEventArgs($"Could not find table {TableName} in database {Database}", CheckResult.Fail, null));
 
-            DiscoveredTable foundCohortDefinitionTable = DiscoverDefinitionTable();
+            var foundCohortDefinitionTable = DiscoverDefinitionTable();
 
             if (foundCohortDefinitionTable.Exists())
             {
-                notifier.OnCheckPerformed(new CheckEventArgs("Found table " + DefinitionTableName + " in database " + Database, CheckResult.Success, null));
+                notifier.OnCheckPerformed(new CheckEventArgs(
+                    $"Found table {DefinitionTableName} in database {Database}", CheckResult.Success, null));
 
                 var cols = foundCohortDefinitionTable.DiscoverColumns();
                     
-                foreach (string requiredField in ExternalCohortTable.CohortDefinitionTable_RequiredFields)
+                foreach (var requiredField in ExternalCohortTable.CohortDefinitionTable_RequiredFields)
                     ComplainIfColumnMissing(DefinitionTableName, cols, requiredField, notifier);
             }
             else
-                notifier.OnCheckPerformed(new CheckEventArgs("Could not find table " + DefinitionTableName + " in database " + Database, CheckResult.Fail, null));
+                notifier.OnCheckPerformed(new CheckEventArgs(
+                    $"Could not find table {DefinitionTableName} in database {Database}", CheckResult.Fail, null));
         }
         catch (Exception e)
         {
-            notifier.OnCheckPerformed(new CheckEventArgs("Could not check table intactness for ExternalCohortTable '" + Name + "'", CheckResult.Fail, e));
+            notifier.OnCheckPerformed(new CheckEventArgs(
+                $"Could not check table intactness for ExternalCohortTable '{Name}'", CheckResult.Fail, e));
         }
     }
         
@@ -317,11 +318,11 @@ public class ExternalCohortTable : DatabaseEntity, IDataAccessCredentials, IExte
         {
             DataAccessPortal.GetInstance().ExpectServer(this, DataAccessContext.DataExport).TestConnection();
               
-            notifier.OnCheckPerformed(new CheckEventArgs("Connected to Cohort database '" + Name + "'", CheckResult.Success, null));
+            notifier.OnCheckPerformed(new CheckEventArgs($"Connected to Cohort database '{Name}'", CheckResult.Success, null));
         }
         catch (Exception e)
         {
-            notifier.OnCheckPerformed(new CheckEventArgs("Could not connect to Cohort database called '" + Name + "'", CheckResult.Fail, e));
+            notifier.OnCheckPerformed(new CheckEventArgs($"Could not connect to Cohort database called '{Name}'", CheckResult.Fail, e));
         }
     }
         
@@ -339,15 +340,15 @@ public class ExternalCohortTable : DatabaseEntity, IDataAccessCredentials, IExte
 
     private void ComplainIfColumnMissing(string tableNameFullyQualified, DiscoveredColumn[] columns, string colToFindCanBeFullyQualifiedIfYouLike, ICheckNotifier notifier)
     {
-        string tofind = GetQuerySyntaxHelper().GetRuntimeName(colToFindCanBeFullyQualifiedIfYouLike);
+        var tofind = GetQuerySyntaxHelper().GetRuntimeName(colToFindCanBeFullyQualifiedIfYouLike);
 
         if (columns.Any(col=>col.GetRuntimeName().Equals(tofind,StringComparison.CurrentCultureIgnoreCase)))
-            notifier.OnCheckPerformed(new CheckEventArgs("Found required field " + tofind + " in table " + tableNameFullyQualified,
+            notifier.OnCheckPerformed(new CheckEventArgs(
+                $"Found required field {tofind} in table {tableNameFullyQualified}",
                 CheckResult.Success, null));
         else
             notifier.OnCheckPerformed(new CheckEventArgs(
-                "Could not find required field " + tofind + " in table " + tableNameFullyQualified +
-                "(It had the following columns:" + columns.Aggregate("", (s, n) => s + n + ",") + ")",
+                $"Could not find required field {tofind} in table {tableNameFullyQualified}(It had the following columns:{columns.Aggregate("", (s, n) => $"{s}{n},")})",
                 CheckResult.Fail, null));
     }
         
@@ -357,7 +358,7 @@ public class ExternalCohortTable : DatabaseEntity, IDataAccessCredentials, IExte
     /// <inheritdoc/>
     public string Password
     {
-        get { return SelfCertifyingDataAccessPoint.Password; }
+        get => SelfCertifyingDataAccessPoint.Password;
         set
         {
             SelfCertifyingDataAccessPoint.Password = value;
@@ -374,7 +375,7 @@ public class ExternalCohortTable : DatabaseEntity, IDataAccessCredentials, IExte
     /// <inheritdoc/>
     public string Username
     {
-        get { return SelfCertifyingDataAccessPoint.Username; }
+        get => SelfCertifyingDataAccessPoint.Username;
         set
         {
             if (Equals(SelfCertifyingDataAccessPoint.Username, value))
@@ -389,7 +390,7 @@ public class ExternalCohortTable : DatabaseEntity, IDataAccessCredentials, IExte
     /// <inheritdoc/>
     public string Server
     {
-        get { return SelfCertifyingDataAccessPoint.Server; }
+        get => SelfCertifyingDataAccessPoint.Server;
         set
         {
             if (Equals(SelfCertifyingDataAccessPoint.Server, value))
@@ -404,7 +405,7 @@ public class ExternalCohortTable : DatabaseEntity, IDataAccessCredentials, IExte
     /// <inheritdoc/>
     public string Database
     {
-        get { return SelfCertifyingDataAccessPoint.Database; }
+        get => SelfCertifyingDataAccessPoint.Database;
         set
         {
             if (Equals(SelfCertifyingDataAccessPoint.Database, value))
@@ -419,7 +420,7 @@ public class ExternalCohortTable : DatabaseEntity, IDataAccessCredentials, IExte
     /// <inheritdoc/>
     public DatabaseType DatabaseType
     {
-        get { return SelfCertifyingDataAccessPoint.DatabaseType; }
+        get => SelfCertifyingDataAccessPoint.DatabaseType;
         set
         {
             if (Equals(SelfCertifyingDataAccessPoint.DatabaseType, value))

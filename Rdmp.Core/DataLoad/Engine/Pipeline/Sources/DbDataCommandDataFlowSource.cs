@@ -59,7 +59,8 @@ public class DbDataCommandDataFlowSource :  IDbDataCommandDataFlowSource
             _con = DatabaseCommandHelper.GetConnection(_builder);
             _con.Open();
 
-            job.OnNotify(this, new NotifyEventArgs(ProgressEventType.Information, "Running SQL:" +Environment.NewLine + Sql));
+            job.OnNotify(this, new NotifyEventArgs(ProgressEventType.Information,
+                $"Running SQL:{Environment.NewLine}{Sql}"));
 
             cmd = DatabaseCommandHelper.GetCommand(Sql, _con);
             cmd.CommandTimeout = _timeout;
@@ -69,11 +70,11 @@ public class DbDataCommandDataFlowSource :  IDbDataCommandDataFlowSource
             _numberOfColumns = _reader.FieldCount;
         }
 
-        int readThisBatch = 0;
+        var readThisBatch = 0;
         timer.Start();
         try
         {
-            DataTable chunk = GetChunkSchema(_reader);
+            var chunk = GetChunkSchema(_reader);
                 
             while (_reader.HasRows && _reader.Read())
             {
@@ -116,7 +117,7 @@ public class DbDataCommandDataFlowSource :  IDbDataCommandDataFlowSource
 
     private DataRow AddRowToDataTable(DataTable chunk, DbDataReader reader)
     {
-        object[] values = new object[_numberOfColumns];
+        var values = new object[_numberOfColumns];
 
         reader.GetValues(values);
         TotalRowsRead++;
@@ -132,7 +133,7 @@ public class DbDataCommandDataFlowSource :  IDbDataCommandDataFlowSource
 
     private DataTable GetChunkSchema(DbDataReader reader)
     {
-        DataTable toReturn = new DataTable("dt");
+        var toReturn = new DataTable("dt");
             
         //Retrieve column schema into a DataTable.
         var schemaTable = reader.GetSchemaTable();
@@ -148,7 +149,7 @@ public class DbDataCommandDataFlowSource :  IDbDataCommandDataFlowSource
             var t = Type.GetType(myField["DataType"].ToString());
 
             if(t == null)
-                throw new NotSupportedException("Type.GetType failed on SQL DataType:" + myField["DataType"]);
+                throw new NotSupportedException($"Type.GetType failed on SQL DataType:{myField["DataType"]}");
 
             //let's not mess around with floats, make everything a double please
             if (t == typeof (float))
@@ -195,13 +196,13 @@ public class DbDataCommandDataFlowSource :  IDbDataCommandDataFlowSource
 
     public DataTable TryGetPreview()
     {
-        DataTable chunk = new DataTable();
+        var chunk = new DataTable();
         using (var con = DatabaseCommandHelper.GetConnection(_builder))
         {
             con.Open();
             using (var da = DatabaseCommandHelper.GetDataAdapter(DatabaseCommandHelper.GetCommand(Sql, con)))
             {
-                int read = da.Fill(0, 100, chunk);
+                var read = da.Fill(0, 100, chunk);
                                     
                 if (read == 0)
                     return null;

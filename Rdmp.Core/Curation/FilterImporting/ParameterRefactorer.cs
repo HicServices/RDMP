@@ -37,7 +37,8 @@ public class ParameterRefactorer : IParameterRefactorer
             return false;
 
         if (!parameter.ParameterName.Equals(newName))
-            throw new ArgumentException("Expected parameter " + parameter + " to have name '" + newName + "' but its value was " + parameter.ParameterName + ", this means someone was lying about the rename event");
+            throw new ArgumentException(
+                $"Expected parameter {parameter} to have name '{newName}' but its value was {parameter.ParameterName}, this means someone was lying about the rename event");
 
         var owner = parameter.GetOwnerIfAny();
 
@@ -50,8 +51,8 @@ public class ParameterRefactorer : IParameterRefactorer
         if (string.IsNullOrWhiteSpace(filter.WhereSQL))
             return false;
 
-        string before = filter.WhereSQL;
-        string after = ParameterCreator.RenameParameterInSQL(before, oldName, newName);
+        var before = filter.WhereSQL;
+        var after = ParameterCreator.RenameParameterInSQL(before, oldName, newName);
 
         //no change was actually made
         if (before.Equals(after))

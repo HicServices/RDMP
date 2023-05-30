@@ -46,9 +46,9 @@ public class FlatFileEventHandlers
     public void FileIsEmpty()
     {
         if (_throwOnEmptyFiles)
-            throw new FlatFileLoadException("File " + _fileToLoad + " is empty");
+            throw new FlatFileLoadException($"File {_fileToLoad} is empty");
 
-        _listener.OnNotify(this, new NotifyEventArgs(ProgressEventType.Warning, "File " + _fileToLoad + " is empty"));
+        _listener.OnNotify(this, new NotifyEventArgs(ProgressEventType.Warning, $"File {_fileToLoad} is empty"));
     }
         
     public bool ReadingExceptionOccurred(ReadingExceptionOccurredArgs args)
@@ -59,7 +59,8 @@ public class FlatFileEventHandlers
         {
             case BadDataHandlingStrategy.IgnoreRows:
                 if (_maximumErrorsToReport-- >0)
-                    _listener.OnNotify(this, new NotifyEventArgs(ProgressEventType.Warning, "Ignored ReadingException on " + line.GetLineDescription(), args.Exception));
+                    _listener.OnNotify(this, new NotifyEventArgs(ProgressEventType.Warning,
+                        $"Ignored ReadingException on {line.GetLineDescription()}", args.Exception));
 
                 //move to next line
                 _dataPusher.BadLines.Add(args.Exception.Context.Parser.RawRow);
@@ -71,7 +72,7 @@ public class FlatFileEventHandlers
                 break;
 
             case BadDataHandlingStrategy.ThrowException:
-                throw new FlatFileLoadException("Bad data found on li" + line.GetLineDescription(), args.Exception);
+                throw new FlatFileLoadException($"Bad data found on li{line.GetLineDescription()}", args.Exception);
 
             default:
                 throw new ArgumentOutOfRangeException();
@@ -86,7 +87,8 @@ public class FlatFileEventHandlers
         if (_ignoreBadDataEvents && isFromCsvHelper)
             if (_maximumErrorsToReport-- > 0)
             {
-                _listener.OnNotify(this, new NotifyEventArgs(ProgressEventType.Warning, "Ignorring CSVHelper internal bad data warning:" + line.GetLineDescription()));
+                _listener.OnNotify(this, new NotifyEventArgs(ProgressEventType.Warning,
+                    $"Ignorring CSVHelper internal bad data warning:{line.GetLineDescription()}"));
                 return;
             }
 
@@ -99,7 +101,8 @@ public class FlatFileEventHandlers
             case BadDataHandlingStrategy.IgnoreRows:
 
                 if (_maximumErrorsToReport-- > 0)
-                    _listener.OnNotify(this, new NotifyEventArgs(ProgressEventType.Warning, "Ignored BadData on " + line.GetLineDescription()));
+                    _listener.OnNotify(this, new NotifyEventArgs(ProgressEventType.Warning,
+                        $"Ignored BadData on {line.GetLineDescription()}"));
 
                 //move to next line
                 _dataPusher.BadLines.Add(line.LineNumber);
@@ -110,7 +113,7 @@ public class FlatFileEventHandlers
                 break;
 
             case BadDataHandlingStrategy.ThrowException:
-                throw new FlatFileLoadException("Bad data found on " + line.GetLineDescription());
+                throw new FlatFileLoadException($"Bad data found on {line.GetLineDescription()}");
 
 
             default:
@@ -122,7 +125,8 @@ public class FlatFileEventHandlers
     {
         if (DivertErrorsFile == null)
         {
-            DivertErrorsFile = new FileInfo(Path.Combine(_fileToLoad.File.Directory.FullName, Path.GetFileNameWithoutExtension(_fileToLoad.File.Name) + "_Errors.txt"));
+            DivertErrorsFile = new FileInfo(Path.Combine(_fileToLoad.File.Directory.FullName,
+                $"{Path.GetFileNameWithoutExtension(_fileToLoad.File.Name)}_Errors.txt"));
 
             //delete any old version
             if (DivertErrorsFile.Exists)
@@ -130,7 +134,8 @@ public class FlatFileEventHandlers
         }
 
         if (_maximumErrorsToReport-- > 0)
-            _listener.OnNotify(this, new NotifyEventArgs(ProgressEventType.Warning, "Diverting Error on " + line.GetLineDescription() + " to '" + DivertErrorsFile.FullName + "'", ex));
+            _listener.OnNotify(this, new NotifyEventArgs(ProgressEventType.Warning,
+                $"Diverting Error on {line.GetLineDescription()} to '{DivertErrorsFile.FullName}'", ex));
 
         File.AppendAllText(DivertErrorsFile.FullName, line.RawRecord);
 

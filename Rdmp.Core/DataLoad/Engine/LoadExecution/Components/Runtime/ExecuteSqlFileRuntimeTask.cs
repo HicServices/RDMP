@@ -37,7 +37,7 @@ public class ExecuteSqlFileRuntimeTask : RuntimeTask
         _loadStage = RuntimeArguments.StageSpecificArguments.LoadStage;
 
         if (!Exists())
-            throw new Exception("The sql file " + Filepath + " does not exist");
+            throw new Exception($"The sql file {Filepath} does not exist");
 
         string commandText;
         try
@@ -55,15 +55,16 @@ public class ExecuteSqlFileRuntimeTask : RuntimeTask
                 if (value.Contains("<DatabaseName>"))
                     value = value.Replace("<DatabaseName>", RuntimeArguments.StageSpecificArguments.DbInfo.GetRuntimeName());
                     
-                commandText = commandText.Replace("##" + kvp.Key + "##", value);
+                commandText = commandText.Replace($"##{kvp.Key}##", value);
             }
         }
         catch (Exception e)
         {
-            throw new Exception("Could not read the sql file at " + Filepath + ": " + e);
+            throw new Exception($"Could not read the sql file at {Filepath}: {e}");
         }
             
-        job.OnNotify(this, new NotifyEventArgs(ProgressEventType.Information, "Executing script " + Filepath + " ( against " + db + ")"));
+        job.OnNotify(this, new NotifyEventArgs(ProgressEventType.Information,
+            $"Executing script {Filepath} ( against {db})"));
         var executer = new ExecuteSqlInDleStage(job,_loadStage);
         return executer.Execute(commandText,db);
     }
@@ -89,7 +90,7 @@ public class ExecuteSqlFileRuntimeTask : RuntimeTask
         if (string.IsNullOrWhiteSpace(Filepath))
         {
             notifier.OnCheckPerformed(
-                new CheckEventArgs("ExecuteSqlFileTask " + _task + " does not have a path specified",
+                new CheckEventArgs($"ExecuteSqlFileTask {_task} does not have a path specified",
                     CheckResult.Fail));
             return;
         }
@@ -97,11 +98,10 @@ public class ExecuteSqlFileRuntimeTask : RuntimeTask
         if (!File.Exists(Filepath))
             notifier.OnCheckPerformed(
                 new CheckEventArgs(
-                    "File '" + Filepath +
-                    "' does not exist! (the only time this would be legal is if you have an exe or a freaky plugin that creates this file)",
+                    $"File '{Filepath}' does not exist! (the only time this would be legal is if you have an exe or a freaky plugin that creates this file)",
                     CheckResult.Warning));
         else
-            notifier.OnCheckPerformed(new CheckEventArgs("Found File '" + Filepath + "'",
+            notifier.OnCheckPerformed(new CheckEventArgs($"Found File '{Filepath}'",
                 CheckResult.Success));
     }
 }

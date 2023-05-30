@@ -37,7 +37,7 @@ class ColumnInfoTests : DatabaseTests
 
             child.SaveToDatabase();
 
-            ColumnInfo childAfter = CatalogueRepository.GetObjectByID<ColumnInfo>(child.ID);
+            var childAfter = CatalogueRepository.GetObjectByID<ColumnInfo>(child.ID);
 
             Assert.AreEqual(child.Name, childAfter.Name);
             Assert.AreEqual(child.Description, childAfter.Description);
@@ -59,7 +59,7 @@ class ColumnInfoTests : DatabaseTests
     public void GetAllColumnInfos_moreThan1_pass()
     {
 
-        TableInfo parent = new TableInfo(CatalogueRepository, "Slalom");
+        var parent = new TableInfo(CatalogueRepository, "Slalom");
 
         try
         {
@@ -83,15 +83,15 @@ class ColumnInfoTests : DatabaseTests
     [Test]
     public void CreateNewColumnInfoInDatabase_valid_pass()
     {
-        TableInfo parent = new TableInfo(CatalogueRepository, "Lazors");
-        ColumnInfo columnInfo = new ColumnInfo(CatalogueRepository, "Lazor Reflection Vol","varchar(1000)",parent);
+        var parent = new TableInfo(CatalogueRepository, "Lazors");
+        var columnInfo = new ColumnInfo(CatalogueRepository, "Lazor Reflection Vol","varchar(1000)",parent);
 
         Assert.NotNull(columnInfo);
 
         columnInfo.DeleteInDatabase();
 
         var ex = Assert.Throws<KeyNotFoundException>(() => CatalogueRepository.GetObjectByID<ColumnInfo>(columnInfo.ID));
-        Assert.IsTrue(ex.Message.StartsWith("Could not find ColumnInfo with ID " + columnInfo.ID), ex.Message);
+        Assert.IsTrue(ex.Message.StartsWith($"Could not find ColumnInfo with ID {columnInfo.ID}"), ex.Message);
 
         parent.DeleteInDatabase();
     }
@@ -99,8 +99,8 @@ class ColumnInfoTests : DatabaseTests
     [Test]
     public void update_changeAllProperties_pass()
     {
-        TableInfo parent = new TableInfo(CatalogueRepository, "Rokkits");
-        ColumnInfo column = new ColumnInfo(CatalogueRepository, "ExplosiveVol","varchar(1000)", parent)
+        var parent = new TableInfo(CatalogueRepository, "Rokkits");
+        var column = new ColumnInfo(CatalogueRepository, "ExplosiveVol","varchar(1000)", parent)
         {
             Digitisation_specs = "Highly digitizable",
             Format = "Jpeg",
@@ -111,7 +111,7 @@ class ColumnInfoTests : DatabaseTests
 
         column.SaveToDatabase();
 
-        ColumnInfo columnAfter = CatalogueRepository.GetObjectByID<ColumnInfo>(column.ID);
+        var columnAfter = CatalogueRepository.GetObjectByID<ColumnInfo>(column.ID);
 
         Assert.IsTrue(columnAfter.Digitisation_specs == "Highly digitizable");
         Assert.IsTrue(columnAfter.Format == "Jpeg");
@@ -126,8 +126,8 @@ class ColumnInfoTests : DatabaseTests
     [Test]
     public void  Test_GetRAWStageTypeWhenPreLoadDiscardedDilution()
     {
-        TableInfo parent = new TableInfo(CatalogueRepository, "Rokkits");
-        ColumnInfo column = new ColumnInfo(CatalogueRepository, "MyCol", "varchar(4)", parent);
+        var parent = new TableInfo(CatalogueRepository, "Rokkits");
+        var column = new ColumnInfo(CatalogueRepository, "MyCol", "varchar(4)", parent);
 
         var discard = new PreLoadDiscardedColumn(CatalogueRepository, parent, "MyCol");
         discard.SqlDataType = "varchar(10)";

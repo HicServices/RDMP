@@ -42,7 +42,7 @@ public class VerboseValidationResults
         ReasonsRowsInvalidated = new List<string>();
         DictionaryOfFailure = new Dictionary<string, Dictionary<Consequence, int>>();
 
-        foreach (ItemValidator iv in validators)
+        foreach (var iv in validators)
         {
             DictionaryOfFailure.Add(iv.TargetProperty,null);
             DictionaryOfFailure[iv.TargetProperty] = new Dictionary<Consequence, int>();
@@ -59,23 +59,26 @@ public class VerboseValidationResults
         {
             ConfirmIntegrityOfValidationException(rootValidationFailure);
 
-            Dictionary<ItemValidator, Consequence> worstConsequences = new Dictionary<ItemValidator, Consequence>();
+            var worstConsequences = new Dictionary<ItemValidator, Consequence>();
 
             foreach (var subException in rootValidationFailure.GetExceptionList())
             {
                 if (!subException.SourceConstraint.Consequence.HasValue)
-                    throw new NullReferenceException("ItemValidator of type " + subException.SourceItemValidator.GetType().Name + " on column " + subException.SourceItemValidator.TargetProperty + " has not had its Consequence configured");
+                    throw new NullReferenceException(
+                        $"ItemValidator of type {subException.SourceItemValidator.GetType().Name} on column {subException.SourceItemValidator.TargetProperty} has not had its Consequence configured");
 
                 //we have encountered a rule that will invalidate the entire row, it's a good idea to keep a track of each of these since it would be rubbish to get a report out the other side that simply says 100% of rows invalid!
                 if (subException.SourceConstraint.Consequence == Consequence.InvalidatesRow)
-                    if (!ReasonsRowsInvalidated.Contains(subException.SourceItemValidator.TargetProperty + "|" + subException.SourceConstraint.GetType().Name))
-                        ReasonsRowsInvalidated.Add(subException.SourceItemValidator.TargetProperty + "|" + subException.SourceConstraint.GetType().Name);
+                    if (!ReasonsRowsInvalidated.Contains(
+                            $"{subException.SourceItemValidator.TargetProperty}|{subException.SourceConstraint.GetType().Name}"))
+                        ReasonsRowsInvalidated.Add(
+                            $"{subException.SourceItemValidator.TargetProperty}|{subException.SourceConstraint.GetType().Name}");
 
                 if (worstConsequences.Keys.Contains(subException.SourceItemValidator) == true)
                 {
                     //see if situation got worse
-                    Consequence oldConsequence = worstConsequences[subException.SourceItemValidator];
-                    Consequence newConsequence = subException.SourceConstraint.Consequence.Value;
+                    var oldConsequence = worstConsequences[subException.SourceItemValidator];
+                    var newConsequence = subException.SourceConstraint.Consequence.Value;
 
                     if (newConsequence > oldConsequence)
                         worstConsequences[subException.SourceItemValidator] = newConsequence;
@@ -93,7 +96,7 @@ public class VerboseValidationResults
                 
             foreach (var itemValidator in worstConsequences.Keys)
             {
-                string columnName = itemValidator.TargetProperty;
+                var columnName = itemValidator.TargetProperty;
                     
                 //increment the most damaging consequence count for this cell
                 DictionaryOfFailure[columnName][worstConsequences[itemValidator]]++;
@@ -103,22 +106,26 @@ public class VerboseValidationResults
         }
         catch (Exception e)
         {
-            throw new Exception("An error occurred when trying to process a ValidationException into Verbose results:" + e.Message, e);
+            throw new Exception(
+                $"An error occurred when trying to process a ValidationException into Verbose results:{e.Message}", e);
         }
     }
 
     private void ConfirmIntegrityOfValidationException(ValidationFailure v)
     {
         if (v.GetExceptionList() == null)
-            throw new NullReferenceException("Expected ValidationException to produce a List of broken validations, not just 1.  Validation message was:" + v.Message);
+            throw new NullReferenceException(
+                $"Expected ValidationException to produce a List of broken validations, not just 1.  Validation message was:{v.Message}");
 
         foreach (var validationException in v.GetExceptionList())
         {
             if (validationException.SourceItemValidator == null || validationException.SourceItemValidator.TargetProperty == null)
-                throw new NullReferenceException("Column name referenced in ValidationException was null!, message in the exception was:" + validationException.Message);
+                throw new NullReferenceException(
+                    $"Column name referenced in ValidationException was null!, message in the exception was:{validationException.Message}");
 
             if (validationException.GetExceptionList() != null)
-                throw new Exception("Inception ValidationException detected! not only does the root Exception have a list of subexceptions (expected) but one of those has a sublist too! (unexpected).  This Exception message was:" + validationException.Message);
+                throw new Exception(
+                    $"Inception ValidationException detected! not only does the root Exception have a list of subexceptions (expected) but one of those has a sublist too! (unexpected).  This Exception message was:{validationException.Message}");
         }
     }
 }

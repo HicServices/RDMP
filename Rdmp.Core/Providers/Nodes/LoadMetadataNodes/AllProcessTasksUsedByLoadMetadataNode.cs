@@ -41,5 +41,6 @@ public class AllProcessTasksUsedByLoadMetadataNode : Node,IOrderable
         return (LoadMetadata != null ? LoadMetadata.GetHashCode() : 0);
     }
 
-    public int Order { get { return 2; } set{} }
+    public int Order { get => 2;
+        set{} }
 }

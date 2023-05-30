@@ -52,8 +52,8 @@ public class ChartLookAndFeelSetter
         chart.ChartAreas[0].AxisY.TitleForeColor = Color.DarkGray;
         chart.ChartAreas[0].AxisY.LabelStyle.ForeColor = Color.DarkGray;
 
-        int rowsPerYear = 12;
-        int datasetLifespanInYears = dt.Rows.Count / rowsPerYear;
+        var rowsPerYear = 12;
+        var datasetLifespanInYears = dt.Rows.Count / rowsPerYear;
 
         if (dt.Rows.Count == 0)
             throw new Exception("There are no rows in the DQE database (dataset is empty?)");
@@ -67,8 +67,8 @@ public class ChartLookAndFeelSetter
             chart.ChartAreas[0].AxisX.Interval = 4; //ever quarter
 
             //start at beginning of a quarter (%4)
-            string monthYearStart = dt.Rows[0]["YearMonth"].ToString();
-            int offset = GetOffset(monthYearStart);
+            var monthYearStart = dt.Rows[0]["YearMonth"].ToString();
+            var offset = GetOffset(monthYearStart);
             chart.ChartAreas[0].AxisX.IntervalOffset = offset % 4;
         }
         else if (datasetLifespanInYears < 100)
@@ -80,8 +80,8 @@ public class ChartLookAndFeelSetter
             chart.ChartAreas[0].AxisX.Interval = 12; //every year
 
             //start at january
-            string monthYearStart = dt.Rows[0]["YearMonth"].ToString();
-            int offset = GetOffset(monthYearStart);
+            var monthYearStart = dt.Rows[0]["YearMonth"].ToString();
+            var offset = GetOffset(monthYearStart);
             chart.ChartAreas[0].AxisX.IntervalOffset = offset;
         }
 

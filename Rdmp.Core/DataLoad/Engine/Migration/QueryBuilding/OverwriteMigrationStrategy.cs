@@ -58,7 +58,7 @@ WHERE
 CrossDatabaseMergeCommandTo..ToTable.Age is null
 */
 
-        StringBuilder sbInsert = new StringBuilder();
+        var sbInsert = new StringBuilder();
         var syntax = server.GetQuerySyntaxHelper();
             
 
@@ -75,11 +75,11 @@ CrossDatabaseMergeCommandTo..ToTable.Age is null
         sbInsert.AppendLine("SELECT");
 
         // Add the columns we are migrating
-        sbInsert.AppendLine(string.Join(","+Environment.NewLine,columnsToMigrate.FieldsToUpdate.Select(c=>c.GetFullyQualifiedName())));
+        sbInsert.AppendLine(string.Join($",{Environment.NewLine}",columnsToMigrate.FieldsToUpdate.Select(c=>c.GetFullyQualifiedName())));
             
         // If we are using trigger also add the run ID e.g. ",50"
         if(!job.LoadMetadata.IgnoreTrigger)
-            sbInsert.AppendLine("," + dataLoadInfoID.ToString());
+            sbInsert.AppendLine($",{dataLoadInfoID}");
 
         sbInsert.AppendLine("FROM");
         sbInsert.AppendLine(columnsToMigrate.SourceTable.GetFullyQualifiedName());
@@ -88,7 +88,7 @@ CrossDatabaseMergeCommandTo..ToTable.Age is null
         sbInsert.AppendLine("ON");
             
         sbInsert.AppendLine(
-            string.Join(" AND " + Environment.NewLine,
+            string.Join($" AND {Environment.NewLine}",
                 columnsToMigrate.PrimaryKeys.Select(
                     pk =>
                         string.Format("{0}.{1}={2}.{1}", columnsToMigrate.SourceTable.GetFullyQualifiedName(),
@@ -103,12 +103,13 @@ CrossDatabaseMergeCommandTo..ToTable.Age is null
         if (columnsToMigrate.DestinationTable.Database.Server.DatabaseType == DatabaseType.MySql)
             sbInsert.Append(" FOR UPDATE");
 
-        string insertSql = sbInsert.ToString();
+        var insertSql = sbInsert.ToString();
             
         var cmd = server.GetCommand(insertSql, _managedConnection);
         cmd.CommandTimeout = Timeout;
 
-        job.OnNotify(this, new NotifyEventArgs(ProgressEventType.Information, "INSERT query: " + Environment.NewLine + insertSql));
+        job.OnNotify(this, new NotifyEventArgs(ProgressEventType.Information,
+            $"INSERT query: {Environment.NewLine}{insertSql}"));
 
         cancellationToken.ThrowIfCancellationRequested();
 
@@ -117,13 +118,14 @@ CrossDatabaseMergeCommandTo..ToTable.Age is null
         {
             inserts = cmd.ExecuteNonQuery();
 
-            List<CustomLine> sqlLines = new List<CustomLine>();
+            var sqlLines = new List<CustomLine>();
 
             var toSet = columnsToMigrate.FieldsToUpdate.Where(c => !c.IsPrimaryKey).Select(c => string.Format("t1.{0} = t2.{0}", syntax.EnsureWrapped(c.GetRuntimeName()))).ToArray();
 
             if(!toSet.Any())
             {
-                job.OnNotify(this,new NotifyEventArgs(ProgressEventType.Warning, "Table " + columnsToMigrate.DestinationTable + " is entirely composed of PrimaryKey columns or hic_ columns so UPDATE will NOT take place"));
+                job.OnNotify(this,new NotifyEventArgs(ProgressEventType.Warning,
+                    $"Table {columnsToMigrate.DestinationTable} is entirely composed of PrimaryKey columns or hic_ columns so UPDATE will NOT take place"));
                 return;
             }
 
@@ -131,7 +133,8 @@ CrossDatabaseMergeCommandTo..ToTable.Age is null
 
             if (!toDiff.Any())
             {
-                job.OnNotify(this, new NotifyEventArgs(ProgressEventType.Warning, "Table " + columnsToMigrate.DestinationTable + " is entirely composed of PrimaryKey columns or hic_ columns/ other non DIFF columns that will not result in an UPDATE will NOT take place"));
+                job.OnNotify(this, new NotifyEventArgs(ProgressEventType.Warning,
+                    $"Table {columnsToMigrate.DestinationTable} is entirely composed of PrimaryKey columns or hic_ columns/ other non DIFF columns that will not result in an UPDATE will NOT take place"));
                 return;
             }
 
@@ -157,7 +160,8 @@ CrossDatabaseMergeCommandTo..ToTable.Age is null
                 columnsToMigrate.SourceTable,
                 sqlLines);
 
-            job.OnNotify(this, new NotifyEventArgs(ProgressEventType.Information, "Update query:" + Environment.NewLine + updateQuery));
+            job.OnNotify(this, new NotifyEventArgs(ProgressEventType.Information,
+                $"Update query:{Environment.NewLine}{updateQuery}"));
 
             var updateCmd = server.GetCommand(updateQuery, _managedConnection);
             updateCmd.CommandTimeout = Timeout;
@@ -169,8 +173,9 @@ CrossDatabaseMergeCommandTo..ToTable.Age is null
             }
             catch (Exception e)
             {
-                job.OnNotify(this, new NotifyEventArgs(ProgressEventType.Error, "Did not successfully perform the update queries: " + updateQuery, e));
-                throw new Exception("Did not successfully perform the update queries: " + updateQuery + " - " + e);
+                job.OnNotify(this, new NotifyEventArgs(ProgressEventType.Error,
+                    $"Did not successfully perform the update queries: {updateQuery}", e));
+                throw new Exception($"Did not successfully perform the update queries: {updateQuery} - {e}");
             }
         }
         catch (OperationCanceledException)
@@ -179,8 +184,10 @@ CrossDatabaseMergeCommandTo..ToTable.Age is null
         }
         catch (Exception e)
         {
-            job.OnNotify(this, new NotifyEventArgs(ProgressEventType.Error, "Failed to migrate " + columnsToMigrate.SourceTable + " to " + columnsToMigrate.DestinationTable, e));
-            throw new Exception("Failed to migrate " + columnsToMigrate.SourceTable + " to " + columnsToMigrate.DestinationTable + ": " + e);
+            job.OnNotify(this, new NotifyEventArgs(ProgressEventType.Error,
+                $"Failed to migrate {columnsToMigrate.SourceTable} to {columnsToMigrate.DestinationTable}", e));
+            throw new Exception(
+                $"Failed to migrate {columnsToMigrate.SourceTable} to {columnsToMigrate.DestinationTable}: {e}");
         }
     }
 

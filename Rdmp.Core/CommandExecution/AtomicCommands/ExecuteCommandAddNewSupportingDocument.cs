@@ -37,7 +37,7 @@ public class ExecuteCommandAddNewSupportingDocument : BasicCommandExecution,IAto
 
         foreach (var doc in allExisting)
         {
-            FileInfo filename = doc.GetFileName();
+            var filename = doc.GetFileName();
                 
             if(filename == null)
                 continue;
@@ -45,7 +45,7 @@ public class ExecuteCommandAddNewSupportingDocument : BasicCommandExecution,IAto
             var collisions = _fileCollectionCombineable.Files.FirstOrDefault(f => f.FullName.Equals(filename.FullName,StringComparison.CurrentCultureIgnoreCase));
                 
             if(collisions != null)
-                SetImpossible("File '" + collisions.Name +"' is already a SupportingDocument (ID=" + doc.ID + " - '"+doc.Name+"')");
+                SetImpossible($"File '{collisions.Name}' is already a SupportingDocument (ID={doc.ID} - '{doc.Name}')");
         }
     }
 
@@ -83,7 +83,7 @@ public class ExecuteCommandAddNewSupportingDocument : BasicCommandExecution,IAto
         if(files == null || files.All(f=>f == null))
             return;
 
-        List<SupportingDocument> created = new List<SupportingDocument>();
+        var created = new List<SupportingDocument>();
         foreach (var f in files)
         {
             var doc = new SupportingDocument((ICatalogueRepository)c.Repository, c, f.Name);

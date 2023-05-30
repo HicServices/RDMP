@@ -36,7 +36,7 @@ public abstract class MigrationQueryHelper
             McsQueryHelper.BuildSelectListForAllColumnsExceptStandard("stag."),
             McsQueryHelper.BuildSelectListForAllColumnsExceptStandard("prod."));
 
-        return cte + " " + CreateUpdateClause();
+        return $"{cte} {CreateUpdateClause()}";
     }
 
     public string CreateUpdateClause()

@@ -96,7 +96,7 @@ public class ExecuteCommandImportAlreadyExistingCohort : BasicCommandExecution, 
         }
 
         // pick which one to import
-        if(BasicActivator.SelectObject("Import Cohort",available, out CohortDefinition cd))
+        if(BasicActivator.SelectObject("Import Cohort",available, out var cd))
         {
             return cd.ID;
         }

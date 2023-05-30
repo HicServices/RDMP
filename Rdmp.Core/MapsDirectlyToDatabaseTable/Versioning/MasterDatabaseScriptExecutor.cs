@@ -62,7 +62,7 @@ public class MasterDatabaseScriptExecutor
 
                 // it doesn't look like this database already contains RDMP curated schemas (hopefully it is blank but if not - meh).
                 // ask the user if they want to create it in this db even though it already exists and might not be empty
-                bool createAnyway = notifier.OnCheckPerformed(new CheckEventArgs($"Database {Database.GetRuntimeName()} already exists", CheckResult.Warning, null,"Attempt to create database inside existing database (will cause problems if the database is not empty)?"));
+                var createAnyway = notifier.OnCheckPerformed(new CheckEventArgs($"Database {Database.GetRuntimeName()} already exists", CheckResult.Warning, null,"Attempt to create database inside existing database (will cause problems if the database is not empty)?"));
 
                 if(!createAnyway)
                     throw new Exception("User chose not continue");
@@ -166,16 +166,16 @@ public class MasterDatabaseScriptExecutor
 
         var hashProvider = SHA512.Create();
 
-        byte[] inputBytes = Encoding.ASCII.GetBytes(input);
+        var inputBytes = Encoding.ASCII.GetBytes(input);
 
-        byte[] hash = hashProvider.ComputeHash(inputBytes);
+        var hash = hashProvider.ComputeHash(inputBytes);
 
 
         // step 2, convert byte array to hex string
 
-        StringBuilder sb = new StringBuilder();
+        var sb = new StringBuilder();
 
-        for (int i = 0; i < hash.Length; i++)
+        for (var i = 0; i < hash.Length; i++)
             sb.Append(i.ToString("X2"));
 
         return sb.ToString();
@@ -213,7 +213,7 @@ public class MasterDatabaseScriptExecutor
             return true;
         }
 
-        Version maxPatchVersion = patches.Values.Max(pat => pat.DatabaseVersionNumber);
+        var maxPatchVersion = patches.Values.Max(pat => pat.DatabaseVersionNumber);
 
         if (backupDatabase && SupportsBackup(Database))
         {
@@ -238,12 +238,12 @@ public class MasterDatabaseScriptExecutor
 
         try
         {
-            int i = 0;
-            foreach (KeyValuePair<string, Patch> patch in patches)
+            var i = 0;
+            foreach (var patch in patches)
             {
                 i++;
 
-                bool shouldRun = patchPreviewShouldIRunIt(patch.Value);
+                var shouldRun = patchPreviewShouldIRunIt(patch.Value);
 
                 if (shouldRun)
                 {
@@ -306,19 +306,19 @@ public class MasterDatabaseScriptExecutor
         if(status != Patch.PatchingState.Required)
             return false;
 
-        bool stop = false;
+        var stop = false;
         var hostAssemblyVersion = patcher.GetDbAssembly().GetName().Version;
 
         //start with the assumption that we will apply all patches
-        SortedDictionary<string, Patch> toApply = new SortedDictionary<string, Patch>();
+        var toApply = new SortedDictionary<string, Patch>();
 
-        foreach (Patch potentialInstallable in allPatchesInAssembly.Values.Except(patchesInDatabase))
+        foreach (var potentialInstallable in allPatchesInAssembly.Values.Except(patchesInDatabase))
             toApply.Add(potentialInstallable.locationInAssembly, potentialInstallable);
 
         try
         {
             //make sure the existing patches in the live database are not freaky phantom patches
-            foreach (Patch patch in patchesInDatabase)
+            foreach (var patch in patchesInDatabase)
                 //if patch is not in database assembly
                 if (!allPatchesInAssembly.Any(a => a.Value.Equals(patch)))
                 {
@@ -353,8 +353,8 @@ public class MasterDatabaseScriptExecutor
         }            
 
         //if any of the patches we are trying to apply are earlier than the latest in the database
-        IEnumerable<Patch> missedOpportunities = toApply.Values.Where(p => p.DatabaseVersionNumber < patchesInDatabase.Max(p2 => p2.DatabaseVersionNumber));
-        foreach (Patch missedOpportunity in missedOpportunities)
+        var missedOpportunities = toApply.Values.Where(p => p.DatabaseVersionNumber < patchesInDatabase.Max(p2 => p2.DatabaseVersionNumber));
+        foreach (var missedOpportunity in missedOpportunities)
         {
             stop = true;
             notifier.OnCheckPerformed(new CheckEventArgs(
@@ -363,7 +363,7 @@ public class MasterDatabaseScriptExecutor
         }
 
         //if the patches to be applied would bring the version number above that of the host Library
-        foreach (Patch futurePatch in toApply.Values.Where(patch => patch.DatabaseVersionNumber > hostAssemblyVersion))
+        foreach (var futurePatch in toApply.Values.Where(patch => patch.DatabaseVersionNumber > hostAssemblyVersion))
         {
             notifier.OnCheckPerformed(new CheckEventArgs(
                 $"Cannot apply patch {futurePatch.locationInAssembly} because its database version number is {futurePatch.DatabaseVersionNumber} which is higher than the currently loaded host assembly ({patcher.GetDbAssembly().FullName}). ", CheckResult.Fail, null));
@@ -378,8 +378,8 @@ public class MasterDatabaseScriptExecutor
         }
 
         //todo: Only MS SQL has a backup implementation in FAnsi currently
-        bool backupDatabase = Database.Server.DatabaseType == DatabaseType.MicrosoftSQLServer &&
-                              backupDatabaseFunc();
+        var backupDatabase = Database.Server.DatabaseType == DatabaseType.MicrosoftSQLServer &&
+                             backupDatabaseFunc();
 
         return PatchDatabase(toApply, notifier, patchPreviewShouldIRunIt, backupDatabase);
     }
@@ -387,7 +387,7 @@ public class MasterDatabaseScriptExecutor
 
     public Patch[] GetPatchesRun()
     { 
-        List<Patch> toReturn = new List<Patch>();
+        var toReturn = new List<Patch>();
 
         var scriptsRun = Database.ExpectTable(RoundhouseScriptsRunTable, RoundhouseSchemaName);
 
@@ -395,15 +395,15 @@ public class MasterDatabaseScriptExecutor
 
         foreach(DataRow r in dt.Rows)
         {
-            string text_of_script = r["text_of_script"] as string;
-            string script_name = r["script_name"] as string;
+            var text_of_script = r["text_of_script"] as string;
+            var script_name = r["script_name"] as string;
 
             if (string.IsNullOrWhiteSpace(script_name) ||
                 string.IsNullOrWhiteSpace(text_of_script) ||
                 script_name.Equals(InitialDatabaseScriptName))
                 continue;
 
-            Patch p = new Patch(script_name, text_of_script);
+            var p = new Patch(script_name, text_of_script);
             toReturn.Add(p);
         }
 

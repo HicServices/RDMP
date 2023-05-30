@@ -53,7 +53,7 @@ public class ExecuteCommandExportLoggedDataToCsv : BasicCommandExecution
             {
                 con.Open();
 
-                string sql = String.Format(@"SELECT * FROM (
+                var sql = String.Format(@"SELECT * FROM (
 SELECT [dataLoadRunID]
       ,eventType
       ,[description]

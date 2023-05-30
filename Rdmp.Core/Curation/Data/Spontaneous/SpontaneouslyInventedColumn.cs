@@ -26,8 +26,5 @@ public class SpontaneouslyInventedColumn : ConcreteColumn,IColumn
         repo.InsertAndHydrate(this,new Dictionary<string, object>());
     }
 
-    public override ColumnInfo ColumnInfo
-    {
-        get { return null; }
-    }
+    public override ColumnInfo ColumnInfo => null;
 }

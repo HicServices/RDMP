@@ -63,7 +63,7 @@ public class DataLoadJob : IDataLoadJob
         _listener = listener;
         Description = description;
 
-        List<ICatalogue> catalogues = LoadMetadata.GetAllCatalogues().ToList();
+        var catalogues = LoadMetadata.GetAllCatalogues().ToList();
             
         if (LoadMetadata != null)
             _loggingTask = GetLoggingTask(catalogues);
@@ -76,7 +76,8 @@ public class DataLoadJob : IDataLoadJob
     {
         var distinctLoggingTasks = cataloguesToLoad.Select(catalogue => catalogue.LoggingDataTask).Distinct().ToList();
         if (distinctLoggingTasks.Count() > 1)
-            throw new Exception("The catalogues to be loaded do not share the same logging task: " + string.Join(", ", distinctLoggingTasks));
+            throw new Exception(
+                $"The catalogues to be loaded do not share the same logging task: {string.Join(", ", distinctLoggingTasks)}");
 
         _loggingTask = distinctLoggingTasks.First();
         if (string.IsNullOrWhiteSpace(_loggingTask))
@@ -171,10 +172,12 @@ public class DataLoadJob : IDataLoadJob
                 case ProgressEventType.Debug:
                     break;
                 case ProgressEventType.Information:
-                    DataLoadInfo.LogProgress(Logging.DataLoadInfo.ProgressEventType.OnInformation, sender.GetType().Name, e.Message + (e.Exception != null ? "Exception=" + ExceptionHelper.ExceptionToListOfInnerMessages(e.Exception, true) : ""));
+                    DataLoadInfo.LogProgress(Logging.DataLoadInfo.ProgressEventType.OnInformation, sender.GetType().Name, e.Message + (e.Exception != null ? $"Exception={ExceptionHelper.ExceptionToListOfInnerMessages(e.Exception, true)}"
+                        : ""));
                     break;
                 case ProgressEventType.Warning:
-                    DataLoadInfo.LogProgress(Logging.DataLoadInfo.ProgressEventType.OnWarning, sender.GetType().Name, e.Message + (e.Exception != null ? "Exception=" + ExceptionHelper.ExceptionToListOfInnerMessages(e.Exception,true) : ""));
+                    DataLoadInfo.LogProgress(Logging.DataLoadInfo.ProgressEventType.OnWarning, sender.GetType().Name, e.Message + (e.Exception != null ? $"Exception={ExceptionHelper.ExceptionToListOfInnerMessages(e.Exception, true)}"
+                        : ""));
                     break;
                 case ProgressEventType.Error:
                     DataLoadInfo.LogProgress(Logging.DataLoadInfo.ProgressEventType.OnTaskFailed, sender.GetType().Name, e.Message);
@@ -191,10 +194,7 @@ public class DataLoadJob : IDataLoadJob
         _listener.OnProgress(sender,e);
     }
 
-    public string ArchiveFilepath
-    {
-        get { return Path.Combine(LoadDirectory.ForArchiving.FullName, DataLoadInfo.ID + ".zip"); }
-    }
+    public string ArchiveFilepath => Path.Combine(LoadDirectory.ForArchiving.FullName, $"{DataLoadInfo.ID}.zip");
 
     public void LoadCompletedSoDispose(ExitCodeType exitCode, IDataLoadEventListener postLoadEventsListener)
     {

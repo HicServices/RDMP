@@ -438,7 +438,7 @@ public partial class ForwardEngineerANOCatalogueUI : ForwardEngineerANOCatalogue
 
     private void DisableObjects()
     {
-        List<object> toDisable = new List<object>();
+        var toDisable = new List<object>();
 
         toDisable.AddRange(_planManager.SkippedTables);
         toDisable.AddRange(_planManager.SkippedTables.SelectMany(t=>t.ColumnInfos));
@@ -455,15 +455,15 @@ public partial class ForwardEngineerANOCatalogueUI : ForwardEngineerANOCatalogue
 
             if(engine.NewCatalogue != null && engine.LoadMetadata != null)
             {
-                foreach (KeyValuePair<ITableInfo, QueryBuilder> sqls in engine.SelectSQLForMigrations)
+                foreach (var sqls in engine.SelectSQLForMigrations)
                     CreateAttacher(sqls.Key, sqls.Value, engine.LoadMetadata, sqls.Key.IsLookupTable()? null:engine.LoadProgressIfAny);
 
-                foreach (KeyValuePair<PreLoadDiscardedColumn, IDilutionOperation> dilutionOps in engine.DilutionOperationsForMigrations)
+                foreach (var dilutionOps in engine.DilutionOperationsForMigrations)
                     CreateDilutionMutilation(dilutionOps,engine.LoadMetadata);
 
                 Publish(engine.NewCatalogue);
 
-                if(Activator.YesNo("Successfully created Catalogue '" + engine.NewCatalogue + "', close form?","Success"))
+                if(Activator.YesNo($"Successfully created Catalogue '{engine.NewCatalogue}', close form?","Success"))
                     Activator.WindowArranger.SetupEditAnything(this,engine.LoadMetadata);
             }
             else
@@ -479,7 +479,7 @@ public partial class ForwardEngineerANOCatalogueUI : ForwardEngineerANOCatalogue
     {
         var pt = new ProcessTask(Activator.RepositoryLocator.CatalogueRepository, lmd, LoadStage.Mounting);
         pt.ProcessTaskType = ProcessTaskType.Attacher;
-        pt.Name = "Read from " + t;
+        pt.Name = $"Read from {t}";
         pt.Path = typeof(RemoteTableAttacher).FullName;
         pt.SaveToDatabase();
 
@@ -512,7 +512,7 @@ public partial class ForwardEngineerANOCatalogueUI : ForwardEngineerANOCatalogue
         var pt = new ProcessTask(Activator.RepositoryLocator.CatalogueRepository, lmd, LoadStage.AdjustStaging);
         pt.CreateArgumentsForClassIfNotExists<Dilution>();
         pt.ProcessTaskType = ProcessTaskType.MutilateDataTable;
-        pt.Name = "Dilute " + dilutionOp.Key.GetRuntimeName();
+        pt.Name = $"Dilute {dilutionOp.Key.GetRuntimeName()}";
         pt.Path = typeof(Dilution).FullName;
         pt.SaveToDatabase();
 
@@ -569,7 +569,7 @@ public partial class ForwardEngineerANOCatalogueUI : ForwardEngineerANOCatalogue
     private void btnSavePlan_Click(object sender, EventArgs e)
     {
 
-        SaveFileDialog sfd = new SaveFileDialog();
+        var sfd = new SaveFileDialog();
         sfd.Filter = "Plans (*.plan)|*.plan";
         if (sfd.ShowDialog() == DialogResult.OK)
         {
@@ -591,7 +591,7 @@ public partial class ForwardEngineerANOCatalogueUI : ForwardEngineerANOCatalogue
     {
         try
         {
-            OpenFileDialog ofd = new OpenFileDialog();
+            var ofd = new OpenFileDialog();
             ofd.Filter = "Plans (*.plan)|*.plan";
             if (ofd.ShowDialog() == DialogResult.OK)
             {

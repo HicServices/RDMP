@@ -23,16 +23,16 @@ public class TestDemographyCreation
     {
         var r = new Random(500);
 
-        PersonCollection people = new PersonCollection();
+        var people = new PersonCollection();
         people.GeneratePeople(100,r);
 
         var f =new FileInfo(Path.Combine(TestContext.CurrentContext.TestDirectory,"DeleteMeTestPeople.csv"));
             
-        bool finished = false;
-        int finishedWithRecords = -1;
+        var finished = false;
+        var finishedWithRecords = -1;
             
             
-        Demography demog = new Demography(r);
+        var demog = new Demography(r);
         demog.RowsGenerated += (s, e) =>
         {
             finished = e.IsFinished;

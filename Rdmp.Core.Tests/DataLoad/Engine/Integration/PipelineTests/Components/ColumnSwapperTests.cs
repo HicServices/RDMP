@@ -288,7 +288,7 @@ class ColumnSwapperTests:DatabaseTests
         swapper.MappingFromColumn = mapCols.Single(c => c.GetRuntimeName().Equals("In"));
         swapper.MappingToColumn = mapCols.Single(c => c.GetRuntimeName().Equals("Out"));
         swapper.CrashIfNoMappingsFound = crashIfNoMappingsFound;
-        swapper.WHERELogic = swapper.MappingToColumn.GetFullyQualifiedName() + " < 2"; //throws out all rows but A
+        swapper.WHERELogic = $"{swapper.MappingToColumn.GetFullyQualifiedName()} < 2"; //throws out all rows but A
 
         swapper.Check(new ThrowImmediatelyCheckNotifier());
 

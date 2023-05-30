@@ -87,7 +87,7 @@ class ConsoleGuiSelectOne : ConsoleGuiBigListBox<IMapsDirectlyToDatabaseTable>
         if(token.IsCancellationRequested)
             return new List<IMapsDirectlyToDatabaseTable>();
              
-        if(int.TryParse(txtId.Text.ToString(), out int searchForID))
+        if(int.TryParse(txtId.Text.ToString(), out var searchForID))
             _scorer.ID = searchForID;
         else 
             _scorer.ID = null;

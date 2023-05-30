@@ -45,7 +45,8 @@ public class WordDataWriter : DocXHelper
         _destination = Executer.Destination;
 
         if(_destination == null)
-            throw new NotSupportedException(GetType().FullName + " only supports destinations which are " + typeof(ExecuteDatasetExtractionFlatFileDestination).FullName);
+            throw new NotSupportedException(
+                $"{GetType().FullName} only supports destinations which are {typeof(ExecuteDatasetExtractionFlatFileDestination).FullName}");
     }
         
     private static object oLockOnWordUsage = new object();
@@ -60,9 +61,10 @@ public class WordDataWriter : DocXHelper
     {
         lock (oLockOnWordUsage)
         {
-            using (var document = GetNewDocFile(new FileInfo(Path.Combine(_destination.DirectoryPopulated.FullName, _destination.GetFilename() + ".docx"))))
+            using (var document = GetNewDocFile(new FileInfo(Path.Combine(_destination.DirectoryPopulated.FullName,
+                       $"{_destination.GetFilename()}.docx"))))
             {
-                InsertHeader(document,Executer.Source.Request.DatasetBundle.DataSet + " Meta Data");
+                InsertHeader(document, $"{Executer.Source.Request.DatasetBundle.DataSet} Meta Data");
 
                 InsertTableOfContents(document);
 
@@ -76,7 +78,7 @@ public class WordDataWriter : DocXHelper
 
                 var t = InsertTable(document, rowCount, 2);
                     
-                int rownum = 0;
+                var rownum = 0;
                 if (_destination.GeneratesFiles)
                 {
                     SetTableCell(t,rownum,0,"File Name");
@@ -104,9 +106,9 @@ public class WordDataWriter : DocXHelper
                     SetTableCell(t,rownum,1,FormatHashString(UsefulStuff.HashFile(_destination.OutputFile)));
                     rownum++;
                     
-                    FileInfo f = new FileInfo(_destination.OutputFile);
+                    var f = new FileInfo(_destination.OutputFile);
                     SetTableCell(t,rownum,0,"File Size");
-                    SetTableCell(t,rownum,1,f.Length + "bytes (" + (f.Length / 1024) + "KB)");
+                    SetTableCell(t,rownum,1, $"{f.Length}bytes ({(f.Length / 1024)}KB)");
                     rownum++;
                 }
 
@@ -121,8 +123,8 @@ public class WordDataWriter : DocXHelper
                 if (_destination.GeneratesFiles)
                 {
                     SetTableCell(t,rownum,0,"Separator");
-                    SetTableCell(t,rownum,1,Executer.Source.Request.Configuration.Separator + "\t(" +
-                                            _destination.SeparatorsStrippedOut + " values stripped from data)");
+                    SetTableCell(t,rownum,1,
+                        $"{Executer.Source.Request.Configuration.Separator}\t({_destination.SeparatorsStrippedOut} values stripped from data)");
                     rownum++;
 
                     SetTableCell(t,rownum,0,"Date Format");
@@ -182,11 +184,11 @@ public class WordDataWriter : DocXHelper
 
         //add a space every 8 hex pairs
         // E5-F2-AB-D9-A2-6E-15-38 E5-F2-AB-D9-A2-6E-15-38
-        StringBuilder result  = new StringBuilder();
+        var result  = new StringBuilder();
 
-        StringReader sr = new StringReader(s);
+        var sr = new StringReader(s);
             
-        char[] buff = new char[23];
+        var buff = new char[23];
 
         while(sr.Read(buff,0,23) > 0)
         {
@@ -206,7 +208,7 @@ public class WordDataWriter : DocXHelper
     private void AddFiltersAndParameters(XWPFDocument document)
     {
         var request = Executer.Source.Request;
-        FilterContainer fc = (FilterContainer)request.Configuration.GetFilterContainerFor(request.DatasetBundle.DataSet);
+        var fc = (FilterContainer)request.Configuration.GetFilterContainerFor(request.DatasetBundle.DataSet);
 
         if (fc != null)
         {
@@ -223,7 +225,7 @@ public class WordDataWriter : DocXHelper
     {
         InsertHeader(document,"Parameters");
 
-        int linesRequred = filtersUsed.Aggregate(0, (s, f) => s + f.GetAllParameters().Count());
+        var linesRequred = filtersUsed.Aggregate(0, (s, f) => s + f.GetAllParameters().Count());
 
         var globalParameters = Executer.Source.Request.Configuration.GlobalExtractionFilterParameters.ToArray();
         linesRequred += globalParameters.Length;
@@ -233,10 +235,10 @@ public class WordDataWriter : DocXHelper
         SetTableCell(t, 0, 1, "Comment");
         SetTableCell(t, 0, 2, "Value");
 
-        int currentLine = 1;
+        var currentLine = 1;
 
-        foreach (IFilter filter in filtersUsed)
-        foreach (ISqlParameter parameter in filter.GetAllParameters())
+        foreach (var filter in filtersUsed)
+        foreach (var parameter in filter.GetAllParameters())
         {
             SetTableCell(t,currentLine, 0, parameter.ParameterName);
             SetTableCell(t,currentLine, 1, parameter.Comment);
@@ -244,7 +246,7 @@ public class WordDataWriter : DocXHelper
             currentLine++;
         }
 
-        foreach (ISqlParameter globalParameter in globalParameters)
+        foreach (var globalParameter in globalParameters)
         {
             SetTableCell(t,currentLine, 0, globalParameter.ParameterName);
             SetTableCell(t,currentLine, 1, globalParameter.Comment);
@@ -263,7 +265,7 @@ public class WordDataWriter : DocXHelper
         SetTableCell(t,0, 1, "Description");
         SetTableCell(t,0, 2, "SQL");
 
-        for (int i = 0; i < filtersUsed.Count; i++)
+        for (var i = 0; i < filtersUsed.Count; i++)
         {
             //i+2 becauset, first row is for headers and indexing in word starts at 1 not 0
             SetTableCell(t,i + 1, 0, filtersUsed[i].Name);
@@ -275,13 +277,13 @@ public class WordDataWriter : DocXHelper
     private void AddAllCatalogueItemMetaData(XWPFDocument document)
     {
         var cata = Executer.Source.Request.Catalogue;
-        WordCatalogueExtractor catalogueMetaData = new WordCatalogueExtractor(cata,document);
+        var catalogueMetaData = new WordCatalogueExtractor(cata,document);
             
         var supplementalData = new Dictionary<CatalogueItem, Tuple<string, string>[]>();
 
-        foreach (ExtractTimeTransformationObserved value in Executer.Source.ExtractTimeTransformationsObserved.Values)
+        foreach (var value in Executer.Source.ExtractTimeTransformationsObserved.Values)
         {
-            List<Tuple<string,string>> supplementalValuesForThisOne = new List<Tuple<string, string>>();
+            var supplementalValuesForThisOne = new List<Tuple<string, string>>();
              
             //Jim no longer wants these to appear in metadata
             /*
@@ -408,42 +410,39 @@ public class WordDataWriter : DocXHelper
 
     private void CreateValidationRulesTable(XWPFDocument document)
     {
-        Validator validator = Executer.Source.ExtractionTimeValidator.Validator;
+        var validator = Executer.Source.ExtractionTimeValidator.Validator;
 
-        int rowCount = validator.ItemValidators.Count +
+        var rowCount = validator.ItemValidators.Count +
                        Executer.Source.ExtractionTimeValidator.IgnoredBecauseColumnHashed.Count + 1;
 
         var t = InsertTable(document,rowCount, 2);
 
-        int tableLine = 0;
+        var tableLine = 0;
         //output table header
         SetTableCell(t,tableLine, 0,"Column");
         SetTableCell(t,tableLine, 1, "Validation");
         tableLine++;
 
         //output list of validations we carried out
-        foreach (ItemValidator iv in validator.ItemValidators)
+        foreach (var iv in validator.ItemValidators)
         {
             SetTableCell(t,tableLine, 0, iv.TargetProperty);
 
-            string definition = "";
+            var definition = "";
 
             if (iv.PrimaryConstraint != null)
             {
-                definition += "Primary Constraint:" + Environment.NewLine;
-                definition += iv.PrimaryConstraint.GetHumanReadableDescriptionOfValidation() +
-                              " (Validation rule failure has Consequence that cell data is:" +
-                              iv.PrimaryConstraint.Consequence + ")" + Environment.NewLine;
+                definition += $"Primary Constraint:{Environment.NewLine}";
+                definition +=
+                    $"{iv.PrimaryConstraint.GetHumanReadableDescriptionOfValidation()} (Validation rule failure has Consequence that cell data is:{iv.PrimaryConstraint.Consequence}){Environment.NewLine}";
             }
 
             if (iv.SecondaryConstraints.Any())
             {
-                definition += "Secondary Constraint(s):" + Environment.NewLine;
+                definition += $"Secondary Constraint(s):{Environment.NewLine}";
                 definition = iv.SecondaryConstraints.Aggregate(definition,
                     (def, e) =>
-                        def + e.GetHumanReadableDescriptionOfValidation() +
-                        " (Validation rule failure has Consequence that cell data is:" +
-                        e.Consequence + ")" + Environment.NewLine);
+                        $"{def}{e.GetHumanReadableDescriptionOfValidation()} (Validation rule failure has Consequence that cell data is:{e.Consequence}){Environment.NewLine}");
             }
 
             if (string.IsNullOrWhiteSpace(definition))
@@ -454,7 +453,7 @@ public class WordDataWriter : DocXHelper
         }
 
         //ouput list of validations we skipped
-        foreach (ItemValidator iv in Executer.Source.ExtractionTimeValidator.IgnoredBecauseColumnHashed)
+        foreach (var iv in Executer.Source.ExtractionTimeValidator.IgnoredBecauseColumnHashed)
         {
             SetTableCell(t, tableLine, 0 , iv.TargetProperty);
             SetTableCell(t, tableLine, 1, "No validations carried out because column is Hashed/Annonymised");
@@ -464,11 +463,11 @@ public class WordDataWriter : DocXHelper
 
     private void CreateValidationResultsTable(XWPFDocument document)
     {
-        VerboseValidationResults results = Executer.Source.ExtractionTimeValidator.Results;
+        var results = Executer.Source.ExtractionTimeValidator.Results;
 
         var t = InsertTable(document,results.DictionaryOfFailure.Count + 1, 4);
             
-        int tableLine = 0;
+        var tableLine = 0;
             
         SetTableCell(t,tableLine, 0, "");
         SetTableCell(t,tableLine, 1, Consequence.Missing.ToString());
@@ -477,9 +476,9 @@ public class WordDataWriter : DocXHelper
 
         tableLine++;
 
-        foreach (KeyValuePair<string, Dictionary<Consequence, int>> keyValuePair in results.DictionaryOfFailure)
+        foreach (var keyValuePair in results.DictionaryOfFailure)
         {
-            string colname = keyValuePair.Key;
+            var colname = keyValuePair.Key;
 
             SetTableCell(t,tableLine, 0,colname);
             SetTableCell(t,tableLine, 1,keyValuePair.Value[Consequence.Missing].ToString());

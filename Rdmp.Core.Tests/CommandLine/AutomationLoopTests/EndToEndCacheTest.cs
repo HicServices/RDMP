@@ -62,7 +62,7 @@ public class EndToEndCacheTest : DatabaseTests
         _lp.OriginDate = new DateTime(2001,1,1);
         _lp.SaveToDatabase();
 
-        _testPipeline = new TestDataPipelineAssembler("EndToEndCacheTestPipeline" + Guid.NewGuid(),CatalogueRepository);
+        _testPipeline = new TestDataPipelineAssembler($"EndToEndCacheTestPipeline{Guid.NewGuid()}",CatalogueRepository);
         _testPipeline.ConfigureCacheProgressToUseThePipeline(_cp);
 
         _cp.CacheFillProgress = DateTime.Now.AddDays(-NumDaysToCache);
@@ -90,7 +90,7 @@ public class EndToEndCacheTest : DatabaseTests
         var cacheFiles = _LoadDirectory.Cache.GetFiles().Select(fi => fi.Name).ToArray();
         for (var i = -NumDaysToCache; i < 0; i++)
         {
-            var filename = DateTime.Now.AddDays(i).ToString("yyyyMMdd") + ".csv"; 
+            var filename = $"{DateTime.Now.AddDays(i):yyyyMMdd}.csv"; 
             Assert.IsTrue(cacheFiles.Contains(filename), filename + " not found");
         }
     }

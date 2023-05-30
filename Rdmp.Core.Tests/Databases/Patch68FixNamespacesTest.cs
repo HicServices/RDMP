@@ -24,13 +24,13 @@ class Patch68FixNamespacesTest:UnitTests
     [Test]
     public void TestClassNameRefactoring()
     {
-        CataloguePatcher p = new CataloguePatcher();
+        var p = new CataloguePatcher();
 
         var patch = p.GetAllPatchesInAssembly(null).Single(kvp=>kvp.Key == "068_FixNamespaces.sql").Value;
 
-        Regex findSubsRegex = new Regex(@"REPLACE\(.*,'(.*)','(.*)'\)");
+        var findSubsRegex = new Regex(@"REPLACE\(.*,'(.*)','(.*)'\)");
             
-        Dictionary<string,string> substitutions = new Dictionary<string, string>();
+        var substitutions = new Dictionary<string, string>();
 
         foreach (Match match in findSubsRegex.Matches(patch.EntireScript))
         {
@@ -46,12 +46,12 @@ class Patch68FixNamespacesTest:UnitTests
 
         foreach (var oldClass in ExpectedClasses)
         {
-            string newClass = oldClass;
+            var newClass = oldClass;
 
-            foreach (KeyValuePair<string, string> kvp in substitutions)
+            foreach (var kvp in substitutions)
                 newClass = newClass.Replace(kvp.Key, kvp.Value);
 
-            Type foundNow = MEF.GetType(newClass);
+            var foundNow = MEF.GetType(newClass);
 
             Assert.IsNotNull(foundNow,"Patch did not work correctly for Type '" + oldClass +"' which after renaming became '" + newClass +"'");
 

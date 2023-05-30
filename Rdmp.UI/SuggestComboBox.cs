@@ -32,7 +32,7 @@ public class SuggestComboBox : ComboBox
 
     public int SuggestBoxHeight
     {
-        get { return _suggLb.Height; }
+        get => _suggLb.Height;
         set { if (value > 0) _suggLb.Height = value; }
     }
 
@@ -42,7 +42,7 @@ public class SuggestComboBox : ComboBox
     /// </summary>
     public Expression<Func<ObjectCollection, IEnumerable<string>>> PropertySelector
     {
-        get { return _propertySelector; }
+        get => _propertySelector;
         set
         {
             if (value == null) return;
@@ -60,7 +60,7 @@ public class SuggestComboBox : ComboBox
     ///</summary>
     public Expression<Func<string, string, bool>> FilterRule
     {
-        get { return _filterRule; }
+        get => _filterRule;
         set
         {
             if (value == null) return;
@@ -76,7 +76,7 @@ public class SuggestComboBox : ComboBox
     ///</summary>
     public Expression<Func<string, string>> SuggestListOrderRule
     {
-        get { return _suggestListOrderRule; }
+        get => _suggestListOrderRule;
         set
         {
             if (value == null) return;

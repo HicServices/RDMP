@@ -25,11 +25,11 @@ public class EndToEndDLECacheTest:TestsRequiringADle
         RepositoryLocator.CatalogueRepository.MEF.AddTypeToCatalogForTesting(typeof(TestDataWriter));
         RepositoryLocator.CatalogueRepository.MEF.AddTypeToCatalogForTesting(typeof(TestDataInventor));
 
-        int timeoutInMilliseconds = 120000;
+        var timeoutInMilliseconds = 120000;
             
         var lmd = TestLoadMetadata;
 
-        LoadProgress lp = new LoadProgress(CatalogueRepository,lmd);
+        var lp = new LoadProgress(CatalogueRepository,lmd);
         lp.DataLoadProgress = new DateTime(2001,1,1);
         lp.DefaultNumberOfDaysToLoadEachTime = 10;
         lp.SaveToDatabase();

@@ -36,7 +36,7 @@ class PipelineComponentVisualisation:DataFlowComponentVisualisation
 
     public bool IsSelected
     {
-        get { return _isSelected; }
+        get => _isSelected;
         set
         {
             _isSelected = value;
@@ -47,7 +47,7 @@ class PipelineComponentVisualisation:DataFlowComponentVisualisation
 
     public Exception ExInitialization
     {
-        get { return _exInitialization; }
+        get => _exInitialization;
         set
         {
             _exInitialization = value;

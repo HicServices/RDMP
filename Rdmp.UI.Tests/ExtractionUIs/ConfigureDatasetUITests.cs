@@ -20,7 +20,7 @@ class ConfigureDatasetUITests : UITests
             
         AssertNoErrors();
 
-        int publishCount = 0;
+        var publishCount = 0;
 
         //should be at least 2 in the config for this test to be sensible
         var cols = sds.ExtractionConfiguration.GetAllExtractableColumnsFor(sds.ExtractableDataSet);

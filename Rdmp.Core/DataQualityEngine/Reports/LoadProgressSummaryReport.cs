@@ -31,8 +31,8 @@ public class LoadProgressSummaryReport:ICheckable
     private readonly ILoadProgress _loadProgress;
     private readonly ILoadMetadata _loadMetadata;
         
-    public bool DQERepositoryExists { get { return dqeRepository != null; } }
-        
+    public bool DQERepositoryExists => dqeRepository != null;
+
     DQERepository dqeRepository;
 
     public DataTable CataloguesPeriodictiyData;
@@ -67,7 +67,7 @@ public class LoadProgressSummaryReport:ICheckable
         CataloguesMissingDQERuns = new HashSet<Catalogue>();
 
         //tell them about the missing evaluations catalogues
-        foreach (Catalogue catalogue in _loadMetadata.GetAllCatalogues().Cast<Catalogue>())
+        foreach (var catalogue in _loadMetadata.GetAllCatalogues().Cast<Catalogue>())
         {
             var evaluation = dqeRepository.GetMostRecentEvaluationFor(catalogue);
 
@@ -79,8 +79,7 @@ public class LoadProgressSummaryReport:ICheckable
                 if (notifier != null)
                     notifier.OnCheckPerformed(
                         new CheckEventArgs(
-                            "Catalogue '" + catalogue +
-                            "' does not have any DQE evaluations on it in the DQE Repository.  You should run the DQE on the dataset",
+                            $"Catalogue '{catalogue}' does not have any DQE evaluations on it in the DQE Repository.  You should run the DQE on the dataset",
                             CheckResult.Warning));
             }
             else
@@ -106,7 +105,7 @@ public class LoadProgressSummaryReport:ICheckable
             foreach (var catalogue in CataloguesWithDQERuns)
                 notifier.OnCheckPerformed(
                     new CheckEventArgs(
-                        "Found DQE Evaluations for Catalogue '" + catalogue + "'",
+                        $"Found DQE Evaluations for Catalogue '{catalogue}'",
                         CheckResult.Success));
 
         using (var con = dqeRepository.GetConnection())
@@ -136,16 +135,16 @@ public class LoadProgressSummaryReport:ICheckable
 
     private void ExtendXAxisTill(DateTime value)
     {
-        int targetYear = value.Year;
-        int targetMonth = value.Month;
+        var targetYear = value.Year;
+        var targetMonth = value.Month;
 
-        int row = CataloguesPeriodictiyData.Rows.Count - 1;
-        int maxYear = Convert.ToInt32(CataloguesPeriodictiyData.Rows[row]["Year"]);
-        int maxMonth = Convert.ToInt32(CataloguesPeriodictiyData.Rows[row]["Month"]);
+        var row = CataloguesPeriodictiyData.Rows.Count - 1;
+        var maxYear = Convert.ToInt32(CataloguesPeriodictiyData.Rows[row]["Year"]);
+        var maxMonth = Convert.ToInt32(CataloguesPeriodictiyData.Rows[row]["Month"]);
 
-        DateTime currentMax = new DateTime(maxYear, maxMonth, 1);
+        var currentMax = new DateTime(maxYear, maxMonth, 1);
 
-        int columnCount = CataloguesPeriodictiyData.Columns.Count;
+        var columnCount = CataloguesPeriodictiyData.Columns.Count;
 
         while (
             //While the cache is years ahead of the end of the axis
@@ -157,27 +156,27 @@ public class LoadProgressSummaryReport:ICheckable
             currentMax = currentMax.AddMonths(1);
 
             var newRow = CataloguesPeriodictiyData.Rows.Add();
-            newRow["YearMonth"] = currentMax.Year + "-" + currentMax.Month;
+            newRow["YearMonth"] = $"{currentMax.Year}-{currentMax.Month}";
             newRow["Year"] = currentMax.Year;
             newRow["Month"] = currentMax.Month;
 
             //set all the catalogue row counts to 0 since we are extending the axis
-            for (int i = 3; i < columnCount; i++)
+            for (var i = 3; i < columnCount; i++)
                 newRow[i] = 0;
         }
     }
     private void ExtendXAxisBackwardsTill(DateTime value)
     {
 
-        int targetYear = value.Year;
-        int targetMonth = value.Month;
+        var targetYear = value.Year;
+        var targetMonth = value.Month;
 
-        int minYear = Convert.ToInt32(CataloguesPeriodictiyData.Rows[0]["Year"]);
-        int minMonth = Convert.ToInt32(CataloguesPeriodictiyData.Rows[0]["Month"]);
+        var minYear = Convert.ToInt32(CataloguesPeriodictiyData.Rows[0]["Year"]);
+        var minMonth = Convert.ToInt32(CataloguesPeriodictiyData.Rows[0]["Month"]);
 
-        DateTime currentMin = new DateTime(minYear, minMonth, 1);
+        var currentMin = new DateTime(minYear, minMonth, 1);
 
-        int columnCount = CataloguesPeriodictiyData.Columns.Count;
+        var columnCount = CataloguesPeriodictiyData.Columns.Count;
 
         while (
             //While the cache is years ahead of the end of the axis
@@ -190,12 +189,12 @@ public class LoadProgressSummaryReport:ICheckable
 
             var newRow = CataloguesPeriodictiyData.NewRow();
 
-            newRow["YearMonth"] = currentMin.Year + "-" + currentMin.Month;
+            newRow["YearMonth"] = $"{currentMin.Year}-{currentMin.Month}";
             newRow["Year"] = currentMin.Year;
             newRow["Month"] = currentMin.Month;
 
             //set all the catalogue row counts to 0 since we are extending the axis
-            for (int i = 3; i < columnCount; i++)
+            for (var i = 3; i < columnCount; i++)
                 newRow[i] = 0;
 
             CataloguesPeriodictiyData.Rows.InsertAt(newRow, 0);
@@ -225,12 +224,10 @@ public class LoadProgressSummaryReport:ICheckable
         if (CachePeriodictiyData == null)
             FetchCacheData(notifier);
 
-        foreach (Catalogue cataloguesMissingDQERun in CataloguesMissingDQERuns)
+        foreach (var cataloguesMissingDQERun in CataloguesMissingDQERuns)
             notifier.OnCheckPerformed(
                 new CheckEventArgs(
-                    "Catalogue '" + cataloguesMissingDQERun +
-                    "' is associated with the load '" + _loadMetadata +
-                    "' but has never had a DQE run executed on it, you should configure some basic validation on it and choose a time periodicity column and execute a DQE run on it.",
+                    $"Catalogue '{cataloguesMissingDQERun}' is associated with the load '{_loadMetadata}' but has never had a DQE run executed on it, you should configure some basic validation on it and choose a time periodicity column and execute a DQE run on it.",
                     CheckResult.Fail));
             
     }
@@ -272,8 +269,8 @@ public class LoadProgressSummaryReport:ICheckable
                     .ToArray();
             Array.Sort(allFailures);
 
-            bool anyFailures = allFailures.Any();
-            bool anySuccesses = availableFiles.Any();
+            var anyFailures = allFailures.Any();
+            var anySuccesses = availableFiles.Any();
 
             //Make sure main data table has room on its X axis for the cache failures and loaded files
             if (anyFailures)
@@ -293,8 +290,8 @@ public class LoadProgressSummaryReport:ICheckable
             //now clone the data table but populate the axis with available/failures instead of 
             foreach (DataRow originRow in CataloguesPeriodictiyData.Rows)
             {
-                int year = Convert.ToInt32(originRow["Year"]);
-                int month = Convert.ToInt32(originRow["Month"]);
+                var year = Convert.ToInt32(originRow["Year"]);
+                var month = Convert.ToInt32(originRow["Month"]);
 
                 var newRow = CachePeriodictiyData.Rows.Add();
 
@@ -302,10 +299,10 @@ public class LoadProgressSummaryReport:ICheckable
                 newRow["Year"] = originRow["Year"];
                 newRow["Month"] = originRow["Month"];
 
-                int totalFailuresForMonth = anyFailures
+                var totalFailuresForMonth = anyFailures
                     ? allFailures.Count(f => f.Year == year && f.Month == month)
                     : 0;
-                int totalAvailableForMonth = anySuccesses
+                var totalAvailableForMonth = anySuccesses
                     ? availableFiles.Count(f => f.Year == year && f.Month == month)
                     : 0;
 
@@ -315,7 +312,8 @@ public class LoadProgressSummaryReport:ICheckable
         }
         else
             notifier.OnCheckPerformed(
-                new CheckEventArgs("There is no Cache configured for LoadProgress '" + _loadProgress + "' (Not nessesarily a problem e.g. if you have a RemoteTableAttacher or some other load module that uses LoadProgress directly, short cutting the need for a cache)",
+                new CheckEventArgs(
+                    $"There is no Cache configured for LoadProgress '{_loadProgress}' (Not nessesarily a problem e.g. if you have a RemoteTableAttacher or some other load module that uses LoadProgress directly, short cutting the need for a cache)",
                     CheckResult.Warning));
     }
 

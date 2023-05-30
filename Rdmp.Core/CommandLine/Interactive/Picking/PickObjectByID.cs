@@ -54,10 +54,10 @@ ID2+: (optional) only allowed if you are being prompted for multiple objects, al
     {
         var objByID = MatchOrThrow(arg, idx);
 
-        string objectType = objByID.Groups[1].Value;
-        string objectId = objByID.Groups[2].Value;
+        var objectType = objByID.Groups[1].Value;
+        var objectId = objByID.Groups[2].Value;
 
-        Type dbObjectType = ParseDatabaseEntityType(objectType, arg, idx);
+        var dbObjectType = ParseDatabaseEntityType(objectType, arg, idx);
                 
         var objs = objectId.Split(',').Select(id=>GetObjectByID(dbObjectType,int.Parse(id))).Distinct();
                 

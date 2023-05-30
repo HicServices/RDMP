@@ -112,7 +112,7 @@ the best ever", dt.Rows[0]["Description"]);
             "CHI,StudyID,Date",
             "0101010101,5,2001-01-05",
             "0101010101,5,2001-01-05",
-            "0101010101,5,2001-01-05" + nullSuffix, //Row has trailing nulls in it which get ignored
+            $"0101010101,5,2001-01-05{nullSuffix}", //Row has trailing nulls in it which get ignored
             "0101010101,5,2001-01-05");
 
         var dt = RunGetChunk(file);

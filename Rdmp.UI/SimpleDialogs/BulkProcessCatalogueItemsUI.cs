@@ -88,18 +88,18 @@ public partial class BulkProcessCatalogueItemsUI : BulkProcessCatalogueItems_Des
 
     private void lbPastedColumns_KeyUp(object sender, KeyEventArgs e)
     {
-        if(e.KeyCode == Keys.V && e.Control)
+        switch (e.KeyCode)
         {
-            lbPastedColumns.Items.AddRange(
-                UsefulStuff.GetInstance().GetArrayOfColumnNamesFromStringPastedInByUser(Clipboard.GetText()).ToArray());
+            case Keys.V when e.Control:
+                lbPastedColumns.Items.AddRange(
+                    UsefulStuff.GetArrayOfColumnNamesFromStringPastedInByUser(Clipboard.GetText()).ToArray());
                 
-            UpdateFilter();
-        }
-
-        if(e.KeyCode == Keys.Delete && lbPastedColumns.SelectedItem != null)
-        {
-            lbPastedColumns.Items.Remove(lbPastedColumns.SelectedItem);
-            UpdateFilter();
+                UpdateFilter();
+                break;
+            case Keys.Delete when lbPastedColumns.SelectedItem != null:
+                lbPastedColumns.Items.Remove(lbPastedColumns.SelectedItem);
+                UpdateFilter();
+                break;
         }
     }
         
@@ -126,9 +126,9 @@ public partial class BulkProcessCatalogueItemsUI : BulkProcessCatalogueItems_Des
         }
                 
 
-        int deleteCount = 0;
-        int countExtractionInformationsCreated = 0;
-        int countOfColumnInfoAssociationsCreated = 0;
+        var deleteCount = 0;
+        var countExtractionInformationsCreated = 0;
+        var countOfColumnInfoAssociationsCreated = 0;
 
         foreach (CatalogueItem catalogueItem in olvCatalogueItems.Objects)
         {
@@ -160,7 +160,7 @@ public partial class BulkProcessCatalogueItemsUI : BulkProcessCatalogueItems_Des
                 //user wants to guess ColumnInfo associations between the supplied catalogue and underlying table (and the column doesnt have any existing ones already
                 if (rbGuessNewAssociatedColumns.Checked && catalogueItem.ColumnInfo_ID == null)
                 {
-                    ColumnInfo[] guesses = catalogueItem.GuessAssociatedColumn(guessPoolColumnInfo).ToArray();
+                    var guesses = catalogueItem.GuessAssociatedColumn(guessPoolColumnInfo).ToArray();
 
                     //exact matches are straight up accepted
                     if(guesses.Length == 1)
@@ -171,9 +171,10 @@ public partial class BulkProcessCatalogueItemsUI : BulkProcessCatalogueItems_Des
                     else
                     {
                         //multiple matches so ask the user what one he wants
-                        for (int i = 0; i < guesses.Length; i++) //note that this sneakily also deals with case where guesses is empty
+                        for (var i = 0; i < guesses.Length; i++) //note that this sneakily also deals with case where guesses is empty
                         {
-                            if (Activator.YesNo("Found multiple matches, approve match?:" + Environment.NewLine + catalogueItem.Name + Environment.NewLine + guesses[i], "Multiple matched guesses"))
+                            if (Activator.YesNo(
+                                    $"Found multiple matches, approve match?:{Environment.NewLine}{catalogueItem.Name}{Environment.NewLine}{guesses[i]}", "Multiple matched guesses"))
                             {
                                 catalogueItem.SetColumnInfo(guesses[i]);
                                 countOfColumnInfoAssociationsCreated++;
@@ -209,7 +210,7 @@ public partial class BulkProcessCatalogueItemsUI : BulkProcessCatalogueItems_Des
                     }
 
                     //we got to here so we have a legit 1 column info to cataitem we can enable for extraction
-                    ExtractionInformation created = new ExtractionInformation((CatalogueRepository) catalogueItem.Repository, catalogueItem, col, null);
+                    var created = new ExtractionInformation((CatalogueRepository) catalogueItem.Repository, catalogueItem, col, null);
 
                     if(ddExtractionCategory.SelectedItem != null)
                     {
@@ -222,16 +223,17 @@ public partial class BulkProcessCatalogueItemsUI : BulkProcessCatalogueItems_Des
             }
         }
 
-        string message = "";
+        var message = "";
             
         if (deleteCount != 0)
-            message += "Performed " + deleteCount + " delete operations" + Environment.NewLine;
+            message += $"Performed {deleteCount} delete operations{Environment.NewLine}";
 
         if (countExtractionInformationsCreated !=0)
-            message += "Created  " + countExtractionInformationsCreated + " ExtractionInformations" + Environment.NewLine;
+            message += $"Created  {countExtractionInformationsCreated} ExtractionInformations{Environment.NewLine}";
 
         if (countOfColumnInfoAssociationsCreated != 0)
-            message += "Created  " + countOfColumnInfoAssociationsCreated + " assocations between CatalogueItems and ColumnInfos" + Environment.NewLine;
+            message +=
+                $"Created  {countOfColumnInfoAssociationsCreated} assocations between CatalogueItems and ColumnInfos{Environment.NewLine}";
 
         if (!string.IsNullOrWhiteSpace(message))
             MessageBox.Show(message);
@@ -275,8 +277,8 @@ public partial class BulkProcessCatalogueItemsUI : BulkProcessCatalogueItems_Des
 
     private void UpdateFilter()
     {
-        List<IModelFilter> filters = new List<IModelFilter>();
-        List<IModelFilter> orFilters = new List<IModelFilter>();
+        var filters = new List<IModelFilter>();
+        var orFilters = new List<IModelFilter>();
 
         foreach (var item in lbPastedColumns.Items)
         {
@@ -286,7 +288,7 @@ public partial class BulkProcessCatalogueItemsUI : BulkProcessCatalogueItems_Des
             if (cbExactMatch.Checked)
             {
                 filter.RegexOptions = RegexOptions.IgnoreCase;
-                filter.RegexStrings = new List<string> {"^" + item + "$"};
+                filter.RegexStrings = new List<string> { $"^{item}$" };
             }
             orFilters.Add(filter);
         }

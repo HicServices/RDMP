@@ -135,7 +135,7 @@ public class DatabaseTests
         if (!f.Exists) 
             throw new FileNotFoundException($"Could not find file '{f.FullName}'");
 
-        using StreamReader s = new StreamReader(f.OpenRead());
+        using var s = new StreamReader(f.OpenRead());
         var deserializer = new DeserializerBuilder()
             .Build();
 
@@ -858,8 +858,8 @@ delete from {1}..Project
 
         foreach (DataRow r in resultTable.Rows)
         {
-            bool matchAll = true;
-            for (int i = 0; i < rowObjects.Length; i++)
+            var matchAll = true;
+            for (var i = 0; i < rowObjects.Length; i++)
             {
                 if (!AreBasicallyEquals(rowObjects[i], r[i]))
                     matchAll = false;
@@ -935,11 +935,11 @@ delete from {1}..Project
         if (ti != null)
         {
             //remove any existing credentials
-            foreach (DataAccessCredentials cred in CatalogueRepository.GetAllObjects<DataAccessCredentials>())
+            foreach (var cred in CatalogueRepository.GetAllObjects<DataAccessCredentials>())
                 CatalogueRepository.TableInfoCredentialsManager.BreakAllLinksBetween(cred, ti);
 
             //set the new ones
-            DataAccessCredentialsFactory credentialsFactory = new DataAccessCredentialsFactory(CatalogueRepository);
+            var credentialsFactory = new DataAccessCredentialsFactory(CatalogueRepository);
             credentialsFactory.Create(ti, username, password, DataAccessContext.Any);
         }
             

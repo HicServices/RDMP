@@ -37,7 +37,8 @@ public class ColumnRenamer : IPluginDataFlowComponent<DataTable>
             if (RelaxedMode)
                 return toProcess;
             else
-                throw new InvalidOperationException("The column to be renamed (" + ColumnNameToFind + ") does not exist in the supplied data table and RelaxedMode is off. Check that this component is configured correctly, or if any upstream components are removing this column unexpectedly.");
+                throw new InvalidOperationException(
+                    $"The column to be renamed ({ColumnNameToFind}) does not exist in the supplied data table and RelaxedMode is off. Check that this component is configured correctly, or if any upstream components are removing this column unexpectedly.");
 
         toProcess.Columns[ColumnNameToFind].ColumnName = ReplacementName;
 

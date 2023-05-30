@@ -54,7 +54,7 @@ public class MigrateRAWTableToStaging : DataLoadComponent
             
         //where we are coming from (source)
         var sourceConvention = LoadBubble.Raw;
-        DiscoveredDatabase sourceDatabase = _databaseConfiguration.DeployInfo[sourceConvention];
+        var sourceDatabase = _databaseConfiguration.DeployInfo[sourceConvention];
         var sourceTableName = _tableInfo.GetRuntimeName(sourceConvention, _databaseConfiguration.DatabaseNamer);
 
         //What to do if where we are coming from does not have the table existing on it
@@ -63,35 +63,35 @@ public class MigrateRAWTableToStaging : DataLoadComponent
             {
                 job.OnNotify(this,
                     new NotifyEventArgs(ProgressEventType.Warning,
-                        "Lookup table " + sourceTableName + " did not exist on RAW so was not migrated to STAGING"));
+                        $"Lookup table {sourceTableName} did not exist on RAW so was not migrated to STAGING"));
                 return ExitCodeType.Success;
             }
             else
                 job.OnNotify(this,
                     new NotifyEventArgs(ProgressEventType.Error,
-                        "Table " + sourceTableName + " did not exist in RAW database " + sourceDatabase +
-                        " when it came time to migrate RAW to STAGING (and the table is not a lookup)"));
+                        $"Table {sourceTableName} did not exist in RAW database {sourceDatabase} when it came time to migrate RAW to STAGING (and the table is not a lookup)"));
 
             
         // where we are going to (destination)
         // ignore any columns that are marked for discard
         var destinationConvention = LoadBubble.Staging;
-        DiscoveredDatabase destinationDatabase = _databaseConfiguration.DeployInfo[LoadBubble.Staging];
+        var destinationDatabase = _databaseConfiguration.DeployInfo[LoadBubble.Staging];
         var destinationTableName = _tableInfo.GetRuntimeName(destinationConvention, _databaseConfiguration.DatabaseNamer);
         
         DeleteFullyNullRecords(sourceTableName, sourceDatabase,job);
 
         //audit
-        ITableLoadInfo tableLoadInfo = job.DataLoadInfo.CreateTableLoadInfo(
-            "None required, if fails then simply drop Staging database and reload dataset", "STAGING:" + destinationTableName,
-            new DataSource[] { new DataSource("RAW:" + sourceTableName, DateTime.Now) }, -1);
+        var tableLoadInfo = job.DataLoadInfo.CreateTableLoadInfo(
+            "None required, if fails then simply drop Staging database and reload dataset",
+            $"STAGING:{destinationTableName}",
+            new DataSource[] { new DataSource($"RAW:{sourceTableName}", DateTime.Now) }, -1);
 
         var syntax = sourceDatabase.Server.GetQuerySyntaxHelper();
 
         //connect to source and open a reader! note that GetReaderForRAW will at this point preserve the state of the database such that any commands e.g. deletes will not have any effect even though ExecutePipeline has not been called!
         var source = new DbDataCommandDataFlowSource(
-            "Select distinct * from "+ syntax.EnsureWrapped(sourceTableName),
-            "Fetch data from " + syntax.EnsureWrapped(sourceTableName),
+            $"Select distinct * from {syntax.EnsureWrapped(sourceTableName)}",
+            $"Fetch data from {syntax.EnsureWrapped(sourceTableName)}",
             sourceDatabase.Server.Builder, 50000);
             
         //ignore those that are pre load discarded columns (unless they are dilution in which case they get passed through in a decrepid state instead of dumped entirely - these fields will still bein ANODump in pristene state btw)
@@ -133,16 +133,18 @@ public class MigrateRAWTableToStaging : DataLoadComponent
                            string.Format(@"delete from {0} WHERE {1}",
                                sourceTableName,
                                string.Join(" AND ",
-                                   cols.Select(c => "(" + c + " IS NULL OR " + c + "=''" + ")"))), con))
+                                   cols.Select(c => $"({c} IS NULL OR {c}='')"))), con))
                 {
-                    job.OnNotify(this, new NotifyEventArgs(ProgressEventType.Warning, "About to delete fully null records using SQL:" + cmd.CommandText));
+                    job.OnNotify(this, new NotifyEventArgs(ProgressEventType.Warning,
+                        $"About to delete fully null records using SQL:{cmd.CommandText}"));
 
                     cmd.CommandTimeout = 500000;
 
-                    int affectedRows = cmd.ExecuteNonQuery();
+                    var affectedRows = cmd.ExecuteNonQuery();
 
                     if (affectedRows != 0)
-                        job.OnNotify(this, new NotifyEventArgs(ProgressEventType.Warning, "Deleted " + affectedRows + " fully blank/null rows from RAW database"));
+                        job.OnNotify(this, new NotifyEventArgs(ProgressEventType.Warning,
+                            $"Deleted {affectedRows} fully blank/null rows from RAW database"));
                 }
             }
         }

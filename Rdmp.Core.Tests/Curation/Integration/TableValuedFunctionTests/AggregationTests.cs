@@ -30,7 +30,7 @@ public class AggregationTests :DatabaseTests
         CreateFunction(CatalogueRepository);
 
         //do a count * on the query builder
-        AggregateBuilder queryBuilder = new AggregateBuilder("", "count(*)", null,new[] { _function.TableInfoCreated });
+        var queryBuilder = new AggregateBuilder("", "count(*)", null,new[] { _function.TableInfoCreated });
 
         Assert.IsTrue(queryBuilder.SQL.Contains(@"SELECT"));
         Assert.IsTrue(queryBuilder.SQL.Contains(@"count(*)"));
@@ -47,7 +47,7 @@ public class AggregationTests :DatabaseTests
     [TestCase(true)]
     public void GenerateAggregateViaAggregateConfigurationTest(bool memoryRepo)
     {
-        ICatalogueRepository repo = memoryRepo ? (ICatalogueRepository) new MemoryCatalogueRepository() : CatalogueRepository;
+        var repo = memoryRepo ? (ICatalogueRepository) new MemoryCatalogueRepository() : CatalogueRepository;
         CreateFunction(repo);
 
         var agg = new AggregateConfiguration(repo, _function.Cata, "MyExcitingAggregate");
@@ -60,10 +60,10 @@ public class AggregationTests :DatabaseTests
             var aggregateForcedJoin = repo.AggregateForcedJoinManager;
             aggregateForcedJoin.CreateLinkBetween(agg, _function.TableInfoCreated);
 
-            AggregateBuilder queryBuilder = agg.GetQueryBuilder();
+            var queryBuilder = agg.GetQueryBuilder();
                 
             Assert.AreEqual(
-                @"DECLARE @startNumber AS int;
+                $@"DECLARE @startNumber AS int;
 SET @startNumber=5;
 DECLARE @stopNumber AS int;
 SET @stopNumber=10;
@@ -73,7 +73,7 @@ SET @name='fish';
 SELECT
 count(*) AS MyCount
 FROM 
-[" + TestDatabaseNames.Prefix +@"ScratchArea]..MyAwesomeFunction(@startNumber,@stopNumber,@name) AS MyAwesomeFunction
+[{TestDatabaseNames.Prefix}ScratchArea]..MyAwesomeFunction(@startNumber,@stopNumber,@name) AS MyAwesomeFunction
 HAVING
 count(*)>1", queryBuilder.SQL);
                 
@@ -101,7 +101,7 @@ count(*)>1", queryBuilder.SQL);
             aggregateForcedJoin.CreateLinkBetween(agg, _function.TableInfoCreated);
 
             //do a count * on the query builder
-            AggregateBuilder queryBuilder = agg.GetQueryBuilder();
+            var queryBuilder = agg.GetQueryBuilder();
 
             Assert.IsTrue(queryBuilder.SQL.Contains(@"SELECT"));
             Assert.IsTrue(queryBuilder.SQL.Contains(@"count(*)"));

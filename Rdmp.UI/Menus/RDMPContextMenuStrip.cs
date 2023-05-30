@@ -184,7 +184,8 @@ public class RDMPContextMenuStrip:ContextMenuStrip
             }
             catch (Exception ex)
             {
-                _activator.GlobalErrorCheckNotifier.OnCheckPerformed(new CheckEventArgs($"Plugin '{plugin.GetType().Name}' failed in call to 'GetAdditionalRightClickMenuItems':"+ Environment.NewLine + ex.Message,
+                _activator.GlobalErrorCheckNotifier.OnCheckPerformed(new CheckEventArgs(
+                    $"Plugin '{plugin.GetType().Name}' failed in call to 'GetAdditionalRightClickMenuItems':{Environment.NewLine}{ex.Message}",
                     CheckResult.Fail, ex));
             }
         }
@@ -244,7 +245,7 @@ public class RDMPContextMenuStrip:ContextMenuStrip
 
         if (UserSettings.DebugPerformance)
         {
-            string timings = string.Join(Environment.NewLine, performance.Select(kvp => $"{kvp.Key}:{kvp.Value.TotalMilliseconds}ms"));
+            var timings = string.Join(Environment.NewLine, performance.Select(kvp => $"{kvp.Key}:{kvp.Value.TotalMilliseconds}ms"));
 
             _activator.GlobalErrorCheckNotifier.OnCheckPerformed(
                 new CheckEventArgs($"Creating menu for '{forObject}' took {DateTime.Now.Subtract(start).Milliseconds}ms:{Environment.NewLine}{timings}",

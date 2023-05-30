@@ -23,7 +23,7 @@ namespace Rdmp.UI.MainFormUITabs;
 
 public partial class ExtractionProgressUI : ExtractionProgressUI_Design, ISaveableUI
 {
-    public ExtractionProgress ExtractionProgress { get => (ExtractionProgress)DatabaseObject; }
+    public ExtractionProgress ExtractionProgress => (ExtractionProgress)DatabaseObject;
     public IDetermineDatasetTimespan TimespanCalculator { get; set; } = new DatasetTimespanCalculator();
         
     private Tuple<DateTime?, DateTime?> dqeResult;
@@ -48,7 +48,7 @@ public partial class ExtractionProgressUI : ExtractionProgressUI_Design, ISaveab
     {
         base.SetDatabaseObject(activator, databaseObject);
 
-        var result = TimespanCalculator.GetMachineReadableTimespanIfKnownOf(databaseObject.ExtractionInformation.CatalogueItem.Catalogue, false, out DateTime? date);
+        var result = TimespanCalculator.GetMachineReadableTimespanIfKnownOf(databaseObject.ExtractionInformation.CatalogueItem.Catalogue, false, out var date);
 
         btnFromDQE.Image = activator.CoreIconProvider.GetImage(RDMPConcept.DQE, OverlayKind.Import).ImageToBitmap();
 

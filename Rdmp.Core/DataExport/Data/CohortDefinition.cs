@@ -56,7 +56,8 @@ public class CohortDefinition : ICohortDefinition
             if(id == null)
                 throw new ArgumentNullException("Cohorts must have a description");
             else
-                throw new NullReferenceException("There is a cohort (with ID " + id + ") in "+locationOfCohort.DefinitionTableName+" which has a blank/null description.  You must fix this.");
+                throw new NullReferenceException(
+                    $"There is a cohort (with ID {id}) in {locationOfCohort.DefinitionTableName} which has a blank/null description.  You must fix this.");
     }
         
     /// <inheritdoc/>
@@ -67,12 +68,12 @@ public class CohortDefinition : ICohortDefinition
             if (ExtractableCohort.GetImportableCohortDefinitions((ExternalCohortTable) LocationOfCohort).Any(t => t.ID == ID))
                 //the same ID already exists
             {
-                matchDescription = "Found a cohort in " + LocationOfCohort + " with the ID " + ID;
+                matchDescription = $"Found a cohort in {LocationOfCohort} with the ID {ID}";
                 return false;
             }
                         
 
-        bool foundSimilar = false;
+        var foundSimilar = false;
 
         try
         {
@@ -92,7 +93,8 @@ public class CohortDefinition : ICohortDefinition
 
         if (foundSimilar)
         {
-            matchDescription = "Found an existing cohort called " + Description + " with version " + Version + " in " + LocationOfCohort;
+            matchDescription =
+                $"Found an existing cohort called {Description} with version {Version} in {LocationOfCohort}";
             return false;
         }
 
@@ -107,6 +109,6 @@ public class CohortDefinition : ICohortDefinition
     /// <returns></returns>
     public override string ToString()
     {
-        return Description + "(Version " + Version + ", ID="+ID+")";
+        return $"{Description}(Version {Version}, ID={ID})";
     }
 }

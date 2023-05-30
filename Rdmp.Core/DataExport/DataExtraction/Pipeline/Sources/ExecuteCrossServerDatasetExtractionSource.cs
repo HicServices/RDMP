@@ -79,7 +79,7 @@ public class ExecuteCrossServerDatasetExtractionSource : ExecuteDatasetExtractio
             return sql;
         }
             
-        listener.OnNotify(this, new NotifyEventArgs(ProgressEventType.Information, "Original (unhacked) SQL was " + sql, null));
+        listener.OnNotify(this, new NotifyEventArgs(ProgressEventType.Information, $"Original (unhacked) SQL was {sql}", null));
             
         //now replace database with tempdb
         var extractableCohort = Request.ExtractableCohort;
@@ -94,7 +94,7 @@ public class ExecuteCrossServerDatasetExtractionSource : ExecuteDatasetExtractio
         //Cohort database.table.releaseId
         //Cohort database.table.cohortdefinitionId
         //Cohort database.table name
-        Dictionary<string,string> replacementStrings = new Dictionary<string, string>();
+        var replacementStrings = new Dictionary<string, string>();
 
         var sourceDb = sourceSyntax.GetRuntimeName(extractableCohortSource.Database);
         var sourceTable = sourceSyntax.GetRuntimeName(extractableCohortSource.TableName);
@@ -113,17 +113,19 @@ public class ExecuteCrossServerDatasetExtractionSource : ExecuteDatasetExtractio
         AddReplacement(replacementStrings, sourceDb, sourceTable, destinationTable, sourceCohortDefinitionId, sourceSyntax, destinationSyntax);
         AddReplacement(replacementStrings, sourceDb, sourceTable, destinationTable, sourceSyntax, destinationSyntax);
             
-        foreach (KeyValuePair<string, string> r in replacementStrings)
+        foreach (var r in replacementStrings)
         {
-            listener.OnNotify(this, new NotifyEventArgs(ProgressEventType.Information, "Replacing '" + r.Key + "' with '" + r.Value + "'", null));
+            listener.OnNotify(this, new NotifyEventArgs(ProgressEventType.Information,
+                $"Replacing '{r.Key}' with '{r.Value}'", null));
                 
             if(!sql.Contains(r.Key))
-                listener.OnNotify(this,new NotifyEventArgs(ProgressEventType.Warning, "SQL extraction query string did not contain the text '" + r.Key +"' (which we expected to replace with '" + r.Value+""));
+                listener.OnNotify(this,new NotifyEventArgs(ProgressEventType.Warning,
+                    $"SQL extraction query string did not contain the text '{r.Key}' (which we expected to replace with '{r.Value}"));
 
             sql = sql.Replace(r.Key, r.Value);
         }
             
-        listener.OnNotify(this, new NotifyEventArgs(ProgressEventType.Information, "Adjusted (hacked) SQL was " + sql, null));
+        listener.OnNotify(this, new NotifyEventArgs(ProgressEventType.Information, $"Adjusted (hacked) SQL was {sql}", null));
 
         //replace [MyCohortDatabase].. with [tempdb].. (while dealing with Cohort..Cohort replacement correctly as well as 'Cohort.dbo.Cohort.Fish' correctly)
         return sql;
@@ -140,7 +142,7 @@ public class ExecuteCrossServerDatasetExtractionSource : ExecuteDatasetExtractio
                 return null;
 
             // add a g to avoid creating a table name that starts with a number (can cause problems and always requires wrapping etc... just bad)
-            var guid = "g" + Guid.NewGuid().ToString("N");                
+            var guid = $"g{Guid.NewGuid():N}";                
 
             return _tablename = TemporaryTableName.Replace("$g", guid);
         }
@@ -206,7 +208,7 @@ public class ExecuteCrossServerDatasetExtractionSource : ExecuteDatasetExtractio
 
         try
         {
-            IExtractableCohort cohort = Request.ExtractableCohort;
+            var cohort = Request.ExtractableCohort;
             cohortDataTable = cohort.FetchEntireCohort();
         }
         catch (Exception e)
@@ -219,34 +221,40 @@ public class ExecuteCrossServerDatasetExtractionSource : ExecuteDatasetExtractio
             if (CreateTemporaryDatabaseIfNotExists)
                 _tempDb.Create();
             else
-                throw new Exception("Database '" + _tempDb + "' did not exist on server '" + _server + "' and CreateAndDestroyTemporaryDatabaseIfNotExists was false");
+                throw new Exception(
+                    $"Database '{_tempDb}' did not exist on server '{_server}' and CreateAndDestroyTemporaryDatabaseIfNotExists was false");
   
 
         var tbl = _tempDb.ExpectTable(GetTableName() ?? cohortDataTable.TableName);
             
         if(tbl.Exists())
         {
-            listener.OnNotify(this,new NotifyEventArgs(ProgressEventType.Warning, "Found existing table called '" + tbl + "' in '" + _tempDb +"'"));
+            listener.OnNotify(this,new NotifyEventArgs(ProgressEventType.Warning,
+                $"Found existing table called '{tbl}' in '{_tempDb}'"));
 
             if(DropExistingCohortTableIfExists)
             {
-                listener.OnNotify(this, new NotifyEventArgs(ProgressEventType.Warning, "About to drop existing table '" + tbl + "'"));
+                listener.OnNotify(this, new NotifyEventArgs(ProgressEventType.Warning,
+                    $"About to drop existing table '{tbl}'"));
                     
                 try
                 {
                     tbl.Drop();
-                    listener.OnNotify(this, new NotifyEventArgs(ProgressEventType.Warning, "Dropped existing table '" + tbl + "'"));
+                    listener.OnNotify(this, new NotifyEventArgs(ProgressEventType.Warning,
+                        $"Dropped existing table '{tbl}'"));
                 }
                 catch(Exception ex)
                 {
-                    listener.OnNotify(this, new NotifyEventArgs(ProgressEventType.Warning, "Warning dropping '" + tbl + "' failed",ex));
+                    listener.OnNotify(this, new NotifyEventArgs(ProgressEventType.Warning,
+                        $"Warning dropping '{tbl}' failed",ex));
                 }
 
                     
             }
             else
             {
-                listener.OnNotify(this, new NotifyEventArgs(ProgressEventType.Warning, "'" + _tempDb + "' contains a table called '" + tbl + "' and DropExistingCohortTableIfExists is false"));
+                listener.OnNotify(this, new NotifyEventArgs(ProgressEventType.Warning,
+                    $"'{_tempDb}' contains a table called '{tbl}' and DropExistingCohortTableIfExists is false"));
             }
         }
 
@@ -272,7 +280,8 @@ public class ExecuteCrossServerDatasetExtractionSource : ExecuteDatasetExtractio
             
 
         if(!tbl.Exists())
-            throw new Exception("Table '" + tbl + "' did not exist despite DataTableUploadDestination completing Successfully!");
+            throw new Exception(
+                $"Table '{tbl}' did not exist despite DataTableUploadDestination completing Successfully!");
 
         tablesToCleanup.Add(tbl);
 
@@ -288,11 +297,11 @@ public class ExecuteCrossServerDatasetExtractionSource : ExecuteDatasetExtractio
             OneCrossServerExtractionAtATime.Release(1);
         listener.OnNotify(this, new NotifyEventArgs(ProgressEventType.Information, "Released Semaphore OneCrossServerExtractionAtATime"));
 
-        foreach (DiscoveredTable table in tablesToCleanup)
+        foreach (var table in tablesToCleanup)
         {
-            listener.OnNotify(this, new NotifyEventArgs(ProgressEventType.Information, "About to drop table '" + table+"'"));
+            listener.OnNotify(this, new NotifyEventArgs(ProgressEventType.Information, $"About to drop table '{table}'"));
             table.Drop();
-            listener.OnNotify(this, new NotifyEventArgs(ProgressEventType.Information, "Dropped table '" + table + "'"));
+            listener.OnNotify(this, new NotifyEventArgs(ProgressEventType.Information, $"Dropped table '{table}'"));
         }
           
         base.Dispose(listener, pipelineFailureExceptionIfAny);

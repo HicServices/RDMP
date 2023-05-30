@@ -19,8 +19,8 @@ public class ParameterManagerTests
     [Test]
     public void Test_ParameterManager_SimpleRename()
     {
-        var p1 = new ConstantParameter("DECLARE @fish as int", "1", "fishes be here",new MicrosoftQuerySyntaxHelper());
-        var p2 = new ConstantParameter("DECLARE @fish as int", "2", "fishes be here",new MicrosoftQuerySyntaxHelper());
+        var p1 = new ConstantParameter("DECLARE @fish as int", "1", "fishes be here",MicrosoftQuerySyntaxHelper.Instance);
+        var p2 = new ConstantParameter("DECLARE @fish as int", "2", "fishes be here",MicrosoftQuerySyntaxHelper.Instance);
 
         var pm1 = new ParameterManager();
         var pm2 = new ParameterManager();
@@ -29,8 +29,8 @@ public class ParameterManagerTests
         pm1.ParametersFoundSoFarInQueryGeneration[ParameterLevel.QueryLevel].Add(p1);
         pm2.ParametersFoundSoFarInQueryGeneration[ParameterLevel.QueryLevel].Add(p2);
 
-        pm3.ImportAndElevateResolvedParametersFromSubquery(pm1, out Dictionary<string,string> renames1);
-        pm3.ImportAndElevateResolvedParametersFromSubquery(pm2, out Dictionary<string,string> renames2);
+        pm3.ImportAndElevateResolvedParametersFromSubquery(pm1, out var renames1);
+        pm3.ImportAndElevateResolvedParametersFromSubquery(pm2, out var renames2);
 
         var final = pm3.GetFinalResolvedParametersList().ToArray();
 
@@ -51,8 +51,8 @@ public class ParameterManagerTests
     [TestCase(ParameterLevel.TableInfo,ParameterLevel.QueryLevel)]
     public void FindOverridenParameters_OneOnlyTest(ParameterLevel addAt, ParameterLevel overridingLevel)
     {
-        var myParameter = new ConstantParameter("DECLARE @fish as int", "1", "fishes be here",new MicrosoftQuerySyntaxHelper());
-        var overridingParameter = new ConstantParameter("DECLARE @fish as int", "999", "overriding value",new MicrosoftQuerySyntaxHelper());
+        var myParameter = new ConstantParameter("DECLARE @fish as int", "1", "fishes be here",MicrosoftQuerySyntaxHelper.Instance);
+        var overridingParameter = new ConstantParameter("DECLARE @fish as int", "999", "overriding value",MicrosoftQuerySyntaxHelper.Instance);
 
         var pm = new ParameterManager();
         pm.ParametersFoundSoFarInQueryGeneration[ParameterLevel.TableInfo].Add(myParameter);
@@ -74,8 +74,8 @@ public class ParameterManagerTests
     [Test]
     public void FindOverridenParameters_CaseSensitivityTest()
     {
-        var baseParameter = new ConstantParameter("DECLARE @fish as int", "1", "fishes be here", new MicrosoftQuerySyntaxHelper());
-        var overridingParameter = new ConstantParameter("DECLARE @Fish as int", "3", "overriding value", new MicrosoftQuerySyntaxHelper());
+        var baseParameter = new ConstantParameter("DECLARE @fish as int", "1", "fishes be here", MicrosoftQuerySyntaxHelper.Instance);
+        var overridingParameter = new ConstantParameter("DECLARE @Fish as int", "3", "overriding value", MicrosoftQuerySyntaxHelper.Instance);
 
         var pm = new ParameterManager();
         pm.ParametersFoundSoFarInQueryGeneration[ParameterLevel.TableInfo].Add(baseParameter);
@@ -93,10 +93,10 @@ public class ParameterManagerTests
     [Test]
     public void FindOverridenParameters_TwoTest()
     {
-        var myParameter1 = new ConstantParameter("DECLARE @fish as int", "1", "fishes be here",new MicrosoftQuerySyntaxHelper());
-        var myParameter2 = new ConstantParameter("DECLARE @fish as int", "2", "fishes be here",new MicrosoftQuerySyntaxHelper());
+        var myParameter1 = new ConstantParameter("DECLARE @fish as int", "1", "fishes be here",MicrosoftQuerySyntaxHelper.Instance);
+        var myParameter2 = new ConstantParameter("DECLARE @fish as int", "2", "fishes be here",MicrosoftQuerySyntaxHelper.Instance);
 
-        var overridingParameter = new ConstantParameter("DECLARE @fish as int", "3", "overriding value",new MicrosoftQuerySyntaxHelper());
+        var overridingParameter = new ConstantParameter("DECLARE @fish as int", "3", "overriding value",MicrosoftQuerySyntaxHelper.Instance);
 
         var pm = new ParameterManager();
         pm.ParametersFoundSoFarInQueryGeneration[ParameterLevel.TableInfo].Add(myParameter1);
@@ -121,7 +121,7 @@ public class ParameterManagerTests
     [Test]
     public void ParameterDeclarationAndDeconstruction()
     {
-        var param = new ConstantParameter("DECLARE @Fish as int;","3","I've got a lovely bunch of coconuts",new MicrosoftQuerySyntaxHelper());
+        var param = new ConstantParameter("DECLARE @Fish as int;","3","I've got a lovely bunch of coconuts",MicrosoftQuerySyntaxHelper.Instance);
         var sql = QueryBuilder.GetParameterDeclarationSQL(param);
 
         Assert.AreEqual(@"/*I've got a lovely bunch of coconuts*/
@@ -129,7 +129,7 @@ DECLARE @Fish as int;
 SET @Fish=3;
 ", sql);
 
-        var after = ConstantParameter.Parse(sql, new MicrosoftQuerySyntaxHelper());
+        var after = ConstantParameter.Parse(sql, MicrosoftQuerySyntaxHelper.Instance);
 
         Assert.AreEqual(param.ParameterSQL,after.ParameterSQL);
         Assert.AreEqual(param.Value, after.Value);

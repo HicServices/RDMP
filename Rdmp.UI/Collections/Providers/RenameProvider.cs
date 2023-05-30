@@ -26,10 +26,7 @@ public class RenameProvider
     private readonly OLVColumn _columnThatSupportsRenaming;
         
     public bool AllowRenaming {  
-        get
-        {
-            return _columnThatSupportsRenaming.IsEditable;
-        }
+        get => _columnThatSupportsRenaming.IsEditable;
         set
         {
             _olv.CellEditActivation = value ? ObjectListView.CellEditActivateMode.SingleClick : ObjectListView.CellEditActivateMode.None;

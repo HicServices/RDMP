@@ -14,8 +14,8 @@ public static class RdmpEnumerableExtensions
 {
     public static Dictionary<TKey, TElement> ToDictionaryEx<TSource, TKey, TElement>(this IEnumerable<TSource> source, Func<TSource, TKey> keySelector, Func<TSource, TElement> elementSelector) where TKey : notnull
     {
-        Dictionary<TKey, TElement> d = new Dictionary<TKey, TElement>();
-        foreach (TSource element in source)
+        var d = new Dictionary<TKey, TElement>();
+        foreach (var element in source)
         {
             try
             {

@@ -107,7 +107,8 @@ public class ExecuteCommandAddNewCatalogueItem : BasicCommandExecution,IAtomicCo
             //get them to type a name for it (based on the ColumnInfo if picked)
             if(TypeText("Name", "Type a name for the new CatalogueItem", 500,columnInfo?.GetRuntimeName(),out text))
             {
-                var ci = new CatalogueItem(BasicActivator.RepositoryLocator.CatalogueRepository, c, "New CatalogueItem " + Guid.NewGuid());
+                var ci = new CatalogueItem(BasicActivator.RepositoryLocator.CatalogueRepository, c,
+                    $"New CatalogueItem {Guid.NewGuid()}");
                 ci.Name = text;
 
                 //set the associated column if they did pick it
@@ -125,7 +126,7 @@ public class ExecuteCommandAddNewCatalogueItem : BasicCommandExecution,IAtomicCo
         }
         else
         {
-            foreach (ColumnInfo columnInfo in _columnInfos)
+            foreach (var columnInfo in _columnInfos)
             {
                 if(AlreadyInCatalogue(columnInfo, existingColumnInfos))
                     continue;

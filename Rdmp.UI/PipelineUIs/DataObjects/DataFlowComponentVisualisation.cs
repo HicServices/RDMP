@@ -33,8 +33,8 @@ public partial class DataFlowComponentVisualisation : UserControl
 
     public bool IsLocked
     {
-        get { return pbPadlock.Visible; }
-        set { pbPadlock.Visible = value; }
+        get => pbPadlock.Visible;
+        set => pbPadlock.Visible = value;
     }
     private readonly Func<DragEventArgs, DataFlowComponentVisualisation, DragDropEffects> _shouldAllowDrop;
 
@@ -100,30 +100,28 @@ public partial class DataFlowComponentVisualisation : UserControl
 
     private void GenerateToolTipBasedOnProperties(object value)
     {
-        StringBuilder toolTip = new StringBuilder();
+        var toolTip = new StringBuilder();
 
         //get all the properties that must be set on AnySeparatorFileAttacher (Those marked with the attribute DemandsInitialization
         var propertiesWeHaveToSet =
             value.GetType().GetProperties()
                 .Where(p => p.GetCustomAttributes(typeof(DemandsInitializationAttribute), true).Any())
                 .ToArray();
-        foreach (PropertyInfo p in propertiesWeHaveToSet)
+        foreach (var p in propertiesWeHaveToSet)
         {
-            object propValue = p.GetValue(value);
+            var propValue = p.GetValue(value);
 
             if (propValue == null || string.IsNullOrWhiteSpace(propValue.ToString()))
                 propValue = "<NotSet>";
 
-            toolTip.AppendLine(p.Name + ":" + propValue);
+            toolTip.AppendLine($"{p.Name}:{propValue}");
         }
 
-        string result = toolTip.ToString();
+        var result = toolTip.ToString();
 
         if(!string.IsNullOrWhiteSpace(result))
             _toolTip.SetToolTip(lblText,
-                lblText.Text + Environment.NewLine +
-                "Arguments:" + Environment.NewLine + 
-                result);
+                $"{lblText.Text}{Environment.NewLine}Arguments:{Environment.NewLine}{result}");
     }
 
     protected bool _isEmpty ;

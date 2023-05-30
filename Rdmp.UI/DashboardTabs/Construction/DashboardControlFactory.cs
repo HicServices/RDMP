@@ -67,8 +67,8 @@ public class DashboardControlFactory
         var instance = CreateControl(t);
             
         //get the default size requirements of the control as it exists post construction
-        int w = instance.Width;
-        int h = instance.Height;
+        var w = instance.Width;
+        var h = instance.Height;
 
         var dbRecord = new DashboardControl(_activator.RepositoryLocator.CatalogueRepository, forLayout, t, _startLocationForNewControls.X, _startLocationForNewControls.Y, w, h, "");
         theControlCreated = Hydrate((IDashboardableControl) instance, dbRecord);
@@ -80,7 +80,7 @@ public class DashboardControlFactory
     {
         var emptyCollection = theControlCreated.ConstructEmptyCollection(dbRecord);
             
-        foreach (DashboardObjectUse objectUse in dbRecord.ObjectsUsed)
+        foreach (var objectUse in dbRecord.ObjectsUsed)
         {
             var o = _activator.RepositoryLocator.GetArbitraryDatabaseObject(objectUse.ReferencedObjectRepositoryType, objectUse.ReferencedObjectType, objectUse.ReferencedObjectID);
             emptyCollection.DatabaseObjects.Add(o);
@@ -91,7 +91,8 @@ public class DashboardControlFactory
         }
         catch (Exception e)
         {
-            throw new DashboardControlHydrationException("Could not resolve extra text persistence string for control '"+ theControlCreated.GetType() +"'",e);
+            throw new DashboardControlHydrationException(
+                $"Could not resolve extra text persistence string for control '{theControlCreated.GetType()}'",e);
         }
 
         theControlCreated.SetCollection(_activator,emptyCollection);
@@ -108,7 +109,7 @@ public class DashboardControlFactory
     private UserControl CreateControl(Type t)
     {
         if (!IsCompatibleType(t))
-            throw new ArgumentException("Type '" + t + "' is not a compatible Type", "t");
+            throw new ArgumentException($"Type '{t}' is not a compatible Type", "t");
 
         var constructor = new ObjectConstructor();
         var instance = (UserControl)constructor.Construct(t);

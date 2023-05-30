@@ -53,7 +53,7 @@ public partial class SelectColumnUI : RDMPUserControl
     internal IReadOnlyCollection<IColumn> AvailableColumns => new ReadOnlyCollection<IColumn>(_availableColumns);
     internal IReadOnlyCollection<IColumn> IncludedColumns => new ReadOnlyCollection<IColumn>(_includedColumns);
 
-    public QuerySyntaxHelper _querySyntaxHelper = new MicrosoftQuerySyntaxHelper();
+    public QuerySyntaxHelper _querySyntaxHelper = MicrosoftQuerySyntaxHelper.Instance;
 
     private readonly Bitmap _add;
     private readonly Bitmap _delete;
@@ -95,7 +95,7 @@ public partial class SelectColumnUI : RDMPUserControl
             var dimensionColumn = e.Model as AggregateDimension;
 
             if (countColumn == null && importableColumn == null && dimensionColumn == null)
-                throw new Exception("Object in list view of type that wasn't IColumn, it was " + e.Model.GetType().Name);
+                throw new Exception($"Object in list view of type that wasn't IColumn, it was {e.Model.GetType().Name}");
 
             //if it is an add
             if (_availableColumns.Contains(e.Model))

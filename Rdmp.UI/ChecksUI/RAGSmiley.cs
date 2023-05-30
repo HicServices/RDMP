@@ -21,7 +21,7 @@ public partial class RAGSmiley : UserControl, IRAGSmiley
         
     public bool AlwaysShowHandCursor
     {
-        get { return _alwaysShowHandCursor; }
+        get => _alwaysShowHandCursor;
         set
         {
             _alwaysShowHandCursor = value;
@@ -125,7 +125,7 @@ public partial class RAGSmiley : UserControl, IRAGSmiley
 
     private void pb_Click(object sender, EventArgs e)
     {
-        Exception tag = ((Control)sender).Tag as Exception ?? _exception;
+        var tag = ((Control)sender).Tag as Exception ?? _exception;
             
         if (PopupMessagesIfAny(tag))
             return;

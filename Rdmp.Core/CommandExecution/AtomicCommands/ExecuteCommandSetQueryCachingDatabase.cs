@@ -35,7 +35,7 @@ public class ExecuteCommandSetQueryCachingDatabase : BasicCommandExecution, IAto
     {
         base.Execute();
             
-        if (SelectOne(_caches.ToList(), out ExternalDatabaseServer selected))
+        if (SelectOne(_caches.ToList(), out var selected))
         {
             if (selected == null)
                 _cic.QueryCachingServer_ID = null;

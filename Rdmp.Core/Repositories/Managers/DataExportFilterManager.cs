@@ -24,7 +24,7 @@ class DataExportFilterManager : IFilterManager
     public IContainer GetParentContainerIfAny(IContainer container)
     {
         return _dataExportRepository.SelectAll<FilterContainer>(
-            "SELECT FilterContainer_ParentID FROM FilterContainerSubcontainers WHERE FilterContainerChildID=" + container.ID,
+            $"SELECT FilterContainer_ParentID FROM FilterContainerSubcontainers WHERE FilterContainerChildID={container.ID}",
             "FilterContainer_ParentID").SingleOrDefault();
     }
 
@@ -33,7 +33,7 @@ class DataExportFilterManager : IFilterManager
     public virtual IContainer[] GetSubContainers(IContainer parent)
     {
         var subcontainers = _dataExportRepository.SelectAll<FilterContainer>(
-            "SELECT FilterContainerChildID FROM FilterContainerSubcontainers WHERE FilterContainer_ParentID=" + parent.ID,
+            $"SELECT FilterContainerChildID FROM FilterContainerSubcontainers WHERE FilterContainer_ParentID={parent.ID}",
             "FilterContainerChildID");
 
         return subcontainers.Cast<IContainer>().ToArray();

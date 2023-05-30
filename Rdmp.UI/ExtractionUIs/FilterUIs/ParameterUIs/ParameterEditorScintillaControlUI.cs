@@ -96,14 +96,14 @@ public partial class ParameterEditorScintillaControlUI : RDMPUserControl
         //for each parameter text section
         foreach (var section in Sections)
         {
-            string sql = "";
+            var sql = "";
 
             //get the lines that make up the selection (freetext sql)
-            for (int i = section.LineStart; i <= section.LineEnd; i++)
+            for (var i = section.LineStart; i <= section.LineEnd; i++)
                 sql += QueryEditor.Lines[i].Text;
                 
             //pass the section its sql text an it will tell us if it is borked or changed or unchanged
-            FreeTextParameterChangeResult changed = section.CheckForChanges(sql);
+            var changed = section.CheckForChanges(sql);
 
             if (changed == FreeTextParameterChangeResult.ChangeRejected)
             {
@@ -139,16 +139,17 @@ public partial class ParameterEditorScintillaControlUI : RDMPUserControl
         {
             IsBroken = false;
             QueryEditor.ReadOnly = false;
-            string sql = "";
+            var sql = "";
             var finalParameters = parameterManager.GetFinalResolvedParametersList().ToArray();
 
-            int currentLine = 0;
+            var currentLine = 0;
 
-            foreach (ISqlParameter parameter in finalParameters)
+            foreach (var parameter in finalParameters)
             {
                 //if it's a user one
                 if(AnyTableSqlParameter.HasProhibitedName(parameter) && !ProblemObjects.ContainsKey(parameter))
-                    ProblemObjects.Add(parameter,new Exception("Parameter name " + parameter.ParameterName + " is a reserved name for the RDMP software"));//advise them
+                    ProblemObjects.Add(parameter,new Exception(
+                        $"Parameter name {parameter.ParameterName} is a reserved name for the RDMP software"));//advise them
 
                 try
                 {
@@ -161,9 +162,9 @@ public partial class ParameterEditorScintillaControlUI : RDMPUserControl
                 }
                     
 
-                string toAdd = QueryBuilder.GetParameterDeclarationSQL(parameter);
+                var toAdd = QueryBuilder.GetParameterDeclarationSQL(parameter);
 
-                int lineCount = GetLineCount(toAdd);
+                var lineCount = GetLineCount(toAdd);
 
                 Sections.Add(new ParameterEditorScintillaSection(Options.Refactorer,currentLine, currentLine += (lineCount - 1), parameter, 
                         
@@ -187,7 +188,7 @@ public partial class ParameterEditorScintillaControlUI : RDMPUserControl
             var exception = ex as QueryBuildingException;
             if (exception != null)
             {
-                foreach (ISqlParameter p in exception.ProblemObjects.OfType<ISqlParameter>())
+                foreach (var p in exception.ProblemObjects.OfType<ISqlParameter>())
                     if(!ProblemObjects .ContainsKey(p))//might have already added it up above
                         ProblemObjects.Add(p, ex);
 
@@ -199,9 +200,9 @@ public partial class ParameterEditorScintillaControlUI : RDMPUserControl
         var highlighter = new ScintillaLineHighlightingHelper();
         highlighter.ClearAll(QueryEditor);
 
-        foreach (ParameterEditorScintillaSection section in Sections)
+        foreach (var section in Sections)
             if (!section.Editable)
-                for (int i = section.LineStart; i <= section.LineEnd; i++)
+                for (var i = section.LineStart; i <= section.LineEnd; i++)
                     highlighter.HighlightLine(QueryEditor, i, Color.LightGray);
     }
 

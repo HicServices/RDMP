@@ -33,7 +33,7 @@ class DitaExtractorTests : DatabaseTests
 
             _directoryHelper.SetUp();
 
-            Random random = new Random();
+            var random = new Random();
                 
             //delete all catalogues with duplicate names
             var catalogues = CatalogueRepository.GetAllObjects<Catalogue>().ToArray();
@@ -75,22 +75,21 @@ class DitaExtractorTests : DatabaseTests
         var testDir = _directoryHelper.Directory;
 
         //get rid of any old copies lying around
-        Catalogue oldCatalogueVersion = CatalogueRepository.GetAllObjects<Catalogue>().SingleOrDefault(c => c.Name.Equals("DitaExtractorConstructor_ExtractTestCatalogue_FilesExist"));
+        var oldCatalogueVersion = CatalogueRepository.GetAllObjects<Catalogue>().SingleOrDefault(c => c.Name.Equals("DitaExtractorConstructor_ExtractTestCatalogue_FilesExist"));
         if(oldCatalogueVersion != null)
             oldCatalogueVersion.DeleteInDatabase();
 
-        Catalogue ditaTestCatalogue = new Catalogue(CatalogueRepository, "DitaExtractorConstructor_ExtractTestCatalogue_FilesExist");//name of Catalogue
+        var ditaTestCatalogue = new Catalogue(CatalogueRepository, "DitaExtractorConstructor_ExtractTestCatalogue_FilesExist");//name of Catalogue
 
         ditaTestCatalogue.Acronym = "DITA_TEST";
         ditaTestCatalogue.Description =
-            "Test catalogue for the unit test DitaExtractorConstructor_ExtractTestCatalogue_FilesExist in file " +
-            typeof (DitaExtractorTests).FullName + ".cs";
+            $"Test catalogue for the unit test DitaExtractorConstructor_ExtractTestCatalogue_FilesExist in file {typeof(DitaExtractorTests).FullName}.cs";
         ditaTestCatalogue.SaveToDatabase();
 
 
         try
         {
-            DitaCatalogueExtractor extractor = new DitaCatalogueExtractor(CatalogueRepository, testDir);
+            var extractor = new DitaCatalogueExtractor(CatalogueRepository, testDir);
 
             extractor.Extract(new ThrowImmediatelyDataLoadEventListener());
 
@@ -100,7 +99,7 @@ class DitaExtractorTests : DatabaseTests
             Assert.IsTrue(File.Exists(Path.Combine(testDir.FullName, "dataset.dita")));
 
             //make sure the catalogue we created is there
-            FileInfo ditaCatalogueAsDotDitaFile = new FileInfo(Path.Combine(testDir.FullName, "ditaextractorconstructor_extracttestcatalogue_filesexist.dita"));//name of Dita file (for the Catalogue we just created)
+            var ditaCatalogueAsDotDitaFile = new FileInfo(Path.Combine(testDir.FullName, "ditaextractorconstructor_extracttestcatalogue_filesexist.dita"));//name of Dita file (for the Catalogue we just created)
             Assert.IsTrue(ditaCatalogueAsDotDitaFile.Exists);
             Assert.IsTrue(File.ReadAllText(ditaCatalogueAsDotDitaFile.FullName).Contains(ditaTestCatalogue.Description));
 
@@ -121,13 +120,13 @@ class DitaExtractorTests : DatabaseTests
         try
         {
             //create a new Catalogue in the test datbaase that doesnt have a acronym (should crash Dita Extractor)
-            Catalogue myNewCatalogue = new Catalogue(CatalogueRepository, "UnitTestCatalogue");
+            var myNewCatalogue = new Catalogue(CatalogueRepository, "UnitTestCatalogue");
             myNewCatalogue.Acronym = "";
             myNewCatalogue.SaveToDatabase();
 
             try
             {
-                DitaCatalogueExtractor extractor = new DitaCatalogueExtractor(CatalogueRepository, testDir);
+                var extractor = new DitaCatalogueExtractor(CatalogueRepository, testDir);
                 var ex = Assert.Throws<Exception>(()=>extractor.Extract(new ThrowImmediatelyDataLoadEventListener()));
                 Assert.AreEqual("Dita Extraction requires that each catalogue have a unique Acronym, the catalogue UnitTestCatalogue is missing an Acronym",ex.Message);
 

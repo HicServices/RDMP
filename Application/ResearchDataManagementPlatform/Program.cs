@@ -62,7 +62,7 @@ static class Program
             return -500;
         }
 
-        RDMPBootStrapper<RDMPMainForm> bootStrapper =
+        var bootStrapper =
             new RDMPBootStrapper<RDMPMainForm>(
                 new EnvironmentInfo(PluginFolders.Main | PluginFolders.Windows),
                 arg);

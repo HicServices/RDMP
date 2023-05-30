@@ -32,10 +32,7 @@ public class RegularExpression : SecondaryConstraint
     [ExpectsLotsOfText]
     public string Pattern
     {
-        get
-        {
-            return _pattern;
-        }
+        get => _pattern;
         set
         {
             //throws if you pass an invalid pattern
@@ -56,10 +53,10 @@ public class RegularExpression : SecondaryConstraint
             value = Convert.ToString(value);
 
         var text = (string)value;
-        Match match = Regex.Match(text, _pattern);
+        var match = Regex.Match(text, _pattern);
 
         if (!match.Success) 
-            return new ValidationFailure("Failed to match text [" + value + "] to regular expression /"+_pattern+"/",this);
+            return new ValidationFailure($"Failed to match text [{value}] to regular expression /{_pattern}/",this);
 
         return null;
     }
@@ -71,6 +68,6 @@ public class RegularExpression : SecondaryConstraint
 
     public override string GetHumanReadableDescriptionOfValidation()
     {
-        return "Matches regex " + Pattern;
+        return $"Matches regex {Pattern}";
     }
 }

@@ -35,12 +35,12 @@ public class ExecuteCommandCreateNewPreLoadDiscardedColumn:BasicUICommandExecuti
         _prototypes = sourceColumnInfoCombineable.ColumnInfos;
 
         var existing = tableInfo.PreLoadDiscardedColumns;
-        foreach (ColumnInfo prototype in _prototypes)
+        foreach (var prototype in _prototypes)
         {
             var alreadyExists = existing.Any(c => c.GetRuntimeName().Equals(prototype.GetRuntimeName()));
 
             if (alreadyExists)
-                SetImpossible("There is already a PreLoadDiscardedColumn called '" + prototype.GetRuntimeName() + "'");
+                SetImpossible($"There is already a PreLoadDiscardedColumn called '{prototype.GetRuntimeName()}'");
         }
           
     }
@@ -81,7 +81,7 @@ public class ExecuteCommandCreateNewPreLoadDiscardedColumn:BasicUICommandExecuti
         }
         else
         {
-            foreach (ColumnInfo prototype in _prototypes)
+            foreach (var prototype in _prototypes)
                 Create(prototype.GetRuntimeName(), prototype.Data_type);
 
             Publish();

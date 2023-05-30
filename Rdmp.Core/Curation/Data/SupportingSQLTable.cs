@@ -50,8 +50,8 @@ public class SupportingSQLTable : DatabaseEntity,INamed, ISupportingObject
     /// </summary>
     public int Catalogue_ID
     {
-        get { return _catalogue_ID; }
-        set { SetField(ref _catalogue_ID, value); }
+        get => _catalogue_ID;
+        set => SetField(ref _catalogue_ID, value);
     }
 
     /// <summary>
@@ -59,8 +59,8 @@ public class SupportingSQLTable : DatabaseEntity,INamed, ISupportingObject
     /// </summary>
     public string Description
     {
-        get { return _description; }
-        set { SetField(ref _description, value); }
+        get => _description;
+        set => SetField(ref _description, value);
     }
 
     /// <inheritdoc/>
@@ -68,8 +68,8 @@ public class SupportingSQLTable : DatabaseEntity,INamed, ISupportingObject
     [Unique]
     public string Name
     {
-        get { return _name; }
-        set { SetField(ref _name, value); }
+        get => _name;
+        set => SetField(ref _name, value);
     }
 
     /// <summary>
@@ -77,8 +77,8 @@ public class SupportingSQLTable : DatabaseEntity,INamed, ISupportingObject
     /// </summary>
     public string SQL
     {
-        get { return _sQL; }
-        set { SetField(ref _sQL, value); }
+        get => _sQL;
+        set => SetField(ref _sQL, value);
     }
 
     /// <summary>
@@ -89,8 +89,8 @@ public class SupportingSQLTable : DatabaseEntity,INamed, ISupportingObject
     /// </summary>
     public bool Extractable
     {
-        get { return _extractable; }
-        set { SetField(ref _extractable, value); }
+        get => _extractable;
+        set => SetField(ref _extractable, value);
     }
 
     /// <summary>
@@ -98,8 +98,8 @@ public class SupportingSQLTable : DatabaseEntity,INamed, ISupportingObject
     /// </summary>
     public int? ExternalDatabaseServer_ID
     {
-        get { return _externalDatabaseServer_ID; }
-        set { SetField(ref _externalDatabaseServer_ID, value); }
+        get => _externalDatabaseServer_ID;
+        set => SetField(ref _externalDatabaseServer_ID, value);
     }
 
     /// <summary>
@@ -107,8 +107,8 @@ public class SupportingSQLTable : DatabaseEntity,INamed, ISupportingObject
     /// </summary>
     public string Ticket
     {
-        get { return _ticket; }
-        set { SetField(ref _ticket, value); }
+        get => _ticket;
+        set => SetField(ref _ticket, value);
     }
 
     /// <summary>
@@ -117,8 +117,8 @@ public class SupportingSQLTable : DatabaseEntity,INamed, ISupportingObject
     /// </summary>
     public bool IsGlobal
     {
-        get { return _isGlobal; }
-        set { SetField(ref _isGlobal, value); }
+        get => _isGlobal;
+        set => SetField(ref _isGlobal, value);
     }
 
     #endregion
@@ -126,16 +126,11 @@ public class SupportingSQLTable : DatabaseEntity,INamed, ISupportingObject
     #region Relationships
     /// <inheritdoc cref="Catalogue_ID"/>
     [NoMappingToDatabase]
-    public Catalogue Catalogue
-    {
-        get { return Repository.GetObjectByID<Catalogue>(Catalogue_ID); }
-    }
+    public Catalogue Catalogue => Repository.GetObjectByID<Catalogue>(Catalogue_ID);
 
     /// <inheritdoc cref="ExternalDatabaseServer_ID"/>
     [NoMappingToDatabase]
-    public ExternalDatabaseServer ExternalDatabaseServer {
-        get { return ExternalDatabaseServer_ID == null ? null : Repository.GetObjectByID<ExternalDatabaseServer>((int)ExternalDatabaseServer_ID); }
-    }
+    public ExternalDatabaseServer ExternalDatabaseServer => ExternalDatabaseServer_ID == null ? null : Repository.GetObjectByID<ExternalDatabaseServer>((int)ExternalDatabaseServer_ID);
 
     #endregion
 
@@ -191,7 +186,8 @@ public class SupportingSQLTable : DatabaseEntity,INamed, ISupportingObject
     public DiscoveredServer GetServer()
     {
         if (ExternalDatabaseServer_ID == null)
-            throw new NotSupportedException("No external database server has been selected for SupportingSQL table called :" + ToString() + " (ID=" + ID + ").  The SupportingSQLTable currently belongs to Catalogue " + Catalogue.Name);
+            throw new NotSupportedException(
+                $"No external database server has been selected for SupportingSQL table called :{ToString()} (ID={ID}).  The SupportingSQLTable currently belongs to Catalogue {Catalogue.Name}");
 
         return ExternalDatabaseServer.Discover(DataAccessContext.DataExport).Server;
     }

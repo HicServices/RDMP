@@ -37,7 +37,7 @@ public class SuspiciousRelationshipPropertyUse
         types = types.Union(typeof(Project).Assembly.GetTypes().Where(t => typeof(DatabaseEntity).IsAssignableFrom(t)))
             .ToArray();
 
-        foreach (Type type in types)
+        foreach (var type in types)
         {
             //if it's a spont object ignore it
             if(typeof(SpontaneousObject).IsAssignableFrom(type) || type == typeof(SpontaneouslyInventedColumn) || type == typeof(SpontaneouslyInventedFilter))
@@ -46,24 +46,24 @@ public class SuspiciousRelationshipPropertyUse
             //Find the C sharp code for the class
             var relationshipProperties = type.GetProperties().Where(p => p.CanRead && !p.CanWrite);
                 
-            string expectedFileName = type.Name + ".cs";
-            var files = csFilesFound.Where(f => f.EndsWith("\\" + expectedFileName,StringComparison.CurrentCultureIgnoreCase)).ToArray();
+            var expectedFileName = $"{type.Name}.cs";
+            var files = csFilesFound.Where(f => f.EndsWith($"\\{expectedFileName}",StringComparison.CurrentCultureIgnoreCase)).ToArray();
 
             if (files.Length == 0)
             {
-                _fails.Add("FAIL: Could not find a csFile called '" + expectedFileName + "'");
+                _fails.Add($"FAIL: Could not find a csFile called '{expectedFileName}'");
                 continue;
             }
             if(files.Length > 1)
             {
-                _fails.Add("FAIL: found multiple csFiles called '" + expectedFileName + "'");
+                _fails.Add($"FAIL: found multiple csFiles called '{expectedFileName}'");
                 continue;
             }
 
             //Find the #region Relationships bit should contain all the properties which get; database objects or enumerates database objects (These shouldn't have a set;)
             var classSourceCode = File.ReadAllText(files[0]);
 
-            Regex r = new Regex("#region Relationships(.*)#endregion",RegexOptions.Singleline);
+            var r = new Regex("#region Relationships(.*)#endregion",RegexOptions.Singleline);
 
             string relationshipsRegion = null;
 
@@ -73,43 +73,48 @@ public class SuspiciousRelationshipPropertyUse
                 relationshipsRegion = matches[0].Groups[1].Value;
                 
             if (matches.Count > 1)
-                _fails.Add("FAIL: Class " + type.FullName + " has multiple '#region Relationships' blocks" );
+                _fails.Add($"FAIL: Class {type.FullName} has multiple '#region Relationships' blocks");
                 
-            foreach (PropertyInfo relationshipProperty in relationshipProperties)
+            foreach (var relationshipProperty in relationshipProperties)
             {
                 if (relationshipProperty.Name.Equals("ID"))
                     continue;
 
                 if (relationshipProperty.CustomAttributes.All(c => c.AttributeType != typeof (NoMappingToDatabase)))
                 {
-                    _fails.Add("FAIL: Class " + type.FullName + " has readonly property " + relationshipProperty + " which is not decorated with NoMapping");
+                    _fails.Add(
+                        $"FAIL: Class {type.FullName} has readonly property {relationshipProperty} which is not decorated with NoMapping");
                     continue;
                 }
 
                 if(!IsRelationshipProperty(relationshipProperty.PropertyType))
                 {
-                    Console.WriteLine("SKIPPED: Property " + relationshipProperty + " is ReadOnly and [NoMapping] but doesn't look like it serves up related objects");
+                    Console.WriteLine(
+                        $"SKIPPED: Property {relationshipProperty} is ReadOnly and [NoMapping] but doesn't look like it serves up related objects");
                     continue;
                 }
                                         
                 if (relationshipsRegion == null)
-                    _fails.Add("FAIL: Class "+ type.FullName+ " has no '#region Relationships' blocks but has a relationship style Property called " + relationshipProperty.Name );
+                    _fails.Add(
+                        $"FAIL: Class {type.FullName} has no '#region Relationships' blocks but has a relationship style Property called {relationshipProperty.Name}");
                 else
                 {
-                    string expectedString = MEF.GetCSharpNameForType(relationshipProperty.PropertyType) + " " + relationshipProperty.Name;
+                    var expectedString =
+                        $"{MEF.GetCSharpNameForType(relationshipProperty.PropertyType)} {relationshipProperty.Name}";
 
                     if (!relationshipsRegion.Contains(expectedString))
-                        _fails.Add("FAIL: Class " + type.FullName + " has a property we expected to be '" + expectedString + "' but it did not appear in the '#region Relationships'");
+                        _fails.Add(
+                            $"FAIL: Class {type.FullName} has a property we expected to be '{expectedString}' but it did not appear in the '#region Relationships'");
                 }
             }
 
 
             var databaseProperties = type.GetProperties(BindingFlags.Public | BindingFlags.Instance).Where(p => p.CanRead && p.CanWrite);
 
-            string suggestedFieldDeclarations = "";
-            string suggestedMethodWrappers = "";
+            var suggestedFieldDeclarations = "";
+            var suggestedMethodWrappers = "";
                 
-            foreach (PropertyInfo p in databaseProperties)
+            foreach (var p in databaseProperties)
             {
                 //its a NoMapping 
                 if (p.CustomAttributes.Any(c => c.AttributeType == typeof (NoMappingToDatabase))) 
@@ -124,16 +129,16 @@ public class SuspiciousRelationshipPropertyUse
 
                 if(setMethod == null)
                 {
-                    Console.WriteLine("WARNING: Property " + p.Name + " on Type " + type.Name + " has no set or it is not public;");
+                    Console.WriteLine($"WARNING: Property {p.Name} on Type {type.Name} has no set or it is not public;");
                     continue;
                 }
 
                 if (MightBeCouldBeMaybeAutoGeneratedInstanceProperty(p))
                 {
                         
-                    char firstLetter = p.Name.ToLower()[0];
-                    string fieldName = "_" + firstLetter + p.Name.Substring(1);
-                    string typeName = p.PropertyType.Name;
+                    var firstLetter = p.Name.ToLower()[0];
+                    var fieldName = $"_{firstLetter}{p.Name.Substring(1)}";
+                    var typeName = p.PropertyType.Name;
                         
                     if (typeName == "String")
                         typeName = "string";
@@ -148,13 +153,13 @@ public class SuspiciousRelationshipPropertyUse
                     if (p.PropertyType == typeof (DateTime?))
                         typeName = "DateTime?";
 
-                    suggestedFieldDeclarations += "private " + typeName + " " + fieldName + ";" + Environment.NewLine;
+                    suggestedFieldDeclarations += $"private {typeName} {fieldName};{Environment.NewLine}";
 
-                    suggestedMethodWrappers += "public " + typeName + " " + p.Name + Environment.NewLine;
-                    suggestedMethodWrappers += "{" + Environment.NewLine;
-                    suggestedMethodWrappers += "\tget { return " + fieldName +";}" + Environment.NewLine;
-                    suggestedMethodWrappers += "\tset { SetField(ref " + fieldName +",value);}" + Environment.NewLine;
-                    suggestedMethodWrappers += "}" + Environment.NewLine;
+                    suggestedMethodWrappers += $"public {typeName} {p.Name}{Environment.NewLine}";
+                    suggestedMethodWrappers += $"{{{Environment.NewLine}";
+                    suggestedMethodWrappers += $"\tget {{ return {fieldName};}}{Environment.NewLine}";
+                    suggestedMethodWrappers += $"\tset {{ SetField(ref {fieldName},value);}}{Environment.NewLine}";
+                    suggestedMethodWrappers += $"}}{Environment.NewLine}";
                 }
 
                 if(!setMethod.IsAbstract)
@@ -182,7 +187,7 @@ public class SuspiciousRelationshipPropertyUse
 
             if(!string.IsNullOrWhiteSpace(suggestedMethodWrappers))
             {
-                Console.WriteLine("CODE SUGGESTION FOR " + type.Name);
+                Console.WriteLine($"CODE SUGGESTION FOR {type.Name}");
                 Console.WriteLine("#region Database Properties");
 
                 Console.WriteLine(suggestedFieldDeclarations);
@@ -195,7 +200,7 @@ public class SuspiciousRelationshipPropertyUse
 
         AnalyseRelationshipPropertyUsages();
 
-        foreach (string fail in _fails)
+        foreach (var fail in _fails)
             Console.WriteLine(fail);
 
         Assert.AreEqual(0, _fails.Count);
@@ -283,7 +288,7 @@ public class SuspiciousRelationshipPropertyUse
         
     public bool MightBeCouldBeMaybeAutoGeneratedInstanceProperty(PropertyInfo info)
     {
-        bool mightBe = info.GetGetMethod()
+        var mightBe = info.GetGetMethod()
             .GetCustomAttributes(
                 typeof(CompilerGeneratedAttribute),
                 true
@@ -295,7 +300,7 @@ public class SuspiciousRelationshipPropertyUse
         }
 
 
-        bool maybe = info.DeclaringType
+        var maybe = info.DeclaringType
             .GetFields(BindingFlags.NonPublic | BindingFlags.Instance)
             .Where(f => f.Name.Contains(info.Name))
             .Where(f => f.Name.Contains("BackingField"))

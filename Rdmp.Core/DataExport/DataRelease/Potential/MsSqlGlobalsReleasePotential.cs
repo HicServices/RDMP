@@ -33,13 +33,13 @@ public class MsSqlGlobalsReleasePotential : GlobalReleasePotential
         var database = server.ExpectDatabase(dbName);
         if (!database.Exists())
         {
-            notifier.OnCheckPerformed(new CheckEventArgs("Database: " + database + " was not found", CheckResult.Fail));
+            notifier.OnCheckPerformed(new CheckEventArgs($"Database: {database} was not found", CheckResult.Fail));
             Releasability = Releaseability.ExtractFilesMissing;
         }
         var foundTable = database.ExpectTable(tblName);
         if (!foundTable.Exists())
         {
-            notifier.OnCheckPerformed(new CheckEventArgs("Table: " + foundTable + " was not found", CheckResult.Fail));
+            notifier.OnCheckPerformed(new CheckEventArgs($"Table: {foundTable} was not found", CheckResult.Fail));
             Releasability = Releaseability.ExtractFilesMissing;
         }
     }

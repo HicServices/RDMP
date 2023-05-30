@@ -25,7 +25,7 @@ public class ExecuteCommandShowTooltip : BasicUICommandExecution, IAtomicCommand
     {
         Weight = 100.5f;
 
-        bool hasOne = RDMPCollectionCommonFunctionality.GetToolTip(activator,o, out _title, out _body, out _isBad);
+        var hasOne = RDMPCollectionCommonFunctionality.GetToolTip(activator,o, out _title, out _body, out _isBad);
 
         if (!hasOne)
             SetImpossible($"{o} does not have a tooltip/problem");

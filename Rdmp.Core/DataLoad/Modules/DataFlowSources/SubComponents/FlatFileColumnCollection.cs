@@ -15,6 +15,7 @@ using FAnsi.Discovery;
 using FAnsi.Extensions;
 using Rdmp.Core.DataFlowPipeline.Requirements;
 using Rdmp.Core.DataLoad.Modules.Exceptions;
+using Rdmp.Core.ReusableLibraryCode;
 using Rdmp.Core.ReusableLibraryCode.Progress;
 
 namespace Rdmp.Core.DataLoad.Modules.DataFlowSources.SubComponents;
@@ -56,10 +57,7 @@ public class FlatFileColumnCollection
         _ignoreColumns = ignoreColumns;
     }
 
-    public string this[int index]
-    {
-        get { return _headers[index]; }
-    }
+    public string this[int index] => _headers[index];
 
     private enum State
     {
@@ -97,7 +95,7 @@ public class FlatFileColumnCollection
     /// <summary>
     /// The number of headers including null ones (but not trailing null headers)
     /// </summary>
-    public int Length { get { return _headers.Length; }}
+    public int Length => _headers.Length;
 
 
     public void GetHeadersFromFile(CsvReader r)
@@ -113,7 +111,7 @@ public class FlatFileColumnCollection
         if (string.IsNullOrWhiteSpace(_forceHeaders))
         {
             //read the first record from the file (this will read the header and first row
-            bool empty = !r.Read();
+            var empty = !r.Read();
 
             if (empty)
             {
@@ -143,7 +141,7 @@ public class FlatFileColumnCollection
         //Make adjustments to the headers (trim etc)
 
         //trim them
-        for (int i = 0; i < _headers.Length; i++)
+        for (var i = 0; i < _headers.Length; i++)
             if (!string.IsNullOrWhiteSpace(_headers[i]))
                 _headers[i] = _headers[i].Trim();
 
@@ -155,7 +153,7 @@ public class FlatFileColumnCollection
 
         //and maybe also help them out with a bit of sanity fixing
         if (_makeHeaderNamesSane)
-            for (int i = 0; i < _headers.Length; i++)
+            for (var i = 0; i < _headers.Length; i++)
                 _headers[i] = QuerySyntaxHelper.MakeHeaderNameSensible(_headers[i]);
     }
 
@@ -175,13 +173,13 @@ public class FlatFileColumnCollection
 
         var dt = new DataTable();
 
-        List<string> duplicateHeaders = new List<string>();
-        List<DataColumn> unamedColumns = new List<DataColumn>();
+        var duplicateHeaders = new List<string>();
+        var unamedColumns = new List<DataColumn>();
 
         //create a string column for each header - these will change type once we have read some data
-        foreach (string header in _headers)
+        foreach (var header in _headers)
         {
-            string h = header;
+            var h = header;
 
             //if we are ignoring this column
             if(h != null && IgnoreColumnsList.Contains(h.Trim()))
@@ -237,11 +235,11 @@ public class FlatFileColumnCollection
 
         _state = State.AfterTableGenerated;
 
-        StringBuilder ASCIIArt = new StringBuilder();
+        var ASCIIArt = new StringBuilder();
 
-        List<string> headersNotFound = new List<string>();
+        var headersNotFound = new List<string>();
            
-        for (int index = 0; index < _headers.Length; index++)
+        for (var index = 0; index < _headers.Length; index++)
         {
             ASCIIArt.Append($"[{index}]");
                 
@@ -267,7 +265,7 @@ public class FlatFileColumnCollection
             //try replacing spaces with underscores
             if (dt.Columns.Contains(_headers[index].Replace(" ", "_")))
             {
-                string before = _headers[index];
+                var before = _headers[index];
                 _headers[index] = _headers[index].Replace(" ", "_");
 
                 ASCIIArt.AppendLine($"{before}>>>{_headers[index]}");
@@ -277,7 +275,7 @@ public class FlatFileColumnCollection
             //try replacing spaces with nothing
             if (dt.Columns.Contains(_headers[index].Replace(" ", "")))
             {
-                string before = _headers[index];
+                var before = _headers[index];
                 _headers[index] = _headers[index].Replace(" ", "");
 
                 ASCIIArt.AppendLine($"{before}>>>{_headers[index]}");
@@ -289,7 +287,7 @@ public class FlatFileColumnCollection
         }
 
         //now that we have adjusted the header names
-        string[] unmatchedColumns =
+        var unmatchedColumns =
             dt.Columns.Cast<DataColumn>()
                 .Where(c => !_headers.Any(h => h != null && h.ToLower().Equals(c.ColumnName.ToLower())))//get all columns in data table where there are not any with the same name
                 .Select(c => c.ColumnName)
@@ -301,7 +299,7 @@ public class FlatFileColumnCollection
 
         //if there is exactly 1 column found by the program and there are unmatched columns it is likely the user has selected the wrong separator
         if (_headers.Length == 1 && unmatchedColumns.Any())
-            foreach (string commonSeparator in _commonSeparators)
+            foreach (var commonSeparator in _commonSeparators)
                 if(_headers[0].Contains(commonSeparator))
                     listener.OnNotify(this, new NotifyEventArgs(ProgressEventType.Error,
                         $"Your separator does not appear in the headers line of your file ({_toLoad.File.Name}) but the separator '{commonSeparator}' does... did you mean to set the Separator to '{commonSeparator}'? The headers line is:\"{_headers[0]}\""));
@@ -323,7 +321,7 @@ public class FlatFileColumnCollection
             return newColumnName;
 
         //otherwise issue a rename
-        int number = 2;
+        var number = 2;
         while (columnsSoFar.Contains($"{newColumnName}_{number}"))
             number++;
 
@@ -354,14 +352,14 @@ public class FlatFileColumnCollection
 
         //create an ascii art representation of the headers being replaced in the format
         //[0]MySensibleCol>>>My Silly Coll#
-        StringBuilder asciiArt = new StringBuilder();
-        for (int i = 0; i < _headers.Length; i++)
+        var asciiArt = new StringBuilder();
+        for (var i = 0; i < _headers.Length; i++)
         {
             asciiArt.Append($"[{i}]{_headers[i]}>>>");
             asciiArt.AppendLine(i < row.ColumnCount ? row[i] : "???");
         }
 
-        for (int i = _headers.Length; i < row.ColumnCount; i++)
+        for (var i = _headers.Length; i < row.ColumnCount; i++)
             asciiArt.AppendLine($"[{i}]???>>>{row[i]}");
 
         listener.OnNotify(this, new NotifyEventArgs(ProgressEventType.Information,
@@ -371,7 +369,7 @@ public class FlatFileColumnCollection
             listener.OnNotify(this, new NotifyEventArgs(ProgressEventType.Warning, "The number of ForceHeader replacement headers specified does not match the number of headers in the file (being replaced)"));
 
         StringBuilder discarded = new();
-        for (int i = 0; i < row.ColumnCount; i++)
+        for (var i = 0; i < row.ColumnCount; i++)
         {
             if (i > 0)
                 discarded.Append(',');

@@ -26,7 +26,7 @@ public static class UserSettings
     {
         get
         {
-            ISettings ret = implementation.Value;
+            var ret = implementation.Value;
             if (ret == null)
             {
                 throw new NotImplementedException("Isolated Storage does not work in this environment...");
@@ -40,8 +40,8 @@ public static class UserSettings
     /// </summary>
     public static bool ConfirmApplicationExiting
     {
-        get { return AppSettings.GetValueOrDefault("ConfirmExit", true); }
-        set { AppSettings.AddOrUpdateValue("ConfirmExit", value); }
+        get => AppSettings.GetValueOrDefault("ConfirmExit", true);
+        set => AppSettings.AddOrUpdateValue("ConfirmExit", value);
     }
 
     /// <summary>
@@ -50,8 +50,8 @@ public static class UserSettings
     /// </summary>
     public static string LicenseAccepted
     {
-        get { return AppSettings.GetValueOrDefault("LicenseAccepted",null); }
-        set { AppSettings.AddOrUpdateValue("LicenseAccepted", value); }
+        get => AppSettings.GetValueOrDefault("LicenseAccepted",null);
+        set => AppSettings.AddOrUpdateValue("LicenseAccepted", value);
     }
 
     /// <summary>
@@ -59,8 +59,8 @@ public static class UserSettings
     /// </summary>
     public static bool ShowHomeOnStartup
     {
-        get { return AppSettings.GetValueOrDefault("ShowHomeOnStartup", false); }
-        set { AppSettings.AddOrUpdateValue("ShowHomeOnStartup", value); }
+        get => AppSettings.GetValueOrDefault("ShowHomeOnStartup", false);
+        set => AppSettings.AddOrUpdateValue("ShowHomeOnStartup", value);
     }
 
     /// <summary>
@@ -68,8 +68,8 @@ public static class UserSettings
     /// </summary>
     public static bool IncludeZeroSeriesInGraphs
     {
-        get { return AppSettings.GetValueOrDefault("IncludeZeroSeriesInGraphs", true); }
-        set { AppSettings.AddOrUpdateValue("IncludeZeroSeriesInGraphs", value); }
+        get => AppSettings.GetValueOrDefault("IncludeZeroSeriesInGraphs", true);
+        set => AppSettings.AddOrUpdateValue("IncludeZeroSeriesInGraphs", value);
     }
 
     /// <summary>
@@ -78,8 +78,8 @@ public static class UserSettings
     /// </summary>
     public static bool EmphasiseOnTabChanged
     {
-        get { return AppSettings.GetValueOrDefault("EmphasiseOnTabChanged", false); }
-        set { AppSettings.AddOrUpdateValue("EmphasiseOnTabChanged", value); }
+        get => AppSettings.GetValueOrDefault("EmphasiseOnTabChanged", false);
+        set => AppSettings.AddOrUpdateValue("EmphasiseOnTabChanged", value);
     }
 
     /// <summary>
@@ -87,8 +87,8 @@ public static class UserSettings
     /// </summary>
     public static bool DisableTutorials
     {
-        get { return AppSettings.GetValueOrDefault("DisableTutorials", false); }
-        set { AppSettings.AddOrUpdateValue("DisableTutorials", value); }
+        get => AppSettings.GetValueOrDefault("DisableTutorials", false);
+        set => AppSettings.AddOrUpdateValue("DisableTutorials", value);
     }
 
     /// <summary>
@@ -96,8 +96,8 @@ public static class UserSettings
     /// </summary>
     public static string CatalogueConnectionString
     {
-        get { return AppSettings.GetValueOrDefault("CatalogueConnectionString", ""); }
-        set { AppSettings.AddOrUpdateValue("CatalogueConnectionString", value); }
+        get => AppSettings.GetValueOrDefault("CatalogueConnectionString", "");
+        set => AppSettings.AddOrUpdateValue("CatalogueConnectionString", value);
     }
 
     /// <summary>
@@ -106,8 +106,8 @@ public static class UserSettings
     /// </summary>
     public static string DataExportConnectionString
     {
-        get { return AppSettings.GetValueOrDefault("DataExportConnectionString", ""); }
-        set { AppSettings.AddOrUpdateValue("DataExportConnectionString", value); }
+        get => AppSettings.GetValueOrDefault("DataExportConnectionString", "");
+        set => AppSettings.AddOrUpdateValue("DataExportConnectionString", value);
     }
 
     /// <summary>
@@ -115,8 +115,8 @@ public static class UserSettings
     /// </summary>
     public static string Theme
     {
-        get { return AppSettings.GetValueOrDefault("Theme", "ResearchDataManagementPlatform.Theme.MyVS2015BlueTheme"); }
-        set { AppSettings.AddOrUpdateValue("Theme", value); }
+        get => AppSettings.GetValueOrDefault("Theme", "ResearchDataManagementPlatform.Theme.MyVS2015BlueTheme");
+        set => AppSettings.AddOrUpdateValue("Theme", value);
     }
 
     /// <summary>
@@ -124,8 +124,8 @@ public static class UserSettings
     /// </summary>
     public static bool FindShouldPin
     {
-        get { return AppSettings.GetValueOrDefault("FindShouldPin", true); }
-        set { AppSettings.AddOrUpdateValue("FindShouldPin", value); }
+        get => AppSettings.GetValueOrDefault("FindShouldPin", true);
+        set => AppSettings.AddOrUpdateValue("FindShouldPin", value);
     }
 
     /// <summary>
@@ -133,8 +133,8 @@ public static class UserSettings
     /// </summary>
     public static int CreateDatabaseTimeout
     {
-        get { return AppSettings.GetValueOrDefault("CreateDatabaseTimeout", 30); }
-        set { AppSettings.AddOrUpdateValue("CreateDatabaseTimeout", DiscoveredServerHelper.CreateDatabaseTimeoutInSeconds = Math.Max(value,30)); }
+        get => AppSettings.GetValueOrDefault("CreateDatabaseTimeout", 30);
+        set => AppSettings.AddOrUpdateValue("CreateDatabaseTimeout", DiscoveredServerHelper.CreateDatabaseTimeoutInSeconds = Math.Max(value,30));
     }
 
     /// <summary>
@@ -142,8 +142,8 @@ public static class UserSettings
     /// </summary>
     public static int TooltipAppearDelay
     {
-        get { return AppSettings.GetValueOrDefault("TooltipAppearDelay", 750); }
-        set { AppSettings.AddOrUpdateValue("TooltipAppearDelay", Math.Max(10,value)); }
+        get => AppSettings.GetValueOrDefault("TooltipAppearDelay", 750);
+        set => AppSettings.AddOrUpdateValue("TooltipAppearDelay", Math.Max(10,value));
     }
 
     /// <summary>
@@ -151,8 +151,8 @@ public static class UserSettings
     /// </summary>
     public static bool ScoreZeroForCohortAggregateContainers
     {
-        get { return AppSettings.GetValueOrDefault("ScoreZeroForCohortAggregateContainers", false); }
-        set { AppSettings.AddOrUpdateValue("ScoreZeroForCohortAggregateContainers", value); }
+        get => AppSettings.GetValueOrDefault("ScoreZeroForCohortAggregateContainers", false);
+        set => AppSettings.AddOrUpdateValue("ScoreZeroForCohortAggregateContainers", value);
     }
 
     /// <summary>
@@ -160,37 +160,36 @@ public static class UserSettings
     /// </summary>
     public static bool EnableCommits
     {
-        get { return AppSettings.GetValueOrDefault("EnableCommits", true); }
-        set { AppSettings.AddOrUpdateValue("EnableCommits", value); }
-
+        get => AppSettings.GetValueOrDefault("EnableCommits", true);
+        set => AppSettings.AddOrUpdateValue("EnableCommits", value);
     }
 
 
     #region Catalogue flag visibility settings
     public static bool ShowInternalCatalogues
     {
-        get { return AppSettings.GetValueOrDefault("ShowInternalCatalogues", true); }
-        set { AppSettings.AddOrUpdateValue("ShowInternalCatalogues", value); }
+        get => AppSettings.GetValueOrDefault("ShowInternalCatalogues", true);
+        set => AppSettings.AddOrUpdateValue("ShowInternalCatalogues", value);
     }
     public static bool ShowDeprecatedCatalogues
     {
-        get { return AppSettings.GetValueOrDefault("ShowDeprecatedCatalogues", true); }
-        set { AppSettings.AddOrUpdateValue("ShowDeprecatedCatalogues", value); }
+        get => AppSettings.GetValueOrDefault("ShowDeprecatedCatalogues", true);
+        set => AppSettings.AddOrUpdateValue("ShowDeprecatedCatalogues", value);
     }
     public static bool ShowColdStorageCatalogues
     {
-        get { return AppSettings.GetValueOrDefault("ShowColdStorageCatalogues", true); }
-        set { AppSettings.AddOrUpdateValue("ShowColdStorageCatalogues", value); }
+        get => AppSettings.GetValueOrDefault("ShowColdStorageCatalogues", true);
+        set => AppSettings.AddOrUpdateValue("ShowColdStorageCatalogues", value);
     }
     public static bool ShowProjectSpecificCatalogues
     {
-        get { return AppSettings.GetValueOrDefault("ShowProjectSpecificCatalogues", true); }
-        set { AppSettings.AddOrUpdateValue("ShowProjectSpecificCatalogues", value); }
+        get => AppSettings.GetValueOrDefault("ShowProjectSpecificCatalogues", true);
+        set => AppSettings.AddOrUpdateValue("ShowProjectSpecificCatalogues", value);
     }
     public static bool ShowNonExtractableCatalogues
     {
-        get { return AppSettings.GetValueOrDefault("ShowNonExtractableCatalogues", true); }
-        set { AppSettings.AddOrUpdateValue("ShowNonExtractableCatalogues", value); }
+        get => AppSettings.GetValueOrDefault("ShowNonExtractableCatalogues", true);
+        set => AppSettings.AddOrUpdateValue("ShowNonExtractableCatalogues", value);
     }
 
     /// <summary>
@@ -198,8 +197,8 @@ public static class UserSettings
     /// </summary>
     public static bool ApplyThemeToMenus
     {
-        get { return AppSettings.GetValueOrDefault("ApplyThemeToMenus", true); }
-        set { AppSettings.AddOrUpdateValue("ApplyThemeToMenus", value); }
+        get => AppSettings.GetValueOrDefault("ApplyThemeToMenus", true);
+        set => AppSettings.AddOrUpdateValue("ApplyThemeToMenus", value);
     }
 
     /// <summary>
@@ -207,8 +206,8 @@ public static class UserSettings
     /// </summary>
     public static int WrapMode
     {
-        get { return AppSettings.GetValueOrDefault("WrapMode", 0); }
-        set { AppSettings.AddOrUpdateValue("WrapMode", value); }
+        get => AppSettings.GetValueOrDefault("WrapMode", 0);
+        set => AppSettings.AddOrUpdateValue("WrapMode", value);
     }
 
     /// <summary>
@@ -220,8 +219,8 @@ public static class UserSettings
     /// </summary>
     public static string HeatMapColours 
     {
-        get { return AppSettings.GetValueOrDefault("HeatMapColours", null); }
-        set { AppSettings.AddOrUpdateValue("HeatMapColours", value); }
+        get => AppSettings.GetValueOrDefault("HeatMapColours", null);
+        set => AppSettings.AddOrUpdateValue("HeatMapColours", value);
     }
 
     /// <summary>
@@ -230,8 +229,8 @@ public static class UserSettings
     /// </summary>
     public static bool Wait5SecondsAfterStartupUI
     {
-        get { return AppSettings.GetValueOrDefault("Wait5SecondsAfterStartupUI", true); }
-        set { AppSettings.AddOrUpdateValue("Wait5SecondsAfterStartupUI", value); }
+        get => AppSettings.GetValueOrDefault("Wait5SecondsAfterStartupUI", true);
+        set => AppSettings.AddOrUpdateValue("Wait5SecondsAfterStartupUI", value);
     }
 
     /// <summary>
@@ -240,8 +239,8 @@ public static class UserSettings
     /// </summary>
     public static bool ShowCohortWizard
     {
-        get { return AppSettings.GetValueOrDefault("ShowCohortWizard", false); }
-        set { AppSettings.AddOrUpdateValue("ShowCohortWizard", value); }
+        get => AppSettings.GetValueOrDefault("ShowCohortWizard", false);
+        set => AppSettings.AddOrUpdateValue("ShowCohortWizard", value);
     }
 
     /// <summary>
@@ -251,8 +250,8 @@ public static class UserSettings
     /// </summary>
     public static bool StrictValidationForCohortBuilderContainers
     {
-        get { return AppSettings.GetValueOrDefault("StrictValidationForCohortBuilderContainers", true); }
-        set { AppSettings.AddOrUpdateValue("StrictValidationForCohortBuilderContainers", value); }
+        get => AppSettings.GetValueOrDefault("StrictValidationForCohortBuilderContainers", true);
+        set => AppSettings.AddOrUpdateValue("StrictValidationForCohortBuilderContainers", value);
     }
 
     /// <summary>
@@ -261,14 +260,14 @@ public static class UserSettings
     /// </summary>
     public static bool DoubleClickToExpand
     {
-        get { return AppSettings.GetValueOrDefault("DoubleClickToExpand", false); }
-        set { AppSettings.AddOrUpdateValue("DoubleClickToExpand", value); }
+        get => AppSettings.GetValueOrDefault("DoubleClickToExpand", false);
+        set => AppSettings.AddOrUpdateValue("DoubleClickToExpand", value);
     }
 
     public static string RecentHistory
     {
-        get { return AppSettings.GetValueOrDefault("RecentHistory", ""); }
-        set { AppSettings.AddOrUpdateValue("RecentHistory", value); }
+        get => AppSettings.GetValueOrDefault("RecentHistory", "");
+        set => AppSettings.AddOrUpdateValue("RecentHistory", value);
     }
 
     /// <summary>
@@ -276,24 +275,27 @@ public static class UserSettings
     /// <para>These figures are completely internal to the application and are not transmitted anywhere.You can view the results in the toolbar.</para>
     /// </summary>
     public static bool DebugPerformance { 
-        get { return AppSettings.GetValueOrDefault("DebugPerformance", false); }
-        set { AppSettings.AddOrUpdateValue("DebugPerformance", value); } }
+        get => AppSettings.GetValueOrDefault("DebugPerformance", false);
+        set => AppSettings.AddOrUpdateValue("DebugPerformance", value);
+    }
 
     /// <summary>
     /// <para>Automatically resize columns in the RDMP user interface with fit contents.</para>
     /// <para>Can be disabled if problems arrise with column content or header visibility</para>
     /// </summary>
     public static bool AutoResizeColumns {
-        get { return AppSettings.GetValueOrDefault("AutoResizeColumns", true); }
-        set { AppSettings.AddOrUpdateValue("AutoResizeColumns", value); } }
+        get => AppSettings.GetValueOrDefault("AutoResizeColumns", true);
+        set => AppSettings.AddOrUpdateValue("AutoResizeColumns", value);
+    }
         
 
     /// <summary>
     /// Show a popup confirmation dialog at the end of a pipeline completing execution
     /// </summary>
     public static bool ShowPipelineCompletedPopup { 
-        get { return AppSettings.GetValueOrDefault("ShowPipelineCompletedPopup", true); }
-        set { AppSettings.AddOrUpdateValue("ShowPipelineCompletedPopup", value); } }
+        get => AppSettings.GetValueOrDefault("ShowPipelineCompletedPopup", true);
+        set => AppSettings.AddOrUpdateValue("ShowPipelineCompletedPopup", value);
+    }
 
     /// <summary>
     /// <para>Enable to skip the checking stage of pipeline source component CohortIdentificationConfigurationSource.</para>
@@ -301,14 +303,14 @@ public static class UserSettings
     /// </summary>
     public static bool SkipCohortBuilderValidationOnCommit
     {
-        get { return AppSettings.GetValueOrDefault("SkipCohortBuilderValidationOnCommit", false); }
-        set { AppSettings.AddOrUpdateValue("SkipCohortBuilderValidationOnCommit", value); }
+        get => AppSettings.GetValueOrDefault("SkipCohortBuilderValidationOnCommit", false);
+        set => AppSettings.AddOrUpdateValue("SkipCohortBuilderValidationOnCommit", value);
     }
 
     public static string ConsoleColorScheme
     {
-        get { return AppSettings.GetValueOrDefault("ConsoleColorScheme", "default"); }
-        set { AppSettings.AddOrUpdateValue("ConsoleColorScheme", value); }
+        get => AppSettings.GetValueOrDefault("ConsoleColorScheme", "default");
+        set => AppSettings.AddOrUpdateValue("ConsoleColorScheme", value);
     }
 
     /// <summary>
@@ -317,8 +319,8 @@ public static class UserSettings
     /// </summary>
     public static bool HideEmptyTableLoadRunAudits
     {
-        get { return AppSettings.GetValueOrDefault("HideEmptyTableLoadRunAudits", false); }
-        set { AppSettings.AddOrUpdateValue("HideEmptyTableLoadRunAudits", value); }
+        get => AppSettings.GetValueOrDefault("HideEmptyTableLoadRunAudits", false);
+        set => AppSettings.AddOrUpdateValue("HideEmptyTableLoadRunAudits", value);
     }
 
     /// <summary>
@@ -327,8 +329,8 @@ public static class UserSettings
     /// </summary>
     public static bool AdvancedFindFilters
     {
-        get { return AppSettings.GetValueOrDefault("AdvancedFindFilters", false); }
-        set { AppSettings.AddOrUpdateValue("AdvancedFindFilters", value); }
+        get => AppSettings.GetValueOrDefault("AdvancedFindFilters", false);
+        set => AppSettings.AddOrUpdateValue("AdvancedFindFilters", value);
     }
 
     /// <summary>
@@ -336,19 +338,19 @@ public static class UserSettings
     /// </summary>
     public static int ArchiveTriggerTimeout
     {
-        get { return AppSettings.GetValueOrDefault("ArchiveTriggerTimeout", 30); }
-        set { AppSettings.AddOrUpdateValue("ArchiveTriggerTimeout", value); }
+        get => AppSettings.GetValueOrDefault("ArchiveTriggerTimeout", 30);
+        set => AppSettings.AddOrUpdateValue("ArchiveTriggerTimeout", value);
     }
 
     public static int FindWindowWidth
     {
-        get { return AppSettings.GetValueOrDefault("FindWindowWidth", 730); }
-        set { AppSettings.AddOrUpdateValue("FindWindowWidth", value); }
+        get => AppSettings.GetValueOrDefault("FindWindowWidth", 730);
+        set => AppSettings.AddOrUpdateValue("FindWindowWidth", value);
     }
     public static int FindWindowHeight
     {
-        get { return AppSettings.GetValueOrDefault("FindWindowHeight", 400); }
-        set { AppSettings.AddOrUpdateValue("FindWindowHeight", value); }
+        get => AppSettings.GetValueOrDefault("FindWindowHeight", 400);
+        set => AppSettings.AddOrUpdateValue("FindWindowHeight", value);
     }
 
     /// <summary>
@@ -358,8 +360,8 @@ public static class UserSettings
     /// </summary>
     public static bool SelectiveRefresh
     {
-        get { return AppSettings.GetValueOrDefault("SelectiveRefresh", false); }
-        set { AppSettings.AddOrUpdateValue("SelectiveRefresh", value); }
+        get => AppSettings.GetValueOrDefault("SelectiveRefresh", false);
+        set => AppSettings.AddOrUpdateValue("SelectiveRefresh", value);
     }
 
     /// <summary>
@@ -369,8 +371,8 @@ public static class UserSettings
     /// </summary>
     public static bool AlwaysJoinEverything
     {
-        get { return AppSettings.GetValueOrDefault("AlwaysJoinEverything", false); }
-        set { AppSettings.AddOrUpdateValue("AlwaysJoinEverything", value); }
+        get => AppSettings.GetValueOrDefault("AlwaysJoinEverything", false);
+        set => AppSettings.AddOrUpdateValue("AlwaysJoinEverything", value);
     }
 
     /// <summary>
@@ -383,8 +385,8 @@ public static class UserSettings
     /// </summary>
     public static bool AutoRunSqlQueries
     {
-        get { return AppSettings.GetValueOrDefault("AutoRunSqlQueries", false); }
-        set { AppSettings.AddOrUpdateValue("AutoRunSqlQueries", value); }
+        get => AppSettings.GetValueOrDefault("AutoRunSqlQueries", false);
+        set => AppSettings.AddOrUpdateValue("AutoRunSqlQueries", value);
     }
 
     /// <summary>
@@ -393,8 +395,8 @@ public static class UserSettings
     /// </summary>
     public static bool ExpandAllInCohortBuilder
     {
-        get { return AppSettings.GetValueOrDefault("ExpandAllInCohortBuilder", true); }
-        set { AppSettings.AddOrUpdateValue("ExpandAllInCohortBuilder", value); }
+        get => AppSettings.GetValueOrDefault("ExpandAllInCohortBuilder", true);
+        set => AppSettings.AddOrUpdateValue("ExpandAllInCohortBuilder", value);
     }
 
     /// <summary>
@@ -402,8 +404,8 @@ public static class UserSettings
     /// </summary>
     public static bool ShowProjectSpecificColumns
     {
-        get { return AppSettings.GetValueOrDefault("ShowProjectSpecificColumns", true); }
-        set { AppSettings.AddOrUpdateValue("ShowProjectSpecificColumns", value); }
+        get => AppSettings.GetValueOrDefault("ShowProjectSpecificColumns", true);
+        set => AppSettings.AddOrUpdateValue("ShowProjectSpecificColumns", value);
     }
 
     /// <summary>
@@ -416,8 +418,8 @@ public static class UserSettings
     /// </summary>
     public static bool UseAliasInsteadOfTransformInGroupByAggregateGraphs
     {
-        get { return AppSettings.GetValueOrDefault("ShowProjectSpecificColumns", false); }
-        set { AppSettings.AddOrUpdateValue("ShowProjectSpecificColumns", value); }
+        get => AppSettings.GetValueOrDefault("ShowProjectSpecificColumns", false);
+        set => AppSettings.AddOrUpdateValue("ShowProjectSpecificColumns", value);
     }
 
 
@@ -431,7 +433,7 @@ public static class UserSettings
     /// <returns></returns>
     public static CheckResult GetErrorReportingLevelFor(ErrorCode errorCode)
     {
-        var result = AppSettings.GetValueOrDefault("EC_" + errorCode.Code, errorCode.DefaultTreatment.ToString());
+        var result = AppSettings.GetValueOrDefault($"EC_{errorCode.Code}", errorCode.DefaultTreatment.ToString());
 
         return Enum.Parse<CheckResult>(result);
     }
@@ -443,7 +445,7 @@ public static class UserSettings
     /// <param name="value"></param>
     public static void SetErrorReportingLevelFor(ErrorCode errorCode,CheckResult value)
     {
-        AppSettings.AddOrUpdateValue("EC_" + errorCode.Code, value.ToString());
+        AppSettings.AddOrUpdateValue($"EC_{errorCode.Code}", value.ToString());
     }
 
     public static bool GetTutorialDone(Guid tutorialGuid)
@@ -451,7 +453,7 @@ public static class UserSettings
         if(tutorialGuid == Guid.Empty)
             return false;
 
-        return AppSettings.GetValueOrDefault("T_" + tutorialGuid.ToString("N"), false); 
+        return AppSettings.GetValueOrDefault($"T_{tutorialGuid:N}", false); 
     }
         
     public static void SetTutorialDone(Guid tutorialGuid,bool value)
@@ -459,7 +461,7 @@ public static class UserSettings
         if(tutorialGuid == Guid.Empty)
             return;
 
-        AppSettings.AddOrUpdateValue("T_" + tutorialGuid.ToString("N"), value);
+        AppSettings.AddOrUpdateValue($"T_{tutorialGuid:N}", value);
     }
 
     public static void SetColumnWidth(Guid columnGuid, int width)
@@ -472,7 +474,7 @@ public static class UserSettings
 
     public static void SetColumnWidth(string colIdentifier, int width)
     {
-        AppSettings.AddOrUpdateValue("ColW_" + colIdentifier, width);
+        AppSettings.AddOrUpdateValue($"ColW_{colIdentifier}", width);
     }
 
     public static void SetColumnVisible(Guid columnGuid, bool visible)
@@ -485,7 +487,7 @@ public static class UserSettings
 
     public static void SetColumnVisible(string colIdentifier,bool visible)
     {
-        AppSettings.AddOrUpdateValue("ColV_" + colIdentifier, visible);
+        AppSettings.AddOrUpdateValue($"ColV_{colIdentifier}", visible);
     }
 
     public static int GetColumnWidth(Guid columnGuid)
@@ -497,7 +499,7 @@ public static class UserSettings
     }
     public static int GetColumnWidth(string colIdentifier)
     {
-        return AppSettings.GetValueOrDefault("ColW_" + colIdentifier, 100);
+        return AppSettings.GetValueOrDefault($"ColW_{colIdentifier}", 100);
     }
 
     public static bool GetColumnVisible(Guid columnGuid)
@@ -510,17 +512,17 @@ public static class UserSettings
 
     public static bool GetColumnVisible(string colIdentifier)
     {
-        return AppSettings.GetValueOrDefault("ColV_" + colIdentifier, true);
+        return AppSettings.GetValueOrDefault($"ColV_{colIdentifier}", true);
     }
 
     public static string[] GetHistoryForControl(Guid controlGuid)
     {
-        return AppSettings.GetValueOrDefault("A_" +controlGuid.ToString("N"), "").Split(new []{"#!#"},StringSplitOptions.None);
+        return AppSettings.GetValueOrDefault($"A_{controlGuid:N}", "").Split(new []{"#!#"},StringSplitOptions.None);
     }
         
     public static void SetHistoryForControl(Guid controlGuid,IEnumerable<string> history)
     {
-        AppSettings.AddOrUpdateValue("A_" + controlGuid.ToString("N"), string.Join("#!#", history));
+        AppSettings.AddOrUpdateValue($"A_{controlGuid:N}", string.Join("#!#", history));
     }
 
     public static void AddHistoryForControl(Guid guid, string v)
@@ -542,13 +544,13 @@ public static class UserSettings
     {
         lock (_oLockUserSettings)
         {
-            var value = AppSettings.GetValueOrDefault("LastColumnSort_" + controlGuid.ToString("N"), null);
+            var value = AppSettings.GetValueOrDefault($"LastColumnSort_{controlGuid:N}", null);
 
             //if we don't have a value
             if (string.IsNullOrWhiteSpace(value))
                 return null;
 
-            string[] args = value.Split(new[] {"#!#"}, StringSplitOptions.RemoveEmptyEntries);
+            var args = value.Split(new[] {"#!#"}, StringSplitOptions.RemoveEmptyEntries);
 
             //or it doesn't split properly 
             if (args.Length != 2)
@@ -570,7 +572,7 @@ public static class UserSettings
     {
         lock (_oLockUserSettings)
         {
-            AppSettings.AddOrUpdateValue("LastColumnSort_" + controlGuid.ToString("N"), columnName +"#!#" + ascending);    
+            AppSettings.AddOrUpdateValue($"LastColumnSort_{controlGuid:N}", $"{columnName}#!#{ascending}");    
         }
     }
 
@@ -583,7 +585,7 @@ public static class UserSettings
     /// <returns></returns>
     public static int GetSplitterDistance(Guid controlGuid)
     {
-        return AppSettings.GetValueOrDefault("SplitterDistance_" + controlGuid.ToString("N"),-1);
+        return AppSettings.GetValueOrDefault($"SplitterDistance_{controlGuid:N}",-1);
     }
 
     /// <summary>
@@ -596,7 +598,7 @@ public static class UserSettings
     {
         lock (_oLockUserSettings)
         {
-            AppSettings.AddOrUpdateValue("SplitterDistance_" + controlGuid.ToString("N"), splitterDistance);
+            AppSettings.AddOrUpdateValue($"SplitterDistance_{controlGuid:N}", splitterDistance);
         }
     }
 

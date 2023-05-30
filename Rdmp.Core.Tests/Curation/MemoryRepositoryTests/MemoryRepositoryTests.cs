@@ -33,7 +33,7 @@ class MemoryRepositoryTests
     [Test]
     public void TestMemoryRepository_CatalogueConstructor()
     {
-        Catalogue memCatalogue = new Catalogue(_repo, "My New Catalogue");
+        var memCatalogue = new Catalogue(_repo, "My New Catalogue");
 
         Assert.AreEqual(memCatalogue, _repo.GetObjectByID<Catalogue>(memCatalogue.ID));
     }
@@ -41,14 +41,14 @@ class MemoryRepositoryTests
     [Test]
     public void TestMemoryRepository_QueryBuilder()
     {
-        Catalogue memCatalogue = new Catalogue(_repo, "My New Catalogue");
+        var memCatalogue = new Catalogue(_repo, "My New Catalogue");
 
-        CatalogueItem myCol = new CatalogueItem(_repo,memCatalogue,"MyCol1");
+        var myCol = new CatalogueItem(_repo,memCatalogue,"MyCol1");
 
         var ti = new TableInfo(_repo, "My table");
         var col = new ColumnInfo(_repo, "Mycol", "varchar(10)", ti);
 
-        ExtractionInformation ei = new ExtractionInformation(_repo, myCol, col, col.Name);
+        var ei = new ExtractionInformation(_repo, myCol, col, col.Name);
 
         Assert.AreEqual(memCatalogue, _repo.GetObjectByID<Catalogue>(memCatalogue.ID));
 

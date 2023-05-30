@@ -71,7 +71,8 @@ public partial class PluginProcessTaskUI : PluginProcessTaskUI_Design, ISaveable
 
             if(string.IsNullOrWhiteSpace(className))
             {
-                activator.KillForm(ParentForm,new Exception("No class has been specified on ProcessTask '" + databaseObject +"'"));
+                activator.KillForm(ParentForm,new Exception(
+                    $"No class has been specified on ProcessTask '{databaseObject}'"));
                 return;
             }
 
@@ -80,11 +81,13 @@ public partial class PluginProcessTaskUI : PluginProcessTaskUI_Design, ISaveable
                 _underlyingType = repo.MEF.GetType(className);
 
                 if(_underlyingType == null)
-                    activator.KillForm(ParentForm,new Exception("Could not find Type '" +className +"' for ProcessTask '" + databaseObject + "'"));
+                    activator.KillForm(ParentForm,new Exception(
+                        $"Could not find Type '{className}' for ProcessTask '{databaseObject}'"));
             }
             catch (Exception e)
             {
-                activator.KillForm(ParentForm,new Exception("MEF crashed while trying to look up Type '" +className +"' for ProcessTask '" + databaseObject + "'",e));
+                activator.KillForm(ParentForm,new Exception(
+                    $"MEF crashed while trying to look up Type '{className}' for ProcessTask '{databaseObject}'",e));
                 return;
             }
 

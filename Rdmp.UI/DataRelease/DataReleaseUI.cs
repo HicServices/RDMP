@@ -257,7 +257,7 @@ public partial class DataReleaseUI : DataReleaseUI_Design
         
     public override string GetTabName()
     {
-        return "Release: " + _project;
+        return $"Release: {_project}";
     }
         
     public void TickAllFor(ExtractionConfiguration configuration)

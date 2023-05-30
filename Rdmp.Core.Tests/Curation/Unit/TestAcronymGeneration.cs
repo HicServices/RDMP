@@ -22,9 +22,9 @@ public class TestAcronymGeneration : DatabaseTests
     [TestCase("Datashet DMP 32", "DDMP32")]
     public void Predict(string name, string predictedAcronym)
     {
-        DitaCatalogueExtractor extractor = new DitaCatalogueExtractor(CatalogueRepository, null);
+        var extractor = new DitaCatalogueExtractor(CatalogueRepository, null);
 
-        string suggestion = extractor.GetAcronymSuggestionFromCatalogueName(name);
+        var suggestion = extractor.GetAcronymSuggestionFromCatalogueName(name);
 
         Assert.AreEqual(predictedAcronym,suggestion);
     }

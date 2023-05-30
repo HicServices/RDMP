@@ -55,7 +55,7 @@ public abstract class PickObjectBase
 
     protected Type ParseDatabaseEntityType(string objectType, string arg, int idx)
     {
-        Type t = GetTypeFromShortCodeIfAny(objectType) ?? Activator.RepositoryLocator.CatalogueRepository.MEF.GetType(objectType);
+        var t = GetTypeFromShortCodeIfAny(objectType) ?? Activator.RepositoryLocator.CatalogueRepository.MEF.GetType(objectType);
 
         if(t == null)
             throw new CommandLineObjectPickerParseException("Could not recognize Type name",idx,arg);
@@ -124,7 +124,7 @@ public abstract class PickObjectBase
     {
         //build regex for the pattern which must be a complete match with anything (.*) matching the users wildcard
         if (!patternDictionary.ContainsKey(pattern))
-            patternDictionary.Add(pattern, new Regex("^" + Regex.Escape(pattern).Replace(@"\*", ".*") + "$",RegexOptions.IgnoreCase));
+            patternDictionary.Add(pattern, new Regex($"^{Regex.Escape(pattern).Replace(@"\*", ".*")}$",RegexOptions.IgnoreCase));
             
         return patternDictionary[pattern].IsMatch(o.ToString());
     }

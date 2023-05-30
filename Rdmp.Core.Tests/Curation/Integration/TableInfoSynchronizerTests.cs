@@ -36,12 +36,12 @@ public class TableInfoSynchronizerTests:DatabaseTests
         using (var con = _server.GetConnection())
         {
             con.Open();
-            _server.GetCommand("CREATE TABLE " + TABLE_NAME + "(Name varchar(10), Address varchar(500))",con).ExecuteNonQuery();
+            _server.GetCommand($"CREATE TABLE {TABLE_NAME}(Name varchar(10), Address varchar(500))",con).ExecuteNonQuery();
         }
 
         var tbl = _database.ExpectTable("TableInfoSynchronizerTests");
             
-        TableInfoImporter importer = new TableInfoImporter(CatalogueRepository,tbl);
+        var importer = new TableInfoImporter(CatalogueRepository,tbl);
         importer.DoImport(out tableInfoCreated,out columnInfosCreated);
     }
 
@@ -50,7 +50,7 @@ public class TableInfoSynchronizerTests:DatabaseTests
     {
         Assert.AreEqual(TABLE_NAME , tableInfoCreated.GetRuntimeName());
             
-        TableInfoSynchronizer synchronizer = new TableInfoSynchronizer(tableInfoCreated);
+        var synchronizer = new TableInfoSynchronizer(tableInfoCreated);
         Assert.AreEqual(true,synchronizer.Synchronize(new ThrowImmediatelyCheckNotifier()));
     }
 
@@ -65,7 +65,7 @@ public class TableInfoSynchronizerTests:DatabaseTests
         var colToDrop = table.DiscoverColumn("Address");
         table.DropColumn(colToDrop);
             
-        TableInfoSynchronizer synchronizer = new TableInfoSynchronizer(tableInfoCreated);
+        var synchronizer = new TableInfoSynchronizer(tableInfoCreated);
 
         if (acceptChanges)
         {
@@ -90,11 +90,11 @@ public class TableInfoSynchronizerTests:DatabaseTests
         using (var con = _database.Server.GetConnection())
         {
             con.Open();
-            _server.GetCommand("ALTER TABLE " + TABLE_NAME + " ADD Birthday datetime not null", con).ExecuteNonQuery();
+            _server.GetCommand($"ALTER TABLE {TABLE_NAME} ADD Birthday datetime not null", con).ExecuteNonQuery();
         }
 
 
-        TableInfoSynchronizer synchronizer = new TableInfoSynchronizer(tableInfoCreated);
+        var synchronizer = new TableInfoSynchronizer(tableInfoCreated);
 
         if (acceptChanges)
         {
@@ -114,7 +114,7 @@ public class TableInfoSynchronizerTests:DatabaseTests
     [TestCase(false)]
     public void SynchronizationTests_ColumnAddedWithCatalogue(bool acceptChanges)
     {
-        ForwardEngineerCatalogue cataEngineer = new ForwardEngineerCatalogue(tableInfoCreated, columnInfosCreated);
+        var cataEngineer = new ForwardEngineerCatalogue(tableInfoCreated, columnInfosCreated);
         cataEngineer.ExecuteForwardEngineering(out var cata, out var cataItems, out var extractionInformations);
 
         try
@@ -126,10 +126,10 @@ public class TableInfoSynchronizerTests:DatabaseTests
             using (var con = _server.GetConnection())
             {
                 con.Open();
-                _server.GetCommand("ALTER TABLE " + TABLE_NAME + " ADD Birthday datetime not null", con).ExecuteNonQuery();
+                _server.GetCommand($"ALTER TABLE {TABLE_NAME} ADD Birthday datetime not null", con).ExecuteNonQuery();
             }
             
-            TableInfoSynchronizer synchronizer = new TableInfoSynchronizer(tableInfoCreated);
+            var synchronizer = new TableInfoSynchronizer(tableInfoCreated);
 
             if (acceptChanges)
             {

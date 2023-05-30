@@ -25,9 +25,9 @@ public static class AssemblyResolver
     {
         AppDomain.CurrentDomain.AssemblyResolve += (sender, resolveArgs) =>
         {
-            string assemblyInfo = resolveArgs.Name;
+            var assemblyInfo = resolveArgs.Name;
             var parts = assemblyInfo.Split(',');
-            string name = parts[0];
+            var name = parts[0];
 
             if (assemblyResolveAttempts.ContainsKey(assemblyInfo))
                 return assemblyResolveAttempts[assemblyInfo];
@@ -35,9 +35,9 @@ public static class AssemblyResolver
             //start out assuming we cannot load it
             assemblyResolveAttempts.Add(assemblyInfo,null);
                 
-            foreach(DirectoryInfo dir in dirs)
+            foreach(var dir in dirs)
             {
-                var dll = dir.EnumerateFiles(name + ".dll").SingleOrDefault();
+                var dll = dir.EnumerateFiles($"{name}.dll").SingleOrDefault();
                 if(dll != null)
                     return assemblyResolveAttempts[assemblyInfo] = LoadFile(dll); //cache and return answer
             }
@@ -47,7 +47,7 @@ public static class AssemblyResolver
                 return null;
 
             var directoryInfo = new DirectoryInfo(assembly);
-            var file = directoryInfo?.EnumerateFiles(name + ".dll").FirstOrDefault();
+            var file = directoryInfo?.EnumerateFiles($"{name}.dll").FirstOrDefault();
             if (file == null)
                 return null;
 

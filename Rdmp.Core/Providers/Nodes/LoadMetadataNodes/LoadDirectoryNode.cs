@@ -19,8 +19,8 @@ public class LoadDirectoryNode: Node,IDirectoryInfoNode, IOrderable
         LoadMetadata = loadMetadata;
     }
 
-    public bool IsEmpty { get { return string.IsNullOrWhiteSpace(LoadMetadata.LocationOfFlatFiles); } }
-        
+    public bool IsEmpty => string.IsNullOrWhiteSpace(LoadMetadata.LocationOfFlatFiles);
+
 
     public override string ToString()
     {
@@ -53,5 +53,6 @@ public class LoadDirectoryNode: Node,IDirectoryInfoNode, IOrderable
         return (LoadMetadata != null ? LoadMetadata.GetHashCode() : 0);
     }
 
-    public int Order { get { return 3; } set{} }
+    public int Order { get => 3;
+        set{} }
 }

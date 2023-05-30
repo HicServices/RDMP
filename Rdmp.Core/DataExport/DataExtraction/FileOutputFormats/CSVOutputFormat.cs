@@ -86,9 +86,9 @@ public class CSVOutputFormat : FileOutputFormat
 
     public string CleanString(object o)
     {
-        int numberOfSeparatorsStrippedOutThisPass = 0;
+        var numberOfSeparatorsStrippedOutThisPass = 0;
 
-        string toReturn = CleanString(o, Separator, out numberOfSeparatorsStrippedOutThisPass, DateFormat,RoundFloatsTo);
+        var toReturn = CleanString(o, Separator, out numberOfSeparatorsStrippedOutThisPass, DateFormat,RoundFloatsTo);
 
         SeparatorsStrippedOut += numberOfSeparatorsStrippedOutThisPass;
 
@@ -100,7 +100,7 @@ public class CSVOutputFormat : FileOutputFormat
     {
         if (o is DateTime)
         {
-            DateTime dt = (DateTime)o;
+            var dt = (DateTime)o;
             separatorsStrippedOut = 0;
             return dt.ToString(dateFormat);
         }
@@ -110,14 +110,14 @@ public class CSVOutputFormat : FileOutputFormat
             separatorsStrippedOut = 0;
             switch(o)
             {
-                case float f : return f.ToString("N" + roundFloatsTo.Value);
-                case decimal dec : return dec.ToString("N" + roundFloatsTo.Value);
-                case double d: return d.ToString("N" + roundFloatsTo.Value);
+                case float f : return f.ToString($"N{roundFloatsTo.Value}");
+                case decimal dec : return dec.ToString($"N{roundFloatsTo.Value}");
+                case double d: return d.ToString($"N{roundFloatsTo.Value}");
             }
         }
 
         //in order to kep a count 
-        Regex regexReplace = new Regex(Regex.Escape(separator));
+        var regexReplace = new Regex(Regex.Escape(separator));
 
         separatorsStrippedOut = 0;
 
@@ -128,7 +128,7 @@ public class CSVOutputFormat : FileOutputFormat
         }
 
         if (o is string)
-            foreach (string cToStripOut in ThingsToStripOut)
+            foreach (var cToStripOut in ThingsToStripOut)
                 o = o.ToString().Replace(cToStripOut, _illegalCharactersReplacement);
 
         return o.ToString().Trim();

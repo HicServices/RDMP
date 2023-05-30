@@ -111,8 +111,8 @@ public class DataExportChildProvider : CatalogueChildProvider
             
         //This means that the ToString method in ExtractableDataSet doesn't need to go lookup catalogue info
         var catalogueIdDict = AllCatalogues.ToDictionaryEx(c => c.ID, c2 => c2);
-        foreach (ExtractableDataSet ds in ExtractableDataSets)
-            if(catalogueIdDict.TryGetValue(ds.Catalogue_ID, out Catalogue cata))
+        foreach (var ds in ExtractableDataSets)
+            if(catalogueIdDict.TryGetValue(ds.Catalogue_ID, out var cata))
                 ds.InjectKnown(cata);
              
         ReportProgress("Injecting ExtractableDataSet");
@@ -139,7 +139,7 @@ public class DataExportChildProvider : CatalogueChildProvider
         Cohorts = GetAllObjects<ExtractableCohort>(dataExportRepository);
         _cohortsByOriginId = new Dictionary<int,HashSet<ExtractableCohort>>();
 
-        foreach (ExtractableCohort c in Cohorts)
+        foreach (var c in Cohorts)
         {
             if(!_cohortsByOriginId.ContainsKey(c.OriginID))
                 _cohortsByOriginId.Add(c.OriginID,new HashSet<ExtractableCohort>());
@@ -160,7 +160,7 @@ public class DataExportChildProvider : CatalogueChildProvider
         RootCohortsNode = new AllCohortsNode();
         AddChildren(RootCohortsNode,new DescendancyList(RootCohortsNode));
 
-        foreach (ExtractableDataSetPackage package in AllPackages)
+        foreach (var package in AllPackages)
             AddChildren(package, new DescendancyList(package));
             
         ReportProgress("Packages and Cohorts");
@@ -174,8 +174,8 @@ public class DataExportChildProvider : CatalogueChildProvider
         var cataToEds = new Dictionary<int,ExtractableDataSet>(ExtractableDataSets.ToDictionary(k => k.Catalogue_ID));
 
         //inject extractability into Catalogues
-        foreach (Catalogue catalogue in AllCatalogues)
-            if (cataToEds.TryGetValue(catalogue.ID, out ExtractableDataSet result))
+        foreach (var catalogue in AllCatalogues)
+            if (cataToEds.TryGetValue(catalogue.ID, out var result))
                 catalogue.InjectKnown(result.GetCatalogueExtractabilityStatus());
             else
                 catalogue.InjectKnown(new CatalogueExtractabilityStatus(false,false));
@@ -236,7 +236,7 @@ public class DataExportChildProvider : CatalogueChildProvider
         _extractionProgressesBySelectedDataSetID = GetAllObjects<ExtractionProgress>(dataExportRepository).ToDictionaryEx(ds => ds.SelectedDataSets_ID, d => d); ;
 
         var dsDictionary = ExtractableDataSets.ToDictionaryEx(ds => ds.ID, d => d);
-        foreach (SelectedDataSets s in SelectedDataSets)
+        foreach (var s in SelectedDataSets)
             s.InjectKnown(dsDictionary[s.ExtractableDataSet_ID]);
 
         ReportProgress("Injecting SelectedDataSets");
@@ -245,8 +245,8 @@ public class DataExportChildProvider : CatalogueChildProvider
 
         var configToSds = SelectedDataSets.GroupBy(k => k.ExtractionConfiguration_ID).ToDictionaryEx(gdc => gdc.Key, gdc => gdc.ToList());
 
-        foreach (ExtractionConfiguration configuration in ExtractionConfigurations)
-            if (configToSds.TryGetValue(configuration.ID, out List<SelectedDataSets> result))
+        foreach (var configuration in ExtractionConfigurations)
+            if (configToSds.TryGetValue(configuration.ID, out var result))
                 _configurationToDatasetMapping.Add(configuration, result);
     }
 
@@ -276,7 +276,7 @@ public class DataExportChildProvider : CatalogueChildProvider
         
     private void AddChildren(Project project, DescendancyList descendancy)
     {
-        HashSet<object> children = new HashSet<object>();
+        var children = new HashSet<object>();
 
         var projectCohortNode = new ProjectCohortsNode(project);
         children.Add(projectCohortNode);
@@ -298,9 +298,9 @@ public class DataExportChildProvider : CatalogueChildProvider
 
     private void AddChildren(ProjectCataloguesNode projectCataloguesNode, DescendancyList descendancy)
     {
-        HashSet<object> children = new HashSet<object>();
+        var children = new HashSet<object>();
 
-        foreach (ExtractableDataSet projectSpecificEds in ExtractableDataSets.Where(eds=>eds.Project_ID == projectCataloguesNode.Project.ID))
+        foreach (var projectSpecificEds in ExtractableDataSets.Where(eds=>eds.Project_ID == projectCataloguesNode.Project.ID))
         {
                 
             var cata = (Catalogue)projectSpecificEds.Catalogue;
@@ -319,7 +319,7 @@ public class DataExportChildProvider : CatalogueChildProvider
 
     private void AddChildren(ProjectCohortsNode projectCohortsNode, DescendancyList descendancy)
     {
-        HashSet<object> children = new HashSet<object>();
+        var children = new HashSet<object>();
         var projectCiCsNode = new ProjectCohortIdentificationConfigurationAssociationsNode(projectCohortsNode.Project);
         children.Add(projectCiCsNode);
         AddChildren(projectCiCsNode, descendancy.Add(projectCiCsNode));
@@ -333,11 +333,11 @@ public class DataExportChildProvider : CatalogueChildProvider
 
     private void AddChildren(ProjectSavedCohortsNode savedCohortsNode, DescendancyList descendancy)
     {
-        HashSet<object> children = new HashSet<object>();
+        var children = new HashSet<object>();
 
         var cohortGroups = GetAllCohortProjectUsageNodesFor(savedCohortsNode.Project);
 
-        foreach (CohortSourceUsedByProjectNode cohortSourceUsedByProjectNode in cohortGroups)
+        foreach (var cohortSourceUsedByProjectNode in cohortGroups)
         {
             AddChildren(cohortSourceUsedByProjectNode, descendancy.Add(cohortSourceUsedByProjectNode));
             children.Add(cohortSourceUsedByProjectNode);
@@ -349,8 +349,8 @@ public class DataExportChildProvider : CatalogueChildProvider
     private void AddChildren(ProjectCohortIdentificationConfigurationAssociationsNode projectCiCsNode, DescendancyList descendancy)
     {
         //add the associations
-        HashSet<object> children = new HashSet<object>();
-        foreach (ProjectCohortIdentificationConfigurationAssociation association in AllProjectAssociatedCics.Where(assoc => assoc.Project_ID == projectCiCsNode.Project.ID))
+        var children = new HashSet<object>();
+        foreach (var association in AllProjectAssociatedCics.Where(assoc => assoc.Project_ID == projectCiCsNode.Project.ID))
         {
 
             var matchingCic = AllCohortIdentificationConfigurations.SingleOrDefault(cic => cic.ID == association.CohortIdentificationConfiguration_ID);
@@ -358,9 +358,7 @@ public class DataExportChildProvider : CatalogueChildProvider
             if (matchingCic == null)
                 _errorsCheckNotifier.OnCheckPerformed(
                     new CheckEventArgs(
-                        "Failed to find Associated Cohort Identification Configuration with ID " +
-                        association.CohortIdentificationConfiguration_ID +
-                        " which was supposed to be associated with " + association.Project, CheckResult.Fail));//inject knowledge of what the cic is so it doesn't have to be fetched during ToString
+                        $"Failed to find Associated Cohort Identification Configuration with ID {association.CohortIdentificationConfiguration_ID} which was supposed to be associated with {association.Project}", CheckResult.Fail));//inject knowledge of what the cic is so it doesn't have to be fetched during ToString
             else
             {
                 association.InjectKnown(matchingCic);
@@ -375,7 +373,7 @@ public class DataExportChildProvider : CatalogueChildProvider
 
     private void AddChildren(ExtractionConfigurationsNode extractionConfigurationsNode, DescendancyList descendancy)
     {
-        HashSet<object> children = new HashSet<object>();
+        var children = new HashSet<object>();
 
         //Create a frozen extraction configurations folder as a subfolder of each ExtractionConfigurationsNode
         var frozenConfigurationsNode = new FrozenExtractionConfigurationsNode(extractionConfigurationsNode.Project);
@@ -387,8 +385,8 @@ public class DataExportChildProvider : CatalogueChildProvider
         AddChildren(frozenConfigurationsNode,descendancy.Add(frozenConfigurationsNode));
 
         //Add ExtractionConfigurations which are not released (frozen)
-        if(ExtractionConfigurationsByProject.TryGetValue(extractionConfigurationsNode.Project.ID, out List<ExtractionConfiguration> result))
-            foreach (ExtractionConfiguration config in result.Where(c=>!c.IsReleased))
+        if(ExtractionConfigurationsByProject.TryGetValue(extractionConfigurationsNode.Project.ID, out var result))
+            foreach (var config in result.Where(c=>!c.IsReleased))
             {
                 AddChildren(config, descendancy.Add(config));
                 children.Add(config);
@@ -399,11 +397,11 @@ public class DataExportChildProvider : CatalogueChildProvider
 
     private void AddChildren(FrozenExtractionConfigurationsNode frozenExtractionConfigurationsNode, DescendancyList descendancy)
     {
-        HashSet<object> children = new HashSet<object>();
+        var children = new HashSet<object>();
 
         //Add ExtractionConfigurations which are not released (frozen)
-        if(ExtractionConfigurationsByProject.TryGetValue(frozenExtractionConfigurationsNode.Project.ID, out List<ExtractionConfiguration> result))
-            foreach (ExtractionConfiguration config in result.Where(c => c.IsReleased))
+        if(ExtractionConfigurationsByProject.TryGetValue(frozenExtractionConfigurationsNode.Project.ID, out var result))
+            foreach (var config in result.Where(c => c.IsReleased))
             {
                 AddChildren(config, descendancy.Add(config));
                 children.Add(config);
@@ -414,7 +412,7 @@ public class DataExportChildProvider : CatalogueChildProvider
 
     private void AddChildren(IExtractionConfiguration extractionConfiguration, DescendancyList descendancy)
     {
-        HashSet<object> children = new HashSet<object>();
+        var children = new HashSet<object>();
 
         var parameters = AllGlobalExtractionFilterParameters.Where(p => p.ExtractionConfiguration_ID == extractionConfiguration.ID)
             .ToArray();
@@ -430,7 +428,7 @@ public class DataExportChildProvider : CatalogueChildProvider
         }
 
         //if it has extractable datasets add those
-        foreach (SelectedDataSets ds in GetDatasets(extractionConfiguration))
+        foreach (var ds in GetDatasets(extractionConfiguration))
         {
             children.Add(ds);
             AddChildren(ds,descendancy.Add(ds));
@@ -442,7 +440,7 @@ public class DataExportChildProvider : CatalogueChildProvider
 
     private void AddChildren(SelectedDataSets selectedDataSets, DescendancyList descendancy)
     {
-        HashSet<object> children = new HashSet<object>();
+        var children = new HashSet<object>();
 
         if (_extractionProgressesBySelectedDataSetID.ContainsKey(selectedDataSets.ID))
         {
@@ -463,7 +461,7 @@ public class DataExportChildProvider : CatalogueChildProvider
 
     private void AddChildren(FilterContainer filterContainer, DescendancyList descendancy)
     {
-        HashSet<object> children = new HashSet<object>();
+        var children = new HashSet<object>();
 
         foreach (FilterContainer subcontainer in _dataExportFilterManager.GetSubContainers(filterContainer))
         {
@@ -504,7 +502,7 @@ public class DataExportChildProvider : CatalogueChildProvider
     {
         var cohorts = Cohorts.Where(c => c.ExternalCohortTable_ID == externalCohortTable.ID).ToArray();
             
-        foreach (ExtractableCohort cohort in cohorts)
+        foreach (var cohort in cohorts)
             cohort.InjectKnown(externalCohortTable);
 
         AddToDictionaries(new HashSet<object>(cohorts), descendancy);
@@ -557,9 +555,9 @@ public class DataExportChildProvider : CatalogueChildProvider
                         {
                             //really should be only one here but still they might for some reason have 2 references to the same external cohort
                             
-                            if(_cohortsByOriginId.TryGetValue(Convert.ToInt32(r["OriginID"]),out HashSet<ExtractableCohort> result))
+                            if(_cohortsByOriginId.TryGetValue(Convert.ToInt32(r["OriginID"]),out var result))
                                 //Tell the cohorts what their external data values are so they don't have to fetch them themselves individually
-                                foreach (ExtractableCohort c in result.Where(c=> c.ExternalCohortTable_ID == source.ID))
+                                foreach (var c in result.Where(c=> c.ExternalCohortTable_ID == source.ID))
                                 {
                                     //load external data from the result set
                                     var externalData = new ExternalCohortDefinitionData(r, source.Name);
@@ -603,7 +601,7 @@ public class DataExportChildProvider : CatalogueChildProvider
             _errorsCheckNotifier.OnCheckPerformed(new CheckEventArgs(ErrorCodes.CouldNotReachCohort, ex, source));
 
         //tell them not to bother looking for the cohort data because its inaccessible
-        foreach (ExtractableCohort cohort in Cohorts.Where(c => c.ExternalCohortTable_ID == source.ID).ToArray())
+        foreach (var cohort in Cohorts.Where(c => c.ExternalCohortTable_ID == source.ID).ToArray())
             cohort.InjectKnown((ExternalCohortDefinitionData)null);
     }
 
@@ -619,7 +617,7 @@ public class DataExportChildProvider : CatalogueChildProvider
         if (project.ProjectNumber == null || !ProjectNumberToCohortsDictionary.ContainsKey(project.ProjectNumber.Value))
             return new List<CohortSourceUsedByProjectNode>();
 
-        List<CohortSourceUsedByProjectNode> toReturn = new List<CohortSourceUsedByProjectNode>();
+        var toReturn = new List<CohortSourceUsedByProjectNode>();
             
             
         foreach (var cohort in ProjectNumberToCohortsDictionary[project.ProjectNumber.Value])
@@ -665,7 +663,7 @@ public class DataExportChildProvider : CatalogueChildProvider
     {
         lock(WriteLock)
         {
-            return _configurationToDatasetMapping.TryGetValue(extractionConfiguration,out List<SelectedDataSets> result)?
+            return _configurationToDatasetMapping.TryGetValue(extractionConfiguration,out var result)?
                 (IEnumerable<SelectedDataSets>) result :Array.Empty<SelectedDataSets>();
         }
     }
@@ -742,7 +740,7 @@ public class DataExportChildProvider : CatalogueChildProvider
                     c.InjectKnown((ExtractionInformation)null);
                 else
                 {
-                    if (AllExtractionInformationsDictionary.TryGetValue(c.CatalogueExtractionInformation_ID.Value,out ExtractionInformation ei))
+                    if (AllExtractionInformationsDictionary.TryGetValue(c.CatalogueExtractionInformation_ID.Value,out var ei))
                         c.InjectKnown(ei);
                 }
             }
@@ -759,7 +757,8 @@ public class DataExportChildProvider : CatalogueChildProvider
 
             if(!(other is DataExportChildProvider dxOther))
             {
-                throw new NotSupportedException("Did not know how to UpdateTo ICoreChildProvider of type " + other.GetType().Name);
+                throw new NotSupportedException(
+                    $"Did not know how to UpdateTo ICoreChildProvider of type {other.GetType().Name}");
             }
 
             //That's one way to avoid memory leaks... anyone holding onto a stale one of these is going to have a bad day

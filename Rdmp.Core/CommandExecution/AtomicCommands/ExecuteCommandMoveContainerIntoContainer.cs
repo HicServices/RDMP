@@ -29,7 +29,7 @@ public class ExecuteCommandMoveContainerIntoContainer : BasicCommandExecution
         if(containerCombineable.AllSubContainersRecursive.Contains(targetContainer))
             SetImpossible("You cannot move a container (AND/OR) into one of its own subcontainers");
 
-        if(targetContainer.ShouldBeReadOnly(out string reason))
+        if(targetContainer.ShouldBeReadOnly(out var reason))
             SetImpossible(reason);
     }
 

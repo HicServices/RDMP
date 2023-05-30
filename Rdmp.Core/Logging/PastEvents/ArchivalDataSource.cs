@@ -43,13 +43,13 @@ public class ArchivalDataSource : IArchivalLoggingRecordOfPastEvent, IComparable
 
         var s = ToString();
         if (s.Length > ArchivalDataLoadInfo.MaxDescriptionLength)
-            return s.Substring(0, ArchivalDataLoadInfo.MaxDescriptionLength) + "...";
+            return $"{s.Substring(0, ArchivalDataLoadInfo.MaxDescriptionLength)}...";
         return s;
     }
 
     public override string ToString()
     {
-        return  "Source:" + Source + (string.IsNullOrWhiteSpace(MD5) ? "" : "(MD5=" + MD5 + ")");
+        return $"Source:{Source}{(string.IsNullOrWhiteSpace(MD5) ? "" : $"(MD5={MD5})")}";
     }
 
     public int CompareTo(object obj)

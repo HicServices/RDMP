@@ -37,8 +37,8 @@ public class ConnectionStringKeyword : DatabaseEntity, INamed, ICheckable
     /// </summary>
     public DatabaseType DatabaseType
     {
-        get { return _databaseType; }
-        set { SetField(ref _databaseType, value); }
+        get => _databaseType;
+        set => SetField(ref _databaseType, value);
     }
 
     /// <summary>
@@ -47,8 +47,8 @@ public class ConnectionStringKeyword : DatabaseEntity, INamed, ICheckable
     [NotNull]
     public string Name
     {
-        get { return _name; }
-        set { SetField(ref _name, value); }
+        get => _name;
+        set => SetField(ref _name, value);
     }
 
     /// <summary>
@@ -56,8 +56,8 @@ public class ConnectionStringKeyword : DatabaseEntity, INamed, ICheckable
     /// </summary>
     public string Value
     {
-        get { return _value; }
-        set { SetField(ref _value, value); }
+        get => _value;
+        set => SetField(ref _value, value);
     }
 
     public ConnectionStringKeyword()

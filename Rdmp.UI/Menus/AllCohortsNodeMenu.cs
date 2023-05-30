@@ -32,7 +32,8 @@ class AllCohortsNodeMenu:RDMPContextMenuStrip
         
     private void AddBlankExternalCohortTable()
     {
-        var newExternalCohortTable = new ExternalCohortTable(RepositoryLocator.DataExportRepository,"Blank Cohort Source " + Guid.NewGuid(),DatabaseType.MicrosoftSQLServer);
+        var newExternalCohortTable = new ExternalCohortTable(RepositoryLocator.DataExportRepository,
+            $"Blank Cohort Source {Guid.NewGuid()}",DatabaseType.MicrosoftSQLServer);
         Publish(newExternalCohortTable);
         Activate(newExternalCohortTable);
     }

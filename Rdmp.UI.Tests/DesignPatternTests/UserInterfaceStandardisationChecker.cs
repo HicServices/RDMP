@@ -75,7 +75,7 @@ public class UserInterfaceStandardisationChecker
         _csFilesList = csFilesList;
 
         //All node classes should have equality compare members so that tree expansion works properly
-        foreach (Type nodeClass in mef.GetAllTypes().Where(t => typeof(Node).IsAssignableFrom(t) && !t.IsAbstract && !t.IsInterface))
+        foreach (var nodeClass in mef.GetAllTypes().Where(t => typeof(Node).IsAssignableFrom(t) && !t.IsAbstract && !t.IsInterface))
         {
             if(nodeClass.Namespace == null || nodeClass.Namespace.StartsWith("System"))
                 continue;
@@ -100,7 +100,7 @@ public class UserInterfaceStandardisationChecker
             {
 
                 if(!nodeClass.Name.StartsWith("All"))
-                    problems.Add("Class '" + nodeClass.Name+ "' is a SingletonNode but its name doesn't start with All");
+                    problems.Add($"Class '{nodeClass.Name}' is a SingletonNode but its name doesn't start with All");
                     
                 continue;
             }
@@ -109,7 +109,7 @@ public class UserInterfaceStandardisationChecker
         }
 
         //All Menus should correspond to a data class
-        foreach (Type menuClass in mef.GetAllTypes().Where(t => typeof (RDMPContextMenuStrip).IsAssignableFrom(t) && !t.IsAbstract && !t.IsInterface))
+        foreach (var menuClass in mef.GetAllTypes().Where(t => typeof (RDMPContextMenuStrip).IsAssignableFrom(t) && !t.IsAbstract && !t.IsInterface))
         { 
             //the basic class from which all are inherited or a menu for FolderNode<X>
             if(menuClass == typeof(RDMPContextMenuStrip) || menuClass.Name.EndsWith("FolderMenu"))
@@ -118,14 +118,15 @@ public class UserInterfaceStandardisationChecker
             //We are looking at something like AutomationServerSlotsMenu
             if (!menuClass.Name.EndsWith("Menu"))
             {
-                problems.Add("Class '" + menuClass + "' is a RDMPContextMenuStrip but its name doesn't end with Menu");
+                problems.Add($"Class '{menuClass}' is a RDMPContextMenuStrip but its name doesn't end with Menu");
                 continue;
             }
 
-            foreach (ConstructorInfo c in menuClass.GetConstructors())
+            foreach (var c in menuClass.GetConstructors())
             {
                 if(c.GetParameters().Count() != 2)
-                    problems.Add("Constructor of class '" + menuClass + "' which is an RDMPContextMenuStrip contained " + c.GetParameters().Count() + " constructor arguments.  These menus are driven by reflection (See RDMPCollectionCommonFunctionality.GetMenuWithCompatibleConstructorIfExists )");
+                    problems.Add(
+                        $"Constructor of class '{menuClass}' which is an RDMPContextMenuStrip contained {c.GetParameters().Count()} constructor arguments.  These menus are driven by reflection (See RDMPCollectionCommonFunctionality.GetMenuWithCompatibleConstructorIfExists )");
             }
 
 
@@ -134,7 +135,8 @@ public class UserInterfaceStandardisationChecker
 
             if(expectedClassName == null)
             {
-                problems.Add("Found menu called '" + menuClass.Name + "' but couldn't find a corresponding data class called '" + toLookFor + ".cs'");
+                problems.Add(
+                    $"Found menu called '{menuClass.Name}' but couldn't find a corresponding data class called '{toLookFor}.cs'");
                 continue;
             }
 
@@ -142,21 +144,22 @@ public class UserInterfaceStandardisationChecker
 
             //expect something like this
             //public AutomationServerSlotsMenu(IActivateItems activator, AllAutomationServerSlotsNode databaseEntity)
-            string expectedConstructorSignature = menuClass.Name + "(RDMPContextMenuStripArgs args," + expectedClassName;
+            var expectedConstructorSignature = $"{menuClass.Name}(RDMPContextMenuStripArgs args,{expectedClassName}";
             ConfirmFileHasText(menuClass,expectedConstructorSignature);
                 
-            FieldInfo[] fields = menuClass.GetFields(
+            var fields = menuClass.GetFields(
                 BindingFlags.NonPublic |
                 BindingFlags.Instance);
 
             //find private fields declared at the object level (i.e. not in base class that are of type IActivateItem)
             var activatorField = fields.FirstOrDefault(f =>f.DeclaringType == menuClass &&  f.FieldType == typeof (IActivateItems));
             if(activatorField != null)
-                problems.Add("Menu '" + menuClass + "' contains a private field called '" + activatorField.Name + "'.  You should instead use base class protected field RDMPContextMenuStrip._activator");
+                problems.Add(
+                    $"Menu '{menuClass}' contains a private field called '{activatorField.Name}'.  You should instead use base class protected field RDMPContextMenuStrip._activator");
         }
             
         //Drag and drop / Activation - Execution Proposal system
-        foreach (Type proposalClass in mef.GetAllTypes().Where(t => typeof(ICommandExecutionProposal).IsAssignableFrom(t) && !t.IsAbstract && !t.IsInterface))
+        foreach (var proposalClass in mef.GetAllTypes().Where(t => typeof(ICommandExecutionProposal).IsAssignableFrom(t) && !t.IsAbstract && !t.IsInterface))
         {
             if(proposalClass.Namespace.Contains("Rdmp.UI.Tests.DesignPatternTests"))
                 continue;
@@ -164,19 +167,21 @@ public class UserInterfaceStandardisationChecker
             //We are looking at something like AutomationServerSlotsMenu
             if (!proposalClass.Name.StartsWith("ProposeExecutionWhenTargetIs"))
             {
-                problems.Add("Class '" + proposalClass + "' is a ICommandExecutionProposal but its name doesn't start with ProposeExecutionWhenTargetIs");
+                problems.Add(
+                    $"Class '{proposalClass}' is a ICommandExecutionProposal but its name doesn't start with ProposeExecutionWhenTargetIs");
                 continue;
             }
 
             var toLookFor = proposalClass.Name.Substring("ProposeExecutionWhenTargetIs".Length);
-            string expectedClassName = GetExpectedClassOrInterface(toLookFor);
+            var expectedClassName = GetExpectedClassOrInterface(toLookFor);
 
             if (expectedClassName == null)
-                problems.Add("Found proposal called '" + proposalClass + "' but couldn't find a corresponding data class called '" + toLookFor + ".cs'");
+                problems.Add(
+                    $"Found proposal called '{proposalClass}' but couldn't find a corresponding data class called '{toLookFor}.cs'");
         }
             
         //Make sure all user interface classes have the suffix UI
-        foreach(Type uiType in mef.GetAllTypes().Where(t => 
+        foreach(var uiType in mef.GetAllTypes().Where(t => 
                     (typeof(RDMPUserControl).IsAssignableFrom(t)||(typeof(RDMPForm).IsAssignableFrom(t))
                         && !t.IsAbstract && !t.IsInterface)))
         {
@@ -190,13 +195,13 @@ public class UserInterfaceStandardisationChecker
                 if(Regex.IsMatch(uiType.Name,@"Screen\d") && uiType.IsNotPublic)
                     continue;
 
-                problems.Add("Class " + uiType.Name + " does not end with UI");
+                problems.Add($"Class {uiType.Name} does not end with UI");
             }
         }
 
 
-        foreach (string problem in problems)
-            Console.WriteLine("FATAL ERROR PROBLEM:" + problem);
+        foreach (var problem in problems)
+            Console.WriteLine($"FATAL ERROR PROBLEM:{problem}");
 
         Assert.AreEqual(problems.Count,0);
     }
@@ -204,24 +209,24 @@ public class UserInterfaceStandardisationChecker
     private string GetExpectedClassOrInterface(string expectedClassName)
     {
         //found it?
-        if (_csFilesList.Any(f => Path.GetFileName(f).Equals(expectedClassName + ".cs", StringComparison.InvariantCultureIgnoreCase)))
+        if (_csFilesList.Any(f => Path.GetFileName(f).Equals($"{expectedClassName}.cs", StringComparison.InvariantCultureIgnoreCase)))
             return expectedClassName;
 
         //expected Filter but found IFilter - acceptable
-        if (_csFilesList.Any(f => Path.GetFileName(f).Equals("I" + expectedClassName + ".cs", StringComparison.InvariantCultureIgnoreCase)))
-            return "I" + expectedClassName;
+        if (_csFilesList.Any(f => Path.GetFileName(f).Equals($"I{expectedClassName}.cs", StringComparison.InvariantCultureIgnoreCase)))
+            return $"I{expectedClassName}";
 
         return null;
     }
 
     private void ConfirmFileHasText(Type type, string expectedString,bool mustHaveText = true)
     {
-        var file = _csFilesList.SingleOrDefault(f => Path.GetFileName(f).Equals(type.Name + ".cs"));
+        var file = _csFilesList.SingleOrDefault(f => Path.GetFileName(f).Equals($"{type.Name}.cs"));
 
         //probably not our class
         if(file == null)
             return;
-        bool hasText = File.ReadAllText(file)
+        var hasText = File.ReadAllText(file)
             .Replace(" ", "")
             .ToLowerInvariant()
             .Contains(expectedString.Replace(" ", "").ToLowerInvariant());
@@ -229,12 +234,12 @@ public class UserInterfaceStandardisationChecker
         if (mustHaveText)
         {
             if(!hasText)
-                problems.Add("File '" + file + "' did not contain expected text '" + expectedString + "'");
+                problems.Add($"File '{file}' did not contain expected text '{expectedString}'");
         }
         else
         {
             if(hasText)
-                problems.Add("File '" + file + "' contains unexpected text '" + expectedString + "'");
+                problems.Add($"File '{file}' contains unexpected text '{expectedString}'");
         }
             
     }

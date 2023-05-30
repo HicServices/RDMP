@@ -43,7 +43,8 @@ public class ExecuteCommandImportCatalogueDescriptionsFromShare : ExecuteCommand
             throw new Exception("ShareDefinition was not for a Catalogue");
 
         if (_targetCatalogue.Name != (string)first.Properties["Name"])
-            if (!YesNo("Catalogue Name is '" + _targetCatalogue.Name + "' but ShareDefinition is for, '" + first.Properties["Name"] + "'.  Import Anyway?", "Import Anyway?"))
+            if (!YesNo(
+                    $"Catalogue Name is '{_targetCatalogue.Name}' but ShareDefinition is for, '{first.Properties["Name"]}'.  Import Anyway?", "Import Anyway?"))
                 return;
 
         shareManager.ImportPropertiesOnly(_targetCatalogue, first);
@@ -51,10 +52,11 @@ public class ExecuteCommandImportCatalogueDescriptionsFromShare : ExecuteCommand
 
         var liveCatalogueItems = _targetCatalogue.CatalogueItems;
 
-        foreach (ShareDefinition sd in shareDefinitions.Skip(1))
+        foreach (var sd in shareDefinitions.Skip(1))
         {
             if (sd.Type != typeof(CatalogueItem))
-                throw new Exception("Unexpected shared object of Type " + sd.Type + " (Expected ShareDefinitionList to have 1 Catalogue + N CatalogueItems)");
+                throw new Exception(
+                    $"Unexpected shared object of Type {sd.Type} (Expected ShareDefinitionList to have 1 Catalogue + N CatalogueItems)");
 
             var shareName = (string)sd.Properties["Name"];
 

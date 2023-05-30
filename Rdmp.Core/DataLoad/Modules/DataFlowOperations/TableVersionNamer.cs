@@ -37,14 +37,15 @@ public class TableVersionNamer : IPluginDataFlowComponent<DataTable>,IPipelineRe
 
     private string GetVersionedTableName(string tableName)
     {
-        for (int i = 1; i <= MaximumNumberOfVersionsAllowed; i++)
+        for (var i = 1; i <= MaximumNumberOfVersionsAllowed; i++)
         {
-            string candidate = tableName + Suffix.Replace("$v", i.ToString());
+            var candidate = tableName + Suffix.Replace("$v", i.ToString());
             if (!_tableNamesAtDestination.Any(t => t.Equals(candidate, StringComparison.CurrentCultureIgnoreCase)))
                 return candidate;
         }
 
-        throw new Exception("Unable to find unique table name after " + MaximumNumberOfVersionsAllowed + " TableNames were tried");
+        throw new Exception(
+            $"Unable to find unique table name after {MaximumNumberOfVersionsAllowed} TableNames were tried");
     }
 
     public void Dispose(IDataLoadEventListener listener, Exception pipelineFailureExceptionIfAny)
