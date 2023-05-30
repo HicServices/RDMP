@@ -78,7 +78,7 @@ public class ExecuteCommandReplacedBy : BasicCommandExecution, IAtomicCommand
             existing.DeleteInDatabase();
         }
 
-        // null means delete relationship and dont create a new one
+        // null means delete relationship and don't create a new one
         if(rep != null)
         {
             // store the ID of the thing that replaces us

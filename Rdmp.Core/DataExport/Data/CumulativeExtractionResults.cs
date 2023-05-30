@@ -248,7 +248,7 @@ public class CumulativeExtractionResults : DatabaseEntity, ICumulativeExtraction
     /// <inheritdoc/>
     public void InjectKnown(IExtractableDataSet instance)
     {
-        _knownExtractableDataSet = new Lazy<IExtractableDataSet>(()=>instance);
+        _knownExtractableDataSet = new Lazy<IExtractableDataSet>(instance);
     }
 
     /// <inheritdoc/>

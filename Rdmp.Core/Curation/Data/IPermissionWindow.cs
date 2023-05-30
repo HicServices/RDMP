@@ -19,7 +19,7 @@ namespace Rdmp.Core.Curation.Data;
 public interface IPermissionWindow : INamed
 {
     /// <summary>
-    /// Human readable description of the period of time described e.g. 'weekday nights only because we dont want to hit local server backup periods'
+    /// Human readable description of the period of time described e.g. 'weekday nights only because we don't want to hit local server backup periods'
     /// </summary>
     string Description { get; set; }
 

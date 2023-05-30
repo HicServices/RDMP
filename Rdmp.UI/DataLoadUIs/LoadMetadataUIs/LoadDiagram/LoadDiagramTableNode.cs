@@ -92,7 +92,7 @@ public class LoadDiagramTableNode:Node,ICombineableSource, IHasLoadDiagramState,
         foreach (var anticipatedChild in _anticipatedChildren)
             anticipatedChild.State = LoadDiagramState.NotFound;
 
-        //we dont exist either!
+        //we don't exist either!
         if (!Table.Exists())
         {
             State = LoadDiagramState.NotFound;    

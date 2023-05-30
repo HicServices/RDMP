@@ -61,7 +61,7 @@ public class AggregateConfigurationCombineable : ICombineToMakeCommand
     public bool IsTemplate { get; set; }
 
     /// <summary>
-    /// Creates a new instance, popualtes <see cref="Aggregate"/> and discovers all other state cached fields (e.g.
+    /// Creates a new instance, populates <see cref="Aggregate"/> and discovers all other state cached fields (e.g.
     /// <see cref="JoinableDeclarationIfAny"/> etc).
     /// </summary>
     /// <param name="aggregate"></param>

@@ -124,8 +124,8 @@ public class ConnectionStringTextBox : TextBox
                 return;
             }
 
-            //dont suggest the whole thing, just suggest the bit they haven't typed yet
-            string bitToSuggest = keywordToSuggest.Substring(lastBitBeingTyped.Length);
+            //don't suggest the whole thing, just suggest the bit they haven't typed yet
+            string bitToSuggest = keywordToSuggest[lastBitBeingTyped.Length..];
             if (string.IsNullOrWhiteSpace(bitToSuggest))
                 return;
 

@@ -29,7 +29,7 @@ namespace Rdmp.Core.DataLoad.Modules.Mutilators;
 /// UPDATE of the values for that record to the new values in STAGING that are being loaded).
 /// 
 /// <para>This component is designed to support loading periods of old data into a LIVE data table that has moved on (i.e. to backfill a dataset) without 
-/// overwritting newer versions of a record (with primary key x) with old.  For example it is 2011 and you have found a year of data you forgot to load back
+/// overwriting newer versions of a record (with primary key x) with old.  For example it is 2011 and you have found a year of data you forgot to load back
 /// in 2009 but you expect that since 2009 there have been historical record updates for records originally generated in 2009 (you want to load all 2009 records
 /// from the historical batch except where there has been an update since).</para>
 /// 

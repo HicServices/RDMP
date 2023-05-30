@@ -190,7 +190,7 @@ public partial  class ChecksUI : UserControl, ICheckNotifier
         bool shouldApplyFix = DoesUserWantToApplyFix(args);
 
         AddToListbox(shouldApplyFix
-            ? new CheckEventArgs("Fix will be applied for message:" + args.Message, CheckResult.Warning, args.Ex)
+            ? new CheckEventArgs($"Fix will be applied for message:{args.Message}", CheckResult.Warning, args.Ex)
             : args);
 
         return shouldApplyFix;
@@ -203,24 +203,18 @@ public partial  class ChecksUI : UserControl, ICheckNotifier
         if (InvokeRequired)
             lock (olockYesNoToAll)
             {
-                return (bool) Invoke(new Func<bool>(() => DoesUserWantToApplyFix(args)));
+                return Invoke(new Func<bool>(() => DoesUserWantToApplyFix(args)));
             }
 
         //if there is a fix and a request handler for whether or not to apply the fix
-        if (args.ProposedFix != null)
-        {
-            if (args.Result == CheckResult.Success)
-                throw new Exception("Why did you propose the fix " + args.ProposedFix + " when there is was no problem " +
-                                    "(dont specify a proposedFix if you are passing in CheckResult.Success)");
+        if (args.ProposedFix == null) return false;
+        if (args.Result == CheckResult.Success)
+            throw new Exception(
+                $"Why did you propose the fix {args.ProposedFix} when there is was no problem (don't specify a proposedFix if you are passing in CheckResult.Success)");
 
-            //there is a suggested fix, see if the user has subscribed to the fix handler (i.e. the fix handler tells the class whether the user wants to apply this specific fix, like maybe a messagebox or something gets shown and it returns true to apply the fix)
-            return MakeChangePopup.ShowYesNoMessageBoxToApplyFix(AllowsYesNoToAll ? yesNoYesToAllDialog : null, 
-                args.Message, args.ProposedFix);
-                
-        }
-            
-        //do not apply fix
-        return false;
+        //there is a suggested fix, see if the user has subscribed to the fix handler (i.e. the fix handler tells the class whether the user wants to apply this specific fix, like maybe a messagebox or something gets shown and it returns true to apply the fix)
+        return MakeChangePopup.ShowYesNoMessageBoxToApplyFix(AllowsYesNoToAll ? yesNoYesToAllDialog : null, 
+            args.Message, args.ProposedFix);
     }
 
     private void AddToListbox(CheckEventArgs args)

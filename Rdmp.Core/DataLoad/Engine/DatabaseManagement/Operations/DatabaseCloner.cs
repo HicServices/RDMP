@@ -115,11 +115,11 @@ public class DatabaseCloner : IDisposeAfterDataLoad
 
     public void LoadCompletedSoDispose(ExitCodeType exitCode,IDataLoadEventListener postLoadEventListener)
     {
-        //dont bother cleaning up if it bombed
+        //don't bother cleaning up if it bombed
         if (exitCode == ExitCodeType.Error )
             return;
 
-        //its Abort,Success or LoadNotRequired
+        //it's Abort,Success or LoadNotRequired
         foreach (var cloneOperation in _tablesCreated)
         {
             cloneOperation.Undo();

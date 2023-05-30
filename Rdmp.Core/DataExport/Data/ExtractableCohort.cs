@@ -166,7 +166,7 @@ public class ExtractableCohort : DatabaseEntity, IExtractableCohort, IInjectKnow
         catch (Exception)
         {
             _broken = true;
-            _cacheData = new Lazy<IExternalCohortDefinitionData>(() => null);
+            _cacheData = new Lazy<IExternalCohortDefinitionData>((IExternalCohortDefinitionData)null);
         }
                 
         return null;
@@ -605,13 +605,13 @@ where
     {
         _broken = instance == null;
 
-        _cacheData = new Lazy<IExternalCohortDefinitionData>(() => instance);
+        _cacheData = new Lazy<IExternalCohortDefinitionData>(instance);
     }
 
     /// <inheritdoc/>
     public void InjectKnown(ExternalCohortTable instance)
     {
-        _knownExternalCohortTable = new Lazy<IExternalCohortTable>(() => instance);
+        _knownExternalCohortTable = new Lazy<IExternalCohortTable>(instance);
     }
     /// <inheritdoc/>
     public void ClearAllInjections()

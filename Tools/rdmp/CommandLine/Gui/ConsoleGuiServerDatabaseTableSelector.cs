@@ -4,14 +4,12 @@
 // RDMP is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License for more details.
 // You should have received a copy of the GNU General Public License along with RDMP. If not, see <https://www.gnu.org/licenses/>.
 
-namespace Rdmp.Core.CommandLine.Gui;
-
 using FAnsi;
 using FAnsi.Discovery;
-using CommandExecution;
-using Curation.Data;
-using ReusableLibraryCode;
-using ReusableLibraryCode.Settings;
+using Rdmp.Core.CommandExecution;
+using Rdmp.Core.Curation.Data;
+using Rdmp.Core.ReusableLibraryCode;
+using Rdmp.Core.ReusableLibraryCode.Settings;
 using System;
 using System.Collections.Generic;
 using System.Data.Common;
@@ -19,6 +17,8 @@ using System.Linq;
 using System.Threading.Tasks;
 using Terminal.Gui;
 
+
+namespace Rdmp.Core.CommandLine.Gui;
 
 public partial class ConsoleGuiServerDatabaseTableSelector {
 

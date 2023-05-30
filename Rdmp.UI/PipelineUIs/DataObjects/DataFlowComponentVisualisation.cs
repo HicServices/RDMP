@@ -41,7 +41,7 @@ public partial class DataFlowComponentVisualisation : UserControl
     public DataFlowComponentVisualisation()
         : this(PipelineComponentRole.Middle, null,null)
     {
-        if (LicenseManager.UsageMode != LicenseUsageMode.Designtime) //dont connect to database in design mode unless they passed in a fist full of nulls
+        if (LicenseManager.UsageMode != LicenseUsageMode.Designtime) //don't connect to database in design mode unless they passed in a fist full of nulls
             throw new NotSupportedException("Do not use this constructor, it is for use by Visual Studio Designer");
     }
 

@@ -1097,7 +1097,7 @@ public class Catalogue : DatabaseEntity, IComparable, ICatalogue, IInjectKnown<C
     /// <summary>
     /// Use to set LoadMetadata to null without first performing Disassociation checks.  This should only be used for in-memory operations such as cloning
     /// This (if saved to the original database it was read from) could create orphans - load stages that relate to the disassociated catalogue.  But if 
-    /// you are cloning a catalogue and dropping the LoadMetadata then you wont be saving the dropped state to the original database ( you will be saving it
+    /// you are cloning a catalogue and dropping the LoadMetadata then you won't be saving the dropped state to the original database ( you will be saving it
     /// to the clone database so it won't be a problem).
     /// </summary>
     public void HardDisassociateLoadMetadata()
@@ -1228,7 +1228,7 @@ public class Catalogue : DatabaseEntity, IComparable, ICatalogue, IInjectKnown<C
     /// <inheritdoc/>
     public void InjectKnown(CatalogueItem[] instance)
     {
-        _knownCatalogueItems = new Lazy<CatalogueItem[]>(() => instance);
+        _knownCatalogueItems = new Lazy<CatalogueItem[]>(instance);
     }
 
     /// <summary>

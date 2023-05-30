@@ -82,7 +82,8 @@ public class FlatFileToDataTablePusher
         if (dt.Columns.Count != headerCount)
             if (!_haveComplainedAboutColumnMismatch)
             {
-                listener.OnNotify(this, new NotifyEventArgs(ProgressEventType.Warning, "Flat file '" + _fileToLoad.File.Name + "' line number '" + reader.Context.Parser.RawRow + "' had  " + headerCount + " columns while the destination DataTable had " + dt.Columns.Count + " columns.  This message apperas only once per file"));
+                listener.OnNotify(this, new NotifyEventArgs(ProgressEventType.Warning,
+                    $"Flat file '{_fileToLoad.File.Name}' line number '{reader.Context.Parser.RawRow}' had  {headerCount} columns while the destination DataTable had {dt.Columns.Count} columns.  This message apperas only once per file"));
                 _haveComplainedAboutColumnMismatch = true;
             }
 
@@ -118,8 +119,8 @@ public class FlatFileToDataTablePusher
                         lineToPush.Cells.Length);
 
                     if (_bufferOverrunsWhereColumnValueWasBlank > 0)
-                        errorMessage += " ( " + _bufferOverrunsWhereColumnValueWasBlank +
-                                        " Previously lines also suffered from buffer overruns but the overrunning values were empty so we had ignored them up until now)";
+                        errorMessage +=
+                            $" ( {_bufferOverrunsWhereColumnValueWasBlank} Previously lines also suffered from buffer overruns but the overrunning values were empty so we had ignored them up until now)";
                         
                     listener.OnNotify(this, new NotifyEventArgs(ProgressEventType.Warning, errorMessage));
                     eventHandlers.BadDataFound(lineToPush);
@@ -130,10 +131,11 @@ public class FlatFileToDataTablePusher
             if(_headers.IgnoreColumnsList.Contains(_headers[i]))
                 continue;
                 
-            //its an empty header, dont bother populating it
+            //its an empty header, don't bother populating it
             if (_headers[i].IsBasicallyNull())
                 if (!lineToPush[i].IsBasicallyNull())
-                    throw new FileLoadException("The header at index " + i + " in flat file '" +dt.TableName+ "' had no name but there was a value in the data column (on Line number " + reader.Context.Parser.RawRow + ")");
+                    throw new FileLoadException(
+                        $"The header at index {i} in flat file '{dt.TableName}' had no name but there was a value in the data column (on Line number {reader.Context.Parser.RawRow})");
                 else
                     continue;
 
@@ -156,7 +158,8 @@ public class FlatFileToDataTablePusher
                 }
                 catch (Exception e)
                 {
-                    throw new FileLoadException("Error reading file '" + dt.TableName + "'.  Problem loading value " + lineToPush[i] + " into data table (on Line number " + reader.Context.Parser.RawRow + ") the header we were trying to populate was " + _headers[i] + " and was of datatype " + dt.Columns[_headers[i]].DataType, e);
+                    throw new FileLoadException(
+                        $"Error reading file '{dt.TableName}'.  Problem loading value {lineToPush[i]} into data table (on Line number {reader.Context.Parser.RawRow}) the header we were trying to populate was {_headers[i]} and was of datatype {dt.Columns[_headers[i]].DataType}", e);
                 }
             }
         }
@@ -178,7 +181,8 @@ public class FlatFileToDataTablePusher
         if(!_attemptToResolveNewlinesInRecords)
         {
             //we read too little cell count but we don't want to solve the problem
-            listener.OnNotify(this, new NotifyEventArgs(ProgressEventType.Warning, "Too few columns on line " + reader.Context.Parser.RawRow + " of file '" + _fileToLoad + "', it has too many columns (expected " + _headers.Length + " columns but line had " + lineToPush.Cells.Length + ")." + (_bufferOverrunsWhereColumnValueWasBlank > 0 ? "( " + _bufferOverrunsWhereColumnValueWasBlank + " Previously lines also suffered from buffer overruns but the overrunning values were empty so we had ignored them up until now)" : "")));
+            listener.OnNotify(this, new NotifyEventArgs(ProgressEventType.Warning,
+                $"Too few columns on line {reader.Context.Parser.RawRow} of file '{_fileToLoad}', it has too many columns (expected {_headers.Length} columns but line had {lineToPush.Cells.Length}).{(_bufferOverrunsWhereColumnValueWasBlank > 0 ? $"( {_bufferOverrunsWhereColumnValueWasBlank} Previously lines also suffered from buffer overruns but the overrunning values were empty so we had ignored them up until now)" : "")}"));
             eventHandlers.BadDataFound(lineToPush);
 
             //didn't bother trying to fix the problem

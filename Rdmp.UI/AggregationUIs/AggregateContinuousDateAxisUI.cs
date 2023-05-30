@@ -87,7 +87,7 @@ public partial class AggregateContinuousDateAxisUI : UserControl
     public AggregateContinuousDateAxisUI()
     {
         InitializeComponent();
-        ddIncrement.DataSource = new object[]{AxisIncrement.Month,AxisIncrement.Quarter,AxisIncrement.Year}; //dont offer day, that was a terrible idea
+        ddIncrement.DataSource = new object[]{AxisIncrement.Month,AxisIncrement.Quarter,AxisIncrement.Year}; //don't offer day, that was a terrible idea
     }
 
 

@@ -63,7 +63,7 @@ public partial class PropagateCatalogueItemChangesToSimilarNamedUI : RDMPForm
 
         CatalogueItem[] otherCatalogueItemsThatShareName = GetAllCatalogueItemsSharingNameWith(catalogueItemBeingSaved);
 
-        //if Name changed then they probably dont want to also rename all associated CatalogueItems
+        //if Name changed then they probably don't want to also rename all associated CatalogueItems
         shouldDialogBeDisplayed = !changedProperties.Any(prop => prop.Name.Equals("Name"));
 
         if (otherCatalogueItemsThatShareName.Length == 0)
@@ -248,14 +248,14 @@ public partial class PropagateCatalogueItemChangesToSimilarNamedUI : RDMPForm
         this.Close();
     }
 
-    //no = do save but dont propogate
+    //no = do save but don't propagate
     private void btnNo_Click(object sender, EventArgs e)
     {
         DialogResult = DialogResult.No;
         this.Close();
     }
 
-    //cancel = dont save this and dont propogate
+    //cancel = don't save this and don't propagate
     private void btnCancel_Click(object sender, EventArgs e)
     {
         DialogResult = DialogResult.Cancel;

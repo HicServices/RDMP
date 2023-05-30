@@ -28,12 +28,11 @@ public partial class RevertablePropertyDifferenceUI : RDMPUserControl
         _difference = difference;
         InitializeComponent();
             
-        if (VisualStudioDesignMode) //dont add the QueryEditor if we are in design time (visual studio) because it breaks
+        if (VisualStudioDesignMode) //don't add the QueryEditor if we are in design time (visual studio) because it breaks
             return;
             
         //For documentation/control previewing
-        if(_difference==null)
-            _difference = new RevertablePropertyDifference(typeof(Catalogue).GetProperty("Name"),"Biochemistry","byochemistry");
+        _difference ??= new RevertablePropertyDifference(typeof(Catalogue).GetProperty("Name"), "Biochemistry", "byochemistry");
 
         CreateScintillaComponents(
             _difference.DatabaseValue != null ? _difference.DatabaseValue.ToString() : "<Null>",

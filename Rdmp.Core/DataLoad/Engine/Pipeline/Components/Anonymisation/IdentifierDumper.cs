@@ -30,11 +30,8 @@ public class IdentifierDumper :IHasRuntimeName, IDisposeAfterDataLoad,ICheckable
 {
     public ITableInfo TableInfo
     {
-        get { return _tableInfo; }
-        set
-        {
-            _tableInfo = value;
-        }
+        get => _tableInfo;
+        set => _tableInfo = value;
     }
 
     public List<PreLoadDiscardedColumn> ColumnsToRouteToSomewhereElse { get; set; }
@@ -60,7 +57,8 @@ public class IdentifierDumper :IHasRuntimeName, IDisposeAfterDataLoad,ICheckable
             
         if (HasAtLeastOneColumnToStoreInDump)
             if (tableInfo.IdentifierDumpServer_ID == null)//id dump server is missing
-                throw new ArgumentException("TableInfo " + tableInfo.Name + " does not have a listed IdentifierDump ExternalDatabaseServer but has some columns configured as  DiscardedColumnDestination.StoreInIdentifiersDump or DiscardedColumnDestination.Dilute, go into the PreLoadDiscarded columns configuration window and select a Server to dump identifiers into");
+                throw new ArgumentException(
+                    $"TableInfo {tableInfo.Name} does not have a listed IdentifierDump ExternalDatabaseServer but has some columns configured as  DiscardedColumnDestination.StoreInIdentifiersDump or DiscardedColumnDestination.Dilute, go into the PreLoadDiscarded columns configuration window and select a Server to dump identifiers into");
             else
             {
                 //the place to store identifiers (at least those that are StoreInIdentifiersDump)
@@ -117,7 +115,8 @@ public class IdentifierDumper :IHasRuntimeName, IDisposeAfterDataLoad,ICheckable
                 }
                 catch (Exception e)
                 {
-                    throw new Exception("IdentifierDumper STAGING insert (" + bulkCopy.DestinationTableName + ") failed, make sure you have called CreateSTAGINGTable() before trying to Dump identifiers (also you should call DropStagging() when you are done)",e);
+                    throw new Exception(
+                        $"IdentifierDumper STAGING insert ({bulkCopy.DestinationTableName}) failed, make sure you have called CreateSTAGINGTable() before trying to Dump identifiers (also you should call DropStagging() when you are done)",e);
                 }
                 MergeStagingWithLive(pks.Select(col => col.GetRuntimeName(LoadStage.AdjustRaw)).ToArray());
             }
@@ -135,7 +134,8 @@ public class IdentifierDumper :IHasRuntimeName, IDisposeAfterDataLoad,ICheckable
                 HaveDumpedRecords = true;
             }
             else
-                throw new Exception("Could not find " + preLoadDiscardedColumn.RuntimeColumnName + " in pipeline column collection");
+                throw new Exception(
+                    $"Could not find {preLoadDiscardedColumn.RuntimeColumnName} in pipeline column collection");
     }
 
      
@@ -157,16 +157,16 @@ public class IdentifierDumper :IHasRuntimeName, IDisposeAfterDataLoad,ICheckable
 
             //INSERT NEW RECORDS
             //"MERGE [Demography]..[GP_ULTRA] AS dest USING [DLE_STAGING]..[Demography_GP_ULTRA_STAGING] AS source ON (source.[gmc] = dest.[gmc] AND source.[gp_code] = dest.[gp_code] AND source.[practice_code] = dest.[practice_code] AND source.[date_into_practice] = dest.[date_into_practice]) WHEN NOT MATCHED BY TARGET THEN INSERT ([notes], [gmc], [gp_code], [gp_cksum], [practice_code], [practice_cksum], [surname], [forename], [initials], [date_into_practice], [date_out_of_practice], hic_dataLoadRunID) VALUES (source.[notes], source.[gmc], source.[gp_code], source.[gp_cksum], source.[practice_code], source.[practice_cksum], source.[surname], source.[forename], source.[initials], source.[date_into_practice], source.[date_out_of_practice], 4718) OUTPUT $action, inserted.*;"
-            string mergeSql = "MERGE " + Environment.NewLine;
-            mergeSql += GetRuntimeName() + " AS dest " + Environment.NewLine;
-            mergeSql += "USING " + GetStagingRuntimeName() + " AS source " + Environment.NewLine;
-            mergeSql += "ON  (" + Environment.NewLine;
-            mergeSql = pks.Aggregate(mergeSql,(s,n)=>s + " source.["+n+"]=dest.["+n+"] AND").TrimEnd(new []{'A','N','D',' '}) + Environment.NewLine;
-            mergeSql += ") WHEN NOT MATCHED BY TARGET THEN INSERT (" + Environment.NewLine;
-            mergeSql = allColumns.Aggregate(mergeSql, (s, n) => s + "[" + n + "],").TrimEnd(new[] { ',', ' '}) + Environment.NewLine;
-            mergeSql += ") VALUES (" + Environment.NewLine;
-            mergeSql = allColumns.Aggregate(mergeSql, (s, n) => s + " source.[" + n + "],").TrimEnd(new[] { ',', ' ' }) + Environment.NewLine;
-            mergeSql += ");" + Environment.NewLine;
+            string mergeSql = $"MERGE {Environment.NewLine}";
+            mergeSql += $"{GetRuntimeName()} AS dest {Environment.NewLine}";
+            mergeSql += $"USING {GetStagingRuntimeName()} AS source {Environment.NewLine}";
+            mergeSql += $"ON  ({Environment.NewLine}";
+            mergeSql = pks.Aggregate(mergeSql,(s,n)=> $"{s} source.[{n}]=dest.[{n}] AND").TrimEnd(new []{'A','N','D',' '}) + Environment.NewLine;
+            mergeSql += $") WHEN NOT MATCHED BY TARGET THEN INSERT ({Environment.NewLine}";
+            mergeSql = allColumns.Aggregate(mergeSql, (s, n) => $"{s}[{n}],").TrimEnd(new[] { ',', ' '}) + Environment.NewLine;
+            mergeSql += $") VALUES ({Environment.NewLine}";
+            mergeSql = allColumns.Aggregate(mergeSql, (s, n) => $"{s} source.[{n}],").TrimEnd(new[] { ',', ' ' }) + Environment.NewLine;
+            mergeSql += $");{Environment.NewLine}";
 
             using (DbCommand cmdInsert = _dumpDatabase.Server.GetCommand(mergeSql, con))
             {
@@ -175,30 +175,30 @@ public class IdentifierDumper :IHasRuntimeName, IDisposeAfterDataLoad,ICheckable
             }
             
             //PERFORM overwrite with UPDATES
-            string updateSql = "WITH ToUpdate AS (" + Environment.NewLine;
-            updateSql += "SELECT stag.* FROM " + GetStagingRuntimeName() + " AS stag" + Environment.NewLine;
-            updateSql += "LEFT OUTER JOIN " + GetRuntimeName() + " AS prod" + Environment.NewLine;
-            updateSql += "ON ( " + Environment.NewLine;
-            updateSql += "/*Primary Keys JOIN*/" + Environment.NewLine;
-            updateSql = pks.Aggregate(updateSql, (s, n) => s + " stag.[" + n + "]=prod.[" + n + "] AND").TrimEnd(new[] { 'A', 'N', 'D', ' ' }) + Environment.NewLine;
-            updateSql += ") WHERE" + Environment.NewLine;
-            updateSql += "/*Primary Keys not null*/" + Environment.NewLine;
-            updateSql = pks.Aggregate(updateSql, (s, n) => s + " stag.[" + n + "] IS NOT NULL AND").TrimEnd(new[] { 'A', 'N', 'D', ' ' }) + Environment.NewLine;
-            updateSql += "AND EXISTS (SELECT " + Environment.NewLine;
-            updateSql += "/*All columns in stag*/" + Environment.NewLine;
-            updateSql = allColumns.Aggregate(updateSql, (s, n) => s + " stag.[" + n + "],").TrimEnd(new[] { ',', ' ' }) + Environment.NewLine;
-            updateSql += "EXCEPT SELECT" + Environment.NewLine;
-            updateSql = allColumns.Aggregate(updateSql, (s, n) => s + " prod.[" + n + "],").TrimEnd(new[] { ',', ' ' }) + Environment.NewLine;
-            updateSql += "))" + Environment.NewLine;
+            string updateSql = $"WITH ToUpdate AS ({Environment.NewLine}";
+            updateSql += $"SELECT stag.* FROM {GetStagingRuntimeName()} AS stag{Environment.NewLine}";
+            updateSql += $"LEFT OUTER JOIN {GetRuntimeName()} AS prod{Environment.NewLine}";
+            updateSql += $"ON ( {Environment.NewLine}";
+            updateSql += $"/*Primary Keys JOIN*/{Environment.NewLine}";
+            updateSql = pks.Aggregate(updateSql, (s, n) => $"{s} stag.[{n}]=prod.[{n}] AND").TrimEnd(new[] { 'A', 'N', 'D', ' ' }) + Environment.NewLine;
+            updateSql += $") WHERE{Environment.NewLine}";
+            updateSql += $"/*Primary Keys not null*/{Environment.NewLine}";
+            updateSql = pks.Aggregate(updateSql, (s, n) => $"{s} stag.[{n}] IS NOT NULL AND").TrimEnd(new[] { 'A', 'N', 'D', ' ' }) + Environment.NewLine;
+            updateSql += $"AND EXISTS (SELECT {Environment.NewLine}";
+            updateSql += $"/*All columns in stag*/{Environment.NewLine}";
+            updateSql = allColumns.Aggregate(updateSql, (s, n) => $"{s} stag.[{n}],").TrimEnd(new[] { ',', ' ' }) + Environment.NewLine;
+            updateSql += $"EXCEPT SELECT{Environment.NewLine}";
+            updateSql = allColumns.Aggregate(updateSql, (s, n) => $"{s} prod.[{n}],").TrimEnd(new[] { ',', ' ' }) + Environment.NewLine;
+            updateSql += $")){Environment.NewLine}";
 
             updateSql += Environment.NewLine;
-            updateSql += "UPDATE prod SET" + Environment.NewLine;
-            updateSql = allColumns.Aggregate(updateSql, (s, n) => s + " prod.[" + n + "]=ToUpdate.["+n+"],").TrimEnd(new[] { ',' }) + Environment.NewLine;
-            updateSql += "FROM " + GetRuntimeName() + " AS prod " + Environment.NewLine;
-            updateSql += "INNER JOIN ToUpdate ON " + Environment.NewLine;
-            updateSql += "(" + Environment.NewLine;
-            updateSql = pks.Aggregate(updateSql, (s, n) => s + " prod.[" + n + "]=ToUpdate.[" + n + "] AND").TrimEnd(new[] { 'A', 'N', 'D', ' ' }) + Environment.NewLine; 
-            updateSql += ")" + Environment.NewLine;
+            updateSql += $"UPDATE prod SET{Environment.NewLine}";
+            updateSql = allColumns.Aggregate(updateSql, (s, n) => $"{s} prod.[{n}]=ToUpdate.[{n}],").TrimEnd(new[] { ',' }) + Environment.NewLine;
+            updateSql += $"FROM {GetRuntimeName()} AS prod {Environment.NewLine}";
+            updateSql += $"INNER JOIN ToUpdate ON {Environment.NewLine}";
+            updateSql += $"({Environment.NewLine}";
+            updateSql = pks.Aggregate(updateSql, (s, n) => $"{s} prod.[{n}]=ToUpdate.[{n}] AND").TrimEnd(new[] { 'A', 'N', 'D', ' ' }) + Environment.NewLine; 
+            updateSql += $"){Environment.NewLine}";
 
             using(DbCommand updateCommand = _dumpDatabase.Server.GetCommand(updateSql,con))
             {
@@ -207,7 +207,7 @@ public class IdentifierDumper :IHasRuntimeName, IDisposeAfterDataLoad,ICheckable
             }
 
             using (DbCommand cmdtruncateIdentifiersArchive =
-                   _dumpDatabase.Server.GetCommand("TRUNCATE TABLE " + GetStagingRuntimeName(), con))
+                   _dumpDatabase.Server.GetCommand($"TRUNCATE TABLE {GetStagingRuntimeName()}", con))
             {
                 if(!cmdtruncateIdentifiersArchive.CommandText.Contains("_STAGING"))
                     throw new Exception("Were about to run a command that TRUNCATED a non staging table!");
@@ -219,16 +219,15 @@ public class IdentifierDumper :IHasRuntimeName, IDisposeAfterDataLoad,ICheckable
 
     public void CreateSTAGINGTable()
     {
-        //dont bother if there are no fields going to identifier dump - some could still be going to oblivion
+        //don't bother if there are no fields going to identifier dump - some could still be going to oblivion
         if(!HasAtLeastOneColumnToStoreInDump)
             return;
 
-        using (var con = _dumpDatabase.Server.GetConnection())
-        {
-            con.Open();
-            using(DbCommand cmdCreateSTAGING = _dumpDatabase.Server.GetCommand("SELECT TOP 0 * INTO " + GetStagingRuntimeName() + " FROM " + GetRuntimeName(), con))
-                cmdCreateSTAGING.ExecuteNonQuery();
-        }
+        using var con = _dumpDatabase.Server.GetConnection();
+        con.Open();
+        using DbCommand cmdCreateSTAGING = _dumpDatabase.Server.GetCommand(
+            $"SELECT TOP 0 * INTO {GetStagingRuntimeName()} FROM {GetRuntimeName()}", con);
+        cmdCreateSTAGING.ExecuteNonQuery();
     }
         
     public void LoadCompletedSoDispose(ExitCodeType exitCode,IDataLoadEventListener postLoadEventListener)
@@ -248,8 +247,7 @@ public class IdentifierDumper :IHasRuntimeName, IDisposeAfterDataLoad,ICheckable
         foreach (var duplicate in duplicates)
             notifier.OnCheckPerformed(
                 new CheckEventArgs(
-                    "There are " + duplicate.Count() + " PreLoadDiscardedColumns called '" + duplicate.Key + "' for TableInfo '" +
-                    TableInfo + "'", CheckResult.Fail));
+                    $"There are {duplicate.Count()} PreLoadDiscardedColumns called '{duplicate.Key}' for TableInfo '{TableInfo}'", CheckResult.Fail));
                 
         //columns that exist in live but are supposedly dropped during load
         var liveColumns = TableInfo.ColumnInfos.ToArray();
@@ -263,13 +261,15 @@ public class IdentifierDumper :IHasRuntimeName, IDisposeAfterDataLoad,ICheckable
             {
                 if(preLoadDiscardedColumn.Destination != DiscardedColumnDestination.Dilute)
                 {
-                    notifier.OnCheckPerformed(new CheckEventArgs("TableInfo "+TableInfo+" declares both a PreLoadDiscardedColumn '" + preLoadDiscardedColumn + "' and a ColumnInfo with the same name", CheckResult.Fail));
+                    notifier.OnCheckPerformed(new CheckEventArgs(
+                        $"TableInfo {TableInfo} declares both a PreLoadDiscardedColumn '{preLoadDiscardedColumn}' and a ColumnInfo with the same name", CheckResult.Fail));
                     return;
                 }
 
                 if (match.IsPrimaryKey && preLoadDiscardedColumn.Destination == DiscardedColumnDestination.Dilute)
                 {
-                    notifier.OnCheckPerformed(new CheckEventArgs("TableInfo " + TableInfo + " declares a PreLoadDiscardedColumn '" + preLoadDiscardedColumn + "' but there is a matching ColumnInfo of the same name which IsPrimaryKey", CheckResult.Fail));
+                    notifier.OnCheckPerformed(new CheckEventArgs(
+                        $"TableInfo {TableInfo} declares a PreLoadDiscardedColumn '{preLoadDiscardedColumn}' but there is a matching ColumnInfo of the same name which IsPrimaryKey", CheckResult.Fail));
                     return;
                 }
             }
@@ -277,7 +277,8 @@ public class IdentifierDumper :IHasRuntimeName, IDisposeAfterDataLoad,ICheckable
             
         if(!HasAtLeastOneColumnToStoreInDump)
         {
-            notifier.OnCheckPerformed(new CheckEventArgs("No columns require dumping from TableInfo " + _tableInfo + " so checking is not needed", CheckResult.Success, null));
+            notifier.OnCheckPerformed(new CheckEventArgs(
+                $"No columns require dumping from TableInfo {_tableInfo} so checking is not needed", CheckResult.Success, null));
             return;
         }
             
@@ -290,22 +291,24 @@ public class IdentifierDumper :IHasRuntimeName, IDisposeAfterDataLoad,ICheckable
         //detect ongoing loads/dirty cleanup
         if (stagingTableFound)
         {
-            bool shouldDrop = notifier.OnCheckPerformed(new CheckEventArgs("STAGING table found " + GetStagingRuntimeName() + " in ANO database",
-                CheckResult.Fail, null, "Drop table " + GetStagingRuntimeName()));
+            bool shouldDrop = notifier.OnCheckPerformed(new CheckEventArgs(
+                $"STAGING table found {GetStagingRuntimeName()} in ANO database",
+                CheckResult.Fail, null, $"Drop table {GetStagingRuntimeName()}"));
 
             if(shouldDrop)
                 DropStaging();
         }
         else
-            notifier.OnCheckPerformed(new CheckEventArgs("Confirmed absence of Table  " + GetStagingRuntimeName() + "(this will be created during load)",CheckResult.Success, null));
+            notifier.OnCheckPerformed(new CheckEventArgs(
+                $"Confirmed absence of Table  {GetStagingRuntimeName()}(this will be created during load)",CheckResult.Success, null));
 
         //confirm that there is a ColumnInfo for every Dilute column
         var columnInfos = _tableInfo.ColumnInfos.ToArray();
         foreach (var dilutedColumn in ColumnsToRouteToSomewhereElse.Where(c=>c.Destination == DiscardedColumnDestination.Dilute))
         {
             if(!columnInfos.Any(c=>c.GetRuntimeName().Equals(dilutedColumn.RuntimeColumnName)))
-                notifier.OnCheckPerformed(new CheckEventArgs("PreLoadDiscardedColumn called " + dilutedColumn.GetRuntimeName() +
-                                                             " is marked for Dilution but does not appear in the TableInfo object's ColumnInfo collection.  Diluted columns must appear both in the LIVE database (in diluted state) and in IdentifierDump (in pristene state) which means that for every PreLoadDiscardedColumn which has the destination Dilution, there must be a ColumnInfo with the same name in LIVE",CheckResult.Fail, null));
+                notifier.OnCheckPerformed(new CheckEventArgs(
+                    $"PreLoadDiscardedColumn called {dilutedColumn.GetRuntimeName()} is marked for Dilution but does not appear in the TableInfo object's ColumnInfo collection.  Diluted columns must appear both in the LIVE database (in diluted state) and in IdentifierDump (in pristene state) which means that for every PreLoadDiscardedColumn which has the destination Dilution, there must be a ColumnInfo with the same name in LIVE",CheckResult.Fail, null));
         }
 
         //if there are any columns due to be stored in the Identifier dump
@@ -331,10 +334,11 @@ public class IdentifierDumper :IHasRuntimeName, IDisposeAfterDataLoad,ICheckable
         {
             con.Open();
             using (DbCommand cmdDropSTAGING =
-                   _dumpDatabase.Server.GetCommand("DROP TABLE " + GetStagingRuntimeName(), con))
+                   _dumpDatabase.Server.GetCommand($"DROP TABLE {GetStagingRuntimeName()}", con))
             {
                 if (!cmdDropSTAGING.CommandText.Contains("STAGING"))
-                    throw new Exception("Expected comand " + cmdDropSTAGING.CommandText + " to have the word STAGING in it, do not drop a live ANO table that would be the worst of things!");
+                    throw new Exception(
+                        $"Expected comand {cmdDropSTAGING.CommandText} to have the word STAGING in it, do not drop a live ANO table that would be the worst of things!");
 
                 cmdDropSTAGING.ExecuteNonQuery();
             }
@@ -343,12 +347,12 @@ public class IdentifierDumper :IHasRuntimeName, IDisposeAfterDataLoad,ICheckable
         
     private string GetStagingRuntimeName()
     {
-        return "ID_" + _tableInfo.GetRuntimeName() + "_STAGING";
+        return $"ID_{_tableInfo.GetRuntimeName()}_STAGING";
     }
 
     public string GetRuntimeName()
     {
-        return "ID_" + _tableInfo.GetRuntimeName();
+        return $"ID_{_tableInfo.GetRuntimeName()}";
     }
 
     public void CreateIdentifierDumpTable(ColumnInfo[] primaryKeyColumnInfos)
@@ -377,10 +381,12 @@ public class IdentifierDumper :IHasRuntimeName, IDisposeAfterDataLoad,ICheckable
             foreach (PreLoadDiscardedColumn discardedColumn in _tableInfo.PreLoadDiscardedColumns.Where(d=>d.GoesIntoIdentifierDump()))
             {
                 if(discardedColumn.RuntimeColumnName.StartsWith("ANO"))
-                    throw new Exception("Why are you trying to discard column " + discardedColumn.RuntimeColumnName + ", it looks like an ANO column in which case it should have an ANOTable transform rather than being a dump field.");
+                    throw new Exception(
+                        $"Why are you trying to discard column {discardedColumn.RuntimeColumnName}, it looks like an ANO column in which case it should have an ANOTable transform rather than being a dump field.");
                   
                 if(discardedColumn.SqlDataType == null)
-                    throw new Exception(discardedColumn.GetType().Name + " called " + discardedColumn.RuntimeColumnName + " does not have an assigned type");
+                    throw new Exception(
+                        $"{discardedColumn.GetType().Name} called {discardedColumn.RuntimeColumnName} does not have an assigned type");
                   
                 dumpColumns.Rows.Add(new object[] { discardedColumn.RuntimeColumnName, discardedColumn.SqlDataType});
             }
@@ -389,7 +395,8 @@ public class IdentifierDumper :IHasRuntimeName, IDisposeAfterDataLoad,ICheckable
             if(dumpColumns.Rows.Count == 0)
                 throw new Exception("Cannot create an identifier dump with no dump columns");
               
-            SqlCommand cmdCreate = new SqlCommand("EXEC " + IdentifierDumpCreatorStoredprocedure + " @liveTableName,@primaryKeys,@dumpColumns",con);
+            SqlCommand cmdCreate = new SqlCommand(
+                $"EXEC {IdentifierDumpCreatorStoredprocedure} @liveTableName,@primaryKeys,@dumpColumns",con);
 
             cmdCreate.Parameters.AddWithValue("@liveTableName", _tableInfo.GetRuntimeName());
 
@@ -426,17 +433,16 @@ public class IdentifierDumper :IHasRuntimeName, IDisposeAfterDataLoad,ICheckable
             DiscoveredStoredprocedure[] procedures = dbInfo.DiscoverStoredprocedures();
 
             if (procedures.Any(p=>p.Name.Equals(IdentifierDumpCreatorStoredprocedure)))
-                notifier.OnCheckPerformed(new CheckEventArgs("Found stored procedure " + IdentifierDumpCreatorStoredprocedure +
-                                                             " on " + dbInfo, CheckResult.Success, null));
+                notifier.OnCheckPerformed(new CheckEventArgs(
+                    $"Found stored procedure {IdentifierDumpCreatorStoredprocedure} on {dbInfo}", CheckResult.Success, null));
             else
-                notifier.OnCheckPerformed(new CheckEventArgs("Connected successfully to server "+dbInfo+" but did not find the stored procedure " + IdentifierDumpCreatorStoredprocedure +
-                                                             " in the database (Possibly the ExternalDatabaseServer is not an IdentifierDump database?)",CheckResult.Fail, null));
+                notifier.OnCheckPerformed(new CheckEventArgs(
+                    $"Connected successfully to server {dbInfo} but did not find the stored procedure {IdentifierDumpCreatorStoredprocedure} in the database (Possibly the ExternalDatabaseServer is not an IdentifierDump database?)",CheckResult.Fail, null));
         }
         catch (Exception e)
         {
             notifier.OnCheckPerformed(new CheckEventArgs(
-                "Exception occurred when trying to find stored procedure " + IdentifierDumpCreatorStoredprocedure +
-                " on " + dbInfo, CheckResult.Fail, e));
+                $"Exception occurred when trying to find stored procedure {IdentifierDumpCreatorStoredprocedure} on {dbInfo}", CheckResult.Fail, e));
         }
     }
 }

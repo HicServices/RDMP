@@ -140,12 +140,12 @@ FROM
                 _changeTracking = Convert.ToInt64(result);
         }
     }
-    private string ByteArrayToString(byte[] ba)
+    private static string ByteArrayToString(IReadOnlyCollection<byte> ba)
     {
-        var hex = new StringBuilder(ba.Length * 2);
+        var hex = new StringBuilder("0x",2+ba.Count * 2);
         foreach (var b in ba)
             hex.Append($"{b:x2}");
-        return $"0x{hex}";
+        return hex.ToString();
     }
 
     public T1[] GetAllObjects<T1>()

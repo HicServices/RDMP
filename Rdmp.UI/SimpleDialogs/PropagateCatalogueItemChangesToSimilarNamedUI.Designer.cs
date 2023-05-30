@@ -247,7 +247,7 @@ namespace Rdmp.UI.SimpleDialogs
             this.btnCancel.Name = "btnCancel";
             this.btnCancel.Size = new System.Drawing.Size(262, 36);
             this.btnCancel.TabIndex = 4;
-            this.btnCancel.Text = "Cancel (Dont save anything)";
+            this.btnCancel.Text = "Cancel (Don't save anything)";
             this.btnCancel.TextImageRelation = System.Windows.Forms.TextImageRelation.ImageBeforeText;
             this.btnCancel.UseVisualStyleBackColor = true;
             this.btnCancel.Click += new System.EventHandler(this.btnCancel_Click);

@@ -163,13 +163,13 @@ public class ExtractableColumn : ConcreteColumn, IComparable, IInjectKnown<Catal
     /// <inheritdoc/>
     public void InjectKnown(CatalogueItem instance)
     {
-        _knownCatalogueItem = new Lazy<CatalogueItem>(()=>instance);
+        _knownCatalogueItem = new Lazy<CatalogueItem>(instance);
     }
 
     /// <inheritdoc/>
     public void InjectKnown(ColumnInfo instance)
     {
-        _knownColumnInfo = new Lazy<ColumnInfo>(()=>instance);
+        _knownColumnInfo = new Lazy<ColumnInfo>(instance);
     }
 
     /// <inheritdoc/>
@@ -186,7 +186,7 @@ public class ExtractableColumn : ConcreteColumn, IComparable, IInjectKnown<Catal
             InjectKnown(extractionInformation.ColumnInfo);
         }
 
-        _knownExtractionInformation = new Lazy<ExtractionInformation>(() => extractionInformation);
+        _knownExtractionInformation = new Lazy<ExtractionInformation>(extractionInformation);
     }
 
     /// <inheritdoc/>

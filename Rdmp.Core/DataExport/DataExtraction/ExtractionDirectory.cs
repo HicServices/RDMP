@@ -159,7 +159,7 @@ public class ExtractionDirectory : IExtractionDirectory
     {
         //only add root folders to the delete queue
         if (isRoot)
-            if (!directoriesToDelete.Any(dir => dir.FullName.Equals(toCleanup.FullName))) //dont add the same folder twice
+            if (!directoriesToDelete.Any(dir => dir.FullName.Equals(toCleanup.FullName))) //don't add the same folder twice
                 directoriesToDelete.Add(toCleanup);
 
         filesToDelete.AddRange(toCleanup.EnumerateFiles());

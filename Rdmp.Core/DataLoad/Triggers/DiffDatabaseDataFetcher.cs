@@ -59,24 +59,26 @@ public class DiffDatabaseDataFetcher
             }
             catch (Exception ex)
             {
-                checkNotifier.OnCheckPerformed(new CheckEventArgs("Could not connect to data access point TableInfo " + _tableInfo, CheckResult.Fail,ex));
+                checkNotifier.OnCheckPerformed(new CheckEventArgs(
+                    $"Could not connect to data access point TableInfo {_tableInfo}", CheckResult.Fail,ex));
                 return;
             }
 
 
             if (database.Exists())
-                checkNotifier.OnCheckPerformed(new CheckEventArgs("Verified database exists " + database, CheckResult.Success));
+                checkNotifier.OnCheckPerformed(new CheckEventArgs($"Verified database exists {database}", CheckResult.Success));
 
             var liveTable = _tableInfo.Discover(DataAccessContext.InternalDataProcessing);
-            var archiveTable = database.ExpectTable(_tableInfo.GetRuntimeName() + "_Archive", liveTable.Schema);
+            var archiveTable = database.ExpectTable($"{_tableInfo.GetRuntimeName()}_Archive", liveTable.Schema);
 
             if (liveTable.Exists())
-                checkNotifier.OnCheckPerformed(new CheckEventArgs("Verified table exists " + _tableInfo, CheckResult.Success));
+                checkNotifier.OnCheckPerformed(new CheckEventArgs($"Verified table exists {_tableInfo}", CheckResult.Success));
 
             if (archiveTable.Exists())
-                checkNotifier.OnCheckPerformed(new CheckEventArgs("Verified Archive table exists " + archiveTable, CheckResult.Success));
+                checkNotifier.OnCheckPerformed(new CheckEventArgs($"Verified Archive table exists {archiveTable}", CheckResult.Success));
             else
-                checkNotifier.OnCheckPerformed(new CheckEventArgs("Did not find an Archive table called " + archiveTable, CheckResult.Fail));
+                checkNotifier.OnCheckPerformed(new CheckEventArgs(
+                    $"Did not find an Archive table called {archiveTable}", CheckResult.Fail));
 
             var allCols = _tableInfo.ColumnInfos.ToArray();
             var allArchiveCols = archiveTable.DiscoverColumns().ToArray();
@@ -84,7 +86,8 @@ public class DiffDatabaseDataFetcher
             _pks = allCols.Where(c => c.IsPrimaryKey).ToArray();
 
             if (_pks.Any())
-                checkNotifier.OnCheckPerformed(new CheckEventArgs("Found the following primary keys:" + string.Join(",", _pks.Select(p => p.GetRuntimeName())),CheckResult.Success));
+                checkNotifier.OnCheckPerformed(new CheckEventArgs(
+                    $"Found the following primary keys:{string.Join(",", _pks.Select(p => p.GetRuntimeName()))}",CheckResult.Success));
             else
                 checkNotifier.OnCheckPerformed(new CheckEventArgs("Table does not have any ColumnInfos marked with IsPrimaryKey (try synchronizing the TableInfo if you are sure you have some", CheckResult.Fail));
 
@@ -94,11 +97,12 @@ public class DiffDatabaseDataFetcher
                         //there is a column with the same name in the archive columns (ignoring case)
                         archiveCol=>c.GetRuntimeName().Equals(archiveCol.GetRuntimeName(), StringComparison.InvariantCultureIgnoreCase)
                            
-                                    //but dont care about differences in these columns (e.g. the actual data load run id will obviously be different!)
+                                    //but don't care about differences in these columns (e.g. the actual data load run id will obviously be different!)
                                     && !SpecialFieldNames.IsHicPrefixed(c)
                     )).ToArray();
 
-            checkNotifier.OnCheckPerformed(new CheckEventArgs("Shared columns between the archive and the live table are " + string.Join(",", _sharedColumns.Select(c=>c.GetRuntimeName())),CheckResult.Success));
+            checkNotifier.OnCheckPerformed(new CheckEventArgs(
+                $"Shared columns between the archive and the live table are {string.Join(",", _sharedColumns.Select(c => c.GetRuntimeName()))}",CheckResult.Success));
 
             GetInsertData(server,database,checkNotifier);
             GetUpdatetData(server,database, checkNotifier);
@@ -115,7 +119,8 @@ public class DiffDatabaseDataFetcher
 
         var syntaxHelper = server.GetQuerySyntaxHelper();
         string tableName = _tableInfo.Name;
-        string archiveTableName = syntaxHelper.EnsureFullyQualified(database.GetRuntimeName(),_tableInfo.Schema, _tableInfo.GetRuntimeName() + "_Archive");
+        string archiveTableName = syntaxHelper.EnsureFullyQualified(database.GetRuntimeName(),_tableInfo.Schema,
+            $"{_tableInfo.GetRuntimeName()}_Archive");
 
         var whereStatement = "";
 
@@ -130,7 +135,8 @@ public class DiffDatabaseDataFetcher
         qb.AddColumnRange(_tableInfo.ColumnInfos.Select(c => new ColumnInfoToIColumn(memoryRepository,c)).ToArray());
             
         //where
-        var filter1 = new SpontaneouslyInventedFilter(memoryRepository,null, syntaxHelper.EnsureWrapped(SpecialFieldNames.DataLoadRunID) + " = " + _dataLoadRunID, "DataLoadRunID matches", null, null);
+        var filter1 = new SpontaneouslyInventedFilter(memoryRepository,null,
+            $"{syntaxHelper.EnsureWrapped(SpecialFieldNames.DataLoadRunID)} = {_dataLoadRunID}", "DataLoadRunID matches", null, null);
         var filter2 =
             new SpontaneouslyInventedFilter(memoryRepository,null,
                 string.Format(@" not exists (
@@ -153,7 +159,8 @@ select 1 from {0} where {1} {2} < {3}
         var syntaxHelper = server.GetQuerySyntaxHelper();
             
         string tableName = _tableInfo.Name;
-        string archiveTableName = syntaxHelper.EnsureFullyQualified(database.GetRuntimeName(),_tableInfo.Schema, _tableInfo.GetRuntimeName() + "_Archive");
+        string archiveTableName = syntaxHelper.EnsureFullyQualified(database.GetRuntimeName(),_tableInfo.Schema,
+            $"{_tableInfo.GetRuntimeName()}_Archive");
 
         var whereStatement = string.Join(" AND ",_pks.Select(pk=>string.Format("{0}.{1} = {2}.{1} ", tableName, pk.GetRuntimeName(),archiveTableName)));
             
@@ -167,22 +174,22 @@ select 1 from {0} where {1} {2} < {3}
         switch (syntaxHelper.DatabaseType)
         {
             case DatabaseType.MicrosoftSQLServer:
-                sql = @"
+                sql = $@"
 --Records which appear in the archive
-SELECT top {0}
-{6},
-{7}
-FROM    {1} 
+SELECT top {{0}}
+{{6}},
+{{7}}
+FROM    {{1}} 
 CROSS APPLY
         (
-        SELECT  TOP 1 {2}.*
-        FROM    {2}
+        SELECT  TOP 1 {{2}}.*
+        FROM    {{2}}
         WHERE  
-         {3}
-         order by " + syntaxHelper.EnsureWrapped(SpecialFieldNames.ValidFrom) + @" desc
-        ) {8}
+         {{3}}
+         order by {syntaxHelper.EnsureWrapped(SpecialFieldNames.ValidFrom)} desc
+        ) {{8}}
 where
-{1}.{4} = {5}";
+{{1}}.{{4}} = {{5}}";
                 break;
 
             case DatabaseType.Oracle:
@@ -190,19 +197,19 @@ where
             case DatabaseType.PostgreSql:
 
                     
-                sql = @"
+                sql = $@"
 /*Records which appear in the archive*/
 SELECT
-{6},
-{7}
+{{6}},
+{{7}}
 FROM    
-{1}
+{{1}}
 Join
-{2} {8} on " + whereStatement.Replace(archiveTableName, archive) + @"
+{{2}} {{8}} on {whereStatement.Replace(archiveTableName, archive)}
  AND
- {8}.{9} = (select max(" + syntaxHelper.EnsureWrapped(SpecialFieldNames.ValidFrom) + @") from {2} s where " + whereStatement.Replace(archiveTableName, archive).Replace(tableName,"s") + @")
+ {{8}}.{{9}} = (select max({syntaxHelper.EnsureWrapped(SpecialFieldNames.ValidFrom)}) from {{2}} s where {whereStatement.Replace(archiveTableName, archive).Replace(tableName, "s")})
  where
-  {1}.{4} = {5}
+  {{1}}.{{4}} = {{5}}
 
 ";
                 sql += syntaxHelper.HowDoWeAchieveTopX(_batchSize).SQL;
@@ -261,7 +268,7 @@ Join
         foreach (ColumnInfo sharedColumn in _sharedColumns)
         {
             sb.AppendLine();
-            sb.Append(tableName + "." + sharedColumn.GetRuntimeName() + " " + columnAliasPrefix + sharedColumn.GetRuntimeName());
+            sb.Append($"{tableName}.{sharedColumn.GetRuntimeName()} {columnAliasPrefix}{sharedColumn.GetRuntimeName()}");
             sb.Append(",");
         }
 
@@ -275,7 +282,7 @@ Join
         foreach (ColumnInfo sharedColumn in _sharedColumns)
         {
             sb.AppendLine();
-            sb.Append(tableName + "." + sharedColumn.GetRuntimeName());
+            sb.Append($"{tableName}.{sharedColumn.GetRuntimeName()}");
             sb.Append(",");
         }
 

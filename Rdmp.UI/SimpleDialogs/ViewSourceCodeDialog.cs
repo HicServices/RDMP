@@ -50,7 +50,7 @@ public partial class ViewSourceCodeDialog : Form
             
         bool designMode = (LicenseManager.UsageMode == LicenseUsageMode.Designtime);
 
-        if (designMode) //dont add the QueryEditor if we are in design time (visual studio) because it breaks
+        if (designMode) //don't add the QueryEditor if we are in design time (visual studio) because it breaks
             return;
 
         QueryEditor = new ScintillaTextEditorFactory().Create(null, SyntaxLanguage.CSharp);

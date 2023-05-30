@@ -15,7 +15,7 @@ namespace Rdmp.Core.MapsDirectlyToDatabaseTable;
 public class SaveEventArgs : EventArgs
 {
     /// <summary>
-    /// Set to true to prevent the save writting to database/disk.
+    /// Set to true to prevent the save writing to database/disk.
     /// </summary>
     public bool Cancel { get; set; }
 

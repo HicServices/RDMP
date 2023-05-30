@@ -544,7 +544,7 @@ public static class UserSettings
         {
             var value = AppSettings.GetValueOrDefault("LastColumnSort_" + controlGuid.ToString("N"), null);
 
-            //if we dont have a value
+            //if we don't have a value
             if (string.IsNullOrWhiteSpace(value))
                 return null;
 
@@ -558,8 +558,7 @@ public static class UserSettings
             if (string.IsNullOrWhiteSpace(args[0]) || string.IsNullOrWhiteSpace(args[1]))
                 return null;
 
-            bool ascending;
-            if (bool.TryParse(args[1], out ascending))
+            if (bool.TryParse(args[1], out var ascending))
                 return Tuple.Create(args[0], ascending);
         }
 

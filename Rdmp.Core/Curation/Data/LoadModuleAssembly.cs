@@ -8,6 +8,7 @@ using System;
 using System.Collections.Generic;
 using System.Data.Common;
 using System.IO;
+using System.Linq;
 using System.Threading;
 using Rdmp.Core.CommandLine.Runners;
 using Rdmp.Core.Curation.Data.ImportExport;
@@ -97,7 +98,7 @@ public class LoadModuleAssembly : DatabaseEntity, IInjectKnown<Plugin>
     {
         var dictionaryParameters = GetDictionaryParameters(f, plugin);
 
-        //so we can reference it in fetch requests to check for duplication (normaly Repository is set during hydration by the repo)
+        //so we can reference it in fetch requests to check for duplication (normally Repository is set during hydration by the repo)
         Repository = repository;
 
         Repository.InsertAndHydrate(this,dictionaryParameters);
@@ -127,7 +128,7 @@ public class LoadModuleAssembly : DatabaseEntity, IInjectKnown<Plugin>
     /// <param name="downloadDirectory"></param>
     public string DownloadAssembly(DirectoryInfo downloadDirectory)
     {
-        string targetDirectory = downloadDirectory.FullName;
+        var targetDirectory = downloadDirectory.FullName;
 
         if (targetDirectory == null)
             throw new Exception("Could not get currently executing assembly directory");
@@ -135,19 +136,19 @@ public class LoadModuleAssembly : DatabaseEntity, IInjectKnown<Plugin>
         if (!downloadDirectory.Exists)
             downloadDirectory.Create();
 
-        string targetFile = Path.Combine(targetDirectory, Plugin.Name);
+        var targetFile = Path.Combine(targetDirectory, Plugin.Name);
             
         //file already exists
         if (File.Exists(targetFile))
             if(AreEqual(File.ReadAllBytes(targetFile), Bin))
                 return targetFile;
 
-        int timeout = 5000;
+        var timeout = 5000;
 
         TryAgain:
         try
         {
-            //if it has changed length or does not exist, write it out to the hardisk
+            //if it has changed length or does not exist, write it out to the disk
             File.WriteAllBytes(targetFile, Bin);
         }
         catch (Exception)
@@ -167,9 +168,9 @@ public class LoadModuleAssembly : DatabaseEntity, IInjectKnown<Plugin>
     private Dictionary<string, object> GetDictionaryParameters(FileInfo f, Plugin plugin)
     {
         if(f.Extension != PackPluginRunner.PluginPackageSuffix)
-            throw new Exception("Expected LoadModuleAssembly file to be a " + PackPluginRunner.PluginPackageSuffix);
+            throw new Exception($"Expected LoadModuleAssembly file to be a {PackPluginRunner.PluginPackageSuffix}");
 
-        byte[] allBytes = File.ReadAllBytes(f.FullName);
+        var allBytes = File.ReadAllBytes(f.FullName);
 
         var dictionaryParameters = new Dictionary<string, object>()
         {
@@ -181,27 +182,23 @@ public class LoadModuleAssembly : DatabaseEntity, IInjectKnown<Plugin>
         return dictionaryParameters;
     }
 
-    private bool AreEqual(byte[] readAllBytes, byte[] dll)
+    private static bool AreEqual(byte[] readAllBytes, byte[] dll)
     {
         if (readAllBytes.Length != dll.Length)
             return false;
 
-        for (int i = 0; i < dll.Length; i++)
-            if (!readAllBytes[i].Equals(dll[i]))
-                return false;
-
-        return true;
+        return !dll.Where((t, i) => !readAllBytes[i].Equals(t)).Any();
     }
 
     public void InjectKnown(Plugin instance)
     {
-        _knownPlugin = new Lazy<Plugin>(() => instance);
+        _knownPlugin = new Lazy<Plugin>(instance);
     }
 
     /// <inheritdoc/>
     public override string ToString()
     {
-        return "LoadModuleAssembly_" + ID;
+        return $"LoadModuleAssembly_{ID}";
     }
 
     public void ClearAllInjections()

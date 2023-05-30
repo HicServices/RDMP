@@ -71,7 +71,7 @@ public class ValidationXMLObscureDependencyFinder:IObscureDependencyFinder
             //anything
             pattern += ".*";
 
-            //this will be replaced by the ID of the thing we are deleting (dont match 1 to 115 though!)
+            //this will be replaced by the ID of the thing we are deleting (don't match 1 to 115 though!)
             pattern += @"\b{0}\b";
 
             //then more of anything

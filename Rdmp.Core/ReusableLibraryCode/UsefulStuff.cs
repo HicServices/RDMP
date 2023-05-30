@@ -125,7 +125,7 @@ public class UsefulStuff
         for (var i = 0; i < split.Length; i++)
             split[i] = Regex.Replace(split[i], @"\s+[\d\s]*$", "");    
             
-        //identifies the last word in a collection of multiple words (requires you .Trim() so we dont get ending whitespace match)
+        //identifies the last word in a collection of multiple words (requires you .Trim() so we don't get ending whitespace match)
         var regexLastWord = new Regex("\\s[^\\s]*$");
         foreach (var s in split)
         {
@@ -337,18 +337,15 @@ public class UsefulStuff
     {
         outputDirectory ??= Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData), "RDMP");
 
-        using var fileToSpray = assembly.GetManifestResourceStream(manifestName);
-
-        if (fileToSpray == null)
-            throw new Exception(
+        using var fileToSpray = assembly.GetManifestResourceStream(manifestName) ?? throw new Exception(
                 $"assembly.GetManifestResourceStream returned null for manifest name {manifestName} in assembly {assembly}");
 
         if (!Directory.Exists(outputDirectory))
             Directory.CreateDirectory(outputDirectory);
 
         var target = new FileInfo(Path.Combine(outputDirectory,file));
-        using var dest = target.OpenWrite();
-        fileToSpray.CopyTo(dest);
+        using var destination = target.OpenWrite();
+        fileToSpray.CopyTo(destination,1<<20);
         return target;
     }
 
@@ -447,27 +444,22 @@ public class UsefulStuff
         Process.Start("explorer.exe", argument);
     }
 
-    public string GetClipboardFormattedHtmlStringFromHtmlString(string s)
+    public static string GetClipboardFormattedHtmlStringFromHtmlString(string s)
     {
-        const int maxLength = 9999999;
+        const int maxLength = 1_000_000_000-52; // Header is 51 characters, total length must fit in 10 digits
         if(s.Length > maxLength)
             throw new ArgumentException(
                 $"String s is too long, the maximum length is {maxLength} but argument s was length {s.Length}",nameof(s));
 
-        var guidStart = Guid.NewGuid().ToString()[..7];
-        var guidEnd = Guid.NewGuid().ToString()[..7];
-
-        //one in a million that the first 7 digits of the guid are the same as one another or exist in the data string
-        if (s.Contains(guidStart) || s.Contains(guidEnd) || guidStart.Equals(guidEnd))
-            return GetClipboardFormattedHtmlStringFromHtmlString(s);//but possible I guess so try again
-
-        var template = $"Version:1.0\r\nStartHTML:{guidStart}\r\nEndHTML:{guidEnd}\r\n";
-
-        s = template
-            .Replace(guidStart, template.Length.ToString("0000000"))
-            .Replace(guidEnd, (template.Length + s.Length).ToString("0000000")) + s;
-
-        return s;
+        // Circular dependency here: we need a string containing both its own length and the length of the string after it
+        // {0:D6} is the same length as its own description
+        // {1:D10} is 3 characters longer than its own description, so +3
+        // {2} on the end adds 3, so the overall prefix length is constant
+        var template = "Version:1.0\r\nStartHTML:{0:D6}\r\nEndHTML:{1:D10}\r\n{2}";
+        return string.Format(
+            template,
+            template.Length,
+            s.Length+template.Length,s);
     }
 
     public static bool IsAssignableToGenericType(Type givenType, Type genericType)

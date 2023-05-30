@@ -121,11 +121,11 @@ public class ExtractableDataSet : DatabaseEntity, IExtractableDataSet, IInjectKn
     public override string ToString()
     {
         if (Catalogue == null)
-            return "DELETED CATALOGUE " + Catalogue_ID;
+            return $"DELETED CATALOGUE {Catalogue_ID}";
 
         //only bother refreshing Catalogue details if we will be able to get a legit catalogue name
         if (Catalogue.IsDeprecated)
-            return "DEPRECATED CATALOGUE " + Catalogue.Name;
+            return $"DEPRECATED CATALOGUE {Catalogue.Name}";
 
         return Catalogue.Name;
     }
@@ -145,9 +145,8 @@ public class ExtractableDataSet : DatabaseEntity, IExtractableDataSet, IInjectKn
         catch (Exception e)
         {
             if(e.Message.Contains("FK_SelectedDataSets_ExtractableDataSet"))
-                throw new Exception("Cannot delete " + this + " because it is in use by the following configurations :" +
-                                    Environment.NewLine + 
-                                    string.Join(Environment.NewLine, ExtractionConfigurations.Select(c=>c.Name +"(" + c.Project +")")), e);
+                throw new Exception(
+                    $"Cannot delete {this} because it is in use by the following configurations :{Environment.NewLine}{string.Join(Environment.NewLine, ExtractionConfigurations.Select(c => $"{c.Name}({c.Project})"))}", e);
             throw;
         }
     }
@@ -168,8 +167,9 @@ public class ExtractableDataSet : DatabaseEntity, IExtractableDataSet, IInjectKn
     public void InjectKnown(ICatalogue instance)
     {
         if(instance.ID != Catalogue_ID)
-            throw new ArgumentOutOfRangeException("You told us our Catalogue was '" + instance +"' but its ID didn't match so that is NOT our Catalogue","c");
-        _catalogue = new Lazy<ICatalogue>(() => instance);
+            throw new ArgumentOutOfRangeException(nameof(instance),
+                $"You told us our Catalogue was '{instance}' but its ID didn't match so that is NOT our Catalogue");
+        _catalogue = new Lazy<ICatalogue>(instance);
     }
 
     /// <inheritdoc/>

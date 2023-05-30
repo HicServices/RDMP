@@ -4,18 +4,18 @@
 // RDMP is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License for more details.
 // You should have received a copy of the GNU General Public License along with RDMP. If not, see <https://www.gnu.org/licenses/>.
 
-namespace Rdmp.Core.CommandLine.Gui;
-
 using NStack;
 using Rdmp.Core.CommandExecution;
-using ReusableLibraryCode.Checks;
-using ReusableLibraryCode.Settings;
+using Rdmp.Core.ReusableLibraryCode.Checks;
+using Rdmp.Core.ReusableLibraryCode.Settings;
 using System.Collections.Generic;
 using System.Linq;
 using System.Reflection;
 using Terminal.Gui;
-    
-    
+
+
+namespace Rdmp.Core.CommandLine.Gui;
+
 public partial class ConsoleGuiUserSettings {
 
     Dictionary<CheckBox, PropertyInfo> checkboxDictionary = new();
