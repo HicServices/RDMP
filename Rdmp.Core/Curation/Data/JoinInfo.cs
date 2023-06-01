@@ -82,29 +82,29 @@ public class JoinInfo : DatabaseEntity, IJoin,IHasDependencies
     /// <inheritdoc cref="IJoin.ForeignKey"/>
     public int ForeignKey_ID
     {
-        get { return _foreignKeyID; }
-        set {SetField(ref _foreignKeyID , value); }
+        get => _foreignKeyID;
+        set => SetField(ref _foreignKeyID , value);
     }
 
     /// <inheritdoc cref="IJoin.PrimaryKey"/>
     public int PrimaryKey_ID
     {
-        get { return _primaryKeyID; }
-        set { SetField(ref _primaryKeyID , value); }
+        get => _primaryKeyID;
+        set => SetField(ref _primaryKeyID , value);
     }
 
     /// <inheritdoc/>
     public string Collation
     {
-        get { return _collation; }
-        set { SetField(ref _collation , value); }
+        get => _collation;
+        set => SetField(ref _collation , value);
     }
 
     /// <inheritdoc/>
     public ExtractionJoinType ExtractionJoinType
     {
-        get { return _extractionJoinType; }
-        set { SetField(ref _extractionJoinType , value); }
+        get => _extractionJoinType;
+        set => SetField(ref _extractionJoinType , value);
     }
 
     #endregion
@@ -119,17 +119,12 @@ public class JoinInfo : DatabaseEntity, IJoin,IHasDependencies
     #region Relationships
     /// <inheritdoc/>
     [NoMappingToDatabase]
-    public ColumnInfo ForeignKey
-    {
-        get { return _foreignKey ?? (_foreignKey = Repository.GetObjectByID<ColumnInfo>(ForeignKey_ID)); }
-    }
+    public ColumnInfo ForeignKey => _foreignKey ?? (_foreignKey = Repository.GetObjectByID<ColumnInfo>(ForeignKey_ID));
 
     /// <inheritdoc/>
     [NoMappingToDatabase]
-    public ColumnInfo PrimaryKey
-    {
-        get { return _primaryKey ?? (_primaryKey = Repository.GetObjectByID<ColumnInfo>(PrimaryKey_ID)); }
-    }
+    public ColumnInfo PrimaryKey => _primaryKey ?? (_primaryKey = Repository.GetObjectByID<ColumnInfo>(PrimaryKey_ID));
+
     #endregion
 
     public JoinInfo()
@@ -154,7 +149,7 @@ public class JoinInfo : DatabaseEntity, IJoin,IHasDependencies
         if (ExtractionJoinType.TryParse(r["ExtractionJoinType"].ToString(), true, out joinType))
             ExtractionJoinType = joinType;
         else
-            throw new Exception("Did not recognise ExtractionJoinType:" + r["ExtractionJoinType"]);
+            throw new Exception($"Did not recognise ExtractionJoinType:{r["ExtractionJoinType"]}");
 
         if (ForeignKey_ID == PrimaryKey_ID)
             throw new Exception("Join key 1 and 2 are the same, lookup is broken");
@@ -182,7 +177,7 @@ public class JoinInfo : DatabaseEntity, IJoin,IHasDependencies
     /// <inheritdoc/>
     public override string ToString()
     {
-        return " " + ForeignKey.Name + " = " + PrimaryKey.Name;
+        return $" {ForeignKey.Name} = {PrimaryKey.Name}";
     }
         
     /// <summary>

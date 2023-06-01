@@ -32,8 +32,8 @@ public class AggregateFilterContainer : ConcreteContainer, IDisableable
     /// <inheritdoc/>
     public bool IsDisabled
     {
-        get { return _isDisabled; }
-        set { SetField(ref _isDisabled, value); }
+        get => _isDisabled;
+        set => SetField(ref _isDisabled, value);
     }
 
     #endregion
@@ -98,13 +98,13 @@ public class AggregateFilterContainer : ConcreteContainer, IDisableable
     public override IContainer DeepCloneEntireTreeRecursivelyIncludingFilters()
     {
         //clone ourselves
-        AggregateFilterContainer clone = ShallowClone();
+        var clone = ShallowClone();
             
         //clone our filters
         foreach (AggregateFilter filterToClone in GetFilters())
         {
             //clone it
-            AggregateFilter cloneFilter = filterToClone.ShallowClone(clone);
+            var cloneFilter = filterToClone.ShallowClone(clone);
 
             //clone parameters
             foreach (AggregateFilterParameter parameterToClone in filterToClone.GetAllParameters())

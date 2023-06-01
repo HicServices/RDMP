@@ -37,15 +37,14 @@ public abstract class GlobalReleasePotential : ICheckable
             var table = RelatedGlobal as SupportingSQLTable;
             if (table == null)
             { 
-                notifier.OnCheckPerformed(new CheckEventArgs("The executed Global " + GlobalResult.ExtractedName + 
-                                                             " has a SQL script but the extracted type (" + GlobalResult.ReferencedObjectType + 
-                                                             ") is not a SupportingSQLTable", CheckResult.Fail));
+                notifier.OnCheckPerformed(new CheckEventArgs(
+                    $"The executed Global {GlobalResult.ExtractedName} has a SQL script but the extracted type ({GlobalResult.ReferencedObjectType}) is not a SupportingSQLTable", CheckResult.Fail));
                 Releasability = Releaseability.ExtractionSQLDesynchronisation;
             }
             if (table.SQL != GlobalResult.SQLExecuted)
             {
-                notifier.OnCheckPerformed(new CheckEventArgs("The executed Global " + GlobalResult.ExtractedName +
-                                                             " has a SQL script which is different from the current one!", CheckResult.Fail));
+                notifier.OnCheckPerformed(new CheckEventArgs(
+                    $"The executed Global {GlobalResult.ExtractedName} has a SQL script which is different from the current one!", CheckResult.Fail));
                 Releasability = Releaseability.ExtractionSQLDesynchronisation;
             }
         }
@@ -64,7 +63,7 @@ public abstract class GlobalReleasePotential : ICheckable
         var file = new FileInfo(filePath);
         if (!file.Exists)
         {
-            notifier.OnCheckPerformed(new CheckEventArgs("File: " + file.FullName + " was not found", CheckResult.Fail));
+            notifier.OnCheckPerformed(new CheckEventArgs($"File: {file.FullName} was not found", CheckResult.Fail));
             Releasability = Releaseability.ExtractFilesMissing;
         }
     }

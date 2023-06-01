@@ -79,7 +79,7 @@ public class TutorialTracker : IHelpWorkflowProgressProvider
 
     public void ClearCompleted()
     {
-        foreach (Tutorial tutorial in TutorialsAvailable)
+        foreach (var tutorial in TutorialsAvailable)
             UserSettings.SetTutorialDone(tutorial.Guid, false);
     }
 

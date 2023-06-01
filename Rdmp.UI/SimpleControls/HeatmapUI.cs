@@ -83,7 +83,7 @@ public partial class HeatmapUI : UserControl
     {
         if(!string.IsNullOrWhiteSpace(UserSettings.HeatMapColours))
         {
-            Regex colorRegex = new Regex("#([0-9A-F][0-9A-F])([0-9A-F][0-9A-F])([0-9A-F][0-9A-F])");
+            var colorRegex = new Regex("#([0-9A-F][0-9A-F])([0-9A-F][0-9A-F])([0-9A-F][0-9A-F])");
 
             var tokens = UserSettings.HeatMapColours.Split(new string[]{"->" },StringSplitOptions.None);
 
@@ -121,8 +121,8 @@ public partial class HeatmapUI : UserControl
             _maxValueInDataTable = double.MinValue;
             _minValueInDataTable = double.MaxValue;
 
-            for (int x = 0; x < _dataTable.Rows.Count; x++)
-            for (int y = 1; y < _dataTable.Columns.Count; y++)
+            for (var x = 0; x < _dataTable.Rows.Count; x++)
+            for (var y = 1; y < _dataTable.Columns.Count; y++)
             {
 
                 var cellValue = ToDouble(_dataTable.Rows[x][y]);
@@ -215,12 +215,12 @@ public partial class HeatmapUI : UserControl
         if (pos.X > Width)
             return null;
 
-        double pixelHeight = GetHeatPixelHeight();
-        double pixelWidth = GetHeatPixelWidth();
+        var pixelHeight = GetHeatPixelHeight();
+        var pixelWidth = GetHeatPixelWidth();
 
 
-        int dataTableCol = (int) (pos.Y/pixelHeight); //heat map line number + 1 because first column is the axis label
-        int dataTableRow = (int) (pos.X/pixelWidth); //the pixel width corresponds to the number of axis values in the first column
+        var dataTableCol = (int) (pos.Y/pixelHeight); //heat map line number + 1 because first column is the axis label
+        var dataTableRow = (int) (pos.X/pixelWidth); //the pixel width corresponds to the number of axis values in the first column
 
         if (dataTableCol >= _dataTable.Columns.Count)
             return null;
@@ -232,7 +232,8 @@ public partial class HeatmapUI : UserControl
         if(dataTableCol == 0)
             return _dataTable.Rows[dataTableRow][dataTableCol];
 
-        return  _dataTable.Rows[dataTableRow][0] + ":" + _dataTable.Columns[dataTableCol].ColumnName  + Environment.NewLine + _dataTable.Rows[dataTableRow][dataTableCol];
+        return
+            $"{_dataTable.Rows[dataTableRow][0]}:{_dataTable.Columns[dataTableCol].ColumnName}{Environment.NewLine}{_dataTable.Rows[dataTableRow][dataTableCol]}";
     }
 
     protected override void OnPaint(PaintEventArgs e)
@@ -251,26 +252,26 @@ public partial class HeatmapUI : UserControl
                 e.Graphics.FillRectangle(Brushes.White, new Rectangle(0,0,Width,Height));
 
                 //decide how tall to make pixels
-                double heatPixelHeight = GetHeatPixelHeight();
+                var heatPixelHeight = GetHeatPixelHeight();
 
                 //based on the height of the line what text font will fit into that line?
-                Font font = GetFontSizeThatWillFitPixelHeight(heatPixelHeight, e.Graphics);
+                var font = GetFontSizeThatWillFitPixelHeight(heatPixelHeight, e.Graphics);
 
                 //now we know the Font to use, figure out the width of the longest piece of text when rendered with the Font (with a sensible max, we aren't allowing war and peace into this label)
                 _currentLabelsWidth = GetLabelWidth(e.Graphics, font);
 
                 //now that we know the width of the labels work out the width of each pixel to fill the rest of the controls area with heat pixels / axis
-                double heatPixelWidth = GetHeatPixelWidth();
+                var heatPixelWidth = GetHeatPixelWidth();
 
                 var brush = new SolidBrush(Color.Black);
                     
                 //for each line of pixels in heatmap
-                for (int x = 0; x < _dataTable.Rows.Count; x++)
+                for (var x = 0; x < _dataTable.Rows.Count; x++)
                 {
                     //draw the line this way -------------> with pixels of width heatPixelWidth/Height
                     
                     //skip the first y value which is the x axis value
-                    for (int y = 1; y < _dataTable.Columns.Count; y++)
+                    for (var y = 1; y < _dataTable.Columns.Count; y++)
                     {
                         //the value we are drawing
                         var cellValue = ToDouble(_dataTable.Rows[x][y]);
@@ -280,8 +281,8 @@ public partial class HeatmapUI : UserControl
                             brush.Color = Color.Black;
                         else
                         {
-                            double brightness = (cellValue - _minValueInDataTable) / (_maxValueInDataTable - _minValueInDataTable);
-                            int brightnessIndex = (int)(brightness * (NumberOfColors - 1));
+                            var brightness = (cellValue - _minValueInDataTable) / (_maxValueInDataTable - _minValueInDataTable);
+                            var brightnessIndex = (int)(brightness * (NumberOfColors - 1));
 
                             brush.Color = _rainbow.Colors[brightnessIndex];
                         }
@@ -290,13 +291,13 @@ public partial class HeatmapUI : UserControl
                     }
                 }
                 
-                double labelStartX = Width - _currentLabelsWidth;
+                var labelStartX = Width - _currentLabelsWidth;
                 
                 
                 //draw the labels
-                for (int i = 1; i < _dataTable.Columns.Count; i++)
+                for (var i = 1; i < _dataTable.Columns.Count; i++)
                 {
-                    double labelStartY = (i)*heatPixelHeight;
+                    var labelStartY = (i)*heatPixelHeight;
                     
                     var name = _dataTable.Columns[i].ColumnName;
 
@@ -309,7 +310,7 @@ public partial class HeatmapUI : UserControl
                 var visibleArea = _useEntireControlAsVisibleArea ? new Rectangle(0,0,Width,Height) : this.GetVisibleArea();
                     
                     
-                int visibleClipBoundsTop = visibleArea.Top;
+                var visibleClipBoundsTop = visibleArea.Top;
 
                 //now draw the axis 
                 //axis starts at the first visible pixel
@@ -318,9 +319,9 @@ public partial class HeatmapUI : UserControl
                 e.Graphics.FillRectangle(Brushes.White, 0, (int)axisYStart, Width, (int)heatPixelHeight);
 
                 //draw the axis labels
-                for (int i = 0; i < _dataTable.Rows.Count; i++)
+                for (var i = 0; i < _dataTable.Rows.Count; i++)
                 {
-                    double axisXStart = i * heatPixelWidth;
+                    var axisXStart = i * heatPixelWidth;
 
                     //skip labels if the axis would result in a label overdrawing its mate
                     if (axisXStart  < lastAxisStart + lastAxisLabelWidth)
@@ -363,7 +364,7 @@ public partial class HeatmapUI : UserControl
 
     private double GetHeatPixelWidth()
     {
-        double plotAreaWidth = Width - _currentLabelsWidth;
+        var plotAreaWidth = Width - _currentLabelsWidth;
         return plotAreaWidth/_dataTable.Rows.Count;
     }
 
@@ -383,7 +384,7 @@ public partial class HeatmapUI : UserControl
     private Font GetFontSizeThatWillFitPixelHeight(double heightInPixels, Graphics graphics)
     {
         Font font;
-        double emSize = heightInPixels;
+        var emSize = heightInPixels;
         do
         {
             font = new Font(new FontFamily("Tahoma"), (float)(emSize -= 0.5), FontStyle.Regular);
@@ -415,9 +416,9 @@ public partial class HeatmapUI : UserControl
 
     public Bitmap GetImage(int maxHeight)
     {
-        int h = Math.Min(maxHeight,Height);
+        var h = Math.Min(maxHeight,Height);
 
-        bool isClipped = maxHeight < Height;
+        var isClipped = maxHeight < Height;
             
         var bmp = new Bitmap(Width, h);
 
@@ -430,15 +431,16 @@ public partial class HeatmapUI : UserControl
         if (isClipped)
         {
             //number of heat map lines
-            int numberOfHeatLinesVisible = (int) (h/GetHeatPixelHeight());
+            var numberOfHeatLinesVisible = (int) (h/GetHeatPixelHeight());
 
             //total number of heatmap lines
-            int totalHeatMapLinesAvailable = _dataTable.Columns.Count -1;
+            var totalHeatMapLinesAvailable = _dataTable.Columns.Count -1;
 
             if (numberOfHeatLinesVisible < totalHeatMapLinesAvailable)
             {
                 //add a note saying to user data has been clipped
-                string clippedRowsComment = (totalHeatMapLinesAvailable - numberOfHeatLinesVisible) + " more rows clipped";
+                var clippedRowsComment =
+                    $"{(totalHeatMapLinesAvailable - numberOfHeatLinesVisible)} more rows clipped";
                 var g = Graphics.FromImage(bmp);
 
                 var fontSize = g.MeasureString(clippedRowsComment, Font);

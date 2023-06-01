@@ -51,7 +51,7 @@ class TestsExecuteCommandList : CommandCliTests
 
         cmd.Execute();
 
-        string contents = Regex.Escape($"{c.ID}:fff");
+        var contents = Regex.Escape($"{c.ID}:fff");
 
         // Called once
         mock.Verify(m => m.Show(It.IsRegex(contents)), Times.Once());

@@ -26,7 +26,7 @@ internal class ExecuteCommandAnonymiseColumnInfo : BasicUICommandExecution,IAtom
     {
         _columnInfo = columnInfo;
         if (columnInfo.GetRuntimeName().StartsWith(ANOTable.ANOPrefix,StringComparison.CurrentCultureIgnoreCase))
-            SetImpossible("ColumnInfo is already anonymised (Starts with \"" + ANOTable.ANOPrefix + "\"");
+            SetImpossible($"ColumnInfo is already anonymised (Starts with \"{ANOTable.ANOPrefix}\"");
 
         if (columnInfo.ANOTable_ID != null)
             SetImpossible("ColumnInfo is already anonymised");

@@ -188,11 +188,11 @@ public partial class ConfigureAndExecutePipelineUI : RDMPUserControl, IPipelineR
 
         progressUI1.ShowRunning(true);
 
-        bool success = false;
+        var success = false;
         Exception exception = null;
 
         //start a new thread
-        Task t = new Task(() =>
+        var t = new Task(() =>
             {
                 try
                 {
@@ -257,7 +257,7 @@ public partial class ConfigureAndExecutePipelineUI : RDMPUserControl, IPipelineR
         if (pipeline != null)
             try
             {
-                DataTableViewerUI dtv = new DataTableViewerUI(((IDataFlowSource<DataTable>) pipeline.SourceObject).TryGetPreview(),"Preview");
+                var dtv = new DataTableViewerUI(((IDataFlowSource<DataTable>) pipeline.SourceObject).TryGetPreview(),"Preview");
                 SingleControlForm.ShowDialog(dtv);
             }
             catch (Exception exception)

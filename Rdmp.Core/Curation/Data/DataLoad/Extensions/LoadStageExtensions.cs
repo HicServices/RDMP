@@ -33,7 +33,7 @@ public static class LoadStageExtensions
             case LoadStage.PostLoad:
                 return LoadBubble.Live;
             default:
-                throw new ArgumentOutOfRangeException("Unknown value for LoadStage: " + loadStage);
+                throw new ArgumentOutOfRangeException($"Unknown value for LoadStage: {loadStage}");
         }
     }
 }

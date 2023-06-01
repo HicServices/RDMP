@@ -37,13 +37,13 @@ internal class CherryPickingTailFilter : IListFilter
     /// <returns>Objects that should survive filtering</returns>
     public IEnumerable Filter(IEnumerable modelObjects)
     {
-        int countReturned = _numberOfObjects;
+        var countReturned = _numberOfObjects;
 
         if (_modelFilter == null)
             return modelObjects.Cast<object>().Take(_numberOfObjects);
 
-        bool hasSearchTokens = _modelFilter.HasComponents;
-        bool hasAlwaysShowlist = _modelFilter.AlwaysShow != null && _modelFilter.AlwaysShow.Any();
+        var hasSearchTokens = _modelFilter.HasComponents;
+        var hasAlwaysShowlist = _modelFilter.AlwaysShow != null && _modelFilter.AlwaysShow.Any();
 
         var available = modelObjects.Cast<object>().ToList();
 

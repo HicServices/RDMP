@@ -52,10 +52,11 @@ public class DataAccessPortal
 
     private DiscoveredServer GetServer(IDataAccessPoint dataAccessPoint, DataAccessContext context, bool setInitialDatabase)
     {
-        IDataAccessCredentials credentials = dataAccessPoint.GetCredentialsIfExists(context);
+        var credentials = dataAccessPoint.GetCredentialsIfExists(context);
             
         if(string.IsNullOrWhiteSpace(dataAccessPoint.Server))
-            throw new NullReferenceException("Could not get connection string because Server was null on dataAccessPoint '" + dataAccessPoint +"'");
+            throw new NullReferenceException(
+                $"Could not get connection string because Server was null on dataAccessPoint '{dataAccessPoint}'");
  
         string dbName = null;
                                    
@@ -63,7 +64,8 @@ public class DataAccessPortal
             if(!string.IsNullOrWhiteSpace(dataAccessPoint.Database))
                 dbName = dataAccessPoint.GetQuerySyntaxHelper().GetRuntimeName(dataAccessPoint.Database);
             else
-                throw new Exception("Could not get server with setInitialDatabase=true because no Database was set on IDataAccessPoint " + dataAccessPoint );
+                throw new Exception(
+                    $"Could not get server with setInitialDatabase=true because no Database was set on IDataAccessPoint {dataAccessPoint}");
             
         var server = new DiscoveredServer(dataAccessPoint.Server,dbName,dataAccessPoint.DatabaseType,credentials?.Username, credentials?.GetDecryptedPassword());
                       
@@ -76,24 +78,26 @@ public class DataAccessPortal
         if(!collection.Any())
             throw new Exception("No IDataAccessPoints were passed, so no connection string builder can be created");
 
-        IDataAccessPoint first = collection.First();
+        var first = collection.First();
 
         //There can be only one - server
-        foreach (IDataAccessPoint accessPoint in collection)
+        foreach (var accessPoint in collection)
         {
             if(first.Server == null)
                 throw new Exception($"Server is null for {first}");
 
             if (!first.Server.Equals(accessPoint.Server, StringComparison.CurrentCultureIgnoreCase))
-                throw new ExpectedIdenticalStringsException("There was a mismatch in server names for data access points " + first + " and " + accessPoint + " server names must match exactly", first.Server, accessPoint.Server);
+                throw new ExpectedIdenticalStringsException(
+                    $"There was a mismatch in server names for data access points {first} and {accessPoint} server names must match exactly", first.Server, accessPoint.Server);
                 
             if(first.DatabaseType != accessPoint.DatabaseType)
-                throw new ExpectedIdenticalStringsException("There was a mismatch on DatabaseType for data access points " + first + " and " + accessPoint, first.DatabaseType.ToString(),accessPoint.DatabaseType.ToString());
+                throw new ExpectedIdenticalStringsException(
+                    $"There was a mismatch on DatabaseType for data access points {first} and {accessPoint}", first.DatabaseType.ToString(),accessPoint.DatabaseType.ToString());
 
             if(setInitialDatabase)
             {
                 if(string.IsNullOrWhiteSpace(first.Database))
-                    throw new Exception("DataAccessPoint '" + first +"' does not have a Database specified on it");
+                    throw new Exception($"DataAccessPoint '{first}' does not have a Database specified on it");
 
                 var querySyntaxHelper = accessPoint.GetQuerySyntaxHelper();
 
@@ -101,7 +105,8 @@ public class DataAccessPortal
                 var currentDbName = querySyntaxHelper.GetRuntimeName(accessPoint.Database);
 
                 if (!firstDbName.Equals(currentDbName))
-                    throw new ExpectedIdenticalStringsException("All data access points must be into the same database, access points '" + first + "' and '" + accessPoint + "' are into different databases", firstDbName, currentDbName);    
+                    throw new ExpectedIdenticalStringsException(
+                        $"All data access points must be into the same database, access points '{first}' and '{accessPoint}' are into different databases", firstDbName, currentDbName);    
             }
         }
             
@@ -111,18 +116,19 @@ public class DataAccessPortal
         //if there are credentials
         if(credentials.Any(c => c != null)) 
             if (credentials.Any(c=>c == null))//all objects in collection must have a credentials if any of them do
-                throw new Exception("IDataAccessPoint collection could not agree whether to use Credentials or not "+Environment.NewLine
-                    +"Objects wanting to use Credentials" + string.Join(",",collection.Where(c=>c.GetCredentialsIfExists(context)!=null).Select(s=>s.ToString())) + Environment.NewLine
-                    + "Objects not wanting to use Credentials" + string.Join(",", collection.Where(c => c.GetCredentialsIfExists(context) == null).Select(s => s.ToString())) + Environment.NewLine
+                throw new Exception(
+                    $"IDataAccessPoint collection could not agree whether to use Credentials or not {Environment.NewLine}Objects wanting to use Credentials{string.Join(",", collection.Where(c => c.GetCredentialsIfExists(context) != null).Select(s => s.ToString()))}{Environment.NewLine}Objects not wanting to use Credentials{string.Join(",", collection.Where(c => c.GetCredentialsIfExists(context) == null).Select(s => s.ToString()))}{Environment.NewLine}"
                 );
             else
                 //There can be only one - Username
             if(credentials.Select(c=>c.Username).Distinct().Count() != 1)
-                throw new Exception("IDataAccessPoint collection could not agree on a single Username to use to access the data under context " + context + " (Servers were " + string.Join("," + Environment.NewLine, collection.Select(c => c + " = " + c.Database + " - " + c.DatabaseType)) + ")");
+                throw new Exception(
+                    $"IDataAccessPoint collection could not agree on a single Username to use to access the data under context {context} (Servers were {string.Join($",{Environment.NewLine}", collection.Select(c => $"{c} = {c.Database} - {c.DatabaseType}"))})");
             else
                 //There can be only one - Password
             if(credentials.Select(c=>c.GetDecryptedPassword()).Distinct().Count() != 1)
-                throw new Exception("IDataAccessPoint collection could not agree on a single Password to use to access the data under context " + context + " (Servers were " + string.Join("," + Environment.NewLine, collection.Select(c => c + " = " + c.Database + " - " + c.DatabaseType)) + ")");
+                throw new Exception(
+                    $"IDataAccessPoint collection could not agree on a single Password to use to access the data under context {context} (Servers were {string.Join($",{Environment.NewLine}", collection.Select(c => $"{c} = {c.Database} - {c.DatabaseType}"))})");
                 
                 
                 

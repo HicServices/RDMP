@@ -70,7 +70,7 @@ public abstract class RDMPCommandLineOptions
 
     public IRDMPPlatformRepositoryServiceLocator DoStartup(EnvironmentInfo env,ICheckNotifier checkNotifier)
     {
-        Startup.Startup startup = new Startup.Startup(env, GetRepositoryLocator()) { SkipPatching = SkipPatching};
+        var startup = new Startup.Startup(env, GetRepositoryLocator()) { SkipPatching = SkipPatching};
         startup.DoStartup(checkNotifier);
         return startup.RepositoryLocator;
     }

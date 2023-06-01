@@ -42,7 +42,7 @@ public class SingleScheduleConsecutiveDateStrategy : IJobDateGenerationStrategy
     {
         var dates = new List<DateTime>();
             
-        for (int i = 0; i < batchSize; i++)
+        for (var i = 0; i < batchSize; i++)
         {
             _lastAssignedLoadDate = _lastAssignedLoadDate.Add(new TimeSpan(1, 0, 0, 0));
 

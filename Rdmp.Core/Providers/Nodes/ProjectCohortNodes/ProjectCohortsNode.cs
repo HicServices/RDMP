@@ -23,7 +23,8 @@ public class ProjectCohortsNode:Node,IOrderable
         return "Project Cohorts";
     }
 
-    public int Order { get { return 1; } set { } }
+    public int Order { get => 1;
+        set { } }
 
     protected bool Equals(ProjectCohortsNode other)
     {

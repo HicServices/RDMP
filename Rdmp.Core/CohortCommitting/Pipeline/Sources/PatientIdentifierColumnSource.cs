@@ -50,7 +50,7 @@ public class PatientIdentifierColumnSource:IPluginDataFlowSource<DataTable>, IPi
 
         var colName = _extractionInformation.GetRuntimeName();
 
-        DataTable dt = new DataTable();
+        var dt = new DataTable();
         dt.Columns.Add(colName);
             
         using (var con = server.GetConnection())
@@ -88,7 +88,8 @@ public class PatientIdentifierColumnSource:IPluginDataFlowSource<DataTable>, IPi
     public void Check(ICheckNotifier notifier)
     {
         if(!_extractionInformation.IsExtractionIdentifier)
-            notifier.OnCheckPerformed(new CheckEventArgs("Column '" + _extractionInformation + "' is not marked IsExtractionIdentifier, are you sure it contains patient identifiers?",CheckResult.Fail));
+            notifier.OnCheckPerformed(new CheckEventArgs(
+                $"Column '{_extractionInformation}' is not marked IsExtractionIdentifier, are you sure it contains patient identifiers?",CheckResult.Fail));
 
         try
         {

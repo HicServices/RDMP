@@ -47,10 +47,10 @@ public class DilutionOperationTests:DatabaseTests
         {
             try
             {
-                string insert = input != null ? "'" + input + "'" : "NULL";
+                var insert = input != null ? $"'{input}'" : "NULL";
 
-                server.GetCommand(@"CREATE TABLE DateRoundingTests(TestField datetime)
-INSERT INTO DateRoundingTests VALUES (" + insert + ")", con).ExecuteNonQuery();
+                server.GetCommand($@"CREATE TABLE DateRoundingTests(TestField datetime)
+INSERT INTO DateRoundingTests VALUES ({insert})", con).ExecuteNonQuery();
 
                 UsefulStuff.ExecuteBatchNonQuery(sql, con.Connection, con.Transaction);
 
@@ -100,10 +100,10 @@ INSERT INTO DateRoundingTests VALUES (" + insert + ")", con).ExecuteNonQuery();
         {
             try
             {
-                string insert = input != null ? "'" + input + "'" : "NULL";
+                var insert = input != null ? $"'{input}'" : "NULL";
 
-                server.GetCommand(@"CREATE TABLE ExcludeRight3OfPostcodes(TestField varchar(15))
-    INSERT INTO ExcludeRight3OfPostcodes VALUES (" + insert + ")", con).ExecuteNonQuery();
+                server.GetCommand($@"CREATE TABLE ExcludeRight3OfPostcodes(TestField varchar(15))
+    INSERT INTO ExcludeRight3OfPostcodes VALUES ({insert})", con).ExecuteNonQuery();
 
                 UsefulStuff.ExecuteBatchNonQuery(sql, con.Connection, con.Transaction);
 
@@ -145,10 +145,10 @@ INSERT INTO DateRoundingTests VALUES (" + insert + ")", con).ExecuteNonQuery();
         {
             try
             {
-                string insert = input != null ? "'" + input + "'" : "NULL";
+                var insert = input != null ? $"'{input}'" : "NULL";
 
-                server.GetCommand(@"CREATE TABLE DiluteToBitFlagTests(TestField "+inputDataType+@")
-INSERT INTO DiluteToBitFlagTests VALUES (" + insert + ")", con).ExecuteNonQuery();
+                server.GetCommand($@"CREATE TABLE DiluteToBitFlagTests(TestField {inputDataType})
+INSERT INTO DiluteToBitFlagTests VALUES ({insert})", con).ExecuteNonQuery();
 
                 UsefulStuff.ExecuteBatchNonQuery(sql, con.Connection, con.Transaction);
 
@@ -168,7 +168,7 @@ INSERT INTO DiluteToBitFlagTests VALUES (" + insert + ")", con).ExecuteNonQuery(
     {
         var db = GetCleanedServer(DatabaseType.MicrosoftSQLServer);
             
-        DataTable dt = new DataTable();
+        var dt = new DataTable();
         dt.Columns.Add("Bob");
         dt.Rows.Add(new[] {"Fish"});
 

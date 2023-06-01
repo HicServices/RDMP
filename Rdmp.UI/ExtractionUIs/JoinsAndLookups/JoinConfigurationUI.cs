@@ -167,20 +167,20 @@ public partial class JoinConfigurationUI : JoinConfiguration_Design
 
             var cataRepo = _leftTableInfo.CatalogueRepository;
 
-            for (int i = 0; i < pks.Length; i++)
+            for (var i = 0; i < pks.Length; i++)
                 if (cataRepo.GetAllObjects<JoinInfo>().Any(j => j.PrimaryKey_ID == pks[i].ID && j.ForeignKey_ID == fks[i].ID))
-                    throw new Exception("Join already exists between " + fks[i] + " and " + pks[i].ID);
+                    throw new Exception($"Join already exists between {fks[i]} and {pks[i].ID}");
 
                 
             if (actuallyDoIt)
             {
-                for (int i = 0; i < pks.Length; i++)
+                for (var i = 0; i < pks.Length; i++)
                     new JoinInfo(cataRepo,fks[i], pks[i], joinType, tbCollation.Text);
 
                 MessageBox.Show("Successfully Created Joins");
                 Activator.RefreshBus.Publish(this,new RefreshObjectEventArgs(_leftTableInfo));
 
-                foreach (KeyDropLocationUI ui in new[] {pk1, pk2, pk3, fk1, fk2, fk3})
+                foreach (var ui in new[] {pk1, pk2, pk3, fk1, fk2, fk3})
                     ui.Clear();
             }
             else

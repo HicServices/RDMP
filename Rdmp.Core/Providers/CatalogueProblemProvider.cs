@@ -193,7 +193,7 @@ public class CatalogueProblemProvider : ProblemProvider
     {
         string reason;
         if (!Catalogue.IsAcceptableName(catalogue.Name, out reason))
-            return "Invalid Name:" + reason;
+            return $"Invalid Name:{reason}";
 
         return null;
     }
@@ -205,10 +205,10 @@ public class CatalogueProblemProvider : ProblemProvider
     /// <returns></returns>
     private string DescribeProblem(AllGovernanceNode allGovernanceNode)
     {
-        HashSet<int> expiredCatalogueIds = new HashSet<int>();
+        var expiredCatalogueIds = new HashSet<int>();
 
         //Get all expired Catalogue IDs
-        foreach (KeyValuePair<int, HashSet<int>> kvp in _childProvider.GovernanceCoverage)
+        foreach (var kvp in _childProvider.GovernanceCoverage)
         {
             var gp = _childProvider.AllGovernancePeriods.Single(g => g.ID == kvp.Key);
 
@@ -218,7 +218,7 @@ public class CatalogueProblemProvider : ProblemProvider
         }
 
         //Throw out any covered by a not expired one
-        foreach (KeyValuePair<int, HashSet<int>> kvp in _childProvider.GovernanceCoverage)
+        foreach (var kvp in _childProvider.GovernanceCoverage)
         {
             var gp = _childProvider.AllGovernancePeriods.Single(g => g.ID == kvp.Key);
 
@@ -230,7 +230,8 @@ public class CatalogueProblemProvider : ProblemProvider
         var expiredCatalogues = expiredCatalogueIds.Select(id => _childProvider.AllCataloguesDictionary[id]).Where(c => !(c.IsDeprecated /* || c.IsColdStorage || c.IsInternal*/)).ToArray();
 
         if (expiredCatalogues.Any())
-            return "Governance Expired On:" +Environment.NewLine + string.Join(Environment.NewLine, expiredCatalogues.Take(5));
+            return
+                $"Governance Expired On:{Environment.NewLine}{string.Join(Environment.NewLine, expiredCatalogues.Take(5))}";
 
         //no expired governance
         return null;
@@ -253,10 +254,12 @@ public class CatalogueProblemProvider : ProblemProvider
                 if (catalogue.IsProjectSpecific(null))
                 {
                     if(extractionInformation.ExtractionCategory != ExtractionCategory.ProjectSpecific)
-                        return "Catalogue " + catalogue + " is Project Specific Catalogue so all ExtractionCategory should be " + ExtractionCategory.ProjectSpecific;
+                        return
+                            $"Catalogue {catalogue} is Project Specific Catalogue so all ExtractionCategory should be {ExtractionCategory.ProjectSpecific}";
                 }
                 else if( extractionInformation.ExtractionCategory == ExtractionCategory.ProjectSpecific)
-                    return "ExtractionCategory is only valid when the Catalogue ('"+catalogue+"') is also ProjectSpecific";
+                    return
+                        $"ExtractionCategory is only valid when the Catalogue ('{catalogue}') is also ProjectSpecific";
             }
         }
 

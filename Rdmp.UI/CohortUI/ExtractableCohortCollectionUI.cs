@@ -123,7 +123,8 @@ public partial class ExtractableCohortCollectionUI : RDMPUserControl, ILifetimeS
         }
         catch (Exception e)
         {
-            ExceptionViewer.Show(this.GetType().Name + " could not load Cohorts:" + Environment.NewLine + ExceptionHelper.ExceptionToListOfInnerMessages(e), e);
+            ExceptionViewer.Show(
+                $"{this.GetType().Name} could not load Cohorts:{Environment.NewLine}{ExceptionHelper.ExceptionToListOfInnerMessages(e)}", e);
         }
     }
 
@@ -136,7 +137,8 @@ public partial class ExtractableCohortCollectionUI : RDMPUserControl, ILifetimeS
         }
         catch (Exception e)
         {
-            ExceptionViewer.Show(this.GetType().Name + " could not load Cohorts:" + Environment.NewLine + ExceptionHelper.ExceptionToListOfInnerMessages(e), e);
+            ExceptionViewer.Show(
+                $"{this.GetType().Name} could not load Cohorts:{Environment.NewLine}{ExceptionHelper.ExceptionToListOfInnerMessages(e)}", e);
         }
     }
 
@@ -146,7 +148,7 @@ public partial class ExtractableCohortCollectionUI : RDMPUserControl, ILifetimeS
         lbCohortDatabaseTable.ClearObjects();
 
         //gets the empty placeholder cohort objects, these have string values like "Loading..." and -1 for counts but each one comes with a Fetch object, the node will populate itself once the callback finishes
-        CohortDescriptionFactory factory = new CohortDescriptionFactory(Activator.RepositoryLocator.DataExportRepository);
+        var factory = new CohortDescriptionFactory(Activator.RepositoryLocator.DataExportRepository);
         var fetchDescriptionsDictionary = factory.Create();
 
         lbCohortDatabaseTable.AddObjects(fetchDescriptionsDictionary.SelectMany(kvp => kvp.Value).ToArray());
@@ -180,9 +182,9 @@ public partial class ExtractableCohortCollectionUI : RDMPUserControl, ILifetimeS
         {
             var node = (ExtractableCohortDescription)lbCohortDatabaseTable.SelectedObject;
 
-            ExtractableCohort toDelete = node.Cohort;
+            var toDelete = node.Cohort;
 
-            if (Activator.YesNo("Are you sure you want to delete " + toDelete + " (ID=" + toDelete.ID + ")","Confirm Delete"))
+            if (Activator.YesNo($"Are you sure you want to delete {toDelete} (ID={toDelete.ID})","Confirm Delete"))
             {
                 try
                 {

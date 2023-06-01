@@ -50,9 +50,9 @@ public class ExecuteCommandBulkImportTableInfos : BasicCommandExecution, IAtomic
             return;
 
 
-        ShareManager shareManager = new ShareManager(BasicActivator.RepositoryLocator, LocalReferenceGetter);
+        var shareManager = new ShareManager(BasicActivator.RepositoryLocator, LocalReferenceGetter);
 
-        List<ICatalogue> catalogues = new List<ICatalogue>();
+        var catalogues = new List<ICatalogue>();
 
         //don't do any double importing!
         var existing = BasicActivator.RepositoryLocator.CatalogueRepository.GetAllObjects<TableInfo>();
@@ -73,7 +73,7 @@ public class ExecuteCommandBulkImportTableInfos : BasicCommandExecution, IAtomic
                 
         }
 
-        bool generateCatalogues = false;
+        var generateCatalogues = false;
 
         if (YesNo("Would you like to try to guess non-matching Catalogues by Name?", "Guess by name"))
             catalogues.AddRange(BasicActivator.RepositoryLocator.CatalogueRepository.GetAllObjects<Catalogue>());
@@ -84,9 +84,9 @@ public class ExecuteCommandBulkImportTableInfos : BasicCommandExecution, IAtomic
 
         ITableInfo anyNewTable = null;
 
-        List<DiscoveredTable> novel = new List<DiscoveredTable>();
+        var novel = new List<DiscoveredTable>();
 
-        foreach (DiscoveredTable discoveredTable in db.DiscoverTables(includeViews: false))
+        foreach (var discoveredTable in db.DiscoverTables(includeViews: false))
         {
             var collide = existing.FirstOrDefault(t => t.Is(discoveredTable));
             if (collide == null)
@@ -95,12 +95,12 @@ public class ExecuteCommandBulkImportTableInfos : BasicCommandExecution, IAtomic
             }
         }
 
-        if(!BasicActivator.SelectObjects("Import", novel.ToArray(), out DiscoveredTable[] selected))
+        if(!BasicActivator.SelectObjects("Import", novel.ToArray(), out var selected))
         {
             return;
         }
 
-        foreach (DiscoveredTable discoveredTable in selected) 
+        foreach (var discoveredTable in selected) 
         { 
             var importer = new TableInfoImporter(BasicActivator.RepositoryLocator.CatalogueRepository, discoveredTable);
                 
@@ -133,7 +133,7 @@ public class ExecuteCommandBulkImportTableInfos : BasicCommandExecution, IAtomic
                     }
 
                 //is anyone unmarried? i.e. new ColumnInfos that don't have CatalogueItems with the same name
-                foreach (ColumnInfo columnInfo in unmatched)
+                foreach (var columnInfo in unmatched)
                 {
                     var cataItem = new CatalogueItem(BasicActivator.RepositoryLocator.CatalogueRepository, (Catalogue)matchingCatalogues[0], columnInfo.GetRuntimeName());
                     cataItem.ColumnInfo_ID = columnInfo.ID;
@@ -145,7 +145,7 @@ public class ExecuteCommandBulkImportTableInfos : BasicCommandExecution, IAtomic
                 new ForwardEngineerCatalogue(ti, cis).ExecuteForwardEngineering();
         }
 
-        if (married.Any() && YesNo("Found " + married.Count + " columns, make them all extractable?", "Make Extractable"))
+        if (married.Any() && YesNo($"Found {married.Count} columns, make them all extractable?", "Make Extractable"))
             foreach (var kvp in married)
             {
                 // don't mark it extractable twice
@@ -169,7 +169,7 @@ public class ExecuteCommandBulkImportTableInfos : BasicCommandExecution, IAtomic
             return _loggingServer.ID;
 
 
-        throw new SharingException("Could not figure out a sensible value to assign to Property " + property);
+        throw new SharingException($"Could not figure out a sensible value to assign to Property {property}");
     }
 
 

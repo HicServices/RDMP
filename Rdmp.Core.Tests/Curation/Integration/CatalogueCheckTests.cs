@@ -33,7 +33,7 @@ public class CatalogueCheckTests:DatabaseTests
     [TestCase(DatabaseType.MySql)]
     public void CatalogueCheck_FetchData(DatabaseType databaseType)
     {
-        DataTable dt = new DataTable();
+        var dt = new DataTable();
         dt.Columns.Add("Name");
         dt.Rows.Add("Frank");
         dt.Rows.Add("Peter");

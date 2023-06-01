@@ -56,7 +56,7 @@ internal class ExecuteCommandCheckAsync : BasicUICommandExecution,IAtomicCommand
     {
         base.Execute();
 
-        var popupChecksUI = new PopupChecksUI("Checking " + _checkable, false);
+        var popupChecksUI = new PopupChecksUI($"Checking {_checkable}", false);
 
         if(_reportWorstTo != null)
             popupChecksUI.AllChecksComplete += (s,a)=>_reportWorstTo(_checkable,a.CheckResults.GetWorst());

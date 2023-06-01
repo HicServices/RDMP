@@ -55,12 +55,12 @@ public class ExcelConversionTest
         var LoadDirectory = CreateLoadDirectoryForTest("TestExcelFunctionality_OnSimpleXlsx");
 
         //clean SetUp anything in the test project folders forloading directory
-        foreach (FileInfo fileInfo in LoadDirectory.ForLoading.GetFiles())
+        foreach (var fileInfo in LoadDirectory.ForLoading.GetFiles())
             fileInfo.Delete();
 
-        string targetFile = Path.Combine(LoadDirectory.ForLoading.FullName, "Test.xlsx");
+        var targetFile = Path.Combine(LoadDirectory.ForLoading.FullName, "Test.xlsx");
 
-        FileInfo fi = new FileInfo(Path.Combine(TestContext.CurrentContext.TestDirectory, "DataLoad", "Engine",
+        var fi = new FileInfo(Path.Combine(TestContext.CurrentContext.TestDirectory, "DataLoad", "Engine",
             "Resources", "Test.xlsx"));
 
         FileAssert.Exists(fi);
@@ -76,11 +76,11 @@ public class ExcelConversionTest
         var LoadDirectory = CreateLoadDirectoryForTest("TestExcelFunctionality_DodgyFileExtension");
 
         //clean SetUp anything in the test project folders forloading directory
-        foreach (FileInfo fileInfo in LoadDirectory.ForLoading.GetFiles())
+        foreach (var fileInfo in LoadDirectory.ForLoading.GetFiles())
             fileInfo.Delete();
 
-        string targetFile = Path.Combine(LoadDirectory.ForLoading.FullName, "Test.xml");
-        FileInfo fi = new FileInfo(Path.Combine(TestContext.CurrentContext.TestDirectory, "DataLoad", "Engine",
+        var targetFile = Path.Combine(LoadDirectory.ForLoading.FullName, "Test.xml");
+        var fi = new FileInfo(Path.Combine(TestContext.CurrentContext.TestDirectory, "DataLoad", "Engine",
             "Resources", "XmlTestForExcel.xml"));
 
         FileAssert.Exists(fi);
@@ -94,14 +94,14 @@ public class ExcelConversionTest
         
     private void TestConversionFor(string targetFile, string fileExtensionToConvert, int expectedNumberOfSheets, LoadDirectory directory)
     {
-        FileInfo f = new FileInfo(targetFile);
+        var f = new FileInfo(targetFile);
 
         try
         {
             Assert.IsTrue(f.Exists);
             Assert.IsTrue(f.Length > 100);
 
-            ExcelToCSVFilesConverter converter = new ExcelToCSVFilesConverter();
+            var converter = new ExcelToCSVFilesConverter();
 
             var job = new ThrowImmediatelyDataLoadJob(new ThrowImmediatelyDataLoadEventListener(){ThrowOnWarning =  true, WriteToConsole =  true});
             job.LoadDirectory = directory;
@@ -109,11 +109,11 @@ public class ExcelConversionTest
             converter.ExcelFilePattern = fileExtensionToConvert;
             converter.Fetch(job, new GracefulCancellationToken());
 
-            FileInfo[] filesCreated = directory.ForLoading.GetFiles("*.csv");
+            var filesCreated = directory.ForLoading.GetFiles("*.csv");
 
             Assert.AreEqual(expectedNumberOfSheets,filesCreated.Length);
 
-            foreach (FileInfo fileCreated in filesCreated)
+            foreach (var fileCreated in filesCreated)
             {
                 Assert.IsTrue(Regex.IsMatch(fileCreated.Name, "Sheet[0-9].csv"));
                 Assert.GreaterOrEqual(fileCreated.Length, 100);

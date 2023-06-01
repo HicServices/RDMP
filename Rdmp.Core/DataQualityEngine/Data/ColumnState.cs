@@ -31,7 +31,7 @@ public class ColumnState
 
     public int CountMissing
     {
-        get { return _countMissing; }
+        get => _countMissing;
         set
         {
             if (IsCommitted)
@@ -42,7 +42,7 @@ public class ColumnState
 
     public int CountWrong
     {
-        get { return _countWrong; }
+        get => _countWrong;
         set
         {
             if (IsCommitted)
@@ -54,7 +54,7 @@ public class ColumnState
 
     public int CountInvalidatesRow
     {
-        get { return _countInvalidatesRow; }
+        get => _countInvalidatesRow;
         set
         {
             if (IsCommitted)
@@ -65,7 +65,7 @@ public class ColumnState
 
     public int CountCorrect
     {
-        get { return _countCorrect; }
+        get => _countCorrect;
         set
         {
             if (IsCommitted)
@@ -77,7 +77,7 @@ public class ColumnState
 
     public int CountDBNull
     {
-        get { return _countDbNull; }
+        get => _countDbNull;
         set
         {
             if(IsCommitted)

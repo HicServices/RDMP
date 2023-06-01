@@ -51,7 +51,7 @@ public class DatabaseEntityJsonConverter:JsonConverter
 
         writer.WriteStartObject();
         writer.WritePropertyName("PersistenceString");
-        writer.WriteRawValue('"' + _shareManager.GetPersistenceString((IMapsDirectlyToDatabaseTable)value) + '"');
+        writer.WriteRawValue($"\"{_shareManager.GetPersistenceString((IMapsDirectlyToDatabaseTable)value)}\"");
         writer.WriteEndObject();
     }
         

@@ -26,7 +26,7 @@ public class ValidationXMLObscureDependencyFinderTests: DatabaseTests
     [Test]
     public void TestGettingTheUsualSuspects()
     {
-        ValidationXMLObscureDependencyFinder finder = new ValidationXMLObscureDependencyFinder( RepositoryLocator);
+        var finder = new ValidationXMLObscureDependencyFinder( RepositoryLocator);
             
         //forces call to initialize
         finder.ThrowIfDeleteDisallowed(null);
@@ -51,10 +51,10 @@ public class ValidationXMLObscureDependencyFinderTests: DatabaseTests
   </ItemValidators>
 </Validator>";
 
-        bool kaizerSoze = false;
-        foreach (Suspect suspect in finder.TheUsualSuspects)
+        var kaizerSoze = false;
+        foreach (var suspect in finder.TheUsualSuspects)
         {
-            string pattern = string.Format(suspect.Pattern, 10029);
+            var pattern = string.Format(suspect.Pattern, 10029);
 
             kaizerSoze = Regex.IsMatch(testXML, pattern,RegexOptions.Singleline);
 
@@ -70,7 +70,7 @@ public class ValidationXMLObscureDependencyFinderTests: DatabaseTests
     public void DeleteAReferencedValidationXML()
     {
         ColumnInfo l2ColumnInfo;
-        BulkTestsData testData = SetupTestData(out l2ColumnInfo);
+        var testData = SetupTestData(out l2ColumnInfo);
         try
         {
             Validator.LocatorForXMLDeserialization = RepositoryLocator;
@@ -84,7 +84,7 @@ public class ValidationXMLObscureDependencyFinderTests: DatabaseTests
             Assert.IsTrue(testData.catalogue.ValidatorXML.Contains("previous_address_L1"));
 
             //we expect the validation XML to find the reference
-            ValidationXMLObscureDependencyFinder finder = new ValidationXMLObscureDependencyFinder(RepositoryLocator);
+            var finder = new ValidationXMLObscureDependencyFinder(RepositoryLocator);
                 
             //and explode
             Assert.Throws<ValidationXmlDependencyException>(() => finder.ThrowIfDeleteDisallowed(l2ColumnInfo));
@@ -145,10 +145,10 @@ public class ValidationXMLObscureDependencyFinderTests: DatabaseTests
         }
         catch (InvalidPatchException patchException)
         {
-            throw new Exception("Problem in patch " + patchException.ScriptName ,patchException);
+            throw new Exception($"Problem in patch {patchException.ScriptName}",patchException);
         }
         //there should be all the obscure dependencies we need done with only the first call to this function
-        int numberAfterFirstRun =
+        var numberAfterFirstRun =
             ((CatalogueObscureDependencyFinder) CatalogueRepository.ObscureDependencyFinder)
             .OtherDependencyFinders.Count;
 
@@ -174,7 +174,7 @@ public class ValidationXMLObscureDependencyFinderTests: DatabaseTests
         testData.ImportAsCatalogue();
 
         //Setup some validation rules
-        Validator v = new Validator();
+        var v = new Validator();
 
         //rule is that previous address line 1 cannot be the same as previous address line 2
         var iv = new ItemValidator("previous_address_L1");

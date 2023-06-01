@@ -26,7 +26,7 @@ public class ANOTableInfoSynchronizer
 
     public void Synchronize(ICheckNotifier notifier)
     {
-        IdentifierDumper dumper = new IdentifierDumper(_tableToSync);
+        var dumper = new IdentifierDumper(_tableToSync);
         dumper.Check(notifier);
 
         CheckForDuplicateANOVsRegularNames();
@@ -39,18 +39,18 @@ public class ANOTableInfoSynchronizer
                     "There are no ANOTables configured for this table so skipping ANOTable checking",
                     CheckResult.Success));
             
-        foreach (ColumnInfo columnInfoWithANOTransform in columnInfosWithANOTransforms)
+        foreach (var columnInfoWithANOTransform in columnInfosWithANOTransforms)
         {
-            ANOTable anoTable = columnInfoWithANOTransform.ANOTable;
+            var anoTable = columnInfoWithANOTransform.ANOTable;
             anoTable.Check(new ThrowImmediatelyCheckNotifier());
                 
             if(!anoTable.GetRuntimeDataType(LoadStage.PostLoad).Equals(columnInfoWithANOTransform.Data_type))
-                throw new ANOConfigurationException("Mismatch between anoTable.GetRuntimeDataType(LoadStage.PostLoad) = " + anoTable.GetRuntimeDataType(LoadStage.PostLoad) + " and column " + columnInfoWithANOTransform + " datatype = " +columnInfoWithANOTransform.Data_type);
+                throw new ANOConfigurationException(
+                    $"Mismatch between anoTable.GetRuntimeDataType(LoadStage.PostLoad) = {anoTable.GetRuntimeDataType(LoadStage.PostLoad)} and column {columnInfoWithANOTransform} datatype = {columnInfoWithANOTransform.Data_type}");
                 
             notifier.OnCheckPerformed(
                 new CheckEventArgs(
-                    "ANOTable " + anoTable + " has shared compatible datatype " + columnInfoWithANOTransform.Data_type + " with ColumnInfo " +
-                    columnInfoWithANOTransform, CheckResult.Success));
+                    $"ANOTable {anoTable} has shared compatible datatype {columnInfoWithANOTransform.Data_type} with ColumnInfo {columnInfoWithANOTransform}", CheckResult.Success));
         }
     }
 
@@ -61,7 +61,8 @@ public class ANOTableInfoSynchronizer
         var duplicates = colNames.Where(c => colNames.Any(c2 => c2.Equals(ANOTable.ANOPrefix + c))).ToArray();
 
         if (duplicates.Any())
-            throw new ANOConfigurationException("The following columns exist both in their identifiable state and ANO state in TableInfo " + _tableToSync + " (this is not allowed).  The offending column(s) are:" + string.Join(",", duplicates.Select(s => "'" + s + "' & '" + ANOTable.ANOPrefix + s + "'")));
+            throw new ANOConfigurationException(
+                $"The following columns exist both in their identifiable state and ANO state in TableInfo {_tableToSync} (this is not allowed).  The offending column(s) are:{string.Join(",", duplicates.Select(s => $"'{s}' & '{ANOTable.ANOPrefix}{s}'"))}");
 
     }
 }

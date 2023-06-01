@@ -58,7 +58,7 @@ public class ArgumentFactory
             argument.SetType(required.PropertyInfo.PropertyType);
             argument.Name = required.Name;
 
-            DemandsInitializationAttribute attribute = required.Demand;
+            var attribute = required.Demand;
             argument.Description = attribute.Description;
 
             if (attribute.DefaultValue != null)
@@ -82,9 +82,9 @@ public class ArgumentFactory
     /// <returns></returns>
     public List<RequiredPropertyInfo> GetRequiredProperties(Type classType)
     {
-        List<RequiredPropertyInfo> required = new List<RequiredPropertyInfo>();
+        var required = new List<RequiredPropertyInfo>();
             
-        foreach (PropertyInfo propertyInfo in classType.GetProperties())
+        foreach (var propertyInfo in classType.GetProperties())
         {
             if (propertyInfo.GetCustomAttributes(typeof(DemandsNestedInitializationAttribute), true).Any())
             {
@@ -103,7 +103,8 @@ public class ArgumentFactory
             var demands = propertyInfo.GetCustomAttributes(typeof (DemandsInitializationAttribute), true);
 
             if (demands.Length > 1)
-                throw new Exception("Property " + propertyInfo + " on class " + classType +" has multiple declarations of DemandsInitializationAttribute");
+                throw new Exception(
+                    $"Property {propertyInfo} on class {classType} has multiple declarations of DemandsInitializationAttribute");
 
             var demand = (DemandsInitializationAttribute)demands.SingleOrDefault();
 
@@ -142,7 +143,8 @@ public class ArgumentFactory
             var existing = existingArguments.SingleOrDefault(e => e.Name == r.Name);
 
             if(existing == null)
-                throw new Exception("Despite creating new Arguments for class '" + underlyingClassTypeForWhichArgumentsWillPopulate + "' we do not have an IArgument called '" + r.Name + "' in the database (host='" + host + "')");
+                throw new Exception(
+                    $"Despite creating new Arguments for class '{underlyingClassTypeForWhichArgumentsWillPopulate}' we do not have an IArgument called '{r.Name}' in the database (host='{host}')");
 
             if (existing.GetSystemType() != r.PropertyInfo.PropertyType)
             {

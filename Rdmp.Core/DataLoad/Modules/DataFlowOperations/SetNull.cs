@@ -34,7 +34,7 @@ class SetNull : IPluginDataFlowComponent<DataTable>
     {
         _sw.Start();
             
-        Regex regex = NullCellsWhereValuesMatch ?? new Regex(NullCellsWhereValuesMatchStandard.Regex);
+        var regex = NullCellsWhereValuesMatch ?? new Regex(NullCellsWhereValuesMatchStandard.Regex);
 
         foreach (DataRow row in toProcess.Rows)
         {

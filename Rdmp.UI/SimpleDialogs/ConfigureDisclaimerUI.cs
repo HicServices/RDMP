@@ -33,7 +33,7 @@ public partial class ConfigureDisclaimerUI : RDMPForm
         if(VisualStudioDesignMode)
             return;
 
-        string value = Activator.RepositoryLocator.DataExportRepository.DataExportPropertyManager.GetValue(DataExportProperty.ReleaseDocumentDisclaimer);
+        var value = Activator.RepositoryLocator.DataExportRepository.DataExportPropertyManager.GetValue(DataExportProperty.ReleaseDocumentDisclaimer);
 
         tb.Text = value ?? GetDefaultText();
 

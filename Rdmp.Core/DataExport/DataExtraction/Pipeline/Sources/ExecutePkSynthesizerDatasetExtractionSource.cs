@@ -45,7 +45,7 @@ public class ExecutePkSynthesizerDatasetExtractionSource : ExecuteDatasetExtract
             {
                 string newSql;
                 if (primaryKeys.Length > 1) // no need to do anything if there is only one.
-                    newSql = "CONCAT(" + String.Join(",'_',", primaryKeys.Select(apk => apk.ToString())) + ")";
+                    newSql = $"CONCAT({String.Join(",'_',", primaryKeys.Select(apk => apk.ToString()))})";
                 else
                     newSql = primaryKeys.Single().Name;
 
@@ -102,18 +102,22 @@ public class ExecutePkSynthesizerDatasetExtractionSource : ExecuteDatasetExtract
         var cataloguePrimaryKeys = GetCatalogueItemPrimaryKeys().ToArray();
         if (!cataloguePrimaryKeys.Any())
         {
-            notifier.OnCheckPerformed(new CheckEventArgs("PKSynthesizer:No CatalogueItems marked IsPrimaryKey in '" + Request.SelectedDataSets + "'",CheckResult.Warning) );
+            notifier.OnCheckPerformed(new CheckEventArgs(
+                $"PKSynthesizer:No CatalogueItems marked IsPrimaryKey in '{Request.SelectedDataSets}'",CheckResult.Warning) );
 
             var columnInfoPrimaryKeys = GetColumnInfoPrimaryKeys().ToArray();
 
             if (columnInfoPrimaryKeys.Any())
-                notifier.OnCheckPerformed(new CheckEventArgs("PKSynthesizer:Found ColumnInfo(s) marked IsPrimaryKey in '" + Request.SelectedDataSets + "'" + string.Join(",",columnInfoPrimaryKeys.Select(c=>c.Name)), CheckResult.Success));
+                notifier.OnCheckPerformed(new CheckEventArgs(
+                    $"PKSynthesizer:Found ColumnInfo(s) marked IsPrimaryKey in '{Request.SelectedDataSets}'{string.Join(",", columnInfoPrimaryKeys.Select(c => c.Name))}", CheckResult.Success));
             else
-                notifier.OnCheckPerformed(new CheckEventArgs("PKSynthesizer:No ColumnInfo marked IsPrimaryKey in '" + Request.SelectedDataSets + "'", CheckResult.Fail));
+                notifier.OnCheckPerformed(new CheckEventArgs(
+                    $"PKSynthesizer:No ColumnInfo marked IsPrimaryKey in '{Request.SelectedDataSets}'", CheckResult.Fail));
                 
         }
         else
-            notifier.OnCheckPerformed(new CheckEventArgs("PKSynthesizer:Found CatalogueItem(s) marked IsPrimaryKey in '" + Request.SelectedDataSets + "'" + string.Join(",", cataloguePrimaryKeys.Select(c => c.GetRuntimeName())), CheckResult.Success));
+            notifier.OnCheckPerformed(new CheckEventArgs(
+                $"PKSynthesizer:Found CatalogueItem(s) marked IsPrimaryKey in '{Request.SelectedDataSets}'{string.Join(",", cataloguePrimaryKeys.Select(c => c.GetRuntimeName()))}", CheckResult.Success));
     }
 
     private IEnumerable<IColumn> GetCatalogueItemPrimaryKeys()

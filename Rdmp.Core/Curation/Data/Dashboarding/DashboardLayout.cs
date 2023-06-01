@@ -31,8 +31,8 @@ public class DashboardLayout : DatabaseEntity,INamed
     [NotNull]
     public string Name
     {
-        get { return _name; }
-        set { SetField(ref _name, value); }
+        get => _name;
+        set => SetField(ref _name, value);
     }
 
     /// <summary>
@@ -40,8 +40,8 @@ public class DashboardLayout : DatabaseEntity,INamed
     /// </summary>
     public DateTime Created
     {
-        get { return _created; }
-        set { SetField(ref _created, value); }
+        get => _created;
+        set => SetField(ref _created, value);
     }
 
     /// <summary>
@@ -49,8 +49,8 @@ public class DashboardLayout : DatabaseEntity,INamed
     /// </summary>
     public string Username
     {
-        get { return _username; }
-        set { SetField(ref _username, value); }
+        get => _username;
+        set => SetField(ref _username, value);
     }
     #endregion
 
@@ -60,7 +60,8 @@ public class DashboardLayout : DatabaseEntity,INamed
     /// Returns all controls that should be rendered on the given dashboard
     /// </summary>
     [NoMappingToDatabase]
-    public DashboardControl[] Controls{ get { return Repository.GetAllObjectsWithParent<DashboardControl>(this); }}
+    public DashboardControl[] Controls => Repository.GetAllObjectsWithParent<DashboardControl>(this);
+
     #endregion
 
     public DashboardLayout()

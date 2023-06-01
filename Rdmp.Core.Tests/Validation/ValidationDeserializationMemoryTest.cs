@@ -18,24 +18,24 @@ public class ValidationDeserializationMemoryTest
     [Test]
     public void TestMemoryLeak()
     {
-        Validator v = new Validator();
+        var v = new Validator();
         v.ItemValidators.Add(new ItemValidator("CHI"){PrimaryConstraint = new Chi()});
-        string xml = v.SaveToXml();
+        var xml = v.SaveToXml();
 
-        long bytesAtStart = Process.GetCurrentProcess().WorkingSet64;
+        var bytesAtStart = Process.GetCurrentProcess().WorkingSet64;
 
-        for (int i = 0; i < 1000; i++)
+        for (var i = 0; i < 1000; i++)
         {
-            Validator deser = Validator.LoadFromXml(xml);
+            var deser = Validator.LoadFromXml(xml);
                 
             if(i%500==0)
             {
                 GC.Collect();
-                Console.WriteLine("Commited Bytes:" + Process.GetCurrentProcess().WorkingSet64);
+                Console.WriteLine($"Commited Bytes:{Process.GetCurrentProcess().WorkingSet64}");
             }
         }
 
-        long bytesAtEnd = Process.GetCurrentProcess().WorkingSet64;
+        var bytesAtEnd = Process.GetCurrentProcess().WorkingSet64;
 
         Assert.Less(bytesAtEnd,bytesAtStart * 2 , "Should not be using double the working memory as many bytes by the end, at start we were using " + bytesAtStart + " at end we were using " + bytesAtEnd + " (Increase of " +((float)bytesAtEnd/bytesAtStart) + " times)");
 

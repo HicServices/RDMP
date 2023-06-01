@@ -38,7 +38,7 @@ public class ExecuteFullExtractionToDatabaseMSSqlDestinationTest :TestsRequiring
         var ci = new CatalogueItem(CatalogueRepository, _catalogue, "YearOfBirth");
         _columnToTransform = _columnInfos.Single(c=>c.GetRuntimeName().Equals("DateOfBirth",StringComparison.CurrentCultureIgnoreCase));
 
-        string transform = "YEAR(" + _columnToTransform.Name + ")";
+        var transform = $"YEAR({_columnToTransform.Name})";
 
 
         if (_catalogue.GetAllExtractionInformation(ExtractionCategory.Any).All(ei => ei.GetRuntimeName() != "YearOfBirth"))
@@ -63,7 +63,7 @@ public class ExecuteFullExtractionToDatabaseMSSqlDestinationTest :TestsRequiring
             _configuration.Name = "ExecuteFullExtractionToDatabaseMSSqlDestinationTest";
             _configuration.SaveToDatabase();
                 
-            var dbname = TestDatabaseNames.GetConsistentName(_project.Name + "_" + _project.ProjectNumber);
+            var dbname = TestDatabaseNames.GetConsistentName($"{_project.Name}_{_project.ProjectNumber}");
             dbToExtractTo = DiscoveredServerICanCreateRandomDatabasesAndTablesOn.ExpectDatabase(dbname);
             if (dbToExtractTo.Exists())
                 dbToExtractTo.Drop();
@@ -108,7 +108,7 @@ public class ExecuteFullExtractionToDatabaseMSSqlDestinationTest :TestsRequiring
 
         File.WriteAllText(filename,"fishfishfish");
         var doc = new SupportingDocument(CatalogueRepository, _catalogue, "bob");
-        doc.URL = new Uri("file://"+filename);
+        doc.URL = new Uri($"file://{filename}");
         doc.Extractable = true;
         doc.SaveToDatabase();
                 
@@ -117,7 +117,7 @@ public class ExecuteFullExtractionToDatabaseMSSqlDestinationTest :TestsRequiring
 
         File.WriteAllText(filename2,"fishfishfish2");
         var doc2 = new SupportingDocument(CatalogueRepository, _catalogue, "bob2");
-        doc2.URL = new Uri("file://"+filename2);
+        doc2.URL = new Uri($"file://{filename2}");
         doc2.Extractable = true;
         doc2.IsGlobal = true;
         doc2.SaveToDatabase();
@@ -129,7 +129,7 @@ public class ExecuteFullExtractionToDatabaseMSSqlDestinationTest :TestsRequiring
         var server = new ExternalDatabaseServer(CatalogueRepository, "myserver", null);
         server.SetProperties(tbl.Database);
         sql.ExternalDatabaseServer_ID = server.ID;
-        sql.SQL = "SELECT * FROM " + tbl.GetFullyQualifiedName();
+        sql.SQL = $"SELECT * FROM {tbl.GetFullyQualifiedName()}";
         sql.Extractable = true;
         sql.SaveToDatabase();
             
@@ -139,13 +139,13 @@ public class ExecuteFullExtractionToDatabaseMSSqlDestinationTest :TestsRequiring
 
         var sql2 = new SupportingSQLTable(CatalogueRepository, _catalogue, "Hosp");
         sql2.ExternalDatabaseServer_ID = server.ID;
-        sql2.SQL = "SELECT * FROM " + tbl2.GetFullyQualifiedName();
+        sql2.SQL = $"SELECT * FROM {tbl2.GetFullyQualifiedName()}";
         sql2.Extractable = true;
         sql2.IsGlobal = true;
         sql2.SaveToDatabase();
 
 
-        DataTable dtLookup = new DataTable();
+        var dtLookup = new DataTable();
         dtLookup.Columns.Add("C");
         dtLookup.Columns.Add("D");
 
@@ -155,7 +155,7 @@ public class ExecuteFullExtractionToDatabaseMSSqlDestinationTest :TestsRequiring
 
         var lookupTbl = tbl2.Database.CreateTable("z_fff", dtLookup);
 
-        Import(lookupTbl, out var ti, out ColumnInfo[] columnInfos);
+        Import(lookupTbl, out var ti, out var columnInfos);
 
         var lookup =  new Lookup(CatalogueRepository, columnInfos[0], 
             _columnToTransform,
@@ -184,14 +184,14 @@ public class ExecuteFullExtractionToDatabaseMSSqlDestinationTest :TestsRequiring
         //set the destination pipeline
         var component = new PipelineComponent(CatalogueRepository, _pipeline, typeof(ExecuteFullExtractionToDatabaseMSSql), 0, "MS SQL Destination");
         var destinationArguments = component.CreateArgumentsForClassIfNotExists<ExecuteFullExtractionToDatabaseMSSql>().ToList();
-        IArgument argumentServer = destinationArguments.Single(a => a.Name == "TargetDatabaseServer");
-        IArgument argumentDbNamePattern = destinationArguments.Single(a => a.Name == "DatabaseNamingPattern");
-        IArgument argumentTblNamePattern = destinationArguments.Single(a => a.Name == "TableNamingPattern");
+        var argumentServer = destinationArguments.Single(a => a.Name == "TargetDatabaseServer");
+        var argumentDbNamePattern = destinationArguments.Single(a => a.Name == "DatabaseNamingPattern");
+        var argumentTblNamePattern = destinationArguments.Single(a => a.Name == "TableNamingPattern");
 
         Assert.AreEqual("TargetDatabaseServer", argumentServer.Name);
         argumentServer.SetValue(_extractionServer);
         argumentServer.SaveToDatabase();
-        argumentDbNamePattern.SetValue(TestDatabaseNames.Prefix + "$p_$n");
+        argumentDbNamePattern.SetValue($"{TestDatabaseNames.Prefix}$p_$n");
         argumentDbNamePattern.SaveToDatabase();
         argumentTblNamePattern.SetValue("$c_$d");
         argumentTblNamePattern.SaveToDatabase();

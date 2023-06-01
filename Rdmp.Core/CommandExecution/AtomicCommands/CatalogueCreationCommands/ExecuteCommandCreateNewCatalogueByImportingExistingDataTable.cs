@@ -59,7 +59,7 @@ public class ExecuteCommandCreateNewCatalogueByImportingExistingDataTable : Cata
         if(c == null || !c.Exists())
         {
             if(BasicActivator.IsInteractive 
-               && BasicActivator.YesNo("You have cancelled Catalogue creation.  Do you want to delete the TableInfo metadata reference (this will not affect any database tables)?", "Delete TableInfo", out bool chosen)
+               && BasicActivator.YesNo("You have cancelled Catalogue creation.  Do you want to delete the TableInfo metadata reference (this will not affect any database tables)?", "Delete TableInfo", out var chosen)
                && chosen)
             {
                 ti.DeleteInDatabase();

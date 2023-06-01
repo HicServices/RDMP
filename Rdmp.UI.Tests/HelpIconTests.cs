@@ -27,7 +27,7 @@ class HelpIconTests
         var hi = new HelpIcon();
 
         //length is over 150 characters
-        string testLongString = "kdsfldsfjsdafdfjsdafldsafadsfksdafjdfjdsfasdjfdsjfsdfldsjfkdsfkdsfksdafjdfsdaf;sdafsdafadsflsdafksdfjadslfjdsflsdjfldsfksadkfadkfasdfadsjfasdsdfladsfjsdjfkdflsdfksdfkadsfladsfj";
+        var testLongString = "kdsfldsfjsdafdfjsdafldsafadsfksdafjdfjdsfasdjfdsjfsdfldsjfkdsfkdsfksdafjdfsdaf;sdafsdafadsflsdafksdfjadslfjdsflsdjfldsfksadkfadkfasdfadsjfasdsdfladsfjsdjfkdflsdfksdfkadsfladsfj";
         hi.SetHelpText(null,testLongString);
         Assert.AreEqual(HelpIcon.MaxHoverTextLength,hi.HoverText.Length);
     }

@@ -61,8 +61,8 @@ public class LoadMetadata : DatabaseEntity, ILoadMetadata, IHasDependencies, IHa
     [AdjustableLocation]
     public string LocationOfFlatFiles
     {
-        get { return _locationOfFlatFiles; }
-        set { SetField(ref _locationOfFlatFiles, value); }
+        get => _locationOfFlatFiles;
+        set => SetField(ref _locationOfFlatFiles, value);
     }
 
     /// <summary>
@@ -70,8 +70,8 @@ public class LoadMetadata : DatabaseEntity, ILoadMetadata, IHasDependencies, IHa
     /// </summary>
     public string AnonymisationEngineClass
     {
-        get { return _anonymisationEngineClass; }
-        set { SetField(ref _anonymisationEngineClass, value); }
+        get => _anonymisationEngineClass;
+        set => SetField(ref _anonymisationEngineClass, value);
     }
 
     /// <inheritdoc/>
@@ -79,8 +79,8 @@ public class LoadMetadata : DatabaseEntity, ILoadMetadata, IHasDependencies, IHa
     [NotNull]
     public string Name
     {
-        get { return _name; }
-        set { SetField(ref _name, value); }
+        get => _name;
+        set => SetField(ref _name, value);
     }
 
     /// <summary>
@@ -88,8 +88,8 @@ public class LoadMetadata : DatabaseEntity, ILoadMetadata, IHasDependencies, IHa
     /// </summary>
     public string Description
     {
-        get { return _description; }
-        set { SetField(ref _description, value); }
+        get => _description;
+        set => SetField(ref _description, value);
     }
 
     /// <summary>
@@ -98,8 +98,8 @@ public class LoadMetadata : DatabaseEntity, ILoadMetadata, IHasDependencies, IHa
     /// </summary>
     public CacheArchiveType CacheArchiveType
     {
-        get { return _cacheArchiveType; }
-        set { SetField(ref _cacheArchiveType, value); }
+        get => _cacheArchiveType;
+        set => SetField(ref _cacheArchiveType, value);
     }
 
     /// <summary>
@@ -108,24 +108,24 @@ public class LoadMetadata : DatabaseEntity, ILoadMetadata, IHasDependencies, IHa
     /// </summary>
     public int? OverrideRAWServer_ID
     {
-        get { return _overrideRawServerID; }
-        set { SetField(ref _overrideRawServerID, value); }
+        get => _overrideRawServerID;
+        set => SetField(ref _overrideRawServerID, value);
     }
         
         
     /// <iheritdoc/>
     public bool IgnoreTrigger
     {
-        get { return _ignoreTrigger; }
-        set { SetField(ref _ignoreTrigger, value); }
+        get => _ignoreTrigger;
+        set => SetField(ref _ignoreTrigger, value);
     }
 
     /// <inheritdoc/>
     [UsefulProperty]
     public string Folder
     {
-        get { return _folder; }
-        set { SetField(ref _folder, FolderHelper.Adjust(value)); }
+        get => _folder;
+        set => SetField(ref _folder, FolderHelper.Adjust(value));
     }
 
     #endregion
@@ -135,16 +135,11 @@ public class LoadMetadata : DatabaseEntity, ILoadMetadata, IHasDependencies, IHa
 
     /// <inheritdoc/>
     [NoMappingToDatabase]
-    public ExternalDatabaseServer OverrideRAWServer {
-        get { return OverrideRAWServer_ID.HasValue? Repository.GetObjectByID<ExternalDatabaseServer>(OverrideRAWServer_ID.Value): null; }
-    }
+    public ExternalDatabaseServer OverrideRAWServer => OverrideRAWServer_ID.HasValue? Repository.GetObjectByID<ExternalDatabaseServer>(OverrideRAWServer_ID.Value): null;
 
     /// <inheritdoc/>
     [NoMappingToDatabase]
-    public ILoadProgress[] LoadProgresses
-    {
-        get { return Repository.GetAllObjectsWithParent<LoadProgress>(this); }
-    }
+    public ILoadProgress[] LoadProgresses => Repository.GetAllObjectsWithParent<LoadProgress>(this);
 
     /// <inheritdoc/>
     [NoMappingToDatabase]
@@ -173,7 +168,7 @@ public class LoadMetadata : DatabaseEntity, ILoadMetadata, IHasDependencies, IHa
     public LoadMetadata(ICatalogueRepository repository, string name = null)
     {
         if (name == null)
-            name = "NewLoadMetadata" + Guid.NewGuid();
+            name = $"NewLoadMetadata{Guid.NewGuid()}";
         repository.InsertAndHydrate(this,new Dictionary<string, object>()
         {
             {"Name",name},
@@ -204,10 +199,11 @@ public class LoadMetadata : DatabaseEntity, ILoadMetadata, IHasDependencies, IHa
     /// <inheritdoc/>
     public override void DeleteInDatabase()
     {
-        ICatalogue firstOrDefault = GetAllCatalogues().FirstOrDefault();
+        var firstOrDefault = GetAllCatalogues().FirstOrDefault();
 
         if (firstOrDefault != null)
-            throw new Exception("This load is used by " + firstOrDefault.Name + " so cannot be deleted (Disassociate it first)");
+            throw new Exception(
+                $"This load is used by {firstOrDefault.Name} so cannot be deleted (Disassociate it first)");
 
         base.DeleteInDatabase();
     }
@@ -250,10 +246,11 @@ public class LoadMetadata : DatabaseEntity, ILoadMetadata, IHasDependencies, IHa
 
     private IDataAccessPoint[] GetLoggingServers()
     {
-        ICatalogue[] catalogue = GetAllCatalogues().ToArray();
+        var catalogue = GetAllCatalogues().ToArray();
 
         if (!catalogue.Any())
-            throw new NotSupportedException("LoadMetaData '" + ToString() + " (ID=" + ID + ") does not have any Catalogues associated with it so it is not possible to fetch its LoggingDatabaseSettings");
+            throw new NotSupportedException(
+                $"LoadMetaData '{ToString()} (ID={ID}) does not have any Catalogues associated with it so it is not possible to fetch its LoggingDatabaseSettings");
 
         return catalogue.Select(c => c.LiveLoggingServer).ToArray();
     }
@@ -267,16 +264,18 @@ public class LoadMetadata : DatabaseEntity, ILoadMetadata, IHasDependencies, IHa
         var catalogueMetadatas = GetAllCatalogues().ToArray();
 
         if(!catalogueMetadatas.Any())
-            throw new Exception("There are no Catalogues associated with load metadata (ID=" +this.ID+")");
+            throw new Exception($"There are no Catalogues associated with load metadata (ID={this.ID})");
 
         var cataloguesWithoutLoggingTasks = catalogueMetadatas.Where(c => String.IsNullOrWhiteSpace(c.LoggingDataTask)).ToArray();
 
         if(cataloguesWithoutLoggingTasks.Any())
-            throw new Exception("The following Catalogues do not have a LoggingDataTask specified:" + cataloguesWithoutLoggingTasks.Aggregate("",(s,n)=>s + n.ToString() + "(ID="+n.ID+"),"));
+            throw new Exception(
+                $"The following Catalogues do not have a LoggingDataTask specified:{cataloguesWithoutLoggingTasks.Aggregate("", (s, n) => $"{s}{n}(ID={n.ID}),")}");
             
-        string[] distinctLoggingTasks = catalogueMetadatas.Select(c => c.LoggingDataTask).Distinct().ToArray();
+        var distinctLoggingTasks = catalogueMetadatas.Select(c => c.LoggingDataTask).Distinct().ToArray();
         if(distinctLoggingTasks.Count()>= 2)
-            throw new Exception("There are " + distinctLoggingTasks.Length + " logging tasks in Catalogues belonging to this metadata (ID=" +this.ID+")");
+            throw new Exception(
+                $"There are {distinctLoggingTasks.Length} logging tasks in Catalogues belonging to this metadata (ID={this.ID})");
 
         return distinctLoggingTasks[0];
     }
@@ -288,9 +287,9 @@ public class LoadMetadata : DatabaseEntity, ILoadMetadata, IHasDependencies, IHa
     /// <returns></returns>
     public List<TableInfo> GetDistinctTableInfoList(bool includeLookups)
     {
-        List<TableInfo> toReturn = new List<TableInfo>();
+        var toReturn = new List<TableInfo>();
 
-        foreach (ICatalogue catalogueMetadata in GetAllCatalogues())
+        foreach (var catalogueMetadata in GetAllCatalogues())
         foreach (TableInfo tableInfo in catalogueMetadata.GetTableInfoList(includeLookups))
             if (!toReturn.Contains(tableInfo))
                 toReturn.Add(tableInfo);
@@ -301,18 +300,18 @@ public class LoadMetadata : DatabaseEntity, ILoadMetadata, IHasDependencies, IHa
     /// <inheritdoc/>
     public DiscoveredServer GetDistinctLiveDatabaseServer()
     {
-        HashSet<ITableInfo> normalTables = new HashSet<ITableInfo>();
-        HashSet<ITableInfo> lookupTables = new HashSet<ITableInfo>();
+        var normalTables = new HashSet<ITableInfo>();
+        var lookupTables = new HashSet<ITableInfo>();
 
-        foreach (ICatalogue catalogue in this.GetAllCatalogues())
+        foreach (var catalogue in this.GetAllCatalogues())
         {
             List<ITableInfo> normal;
             List<ITableInfo> lookup;
             catalogue.GetTableInfos(out normal, out lookup);
 
-            foreach (ITableInfo n in normal)
+            foreach (var n in normal)
                 normalTables.Add(n);
-            foreach (ITableInfo l in lookup)
+            foreach (var l in lookup)
                 lookupTables.Add(l);
         }
 
@@ -322,7 +321,8 @@ public class LoadMetadata : DatabaseEntity, ILoadMetadata, IHasDependencies, IHa
         if(lookupTables.Any())
             return DataAccessPortal.GetInstance().ExpectDistinctServer(lookupTables.ToArray(), DataAccessContext.DataLoad,true);
             
-        throw new Exception("LoadMetadata " + this + " has no TableInfos configured (or possibly the tables have been deleted resulting in MISSING ColumnInfos?)");
+        throw new Exception(
+            $"LoadMetadata {this} has no TableInfos configured (or possibly the tables have been deleted resulting in MISSING ColumnInfos?)");
     }
 
     /// <inheritdoc/>
@@ -375,7 +375,8 @@ public class LoadMetadata : DatabaseEntity, ILoadMetadata, IHasDependencies, IHa
     {
         var syntax = GetAllCatalogues().Select(c => c.GetQuerySyntaxHelper()).Distinct().ToArray();
         if (syntax.Length > 1)
-            throw new Exception("LoadMetadata '" + this + "' has multiple underlying Catalogue Live Database Type(s) - not allowed");
+            throw new Exception(
+                $"LoadMetadata '{this}' has multiple underlying Catalogue Live Database Type(s) - not allowed");
 
         return syntax.SingleOrDefault();
     }

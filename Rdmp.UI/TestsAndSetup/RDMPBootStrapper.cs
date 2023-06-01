@@ -83,7 +83,7 @@ public class RDMPBootStrapper<T> where T : RDMPForm, new()
         try
         {
             //show the startup dialog
-            Startup startup = new Startup(_environmentInfo) { SkipPatching = _args.SkipPatching };
+            var startup = new Startup(_environmentInfo) { SkipPatching = _args.SkipPatching };
 
             if(!string.IsNullOrWhiteSpace(_args.Dir))
             {

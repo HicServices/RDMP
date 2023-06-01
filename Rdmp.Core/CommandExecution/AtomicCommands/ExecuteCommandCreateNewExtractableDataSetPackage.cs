@@ -31,7 +31,7 @@ public class ExecuteCommandCreateNewExtractableDataSetPackage:BasicCommandExecut
     {
         base.Execute();
             
-        if (TypeText("Name for package", "Name", 500, null, out string name))
+        if (TypeText("Name for package", "Name", 500, null, out var name))
         {
             var p = new ExtractableDataSetPackage(BasicActivator.RepositoryLocator.DataExportRepository, name);
             Publish(p);

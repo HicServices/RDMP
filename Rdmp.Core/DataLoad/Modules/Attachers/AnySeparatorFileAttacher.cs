@@ -21,8 +21,8 @@ public class AnySeparatorFileAttacher : DelimitedFlatFileAttacher
     [DemandsInitialization(@"The file separator e.g. , for CSV.  For tabs type \t", Mandatory = true)]
     public string Separator
     {
-        get { return _source.Separator; }
-        set { _source.Separator = value; }
+        get => _source.Separator;
+        set => _source.Separator = value;
     }
 
     public AnySeparatorFileAttacher() : base('A')

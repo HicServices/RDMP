@@ -142,7 +142,8 @@ public class JobDateGenerationStrategyFactoryTestsIntegration:DatabaseTests
         try
         {
             var ex = Assert.Throws<InvalidOperationException>(()=>_factory.Create(_lp,new ThrowImmediatelyDataLoadEventListener()));
-            Assert.AreEqual("Caching has not begun for this CacheProgress ("+_cp.ID+"), so there is nothing to load and this strategy should not be used.",ex.Message);
+            Assert.AreEqual(
+                $"Caching has not begun for this CacheProgress ({_cp.ID}), so there is nothing to load and this strategy should not be used.",ex.Message);
         }
         finally
         {

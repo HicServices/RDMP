@@ -24,7 +24,7 @@ namespace Rdmp.Core.DataLoad.Engine.LoadExecution.Components.Runtime;
 public class AttacherRuntimeTask : RuntimeTask, IMEFRuntimeTask
 {
     public IAttacher Attacher { get; private set; }
-    public ICheckable MEFPluginClassInstance { get { return Attacher; }}
+    public ICheckable MEFPluginClassInstance => Attacher;
 
     public AttacherRuntimeTask(IProcessTask task, RuntimeArgumentCollection args, MEF mef)
         : base(task, args)

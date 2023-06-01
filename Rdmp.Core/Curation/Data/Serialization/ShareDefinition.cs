@@ -75,10 +75,10 @@ public class ShareDefinition
     public Dictionary<string, object> GetDictionaryForImport()
     {
         //Make a dictionary of the normal properties we are supposed to be importing
-        Dictionary<string, object> newDictionary = Properties.ToDictionary(kvp => kvp.Key, kvp => kvp.Value);
+        var newDictionary = Properties.ToDictionary(kvp => kvp.Key, kvp => kvp.Value);
 
         //remove null arguments they won't help us here
-        foreach (string key in newDictionary.Keys.ToArray())
+        foreach (var key in newDictionary.Keys.ToArray())
         {
             if (newDictionary[key] == null)
                 newDictionary.Remove(key);

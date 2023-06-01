@@ -22,13 +22,13 @@ public class ForkDataLoadEventListener:IDataLoadEventListener
 
     public void OnNotify(object sender, NotifyEventArgs e)
     {
-        foreach (IDataLoadEventListener listener in _listeners)
+        foreach (var listener in _listeners)
             listener.OnNotify(sender, e);
     }
 
     public void OnProgress(object sender, ProgressEventArgs e)
     {
-        foreach (IDataLoadEventListener listener in _listeners)
+        foreach (var listener in _listeners)
             listener.OnProgress(sender, e);
     }
 }

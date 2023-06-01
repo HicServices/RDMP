@@ -55,28 +55,33 @@ public class PrematureLoadEnder : IPluginMutilateDataTables
     {
         if (ConditionsToTerminateUnder == PrematureLoadEndCondition.Always)
         {
-            job.OnNotify(this, new NotifyEventArgs(ProgressEventType.Information, "ConditionsToTerminateUnder is " + ConditionsToTerminateUnder + " so terminating load with " +ExitCodeToReturnIfConditionMet));
+            job.OnNotify(this, new NotifyEventArgs(ProgressEventType.Information,
+                $"ConditionsToTerminateUnder is {ConditionsToTerminateUnder} so terminating load with {ExitCodeToReturnIfConditionMet}"));
             return ExitCodeToReturnIfConditionMet;
         }
 
         if(ConditionsToTerminateUnder == PrematureLoadEndCondition.NoRecordsInAnyTablesInDatabase)
         {
-            job.OnNotify(this,new NotifyEventArgs(ProgressEventType.Information, "About to inspect what tables have rows in them in database " + _databaseInfo.GetRuntimeName()));
+            job.OnNotify(this,new NotifyEventArgs(ProgressEventType.Information,
+                $"About to inspect what tables have rows in them in database {_databaseInfo.GetRuntimeName()}"));
 
             foreach (var t in _databaseInfo.DiscoverTables(false))
             {
-                int rowCount = t.GetRowCount();
+                var rowCount = t.GetRowCount();
 
-                job.OnNotify(this,new NotifyEventArgs(ProgressEventType.Information, "Found table " + t.GetRuntimeName() + " with row count " + rowCount));
+                job.OnNotify(this,new NotifyEventArgs(ProgressEventType.Information,
+                    $"Found table {t.GetRuntimeName()} with row count {rowCount}"));
 
                 if(rowCount > 0)
                 {
-                    job.OnNotify(this, new NotifyEventArgs(ProgressEventType.Information, "Found at least 1 record in 1 table so condition " + ConditionsToTerminateUnder + " is not met.  Therefore returning Success so the load can continue normally."));
+                    job.OnNotify(this, new NotifyEventArgs(ProgressEventType.Information,
+                        $"Found at least 1 record in 1 table so condition {ConditionsToTerminateUnder} is not met.  Therefore returning Success so the load can continue normally."));
                     return ExitCodeType.Success;
                 }
             }
 
-            job.OnNotify(this,new NotifyEventArgs(ProgressEventType.Information, "No tables had any rows in them so returning " + ExitCodeToReturnIfConditionMet + " which should terminate the load here"));
+            job.OnNotify(this,new NotifyEventArgs(ProgressEventType.Information,
+                $"No tables had any rows in them so returning {ExitCodeToReturnIfConditionMet} which should terminate the load here"));
             return ExitCodeToReturnIfConditionMet;
         }
 
@@ -85,24 +90,27 @@ public class PrematureLoadEnder : IPluginMutilateDataTables
             var dataLoadJob = job as IDataLoadJob;
 
             if(dataLoadJob == null)
-                throw new Exception("IDataLoadEventListener " + job + " was not an IDataLoadJob (very unexpected)");
+                throw new Exception($"IDataLoadEventListener {job} was not an IDataLoadJob (very unexpected)");
 
-            job.OnNotify(this, new NotifyEventArgs(ProgressEventType.Information, "About to check ForLoading directory for files, the directory is:" + dataLoadJob.LoadDirectory.ForLoading.FullName));
+            job.OnNotify(this, new NotifyEventArgs(ProgressEventType.Information,
+                $"About to check ForLoading directory for files, the directory is:{dataLoadJob.LoadDirectory.ForLoading.FullName}"));
 
             var files = dataLoadJob.LoadDirectory.ForLoading.GetFiles();
 
             if (!files.Any())
             {
-                job.OnNotify(this, new NotifyEventArgs(ProgressEventType.Information, "No files in ForLoading so returning " + ExitCodeToReturnIfConditionMet + " which should terminate the load here"));
+                job.OnNotify(this, new NotifyEventArgs(ProgressEventType.Information,
+                    $"No files in ForLoading so returning {ExitCodeToReturnIfConditionMet} which should terminate the load here"));
                 return ExitCodeToReturnIfConditionMet;
             }
 
-            job.OnNotify(this, new NotifyEventArgs(ProgressEventType.Information, "Found " + files.Length + " files in ForLoading so not terminating (" + string.Join(",", files.Select(f => f.Name)) + ")"));
+            job.OnNotify(this, new NotifyEventArgs(ProgressEventType.Information,
+                $"Found {files.Length} files in ForLoading so not terminating ({string.Join(",", files.Select(f => f.Name))})"));
                 
             //There were 
             return ExitCodeType.Success;
         }
                 
-        throw new Exception("Didn't know how to handle condition:" + ConditionsToTerminateUnder);
+        throw new Exception($"Didn't know how to handle condition:{ConditionsToTerminateUnder}");
     }
 }

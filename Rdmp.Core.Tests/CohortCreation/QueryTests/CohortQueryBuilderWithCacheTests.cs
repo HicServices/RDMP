@@ -29,12 +29,13 @@ public class CohortQueryBuilderWithCacheTests : CohortIdentificationTests
     {
         base.OneTimeSetUp();
 
-        queryCacheDatabase = DiscoveredServerICanCreateRandomDatabasesAndTablesOn.ExpectDatabase(TestDatabaseNames.Prefix + "QueryCache");
+        queryCacheDatabase = DiscoveredServerICanCreateRandomDatabasesAndTablesOn.ExpectDatabase(
+            $"{TestDatabaseNames.Prefix}QueryCache");
 
         if (queryCacheDatabase.Exists())
             base.DeleteTables(queryCacheDatabase);
 
-        MasterDatabaseScriptExecutor executor = new MasterDatabaseScriptExecutor(queryCacheDatabase);
+        var executor = new MasterDatabaseScriptExecutor(queryCacheDatabase);
 
         var p = new QueryCachingPatcher();
         executor.CreateAndPatchDatabase(p, new AcceptAllCheckNotifier());
@@ -47,7 +48,7 @@ public class CohortQueryBuilderWithCacheTests : CohortIdentificationTests
     public void TestGettingAggregateJustFromConfig_DistinctCHISelect()
     {
 
-        CachedAggregateConfigurationResultsManager manager = new CachedAggregateConfigurationResultsManager( externalDatabaseServer);
+        var manager = new CachedAggregateConfigurationResultsManager( externalDatabaseServer);
             
         cohortIdentificationConfiguration.QueryCachingServer_ID = externalDatabaseServer.ID;
         cohortIdentificationConfiguration.SaveToDatabase();
@@ -56,7 +57,7 @@ public class CohortQueryBuilderWithCacheTests : CohortIdentificationTests
         cohortIdentificationConfiguration.CreateRootContainerIfNotExists();
         cohortIdentificationConfiguration.RootCohortAggregateContainer.AddChild(aggregate1,0);
 
-        CohortQueryBuilder builder = new CohortQueryBuilder(cohortIdentificationConfiguration,null);
+        var builder = new CohortQueryBuilder(cohortIdentificationConfiguration,null);
         try
         {
             Assert.AreEqual(
@@ -93,7 +94,7 @@ FROM
             }
 
 
-            CohortQueryBuilder builderCached = new CohortQueryBuilder(cohortIdentificationConfiguration,null);
+            var builderCached = new CohortQueryBuilder(cohortIdentificationConfiguration,null);
 
             Assert.AreEqual(
                 CollapseWhitespace(

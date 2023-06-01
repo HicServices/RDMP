@@ -46,7 +46,7 @@ public class ExecuteCommandAddAggregateConfigurationToCohortIdentificationSetCon
     {
         _targetCohortAggregateContainer = targetCohortAggregateContainer;
 
-        if (targetCohortAggregateContainer.ShouldBeReadOnly(out string reason))
+        if (targetCohortAggregateContainer.ShouldBeReadOnly(out var reason))
             SetImpossible(reason);
 
         UseTripleDotSuffix = true;
@@ -169,7 +169,7 @@ public class ExecuteCommandAddAggregateConfigurationToCohortIdentificationSetCon
                 return;
             }
 
-            foreach (AggregateConfiguration aggregateConfiguration in selected)
+            foreach (var aggregateConfiguration in selected)
             {
                 var combineable = new AggregateConfigurationCombineable(aggregateConfiguration);
                 Execute(combineable, aggregateConfiguration == selected.Last());
@@ -189,7 +189,7 @@ public class ExecuteCommandAddAggregateConfigurationToCohortIdentificationSetCon
 
         var cic = _targetCohortAggregateContainer.GetCohortIdentificationConfiguration();
 
-        AggregateConfiguration child = DoNotClone
+        var child = DoNotClone
             ? toAdd.Aggregate
             : cic.ImportAggregateConfigurationAsIdentifierList(toAdd.Aggregate, (a, b) => CohortCombineToCreateCommandHelper.PickOneExtractionIdentifier(BasicActivator, a, b));
 
@@ -197,7 +197,7 @@ public class ExecuteCommandAddAggregateConfigurationToCohortIdentificationSetCon
         var contents = _targetCohortAggregateContainer.GetOrderedContents().ToArray();
 
         //insert it at the begining of the contents
-        int minimumOrder = 0;
+        var minimumOrder = 0;
         if (contents.Any())
             minimumOrder = contents.Min(o => o.Order);
 

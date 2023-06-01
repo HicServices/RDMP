@@ -38,17 +38,17 @@ public class ExecuteCommandShowCacheFetchFailures : BasicUICommandExecution,IAto
 
         // for now just show a modal dialog with a data grid view of all the failure rows
             
-        DataTable dt = new DataTable();
+        var dt = new DataTable();
         dt.Columns.Add("FetchRequestStart");
         dt.Columns.Add("FetchRequestEnd");
         dt.Columns.Add("ExceptionText");
         dt.Columns.Add("LastAttempt");
         dt.Columns.Add("ResolvedOn");
 
-        foreach (ICacheFetchFailure f in _failures)
+        foreach (var f in _failures)
             dt.Rows.Add(f.FetchRequestStart, f.FetchRequestEnd, f.ExceptionText, f.LastAttempt, f.ResolvedOn);
 
-        DataTableViewerUI ui = new DataTableViewerUI(dt,"Cache Failures");
+        var ui = new DataTableViewerUI(dt,"Cache Failures");
         Activator.ShowWindow(ui, true);
     }
 

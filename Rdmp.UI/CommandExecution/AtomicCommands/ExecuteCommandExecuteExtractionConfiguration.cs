@@ -63,7 +63,7 @@ public class ExecuteCommandExecuteExtractionConfiguration:BasicUICommandExecutio
         _project = target as Project;
 
         //if target is ExtractionConfiguration
-        if(_extractionConfiguration != null && !_extractionConfiguration.IsExtractable(out string reason))
+        if(_extractionConfiguration != null && !_extractionConfiguration.IsExtractable(out var reason))
             SetImpossible(reason);
 
         if (_project != null && !_project.ExtractionConfigurations.Any(c => c.IsExtractable(out _)))

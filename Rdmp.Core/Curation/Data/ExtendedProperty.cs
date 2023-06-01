@@ -76,22 +76,22 @@ public class ExtendedProperty  : Argument,IReferenceOtherObjectWithPersist, IInj
     /// <inheritdoc/>
     public string ReferencedObjectType
     {
-        get { return _referencedObjectType; }
-        set { SetField(ref _referencedObjectType, value); }
+        get => _referencedObjectType;
+        set => SetField(ref _referencedObjectType, value);
     }
 
     /// <inheritdoc/>
     public int ReferencedObjectID
     {
-        get { return _referencedObjectID; }
-        set { SetField(ref _referencedObjectID, value); }
+        get => _referencedObjectID;
+        set => SetField(ref _referencedObjectID, value);
     }
 
     /// <inheritdoc/>
     public string ReferencedObjectRepositoryType
     {
-        get { return _referencedObjectRepositoryType; }
-        set { SetField(ref _referencedObjectRepositoryType, value); }
+        get => _referencedObjectRepositoryType;
+        set => SetField(ref _referencedObjectRepositoryType, value);
     }
 
 

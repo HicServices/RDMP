@@ -52,7 +52,7 @@ public class LogViewerFilter
     }
     public LoggingTables LoggingTable {get;set;}
 
-    public bool IsEmpty { get { return Run == null && Table == null && Task == null; } }
+    public bool IsEmpty => Run == null && Table == null && Task == null;
 
     public int? Task { get; set; }
 
@@ -67,16 +67,16 @@ public class LogViewerFilter
 
     public override string ToString()
     {
-        StringBuilder sb = new StringBuilder();
+        var sb = new StringBuilder();
 
         if(Task != null)
-            sb.Append("DataLoadTask=" + Task);
+            sb.Append($"DataLoadTask={Task}");
 
         if (Run != null)
-            sb.Append("DataLoadRun=" + Run);
+            sb.Append($"DataLoadRun={Run}");
 
         if (Table != null)
-            sb.Append("TableLoadRun=" + Table);
+            sb.Append($"TableLoadRun={Table}");
 
         if (sb.Length == 0)
             return "No filter";
@@ -91,22 +91,22 @@ public class LogViewerFilter
             case LoggingTables.None:
                 return "";
             case LoggingTables.DataLoadTask:
-                return Task.HasValue ? "WHERE ID =" + Task.Value:"";
+                return Task.HasValue ? $"WHERE ID ={Task.Value}" :"";
             case LoggingTables.DataLoadRun:
                 if (Run.HasValue)
-                    return "WHERE ID =" + Run.Value;
+                    return $"WHERE ID ={Run.Value}";
                 if (Task.HasValue)
-                    return "WHERE dataLoadTaskID = " + Task.Value;
+                    return $"WHERE dataLoadTaskID = {Task.Value}";
                 return "";
             case LoggingTables.ProgressLog:
             case LoggingTables.FatalError:
             case LoggingTables.TableLoadRun:
                 if (Run.HasValue)
-                    return "WHERE dataLoadRunID =" + Run.Value;
+                    return $"WHERE dataLoadRunID ={Run.Value}";
                 return "";
             case LoggingTables.DataSource:
                 if (Table.HasValue)
-                    return "WHERE tableLoadRunID =" + Table.Value;
+                    return $"WHERE tableLoadRunID ={Table.Value}";
                 return "";
             default:
                 throw new ArgumentOutOfRangeException("table");

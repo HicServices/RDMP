@@ -31,17 +31,17 @@ public class PipelineReadPerformanceTest:DatabaseTests
     {
         var server = _bulkTestData.BulkDataDatabase.Server;
 
-        using (DbConnection con = server.GetConnection())
+        using (var con = server.GetConnection())
         {
             con.Open();
-            DbCommand cmd = server.GetCommand("Select count(*) from " + BulkTestsData.BulkDataTable, con);
-            int manualCount = Convert.ToInt32(cmd.ExecuteScalar());
+            var cmd = server.GetCommand($"Select count(*) from {BulkTestsData.BulkDataTable}", con);
+            var manualCount = Convert.ToInt32(cmd.ExecuteScalar());
 
             //manual count matches expected
             Assert.AreEqual(_bulkTestData.ExpectedNumberOfRowsInTestData,manualCount);
 
             //now get the fast approximate rowcount
-            int fastRowcount = _bulkTestData.BulkDataDatabase
+            var fastRowcount = _bulkTestData.BulkDataDatabase
                 .ExpectTable(BulkTestsData.BulkDataTable)
                 .GetRowCount();
 

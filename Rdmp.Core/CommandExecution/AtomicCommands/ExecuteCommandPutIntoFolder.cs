@@ -60,7 +60,7 @@ public class ExecuteCommandPutIntoFolder: BasicCommandExecution
                 // or on several items in the same folder).  Then make the 
                 // popup text box show the old value.  Otherwise show the root \
                 var current = _toMove.Select(m => m.Folder).Distinct().ToArray();
-                string oldValue = current.Length == 1 ? current[0] : "\\";
+                var oldValue = current.Length == 1 ? current[0] : "\\";
 
                 if (!BasicActivator.TypeText(new DialogArgs
                     {
@@ -80,7 +80,7 @@ public class ExecuteCommandPutIntoFolder: BasicCommandExecution
         if (string.IsNullOrWhiteSpace(f))
             return;
 
-        foreach (IHasFolder c in _toMove)
+        foreach (var c in _toMove)
         {
             c.Folder = f;
             c.SaveToDatabase();

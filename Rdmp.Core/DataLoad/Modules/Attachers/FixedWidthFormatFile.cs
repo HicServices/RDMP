@@ -25,9 +25,9 @@ public class FixedWidthFormatFile
     public FixedWidthFormatFile(FileInfo pathToFormatFile)
     {
         _pathToFormatFile = pathToFormatFile;
-        string[] readAllLines = File.ReadAllLines(_pathToFormatFile.FullName);
+        var readAllLines = File.ReadAllLines(_pathToFormatFile.FullName);
 
-        string headers = readAllLines[0];
+        var headers = readAllLines[0];
 
         EnsureHeaderIntact(headers);
 
@@ -38,10 +38,10 @@ public class FixedWidthFormatFile
         FormatColumns = new FixedWidthColumn[readAllLines.Count()-1];
 
         //now add values
-        for (int index = 0; index < readAllLines.Count()-1; index++)
+        for (var index = 0; index < readAllLines.Count()-1; index++)
         {
             //skip header line 
-            string[] cellsOnRowAsSplitString = readAllLines[index + 1].Split(',');
+            var cellsOnRowAsSplitString = readAllLines[index + 1].Split(',');
 
             FormatColumns[index].From = int.Parse(cellsOnRowAsSplitString[0]);
             FormatColumns[index].To = int.Parse(cellsOnRowAsSplitString[1]);
@@ -53,7 +53,8 @@ public class FixedWidthFormatFile
                 FormatColumns[index].DateFormat = cellsOnRowAsSplitString[4].Replace("ccyy","yyyy"); //some people think that ccyy is a valid way of expressing year formats... they are wrong 
 
             if (FormatColumns[index].From + FormatColumns[index].Size -1 != FormatColumns[index].To)
-                throw new FlatFileLoadException("Problem with format of field " + FormatColumns[index].Field + " From + Size -1 does not equal To");
+                throw new FlatFileLoadException(
+                    $"Problem with format of field {FormatColumns[index].Field} From + Size -1 does not equal To");
 
             if (!string.IsNullOrWhiteSpace(FormatColumns[index].DateFormat))
                 try
@@ -62,7 +63,8 @@ public class FixedWidthFormatFile
                 }
                 catch (Exception e)
                 {
-                    throw new FlatFileLoadException("Problem with flat file format which announced the date format as " + FormatColumns[index].DateFormat + " which C# says isn't a valid format",e);
+                    throw new FlatFileLoadException(
+                        $"Problem with flat file format which announced the date format as {FormatColumns[index].DateFormat} which C# says isn't a valid format",e);
                 }
         }
     }
@@ -71,12 +73,12 @@ public class FixedWidthFormatFile
     public DataTable GetDataTableFromFlatFile(FileInfo f)
     {
         //setup the table
-        DataTable toReturn = new DataTable();
+        var toReturn = new DataTable();
 
 
-        foreach (FixedWidthColumn fixedWidthColumn in FormatColumns)
+        foreach (var fixedWidthColumn in FormatColumns)
         {
-            DataColumn dataColumn = toReturn.Columns.Add(fixedWidthColumn.Field);
+            var dataColumn = toReturn.Columns.Add(fixedWidthColumn.Field);
 
             if (!string.IsNullOrWhiteSpace(fixedWidthColumn.DateFormat))
                 dataColumn.DataType = typeof (DateTime);
@@ -85,25 +87,26 @@ public class FixedWidthFormatFile
 
         }
 
-        int lineNumber = 0;
+        var lineNumber = 0;
 
         //populate the table
         //foreach line in file
-        foreach (string readAllLine in File.ReadAllLines(f.FullName))
+        foreach (var readAllLine in File.ReadAllLines(f.FullName))
         {
             lineNumber++;
 
             //add a new row to data table
-            DataRow dataRow = toReturn.Rows.Add();
+            var dataRow = toReturn.Rows.Add();
 
             //foreach expected fixed width column
-            foreach (FixedWidthColumn fixedWidthColumn in FormatColumns)
+            foreach (var fixedWidthColumn in FormatColumns)
             {
                 if(readAllLine.Length < fixedWidthColumn.To)
-                    throw new FlatFileLoadException("Error on line " + lineNumber + " of file " + f.Name + ", the format file (" + _pathToFormatFile.FullName + ") specified that a column " + fixedWidthColumn.Field + " would be found between character positions " + fixedWidthColumn.From + " and " + fixedWidthColumn.To + " but the current line is only " + readAllLine.Length + " characters long");
+                    throw new FlatFileLoadException(
+                        $"Error on line {lineNumber} of file {f.Name}, the format file ({_pathToFormatFile.FullName}) specified that a column {fixedWidthColumn.Field} would be found between character positions {fixedWidthColumn.From} and {fixedWidthColumn.To} but the current line is only {readAllLine.Length} characters long");
 
                 //substring in order to get cell data
-                string value = readAllLine.Substring(fixedWidthColumn.From-1, fixedWidthColumn.Size);
+                var value = readAllLine.Substring(fixedWidthColumn.From-1, fixedWidthColumn.Size);
                       
                 //if its a null
                 if (string.IsNullOrWhiteSpace(value))
@@ -118,7 +121,8 @@ public class FixedWidthFormatFile
                     catch (Exception e)
                     {
                             
-                        throw new Exception("The value '" + value + "' was rejected by DateTime.ParseExact using the listed date time format '" + fixedWidthColumn.DateFormat +"'",e);
+                        throw new Exception(
+                            $"The value '{value}' was rejected by DateTime.ParseExact using the listed date time format '{fixedWidthColumn.DateFormat}'",e);
                     }
                 else //its not a date
                     dataRow[fixedWidthColumn.Field] = value.Trim();
@@ -132,10 +136,11 @@ public class FixedWidthFormatFile
     {
             
         //From	To	Field	Size	DateFormat
-        string expected = string.Join(",",typeof(FixedWidthColumn).GetFields().Select(f=>f.Name));
+        var expected = string.Join(",",typeof(FixedWidthColumn).GetFields().Select(f=>f.Name));
 
         if(!header.TrimEnd().Equals(expected))
-            throw new FlatFileLoadException("Format file headers in file " + _pathToFormatFile.FullName + " WAS: "+header+" WE EXPECTED: " + expected);
+            throw new FlatFileLoadException(
+                $"Format file headers in file {_pathToFormatFile.FullName} WAS: {header} WE EXPECTED: {expected}");
 
 
 

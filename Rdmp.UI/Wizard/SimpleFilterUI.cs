@@ -36,11 +36,11 @@ public partial class SimpleFilterUI : UserControl
 
     int rowHeight = 30;
 
-    public IFilter Filter {get { return _filter; }}
+    public IFilter Filter => _filter;
 
     public bool Mandatory
     {
-        get { return _mandatory; }
+        get => _mandatory;
         set
         {
             _mandatory = value;
@@ -76,7 +76,7 @@ public partial class SimpleFilterUI : UserControl
 
         SetupKnownGoodValues();
             
-        for (int i = 0; i < parameters.Length; i++)
+        for (var i = 0; i < parameters.Length; i++)
         {
             var currentRowPanel = new Panel();
                 
@@ -113,7 +113,7 @@ public partial class SimpleFilterUI : UserControl
             pbKnownValueSets.Visible = true;
             ddKnownGoodValues.Visible = true;
 
-            List<object> l = new List<object>();
+            var l = new List<object>();
             l.Add("");
             l.AddRange(knownGoodValues);
 
@@ -152,7 +152,7 @@ public partial class SimpleFilterUI : UserControl
         var set = ddKnownGoodValues.SelectedItem as ExtractionFilterParameterSet;
 
         _settingAKnownGoodValue = true;
-        foreach (SimpleParameterUI p in parameterUis)
+        foreach (var p in parameterUis)
             p.SetValueTo(set);
         _settingAKnownGoodValue = false;
     }
@@ -162,12 +162,12 @@ public partial class SimpleFilterUI : UserControl
         var importer = new FilterImporter(factory, null);
         var newFilter = importer.ImportFilter(filterContainer,_filter, alreadyExisting);
             
-        foreach (SimpleParameterUI parameterUi in parameterUis)
+        foreach (var parameterUi in parameterUis)
             parameterUi.HandleSettingParameters(newFilter);
 
         //if there are known good values
         if (ddKnownGoodValues.SelectedItem != null && ddKnownGoodValues.SelectedItem as string != string.Empty)
-            newFilter.Name += "_" + ddKnownGoodValues.SelectedItem;
+            newFilter.Name += $"_{ddKnownGoodValues.SelectedItem}";
             
            
         newFilter.FilterContainer_ID = filterContainer.ID;

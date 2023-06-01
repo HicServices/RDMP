@@ -43,7 +43,7 @@ public class EmptyDataExtractionTests:TestsRequiringAnExtractionConfiguration
     [TestCase(true)]
     public void TestAllowingEmptyDatasets(bool allowEmptyDatasetExtractions)
     {
-        Pipeline p = SetupPipeline();
+        var p = SetupPipeline();
             
         TruncateDataTable();
 

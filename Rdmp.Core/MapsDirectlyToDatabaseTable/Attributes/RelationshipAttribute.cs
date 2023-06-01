@@ -65,7 +65,7 @@ public class RelationshipAttribute : Attribute
     {
         unchecked
         {
-            int hashCode = base.GetHashCode();
+            var hashCode = base.GetHashCode();
             hashCode = (hashCode*397) ^ (Cref != null ? Cref.GetHashCode() : 0);
             hashCode = (hashCode*397) ^ (PropertyName != null ? PropertyName.GetHashCode() : 0);
             return hashCode;

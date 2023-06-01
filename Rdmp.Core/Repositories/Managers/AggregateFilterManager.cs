@@ -23,7 +23,8 @@ class AggregateFilterManager : IFilterManager
     public virtual IContainer[] GetSubContainers(IContainer container)
     {
         return 
-            _catalogueRepository.SelectAll<AggregateFilterContainer>("SELECT AggregateFilterContainer_ChildID FROM AggregateFilterSubContainer WHERE AggregateFilterContainer_ParentID=" + container.ID,
+            _catalogueRepository.SelectAll<AggregateFilterContainer>(
+                $"SELECT AggregateFilterContainer_ChildID FROM AggregateFilterSubContainer WHERE AggregateFilterContainer_ParentID={container.ID}",
                 "AggregateFilterContainer_ChildID").ToArray();
     }
 
@@ -37,7 +38,8 @@ class AggregateFilterManager : IFilterManager
 
     public IContainer GetParentContainerIfAny(IContainer container)
     {
-        return _catalogueRepository.SelectAll<AggregateFilterContainer>("SELECT AggregateFilterContainer_ParentID FROM AggregateFilterSubContainer WHERE AggregateFilterContainer_ChildID=" + container.ID,
+        return _catalogueRepository.SelectAll<AggregateFilterContainer>(
+            $"SELECT AggregateFilterContainer_ParentID FROM AggregateFilterSubContainer WHERE AggregateFilterContainer_ChildID={container.ID}",
             "AggregateFilterContainer_ParentID").SingleOrDefault();
     }
 

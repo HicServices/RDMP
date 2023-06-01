@@ -256,7 +256,7 @@ public partial class CohortIdentificationConfigurationUI : CohortIdentificationC
 
     public override string GetTabName()
     {
-        return "Execute:" + base.GetTabName();
+        return $"Execute:{base.GetTabName()}";
     }
         
     private void ticket_TicketTextChanged(object sender, EventArgs e)

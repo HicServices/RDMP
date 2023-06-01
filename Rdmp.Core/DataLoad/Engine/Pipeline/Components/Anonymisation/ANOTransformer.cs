@@ -47,10 +47,11 @@ public class ANOTransformer
 
     public void Transform(DataTable table, DataColumn srcColumn, DataColumn destColumn, bool previewOnly = false)
     {
-        DataTable tableOfIdentifiersRequiringSubstitution = ColumnToDataTable(srcColumn,true);
+        var tableOfIdentifiersRequiringSubstitution = ColumnToDataTable(srcColumn,true);
 
         if (!destColumn.ColumnName.Equals(ANOTable.ANOPrefix + srcColumn.ColumnName))
-            throw new Exception("Expected destination column " + destColumn.ColumnName + " to be " + ANOTable.ANOPrefix + srcColumn.ColumnName );
+            throw new Exception(
+                $"Expected destination column {destColumn.ColumnName} to be {ANOTable.ANOPrefix}{srcColumn.ColumnName}");
 
         if(tableOfIdentifiersRequiringSubstitution.Columns.Count != 1)
             throw new Exception("Expected only a single columns to be dispatched to SubstituteIdentifiersForANOEquivalents");
@@ -60,7 +61,7 @@ public class ANOTransformer
             return;
 
         //translate all values into ANO equivalents
-        DataTable substitutionTable = GetSubstitutionsForANOEquivalents(tableOfIdentifiersRequiringSubstitution, previewOnly);
+        var substitutionTable = GetSubstitutionsForANOEquivalents(tableOfIdentifiersRequiringSubstitution, previewOnly);
           
         //give the substitution table a primary key to make it faster.
         substitutionTable.PrimaryKey = new[] {substitutionTable.Columns[0]};
@@ -69,27 +70,30 @@ public class ANOTransformer
             throw new Exception("Expected only a two columns to be returned by SubstituteIdentifiersForANOEquivalents, the original primary key and the substitution identifier");
             
         if (substitutionTable.Columns[0].ColumnName.StartsWith(ANOTable.ANOPrefix))
-            throw new Exception("Expected first column returned by SubstituteIdentifiersForANOEquivalents to be a primary key (not start with " + ANOTable.ANOPrefix + ") but it was:" + substitutionTable.Columns[0].ColumnName);
+            throw new Exception(
+                $"Expected first column returned by SubstituteIdentifiersForANOEquivalents to be a primary key (not start with {ANOTable.ANOPrefix}) but it was:{substitutionTable.Columns[0].ColumnName}");
             
         if (!substitutionTable.Columns[1].ColumnName.StartsWith(ANOTable.ANOPrefix))
-            throw new Exception("Expected second column returned by SubstituteIdentifiersForANOEquivalents to be an ANO identifier(start with " + ANOTable.ANOPrefix + ") but it was:" + substitutionTable.Columns[1].ColumnName);
+            throw new Exception(
+                $"Expected second column returned by SubstituteIdentifiersForANOEquivalents to be an ANO identifier(start with {ANOTable.ANOPrefix}) but it was:{substitutionTable.Columns[1].ColumnName}");
 
-        for (int i = 0; i < table.Rows.Count; i++)
+        for (var i = 0; i < table.Rows.Count; i++)
         {
             // fill with ANO versions (found by primary key)
-            object valueToReplace = table.Rows[i][srcColumn.ColumnName];
+            var valueToReplace = table.Rows[i][srcColumn.ColumnName];
 
             //don't bother substituting nulls (because they won't have a sub!)
             if (valueToReplace == DBNull.Value)
                 continue;
                 
             //its not null so look up the mapped value
-            DataRow substitutionRow = substitutionTable.Rows.Find(valueToReplace);
+            var substitutionRow = substitutionTable.Rows.Find(valueToReplace);
 
             if (substitutionRow == null)
-                throw new Exception("Substitution table returned by " + SubstitutionStoredprocedure + " did not contain a mapping for identifier " + valueToReplace + "(Substitution Table had " + substitutionTable.Rows.Count + " rows)");
+                throw new Exception(
+                    $"Substitution table returned by {SubstitutionStoredprocedure} did not contain a mapping for identifier {valueToReplace}(Substitution Table had {substitutionTable.Rows.Count} rows)");
 
-            object substitutionValue = substitutionRow[1];//substitution value
+            var substitutionValue = substitutionRow[1];//substitution value
                 
             //overwrite the value with the substitution
             destColumn.Table.Rows[i][destColumn.ColumnName] = substitutionValue;
@@ -98,7 +102,7 @@ public class ANOTransformer
 
     private DataTable ColumnToDataTable(DataColumn column,bool discardNulls)
     {
-        DataTable table = new DataTable();
+        var table = new DataTable();
 
         table.Columns.Add(column.ColumnName, column.DataType);
 
@@ -130,7 +134,7 @@ public class ANOTransformer
                 
                 if (previewOnly)
                 {
-                    bool mustPush = !_anoTable.IsTablePushed();
+                    var mustPush = !_anoTable.IsTablePushed();
 
                     con.Open();
                     transaction = con.BeginTransaction();//if it is preview only we will use a transaction which we will then rollback
@@ -153,9 +157,9 @@ public class ANOTransformer
                     }
                 }
 
-                string substituteForANOIdentifiersProc = SubstitutionStoredprocedure;
+                var substituteForANOIdentifiersProc = SubstitutionStoredprocedure;
                 
-                SqlCommand cmdSubstituteIdentifiers = new SqlCommand(substituteForANOIdentifiersProc, con);
+                var cmdSubstituteIdentifiers = new SqlCommand(substituteForANOIdentifiersProc, con);
                 cmdSubstituteIdentifiers.CommandType = CommandType.StoredProcedure;
                 cmdSubstituteIdentifiers.CommandTimeout = 500;
                 cmdSubstituteIdentifiers.Transaction = transaction;
@@ -175,8 +179,8 @@ public class ANOTransformer
                 cmdSubstituteIdentifiers.Parameters["@numberOfCharactersToUseInAnonymousRepresentation"].Value = _anoTable.NumberOfCharactersToUseInAnonymousRepresentation;
                 cmdSubstituteIdentifiers.Parameters["@suffix"].Value = _anoTable.Suffix;
 
-                SqlDataAdapter da = new SqlDataAdapter(cmdSubstituteIdentifiers);
-                DataTable dtToReturn = new DataTable();
+                var da = new SqlDataAdapter(cmdSubstituteIdentifiers);
+                var dtToReturn = new DataTable();
                 
                 da.Fill(dtToReturn);
 
@@ -188,7 +192,7 @@ public class ANOTransformer
             }
             catch (Exception e)
             {
-                throw new Exception(SubstitutionStoredprocedure + " failed to complete correctly: " + e);
+                throw new Exception($"{SubstitutionStoredprocedure} failed to complete correctly: {e}");
             }
         }
     }
@@ -223,15 +227,16 @@ public class ANOTransformer
         {
 
             if (database.DiscoverStoredprocedures().Any(p => p.Name.Equals(SubstitutionStoredprocedure)))
-                notifier.OnCheckPerformed(new CheckEventArgs("successfully found " + SubstitutionStoredprocedure + " on "+database, CheckResult.Success, null));
+                notifier.OnCheckPerformed(new CheckEventArgs(
+                    $"successfully found {SubstitutionStoredprocedure} on {database}", CheckResult.Success, null));
             else
-                notifier.OnCheckPerformed(new CheckEventArgs("Failed to find " + SubstitutionStoredprocedure + " on " + database, CheckResult.Fail, null));
+                notifier.OnCheckPerformed(new CheckEventArgs(
+                    $"Failed to find {SubstitutionStoredprocedure} on {database}", CheckResult.Fail, null));
         }   
         catch (Exception e)
         {
             notifier.OnCheckPerformed(new CheckEventArgs(
-                "Exception occurred when trying to find stored procedure " + SubstitutionStoredprocedure +
-                " on " + database, CheckResult.Fail, e));
+                $"Exception occurred when trying to find stored procedure {SubstitutionStoredprocedure} on {database}", CheckResult.Fail, e));
         }
     }
 }

@@ -23,9 +23,7 @@ public class ExtractionTimeTimeCoverageAggregatorBucket
 
     public DateTime Time { get; set; }
     public int CountOfTimesSeen { get; set; }
-    public int CountOfDistinctIdentifiers {
-        get { return _identifiersSeen.Count; }
-    }
+    public int CountOfDistinctIdentifiers => _identifiersSeen.Count;
     private readonly HashSet<object> _identifiersSeen = new HashSet<object>();
 
     public ExtractionTimeTimeCoverageAggregatorBucket(DateTime time)
@@ -35,7 +33,7 @@ public class ExtractionTimeTimeCoverageAggregatorBucket
 
     public bool IsTimeInBucket(DateTime toCheck, BucketSize bucketSize)
     {
-        DateTime upperLimit = Time;
+        var upperLimit = Time;
         if (bucketSize == BucketSize.Day)
             upperLimit = upperLimit.AddDays(1);
         else
@@ -73,7 +71,7 @@ public class ExtractionTimeTimeCoverageAggregatorBucket
         if(bucketSize == BucketSize.Year)
             return new DateTime(toRound.Year,1,1);
 
-        throw new NotSupportedException("Unknown bucket size " + bucketSize);
+        throw new NotSupportedException($"Unknown bucket size {bucketSize}");
     }
 
     public static DateTime IncreaseDateTimeBy(DateTime toAdd, BucketSize bucketSize)
@@ -87,7 +85,7 @@ public class ExtractionTimeTimeCoverageAggregatorBucket
         if (bucketSize == BucketSize.Year)
             return toAdd.AddYears(1);
 
-        throw new NotSupportedException("Unknown bucket size " + bucketSize);
+        throw new NotSupportedException($"Unknown bucket size {bucketSize}");
     }
 
     public static DateTime DecreaseDateTimeBy(DateTime toAdd, BucketSize bucketSize)
@@ -101,6 +99,6 @@ public class ExtractionTimeTimeCoverageAggregatorBucket
         if (bucketSize == BucketSize.Year)
             return toAdd.AddYears(-1);
 
-        throw new NotSupportedException("Unknown bucket size " + bucketSize);
+        throw new NotSupportedException($"Unknown bucket size {bucketSize}");
     }
 }

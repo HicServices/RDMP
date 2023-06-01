@@ -54,10 +54,10 @@ public class GlobalExtractionChecker : ICheckable
     /// <param name="notifier"></param>
     public void Check(ICheckNotifier notifier)
     {
-        foreach (SupportingSQLTable table in _configuration.GetGlobals().OfType<SupportingSQLTable>())
+        foreach (var table in _configuration.GetGlobals().OfType<SupportingSQLTable>())
             new SupportingSQLTableChecker(table).Check(notifier);
 
-        foreach (SupportingDocument document in _configuration.GetGlobals().OfType<SupportingDocument>())
+        foreach (var document in _configuration.GetGlobals().OfType<SupportingDocument>())
             new SupportingDocumentsFetcher(document).Check(notifier);
 
         if (_alsoCheckPipeline != null && _command != null)

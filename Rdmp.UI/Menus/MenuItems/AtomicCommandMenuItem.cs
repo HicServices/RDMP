@@ -58,7 +58,7 @@ public class AtomicCommandMenuItem : ToolStripMenuItem
 
             if (sqlException != null)
             {
-                Regex fk = new Regex("((FK_)|(ix_))([A-Za-z_]*)");
+                var fk = new Regex("((FK_)|(ix_))([A-Za-z_]*)");
                 var match = fk.Match(sqlException.Message);
 
                 if (match.Success)
@@ -67,13 +67,15 @@ public class AtomicCommandMenuItem : ToolStripMenuItem
 
                     if (helpDict != null && helpDict.ContainsKey(match.Value))
                     {
-                        ExceptionViewer.Show("Rule Broken" + Environment.NewLine + helpDict[match.Value] + Environment.NewLine + "(" + match.Value + ")",ex);
+                        ExceptionViewer.Show(
+                            $"Rule Broken{Environment.NewLine}{helpDict[match.Value]}{Environment.NewLine}({match.Value})",ex);
                         return;
                     }
                 }
             }
 
-            ExceptionViewer.Show("Failed to execute command '" + _command.GetCommandName() + "' (Type was '" + _command.GetType().Name + "')", ex);
+            ExceptionViewer.Show(
+                $"Failed to execute command '{_command.GetCommandName()}' (Type was '{_command.GetType().Name}')", ex);
         }
     }
 }

@@ -29,8 +29,8 @@ public class TestPrescribingCreation
 
         var f = new FileInfo(Path.Combine(TestContext.CurrentContext.TestDirectory,"DeleteMeTestPrescribing.csv"));
 
-        bool finished = false;
-        int finishedWithRecords = -1;
+        var finished = false;
+        var finishedWithRecords = -1;
             
         var prescribing = new Prescribing(r);
         prescribing.RowsGenerated += (s, e) =>

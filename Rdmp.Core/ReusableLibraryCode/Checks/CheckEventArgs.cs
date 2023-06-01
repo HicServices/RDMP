@@ -71,7 +71,7 @@ public partial class CheckEventArgs : IHasSummary
     /// <param name="formatStringArgs"></param>
     public CheckEventArgs(ErrorCode code, Exception ex, string proposedFix, params object[] formatStringArgs)
     {
-        Message = code.Code + " " + string.Format(code.Message,formatStringArgs);
+        Message = $"{code.Code} {string.Format(code.Message, formatStringArgs)}";
         Result = UserSettings.GetErrorReportingLevelFor(code);
         Ex = ex;
         ProposedFix = proposedFix;

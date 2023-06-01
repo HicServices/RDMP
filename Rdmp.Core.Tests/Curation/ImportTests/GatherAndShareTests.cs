@@ -27,7 +27,7 @@ public class GatherAndShareTests:DatabaseTests
     [Test]
     public void Test_SerializeObject_ShareAttribute()
     {
-        Dictionary<RelationshipAttribute, Guid> d = new Dictionary<RelationshipAttribute,Guid>();
+        var d = new Dictionary<RelationshipAttribute,Guid>();
             
         var json = JsonConvertExtensions.SerializeObject(d,RepositoryLocator);
         var obj = (Dictionary<RelationshipAttribute, Guid>)JsonConvertExtensions.DeserializeObject(json, typeof(Dictionary<RelationshipAttribute, Guid>),RepositoryLocator);
@@ -52,7 +52,7 @@ public class GatherAndShareTests:DatabaseTests
 
         Assert.AreEqual(anoTable.Server_ID,anoserver.ID);
             
-        Gatherer g = new Gatherer(RepositoryLocator);
+        var g = new Gatherer(RepositoryLocator);
         Assert.IsTrue(g.CanGatherDependencies(anoTable));
 
         var gObj = g.GatherDependencies(anoTable);
@@ -63,8 +63,8 @@ public class GatherAndShareTests:DatabaseTests
 
         //get the sharing definitions
         var shareManager = new ShareManager(RepositoryLocator);
-        ShareDefinition defParent = gObj.ToShareDefinition(shareManager,new List<ShareDefinition>());
-        ShareDefinition defChild = gObj.Children.Single().ToShareDefinition(shareManager, new List<ShareDefinition>(new []{defParent}));
+        var defParent = gObj.ToShareDefinition(shareManager,new List<ShareDefinition>());
+        var defChild = gObj.Children.Single().ToShareDefinition(shareManager, new List<ShareDefinition>(new []{defParent}));
 
         //make it look like we never had it in the first place
         shareManager.GetNewOrExistingExportFor(anoserver).DeleteInDatabase();
@@ -120,22 +120,24 @@ public class GatherAndShareTests:DatabaseTests
         anoTableAfter.DeleteInDatabase();
         anoserverAfter.DeleteInDatabase();
 
-        foreach (ObjectImport o in RepositoryLocator.CatalogueRepository.GetAllObjects<ObjectImport>())
+        foreach (var o in RepositoryLocator.CatalogueRepository.GetAllObjects<ObjectImport>())
             o.DeleteInDatabase();
     }
 
     [Test]
     public void GatherAndShare_Plugin_Test()
     {
-        var f1 = new FileInfo(Path.Combine(TestContext.CurrentContext.TestDirectory,"Imaginary1"+ PackPluginRunner.PluginPackageSuffix));
+        var f1 = new FileInfo(Path.Combine(TestContext.CurrentContext.TestDirectory,
+            $"Imaginary1{PackPluginRunner.PluginPackageSuffix}"));
         File.WriteAllBytes(f1.FullName,new byte[]{0x1,0x2});
             
-        var plugin = new Core.Curation.Data.Plugin(CatalogueRepository,new FileInfo("Imaginary"+ PackPluginRunner.PluginPackageSuffix),new System.Version(1,1,1),new System.Version(1,1,1));
+        var plugin = new Core.Curation.Data.Plugin(CatalogueRepository,new FileInfo(
+            $"Imaginary{PackPluginRunner.PluginPackageSuffix}"),new System.Version(1,1,1),new System.Version(1,1,1));
         var lma1 = new LoadModuleAssembly(CatalogueRepository,f1,plugin);
 
         Assert.AreEqual(lma1.Plugin_ID, plugin.ID);
 
-        Gatherer g = new Gatherer(RepositoryLocator);
+        var g = new Gatherer(RepositoryLocator);
         Assert.IsTrue(g.CanGatherDependencies(plugin));
 
         var gObj = g.GatherDependencies(plugin);
@@ -170,7 +172,7 @@ public class GatherAndShareTests:DatabaseTests
         Assert.IsNotNull(cata.LiveLoggingServer_ID);
 
         //Catalogue sharing should be allowed
-        Gatherer g = new Gatherer(RepositoryLocator);
+        var g = new Gatherer(RepositoryLocator);
         Assert.IsTrue(g.CanGatherDependencies(cata));
 
         //gather the objects depending on Catalogue as a tree

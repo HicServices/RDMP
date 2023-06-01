@@ -166,8 +166,7 @@ public class ExecuteFullExtractionToDatabaseMSSql : ExtractionDestination
                 else
                 {
                     listener.OnNotify(this, new NotifyEventArgs(ProgressEventType.Warning,
-                        "A table called " + tblName + " already exists on server " + TargetDatabaseServer +
-                        ", data load might crash if it is populated and/or has an incompatible schema"));
+                        $"A table called {tblName} already exists on server {TargetDatabaseServer}, data load might crash if it is populated and/or has an incompatible schema"));
                 }
             }
             else
@@ -227,7 +226,7 @@ public class ExecuteFullExtractionToDatabaseMSSql : ExtractionDestination
                 continue;
             }
 
-            string destinationType = GetDestinationDatabaseType(extractionInformation);
+            var destinationType = GetDestinationDatabaseType(extractionInformation);
                 
             //Tell the destination the datatype of the ColumnInfo that underlies the ExtractionInformation (this might be changed by the ExtractionInformation e.g. as a 
             //transform but it is a good starting point.  We don't want to create a varchar(10) column in the destination if the origin dataset (Catalogue) is a varchar(100)
@@ -246,7 +245,7 @@ public class ExecuteFullExtractionToDatabaseMSSql : ExtractionDestination
         foreach (ReleaseIdentifierSubstitution sub in datasetCommand.QueryBuilder.SelectColumns.Where(sc => sc.IColumn is ReleaseIdentifierSubstitution).Select(sc => sc.IColumn))
         {
             var columnName = sub.GetRuntimeName();
-            bool isPk = toProcess.PrimaryKey.Any(dc => dc.ColumnName == columnName);
+            var isPk = toProcess.PrimaryKey.Any(dc => dc.ColumnName == columnName);
 
             var addedType = _destination.AddExplicitWriteType(columnName, datasetCommand.ExtractableCohort.GetReleaseIdentifierDataType());
             addedType.IsPrimaryKey = isPk;
@@ -264,7 +263,7 @@ public class ExecuteFullExtractionToDatabaseMSSql : ExtractionDestination
             var fromSyntax = col.ColumnInfo.GetQuerySyntaxHelper();
             var toSyntax = _destinationDatabase.Server.GetQuerySyntaxHelper();
 
-            DatabaseTypeRequest intermediate = fromSyntax.TypeTranslater.GetDataTypeRequestForSQLDBType(col.ColumnInfo.Data_type);
+            var intermediate = fromSyntax.TypeTranslater.GetDataTypeRequestForSQLDBType(col.ColumnInfo.Data_type);
             return toSyntax.TypeTranslater.GetSQLDBTypeForCSharpType(intermediate);
         }
             
@@ -279,7 +278,7 @@ public class ExecuteFullExtractionToDatabaseMSSql : ExtractionDestination
             tblName = SanitizeNameForDatabase(_toProcess.TableName);
 
             if (!String.IsNullOrWhiteSpace(suffix))
-                tblName += "_" + suffix;
+                tblName += $"_{suffix}";
 
             return tblName;
         }
@@ -305,7 +304,7 @@ public class ExecuteFullExtractionToDatabaseMSSql : ExtractionDestination
 
         var cachedGetTableNameAnswer = SanitizeNameForDatabase(tblName);
         if (!String.IsNullOrWhiteSpace(suffix))
-            cachedGetTableNameAnswer += "_" + suffix;
+            cachedGetTableNameAnswer += $"_{suffix}";
 
         return cachedGetTableNameAnswer;
     }
@@ -322,10 +321,11 @@ public class ExecuteFullExtractionToDatabaseMSSql : ExtractionDestination
         syntax.ValidateTableName(tblName);
 
         //otherwise, fetch and cache answer
-        string cachedGetTableNameAnswer = syntax.GetSensibleEntityNameFromString(tblName);
+        var cachedGetTableNameAnswer = syntax.GetSensibleEntityNameFromString(tblName);
 
         if (String.IsNullOrWhiteSpace(cachedGetTableNameAnswer))
-            throw new Exception("TableNamingPattern '" + TableNamingPattern + "' resulted in an empty string for request '" + _request + "'");
+            throw new Exception(
+                $"TableNamingPattern '{TableNamingPattern}' resulted in an empty string for request '{_request}'");
 
         return cachedGetTableNameAnswer;
     }
@@ -345,9 +345,10 @@ public class ExecuteFullExtractionToDatabaseMSSql : ExtractionDestination
                         
                     if(tbl.Exists())
                     {
-                        listener.OnNotify(this, new NotifyEventArgs(ProgressEventType.Warning, "DropTableIfLoadFails is true so about to drop table " + tbl));
+                        listener.OnNotify(this, new NotifyEventArgs(ProgressEventType.Warning,
+                            $"DropTableIfLoadFails is true so about to drop table {tbl}"));
                         tbl.Drop();
-                        listener.OnNotify(this, new NotifyEventArgs(ProgressEventType.Warning, "Dropped table " + tbl));
+                        listener.OnNotify(this, new NotifyEventArgs(ProgressEventType.Warning, $"Dropped table {tbl}"));
                     }
                 }
             }
@@ -409,7 +410,7 @@ public class ExecuteFullExtractionToDatabaseMSSql : ExtractionDestination
 
         var tblName = _toProcess.TableName;
         var dbName = GetDatabaseName();
-        return TargetDatabaseServer.ID + "|" + dbName + "|" + tblName;
+        return $"{TargetDatabaseServer.ID}|{dbName}|{tblName}";
     }
 
     public DestinationType GetDestinationType()
@@ -433,14 +434,16 @@ public class ExecuteFullExtractionToDatabaseMSSql : ExtractionDestination
     protected override void TryExtractSupportingSQLTableImpl(SupportingSQLTable sqlTable, DirectoryInfo directory, IExtractionConfiguration configuration,IDataLoadEventListener listener, out int linesWritten,
         out string destinationDescription)
     {
-        listener.OnNotify(this, new NotifyEventArgs(ProgressEventType.Information, "About to download SQL for global SupportingSQL " + sqlTable.SQL));
+        listener.OnNotify(this, new NotifyEventArgs(ProgressEventType.Information,
+            $"About to download SQL for global SupportingSQL {sqlTable.SQL}"));
         using (var con = sqlTable.GetServer().GetConnection())
         {
             con.Open();
 
-            listener.OnNotify(this, new NotifyEventArgs(ProgressEventType.Information, "Connection opened successfully, about to send SQL command " + sqlTable.SQL));
+            listener.OnNotify(this, new NotifyEventArgs(ProgressEventType.Information,
+                $"Connection opened successfully, about to send SQL command {sqlTable.SQL}"));
 
-            using (DataTable dt = new DataTable())
+            using (var dt = new DataTable())
             {
                 using(var cmd = DatabaseCommandHelper.GetCommand(sqlTable.SQL, con))
                 using (var da = DatabaseCommandHelper.GetDataAdapter(cmd))
@@ -461,7 +464,7 @@ public class ExecuteFullExtractionToDatabaseMSSql : ExtractionDestination
                     tbl.Drop();
 
                 destinationDb.CreateTable(dt.TableName,dt);
-                destinationDescription = TargetDatabaseServer.ID + "|" + GetDatabaseName() + "|" + dt.TableName;
+                destinationDescription = $"{TargetDatabaseServer.ID}|{GetDatabaseName()}|{dt.TableName}";
             }
         }
     }
@@ -475,7 +478,7 @@ public class ExecuteFullExtractionToDatabaseMSSql : ExtractionDestination
         dt.TableName = GetTableName(_destinationDatabase.Server.GetQuerySyntaxHelper().GetSensibleEntityNameFromString(lookup.TableInfo.Name));
 
         //describe the destination for the abstract base
-        destinationDescription = TargetDatabaseServer.ID + "|" + GetDatabaseName() + "|" + dt.TableName;
+        destinationDescription = $"{TargetDatabaseServer.ID}|{GetDatabaseName()}|{dt.TableName}";
         linesWritten = dt.Rows.Count;
 
         var destinationDb = GetDestinationDatabase(listener);
@@ -483,7 +486,8 @@ public class ExecuteFullExtractionToDatabaseMSSql : ExtractionDestination
                 
         if(existing.Exists())
         {
-            listener.OnNotify(this,new NotifyEventArgs(ProgressEventType.Warning,"Dropping existing Lookup table '" + existing.GetFullyQualifiedName() +"'"));
+            listener.OnNotify(this,new NotifyEventArgs(ProgressEventType.Warning,
+                $"Dropping existing Lookup table '{existing.GetFullyQualifiedName()}'"));
             existing.Drop();
         }
 
@@ -493,7 +497,8 @@ public class ExecuteFullExtractionToDatabaseMSSql : ExtractionDestination
     private DiscoveredDatabase GetDestinationDatabase(IDataLoadEventListener listener)
     {
         //tell user we are about to inspect it
-        listener.OnNotify(this, new NotifyEventArgs(ProgressEventType.Information, "About to open connection to " + TargetDatabaseServer));
+        listener.OnNotify(this, new NotifyEventArgs(ProgressEventType.Information,
+            $"About to open connection to {TargetDatabaseServer}"));
 
         var databaseName = GetDatabaseName();
 
@@ -508,16 +513,16 @@ public class ExecuteFullExtractionToDatabaseMSSql : ExtractionDestination
 
     private string GetDatabaseName()
     {
-        string dbName = DatabaseNamingPattern;
+        var dbName = DatabaseNamingPattern;
 
         if(_project.ProjectNumber == null)
-            throw new ProjectNumberException("Project '"+_project+"' must have a ProjectNumber");
+            throw new ProjectNumberException($"Project '{_project}' must have a ProjectNumber");
 
         if (_request == null)
             throw new Exception("No IExtractCommand Request was passed to this component");
 
         if (_request.Configuration == null)
-            throw new Exception("Request did not specify any Configuration for Project '" + _project + "'");
+            throw new Exception($"Request did not specify any Configuration for Project '{_project}'");
 
         dbName = dbName.Replace("$p", _project.Name)
             .Replace("$n", _project.ProjectNumber.ToString())
@@ -578,7 +583,8 @@ public class ExecuteFullExtractionToDatabaseMSSql : ExtractionDestination
             var dsRequest = _request as ExtractDatasetCommand;
 
             if (dsRequest != null && string.IsNullOrWhiteSpace(dsRequest.Catalogue.Acronym))
-                notifier.OnCheckPerformed(new CheckEventArgs("Catalogue '" + dsRequest.Catalogue + "' does not have an Acronym but TableNamingPattern contains $a", CheckResult.Fail));
+                notifier.OnCheckPerformed(new CheckEventArgs(
+                    $"Catalogue '{dsRequest.Catalogue}' does not have an Acronym but TableNamingPattern contains $a", CheckResult.Fail));
         }
             
         base.Check(notifier);
@@ -591,13 +597,12 @@ public class ExecuteFullExtractionToDatabaseMSSql : ExtractionDestination
             if (database.Exists())
                 notifier.OnCheckPerformed(
                     new CheckEventArgs(
-                        "Database " + database + " already exists! if an extraction has already been run " +
-                        "you may have errors if you are re-extracting the same tables", CheckResult.Warning));
+                        $"Database {database} already exists! if an extraction has already been run you may have errors if you are re-extracting the same tables", CheckResult.Warning));
             else
             {
                 notifier.OnCheckPerformed(
                     new CheckEventArgs(
-                        "Database " + database + " does not exist on server... it will be created at runtime",
+                        $"Database {database} does not exist on server... it will be created at runtime",
                         CheckResult.Success));
                 return;
             }
@@ -627,12 +632,12 @@ public class ExecuteFullExtractionToDatabaseMSSql : ExtractionDestination
                     
             }
             else
-                notifier.OnCheckPerformed(new CheckEventArgs("Confirmed that database " + database + " is empty of tables", CheckResult.Success));
+                notifier.OnCheckPerformed(new CheckEventArgs($"Confirmed that database {database} is empty of tables", CheckResult.Success));
         }
         catch (Exception e)
         {
             notifier.OnCheckPerformed(new CheckEventArgs(
-                "Could not connect to TargetDatabaseServer '" + TargetDatabaseServer  +"'", CheckResult.Fail, e));
+                $"Could not connect to TargetDatabaseServer '{TargetDatabaseServer}'", CheckResult.Fail, e));
         }
     }
 }

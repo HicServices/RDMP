@@ -232,9 +232,9 @@ public abstract class ReleasePotential:ICheckable
             case Releaseability.ExceptionOccurredWhileEvaluatingReleaseability:
                 return Exception.ToString();
             default:
-                string toReturn = "Dataset: " + DataSet;
-                toReturn += " DateOfExtraction: " + DateOfExtraction;
-                toReturn += " Status: " + Assessments[DatasetExtractionResult];
+                var toReturn = $"Dataset: {DataSet}";
+                toReturn += $" DateOfExtraction: {DateOfExtraction}";
+                toReturn += $" Status: {Assessments[DatasetExtractionResult]}";
 
                 return toReturn;
         }
@@ -250,10 +250,7 @@ public abstract class ReleasePotential:ICheckable
 
         if (DatasetExtractionResult.HasLocalChanges().Evaluation == ChangeDescription.DatabaseCopyWasDeleted)
             notifier.OnCheckPerformed(new CheckEventArgs(
-                "Release potential relates to expired (stale) extraction; you or someone else has executed another data extraction since you added this dataset to the release." +
-                "Offending dataset was (" + DataSet +
-                ").  You can probably fix this problem by reloading/refreshing the Releaseability window. " +
-                "If you have already added them to a planned Release you will need to add the newly recalculated one instead.", CheckResult.Fail));
+                $"Release potential relates to expired (stale) extraction; you or someone else has executed another data extraction since you added this dataset to the release.Offending dataset was ({DataSet}).  You can probably fix this problem by reloading/refreshing the Releaseability window. If you have already added them to a planned Release you will need to add the newly recalculated one instead.", CheckResult.Fail));
 
         var existingReleaseLog = DatasetExtractionResult.GetReleaseLogEntryIfAny();
         if (existingReleaseLog != null)
@@ -283,7 +280,7 @@ public abstract class ReleasePotential:ICheckable
             catch (Exception e)
             {
                 Assessments.Add(DatasetExtractionResult, Releaseability.ExceptionOccurredWhileEvaluatingReleaseability);
-                notifier.OnCheckPerformed(new CheckEventArgs("FAILURE: " + e.Message, CheckResult.Fail, e));
+                notifier.OnCheckPerformed(new CheckEventArgs($"FAILURE: {e.Message}", CheckResult.Fail, e));
             }
 
         foreach (var supplementalResult in DatasetExtractionResult.SupplementalExtractionResults)
@@ -296,11 +293,11 @@ public abstract class ReleasePotential:ICheckable
                 catch (Exception e)
                 {
                     Assessments.Add(supplementalResult, Releaseability.ExceptionOccurredWhileEvaluatingReleaseability);
-                    notifier.OnCheckPerformed(new CheckEventArgs("FAILURE: " + e.Message, CheckResult.Fail, e));
+                    notifier.OnCheckPerformed(new CheckEventArgs($"FAILURE: {e.Message}", CheckResult.Fail, e));
                 }
         }
 
-        foreach (KeyValuePair<IExtractionResults, Releaseability> kvp in Assessments)
+        foreach (var kvp in Assessments)
         {
             CheckResult checkResult;
             switch (kvp.Value)
@@ -316,7 +313,7 @@ public abstract class ReleasePotential:ICheckable
                     break;
             }
 
-            notifier.OnCheckPerformed(new CheckEventArgs(kvp.Key + " is " + kvp.Value, checkResult));
+            notifier.OnCheckPerformed(new CheckEventArgs($"{kvp.Key} is {kvp.Value}", checkResult));
         }
     }
 

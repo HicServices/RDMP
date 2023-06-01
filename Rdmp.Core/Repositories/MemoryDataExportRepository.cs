@@ -20,10 +20,10 @@ namespace Rdmp.Core.Repositories;
 /// </summary>
 public class MemoryDataExportRepository : MemoryCatalogueRepository,IDataExportRepository, IDataExportPropertyManager, IExtractableDataSetPackageManager
 {
-    public ICatalogueRepository CatalogueRepository { get { return this; } }
-    public IDataExportPropertyManager DataExportPropertyManager { get { return this; } }
-    public IExtractableDataSetPackageManager PackageManager { get { return this; }}
-         
+    public ICatalogueRepository CatalogueRepository => this;
+    public IDataExportPropertyManager DataExportPropertyManager => this;
+    public IExtractableDataSetPackageManager PackageManager => this;
+
 
     public CatalogueExtractabilityStatus GetExtractabilityStatus(ICatalogue c)
     {

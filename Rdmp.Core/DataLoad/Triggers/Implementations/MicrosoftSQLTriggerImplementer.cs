@@ -40,7 +40,7 @@ public class MicrosoftSQLTriggerImplementer:TriggerImplementer
     public MicrosoftSQLTriggerImplementer(DiscoveredTable table, bool createDataLoadRunIDAlso = true) : base(table, createDataLoadRunIDAlso)
     {
         _schema = string.IsNullOrWhiteSpace(_table.Schema) ? "dbo":_table.Schema;
-        _triggerName = _schema + "." + GetTriggerName();
+        _triggerName = $"{_schema}.{GetTriggerName()}";
     }
 
     public override void DropTrigger(out string problemsDroppingTrigger, out string thingsThatWorkedDroppingTrigger)
@@ -52,42 +52,45 @@ public class MicrosoftSQLTriggerImplementer:TriggerImplementer
             problemsDroppingTrigger = "";
             thingsThatWorkedDroppingTrigger = "";
 
-            using(var cmdDropTrigger = _server.GetCommand("DROP TRIGGER " + _triggerName, con))
+            using(var cmdDropTrigger = _server.GetCommand($"DROP TRIGGER {_triggerName}", con))
                 try
                 {
                     cmdDropTrigger.CommandTimeout = UserSettings.ArchiveTriggerTimeout;
-                    thingsThatWorkedDroppingTrigger += "Dropped Trigger successfully" + Environment.NewLine;
+                    thingsThatWorkedDroppingTrigger += $"Dropped Trigger successfully{Environment.NewLine}";
                     cmdDropTrigger.ExecuteNonQuery();
                 }
                 catch (Exception exception)
                 {
                     //this is not a problem really since it is likely that DLE chose to recreate the trigger because it was FUBARed or missing, this is just belt and braces try and drop anything that is lingering, whether or not it is there
-                    problemsDroppingTrigger += "Failed to drop Trigger:" + exception.Message + Environment.NewLine;
+                    problemsDroppingTrigger += $"Failed to drop Trigger:{exception.Message}{Environment.NewLine}";
                 }
 
-            using(var cmdDropArchiveIndex = _server.GetCommand("DROP INDEX PKsIndex ON " + _archiveTable.GetRuntimeName(), con))
+            using(var cmdDropArchiveIndex = _server.GetCommand(
+                      $"DROP INDEX PKsIndex ON {_archiveTable.GetRuntimeName()}", con))
                 try
                 {
                     cmdDropArchiveIndex.CommandTimeout = UserSettings.ArchiveTriggerTimeout;
                     cmdDropArchiveIndex.ExecuteNonQuery();
 
-                    thingsThatWorkedDroppingTrigger += "Dropped index PKsIndex on Archive table successfully" + Environment.NewLine;
+                    thingsThatWorkedDroppingTrigger +=
+                        $"Dropped index PKsIndex on Archive table successfully{Environment.NewLine}";
                 }
                 catch (Exception exception)
                 {
-                    problemsDroppingTrigger += "Failed to drop Archive Index:" + exception.Message + Environment.NewLine;
+                    problemsDroppingTrigger += $"Failed to drop Archive Index:{exception.Message}{Environment.NewLine}";
                 }
 
-            using(var cmdDropArchiveLegacyView = _server.GetCommand("DROP FUNCTION " + _table.GetRuntimeName() + "_Legacy", con))
+            using(var cmdDropArchiveLegacyView = _server.GetCommand($"DROP FUNCTION {_table.GetRuntimeName()}_Legacy", con))
                 try
                 {
                     cmdDropArchiveLegacyView.CommandTimeout = UserSettings.ArchiveTriggerTimeout;
                     cmdDropArchiveLegacyView.ExecuteNonQuery();
-                    thingsThatWorkedDroppingTrigger += "Dropped Legacy Table View successfully" + Environment.NewLine;
+                    thingsThatWorkedDroppingTrigger += $"Dropped Legacy Table View successfully{Environment.NewLine}";
                 }
                 catch (Exception exception)
                 {
-                    problemsDroppingTrigger += "Failed to drop Legacy Table View:" + exception.Message + Environment.NewLine;
+                    problemsDroppingTrigger +=
+                        $"Failed to drop Legacy Table View:{exception.Message}{Environment.NewLine}";
                 }
         }
     }
@@ -100,7 +103,7 @@ public class MicrosoftSQLTriggerImplementer:TriggerImplementer
         {
             con.Open();
 
-            string trigger = GetCreateTriggerSQL();
+            var trigger = GetCreateTriggerSQL();
                 
             using (var cmdAddTrigger = _server.GetCommand(trigger, con))
             {
@@ -110,15 +113,16 @@ public class MicrosoftSQLTriggerImplementer:TriggerImplementer
                     
                     
             //Add key so that we can more easily do comparisons on primary key between main table and archive
-            string idxCompositeKeyBody = "";
+            var idxCompositeKeyBody = "";
 
             foreach (var key in _primaryKeys)
-                idxCompositeKeyBody += "[" + key.GetRuntimeName() + @"] ASC,";
+                idxCompositeKeyBody += $"[{key.GetRuntimeName()}] ASC,";
 
             //remove trailing comma
             idxCompositeKeyBody = idxCompositeKeyBody.TrimEnd(',');
 
-            string createIndexSQL = @"CREATE NONCLUSTERED INDEX [PKsIndex] ON " + _archiveTable.GetFullyQualifiedName() + " (" +idxCompositeKeyBody + ")";
+            var createIndexSQL =
+                $@"CREATE NONCLUSTERED INDEX [PKsIndex] ON {_archiveTable.GetFullyQualifiedName()} ({idxCompositeKeyBody})";
             using(var cmdCreateIndex = _server.GetCommand(createIndexSQL, con))
                 try
                 {
@@ -146,20 +150,21 @@ public class MicrosoftSQLTriggerImplementer:TriggerImplementer
             throw new TriggerException("There must be at least 1 primary key");
 
         //this is the SQL to join on the main table to the deleted to record the hic_validFrom
-        string updateValidToWhere = " UPDATE [" + _table +"] SET "+SpecialFieldNames.ValidFrom+" = GETDATE() FROM deleted where ";
+        var updateValidToWhere =
+            $" UPDATE [{_table}] SET {SpecialFieldNames.ValidFrom} = GETDATE() FROM deleted where ";
 
         //its a combo field so join on both when filling in hic_validFrom
-        foreach (DiscoveredColumn key in _primaryKeys)
-            updateValidToWhere += "[" + _table + "].[" + key + "] = deleted.[" + key + "] AND ";
+        foreach (var key in _primaryKeys)
+            updateValidToWhere += $"[{_table}].[{key}] = deleted.[{key}] AND ";
 
         //trim off last AND
         updateValidToWhere = updateValidToWhere.Substring(0, updateValidToWhere.Length - "AND ".Length);
 
-        string InsertedToDeletedJoin = "JOIN inserted i ON ";
+        var InsertedToDeletedJoin = "JOIN inserted i ON ";
         InsertedToDeletedJoin += GetTableToTableEqualsSqlWithPrimaryKeys("i", "d");
 
-        string equalsSqlTableToInserted = GetTableToTableEqualsSqlWithPrimaryKeys(_table.GetRuntimeName(),"inserted");
-        string equalsSqlTableToDeleted = GetTableToTableEqualsSqlWithPrimaryKeys(_table.GetRuntimeName(), "deleted");
+        var equalsSqlTableToInserted = GetTableToTableEqualsSqlWithPrimaryKeys(_table.GetRuntimeName(),"inserted");
+        var equalsSqlTableToDeleted = GetTableToTableEqualsSqlWithPrimaryKeys(_table.GetRuntimeName(), "deleted");
 
         var columnNames = _columns.Select(c => c.GetRuntimeName()).ToList();
 
@@ -169,12 +174,12 @@ public class MicrosoftSQLTriggerImplementer:TriggerImplementer
         if(!columnNames.Contains(SpecialFieldNames.ValidFrom,StringComparer.CurrentCultureIgnoreCase))
             columnNames.Add(SpecialFieldNames.ValidFrom);
             
-        string colList = string.Join(",",columnNames.Select(c=>"[" + c +"]") );
-        string dDotColList = string.Join(",", columnNames.Select(c => "d.[" + c +"]"));
+        var colList = string.Join(",",columnNames.Select(c=> $"[{c}]") );
+        var dDotColList = string.Join(",", columnNames.Select(c => $"d.[{c}]"));
 
         return
-            @"
-CREATE TRIGGER " + _triggerName + " ON " + _table.GetFullyQualifiedName() + @"
+            $@"
+CREATE TRIGGER {_triggerName} ON {_table.GetFullyQualifiedName()}
 AFTER UPDATE, DELETE
 AS BEGIN
 
@@ -183,26 +188,22 @@ SET NOCOUNT ON
 declare @isPrimaryKeyChange bit = 0
 
 --it will be a primary key change if deleted and inserted do not agree on primary key values
-IF exists ( select 1 FROM deleted d RIGHT " + InsertedToDeletedJoin + @" WHERE d.[" + _primaryKeys.First().GetRuntimeName() + @"] is null)
+IF exists ( select 1 FROM deleted d RIGHT {InsertedToDeletedJoin} WHERE d.[{_primaryKeys.First().GetRuntimeName()}] is null)
 begin
-	UPDATE [" + _table + @"] SET " + SpecialFieldNames.ValidFrom + " = GETDATE() FROM inserted where " +
-            equalsSqlTableToInserted + @"
+	UPDATE [{_table}] SET {SpecialFieldNames.ValidFrom} = GETDATE() FROM inserted where {equalsSqlTableToInserted}
 	set @isPrimaryKeyChange = 1
 end
 else
 begin
-	UPDATE [" + _table + @"] SET " + SpecialFieldNames.ValidFrom + " = GETDATE() FROM deleted where " +
-            equalsSqlTableToDeleted + @"
+	UPDATE [{_table}] SET {SpecialFieldNames.ValidFrom} = GETDATE() FROM deleted where {equalsSqlTableToDeleted}
 	set @isPrimaryKeyChange = 0
 end
 
-" + updateValidToWhere + @"
+{updateValidToWhere}
 
-INSERT INTO [" + _archiveTable.GetRuntimeName() + @"] (" + colList + @",hic_validTo,hic_userID,hic_status) SELECT " + dDotColList +
-            ", GETDATE(), SYSTEM_USER, CASE WHEN @isPrimaryKeyChange = 1 then 'K' WHEN i.[" + _primaryKeys.First().GetRuntimeName() +
-            "] IS NULL THEN 'D' WHEN d.[" + _primaryKeys.First().GetRuntimeName() + @"] IS NULL THEN 'I' ELSE 'U' END
+INSERT INTO [{_archiveTable.GetRuntimeName()}] ({colList},hic_validTo,hic_userID,hic_status) SELECT {dDotColList}, GETDATE(), SYSTEM_USER, CASE WHEN @isPrimaryKeyChange = 1 then 'K' WHEN i.[{_primaryKeys.First().GetRuntimeName()}] IS NULL THEN 'D' WHEN d.[{_primaryKeys.First().GetRuntimeName()}] IS NULL THEN 'I' ELSE 'U' END
 FROM deleted d 
-LEFT " + InsertedToDeletedJoin + @"
+LEFT {InsertedToDeletedJoin}
 
 SET NOCOUNT OFF
 
@@ -213,10 +214,10 @@ END
 
     private string GetTableToTableEqualsSqlWithPrimaryKeys(string table1, string table2)
     {
-        string toReturn = "";
+        var toReturn = "";
 
-        foreach (DiscoveredColumn key in _primaryKeys)
-            toReturn += " [" + table1 + "].[" + key.GetRuntimeName() + "] = [" + table2 + "].[" + key.GetRuntimeName() + "] AND ";
+        foreach (var key in _primaryKeys)
+            toReturn += $" [{table1}].[{key.GetRuntimeName()}] = [{table2}].[{key.GetRuntimeName()}] AND ";
 
         //trim off last AND
         toReturn = toReturn.Substring(0, toReturn.Length - "AND ".Length);
@@ -226,75 +227,78 @@ END
 
     private void CreateViewOldVersionsTableValuedFunction(string sqlUsedToCreateArchiveTableSQL,DbConnection con)
     {
-        string columnsInArchive = "";
+        var columnsInArchive = "";
 
-        var syntaxHelper = new MicrosoftQuerySyntaxHelper();
+        var syntaxHelper = MicrosoftQuerySyntaxHelper.Instance;
 
-        Match matchStartColumnExtraction = Regex.Match(sqlUsedToCreateArchiveTableSQL, "CREATE TABLE .*\\(");
+        var matchStartColumnExtraction = Regex.Match(sqlUsedToCreateArchiveTableSQL, "CREATE TABLE .*\\(");
 
         if (!matchStartColumnExtraction.Success)
             throw new Exception("Could not find regex match at start of Archive table CREATE SQL");
 
-        int startExtractingColumnsAt = matchStartColumnExtraction.Index + matchStartColumnExtraction.Length;
+        var startExtractingColumnsAt = matchStartColumnExtraction.Index + matchStartColumnExtraction.Length;
         //trim off excess crud at start and we should have just the columns bit of the create (plus crud at the end)
         columnsInArchive = sqlUsedToCreateArchiveTableSQL.Substring(startExtractingColumnsAt);
 
         //trim off excess crud at the end
         columnsInArchive = columnsInArchive.Trim(new[] {')', '\r', '\n'});
 
-        string sqlToRun = string.Format("CREATE FUNCTION [" + _schema + "].[{0}_Legacy]", QuerySyntaxHelper.MakeHeaderNameSensible(_table.GetRuntimeName()));
+        var sqlToRun = string.Format("CREATE FUNCTION [" + _schema + "].[{0}_Legacy]", QuerySyntaxHelper.MakeHeaderNameSensible(_table.GetRuntimeName()));
         sqlToRun += Environment.NewLine;
-        sqlToRun += "(" + Environment.NewLine;
-        sqlToRun += "\t@index DATETIME" + Environment.NewLine;
-        sqlToRun += ")" + Environment.NewLine;
-        sqlToRun += "RETURNS @returntable TABLE" + Environment.NewLine;
-        sqlToRun += "(" + Environment.NewLine;
-        sqlToRun += "/*the return table will follow the structure of the Archive table*/" + Environment.NewLine;
+        sqlToRun += $"({Environment.NewLine}";
+        sqlToRun += $"\t@index DATETIME{Environment.NewLine}";
+        sqlToRun += $"){Environment.NewLine}";
+        sqlToRun += $"RETURNS @returntable TABLE{Environment.NewLine}";
+        sqlToRun += $"({Environment.NewLine}";
+        sqlToRun += $"/*the return table will follow the structure of the Archive table*/{Environment.NewLine}";
         sqlToRun += columnsInArchive;
 
         //these were added during transaction so we have to specify them again here because transaction will not have been committed yet
         sqlToRun = sqlToRun.Trim();
-        sqlToRun += "," + Environment.NewLine;
-        sqlToRun += "\thic_validTo datetime," + Environment.NewLine;
+        sqlToRun += $",{Environment.NewLine}";
+        sqlToRun += $"\thic_validTo datetime,{Environment.NewLine}";
         sqlToRun += "\thic_userID varchar(128),";
         sqlToRun += "\thic_status char(1)";
 
 
-        sqlToRun += ")" + Environment.NewLine;
-        sqlToRun += "AS" + Environment.NewLine;
-        sqlToRun += "BEGIN" + Environment.NewLine;
+        sqlToRun += $"){Environment.NewLine}";
+        sqlToRun += $"AS{Environment.NewLine}";
+        sqlToRun += $"BEGIN{Environment.NewLine}";
         sqlToRun += Environment.NewLine;
 
-        var liveCols = _columns.Select(c => "[" + c.GetRuntimeName() +"]").Union(new String[] {'[' + SpecialFieldNames.DataLoadRunID +']', '[' +SpecialFieldNames.ValidFrom +']'}).ToArray();
+        var liveCols = _columns.Select(c => $"[{c.GetRuntimeName()}]").Union(new String[] {
+            $"[{SpecialFieldNames.DataLoadRunID}]", $"[{SpecialFieldNames.ValidFrom}]"
+        }).ToArray();
 
-        string archiveCols = string.Join(",", liveCols) + ",hic_validTo,hic_userID,hic_status";
-        string cDotArchiveCols = string.Join(",", liveCols.Select(s => "c." + s)); 
+        var archiveCols = $"{string.Join(",", liveCols)},hic_validTo,hic_userID,hic_status";
+        var cDotArchiveCols = string.Join(",", liveCols.Select(s => $"c.{s}")); 
 
 
-        sqlToRun += "\tINSERT @returntable" + Environment.NewLine;
+        sqlToRun += $"\tINSERT @returntable{Environment.NewLine}";
         sqlToRun += string.Format("\tSELECT "+archiveCols+" FROM [{0}] WHERE @index BETWEEN ISNULL(" + SpecialFieldNames.ValidFrom + ", '1899/01/01') AND hic_validTo" + Environment.NewLine, _archiveTable);
         sqlToRun += Environment.NewLine;
 
-        sqlToRun += "\tINSERT @returntable" + Environment.NewLine;
-        sqlToRun += "\tSELECT " + cDotArchiveCols + ",NULL AS hic_validTo, NULL AS hic_userID, 'C' AS hic_status" + Environment.NewLine; //c is for current
+        sqlToRun += $"\tINSERT @returntable{Environment.NewLine}";
+        sqlToRun +=
+            $"\tSELECT {cDotArchiveCols},NULL AS hic_validTo, NULL AS hic_userID, 'C' AS hic_status{Environment.NewLine}"; //c is for current
         sqlToRun += string.Format("\tFROM [{0}] c" + Environment.NewLine, _table.GetRuntimeName());
-        sqlToRun += "\tLEFT OUTER JOIN @returntable a ON " + Environment.NewLine;
+        sqlToRun += $"\tLEFT OUTER JOIN @returntable a ON {Environment.NewLine}";
 
-        for (int index = 0; index < _primaryKeys.Length; index++)
+        for (var index = 0; index < _primaryKeys.Length; index++)
         {
             sqlToRun += string.Format("\ta.{0}=c.{0} " + Environment.NewLine, 
                 syntaxHelper.EnsureWrapped(_primaryKeys[index].GetRuntimeName())); //add the primary key joins
 
             if (index + 1 < _primaryKeys.Length)
-                sqlToRun += "\tAND" + Environment.NewLine; //add an AND because there are more coming
+                sqlToRun += $"\tAND{Environment.NewLine}"; //add an AND because there are more coming
         }
 
         sqlToRun += string.Format("\tWHERE a.[{0}] IS NULL -- where archive record doesn't exist" + Environment.NewLine, _primaryKeys.First().GetRuntimeName());
-        sqlToRun += "\tAND @index > ISNULL(c." + SpecialFieldNames.ValidFrom + ", '1899/01/01')" + Environment.NewLine;
+        sqlToRun += $"\tAND @index > ISNULL(c.{SpecialFieldNames.ValidFrom}, '1899/01/01'){Environment.NewLine}";
 
         sqlToRun += Environment.NewLine;
-        sqlToRun += "RETURN" + Environment.NewLine;
-        sqlToRun += "END" + Environment.NewLine;
+        sqlToRun += $"RETURN{Environment.NewLine}";
+        sqlToRun += $"END{Environment.NewLine}";
 
         using(var cmd = _server.GetCommand(sqlToRun, con))
         {
@@ -308,8 +312,8 @@ END
 
         var updateTriggerName = GetTriggerName();
 
-        var queryTriggerIsItDisabledOrMissing = "USE [" + _table.Database.GetRuntimeName()+ @"]; 
-if exists (select 1 from sys.triggers WHERE name=@triggerName) SELECT is_disabled  FROM sys.triggers WHERE name=@triggerName else select -1 is_disabled";
+        var queryTriggerIsItDisabledOrMissing =
+            $"USE [{_table.Database.GetRuntimeName()}]; \r\nif exists (select 1 from sys.triggers WHERE name=@triggerName) SELECT is_disabled  FROM sys.triggers WHERE name=@triggerName else select -1 is_disabled";
             
         try
         {
@@ -333,32 +337,33 @@ if exists (select 1 from sys.triggers WHERE name=@triggerName) SELECT is_disable
                         case -1: 
                             return TriggerStatus.Missing;
                         default:
-                            throw new NotSupportedException("Query returned unexpected value:" + result);
+                            throw new NotSupportedException($"Query returned unexpected value:{result}");
                     }
                 }
             }
         }
         catch (Exception e)
         {
-            throw new Exception("Failed to check if trigger " + updateTriggerName + " is enabled: " + e);
+            throw new Exception($"Failed to check if trigger {updateTriggerName} is enabled: {e}");
         }
     }
 
     private string GetTriggerName()
     {
-        return QuerySyntaxHelper.MakeHeaderNameSensible( _table.GetRuntimeName()) + "_OnUpdate";
+        return $"{QuerySyntaxHelper.MakeHeaderNameSensible(_table.GetRuntimeName())}_OnUpdate";
     }
 
     public override bool CheckUpdateTriggerIsEnabledAndHasExpectedBody()
     {
-        bool baseResult = base.CheckUpdateTriggerIsEnabledAndHasExpectedBody();
+        var baseResult = base.CheckUpdateTriggerIsEnabledAndHasExpectedBody();
 
         if (!baseResult)
             return false;
             
         //now check the definition of it! - make sure it relates to primary keys etc
         var updateTriggerName = GetTriggerName();
-        var query = "USE [" + _table.Database.GetRuntimeName()+ "];SELECT OBJECT_DEFINITION (object_id) FROM sys.triggers WHERE name='" + updateTriggerName + "' and is_disabled=0";
+        var query =
+            $"USE [{_table.Database.GetRuntimeName()}];SELECT OBJECT_DEFINITION (object_id) FROM sys.triggers WHERE name='{updateTriggerName}' and is_disabled=0";
 
         try
         {
@@ -375,16 +380,16 @@ if exists (select 1 from sys.triggers WHERE name=@triggerName) SELECT is_disable
                         
 
                 if (String.IsNullOrWhiteSpace(result))
-                    throw new TriggerMissingException("Trigger " + updateTriggerName +
-                                                      " does not have an OBJECT_DEFINITION or is missing or is disabled");
+                    throw new TriggerMissingException(
+                        $"Trigger {updateTriggerName} does not have an OBJECT_DEFINITION or is missing or is disabled");
 
-                string expectedSQL = GetCreateTriggerSQL();
+                var expectedSQL = GetCreateTriggerSQL();
 
                 expectedSQL = expectedSQL.Trim();
                 result = result.Trim();
 
                 if (!expectedSQL.Equals(result))
-                    throw new ExpectedIdenticalStringsException("Trigger " + updateTriggerName + " is corrupt",
+                    throw new ExpectedIdenticalStringsException($"Trigger {updateTriggerName} is corrupt",
                         expectedSQL, result);
             }
         }
@@ -399,7 +404,7 @@ if exists (select 1 from sys.triggers WHERE name=@triggerName) SELECT is_disable
         catch (Exception e)
         {
             throw new Exception(
-                "Failed to check if trigger " + updateTriggerName + " is enabled.  See InnerException for details",e);
+                $"Failed to check if trigger {updateTriggerName} is enabled.  See InnerException for details",e);
         }
 
         return true;

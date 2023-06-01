@@ -24,7 +24,7 @@ public class PreInitializeTests
     public void TestNormal()
     {
 
-        FishUser fishUser = new FishUser();
+        var fishUser = new FishUser();
 
         Assert.AreNotEqual(fishUser.IFish, fish);
         context.PreInitialize(new ThrowImmediatelyDataLoadEventListener(),fishUser, fish);
@@ -35,7 +35,7 @@ public class PreInitializeTests
     public void TestOneOFMany()
     {
 
-        FishUser fishUser = new FishUser();
+        var fishUser = new FishUser();
             
         Assert.AreNotEqual(fishUser.IFish, fish);
         context.PreInitialize(new ThrowImmediatelyDataLoadEventListener(), fishUser,new object(), fish);
@@ -45,7 +45,7 @@ public class PreInitializeTests
     public void TestCasting()
     {
 
-        FishUser fishUser = new FishUser();
+        var fishUser = new FishUser();
 
         Assert.AreNotEqual(fishUser.IFish, fish);
         context.PreInitialize(new ThrowImmediatelyDataLoadEventListener(), fishUser, (IFish)fish);
@@ -55,7 +55,7 @@ public class PreInitializeTests
     [Test]
     public void TestDownCasting()
     {
-        SpecificFishUser fishUser = new SpecificFishUser();
+        var fishUser = new SpecificFishUser();
 
         IFish f = fish;
         Assert.AreNotEqual(fishUser.IFish, fish);
@@ -65,7 +65,7 @@ public class PreInitializeTests
     [Test]
     public void TestNoObjects()
     {
-        SpecificFishUser fishUser = new SpecificFishUser();
+        var fishUser = new SpecificFishUser();
         var ex = Assert.Throws<Exception>(()=>context.PreInitialize(new ThrowImmediatelyDataLoadEventListener(), fishUser, Array.Empty<object>()));
         Assert.IsTrue(ex.Message.Contains("The following expected types were not passed to PreInitialize:Fish"));
     }
@@ -73,7 +73,7 @@ public class PreInitializeTests
     [Test]
     public void TestWrongObjects()
     {
-        SpecificFishUser fishUser = new SpecificFishUser();
+        var fishUser = new SpecificFishUser();
         var ex = Assert.Throws<Exception>(() => context.PreInitialize(new ThrowImmediatelyDataLoadEventListener(), fishUser, new Penguin()));
         Assert.IsTrue(ex.Message.Contains("The following expected types were not passed to PreInitialize:Fish"));
         Assert.IsTrue(ex.Message.Contains("The object types passed were:"));

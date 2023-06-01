@@ -35,20 +35,20 @@ class TableInfoTests : DatabaseTests
     [Test]
     public void CreateNewTableInfoInDatabase_valid_pass()
     {
-        TableInfo table = new TableInfo(CatalogueRepository, "TestDB..TestTableName");
+        var table = new TableInfo(CatalogueRepository, "TestDB..TestTableName");
 
         Assert.NotNull(table);
 
         table.DeleteInDatabase();
 
         var ex = Assert.Throws<KeyNotFoundException>(() => CatalogueRepository.GetObjectByID<TableInfo>(table.ID));
-        Assert.AreEqual(ex.Message, "Could not find TableInfo with ID " + table.ID);
+        Assert.AreEqual(ex.Message, $"Could not find TableInfo with ID {table.ID}");
     }
 
     [Test]
     public void update_changeAllProperties_pass()
     {
-        TableInfo table = new TableInfo(CatalogueRepository, "CHI_AMALG..SearchStuff")
+        var table = new TableInfo(CatalogueRepository, "CHI_AMALG..SearchStuff")
         {
             Database = "CHI_AMALG",
             Server = "Highly restricted",
@@ -58,7 +58,7 @@ class TableInfoTests : DatabaseTests
 
         table.SaveToDatabase();
 
-        TableInfo tableAfter = CatalogueRepository.GetObjectByID<TableInfo>(table.ID);
+        var tableAfter = CatalogueRepository.GetObjectByID<TableInfo>(table.ID);
 
         Assert.IsTrue(tableAfter.Database == "CHI_AMALG");
         Assert.IsTrue(tableAfter.Server == "Highly restricted");
@@ -75,11 +75,11 @@ class TableInfoTests : DatabaseTests
     [TestCase("TestDB..TestTableName", "TestDB..TestTableName.ANOMyCol")]
     public void CreateNewTableInfoInDatabase_Naming(string tableName, string columnName)
     {
-        TableInfo table = new TableInfo(CatalogueRepository, tableName);
+        var table = new TableInfo(CatalogueRepository, tableName);
         table.Database = "TestDB";
         table.SaveToDatabase();
 
-        ColumnInfo c = new ColumnInfo(CatalogueRepository, columnName, "varchar(100)", table);
+        var c = new ColumnInfo(CatalogueRepository, columnName, "varchar(100)", table);
         c.ANOTable_ID = -100;
             
         try
@@ -180,7 +180,7 @@ class TableInfoTests : DatabaseTests
         var db = GetCleanedServer(dbType);
         var syntax = db.Server.GetQuerySyntaxHelper();
 
-        DataTable dt = new DataTable();
+        var dt = new DataTable();
         dt.Columns.Add("FF");
 
         var tbl = db.CreateTable("MyTable",dt);

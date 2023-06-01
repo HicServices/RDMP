@@ -60,7 +60,7 @@ internal class OracleTriggerImplementer:MySqlTriggerImplementer
 
   END", _archiveTable.GetFullyQualifiedName(),
             string.Join(",", _columns.Select(c => syntax.EnsureWrapped(c.GetRuntimeName()))),
-            string.Join(",", _columns.Select(c => ":old." + syntax.EnsureWrapped(c.GetRuntimeName()))),
+            string.Join(",", _columns.Select(c => $":old.{syntax.EnsureWrapped(c.GetRuntimeName())}")),
             syntax.EnsureWrapped(SpecialFieldNames.ValidFrom));
     }
 

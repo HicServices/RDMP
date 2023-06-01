@@ -59,7 +59,7 @@ public class CohortQueryBuilder
         
     public ExternalDatabaseServer CacheServer
     {
-        get { return _cacheServer; }
+        get => _cacheServer;
         set
         {
             _cacheServer = value;
@@ -84,7 +84,7 @@ public class CohortQueryBuilder
             
         SQLOutOfDate = true;
 
-        foreach (ISqlParameter parameter in _globals)
+        foreach (var parameter in _globals)
             ParameterManager.AddGlobalParameter(parameter);
     }
 
@@ -94,7 +94,8 @@ public class CohortQueryBuilder
             throw new QueryBuildingException("Configuration has not been set yet");
 
         if (configuration.RootCohortAggregateContainer_ID == null)
-            throw new QueryBuildingException("Root container not set on CohortIdentificationConfiguration " + configuration);
+            throw new QueryBuildingException(
+                $"Root container not set on CohortIdentificationConfiguration {configuration}");
 
         if (configuration.QueryCachingServer_ID != null)
             CacheServer = configuration.QueryCachingServer;
@@ -136,16 +137,16 @@ public class CohortQueryBuilder
             throw new NotSupportedException("Can only generate select * statements when constructed for a single AggregateConfiguration, this was constructed with a container as the root entity (it may even reflect a UNION style query that spans datasets)");
             
         //Show the user all the fields (*) unless there is a HAVING or it is a Patient Index Table.
-        string selectList = 
+        var selectList = 
             string.IsNullOrWhiteSpace(configuration.HavingSQL) && !configuration.IsJoinablePatientIndexTable() ? "*" : null;
 
         RecreateHelpers(new QueryBuilderCustomArgs(selectList, "" /*removes distinct*/, topX),CancellationToken.None);
 
         Results.BuildFor(configuration,ParameterManager);
             
-        string sampleSQL = Results.Sql;
+        var sampleSQL = Results.Sql;
 
-        string parameterSql = "";
+        var parameterSql = "";
 
         //get resolved parameters for the select * query
         var finalParams = ParameterManager.GetFinalResolvedParametersList().ToArray();
@@ -185,10 +186,10 @@ public class CohortQueryBuilder
 
         if(!DoNotWriteOutParameters)
         {
-            string parameterSql = "";
+            var parameterSql = "";
 
             //add the globals
-            foreach (ISqlParameter param in finalParameters)
+            foreach (var param in finalParameters)
                 parameterSql += QueryBuilder.GetParameterDeclarationSQL(param);
 
             _sql =  parameterSql + _sql;
@@ -207,7 +208,7 @@ public class CohortQueryBuilder
     /// </summary>
     public bool DoNotWriteOutParameters
     {
-        get { return _doNotWriteOutParameters; }
+        get => _doNotWriteOutParameters;
         set
         {
             _doNotWriteOutParameters = value;
@@ -224,7 +225,7 @@ public class CohortQueryBuilder
 
     public IOrderable StopContainerWhenYouReach
     {
-        get { return _stopContainerWhenYouReach; }
+        get => _stopContainerWhenYouReach;
         set
         {
             _stopContainerWhenYouReach = value;

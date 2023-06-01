@@ -84,7 +84,7 @@ public class TestsRequiringACohort : TestsRequiringA
         else
             _cohortDatabase.Create();
             
-        string sql = @"
+        var sql = @"
 
 CREATE TABLE [dbo].[Cohort](
        [PrivateID] [varchar](10) NOT NULL,
@@ -129,13 +129,13 @@ GO
 
     private void CreateExternalCohortTableReference()
     {
-        ExternalCohortTable alreadyExisting = DataExportRepository.GetAllObjects<ExternalCohortTable>()
+        var alreadyExisting = DataExportRepository.GetAllObjects<ExternalCohortTable>()
             .SingleOrDefault(external => external.Name.Equals(ExternalCohortTableNameInCatalogue));
 
         if (alreadyExisting != null)
         {
             //remove dependencies cohorts
-            ExtractableCohort toCleanup = DataExportRepository.GetAllObjects<ExtractableCohort>().SingleOrDefault(ec => ec.OriginID == cohortIDInTestData);
+            var toCleanup = DataExportRepository.GetAllObjects<ExtractableCohort>().SingleOrDefault(ec => ec.OriginID == cohortIDInTestData);
 
 
             if (toCleanup != null)
@@ -179,7 +179,7 @@ GO
 
     private void SetupCohortDefinitionAndCustomTable()
     {
-        DataTable dt = new DataTable();
+        var dt = new DataTable();
         dt.Columns.Add("SuperSecretThing");
         dt.Columns.Add("PrivateID");
 
@@ -197,7 +197,7 @@ GO
 
         CustomExtractableDataSet = new ExtractableDataSet(DataExportRepository, CustomCatalogue);
             
-        foreach (ExtractionInformation e in eis)
+        foreach (var e in eis)
         {
             e.ExtractionCategory = ExtractionCategory.ProjectSpecific;
                 
@@ -209,10 +209,9 @@ GO
 
         using (var con = _cohortDatabase.Server.GetConnection())
         {
-            string insertSQL = "SET IDENTITY_INSERT " + definitionTableName + " ON ;" + Environment.NewLine;
-            insertSQL += "INSERT INTO " + definitionTableName +
-                         " (id,projectNumber,description,version) VALUES (" + cohortIDInTestData + "," +
-                         projectNumberInTestData + ",'unitTestDataForCohort',1)";
+            var insertSQL = $"SET IDENTITY_INSERT {definitionTableName} ON ;{Environment.NewLine}";
+            insertSQL +=
+                $"INSERT INTO {definitionTableName} (id,projectNumber,description,version) VALUES ({cohortIDInTestData},{projectNumberInTestData},'unitTestDataForCohort',1)";
 
             con.Open();
             using(var cmd = _cohortDatabase.Server.GetCommand(insertSQL, con))
@@ -231,7 +230,7 @@ GO
             //clear out old data
             using(var cmdDelete =
                   _cohortDatabase.Server.GetCommand(
-                      "DELETE FROM " + cohortTableName + "; DELETE FROM " + definitionTableName + ";", con))
+                      $"DELETE FROM {cohortTableName}; DELETE FROM {definitionTableName};", con))
                 cmdDelete.ExecuteNonQuery();
         }
     }
@@ -244,7 +243,8 @@ GO
         {
             con.Open();
 
-            string insertIntoList = "INSERT INTO Cohort(PrivateID,ReleaseID,cohortDefinition_id) VALUES ('" + privateID + "','" + publicID + "'," + cohortIDInTestData + ")";
+            var insertIntoList =
+                $"INSERT INTO Cohort(PrivateID,ReleaseID,cohortDefinition_id) VALUES ('{privateID}','{publicID}',{cohortIDInTestData})";
 
             using(var insertRecord = _cohortDatabase.Server.GetCommand(insertIntoList, con))
                 Assert.AreEqual(1, insertRecord.ExecuteNonQuery());

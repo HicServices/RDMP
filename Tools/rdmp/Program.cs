@@ -44,7 +44,7 @@ class Program
         }
         catch(Exception ex)
         {
-            Console.WriteLine("Could not load NLog.config:" + ex.Message);
+            Console.WriteLine($"Could not load NLog.config:{ex.Message}");
         }
             
         if(args.Any(a=>a.Equals("-q")) || args.Any(a=>a.Equals("--quiet",StringComparison.CurrentCultureIgnoreCase)))
@@ -56,8 +56,8 @@ class Program
 
         var logger = LogManager.GetCurrentClassLogger();
 
-        logger.Info("Dotnet Version:" + Environment.Version);
-        logger.Info("RDMP Version:" + typeof(Catalogue).Assembly.GetName().Version);
+        logger.Info($"Dotnet Version:{Environment.Version}");
+        logger.Info($"RDMP Version:{typeof(Catalogue).Assembly.GetName().Version}");
 
         Startup.Startup.PreStartup();
 
@@ -116,7 +116,7 @@ class Program
                                 return returnCode = RdmpCommandLineBootStrapper.HandleArgumentsWithStandardRunner(args, logger);
                         });
 
-            logger.Info("Exiting with code " + returnCode);
+            logger.Info($"Exiting with code {returnCode}");
             return returnCode;
         }
         catch (Exception e)
@@ -141,7 +141,7 @@ class Program
         var serverName = opts.ServerName;
         var prefix = opts.Prefix;
 
-        Console.WriteLine("About to create on server '" + serverName + "' databases with prefix '" + prefix + "'");
+        Console.WriteLine($"About to create on server '{serverName}' databases with prefix '{prefix}'");
             
         try
         {
@@ -171,7 +171,7 @@ class Program
         var checker = new NLogICheckNotifier(true, false);
 
         var start = new Startup.Startup(RdmpCommandLineBootStrapper.GetEnvironmentInfo(), repo);
-        bool badTimes = false;
+        var badTimes = false;
 
         start.DatabaseFound += (s,e)=>{
                 

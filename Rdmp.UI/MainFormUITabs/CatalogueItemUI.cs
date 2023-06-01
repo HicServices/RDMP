@@ -97,7 +97,7 @@ public partial class CatalogueItemUI : CatalogueItemUI_Design, ISaveableUI
 
     public override string GetTabName()
     {
-        return base.GetTabName() + " (" + _catalogueItem.Catalogue.Name + ")";
+        return $"{base.GetTabName()} ({_catalogueItem.Catalogue.Name})";
     }
 }
 

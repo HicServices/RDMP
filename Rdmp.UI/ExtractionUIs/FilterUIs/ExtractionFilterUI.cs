@@ -100,7 +100,7 @@ public partial class ExtractionFilterUI :ExtractionFilterUI_Design, ILifetimeSub
         foreach (var c in options.GetIColumnsInFilterScope())
             _autoCompleteProvider.Add(c);
 
-        foreach (ISqlParameter parameter in GlobalFilterParameters)
+        foreach (var parameter in GlobalFilterParameters)
             _autoCompleteProvider.Add(parameter);
 
         _autoCompleteProvider.RegisterForEvents(QueryEditor);
@@ -131,7 +131,7 @@ public partial class ExtractionFilterUI :ExtractionFilterUI_Design, ILifetimeSub
 
             MessageBox.Show("Your Filter SQL has an AND / OR in it, so we are going to wrap it in brackets for you", "Filter contains AND/OR");
 
-            QueryEditor.Text = "(" + QueryEditor.Text + ")";
+            QueryEditor.Text = $"({QueryEditor.Text})";
         }
     }
 
@@ -143,12 +143,12 @@ public partial class ExtractionFilterUI :ExtractionFilterUI_Design, ILifetimeSub
         // regex:
         // \s* = don't capture whitespace before or after the comment so we can consistently add a single space front and back for the block comment
         // .*? = lazy capture of comment text, so we don't eat repeated whitespace at the end of the comment (matched by the second \s* outside the capture group)
-        var commentRegex = new Regex(@"--\s*(?<comment>.*?)\s*" + Environment.NewLine);
+        var commentRegex = new Regex($@"--\s*(?<comment>.*?)\s*{Environment.NewLine}");
             
         if (commentRegex.Matches(QueryEditor.Text).Count > 0)
         {
             MessageBox.Show("Line comments are not allowed in the filter query, these will be automatically converted to block comments.", "Line comments");
-            QueryEditor.Text = commentRegex.Replace(QueryEditor.Text, "/* ${comment} */" + Environment.NewLine);
+            QueryEditor.Text = commentRegex.Replace(QueryEditor.Text, $"/* ${{comment}} */{Environment.NewLine}");
         }
     }
 

@@ -195,7 +195,7 @@ public class JoinableCohortConfigurationTests : CohortIdentificationTests
                 Assert.IsTrue(dbReader.Read());
             }
 
-            string expectedTableAlias = "ix" + joinable2.ID;
+            var expectedTableAlias = $"ix{joinable2.ID}";
 
             //after joinables
             Assert.AreEqual(
@@ -234,7 +234,7 @@ on ["+TestDatabaseNames.Prefix+@"ScratchArea].[dbo].[BulkData].[chi] = {0}.chi",
         var joinable2 = new JoinableCohortAggregateConfiguration(CatalogueRepository, cohortIdentificationConfiguration, aggregate2);
         joinable2.AddUser(aggregate1);
 
-        string expectedTableAlias = "ix" + joinable2.ID;
+        var expectedTableAlias = $"ix{joinable2.ID}";
 
         var filterContainer1 = new AggregateFilterContainer(CatalogueRepository, FilterContainerOperation.AND);
         var filterContainer2 = new AggregateFilterContainer(CatalogueRepository, FilterContainerOperation.AND);
@@ -328,7 +328,7 @@ ABS(DATEDIFF(year, {0}.dtCreated, ["+TestDatabaseNames.Prefix+@"ScratchArea].[db
         var joinable2 = new JoinableCohortAggregateConfiguration(CatalogueRepository, cohortIdentificationConfiguration, aggregate2);
         joinable2.AddUser(aggregate1);
 
-        string expectedTableAlias = "ix" + joinable2.ID;
+        var expectedTableAlias = $"ix{joinable2.ID}";
 
         var filterContainer1 = new AggregateFilterContainer(CatalogueRepository, FilterContainerOperation.AND);
         var filterContainer2 = new AggregateFilterContainer(CatalogueRepository, FilterContainerOperation.AND);
@@ -364,8 +364,8 @@ ABS(DATEDIFF(year, {0}.dtCreated, ["+TestDatabaseNames.Prefix+@"ScratchArea].[db
 
             var cloneBuilder = new CohortQueryBuilder(clone,null);
 
-            string origSql = builder.SQL;
-            string cloneOrigSql = cloneBuilder.SQL;
+            var origSql = builder.SQL;
+            var cloneOrigSql = cloneBuilder.SQL;
 
             Console.WriteLine("//////////////////////////////////////////////VERBATIM//////////////////////////////////////////////");
             Console.WriteLine(origSql);
@@ -419,7 +419,7 @@ ABS(DATEDIFF(year, {0}.dtCreated, ["+TestDatabaseNames.Prefix+@"ScratchArea].[db
     [Test]
     public void JoinablesWithCache()
     {
-        string queryCachingDatabaseName = To.GetRuntimeName();
+        var queryCachingDatabaseName = To.GetRuntimeName();
         _queryCachingDatabase = To;
 
         //make aggregate 2 a joinable
@@ -431,7 +431,7 @@ ABS(DATEDIFF(year, {0}.dtCreated, ["+TestDatabaseNames.Prefix+@"ScratchArea].[db
         aggregate2.AddDimension(anotherCol);
             
         //create a caching server
-        MasterDatabaseScriptExecutor scripter = new MasterDatabaseScriptExecutor(_queryCachingDatabase);
+        var scripter = new MasterDatabaseScriptExecutor(_queryCachingDatabase);
         scripter.CreateAndPatchDatabase(new QueryCachingPatcher(), new AcceptAllCheckNotifier());
 
         var queryCachingDatabaseServer = new ExternalDatabaseServer(CatalogueRepository, queryCachingDatabaseName,null);
@@ -443,10 +443,10 @@ ABS(DATEDIFF(year, {0}.dtCreated, ["+TestDatabaseNames.Prefix+@"ScratchArea].[db
             var builderForCaching = new CohortQueryBuilder(aggregate2, null,null);
 
             var cacheDt = new DataTable();
-            using (SqlConnection con = (SqlConnection)Database.Server.GetConnection())
+            using (var con = (SqlConnection)Database.Server.GetConnection())
             {
                 con.Open();
-                SqlDataAdapter da = new SqlDataAdapter(new SqlCommand(builderForCaching.SQL, con));
+                var da = new SqlDataAdapter(new SqlCommand(builderForCaching.SQL, con));
                 da.Fill(cacheDt);
             }
 
@@ -472,7 +472,7 @@ ABS(DATEDIFF(year, {0}.dtCreated, ["+TestDatabaseNames.Prefix+@"ScratchArea].[db
                     Assert.IsTrue(dbReader.Read());
                 }
 
-                string expectedTableAlias = "ix" + joinable2.ID;
+                var expectedTableAlias = $"ix{joinable2.ID}";
 
                 //after joinables
                 Assert.AreEqual(

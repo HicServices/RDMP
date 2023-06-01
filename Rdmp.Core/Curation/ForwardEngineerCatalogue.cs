@@ -77,18 +77,18 @@ public class ForwardEngineerCatalogue
             intoExistingCatalogue = new Catalogue(repo, _tableInfo.GetRuntimeName());
 
         catalogue = intoExistingCatalogue;
-        List<CatalogueItem> catalogueItemsCreated = new List<CatalogueItem>();
-        List<ExtractionInformation> extractionInformationsCreated = new List<ExtractionInformation>();
+        var catalogueItemsCreated = new List<CatalogueItem>();
+        var extractionInformationsCreated = new List<ExtractionInformation>();
 
-        int order = 0;
+        var order = 0;
 
         //for each column we will add a new one to the 
-        foreach (ColumnInfo col in _columnInfos)
+        foreach (var col in _columnInfos)
         {
             order++;
                 
             //create it with the same name
-            CatalogueItem cataItem = new CatalogueItem(repo, intoExistingCatalogue, col.Name.Substring(col.Name.LastIndexOf(".") + 1).Trim('[', ']', '`','"'));
+            var cataItem = new CatalogueItem(repo, intoExistingCatalogue, col.Name.Substring(col.Name.LastIndexOf(".") + 1).Trim('[', ']', '`','"'));
             catalogueItemsCreated.Add(cataItem);
                                 
             var newExtractionInfo = new ExtractionInformation(repo, cataItem, col, col.Name);

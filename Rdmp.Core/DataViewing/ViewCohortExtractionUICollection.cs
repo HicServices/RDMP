@@ -58,9 +58,8 @@ public class ViewCohortExtractionUICollection : PersistableObjectCollection, IVi
         _arguments = Helper.LoadDictionaryFromString(s);
     }
 
-    public ExtractableCohort Cohort { get { return DatabaseObjects.OfType<ExtractableCohort>().SingleOrDefault(); } }
+    public ExtractableCohort Cohort => DatabaseObjects.OfType<ExtractableCohort>().SingleOrDefault();
 
-        
 
     public IEnumerable<DatabaseEntity> GetToolStripObjects()
     {

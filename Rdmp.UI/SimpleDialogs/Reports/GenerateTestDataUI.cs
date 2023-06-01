@@ -44,9 +44,9 @@ public partial class GenerateTestDataUI : RDMPForm
 
         var dataGeneratorFactory = new DataGeneratorFactory();
 
-        int yLoc = 0;
+        var yLoc = 0;
 
-        foreach(Type t in dataGeneratorFactory.GetAvailableGenerators())
+        foreach(var t in dataGeneratorFactory.GetAvailableGenerators())
         {
             var ui = new DataGeneratorUI();
             ui.Generator = dataGeneratorFactory.Create(t,new Random());
@@ -176,17 +176,17 @@ public partial class GenerateTestDataUI : RDMPForm
             //run them at the same time
             if(!_seed.HasValue)
             {
-                foreach (DataGeneratorUI ui in uis)
+                foreach (var ui in uis)
                 {
                     Executing.Add(ui);
                     ui.BeginGeneration(identifiers, _extractDirectory);
-                    DataGeneratorUI ui1 = ui;
+                    var ui1 = ui;
                     ui.Completed += () => { Executing.Remove(ui1); AnnounceIfComplete();};    
                 }
             }
             else
             { 
-                Queue<DataGeneratorUI> queue = new Queue<DataGeneratorUI>(uis);
+                var queue = new Queue<DataGeneratorUI>(uis);
                 Execute(identifiers,queue,queue.Dequeue(),r);
             }
         }
@@ -243,7 +243,7 @@ public partial class GenerateTestDataUI : RDMPForm
 
         if (stillRunning != null)
         {
-            MessageBox.Show(stillRunning.Generator.GetType().Name + " is still generating data");
+            MessageBox.Show($"{stillRunning.Generator.GetType().Name} is still generating data");
             e.Cancel = true;
         }
     }

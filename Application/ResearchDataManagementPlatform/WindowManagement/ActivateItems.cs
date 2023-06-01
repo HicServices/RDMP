@@ -165,16 +165,17 @@ public class ActivateItems : BasicActivateItems, IActivateItems, IRefreshBusSubs
             return _mainDockPanel.Invoke<Form>(() => ShowWindow(singleControlForm, asDocument));
         }
 
-        int width = singleControlForm.Size.Width + SystemInformation.BorderSize.Width;
-        int height = singleControlForm.Size.Height + SystemInformation.BorderSize.Height;
+        var width = singleControlForm.Size.Width + SystemInformation.BorderSize.Width;
+        var height = singleControlForm.Size.Height + SystemInformation.BorderSize.Height;
 
         //use the .Text or fallback on .Name 
-        string name = string.IsNullOrWhiteSpace(singleControlForm.Text)
+        var name = string.IsNullOrWhiteSpace(singleControlForm.Text)
             ? singleControlForm.Name ?? singleControlForm.GetType().Name//or worst case scenario use the type name!
             : singleControlForm.Text;
 
         if(singleControlForm is Form && asDocument)
-            throw new Exception("Control '" + singleControlForm + "' is a Form and asDocument was passed as true.  When asDocument is true you must be a Control not a Form e.g. inherit from RDMPUserControl instead of RDMPForm");
+            throw new Exception(
+                $"Control '{singleControlForm}' is a Form and asDocument was passed as true.  When asDocument is true you must be a Control not a Form e.g. inherit from RDMPUserControl instead of RDMPForm");
 
         var c = singleControlForm as RDMPUserControl;
             
@@ -302,7 +303,8 @@ public class ActivateItems : BasicActivateItems, IActivateItems, IRefreshBusSubs
         return RepositoryLocator.CatalogueRepository.CommentStore.GetTypeDocumentationIfExists(type);
     }
 
-    public string CurrentDirectory { get { return Environment.CurrentDirectory; }}
+    public string CurrentDirectory => Environment.CurrentDirectory;
+
     public DialogResult ShowDialog(Form form)
     {
         // if on wrong Thread
@@ -350,7 +352,7 @@ public class ActivateItems : BasicActivateItems, IActivateItems, IRefreshBusSubs
     /// <returns></returns>
     public bool ShouldReloadFreshCopy(DatabaseEntity databaseEntity)
     {
-        return YesNo(databaseEntity + " is out of date with database, would you like to reload a fresh copy?",
+        return YesNo($"{databaseEntity} is out of date with database, would you like to reload a fresh copy?",
             "Object Changed");
     }
 
@@ -468,7 +470,8 @@ public class ActivateItems : BasicActivateItems, IActivateItems, IRefreshBusSubs
             catch (Exception e)
             {
                 floatable.Close();
-                throw new Exception("SetDatabaseObject failed on Control of Type '"+instruction.UIControlType.Name+"', control closed, see inner Exception for details",e);
+                throw new Exception(
+                    $"SetDatabaseObject failed on Control of Type '{instruction.UIControlType.Name}', control closed, see inner Exception for details",e);
             }
 
             return floatable;
@@ -481,8 +484,8 @@ public class ActivateItems : BasicActivateItems, IActivateItems, IRefreshBusSubs
 
     private void SetTabText(DockContent floatable, INamedTab tab)
     {
-        string tabText = tab.GetTabName();
-        string tabToolTipText = tab.GetTabToolTip();
+        var tabText = tab.GetTabName();
+        var tabToolTipText = tab.GetTabToolTip();
 
         floatable.TabText = tabText;
 
@@ -490,7 +493,7 @@ public class ActivateItems : BasicActivateItems, IActivateItems, IRefreshBusSubs
         floatable.ToolTipText = string.IsNullOrEmpty(tabToolTipText) ? tabText : tabToolTipText;
 
         if (floatable != null && floatable.ParentForm != null)
-            floatable.ParentForm.Text = tabText + " - RDMP";
+            floatable.ParentForm.Text = $"{tabText} - RDMP";
     }
 
     public PersistableObjectCollectionDockContent Activate(IObjectCollectionControl collectionControl, IPersistableObjectCollection objectCollection)
@@ -514,7 +517,7 @@ public class ActivateItems : BasicActivateItems, IActivateItems, IRefreshBusSubs
 
     private void RefreshProblemProviders()
     {
-        foreach (IProblemProvider p in ProblemProviders)
+        foreach (var p in ProblemProviders)
             p.RefreshProblems(CoreChildProvider);
     }
 
@@ -753,7 +756,7 @@ public class ActivateItems : BasicActivateItems, IActivateItems, IRefreshBusSubs
         using (var fb = new OpenFileDialog {CheckFileExists = false,Multiselect = false})
         {
             if (patternDescription != null && pattern != null)
-                fb.Filter = patternDescription + "|" + pattern;
+                fb.Filter = $"{patternDescription}|{pattern}";
 
             if (fb.ShowDialog() == DialogResult.OK)
             {
@@ -779,7 +782,7 @@ public class ActivateItems : BasicActivateItems, IActivateItems, IRefreshBusSubs
         using (var fb = new OpenFileDialog {CheckFileExists = false,Multiselect = true})
         {
             if (patternDescription != null && pattern != null)
-                fb.Filter = patternDescription + "|" + pattern;
+                fb.Filter = $"{patternDescription}|{pattern}";
 
             if (fb.ShowDialog() == DialogResult.OK)
                 return fb.FileNames.Select(f=>new FileInfo(f)).ToArray();
@@ -823,7 +826,7 @@ public class ActivateItems : BasicActivateItems, IActivateItems, IRefreshBusSubs
 
         if (!availableObjects.Any())
         {
-            MessageBox.Show("There are no '" + arrayElementType.Name + "' objects in your RMDP");
+            MessageBox.Show($"There are no '{arrayElementType.Name}' objects in your RMDP");
             return null;
         }
 
@@ -835,7 +838,7 @@ public class ActivateItems : BasicActivateItems, IActivateItems, IRefreshBusSubs
             var ms = selectDialog.MultiSelected.ToList();
             var toReturn = Array.CreateInstance(arrayElementType, ms.Count);
 
-            for(int i = 0;i<ms.Count;i++)
+            for(var i = 0;i<ms.Count;i++)
                 toReturn.SetValue(ms[i],i);
                 
             return toReturn.Cast<IMapsDirectlyToDatabaseTable>().ToArray();
@@ -887,7 +890,7 @@ public class ActivateItems : BasicActivateItems, IActivateItems, IRefreshBusSubs
 
     public override IPipelineRunner GetPipelineRunner(DialogArgs args,IPipelineUseCase useCase, IPipeline pipeline)
     {
-        ConfigureAndExecutePipelineUI configureAndExecuteDialog = new ConfigureAndExecutePipelineUI(args,useCase, this);
+        var configureAndExecuteDialog = new ConfigureAndExecutePipelineUI(args,useCase, this);
         configureAndExecuteDialog.Dock = DockStyle.Fill;
             
         return configureAndExecuteDialog;
@@ -904,7 +907,7 @@ public class ActivateItems : BasicActivateItems, IActivateItems, IRefreshBusSubs
         var ui = new CohortCreationRequestUI(this,externalCohortTable,project);
                 
         if(!string.IsNullOrWhiteSpace(cohortInitialDescription))
-            ui.CohortDescription = cohortInitialDescription + " (" + Environment.UserName + " - " + DateTime.Now + ")";
+            ui.CohortDescription = $"{cohortInitialDescription} ({Environment.UserName} - {DateTime.Now})";
 
         if (ui.ShowDialog() != DialogResult.OK)
             return null;
@@ -1016,7 +1019,7 @@ public class ActivateItems : BasicActivateItems, IActivateItems, IRefreshBusSubs
         }
 
 
-        LoggingTabUI loggingTabUI =  Activate<LoggingTabUI, ExternalDatabaseServer>(loggingServer);
+        var loggingTabUI =  Activate<LoggingTabUI, ExternalDatabaseServer>(loggingServer);
         if(filter != null)
             loggingTabUI.SetFilter(filter);
     }

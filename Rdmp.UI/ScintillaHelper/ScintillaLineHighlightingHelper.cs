@@ -16,7 +16,7 @@ public class ScintillaLineHighlightingHelper
 {
     public void HighlightLine(Scintilla editor, int i, Color color)
     {
-        Marker marker = editor.Markers[0];
+        var marker = editor.Markers[0];
         marker.Symbol = MarkerSymbol.Background;
         marker.SetBackColor(color);
         editor.Lines[i].MarkerAdd(0);

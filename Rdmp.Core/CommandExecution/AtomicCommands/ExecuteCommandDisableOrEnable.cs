@@ -36,7 +36,7 @@ public class ExecuteCommandDisableOrEnable : BasicCommandExecution, IAtomicComma
 
         if (disableables.All(d => d.IsDisabled) || disableables.All(d => !d.IsDisabled))
         {
-            foreach (IDisableable d in _targets)
+            foreach (var d in _targets)
                 UpdateViabilityForTarget(d);
         }
         else
@@ -62,7 +62,7 @@ public class ExecuteCommandDisableOrEnable : BasicCommandExecution, IAtomicComma
             if (aggregateConfiguration.IsJoinablePatientIndexTable() && !aggregateConfiguration.IsDisabled)
                 SetImpossible("Joinable Patient Index Tables cannot be disabled");
 
-        if (target is IMightBeReadOnly ro && ro.ShouldBeReadOnly(out string reason))
+        if (target is IMightBeReadOnly ro && ro.ShouldBeReadOnly(out var reason))
             SetImpossible(reason);
 
     }
@@ -71,7 +71,7 @@ public class ExecuteCommandDisableOrEnable : BasicCommandExecution, IAtomicComma
     {
         base.Execute();
 
-        foreach (IDisableable d in _targets)
+        foreach (var d in _targets)
         {
             d.IsDisabled = !d.IsDisabled;
             d.SaveToDatabase();

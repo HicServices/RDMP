@@ -39,7 +39,7 @@ public class IconFactory
     private Icon CreateIcon(Image<Rgba32> bmp)
     {
         // Get an Hicon for myBitmap.
-        IntPtr Hicon = bmp.ImageToBitmap().GetHicon();
+        var Hicon = bmp.ImageToBitmap().GetHicon();
 
         // Create a new icon from the handle. 
         return Icon.FromHandle(Hicon);

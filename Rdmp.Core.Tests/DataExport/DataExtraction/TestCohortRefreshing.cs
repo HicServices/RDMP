@@ -104,9 +104,9 @@ public class TestCohortRefreshing : TestsRequiringAnExtractionConfiguration
 
         //Create a query cache
         var p = new QueryCachingPatcher();
-        ExternalDatabaseServer queryCacheServer = new ExternalDatabaseServer(CatalogueRepository, "TestCohortRefreshing_CacheTest", p);
+        var queryCacheServer = new ExternalDatabaseServer(CatalogueRepository, "TestCohortRefreshing_CacheTest", p);
 
-        DiscoveredDatabase cachedb = DiscoveredServerICanCreateRandomDatabasesAndTablesOn.ExpectDatabase("TestCohortRefreshing_CacheTest");
+        var cachedb = DiscoveredServerICanCreateRandomDatabasesAndTablesOn.ExpectDatabase("TestCohortRefreshing_CacheTest");
         if (cachedb.Exists())
             cachedb.Drop();
 
@@ -114,7 +114,7 @@ public class TestCohortRefreshing : TestsRequiringAnExtractionConfiguration
         queryCacheServer.SetProperties(cachedb);
             
         //Create a Cohort Identification configuration (query) that will identify the cohort
-        CohortIdentificationConfiguration cic = new CohortIdentificationConfiguration(RepositoryLocator.CatalogueRepository, "RefreshCohort.cs");
+        var cic = new CohortIdentificationConfiguration(RepositoryLocator.CatalogueRepository, "RefreshCohort.cs");
 
         try
         {

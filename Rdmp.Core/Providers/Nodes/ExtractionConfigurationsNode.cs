@@ -44,6 +44,7 @@ public class ExtractionConfigurationsNode:Node,IOrderable
         return (Project != null ? Project.GetHashCode() : 0);
     }
 
-    public int Order { get { return 3; } set{} }
+    public int Order { get => 3;
+        set{} }
 
 }

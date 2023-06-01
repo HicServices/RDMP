@@ -56,7 +56,7 @@ public class RdmpCommandLineBootStrapper
                         (ExecuteCommandOptions opts) => RunCmd(opts, existingLocator),
                         errs => 1);
 
-            logger.Info("Exiting with code " + returnCode);
+            logger.Info($"Exiting with code {returnCode}");
             return returnCode;
         }
         catch (Exception e)
@@ -146,7 +146,7 @@ public class RdmpCommandLineBootStrapper
         if (checker.Worst > LogLevel.Warn)
             checker.Worst = LogLevel.Warn;
 
-        int runExitCode = runner.Run(repositoryLocator, listener, checker, new GracefulCancellationToken());
+        var runExitCode = runner.Run(repositoryLocator, listener, checker, new GracefulCancellationToken());
 
         if (opts.Command == CommandLineActivity.check)
             checker.OnCheckPerformed(checker.Worst <= LogLevel.Warn

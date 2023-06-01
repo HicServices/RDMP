@@ -111,7 +111,7 @@ public class ImportAndTestTests : DatabaseTests
     [Test]
     public void Synchronization_ExtraParameter()
     {
-        string expectedMessage =
+        var expectedMessage =
             "MyAwesomeFunction is a Table Valued Function, in the Catalogue it has a parameter called @fish but this parameter no longer appears in the underlying database";
 
         var excessParameter = new AnyTableSqlParameter(CatalogueRepository, _function.TableInfoCreated, "DECLARE @fish as int");
@@ -141,9 +141,9 @@ public class ImportAndTestTests : DatabaseTests
     [Test]
     public void Synchronization_MissingParameter()
     {
-        string expectedMessage = "MyAwesomeFunction is a Table Valued Function but it does not have a record of the parameter @startNumber which appears in the underlying database";
+        var expectedMessage = "MyAwesomeFunction is a Table Valued Function but it does not have a record of the parameter @startNumber which appears in the underlying database";
 
-        AnyTableSqlParameter parameter = (AnyTableSqlParameter)_function.TableInfoCreated.GetAllParameters().Single(p => p.ParameterName.Equals("@startNumber"));
+        var parameter = (AnyTableSqlParameter)_function.TableInfoCreated.GetAllParameters().Single(p => p.ParameterName.Equals("@startNumber"));
         parameter.DeleteInDatabase();
 
         var syncer = new TableInfoSynchronizer(_function.TableInfoCreated);
@@ -165,10 +165,10 @@ public class ImportAndTestTests : DatabaseTests
     [Test]
     public void Synchronization_ParameterDefinitionChanged()
     {
-        string expectedMessage =
+        var expectedMessage =
             "Parameter @startNumber is declared as 'DECLARE @startNumber AS int;' but in the Catalogue it appears as 'DECLARE @startNumber AS datetime;'";
 
-        AnyTableSqlParameter parameter = (AnyTableSqlParameter)_function.TableInfoCreated.GetAllParameters().Single(p => p.ParameterName.Equals("@startNumber"));
+        var parameter = (AnyTableSqlParameter)_function.TableInfoCreated.GetAllParameters().Single(p => p.ParameterName.Equals("@startNumber"));
         parameter.ParameterSQL = "DECLARE @startNumber AS datetime;";
         parameter.SaveToDatabase();
 
@@ -202,7 +202,7 @@ public class ImportAndTestTests : DatabaseTests
     [Test]
     public void Synchronization_ParameterRenamed()
     {
-        AnyTableSqlParameter parameter = (AnyTableSqlParameter)_function.TableInfoCreated.GetAllParameters().Single(p => p.ParameterName.Equals("@startNumber"));
+        var parameter = (AnyTableSqlParameter)_function.TableInfoCreated.GetAllParameters().Single(p => p.ParameterName.Equals("@startNumber"));
         parameter.ParameterSQL = "DECLARE @startNum AS int";
         parameter.SaveToDatabase();
 

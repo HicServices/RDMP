@@ -30,8 +30,8 @@ public class WindowLayout: DatabaseEntity,INamed
     [Unique]
     public string Name
     {
-        get { return _name;}
-        set { SetField(ref _name, value);}
+        get => _name;
+        set => SetField(ref _name, value);
     }
 
     /// <summary>
@@ -39,8 +39,8 @@ public class WindowLayout: DatabaseEntity,INamed
     /// </summary>
     public string LayoutData
     {
-        get { return _layoutData;}
-        set { SetField(ref _layoutData, value);}
+        get => _layoutData;
+        set => SetField(ref _layoutData, value);
     }
 
     public WindowLayout()

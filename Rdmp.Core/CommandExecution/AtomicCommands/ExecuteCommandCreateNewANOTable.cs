@@ -40,12 +40,12 @@ public class ExecuteCommandCreateNewANOTable : BasicCommandExecution,IAtomicComm
     {
         base.Execute();
 
-        if(TypeText("ANO Concept Name","Name",500,null, out string name))
+        if(TypeText("ANO Concept Name","Name",500,null, out var name))
         {
-            if(TypeText("Type Concept Suffix", "Suffix", 5, null, out string suffix))
+            if(TypeText("Type Concept Suffix", "Suffix", 5, null, out var suffix))
             {
                 if(!name.StartsWith("ANO"))
-                    name = "ANO" + name;
+                    name = $"ANO{name}";
 
                 var s = suffix.Trim('_');
 

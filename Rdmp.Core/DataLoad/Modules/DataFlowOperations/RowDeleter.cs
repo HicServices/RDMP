@@ -32,12 +32,12 @@ class RowDeleter: IPluginDataFlowComponent<DataTable>
     public DataTable ProcessPipelineData(DataTable toProcess, IDataLoadEventListener listener, GracefulCancellationToken cancellationToken)
     {
         _sw.Start();
-        DataTable outputTable = new DataTable();
+        var outputTable = new DataTable();
 
         foreach (DataColumn dataColumn in toProcess.Columns)
             outputTable.Columns.Add(dataColumn.ColumnName, dataColumn.DataType);
 
-        Regex regex = DeleteRowsWhereValuesMatch ?? new Regex(DeleteRowsWhereValuesMatchStandard.Regex);
+        var regex = DeleteRowsWhereValuesMatch ?? new Regex(DeleteRowsWhereValuesMatchStandard.Regex);
 
         foreach (DataRow row in toProcess.Rows)
         {

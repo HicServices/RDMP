@@ -47,7 +47,8 @@ public class PrimaryKeyCollisionResolverMutilation : IPluginMutilateDataTables
     public void Initialize(DiscoveredDatabase dbInfo, LoadStage loadStage)
     {
         if (loadStage != LoadStage.AdjustRaw)
-            throw new Exception("Primary key collisions can only be resolved in a RAW environment, current load stage is:" + loadStage + " (The reason for this is because there should be primary keys in the database level in STAGING and LIVE making primary key collisions IMPOSSIBE)");
+            throw new Exception(
+                $"Primary key collisions can only be resolved in a RAW environment, current load stage is:{loadStage} (The reason for this is because there should be primary keys in the database level in STAGING and LIVE making primary key collisions IMPOSSIBE)");
 
         _dbInfo = dbInfo;
     }
@@ -66,8 +67,8 @@ public class PrimaryKeyCollisionResolverMutilation : IPluginMutilateDataTables
         {
             con.Open();
 
-            PrimaryKeyCollisionResolver resolver = new PrimaryKeyCollisionResolver(TargetTable);
-            SqlCommand cmdAreTherePrimaryKeyCollisions = new SqlCommand(resolver.GenerateCollisionDetectionSQL(), con);
+            var resolver = new PrimaryKeyCollisionResolver(TargetTable);
+            var cmdAreTherePrimaryKeyCollisions = new SqlCommand(resolver.GenerateCollisionDetectionSQL(), con);
             cmdAreTherePrimaryKeyCollisions.CommandTimeout = 5000;
 
             //if there are no primary key collisions
@@ -80,11 +81,12 @@ public class PrimaryKeyCollisionResolverMutilation : IPluginMutilateDataTables
             //there are primary key collisions so resolve them
             job.OnNotify(this, new NotifyEventArgs(ProgressEventType.Warning, "Primary key collisions detected"));
 
-            SqlCommand cmdResolve = new SqlCommand(resolver.GenerateSQL(), con);
+            var cmdResolve = new SqlCommand(resolver.GenerateSQL(), con);
             cmdResolve.CommandTimeout = 5000;
-            int affectedRows = cmdResolve.ExecuteNonQuery();
+            var affectedRows = cmdResolve.ExecuteNonQuery();
 
-            job.OnNotify(this, new NotifyEventArgs(ProgressEventType.Warning, "Primary key collisions resolved by deleting " + affectedRows + " rows"));
+            job.OnNotify(this, new NotifyEventArgs(ProgressEventType.Warning,
+                $"Primary key collisions resolved by deleting {affectedRows} rows"));
             con.Close();
         }
     }
@@ -99,12 +101,13 @@ public class PrimaryKeyCollisionResolverMutilation : IPluginMutilateDataTables
 
         try
         {
-            PrimaryKeyCollisionResolver resolver = new PrimaryKeyCollisionResolver(TargetTable);
-            string sql = resolver.GenerateSQL();
+            var resolver = new PrimaryKeyCollisionResolver(TargetTable);
+            var sql = resolver.GenerateSQL();
         }
         catch (Exception e)
         {
-            notifier.OnCheckPerformed(new CheckEventArgs("Failed to check PrimaryKeyCollisionResolver on " + TargetTable,CheckResult.Fail, e));
+            notifier.OnCheckPerformed(new CheckEventArgs(
+                $"Failed to check PrimaryKeyCollisionResolver on {TargetTable}",CheckResult.Fail, e));
         }
             
     }

@@ -40,10 +40,7 @@ public class Evaluation : DatabaseEntity
             return rowStates;
         }
 
-        set
-        {
-            rowStates = value;
-        }
+        set => rowStates = value;
     }
 
         
@@ -60,10 +57,7 @@ public class Evaluation : DatabaseEntity
             return columnStates;
         }
 
-        set
-        {
-            columnStates = value;
-        }
+        set => columnStates = value;
     }
 
     [NoMappingToDatabase]
@@ -97,7 +91,8 @@ public class Evaluation : DatabaseEntity
         }
         catch (Exception e)
         {
-            throw new Exception("Could not create a DataQualityEngine.Evaluation for Evaluation with ID "+ID+" because it is a report of an old Catalogue that has been deleted or otherwise does not exist/could not be retrieved (CatalogueID was:" + CatalogueID+").  See inner exception for full details",e);
+            throw new Exception(
+                $"Could not create a DataQualityEngine.Evaluation for Evaluation with ID {ID} because it is a report of an old Catalogue that has been deleted or otherwise does not exist/could not be retrieved (CatalogueID was:{CatalogueID}).  See inner exception for full details",e);
         }
             
     }
@@ -126,8 +121,8 @@ public class Evaluation : DatabaseEntity
 
     public string[] GetPivotCategoryValues()
     {
-        List<string> toReturn = new List<string>();
-        string sql = "select distinct PivotCategory From RowState where Evaluation_ID  = " + ID;
+        var toReturn = new List<string>();
+        var sql = $"select distinct PivotCategory From RowState where Evaluation_ID  = {ID}";
 
         using (var con = DQERepository.GetConnection())
         {
@@ -145,10 +140,10 @@ public class Evaluation : DatabaseEntity
 
     public override void DeleteInDatabase()
     {
-        int affectedRows = DQERepository.Delete("DELETE FROM Evaluation where ID = " + ID);
+        var affectedRows = DQERepository.Delete($"DELETE FROM Evaluation where ID = {ID}");
 
         if(affectedRows == 0)
-            throw new Exception("Delete statement resulted in " + affectedRows + " affected rows");
+            throw new Exception($"Delete statement resulted in {affectedRows} affected rows");
     }
 
     /// <summary>
@@ -169,7 +164,7 @@ public class Evaluation : DatabaseEntity
 
     private void LoadRowAndColumnStates()
     {
-        List<RowState> states = new List<RowState>();
+        var states = new List<RowState>();
         if (Repository is not TableRepository repo)
             throw new Exception($"Repository was not a {nameof(TableRepository)}.  Evaluation class requires a database back repository to fetch RowStates/ColumnStates.  Repository was of Type '{Repository.GetType().Name}'");
 
@@ -193,7 +188,7 @@ public class Evaluation : DatabaseEntity
             con.Connection, con.Transaction);
         {
             using var r2 = cmdGetColumnStates.ExecuteReader();
-            List<ColumnState> colStates = new List<ColumnState>();
+            var colStates = new List<ColumnState>();
 
             while (r2.Read())
                 colStates.Add(new ColumnState(r2));

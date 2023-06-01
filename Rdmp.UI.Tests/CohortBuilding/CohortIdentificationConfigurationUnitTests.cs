@@ -40,7 +40,7 @@ class CohortIdentificationConfigurationUnitTests:UITests
     {
         DeleteOldAggregates();
 
-        GetObjects(out Catalogue cata, out CohortIdentificationConfiguration cic);
+        GetObjects(out var cata, out var cic);
             
         //we should be able to add it
         var cmd = new ExecuteCommandAddCatalogueToCohortIdentificationSetContainer(ItemActivator, new CatalogueCombineable(cata),cic.RootCohortAggregateContainer);
@@ -71,7 +71,7 @@ class CohortIdentificationConfigurationUnitTests:UITests
     [Test, UITimeout(50000)]
     public void Test_AggregateConfigurationOrder_MovingAggregatesBetweenContainers()
     {
-        GetObjects(out Catalogue cata, out CohortIdentificationConfiguration cic);
+        GetObjects(out var cata, out var cic);
             
         //we should be able to add it to root container
         var cmd = new ExecuteCommandAddCatalogueToCohortIdentificationSetContainer(ItemActivator, new CatalogueCombineable(cata),cic.RootCohortAggregateContainer);
@@ -127,7 +127,7 @@ class CohortIdentificationConfigurationUnitTests:UITests
     private void DeleteOldAggregates()
     {
         //remove any remnants so we can count them at the end to make sure no duplicates were created
-        foreach (AggregateConfiguration ac in Repository.GetAllObjects<AggregateConfiguration>())
+        foreach (var ac in Repository.GetAllObjects<AggregateConfiguration>())
             ac.DeleteInDatabase();
 
         Assert.AreEqual(0, Repository.GetAllObjects<AggregateConfiguration>().Length, "We just deleted the AggregateConfigurations why were there suddenly some in the db!?");

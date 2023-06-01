@@ -75,7 +75,7 @@ public class QueryBuilder : ISqlQueryBuilder
     /// </summary>
     public IContainer RootFilterContainer
     {
-        get { return _rootFilterContainer; }
+        get => _rootFilterContainer;
         set {
             _rootFilterContainer = value;
             SQLOutOfDate = true;
@@ -118,7 +118,7 @@ public class QueryBuilder : ISqlQueryBuilder
     /// </summary>
     public int TopX
     {
-        get { return _topX; }
+        get => _topX;
         set
         {
             //it already has that value
@@ -166,7 +166,7 @@ public class QueryBuilder : ISqlQueryBuilder
     public void AddColumnRange(IColumn[] columnsToAdd)
     {
         //add the new ones to the list
-        foreach (IColumn col in columnsToAdd)
+        foreach (var col in columnsToAdd)
             AddColumn(col);
                 
         SQLOutOfDate = true;
@@ -175,7 +175,7 @@ public class QueryBuilder : ISqlQueryBuilder
     /// <inheritdoc/>
     public void AddColumn(IColumn col)
     {
-        QueryTimeColumn toAdd = new QueryTimeColumn(col);
+        var toAdd = new QueryTimeColumn(col);
 
         //if it is new, add it to the list
         if (!SelectColumns.Contains(toAdd))
@@ -247,9 +247,9 @@ public class QueryBuilder : ISqlQueryBuilder
 
         #region Preamble (including variable declarations/initializations)
         //assemble the query - never use Environment.Newline, use TakeNewLine() so that QueryBuilder knows what line its got up to
-        string toReturn = "";
+        var toReturn = "";
 
-        foreach (ISqlParameter parameter in ParameterManager.GetFinalResolvedParametersList())
+        foreach (var parameter in ParameterManager.GetFinalResolvedParametersList())
         {
             //if the parameter is one that needs to be told what the query syntax helper is e.g. if it's a global parameter designed to work on multiple datasets
             var needsToldTheSyntaxHelper = parameter as IInjectKnown<IQuerySyntaxHelper>;
@@ -269,17 +269,17 @@ public class QueryBuilder : ISqlQueryBuilder
 
         #region Select (including all IColumns)
         toReturn += Environment.NewLine;
-        toReturn += "SELECT " + LimitationSQL + Environment.NewLine;
+        toReturn += $"SELECT {LimitationSQL}{Environment.NewLine}";
 
         toReturn = AppendCustomLines(toReturn, QueryComponent.SELECT);
         toReturn += Environment.NewLine;
 
         toReturn = AppendCustomLines(toReturn, QueryComponent.QueryTimeColumn);
             
-        for (int i = 0; i < SelectColumns.Count;i++ )
+        for (var i = 0; i < SelectColumns.Count;i++ )
         {
             //output each of the ExtractionInformations that the user requested and record the line number for posterity
-            string columnAsSql = SelectColumns[i].GetSelectSQL(_hashingAlgorithm, _salt, QuerySyntaxHelper);
+            var columnAsSql = SelectColumns[i].GetSelectSQL(_hashingAlgorithm, _salt, QuerySyntaxHelper);
 
             //there is another one coming
             if (i + 1 < SelectColumns.Count)
@@ -334,18 +334,18 @@ public class QueryBuilder : ISqlQueryBuilder
     /// <returns></returns>
     public static string GetParameterDeclarationSQL(ISqlParameter sqlParameter)
     {
-        string toReturn = "";
+        var toReturn = "";
 
         if (!string.IsNullOrWhiteSpace(sqlParameter.Comment))
-            toReturn += "/*" + sqlParameter.Comment + "*/" + Environment.NewLine;
+            toReturn += $"/*{sqlParameter.Comment}*/{Environment.NewLine}";
             
         toReturn += sqlParameter.ParameterSQL + Environment.NewLine;
 
         //it's a table valued parameter! advanced
         if (!string.IsNullOrEmpty(sqlParameter.Value) && Regex.IsMatch(sqlParameter.Value, @"\binsert\s+into\b",RegexOptions.IgnoreCase))
-            toReturn += sqlParameter.Value + ";" + Environment.NewLine;
+            toReturn += $"{sqlParameter.Value};{Environment.NewLine}";
         else
-            toReturn += "SET " + sqlParameter.ParameterName + "=" + sqlParameter.Value + ";" + Environment.NewLine;//its a regular value
+            toReturn += $"SET {sqlParameter.ParameterName}={sqlParameter.Value};{Environment.NewLine}";//its a regular value
             
         return toReturn;
     }

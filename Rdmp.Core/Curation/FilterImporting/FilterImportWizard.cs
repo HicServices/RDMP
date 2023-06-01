@@ -58,7 +58,7 @@ public class FilterImportWizard
 
     private IFilter Import(IContainer containerToImportOneInto, IFilter filterToImport, ISqlParameter[] globalParameters, IFilter[] otherFiltersInScope, ExtractionFilterParameterSet parameterSet)
     {
-        bool cancel = false;
+        var cancel = false;
 
         //Sometimes filters have some recommended parameter values which the user can pick from (e.g. filter Condition could have parameter value sets for 'Dementia', 'Alzheimers' etc
         var chosenParameterValues = parameterSet ?? AdvertiseAvailableFilterParameterSetsIfAny(filterToImport, out cancel);
@@ -74,7 +74,8 @@ public class FilterImportWizard
             importer =
                 new FilterImporter(new DeployedExtractionFilterFactory((IDataExportRepository)containerToImportOneInto.Repository), globalParameters);
         else
-            throw new ArgumentException("Cannot import into IContainer of type " + containerToImportOneInto.GetType().Name, "containerToImportOneInto");
+            throw new ArgumentException(
+                $"Cannot import into IContainer of type {containerToImportOneInto.GetType().Name}", "containerToImportOneInto");
 
         //if there is a parameter value set then tell the importer to use these parameter values instead of the IFilter's default ones
         if (chosenParameterValues != null)
@@ -86,7 +87,7 @@ public class FilterImportWizard
         //if we used custom parameter values we should update the filter name so the user is reminded that the concept of the filter includes both 'Condition' and the value they selected e.g. 'Dementia'
         if (chosenParameterValues != null)
         {
-            newFilter.Name += "_" + chosenParameterValues.Name;
+            newFilter.Name += $"_{chosenParameterValues.Name}";
             newFilter.SaveToDatabase();
         }
 
@@ -218,7 +219,8 @@ public class FilterImportWizard
         }
 
 
-        throw new Exception("Container " + containerToImportOneInto + " was an unexpected Type:" + containerToImportOneInto.GetType().Name);
+        throw new Exception(
+            $"Container {containerToImportOneInto} was an unexpected Type:{containerToImportOneInto.GetType().Name}");
     }
 
     private List<IFilter> GetAllFiltersRecursively(IContainer currentContainer, List<IFilter> foundSoFar)

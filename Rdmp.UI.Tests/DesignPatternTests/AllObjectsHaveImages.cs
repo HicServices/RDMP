@@ -20,7 +20,7 @@ public class AllObjectsHaveImages:DatabaseTests
     [Test]
     public void AllIHasDependenciesHaveIcons()
     {
-        string[] exceptionsAllowed = new[]
+        var exceptionsAllowed = new[]
         {
 
             "IHasDependencies", //base interface of which nobody is who isn't otherwise on this list

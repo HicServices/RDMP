@@ -48,7 +48,7 @@ public class ExecuteCommandCreateNewCatalogueByExecutingAnAggregateConfiguration
 
         if (_aggregateConfiguration.IsJoinablePatientIndexTable())
         {
-            if (!BasicActivator.YesNo("Would you like to constrain the records to only those in a committed cohort?", "Cohort Records Only", out bool chosen))
+            if (!BasicActivator.YesNo("Would you like to constrain the records to only those in a committed cohort?", "Cohort Records Only", out var chosen))
                 return;
 
             if (chosen)
@@ -93,12 +93,13 @@ public class ExecuteCommandCreateNewCatalogueByExecutingAnAggregateConfiguration
     void ui_PipelineExecutionFinishedsuccessfully(object sender, PipelineEngineEventArgs args)
     {
         if (!_table.Exists())
-            throw new Exception("Pipeline execute succesfully but the expected table '" + _table + "' did not exist");
+            throw new Exception($"Pipeline execute succesfully but the expected table '{_table}' did not exist");
 
         var importer = new TableInfoImporter(BasicActivator.RepositoryLocator.CatalogueRepository, _table);
         importer.DoImport(out var ti,out _);
 
-        BasicActivator.CreateAndConfigureCatalogue(ti,null,"Execution of '" + _aggregateConfiguration + "' (AggregateConfiguration ID =" + _aggregateConfiguration.ID + ")",ProjectSpecific,TargetFolder);
+        BasicActivator.CreateAndConfigureCatalogue(ti,null,
+            $"Execution of '{_aggregateConfiguration}' (AggregateConfiguration ID ={_aggregateConfiguration.ID})",ProjectSpecific,TargetFolder);
     }
 
 

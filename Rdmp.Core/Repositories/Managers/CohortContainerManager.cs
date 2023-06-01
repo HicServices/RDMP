@@ -67,7 +67,7 @@ class CohortContainerManager : ICohortContainerManager
 
         using (var con = CatalogueRepository.GetConnection())
         {
-            using (DbCommand cmd = DatabaseCommandHelper.GetCommand(
+            using (var cmd = DatabaseCommandHelper.GetCommand(
                        "SELECT [Order] FROM CohortAggregateContainer_AggregateConfiguration WHERE AggregateConfiguration_ID = @AggregateConfiguration_ID",
                        con.Connection, con.Transaction))
             {
@@ -88,7 +88,8 @@ class CohortContainerManager : ICohortContainerManager
                 {"CohortAggregateContainer_ParentID", parent.ID}
             }).ToArray();
 
-        var configs = CatalogueRepository.SelectAll<AggregateConfiguration>("SELECT AggregateConfiguration_ID FROM CohortAggregateContainer_AggregateConfiguration where CohortAggregateContainer_ID=" + parent.ID).OrderBy(config => config.Order).ToArray();
+        var configs = CatalogueRepository.SelectAll<AggregateConfiguration>(
+            $"SELECT AggregateConfiguration_ID FROM CohortAggregateContainer_AggregateConfiguration where CohortAggregateContainer_ID={parent.ID}").OrderBy(config => config.Order).ToArray();
 
         return containers.Cast<IOrderable>().Union(configs).OrderBy(o => o.Order).ToArray();
     }
@@ -113,7 +114,8 @@ class CohortContainerManager : ICohortContainerManager
 
     public void SetOrder(AggregateConfiguration child, int newOrder)
     {
-        CatalogueRepository.Update("UPDATE CohortAggregateContainer_AggregateConfiguration SET [Order] = " + newOrder + " WHERE AggregateConfiguration_ID = @AggregateConfiguration_ID", new Dictionary<string, object>
+        CatalogueRepository.Update(
+            $"UPDATE CohortAggregateContainer_AggregateConfiguration SET [Order] = {newOrder} WHERE AggregateConfiguration_ID = @AggregateConfiguration_ID", new Dictionary<string, object>
         {
             {"AggregateConfiguration_ID", child.ID}
         });

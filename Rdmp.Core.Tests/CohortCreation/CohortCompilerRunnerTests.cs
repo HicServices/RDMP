@@ -57,7 +57,7 @@ public class CohortCompilerRunnerTests:DatabaseTests
 
         SetupCohort(out db, out cic, out dt);
             
-        MasterDatabaseScriptExecutor e = new MasterDatabaseScriptExecutor(db);
+        var e = new MasterDatabaseScriptExecutor(db);
         var p = new QueryCachingPatcher();
         e.CreateAndPatchDatabase(p,new AcceptAllCheckNotifier());
             
@@ -90,7 +90,7 @@ public class CohortCompilerRunnerTests:DatabaseTests
         dt.Columns.Add("PK");
 
         //add lots of rows
-        for (int i = 0; i < 100000; i++)
+        for (var i = 0; i < 100000; i++)
             dt.Rows.Add(i);
 
         db = GetCleanedServer(DatabaseType.MicrosoftSQLServer);

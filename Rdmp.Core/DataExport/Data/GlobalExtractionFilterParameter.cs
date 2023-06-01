@@ -30,10 +30,7 @@ public class GlobalExtractionFilterParameter : DatabaseEntity, ISqlParameter, II
 {
     /// <inheritdoc/>
     [NoMappingToDatabase]
-    public string ParameterName
-    {
-        get { return QuerySyntaxHelper.GetParameterNameFromDeclarationSQL(ParameterSQL); }
-    }
+    public string ParameterName => QuerySyntaxHelper.GetParameterNameFromDeclarationSQL(ParameterSQL);
 
     #region Database Properties
     private string _parameterSQL;
@@ -45,22 +42,22 @@ public class GlobalExtractionFilterParameter : DatabaseEntity, ISqlParameter, II
     [Sql]
     public string ParameterSQL
     {
-        get { return _parameterSQL; }
-        set { SetField(ref _parameterSQL, value); }
+        get => _parameterSQL;
+        set => SetField(ref _parameterSQL, value);
     }
 
     /// <inheritdoc/>
     public string Value
     {
-        get { return _value; }
-        set { SetField(ref _value, value); }
+        get => _value;
+        set => SetField(ref _value, value);
     }
 
     /// <inheritdoc/>
     public string Comment
     {
-        get { return _comment; }
-        set { SetField(ref _comment, value); }
+        get => _comment;
+        set => SetField(ref _comment, value);
     }
 
     /// <summary>
@@ -69,8 +66,8 @@ public class GlobalExtractionFilterParameter : DatabaseEntity, ISqlParameter, II
     /// </summary>
     public int ExtractionConfiguration_ID
     {
-        get { return _extractionConfiguration_ID; }
-        set { SetField(ref _extractionConfiguration_ID, value); }
+        get => _extractionConfiguration_ID;
+        set => SetField(ref _extractionConfiguration_ID, value);
     }
 
     #endregion
@@ -79,7 +76,7 @@ public class GlobalExtractionFilterParameter : DatabaseEntity, ISqlParameter, II
         
     /// <inheritdoc cref="ExtractionConfiguration_ID"/>
     [NoMappingToDatabase]
-    public ExtractionConfiguration ExtractionConfiguration { get{return Repository.GetObjectByID<ExtractionConfiguration>(ExtractionConfiguration_ID);} }
+    public ExtractionConfiguration ExtractionConfiguration => Repository.GetObjectByID<ExtractionConfiguration>(ExtractionConfiguration_ID);
 
     #endregion
 
@@ -126,7 +123,7 @@ public class GlobalExtractionFilterParameter : DatabaseEntity, ISqlParameter, II
     /// <returns></returns>
     public override string ToString()
     {
-        return ParameterName + " = " + Value;
+        return $"{ParameterName} = {Value}";
     }
 
 

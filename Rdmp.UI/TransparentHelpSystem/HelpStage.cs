@@ -80,7 +80,7 @@ public class HelpStage
 
     private void HandleParams(HelpStage[] nextStagesInOrder)
     {
-        for (int i = 0; i < nextStagesInOrder.Length; i++)
+        for (var i = 0; i < nextStagesInOrder.Length; i++)
             if (i == 0)
                 Next = nextStagesInOrder[i];
             else
@@ -104,8 +104,8 @@ public class HelpStage
         var textToShow = HelpText;
 
         if (HelpText.Length > 47)
-            textToShow = HelpText.Substring(0, 47) + "...";
+            textToShow = $"{HelpText.Substring(0, 47)}...";
 
-        return "Help Stage:"  + textToShow;
+        return $"Help Stage:{textToShow}";
     }
 }

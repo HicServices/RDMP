@@ -44,7 +44,7 @@ public partial class PatchingUI : Form
         if (LicenseManager.UsageMode == LicenseUsageMode.Designtime)
             return;
 
-        string name = patcher.Name + " v" + patcher.GetDbAssembly().GetName().Version.ToString(3);
+        var name = $"{patcher.Name} v{patcher.GetDbAssembly().GetName().Version.ToString(3)}";
 
         tbPatch.Text =  $"{name}";
 

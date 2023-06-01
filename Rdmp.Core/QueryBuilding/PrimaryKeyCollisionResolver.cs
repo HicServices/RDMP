@@ -58,7 +58,7 @@ WHERE DuplicateCount > 1";
 
     private string GenerateSQL(out ColumnInfo[] pks, out List<IResolveDuplication> resolvers)
     {
-        string tableNameInRAW = GetTableName();
+        var tableNameInRAW = GetTableName();
 
         var cols = _tableInfo.ColumnInfos.ToArray();
         pks = cols.Where(col => col.IsPrimaryKey).ToArray();
@@ -108,15 +108,15 @@ WHERE DuplicateCount > 1";
 
     private string AppendRelevantOrderBySql(string sql, IResolveDuplication col)
     {
-        string colname = _querySyntaxHelper.EnsureWrapped(col.GetRuntimeName(LoadStage.AdjustRaw));
+        var colname = _querySyntaxHelper.EnsureWrapped(col.GetRuntimeName(LoadStage.AdjustRaw));
 
-        string direction = col.DuplicateRecordResolutionIsAscending ? " ASC" : " DESC";
+        var direction = col.DuplicateRecordResolutionIsAscending ? " ASC" : " DESC";
 
         //don't bother adding these because they are hic generated
         if (SpecialFieldNames.IsHicPrefixed(colname))
             return sql;
 
-        ValueType valueType = GetDataType(col.Data_type);
+        var valueType = GetDataType(col.Data_type);
 
         if (valueType == ValueType.CharacterString)
         {
@@ -136,10 +136,10 @@ WHERE DuplicateCount > 1";
     /// <returns></returns>
     public string GenerateCollisionDetectionSQL()
     {
-        string tableNameInRAW = GetTableName();
+        var tableNameInRAW = GetTableName();
         var pks = _tableInfo.ColumnInfos.Where(col => col.IsPrimaryKey).ToArray();
 
-        string sql = "";
+        var sql = "";
         sql += $"select case when exists({Environment.NewLine}";
         sql += $"select 1 FROM{Environment.NewLine}";
         sql += tableNameInRAW + Environment.NewLine;
@@ -162,10 +162,10 @@ WHERE DuplicateCount > 1";
             
         ColumnInfo[] pks;
         List<IResolveDuplication> resolvers;
-        string basicSQL = GenerateSQL(out pks, out resolvers);
+        var basicSQL = GenerateSQL(out pks, out resolvers);
 
-        string commaSeparatedPKs = String.Join(",", pks.Select(c => _querySyntaxHelper.EnsureWrapped(c.GetRuntimeName(LoadStage.AdjustRaw))));
-        string commaSeparatedCols = String.Join(",", resolvers.Select(c => _querySyntaxHelper.EnsureWrapped(c.GetRuntimeName(LoadStage.AdjustRaw))));
+        var commaSeparatedPKs = String.Join(",", pks.Select(c => _querySyntaxHelper.EnsureWrapped(c.GetRuntimeName(LoadStage.AdjustRaw))));
+        var commaSeparatedCols = String.Join(",", resolvers.Select(c => _querySyntaxHelper.EnsureWrapped(c.GetRuntimeName(LoadStage.AdjustRaw))));
 
         //add all the columns to the WITH CTE bit
         basicSQL = basicSQL.Replace(WithCTE, $"WITH CTE ({commaSeparatedPKs},{commaSeparatedCols},DuplicateCount)");
@@ -289,7 +289,7 @@ WHERE DuplicateCount > 1";
         if (datatype.Contains("decimal") || datatype.Contains("numeric"))
         {
             var digits = Regex.Match(datatype, @"(\d+),?(\d+)?");
-            string toReturn = "";
+            var toReturn = "";
 
             if (min)
                 toReturn = "-";
@@ -297,7 +297,7 @@ WHERE DuplicateCount > 1";
             //ignore element zero because elment zero is always a duplicate see https://msdn.microsoft.com/en-us/library/system.text.regularexpressions.match.groups%28v=vs.110%29.aspx
             if (digits.Groups.Count == 3 && String.IsNullOrWhiteSpace(digits.Groups[2].Value))
             {
-                for (int i = 0; i < Convert.ToInt32(digits.Groups[1].Value); i++)
+                for (var i = 0; i < Convert.ToInt32(digits.Groups[1].Value); i++)
                     toReturn += "9";
 
                 return toReturn;
@@ -305,10 +305,10 @@ WHERE DuplicateCount > 1";
 
             if (digits.Groups.Count == 3)
             {
-                int totalDigits = Convert.ToInt32(digits.Groups[1].Value);
-                int digitsAfterDecimal = Convert.ToInt32(digits.Groups[2].Value);
+                var totalDigits = Convert.ToInt32(digits.Groups[1].Value);
+                var digitsAfterDecimal = Convert.ToInt32(digits.Groups[2].Value);
 
-                for (int i = 0; i < totalDigits + 1; i++)
+                for (var i = 0; i < totalDigits + 1; i++)
                     if (i == totalDigits - digitsAfterDecimal)
                         toReturn += ".";
                     else
@@ -318,7 +318,7 @@ WHERE DuplicateCount > 1";
             }
         }
 
-        ValueType valueType = GetDataType(datatype);
+        var valueType = GetDataType(datatype);
 
         if (valueType == ValueType.CharacterString)
             if (min)

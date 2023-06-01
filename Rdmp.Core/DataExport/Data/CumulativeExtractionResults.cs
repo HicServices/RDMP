@@ -35,68 +35,68 @@ public class CumulativeExtractionResults : DatabaseEntity, ICumulativeExtraction
     /// <inheritdoc/>
     public int ExtractionConfiguration_ID
     {
-        get { return _extractionConfiguration_ID; }
-        set { SetField(ref _extractionConfiguration_ID, value); }
+        get => _extractionConfiguration_ID;
+        set => SetField(ref _extractionConfiguration_ID, value);
     }
     /// <inheritdoc/>
     public int ExtractableDataSet_ID
     {
-        get { return _extractableDataSet_ID; }
-        private set { SetField(ref _extractableDataSet_ID, value); }
+        get => _extractableDataSet_ID;
+        private set => SetField(ref _extractableDataSet_ID, value);
     }
     /// <inheritdoc/>
     public DateTime DateOfExtraction
     {
-        get { return _dateOfExtraction; }
-        private set { SetField(ref _dateOfExtraction, value); }
+        get => _dateOfExtraction;
+        private set => SetField(ref _dateOfExtraction, value);
     }
     /// <inheritdoc/>
     public string DestinationType
     {
-        get { return _destinationType; }
-        private set { SetField(ref _destinationType, value); }
+        get => _destinationType;
+        private set => SetField(ref _destinationType, value);
     }
     /// <inheritdoc/>
     public string DestinationDescription
     {
-        get { return _destinationDescription; }
-        private set { SetField(ref _destinationDescription, value); }
+        get => _destinationDescription;
+        private set => SetField(ref _destinationDescription, value);
     }
     /// <inheritdoc/>
     public int RecordsExtracted
     {
-        get { return _recordsExtracted; }
-        set { SetField(ref _recordsExtracted, value); }
+        get => _recordsExtracted;
+        set => SetField(ref _recordsExtracted, value);
     }
     /// <inheritdoc/>
     public int DistinctReleaseIdentifiersEncountered
     {
-        get { return _distinctReleaseIdentifiersEncountered; }
-        set { SetField(ref _distinctReleaseIdentifiersEncountered, value); }
+        get => _distinctReleaseIdentifiersEncountered;
+        set => SetField(ref _distinctReleaseIdentifiersEncountered, value);
     }
     /// <inheritdoc/>
     public string FiltersUsed
     {
-        get { return _filtersUsed; }
-        set { SetField(ref _filtersUsed, value); }
+        get => _filtersUsed;
+        set => SetField(ref _filtersUsed, value);
     }
     /// <inheritdoc/>
     public string Exception
     {
-        get { return _exception; }
-        set { SetField(ref _exception, value); }
+        get => _exception;
+        set => SetField(ref _exception, value);
     }
     /// <inheritdoc/>
     public string SQLExecuted
     {
-        get { return _sQLExecuted; }
-        private set { SetField(ref _sQLExecuted, value); }
+        get => _sQLExecuted;
+        private set => SetField(ref _sQLExecuted, value);
     }
     /// <inheritdoc/>
     public int CohortExtracted
     {
-        get { return _cohortExtracted; }
-        private set { SetField(ref _cohortExtracted, value); }
+        get => _cohortExtracted;
+        private set => SetField(ref _cohortExtracted, value);
     }
 
     #endregion
@@ -104,20 +104,11 @@ public class CumulativeExtractionResults : DatabaseEntity, ICumulativeExtraction
     #region Relationships
     /// <inheritdoc/>
     [NoMappingToDatabase]
-    public IExtractableDataSet ExtractableDataSet
-    {
-        get
-        {
-            return _knownExtractableDataSet.Value;
-        }
-    }
-        
+    public IExtractableDataSet ExtractableDataSet => _knownExtractableDataSet.Value;
+
     /// <inheritdoc/>
     [NoMappingToDatabase]
-    public List<ISupplementalExtractionResults> SupplementalExtractionResults
-    {
-        get { return new List<ISupplementalExtractionResults>(Repository.GetAllObjectsWithParent<SupplementalExtractionResults>(this)); }
-    }
+    public List<ISupplementalExtractionResults> SupplementalExtractionResults => new(Repository.GetAllObjectsWithParent<SupplementalExtractionResults>(this));
 
     /// <inheritdoc/>
     public ISupplementalExtractionResults AddSupplementalExtractionResult(string sqlExecuted, IMapsDirectlyToDatabaseTable extractedObject)

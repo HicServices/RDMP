@@ -47,7 +47,7 @@ public class ForwardEngineerANOCatalogueTests : TestsRequiringFullAnonymisationS
 
         db.Create(true);
 
-        BulkTestsData bulk = new BulkTestsData(CatalogueRepository, GetCleanedServer(FAnsi.DatabaseType.MicrosoftSQLServer), 100);
+        var bulk = new BulkTestsData(CatalogueRepository, GetCleanedServer(FAnsi.DatabaseType.MicrosoftSQLServer), 100);
         bulk.SetupTestData();
         bulk.ImportAsCatalogue();
 
@@ -100,7 +100,7 @@ public class ForwardEngineerANOCatalogueTests : TestsRequiringFullAnonymisationS
 
         db.Create(true);
 
-        BulkTestsData bulk = new BulkTestsData(CatalogueRepository, GetCleanedServer(FAnsi.DatabaseType.MicrosoftSQLServer), 100);
+        var bulk = new BulkTestsData(CatalogueRepository, GetCleanedServer(FAnsi.DatabaseType.MicrosoftSQLServer), 100);
         bulk.SetupTestData();
         bulk.ImportAsCatalogue();
 
@@ -210,16 +210,16 @@ public class ForwardEngineerANOCatalogueTests : TestsRequiringFullAnonymisationS
         //Necks table already exists in the destination so will be skipped for migration but still needs to be imported
         var tblToNeck = dbTo.CreateTable("Necks", cols);
 
-        TableInfoImporter i1 = new TableInfoImporter(CatalogueRepository, tblFromHeads);
+        var i1 = new TableInfoImporter(CatalogueRepository, tblFromHeads);
         i1.DoImport(out var fromHeadsTableInfo,out var fromHeadsColumnInfo);
 
-        TableInfoImporter i2 = new TableInfoImporter(CatalogueRepository, tblFromNeck);
+        var i2 = new TableInfoImporter(CatalogueRepository, tblFromNeck);
         i2.DoImport(out var fromNeckTableInfo,out var fromNeckColumnInfo);
             
         //Table already exists but does the in Catalogue reference exist?
         if(tableInfoAlreadyExistsForSkippedTable)
         {
-            TableInfoImporter i3 = new TableInfoImporter(CatalogueRepository, tblToNeck);
+            var i3 = new TableInfoImporter(CatalogueRepository, tblToNeck);
             i3.DoImport(out var toNecksTableInfo,out var toNecksColumnInfo);
         }
 
@@ -310,7 +310,7 @@ public class ForwardEngineerANOCatalogueTests : TestsRequiringFullAnonymisationS
 
         db.Create(true);
 
-        BulkTestsData bulk = new BulkTestsData(CatalogueRepository, GetCleanedServer(FAnsi.DatabaseType.MicrosoftSQLServer), 100);
+        var bulk = new BulkTestsData(CatalogueRepository, GetCleanedServer(FAnsi.DatabaseType.MicrosoftSQLServer), 100);
         bulk.SetupTestData();
         bulk.ImportAsCatalogue();
 
@@ -323,7 +323,7 @@ public class ForwardEngineerANOCatalogueTests : TestsRequiringFullAnonymisationS
         });
 
         //import a reference to the table
-        TableInfoImporter importer = new TableInfoImporter(CatalogueRepository,lookupTbl);
+        var importer = new TableInfoImporter(CatalogueRepository,lookupTbl);
         importer.DoImport(out var lookupTableInfo,out var lookupColumnInfos);
 
         //Create a Lookup reference
@@ -352,7 +352,8 @@ public class ForwardEngineerANOCatalogueTests : TestsRequiringFullAnonymisationS
         var colForename = bulk.columnInfos.Single(c => c.GetRuntimeName() == "forename");
         var colSurname =  bulk.columnInfos.Single(c => c.GetRuntimeName() == "surname");
 
-        var eiComboCol = new ExtractionInformation(CatalogueRepository, ciComboCol, colForename,colForename + " + ' ' + " + colSurname );
+        var eiComboCol = new ExtractionInformation(CatalogueRepository, ciComboCol, colForename,
+            $"{colForename} + ' ' + {colSurname}");
         eiComboCol.Alias = "ComboColumn";
         eiComboCol.SaveToDatabase();
 
@@ -366,7 +367,7 @@ public class ForwardEngineerANOCatalogueTests : TestsRequiringFullAnonymisationS
         var compositeLookup = new LookupCompositeJoinInfo(CatalogueRepository, lookup, ciHb.ColumnInfo, lookupColumnInfos[1]);
 
         //now let's make the _Desc field in the original Catalogue
-        int orderToInsertDescriptionFieldAt = ciSex.ExtractionInformation.Order;
+        var orderToInsertDescriptionFieldAt = ciSex.ExtractionInformation.Order;
 
         //bump everyone down 1
         foreach (var toBumpDown in bulk.catalogue.CatalogueItems.Select(ci=>ci.ExtractionInformation).Where(e =>e != null && e.Order > orderToInsertDescriptionFieldAt))
@@ -385,7 +386,7 @@ public class ForwardEngineerANOCatalogueTests : TestsRequiringFullAnonymisationS
         bulk.catalogue.ClearAllInjections();
 
         //check it worked
-        QueryBuilder qb = new QueryBuilder(null,null);
+        var qb = new QueryBuilder(null,null);
         qb.AddColumnRange(bulk.catalogue.GetAllExtractionInformation(ExtractionCategory.Any));
             
         //The query builder should be able to succesfully create SQL
@@ -420,7 +421,7 @@ public class ForwardEngineerANOCatalogueTests : TestsRequiringFullAnonymisationS
             
         Assert.AreEqual(eiSource.Length,eiDestination.Length,"Both the new and the ANO catalogue should have the same number of ExtractionInformations (extractable columns)");
 
-        for (int i = 0; i < eiSource.Length; i++)
+        for (var i = 0; i < eiSource.Length; i++)
         {
             Assert.AreEqual(eiSource[i].Order , eiDestination[i].Order,"ExtractionInformations in the source and destination Catalogue should have the same order");
                 
@@ -434,7 +435,7 @@ public class ForwardEngineerANOCatalogueTests : TestsRequiringFullAnonymisationS
         }
 
         //check it worked
-        QueryBuilder qbdestination = new QueryBuilder(null, null);
+        var qbdestination = new QueryBuilder(null, null);
         qbdestination.AddColumnRange(anoCatalogue.GetAllExtractionInformation(ExtractionCategory.Any));
 
         //The query builder should be able to succesfully create SQL

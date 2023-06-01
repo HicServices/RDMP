@@ -82,7 +82,7 @@ public class CommandInvokerTests : UnitTests
         public override void Execute()
         {
             base.Execute();
-            Console.Write("Arg was " + _arg);
+            Console.Write($"Arg was {_arg}");
             Assert.IsNotNull(_arg);
         }
     }
@@ -101,8 +101,8 @@ public class CommandInvokerTests : UnitTests
         public override void Execute()
         {
             base.Execute();
-            Console.Write("_a was " + _a);
-            Console.Write("_b was " + _b);
+            Console.Write($"_a was {_a}");
+            Console.Write($"_b was {_b}");
             Assert.IsNotNull(_a);
             Assert.IsNotNull(_b);
         }

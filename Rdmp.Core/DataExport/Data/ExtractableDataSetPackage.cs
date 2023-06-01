@@ -29,8 +29,8 @@ public class ExtractableDataSetPackage:DatabaseEntity, IExtractableDataSetPackag
     [Unique]
     public string Name
     {
-        get { return _name; }
-        set { SetField(ref _name, value); }
+        get => _name;
+        set => SetField(ref _name, value);
     }
 
     /// <summary>
@@ -38,8 +38,8 @@ public class ExtractableDataSetPackage:DatabaseEntity, IExtractableDataSetPackag
     /// </summary>
     public string Creator
     {
-        get { return _creator; }
-        set { SetField(ref _creator, value); }
+        get => _creator;
+        set => SetField(ref _creator, value);
     }
 
     /// <summary>
@@ -47,8 +47,8 @@ public class ExtractableDataSetPackage:DatabaseEntity, IExtractableDataSetPackag
     /// </summary>
     public DateTime CreationDate
     {
-        get { return _creationDate; }
-        set { SetField(ref _creationDate, value); }
+        get => _creationDate;
+        set => SetField(ref _creationDate, value);
     }
 
     #endregion

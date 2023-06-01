@@ -87,8 +87,8 @@ public class ArchiveFilesTests : DatabaseTests
         {
             archiveFiles.Run(job, new GracefulCancellationToken());
 
-            foreach (FileInfo fileInfo in loadDirectory.ForArchiving.GetFiles("*.zip"))
-                Console.WriteLine("About to throw SetUp because of zip file:" + fileInfo.FullName);
+            foreach (var fileInfo in loadDirectory.ForArchiving.GetFiles("*.zip"))
+                Console.WriteLine($"About to throw SetUp because of zip file:{fileInfo.FullName}");
 
             Assert.IsFalse(loadDirectory.ForArchiving.GetFiles("*.zip").Any(),"There should not be any zip files in the archive directory!");
         }

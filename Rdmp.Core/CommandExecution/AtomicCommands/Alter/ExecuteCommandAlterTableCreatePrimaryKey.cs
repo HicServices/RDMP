@@ -32,7 +32,7 @@ ColumnInfos List of columns that should form the primary key (1 for simple prima
             return;
 
         var pick = new List<ColumnInfo>();
-        for (int i = 1; i < picker.Length; i++)
+        for (var i = 1; i < picker.Length; i++)
         {
             pick.Add((ColumnInfo)picker[i].GetValueForParameterOfType(typeof(ColumnInfo)));
         }
@@ -59,7 +59,7 @@ ColumnInfos List of columns that should form the primary key (1 for simple prima
 
         var cols = _columnInfos;
 
-        if (cols == null && SelectMany(TableInfo.ColumnInfos, out ColumnInfo[] selected))
+        if (cols == null && SelectMany(TableInfo.ColumnInfos, out var selected))
             cols = selected;
 
         if (cols == null || cols.Length == 0)

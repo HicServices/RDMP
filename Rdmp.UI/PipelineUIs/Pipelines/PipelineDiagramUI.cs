@@ -75,7 +75,7 @@ public partial class PipelineDiagramUI : UserControl
     {
         if (SelectedComponent != null)
         {
-            if(MessageBox.Show("Do you want to delete " + SelectedComponent.Class + "?","Confirm Delete",MessageBoxButtons.YesNo) == DialogResult.Yes)
+            if(MessageBox.Show($"Do you want to delete {SelectedComponent.Class}?","Confirm Delete",MessageBoxButtons.YesNo) == DialogResult.Yes)
             {
                 //if they are deleting the destination
                 if (SelectedComponent.ID == _pipeline.DestinationPipelineComponent_ID)
@@ -134,7 +134,7 @@ public partial class PipelineDiagramUI : UserControl
             
         foreach(var o in _useCase.GetInitializationObjects().Reverse())
         {
-            Button b = factory.CreateButton(new ExecuteCommandDescribe(_activator, o));
+            var b = factory.CreateButton(new ExecuteCommandDescribe(_activator, o));
             pInitializationObjects.Controls.Add(b);                    
         }
 
@@ -148,7 +148,7 @@ public partial class PipelineDiagramUI : UserControl
                     _pipelineFactory = new DataFlowPipelineEngineFactory(_useCase, _pipeline);
 
                     //create it
-                    IDataFlowPipelineEngine pipelineInstance = _pipelineFactory.Create(pipeline, new ThrowImmediatelyDataLoadEventListener());
+                    var pipelineInstance = _pipelineFactory.Create(pipeline, new ThrowImmediatelyDataLoadEventListener());
                     
                     //initialize it (unless it is design time)
                     if(!_useCase.IsDesignTime)
@@ -275,7 +275,7 @@ public partial class PipelineDiagramUI : UserControl
         if(!AllowReOrdering)
             return;
 
-        DividerLineControl divider = new DividerLineControl(dividerLine_shouldAllowDrop);
+        var divider = new DividerLineControl(dividerLine_shouldAllowDrop);
         divider.DragDrop += divider_DragDrop;
         flpPipelineDiagram.Controls.Add(divider);
     }
@@ -292,7 +292,7 @@ public partial class PipelineDiagramUI : UserControl
         _deleteSelectedMenuItem.Enabled = SelectedComponent != null;
             
         //clear old selections
-        foreach (PipelineComponentVisualisation componentVisualisation in flpPipelineDiagram.Controls.OfType<PipelineComponentVisualisation>())
+        foreach (var componentVisualisation in flpPipelineDiagram.Controls.OfType<PipelineComponentVisualisation>())
             componentVisualisation.IsSelected = false;
 
         ((PipelineComponentVisualisation) sender).IsSelected = true;
@@ -316,13 +316,14 @@ public partial class PipelineDiagramUI : UserControl
         }
         catch (Exception e)
         {
-            ExceptionViewer.Show("PreInitialize failed on Explicit (locked component) " + component.Value.GetType().Name ,e);
+            ExceptionViewer.Show(
+                $"PreInitialize failed on Explicit (locked component) {component.Value.GetType().Name}",e);
         }
     }
         
     private void AddBlankComponent(PipelineComponentRole role)
     {
-        DataFlowComponentVisualisation toAdd = new DataFlowComponentVisualisation(role, null, component_shouldAllowDrop);
+        var toAdd = new DataFlowComponentVisualisation(role, null, component_shouldAllowDrop);
         toAdd.DragDrop += component_DragDrop;
         flpPipelineDiagram.Controls.Add(toAdd);
     }
@@ -414,7 +415,7 @@ public partial class PipelineDiagramUI : UserControl
             return;
         }
 
-        Type underlyingComponentType = advert.GetComponentType();
+        var underlyingComponentType = advert.GetComponentType();
 
         //add the component to the pipeline
         var repository = (ICatalogueRepository)_pipeline.Repository;
@@ -451,11 +452,11 @@ public partial class PipelineDiagramUI : UserControl
 
     private int GetOrderMakingSpaceIfNessesary(PipelineComponentVisualisation beingReorderedIfAny, DividerLineControl divider)
     {
-        int newOrder = 0;
-        int toReturn = 0;
+        var newOrder = 0;
+        var toReturn = 0;
 
         //for each component in the diagram
-        for (int i = 0; i < flpPipelineDiagram.Controls.Count; i++)
+        for (var i = 0; i < flpPipelineDiagram.Controls.Count; i++)
         {
             var controlAtIndex = flpPipelineDiagram.Controls[i];
             var pipelineComponentVisAtIndex = flpPipelineDiagram.Controls[i] as PipelineComponentVisualisation;
@@ -487,7 +488,7 @@ public partial class PipelineDiagramUI : UserControl
 
     private AdvertisedPipelineComponentTypeUnderContext GetAdvertisedObjectFromDragOperation(DragEventArgs e)
     {
-        OLVDataObject dataObject = e.Data as OLVDataObject;
+        var dataObject = e.Data as OLVDataObject;
         if (dataObject != null)
         {
             if (dataObject.ModelObjects.Count == 1 &&

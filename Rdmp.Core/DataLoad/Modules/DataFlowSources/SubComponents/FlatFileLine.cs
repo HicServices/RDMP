@@ -54,10 +54,7 @@ public class FlatFileLine
         ReadingContext = bad.Context;
     }
 
-    public string this[int i]
-    {
-        get { return Cells[i]; }
-    }
+    public string this[int i] => Cells[i];
 
     public string GetLineDescription()
     {

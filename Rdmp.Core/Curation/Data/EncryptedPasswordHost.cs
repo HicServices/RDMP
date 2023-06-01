@@ -83,10 +83,7 @@ public class EncryptedPasswordHost : IEncryptedPasswordHost
 
             return _encryptedString.Value;
         }
-        set
-        {
-            _encryptedString.Value = value;
-        }
+        set => _encryptedString.Value = value;
     }
 
     /// <inheritdoc/>

@@ -40,35 +40,35 @@ public class ReleaseIdentifierSubstitution :SpontaneousObject, IColumn
     public string Alias { get; private set; }
         
     //all these are hard coded to null or false really
-    public ColumnInfo ColumnInfo
-    {
-        get { return OriginalDatasetColumn.ColumnInfo; }
-    }
+    public ColumnInfo ColumnInfo => OriginalDatasetColumn.ColumnInfo;
+
     public int Order
     {
-        get { return OriginalDatasetColumn.Order; }
+        get => OriginalDatasetColumn.Order;
         set { }
     }
-    public bool HashOnDataRelease { get { return false; } }
-    public bool IsExtractionIdentifier { get { return OriginalDatasetColumn.IsExtractionIdentifier; } }
-    public bool IsPrimaryKey { get { return OriginalDatasetColumn.IsPrimaryKey; } }
+    public bool HashOnDataRelease => false;
+    public bool IsExtractionIdentifier => OriginalDatasetColumn.IsExtractionIdentifier;
+    public bool IsPrimaryKey => OriginalDatasetColumn.IsPrimaryKey;
 
     public ReleaseIdentifierSubstitution(MemoryRepository repo,IColumn extractionIdentifierToSubFor, IExtractableCohort extractableCohort, bool isPartOfMultiCHISubstitution,IQuerySyntaxHelper querySyntaxHelper):base(repo)
     {
         if(!extractionIdentifierToSubFor.IsExtractionIdentifier)
-            throw new Exception("Column " + extractionIdentifierToSubFor + " is not marked IsExtractionIdentifier so cannot be substituted for a ReleaseIdentifier");
+            throw new Exception(
+                $"Column {extractionIdentifierToSubFor} is not marked IsExtractionIdentifier so cannot be substituted for a ReleaseIdentifier");
             
         OriginalDatasetColumn = extractionIdentifierToSubFor;
         this._querySyntaxHelper = querySyntaxHelper;
         if (OriginalDatasetColumn.ColumnInfo == null)
-            throw new Exception("The column " + OriginalDatasetColumn.GetRuntimeName() + " references a ColumnInfo that has been deleted");
+            throw new Exception(
+                $"The column {OriginalDatasetColumn.GetRuntimeName()} references a ColumnInfo that has been deleted");
 
         var syntaxHelper = extractableCohort.GetQuerySyntaxHelper();
 
         //the externally referenced Cohort table
         var privateCol = extractableCohort.ExternalCohortTable.DiscoverPrivateIdentifier();
 
-        string collateStatement = "";
+        var collateStatement = "";
             
         //the release identifier join might require collation
 
@@ -82,7 +82,7 @@ public class ReleaseIdentifierSubstitution :SpontaneousObject, IColumn
             //only collate if the server types match and if the collations differ
             if(privateCol.Table.Database.Server.DatabaseType == OriginalDatasetColumn.ColumnInfo.TableInfo.DatabaseType)
                 if (!string.IsNullOrWhiteSpace(otherTableCollation) && !string.Equals(cohortCollation, otherTableCollation))
-                    collateStatement = " collate " + cohortCollation;
+                    collateStatement = $" collate {cohortCollation}";
         }
 
 
@@ -93,15 +93,13 @@ public class ReleaseIdentifierSubstitution :SpontaneousObject, IColumn
         }
         else
         {
-            SelectSQL = "(SELECT DISTINCT " +
-                        extractableCohort.GetReleaseIdentifier() + 
-                        " FROM " +
-                        privateCol.Table.GetFullyQualifiedName() + " WHERE " + extractableCohort.WhereSQL() + " AND " + privateCol.GetFullyQualifiedName() + "=" + OriginalDatasetColumn.SelectSQL + collateStatement +")";
+            SelectSQL =
+                $"(SELECT DISTINCT {extractableCohort.GetReleaseIdentifier()} FROM {privateCol.Table.GetFullyQualifiedName()} WHERE {extractableCohort.WhereSQL()} AND {privateCol.GetFullyQualifiedName()}={OriginalDatasetColumn.SelectSQL}{collateStatement})";
                 
             if(!string.IsNullOrWhiteSpace(OriginalDatasetColumn.Alias))
             {
-                string toReplace = extractableCohort.GetPrivateIdentifier(true);
-                string toReplaceWith = extractableCohort.GetReleaseIdentifier(true);
+                var toReplace = extractableCohort.GetPrivateIdentifier(true);
+                var toReplaceWith = extractableCohort.GetReleaseIdentifier(true);
 
                 //take the same name as the underlying column
                 Alias = OriginalDatasetColumn.Alias;
@@ -116,10 +114,11 @@ public class ReleaseIdentifierSubstitution :SpontaneousObject, IColumn
                 Alias = Alias.Replace(toReplace,toReplaceWith);
             }
             else
-                throw new Exception("In cases where you have multiple columns marked IsExtractionIdentifier, they must all have Aliases, the column " + OriginalDatasetColumn.SelectSQL + " does not have one");
+                throw new Exception(
+                    $"In cases where you have multiple columns marked IsExtractionIdentifier, they must all have Aliases, the column {OriginalDatasetColumn.SelectSQL} does not have one");
         }
 
-        JoinSQL = OriginalDatasetColumn.SelectSQL + "=" + privateCol.GetFullyQualifiedName() + collateStatement;
+        JoinSQL = $"{OriginalDatasetColumn.SelectSQL}={privateCol.GetFullyQualifiedName()}{collateStatement}";
 
     }
 

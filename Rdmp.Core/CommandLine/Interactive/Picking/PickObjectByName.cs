@@ -50,17 +50,17 @@ NamePattern2+: (optional) only allowed if you are being prompted for multiple ob
 
     public override CommandLineObjectPickerArgumentValue Parse(string arg, int idx)
     {
-        if (IsDatabaseObjectType(arg, out Type t))
+        if (IsDatabaseObjectType(arg, out var t))
         {
             return new CommandLineObjectPickerArgumentValue(arg,idx,GetAllObjects(t).ToArray());
         }
 
         var objByToString = MatchOrThrow(arg, idx);
             
-        string objectType = objByToString.Groups[1].Value;
-        string objectToString = objByToString.Groups[2].Value;
+        var objectType = objByToString.Groups[1].Value;
+        var objectToString = objByToString.Groups[2].Value;
 
-        Type dbObjectType = ParseDatabaseEntityType(objectType, arg, idx);
+        var dbObjectType = ParseDatabaseEntityType(objectType, arg, idx);
             
         var objs = objectToString.Split(',').SelectMany(str=>GetObjectByToString(dbObjectType,str)).Distinct();
         return new CommandLineObjectPickerArgumentValue(arg,idx,objs.Cast<IMapsDirectlyToDatabaseTable>().ToArray());

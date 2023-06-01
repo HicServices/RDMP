@@ -37,7 +37,7 @@ public class ExecuteCommandImportShareDefinitionList : BasicCommandExecution, IA
         {
             try
             {
-                ShareManager shareManager = new ShareManager(BasicActivator.RepositoryLocator);
+                var shareManager = new ShareManager(BasicActivator.RepositoryLocator);
                 shareManager.LocalReferenceGetter = LocalReferenceGetter;
 
                 foreach (var f in selected)
@@ -60,10 +60,8 @@ public class ExecuteCommandImportShareDefinitionList : BasicCommandExecution, IA
 
     private int? LocalReferenceGetter(PropertyInfo property, RelationshipAttribute relationshipAttribute, ShareDefinition shareDefinition)
     {
-        BasicActivator.Show("Choose a local object for '" + property + "' on " + Environment.NewLine
-                            +
-                            string.Join(Environment.NewLine,
-                                shareDefinition.Properties.Select(kvp => kvp.Key + ": " + kvp.Value)));
+        BasicActivator.Show(
+            $"Choose a local object for '{property}' on {Environment.NewLine}{string.Join(Environment.NewLine, shareDefinition.Properties.Select(kvp => $"{kvp.Key}: {kvp.Value}"))}");
 
         var requiredType = relationshipAttribute.Cref;
 

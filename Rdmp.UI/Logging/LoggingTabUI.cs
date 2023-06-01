@@ -107,9 +107,9 @@ public class LoggingTabUI : LoggingTab_Design
         {
             var menu = new ContextMenuStrip();
 
-            foreach (BasicCommandExecution cmd in GetCommands(e.RowIndex))
+            foreach (var cmd in GetCommands(e.RowIndex))
             {
-                BasicCommandExecution cmd1 = cmd;
+                var cmd1 = cmd;
                 var mi = new ToolStripMenuItem(cmd.GetCommandName(), null, (s, x) => cmd1.Execute());
                 menu.Items.Add(mi);
             }
@@ -163,11 +163,11 @@ public class LoggingTabUI : LoggingTab_Design
 
     private void AddFreeTextSearchColumn(DataTable dt)
     {
-        DataColumn dcRowString = dt.Columns.Add("_RowString", typeof(string));
+        var dcRowString = dt.Columns.Add("_RowString", typeof(string));
         foreach (DataRow dataRow in dt.Rows)
         {
-            StringBuilder sb = new StringBuilder();
-            for (int i = 0; i < dt.Columns.Count - 1; i++)
+            var sb = new StringBuilder();
+            for (var i = 0; i < dt.Columns.Count - 1; i++)
             {
                 sb.Append(dataRow[i]);
                 sb.Append("\t");
@@ -178,7 +178,7 @@ public class LoggingTabUI : LoggingTab_Design
     #region InitializeComponent
     private void InitializeComponent()
     {
-        System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(LoggingTabUI));
+        var resources = new System.ComponentModel.ComponentResourceManager(typeof(LoggingTabUI));
         this.dataGridView1 = new System.Windows.Forms.DataGridView();
         dataGridView1.ColumnAdded += (s, e) => e.Column.FillWeight = 1;
 
@@ -358,9 +358,9 @@ public class LoggingTabUI : LoggingTab_Design
         CommonFunctionality.AddToMenu(new ExecuteCommandViewLogs(activator, new LogViewerFilter(LoggingTables.ProgressLog)) { OverrideCommandName = "All Progress Logs" });
 
 
-        if (!databaseObject.DiscoverExistence(DataAccessContext.Logging, out string reason))
+        if (!databaseObject.DiscoverExistence(DataAccessContext.Logging, out var reason))
         {
-            activator.KillForm(ParentForm, "Database " + databaseObject + " did not exist:" + reason);
+            activator.KillForm(ParentForm, $"Database {databaseObject} did not exist:{reason}");
             return;
         }
 

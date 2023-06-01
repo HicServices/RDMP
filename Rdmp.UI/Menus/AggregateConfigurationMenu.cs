@@ -58,7 +58,7 @@ class AggregateConfigurationMenu :RDMPContextMenuStrip
                 matchRecords.Enabled = graphsAvailableInCatalogue.Any();
                 matchIdentifiers.Enabled = graphsAvailableInCatalogue.Any() && cic.QueryCachingServer_ID != null;
 
-                foreach (AggregateConfiguration graph in graphsAvailableInCatalogue)
+                foreach (var graph in graphsAvailableInCatalogue)
                 {
                     //records in
                     Add(new ExecuteCommandViewCohortAggregateGraph(_activator,new CohortSummaryAggregateGraphObjectCollection(aggregate, graph, CohortSummaryAdjustment.WhereRecordsIn)),

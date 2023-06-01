@@ -26,7 +26,7 @@ public abstract class DataLoadComponent : IDataLoadComponent
     {
         if (!SkipComponent) return false;
 
-        job.OnNotify(this, new NotifyEventArgs(ProgressEventType.Warning, "Skipped load component: " + Description));
+        job.OnNotify(this, new NotifyEventArgs(ProgressEventType.Warning, $"Skipped load component: {Description}"));
         return true;
     }
 

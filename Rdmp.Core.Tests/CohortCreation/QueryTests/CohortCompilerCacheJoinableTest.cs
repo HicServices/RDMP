@@ -31,7 +31,7 @@ class CohortCompilerCacheJoinableTest:FromToDatabaseTests
     [Test]
     public void CohortIdentificationConfiguration_Join_PatientIndexTable()
     {
-        DataTable header = new DataTable();
+        var header = new DataTable();
         header.Columns.Add("ID");
         header.Columns.Add("Chi");
         header.Columns.Add("Age");
@@ -53,7 +53,7 @@ class CohortCompilerCacheJoinableTest:FromToDatabaseTests
         var edsCache = new ExternalDatabaseServer(CatalogueRepository,"Cache", new QueryCachingPatcher());
         edsCache.SetProperties(To);
 
-        DataTable results = new DataTable();
+        var results = new DataTable();
         results.Columns.Add("Header_ID");
         results.Columns.Add("TestCode");
         results.Columns.Add("Result");
@@ -66,7 +66,7 @@ class CohortCompilerCacheJoinableTest:FromToDatabaseTests
         var rTbl = From.CreateTable("results", results);
             
         var importer = new TableInfoImporter(CatalogueRepository,rTbl);
-        importer.DoImport(out var rTi,out ColumnInfo[] rColInfos);
+        importer.DoImport(out var rTi,out var rColInfos);
 
         var fe = new ForwardEngineerCatalogue(rTi,rColInfos);
         fe.ExecuteForwardEngineering(cata);

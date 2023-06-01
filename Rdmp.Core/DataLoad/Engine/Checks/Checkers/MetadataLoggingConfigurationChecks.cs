@@ -40,11 +40,11 @@ class MetadataLoggingConfigurationChecks : ICheckable
 
             if(catalogues.Length == 1)
             {
-                proposedName = "Loading '" + catalogues[0] + "'";
+                proposedName = $"Loading '{catalogues[0]}'";
                 fix = notifier.OnCheckPerformed(
                     new CheckEventArgs(
-                        "Catalogue " + catalogues[0] + " does not have a logging task specified",
-                        CheckResult.Fail, null, "Create a new Logging Task called '" + proposedName + "'?"));
+                        $"Catalogue {catalogues[0]} does not have a logging task specified",
+                        CheckResult.Fail, null, $"Create a new Logging Task called '{proposedName}'?"));
             }
             else
             {
@@ -53,8 +53,8 @@ class MetadataLoggingConfigurationChecks : ICheckable
                 fix =
                     notifier.OnCheckPerformed(
                         new CheckEventArgs(
-                            "Catalogues " + string.Join(",",catalogues.Select(c=>c.Name)) + " do not have a logging task specified",
-                            CheckResult.Fail, null, "Create a new Logging Task called '" + proposedName + "'?"));
+                            $"Catalogues {string.Join(",", catalogues.Select(c => c.Name))} do not have a logging task specified",
+                            CheckResult.Fail, null, $"Create a new Logging Task called '{proposedName}'?"));
                     
             }
 
@@ -130,7 +130,8 @@ class MetadataLoggingConfigurationChecks : ICheckable
         try
         {
             distinctLoggingTask = _loadMetadata.GetDistinctLoggingTask();
-            notifier.OnCheckPerformed(new CheckEventArgs("All Catalogues agreed on a single Logging Task:" + distinctLoggingTask, CheckResult.Success, null));
+            notifier.OnCheckPerformed(new CheckEventArgs(
+                $"All Catalogues agreed on a single Logging Task:{distinctLoggingTask}", CheckResult.Success, null));
         }
         catch (Exception e)
         {
@@ -147,14 +148,17 @@ class MetadataLoggingConfigurationChecks : ICheckable
 
             if(distinctLoggingTask != null)
             {
-                LogManager lm = new LogManager(settings);
-                string[] dataTasks = lm.ListDataTasks();
+                var lm = new LogManager(settings);
+                var dataTasks = lm.ListDataTasks();
 
                 if (dataTasks.Contains(distinctLoggingTask))
-                    notifier.OnCheckPerformed(new CheckEventArgs("Found Logging Task " + distinctLoggingTask + " in Logging database",CheckResult.Success, null));
+                    notifier.OnCheckPerformed(new CheckEventArgs(
+                        $"Found Logging Task {distinctLoggingTask} in Logging database",CheckResult.Success, null));
                 else
                 {
-                    var fix = notifier.OnCheckPerformed(new CheckEventArgs("Could not find Logging Task " + distinctLoggingTask + " in Logging database", CheckResult.Fail, null, "Create Logging Task '" + distinctLoggingTask +"'"));
+                    var fix = notifier.OnCheckPerformed(new CheckEventArgs(
+                        $"Could not find Logging Task {distinctLoggingTask} in Logging database", CheckResult.Fail, null,
+                        $"Create Logging Task '{distinctLoggingTask}'"));
                     if(fix)
                         lm.CreateNewLoggingTaskIfNotExists(distinctLoggingTask);
                 }
@@ -195,9 +199,9 @@ class MetadataLoggingConfigurationChecks : ICheckable
 
         var logManager = new LogManager(loggingServer);
         logManager.CreateNewLoggingTaskIfNotExists(proposedName);
-        notifier.OnCheckPerformed(new CheckEventArgs("Created Logging Task '" + proposedName + "'",CheckResult.Success));
+        notifier.OnCheckPerformed(new CheckEventArgs($"Created Logging Task '{proposedName}'",CheckResult.Success));
 
-        foreach (Catalogue catalogue in catalogues.Cast<Catalogue>())
+        foreach (var catalogue in catalogues.Cast<Catalogue>())
         {
             catalogue.LiveLoggingServer_ID = loggingServer.ID;
             catalogue.LoggingDataTask = proposedName;

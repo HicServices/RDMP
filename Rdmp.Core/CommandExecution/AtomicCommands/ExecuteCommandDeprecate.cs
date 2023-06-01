@@ -67,7 +67,7 @@ public class ExecuteCommandDeprecate : BasicCommandExecution
     private string GetDescription()
     {
         var verb = _desiredState ? "Deprecate" : "UnDeprecate";
-        var noun = _o.Length == 1 ? _o[0].ToString() : _o.Length + " objects";
+        var noun = _o.Length == 1 ? _o[0].ToString() : $"{_o.Length} objects";
 
         return $"{verb} {noun}";
     }

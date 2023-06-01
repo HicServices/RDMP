@@ -32,29 +32,29 @@ public class PermissionWindow : DatabaseEntity, IPermissionWindow
     [Unique]
     public string Name
     {
-        get { return _name; }
-        set { SetField(ref  _name, value); }
+        get => _name;
+        set => SetField(ref  _name, value);
     }
 
     /// <inheritdoc/>
     public string Description
     {
-        get { return _description; }
-        set { SetField(ref  _description, value); }
+        get => _description;
+        set => SetField(ref  _description, value);
     }
 
     /// <inheritdoc/>
     public bool RequiresSynchronousAccess
     {
-        get { return _requiresSynchronousAccess; }
-        set { SetField(ref  _requiresSynchronousAccess, value); }
+        get => _requiresSynchronousAccess;
+        set => SetField(ref  _requiresSynchronousAccess, value);
     }
         
     /// <summary>
     /// The serialized string of <see cref="PermissionWindowPeriods"/> which is written/read from the catalogue database
     /// </summary>
     public string PermissionPeriodConfig {
-        get { return SerializePermissionWindowPeriods(); }
+        get => SerializePermissionWindowPeriods();
         set
         {
             var old = SerializePermissionWindowPeriods();
@@ -69,9 +69,8 @@ public class PermissionWindow : DatabaseEntity, IPermissionWindow
 
     /// <inheritdoc/>
     [NoMappingToDatabase]
-    public IEnumerable<ICacheProgress> CacheProgresses {
-        get { return Repository.GetAllObjectsWithParent<CacheProgress>(this); }
-    }
+    public IEnumerable<ICacheProgress> CacheProgresses => Repository.GetAllObjectsWithParent<CacheProgress>(this);
+
     #endregion
 
     /// <inheritdoc/>
@@ -125,7 +124,7 @@ public class PermissionWindow : DatabaseEntity, IPermissionWindow
         repository.InsertAndHydrate(this,new Dictionary<string, object>
         {
             {"PermissionPeriodConfig", DBNull.Value},
-            {"Name","New PermissionWindow" + Guid.NewGuid()}
+            {"Name", $"New PermissionWindow{Guid.NewGuid()}" }
         });
     }
 
@@ -141,7 +140,7 @@ public class PermissionWindow : DatabaseEntity, IPermissionWindow
     /// <inheritdoc/>
     public override string ToString()
     {
-        return (string.IsNullOrWhiteSpace(Name) ? "Unnamed" : Name) + "(ID = " + ID + ")";
+        return $"{(string.IsNullOrWhiteSpace(Name) ? "Unnamed" : Name)}(ID = {ID})";
     }
         
     /// <inheritdoc/>

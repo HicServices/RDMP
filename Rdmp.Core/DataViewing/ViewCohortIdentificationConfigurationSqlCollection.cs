@@ -77,20 +77,14 @@ class ViewCohortIdentificationConfigurationSqlCollection : PersistableObjectColl
 
     public string GetTabName()
     {
-        return "View " + CohortIdentificationConfiguration;
+        return $"View {CohortIdentificationConfiguration}";
     }
 
     public void AdjustAutocomplete(IAutoCompleteProvider autoComplete)
     {
     }
 
-    CohortIdentificationConfiguration CohortIdentificationConfiguration
-    {
-        get
-        {
-            return DatabaseObjects.OfType<CohortIdentificationConfiguration>().SingleOrDefault();
-        }
-    }
+    CohortIdentificationConfiguration CohortIdentificationConfiguration => DatabaseObjects.OfType<CohortIdentificationConfiguration>().SingleOrDefault();
 
     public IQuerySyntaxHelper GetQuerySyntaxHelper()
     {

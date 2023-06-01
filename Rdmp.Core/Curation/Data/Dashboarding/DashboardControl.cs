@@ -36,8 +36,8 @@ public class DashboardControl:DatabaseEntity
     /// </summary>
     public int DashboardLayout_ID
     {
-        get { return _dashboardLayout_ID; }
-        set { SetField(ref _dashboardLayout_ID, value); }
+        get => _dashboardLayout_ID;
+        set => SetField(ref _dashboardLayout_ID, value);
     }
 
     /// <summary>
@@ -45,8 +45,8 @@ public class DashboardControl:DatabaseEntity
     /// </summary>
     public int X
     {
-        get { return _x; }
-        set { SetField(ref _x, value); }
+        get => _x;
+        set => SetField(ref _x, value);
     }
 
     /// <summary>
@@ -54,8 +54,8 @@ public class DashboardControl:DatabaseEntity
     /// </summary>
     public int Y
     {
-        get { return _y; }
-        set { SetField(ref _y, value); }
+        get => _y;
+        set => SetField(ref _y, value);
     }
 
     /// <summary>
@@ -63,8 +63,8 @@ public class DashboardControl:DatabaseEntity
     /// </summary>
     public int Width
     {
-        get { return _width; }
-        set { SetField(ref _width, value); }
+        get => _width;
+        set => SetField(ref _width, value);
     }
 
     /// <summary>
@@ -72,8 +72,8 @@ public class DashboardControl:DatabaseEntity
     /// </summary>
     public int Height
     {
-        get { return _height; }
-        set { SetField(ref _height, value); }
+        get => _height;
+        set => SetField(ref _height, value);
     }
 
     /// <summary>
@@ -81,8 +81,8 @@ public class DashboardControl:DatabaseEntity
     /// </summary>
     public string ControlType
     {
-        get { return _controlType; }
-        set { SetField(ref _controlType, value); }
+        get => _controlType;
+        set => SetField(ref _controlType, value);
     }
 
     /// <summary>
@@ -90,8 +90,8 @@ public class DashboardControl:DatabaseEntity
     /// </summary>
     public string PersistenceString
     {
-        get { return _persistenceString; }
-        set { SetField(ref _persistenceString, value); }
+        get => _persistenceString;
+        set => SetField(ref _persistenceString, value);
     }
 
     #endregion
@@ -103,11 +103,12 @@ public class DashboardControl:DatabaseEntity
     /// are missing column descriptions then this will return the <see cref="ICatalogue"/> which represents that dataset
     /// </summary>
     [NoMappingToDatabase]
-    public DashboardObjectUse[] ObjectsUsed{ get { return Repository.GetAllObjectsWithParent<DashboardObjectUse>(this); }}
+    public DashboardObjectUse[] ObjectsUsed => Repository.GetAllObjectsWithParent<DashboardObjectUse>(this);
 
     /// <inheritdoc cref="DashboardLayout_ID"/>
     [NoMappingToDatabase]
-    public DashboardLayout ParentLayout { get { return Repository.GetObjectByID<DashboardLayout>(DashboardLayout_ID); } }
+    public DashboardLayout ParentLayout => Repository.GetObjectByID<DashboardLayout>(DashboardLayout_ID);
+
     #endregion
 
     public DashboardControl()
@@ -158,7 +159,7 @@ public class DashboardControl:DatabaseEntity
     /// <inheritdoc/>
     public override string ToString()
     {
-        return ControlType + "( " + ID + " )";
+        return $"{ControlType}( {ID} )";
     }
 
     /// <summary>
@@ -175,7 +176,7 @@ public class DashboardControl:DatabaseEntity
         foreach (var o in ObjectsUsed)
             o.DeleteInDatabase();
 
-        foreach (IMapsDirectlyToDatabaseTable objectToSave in collection.DatabaseObjects)
+        foreach (var objectToSave in collection.DatabaseObjects)
             new DashboardObjectUse((ICatalogueRepository) Repository, this, objectToSave);
     }
 }

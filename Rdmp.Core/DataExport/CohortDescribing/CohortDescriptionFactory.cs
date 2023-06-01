@@ -45,7 +45,7 @@ public class CohortDescriptionFactory
     {
         var toReturn = new Dictionary<CohortDescriptionDataTableAsyncFetch,ExtractableCohortDescription[]>();
 
-        foreach (ExternalCohortTable source in _sources)
+        foreach (var source in _sources)
         {
             //setup the async data retreival which can take a long time if there are a lot of cohorts or millions of identifiers
             var asyncFetch = new CohortDescriptionDataTableAsyncFetch(source);

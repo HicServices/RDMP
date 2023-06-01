@@ -33,7 +33,7 @@ public class FixedStagingDatabaseNamer : SuffixBasedNamer
     public override string GetName(string tableName, LoadBubble convention)
     {
         if (convention == LoadBubble.Staging)
-            return _databaseName + "_" + tableName + Suffixes[convention];
+            return $"{_databaseName}_{tableName}{Suffixes[convention]}";
 
         return base.GetName(tableName, convention);
     }
@@ -57,13 +57,14 @@ public class FixedStagingDatabaseNamer : SuffixBasedNamer
         if (s == null)
             return null;
 
-        string toReturn = s.Trim(new char[] { '[', ']', '`' ,'"'});
+        var toReturn = s.Trim(new char[] { '[', ']', '`' ,'"'});
 
         if (
             toReturn.Contains("[") ||
             toReturn.Contains("]") ||
             toReturn.Contains("'"))
-            throw new Exception("Attempted to strip wrapping from " + s + " but result was " + toReturn + " which contains invalid characters like [ and ], possibly original string was a multipart identifier? e.g. [MyTable].dbo.[Bob]?");
+            throw new Exception(
+                $"Attempted to strip wrapping from {s} but result was {toReturn} which contains invalid characters like [ and ], possibly original string was a multipart identifier? e.g. [MyTable].dbo.[Bob]?");
 
         return toReturn;
     }

@@ -38,10 +38,10 @@ public class FilterSyntaxChecker : SyntaxChecker
         }
         catch (SyntaxErrorException exception)
         {
-            throw new SyntaxErrorException("Failed to validate the bracket parity of filter " + _filter, exception);
+            throw new SyntaxErrorException($"Failed to validate the bracket parity of filter {_filter}", exception);
         }
 
-        foreach (ISqlParameter parameter in _filter.GetAllParameters())
+        foreach (var parameter in _filter.GetAllParameters())
             CheckSyntax(parameter);
     }
 }

@@ -159,7 +159,7 @@ public class CatalogueRepository : TableRepository, ICatalogueRepository
         var type = parent.GetType();
 
         if (!AnyTableSqlParameter.IsSupportedType(type))
-            throw new NotSupportedException("This table does not support parents of type " + type.Name);
+            throw new NotSupportedException($"This table does not support parents of type {type.Name}");
 
         return GetReferencesTo<AnyTableSqlParameter>(parent);
     }
@@ -175,7 +175,8 @@ public class CatalogueRepository : TableRepository, ICatalogueRepository
         if (configuration.Length == 1)
             return configuration[0];
 
-        throw new NotSupportedException("There should only ever be one active ticketing system, something has gone very wrong, there are currently " + configuration.Length);
+        throw new NotSupportedException(
+            $"There should only ever be one active ticketing system, something has gone very wrong, there are currently {configuration.Length}");
     }
         
     protected override IMapsDirectlyToDatabaseTable ConstructEntity(Type t, DbDataReader reader)
@@ -221,7 +222,7 @@ public class CatalogueRepository : TableRepository, ICatalogueRepository
     {
         using (var con = GetConnection())
         {
-            using (DbCommand cmd = DatabaseCommandHelper.GetCommand(
+            using (var cmd = DatabaseCommandHelper.GetCommand(
                        @"if exists (select 1 from Lookup join ColumnInfo on Lookup.Description_ID = ColumnInfo.ID where TableInfo_ID = @tableInfoID)
 select 1
 else
@@ -305,17 +306,18 @@ select 0", con.Connection, con.Transaction))
         if (toChange == PermissableDefaults.None)
             throw new ArgumentException("toChange cannot be None", "toChange");
 
-        string sql =
+        var sql =
             "UPDATE ServerDefaults set ExternalDatabaseServer_ID  = @ExternalDatabaseServer_ID where DefaultType=@DefaultType";
 
-        int affectedRows = Update(sql, new Dictionary<string, object>()
+        var affectedRows = Update(sql, new Dictionary<string, object>()
         {
             {"DefaultType",ServerDefaults.StringExpansionDictionary[toChange]},
             {"ExternalDatabaseServer_ID",externalDatabaseServer.ID}
         });
 
         if (affectedRows != 1)
-            throw new Exception("We were asked to update default for " + toChange + " but the query '" + sql + "' did not result in 1 affected rows (it resulted in " + affectedRows + ")");
+            throw new Exception(
+                $"We were asked to update default for {toChange} but the query '{sql}' did not result in 1 affected rows (it resulted in {affectedRows})");
     }
 
     private void InsertNewValue(PermissableDefaults toChange, IExternalDatabaseServer externalDatabaseServer)
@@ -360,7 +362,7 @@ select 0", con.Connection, con.Transaction))
     {
         using var con = GetConnection();
         //Table can only ever have 1 record
-        using DbCommand cmd = DatabaseCommandHelper.GetCommand("DELETE FROM PasswordEncryptionKeyLocation",
+        using var cmd = DatabaseCommandHelper.GetCommand("DELETE FROM PasswordEncryptionKeyLocation",
             con.Connection, con.Transaction);
         var affectedRows = cmd.ExecuteNonQuery();
         if (affectedRows != 1)

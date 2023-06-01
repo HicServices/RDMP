@@ -42,10 +42,12 @@ public class StagingToLiveMigrationFieldProcessor : IMigrationFieldProcessor
             return;
 
         if (!destinationFields.Any(f => f.GetRuntimeName().Equals(SpecialFieldNames.DataLoadRunID, StringComparison.CurrentCultureIgnoreCase)))
-            throw new MissingFieldException("Destination (Live) database table is missing field:" + SpecialFieldNames.DataLoadRunID);
+            throw new MissingFieldException(
+                $"Destination (Live) database table is missing field:{SpecialFieldNames.DataLoadRunID}");
 
         if (!destinationFields.Any(f=>f.GetRuntimeName().Equals(SpecialFieldNames.ValidFrom,StringComparison.CurrentCultureIgnoreCase)))
-            throw new MissingFieldException("Destination (Live) database table is missing field:" + SpecialFieldNames.ValidFrom);
+            throw new MissingFieldException(
+                $"Destination (Live) database table is missing field:{SpecialFieldNames.ValidFrom}");
     }
 
     public void AssignFieldsForProcessing(DiscoveredColumn field, List<DiscoveredColumn> fieldsToDiff, List<DiscoveredColumn> fieldsToUpdate)
@@ -78,7 +80,7 @@ public class StagingToLiveMigrationFieldProcessor : IMigrationFieldProcessor
         // TODO: if a load targets 2 tables with the same name in different databases and one has a column marked ignore it could be ignored in both during load.  Note that `field` parameter is the from column not the to column
             
         //its a column we were told to ignore
-        ColumnInfo match = _alsoIgnore.FirstOrDefault(c=>
+        var match = _alsoIgnore.FirstOrDefault(c=>
             c.GetRuntimeName().Equals(field.GetRuntimeName(),StringComparison.CurrentCultureIgnoreCase) &&
             c.TableInfo.GetRuntimeName().Equals(field.Table.GetRuntimeName(),StringComparison.CurrentCultureIgnoreCase)
         );
@@ -95,10 +97,11 @@ public class StagingToLiveMigrationFieldProcessor : IMigrationFieldProcessor
             return false;
 
         //its a global ignore based on regex ignore pattern?
-        bool match = _ignore.IsMatch(field.GetRuntimeName());
+        var match = _ignore.IsMatch(field.GetRuntimeName());
 
         if(match && field.IsPrimaryKey)
-            throw new NotSupportedException("Ignore Pattern " + _ignore + " matched Primary Key column '" + field.GetRuntimeName() + "' this is not permitted");
+            throw new NotSupportedException(
+                $"Ignore Pattern {_ignore} matched Primary Key column '{field.GetRuntimeName()}' this is not permitted");
 
         return match;
     }
@@ -109,10 +112,11 @@ public class StagingToLiveMigrationFieldProcessor : IMigrationFieldProcessor
             return false;
 
         //its a supplemental ignore e.g. MessageGuid
-        bool match = _updateButDoNotDiffExtended.IsMatch(field.GetRuntimeName());
+        var match = _updateButDoNotDiffExtended.IsMatch(field.GetRuntimeName());
 
         if(match && field.IsPrimaryKey)
-            throw new NotSupportedException("UpdateButDoNotDiff Pattern " + _updateButDoNotDiffExtended + " matched Primary Key column '" + field.GetRuntimeName() + "' this is not permitted");
+            throw new NotSupportedException(
+                $"UpdateButDoNotDiff Pattern {_updateButDoNotDiffExtended} matched Primary Key column '{field.GetRuntimeName()}' this is not permitted");
 
         return match;
     }

@@ -116,7 +116,7 @@ public class QueryTimeColumn: IComparable
     {
 
         ColumnInfo lastForeignKeyFound = null;
-        int lookupTablesFound = 0;
+        var lookupTablesFound = 0;
 
         var firstTable = tablesUsedInQuery.FirstOrDefault();
 
@@ -125,22 +125,24 @@ public class QueryTimeColumn: IComparable
         if(firstTable != null)
             allAvailableLookups = firstTable.Repository.GetAllObjects<Lookup>();
                 
-        for (int i = 0; i < ColumnsInOrder.Count(); i++)
+        for (var i = 0; i < ColumnsInOrder.Count(); i++)
         {
             //it is a custom column
             if (ColumnsInOrder[i].UnderlyingColumn == null)
                 continue;
 
-            Lookup[] foreignKeyLookupInvolvement = allAvailableLookups.Where(l=>l.ForeignKey_ID == ColumnsInOrder[i].UnderlyingColumn.ID).ToArray();
-            Lookup[] lookupDescriptionInvolvement = allAvailableLookups.Where(l=>l.Description_ID == ColumnsInOrder[i].UnderlyingColumn.ID).ToArray();
+            var foreignKeyLookupInvolvement = allAvailableLookups.Where(l=>l.ForeignKey_ID == ColumnsInOrder[i].UnderlyingColumn.ID).ToArray();
+            var lookupDescriptionInvolvement = allAvailableLookups.Where(l=>l.Description_ID == ColumnsInOrder[i].UnderlyingColumn.ID).ToArray();
 
             if (foreignKeyLookupInvolvement.Select(l => l.PrimaryKey.TableInfo_ID).Distinct().Count() > 1)
-                throw new Exception("Column " + ColumnsInOrder[i].UnderlyingColumn + " is configured as a foreign key for multiple different Lookup tables");
+                throw new Exception(
+                    $"Column {ColumnsInOrder[i].UnderlyingColumn} is configured as a foreign key for multiple different Lookup tables");
 
             if (foreignKeyLookupInvolvement.Length > 0)
             {
                 if (lookupDescriptionInvolvement.Length > 0)
-                    throw new QueryBuildingException("Column " + ColumnsInOrder[i].UnderlyingColumn + " is both a Lookup.ForeignKey and a Lookup.Description");
+                    throw new QueryBuildingException(
+                        $"Column {ColumnsInOrder[i].UnderlyingColumn} is both a Lookup.ForeignKey and a Lookup.Description");
 
 
                 lastForeignKeyFound = ColumnsInOrder[i].UnderlyingColumn;
@@ -152,7 +154,7 @@ public class QueryTimeColumn: IComparable
 
             if (lookupDescriptionInvolvement.Length > 0)
             {
-                bool lookupDescriptionIsIsolated = false;
+                var lookupDescriptionIsIsolated = false;
 
                 //we have not found any foreign keys yet thats a problem
                 if (lastForeignKeyFound == null)
@@ -168,10 +170,11 @@ public class QueryTimeColumn: IComparable
                     }
                     else
                         //otherwise there are multiple foreign keys for this description and the user has not put in a foreign key to let us choose the correct one
-                        throw new QueryBuildingException("Found lookup description before encountering any lookup foreign keys (Description column was " + ColumnsInOrder[i].UnderlyingColumn + ") - make sure you always order Descriptions after their Foreign key and ensure they are in a contiguous block");
+                        throw new QueryBuildingException(
+                            $"Found lookup description before encountering any lookup foreign keys (Description column was {ColumnsInOrder[i].UnderlyingColumn}) - make sure you always order Descriptions after their Foreign key and ensure they are in a contiguous block");
                 }
 
-                Lookup[] correctLookupDescriptionInvolvement = lookupDescriptionInvolvement.Where(lookup => lookup.ForeignKey.ID == lastForeignKeyFound.ID).ToArray();
+                var correctLookupDescriptionInvolvement = lookupDescriptionInvolvement.Where(lookup => lookup.ForeignKey.ID == lastForeignKeyFound.ID).ToArray();
 
                 if (correctLookupDescriptionInvolvement.Length == 0)
                 {
@@ -187,16 +190,18 @@ public class QueryTimeColumn: IComparable
                                     qtc.UnderlyingColumn != null && qtc.UnderlyingColumn.ID == l.ForeignKey_ID)).ToArray();
 
 
-                    string suggestions = "";
+                    var suggestions = "";
                     if (probableCorrectColumn.Any())
-                        suggestions = "Possible foreign keys include:" + string.Join(",", probableCorrectColumn.Select(l => l.ForeignKey));
+                        suggestions =
+                            $"Possible foreign keys include:{string.Join(",", probableCorrectColumn.Select(l => l.ForeignKey))}";
 
                     throw new QueryBuildingException(
-                        "Encountered Lookup Description Column (" + ColumnsInOrder[i].IColumn + ") after first encountering Foreign Key (" + lastForeignKeyFound + ").  Lookup description columns (_Desc) must come after the associated Foreign key." + suggestions );
+                        $"Encountered Lookup Description Column ({ColumnsInOrder[i].IColumn}) after first encountering Foreign Key ({lastForeignKeyFound}).  Lookup description columns (_Desc) must come after the associated Foreign key.{suggestions}");
                 }
 
                 if (correctLookupDescriptionInvolvement.Length > 1)
-                    throw new QueryBuildingException("Lookup description " + ColumnsInOrder[i].UnderlyingColumn + " appears to be configured as a Lookup Description twice with the same Lookup Table");
+                    throw new QueryBuildingException(
+                        $"Lookup description {ColumnsInOrder[i].UnderlyingColumn} appears to be configured as a Lookup Description twice with the same Lookup Table");
 
                 ColumnsInOrder[i].IsIsolatedLookupDescription = lookupDescriptionIsIsolated;
                 ColumnsInOrder[i].IsLookupForeignKey = false;
@@ -205,12 +210,13 @@ public class QueryTimeColumn: IComparable
                 ColumnsInOrder[i].LookupTable = correctLookupDescriptionInvolvement[0];
 
                 //see if there are any supplemental joins to tables that are not involved in the query
-                IEnumerable<ISupplementalJoin> supplementalJoins = correctLookupDescriptionInvolvement[0].GetSupplementalJoins();
+                var supplementalJoins = correctLookupDescriptionInvolvement[0].GetSupplementalJoins();
 
                 if (supplementalJoins != null)
-                    foreach (ISupplementalJoin supplementalJoin in supplementalJoins)
+                    foreach (var supplementalJoin in supplementalJoins)
                         if (!tablesUsedInQuery.Any(t => t.ID == supplementalJoin.ForeignKey.TableInfo_ID))
-                            throw new QueryBuildingException("Lookup requires supplemental join to column " + supplementalJoin.ForeignKey + " which is contained in a table that is not part of the SELECT column collection");
+                            throw new QueryBuildingException(
+                                $"Lookup requires supplemental join to column {supplementalJoin.ForeignKey} which is contained in a table that is not part of the SELECT column collection");
             }
         }
     }
@@ -225,13 +231,14 @@ public class QueryTimeColumn: IComparable
     /// <returns></returns>
     public string GetSelectSQL(string hashingPattern, string salt,IQuerySyntaxHelper syntaxHelper)
     {
-        string toReturn = this.IColumn.SelectSQL;
+        var toReturn = this.IColumn.SelectSQL;
 
         //deal with hashing
         if (string.IsNullOrWhiteSpace(salt) == false && this.IColumn.HashOnDataRelease)
         {
             if (string.IsNullOrWhiteSpace(this.IColumn.Alias))
-                throw new ArgumentException("IExtractableColumn " + this.IColumn + " is missing an Alias (required for hashing)");
+                throw new ArgumentException(
+                    $"IExtractableColumn {this.IColumn} is missing an Alias (required for hashing)");
 
             //if there is no custom hashing pattern
             if (string.IsNullOrWhiteSpace(hashingPattern))
@@ -256,10 +263,11 @@ public class QueryTimeColumn: IComparable
         //replace table name with table alias if it is a LookupDescription
         if (IsLookupDescription)
         {
-            string tableName = LookupTable.PrimaryKey.TableInfo.Name;
+            var tableName = LookupTable.PrimaryKey.TableInfo.Name;
 
             if (!toReturn.Contains(tableName))
-                throw new Exception("Column \"" + toReturn + "\" is a Lookup Description but its SELECT SQL does not include the Lookup table name \"" + tableName + "\"");
+                throw new Exception(
+                    $"Column \"{toReturn}\" is a Lookup Description but its SELECT SQL does not include the Lookup table name \"{tableName}\"");
 
             toReturn = toReturn.Replace(tableName, JoinHelper.GetLookupTableAlias(LookupTableAlias));
         }
@@ -278,7 +286,7 @@ public class QueryTimeColumn: IComparable
         try
         {
             IColumn.Check(new ThrowImmediatelyCheckNotifier());
-            string runtimeName = IColumn.GetRuntimeName();
+            var runtimeName = IColumn.GetRuntimeName();
 
             if (string.IsNullOrWhiteSpace(runtimeName))
                 throw new SyntaxErrorException("no runtime name");
@@ -286,7 +294,8 @@ public class QueryTimeColumn: IComparable
         }
         catch (SyntaxErrorException exception)
         {
-            throw new SyntaxErrorException("Syntax failure on IExtractableColumn with SelectSQL=\"" + IColumn.SelectSQL + "\"", exception);
+            throw new SyntaxErrorException(
+                $"Syntax failure on IExtractableColumn with SelectSQL=\"{IColumn.SelectSQL}\"", exception);
         }
     }
 

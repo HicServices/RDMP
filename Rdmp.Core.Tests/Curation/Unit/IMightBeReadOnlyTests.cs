@@ -33,7 +33,7 @@ class IMightBeReadOnlyTests : UnitTests
         Assert.IsFalse(c.ShouldBeReadOnly(out _));
 
         cic.Frozen = true;
-        Assert.IsTrue(c.ShouldBeReadOnly(out string reason));
+        Assert.IsTrue(c.ShouldBeReadOnly(out var reason));
             
         Assert.AreEqual("fff is Frozen",reason);
     }
@@ -50,7 +50,7 @@ class IMightBeReadOnlyTests : UnitTests
 
         ec.Name = "lll";
         ec.IsReleased = true;
-        Assert.IsTrue(c.ShouldBeReadOnly(out string reason));
+        Assert.IsTrue(c.ShouldBeReadOnly(out var reason));
             
         Assert.AreEqual("lll has already been released",reason);
     }
@@ -81,7 +81,7 @@ class IMightBeReadOnlyTests : UnitTests
         Assert.IsFalse(f.ShouldBeReadOnly(out _));
 
         cic.Frozen = true;
-        Assert.IsTrue(f.ShouldBeReadOnly(out string reason));
+        Assert.IsTrue(f.ShouldBeReadOnly(out var reason));
             
         Assert.AreEqual("fff is Frozen",reason);
     }
@@ -95,7 +95,7 @@ class IMightBeReadOnlyTests : UnitTests
         var ec = ((FilterContainer) f.FilterContainer).GetSelectedDataSetIfAny().ExtractionConfiguration;
         ec.Name = "lll";
         ec.IsReleased = true;
-        Assert.IsTrue(f.ShouldBeReadOnly(out string reason));
+        Assert.IsTrue(f.ShouldBeReadOnly(out var reason));
             
         Assert.AreEqual("lll has already been released",reason);
     }

@@ -85,11 +85,13 @@ public abstract class CacheFilesystemDestination : ICacheFileSystemDestination, 
                 sw.Close();
                 sw.Dispose();
                 File.Delete(tempFilename);
-                notifier.OnCheckPerformed(new CheckEventArgs("Confirmed could write to/delete from the overridden CacheDirectory: " + CacheDirectory.FullName, CheckResult.Success));
+                notifier.OnCheckPerformed(new CheckEventArgs(
+                    $"Confirmed could write to/delete from the overridden CacheDirectory: {CacheDirectory.FullName}", CheckResult.Success));
             }
             catch (Exception e)
             {
-                notifier.OnCheckPerformed(new CheckEventArgs("Could not write to the overridden CacheDirectory: " + CacheDirectory.FullName, CheckResult.Fail, e));
+                notifier.OnCheckPerformed(new CheckEventArgs(
+                    $"Could not write to the overridden CacheDirectory: {CacheDirectory.FullName}", CheckResult.Fail, e));
             }
         }
 

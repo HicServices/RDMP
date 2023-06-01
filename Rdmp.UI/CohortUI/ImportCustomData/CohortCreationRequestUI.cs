@@ -38,8 +38,8 @@ public partial class CohortCreationRequestUI : RDMPForm
         
     public string CohortDescription
     {
-        get { return tbDescription.Text; }
-        set { tbDescription.Text = value; }
+        get => tbDescription.Text;
+        set => tbDescription.Text = value;
     }
 
     public CohortCreationRequestUI(IActivateItems activator,IExternalCohortTable target, IProject project =null):base(activator)
@@ -80,8 +80,8 @@ public partial class CohortCreationRequestUI : RDMPForm
 
         if (Project.ProjectNumber == null)
         {
-            MessageBox.Show("Project " + Project +
-                            " does not have a project number yet, you must asign it one before it can be involved in cohort creation");
+            MessageBox.Show(
+                $"Project {Project} does not have a project number yet, you must asign it one before it can be involved in cohort creation");
             return;
         }
 
@@ -125,7 +125,7 @@ public partial class CohortCreationRequestUI : RDMPForm
         Result.NewCohortDefinition.CohortReplacedIfAny = ddExistingCohort.SelectedItem as ExtractableCohort;
             
         //see if it is passing checks
-        ToMemoryCheckNotifier notifier = new ToMemoryCheckNotifier();
+        var notifier = new ToMemoryCheckNotifier();
         Result.Check(notifier);
         if (notifier.GetWorst() <= CheckResult.Warning)
         {
@@ -137,9 +137,8 @@ public partial class CohortCreationRequestUI : RDMPForm
             var bads = notifier.Messages.Where(c => c.Result == CheckResult.Fail);
 
             WideMessageBox.Show("Checks Failed",
-                @"Checks must pass before continuing:
-- " + 
-                string.Join(Environment.NewLine + "- ",bads.Select(b=>b.Message)));
+                $@"Checks must pass before continuing:
+- {string.Join($"{Environment.NewLine}- ", bads.Select(b => b.Message))}");
 
             //if it is not passing checks display the results of the failing checking
             ragSmiley1.Reset();
@@ -225,19 +224,19 @@ public partial class CohortCreationRequestUI : RDMPForm
     {
         try
         {
-            ProjectUI.ProjectUI p = new ProjectUI.ProjectUI();
-            RDMPForm dialog = new RDMPForm(Activator);
+            var p = new ProjectUI.ProjectUI();
+            var dialog = new RDMPForm(Activator);
 
             p.SwitchToCutDownUIMode();
 
-            Button ok = new Button();
+            var ok = new Button();
             ok.Click += (s, ev) => { dialog.Close(); dialog.DialogResult = DialogResult.OK; };
             ok.Location = new Point(0,p.Height + 10);
             ok.Width = p.Width/2;
             ok.Height = 30;
             ok.Text = "Ok";
 
-            Button cancel = new Button();
+            var cancel = new Button();
             cancel.Click += (s, ev) =>{dialog.Close();dialog.DialogResult = DialogResult.Cancel;};
             cancel.Location = new Point(p.Width / 2, p.Height + 10);
             cancel.Width = p.Width / 2;
@@ -256,7 +255,7 @@ public partial class CohortCreationRequestUI : RDMPForm
 
             var project = new Project(_repository, "New Project");
             p.SetDatabaseObject(Activator,project);
-            DialogResult result = dialog.ShowDialog();
+            var result = dialog.ShowDialog();
 
             if (result == DialogResult.OK)
             {
@@ -322,7 +321,7 @@ public partial class CohortCreationRequestUI : RDMPForm
         try
         {
             tbSetProjectNumber.ForeColor = Color.Black;
-            int newProjectNumber = int.Parse(tbSetProjectNumber.Text);
+            var newProjectNumber = int.Parse(tbSetProjectNumber.Text);
             Project.ProjectNumber = newProjectNumber;
             Project.SaveToDatabase();
         }

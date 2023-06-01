@@ -309,7 +309,7 @@ A cool dataset with interesting stuff
     [Test]
     public void TestCustomMetadataReport_TwoCataloguesWithItems()
     {
-        Setup2Catalogues(out Catalogue c1, out Catalogue c2);
+        Setup2Catalogues(out var c1, out var c2);
 
         var template = new FileInfo(Path.Combine(TestContext.CurrentContext.WorkDirectory, "template.md"));
         var outDir = new DirectoryInfo(Path.Combine(TestContext.CurrentContext.WorkDirectory, "outDir"));
@@ -562,7 +562,7 @@ Description: A cool dataset with interesting stuff", resultText);
     [Test]
     public void TestCustomMetadataReport_LoopCataloguesPrefix()
     {
-        Setup2Catalogues(out Catalogue c1, out Catalogue c2);
+        Setup2Catalogues(out var c1, out var c2);
 
         var template = new FileInfo(Path.Combine(TestContext.CurrentContext.WorkDirectory, "template.md"));
         var outDir = new DirectoryInfo(Path.Combine(TestContext.CurrentContext.WorkDirectory, "outDir"));
@@ -834,7 +834,7 @@ Accurate as of : 01/01/0001 00:00:00", resultText.TrimEnd());
     [Test]
     public void TestCustomMetadataReport_LoopCataloguesSuffix()
     {
-        Setup2Catalogues(out Catalogue c1, out Catalogue c2);
+        Setup2Catalogues(out var c1, out var c2);
 
         var template = new FileInfo(Path.Combine(TestContext.CurrentContext.WorkDirectory, "template.md"));
         var outDir = new DirectoryInfo(Path.Combine(TestContext.CurrentContext.WorkDirectory, "outDir"));
@@ -884,7 +884,7 @@ Get in touch with us at noreply@nobody.com", resultText.TrimEnd());
     [Test]
     public void TestCustomMetadataReport_LoopCataloguesPrefixAndSuffix()
     {
-        Setup2Catalogues(out Catalogue c1, out Catalogue c2);
+        Setup2Catalogues(out var c1, out var c2);
 
         var template = new FileInfo(Path.Combine(TestContext.CurrentContext.WorkDirectory, "template.md"));
         var outDir = new DirectoryInfo(Path.Combine(TestContext.CurrentContext.WorkDirectory, "outDir"));
@@ -944,7 +944,7 @@ Get in touch with us at noreply@nobody.com", resultText.TrimEnd());
     [Test]
     public void TestCustomMetadataReport_LoopCataloguesTableOfContents()
     {
-        Setup2Catalogues(out Catalogue c1, out Catalogue c2);
+        Setup2Catalogues(out var c1, out var c2);
 
         var template = new FileInfo(Path.Combine(TestContext.CurrentContext.WorkDirectory, "template.md"));
         var outDir = new DirectoryInfo(Path.Combine(TestContext.CurrentContext.WorkDirectory, "outDir"));
@@ -1020,7 +1020,7 @@ Get in touch with us at noreply@nobody.com", resultText.TrimEnd());
     [Test]
     public void TestCustomMetadataReport_ErrorCondition_ExtraStartBlock()
     {
-        Setup2Catalogues(out Catalogue c1, out Catalogue c2);
+        Setup2Catalogues(out var c1, out var c2);
 
         var template = new FileInfo(Path.Combine(TestContext.CurrentContext.WorkDirectory, "template.md"));
         var outDir = new DirectoryInfo(Path.Combine(TestContext.CurrentContext.WorkDirectory, "outDir"));
@@ -1048,7 +1048,7 @@ some more text
     [Test]
     public void TestCustomMetadataReport_ErrorCondition_UnexpectedEndBlock()
     {
-        Setup2Catalogues(out Catalogue c1, out Catalogue c2);
+        Setup2Catalogues(out var c1, out var c2);
 
         var template = new FileInfo(Path.Combine(TestContext.CurrentContext.WorkDirectory, "template.md"));
         var outDir = new DirectoryInfo(Path.Combine(TestContext.CurrentContext.WorkDirectory, "outDir"));
@@ -1078,7 +1078,7 @@ some more text
     [Test]
     public void TestCustomMetadataReport_ErrorCondition_TooManyEndBlocks()
     {
-        Setup2Catalogues(out Catalogue c1, out Catalogue c2);
+        Setup2Catalogues(out var c1, out var c2);
 
         var template = new FileInfo(Path.Combine(TestContext.CurrentContext.WorkDirectory, "template.md"));
         var outDir = new DirectoryInfo(Path.Combine(TestContext.CurrentContext.WorkDirectory, "outDir"));
@@ -1107,7 +1107,7 @@ some more text
     [Test]
     public void TestCustomMetadataReport_ErrorCondition_MixingTopLevelBlocks()
     {
-        Setup2Catalogues(out Catalogue c1, out Catalogue c2);
+        Setup2Catalogues(out var c1, out var c2);
 
         var template = new FileInfo(Path.Combine(TestContext.CurrentContext.WorkDirectory, "template.md"));
         var outDir = new DirectoryInfo(Path.Combine(TestContext.CurrentContext.WorkDirectory, "outDir"));
@@ -1140,7 +1140,7 @@ some more text
         var templateCode = @"
 $Name
 $Comma";
-        Setup2Catalogues(out Catalogue c1, out Catalogue c2);
+        Setup2Catalogues(out var c1, out var c2);
 
         var template = new FileInfo(Path.Combine(TestContext.CurrentContext.WorkDirectory, "template.md"));
         var outDir = new DirectoryInfo(Path.Combine(TestContext.CurrentContext.WorkDirectory, "outDir"));
@@ -1176,7 +1176,7 @@ $end
 $end
 ]";
 
-        Setup2Catalogues(out Catalogue c1, out Catalogue c2);
+        Setup2Catalogues(out var c1, out var c2);
 
         var template = new FileInfo(Path.Combine(TestContext.CurrentContext.WorkDirectory, "template.md"));
         var outDir = new DirectoryInfo(Path.Combine(TestContext.CurrentContext.WorkDirectory, "outDir"));
@@ -1243,7 +1243,7 @@ $end
 $end
 ]";
 
-        Setup2Catalogues(out Catalogue c1, out Catalogue c2);
+        Setup2Catalogues(out var c1, out var c2);
 
         var template = new FileInfo(Path.Combine(TestContext.CurrentContext.WorkDirectory, "template.md"));
         var outDir = new DirectoryInfo(Path.Combine(TestContext.CurrentContext.WorkDirectory, "outDir"));
@@ -1356,7 +1356,7 @@ $DQE_StartMonth
 $DQE_StartYear";
             
 
-        Setup2Catalogues(out Catalogue c1, out Catalogue c2);
+        Setup2Catalogues(out var c1, out var c2);
 
         var template = new FileInfo(Path.Combine(TestContext.CurrentContext.WorkDirectory, "template.md"));
         var outDir = new DirectoryInfo(Path.Combine(TestContext.CurrentContext.WorkDirectory, "outDir"));
@@ -1418,7 +1418,7 @@ $DQE_PercentNull
 $end";
 
 
-        Setup2Catalogues(out Catalogue c1, out Catalogue c2);
+        Setup2Catalogues(out var c1, out var c2);
 
         var template = new FileInfo(Path.Combine(TestContext.CurrentContext.WorkDirectory, "template.md"));
         var outDir = new DirectoryInfo(Path.Combine(TestContext.CurrentContext.WorkDirectory, "outDir"));

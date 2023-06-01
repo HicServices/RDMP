@@ -71,7 +71,8 @@ public class ExecuteCommandAddNewAggregateGraph : BasicCommandExecution,IAtomicC
             }
         }
 
-        var newAggregate = new AggregateConfiguration(BasicActivator.RepositoryLocator.CatalogueRepository,c, name ?? "New Aggregate " + Guid.NewGuid());
+        var newAggregate = new AggregateConfiguration(BasicActivator.RepositoryLocator.CatalogueRepository,c, name ??
+            $"New Aggregate {Guid.NewGuid()}");
         Publish(_catalogue);
         Activate(newAggregate);
     }

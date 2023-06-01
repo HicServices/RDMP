@@ -29,7 +29,7 @@ public class DeployedExtractionFilterUIOptions : FilterUIOptions
         _tables = ds.Catalogue.GetTableInfoList(false);
         _globals = c.GlobalExtractionFilterParameters;
 
-        List<IColumn> columns = new List<IColumn>();
+        var columns = new List<IColumn>();
 
         columns.AddRange(c.GetAllExtractableColumnsFor(ds));
         columns.AddRange(c.Project.GetAllProjectCatalogueColumns(ExtractionCategory.ProjectSpecific));

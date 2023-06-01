@@ -28,10 +28,10 @@ public class ObjectSharingObscureDependencyFinderTests: DatabaseTests
     [Test]
     public void TestPruning()
     {
-        Catalogue c = new Catalogue(CatalogueRepository,"Catapault");
+        var c = new Catalogue(CatalogueRepository,"Catapault");
         var ci = new CatalogueItem(CatalogueRepository, c, "string");
             
-        Catalogue c2 = new Catalogue(CatalogueRepository,"Catapault (Import)");
+        var c2 = new Catalogue(CatalogueRepository,"Catapault (Import)");
         var ci2 = new CatalogueItem(CatalogueRepository, c2, "string (Import)");
 
         Assert.AreEqual(CatalogueRepository.GetAllObjects<ObjectExport>().Count(), 0);
@@ -62,7 +62,7 @@ public class ObjectSharingObscureDependencyFinderTests: DatabaseTests
     public void CannotDeleteSharedObjectTest()
     {
         //create a test catalogue
-        Catalogue c = new Catalogue(CatalogueRepository,"blah");
+        var c = new Catalogue(CatalogueRepository,"blah");
 
         Assert.IsFalse(_share.IsExportedObject(c));
 
@@ -87,11 +87,11 @@ public class ObjectSharingObscureDependencyFinderTests: DatabaseTests
     [Test]
     public void CascadeDeleteImportDefinitions()
     {
-        Project p = new Project(DataExportRepository, "prah");
+        var p = new Project(DataExportRepository, "prah");
 
         var exportDefinition = _share.GetNewOrExistingExportFor(p);
 
-        Project p2 = new Project(DataExportRepository, "prah2");
+        var p2 = new Project(DataExportRepository, "prah2");
 
         var importDefinition = _share.GetImportAs(exportDefinition.SharingUID, p2);
 

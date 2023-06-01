@@ -44,7 +44,7 @@ public class ExtractionTimeValidator
         Validator = Validator.LoadFromXml(_catalogue.ValidatorXML);
 
         if (string.IsNullOrWhiteSpace(_catalogue.ValidatorXML))
-            throw new ArgumentException("No validations are configured for catalogue " + catalogue.Name);
+            throw new ArgumentException($"No validations are configured for catalogue {catalogue.Name}");
 
         IgnoredBecauseColumnHashed = new List<ItemValidator>();
     }
@@ -70,10 +70,10 @@ public class ExtractionTimeValidator
 
     private void Initialize(DataTable dt)
     {
-        List<ItemValidator> toDiscard = new List<ItemValidator>();
+        var toDiscard = new List<ItemValidator>();
 
         //discard any item validators that don't exist in our colmn collection (from schema) - These are likely just columns that are not used during validation
-        foreach (ItemValidator iv in Validator.ItemValidators)
+        foreach (var iv in Validator.ItemValidators)
             if (!dt.Columns.Contains(iv.TargetProperty))  //if target property is not in the column collection
                 toDiscard.Add(iv);
             else
@@ -81,7 +81,7 @@ public class ExtractionTimeValidator
                 //also discard any that have an underlying column that is Hashed as they will not match validation constraints post hash (hashing is done in SQL so we will never see original value)
                 if (_columnsToExtract.Exists(c => c.ToString().Equals(iv.TargetProperty)))
                 {
-                    IColumn ec = _columnsToExtract.First(c => c.ToString().Equals(iv.TargetProperty));
+                    var ec = _columnsToExtract.First(c => c.ToString().Equals(iv.TargetProperty));
                     if (ec.HashOnDataRelease)
                     {
                         IgnoredBecauseColumnHashed.Add(iv);
@@ -97,7 +97,7 @@ public class ExtractionTimeValidator
 
             }
 
-        foreach (ItemValidator itemValidator in toDiscard)
+        foreach (var itemValidator in toDiscard)
             Validator.ItemValidators.Remove(itemValidator);
 
         _initialized = true;

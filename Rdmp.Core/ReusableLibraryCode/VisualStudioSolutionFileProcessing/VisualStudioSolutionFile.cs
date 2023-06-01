@@ -31,9 +31,9 @@ public class VisualStudioSolutionFile
         var slnFileContents = File.ReadAllText(slnFile.FullName);
 
         //                                                           Group 1             Group 2                       Group4
-        Regex projReg = new Regex(@"Project\(\""\{[\w-]*\}\""\) = \""([\w _]*.*)\"", \""(.*\.(cs|vcx|vb)proj)\"", \""({[\w-]*\})\""", RegexOptions.Compiled);
+        var projReg = new Regex(@"Project\(\""\{[\w-]*\}\""\) = \""([\w _]*.*)\"", \""(.*\.(cs|vcx|vb)proj)\"", \""({[\w-]*\})\""", RegexOptions.Compiled);
         //                                                           Group 1                Group 2            Group3
-        Regex folderReg = new Regex(@"Project\(\""\{[\w-]*\}\""\) = \""([\w _]*.*)\"", \""([\w\.]*)\"", \""({[\w-]*\})\""", RegexOptions.Compiled);
+        var folderReg = new Regex(@"Project\(\""\{[\w-]*\}\""\) = \""([\w _]*.*)\"", \""([\w\.]*)\"", \""({[\w-]*\})\""", RegexOptions.Compiled);
 
         Projects = new List<VisualStudioProjectReference>();
         Folders = new List<VisualStudioSolutionFolder>();
@@ -45,12 +45,13 @@ public class VisualStudioSolutionFile
         foreach (Match m in folderReg.Matches(slnFileContents))
         {
             if(!m.Groups[1].Value.Equals(m.Groups[2].Value))
-                throw new Exception("Expected folder name to be the same as folder text when evaluating the projects in solution " + slnFile.FullName + " (Regex matches were'" + m.Groups[1].Value + "' and '" + m.Groups[2].Value + "')");
+                throw new Exception(
+                    $"Expected folder name to be the same as folder text when evaluating the projects in solution {slnFile.FullName} (Regex matches were'{m.Groups[1].Value}' and '{m.Groups[2].Value}')");
 
             Folders.Add(new VisualStudioSolutionFolder(m.Groups[2].Value, m.Groups[3].Value));
         }
 
-        string[] slnFileLines = File.ReadAllLines(slnFile.FullName);
+        var slnFileLines = File.ReadAllLines(slnFile.FullName);
 
         /*
 GlobalSection(NestedProjects) = preSolution
@@ -58,8 +59,8 @@ GlobalSection(NestedProjects) = preSolution
     {16187832-4783-4FD5-A4C7-76E5E3254749} = {264C99E2-E3F5-4001-87EA-9CB1B06204AA}
          EndGlobalSection*/
 
-        bool enteredRelationshipsBit = false;
-        for (int i = 0; i < slnFileLines.Length; i++)
+        var enteredRelationshipsBit = false;
+        for (var i = 0; i < slnFileLines.Length; i++)
         {
             if (slnFileLines[i].Trim().Equals(@"GlobalSection(NestedProjects) = preSolution"))
             {

@@ -35,7 +35,7 @@ public class PatientIndexTableSource : AggregateConfigurationTableSource, IPipel
         
     protected override  string GetSQL()
     {
-        CohortQueryBuilder builder = new CohortQueryBuilder(AggregateConfiguration,CohortIdentificationConfigurationIfAny.GetAllParameters(),null);
+        var builder = new CohortQueryBuilder(AggregateConfiguration,CohortIdentificationConfigurationIfAny.GetAllParameters(),null);
 
         var sql = builder.SQL;
 
@@ -44,14 +44,13 @@ public class PatientIndexTableSource : AggregateConfigurationTableSource, IPipel
         //IMPORTANT: We are using impromptu SQL instead of a Spontaneous container / CustomLine because we want the CohortQueryBuilder to decide to use
         //the cached table data (if any).  If it senses we are monkeying with the query it will run it verbatim which will be very slow.
 
-        string whereString = AggregateConfiguration.RootFilterContainer_ID != null ? "AND " : "WHERE ";
+        var whereString = AggregateConfiguration.RootFilterContainer_ID != null ? "AND " : "WHERE ";
 
-        var impromptuSql = whereString + extractionIdentifier.SelectSQL + " IN (SELECT " +
-                           _extractableCohort.GetPrivateIdentifier() + " FROM " +
-                           _extractableCohort.ExternalCohortTable.TableName + " WHERE " + _extractableCohort.WhereSQL() + ")";
+        var impromptuSql =
+            $"{whereString}{extractionIdentifier.SelectSQL} IN (SELECT {_extractableCohort.GetPrivateIdentifier()} FROM {_extractableCohort.ExternalCohortTable.TableName} WHERE {_extractableCohort.WhereSQL()})";
             
         //if there is a group by then we must insert the AND patient in cohort bit before the group by but after any WHERE containers
-        int insertionPoint = sql.IndexOf("group by", 0, StringComparison.CurrentCultureIgnoreCase);
+        var insertionPoint = sql.IndexOf("group by", 0, StringComparison.CurrentCultureIgnoreCase);
 
         //if there isn't a group by
         if (insertionPoint == -1)
@@ -71,6 +70,7 @@ public class PatientIndexTableSource : AggregateConfigurationTableSource, IPipel
         base.PreInitialize(value, listener);
 
         if (CohortIdentificationConfigurationIfAny == null)
-            listener.OnNotify(this, new NotifyEventArgs(ProgressEventType.Error, "Configuration " + AggregateConfiguration + " is not a valid input because it does not have a CohortIdentificationConfiguration nevermind a JoinableCohortAggregateConfiguration.  Maybe it isn't a patient index table?"));
+            listener.OnNotify(this, new NotifyEventArgs(ProgressEventType.Error,
+                $"Configuration {AggregateConfiguration} is not a valid input because it does not have a CohortIdentificationConfiguration nevermind a JoinableCohortAggregateConfiguration.  Maybe it isn't a patient index table?"));
     }
 }

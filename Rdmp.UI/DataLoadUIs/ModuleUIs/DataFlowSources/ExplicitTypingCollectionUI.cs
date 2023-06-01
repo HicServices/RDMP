@@ -57,7 +57,7 @@ public partial class ExplicitTypingCollectionUI : Form, ICustomUI<ExplicitTyping
     {
         tableLayoutPanel1.Controls.Clear();
         tableLayoutPanel1.RowCount = types.Count;
-        for (int i = 0; i < types.Count; i++)
+        for (var i = 0; i < types.Count; i++)
             tableLayoutPanel1.Controls.Add(types[i], 1, i + 1);
     }
 
@@ -75,7 +75,7 @@ public partial class ExplicitTypingCollectionUI : Form, ICustomUI<ExplicitTyping
     {
         var toReturn = new ExplicitTypingCollection();
 
-        foreach (ExplicitColumnTypeUI columnTypeUI in types)
+        foreach (var columnTypeUI in types)
             toReturn.ExplicitTypesCSharp.Add(columnTypeUI.ColumnName, columnTypeUI.Type);
 
         return toReturn;
@@ -83,7 +83,7 @@ public partial class ExplicitTypingCollectionUI : Form, ICustomUI<ExplicitTyping
 
     public void SetUnderlyingObjectTo(ExplicitTypingCollection value)
     {
-        ExplicitTypingCollection child = value ?? new ExplicitTypingCollection();
+        var child = value ?? new ExplicitTypingCollection();
 
         foreach (var kvp in child.ExplicitTypesCSharp)
             AddColumn(kvp.Key, kvp.Value);

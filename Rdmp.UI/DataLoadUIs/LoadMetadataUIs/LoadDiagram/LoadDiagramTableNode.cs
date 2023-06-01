@@ -49,7 +49,7 @@ public class LoadDiagramTableNode:Node,ICombineableSource, IHasLoadDiagramState,
         TableName = TableInfo.GetRuntimeName(Bubble);
 
         //only reference schema if it is LIVE
-        string schema = bubble >= LoadBubble.Live ? tableInfo.Schema: null;
+        var schema = bubble >= LoadBubble.Live ? tableInfo.Schema: null;
 
         Table = databaseNode.Database.ExpectTable(TableName,schema);
 
@@ -62,7 +62,7 @@ public class LoadDiagramTableNode:Node,ICombineableSource, IHasLoadDiagramState,
 
     }
 
-    public string DatabaseName { get { return _databaseNode.DatabaseName; }}
+    public string DatabaseName => _databaseNode.DatabaseName;
     public string TableName { get; private set; }
 
     public IEnumerable<object> GetChildren(bool dynamicColumnsOnly)
@@ -146,7 +146,7 @@ public class LoadDiagramTableNode:Node,ICombineableSource, IHasLoadDiagramState,
     {
         unchecked
         {
-            int hashCode = (_databaseNode != null ? _databaseNode.GetHashCode() : 0);
+            var hashCode = (_databaseNode != null ? _databaseNode.GetHashCode() : 0);
             hashCode = (hashCode*397) ^ (int) Bubble;
             hashCode = (hashCode*397) ^ (TableName != null ? TableName.GetHashCode() : 0);
             return hashCode;

@@ -25,7 +25,7 @@ public class ColumnInfoANOPlan:ICheckable
 {
     public ColumnInfo ColumnInfo
     {
-        get { return _columnInfo; }
+        get => _columnInfo;
         set
         {
             _columnInfo = value;
@@ -50,7 +50,7 @@ public class ColumnInfoANOPlan:ICheckable
 
     public Plan Plan
     {
-        get { return _plan; }
+        get => _plan;
         set
         {
             _plan = value;
@@ -78,14 +78,9 @@ public class ColumnInfoANOPlan:ICheckable
         }
     }
 
-    public bool IsMandatory
-    {
-        get
-        {
-            //ColumnInfo is part of the table primary key
-            return ColumnInfo.IsPrimaryKey;
-        }
-    }
+    public bool IsMandatory =>
+        //ColumnInfo is part of the table primary key
+        ColumnInfo.IsPrimaryKey;
 
     /// <summary>
     /// Json deserialization constructor <see cref="PickAnyConstructorJsonConverter"/>
@@ -160,7 +155,8 @@ public class ColumnInfoANOPlan:ICheckable
     private void MakeANOTableSuggestionIfApplicable()
     {
         //if there is a ColumnInfo with the same name (or that has ANO prefix)
-        var matchingOnName = _allColumnInfosSystemWide.Where(a => a.GetRuntimeName() == ColumnInfo.GetRuntimeName() || a.GetRuntimeName() == "ANO" + ColumnInfo.GetRuntimeName()).ToArray();
+        var matchingOnName = _allColumnInfosSystemWide.Where(a => a.GetRuntimeName() == ColumnInfo.GetRuntimeName() || a.GetRuntimeName() ==
+            $"ANO{ColumnInfo.GetRuntimeName()}").ToArray();
 
         //and if the same named ColumnInfo(s) have a shared ANOTable (e.g. ANOCHI)
         var agreedAnoTableID = matchingOnName.Where(c => c.ANOTable_ID != null).Select(c => c.ANOTable_ID).Distinct().ToArray();
@@ -185,44 +181,51 @@ public class ColumnInfoANOPlan:ICheckable
     public void Check(ICheckNotifier notifier)
     {
         if(IsMandatory && Plan == Plan.Drop)
-            notifier.OnCheckPerformed(new CheckEventArgs("ColumnInfo '" + ColumnInfo + "' is mandatory and cannot be dropped",CheckResult.Fail));
+            notifier.OnCheckPerformed(new CheckEventArgs(
+                $"ColumnInfo '{ColumnInfo}' is mandatory and cannot be dropped",CheckResult.Fail));
 
         if(Plan == Plan.ANO && ANOTable == null)
-            notifier.OnCheckPerformed(new CheckEventArgs("No ANOTable has been picked for ColumnInfo '" + ColumnInfo + "'", CheckResult.Fail));
+            notifier.OnCheckPerformed(new CheckEventArgs($"No ANOTable has been picked for ColumnInfo '{ColumnInfo}'", CheckResult.Fail));
 
         if(Plan == Plan.Dilute && Dilution == null)
-            notifier.OnCheckPerformed(new CheckEventArgs("No Dilution Operation has been picked for ColumnInfo '" + ColumnInfo + "'", CheckResult.Fail));
+            notifier.OnCheckPerformed(new CheckEventArgs(
+                $"No Dilution Operation has been picked for ColumnInfo '{ColumnInfo}'", CheckResult.Fail));
             
         if (Plan != Plan.Drop)
         {
             try
             {
                 var datatype = GetEndpointDataType();
-                notifier.OnCheckPerformed(new CheckEventArgs("Determined endpoint data type '" + datatype + "' for ColumnInfo '" + ColumnInfo + "'", CheckResult.Success));
+                notifier.OnCheckPerformed(new CheckEventArgs(
+                    $"Determined endpoint data type '{datatype}' for ColumnInfo '{ColumnInfo}'", CheckResult.Success));
 
             }
             catch (Exception e)
             {
-                notifier.OnCheckPerformed(new CheckEventArgs("Could not determine endpoint data type for ColumnInfo '" + ColumnInfo + "'", CheckResult.Fail, e));
+                notifier.OnCheckPerformed(new CheckEventArgs(
+                    $"Could not determine endpoint data type for ColumnInfo '{ColumnInfo}'", CheckResult.Fail, e));
             }
         }
             
         //don't let user select ExtractionCategory.Any
         if (ExtractionCategoryIfAny == ExtractionCategory.Any)
-            notifier.OnCheckPerformed(new CheckEventArgs("Extraction Category '" + ExtractionCategoryIfAny + "' is not valid (on ColumnInfo " + ColumnInfo + ")", CheckResult.Fail));
+            notifier.OnCheckPerformed(new CheckEventArgs(
+                $"Extraction Category '{ExtractionCategoryIfAny}' is not valid (on ColumnInfo {ColumnInfo})", CheckResult.Fail));
 
         //for each column we are not planning on dropping but are planning on making extractable, there must be a CatalogueItem in the source Catalogue
         if (ExtractionCategoryIfAny != null && Plan != Plan.Drop)
             if (_allCatalogueItems.All(ci => ci.ColumnInfo_ID != ColumnInfo.ID))
                 notifier.OnCheckPerformed(
-                    new CheckEventArgs("There are no CatalogueItems configured for ColumnInfo '" + ColumnInfo + "' but its PlannedExtractionCategory is '" + ExtractionCategoryIfAny + "'", CheckResult.Fail));
+                    new CheckEventArgs(
+                        $"There are no CatalogueItems configured for ColumnInfo '{ColumnInfo}' but its PlannedExtractionCategory is '{ExtractionCategoryIfAny}'", CheckResult.Fail));
 
         //Will there be conflicts on name?
         if (_planManager.TargetDatabase != null && Plan != Plan.Drop)
         {
             //don't let them extract to the same database
             if(_planManager.TargetDatabase.GetRuntimeName() == ColumnInfo.TableInfo.Database)
-                notifier.OnCheckPerformed(new CheckEventArgs("ColumnInfo " + ColumnInfo + " is already in " + _planManager.TargetDatabase.GetRuntimeName() +" you cannot create an ANO version in the same database",CheckResult.Fail));
+                notifier.OnCheckPerformed(new CheckEventArgs(
+                    $"ColumnInfo {ColumnInfo} is already in {_planManager.TargetDatabase.GetRuntimeName()} you cannot create an ANO version in the same database",CheckResult.Fail));
         }
     }
 

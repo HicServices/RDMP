@@ -29,10 +29,10 @@ public static class ApplicationRestarter
 
     private static void RestartImpl()
     {
-        string[] arguments = Environment.GetCommandLineArgs();
+        var arguments = Environment.GetCommandLineArgs();
 
-        StringBuilder sb = new StringBuilder((arguments.Length - 1) * 16);
-        for (int argumentIndex = 1; argumentIndex < arguments.Length - 1; argumentIndex++)
+        var sb = new StringBuilder((arguments.Length - 1) * 16);
+        for (var argumentIndex = 1; argumentIndex < arguments.Length - 1; argumentIndex++)
         {
             sb.Append('"');
             sb.Append(arguments[argumentIndex]);
@@ -44,7 +44,7 @@ public static class ApplicationRestarter
             sb.Append(arguments[arguments.Length - 1]);
             sb.Append('"');
         }
-        ProcessStartInfo currentStartInfo = new ProcessStartInfo();
+        var currentStartInfo = new ProcessStartInfo();
         currentStartInfo.FileName = Path.ChangeExtension(Application.ExecutablePath, "exe");
         if (sb.Length > 0)
         {

@@ -51,7 +51,7 @@ public partial class ArgumentValueArrayUI : UserControl, IArgumentValueUI
             tbArray.Text = "";
         else
         {
-            StringBuilder sb = new StringBuilder();
+            var sb = new StringBuilder();
 
             var e = value.GetEnumerator();
             while (e.MoveNext())
@@ -72,10 +72,11 @@ public partial class ArgumentValueArrayUI : UserControl, IArgumentValueUI
         var elementType = type.GetElementType();
 
         if(elementType == null)
-            throw new NotSupportedException("No array element existed for DemandsInitialization Type " + type);
+            throw new NotSupportedException($"No array element existed for DemandsInitialization Type {type}");
 
         if (!_args.CatalogueRepository.SupportsObjectType(elementType))
-            throw new NotSupportedException("CatalogueRepository does not support element "+elementType+" for DemandsInitialization Type " + type);
+            throw new NotSupportedException(
+                $"CatalogueRepository does not support element {elementType} for DemandsInitialization Type {type}");
 
         if(_activator.SelectObjects(new DialogArgs
            {

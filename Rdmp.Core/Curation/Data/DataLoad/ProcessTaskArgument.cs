@@ -34,8 +34,8 @@ public sealed class ProcessTaskArgument : Argument
     [Relationship(typeof(ProcessTask), RelationshipType.SharedObject)]
     public int ProcessTask_ID
     {
-        get { return _processTask_ID; }
-        set { SetField(ref _processTask_ID, value); }
+        get => _processTask_ID;
+        set => SetField(ref _processTask_ID, value);
     }
         
     #endregion
@@ -44,9 +44,8 @@ public sealed class ProcessTaskArgument : Argument
 
     /// <inheritdoc cref="ProcessTask_ID"/>
     [NoMappingToDatabase]
-    public ProcessTask ProcessTask {get{
-        return Repository.GetObjectByID<ProcessTask>(ProcessTask_ID);
-    }}
+    public ProcessTask ProcessTask => Repository.GetObjectByID<ProcessTask>(ProcessTask_ID);
+
     #endregion
 
     public ProcessTaskArgument()
@@ -65,7 +64,7 @@ public sealed class ProcessTaskArgument : Argument
         repository.InsertAndHydrate(this,new Dictionary<string, object>
         {
             {"ProcessTask_ID", parent.ID},
-            {"Name", "Parameter" + Guid.NewGuid()},
+            {"Name", $"Parameter{Guid.NewGuid()}" },
             {"Type", typeof (string).ToString()}
         });
     }
@@ -135,7 +134,7 @@ public sealed class ProcessTaskArgument : Argument
 
     public ProcessTaskArgument ShallowClone(ProcessTask into)
     {
-        ProcessTaskArgument clone = new ProcessTaskArgument(CatalogueRepository, into);
+        var clone = new ProcessTaskArgument(CatalogueRepository, into);
         CopyShallowValuesTo(clone,true);
 
         return clone;

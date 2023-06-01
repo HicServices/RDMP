@@ -24,7 +24,7 @@ public class AlphaNumeric : PrimaryConstraint
         var match = Regex.Match(text, RegExp);
 
         if (!match.Success)
-            return new ValidationFailure("Value [" + value + "] contains characters other than alphanumeric",this);
+            return new ValidationFailure($"Value [{value}] contains characters other than alphanumeric",this);
 
         return null;
     }

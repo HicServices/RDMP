@@ -54,7 +54,7 @@ public class ItemValidator
             throw new Exception(
                 "there was a difference between the number of columns and the number of column names passed for validation");
 
-        ValidationFailure result = ValidatePrimaryConstraint(columnValue);
+        var result = ValidatePrimaryConstraint(columnValue);
 
         if (result != null)
             return result;
@@ -83,7 +83,7 @@ public class ItemValidator
                 
             try
             {
-                ValidationFailure result = secondaryConstraint.Validate(columnValue, otherColumns, otherColumnNames);
+                var result = secondaryConstraint.Validate(columnValue, otherColumns, otherColumnNames);
 
                 if (result != null)
                     return result;

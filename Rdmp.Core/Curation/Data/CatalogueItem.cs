@@ -63,7 +63,7 @@ public class CatalogueItem : DatabaseEntity, IDeleteable, IComparable, IHasDepen
     [DoNotExtractProperty]
     public int Catalogue_ID
     {
-        get { return _catalogueID; }
+        get => _catalogueID;
         set
         {
             SetField(ref _catalogueID, value);
@@ -74,19 +74,16 @@ public class CatalogueItem : DatabaseEntity, IDeleteable, IComparable, IHasDepen
     [NotNull]
     [DoNotImportDescriptions]
     public string Name {
-        get { return _Name;}
-        set {SetField(ref _Name,value);} 
+        get => _Name;
+        set => SetField(ref _Name,value);
     }
 
     /// <summary>
     /// User supplied field meant to identify any statistical anomalies with the data in the column described.  Not used for anything by RDMP.
     /// </summary>
     public string Statistical_cons {
-        get { return _Statistical_cons; }
-        set
-        {
-            SetField(ref _Statistical_cons, value);
-        } 
+        get => _Statistical_cons;
+        set => SetField(ref _Statistical_cons, value);
     }
 
     /// <summary>
@@ -94,8 +91,8 @@ public class CatalogueItem : DatabaseEntity, IDeleteable, IComparable, IHasDepen
     /// </summary>
     public string Research_relevance
     {
-        get { return _Research_relevance; }
-        set { SetField(ref _Research_relevance , value);}
+        get => _Research_relevance;
+        set => SetField(ref _Research_relevance , value);
     }
 
 
@@ -105,8 +102,8 @@ public class CatalogueItem : DatabaseEntity, IDeleteable, IComparable, IHasDepen
     [UsefulProperty]
     public string Description
     {
-        get { return _Description; }
-        set { SetField(ref _Description , value);}
+        get => _Description;
+        set => SetField(ref _Description , value);
     }
 
     /// <summary>
@@ -114,8 +111,8 @@ public class CatalogueItem : DatabaseEntity, IDeleteable, IComparable, IHasDepen
     /// </summary>
     public string Topic
     {
-        get { return _Topic; }
-        set { SetField(ref _Topic , value);}
+        get => _Topic;
+        set => SetField(ref _Topic , value);
     }
 
     /// <summary>
@@ -123,8 +120,8 @@ public class CatalogueItem : DatabaseEntity, IDeleteable, IComparable, IHasDepen
     /// </summary>
     public string Agg_method
     {
-        get { return _Agg_method; }
-        set { SetField(ref _Agg_method , value);}
+        get => _Agg_method;
+        set => SetField(ref _Agg_method , value);
     }
 
     /// <summary>
@@ -132,8 +129,8 @@ public class CatalogueItem : DatabaseEntity, IDeleteable, IComparable, IHasDepen
     /// </summary>
     public string Limitations
     {
-        get { return _Limitations; }
-        set{ SetField(ref _Limitations , value);}
+        get => _Limitations;
+        set => SetField(ref _Limitations , value);
     }
 
     /// <summary>
@@ -141,8 +138,8 @@ public class CatalogueItem : DatabaseEntity, IDeleteable, IComparable, IHasDepen
     /// </summary>
     public string Comments
     {
-        get { return _Comments; }
-        set { SetField( ref _Comments , value);}
+        get => _Comments;
+        set => SetField( ref _Comments , value);
     }
 
     /// <summary>
@@ -154,7 +151,7 @@ public class CatalogueItem : DatabaseEntity, IDeleteable, IComparable, IHasDepen
     [Relationship(typeof(ColumnInfo), RelationshipType.IgnoreableLocalReference)]  //will appear as empty, then the user can guess from a table
     public int? ColumnInfo_ID
     {
-        get { return _columnInfoID; }
+        get => _columnInfoID;
         set
         {
             //don't change it to the same value it already has
@@ -171,8 +168,8 @@ public class CatalogueItem : DatabaseEntity, IDeleteable, IComparable, IHasDepen
     /// </summary>
     public Catalogue.CataloguePeriodicity Periodicity
     {
-        get { return _periodicity; }
-        set { SetField(ref _periodicity , value); }
+        get => _periodicity;
+        set => SetField(ref _periodicity , value);
     }
 
     #endregion
@@ -181,33 +178,19 @@ public class CatalogueItem : DatabaseEntity, IDeleteable, IComparable, IHasDepen
     #region Relationships
     /// <inheritdoc cref="Catalogue_ID"/>
     [NoMappingToDatabase]
-    public Catalogue Catalogue {
-        get{return _knownCatalogue.Value;}
-    }
+    public Catalogue Catalogue => _knownCatalogue.Value;
 
     /// <summary>
     /// Fetches the <see cref="ExtractionInformation"/> (if any) that specifies how to extract this column.  This can be the underlying column name (fully specified) or a transform.
     /// <para>This will be null if the <see cref="CatalogueItem"/> is not extractable</para>
     /// </summary>
     [NoMappingToDatabase]
-    public ExtractionInformation ExtractionInformation
-    {
-        get
-        {
-            return _knownExtractionInformation.Value;
-        }
-    }
+    public ExtractionInformation ExtractionInformation => _knownExtractionInformation.Value;
 
     /// <inheritdoc cref="ColumnInfo_ID"/>
     [NoMappingToDatabase]
-    public ColumnInfo ColumnInfo
-    {
-        get
-        {
-            return _knownColumnInfo.Value;
-        }
-    }
-        
+    public ColumnInfo ColumnInfo => _knownColumnInfo.Value;
+
     internal bool IsColumnInfoCached()
     {
         return _knownColumnInfo.IsValueCreated;
@@ -221,7 +204,7 @@ public class CatalogueItem : DatabaseEntity, IDeleteable, IComparable, IHasDepen
     [UsefulProperty]
     [NoMappingToDatabase]
     [DoNotExtractProperty]
-    public string CatalogueName { get { return Catalogue.Name; }}
+    public string CatalogueName => Catalogue.Name;
 
     public CatalogueItem()
     {
@@ -260,7 +243,7 @@ public class CatalogueItem : DatabaseEntity, IDeleteable, IComparable, IHasDepen
         ColumnInfo_ID = ObjectToNullableInt(r["ColumnInfo_ID"]);
 
         //Periodicity - with handling for invalid enum values listed in database
-        object periodicity = r["Periodicity"];
+        var periodicity = r["Periodicity"];
         if (periodicity == null || periodicity == DBNull.Value)
             Periodicity = Catalogue.CataloguePeriodicity.Unknown;
         else
@@ -342,7 +325,7 @@ public class CatalogueItem : DatabaseEntity, IDeleteable, IComparable, IHasDepen
             return -(obj.ToString().CompareTo(this.ToString())); //sort alphabetically (reverse)
         }
 
-        throw new Exception("Cannot compare " + this.GetType().Name + " to " + obj.GetType().Name);
+        throw new Exception($"Cannot compare {this.GetType().Name} to {obj.GetType().Name}");
     }
         
     /// <summary>
@@ -358,10 +341,10 @@ public class CatalogueItem : DatabaseEntity, IDeleteable, IComparable, IHasDepen
         var clone = new CatalogueItem((ICatalogueRepository)cataToImportTo.Repository, cataToImportTo, this.Name);
             
         //Get all the properties           
-        PropertyInfo[] propertyInfo = this.GetType().GetProperties(BindingFlags.Public | BindingFlags.NonPublic | BindingFlags.Instance);
+        var propertyInfo = this.GetType().GetProperties(BindingFlags.Public | BindingFlags.NonPublic | BindingFlags.Instance);
 
         //Assign all source property to taget object 's properties
-        foreach (PropertyInfo property in propertyInfo)
+        foreach (var property in propertyInfo)
         {
             //Check whether property can be written to
             if (property.CanWrite && !property.Name.Equals("ID") && !property.Name.Equals("Catalogue_ID"))
@@ -385,7 +368,7 @@ public class CatalogueItem : DatabaseEntity, IDeleteable, IComparable, IHasDepen
     public IEnumerable<ColumnInfo> GuessAssociatedColumn(ColumnInfo[] guessPool, bool allowPartial = true)
     {
         //exact matches exist so return those
-        ColumnInfo[] Guess = guessPool.Where(col => col.GetRuntimeName().Equals(this.Name)).ToArray();
+        var Guess = guessPool.Where(col => col.GetRuntimeName().Equals(this.Name)).ToArray();
         if (Guess.Any())
             return Guess;
 
@@ -418,7 +401,7 @@ public class CatalogueItem : DatabaseEntity, IDeleteable, IComparable, IHasDepen
     /// <inheritdoc/>
     public IHasDependencies[] GetObjectsDependingOnThis()
     {
-        List<IHasDependencies> dependantObjects = new List<IHasDependencies>();
+        var dependantObjects = new List<IHasDependencies>();
 
         var exInfo = ExtractionInformation;
 
@@ -454,7 +437,7 @@ public class CatalogueItem : DatabaseEntity, IDeleteable, IComparable, IHasDepen
 
     public override string GetSummary(bool includeName, bool includeID)
     {
-        StringBuilder sb = new StringBuilder();
+        var sb = new StringBuilder();
 
         foreach (var prop in GetType().GetProperties().Where(p => p.Name.Contains("Description")))
         {

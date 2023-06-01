@@ -26,24 +26,24 @@ public class Commit : DatabaseEntity
 
     public string Username
     {
-        get { return _username; }
-        set { SetField(ref _username, value); }
+        get => _username;
+        set => SetField(ref _username, value);
     }
 
     public DateTime Date
     {
-        get { return _date; }
-        set { SetField(ref _date, value); }
+        get => _date;
+        set => SetField(ref _date, value);
     }
     public string Transaction
     {
-        get { return _transaction; }
-        set { SetField(ref _transaction, value); }
+        get => _transaction;
+        set => SetField(ref _transaction, value);
     }
     public string Description
     {
-        get { return _description; }
-        set { SetField(ref _description, value); }
+        get => _description;
+        set => SetField(ref _description, value);
     }
 
     #endregion

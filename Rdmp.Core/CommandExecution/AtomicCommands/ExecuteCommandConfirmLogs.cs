@@ -93,7 +93,7 @@ public class ExecuteCommandConfirmLogs : BasicCommandExecution {
             .Where(a=>!checkInclusionCriteria || Include(a))
             .FirstOrDefault();
 
-        string messageClarification = checkInclusionCriteria ? " (where rows were loaded)" : "";
+        var messageClarification = checkInclusionCriteria ? " (where rows were loaded)" : "";
 
         // if no logs
         if (latest == null)

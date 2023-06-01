@@ -68,7 +68,7 @@ public class DataFlowPipelineEngineFactory : IDataFlowPipelineEngineFactory
         string reason;
 
         if (!_context.IsAllowable(pipeline, out reason))
-            throw new Exception("Cannot create pipeline because: " + reason);
+            throw new Exception($"Cannot create pipeline because: {reason}");
 
         var destination = GetBest(_useCase.ExplicitDestination, CreateDestinationIfExists(pipeline),"destination");
         var source = GetBest(_useCase.ExplicitSource, CreateSourceIfExists(pipeline), "source");
@@ -91,7 +91,7 @@ public class DataFlowPipelineEngineFactory : IDataFlowPipelineEngineFactory
                 continue;
                 
             //get the factory to realize the freaky Export types defined in any assembly anywhere and set their DemandsInitialization properties based on the Arguments
-            object component = CreateComponent(toBuild);
+            var component = CreateComponent(toBuild);
                 
             //Add the components to the pipeline
             dataFlowEngine.ComponentObjects.Add(component);
@@ -113,14 +113,16 @@ public class DataFlowPipelineEngineFactory : IDataFlowPipelineEngineFactory
         // if explicitThing and pipelineConfigurationThing are both null
         //Means: xplicitThing == null && pipelineConfigurationThing == null
         if (EqualityComparer<T2>.Default.Equals(explicitThing, default(T2)) && EqualityComparer<T2>.Default.Equals(pipelineConfigurationThing, default(T2)))
-            throw new Exception("No explicit " + descriptionOfWhatThingIs + " was specified and there is no fixed " + descriptionOfWhatThingIs + " defined in the Pipeline configuration in the Catalogue");
+            throw new Exception(
+                $"No explicit {descriptionOfWhatThingIs} was specified and there is no fixed {descriptionOfWhatThingIs} defined in the Pipeline configuration in the Catalogue");
 
         //if one of them only is null - XOR
         if(EqualityComparer<T2>.Default.Equals(explicitThing, default(T2)) ^ EqualityComparer<T2>.Default.Equals(pipelineConfigurationThing, default(T2)))
             return EqualityComparer<T2>.Default.Equals(explicitThing, default(T2)) ? pipelineConfigurationThing : explicitThing; //return the not null one
 
         //both of them are populated
-        throw new Exception("Cannot have both the explicit " + descriptionOfWhatThingIs + " '" + explicitThing + "' (the code creating the pipeline said it had a specific " + descriptionOfWhatThingIs + " it wants to use) as well as the " + descriptionOfWhatThingIs + " configured in the Pipeline in the Catalogue '" + pipelineConfigurationThing + "' (this should have been picked up by the DataFlowPipelineContext checks above)");
+        throw new Exception(
+            $"Cannot have both the explicit {descriptionOfWhatThingIs} '{explicitThing}' (the code creating the pipeline said it had a specific {descriptionOfWhatThingIs} it wants to use) as well as the {descriptionOfWhatThingIs} configured in the Pipeline in the Catalogue '{pipelineConfigurationThing}' (this should have been picked up by the DataFlowPipelineContext checks above)");
     }
 
 
@@ -150,9 +152,9 @@ public class DataFlowPipelineEngineFactory : IDataFlowPipelineEngineFactory
         var type = toBuild.GetClassAsSystemType();
             
         if(type == null)
-            throw new Exception("Could not find Type '" + toBuild.Class  +"'");
+            throw new Exception($"Could not find Type '{toBuild.Class}'");
 
-        object toReturn = _constructor.Construct(type);
+        var toReturn = _constructor.Construct(type);
 
         //all the IArguments we need to initialize the class
         var allArguments = toBuild.GetAllArguments().ToArray();
@@ -163,7 +165,7 @@ public class DataFlowPipelineEngineFactory : IDataFlowPipelineEngineFactory
             SetPropertyIfDemanded(toBuild,toReturn,propertyInfo,allArguments);
 
             //see if any demand nested initialization
-            Attribute nestedInit =
+            var nestedInit =
                 System.Attribute.GetCustomAttributes(propertyInfo)
                     .FirstOrDefault(a => a is DemandsNestedInitializationAttribute);
 
@@ -207,7 +209,7 @@ public class DataFlowPipelineEngineFactory : IDataFlowPipelineEngineFactory
             {
                 //look for 'DeleteUsers' if not nested
                 //look for 'Settings.DeleteUsers' if nested in a property called Settings on class
-                string expectedArgumentName = nestedProperty != null ?nestedProperty.Name + "." + propertyInfo.Name : propertyInfo.Name;
+                var expectedArgumentName = nestedProperty != null ? $"{nestedProperty.Name}.{propertyInfo.Name}" : propertyInfo.Name;
 
                 //get the appropriate value from arguments
                 var argument = arguments.SingleOrDefault(n => n.Name.Equals(expectedArgumentName));
@@ -216,7 +218,7 @@ public class DataFlowPipelineEngineFactory : IDataFlowPipelineEngineFactory
                 if (argument == null)
                     if (initialization.DefaultValue == null && initialization.Mandatory)
                     {
-                        string msg = string.Format("Class {0} has a property {1} marked with DemandsInitialization but no corresponding argument was found in the arguments (PipelineComponentArgument) of the PipelineComponent called {2}", 
+                        var msg = string.Format("Class {0} has a property {1} marked with DemandsInitialization but no corresponding argument was found in the arguments (PipelineComponentArgument) of the PipelineComponent called {2}", 
                             toReturn.GetType().Name ,
                             propertyInfo.Name ,
                             toBuild.Name);
@@ -238,8 +240,8 @@ public class DataFlowPipelineEngineFactory : IDataFlowPipelineEngineFactory
             }
             catch (NotSupportedException e)
             {
-                throw new Exception("Class " + toReturn.GetType().Name + " has a property " + propertyInfo.Name +
-                                    " but is of unexpected/unsupported type " + propertyInfo.GetType(), e);
+                throw new Exception(
+                    $"Class {toReturn.GetType().Name} has a property {propertyInfo.Name} but is of unexpected/unsupported type {propertyInfo.GetType()}", e);
             }
         }
     }
@@ -317,17 +319,14 @@ public class DataFlowPipelineEngineFactory : IDataFlowPipelineEngineFactory
                 dataFlowPipelineEngine.Initialize(initizationObjects);
                 checkNotifier.OnCheckPerformed(
                     new CheckEventArgs(
-                        "Pipeline sucesfully initialized with " +
-                        initizationObjects.Length + " initialization objects",
+                        $"Pipeline sucesfully initialized with {initizationObjects.Length} initialization objects",
                         CheckResult.Success));
             }
             catch (Exception exception)
             {
                 checkNotifier.OnCheckPerformed(
                     new CheckEventArgs(
-                        "Pipeline initialization failed, there were " + initizationObjects.Length +
-                        " objects for use in initialization (" +
-                        string.Join(",", initizationObjects.Select(o => o.ToString())) + ")", CheckResult.Fail,
+                        $"Pipeline initialization failed, there were {initizationObjects.Length} objects for use in initialization ({string.Join(",", initizationObjects.Select(o => o.ToString()))})", CheckResult.Fail,
                         exception));
             }
 

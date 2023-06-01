@@ -49,10 +49,7 @@ public class JoinableTask:CacheableTask
         return _catalogueName;
     }
 
-    public override IMapsDirectlyToDatabaseTable Child
-    {
-        get { return Joinable; }
-    }
+    public override IMapsDirectlyToDatabaseTable Child => Joinable;
 
     public override IDataAccessPoint[] GetDataAccessPoints()
     {
@@ -67,9 +64,9 @@ public class JoinableTask:CacheableTask
     public override string ToString()
     {
             
-        string name = _aggregate.Name;
+        var name = _aggregate.Name;
 
-        string expectedTrimStart = _cohortIdentificationConfiguration.GetNamingConventionPrefixForConfigurations();
+        var expectedTrimStart = _cohortIdentificationConfiguration.GetNamingConventionPrefixForConfigurations();
 
         if (name.StartsWith(expectedTrimStart))
             return name.Substring(expectedTrimStart.Length);
@@ -92,8 +89,8 @@ public class JoinableTask:CacheableTask
         manager.DeleteCacheEntryIfAny(Joinable.AggregateConfiguration, AggregateOperation.JoinableInceptionQuery);
     }
 
-    public override int Order { get { return Joinable.ID; }
-        set { throw new NotSupportedException();}
+    public override int Order { get => Joinable.ID;
+        set => throw new NotSupportedException();
     }
 
     public bool IsUnused { get; private set; }
@@ -106,6 +103,6 @@ public class JoinableTask:CacheableTask
     public string GetUnusedWarningText()
     {
         return
-            "Patient Index Table '" + ToString() + @"' is not used by any of your sets (above).";
+            $"Patient Index Table '{ToString()}' is not used by any of your sets (above).";
     }
 }

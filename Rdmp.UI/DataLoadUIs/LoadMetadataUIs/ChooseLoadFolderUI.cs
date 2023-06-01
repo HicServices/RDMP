@@ -133,7 +133,7 @@ public partial class ChooseLoadDirectoryUI : RDMPForm
 
     private void btnCreateNewBrowse_Click(object sender, EventArgs e)
     {
-        FolderBrowserDialog fbd = new FolderBrowserDialog();
+        var fbd = new FolderBrowserDialog();
             
         if (fbd.ShowDialog() == DialogResult.OK)
             tbCreateNew.Text = fbd.SelectedPath;
@@ -141,7 +141,7 @@ public partial class ChooseLoadDirectoryUI : RDMPForm
 
     private void btnBrowseForExisting_Click(object sender, EventArgs e)
     {
-        FolderBrowserDialog fbd = new FolderBrowserDialog();
+        var fbd = new FolderBrowserDialog();
         fbd.ShowNewFolderButton = false;
 
         if (fbd.ShowDialog() == DialogResult.OK)

@@ -54,13 +54,13 @@ public class ExecuteCommandSyncTableInfo : BasicCommandExecution
     {
         base.Execute();
 
-        TableInfoSynchronizer syncher = new TableInfoSynchronizer(_tableInfo);
+        var syncher = new TableInfoSynchronizer(_tableInfo);
         var listener = _autoYes ? new AcceptAllCheckNotifier() :(ICheckNotifier) new FromActivateItemsToCheckNotifier(BasicActivator);
 
         try
         {
                 
-            bool wasSynchedsuccessfully = syncher.Synchronize(listener);
+            var wasSynchedsuccessfully = syncher.Synchronize(listener);
 
             if (wasSynchedsuccessfully)
                 BasicActivator.Show("Synchronization complete, TableInfo is Synchronized with the live database");
@@ -88,7 +88,7 @@ public class ExecuteCommandSyncTableInfo : BasicCommandExecution
             }
             catch (Exception exception)
             {
-                BasicActivator.ShowException("Fatal error while attempting to synchronize (" + exception.Message + ")", exception);
+                BasicActivator.ShowException($"Fatal error while attempting to synchronize ({exception.Message})", exception);
             }
         }
 

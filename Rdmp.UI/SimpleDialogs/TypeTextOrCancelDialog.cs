@@ -24,7 +24,7 @@ public partial class TypeTextOrCancelDialog : Form
     private readonly bool _multiline;
     private Scintilla _scintilla;
 
-    public string ResultText {get { return (_multiline ? _scintilla.Text : textBox1.Text)?.Trim(); }}
+    public string ResultText => (_multiline ? _scintilla.Text : textBox1.Text)?.Trim();
 
     /// <summary>
     /// True to require that text typed be sane for usage as a column name, table name etc e.g. "bob" but not "bob::bbbbb".

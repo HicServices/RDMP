@@ -45,11 +45,11 @@ public class BasicDataReleaseDestination : IPluginDataFlowComponent<ReleaseAudit
         {
             listener.OnNotify(this, new NotifyEventArgs(ProgressEventType.Information, "CumulativeExtractionResults for datasets not included in the Patch will now be erased."));
                     
-            int recordsDeleted = 0;
+            var recordsDeleted = 0;
 
             foreach (var configuration in this._releaseData.ConfigurationsForRelease.Keys)
             {
-                IExtractionConfiguration current = configuration;
+                var current = configuration;
                 var currentResults = configuration.CumulativeExtractionResults;
                 
                 //foreach existing CumulativeExtractionResults if it is not included in the patch then it should be deleted
@@ -60,7 +60,8 @@ public class BasicDataReleaseDestination : IPluginDataFlowComponent<ReleaseAudit
                 }
             }
                 
-            listener.OnNotify(this, new NotifyEventArgs(ProgressEventType.Information, "Deleted " + recordsDeleted + " old CumulativeExtractionResults (That were not included in the final Patch you are preparing)"));
+            listener.OnNotify(this, new NotifyEventArgs(ProgressEventType.Information,
+                $"Deleted {recordsDeleted} old CumulativeExtractionResults (That were not included in the final Patch you are preparing)"));
         }
 
         _engine = new ReleaseEngine(_project, ReleaseSettings, listener, releaseAudit);
@@ -79,7 +80,7 @@ public class BasicDataReleaseDestination : IPluginDataFlowComponent<ReleaseAudit
         {
             try
             {
-                int remnantsDeleted = 0;
+                var remnantsDeleted = 0;
 
                 foreach (ExtractionConfiguration configuration in _releaseData.ConfigurationsForRelease.Keys)
                 foreach (ReleaseLog remnant in configuration.ReleaseLog)
@@ -89,7 +90,8 @@ public class BasicDataReleaseDestination : IPluginDataFlowComponent<ReleaseAudit
                 }
 
                 if (remnantsDeleted > 0)
-                    listener.OnNotify(this, new NotifyEventArgs(ProgressEventType.Information, "Because release failed we are deleting ReleaseLogEntries, this resulted in " + remnantsDeleted + " deleted records, you will likely need to re-extract these datasets or retrieve them from the Release directory"));
+                    listener.OnNotify(this, new NotifyEventArgs(ProgressEventType.Information,
+                        $"Because release failed we are deleting ReleaseLogEntries, this resulted in {remnantsDeleted} deleted records, you will likely need to re-extract these datasets or retrieve them from the Release directory"));
             }
             catch (Exception e1)
             {
@@ -99,7 +101,8 @@ public class BasicDataReleaseDestination : IPluginDataFlowComponent<ReleaseAudit
 
         if (pipelineFailureExceptionIfAny == null && _destinationFolder != null)
         {
-            listener.OnNotify(this, new NotifyEventArgs(ProgressEventType.Information, "Data release succeded into:" + _destinationFolder));
+            listener.OnNotify(this, new NotifyEventArgs(ProgressEventType.Information,
+                $"Data release succeded into:{_destinationFolder}"));
             //mark configuration as released
             foreach (var config in _configurationReleased)
             {

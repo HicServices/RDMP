@@ -44,8 +44,8 @@ public class CohortAggregateContainer : DatabaseEntity, IOrderable,INamed,IDisab
     /// </summary>
     public SetOperation Operation
     {
-        get { return _operation; }
-        set { SetField(ref  _operation, value); }
+        get => _operation;
+        set => SetField(ref  _operation, value);
     }
 
     /// <inheritdoc/>
@@ -55,8 +55,8 @@ public class CohortAggregateContainer : DatabaseEntity, IOrderable,INamed,IDisab
     [NotNull]
     public string Name
     {
-        get { return _name; }
-        set { SetField(ref  _name, value); }
+        get => _name;
+        set => SetField(ref  _name, value);
     }
 
     /// <summary>
@@ -66,15 +66,15 @@ public class CohortAggregateContainer : DatabaseEntity, IOrderable,INamed,IDisab
     /// </summary>
     public int Order
     {
-        get { return _order; }
-        set { SetField(ref  _order, value); }
+        get => _order;
+        set => SetField(ref  _order, value);
     }
 
     /// <inheritdoc/>
     public bool IsDisabled
     {
-        get { return _isDisabled; }
-        set { SetField(ref _isDisabled , value); }
+        get => _isDisabled;
+        set => SetField(ref _isDisabled , value);
     }
 
     #endregion
@@ -234,7 +234,7 @@ public class CohortAggregateContainer : DatabaseEntity, IOrderable,INamed,IDisab
     /// <returns></returns>
     public bool HasChild(CohortAggregateContainer potentialChild)
     {
-        bool foundChildThroughRecursion = false;
+        var foundChildThroughRecursion = false;
 
         //recurse into all children
         foreach(var c in GetSubContainers())
@@ -252,7 +252,7 @@ public class CohortAggregateContainer : DatabaseEntity, IOrderable,INamed,IDisab
     /// <returns></returns>
     public bool HasChild(AggregateConfiguration configuration)
     {
-        bool foundChildThroughRecursion = false;
+        var foundChildThroughRecursion = false;
 
         //recurse into all children
         foreach (var c in GetSubContainers())
@@ -313,9 +313,9 @@ public class CohortAggregateContainer : DatabaseEntity, IOrderable,INamed,IDisab
 
 
         //for each thing in us
-        foreach (IOrderable content in contents)
+        foreach (var content in contents)
         {
-            int order = content.Order;
+            var order = content.Order;
             var config = content as AggregateConfiguration;
             var container = content as CohortAggregateContainer;
 
@@ -323,7 +323,8 @@ public class CohortAggregateContainer : DatabaseEntity, IOrderable,INamed,IDisab
             if(config != null)
             {
                 var configClone = clone.ImportAggregateConfigurationAsIdentifierList(config, null,false);
-                notifier.OnCheckPerformed(new CheckEventArgs("Created clone dataset " + configClone + " with ID " + configClone.ID,CheckResult.Success));
+                notifier.OnCheckPerformed(new CheckEventArgs(
+                    $"Created clone dataset {configClone} with ID {configClone.ID}",CheckResult.Success));
                 cloneContainer.AddChild(configClone,order);
 
                 //if the original used any joinable patient index tables
@@ -334,7 +335,8 @@ public class CohortAggregateContainer : DatabaseEntity, IOrderable,INamed,IDisab
                 {
                     //for some reason the CohortIdentificationConfiguration didn't properly clone the joinable permission or didn't add it to the dictionary
                     if(!parentToCloneJoinablesDictionary.ContainsKey(j.JoinableCohortAggregateConfiguration))
-                        throw new KeyNotFoundException("Configuration " + configClone + " uses Patient Index Table " + j.AggregateConfiguration + " but our dictionary did not have the key, why was that joinable not cloned?");
+                        throw new KeyNotFoundException(
+                            $"Configuration {configClone} uses Patient Index Table {j.AggregateConfiguration} but our dictionary did not have the key, why was that joinable not cloned?");
 
                     //we do have a clone copy of the joinable permission, set the clone aggregate
                     var cloneJoinable = parentToCloneJoinablesDictionary[j.JoinableCohortAggregateConfiguration];
@@ -366,7 +368,8 @@ public class CohortAggregateContainer : DatabaseEntity, IOrderable,INamed,IDisab
             {
                 var cloneSubContainer = container.CloneEntireTreeRecursively(notifier, original, clone,parentToCloneJoinablesDictionary);
 
-                notifier.OnCheckPerformed(new CheckEventArgs("Created clone container " + cloneSubContainer + " with ID " + cloneSubContainer.ID, CheckResult.Success));
+                notifier.OnCheckPerformed(new CheckEventArgs(
+                    $"Created clone container {cloneSubContainer} with ID {cloneSubContainer.ID}", CheckResult.Success));
                 cloneContainer.AddChild(cloneSubContainer);
             }
         }
@@ -438,12 +441,12 @@ public class CohortAggregateContainer : DatabaseEntity, IOrderable,INamed,IDisab
     /// <returns></returns>
     public List<CohortAggregateContainer> GetAllSubContainersRecursively()
     {
-        List<CohortAggregateContainer> toReturn = new List<CohortAggregateContainer>();
+        var toReturn = new List<CohortAggregateContainer>();
 
         var subs = GetSubContainers();
         toReturn.AddRange(subs);
 
-        foreach (CohortAggregateContainer sub in subs)
+        foreach (var sub in subs)
             toReturn.AddRange(sub.GetAllSubContainersRecursively());
             
         return toReturn;
@@ -468,7 +471,7 @@ public class CohortAggregateContainer : DatabaseEntity, IOrderable,INamed,IDisab
     /// <returns></returns>
     public IEnumerable<CohortAggregateContainer> GetAllParentContainers()
     {
-        CohortAggregateContainer container = this;
+        var container = this;
 
         while (container != null)
         {

@@ -30,7 +30,7 @@ public class ExecuteCommandAddPlugins : BasicCommandExecution, IAtomicCommand
     {
         if(!fileCombineable.Files.All(f=>f.Extension == PackPluginRunner.PluginPackageSuffix))
         {
-            SetImpossible("Plugins must " + PackPluginRunner.PluginPackageSuffix); 
+            SetImpossible($"Plugins must {PackPluginRunner.PluginPackageSuffix}"); 
             return;
         }
 
@@ -40,7 +40,7 @@ public class ExecuteCommandAddPlugins : BasicCommandExecution, IAtomicCommand
 
         var collision = existing.FirstOrDefault(p=>_files.Any(f=>f.Name.Equals(p.Name)));
         if(collision != null)
-            SetImpossible("There is already a plugin called '" + collision + "'");
+            SetImpossible($"There is already a plugin called '{collision}'");
 
     }
 
@@ -52,14 +52,14 @@ public class ExecuteCommandAddPlugins : BasicCommandExecution, IAtomicCommand
         {
                 
             var f = BasicActivator.SelectFile("Plugin to add",
-                $"Plugins (*{PackPluginRunner.PluginPackageSuffix})",'*'+PackPluginRunner.PluginPackageSuffix);
+                $"Plugins (*{PackPluginRunner.PluginPackageSuffix})", $"*{PackPluginRunner.PluginPackageSuffix}");
             if(f != null)
                 _files = new FileInfo[]{ f };
             else return;
         }
 
 
-        foreach(FileInfo f in _files)
+        foreach(var f in _files)
         {
             var runner = new PackPluginRunner(new Core.CommandLine.Options.PackOptions(){File = f.FullName});
             runner.Run(BasicActivator.RepositoryLocator,new ThrowImmediatelyDataLoadEventListener(),new ThrowImmediatelyCheckNotifier(),new Core.DataFlowPipeline.GracefulCancellationToken());

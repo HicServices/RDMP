@@ -26,7 +26,7 @@ public class PeriodicityState
 
     public int CountOfRecords
     {
-        get { return _countOfRecords; }
+        get => _countOfRecords;
         set
         {
             if(IsCommitted )
@@ -115,7 +115,8 @@ public class PeriodicityState
                                 break;
                             case "Wrong": toIncrement.Total += (int)r["CountOfRecords"];
                                 break;
-                            default:throw new ArgumentOutOfRangeException("Unexpected RowEvaluation '" + r["RowEvaluation"] + "'");
+                            default:throw new ArgumentOutOfRangeException(
+                                $"Unexpected RowEvaluation '{r["RowEvaluation"]}'");
                         }
                     }
                 }
@@ -138,21 +139,21 @@ public class PeriodicityState
     {
         using (var con = evaluation.DQERepository.GetConnection())
         {
-            string sql = "";
+            var sql = "";
 
             if (pivot)
                 sql = string.Format(PeriodicityPivotSql, evaluation.ID, pivotCategoryValue);
             else
-                sql = @"Select [Evaluation_ID]
+                sql = $@"Select [Evaluation_ID]
       ,CAST([Year] as varchar(4)) + '-' + datename(month,dateadd(month, [Month] - 1, 0)) as YearMonth
       ,[CountOfRecords]
-      ,[RowEvaluation] from PeriodicityState where Evaluation_ID=" + evaluation.ID + " AND PivotCategory = '" + pivotCategoryValue+"'";
+      ,[RowEvaluation] from PeriodicityState where Evaluation_ID={evaluation.ID} AND PivotCategory = '{pivotCategoryValue}'";
 
 
             using(var cmd = DatabaseCommandHelper.GetCommand(sql, con.Connection, con.Transaction))
             using (var da = DatabaseCommandHelper.GetDataAdapter(cmd))
             {
-                DataTable dt = new DataTable();
+                var dt = new DataTable();
                 da.Fill(dt);
 
                 // if there are no rows (table is empty) return null instead
@@ -183,7 +184,7 @@ public class PeriodicityState
 
             var t = evaluation.DQERepository;
 
-            string sql =
+            var sql =
                 $"INSERT INTO PeriodicityState(Evaluation_ID,{t.Wrap("Year")},{t.Wrap("Month")},CountOfRecords,RowEvaluation,PivotCategory)VALUES({evaluation.ID},{Year},{Month},{CountOfRecords},@RowEvaluation,@PivotCategory)";
 
             using (var cmd = DatabaseCommandHelper.GetCommand(sql, con.Connection, con.Transaction))

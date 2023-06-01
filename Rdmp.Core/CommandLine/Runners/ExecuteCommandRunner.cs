@@ -116,11 +116,11 @@ class ExecuteCommandRunner:IRunner
             var suggestions =
                 _commands.Keys.Where(c => CultureInfo.CurrentCulture.CompareInfo.IndexOf(c,command, CompareOptions.IgnoreCase) >= 0).ToArray();
 
-            StringBuilder msg = new StringBuilder($"Unknown or Unsupported Command '{command}', use {BasicCommandExecution.GetCommandName<ExecuteCommandListSupportedCommands>()} to see available commands");
+            var msg = new StringBuilder($"Unknown or Unsupported Command '{command}', use {BasicCommandExecution.GetCommandName<ExecuteCommandListSupportedCommands>()} to see available commands");
 
             if (suggestions.Any())
-                msg.AppendLine("Similar commands include:" + Environment.NewLine +
-                               string.Join(Environment.NewLine, suggestions));
+                msg.AppendLine(
+                    $"Similar commands include:{Environment.NewLine}{string.Join(Environment.NewLine, suggestions)}");
 
             _listener.OnNotify(this,new NotifyEventArgs(ProgressEventType.Error,msg.ToString()));
         }
@@ -189,7 +189,7 @@ class ExecuteCommandRunner:IRunner
 
         using (script.UseScope ? NewObjectPool.StartSession() : null)
         {
-            foreach (string s in script.Commands)
+            foreach (var s in script.Commands)
             {
                 try
                 {
@@ -230,11 +230,11 @@ class ExecuteCommandRunner:IRunner
     {
         char? inQuotes = null;
 
-        StringBuilder word = new StringBuilder();
+        var word = new StringBuilder();
             
-        for(int i=0; i<commandLine.Length;i++)
+        for(var i=0; i<commandLine.Length;i++)
         {
-            char c = commandLine[i];
+            var c = commandLine[i];
 
             //if we enter quotes and it's the first letter in the word
             if(inQuotes == null && (c == '\'' || c == '"') && word.Length == 0)
@@ -251,7 +251,7 @@ class ExecuteCommandRunner:IRunner
             if(c == ' ' && inQuotes == null) 
             {
                 //break character outside of quotes
-                string resultWord = word.ToString().Trim();
+                var resultWord = word.ToString().Trim();
                 if(!string.IsNullOrWhiteSpace(resultWord))
                     yield return resultWord;
 
@@ -261,7 +261,7 @@ class ExecuteCommandRunner:IRunner
                 word.Append(c); //regular character
         }
 
-        string finalWord = word.ToString().Trim();
+        var finalWord = word.ToString().Trim();
         if(!string.IsNullOrWhiteSpace(finalWord))
             yield return finalWord;            
     }

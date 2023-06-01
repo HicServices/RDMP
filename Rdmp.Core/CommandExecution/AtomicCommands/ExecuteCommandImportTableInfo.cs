@@ -51,7 +51,7 @@ public class ExecuteCommandImportTableInfo : BasicCommandExecution
         else
             importer = new TableInfoImporter(BasicActivator.RepositoryLocator.CatalogueRepository, t);
             
-        importer.DoImport(out var ti, out ColumnInfo[] cis);
+        importer.DoImport(out var ti, out var cis);
 
         BasicActivator.Show($"Successfully imported new TableInfo { ti.Name} with ID {ti.ID}");
 

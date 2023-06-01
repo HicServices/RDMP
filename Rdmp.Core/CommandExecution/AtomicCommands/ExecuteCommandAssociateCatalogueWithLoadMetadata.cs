@@ -61,7 +61,7 @@ public class ExecuteCommandAssociateCatalogueWithLoadMetadata:BasicCommandExecut
         if (_chosenCatalogues == null && !SelectMany(_availableCatalogues,out _chosenCatalogues))
             return;
 
-        foreach (Catalogue cata in _chosenCatalogues)
+        foreach (var cata in _chosenCatalogues)
         {
             //if there are other catalogues
             if (_otherCatalogues.Any())
@@ -70,7 +70,7 @@ public class ExecuteCommandAssociateCatalogueWithLoadMetadata:BasicCommandExecut
                 //if the other catalogues have an agreed logging task
                 if (tasks.Length == 1)
                 {
-                    string task = tasks.Single();
+                    var task = tasks.Single();
 
                     //and that logging task is not blank!, and differs from this Catalogue
                     if (!string.IsNullOrWhiteSpace(task) && !task.Equals(cata.LoggingDataTask))
@@ -84,7 +84,8 @@ public class ExecuteCommandAssociateCatalogueWithLoadMetadata:BasicCommandExecut
                             if (string.IsNullOrWhiteSpace(cata.LoggingDataTask)
 
                                 //or if the user wants to switch to the new one
-                                || YesNo("Do you want to set Catalogue '" + cata.Name + "' to use shared logging task '" + task + "' instead of its current Logging Task '" + cata.LoggingDataTask + "' (All Catalogues in a load must share the same task and logging servers)?", "Synchronise Logging Tasks"))
+                                || YesNo(
+                                    $"Do you want to set Catalogue '{cata.Name}' to use shared logging task '{task}' instead of its current Logging Task '{cata.LoggingDataTask}' (All Catalogues in a load must share the same task and logging servers)?", "Synchronise Logging Tasks"))
                             {
                                 //switch Catalogue to use that logging task (including servers)
                                 cata.LoggingDataTask = task;
@@ -95,7 +96,7 @@ public class ExecuteCommandAssociateCatalogueWithLoadMetadata:BasicCommandExecut
                 }
                 else if (tasks.Length == 0)
                 {
-                    cata.LoggingDataTask = "Loading " + _loadMetadata.Name;
+                    cata.LoggingDataTask = $"Loading {_loadMetadata.Name}";
                 }
             }
 

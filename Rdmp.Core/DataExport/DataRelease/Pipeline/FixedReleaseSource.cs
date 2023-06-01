@@ -77,8 +77,7 @@ public abstract class FixedReleaseSource<T> : ICheckable, IPipelineRequirement<R
 
             if (staleDatasets.Any())
                 throw new Exception(
-                    "The following ReleasePotentials relate to expired (stale) extractions, you or someone else has executed another data extraction since you added this dataset to the release.  Offending datasets were (" +
-                    string.Join(",", staleDatasets.Select(ds => ds.ToString())) + ").  You can probably fix this problem by reloading/refreshing the Releaseability window.  If you have already added them to a planned Release you will need to add the newly recalculated one instead.");
+                    $"The following ReleasePotentials relate to expired (stale) extractions, you or someone else has executed another data extraction since you added this dataset to the release.  Offending datasets were ({string.Join(",", staleDatasets.Select(ds => ds.ToString()))}).  You can probably fix this problem by reloading/refreshing the Releaseability window.  If you have already added them to a planned Release you will need to add the newly recalculated one instead.");
 
             if (_releaseData.ConfigurationsForRelease.Any(kvp => kvp.Value.OfType<NoReleasePotential>().Any()))
                 throw new Exception("There are DataSets with NoReleasePotential in the ReleaseData");
@@ -98,22 +97,25 @@ public abstract class FixedReleaseSource<T> : ICheckable, IPipelineRequirement<R
 
             if (dodgyStates.Any())
             {
-                StringBuilder sb = new StringBuilder();
-                foreach (KeyValuePair<IExtractionConfiguration, List<ReleasePotential>> kvp in dodgyStates)
+                var sb = new StringBuilder();
+                foreach (var kvp in dodgyStates)
                 {
-                    sb.AppendLine(kvp.Key + ":");
+                    sb.AppendLine($"{kvp.Key}:");
                     foreach (var releasePotential in kvp.Value)
-                        sb.AppendLine("\t" + releasePotential.Configuration.Name + " : " + releasePotential.DatasetExtractionResult);
+                        sb.AppendLine(
+                            $"\t{releasePotential.Configuration.Name} : {releasePotential.DatasetExtractionResult}");
                 }
 
-                throw new Exception("Attempted to release a dataset that was not evaluated as being releaseable. The following Release Potentials were at a dodgy state:" + sb);
+                throw new Exception(
+                    $"Attempted to release a dataset that was not evaluated as being releaseable. The following Release Potentials were at a dodgy state:{sb}");
             }
 
             foreach (var environmentPotential in _releaseData.EnvironmentPotentials.Values)
             {
                 environmentPotential.Check(notifier);
                 if (environmentPotential.Assesment != TicketingReleaseabilityEvaluation.Releaseable && environmentPotential.Assesment != TicketingReleaseabilityEvaluation.TicketingLibraryMissingOrNotConfiguredCorrectly)
-                    throw new Exception("Ticketing system decided that the Environment is not ready for release. Reason: " + environmentPotential.Reason);
+                    throw new Exception(
+                        $"Ticketing system decided that the Environment is not ready for release. Reason: {environmentPotential.Reason}");
             }
         }
 
@@ -138,7 +140,7 @@ public abstract class FixedReleaseSource<T> : ICheckable, IPipelineRequirement<R
     {
         var globalDirectoriesFound = new List<DirectoryInfo>();
 
-        foreach (KeyValuePair<IExtractionConfiguration, List<ReleasePotential>> releasePotentials in _releaseData.ConfigurationsForRelease)
+        foreach (var releasePotentials in _releaseData.ConfigurationsForRelease)
             globalDirectoriesFound.AddRange(GetAllGlobalFolders(releasePotentials));
 
         if (globalDirectoriesFound.Any())
@@ -147,7 +149,7 @@ public abstract class FixedReleaseSource<T> : ICheckable, IPipelineRequirement<R
 
             foreach (var directoryInfo in globalDirectoriesFound.Distinct(new DirectoryInfoComparer()))
             {
-                UsefulStuff.GetInstance().ConfirmContentsOfDirectoryAreTheSame(firstGlobal, directoryInfo);
+                UsefulStuff.ConfirmContentsOfDirectoryAreTheSame(firstGlobal, directoryInfo);
             }
 
             return firstGlobal;
@@ -160,12 +162,12 @@ public abstract class FixedReleaseSource<T> : ICheckable, IPipelineRequirement<R
     {
         const string folderName = ExtractionDirectory.GLOBALS_DATA_NAME;
 
-        foreach (ReleasePotential releasePotential in toRelease.Value)
+        foreach (var releasePotential in toRelease.Value)
         {
             Debug.Assert(releasePotential.ExtractDirectory.Parent != null, "releasePotential.ExtractDirectory.Parent != null");
-            DirectoryInfo globalFolderForThisExtract = releasePotential.ExtractDirectory.Parent.EnumerateDirectories(folderName, SearchOption.TopDirectoryOnly).SingleOrDefault();
+            var globalFolderForThisExtract = releasePotential.ExtractDirectory.Parent.EnumerateDirectories(folderName, SearchOption.TopDirectoryOnly).SingleOrDefault();
 
-            if (globalFolderForThisExtract == null) //this particualar release didn't include globals/custom data at all
+            if (globalFolderForThisExtract == null) //this particular release didn't include globals/custom data at all
                 continue;
 
             yield return (globalFolderForThisExtract);

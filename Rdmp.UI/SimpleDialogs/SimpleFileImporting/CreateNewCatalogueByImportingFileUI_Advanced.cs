@@ -85,13 +85,14 @@ public partial class CreateNewCatalogueByImportingFileUI_Advanced : UserControl
                 targetTable = dest.TargetTableName;
                 var table = _database.ExpectTable(targetTable);
 
-                var ui = new ConfigureCatalogueExtractabilityUI(_activator, new TableInfoImporter(_repositoryLocator.CatalogueRepository, table), "File '" + _file.FullName + "'", _projectSpecific);
+                var ui = new ConfigureCatalogueExtractabilityUI(_activator, new TableInfoImporter(_repositoryLocator.CatalogueRepository, table),
+                    $"File '{_file.FullName}'", _projectSpecific);
                 ui.ShowDialog();
                     
                 var cata = CatalogueCreatedIfAny = ui.CatalogueCreatedIfAny;
 
                 if (cata != null)
-                    MessageBox.Show("Catalogue " + cata.Name + " successfully created");
+                    MessageBox.Show($"Catalogue {cata.Name} successfully created");
                 else
                     MessageBox.Show("User cancelled Catalogue creation, data has been loaded and TableInfo/ColumnInfos exist in Data Catalogue but there will be no Catalogue");
 
@@ -99,7 +100,8 @@ public partial class CreateNewCatalogueByImportingFileUI_Advanced : UserControl
             }
             catch (Exception e)
             {
-                ExceptionViewer.Show("Failed to import TableInfo/Forward Engineer Catalogue from " + _database.ToString() + "(Table was " + (targetTable ??"Null!")+ ")" + " - see Exception for details", e);
+                ExceptionViewer.Show(
+                    $"Failed to import TableInfo/Forward Engineer Catalogue from {_database}(Table was {(targetTable ?? "Null!")}) - see Exception for details", e);
             }
         }
     }

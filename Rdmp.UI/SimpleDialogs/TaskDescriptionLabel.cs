@@ -72,7 +72,7 @@ public partial class TaskDescriptionLabel : UserControl
 
     private void textBox1_Resize(object sender, EventArgs e)
     {
-        SizeF MessageSize = tbTaskDescription.CreateGraphics()
+        var MessageSize = tbTaskDescription.CreateGraphics()
             .MeasureString(tbTaskDescription.Text,
                 tbTaskDescription.Font,
                 tbTaskDescription.Width,
@@ -85,7 +85,7 @@ public partial class TaskDescriptionLabel : UserControl
 
     private void tbEntryLabel_Resize(object sender, EventArgs e)
     {
-        SizeF MessageSize = tbEntryLabel.CreateGraphics()
+        var MessageSize = tbEntryLabel.CreateGraphics()
             .MeasureString(tbEntryLabel.Text,
                 tbEntryLabel.Font,
                 tbEntryLabel.Width,

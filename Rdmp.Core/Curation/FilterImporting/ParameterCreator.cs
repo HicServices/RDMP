@@ -64,18 +64,18 @@ public class ParameterCreator
     public void CreateAll(IFilter filterToCreateFor, ISqlParameter[] existingParametersInScope)
     {
         //get what parameter exists
-        ISqlParameter[] sqlParameters = filterToCreateFor.GetAllParameters()??Array.Empty<ISqlParameter>();
+        var sqlParameters = filterToCreateFor.GetAllParameters()??Array.Empty<ISqlParameter>();
 
         //all parameters in the Select SQL
-        HashSet<string> parametersRequiredByWhereSQL = GetRequiredParamaterNamesForQuery(filterToCreateFor.WhereSQL, _globals);
+        var parametersRequiredByWhereSQL = GetRequiredParamaterNamesForQuery(filterToCreateFor.WhereSQL, _globals);
 
         //find which current parameters are redundant and delete them
-        foreach (ISqlParameter parameter in sqlParameters)
+        foreach (var parameter in sqlParameters)
             if (!parametersRequiredByWhereSQL.Contains(parameter.ParameterName))
                 ((IDeleteable)parameter).DeleteInDatabase();
 
         //find new parameters that we don't have
-        foreach (string requiredParameterName in parametersRequiredByWhereSQL)
+        foreach (var requiredParameterName in parametersRequiredByWhereSQL)
         {
             if (!sqlParameters.Any(p => p.ParameterName.Equals(requiredParameterName)))
             {
@@ -86,8 +86,8 @@ public class ParameterCreator
                 if (_importFromIfAny != null)
                     matchingTemplateFilter = _importFromIfAny.SingleOrDefault(t => t.ParameterName.Equals(requiredParameterName));
                     
-                string proposedNewParameterName = requiredParameterName;
-                int proposedAliasNumber = 2;
+                var proposedNewParameterName = requiredParameterName;
+                var proposedAliasNumber = 2;
 
                 //Figure out of there are any collisions with existing parameters
                 if(existingParametersInScope != null)
@@ -110,7 +110,7 @@ public class ParameterCreator
                 //If there is a matching Template Filter
                 if(matchingTemplateFilter != null)
                 {
-                    string toCreate = matchingTemplateFilter.ParameterSQL;
+                    var toCreate = matchingTemplateFilter.ParameterSQL;
 
                     //there's a rename requirement e.g. 'DECLARE @bob AS int' to 'DECLARE @bob2 AS int' because the existing scope already has a parameter called @bob
                     if (proposedNewParameterName != requiredParameterName)
@@ -159,11 +159,11 @@ public class ParameterCreator
     /// <returns>parameter names that are required by the SQL but are not already declared in the globals</returns>
     private HashSet<string> GetRequiredParamaterNamesForQuery(string whereSql, IEnumerable<ISqlParameter> globals)
     {
-        HashSet<string> toReturn = QuerySyntaxHelper.GetAllParameterNamesFromQuery(whereSql);
+        var toReturn = QuerySyntaxHelper.GetAllParameterNamesFromQuery(whereSql);
 
         //remove any global parameters (these don't need to be created)
         if (globals != null)
-            foreach (ISqlParameter globalExtractionFilterParameter in globals)
+            foreach (var globalExtractionFilterParameter in globals)
                 if (toReturn.Contains(globalExtractionFilterParameter.ParameterName))
                     toReturn.Remove(globalExtractionFilterParameter.ParameterName);
 
@@ -180,12 +180,12 @@ public class ParameterCreator
     public static string RenameParameterInSQL(string haystack, string parameterName, string parameterNameReplacement)
     {
         //Does a zero matching look ahead for anything that isn't a legal parameter name e.g. "@bob)" will match the bracket but will not replace the bracket since the match is zero width
-        string regexBoundary = @"(?=[^A-Za-z0-9_#@$])";
+        var regexBoundary = @"(?=[^A-Za-z0-9_#@$])";
 
         var patternNeedle = Regex.Escape(parameterName);
 
         //Replace the users needle with either an 'end of string' boundary or an invalid parameter name character (e.g. space, bracket, equals etc)
-        var regex = new Regex("("+patternNeedle +"$)" + "|(" + patternNeedle + regexBoundary + ")");
+        var regex = new Regex($"({patternNeedle}$)|({patternNeedle}{regexBoundary})");
 
         return regex.Replace(haystack, parameterNameReplacement);
     }

@@ -33,9 +33,10 @@ public class ExecuteCommandMakePatientIndexTableIntoRegularCohortIdentificationS
             SetImpossible("Aggregate belongs to a different CohortIdentificationConfiguration");
             
         if(_sourceAggregateCommand.JoinableUsersIfAny.Any())
-            SetImpossible("The following Cohort Set(s) use this PatientIndex table:" + string.Join(",",_sourceAggregateCommand.JoinableUsersIfAny.Select(j=>j.ToString())));
+            SetImpossible(
+                $"The following Cohort Set(s) use this PatientIndex table:{string.Join(",", _sourceAggregateCommand.JoinableUsersIfAny.Select(j => j.ToString()))}");
 
-        if(_targetCohortAggregateContainer.ShouldBeReadOnly(out string reason))
+        if(_targetCohortAggregateContainer.ShouldBeReadOnly(out var reason))
             SetImpossible(reason);
     }
 
@@ -51,7 +52,7 @@ public class ExecuteCommandMakePatientIndexTableIntoRegularCohortIdentificationS
         foreach (var dimension in _sourceAggregateCommand.Aggregate.AggregateDimensions)
             if (!dimension.IsExtractionIdentifier)
                 if (YesNo(
-                        "Changing to a CohortSet means deleting AggregateDimension '" + dimension + "'.  Ok?",
+                        $"Changing to a CohortSet means deleting AggregateDimension '{dimension}'.  Ok?",
                         "Delete Aggregate Dimension"))
                     dimension.DeleteInDatabase();
                 else

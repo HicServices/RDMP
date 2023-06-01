@@ -70,14 +70,14 @@ public class DleRunner:Runner
                 // Create the pipeline to pass into the DataLoadProcess object
                 var dataLoadFactory = new HICDataLoadFactory(loadMetadata, databaseConfiguration,flags,locator.CatalogueRepository, logManager);
 
-                IDataLoadExecution execution = dataLoadFactory.Create(listener);
+                var execution = dataLoadFactory.Create(listener);
                 IDataLoadProcess dataLoadProcess;
 
                 if (loadMetadata.LoadProgresses.Any())
                 {
                     //Then the load is designed to run X days of source data at a time
                     //Load Progress
-                    ILoadProgressSelectionStrategy whichLoadProgress = loadProgress != null ? (ILoadProgressSelectionStrategy) new SingleLoadProgressSelectionStrategy(loadProgress) : new AnyAvailableLoadProgressSelectionStrategy(loadMetadata);
+                    var whichLoadProgress = loadProgress != null ? (ILoadProgressSelectionStrategy) new SingleLoadProgressSelectionStrategy(loadProgress) : new AnyAvailableLoadProgressSelectionStrategy(loadMetadata);
 
                     var jobDateFactory = new JobDateGenerationStrategyFactory(whichLoadProgress);
                     

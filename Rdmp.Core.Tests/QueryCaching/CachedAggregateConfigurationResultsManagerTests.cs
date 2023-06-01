@@ -46,7 +46,7 @@ public class CachedAggregateConfigurationResultsManagerTests : QueryCachingDatab
     [Test]
     public void CommitResults_CreatesTablessuccessfully()
     {
-        DataTable dt = new DataTable();
+        var dt = new DataTable();
         dt.Columns.Add("MyCol");
 
         dt.Rows.Add("0101010101");
@@ -61,7 +61,7 @@ public class CachedAggregateConfigurationResultsManagerTests : QueryCachingDatab
         var resultsTableName = _manager.GetLatestResultsTableUnsafe(_config, AggregateOperation.IndexedExtractionIdentifierList);
 
 
-        Assert.AreEqual("IndexedExtractionIdentifierList_AggregateConfiguration" + _config.ID, resultsTableName.GetRuntimeName());
+        Assert.AreEqual($"IndexedExtractionIdentifierList_AggregateConfiguration{_config.ID}", resultsTableName.GetRuntimeName());
 
         var table = DataAccessPortal.GetInstance()
             .ExpectDatabase(QueryCachingDatabaseServer, DataAccessContext.InternalDataProcessing)
@@ -78,7 +78,7 @@ public class CachedAggregateConfigurationResultsManagerTests : QueryCachingDatab
             con.Open();
 
             var dt2 = new DataTable();
-            SqlDataAdapter da = new SqlDataAdapter("Select * from " + resultsTableName.GetFullyQualifiedName(),(SqlConnection)con);
+            var da = new SqlDataAdapter($"Select * from {resultsTableName.GetFullyQualifiedName()}",(SqlConnection)con);
             da.Fill(dt2);
 
             Assert.AreEqual(dt.Rows.Count,dt2.Rows.Count);
@@ -94,7 +94,7 @@ public class CachedAggregateConfigurationResultsManagerTests : QueryCachingDatab
     [Test]
     public void Throws_BecauseItHasDuplicates()
     {
-        DataTable dt = new DataTable();
+        var dt = new DataTable();
         dt.Columns.Add("MyCol");
         dt.Rows.Add("0101010101");
         dt.Rows.Add("0101010101");
@@ -106,7 +106,7 @@ public class CachedAggregateConfigurationResultsManagerTests : QueryCachingDatab
     [Test]
     public void Throws_BecauseInceptionCaching()
     {
-        DataTable dt = new DataTable();
+        var dt = new DataTable();
         dt.Columns.Add("MyCol");
         dt.Rows.Add("0101010101");
 
@@ -114,7 +114,7 @@ public class CachedAggregateConfigurationResultsManagerTests : QueryCachingDatab
         //If this unit test suddenly starts failing you might have changed the value of CachedAggregateConfigurationResultsManager.CachingPrefix (see sql variable below and make it match the const - the unit test is divorced because why would you want to change that eh!, 'Cached:' is very clear)
             
         //this is a cache fetch request that we are trying to inception recache 
-        string sql = @"/*Cached:cic_65_People in DMPTestCatalogue*/
+        var sql = @"/*Cached:cic_65_People in DMPTestCatalogue*/
 	select * from [cache]..[IndexedExtractionIdentifierList_AggregateConfiguration217]";
 
         var ex = Assert.Throws<NotSupportedException>(() => _manager.CommitResults(new CacheCommitIdentifierList(_config, sql, dt, _myColSpecification, 30)));
@@ -126,7 +126,7 @@ public class CachedAggregateConfigurationResultsManagerTests : QueryCachingDatab
     [Test]
     public void NullsAreDropped()
     {
-        DataTable dt = new DataTable();
+        var dt = new DataTable();
         dt.Columns.Add("MyCol");
         dt.Rows.Add("0101010101");
         dt.Rows.Add(DBNull.Value);
@@ -142,7 +142,7 @@ public class CachedAggregateConfigurationResultsManagerTests : QueryCachingDatab
         {
             con.Open();
                 
-            SqlDataAdapter da = new SqlDataAdapter("Select * from " + resultTable.GetFullyQualifiedName(),
+            var da = new SqlDataAdapter($"Select * from {resultTable.GetFullyQualifiedName()}",
                 (SqlConnection) con);
             da.Fill(dt2);
         }

@@ -118,9 +118,9 @@ public partial class TableInfoUI : TableInfoUI_Design, ISaveableUI
     {
         var refactorer = new SelectSQLRefactorer();
             
-        int updatesMade = refactorer.RefactorTableName(_tableInfo,toReplace,toReplaceWith);
+        var updatesMade = refactorer.RefactorTableName(_tableInfo,toReplace,toReplaceWith);
 
-        MessageBox.Show("Made " + updatesMade + " replacements in ExtractionInformation/ColumnInfos.");
+        MessageBox.Show($"Made {updatesMade} replacements in ExtractionInformation/ColumnInfos.");
     }
 
     private void tbTableInfoName_TextChanged(object sender, EventArgs e)
@@ -152,7 +152,7 @@ public partial class TableInfoUI : TableInfoUI_Design, ISaveableUI
     {
         try
         {
-            bool isSync = new TableInfoSynchronizer(_tableInfo).Synchronize(new MakeChangePopup(new YesNoYesToAllDialog()));
+            var isSync = new TableInfoSynchronizer(_tableInfo).Synchronize(new MakeChangePopup(new YesNoYesToAllDialog()));
 
             if (isSync)
                 MessageBox.Show("TableInfo is synchronized");

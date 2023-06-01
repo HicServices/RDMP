@@ -56,8 +56,8 @@ public class CohortIdentificationConfiguration : DatabaseEntity, ICollectSqlPara
     [NotNull]
     public string Name
     {
-        get { return _name; }
-        set { SetField(ref  _name, value); }
+        get => _name;
+        set => SetField(ref  _name, value);
     }
 
     /// <summary>
@@ -66,8 +66,8 @@ public class CohortIdentificationConfiguration : DatabaseEntity, ICollectSqlPara
     /// </summary>
     public string Description
     {
-        get { return _description; }
-        set { SetField(ref  _description, value); }
+        get => _description;
+        set => SetField(ref  _description, value);
     }
 
     /// <summary>
@@ -76,8 +76,8 @@ public class CohortIdentificationConfiguration : DatabaseEntity, ICollectSqlPara
     /// </summary>
     public string Ticket
     {
-        get { return _ticket; }
-        set { SetField(ref  _ticket, value); }
+        get => _ticket;
+        set => SetField(ref  _ticket, value);
     }
 
     /// <summary>
@@ -87,8 +87,8 @@ public class CohortIdentificationConfiguration : DatabaseEntity, ICollectSqlPara
     /// </summary>
     public int? RootCohortAggregateContainer_ID
     {
-        get { return _rootCohortAggregateContainerID; }
-        set { SetField(ref  _rootCohortAggregateContainerID, value); }
+        get => _rootCohortAggregateContainerID;
+        set => SetField(ref  _rootCohortAggregateContainerID, value);
     }
 
     /// <summary>
@@ -102,8 +102,8 @@ public class CohortIdentificationConfiguration : DatabaseEntity, ICollectSqlPara
     /// </summary>
     public int? QueryCachingServer_ID
     {
-        get { return _queryCachingServerID; }
-        set { SetField(ref  _queryCachingServerID, value); }
+        get => _queryCachingServerID;
+        set => SetField(ref  _queryCachingServerID, value);
     }
 
     /// <summary>
@@ -113,8 +113,8 @@ public class CohortIdentificationConfiguration : DatabaseEntity, ICollectSqlPara
     /// </summary>
     public bool Frozen
     {
-        get { return _frozen; }
-        set { SetField(ref  _frozen, value); }
+        get => _frozen;
+        set => SetField(ref  _frozen, value);
     }
 
     /// <summary>
@@ -123,8 +123,8 @@ public class CohortIdentificationConfiguration : DatabaseEntity, ICollectSqlPara
     /// </summary>
     public string FrozenBy
     {
-        get { return _frozenBy; }
-        set { SetField(ref  _frozenBy, value); }
+        get => _frozenBy;
+        set => SetField(ref  _frozenBy, value);
     }
 
     /// <summary>
@@ -133,8 +133,8 @@ public class CohortIdentificationConfiguration : DatabaseEntity, ICollectSqlPara
     /// </summary>
     public DateTime? FrozenDate
     {
-        get { return _frozenDate; }
-        set { SetField(ref  _frozenDate, value); }
+        get => _frozenDate;
+        set => SetField(ref  _frozenDate, value);
     }
 
     /// <summary>
@@ -145,40 +145,32 @@ public class CohortIdentificationConfiguration : DatabaseEntity, ICollectSqlPara
     /// </summary>
     public int? ClonedFrom_ID
     {
-        get { return _clonedFrom_ID; }
-        set { SetField(ref  _clonedFrom_ID, value); }
+        get => _clonedFrom_ID;
+        set => SetField(ref  _clonedFrom_ID, value);
     }
 
     /// <inheritdoc/>
     [UsefulProperty]
     public string Folder
     {
-        get { return _folder; }
-        set { SetField(ref _folder, FolderHelper.Adjust(value)); }
+        get => _folder;
+        set => SetField(ref _folder, FolderHelper.Adjust(value));
     }
     #endregion
 
     #region Relationships
     /// <inheritdoc cref="RootCohortAggregateContainer_ID"/>
     [NoMappingToDatabase]
-    public CohortAggregateContainer RootCohortAggregateContainer {
-        get { return 
-            RootCohortAggregateContainer_ID == null?  null:
-                Repository.GetObjectByID<CohortAggregateContainer>((int) RootCohortAggregateContainer_ID); }
-    }
+    public CohortAggregateContainer RootCohortAggregateContainer =>
+        RootCohortAggregateContainer_ID == null?  null:
+            Repository.GetObjectByID<CohortAggregateContainer>((int) RootCohortAggregateContainer_ID);
 
     /// <inheritdoc cref="QueryCachingServer_ID"/>
     [NoMappingToDatabase]
-    public ExternalDatabaseServer QueryCachingServer {
-        get
-        {
-            return QueryCachingServer_ID == null
-                ? null
-                : Repository.GetObjectByID<ExternalDatabaseServer>(QueryCachingServer_ID.Value);
-        }
-    }
-
-
+    public ExternalDatabaseServer QueryCachingServer =>
+        QueryCachingServer_ID == null
+            ? null
+            : Repository.GetObjectByID<ExternalDatabaseServer>(QueryCachingServer_ID.Value);
 
     #endregion
 
@@ -270,7 +262,7 @@ public class CohortIdentificationConfiguration : DatabaseEntity, ICollectSqlPara
     {
         if (Frozen)
         {
-            reason = Name + " is Frozen";
+            reason = $"{Name} is Frozen";
             return true;
         }
 
@@ -282,7 +274,7 @@ public class CohortIdentificationConfiguration : DatabaseEntity, ICollectSqlPara
     public string GetSearchString()
     {
         //let the cic acronym match cohort identification configuration
-        return "cic " + Name;
+        return $"cic {Name}";
     }
 
     /// <inheritdoc/>
@@ -295,7 +287,7 @@ public class CohortIdentificationConfiguration : DatabaseEntity, ICollectSqlPara
     /// <inheritdoc cref="CICPrefix"/>
     public string GetNamingConventionPrefixForConfigurations()
     {
-        return  CICPrefix + ID + "_";
+        return $"{CICPrefix}{ID}_";
     }
 
     /// <summary>
@@ -324,8 +316,8 @@ public class CohortIdentificationConfiguration : DatabaseEntity, ICollectSqlPara
         //make it valid by sticking on the prefix
         aggregate.Name = GetNamingConventionPrefixForConfigurations() + aggregate.Name;
 
-        int copy = 0;
-        string origName = aggregate.Name;
+        var copy = 0;
+        var origName = aggregate.Name;
 
 
         var otherConfigurations = Repository.GetAllObjects<AggregateConfiguration>().Except(new[] {aggregate}).ToArray();
@@ -337,7 +329,7 @@ public class CohortIdentificationConfiguration : DatabaseEntity, ICollectSqlPara
             {
                 //add Copy 1 then Copy 2 etc
                 copy++;
-                aggregate.Name = origName + " (Copy " + copy + ")";
+                aggregate.Name = $"{origName} (Copy {copy})";
             }
             while (otherConfigurations.Any(c => c.Name.Equals(aggregate.Name)));//until there are no more copies
         }
@@ -363,14 +355,15 @@ public class CohortIdentificationConfiguration : DatabaseEntity, ICollectSqlPara
             {
                 notifier.OnCheckPerformed(new CheckEventArgs("Super Transaction started on Catalogue Repository", CheckResult.Success));
 
-                var clone = new CohortIdentificationConfiguration(cataRepo, Name + " (Clone)");
+                var clone = new CohortIdentificationConfiguration(cataRepo, $"{Name} (Clone)");
 
-                notifier.OnCheckPerformed(new CheckEventArgs("Created clone configuration '"+clone.Name+"' with ID " + clone.ID + " called " + clone, CheckResult.Success));
+                notifier.OnCheckPerformed(new CheckEventArgs(
+                    $"Created clone configuration '{clone.Name}' with ID {clone.ID} called {clone}", CheckResult.Success));
 
                 //clone the global parameters
                 foreach (var p in GetAllParameters())
                 {
-                    notifier.OnCheckPerformed(new CheckEventArgs("Cloning global parameter " + p.ParameterName,CheckResult.Success));
+                    notifier.OnCheckPerformed(new CheckEventArgs($"Cloning global parameter {p.ParameterName}",CheckResult.Success));
                     var cloneP = new AnyTableSqlParameter(cataRepo, clone, p.ParameterSQL);
                     cloneP.Comment = p.Comment;
                     cloneP.Value = p.Value;
@@ -465,7 +458,7 @@ public class CohortIdentificationConfiguration : DatabaseEntity, ICollectSqlPara
         newConfiguration.Description = toClone.Description;
 
         //clone parameters
-        foreach (AnyTableSqlParameter toCloneParameter in toClone.Parameters)
+        foreach (var toCloneParameter in toClone.Parameters)
         {
             var newParam = new AnyTableSqlParameter((ICatalogueRepository)newConfiguration.Repository, newConfiguration, toCloneParameter.ParameterSQL);
             newParam.Value = toCloneParameter.Value;
@@ -481,7 +474,7 @@ public class CohortIdentificationConfiguration : DatabaseEntity, ICollectSqlPara
         if (!toClone.Catalogue.IsApiCall())
         {
             //two cases here either the import has a custom freaky CHI column (dimension) or it doesn't reference CHI at all if it is freaky we want to preserve its freakyness
-            var extractionIdentifier = GetExtractionIdentifierFrom(toClone, out ExtractionInformation underlyingExtractionInformation, resolveMultipleExtractionIdentifiers);
+            var extractionIdentifier = GetExtractionIdentifierFrom(toClone, out var underlyingExtractionInformation, resolveMultipleExtractionIdentifiers);
 
             //now give it 1 dimension which is the only IsExtractionIdentifier column 
             var newDimension = new AggregateDimension(cataRepo, underlyingExtractionInformation, newConfiguration);
@@ -501,7 +494,7 @@ public class CohortIdentificationConfiguration : DatabaseEntity, ICollectSqlPara
         if (toClone.RootFilterContainer_ID != null) //if it has any filters
         {
             //get the tree
-            IContainer oldRootContainer = toClone.RootFilterContainer;
+            var oldRootContainer = toClone.RootFilterContainer;
 
             //clone the tree
             var newRootContainer = oldRootContainer.DeepCloneEntireTreeRecursivelyIncludingFilters();
@@ -538,7 +531,7 @@ public class CohortIdentificationConfiguration : DatabaseEntity, ICollectSqlPara
     {
         var cataRepo = (ICatalogueRepository) Repository;
             
-        AggregateConfiguration configuration = new AggregateConfiguration(cataRepo,catalogue, "People in " + catalogue);
+        var configuration = new AggregateConfiguration(cataRepo,catalogue, $"People in {catalogue}");
         EnsureNamingConvention(configuration);
 
         if(!catalogue.IsApiCall())
@@ -565,7 +558,7 @@ public class CohortIdentificationConfiguration : DatabaseEntity, ICollectSqlPara
         //Find any Mandatory Filters
         var mandatoryFilters = catalogue.GetAllMandatoryFilters();
 
-        List<AggregateFilter> createdSoFar = new List<AggregateFilter>();
+        var createdSoFar = new List<AggregateFilter>();
 
         if (mandatoryFilters.Any())
         {
@@ -573,7 +566,7 @@ public class CohortIdentificationConfiguration : DatabaseEntity, ICollectSqlPara
             configuration.RootFilterContainer_ID = container.ID;
             configuration.SaveToDatabase();
 
-            foreach (ExtractionFilter filter in mandatoryFilters)
+            foreach (var filter in mandatoryFilters)
             {
                 var newFilter = (AggregateFilter)filterImporter.ImportFilter(container, filter, createdSoFar.ToArray());
 
@@ -606,7 +599,8 @@ public class CohortIdentificationConfiguration : DatabaseEntity, ICollectSqlPara
 
         //very unexpected, he had multiple IsExtractionIdentifier Dimensions all configured for simultaneous use on this Aggregate, it is very freaky and we definetly don't want to let him import it for cohort identification
         if (existingExtractionIdentifierDimensions.Count() > 1)
-            throw new NotSupportedException("Cannot clone the AggregateConfiguration " + toClone + " because it has multiple IsExtractionIdentifier dimensions (must be 0 or 1)");
+            throw new NotSupportedException(
+                $"Cannot clone the AggregateConfiguration {toClone} because it has multiple IsExtractionIdentifier dimensions (must be 0 or 1)");
 
         //It has 1... maybe it's already being used in cohort identification from another project or he just likes to graph chi numbers for some reason
         if (existingExtractionIdentifierDimensions.Count() == 1)
@@ -639,7 +633,8 @@ public class CohortIdentificationConfiguration : DatabaseEntity, ICollectSqlPara
         //if there are multiple IsExtractionInformation columns
         if (catalogueCandidates.Count() != 1)
             if (resolveMultipleExtractionIdentifiers == null)//no delegate has been provided for resolving this
-                throw new NotSupportedException("Cannot create AggregateConfiguration because the Catalogue "+catalogue+" has " + catalogueCandidates.Length + " IsExtractionIdentifier ExtractionInformations");
+                throw new NotSupportedException(
+                    $"Cannot create AggregateConfiguration because the Catalogue {catalogue} has {catalogueCandidates.Length} IsExtractionIdentifier ExtractionInformations");
             else
             {
                 //there is a delegate to resolve this, invoke it
@@ -714,7 +709,7 @@ public class CohortIdentificationConfiguration : DatabaseEntity, ICollectSqlPara
     /// <inheritdoc/>
     public IHasDependencies[] GetObjectsThisDependsOn()
     {
-        List<IHasDependencies> dependencies = new List<IHasDependencies>();
+        var dependencies = new List<IHasDependencies>();
             
         dependencies.AddRange(GetAllParameters().Cast<AnyTableSqlParameter>());
             

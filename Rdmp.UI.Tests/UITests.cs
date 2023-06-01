@@ -72,7 +72,7 @@ public class UITests : UnitTests
     /// <exception cref="NotSupportedException">Thrown when calling this method multiple times within a single test</exception>
     public T AndLaunch<T>(DatabaseEntity o,bool setDatabaseObject=true) where T : Control, IRDMPSingleDatabaseObjectControl, new()
     {
-        T ui = new T();
+        var ui = new T();
         AndLaunch(ui);
         if(setDatabaseObject)
             ui.SetDatabaseObject(ItemActivator, o);
@@ -82,7 +82,7 @@ public class UITests : UnitTests
 
     public T AndLaunch<T>() where T : RDMPCollectionUI,new()
     {
-        T ui = new T();
+        var ui = new T();
         AndLaunch(ui);
         ui.SetItemActivator(ItemActivator);
         return ui;
@@ -92,7 +92,7 @@ public class UITests : UnitTests
         //clear the old results
         ClearResults();
 
-        Form f = new Form();
+        var f = new Form();
             
         f.Controls.Add(ui);
         CreateControls(ui);
@@ -375,7 +375,7 @@ public class UITests : UnitTests
         var methods = typeof (UITests).GetMethods(BindingFlags.Public | BindingFlags.NonPublic | BindingFlags.Instance);
         var methodWhenIHaveA = methods.Single(m => m.Name.Equals("WhenIHaveA") && !m.GetParameters().Any());
 
-        List<DatabaseEntity> objectsToTest = (types
+        var objectsToTest = (types
             .Where(t => !SkipTheseTypes.Contains(t.Name) && !t.Name.StartsWith("Spontaneous") &&
                         !typeof(SpontaneousObject).IsAssignableFrom(t))
             .Select(t => methodWhenIHaveA.MakeGenericMethod(t))
@@ -384,7 +384,7 @@ public class UITests : UnitTests
         //sets up all the child providers etc
         _itemActivator=InitializeItemActivator();
 
-        foreach(DatabaseEntity o in objectsToTest)
+        foreach(var o in objectsToTest)
         {
             //foreach compatible UI
             foreach (var uiType in uiTypes.Where(a=>a.BaseType.BaseType.GetGenericArguments()[0] == o.GetType()))
@@ -419,7 +419,7 @@ public class UITests : UnitTests
 
     private string ShowCode(Type t, Type uiType)
     {
-        StringBuilder sb = new StringBuilder();
+        var sb = new StringBuilder();
             
         sb.AppendLine("using NUnit.Framework;");
         sb.AppendLine($"using {t.Namespace};");

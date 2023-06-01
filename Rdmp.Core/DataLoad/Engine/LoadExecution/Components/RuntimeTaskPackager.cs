@@ -65,7 +65,7 @@ public class RuntimeTaskPackager
 
     public CompositeDataLoadComponent CreateCompositeDataLoadComponentFor(LoadStage loadStage,string descriptionForComponent)
     {
-        RuntimeTaskFactory factory = new RuntimeTaskFactory(_repository);
+        var factory = new RuntimeTaskFactory(_repository);
 
         var tasks = new List<IDataLoadComponent>();
 

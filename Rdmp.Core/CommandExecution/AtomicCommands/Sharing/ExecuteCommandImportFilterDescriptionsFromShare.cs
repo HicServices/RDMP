@@ -53,7 +53,8 @@ public class ExecuteCommandImportFilterDescriptionsFromShare : ExecuteCommandImp
         foreach (var param in shareDefinitions.Skip(1))
         {
             if (!typeof(ISqlParameter).IsAssignableFrom(param.Type))
-                throw new Exception("Expected ShareDefinition to start with 1 IFilter then have 0+ ISqlParameters instead we found a " + param.Type);
+                throw new Exception(
+                    $"Expected ShareDefinition to start with 1 IFilter then have 0+ ISqlParameters instead we found a {param.Type}");
 
             var paramProps = param.Properties;
 

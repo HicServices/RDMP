@@ -24,7 +24,8 @@ public class Chi : PrimaryConstraint
         var valueAsString = value as string;
 
         if(valueAsString == null)
-            return new ValidationFailure("Incompatible type, CHIs must be strings, value passed was of type " + value.GetType().Name,this);
+            return new ValidationFailure(
+                $"Incompatible type, CHIs must be strings, value passed was of type {value.GetType().Name}",this);
 
         string reason;
 
@@ -54,13 +55,13 @@ public class Chi : PrimaryConstraint
             return false;
         }
 
-        string dd = columnValueAsString.Substring(0, 2);
-        string mm = columnValueAsString.Substring(2, 2);
-        string yy = columnValueAsString.Substring(4, 2);
+        var dd = columnValueAsString.Substring(0, 2);
+        var mm = columnValueAsString.Substring(2, 2);
+        var yy = columnValueAsString.Substring(4, 2);
 
         DateTime outDt;
         //maybe tryparse instead
-        if (DateTime.TryParse(dd + "/" + mm + "/" + yy, out outDt) == false)
+        if (DateTime.TryParse($"{dd}/{mm}/{yy}", out outDt) == false)
         {
             reason = "First 6 numbers of CHI did not constitute a valid date";
             return false;
@@ -92,7 +93,7 @@ public class Chi : PrimaryConstraint
 
         sum = 0;
         c = (int)'0';
-        for (int i = 0; i < lsCHI - 1; i++)
+        for (var i = 0; i < lsCHI - 1; i++)
             sum += ((int)(sCHI.Substring(i, 1)[0]) - c) * (lsCHI - i);
         sum = sum % 11;
 
@@ -115,7 +116,7 @@ public class Chi : PrimaryConstraint
         if (!IsValidChiNumber(chi, out errorReport))
             throw new ArgumentException("Invalid CHI");
 
-        char sexChar = chi[8];
+        var sexChar = chi[8];
 
         return (int)(sexChar % 2);
     }
@@ -134,7 +135,7 @@ public class Chi : PrimaryConstraint
             return false;
 
         // Value of 10 indicates a checksum error
-        int checkDigit = ComputeChecksum(strChi);
+        var checkDigit = ComputeChecksum(strChi);
 
         return (checkDigit != 10 && (int)Char.GetNumericValue(strChi[9]) == checkDigit);
     }
@@ -153,10 +154,10 @@ public class Chi : PrimaryConstraint
 
     private static int ComputeChecksum(string chi)
     {
-        int sum = SumDigits(chi);
-        int checkDigit = 0;
+        var sum = SumDigits(chi);
+        var checkDigit = 0;
 
-        int n = (11 - (sum % 11));
+        var n = (11 - (sum % 11));
         if (n < 10)
             checkDigit = n;
 
@@ -165,9 +166,9 @@ public class Chi : PrimaryConstraint
 
     private static int SumDigits(string chi)
     {
-        int sum = 0;
-        int factor = 10;
-        for (int i = 0; i < 9; i++)
+        var sum = 0;
+        var factor = 10;
+        for (var i = 0; i < 9; i++)
         {
             sum += (chi[i] - 48) * factor--;
         }

@@ -67,9 +67,10 @@ public class TestsRequiringANOStore:TestsRequiringA
         foreach (var lingeringTablesReferencingServer in CatalogueRepository.GetAllObjects<ANOTable>().Where(a => a.Server_ID == preExisting.ID))
         {
             //unhook the anonymisation transform from any ColumnInfos using it
-            foreach (ColumnInfo colWithANOTransform in CatalogueRepository.GetAllObjects<ColumnInfo>().Where(c => c.ANOTable_ID == lingeringTablesReferencingServer.ID))
+            foreach (var colWithANOTransform in CatalogueRepository.GetAllObjects<ColumnInfo>().Where(c => c.ANOTable_ID == lingeringTablesReferencingServer.ID))
             {
-                Console.WriteLine("Unhooked ColumnInfo " + colWithANOTransform + " from ANOTable " + lingeringTablesReferencingServer);
+                Console.WriteLine(
+                    $"Unhooked ColumnInfo {colWithANOTransform} from ANOTable {lingeringTablesReferencingServer}");
                 colWithANOTransform.ANOTable_ID = null;
                 colWithANOTransform.SaveToDatabase();
             }
@@ -84,13 +85,14 @@ public class TestsRequiringANOStore:TestsRequiringA
 
     protected void TruncateANOTable(ANOTable anoTable)
     {
-        Console.WriteLine("Truncating table " + anoTable.TableName + " on server " + ANOStore_ExternalDatabaseServer);
+        Console.WriteLine($"Truncating table {anoTable.TableName} on server {ANOStore_ExternalDatabaseServer}");
             
         var server = ANOStore_Database.Server;
         using (var con = server.GetConnection())
         {
             con.Open();
-            using(var cmdDelete = server.GetCommand("if exists (select top 1 * from sys.tables where name ='" + anoTable.TableName + "') TRUNCATE TABLE " + anoTable.TableName, con))
+            using(var cmdDelete = server.GetCommand(
+                      $"if exists (select top 1 * from sys.tables where name ='{anoTable.TableName}') TRUNCATE TABLE {anoTable.TableName}", con))
                 cmdDelete.ExecuteNonQuery();
             con.Close();
         }

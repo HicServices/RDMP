@@ -223,7 +223,7 @@ public class WindowManager
 
     public RDMPCollection GetFocusedCollection()
     {
-        foreach (KeyValuePair<RDMPCollection, PersistableToolboxDockContent> t in _visibleToolboxes)
+        foreach (var t in _visibleToolboxes)
         {
             if (t.Value.ContainsFocus)
                 return t.Key;
@@ -257,7 +257,7 @@ public class WindowManager
     /// <param name="root"></param>
     public void ShowCollectionWhichSupportsRootObjectType(object root)
     {
-        RDMPCollection collection = GetCollectionForRootObject(root);
+        var collection = GetCollectionForRootObject(root);
 
         if(collection == RDMPCollection.None)
             return;
@@ -363,7 +363,7 @@ public class WindowManager
         if(newTab != null && newTab.ParentForm != null)
         {
             Navigation.Append(new TabNavigation(newTab));
-            newTab.ParentForm.Text = newTab.TabText + " - RDMP";
+            newTab.ParentForm.Text = $"{newTab.TabText} - RDMP";
         }
                 
 

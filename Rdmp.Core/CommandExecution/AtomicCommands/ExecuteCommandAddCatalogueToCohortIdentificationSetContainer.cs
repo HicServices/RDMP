@@ -58,7 +58,7 @@ public class ExecuteCommandAddCatalogueToCohortIdentificationSetContainer : Basi
 
         _targetCohortAggregateContainer = targetCohortAggregateContainer;
 
-        if (targetCohortAggregateContainer.ShouldBeReadOnly(out string reason))
+        if (targetCohortAggregateContainer.ShouldBeReadOnly(out var reason))
             SetImpossible(reason);
 
         if(catalogue != null)
@@ -103,7 +103,8 @@ public class ExecuteCommandAddCatalogueToCohortIdentificationSetContainer : Basi
         }
 
         if (!catalogueCombineable.ContainsAtLeastOneExtractionIdentifier)
-            SetImpossible("Catalogue " + catalogueCombineable.Catalogue + " does not contain any IsExtractionIdentifier columns");
+            SetImpossible(
+                $"Catalogue {catalogueCombineable.Catalogue} does not contain any IsExtractionIdentifier columns");
     }
 
     public override Image<Rgba32> GetImage(IIconProvider iconProvider)
@@ -129,7 +130,7 @@ public class ExecuteCommandAddCatalogueToCohortIdentificationSetContainer : Basi
             }
 
             // for each catalogue they picked
-            foreach (Catalogue catalogue in selected)
+            foreach (var catalogue in selected)
             {
 
                 var combineable = new CatalogueCombineable(catalogue);

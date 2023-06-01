@@ -36,20 +36,21 @@ public class ArchiveFiles : DataLoadComponent
             return ExitCodeType.Success;
 
         var datasetID = job.DataLoadInfo.ID;
-        var destFile = Path.Combine(job.LoadDirectory.ForArchiving.FullName, datasetID + ".zip");
+        var destFile = Path.Combine(job.LoadDirectory.ForArchiving.FullName, $"{datasetID}.zip");
             
         // If there is nothing in the forLoadingDirectory then 
         // There may be a HiddenFromArchiver directory with data that may be processed by another component, but this component should *always* archive *something* even if it is just some metadata about the load (if, for example, imaging data is being loaded which is too large to archive)
         if (!FoundFilesOrDirsToArchive(job))
         {
-            job.OnNotify(this, new NotifyEventArgs(ProgressEventType.Warning, "There is nothing to archive: " + job.LoadDirectory.ForLoading.FullName + " is empty after completion of the load process and there is no hidden archive directory (" + HiddenFromArchiver + ")."));
+            job.OnNotify(this, new NotifyEventArgs(ProgressEventType.Warning,
+                $"There is nothing to archive: {job.LoadDirectory.ForLoading.FullName} is empty after completion of the load process and there is no hidden archive directory ({HiddenFromArchiver})."));
             return ExitCodeType.Success;
         }
 
-        job.OnNotify(this, new NotifyEventArgs(ProgressEventType.Information, "Archiving to " + destFile));
+        job.OnNotify(this, new NotifyEventArgs(ProgressEventType.Information, $"Archiving to {destFile}"));
 
         if (File.Exists(destFile))
-            throw new Exception("Cannot archive files, " + destFile + " already exists");
+            throw new Exception($"Cannot archive files, {destFile} already exists");
 
         // create directory for zipping, leaving out __hidden_from_archiver__
         var zipDir = job.LoadDirectory.ForLoading.CreateSubdirectory(TempArchiveDirName);

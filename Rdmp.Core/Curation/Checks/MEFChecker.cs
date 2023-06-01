@@ -56,7 +56,7 @@ public class MEFChecker : ICheckable
             return;
         }
 
-        string typeNameOnly = _classToFind[(_classToFind.LastIndexOf(".", StringComparison.Ordinal) + 1)..];
+        var typeNameOnly = _classToFind[(_classToFind.LastIndexOf(".", StringComparison.Ordinal) + 1)..];
 
         var allTypes = _mefPlugins.GetAllTypes().ToArray();
 
@@ -66,7 +66,7 @@ public class MEFChecker : ICheckable
                 CheckResult.Success, null));
         else
         {
-            Type[] substitute = allTypes.Where(t => t.Name.Equals(typeNameOnly)).ToArray();
+            var substitute = allTypes.Where(t => t.Name.Equals(typeNameOnly)).ToArray();
 
             switch (substitute.Length)
             {
@@ -76,7 +76,7 @@ public class MEFChecker : ICheckable
                         $"Could not find MEF class called {_classToFind} in LoadModuleAssembly.GetAllTypes() and couldn't even find any with the same basic name (Note that we only checked Exported MEF types e.g. classes implementing IPluginAttacher, IPluginDataProvider etc)",
                         CheckResult.Fail, null));
 
-                    Dictionary<string, Exception> badAssemblies = _mefPlugins.ListBadAssemblies();
+                    var badAssemblies = _mefPlugins.ListBadAssemblies();
 
                     if (badAssemblies.Any())
                         notifier.OnCheckPerformed(new CheckEventArgs(
@@ -89,7 +89,7 @@ public class MEFChecker : ICheckable
                 }
                 case 1:
                 {
-                    bool acceptSubstitution = notifier.OnCheckPerformed(new CheckEventArgs(
+                    var acceptSubstitution = notifier.OnCheckPerformed(new CheckEventArgs(
                         $"Could not find MEF class called {_classToFind} but did find one called {substitute[0].FullName}",
                         CheckResult.Fail, null,
                         $"Change reference to {_classToFind} to point to MEF assembly type {substitute[0].FullName}"));

@@ -28,8 +28,8 @@ public class ProjectCohortIdentificationConfigurationAssociation : DatabaseEntit
     /// <inheritdoc/>
     public int Project_ID
     {
-        get { return _project_ID; }
-        set { SetField(ref _project_ID, value); }
+        get => _project_ID;
+        set => SetField(ref _project_ID, value);
     }
 
     /// <summary>
@@ -37,8 +37,8 @@ public class ProjectCohortIdentificationConfigurationAssociation : DatabaseEntit
     /// </summary>
     public int CohortIdentificationConfiguration_ID
     {
-        get { return _cohortIdentificationConfiguration_ID; }
-        set { SetField(ref _cohortIdentificationConfiguration_ID, value); }
+        get => _cohortIdentificationConfiguration_ID;
+        set => SetField(ref _cohortIdentificationConfiguration_ID, value);
     }
 
 
@@ -47,18 +47,15 @@ public class ProjectCohortIdentificationConfigurationAssociation : DatabaseEntit
 
     /// <inheritdoc cref="Project_ID"/>
     [NoMappingToDatabase]
-    public IProject Project { get { return Repository.GetObjectByID<Project>(Project_ID); } }
+    public IProject Project => Repository.GetObjectByID<Project>(Project_ID);
 
     private Lazy<CohortIdentificationConfiguration> _knownCic;
 
     /// <inheritdoc cref="CohortIdentificationConfiguration_ID"/>
     [NoMappingToDatabase]
-    public CohortIdentificationConfiguration CohortIdentificationConfiguration {
-        get
-        {
-            //handles the object having been deleted and somehow that deletion is missed
-            return _knownCic.Value;
-        } }
+    public CohortIdentificationConfiguration CohortIdentificationConfiguration =>
+        //handles the object having been deleted and somehow that deletion is missed
+        _knownCic.Value;
 
     #endregion
 

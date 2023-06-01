@@ -52,7 +52,7 @@ public class PersistStringHelper
     /// <returns></returns>
     public string SaveDictionaryToString(Dictionary<string, string> dict)
     {
-        XElement el = new XElement("root",
+        var el = new XElement("root",
             dict.Select(kv => new XElement(kv.Key, kv.Value)));
 
         return el.ToString();
@@ -68,8 +68,8 @@ public class PersistStringHelper
         if(String.IsNullOrWhiteSpace(str))
             return new Dictionary<string, string>();
 
-        XElement rootElement = XElement.Parse(str);
-        Dictionary<string, string> dict = new Dictionary<string, string>();
+        var rootElement = XElement.Parse(str);
+        var dict = new Dictionary<string, string>();
         foreach (var el in rootElement.Elements())
             dict.Add(el.Name.LocalName, el.Value);
 
@@ -102,7 +102,7 @@ public class PersistStringHelper
     public string GetObjectCollectionPersistString(params IMapsDirectlyToDatabaseTable[] objects)
     {
 
-        StringBuilder sb = new StringBuilder();
+        var sb = new StringBuilder();
 
         //output [obj1,obj2,obj3]
         sb.Append(CollectionStartDelimiter);
@@ -128,7 +128,7 @@ public class PersistStringHelper
         try
         {
             //match the starting delimiter
-            string pattern = Regex.Escape(CollectionStartDelimiter);
+            var pattern = Regex.Escape(CollectionStartDelimiter);
             pattern += "(.*)";//then anything
             pattern += Regex.Escape(CollectionEndDelimiter);//then the ending delimiter
 
@@ -156,7 +156,7 @@ public class PersistStringHelper
 
         var objectStrings = allObjectsString.Split(new[] { CollectionObjectSeparator }, StringSplitOptions.RemoveEmptyEntries);
 
-        foreach (string objectString in objectStrings)
+        foreach (var objectString in objectStrings)
         {
             var objectTokens = objectString.Split(Separator);
                 

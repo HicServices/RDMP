@@ -59,7 +59,7 @@ public partial class ProjectUI : ProjectUI_Design, ISaveableUI
             return;
         }
 
-        List<ExtractableCohort> toShow = new List<ExtractableCohort>();
+        var toShow = new List<ExtractableCohort>();
 
         foreach(var c in dxChildProvider.Cohorts)
         {
@@ -139,12 +139,12 @@ public partial class ProjectUI : ProjectUI_Design, ISaveableUI
         if (value == null)
             return null;
 
-        IExtractionConfiguration[] configurations = value.ExtractionConfigurations;
+        var configurations = value.ExtractionConfigurations;
 
         if (configurations == null || configurations.Length == 0)
             return null;
 
-        DataTable dtToReturn = new DataTable();
+        var dtToReturn = new DataTable();
 
         dtToReturn.Columns.Add("ID");
         dtToReturn.Columns.Add("Name");
@@ -165,7 +165,7 @@ public partial class ProjectUI : ProjectUI_Design, ISaveableUI
 
         foreach (ExtractionConfiguration configuration in configurations)
         {
-            DataRow r = dtToReturn.Rows.Add();
+            var r = dtToReturn.Rows.Add();
 
             r["ID"] = configuration.ID;
             r["Name"] = configuration.Name;
@@ -212,12 +212,12 @@ public partial class ProjectUI : ProjectUI_Design, ISaveableUI
         
     void mi_SetDescription_Click(object sender, EventArgs e)
     {
-        ExtractionConfiguration toSetDescriptionOn = Activator.RepositoryLocator.DataExportRepository.GetObjectByID<ExtractionConfiguration>(_rightClickedRowExtractionConfigurationID);
+        var toSetDescriptionOn = Activator.RepositoryLocator.DataExportRepository.GetObjectByID<ExtractionConfiguration>(_rightClickedRowExtractionConfigurationID);
 
         if (toSetDescriptionOn.IsReleased)
             return;
 
-        TypeTextOrCancelDialog dialog = new TypeTextOrCancelDialog("Description", "Enter a Description for the Extraction:", 1000, toSetDescriptionOn.Description);
+        var dialog = new TypeTextOrCancelDialog("Description", "Enter a Description for the Extraction:", 1000, toSetDescriptionOn.Description);
 
         dialog.ShowDialog(this);
 
@@ -231,12 +231,12 @@ public partial class ProjectUI : ProjectUI_Design, ISaveableUI
 
     void mi_ChooseFileSeparator_Click(object sender, EventArgs e)
     {
-        ExtractionConfiguration toSetDescriptionOn = Activator.RepositoryLocator.DataExportRepository.GetObjectByID<ExtractionConfiguration>(_rightClickedRowExtractionConfigurationID);
+        var toSetDescriptionOn = Activator.RepositoryLocator.DataExportRepository.GetObjectByID<ExtractionConfiguration>(_rightClickedRowExtractionConfigurationID);
 
         if (toSetDescriptionOn.IsReleased)
             return;
 
-        TypeTextOrCancelDialog dialog = new TypeTextOrCancelDialog("Separator", "Choose a character(s) separator",3,toSetDescriptionOn.Separator);
+        var dialog = new TypeTextOrCancelDialog("Separator", "Choose a character(s) separator",3,toSetDescriptionOn.Separator);
 
         dialog.ShowDialog(this);
 
@@ -266,7 +266,7 @@ public partial class ProjectUI : ProjectUI_Design, ISaveableUI
                    
                 _rightClickedRowExtractionConfigurationID = int.Parse(dataGridView1.Rows[e.RowIndex].Cells["ID"].Value.ToString());
 
-                ExtractionConfiguration selectedExtractionConfiguration = Activator.RepositoryLocator.DataExportRepository.GetObjectByID<ExtractionConfiguration>(_rightClickedRowExtractionConfigurationID);
+                var selectedExtractionConfiguration = Activator.RepositoryLocator.DataExportRepository.GetObjectByID<ExtractionConfiguration>(_rightClickedRowExtractionConfigurationID);
                     
                 menu.Items.Clear();
                     

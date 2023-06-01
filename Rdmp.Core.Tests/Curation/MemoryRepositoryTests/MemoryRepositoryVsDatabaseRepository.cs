@@ -26,8 +26,8 @@ class MemoryRepositoryVsDatabaseRepository:DatabaseTests
     {
         var memoryRepository = new MemoryCatalogueRepository(CatalogueRepository);
 
-        Catalogue memCatalogue = new Catalogue(memoryRepository, "My New Catalogue");
-        Catalogue dbCatalogue = new Catalogue(CatalogueRepository,"My New Catalogue");
+        var memCatalogue = new Catalogue(memoryRepository, "My New Catalogue");
+        var dbCatalogue = new Catalogue(CatalogueRepository,"My New Catalogue");
             
         UnitTests.AssertAreEqual(memCatalogue,dbCatalogue);
     }
@@ -54,8 +54,8 @@ class MemoryRepositoryVsDatabaseRepository:DatabaseTests
     {
         var memoryRepository = new MemoryCatalogueRepository(CatalogueRepository);
 
-        Catalogue memCatalogue = new Catalogue(memoryRepository, "My New Catalogue");
-        Catalogue dbCatalogue = new Catalogue(CatalogueRepository, "My New Catalogue");
+        var memCatalogue = new Catalogue(memoryRepository, "My New Catalogue");
+        var dbCatalogue = new Catalogue(CatalogueRepository, "My New Catalogue");
 
         var memAggregate = new AggregateConfiguration(memoryRepository, memCatalogue, "My New Aggregate");
         var dbAggregate = new AggregateConfiguration(CatalogueRepository, dbCatalogue, "My New Aggregate");
@@ -71,7 +71,7 @@ class MemoryRepositoryVsDatabaseRepository:DatabaseTests
         var loggingServer = new ExternalDatabaseServer(memoryRepository, "My Logging Server",null);
         memoryRepository.SetDefault(PermissableDefaults.LiveLoggingServer_ID, loggingServer);
 
-        Catalogue memCatalogue = new Catalogue(memoryRepository, "My New Catalogue");
+        var memCatalogue = new Catalogue(memoryRepository, "My New Catalogue");
         Assert.AreEqual(memCatalogue.LiveLoggingServer_ID,loggingServer.ID);
     }
 
@@ -79,7 +79,7 @@ class MemoryRepositoryVsDatabaseRepository:DatabaseTests
     [TestCase(DatabaseType.MySql)]
     public void TestImportingATable(DatabaseType dbType)
     {
-        DataTable dt = new DataTable();
+        var dt = new DataTable();
         dt.Columns.Add("Do");
         dt.Columns.Add("Ray");
         dt.Columns.Add("Me");

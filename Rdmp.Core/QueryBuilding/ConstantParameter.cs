@@ -50,7 +50,7 @@ public class ConstantParameter : ISqlParameter
     /// <inheritdoc/>
     public override string ToString()
     {
-        return ParameterName + " = " + Value;
+        return $"{ParameterName} = {Value}";
     }
 
     /// <summary>
@@ -69,7 +69,7 @@ public class ConstantParameter : ISqlParameter
     }
 
     /// <inheritdoc/>
-    public string ParameterName { get { return QuerySyntaxHelper.GetParameterNameFromDeclarationSQL(ParameterSQL); } }
+    public string ParameterName => QuerySyntaxHelper.GetParameterNameFromDeclarationSQL(ParameterSQL);
 
     /// <inheritdoc/>
     [Sql]
@@ -99,22 +99,22 @@ public class ConstantParameter : ISqlParameter
     /// <returns></returns>
     public static ConstantParameter Parse(string sql, IQuerySyntaxHelper syntaxHelper)
     {
-        string[] lines = sql.Split(new[] { '\n' }, StringSplitOptions.RemoveEmptyEntries);
+        var lines = sql.Split(new[] { '\n' }, StringSplitOptions.RemoveEmptyEntries);
 
         string comment = null;
 
-        Regex commentRegex = new Regex(@"/\*(.*)\*/");
+        var commentRegex = new Regex(@"/\*(.*)\*/");
         var matchComment = commentRegex.Match(lines[0]);
         if (lines.Length >= 3 && matchComment.Success)
             comment = matchComment.Groups[1].Value;
 
-        string declaration = comment == null ? lines[0] : lines[1];
+        var declaration = comment == null ? lines[0] : lines[1];
         declaration = declaration.TrimEnd(new[] { '\r' });
 
-        string valueLine = comment == null ? lines[1] : lines[2];
+        var valueLine = comment == null ? lines[1] : lines[2];
 
         if (!valueLine.StartsWith("SET"))
-            throw new Exception("Value line did not start with SET:" + sql);
+            throw new Exception($"Value line did not start with SET:{sql}");
 
         var valueLineSplit = valueLine.Split(new[] { '=' });
         var value = valueLineSplit[1].TrimEnd(new[] { ';', '\r' });

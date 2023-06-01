@@ -58,21 +58,21 @@ public partial class ExtractableCohortUI :ExtractableCohortUI_Design, ISaveableU
         QueryPreview.ReadOnly = false;
         try
         {
-            string toShow = "";
+            var toShow = "";
 
-            DiscoveredDatabase location = _extractableCohort.GetDatabaseServer();
+            var location = _extractableCohort.GetDatabaseServer();
             //tell user about connection string (currently we don't support usernames/passwords so it's fine
-            toShow += "/*Cohort is stored in Server " + location.Server.Name + " Database " + location.GetRuntimeName() +"*/" + Environment.NewLine;
+            toShow +=
+                $"/*Cohort is stored in Server {location.Server.Name} Database {location.GetRuntimeName()}*/{Environment.NewLine}";
             toShow += Environment.NewLine;
 
-            IExternalCohortTable externalCohortTable = _extractableCohort.ExternalCohortTable;
+            var externalCohortTable = _extractableCohort.ExternalCohortTable;
                 
-            string sql = "SELECT * FROM " + externalCohortTable.TableName +
-                         Environment.NewLine
-                         + " WHERE " + _extractableCohort.WhereSQL();
+            var sql =
+                $"SELECT * FROM {externalCohortTable.TableName}{Environment.NewLine} WHERE {_extractableCohort.WhereSQL()}";
 
             toShow += Environment.NewLine;
-            toShow += Environment.NewLine + "/*SQL to view cohort:*/" + Environment.NewLine;
+            toShow += $"{Environment.NewLine}/*SQL to view cohort:*/{Environment.NewLine}";
             toShow += sql;
 
             QueryPreview.Text = toShow;
@@ -224,7 +224,7 @@ public partial class ExtractableCohortUI :ExtractableCohortUI_Design, ISaveableU
         var projects = dx.Projects.Where(p => p.ProjectNumber == _extractableCohort.ExternalProjectNumber).ToArray();
 
         if (!projects.Any())
-            MessageBox.Show("No Projects exist with ProjectNumber " + _extractableCohort.ExternalProjectNumber);
+            MessageBox.Show($"No Projects exist with ProjectNumber {_extractableCohort.ExternalProjectNumber}");
         else if (projects.Length == 1)
             Activator.RequestItemEmphasis(this, new EmphasiseRequest(projects.Single(), 1));
         else
@@ -243,7 +243,7 @@ public partial class ExtractableCohortUI :ExtractableCohortUI_Design, ISaveableU
 
     public override string GetTabName()
     {
-        return _extractableCohort + " (V" + _extractableCohort.ExternalVersion +")";
+        return $"{_extractableCohort} (V{_extractableCohort.ExternalVersion})";
     }
 }
 

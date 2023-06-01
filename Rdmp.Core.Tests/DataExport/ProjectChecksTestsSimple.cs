@@ -22,7 +22,7 @@ public class ProjectChecksTestsSimple:DatabaseTests
     [Test]
     public void Project_NoConfigurations()
     {
-        Project p = new Project(DataExportRepository, "Fish");
+        var p = new Project(DataExportRepository, "Fish");
 
         try
         {
@@ -40,7 +40,7 @@ public class ProjectChecksTestsSimple:DatabaseTests
     public void Project_NoDirectory()
     {
         ExtractionConfiguration config;
-        Project p = GetProjectWithConfig(out config);
+        var p = GetProjectWithConfig(out config);
         var ex = Assert.Throws<Exception>(()=>RunTestWithCleanup(p, config));
         Assert.AreEqual("Project does not have an ExtractionDirectory", ex.Message);
             
@@ -53,7 +53,7 @@ public class ProjectChecksTestsSimple:DatabaseTests
     public void Project_NonExistentDirectory(string dir)
     {
         ExtractionConfiguration config;
-        Project p = GetProjectWithConfig(out config);
+        var p = GetProjectWithConfig(out config);
            
         p.ExtractionDirectory = dir;
         var ex = Assert.Throws<Exception>(()=>RunTestWithCleanup(p, config));
@@ -65,7 +65,7 @@ public class ProjectChecksTestsSimple:DatabaseTests
     public void Project_DodgyCharactersInExtractionDirectoryName()
     {
         ExtractionConfiguration config;
-        Project p = GetProjectWithConfig(out config);
+        var p = GetProjectWithConfig(out config);
         p.ExtractionDirectory = @"C:\|||";
 
         var ex = Assert.Throws<Exception>(()=>RunTestWithCleanup(p,config));
@@ -80,7 +80,7 @@ public class ProjectChecksTestsSimple:DatabaseTests
         var p = GetProjectWithConfigDirectory(out config, out dir);
 
         //create remnant directory (empty)
-        var remnantDir = dir.CreateSubdirectory("Extr_" + config.ID + "20011225");
+        var remnantDir = dir.CreateSubdirectory($"Extr_{config.ID}20011225");
                 
         //with empty subdirectories
         remnantDir.CreateSubdirectory("DMPTestCatalogue").CreateSubdirectory("Lookups");
@@ -118,7 +118,7 @@ public class ProjectChecksTestsSimple:DatabaseTests
         var p = GetProjectWithConfigDirectory(out config, out dir);
 
         //create remnant directory (empty)
-        var remnantDir = dir.CreateSubdirectory("Extr_" + config.ID + "20011225");
+        var remnantDir = dir.CreateSubdirectory($"Extr_{config.ID}20011225");
 
         //with empty subdirectories
         var lookupDir = remnantDir.CreateSubdirectory("DMPTestCatalogue").CreateSubdirectory("Lookups");

@@ -31,15 +31,15 @@ public class DoNothingCacheDestination : CacheFilesystemDestination
 
         var chunk = toProcess as DoNothingCacheChunk;
 
-        int run = 0;
+        var run = 0;
         if (chunk != null)
         {
             run = chunk.RunIteration;
         }
 
-        for (int i = 0; i < 10; i++)
+        for (var i = 0; i < 10; i++)
         {
-            File.WriteAllText(Path.Combine(CacheDirectory.FullName, "run " + run + " - loop " + i + ".txt"), DateTime.Now.ToString("O"));
+            File.WriteAllText(Path.Combine(CacheDirectory.FullName, $"run {run} - loop {i}.txt"), DateTime.Now.ToString("O"));
             if (cancellationToken.IsCancellationRequested)
                 return null;
 

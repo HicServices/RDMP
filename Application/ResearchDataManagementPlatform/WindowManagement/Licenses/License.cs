@@ -61,7 +61,7 @@ public class License
         var stream = typeof (License).Assembly.GetManifestResourceStream(_resourceFilename);
 
         if (stream == null)
-            throw new Exception("Could not find EmbeddedResource '" + _resourceFilename + "'");
+            throw new Exception($"Could not find EmbeddedResource '{_resourceFilename}'");
 
         return stream;
     }

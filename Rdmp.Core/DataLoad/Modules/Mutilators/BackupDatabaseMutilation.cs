@@ -46,7 +46,8 @@ public class BackupDatabaseMutilation:IMutilateDataTables
     public void Initialize(DiscoveredDatabase dbInfo, LoadStage loadStage)
     {
         if(loadStage != LoadStage.AdjustStaging && loadStage != LoadStage.PostLoad)
-            throw new Exception(typeof(BackupDatabaseMutilation).Name + " can only be done in AdjustStaging or PostLoad (this minimises redundant backups that would otherwise be created while you attempt to fix RAW / constraint related load errors)");
+            throw new Exception(
+                $"{typeof(BackupDatabaseMutilation).Name} can only be done in AdjustStaging or PostLoad (this minimises redundant backups that would otherwise be created while you attempt to fix RAW / constraint related load errors)");
     }
 
     public ExitCodeType Mutilate(IDataLoadJob job)

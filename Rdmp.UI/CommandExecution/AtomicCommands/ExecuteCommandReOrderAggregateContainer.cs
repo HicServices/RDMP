@@ -32,7 +32,7 @@ internal class ExecuteCommandReOrderAggregateContainer : BasicUICommandExecution
         if(_insertOption == InsertOption.Default)
             SetImpossible("Insert must be above/below");
             
-        if(_targetParent.ShouldBeReadOnly(out string reason))
+        if(_targetParent.ShouldBeReadOnly(out var reason))
             SetImpossible(reason);
     }
 
@@ -59,7 +59,7 @@ internal class ExecuteCommandReOrderAggregateContainer : BasicUICommandExecution
 
         var source = _sourceCohortAggregateContainerCombineable.AggregateContainer;
 
-        int order = _targetOrderable.Order;
+        var order = _targetOrderable.Order;
             
         _targetParent.CreateInsertionPointAtOrder(source,order,_insertOption == InsertOption.InsertAbove);
         source.Order = order;

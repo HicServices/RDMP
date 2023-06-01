@@ -39,7 +39,7 @@ public class ANOStoreFunctionalityTests:TestsRequiringFullAnonymisationSuite
         {
             connection.Open();
 
-            using (DbCommand cmd =
+            using (var cmd =
                    DatabaseCommandHelper.GetCommand("Select version from RoundhousE.Version", connection))
             {
                 var version = new Version(cmd.ExecuteScalar().ToString());
@@ -73,7 +73,7 @@ public class ANOStoreFunctionalityTests:TestsRequiringFullAnonymisationSuite
         {
             connection.Open();
 
-            using (DbCommand cmd = DatabaseCommandHelper.GetCommand("Select version from RoundhousE.Version", connection))
+            using (var cmd = DatabaseCommandHelper.GetCommand("Select version from RoundhousE.Version", connection))
             {
                 var version = new Version(cmd.ExecuteScalar().ToString());
                 Assert.GreaterOrEqual(version, new Version("0.0.0.0"));

@@ -26,11 +26,8 @@ public class BackfillCacheFetchRequest : ICacheFetchRequest
     public ICacheProgress CacheProgress { get; set; }
     public bool IsRetry { get; private set; }
 
-    public DateTime End
-    {
-        get { return Start.Add(ChunkPeriod); }
-    }
-        
+    public DateTime End => Start.Add(ChunkPeriod);
+
     public BackfillCacheFetchRequest(IRepository repository,DateTime start)
     {
         Repository = repository;

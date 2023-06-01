@@ -33,7 +33,7 @@ public class DelimitedFileSourceTests
         if(File.Exists(filename))
             File.Delete(filename);
 
-        StringBuilder sb = new StringBuilder();
+        var sb = new StringBuilder();
 
         sb.AppendLine("CHI,StudyID,Date");
         sb.AppendLine("0101010101,5,2001-01-05");
@@ -44,7 +44,7 @@ public class DelimitedFileSourceTests
     [Test]
     public void FileToLoadNotSet_Throws()
     {
-        DelimitedFlatFileDataFlowSource source = new DelimitedFlatFileDataFlowSource();
+        var source = new DelimitedFlatFileDataFlowSource();
         var ex = Assert.Throws<Exception>(()=>source.GetChunk(new ThrowImmediatelyDataLoadEventListener(), new GracefulCancellationToken()));
         StringAssert.Contains("_fileToLoad was not set",ex.Message);
     }
@@ -52,7 +52,7 @@ public class DelimitedFileSourceTests
     public void SeparatorNotSet_Throws()
     {
         var testFile = new FileInfo(filename);
-        DelimitedFlatFileDataFlowSource source = new DelimitedFlatFileDataFlowSource();
+        var source = new DelimitedFlatFileDataFlowSource();
         source.PreInitialize(new FlatFileToLoad(testFile),new ThrowImmediatelyDataLoadEventListener() );
         var ex = Assert.Throws<Exception>(()=>source.GetChunk(new ThrowImmediatelyDataLoadEventListener(), new GracefulCancellationToken()));
         StringAssert.Contains("Separator has not been set", ex.Message);
@@ -62,7 +62,7 @@ public class DelimitedFileSourceTests
     {
         var testFile = new FileInfo(filename);
 
-        DelimitedFlatFileDataFlowSource source = new DelimitedFlatFileDataFlowSource();
+        var source = new DelimitedFlatFileDataFlowSource();
         source.PreInitialize(new FlatFileToLoad(testFile), new ThrowImmediatelyDataLoadEventListener());
         source.Separator = ",";
         source.ForceHeaders = "chi  ,Study ID\t ,Date";
@@ -71,7 +71,8 @@ public class DelimitedFileSourceTests
 
         var chunk = source.GetChunk(new ThrowImmediatelyDataLoadEventListener(), new GracefulCancellationToken());
 
-        Console.WriteLine("Resulting columns were:" + string.Join("," , chunk.Columns.Cast<DataColumn>().Select(c=>c.ColumnName)));
+        Console.WriteLine(
+            $"Resulting columns were:{string.Join(",", chunk.Columns.Cast<DataColumn>().Select(c => c.ColumnName))}");
 
         Assert.IsTrue(chunk.Columns.Contains("chi")); //notice the lack of whitespace!
         Assert.IsTrue(chunk.Columns.Contains("study ID")); //whitespace is allowed in the middle though... because we like a challenge!
@@ -90,7 +91,7 @@ public class DelimitedFileSourceTests
     {
 
         var testFile = new FileInfo(filename);
-        DelimitedFlatFileDataFlowSource source = new DelimitedFlatFileDataFlowSource();
+        var source = new DelimitedFlatFileDataFlowSource();
         source.PreInitialize(new FlatFileToLoad(testFile), new ThrowImmediatelyDataLoadEventListener());
         source.Separator = ",";
         source.StronglyTypeInput = true;//makes the source interpret the file types properly
@@ -110,7 +111,7 @@ public class DelimitedFileSourceTests
     {
 
         var testFile = new FileInfo(filename);
-        DelimitedFlatFileDataFlowSource source = new DelimitedFlatFileDataFlowSource();
+        var source = new DelimitedFlatFileDataFlowSource();
         source.PreInitialize(new FlatFileToLoad(testFile), new ThrowImmediatelyDataLoadEventListener());
         source.Separator = ",";
         source.StronglyTypeInput = true;//makes the source interpret the file types properly
@@ -119,7 +120,7 @@ public class DelimitedFileSourceTests
         source.ExplicitlyTypedColumns.ExplicitTypesCSharp.Add("StudyID",typeof(string));
 
         //preview should be correct
-        DataTable preview = source.TryGetPreview();
+        var preview = source.TryGetPreview();
         Assert.AreEqual(typeof(string), preview.Columns["StudyID"].DataType);
         Assert.AreEqual("5", preview.Rows[0]["StudyID"]);
 
@@ -137,7 +138,7 @@ public class DelimitedFileSourceTests
         if (File.Exists(filename))
             File.Delete(filename);
 
-        StringBuilder sb = new StringBuilder();
+        var sb = new StringBuilder();
 
         sb.AppendLine("Number,Field");
         sb.AppendLine("1,\"Sick\" headaches");
@@ -148,7 +149,7 @@ public class DelimitedFileSourceTests
 
         var testFile = new FileInfo(filename);
 
-        DelimitedFlatFileDataFlowSource source = new DelimitedFlatFileDataFlowSource();
+        var source = new DelimitedFlatFileDataFlowSource();
         source.PreInitialize(new FlatFileToLoad(testFile), new ThrowImmediatelyDataLoadEventListener());
         source.Separator = ",";
         source.IgnoreQuotes = true;
@@ -172,7 +173,7 @@ public class DelimitedFileSourceTests
         if (File.Exists(filename))
             File.Delete(filename);
 
-        StringBuilder sb = new StringBuilder();
+        var sb = new StringBuilder();
         sb.AppendLine("CHI,StudyID,Date");
         sb.AppendLine("0101010101,5,2001-01-05");
         sb.AppendLine("0101010101,5,2001-01-05");
@@ -184,7 +185,7 @@ public class DelimitedFileSourceTests
 
         var testFile = new FileInfo(filename);
 
-        DelimitedFlatFileDataFlowSource source = new DelimitedFlatFileDataFlowSource();
+        var source = new DelimitedFlatFileDataFlowSource();
         source.PreInitialize(new FlatFileToLoad(testFile), new ThrowImmediatelyDataLoadEventListener());
         source.Separator = ",";
 
@@ -212,7 +213,7 @@ public class DelimitedFileSourceTests
 
                     Assert.IsNotNull(source.EventHandlers.DivertErrorsFile);
 
-                    Assert.AreEqual("0101010101,5,2001-01-05,fish,watafak"+Environment.NewLine, File.ReadAllText(source.EventHandlers.DivertErrorsFile.FullName));
+                    Assert.AreEqual($"0101010101,5,2001-01-05,fish,watafak{Environment.NewLine}", File.ReadAllText(source.EventHandlers.DivertErrorsFile.FullName));
 
                     break;
                 default:
@@ -232,7 +233,7 @@ public class DelimitedFileSourceTests
         if (File.Exists(filename))
             File.Delete(filename);
 
-        StringBuilder sb = new StringBuilder();
+        var sb = new StringBuilder();
         sb.AppendLine("CHI,Name,SomeInterestingFacts,Date");
         sb.AppendLine("0101010101,Dave,Dave is over 1000 years old,2001-01-05");
         sb.AppendLine("0101010101,Dave,\"Dave is \"\"over\"\" 1000 years old\",2001-01-05"); //https://tools.ietf.org/html/rfc4180 (to properly include quotes in escaped text you need to use "")
@@ -241,7 +242,7 @@ public class DelimitedFileSourceTests
 
         var testFile = new FileInfo(filename);
 
-        DelimitedFlatFileDataFlowSource source = new DelimitedFlatFileDataFlowSource();
+        var source = new DelimitedFlatFileDataFlowSource();
         source.PreInitialize(new FlatFileToLoad(testFile), new ThrowImmediatelyDataLoadEventListener());
         source.Separator = ",";
         source.MaxBatchSize = 10000;
@@ -275,7 +276,7 @@ public class DelimitedFileSourceTests
         if (File.Exists(filename))
             File.Delete(filename);
 
-        StringBuilder sb = new StringBuilder();
+        var sb = new StringBuilder();
         sb.AppendLine("CHI,Name,SomeInterestingFacts,Date");
         sb.AppendLine("0101010101,Dave,Dave is over 1000 years old,2001-01-05");
         sb.AppendLine("0101010101,Dave,Dave is \"over\" 1000 years old,2001-01-05");
@@ -287,7 +288,7 @@ public class DelimitedFileSourceTests
 
         var testFile = new FileInfo(filename);
 
-        DelimitedFlatFileDataFlowSource source = new DelimitedFlatFileDataFlowSource();
+        var source = new DelimitedFlatFileDataFlowSource();
         source.PreInitialize(new FlatFileToLoad(testFile), new ThrowImmediatelyDataLoadEventListener());
         source.Separator = ",";
         source.MaxBatchSize = 10000;
@@ -320,7 +321,7 @@ public class DelimitedFileSourceTests
         if (File.Exists(filename))
             File.Delete(filename);
 
-        StringBuilder sb = new StringBuilder();
+        var sb = new StringBuilder();
         sb.AppendLine("CHI,Name,SomeInterestingFacts,Date");
         sb.AppendLine("0101010101,Dave,Dave is over 1000 years old,2001-01-05");
         sb.AppendLine("0101010101,Dave,Da,,ve is \"over\" 1000 years old,2001-01-05");
@@ -331,7 +332,7 @@ public class DelimitedFileSourceTests
 
         var testFile = new FileInfo(filename);
 
-        DelimitedFlatFileDataFlowSource source = new DelimitedFlatFileDataFlowSource();
+        var source = new DelimitedFlatFileDataFlowSource();
         source.PreInitialize(new FlatFileToLoad(testFile), new ThrowImmediatelyDataLoadEventListener());
         source.Separator = ",";
         source.MaxBatchSize = 10000;
@@ -358,7 +359,7 @@ public class DelimitedFileSourceTests
         if (File.Exists(filename))
             File.Delete(filename);
 
-        StringBuilder sb = new StringBuilder();
+        var sb = new StringBuilder();
         sb.AppendLine("CHI,Name,SomeInterestingFacts,Date");
         sb.AppendLine("0101010101,Dave,Dave is over 1000 years old,2001-01-05");
         sb.AppendLine("0101010101,Dave,Dave is \"over\" 1000 years old,2001-01-05");
@@ -371,7 +372,7 @@ old"",2001-01-05");
 
         var testFile = new FileInfo(filename);
 
-        DelimitedFlatFileDataFlowSource source = new DelimitedFlatFileDataFlowSource();
+        var source = new DelimitedFlatFileDataFlowSource();
         source.PreInitialize(new FlatFileToLoad(testFile), new ThrowImmediatelyDataLoadEventListener());
         source.Separator = ",";
         source.MaxBatchSize = 10000;
@@ -399,7 +400,7 @@ old"",2001-01-05");
         if (File.Exists(filename))
             File.Delete(filename);
 
-        StringBuilder sb = new StringBuilder();
+        var sb = new StringBuilder();
 
         sb.AppendLine("CHI,StudyID,Date");
         sb.AppendLine("0101010101,5,2001-01-05");
@@ -412,7 +413,7 @@ old"",2001-01-05");
 
         var testFile = new FileInfo(filename);
 
-        DelimitedFlatFileDataFlowSource source = new DelimitedFlatFileDataFlowSource();
+        var source = new DelimitedFlatFileDataFlowSource();
         source.PreInitialize(new FlatFileToLoad(testFile), new ThrowImmediatelyDataLoadEventListener());
         source.Separator = ",";
 
@@ -440,7 +441,7 @@ old"",2001-01-05");
 
                     Assert.IsNotNull(source.EventHandlers.DivertErrorsFile);
 
-                    Assert.AreEqual("0101010101,5,2001-01-05,fish,watafak" + Environment.NewLine, File.ReadAllText(source.EventHandlers.DivertErrorsFile.FullName));
+                    Assert.AreEqual($"0101010101,5,2001-01-05,fish,watafak{Environment.NewLine}", File.ReadAllText(source.EventHandlers.DivertErrorsFile.FullName));
 
                     break;
                 default:
@@ -459,7 +460,7 @@ old"",2001-01-05");
         if (File.Exists(filename))
             File.Delete(filename);
 
-        StringBuilder sb = new StringBuilder();
+        var sb = new StringBuilder();
         sb.AppendLine("CHI,StudyID,Date");
         sb.AppendLine(@"0101010101,""5
     The first"",2001-01-05");
@@ -472,7 +473,7 @@ old"",2001-01-05");
 
         var testFile = new FileInfo(filename);
 
-        DelimitedFlatFileDataFlowSource source = new DelimitedFlatFileDataFlowSource();
+        var source = new DelimitedFlatFileDataFlowSource();
         source.PreInitialize(new FlatFileToLoad(testFile), new ThrowImmediatelyDataLoadEventListener());
         source.Separator = ",";
 
@@ -502,7 +503,7 @@ old"",2001-01-05");
         if (File.Exists(filename))
             File.Delete(filename);
 
-        StringBuilder sb = new StringBuilder();
+        var sb = new StringBuilder();
         sb.AppendLine("CHI,StudyID,Date");
         sb.AppendLine(@"0101010101,5
     The first,2001-01-05");
@@ -515,7 +516,7 @@ old"",2001-01-05");
 
         var testFile = new FileInfo(filename);
 
-        DelimitedFlatFileDataFlowSource source = new DelimitedFlatFileDataFlowSource();
+        var source = new DelimitedFlatFileDataFlowSource();
         source.PreInitialize(new FlatFileToLoad(testFile), new ThrowImmediatelyDataLoadEventListener());
         source.Separator = ",";
 
@@ -564,7 +565,7 @@ old"",2001-01-05");
         if (File.Exists(filename))
             File.Delete(filename);
 
-        StringBuilder sb = new StringBuilder();
+        var sb = new StringBuilder();
         sb.AppendLine("0101010101\t5\t2001-01-05");
         sb.AppendLine("0101010101\t5\t2001-01-05");
         File.WriteAllText(filename,sb.ToString());
@@ -572,7 +573,7 @@ old"",2001-01-05");
 
         var testFile = new FileInfo(filename);
 
-        DelimitedFlatFileDataFlowSource source = new DelimitedFlatFileDataFlowSource();
+        var source = new DelimitedFlatFileDataFlowSource();
         source.PreInitialize(new FlatFileToLoad(testFile), new ThrowImmediatelyDataLoadEventListener());
         source.Separator = "\\t"; //<-- Important this is the string value SLASH T not an actual escaped tab as C# understands it.  This reflects the user pressing slash and t on his keyboard for the Separator argument in the UI
         source.ForceHeaders = "CHI\tStudyID\tDate";
@@ -601,14 +602,14 @@ old"",2001-01-05");
         if (File.Exists(filename))
             File.Delete(filename);
 
-        StringBuilder sb = new StringBuilder();
+        var sb = new StringBuilder();
         sb.AppendLine("0101010101\t5\t2001-01-05\tomg\t");
         sb.AppendLine("0101010101\t5\t2001-01-05\tomg2\t");
         File.WriteAllText(filename, sb.ToString());
             
         var testFile = new FileInfo(filename);
 
-        DelimitedFlatFileDataFlowSource source = new DelimitedFlatFileDataFlowSource();
+        var source = new DelimitedFlatFileDataFlowSource();
         source.PreInitialize(new FlatFileToLoad(testFile), new ThrowImmediatelyDataLoadEventListener());
         source.Separator = "\\t"; //<-- Important this is the string value SLASH T not an actual escaped tab as C# understands it.  This reflects the user pressing slash and t on his keyboard for the Separator argument in the UI
         source.ForceHeaders = "CHI\tStudyID\tDate\tSomeText";
@@ -649,7 +650,7 @@ old"",2001-01-05");
     {
         var f = Path.Combine(TestContext.CurrentContext.WorkDirectory,"meee.csv");
             
-        StringBuilder sb = new StringBuilder();
+        var sb = new StringBuilder();
 
         sb.AppendLine("test");
 
@@ -657,7 +658,7 @@ old"",2001-01-05");
         sb.AppendLine("-4.10235746055587E-05");
 
         //500 lines of random stuff to force 2 batches
-        for (int i=0;i< DelimitedFlatFileDataFlowSource.MinimumStronglyTypeInputBatchSize; i++)
+        for (var i=0;i< DelimitedFlatFileDataFlowSource.MinimumStronglyTypeInputBatchSize; i++)
             sb.AppendLine("5");
 
         //a scientific notation in batch 2
@@ -665,7 +666,7 @@ old"",2001-01-05");
 
         File.WriteAllText(f,sb.ToString());
 
-        DelimitedFlatFileDataFlowSource source = new DelimitedFlatFileDataFlowSource();
+        var source = new DelimitedFlatFileDataFlowSource();
         source.PreInitialize(new FlatFileToLoad(new FileInfo(f)), new ThrowImmediatelyDataLoadEventListener());
         source.Separator = ",";
         source.MaxBatchSize = DelimitedFlatFileDataFlowSource.MinimumStronglyTypeInputBatchSize;
@@ -697,7 +698,7 @@ old"",2001-01-05");
 1,Watch out guys its Billie ""The Killer"" Cole
 2,""The Killer""? I've heard of him hes a bad un");
 
-        DelimitedFlatFileDataFlowSource source = new DelimitedFlatFileDataFlowSource();
+        var source = new DelimitedFlatFileDataFlowSource();
         source.PreInitialize(new FlatFileToLoad(new FileInfo(f)), new ThrowImmediatelyDataLoadEventListener());
         source.Separator = ",";
         source.MaxBatchSize = DelimitedFlatFileDataFlowSource.MinimumStronglyTypeInputBatchSize;

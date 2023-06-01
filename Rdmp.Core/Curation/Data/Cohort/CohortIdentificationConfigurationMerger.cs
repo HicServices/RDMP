@@ -41,7 +41,7 @@ public class CohortIdentificationConfigurationMerger
         var cicClones = new CohortIdentificationConfiguration[cics.Length];
         try
         {
-            for (int i = 0; i < cics.Length; i++)
+            for (var i = 0; i < cics.Length; i++)
             {
                 cicClones[i] = cics[i].CreateClone(new ThrowImmediatelyCheckNotifier());
             }
@@ -63,7 +63,7 @@ public class CohortIdentificationConfigurationMerger
             rootContainer.SaveToDatabase();
                 
             //Grab the root container of each of the input cics
-            foreach(CohortIdentificationConfiguration cic in cicClones)
+            foreach(var cic in cicClones)
             {
                 var container = cic.RootCohortAggregateContainer;
 
@@ -105,7 +105,7 @@ public class CohortIdentificationConfigurationMerger
         var cicClones = new CohortIdentificationConfiguration[cics.Length];
         try
         {
-            for (int i = 0; i < cics.Length; i++)
+            for (var i = 0; i < cics.Length; i++)
             {
                 cicClones[i] = cics[i].CreateClone(new ThrowImmediatelyCheckNotifier());
             }
@@ -119,7 +119,7 @@ public class CohortIdentificationConfigurationMerger
         using(_repository.BeginNewTransaction())
         {
             //Grab the root container of each of the input cics
-            foreach(CohortIdentificationConfiguration cic in cicClones)
+            foreach(var cic in cicClones)
             {
                 var container = cic.RootCohortAggregateContainer;
 

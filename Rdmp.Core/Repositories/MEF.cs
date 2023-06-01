@@ -104,7 +104,7 @@ public class MEF
             else
             {
                 //ok they are lying about the Type.  It's not MyLib.Myclass but maybe we still have a Myclass in Rdmp.Core?
-                string name = type[(type.LastIndexOf('.')+1)..];
+                var name = type[(type.LastIndexOf('.')+1)..];
                 toReturn = 
                     typeof(Catalogue).Assembly.ExportedTypes.SingleOrDefault(t=>t.Name.Equals(name))
                     ?? typeof(Catalogue).Assembly.ExportedTypes.SingleOrDefault(t=>t.Name.Equals(name,StringComparison.InvariantCultureIgnoreCase));
@@ -196,12 +196,12 @@ public class MEF
         if (!t.IsGenericType) return t.FullName;
         if (t.GenericTypeArguments.Count() != 1)
             throw new NotSupportedException("Generic type has more than 1 token (e.g. T1,T2) so no idea what MEF would call it");
-        string genericTypeName = t.GetGenericTypeDefinition().FullName;
+        var genericTypeName = t.GetGenericTypeDefinition().FullName;
 
         Debug.Assert(genericTypeName.EndsWith("`1"));
         genericTypeName = genericTypeName[..^"`1".Length];
 
-        string underlyingType = t.GenericTypeArguments.Single().FullName;
+        var underlyingType = t.GenericTypeArguments.Single().FullName;
         return $"{genericTypeName}({underlyingType})";
 
     }
@@ -221,12 +221,12 @@ public class MEF
         if (!t.IsGenericType) return t.Name;
         if (t.GenericTypeArguments.Count() != 1)
             throw new NotSupportedException("Generic type has more than 1 token (e.g. T1,T2) so no idea what MEF would call it");
-        string genericTypeName = t.GetGenericTypeDefinition().Name;
+        var genericTypeName = t.GetGenericTypeDefinition().Name;
 
         Debug.Assert(genericTypeName.EndsWith("`1"));
         genericTypeName = genericTypeName[..^"`1".Length];
 
-        string underlyingType = t.GenericTypeArguments.Single().Name;
+        var underlyingType = t.GenericTypeArguments.Single().Name;
         return $"{genericTypeName}<{underlyingType}>";
 
     }
@@ -278,7 +278,7 @@ public class MEF
             if(_cachedImplementations.ContainsKey(type))
                 return _cachedImplementations[type];
 
-            Type[] results = SafeDirectoryCatalog.GetAllTypes().Where(t=>type.IsAssignableFrom(t) && !t.IsAbstract && !t.IsInterface).ToArray();
+            var results = SafeDirectoryCatalog.GetAllTypes().Where(t=>type.IsAssignableFrom(t) && !t.IsAbstract && !t.IsInterface).ToArray();
             _cachedImplementations.Add(type,results);
             return results;
         }
@@ -311,7 +311,7 @@ public class MEF
     /// <returns></returns>
     public T CreateA<T>(string typeToCreate, params object[] args)
     {
-        Type typeToCreateAsType = GetType(typeToCreate);
+        var typeToCreateAsType = GetType(typeToCreate);
 
         if (typeToCreateAsType == null)
             throw new Exception($"Could not find Type '{typeToCreate}'");
@@ -321,7 +321,7 @@ public class MEF
             throw new Exception(
                 $"Requested typeToCreate '{typeToCreate}' was not assignable to the required Type '{typeof(T).Name}'");
 
-        T instance = (T)o.ConstructIfPossible(typeToCreateAsType,args);
+        var instance = (T)o.ConstructIfPossible(typeToCreateAsType,args);
 
         if(instance == null)
             throw new ObjectLacksCompatibleConstructorException(

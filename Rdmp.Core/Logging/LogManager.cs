@@ -59,14 +59,14 @@ public class LogManager : ILogManager
 
     public string[] ListDataTasks(bool hideTests=false)
     {
-        List<string> tasks = new List<string>();
+        var tasks = new List<string>();
 
         using (var con = Server.GetConnection())
         {
             con.Open();
-            using (DbCommand cmd = Server.GetCommand("SELECT * FROM DataLoadTask", con))
+            using (var cmd = Server.GetCommand("SELECT * FROM DataLoadTask", con))
             {
-                using(DbDataReader r = cmd.ExecuteReader())
+                using(var r = cmd.ExecuteReader())
                     while (r.Read())
                     {
                         if (hideTests)
@@ -93,25 +93,25 @@ public class LogManager : ILogManager
     /// <returns></returns>
     public DataTable GetTable(LogViewerFilter filter, int? topX, bool sortDesc)
     {
-        string prefix = "";
-        string where = filter == null ? "": filter.GetWhereSql();
+        var prefix = "";
+        var where = filter == null ? "": filter.GetWhereSql();
 
         if (topX.HasValue)
-            prefix = "TOP " + topX.Value;
+            prefix = $"TOP {topX.Value}";
             
         return GetAsTable(string.Format("SELECT {0} * FROM " + filter.LoggingTable + " {1} ORDER BY ID " + (sortDesc? "Desc":"Asc"), prefix, where));
     }
         
     private DataTable GetAsTable(string sql)
     {
-        DataTable dt = new DataTable();
+        var dt = new DataTable();
             
         using (var con = Server.GetConnection())
         {
             con.Open();
 
-            using(DbCommand cmd = Server.GetCommand(sql, con))
-            using(DbDataAdapter da = Server.GetDataAdapter(cmd))
+            using(var cmd = Server.GetCommand(sql, con))
+            using(var da = Server.GetDataAdapter(cmd))
                 da.Fill(dt);
                 
             return dt;
@@ -120,14 +120,14 @@ public class LogManager : ILogManager
 
     public string[] ListDataSets()
     {
-        List<string> tasks = new List<string>();
+        var tasks = new List<string>();
 
         using (var con = Server.GetConnection())
         {
             con.Open();
 
-            using(DbCommand cmd = Server.GetCommand("SELECT * FROM DataSet", con))
-            using(DbDataReader r = cmd.ExecuteReader())
+            using(var cmd = Server.GetCommand("SELECT * FROM DataSet", con))
+            using(var r = cmd.ExecuteReader())
                 while (r.Read())
                     tasks.Add(r["dataSetID"].ToString());
 
@@ -154,12 +154,12 @@ public class LogManager : ILogManager
 
             var dataTaskId = GetDataTaskId(dataTask,Server, con);
 
-            string where = "";
+            var where = "";
 
             using (var cmd = Server.GetCommand("", con))
             {
                 if (specificDataLoadRunIDOnly != null)
-                    where = "WHERE ID=" + specificDataLoadRunIDOnly.Value;
+                    where = $"WHERE ID={specificDataLoadRunIDOnly.Value}";
                 else
                 {
                     where = "WHERE dataLoadTaskID = @dataTaskId";
@@ -174,7 +174,7 @@ public class LogManager : ILogManager
                 if (topX.HasValue)
                     top = Server.GetQuerySyntaxHelper().HowDoWeAchieveTopX(topX.Value);
 
-                StringBuilder sb = new StringBuilder();
+                var sb = new StringBuilder();
 
 
                 sb.Append("SELECT ");
@@ -201,7 +201,7 @@ public class LogManager : ILogManager
                     r = cmd.ExecuteReader();
                 else
                 {
-                    Task<DbDataReader> rTask = cmd.ExecuteReaderAsync(token.Value);
+                    var rTask = cmd.ExecuteReaderAsync(token.Value);
                     rTask.Wait(token.Value);
 
                     if (rTask.IsCompleted)
@@ -243,7 +243,8 @@ public class LogManager : ILogManager
     {
         var task = ListDataTasks().FirstOrDefault(t=>t.Equals(dataLoadTaskName,StringComparison.CurrentCultureIgnoreCase));
         if(task == null)
-            throw new KeyNotFoundException("DataLoadTask called '" + dataLoadTaskName + "' was not found in the logging database " + Server);
+            throw new KeyNotFoundException(
+                $"DataLoadTask called '{dataLoadTaskName}' was not found in the logging database {Server}");
 
         var toReturn = new DataLoadInfo(task, packageName, description, suggestedRollbackCommand, isTest, Server);
 
@@ -265,9 +266,7 @@ public class LogManager : ILogManager
             conn.Open();
             {
                 var sql =
-                    "INSERT INTO DataLoadTask (ID, description, name, createTime, userAccount, statusID, isTest, dataSetID) " +
-                    "VALUES " +
-                    "(" + id + ", @dataSetID, @dataSetID, @date, @username, 1, 0, @dataSetID)";
+                    $"INSERT INTO DataLoadTask (ID, description, name, createTime, userAccount, statusID, isTest, dataSetID) VALUES ({id}, @dataSetID, @dataSetID, @date, @username, 1, 0, @dataSetID)";
 
                 using (var cmd = Server.GetCommand(sql, conn))
                 {
@@ -340,7 +339,7 @@ public class LogManager : ILogManager
             conn.Open();
             {
                 var sql =
-                    "UPDATE FatalError SET explanation =@explanation, statusID=@statusID where ID in (" + string.Join(",", ids) + ")";
+                    $"UPDATE FatalError SET explanation =@explanation, statusID=@statusID where ID in ({string.Join(",", ids)})";
 
                 int affectedRows;
 
@@ -352,7 +351,8 @@ public class LogManager : ILogManager
                 }
                     
                 if(affectedRows != ids.Length)
-                    throw new Exception("Query " + sql + " resulted in " + affectedRows + ", we were expecting there to be " + ids.Length + " updates because that is how many FatalError IDs that were passed to this method");
+                    throw new Exception(
+                        $"Query {sql} resulted in {affectedRows}, we were expecting there to be {ids.Length} updates because that is how many FatalError IDs that were passed to this method");
             }
         }
     }

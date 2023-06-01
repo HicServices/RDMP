@@ -16,13 +16,9 @@ namespace Rdmp.UI.DataLoadUIs.ModuleUIs.DataFlowSources;
 public partial class ExplicitColumnTypeUI : UserControl
 {
 
-    public string ColumnName {
-        get { return textBox1.Text; }
-    }
-    public Type Type
-    {
-        get { return (Type) ddType.SelectedItem; }
-    }
+    public string ColumnName => textBox1.Text;
+
+    public Type Type => (Type) ddType.SelectedItem;
 
     public ExplicitColumnTypeUI(string name, Type t)
     {

@@ -57,14 +57,14 @@ class DataExportFilterManagerFromChildProvider : DataExportFilterManager
     /// </summary>
     public override IContainer[] GetSubContainers(IContainer parent)
     {
-        return _subcontainers.TryGetValue(parent.ID, out List<FilterContainer> result)
+        return _subcontainers.TryGetValue(parent.ID, out var result)
             ? result.ToArray()
             : Array.Empty<IContainer>();
     }
 
     public override IFilter[] GetFilters(IContainer container)
     {
-        return _containersToFilters.TryGetValue(container.ID, out List<DeployedExtractionFilter> filters)
+        return _containersToFilters.TryGetValue(container.ID, out var filters)
             ? filters.ToArray()
             : Array.Empty<IFilter>();
     }

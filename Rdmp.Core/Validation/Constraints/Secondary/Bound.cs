@@ -30,7 +30,7 @@ public abstract class Bound : SecondaryConstraint
 
     protected object LookupFieldNamed(string name, object[] otherColumns, object[] otherColumnNames)
     {
-        for (int i = 0; i < otherColumnNames.Length; i++)
+        for (var i = 0; i < otherColumnNames.Length; i++)
             if (otherColumnNames[i].Equals(name))
                 return otherColumns[i];
 
@@ -42,8 +42,7 @@ public abstract class Bound : SecondaryConstraint
 
     private void SignalThatFieldWasNotFound(string name)
     {
-        throw new MissingFieldException("Validation failed: Comparator field [" + name +
-                                        "] not found in dictionary.");
+        throw new MissingFieldException($"Validation failed: Comparator field [{name}] not found in dictionary.");
     }
 
         
@@ -61,19 +60,19 @@ public abstract class Bound : SecondaryConstraint
 
     public override string GetHumanReadableDescriptionOfValidation()
     {
-        string result = "";
+        var result = "";
 
         if (LowerFieldName != null )
             if(Inclusive)
-                result += " >=" + LowerFieldName;
+                result += $" >={LowerFieldName}";
             else
-                result += " >" + LowerFieldName;
+                result += $" >{LowerFieldName}";
             
         if (UpperFieldName != null )
             if (Inclusive)
-                result += " <=" + UpperFieldName;
+                result += $" <={UpperFieldName}";
             else
-                result += " <" + UpperFieldName;
+                result += $" <{UpperFieldName}";
 
         return result;
     }

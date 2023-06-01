@@ -50,30 +50,30 @@ public abstract class ConcreteFilter :  DatabaseEntity,IFilter, ICheckable
     [Sql]
     public string WhereSQL
     {
-        get { return _whereSQL; }
-        set { SetField(ref  _whereSQL, value); }
+        get => _whereSQL;
+        set => SetField(ref  _whereSQL, value);
     }
     /// <inheritdoc/>
     [NotNull]
     public string Name
     {
-        get { return _name; }
-        set { SetField(ref  _name, value); }
+        get => _name;
+        set => SetField(ref  _name, value);
     }
 
     /// <inheritdoc/>
     [UsefulProperty]
     public string Description
     {
-        get { return _description; }
-        set { SetField(ref  _description, value); }
+        get => _description;
+        set => SetField(ref  _description, value);
     }
 
     /// <inheritdoc/>
     public bool IsMandatory
     {
-        get { return _isMandatory; }
-        set { SetField(ref  _isMandatory, value); }
+        get => _isMandatory;
+        set => SetField(ref  _isMandatory, value);
     }
 
     #endregion
@@ -156,7 +156,7 @@ public abstract class ConcreteFilter :  DatabaseEntity,IFilter, ICheckable
             _cachedDatabaseTypeAnswer = GetCatalogue().GetDistinctLiveDatabaseServerType();
 
         if (!_cachedDatabaseTypeAnswer.HasValue)
-            throw new AmbiguousDatabaseTypeException("Unable to determine DatabaseType for Filter '" + this +"'");
+            throw new AmbiguousDatabaseTypeException($"Unable to determine DatabaseType for Filter '{this}'");
             
         return _cachedDatabaseTypeAnswer.Value;
     }

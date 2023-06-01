@@ -34,12 +34,12 @@ public partial class ArgumentValuePipelineUI : UserControl, IArgumentValueUI
     {
         InitializeComponent();
 
-        string typeName = parent.GetClassNameWhoArgumentsAreFor();
+        var typeName = parent.GetClassNameWhoArgumentsAreFor();
 
         _typeOfUnderlyingClass = catalogueRepository.MEF.GetType(typeName);
 
         if (_typeOfUnderlyingClass == null)
-            throw new Exception("Could not identify a Type called " + typeName + " in any loaded assemblies");
+            throw new Exception($"Could not identify a Type called {typeName} in any loaded assemblies");
 
     }
         

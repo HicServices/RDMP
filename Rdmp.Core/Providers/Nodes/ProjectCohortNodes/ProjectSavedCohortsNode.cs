@@ -45,5 +45,6 @@ public class ProjectSavedCohortsNode:Node,IOrderable
         return (Project != null ? Project.GetHashCode() : 0);
     }
 
-    public int Order { get { return 2; } set{}}
+    public int Order { get => 2;
+        set{}}
 }

@@ -48,7 +48,7 @@ public class PersistableSingleDatabaseObjectDockContent : RDMPSingleControlTab
         if(TabText == null)
             return;
 
-        TabText = unsavedChanges ? TabText.TrimEnd('*') + '*' : TabText.TrimEnd('*');
+        TabText = unsavedChanges ? $"{TabText.TrimEnd('*')}*" : TabText.TrimEnd('*');
     }
 
     protected override string GetPersistString()

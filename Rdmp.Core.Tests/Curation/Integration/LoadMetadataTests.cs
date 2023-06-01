@@ -86,7 +86,7 @@ public class LoadMetadataTests : DatabaseTests
     public void TestPreExecutionChecker_TableIsTableValuedFunction()
     {
         var db = GetCleanedServer(FAnsi.DatabaseType.MicrosoftSQLServer);
-        TestableTableValuedFunction f = new TestableTableValuedFunction();
+        var f = new TestableTableValuedFunction();
         f.Create(db,CatalogueRepository);
 
         var tbl = f.TableInfoCreated.Discover(DataAccessContext.DataLoad);

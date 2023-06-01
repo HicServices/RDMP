@@ -26,7 +26,7 @@ public class DatabaseEntityConventionTests:UnitTests
     {
         SetupMEF();
 
-        List<string> problems = new List<string>();
+        var problems = new List<string>();
 
         foreach (var type in MEF.GetAllTypes().Where(t => typeof(DatabaseEntity).IsAssignableFrom(t)))
         {

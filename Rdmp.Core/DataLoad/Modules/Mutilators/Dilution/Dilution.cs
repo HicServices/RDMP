@@ -52,7 +52,8 @@ public class Dilution : IPluginMutilateDataTables
         }
             
         if (ColumnToDilute.Destination != DiscardedColumnDestination.Dilute)
-            notifier.OnCheckPerformed(new CheckEventArgs("ColumnToDilute '" + ColumnToDilute.GetRuntimeName() +"' is not marked as DiscardedColumnDestination.Dilute", CheckResult.Fail, null));
+            notifier.OnCheckPerformed(new CheckEventArgs(
+                $"ColumnToDilute '{ColumnToDilute.GetRuntimeName()}' is not marked as DiscardedColumnDestination.Dilute", CheckResult.Fail, null));
 
         //Stamp out the type
         IDilutionOperation instance = null; 
@@ -65,12 +66,12 @@ public class Dilution : IPluginMutilateDataTables
         {
             notifier.OnCheckPerformed(
                 new CheckEventArgs(
-                    "Could not create DilutionOperation of Type " + Operation +
-                    " using DilutionOperationFactory, see inner Exception for details", CheckResult.Fail, e));
+                    $"Could not create DilutionOperation of Type {Operation} using DilutionOperationFactory, see inner Exception for details", CheckResult.Fail, e));
         }
 
         if(_loadStage  != LoadStage.AdjustStaging)
-            notifier.OnCheckPerformed(new CheckEventArgs("Dilution can ONLY occur in load stage AdjustStaging, it is currently configured as load stage: " + _loadStage, CheckResult.Fail));
+            notifier.OnCheckPerformed(new CheckEventArgs(
+                $"Dilution can ONLY occur in load stage AdjustStaging, it is currently configured as load stage: {_loadStage}", CheckResult.Fail));
 
         if(instance != null)
             instance.Check(notifier);

@@ -52,7 +52,7 @@ public class ExecuteCommandPasteClipboardAsNewCatalogueItems : BasicCommandExecu
     {
         base.Execute();
 
-        string clipboard = _clipboardContents;
+        var clipboard = _clipboardContents;
 
         if (_clipboardContentGetter != null)
         {
@@ -75,12 +75,12 @@ public class ExecuteCommandPasteClipboardAsNewCatalogueItems : BasicCommandExecu
         if (clipboard == null)
             return;
 
-        string[] toImport = UsefulStuff.GetInstance().GetArrayOfColumnNamesFromStringPastedInByUser(clipboard).ToArray();
+        var toImport = UsefulStuff.GetArrayOfColumnNamesFromStringPastedInByUser(clipboard).ToArray();
 
         if (toImport.Any())
         {
-            foreach (string name in toImport)
-                new CatalogueItem(BasicActivator.RepositoryLocator.CatalogueRepository, _catalogue, name);
+            foreach (var name in toImport)
+                _=new CatalogueItem(BasicActivator.RepositoryLocator.CatalogueRepository, _catalogue, name);
 
             Publish(_catalogue);
         }

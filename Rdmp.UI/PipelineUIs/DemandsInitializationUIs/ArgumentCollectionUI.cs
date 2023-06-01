@@ -57,7 +57,7 @@ public partial class ArgumentCollectionUI : UserControl
         _argumentsAreFor = argumentsAreForUnderlyingType;
         _activator = activator;
             
-        bool typeLoadable = !(_argumentsAreFor == null);
+        var typeLoadable = !(_argumentsAreFor == null);
 
         lblTypeUnloadable.Visible = !typeLoadable;
 
@@ -123,7 +123,7 @@ public partial class ArgumentCollectionUI : UserControl
 
     private Label GetLabelHeader(string caption)
     {
-        Label label = new Label();
+        var label = new Label();
         label.Text = caption;
         label.BackColor = Color.DarkGray;
         label.Dock = DockStyle.Top;
@@ -136,23 +136,23 @@ public partial class ArgumentCollectionUI : UserControl
     private void CreateLine(IArgumentHost parent, IArgument argument, RequiredPropertyInfo required, float maxArgNameWidth)
     {
 
-        Label name = new Label();
+        var name = new Label();
 
-        HelpIcon helpIcon = new HelpIcon();
-        helpIcon.SetHelpText(GetSystemTypeName(argument.GetSystemType())??"Unrecognised Type:" + argument.Type, required.Demand.Description);
+        var helpIcon = new HelpIcon();
+        helpIcon.SetHelpText(GetSystemTypeName(argument.GetSystemType())?? $"Unrecognised Type:{argument.Type}", required.Demand.Description);
         helpIcon.Dock = DockStyle.Right;
 
-        string spaceSeparatedArgumentName = UsefulStuff.PascalCaseStringToHumanReadable(argument.Name);
+        var spaceSeparatedArgumentName = UsefulStuff.PascalCaseStringToHumanReadable(argument.Name);
         name.Height = helpIcon.Height;
         name.Text = spaceSeparatedArgumentName;
         name.TextAlign = ContentAlignment.MiddleLeft;
         name.Dock = DockStyle.Left;
         name.Width = (int)maxArgNameWidth+3 /*padding*/;
 
-        RAGSmiley ragSmiley = new RAGSmiley();
+        var ragSmiley = new RAGSmiley();
 
         if (required.Demand.Mandatory && string.IsNullOrWhiteSpace(argument.Value))
-            ragSmiley.Fatal(new Exception("Property " + argument.Name + " is Mandatory"));
+            ragSmiley.Fatal(new Exception($"Property {argument.Name} is Mandatory"));
 
         var args = new ArgumentValueUIArgs();
         args.Parent = parent;
@@ -191,7 +191,7 @@ public partial class ArgumentCollectionUI : UserControl
                 argument.GetValueAsSystemType();
 
                 if(required.Demand.Mandatory && (v == null  || string.IsNullOrWhiteSpace(v.ToString())))
-                    ragSmiley.Fatal(new Exception("Property " + argument.Name + " is Mandatory"));
+                    ragSmiley.Fatal(new Exception($"Property {argument.Name} is Mandatory"));
             }
             catch (Exception ex)
             {
@@ -203,7 +203,7 @@ public partial class ArgumentCollectionUI : UserControl
         var valueui = (Control)_valueUisFactory.Create(_activator, args);
         valueui.Dock = DockStyle.Fill;
 
-        Panel p = new Panel();
+        var p = new Panel();
         p.Height = Math.Max(Math.Max(lblClassName.Height,helpIcon.Height),valueui.Height);
         p.Dock = DockStyle.Top;
 
@@ -219,7 +219,7 @@ public partial class ArgumentCollectionUI : UserControl
 
         name.Height = p.Height;
 
-        Label hr = new Label();
+        var hr = new Label();
         hr.AutoSize = false;
         hr.BorderStyle = BorderStyle.FixedSingle;
         hr.Height = 1;
@@ -244,6 +244,6 @@ public partial class ArgumentCollectionUI : UserControl
 
     private void btnViewSourceCode_Click(object sender, EventArgs e)
     {
-        new ViewSourceCodeDialog(_argumentsAreFor.Name + ".cs").Show();
+        new ViewSourceCodeDialog($"{_argumentsAreFor.Name}.cs").Show();
     }
 }

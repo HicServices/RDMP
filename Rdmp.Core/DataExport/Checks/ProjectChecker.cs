@@ -54,7 +54,7 @@ public class ProjectChecker:ICheckable
     /// <param name="notifier"></param>
     public void Check(ICheckNotifier notifier)
     {
-        notifier.OnCheckPerformed(new CheckEventArgs("About to check project " + _project.Name + " (ID="+_project.ID+")", CheckResult.Success));
+        notifier.OnCheckPerformed(new CheckEventArgs($"About to check project {_project.Name} (ID={_project.ID})", CheckResult.Success));
 
         _extractionConfigurations = _project.ExtractionConfigurations;
 
@@ -77,15 +77,17 @@ public class ProjectChecker:ICheckable
         }
         catch (Exception e)
         {
-            notifier.OnCheckPerformed(new CheckEventArgs("Project ExtractionDirectory ('" + _project.ExtractionDirectory +"') is not a valid directory name ", CheckResult.Fail, e));
+            notifier.OnCheckPerformed(new CheckEventArgs(
+                $"Project ExtractionDirectory ('{_project.ExtractionDirectory}') is not a valid directory name ", CheckResult.Fail, e));
             return;
         }
 
         //tell them whether it exists or not
-        notifier.OnCheckPerformed(new CheckEventArgs("Project ExtractionDirectory ('" + _project.ExtractionDirectory+"') " + (_projectDirectory.Exists ? "Exists" : "Does Not Exist"), _projectDirectory.Exists?CheckResult.Success : CheckResult.Fail));
+        notifier.OnCheckPerformed(new CheckEventArgs(
+            $"Project ExtractionDirectory ('{_project.ExtractionDirectory}') {(_projectDirectory.Exists ? "Exists" : "Does Not Exist")}", _projectDirectory.Exists?CheckResult.Success : CheckResult.Fail));
 
         if (CheckConfigurations)
-            foreach (IExtractionConfiguration extractionConfiguration in _extractionConfigurations)
+            foreach (var extractionConfiguration in _extractionConfigurations)
             {
                 var extractionConfigurationChecker = new ExtractionConfigurationChecker(_activator, extractionConfiguration) { CheckDatasets = CheckDatasets };
                 extractionConfigurationChecker.Check(notifier);

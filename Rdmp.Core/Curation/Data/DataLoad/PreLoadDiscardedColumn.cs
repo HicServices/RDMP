@@ -62,51 +62,46 @@ public class PreLoadDiscardedColumn : DatabaseEntity, IPreLoadDiscardedColumn, I
     /// <inheritdoc cref="IPreLoadDiscardedColumn.TableInfo"/>
     public int TableInfo_ID
     {
-        get { return _tableInfoID; }
-        set { SetField(ref  _tableInfoID, value); }
+        get => _tableInfoID;
+        set => SetField(ref  _tableInfoID, value);
     }
     /// <inheritdoc/>
     public DiscardedColumnDestination Destination
     {
-        get { return _destination; }
-        set { SetField(ref  _destination, value); }
+        get => _destination;
+        set => SetField(ref  _destination, value);
     }
     /// <inheritdoc/>
     public string RuntimeColumnName
     {
-        get { return _runtimeColumnName; }
-        set { SetField(ref  _runtimeColumnName, value); }
+        get => _runtimeColumnName;
+        set => SetField(ref  _runtimeColumnName, value);
     }
     /// <inheritdoc/>
     public string SqlDataType
     {
-        get { return _sqlDataType; }
-        set { SetField(ref  _sqlDataType, value); }
+        get => _sqlDataType;
+        set => SetField(ref  _sqlDataType, value);
     }
     /// <inheritdoc/>
     public int? DuplicateRecordResolutionOrder
     {
-        get { return _duplicateRecordResolutionOrder; }
-        set { SetField(ref  _duplicateRecordResolutionOrder, value); }
+        get => _duplicateRecordResolutionOrder;
+        set => SetField(ref  _duplicateRecordResolutionOrder, value);
     }
     /// <inheritdoc/>
     public bool DuplicateRecordResolutionIsAscending
     {
-        get { return _duplicateRecordResolutionIsAscending; }
-        set { SetField(ref  _duplicateRecordResolutionIsAscending, value); }
+        get => _duplicateRecordResolutionIsAscending;
+        set => SetField(ref  _duplicateRecordResolutionIsAscending, value);
     }
 
     #endregion
     #region Relationships
     /// <inheritdoc/>
     [NoMappingToDatabase]
-    public ITableInfo TableInfo
-    {
-        get
-        {
-            return _knownTableInfo.Value;
-        }
-    }
+    public ITableInfo TableInfo => _knownTableInfo.Value;
+
     #endregion
 
     //required for IResolveDuplication
@@ -114,7 +109,7 @@ public class PreLoadDiscardedColumn : DatabaseEntity, IPreLoadDiscardedColumn, I
     /// For setting, use SqlDataType instead, it is an exact alias to allow for IResolveDuplication interface definition (see the fact that ColumnInfo also uses that interface and is also IMapsDirectlyToDatabaseTable)
     /// </summary>
     [NoMappingToDatabase]
-    public string Data_type { get { return SqlDataType; } }
+    public string Data_type => SqlDataType;
 
     public PreLoadDiscardedColumn()
     {
@@ -134,7 +129,7 @@ public class PreLoadDiscardedColumn : DatabaseEntity, IPreLoadDiscardedColumn, I
         {
             {"TableInfo_ID", parent.ID},
             {"Destination", DiscardedColumnDestination.Oblivion},
-            {"RuntimeColumnName", name ?? "NewColumn" + Guid.NewGuid()}
+            {"RuntimeColumnName", name ?? $"NewColumn{Guid.NewGuid()}" }
         });
 
         ClearAllInjections();
@@ -161,7 +156,7 @@ public class PreLoadDiscardedColumn : DatabaseEntity, IPreLoadDiscardedColumn, I
     /// <inheritdoc/>
     public override string ToString()
     {
-        return RuntimeColumnName + " (" + Destination + ")";
+        return $"{RuntimeColumnName} ({Destination})";
     }
 
 
@@ -188,7 +183,7 @@ public class PreLoadDiscardedColumn : DatabaseEntity, IPreLoadDiscardedColumn, I
                 .Except(new[] {this})
                 .Any(c => c.GetRuntimeName(LoadStage.AdjustRaw).Equals(GetRuntimeName(LoadStage.AdjustRaw),StringComparison.CurrentCultureIgnoreCase)))
             notifier.OnCheckPerformed(
-                new CheckEventArgs("There are 2+ columns called '" + GetRuntimeName(LoadStage.AdjustRaw) + "' in this table",
+                new CheckEventArgs($"There are 2+ columns called '{GetRuntimeName(LoadStage.AdjustRaw)}' in this table",
                     CheckResult.Fail));
         else
             notifier.OnCheckPerformed(new CheckEventArgs("Name is unique", CheckResult.Success));
@@ -198,7 +193,7 @@ public class PreLoadDiscardedColumn : DatabaseEntity, IPreLoadDiscardedColumn, I
     public string GetRuntimeName()
     {
         //belt and bracers, the user could be typing something mental into this field in his database
-        return new MicrosoftQuerySyntaxHelper().GetRuntimeName(RuntimeColumnName);
+        return MicrosoftQuerySyntaxHelper.Instance.GetRuntimeName(RuntimeColumnName);
     }
     /// <inheritdoc/>
     public string GetRuntimeName(LoadStage stage)

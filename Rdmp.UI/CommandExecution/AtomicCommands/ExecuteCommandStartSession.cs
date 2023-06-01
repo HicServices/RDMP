@@ -40,7 +40,7 @@ public class ExecuteCommandStartSession : BasicUICommandExecution, IAtomicComman
 
         if (string.IsNullOrWhiteSpace(name))
         {
-            if (!Activator.TypeText("Session Name", "Name", 100, "Session 0", out string sessionName, false))
+            if (!Activator.TypeText("Session Name", "Name", 100, "Session 0", out var sessionName, false))
                 return;
 
             name = sessionName;
@@ -57,7 +57,7 @@ public class ExecuteCommandStartSession : BasicUICommandExecution, IAtomicComman
         var novelName = name;
         var sessions = ((IActivateItems)BasicActivator).GetSessions().ToArray();
 
-        int i = 1;
+        var i = 1;
 
         while (sessions.Any(s => s.Collection.SessionName.Equals(novelName)))
         {

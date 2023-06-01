@@ -54,18 +54,18 @@ public class ToMemoryDataLoadEventListener:IDataLoadEventListener
 
     public override string ToString()
     {
-        StringBuilder sb = new StringBuilder();
+        var sb = new StringBuilder();
 
-        foreach (KeyValuePair<object, List<NotifyEventArgs>> kvp in EventsReceivedBySender)
+        foreach (var kvp in EventsReceivedBySender)
         {
-            sb.AppendLine(kvp.Key + " Messages:");
+            sb.AppendLine($"{kvp.Key} Messages:");
             foreach (var msg in kvp.Value)
-                sb.AppendLine(msg.ProgressEventType +":"+ msg.Message);
+                sb.AppendLine($"{msg.ProgressEventType}:{msg.Message}");
 
         }
 
         foreach (var kvp in LastProgressRecieivedByTaskName)
-            sb.AppendLine(kvp.Key + " " + kvp.Value.Progress.Value + " " + kvp.Value.Progress.UnitOfMeasurement);
+            sb.AppendLine($"{kvp.Key} {kvp.Value.Progress.Value} {kvp.Value.Progress.UnitOfMeasurement}");
 
         return sb.ToString();
     }
@@ -76,12 +76,12 @@ public class ToMemoryDataLoadEventListener:IDataLoadEventListener
     /// <returns></returns>
     public Dictionary<ProgressEventType,List<NotifyEventArgs>> GetAllMessagesByProgressEventType()
     {
-        Dictionary<ProgressEventType,List<NotifyEventArgs>> toReturn = new Dictionary<ProgressEventType,List<NotifyEventArgs>>();
+        var toReturn = new Dictionary<ProgressEventType,List<NotifyEventArgs>>();
 
         foreach (ProgressEventType e in Enum.GetValues(typeof(ProgressEventType)))
             toReturn.Add(e,new List<NotifyEventArgs>());
 
-        foreach (NotifyEventArgs eventArgs in EventsReceivedBySender.Values.SelectMany(a => a))
+        foreach (var eventArgs in EventsReceivedBySender.Values.SelectMany(a => a))
             toReturn[eventArgs.ProgressEventType].Add(eventArgs);
 
         return toReturn;

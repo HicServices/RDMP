@@ -74,7 +74,7 @@ public partial class ValidationSetupUI : ValidationSetupForm_Design, ISaveableUI
         olvColumns.RowHeight = 19;
         ddConsequence.DataSource = Enum.GetValues(typeof (Consequence));
 
-        int vertScrollWidth = SystemInformation.VerticalScrollBarWidth;
+        var vertScrollWidth = SystemInformation.VerticalScrollBarWidth;
         tableLayoutPanel1.Padding = new Padding(0, 0, vertScrollWidth, 0);
 
         AssociatedCollection = RDMPCollection.Catalogue;
@@ -139,7 +139,7 @@ public partial class ValidationSetupUI : ValidationSetupForm_Design, ISaveableUI
         //if there are any item validators that do not map to an existing column in the dataset then we must show the resolve missing references dialog.
         if (ResolveMissingTargetPropertiesUI.GetMissingReferences(Validator,olvColumns.Objects.Cast<ExtractionInformation>()).Any())
         {
-            ResolveMissingTargetPropertiesUI dialog = new ResolveMissingTargetPropertiesUI(Validator,olvColumns.Objects.Cast<ExtractionInformation>().ToArray());
+            var dialog = new ResolveMissingTargetPropertiesUI(Validator,olvColumns.Objects.Cast<ExtractionInformation>().ToArray());
 
             if(dialog.ShowDialog() == DialogResult.OK)
                 Validator = dialog.AdjustedValidator;    
@@ -148,7 +148,7 @@ public partial class ValidationSetupUI : ValidationSetupForm_Design, ISaveableUI
 
     private void SetupAvailableOperations()
     {
-        List<string> constraintNames = new List<string>();
+        var constraintNames = new List<string>();
         constraintNames.AddRange(Validator.GetPrimaryConstraintNames());
         constraintNames.Sort();
             
@@ -156,7 +156,7 @@ public partial class ValidationSetupUI : ValidationSetupForm_Design, ISaveableUI
         ddPrimaryConstraints.Items.Add(_noPrimaryConstraintText);
 
 
-        List<string> secondaryConstraintNames = new List<string>();
+        var secondaryConstraintNames = new List<string>();
         secondaryConstraintNames.AddRange(Validator.GetSecondaryConstraintNames());
         secondaryConstraintNames.Sort();
 
@@ -228,7 +228,7 @@ public partial class ValidationSetupUI : ValidationSetupForm_Design, ISaveableUI
             }
             catch(Exception ex)
             {
-                ExceptionViewer.Show("Failed to create PrimaryConstraint '" + ddPrimaryConstraints.Text + "'",ex);
+                ExceptionViewer.Show($"Failed to create PrimaryConstraint '{ddPrimaryConstraints.Text}'",ex);
             }
 
         //Make consequence selection only possible if there is a priary constraint selected
@@ -271,7 +271,7 @@ public partial class ValidationSetupUI : ValidationSetupForm_Design, ISaveableUI
     {
         tableLayoutPanel1.RowCount++;
             
-        SecondaryConstraintUI toAdd = new SecondaryConstraintUI(Activator.RepositoryLocator.CatalogueRepository,secondaryConstriant,olvColumns.Objects.Cast<ExtractionInformation>().Select(c=>c.GetRuntimeName()).ToArray());
+        var toAdd = new SecondaryConstraintUI(Activator.RepositoryLocator.CatalogueRepository,secondaryConstriant,olvColumns.Objects.Cast<ExtractionInformation>().Select(c=>c.GetRuntimeName()).ToArray());
 
         toAdd.Width = splitContainer1.Panel2.Width;
         toAdd.Anchor = AnchorStyles.Left | AnchorStyles.Right | AnchorStyles.Top;
@@ -314,7 +314,7 @@ public partial class ValidationSetupUI : ValidationSetupForm_Design, ISaveableUI
     {
         if(HasChanges())
         {
-            var dr = MessageBox.Show("Save Validation rule changes for Catalogue '" + _catalogue + "'?", "Save Changes",MessageBoxButtons.YesNoCancel);
+            var dr = MessageBox.Show($"Save Validation rule changes for Catalogue '{_catalogue}'?", "Save Changes",MessageBoxButtons.YesNoCancel);
 
             switch (dr)
             {

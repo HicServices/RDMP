@@ -75,10 +75,10 @@ public class HistoryProvider
     /// <param name="numberOfEntries">Maximum number of objects of any given <see cref="System.Type"/> to store</param>
     public void Save(int numberOfEntries = 20)
     {
-        List<HistoryEntry> newHistory = new List<HistoryEntry>();
-        StringBuilder sb = new StringBuilder();
+        var newHistory = new List<HistoryEntry>();
+        var sb = new StringBuilder();
 
-        foreach (IGrouping<Type, HistoryEntry> group in History.GroupBy(o => o.Object.GetType()))
+        foreach (var group in History.GroupBy(o => o.Object.GetType()))
         {
             var recentsOfType = group.ToList().OrderByDescending(e=>e.Date).Take(numberOfEntries).ToList();
                 

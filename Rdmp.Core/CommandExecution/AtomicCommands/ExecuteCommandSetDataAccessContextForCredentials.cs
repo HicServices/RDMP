@@ -30,7 +30,8 @@ public class ExecuteCommandSetDataAccessContextForCredentials : BasicCommandExec
             
         //if there's already another credential for that context (other than this one)
         if (existingCredentials.ContainsKey(newContext))
-            SetImpossible("DataAccessCredentials '" + existingCredentials[newContext] + "' are used for accessing table under context " + newContext);
+            SetImpossible(
+                $"DataAccessCredentials '{existingCredentials[newContext]}' are used for accessing table under context {newContext}");
     }
 
     public override string GetCommandHelp()

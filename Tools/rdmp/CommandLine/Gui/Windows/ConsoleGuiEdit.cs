@@ -112,7 +112,7 @@ class ConsoleGuiEdit : Window
     {
         if(obj.KeyEvent.Key == Key.DeleteChar)
         {
-            int rly = MessageBox.Query("Clear", "Clear Property Value?", "Yes", "Cancel");
+            var rly = MessageBox.Query("Clear", "Clear Property Value?", "Yes", "Cancel");
             if(rly == 0)
             {
                 obj.Handled = true;
@@ -162,7 +162,7 @@ class ConsoleGuiEdit : Window
                 }
             }
                 
-            DisplayMember = PropertyInfo.Name + ":" + val;
+            DisplayMember = $"{PropertyInfo.Name}:{val}";
         }
     }
 }

@@ -66,7 +66,7 @@ public partial class ImportSQLTableUI : RDMPForm
         var cataRepo = Activator.RepositoryLocator.CatalogueRepository;
         try
         {
-            DiscoveredTable tbl = serverDatabaseTableSelector1.GetDiscoveredTable();
+            var tbl = serverDatabaseTableSelector1.GetDiscoveredTable();
 
             if (tbl == null)
             {
@@ -126,14 +126,14 @@ public partial class ImportSQLTableUI : RDMPForm
                     var options = new ParameterCollectionUIOptionsFactory().Create(ti);
                     ParameterCollectionUI.ShowAsDialog(Activator,options,true);
                 }
-                MessageBox.Show("Successfully imported table '" + ti + "'");
+                MessageBox.Show($"Successfully imported table '{ti}'");
             }
 
             Close();
         }
         catch (SqlException exception)
         {
-            MessageBox.Show("Problem importing table :" + exception.Message);
+            MessageBox.Show($"Problem importing table :{exception.Message}");
         }
     }
 

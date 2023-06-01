@@ -33,7 +33,7 @@ public class DataFlowPipelineEngine<T> : IDataFlowPipelineEngine
     /// <summary>
     /// Readonly cast of <see cref="ComponentObjects"/>. If you need to add components, add them to <see cref="ComponentObjects"/> instead.
     /// </summary>
-    public ReadOnlyCollection<IDataFlowComponent<T>> Components { get { return ComponentObjects.Cast<IDataFlowComponent<T>>().ToList().AsReadOnly(); } }
+    public ReadOnlyCollection<IDataFlowComponent<T>> Components => ComponentObjects.Cast<IDataFlowComponent<T>>().ToList().AsReadOnly();
 
     /// <summary>
     /// The last component in the pipeline, responsible for writing the chunks (of type {T}) to somewhere (E.g. to disk, to database etc)
@@ -51,10 +51,10 @@ public class DataFlowPipelineEngine<T> : IDataFlowPipelineEngine
     public List<object> ComponentObjects { get; set; }
 
     /// <inheritdoc cref="Destination"/>
-    public object DestinationObject { get { return Destination; } }
+    public object DestinationObject => Destination;
 
     /// <inheritdoc cref="Source"/>
-    public object SourceObject { get { return Source; } }
+    public object SourceObject => Source;
 
     /// <summary>
     /// Creates a new pipeline engine ready to run under the <paramref name="context"/> recording events that occur to <paramref name="listener"/>.
@@ -85,7 +85,7 @@ public class DataFlowPipelineEngine<T> : IDataFlowPipelineEngine
     {
         _context.PreInitialize(_listener,Source,initializationObjects);
 
-        foreach (IDataFlowComponent<T> component in Components)
+        foreach (var component in Components)
             _context.PreInitialize(_listener, component, initializationObjects);
 
         _context.PreInitialize(_listener,Destination,initializationObjects);
@@ -132,7 +132,7 @@ public class DataFlowPipelineEngine<T> : IDataFlowPipelineEngine
         {
             _listener.OnNotify(this, new NotifyEventArgs(ProgressEventType.Debug, "Preparing to Dispose of DataFlowPipelineEngine components"));
                 
-            _listener.OnNotify(this, new NotifyEventArgs(ProgressEventType.Trace, "About to Dispose " + Source));
+            _listener.OnNotify(this, new NotifyEventArgs(ProgressEventType.Trace, $"About to Dispose {Source}"));
             try
             {
                 Source.Dispose(_listener, exception);
@@ -146,9 +146,10 @@ public class DataFlowPipelineEngine<T> : IDataFlowPipelineEngine
                 _listener.OnNotify(Source, new NotifyEventArgs(ProgressEventType.Error, "Error Disposing Source Component", e));
             }
 
-            foreach (IDataFlowComponent<T> dataLoadComponent in Components)
+            foreach (var dataLoadComponent in Components)
             {
-                _listener.OnNotify(this, new NotifyEventArgs(ProgressEventType.Trace, "About to Dispose " + dataLoadComponent));
+                _listener.OnNotify(this, new NotifyEventArgs(ProgressEventType.Trace,
+                    $"About to Dispose {dataLoadComponent}"));
                 try
                 {
                     dataLoadComponent.Dispose(_listener, exception);
@@ -163,7 +164,7 @@ public class DataFlowPipelineEngine<T> : IDataFlowPipelineEngine
                 }
             }
 
-            _listener.OnNotify(this, new NotifyEventArgs(ProgressEventType.Trace, "About to Dispose " + Destination));
+            _listener.OnNotify(this, new NotifyEventArgs(ProgressEventType.Trace, $"About to Dispose {Destination}"));
             try
             {
                 Destination.Dispose(_listener, exception);
@@ -199,7 +200,8 @@ public class DataFlowPipelineEngine<T> : IDataFlowPipelineEngine
         }
         catch (Exception e)
         {
-            throw new InvalidOperationException("Error when attempting to get a chunk from the source component: " + Source, e);
+            throw new InvalidOperationException(
+                $"Error when attempting to get a chunk from the source component: {Source}", e);
         }
 
         if (currentChunk == null)
@@ -208,7 +210,7 @@ public class DataFlowPipelineEngine<T> : IDataFlowPipelineEngine
             return false;
         }
 
-        foreach (IDataFlowComponent<T> component in Components)
+        foreach (var component in Components)
         {
             if (cancellationToken.IsAbortRequested) break;
             currentChunk = component.ProcessPipelineData( currentChunk, _listener, cancellationToken);
@@ -239,46 +241,48 @@ public class DataFlowPipelineEngine<T> : IDataFlowPipelineEngine
     {
         try
         {
-            ICheckable checkableSource = Source as ICheckable;
+            var checkableSource = Source as ICheckable;
             if (checkableSource != null)
             {
-                notifier.OnCheckPerformed(new CheckEventArgs("About to start checking Source component " + checkableSource,
+                notifier.OnCheckPerformed(new CheckEventArgs(
+                    $"About to start checking Source component {checkableSource}",
                     CheckResult.Success));
                 checkableSource.Check(notifier);
             }
             else
                 notifier.OnCheckPerformed(
                     new CheckEventArgs(
-                        "Source component " + Source + " does not support ICheckable so skipping checking it",
+                        $"Source component {Source} does not support ICheckable so skipping checking it",
                         CheckResult.Warning));
 
-            foreach (IDataFlowComponent<T> component in Components)
+            foreach (var component in Components)
             {
-                ICheckable checkable = component as ICheckable;
+                var checkable = component as ICheckable;
 
                 if (checkable != null)
                 {
-                    notifier.OnCheckPerformed(new CheckEventArgs("About to start checking component " + component, CheckResult.Success));
+                    notifier.OnCheckPerformed(new CheckEventArgs($"About to start checking component {component}", CheckResult.Success));
                     checkable.Check(notifier);
                 }
                 else
                     notifier.OnCheckPerformed(
                         new CheckEventArgs(
-                            "Component " + component + " does not support ICheckable so skipping checking it",
+                            $"Component {component} does not support ICheckable so skipping checking it",
                             CheckResult.Warning));
             }
 
-            ICheckable checkableDestination = Destination as ICheckable;
+            var checkableDestination = Destination as ICheckable;
             if (checkableDestination != null)
             {
-                notifier.OnCheckPerformed(new CheckEventArgs("About to start checking Destination component " + checkableDestination,
+                notifier.OnCheckPerformed(new CheckEventArgs(
+                    $"About to start checking Destination component {checkableDestination}",
                     CheckResult.Success));
                 checkableDestination.Check(notifier);
             }
             else
                 notifier.OnCheckPerformed(
                     new CheckEventArgs(
-                        "Destination component " + Destination + " does not support ICheckable so skipping checking it",
+                        $"Destination component {Destination} does not support ICheckable so skipping checking it",
                         CheckResult.Warning));
 
         }
@@ -286,7 +290,7 @@ public class DataFlowPipelineEngine<T> : IDataFlowPipelineEngine
         {
             notifier.OnCheckPerformed(
                 new CheckEventArgs(
-                    typeof (DataFlowPipelineEngine<T>).Name + " Checking failed in an unexpected way",
+                    $"{typeof(DataFlowPipelineEngine<T>).Name} Checking failed in an unexpected way",
                     CheckResult.Fail, e));
         }
 

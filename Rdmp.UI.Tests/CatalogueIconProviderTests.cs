@@ -33,10 +33,10 @@ class CatalogueIconProviderTests: UITests
     [Test]
     public void CatalogueIconProvider_HasImage_AllObjectsHave()
     {
-        int objectCount = 0;
+        var objectCount = 0;
         var provider = new DataExportIconProvider(RepositoryLocator,null);
             
-        foreach (DatabaseEntity obj in WhenIHaveAll())
+        foreach (var obj in WhenIHaveAll())
         {
             var img = provider.GetImage(obj, OverlayKind.None);
 

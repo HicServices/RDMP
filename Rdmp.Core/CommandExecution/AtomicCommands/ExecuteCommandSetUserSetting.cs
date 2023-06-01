@@ -74,7 +74,7 @@ public class ExecuteCommandSetUserSetting : BasicCommandExecution
 
             if (suggestions.Any())
             {
-                StringBuilder msg = new StringBuilder($"Unknown Property '{property}'");
+                var msg = new StringBuilder($"Unknown Property '{property}'");
                 msg.AppendLine();
                 msg.AppendLine("Did you mean:");
                 foreach (var s in suggestions)

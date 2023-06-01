@@ -97,7 +97,7 @@ internal class ConsoleGuiActivator : BasicActivateItems
         // don't use the full height if you're just asking a yes/no question with no big description
         h = Math.Min(5+((args.TaskDescription?.Length ??0) / 20), h);
 
-        int result = MessageBox.Query(w, h, args.WindowTitle ?? "", args.TaskDescription ?? "", "yes", "no", "cancel");
+        var result = MessageBox.Query(w, h, args.WindowTitle ?? "", args.TaskDescription ?? "", "yes", "no", "cancel");
         chosen = result == 0;
 
         return result != 2;
@@ -308,7 +308,7 @@ internal class ConsoleGuiActivator : BasicActivateItems
             WordWrap = true,
         };
 
-        bool toggleStack = true;
+        var toggleStack = true;
 
         var btnOk = new Button("Ok", true);
         btnOk.Clicked += ()=>Application.RequestStop();
@@ -333,12 +333,12 @@ internal class ConsoleGuiActivator : BasicActivateItems
 
     private ustring GetExceptionText(string errorText, Exception exception, bool includeStackTrace)
     {
-        return Wrap(errorText + "\n" + ExceptionHelper.ExceptionToListOfInnerMessages(exception,includeStackTrace), 76);
+        return Wrap($"{errorText}\n{ExceptionHelper.ExceptionToListOfInnerMessages(exception, includeStackTrace)}", 76);
     }
 
     private string Wrap(string longString, int width)
     {
-        return string.Join("\n",Regex.Matches( longString, ".{1,"+width+"}" ).Select( m => m.Value ).ToArray());
+        return string.Join("\n",Regex.Matches( longString, $".{{1,{width}}}").Select( m => m.Value ).ToArray());
     }
 
     public override void ShowData(IViewSQLAndResultsCollection collection)
@@ -360,7 +360,7 @@ internal class ConsoleGuiActivator : BasicActivateItems
 
     protected override void ActivateImpl(object o)
     {
-        IRevertable m = o as IRevertable;
+        var m = o as IRevertable;
 
         if (o is IMasqueradeAs masq)
         {

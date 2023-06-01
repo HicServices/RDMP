@@ -26,7 +26,7 @@ public partial class SQLPreviewWindow : Form
         lblMessage.Text = msg;
         this.Text = title;
 
-        bool designMode = (LicenseManager.UsageMode == LicenseUsageMode.Designtime);
+        var designMode = (LicenseManager.UsageMode == LicenseUsageMode.Designtime);
 
         if (designMode) //don't add the QueryEditor if we are in design time (visual studio) because it breaks
             return;
@@ -58,7 +58,7 @@ public partial class SQLPreviewWindow : Form
 
     public static DialogResult Show(string title,string message, string sql)
     {
-        SQLPreviewWindow dialog = new SQLPreviewWindow(title,message, sql);
+        var dialog = new SQLPreviewWindow(title,message, sql);
         dialog.ShowDialog();
 
         return dialog.DialogResult;

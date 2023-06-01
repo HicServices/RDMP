@@ -100,7 +100,7 @@ public class ExceptionViewer : WideMessageBox
             message = "Error";
         }
 
-        ExceptionViewer ev = new ExceptionViewer(message,longMessage,exception);
+        var ev = new ExceptionViewer(message,longMessage,exception);
 
         if(isModalDialog)
             ev.ShowDialog();

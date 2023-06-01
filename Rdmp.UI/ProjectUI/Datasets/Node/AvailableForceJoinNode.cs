@@ -24,7 +24,7 @@ internal class AvailableForceJoinNode : IMasqueradeAs
     /// <summary>
     /// The table will be in the query if it IsMandatory (becaues of the columns the user has selected) or is explicitly picked for inclusion by the user (ForcedJoin)
     /// </summary>
-    public bool IsIncludedInQuery { get { return ForcedJoin != null || IsMandatory; }}
+    public bool IsIncludedInQuery => ForcedJoin != null || IsMandatory;
 
     public AvailableForceJoinNode(TableInfo tableInfo, bool isMandatory)
     {
@@ -73,9 +73,9 @@ internal class AvailableForceJoinNode : IMasqueradeAs
         var allJoins = coreChildProvider.AllJoinInfos;
         var mycols = coreChildProvider.TableInfosToColumnInfos[TableInfo.ID].ToArray();
 
-        List<JoinInfo> foundJoinInfos = new List<JoinInfo>();
+        var foundJoinInfos = new List<JoinInfo>();
 
-        foreach (AvailableForceJoinNode otherNode in otherNodes)
+        foreach (var otherNode in otherNodes)
         {
             //don't look for self joins
             if(Equals(otherNode , this))

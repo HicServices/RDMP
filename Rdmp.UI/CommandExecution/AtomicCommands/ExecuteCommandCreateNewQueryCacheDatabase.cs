@@ -35,7 +35,7 @@ public class ExecuteCommandCreateNewQueryCacheDatabase : BasicUICommandExecution
 
         var p = new QueryCachingPatcher();
 
-        CreatePlatformDatabase createPlatform = new CreatePlatformDatabase(p);
+        var createPlatform = new CreatePlatformDatabase(p);
         createPlatform.ShowDialog();
 
         var db = createPlatform.DatabaseCreatedIfAny;

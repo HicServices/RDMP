@@ -44,5 +44,6 @@ class FrozenExtractionConfigurationsNode:Node , IOrderable
         return (Project != null ? Project.GetHashCode() : 0);
     }
 
-    public int Order { get { return 6000; } set{} }
+    public int Order { get => 6000;
+        set{} }
 }

@@ -26,7 +26,7 @@ public class ConnectionStringTextBox : TextBox
 
     public DatabaseType DatabaseType
     {
-        get { return _databaseType; }
+        get => _databaseType;
         set
         {
             _databaseType = value;
@@ -89,15 +89,15 @@ public class ConnectionStringTextBox : TextBox
                 return;
 
             //the potential autocomplete keywords
-            List<string> candidates = new List<string>();
+            var candidates = new List<string>();
             candidates.AddRange(supportedKeywords.ToArray());
 
             //get all the keywords they have typed so far
-            string[] keywords = Text.Split(';').ToArray();
+            var keywords = Text.Split(';').ToArray();
             //set text color to black by default
             ForeColor = Color.Black;
 
-            foreach (string keyword in keywords)
+            foreach (var keyword in keywords)
             {
                 var kvp = keyword.Split('=').ToArray();
 
@@ -108,7 +108,7 @@ public class ConnectionStringTextBox : TextBox
             }
 
             //get last thing user is typing
-            string lastBitBeingTyped = Text.Substring(Text.LastIndexOf(";") + 1);
+            var lastBitBeingTyped = Text.Substring(Text.LastIndexOf(";") + 1);
 
             if (string.IsNullOrWhiteSpace(lastBitBeingTyped) //user has not typed anything or has just put in a ;
                 ||
@@ -125,13 +125,13 @@ public class ConnectionStringTextBox : TextBox
             }
 
             //don't suggest the whole thing, just suggest the bit they haven't typed yet
-            string bitToSuggest = keywordToSuggest[lastBitBeingTyped.Length..];
+            var bitToSuggest = keywordToSuggest[lastBitBeingTyped.Length..];
             if (string.IsNullOrWhiteSpace(bitToSuggest))
                 return;
 
             //suppress further text changed calls
             suppressAutocomplete = true;
-            int whereUserIsCurrently = SelectionStart;
+            var whereUserIsCurrently = SelectionStart;
 
             Text = Text.Insert(whereUserIsCurrently, bitToSuggest);
             SelectionStart = whereUserIsCurrently;

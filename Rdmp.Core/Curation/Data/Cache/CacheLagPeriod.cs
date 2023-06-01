@@ -56,18 +56,18 @@ public class CacheLagPeriod
     /// <summary>
     /// Returns the Months component represented by this period, note that if period is 2 Months then Days will still be 0
     /// </summary>
-    public int Months { get { return Type == PeriodType.Month ? Duration : 0; } }
+    public int Months => Type == PeriodType.Month ? Duration : 0;
 
     /// <summary>
     /// Returns the Days component represented by this period, note that if period is 2 Months then Days will be 0, therefore you should only use this property in conjunction with Months
     /// </summary>
-    public int Days { get { return Type == PeriodType.Day ? Duration : 0; } }
+    public int Days => Type == PeriodType.Day ? Duration : 0;
 
     /// <summary>
     /// Define a Zero length CacheLagPeriod i.e. the remote end point from which caching happens is real time up to the millisecond so you can always issue a cache fetch 
     /// request for data up to DateTime.Now (obviously you can't request future data).
     /// </summary>
-    public static CacheLagPeriod Zero {get { return new CacheLagPeriod(0, PeriodType.Month); }} 
+    public static CacheLagPeriod Zero => new(0, PeriodType.Month);
 
     /// <summary>
     /// Deserializes a <see cref="CacheProgress.CacheLagPeriodLoadDelay"/> string into an instance of <see cref="CacheLagPeriod"/>

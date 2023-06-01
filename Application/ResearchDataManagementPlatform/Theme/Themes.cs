@@ -21,7 +21,7 @@ public class MyVS2015BlueTheme : VS2015BlueTheme, ITheme
     public MyVS2015BlueTheme()
     {
         var manager = new System.Resources.ResourceManager("WeifenLuo.WinFormsUI.ThemeVS2015.Resources", typeof(WeifenLuo.WinFormsUI.ThemeVS2015.VS2015ThemeBase).Assembly);
-        byte[] bytes = (byte[]) manager.GetObject("vs2015blue_vstheme",CultureInfo.CurrentCulture);
+        var bytes = (byte[]) manager.GetObject("vs2015blue_vstheme",CultureInfo.CurrentCulture);
 
         _extender = new ThemeExtender(Decompress(bytes));
     }
@@ -44,7 +44,7 @@ public class MyVS2015DarkTheme : VS2015DarkTheme, ITheme
     public MyVS2015DarkTheme()
     {
         var manager = new System.Resources.ResourceManager("WeifenLuo.WinFormsUI.ThemeVS2015.Resources", typeof(WeifenLuo.WinFormsUI.ThemeVS2015.VS2015ThemeBase).Assembly);
-        byte[] bytes = (byte[])manager.GetObject("vs2015dark_vstheme", CultureInfo.CurrentCulture);
+        var bytes = (byte[])manager.GetObject("vs2015dark_vstheme", CultureInfo.CurrentCulture);
 
         _extender = new ThemeExtender(Decompress(bytes));
     }
@@ -67,7 +67,7 @@ public class MyVS2015LightTheme : VS2015LightTheme, ITheme
     public MyVS2015LightTheme()
     {
         var manager = new System.Resources.ResourceManager("WeifenLuo.WinFormsUI.ThemeVS2015.Resources", typeof(WeifenLuo.WinFormsUI.ThemeVS2015.VS2015ThemeBase).Assembly);
-        byte[] bytes = (byte[])manager.GetObject("vs2015light_vstheme", CultureInfo.CurrentCulture);
+        var bytes = (byte[])manager.GetObject("vs2015light_vstheme", CultureInfo.CurrentCulture);
 
         _extender = new ThemeExtender(Decompress(bytes));
     }

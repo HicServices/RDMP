@@ -28,14 +28,15 @@ public class CommandLineHelper
             throw new ArgumentException("The argument 'name' parameter is empty");
 
         if (!char.IsUpper(name, 0))
-            throw new ArgumentException("The name argument should be in Pascal case, the first character in " + name + " should be uppercase");
+            throw new ArgumentException(
+                $"The name argument should be in Pascal case, the first character in {name} should be uppercase");
 
         if (value == null)
             throw new ArgumentException("The argument value is null");
 
         if (value is bool)
             if (Convert.ToBoolean(value))
-                return "-" + ConvertArgNameToString(name);
+                return $"-{ConvertArgNameToString(name)}";
             else
                 return "";
 
@@ -45,10 +46,11 @@ public class CommandLineHelper
         if (value is DiscoveredDatabase)
         {
             var dbInfo = value as DiscoveredDatabase;
-            return CreateArgString("DatabaseName", dbInfo.GetRuntimeName()) + " " + CreateArgString("DatabaseServer", dbInfo.Server.Name);
+            return
+                $"{CreateArgString("DatabaseName", dbInfo.GetRuntimeName())} {CreateArgString("DatabaseServer", dbInfo.Server.Name)}";
         }
                         
-        return "-" + ConvertArgNameToString(name) + "=" + GetValueString(value);
+        return $"-{ConvertArgNameToString(name)}={GetValueString(value)}";
     }
 
     public static string ConvertArgNameToString(string name)
@@ -62,22 +64,23 @@ public class CommandLineHelper
     {
         if (value is string)
             if (value.ToString().Contains(" "))
-                return @"""" + value + @"""";//<- looks like a snake (or a golf club? GM)
+                return $@"""{value}""";//<- looks like a snake (or a golf club? GM)
             else
                 return value as string;
 
         if (value is DateTime)
         {
             var dt = (DateTime) value;
-            return "\"" + (dt.TimeOfDay.TotalSeconds.Equals(0) ? dt.ToString("yyyy-MM-dd") : dt.ToString("yyyy-MM-dd HH:mm:ss")) + "\"";
+            return
+                $"\"{(dt.TimeOfDay.TotalSeconds.Equals(0) ? dt.ToString("yyyy-MM-dd") : dt.ToString("yyyy-MM-dd HH:mm:ss"))}\"";
         }
 
         if (value is FileInfo)
         {
             var fi = value as FileInfo;
-            return "\"" + fi.FullName + "\"";
+            return $"\"{fi.FullName}\"";
         }
 
-        throw new ArgumentException("Cannot create a value string from an object of type " + value.GetType().FullName);
+        throw new ArgumentException($"Cannot create a value string from an object of type {value.GetType().FullName}");
     }
 }

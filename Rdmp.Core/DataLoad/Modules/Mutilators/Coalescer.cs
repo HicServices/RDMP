@@ -34,7 +34,7 @@ public class Coalescer : MatchingTablesMutilator
     {
         var server = table.Database.Server;
 
-        job.OnNotify(this, new NotifyEventArgs(ProgressEventType.Information, "About to run Coalese on table " + table));
+        job.OnNotify(this, new NotifyEventArgs(ProgressEventType.Information, $"About to run Coalese on table {table}"));
 
         var allCols = table.DiscoverColumns();
 
@@ -43,15 +43,16 @@ public class Coalescer : MatchingTablesMutilator
         var pks = allCols.Except(nonPks).ToArray();
 
         if (!pkColumnInfos.Any())
-            throw new Exception("Table '" + tableInfo + "' has no IsPrimaryKey columns");
+            throw new Exception($"Table '{tableInfo}' has no IsPrimaryKey columns");
 
         if (allCols.Length == pkColumnInfos.Length)
         {
-            job.OnNotify(this, new NotifyEventArgs(ProgressEventType.Warning, "Skipping Coalesce on table " + table + " because it has no non primary key columns"));
+            job.OnNotify(this, new NotifyEventArgs(ProgressEventType.Warning,
+                $"Skipping Coalesce on table {table} because it has no non primary key columns"));
             return;
         }
 
-        int affectedRows = 0;
+        var affectedRows = 0;
 
         using (var con = table.Database.Server.GetConnection())
         {
@@ -70,7 +71,7 @@ public class Coalescer : MatchingTablesMutilator
             }
 
             //Get an update command for each non primary key column
-            foreach (DiscoveredColumn nonPk in nonPks)
+            foreach (var nonPk in nonPks)
             {
                 var sql = GetCommand(table, pks, nonPk);
 
@@ -80,12 +81,13 @@ public class Coalescer : MatchingTablesMutilator
             }
         }
             
-        job.OnNotify(this, new NotifyEventArgs(ProgressEventType.Information, "Coalesce on table '" + table + "' completed (" + affectedRows + " rows affected)"));
+        job.OnNotify(this, new NotifyEventArgs(ProgressEventType.Information,
+            $"Coalesce on table '{table}' completed ({affectedRows} rows affected)"));
     }
 
     private string GetCommand(DiscoveredTable table, DiscoveredColumn[] pks, DiscoveredColumn nonPk)
     {
-        List<CustomLine> sqlLines = new List<CustomLine>();
+        var sqlLines = new List<CustomLine>();
         sqlLines.Add(new CustomLine(string.Format("(t1.{0} is null AND t2.{0} is not null)", nonPk.GetRuntimeName()), QueryComponent.WHERE));
         sqlLines.Add(new CustomLine(string.Format("t1.{0} = COALESCE(t1.{0},t2.{0})", nonPk.GetRuntimeName()),QueryComponent.SET));
         sqlLines.AddRange(pks.Select(p=>new CustomLine(string.Format("t1.{0} = t2.{0}", p.GetRuntimeName()),QueryComponent.JoinInfoJoin)));

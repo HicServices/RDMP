@@ -144,7 +144,8 @@ public class ExecuteCommandCreateNewCohortFromCatalogue : CohortCreationCommandE
             return;
 
         request.ExtractionIdentifierColumn = _extractionIdentifierColumn;
-        var configureAndExecute = GetConfigureAndExecuteControl(request, "Import column " + _extractionIdentifierColumn + " as cohort and commmit results", _extractionIdentifierColumn);
+        var configureAndExecute = GetConfigureAndExecuteControl(request,
+            $"Import column {_extractionIdentifierColumn} as cohort and commmit results", _extractionIdentifierColumn);
 
         configureAndExecute.Run(BasicActivator.RepositoryLocator, null, null, null);
     }

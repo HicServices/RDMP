@@ -77,7 +77,8 @@ public class DataFlowPipelineContext<T>: IDataFlowPipelineContext
                 reason = null;
                 var isAssignable = MustHaveSource.IsAssignableFrom(t);
                 if (!isAssignable)
-                    reason = "Type " + GetFullName(t) + " is not a " + GetFullName(MustHaveSource) + " (which is the required type for all sources within the current context)";
+                    reason =
+                        $"Type {GetFullName(t)} is not a {GetFullName(MustHaveSource)} (which is the required type for all sources within the current context)";
 
                 return isAssignable;
             }
@@ -94,7 +95,8 @@ public class DataFlowPipelineContext<T>: IDataFlowPipelineContext
                 reason = null;
                 var isAssignable = MustHaveDestination.IsAssignableFrom(t);
                 if (!isAssignable)
-                    reason = "Type " + GetFullName(t) +  " is not a " + GetFullName(MustHaveDestination) + " (which is the required type for all destinations within the current context)";
+                    reason =
+                        $"Type {GetFullName(t)} is not a {GetFullName(MustHaveDestination)} (which is the required type for all destinations within the current context)";
 
                 return isAssignable;
             }
@@ -105,7 +107,8 @@ public class DataFlowPipelineContext<T>: IDataFlowPipelineContext
         {
             if (forbiddenType.IsAssignableFrom(t))
             {
-                reason = "Type " + GetFullName(t) + " is inherited from a type which is forbidden in the current context: " + GetFullName(forbiddenType);
+                reason =
+                    $"Type {GetFullName(t)} is inherited from a type which is forbidden in the current context: {GetFullName(forbiddenType)}";
                 return false;
             }
 
@@ -115,7 +118,8 @@ public class DataFlowPipelineContext<T>: IDataFlowPipelineContext
                 &&
                 forbiddenType.GenericTypeArguments.Any(subtype => subtype.IsAssignableFrom(t))) //and t is TableInfo (generic <T> == t)
             {
-                reason = "Type " + GetFullName(t) + " is a generic parameter of forbidden type " + GetFullName(forbiddenType) + "(Forbidden within the current context)";
+                reason =
+                    $"Type {GetFullName(t)} is a generic parameter of forbidden type {GetFullName(forbiddenType)}(Forbidden within the current context)";
                 return false;
             }
         }
@@ -140,7 +144,8 @@ public class DataFlowPipelineContext<T>: IDataFlowPipelineContext
 
             if (!IsAllowable(component.GetClassAsSystemType(), out forbiddenType))
             {
-                reason = "Component " + component.Name + " implements a forbidden type (" + GetFullName(forbiddenType) + ") under the pipeline usage context";
+                reason =
+                    $"Component {component.Name} implements a forbidden type ({GetFullName(forbiddenType)}) under the pipeline usage context";
                 return false;
             }
         }
@@ -160,25 +165,25 @@ public class DataFlowPipelineContext<T>: IDataFlowPipelineContext
         //it must have destination
         if (mustHaveType != null)
             if (component == null)
-                return "An explicit " + descriptionOfThingBeingChecked + " must be chosen";
+                return $"An explicit {descriptionOfThingBeingChecked} must be chosen";
             else
             {
-                Type pipelineComponentType = component.GetClassAsSystemType();
+                var pipelineComponentType = component.GetClassAsSystemType();
 
                 if (pipelineComponentType == null)
-                    return "PipelineComponent " + component.Class + " could not be created, check MEF assembly loading in the Diagnostics menu";
+                    return
+                        $"PipelineComponent {component.Class} could not be created, check MEF assembly loading in the Diagnostics menu";
 
                 if (!mustHaveType.IsAssignableFrom(pipelineComponentType))
                 {
-                    return "The pipeline requires a " + descriptionOfThingBeingChecked + " of type " + GetFullName(mustHaveType) +
-                           " but the currently configured " + descriptionOfThingBeingChecked + GetFullName(pipelineComponentType) +
-                           " is not of the same type or a derrived type";
+                    return
+                        $"The pipeline requires a {descriptionOfThingBeingChecked} of type {GetFullName(mustHaveType)} but the currently configured {descriptionOfThingBeingChecked}{GetFullName(pipelineComponentType)} is not of the same type or a derrived type";
                 }
             }
         else
             //it cannot have destination 
         if (component != null)
-            return "Context does not allow for an explicit (custom) " + descriptionOfThingBeingChecked;
+            return $"Context does not allow for an explicit (custom) {descriptionOfThingBeingChecked}";
 
 
         return null;
@@ -236,20 +241,22 @@ public class DataFlowPipelineContext<T>: IDataFlowPipelineContext
 
     private void Satisfy(Type[] requirements, bool isOptional, IDataLoadEventListener listener, object component, params object[] parameters)
     {
-        Dictionary<object, Dictionary<MethodInfo, object>> initializedComponents = new Dictionary<object, Dictionary<MethodInfo, object>>();
+        var initializedComponents = new Dictionary<object, Dictionary<MethodInfo, object>>();
 
         //these are the T tokens in the above interfaces
         var typesRequired = requirements.Select(i => i.GenericTypeArguments[0]).ToList();
                    
         //now initialize all the parameters
-        foreach (object parameter in parameters)
+        foreach (var parameter in parameters)
         {
             if (parameter == null)
-                throw new InvalidOperationException("One of the parameters for PreInitialization of " + component + " is null");
+                throw new InvalidOperationException(
+                    $"One of the parameters for PreInitialization of {component} is null");
 
             //see if any of them are forbidden (e.g. if context was created without LoadsSingleTableInfo then it is forbidden to have components with IPipelineRequirement<TableInfo>)
             if (!IsAllowable(parameter.GetType()))
-                throw new Exception("Type " + GetFullName(parameter.GetType()) + " is not an allowable PreInitialize parameters type under the current DataFlowPipelineContext (check which flags you passed to the DataFlowPipelineContextFactory and the interfaces IPipelineRequirement<> that your components implement) ");
+                throw new Exception(
+                    $"Type {GetFullName(parameter.GetType())} is not an allowable PreInitialize parameters type under the current DataFlowPipelineContext (check which flags you passed to the DataFlowPipelineContextFactory and the interfaces IPipelineRequirement<> that your components implement) ");
 
             var toRemove = PreInitializeComponentWithSingleObject(listener, component, parameter, initializedComponents);
 
@@ -259,11 +266,7 @@ public class DataFlowPipelineContext<T>: IDataFlowPipelineContext
 
         if (typesRequired.Any() && !isOptional)
             throw new Exception(
-                "Component '" + component.GetType().Name + "' reports a problem" + Environment.NewLine +
-                "The following expected types were not passed to PreInitialize:" + string.Join(",", typesRequired.Select(GetFullName))
-
-                + Environment.NewLine + "The object types passed were:" + Environment.NewLine +
-                string.Join(Environment.NewLine, parameters.Select(p => p.GetType() + ":" + p.ToString()))
+                $"Component '{component.GetType().Name}' reports a problem{Environment.NewLine}The following expected types were not passed to PreInitialize:{string.Join(",", typesRequired.Select(GetFullName))}{Environment.NewLine}The object types passed were:{Environment.NewLine}{string.Join(Environment.NewLine, parameters.Select(p => $"{p.GetType()}:{p}"))}"
             );
     }
 
@@ -278,7 +281,8 @@ public class DataFlowPipelineContext<T>: IDataFlowPipelineContext
             return null;
 
         if(compatibleInterfaces.Length > 1)
-            throw new OverlappingImplementationsException("The following IPipelineRequirement<> interfaces are implemented on pipeline component of type '" + component.GetType().Name + "' which are intercompatible with the input object of type '" + value.GetType().Name +"' "+ string.Join(",", compatibleInterfaces.Select(GetFullName)));
+            throw new OverlappingImplementationsException(
+                $"The following IPipelineRequirement<> interfaces are implemented on pipeline component of type '{component.GetType().Name}' which are intercompatible with the input object of type '{value.GetType().Name}' {string.Join(",", compatibleInterfaces.Select(GetFullName))}");
 
         var interfaceToInvokeIfAny = compatibleInterfaces[0];
         if (interfaceToInvokeIfAny != null)
@@ -291,7 +295,8 @@ public class DataFlowPipelineContext<T>: IDataFlowPipelineContext
                 initializedComponents.Add(component, new Dictionary<MethodInfo, object>());
 
             if (initializedComponents[component].ContainsKey(preInit))
-                throw new MultipleMatchingImplmentationException("Interface " + GetFullName(interfaceToInvokeIfAny) + " matches both input objects '" + initializedComponents[component][preInit] + "' ('" + initializedComponents[component][preInit].GetType().Name + "') and '" + value + "' ('" + value.GetType().Name + "')");
+                throw new MultipleMatchingImplmentationException(
+                    $"Interface {GetFullName(interfaceToInvokeIfAny)} matches both input objects '{initializedComponents[component][preInit]}' ('{initializedComponents[component][preInit].GetType().Name}') and '{value}' ('{value.GetType().Name}')");
             else
                 initializedComponents[component].Add(preInit, value);
                 
@@ -314,9 +319,7 @@ public class DataFlowPipelineContext<T>: IDataFlowPipelineContext
             PreInitialize(listener, (IDataFlowComponent<T>) component, initializationObjects);
         else
             throw new NotSupportedException(
-                "It looks like you attempted to pre initialize using PreInitializeGeneric but your object was type '" +
-                GetFullName(component.GetType()) + "' and we expected either a source or a component <T> where <T> is:" +
-                GetFullName(typeof (T)));
+                $"It looks like you attempted to pre initialize using PreInitializeGeneric but your object was type '{GetFullName(component.GetType())}' and we expected either a source or a component <T> where <T> is:{GetFullName(typeof(T))}");
     }
 
       
@@ -324,7 +327,7 @@ public class DataFlowPipelineContext<T>: IDataFlowPipelineContext
     {
         if (!t.IsGenericType)
             return t.Name;
-        StringBuilder sb = new StringBuilder();
+        var sb = new StringBuilder();
 
         sb.Append(t.Name.Substring(0, t.Name.LastIndexOf("`")));
         sb.Append(t.GetGenericArguments().Aggregate("<",

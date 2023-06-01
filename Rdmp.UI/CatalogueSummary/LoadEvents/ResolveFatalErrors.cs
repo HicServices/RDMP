@@ -61,7 +61,7 @@ public partial class ResolveFatalErrors : RDMPForm
         _logManager.ResolveFatalErrors(_toResolve.Select(f => f.ID).ToArray(), newState, Explanation.Text);
             
         //resolve it in memory
-        foreach (ArchivalFatalError error in _toResolve)
+        foreach (var error in _toResolve)
             error.Explanation = Explanation.Text;
 
         this.Close();

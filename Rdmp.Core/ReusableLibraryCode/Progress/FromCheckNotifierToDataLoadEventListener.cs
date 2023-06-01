@@ -37,7 +37,7 @@ public class FromCheckNotifierToDataLoadEventListener : IDataLoadEventListener
         if (!_progressMessagesReceived.Contains(e.TaskDescription))
         {
             _progressMessagesReceived.Add(e.TaskDescription);
-            _checker.OnCheckPerformed(new CheckEventArgs("Started progress on " + e.TaskDescription,CheckResult.Success));
+            _checker.OnCheckPerformed(new CheckEventArgs($"Started progress on {e.TaskDescription}",CheckResult.Success));
         }
     }
 }

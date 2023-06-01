@@ -36,7 +36,7 @@ public class DataAccessCredentialsFactory
     /// <param name="usageContext"></param>
     public DataAccessCredentials Create(ITableInfo tableInfoCreated, string username, string password, DataAccessContext usageContext)
     {
-        DataAccessCredentials credentialsToAssociate = _cataRepository.TableInfoCredentialsManager.GetCredentialByUsernameAndPasswordIfExists(username, password);
+        var credentialsToAssociate = _cataRepository.TableInfoCredentialsManager.GetCredentialByUsernameAndPasswordIfExists(username, password);
 
         if (credentialsToAssociate == null)
         {

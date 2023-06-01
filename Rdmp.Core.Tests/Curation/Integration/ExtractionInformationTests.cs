@@ -46,7 +46,7 @@ public class ExtractionInformationTests : DatabaseTests
     [Test]
     public void BasicIDsAreCorrect()
     {
-        ColumnInfo firstLinked = cataItem.ColumnInfo;
+        var firstLinked = cataItem.ColumnInfo;
         Assert.IsTrue(firstLinked != null);
         Assert.IsTrue(firstLinked.ID == columnInfo.ID);
     }
@@ -82,11 +82,11 @@ public class ExtractionInformationTests : DatabaseTests
             parameter.Value = "500";
             parameter.SaveToDatabase();
 
-            ExtractionFilterParameter afterSave = CatalogueRepository.GetObjectByID<ExtractionFilterParameter>(parameter.ID);
+            var afterSave = CatalogueRepository.GetObjectByID<ExtractionFilterParameter>(parameter.ID);
             Assert.AreEqual(afterSave.Value ,"500");
 
 
-            ExtractionFilter filterFastThings_NewCopyFromDB = CatalogueRepository.GetObjectByID<ExtractionFilter>(filterFastThings.ID);
+            var filterFastThings_NewCopyFromDB = CatalogueRepository.GetObjectByID<ExtractionFilter>(filterFastThings.ID);
 
             Assert.AreEqual(filterFastThings.ID, filterFastThings_NewCopyFromDB.ID);
             Assert.AreEqual(filterFastThings.Description, filterFastThings_NewCopyFromDB.Description);
@@ -134,7 +134,7 @@ public class ExtractionInformationTests : DatabaseTests
             Assert.AreEqual(extractInfo.SelectSQL,"dave");
 
             //fetch the extraction information via the linked CatalogueItem - ColumnInfo pair (i.e. we are testing the alternate route to fetch ExtractionInformation - by ID or by colum/item pair)
-            ExtractionInformation extractInfo2_CameFromLinker = cataItem.ExtractionInformation;
+            var extractInfo2_CameFromLinker = cataItem.ExtractionInformation;
             Assert.AreEqual(extractInfo.ID, extractInfo2_CameFromLinker.ID);
             Assert.AreEqual(extractInfo.SelectSQL, extractInfo2_CameFromLinker.SelectSQL);
 

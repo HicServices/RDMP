@@ -34,8 +34,8 @@ public class CacheRunner : Runner
     {
             
 
-        CacheProgress cp = GetObjectFromCommandLineString<CacheProgress>(repositoryLocator,_options.CacheProgress);
-        string dataLoadTask = cp.GetDistinctLoggingTask();
+        var cp = GetObjectFromCommandLineString<CacheProgress>(repositoryLocator,_options.CacheProgress);
+        var dataLoadTask = cp.GetDistinctLoggingTask();
 
         var defaults = repositoryLocator.CatalogueRepository;
         var loggingServer = defaults.GetDefaultFor(PermissableDefaults.LiveLoggingServer_ID);

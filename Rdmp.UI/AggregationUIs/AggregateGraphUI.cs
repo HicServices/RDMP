@@ -69,14 +69,8 @@ public partial class AggregateGraphUI : AggregateGraph_Design
         
     public int Timeout
     {
-        get
-        {
-            return _timeoutControls.Timeout;
-        }
-        set
-        {
-            _timeoutControls.Timeout = value;
-        }
+        get => _timeoutControls.Timeout;
+        set => _timeoutControls.Timeout = value;
     }
 
     public event DataTableHandler GraphTableRetrieved;
@@ -151,10 +145,7 @@ public partial class AggregateGraphUI : AggregateGraph_Design
         btnResendQuery.Enabled = enabled;
     }
 
-    public AggregateConfiguration AggregateConfiguration
-    {
-        get { return _aggregateConfiguration; }
-    }
+    public AggregateConfiguration AggregateConfiguration => _aggregateConfiguration;
 
     public void AbortLoadGraph()
     {
@@ -832,7 +823,7 @@ public partial class AggregateGraphUI : AggregateGraph_Design
     {
         if(sender == miClipboardWord)
         {
-            var s = UsefulStuff.GetInstance().DataTableToHtmlDataTable(_dt);
+            var s = UsefulStuff.DataTableToHtmlDataTable(_dt);
 
             var formatted = UsefulStuff.GetClipboardFormattedHtmlStringFromHtmlString(s);
             

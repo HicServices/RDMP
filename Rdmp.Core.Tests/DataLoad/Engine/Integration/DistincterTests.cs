@@ -31,20 +31,20 @@ public class DistincterTests : DatabaseTests
     {
         var db = GetCleanedServer(type, "TestCoalescer");
 
-        int batchCount = 1000;
+        var batchCount = 1000;
 
-        DataTable dt = new DataTable("TestCoalescer_RampantNullness");
+        var dt = new DataTable("TestCoalescer_RampantNullness");
         dt.Columns.Add("pk");
         dt.Columns.Add("f1");
         dt.Columns.Add("f2");
         dt.Columns.Add("f3");
         dt.Columns.Add("f4");
 
-        Random r = new Random(123);
+        var r = new Random(123);
 
-        for (int i = 0; i < batchCount; i++)
+        for (var i = 0; i < batchCount; i++)
         {
-            int randInt = r.Next(int.MaxValue);
+            var randInt = r.Next(int.MaxValue);
                 
             dt.Rows.Add(new object[] { randInt, randInt, randInt, randInt, randInt });
             dt.Rows.Add(new object[] { randInt, randInt, randInt, randInt, randInt });
@@ -84,20 +84,20 @@ public class DistincterTests : DatabaseTests
     {
         var db = GetCleanedServer(type, "TestCoalescer");
 
-        int batchCount = 1000;
+        var batchCount = 1000;
 
-        DataTable dt = new DataTable("TestCoalescer_RampantNullness");
+        var dt = new DataTable("TestCoalescer_RampantNullness");
         dt.Columns.Add("pk");
         dt.Columns.Add("f1");
         dt.Columns.Add("f2");
         dt.Columns.Add("f3");
         dt.Columns.Add("f4");
 
-        Random r = new Random(123);
+        var r = new Random(123);
 
-        for (int i = 0; i < batchCount; i++)
+        for (var i = 0; i < batchCount; i++)
         {
-            int randInt = r.Next(int.MaxValue);
+            var randInt = r.Next(int.MaxValue);
 
             dt.Rows.Add(new object[] { randInt, randInt, randInt, randInt, randInt });
             dt.Rows.Add(new object[] { randInt, randInt, randInt, randInt, randInt+1 });

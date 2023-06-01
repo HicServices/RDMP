@@ -73,7 +73,7 @@ public class RDMPSingleControlTab:DockContent,IRefreshBusSubscriber
     {
         var typeDocs = activator.RepositoryLocator.CatalogueRepository.CommentStore;
 
-        StringBuilder sb = new StringBuilder();
+        var sb = new StringBuilder();
 
         string firstMatch = null;
 

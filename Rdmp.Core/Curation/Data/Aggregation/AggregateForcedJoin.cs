@@ -36,7 +36,7 @@ class AggregateForcedJoin : IAggregateForcedJoinManager
 
         return
             _repository.SelectAllWhere<TableInfo>(
-                "Select TableInfo_ID from AggregateForcedJoin where AggregateConfiguration_ID = " + configuration.ID,
+                $"Select TableInfo_ID from AggregateForcedJoin where AggregateConfiguration_ID = {configuration.ID}",
                 "TableInfo_ID").Union(everyone).ToArray();
     }
 

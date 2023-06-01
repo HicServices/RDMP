@@ -108,7 +108,7 @@ public partial class CreateNewDataExtractionProjectUI : RDMPForm
     {
         var p = Activator.RepositoryLocator.CatalogueRepository.GetAllObjects<Pipeline>();
             
-        foreach (Pipeline pipeline in p)
+        foreach (var pipeline in p)
         {
             var source = pipeline.Source;
             var destination = pipeline.Destination;
@@ -177,7 +177,8 @@ public partial class CreateNewDataExtractionProjectUI : RDMPForm
                 
             var collisionProject = _existingProjects.FirstOrDefault(p => p.ProjectNumber == _projectNumber);
             if(collisionProject != null)
-                ragProjectNumber.Warning(new Exception("There is already an existing Project ('" + collisionProject + "') with ProjectNumber " + _projectNumber));
+                ragProjectNumber.Warning(new Exception(
+                    $"There is already an existing Project ('{collisionProject}') with ProjectNumber {_projectNumber}"));
         }
         catch (Exception ex)
         {
@@ -193,9 +194,9 @@ public partial class CreateNewDataExtractionProjectUI : RDMPForm
             return;
         }
             
-        OpenFileDialog ofd = new OpenFileDialog();
+        var ofd = new OpenFileDialog();
         ofd.Filter = "Comma Separated Values|*.csv";
-        DialogResult result = ofd.ShowDialog();
+        var result = ofd.ShowDialog();
 
         if (result == DialogResult.OK)
             SelectFile(new FileInfo(ofd.FileName));
@@ -270,7 +271,7 @@ public partial class CreateNewDataExtractionProjectUI : RDMPForm
     {
         Cursor = Cursors.WaitCursor;
 
-        string problem = AllRequiredDataPresent();
+        var problem = AllRequiredDataPresent();
 
         try
         {
@@ -484,7 +485,7 @@ public partial class CreateNewDataExtractionProjectUI : RDMPForm
         _bLoading = true;
         cbxDatasets.Visible = _selectedDatasets.Length <= 1;
         lblDatasets.Visible = _selectedDatasets.Length > 1;
-        lblDatasets.Text = _selectedDatasets.Length + " Datasets";
+        lblDatasets.Text = $"{_selectedDatasets.Length} Datasets";
         cbxDatasets.SelectedItem = _selectedDatasets.Length <= 1 ? _selectedDatasets.SingleOrDefault() : null;
         _bLoading = false;
     }

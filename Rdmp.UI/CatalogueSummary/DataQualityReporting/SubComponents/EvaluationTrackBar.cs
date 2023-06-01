@@ -33,7 +33,7 @@ public partial class EvaluationTrackBar : UserControl
 
     public Evaluation[] Evaluations
     {
-        get { return _evaluations; }
+        get => _evaluations;
         set
         {
             _evaluations = value;
@@ -60,7 +60,7 @@ public partial class EvaluationTrackBar : UserControl
         else
             this.Enabled = true;//let user drag around the trackbar if he wants
 
-        foreach (Label label in labels)
+        foreach (var label in labels)
         {
             this.Controls.Remove(label);
             label.Dispose();
@@ -74,15 +74,15 @@ public partial class EvaluationTrackBar : UserControl
         tbEvaluation.Value = Evaluations.Length - 1;
         tbEvaluation.LargeChange = 1;
 
-        for (int i = 0; i < Evaluations.Length; i++)
+        for (var i = 0; i < Evaluations.Length; i++)
         {
-            double ratio = ((double)i)/(Evaluations.Length-1);
+            var ratio = ((double)i)/(Evaluations.Length-1);
 
 
-            int x = tbEvaluation.Left + (int) (ratio * tbEvaluation.Width);
-            int y = tbEvaluation.Bottom - 10;
+            var x = tbEvaluation.Left + (int) (ratio * tbEvaluation.Width);
+            var y = tbEvaluation.Bottom - 10;
 
-            Label l = new Label();
+            var l = new Label();
             l.Text = Evaluations[i].DateOfEvaluation.ToString("d");
             l.Location = new Point(x - (l.PreferredWidth / 2), y);
               

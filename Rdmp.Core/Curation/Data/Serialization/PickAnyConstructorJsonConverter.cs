@@ -36,10 +36,7 @@ public class PickAnyConstructorJsonConverter:JsonConverter
     /// <summary>
     /// Cannot write, this class is for deserialization only
     /// </summary>
-    public override bool CanWrite
-    {
-        get { return false; }
-    }
+    public override bool CanWrite => false;
 
     /// <summary>
     /// Cannot write, throws NotImplementedException
@@ -100,7 +97,8 @@ public class PickAnyConstructorJsonConverter:JsonConverter
         if (constructors.Count == 1)
             return true;
 
-        throw new ObjectLacksCompatibleConstructorException("There were " + constructors.Count + " compatible constructors for the constructorObjects provided");
+        throw new ObjectLacksCompatibleConstructorException(
+            $"There were {constructors.Count} compatible constructors for the constructorObjects provided");
     }
 
     private Dictionary<ConstructorInfo, List<object>> GetConstructors(Type objectType)

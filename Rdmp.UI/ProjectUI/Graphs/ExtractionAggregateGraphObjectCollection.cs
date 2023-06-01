@@ -20,12 +20,12 @@ public class ExtractionAggregateGraphObjectCollection : PersistableObjectCollect
     /// The extraction dataset (in a given <see cref="ExtractionConfiguration"/>) to which the <see cref="Graph"/> results
     /// should be limited.  The graph should only depict records appearing in this extract.
     /// </summary>
-    public SelectedDataSets SelectedDataSets { get { return (SelectedDataSets) DatabaseObjects[0]; }}
-        
+    public SelectedDataSets SelectedDataSets => (SelectedDataSets) DatabaseObjects[0];
+
     /// <summary>
     /// The graph to be shown
     /// </summary>
-    public AggregateConfiguration Graph { get { return (AggregateConfiguration) DatabaseObjects[1]; }}
+    public AggregateConfiguration Graph => (AggregateConfiguration) DatabaseObjects[1];
 
 
     /// <summary>

@@ -65,7 +65,7 @@ public partial class ObjectSaverButton
         control.CommonFunctionality.Add(btnSave);
         control.CommonFunctionality.Add(btnUndoRedo);
             
-        Form f = control as Form ?? ((Control)control).FindForm();
+        var f = control as Form ?? ((Control)control).FindForm();
 
         if (f == null)
             throw new NotSupportedException("Cannot call SetupFor before the control has been added to its parent form");
@@ -246,7 +246,7 @@ public partial class ObjectSaverButton
             return;
             
         if (_isEnabled)
-            if (_activator.YesNo("Save Changes To '" + _o + "'?", "Save Changes"))
+            if (_activator.YesNo($"Save Changes To '{_o}'?", "Save Changes"))
                 Save();
             else
                 _o.RevertToDatabaseState();

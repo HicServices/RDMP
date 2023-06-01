@@ -22,7 +22,7 @@ public class ExecuteCommandCreateNewCatalogueFromTableInfo : CatalogueCreationCo
         _tableInfo = tableInfo;
 
         if (activator.CoreChildProvider.AllCatalogues.Any(c => c.Name.Equals(tableInfo.GetRuntimeName())))
-            SetImpossible("There is already a Catalogue called '" + tableInfo.GetRuntimeName() + "'");
+            SetImpossible($"There is already a Catalogue called '{tableInfo.GetRuntimeName()}'");
     }
 
 

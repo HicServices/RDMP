@@ -27,7 +27,7 @@ public class CacheCommitExtractableAggregate : CacheCommitArguments
             throw new ArgumentException(
                 $"The DataTable that you claimed was an {Operation} had zero columns and therefore cannot be cached");
 
-        string[] suspectDimensions =
+        var suspectDimensions =
             configuration.AggregateDimensions
                 .Where(d => d.IsExtractionIdentifier || d.HashOnDataRelease)
                 .Select(d => d.GetRuntimeName())

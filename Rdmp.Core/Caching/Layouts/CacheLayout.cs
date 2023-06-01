@@ -60,10 +60,11 @@ public abstract class CacheLayout : ICacheLayout
             
         if(ArchiveType == CacheArchiveType.None)
         {
-            var matching = loadCacheDirectory.GetFiles(archiveDate.ToString(DateFormat) + ".*").ToArray();
+            var matching = loadCacheDirectory.GetFiles($"{archiveDate.ToString(DateFormat)}.*").ToArray();
 
             if(matching.Length > 1)
-                throw new Exception("Mulitple files found in Cache that share the date " + archiveDate + ", matching files were:" + string.Join(",",matching.Select(m=>m.Name)) + ".  Cache directory is:" + loadCacheDirectory);
+                throw new Exception(
+                    $"Mulitple files found in Cache that share the date {archiveDate}, matching files were:{string.Join(",", matching.Select(m => m.Name))}.  Cache directory is:{loadCacheDirectory}");
 
             if (matching.Length == 1)
                 return matching[0];
@@ -72,9 +73,10 @@ public abstract class CacheLayout : ICacheLayout
             return null;
         }
 
-        var filename = archiveDate.ToString(DateFormat) + "." + ArchiveType.ToString().ToLower();
+        var filename = $"{archiveDate.ToString(DateFormat)}.{ArchiveType.ToString().ToLower()}";
 
-        listener.OnNotify(this,new NotifyEventArgs(ProgressEventType.Information, "Looking for a file called '" + filename +"' in '" + loadCacheDirectory.FullName+ "'"));
+        listener.OnNotify(this,new NotifyEventArgs(ProgressEventType.Information,
+            $"Looking for a file called '{filename}' in '{loadCacheDirectory.FullName}'"));
 
         return new FileInfo(Path.Combine(loadCacheDirectory.FullName, filename));
     }
@@ -87,7 +89,8 @@ public abstract class CacheLayout : ICacheLayout
     public virtual DirectoryInfo GetLoadCacheDirectory(IDataLoadEventListener listener)
     {
         if(Resolver == null)
-            throw new Exception("No ILoadCachePathResolver has been set on CacheLayout " + this + ", this tells the system whether there are subdirectories and which one to use for a given ICacheLayout, if you don't have one use a new NoSubdirectoriesCachePathResolver() in your ICacheLayout constructor");
+            throw new Exception(
+                $"No ILoadCachePathResolver has been set on CacheLayout {this}, this tells the system whether there are subdirectories and which one to use for a given ICacheLayout, if you don't have one use a new NoSubdirectoriesCachePathResolver() in your ICacheLayout constructor");
 
         if(RootDirectory == null)
             throw new NullReferenceException("RootDirectory has not been set yet");
@@ -95,19 +98,22 @@ public abstract class CacheLayout : ICacheLayout
         var downloadDirectory = Resolver.GetLoadCacheDirectory(RootDirectory);
 
         if (downloadDirectory == null)
-            throw new Exception("Resolver " + Resolver + " of type " + Resolver.GetType().FullName + " returned null from GetLoadCacheDirectory");
+            throw new Exception(
+                $"Resolver {Resolver} of type {Resolver.GetType().FullName} returned null from GetLoadCacheDirectory");
 
         if (downloadDirectory.Exists)
             listener.OnNotify(this,
                 new NotifyEventArgs(ProgressEventType.Trace,
-                    "Download Directory Is:" + downloadDirectory.FullName));
+                    $"Download Directory Is:{downloadDirectory.FullName}"));
         else
         {
-            listener.OnNotify(this,new NotifyEventArgs(ProgressEventType.Warning,"Download Directory Did Not Exist:" + downloadDirectory.FullName));
+            listener.OnNotify(this,new NotifyEventArgs(ProgressEventType.Warning,
+                $"Download Directory Did Not Exist:{downloadDirectory.FullName}"));
                 
             downloadDirectory.Create();
 
-            listener.OnNotify(this,new NotifyEventArgs(ProgressEventType.Information,"Created Download Directory:" + downloadDirectory.FullName));
+            listener.OnNotify(this,new NotifyEventArgs(ProgressEventType.Information,
+                $"Created Download Directory:{downloadDirectory.FullName}"));
         }
         return downloadDirectory;
     }
@@ -115,7 +121,8 @@ public abstract class CacheLayout : ICacheLayout
     private IEnumerable<FileInfo> GetArchiveFilesInLoadCacheDirectory(IDataLoadEventListener listener)
     {
         var disciplineRoot = GetLoadCacheDirectory(listener);
-        return disciplineRoot.EnumerateFiles("*." + (ArchiveType != CacheArchiveType.None ?ArchiveType.ToString():"*"));
+        return disciplineRoot.EnumerateFiles(
+            $"*.{(ArchiveType != CacheArchiveType.None ? ArchiveType.ToString() : "*")}");
     }
 
     private IEnumerable<DateTime> GetDateListFromArchiveFilesInLoadCacheDirectory(IDataLoadEventListener listener)
@@ -182,7 +189,7 @@ public abstract class CacheLayout : ICacheLayout
         if (ArchiveType == CacheArchiveType.Zip)
         {
             ZipArchiveMode zipArchiveMode;
-            var ziptmp = archiveFilepath.FullName + ".tmp";
+            var ziptmp = $"{archiveFilepath.FullName}.tmp";
             if (archiveFilepath.Exists)
             {
                 zipArchiveMode = ZipArchiveMode.Update;

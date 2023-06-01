@@ -31,7 +31,7 @@ public class ArchivalTableLoadInfo : IArchivalLoggingRecordOfPastEvent, ICompara
     public int? Updates { get; internal set; }
     public string Notes { get; internal set; }
 
-    public List<ArchivalDataSource> DataSources { get { return _knownDataSource.Value; }}
+    public List<ArchivalDataSource> DataSources => _knownDataSource.Value;
 
     readonly Lazy<List<ArchivalDataSource>> _knownDataSource;
 
@@ -60,13 +60,13 @@ public class ArchivalTableLoadInfo : IArchivalLoggingRecordOfPastEvent, ICompara
     }
     private List<ArchivalDataSource> GetDataSources()
     {
-        List<ArchivalDataSource> toReturn = new List<ArchivalDataSource>();
+        var toReturn = new List<ArchivalDataSource>();
 
         using (var con = _loggingDatabase.Server.GetConnection())
         {
             con.Open();
 
-            using(var cmd = _loggingDatabase.Server.GetCommand("SELECT * FROM DataSource WHERE tableLoadRunID=" + ID, con))
+            using(var cmd = _loggingDatabase.Server.GetCommand($"SELECT * FROM DataSource WHERE tableLoadRunID={ID}", con))
             using(var r = cmd.ExecuteReader())
                 while (r.Read())
                     toReturn.Add(new ArchivalDataSource(r));
@@ -85,7 +85,7 @@ public class ArchivalTableLoadInfo : IArchivalLoggingRecordOfPastEvent, ICompara
         
     public override string ToString()
     {
-        return Start + " - " + TargetTable + " (Inserts=" + Inserts + ",Updates=" + Updates + ",Deletes=" + Deletes +")";
+        return $"{Start} - {TargetTable} (Inserts={Inserts},Updates={Updates},Deletes={Deletes})";
     }
 
     public int CompareTo(object obj)

@@ -17,7 +17,7 @@ public class PluginValidationSerializationTest
     [Test]
     public void TestSerialization()
     {
-        Validator v = new Validator();
+        var v = new Validator();
         var iv = new ItemValidator("fish");
         iv.PrimaryConstraint = new FishConstraint();
 
@@ -30,7 +30,7 @@ public class PluginValidationSerializationTest
         Assert.AreEqual(1, v.ItemValidators.Count);
         Assert.AreEqual(typeof(FishConstraint), v.ItemValidators[0].PrimaryConstraint.GetType());
 
-        string xml = v.SaveToXml();
+        var xml = v.SaveToXml();
 
         var newV = Validator.LoadFromXml(xml);
 
@@ -57,11 +57,11 @@ public class FishConstraint : PluginPrimaryConstraint
         if (value == null)
             return null;
 
-        string result = value as string ?? value.ToString();
+        var result = value as string ?? value.ToString();
 
         if (result.Equals("Fish"))
             return null;
 
-        return new ValidationFailure("Value '" + value +"' was not 'Fish'!",this);
+        return new ValidationFailure($"Value '{value}' was not 'Fish'!",this);
     }
 }

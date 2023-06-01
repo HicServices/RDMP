@@ -84,7 +84,7 @@ public class ExtractionRunner : ManyRunner
             
         var factory = new ExtractCommandCollectionFactory();
 
-        foreach (ISelectedDataSets sds in GetSelectedDataSets())
+        foreach (var sds in GetSelectedDataSets())
         {
             var extractDatasetCommand = factory.Create(RepositoryLocator, sds);
             commands.Add(extractDatasetCommand);
@@ -246,7 +246,8 @@ public class ExtractionRunner : ManyRunner
         }
         catch (Exception e)
         {
-            throw new Exception("Problem occurred trying to create Logging Component:" + e.Message + " (check user has access to " + _logManager.Server + " and that the DataLoadTask '" + ExecuteDatasetExtractionSource.AuditTaskName + "' exists)", e);
+            throw new Exception(
+                $"Problem occurred trying to create Logging Component:{e.Message} (check user has access to {_logManager.Server} and that the DataLoadTask '{ExecuteDatasetExtractionSource.AuditTaskName}' exists)", e);
         }
 
         return dataLoadInfo;

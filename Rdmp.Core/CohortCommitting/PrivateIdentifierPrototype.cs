@@ -48,7 +48,7 @@ public class PrivateIdentifierPrototype
 
     public string GetDeclarationSql()
     {
-        return RuntimeName + " " + DataType;
+        return $"{RuntimeName} {DataType}";
 
     }
 }

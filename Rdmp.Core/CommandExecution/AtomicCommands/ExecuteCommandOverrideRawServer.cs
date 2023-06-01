@@ -36,7 +36,7 @@ public class ExecuteCommandOverrideRawServer:BasicCommandExecution,IAtomicComman
 
         if (_server == null)
         {
-            if (SelectOne(_available,out ExternalDatabaseServer selected))
+            if (SelectOne(_available,out var selected))
                 _server = selected;
             else
                 return;

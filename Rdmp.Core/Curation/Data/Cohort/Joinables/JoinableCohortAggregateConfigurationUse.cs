@@ -29,8 +29,8 @@ public class JoinableCohortAggregateConfigurationUse:DatabaseEntity
     /// </summary>
     public int JoinableCohortAggregateConfiguration_ID
     {
-        get { return _joinableCohortAggregateConfigurationID; }
-        set { SetField(ref  _joinableCohortAggregateConfigurationID, value); }
+        get => _joinableCohortAggregateConfigurationID;
+        set => SetField(ref  _joinableCohortAggregateConfigurationID, value);
     }
 
     /// <summary>
@@ -39,8 +39,8 @@ public class JoinableCohortAggregateConfigurationUse:DatabaseEntity
     /// </summary>
     public int AggregateConfiguration_ID
     {
-        get { return _aggregateConfigurationID; }
-        set { SetField(ref  _aggregateConfigurationID, value); }
+        get => _aggregateConfigurationID;
+        set => SetField(ref  _aggregateConfigurationID, value);
     }
 
     /// <summary>
@@ -49,8 +49,8 @@ public class JoinableCohortAggregateConfigurationUse:DatabaseEntity
     /// </summary>
     public ExtractionJoinType JoinType
     {
-        get { return _joinType; }
-        set { SetField(ref  _joinType, value); }
+        get => _joinType;
+        set => SetField(ref  _joinType, value);
     }
 
     #endregion
@@ -58,23 +58,12 @@ public class JoinableCohortAggregateConfigurationUse:DatabaseEntity
     #region Relationships
     /// <inheritdoc cref="JoinableCohortAggregateConfiguration_ID"/>
     [NoMappingToDatabase]
-    public JoinableCohortAggregateConfiguration JoinableCohortAggregateConfiguration
-    {
-        get
-        {
-            return Repository.GetObjectByID<JoinableCohortAggregateConfiguration>(JoinableCohortAggregateConfiguration_ID);
-        }
-    }
+    public JoinableCohortAggregateConfiguration JoinableCohortAggregateConfiguration => Repository.GetObjectByID<JoinableCohortAggregateConfiguration>(JoinableCohortAggregateConfiguration_ID);
 
     /// <inheritdoc cref="AggregateConfiguration_ID"/>
     [NoMappingToDatabase]
-    public AggregateConfiguration AggregateConfiguration
-    {
-        get
-        {
-            return Repository.GetObjectByID<AggregateConfiguration>(AggregateConfiguration_ID);
-        }
-    }
+    public AggregateConfiguration AggregateConfiguration => Repository.GetObjectByID<AggregateConfiguration>(AggregateConfiguration_ID);
+
     #endregion
 
     public JoinableCohortAggregateConfigurationUse()
@@ -98,7 +87,8 @@ public class JoinableCohortAggregateConfigurationUse:DatabaseEntity
     internal JoinableCohortAggregateConfigurationUse(ICatalogueRepository repository, AggregateConfiguration user, JoinableCohortAggregateConfiguration joinable)
     {
         if (repository.GetAllObjectsWhere<JoinableCohortAggregateConfiguration>("AggregateConfiguration_ID", user.ID).Any())
-            throw new NotSupportedException("Cannot add user " + user + " because that AggregateConfiguration is itself a JoinableCohortAggregateConfiguration");
+            throw new NotSupportedException(
+                $"Cannot add user {user} because that AggregateConfiguration is itself a JoinableCohortAggregateConfiguration");
          
         if(user.Catalogue.IsApiCall())
         {
@@ -106,7 +96,8 @@ public class JoinableCohortAggregateConfigurationUse:DatabaseEntity
         }
 
         if(user.AggregateDimensions.Count(u=>u.IsExtractionIdentifier) != 1)
-            throw new NotSupportedException("Cannot configure AggregateConfiguration " + user + " as join user because it does not contain exactly 1 IsExtractionIdentifier dimension");
+            throw new NotSupportedException(
+                $"Cannot configure AggregateConfiguration {user} as join user because it does not contain exactly 1 IsExtractionIdentifier dimension");
 
         repository.InsertAndHydrate(this,new Dictionary<string, object>()
         {
@@ -159,6 +150,6 @@ public class JoinableCohortAggregateConfigurationUse:DatabaseEntity
     /// <returns></returns>
     public string GetJoinTableAlias()
     {
-        return "ix" + JoinableCohortAggregateConfiguration_ID;
+        return $"ix{JoinableCohortAggregateConfiguration_ID}";
     }
 }

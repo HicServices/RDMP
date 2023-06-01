@@ -55,23 +55,23 @@ public partial class ConsequenceBar : UserControl
         //.......Nulls Rectangle............|         Not Nulls Rectangle
         /******************************************************************/
 
-        SolidBrush bCorrect = new SolidBrush(CorrectColor);
-        SolidBrush bMissing = new SolidBrush(MissingColor);
-        SolidBrush bWrong = new SolidBrush(WrongColor);
-        SolidBrush bInvalid = new SolidBrush(InvalidColor);
+        var bCorrect = new SolidBrush(CorrectColor);
+        var bMissing = new SolidBrush(MissingColor);
+        var bWrong = new SolidBrush(WrongColor);
+        var bInvalid = new SolidBrush(InvalidColor);
 
-        SolidBrush bValues = new SolidBrush(HasValuesColor);
-        SolidBrush bNulls = new SolidBrush(IsNullColor);
+        var bValues = new SolidBrush(HasValuesColor);
+        var bNulls = new SolidBrush(IsNullColor);
 
-        double totalRecords = Correct + Missing + Invalid + Wrong;
+        var totalRecords = Correct + Missing + Invalid + Wrong;
             
-        int heightOfNullsBarStart = (int) (Height * 0.8);
-        int heightOfNullsBar = (int) (Height/5.0);
+        var heightOfNullsBarStart = (int) (Height * 0.8);
+        var heightOfNullsBar = (int) (Height/5.0);
             
 
         //draw the nulls bar
-        double valuesRatio = 1 - (DBNull / totalRecords);
-        int midPointOfNullsBar = (int) (valuesRatio*Width);
+        var valuesRatio = 1 - (DBNull / totalRecords);
+        var midPointOfNullsBar = (int) (valuesRatio*Width);
 
         //values
         e.Graphics.FillRectangle(bValues,new Rectangle(0,heightOfNullsBarStart,midPointOfNullsBar,heightOfNullsBar));
@@ -79,15 +79,15 @@ public partial class ConsequenceBar : UserControl
             
             
         //draw the main bar
-        int correctRightPoint = (int) (((Correct)/totalRecords)*Width);
+        var correctRightPoint = (int) (((Correct)/totalRecords)*Width);
 
-        int missingWidth = (int) ((Missing/totalRecords)*Width);
-        int missingRightPoint = correctRightPoint + missingWidth;
+        var missingWidth = (int) ((Missing/totalRecords)*Width);
+        var missingRightPoint = correctRightPoint + missingWidth;
 
-        int wrongWidth = (int) ((Wrong/totalRecords)*Width);
-        int wrongRightPoint =  missingRightPoint + wrongWidth;
+        var wrongWidth = (int) ((Wrong/totalRecords)*Width);
+        var wrongRightPoint =  missingRightPoint + wrongWidth;
 
-        int invalidWidth = (int)((Invalid / totalRecords) * Width);
+        var invalidWidth = (int)((Invalid / totalRecords) * Width);
             
         e.Graphics.FillRectangle(bCorrect,new Rectangle(0,0,correctRightPoint,heightOfNullsBarStart));
         e.Graphics.FillRectangle(bMissing, new Rectangle(correctRightPoint, 0, missingWidth, heightOfNullsBarStart));
@@ -115,30 +115,19 @@ public partial class ConsequenceBar : UserControl
             return;
 
         toolTip.SetToolTip(this,
-
-            Label +Environment.NewLine +
-            "Null:" +
-            string.Format("{0:n0}", DBNull) + GetPercentageText(DBNull) +
-            "Correct:" +
-            string.Format("{0:n0}", Correct) + GetPercentageText(Correct) +
-            "Missing:" +
-            string.Format("{0:n0}", Missing) + GetPercentageText(Missing) +
-            "Wrong:" +
-            string.Format("{0:n0}", Wrong) + GetPercentageText(Wrong) +
-            "Invalid:" +
-            string.Format("{0:n0}", Invalid) + GetPercentageText(Invalid).TrimEnd()
+            $"{Label}{Environment.NewLine}Null:{string.Format("{0:n0}", DBNull)}{GetPercentageText(DBNull)}Correct:{string.Format("{0:n0}", Correct)}{GetPercentageText(Correct)}Missing:{string.Format("{0:n0}", Missing)}{GetPercentageText(Missing)}Wrong:{string.Format("{0:n0}", Wrong)}{GetPercentageText(Wrong)}Invalid:{string.Format("{0:n0}", Invalid)}{GetPercentageText(Invalid).TrimEnd()}"
         );
     }
 
     private string GetPercentageText(double fraction)
     {
-        double totalRecords = Correct + Missing + Invalid + Wrong;
-        return "(" + string.Format("{0:n2}", Truncate((fraction / totalRecords) * 100,2)) + "%" + ")" + Environment.NewLine;
+        var totalRecords = Correct + Missing + Invalid + Wrong;
+        return $"({string.Format("{0:n2}", Truncate((fraction / totalRecords) * 100, 2))}%){Environment.NewLine}";
     }
 
     private double Truncate(double value, int digits)
     {
-        double mult = System.Math.Pow(10.0, digits);
+        var mult = System.Math.Pow(10.0, digits);
         return System.Math.Truncate(value * mult) / mult;
     }
 }

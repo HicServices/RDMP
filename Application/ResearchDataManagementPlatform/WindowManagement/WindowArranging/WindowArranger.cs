@@ -45,8 +45,8 @@ public class WindowArranger : IArrangeWindows
     public void Setup(WindowLayout target)
     {
         //Do not reload an existing layout
-        string oldXml = _windowManager.MainForm.GetCurrentLayoutXml();
-        string newXml = target.LayoutData;
+        var oldXml = _windowManager.MainForm.GetCurrentLayoutXml();
+        var newXml = target.LayoutData;
 
         if(AreBasicallyTheSameLayout(oldXml, newXml))
             return;

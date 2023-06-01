@@ -47,18 +47,18 @@ NamePattern: must be a value that could appear for the given Property.  Comparis
 
     public override CommandLineObjectPickerArgumentValue Parse(string arg, int idx)
     {
-        if (IsDatabaseObjectType(arg, out Type t))
+        if (IsDatabaseObjectType(arg, out var t))
         {
             return new CommandLineObjectPickerArgumentValue(arg,idx,GetAllObjects(t).ToArray());
         }
 
         var objByToString = MatchOrThrow(arg, idx);
             
-        string objectType = objByToString.Groups[1].Value;
-        string propertyName = objByToString.Groups[2].Value;
-        string objectToString = objByToString.Groups[3].Value;
+        var objectType = objByToString.Groups[1].Value;
+        var propertyName = objByToString.Groups[2].Value;
+        var objectToString = objByToString.Groups[3].Value;
 
-        Type dbObjectType = ParseDatabaseEntityType(objectType, arg, idx);
+        var dbObjectType = ParseDatabaseEntityType(objectType, arg, idx);
 
         var property = dbObjectType.GetProperty(propertyName);
 

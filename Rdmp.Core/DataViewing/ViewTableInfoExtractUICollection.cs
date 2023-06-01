@@ -48,7 +48,7 @@ public class ViewTableInfoExtractUICollection : PersistableObjectCollection, IVi
 
     public override void LoadExtraText(string s)
     {
-        string value = Helper.GetValueIfExistsFromPersistString("ViewType", s);
+        var value = Helper.GetValueIfExistsFromPersistString("ViewType", s);
         ViewType = (ViewType)Enum.Parse(typeof(ViewType), value);
     }
 
@@ -100,7 +100,7 @@ public class ViewTableInfoExtractUICollection : PersistableObjectCollection, IVi
 
     public string GetTabName()
     {
-        return TableInfo + "(" + ViewType + ")";
+        return $"{TableInfo}({ViewType})";
     }
 
     public void AdjustAutocomplete(IAutoCompleteProvider autoComplete)
@@ -108,7 +108,8 @@ public class ViewTableInfoExtractUICollection : PersistableObjectCollection, IVi
         autoComplete.Add(TableInfo);
     }
 
-    public TableInfo TableInfo { get { return DatabaseObjects.OfType<TableInfo>().SingleOrDefault(); } }
+    public TableInfo TableInfo => DatabaseObjects.OfType<TableInfo>().SingleOrDefault();
+
     public IQuerySyntaxHelper GetQuerySyntaxHelper()
     {
         var t = TableInfo;

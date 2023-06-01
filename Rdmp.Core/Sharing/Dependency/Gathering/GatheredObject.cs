@@ -56,15 +56,15 @@ public class GatheredObject : IHasDependencies, IMasqueradeAs
     {
         var export = shareManager.GetNewOrExistingExportFor(Object);
 
-        Dictionary<string,object> properties = new Dictionary<string, object>();
-        Dictionary<RelationshipAttribute,Guid> relationshipProperties = new Dictionary<RelationshipAttribute, Guid>();
+        var properties = new Dictionary<string, object>();
+        var relationshipProperties = new Dictionary<RelationshipAttribute, Guid>();
 
-        AttributePropertyFinder<RelationshipAttribute> relationshipFinder = new AttributePropertyFinder<RelationshipAttribute>(Object);
-        AttributePropertyFinder<NoMappingToDatabase> noMappingFinder = new AttributePropertyFinder<NoMappingToDatabase>(Object);
+        var relationshipFinder = new AttributePropertyFinder<RelationshipAttribute>(Object);
+        var noMappingFinder = new AttributePropertyFinder<NoMappingToDatabase>(Object);
 
             
         //for each property in the Object class
-        foreach (PropertyInfo property in Object.GetType().GetProperties())
+        foreach (var property in Object.GetType().GetProperties())
         {
             //if it's the ID column skip it
             if(property.Name == "ID")
@@ -78,13 +78,13 @@ public class GatheredObject : IHasDependencies, IMasqueradeAs
             if (typeof(IRepository).IsAssignableFrom(property.PropertyType))
                 continue;
 
-            RelationshipAttribute attribute = relationshipFinder.GetAttribute(property);
+            var attribute = relationshipFinder.GetAttribute(property);
 
             //if it's a relationship to a shared object
             if (attribute != null && (attribute.Type == RelationshipType.SharedObject || attribute.Type == RelationshipType.OptionalSharedObject))
             {
                 var idOfParent = property.GetValue(Object);
-                Type typeOfParent = attribute.Cref;
+                var typeOfParent = attribute.Cref;
 
                 var parent = branchParents.SingleOrDefault(d => d.Type == typeOfParent && d.ID.Equals(idOfParent));
 
@@ -93,7 +93,8 @@ public class GatheredObject : IHasDependencies, IMasqueradeAs
                 {
                     //if a reference is required (i.e. not optional)
                     if(attribute.Type != RelationshipType.OptionalSharedObject)
-                        throw new SharingException("Property " + property + " on Type " + Object.GetType() + " is marked [Relationship] but we found no ShareDefinition amongst the current objects parents to satisfy this property");
+                        throw new SharingException(
+                            $"Property {property} on Type {Object.GetType()} is marked [Relationship] but we found no ShareDefinition amongst the current objects parents to satisfy this property");
                 }
                 else
                     relationshipProperties.Add(attribute, parent.SharingGuid);
@@ -125,7 +126,7 @@ public class GatheredObject : IHasDependencies, IMasqueradeAs
         parents.Add(me);
         toReturn.Add(me);
 
-        foreach (GatheredObject child in Children)
+        foreach (var child in Children)
             toReturn.AddRange(child.ToShareDefinitionWithChildren(shareManager, parents));
 
         return toReturn;

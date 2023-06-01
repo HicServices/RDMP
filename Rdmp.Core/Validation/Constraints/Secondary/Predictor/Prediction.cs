@@ -52,10 +52,11 @@ public class Prediction : SecondaryConstraint
         if (otherColumns.Length != otherColumnNames.Length)
             throw new Exception("Could not make prediction because of mismatch between column values and column names array sizes");
 
-        int i = Array.IndexOf(otherColumnNames,TargetColumn);
+        var i = Array.IndexOf(otherColumnNames,TargetColumn);
 
         if (i == -1)
-            throw new MissingFieldException("Could not find TargetColumn '" + TargetColumn +"' for Prediction validation constraint.  Supplied column name collection was:(" +string.Join(",", otherColumnNames) + ")");
+            throw new MissingFieldException(
+                $"Could not find TargetColumn '{TargetColumn}' for Prediction validation constraint.  Supplied column name collection was:({string.Join(",", otherColumnNames)})");
 
         return Rule.Predict(this,value,otherColumns[i]);
     }
@@ -78,6 +79,6 @@ public class Prediction : SecondaryConstraint
         if (Rule == null)
             return "Normally checks input against prediction rule but no rule has yet been configured";
 
-        return "Checks that input follows its prediciton rule: '" + Rule.GetType().Name + "'";
+        return $"Checks that input follows its prediciton rule: '{Rule.GetType().Name}'";
     }
 }

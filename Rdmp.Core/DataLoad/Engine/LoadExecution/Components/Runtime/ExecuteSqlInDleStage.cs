@@ -46,7 +46,7 @@ internal class ExecuteSqlInDleStage
                 UsefulStuff.ExecuteBatchNonQuery(commandText, con, null, out performance, 600000);
             }
 
-            foreach (KeyValuePair<int, Stopwatch> section in performance)
+            foreach (var section in performance)
                 _job.OnNotify(this,
                     new NotifyEventArgs(ProgressEventType.Information,
                         $"Batch ending on line  \"{section.Key}\" finished after {section.Value.Elapsed}"));

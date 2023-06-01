@@ -18,8 +18,8 @@ public class CatalogueTests : UnitTests
     [Test]
     public void Test_GetObjects_Catalogue()
     {
-        Catalogue catalogueWithId = new Catalogue(Repository, "bob");
-        Catalogue[] catas = Repository.GetAllObjects<Catalogue>();
+        var catalogueWithId = new Catalogue(Repository, "bob");
+        var catas = Repository.GetAllObjects<Catalogue>();
 
         Assert.IsTrue(catas.Length > 0);
 
@@ -29,8 +29,8 @@ public class CatalogueTests : UnitTests
     [Test]
     public void SettingPropertyViaRelationshipDoesntSave_NoticeHowYouHaveToCacheThePropertyCatalogueToSetIt()
     {
-        Catalogue c = new Catalogue(Repository,"frank");
-        CatalogueItem ci = new CatalogueItem(Repository,c,"bob");
+        var c = new Catalogue(Repository,"frank");
+        var ci = new CatalogueItem(Repository,c,"bob");
 
 
         var cata = ci.Catalogue;
@@ -52,10 +52,10 @@ public class CatalogueTests : UnitTests
     {
         //create a new one
         var cata = new Catalogue(Repository, "fishing");
-        int expectedID = cata.ID;
+        var expectedID = cata.ID;
 
         //find it and change its name
-        Catalogue[] catas = Repository.GetAllObjects<Catalogue>().ToArray();
+        var catas = Repository.GetAllObjects<Catalogue>().ToArray();
 
         foreach (var catalogue in catas)
         {
@@ -67,7 +67,7 @@ public class CatalogueTests : UnitTests
         }
 
         //find it again and see if its name has changed - then delete it so we don't polute the db
-        Catalogue[] catasAfter = Repository.GetAllObjects<Catalogue>().ToArray();
+        var catasAfter = Repository.GetAllObjects<Catalogue>().ToArray();
 
         foreach (var catalogue in catasAfter)
         {
@@ -84,10 +84,10 @@ public class CatalogueTests : UnitTests
     {
         //create a new one
         var cata = new Catalogue(Repository, "fishing");
-        int expectedID = cata.ID;
+        var expectedID = cata.ID;
 
         //find it and change its name
-        Catalogue[] catas = Repository.GetAllObjects<Catalogue>().ToArray();
+        var catas = Repository.GetAllObjects<Catalogue>().ToArray();
 
         foreach (var catalogue in catas)
         {
@@ -134,7 +134,7 @@ public class CatalogueTests : UnitTests
 
 
         //find it again and see if it has changed - then delete it so we don't polute the db
-        Catalogue[] catasAfter = Repository.GetAllObjects<Catalogue>().ToArray();
+        var catasAfter = Repository.GetAllObjects<Catalogue>().ToArray();
 
         foreach (var catalogue in catasAfter)
         {
@@ -184,21 +184,21 @@ public class CatalogueTests : UnitTests
     [Test]
     public void create_blankConstructorCatalogue_createsNewInDatabase()
     {
-        int before = Repository.GetAllObjects<Catalogue>().Count();
+        var before = Repository.GetAllObjects<Catalogue>().Count();
 
         var newCatalogue = new Catalogue(Repository, "fishing");
-        int expectedID = newCatalogue.ID;
+        var expectedID = newCatalogue.ID;
 
         Assert.IsTrue(expectedID > 1);
 
 
-        Catalogue[] catasAfter = Repository.GetAllObjects<Catalogue>().ToArray();
-        int after = catasAfter.Count();
+        var catasAfter = Repository.GetAllObjects<Catalogue>().ToArray();
+        var after = catasAfter.Count();
 
         Assert.AreEqual(before, after - 1);
 
-        int numberDeleted = 0;
-        foreach (Catalogue cata in catasAfter)
+        var numberDeleted = 0;
+        foreach (var cata in catasAfter)
         {
             if (cata.ID == expectedID)
             {
@@ -219,7 +219,7 @@ public class CatalogueTests : UnitTests
     [Test]
     public void GetCatalogueWithID_validID_pass()
     {
-        Catalogue c = new Catalogue(Repository, "TEST");
+        var c = new Catalogue(Repository, "TEST");
 
         Assert.NotNull(c);
         Assert.True(c.Name == "TEST");
@@ -232,30 +232,30 @@ public class CatalogueTests : UnitTests
     public void TestGetTablesAndLookupTables()
     {
         //One catalogue
-        Catalogue cata = new Catalogue(Repository, "TestGetTablesAndLookupTables");
+        var cata = new Catalogue(Repository, "TestGetTablesAndLookupTables");
 
         //6 virtual columns
-        CatalogueItem ci1 = new CatalogueItem(Repository, cata, "Col1");
-        CatalogueItem ci2 = new CatalogueItem(Repository, cata, "Col2");
-        CatalogueItem ci3 = new CatalogueItem(Repository, cata, "Col3");
-        CatalogueItem ci4 = new CatalogueItem(Repository, cata, "Col4");
-        CatalogueItem ci5 = new CatalogueItem(Repository, cata, "Description");
-        CatalogueItem ci6 = new CatalogueItem(Repository, cata, "Code");
+        var ci1 = new CatalogueItem(Repository, cata, "Col1");
+        var ci2 = new CatalogueItem(Repository, cata, "Col2");
+        var ci3 = new CatalogueItem(Repository, cata, "Col3");
+        var ci4 = new CatalogueItem(Repository, cata, "Col4");
+        var ci5 = new CatalogueItem(Repository, cata, "Description");
+        var ci6 = new CatalogueItem(Repository, cata, "Code");
 
         //2 columns come from table 1
-        TableInfo t1 = new TableInfo(Repository, "Table1");
-        ColumnInfo t1_c1 = new ColumnInfo(Repository, "Col1","varchar(10)",t1);
-        ColumnInfo t1_c2 = new ColumnInfo(Repository, "Col2", "int", t1);
+        var t1 = new TableInfo(Repository, "Table1");
+        var t1_c1 = new ColumnInfo(Repository, "Col1","varchar(10)",t1);
+        var t1_c2 = new ColumnInfo(Repository, "Col2", "int", t1);
 
         //2 columns come from table 2
-        TableInfo t2 = new TableInfo(Repository, "Table2");
-        ColumnInfo t2_c1 = new ColumnInfo(Repository, "Col3", "varchar(10)", t2);
-        ColumnInfo t2_c2 = new ColumnInfo(Repository, "Col4", "int", t2);
+        var t2 = new TableInfo(Repository, "Table2");
+        var t2_c1 = new ColumnInfo(Repository, "Col3", "varchar(10)", t2);
+        var t2_c2 = new ColumnInfo(Repository, "Col4", "int", t2);
 
         //2 columns come from the lookup table
-        TableInfo t3 = new TableInfo(Repository, "Table3");
-        ColumnInfo t3_c1 = new ColumnInfo(Repository, "Description", "varchar(10)", t3);
-        ColumnInfo t3_c2 = new ColumnInfo(Repository, "Code", "int", t3);
+        var t3 = new TableInfo(Repository, "Table3");
+        var t3_c1 = new ColumnInfo(Repository, "Description", "varchar(10)", t3);
+        var t3_c2 = new ColumnInfo(Repository, "Code", "int", t3);
 
         //wire SetUp virtual columns to underlying columns
         ci1.SetColumnInfo(t1_c1);
@@ -386,7 +386,7 @@ public class CatalogueTests : UnitTests
     [Test]
     public void RelatedCatalogueTest_NoCatalogues()
     {
-        TableInfo t = new TableInfo(Repository,"MyTable");
+        var t = new TableInfo(Repository,"MyTable");
         try
         {
             Assert.AreEqual(0,t.GetAllRelatedCatalogues().Length);
@@ -403,11 +403,11 @@ public class CatalogueTests : UnitTests
     [TestCase(false)]
     public void RelatedCatalogueTest_OneCatalogue(bool createExtractionInformation)
     {
-        TableInfo t = new TableInfo(Repository, "MyTable");
-        ColumnInfo c = new ColumnInfo(Repository,"MyCol","varchar(10)",t);
+        var t = new TableInfo(Repository, "MyTable");
+        var c = new ColumnInfo(Repository,"MyCol","varchar(10)",t);
             
-        Catalogue cata = new Catalogue(Repository,"MyCata");
-        CatalogueItem ci = new CatalogueItem(Repository,cata,"MyCataItem");
+        var cata = new Catalogue(Repository,"MyCata");
+        var ci = new CatalogueItem(Repository,cata,"MyCataItem");
 
         try
         {
@@ -433,17 +433,17 @@ public class CatalogueTests : UnitTests
     [TestCase(false)]
     public void RelatedCatalogueTest_TwoCatalogues_TwoColumnsEach(bool createExtractionInformation)
     {
-        TableInfo t = new TableInfo(Repository, "MyTable");
-        ColumnInfo c1 = new ColumnInfo(Repository, "MyCol1", "varchar(10)", t);
-        ColumnInfo c2 = new ColumnInfo(Repository, "MyCol2", "varchar(10)", t);
+        var t = new TableInfo(Repository, "MyTable");
+        var c1 = new ColumnInfo(Repository, "MyCol1", "varchar(10)", t);
+        var c2 = new ColumnInfo(Repository, "MyCol2", "varchar(10)", t);
             
-        Catalogue cata1 = new Catalogue(Repository, "cata1");
-        CatalogueItem ci1_1 = new CatalogueItem(Repository, cata1, "MyCataItem1_1");
-        CatalogueItem ci1_2 = new CatalogueItem(Repository, cata1, "MyCataItem1_2");
+        var cata1 = new Catalogue(Repository, "cata1");
+        var ci1_1 = new CatalogueItem(Repository, cata1, "MyCataItem1_1");
+        var ci1_2 = new CatalogueItem(Repository, cata1, "MyCataItem1_2");
 
-        Catalogue cata2 = new Catalogue(Repository, "cata2");
-        CatalogueItem ci2_1 = new CatalogueItem(Repository, cata2, "MyCataItem2_1");
-        CatalogueItem ci2_2 = new CatalogueItem(Repository, cata2, "MyCataItem2_2");
+        var cata2 = new Catalogue(Repository, "cata2");
+        var ci2_1 = new CatalogueItem(Repository, cata2, "MyCataItem2_1");
+        var ci2_2 = new CatalogueItem(Repository, cata2, "MyCataItem2_2");
         try
         {
             if (createExtractionInformation)

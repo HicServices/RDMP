@@ -29,18 +29,12 @@ public class ViewColumnExtractCollection : PersistableObjectCollection, IViewSQL
     /// <summary>
     /// The SELECT column (can be null if this instance was constructed using a <see cref="ColumnInfo"/>)
     /// </summary>
-    public ExtractionInformation ExtractionInformation
-    {
-        get { return DatabaseObjects.OfType<ExtractionInformation>().SingleOrDefault(); }
-    }
+    public ExtractionInformation ExtractionInformation => DatabaseObjects.OfType<ExtractionInformation>().SingleOrDefault();
 
     /// <summary>
     /// The SELECT column (can be null if this instance was constructed using a <see cref="ExtractionInformation"/>)
     /// </summary>
-    public ColumnInfo ColumnInfo
-    {
-        get { return DatabaseObjects.OfType<ColumnInfo>().SingleOrDefault(); }
-    }
+    public ColumnInfo ColumnInfo => DatabaseObjects.OfType<ColumnInfo>().SingleOrDefault();
 
 
     #region Constructors
@@ -88,7 +82,7 @@ public class ViewColumnExtractCollection : PersistableObjectCollection, IViewSQL
 
     public override void LoadExtraText(string s)
     {
-        string value = Helper.GetValueIfExistsFromPersistString("ViewType", s);
+        var value = Helper.GetValueIfExistsFromPersistString("ViewType", s);
         ViewType = (ViewType)Enum.Parse(typeof(ViewType), value);
     }
 
@@ -154,10 +148,10 @@ public class ViewColumnExtractCollection : PersistableObjectCollection, IViewSQL
         var sql = qb.SQL;
 
         if (ViewType == ViewType.Aggregate)
-            sql += Environment.NewLine + " GROUP BY " + GetColumnSelectSql();
+            sql += $"{Environment.NewLine} GROUP BY {GetColumnSelectSql()}";
 
         if (ViewType == ViewType.Aggregate)
-            sql += Environment.NewLine + " ORDER BY count(*) DESC";
+            sql += $"{Environment.NewLine} ORDER BY count(*) DESC";
 
         return sql;
     }
@@ -180,26 +174,28 @@ public class ViewColumnExtractCollection : PersistableObjectCollection, IViewSQL
     {
         var repo = new MemoryRepository();
         qb.AddColumn(new SpontaneouslyInventedColumn(repo, "CountTotal", "count(1)"));
-        qb.AddColumn(new SpontaneouslyInventedColumn(repo, "CountNull", "SUM(CASE WHEN " + GetColumnSelectSql() + " IS NULL THEN 1 ELSE 0  END)"));
-        qb.AddColumn(new SpontaneouslyInventedColumn(repo, "CountZero", "SUM(CASE WHEN " + GetColumnSelectSql() + " = 0 THEN 1  ELSE 0 END)"));
+        qb.AddColumn(new SpontaneouslyInventedColumn(repo, "CountNull",
+            $"SUM(CASE WHEN {GetColumnSelectSql()} IS NULL THEN 1 ELSE 0  END)"));
+        qb.AddColumn(new SpontaneouslyInventedColumn(repo, "CountZero",
+            $"SUM(CASE WHEN {GetColumnSelectSql()} = 0 THEN 1  ELSE 0 END)"));
 
-        qb.AddColumn(new SpontaneouslyInventedColumn(repo, "Max", "max(" + GetColumnSelectSql() + ")"));
-        qb.AddColumn(new SpontaneouslyInventedColumn(repo, "Min", "min(" + GetColumnSelectSql() + ")"));
+        qb.AddColumn(new SpontaneouslyInventedColumn(repo, "Max", $"max({GetColumnSelectSql()})"));
+        qb.AddColumn(new SpontaneouslyInventedColumn(repo, "Min", $"min({GetColumnSelectSql()})"));
 
         switch (ColumnInfo.GetQuerySyntaxHelper().DatabaseType)
         {
             case DatabaseType.MicrosoftSQLServer:
-                qb.AddColumn(new SpontaneouslyInventedColumn(repo, "stdev ", "stdev(" + GetColumnSelectSql() + ")"));
+                qb.AddColumn(new SpontaneouslyInventedColumn(repo, "stdev ", $"stdev({GetColumnSelectSql()})"));
                 break;
             case DatabaseType.MySql:
             case DatabaseType.Oracle:
-                qb.AddColumn(new SpontaneouslyInventedColumn(repo, "stddev ", "stddev(" + GetColumnSelectSql() + ")"));
+                qb.AddColumn(new SpontaneouslyInventedColumn(repo, "stddev ", $"stddev({GetColumnSelectSql()})"));
                 break;
             default:
                 throw new ArgumentOutOfRangeException();
         }
 
-        qb.AddColumn(new SpontaneouslyInventedColumn(repo, "avg", "avg(" + GetColumnSelectSql() + ")"));
+        qb.AddColumn(new SpontaneouslyInventedColumn(repo, "avg", $"avg({GetColumnSelectSql()})"));
 
     }
 
@@ -214,7 +210,7 @@ public class ViewColumnExtractCollection : PersistableObjectCollection, IViewSQL
 
     public string GetTabName()
     {
-        return GetIColumn() + "(" + ViewType + ")";
+        return $"{GetIColumn()}({ViewType})";
     }
 
     public void AdjustAutocomplete(IAutoCompleteProvider autoComplete)

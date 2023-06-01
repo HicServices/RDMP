@@ -69,27 +69,28 @@ public class KVPAttacher :FlatFileAttacher, IDemandToUseAPipeline, IDataFlowDest
     protected override void ConfirmFlatFileHeadersAgainstDataTable(DataTable loadTarget, IDataLoadJob job)
     {
 
-        string[] pks = GetPKs();
+        var pks = GetPKs();
 
         //make sure the primary key columns are in all the relevant tables
-        foreach (string pk in pks)
+        foreach (var pk in pks)
         {
             if (!loadTarget.Columns.Contains(pk))
-                throw new KeyNotFoundException("Could not find a column called " + pk + " (part of the PrimaryKey) on destination table " + TableName);
+                throw new KeyNotFoundException(
+                    $"Could not find a column called {pk} (part of the PrimaryKey) on destination table {TableName}");
 
-            foreach (DataTable batchTable in BatchesReadyForProcessing)
+            foreach (var batchTable in BatchesReadyForProcessing)
                 if (!batchTable.Columns.Contains(pk))
                     throw new KeyNotFoundException(
-                        "Source Batch DataTable (read from Pipeline) was missing column " + pk +
-                        " (columns in DataTable were:" +
-                        string.Join(",", batchTable.Columns.Cast<DataColumn>().Select(c => c.ColumnName)));
+                        $"Source Batch DataTable (read from Pipeline) was missing column {pk} (columns in DataTable were:{string.Join(",", batchTable.Columns.Cast<DataColumn>().Select(c => c.ColumnName))}");
         }
 
         if (!loadTarget.Columns.Contains(TargetDataTableKeyColumnName))
-            throw new KeyNotFoundException("Target destination table " + TableName + " did not contain a column called '" + TargetDataTableKeyColumnName + "' which is where we were told to store the Keys of the Key value pairs (note that the Key the column that matches the value not the primary key columns which are separate)");
+            throw new KeyNotFoundException(
+                $"Target destination table {TableName} did not contain a column called '{TargetDataTableKeyColumnName}' which is where we were told to store the Keys of the Key value pairs (note that the Key the column that matches the value not the primary key columns which are separate)");
 
         if (!loadTarget.Columns.Contains(TargetDataTableValueColumnName))
-            throw new KeyNotFoundException("Target destination table " + TableName + " did not contain a column called '" + TargetDataTableValueColumnName + "' which is where we were told to store the Value of the Key value pairs");
+            throw new KeyNotFoundException(
+                $"Target destination table {TableName} did not contain a column called '{TargetDataTableValueColumnName}' which is where we were told to store the Value of the Key value pairs");
 
     }
         
@@ -99,18 +100,18 @@ public class KVPAttacher :FlatFileAttacher, IDemandToUseAPipeline, IDataFlowDest
         if (!BatchesReadyForProcessing.Any())
             return 0;
 
-        string[] pks = GetPKs();
+        var pks = GetPKs();
 
         //handle batch 0
         var currentBatch = BatchesReadyForProcessing[0];
 
-        int recordsGenerated = 0;
+        var recordsGenerated = 0;
 
         foreach (DataRow batchRow in currentBatch.Rows)
         {
-            Dictionary<string,object> pkValues = new Dictionary<string, object>();
+            var pkValues = new Dictionary<string, object>();
                 
-            foreach(string pk in pks)
+            foreach(var pk in pks)
                 pkValues.Add(pk,batchRow[pk]);
 
             foreach (DataColumn col in currentBatch.Columns)
@@ -122,7 +123,7 @@ public class KVPAttacher :FlatFileAttacher, IDemandToUseAPipeline, IDataFlowDest
                 var val = batchRow[k];
 
                 var newRow = dt.Rows.Add();
-                foreach (string pk in pks)
+                foreach (var pk in pks)
                     newRow[pk] = pkValues[pk];
                 newRow[TargetDataTableKeyColumnName] = k;
                 newRow[TargetDataTableValueColumnName] = val;
@@ -181,10 +182,11 @@ public class KVPAttacher :FlatFileAttacher, IDemandToUseAPipeline, IDataFlowDest
         if (string.IsNullOrWhiteSpace(TargetDataTableValueColumnName))
             notifier.OnCheckPerformed(new CheckEventArgs("Argument TargetDataTableValueColumnName has not been set", CheckResult.Fail));
 
-        string duplicate = pks.FirstOrDefault(s => s.Equals(TargetDataTableKeyColumnName) || s.Equals(TargetDataTableValueColumnName));
+        var duplicate = pks.FirstOrDefault(s => s.Equals(TargetDataTableKeyColumnName) || s.Equals(TargetDataTableValueColumnName));
 
         if (duplicate != null)
-            notifier.OnCheckPerformed(new CheckEventArgs("Field '" + duplicate + "' is both a PrimaryKeyColumn and a TargetDataTable column, this is not allowed.  Your fields Pk1,Pk2,Pketc,Key,Value must all be mutually exclusive", CheckResult.Fail));
+            notifier.OnCheckPerformed(new CheckEventArgs(
+                $"Field '{duplicate}' is both a PrimaryKeyColumn and a TargetDataTable column, this is not allowed.  Your fields Pk1,Pk2,Pketc,Key,Value must all be mutually exclusive", CheckResult.Fail));
 
         if (TargetDataTableKeyColumnName != null && TargetDataTableKeyColumnName.Equals(TargetDataTableValueColumnName))
             notifier.OnCheckPerformed(new CheckEventArgs("TargetDataTableKeyColumnName cannot be the same as TargetDataTableValueColumnName",CheckResult.Fail));

@@ -36,13 +36,7 @@ public class DataLoadInfo : IDataLoadInfo
 
     private DiscoveredServer _server ;
 
-    public DiscoveredServer DatabaseSettings
-    {
-        get
-        {
-            return _server;
-        }
-    }
+    public DiscoveredServer DatabaseSettings => _server;
 
     private object oLock = new object();
         
@@ -51,81 +45,31 @@ public class DataLoadInfo : IDataLoadInfo
 
        
 
-    public string PackageName
-    {
-        get
-        {
-            return _packageName;
-        }
-    }
-
-       
-    public string UserAccount
-    {
-        get
-        {
-            return _userAccount;
-        }
-    }
-
-        
-    public DateTime StartTime
-    {
-        get
-        {
-            return _startTime;
-        }
-    }
-
-       
-    public DateTime EndTime
-    {
-        get
-        {
-            return _endTime;
-        }
-    }
-
-        
-    public string Description
-    {
-        get
-        {
-            return _description;
-        }
-    }
-
-        
-    public string SuggestedRollbackCommand
-    {
-        get
-        {
-            return _suggestedRollbackCommand;
-        }
-    }
-
-        
-    public int ID
-    {
-        get
-        {   
-            return _id;
-        }
-    }
-
-    public bool IsTest
-    {
-        get
-        {
-            return _isTest;
-        }
-    }
+    public string PackageName => _packageName;
 
 
-    public bool IsClosed
-    {
-        get { return _isClosed; }
-    }
+    public string UserAccount => _userAccount;
+
+
+    public DateTime StartTime => _startTime;
+
+
+    public DateTime EndTime => _endTime;
+
+
+    public string Description => _description;
+
+
+    public string SuggestedRollbackCommand => _suggestedRollbackCommand;
+
+
+    public int ID => _id;
+
+    public bool IsTest => _isTest;
+
+
+    public bool IsClosed => _isClosed;
+
     #endregion
 
 
@@ -169,7 +113,7 @@ public class DataLoadInfo : IDataLoadInfo
             var result = cmd.ExecuteScalar();
 
             if (result == null || result == DBNull.Value)
-                throw new Exception("Could not find data load task named:" + dataLoadTaskName);
+                throw new Exception($"Could not find data load task named:{dataLoadTaskName}");
 
             //ID can come back as a decimal or an Int32 or an Int64 so whatever, just turn it into a string and then parse it
             var parentTaskID = int.Parse(result.ToString());
@@ -211,19 +155,18 @@ SELECT @@IDENTITY;", con);
                 try
                 {
 
-                    DbCommand cmdUpdateToClosed =
+                    var cmdUpdateToClosed =
                         _server.GetCommand("UPDATE DataLoadRun SET endTime=@endTime WHERE ID=@ID",
                             con);
 
                     _server.AddParameterWithValueToCommand("@endTime", cmdUpdateToClosed,DateTime.Now);
                     _server.AddParameterWithValueToCommand("@ID", cmdUpdateToClosed, ID);
                         
-                    int rowsAffected = cmdUpdateToClosed.ExecuteNonQuery();
+                    var rowsAffected = cmdUpdateToClosed.ExecuteNonQuery();
 
                     if (rowsAffected != 1)
                         throw new Exception(
-                            "Error closing off DataLoad in database, the update command resulted in " +
-                            rowsAffected + " rows being affected (expected 1) - will try to rollback");
+                            $"Error closing off DataLoad in database, the update command resulted in {rowsAffected} rows being affected (expected 1) - will try to rollback");
 
                     con.ManagedTransaction.CommitAndCloseConnection();
 
@@ -238,7 +181,7 @@ SELECT @@IDENTITY;", con);
                 }
 
                 //once a record has been commited to the database it is redundant and no further attempts to read/change it should be made by anyone
-                foreach (TableLoadInfo t in this.TableLoads.Values)
+                foreach (var t in this.TableLoads.Values)
                 {
                     //close any table loads that have not yet completed
                     if (!t.IsClosed)
@@ -251,13 +194,7 @@ SELECT @@IDENTITY;", con);
 
     private Dictionary<int, TableLoadInfo> _TableLoads = new Dictionary<int, TableLoadInfo>();
 
-    public Dictionary<int, TableLoadInfo> TableLoads
-    {
-        get
-        {
-            return _TableLoads;
-        }
-    }
+    public Dictionary<int, TableLoadInfo> TableLoads => _TableLoads;
 
     public ITableLoadInfo CreateTableLoadInfo(string suggestedRollbackCommand, string destinationTable, DataSource[] sources, int expectedInserts)
     {
@@ -297,13 +234,13 @@ SELECT @@IDENTITY;", con);
             con.Open();
 
             //look up the fatal error ID (get hte name of the Enum so that we can refactor if nessesary without breaking the code looking for a constant string)
-            string initialErrorStatus = Enum.GetName(typeof(FatalErrorStates), FatalErrorStates.Outstanding);
+            var initialErrorStatus = Enum.GetName(typeof(FatalErrorStates), FatalErrorStates.Outstanding);
 
                 
             var cmdLookupStatusID = _server.GetCommand("SELECT ID from z_FatalErrorStatus WHERE status=@status", con);
             _server.AddParameterWithValueToCommand("@status",cmdLookupStatusID, initialErrorStatus);
 
-            int statusID = int.Parse(cmdLookupStatusID.ExecuteScalar().ToString());
+            var statusID = int.Parse(cmdLookupStatusID.ExecuteScalar().ToString());
 
             var cmdRecordFatalError = _server.GetCommand(
                 @"INSERT INTO FatalError (time,source,description,statusID,dataLoadRunID) VALUES (@time,@source,@description,@statusID,@dataLoadRunID);", con);

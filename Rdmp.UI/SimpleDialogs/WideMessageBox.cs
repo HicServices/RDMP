@@ -142,10 +142,10 @@ public partial class WideMessageBox : Form
     {
         //if it's a class name we are showing
         if (className.IsMatch(title) &&
-            ViewSourceCodeDialog.SourceCodeIsAvailableFor(title + ".cs"))
+            ViewSourceCodeDialog.SourceCodeIsAvailableFor($"{title}.cs"))
         {
             btnViewSourceCode.Enabled = true;
-            btnViewSourceCode.Tag = title + ".cs";
+            btnViewSourceCode.Tag = $"{title}.cs";
         }
         else
             btnViewSourceCode.Enabled = false;
@@ -153,7 +153,7 @@ public partial class WideMessageBox : Form
 
     public static void Show(IHasSummary summary,bool isModalDialog = true)
     {
-        summary.GetSummary(out string title,out string body, out string stackTrace,out CheckResult level);
+        summary.GetSummary(out var title,out var body, out var stackTrace,out var level);
         Show(title,body,stackTrace,isModalDialog,null,GetTheme(level));
     }
     public static void Show(string title, DataGridViewRow row, bool isModalDialog = true, WideMessageBoxTheme theme = WideMessageBoxTheme.Help)
@@ -164,7 +164,7 @@ public partial class WideMessageBox : Form
     private static string GetText(DataGridViewRow row)
     {
         const int MAX_LENGTH_ELEMENT = 10000;
-        StringBuilder sb = new StringBuilder();
+        var sb = new StringBuilder();
 
         foreach (DataGridViewColumn c in row.DataGridView.Columns)
             if (c.Visible)
@@ -173,9 +173,9 @@ public partial class WideMessageBox : Form
                 var stringval = v == null || v == DBNull.Value ? "NULL" : v.ToString();
 
                 if(stringval.Length > MAX_LENGTH_ELEMENT)
-                    stringval = stringval.Substring(0, MAX_LENGTH_ELEMENT) + "...";
+                    stringval = $"{stringval.Substring(0, MAX_LENGTH_ELEMENT)}...";
 
-                sb.AppendLine(c.Name + ":" + stringval);
+                sb.AppendLine($"{c.Name}:{stringval}");
             }
                     
         if(sb.Length >= MAX_LENGTH_BODY)
@@ -185,7 +185,7 @@ public partial class WideMessageBox : Form
     }
     public static void Show(string title, string message, string environmentDotStackTrace = null, bool isModalDialog = true, string keywordNotToAdd = null,WideMessageBoxTheme theme = WideMessageBoxTheme.Exception)
     {
-        WideMessageBox wmb = new WideMessageBox(new WideMessageBoxArgs(title,message, environmentDotStackTrace, keywordNotToAdd, theme));
+        var wmb = new WideMessageBox(new WideMessageBoxArgs(title,message, environmentDotStackTrace, keywordNotToAdd, theme));
 
         if (isModalDialog)
             wmb.ShowDialog();
@@ -284,7 +284,7 @@ public partial class WideMessageBox : Form
 
         richTextBox1.Visible = false;
 
-        foreach (string word in Regex.Split(message, @"(?<=[. ,;)(<>\n-])"))
+        foreach (var word in Regex.Split(message, @"(?<=[. ,;)(<>\n-])"))
         {
             //Try to match the trimmed keyword or the trimmed keyword without an s
             var keyword = GetDocumentationKeyword(keywordNotToAdd, word.Trim('.', ' ', ',', ';', '(', ')','<','>','-','\r','\n'));
@@ -396,7 +396,7 @@ public partial class WideMessageBox : Form
             else
             {
                 //the text (which may include 'hyperlinks') e.g. "Bob Project #Project(ExtractionConfiguration #IExtractionConfigurationID=3"
-                string text = richTextBox1.SelectedText;
+                var text = richTextBox1.SelectedText;
 
                 //
                 /*
@@ -408,12 +408,12 @@ public partial class WideMessageBox : Form
                 Grab the hyperlinks
 */
                 //gets around formatting of hyperlinks appearing in Ctrl+C
-                Regex rtfHyperlinks = new Regex(@"\\v #([^\\]*)\\v");
+                var rtfHyperlinks = new Regex(@"\\v #([^\\]*)\\v");
 
                 foreach (Match m in rtfHyperlinks.Matches(richTextBox1.SelectedRtf))
                 {
                     //replace the hyperlink text in the 'unformatted' text
-                    text = text.Replace("#" + m.Groups[1].Value,"");
+                    text = text.Replace($"#{m.Groups[1].Value}","");
                 }
 
                 Clipboard.SetText(text);
@@ -423,13 +423,13 @@ public partial class WideMessageBox : Form
 
     private Size GetPreferredSizeOfTextControl(Control c)
     {
-        Graphics graphics = c.CreateGraphics();
-        SizeF measureString = graphics.MeasureString(c.Text, c.Font);
+        var graphics = c.CreateGraphics();
+        var measureString = graphics.MeasureString(c.Text, c.Font);
 
-        int minimumWidth = 400;
-        int minimumHeight = 150;
+        var minimumWidth = 400;
+        var minimumHeight = 150;
 
-        Rectangle maxSize = Screen.GetBounds(c);
+        var maxSize = Screen.GetBounds(c);
         maxSize.Height = Math.Min(maxSize.Height,800);
         maxSize.Width = Math.Min(maxSize.Width, 1024);
 

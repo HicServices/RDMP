@@ -66,13 +66,13 @@ public class ExcelDataFlowSource : IPluginDataFlowSource<DataTable>, IPipelineRe
         
     private DataTable GetAllData(IDataLoadEventListener listener, GracefulCancellationToken cancellationToken)
     {
-        Stopwatch sw = new Stopwatch();
+        var sw = new Stopwatch();
         sw.Start();
         if(_fileToLoad == null)
             throw new Exception("_fileToLoad has not been set yet, possibly component has not been Initialized yet");
 
         if (!IsAcceptableFileExtension())
-            throw new Exception("FileToLoad (" + _fileToLoad.File.FullName + ") extension was not XLS or XLSX, dubious");
+            throw new Exception($"FileToLoad ({_fileToLoad.File.FullName}) extension was not XLS or XLSX, dubious");
 
         using (var fs = new FileStream(_fileToLoad.File.FullName, FileMode.Open))
         {
@@ -127,12 +127,12 @@ public class ExcelDataFlowSource : IPluginDataFlowSource<DataTable>, IPipelineRe
     /// <returns></returns>
     public DataTable GetAllData(ISheet worksheet, IDataLoadEventListener listener)
     {
-        DataTable toReturn = new DataTable();
+        var toReturn = new DataTable();
 
         var rowEnumerator = worksheet.GetRowEnumerator();
-        int nColumns = -1;
+        var nColumns = -1;
 
-        Dictionary<int, DataColumn> nonBlankColumns = new Dictionary<int, DataColumn>();
+        var nonBlankColumns = new Dictionary<int, DataColumn>();
 
         while (rowEnumerator.MoveNext())
         {
@@ -146,9 +146,10 @@ public class ExcelDataFlowSource : IPluginDataFlowSource<DataTable>, IPipelineRe
             if (nColumns == -1)
             {
                 nColumns = row.Cells.Count;
-                listener.OnNotify(this, new NotifyEventArgs(ProgressEventType.Information, "Excel sheet " + worksheet.SheetName + " contains " + nColumns));
+                listener.OnNotify(this, new NotifyEventArgs(ProgressEventType.Information,
+                    $"Excel sheet {worksheet.SheetName} contains {nColumns}"));
 
-                for (int i = 0; i < nColumns; i++)
+                for (var i = 0; i < nColumns; i++)
                 {
                     //if the cell header is blank
                     var cell = row.Cells[i];
@@ -165,7 +166,7 @@ public class ExcelDataFlowSource : IPluginDataFlowSource<DataTable>, IPipelineRe
             //the rest of the rows
             var r = toReturn.Rows.Add();
 
-            bool gotAtLeastOneGoodValue = false;
+            var gotAtLeastOneGoodValue = false;
 
             foreach (var cell in row.Cells)
             {
@@ -178,7 +179,8 @@ public class ExcelDataFlowSource : IPluginDataFlowSource<DataTable>, IPipelineRe
                 //were we expecting this to be blank?
                 if (!nonBlankColumns.ContainsKey(cell.ColumnIndex))
                 {
-                    listener.OnNotify(this, new NotifyEventArgs(ProgressEventType.Warning, "Discarded the following data (that was found in unamed columns):" + value));
+                    listener.OnNotify(this, new NotifyEventArgs(ProgressEventType.Warning,
+                        $"Discarded the following data (that was found in unamed columns):{value}"));
                     continue;
                 }
 
@@ -220,7 +222,7 @@ public class ExcelDataFlowSource : IPluginDataFlowSource<DataTable>, IPipelineRe
                 //some numerics are actually dates/times
                 if (cell.CellStyle.DataFormat != 0)
                 {
-                    string format = cell.CellStyle.GetDataFormatString();
+                    var format = cell.CellStyle.GetDataFormatString();
                     var f = new NumberFormat(format);
 
                     if (IsDateWithoutTime(format))
@@ -338,13 +340,12 @@ public class ExcelDataFlowSource : IPluginDataFlowSource<DataTable>, IPipelineRe
         if (_fileToLoad != null)
             if (!IsAcceptableFileExtension())
                 notifier.OnCheckPerformed(
-                    new CheckEventArgs("File extension " + _fileToLoad.File +
-                                       " has an invalid extension:" + _fileToLoad.File.Extension +
-                                       " (this class only accepts:" + string.Join(",", acceptedFileExtensions) + ")",
+                    new CheckEventArgs(
+                        $"File extension {_fileToLoad.File} has an invalid extension:{_fileToLoad.File.Extension} (this class only accepts:{string.Join(",", acceptedFileExtensions)})",
                         CheckResult.Fail));
             else
                 notifier.OnCheckPerformed(
-                    new CheckEventArgs("File extension of file " + _fileToLoad.File.Name + " is acceptable",
+                    new CheckEventArgs($"File extension of file {_fileToLoad.File.Name} is acceptable",
                         CheckResult.Success));
         else
             notifier.OnCheckPerformed(

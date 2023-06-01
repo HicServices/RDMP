@@ -214,13 +214,13 @@ public class Diff {
     /// <returns>Returns a array of Items that describe the differences.</returns>
     public static Item [] DiffText(string TextA, string TextB, bool trimSpace, bool ignoreSpace, bool ignoreCase) {
         // prepare the input-text and convert to comparable numbers.
-        Hashtable h = new Hashtable(TextA.Length + TextB.Length);
+        var h = new Hashtable(TextA.Length + TextB.Length);
 
         // The A-Version of the data (original data) to be compared.
-        DiffData DataA = new DiffData(DiffCodes(TextA, h, trimSpace, ignoreSpace, ignoreCase));
+        var DataA = new DiffData(DiffCodes(TextA, h, trimSpace, ignoreSpace, ignoreCase));
 
         // The B-Version of the data (modified data) to be compared.
-        DiffData DataB = new DiffData(DiffCodes(TextB, h, trimSpace, ignoreSpace, ignoreCase));
+        var DataB = new DiffData(DiffCodes(TextB, h, trimSpace, ignoreSpace, ignoreCase));
 
         h = null; // free up hashtable memory (maybe)
 
@@ -237,10 +237,10 @@ public class Diff {
     /// <returns>Returns a array of Items that describe the differences.</returns>
     public static Item [] DiffInt(int[] ArrayA, int[] ArrayB) {
         // The A-Version of the data (original data) to be compared.
-        DiffData DataA = new DiffData(ArrayA);
+        var DataA = new DiffData(ArrayA);
 
         // The B-Version of the data (modified data) to be compared.
-        DiffData DataB = new DiffData(ArrayB);
+        var DataB = new DiffData(ArrayB);
 
         LCS(DataA, 0, DataA.Length, DataB, 0, DataB.Length);
         return CreateDiffs(DataA, DataB);
@@ -261,7 +261,7 @@ public class Diff {
         // get all codes of the text
         string []Lines;
         int []Codes;
-        int lastUsedCode = h.Count;
+        var lastUsedCode = h.Count;
         object aCode;
         string s;
 
@@ -271,7 +271,7 @@ public class Diff {
 
         Codes = new int[Lines.Length];
 
-        for (int i = 0; i < Lines.Length; ++i) {
+        for (var i = 0; i < Lines.Length; ++i) {
             s = Lines[i];
             if (trimSpace)
                 s = s.Trim();
@@ -308,26 +308,26 @@ public class Diff {
     /// <returns>a MiddleSnakeData record containing x,y and u,v</returns>
     private static SMSRD SMS(DiffData DataA, int LowerA, int UpperA, DiffData DataB, int LowerB, int UpperB) {
         SMSRD ret;
-        int MAX = DataA.Length + DataB.Length + 1;
+        var MAX = DataA.Length + DataB.Length + 1;
 
-        int DownK = LowerA - LowerB; // the k-line to start the forward search
-        int UpK = UpperA - UpperB; // the k-line to start the reverse search
+        var DownK = LowerA - LowerB; // the k-line to start the forward search
+        var UpK = UpperA - UpperB; // the k-line to start the reverse search
 
-        int Delta = (UpperA - LowerA) - (UpperB - LowerB);
-        bool oddDelta = (Delta & 1) != 0;
+        var Delta = (UpperA - LowerA) - (UpperB - LowerB);
+        var oddDelta = (Delta & 1) != 0;
 
         // vector for the (0,0) to (x,y) search
-        int[] DownVector = new int[2* MAX + 2];
+        var DownVector = new int[2* MAX + 2];
 
         // vector for the (u,v) to (N,M) search
-        int[] UpVector = new int[2 * MAX + 2];
+        var UpVector = new int[2 * MAX + 2];
       
         // The vectors in the publication accepts negative indexes. the vectors implemented here are 0-based
         // and are access using a specific offset: UpOffset UpVector and DownOffset for DownVektor
-        int DownOffset = MAX - DownK;
-        int UpOffset = MAX - UpK;
+        var DownOffset = MAX - DownK;
+        var UpOffset = MAX - UpK;
 	
-        int  MaxD = ((UpperA - LowerA + UpperB - LowerB) / 2) + 1;
+        var  MaxD = ((UpperA - LowerA + UpperB - LowerB) / 2) + 1;
 		
         // Debug.Write(2, "SMS", String.Format("Search the box: A[{0}-{1}] to B[{2}-{3}]", LowerA, UpperA, LowerB, UpperB));
 
@@ -335,10 +335,10 @@ public class Diff {
         DownVector[DownOffset + DownK + 1] = LowerA;
         UpVector[UpOffset + UpK - 1] = UpperA;
 			
-        for (int D = 0; D <= MaxD; D++) {
+        for (var D = 0; D <= MaxD; D++) {
 
             // Extend the forward path.
-            for (int k = DownK - D; k <= DownK + D; k += 2) {
+            for (var k = DownK - D; k <= DownK + D; k += 2) {
                 // Debug.Write(0, "SMS", "extend forward path " + k.ToString());
 
                 // find the only or better starting point
@@ -372,7 +372,7 @@ public class Diff {
             } // for k
 				
             // Extend the reverse path.
-            for (int k = UpK - D; k <= UpK + D; k += 2) {
+            for (var k = UpK - D; k <= UpK + D; k += 2) {
                 // Debug.Write(0, "SMS", "extend reverse path " + k.ToString());
 
                 // find the only or better starting point
@@ -447,7 +447,7 @@ public class Diff {
 
         } else {
             // Find the middle snakea and length of an optimal path for A and B
-            SMSRD smsrd = SMS(DataA, LowerA, UpperA, DataB, LowerB, UpperB);
+            var smsrd = SMS(DataA, LowerA, UpperA, DataB, LowerB, UpperB);
             // Debug.Write(2, "MiddleSnakeData", String.Format("{0},{1}", smsrd.x, smsrd.y));
 
             // The path is from LowerX to (x,y) and (x,y) ot UpperX
@@ -462,7 +462,7 @@ public class Diff {
     /// </summary>
     /// dynamic array
     private static Item[] CreateDiffs(DiffData DataA, DiffData DataB) {
-        ArrayList a = new ArrayList();
+        var a = new ArrayList();
         Item []result;
 
         int StartA, StartB;

@@ -54,7 +54,7 @@ public class CohortQueryBuilderTestsInvolvingTableValuedParameters:DatabaseTests
             Assert.IsNull(cic.RootCohortAggregateContainer_ID);
                 
             //create a root container for it
-            CohortAggregateContainer container = new CohortAggregateContainer(CatalogueRepository,SetOperation.INTERSECT);
+            var container = new CohortAggregateContainer(CatalogueRepository,SetOperation.INTERSECT);
 
             //set the container as the root container for the cohort identification task object
             cic.RootCohortAggregateContainer_ID = container.ID;
@@ -64,7 +64,7 @@ public class CohortQueryBuilderTestsInvolvingTableValuedParameters:DatabaseTests
             container.AddChild(config1, 0);
             container.AddChild(config2, 1);
 
-            CohortQueryBuilder builder = new CohortQueryBuilder(cic,null);
+            var builder = new CohortQueryBuilder(cic,null);
             Assert.AreEqual(
                 CollapseWhitespace(
                     string.Format(
@@ -104,7 +104,7 @@ SET @name='fish';
             param2.Value = "'monkey'";
             param2.SaveToDatabase();
 
-            CohortQueryBuilder builder2 = new CohortQueryBuilder(cic,null);
+            var builder2 = new CohortQueryBuilder(cic,null);
 
             Assert.AreEqual(
                 CollapseWhitespace(

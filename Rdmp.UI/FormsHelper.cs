@@ -23,7 +23,7 @@ public static class FormsHelper
     /// <returns></returns>
     public static Rectangle GetVisibleArea(this Control c)
     {
-        Control originalControl = c;
+        var originalControl = c;
         var rect = c.RectangleToScreen(c.ClientRectangle);
         while (c != null)
         {

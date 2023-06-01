@@ -61,7 +61,8 @@ public class ExampleDatasetsCreation
             if(options.DropDatabases)
                 db.Drop();
             else
-                throw new Exception("Database " + db.GetRuntimeName() + " already exists and allowDrop option was not specified");
+                throw new Exception(
+                    $"Database {db.GetRuntimeName()} already exists and allowDrop option was not specified");
             
         if(db.Server.Builder is SqlConnectionStringBuilder b)
         {
@@ -73,11 +74,11 @@ public class ExampleDatasetsCreation
             AddKeywordIfSpecified(b.TrustServerCertificate, nameof(b.TrustServerCertificate),keywords);
         }
 
-        notifier.OnCheckPerformed(new CheckEventArgs("About to create "+ db.GetRuntimeName(),CheckResult.Success));
+        notifier.OnCheckPerformed(new CheckEventArgs($"About to create {db.GetRuntimeName()}",CheckResult.Success));
         //create a new database for the datasets
         db.Create();
 
-        notifier.OnCheckPerformed(new CheckEventArgs("Succesfully created "+ db.GetRuntimeName(),CheckResult.Success));
+        notifier.OnCheckPerformed(new CheckEventArgs($"Succesfully created {db.GetRuntimeName()}",CheckResult.Success));
 
         //fixed seed so everyone gets the same datasets
         var r = new Random(options.Seed);
@@ -195,7 +196,7 @@ public class ExampleDatasetsCreation
             
         var cic = CreateCohortIdentificationConfiguration((ExtractionFilter)f);
             
-        var cohort = CommitCohortToNewProject(cic,externalCohortTable,cohortCreationPipeline,"Lung Cancer Project","P1 Lung Cancer Patients",123,out Project project);
+        var cohort = CommitCohortToNewProject(cic,externalCohortTable,cohortCreationPipeline,"Lung Cancer Project","P1 Lung Cancer Patients",123,out var project);
             
         var cohortTable = cohort.ExternalCohortTable.DiscoverCohortTable();
         using (var con = cohortTable.Database.Server.GetConnection())
@@ -283,7 +284,7 @@ public class ExampleDatasetsCreation
     private void SetParameter(IFilter filter, string paramterToSet, string dataType, string value)
     {
         var p = filter.GetAllParameters().Single(fp=>fp.ParameterName == paramterToSet);
-        p.ParameterSQL = "DECLARE " + paramterToSet + " AS " + dataType;
+        p.ParameterSQL = $"DECLARE {paramterToSet} AS {dataType}";
         p.Value = value;
         p.SaveToDatabase();
     }
@@ -292,7 +293,7 @@ public class ExampleDatasetsCreation
     {
         var col = catalogue.GetTableInfoList(false).SelectMany(t=>t.ColumnInfos).SingleOrDefault(c=>c.GetRuntimeName() == columnInfoName);
         if(col == null)
-            throw new Exception("Could not find ColumnInfo called '" + columnInfoName +"' in Catalogue " + catalogue);
+            throw new Exception($"Could not find ColumnInfo called '{columnInfoName}' in Catalogue {catalogue}");
 
         var ci = new CatalogueItem(_repos.CatalogueRepository,catalogue,name);
         ci.ColumnInfo_ID = col.ID;
@@ -385,11 +386,11 @@ public class ExampleDatasetsCreation
         //Add the filter to the WHERE logic of the cohort set
         var whereContainer = new AggregateFilterContainer(_repos.CatalogueRepository,FilterContainerOperation.OR);
 
-        ac.Name = "People with " + inclusionFilter1.Name;
+        ac.Name = $"People with {inclusionFilter1.Name}";
         ac.RootFilterContainer_ID = whereContainer.ID;
         cic.EnsureNamingConvention(ac); //this will put cicx at the front and cause implicit SaveToDatabase
             
-        FilterImporter filterImporter = new FilterImporter(new AggregateFilterFactory(_repos.CatalogueRepository),null);
+        var filterImporter = new FilterImporter(new AggregateFilterFactory(_repos.CatalogueRepository),null);
         var cloneFilter = filterImporter.ImportFilter(whereContainer, inclusionFilter1, null);
             
         whereContainer.AddChild(cloneFilter);
@@ -517,13 +518,13 @@ UNPIVOT
         }
         catch
         {
-            throw new Exception("Could not find an ExtractionInformation called '" + name + "' in dataset " + cata.Name);
+            throw new Exception($"Could not find an ExtractionInformation called '{name}' in dataset {cata.Name}");
         }
     }
 
     private DiscoveredTable Create<T>(DiscoveredDatabase db,PersonCollection people, Random r, ICheckNotifier notifier,int numberOfRecords, params string[] primaryKey) where T:IDataGenerator
     {
-        string dataset = typeof(T).Name;
+        var dataset = typeof(T).Name;
         notifier.OnCheckPerformed(new CheckEventArgs(string.Format("Generating {0} records for {1}", numberOfRecords,dataset),CheckResult.Success));
             
         var factory = new DataGeneratorFactory();
@@ -534,17 +535,17 @@ UNPIVOT
 
         //prune "nulls"
         foreach(DataRow dr in dt.Rows)
-            for(int i = 0;i<dt.Columns.Count;i++)
+            for(var i = 0;i<dt.Columns.Count;i++)
                 if(string.Equals(dr[i] as string, "NULL",StringComparison.CurrentCultureIgnoreCase))
                     dr[i] = DBNull.Value;
 
 
-        notifier.OnCheckPerformed(new CheckEventArgs("Uploading " + dataset,CheckResult.Success));
+        notifier.OnCheckPerformed(new CheckEventArgs($"Uploading {dataset}",CheckResult.Success));
         var tbl = db.CreateTable(dataset,dt,GetExplicitColumnDefinitions<T>());
 
         if(primaryKey.Length != 0)
         {
-            notifier.OnCheckPerformed(new CheckEventArgs("Creating Primary Key " + dataset,CheckResult.Success));
+            notifier.OnCheckPerformed(new CheckEventArgs($"Creating Primary Key {dataset}",CheckResult.Success));
             var cols = primaryKey.Select(s=>tbl.DiscoverColumn(s)).ToArray();
             tbl.CreatePrimaryKey(5000,cols);
         }
@@ -588,7 +589,7 @@ UNPIVOT
     private ICatalogue ImportCatalogue(ITableInfo ti)
     {
         var forwardEngineer = new ForwardEngineerCatalogue(ti,ti.ColumnInfos);
-        forwardEngineer.ExecuteForwardEngineering(out var cata, out _,out ExtractionInformation[] eis);
+        forwardEngineer.ExecuteForwardEngineering(out var cata, out _,out var eis);
             
         //get descriptions of the columns from BadMedicine
         var desc = new Descriptions();

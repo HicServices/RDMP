@@ -35,7 +35,7 @@ public class ExecuteCommandRefreshExtractionConfigurationsCohort : BasicUIComman
             SetImpossible("No Refresh Pipeline Set");
 
         if(!_project.ProjectNumber.HasValue)
-            SetImpossible("Project '"+_project+"' does not have a Project Number");
+            SetImpossible($"Project '{_project}' does not have a Project Number");
     }
 
     public override string GetCommandHelp()
@@ -52,7 +52,7 @@ public class ExecuteCommandRefreshExtractionConfigurationsCohort : BasicUIComman
         var progressUi = new ProgressUI();
         progressUi.ApplyTheme(Activator.Theme);
 
-        progressUi.Text = "Refreshing Cohort (" + _extractionConfiguration + ")";
+        progressUi.Text = $"Refreshing Cohort ({_extractionConfiguration})";
         Activator.ShowWindow(progressUi,true);
 
         var engine = new CohortRefreshEngine(progressUi, _extractionConfiguration);

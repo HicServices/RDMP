@@ -31,12 +31,12 @@ public class StandardRegexTests:DatabaseTests
             regex.Regex = "^(Fish)$";
             regex.SaveToDatabase();
 
-            StandardRegexConstraint constraint = new StandardRegexConstraint(CatalogueRepository);
+            var constraint = new StandardRegexConstraint(CatalogueRepository);
                 
             constraint.CatalogueStandardRegex = regex;
                 
             Assert.IsNull(constraint.Validate("Fish",null,null));
-            ValidationFailure failure = constraint.Validate("FishFingers", null, null);
+            var failure = constraint.Validate("FishFingers", null, null);
             Assert.IsNotNull(failure);
         }
         finally

@@ -51,7 +51,7 @@ public class LoggingDatabaseChecker : ICheckable
 
     private void CheckDataLoadTaskStatusTable(ICheckNotifier notifier)
     {
-        Dictionary<int,string> desired = new Dictionary<int, string>();
+        var desired = new Dictionary<int, string>();
 
         desired.Add(1, "Open");
         desired.Add(2, "Ready");
@@ -109,13 +109,14 @@ public class LoggingDatabaseChecker : ICheckable
 
                 if (found != null)
                 {
-                    notifier.OnCheckPerformed(new CheckEventArgs("Found default dataset: " + dataSetID,
+                    notifier.OnCheckPerformed(new CheckEventArgs($"Found default dataset: {dataSetID}",
                         CheckResult.Success, null));
                     return;
                 }
             }
 
-            if (notifier.OnCheckPerformed(new CheckEventArgs("Did not find default dataset '" + dataSetID + "'.", CheckResult.Fail, null, "Create the dataset '" + dataSetID + "'")))
+            if (notifier.OnCheckPerformed(new CheckEventArgs($"Did not find default dataset '{dataSetID}'.", CheckResult.Fail, null,
+                    $"Create the dataset '{dataSetID}'")))
             {
                 using (var cmd =
                        _server.GetCommand("INSERT INTO DataSet (dataSetID, name) VALUES (@dsID, @dsID)", conn))
@@ -136,18 +137,18 @@ public class LoggingDatabaseChecker : ICheckable
     private void CheckDataLoadTaskExists(ICheckNotifier notifier, int id, string dataSetID)
     {
 
-        LogManager lm = new LogManager(_server);
+        var lm = new LogManager(_server);
 
 
         if (lm.ListDataTasks().Contains(dataSetID))
-            notifier.OnCheckPerformed(new CheckEventArgs("Found default DataLoadTask for '" + dataSetID + "'", CheckResult.Success,
+            notifier.OnCheckPerformed(new CheckEventArgs($"Found default DataLoadTask for '{dataSetID}'", CheckResult.Success,
                 null));
         else
         {
-            bool shouldCreate =
-                notifier.OnCheckPerformed(new CheckEventArgs("Did not find default DataLoadTask for '" + dataSetID + "'.",
+            var shouldCreate =
+                notifier.OnCheckPerformed(new CheckEventArgs($"Did not find default DataLoadTask for '{dataSetID}'.",
                     CheckResult.Fail,
-                    null, "Create a DataLoadTask for '" + dataSetID + "'"));
+                    null, $"Create a DataLoadTask for '{dataSetID}'"));
 
             if(shouldCreate)
                 lm.CreateNewLoggingTask(id, dataSetID);
@@ -162,7 +163,7 @@ public class LoggingDatabaseChecker : ICheckable
         {
             conn.Open();
 
-            using(var cmd = _server.GetCommand("SELECT ID, " + valueColumnName + " FROM " + tableName, conn))
+            using(var cmd = _server.GetCommand($"SELECT ID, {valueColumnName} FROM {tableName}", conn))
             using(var reader = cmd.ExecuteReader())
                 while (reader.Read())
                     actual.Add(Convert.ToInt32(reader["ID"]), reader[valueColumnName].ToString().Trim());
@@ -177,7 +178,7 @@ public class LoggingDatabaseChecker : ICheckable
             
         if(!missing.Any() && !collisions.Any() && !misnomers.Any())
         {
-            notifier.OnCheckPerformed(new CheckEventArgs(tableName + " contains the correct lookup values", CheckResult.Success, null));
+            notifier.OnCheckPerformed(new CheckEventArgs($"{tableName} contains the correct lookup values", CheckResult.Success, null));
             return;
         }
 
@@ -185,17 +186,15 @@ public class LoggingDatabaseChecker : ICheckable
         if (collisions.Any())
         {
 
-            notifier.OnCheckPerformed(new CheckEventArgs(tableName + " there is a key collision between what we require and what is in the database, the mismatches are:" + Environment.NewLine+
-                                                         collisions.Aggregate("",(s,n)=>s+"Desired:("+n.Key+",'"+n.Value+"') VS Found:("+n.Key+",'" + actual[n.Key]+"')"+ Environment.NewLine)
-                                                         + collisions,CheckResult.Fail, null));
+            notifier.OnCheckPerformed(new CheckEventArgs(
+                $"{tableName} there is a key collision between what we require and what is in the database, the mismatches are:{Environment.NewLine}{collisions.Aggregate("", (s, n) => $"{s}Desired:({n.Key},'{n.Value}') VS Found:({n.Key},'{actual[n.Key]}'){Environment.NewLine}")}{collisions}",CheckResult.Fail, null));
             return;
         }
 
         //misnomers cannot be resolved without manual intervention either
         if (misnomers.Any())
             notifier.OnCheckPerformed(new CheckEventArgs(
-                tableName + " the following ID conflicts were found:" +
-                misnomers.Aggregate("", (s, n) => s + Environment.NewLine + n), CheckResult.Fail, null));
+                $"{tableName} the following ID conflicts were found:{misnomers.Aggregate("", (s, n) => s + Environment.NewLine + n)}", CheckResult.Fail, null));
 
             
 
@@ -203,18 +202,20 @@ public class LoggingDatabaseChecker : ICheckable
         {
 
             //add missing values
-            if (notifier.OnCheckPerformed(new CheckEventArgs(tableName + " does not contain all the required lookup statuses",
+            if (notifier.OnCheckPerformed(new CheckEventArgs(
+                    $"{tableName} does not contain all the required lookup statuses",
                     CheckResult.Fail, null,
-                    "Insert the missing lookups (" + missing.Aggregate("", (s, pair) => s + ", " + pair.Value) + ")")))
+                    $"Insert the missing lookups ({missing.Aggregate("", (s, pair) => $"{s}, {pair.Value}")})")))
             {
                 using(var c = _server.BeginNewTransactedConnection())
                 {
-                    _server.GetCommand("SET IDENTITY_INSERT " + tableName + " ON ", c).ExecuteNonQuery();
+                    _server.GetCommand($"SET IDENTITY_INSERT {tableName} ON ", c).ExecuteNonQuery();
 
                     foreach (var kvp in missing)
-                        _server.GetCommand("INSERT INTO " + tableName + "(ID," + valueColumnName + ") VALUES (" + kvp.Key + ",'" + kvp.Value + "')", c).ExecuteNonQuery();
+                        _server.GetCommand(
+                            $"INSERT INTO {tableName}(ID,{valueColumnName}) VALUES ({kvp.Key},'{kvp.Value}')", c).ExecuteNonQuery();
 
-                    _server.GetCommand("SET IDENTITY_INSERT " + tableName + " OFF ", c).ExecuteNonQuery();
+                    _server.GetCommand($"SET IDENTITY_INSERT {tableName} OFF ", c).ExecuteNonQuery();
 
                     c.ManagedTransaction.CommitAndCloseConnection();
                 }
@@ -232,7 +233,7 @@ public class LoggingDatabaseChecker : ICheckable
         misnomers = new List<string>();
             
         //for each desired kvp 
-        foreach (KeyValuePair<int,string> kvp in expected)
+        foreach (var kvp in expected)
         {
                 
             //make sure it is not a misnomer
@@ -242,9 +243,11 @@ public class LoggingDatabaseChecker : ICheckable
                 var misnomer = actual.Where(m => m.Value.Equals(kvp.Value)).Select(p => p.Key).ToArray(); //get ALL the keys that correspond to this value including exact matching key=key (to deal with schitzophrenia)
 
                 if (misnomer.Length == 1)
-                    misnomers.Add(kvp.Value + " is known under ID=" + kvp.Key + " in desired but in your live database it is ID=" + misnomer.Single());
+                    misnomers.Add(
+                        $"{kvp.Value} is known under ID={kvp.Key} in desired but in your live database it is ID={misnomer.Single()}");
                 else
-                    misnomers.Add(kvp.Value + " is known under ID=" + kvp.Key + " in desired but in your live database is it is known schizophrenically as (" + misnomer.Aggregate("",(s,n)=>s+"ID="+n +",").TrimEnd(',') +")");
+                    misnomers.Add(
+                        $"{kvp.Value} is known under ID={kvp.Key} in desired but in your live database is it is known schizophrenically as ({misnomer.Aggregate("", (s, n) => $"{s}ID={n},").TrimEnd(',')})");
                     
             }
 

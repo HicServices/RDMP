@@ -37,16 +37,16 @@ public class ExecuteCommandList : BasicCommandExecution
             return;
         }
 
-        StringBuilder sb = new StringBuilder();
+        var sb = new StringBuilder();
         foreach (var m in _toList)
-            sb.AppendLine(m.ID + ":" + m);
+            sb.AppendLine($"{m.ID}:{m}");
 
         BasicActivator.Show(sb.ToString());
     }
 
     private void ListEveryone()
     {
-        StringBuilder sb = new StringBuilder();
+        var sb = new StringBuilder();
             
         foreach(var repo in BasicActivator.RepositoryLocator.GetAllRepositories())
         {

@@ -14,7 +14,8 @@ namespace Rdmp.Core.Providers.Nodes;
 /// </summary>
 public class AllGovernanceNode:SingletonNode,IOrderable
 {
-    public int Order { get { return -5000; }set{}}
+    public int Order { get => -5000;
+        set{}}
 
     public AllGovernanceNode() : base("Governance")
     {

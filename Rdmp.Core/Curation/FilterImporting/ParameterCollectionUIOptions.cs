@@ -61,7 +61,7 @@ public class ParameterCollectionUIOptions
     private ISqlParameter CreateNewParameterDefaultImplementation(ICollectSqlParameters collector, string parameterName)
     {
         if (!parameterName.StartsWith("@"))
-            parameterName = "@" + parameterName;
+            parameterName = $"@{parameterName}";
 
         var entity = (IMapsDirectlyToDatabaseTable)collector;
         var newParam = new AnyTableSqlParameter((ICatalogueRepository)entity.Repository, entity, AnyTableSqlParameter.GetDefaultDeclaration(parameterName));

@@ -66,7 +66,7 @@ public class ProjectConsistentGuidReleaseIdentifierAllocator : IAllocateReleaseI
 
         using (var con = cohortDatabase.Server.GetConnection())
         {
-            string sql =
+            var sql =
                 string.Format("SELECT DISTINCT {0},{1} FROM {2} JOIN {3} ON {4}={3}.{5} WHERE {3}.{6}={7}"
                     , ect.PrivateIdentifierField,
                     ect.ReleaseIdentifierField,
@@ -88,7 +88,8 @@ public class ProjectConsistentGuidReleaseIdentifierAllocator : IAllocateReleaseI
                 while (r.Read())
                 {
                     if(toReturn.ContainsKey(r[priv]))
-                        throw new Exception("Private identifier '" + r[priv] + "' has more than 1 historical release identifier (" + string.Join(",",toReturn[r[priv]],r[rel]));
+                        throw new Exception(
+                            $"Private identifier '{r[priv]}' has more than 1 historical release identifier ({string.Join(",", toReturn[r[priv]], r[rel])}");
 
                     toReturn.Add(r[priv],r[rel]);
                 }
@@ -104,7 +105,7 @@ public class ProjectConsistentGuidReleaseIdentifierAllocator : IAllocateReleaseI
         if(request.Project != null)
         {
             if (!request.Project.ProjectNumber.HasValue)
-                throw new ProjectNumberException("Project " + request.Project + " must have a ProjectNumber");
+                throw new ProjectNumberException($"Project {request.Project} must have a ProjectNumber");
         }
         else
         {

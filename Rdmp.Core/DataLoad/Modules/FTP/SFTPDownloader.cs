@@ -32,7 +32,7 @@ public class SFTPDownloader:FTPDownloader
         if (file.Contains("/") || file.Contains("\\"))
             throw new Exception("Was not expecting a relative path here");
             
-        Stopwatch s = new Stopwatch();
+        var s = new Stopwatch();
         s.Start();
             
         using(var sftp = new SftpClient(_host,_username,_password))
@@ -46,9 +46,9 @@ public class SFTPDownloader:FTPDownloader
             sftp.Connect();
                 
             //if there is a specified remote directory then reference it otherwise reference it locally (or however we were told about it from GetFileList())
-            string fullFilePath = !string.IsNullOrWhiteSpace(RemoteDirectory) ? Path.Combine(RemoteDirectory, file) : file;
+            var fullFilePath = !string.IsNullOrWhiteSpace(RemoteDirectory) ? Path.Combine(RemoteDirectory, file) : file;
                 
-            string destinationFilePath = Path.Combine(destination.ForLoading.FullName, file);
+            var destinationFilePath = Path.Combine(destination.ForLoading.FullName, file);
 
             //register for events
             Action<ulong> callback = (totalBytes) => job.OnProgress(this, new ProgressEventArgs(destinationFilePath, new ProgressMeasurement((int)(totalBytes * 0.001), ProgressType.Kilobytes), s.Elapsed));
@@ -75,15 +75,17 @@ public class SFTPDownloader:FTPDownloader
                 sftp.ConnectionInfo.Timeout = new TimeSpan(0, 0, 0, TimeoutInSeconds);
                 sftp.Connect();
                     
-                foreach (string retrievedFiles in _filesRetrieved)
+                foreach (var retrievedFiles in _filesRetrieved)
                     try
                     {
                         sftp.DeleteFile(retrievedFiles);
-                        postLoadEventListener.OnNotify(this, new NotifyEventArgs(ProgressEventType.Information, "Deleted SFTP file " + retrievedFiles + " from SFTP server"));
+                        postLoadEventListener.OnNotify(this, new NotifyEventArgs(ProgressEventType.Information,
+                            $"Deleted SFTP file {retrievedFiles} from SFTP server"));
                     }
                     catch (Exception e)
                     {
-                        postLoadEventListener.OnNotify(this, new NotifyEventArgs(ProgressEventType.Error, "Could not delete SFTP file " + retrievedFiles + " from SFTP server", e));
+                        postLoadEventListener.OnNotify(this, new NotifyEventArgs(ProgressEventType.Error,
+                            $"Could not delete SFTP file {retrievedFiles} from SFTP server", e));
                     }
             }
                 
@@ -98,7 +100,7 @@ public class SFTPDownloader:FTPDownloader
             sftp.ConnectionInfo.Timeout = new TimeSpan(0, 0, 0, TimeoutInSeconds);
             sftp.Connect();
 
-            string directory = RemoteDirectory;
+            var directory = RemoteDirectory;
 
             if (string.IsNullOrWhiteSpace(directory))
                 directory = ".";

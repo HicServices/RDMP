@@ -79,7 +79,7 @@ public partial class DatasetRaceway : RDMPUserControl, IDashboardableControl
             
         var allCatalogues = _collection.GetCatalogues();
 
-        Dictionary<Catalogue, Dictionary<DateTime, ArchivalPeriodicityCount>> cataloguesToAdd = new Dictionary<Catalogue, Dictionary<DateTime, ArchivalPeriodicityCount>>();
+        var cataloguesToAdd = new Dictionary<Catalogue, Dictionary<DateTime, ArchivalPeriodicityCount>>();
 
         DQERepository dqeRepository;
 
@@ -120,7 +120,7 @@ public partial class DatasetRaceway : RDMPUserControl, IDashboardableControl
 
         foreach (var dictionary in cataloguesDictionary.Values)
             if (dictionary != null)
-                foreach (DateTime dt in dictionary.Keys)
+                foreach (var dt in dictionary.Keys)
                 {
                     //if it is before the start or after today
                     if (dt < GetUserPickedStartDate() || dt.Date > DateTime.Now.Date)

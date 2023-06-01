@@ -93,12 +93,12 @@ public class Gatherer
             root.Children.Add(GatherDependencies(cata));
 
         //and the load operations
-        foreach (IProcessTask processTask in loadMetadata.ProcessTasks)
+        foreach (var processTask in loadMetadata.ProcessTasks)
         {
             var gpt = new GatheredObject(processTask);
             root.Children.Add(gpt);
 
-            foreach (IArgument a in processTask.GetAllArguments())
+            foreach (var a in processTask.GetAllArguments())
             {
                 var ga = new GatheredObject(a);
                 gpt.Children.Add(ga);

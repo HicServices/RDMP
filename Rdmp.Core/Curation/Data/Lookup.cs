@@ -52,8 +52,8 @@ public class Lookup : DatabaseEntity, IJoin, IHasDependencies, ICheckable
     /// </summary>
     public int Description_ID
     {
-        get { return _description_ID; }
-        set { SetField(ref _description_ID, value); }
+        get => _description_ID;
+        set => SetField(ref _description_ID, value);
     }
 
     /// <summary>
@@ -61,8 +61,8 @@ public class Lookup : DatabaseEntity, IJoin, IHasDependencies, ICheckable
     /// </summary>
     public int ForeignKey_ID
     {
-        get { return _foreignKey_ID; }
-        set { SetField(ref _foreignKey_ID, value); }
+        get => _foreignKey_ID;
+        set => SetField(ref _foreignKey_ID, value);
     }
 
     /// <summary>
@@ -70,23 +70,23 @@ public class Lookup : DatabaseEntity, IJoin, IHasDependencies, ICheckable
     /// </summary>
     public int PrimaryKey_ID
     {
-        get { return _primaryKey_ID; }
-        set { SetField(ref _primaryKey_ID, value); }
+        get => _primaryKey_ID;
+        set => SetField(ref _primaryKey_ID, value);
     }
 
     /// <inheritdoc/>
     public string Collation
     {
-        get { return _collation; }
-        set { SetField(ref _collation, value); }
+        get => _collation;
+        set => SetField(ref _collation, value);
     }
 
     /// <inheritdoc/>
     ///<remarks>For <see cref="Lookup"/> this should almost always be LEFT</remarks>
     public ExtractionJoinType ExtractionJoinType
     {
-        get { return _extractionJoinType; }
-        set { SetField(ref _extractionJoinType, value); }
+        get => _extractionJoinType;
+        set => SetField(ref _extractionJoinType, value);
     }
 
     #endregion
@@ -187,7 +187,7 @@ public class Lookup : DatabaseEntity, IJoin, IHasDependencies, ICheckable
         if (ExtractionJoinType.TryParse(r["ExtractionJoinType"].ToString(), true, out joinType))
             ExtractionJoinType = joinType;
         else
-            throw new Exception("Did not recognise ExtractionJoinType:" + r["ExtractionJoinType"]);
+            throw new Exception($"Did not recognise ExtractionJoinType:{r["ExtractionJoinType"]}");
 
         if (ForeignKey_ID == PrimaryKey_ID)
             throw new ArgumentException("Join Key 1 and Join Key 2 cannot be the same");
@@ -203,7 +203,7 @@ public class Lookup : DatabaseEntity, IJoin, IHasDependencies, ICheckable
     private string _cachedToString = null;
     private string ToStringCached()
     {
-        return _cachedToString ?? (_cachedToString = " " + ForeignKey.Name + " = " + PrimaryKey.Name);
+        return _cachedToString ?? (_cachedToString = $" {ForeignKey.Name} = {PrimaryKey.Name}");
     }
 
     /// <summary>
@@ -215,7 +215,7 @@ public class Lookup : DatabaseEntity, IJoin, IHasDependencies, ICheckable
     /// <returns>All lookup relationships, a given table could have 2+ of these e.g. SendingLocation and DischargeLocation could both reference z_Location lookup</returns>
     public static Lookup[] GetAllLookupsBetweenTables(TableInfo foreignKeyTable,TableInfo primaryKeyTable)
     {
-        List<Lookup> toReturn = new List<Lookup>();
+        var toReturn = new List<Lookup>();
 
         if(foreignKeyTable.Equals(primaryKeyTable))
             throw new NotSupportedException("Tables must be different");
@@ -240,7 +240,7 @@ public class Lookup : DatabaseEntity, IJoin, IHasDependencies, ICheckable
                 cmd.Parameters["@primaryKeyTableID"].Value = primaryKeyTable.ID;
                 cmd.Parameters["@foreignKeyTableID"].Value = foreignKeyTable.ID;
 
-                using (DbDataReader r = cmd.ExecuteReader())
+                using (var r = cmd.ExecuteReader())
                     while (r.Read())
                         toReturn.Add(new Lookup(repo, r));
             }
@@ -257,10 +257,12 @@ public class Lookup : DatabaseEntity, IJoin, IHasDependencies, ICheckable
     {
             
         if (ForeignKey.TableInfo_ID == PrimaryKey.TableInfo_ID)
-            notifier.OnCheckPerformed(new CheckEventArgs("Foreign Key and Primary Key are from the same table for Lookup " + this.ID,CheckResult.Fail));
+            notifier.OnCheckPerformed(new CheckEventArgs(
+                $"Foreign Key and Primary Key are from the same table for Lookup {this.ID}",CheckResult.Fail));
 
         if (Description.TableInfo_ID != PrimaryKey.TableInfo_ID)
-            notifier.OnCheckPerformed(new CheckEventArgs("Description Key and Primary Key are from different tables (Not allowed) in Lookup " + this.ID, CheckResult.Fail));
+            notifier.OnCheckPerformed(new CheckEventArgs(
+                $"Description Key and Primary Key are from different tables (Not allowed) in Lookup {this.ID}", CheckResult.Fail));
     }
         
     /// <inheritdoc/>

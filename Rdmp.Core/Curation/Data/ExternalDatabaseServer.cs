@@ -42,8 +42,8 @@ public class ExternalDatabaseServer : DatabaseEntity, IExternalDatabaseServer, I
     [NotNull]
     public string Name
     {
-        get { return _name; }
-        set { SetField(ref  _name, value); }
+        get => _name;
+        set => SetField(ref  _name, value);
     }
 
     /// <summary>
@@ -52,8 +52,8 @@ public class ExternalDatabaseServer : DatabaseEntity, IExternalDatabaseServer, I
     /// </summary>
     public string CreatedByAssembly
     {
-        get { return _createdByAssembly; }
-        set { SetField(ref  _createdByAssembly, value); }
+        get => _createdByAssembly;
+        set => SetField(ref  _createdByAssembly, value);
     }
 
     /// <summary>
@@ -62,14 +62,14 @@ public class ExternalDatabaseServer : DatabaseEntity, IExternalDatabaseServer, I
     /// </summary>
     public string MappedDataPath
     {
-        get { return _mappedDataPath; }
-        set { SetField(ref _mappedDataPath, value); }
+        get => _mappedDataPath;
+        set => SetField(ref _mappedDataPath, value);
     }
 
     /// <inheritdoc/>
     public string Server
     {
-        get { return _selfCertifyingDataAccessPoint.Server; }
+        get => _selfCertifyingDataAccessPoint.Server;
         set
         {
             if (Equals(_selfCertifyingDataAccessPoint.Server, value))
@@ -84,7 +84,7 @@ public class ExternalDatabaseServer : DatabaseEntity, IExternalDatabaseServer, I
     /// <inheritdoc/>
     public string Database
     {
-        get { return _selfCertifyingDataAccessPoint.Database; }
+        get => _selfCertifyingDataAccessPoint.Database;
         set
         {
             if (Equals(_selfCertifyingDataAccessPoint.Database,value))
@@ -99,7 +99,7 @@ public class ExternalDatabaseServer : DatabaseEntity, IExternalDatabaseServer, I
     /// <inheritdoc/>
     public string Username
     {
-        get { return _selfCertifyingDataAccessPoint.Username; }
+        get => _selfCertifyingDataAccessPoint.Username;
         set
         {
             if (Equals(_selfCertifyingDataAccessPoint.Username, value))
@@ -114,7 +114,7 @@ public class ExternalDatabaseServer : DatabaseEntity, IExternalDatabaseServer, I
     /// <inheritdoc/>
     public string Password
     {
-        get { return _selfCertifyingDataAccessPoint.Password; }
+        get => _selfCertifyingDataAccessPoint.Password;
         set
         {
             _selfCertifyingDataAccessPoint.Password = value;
@@ -125,7 +125,7 @@ public class ExternalDatabaseServer : DatabaseEntity, IExternalDatabaseServer, I
     /// <inheritdoc/>
     public DatabaseType DatabaseType
     {
-        get { return _selfCertifyingDataAccessPoint.DatabaseType; }
+        get => _selfCertifyingDataAccessPoint.DatabaseType;
         set
         {
             if (Equals(_selfCertifyingDataAccessPoint.DatabaseType, value))

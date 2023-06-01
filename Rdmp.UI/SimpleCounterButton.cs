@@ -21,7 +21,7 @@ public class SimpleCounterButton : ToolStripButton
 
     public int? Count
     {
-        get { return _count; }
+        get => _count;
         set
         {
             _count = value; 

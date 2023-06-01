@@ -48,8 +48,8 @@ public class ExtractionFilter : ConcreteFilter, IHasDependencies, IInjectKnown<E
     [Relationship(typeof(ExtractionInformation),RelationshipType.LocalReference)]
     public int ExtractionInformation_ID
     {
-        get { return _extractionInformationID; }
-        set { SetField(ref _extractionInformationID , value); }
+        get => _extractionInformationID;
+        set => SetField(ref _extractionInformationID , value);
     }
 
     #endregion
@@ -58,7 +58,7 @@ public class ExtractionFilter : ConcreteFilter, IHasDependencies, IInjectKnown<E
 
     /// <inheritdoc/>
     [NoMappingToDatabase]
-    public override IContainer FilterContainer { get { return null; } }
+    public override IContainer FilterContainer => null;
 
     #endregion
 
@@ -66,15 +66,12 @@ public class ExtractionFilter : ConcreteFilter, IHasDependencies, IInjectKnown<E
     [NoMappingToDatabase]
     public override int? FilterContainer_ID
     {
-        get { throw new NotSupportedException(); }
-        set { throw new NotSupportedException(); }
+        get => throw new NotSupportedException();
+        set => throw new NotSupportedException();
     }
 
     [NoMappingToDatabase]
-    public ExtractionFilterParameterSet[] ExtractionFilterParameterSets
-    {
-        get { return _knownExtractionFilterParameterSets.Value; }
-    }
+    public ExtractionFilterParameterSet[] ExtractionFilterParameterSets => _knownExtractionFilterParameterSets.Value;
 
     /// <inheritdoc/>
     public override ColumnInfo GetColumnInfoIfExists()
@@ -103,11 +100,11 @@ public class ExtractionFilter : ConcreteFilter, IHasDependencies, IInjectKnown<E
 
     /// <inheritdoc cref="ExtractionInformation_ID"/>
     [NoMappingToDatabase]
-    public ExtractionInformation ExtractionInformation {get { return Repository.GetObjectByID<ExtractionInformation>(ExtractionInformation_ID); }}
+    public ExtractionInformation ExtractionInformation => Repository.GetObjectByID<ExtractionInformation>(ExtractionInformation_ID);
 
     /// <inheritdoc cref="ConcreteFilter.GetAllParameters"/>
     [NoMappingToDatabase]
-    public IEnumerable<ExtractionFilterParameter> ExtractionFilterParameters { get { return Repository.GetAllObjectsWithParent<ExtractionFilterParameter>(this); } }
+    public IEnumerable<ExtractionFilterParameter> ExtractionFilterParameters => Repository.GetAllObjectsWithParent<ExtractionFilterParameter>(this);
 
     #endregion
 
@@ -126,7 +123,7 @@ public class ExtractionFilter : ConcreteFilter, IHasDependencies, IInjectKnown<E
     /// <param name="parent"></param>
     public ExtractionFilter(ICatalogueRepository repository, string name, ExtractionInformation parent)
     {
-        name = name ?? "New Filter " + Guid.NewGuid();
+        name = name ?? $"New Filter {Guid.NewGuid()}";
 
         repository.InsertAndHydrate(this,new Dictionary<string, object>
         {
@@ -165,14 +162,8 @@ public class ExtractionFilter : ConcreteFilter, IHasDependencies, IInjectKnown<E
     [NoMappingToDatabase]
     public override int? ClonedFromExtractionFilter_ID
     {
-        get
-        {
-            return null; 
-        }
-        set
-        {
-            throw new NotSupportedException("ClonedFromExtractionFilter_ID is only supported on lower level filters e.g. DeployedExtractionFilter and AggregateFilter");
-        }
+        get => null;
+        set => throw new NotSupportedException("ClonedFromExtractionFilter_ID is only supported on lower level filters e.g. DeployedExtractionFilter and AggregateFilter");
     }
         
     /// <inheritdoc/>

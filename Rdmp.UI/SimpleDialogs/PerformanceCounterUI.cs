@@ -35,9 +35,10 @@ public partial class PerformanceCounterUI : Form
         }
         else
         {
-            int timesSeen = DatabaseCommandHelper.PerformanceCounter.DictionaryOfQueries.Values.Sum(s=>s.TimesSeen);
+            var timesSeen = DatabaseCommandHelper.PerformanceCounter.DictionaryOfQueries.Values.Sum(s=>s.TimesSeen);
 
-            lblCommandsAudited.Text = "Commands Audited:" + timesSeen + " (" + DatabaseCommandHelper.PerformanceCounter.DictionaryOfQueries.Keys.Count + " distinct)";
+            lblCommandsAudited.Text =
+                $"Commands Audited:{timesSeen} ({DatabaseCommandHelper.PerformanceCounter.DictionaryOfQueries.Keys.Count} distinct)";
         }
     }
 
@@ -71,7 +72,7 @@ public partial class PerformanceCounterUI : Form
         if (DatabaseCommandHelper.PerformanceCounter == null || !DatabaseCommandHelper.PerformanceCounter.DictionaryOfQueries.Keys.Any())
             return;                
 
-        Form f = new Form();
+        var f = new Form();
         var ui = new PerformanceCounterResultsUI();
         ui.Dock = DockStyle.Fill;
 

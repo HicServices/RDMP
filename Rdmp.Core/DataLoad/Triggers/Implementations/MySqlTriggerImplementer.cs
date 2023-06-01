@@ -34,25 +34,25 @@ internal class MySqlTriggerImplementer:TriggerImplementer
             {
                 con.Open();
 
-                using(var cmd = _server.GetCommand("DROP TRIGGER " + GetTriggerName(), con))
+                using(var cmd = _server.GetCommand($"DROP TRIGGER {GetTriggerName()}", con))
                 {
                     cmd.CommandTimeout = UserSettings.ArchiveTriggerTimeout;
                     cmd.ExecuteNonQuery();
                 }
 
-                thingsThatWorkedDroppingTrigger = "Droppped trigger " + GetTriggerName();
+                thingsThatWorkedDroppingTrigger = $"Droppped trigger {GetTriggerName()}";
             }
         }
         catch (Exception exception)
         {
             //this is not a problem really since it is likely that DLE chose to recreate the trigger because it was FUBARed or missing, this is just belt and braces try and drop anything that is lingering, whether or not it is there
-            problemsDroppingTrigger += "Failed to drop Trigger:" + exception.Message + Environment.NewLine;
+            problemsDroppingTrigger += $"Failed to drop Trigger:{exception.Message}{Environment.NewLine}";
         }
     }
 
     public override string CreateTrigger(ICheckNotifier notifier)
     {
-        string creationSql = base.CreateTrigger(notifier);
+        var creationSql = base.CreateTrigger(notifier);
 
         var sql = string.Format(@"CREATE TRIGGER {0} BEFORE UPDATE ON {1} FOR EACH ROW
 {2};", 
@@ -121,7 +121,8 @@ internal class MySqlTriggerImplementer:TriggerImplementer
 
 	SET NEW.{2} = now();
   END", _archiveTable.GetFullyQualifiedName(),
-            string.Join(",", _columns.Select(c =>syntax.EnsureWrapped( c.GetRuntimeName()) + "=OLD." + syntax.EnsureWrapped(c.GetRuntimeName()))),
+            string.Join(",", _columns.Select(c =>
+                $"{syntax.EnsureWrapped(c.GetRuntimeName())}=OLD.{syntax.EnsureWrapped(c.GetRuntimeName())}")),
             syntax.EnsureWrapped(SpecialFieldNames.ValidFrom));
     }
         
@@ -150,7 +151,7 @@ internal class MySqlTriggerImplementer:TriggerImplementer
 
     protected virtual object GetTriggerName()
     {
-        return QuerySyntaxHelper.MakeHeaderNameSensible(_table.GetRuntimeName()) + "_onupdate";
+        return $"{QuerySyntaxHelper.MakeHeaderNameSensible(_table.GetRuntimeName())}_onupdate";
     }
 
     public override bool CheckUpdateTriggerIsEnabledAndHasExpectedBody()

@@ -35,21 +35,21 @@ public class DataAccessCredentials : DatabaseEntity, IDataAccessCredentials,INam
     [NotNull]
     public string Name
     {
-        get { return _name; }
-        set { SetField(ref  _name, value); }
+        get => _name;
+        set => SetField(ref  _name, value);
     }
 
     /// <inheritdoc/>
     public string Username
     {
-        get { return _username; }
-        set { SetField(ref  _username, value); }
+        get => _username;
+        set => SetField(ref  _username, value);
     }
         
     /// <inheritdoc/>
     public string Password
     {
-        get { return _encryptedPasswordHost.Password; }
+        get => _encryptedPasswordHost.Password;
         set
         {
             _encryptedPasswordHost.Password = value;
@@ -74,7 +74,7 @@ public class DataAccessCredentials : DatabaseEntity, IDataAccessCredentials,INam
     /// <param name="name"></param>
     public DataAccessCredentials(ICatalogueRepository repository, string name= null)
     {
-        name = name ?? "New Credentials " + Guid.NewGuid();
+        name = name ?? $"New Credentials {Guid.NewGuid()}";
 
         _encryptedPasswordHost = new EncryptedPasswordHost(repository);
 
@@ -110,7 +110,8 @@ public class DataAccessCredentials : DatabaseEntity, IDataAccessCredentials,INam
         catch (Exception e)
         {
             if(e.Message.Contains("FK_DataAccessCredentials_TableInfo_DataAccessCredentials"))
-                throw new CredentialsInUseException("Cannot delete credentials " + Name + " because it is in use by one or more TableInfo objects(" + string.Join("",GetAllTableInfosThatUseThis().Values.Select(t=>string.Join(",",t)))+")",e);
+                throw new CredentialsInUseException(
+                    $"Cannot delete credentials {Name} because it is in use by one or more TableInfo objects({string.Join("", GetAllTableInfosThatUseThis().Values.Select(t => string.Join(",", t)))})",e);
 
             throw;
         }

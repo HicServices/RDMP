@@ -91,7 +91,7 @@ internal class ConsoleGuiContextMenuFactory
 
         // add spacers when the Weight differs by more than 1 whole number
         var withSpacers = new List<MenuItem>();
-        int lastWeightSeen = (int)order[items.First()];
+        var lastWeightSeen = (int)order[items.First()];
 
         foreach (var item in items)
         {

@@ -51,7 +51,7 @@ public class ExecuteCommandExportPlugins : BasicCommandExecution
         if (_outDir == null)
             return;
 
-        foreach (Curation.Data.Plugin p in _plugins)
+        foreach (var p in _plugins)
             p.LoadModuleAssemblies.FirstOrDefault()?.DownloadAssembly(_outDir);
     }
 }

@@ -57,20 +57,15 @@ public abstract class DatabaseEntity : IRevertable,  INotifyPropertyChanged, ICa
         
     /// <inheritdoc/>
     [NoMappingToDatabase]
-    public ICatalogueRepository CatalogueRepository
-    {
-        get { return Repository as ICatalogueRepository; }
-    }
+    public ICatalogueRepository CatalogueRepository => Repository as ICatalogueRepository;
 
-        
+
     /// <summary>
     /// Returns <see cref="Repository"/> as <see cref="IDataExportRepository"/> or null if the object does not exist in a data export repository.
     /// </summary>
     [NoMappingToDatabase]
-    public IDataExportRepository DataExportRepository
-    {
-        get { return Repository as IDataExportRepository; }
-    }
+    public IDataExportRepository DataExportRepository => Repository as IDataExportRepository;
+
     /// <summary>
     /// Constructs a new instance.  You should only use this when your object does not yet exist in the database
     /// and you are trying to create it into the db
@@ -89,7 +84,8 @@ public abstract class DatabaseEntity : IRevertable,  INotifyPropertyChanged, ICa
         Repository = repository;
 
         if (!HasColumn(r, "ID"))
-            throw new InvalidOperationException("The DataReader passed to this type (" + GetType().Name + ") does not contain an 'ID' column. This is a requirement for all IMapsDirectlyToDatabaseTable implementing classes.");
+            throw new InvalidOperationException(
+                $"The DataReader passed to this type ({GetType().Name}) does not contain an 'ID' column. This is a requirement for all IMapsDirectlyToDatabaseTable implementing classes.");
 
         ID = int.Parse(r["ID"].ToString()); // gets around decimals and other random crud number field types that sql returns
 
@@ -114,7 +110,7 @@ public abstract class DatabaseEntity : IRevertable,  INotifyPropertyChanged, ICa
     /// <returns></returns>
     protected Uri ParseUrl(DbDataReader r, string fieldName)
     {
-        object uri = r[fieldName];
+        var uri = r[fieldName];
 
         if (uri == null || uri == DBNull.Value || string.IsNullOrWhiteSpace(uri.ToString()))
             return null;
@@ -239,7 +235,8 @@ public abstract class DatabaseEntity : IRevertable,  INotifyPropertyChanged, ICa
             return false;
 
         if (_readonly)
-            throw new Exception("An attempt was made to modify Property '" + propertyName + "' of Database Object of Type '" + GetType().Name + "' while it was in read only mode.  Object was called '" + this + "'");
+            throw new Exception(
+                $"An attempt was made to modify Property '{propertyName}' of Database Object of Type '{GetType().Name}' while it was in read only mode.  Object was called '{this}'");
 
         var old = field;
 
@@ -291,13 +288,13 @@ public abstract class DatabaseEntity : IRevertable,  INotifyPropertyChanged, ICa
     public virtual string GetSummary(bool includeName, bool includeID)
     {
 
-        StringBuilder sbPart1 = new StringBuilder();
+        var sbPart1 = new StringBuilder();
         foreach (var prop in GetType().GetProperties().Where(p=>p.Name.Contains("Description")))
         {
             AppendPropertyToSummary(sbPart1, prop, includeName, includeID, false);
         }
 
-        StringBuilder sbPart2 = new StringBuilder();
+        var sbPart2 = new StringBuilder();
         foreach (var prop in GetType().GetProperties().Where(p => !p.Name.Contains("Description")))
         {
             AppendPropertyToSummary(sbPart2, prop, includeName, includeID);
@@ -357,11 +354,11 @@ public abstract class DatabaseEntity : IRevertable,  INotifyPropertyChanged, ICa
             if (val is Enum e && Convert.ToInt32(e) == 0 && val is not DatabaseType)
                 return;
 
-            var representation = $"{(includePropertyName? FormatPropertyNameForSummary(prop) + ": " : "")}{ FormatForSummary(val)}";
+            var representation = $"{(includePropertyName? $"{FormatPropertyNameForSummary(prop)}: " : "")}{ FormatForSummary(val)}";
 
             if (representation.Length > MAX_SUMMARY_ITEM_LENGTH)
             {
-                representation = representation.Substring(0, MAX_SUMMARY_ITEM_LENGTH - 3) + "...";
+                representation = $"{representation.Substring(0, MAX_SUMMARY_ITEM_LENGTH - 3)}...";
             }
 
             if (representation.Contains('\n'))

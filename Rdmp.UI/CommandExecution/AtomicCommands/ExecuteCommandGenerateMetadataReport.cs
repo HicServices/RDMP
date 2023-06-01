@@ -25,7 +25,7 @@ public class ExecuteCommandGenerateMetadataReport:BasicUICommandExecution,IAtomi
     {
         base.Execute();
 
-        MetadataReportUI dialog = new MetadataReportUI(Activator, _initialSelection);
+        var dialog = new MetadataReportUI(Activator, _initialSelection);
         dialog.Show();
     }
 }

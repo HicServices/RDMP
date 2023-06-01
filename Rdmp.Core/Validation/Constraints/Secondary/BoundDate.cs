@@ -78,8 +78,8 @@ public class BoundDate : Bound
 
     private bool IsWithinRange(DateTime d, object[] otherColumns, string[] otherColumnNames)
     {
-        DateTime? low = SafeConvertToDate(LookupFieldNamed(LowerFieldName, otherColumns, otherColumnNames));
-        DateTime? up = SafeConvertToDate(LookupFieldNamed(UpperFieldName, otherColumns, otherColumnNames));
+        var low = SafeConvertToDate(LookupFieldNamed(LowerFieldName, otherColumns, otherColumnNames));
+        var up = SafeConvertToDate(LookupFieldNamed(UpperFieldName, otherColumns, otherColumnNames));
 
         if (Inclusive)
         {
@@ -133,8 +133,7 @@ public class BoundDate : Bound
             return (DateTime)lookupFieldNamed;
         }
 
-        throw new ArgumentException("Did not know how to deal with object of type " +
-                                    lookupFieldNamed.GetType().Name);
+        throw new ArgumentException($"Did not know how to deal with object of type {lookupFieldNamed.GetType().Name}");
     }
 
     private string CreateViolationReportUsingDates(DateTime d)
@@ -167,39 +166,42 @@ public class BoundDate : Bound
 
     private string BetweenMessage(DateTime d, string l, string u)
     {
-        return "Date " + Wrap(d.ToString(CultureInfo.InvariantCulture)) + " out of range. Expected a date between " + Wrap(l) + " and " + Wrap(u) + (Inclusive ? " inclusively" : " exclusively") + ".";
+        return
+            $"Date {Wrap(d.ToString(CultureInfo.InvariantCulture))} out of range. Expected a date between {Wrap(l)} and {Wrap(u)}{(Inclusive ? " inclusively" : " exclusively")}.";
     }
 
     private string GreaterThanMessage(DateTime d, string s)
     {
-        return "Date " + Wrap(d.ToString(CultureInfo.InvariantCulture)) + " out of range. Expected a date greater than " + Wrap(s) + ".";
+        return
+            $"Date {Wrap(d.ToString(CultureInfo.InvariantCulture))} out of range. Expected a date greater than {Wrap(s)}.";
     }
 
     private string LessThanMessage(DateTime d, string s)
     {
-        return "Date " + Wrap(d.ToString(CultureInfo.InvariantCulture)) + " out of range. Expected a date less than " + Wrap(s) + ".";
+        return
+            $"Date {Wrap(d.ToString(CultureInfo.InvariantCulture))} out of range. Expected a date less than {Wrap(s)}.";
     }
 
     private string Wrap(string s)
     {
-        return "[" + s + "]";
+        return $"[{s}]";
     }
         
     public override string GetHumanReadableDescriptionOfValidation()
     {
-        string result = "Checks that a date is within a given set of bounds.  This field is currently configured to be ";
+        var result = "Checks that a date is within a given set of bounds.  This field is currently configured to be ";
             
         if (Lower != null )
             if(Inclusive)
-                result += " >=" + Lower;
+                result += $" >={Lower}";
             else
-                result += " >" + Lower;
+                result += $" >{Lower}";
             
         if(Upper != null)
             if (Inclusive)
-                result += " <=" + Upper;
+                result += $" <={Upper}";
             else
-                result += " <" + Upper;
+                result += $" <{Upper}";
 
         return result;
     }

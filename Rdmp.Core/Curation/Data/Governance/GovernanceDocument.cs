@@ -36,16 +36,16 @@ public class GovernanceDocument : DatabaseEntity,INamed
     /// </summary>
     public int GovernancePeriod_ID
     {
-        get { return _governancePeriodID; }
-        private set { SetField(ref  _governancePeriodID, value); }
+        get => _governancePeriodID;
+        private set => SetField(ref  _governancePeriodID, value);
     } //every document belongs to only one period of governance knoweldge (via fk relationship)
 
     /// <inheritdoc/>
     [NotNull]
     public string Name
     {
-        get { return _name; }
-        set { SetField(ref  _name, value); }
+        get => _name;
+        set => SetField(ref  _name, value);
     }
 
     /// <summary>
@@ -53,8 +53,8 @@ public class GovernanceDocument : DatabaseEntity,INamed
     /// </summary>
     public string Description
     {
-        get { return _description; }
-        set { SetField(ref  _description, value); }
+        get => _description;
+        set => SetField(ref  _description, value);
     }
 
     /// <summary>
@@ -63,8 +63,8 @@ public class GovernanceDocument : DatabaseEntity,INamed
     [AdjustableLocation]
     public string URL
     {
-        get { return _url; }
-        set { SetField(ref  _url, value); }
+        get => _url;
+        set => SetField(ref  _url, value);
     }
 
     #endregion
@@ -119,25 +119,22 @@ public class GovernanceDocument : DatabaseEntity,INamed
 
         try
         {
-            FileInfo fileInfo = new FileInfo(URL);
+            var fileInfo = new FileInfo(URL);
 
             if (fileInfo.Exists)
                 notifier.OnCheckPerformed(
                     new CheckEventArgs(
-                        "Found intact attachment file " + fileInfo + " with length " +
-                        UsefulStuff.GetHumanReadableByteSize(fileInfo.Length), CheckResult.Success));
+                        $"Found intact attachment file {fileInfo} with length {UsefulStuff.GetHumanReadableByteSize(fileInfo.Length)}", CheckResult.Success));
             else
                 notifier.OnCheckPerformed(
                     new CheckEventArgs(
-                        "File " + fileInfo.FullName + " does not exist (for GovernanceDocument '" + this + "' (ID=" +
-                        ID + ")", CheckResult.Fail));
+                        $"File {fileInfo.FullName} does not exist (for GovernanceDocument '{this}' (ID={ID})", CheckResult.Fail));
         }
         catch (Exception ex)
         {
             notifier.OnCheckPerformed(
                 new CheckEventArgs(
-                    "Failed to check for existance of the file described by GovernanceDocument '" + this + "' (ID=" +
-                    ID + ")", CheckResult.Fail,ex));
+                    $"Failed to check for existance of the file described by GovernanceDocument '{this}' (ID={ID})", CheckResult.Fail,ex));
         }
     }
 

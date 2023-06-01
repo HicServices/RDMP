@@ -53,7 +53,7 @@ public class FolderNode<T> : IFolderNode, IOrderable /*Orderable interface ensur
             }
             else
             {
-                sb.Insert(0, p.Name + "\\");
+                sb.Insert(0, $"{p.Name}\\");
             }
                                 
             p = p.Parent;
@@ -62,10 +62,7 @@ public class FolderNode<T> : IFolderNode, IOrderable /*Orderable interface ensur
         return sb.ToString();
     }
 
-    public FolderNode<T> this[string key]
-    {
-        get => GetChild(key);
-    }
+    public FolderNode<T> this[string key] => GetChild(key);
 
     private FolderNode<T> GetChild(string key)
     {

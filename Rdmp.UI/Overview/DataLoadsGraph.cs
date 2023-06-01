@@ -111,14 +111,14 @@ public partial class DataLoadsGraph : RDMPUserControl, IDashboardableControl
         ragSmiley1.Reset();
         ragSmiley1.SetVisible(false);
 
-        Thread t = new Thread(() =>
+        var t = new Thread(() =>
         {
             try
             {
-                int countManualLoadsuccessful = 0;
-                int countManualLoadFailure = 0;
+                var countManualLoadsuccessful = 0;
+                var countManualLoadFailure = 0;
                     
-                foreach (LoadMetadata metadata in Activator.RepositoryLocator.CatalogueRepository.GetAllObjects<LoadMetadata>())
+                foreach (var metadata in Activator.RepositoryLocator.CatalogueRepository.GetAllObjects<LoadMetadata>())
                 {
                     try
                     {
@@ -138,7 +138,7 @@ public partial class DataLoadsGraph : RDMPUserControl, IDashboardableControl
                             throw;
                         }
 
-                        ArchivalDataLoadInfo archivalDataLoadInfo = logManager.GetArchivalDataLoadInfos(metadata.GetDistinctLoggingTask()).FirstOrDefault();
+                        var archivalDataLoadInfo = logManager.GetArchivalDataLoadInfos(metadata.GetDistinctLoggingTask()).FirstOrDefault();
 
                         bool lastLoadWasError;
 
@@ -202,7 +202,7 @@ public partial class DataLoadsGraph : RDMPUserControl, IDashboardableControl
                     return;
                 }
 
-                DataTable dt = new DataTable();
+                var dt = new DataTable();
                 dt.Columns.Add("Category");
                 dt.Columns.Add("NumberOfDataLoadsAtStatus");
 
@@ -227,7 +227,7 @@ public partial class DataLoadsGraph : RDMPUserControl, IDashboardableControl
                         countManualLoadsuccessful
                     }.Max();
 
-                    int gridMarkEvery = max == 0 ? 1 : Math.Max(max/10, 1);
+                    var gridMarkEvery = max == 0 ? 1 : Math.Max(max/10, 1);
 
 
                     chart1.ChartAreas[0].AxisY.Interval = gridMarkEvery;

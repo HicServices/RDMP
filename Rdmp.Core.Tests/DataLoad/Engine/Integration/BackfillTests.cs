@@ -49,8 +49,8 @@ public class BackfillTests : FromToDatabaseTests
         {
             connection.Open();
 
-            var cmd = new SqlCommand("INSERT INTO [Samples] (ID, SampleDate, Description, "+SpecialFieldNames.ValidFrom+", "+SpecialFieldNames.DataLoadRunID+") VALUES " +
-                                     "(10, '2016-01-10T12:00:00', 'Earlier than corresponding new data, should be updated', '2016-01-10T12:00:00', 1)", connection);
+            var cmd = new SqlCommand(
+                $"INSERT INTO [Samples] (ID, SampleDate, Description, {SpecialFieldNames.ValidFrom}, {SpecialFieldNames.DataLoadRunID}) VALUES (10, '2016-01-10T12:00:00', 'Earlier than corresponding new data, should be updated', '2016-01-10T12:00:00', 1)", connection);
             cmd.ExecuteNonQuery();
         }
 
@@ -67,7 +67,7 @@ public class BackfillTests : FromToDatabaseTests
         #endregion
 
         // databases are now represent state after push to From and before migration
-        Mutilate("[" + DatabaseName + "].[dbo].[Samples].[SampleDate]");
+        Mutilate($"[{DatabaseName}].[dbo].[Samples].[SampleDate]");
 
         // check that From contains the correct data
         using (var connection = (SqlConnection)From.Server.GetConnection())
@@ -120,8 +120,8 @@ public class BackfillTests : FromToDatabaseTests
         {
             connection.Open();
 
-            var cmd = new SqlCommand("INSERT INTO [Samples] (ID, SampleDate, Description, " + SpecialFieldNames.ValidFrom + ", " + SpecialFieldNames.DataLoadRunID + ") VALUES " +
-                                     "(1, '2016-01-10T12:00:00', 'Later than corresponding new data, should not be updated', '2016-01-10T12:00:00', 1)", connection);
+            var cmd = new SqlCommand(
+                $"INSERT INTO [Samples] (ID, SampleDate, Description, {SpecialFieldNames.ValidFrom}, {SpecialFieldNames.DataLoadRunID}) VALUES (1, '2016-01-10T12:00:00', 'Later than corresponding new data, should not be updated', '2016-01-10T12:00:00', 1)", connection);
             cmd.ExecuteNonQuery();
         }
 
@@ -138,7 +138,7 @@ public class BackfillTests : FromToDatabaseTests
         #endregion
 
         // databases are now represent state after push to From and before migration
-        Mutilate("[" + DatabaseName + "].[dbo].[Samples].[SampleDate]");
+        Mutilate($"[{DatabaseName}].[dbo].[Samples].[SampleDate]");
 
         // check that From contains the correct data
         using (var connection = (SqlConnection)From.Server.GetConnection())
@@ -180,7 +180,7 @@ public class BackfillTests : FromToDatabaseTests
         #endregion
 
         // databases are now represent state after push to From and before migration
-        Mutilate("[" + DatabaseName + "].[dbo].[Samples].[SampleDate]");
+        Mutilate($"[{DatabaseName}].[dbo].[Samples].[SampleDate]");
 
         // check that From contains the correct data
         using (var connection = (SqlConnection)From.Server.GetConnection())
@@ -228,7 +228,7 @@ public class BackfillTests : FromToDatabaseTests
         }
         #endregion
 
-        Mutilate("[" + DatabaseName + "].[dbo].[Samples].[SampleDate]");
+        Mutilate($"[{DatabaseName}].[dbo].[Samples].[SampleDate]");
 
         // todo: asserts
         using (var connection = (SqlConnection)From.Server.GetConnection())
@@ -317,7 +317,7 @@ public class BackfillTests : FromToDatabaseTests
 
         #endregion
 
-        Mutilate("[" + DatabaseName + "].[dbo].[Samples].[SampleDate]");
+        Mutilate($"[{DatabaseName}].[dbo].[Samples].[SampleDate]");
 
         // From should be exactly the same as it was before mutilation as there is a single update
         using (var connection = (SqlConnection)From.Server.GetConnection())
@@ -383,7 +383,7 @@ public class BackfillTests : FromToDatabaseTests
 
         #endregion
 
-        Mutilate("[" + DatabaseName + "].[dbo].[Samples].[SampleDate]");
+        Mutilate($"[{DatabaseName}].[dbo].[Samples].[SampleDate]");
 
         // From should be exactly the same as it was before mutilation as there is a single update
         using (var connection = (SqlConnection)From.Server.GetConnection())
@@ -469,7 +469,7 @@ public class BackfillTests : FromToDatabaseTests
 
         #endregion
 
-        Mutilate("[" + DatabaseName + "].[dbo].[Samples].[SampleDate]");
+        Mutilate($"[{DatabaseName}].[dbo].[Samples].[SampleDate]");
 
         // From should be exactly the same as it was before mutilation as there is a single update
         using (var connection = (SqlConnection)From.Server.GetConnection())
@@ -561,7 +561,7 @@ public class BackfillTests : FromToDatabaseTests
 
         #endregion
 
-        Mutilate("[" + DatabaseName + "].[dbo].[Samples].[SampleDate]");
+        Mutilate($"[{DatabaseName}].[dbo].[Samples].[SampleDate]");
 
         // From should be exactly the same as it was before mutilation as there is a single update
         using (var connection = (SqlConnection)From.Server.GetConnection())
@@ -629,7 +629,7 @@ public class BackfillTests : FromToDatabaseTests
             
         #endregion
 
-        Mutilate("[" + DatabaseName + "].[dbo].[Samples].[SampleDate]");
+        Mutilate($"[{DatabaseName}].[dbo].[Samples].[SampleDate]");
 
         // From should be exactly the same as it was before mutilation as there is a single update
         using (var connection = (SqlConnection)From.Server.GetConnection())
@@ -697,7 +697,7 @@ public class BackfillTests : FromToDatabaseTests
 
         #endregion
 
-        Mutilate("[" + DatabaseName + "].[dbo].[Samples].[SampleDate]");
+        Mutilate($"[{DatabaseName}].[dbo].[Samples].[SampleDate]");
 
         // From should be exactly the same as it was before mutilation as there is a single update
         using (var connection = (SqlConnection)From.Server.GetConnection())
@@ -778,7 +778,7 @@ public class BackfillTests : FromToDatabaseTests
 
         #endregion
 
-        Mutilate("[" + DatabaseName + "].[dbo].[Samples].[SampleDate]");
+        Mutilate($"[{DatabaseName}].[dbo].[Samples].[SampleDate]");
 
         using (var connection = (SqlConnection)From.Server.GetConnection())
         {
@@ -832,26 +832,26 @@ public class BackfillTests : FromToDatabaseTests
             throw new InvalidOperationException("Primary Key column is required.");
 
         var pkConstraint = String.Format("CONSTRAINT PK_{0} PRIMARY KEY ({1})", tableName, pkColumn);
-        var stagingTableDefinition = columnDefinitions + ", " + pkConstraint;
+        var stagingTableDefinition = $"{columnDefinitions}, {pkConstraint}";
         var liveTableDefinition = columnDefinitions + String.Format(", hic_validFrom DATETIME, hic_dataLoadRunID int, " + pkConstraint);
 
         if (fkConstraintString != null)
         {
-            stagingTableDefinition += ", " + fkConstraintString;
-            liveTableDefinition += ", " + fkConstraintString;
+            stagingTableDefinition += $", {fkConstraintString}";
+            liveTableDefinition += $", {fkConstraintString}";
         }
 
 
         using (var con = (SqlConnection) From.Server.GetConnection())
         {
             con.Open();
-            new SqlCommand("CREATE TABLE " + tableName + " (" + stagingTableDefinition + ")",con).ExecuteNonQuery();
+            new SqlCommand($"CREATE TABLE {tableName} ({stagingTableDefinition})",con).ExecuteNonQuery();
         }
 
         using(var con = (SqlConnection)To.Server.GetConnection())
         {
             con.Open();
-            new SqlCommand("CREATE TABLE " + tableName + " (" + liveTableDefinition + ")",con).ExecuteNonQuery(); 
+            new SqlCommand($"CREATE TABLE {tableName} ({liveTableDefinition})",con).ExecuteNonQuery(); 
         }
     }
 
@@ -944,7 +944,8 @@ public class BackfillTests : FromToDatabaseTests
         // databases are now represent state after push to From and before migration
         var mutilator = new StagingBackfillMutilator
         {
-            TimePeriodicityField = CatalogueRepository.GetAllObjects<ColumnInfo>().Single(ci=>ci.Name == "[" + DatabaseName + "]..[Samples].[SampleDate]"),
+            TimePeriodicityField = CatalogueRepository.GetAllObjects<ColumnInfo>().Single(ci=>ci.Name ==
+                $"[{DatabaseName}]..[Samples].[SampleDate]"),
             TestContext = true,
             TableNamingScheme = new IdentityTableNamingScheme()
         };

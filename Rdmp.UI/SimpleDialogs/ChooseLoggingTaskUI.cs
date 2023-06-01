@@ -37,7 +37,7 @@ public partial class ChooseLoggingTaskUI : RDMPUserControl, ICheckNotifier
     private string expectedDatabaseTypeString = "HIC.Logging.Database";
     public Catalogue Catalogue
     {
-        get { return _catalogue; }
+        get => _catalogue;
         set
         {
             _catalogue = value;
@@ -63,7 +63,8 @@ public partial class ChooseLoggingTaskUI : RDMPUserControl, ICheckNotifier
                 .SingleOrDefault(i => i.ID == (int)_catalogue.LiveLoggingServer_ID);
 
             if(liveserver == null)
-                throw new Exception("Catalogue '" + _catalogue + "' lists its Live Logging Server as '" + _catalogue.LiveLoggingServer + "' did not appear in combo box, possibly it is not marked as a '" + expectedDatabaseTypeString + "' server? Try editting it in Locations=>Manage External Servers");
+                throw new Exception(
+                    $"Catalogue '{_catalogue}' lists its Live Logging Server as '{_catalogue.LiveLoggingServer}' did not appear in combo box, possibly it is not marked as a '{expectedDatabaseTypeString}' server? Try editting it in Locations=>Manage External Servers");
 
             ddLoggingServer.SelectedItem = liveserver;
         }
@@ -74,7 +75,7 @@ public partial class ChooseLoggingTaskUI : RDMPUserControl, ICheckNotifier
             //if the catalogue knows its logging server - populate values
             if (liveserver != null)
             {
-                LogManager lm = new LogManager(liveserver);
+                var lm = new LogManager(liveserver);
 
                 foreach (var t in lm.ListDataTasks())
                     if (!cbxDataLoadTasks.Items.Contains(t))
@@ -85,7 +86,7 @@ public partial class ChooseLoggingTaskUI : RDMPUserControl, ICheckNotifier
         catch (Exception ex)
         {
 
-            MessageBox.Show("Problem getting the list of DataTasks from the new logging architecture:" + ex.Message);
+            MessageBox.Show($"Problem getting the list of DataTasks from the new logging architecture:{ex.Message}");
         }
 
         if (!string.IsNullOrWhiteSpace(_catalogue.LoggingDataTask))
@@ -116,7 +117,7 @@ public partial class ChooseLoggingTaskUI : RDMPUserControl, ICheckNotifier
 
     private void RefreshTasks()
     {
-        ExternalDatabaseServer liveserver = ddLoggingServer.SelectedItem as ExternalDatabaseServer;
+        var liveserver = ddLoggingServer.SelectedItem as ExternalDatabaseServer;
         var server = DataAccessPortal.GetInstance().ExpectServer(liveserver, DataAccessContext.Logging);
 
         if (liveserver != null)
@@ -125,7 +126,7 @@ public partial class ChooseLoggingTaskUI : RDMPUserControl, ICheckNotifier
 
             try
             {
-                LogManager lm = new LogManager(server);
+                var lm = new LogManager(server);
                 cbxDataLoadTasks.Items.AddRange(lm.ListDataTasks());
             }
             catch (Exception e)
@@ -177,12 +178,12 @@ public partial class ChooseLoggingTaskUI : RDMPUserControl, ICheckNotifier
         {
             var liveServer =  ddLoggingServer.SelectedItem as ExternalDatabaseServer;
 
-            string target = "";
+            var target = "";
 
-            string toCreate = cbxDataLoadTasks.Text;
+            var toCreate = cbxDataLoadTasks.Text;
 
             if (liveServer != null)
-                target = liveServer.Server + "." + liveServer.Database;
+                target = $"{liveServer.Server}.{liveServer.Database}";
                 
             if (string.IsNullOrEmpty(target))
             {
@@ -191,12 +192,12 @@ public partial class ChooseLoggingTaskUI : RDMPUserControl, ICheckNotifier
                 return;
             }
 
-            if(Activator.YesNo("Create a new dataset and new data task called \"" + toCreate + "\" in " + target, "Create new logging task"))
+            if(Activator.YesNo($"Create a new dataset and new data task called \"{toCreate}\" in {target}", "Create new logging task"))
             {
                 if (liveServer != null)
                 {
 
-                    LoggingDatabaseChecker checker = new LoggingDatabaseChecker(liveServer);
+                    var checker = new LoggingDatabaseChecker(liveServer);
                     checker.Check(this);
 
                     new LogManager(liveServer)
@@ -256,7 +257,8 @@ public partial class ChooseLoggingTaskUI : RDMPUserControl, ICheckNotifier
             ragSmiley1.Warning(new Exception("You must provide a Data Task name e.g. 'Loading my cool dataset'"));
         else
         if (!cbxDataLoadTasks.Items.Contains(cbxDataLoadTasks.Text))
-            ragSmiley1.Fatal(new Exception("Task '" + cbxDataLoadTasks.Text + "' does not exist yet, select 'Create' to create it"));
+            ragSmiley1.Fatal(new Exception(
+                $"Task '{cbxDataLoadTasks.Text}' does not exist yet, select 'Create' to create it"));
     }
 
     private void btnCreateNewLoggingServer_Click(object sender, EventArgs e)

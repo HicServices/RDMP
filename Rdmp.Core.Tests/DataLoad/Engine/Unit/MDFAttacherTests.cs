@@ -109,10 +109,10 @@ public class MDFAttacherTests : DatabaseTests
     [Test]
     public void TestLocations_NoNetworkPath()
     {
-        foreach (string remnant in Directory.EnumerateFiles(TestContext.CurrentContext.TestDirectory, "MyFile*.mdf"))
+        foreach (var remnant in Directory.EnumerateFiles(TestContext.CurrentContext.TestDirectory, "MyFile*.mdf"))
             File.Delete(remnant);
 
-        foreach (string remnant in Directory.EnumerateFiles(TestContext.CurrentContext.TestDirectory, "MyFile*.ldf"))
+        foreach (var remnant in Directory.EnumerateFiles(TestContext.CurrentContext.TestDirectory, "MyFile*.ldf"))
             File.Delete(remnant);
 
         var mdf = Path.Combine(TestContext.CurrentContext.TestDirectory, "MyFile.mdf");
@@ -123,7 +123,7 @@ public class MDFAttacherTests : DatabaseTests
             File.WriteAllText(mdf, "fish");
             File.WriteAllText(ldf, "fish");
 
-            string serverDatabasePath = @"H:/Program Files/Microsoft SQL Server/MSSQL13.SQLEXPRESS/MSSQL/DATA/";
+            var serverDatabasePath = @"H:/Program Files/Microsoft SQL Server/MSSQL13.SQLEXPRESS/MSSQL/DATA/";
             var locations = new MdfFileAttachLocations(new DirectoryInfo(TestContext.CurrentContext.TestDirectory), serverDatabasePath, null);
                 
 
@@ -145,10 +145,10 @@ public class MDFAttacherTests : DatabaseTests
     [Test]
     public void TestTwoFiles()
     {
-        foreach (string remnant in Directory.EnumerateFiles(TestContext.CurrentContext.TestDirectory, "MyFile*.mdf"))
+        foreach (var remnant in Directory.EnumerateFiles(TestContext.CurrentContext.TestDirectory, "MyFile*.mdf"))
             File.Delete(remnant);
 
-        foreach (string remnant in Directory.EnumerateFiles(TestContext.CurrentContext.TestDirectory, "MyFile*.ldf"))
+        foreach (var remnant in Directory.EnumerateFiles(TestContext.CurrentContext.TestDirectory, "MyFile*.ldf"))
             File.Delete(remnant);
 
         var mdf1 = Path.Combine(TestContext.CurrentContext.TestDirectory, "MyFile1.mdf");
@@ -163,7 +163,7 @@ public class MDFAttacherTests : DatabaseTests
             File.WriteAllText(ldf1, "fish");
             File.WriteAllText(ldf2, "fish");
 
-            string serverDatabasePath = TestContext.CurrentContext.WorkDirectory;
+            var serverDatabasePath = TestContext.CurrentContext.WorkDirectory;
             Assert.Throws<MultipleMatchingFilesException>(()=>new MdfFileAttachLocations(new DirectoryInfo(TestContext.CurrentContext.TestDirectory), serverDatabasePath, null));
                 
         }
@@ -201,7 +201,8 @@ public class MDFAttacherTests : DatabaseTests
         var memory2 = new ToMemoryCheckNotifier(new ThrowImmediatelyCheckNotifier());
         mdf.OverrideMDFFileCopyDestination = TestContext.CurrentContext.WorkDirectory;
         mdf.Check(memory2);
-        Assert.IsTrue(memory2.Messages.Any(m => Regex.IsMatch(m.Message,@"Found server DATA folder .*" + Regex.Escape(TestContext.CurrentContext.WorkDirectory)) && m.Result == CheckResult.Success));
+        Assert.IsTrue(memory2.Messages.Any(m => Regex.IsMatch(m.Message,
+            $@"Found server DATA folder .*{Regex.Escape(TestContext.CurrentContext.WorkDirectory)}") && m.Result == CheckResult.Success));
 
         hicProjDir.RootPath.Delete(true);
 
@@ -210,10 +211,10 @@ public class MDFAttacherTests : DatabaseTests
     [Test]
     public void TestLocations_NetworkPath()
     {
-        foreach (string remnant in Directory.EnumerateFiles(TestContext.CurrentContext.TestDirectory, "MyFile*.mdf"))
+        foreach (var remnant in Directory.EnumerateFiles(TestContext.CurrentContext.TestDirectory, "MyFile*.mdf"))
             File.Delete(remnant);
 
-        foreach (string remnant in Directory.EnumerateFiles(TestContext.CurrentContext.TestDirectory, "MyFile*.ldf"))
+        foreach (var remnant in Directory.EnumerateFiles(TestContext.CurrentContext.TestDirectory, "MyFile*.ldf"))
             File.Delete(remnant);
 
         var mdf = Path.Combine(TestContext.CurrentContext.TestDirectory, "MyFile.mdf");
@@ -224,7 +225,7 @@ public class MDFAttacherTests : DatabaseTests
             File.WriteAllText(mdf, "fish");
             File.WriteAllText(ldf, "fish");
 
-            string serverDatabasePath = @"H:/Program Files/Microsoft SQL Server/MSSQL13.SQLEXPRESS/MSSQL/DATA/";
+            var serverDatabasePath = @"H:/Program Files/Microsoft SQL Server/MSSQL13.SQLEXPRESS/MSSQL/DATA/";
             var locations = new MdfFileAttachLocations(new DirectoryInfo(TestContext.CurrentContext.TestDirectory), serverDatabasePath, @"//MyDbServer1/Share/Database");
 
 
@@ -283,26 +284,26 @@ public class MDFAttacherTests : DatabaseTests
     [Test]
     public void TestConstructors()
     {
-        string actualName = typeof(MyClass).ToString();
+        var actualName = typeof(MyClass).ToString();
 
-        Console.WriteLine("About to instantiate a :" + actualName);
+        Console.WriteLine($"About to instantiate a :{actualName}");
 
         //convert type name as a string into a legit Type
         var type = Type.GetType(actualName, true, false);
 
         //ensure that the Type implements IAttacher
         if(!typeof(IAttacher).IsAssignableFrom(type))
-            throw new TypeLoadException("Type " + type + " does not implement IAttacher");
+            throw new TypeLoadException($"Type {type} does not implement IAttacher");
 
         //find the blank constructor
-        ConstructorInfo constructorInfo = type.GetConstructor(new Type[] {});
+        var constructorInfo = type.GetConstructor(new Type[] {});
             
         //if it doesnt have one
         if(constructorInfo == null)
-            throw new TypeLoadException("Type " + type + " does not have a blank constructor");
+            throw new TypeLoadException($"Type {type} does not have a blank constructor");
 
         //call the blank constructor and return the reuslts
-        IAttacher bob = (IAttacher) constructorInfo.Invoke(new Type[] {});
+        var bob = (IAttacher) constructorInfo.Invoke(new Type[] {});
 
         
     }

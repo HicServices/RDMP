@@ -79,7 +79,7 @@ public partial class DataLoadProgressUpdateInfoUI : Form, ICustomUI<DataLoadProg
     {
         var selected = (DataLoadProgressUpdateStrategy) ddStrategy.SelectedItem;
 
-        bool setvisible = selected == DataLoadProgressUpdateStrategy.ExecuteScalarSQLInLIVE ||selected == DataLoadProgressUpdateStrategy.ExecuteScalarSQLInRAW;
+        var setvisible = selected == DataLoadProgressUpdateStrategy.ExecuteScalarSQLInLIVE ||selected == DataLoadProgressUpdateStrategy.ExecuteScalarSQLInRAW;
         pSQL.Visible = setvisible;
         tbTimeout.Visible = setvisible;
         lblTimeout.Visible = setvisible;

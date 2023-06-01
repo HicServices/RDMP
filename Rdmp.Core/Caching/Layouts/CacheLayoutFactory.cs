@@ -38,8 +38,8 @@ public class CacheLayoutFactory
     {
         const string whatWeExpected = @"(we expected one that was a MEF class implementing ICachedDataProvider since you are trying to execute a cache based data load)";
 
-        List<ProcessTask> incompatibleProviders = new List<ProcessTask>();
-        List<ProcessTask> compatibleProviders = new List<ProcessTask>();
+        var incompatibleProviders = new List<ProcessTask>();
+        var compatibleProviders = new List<ProcessTask>();
 
 
         foreach (ProcessTask task in processTasks)
@@ -58,13 +58,16 @@ public class CacheLayoutFactory
         }
 
         if (!incompatibleProviders.Any() && !compatibleProviders.Any())
-            throw new CacheDataProviderFindingException("LoadMetadata " + metadata + " does not have ANY process tasks of type ProcessTaskType.DataProvider " + whatWeExpected);
+            throw new CacheDataProviderFindingException(
+                $"LoadMetadata {metadata} does not have ANY process tasks of type ProcessTaskType.DataProvider {whatWeExpected}");
 
         if (!compatibleProviders.Any())
-            throw new CacheDataProviderFindingException("LoadMetadata " + metadata + " has some DataProviders tasks but none of them wrap classes that implement ICachedDataProvider " + whatWeExpected + " FYI the data providers in your load wrap the following classes:" + string.Join(",", incompatibleProviders.Select(t => t.Path)));
+            throw new CacheDataProviderFindingException(
+                $"LoadMetadata {metadata} has some DataProviders tasks but none of them wrap classes that implement ICachedDataProvider {whatWeExpected} FYI the data providers in your load wrap the following classes:{string.Join(",", incompatibleProviders.Select(t => t.Path))}");
 
         if (compatibleProviders.Count > 1)
-            throw new CacheDataProviderFindingException("LoadMetadata " + metadata + " has multiple cache DataProviders tasks (" + string.Join(",", compatibleProviders.Select(p => p.ToString())) + "), you are only allowed 1");
+            throw new CacheDataProviderFindingException(
+                $"LoadMetadata {metadata} has multiple cache DataProviders tasks ({string.Join(",", compatibleProviders.Select(p => p.ToString()))}), you are only allowed 1");
 
     }
 }

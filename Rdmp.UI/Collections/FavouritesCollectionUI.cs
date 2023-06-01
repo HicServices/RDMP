@@ -90,7 +90,7 @@ public partial class FavouritesCollectionUI : RDMPCollectionUI, ILifetimeSubscri
     {
         var potentialRootFavourites = activator.CoreChildProvider.GetAllSearchables().Where(k=>condition(k.Key)).ToArray();
 
-        List<IMapsDirectlyToDatabaseTable> hierarchyCollisions = new List<IMapsDirectlyToDatabaseTable>();
+        var hierarchyCollisions = new List<IMapsDirectlyToDatabaseTable>();
 
         //find hierarchy collisions (shared hierarchy in which one Favourite object includes a tree of objects some of which are Favourited).  For this only display the parent
         foreach (var currentFavourite in potentialRootFavourites)
@@ -100,14 +100,14 @@ public partial class FavouritesCollectionUI : RDMPCollectionUI, ILifetimeSubscri
                 continue;
 
             //if any of the current favourites parents
-            foreach (object parent in currentFavourite.Value.Parents)
+            foreach (var parent in currentFavourite.Value.Parents)
                 //are favourites
                 if (potentialRootFavourites.Any(kvp => kvp.Key.Equals(parent)))
                     //then this is not a favourite it's a collision (already favourited under another node)
                     hierarchyCollisions.Add(currentFavourite.Key);    
         }
 
-        List<IMapsDirectlyToDatabaseTable> actualRootFavourites = new List<IMapsDirectlyToDatabaseTable>();
+        var actualRootFavourites = new List<IMapsDirectlyToDatabaseTable>();
 
         foreach (var currentFavourite in potentialRootFavourites)
         {

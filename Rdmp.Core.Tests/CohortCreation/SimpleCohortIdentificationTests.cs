@@ -27,7 +27,7 @@ public class SimpleCohortIdentificationTests:DatabaseTests
             config.SaveToDatabase();
 
 
-            CohortIdentificationConfiguration config2 = CatalogueRepository.GetObjectByID<CohortIdentificationConfiguration>(config.ID);
+            var config2 = CatalogueRepository.GetObjectByID<CohortIdentificationConfiguration>(config.ID);
             Assert.AreEqual("Hi there", config2.Description);
         }
         finally 

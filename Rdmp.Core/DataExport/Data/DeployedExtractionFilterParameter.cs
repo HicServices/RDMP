@@ -35,45 +35,42 @@ public class DeployedExtractionFilterParameter: DatabaseEntity, ISqlParameter
     [Relationship(typeof(DeployedExtractionFilter),RelationshipType.SharedObject)]
     public int ExtractionFilter_ID
     {
-        get { return _extractionFilter_ID; }
-        set { SetField(ref _extractionFilter_ID, value); }
+        get => _extractionFilter_ID;
+        set => SetField(ref _extractionFilter_ID, value);
     }
 
     /// <inheritdoc/>
     [Sql]
     public string ParameterSQL
     {
-        get { return _parameterSQL; }
-        set { SetField(ref _parameterSQL, value); }
+        get => _parameterSQL;
+        set => SetField(ref _parameterSQL, value);
     }
 
     /// <inheritdoc/>
     [Sql]
     public string Value
     {
-        get { return _value; }
-        set { SetField(ref _value, value); }
+        get => _value;
+        set => SetField(ref _value, value);
     }
 
     /// <inheritdoc/>
     public string Comment
     {
-        get { return _comment; }
-        set { SetField(ref _comment, value); }
+        get => _comment;
+        set => SetField(ref _comment, value);
     }
     #endregion
         
     /// <inheritdoc/>
     [NoMappingToDatabase]
-    public string ParameterName
-    {
-        get { return QuerySyntaxHelper.GetParameterNameFromDeclarationSQL(ParameterSQL); }
-    }
+    public string ParameterName => QuerySyntaxHelper.GetParameterNameFromDeclarationSQL(ParameterSQL);
 
     #region Relationships
     [NoMappingToDatabase]
-    public DeployedExtractionFilter ExtractionFilter { get { 
-        return Repository.GetObjectByID<DeployedExtractionFilter>(ExtractionFilter_ID); }  }
+    public DeployedExtractionFilter ExtractionFilter => Repository.GetObjectByID<DeployedExtractionFilter>(ExtractionFilter_ID);
+
     #endregion
 
     public DeployedExtractionFilterParameter()
@@ -117,7 +114,7 @@ public class DeployedExtractionFilterParameter: DatabaseEntity, ISqlParameter
     /// <returns></returns>
     public override string ToString()
     {
-        return ParameterName + " = " + Value;
+        return $"{ParameterName} = {Value}";
     }
 
     /// <summary>

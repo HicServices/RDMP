@@ -45,7 +45,7 @@ public class DocXHelper
         foreach(var para in ptext.Split(Environment.NewLine, StringSplitOptions.RemoveEmptyEntries))
         {
             var h = document.CreateParagraph();
-            XWPFRun r0 = h.CreateRun();
+            var r0 = h.CreateRun();
             //file data
             r0.SetText(para);
 
@@ -57,7 +57,7 @@ public class DocXHelper
     protected void InsertHeader(XWPFDocument document, string htext, int headSize = 1)
     {
         var h = document.CreateParagraph();
-        XWPFRun r0 = h.CreateRun();
+        var r0 = h.CreateRun();
         r0.FontSize = GetSize(headSize);
 
         //file data
@@ -126,13 +126,13 @@ public class DocXHelper
 
     protected XWPFTable InsertTable(XWPFDocument document, int rowCount, int colCount)
     {
-        XWPFTable table1 = document.CreateTable(rowCount, colCount);
+        var table1 = document.CreateTable(rowCount, colCount);
         var tblLayout1 = table1.GetCTTbl().tblPr.AddNewTblLayout();
         tblLayout1.type = ST_TblLayoutType.@fixed;
 
         const int width = 10000;
 
-        for (int i = 0; i < colCount; i++)
+        for (var i = 0; i < colCount; i++)
         {
             table1.SetColumnWidth(i, (ulong)(width / colCount));
         }
@@ -146,17 +146,17 @@ public class DocXHelper
 
 
         var f = new FileInfo(Path.Combine(root.FullName,UsefulStuff.RemoveIllegalFilenameCharacters(desiredName) + extension));
-        int i = 1;
+        var i = 1;
 
         //file name is taken
         while (f.Exists)
         {
-            f = new FileInfo(Path.Combine(root.FullName, desiredName + "_" + i + extension));
+            f = new FileInfo(Path.Combine(root.FullName, $"{desiredName}_{i}{extension}"));
             i++;
 
             //give up it has clearly gone horribly wrong
             if (i > 100)
-                return new FileInfo(Path.Combine(root.FullName, "F" + Guid.NewGuid() + extension));
+                return new FileInfo(Path.Combine(root.FullName, $"F{Guid.NewGuid()}{extension}"));
         }
 
         return f;
@@ -174,7 +174,7 @@ public class DocXHelper
     /// <returns></returns>
     protected XWPFDocumentFile GetNewDocFile(string filename)
     {
-        FileInfo fi = GetUniqueFilenameInWorkArea(filename);
+        var fi = GetUniqueFilenameInWorkArea(filename);
         return new XWPFDocumentFile(fi,new FileStream(fi.FullName,FileMode.Create));
     }
     /// <summary>
@@ -196,15 +196,15 @@ public class DocXHelper
 
     protected void AddFooter(XWPFDocument document,string text,int textFontSize)
     {
-        CT_SectPr secPr = document.Document.body.sectPr;
-        CT_Ftr footer = new CT_Ftr();
+        var secPr = document.Document.body.sectPr;
+        var footer = new CT_Ftr();
         var run = footer.AddNewP().AddNewR();
         run.AddNewT().Value = text;
-        XWPFRelation relation2 = XWPFRelation.FOOTER;
-        XWPFFooter myFooter = (XWPFFooter)document.CreateRelationship(relation2, XWPFFactory.GetInstance(), document.FooterList.Count + 1);
+        var relation2 = XWPFRelation.FOOTER;
+        var myFooter = (XWPFFooter)document.CreateRelationship(relation2, XWPFFactory.GetInstance(), document.FooterList.Count + 1);
 
         myFooter.SetHeaderFooter(footer);
-        CT_HdrFtrRef myFooterRef = secPr.AddNewFooterReference();
+        var myFooterRef = secPr.AddNewFooterReference();
         myFooterRef.type = ST_HdrFtr.@default;
 #pragma warning disable CS0618 // Type or member is obsolete
         myFooterRef.id = myFooter.GetPackageRelationship().Id;

@@ -52,9 +52,11 @@ public class SingleScheduleCacheDateTrackingStrategy : IJobDateGenerationStrateg
         // CacheFillProgress is the date up to which caching has been performed, and is therefore the date from which caching will next begin.
         var cacheProgress = loadProgress.CacheProgress;
         if (cacheProgress == null)
-            throw new InvalidOperationException("Could not retrieve the CacheProgress from LoadProgress " + loadProgress.ID + " (ensure caching is configured on this load before using this strategy)");
+            throw new InvalidOperationException(
+                $"Could not retrieve the CacheProgress from LoadProgress {loadProgress.ID} (ensure caching is configured on this load before using this strategy)");
         if (cacheProgress.CacheFillProgress == null)
-            throw new InvalidOperationException("Caching has not begun for this CacheProgress (" + cacheProgress.ID + "), so there is nothing to load and this strategy should not be used.");
+            throw new InvalidOperationException(
+                $"Caching has not begun for this CacheProgress ({cacheProgress.ID}), so there is nothing to load and this strategy should not be used.");
 
         // We don't want to load partially filled cache files, so use the CacheFileGranularity to calculate the latest file we can safely load
         // CacheFileGranularity is a caching pipeline component argument, so need to get the runtime pipeline
@@ -84,7 +86,8 @@ public class SingleScheduleCacheDateTrackingStrategy : IJobDateGenerationStrateg
         }
         catch (Exception e)
         {
-            throw new Exception("We identified that your cache uses pipeline "+cacheProgress.Pipeline+ " but we could not instantiate the Pipeline's Destination instance, make sure the pipeline is intact in PipelineDiagramUI.  See inner exception for details",e );
+            throw new Exception(
+                $"We identified that your cache uses pipeline {cacheProgress.Pipeline} but we could not instantiate the Pipeline's Destination instance, make sure the pipeline is intact in PipelineDiagramUI.  See inner exception for details",e );
         }
 
         return destination;

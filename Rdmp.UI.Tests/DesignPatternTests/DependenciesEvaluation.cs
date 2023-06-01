@@ -29,9 +29,9 @@ public class DependenciesEvaluation
 
     public void FindProblems(VisualStudioSolutionFile sln)
     {
-        List<string> problems = new List<string>();
+        var problems = new List<string>();
 
-        foreach (string nuspecFile in _nuspecFiles)
+        foreach (var nuspecFile in _nuspecFiles)
         {
             var filePath = Path.Combine(sln.SolutionDirectory.FullName, nuspecFile);
             var text = File.ReadAllText(filePath);
@@ -39,7 +39,7 @@ public class DependenciesEvaluation
 
             //<dependency id="jacobslusser.ScintillaNET" version="3.6.3"
 
-            Regex r = new Regex(@"dependency id=([A-Za-z.0-9""]*)\s+version=([0-9.""]*)");
+            var r = new Regex(@"dependency id=([A-Za-z.0-9""]*)\s+version=([0-9.""]*)");
 
             foreach (Match match in r.Matches(text))
             {
@@ -51,51 +51,49 @@ public class DependenciesEvaluation
                 else
                 {
                     if (!Equals(Dependencies[assembly], version))
-                        throw new Exception("nuspec files could not agree on standard version for " + assembly);
+                        throw new Exception($"nuspec files could not agree on standard version for {assembly}");
                 }
             }
         }
 
         foreach (var project in sln.Projects)
         {
-            FileInfo csproj = new FileInfo(Path.Combine(sln.SolutionDirectory.FullName, project.Path));
+            var csproj = new FileInfo(Path.Combine(sln.SolutionDirectory.FullName, project.Path));
 
-            FileInfo fappConfig = new FileInfo(Path.Combine(csproj.Directory.FullName, "app.config"));
+            var fappConfig = new FileInfo(Path.Combine(csproj.Directory.FullName, "app.config"));
 
             if (fappConfig.Exists)
                 ProcessAppConfig(fappConfig, problems);
 
-            FileInfo fExeConfig = new FileInfo(Path.Combine(csproj.Directory.FullName,"RDMPAutomationService.exe.config"));
+            var fExeConfig = new FileInfo(Path.Combine(csproj.Directory.FullName,"RDMPAutomationService.exe.config"));
 
             if (fExeConfig.Exists)
                 ProcessAppConfig(fExeConfig,problems);
 
-            FileInfo fappPackages = new FileInfo(Path.Combine(csproj.Directory.FullName, "packages.config"));
+            var fappPackages = new FileInfo(Path.Combine(csproj.Directory.FullName, "packages.config"));
             if (fappPackages.Exists)
             {
                 //look for dodgy packages
                 //<package id="NUnit" version="2.6.4" />
 
-                XmlDocument dc = new XmlDocument();
+                var dc = new XmlDocument();
                 dc.Load(fappPackages.FullName);
 
                 foreach (XmlElement dependency in dc.GetElementsByTagName("package"))
                 {
-                    var assembly = '"' + dependency.Attributes["id"].Value + '"';
-                    var version = '"' + dependency.Attributes["version"].Value + '"';
+                    var assembly = $"\"{dependency.Attributes["id"].Value}\"";
+                    var version = $"\"{dependency.Attributes["version"].Value}\"";
 
                     if (Dependencies.ContainsKey(assembly))
                     {
                         if (!Equals(Dependencies[assembly], version))
-                            problems.Add("In package " + fappPackages.FullName + " you reference " + assembly +
-                                         " with version " + version + " but your nuspec has version " +
-                                         Dependencies[assembly]);
+                            problems.Add(
+                                $"In package {fappPackages.FullName} you reference {assembly} with version {version} but your nuspec has version {Dependencies[assembly]}");
                     }
                     else
                     {
-                        problems.Add("In package " + fappPackages.FullName + " you reference " + assembly +
-                                     "  (version " + version +
-                                     ") but no corresponding dependency listed in any of your nuspec files.");
+                        problems.Add(
+                            $"In package {fappPackages.FullName} you reference {assembly}  (version {version}) but no corresponding dependency listed in any of your nuspec files.");
                     }
 
                 }
@@ -105,10 +103,10 @@ public class DependenciesEvaluation
             var csprojFileContexnts = File.ReadAllText(csproj.FullName);
 
             //look for dodgy reference includes
-            foreach (KeyValuePair<string, string> dependency in Dependencies)
+            foreach (var dependency in Dependencies)
             {
                 //Reference Include="MySql.Data, Version=8.0.12.0
-                Regex r = new Regex(dependency.Key.Trim('"') + @", Version=([0-9.""]*)");
+                var r = new Regex($@"{dependency.Key.Trim('"')}, Version=([0-9.""]*)");
 
                 foreach (Match match in r.Matches(csprojFileContexnts))
                 {
@@ -116,9 +114,8 @@ public class DependenciesEvaluation
                     var versionInNuspec = dependency.Value;
 
                     if (!AreProbablyCompatibleVersions(versionInNuspec, versionInCsproj))
-                        problems.Add("csproj file " + project.Name + " lists dependency of " + dependency.Key +
-                                     " with version " + versionInCsproj + " while in the nuspec it is " +
-                                     versionInNuspec);
+                        problems.Add(
+                            $"csproj file {project.Name} lists dependency of {dependency.Key} with version {versionInCsproj} while in the nuspec it is {versionInNuspec}");
                 }
             }
         }
@@ -137,7 +134,7 @@ public class DependenciesEvaluation
         /*<assemblyIdentity name="Newtonsoft.Json" publicKeyToken="30ad4fe6b2a6aeed" culture="neutral" />
         <bindingRedirect oldVersion="0.0.0.0-11.0.0.0" newVersion="11.0.2.0" />*
              */
-        XmlDocument dc = new XmlDocument();
+        var dc = new XmlDocument();
         dc.Load(fappConfig.FullName);
 
         foreach (XmlElement dependency in dc.GetElementsByTagName("dependentAssembly"))
@@ -149,21 +146,19 @@ public class DependenciesEvaluation
 
             if (assemblyIdentity != null && bindingRedirect != null)
             {
-                var version = '"' + bindingRedirect.Attributes["newVersion"].Value + '"';
-                var assembly = '"' + assemblyIdentity.Attributes["name"].Value + '"';
+                var version = $"\"{bindingRedirect.Attributes["newVersion"].Value}\"";
+                var assembly = $"\"{assemblyIdentity.Attributes["name"].Value}\"";
 
                 if (Dependencies.ContainsKey(assembly))
                 {
                     if (!AreProbablyCompatibleVersions(Dependencies[assembly], version))
-                        problems.Add("You have a binding redirect in " + fappConfig.FullName + " for assembly " +
-                                     assembly + " to version " + version + " but your nuspec has version " +
-                                     Dependencies[assembly]);
+                        problems.Add(
+                            $"You have a binding redirect in {fappConfig.FullName} for assembly {assembly} to version {version} but your nuspec has version {Dependencies[assembly]}");
                 }
                 else
                 {
-                    problems.Add("You have a binding redirect in " + fappConfig.FullName + " for assembly " +
-                                 assembly +
-                                 " but no corresponding dependency listed in any of your nuspec files.  Why do you have binding redirects for assemblies that are not redistributed with RDMP?");
+                    problems.Add(
+                        $"You have a binding redirect in {fappConfig.FullName} for assembly {assembly} but no corresponding dependency listed in any of your nuspec files.  Why do you have binding redirects for assemblies that are not redistributed with RDMP?");
                 }
             }
         }

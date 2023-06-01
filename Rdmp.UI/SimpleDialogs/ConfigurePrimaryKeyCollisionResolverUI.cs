@@ -90,13 +90,13 @@ public partial class ConfigurePrimaryKeyCollisionResolverUI : RDMPForm
             lbPrimaryKeys.Items.Add(pkCol);
         }
 
-        List<IResolveDuplication> resolvers = new List<IResolveDuplication>();
+        var resolvers = new List<IResolveDuplication>();
         resolvers.AddRange(_table.ColumnInfos.Where(col => !col.IsPrimaryKey));
         resolvers.AddRange(_table.PreLoadDiscardedColumns);
 
         //if there is no order yet
         if(resolvers.All(r=>r.DuplicateRecordResolutionOrder == null))
-            for (int i = 0; i < resolvers.Count; i++)
+            for (var i = 0; i < resolvers.Count; i++)
             {
                 //set one up
                 resolvers[i].DuplicateRecordResolutionOrder = i;
@@ -104,7 +104,7 @@ public partial class ConfigurePrimaryKeyCollisionResolverUI : RDMPForm
             }
 
 
-        foreach (IResolveDuplication resolver in resolvers.OrderBy(o => o.DuplicateRecordResolutionOrder).ToArray())
+        foreach (var resolver in resolvers.OrderBy(o => o.DuplicateRecordResolutionOrder).ToArray())
         {
             //if it starts with hic_ 
             if (SpecialFieldNames.IsHicPrefixed(resolver))
@@ -117,7 +117,7 @@ public partial class ConfigurePrimaryKeyCollisionResolverUI : RDMPForm
             }
         }
 
-        foreach (IResolveDuplication resolver in resolvers.OrderBy(c => c.DuplicateRecordResolutionOrder))
+        foreach (var resolver in resolvers.OrderBy(c => c.DuplicateRecordResolutionOrder))
             lbConflictResolutionColumns.Items.Add(resolver);
 
         QueryEditor.ReadOnly = false;
@@ -126,7 +126,7 @@ public partial class ConfigurePrimaryKeyCollisionResolverUI : RDMPForm
         {
 
             //this is used only to generate the SQL preview of how to resolve primary key collisions so no username/password is required - hence the null,null
-            PrimaryKeyCollisionResolver resolver = new PrimaryKeyCollisionResolver(_table);
+            var resolver = new PrimaryKeyCollisionResolver(_table);
             QueryEditor.Text = resolver.GenerateSQL();
             CommonFunctionality.ScintillaGoRed(QueryEditor,false);
         }
@@ -157,24 +157,24 @@ public partial class ConfigurePrimaryKeyCollisionResolverUI : RDMPForm
     private void listBox1_DragOver(object sender, DragEventArgs e)
     {
         e.Effect = DragDropEffects.Move;
-        int idxHoverOver =
+        var idxHoverOver =
             lbConflictResolutionColumns.IndexFromPoint(lbConflictResolutionColumns.PointToClient(new Point(e.X, e.Y)));
 
-        Graphics g = lbConflictResolutionColumns.CreateGraphics();
+        var g = lbConflictResolutionColumns.CreateGraphics();
 
-        int top = lbConflictResolutionColumns.Font.Height*idxHoverOver;
+        var top = lbConflictResolutionColumns.Font.Height*idxHoverOver;
 
         top += lbConflictResolutionColumns.AutoScrollOffset.Y;
 
         //this seems to count up the number of items that have been skipped rather than the pixels... wierdo crazy
-        int barpos = NativeMethods.GetScrollPos(lbConflictResolutionColumns.Handle, Orientation.Vertical);
+        var barpos = NativeMethods.GetScrollPos(lbConflictResolutionColumns.Handle, Orientation.Vertical);
         barpos *= lbConflictResolutionColumns.Font.Height;
         top -= barpos;
 
 
         //calculate where we should be drawing our horizontal line
-        Point left = new Point(0, top);
-        Point right = new Point(lbConflictResolutionColumns.Width, top);
+        var left = new Point(0, top);
+        var right = new Point(lbConflictResolutionColumns.Width, top);
 
         //draw over the old one in the background colour (incase it has moved) - we don't want to leave trails
         g.DrawLine(new System.Drawing.Pen(lbConflictResolutionColumns.BackColor, 2), draggingOldLeftPoint,
@@ -188,20 +188,20 @@ public partial class ConfigurePrimaryKeyCollisionResolverUI : RDMPForm
 
     private void listBox1_DragDrop(object sender, DragEventArgs e)
     {
-        Point point = lbConflictResolutionColumns.PointToClient(new Point(e.X, e.Y));
-        int index = this.lbConflictResolutionColumns.IndexFromPoint(point);
+        var point = lbConflictResolutionColumns.PointToClient(new Point(e.X, e.Y));
+        var index = this.lbConflictResolutionColumns.IndexFromPoint(point);
 
         //if they are dragging it way down the bottom of the list
         if (index < 0)
             index = this.lbConflictResolutionColumns.Items.Count;
 
         //get the thing they are dragging
-        IResolveDuplication data =
+        var data =
             (IResolveDuplication)
             (e.Data.GetData(typeof (ColumnInfo)) ?? e.Data.GetData(typeof (PreLoadDiscardedColumn)));
 
         //find original index because if we are dragging down then we will want to adjust the index so that insert point is correct even after removing the object further up the list
-        int originalIndex = this.lbConflictResolutionColumns.Items.IndexOf(data);
+        var originalIndex = this.lbConflictResolutionColumns.Items.IndexOf(data);
 
         this.lbConflictResolutionColumns.Items.Remove(data);
 
@@ -217,9 +217,9 @@ public partial class ConfigurePrimaryKeyCollisionResolverUI : RDMPForm
 
     private void SaveOrderIntoDatabase()
     {
-        for (int i = 0; i < lbConflictResolutionColumns.Items.Count; i++)
+        for (var i = 0; i < lbConflictResolutionColumns.Items.Count; i++)
         {
-            IResolveDuplication extractionInformation = (IResolveDuplication) lbConflictResolutionColumns.Items[i];
+            var extractionInformation = (IResolveDuplication) lbConflictResolutionColumns.Items[i];
             extractionInformation.DuplicateRecordResolutionOrder = i;
             extractionInformation.SaveToDatabase();
         }
@@ -239,21 +239,20 @@ public partial class ConfigurePrimaryKeyCollisionResolverUI : RDMPForm
     {
         if (e.Button == MouseButtons.Right)
         {
-            int indexFromPoint = lbConflictResolutionColumns.IndexFromPoint(e.Location);
+            var indexFromPoint = lbConflictResolutionColumns.IndexFromPoint(e.Location);
 
             if (indexFromPoint != -1)
             {
                 var RightClickMenu = new ContextMenuStrip();
 
-                IResolveDuplication resolver =
+                var resolver =
                     (IResolveDuplication) lbConflictResolutionColumns.Items[indexFromPoint];
 
-                string target = resolver.DuplicateRecordResolutionIsAscending ? "DESC" : "ASC";
-                string currently = resolver.DuplicateRecordResolutionIsAscending ? "ASC" : "DESC";
+                var target = resolver.DuplicateRecordResolutionIsAscending ? "DESC" : "ASC";
+                var currently = resolver.DuplicateRecordResolutionIsAscending ? "ASC" : "DESC";
 
                 RightClickMenu.Items.Add(
-                    "Set " + resolver.GetRuntimeName() + " to " + target + " (Currently resolution order is " +
-                    currently + ")", null, delegate
+                    $"Set {resolver.GetRuntimeName()} to {target} (Currently resolution order is {currently})", null, delegate
                     {
                         //flip its bit
                         resolver.DuplicateRecordResolutionIsAscending =
@@ -279,7 +278,7 @@ public partial class ConfigurePrimaryKeyCollisionResolverUI : RDMPForm
     private void lbConflictResolutionColumns_DrawItem(object sender, DrawItemEventArgs e)
     {
         e.DrawBackground();
-        Graphics g = e.Graphics;
+        var g = e.Graphics;
 
         // draw the background color you want
         // mine is set to olive, change it to whatever you want
@@ -291,7 +290,7 @@ public partial class ConfigurePrimaryKeyCollisionResolverUI : RDMPForm
 
         if (e.Index != -1)
         {
-            string toDisplay = (sender as ListBox).Items[e.Index].ToString();
+            var toDisplay = (sender as ListBox).Items[e.Index].ToString();
 
             //if it matches filter
             if (toDisplay.ToLower().Contains(tbHighlight.Text.ToLower())
@@ -312,7 +311,7 @@ public partial class ConfigurePrimaryKeyCollisionResolverUI : RDMPForm
         try
         {
             //this is used only to generate the SQL preview of how to resolve primary key collisions so no username/password is required - hence the null,null
-            PrimaryKeyCollisionResolver resolver = new PrimaryKeyCollisionResolver(_table);
+            var resolver = new PrimaryKeyCollisionResolver(_table);
                 
             if(sender == btnCopyPreview)
                 System.Windows.Forms.Clipboard.SetText(resolver.GeneratePreviewSQL());

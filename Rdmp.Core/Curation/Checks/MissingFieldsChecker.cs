@@ -40,13 +40,13 @@ public class MissingFieldsChecker : ICheckable
         var db = server.GetCurrentDatabase();
         if(!db.Exists())
         {
-            notifier.OnCheckPerformed(new CheckEventArgs("Could not find database " + db ,CheckResult.Fail));
+            notifier.OnCheckPerformed(new CheckEventArgs($"Could not find database {db}",CheckResult.Fail));
             return;
         }
                 
         var tables = db.DiscoverTables(false);
 
-        foreach (Type type in _repository.GetCompatibleTypes())
+        foreach (var type in _repository.GetCompatibleTypes())
             CheckEntities(notifier, type, tables);
     }
 
@@ -72,58 +72,56 @@ public class MissingFieldsChecker : ICheckable
 
         //make sure argument was IMaps..
         if(!typeof(IMapsDirectlyToDatabaseTable).IsAssignableFrom(type))
-            throw new ArgumentException("Type " + type.Name + " passed into method was not an IMapsDirectlyToDatabaseTable");
+            throw new ArgumentException($"Type {type.Name} passed into method was not an IMapsDirectlyToDatabaseTable");
 
         //make sure table exists with exact same name as class
-        DiscoveredTable table = tables.SingleOrDefault(t => t.GetRuntimeName().Equals(type.Name));
+        var table = tables.SingleOrDefault(t => t.GetRuntimeName().Equals(type.Name));
 
         if (table == null)
         {
-            notifier.OnCheckPerformed(new CheckEventArgs("Could not find Table called " + type.Name +" (which implements IMapsDirectlyToDatabaseTable)",CheckResult.Fail, null));
+            notifier.OnCheckPerformed(new CheckEventArgs(
+                $"Could not find Table called {type.Name} (which implements IMapsDirectlyToDatabaseTable)",CheckResult.Fail, null));
             return;   
         }
             
-        notifier.OnCheckPerformed(new CheckEventArgs("Found Table " + type.Name, CheckResult.Success, null));
+        notifier.OnCheckPerformed(new CheckEventArgs($"Found Table {type.Name}", CheckResult.Success, null));
             
             
         //get columns from underlying database table
-        DiscoveredColumn[] columns = table.DiscoverColumns();
+        var columns = table.DiscoverColumns();
 
         //get the properties that are not explicitly set as not mapping to database
-        PropertyInfo[] properties = TableRepository.GetPropertyInfos(type);
+        var properties = TableRepository.GetPropertyInfos(type);
 
         //this is part of the interface and hence doesnt exist in the underlying data table
         properties = properties.Where(p => !p.Name.Equals("UpdateCommand")).ToArray();
 
         //find columns in database where there are no properties with the same name
-        IEnumerable<DiscoveredColumn> missingProperties = columns.Where(col => !properties.Any(p => p.Name.Equals(col.GetRuntimeName())));
-        IEnumerable<PropertyInfo> missingDatabaseFields = properties.Where(p => !columns.Any(col => col.GetRuntimeName().Equals(p.Name)));
+        var missingProperties = columns.Where(col => !properties.Any(p => p.Name.Equals(col.GetRuntimeName())));
+        var missingDatabaseFields = properties.Where(p => !columns.Any(col => col.GetRuntimeName().Equals(p.Name)));
 
-        bool problems = false;
-        foreach (DiscoveredColumn missingProperty in missingProperties)
+        var problems = false;
+        foreach (var missingProperty in missingProperties)
         {
             if(missingProperty.GetRuntimeName().Equals("RowVer"))
                 continue;
 
             notifier.OnCheckPerformed(new CheckEventArgs(
-                "Missing property " + missingProperty + " on class definition " + type.FullName + ", the underlying table contains this field but the class does not", CheckResult.Fail,
+                $"Missing property {missingProperty} on class definition {type.FullName}, the underlying table contains this field but the class does not", CheckResult.Fail,
                 null));
             problems = true;
         }
 
-        foreach (PropertyInfo missingDatabaseField in missingDatabaseFields)
+        foreach (var missingDatabaseField in missingDatabaseFields)
         {
             notifier.OnCheckPerformed(new CheckEventArgs(
-                "Missing field in database table " + table + " when compared to class definition " + type.FullName 
-                + " property was called " + missingDatabaseField.Name 
-                + " and was of type " + missingDatabaseField.PropertyType
-                + ((typeof(Enum).IsAssignableFrom(missingDatabaseField.PropertyType)?"(An Enum)":""))
+                $"Missing field in database table {table} when compared to class definition {type.FullName} property was called {missingDatabaseField.Name} and was of type {missingDatabaseField.PropertyType}{((typeof(Enum).IsAssignableFrom(missingDatabaseField.PropertyType) ? "(An Enum)" : ""))}"
                 , CheckResult.Warning,
                 null));
             problems = true;
         }
             
         if (!problems)
-            notifier.OnCheckPerformed(new CheckEventArgs("All fields present and correct in Type/Table " + table,CheckResult.Success,null));
+            notifier.OnCheckPerformed(new CheckEventArgs($"All fields present and correct in Type/Table {table}",CheckResult.Success,null));
     }
 }

@@ -36,12 +36,12 @@ public class SpontaneouslyInventedFilterContainer : ConcreteContainer, IContaine
         repo.InsertAndHydrate(this,new Dictionary<string, object>());
 
         if (subContainersIfAny != null)
-            foreach (IContainer container in subContainersIfAny)
+            foreach (var container in subContainersIfAny)
                 AddChild(container);
 
 
         if (filtersIfAny != null)
-            foreach (IFilter filter in filtersIfAny)
+            foreach (var filter in filtersIfAny)
                 if(filter is SpontaneouslyInventedFilter)
                     AddChild(filter);
                 else

@@ -37,9 +37,9 @@ public class TestDataInventor : CacheSource<TestDataWriterChunk>
         if (Request.Start > today)
             return null;
 
-        DateTime currentDay = Request.Start;
+        var currentDay = Request.Start;
             
-        List<FileInfo> toReturn = new List<FileInfo>();
+        var toReturn = new List<FileInfo>();
 
         while(currentDay <= Request.End)
         {
@@ -52,12 +52,12 @@ public class TestDataInventor : CacheSource<TestDataWriterChunk>
 
     private FileInfo GetFileForDay(DateTime currentDay)
     {
-        string filename = Path.Combine(WorkingFolder,currentDay.ToString("yyyyMMdd") + ".csv");
+        var filename = Path.Combine(WorkingFolder, $"{currentDay:yyyyMMdd}.csv");
 
-        string contents = "MyRand,DateOfRandom" + Environment.NewLine;
-        for (int i = 0; i < 100; i++)
+        var contents = $"MyRand,DateOfRandom{Environment.NewLine}";
+        for (var i = 0; i < 100; i++)
 #pragma warning disable SCS0005 // Weak random generator - This is not a secure context as it is simply a test helper.
-            contents += r.Next(10000) + "," + currentDay.ToString("yyyy-MM-dd") + Environment.NewLine;
+            contents += $"{r.Next(10000)},{currentDay:yyyy-MM-dd}{Environment.NewLine}";
 #pragma warning restore SCS0005 // Weak random generator
 
         File.WriteAllText(filename, contents);

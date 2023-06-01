@@ -160,7 +160,7 @@ public class PluginCohortCompilerTests : CohortQueryBuilderWithCacheTests
 
         // Create a regular normal boring old table that will join into the results of the API call
         var db = GetCleanedServer(DatabaseType.MicrosoftSQLServer);
-        using DataTable dt = new DataTable();
+        using var dt = new DataTable();
         dt.Columns.Add("chi");
         dt.Rows.Add("0101010101");
 

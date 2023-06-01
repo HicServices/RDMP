@@ -36,7 +36,7 @@ public class ExecuteCommandImportCatalogueItemDescription : BasicCommandExecutio
         if (available.Any(a => a.Name.Equals(_toPopulate.Name, StringComparison.CurrentCultureIgnoreCase)))
             initialSearchText = _toPopulate.Name;
             
-        if(SelectOne(available,out CatalogueItem selected,initialSearchText,false))
+        if(SelectOne(available,out var selected,initialSearchText,false))
         {
             CopyNonIDValuesAcross(selected, _toPopulate, true);
             _toPopulate.SaveToDatabase();
@@ -74,7 +74,7 @@ public class ExecuteCommandImportCatalogueItemDescription : BasicCommandExecutio
             if (propertyInfo.CanWrite == false || propertyInfo.CanRead == false)
                 continue;
 
-            object value = propertyInfo.GetValue(from, null);
+            var value = propertyInfo.GetValue(from, null);
             propertyInfo.SetValue(to, value, null);
         }
 

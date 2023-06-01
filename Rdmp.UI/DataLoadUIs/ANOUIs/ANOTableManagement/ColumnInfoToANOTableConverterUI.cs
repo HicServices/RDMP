@@ -66,7 +66,7 @@ public partial class ColumnInfoToANOTableConverterUI : ColumnInfoToANOTableConve
         
     public ColumnInfo ColumnInfo
     {
-        get { return _columnInfo; }
+        get => _columnInfo;
         private set
         {
             _columnInfo = value;
@@ -78,7 +78,7 @@ public partial class ColumnInfoToANOTableConverterUI : ColumnInfoToANOTableConve
 
     private ANOTable ANOTable
     {
-        get { return _anoTable; }
+        get => _anoTable;
         set
         {
             _anoTable = value;
@@ -114,7 +114,7 @@ public partial class ColumnInfoToANOTableConverterUI : ColumnInfoToANOTableConve
         ColumnInfo = databaseObject;
 
         //make sure we can connect to the server
-        if(!ColumnInfo.TableInfo.DiscoverExistence(DataAccessContext.DataLoad,out string reason))
+        if(!ColumnInfo.TableInfo.DiscoverExistence(DataAccessContext.DataLoad,out var reason))
         {
             activator.KillForm(ParentForm,reason);
             return;
@@ -131,7 +131,7 @@ public partial class ColumnInfoToANOTableConverterUI : ColumnInfoToANOTableConve
             {
                 checksUI1.OnCheckPerformed(
                     new CheckEventArgs(
-                        "Could not get rowcount of table " + ColumnInfo.TableInfo.GetRuntimeName() + " using data access context DataLoad", CheckResult.Fail, e));
+                        $"Could not get rowcount of table {ColumnInfo.TableInfo.GetRuntimeName()} using data access context DataLoad", CheckResult.Fail, e));
             }
 
 
@@ -202,9 +202,9 @@ public partial class ColumnInfoToANOTableConverterUI : ColumnInfoToANOTableConve
                 qb.AddColumn(new ColumnInfoToIColumn(new MemoryRepository(), _columnInfo));
                 qb.TopX = 10;
                     
-                bool rowsRead = false;
+                var rowsRead = false;
 
-                using (DbCommand cmd = server.GetCommand(qb.SQL, con))
+                using (var cmd = server.GetCommand(qb.SQL, con))
                 {
                     cmd.CommandTimeout = Convert.ToInt32(ntimeout.Value);
                     using (var r = cmd.ExecuteReader())
@@ -256,7 +256,7 @@ public partial class ColumnInfoToANOTableConverterUI : ColumnInfoToANOTableConve
                 if (preview.Rows.Count!=0)
                 {
                     checksUI1.Clear();
-                    ANOTransformer transformer = new ANOTransformer(ANOTable,new FromCheckNotifierToDataLoadEventListener(checksUI1));
+                    var transformer = new ANOTransformer(ANOTable,new FromCheckNotifierToDataLoadEventListener(checksUI1));
                     transformer.Transform(preview, preview.Columns[0],preview.Columns[1],true);
                 }
             }
@@ -321,15 +321,14 @@ public partial class ColumnInfoToANOTableConverterUI : ColumnInfoToANOTableConve
         //if table is already on the ANO server
         if(anoTable.IsTablePushed())
         {
-            string anoDatatype = anoTable.GetRuntimeDataType(LoadStage.AdjustRaw);
-            string colDatatype = _columnInfo.GetRuntimeDataType(LoadStage.PostLoad);
+            var anoDatatype = anoTable.GetRuntimeDataType(LoadStage.AdjustRaw);
+            var colDatatype = _columnInfo.GetRuntimeDataType(LoadStage.PostLoad);
 
             if (!anoDatatype.Equals(colDatatype))
             {
                 checksUI1.OnCheckPerformed(
                     new CheckEventArgs(
-                        "ANOTable  " + anoTable + " cannot be used because its input datatype is " + anoDatatype + " but the data in " +
-                        _columnInfo + " is of datatype " + colDatatype, CheckResult.Fail));
+                        $"ANOTable  {anoTable} cannot be used because its input datatype is {anoDatatype} but the data in {_columnInfo} is of datatype {colDatatype}", CheckResult.Fail));
                 ddANOTables.SelectedItem = null;
                 return;
             }
@@ -354,7 +353,7 @@ public partial class ColumnInfoToANOTableConverterUI : ColumnInfoToANOTableConve
         }
 
 
-        ColumnInfoToANOTableConverter converter = new ColumnInfoToANOTableConverter(_columnInfo, ANOTable);
+        var converter = new ColumnInfoToANOTableConverter(_columnInfo, ANOTable);
 
         try
         {
@@ -445,7 +444,7 @@ public partial class ColumnInfoToANOTableConverterUI : ColumnInfoToANOTableConve
 
     public override string GetTabName()
     {
-        return "Convert " + base.GetTabName() + " to ANOColumnInfo";
+        return $"Convert {base.GetTabName()} to ANOColumnInfo";
     }
 }
 

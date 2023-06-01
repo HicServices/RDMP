@@ -151,7 +151,7 @@ public class ExecuteCommandImportFilterContainerTree : BasicCommandExecution
                 return;
             }
                 
-            if(SelectOne(fromConfiguration,out DatabaseEntity selected))
+            if(SelectOne(fromConfiguration,out var selected))
             {
                 if(selected is ExtractionConfiguration ec)
                 {

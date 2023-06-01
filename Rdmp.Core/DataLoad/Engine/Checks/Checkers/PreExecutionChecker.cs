@@ -61,23 +61,24 @@ public class PreExecutionChecker :  ICheckable
 
         if (!dbInfo.Exists())
         {
-            var createDatabase = _notifier.OnCheckPerformed(new CheckEventArgs(failureMessage + ": " + dbInfo, CheckResult.Fail, null, "Create " + dbInfo.GetRuntimeName() + " on " + dbInfo.Server.Name));
+            var createDatabase = _notifier.OnCheckPerformed(new CheckEventArgs($"{failureMessage}: {dbInfo}", CheckResult.Fail, null,
+                $"Create {dbInfo.GetRuntimeName()} on {dbInfo.Server.Name}"));
 
                 
             if (createDatabase)
                 dbInfo.Server.CreateDatabase(dbInfo.GetRuntimeName());
         }
         else
-            _notifier.OnCheckPerformed(new CheckEventArgs(successMessage + ": " + dbInfo, CheckResult.Success, null));
+            _notifier.OnCheckPerformed(new CheckEventArgs($"{successMessage}: {dbInfo}", CheckResult.Success, null));
     }
 
     private void CheckTablesDoNotExistOnStaging(IEnumerable<ITableInfo> allTableInfos)
     {
-        DiscoveredDatabase stagingDbInfo = _databaseConfiguration.DeployInfo[LoadBubble.Staging];
+        var stagingDbInfo = _databaseConfiguration.DeployInfo[LoadBubble.Staging];
         var alreadyExistingTableInfosThatShouldntBeThere = new List<string>();
 
         var tableNames = allTableInfos.Select(info => info.GetRuntimeName(LoadBubble.Staging, _databaseConfiguration.DatabaseNamer));
-        foreach (string tableName in tableNames)
+        foreach (var tableName in tableNames)
         {
             if (stagingDbInfo.ExpectTable(tableName).Exists())
                 alreadyExistingTableInfosThatShouldntBeThere.Add(tableName);
@@ -88,10 +89,7 @@ public class PreExecutionChecker :  ICheckable
             bool nukeTables;
 
             nukeTables = _notifier.OnCheckPerformed(new CheckEventArgs(
-                "The following tables: '" +
-                alreadyExistingTableInfosThatShouldntBeThere.Aggregate("", (s, n) => s + n + ",") +
-                "' exists in the Staging database (" + stagingDbInfo.GetRuntimeName() +
-                ") but the database load configuration requires that tables are created during the load process",
+                $"The following tables: '{alreadyExistingTableInfosThatShouldntBeThere.Aggregate("", (s, n) => $"{s}{n},")}' exists in the Staging database ({stagingDbInfo.GetRuntimeName()}) but the database load configuration requires that tables are created during the load process",
                 CheckResult.Fail, null, "Drop the tables"));
 
             if (nukeTables)
@@ -108,9 +106,10 @@ public class PreExecutionChecker :  ICheckable
         foreach (var table in stagingDbInfo.DiscoverTables(false))
         {
             if(!table.IsEmpty())
-                _notifier.OnCheckPerformed(new CheckEventArgs("Table " + table + " in staging database '" + stagingDbInfo.GetRuntimeName() + "' is not empty on " + stagingDbInfo.Server.Name, CheckResult.Fail));
+                _notifier.OnCheckPerformed(new CheckEventArgs(
+                    $"Table {table} in staging database '{stagingDbInfo.GetRuntimeName()}' is not empty on {stagingDbInfo.Server.Name}", CheckResult.Fail));
             else
-                _notifier.OnCheckPerformed(new CheckEventArgs("Staging database is empty (" + stagingDbInfo + ")", CheckResult.Success, null));
+                _notifier.OnCheckPerformed(new CheckEventArgs($"Staging database is empty ({stagingDbInfo})", CheckResult.Success, null));
         }
             
     }
@@ -124,13 +123,15 @@ public class PreExecutionChecker :  ICheckable
             var columnNames = tableInfo.ColumnInfos.Select(info => info.GetRuntimeName()).ToList();
 
             if (!columnNames.Any())
-                _notifier.OnCheckPerformed(new CheckEventArgs("Table '" + tableInfo.GetRuntimeName() + "' has no ColumnInfos", CheckResult.Fail, null));
+                _notifier.OnCheckPerformed(new CheckEventArgs(
+                    $"Table '{tableInfo.GetRuntimeName()}' has no ColumnInfos", CheckResult.Fail, null));
 
-            string tableName = tableInfo.GetRuntimeName(deploymentStage, _databaseConfiguration.DatabaseNamer);
+            var tableName = tableInfo.GetRuntimeName(deploymentStage, _databaseConfiguration.DatabaseNamer);
             var table = dbInfo.ExpectTable(tableName);
                     
             if(!table.Exists())
-                throw new Exception("PreExecutionChecker spotted that table does not exist:" + table + " it was about to check whether the TableInfo matched the columns or not");
+                throw new Exception(
+                    $"PreExecutionChecker spotted that table does not exist:{table} it was about to check whether the TableInfo matched the columns or not");
         }
     }
 
@@ -157,7 +158,8 @@ public class PreExecutionChecker :  ICheckable
             // RAW db does not exist thats usually good unless...
             if(persistentRaw)
             {
-                var shouldCreate = _notifier.OnCheckPerformed(new CheckEventArgs("RAW database '" + rawDbInfo + "' does not exist but load is persistentRaw", CheckResult.Fail, null, $"Create RAW database?"));
+                var shouldCreate = _notifier.OnCheckPerformed(new CheckEventArgs(
+                    $"RAW database '{rawDbInfo}' does not exist but load is persistentRaw", CheckResult.Fail, null, $"Create RAW database?"));
                 if(shouldCreate)
                 {
                     rawDbInfo.Create();
@@ -168,21 +170,23 @@ public class PreExecutionChecker :  ICheckable
         }
 
 
-        var shouldDrop = _notifier.OnCheckPerformed(new CheckEventArgs("RAW database '" + rawDbInfo + "' exists", CheckResult.Fail, null, $"Drop {(persistentRaw ? "table(s)": "database")} " + rawDbInfo));
+        var shouldDrop = _notifier.OnCheckPerformed(new CheckEventArgs($"RAW database '{rawDbInfo}' exists", CheckResult.Fail, null,
+            $"Drop {(persistentRaw ? "table(s)" : "database")} {rawDbInfo}"));
             
         if(!rawDbInfo.GetRuntimeName().EndsWith("_RAW",StringComparison.CurrentCultureIgnoreCase))
-            throw new Exception("rawDbInfo database name did not end with _RAW! It was:" + rawDbInfo.GetRuntimeName()+ " (Why is the system trying to drop this database?)");
+            throw new Exception(
+                $"rawDbInfo database name did not end with _RAW! It was:{rawDbInfo.GetRuntimeName()} (Why is the system trying to drop this database?)");
         if (shouldDrop)
         {
-            foreach (DiscoveredTable t in rawDbInfo.DiscoverTables(true))
+            foreach (var t in rawDbInfo.DiscoverTables(true))
             {
-                _notifier.OnCheckPerformed(new CheckEventArgs("Dropping table " + t.GetFullyQualifiedName() + "...", CheckResult.Success));
+                _notifier.OnCheckPerformed(new CheckEventArgs($"Dropping table {t.GetFullyQualifiedName()}...", CheckResult.Success));
                 t.Drop();
             }
 
             if(!persistentRaw)
             {
-                _notifier.OnCheckPerformed(new CheckEventArgs("Finally dropping database" + rawDbInfo + "...", CheckResult.Success));
+                _notifier.OnCheckPerformed(new CheckEventArgs($"Finally dropping database{rawDbInfo}...", CheckResult.Success));
                 rawDbInfo.Drop();
             }
         }
@@ -193,7 +197,7 @@ public class PreExecutionChecker :  ICheckable
         // Check that the update triggers are present/enabled
         foreach (var tableInfo in allTableInfos)
         {
-            TriggerChecks checker = new TriggerChecks(_databaseConfiguration.DeployInfo[LoadBubble.Live].ExpectTable(tableInfo.GetRuntimeName(),tableInfo.Schema));
+            var checker = new TriggerChecks(_databaseConfiguration.DeployInfo[LoadBubble.Live].ExpectTable(tableInfo.GetRuntimeName(),tableInfo.Schema));
             checker.Check(_notifier);
         }
     }
@@ -207,7 +211,7 @@ public class PreExecutionChecker :  ICheckable
         _notifier = notifier;
 
         //For each table in load can we reach it and is it a valid table type
-        foreach (ITableInfo ti in _loadMetadata.GetAllCatalogues().SelectMany(c => c.GetTableInfoList(true)).Distinct())
+        foreach (var ti in _loadMetadata.GetAllCatalogues().SelectMany(c => c.GetTableInfoList(true)).Distinct())
         {
             DiscoveredTable tbl;
             try
@@ -217,20 +221,20 @@ public class PreExecutionChecker :  ICheckable
             catch (Exception e)
             {
                 HardFail = true;
-                notifier.OnCheckPerformed(new CheckEventArgs("Could not reach table in load '" + ti.Name +"'",CheckResult.Fail,e));
+                notifier.OnCheckPerformed(new CheckEventArgs($"Could not reach table in load '{ti.Name}'",CheckResult.Fail,e));
                 return;
             }
 
             if (!tbl.Exists())
             {
                 HardFail = true;
-                notifier.OnCheckPerformed(new CheckEventArgs("Table '" + ti.Name + "' does not exist", CheckResult.Fail));
+                notifier.OnCheckPerformed(new CheckEventArgs($"Table '{ti.Name}' does not exist", CheckResult.Fail));
             }
 
             if (tbl.TableType != TableType.Table)
             {
                 HardFail = true;
-                notifier.OnCheckPerformed(new CheckEventArgs("Table '" + ti + "' is a " + tbl.TableType,CheckResult.Fail));
+                notifier.OnCheckPerformed(new CheckEventArgs($"Table '{ti}' is a {tbl.TableType}",CheckResult.Fail));
             }
         }
 
@@ -251,8 +255,7 @@ public class PreExecutionChecker :  ICheckable
         if (_loadMetadata.ProcessTasks.All(p => p.IsDisabled))
             _notifier.OnCheckPerformed(
                 new CheckEventArgs(
-                    "There are no ProcessTasks defined for '" + _loadMetadata +
-                    "'",
+                    $"There are no ProcessTasks defined for '{_loadMetadata}'",
                     CheckResult.Fail));
     }
                 

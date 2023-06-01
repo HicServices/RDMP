@@ -17,7 +17,7 @@ class CommentStoreTests
     {
         var store = new CommentStore();
             
-        XmlDocument doc = new XmlDocument();
+        var doc = new XmlDocument();
         doc.LoadXml(
             @" <member name=""T:ResearchDataManagementPlatform.WindowManagement.WindowFactory"">
                 <summary>
@@ -38,7 +38,7 @@ class CommentStoreTests
     {
         var store = new CommentStore();
             
-        XmlDocument doc = new XmlDocument();
+        var doc = new XmlDocument();
         doc.LoadXml(
             @" <member name=""T:ResearchDataManagementPlatform.WindowManagement.WindowFactory"">
                 <summary>
@@ -61,7 +61,7 @@ class CommentStoreTests
     {
         var store = new CommentStore();
             
-        XmlDocument doc = new XmlDocument();
+        var doc = new XmlDocument();
         doc.LoadXml(
             @" <member name=""T:ResearchDataManagementPlatform.WindowManagement.WindowFactory"">
                 <summary>
@@ -89,7 +89,7 @@ this is next para"
     {
         var store = new CommentStore();
             
-        XmlDocument doc = new XmlDocument();
+        var doc = new XmlDocument();
         doc.LoadXml(
             @" <member name=""T:ResearchDataManagementPlatform.WindowManagement.WindowFactory"">
                 <summary></summary>
@@ -129,7 +129,7 @@ this is next para"
     {
         var store = new CommentStore();
             
-        XmlDocument doc = new XmlDocument();
+        var doc = new XmlDocument();
         doc.LoadXml(
             @" <member name=""T:ResearchDataManagementPlatform.WindowManagement.WindowFactory"">
                 <summary>
@@ -159,7 +159,7 @@ this is next para"
     {
         var store = new CommentStore();
             
-        XmlDocument doc = new XmlDocument();
+        var doc = new XmlDocument();
         doc.LoadXml(
             @" <member name=""T:ResearchDataManagementPlatform.WindowManagement.WindowFactory"">
                 <summary>

@@ -39,7 +39,7 @@ public class PeriodicityCube
 
     public void CommitToDatabase(Evaluation evaluation, string pivotCategory)
     {
-        foreach (PeriodicityState state in _consequenceCube.Values)
+        foreach (var state in _consequenceCube.Values)
             state.Commit(evaluation, pivotCategory);
 
         _passingValidation.Commit(evaluation, pivotCategory);

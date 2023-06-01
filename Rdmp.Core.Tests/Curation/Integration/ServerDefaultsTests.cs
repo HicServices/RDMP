@@ -41,7 +41,7 @@ public class ServerDefaultsTests : DatabaseTests
             databaseServer.Database = "TEST";
             databaseServer.SaveToDatabase();
                 
-            Catalogue cata = new Catalogue(CatalogueRepository, "TestCatalogueFor_CreateNewExternalServerAndConfigureItAsDefault");
+            var cata = new Catalogue(CatalogueRepository, "TestCatalogueFor_CreateNewExternalServerAndConfigureItAsDefault");
             cata.DeleteInDatabase();
 
         }

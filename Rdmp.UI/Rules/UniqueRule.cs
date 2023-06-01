@@ -19,7 +19,7 @@ class UniqueRule<T> : BinderRule<T> where T : IMapsDirectlyToDatabaseTable
     public UniqueRule(IActivateItems activator, T toTest, Func<T, object> propertyToCheck, Control control, string propertyToCheckName)
         : base(activator, toTest, propertyToCheck, control, propertyToCheckName)
     {
-        _problemDescription = "Must be unique amongst all " + toTest.GetType().Name + "s";
+        _problemDescription = $"Must be unique amongst all {toTest.GetType().Name}s";
 
     }
 
@@ -42,7 +42,7 @@ class UniqueRule<T> : BinderRule<T> where T : IMapsDirectlyToDatabaseTable
 
     private bool AreEqual(T arg, object currentValue)
     {
-        string s = currentValue as string;
+        var s = currentValue as string;
 
         if (s != null)
             return string.Equals(s, PropertyToCheck(arg) as string, StringComparison.CurrentCultureIgnoreCase);

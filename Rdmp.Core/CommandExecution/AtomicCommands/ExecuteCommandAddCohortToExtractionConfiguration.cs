@@ -36,7 +36,8 @@ public class ExecuteCommandAddCohortToExtractionConfiguration : BasicCommandExec
 
         if(_sourceExtractableCohortComand.ErrorGettingCohortData != null)
         {
-            SetImpossible("Could not fetch Cohort data:" + _sourceExtractableCohortComand.ErrorGettingCohortData.Message);
+            SetImpossible(
+                $"Could not fetch Cohort data:{_sourceExtractableCohortComand.ErrorGettingCohortData.Message}");
             return;
         }
 
@@ -48,7 +49,8 @@ public class ExecuteCommandAddCohortToExtractionConfiguration : BasicCommandExec
 
         if (!sourceExtractableCohortComand.CompatibleExtractionConfigurations.Contains(_targetExtractionConfiguration))
         {
-            SetImpossible("Cohort has project number " + sourceExtractableCohortComand.ExternalProjectNumber + " so can only be added to ExtractionConfigurations belonging to Projects with that same number");
+            SetImpossible(
+                $"Cohort has project number {sourceExtractableCohortComand.ExternalProjectNumber} so can only be added to ExtractionConfigurations belonging to Projects with that same number");
             return;
         }
 

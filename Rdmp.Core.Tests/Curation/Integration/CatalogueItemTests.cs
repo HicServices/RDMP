@@ -19,8 +19,8 @@ class CatalogueItemTests : DatabaseTests
 
         var parent = new Catalogue(CatalogueRepository, "GROG");
 
-        CatalogueItem child1 = new CatalogueItem(CatalogueRepository, parent, "GROG_ITEM1");
-        CatalogueItem child2 = new CatalogueItem(CatalogueRepository, parent, "GROG_ITEM2");
+        var child1 = new CatalogueItem(CatalogueRepository, parent, "GROG_ITEM1");
+        var child2 = new CatalogueItem(CatalogueRepository, parent, "GROG_ITEM2");
 
         Assert.IsTrue(child1.Catalogue_ID == parent.ID);
         Assert.IsTrue(child2.Catalogue_ID == parent.ID);
@@ -39,7 +39,7 @@ class CatalogueItemTests : DatabaseTests
 
         var parent = new Catalogue(CatalogueRepository, "GROG");
 
-        CatalogueItem child1 = new CatalogueItem(CatalogueRepository, parent, "GROG_ITEM1");
+        var child1 = new CatalogueItem(CatalogueRepository, parent, "GROG_ITEM1");
         child1.SetColumnInfo(null);
             
         Assert.IsNull(child1.ColumnInfo_ID);
@@ -50,12 +50,12 @@ class CatalogueItemTests : DatabaseTests
     [Test]
     public void GetAllCatalogueItemsForCatalogueID_NewCatalogue_pass()
     {
-        Catalogue parent = new Catalogue(CatalogueRepository, "ZOMBIEMAN");
+        var parent = new Catalogue(CatalogueRepository, "ZOMBIEMAN");
 
         var child1 = new CatalogueItem(CatalogueRepository, parent, "ZOMBIEMAN_ITEM1");
         var child2 = new CatalogueItem(CatalogueRepository, parent, "ZOMBIEMAN_ITEM2");
 
-        CatalogueItem[] children = parent.CatalogueItems;
+        var children = parent.CatalogueItems;
 
         Assert.AreEqual(children.Length,2);
         Assert.IsTrue(children[0].ID == child1.ID || children[1].ID == child1.ID);
@@ -70,8 +70,8 @@ class CatalogueItemTests : DatabaseTests
     [Test]
     public void update_changeAllPropertiesOfCatalogueItem_passes()
     {
-        Catalogue parent = new Catalogue(CatalogueRepository, "KONGOR");
-        CatalogueItem child = new CatalogueItem(CatalogueRepository, parent, "KONGOR_SUPERKING")
+        var parent = new Catalogue(CatalogueRepository, "KONGOR");
+        var child = new CatalogueItem(CatalogueRepository, parent, "KONGOR_SUPERKING")
         {
             Agg_method = "Adding SetUp",
             Comments = "do not change amagad super secret!",
@@ -87,7 +87,7 @@ class CatalogueItemTests : DatabaseTests
 
         child.SaveToDatabase();
             
-        CatalogueItem childAfter = CatalogueRepository.GetObjectByID<CatalogueItem>(child.ID);
+        var childAfter = CatalogueRepository.GetObjectByID<CatalogueItem>(child.ID);
 
         Assert.IsTrue(child.Name == childAfter.Name);
         Assert.IsTrue(child.Agg_method == childAfter.Agg_method);
@@ -106,10 +106,10 @@ class CatalogueItemTests : DatabaseTests
     [Test]
     public void clone_CloneCatalogueItemWithIDIntoCatalogue_passes()
     {
-        Catalogue parent = new Catalogue(CatalogueRepository,"KONGOR");
-        Catalogue parent2 = new Catalogue(CatalogueRepository, "KONGOR2");
+        var parent = new Catalogue(CatalogueRepository,"KONGOR");
+        var parent2 = new Catalogue(CatalogueRepository, "KONGOR2");
 
-        CatalogueItem child = new CatalogueItem(CatalogueRepository, parent, "KONGOR_SUPERKING")
+        var child = new CatalogueItem(CatalogueRepository, parent, "KONGOR_SUPERKING")
         {
             Agg_method = "Adding SetUp",
             Comments = "do not change amagad super secret!",

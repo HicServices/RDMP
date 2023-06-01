@@ -109,7 +109,7 @@ public class ANOTableTests:TestsRequiringANOStore
     [Test]
     public void CreateAnANOTable_IntCountNegative()
     {
-        ANOTable anoTable = GetANOTable();
+        var anoTable = GetANOTable();
 
         try
         {
@@ -151,7 +151,7 @@ public class ANOTableTests:TestsRequiringANOStore
         anoTable.PushToANOServerAsNewTable("varchar(10)",new ThrowImmediatelyCheckNotifier());
 
 
-        DataTable dt = new DataTable();
+        var dt = new DataTable();
         dt.Columns.Add("CHI");
         dt.Columns.Add("ANOCHI");
 
@@ -159,14 +159,14 @@ public class ANOTableTests:TestsRequiringANOStore
         dt.Rows.Add("0101010102",DBNull.Value);
         dt.Rows.Add("0101010101",DBNull.Value);//duplicates
 
-        ANOTransformer transformer = new ANOTransformer(anoTable, new ThrowImmediatelyDataLoadEventListener());
+        var transformer = new ANOTransformer(anoTable, new ThrowImmediatelyDataLoadEventListener());
         transformer.Transform(dt,dt.Columns["CHI"],dt.Columns["ANOCHI"]);
 
         Assert.IsTrue((string) dt.Rows[0][0] == "0101010101");
         Assert.IsTrue(_anochiPattern.IsMatch((string) dt.Rows[0][1]));//should be 10 digits and then _A
         Assert.AreEqual(dt.Rows[0][1], dt.Rows[2][1]);//because of duplication these should both be the same
 
-        Console.WriteLine("ANO identifiers created were:" + dt.Rows[0][1] + "," +dt.Rows[1][1]);
+        Console.WriteLine($"ANO identifiers created were:{dt.Rows[0][1]},{dt.Rows[1][1]}");
 
         TruncateANOTable(anoTable);
 
@@ -209,16 +209,16 @@ public class ANOTableTests:TestsRequiringANOStore
         anoTable.NumberOfCharactersToUseInAnonymousRepresentation = 0;
         anoTable.NumberOfIntegersToUseInAnonymousRepresentation = 10;
 
-        DiscoveredTable ANOtable = ANOStore_Database.ExpectTable(anoTable.TableName);
+        var ANOtable = ANOStore_Database.ExpectTable(anoTable.TableName);
 
         //should not exist yet
         Assert.False(ANOtable.Exists());
             
-        DataTable dt = new DataTable();
+        var dt = new DataTable();
         dt.Columns.Add("CHI");
         dt.Columns.Add("ANOCHI");
         dt.Rows.Add("0101010101", DBNull.Value);
-        ANOTransformer transformer = new ANOTransformer(anoTable, new ThrowImmediatelyDataLoadEventListener());
+        var transformer = new ANOTransformer(anoTable, new ThrowImmediatelyDataLoadEventListener());
         transformer.Transform(dt, dt.Columns["CHI"], dt.Columns["ANOCHI"], true);
 
         Assert.IsTrue(_anochiPattern.IsMatch((string)dt.Rows[0][1]));//should be 10 digits and then _A
@@ -241,45 +241,45 @@ public class ANOTableTests:TestsRequiringANOStore
         anoTable.PushToANOServerAsNewTable("varchar(10)", new ThrowImmediatelyCheckNotifier());
 
             
-        Stopwatch sw = new Stopwatch();
+        var sw = new Stopwatch();
         sw.Start();
 
-        DataTable dt = new DataTable();
+        var dt = new DataTable();
         dt.Columns.Add("CHI");
         dt.Columns.Add("ANOCHI");
 
-        Random r = new Random();
+        var r = new Random();
 
-        HashSet<string> uniqueSourceSet = new HashSet<string>();
+        var uniqueSourceSet = new HashSet<string>();
 
 
-        for (int i = 0; i < batchSize; i++)
+        for (var i = 0; i < batchSize; i++)
         {
             var val = r.NextDouble() * 9999999999;
             val = Math.Round(val);
-            string valAsString = val.ToString();
+            var valAsString = val.ToString();
                 
             while (valAsString.Length < 10)
-                valAsString = "0" + valAsString;
+                valAsString = $"0{valAsString}";
 
             if (!uniqueSourceSet.Contains(valAsString))
                 uniqueSourceSet.Add(valAsString);
 
             dt.Rows.Add(valAsString, DBNull.Value);//duplicates    
         }
-        Console.WriteLine("Time to allocate in C# memory:"+sw.Elapsed);
-        Console.WriteLine("Allocated " + dt.Rows.Count + " identifiers (" + uniqueSourceSet.Count() + " unique ones)");
+        Console.WriteLine($"Time to allocate in C# memory:{sw.Elapsed}");
+        Console.WriteLine($"Allocated {dt.Rows.Count} identifiers ({uniqueSourceSet.Count()} unique ones)");
 
         sw.Reset();
         sw.Start();
 
-        ANOTransformer transformer = new ANOTransformer(anoTable, new ThrowImmediatelyDataLoadEventListener());
+        var transformer = new ANOTransformer(anoTable, new ThrowImmediatelyDataLoadEventListener());
         transformer.Transform(dt, dt.Columns["CHI"], dt.Columns["ANOCHI"]);
-        Console.WriteLine("Time to perform SQL transform and allocation:" + sw.Elapsed);
+        Console.WriteLine($"Time to perform SQL transform and allocation:{sw.Elapsed}");
 
         sw.Reset();
         sw.Start();
-        HashSet<string> uniqueSet = new HashSet<string>();
+        var uniqueSet = new HashSet<string>();
 
         foreach (DataRow row in dt.Rows)
         {
@@ -290,7 +290,7 @@ public class ANOTableTests:TestsRequiringANOStore
             Assert.IsTrue(_anochiPattern.IsMatch(ANOid));
         }
 
-        Console.WriteLine("Allocated " + uniqueSet.Count + " anonymous identifiers");
+        Console.WriteLine($"Allocated {uniqueSet.Count} anonymous identifiers");
 
 
         var server = ANOStore_Database.Server;
@@ -299,21 +299,21 @@ public class ANOTableTests:TestsRequiringANOStore
             con.Open();
 
             var cmd = server.GetCommand("Select count(*) from ANOMyTable", con);
-            int numberOfRows = Convert.ToInt32(cmd.ExecuteScalar());
+            var numberOfRows = Convert.ToInt32(cmd.ExecuteScalar());
 
             //should be the same number of unique identifiers in memory as in the database
             Assert.AreEqual(uniqueSet.Count,numberOfRows);
-            Console.WriteLine("Found " + numberOfRows + " unique ones");
+            Console.WriteLine($"Found {numberOfRows} unique ones");
 
             var cmdNulls = server.GetCommand("select count(*) from ANOMyTable where ANOMyTable is null", con);
-            int nulls = Convert.ToInt32(cmdNulls.ExecuteScalar());
+            var nulls = Convert.ToInt32(cmdNulls.ExecuteScalar());
             Assert.AreEqual(0,nulls);
-            Console.WriteLine("Found " + nulls + " null ANO identifiers");
+            Console.WriteLine($"Found {nulls} null ANO identifiers");
 
             con.Close();
         }
         sw.Stop();
-        Console.WriteLine("Time to evaluate results:" + sw.Elapsed);
+        Console.WriteLine($"Time to evaluate results:{sw.Elapsed}");
         TruncateANOTable(anoTable);
 
         anoTable.DeleteInDatabase();

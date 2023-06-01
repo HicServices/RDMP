@@ -44,8 +44,8 @@ public class ExtractableColumn : ConcreteColumn, IComparable, IInjectKnown<Catal
     /// </summary>
     public int ExtractableDataSet_ID
     {
-        get { return _extractableDataSet_ID; }
-        set { SetField(ref _extractableDataSet_ID, value); }
+        get => _extractableDataSet_ID;
+        set => SetField(ref _extractableDataSet_ID, value);
     }
 
     /// <summary>
@@ -54,8 +54,8 @@ public class ExtractableColumn : ConcreteColumn, IComparable, IInjectKnown<Catal
     /// </summary>
     public int ExtractionConfiguration_ID
     {
-        get { return _extractionConfiguration_ID; }
-        set { SetField(ref _extractionConfiguration_ID, value); }
+        get => _extractionConfiguration_ID;
+        set => SetField(ref _extractionConfiguration_ID, value);
     }
 
     /// <summary>
@@ -67,7 +67,7 @@ public class ExtractableColumn : ConcreteColumn, IComparable, IInjectKnown<Catal
     /// </summary>
     public int? CatalogueExtractionInformation_ID
     {
-        get { return _catalogueExtractionInformation_ID; }
+        get => _catalogueExtractionInformation_ID;
         set
         {
             SetField(ref _catalogueExtractionInformation_ID, value);
@@ -83,24 +83,12 @@ public class ExtractableColumn : ConcreteColumn, IComparable, IInjectKnown<Catal
     /// <inheritdoc cref="CatalogueExtractionInformation_ID"/>
     [NoMappingToDatabase]
     [CanBeNull]
-    public ExtractionInformation CatalogueExtractionInformation
-    {
-        get
-        {
-            return _knownExtractionInformation.Value;
-        }
-    }
+    public ExtractionInformation CatalogueExtractionInformation => _knownExtractionInformation.Value;
 
     /// <inheritdoc/>
     [CanBeNull]
     [NoMappingToDatabase]
-    public override ColumnInfo ColumnInfo
-    {
-        get
-        {
-            return _knownColumnInfo.Value;
-        }
-    }
+    public override ColumnInfo ColumnInfo => _knownColumnInfo.Value;
 
     #endregion
 
@@ -230,7 +218,7 @@ public class ExtractableColumn : ConcreteColumn, IComparable, IInjectKnown<Catal
 
     private CatalogueItem FetchCatalogueItem()
     {
-        ExtractionInformation ei = _knownExtractionInformation.Value;
+        var ei = _knownExtractionInformation.Value;
 
         if (ei == null)
             return null;

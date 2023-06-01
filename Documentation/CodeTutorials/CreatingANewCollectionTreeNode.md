@@ -139,13 +139,13 @@ The full method should now look something like:
 ```csharp
 private void AddChildren(ExtractionConfigurationsNode extractionConfigurationsNode, DescendancyList descendancy)
 {
-    HashSet<object> children = new HashSet<object>();
+    var children = new HashSet<object>();
 
     var frozenConfigurationsNode = new FrozenExtractionConfigurationsNode(extractionConfigurationsNode.Project);
     children.Add(frozenConfigurationsNode);
 
     var configs = ExtractionConfigurations.Where(c => c.Project_ID == extractionConfigurationsNode.Project.ID).ToArray();
-    foreach (ExtractionConfiguration config in configs)
+    foreach (var config in configs)
     {
         AddChildren(config, descendancy.Add(config));
         children.Add(config);
@@ -208,7 +208,7 @@ In this method add the following:
 ```csharp
 private void AddChildren(FrozenExtractionConfigurationsNode frozenExtractionConfigurationsNode, DescendancyList descendancy)
 {
-	HashSet<object> children = new HashSet<object>();
+	var children = new HashSet<object>();
 
 	//todo add child objects here
 
@@ -223,7 +223,7 @@ Just as an example add the number 87 to the children HashSet:
 ```csharp
  private void AddChildren(FrozenExtractionConfigurationsNode frozenExtractionConfigurationsNode, DescendancyList descendancy)
 {
-	HashSet<object> children = new HashSet<object>();
+	var children = new HashSet<object>();
 
 	children.Add(87);
 
@@ -241,7 +241,7 @@ To complete this example we will modify the `AddChildren` method for `Extraction
 ```csharp
 private void AddChildren(ExtractionConfigurationsNode extractionConfigurationsNode, DescendancyList descendancy)
 {
-	HashSet<object> children = new HashSet<object>();
+	var children = new HashSet<object>();
 
 	//Create a frozen extraction configurations folder as a subfolder of each ExtractionConfigurationsNode
 	var frozenConfigurationsNode = new FrozenExtractionConfigurationsNode(extractionConfigurationsNode.Project);
@@ -254,7 +254,7 @@ private void AddChildren(ExtractionConfigurationsNode extractionConfigurationsNo
 
 	//Add ExtractionConfigurations which are not released (frozen)
 	var configs = ExtractionConfigurations.Where(c => c.Project_ID == extractionConfigurationsNode.Project.ID).ToArray();
-	foreach (ExtractionConfiguration config in configs.Where(c=>!c.IsReleased))
+	foreach (var config in configs.Where(c=>!c.IsReleased))
 	{
 		AddChildren(config, descendancy.Add(config));
 		children.Add(config);
@@ -265,11 +265,11 @@ private void AddChildren(ExtractionConfigurationsNode extractionConfigurationsNo
 
 private void AddChildren(FrozenExtractionConfigurationsNode frozenExtractionConfigurationsNode, DescendancyList descendancy)
 {
-	HashSet<object> children = new HashSet<object>();
+	var children = new HashSet<object>();
 
 	//Add ExtractionConfigurations which are not released (frozen)
 	var configs = ExtractionConfigurations.Where(c => c.Project_ID == frozenExtractionConfigurationsNode.Project.ID).ToArray();
-	foreach (ExtractionConfiguration config in configs.Where(c => c.IsReleased))
+	foreach (var config in configs.Where(c => c.IsReleased))
 	{
 		AddChildren(config, descendancy.Add(config));
 		children.Add(config);

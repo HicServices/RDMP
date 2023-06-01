@@ -40,7 +40,7 @@ class ZipTests
         var _listener = new ThrowImmediatelyDataLoadEventListener();
         var when = DateTime.Now;
         var targetzip = _zt.GetArchiveFileInfoForDate(when, _listener);
-        List<FileInfo> files=new List<FileInfo>();
+        var files=new List<FileInfo>();
 
         // First create a zip file with one item in
         File.Delete(targetzip.FullName);

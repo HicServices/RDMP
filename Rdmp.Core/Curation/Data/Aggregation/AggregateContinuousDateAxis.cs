@@ -36,8 +36,8 @@ public class AggregateContinuousDateAxis: DatabaseEntity, IQueryAxis
     /// </summary>
     public int AggregateDimension_ID
     {
-        get { return _aggregateDimensionID; }
-        set { SetField(ref  _aggregateDimensionID, value); }
+        get => _aggregateDimensionID;
+        set => SetField(ref  _aggregateDimensionID, value);
     }
 
     /// <summary>
@@ -45,8 +45,8 @@ public class AggregateContinuousDateAxis: DatabaseEntity, IQueryAxis
     /// </summary>
     public string StartDate
     {
-        get { return _startDate; }
-        set { SetField(ref  _startDate, value); }
+        get => _startDate;
+        set => SetField(ref  _startDate, value);
     }
 
     /// <summary>
@@ -54,8 +54,8 @@ public class AggregateContinuousDateAxis: DatabaseEntity, IQueryAxis
     /// </summary>
     public string EndDate
     {
-        get { return _endDate; }
-        set { SetField(ref  _endDate, value); }
+        get => _endDate;
+        set => SetField(ref  _endDate, value);
     }
 
     /// <summary>
@@ -63,8 +63,8 @@ public class AggregateContinuousDateAxis: DatabaseEntity, IQueryAxis
     /// </summary>
     public AxisIncrement AxisIncrement
     {
-        get { return _axisIncrement; }
-        set { SetField(ref  _axisIncrement, value); }
+        get => _axisIncrement;
+        set => SetField(ref  _axisIncrement, value);
     }
 
     #endregion
@@ -72,7 +72,8 @@ public class AggregateContinuousDateAxis: DatabaseEntity, IQueryAxis
     #region Relationships
     /// <inheritdoc cref="AggregateDimension_ID"/>
     [NoMappingToDatabase]
-    public AggregateDimension AggregateDimension { get{return Repository.GetObjectByID<AggregateDimension>(AggregateDimension_ID);}}
+    public AggregateDimension AggregateDimension => Repository.GetObjectByID<AggregateDimension>(AggregateDimension_ID);
+
     #endregion
 
     public AggregateContinuousDateAxis()

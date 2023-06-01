@@ -41,14 +41,14 @@ public partial class ViewSourceCodeDialog : Form
 
     public ViewSourceCodeDialog(string filename, int lineNumber, Color highlightColor)
     {
-        string toFind = Path.GetFileName(filename);
+        var toFind = Path.GetFileName(filename);
             
         InitializeComponent();
 
         if(filename == null)
             return;
             
-        bool designMode = (LicenseManager.UsageMode == LicenseUsageMode.Designtime);
+        var designMode = (LicenseManager.UsageMode == LicenseUsageMode.Designtime);
 
         if (designMode) //don't add the QueryEditor if we are in design time (visual studio) because it breaks
             return;
@@ -68,7 +68,7 @@ public partial class ViewSourceCodeDialog : Form
     {
         lock (oSupplementalSourceZipFilesLock)
         {
-            string readToEnd = GetSourceForFile(toFind);
+            var readToEnd = GetSourceForFile(toFind);
 
             //entry was found
             if (readToEnd != null)
@@ -82,7 +82,7 @@ public partial class ViewSourceCodeDialog : Form
                 }
             }
             else
-                throw new FileNotFoundException("Could not find file called '" + toFind + "' in any of the zip archives");
+                throw new FileNotFoundException($"Could not find file called '{toFind}' in any of the zip archives");
         }
 
         Text = toFind;
@@ -90,7 +90,7 @@ public partial class ViewSourceCodeDialog : Form
 
     private void WorkerOnDoWork(object sender, DoWorkEventArgs doWorkEventArgs)
     {
-        HashSet<string> entries = new HashSet<string>();
+        var entries = new HashSet<string>();
 
         var zipArchive = new FileInfo(MainSourceCodeRepo);
         foreach (var zipFile in new[] { zipArchive }.Union(SupplementalSourceZipFiles))

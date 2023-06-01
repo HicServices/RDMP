@@ -35,14 +35,7 @@ public class DataSource
 
     private byte[] _md5;
     public byte[] MD5 {
-        get
-        {
-            return _md5;
-        }
-        set
-        {
-           
-            _md5 = value;
-        } 
+        get => _md5;
+        set => _md5 = value;
     }
 }

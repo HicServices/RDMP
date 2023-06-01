@@ -93,7 +93,7 @@ public class CommentStore : IEnumerable<KeyValuePair<string, string>>
         if (summaryTag == null)
             return null;
             
-        StringBuilder sb = new StringBuilder();
+        var sb = new StringBuilder();
             
         summaryTag.IterateThroughAllNodes(
             n =>
@@ -163,7 +163,7 @@ public class CommentStore : IEnumerable<KeyValuePair<string, string>>
     {
         if (sb == null || sb.Length == 0) return sb;
 
-        int i = sb.Length - 1;
+        var i = sb.Length - 1;
         for (; i >= 0; i--)
             if (sb[i] != ' ')
                 break;
@@ -226,7 +226,7 @@ public class CommentStore : IEnumerable<KeyValuePair<string, string>>
             docs = this[type.Name[..^"`1".Length]];
 
         if (docs == null && allowInterfaceInstead && !type.IsInterface)
-            docs = this["I" + type.Name];
+            docs = this[$"I{type.Name}"];
 
         if (string.IsNullOrWhiteSpace(docs))
             return null;
@@ -239,7 +239,7 @@ public class CommentStore : IEnumerable<KeyValuePair<string, string>>
         if (docs.Length <= maxLength)
             return docs;
 
-        return docs[..maxLength] + "...";
+        return $"{docs[..maxLength]}...";
     }
     /// <inheritdoc cref="GetTypeDocumentationIfExists(int,Type,bool,bool)"/>
     public string GetTypeDocumentationIfExists(Type type, bool allowInterfaceInstead = true, bool formatAsParagraphs = false)
@@ -296,7 +296,7 @@ public class CommentStore : IEnumerable<KeyValuePair<string, string>>
     public string FormatAsParagraphs(string message)
     {
             
-        message = Regex.Replace(message, Environment.NewLine + "\\s*",Environment.NewLine + Environment.NewLine);
+        message = Regex.Replace(message, $"{Environment.NewLine}\\s*",Environment.NewLine + Environment.NewLine);
         message = Regex.Replace(message, @"(\.?[A-z]{2,}\.)+([A-z]+)", (m) => m.Groups[2].Value);
             
         return message;

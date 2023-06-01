@@ -140,7 +140,7 @@ public class AggregateBuilder : ISqlQueryBuilder
     /// </summary>
     public bool DoNotWriteOutParameters
     {
-        get { return _doNotWriteOutParameters; }
+        get => _doNotWriteOutParameters;
         set
         {
             //no change
@@ -249,7 +249,7 @@ public class AggregateBuilder : ISqlQueryBuilder
     /// <param name="includeAsGroupBy">false to add the columns only to the SELECT section of the query (and not GROUP BY)</param>
     public void AddColumnRange(IColumn[] columnsToAdd, bool includeAsGroupBy)
     {
-        foreach (IColumn column in columnsToAdd)
+        foreach (var column in columnsToAdd)
         {
             SelectColumns.Add(new QueryTimeColumn(column));
 
@@ -321,7 +321,7 @@ public class AggregateBuilder : ISqlQueryBuilder
         }
             
 
-        IAggregateHelper aggregateHelper = QuerySyntaxHelper.AggregateHelper;
+        var aggregateHelper = QuerySyntaxHelper.AggregateHelper;
             
         if(_pivotID != -1)
             try
@@ -333,7 +333,8 @@ public class AggregateBuilder : ISqlQueryBuilder
             }
             catch (Exception e)
             {
-                throw new QueryBuildingException("Problem occurred when trying to find PivotDimension ID " + _pivotID + " in SelectColumns list",e);
+                throw new QueryBuildingException(
+                    $"Problem occurred when trying to find PivotDimension ID {_pivotID} in SelectColumns list",e);
             }
 
         foreach (AggregateDimension dimension in SelectColumns.Select(c=>c.IColumn).Where(e=>e is AggregateDimension))
@@ -343,7 +344,7 @@ public class AggregateBuilder : ISqlQueryBuilder
             if(availableAxis != null)
                 if (_axis != null)
                     throw new QueryBuildingException(
-                        "Multiple dimensions have an AggregateContinuousDateAxis within the same configuration (Dimensions " + _axisAppliesToDimension.GetRuntimeName() + " and " + dimension.GetRuntimeName() + ")");
+                        $"Multiple dimensions have an AggregateContinuousDateAxis within the same configuration (Dimensions {_axisAppliesToDimension.GetRuntimeName()} and {dimension.GetRuntimeName()})");
                 else
                 {
                     _axis = availableAxis;
@@ -353,7 +354,8 @@ public class AggregateBuilder : ISqlQueryBuilder
 
         if (_pivotDimension != null)
             if (_pivotDimension.IColumn == _axisAppliesToDimension)
-                throw new QueryBuildingException("Column " + _pivotDimension.IColumn + " is both a PIVOT and has an AXIS configured on it, you cannot have both.");
+                throw new QueryBuildingException(
+                    $"Column {_pivotDimension.IColumn} is both a PIVOT and has an AXIS configured on it, you cannot have both.");
             
         //work out all the filters 
         Filters = SqlQueryBuilderHelper.GetAllFiltersUsedInContainerTreeRecursively(RootFilterContainer);
@@ -384,7 +386,8 @@ public class AggregateBuilder : ISqlQueryBuilder
                         continue;
                     else
                         //this isn't fine
-                        throw new QueryBuildingException("You chose to FORCE a join to table " + t + " which is marked IsPrimaryExtractionTable but you have also selected a column called " + primary + " which is also an IsPrimaryExtractionTable (cannot have 2 different primary extraction tables)");
+                        throw new QueryBuildingException(
+                            $"You chose to FORCE a join to table {t} which is marked IsPrimaryExtractionTable but you have also selected a column called {primary} which is also an IsPrimaryExtractionTable (cannot have 2 different primary extraction tables)");
             }
 
         this.PrimaryExtractionTable = primary;
@@ -400,7 +403,7 @@ public class AggregateBuilder : ISqlQueryBuilder
 
         //assuming we were not told to ignore the writing out of parameters!
         if (!DoNotWriteOutParameters)
-            foreach (ISqlParameter parameter in ParameterManager.GetFinalResolvedParametersList())
+            foreach (var parameter in ParameterManager.GetFinalResolvedParametersList())
                 queryLines.Add(new CustomLine(QueryBuilder.GetParameterDeclarationSQL(parameter),QueryComponent.VariableDeclaration));
 
         CompileCustomLinesInStageAndAddToList(QueryComponent.VariableDeclaration, queryLines);
@@ -426,11 +429,13 @@ public class AggregateBuilder : ISqlQueryBuilder
     {
         //axis but no pivot
         if(_axis != null && _pivotDimension == null && SelectColumns.Count !=2 )
-            throw new QueryBuildingException("You must have two columns in an AggregateConfiguration that contains an axis.  These must be the axis column and the count/sum column.  Your query had " + SelectColumns.Count + " (" + string.Join(",", SelectColumns.Select(c => "'" + c.IColumn.ToString() + "'")) + ")");
+            throw new QueryBuildingException(
+                $"You must have two columns in an AggregateConfiguration that contains an axis.  These must be the axis column and the count/sum column.  Your query had {SelectColumns.Count} ({string.Join(",", SelectColumns.Select(c => $"'{c.IColumn}'"))})");
             
         //axis and pivot
         if(_axis != null && _pivotDimension != null && SelectColumns.Count !=3 )
-            throw new QueryBuildingException("You must have three columns in an AggregateConfiguration that contains a pivot.  These must be the axis column, the pivot column and the count/sum column.  Your query had " + SelectColumns.Count + " (" + string.Join(",", SelectColumns.Select(c => "'" + c.IColumn.ToString() + "'")) + ")");
+            throw new QueryBuildingException(
+                $"You must have three columns in an AggregateConfiguration that contains a pivot.  These must be the axis column, the pivot column and the count/sum column.  Your query had {SelectColumns.Count} ({string.Join(",", SelectColumns.Select(c => $"'{c.IColumn}'"))})");
     }
         
     private void CompileCustomLinesInStageAndAddToList( QueryComponent stage,List<CustomLine> list)
@@ -459,7 +464,7 @@ public class AggregateBuilder : ISqlQueryBuilder
                 if (_skipGroupByForThese.Contains(col.IColumn))
                     continue;
 
-                var line = new CustomLine(GetGroupOrOrderByCustomLineBasedOn(col) +",",QueryComponent.GroupBy);
+                var line = new CustomLine($"{GetGroupOrOrderByCustomLineBasedOn(col)},",QueryComponent.GroupBy);
 
                 FlagLineBasedOnIcolumn(line,col.IColumn);
 
@@ -494,7 +499,7 @@ public class AggregateBuilder : ISqlQueryBuilder
                         if (_skipGroupByForThese.Contains(col.IColumn))
                             continue;
                             
-                        var line = new CustomLine(GetGroupOrOrderByCustomLineBasedOn(col) + ",", QueryComponent.OrderBy);
+                        var line = new CustomLine($"{GetGroupOrOrderByCustomLineBasedOn(col)},", QueryComponent.OrderBy);
 
                         FlagLineBasedOnIcolumn(line,col.IColumn);
 
@@ -593,7 +598,7 @@ public class AggregateBuilder : ISqlQueryBuilder
 
     private void GetSelectSQL(List<CustomLine> lines)
     {
-        lines.Add(new CustomLine("/*" + LabelWithComment + "*/",QueryComponent.SELECT));
+        lines.Add(new CustomLine($"/*{LabelWithComment}*/",QueryComponent.SELECT));
         lines.Add(new CustomLine("SELECT ",QueryComponent.SELECT));
 
         //if there is no top X or an axis is specified (in which case the TopX applies to the PIVOT if any not the axis)
@@ -605,13 +610,14 @@ public class AggregateBuilder : ISqlQueryBuilder
         CompileCustomLinesInStageAndAddToList(QueryComponent.QueryTimeColumn, lines);
             
         //put in all the selected columns (which are not being skipped because they aren't a part of group by)
-        foreach (QueryTimeColumn col in SelectColumns.Where(col => !_skipGroupByForThese.Contains(col.IColumn)))
+        foreach (var col in SelectColumns.Where(col => !_skipGroupByForThese.Contains(col.IColumn)))
         {
             if (col.IColumn.HashOnDataRelease)
-                throw new QueryBuildingException("Column " + col.IColumn.GetRuntimeName() + " is marked as HashOnDataRelease and therefore cannot be used as an Aggregate dimension");
+                throw new QueryBuildingException(
+                    $"Column {col.IColumn.GetRuntimeName()} is marked as HashOnDataRelease and therefore cannot be used as an Aggregate dimension");
 
 
-            var line = new CustomLine(col.GetSelectSQL(null, null, QuerySyntaxHelper) + ",", QueryComponent.QueryTimeColumn);
+            var line = new CustomLine($"{col.GetSelectSQL(null, null, QuerySyntaxHelper)},", QueryComponent.QueryTimeColumn);
             FlagLineBasedOnIcolumn(line,col.IColumn);
 
             //it's the axis dimension tag it with the axis tag
@@ -641,12 +647,12 @@ public class AggregateBuilder : ISqlQueryBuilder
 
     private string GetHavingSql()
     {
-        string toReturn = "";
+        var toReturn = "";
 
         //HAVING
         if (!string.IsNullOrWhiteSpace(HavingSQL))
         {
-            toReturn += "HAVING" + Environment.NewLine;
+            toReturn += $"HAVING{Environment.NewLine}";
             toReturn += HavingSQL;
         }
         return toReturn;

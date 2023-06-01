@@ -85,7 +85,7 @@ public class ExecuteCommandViewFilterMatchData : ExecuteCommandViewDataBase, IAt
         _candidates = GetCandidates(catalogue);
 
         if (!_candidates.Any())
-            SetImpossible("No ColumnInfo is associated with '" + rootObj + "'");
+            SetImpossible($"No ColumnInfo is associated with '{rootObj}'");
     }
 
     private ColumnInfo[] GetCandidates(Catalogue catalogue)

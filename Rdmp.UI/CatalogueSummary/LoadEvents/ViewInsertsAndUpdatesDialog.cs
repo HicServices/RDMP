@@ -111,7 +111,8 @@ public partial class ViewInsertsAndUpdatesDialog : Form, ICheckNotifier
 
     private TableInfo GetTableInfoFromConstructorArguments(ArchivalTableLoadInfo toAttemptToDisplay, List<TableInfo> potentialTableInfos, ICheckNotifier checkNotifier)
     {
-        checkNotifier.OnCheckPerformed(new CheckEventArgs("Table user is attempting to view updates/inserts for is called " + toAttemptToDisplay.TargetTable, CheckResult.Success));
+        checkNotifier.OnCheckPerformed(new CheckEventArgs(
+            $"Table user is attempting to view updates/inserts for is called {toAttemptToDisplay.TargetTable}", CheckResult.Success));
             
         if(potentialTableInfos.Count == 0)
             throw new Exception("No potential tables were found");
@@ -121,14 +122,13 @@ public partial class ViewInsertsAndUpdatesDialog : Form, ICheckNotifier
 
         var syntax = potentialTableInfos.First().GetQuerySyntaxHelper();
 
-        string runtimeName = syntax.GetRuntimeName(toAttemptToDisplay.TargetTable);
+        var runtimeName = syntax.GetRuntimeName(toAttemptToDisplay.TargetTable);
 
-        checkNotifier.OnCheckPerformed(new CheckEventArgs("The runtime name of the table is " + runtimeName, CheckResult.Success));
+        checkNotifier.OnCheckPerformed(new CheckEventArgs($"The runtime name of the table is {runtimeName}", CheckResult.Success));
 
         checkNotifier.OnCheckPerformed(
             new CheckEventArgs(
-                "The following TableInfos were given to us to pick from " +
-                string.Join(",", potentialTableInfos), CheckResult.Success));
+                $"The following TableInfos were given to us to pick from {string.Join(",", potentialTableInfos)}", CheckResult.Success));
 
         var candidates = potentialTableInfos.Where(t => t.GetRuntimeName().Equals(runtimeName)).ToArray();
 
@@ -140,7 +140,8 @@ public partial class ViewInsertsAndUpdatesDialog : Form, ICheckNotifier
 
         if (candidates.Count() > 1)
         {
-            checkNotifier.OnCheckPerformed(new CheckEventArgs("Found multiple TableInfos (mentioned above) with the runtime name " + runtimeName + " I don't know which one you want to view", CheckResult.Fail));
+            checkNotifier.OnCheckPerformed(new CheckEventArgs(
+                $"Found multiple TableInfos (mentioned above) with the runtime name {runtimeName} I don't know which one you want to view", CheckResult.Fail));
             return null;
         }
 
@@ -160,7 +161,7 @@ public partial class ViewInsertsAndUpdatesDialog : Form, ICheckNotifier
                 return true;
 
             //we will handle this one instead of the checksui
-            SQLPreviewWindow window = new SQLPreviewWindow("Send Query?","The following query is about to be submitted:",args.ProposedFix);
+            var window = new SQLPreviewWindow("Send Query?","The following query is about to be submitted:",args.ProposedFix);
             try
             {
                 return window.ShowDialog() == DialogResult.OK;

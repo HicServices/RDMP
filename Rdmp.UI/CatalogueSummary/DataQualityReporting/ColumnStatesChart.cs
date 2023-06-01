@@ -44,11 +44,11 @@ public partial class ColumnStatesChart : UserControl, IDataQualityReportingChart
     {
         panel1.Controls.Clear();
 
-        int row = 0;
+        var row = 0;
 
         foreach (var property in evaluation.ColumnStates.Select(c=>c.TargetProperty).Distinct())
         {
-            ConsequenceBar bar = new ConsequenceBar();
+            var bar = new ConsequenceBar();
             bar.Label = property;
             bar.Correct = evaluation.ColumnStates.Where(c => c.TargetProperty.Equals(property)).Sum(s => s.PivotCategory.Equals(pivotCategoryValue)?s.CountCorrect:0);
             bar.Invalid = evaluation.ColumnStates.Where(c => c.TargetProperty.Equals(property)).Sum(s => s.PivotCategory.Equals(pivotCategoryValue)?s.CountInvalidatesRow:0);
@@ -71,7 +71,7 @@ public partial class ColumnStatesChart : UserControl, IDataQualityReportingChart
     {
         base.OnResize(e);
 
-        foreach (ConsequenceBar bar in panel1.Controls.OfType<ConsequenceBar>())
+        foreach (var bar in panel1.Controls.OfType<ConsequenceBar>())
             bar.Invalidate();
     }
 }

@@ -88,14 +88,14 @@ public partial class ExceptionViewerStackTraceWithHyperlinks : Form
 
         tableLayoutPanel1.RowCount = lines.Length;
 
-        ViewSourceCodeToolTip tt = new ViewSourceCodeToolTip();
+        var tt = new ViewSourceCodeToolTip();
 
-        for (int i = 0; i < lines.Length; i++)
+        for (var i = 0; i < lines.Length; i++)
         {
                 
              
             //Any other things you want to not be a hyperlink because they give no useful context to the error can be added here and they will not appear as hyperlinks
-            bool lineIsMessageConstructor = lines[i].Contains("ReusableLibraryCode.Checks.CheckEventArgs..ctor");
+            var lineIsMessageConstructor = lines[i].Contains("ReusableLibraryCode.Checks.CheckEventArgs..ctor");
 
             Match lineNumberMatch;
             Match filenameMatch;
@@ -103,7 +103,7 @@ public partial class ExceptionViewerStackTraceWithHyperlinks : Form
 
             if (!(lineNumberMatch.Success || filenameMatch.Success) || lineIsMessageConstructor)
             {
-                Label l = new Label();
+                var l = new Label();
                 l.Text = lines[i];
                 l.AutoSize = true;
 
@@ -118,15 +118,15 @@ public partial class ExceptionViewerStackTraceWithHyperlinks : Form
             }
             else
             {
-                int lineNumber = int.Parse(lineNumberMatch.Groups[1].Value);
-                LinkLabel link = new LinkLabel();
+                var lineNumber = int.Parse(lineNumberMatch.Groups[1].Value);
+                var link = new LinkLabel();
 
-                string filename = filenameMatch.Groups[1].Value;
+                var filename = filenameMatch.Groups[1].Value;
 
                 link.AutoSize = true;
                 link.Text = lines[i];
 
-                tt.SetToolTip(link,filename + "|" + lineNumber);
+                tt.SetToolTip(link, $"{filename}|{lineNumber}");
 
                 link.LinkClicked += (sender, args) => OpenVisualStudio(filename, lineNumber);
                 tableLayoutPanel1.Controls.Add(link, 0, i);
@@ -162,7 +162,7 @@ public partial class ExceptionViewerStackTraceWithHyperlinks : Form
     {
         try
         {
-            Clipboard.SetText(Path.GetFileName(filename) +":" + lineNumber);
+            Clipboard.SetText($"{Path.GetFileName(filename)}:{lineNumber}");
 
             var viewer = new Rdmp.UI.SimpleDialogs.ViewSourceCodeDialog(filename, lineNumber,Color.LawnGreen);
             viewer.ShowDialog();

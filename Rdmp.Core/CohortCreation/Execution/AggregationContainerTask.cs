@@ -42,8 +42,8 @@ public class AggregationContainerTask : Compileable,IOrderable
         return "";
     }
 
-    public override IMapsDirectlyToDatabaseTable Child { get { return Container; } }
-        
+    public override IMapsDirectlyToDatabaseTable Child => Container;
+
     public override IDataAccessPoint[] GetDataAccessPoints()
     {
         var cataIDs = Container.GetAggregateConfigurations().Select(c => c.Catalogue_ID).Distinct().ToList();
@@ -58,7 +58,8 @@ public class AggregationContainerTask : Compileable,IOrderable
 
         //none of the subcontainers have any catalogues either!
         if(!cataIDs.Any())
-            throw new Exception("Aggregate Container " + Container.ID + " does not have any datasets in it and neither does an of its direct subcontainers have any, how far down the tree do you expect me to look!");
+            throw new Exception(
+                $"Aggregate Container {Container.ID} does not have any datasets in it and neither does an of its direct subcontainers have any, how far down the tree do you expect me to look!");
 
         var catas = Container.Repository.GetAllObjectsInIDList<Catalogue>(cataIDs);
 
@@ -89,7 +90,8 @@ returned by this operation they must be in all the sets under this (including th
                     @"Includes ALL patients in the FIRST set (or subcontainer) under this container but ONLY if they DO NOT
 APPEAR in any of the sets that come after the FIRST.  This means that you get everyone in the first set
 EXCEPT anyone appearing in any of the other sets that follow the FIRST.";
-            default : throw new ArgumentOutOfRangeException("Did not know what tool tip to return for set operation " + ToString());
+            default : throw new ArgumentOutOfRangeException(
+                $"Did not know what tool tip to return for set operation {ToString()}");
 
         }
     }

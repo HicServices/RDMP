@@ -42,7 +42,8 @@ public class RemotePushingService
 
     public async void SendToAllRemotes<T>(T[] toSendAll, Action callback = null) where  T:IMapsDirectlyToDatabaseTable
     {
-        listener.OnNotify(this, new NotifyEventArgs(ProgressEventType.Information, "Ready to send " + toSendAll.Length + " " + typeof(T).Name + " items to all remotes."));
+        listener.OnNotify(this, new NotifyEventArgs(ProgressEventType.Information,
+            $"Ready to send {toSendAll.Length} {typeof(T).Name} items to all remotes."));
         var done = new Dictionary<string, int>();
 
         foreach (var remoteRDMP in remotes)
@@ -59,7 +60,8 @@ public class RemotePushingService
             foreach (var toSend in toSendAll)
             {
                 if(!_gatherer.CanGatherDependencies(toSend))
-                    throw new Exception("Type " + typeof(T)  + " is not supported yet by Gatherer and therefore cannot be shared");
+                    throw new Exception(
+                        $"Type {typeof(T)} is not supported yet by Gatherer and therefore cannot be shared");
 
                 var share = _gatherer.GatherDependencies(toSend).ToShareDefinitionWithChildren(_shareManager);
                 var json = JsonConvertExtensions.SerializeObject(share, _repositoryLocator);
@@ -73,8 +75,8 @@ public class RemotePushingService
 
                 var apiUrl = remote.GetUrlFor<T>();
 
-                RemoteRDMP remote1 = remote;
-                T toSend1 = toSend;
+                var remote1 = remote;
+                var toSend1 = toSend;
                                
                 var sender = new Task(() =>
                 {
@@ -84,12 +86,11 @@ public class RemotePushingService
                         {
                             result = client.PostAsync(new Uri(apiUrl), new StringContent(json, Encoding.UTF8, "text/plain")).Result;
                             if (result.IsSuccessStatusCode)
-                                listener.OnNotify(this, new NotifyEventArgs(ProgressEventType.Information, "Sending " + toSend1 + " to " + remote1.Name + " completed."));
+                                listener.OnNotify(this, new NotifyEventArgs(ProgressEventType.Information,
+                                    $"Sending {toSend1} to {remote1.Name} completed."));
                             else
-                                listener.OnNotify(this, new NotifyEventArgs(ProgressEventType.Error, 
-                                    "Error sending " + toSend1 + " to " + remote1.Name + ": " + 
-                                    result.ReasonPhrase + " - " + 
-                                    result.Content.ReadAsStringAsync().Result));
+                                listener.OnNotify(this, new NotifyEventArgs(ProgressEventType.Error,
+                                    $"Error sending {toSend1} to {remote1.Name}: {result.ReasonPhrase} - {result.Content.ReadAsStringAsync().Result}"));
                             lock (done)
                             {
                                 listener.OnProgress(this, new ProgressEventArgs(remote1.Name, new ProgressMeasurement(++done[remote1.Name], ProgressType.Records, toSendAll.Length), new TimeSpan()));
@@ -97,7 +98,8 @@ public class RemotePushingService
                         }
                         catch (Exception ex)
                         {
-                            listener.OnNotify(this, new NotifyEventArgs(ProgressEventType.Error, "Error sending " + toSend1 + " to " + remote1.Name, ex));
+                            listener.OnNotify(this, new NotifyEventArgs(ProgressEventType.Error,
+                                $"Error sending {toSend1} to {remote1.Name}", ex));
                             listener.OnProgress(this, new ProgressEventArgs(remote1.Name, new ProgressMeasurement(1, ProgressType.Records, 1), new TimeSpan()));
                         }
                     }

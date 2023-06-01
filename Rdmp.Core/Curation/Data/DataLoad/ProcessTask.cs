@@ -51,75 +51,73 @@ public class ProcessTask : DatabaseEntity, IProcessTask, IOrderable,INamed, IChe
     [Relationship(typeof(LoadMetadata),RelationshipType.SharedObject)]
     public int LoadMetadata_ID
     {
-        get { return _loadMetadataID; }
-        set { SetField(ref  _loadMetadataID, value); }
+        get => _loadMetadataID;
+        set => SetField(ref  _loadMetadataID, value);
     }
     /// <inheritdoc/>
     [Obsolete("Since you can't change which Catalogues are loaded by a LoadMetadata at runtime, this property is now obsolete")]
     public int? RelatesSolelyToCatalogue_ID
     {
-        get { return _relatesSolelyToCatalogueID; }
-        set { SetField(ref  _relatesSolelyToCatalogueID, value); }
+        get => _relatesSolelyToCatalogueID;
+        set => SetField(ref  _relatesSolelyToCatalogueID, value);
     }
 
     /// <inheritdoc/>
     public int Order
     {
-        get { return _order; }
-        set { SetField(ref  _order, value); }
+        get => _order;
+        set => SetField(ref  _order, value);
     }
 
     /// <inheritdoc/>
     [AdjustableLocation]
     public string Path
     {
-        get { return _path; }
-        set { SetField(ref  _path, value); }
+        get => _path;
+        set => SetField(ref  _path, value);
     }
 
     /// <inheritdoc cref="IProcessTask.Name"/>
     [NotNull]
     public string Name
     {
-        get { return _name; }
-        set { SetField(ref  _name, value); }
+        get => _name;
+        set => SetField(ref  _name, value);
     }
     /// <inheritdoc/>
     public LoadStage LoadStage
     {
-        get { return _loadStage; }
-        set { SetField(ref  _loadStage, value); }
+        get => _loadStage;
+        set => SetField(ref  _loadStage, value);
     }
     /// <inheritdoc/>
     public ProcessTaskType ProcessTaskType
     {
-        get { return _processTaskType; }
-        set { SetField(ref  _processTaskType, value); }
+        get => _processTaskType;
+        set => SetField(ref  _processTaskType, value);
     }
     /// <inheritdoc/>
     public bool IsDisabled
     {
-        get { return _isDisabled; }
-        set { SetField(ref  _isDisabled, value); }
+        get => _isDisabled;
+        set => SetField(ref  _isDisabled, value);
     }
 
     #endregion
     #region Relationships
     /// <inheritdoc cref="LoadMetadata_ID"/>
     [NoMappingToDatabase]
-    public LoadMetadata LoadMetadata {
-        get { return Repository.GetObjectByID<LoadMetadata>(LoadMetadata_ID); }
-    }
+    public LoadMetadata LoadMetadata => Repository.GetObjectByID<LoadMetadata>(LoadMetadata_ID);
 
     /// <inheritdoc/>
     [NoMappingToDatabase]
-    public IEnumerable<ProcessTaskArgument> ProcessTaskArguments { get { return Repository.GetAllObjectsWithParent<ProcessTaskArgument>(this);} }
-        
+    public IEnumerable<ProcessTaskArgument> ProcessTaskArguments => Repository.GetAllObjectsWithParent<ProcessTaskArgument>(this);
+
     /// <summary>
     /// All <see cref="ILoadProgress"/> (if any) that can be advanced by executing this load.  This allows batch execution of large loads
     /// </summary>
     [NoMappingToDatabase]
-    public ILoadProgress[] LoadProgresses { get { return LoadMetadata.LoadProgresses; }}
+    public ILoadProgress[] LoadProgresses => LoadMetadata.LoadProgresses;
 
     #endregion
 
@@ -143,7 +141,7 @@ public class ProcessTask : DatabaseEntity, IProcessTask, IOrderable,INamed, IChe
             {"LoadMetadata_ID", parent.ID},
             {"ProcessTaskType", ProcessTaskType.Executable.ToString()},
             {"LoadStage", stage},
-            {"Name", "New Process" + Guid.NewGuid()},
+            {"Name", $"New Process{Guid.NewGuid()}" },
             {"Order", order}
         });
     }
@@ -165,13 +163,13 @@ public class ProcessTask : DatabaseEntity, IProcessTask, IOrderable,INamed, IChe
         if (ProcessTaskType.TryParse(r["ProcessTaskType"] as string, out processTaskType))
             ProcessTaskType = processTaskType;
         else
-            throw new Exception("Could not parse ProcessTaskType:" + r["ProcessTaskType"]);
+            throw new Exception($"Could not parse ProcessTaskType:{r["ProcessTaskType"]}");
 
         LoadStage loadStage;
         if (LoadStage.TryParse(r["LoadStage"] as string, out loadStage))
             LoadStage = loadStage;
         else
-            throw new Exception("Could not parse LoadStage:" + r["LoadStage"]);
+            throw new Exception($"Could not parse LoadStage:{r["LoadStage"]}");
 
         IsDisabled = Convert.ToBoolean(r["IsDisabled"]);
     }
@@ -218,7 +216,7 @@ public class ProcessTask : DatabaseEntity, IProcessTask, IOrderable,INamed, IChe
             var sql = File.ReadAllText(Path);
 
             //let's check for any SQL that indicates user is trying to modify a STAGING table in a RAW script (for example)
-            foreach (TableInfo tableInfo in LoadMetadata.GetDistinctTableInfoList(false))
+            foreach (var tableInfo in LoadMetadata.GetDistinctTableInfoList(false))
                 //for each stage get all the object names that are in that stage
             foreach (var stage in new[]{LoadStage.AdjustRaw, LoadStage.AdjustStaging, LoadStage.PostLoad})
             {
@@ -227,20 +225,18 @@ public class ProcessTask : DatabaseEntity, IProcessTask, IOrderable,INamed, IChe
                     continue;
                         
                 //figure out what is prohibited
-                string prohibitedSql = tableInfo.GetQuerySyntaxHelper().EnsureFullyQualified(tableInfo.GetDatabaseRuntimeName(stage),null, tableInfo.GetRuntimeName(stage));
+                var prohibitedSql = tableInfo.GetQuerySyntaxHelper().EnsureFullyQualified(tableInfo.GetDatabaseRuntimeName(stage),null, tableInfo.GetRuntimeName(stage));
 
                 //if we reference it, complain
                 if (sql.Contains(prohibitedSql))
                     notifier.OnCheckPerformed(
                         new CheckEventArgs(
-                            "Sql in file '" + Path + "' contains a reference to '" + prohibitedSql +
-                            "' which is prohibited since the ProcessTask ('" + Name + "') runs in LoadStage " +
-                            LoadStage, CheckResult.Warning));
+                            $"Sql in file '{Path}' contains a reference to '{prohibitedSql}' which is prohibited since the ProcessTask ('{Name}') runs in LoadStage {LoadStage}", CheckResult.Warning));
             }
         }
         catch (Exception e)
         {
-            notifier.OnCheckPerformed(new CheckEventArgs("Failed to check the contents of the SQL file '" + Path + "'", CheckResult.Fail,e));
+            notifier.OnCheckPerformed(new CheckEventArgs($"Failed to check the contents of the SQL file '{Path}'", CheckResult.Fail,e));
         }
     }
 
@@ -248,22 +244,21 @@ public class ProcessTask : DatabaseEntity, IProcessTask, IOrderable,INamed, IChe
     {
         if (string.IsNullOrWhiteSpace(Path))
         {
-            notifier.OnCheckPerformed(new CheckEventArgs("No Path specified for ProcessTask '" + Name + "'",CheckResult.Fail));
+            notifier.OnCheckPerformed(new CheckEventArgs($"No Path specified for ProcessTask '{Name}'",CheckResult.Fail));
             return;
         }
 
         if (!File.Exists(Path))
-            notifier.OnCheckPerformed(new CheckEventArgs("Could not find File '" + Path + "' for ProcessTask '" + Name + "'", CheckResult.Fail));
+            notifier.OnCheckPerformed(new CheckEventArgs($"Could not find File '{Path}' for ProcessTask '{Name}'", CheckResult.Fail));
         else
-            notifier.OnCheckPerformed(new CheckEventArgs("Found File '" + Path + "'", CheckResult.Success));
+            notifier.OnCheckPerformed(new CheckEventArgs($"Found File '{Path}'", CheckResult.Success));
 
 
         var matchingPaths = Repository.GetAllObjects<ProcessTask>().Where(pt => pt.Path.Equals(Path));
         foreach (var duplicate in matchingPaths.Except(new[] {this}))
             notifier.OnCheckPerformed(
                 new CheckEventArgs(
-                    "ProcessTask '" + duplicate + "' (ID=" + duplicate.ID + ") also uses file '" +
-                    System.IO.Path.GetFileName(Path) + "'", CheckResult.Warning));
+                    $"ProcessTask '{duplicate}' (ID={duplicate.ID}) also uses file '{System.IO.Path.GetFileName(Path)}'", CheckResult.Warning));
 
         //conflicting tokens in Name string
         foreach (Match match in Regex.Matches(Name, @"'.*((\.exe')|(\.sql'))"))
@@ -277,8 +272,7 @@ public class ProcessTask : DatabaseEntity, IProcessTask, IOrderable,INamed, IChe
                 if (referencedFile != actualFile)
                     notifier.OnCheckPerformed(
                         new CheckEventArgs(
-                            "Name of ProcessTask '" + Name + "' (ID=" + ID + ") references file '" + match.Value +
-                            "' but the Path of the ProcessTask is '" + Path + "'", CheckResult.Fail));
+                            $"Name of ProcessTask '{Name}' (ID={ID}) references file '{match.Value}' but the Path of the ProcessTask is '{Path}'", CheckResult.Fail));
             }
                 
         }
@@ -326,14 +320,14 @@ public class ProcessTask : DatabaseEntity, IProcessTask, IOrderable,INamed, IChe
             try
             {
                 //get list of arguments to also clone (will happen outside of transaction
-                ProcessTaskArgument[] toCloneArguments = ProcessTaskArguments.ToArray();
+                var toCloneArguments = ProcessTaskArguments.ToArray();
 
                 //create a new transaction for all the cloning - note that once all objects are cloned the transaction is committed then all the objects are adjusted outside the transaction
-                ProcessTask clone = new ProcessTask(CatalogueRepository,LoadMetadata,loadStage);
+                var clone = new ProcessTask(CatalogueRepository,LoadMetadata,loadStage);
                 CopyShallowValuesTo(clone);
 
                 //foreach of our child arguments
-                foreach (ProcessTaskArgument argument in toCloneArguments)
+                foreach (var argument in toCloneArguments)
                 {
                     //clone it but rewire it to the proper ProcessTask parent (the clone)
                     argument.ShallowClone(clone);
@@ -428,7 +422,8 @@ public class ProcessTask : DatabaseEntity, IProcessTask, IOrderable,INamed, IChe
     {
         var matchingArgument = ProcessTaskArguments.SingleOrDefault(p => p.Name.Equals(parameterName));
         if (matchingArgument == null)
-            throw new Exception("Could not find a ProcessTaskArgument called '" + parameterName + "', have you called CreateArgumentsForClassIfNotExists<T> yet?");
+            throw new Exception(
+                $"Could not find a ProcessTaskArgument called '{parameterName}', have you called CreateArgumentsForClassIfNotExists<T> yet?");
 
         matchingArgument.SetValue(o);
         matchingArgument.SaveToDatabase();

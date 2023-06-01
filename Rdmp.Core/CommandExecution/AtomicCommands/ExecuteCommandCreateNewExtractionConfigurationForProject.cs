@@ -115,7 +115,7 @@ public class ExecuteCommandCreateNewExtractionConfigurationForProject : BasicCom
         if (p == null)
             return;
 
-        string name = _name;
+        var name = _name;
 
         // if we don't have a name and we are running in interactive mode
         if (string.IsNullOrWhiteSpace(name) && BasicActivator.IsInteractive)

@@ -27,7 +27,7 @@ public class CatalogueUsedByLoadMetadataNode:ObjectUsedByOtherObjectNode<LoadMet
 
     public string GetDeleteMessage()
     {
-        return "remove Catalogue '" + ObjectBeingUsed +"' from Load";
+        return $"remove Catalogue '{ObjectBeingUsed}' from Load";
     }
 
     /// <inheritdoc/>

@@ -29,7 +29,7 @@ public class EnumImageCollection<T> where T : struct, Enum, IConvertible
         var missingImages = _images.Where(i => i.Value is null).Select(p => p.Key).ToList();
         if(missingImages.Any())
             throw new IconProvisionException(
-                $"The following expected images were missing from {resourceManager.BaseName}.resx{Environment.NewLine}{string.Join("," + Environment.NewLine, missingImages)}");
+                $"The following expected images were missing from {resourceManager.BaseName}.resx{Environment.NewLine}{string.Join($",{Environment.NewLine}", missingImages)}");
     }
 
     public Image<Rgba32> this[T index] => _images[index];

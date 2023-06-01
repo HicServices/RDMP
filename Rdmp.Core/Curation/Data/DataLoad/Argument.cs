@@ -83,30 +83,30 @@ public abstract class Argument : DatabaseEntity, IArgument
     /// <inheritdoc/>
     public string Name
     {
-        get { return _name; }
-        set { SetField(ref  _name, value); }
+        get => _name;
+        set => SetField(ref  _name, value);
     }
 
     /// <inheritdoc/>
     [AdjustableLocation]
     public string Value
     {
-        get { return _value; }
-        set { SetField(ref  _value, value); }
+        get => _value;
+        set => SetField(ref  _value, value);
     }
 
     /// <inheritdoc/>
     public string Type
     {
-        get { return _type; }
-        protected set { SetField(ref  _type, value); }
+        get => _type;
+        protected set => SetField(ref  _type, value);
     }
 
     /// <inheritdoc/>
     public string Description
     {
-        get { return _description; }
-        set { SetField(ref  _description, value); }
+        get => _description;
+        set => SetField(ref  _description, value);
     }
 
     #endregion
@@ -203,7 +203,7 @@ public abstract class Argument : DatabaseEntity, IArgument
         if (type.Equals(typeof(Regex).ToString()))
             return new Regex(value);
 
-        Type concreteType = GetConcreteSystemType(type);
+        var concreteType = GetConcreteSystemType(type);
             
         //try to enum it 
         if (typeof(Enum).IsAssignableFrom(concreteType))
@@ -229,14 +229,14 @@ public abstract class Argument : DatabaseEntity, IArgument
         if (typeof(Array).IsAssignableFrom(concreteType))
         {
             var elementType = concreteType.GetElementType();
-            int[] ids = value.Split(',').Select(int.Parse).ToArray();
+            var ids = value.Split(',').Select(int.Parse).ToArray();
 
             if (typeof(IMapsDirectlyToDatabaseTable).IsAssignableFrom(elementType))
             {
                 var genericArray = Repository.GetAllObjectsInIDList(elementType, ids).ToArray();
                 var typedArray = Array.CreateInstance(elementType, genericArray.Length);
 
-                for (int i = 0; i < genericArray.Length; i++)
+                for (var i = 0; i < genericArray.Length; i++)
                     typedArray.SetValue(genericArray[i], i);
 
                 return typedArray;
@@ -254,7 +254,7 @@ public abstract class Argument : DatabaseEntity, IArgument
         if(type.Equals(typeof(CultureInfo).ToString()))
             return new CultureInfo(value);
 
-        throw new NotSupportedException("Custom arguments cannot be of type " + type);
+        throw new NotSupportedException($"Custom arguments cannot be of type {type}");
     }
 
     private bool HandleIfICustomUIDrivenClass(string value, Type concreteType, out object answer)
@@ -269,16 +269,17 @@ public abstract class Argument : DatabaseEntity, IArgument
 
             try
             {
-                Type t = CatalogueRepository.MEF.GetType(concreteType.FullName);
+                var t = CatalogueRepository.MEF.GetType(concreteType.FullName);
 
-                ObjectConstructor constructor = new ObjectConstructor();
+                var constructor = new ObjectConstructor();
 
                 result = (ICustomUIDrivenClass) constructor.Construct(t, (ICatalogueRepository) Repository);
                      
             }
             catch (Exception e)
             {
-                throw new Exception("Failed to create an ICustomUIDrivenClass of type " + concreteType.FullName + " make sure that you mark your class as public, commit it to the catalogue and mark it with the export ''", e);
+                throw new Exception(
+                    $"Failed to create an ICustomUIDrivenClass of type {concreteType.FullName} make sure that you mark your class as public, commit it to the catalogue and mark it with the export ''", e);
             }
 
             try
@@ -287,7 +288,8 @@ public abstract class Argument : DatabaseEntity, IArgument
             }
             catch (Exception e)
             {
-                throw new Exception("RestoreState failed on your ICustomUIDrivenClass called " + concreteType.FullName + " the restore value was the string value '" + value + "'", e);
+                throw new Exception(
+                    $"RestoreState failed on your ICustomUIDrivenClass called {concreteType.FullName} the restore value was the string value '{value}'", e);
             }
 
             answer =  result;
@@ -307,25 +309,26 @@ public abstract class Argument : DatabaseEntity, IArgument
     private Type GetSystemType(string type)
     {
         //if we know they type (it is exactly one we are expecting)
-        foreach (Type knownType in PermissableTypes)
+        foreach (var knownType in PermissableTypes)
         {
             //return the type
             if (knownType.ToString().Equals(type))
                 return knownType;
         }
 
-        Regex arrayType = new Regex(@"(.*)\[]");
+        var arrayType = new Regex(@"(.*)\[]");
         var arrayMatch = arrayType.Match(type);
 
         if (arrayMatch.Success)
         {
-            string elementTypeAsString = arrayMatch.Groups[1].Value;
+            var elementTypeAsString = arrayMatch.Groups[1].Value;
 
             //it is an unknown Type e.g. Bob where Bob is an ICustomUIDrivenClass or something
             var elementType = CatalogueRepository.MEF.GetType(elementTypeAsString);
 
             if (elementType == null)
-                throw new Exception("Could not figure out what SystemType to use for elementType = '" + elementTypeAsString + "' of Type '" + type + "'");
+                throw new Exception(
+                    $"Could not figure out what SystemType to use for elementType = '{elementTypeAsString}' of Type '{type}'");
 
             return Array.CreateInstance(elementType, 0).GetType();
         }
@@ -334,8 +337,8 @@ public abstract class Argument : DatabaseEntity, IArgument
         Type vType;
         if (IsDictionary(type, out kType, out vType))
         {
-            Type genericClass = typeof(Dictionary<,>);
-            Type constructedClass = genericClass.MakeGenericType(kType,vType);
+            var genericClass = typeof(Dictionary<,>);
+            var constructedClass = genericClass.MakeGenericType(kType,vType);
             return constructedClass;
         }
 
@@ -343,7 +346,7 @@ public abstract class Argument : DatabaseEntity, IArgument
         var anyType = CatalogueRepository.MEF.GetType(type);
 
         if (anyType == null)
-            throw new Exception("Could not figure out what SystemType to use for Type = '" + type + "'");
+            throw new Exception($"Could not figure out what SystemType to use for Type = '{type}'");
 
         return anyType;
     }
@@ -400,7 +403,7 @@ public abstract class Argument : DatabaseEntity, IArgument
             return o.ToString();
                     
         //get the system type
-        Type type = GetSystemType(asType);
+        var type = GetSystemType(asType);
 
         if (o is String)
         {
@@ -425,7 +428,8 @@ public abstract class Argument : DatabaseEntity, IArgument
             if (typeof(IMapsDirectlyToDatabaseTable).IsAssignableFrom(type.GetElementType()))
                 return string.Join(",", arr.Cast<IMapsDirectlyToDatabaseTable>().Select(m => m.ID));
                 
-            throw new NotSupportedException("DemandsInitialization arrays must be of Type IMapsDirectlyToDatabaseTable e.g. TableInfo[].  Supplied Type was " + type);
+            throw new NotSupportedException(
+                $"DemandsInitialization arrays must be of Type IMapsDirectlyToDatabaseTable e.g. TableInfo[].  Supplied Type was {type}");
         }
 
         if (type != null && typeof (IDictionary).IsAssignableFrom(type))
@@ -439,7 +443,8 @@ public abstract class Argument : DatabaseEntity, IArgument
             {
                 //if we have been given an illegal typed object
                 if (!PermissableTypes.Contains(o.GetType()))
-                    throw new NotSupportedException("Type " + o.GetType() + " is not one of the permissable types for ProcessTaskArgument, argument must be one of:" + PermissableTypes.Aggregate("", (s, n) => s + n + ",").TrimEnd(','));
+                    throw new NotSupportedException(
+                        $"Type {o.GetType()} is not one of the permissable types for ProcessTaskArgument, argument must be one of:{PermissableTypes.Aggregate("", (s, n) => $"{s}{n},").TrimEnd(',')}");
 
                 //if we are passed something o of differing type to the known requested type then someone is lying to someone!
                 if (type != null && !type.IsInstanceOfType(o))
@@ -449,7 +454,8 @@ public abstract class Argument : DatabaseEntity, IArgument
                     }
                     catch (Exception)
                     {
-                        throw new Exception("Cannot set value " + o + " (of Type " + o.GetType().FullName + ") to on ProcessTaskArgument because it has an incompatible Type specified (" + type.FullName + ")");
+                        throw new Exception(
+                            $"Cannot set value {o} (of Type {o.GetType().FullName}) to on ProcessTaskArgument because it has an incompatible Type specified ({type.FullName})");
                     }
                         
             }
@@ -470,7 +476,7 @@ public abstract class Argument : DatabaseEntity, IArgument
         {
             var doc = XDocument.Load(sr);
             var dict = doc.Element("dictionary");
-            foreach (XElement xElement in dict.Elements("entry"))
+            foreach (var xElement in dict.Elements("entry"))
             {
                 var kElement = xElement.Element("key");
                 var kType = kElement.Attribute("type").Value;
@@ -539,7 +545,7 @@ public abstract class Argument : DatabaseEntity, IArgument
         vType = null;
 
         //regex to match the two types referenced in the Dictionary
-        Regex r = new Regex(
+        var r = new Regex(
             string.Format("{0}{1},{1}{2}",
                 Regex.Escape("System.Collections.Generic.Dictionary`2["),
                 "(.*)",

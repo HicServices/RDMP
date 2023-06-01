@@ -32,8 +32,8 @@ public class ExecuteCrossServerDatasetExtractionSourceTest : TestsRequiringAnExt
         var r = (ExecuteDatasetExtractionFlatFileDestination)result;
 
         //this should be what is in the file, the private identifier and the 1 that was put into the table in the first place (see parent class for the test data setup)
-        Assert.AreEqual(@"ReleaseID,Name,DateOfBirth
-" + _cohortKeysGenerated[_cohortKeysGenerated.Keys.First()] + @",Dave,2001-01-01", File.ReadAllText(r.OutputFile).Trim());
+        Assert.AreEqual($@"ReleaseID,Name,DateOfBirth
+{_cohortKeysGenerated[_cohortKeysGenerated.Keys.First()]},Dave,2001-01-01", File.ReadAllText(r.OutputFile).Trim());
 
         File.Delete(r.OutputFile);
     }
@@ -78,7 +78,7 @@ public class ExecuteCrossServerDatasetExtractionSourceTest : TestsRequiringAnExt
         if (_request.QueryBuilder == null)
             _request.GenerateQueryBuilder();
 
-        string expectedOutput = 
+        var expectedOutput = 
             string.Format(@"/*The ID of the cohort in [tempdb]..[Cohort]*/
 DECLARE @CohortDefinitionID AS int;
 SET @CohortDefinitionID=-599;
@@ -103,16 +103,16 @@ WHERE
         ect.Server = "bob";
 
         var e = DataExportRepository.GetObjectByID<ExternalCohortTable>(_request.ExtractableCohort.ExternalCohortTable_ID);
-        string origValue = e.Database;
+        var origValue = e.Database;
 
         e.Database = CohortDatabaseName;
         e.SaveToDatabase();
         try
         {
-            ExecuteCrossServerDatasetExtractionSource s = new ExecuteCrossServerDatasetExtractionSource();
+            var s = new ExecuteCrossServerDatasetExtractionSource();
             s.TemporaryDatabaseName = "tempdb";
             s.PreInitialize(_request, new ThrowImmediatelyDataLoadEventListener());
-            string hacked = s.HackExtractionSQL(_request.QueryBuilder.SQL, new ThrowImmediatelyDataLoadEventListener() { ThrowOnWarning = true });
+            var hacked = s.HackExtractionSQL(_request.QueryBuilder.SQL, new ThrowImmediatelyDataLoadEventListener() { ThrowOnWarning = true });
 
             Assert.AreEqual(expectedOutput.Trim(),hacked.Trim());
         }

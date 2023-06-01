@@ -24,7 +24,7 @@ public class BundledLookupTable : IBundledLookupTable
     public BundledLookupTable(ITableInfo tableInfo)
     {
         if(!tableInfo.IsLookupTable())
-            throw new Exception("TableInfo " + tableInfo + " is not a lookup table");
+            throw new Exception($"TableInfo {tableInfo} is not a lookup table");
 
         TableInfo = tableInfo;
     }

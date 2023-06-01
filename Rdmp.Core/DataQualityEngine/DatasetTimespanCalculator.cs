@@ -42,10 +42,10 @@ public class DatasetTimespanCalculator : IDetermineDatasetTimespan
         if (dt == null || dt.Rows.Count < 2)
             return Unknown();
 
-        int discardThreshold = discardOutliers ? GetDiscardThreshold(dt) : -1;
+        var discardThreshold = discardOutliers ? GetDiscardThreshold(dt) : -1;
 
         DateTime? minMonth = null;
-        for (int i = 0; i < dt.Rows.Count; i++)
+        for (var i = 0; i < dt.Rows.Count; i++)
         {
             if (Convert.ToInt32(dt.Rows[i]["CountOfRecords"]) > discardThreshold)
             {
@@ -55,7 +55,7 @@ public class DatasetTimespanCalculator : IDetermineDatasetTimespan
         }
 
         DateTime? maxMonth = null;
-        for (int i = dt.Rows.Count - 1; i >= 0; i--)
+        for (var i = dt.Rows.Count - 1; i >= 0; i--)
         {
             if (Convert.ToInt32(dt.Rows[i]["CountOfRecords"]) > discardThreshold)
             {
@@ -100,12 +100,12 @@ public class DatasetTimespanCalculator : IDetermineDatasetTimespan
 
     private int GetDiscardThreshold(DataTable dt)
     {
-        int total = 0;
-        int counted = 0;
+        var total = 0;
+        var counted = 0;
 
         foreach (DataRow row in dt.Rows)
         {
-            int currentValue = Convert.ToInt32(row["CountOfRecords"]);
+            var currentValue = Convert.ToInt32(row["CountOfRecords"]);
                 
             if(currentValue == 0)
                 continue;
@@ -114,7 +114,7 @@ public class DatasetTimespanCalculator : IDetermineDatasetTimespan
             counted++;
         }
 
-        double nonZeroAverage = total/(double)counted;
+        var nonZeroAverage = total/(double)counted;
 
         return (int)(nonZeroAverage/1000);
     }

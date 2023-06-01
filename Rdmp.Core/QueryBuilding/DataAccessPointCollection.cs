@@ -104,7 +104,7 @@ public class DataAccessPointCollection
         {
             var tempList = new HashSet<IDataAccessPoint>(_points);
 
-            foreach (IDataAccessPoint p in points)
+            foreach (var p in points)
                 tempList.Add(p);
 
             try
@@ -113,7 +113,7 @@ public class DataAccessPointCollection
                     .ExpectDistinctServer(tempList.ToArray(), DataAccessContext, false);
 
                 //now add to the proper collection
-                foreach (IDataAccessPoint p in points)
+                foreach (var p in points)
                     _points.Add(p);
             }
             catch (Exception e)
@@ -122,8 +122,7 @@ public class DataAccessPointCollection
                     throw;
 
                 throw new InvalidOperationException(
-                    $"Could not identify single set of server/credentials to use with points:" +
-                    string.Join(Environment.NewLine, tempList), e);
+                    $"Could not identify single set of server/credentials to use with points:{string.Join(Environment.NewLine, tempList)}", e);
             }
         }
         else

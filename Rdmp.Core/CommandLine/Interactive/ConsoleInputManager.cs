@@ -70,7 +70,7 @@ public class ConsoleInputManager : BasicActivateItems
         }
 
         // user typed "null" or some spaces or something
-        if (IsBasicallyNull(text))
+        if (text.IsBasicallyNull())
             text = null;
 
         // that's still an affirmative choice
@@ -105,7 +105,7 @@ public class ConsoleInputManager : BasicActivateItems
         if (DisallowInput)
             throw new InputDisallowedException($"Value required for '{args}'");
 
-        string chosenStr = GetString(args, Enum.GetNames(enumType).ToList());
+        var chosenStr = GetString(args, Enum.GetNames(enumType).ToList());
         try
         {
             chosen = (Enum)Enum.Parse(enumType, chosenStr);
@@ -124,7 +124,7 @@ public class ConsoleInputManager : BasicActivateItems
         if (DisallowInput)
             throw new InputDisallowedException($"Value required for '{args}'"); 
 
-        string chosenStr = GetString(args, available.Select(t=>t.Name).ToList());
+        var chosenStr = GetString(args, available.Select(t=>t.Name).ToList());
 
         if (string.IsNullOrWhiteSpace(chosenStr))
         {
@@ -150,7 +150,8 @@ public class ConsoleInputManager : BasicActivateItems
         var unavailable = value.DatabaseEntities.Except(availableObjects).ToArray();
 
         if(unavailable.Any())
-            throw new Exception("The following objects were not among the listed available objects " + string.Join(",",unavailable.Select(o=>o.ToString())));
+            throw new Exception(
+                $"The following objects were not among the listed available objects {string.Join(",", unavailable.Select(o => o.ToString()))}");
 
         return value.DatabaseEntities.ToArray();
     }
@@ -252,16 +253,16 @@ public class ConsoleInputManager : BasicActivateItems
 
     public override bool SelectObject<T>(DialogArgs args, T[] available, out T selected)
     {
-        for(int i=0;i<available.Length;i++)
+        for(var i=0;i<available.Length;i++)
         {
-            Console.WriteLine(i + ":" + available[i]);
+            Console.WriteLine($"{i}:{available[i]}");
         }
 
         Console.Write(args.EntryLabel);
 
         var result = Console.ReadLine();
 
-        if(int.TryParse(result, out int idx))
+        if(int.TryParse(result, out var idx))
         {
             if(idx >= 0 && idx < available.Length)
             {
@@ -302,10 +303,7 @@ public class ConsoleInputManager : BasicActivateItems
                     }))
                 .AllowEmpty());
 
-        if (IsBasicallyNull(result))
-            return null;
-
-        return new DirectoryInfo(result);
+        return result.IsBasicallyNull() ? null : new DirectoryInfo(result);
     }
 
     public override FileInfo SelectFile(string prompt)
@@ -330,23 +328,7 @@ public class ConsoleInputManager : BasicActivateItems
                     }))
                 .AllowEmpty());
 
-        if (IsBasicallyNull(result))
-            return null;
-
-        return new FileInfo(result);
-    }
-
-    private bool IsBasicallyNull(string result)
-    {
-        if (string.IsNullOrWhiteSpace(result))
-            return true;
-            
-        // if user types the literal string null then return null (typically interpretted as - 'I don't want to pick one')
-        // but not the same as task cancellation
-        if (string.Equals(result, "null", StringComparison.CurrentCultureIgnoreCase))
-            return true;
-
-        return false;
+        return result.IsBasicallyNull() ? null : new FileInfo(result);
     }
 
     public override FileInfo[] SelectFiles(string prompt, string patternDescription, string pattern)
@@ -364,14 +346,14 @@ public class ConsoleInputManager : BasicActivateItems
                     }))
                 .AllowEmpty());
 
-        if (IsBasicallyNull(file))
+        if (file.IsBasicallyNull())
             return null;
 
         var asteriskIdx = file.IndexOf('*');
 
         if(asteriskIdx != -1)
         {
-            int idxLastSlash = file.LastIndexOfAny(new []{ Path.DirectorySeparatorChar,Path.AltDirectorySeparatorChar });
+            var idxLastSlash = file.LastIndexOfAny(new []{ Path.DirectorySeparatorChar,Path.AltDirectorySeparatorChar });
 
             if(idxLastSlash == -1 || asteriskIdx < idxLastSlash)
                 throw new Exception("Wildcards are only supported at the file level");
@@ -382,7 +364,7 @@ public class ConsoleInputManager : BasicActivateItems
             var dir = new DirectoryInfo(dirStr);
 
             if(!dir.Exists)
-                throw new DirectoryNotFoundException("Could not find directory:" + dirStr);
+                throw new DirectoryNotFoundException($"Could not find directory:{dirStr}");
                                         
             return dir.GetFiles(searchPattern).ToArray();
         }
@@ -434,7 +416,7 @@ public class ConsoleInputManager : BasicActivateItems
         var sql = collection.GetSql();
 
         var logger = NLog.LogManager.GetCurrentClassLogger();
-        logger.Trace($"About to ShowData from Query:{Environment.NewLine}" + sql);
+        logger.Trace($"About to ShowData from Query:{Environment.NewLine}{sql}");
             
         var toRun = new ExtractTableVerbatim(db.Server,sql,Console.OpenStandardOutput(),",",null);
         toRun.DoExtraction();
@@ -447,11 +429,11 @@ public class ConsoleInputManager : BasicActivateItems
             Console.WriteLine(load.Description);
             Console.WriteLine(load.StartTime);
                 
-            Console.WriteLine("Errors:" + load.Errors.Count);
+            Console.WriteLine($"Errors:{load.Errors.Count}");
                 
             foreach(var error in load.Errors)
             {
-                error.GetSummary(out string title, out string body, out _, out CheckResult _);
+                error.GetSummary(out var title, out var body, out _, out var _);
 
                 Console.WriteLine($"\t{title}");
                 Console.WriteLine($"\t{body}");
@@ -489,7 +471,7 @@ public class ConsoleInputManager : BasicActivateItems
             return true;
         }
 
-        for(int i=0;i < available.Length; i++)
+        for(var i=0;i < available.Length; i++)
         {
             Console.WriteLine($"{i}:{available[i]}");
         }

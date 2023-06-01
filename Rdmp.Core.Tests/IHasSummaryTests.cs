@@ -16,9 +16,9 @@ internal class IHasSummaryTests : UnitTests
     [Test]
     public void AllObjects_SupportSummary()
     {
-        int objectCount = 0;
+        var objectCount = 0;
 
-        foreach (DatabaseEntity obj in WhenIHaveAll())
+        foreach (var obj in WhenIHaveAll())
         {
             try
             {

@@ -125,7 +125,7 @@ public partial class ServerDefaultsUI : RDMPForm
         else if (sender == ddCohortIdentificationQueryCacheServer)
             toChange = PermissableDefaults.CohortIdentificationQueryCachingServer_ID;
         else
-            throw new Exception("Did not recognise sender:" + sender);
+            throw new Exception($"Did not recognise sender:{sender}");
 
         var selectedItem = ((ComboBox) sender).SelectedItem as ExternalDatabaseServer;
 
@@ -178,7 +178,7 @@ public partial class ServerDefaultsUI : RDMPForm
             ddCohortIdentificationQueryCacheServer.SelectedItem = null;
         }
         else
-            throw new Exception("Did not recognise sender:" + sender);
+            throw new Exception($"Did not recognise sender:{sender}");
 
         defaults.ClearDefault(toClear);
         RefreshUIFromDatabase();

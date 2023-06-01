@@ -26,7 +26,7 @@ public class ExtractableDataSet : DatabaseEntity, IExtractableDataSet, IInjectKn
     /// <inheritdoc/>
     public int Catalogue_ID
     {
-        get { return _catalogue_ID; }
+        get => _catalogue_ID;
         set
         {
             ClearAllInjections();
@@ -36,16 +36,16 @@ public class ExtractableDataSet : DatabaseEntity, IExtractableDataSet, IInjectKn
     /// <inheritdoc/>
     public bool DisableExtraction
     {
-        get { return _disableExtraction; }
-        set { SetField(ref _disableExtraction, value); }
+        get => _disableExtraction;
+        set => SetField(ref _disableExtraction, value);
     }
 
 
     /// <inheritdoc/>
     public int? Project_ID
     {
-        get { return _project_ID; }
-        set { SetField(ref _project_ID, value); }
+        get => _project_ID;
+        set => SetField(ref _project_ID, value);
     }
 
     #endregion
@@ -69,7 +69,8 @@ public class ExtractableDataSet : DatabaseEntity, IExtractableDataSet, IInjectKn
 
     /// <inheritdoc/>
     [NoMappingToDatabase]
-    public ICatalogue Catalogue { get {return _catalogue.Value;}}
+    public ICatalogue Catalogue => _catalogue.Value;
+
     #endregion
 
 
@@ -106,14 +107,8 @@ public class ExtractableDataSet : DatabaseEntity, IExtractableDataSet, IInjectKn
 
     /// <inheritdoc/>
     [NoMappingToDatabase]
-    public bool IsCatalogueDeprecated
-    {
-        get
-        {
-            return Catalogue == null || Catalogue.IsDeprecated;
-        }
-    }
-        
+    public bool IsCatalogueDeprecated => Catalogue == null || Catalogue.IsDeprecated;
+
     /// <summary>
     /// Returns the <see cref="ICatalogue"/> behind this dataset's Name or a string describing the object state if the Catalogue is unreachable.
     /// </summary>

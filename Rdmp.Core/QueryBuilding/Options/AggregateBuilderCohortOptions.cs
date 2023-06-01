@@ -65,14 +65,14 @@ public class AggregateBuilderCohortOptions: IAggregateBuilderOptions
         toReturn.AddRange(aggregate.Catalogue.GetAllExtractionInformation(ExtractionCategory.Any));
 
         //for each joined PatientIdentifier table
-        foreach (JoinableCohortAggregateConfigurationUse usedJoinable in aggregate.PatientIndexJoinablesUsed)
+        foreach (var usedJoinable in aggregate.PatientIndexJoinablesUsed)
         {
             var tableAlias = usedJoinable.GetJoinTableAlias();
-            IColumn[] hackedDimensions = usedJoinable.JoinableCohortAggregateConfiguration.AggregateConfiguration.AggregateDimensions.Cast<IColumn>().ToArray();
+            var hackedDimensions = usedJoinable.JoinableCohortAggregateConfiguration.AggregateConfiguration.AggregateDimensions.Cast<IColumn>().ToArray();
 
             //change the SelectSQL to the table alias of the joinable used (see CohortQueryBuilder.AddJoinablesToBuilder)
             foreach (var dimension in hackedDimensions)
-                dimension.SelectSQL = tableAlias + "." + dimension.GetRuntimeName();
+                dimension.SelectSQL = $"{tableAlias}.{dimension.GetRuntimeName()}";
                 
             toReturn.AddRange(hackedDimensions);
         }
@@ -108,7 +108,7 @@ public class AggregateBuilderCohortOptions: IAggregateBuilderOptions
 
         var availableTableInfos = aggregate.Catalogue.GetTableInfoList(true);
 
-        List<IMapsDirectlyToDatabaseTable> toReturn = new List<IMapsDirectlyToDatabaseTable>();
+        var toReturn = new List<IMapsDirectlyToDatabaseTable>();
             
         //They can add TableInfos that have not been referenced yet by the columns or already been configured as an explicit force join
         toReturn.AddRange(availableTableInfos.Except(existingTablesAlreadyReferenced.Union(existingForcedJoinTables)));
@@ -122,7 +122,8 @@ public class AggregateBuilderCohortOptions: IAggregateBuilderOptions
 
         //If this returns null then it means someone deleted it out of the configuration while you were editing it?
         if(config == null)
-            throw new NotSupportedException("Aggregate " + aggregate + " did not return its CohortIdentificationConfiguration correctly, did someone delete the configuration or Orphan this AggregateConfiguration while you weren't looking?");
+            throw new NotSupportedException(
+                $"Aggregate {aggregate} did not return its CohortIdentificationConfiguration correctly, did someone delete the configuration or Orphan this AggregateConfiguration while you weren't looking?");
 
         //find those that are already referenced
         var existingJoinables = aggregate.PatientIndexJoinablesUsed.Select(u=>u.JoinableCohortAggregateConfiguration);

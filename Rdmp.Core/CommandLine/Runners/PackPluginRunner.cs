@@ -41,10 +41,10 @@ public class PackPluginRunner : IRunner
         var toCommit = new FileInfo(_packOpts.File);
 
         if (!toCommit.Exists)
-            throw new FileNotFoundException("Could not find file '" + toCommit + "'");
+            throw new FileNotFoundException($"Could not find file '{toCommit}'");
 
         if (toCommit.Extension.ToLowerInvariant() != PluginPackageSuffix)
-            throw new NotSupportedException("Plugins must be packaged as " + PluginPackageSuffix);
+            throw new NotSupportedException($"Plugins must be packaged as {PluginPackageSuffix}");
 
         //the version of the plugin e.g. MyPlugin.nupkg version 1.0.0.0
         Version pluginVersion;
@@ -64,7 +64,8 @@ public class PackPluginRunner : IRunner
             var manifests = zf.Entries.Where(e => e.FullName.EndsWith(PluginPackageManifest)).ToArray();
 
             if (manifests.Length != 1)
-                throw new Exception("Found " + manifests.Length + " files in plguin with the extension " + PluginPackageManifest);
+                throw new Exception(
+                    $"Found {manifests.Length} files in plguin with the extension {PluginPackageManifest}");
 
             using (var s = manifests[0].Open())
             {
@@ -103,7 +104,7 @@ public class PackPluginRunner : IRunner
         var oldVersion = repositoryLocator.CatalogueRepository.GetAllObjects<Curation.Data.Plugin>().SingleOrDefault(p => p.Name.Equals(toCommit.Name) && p.PluginVersion == pluginVersion);
 
         if (oldVersion != null)
-            throw new Exception("There is already a plugin called " + oldVersion.Name);
+            throw new Exception($"There is already a plugin called {oldVersion.Name}");
 
         try
         {
@@ -113,7 +114,7 @@ public class PackPluginRunner : IRunner
         }
         catch (Exception e)
         {
-            checkNotifier.OnCheckPerformed(new CheckEventArgs("Failed processing plugin " + toCommit.Name,
+            checkNotifier.OnCheckPerformed(new CheckEventArgs($"Failed processing plugin {toCommit.Name}",
                 CheckResult.Fail, e));
             throw;
         }

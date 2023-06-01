@@ -41,8 +41,8 @@ public class LoadModuleAssembly : DatabaseEntity, IInjectKnown<Plugin>
     [YamlIgnore]
     public Byte[] Bin
     {
-        get { return _bin;}
-        set { SetField(ref _bin,value);}
+        get => _bin;
+        set => SetField(ref _bin,value);
     }
         
     /// <summary>
@@ -50,8 +50,8 @@ public class LoadModuleAssembly : DatabaseEntity, IInjectKnown<Plugin>
     /// </summary>
     public string Committer
     {
-        get { return _committer;}
-        set { SetField(ref _committer,value);}
+        get => _committer;
+        set => SetField(ref _committer,value);
     }
 
     /// <summary>
@@ -59,8 +59,8 @@ public class LoadModuleAssembly : DatabaseEntity, IInjectKnown<Plugin>
     /// </summary>
     public DateTime UploadDate
     {
-        get { return _uploadDate;}
-        set { SetField(ref _uploadDate,value);}
+        get => _uploadDate;
+        set => SetField(ref _uploadDate,value);
     }
         
     /// <summary>
@@ -69,8 +69,8 @@ public class LoadModuleAssembly : DatabaseEntity, IInjectKnown<Plugin>
     [Relationship(typeof(Plugin), RelationshipType.SharedObject)]
     public int Plugin_ID
     {
-        get { return _plugin_ID;}
-        set { SetField(ref _plugin_ID,value);}
+        get => _plugin_ID;
+        set => SetField(ref _plugin_ID,value);
     }
 
     #endregion
@@ -79,7 +79,7 @@ public class LoadModuleAssembly : DatabaseEntity, IInjectKnown<Plugin>
         
     /// <inheritdoc cref="Plugin_ID"/>
     [NoMappingToDatabase]
-    public Plugin Plugin { get { return _knownPlugin.Value; }}
+    public Plugin Plugin => _knownPlugin.Value;
 
     #endregion
 

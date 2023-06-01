@@ -44,13 +44,13 @@ public class ExtractionDirectory : IExtractionDirectory
 
         if (!rootExtractionDirectory.StartsWith("\\"))
             if (!Directory.Exists(rootExtractionDirectory))
-                throw new DirectoryNotFoundException("Root directory \"" + rootExtractionDirectory + "\" does not exist");
+                throw new DirectoryNotFoundException($"Root directory \"{rootExtractionDirectory}\" does not exist");
 
         root = new DirectoryInfo(Path.Combine(rootExtractionDirectory, EXTRACTION_SUB_FOLDER_NAME));
         if (!root.Exists)
             root.Create();
 
-        string subdirectoryName = GetExtractionDirectoryPrefix(configuration);
+        var subdirectoryName = GetExtractionDirectoryPrefix(configuration);
 
         if (!Directory.Exists(Path.Combine(root.FullName, subdirectoryName)))
             ExtractionDirectoryInfo = root.CreateSubdirectory(subdirectoryName);
@@ -66,11 +66,13 @@ public class ExtractionDirectory : IExtractionDirectory
     public DirectoryInfo GetDirectoryForDataset(IExtractableDataSet dataset)
     {
         if(dataset.ToString().Equals(CUSTOM_COHORT_DATA_FOLDER_NAME))
-            throw new Exception("You cannot call a dataset '"+CUSTOM_COHORT_DATA_FOLDER_NAME+"' because this string is reserved for cohort custom data the system spits out itself");
+            throw new Exception(
+                $"You cannot call a dataset '{CUSTOM_COHORT_DATA_FOLDER_NAME}' because this string is reserved for cohort custom data the system spits out itself");
 
         string reason;
         if(!Catalogue.IsAcceptableName(dataset.Catalogue.Name,out reason))
-            throw new NotSupportedException("Cannot extract dataset " + dataset + " because it points at Catalogue with an invalid name, name is invalid because:" + reason);
+            throw new NotSupportedException(
+                $"Cannot extract dataset {dataset} because it points at Catalogue with an invalid name, name is invalid because:{reason}");
 
         var datasetDirectory = dataset.ToString();
         try
@@ -79,7 +81,8 @@ public class ExtractionDirectory : IExtractionDirectory
         }
         catch (Exception e)
         {
-            throw new Exception("Could not create a directory called '" + datasetDirectory +"' as a subfolder of Project extraction directory " + ExtractionDirectoryInfo.Root ,e);
+            throw new Exception(
+                $"Could not create a directory called '{datasetDirectory}' as a subfolder of Project extraction directory {ExtractionDirectoryInfo.Root}",e);
         }
     }
 
@@ -95,7 +98,7 @@ public class ExtractionDirectory : IExtractionDirectory
             return false;
 
         //The configuration number matches but directory isn't the currently configured Project extraction directory
-        IProject p = configuration.Project;
+        var p = configuration.Project;
 
         if (directory.Parent.FullName != Path.Combine(p.ExtractionDirectory, EXTRACTION_SUB_FOLDER_NAME))
             return false;
@@ -115,7 +118,7 @@ public class ExtractionDirectory : IExtractionDirectory
 
     public static void CleanupExtractionDirectory(object sender, string extractionDirectory, IEnumerable<IExtractionConfiguration> configurations, IDataLoadEventListener listener)
     {
-        DirectoryInfo projectExtractionDirectory = new DirectoryInfo(Path.Combine(extractionDirectory, EXTRACTION_SUB_FOLDER_NAME));
+        var projectExtractionDirectory = new DirectoryInfo(Path.Combine(extractionDirectory, EXTRACTION_SUB_FOLDER_NAME));
         var directoriesToDelete = new List<DirectoryInfo>();
         var filesToDelete = new List<FileInfo>();
 
@@ -124,33 +127,37 @@ public class ExtractionDirectory : IExtractionDirectory
             var config = extractionConfiguration;
             var directoryInfos = projectExtractionDirectory.GetDirectories().Where(d => IsOwnerOf(config, d));
 
-            foreach (DirectoryInfo toCleanup in directoryInfos)
+            foreach (var toCleanup in directoryInfos)
                 AddDirectoryToCleanupList(toCleanup, true, directoriesToDelete, filesToDelete);
         }
 
         foreach (var fileInfo in filesToDelete)
         {
-            listener.OnNotify(sender, new NotifyEventArgs(ProgressEventType.Information, "Deleting: " + fileInfo.FullName));
+            listener.OnNotify(sender, new NotifyEventArgs(ProgressEventType.Information,
+                $"Deleting: {fileInfo.FullName}"));
             try
             {
                 fileInfo.Delete();
             }
             catch (Exception e)
             {
-                listener.OnNotify(sender, new NotifyEventArgs(ProgressEventType.Error, "Error deleting: " + fileInfo.FullName, e));
+                listener.OnNotify(sender, new NotifyEventArgs(ProgressEventType.Error,
+                    $"Error deleting: {fileInfo.FullName}", e));
             }
         }
 
         foreach (var directoryInfo in directoriesToDelete)
         {
-            listener.OnNotify(sender, new NotifyEventArgs(ProgressEventType.Information, "Recursively deleting folder: " + directoryInfo.FullName));
+            listener.OnNotify(sender, new NotifyEventArgs(ProgressEventType.Information,
+                $"Recursively deleting folder: {directoryInfo.FullName}"));
             try
             {
                 directoryInfo.Delete(true);
             }
             catch (Exception e)
             {
-                listener.OnNotify(sender, new NotifyEventArgs(ProgressEventType.Error, "Error deleting: " + directoryInfo.FullName, e));
+                listener.OnNotify(sender, new NotifyEventArgs(ProgressEventType.Error,
+                    $"Error deleting: {directoryInfo.FullName}", e));
             }
         }
     }

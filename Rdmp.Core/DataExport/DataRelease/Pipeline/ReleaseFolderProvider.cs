@@ -88,8 +88,8 @@ public class ReleaseFolderProvider : IPluginDataFlowComponent<ReleaseAudit>, IPi
         if (FolderSettings.CreateReleaseDirectoryIfNotFound)
             _releaseFolder.Create();
         else
-            throw new Exception("Intended release directory was not found and I was forbidden to create it: " +
-                                _releaseFolder.FullName);
+            throw new Exception(
+                $"Intended release directory was not found and I was forbidden to create it: {_releaseFolder.FullName}");
     }
 
     public DirectoryInfo GetFromProjectFolder(IProject p)
@@ -98,7 +98,7 @@ public class ReleaseFolderProvider : IPluginDataFlowComponent<ReleaseAudit>, IPi
             return null;
 
         var prefix = DateTime.UtcNow.ToString("yyyy-MM-dd");
-        string suffix = String.Empty;
+        var suffix = String.Empty;
         if (_releaseData != null && _releaseData.ConfigurationsForRelease != null && _releaseData.ConfigurationsForRelease.Keys.Any())
         {
             var releaseTicket = _releaseData.ConfigurationsForRelease.Keys.First().ReleaseTicket;
@@ -111,11 +111,11 @@ public class ReleaseFolderProvider : IPluginDataFlowComponent<ReleaseAudit>, IPi
         if (String.IsNullOrWhiteSpace(suffix))
         {
             if (String.IsNullOrWhiteSpace(p.MasterTicket))
-                suffix = p.ID + "_" + p.Name;
+                suffix = $"{p.ID}_{p.Name}";
             else
                 suffix = p.MasterTicket;
         }
 
-        return new DirectoryInfo(Path.Combine(p.ExtractionDirectory, prefix + "_" + suffix));
+        return new DirectoryInfo(Path.Combine(p.ExtractionDirectory, $"{prefix}_{suffix}"));
     }
 }

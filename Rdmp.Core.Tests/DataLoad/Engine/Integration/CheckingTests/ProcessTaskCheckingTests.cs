@@ -39,13 +39,13 @@ public class ProcessTaskCheckingTests:DatabaseTests
         _lmd.LocationOfFlatFiles = hicdir.RootPath.FullName;
         _lmd.SaveToDatabase();
 
-        Catalogue c = new Catalogue(CatalogueRepository,"c");
-        CatalogueItem ci = new CatalogueItem(CatalogueRepository,c,"ci");
-        TableInfo t = new TableInfo(CatalogueRepository,"t");
+        var c = new Catalogue(CatalogueRepository,"c");
+        var ci = new CatalogueItem(CatalogueRepository,c,"ci");
+        var t = new TableInfo(CatalogueRepository,"t");
         t.Server = DiscoveredServerICanCreateRandomDatabasesAndTablesOn.Name;
         t.Database = "mydb";
         t.SaveToDatabase();
-        ColumnInfo col = new ColumnInfo(CatalogueRepository,"col","bit",t);
+        var col = new ColumnInfo(CatalogueRepository,"col","bit",t);
         ci.SetColumnInfo(col);
         c.LoadMetadata_ID = _lmd.ID;
         c.SaveToDatabase();
@@ -110,7 +110,7 @@ public class ProcessTaskCheckingTests:DatabaseTests
         _task.CreateArgumentsForClassIfNotExists<AnySeparatorFileAttacher>();
 
         var ex = Assert.Throws<Exception>(()=>_checker.Check(new ThrowImmediatelyCheckNotifier(){ThrowOnWarning = true}));
-        Assert.AreEqual(@"No Project Directory (LocationOfFlatFiles) has been configured on LoadMetadata " + _lmd.Name, ex.InnerException.Message);
+        Assert.AreEqual($@"No Project Directory (LocationOfFlatFiles) has been configured on LoadMetadata {_lmd.Name}", ex.InnerException.Message);
             
     }
     [Test]
@@ -172,7 +172,7 @@ public class ProcessTaskCheckingTests:DatabaseTests
 
             foreach (var msg in results.Messages)
             {
-                Console.WriteLine("(" + msg.Result + ")" + msg.Message);
+                Console.WriteLine($"({msg.Result}){msg.Message}");
 
                 if (msg.Ex != null)
                     Console.WriteLine(ExceptionHelper.ExceptionToListOfInnerMessages(msg.Ex));

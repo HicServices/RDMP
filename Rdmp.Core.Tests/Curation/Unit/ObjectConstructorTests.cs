@@ -70,10 +70,10 @@ public class ObjectConstructorTests : UnitTests
     {
         SetupMEF();
             
-        int countCompatible = 0;
+        var countCompatible = 0;
 
         var badTypes = new Dictionary<Type,Exception>();
-        foreach (Type t in MEF.GetAllTypes().Where(typeof(DatabaseEntity).IsAssignableFrom))
+        foreach (var t in MEF.GetAllTypes().Where(typeof(DatabaseEntity).IsAssignableFrom))
         {
             try
             {
@@ -89,7 +89,7 @@ public class ObjectConstructorTests : UnitTests
 
         Assert.IsEmpty(badTypes);
         Assert.GreaterOrEqual(countCompatible,10);
-        Console.WriteLine("Found compatible constructors on " + countCompatible + " objects");
+        Console.WriteLine($"Found compatible constructors on {countCompatible} objects");
     }
 
     class TestClassDefaultConstructor

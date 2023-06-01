@@ -30,16 +30,13 @@ public partial class TicketingControlUI : RDMPUserControl
 
     public string TicketText
     {
-        get { return tbTicket.Text; }
-        set { tbTicket.Text = value; }
+        get => tbTicket.Text;
+        set => tbTicket.Text = value;
     }
 
     public string Title
     {
-        set
-        {
-            gbTicketing.Text = value;
-        }
+        set => gbTicketing.Text = value;
     }
 
     public TicketingControlUI()
@@ -66,7 +63,7 @@ public partial class TicketingControlUI : RDMPUserControl
             if (Activator == null)
                 throw new Exception("Activator has not been set, call SetItemActivator");
 
-            TicketingSystemFactory factory = new TicketingSystemFactory(Activator.RepositoryLocator.CatalogueRepository);
+            var factory = new TicketingSystemFactory(Activator.RepositoryLocator.CatalogueRepository);
 
             var configuration = Activator.RepositoryLocator.CatalogueRepository.GetTicketingSystem();
             _ticketingSystemConfiguration = factory.CreateIfExists(configuration);

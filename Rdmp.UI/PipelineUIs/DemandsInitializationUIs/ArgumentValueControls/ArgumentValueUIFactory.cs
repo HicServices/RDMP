@@ -50,8 +50,7 @@ public class ArgumentValueUIFactory
             {
                 if (typeof (string) != argumentType)
                     throw new NotSupportedException(
-                        "Demanded type (of DemandsInitialization) was DemandType.SQL but the ProcessTaskArgument Property was of type " +
-                        argumentType + " (Expected String)");
+                        $"Demanded type (of DemandsInitialization) was DemandType.SQL but the ProcessTaskArgument Property was of type {argumentType} (Expected String)");
 
                 toReturn = new ArgumentValueSqlUI();
             }
@@ -65,9 +64,8 @@ public class ArgumentValueUIFactory
 
                 //There must be a shared parent Type for the user to  pick from
                 if (args.Required.Demand.TypeOf == null)
-                    throw new NotSupportedException("Property " + args.Required.Name + " has Property Type '" +
-                                                    argumentType +
-                                                    "' but does not have a TypeOf specified (e.g. [DemandsInitialization(\"some desc\",DemandType.Unspecified,null,typeof(IDilutionOperation))]).  Without the typeof(X) we do not know what Types to advertise as selectable to the user");
+                    throw new NotSupportedException(
+                        $"Property {args.Required.Name} has Property Type '{argumentType}' but does not have a TypeOf specified (e.g. [DemandsInitialization(\"some desc\",DemandType.Unspecified,null,typeof(IDilutionOperation))]).  Without the typeof(X) we do not know what Types to advertise as selectable to the user");
 
                 toReturn =
                     new ArgumentValueComboBoxUI(activator,
@@ -97,7 +95,8 @@ public class ArgumentValueUIFactory
         }
         catch (Exception e)
         {
-            throw new Exception("A problem occured trying to create an ArgumentUI for Property '" + args.Required.Name + "' of Type '" + argumentType + "' on parent class of Type '" + args.Parent.GetClassNameWhoArgumentsAreFor() + "'", e);
+            throw new Exception(
+                $"A problem occured trying to create an ArgumentUI for Property '{args.Required.Name}' of Type '{argumentType}' on parent class of Type '{args.Parent.GetClassNameWhoArgumentsAreFor()}'", e);
         }
 
         ((Control)toReturn).Dock = DockStyle.Fill;

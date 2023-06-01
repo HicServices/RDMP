@@ -84,18 +84,18 @@ public class WordCatalogueExtractor: DocXHelper
     /// <param name="supplementalData">A bunch of key value pairs (Tuple actually) that accompany a CatalogueItem and should be rammed into the table as it is written out, this could contain information only determined at runtime e.g. not part of the Catalogue</param>
     public void AddMetaDataForColumns(CatalogueItem[] cataItems, Dictionary<CatalogueItem, Tuple<string, string>[]> supplementalData = null)
     {
-        InsertHeader(_document,"Catalogue:" + Catalogue.Name);
+        InsertHeader(_document, $"Catalogue:{Catalogue.Name}");
 
         //first of all output all the info in the Catalogue
 
-        int requiredRowsCount = CountWriteableProperties(Catalogue);
+        var requiredRowsCount = CountWriteableProperties(Catalogue);
 
         var table = InsertTable(_document,requiredRowsCount, 2);
 
         GenerateObjectPropertiesAsRowUsingReflection(table, Catalogue, null);
 
         //then move onto CatalogueItems that have been extracte
-        foreach (CatalogueItem catalogueItem in cataItems)
+        foreach (var catalogueItem in cataItems)
         {
             InsertHeader(_document,catalogueItem.Name,2);
                 
@@ -117,12 +117,12 @@ public class WordCatalogueExtractor: DocXHelper
 
     private int CountWriteableProperties(object o)
     {
-        PropertyInfo[] propertyInfo =
+        var propertyInfo =
             o.GetType().GetProperties(BindingFlags.Public | BindingFlags.NonPublic | BindingFlags.Instance);
             
-        int count = 0;
+        var count = 0;
         //generate a row for each property
-        foreach (PropertyInfo property in propertyInfo )
+        foreach (var property in propertyInfo )
         {
             //Check whether property can be written to
             if (property.CanRead && Attribute.IsDefined(property, typeof(DoNotExtractProperty)) == false && !PropertyIgnorelist.Contains(property.Name))
@@ -135,12 +135,12 @@ public class WordCatalogueExtractor: DocXHelper
 
     private void GenerateObjectPropertiesAsRowUsingReflection(XWPFTable table, object o, Tuple<string,string>[] supplementalData )
     {
-        PropertyInfo[] propertyInfo = o.GetType().GetProperties(BindingFlags.Public | BindingFlags.NonPublic | BindingFlags.Instance);
+        var propertyInfo = o.GetType().GetProperties(BindingFlags.Public | BindingFlags.NonPublic | BindingFlags.Instance);
 
-        int currentRow = 0;
+        var currentRow = 0;
 
         //generate a row for each property
-        foreach (PropertyInfo property in propertyInfo)
+        foreach (var property in propertyInfo)
         {
                 
             //Check whether property can be written to
@@ -149,7 +149,7 @@ public class WordCatalogueExtractor: DocXHelper
                 {
                     SetTableCell(table, currentRow, 0, property.Name);
 
-                    object val = property.GetValue(o, null);
+                    var val = property.GetValue(o, null);
 
                     if(val != null)
                         SetTableCell(table, currentRow, 1, val.ToString());
@@ -160,7 +160,7 @@ public class WordCatalogueExtractor: DocXHelper
 
         //add any supplemental data they want in the table
         if(supplementalData!= null)
-            foreach (Tuple<string, string> tuple in supplementalData)
+            foreach (var tuple in supplementalData)
             {
                 SetTableCell(table, currentRow, 0, tuple.Item1);
                 SetTableCell(table, currentRow, 1, tuple.Item2);

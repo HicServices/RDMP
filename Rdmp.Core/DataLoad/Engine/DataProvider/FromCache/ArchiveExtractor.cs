@@ -31,10 +31,12 @@ internal abstract class ArchiveExtractor : IArchivedFileExtractor
     {
         //ensure it is a legit zip file
         if (!job.Value.Extension.Equals(_extension))
-            throw new NotSupportedException("Unexpected job file extension -" + job.Value.Extension + " (expected " + _extension + ")");
+            throw new NotSupportedException(
+                $"Unexpected job file extension -{job.Value.Extension} (expected {_extension})");
 
         //tell the UI/listener that we have identified the archive
-        dataLoadJob.OnNotify(this, new NotifyEventArgs(ProgressEventType.Information, "Archive identified:" + job.Value.FullName));
+        dataLoadJob.OnNotify(this, new NotifyEventArgs(ProgressEventType.Information,
+            $"Archive identified:{job.Value.FullName}"));
 
         try
         {
@@ -42,7 +44,7 @@ internal abstract class ArchiveExtractor : IArchivedFileExtractor
         }
         catch (Exception ex)
         {
-            throw new Exception("Error occurred extracting zip archive " + job.Value.FullName, ex);
+            throw new Exception($"Error occurred extracting zip archive {job.Value.FullName}", ex);
         }
     }
 }

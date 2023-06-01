@@ -19,7 +19,7 @@ class RowPeekerTests
     [Test]
     public void Peeker()
     {
-        DataTable dt = new DataTable();
+        var dt = new DataTable();
         dt.Columns.Add("MyCol");
         dt.Rows.Add("fish");
         dt.Rows.Add("dish");
@@ -32,7 +32,7 @@ class RowPeekerTests
             .Returns(dt.Rows[2])
             .Returns(()=>{return null;});
 
-        RowPeeker p = new RowPeeker();
+        var p = new RowPeeker();
         var dt2 = new DataTable();
         dt2.Columns.Add("MyCol");
 
@@ -57,7 +57,7 @@ class RowPeekerTests
 
         //now we can read into dt4 but the condition is false
         //Reads nothing but peeks splish
-        DataTable dt4 = new DataTable();
+        var dt4 = new DataTable();
         dt4.Columns.Add("MyCol");
         p.AddWhile(mock.Object, r => (string) r["MyCol"] == "fish", dt4);
 
@@ -69,7 +69,7 @@ class RowPeekerTests
         Assert.IsNotNull(dt5);
         Assert.AreEqual("splish",dt5.Rows[0]["MyCol"]);
 
-        DataTable dt6 = new DataTable();
+        var dt6 = new DataTable();
         dt6.Columns.Add("MyCol");
         p.AddWhile(mock.Object, r => (string) r["MyCol"] == "fish", dt6);
 

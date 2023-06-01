@@ -118,13 +118,13 @@ public class DiffDatabaseDataFetcher
         var memoryRepository = new MemoryCatalogueRepository();
 
         var syntaxHelper = server.GetQuerySyntaxHelper();
-        string tableName = _tableInfo.Name;
-        string archiveTableName = syntaxHelper.EnsureFullyQualified(database.GetRuntimeName(),_tableInfo.Schema,
+        var tableName = _tableInfo.Name;
+        var archiveTableName = syntaxHelper.EnsureFullyQualified(database.GetRuntimeName(),_tableInfo.Schema,
             $"{_tableInfo.GetRuntimeName()}_Archive");
 
         var whereStatement = "";
 
-        foreach (ColumnInfo pk in _pks)
+        foreach (var pk in _pks)
             whereStatement += string.Format("{0}.{1} = {2}.{1} AND ", 
                 tableName,
                 syntaxHelper.EnsureWrapped(pk.GetRuntimeName()), 
@@ -158,8 +158,8 @@ select 1 from {0} where {1} {2} < {3}
 
         var syntaxHelper = server.GetQuerySyntaxHelper();
             
-        string tableName = _tableInfo.Name;
-        string archiveTableName = syntaxHelper.EnsureFullyQualified(database.GetRuntimeName(),_tableInfo.Schema,
+        var tableName = _tableInfo.Name;
+        var archiveTableName = syntaxHelper.EnsureFullyQualified(database.GetRuntimeName(),_tableInfo.Schema,
             $"{_tableInfo.GetRuntimeName()}_Archive");
 
         var whereStatement = string.Join(" AND ",_pks.Select(pk=>string.Format("{0}.{1} = {2}.{1} ", tableName, pk.GetRuntimeName(),archiveTableName)));
@@ -232,7 +232,7 @@ Join
             syntaxHelper.EnsureWrapped(SpecialFieldNames.ValidFrom)
         );
 
-        DataTable dtComboTable = new DataTable();
+        var dtComboTable = new DataTable();
         FillTableWithQueryIfUserConsents(dtComboTable, sql,checkNotifier,server);
 
         Updates_New = new DataTable();
@@ -263,9 +263,9 @@ Join
 
     private string GetSharedColumnsSQLWithColumnAliasPrefix(string tableName, string columnAliasPrefix)
     {
-        StringBuilder sb = new StringBuilder();
+        var sb = new StringBuilder();
 
-        foreach (ColumnInfo sharedColumn in _sharedColumns)
+        foreach (var sharedColumn in _sharedColumns)
         {
             sb.AppendLine();
             sb.Append($"{tableName}.{sharedColumn.GetRuntimeName()} {columnAliasPrefix}{sharedColumn.GetRuntimeName()}");
@@ -277,9 +277,9 @@ Join
 
     private string GetSharedColumnsSQL(string tableName)
     {
-        StringBuilder sb = new StringBuilder();
+        var sb = new StringBuilder();
 
-        foreach (ColumnInfo sharedColumn in _sharedColumns)
+        foreach (var sharedColumn in _sharedColumns)
         {
             sb.AppendLine();
             sb.Append($"{tableName}.{sharedColumn.GetRuntimeName()}");
@@ -293,7 +293,7 @@ Join
 
     private void FillTableWithQueryIfUserConsents(DataTable dt, string sql,ICheckNotifier checkNotifier,DiscoveredServer server)
     {
-        bool execute = checkNotifier.OnCheckPerformed(new CheckEventArgs("About to fetch data, confirming user is happy with SQL", CheckResult.Warning, null, sql));
+        var execute = checkNotifier.OnCheckPerformed(new CheckEventArgs("About to fetch data, confirming user is happy with SQL", CheckResult.Warning, null, sql));
 
         if (execute)
         {

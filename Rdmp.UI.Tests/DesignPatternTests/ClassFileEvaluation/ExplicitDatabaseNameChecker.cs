@@ -16,10 +16,10 @@ public class ExplicitDatabaseNameChecker
 {
     public void FindProblems(List<string> csFilesFound)
     {
-        Dictionary<string,string> problemFiles = new Dictionary<string, string>();
-        List<string> prohibitedStrings = new List<string>();
+        var problemFiles = new Dictionary<string, string>();
+        var prohibitedStrings = new List<string>();
             
-        List<string> ignoreList = new List<string>();
+        var ignoreList = new List<string>();
         ignoreList.Add("ExplicitDatabaseNameChecker.cs"); //us obviously since we do contain that text!
         ignoreList.Add("DatabaseCreationProgramOptions.cs"); //allowed because it is the usage text for the program.
         ignoreList.Add("AutomationServiceOptions.cs");//allowed because it is the usage text for the program.
@@ -48,14 +48,14 @@ public class ExplicitDatabaseNameChecker
         prohibitedStrings.Add("TEST_");
         prohibitedStrings.Add("RDMP_");
 
-        foreach (string file in csFilesFound)
+        foreach (var file in csFilesFound)
         {
             if (ignoreList.Any(str=>str.Equals(Path.GetFileName(file))))
                 continue;
                 
             var contents = File.ReadAllText(file);
                 
-            foreach (string prohibited in prohibitedStrings)
+            foreach (var prohibited in prohibitedStrings)
                 if (contents.Contains(prohibited))
                 {
                     problemFiles.Add(file, prohibited);
@@ -64,7 +64,8 @@ public class ExplicitDatabaseNameChecker
         }
 
         foreach (var kvp in problemFiles)
-            Console.WriteLine("FAIL: File '" + kvp.Key + "' contains a reference to an explicitly prohibited database name string ('" + kvp.Value + "')");
+            Console.WriteLine(
+                $"FAIL: File '{kvp.Key}' contains a reference to an explicitly prohibited database name string ('{kvp.Value}')");
 
         Assert.AreEqual(0,problemFiles.Count);
     }

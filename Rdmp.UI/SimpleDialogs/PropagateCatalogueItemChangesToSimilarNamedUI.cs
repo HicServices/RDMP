@@ -61,7 +61,7 @@ public partial class PropagateCatalogueItemChangesToSimilarNamedUI : RDMPForm
 
         var changedProperties = DetermineChangedProperties(catalogueItemBeingSaved);
 
-        CatalogueItem[] otherCatalogueItemsThatShareName = GetAllCatalogueItemsSharingNameWith(catalogueItemBeingSaved);
+        var otherCatalogueItemsThatShareName = GetAllCatalogueItemsSharingNameWith(catalogueItemBeingSaved);
 
         //if Name changed then they probably don't want to also rename all associated CatalogueItems
         shouldDialogBeDisplayed = !changedProperties.Any(prop => prop.Name.Equals("Name"));
@@ -121,7 +121,7 @@ public partial class PropagateCatalogueItemChangesToSimilarNamedUI : RDMPForm
     private object CatalogueItemName_AspectGetter(object rowObject)
     {
         var ci = rowObject as CatalogueItem;
-        return ci.Catalogue.Name + "." + ci.Name;
+        return $"{ci.Catalogue.Name}.{ci.Name}";
     }
 
 
@@ -209,23 +209,23 @@ public partial class PropagateCatalogueItemChangesToSimilarNamedUI : RDMPForm
 
     private void highlightDifferencesBetweenPreviewPanes()
     {
-        string sOld = previewOldValue.Text;
-        string sNew = previewNewValue.Text;
+        var sOld = previewOldValue.Text;
+        var sNew = previewNewValue.Text;
 
         var highlighter = new ScintillaLineHighlightingHelper();
 
         highlighter.ClearAll(previewNewValue);
         highlighter.ClearAll(previewOldValue);
 
-        Diff diff = new Diff();
-        foreach (Diff.Item item in diff.DiffText(sOld, sNew))
+        var diff = new Diff();
+        foreach (var item in diff.DiffText(sOld, sNew))
         {
                 
-            for (int i = item.StartA; i < item.StartA + item.deletedA; i++)
+            for (var i = item.StartA; i < item.StartA + item.deletedA; i++)
                 highlighter.HighlightLine(previewOldValue,i,Color.Pink);
                 
             //if it is single line change
-            for (int i = item.StartB; i < item.StartB + item.insertedB; i++)
+            for (var i = item.StartB; i < item.StartB + item.insertedB; i++)
                 highlighter.HighlightLine(previewNewValue, i, Color.LawnGreen);
 
         }

@@ -21,7 +21,7 @@ public class SaveMenuItem : ToolStripMenuItem
 
     public ISaveableUI Saveable
     {
-        get { return _saveable; }
+        get => _saveable;
         set
         {
             _saveable = value;

@@ -71,7 +71,7 @@ public class CreateNewCohortDatabaseWizardTests:DatabaseTests
     {
         _extractionInfo1.IsExtractionIdentifier = true;
         _extractionInfo1.SaveToDatabase();
-        CreateNewCohortDatabaseWizard wizard = new CreateNewCohortDatabaseWizard(null,CatalogueRepository, DataExportRepository,false);
+        var wizard = new CreateNewCohortDatabaseWizard(null,CatalogueRepository, DataExportRepository,false);
 
         //it finds it!
         Assert.IsTrue(wizard.GetPrivateIdentifierCandidates().Any(prototype => prototype.RuntimeName.Equals("PrivateIdentifierA")));
@@ -88,7 +88,7 @@ public class CreateNewCohortDatabaseWizardTests:DatabaseTests
     [Test]
     public void ProposePrivateIdentifierDatatypes()
     {
-        CreateNewCohortDatabaseWizard wizard = new CreateNewCohortDatabaseWizard(null,CatalogueRepository, DataExportRepository,false);
+        var wizard = new CreateNewCohortDatabaseWizard(null,CatalogueRepository, DataExportRepository,false);
 
         var candidates = wizard.GetPrivateIdentifierCandidates();
 
@@ -111,7 +111,7 @@ public class CreateNewCohortDatabaseWizardTests:DatabaseTests
     {
         var db = GetCleanedServer(DatabaseType.MicrosoftSQLServer);
 
-        CreateNewCohortDatabaseWizard wizard = new CreateNewCohortDatabaseWizard(db, CatalogueRepository, DataExportRepository, false);
+        var wizard = new CreateNewCohortDatabaseWizard(db, CatalogueRepository, DataExportRepository, false);
 
         _extractionInfo2.IsExtractionIdentifier = true;
         _c2.Data_type = term;
@@ -131,7 +131,7 @@ public class CreateNewCohortDatabaseWizardTests:DatabaseTests
     {
         var db = GetCleanedServer(type);
 
-        CreateNewCohortDatabaseWizard wizard = new CreateNewCohortDatabaseWizard(db,CatalogueRepository, DataExportRepository,false);
+        var wizard = new CreateNewCohortDatabaseWizard(db,CatalogueRepository, DataExportRepository,false);
 
         _extractionInfo2.IsExtractionIdentifier = true;
         _extractionInfo2.SaveToDatabase();
@@ -163,7 +163,7 @@ public class CreateNewCohortDatabaseWizardTests:DatabaseTests
         var request = new CohortCreationRequest(project, new CohortDefinition(null, "My cohort", 1, 10, ect), DataExportRepository,"Blah");
             
         //the actual cohort data
-        DataTable dt = new DataTable();
+        var dt = new DataTable();
         dt.Columns.Add(_extractionInfo2.GetRuntimeName());
         dt.Rows.Add(101243); //_extractionInfo2 is of type int
 
@@ -234,7 +234,7 @@ public class CreateNewCohortDatabaseWizardTests:DatabaseTests
     {
         var db = GetCleanedServer(DatabaseType.MicrosoftSQLServer);
 
-        CreateNewCohortDatabaseWizard wizard = new CreateNewCohortDatabaseWizard(db,CatalogueRepository, DataExportRepository,false);
+        var wizard = new CreateNewCohortDatabaseWizard(db,CatalogueRepository, DataExportRepository,false);
 
         _extractionInfo2.IsExtractionIdentifier = true;
         _extractionInfo2.SaveToDatabase();

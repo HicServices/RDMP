@@ -160,14 +160,14 @@ class BoundsValidationDateTest: ValidationTests
 
         var v = CreateAdmissionDateValidator(b);
 
-        ValidationFailure result = v.Validate(TestConstants.AdmissionDateOccursBeforeDob);
+        var result = v.Validate(TestConstants.AdmissionDateOccursBeforeDob);
             
         if(result == null)
             Assert.Fail();
             
-        List<ValidationFailure> l = result.GetExceptionList();
+        var l = result.GetExceptionList();
 
-        StringAssert.EndsWith("Expected a date greater than [" + b.LowerFieldName +"].", l[0].Message);
+        StringAssert.EndsWith($"Expected a date greater than [{b.LowerFieldName}].", l[0].Message);
         Console.WriteLine(result.Message);
             
     }
@@ -217,14 +217,14 @@ class BoundsValidationDateTest: ValidationTests
 
         var v = CreateParentDobValidator(b);
 
-        ValidationFailure result = v.Validate(TestConstants.ParentDobOccursAfterDob); 
+        var result = v.Validate(TestConstants.ParentDobOccursAfterDob); 
             
         if(result == null)
             Assert.Fail();
 
-        List<ValidationFailure> l = result.GetExceptionList();
+        var l = result.GetExceptionList();
 
-        StringAssert.EndsWith("Expected a date less than [" + b.UpperFieldName + "].", l[0].Message);
+        StringAssert.EndsWith($"Expected a date less than [{b.UpperFieldName}].", l[0].Message);
         Console.WriteLine(result.Message);
             
     }

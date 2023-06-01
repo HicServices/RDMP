@@ -111,8 +111,8 @@ public class PrimaryKeyCollisionResolverTests : DatabaseTests
             c3.DuplicateRecordResolutionIsAscending = false;
             c3.SaveToDatabase();
 
-            PrimaryKeyCollisionResolver resolver = new PrimaryKeyCollisionResolver(t);
-            string sql = resolver.GenerateSQL();
+            var resolver = new PrimaryKeyCollisionResolver(t);
+            var sql = resolver.GenerateSQL();
 
             Console.WriteLine(sql);
 
@@ -144,7 +144,7 @@ public class PrimaryKeyCollisionResolverTests : DatabaseTests
             c1.IsPrimaryKey = true;
             c1.SaveToDatabase();
 
-            PrimaryKeyCollisionResolver resolver = new PrimaryKeyCollisionResolver(t);
+            var resolver = new PrimaryKeyCollisionResolver(t);
             var ex = Assert.Throws<Exception>(()=>Console.WriteLine(resolver.GenerateSQL()));
             StringAssert.Contains("The ColumnInfos of TableInfo PrimaryKeyCollisionResolverTests do not have primary key resolution orders configured (do not know which order to use non primary key column values in to resolve collisions).  Fix this by right clicking a TableInfo in CatalogueManager and selecting 'Configure Primary Key Collision Resolution'.",ex.Message);
         }
@@ -165,7 +165,7 @@ public class PrimaryKeyCollisionResolverTests : DatabaseTests
            
         try
         {
-            PrimaryKeyCollisionResolver resolver = new PrimaryKeyCollisionResolver(t);
+            var resolver = new PrimaryKeyCollisionResolver(t);
             var ex = Assert.Throws<Exception>(()=>Console.WriteLine(resolver.GenerateSQL()));
             StringAssert.Contains("does not have any primary keys defined so cannot resolve primary key collisions",ex.Message);
         }

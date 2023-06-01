@@ -64,7 +64,7 @@ public class ExecuteCommandChooseCohort : BasicCommandExecution,IAtomicCommand
             SetImpossible("The currently select cohort is the only one available");
 
         if(!_compatibleCohorts.Any())
-            SetImpossible("There are no cohorts currently configured with ProjectNumber " + project.ProjectNumber.Value);
+            SetImpossible($"There are no cohorts currently configured with ProjectNumber {project.ProjectNumber.Value}");
 
         _pick = cohort;
             
@@ -89,7 +89,7 @@ public class ExecuteCommandChooseCohort : BasicCommandExecution,IAtomicCommand
             if(SelectOne(new DialogArgs() {
                    WindowTitle = "Select Saved Cohort",
                    TaskDescription = "Select the existing Cohort you would like to be used for your Extraction Configuration."
-               }, _compatibleCohorts.Where(c => c.ID != _extractionConfiguration.Cohort_ID && !c.IsDeprecated).ToList(), out ExtractableCohort selected))
+               }, _compatibleCohorts.Where(c => c.ID != _extractionConfiguration.Cohort_ID && !c.IsDeprecated).ToList(), out var selected))
             {
                 pick = selected;                
             }

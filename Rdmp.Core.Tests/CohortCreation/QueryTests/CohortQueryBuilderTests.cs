@@ -24,7 +24,7 @@ public class CohortQueryBuilderTests : CohortIdentificationTests
     [Test]
     public void TestGettingAggregateJustFromConfig_DistinctCHISelect()
     {
-        CohortQueryBuilder builder = new CohortQueryBuilder(aggregate1,null,null);
+        var builder = new CohortQueryBuilder(aggregate1,null,null);
 
         Assert.AreEqual(CollapseWhitespace(string.Format(@"/*cic_{0}_UnitTestAggregate1*/
 SELECT 
@@ -37,7 +37,7 @@ FROM
     [Test]
     public void TestGettingAggregateJustFromConfig_SelectStar()
     {
-        CohortQueryBuilder builder = new CohortQueryBuilder(aggregate1, null,null);
+        var builder = new CohortQueryBuilder(aggregate1, null,null);
 
         Assert.AreEqual(CollapseWhitespace(
             string.Format(@"/*cic_{0}_UnitTestAggregate1*/
@@ -59,7 +59,7 @@ FROM
     {
         aggregate1.HavingSQL = "count(*)>1";
 
-        CohortQueryBuilder builder = new CohortQueryBuilder(aggregate1, null,null);
+        var builder = new CohortQueryBuilder(aggregate1, null,null);
 
         Assert.AreEqual(CollapseWhitespace(
             string.Format(@"/*cic_{0}_UnitTestAggregate1*/
@@ -85,7 +85,7 @@ FROM
         rootcontainer.AddChild(aggregate2, 1);
         rootcontainer.AddChild(aggregate1, 5);
 
-        CohortQueryBuilder builder = new CohortQueryBuilder(cohortIdentificationConfiguration,null);
+        var builder = new CohortQueryBuilder(cohortIdentificationConfiguration,null);
 
         Assert.AreEqual(rootcontainer,aggregate1.GetCohortAggregateContainerIfAny());
         try
@@ -136,7 +136,7 @@ FROM
         container1.AddChild(aggregate2, 1);
         container1.AddChild(aggregate3, 2);
 
-        CohortQueryBuilder builder = new CohortQueryBuilder(cohortIdentificationConfiguration,null);
+        var builder = new CohortQueryBuilder(cohortIdentificationConfiguration,null);
 
         try
         {
@@ -203,7 +203,7 @@ FROM
         container1.AddChild(aggregate2, 1);
         container1.AddChild(aggregate3, 2);
             
-        CohortQueryBuilder builder = new CohortQueryBuilder(cohortIdentificationConfiguration,null);
+        var builder = new CohortQueryBuilder(cohortIdentificationConfiguration,null);
 
         try
         {
@@ -281,7 +281,7 @@ FROM
         rootcontainer.AddChild(aggregate2, 1);
         rootcontainer.AddChild(aggregate1, 5);
             
-        CohortQueryBuilder builder = new CohortQueryBuilder(cohortIdentificationConfiguration,null);
+        var builder = new CohortQueryBuilder(cohortIdentificationConfiguration,null);
 
         try
         {
@@ -317,7 +317,7 @@ SET @abracadabra=1;
                 ,CollapseWhitespace(builder.SQL));
 
 
-            CohortQueryBuilder builder2 = new CohortQueryBuilder(aggregate1, null,null);
+            var builder2 = new CohortQueryBuilder(aggregate1, null,null);
             Assert.AreEqual(
 
                 CollapseWhitespace(
@@ -338,7 +338,7 @@ WHERE
                 CollapseWhitespace(builder2.SQL));
 
 
-            string selectStar = new CohortQueryBuilder(aggregate1,null,null).GetDatasetSampleSQL();
+            var selectStar = new CohortQueryBuilder(aggregate1,null,null).GetDatasetSampleSQL();
 
             Assert.AreEqual(
                 CollapseWhitespace(
@@ -380,7 +380,7 @@ SET @abracadabra=1;
         rootcontainer.AddChild(aggregate2,2);
         rootcontainer.AddChild(aggregate3,3);
             
-        CohortQueryBuilder builder = new CohortQueryBuilder(rootcontainer, null,null);
+        var builder = new CohortQueryBuilder(rootcontainer, null,null);
             
         builder.StopContainerWhenYouReach = aggregate2;
         try
@@ -411,7 +411,7 @@ SET @abracadabra=1;
                 CollapseWhitespace(builder.SQL));
 
 
-            CohortQueryBuilder builder2 = new CohortQueryBuilder(rootcontainer, null,null);
+            var builder2 = new CohortQueryBuilder(rootcontainer, null,null);
             builder2.StopContainerWhenYouReach = null;
             Assert.AreEqual(
                 CollapseWhitespace(
@@ -465,11 +465,11 @@ SET @abracadabra=1;
             
         rootcontainer.AddChild(container1);
 
-        AggregateConfiguration aggregate4 = new AggregateConfiguration(CatalogueRepository, testData.catalogue, "UnitTestAggregate4");
+        var aggregate4 = new AggregateConfiguration(CatalogueRepository, testData.catalogue, "UnitTestAggregate4");
         new AggregateDimension(CatalogueRepository, testData.extractionInformations.Single(e => e.GetRuntimeName().Equals("chi")), aggregate4);
 
         rootcontainer.AddChild(aggregate4,5);
-        CohortQueryBuilder builder = new CohortQueryBuilder(rootcontainer, null,null);
+        var builder = new CohortQueryBuilder(rootcontainer, null,null);
 
         //Looks like:
         /*
@@ -549,7 +549,7 @@ SET @abracadabra=1;
 
             rootcontainer.AddChild(container1);
 
-            CohortQueryBuilder builder = new CohortQueryBuilder(rootcontainer, null,null);
+            var builder = new CohortQueryBuilder(rootcontainer, null,null);
             Assert.AreEqual(
                 CollapseWhitespace(
                     string.Format(
@@ -664,7 +664,7 @@ SET @abracadabra=1;
             param.SaveToDatabase();
         }
             
-        CohortQueryBuilder builder = new CohortQueryBuilder(cohortIdentificationConfiguration,null);
+        var builder = new CohortQueryBuilder(cohortIdentificationConfiguration,null);
         Console.WriteLine( builder.SQL);
 
         try
@@ -792,7 +792,7 @@ SET @bob_2='Boom!';
 
         Assert.AreEqual(rootcontainer, aggregate1.GetCohortAggregateContainerIfAny());
 
-        CohortQueryBuilder builder = new CohortQueryBuilder(cohortIdentificationConfiguration,null);
+        var builder = new CohortQueryBuilder(cohortIdentificationConfiguration,null);
         try
         {
             Assert.AreEqual(
@@ -869,7 +869,7 @@ SET @bob_2='Boom!';
             param.SaveToDatabase();
         }
             
-        CohortQueryBuilder builder = new CohortQueryBuilder(cohortIdentificationConfiguration,null);
+        var builder = new CohortQueryBuilder(cohortIdentificationConfiguration,null);
 
         Console.WriteLine(builder.SQL);
 

@@ -42,11 +42,12 @@ public class ExecuteCommandPublishFilter : BasicUICommandExecution, IAtomicComma
         _allExtractionInformations = _catalogue.GetAllExtractionInformation(ExtractionCategory.Any);
 
         if (!_allExtractionInformations.Any())
-            SetImpossible("Cannot publish filter because Catalogue " + _catalogue + " does not have any ExtractionInformations (extractable columns) we could associate it with");
+            SetImpossible(
+                $"Cannot publish filter because Catalogue {_catalogue} does not have any ExtractionInformations (extractable columns) we could associate it with");
 
         string reason;
         if (!FilterImporter.IsProperlyDocumented(filter, out reason))
-            SetImpossible("Filter is not properly documented:" + reason);
+            SetImpossible($"Filter is not properly documented:{reason}");
     }
 
     public override void Execute()
@@ -68,8 +69,7 @@ public class ExecuteCommandPublishFilter : BasicUICommandExecution, IAtomicComma
             if (duplicate != null)
             {
                 if (YesNo(
-                        "There is already a filter called " + _filter.Name +
-                        " in ExtractionInformation " + toAddTo + " do you want to mark this filter as a child of that master filter?",
+                        $"There is already a filter called {_filter.Name} in ExtractionInformation {toAddTo} do you want to mark this filter as a child of that master filter?",
                         "Duplicate, mark these as the same?"))
                 {
                     _filter.ClonedFromExtractionFilter_ID = duplicate.ID;

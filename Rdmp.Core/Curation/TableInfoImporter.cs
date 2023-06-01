@@ -119,20 +119,21 @@ public class TableInfoImporter:ITableInfoImporter
         tableName = querySyntaxHelper.EnsureWrapped(_importDatabaseName);
 
         if (_type == DatabaseType.MicrosoftSQLServer || _type == DatabaseType.PostgreSql)
-            tableName += "."+(querySyntaxHelper.EnsureWrapped(_importFromSchema ?? querySyntaxHelper.GetDefaultSchemaIfAny())) +".";
+            tableName +=
+                $".{(querySyntaxHelper.EnsureWrapped(_importFromSchema ?? querySyntaxHelper.GetDefaultSchemaIfAny()))}.";
         else if (_type == DatabaseType.MySql || _type == DatabaseType.Oracle)
             tableName += ".";
         else
-            throw new NotSupportedException("Unknown Type:" + _type);
+            throw new NotSupportedException($"Unknown Type:{_type}");
 
         tableName += querySyntaxHelper.EnsureWrapped(_importTableName);
         databaseName = querySyntaxHelper.EnsureWrapped(_importDatabaseName);
 
-        DiscoveredColumn[] discoveredColumns = _server.ExpectDatabase(_importDatabaseName)
+        var discoveredColumns = _server.ExpectDatabase(_importDatabaseName)
             .ExpectTable(_importTableName,_importFromSchema, _importTableType)
             .DiscoverColumns();
             
-        TableInfo parent = new TableInfo(_repository, tableName)
+        var parent = new TableInfo(_repository, tableName)
         {
             DatabaseType = _type,
             Database = databaseName,
@@ -144,9 +145,9 @@ public class TableInfoImporter:ITableInfoImporter
 
         parent.SaveToDatabase();
 
-        List<ColumnInfo> newCols = new List<ColumnInfo>();
+        var newCols = new List<ColumnInfo>();
 
-        foreach (DiscoveredColumn discoveredColumn in discoveredColumns)
+        foreach (var discoveredColumn in discoveredColumns)
             newCols.Add(CreateNewColumnInfo(parent,discoveredColumn));
 
         tableInfoCreated = parent;
@@ -155,7 +156,7 @@ public class TableInfoImporter:ITableInfoImporter
         //if there is a username then we need to associate it with the TableInfo we just created
         if(!string.IsNullOrWhiteSpace(_username) )
         {
-            DataAccessCredentialsFactory credentialsFactory = new DataAccessCredentialsFactory(_repository);
+            var credentialsFactory = new DataAccessCredentialsFactory(_repository);
             credentialsFactory.Create(tableInfoCreated, _username, _password, _usageContext);
         }
     }

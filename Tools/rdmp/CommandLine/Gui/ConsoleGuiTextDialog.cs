@@ -26,7 +26,7 @@ class ConsoleGuiTextDialog
 
     public bool ShowDialog()
     {
-        bool okClicked = false;
+        var okClicked = false;
 
         var win = new Window(_args.WindowTitle) {
             X = 0,

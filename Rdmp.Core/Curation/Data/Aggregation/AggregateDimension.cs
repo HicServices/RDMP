@@ -41,8 +41,8 @@ public class AggregateDimension : DatabaseEntity, ISaveable, IDeleteable, IColum
     /// </summary>
     public int AggregateConfiguration_ID
     {
-        get { return _aggregateConfigurationID; }
-        set { SetField(ref  _aggregateConfigurationID, value); }
+        get => _aggregateConfigurationID;
+        set => SetField(ref  _aggregateConfigurationID, value);
     }
 
     /// <summary>
@@ -54,8 +54,8 @@ public class AggregateDimension : DatabaseEntity, ISaveable, IDeleteable, IColum
     /// </summary>
     public int ExtractionInformation_ID
     {
-        get { return _extractionInformationID; }
-        set { SetField(ref  _extractionInformationID, value); }
+        get => _extractionInformationID;
+        set => SetField(ref  _extractionInformationID, value);
     }
 
     /// <summary>
@@ -64,8 +64,8 @@ public class AggregateDimension : DatabaseEntity, ISaveable, IDeleteable, IColum
     /// </summary>
     public string Alias
     {
-        get { return _alias; }
-        set { SetField(ref  _alias, value); }
+        get => _alias;
+        set => SetField(ref  _alias, value);
     }
 
     /// <summary>
@@ -77,8 +77,8 @@ public class AggregateDimension : DatabaseEntity, ISaveable, IDeleteable, IColum
     [Sql]
     public string SelectSQL
     {
-        get { return _selectSQL; }
-        set { SetField(ref  _selectSQL, value); }
+        get => _selectSQL;
+        set => SetField(ref  _selectSQL, value);
     }
 
     /// <summary>
@@ -88,8 +88,8 @@ public class AggregateDimension : DatabaseEntity, ISaveable, IDeleteable, IColum
     /// </summary>
     public int Order
     {
-        get { return _order; }
-        set { SetField(ref  _order, value); }
+        get => _order;
+        set => SetField(ref  _order, value);
     }
     #endregion
 
@@ -98,19 +98,19 @@ public class AggregateDimension : DatabaseEntity, ISaveable, IDeleteable, IColum
 
     /// <inheritdoc cref="IColumn.HashOnDataRelease"/>
     [NoMappingToDatabase]
-    public bool HashOnDataRelease { get { return _knownExtractionInformation.Value.HashOnDataRelease; } }
+    public bool HashOnDataRelease => _knownExtractionInformation.Value.HashOnDataRelease;
 
     /// <inheritdoc cref="IColumn.IsExtractionIdentifier"/>
     [NoMappingToDatabase]
-    public bool IsExtractionIdentifier { get { return _knownExtractionInformation.Value.IsExtractionIdentifier; } }
+    public bool IsExtractionIdentifier => _knownExtractionInformation.Value.IsExtractionIdentifier;
 
     /// <inheritdoc cref="IColumn.IsPrimaryKey"/>
     [NoMappingToDatabase]
-    public bool IsPrimaryKey { get { return _knownExtractionInformation.Value.IsPrimaryKey; } }
+    public bool IsPrimaryKey => _knownExtractionInformation.Value.IsPrimaryKey;
 
     /// <inheritdoc cref="IColumn.ColumnInfo"/>
     [NoMappingToDatabase]
-    public ColumnInfo ColumnInfo { get { return _knownExtractionInformation.Value.ColumnInfo; } }
+    public ColumnInfo ColumnInfo => _knownExtractionInformation.Value.ColumnInfo;
 
     /// <summary>
     /// An <see cref="AggregateConfiguration"/> can have a single <see cref="AggregateContinuousDateAxis"/> declared on it (if it is not functioning in a cohort identification
@@ -118,21 +118,15 @@ public class AggregateDimension : DatabaseEntity, ISaveable, IDeleteable, IColum
     /// </summary>
     /// <seealso cref="Aggregation.AggregateContinuousDateAxis.AggregateDimension_ID"/>
     [NoMappingToDatabase]
-    public AggregateContinuousDateAxis AggregateContinuousDateAxis
-    {
-        get
-        {
-            return Repository.GetAllObjectsWithParent<AggregateContinuousDateAxis>(this).SingleOrDefault();
-        }
-    }
+    public AggregateContinuousDateAxis AggregateContinuousDateAxis => Repository.GetAllObjectsWithParent<AggregateContinuousDateAxis>(this).SingleOrDefault();
 
     /// <inheritdoc cref="ExtractionInformation_ID"/>
     [NoMappingToDatabase]
-    public ExtractionInformation ExtractionInformation {get { return _knownExtractionInformation.Value; } }
+    public ExtractionInformation ExtractionInformation => _knownExtractionInformation.Value;
 
     /// <inheritdoc cref="AggregateConfiguration_ID"/>
     [NoMappingToDatabase]
-    public AggregateConfiguration AggregateConfiguration { get { return _knownAggregateConfiguration.Value;} }
+    public AggregateConfiguration AggregateConfiguration => _knownAggregateConfiguration.Value;
 
     #endregion
 
@@ -223,7 +217,7 @@ public class AggregateDimension : DatabaseEntity, ISaveable, IDeleteable, IColum
         }
         catch (Exception)
         {
-            return "Unamed AggregateDimension ID " + ID;
+            return $"Unamed AggregateDimension ID {ID}";
         }
     }
 

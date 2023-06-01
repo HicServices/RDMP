@@ -70,13 +70,13 @@ public partial class ProgressBarsUI : UserControl,IDataLoadEventListener
         {
             var y = GetRowYForNewProgressBar();
 
-            Label lbl = new Label();
+            var lbl = new Label();
             lbl.Text = e.TaskDescription;
             lbl.Font = new Font(Font.FontFamily,EmSize);
             lbl.Location = new Point(0,y);
             Controls.Add(lbl);
 
-            ProgressBar pb = new ProgressBar();
+            var pb = new ProgressBar();
             pb.Location = new Point(lbl.Right,y);
             pb.Size = new Size(ragSmiley1.Left - lbl.Right,lbl.Height-2);
             pb.Anchor = AnchorStyles.Left | AnchorStyles.Top | AnchorStyles.Right;
@@ -98,7 +98,7 @@ public partial class ProgressBarsUI : UserControl,IDataLoadEventListener
 
     private void UpdateProgressBar(ProgressBar progressBar, ProgressEventArgs progressEventArgs)
     {
-        string text = progressEventArgs.Progress.Value + " " + progressEventArgs.Progress.UnitOfMeasurement;
+        var text = $"{progressEventArgs.Progress.Value} {progressEventArgs.Progress.UnitOfMeasurement}";
 
         tt.SetToolTip(progressBar,text);
 

@@ -93,7 +93,7 @@ public partial class SelectDialog<T> : Form, IVirtualListDataSource where T : cl
     }
     public bool AllowMultiSelect
     {
-        get { return olv.MultiSelect; }
+        get => olv.MultiSelect;
         set
         {
             olv.MultiSelect = value;
@@ -305,7 +305,7 @@ public partial class SelectDialog<T> : Form, IVirtualListDataSource where T : cl
         //all objects are the same Type
 
         //look for useful properties
-        foreach (PropertyInfo propertyInfo in type.GetProperties())
+        foreach (var propertyInfo in type.GetProperties())
         {
             var useful = _usefulPropertyFinder.GetAttribute(propertyInfo);
             if (useful != null)
@@ -315,7 +315,7 @@ public partial class SelectDialog<T> : Form, IVirtualListDataSource where T : cl
                 olv.AllColumns.Add(newCol);
 
 
-                RDMPCollectionCommonFunctionality.SetupColumnTracking(olv, newCol, "Useful_" + propertyInfo.Name);
+                RDMPCollectionCommonFunctionality.SetupColumnTracking(olv, newCol, $"Useful_{propertyInfo.Name}");
             }
         }
             
@@ -388,7 +388,7 @@ public partial class SelectDialog<T> : Form, IVirtualListDataSource where T : cl
         _types = _searchables.Keys.Select(k => k.GetType()).Distinct().ToArray();
         _typeNames = new HashSet<string>(_types.Select(t => t.Name));
 
-        foreach (Type t in StartingEasyFilters.SelectMany(v => v.Value))
+        foreach (var t in StartingEasyFilters.SelectMany(v => v.Value))
         {
             if (!_typeNames.Contains(t.Name))
                 _typeNames.Add(t.Name);
@@ -398,14 +398,14 @@ public partial class SelectDialog<T> : Form, IVirtualListDataSource where T : cl
         if (focusedCollection != RDMPCollection.None && StartingEasyFilters.ContainsKey(focusedCollection))
             startingFilters = StartingEasyFilters[focusedCollection];
 
-        BackColorProvider backColorProvider = new BackColorProvider();
+        var backColorProvider = new BackColorProvider();
 
         // if there are at least 2 Types of object let them filter
         if(_types.Count() > 1)
         {
-            foreach (Type t in EasyFilterTypesAndAssociatedCollections.Keys)
+            foreach (var t in EasyFilterTypesAndAssociatedCollections.Keys)
             {
-                string shortCode = SearchablesMatchScorer.ShortCodes.Single(kvp => kvp.Value == t).Key;
+                var shortCode = SearchablesMatchScorer.ShortCodes.Single(kvp => kvp.Value == t).Key;
                 var b = new ToolStripButton
                 {
                     Checked = startingFilters?.Contains(t) == true,
@@ -530,7 +530,7 @@ public partial class SelectDialog<T> : Form, IVirtualListDataSource where T : cl
         scorer.ReturnEmptyResultWhenNoSearchTerms = _args.IsFind;
         scorer.BumpMatches = _activator.HistoryProvider.History.Select(h => h.Object).ToList();
 
-        if (_lblId != null && int.TryParse(_lblId.Text, out int requireId))
+        if (_lblId != null && int.TryParse(_lblId.Text, out var requireId))
         {
             scorer.ID = requireId;
         }
@@ -583,7 +583,7 @@ public partial class SelectDialog<T> : Form, IVirtualListDataSource where T : cl
         var deletable = olv.SelectedObject as IDeleteable;
         if (e.KeyCode == Keys.Delete && _allowDeleting && deletable != null)
         {
-            if (MessageBox.Show("Confirm deleting " + deletable, "Really delete?", MessageBoxButtons.YesNoCancel) == DialogResult.Yes)
+            if (MessageBox.Show($"Confirm deleting {deletable}", "Really delete?", MessageBoxButtons.YesNoCancel) == DialogResult.Yes)
             {
                 try
                 {

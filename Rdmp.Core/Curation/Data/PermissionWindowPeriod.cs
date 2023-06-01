@@ -41,16 +41,16 @@ public class PermissionWindowPeriod
     [XmlElement(DataType = "duration", ElementName = "Start")]
     public string StartString
     {
-        get { return XmlConvert.ToString(Start); }
-        set { Start = string.IsNullOrEmpty(value) ? TimeSpan.Zero : XmlConvert.ToTimeSpan(value); }
+        get => XmlConvert.ToString(Start);
+        set => Start = string.IsNullOrEmpty(value) ? TimeSpan.Zero : XmlConvert.ToTimeSpan(value);
     }
 
     /// <inheritdoc cref="End"/>
     [XmlElement(DataType = "duration", ElementName = "End")]
     public string EndString
     {
-        get { return XmlConvert.ToString(End); }
-        set { End = string.IsNullOrEmpty(value) ? TimeSpan.Zero : XmlConvert.ToTimeSpan(value); }
+        get => XmlConvert.ToString(End);
+        set => End = string.IsNullOrEmpty(value) ? TimeSpan.Zero : XmlConvert.ToTimeSpan(value);
     }
 
     /// <summary>
@@ -95,6 +95,6 @@ public class PermissionWindowPeriod
     /// <inheritdoc/>
     public override string ToString()
     {
-        return Start.ToString("hh':'mm") + "-" + End.ToString("hh':'mm");
+        return $"{Start:hh':'mm}-{End:hh':'mm}";
     }
 }

@@ -22,7 +22,7 @@ public class CacheFetchRequest : ICacheFetchRequest
     public IRepository Repository { get; set; }
 
     public DateTime Start { get; set; }
-    public DateTime End { get { return Start.Add(ChunkPeriod); } }
+    public DateTime End => Start.Add(ChunkPeriod);
     public TimeSpan ChunkPeriod { get; set; }
     public IPermissionWindow PermissionWindow { get; set; }
     public ICacheProgress CacheProgress { get; set; }
@@ -32,7 +32,7 @@ public class CacheFetchRequest : ICacheFetchRequest
     /// <summary>
     /// Is this CacheFetchRequest a retry of a previously failed fetch request?
     /// </summary>
-    public bool IsRetry { get { return PreviousFailure != null; }}
+    public bool IsRetry => PreviousFailure != null;
 
     public CacheFetchRequest(IRepository repository, DateTime start)
     {

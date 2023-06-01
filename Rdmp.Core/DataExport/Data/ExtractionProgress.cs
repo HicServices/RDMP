@@ -170,7 +170,7 @@ public class ExtractionProgress : DatabaseEntity, IExtractionProgress
             { "SelectedDataSets_ID",sds.ID},
             { "ExtractionInformation_ID",coverageColId},
             { "NumberOfDaysPerBatch",365},
-            { "Name","ExtractionProgress"+Guid.NewGuid() },
+            { "Name", $"ExtractionProgress{Guid.NewGuid()}" },
             { "Retry",RetryStrategy.NoRetry }
         });
 

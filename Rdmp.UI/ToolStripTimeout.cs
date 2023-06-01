@@ -22,7 +22,7 @@ public class ToolStripTimeout
 
     public int Timeout
     {
-        get { return _timeout; }
+        get => _timeout;
         set
         {
             _timeout = value;

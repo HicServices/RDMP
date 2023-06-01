@@ -58,7 +58,7 @@ class ExecuteCommandListSupportedCommands:BasicCommandExecution
         {
             var tokens = _pattern.Split('*',StringSplitOptions.RemoveEmptyEntries);
 
-            for(int i=0;i<commands.Length;i++)
+            for(var i=0;i<commands.Length;i++)
             {
                 if(tokens.All(t=>names[i].Contains(t,StringComparison.InvariantCultureIgnoreCase)))
                 {
@@ -78,10 +78,10 @@ class ExecuteCommandListSupportedCommands:BasicCommandExecution
             }
         }
 
-        bool showAll = onlyShowIndexes.Count == 0;
+        var showAll = onlyShowIndexes.Count == 0;
         var outputCommandDictionary = new Dictionary<string,string>();
 
-        for(int i=0;i<commands.Length;i++)
+        for(var i=0;i<commands.Length;i++)
         {
             if(showAll || onlyShowIndexes.Contains(i))
             {
@@ -90,7 +90,7 @@ class ExecuteCommandListSupportedCommands:BasicCommandExecution
             }
         }
 
-        string output = string.Join(Environment.NewLine,
+        var output = string.Join(Environment.NewLine,
             outputCommandDictionary.Select(kvp => kvp.Key+kvp.Value)
                 .OrderBy(s=>s));
 

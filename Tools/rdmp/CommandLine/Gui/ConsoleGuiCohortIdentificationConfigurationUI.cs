@@ -56,7 +56,7 @@ public partial class ConsoleGuiCohortIdentificationConfigurationUI {
         tableview1.KeyPress += Tableview1_KeyPress;
         tbTimeout.TextChanged += (s) =>
         {
-            if (int.TryParse(tbTimeout.Text.ToString(), out int t))
+            if (int.TryParse(tbTimeout.Text.ToString(), out var t))
             {
                 Common.Timeout = t;
             }

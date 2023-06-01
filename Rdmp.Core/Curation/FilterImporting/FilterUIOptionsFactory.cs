@@ -32,8 +32,7 @@ public class FilterUIOptionsFactory
         if (masterCatalogueFilter != null)
             return new ExtractionFilterUIOptions(masterCatalogueFilter);
 
-        throw new Exception("Expected IFilter '" + filter +
-                            "' to be either an AggregateFilter, DeployedExtractionFilter or a master ExtractionFilter but it was " +
-                            filter.GetType().Name);
+        throw new Exception(
+            $"Expected IFilter '{filter}' to be either an AggregateFilter, DeployedExtractionFilter or a master ExtractionFilter but it was {filter.GetType().Name}");
     }
 }

@@ -44,7 +44,7 @@ public class AtomicCommandUIFactory
     {
         var tt = new ToolTip();
 
-        Button b = new Button
+        var b = new Button
         {
             Width = 26,
             Height = 26,

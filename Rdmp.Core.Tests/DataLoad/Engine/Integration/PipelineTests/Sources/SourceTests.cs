@@ -126,7 +126,7 @@ public class SourceTests:DatabaseTests
         component.SaveToDatabase();
 
         string reason;
-        bool rejection = context.IsAllowable(pipeline, out reason);
+        var rejection = context.IsAllowable(pipeline, out reason);
 
         Console.WriteLine(reason);
 
@@ -146,7 +146,7 @@ public class SourceTests:DatabaseTests
         var suspiciousComponent = new TestObject_Suspicious();
         var ex = Assert.Throws<MultipleMatchingImplmentationException>(() => context.PreInitialize(new ThrowImmediatelyDataLoadJob(), suspiciousComponent, 5, "fish"));
 
-        Console.WriteLine("Exception was:"  + ex.Message);
+        Console.WriteLine($"Exception was:{ex.Message}");
     }
     [Test]
     public void TestExtraSuspiciousPipelineRequirements()

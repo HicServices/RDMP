@@ -66,10 +66,10 @@ public class RuntimeArgumentCollection
 
     public object GetCustomArgumentValue(string name)
     {
-        IArgument first = Arguments.SingleOrDefault(a => a.Name.Equals(name));
+        var first = Arguments.SingleOrDefault(a => a.Name.Equals(name));
 
         if(first == null)
-            throw new KeyNotFoundException("Argument " + name + " was missing");
+            throw new KeyNotFoundException($"Argument {name} was missing");
 
         try
         {
@@ -77,7 +77,8 @@ public class RuntimeArgumentCollection
         }
         catch (Exception e)
         {
-            throw new Exception("Could not convert value '" + first.Value + "' into a " + first.GetSystemType().FullName + " for argument '" + first.Name + "'", e);
+            throw new Exception(
+                $"Could not convert value '{first.Value}' into a {first.GetSystemType().FullName} for argument '{first.Name}'", e);
         }
     }
 
@@ -87,7 +88,7 @@ public class RuntimeArgumentCollection
             foreach (var kvp in StageSpecificArguments.ToDictionary())
                 yield return kvp;
 
-        foreach (IArgument argument in Arguments)
+        foreach (var argument in Arguments)
             yield return new KeyValuePair<string, object>(argument.Name, argument.GetValueAsSystemType());
     }
 
@@ -98,7 +99,7 @@ public class RuntimeArgumentCollection
                 if(kvp.Value.GetType() == typeof(T))
                     yield return new KeyValuePair<string, T>(kvp.Key,(T)kvp.Value);
 
-        foreach (IArgument argument in Arguments)
+        foreach (var argument in Arguments)
             if(argument.GetSystemType() == typeof(T))
                 yield return new KeyValuePair<string, T>(argument.Name, (T)argument.GetValueAsSystemType());
 

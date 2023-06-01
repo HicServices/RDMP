@@ -256,7 +256,7 @@ public partial class SimpleCohortSetUI : UserControl
             aggregate.RootFilterContainer_ID = filterContainer.ID;
             aggregate.SaveToDatabase();
 
-            List<IFilter> filtersAddedSoFar = new List<IFilter>();
+            var filtersAddedSoFar = new List<IFilter>();
             foreach (var ui in _filterUIs)
             {
                 var f = ui.CreateFilter(new AggregateFilterFactory(_activator.RepositoryLocator.CatalogueRepository), filterContainer, filtersAddedSoFar.ToArray());

@@ -135,7 +135,7 @@ public partial class StartupUI : Form, ICheckNotifier
         if(ragSmiley1.IsFatal() || CouldNotReachTier1Database)
             return;
 
-        Timer t = new Timer
+        var t = new Timer
         {
             Interval = 1000
         };
@@ -184,7 +184,7 @@ public partial class StartupUI : Form, ICheckNotifier
             try
             {
                 lblProgress.Text = "Constructing UserSettingsRepositoryFinder";
-                UserSettingsRepositoryFinder finder = new UserSettingsRepositoryFinder();
+                var finder = new UserSettingsRepositoryFinder();
                 _startup.RepositoryLocator = finder;
             }
             catch (Exception ex)
@@ -203,7 +203,7 @@ public partial class StartupUI : Form, ICheckNotifier
 
         lblProgress.Text = "Awaiting Platform Database Discovery...";
 
-        Task t = new Task(
+        var t = new Task(
             () =>
             {
                 try
@@ -312,7 +312,7 @@ public partial class StartupUI : Form, ICheckNotifier
         }
             
         //if the message starts with a percentage translate it into the progress bars movement
-        Regex progressHackMessage = new Regex("^(\\d+)%");
+        var progressHackMessage = new Regex("^(\\d+)%");
         var match = progressHackMessage.Match(args.Message);
 
         if (match.Success)

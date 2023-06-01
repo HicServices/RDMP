@@ -72,8 +72,8 @@ public partial class ArgumentValueDictionaryUI : UserControl, IArgumentValueUI
     private void AddRow(object key, object val)
     {
         const int uiWidth = 350;
-        int element = keys.Count;
-        int y = element * 25;
+        var element = keys.Count;
+        var y = element * 25;
         keys.Add(key);
         values.Add(val);
 
@@ -131,7 +131,7 @@ public partial class ArgumentValueDictionaryUI : UserControl, IArgumentValueUI
         try
         {
             _dictionary.Clear();
-            for (int i = 0; i < keys.Count; i++)
+            for (var i = 0; i < keys.Count; i++)
                 _dictionary.Add(keys[i], values[i]);
 
             _args.Setter(_dictionary);

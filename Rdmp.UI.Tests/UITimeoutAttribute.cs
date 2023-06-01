@@ -67,7 +67,7 @@ class UITimeoutAttribute : NUnitAttribute, IWrapTestMethod
             TestResult result = null;
             Exception threadException = null;
 
-            Thread thread = new Thread(() =>
+            var thread = new Thread(() =>
             {
                 try
                 {
@@ -90,7 +90,7 @@ class UITimeoutAttribute : NUnitAttribute, IWrapTestMethod
                     _timeout -= 100;
                 }
 
-                int closeAttempts = 10;
+                var closeAttempts = 10;
 
                 if (_timeout <= 0)
                 {
@@ -105,7 +105,7 @@ class UITimeoutAttribute : NUnitAttribute, IWrapTestMethod
                         if(closeAttempts-- <=0)
                             throw new Exception("Failed to close all windows even after multiple attempts");
 
-                        StringBuilder sbClass = new StringBuilder(100);
+                        var sbClass = new StringBuilder(100);
 
                         GetClassName(handle, sbClass, 100);
                                 

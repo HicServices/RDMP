@@ -36,7 +36,7 @@ public class ExecuteCommandCreateNewEmptyCatalogue : BasicCommandExecution, IAto
     {
         base.Execute();
 
-        var c = new Catalogue(BasicActivator.RepositoryLocator.CatalogueRepository, "New Catalogue " + Guid.NewGuid());
+        var c = new Catalogue(BasicActivator.RepositoryLocator.CatalogueRepository, $"New Catalogue {Guid.NewGuid()}");
 
         if (TargetFolder != null)
         {

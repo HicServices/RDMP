@@ -24,7 +24,7 @@ public class DublinCoreTranslater
     /// <param name="fillWith"></param>
     public void Fill<T>(T toFill,DublinCoreDefinition fillWith)
     {
-        Catalogue c = toFill as Catalogue;
+        var c = toFill as Catalogue;
 
         if (c != null)
         {
@@ -40,7 +40,8 @@ public class DublinCoreTranslater
                 c.Acronym = fillWith.Alternative;
         }
         else
-            throw new NotSupportedException("Did not know how to hydrate the Type " + typeof(T) + " from a DublinCoreDefinition");
+            throw new NotSupportedException(
+                $"Did not know how to hydrate the Type {typeof(T)} from a DublinCoreDefinition");
     }
 
     /// <summary>
@@ -56,7 +57,7 @@ public class DublinCoreTranslater
     {
         var toReturn = new DublinCoreDefinition();
 
-        Catalogue c = generateFrom as Catalogue;
+        var c = generateFrom as Catalogue;
 
         if (c != null)
         {
@@ -66,7 +67,8 @@ public class DublinCoreTranslater
             toReturn.Alternative = c.Acronym;
         }
         else
-            throw new NotSupportedException("Did not know how to extracta a DublinCoreDefinition from the Type " + typeof(T));
+            throw new NotSupportedException(
+                $"Did not know how to extracta a DublinCoreDefinition from the Type {typeof(T)}");
 
         return toReturn;
     }

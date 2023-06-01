@@ -58,7 +58,7 @@ public class CloneExtractionConfigurationTests:TestsRequiringAnExtractionConfigu
             param.Value = "'jormungander'";
             param.SaveToDatabase();
 
-            ExtractDatasetCommand request = new ExtractDatasetCommand(_configuration,new ExtractableDatasetBundle(_extractableDataSet));
+            var request = new ExtractDatasetCommand(_configuration,new ExtractableDatasetBundle(_extractableDataSet));
             request.GenerateQueryBuilder();
             Assert.AreEqual(
                 CollapseWhitespace(
@@ -90,12 +90,12 @@ AND
                         , TestDatabaseNames.Prefix))
                 ,CollapseWhitespace(request.QueryBuilder.SQL));
 
-            ExtractionConfiguration deepClone = _configuration.DeepCloneWithNewIDs();
+            var deepClone = _configuration.DeepCloneWithNewIDs();
             Assert.AreEqual(deepClone.Cohort_ID,_configuration.Cohort_ID);
             Assert.AreNotEqual(deepClone.ID,_configuration.ID);
             try
             {
-                ExtractDatasetCommand request2 = new ExtractDatasetCommand(deepClone, new ExtractableDatasetBundle(_extractableDataSet));
+                var request2 = new ExtractDatasetCommand(deepClone, new ExtractableDatasetBundle(_extractableDataSet));
                 request2.GenerateQueryBuilder();
                 
                 Assert.AreEqual(request.QueryBuilder.SQL,request2.QueryBuilder.SQL);
@@ -123,7 +123,7 @@ AND
         origProgress.ProgressDate = new DateTime(2001, 01, 01);
         origProgress.SaveToDatabase();
 
-        ExtractionConfiguration deepClone = _configuration.DeepCloneWithNewIDs();
+        var deepClone = _configuration.DeepCloneWithNewIDs();
         Assert.AreEqual(deepClone.Cohort_ID, _configuration.Cohort_ID);
         Assert.AreNotEqual(deepClone.ID, _configuration.ID);
 
@@ -157,8 +157,7 @@ AND
         using (var con = DataExportTableRepository.GetConnection())
         {
             DataExportTableRepository.DiscoveredServer.GetCommand(
-                "UPDATE ExtractableColumn set CatalogueExtractionInformation_ID = " + int.MaxValue + " where ID = " +
-                name.ID, con).ExecuteNonQuery();
+                $"UPDATE ExtractableColumn set CatalogueExtractionInformation_ID = {int.MaxValue} where ID = {name.ID}", con).ExecuteNonQuery();
         }
 
     }

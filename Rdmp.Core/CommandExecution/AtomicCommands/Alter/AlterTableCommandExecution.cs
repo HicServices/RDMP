@@ -43,7 +43,7 @@ public abstract class AlterTableCommandExecution :BasicCommandExecution
 
         if(Table.TableType != TableType.Table)
         {
-            SetImpossible("Table is a " + Table.TableType);
+            SetImpossible($"Table is a {Table.TableType}");
             return;
         }
     }

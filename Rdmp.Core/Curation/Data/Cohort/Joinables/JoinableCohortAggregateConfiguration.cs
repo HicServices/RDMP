@@ -29,8 +29,8 @@ public class JoinableCohortAggregateConfiguration : DatabaseEntity
     /// </summary>
     public int CohortIdentificationConfiguration_ID
     {
-        get { return _cohortIdentificationConfigurationID; }
-        set { SetField(ref  _cohortIdentificationConfigurationID, value); }
+        get => _cohortIdentificationConfigurationID;
+        set => SetField(ref  _cohortIdentificationConfigurationID, value);
     }
 
     /// <summary>
@@ -38,8 +38,8 @@ public class JoinableCohortAggregateConfiguration : DatabaseEntity
     /// </summary>
     public int AggregateConfiguration_ID
     {
-        get { return _aggregateConfigurationID; }
-        set { SetField(ref  _aggregateConfigurationID, value); }
+        get => _aggregateConfigurationID;
+        set => SetField(ref  _aggregateConfigurationID, value);
     }
 
     #endregion
@@ -52,28 +52,16 @@ public class JoinableCohortAggregateConfiguration : DatabaseEntity
     /// <see cref="JoinableCohortAggregateConfigurationUse.AggregateConfiguration"/> to fetch the actual <see cref="AggregateConfiguration"/></para>
     /// </summary>
     [NoMappingToDatabase]
-    public JoinableCohortAggregateConfigurationUse[] Users
-    {
-        get { return Repository.GetAllObjectsWithParent<JoinableCohortAggregateConfigurationUse>(this).ToArray(); }
-    }
+    public JoinableCohortAggregateConfigurationUse[] Users => Repository.GetAllObjectsWithParent<JoinableCohortAggregateConfigurationUse>(this).ToArray();
+
     /// <inheritdoc cref="CohortIdentificationConfiguration_ID"/>
     [NoMappingToDatabase]
-    public CohortIdentificationConfiguration CohortIdentificationConfiguration {
-        get
-        {
-            return Repository.GetObjectByID<CohortIdentificationConfiguration>(CohortIdentificationConfiguration_ID);
-        }
-    }
+    public CohortIdentificationConfiguration CohortIdentificationConfiguration => Repository.GetObjectByID<CohortIdentificationConfiguration>(CohortIdentificationConfiguration_ID);
 
     /// <inheritdoc cref="AggregateConfiguration_ID"/>
     [NoMappingToDatabase]
-    public AggregateConfiguration AggregateConfiguration
-    {
-        get
-        {
-            return Repository.GetObjectByID<AggregateConfiguration>(AggregateConfiguration_ID);
-        }
-    }
+    public AggregateConfiguration AggregateConfiguration => Repository.GetObjectByID<AggregateConfiguration>(AggregateConfiguration_ID);
+
     #endregion
 
     public JoinableCohortAggregateConfiguration()
@@ -97,13 +85,15 @@ public class JoinableCohortAggregateConfiguration : DatabaseEntity
     /// <param name="aggregate"></param>
     public JoinableCohortAggregateConfiguration(ICatalogueRepository repository, CohortIdentificationConfiguration cic, AggregateConfiguration aggregate)
     {
-        int extractionIdentifiers = aggregate.AggregateDimensions.Count(d => d.IsExtractionIdentifier);
+        var extractionIdentifiers = aggregate.AggregateDimensions.Count(d => d.IsExtractionIdentifier);
 
         if( !aggregate.Catalogue.IsApiCall() && extractionIdentifiers != 1)
-            throw new NotSupportedException("Cannot make aggregate " + aggregate + " into a Joinable aggregate because it has " + extractionIdentifiers + " columns marked IsExtractionIdentifier");
+            throw new NotSupportedException(
+                $"Cannot make aggregate {aggregate} into a Joinable aggregate because it has {extractionIdentifiers} columns marked IsExtractionIdentifier");
 
         if(aggregate.GetCohortAggregateContainerIfAny() != null)
-            throw new NotSupportedException("Cannot make aggregate " + aggregate + " into a Joinable aggregate because it is already in a CohortAggregateContainer");
+            throw new NotSupportedException(
+                $"Cannot make aggregate {aggregate} into a Joinable aggregate because it is already in a CohortAggregateContainer");
 
         repository.InsertAndHydrate(this, new Dictionary<string, object>()
         {
@@ -121,7 +111,7 @@ public class JoinableCohortAggregateConfiguration : DatabaseEntity
     public JoinableCohortAggregateConfigurationUse AddUser(AggregateConfiguration user)
     {
         if(user.ID == AggregateConfiguration_ID)
-            throw new NotSupportedException("Cannot configure AggregateConfiguration "+ user + " as a Join user to itself!");
+            throw new NotSupportedException($"Cannot configure AggregateConfiguration {user} as a Join user to itself!");
 
         var existing = Repository.GetAllObjects<JoinableCohortAggregateConfigurationUse>().FirstOrDefault(u => u.AggregateConfiguration_ID == user.ID);
 

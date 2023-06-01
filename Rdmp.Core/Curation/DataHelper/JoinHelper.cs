@@ -32,16 +32,16 @@ public class JoinHelper
         if (join.PrimaryKey != null)
             pkTable = join.PrimaryKey.TableInfo;
 
-        string foreignTable = fkTable == null ? "" : fkTable.Name;
-        string primaryTable = pkTable == null ? "" : pkTable.Name;
+        var foreignTable = fkTable == null ? "" : fkTable.Name;
+        var primaryTable = pkTable == null ? "" : pkTable.Name;
 
-        string key1 = join.ForeignKey == null ? "" : join.ForeignKey.Name;
-        string key2 = join.PrimaryKey == null ? "" : join.PrimaryKey.Name;
+        var key1 = join.ForeignKey == null ? "" : join.ForeignKey.Name;
+        var key2 = join.PrimaryKey == null ? "" : join.PrimaryKey.Name;
 
-        string joinType = join.ExtractionJoinType.ToString();
+        var joinType = join.ExtractionJoinType.ToString();
 
-        string SQL = foreignTable + " " + joinType + " JOIN " + primaryTable 
-                     + GetOnSql(join, foreignTable, primaryTable, key1,key2, out var hasCustomSql);
+        var SQL =
+            $"{foreignTable} {joinType} JOIN {primaryTable}{GetOnSql(join, foreignTable, primaryTable, key1, key2, out var hasCustomSql)}";
 
         SQL = AppendCollation(SQL, join.Collation);
 
@@ -66,11 +66,11 @@ public class JoinHelper
             // remove newlines in users SQL
             custom = Regex.Replace(custom,"\r?\n", " ");
 
-            return " ON " + custom;
+            return $" ON {custom}";
         }
         hasCustomSql = false;
 
-        return " ON " + key1 + " = " + key2;
+        return $" ON {key1} = {key2}";
     }
 
     /// <summary>
@@ -91,14 +91,14 @@ public class JoinHelper
         if (join.PrimaryKey != null)
             pkTable = join.PrimaryKey.TableInfo;
 
-        string foreignTable = fkTable == null ? "" : fkTable.Name;
-        string primaryTable = pkTable == null ? "" : pkTable.Name;
+        var foreignTable = fkTable == null ? "" : fkTable.Name;
+        var primaryTable = pkTable == null ? "" : pkTable.Name;
 
-        string key1 = join.ForeignKey == null ? "" : join.ForeignKey.Name;
-        string key2 = join.PrimaryKey == null ? "" : join.PrimaryKey.Name;
+        var key1 = join.ForeignKey == null ? "" : join.ForeignKey.Name;
+        var key2 = join.PrimaryKey == null ? "" : join.PrimaryKey.Name;
 
-        string SQL = " " + join.GetInvertedJoinType() + " JOIN " + foreignTable 
-                     + GetOnSql(join,foreignTable, primaryTable, key1,key2,out var hasCustomSql);
+        var SQL =
+            $" {join.GetInvertedJoinType()} JOIN {foreignTable}{GetOnSql(join, foreignTable, primaryTable, key1, key2, out var hasCustomSql)}";
 
         SQL = AppendCollation(SQL, join);
 
@@ -133,12 +133,12 @@ public class JoinHelper
         if (join.PrimaryKey != null)
             pkTable = join.PrimaryKey.TableInfo;
 
-        string foreignTable = fkTable == null ? "" : fkTable.Name;
-        string primaryTable = pkTable == null ? "" : pkTable.Name;
+        var foreignTable = fkTable == null ? "" : fkTable.Name;
+        var primaryTable = pkTable == null ? "" : pkTable.Name;
 
         //null check... could be required for display purposes where you have set up half the join when this is called
-        string key1 = join.ForeignKey == null ? "" : join.ForeignKey.Name;
-        string key2 = join.PrimaryKey == null ? "" : join.PrimaryKey.Name;
+        var key1 = join.ForeignKey == null ? "" : join.ForeignKey.Name;
+        var key2 = join.PrimaryKey == null ? "" : join.PrimaryKey.Name;
 
         string toReturn;
         bool hasCustomSql;
@@ -146,8 +146,8 @@ public class JoinHelper
         //The lookup table is not being assigned an alias
         if (aliasNumber == -1)
         {
-            toReturn = " " + join.ExtractionJoinType + " JOIN " + primaryTable 
-                       + GetOnSql(join, foreignTable,primaryTable, key1, key2, out hasCustomSql);
+            toReturn =
+                $" {join.ExtractionJoinType} JOIN {primaryTable}{GetOnSql(join, foreignTable, primaryTable, key1, key2, out hasCustomSql)}";
                 
         }   
         else
@@ -155,9 +155,8 @@ public class JoinHelper
             var lookupAlias = GetLookupTableAlias(aliasNumber);
 
             //the lookup table IS being assigned an alias so append As X after table name and change key2 of the join to X.col instead of tablename.col
-            toReturn = " " + join.ExtractionJoinType + " JOIN " + primaryTable
-                       + GetLookupTableAlias(aliasNumber, true) +
-                       GetOnSql(join,foreignTable, lookupAlias, key1, key2.Replace(pkTable.Name, lookupAlias),out hasCustomSql);
+            toReturn =
+                $" {join.ExtractionJoinType} JOIN {primaryTable}{GetLookupTableAlias(aliasNumber, true)}{GetOnSql(join, foreignTable, lookupAlias, key1, key2.Replace(pkTable.Name, lookupAlias), out hasCustomSql)}";
         }
 
         toReturn = AppendCollation(toReturn, join);
@@ -179,9 +178,9 @@ public class JoinHelper
     public static string GetLookupTableAlias(int aliasNumber, bool requirePrefix = false)
     {
         if (requirePrefix)
-            return " AS " + "lookup_" + aliasNumber;
+            return $" AS lookup_{aliasNumber}";
 
-        return "lookup_" + aliasNumber;
+        return $"lookup_{aliasNumber}";
 
     }
 
@@ -190,20 +189,20 @@ public class JoinHelper
     private static string AppendSupplementalJoins(string sql, IJoin join, int aliasNumber = -1)
     {
             
-        IEnumerable<ISupplementalJoin> supplementalJoins = join.GetSupplementalJoins();
+        var supplementalJoins = join.GetSupplementalJoins();
 
         if (supplementalJoins != null)
-            foreach (ISupplementalJoin supplementalJoin in supplementalJoins)
+            foreach (var supplementalJoin in supplementalJoins)
             {
-                string rightHalf = supplementalJoin.PrimaryKey.ToString();
+                var rightHalf = supplementalJoin.PrimaryKey.ToString();
 
                 if (aliasNumber != -1)
                 {
-                    TableInfo lookupTable = join.PrimaryKey.TableInfo;
+                    var lookupTable = join.PrimaryKey.TableInfo;
                     rightHalf = rightHalf.Replace(lookupTable.Name, GetLookupTableAlias(aliasNumber));
                 }
 
-                sql += " AND " + supplementalJoin.ForeignKey + " = " + rightHalf;
+                sql += $" AND {supplementalJoin.ForeignKey} = {rightHalf}";
                 sql = AppendCollation(sql, supplementalJoin);
             }
 
@@ -229,7 +228,7 @@ public class JoinHelper
     private static string AppendCollation(string sql, string collation)
     {
         if (!string.IsNullOrWhiteSpace(collation))
-            return sql + " collate " + collation;
+            return $"{sql} collate {collation}";
 
         return sql;
     }

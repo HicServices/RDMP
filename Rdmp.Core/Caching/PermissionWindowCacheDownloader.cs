@@ -78,7 +78,8 @@ public class PermissionWindowCacheDownloader
     public RetrievalResult RetryDownload(IDataLoadEventListener listener, GracefulCancellationToken cancellationToken)
     {
         _listener = listener;
-        listener.OnNotify(this, new NotifyEventArgs(ProgressEventType.Information, "Retrying download: " + (_permissionWindow == null ? "No permission window" : _permissionWindow.Name)));
+        listener.OnNotify(this, new NotifyEventArgs(ProgressEventType.Information,
+            $"Retrying download: {(_permissionWindow == null ? "No permission window" : _permissionWindow.Name)}"));
 
         return IsDownloadRequired(listener) ? 
             RunPipelineExecutionTask(cancellationToken, CreateRetryCachingEngine) :
@@ -207,16 +208,14 @@ public class PermissionWindowCacheDownloader
             if (_permissionWindow == null)
             {
                 if (cacheProgress.PermissionWindow_ID != null)
-                    throw new Exception("Configuration error: This downloader has been configured for all CacheProgress items which have no PermissionWindow, but this CacheProgress (ID=" + cacheProgress.ID + ") does have a PermissionWindow.");
+                    throw new Exception(
+                        $"Configuration error: This downloader has been configured for all CacheProgress items which have no PermissionWindow, but this CacheProgress (ID={cacheProgress.ID}) does have a PermissionWindow.");
             }
             else if (cacheProgress.PermissionWindow_ID != _permissionWindow.ID)
             {
                 var progressPermissionWindow = cacheProgress.PermissionWindow;
-                throw new Exception("Configuration error, CacheProgress with ID=" + cacheProgress.ID +
-                                    " does not have its permissions specified by Permission Window '" +
-                                    _permissionWindow.Name +
-                                    "' (ID=" + _permissionWindow.ID + "). It uses Permission Window '" +
-                                    progressPermissionWindow.Name + "' (ID=" + progressPermissionWindow.ID + ")");
+                throw new Exception(
+                    $"Configuration error, CacheProgress with ID={cacheProgress.ID} does not have its permissions specified by Permission Window '{_permissionWindow.Name}' (ID={_permissionWindow.ID}). It uses Permission Window '{progressPermissionWindow.Name}' (ID={progressPermissionWindow.ID})");
             }
 
         }
@@ -228,6 +227,6 @@ public class PermissionWindowCacheDownloader
             return "Downloader (Any Time)";
 
 
-        return "Downloader for " + _permissionWindow.Name;
+        return $"Downloader for {_permissionWindow.Name}";
     }
 }

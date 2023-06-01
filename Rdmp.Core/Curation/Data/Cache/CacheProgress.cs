@@ -42,57 +42,57 @@ public class CacheProgress : DatabaseEntity, ICacheProgress
     [NotNull]
     public string Name
     {
-        get { return _name; }
-        set { SetField(ref _name, value); }
+        get => _name;
+        set => SetField(ref _name, value);
     }
 
     /// <inheritdoc/>
     public int LoadProgress_ID
     {
-        get { return _loadProgressID; }
-        set { SetField(ref _loadProgressID, value); }
+        get => _loadProgressID;
+        set => SetField(ref _loadProgressID, value);
     }
 
     /// <inheritdoc/>
     public int? PermissionWindow_ID
     {
-        get { return _permissionWindowID; }
-        set { SetField(ref  _permissionWindowID, value); }
+        get => _permissionWindowID;
+        set => SetField(ref  _permissionWindowID, value);
     }
 
     /// <inheritdoc/>
     public DateTime? CacheFillProgress
     {
-        get { return _cacheFillProgress; }
-        set { SetField(ref  _cacheFillProgress, value); }
+        get => _cacheFillProgress;
+        set => SetField(ref  _cacheFillProgress, value);
     }
 
     ///<inheritdoc/>
     public string CacheLagPeriod
     {
-        get { return _cacheLagPeriod; }
-        set { SetField(ref  _cacheLagPeriod, value); }
+        get => _cacheLagPeriod;
+        set => SetField(ref  _cacheLagPeriod, value);
     } // stored as string in DB, use GetCacheLagPeriod() to get as CacheLagPeriod
 
     ///<inheritdoc/>
     public int? Pipeline_ID
     {
-        get { return _pipelineID; }
-        set { SetField(ref  _pipelineID, value); }
+        get => _pipelineID;
+        set => SetField(ref  _pipelineID, value);
     }
 
     ///<inheritdoc/>
     public TimeSpan ChunkPeriod
     {
-        get { return _chunkPeriod; }
-        set { SetField(ref  _chunkPeriod, value); }
+        get => _chunkPeriod;
+        set => SetField(ref  _chunkPeriod, value);
     }
 
     ///<inheritdoc/>
     public string CacheLagPeriodLoadDelay
     {
-        get { return _cacheLagPeriodLoadDelay; }
-        set { SetField(ref  _cacheLagPeriodLoadDelay, value); }
+        get => _cacheLagPeriodLoadDelay;
+        set => SetField(ref  _cacheLagPeriodLoadDelay, value);
     } 
 
     #endregion
@@ -101,35 +101,22 @@ public class CacheProgress : DatabaseEntity, ICacheProgress
 
     ///<inheritdoc/>
     [NoMappingToDatabase]
-    public IEnumerable<ICacheFetchFailure> CacheFetchFailures {
-        get { return Repository.GetAllObjectsWithParent<CacheFetchFailure>(this); }
-    }
+    public IEnumerable<ICacheFetchFailure> CacheFetchFailures => Repository.GetAllObjectsWithParent<CacheFetchFailure>(this);
 
     /// <inheritdoc cref="ICacheProgress.LoadProgress_ID"/>
     [NoMappingToDatabase]
-    public ILoadProgress LoadProgress
-    {
-        get { return Repository.GetObjectByID<LoadProgress>(LoadProgress_ID); }
-    }
+    public ILoadProgress LoadProgress => Repository.GetObjectByID<LoadProgress>(LoadProgress_ID);
 
     /// <inheritdoc cref="ICacheProgress.Pipeline_ID"/>
     [NoMappingToDatabase]
-    public IPipeline Pipeline
-    {
-        get { return Pipeline_ID == null ? null : Repository.GetObjectByID<Pipeline>((int)Pipeline_ID); }
-    }
+    public IPipeline Pipeline => Pipeline_ID == null ? null : Repository.GetObjectByID<Pipeline>((int)Pipeline_ID);
 
     /// <inheritdoc cref="ICacheProgress.PermissionWindow_ID"/>
     [NoMappingToDatabase]
-    public IPermissionWindow PermissionWindow
-    {
-        get
-        {
-            return PermissionWindow_ID == null
-                ? null
-                : Repository.GetObjectByID<PermissionWindow>((int) PermissionWindow_ID);
-        }
-    }
+    public IPermissionWindow PermissionWindow =>
+        PermissionWindow_ID == null
+            ? null
+            : Repository.GetObjectByID<PermissionWindow>((int) PermissionWindow_ID);
 
     #endregion
     /// <inheritdoc cref="ICacheProgress.CacheLagPeriod"/>
@@ -178,7 +165,7 @@ public class CacheProgress : DatabaseEntity, ICacheProgress
         repository.InsertAndHydrate(this,new Dictionary<string, object>
         {
             {"LoadProgress_ID", loadProgress.ID},
-            {"Name", "New CacheProgress " + Guid.NewGuid()}
+            {"Name", $"New CacheProgress {Guid.NewGuid()}" }
         });
     }
 
@@ -198,16 +185,16 @@ public class CacheProgress : DatabaseEntity, ICacheProgress
     /// <inheritdoc/>
     public IEnumerable<ICacheFetchFailure> FetchPage(int start, int batchSize)
     {
-        List<int> toReturnIds = new List<int>();
+        var toReturnIds = new List<int>();
 
         using (var conn = ((CatalogueRepository)Repository).GetConnection())
         {
             using(var cmd =
-                  DatabaseCommandHelper.GetCommand(@"SELECT ID FROM CacheFetchFailure 
+                  DatabaseCommandHelper.GetCommand($@"SELECT ID FROM CacheFetchFailure 
 WHERE CacheProgress_ID = @CacheProgressID AND ResolvedOn IS NULL
 ORDER BY FetchRequestStart
-OFFSET " + start + @" ROWS
-FETCH NEXT " + batchSize + @" ROWS ONLY", conn.Connection,conn.Transaction))
+OFFSET {start} ROWS
+FETCH NEXT {batchSize} ROWS ONLY", conn.Connection,conn.Transaction))
             {
                 DatabaseCommandHelper.AddParameterWithValueToCommand("@CacheProgressID",cmd, ID);
 

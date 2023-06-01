@@ -120,7 +120,8 @@ public partial class RDMPMainForm : RDMPForm
             var connectionStringsFileLoaded = RDMPBootStrapper<RDMPMainForm>.ApplicationArguments?.ConnectionStringsFileLoaded;
             if (connectionStringsFileLoaded != null)
             {
-                instanceDescription = " - " + (connectionStringsFileLoaded.Name ?? connectionStringsFileLoaded.FileLoaded.Name);
+                instanceDescription =
+                    $" - {(connectionStringsFileLoaded.Name ?? connectionStringsFileLoaded.FileLoaded.Name)}";
             }
             if (database != null) 
                 _connectedTo = $"({database.GetRuntimeName()} on {database.Server.Name}){instanceDescription}";
@@ -174,12 +175,12 @@ public partial class RDMPMainForm : RDMPForm
     {
         if (dockPanel1.DocumentStyle == DocumentStyle.SystemMdi)
         {
-            foreach (Form form in MdiChildren)
+            foreach (var form in MdiChildren)
                 form.Close();
         }
         else
         {
-            foreach (IDockContent document in dockPanel1.DocumentsToArray())
+            foreach (var document in dockPanel1.DocumentsToArray())
             {
                 // IMPORANT: dispose all panes.
                 document.DockHandler.DockPanel = null;
@@ -205,11 +206,11 @@ public partial class RDMPMainForm : RDMPForm
     }
     public void LoadFromXml(WindowLayout target)
     {
-        UnicodeEncoding uniEncoding = new UnicodeEncoding();
+        var uniEncoding = new UnicodeEncoding();
             
         // You might not want to use the outer using statement that I have
         // I wasn't sure how long you would need the MemoryStream object    
-        using (MemoryStream ms = new MemoryStream())
+        using (var ms = new MemoryStream())
         {
             var sw = new StreamWriter(ms, uniEncoding);
             try
@@ -230,9 +231,9 @@ public partial class RDMPMainForm : RDMPForm
 
     public string GetCurrentLayoutXml()
     {
-        UnicodeEncoding uniEncoding = new UnicodeEncoding();
+        var uniEncoding = new UnicodeEncoding();
 
-        using (MemoryStream ms = new MemoryStream())
+        using (var ms = new MemoryStream())
         {
             dockPanel1.SaveAsXml(ms, uniEncoding);
 
@@ -302,7 +303,8 @@ public partial class RDMPMainForm : RDMPForm
         }
         catch (Exception e)
         {
-            _globalErrorCheckNotifier.OnCheckPerformed(new CheckEventArgs("Could not work out what window to show for persistence string '" + persiststring + "'",CheckResult.Fail, e));
+            _globalErrorCheckNotifier.OnCheckPerformed(new CheckEventArgs(
+                $"Could not work out what window to show for persistence string '{persiststring}'",CheckResult.Fail, e));
         }
 
         return null;

@@ -39,7 +39,7 @@ public sealed class CohortCreationRequest : PipelineUseCase,ICohortCreationReque
 
     public FlatFileToLoad FileToLoad
     {
-        get { return _fileToLoad; }
+        get => _fileToLoad;
         set
         {
             //remove old value if it had one
@@ -54,7 +54,7 @@ public sealed class CohortCreationRequest : PipelineUseCase,ICohortCreationReque
         
     public CohortIdentificationConfiguration CohortIdentificationConfiguration
     {
-        get { return _cohortIdentificationConfiguration; }
+        get => _cohortIdentificationConfiguration;
         set
         {
             Pop(_cohortIdentificationConfiguration);
@@ -65,7 +65,7 @@ public sealed class CohortCreationRequest : PipelineUseCase,ICohortCreationReque
 
     public ExtractionInformation ExtractionIdentifierColumn
     {
-        get { return _extractionIdentifierColumn; }
+        get => _extractionIdentifierColumn;
         set
         {
             Pop(_extractionIdentifierColumn);
@@ -116,7 +116,8 @@ public sealed class CohortCreationRequest : PipelineUseCase,ICohortCreationReque
         _repository = (IDataExportRepository) configuration.Repository;
 
         if (configuration.CohortIdentificationConfiguration_ID == null)
-            throw new NotSupportedException("Configuration '" + configuration + "' does not have an associated CohortIdentificationConfiguration for cohort refreshing");
+            throw new NotSupportedException(
+                $"Configuration '{configuration}' does not have an associated CohortIdentificationConfiguration for cohort refreshing");
 
         var origCohort = configuration.Cohort;
         var origCohortData = origCohort.GetExternalData();
@@ -124,7 +125,7 @@ public sealed class CohortCreationRequest : PipelineUseCase,ICohortCreationReque
         Project = configuration.Project;
             
         if(Project.ProjectNumber == null)
-            throw new ProjectNumberException("Project '" + Project  + "' does not have a ProjectNumber");
+            throw new ProjectNumberException($"Project '{Project}' does not have a ProjectNumber");
 
         var definition = new CohortDefinition(null, origCohortData.ExternalDescription, origCohortData.ExternalVersion + 1,(int) Project.ProjectNumber, origCohort.ExternalCohortTable);
         definition.CohortReplacedIfAny = origCohort;
@@ -159,29 +160,29 @@ public sealed class CohortCreationRequest : PipelineUseCase,ICohortCreationReque
         if (NewCohortDefinition.ID != null)
             notifier.OnCheckPerformed(
                 new CheckEventArgs(
-                    "Expected the cohort definition " + NewCohortDefinition +
-                    " to have a null ID - we are trying to create this, why would it already exist?",
+                    $"Expected the cohort definition {NewCohortDefinition} to have a null ID - we are trying to create this, why would it already exist?",
                     CheckResult.Fail));
         else
             notifier.OnCheckPerformed(new CheckEventArgs("Confirmed that cohort ID is null", CheckResult.Success));
 
         if (Project.ProjectNumber == null)
-            notifier.OnCheckPerformed(new CheckEventArgs("Project " + Project + " does not have a ProjectNumber specified, it should have the same number as the CohortCreationRequest ("+NewCohortDefinition.ProjectNumber+")", CheckResult.Fail));
+            notifier.OnCheckPerformed(new CheckEventArgs(
+                $"Project {Project} does not have a ProjectNumber specified, it should have the same number as the CohortCreationRequest ({NewCohortDefinition.ProjectNumber})", CheckResult.Fail));
         else
         if (Project.ProjectNumber != NewCohortDefinition.ProjectNumber)
             notifier.OnCheckPerformed(
                 new CheckEventArgs(
-                    "Project "+Project+" has ProjectNumber=" + Project.ProjectNumber +
-                    " but the CohortCreationRequest.ProjectNumber is " + NewCohortDefinition.ProjectNumber + "",
+                    $"Project {Project} has ProjectNumber={Project.ProjectNumber} but the CohortCreationRequest.ProjectNumber is {NewCohortDefinition.ProjectNumber}",
                     CheckResult.Fail));
             
             
         string matchDescription;
         if (!NewCohortDefinition.IsAcceptableAsNewCohort(out matchDescription))
-            notifier.OnCheckPerformed(new CheckEventArgs("Cohort failed novelness check:" + matchDescription,
+            notifier.OnCheckPerformed(new CheckEventArgs($"Cohort failed novelness check:{matchDescription}",
                 CheckResult.Fail));
         else
-            notifier.OnCheckPerformed(new CheckEventArgs("Confirmed that cohort " + NewCohortDefinition + " does not already exist",
+            notifier.OnCheckPerformed(new CheckEventArgs(
+                $"Confirmed that cohort {NewCohortDefinition} does not already exist",
                 CheckResult.Success));
 
         if (string.IsNullOrWhiteSpace(DescriptionForAuditLog))

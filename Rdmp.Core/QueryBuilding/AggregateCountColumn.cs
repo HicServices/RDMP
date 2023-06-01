@@ -80,7 +80,7 @@ public class AggregateCountColumn:SpontaneousObject,IColumn
     }
 
     /// <inheritdoc/>
-    public ColumnInfo ColumnInfo { get { return null; } }
+    public ColumnInfo ColumnInfo => null;
 
     /// <inheritdoc/>
     public int Order { get; set; }
@@ -93,13 +93,13 @@ public class AggregateCountColumn:SpontaneousObject,IColumn
     public string Alias{get; private set; }
 
     /// <inheritdoc/>
-    public bool HashOnDataRelease { get { return false; }}
+    public bool HashOnDataRelease => false;
 
     /// <inheritdoc/>
-    public bool IsExtractionIdentifier { get { return false; } }
+    public bool IsExtractionIdentifier => false;
 
     /// <inheritdoc/>
-    public bool IsPrimaryKey { get { return false; } }
+    public bool IsPrimaryKey => false;
 
     /// <inheritdoc/>
     public void Check(ICheckNotifier notifier)

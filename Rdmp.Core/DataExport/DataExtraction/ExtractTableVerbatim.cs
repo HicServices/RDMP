@@ -100,7 +100,7 @@ public class ExtractTableVerbatim
 
     public int DoExtraction()
     {
-        int linesWritten = 0;
+        var linesWritten = 0;
 
         using (var con = _server.GetConnection())
         {
@@ -112,8 +112,8 @@ public class ExtractTableVerbatim
             }
             
             if(_tableNames != null)
-                foreach (string table in _tableNames)
-                    linesWritten += ExtractSQL("select * from " + table, table,con);
+                foreach (var table in _tableNames)
+                    linesWritten += ExtractSQL($"select * from {table}", table,con);
 
             con.Close();
         }
@@ -125,7 +125,7 @@ public class ExtractTableVerbatim
     {
         int linesWritten;
 
-        using (DbCommand cmdExtract = _server.GetCommand(sql, con))
+        using (var cmdExtract = _server.GetCommand(sql, con))
         {
             string filename = null;
 
@@ -158,7 +158,7 @@ public class ExtractTableVerbatim
                  
             cmdExtract.CommandTimeout = 500000;
 
-            using(DbDataReader r = cmdExtract.ExecuteReader())
+            using(var r = cmdExtract.ExecuteReader())
             {
                 WriteHeader(sw, r, _separator, _dateTimeFormat);
                 linesWritten = WriteBody(sw, r, _separator, _dateTimeFormat,RoundFloatsTo);
@@ -176,7 +176,7 @@ public class ExtractTableVerbatim
     public static void WriteHeader(StreamWriter sw, DbDataReader r, string separator, string dateTimeFormat)
     {
         //write headers
-        for (int i = 0; i < r.FieldCount; i++)
+        for (var i = 0; i < r.FieldCount; i++)
         {
             sw.Write(CSVOutputFormat.CleanString(r.GetName(i), separator, out _, dateTimeFormat,null));
             if (i < r.FieldCount - 1)
@@ -187,12 +187,12 @@ public class ExtractTableVerbatim
     }
     public static int WriteBody(StreamWriter sw, DbDataReader r, string separator, string dateTimeFormat, int? roundFloatsTo)
     {
-        int linesWritten = 0;
+        var linesWritten = 0;
 
         while (r.Read())
         {
             //write values
-            for (int i = 0; i < r.FieldCount; i++)
+            for (var i = 0; i < r.FieldCount; i++)
             {
                 //clean string
                 sw.Write(CSVOutputFormat.CleanString(r[i], separator, out _, dateTimeFormat, roundFloatsTo));

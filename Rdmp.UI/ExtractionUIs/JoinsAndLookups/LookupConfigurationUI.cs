@@ -122,7 +122,7 @@ public partial class LookupConfigurationUI : LookupConfiguration_Design
         olvDescriptionsColumn.ImageGetter = o => activator.CoreIconProvider.GetImage(o).ImageToBitmap();
             
         //add the currently configured extraction informations in the order they appear in the dataset
-        List<ExtractionInformation> allExtractionInformationFromCatalogue = new List<ExtractionInformation>(_catalogue.GetAllExtractionInformation(ExtractionCategory.Any));
+        var allExtractionInformationFromCatalogue = new List<ExtractionInformation>(_catalogue.GetAllExtractionInformation(ExtractionCategory.Any));
         allExtractionInformationFromCatalogue.Sort();
             
         olvExtractionInformations.ClearObjects();
@@ -145,7 +145,8 @@ public partial class LookupConfigurationUI : LookupConfiguration_Design
     {
         if(t != null && t.IsTableValuedFunction)
         {
-            WideMessageBox.Show("Lookup table not valid","Table '" + t + "' is a TableValuedFunction, you cannot use it as a lookup table");
+            WideMessageBox.Show("Lookup table not valid",
+                $"Table '{t}' is a TableValuedFunction, you cannot use it as a lookup table");
             return;
         }
             
@@ -199,10 +200,10 @@ public partial class LookupConfigurationUI : LookupConfiguration_Design
 
     private void LookupConfiguration_Paint(object sender, PaintEventArgs e)
     {
-        Point drawTaskListAt = new Point(580,10);
+        var drawTaskListAt = new Point(580,10);
 
 
-        string[] lines = new[]
+        var lines = new[]
         {
             "Defining a lookup relationship:",
             "  1. Choose Lookup Table",
@@ -212,9 +213,9 @@ public partial class LookupConfigurationUI : LookupConfiguration_Design
         };
 
 
-        float lineHeight = e.Graphics.MeasureString(lines[0], Font).Height;
+        var lineHeight = e.Graphics.MeasureString(lines[0], Font).Height;
             
-        for (int i = 0; i < lines.Length; i++)
+        for (var i = 0; i < lines.Length; i++)
             e.Graphics.DrawString(lines[i], Font, Brushes.Black,new PointF(drawTaskListAt.X, drawTaskListAt.Y + (lineHeight*i)));
 
         int bulletLineIndex;
@@ -259,7 +260,7 @@ public partial class LookupConfigurationUI : LookupConfiguration_Design
     {
         var arrowPen = new Pen(Color.DarkGray,2);
 
-        GraphicsPath capPath = new GraphicsPath();
+        var capPath = new GraphicsPath();
             
         // Create the outline for our custom end cap.
         capPath.AddLine(new Point(0, 0), new Point(2, -2));
@@ -303,8 +304,8 @@ public partial class LookupConfigurationUI : LookupConfiguration_Design
     }
     private void DrawCurveWithLabel(PointF start, PointF end, string label,Graphics g, Pen p)
     {
-        float w = end.X - start.X;
-        float h = end.Y - start.Y;
+        var w = end.X - start.X;
+        var h = end.Y - start.Y;
 
         DrawCurveWithLabel(start, new PointF(start.X + w, start.Y),new PointF(start.X, start.Y + h),end,label,g,p);
     }
@@ -443,9 +444,9 @@ Only define secondary columns if you really need them! if any of the key fields 
 
             if (actuallyDoIt)
             {
-                bool alsoCreateExtractionInformation =
+                var alsoCreateExtractionInformation =
                     Activator.YesNo(
-                        "Also create a virtual extractable column(s) in '" + _catalogue + "' called '<Column>_Desc'",
+                        $"Also create a virtual extractable column(s) in '{_catalogue}' called '<Column>_Desc'",
                         "Create Extractable Column?");
 
                 var keyPairs = new List<Tuple<ColumnInfo, ColumnInfo>>();
@@ -493,7 +494,7 @@ Only define secondary columns if you really need them! if any of the key fields 
 
     public override string GetTabName()
     {
-        return "Add Lookup (" + base.GetTabName()+ ")";
+        return $"Add Lookup ({base.GetTabName()})";
     }
 
     private void tbFilter_TextChanged(object sender, EventArgs e)

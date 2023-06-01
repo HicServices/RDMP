@@ -92,18 +92,18 @@ False - Drop the row from the DataTable (and issue a warning)",DefaultValue=true
 
     public DataTable ProcessPipelineData(DataTable toProcess, IDataLoadEventListener listener,GracefulCancellationToken cancellationToken)
     {
-        string fromColumnName = string.IsNullOrWhiteSpace(InputFromColumn) ? MappingFromColumn.GetRuntimeName() : InputFromColumn;
-        string toColumnName = string.IsNullOrWhiteSpace(OutputToColumn) ? MappingToColumn.GetRuntimeName() : OutputToColumn;
+        var fromColumnName = string.IsNullOrWhiteSpace(InputFromColumn) ? MappingFromColumn.GetRuntimeName() : InputFromColumn;
+        var toColumnName = string.IsNullOrWhiteSpace(OutputToColumn) ? MappingToColumn.GetRuntimeName() : OutputToColumn;
 
-        bool inPlace = string.Equals(fromColumnName, toColumnName);
+        var inPlace = string.Equals(fromColumnName, toColumnName);
 
         listener.OnNotify(this,new NotifyEventArgs(ProgressEventType.Information, "About to build mapping table"));
 
         if(!toProcess.Columns.Contains(fromColumnName))
-            throw new Exception("DataTable did not contain a field called '" + fromColumnName +"'");
+            throw new Exception($"DataTable did not contain a field called '{fromColumnName}'");
 
         if (!inPlace && toProcess.Columns.Contains(toColumnName))
-            throw new Exception("DataTable already contained a field '" + toColumnName +"'");
+            throw new Exception($"DataTable already contained a field '{toColumnName}'");
 
         if(_mappingTable == null)
             BuildMappingTable(listener);
@@ -114,9 +114,12 @@ False - Drop the row from the DataTable (and issue a warning)",DefaultValue=true
         if(_keyType == null)
             throw new Exception("Unable to determine key datatype for mapping table");
 
-        listener.OnNotify(this, new NotifyEventArgs(ProgressEventType.Information, "Mapping table resulted in " + _mappingTable.Count + " unique possible input values"));
-        listener.OnNotify(this, new NotifyEventArgs(ProgressEventType.Information, "Mapping table resulted in " + _mappingTable.Sum(kvp=>kvp.Value.Count) + " unique possible output values"));
-        listener.OnNotify(this, new NotifyEventArgs(ProgressEventType.Information, "Mapping table Key is of Type " + _keyType));
+        listener.OnNotify(this, new NotifyEventArgs(ProgressEventType.Information,
+            $"Mapping table resulted in {_mappingTable.Count} unique possible input values"));
+        listener.OnNotify(this, new NotifyEventArgs(ProgressEventType.Information,
+            $"Mapping table resulted in {_mappingTable.Sum(kvp => kvp.Value.Count)} unique possible output values"));
+        listener.OnNotify(this, new NotifyEventArgs(ProgressEventType.Information,
+            $"Mapping table Key is of Type {_keyType}"));
 
         //add the new column (the output column).  Unless we are just updating the same input column
         if (!inPlace)
@@ -125,16 +128,16 @@ False - Drop the row from the DataTable (and issue a warning)",DefaultValue=true
         }
             
 
-        int idxFrom = toProcess.Columns.IndexOf(fromColumnName);
-        int idxTo = toProcess.Columns.IndexOf(toColumnName);
+        var idxFrom = toProcess.Columns.IndexOf(fromColumnName);
+        var idxTo = toProcess.Columns.IndexOf(toColumnName);
 
-        int numberOfElementsPerRow = toProcess.Columns.Count;
+        var numberOfElementsPerRow = toProcess.Columns.Count;
 
-        List<object[]> newRows = new List<object[]>();
-        List<DataRow> toDrop = new List<DataRow>();
+        var newRows = new List<object[]>();
+        var toDrop = new List<DataRow>();
 
         // Flag and anonymous method for converting between input data type and mapping table datatype
-        bool doTypeConversion = false;
+        var doTypeConversion = false;
         Func<object,object> typeConversion=null;
 
         //if there is a difference between the input column datatype and the mapping table datatatype
@@ -152,7 +155,7 @@ False - Drop the row from the DataTable (and issue a warning)",DefaultValue=true
                 try
                 {
                     var deciderFactory = new TypeDeciderFactory(Culture);
-                    IDecideTypesForStrings decider = deciderFactory.Create(_keyType);
+                    var decider = deciderFactory.Create(_keyType);
                     typeConversion = (a)=>decider.Parse(a.ToString());
                 }
                 catch (Exception ex)
@@ -184,10 +187,11 @@ False - Drop the row from the DataTable (and issue a warning)",DefaultValue=true
             //if we don't have the key value
             if(!_mappingTable.ContainsKey(fromValue))
                 if(CrashIfNoMappingsFound)
-                    throw new KeyNotFoundException("Could not find mapping for " + fromValue);
+                    throw new KeyNotFoundException($"Could not find mapping for {fromValue}");
                 else
                 {
-                    listener.OnNotify(this,new NotifyEventArgs(ProgressEventType.Warning, "No mapping for '" + fromValue+"' dropping row"));
+                    listener.OnNotify(this,new NotifyEventArgs(ProgressEventType.Warning,
+                        $"No mapping for '{fromValue}' dropping row"));
                     toDrop.Add(row);
                     continue;
                 }
@@ -204,7 +208,8 @@ False - Drop the row from the DataTable (and issue a warning)",DefaultValue=true
                 switch (AliasResolutionStrategy)
                 {
                     case AliasResolutionStrategy.CrashIfAliasesFound:
-                        throw new AliasException("The value '" + fromValue + "' maps to mulitple ouptut values:" + string.Join(",",results.Select(v=>"'" + v.ToString() +"'")) );
+                        throw new AliasException(
+                            $"The value '{fromValue}' maps to mulitple ouptut values:{string.Join(",", results.Select(v => $"'{v}'"))}");
 
                     case AliasResolutionStrategy.MultiplyInputDataRowsByAliases:
                             
@@ -212,10 +217,10 @@ False - Drop the row from the DataTable (and issue a warning)",DefaultValue=true
                         row[idxTo] = results.First();
 
                         //then clone the row and do a row with bob=>Jesus
-                        foreach (object next in results.Skip(1))
+                        foreach (var next in results.Skip(1))
                         {
                             //Create a copy of the input row
-                            object[] newRow = new object[numberOfElementsPerRow];
+                            var newRow = new object[numberOfElementsPerRow];
                             row.ItemArray.CopyTo(newRow, 0);
 
                             //Set the aliasable element to the alias
@@ -233,11 +238,11 @@ False - Drop the row from the DataTable (and issue a warning)",DefaultValue=true
         }
             
         //add any alias multiplication rows
-        foreach (object[] newRow in newRows)
+        foreach (var newRow in newRows)
             toProcess.Rows.Add(newRow);
 
         //drop rows with missing identifiers
-        foreach (DataRow dropRow in toDrop)
+        foreach (var dropRow in toDrop)
             toProcess.Rows.Remove(dropRow);
 
         // drop column unless it is an inplace (no new columns) update or user wants to keep both
@@ -259,7 +264,7 @@ False - Drop the row from the DataTable (and issue a warning)",DefaultValue=true
         var toColumnName = MappingToColumn.GetRuntimeName();
             
         // The number of null key values found in the mapping table (these are ignored)
-        int nulls = 0;
+        var nulls = 0;
 
         //pull back all the data
         using (var con = server.GetConnection())
@@ -416,7 +421,8 @@ False - Drop the row from the DataTable (and issue a warning)",DefaultValue=true
         if(MappingFromColumn.TableInfo_ID != MappingToColumn.TableInfo_ID)
             throw new Exception("MappingFromColumn and MappingToColumn must belong to the same table");
 
-        notifier.OnCheckPerformed(new CheckEventArgs("Mapping table SQL is:"+ Environment.NewLine + GetMappingTableSql(),CheckResult.Success));
+        notifier.OnCheckPerformed(new CheckEventArgs(
+            $"Mapping table SQL is:{Environment.NewLine}{GetMappingTableSql()}",CheckResult.Success));
     }
 
     public void PreInitialize(IExtractCommand value, IDataLoadEventListener listener)

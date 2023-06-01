@@ -38,7 +38,8 @@ public class MigrationHost
     public void Migrate(IDataLoadJob job, GracefulCancellationToken cancellationToken)
     {
         if (_sourceDbInfo.DiscoverTables(false).All(t=>t.IsEmpty()))
-            throw new Exception("The source database '" + _sourceDbInfo.GetRuntimeName()+ "' on " + _sourceDbInfo.Server.Name + " is empty. There is nothing to migrate.");
+            throw new Exception(
+                $"The source database '{_sourceDbInfo.GetRuntimeName()}' on {_sourceDbInfo.Server.Name} is empty. There is nothing to migrate.");
 
         using (var managedConnectionToDestination = _destinationDbInfo.Server.BeginNewTransactedConnection())
         {
@@ -47,7 +48,8 @@ public class MigrationHost
                 // This will eventually be provided by factory/externally based on LoadMetadata (only one strategy for now)
                 _migrationStrategy = new OverwriteMigrationStrategy(managedConnectionToDestination);
                 _migrationStrategy.TableMigrationCompleteHandler += (name, inserts, updates) =>
-                    job.OnNotify(this, new NotifyEventArgs(ProgressEventType.Information, "Migrate table "+ name +" from STAGING to " + _destinationDbInfo.GetRuntimeName() + ": " + inserts + " inserts, " + updates + " updates"));
+                    job.OnNotify(this, new NotifyEventArgs(ProgressEventType.Information,
+                        $"Migrate table {name} from STAGING to {_destinationDbInfo.GetRuntimeName()}: {inserts} inserts, {updates} updates"));
 
                 //migrate all tables (both lookups and live tables in the same way)
                 var dataColsToMigrate = _migrationConfig.CreateMigrationColumnSetFromTableInfos(job.RegularTablesToLoad, job.LookupTablesToLoad,

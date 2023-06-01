@@ -42,6 +42,6 @@ public class ParameterFoundAtLevel
     /// <returns></returns>
     public override string ToString()
     {
-        return Parameter.ParameterName + " (At Level:" + Level + ")";
+        return $"{Parameter.ParameterName} (At Level:{Level})";
     }
 }

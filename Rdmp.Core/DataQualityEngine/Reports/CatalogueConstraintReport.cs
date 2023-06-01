@@ -93,7 +93,8 @@ public class CatalogueConstraintReport : DataQualityReport
     {
         SetupLogging(c.CatalogueRepository);
 
-        var toDatabaseLogger = new ToLoggingDatabaseDataLoadEventListener(this, _logManager, _loggingTask, "DQE evaluation of " + c);
+        var toDatabaseLogger = new ToLoggingDatabaseDataLoadEventListener(this, _logManager, _loggingTask,
+            $"DQE evaluation of {c}");
 
         var forker = new ForkDataLoadEventListener(listener, toDatabaseLogger);
 
@@ -123,21 +124,21 @@ public class CatalogueConstraintReport : DataQualityReport
 
                 var r = t.Result;
 
-                int progress = 0;
+                var progress = 0;
 
                 while (r.Read())
                 {
                     cancellationToken.ThrowIfCancellationRequested();
 
                     progress++;
-                    int dataLoadRunIDOfCurrentRecord = 0;
+                    var dataLoadRunIDOfCurrentRecord = 0;
                     //to start with assume we will pass the results for the 'unknown batch' (where data load run ID is null or not available)
 
                     //if the DataReader is likely to have a data load run ID column
                     if (_containsDataLoadID)
                     {
                         //get data load run id
-                        int? runID = dqeRepository.ObjectToNullableInt(r[_dataLoadRunFieldName]);
+                        var runID = dqeRepository.ObjectToNullableInt(r[_dataLoadRunFieldName]);
 
                         //if it has a value use it (otherwise it is null so use 0 - ugh I know, it's a primary key constraint issue)
                         if (runID != null)
@@ -155,8 +156,7 @@ public class CatalogueConstraintReport : DataQualityReport
                         {
                             forker.OnNotify(this,
                                 new NotifyEventArgs(ProgressEventType.Warning,
-                                    "Found a null/empty value for pivot category '" + _pivotCategory +
-                                    "', this record will ONLY be recorded under ALL and not its specific category, you will not be warned of further nulls because there are likely to be many if there are any"));
+                                    $"Found a null/empty value for pivot category '{_pivotCategory}', this record will ONLY be recorded under ALL and not its specific category, you will not be warned of further nulls because there are likely to be many if there are any"));
                             haveComplainedAboutNullCategories = true;
                             pivotValue = null;
                         }
@@ -175,8 +175,7 @@ public class CatalogueConstraintReport : DataQualityReport
                             //we will need to expand the dictionaries 
                             if (byPivotCategoryCubesOverTime.Keys.Count > MaximumPivotValues)
                                 throw new OverflowException(
-                                    "Encountered more than "+MaximumPivotValues+" values for the pivot column " + _pivotCategory +
-                                    " this will result in crazy space usage since it is a multiplicative scale of DQE tesseracts");
+                                    $"Encountered more than {MaximumPivotValues} values for the pivot column {_pivotCategory} this will result in crazy space usage since it is a multiplicative scale of DQE tesseracts");
 
                             //expand both the time periodicity and the state results
                             byPivotRowStatesOverDataLoadRunId.Add(pivotValue,
@@ -192,13 +191,13 @@ public class CatalogueConstraintReport : DataQualityReport
 
                     if (progress%5000 == 0)
                         forker.OnProgress(this,
-                            new ProgressEventArgs("Processing " + _catalogue,
+                            new ProgressEventArgs($"Processing {_catalogue}",
                                 new ProgressMeasurement(progress, ProgressType.Records), sw.Elapsed));
 
                 }
                 //final value
                 forker.OnProgress(this,
-                    new ProgressEventArgs("Processing " + _catalogue,
+                    new ProgressEventArgs($"Processing {_catalogue}",
                         new ProgressMeasurement(progress, ProgressType.Records), sw.Elapsed));
                 con.Close();
             }
@@ -213,13 +212,13 @@ public class CatalogueConstraintReport : DataQualityReport
                 try
                 {
                     //mark down that we are beginning an evaluation on this the day of our lord etc...
-                    Evaluation evaluation = new Evaluation(dqeRepository, _catalogue);
+                    var evaluation = new Evaluation(dqeRepository, _catalogue);
 
                     foreach (var state in byPivotRowStatesOverDataLoadRunId.Values)
                         state.CommitToDatabase(evaluation, _catalogue, con.Connection, con.Transaction);
 
                     if (_timePeriodicityField != null)
-                        foreach (PeriodicityCubesOverTime periodicity in byPivotCategoryCubesOverTime.Values)
+                        foreach (var periodicity in byPivotCategoryCubesOverTime.Values)
                             periodicity.CommitToDatabase(evaluation);
 
                     dqeRepository.EndTransactedConnection(true);
@@ -257,13 +256,14 @@ public class CatalogueConstraintReport : DataQualityReport
         if (o == null || o == DBNull.Value)
             return null;
 
-        string stringValue = o.ToString();
-        string trimmedValue = stringValue.Trim();
+        var stringValue = o.ToString();
+        var trimmedValue = stringValue.Trim();
 
         if (!_haveComplainedAboutTrailingWhitespaces && stringValue != trimmedValue)
         {
 
-            listener.OnNotify(this,new NotifyEventArgs(ProgressEventType.Warning, "Found trailing/leading whitespace in value in Pivot field, this will be trimmed off:'"+ o +"'"));
+            listener.OnNotify(this,new NotifyEventArgs(ProgressEventType.Warning,
+                $"Found trailing/leading whitespace in value in Pivot field, this will be trimmed off:'{o}'"));
             _haveComplainedAboutTrailingWhitespaces = true;
         }
 
@@ -287,7 +287,8 @@ public class CatalogueConstraintReport : DataQualityReport
         try
         {
             var dqeRepository = ExplicitDQERepository ?? new DQERepository(_catalogue.CatalogueRepository);
-            notifier.OnCheckPerformed(new CheckEventArgs("Found DQE reporting server " + dqeRepository.DiscoveredServer.Name, CheckResult.Success));
+            notifier.OnCheckPerformed(new CheckEventArgs(
+                $"Found DQE reporting server {dqeRepository.DiscoveredServer.Name}", CheckResult.Success));
         }
         catch (Exception e)
         {
@@ -310,10 +311,12 @@ public class CatalogueConstraintReport : DataQualityReport
         //there is XML
         if (string.IsNullOrWhiteSpace(_catalogue.ValidatorXML))
         {
-            notifier.OnCheckPerformed(new CheckEventArgs("There is no ValidatorXML specified for the Catalogue " + _catalogue + ", you must configure validation rules",CheckResult.Fail));
+            notifier.OnCheckPerformed(new CheckEventArgs(
+                $"There is no ValidatorXML specified for the Catalogue {_catalogue}, you must configure validation rules",CheckResult.Fail));
             return;
         }
-        notifier.OnCheckPerformed(new CheckEventArgs("Found ValidatorXML specified for the Catalogue " + _catalogue + ":"+Environment.NewLine + _catalogue.ValidatorXML, CheckResult.Success));
+        notifier.OnCheckPerformed(new CheckEventArgs(
+            $"Found ValidatorXML specified for the Catalogue {_catalogue}:{Environment.NewLine}{_catalogue.ValidatorXML}", CheckResult.Success));
             
         //the XML is legit
         try
@@ -322,7 +325,8 @@ public class CatalogueConstraintReport : DataQualityReport
         }
         catch (Exception e)
         {
-            notifier.OnCheckPerformed(new CheckEventArgs("ValidatorXML for Catalogue " + _catalogue + " could not be deserialized into a Validator",CheckResult.Fail,e));
+            notifier.OnCheckPerformed(new CheckEventArgs(
+                $"ValidatorXML for Catalogue {_catalogue} could not be deserialized into a Validator",CheckResult.Fail,e));
             return;
         }
 
@@ -335,10 +339,10 @@ public class CatalogueConstraintReport : DataQualityReport
         }
         catch (Exception e)
         {
-            notifier.OnCheckPerformed(new CheckEventArgs("Could not get connection to Catalogue " + _catalogue,CheckResult.Fail, e));
+            notifier.OnCheckPerformed(new CheckEventArgs($"Could not get connection to Catalogue {_catalogue}",CheckResult.Fail, e));
             return;
         }
-        notifier.OnCheckPerformed(new CheckEventArgs("Found connection string for Catalogue " + _catalogue, CheckResult.Success));
+        notifier.OnCheckPerformed(new CheckEventArgs($"Found connection string for Catalogue {_catalogue}", CheckResult.Success));
 
         //we can connect to the server
         try
@@ -347,7 +351,7 @@ public class CatalogueConstraintReport : DataQualityReport
         }
         catch (Exception e)
         {
-            notifier.OnCheckPerformed(new CheckEventArgs("Could not connect to server for Catalogue " + _catalogue,CheckResult.Fail, e));
+            notifier.OnCheckPerformed(new CheckEventArgs($"Could not connect to server for Catalogue {_catalogue}",CheckResult.Fail, e));
         }
 
         //there is extraction SQL
@@ -359,16 +363,16 @@ public class CatalogueConstraintReport : DataQualityReport
             var duplicates = _queryBuilder.SelectColumns.GroupBy(c => c.IColumn.GetRuntimeName()).SelectMany(grp=>grp.Skip(1)).ToArray();
 
             if(duplicates.Any())
-                foreach (QueryTimeColumn column in duplicates)
+                foreach (var column in duplicates)
                 {
                     notifier.OnCheckPerformed(
                         new CheckEventArgs(
-                            "The column name " + column.IColumn.GetRuntimeName() +
-                            " is duplicated in the SELECT command, column names must be unique!  Most likely you have 2+ columns with the same name (from different tables) or duplicate named CatalogueItem/Aliases for the same underlying ColumnInfo",
+                            $"The column name {column.IColumn.GetRuntimeName()} is duplicated in the SELECT command, column names must be unique!  Most likely you have 2+ columns with the same name (from different tables) or duplicate named CatalogueItem/Aliases for the same underlying ColumnInfo",
                             CheckResult.Fail));
                 }
 
-            notifier.OnCheckPerformed(new CheckEventArgs("Query Builder decided the extraction SQL was:" + Environment.NewLine + _queryBuilder.SQL,CheckResult.Success));
+            notifier.OnCheckPerformed(new CheckEventArgs(
+                $"Query Builder decided the extraction SQL was:{Environment.NewLine}{_queryBuilder.SQL}",CheckResult.Success));
 
             SetupAdditionalValidationRules(notifier);
 
@@ -379,7 +383,7 @@ public class CatalogueConstraintReport : DataQualityReport
         }
             
         //for each thing we are about to try and validate
-        foreach (ItemValidator itemValidator in _validator.ItemValidators)
+        foreach (var itemValidator in _validator.ItemValidators)
         {
             //is there a column in the query builder that matches it
             if (
@@ -388,13 +392,12 @@ public class CatalogueConstraintReport : DataQualityReport
                     c => c.IColumn.GetRuntimeName().Equals(itemValidator.TargetProperty)))
                 notifier.OnCheckPerformed(
                     new CheckEventArgs(
-                        "Could not find a column in the extraction SQL that would match TargetProperty " +
-                        itemValidator.TargetProperty, CheckResult.Fail));
+                        $"Could not find a column in the extraction SQL that would match TargetProperty {itemValidator.TargetProperty}", CheckResult.Fail));
             else
                 //there is that is good
                 notifier.OnCheckPerformed(
-                    new CheckEventArgs("Found column in query builder columns which matches TargetProperty " +
-                                       itemValidator.TargetProperty, CheckResult.Success));
+                    new CheckEventArgs(
+                        $"Found column in query builder columns which matches TargetProperty {itemValidator.TargetProperty}", CheckResult.Success));
         }
 
         _containsDataLoadID =
@@ -404,14 +407,13 @@ public class CatalogueConstraintReport : DataQualityReport
         if (_containsDataLoadID)
             notifier.OnCheckPerformed(
                 new CheckEventArgs(
-                    "Found " + _dataLoadRunFieldName + " field in ExtractionInformation",
+                    $"Found {_dataLoadRunFieldName} field in ExtractionInformation",
                     CheckResult.Success));
         else
         {
             notifier.OnCheckPerformed(
                 new CheckEventArgs(
-                    "Did not find ExtractionInformation for a column called " + _dataLoadRunFieldName +
-                    ", this will prevent you from viewing the resulting report subdivided by data load batch (make sure you have this column and that it is marked as extractable)",
+                    $"Did not find ExtractionInformation for a column called {_dataLoadRunFieldName}, this will prevent you from viewing the resulting report subdivided by data load batch (make sure you have this column and that it is marked as extractable)",
                     CheckResult.Warning));
         }
 
@@ -426,7 +428,7 @@ public class CatalogueConstraintReport : DataQualityReport
             _pivotCategory = _catalogue.PivotCategory_ExtractionInformation.GetRuntimeName();
             notifier.OnCheckPerformed(
                 new CheckEventArgs(
-                    "Found time Pivot Category field " + _pivotCategory + " so we will be able to generate a categorised tesseract (evaluation, periodicity, consequence, pivot category)",
+                    $"Found time Pivot Category field {_pivotCategory} so we will be able to generate a categorised tesseract (evaluation, periodicity, consequence, pivot category)",
                     CheckResult.Success));
         }
 
@@ -434,8 +436,7 @@ public class CatalogueConstraintReport : DataQualityReport
         if (tblValuedFunctions.Any())
             notifier.OnCheckPerformed(
                 new CheckEventArgs(
-                    "Catalogue contains 1+ table valued function in its TableInfos (" +
-                    string.Join(",", tblValuedFunctions.Select(t => t.ToString())), CheckResult.Fail));
+                    $"Catalogue contains 1+ table valued function in its TableInfos ({string.Join(",", tblValuedFunctions.Select(t => t.ToString()))}", CheckResult.Fail));
 
         if (_catalogue.TimeCoverage_ExtractionInformation_ID == null)
             notifier.OnCheckPerformed(
@@ -449,20 +450,18 @@ public class CatalogueConstraintReport : DataQualityReport
             _timePeriodicityField = periodicityExtractionInformation.GetRuntimeName();
             notifier.OnCheckPerformed(
                 new CheckEventArgs(
-                    "Found time coverage field "+_timePeriodicityField,
+                    $"Found time coverage field {_timePeriodicityField}",
                     CheckResult.Success));
 
             if (!periodicityExtractionInformation.ColumnInfo.Data_type.ToLower().Contains("date"))
                 notifier.OnCheckPerformed(
                     new CheckEventArgs(
-                        "Time periodicity field " + _timePeriodicityField + " was of type " +
-                        periodicityExtractionInformation.ColumnInfo.Data_type +
-                        " (expected the type name to contain the word 'date' - ignoring caps).  It is possible (but unlikely) that you have dealt with this by applying a transform to the underlying ColumnInfo as part of the ExtractionInformation, if so you can ignore this message.",
+                        $"Time periodicity field {_timePeriodicityField} was of type {periodicityExtractionInformation.ColumnInfo.Data_type} (expected the type name to contain the word 'date' - ignoring caps).  It is possible (but unlikely) that you have dealt with this by applying a transform to the underlying ColumnInfo as part of the ExtractionInformation, if so you can ignore this message.",
                         CheckResult.Warning));
             else
                 notifier.OnCheckPerformed(
                     new CheckEventArgs(
-                        "Time periodicity field " + _timePeriodicityField + " is a legit date!",
+                        $"Time periodicity field {_timePeriodicityField} is a legit date!",
                         CheckResult.Success));
         }
     }
@@ -470,7 +469,7 @@ public class CatalogueConstraintReport : DataQualityReport
     private void SetupAdditionalValidationRules(ICheckNotifier notifier)
     {
         //for each description
-        foreach (QueryTimeColumn descQtc in _queryBuilder.SelectColumns.Where(qtc => qtc.IsLookupDescription))
+        foreach (var descQtc in _queryBuilder.SelectColumns.Where(qtc => qtc.IsLookupDescription))
         {
             try
             {
@@ -480,7 +479,7 @@ public class CatalogueConstraintReport : DataQualityReport
                     var descriptionFieldName = descQtc.IColumn.GetRuntimeName();
                     var foreignKeyFieldName = foreignQtc.IColumn.GetRuntimeName();
 
-                    ItemValidator itemValidator = _validator.GetItemValidator(descriptionFieldName);
+                    var itemValidator = _validator.GetItemValidator(descriptionFieldName);
 
                     //there is not yet one for this field
                     if (itemValidator == null)
@@ -501,8 +500,7 @@ public class CatalogueConstraintReport : DataQualityReport
                         
                         notifier.OnCheckPerformed(
                             new CheckEventArgs(
-                                "Dynamically added value->value Nullnes constraint with consequence Missing onto columns " +
-                                foreignKeyFieldName + " and " + descriptionFieldName + " because they have a configured Lookup relationship in the Catalogue", CheckResult.Success));
+                                $"Dynamically added value->value Nullnes constraint with consequence Missing onto columns {foreignKeyFieldName} and {descriptionFieldName} because they have a configured Lookup relationship in the Catalogue", CheckResult.Success));
                     }
            
                 }
@@ -511,8 +509,7 @@ public class CatalogueConstraintReport : DataQualityReport
             {
                 notifier.OnCheckPerformed(
                     new CheckEventArgs(
-                        "Failed to add new lookup validation rule for column " +
-                        descQtc.IColumn.GetRuntimeName(), CheckResult.Warning, ex));
+                        $"Failed to add new lookup validation rule for column {descQtc.IColumn.GetRuntimeName()}", CheckResult.Warning, ex));
             }
         }
     }
@@ -541,7 +538,8 @@ public class CatalogueConstraintReport : DataQualityReport
             }
             catch (InvalidCastException e)
             {
-                throw new Exception("Found value " + r[_timePeriodicityField] + " of type " +r[_timePeriodicityField].GetType().Name + " in your time periodicity field which was not a valid date time, make sure your time periodicity field is a datetime datatype",e);
+                throw new Exception(
+                    $"Found value {r[_timePeriodicityField]} of type {r[_timePeriodicityField].GetType().Name} in your time periodicity field which was not a valid date time, make sure your time periodicity field is a datetime datatype",e);
             }
             if (dt != null)
                 periodicity.IncrementHyperCube(dt.Value.Year, dt.Value.Month, worstConsequence);

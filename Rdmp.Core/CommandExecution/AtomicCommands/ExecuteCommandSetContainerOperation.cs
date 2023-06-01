@@ -28,7 +28,7 @@ public class ExecuteCommandSetContainerOperation : BasicCommandExecution
         _container = container;
         _operation = operation;
 
-        if (container.ShouldBeReadOnly(out string reason))
+        if (container.ShouldBeReadOnly(out var reason))
         {
             SetImpossible(reason);
         }
@@ -46,7 +46,7 @@ public class ExecuteCommandSetContainerOperation : BasicCommandExecution
         if (!string.IsNullOrWhiteSpace(OverrideCommandName))
             return OverrideCommandName;
 
-        return "Set operation " + _operation;
+        return $"Set operation {_operation}";
     }
 
     public override Image<Rgba32> GetImage(IIconProvider iconProvider)
@@ -72,7 +72,7 @@ public class ExecuteCommandSetContainerOperation : BasicCommandExecution
             _container.Name = _operation + _container.Name.Substring(oldOperation.ToString().Length);
         else
         {
-            if (BasicActivator.TypeText("New name for container?", "You have changed the operation, do you want to give it a new description?", 1000, _container.Name, out string newName, false))
+            if (BasicActivator.TypeText("New name for container?", "You have changed the operation, do you want to give it a new description?", 1000, _container.Name, out var newName, false))
             {
                 _container.Name = newName;
             }

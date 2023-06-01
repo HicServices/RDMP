@@ -145,7 +145,7 @@ public class CataloguePipelinesAndReferencesCreation
 
         var pipeline = CreatePipeline(nameOfPipe, sourceType, destinationTypeIfAny);
 
-        int i = 1;
+        var i = 1;
         foreach (var componentType in componentTypes)
         {
             var component = new PipelineComponent(_repositoryLocator.CatalogueRepository, pipeline, componentType, i++);

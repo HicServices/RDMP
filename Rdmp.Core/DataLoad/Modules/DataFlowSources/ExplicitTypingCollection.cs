@@ -33,17 +33,17 @@ public class ExplicitTypingCollection:ICustomUIDrivenClass
         if(value == null)
             return;
 
-        XmlDocument doc = new XmlDocument();
+        var doc = new XmlDocument();
         doc.Load(new StringReader(value));
 
 
         //get the dictionary tag
-        XmlNode typesNode = doc.GetElementsByTagName("ExplicitTypesCSharp").Cast<XmlNode>().Single();
-        string dictionary = typesNode.InnerText;
+        var typesNode = doc.GetElementsByTagName("ExplicitTypesCSharp").Cast<XmlNode>().Single();
+        var dictionary = typesNode.InnerText;
 
-        string[] lines = dictionary.Split(new[] {Environment.NewLine}, StringSplitOptions.RemoveEmptyEntries);
+        var lines = dictionary.Split(new[] {Environment.NewLine}, StringSplitOptions.RemoveEmptyEntries);
 
-        for (int i = 0; i < lines.Length; i += 2)
+        for (var i = 0; i < lines.Length; i += 2)
             ExplicitTypesCSharp.Add(lines[i], Type.GetType(lines[i + 1]));
 
 
@@ -52,12 +52,12 @@ public class ExplicitTypingCollection:ICustomUIDrivenClass
     /// <inheritdoc/>
     public string SaveStateToString()
     {
-        StringBuilder sb = new StringBuilder();
+        var sb = new StringBuilder();
 
         //Add anything new here
 
         sb.AppendLine("<ExplicitTypesCSharp>");
-        foreach (KeyValuePair<string, Type> kvp in ExplicitTypesCSharp)
+        foreach (var kvp in ExplicitTypesCSharp)
         {
             sb.AppendLine(kvp.Key);
             sb.AppendLine(kvp.Value.FullName);

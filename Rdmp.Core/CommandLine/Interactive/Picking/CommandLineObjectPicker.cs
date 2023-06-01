@@ -52,7 +52,7 @@ public class CommandLineObjectPicker
     /// <param name="pickers"></param>
     public CommandLineObjectPicker(string[] args,IRDMPPlatformRepositoryServiceLocator repositoryLocator, IEnumerable<PickObjectBase> pickers)
     {
-        foreach(PickObjectBase p in pickers)
+        foreach(var p in pickers)
             _pickers.Add(p);
 
         Arguments = new ReadOnlyCollection<CommandLineObjectPickerArgumentValue>(args.Select(ParseValue).ToList());

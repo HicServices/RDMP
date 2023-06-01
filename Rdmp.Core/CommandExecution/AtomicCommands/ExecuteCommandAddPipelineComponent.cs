@@ -65,7 +65,7 @@ public class ExecuteCommandAddPipelineComponent : BasicCommandExecution
         {
             var mef = BasicActivator.RepositoryLocator.CatalogueRepository.MEF;
             var context = _useCaseIfAny?.GetContext();
-            List<Type> offer = new List<Type>();
+            var offer = new List<Type>();
 
             TypeFilter filter = (t, o) => t.IsGenericType &&
                                           (t.GetGenericTypeDefinition() == typeof(IDataFlowComponent<>) ||
@@ -116,7 +116,7 @@ public class ExecuteCommandAddPipelineComponent : BasicCommandExecution
         // if we don't know the order yet and it's important
         if (!order.HasValue && !isDest && !isSource)
         {
-            if (BasicActivator.SelectValueType("Order", typeof(int), 0, out object chosen))
+            if (BasicActivator.SelectValueType("Order", typeof(int), 0, out var chosen))
             {
                 order = (int)chosen;
             }

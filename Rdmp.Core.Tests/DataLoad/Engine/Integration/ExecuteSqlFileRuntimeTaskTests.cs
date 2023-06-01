@@ -41,7 +41,7 @@ class ExecuteSqlFileRuntimeTaskTests:DatabaseTests
 
         var tbl = db.CreateTable("Fish",dt);
             
-        FileInfo f = new FileInfo(Path.Combine(TestContext.CurrentContext.TestDirectory,"Bob.sql"));
+        var f = new FileInfo(Path.Combine(TestContext.CurrentContext.TestDirectory,"Bob.sql"));
 
         File.WriteAllText(f.FullName,@"UPDATE Fish Set Lawl = 1");
 
@@ -53,7 +53,7 @@ class ExecuteSqlFileRuntimeTaskTests:DatabaseTests
 
         task.Check(new ThrowImmediatelyCheckNotifier());
 
-        IDataLoadJob job = Mock.Of<IDataLoadJob>();
+        var job = Mock.Of<IDataLoadJob>();
 
         task.Run(job, new GracefulCancellationToken());
 
@@ -76,7 +76,7 @@ class ExecuteSqlFileRuntimeTaskTests:DatabaseTests
 
         Import(tbl,out var ti,out var cols);
 
-        FileInfo f = new FileInfo(Path.Combine(TestContext.CurrentContext.TestDirectory, "Bob.sql"));
+        var f = new FileInfo(Path.Combine(TestContext.CurrentContext.TestDirectory, "Bob.sql"));
             
         File.WriteAllText(f.FullName, @"UPDATE {T:0} Set {C:0} = 1");
 
@@ -89,9 +89,9 @@ class ExecuteSqlFileRuntimeTaskTests:DatabaseTests
         var task = new ExecuteSqlFileRuntimeTask(pt, new RuntimeArgumentCollection(Array.Empty<IArgument>(), new StageArgs(LoadStage.AdjustRaw, db, dir)));
 
         task.Check(new ThrowImmediatelyCheckNotifier());
-        HICDatabaseConfiguration configuration = new HICDatabaseConfiguration(db.Server);
+        var configuration = new HICDatabaseConfiguration(db.Server);
 
-        IDataLoadJob job = Mock.Of<IDataLoadJob>(x => 
+        var job = Mock.Of<IDataLoadJob>(x => 
             x.RegularTablesToLoad == new List<ITableInfo> {ti} &&
             x.LookupTablesToLoad == new List<ITableInfo>() &&
             x.Configuration == configuration);
@@ -116,7 +116,7 @@ class ExecuteSqlFileRuntimeTaskTests:DatabaseTests
 
         Import(tbl,out var ti,out var cols);
 
-        string sql = @"UPDATE {T:0} Set {C:0} = 1";
+        var sql = @"UPDATE {T:0} Set {C:0} = 1";
             
         IRuntimeTask task;
         IProcessTask pt;
@@ -140,7 +140,7 @@ class ExecuteSqlFileRuntimeTaskTests:DatabaseTests
         task = new MutilateDataTablesRuntimeTask(pt,args,CatalogueRepository.MEF);
                         
         task.Check(new ThrowImmediatelyCheckNotifier());
-        HICDatabaseConfiguration configuration = new HICDatabaseConfiguration(db.Server);
+        var configuration = new HICDatabaseConfiguration(db.Server);
 
         var job = new ThrowImmediatelyDataLoadJob();
             
@@ -172,9 +172,9 @@ class ExecuteSqlFileRuntimeTaskTests:DatabaseTests
 
         Import(tbl, out var ti, out var cols);
             
-        FileInfo f = new FileInfo(Path.Combine(TestContext.CurrentContext.TestDirectory, "Bob.sql"));
+        var f = new FileInfo(Path.Combine(TestContext.CurrentContext.TestDirectory, "Bob.sql"));
 
-        File.WriteAllText(f.FullName, @"UPDATE {T:"+ti.ID+ "} Set {C:"+cols[0].ID+ "} = 1");
+        File.WriteAllText(f.FullName, $@"UPDATE {{T:{ti.ID}}} Set {{C:{cols[0].ID}}} = 1");
 
         tbl.Rename(tableName);
 
@@ -192,9 +192,9 @@ class ExecuteSqlFileRuntimeTaskTests:DatabaseTests
             
         //create a namer that tells the user 
         var namer = RdmpMockFactory.Mock_INameDatabasesAndTablesDuringLoads(db, tableName);
-        HICDatabaseConfiguration configuration = new HICDatabaseConfiguration(db.Server,namer);
+        var configuration = new HICDatabaseConfiguration(db.Server,namer);
 
-        IDataLoadJob job = Mock.Of<IDataLoadJob>(x => 
+        var job = Mock.Of<IDataLoadJob>(x => 
             x.RegularTablesToLoad == new List<ITableInfo> { ti }&&
             x.LookupTablesToLoad == new List<ITableInfo>() &&
             x.Configuration == configuration);

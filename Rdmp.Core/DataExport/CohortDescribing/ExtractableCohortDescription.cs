@@ -154,15 +154,17 @@ public class ExtractableCohortDescription
         try
         {
             if (Fetch.Task.IsFaulted)
-                throw new Exception("Fetch cohort data failed for source " + Fetch.Source + " see inner Exception for details" ,Fetch.Task.Exception);
+                throw new Exception(
+                    $"Fetch cohort data failed for source {Fetch.Source} see inner Exception for details",Fetch.Task.Exception);
 
             if (Fetch.DataTable == null)
-                throw new Exception("IsFaulted was false but DataTable was not populated for fetch " + Fetch.Source);
+                throw new Exception($"IsFaulted was false but DataTable was not populated for fetch {Fetch.Source}");
             
             var row = Fetch.DataTable.Rows.Cast<DataRow>().FirstOrDefault(r => Convert.ToInt32(r["OriginID"]) == OriginID);
              
             if(row == null)
-                throw new Exception("No row found for Origin ID " + OriginID + " in fetched cohort description table for source " + Fetch.Source);
+                throw new Exception(
+                    $"No row found for Origin ID {OriginID} in fetched cohort description table for source {Fetch.Source}");
 
             
 

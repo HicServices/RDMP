@@ -76,35 +76,37 @@ public class CohortSummaryAggregateGraphUI:AggregateGraphUI, IObjectCollectionCo
     public override string GetTabName()
     {
         if(_collection.CohortIfAny != null)
-            return "Cohort Graph " + _collection.CohortIfAny + "(" + _collection.Adjustment + ")";
+            return $"Cohort Graph {_collection.CohortIfAny}({_collection.Adjustment})";
 
         if(_collection.CohortContainerIfAny != null)
-            return "Cohort Container Graph " + _collection.CohortContainerIfAny;
+            return $"Cohort Container Graph {_collection.CohortContainerIfAny}";
 
         return "Loading...";
     }
 
     protected override string GetDescription()
     {
-        string orig = base.GetDescription();
+        var orig = base.GetDescription();
 
         string restriction;
         switch (_collection.Adjustment)
         {
             case CohortSummaryAdjustment.WhereExtractionIdentifiersIn:
-                restriction = "Only showing records for people in cohort set '" + (_collection.CohortIfAny ?? (object)_collection.CohortContainerIfAny)+ "')";
+                restriction =
+                    $"Only showing records for people in cohort set '{(_collection.CohortIfAny ?? (object)_collection.CohortContainerIfAny)}')";
                 break;
             case CohortSummaryAdjustment.WhereRecordsIn:
-                restriction = "Only showing records returned by the query defining cohort set '" + (_collection.CohortIfAny ?? (object)_collection.CohortContainerIfAny) + "')";
+                restriction =
+                    $"Only showing records returned by the query defining cohort set '{(_collection.CohortIfAny ?? (object)_collection.CohortContainerIfAny)}')";
                 break;
             default:
                 throw new ArgumentOutOfRangeException();
         }
 
         if (_collection.SingleFilterOnly != null)
-            restriction += ". Only showing Filter " + _collection.SingleFilterOnly + ".";
+            restriction += $". Only showing Filter {_collection.SingleFilterOnly}.";
 
-        var toReturn = orig + " (RESULTS RESTRICTED:" + restriction;
+        var toReturn = $"{orig} (RESULTS RESTRICTED:{restriction}";
         return toReturn.Trim();
     }
 

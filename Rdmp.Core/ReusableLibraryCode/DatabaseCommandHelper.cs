@@ -73,7 +73,7 @@ public class DatabaseCommandHelper
         if (cmd is NpgsqlCommand)
             return _dbConHelpersByType[DatabaseType.PostgreSql].GetServerHelper();
 
-        throw new NotSupportedException("Didn't know what helper to use for DbCommand Type " + cmd.GetType());
+        throw new NotSupportedException($"Didn't know what helper to use for DbCommand Type {cmd.GetType()}");
         //todo: add this method to implementation in FAnsi
         //return _dbConHelpersByType.Values.Single(i => i.IsFor(cmd)).GetServerHelper();
     }
@@ -119,7 +119,7 @@ public class DatabaseCommandHelper
 
     public static void AddParameterWithValueToCommand(string parameterName, DbCommand command, object valueForParameter)
     {
-        DbParameter dbParameter = GetParameter(parameterName, command);
+        var dbParameter = GetParameter(parameterName, command);
         dbParameter.Value = valueForParameter;
         command.Parameters.Add(dbParameter);
     }

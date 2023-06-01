@@ -38,18 +38,19 @@ public class IdentifierDumpFunctionalityTests:TestsRequiringFullAnonymisationSui
             
         Console.WriteLine("Importing to Catalogue");
         var tbl = _bulkData.Table;
-        TableInfoImporter importer = new TableInfoImporter(CatalogueRepository, tbl);
+        var importer = new TableInfoImporter(CatalogueRepository, tbl);
 
         importer.DoImport(out tableInfoCreated,out columnInfosCreated);
             
-        Console.WriteLine("Imported TableInfo " + tableInfoCreated);
-        Console.WriteLine("Imported ColumnInfos " + string.Join(",",columnInfosCreated.Select(c=>c.GetRuntimeName())));
+        Console.WriteLine($"Imported TableInfo {tableInfoCreated}");
+        Console.WriteLine(
+            $"Imported ColumnInfos {string.Join(",", columnInfosCreated.Select(c => c.GetRuntimeName()))}");
 
         Assert.NotNull(tableInfoCreated);
 
-        ColumnInfo chi = columnInfosCreated.Single(c => c.GetRuntimeName().Equals("chi"));
+        var chi = columnInfosCreated.Single(c => c.GetRuntimeName().Equals("chi"));
 
-        Console.WriteLine("CHI is primary key? (expecting true):" + chi.IsPrimaryKey);
+        Console.WriteLine($"CHI is primary key? (expecting true):{chi.IsPrimaryKey}");
         Assert.IsTrue(chi.IsPrimaryKey);
 
 
@@ -74,14 +75,14 @@ public class IdentifierDumpFunctionalityTests:TestsRequiringFullAnonymisationSui
         tableInfoCreated.IdentifierDumpServer_ID = IdentifierDump_ExternalDatabaseServer.ID;
         tableInfoCreated.SaveToDatabase();
 
-        IdentifierDumper dumper = new IdentifierDumper(tableInfoCreated);
+        var dumper = new IdentifierDumper(tableInfoCreated);
 
         var chiToSurnameDictionary = new Dictionary<string, HashSet<string>>();
         try
         {
             dumper.Check(new AcceptAllCheckNotifier());
                 
-            DataTable dt = _bulkData.GetDataTable(1000);
+            var dt = _bulkData.GetDataTable(1000);
 
             Assert.AreEqual(1000,dt.Rows.Count);
             Assert.IsTrue(dt.Columns.Contains("surname"));
@@ -110,7 +111,7 @@ public class IdentifierDumpFunctionalityTests:TestsRequiringFullAnonymisationSui
             {
                 con.Open();
 
-                var cmd = server.GetCommand("Select * from " + "ID_" + BulkTestsData.BulkDataTable, con);
+                var cmd = server.GetCommand($"Select * from ID_{BulkTestsData.BulkDataTable}", con);
                 var r = cmd.ExecuteReader();
                     
                 //make sure the values in the ID table match the ones we originally had in the pipeline
@@ -122,12 +123,12 @@ public class IdentifierDumpFunctionalityTests:TestsRequiringFullAnonymisationSui
                 r.Close();
 
                 //leave the identifier dump in the way we found it (empty)
-                var tbl = IdentifierDump_Database.ExpectTable("ID_" + BulkTestsData.BulkDataTable);
+                var tbl = IdentifierDump_Database.ExpectTable($"ID_{BulkTestsData.BulkDataTable}");
 
                 if(tbl.Exists())
                     tbl.Drop();
 
-                tbl = IdentifierDump_Database.ExpectTable("ID_" + BulkTestsData.BulkDataTable + "_Archive");
+                tbl = IdentifierDump_Database.ExpectTable($"ID_{BulkTestsData.BulkDataTable}_Archive");
 
                 if (tbl.Exists())
                     tbl.Drop();
@@ -164,10 +165,10 @@ public class IdentifierDumpFunctionalityTests:TestsRequiringFullAnonymisationSui
         tableInfoCreated.IdentifierDumpServer_ID = IdentifierDump_ExternalDatabaseServer.ID;
         tableInfoCreated.SaveToDatabase();
 
-        IdentifierDumper dumper = new IdentifierDumper(tableInfoCreated);
+        var dumper = new IdentifierDumper(tableInfoCreated);
         dumper.Check(new AcceptAllCheckNotifier());
 
-        DiscoveredTable tableInDump = IdentifierDump_Database.ExpectTable("ID_" + BulkTestsData.BulkDataTable);
+        var tableInDump = IdentifierDump_Database.ExpectTable($"ID_{BulkTestsData.BulkDataTable}");
         Assert.IsTrue(tableInDump.Exists(), "ID table did not exist");
 
 
@@ -182,7 +183,7 @@ public class IdentifierDumpFunctionalityTests:TestsRequiringFullAnonymisationSui
         preDiscardedColumn2.DeleteInDatabase();
 
         //now create a new dumper and watch it go crazy 
-        IdentifierDumper dumper2 = new IdentifierDumper(tableInfoCreated);
+        var dumper2 = new IdentifierDumper(tableInfoCreated);
 
         var thrower = new ThrowImmediatelyCheckNotifier();
         thrower.ThrowOnWarning = true;
@@ -201,10 +202,10 @@ public class IdentifierDumpFunctionalityTests:TestsRequiringFullAnonymisationSui
                 con.Open();
                     
                 //leave the identifier dump in the way we found it (empty)
-                var cmdDrop = server.GetCommand("DROP TABLE ID_" + BulkTestsData.BulkDataTable, con);
+                var cmdDrop = server.GetCommand($"DROP TABLE ID_{BulkTestsData.BulkDataTable}", con);
                 cmdDrop.ExecuteNonQuery();
 
-                var cmdDropArchive = server.GetCommand("DROP TABLE ID_" + BulkTestsData.BulkDataTable + "_Archive", con);
+                var cmdDropArchive = server.GetCommand($"DROP TABLE ID_{BulkTestsData.BulkDataTable}_Archive", con);
                 cmdDropArchive.ExecuteNonQuery();
             }
 
@@ -230,7 +231,7 @@ public class IdentifierDumpFunctionalityTests:TestsRequiringFullAnonymisationSui
         tableInfoCreated.IdentifierDumpServer_ID = IdentifierDump_ExternalDatabaseServer.ID;
         tableInfoCreated.SaveToDatabase();
 
-        IdentifierDumper dumper = new IdentifierDumper(tableInfoCreated);
+        var dumper = new IdentifierDumper(tableInfoCreated);
         try
         {
             dumper.Check(new AcceptAllCheckNotifier());
@@ -264,11 +265,11 @@ public class IdentifierDumpFunctionalityTests:TestsRequiringFullAnonymisationSui
         if(existingTable.Exists())
             existingTable.Drop();
 
-        IdentifierDumper dumper = new IdentifierDumper(tableInfoCreated);
+        var dumper = new IdentifierDumper(tableInfoCreated);
 
         try
         {
-            ToMemoryCheckNotifier notifier = new ToMemoryCheckNotifier(new AcceptAllCheckNotifier());
+            var notifier = new ToMemoryCheckNotifier(new AcceptAllCheckNotifier());
             dumper.Check(notifier);
 
             Assert.IsTrue(notifier.Messages.Any(m=>
@@ -296,7 +297,7 @@ public class IdentifierDumpFunctionalityTests:TestsRequiringFullAnonymisationSui
         tableInfoCreated.IdentifierDumpServer_ID = ANOStore_ExternalDatabaseServer.ID;
         tableInfoCreated.SaveToDatabase();
             
-        IdentifierDumper dumper = new IdentifierDumper(tableInfoCreated);
+        var dumper = new IdentifierDumper(tableInfoCreated);
         try
         {
             dumper.Check(new ThrowImmediatelyCheckNotifier());
@@ -349,7 +350,7 @@ public class IdentifierDumpFunctionalityTests:TestsRequiringFullAnonymisationSui
             tableInfoCreated.IdentifierDumpServer_ID = IdentifierDump_ExternalDatabaseServer.ID;
             tableInfoCreated.SaveToDatabase();
 
-            IdentifierDumper dumper = new IdentifierDumper(tableInfoCreated);
+            var dumper = new IdentifierDumper(tableInfoCreated);
             
             //table doesnt exist yet it should work
             dumper.Check(new AcceptAllCheckNotifier());
@@ -361,7 +362,7 @@ public class IdentifierDumpFunctionalityTests:TestsRequiringFullAnonymisationSui
             //get a new dumper because we have changed the pre load discarded column
             dumper = new IdentifierDumper(tableInfoCreated);
             //table doesnt exist yet it should work
-            Exception ex = Assert.Throws<Exception>(()=>dumper.Check(new ThrowImmediatelyCheckNotifier()));
+            var ex = Assert.Throws<Exception>(()=>dumper.Check(new ThrowImmediatelyCheckNotifier()));
 
             Assert.IsTrue(ex.Message.Contains("has data type varbinary(200) in the Catalogue but appears as varchar(50) in the actual IdentifierDump"));
         }

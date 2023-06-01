@@ -104,7 +104,7 @@ public partial class ConsoleGuiUserSettings {
     }
     private void AddTooltip(View cb, string propertyName)
     {
-        string helpText = _activator.CommentStore.GetDocumentationIfExists($"{ nameof(UserSettings)}.{propertyName}", false);
+        var helpText = _activator.CommentStore.GetDocumentationIfExists($"{ nameof(UserSettings)}.{propertyName}", false);
 
         if (string.IsNullOrWhiteSpace(helpText))
         {
@@ -125,7 +125,7 @@ public partial class ConsoleGuiUserSettings {
 
     private void tbCreateDatabaseTimeout_TextChanged(ustring s)
     {
-        if (int.TryParse(tbCreateDatabaseTimeout.Text.ToString(), out int result))
+        if (int.TryParse(tbCreateDatabaseTimeout.Text.ToString(), out var result))
         {
             UserSettings.CreateDatabaseTimeout = result;
         }
@@ -133,7 +133,7 @@ public partial class ConsoleGuiUserSettings {
     private void tbArchiveTriggerTimeout_TextChanged(ustring s)
     {
 
-        if (int.TryParse(tbArchiveTriggerTimeout.Text.ToString(), out int result))
+        if (int.TryParse(tbArchiveTriggerTimeout.Text.ToString(), out var result))
         {
             UserSettings.ArchiveTriggerTimeout = result;
         }

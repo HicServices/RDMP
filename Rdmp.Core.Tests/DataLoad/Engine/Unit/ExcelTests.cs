@@ -40,10 +40,13 @@ public class ExcelTests
     [OneTimeSetUp]
     public void SprayToDisk()
     {
-        _fileLocations.Add(TestFile, UsefulStuff.SprayFile(typeof(ExcelTests).Assembly,typeof(ExcelTests).Namespace + ".TestFile." + TestFile,TestFile,TestContext.CurrentContext.TestDirectory));
-        _fileLocations.Add(FreakyTestFile, UsefulStuff.SprayFile(typeof(ExcelTests).Assembly, typeof(ExcelTests).Namespace + ".TestFile." + FreakyTestFile, FreakyTestFile, TestContext.CurrentContext.TestDirectory));
+        _fileLocations.Add(TestFile, UsefulStuff.SprayFile(typeof(ExcelTests).Assembly,
+            $"{typeof(ExcelTests).Namespace}.TestFile.{TestFile}",TestFile,TestContext.CurrentContext.TestDirectory));
+        _fileLocations.Add(FreakyTestFile, UsefulStuff.SprayFile(typeof(ExcelTests).Assembly,
+            $"{typeof(ExcelTests).Namespace}.TestFile.{FreakyTestFile}", FreakyTestFile, TestContext.CurrentContext.TestDirectory));
 
-        _fileLocations.Add(OddFormatsFile, UsefulStuff.SprayFile(typeof(ExcelTests).Assembly, typeof(ExcelTests).Namespace + ".TestFile." + OddFormatsFile, OddFormatsFile, TestContext.CurrentContext.TestDirectory));
+        _fileLocations.Add(OddFormatsFile, UsefulStuff.SprayFile(typeof(ExcelTests).Assembly,
+            $"{typeof(ExcelTests).Namespace}.TestFile.{OddFormatsFile}", OddFormatsFile, TestContext.CurrentContext.TestDirectory));
     }
 
 
@@ -57,7 +60,7 @@ public class ExcelTests
     [Test]
     public void DontTryToOpenWithDelimited_ThrowsInvalidFileExtension()
     {
-        DelimitedFlatFileDataFlowSource invalid = new DelimitedFlatFileDataFlowSource();
+        var invalid = new DelimitedFlatFileDataFlowSource();
         invalid.Separator = ",";
         invalid.PreInitialize(new FlatFileToLoad(new FileInfo(TestFile)), new ThrowImmediatelyDataLoadEventListener());
         var ex = Assert.Throws<Exception>(()=>invalid.Check(new ThrowImmediatelyCheckNotifier()));
@@ -69,10 +72,10 @@ public class ExcelTests
     [TestCase(FreakyTestFile)]
     public void NormalBook_FirstRowCorrect(string versionOfTestFile)
     {
-        ExcelDataFlowSource source = new ExcelDataFlowSource();
+        var source = new ExcelDataFlowSource();
 
         source.PreInitialize(new FlatFileToLoad(_fileLocations[versionOfTestFile]), new ThrowImmediatelyDataLoadEventListener());
-        DataTable dt = source.GetChunk(new ThrowImmediatelyDataLoadEventListener(), new GracefulCancellationToken());
+        var dt = source.GetChunk(new ThrowImmediatelyDataLoadEventListener(), new GracefulCancellationToken());
 
         Assert.AreEqual(6,dt.Columns.Count);
         Assert.AreEqual("Participant", dt.Columns[0].ColumnName);
@@ -94,11 +97,11 @@ public class ExcelTests
     [TestCase(FreakyTestFile)]
     public void NormalBook_FirstRowCorrect_AddFilenameColumnNamed(string versionOfTestFile)
     {
-        ExcelDataFlowSource source = new ExcelDataFlowSource();
+        var source = new ExcelDataFlowSource();
         source.AddFilenameColumnNamed = "Path";
 
         source.PreInitialize(new FlatFileToLoad(_fileLocations[versionOfTestFile]), new ThrowImmediatelyDataLoadEventListener());
-        DataTable dt = source.GetChunk(new ThrowImmediatelyDataLoadEventListener(), new GracefulCancellationToken());
+        var dt = source.GetChunk(new ThrowImmediatelyDataLoadEventListener(), new GracefulCancellationToken());
 
         Assert.AreEqual(7, dt.Columns.Count);
         Assert.AreEqual("Participant", dt.Columns[0].ColumnName);
@@ -131,10 +134,10 @@ public class ExcelTests
         */
         var listener = new ToMemoryDataLoadEventListener(true);
 
-        ExcelDataFlowSource source = new ExcelDataFlowSource();
+        var source = new ExcelDataFlowSource();
 
         source.PreInitialize(new FlatFileToLoad(_fileLocations[versionOfTestFile]), listener);
-        DataTable dt = source.GetChunk(listener, new GracefulCancellationToken());
+        var dt = source.GetChunk(listener, new GracefulCancellationToken());
 
         Assert.AreEqual(5,dt.Rows.Count);
 
@@ -164,11 +167,11 @@ public class ExcelTests
     {
         var listener = new ToMemoryDataLoadEventListener(true);
 
-        ExcelDataFlowSource source = new ExcelDataFlowSource();
+        var source = new ExcelDataFlowSource();
         source.WorkSheetName = "MySheet";
 
         source.PreInitialize(new FlatFileToLoad(_fileLocations[OddFormatsFile]), listener);
-        DataTable dt = source.GetChunk(listener, new GracefulCancellationToken());
+        var dt = source.GetChunk(listener, new GracefulCancellationToken());
 
         Assert.AreEqual(2,dt.Rows.Count);
         Assert.AreEqual(5, dt.Columns.Count);
@@ -199,12 +202,12 @@ public class ExcelTests
     [Test]
     public void NormalBook_NoEmptyRowsRead()
     {
-        ExcelDataFlowSource source = new ExcelDataFlowSource();
+        var source = new ExcelDataFlowSource();
 
         var listener = new ToMemoryDataLoadEventListener(true);
 
         source.PreInitialize(new FlatFileToLoad(_fileLocations[TestFile]), listener);
-        DataTable dt = source.GetChunk(listener, new GracefulCancellationToken());
+        var dt = source.GetChunk(listener, new GracefulCancellationToken());
             
         Assert.AreEqual(5, dt.Rows.Count);
     }
@@ -214,10 +217,10 @@ public class ExcelTests
     {
         var messages = new ToMemoryDataLoadEventListener(true);
 
-        ExcelDataFlowSource source = new ExcelDataFlowSource();
+        var source = new ExcelDataFlowSource();
 
         source.PreInitialize(new FlatFileToLoad(_fileLocations[FreakyTestFile]), new ThrowImmediatelyDataLoadEventListener());
-        DataTable dt = source.GetChunk(messages, new GracefulCancellationToken());
+        var dt = source.GetChunk(messages, new GracefulCancellationToken());
             
         var args = messages.EventsReceivedBySender[source];
 
@@ -229,7 +232,7 @@ public class ExcelTests
     [Test]
     public void BlankFirstLineFile()
     {
-        ExcelDataFlowSource source = new ExcelDataFlowSource();
+        var source = new ExcelDataFlowSource();
 
         var fi = new FileInfo(Path.Combine(TestContext.CurrentContext.TestDirectory,
             "DataLoad","Engine","Resources","BlankLineBook.xlsx"));
@@ -238,7 +241,7 @@ public class ExcelTests
         source.PreInitialize(new FlatFileToLoad(fi), new ThrowImmediatelyDataLoadEventListener());
             
             
-        DataTable dt = source.GetChunk(new ThrowImmediatelyDataLoadEventListener(), new GracefulCancellationToken());
+        var dt = source.GetChunk(new ThrowImmediatelyDataLoadEventListener(), new GracefulCancellationToken());
 
             
         Assert.AreEqual(3,dt.Rows.Count);
@@ -251,7 +254,7 @@ public class ExcelTests
     [Test]
     public void BlankWorkbook()
     {
-        ExcelDataFlowSource source = new ExcelDataFlowSource();
+        var source = new ExcelDataFlowSource();
 
             
         var fi = new FileInfo(Path.Combine(TestContext.CurrentContext.TestDirectory,"DataLoad","Engine","Resources","BlankBook.xlsx"));
@@ -267,14 +270,14 @@ public class ExcelTests
     [Test]
     public void Checks_ValidFileExtension_Pass()
     {
-        ExcelDataFlowSource source = new ExcelDataFlowSource();
+        var source = new ExcelDataFlowSource();
         source.PreInitialize(new FlatFileToLoad(new FileInfo("bob.xlsx")),new ThrowImmediatelyDataLoadEventListener() );
         source.Check(new ThrowImmediatelyCheckNotifier(){ThrowOnWarning = true});
     }
     [Test]
     public void Checks_ValidFileExtension_InvalidExtensionPass()
     {
-        ExcelDataFlowSource source = new ExcelDataFlowSource();
+        var source = new ExcelDataFlowSource();
         source.PreInitialize(new FlatFileToLoad(new FileInfo("bob.csv")), new ThrowImmediatelyDataLoadEventListener());
         var ex = Assert.Throws<Exception>(()=>source.Check(new ThrowImmediatelyCheckNotifier() { ThrowOnWarning = true }));
         Assert.AreEqual("File extension bob.csv has an invalid extension:.csv (this class only accepts:.xlsx,.xls)",ex.Message);
@@ -286,7 +289,7 @@ public class ExcelTests
     {
         var loc = _fileLocations[TestFile];
 
-        ExcelToCSVFilesConverter converter = new ExcelToCSVFilesConverter();
+        var converter = new ExcelToCSVFilesConverter();
         converter.ExcelFilePattern = loc.Name;
         converter.PrefixWithWorkbookName = prefixWithWorkbookName;
             

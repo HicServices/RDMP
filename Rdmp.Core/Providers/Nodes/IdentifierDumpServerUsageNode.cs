@@ -26,7 +26,7 @@ public class IdentifierDumpServerUsageNode:Node,IDeleteable
 
     public override string ToString()
     {
-        return "Usage of:" + IdentifierDumpServer.Name;
+        return $"Usage of:{IdentifierDumpServer.Name}";
     }
         
     protected bool Equals(IdentifierDumpServerUsageNode other)

@@ -93,7 +93,7 @@ public class ReleaseRunner:ManyRunner
         foreach (var configuration in _configurations)
             IdentifyAndRemoveOldExtractionResults(RepositoryLocator,checkNotifier, configuration);
 
-        List<ICheckable> toReturn = new List<ICheckable>();
+        var toReturn = new List<ICheckable>();
 
         if (_options.ReleaseGlobals ?? true)
         {
@@ -104,7 +104,7 @@ public class ReleaseRunner:ManyRunner
                     new GlobalsReleaseChecker(RepositoryLocator, _configurations, availableGlobal).GetEvaluator()));
         }
 
-        foreach (IExtractionConfiguration configuration in _configurations)
+        foreach (var configuration in _configurations)
         {
             toReturn.AddRange(GetReleasePotentials(checkNotifier,configuration));
             toReturn.Add(new ReleaseEnvironmentPotential(configuration));
@@ -134,15 +134,14 @@ public class ReleaseRunner:ManyRunner
 
         if (oldResults.Any())
         {
-            string message = "In Configuration " + configuration + ":" + Environment.NewLine + Environment.NewLine +
-                             "The following CumulativeExtractionResults reflect datasets that were previously extracted under the existing Configuration but are no longer in the CURRENT configuration:";
+            var message =
+                $"In Configuration {configuration}:{Environment.NewLine}{Environment.NewLine}The following CumulativeExtractionResults reflect datasets that were previously extracted under the existing Configuration but are no longer in the CURRENT configuration:";
 
             message = oldResults.Aggregate(message, (s, n) => s + Environment.NewLine + n);
 
             if (
                 checkNotifier.OnCheckPerformed(new CheckEventArgs(message, CheckResult.Fail, null,
-                    "Delete expired CumulativeExtractionResults for configuration." + Environment.NewLine +
-                    "Not doing so may result in failures at Release time.")))
+                    $"Delete expired CumulativeExtractionResults for configuration.{Environment.NewLine}Not doing so may result in failures at Release time.")))
             {
                 foreach (var result in oldResults)
                     result.DeleteInDatabase();
@@ -157,16 +156,14 @@ public class ReleaseRunner:ManyRunner
 
         if (oldLostSupplemental.Any())
         {
-            string message = "In Configuration " + configuration + ":" + Environment.NewLine + Environment.NewLine +
-                             "The following list reflect objects (supporting sql, lookups or documents) " +
-                             "that were previously extracted but have since been deleted:";
+            var message =
+                $"In Configuration {configuration}:{Environment.NewLine}{Environment.NewLine}The following list reflect objects (supporting sql, lookups or documents) that were previously extracted but have since been deleted:";
 
             message = oldLostSupplemental.Aggregate(message, (s, n) => s + Environment.NewLine + n.DestinationDescription);
 
             if (
                 checkNotifier.OnCheckPerformed(new CheckEventArgs(message, CheckResult.Fail, null,
-                    "Delete expired Extraction Results for configuration." + Environment.NewLine +
-                    "Not doing so may result in failures at Release time.")))
+                    $"Delete expired Extraction Results for configuration.{Environment.NewLine}Not doing so may result in failures at Release time.")))
             {
                 foreach (var result in oldLostSupplemental)
                     result.DeleteInDatabase();
@@ -179,7 +176,7 @@ public class ReleaseRunner:ManyRunner
         var toReturn = new List<ReleasePotential>();
 
         //create new ReleaseAssesments
-        foreach (ISelectedDataSets selectedDataSet in GetSelectedDataSets(configuration))//todo only the ones user ticked
+        foreach (var selectedDataSet in GetSelectedDataSets(configuration))//todo only the ones user ticked
         {
             var extractionResults = selectedDataSet.GetCumulativeExtractionResultsIfAny();
 
@@ -222,7 +219,7 @@ public class ReleaseRunner:ManyRunner
     {
         var data = new ReleaseData(RepositoryLocator);
 
-        foreach (IExtractionConfiguration configuration in _configurations)
+        foreach (var configuration in _configurations)
         {
             data.ConfigurationsForRelease.Add(configuration, GetReleasePotentials(checkNotifier,configuration));
             data.EnvironmentPotentials.Add(configuration, new ReleaseEnvironmentPotential(configuration));
@@ -244,7 +241,7 @@ public class ReleaseRunner:ManyRunner
         }
         catch (Exception ex)
         {
-            checkNotifier.OnCheckPerformed(new CheckEventArgs("FAIL: " + ex.Message, CheckResult.Fail, ex));
+            checkNotifier.OnCheckPerformed(new CheckEventArgs($"FAIL: {ex.Message}", CheckResult.Fail, ex));
         }
 
         return null;

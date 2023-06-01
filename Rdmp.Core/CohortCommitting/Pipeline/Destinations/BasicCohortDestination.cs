@@ -66,7 +66,8 @@ public class BasicCohortDestination : IPluginCohortDestination
         }
             
         if(!toProcess.Columns.Contains(_privateIdentifier))
-            throw new Exception("Could not find column called " + _privateIdentifier + " in chunk, columns were:" + string.Join(",", toProcess.Columns.OfType<DataColumn>().Select(c => c.ColumnName)));
+            throw new Exception(
+                $"Could not find column called {_privateIdentifier} in chunk, columns were:{string.Join(",", toProcess.Columns.OfType<DataColumn>().Select(c => c.ColumnName))}");
                 
         //we don't have a release identifier column
         if (!toProcess.Columns.Contains(_releaseIdentifier))
@@ -86,7 +87,7 @@ public class BasicCohortDestination : IPluginCohortDestination
             }
         else
         {
-            bool foundUserSpecifiedReleaseIds = false;
+            var foundUserSpecifiedReleaseIds = false;
 
             foreach (DataRow row in toProcess.Rows)
             {
@@ -106,7 +107,8 @@ public class BasicCohortDestination : IPluginCohortDestination
                     if (_allocator != null)
                     {
                         if (foundUserSpecifiedReleaseIds && _allocator != null)
-                            throw new Exception("Input data table had a column '" + _releaseIdentifier + "' which contained some values but also null values.  There is a configured ReleaseIdentifierAllocator, we cannot cannot continue since it would result in a mixed release identifier list of some provided by you and some provided by the ReleaseIdentifierAllocator");
+                            throw new Exception(
+                                $"Input data table had a column '{_releaseIdentifier}' which contained some values but also null values.  There is a configured ReleaseIdentifierAllocator, we cannot cannot continue since it would result in a mixed release identifier list of some provided by you and some provided by the ReleaseIdentifierAllocator");
 
                         release = _allocator.AllocateReleaseIdentifier(priv);
                     }
@@ -158,7 +160,7 @@ public class BasicCohortDestination : IPluginCohortDestination
 
                 var tbl = Request.NewCohortDefinition.LocationOfCohort.DiscoverCohortTable();
 
-                bool isIdentifiable = string.Equals(_releaseIdentifier, _privateIdentifier);
+                var isIdentifiable = string.Equals(_releaseIdentifier, _privateIdentifier);
 
                 using (var bulkCopy = tbl.BeginBulkInsert(connection.ManagedTransaction))
                 {
@@ -174,7 +176,7 @@ public class BasicCohortDestination : IPluginCohortDestination
                     //add the ID as another column 
                     dt.Columns.Add(_fk);
 
-                    foreach (KeyValuePair<object, object> kvp in _cohortDictionary)
+                    foreach (var kvp in _cohortDictionary)
                     {
                         if (isIdentifiable)
                         {
@@ -199,11 +201,13 @@ public class BasicCohortDestination : IPluginCohortDestination
             }
         }
 
-        listener.OnNotify(this, new NotifyEventArgs(ProgressEventType.Information, "Succesfully uploaded " + _cohortDictionary.Count + " records"));
+        listener.OnNotify(this, new NotifyEventArgs(ProgressEventType.Information,
+            $"Succesfully uploaded {_cohortDictionary.Count} records"));
 
-        int id = Request.ImportAsExtractableCohort(DeprecateOldCohortOnSuccess, MigrateUsages);
+        var id = Request.ImportAsExtractableCohort(DeprecateOldCohortOnSuccess, MigrateUsages);
 
-        listener.OnNotify(this,new NotifyEventArgs(ProgressEventType.Information, "Cohort successfully comitted to destination and imported as an RDMP ExtractableCohort (ID="+id+" <- this is the ID of the reference pointer, the cohortDefinitionID of the actual cohort remains as you specified:"+Request.NewCohortDefinition.ID+")"));
+        listener.OnNotify(this,new NotifyEventArgs(ProgressEventType.Information,
+            $"Cohort successfully comitted to destination and imported as an RDMP ExtractableCohort (ID={id} <- this is the ID of the reference pointer, the cohortDefinitionID of the actual cohort remains as you specified:{Request.NewCohortDefinition.ID})"));
     }
 
     /// <summary>
@@ -232,8 +236,10 @@ public class BasicCohortDestination : IPluginCohortDestination
 
         _fk = syntax.GetRuntimeName(Request.NewCohortDefinition.LocationOfCohort.DefinitionTableForeignKeyField);
 
-        listener.OnNotify(this,new NotifyEventArgs(ProgressEventType.Information, "CohortCreationRequest spotted, we will look for columns " + _privateIdentifier + " and " + _releaseIdentifier + " (both of which must be in the pipeline before we will allow the cohort to be submitted)"));
-        listener.OnNotify(this,new NotifyEventArgs(ProgressEventType.Information, "id column in table " + Request.NewCohortDefinition.LocationOfCohort.TableName + " is " + Request.NewCohortDefinition.LocationOfCohort.DefinitionTableForeignKeyField));
+        listener.OnNotify(this,new NotifyEventArgs(ProgressEventType.Information,
+            $"CohortCreationRequest spotted, we will look for columns {_privateIdentifier} and {_releaseIdentifier} (both of which must be in the pipeline before we will allow the cohort to be submitted)"));
+        listener.OnNotify(this,new NotifyEventArgs(ProgressEventType.Information,
+            $"id column in table {Request.NewCohortDefinition.LocationOfCohort.TableName} is {Request.NewCohortDefinition.LocationOfCohort.DefinitionTableForeignKeyField}"));
     }
 
     /// <summary>
@@ -253,7 +259,8 @@ public class BasicCohortDestination : IPluginCohortDestination
         if (ReleaseIdentifierAllocator == null)
             notifier.OnCheckPerformed(new CheckEventArgs("No ReleaseIdentifierAllocator has been set, this means that Release Identifiers must be provided in the cohort uploaded or populated afer committing manually",CheckResult.Warning));
             
-        notifier.OnCheckPerformed(new CheckEventArgs("Cohort identifier columns are '"+ _privateIdentifier + "' (private) and '" + _releaseIdentifier + "' (release)", CheckResult.Success));
+        notifier.OnCheckPerformed(new CheckEventArgs(
+            $"Cohort identifier columns are '{_privateIdentifier}' (private) and '{_releaseIdentifier}' (release)", CheckResult.Success));
             
         Request.Check(notifier);
     }

@@ -251,14 +251,14 @@ public class LookupTest : DatabaseTests
             desc = new ColumnInfo(CatalogueRepository, "UnitTest_TestDescription", "int", pkTable);
             lookup = new Lookup(CatalogueRepository, desc, fk, pk, ExtractionJoinType.Left, null);
 
-            string joinSQL = JoinHelper.GetJoinSQL(lookup);
+            var joinSQL = JoinHelper.GetJoinSQL(lookup);
 
             Assert.AreEqual(joinSQL,"UnitTest_Biochemistry Left JOIN UnitTest_BiochemistryLookup ON UnitTest_BCTestCode = UnitTest_TestCode");
 
             //Create the composite lookup
             composite = new LookupCompositeJoinInfo(CatalogueRepository, lookup, fk2, pk2);
 
-            string joinSQL_AfterAddingCompositeKey = JoinHelper.GetJoinSQL(lookup);
+            var joinSQL_AfterAddingCompositeKey = JoinHelper.GetJoinSQL(lookup);
 
             Assert.AreEqual(joinSQL_AfterAddingCompositeKey, "UnitTest_Biochemistry Left JOIN UnitTest_BiochemistryLookup ON UnitTest_BCTestCode = UnitTest_TestCode AND UnitTest_BCHealthBoard = UnitTest_Healthboard");
         }
@@ -320,7 +320,7 @@ public class LookupTest : DatabaseTests
             desc = new ColumnInfo(CatalogueRepository, "UnitTest_TestDescription", "int", pkTable);
             lookup = new Lookup(CatalogueRepository, desc, fk, pk, ExtractionJoinType.Left, null);
 
-            string joinSQL = JoinHelper.GetJoinSQL(lookup);
+            var joinSQL = JoinHelper.GetJoinSQL(lookup);
 
             Assert.AreEqual(joinSQL, "UnitTest_Biochemistry Left JOIN UnitTest_BiochemistryLookup ON One = One");
 
@@ -335,7 +335,7 @@ public class LookupTest : DatabaseTests
             cmd.Execute();
 
 
-            string joinSQL_AfterAddingCompositeKey = JoinHelper.GetJoinSQL(lookup);
+            var joinSQL_AfterAddingCompositeKey = JoinHelper.GetJoinSQL(lookup);
 
             Assert.AreEqual(joinSQL_AfterAddingCompositeKey,
                 "UnitTest_Biochemistry Left JOIN UnitTest_BiochemistryLookup ON UnitTest_Biochemistry.One=UnitTest_BiochemistryLookup.One AND (UnitTest_Biochemistry.Two = UnitTest_Biochemistry.Two OR      (UnitTest_Biochemistry.{Two} is null AND UnitTest_BiochemistryLookup.Two is null) )");
@@ -365,7 +365,7 @@ public class LookupTest : DatabaseTests
     {
         var db = GetCleanedServer(FAnsi.DatabaseType.MicrosoftSQLServer);
 
-        DataTable dt = new DataTable();
+        var dt = new DataTable();
         dt.Columns.Add("ID");
         dt.Columns.Add("SendingLocation");
         dt.Columns.Add("DischargeLocation");
@@ -375,7 +375,7 @@ public class LookupTest : DatabaseTests
 
         var mainCata = Import(maintbl);
 
-        DataTable dtLookup = new DataTable();
+        var dtLookup = new DataTable();
         dtLookup.Columns.Add("LocationCode");
         dtLookup.Columns.Add("Line1");
         dtLookup.Columns.Add("Line2");
@@ -386,12 +386,12 @@ public class LookupTest : DatabaseTests
 
         var lookupCata = Import(lookuptbl);
 
-        ExtractionInformation fkEi = mainCata.GetAllExtractionInformation(ExtractionCategory.Any).Single(n => n.GetRuntimeName() == "SendingLocation");
-        ColumnInfo fk = mainCata.GetTableInfoList(false).Single().ColumnInfos.Single(n => n.GetRuntimeName() == "SendingLocation");
-        ColumnInfo pk = lookupCata.GetTableInfoList(false).Single().ColumnInfos.Single(n => n.GetRuntimeName() == "LocationCode");
+        var fkEi = mainCata.GetAllExtractionInformation(ExtractionCategory.Any).Single(n => n.GetRuntimeName() == "SendingLocation");
+        var fk = mainCata.GetTableInfoList(false).Single().ColumnInfos.Single(n => n.GetRuntimeName() == "SendingLocation");
+        var pk = lookupCata.GetTableInfoList(false).Single().ColumnInfos.Single(n => n.GetRuntimeName() == "LocationCode");
 
-        ColumnInfo descLine1 = lookupCata.GetTableInfoList(false).Single().ColumnInfos.Single(n => n.GetRuntimeName() == "Line1");
-        ColumnInfo descLine2 = lookupCata.GetTableInfoList(false).Single().ColumnInfos.Single(n => n.GetRuntimeName() == "Line2");
+        var descLine1 = lookupCata.GetTableInfoList(false).Single().ColumnInfos.Single(n => n.GetRuntimeName() == "Line1");
+        var descLine2 = lookupCata.GetTableInfoList(false).Single().ColumnInfos.Single(n => n.GetRuntimeName() == "Line2");
 
         ExecuteCommandCreateLookup cmd = null;
 

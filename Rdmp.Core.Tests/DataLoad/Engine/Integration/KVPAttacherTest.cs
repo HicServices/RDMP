@@ -37,7 +37,7 @@ public class KVPAttacherTest:DatabaseTests
     [TestCase(KVPAttacherTestCase.TwoFilesWithPrimaryKey)]
     public void KVPAttacherTest_Attach(KVPAttacherTestCase testCase)
     {
-        bool hasPk = testCase != KVPAttacherTestCase.OneFileWithoutPrimaryKey;
+        var hasPk = testCase != KVPAttacherTestCase.OneFileWithoutPrimaryKey;
         var db = GetCleanedServer(FAnsi.DatabaseType.MicrosoftSQLServer);
         var attacher = new KVPAttacher();
         var tbl = db.ExpectTable("KVPTestTable");
@@ -46,9 +46,9 @@ public class KVPAttacherTest:DatabaseTests
         var parentDir = workingDir.CreateSubdirectory("KVPAttacherTestProjectDirectory");
         var projectDir = LoadDirectory.CreateDirectoryStructure(parentDir, "KVPAttacherTest", true);
 
-        string filepk = "kvpTestFilePK.csv";
-        string filepk2 = "kvpTestFilePK2.csv";
-        string fileNoPk = "kvpTestFile_NoPK.csv";
+        var filepk = "kvpTestFilePK.csv";
+        var filepk2 = "kvpTestFilePK2.csv";
+        var fileNoPk = "kvpTestFile_NoPK.csv";
 
         if (testCase == KVPAttacherTestCase.OneFileWithPrimaryKey || testCase == KVPAttacherTestCase.TwoFilesWithPrimaryKey)
             CopyToBin(projectDir, filepk);
@@ -66,7 +66,7 @@ public class KVPAttacherTest:DatabaseTests
         using (var con = (SqlConnection) tbl.Database.Server.GetConnection())
         {
             con.Open();
-            string sql = hasPk
+            var sql = hasPk
                 ? "CREATE TABLE KVPTestTable (Person varchar(100), Test varchar(50), Result int)"
                 : "CREATE TABLE KVPTestTable (Test varchar(50), Result int)";
 
@@ -137,7 +137,7 @@ public class KVPAttacherTest:DatabaseTests
             attacher.Attach(new ThrowImmediatelyDataLoadJob(), new GracefulCancellationToken());
 
             //test file contains 291 values belonging to 3 different people
-            int expectedRows = 291;
+            var expectedRows = 291;
 
             //if we loaded two files (or should have done) then add the number of values in that file (54)
             if (testCase == KVPAttacherTestCase.TwoFilesWithPrimaryKey)
@@ -193,7 +193,7 @@ public class KVPAttacherTest:DatabaseTests
             kvp.TargetDataTableValueColumnName = "smith";
             
         var ex = Assert.Throws<Exception>(() => kvp.Check(new ThrowImmediatelyCheckNotifier()));
-        Assert.IsTrue(ex.Message.StartsWith("Argument " + missingField + " has not been set"));
+        Assert.IsTrue(ex.Message.StartsWith($"Argument {missingField} has not been set"));
     }
 
     [Test]
@@ -229,7 +229,7 @@ public class KVPAttacherTest:DatabaseTests
     private void CopyToBin(LoadDirectory projDir, string file)
     {
             
-        string testFileLocation = Path.Combine(TestContext.CurrentContext.TestDirectory,"DataLoad","Engine","Resources" , file);
+        var testFileLocation = Path.Combine(TestContext.CurrentContext.TestDirectory,"DataLoad","Engine","Resources" , file);
         Assert.IsTrue(File.Exists(testFileLocation));
 
         File.Copy(testFileLocation, projDir.ForLoading.FullName + Path.DirectorySeparatorChar + file, true);

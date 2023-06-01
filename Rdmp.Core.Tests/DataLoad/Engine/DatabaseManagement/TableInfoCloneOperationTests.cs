@@ -31,9 +31,9 @@ class TableInfoCloneOperationTests : DatabaseTests
 
         //create a RAW table schema called TableName_Isolation
         var cloner = new TableInfoCloneOperation(config,(TableInfo)ti,LoadBubble.Live,new ThrowImmediatelyDataLoadEventListener());
-        cloner.CloneTable(tbl.Database, tbl.Database,tbl, tbl.GetRuntimeName() + "_copy", true, true, true, ti.PreLoadDiscardedColumns);
+        cloner.CloneTable(tbl.Database, tbl.Database,tbl, $"{tbl.GetRuntimeName()}_copy", true, true, true, ti.PreLoadDiscardedColumns);
              
-        var tbl2 = tbl.Database.ExpectTable(tbl.GetRuntimeName() + "_copy");
+        var tbl2 = tbl.Database.ExpectTable($"{tbl.GetRuntimeName()}_copy");
 
         Assert.IsTrue(tbl2.Exists());
     }

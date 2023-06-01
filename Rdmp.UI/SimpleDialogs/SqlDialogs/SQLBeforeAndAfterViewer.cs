@@ -29,7 +29,7 @@ public partial class SQLBeforeAndAfterViewer : Form
     {
         InitializeComponent();
 
-        bool designMode = (LicenseManager.UsageMode == LicenseUsageMode.Designtime);
+        var designMode = (LicenseManager.UsageMode == LicenseUsageMode.Designtime);
 
         if (designMode) //don't add the QueryEditor if we are in design time (visual studio) because it breaks
             return;
@@ -58,14 +58,14 @@ public partial class SQLBeforeAndAfterViewer : Form
         if (sqlAfter == null)
             sqlAfter = "";
 
-        Diff diff = new Diff();
+        var diff = new Diff();
 
-        foreach (Diff.Item item in diff.DiffText(sqlBefore, sqlAfter))
+        foreach (var item in diff.DiffText(sqlBefore, sqlAfter))
         {
-            for (int i = item.StartA; i < item.StartA+item.deletedA; i++)
+            for (var i = item.StartA; i < item.StartA+item.deletedA; i++)
                 highlighter.HighlightLine(QueryEditorBefore,i,Color.Pink);
                     
-            for (int i = item.StartB; i < item.StartB+item.insertedB; i++)
+            for (var i = item.StartB; i < item.StartB+item.insertedB; i++)
                 highlighter.HighlightLine(QueryEditorAfter, i, Color.LawnGreen);
                 
         }

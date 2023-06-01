@@ -132,7 +132,7 @@ public class AutoCompleteProvider : IAutoCompleteProvider
         if (syntaxHelper == null)
             return;
 
-        foreach (KeyValuePair<string, string> kvp in syntaxHelper.GetSQLFunctionsDictionary())
+        foreach (var kvp in syntaxHelper.GetSQLFunctionsDictionary())
         {
             AddUnlessDuplicate(kvp.Value);
             AddUnlessDuplicateImage(kvp.Value, SQL_IDX);

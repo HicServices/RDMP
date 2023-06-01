@@ -16,7 +16,7 @@ namespace Rdmp.Core.DataViewing;
 class ViewSupportingSqlCollection : PersistableObjectCollection, IViewSQLAndResultsCollection
 {
 
-    public SupportingSQLTable SupportingSQLTable { get => DatabaseObjects.OfType<SupportingSQLTable>().FirstOrDefault(); }
+    public SupportingSQLTable SupportingSQLTable => DatabaseObjects.OfType<SupportingSQLTable>().FirstOrDefault();
 
     public ViewSupportingSqlCollection(SupportingSQLTable supportingSql)
     {

@@ -31,7 +31,7 @@ public partial class RDMPTaskBarUI : UserControl
     public RDMPTaskBarUI()
     {
         InitializeComponent();
-        BackColorProvider provider = new BackColorProvider();
+        var provider = new BackColorProvider();
 
         btnHome.Image = FamFamFamIcons.application_home.ImageToBitmap();
         btnCatalogues.Image = CatalogueIcons.Catalogue.ImageToBitmap();
@@ -134,9 +134,9 @@ public partial class RDMPTaskBarUI : UserControl
         cbx.ComboBox.Items.Add("");
 
         //minimum size that it will be (same width as the combo box)
-        int proposedComboBoxWidth = cbx.Width - xPaddingForComboText;
+        var proposedComboBoxWidth = cbx.Width - xPaddingForComboText;
 
-        foreach (T o in objects)
+        foreach (var o in objects)
         {
             //add dropdown item
             cbx.ComboBox.Items.Add(o);
@@ -158,7 +158,7 @@ public partial class RDMPTaskBarUI : UserControl
 
     private void ToolboxButtonClicked(object sender, EventArgs e)
     {
-        RDMPCollection collection = ButtonToEnum(sender);
+        var collection = ButtonToEnum(sender);
 
         if (_manager.IsVisible(collection))
             _manager.Pop(collection);
@@ -227,7 +227,7 @@ public partial class RDMPTaskBarUI : UserControl
 
     private void AddNewLayout()
     {
-        string xml = _manager.MainForm.GetCurrentLayoutXml();
+        var xml = _manager.MainForm.GetCurrentLayoutXml();
 
         var dialog = new TypeTextOrCancelDialog("Layout Name", "Name", 100, null, false);
         if (dialog.ShowDialog() == DialogResult.OK)
@@ -268,7 +268,7 @@ public partial class RDMPTaskBarUI : UserControl
         var layout = cbxLayouts.SelectedItem as WindowLayout;
         if(layout != null)
         {
-            string xml = _manager.MainForm.GetCurrentLayoutXml();
+            var xml = _manager.MainForm.GetCurrentLayoutXml();
 
             layout.LayoutData = xml;
             layout.SaveToDatabase();
@@ -289,9 +289,9 @@ public partial class RDMPTaskBarUI : UserControl
     {
         btnBack.DropDownItems.Clear();
 
-        int backIndex = 1;
+        var backIndex = 1;
 
-        foreach (INavigation history in _manager.Navigation.GetHistory(16))
+        foreach (var history in _manager.Navigation.GetHistory(16))
         {
             var i = backIndex++;
             btnBack.DropDownItems.Add(history.ToString(),null,(a,b)=>_manager.Navigation.Back(i,true));

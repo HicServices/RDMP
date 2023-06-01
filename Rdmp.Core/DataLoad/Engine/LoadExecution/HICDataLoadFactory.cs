@@ -44,7 +44,8 @@ public class HICDataLoadFactory
         // If we are not supplied any catalogues to load, it is expected that we will load all catalogues associated with the provided ILoadMetadata
         _cataloguesToLoad = LoadMetadata.GetAllCatalogues().ToList();
         if (!_cataloguesToLoad.Any())
-            throw new InvalidOperationException("LoadMetadata " + LoadMetadata.ID + " is not related to any Catalogues, there is nothing to load");
+            throw new InvalidOperationException(
+                $"LoadMetadata {LoadMetadata.ID} is not related to any Catalogues, there is nothing to load");
     }
 
     public IDataLoadExecution Create(IDataLoadEventListener postLoadEventListener)
@@ -53,10 +54,10 @@ public class HICDataLoadFactory
 
         //warn user about disabled tasks
         var processTasks = LoadMetadata.ProcessTasks.ToList();
-        foreach (IProcessTask task in processTasks
+        foreach (var task in processTasks
                      .Where(p => p.IsDisabled))
             postLoadEventListener.OnNotify(this,
-                new NotifyEventArgs(ProgressEventType.Warning, "Found disabled ProcessTask" + task));
+                new NotifyEventArgs(ProgressEventType.Warning, $"Found disabled ProcessTask{task}"));
 
         //Get all the runtime tasks which are not disabled
         var factory = new RuntimeTaskPackager(processTasks.Where(p => !p.IsDisabled), loadArgsDictionary.LoadArgs, _cataloguesToLoad, _repository);

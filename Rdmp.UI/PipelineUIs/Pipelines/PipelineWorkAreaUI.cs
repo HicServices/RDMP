@@ -132,7 +132,7 @@ public partial class PipelineWorkAreaUI : UserControl
     {
         var model = (AdvertisedPipelineComponentTypeUnderContext)e.Model;
             
-        ContextMenuStrip RightClickMenu = new ContextMenuStrip();
+        var RightClickMenu = new ContextMenuStrip();
             
         if (model != null)
         {

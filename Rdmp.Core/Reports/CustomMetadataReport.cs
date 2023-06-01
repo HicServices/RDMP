@@ -96,13 +96,13 @@ public class CustomMetadataReport
 
         //add basic properties
         foreach (var prop in typeof(Catalogue).GetProperties())
-            Replacements.Add("$" + prop.Name, (c) => prop.GetValue(c));
+            Replacements.Add($"${prop.Name}", (c) => prop.GetValue(c));
 
         //add basic properties TableInfo
         foreach (var prop in typeof(TableInfo).GetProperties())
         {
             // if it's not already a property of Catalogue
-            Replacements.TryAdd("$" + prop.Name, (c) => GetTable(c) == null ? null : prop.GetValue(GetTable(c)));
+            Replacements.TryAdd($"${prop.Name}", (c) => GetTable(c) == null ? null : prop.GetValue(GetTable(c)));
         }
 
         AddDQEReplacements();
@@ -111,13 +111,13 @@ public class CustomMetadataReport
 
         //add basic properties CatalogueItem
         foreach (var prop in typeof(CatalogueItem).GetProperties())
-            ReplacementsCatalogueItem.Add("$" + prop.Name, (s) => prop.GetValue(s));
+            ReplacementsCatalogueItem.Add($"${prop.Name}", (s) => prop.GetValue(s));
 
         //add basic properties ColumnInfo
         foreach (var prop in typeof(ColumnInfo).GetProperties())
         {
             // if it's not already a property of CatalogueItem
-            ReplacementsCatalogueItem.TryAdd("$" + prop.Name, (s) => s.ColumnInfo_ID == null ? null : prop.GetValue(s.ColumnInfo));
+            ReplacementsCatalogueItem.TryAdd($"${prop.Name}", (s) => s.ColumnInfo_ID == null ? null : prop.GetValue(s.ColumnInfo));
         }
 
         try
@@ -217,7 +217,7 @@ public class CustomMetadataReport
             return null;
         }
 
-        return ((int)(columnStats.CountDBNull / (double)total * 100)) + "%";
+        return $"{((int)(columnStats.CountDBNull / (double)total * 100))}%";
     }
 
     private Evaluation GetEvaluation(CatalogueItem ci)
@@ -226,7 +226,7 @@ public class CustomMetadataReport
     }
     private Evaluation GetEvaluation(Catalogue c)
     {
-        if (!EvaluationCache.TryGetValue(c, out Evaluation evaluation))
+        if (!EvaluationCache.TryGetValue(c, out var evaluation))
         {
             evaluation = DQERepository?.GetMostRecentEvaluationFor(c);
             EvaluationCache.Add(c, evaluation);
@@ -260,7 +260,7 @@ public class CustomMetadataReport
             
         var templateBody = File.ReadAllLines(template.FullName);
 
-        string outname = DoReplacements(new []{fileNaming},catalogues.First(),null,ElementIteration.NotIterating).Trim();
+        var outname = DoReplacements(new []{fileNaming},catalogues.First(),null,ElementIteration.NotIterating).Trim();
 
         StreamWriter outFile = null;
             
@@ -281,7 +281,7 @@ public class CustomMetadataReport
                         }
                         else
                         {
-                            for (int i=0;i<catalogues.Length;i++)
+                            for (var i=0;i<catalogues.Length;i++)
                             {
                                 var element = 
                                     i == catalogues.Length - 1 ? ElementIteration.LastElement : ElementIteration.RegularElement;
@@ -297,7 +297,7 @@ public class CustomMetadataReport
             }
             else
             {
-                foreach (Catalogue catalogue in catalogues)
+                foreach (var catalogue in catalogues)
                 {
                     var newContents = DoReplacements(templateBody, catalogue,null,ElementIteration.NotIterating);
 
@@ -305,7 +305,7 @@ public class CustomMetadataReport
                         outFile.WriteLine(newContents);
                     else
                     {
-                        string filename = DoReplacements(new[] {fileNaming}, catalogue,null, ElementIteration.NotIterating).Trim();
+                        var filename = DoReplacements(new[] {fileNaming}, catalogue,null, ElementIteration.NotIterating).Trim();
 
                         using (var sw = new StreamWriter(Path.Combine(outputDirectory.FullName,filename)))
                         {
@@ -330,9 +330,9 @@ public class CustomMetadataReport
             yield break;
 
         CatalogueSection currentSection = null;
-        int depth = 0;
+        var depth = 0;
 
-        for(int i=0;i< templateBody.Length ;i++)
+        for(var i=0;i< templateBody.Length ;i++)
         {
             var str = templateBody[i];
 
@@ -428,12 +428,12 @@ public class CustomMetadataReport
     /// <returns></returns>
     private string DoReplacements(string[] strs, Catalogue catalogue, CatalogueSection section, ElementIteration iteration)
     {
-        StringBuilder sb = new StringBuilder();
+        var sb = new StringBuilder();
 
         for (var index = 0; index < strs.Length; index++)
         {
             var str = strs[index];
-            string copy = str;
+            var copy = str;
 
             if (str.Trim().Equals(LoopCatalogueItems, StringComparison.CurrentCultureIgnoreCase))
             {
@@ -476,21 +476,21 @@ public class CustomMetadataReport
     private int DoReplacements(string[] strs, int index, out string result, CatalogueItem[] catalogueItems,CatalogueSection section)
     {
         // The foreach template block as extracted from strs
-        StringBuilder block = new StringBuilder();
+        var block = new StringBuilder();
 
         //the result of printing out the block once for each CatalogueItem item (with replacements)
-        StringBuilder sbResult = new StringBuilder();
+        var sbResult = new StringBuilder();
 
-        int i = index+1;
-        bool blockTerminated = false;
+        var i = index+1;
+        var blockTerminated = false;
 
-        int sectionOffset = section?.LineNumber ??0;
+        var sectionOffset = section?.LineNumber ??0;
 
         //starting on the next line after $foreach until the end of the file
         for (; i < strs.Length; i++)
         {
             var current = strs[i];
-            int lineNumberHuman = i +1+sectionOffset;
+            var lineNumberHuman = i +1+sectionOffset;
 
             if (current.Trim().Equals(EndLoop, StringComparison.CurrentCultureIgnoreCase))
             {
@@ -507,7 +507,7 @@ public class CustomMetadataReport
         if(!blockTerminated)
             throw new CustomMetadataReportException($"Expected {EndLoop} to match $foreach which started on line {index+1+sectionOffset}",index+1+sectionOffset);
 
-        for(int j=0;j< catalogueItems.Length; j++)
+        for(var j=0;j< catalogueItems.Length; j++)
         {
             sbResult.AppendLine(DoReplacements(block.ToString(), catalogueItems[j],
                 j < catalogueItems.Length -1 ? 

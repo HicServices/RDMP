@@ -134,7 +134,7 @@ class DataExportPropertyManager : IDataExportPropertyManager
         var repo = (TableRepository)_repository;
         using (var con = repo.GetConnection())
         {
-            using (DbCommand cmd = DatabaseCommandHelper.GetCommand("SELECT * from [ConfigurationProperties]",
+            using (var cmd = DatabaseCommandHelper.GetCommand("SELECT * from [ConfigurationProperties]",
                        con.Connection, con.Transaction))
             {
                 using (var reader = cmd.ExecuteReader())

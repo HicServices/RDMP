@@ -118,7 +118,7 @@ public class CohortQueryBuilderResult
         ThrowIfAlreadyBuilt();
         IsForContainer = true;
 
-        _log.AppendLine("Starting Build for " + container);
+        _log.AppendLine($"Starting Build for {container}");
         //gather dependencies
         foreach(var cohortSet in ChildProvider.GetAllChildrenRecursively(container).OfType<AggregateConfiguration>().Where(IsEnabled).OrderBy(ac=>ac.Order))
             AddDependency(cohortSet);
@@ -140,7 +140,7 @@ public class CohortQueryBuilderResult
         ThrowIfAlreadyBuilt();
         IsForContainer = false;
 
-        _log.AppendLine("Starting Build for " + configuration);
+        _log.AppendLine($"Starting Build for {configuration}");
         var d = AddDependency(configuration);
             
         LogDependencies();
@@ -169,20 +169,20 @@ public class CohortQueryBuilderResult
         }
         else
         {
-            string uncached = "CacheUsageDecision is " + CacheUsageDecision +
-                              " and the following were not cached:" + string.Join(Environment.NewLine,
-                                  Dependencies.Where(d => d.SqlFullyCached == null));
+            var uncached =
+                $"CacheUsageDecision is {CacheUsageDecision} and the following were not cached:{string.Join(Environment.NewLine, Dependencies.Where(d => d.SqlFullyCached == null))}";
 
             switch (CacheUsageDecision)
             {
                 case CacheUsage.MustUse:
                     throw new QueryBuildingException(
-                        "Could not build final SQL because some queries are not fully cached and " + uncached);
+                        $"Could not build final SQL because some queries are not fully cached and {uncached}");
 
                 case CacheUsage.Opportunistic:
 
                     //The cache and dataset are on the same server so run it
-                    SetTargetServer(DependenciesSingleServer.GetDistinctServer(),"not all dependencies are cached while " + uncached);
+                    SetTargetServer(DependenciesSingleServer.GetDistinctServer(),
+                        $"not all dependencies are cached while {uncached}");
                         
                     CountOfCachedSubQueries = Dependencies.Count(d=>d.SqlFullyCached != null);
                         
@@ -196,7 +196,8 @@ public class CohortQueryBuilderResult
                 case CacheUsage.AllOrNothing:
 
                     //It's not fully cached so we have to run it entirely uncached
-                    SetTargetServer(DependenciesSingleServer.GetDistinctServer(),"not all dependencies are cached while " + uncached);
+                    SetTargetServer(DependenciesSingleServer.GetDistinctServer(),
+                        $"not all dependencies are cached while {uncached}");
 
                     //cannot use any of the caches because it's all or nothing
                     CountOfCachedSubQueries = 0;
@@ -224,7 +225,7 @@ public class CohortQueryBuilderResult
     private string WriteContainers(CohortAggregateContainer container, IQuerySyntaxHelper syntaxHelper,
         Dictionary<CohortQueryBuilderDependency, string> sqlDictionary, int tabs)
     {
-        string sql = "";
+        var sql = "";
             
         //Things we need to output
         var toWriteOut = container.GetOrderedContents().Where(IsEnabled).ToArray();
@@ -236,8 +237,8 @@ public class CohortQueryBuilderResult
             throw new QueryBuildingException($"Container '{container}' is empty, Disable it if you don't want it run'");
         }
 
-        bool firstEntityWritten = false;
-        foreach (IOrderable toWrite in toWriteOut)
+        var firstEntityWritten = false;
+        foreach (var toWrite in toWriteOut)
         {
             if (firstEntityWritten)
                 sql += Environment.NewLine + TabIn(GetSetOperationSql(container.Operation,syntaxHelper.DatabaseType) + Environment.NewLine + Environment.NewLine,tabs);
@@ -335,7 +336,8 @@ public class CohortQueryBuilderResult
         switch (CacheUsageDecision)
         {
             case CacheUsage.MustUse:
-                throw new QueryBuildingException("Could not build final SQL because " + dependency +" is not fully cached and CacheUsageDecision is " + CacheUsageDecision);
+                throw new QueryBuildingException(
+                    $"Could not build final SQL because {dependency} is not fully cached and CacheUsageDecision is {CacheUsageDecision}");
 
             case CacheUsage.Opportunistic:
 
@@ -406,13 +408,13 @@ public class CohortQueryBuilderResult
         {
 
             _log.AppendLine($"Evaluating '{dependency.CohortSet}'");
-            foreach (ITableInfo dependantTable in dependency.CohortSet.Catalogue.GetTableInfoList(false))
+            foreach (var dependantTable in dependency.CohortSet.Catalogue.GetTableInfoList(false))
                 HandleDependency(dependency,false, dependantTable);
                 
             if (dependency.JoinedTo != null)
             {
                 _log.AppendLine($"Evaluating '{dependency.JoinedTo}'");
-                foreach (ITableInfo dependantTable in dependency.JoinedTo.Catalogue.GetTableInfoList(false))
+                foreach (var dependantTable in dependency.JoinedTo.Catalogue.GetTableInfoList(false))
                     HandleDependency(dependency,true,dependantTable);
             }
         }
@@ -434,7 +436,7 @@ public class CohortQueryBuilderResult
                     throw new QueryBuildingException($"Table {dependantTable} is on a different server (or uses different access credentials) from previously seen dependencies and no QueryCache is configured");
                     
                 //there is a cache server, perhaps we can dodge 'dependantTable' by going to cache instead
-                bool canUseCacheForDependantTable =
+                var canUseCacheForDependantTable =
                     (isPatientIndexTable ? dependency.SqlJoinableCached : dependency.SqlFullyCached)
                     != null;
 
@@ -458,7 +460,7 @@ public class CohortQueryBuilderResult
             CacheUsageDecision == CacheUsage.Opportunistic)
         {
             //We can only do opportunistic joins if the Cache and Data server are on the same server
-            bool canCombine = DependenciesSingleServer.AddWouldBePossible(CacheServer);
+            var canCombine = DependenciesSingleServer.AddWouldBePossible(CacheServer);
 
             if(!canCombine)
                 SetCacheUsage(CacheUsage.AllOrNothing,"All datasets are on one server/access credentials while Cache is on a separate one");

@@ -208,7 +208,7 @@ public class ExecuteCommandViewData : ExecuteCommandViewDataBase, IAtomicCommand
 
         }
 
-        return "View " + _viewType.ToString().Replace("_", " ");
+        return $"View {_viewType.ToString().Replace("_", " ")}";
     }
     protected override IViewSQLAndResultsCollection GetCollection()
     {

@@ -41,7 +41,7 @@ public class CatalogueObscureDependencyFinder : IObscureDependencyFinder
     /// <param name="oTableWrapperObject"></param>
     public void ThrowIfDeleteDisallowed(IMapsDirectlyToDatabaseTable oTableWrapperObject)
     {
-        foreach (IObscureDependencyFinder obscureDependencyFinder in OtherDependencyFinders)
+        foreach (var obscureDependencyFinder in OtherDependencyFinders)
             obscureDependencyFinder.ThrowIfDeleteDisallowed(oTableWrapperObject);
     }
 
@@ -51,7 +51,7 @@ public class CatalogueObscureDependencyFinder : IObscureDependencyFinder
     /// <param name="oTableWrapperObject"></param>
     public void HandleCascadeDeletesForDeletedObject(IMapsDirectlyToDatabaseTable oTableWrapperObject)
     {
-        foreach (IObscureDependencyFinder obscureDependencyFinder in OtherDependencyFinders)
+        foreach (var obscureDependencyFinder in OtherDependencyFinders)
             obscureDependencyFinder.HandleCascadeDeletesForDeletedObject(oTableWrapperObject);
 
         //Delete any SQLFilterParameters associated with the parent object (which has just been deleted!)
@@ -69,7 +69,7 @@ public class CatalogueObscureDependencyFinder : IObscureDependencyFinder
     {
         if (OtherDependencyFinders.All(f => f.GetType() != typeof(T)))
         {
-            ObjectConstructor constructor = new ObjectConstructor();
+            var constructor = new ObjectConstructor();
             OtherDependencyFinders.Add((T)constructor.Construct(typeof(T), repositoryLocator));
         }
     }

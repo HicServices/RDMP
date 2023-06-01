@@ -74,7 +74,7 @@ public partial class SqlProcessTaskUI : SqlProcessTaskUI_Design, ISaveableUI
         {
             if (_scintilla == null)
             {
-                ScintillaTextEditorFactory factory = new ScintillaTextEditorFactory();
+                var factory = new ScintillaTextEditorFactory();
                 _scintilla = factory.Create(new RDMPCombineableFactory());
                 groupBox1.Controls.Add(_scintilla);
                 _scintilla.SavePointLeft += ScintillaOnSavePointLeft;
@@ -90,7 +90,7 @@ public partial class SqlProcessTaskUI : SqlProcessTaskUI_Design, ISaveableUI
             }
             catch (Exception e)
             {
-                CommonFunctionality.Fatal("Could not open file " + _processTask.Path,e);
+                CommonFunctionality.Fatal($"Could not open file {_processTask.Path}",e);
             }
         }
         finally
@@ -132,7 +132,7 @@ public partial class SqlProcessTaskUI : SqlProcessTaskUI_Design, ISaveableUI
 
     private void btnBrowse_Click(object sender, EventArgs e)
     {
-        OpenFileDialog ofd = new OpenFileDialog();
+        var ofd = new OpenFileDialog();
         ofd.Filter = "Sql Files|*.sql";
         ofd.CheckFileExists = true;
 

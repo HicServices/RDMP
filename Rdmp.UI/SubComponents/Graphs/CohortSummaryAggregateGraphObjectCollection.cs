@@ -22,12 +22,12 @@ namespace Rdmp.UI.SubComponents.Graphs;
 public class CohortSummaryAggregateGraphObjectCollection:PersistableObjectCollection
 {
     public CohortSummaryAdjustment Adjustment;
-    public AggregateFilter SingleFilterOnly { get { return DatabaseObjects.OfType<AggregateFilter>().SingleOrDefault(); } }
+    public AggregateFilter SingleFilterOnly => DatabaseObjects.OfType<AggregateFilter>().SingleOrDefault();
 
-    public CohortAggregateContainer CohortContainerIfAny { get { return DatabaseObjects[0] as CohortAggregateContainer; } }
-    public AggregateConfiguration CohortIfAny { get { return DatabaseObjects[0] as AggregateConfiguration; } }
+    public CohortAggregateContainer CohortContainerIfAny => DatabaseObjects[0] as CohortAggregateContainer;
+    public AggregateConfiguration CohortIfAny => DatabaseObjects[0] as AggregateConfiguration;
 
-    public AggregateConfiguration Graph { get { return (AggregateConfiguration)DatabaseObjects[1]; } }
+    public AggregateConfiguration Graph => (AggregateConfiguration)DatabaseObjects[1];
 
     /// <summary>
     /// Do not use this constructor, it is used only for deserialization during persistence on form loading after application closing
@@ -45,9 +45,11 @@ public class CohortSummaryAggregateGraphObjectCollection:PersistableObjectCollec
     public CohortSummaryAggregateGraphObjectCollection(AggregateConfiguration cohort, AggregateConfiguration graph,CohortSummaryAdjustment adjustment):this()
     {
         if(!cohort.IsCohortIdentificationAggregate)
-            throw new ArgumentException("Parameter cohort was AggregateConfiguration '" + cohort + "' which is not a Cohort Aggregate (not allowed)","cohort");
+            throw new ArgumentException(
+                $"Parameter cohort was AggregateConfiguration '{cohort}' which is not a Cohort Aggregate (not allowed)","cohort");
         if (graph.IsCohortIdentificationAggregate)
-            throw new ArgumentException("Parameter graph was AggregateConfiguration '" + graph + "' which is a Cohort Aggregate (not allowed)", "graph");
+            throw new ArgumentException(
+                $"Parameter graph was AggregateConfiguration '{graph}' which is a Cohort Aggregate (not allowed)", "graph");
 
         DatabaseObjects.Add(cohort);
         DatabaseObjects.Add(graph);
@@ -62,7 +64,8 @@ public class CohortSummaryAggregateGraphObjectCollection:PersistableObjectCollec
         : this()
     {
         if (graph.IsCohortIdentificationAggregate)
-            throw new ArgumentException("Parameter graph was AggregateConfiguration '" + graph + "' which is a Cohort Aggregate (not allowed)", "graph");
+            throw new ArgumentException(
+                $"Parameter graph was AggregateConfiguration '{graph}' which is a Cohort Aggregate (not allowed)", "graph");
 
         DatabaseObjects.Add(container);
         DatabaseObjects.Add(graph);
@@ -84,7 +87,7 @@ public class CohortSummaryAggregateGraphObjectCollection:PersistableObjectCollec
         CohortSummaryAdjustment a;
             
         if(!CohortSummaryAdjustment.TryParse(s, out a))
-            throw new Exception("Could not parse '" + s + "' into a valid CohortSummaryAdjustment");
+            throw new Exception($"Could not parse '{s}' into a valid CohortSummaryAdjustment");
 
         Adjustment = a;
     }

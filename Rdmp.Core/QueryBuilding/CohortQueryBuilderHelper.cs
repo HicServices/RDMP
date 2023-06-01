@@ -35,15 +35,16 @@ public class CohortQueryBuilderHelper
     /// <returns></returns>
     public CohortQueryBuilderDependencySql GetSQLForAggregate(AggregateConfiguration aggregate, QueryBuilderArgs args)
     {
-        bool isJoinAggregate = aggregate.IsCohortIdentificationAggregate;
+        var isJoinAggregate = aggregate.IsCohortIdentificationAggregate;
 
         //make sure it is a valid configuration
         string reason;
         if (!aggregate.IsAcceptableAsCohortGenerationSource(out reason))
-            throw new QueryBuildingException("Cannot generate a cohort using AggregateConfiguration " + aggregate + " because:" + reason);
+            throw new QueryBuildingException(
+                $"Cannot generate a cohort using AggregateConfiguration {aggregate} because:{reason}");
 
         //get the extraction identifier (method IsAcceptableAsCohortGenerationSource will ensure this linq returns 1 so no need to check again)
-        AggregateDimension extractionIdentifier = aggregate.AggregateDimensions.Single(d => d.IsExtractionIdentifier);
+        var extractionIdentifier = aggregate.AggregateDimensions.Single(d => d.IsExtractionIdentifier);
 
         //create a builder but do it manually, we care about group bys etc or count(*) even 
         AggregateBuilder builder;
@@ -55,16 +56,17 @@ public class CohortQueryBuilderHelper
             string selectList;
 
             if (!isJoinAggregate)
-                selectList = extractionIdentifier.SelectSQL +  (extractionIdentifier.Alias != null ? " " + extractionIdentifier.Alias: "");
+                selectList = extractionIdentifier.SelectSQL +  (extractionIdentifier.Alias != null ? $" {extractionIdentifier.Alias}"
+                    : "");
             else
                 //unless we are also including other columns because this is a patient index joinable inception query
-                selectList = string.Join("," + Environment.NewLine,
-                    aggregate.AggregateDimensions.Select(e => e.SelectSQL + (e.Alias != null ? " " + e.Alias : ""))); //joinable patient index tables have patientIdentifier + 1 or more other columns
+                selectList = string.Join($",{Environment.NewLine}",
+                    aggregate.AggregateDimensions.Select(e => e.SelectSQL + (e.Alias != null ? $" {e.Alias}" : ""))); //joinable patient index tables have patientIdentifier + 1 or more other columns
 
             if (args.OverrideSelectList != null)
                 selectList = args.OverrideSelectList;
 
-            string limitationSQL = args?.OverrideLimitationSQL ?? "distinct";
+            var limitationSQL = args?.OverrideLimitationSQL ?? "distinct";
 
             //select list is either [chi] or [chi],[mycolumn],[myexcitingcol] (in the case of a patient index table)
             builder = new AggregateBuilder(limitationSQL, selectList, aggregate, aggregate.ForcedJoins);
@@ -110,7 +112,7 @@ public class CohortQueryBuilderHelper
         var builderSqlWithoutParameters = builder.SQL;
 
         //get the SQL from the builder (for the current configuration) - without parameters
-        string currentBlock = builderSqlWithoutParameters;
+        var currentBlock = builderSqlWithoutParameters;
 
         var toReturn = new CohortQueryBuilderDependencySql(currentBlock,builder.ParameterManager);
 
@@ -127,11 +129,11 @@ public class CohortQueryBuilderHelper
     public void AddJoinToBuilder(AggregateConfiguration user,IColumn usersExtractionIdentifier,AggregateBuilder builder, QueryBuilderArgs args)
     {
         var joinableTableAlias = args.JoinIfAny.GetJoinTableAlias();
-        string joinDirection = args.JoinIfAny.GetJoinDirectionSQL();
+        var joinDirection = args.JoinIfAny.GetJoinDirectionSQL();
 
         IHasRuntimeName joinOn = null;
 
-        if (args.JoinedTo.Catalogue.IsApiCall(out IPluginCohortCompiler plugin))
+        if (args.JoinedTo.Catalogue.IsApiCall(out var plugin))
         {
             if(plugin == null)
             {

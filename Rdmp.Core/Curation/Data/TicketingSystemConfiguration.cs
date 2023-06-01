@@ -47,8 +47,8 @@ public class TicketingSystemConfiguration : DatabaseEntity, INamed
     /// </summary>
     public bool IsActive
     {
-        get { return _isActive; }
-        set { SetField(ref _isActive, value); }
+        get => _isActive;
+        set => SetField(ref _isActive, value);
     }
 
     /// <summary>
@@ -56,8 +56,8 @@ public class TicketingSystemConfiguration : DatabaseEntity, INamed
     /// </summary>
     public string Url
     {
-        get { return _url; }
-        set { SetField(ref _url, value); }
+        get => _url;
+        set => SetField(ref _url, value);
     }
 
     /// <summary>
@@ -65,8 +65,8 @@ public class TicketingSystemConfiguration : DatabaseEntity, INamed
     /// </summary>
     public string Type
     {
-        get { return _type; }
-        set { SetField(ref _type, value); }
+        get => _type;
+        set => SetField(ref _type, value);
     }
 
     /// <inheritdoc/>
@@ -74,8 +74,8 @@ public class TicketingSystemConfiguration : DatabaseEntity, INamed
     [Unique]
     public string Name
     {
-        get { return _name; }
-        set { SetField(ref _name, value); }
+        get => _name;
+        set => SetField(ref _name, value);
     }
 
     /// <summary>
@@ -83,8 +83,8 @@ public class TicketingSystemConfiguration : DatabaseEntity, INamed
     /// </summary>
     public int? DataAccessCredentials_ID
     {
-        get { return _dataAccessCredentials_ID; }
-        set { SetField(ref _dataAccessCredentials_ID, value); }
+        get => _dataAccessCredentials_ID;
+        set => SetField(ref _dataAccessCredentials_ID, value);
     }
 
     #endregion
@@ -96,12 +96,11 @@ public class TicketingSystemConfiguration : DatabaseEntity, INamed
     /// configured.
     /// </summary>
     [NoMappingToDatabase]
-    public DataAccessCredentials DataAccessCredentials { get
-    {
-        return DataAccessCredentials_ID == null
+    public DataAccessCredentials DataAccessCredentials =>
+        DataAccessCredentials_ID == null
             ? null
             : Repository.GetObjectByID<DataAccessCredentials>((int) DataAccessCredentials_ID);
-    }}
+
     #endregion
 
     public TicketingSystemConfiguration()

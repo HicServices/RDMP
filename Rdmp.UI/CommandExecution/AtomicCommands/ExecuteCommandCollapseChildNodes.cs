@@ -62,7 +62,7 @@ public class ExecuteCommandCollapseChildNodes : BasicUICommandExecution,IAtomicC
             }
 
             //collapse all children
-            foreach (object o in _commonFunctionality.CoreChildProvider.GetAllChildrenRecursively(_rootToCollapseTo))
+            foreach (var o in _commonFunctionality.CoreChildProvider.GetAllChildrenRecursively(_rootToCollapseTo))
                 if (_commonFunctionality.Tree.IsExpanded(o))
                     _commonFunctionality.Tree.Collapse(o);
 

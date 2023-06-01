@@ -47,7 +47,7 @@ public class SqlBulkInsertDestination : IDataFlowDestination<DataTable>, IPipeli
         Table = _dbInfo.Server.GetQuerySyntaxHelper().EnsureWrapped(tableName);
         _table = _dbInfo.ExpectTable(tableName);
         _columnNamesToIgnore = columnNamesToIgnore.ToList();
-        _taskBeingPerformed = "Bulk insert into " + Table + "(server=" + _dbInfo.Server + ",database=" + _dbInfo.GetRuntimeName() + ")";
+        _taskBeingPerformed = $"Bulk insert into {Table}(server={_dbInfo.Server},database={_dbInfo.GetRuntimeName()})";
     }
 
 
@@ -70,18 +70,18 @@ public class SqlBulkInsertDestination : IDataFlowDestination<DataTable>, IPipeli
 
     protected void AssessMissingAndIgnoredColumns(DataTable chunk, IDataLoadEventListener job)
     {
-        DiscoveredColumn[] listColumns = _dbInfo.ExpectTable(Table).DiscoverColumns();
-        bool problemsWithColumnSets = false;
+        var listColumns = _dbInfo.ExpectTable(Table).DiscoverColumns();
+        var problemsWithColumnSets = false;
 
         foreach (DataColumn colInSource in chunk.Columns)
             if (!listColumns.Any(c=>c.GetRuntimeName().Equals(colInSource.ColumnName,StringComparison.CurrentCultureIgnoreCase)))//there is something wicked this way coming, down the pipeline but not in the target table
             {
                 job.OnNotify(this, new NotifyEventArgs(ProgressEventType.Error,
-                    "Column " + colInSource.ColumnName + " appears in pipeline but not destination table (" + Table + ") which is on (Database=" + _dbInfo.GetRuntimeName() + ",Server=" + _dbInfo.Server + ")"));
+                    $"Column {colInSource.ColumnName} appears in pipeline but not destination table ({Table}) which is on (Database={_dbInfo.GetRuntimeName()},Server={_dbInfo.Server})"));
 
                 problemsWithColumnSets = true;
             }
-        foreach (DiscoveredColumn columnInDestination in listColumns)
+        foreach (var columnInDestination in listColumns)
             if (columnInDestination.GetRuntimeName().Equals(SpecialFieldNames.DataLoadRunID) ||
                 columnInDestination.GetRuntimeName().Equals(SpecialFieldNames.ValidFrom))
                 //its fine if validFrom/DataLoadRunID columns are missing
@@ -89,11 +89,11 @@ public class SqlBulkInsertDestination : IDataFlowDestination<DataTable>, IPipeli
             else
             if (!chunk.Columns.Contains(columnInDestination.GetRuntimeName()))//its not fine if there are other columns missing (at the very least we should warn the user.
             {
-                bool isBigProblem = !SpecialFieldNames.IsHicPrefixed(columnInDestination);
+                var isBigProblem = !SpecialFieldNames.IsHicPrefixed(columnInDestination);
 
                 job.OnNotify(this, 
                     new NotifyEventArgs(isBigProblem?ProgressEventType.Error:ProgressEventType.Warning, //hic_ columns could be ok if missing so only warning, otherwise go error
-                        "Column " + columnInDestination.GetRuntimeName() + " appears in destination table ("+Table+") but is not in the pipeline (will probably be left as NULL)"));
+                        $"Column {columnInDestination.GetRuntimeName()} appears in destination table ({Table}) but is not in the pipeline (will probably be left as NULL)"));
 
                 if (isBigProblem)
                     problemsWithColumnSets = true;
@@ -123,7 +123,7 @@ public class SqlBulkInsertDestination : IDataFlowDestination<DataTable>, IPipeli
         insert.Timeout = Timeout;
 
         job.OnNotify(this, new NotifyEventArgs(ProgressEventType.Information,
-            "SqlBulkCopy to " + _dbInfo.Server + ", " + _dbInfo.GetRuntimeName() + ".." + Table + " initialised for " + dt.Columns.Count + " columns, with a timeout of " + Timeout + ".  First chunk received had rowcount of " + dt.Rows.Count));
+            $"SqlBulkCopy to {_dbInfo.Server}, {_dbInfo.GetRuntimeName()}..{Table} initialised for {dt.Columns.Count} columns, with a timeout of {Timeout}.  First chunk received had rowcount of {dt.Rows.Count}"));
 
         return insert;
     }
@@ -157,14 +157,16 @@ public class SqlBulkInsertDestination : IDataFlowDestination<DataTable>, IPipeli
                 _copy.Dispose();
 
             if (_recordsWritten == 0)
-                listener.OnNotify(this, new NotifyEventArgs(ProgressEventType.Warning, "Warning, 0 records written by SqlBulkInsertDestination (" + _dbInfo.Server + "," + _dbInfo.GetRuntimeName()+ ")"));
+                listener.OnNotify(this, new NotifyEventArgs(ProgressEventType.Warning,
+                    $"Warning, 0 records written by SqlBulkInsertDestination ({_dbInfo.Server},{_dbInfo.GetRuntimeName()})"));
         }
         catch (Exception e)
         {
             listener.OnNotify(this, new NotifyEventArgs(ProgressEventType.Warning, "Could not close connection to server", e));
         }
 
-        listener.OnNotify(this, new NotifyEventArgs(ProgressEventType.Information, "SqlBulkCopy closed after writing " + _recordsWritten + " rows to the server.  Total time spent writing to server:" + _timer.Elapsed));
+        listener.OnNotify(this, new NotifyEventArgs(ProgressEventType.Information,
+            $"SqlBulkCopy closed after writing {_recordsWritten} rows to the server.  Total time spent writing to server:{_timer.Elapsed}"));
     }
 
     public DataTable ProcessPipelineData( DataTable toProcess, IDataLoadEventListener listener, GracefulCancellationToken cancellationToken)

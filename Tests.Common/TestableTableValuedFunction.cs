@@ -66,7 +66,7 @@ END
             UsefulStuff.ExecuteBatchNonQuery(CreateFunctionSQL, con);
         }
         var tbl = databaseICanCreateRandomTablesIn.ExpectTableValuedFunction("MyAwesomeFunction");
-        TableValuedFunctionImporter importer = new TableValuedFunctionImporter(catalogueRepository, tbl);
+        var importer = new TableValuedFunctionImporter(catalogueRepository, tbl);
         importer.DoImport(out TableInfoCreated, out ColumnInfosCreated);
 
         importer.ParametersCreated[0].Value = "5";
@@ -79,7 +79,7 @@ END
         importer.ParametersCreated[2].SaveToDatabase();
 
 
-        ForwardEngineerCatalogue forwardEngineerCatalogue = new ForwardEngineerCatalogue(TableInfoCreated, ColumnInfosCreated);
+        var forwardEngineerCatalogue = new ForwardEngineerCatalogue(TableInfoCreated, ColumnInfosCreated);
         forwardEngineerCatalogue.ExecuteForwardEngineering(out Cata, out CataItems, out ExtractionInformations);
     }
 

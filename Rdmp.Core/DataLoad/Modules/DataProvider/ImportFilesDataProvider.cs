@@ -46,9 +46,9 @@ public class ImportFilesDataProvider : IPluginDataProvider
             notifier.OnCheckPerformed(new CheckEventArgs("No FilePattern has been specified, this should be a pattern that matches files in the remote folder you want to copy files out of e.g. *.*", CheckResult.Fail));
 
         if (new DirectoryInfo(DirectoryPath).Exists)
-            notifier.OnCheckPerformed(new CheckEventArgs("Path " + DirectoryPath + " was found", CheckResult.Success));
+            notifier.OnCheckPerformed(new CheckEventArgs($"Path {DirectoryPath} was found", CheckResult.Success));
         else
-            notifier.OnCheckPerformed(new CheckEventArgs("Path " + DirectoryPath + " was not found",CheckResult.Fail));
+            notifier.OnCheckPerformed(new CheckEventArgs($"Path {DirectoryPath} was not found",CheckResult.Fail));
     }
 
     public void Initialize(ILoadDirectory directory, DiscoveredDatabase dbInfo)
@@ -60,10 +60,11 @@ public class ImportFilesDataProvider : IPluginDataProvider
     {
         _files = new DirectoryInfo(DirectoryPath).GetFiles(FilePattern);
 
-        foreach (FileInfo f in _files)
+        foreach (var f in _files)
         {
             var to = Path.Combine(job.LoadDirectory.ForLoading.FullName, f.Name);
-            job.OnNotify(this,new NotifyEventArgs(ProgressEventType.Information, "Copying file " + f.FullName + " to directory " + to));
+            job.OnNotify(this,new NotifyEventArgs(ProgressEventType.Information,
+                $"Copying file {f.FullName} to directory {to}"));
             f.CopyTo(to,true);
         }
 
@@ -74,9 +75,10 @@ public class ImportFilesDataProvider : IPluginDataProvider
     {
         if (exitCode == ExitCodeType.Success)
             if (DeleteFilesOnsuccessfulLoad)
-                foreach (FileInfo f in _files)
+                foreach (var f in _files)
                 {
-                    postLoadEventsListener.OnNotify(this, new NotifyEventArgs(ProgressEventType.Information, "About to delete " + f.FullName));
+                    postLoadEventsListener.OnNotify(this, new NotifyEventArgs(ProgressEventType.Information,
+                        $"About to delete {f.FullName}"));
                     f.Delete();
                 }
     }

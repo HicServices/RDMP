@@ -167,7 +167,7 @@ public partial class UserSettingsFileUI : Form
 
     private void AddTooltip(Control c, string propertyName)
     {
-        string helpText = _activator.CommentStore.GetDocumentationIfExists($"{ nameof(UserSettings)}.{propertyName}", false);
+        var helpText = _activator.CommentStore.GetDocumentationIfExists($"{ nameof(UserSettings)}.{propertyName}", false);
         if(string.IsNullOrWhiteSpace(helpText))
         {
             return;
@@ -222,7 +222,7 @@ public partial class UserSettingsFileUI : Form
 
     private void tbCreateDatabaseTimeout_TextChanged(object sender, EventArgs e)
     {
-        if(int.TryParse(tbCreateDatabaseTimeout.Text,out int result))
+        if(int.TryParse(tbCreateDatabaseTimeout.Text,out var result))
         {
             UserSettings.CreateDatabaseTimeout = result;
         }
@@ -230,14 +230,14 @@ public partial class UserSettingsFileUI : Form
     private void tbArchiveTriggerTimeout_TextChanged(object sender, EventArgs e)
     {
 
-        if (int.TryParse(tbArchiveTriggerTimeout.Text, out int result))
+        if (int.TryParse(tbArchiveTriggerTimeout.Text, out var result))
         {
             UserSettings.ArchiveTriggerTimeout = result;
         }
     }
     private void tbTooltipAppearDelay_TextChanged(object sender, EventArgs e)
     {
-        if (int.TryParse(tbTooltipAppearDelay.Text, out int result))
+        if (int.TryParse(tbTooltipAppearDelay.Text, out var result))
         {
             UserSettings.TooltipAppearDelay = result;
         }

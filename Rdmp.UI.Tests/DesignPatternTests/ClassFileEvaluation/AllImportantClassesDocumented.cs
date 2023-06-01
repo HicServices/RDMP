@@ -52,7 +52,7 @@ public class AllImportantClassesDocumented
                 
             var text = File.ReadAllText(f);
 
-            int startAt = text.IndexOf("public class");
+            var startAt = text.IndexOf("public class");
             if(startAt == -1)
                 startAt = text.IndexOf("public interface");
 
@@ -63,7 +63,7 @@ public class AllImportantClassesDocumented
                 var mNamespace = Regex.Match(beforeDeclaration, "namespace (.*)");
 
                 if(!mNamespace.Success)
-                    Assert.Fail("No namespace found in class file " + f);//no namespace in class!
+                    Assert.Fail($"No namespace found in class file {f}");//no namespace in class!
                     
                 var nameSpace= mNamespace.Groups[1].Value;
 
@@ -117,7 +117,7 @@ public class AllImportantClassesDocumented
                             continue;
                     }
 
-                    int idxLastSlash = f.LastIndexOf("\\");
+                    var idxLastSlash = f.LastIndexOf("\\");
 
                     if(idxLastSlash != -1)
                         problems.Add(String.Format("FAIL UNDOCUMENTED CLASS:{0} ({1})", 
@@ -125,7 +125,7 @@ public class AllImportantClassesDocumented
                             f.Substring(0, idxLastSlash))
                         );
                     else
-                        problems.Add("FAIL UNDOCUMENTED CLASS:" + f);
+                        problems.Add($"FAIL UNDOCUMENTED CLASS:{f}");
                 }
                 else
                 {
@@ -136,11 +136,11 @@ public class AllImportantClassesDocumented
             }
         }
             
-        foreach (string fail in problems)
+        foreach (var fail in problems)
             Console.WriteLine(fail);
 
-        Console.WriteLine("Total Documented Classes:" + commentedCount);
-        Console.WriteLine("Total Lines of Classes Documentation:" + commentLineCount);
+        Console.WriteLine($"Total Documented Classes:{commentedCount}");
+        Console.WriteLine($"Total Lines of Classes Documentation:{commentLineCount}");
             
         Assert.AreEqual(0, problems.Count);
     }

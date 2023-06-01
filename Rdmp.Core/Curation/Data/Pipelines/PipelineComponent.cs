@@ -29,27 +29,27 @@ public class PipelineComponent : DatabaseEntity, IPipelineComponent
     /// <inheritdoc/>
     public string Name
     {
-        get { return _name; }
-        set { SetField(ref  _name, value); }
+        get => _name;
+        set => SetField(ref  _name, value);
     }
 
     /// <inheritdoc/>
     public int Order
     {
-        get { return _order; }
-        set { SetField(ref  _order, value); }
+        get => _order;
+        set => SetField(ref  _order, value);
     }
     /// <inheritdoc/>
     public int Pipeline_ID
     {
-        get { return _pipelineID; }
-        set { SetField(ref  _pipelineID, value); }
+        get => _pipelineID;
+        set => SetField(ref  _pipelineID, value);
     }
     /// <inheritdoc/>
     public string Class
     {
-        get { return _class; }
-        set { SetField(ref  _class, value); }
+        get => _class;
+        set => SetField(ref  _class, value);
     }
 
     #endregion
@@ -58,15 +58,11 @@ public class PipelineComponent : DatabaseEntity, IPipelineComponent
 
     /// <inheritdoc/>
     [NoMappingToDatabase]
-    public IEnumerable<IPipelineComponentArgument> PipelineComponentArguments {
-        get { return Repository.GetAllObjectsWithParent<PipelineComponentArgument>(this); }
-    }
+    public IEnumerable<IPipelineComponentArgument> PipelineComponentArguments => Repository.GetAllObjectsWithParent<PipelineComponentArgument>(this);
 
     /// <inheritdoc cref="Pipeline_ID"/>
     [NoMappingToDatabase]
-    public IHasDependencies Pipeline {
-        get { return Repository.GetObjectByID<Pipeline>(Pipeline_ID); }
-    }
+    public IHasDependencies Pipeline => Repository.GetObjectByID<Pipeline>(Pipeline_ID);
 
     #endregion
 
@@ -95,7 +91,7 @@ public class PipelineComponent : DatabaseEntity, IPipelineComponent
     {
         repository.InsertAndHydrate(this,new Dictionary<string, object>
         {
-            {"Name", name ?? "Run " + componentType.Name},
+            {"Name", name ?? $"Run {componentType.Name}" },
             {"Pipeline_ID", parent.ID},
             {"Class", componentType.ToString()},
             {"Order", order}
@@ -239,6 +235,6 @@ public class PipelineComponent : DatabaseEntity, IPipelineComponent
         if (IsGenericType(componentType, typeof(IDataFlowComponent<>)))
             return PipelineComponentRole.Middle;
 
-        throw new ArgumentException("Object must be an IDataFlowComponent<> but was " + componentType);
+        throw new ArgumentException($"Object must be an IDataFlowComponent<> but was {componentType}");
     }
 }

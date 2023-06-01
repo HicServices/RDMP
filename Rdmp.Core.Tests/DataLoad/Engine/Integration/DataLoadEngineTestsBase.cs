@@ -47,7 +47,7 @@ class DataLoadEngineTestsBase : DatabaseTests
         var pt = new ProcessTask(CatalogueRepository, lmd, LoadStage.Mounting);
         pt.Path = typeof(AnySeparatorFileAttacher).FullName;
         pt.ProcessTaskType = ProcessTaskType.Attacher;
-        pt.Name = "Load " + ti.GetRuntimeName();
+        pt.Name = $"Load {ti.GetRuntimeName()}";
         pt.SaveToDatabase();
 
         pt.CreateArgumentsForClassIfNotExists<AnySeparatorFileAttacher>();

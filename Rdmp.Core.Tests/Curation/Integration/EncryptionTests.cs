@@ -22,10 +22,10 @@ public class EncryptionTests : DatabaseTests
 
         var encrypter = CatalogueRepository.EncryptionManager.GetEncrypter();
 
-        string toEncrypt = "Amagad";
-        string encrytpedBinaryString = encrypter.Encrypt(toEncrypt);
+        var toEncrypt = "Amagad";
+        var encrytpedBinaryString = encrypter.Encrypt(toEncrypt);
 
-        Console.WriteLine("Encrypted password was:" +encrytpedBinaryString);
+        Console.WriteLine($"Encrypted password was:{encrytpedBinaryString}");
         Assert.AreNotEqual(toEncrypt, encrytpedBinaryString);
         Assert.AreEqual(toEncrypt,encrypter.Decrypt(encrytpedBinaryString));
     }
@@ -36,10 +36,10 @@ public class EncryptionTests : DatabaseTests
 
         var encrypter = CatalogueRepository.EncryptionManager.GetEncrypter();
 
-        string toEncrypt = "Amagad";
-        string encrytpedBinaryString = encrypter.Encrypt(toEncrypt);
+        var toEncrypt = "Amagad";
+        var encrytpedBinaryString = encrypter.Encrypt(toEncrypt);
 
-        Console.WriteLine("Encrypted password was:" + encrytpedBinaryString);
+        Console.WriteLine($"Encrypted password was:{encrytpedBinaryString}");
             
         Assert.True(encrypter.IsStringEncrypted(encrytpedBinaryString));
         Assert.False(encrypter.IsStringEncrypted(toEncrypt));
@@ -53,7 +53,7 @@ public class EncryptionTests : DatabaseTests
         foreach (var c in CatalogueRepository.GetAllObjects<DataAccessCredentials>().Where(c => c.Name.Equals("frankieFran")))
             c.DeleteInDatabase();
 
-        DataAccessCredentials creds = new DataAccessCredentials(CatalogueRepository, "frankieFran");
+        var creds = new DataAccessCredentials(CatalogueRepository, "frankieFran");
         try
         {
             //as soon as you set a password it should be encrypted by the credentials class in memory
@@ -83,7 +83,7 @@ public class EncryptionTests : DatabaseTests
         foreach (var c in CatalogueRepository.GetAllObjects<DataAccessCredentials>().Where(c => c.Name.Equals("frankieFran")))
             c.DeleteInDatabase();
 
-        DataAccessCredentials creds = new DataAccessCredentials(CatalogueRepository, "frankieFran");
+        var creds = new DataAccessCredentials(CatalogueRepository, "frankieFran");
         try
         {
             //as soon as you set a password it should be encrypted by the credentials class in memory
@@ -105,7 +105,7 @@ public class EncryptionTests : DatabaseTests
             }
 
             //get a new copy out of the database
-            DataAccessCredentials newCopy = CatalogueRepository.GetObjectByID<DataAccessCredentials>(creds.ID);
+            var newCopy = CatalogueRepository.GetObjectByID<DataAccessCredentials>(creds.ID);
             Assert.AreEqual(creds.Password,newCopy.Password);//passwords should match
             Assert.AreNotEqual("fish",creds.Password);//neither should be fish
             Assert.AreNotEqual("fish", newCopy.Password);
@@ -131,7 +131,7 @@ public class EncryptionTests : DatabaseTests
         foreach (var c in CatalogueRepository.GetAllObjects<DataAccessCredentials>().Where(c => c.Name.Equals("frankieFran")))
             c.DeleteInDatabase();
 
-        DataAccessCredentials creds = new DataAccessCredentials(CatalogueRepository, "frankieFran");
+        var creds = new DataAccessCredentials(CatalogueRepository, "frankieFran");
         try
         {
             //as soon as you set a password it should be encrypted by the credentials class in memory
@@ -153,7 +153,7 @@ public class EncryptionTests : DatabaseTests
             }
 
             //get a new copy out of the database
-            DataAccessCredentials newCopy = CatalogueRepository.GetObjectByID<DataAccessCredentials>(creds.ID);
+            var newCopy = CatalogueRepository.GetObjectByID<DataAccessCredentials>(creds.ID);
             Assert.AreEqual(creds.Password, newCopy.Password);//passwords should match
             Assert.AreNotEqual(freakyPassword, creds.Password);//neither should be fish
             Assert.AreNotEqual(freakyPassword, newCopy.Password);
@@ -178,7 +178,7 @@ public class EncryptionTests : DatabaseTests
             c.DeleteInDatabase();
 
         //create a new credentials
-        DataAccessCredentials creds = new DataAccessCredentials(CatalogueRepository, "frankieFran");
+        var creds = new DataAccessCredentials(CatalogueRepository, "frankieFran");
         try
         {
             //update the database to an unencrypted password (like would be the case before software patch)
@@ -191,7 +191,7 @@ public class EncryptionTests : DatabaseTests
                     
             }
 
-            DataAccessCredentials newCopy = CatalogueRepository.GetObjectByID<DataAccessCredentials>(creds.ID);
+            var newCopy = CatalogueRepository.GetObjectByID<DataAccessCredentials>(creds.ID);
                 
             Assert.AreEqual("fish",newCopy.GetDecryptedPassword());
             Assert.AreNotEqual("fish", newCopy.Password);
@@ -208,8 +208,8 @@ public class EncryptionTests : DatabaseTests
         if(RepositoryLocator.CatalogueRepository.EncryptionManager is PasswordEncryptionKeyLocation em && !string.IsNullOrWhiteSpace(em.GetKeyFileLocation()))
             Assert.Inconclusive("Could not run test because there is already an encryption key set up.  Likely one that handles very long passwords");
 
-        string password = "a";
-        for (int i = 0; i < 200; i++)
+        var password = "a";
+        for (var i = 0; i < 200; i++)
             password += "a";
 
         var ex = Assert.Throws<InvalidOperationException>(() => TestFreakyPasswordValues(password));

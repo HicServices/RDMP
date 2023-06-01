@@ -93,7 +93,7 @@ public abstract class PluginCohortCompiler : IPluginCohortCompiler
     protected void SubmitPatientIndexTable(DataTable results, AggregateConfiguration aggregate, CachedAggregateConfigurationResultsManager cache, bool knownTypes)
     {
         // The data table has to go into the database so we need to know max length of strings, decimal precision etc
-        Dictionary<string, Guesser> guessers = new Dictionary<string, Guesser>();
+        var guessers = new Dictionary<string, Guesser>();
 
         foreach(DataColumn col in results.Columns)
         {

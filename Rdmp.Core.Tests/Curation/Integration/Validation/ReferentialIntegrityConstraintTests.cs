@@ -40,7 +40,7 @@ public class ReferentialIntegrityConstraintTests :DatabaseTests
             server.GetCommand("INSERT INTO ReferentialIntegrityConstraintTests (MyValue) VALUES (5)", con).ExecuteNonQuery();
         }
 
-        TableInfoImporter importer = new TableInfoImporter(CatalogueRepository, tbl);
+        var importer = new TableInfoImporter(CatalogueRepository, tbl);
         importer.DoImport(out _tableInfo,out _columnInfo);
 
         _constraint = new ReferentialIntegrityConstraint(CatalogueRepository);
@@ -56,7 +56,7 @@ public class ReferentialIntegrityConstraintTests :DatabaseTests
     public void NormalLogic(object value, bool expectFailure)
     {
         _constraint.InvertLogic = false;
-        ValidationFailure failure = _constraint.Validate(value, null, null);
+        var failure = _constraint.Validate(value, null, null);
 
         //if it did not fail validation and we expected failure
         if(failure == null && expectFailure)
@@ -79,7 +79,7 @@ public class ReferentialIntegrityConstraintTests :DatabaseTests
     public void InvertedLogic(object value, bool expectFailure)
     {
         _constraint.InvertLogic = true;
-        ValidationFailure failure = _constraint.Validate(value, null, null);
+        var failure = _constraint.Validate(value, null, null);
 
         //if it did not fail validation and we expected failure
         if (failure == null && expectFailure)

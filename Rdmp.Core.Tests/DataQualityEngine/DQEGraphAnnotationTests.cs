@@ -18,14 +18,14 @@ public class DQEGraphAnnotationTests:DatabaseTests
     [Test]
     public void TestCreatingOne()
     {
-        Catalogue c = new Catalogue(CatalogueRepository,"FrankyMicky");
+        var c = new Catalogue(CatalogueRepository,"FrankyMicky");
 
             
         try
         {
 
             var dqeRepo = new DQERepository(CatalogueRepository);
-            Evaluation evaluation = new Evaluation(dqeRepo, c);
+            var evaluation = new Evaluation(dqeRepo, c);
             
             var annotation = new DQEGraphAnnotation(dqeRepo,1, 2, 3, 4, "Fishesfly", evaluation,DQEGraphType.TimePeriodicityGraph,"ALL");
                 

@@ -85,11 +85,11 @@ public partial class PermissionWindowUI : PermissionWindowUI_Design, ISaveableUI
             var parts = periodString.Split(new[] {"-"}, StringSplitOptions.RemoveEmptyEntries);
             TimeSpan start;
             if (!TimeSpan.TryParse(parts[0], out start))
-                throw new Exception("Could not parse " + parts[0] + " as a TimeSpan");
+                throw new Exception($"Could not parse {parts[0]} as a TimeSpan");
 
             TimeSpan end;
             if (!TimeSpan.TryParse(parts[1], out end))
-                throw new Exception("Could not parse " + parts[1] + " as a TimeSpan");
+                throw new Exception($"Could not parse {parts[1]} as a TimeSpan");
 
             periodList.Add(new PermissionWindowPeriod(dayOfWeek, start, end));
         }

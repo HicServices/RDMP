@@ -41,8 +41,8 @@ public class RemoteRDMP : DatabaseEntity, INamed, IEncryptedPasswordHost
     /// </summary>
     public string URL
     {
-        get { return _uRL; }
-        set { SetField(ref _uRL, value); }
+        get => _uRL;
+        set => SetField(ref _uRL, value);
     }
 
     /// <inheritdoc/>
@@ -50,8 +50,8 @@ public class RemoteRDMP : DatabaseEntity, INamed, IEncryptedPasswordHost
     [Unique]
     public string Name
     {
-        get { return _name; }
-        set { SetField(ref _name, value); }
+        get => _name;
+        set => SetField(ref _name, value);
     }
 
     /// <summary>
@@ -59,14 +59,14 @@ public class RemoteRDMP : DatabaseEntity, INamed, IEncryptedPasswordHost
     /// </summary>
     public string Username
     {
-        get { return _username; }
-        set { SetField(ref _username, value); }
+        get => _username;
+        set => SetField(ref _username, value);
     }
         
     /// <inheritdoc/>
     public string Password
     {
-        get { return _encryptedPasswordHost.Password; }
+        get => _encryptedPasswordHost.Password;
         set
         {
             // if we are being deserialized (using blank constructor)
@@ -143,7 +143,7 @@ public class RemoteRDMP : DatabaseEntity, INamed, IEncryptedPasswordHost
         if (isarray)
             baseUri.Query = "isarray=true";
 
-        baseUri.Path += "/api/" + typeof(T).Name;
+        baseUri.Path += $"/api/{typeof(T).Name}";
             
         return baseUri.ToString();
     }

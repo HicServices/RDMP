@@ -51,8 +51,8 @@ class GovernanceManager : IGovernanceManager
                 {
                     while (r.Read())
                     {
-                        int gp = (int)r["GovernancePeriod_ID"];
-                        int cata = (int)r["Catalogue_ID"];
+                        var gp = (int)r["GovernancePeriod_ID"];
+                        var cata = (int)r["Catalogue_ID"];
 
                         if (!toReturn.ContainsKey(gp))
                             toReturn.Add(gp, new HashSet<int>());
@@ -69,6 +69,7 @@ class GovernanceManager : IGovernanceManager
 
     public IEnumerable<ICatalogue> GetAllGovernedCatalogues(GovernancePeriod governancePeriod)
     {
-        return _catalogueRepository.SelectAll<Catalogue>(@"SELECT Catalogue_ID FROM GovernancePeriod_Catalogue where GovernancePeriod_ID=" + governancePeriod.ID,"Catalogue_ID");
+        return _catalogueRepository.SelectAll<Catalogue>(
+            $@"SELECT Catalogue_ID FROM GovernancePeriod_Catalogue where GovernancePeriod_ID={governancePeriod.ID}","Catalogue_ID");
     }
 }

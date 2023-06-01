@@ -101,7 +101,7 @@ public abstract class RDMPSingleDatabaseObjectControl<T> : RDMPUserControl, IRDM
 
         if (databaseObject is IMightBeReadOnly ro)
         {
-            if (ro.ShouldBeReadOnly(out string reason))
+            if (ro.ShouldBeReadOnly(out var reason))
             {
                 _readonlyIndicator.Text = reason;
                 this.Controls.Add(this._readonlyIndicator);
@@ -230,7 +230,7 @@ public abstract class RDMPSingleDatabaseObjectControl<T> : RDMPUserControl, IRDM
                 return;
             }
 
-            DateTime dateTime = DateTime.Parse(tb.Text);
+            var dateTime = DateTime.Parse(tb.Text);
             action(dateTime);
 
             tb.ForeColor = Color.Black;
@@ -258,7 +258,7 @@ public abstract class RDMPSingleDatabaseObjectControl<T> : RDMPUserControl, IRDM
                 return;
             }
 
-            Uri u = new Uri(tb.Text);
+            var u = new Uri(tb.Text);
             action(u);
             tb.ForeColor = Color.Black;
 

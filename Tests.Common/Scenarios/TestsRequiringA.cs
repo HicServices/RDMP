@@ -46,7 +46,7 @@ public abstract class TestsRequiringA : FromToDatabaseTests, IDatabaseColumnRequ
         where T : IDataGenerator
     {
         var f = new DataGeneratorFactory();
-        T instance = f.Create<T>(r);
+        var instance = f.Create<T>(r);
 
         var dt = instance.GetDataTable(people, rows);
 

@@ -57,15 +57,15 @@ public class MigrationColumnSet
         FieldsToDiff = new List<DiscoveredColumn>();
         FieldsToUpdate = new List<DiscoveredColumn>();
 
-        foreach (DiscoveredColumn pk in PrimaryKeys)
+        foreach (var pk in PrimaryKeys)
             if(!toCols.Any(f=>f.GetRuntimeName().Equals(pk.GetRuntimeName(),StringComparison.CurrentCultureIgnoreCase)))
-                throw new MissingFieldException("Column " + pk + " is missing from either the destination table");
+                throw new MissingFieldException($"Column {pk} is missing from either the destination table");
 
         if(!PrimaryKeys.Any())
-            throw new Exception("There are no primary keys declared in table " + from);
+            throw new Exception($"There are no primary keys declared in table {from}");
             
         //figure out things to migrate and whether they matter to diffing
-        foreach (DiscoveredColumn field in fromCols)
+        foreach (var field in fromCols)
         {
             if (
                 field.GetRuntimeName().Equals(SpecialFieldNames.DataLoadRunID,StringComparison.CurrentCultureIgnoreCase) ||
@@ -73,7 +73,7 @@ public class MigrationColumnSet
                 continue;
 
             if (!toCols.Any(c=>c.GetRuntimeName().Equals(field.GetRuntimeName(),StringComparison.CurrentCultureIgnoreCase)))
-                throw new MissingFieldException("Field " + field + " is missing from destination table");
+                throw new MissingFieldException($"Field {field} is missing from destination table");
 
             migrationFieldProcessor.AssignFieldsForProcessing(field, FieldsToDiff, FieldsToUpdate);
         }

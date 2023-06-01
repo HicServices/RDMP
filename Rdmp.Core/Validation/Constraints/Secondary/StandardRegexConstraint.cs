@@ -43,7 +43,7 @@ public class StandardRegexConstraint : SecondaryConstraint
     [HideOnValidationUI]
     public int StandardRegexID
     {
-        get { return _standardRegexID; }
+        get => _standardRegexID;
         set
         {
             _standardRegexID = value;
@@ -59,7 +59,7 @@ public class StandardRegexConstraint : SecondaryConstraint
     [XmlIgnore]
     public StandardRegex CatalogueStandardRegex
     {
-        get { return _standardRegex; }
+        get => _standardRegex;
         set
         {
             _standardRegex = value;
@@ -88,7 +88,8 @@ public class StandardRegexConstraint : SecondaryConstraint
     public override string GetHumanReadableDescriptionOfValidation()
     {
         if (CatalogueStandardRegex != null)
-            return "Checks that the value conforms to the agency specific StandardRegex concept '" + CatalogueStandardRegex.ConceptName + "' defined in the Catalogue";
+            return
+                $"Checks that the value conforms to the agency specific StandardRegex concept '{CatalogueStandardRegex.ConceptName}' defined in the Catalogue";
 
         return "Checks that values match the supplied agency specific StandardRegex defined in the Catalogue for core concepts (e.g. Gender)";
     }
@@ -104,7 +105,8 @@ public class StandardRegexConstraint : SecondaryConstraint
         if (_regex.IsMatch(value.ToString()))
             return null;
 
-        return new ValidationFailure("Value " + value + " did not match pattern for StandardRegex concept '" + CatalogueStandardRegex.ConceptName + "'", this);
+        return new ValidationFailure(
+            $"Value {value} did not match pattern for StandardRegex concept '{CatalogueStandardRegex.ConceptName}'", this);
             
     }
 

@@ -34,7 +34,7 @@ public class DilutionOperationFactory
             throw new ArgumentNullException("operation");
 
         if(!typeof(IDilutionOperation).IsAssignableFrom(operation))
-            throw new ArgumentException("Requested operation Type " + operation + " did was not an IDilutionOperation");
+            throw new ArgumentException($"Requested operation Type {operation} did was not an IDilutionOperation");
 
         var instance = _mef.CreateA<IDilutionOperation>(operation.FullName);
         instance.ColumnToDilute = _targetColumn;

@@ -39,15 +39,15 @@ public abstract class ConcreteColumn : DatabaseEntity, IColumn,IOrderable,ICompa
     /// </summary>
     public int Order
     {
-        get { return _order; }
-        set { SetField(ref _order, value); }
+        get => _order;
+        set => SetField(ref _order, value);
     }
 
     /// <inheritdoc/>
     [Sql]
     public string SelectSQL
     {
-        get { return _selectSql; }
+        get => _selectSql;
         set
         {
             //never allow annoying whitespace on this field
@@ -61,29 +61,29 @@ public abstract class ConcreteColumn : DatabaseEntity, IColumn,IOrderable,ICompa
     /// <inheritdoc/>
     public string Alias
     {
-        get { return _alias; }
-        set { SetField(ref _alias , value);}
+        get => _alias;
+        set => SetField(ref _alias , value);
     }
 
     /// <inheritdoc/>
     public bool HashOnDataRelease
     {
-        get { return _hashOnDataRelease; }
-        set { SetField(ref _hashOnDataRelease , value);}
+        get => _hashOnDataRelease;
+        set => SetField(ref _hashOnDataRelease , value);
     }
 
     /// <inheritdoc/>
     public bool IsExtractionIdentifier
     {
-        get { return _isExtractionIdentifier; }
-        set { SetField(ref _isExtractionIdentifier , value); }
+        get => _isExtractionIdentifier;
+        set => SetField(ref _isExtractionIdentifier , value);
     }
 
     /// <inheritdoc/>
     public bool IsPrimaryKey
     {
-        get { return _isPrimaryKey; }
-        set { SetField(ref _isPrimaryKey , value);}
+        get => _isPrimaryKey;
+        set => SetField(ref _isPrimaryKey , value);
     }
 
     #endregion
@@ -111,7 +111,7 @@ public abstract class ConcreteColumn : DatabaseEntity, IColumn,IOrderable,ICompa
     /// <inheritdoc/>
     public string GetRuntimeName()
     {
-        var helper = ColumnInfo == null ? new MicrosoftQuerySyntaxHelper(): ColumnInfo.GetQuerySyntaxHelper();
+        var helper = ColumnInfo == null ? MicrosoftQuerySyntaxHelper.Instance: ColumnInfo.GetQuerySyntaxHelper();
         if (!String.IsNullOrWhiteSpace(Alias))
             return helper.GetRuntimeName(Alias);//.GetRuntimeName(); RDMPQuerySyntaxHelper.GetRuntimeName(this);
 

@@ -69,12 +69,12 @@ public class ExecuteCommandSetExtendedProperty : BasicCommandExecution, IAtomicC
         base.Execute();
 
         var cataRepo = BasicActivator.RepositoryLocator.CatalogueRepository;
-        string newValue = Value;
+        var newValue = Value;
                         
         foreach(var o in SetOn)
         {
             var props = cataRepo.GetExtendedProperties(PropertyName, o).ToArray();
-            string oldValue = props.FirstOrDefault()?.Value;
+            var oldValue = props.FirstOrDefault()?.Value;
 
             if (PromptForValue)
             {

@@ -98,25 +98,28 @@ public class FTPDownloader : IPluginDataProvider
         _password = String.IsNullOrWhiteSpace(FTPServer.Password) ? "guest" : FTPServer.GetDecryptedPassword();
 
         if(string.IsNullOrWhiteSpace(_host))
-            throw new NullReferenceException("FTPServer is not set up correctly it must have Server property filled in" + FTPServer);
+            throw new NullReferenceException(
+                $"FTPServer is not set up correctly it must have Server property filled in{FTPServer}");
     }
 
     private ExitCodeType DownloadFilesOnFTP(ILoadDirectory destination, IDataLoadEventListener listener)
     {
-        string[] files = GetFileList();
+        var files = GetFileList();
 
-        listener.OnNotify(this, new NotifyEventArgs(ProgressEventType.Information, files.Aggregate("Identified the following files on the FTP server:", (s, f) => f + ",").TrimEnd(',')));
+        listener.OnNotify(this, new NotifyEventArgs(ProgressEventType.Information, files.Aggregate("Identified the following files on the FTP server:", (s, f) =>
+            $"{f},").TrimEnd(',')));
             
-        bool forLoadingContainedCachedFiles = false;
+        var forLoadingContainedCachedFiles = false;
 
-        foreach (string file in files)
+        foreach (var file in files)
         {
             var action = GetSkipActionForFile(file, destination);
 
-            listener.OnNotify(this,new NotifyEventArgs(ProgressEventType.Information, "File " + file + " was evaluated as " + action));
+            listener.OnNotify(this,new NotifyEventArgs(ProgressEventType.Information,
+                $"File {file} was evaluated as {action}"));
             if(action == SkipReason.DoNotSkip)
             {
-                listener.OnNotify(this, new NotifyEventArgs(ProgressEventType.Information, "About to download "+file));
+                listener.OnNotify(this, new NotifyEventArgs(ProgressEventType.Information, $"About to download {file}"));
                 Download(file, destination, listener);
             }
 
@@ -170,7 +173,7 @@ public class FTPDownloader : IPluginDataProvider
         
     protected virtual string[] GetFileList()
     {
-        StringBuilder result = new StringBuilder();
+        var result = new StringBuilder();
         WebResponse response = null;
         StreamReader reader = null;
         try
@@ -181,9 +184,9 @@ public class FTPDownloader : IPluginDataProvider
 
 
             if (!string.IsNullOrWhiteSpace(RemoteDirectory))
-                uri = "ftp://" + _host + "/" + RemoteDirectory;
+                uri = $"ftp://{_host}/{RemoteDirectory}";
             else
-                uri = "ftp://" + _host;
+                uri = $"ftp://{_host}";
 
 #pragma warning disable SYSLIB0014 // Type or member is obsolete
             reqFTP = (FtpWebRequest)FtpWebRequest.Create(new Uri(uri));
@@ -204,7 +207,7 @@ public class FTPDownloader : IPluginDataProvider
             response = reqFTP.GetResponse();
 
             reader = new StreamReader(response.GetResponseStream());
-            string line = reader.ReadLine();
+            var line = reader.ReadLine();
             while (line != null)
             {
                 result.Append(line);
@@ -228,19 +231,19 @@ public class FTPDownloader : IPluginDataProvider
     protected virtual void Download(string file, ILoadDirectory destination,IDataLoadEventListener job)
     {
 
-        Stopwatch s = new Stopwatch();
+        var s = new Stopwatch();
         s.Start();
 
         string uri;
         if (!string.IsNullOrWhiteSpace(RemoteDirectory))
-            uri = "ftp://" + _host + "/" + RemoteDirectory + "/" + file;
+            uri = $"ftp://{_host}/{RemoteDirectory}/{file}";
         else
-            uri = "ftp://" + _host + "/" + file;
+            uri = $"ftp://{_host}/{file}";
 
         if (_useSSL)
-            uri = "s" + uri;
+            uri = $"s{uri}";
 
-        Uri serverUri = new Uri(uri);
+        var serverUri = new Uri(uri);
         if (serverUri.Scheme != Uri.UriSchemeFtp)
         {
             return;
@@ -259,16 +262,16 @@ public class FTPDownloader : IPluginDataProvider
         reqFTP.EnableSsl = _useSSL;
         reqFTP.Timeout = TimeoutInSeconds*1000;
 
-        FtpWebResponse response = (FtpWebResponse)reqFTP.GetResponse();
-        Stream responseStream = response.GetResponseStream();
-        string destinationFileName = Path.Combine(destination.ForLoading.FullName, file);
+        var response = (FtpWebResponse)reqFTP.GetResponse();
+        var responseStream = response.GetResponseStream();
+        var destinationFileName = Path.Combine(destination.ForLoading.FullName, file);
             
-        using (FileStream writeStream = new FileStream(destinationFileName, FileMode.Create))
+        using (var writeStream = new FileStream(destinationFileName, FileMode.Create))
         {
-            int Length = 2048;
-            Byte[] buffer = new Byte[Length];
-            int bytesRead = responseStream.Read(buffer, 0, Length);
-            int totalBytesReadSoFar = bytesRead;
+            var Length = 2048;
+            var buffer = new Byte[Length];
+            var bytesRead = responseStream.Read(buffer, 0, Length);
+            var totalBytesReadSoFar = bytesRead;
 
             while (bytesRead > 0)
             {
@@ -294,7 +297,7 @@ public class FTPDownloader : IPluginDataProvider
 
         if (exitCode == ExitCodeType.Success && DeleteFilesOffFTPServerAfterSuccesfulDataLoad)
         {
-            foreach (string file in _filesRetrieved)
+            foreach (var file in _filesRetrieved)
             {
                 FtpWebRequest reqFTP;
 #pragma warning disable SYSLIB0014 // Type or member is obsolete
@@ -308,12 +311,14 @@ public class FTPDownloader : IPluginDataProvider
                 reqFTP.UsePassive = true;
                 reqFTP.EnableSsl = _useSSL;
 
-                FtpWebResponse response = (FtpWebResponse)reqFTP.GetResponse();
+                var response = (FtpWebResponse)reqFTP.GetResponse();
 
                 if(response.StatusCode != FtpStatusCode.FileActionOK)
-                    postLoadEventListener.OnNotify(this, new NotifyEventArgs(ProgressEventType.Warning, "Attempt to delete file at URI " + file + " resulted in response with StatusCode = " + response.StatusCode));
+                    postLoadEventListener.OnNotify(this, new NotifyEventArgs(ProgressEventType.Warning,
+                        $"Attempt to delete file at URI {file} resulted in response with StatusCode = {response.StatusCode}"));
                 else
-                    postLoadEventListener.OnNotify(this, new NotifyEventArgs(ProgressEventType.Information, "Deleted FTP file at URI " + file + " status code was " + response.StatusCode));
+                    postLoadEventListener.OnNotify(this, new NotifyEventArgs(ProgressEventType.Information,
+                        $"Deleted FTP file at URI {file} status code was {response.StatusCode}"));
 
                 response.Close();
             }

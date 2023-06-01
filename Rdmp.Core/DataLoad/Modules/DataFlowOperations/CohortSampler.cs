@@ -71,7 +71,7 @@ public class CohortSampler : IPluginDataFlowComponent<DataTable>, IPipelineRequi
             throw new Exception($"CohortSampler was unable to find a column called '{expectedFieldName}' in the data passed in.  This is the expected private identifier column name of the cohort you are committing.");
 
         // get all the unique values
-        HashSet<object> uniques = new HashSet<object>();
+        var uniques = new HashSet<object>();
 
         foreach(DataRow row in toProcess.Rows)
         {
@@ -86,7 +86,7 @@ public class CohortSampler : IPluginDataFlowComponent<DataTable>, IPipelineRequi
         _firstBatch = false;
 
 
-        Random r = new Random(_project.ProjectNumber.Value);
+        var r = new Random(_project.ProjectNumber.Value);
 
         // first order the values e.g. alphabetically so that even if the input is in a different order our
         // seeded random picks the same values.  Se test TestCohortSampler_Repeatability_OrderIrrelevant
@@ -101,7 +101,7 @@ public class CohortSampler : IPluginDataFlowComponent<DataTable>, IPipelineRequi
             throw new Exception($"Cohort only contains {chosen.Count} unique identifiers.  This is less than the requested sample size of {SampleSize} and {nameof(FailIfNotEnoughIdentifiers)} is true");
         }
 
-        DataTable dtToReturn = new DataTable();
+        var dtToReturn = new DataTable();
         dtToReturn.Columns.Add(expectedFieldName);
 
         foreach(var val in chosen)

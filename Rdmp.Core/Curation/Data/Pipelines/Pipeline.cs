@@ -31,28 +31,28 @@ public class Pipeline : DatabaseEntity, IPipeline,IHasDependencies
     [Unique]
     public string Name
     {
-        get { return _name; }
-        set { SetField(ref  _name, value); }
+        get => _name;
+        set => SetField(ref  _name, value);
     }
 
     /// <inheritdoc/>
     public string Description
     {
-        get { return _description; }
-        set { SetField(ref  _description, value); }
+        get => _description;
+        set => SetField(ref  _description, value);
     }
 
     /// <inheritdoc/>
     public int? DestinationPipelineComponent_ID
     {
-        get { return _destinationPipelineComponentID; }
-        set { SetField(ref  _destinationPipelineComponentID, value); }
+        get => _destinationPipelineComponentID;
+        set => SetField(ref  _destinationPipelineComponentID, value);
     }
     /// <inheritdoc/>
     public int? SourcePipelineComponent_ID
     {
-        get { return _sourcePipelineComponentID; }
-        set { SetField(ref  _sourcePipelineComponentID, value); }
+        get => _sourcePipelineComponentID;
+        set => SetField(ref  _sourcePipelineComponentID, value);
     }
 
     #endregion
@@ -60,10 +60,7 @@ public class Pipeline : DatabaseEntity, IPipeline,IHasDependencies
     #region Relationships
     /// <inheritdoc/>
     [NoMappingToDatabase]
-    public IList<IPipelineComponent> PipelineComponents { get
-    {
-        return _knownPipelineComponents.Value;
-    }}
+    public IList<IPipelineComponent> PipelineComponents => _knownPipelineComponents.Value;
 
     /// <inheritdoc/>
     [NoMappingToDatabase]
@@ -102,7 +99,7 @@ public class Pipeline : DatabaseEntity, IPipeline,IHasDependencies
     {
         repository.InsertAndHydrate(this, new Dictionary<string, object>
         {
-            {"Name", name ?? "NewPipeline " + Guid.NewGuid()}
+            {"Name", name ?? $"NewPipeline {Guid.NewGuid()}" }
         });
             
         ClearAllInjections();
@@ -113,7 +110,7 @@ public class Pipeline : DatabaseEntity, IPipeline,IHasDependencies
     {
         Name = r["Name"].ToString();
 
-        object o=  r["DestinationPipelineComponent_ID"];
+        var o=  r["DestinationPipelineComponent_ID"];
         if (o == DBNull.Value)
             DestinationPipelineComponent_ID = null;
         else
@@ -143,7 +140,7 @@ public class Pipeline : DatabaseEntity, IPipeline,IHasDependencies
     /// <returns></returns>
     public Pipeline Clone()
     {
-        string name = GetUniqueCloneName();
+        var name = GetUniqueCloneName();
 
         var clonePipe = new Pipeline((ICatalogueRepository)Repository,name);
         clonePipe.Description = Description;
@@ -163,7 +160,7 @@ public class Pipeline : DatabaseEntity, IPipeline,IHasDependencies
 
         clonePipe.SaveToDatabase();
 
-        foreach (IPipelineComponent component in PipelineComponents)
+        foreach (var component in PipelineComponents)
         {
             //if the component is one of the ones we already cloned
             if (Equals(originalSource, component) || Equals(originalDestination, component))
@@ -180,8 +177,8 @@ public class Pipeline : DatabaseEntity, IPipeline,IHasDependencies
     {
         var otherPipelines = CatalogueRepository.GetAllObjects<Pipeline>();
 
-        string proposedName = $"{Name} (Clone)";
-        int suffix = 1;
+        var proposedName = $"{Name} (Clone)";
+        var suffix = 1;
 
         while(otherPipelines.Any(p=>proposedName.Equals(p.Name,StringComparison.CurrentCultureIgnoreCase)))
         {

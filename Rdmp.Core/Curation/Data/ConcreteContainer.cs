@@ -23,8 +23,8 @@ public abstract class ConcreteContainer:DatabaseEntity, IContainer
     /// <inheritdoc/>
     public FilterContainerOperation Operation
     {
-        get { return _operation; }
-        set { SetField(ref  _operation, value); }
+        get => _operation;
+        set => SetField(ref  _operation, value);
     }
 
     public ConcreteContainer()
@@ -78,7 +78,8 @@ public abstract class ConcreteContainer:DatabaseEntity, IContainer
             if (filter.FilterContainer_ID == ID)
                 return; //It's already a child of us
             else
-                throw new NotSupportedException("Filter " + filter + " is already a child of nother container (ID=" + filter.FilterContainer_ID + ")");
+                throw new NotSupportedException(
+                    $"Filter {filter} is already a child of nother container (ID={filter.FilterContainer_ID})");
 
         _manager.AddChild(this, filter);
     }
@@ -95,7 +96,7 @@ public abstract class ConcreteContainer:DatabaseEntity, IContainer
         var children = GetAllFiltersIncludingInSubContainersRecursively();
 
         //then delete any children it has itself
-        foreach (IContainer subContainer in this.GetAllSubContainersRecursively())
+        foreach (var subContainer in this.GetAllSubContainersRecursively())
             if(subContainer.Exists())
                 subContainer.DeleteInDatabase();
 
@@ -134,14 +135,14 @@ public abstract class ConcreteContainer:DatabaseEntity, IContainer
         
     private List<IFilter> GetAllFiltersIncludingInSubContainersRecursively(IContainer container)
     {
-        List<IFilter> toReturn = new List<IFilter>();
+        var toReturn = new List<IFilter>();
 
         toReturn.AddRange(container.GetFilters());
 
-        IContainer[] subs = container.GetSubContainers();
+        var subs = container.GetSubContainers();
 
         if (subs != null)
-            foreach (IContainer sub in subs)
+            foreach (var sub in subs)
                 toReturn.AddRange(GetAllFiltersIncludingInSubContainersRecursively(sub));
 
         return toReturn;
@@ -157,12 +158,12 @@ public abstract class ConcreteContainer:DatabaseEntity, IContainer
 
     private List<IContainer> GetAllSubContainersRecursively(IContainer current)
     {
-        List<IContainer> toReturn = new List<IContainer>();
+        var toReturn = new List<IContainer>();
 
         var currentSubs = current.GetSubContainers();
         toReturn.AddRange(currentSubs);
 
-        foreach (IContainer sub in currentSubs)
+        foreach (var sub in currentSubs)
             toReturn.AddRange(GetAllSubContainersRecursively(sub));
 
         return toReturn;

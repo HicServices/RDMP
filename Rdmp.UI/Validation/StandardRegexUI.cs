@@ -65,12 +65,14 @@ public partial class StandardRegexUI : StandardRegexUI_Design, ISaveableUI
         else
         if (Regex.IsMatch(tbTesting.Text, _standardRegex.Regex))
         {
-            lblResultOfTest.Text = "The text '" + tbTesting.Text + "' matches the Regex pattern '" + _standardRegex.Regex + "' meaning that the value will pass validation and not be flagged as a validation failure";
+            lblResultOfTest.Text =
+                $"The text '{tbTesting.Text}' matches the Regex pattern '{_standardRegex.Regex}' meaning that the value will pass validation and not be flagged as a validation failure";
             lblResultOfTest.ForeColor = Color.Green;
         }
         else
         {
-            lblResultOfTest.Text = "The text '" + tbTesting.Text + "' failed to match Regex pattern '" + _standardRegex.Regex + "' meaning that the value will fail validation and will be flagged as a validation failure";
+            lblResultOfTest.Text =
+                $"The text '{tbTesting.Text}' failed to match Regex pattern '{_standardRegex.Regex}' meaning that the value will fail validation and will be flagged as a validation failure";
             lblResultOfTest.ForeColor = Color.Red;
         }
     }

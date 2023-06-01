@@ -97,7 +97,7 @@ public class ExecuteCommandShow : BasicCommandExecution, IAtomicCommand
             new IMapsDirectlyToDatabaseTable[]{activator.RepositoryLocator.GetObjectByID(typeToFetch,foreignKey.Value) } :
             Array.Empty<IMapsDirectlyToDatabaseTable>();
 
-        OverrideCommandName = typeToFetch.Name + "(s)";
+        OverrideCommandName = $"{typeToFetch.Name}(s)";
 
         Weight = 50.3f;
     }
@@ -107,7 +107,7 @@ public class ExecuteCommandShow : BasicCommandExecution, IAtomicCommand
         if (!string.IsNullOrWhiteSpace(OverrideCommandName))
             return base.GetCommandName();
 
-        return UseIconAndTypeName && _objectType != null ? "Show " + _objectType.Name + "(s)": base.GetCommandName();
+        return UseIconAndTypeName && _objectType != null ? $"Show {_objectType.Name}(s)" : base.GetCommandName();
     }
 
     public override void Execute()

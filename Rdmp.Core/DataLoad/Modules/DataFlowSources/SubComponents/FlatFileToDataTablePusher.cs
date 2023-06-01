@@ -13,6 +13,7 @@ using System.Linq;
 using CsvHelper;
 using Rdmp.Core.DataFlowPipeline.Requirements;
 using FAnsi.Extensions;
+using Rdmp.Core.ReusableLibraryCode;
 using Rdmp.Core.ReusableLibraryCode.Progress;
 using TypeGuesser;
 using TypeGuesser.Deciders;
@@ -76,7 +77,7 @@ public class FlatFileToDataTablePusher
         if (lineToPush.Cells.Length == 0 || lineToPush.Cells.All(h => h.IsBasicallyNull()))
             return 0;
 
-        int headerCount = _headers.CountNotNull;
+        var headerCount = _headers.CountNotNull;
             
         //if the number of not empty headers doesn't match the headers in the data table
         if (dt.Columns.Count != headerCount)
@@ -87,16 +88,16 @@ public class FlatFileToDataTablePusher
                 _haveComplainedAboutColumnMismatch = true;
             }
 
-        Dictionary<string, object> rowValues = new Dictionary<string, object>();
+        var rowValues = new Dictionary<string, object>();
 
         if (lineToPush.Cells.Length < headerCount)
             if (!DealWithTooFewCellsOnCurrentLine(reader, lineToPush, listener, eventHandlers))
                 return 0;
 
-        bool haveIncremented_bufferOverrunsWhereColumnValueWasBlank = false;
+        var haveIncremented_bufferOverrunsWhereColumnValueWasBlank = false;
 
 
-        for (int i = 0; i < lineToPush.Cells.Length; i++)
+        for (var i = 0; i < lineToPush.Cells.Length; i++)
         {
             //about to do a buffer overrun
             if (i >= _headers.Length)
@@ -108,11 +109,11 @@ public class FlatFileToDataTablePusher
                         haveIncremented_bufferOverrunsWhereColumnValueWasBlank = true;
                     }
 
-                    continue; //do not bother buffer overruning with null whitespace stuff
+                    continue; //do not bother buffer overrunning with null whitespace stuff
                 }
                 else
                 {
-                    string errorMessage = string.Format("Column mismatch on line {0} of file '{1}', it has too many columns (expected {2} columns but line had  {3})",
+                    var errorMessage = string.Format("Column mismatch on line {0} of file '{1}', it has too many columns (expected {2} columns but line had  {3})",
                         reader.Context.Parser.RawRow,
                         dt.TableName, 
                         _headers.Length,
@@ -144,7 +145,7 @@ public class FlatFileToDataTablePusher
                 rowValues.Add(_headers[i], DBNull.Value);
             else
             {
-                object hackedValue = _hackValuesFunc(lineToPush[i]);
+                var hackedValue = _hackValuesFunc(lineToPush[i]);
 
                 if (hackedValue is string)
                     hackedValue = ((string)hackedValue).Trim();
@@ -166,8 +167,8 @@ public class FlatFileToDataTablePusher
 
         if(!BadLines.Contains(reader.Context.Parser.RawRow))
         {
-            DataRow currentRow = dt.Rows.Add();
-            foreach (KeyValuePair<string, object> kvp in rowValues)
+            var currentRow = dt.Rows.Add();
+            foreach (var kvp in rowValues)
                 currentRow[kvp.Key] = kvp.Value;
                 
             return 1;
@@ -192,7 +193,7 @@ public class FlatFileToDataTablePusher
         //We want to try to fix the problem by reading more data
 
         //Create a composite row
-        List<string> newCells = new List<string>(lineToPush.Cells);
+        var newCells = new List<string>(lineToPush.Cells);
             
         //track what we are Reading incase it doesn't work
         var allPeekedLines = new List<FlatFileLine>();
@@ -263,15 +264,15 @@ public class FlatFileToDataTablePusher
 
     public DataTable StronglyTypeTable(DataTable workingTable, ExplicitTypingCollection explicitTypingCollection)
     {
-        Dictionary<int, IDecideTypesForStrings> deciders = new Dictionary<int, IDecideTypesForStrings>();
+        var deciders = new Dictionary<int, IDecideTypesForStrings>();
         var factory = new TypeDeciderFactory(_culture);
             
         if(!string.IsNullOrWhiteSpace(_explicitDateTimeFormat))
             factory.Settings.ExplicitDateFormats = new []{ _explicitDateTimeFormat};
 
-        DataTable dtCloned = workingTable.Clone();
+        var dtCloned = workingTable.Clone();
 
-        bool typeChangeNeeded = false;
+        var typeChangeNeeded = false;
 
         foreach (DataColumn col in workingTable.Columns)
         {
@@ -320,7 +321,7 @@ public class FlatFileToDataTablePusher
         PeekedRecord = allPeekedLines.Last();
 
         //but throw away everything else we read
-        foreach (FlatFileLine line in allPeekedLines.Take(allPeekedLines.Count() - 1))
+        foreach (var line in allPeekedLines.Take(allPeekedLines.Count() - 1))
             eventHandlers.BadDataFound(line);
     }
 
@@ -329,7 +330,7 @@ public class FlatFileToDataTablePusher
         //the current line is bad
         eventHandlers.BadDataFound(lineToPush);
 
-        foreach (FlatFileLine line in allPeekedLines)
+        foreach (var line in allPeekedLines)
             eventHandlers.BadDataFound(line);
     }
 }

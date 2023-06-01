@@ -35,13 +35,13 @@ public class RemoveDuplicates :IPluginDataFlowComponent<DataTable>
     {
         sw.Start();
             
-        DataTable toReturn = toProcess.Clone();
+        var toReturn = toProcess.Clone();
 
         //now sort rows
         foreach (DataRow row in toProcess.Rows)
         {
             totalRecordsProcessed++;
-            int hashOfItems = GetHashCode(row.ItemArray);
+            var hashOfItems = GetHashCode(row.ItemArray);
 
             if (unqiueHashesSeen.ContainsKey(hashOfItems))
             {
@@ -104,7 +104,7 @@ public class RemoveDuplicates :IPluginDataFlowComponent<DataTable>
         {
             unchecked
             {
-                int hash = 17;
+                var hash = 17;
 
                 // get hash code for all items in array
                 foreach (var item in array)

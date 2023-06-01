@@ -75,7 +75,7 @@ public partial class ViewSQLAndResultsWithDataGridUI : RDMPUserControl, IObjectC
         lblHelp.Visible = !UserSettings.AutoRunSqlQueries;
 
 
-        Guid splitterGuid = new Guid("f48582bd-2698-423a-bb86-5e91b91129bb");
+        var splitterGuid = new Guid("f48582bd-2698-423a-bb86-5e91b91129bb");
 
         var distance = UserSettings.GetSplitterDistance(splitterGuid);
 
@@ -128,7 +128,7 @@ public partial class ViewSQLAndResultsWithDataGridUI : RDMPUserControl, IObjectC
             var syntax = _collection.GetQuerySyntaxHelper();
 
             // Create the SQL editor for that language
-            ScintillaTextEditorFactory factory = new ScintillaTextEditorFactory();
+            var factory = new ScintillaTextEditorFactory();
             _scintilla = factory.Create(null, SyntaxLanguage.SQL, syntax);
             splitContainer1.Panel1.Controls.Add(_scintilla);
             _scintilla.TextChanged += _scintilla_TextChanged;
@@ -148,7 +148,7 @@ public partial class ViewSQLAndResultsWithDataGridUI : RDMPUserControl, IObjectC
         foreach (var c in _timeoutControls.GetControls())
             CommonFunctionality.Add(c);
 
-        foreach (DatabaseEntity d in _collection.GetToolStripObjects())
+        foreach (var d in _collection.GetToolStripObjects())
             CommonFunctionality.AddToMenu(new ExecuteCommandShow(activator, d, 0, true));
             
         CommonFunctionality.Add(new ToolStripSeparator());
@@ -176,7 +176,7 @@ public partial class ViewSQLAndResultsWithDataGridUI : RDMPUserControl, IObjectC
             _server = DataAccessPortal.GetInstance()
                 .ExpectServer(_collection.GetDataAccessPoint(), DataAccessContext.InternalDataProcessing);
 
-            string sql = _collection.GetSql();
+            var sql = _collection.GetSql();
             _originalSql = sql;
             //update the editor to show the user the SQL
             _scintilla.Text = sql;
@@ -240,7 +240,7 @@ public partial class ViewSQLAndResultsWithDataGridUI : RDMPUserControl, IObjectC
         _task = Task.Factory.StartNew(() =>
         {
 
-            int timeout = 1000;
+            var timeout = 1000;
             while (!IsHandleCreated && timeout > 0)
             {
                 timeout -= 10;
@@ -250,16 +250,16 @@ public partial class ViewSQLAndResultsWithDataGridUI : RDMPUserControl, IObjectC
             try
             {
                 //then execute the command
-                using (DbConnection con = server.GetConnection())
+                using (var con = server.GetConnection())
                 {
                     con.Open();
 
                     _cmd = server.GetCommand(sql, con);
                     _cmd.CommandTimeout = _timeoutControls.Timeout;
 
-                    DbDataAdapter a = server.GetDataAdapter(_cmd);
+                    var a = server.GetDataAdapter(_cmd);
                         
-                    DataTable dt = new DataTable();
+                    var dt = new DataTable();
 
                     a.Fill(dt);
 
@@ -290,7 +290,7 @@ public partial class ViewSQLAndResultsWithDataGridUI : RDMPUserControl, IObjectC
         var targetNames = table.Columns.Cast<DataColumn>()
             .Where(col => col.DataType.Equals(typeof(byte[])))
             .Select(col => col.ColumnName).ToList();
-        foreach (string colName in targetNames)
+        foreach (var colName in targetNames)
         {
             // add new column and put it where the old column was
             var tmpName = "new";
@@ -300,8 +300,7 @@ public partial class ViewSQLAndResultsWithDataGridUI : RDMPUserControl, IObjectC
             // fill in values in new column for every row
             foreach (DataRow row in table.Rows)
             {
-                row[tmpName] = "0x" + string.Join("",
-                    ((byte[])row[colName]).Select(b => b.ToString("X2")).ToArray());
+                row[tmpName] = $"0x{string.Join("", ((byte[])row[colName]).Select(b => b.ToString("X2")).ToArray())}";
             }
 
             // cleanup

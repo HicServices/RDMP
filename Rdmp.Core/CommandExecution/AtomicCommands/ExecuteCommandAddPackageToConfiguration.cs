@@ -42,7 +42,7 @@ public class ExecuteCommandAddPackageToConfiguration : BasicCommandExecution, IA
     {
         base.Execute();
 
-        if(SelectOne(_packages,out ExtractableDataSetPackage package))
+        if(SelectOne(_packages,out var package))
             new ExecuteCommandAddDatasetsToConfiguration(BasicActivator, new ExtractableDataSetCombineable(package), _extractionConfiguration).Execute();
     }
 

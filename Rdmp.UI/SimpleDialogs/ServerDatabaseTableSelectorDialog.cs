@@ -34,10 +34,12 @@ public partial class ServerDatabaseTableSelectorDialog : Form
         serverDatabaseTableSelector1.SetItemActivator(activator);
     }
 
-    public DiscoveredDatabase SelectedDatabase { get { return serverDatabaseTableSelector1.GetDiscoveredDatabase(); } }
-    public DiscoveredTable SelectedTable { get { return serverDatabaseTableSelector1.GetDiscoveredTable(); }}
+    public DiscoveredDatabase SelectedDatabase => serverDatabaseTableSelector1.GetDiscoveredDatabase();
+    public DiscoveredTable SelectedTable => serverDatabaseTableSelector1.GetDiscoveredTable();
 
-    public bool AllowTableValuedFunctionSelection { get { return serverDatabaseTableSelector1.AllowTableValuedFunctionSelection;} set { serverDatabaseTableSelector1.AllowTableValuedFunctionSelection = value;}}
+    public bool AllowTableValuedFunctionSelection { get => serverDatabaseTableSelector1.AllowTableValuedFunctionSelection;
+        set => serverDatabaseTableSelector1.AllowTableValuedFunctionSelection = value;
+    }
 
     private void btnOk_Click(object sender, EventArgs e)
     {

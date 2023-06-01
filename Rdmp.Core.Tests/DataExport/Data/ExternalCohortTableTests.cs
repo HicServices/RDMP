@@ -24,7 +24,7 @@ class ExternalCohortTableTests:UnitTests
     [Test]
     public void Create_ExternalCohortTable_Manually()
     {
-        MemoryDataExportRepository repository = new MemoryDataExportRepository();
+        var repository = new MemoryDataExportRepository();
         var table = new ExternalCohortTable(repository, "My Cohort Database", DatabaseType.MicrosoftSQLServer);
         table.Database = "mydb";
         table.PrivateIdentifierField = "chi";

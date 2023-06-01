@@ -289,15 +289,15 @@ class DocumentationCrossExaminationTest
 
         //are they in the codebase tokens?
 
-        List<string> problems = new List<string>();
+        var problems = new List<string>();
 
-        HashSet<string> codeTokens = new HashSet<string>();
-        Dictionary<string, HashSet<string>> fileCommentTokens = new Dictionary<string, HashSet<string>>();
+        var codeTokens = new HashSet<string>();
+        var fileCommentTokens = new Dictionary<string, HashSet<string>>();
 
         //find all comments in class files
-        foreach (string file in csFilesFound)
+        foreach (var file in csFilesFound)
         {
-            bool isDesignerFile = file.Contains(".Designer.cs");
+            var isDesignerFile = file.Contains(".Designer.cs");
                 
             if(file.Contains("CodeTutorials"))
                 continue;
@@ -306,7 +306,7 @@ class DocumentationCrossExaminationTest
             if(file.Contains("packages"))
                 continue;
 
-            foreach (string line in File.ReadAllLines(file))
+            foreach (var line in File.ReadAllLines(file))
             {
                 //if it is a comment
                 if (MatchComments.IsMatch(line))
@@ -331,7 +331,7 @@ class DocumentationCrossExaminationTest
         }
 
         //find all comments in .md tutorials
-        foreach (string mdFile in _mdFiles)
+        foreach (var mdFile in _mdFiles)
         {
             //don't look in the packages dir!
             if(mdFile.Contains("packages"))
@@ -366,7 +366,7 @@ class DocumentationCrossExaminationTest
             Console.WriteLine("Found problem words in comments (Scroll down to see by file then if you think they are fine add them to DocumentationCrossExaminationTest._ignorelist):");
             foreach (var pLine in problems.Where(l=>l.Contains('\n')).Select(p => p.Split('\n')))
                 Console.WriteLine($"\"{pLine[1]}\",");
-            foreach (string problem in problems)
+            foreach (var problem in problems)
                 Console.WriteLine(problem);
         }
 
@@ -375,21 +375,21 @@ class DocumentationCrossExaminationTest
 
     private void EnsureCodeBlocksCompile(string mdFile, List<string> problems)
     {
-        string codeBlocks = Path.Combine(TestContext.CurrentContext.TestDirectory,"../../../DesignPatternTests/MarkdownCodeBlockTests.cs");
+        var codeBlocks = Path.Combine(TestContext.CurrentContext.TestDirectory,"../../../DesignPatternTests/MarkdownCodeBlockTests.cs");
 
         Console.WriteLine($"Starting {mdFile}");
 
         var codeBlocksContent = File.ReadAllText(codeBlocks);
 
-        Regex rGuidComment = new Regex("<!--- (.{32}) --->");
-        Regex rStartCodeBlock = new Regex("```csharp");
-        Regex rEndCodeBlock = new Regex("```");
+        var rGuidComment = new Regex("<!--- (.{32}) --->");
+        var rStartCodeBlock = new Regex("```csharp");
+        var rEndCodeBlock = new Regex("```");
 
-        Dictionary<string,string> markdownCodeBlocks = new Dictionary<string, string>();
+        var markdownCodeBlocks = new Dictionary<string, string>();
             
         var lines = File.ReadAllLines(mdFile);
 
-        for (int i = 0; i < lines.Length; i++)
+        for (var i = 0; i < lines.Length; i++)
         {
             var match = rGuidComment.Match(lines[i]);
 
@@ -418,7 +418,7 @@ class DocumentationCrossExaminationTest
 
         foreach (var kvp in markdownCodeBlocks)
         {
-            Regex rBlock = new Regex($"#region {kvp.Key}([^#]*)#endregion",RegexOptions.Singleline);
+            var rBlock = new Regex($"#region {kvp.Key}([^#]*)#endregion",RegexOptions.Singleline);
             var m = rBlock.Match(codeBlocksContent);
 
             if (!m.Success)
@@ -437,9 +437,9 @@ class DocumentationCrossExaminationTest
     {
         const string glossaryRelativePath = "./Documentation/CodeTutorials/Glossary.md";
             
-        Regex rGlossary = new Regex("##([A-z ]*)");
-        Regex rWords = new Regex(@"\[?\w*\]?");
-        Regex rGlossaryLink = new Regex(@"^\[\w*\]:");
+        var rGlossary = new Regex("##([A-z ]*)");
+        var rWords = new Regex(@"\[?\w*\]?");
+        var rGlossaryLink = new Regex(@"^\[\w*\]:");
 
         var glossaryPath = Path.Combine(_slndir.FullName, glossaryRelativePath);
             
@@ -456,15 +456,15 @@ class DocumentationCrossExaminationTest
                     .Where(l=>rGlossary.IsMatch(l))
                     .Select(l=>rGlossary.Match(l).Groups[1].Value.Trim()));
 
-        bool inCodeBlock = false;
-        int lineNumber = 0;
+        var inCodeBlock = false;
+        var lineNumber = 0;
 
         var allLines = File.ReadAllLines(mdFile);
         var allLinesRevised = allLines;
 
-        Dictionary<string,string> suggestedLinks = new Dictionary<string, string>();
+        var suggestedLinks = new Dictionary<string, string>();
 
-        foreach (string line in allLines)
+        foreach (var line in allLines)
         {
             lineNumber++;
 
@@ -492,15 +492,15 @@ class DocumentationCrossExaminationTest
                             continue;
 
 
-                        Uri path1 = new Uri(mdFile);
-                        Uri path2 = new Uri(glossaryPath);
-                        Uri diff = path1.MakeRelativeUri(path2);
-                        string relPath = diff.OriginalString;
+                        var path1 = new Uri(mdFile);
+                        var path2 = new Uri(glossaryPath);
+                        var diff = path1.MakeRelativeUri(path2);
+                        var relPath = diff.OriginalString;
 
                         if (!relPath.StartsWith("."))
                             relPath = $"./{relPath}";
 
-                        string suggestedLine = $"[{match.Value}]: {relPath}#{match.Value}";
+                        var suggestedLine = $"[{match.Value}]: {relPath}#{match.Value}";
 
                         //if it has spaces on either side
                         if(line[Math.Max(0,match.Index-1)] == ' ' && line[Math.Min(line.Length-1,match.Index + match.Length)] == ' '

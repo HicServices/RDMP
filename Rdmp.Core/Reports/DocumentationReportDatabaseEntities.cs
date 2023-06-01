@@ -44,9 +44,9 @@ public class DocumentationReportDatabaseEntities : DocXHelper
             //Listing Cell header
             SetTableCell(t, 0, 0, "Tables");
 
-            Type[] keys = Summaries.Keys.ToArray();
+            var keys = Summaries.Keys.ToArray();
 
-            for (int i = 0; i < Summaries.Count; i++)
+            for (var i = 0; i < Summaries.Count; i++)
             {
                 //creates the run
                 SetTableCell(t, (i*2) + 1, 0, "");
@@ -59,7 +59,7 @@ public class DocumentationReportDatabaseEntities : DocXHelper
                     var run = para.Runs.FirstOrDefault() ?? para.CreateRun();
                     GetPicture(run,bmp);
                 }
-                SetTableCell(t, (i * 2) + 1, 0," "+ keys[i].Name);
+                SetTableCell(t, (i * 2) + 1, 0, $" {keys[i].Name}");
 
                 SetTableCell(t,(i*2) + 2, 0, Summaries[keys[i]]);
             }
@@ -75,7 +75,7 @@ public class DocumentationReportDatabaseEntities : DocXHelper
 
     private void Check(ICheckNotifier notifier)
     {
-        foreach (Type t in _mef.GetAllTypes().Where(t=>typeof(DatabaseEntity).IsAssignableFrom(t)))
+        foreach (var t in _mef.GetAllTypes().Where(t=>typeof(DatabaseEntity).IsAssignableFrom(t)))
             if (typeof (IMapsDirectlyToDatabaseTable).IsAssignableFrom(t))
             {
                 if (t.IsInterface || t.IsAbstract || t.Name.StartsWith("Spontaneous") || t.Assembly.FullName?.StartsWith("DynamicProxyGenAssembly2")==true)

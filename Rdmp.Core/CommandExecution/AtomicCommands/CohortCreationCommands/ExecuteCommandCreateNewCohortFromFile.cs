@@ -97,7 +97,7 @@ public class ExecuteCommandCreateNewCohortFromFile : CohortCreationCommandExecut
 
         request.FileToLoad = flatFile;
 
-        var configureAndExecuteDialog = GetConfigureAndExecuteControl(request, "Uploading File " + flatFile.File.Name, flatFile);
+        var configureAndExecuteDialog = GetConfigureAndExecuteControl(request, $"Uploading File {flatFile.File.Name}", flatFile);
 
         //add the flat file to the dialog with an appropriate description of what they are trying to achieve
         configureAndExecuteDialog.Run(BasicActivator.RepositoryLocator, null, null, null);

@@ -66,8 +66,8 @@ public class AggregateConfiguration : DatabaseEntity, ICheckable, IOrderable, IC
     /// </summary>
     public string CountSQL
     {
-        get { return _countSQL; }
-        set { SetField(ref  _countSQL, value); }
+        get => _countSQL;
+        set => SetField(ref  _countSQL, value);
     }
 
     /// <summary>
@@ -76,8 +76,8 @@ public class AggregateConfiguration : DatabaseEntity, ICheckable, IOrderable, IC
     /// </summary>
     public int Catalogue_ID
     {
-        get { return _catalogueID; }
-        set { SetField(ref  _catalogueID, value); }
+        get => _catalogueID;
+        set => SetField(ref  _catalogueID, value);
     }
 
     /// <summary>
@@ -86,8 +86,8 @@ public class AggregateConfiguration : DatabaseEntity, ICheckable, IOrderable, IC
     [NotNull]
     public string Name
     {
-        get { return _name; }
-        set { SetField(ref  _name, value); }
+        get => _name;
+        set => SetField(ref  _name, value);
     }
 
     /// <summary>
@@ -95,8 +95,8 @@ public class AggregateConfiguration : DatabaseEntity, ICheckable, IOrderable, IC
     /// </summary>
     public string Description
     {
-        get { return _description; }
-        set { SetField(ref  _description, value); }
+        get => _description;
+        set => SetField(ref  _description, value);
     }
 
     /// <summary>
@@ -104,8 +104,8 @@ public class AggregateConfiguration : DatabaseEntity, ICheckable, IOrderable, IC
     /// </summary>
     public DateTime dtCreated
     {
-        get { return _dtCreated; }
-        set { SetField(ref  _dtCreated, value); }
+        get => _dtCreated;
+        set => SetField(ref  _dtCreated, value);
     }
 
     /// <summary>
@@ -116,8 +116,8 @@ public class AggregateConfiguration : DatabaseEntity, ICheckable, IOrderable, IC
     /// </summary>
     public int? PivotOnDimensionID
     {
-        get { return _pivotOnDimensionID; }
-        set { SetField(ref  _pivotOnDimensionID, value); }
+        get => _pivotOnDimensionID;
+        set => SetField(ref  _pivotOnDimensionID, value);
     }
 
     /// <summary>
@@ -126,8 +126,8 @@ public class AggregateConfiguration : DatabaseEntity, ICheckable, IOrderable, IC
     /// </summary>
     public bool IsExtractable
     {
-        get { return _isExtractable; }
-        set { SetField(ref  _isExtractable, value); }
+        get => _isExtractable;
+        set => SetField(ref  _isExtractable, value);
     }
 
 
@@ -138,8 +138,8 @@ public class AggregateConfiguration : DatabaseEntity, ICheckable, IOrderable, IC
     /// </summary>
     public string HavingSQL
     {
-        get { return _havingSQL; }
-        set { SetField(ref  _havingSQL, value); }
+        get => _havingSQL;
+        set => SetField(ref  _havingSQL, value);
     }
         
     /// <summary>
@@ -148,7 +148,7 @@ public class AggregateConfiguration : DatabaseEntity, ICheckable, IOrderable, IC
     /// </summary>
     public int? RootFilterContainer_ID
     {
-        get { return _rootFilterContainerID; }
+        get => _rootFilterContainerID;
         set
         {
             if (OverrideFiltersByUsingParentAggregateConfigurationInstead_ID != null && value != null)
@@ -168,7 +168,7 @@ public class AggregateConfiguration : DatabaseEntity, ICheckable, IOrderable, IC
     /// </summary>
     public int? OverrideFiltersByUsingParentAggregateConfigurationInstead_ID
     {
-        get { return _overrideFiltersByUsingParentAggregateConfigurationInsteadID; }
+        get => _overrideFiltersByUsingParentAggregateConfigurationInsteadID;
         set
         {
             if (RootFilterContainer_ID != null && value != null)
@@ -182,8 +182,8 @@ public class AggregateConfiguration : DatabaseEntity, ICheckable, IOrderable, IC
     /// <inheritdoc/>
     public bool IsDisabled
     {
-        get { return _isDisabled; }
-        set { SetField(ref _isDisabled, value); }
+        get => _isDisabled;
+        set => SetField(ref _isDisabled, value);
     }
     #endregion
 
@@ -194,10 +194,7 @@ public class AggregateConfiguration : DatabaseEntity, ICheckable, IOrderable, IC
     /// <see cref="Catalogue_ID"/>
     ///  </summary>
     [NoMappingToDatabase]
-    public Catalogue Catalogue
-    {
-        get { return _knownCatalogue.Value; }
-    }
+    public Catalogue Catalogue => _knownCatalogue.Value;
 
     /// <inheritdoc/>
     [NoMappingToDatabase]
@@ -233,7 +230,7 @@ public class AggregateConfiguration : DatabaseEntity, ICheckable, IOrderable, IC
 
         if (!UserSettings.IncludeZeroSeriesInGraphs)
         {
-            foreach (DataColumn col in dt.Columns.Cast<DataColumn>().ToArray())
+            foreach (var col in dt.Columns.Cast<DataColumn>().ToArray())
             {
                 if (dt.Rows.Cast<DataRow>().All(r => IsBasicallyZero(r[col.ColumnName])))
                 {
@@ -252,10 +249,7 @@ public class AggregateConfiguration : DatabaseEntity, ICheckable, IOrderable, IC
     /// Gets all parameters (e.g. @studyStartDate ) associated with this AggregateConfiguration (there might not be any).
     /// </summary>
     [NoMappingToDatabase]
-    public IEnumerable<AnyTableSqlParameter> Parameters
-    {
-        get { return CatalogueRepository.GetAllParametersForParentTable(this); }
-    }
+    public IEnumerable<AnyTableSqlParameter> Parameters => CatalogueRepository.GetAllParametersForParentTable(this);
 
     /// <inheritdoc cref="Parameters"/>
     public ISqlParameter[] GetAllParameters()
@@ -269,10 +263,7 @@ public class AggregateConfiguration : DatabaseEntity, ICheckable, IOrderable, IC
     /// or there are other tables you want joined in addition the user can specify them in this property Populated via <see cref="AggregateForcedJoin"/>
     /// </summary>
     [NoMappingToDatabase]
-    public ITableInfo[] ForcedJoins
-    {
-        get { return CatalogueRepository.AggregateForcedJoinManager.GetAllForcedJoinsFor(this); }
-    }
+    public ITableInfo[] ForcedJoins => CatalogueRepository.AggregateForcedJoinManager.GetAllForcedJoinsFor(this);
 
     /// <summary>
     /// When an AggregateConfiguration is used in a cohort identification capacity it can have one or more 'patient index tables' defined e.g. 
@@ -283,38 +274,28 @@ public class AggregateConfiguration : DatabaseEntity, ICheckable, IOrderable, IC
     /// for building its join.</para>
     /// </summary>
     [NoMappingToDatabase]
-    public JoinableCohortAggregateConfigurationUse[] PatientIndexJoinablesUsed {
-        get { return Repository.GetAllObjectsWithParent<JoinableCohortAggregateConfigurationUse>(this).ToArray(); }
-    }
+    public JoinableCohortAggregateConfigurationUse[] PatientIndexJoinablesUsed => Repository.GetAllObjectsWithParent<JoinableCohortAggregateConfigurationUse>(this).ToArray();
 
     /// <summary>
     /// Only populated if the AggregateConfiguration is acting as a patient index table.  Returns the <see cref="JoinableCohortAggregateConfiguration"/> object
     /// which makes this a fact.
     /// </summary>
     [NoMappingToDatabase]
-    public JoinableCohortAggregateConfiguration JoinableCohortAggregateConfiguration { get { return _knownJoinableCohortAggregateConfiguration.Value;} }
+    public JoinableCohortAggregateConfiguration JoinableCohortAggregateConfiguration => _knownJoinableCohortAggregateConfiguration.Value;
 
     /// <summary>
     /// An AggregateConfiguration is a Group By statement.  This will return all the SELECT columns for the query (including any count(*) / sum(*) etc columns).
     /// </summary>
     [NoMappingToDatabase]
-    public AggregateDimension[] AggregateDimensions
-    {
-        get { return _knownAggregateDimensions.Value; }
-    }
+    public AggregateDimension[] AggregateDimensions => _knownAggregateDimensions.Value;
 
 
     /// <inheritdoc cref="PivotOnDimensionID"/>
     [NoMappingToDatabase]
-    public AggregateDimension PivotDimension
-    {
-        get
-        {
-            return PivotOnDimensionID == null
-                ? null
-                : Repository.GetObjectByID<AggregateDimension>((int) PivotOnDimensionID);
-        }
-    }
+    public AggregateDimension PivotDimension =>
+        PivotOnDimensionID == null
+            ? null
+            : Repository.GetObjectByID<AggregateDimension>((int) PivotOnDimensionID);
 
     public AggregateConfiguration()
     {
@@ -323,16 +304,11 @@ public class AggregateConfiguration : DatabaseEntity, ICheckable, IOrderable, IC
 
     /// <inheritdoc cref="OverrideFiltersByUsingParentAggregateConfigurationInstead_ID"/>
     [NoMappingToDatabase]
-    public AggregateConfiguration OverrideFiltersByUsingParentAggregateConfigurationInstead
-    {
-        get
-        {
-            return _overrideFiltersByUsingParentAggregateConfigurationInsteadID == null
-                ? null
-                : Repository.GetObjectByID<AggregateConfiguration>(
-                    (int) _overrideFiltersByUsingParentAggregateConfigurationInsteadID);
-        }
-    }
+    public AggregateConfiguration OverrideFiltersByUsingParentAggregateConfigurationInstead =>
+        _overrideFiltersByUsingParentAggregateConfigurationInsteadID == null
+            ? null
+            : Repository.GetObjectByID<AggregateConfiguration>(
+                (int) _overrideFiltersByUsingParentAggregateConfigurationInsteadID);
 
     #endregion
 
@@ -407,7 +383,7 @@ public class AggregateConfiguration : DatabaseEntity, ICheckable, IOrderable, IC
         CountSQL = r["CountSQL"] as string;
         HavingSQL = r["HavingSQL"] as string;
 
-        object rootFilterID = r["RootFilterContainer_ID"];
+        var rootFilterID = r["RootFilterContainer_ID"];
 
         if (rootFilterID == null || rootFilterID == DBNull.Value)
             RootFilterContainer_ID = null;
@@ -553,7 +529,7 @@ public class AggregateConfiguration : DatabaseEntity, ICheckable, IOrderable, IC
     public AggregateContinuousDateAxis GetAxisIfAny()
     {
         //for each dimension
-        foreach (AggregateDimension aggregateDimension in AggregateDimensions)
+        foreach (var aggregateDimension in AggregateDimensions)
         {
             //if it has an axis
             var axis = aggregateDimension.AggregateContinuousDateAxis;
@@ -697,7 +673,7 @@ public class AggregateConfiguration : DatabaseEntity, ICheckable, IOrderable, IC
         if(clone.PivotOnDimensionID != null)
             throw new NotImplementedException("Cannot clone due to PIVOT");
 
-        foreach (AggregateDimension aggregateDimension in AggregateDimensions)
+        foreach (var aggregateDimension in AggregateDimensions)
         {
             var cloneDimension = new AggregateDimension((ICatalogueRepository) Repository, aggregateDimension.ExtractionInformation, clone);
             cloneDimension.Alias = aggregateDimension.Alias;
@@ -769,7 +745,7 @@ public class AggregateConfiguration : DatabaseEntity, ICheckable, IOrderable, IC
     /// <inheritdoc/>
     public IHasDependencies[] GetObjectsThisDependsOn()
     {
-        List<IHasDependencies> dependencies = new List<IHasDependencies>();
+        var dependencies = new List<IHasDependencies>();
         dependencies.AddRange(AggregateDimensions);
         dependencies.AddRange(Parameters);
         dependencies.AddRange(ForcedJoins);
@@ -781,7 +757,7 @@ public class AggregateConfiguration : DatabaseEntity, ICheckable, IOrderable, IC
     /// <inheritdoc/>
     public IHasDependencies[] GetObjectsDependingOnThis()
     {
-        List<IHasDependencies> dependers = new List<IHasDependencies>();
+        var dependers = new List<IHasDependencies>();
 
         var cic = GetCohortIdentificationConfigurationIfAny();
         if(cic != null)

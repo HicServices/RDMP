@@ -100,7 +100,7 @@ public abstract class ExecuteCommandSetColumnSettingBase : BasicCommandExecution
         if (cols == null || cols.Length == 0)
             return _commandName;
 
-        return _commandName + " (" + string.Join(",", cols.Select(e => e.GetRuntimeName())) + ")";
+        return $"{_commandName} ({string.Join(",", cols.Select(e => e.GetRuntimeName()))})";
     }
     public override void Execute()
     {
@@ -108,7 +108,7 @@ public abstract class ExecuteCommandSetColumnSettingBase : BasicCommandExecution
 
         var oldCols = _alreadyMarked ?? _alreadyMarkedInConfiguration;
 
-        string initialSearchText = oldCols.Length == 1 ? oldCols[0].GetRuntimeName() : null;
+        var initialSearchText = oldCols.Length == 1 ? oldCols[0].GetRuntimeName() : null;
 
         if (_inConfiguration != null)
         {
@@ -155,7 +155,7 @@ public abstract class ExecuteCommandSetColumnSettingBase : BasicCommandExecution
 
         foreach (var ec in allColumns)
         {
-            bool newValue = selected != null && selected.Contains(ec);
+            var newValue = selected != null && selected.Contains(ec);
 
             if (Getter(ec) != newValue)
             {

@@ -140,9 +140,8 @@ public partial class ProgressUI : UserControl, IDataLoadEventListener
     {
         if(e.ColumnIndex == _processingTimeColIndex)
             if (e.Value != null && e.Value != DBNull.Value)
-                e.Value = ((TimeSpan)e.Value).Hours.ToString("00") + ":" +
-                          ((TimeSpan)e.Value).Minutes.ToString("00") + ":" +
-                          ((TimeSpan)e.Value).Seconds.ToString("00");
+                e.Value =
+                    $"{((TimeSpan)e.Value).Hours:00}:{((TimeSpan)e.Value).Minutes:00}:{((TimeSpan)e.Value).Seconds:00}";
     }
 
 
@@ -222,10 +221,10 @@ public partial class ProgressUI : UserControl, IDataLoadEventListener
         {
             while(ProgressQueue.Any())
             {
-                KeyValuePair<string, QueuedProgressMessage> message = ProgressQueue.First();
+                var message = ProgressQueue.First();
                 var args = message.Value.ProgressEventArgs;
                     
-                string label = "";
+                var label = "";
                 switch (args.Progress.UnitOfMeasurement)
                 {
                     case ProgressType.Records:
@@ -238,7 +237,7 @@ public partial class ProgressUI : UserControl, IDataLoadEventListener
                         throw new ArgumentOutOfRangeException("type");
                 }
 
-                bool handledByFlood = HandleFloodOfMessagesFromJob(message.Value.Sender, args.TaskDescription, args.Progress.Value, label);
+                var handledByFlood = HandleFloodOfMessagesFromJob(message.Value.Sender, args.TaskDescription, args.Progress.Value, label);
                         
                 if(!handledByFlood)
                     if (!progress.Rows.Contains(args.TaskDescription))
@@ -304,7 +303,7 @@ public partial class ProgressUI : UserControl, IDataLoadEventListener
 
     private void MergeAllJobsForSenderIntoSingleRowAndCumulateResult(object sender  , string jobToAdd,int progressAmountToAdd, string label)
     {
-        int startAtProgressAmount = 0;
+        var startAtProgressAmount = 0;
 
         foreach (var jobsAlreadySeen in JobsreceivedFromSender[sender])
             if (progress.Rows.Contains(jobsAlreadySeen))
@@ -314,12 +313,12 @@ public partial class ProgressUI : UserControl, IDataLoadEventListener
                     
             }
 
-        int i = 1;
+        var i = 1;
         try
         {
             for (; i < 500; i++)
             {
-                string startsWith = JobsreceivedFromSender[sender].First().Substring(0, i);
+                var startsWith = JobsreceivedFromSender[sender].First().Substring(0, i);
 
                 if (!JobsreceivedFromSender[sender].All(job => job.Substring(0,i).StartsWith(startsWith)))
                     break;
@@ -334,9 +333,9 @@ public partial class ProgressUI : UserControl, IDataLoadEventListener
             
         //no shared prefix
         if(i ==1)
-            floodJob = sender + " FloodOfMessages";
+            floodJob = $"{sender} FloodOfMessages";
         else
-            floodJob = JobsreceivedFromSender[sender].First().Substring(0,i-1) + "... FloodOfMessages";
+            floodJob = $"{JobsreceivedFromSender[sender].First().Substring(0, i - 1)}... FloodOfMessages";
             
         //add a new row (or edit existing) for the flood of messages from sender
         if (progress.Rows.Contains(floodJob))

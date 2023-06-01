@@ -403,7 +403,7 @@ class QueryCachingCrossServerTests: TestsRequiringA
         var dbCache =
             GetCleanedServer(Enum.GetValues(typeof(DatabaseType)).Cast<DatabaseType>().First(t => t != dbType));
 
-        ExternalDatabaseServer cache = CreateCache(dbCache);
+        var cache = CreateCache(dbCache);
 
         var r = new Random(500);
         var people = new PersonCollection();
@@ -454,7 +454,7 @@ class QueryCachingCrossServerTests: TestsRequiringA
         var server1 = GetCleanedServer(DatabaseType.MySql);
         var server2 = GetCleanedServer(DatabaseType.MicrosoftSQLServer);
 
-        ExternalDatabaseServer cache = CreateCache(server2);
+        var cache = CreateCache(server2);
 
         var r = new Random(500);
         var people = new PersonCollection();
@@ -509,7 +509,7 @@ class QueryCachingCrossServerTests: TestsRequiringA
         var server2 = GetCleanedServer(DatabaseType.MicrosoftSQLServer);
         var server3 = GetCleanedServer(DatabaseType.Oracle);
 
-        ExternalDatabaseServer cache = CreateCache(server3);
+        var cache = CreateCache(server3);
 
         var r = new Random(500);
         var people = new PersonCollection();
@@ -564,7 +564,7 @@ class QueryCachingCrossServerTests: TestsRequiringA
             GetCleanedServer(Enum.GetValues(typeof(DatabaseType)).Cast<DatabaseType>().First(t =>
                 t != dbType && t!= DatabaseType.MySql));
 
-        ExternalDatabaseServer cache = CreateCache(dbCache);
+        var cache = CreateCache(dbCache);
 
         var r = new Random(500);
         var people = new PersonCollection();
@@ -628,7 +628,7 @@ class QueryCachingCrossServerTests: TestsRequiringA
         var syntax = db.Server.GetQuerySyntaxHelper();
 
         var tbl = CreateDataset<Biochemistry>(db, people, 10000, r);
-        var cata = Import(tbl,out _, out _, out _,out ExtractionInformation[] eis);
+        var cata = Import(tbl,out _, out _, out _,out var eis);
 
         var chi = eis.Single(ei => ei.GetRuntimeName().Equals("chi", StringComparison.CurrentCultureIgnoreCase));
         var code = eis.Single(ei => ei.GetRuntimeName().Equals("TestCode", StringComparison.CurrentCultureIgnoreCase));
@@ -647,7 +647,7 @@ class QueryCachingCrossServerTests: TestsRequiringA
 
         var and = new AggregateFilterContainer(CatalogueRepository, FilterContainerOperation.AND);
         var filter = new AggregateFilter(CatalogueRepository,"TestCode is NA",and);
-        filter.WhereSQL = syntax.EnsureWrapped("TestCode") + " = 'NA'";
+        filter.WhereSQL = $"{syntax.EnsureWrapped("TestCode")} = 'NA'";
         filter.SaveToDatabase();
 
         ac.RootFilterContainer_ID = and.ID;
@@ -661,7 +661,7 @@ class QueryCachingCrossServerTests: TestsRequiringA
         var syntax = db.Server.GetQuerySyntaxHelper();
 
         var joinable = SetupPatientIndexTable(db, people, r, cic);
-        AddFilter(db,"Test After",syntax.EnsureWrapped("SampleDate") + " < ",joinable.AggregateConfiguration,useParameter,paramName,paramValue);
+        AddFilter(db,"Test After", $"{syntax.EnsureWrapped("SampleDate")} < ",joinable.AggregateConfiguration,useParameter,paramName,paramValue);
         return joinable;
     }
 
@@ -682,7 +682,7 @@ class QueryCachingCrossServerTests: TestsRequiringA
             
         var and = new AggregateFilterContainer(CatalogueRepository, FilterContainerOperation.AND);
         var filter = new AggregateFilter(CatalogueRepository, "Hospitalised after an NA", and);
-        filter.WhereSQL = syntax.EnsureWrapped("AdmissionDate") + " > " + syntax.EnsureWrapped("SampleDate");
+        filter.WhereSQL = $"{syntax.EnsureWrapped("AdmissionDate")} > {syntax.EnsureWrapped("SampleDate")}";
         filter.SaveToDatabase();
 
         ac.RootFilterContainer_ID = and.ID;
@@ -700,7 +700,7 @@ class QueryCachingCrossServerTests: TestsRequiringA
 
         var ac1 = SetupPatientIndexTableUser(db, people, r, cic,joinable);
 
-        AddFilter(db,"My Filter", syntax.EnsureWrapped("AdmissionDate") + " < ", ac1, useParameter, paramName, paramValue);
+        AddFilter(db,"My Filter", $"{syntax.EnsureWrapped("AdmissionDate")} < ", ac1, useParameter, paramName, paramValue);
 
         return ac1;
     }
@@ -744,7 +744,7 @@ class QueryCachingCrossServerTests: TestsRequiringA
     {
         var existingTbl = db.ExpectTable("HospitalAdmissions");
         var tbl = existingTbl.Exists() ? existingTbl : CreateDataset<HospitalAdmissions>(db, people, 10000, r);
-        var cata = Import(tbl, out _, out _, out _, out ExtractionInformation[] eis);
+        var cata = Import(tbl, out _, out _, out _, out var eis);
 
         var chi = eis.Single(ei => ei.GetRuntimeName().Equals("chi", StringComparison.CurrentCultureIgnoreCase));
         chi.IsExtractionIdentifier = true;
@@ -774,7 +774,7 @@ class QueryCachingCrossServerTests: TestsRequiringA
     {
         var syntax = db.Server.GetQuerySyntaxHelper();
         var ac1 = SetupAggregateConfiguration(db, people, r, cic);
-        AddFilter(db, "My Filter", syntax.EnsureWrapped("AdmissionDate") +" < ", ac1, useParameter, paramName, paramValue);
+        AddFilter(db, "My Filter", $"{syntax.EnsureWrapped("AdmissionDate")} < ", ac1, useParameter, paramName, paramValue);
         return ac1;
     }
 
@@ -789,7 +789,7 @@ class QueryCachingCrossServerTests: TestsRequiringA
         TestContext.WriteLine($"| Task | Type | State | Error | RowCount | CacheUse |");
 
 
-        int i = 0;
+        var i = 0;
         foreach (var kvp in compiler.Tasks)
             TestContext.WriteLine($"{i++} - {kvp.Key.ToString()} | {kvp.Key.GetType()} | {kvp.Key.State} | {kvp.Key?.CrashMessage} | {kvp.Key.FinalRowCount} | {kvp.Key.GetCachedQueryUseCount()}");
             

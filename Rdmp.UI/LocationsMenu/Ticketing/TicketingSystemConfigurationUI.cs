@@ -136,11 +136,11 @@ public partial class TicketingSystemConfigurationUI : RDMPUserControl
         ITicketingSystem instance;
         try
         {
-            TicketingSystemFactory factory = new TicketingSystemFactory(_activator.RepositoryLocator.CatalogueRepository);
+            var factory = new TicketingSystemFactory(_activator.RepositoryLocator.CatalogueRepository);
             instance = factory.CreateIfExists(_ticketingSystemConfiguration);
 
             checksUI1.OnCheckPerformed(
-                new CheckEventArgs("successfully created a instance of " + instance.GetType().FullName,
+                new CheckEventArgs($"successfully created a instance of {instance.GetType().FullName}",
                     CheckResult.Success));
         }
         catch (Exception exception)
@@ -175,7 +175,7 @@ public partial class TicketingSystemConfigurationUI : RDMPUserControl
             {
                 var toDelete = _ticketingSystemConfiguration.DataAccessCredentials;
 
-                if (Activator.YesNo("Confirm deleting Encrypted Credentials " + toDelete.Name + "?","Confirm delete?"))
+                if (Activator.YesNo($"Confirm deleting Encrypted Credentials {toDelete.Name}?","Confirm delete?"))
                     toDelete.DeleteInDatabase();
             }
         }

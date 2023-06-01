@@ -49,7 +49,7 @@ public class ExecuteCommandAddNewFilterContainerTests : UnitTests
         var ac = WhenIHaveA<AggregateConfiguration>();
 
         var c = ac.Catalogue;
-        c.Name = PluginCohortCompiler.ApiPrefix + "MyAwesomeAPI";
+        c.Name = $"{PluginCohortCompiler.ApiPrefix}MyAwesomeAPI";
         c.SaveToDatabase();
 
         Assert.IsTrue(c.IsApiCall());

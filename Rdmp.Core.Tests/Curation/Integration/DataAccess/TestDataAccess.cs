@@ -32,7 +32,7 @@ public class TestDataAccess:DatabaseTests
     [Test]
     public void TestDistinctCredentials_PasswordMismatch()
     {
-        List<TestAccessPoint>  testPoints = new List<TestAccessPoint>();
+        var  testPoints = new List<TestAccessPoint>();
 
         testPoints.Add(new TestAccessPoint("frank","bob","username","mypas"));
         testPoints.Add(new TestAccessPoint("frank","bob","username","mydifferentPass"));
@@ -46,7 +46,7 @@ public class TestDataAccess:DatabaseTests
     [Test]
     public void TestDistinctCredentials_UsernamePasswordAreNull()
     {
-        List<TestAccessPoint> testPoints = new List<TestAccessPoint>();
+        var testPoints = new List<TestAccessPoint>();
 
         testPoints.Add(new TestAccessPoint("frank", "bob", null, null));
         testPoints.Add(new TestAccessPoint("frank", "bob", "username", "mydifferentPass"));
@@ -60,7 +60,7 @@ public class TestDataAccess:DatabaseTests
     [Test]
     public void TestDistinctCredentials_UsernameMismatch()
     {
-        List<TestAccessPoint> testPoints = new List<TestAccessPoint>();
+        var testPoints = new List<TestAccessPoint>();
 
         testPoints.Add(new TestAccessPoint("frank", "bob", "usernameasdasd", "mydifferentpass"));
         testPoints.Add(new TestAccessPoint("frank", "bob", "username", "mydifferentPass"));
@@ -76,7 +76,7 @@ public class TestDataAccess:DatabaseTests
     [Test]
     public void TestDistinctCredentials_ServerMixedCapitalization_Allowed()
     {
-        List<TestAccessPoint> testPoints = new List<TestAccessPoint>();
+        var testPoints = new List<TestAccessPoint>();
 
         testPoints.Add(new TestAccessPoint("frank", "bob", null,null));
         testPoints.Add(new TestAccessPoint("FRANK", "bob", null, null));
@@ -88,7 +88,7 @@ public class TestDataAccess:DatabaseTests
     [Test]
     public void TestDistinctCredentials_DatabaseMixedCapitalization_NotAllowed()
     {
-        List<TestAccessPoint> testPoints = new List<TestAccessPoint>();
+        var testPoints = new List<TestAccessPoint>();
 
         testPoints.Add(new TestAccessPoint("frank", "bob", null, null));
         testPoints.Add(new TestAccessPoint("frank", "BOB", null, null));
@@ -103,7 +103,7 @@ public class TestDataAccess:DatabaseTests
     [Test]
     public void TestDistinctCredentials_WrappedDatabaseName()
     {
-        List<TestAccessPoint> testPoints = new List<TestAccessPoint>();
+        var testPoints = new List<TestAccessPoint>();
 
         testPoints.Add(new TestAccessPoint("frank", "[bob's Database]", "username", "mypas"));
         testPoints.Add(new TestAccessPoint("frank", "bob's Database", "username", "mypas"));
@@ -117,7 +117,7 @@ public class TestDataAccess:DatabaseTests
     [Test]
     public void TestDistinctCredentials_PasswordMatch()
     {
-        List<TestAccessPoint> testPoints = new List<TestAccessPoint>();
+        var testPoints = new List<TestAccessPoint>();
 
         testPoints.Add(new TestAccessPoint("frank", "bob", "username", "mypas"));
         testPoints.Add(new TestAccessPoint("frank", "bob", "username", "mypas"));
@@ -137,22 +137,22 @@ public class TestDataAccess:DatabaseTests
         if (CatalogueRepository is not TableRepository)
             Assert.Inconclusive("Test only applies to database repositories");
 
-        List<Thread> threads = new List<Thread>();
+        var threads = new List<Thread>();
 
 
-        for (int i = 0; i < 30; i++)
+        for (var i = 0; i < 30; i++)
             threads.Add(new Thread(MessWithCatalogue));
 
-        foreach (Thread t in threads)
+        foreach (var t in threads)
             t.Start();
 
         while(threads.Any(t=>t.ThreadState != ThreadState.Stopped))
             Thread.Sleep(100);
 
-        for (int index = 0; index < asyncExceptions.Count; index++)
+        for (var index = 0; index < asyncExceptions.Count; index++)
         {
-            Console.WriteLine("Exception " + index);
-            Exception asyncException = asyncExceptions[index];
+            Console.WriteLine($"Exception {index}");
+            var asyncException = asyncExceptions[index];
             Console.WriteLine(ExceptionHelper.ExceptionToListOfInnerMessages(asyncException, true));
         }
         Assert.IsEmpty(asyncExceptions);
@@ -183,14 +183,14 @@ public class TestDataAccess:DatabaseTests
     [Test]
     public void TestGettingConnectionStrings()
     {
-        foreach (TableInfo tbl in CatalogueRepository.GetAllObjects<TableInfo>().Where(table => table.Name.ToLower().Equals("bob")))
+        foreach (var tbl in CatalogueRepository.GetAllObjects<TableInfo>().Where(table => table.Name.ToLower().Equals("bob")))
             tbl.DeleteInDatabase();
 
         foreach (var c in CatalogueRepository.GetAllObjects<DataAccessCredentials>().Where(cred=>cred.Name.ToLower().Equals("bob")))
             c.DeleteInDatabase();
             
         //test it with TableInfos
-        TableInfo t = new TableInfo(CatalogueRepository, "Bob");
+        var t = new TableInfo(CatalogueRepository, "Bob");
         try
         {
             t.Server = "fish";
@@ -280,7 +280,7 @@ public class TestDataAccess:DatabaseTests
 
         public IQuerySyntaxHelper GetQuerySyntaxHelper()
         {
-            return new MicrosoftQuerySyntaxHelper();
+            return MicrosoftQuerySyntaxHelper.Instance;
         }
 
         public bool DiscoverExistence(DataAccessContext context, out string reason)

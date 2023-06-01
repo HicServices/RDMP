@@ -21,15 +21,9 @@ public class PlatformDatabaseCreationRepositoryFinder : IRDMPPlatformRepositoryS
 {
     private readonly LinkedRepositoryProvider _linkedRepositoryProvider;
 
-    public ICatalogueRepository CatalogueRepository
-    {
-        get { return _linkedRepositoryProvider.CatalogueRepository; }
-    }
+    public ICatalogueRepository CatalogueRepository => _linkedRepositoryProvider.CatalogueRepository;
 
-    public IDataExportRepository DataExportRepository
-    {
-        get { return _linkedRepositoryProvider.DataExportRepository; }
-    }
+    public IDataExportRepository DataExportRepository => _linkedRepositoryProvider.DataExportRepository;
 
     public IMapsDirectlyToDatabaseTable GetArbitraryDatabaseObject(string repositoryTypeName, string databaseObjectTypeName, int objectID)
     {

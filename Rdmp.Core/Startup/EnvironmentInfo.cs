@@ -46,7 +46,7 @@ public class EnvironmentInfo
     {
         get
         {
-            int p = (int)Environment.OSVersion.Platform;
+            var p = (int)Environment.OSVersion.Platform;
             return p == 4 || p == 6 || p == 128;
         }
     }
@@ -58,7 +58,7 @@ public class EnvironmentInfo
     internal IEnumerable<DirectoryInfo> GetPluginSubDirectories(DirectoryInfo root, ICheckNotifier notifier)
     {
         if(!root.Name.Equals("lib"))
-            throw new ArgumentException("Expected " + root.FullName + " to be the 'lib' directory");
+            throw new ArgumentException($"Expected {root.FullName} to be the 'lib' directory");
 
         // if we are loading the main codebase of plugins
         if (_pluginsToLoad.HasFlag(PluginFolders.Main))
@@ -74,7 +74,8 @@ public class EnvironmentInfo
             else
             {
                 // plugin has no main directory, maybe it is not built correctly
-                notifier.OnCheckPerformed(new CheckEventArgs($"Could not find an expected folder called '/lib/{MainSubDir}' in folder:" + root, CheckResult.Warning));
+                notifier.OnCheckPerformed(new CheckEventArgs(
+                    $"Could not find an expected folder called '/lib/{MainSubDir}' in folder:{root}", CheckResult.Warning));
             }   
         }
 

@@ -74,7 +74,7 @@ class CommitCohortExample: DatabaseTests
         pipelineDestination.Dispose(new ThrowImmediatelyDataLoadEventListener(), null);
 
         //now there should be one
-        ExtractableCohort cohort = DataExportRepository.GetAllObjects<ExtractableCohort>().Single();
+        var cohort = DataExportRepository.GetAllObjects<ExtractableCohort>().Single();
 
         //make sure we are all on the same page about what the DBMS type is (nothing cached etc)
         Assert.AreEqual(dbType, cohort.ExternalCohortTable.DatabaseType);

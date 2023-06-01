@@ -125,19 +125,19 @@ Col2"), CollapseWhitespace(builder.SQL));
 
         var builder = _configuration.GetQueryBuilder();
             
-        Assert.AreEqual(CollapseWhitespace(@"/*MyConfig*/
+        Assert.AreEqual(CollapseWhitespace($@"/*MyConfig*/
 SELECT 
 TOP 10
 Col1,
 Col2,
-"+countColField+@" AS MyCount
+{countColField} AS MyCount
 FROM 
 T1
 group by 
 Col1,
 Col2
 order by 
-"+countColField+" " + (asc?"asc":"desc")),CollapseWhitespace(builder.SQL));
+{countColField} {(asc ? "asc" : "desc")}"),CollapseWhitespace(builder.SQL));
 
         _configuration.CountSQL = beforeCountSQL;
         topX.DeleteInDatabase();
@@ -157,7 +157,7 @@ order by
             
         var builder = _configuration.GetQueryBuilder();
 
-        Assert.AreEqual(CollapseWhitespace(@"/*MyConfig*/
+        Assert.AreEqual(CollapseWhitespace($@"/*MyConfig*/
 SELECT 
 TOP 10
 Col1,
@@ -169,7 +169,7 @@ group by
 Col1,
 Col2
 order by 
-Col1 " + (asc ? "asc" : "desc")), CollapseWhitespace(builder.SQL));
+Col1 {(asc ? "asc" : "desc")}"), CollapseWhitespace(builder.SQL));
             
         topX.DeleteInDatabase();
     }

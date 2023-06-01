@@ -44,7 +44,7 @@ class SelectedDataSetsMenu : RDMPContextMenuStrip
 
         var availableGraphs = cata.AggregateConfigurations.Where(a => !a.IsCohortIdentificationAggregate).ToArray();
 
-        foreach (AggregateConfiguration graph in availableGraphs)
+        foreach (var graph in availableGraphs)
         {
             Add(new ExecuteCommandExecuteExtractionAggregateGraph(_activator, new ExtractionAggregateGraphObjectCollection(_selectedDataSet, graph))
             {

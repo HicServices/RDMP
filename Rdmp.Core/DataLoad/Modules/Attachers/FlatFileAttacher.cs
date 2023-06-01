@@ -55,7 +55,7 @@ public abstract class FlatFileAttacher : Attacher, IPluginAttacher
             var allTables = job.RegularTablesToLoad.Union(job.LookupTablesToLoad).Distinct().ToArray();
 
             if (!allTables.Contains(TableToLoad))
-                job.OnNotify(this,new NotifyEventArgs(ProgressEventType.Warning,$"FlatFileAttacher TableToLoad was '{TableToLoad}' (ID={TableToLoad.ID}) but that table was not one of the tables in the load:{string.Join(",", allTables.Select(t=>"'" + t.Name + "'"))}"));
+                job.OnNotify(this,new NotifyEventArgs(ProgressEventType.Warning,$"FlatFileAttacher TableToLoad was '{TableToLoad}' (ID={TableToLoad.ID}) but that table was not one of the tables in the load:{string.Join(",", allTables.Select(t=> $"'{t.Name}'"))}"));
 
             TableName = TableToLoad.GetRuntimeName(LoadBubble.Raw, job.Configuration.DatabaseNamer);
         }
@@ -64,21 +64,21 @@ public abstract class FlatFileAttacher : Attacher, IPluginAttacher
         if(TableName != null)
             TableName = TableName.Trim();
 
-        Stopwatch timer = new Stopwatch();
+        var timer = new Stopwatch();
         timer.Start();
 
 
         if(string.IsNullOrWhiteSpace(TableName))
             throw new ArgumentNullException("TableName has not been set, set it in the DataCatalogue");
 
-        DiscoveredTable table = _dbInfo.ExpectTable(TableName);
+        var table = _dbInfo.ExpectTable(TableName);
 
         //table didnt exist!
         if (!table.Exists())
             if (!_dbInfo.DiscoverTables(false).Any())//maybe no tables existed
                 throw new FlatFileLoadException("Raw database had 0 tables we could load");
             else//no there are tables just not the one we were looking for
-                throw new FlatFileLoadException("RAW database did not have a table called:" + TableName);
+                throw new FlatFileLoadException($"RAW database did not have a table called:{TableName}");
 
             
         //load the flat file
@@ -88,7 +88,8 @@ public abstract class FlatFileAttacher : Attacher, IPluginAttacher
 
         if (!filesToLoad.Any())
         {
-            job.OnNotify(this,new NotifyEventArgs(ProgressEventType.Warning,  "Did not find any files matching pattern " + filepattern + " in forLoading directory"));
+            job.OnNotify(this,new NotifyEventArgs(ProgressEventType.Warning,
+                $"Did not find any files matching pattern {filepattern} in forLoading directory"));
                 
             if(SendLoadNotRequiredIfFileNotFound)
                 return ExitCodeType.OperationNotRequired;
@@ -125,7 +126,7 @@ public abstract class FlatFileAttacher : Attacher, IPluginAttacher
     {
         using (var con = dbInfo.Server.GetConnection())
         {
-            DataTable dt = tableToLoad.GetDataTable(0);
+            var dt = tableToLoad.GetDataTable(0);
 
             using (var insert = tableToLoad.BeginBulkInsert(Culture))
             {
@@ -137,7 +138,8 @@ public abstract class FlatFileAttacher : Attacher, IPluginAttacher
                     insert.DateTimeDecider.Settings.ExplicitDateFormats = new string[]{ExplicitDateTimeFormat};
 
                 //bulk insert ito destination
-                job.OnNotify(this, new NotifyEventArgs(ProgressEventType.Information, "About to open file " + fileToLoad.FullName));
+                job.OnNotify(this, new NotifyEventArgs(ProgressEventType.Information,
+                    $"About to open file {fileToLoad.FullName}"));
                 OpenFile(fileToLoad,job,token);
 
                 //confirm the validity of the headers
@@ -146,9 +148,9 @@ public abstract class FlatFileAttacher : Attacher, IPluginAttacher
                 con.Open();
 
                 //now we will read data out of the file in batches
-                int batchNumber = 1;
-                int maxBatchSize = 10000;
-                int recordsCreatedSoFar = 0;
+                var batchNumber = 1;
+                var maxBatchSize = 10000;
+                var recordsCreatedSoFar = 0;
                 
                 try
                 {
@@ -169,13 +171,14 @@ public abstract class FlatFileAttacher : Attacher, IPluginAttacher
                         }
                         catch (Exception e)
                         {
-                            throw new Exception("Error processing batch number " + batchNumber + " (of batch size " + maxBatchSize+")",e);
+                            throw new Exception(
+                                $"Error processing batch number {batchNumber} (of batch size {maxBatchSize})",e);
                         } 
                     }
                 }
                 catch (Exception e)
                 {
-                    throw new FlatFileLoadException("Error processing file " + fileToLoad, e);
+                    throw new FlatFileLoadException($"Error processing file {fileToLoad}", e);
                 }
                 finally
                 {
@@ -191,10 +194,12 @@ public abstract class FlatFileAttacher : Attacher, IPluginAttacher
     public override void Check(ICheckNotifier notifier)
     {
         if (string.IsNullOrWhiteSpace(TableName) && TableToLoad == null)
-            notifier.OnCheckPerformed(new CheckEventArgs("Either argument TableName or TableToLoad must be set " + this + ", you should specify this value." ,CheckResult.Fail));
+            notifier.OnCheckPerformed(new CheckEventArgs(
+                $"Either argument TableName or TableToLoad must be set {this}, you should specify this value.",CheckResult.Fail));
 
         if (string.IsNullOrWhiteSpace(FilePattern))
-            notifier.OnCheckPerformed(new CheckEventArgs("Argument FilePattern has not been set on " + this + ", you should specify this value in the LoadMetadataUI", CheckResult.Fail));
+            notifier.OnCheckPerformed(new CheckEventArgs(
+                $"Argument FilePattern has not been set on {this}, you should specify this value in the LoadMetadataUI", CheckResult.Fail));
 
         if (!string.IsNullOrWhiteSpace(TableName) && TableToLoad != null)
             notifier.OnCheckPerformed(new CheckEventArgs("You should only specify argument TableName or TableToLoad, not both", CheckResult.Fail));
@@ -207,14 +212,13 @@ public abstract class FlatFileAttacher : Attacher, IPluginAttacher
 
         //see if there is a shape problem between stuff that is on the server and stuff that is in the flat file
         if (dt.Columns.Count != columnsAtDestination.Length)
-            job.OnNotify(this,new NotifyEventArgs(ProgressEventType.Warning,"There was a mismatch between the number of columns in the flat file (" +
-                                                                            columnsAtDestination.Aggregate((s, n) => s + Environment.NewLine + n) +
-                                                                            ") and the number of columns in the RAW database table (" + dt.Columns.Count + ")"));
+            job.OnNotify(this,new NotifyEventArgs(ProgressEventType.Warning,
+                $"There was a mismatch between the number of columns in the flat file ({columnsAtDestination.Aggregate((s, n) => s + Environment.NewLine + n)}) and the number of columns in the RAW database table ({dt.Columns.Count})"));
             
         foreach (DataColumn column in dt.Columns)
             if (!columnsAtDestination.Contains(column.ColumnName,StringComparer.CurrentCultureIgnoreCase))
-                throw new FlatFileLoadException("Column in flat file called " + column.ColumnName +
-                                                " does not appear in the RAW database table (after fixing potentially silly names)");
+                throw new FlatFileLoadException(
+                    $"Column in flat file called {column.ColumnName} does not appear in the RAW database table (after fixing potentially silly names)");
 
     }
 
@@ -238,14 +242,14 @@ public abstract class FlatFileAttacher : Attacher, IPluginAttacher
 
     private void DropEmptyColumns(DataTable dt)
     {
-        Regex emptyColumnsSyntheticNames = new Regex("^Column[0-9]+$");
+        var emptyColumnsSyntheticNames = new Regex("^Column[0-9]+$");
 
         //deal with any ending columns which have nothing but whitespace
-        for (int i = dt.Columns.Count - 1; i >= 0; i--)
+        for (var i = dt.Columns.Count - 1; i >= 0; i--)
         {
             if (emptyColumnsSyntheticNames.IsMatch(dt.Columns[i].ColumnName) || string.IsNullOrWhiteSpace(dt.Columns[i].ColumnName)) //is synthetic column or blank, nuke it
             {
-                bool foundValue = false;
+                var foundValue = false;
                 foreach (DataRow dr in dt.Rows)
                 {
                     if (dr.ItemArray[i] == null)
