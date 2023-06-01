@@ -109,7 +109,7 @@ public class FlatFileToDataTablePusher
                         haveIncremented_bufferOverrunsWhereColumnValueWasBlank = true;
                     }
 
-                    continue; //do not bother buffer overruning with null whitespace stuff
+                    continue; //do not bother buffer overrunning with null whitespace stuff
                 }
                 else
                 {

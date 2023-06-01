@@ -29,15 +29,16 @@ namespace Rdmp.Core.ReusableLibraryCode;
 /// </summary>
 public static class UsefulStuff
 {
-    public static readonly Regex RegexThingsThatAreNotNumbersOrLetters = new Regex("[^0-9A-Za-z]+",RegexOptions.Compiled|RegexOptions.CultureInvariant);
-    public static readonly Regex RegexThingsThatAreNotNumbersOrLettersOrUnderscores = new Regex("[^0-9A-Za-z_]+",RegexOptions.Compiled|RegexOptions.CultureInvariant);
+    public static readonly Regex RegexThingsThatAreNotNumbersOrLetters = new("[^0-9A-Za-z]+",RegexOptions.Compiled|RegexOptions.CultureInvariant);
+    public static readonly Regex RegexThingsThatAreNotNumbersOrLettersOrUnderscores = new("[^0-9A-Za-z_]+",RegexOptions.Compiled|RegexOptions.CultureInvariant);
+    private static readonly Regex NullWithSpaces = new(@"^\s*null\s*$", RegexOptions.Compiled | RegexOptions.IgnoreCase | RegexOptions.CultureInvariant);
 
     public static bool IsBasicallyNull(this string result)
     {
         return string.IsNullOrWhiteSpace(result) ||
                // if user types the literal string null then return null (typically interpreted as - 'I don't want to pick one')
                // but not the same as task cancellation
-               string.Equals(result, "null", StringComparison.CurrentCultureIgnoreCase);
+               NullWithSpaces.IsMatch(result);
     }
 
     public static bool IsBadName(string name)
@@ -111,10 +112,10 @@ public static class UsefulStuff
 
     // find quoted field names at end of line
     private static readonly Regex RDoubleQuotes = new ("\"([^\"]+)\"$");
-    private static readonly Regex RSingleQuotes = new Regex("'([^']+)'$");
-    private static readonly Regex RBacktickQuotes = new Regex("`([^']+)`$");
-    private static readonly Regex RSquareBrackets = new Regex(@"\[([^[]+)]$");
-    private static readonly Regex RNoPunctuation = new Regex(@"^([\w\s]+)$");
+    private static readonly Regex RSingleQuotes = new("'([^']+)'$");
+    private static readonly Regex RBacktickQuotes = new("`([^']+)`$");
+    private static readonly Regex RSquareBrackets = new(@"\[([^[]+)]$");
+    private static readonly Regex RNoPunctuation = new(@"^([\w\s]+)$");
     public static IEnumerable<string> GetArrayOfColumnNamesFromStringPastedInByUser(string text)
     {
 

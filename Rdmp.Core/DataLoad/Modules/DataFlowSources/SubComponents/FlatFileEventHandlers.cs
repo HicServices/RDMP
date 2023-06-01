@@ -88,7 +88,7 @@ public class FlatFileEventHandlers
             if (_maximumErrorsToReport-- > 0)
             {
                 _listener.OnNotify(this, new NotifyEventArgs(ProgressEventType.Warning,
-                    $"Ignorring CSVHelper internal bad data warning:{line.GetLineDescription()}"));
+                    $"Ignoring CSVHelper internal bad data warning:{line.GetLineDescription()}"));
                 return;
             }
 
