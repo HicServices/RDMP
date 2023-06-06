@@ -64,8 +64,10 @@ public class ParameterCollectionUIOptions
             parameterName = $"@{parameterName}";
 
         var entity = (IMapsDirectlyToDatabaseTable)collector;
-        var newParam = new AnyTableSqlParameter((ICatalogueRepository)entity.Repository, entity, AnyTableSqlParameter.GetDefaultDeclaration(parameterName));
-        newParam.Value = AnyTableSqlParameter.DefaultValue;
+        var newParam = new AnyTableSqlParameter((ICatalogueRepository)entity.Repository, entity, AnyTableSqlParameter.GetDefaultDeclaration(parameterName))
+            {
+                Value = AnyTableSqlParameter.DefaultValue
+            };
         newParam.SaveToDatabase();
         return newParam;
     }

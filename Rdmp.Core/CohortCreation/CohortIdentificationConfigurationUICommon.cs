@@ -92,7 +92,7 @@ public class CohortIdentificationConfigurationUICommon
     {
         var key = GetKey(rowobject);
 
-        if (key != null && key.State == CompilationState.Finished)
+        if (key is { State: CompilationState.Finished })
             return key.FinalRowCount.ToString("N0");
 
         return null;
@@ -148,7 +148,7 @@ public class CohortIdentificationConfigurationUICommon
             CompilationState.Executing => Operation.Cancel,
             CompilationState.Finished => Operation.Execute,
             CompilationState.Crashed => Operation.Execute,
-            _ => throw new ArgumentOutOfRangeException("currentState")
+            _ => throw new ArgumentOutOfRangeException(nameof(currentState))
         };
     }
 
@@ -194,7 +194,7 @@ public class CohortIdentificationConfigurationUICommon
             case Operation.None:
                 break;
             default:
-                throw new ArgumentOutOfRangeException("operation");
+                throw new ArgumentOutOfRangeException(nameof(operation));
         }
     }
 
@@ -402,10 +402,10 @@ public class CohortIdentificationConfigurationUICommon
             }
             catch (Exception e)
             {
-                Activator.ShowException("Runer crashed",e);
+                Activator.ShowException("Runner crashed",e);
             }
 
-        }).ContinueWith((s, e) => {
+        }).ContinueWith((_, _) => {
             afterDelegate();
         }, TaskScheduler.FromCurrentSynchronizationContext());
     }

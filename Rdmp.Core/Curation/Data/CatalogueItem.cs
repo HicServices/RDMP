@@ -250,7 +250,7 @@ public class CatalogueItem : DatabaseEntity, IDeleteable, IComparable, IHasDepen
         {
             Catalogue.CataloguePeriodicity periodicityAsEnum;
 
-            if(Catalogue.CataloguePeriodicity.TryParse(periodicity.ToString(), true, out periodicityAsEnum))
+            if(Enum.TryParse(periodicity.ToString(), true, out periodicityAsEnum))
                 Periodicity = periodicityAsEnum;
             else
                 Periodicity = Catalogue.CataloguePeriodicity.Unknown;
@@ -322,10 +322,10 @@ public class CatalogueItem : DatabaseEntity, IDeleteable, IComparable, IHasDepen
     {
         if (obj is CatalogueItem)
         {
-            return -(obj.ToString().CompareTo(this.ToString())); //sort alphabetically (reverse)
+            return -(obj.ToString().CompareTo(ToString())); //sort alphabetically (reverse)
         }
 
-        throw new Exception($"Cannot compare {this.GetType().Name} to {obj.GetType().Name}");
+        throw new Exception($"Cannot compare {GetType().Name} to {obj.GetType().Name}");
     }
         
     /// <summary>
@@ -335,20 +335,20 @@ public class CatalogueItem : DatabaseEntity, IDeleteable, IComparable, IHasDepen
     /// <returns></returns>
     public CatalogueItem CloneCatalogueItemWithIDIntoCatalogue(Catalogue cataToImportTo)
     {
-        if(this.Catalogue_ID == cataToImportTo.ID)
+        if(Catalogue_ID == cataToImportTo.ID)
             throw new ArgumentException("Cannot clone a CatalogueItem into its own parent, specify a different catalogue to clone into");
 
-        var clone = new CatalogueItem((ICatalogueRepository)cataToImportTo.Repository, cataToImportTo, this.Name);
+        var clone = new CatalogueItem((ICatalogueRepository)cataToImportTo.Repository, cataToImportTo, Name);
             
         //Get all the properties           
-        var propertyInfo = this.GetType().GetProperties(BindingFlags.Public | BindingFlags.NonPublic | BindingFlags.Instance);
+        var propertyInfo = GetType().GetProperties(BindingFlags.Public | BindingFlags.NonPublic | BindingFlags.Instance);
 
         //Assign all source property to taget object 's properties
         foreach (var property in propertyInfo)
         {
             //Check whether property can be written to
             if (property.CanWrite && !property.Name.Equals("ID") && !property.Name.Equals("Catalogue_ID"))
-                if (property.PropertyType.IsValueType || property.PropertyType.IsEnum || property.PropertyType.Equals(typeof(System.String)))
+                if (property.PropertyType.IsValueType || property.PropertyType.IsEnum || property.PropertyType.Equals(typeof(string)))
                     property.SetValue(clone, property.GetValue(this, null), null);
         }
 
@@ -368,24 +368,24 @@ public class CatalogueItem : DatabaseEntity, IDeleteable, IComparable, IHasDepen
     public IEnumerable<ColumnInfo> GuessAssociatedColumn(ColumnInfo[] guessPool, bool allowPartial = true)
     {
         //exact matches exist so return those
-        var Guess = guessPool.Where(col => col.GetRuntimeName().Equals(this.Name)).ToArray();
+        var Guess = guessPool.Where(col => col.GetRuntimeName().Equals(Name)).ToArray();
         if (Guess.Any())
             return Guess;
 
         //ignore caps match instead
-        Guess = guessPool.Where(col => col.GetRuntimeName().ToLower().Equals(this.Name.ToLower())).ToArray();
+        Guess = guessPool.Where(col => col.GetRuntimeName().ToLower().Equals(Name.ToLower())).ToArray();
         if (Guess.Any())
             return Guess;
 
         //ignore caps and remove spaces match instead
-        Guess = guessPool.Where(col => col.GetRuntimeName().ToLower().Replace(" ", "").Equals(this.Name.ToLower().Replace(" ", ""))).ToArray();
+        Guess = guessPool.Where(col => col.GetRuntimeName().ToLower().Replace(" ", "").Equals(Name.ToLower().Replace(" ", ""))).ToArray();
         if (Guess.Any())
             return Guess;
 
         if (allowPartial)
             //contains match is final last resort
             return guessPool.Where(col =>
-                col.GetRuntimeName().ToLower().Contains(this.Name.ToLower())
+                col.GetRuntimeName().ToLower().Contains(Name.ToLower())
                 ||
                 Name.ToLower().Contains(col.GetRuntimeName().ToLower()));
 

@@ -64,7 +64,7 @@ public class CohortSummaryAggregateGraphUI:AggregateGraphUI, IObjectCollectionCo
             
         BuildMenu(activator);
 
-        base.SetAggregate(activator,_collection.Graph);
+        SetAggregate(activator,_collection.Graph);
         LoadGraphAsync();
     }
 
@@ -124,7 +124,7 @@ public class CohortSummaryAggregateGraphUI:AggregateGraphUI, IObjectCollectionCo
             case CohortSummaryAdjustment.WhereRecordsIn:
                 return "Graphing Cohort Query Result";
             default:
-                throw new ArgumentOutOfRangeException("adjustment");
+                throw new ArgumentOutOfRangeException(nameof(adjustment));
         }
     }
 

@@ -154,12 +154,8 @@ public class ParameterManager
         if(emptyParameter != null)
         {
             var exceptionMessage = $"No Value defined for Parameter {emptyParameter.Parameter.ParameterName}";
-            var asConcreteObject = emptyParameter.Parameter as IMapsDirectlyToDatabaseTable;
-                
-            //problem was in a freaky parameter e.g. a constant one that doesn't come from database (rare to happen I would expect)
-            if(asConcreteObject == null)
-                throw new QueryBuildingException(exceptionMessage);
-                
+            var asConcreteObject = emptyParameter.Parameter as IMapsDirectlyToDatabaseTable ?? throw new QueryBuildingException(exceptionMessage);
+
             //problem was from a user one from their Catalogue Database, tell them the ProblemObject aswell
             throw new QueryBuildingException(exceptionMessage,new[]{asConcreteObject});
                 
@@ -476,8 +472,10 @@ public class ParameterManager
     /// <returns></returns>
     public ParameterManager Clone()
     {
-        var clone = new ParameterManager(this.ParametersFoundSoFarInQueryGeneration[ParameterLevel.Global].ToArray());
-        clone.State = State;
+        var clone = new ParameterManager(ParametersFoundSoFarInQueryGeneration[ParameterLevel.Global].ToArray())
+            {
+                State = State
+            };
 
         foreach (var kvp in ParametersFoundSoFarInQueryGeneration)
             clone.ParametersFoundSoFarInQueryGeneration[kvp.Key].AddRange(kvp.Value);

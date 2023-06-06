@@ -164,7 +164,7 @@ public class Plugin : DatabaseEntity,INamed
         var pluginName = Path.GetFileNameWithoutExtension(Name);
 
         if(string.IsNullOrWhiteSpace(pluginName))
-            throw new Exception("Plugin doens't have a valid name");
+            throw new Exception("Plugin doesn't have a valid name");
 
         return Path.Combine(downloadDirectoryRoot.FullName ,pluginName);
     }

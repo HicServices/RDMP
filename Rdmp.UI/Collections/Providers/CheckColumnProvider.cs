@@ -45,7 +45,7 @@ public class CheckColumnProvider
     private Task checkingTask;
     public void CheckCheckables()
     {
-        if (checkingTask != null && !checkingTask.IsCompleted)
+        if (checkingTask is { IsCompleted: false })
         {
             MessageBox.Show("Checking is already happening");
             return;
@@ -88,7 +88,7 @@ public class CheckColumnProvider
 
         var checksCol = _tree.AllColumns.FirstOrDefault(c=>string.Equals(c.Text,ChecksColumnName));
 
-        if (checksCol != null && !checksCol.IsVisible)
+        if (checksCol is { IsVisible: false })
         {
             checksCol.IsVisible = true;
             _tree.RebuildColumns();
@@ -116,14 +116,13 @@ public class CheckColumnProvider
 
     private Bitmap CheckImageGetter(object rowobject)
     {
-        var checkable = rowobject as ICheckable;
-        if (checkable == null)
+        if (rowobject is not ICheckable checkable)
             return null;
 
         lock (ocheckResultsDictionaryLock)
         {
-            if (checkResultsDictionary.ContainsKey(checkable))
-                return _iconProvider.GetImage(checkResultsDictionary[checkable]).ImageToBitmap();
+            if (checkResultsDictionary.TryGetValue(checkable, out var image))
+                return _iconProvider.GetImage(image).ImageToBitmap();
 
         }
         //not been checked yet

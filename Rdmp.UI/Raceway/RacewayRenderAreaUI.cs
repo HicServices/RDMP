@@ -293,7 +293,7 @@ public partial class RacewayRenderAreaUI : UserControl,INotifyMeOfEditState
             _allowScrollDown = false;
 
             var index = 0;
-            foreach (var kvp in _periodicityDictionary.OrderBy(kvp => kvp.Value == null ? $"zzzzzz{kvp.Key.Name}" : kvp.Key.Name))
+            foreach (var (catalogue, dictionary) in _periodicityDictionary.OrderBy(kvp => kvp.Value == null ? $"zzzzzz{kvp.Key.Name}" : kvp.Key.Name))
             {
                 index++;
 
@@ -308,9 +308,6 @@ public partial class RacewayRenderAreaUI : UserControl,INotifyMeOfEditState
                     break;
                 }
 
-                var catalogue = kvp.Key;
-                var dictionary = kvp.Value;
-
                 var middleLineOfCatalogueLabelY = ((eachRaceLaneHasThisMuchYSpace / 2) - (Font.Height / 2.0)) + startDrawingLaneAtY;
 
                 if (!_buckets.Any())
@@ -321,13 +318,13 @@ public partial class RacewayRenderAreaUI : UserControl,INotifyMeOfEditState
                 if (dictionary == null)
                 {
                     var textWidth = DrawErrorText($"No DQE Evaluation for {catalogue}",true,e, startDrawingLaneAtY, eachRaceLaneHasThisMuchYSpace, middleLineOfCatalogueLabelY);
-                    rectNoDQE.Add(new Rectangle(0, (int)startDrawingLaneAtY, (int)textWidth, (int)eachRaceLaneHasThisMuchYSpace),kvp.Key);
+                    rectNoDQE.Add(new Rectangle(0, (int)startDrawingLaneAtY, (int)textWidth, (int)eachRaceLaneHasThisMuchYSpace),catalogue);
                 }
                 else
                 if (!dictionary.Any())
                 {
                     var textWidth = DrawErrorText($"Table(s) were empty for {catalogue}", true, e, startDrawingLaneAtY, eachRaceLaneHasThisMuchYSpace, middleLineOfCatalogueLabelY);
-                    rectNoDQE.Add(new Rectangle(0, (int)startDrawingLaneAtY, (int)textWidth, (int)eachRaceLaneHasThisMuchYSpace), kvp.Key);
+                    rectNoDQE.Add(new Rectangle(0, (int)startDrawingLaneAtY, (int)textWidth, (int)eachRaceLaneHasThisMuchYSpace), catalogue);
                 }
                 else
                 {
@@ -377,7 +374,7 @@ public partial class RacewayRenderAreaUI : UserControl,INotifyMeOfEditState
                         {
                             hoverLabel = _buckets[i].ToString("Y");
                             hoverValue =
-                                $"{string.Format("{0:n0}", good)}/{string.Format("{0:n0}", total)}";
+                                $"{$"{good:n0}"}/{$"{total:n0}"}";
                         }
                     }
 
@@ -418,7 +415,7 @@ public partial class RacewayRenderAreaUI : UserControl,INotifyMeOfEditState
 
                     e.Graphics.DrawImage(deleteIcon, buttonPoint);
 
-                    rectDeleteButtons.Add(new Rectangle(buttonPoint.X, buttonPoint.Y, deleteIcon.Width, deleteIcon.Height), kvp.Key);
+                    rectDeleteButtons.Add(new Rectangle(buttonPoint.X, buttonPoint.Y, deleteIcon.Width, deleteIcon.Height), catalogue);
                 }
 
                 //move to next lane on graph

@@ -73,7 +73,7 @@ public class MEF
         if(TypeNotKnown.Contains(type))
             return null;
 
-        if (SafeDirectoryCatalog.TypesByName.ContainsKey(type)) return SafeDirectoryCatalog.TypesByName[type];
+        if (SafeDirectoryCatalog.TypesByName.TryGetValue(type, out var type1)) return type1;
         var toReturn = Type.GetType(type);
                 
         //If they are looking for the Type name without the namespace that's bad
@@ -194,11 +194,11 @@ public class MEF
     public static string GetMEFNameForType(Type t)
     {
         if (!t.IsGenericType) return t.FullName;
-        if (t.GenericTypeArguments.Count() != 1)
+        if (t.GenericTypeArguments.Length != 1)
             throw new NotSupportedException("Generic type has more than 1 token (e.g. T1,T2) so no idea what MEF would call it");
         var genericTypeName = t.GetGenericTypeDefinition().FullName;
 
-        Debug.Assert(genericTypeName.EndsWith("`1"));
+        Debug.Assert(genericTypeName?.EndsWith("`1")==true);
         genericTypeName = genericTypeName[..^"`1".Length];
 
         var underlyingType = t.GenericTypeArguments.Single().FullName;
@@ -219,7 +219,7 @@ public class MEF
     public static string GetCSharpNameForType(Type t)
     {
         if (!t.IsGenericType) return t.Name;
-        if (t.GenericTypeArguments.Count() != 1)
+        if (t.GenericTypeArguments.Length != 1)
             throw new NotSupportedException("Generic type has more than 1 token (e.g. T1,T2) so no idea what MEF would call it");
         var genericTypeName = t.GetGenericTypeDefinition().Name;
 
@@ -260,8 +260,8 @@ public class MEF
         return GetTypes(typeof(T));
     }
 
-    object _cachedImplementationsLock = new object();
-    Dictionary<Type,Type[]> _cachedImplementations = new Dictionary<Type, Type[]>();
+    readonly object _cachedImplementationsLock = new object();
+    readonly Dictionary<Type,Type[]> _cachedImplementations = new Dictionary<Type, Type[]>();
 
     /// <summary>
     /// Returns MEF exported Types which inherit or implement <paramref name="type"/>.  E.g. pass IAttacher to see
@@ -275,8 +275,8 @@ public class MEF
 
         lock(_cachedImplementationsLock)
         {
-            if(_cachedImplementations.ContainsKey(type))
-                return _cachedImplementations[type];
+            if(_cachedImplementations.TryGetValue(type, out var types))
+                return types;
 
             var results = SafeDirectoryCatalog.GetAllTypes().Where(t=>type.IsAssignableFrom(t) && !t.IsAbstract && !t.IsInterface).ToArray();
             _cachedImplementations.Add(type,results);
@@ -303,30 +303,21 @@ public class MEF
     }
                 
     /// <summary>
-    /// Creates an instance of the named class with the provided constructor args
-    /// 
-    /// <para>IMPORTANT: this will create classes from the MEF Exports ONLY i.e. not any loaded type but has to be an explicitly labled Export of a LoadModuleAssembly</para>
+    /// Creates an instance of the named class with the provided constructor arguments
     /// </summary>
     /// <typeparam name="T">The base/interface of the Type you want to create e.g. IAttacher</typeparam>
     /// <returns></returns>
     public T CreateA<T>(string typeToCreate, params object[] args)
     {
-        var typeToCreateAsType = GetType(typeToCreate);
-
-        if (typeToCreateAsType == null)
-            throw new Exception($"Could not find Type '{typeToCreate}'");
+        var typeToCreateAsType = GetType(typeToCreate) ?? throw new Exception($"Could not find Type '{typeToCreate}'");
 
         //can we cast to T?
-        if(typeToCreateAsType.IsAssignableFrom(typeof(T)))
+        if (typeToCreateAsType.IsAssignableFrom(typeof(T)))
             throw new Exception(
                 $"Requested typeToCreate '{typeToCreate}' was not assignable to the required Type '{typeof(T).Name}'");
 
-        var instance = (T)o.ConstructIfPossible(typeToCreateAsType,args);
-
-        if(instance == null)
-            throw new ObjectLacksCompatibleConstructorException(
+        var instance = (T)o.ConstructIfPossible(typeToCreateAsType,args) ?? throw new ObjectLacksCompatibleConstructorException(
                 $"Could not construct a {typeof(T)} using the {args.Length} constructor arguments");
-
         return instance;
     }
 

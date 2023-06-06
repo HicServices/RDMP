@@ -52,11 +52,12 @@ public class DleRunner:Runner
             throw new ArgumentException("The supplied LoadProgress does not belong to the supplied LoadMetadata load");
             
         var databaseConfiguration = new HICDatabaseConfiguration(loadMetadata);
-        var flags = new HICLoadConfigurationFlags();
-            
-        flags.ArchiveData = !_options.DoNotArchiveData;
-        flags.DoLoadToStaging = !_options.StopAfterRAW;
-        flags.DoMigrateFromStagingToLive = !_options.StopAfterSTAGING;
+        var flags = new HICLoadConfigurationFlags
+        {
+            ArchiveData = !_options.DoNotArchiveData,
+            DoLoadToStaging = !_options.StopAfterRAW,
+            DoMigrateFromStagingToLive = !_options.StopAfterSTAGING
+        };
 
         var checkable = new CheckEntireDataLoadProcess(loadMetadata, databaseConfiguration, flags, locator.CatalogueRepository.MEF); 
 

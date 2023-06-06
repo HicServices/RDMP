@@ -148,7 +148,7 @@ public class BulkTestsData
 
         var forwardEngineer = new ForwardEngineerCatalogue(tableInfo,columnInfos);
         forwardEngineer.ExecuteForwardEngineering(out var c,out catalogueItems, out extractionInformations);
-        this.catalogue = c;
+        catalogue = c;
 
         var chi = extractionInformations.Single(e => e.GetRuntimeName().Equals("chi"));
         chi.IsExtractionIdentifier = true;
@@ -184,8 +184,10 @@ public class BulkTestsData
     public void SetupValidationOnCatalogue()
     {
         var v = new Validator();
-        var iv = new ItemValidator("chi");
-        iv.PrimaryConstraint = new Chi();
+        var iv = new ItemValidator("chi")
+        {
+            PrimaryConstraint = new Chi()
+        };
         iv.PrimaryConstraint.Consequence = Consequence.Wrong;
 
         v.AddItemValidator(iv, "chi", typeof(string));

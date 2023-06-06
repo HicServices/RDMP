@@ -74,7 +74,7 @@ public partial class ExtractableCohortCollectionUI : RDMPUserControl, ILifetimeS
 
     private void BeforeSorting(object sender, BeforeSortingEventArgs e)
     {
-        this.lbCohortDatabaseTable.ListViewItemSorter = new ColumnComparer(
+        lbCohortDatabaseTable.ListViewItemSorter = new ColumnComparer(
             e.ColumnToSort,e.SortOrder , e.SecondaryColumnToSort, e.SecondarySortOrder);
         e.Handled = true;
     }
@@ -124,7 +124,7 @@ public partial class ExtractableCohortCollectionUI : RDMPUserControl, ILifetimeS
         catch (Exception e)
         {
             ExceptionViewer.Show(
-                $"{this.GetType().Name} could not load Cohorts:{Environment.NewLine}{ExceptionHelper.ExceptionToListOfInnerMessages(e)}", e);
+                $"{GetType().Name} could not load Cohorts:{Environment.NewLine}{ExceptionHelper.ExceptionToListOfInnerMessages(e)}", e);
         }
     }
 
@@ -138,7 +138,7 @@ public partial class ExtractableCohortCollectionUI : RDMPUserControl, ILifetimeS
         catch (Exception e)
         {
             ExceptionViewer.Show(
-                $"{this.GetType().Name} could not load Cohorts:{Environment.NewLine}{ExceptionHelper.ExceptionToListOfInnerMessages(e)}", e);
+                $"{GetType().Name} could not load Cohorts:{Environment.NewLine}{ExceptionHelper.ExceptionToListOfInnerMessages(e)}", e);
         }
     }
 
@@ -154,12 +154,9 @@ public partial class ExtractableCohortCollectionUI : RDMPUserControl, ILifetimeS
         lbCohortDatabaseTable.AddObjects(fetchDescriptionsDictionary.SelectMany(kvp => kvp.Value).ToArray());
 
         //Just because the object updates itself doesn't mean ObjectListView will notice, so we must also subscribe to the fetch completion (1 per cohort source table) 
-        //when the fetch completes, update the UI nodes (they also themselves subscribe to the fetch completion handler and should be registered further up the inovcation list)
-        foreach (var kvp in fetchDescriptionsDictionary)
+        //when the fetch completes, update the UI nodes (they also themselves subscribe to the fetch completion handler and should be registered further up the invocation list)
+        foreach (var (fetch, nodes) in fetchDescriptionsDictionary)
         {
-            var fetch = kvp.Key;
-            var nodes = kvp.Value;
-
             //Could be we are disposed when this happens
             fetch.Finished += () =>
             {

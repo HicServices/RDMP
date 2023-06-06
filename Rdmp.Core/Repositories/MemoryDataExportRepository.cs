@@ -50,15 +50,12 @@ public class MemoryDataExportRepository : MemoryCatalogueRepository,IDataExportR
         
     public virtual string GetValue(DataExportProperty property)
     {
-        return PropertiesDictionary.ContainsKey(property) ? PropertiesDictionary[property] : null;
+        return PropertiesDictionary.TryGetValue(property, out var value) ? value : null;
     }
 
     public virtual void SetValue(DataExportProperty property, string value)
     {
-        if (!PropertiesDictionary.ContainsKey(property))
-            PropertiesDictionary.Add(property,value);
-        else
-            PropertiesDictionary[property] = value;
+        PropertiesDictionary[property] = value;
     }
     #endregion
 
@@ -90,7 +87,7 @@ public class MemoryDataExportRepository : MemoryCatalogueRepository,IDataExportR
             PackageDictionary.Add(package, new HashSet<IExtractableDataSet>());
 
         if (!PackageDictionary[package].Contains(dataSet))
-            throw new ArgumentException($"dataSet {dataSet} is not part of package {package} so cannot be removed", "dataSet");
+            throw new ArgumentException($"dataSet {dataSet} is not part of package {package} so cannot be removed", nameof(dataSet));
 
         PackageDictionary[package].Remove(dataSet);
     }

@@ -160,7 +160,7 @@ False - Drop the row from the DataTable (and issue a warning)",DefaultValue=true
                 }
                 catch (Exception ex)
                 {
-                    throw new Exception($"Error building Type convertion decider for the mapping table key type {_keyType}",ex);
+                    throw new Exception($"Error building Type conversion decider for the mapping table key type {_keyType}",ex);
                 }   
             }
                     
@@ -209,7 +209,7 @@ False - Drop the row from the DataTable (and issue a warning)",DefaultValue=true
                 {
                     case AliasResolutionStrategy.CrashIfAliasesFound:
                         throw new AliasException(
-                            $"The value '{fromValue}' maps to mulitple ouptut values:{string.Join(",", results.Select(v => $"'{v}'"))}");
+                            $"The value '{fromValue}' maps to multiple output values:{string.Join(",", results.Select(v => $"'{v}'"))}");
 
                     case AliasResolutionStrategy.MultiplyInputDataRowsByAliases:
                             

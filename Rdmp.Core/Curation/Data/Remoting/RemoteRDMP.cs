@@ -177,7 +177,9 @@ public class RemoteRDMP : DatabaseEntity, INamed, IEncryptedPasswordHost
 
     public void SetRepository(ICatalogueRepository repository)
     {
-        _encryptedPasswordHost = new EncryptedPasswordHost(repository);
-        _encryptedPasswordHost.Password = _tempPassword;
+        _encryptedPasswordHost = new EncryptedPasswordHost(repository)
+        {
+            Password = _tempPassword
+        };
     }
 }

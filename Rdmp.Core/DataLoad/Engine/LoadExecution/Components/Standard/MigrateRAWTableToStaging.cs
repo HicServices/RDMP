@@ -150,7 +150,7 @@ public class MigrateRAWTableToStaging : DataLoadComponent
         }
         catch (Exception e)
         {
-            job.OnNotify(this,new NotifyEventArgs(ProgressEventType.Warning, "Could not delete fully null records, this will not prevent the data load ocurring",e));
+            job.OnNotify(this,new NotifyEventArgs(ProgressEventType.Warning, "Could not delete fully null records, this will not prevent the data load occurring",e));
         }
     }
 

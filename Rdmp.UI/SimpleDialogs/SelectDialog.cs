@@ -171,7 +171,7 @@ public partial class SelectDialog<T> : Form, IVirtualListDataSource where T : cl
             _allObjects = toSelectFrom.ToArray();
                 
             // don't bother with the tool strip because its not database objects so we can't filter by ID/type etc
-            this.Controls.Remove(toolStrip1);
+            Controls.Remove(toolStrip1);
         }
 
         taskDescriptionLabel1.SetupFor(args);
@@ -299,7 +299,7 @@ public partial class SelectDialog<T> : Form, IVirtualListDataSource where T : cl
         var type = mapsDirectlyToDatabaseTables.First().GetType();
 
         // types differ (use All to jump out ASAP if theres a billion objects)
-        if (!mapsDirectlyToDatabaseTables.All(m => m.GetType() == type))
+        if (mapsDirectlyToDatabaseTables.Any(m => m.GetType() != type))
             return;
 
         //all objects are the same Type
@@ -308,15 +308,13 @@ public partial class SelectDialog<T> : Form, IVirtualListDataSource where T : cl
         foreach (var propertyInfo in type.GetProperties())
         {
             var useful = _usefulPropertyFinder.GetAttribute(propertyInfo);
-            if (useful != null)
-            {
-                //add a column
-                var newCol = new OLVColumn(propertyInfo.Name, propertyInfo.Name);
-                olv.AllColumns.Add(newCol);
+            if (useful == null) continue;
+            //add a column
+            var newCol = new OLVColumn(propertyInfo.Name, propertyInfo.Name);
+            olv.AllColumns.Add(newCol);
 
 
-                RDMPCollectionCommonFunctionality.SetupColumnTracking(olv, newCol, $"Useful_{propertyInfo.Name}");
-            }
+            RDMPCollectionCommonFunctionality.SetupColumnTracking(olv, newCol, $"Useful_{propertyInfo.Name}");
         }
             
     }
@@ -340,44 +338,29 @@ public partial class SelectDialog<T> : Form, IVirtualListDataSource where T : cl
 
     private Bitmap GetHierarchyImage(object rowObject)
     {
-        if (!(rowObject is IMapsDirectlyToDatabaseTable m))
+        if (rowObject is not IMapsDirectlyToDatabaseTable m)
             return null;
 
         lock (oMatches)
         {
-            if (_searchables == null)
-                return null;
+            if (_searchables?.TryGetValue(m, out var searchable) != true) return null;
+            var parent = searchable?.GetMostDescriptiveParent();
 
-            if (_searchables.ContainsKey(m))
-            {
-                var descendancy = _searchables[m];
-                var parent = descendancy?.GetMostDescriptiveParent();
-
-                if (parent == null)
-                    return null;
-
-                return provider.GetGrayscale(_activator.CoreIconProvider.GetImage(parent)).ImageToBitmap();
-            }
+            return parent == null ? null : provider.GetGrayscale(_activator.CoreIconProvider.GetImage(parent)).ImageToBitmap();
         }
-
-        return null;
     }
 
     private object GetHierarchy(object rowObject)
     {
-        if (!(rowObject is IMapsDirectlyToDatabaseTable m))
+        if (rowObject is not IMapsDirectlyToDatabaseTable m)
             return null;
 
         lock(oMatches)
         {
-            if (_searchables == null)
-                return null;
-
-            if (_searchables.ContainsKey(m))
-            {
-                var descendancy = _searchables[m];
-                return descendancy != null ? Regex.Replace(string.Join('\\', descendancy.GetUsefulParents()), "\\\\+", "\\").Trim('\\') : null;
-            }
+            if (_searchables?.TryGetValue(m, out var descendancy)==true)
+                return descendancy != null
+                    ? Regex.Replace(string.Join('\\', descendancy.GetUsefulParents()), "\\\\+", "\\").Trim('\\')
+                    : null;
         }   
 
         return null;
@@ -395,13 +378,13 @@ public partial class SelectDialog<T> : Form, IVirtualListDataSource where T : cl
         }
         Type[] startingFilters = null;
 
-        if (focusedCollection != RDMPCollection.None && StartingEasyFilters.ContainsKey(focusedCollection))
-            startingFilters = StartingEasyFilters[focusedCollection];
+        if (focusedCollection != RDMPCollection.None && StartingEasyFilters.TryGetValue(focusedCollection, out var filter))
+            startingFilters = filter;
 
         var backColorProvider = new BackColorProvider();
 
         // if there are at least 2 Types of object let them filter
-        if(_types.Count() > 1)
+        if(_types.Length > 1)
         {
             foreach (var t in EasyFilterTypesAndAssociatedCollections.Keys)
             {
@@ -524,11 +507,13 @@ public partial class SelectDialog<T> : Form, IVirtualListDataSource where T : cl
 
     private void FetchMatches(string text, CancellationToken cancellationToken)
     {
-        var scorer = new SearchablesMatchScorer();
-        scorer.RespectUserSettings = UserSettings.AdvancedFindFilters;
-        scorer.TypeNames = _typeNames;
-        scorer.ReturnEmptyResultWhenNoSearchTerms = _args.IsFind;
-        scorer.BumpMatches = _activator.HistoryProvider.History.Select(h => h.Object).ToList();
+        var scorer = new SearchablesMatchScorer
+        {
+            RespectUserSettings = UserSettings.AdvancedFindFilters,
+            TypeNames = _typeNames,
+            ReturnEmptyResultWhenNoSearchTerms = _args.IsFind,
+            BumpMatches = _activator.HistoryProvider.History.Select(h => h.Object).ToList()
+        };
 
         if (_lblId != null && int.TryParse(_lblId.Text, out var requireId))
         {
@@ -575,7 +560,7 @@ public partial class SelectDialog<T> : Form, IVirtualListDataSource where T : cl
 
             MultiSelected = new HashSet<T>(new[] { Selected });
             DialogResult = DialogResult.OK;
-            this.Close();
+            Close();
         }
     }
     private void listBox1_KeyUp(object sender, KeyEventArgs e)
@@ -600,13 +585,13 @@ public partial class SelectDialog<T> : Form, IVirtualListDataSource where T : cl
         if (e.KeyCode == Keys.Enter && olv.SelectedObject != null)
         {
             DialogResult = DialogResult.OK;
-            Selected = olv.SelectedObject is T s ? s : default(T);
+            Selected = olv.SelectedObject is T s ? s : default;
 
             // if there are some multi selected items already
             if(AllowMultiSelect && MultiSelected.Any())
             {
                 // select only those
-                this.Close();
+                Close();
                 return;
             }
 
@@ -614,7 +599,7 @@ public partial class SelectDialog<T> : Form, IVirtualListDataSource where T : cl
                 return;
 
             MultiSelected = new HashSet<T>(new[] { Selected });
-            this.Close();
+            Close();
         }
 
         //space flips the selectedness of the objects that are selected
@@ -667,7 +652,7 @@ public partial class SelectDialog<T> : Form, IVirtualListDataSource where T : cl
         }
 
         //cancel the last execution if it has not completed yet
-        if (_lastFetchTask != null && !_lastFetchTask.IsCompleted)
+        if (_lastFetchTask is { IsCompleted: false })
             _lastCancellationToken.Cancel();
 
         _lastCancellationToken = new CancellationTokenSource();
@@ -827,23 +812,23 @@ public partial class SelectDialog<T> : Form, IVirtualListDataSource where T : cl
             Selected = (T)olv.SelectedObject;
 
         DialogResult = DialogResult.OK;
-        this.Close();
+        Close();
     }
 
     private void btnSelectNULL_Click(object sender, EventArgs e)
     {
-        Selected = default(T);
+        Selected = default;
         MultiSelected = new HashSet<T>();
         DialogResult = DialogResult.OK;
-        this.Close();
+        Close();
     }
 
     private void btnCancel_Click(object sender, EventArgs e)
     {
-        Selected = default(T);
+        Selected = default;
         MultiSelected = new HashSet<T>();
         DialogResult = DialogResult.Cancel;
-        this.Close();
+        Close();
     }
     public void SetInitialSelection(IEnumerable<T> toSelect)
     {

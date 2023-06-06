@@ -23,7 +23,7 @@ public class ExecuteCommandExecuteAggregateGraph : BasicCommandExecution, IAtomi
     public ExecuteCommandExecuteAggregateGraph(IBasicActivateItems activator, AggregateConfiguration aggregate, FileInfo toFile=null) : base(activator)
     {
         _aggregate = aggregate;
-        this._toFile = toFile;
+        _toFile = toFile;
         if (aggregate.IsCohortIdentificationAggregate)
             SetImpossible("AggregateConfiguration is a Cohort aggregate");
 

@@ -17,7 +17,7 @@ public class DirectoryInfoComparer : IEqualityComparer<DirectoryInfo>
 {
     public bool Equals(DirectoryInfo x, DirectoryInfo y)
     {
-        if (object.ReferenceEquals(x, y))
+        if (ReferenceEquals(x, y))
             return true;
         if (x == null || y == null)
             return false;
@@ -36,7 +36,7 @@ public static class DirectoryInfoExtensions
 {
     public static void CopyAll(this DirectoryInfo source, DirectoryInfo target)
     {
-        if (String.Equals(source.FullName, target.FullName, StringComparison.InvariantCultureIgnoreCase))
+        if (string.Equals(source.FullName, target.FullName, StringComparison.InvariantCultureIgnoreCase))
         {
             return;
         }

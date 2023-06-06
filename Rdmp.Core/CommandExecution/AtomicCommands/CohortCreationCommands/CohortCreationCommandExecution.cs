@@ -147,10 +147,10 @@ public abstract class CohortCreationCommandExecution : BasicCommandExecution, IA
 
         var pipelineRunner = BasicActivator.GetPipelineRunner(new DialogArgs { 
             WindowTitle = "Commit Cohort",
-            TaskDescription = $"Select a Pipeline compatible with creating a Cohort from an '{cohortIsBeingCreatedFrom.GetType().Name}'.  If the pipeline completes succesfully a new Saved Cohort will be created and the cohort identifiers stored in '{request?.NewCohortDefinition?.LocationOfCohort?.Name ?? "Unknown"}'."
+            TaskDescription = $"Select a Pipeline compatible with creating a Cohort from an '{cohortIsBeingCreatedFrom.GetType().Name}'.  If the pipeline completes successfully a new Saved Cohort will be created and the cohort identifiers stored in '{request?.NewCohortDefinition?.LocationOfCohort?.Name ?? "Unknown"}'."
         },request, Pipeline);
 
-        pipelineRunner.PipelineExecutionFinishedsuccessfully += (o, args) => OnCohortCreatedSuccessfully(pipelineRunner, request);
+        pipelineRunner.PipelineExecutionFinishedsuccessfully += (_, _) => OnCohortCreatedSuccessfully(pipelineRunner, request);
 
         //add in the logging server
         var loggingServer = catalogueRepository.GetDefaultFor(PermissableDefaults.LiveLoggingServer_ID);

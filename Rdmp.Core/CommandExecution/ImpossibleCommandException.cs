@@ -17,7 +17,7 @@ public class ImpossibleCommandException : Exception
     public string ReasonCommandImpossible { get; private set; }
 
     public ImpossibleCommandException(ICommandExecution command, string reasonCommandImpossible)
-        : base(string.Format("Command is marked as IsImpossible and should not be Executed.  Reason is '{0}'", reasonCommandImpossible))
+        : base($"Command is marked as IsImpossible and should not be Executed.  Reason is '{reasonCommandImpossible}'")
     {
         Command = command;
         ReasonCommandImpossible = reasonCommandImpossible;

@@ -28,9 +28,9 @@ public class ExecuteCommandAddPlugins : BasicCommandExecution, IAtomicCommand
 
     public ExecuteCommandAddPlugins(IBasicActivateItems itemActivator, FileCollectionCombineable fileCombineable):base(itemActivator)
     {
-        if(!fileCombineable.Files.All(f=>f.Extension == PackPluginRunner.PluginPackageSuffix))
+        if(fileCombineable.Files.Any(f => f.Extension != PackPluginRunner.PluginPackageSuffix))
         {
-            SetImpossible($"Plugins must {PackPluginRunner.PluginPackageSuffix}"); 
+            SetImpossible($"Plugins must end {PackPluginRunner.PluginPackageSuffix}"); 
             return;
         }
 
@@ -61,8 +61,8 @@ public class ExecuteCommandAddPlugins : BasicCommandExecution, IAtomicCommand
 
         foreach(var f in _files)
         {
-            var runner = new PackPluginRunner(new Core.CommandLine.Options.PackOptions(){File = f.FullName});
-            runner.Run(BasicActivator.RepositoryLocator,new ThrowImmediatelyDataLoadEventListener(),new ThrowImmediatelyCheckNotifier(),new Core.DataFlowPipeline.GracefulCancellationToken());
+            var runner = new PackPluginRunner(new CommandLine.Options.PackOptions(){File = f.FullName});
+            runner.Run(BasicActivator.RepositoryLocator,new ThrowImmediatelyDataLoadEventListener(),new ThrowImmediatelyCheckNotifier(),new DataFlowPipeline.GracefulCancellationToken());
         }
                 
         Show("Changes will take effect on restart");

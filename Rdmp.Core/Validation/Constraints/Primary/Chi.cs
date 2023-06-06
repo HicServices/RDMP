@@ -55,7 +55,7 @@ public class Chi : PrimaryConstraint
             return false;
         }
 
-        var dd = columnValueAsString.Substring(0, 2);
+        var dd = columnValueAsString[..2];
         var mm = columnValueAsString.Substring(2, 2);
         var yy = columnValueAsString.Substring(4, 2);
 
@@ -68,7 +68,7 @@ public class Chi : PrimaryConstraint
         }
 
 
-        if (columnValueAsString.Substring(columnValueAsString.Length - 1) != GetCHICheckDigit(columnValueAsString))
+        if (columnValueAsString[^1..] != GetCHICheckDigit(columnValueAsString))
         {
             reason = "CHI check digit did not match";
             return false;
@@ -95,7 +95,7 @@ public class Chi : PrimaryConstraint
         c = (int)'0';
         for (var i = 0; i < lsCHI - 1; i++)
             sum += ((int)(sCHI.Substring(i, 1)[0]) - c) * (lsCHI - i);
-        sum = sum % 11;
+        sum %= 11;
 
         c = 11 - sum;
         if (c == 11) c = 0;
@@ -137,7 +137,7 @@ public class Chi : PrimaryConstraint
         // Value of 10 indicates a checksum error
         var checkDigit = ComputeChecksum(strChi);
 
-        return (checkDigit != 10 && (int)Char.GetNumericValue(strChi[9]) == checkDigit);
+        return (checkDigit != 10 && (int)char.GetNumericValue(strChi[9]) == checkDigit);
     }
 
     private static bool isWellFormedChi(string strChi)

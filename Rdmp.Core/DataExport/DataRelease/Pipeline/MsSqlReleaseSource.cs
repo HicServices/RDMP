@@ -84,7 +84,7 @@ public class MsSqlReleaseSource<T> : FixedReleaseSource<ReleaseAudit>
         if (!_releaseData.ReleaseGlobals || _releaseData.ReleaseState == ReleaseState.DoingPatch)
             notifier.OnCheckPerformed(new CheckEventArgs("You cannot untick globals or release a subset of datasets when releasing from a DB", CheckResult.Fail));
 
-        var foundConnection = String.Empty;
+        var foundConnection = string.Empty;
         var tables = new List<string>();
         foreach (var cumulativeResult in _releaseData.ConfigurationsForRelease.SelectMany(x => x.Key.CumulativeExtractionResults))
         {
@@ -97,7 +97,7 @@ public class MsSqlReleaseSource<T> : FixedReleaseSource<ReleaseAudit>
 
             tables.Add(cumulativeResult.DestinationDescription.Split('|')[2]);
 
-            if (String.IsNullOrEmpty(foundConnection)) // the first time we use the candidate as our connection...
+            if (string.IsNullOrEmpty(foundConnection)) // the first time we use the candidate as our connection...
                 foundConnection = candidate;
 
             if (foundConnection != candidate) // ...then we check that all other candidates point to the same DB
@@ -136,7 +136,7 @@ public class MsSqlReleaseSource<T> : FixedReleaseSource<ReleaseAudit>
 
             tables.Add(globalResult.DestinationDescription.Split('|')[2]);
 
-            if (String.IsNullOrEmpty(foundConnection)) // the first time we use the candidate as our connection...
+            if (string.IsNullOrEmpty(foundConnection)) // the first time we use the candidate as our connection...
                 foundConnection = candidate;
 
             if (foundConnection != candidate) // ...then we check that all other candidates point to the same DB
@@ -148,7 +148,7 @@ public class MsSqlReleaseSource<T> : FixedReleaseSource<ReleaseAudit>
         var dbName = foundConnection.Split('|')[1];
 
         var externalServer = _catalogueRepository.GetObjectByID<ExternalDatabaseServer>(externalServerId);
-        if (!String.IsNullOrWhiteSpace(externalServer.MappedDataPath))
+        if (!string.IsNullOrWhiteSpace(externalServer.MappedDataPath))
             _dataPathMap = new DirectoryInfo(externalServer.MappedDataPath);
         else
             throw new Exception(
@@ -173,7 +173,7 @@ public class MsSqlReleaseSource<T> : FixedReleaseSource<ReleaseAudit>
 
         var spuriousTables = _database.DiscoverTables(false).Where(t => !tables.Contains(t.GetRuntimeName())).ToList();
         if (spuriousTables.Any() && !notifier.OnCheckPerformed(new CheckEventArgs(
-                $"Spurious table(s): {String.Join(",", spuriousTables)} found in the DB.These WILL BE released, you may want to check them before proceeding.",
+                $"Spurious table(s): {string.Join(",", spuriousTables)} found in the DB.These WILL BE released, you may want to check them before proceeding.",
                 CheckResult.Warning,
                 null,
                 "Are you sure you want to continue the release process?")))
@@ -190,8 +190,9 @@ public class MsSqlReleaseSource<T> : FixedReleaseSource<ReleaseAudit>
         if (File.Exists(Path.Combine(dbOutputFolder.FullName, $"{databaseName}.mdf")) ||
             File.Exists(Path.Combine(dbOutputFolder.FullName, $"{databaseName}_log.ldf")))
         {
-            if (notifier.OnCheckPerformed(new CheckEventArgs(String.Format("It seems that database {0} was already detached previously into {1} " +
-                                                                           "but not released or cleaned from the extraction folder", databaseName, dbOutputFolder.FullName),
+            if (notifier.OnCheckPerformed(new CheckEventArgs(
+                    $"It seems that database {databaseName} was already detached previously into {dbOutputFolder.FullName} " +
+                    "but not released or cleaned from the extraction folder",
                     CheckResult.Warning,
                     null,
                     "Do you want to delete it? You should check the contents first. Clicking 'No' will abort the Release.")))

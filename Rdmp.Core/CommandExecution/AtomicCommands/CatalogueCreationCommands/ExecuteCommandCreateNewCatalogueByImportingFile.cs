@@ -107,7 +107,7 @@ public class ExecuteCommandCreateNewCatalogueByImportingFile : CatalogueCreation
         if(db == null)
             return;
 
-        File = File ?? BasicActivator.SelectFile("File to upload");
+        File ??= BasicActivator.SelectFile("File to upload");
             
         if(File == null)
             return;
@@ -126,7 +126,7 @@ public class ExecuteCommandCreateNewCatalogueByImportingFile : CatalogueCreation
         return new DialogArgs
         {
             WindowTitle = "Create Catalogue from File",
-            TaskDescription = "Select a Pipeline compatible with the file format you are loading and your intended destination.  If the pipeline completes succesfully a new Catalogue will be created referencing the new table created in your database."
+            TaskDescription = "Select a Pipeline compatible with the file format you are loading and your intended destination.  If the pipeline completes successfully a new Catalogue will be created referencing the new table created in your database."
         };
     }
 
@@ -135,11 +135,8 @@ public class ExecuteCommandCreateNewCatalogueByImportingFile : CatalogueCreation
         var engine = args.PipelineEngine;
 
         //todo figure out what it created
-        var dest = engine.DestinationObject as DataTableUploadDestination;
-        if(dest == null)
-            throw new Exception($"Destination of engine was unexpectedly not a DataTableUploadDestination despite use case {nameof(UploadFileUseCase)}");
-                        
-        if(string.IsNullOrWhiteSpace(dest.TargetTableName))
+        var dest = engine.DestinationObject as DataTableUploadDestination ?? throw new Exception($"Destination of engine was unexpectedly not a DataTableUploadDestination despite use case {nameof(UploadFileUseCase)}");
+        if (string.IsNullOrWhiteSpace(dest.TargetTableName))
             throw new Exception($"Destination of engine failed to populate {dest.TargetTableName}");
 
         var tbl = db.ExpectTable(dest.TargetTableName);

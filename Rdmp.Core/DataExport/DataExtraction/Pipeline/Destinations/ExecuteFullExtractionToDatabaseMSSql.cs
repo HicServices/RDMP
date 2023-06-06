@@ -277,7 +277,7 @@ public class ExecuteFullExtractionToDatabaseMSSql : ExtractionDestination
         {
             tblName = SanitizeNameForDatabase(_toProcess.TableName);
 
-            if (!String.IsNullOrWhiteSpace(suffix))
+            if (!string.IsNullOrWhiteSpace(suffix))
                 tblName += $"_{suffix}";
 
             return tblName;
@@ -303,7 +303,7 @@ public class ExecuteFullExtractionToDatabaseMSSql : ExtractionDestination
         }
 
         var cachedGetTableNameAnswer = SanitizeNameForDatabase(tblName);
-        if (!String.IsNullOrWhiteSpace(suffix))
+        if (!string.IsNullOrWhiteSpace(suffix))
             cachedGetTableNameAnswer += $"_{suffix}";
 
         return cachedGetTableNameAnswer;
@@ -323,7 +323,7 @@ public class ExecuteFullExtractionToDatabaseMSSql : ExtractionDestination
         //otherwise, fetch and cache answer
         var cachedGetTableNameAnswer = syntax.GetSensibleEntityNameFromString(tblName);
 
-        if (String.IsNullOrWhiteSpace(cachedGetTableNameAnswer))
+        if (string.IsNullOrWhiteSpace(cachedGetTableNameAnswer))
             throw new Exception(
                 $"TableNamingPattern '{TableNamingPattern}' resulted in an empty string for request '{_request}'");
 
@@ -365,7 +365,7 @@ public class ExecuteFullExtractionToDatabaseMSSql : ExtractionDestination
                     // if there is no primary key then failed batches may have introduced duplication
                     if(!tbl.DiscoverColumns().Any(p=>p.IsPrimaryKey))
                     {
-                        listener.OnNotify(this, new NotifyEventArgs(ProgressEventType.Information, $"Making {tbl} distinct incase there are duplicate rows from bad batch resumes"));
+                        listener.OnNotify(this, new NotifyEventArgs(ProgressEventType.Information, $"Making {tbl} distinct in case there are duplicate rows from bad batch resumes"));
                         tbl.MakeDistinct(50000000);
                         listener.OnNotify(this, new NotifyEventArgs(ProgressEventType.Information, $"Finished distincting {tbl}"));
                     }
@@ -380,7 +380,7 @@ public class ExecuteFullExtractionToDatabaseMSSql : ExtractionDestination
         {
             var result = ((IExtractDatasetCommand)_request).CumulativeExtractionResults;
             if (result != null && _toProcess != null)
-                result.CompleteAudit(this.GetType(), GetDestinationDescription(), TableLoadInfo.Inserts, _request.IsBatchResume, pipelineFailureExceptionIfAny != null);
+                result.CompleteAudit(GetType(), GetDestinationDescription(), TableLoadInfo.Inserts, _request.IsBatchResume, pipelineFailureExceptionIfAny != null);
         }
     }
 

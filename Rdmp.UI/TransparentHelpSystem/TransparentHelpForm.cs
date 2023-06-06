@@ -28,8 +28,8 @@ public class TransparentHelpForm:Form
     [DllImport("dwmapi.dll", PreserveSig = false)]
     public static extern bool DwmIsCompositionEnabled();
 
-    const UInt32 SW_SHOWNOACTIVATE = 4;
-    private const UInt32 WM_NCHITTEST = 0x0084;
+    const uint SW_SHOWNOACTIVATE = 4;
+    private const uint WM_NCHITTEST = 0x0084;
     private const int HTTRANSPARENT = -1;
 
     Timer timer = new Timer();
@@ -138,7 +138,7 @@ public class TransparentHelpForm:Form
     public void ShowWithoutActivate()
     {
         // Show the window without activating it (i.e. do not take focus)
-        ShowWindow(this.Handle, (short)SW_SHOWNOACTIVATE);
+        ShowWindow(Handle, (short)SW_SHOWNOACTIVATE);
     }
 
     protected override void WndProc(ref Message m)

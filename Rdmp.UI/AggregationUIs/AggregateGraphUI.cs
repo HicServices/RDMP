@@ -139,9 +139,9 @@ public partial class AggregateGraphUI : AggregateGraph_Design
             return;
         }
 
-        miSaveImages.Enabled = enabled && _dt != null && _dt.Rows.Count>0;
-        miClipboardCsv.Enabled = enabled && _dt != null && _dt.Rows.Count > 0;
-        miClipboardWord.Enabled = enabled && _dt != null && _dt.Rows.Count > 0;
+        miSaveImages.Enabled = enabled && _dt is { Rows.Count: > 0 };
+        miClipboardCsv.Enabled = enabled && _dt is { Rows.Count: > 0 };
+        miClipboardWord.Enabled = enabled && _dt is { Rows.Count: > 0 };
         btnResendQuery.Enabled = enabled;
     }
 
@@ -155,7 +155,7 @@ public partial class AggregateGraphUI : AggregateGraph_Design
             return;
         }
 
-        if (_cmd != null && _cmd.Connection != null && _cmd.Connection.State != ConnectionState.Closed)
+        if (_cmd is { Connection: not null } && _cmd.Connection.State != ConnectionState.Closed)
             _cmd.Cancel();
 
         pbLoading.Visible = false;
@@ -171,7 +171,7 @@ public partial class AggregateGraphUI : AggregateGraph_Design
     public void LoadGraphAsync()
     {
         //it is already executing
-        if (_loadTask != null && !_loadTask.IsCompleted) 
+        if (_loadTask is { IsCompleted: false }) 
             return;
 
         if (chart1.IsDisposed || chart1.Disposing)
@@ -240,7 +240,7 @@ public partial class AggregateGraphUI : AggregateGraph_Design
                         "Window Handle was not created on AggregateGraph control after 10 seconds of calling LoadGraph!");
             }
                 
-            this.Invoke(new MethodInvoker(() =>
+            Invoke(new MethodInvoker(() =>
             {
                 lblLoadStage.Visible = true;
                 lblLoadStage.Text = "Generating Query...";
@@ -257,7 +257,7 @@ public partial class AggregateGraphUI : AggregateGraph_Design
                 AggregateConfiguration.Catalogue.GetDistinctLiveDatabaseServer(
                     DataAccessContext.InternalDataProcessing,true);
 
-            this.Invoke(new MethodInvoker(() => { lblLoadStage.Text = "Connecting To Server..."; }));
+            Invoke(new MethodInvoker(() => { lblLoadStage.Text = "Connecting To Server..."; }));
 
             using (var con = server.GetConnection())
             {
@@ -268,7 +268,7 @@ public partial class AggregateGraphUI : AggregateGraph_Design
 
                 _dt = new DataTable();
 
-                this.Invoke(new MethodInvoker(() => { lblLoadStage.Text = "Executing Query..."; }));
+                Invoke(new MethodInvoker(() => { lblLoadStage.Text = "Executing Query..."; }));
 
                 var adapter = server.GetDataAdapter(_cmd);
                 adapter.Fill(_dt);
@@ -285,9 +285,9 @@ public partial class AggregateGraphUI : AggregateGraph_Design
 
                 //setup the heatmap if there is a pivot
                 if (_dt.Columns.Count > 2 && AggregateConfiguration.PivotOnDimensionID != null)
-                    this.Invoke(new MethodInvoker(() => heatmapUI.SetDataTable(_dt)));
+                    Invoke(new MethodInvoker(() => heatmapUI.SetDataTable(_dt)));
                 else
-                    this.Invoke(new MethodInvoker(() => heatmapUI.Clear()));
+                    Invoke(new MethodInvoker(() => heatmapUI.Clear()));
 
 
                 if (GraphTableRetrieved != null)
@@ -297,7 +297,7 @@ public partial class AggregateGraphUI : AggregateGraph_Design
                     throw new NotSupportedException("Aggregates must have 2 columns at least");
 
                 //Invoke onto main UI thread so we can setup the chart
-                this.Invoke(new MethodInvoker(() =>
+                Invoke(new MethodInvoker(() =>
                 {
                     PopulateGraphResults(countColumn, axis);
                     Done = true;
@@ -548,7 +548,7 @@ public partial class AggregateGraphUI : AggregateGraph_Design
             if(Silent)
                 throw new Exception($"Aborting data binding because there were {cells} cells in the graph data table");
             else 
-                abandon = !Activator.YesNo($"Data Table has {String.Format("{0:n0}", cells)} cells.  Are you sure you want to attempt to graph it?", "Render Graph?");
+                abandon = !Activator.YesNo($"Data Table has {$"{cells:n0}"} cells.  Are you sure you want to attempt to graph it?", "Render Graph?");
 
         if (!abandon)
         {
@@ -856,11 +856,7 @@ public partial class AggregateGraphUI : AggregateGraph_Design
             var args = new CacheCommitExtractableAggregate(AggregateConfiguration, QueryEditor.Text, (DataTable)dataGridView1.DataSource,Timeout);
             cacheManager.CommitResults(args);
 
-            var result = cacheManager.GetLatestResultsTable(AggregateConfiguration,AggregateOperation.ExtractableAggregateResults, QueryEditor.Text);
-
-            if(result == null)
-                throw new NullReferenceException("CommitResults passed but GetLatestResultsTable returned false (when we tried to refetch the table name from the cache)");
-
+            var result = cacheManager.GetLatestResultsTable(AggregateConfiguration,AggregateOperation.ExtractableAggregateResults, QueryEditor.Text) ?? throw new NullReferenceException("CommitResults passed but GetLatestResultsTable returned false (when we tried to refetch the table name from the cache)");
             MessageBox.Show($"DataTable successfully submitted to:{result.GetFullyQualifiedName()}");
             btnClearFromCache.Enabled = true;
         }

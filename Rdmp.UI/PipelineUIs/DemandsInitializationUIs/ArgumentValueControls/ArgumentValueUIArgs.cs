@@ -36,16 +36,18 @@ public class ArgumentValueUIArgs
 
     public ArgumentValueUIArgs Clone()
     {
-        var newInstance = new ArgumentValueUIArgs();
-        newInstance.Parent = Parent;
-        newInstance.InitialValue = InitialValue;
-        newInstance.ContextText = ContextText;
-        newInstance.Type = Type;
-        newInstance.Required = Required;
-        newInstance.CatalogueRepository = CatalogueRepository;
-        newInstance.Setter = Setter;
-        newInstance.Fatal = Fatal;
-            
+        var newInstance = new ArgumentValueUIArgs
+        {
+            Parent = Parent,
+            InitialValue = InitialValue,
+            ContextText = ContextText,
+            Type = Type,
+            Required = Required,
+            CatalogueRepository = CatalogueRepository,
+            Setter = Setter,
+            Fatal = Fatal
+        };
+
         return newInstance;
     }
 }

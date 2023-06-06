@@ -151,7 +151,7 @@ class CatalogueLoadChecks:ICheckable
 
     private void CheckTableInfoSynchronization(TableInfo tableInfo, ICheckNotifier notifier)
     {
-        //live is the current data load's (possilby overridden server/database)
+        //live is the current data load's (possibly overridden server/database)
         var tableInfoSynchronizer = new TableInfoSynchronizer(tableInfo);
 
         var problemList = "";
@@ -165,14 +165,13 @@ class CatalogueLoadChecks:ICheckable
         {
             var launchSyncFixer = notifier.OnCheckPerformed(new CheckEventArgs(
                 $"TableInfo {tableInfo} failed Synchronization check with following problems:{problemList}", CheckResult.Fail,
-                null,"Launch Synchronization Fixing")); //failed syncronization
+                null,"Launch Synchronization Fixing")); //failed synchronization
 
             if (launchSyncFixer)
             {
-                bool userFixed;
-
-                //if silent running accept all changes
-                userFixed = tableInfoSynchronizer.Synchronize(notifier);
+                var userFixed =
+                    //if silent running accept all changes
+                    tableInfoSynchronizer.Synchronize(notifier);
 
                 if(!userFixed)
                     notifier.OnCheckPerformed(new CheckEventArgs(
@@ -286,13 +285,13 @@ class CatalogueLoadChecks:ICheckable
                 NoBackupTrigger = _loadMetadata.IgnoreTrigger
             });
             notifier.OnCheckPerformed(new CheckEventArgs(
-                $"TableInfo {liveTable} passed {typeof(MigrationColumnSet).Name} check ", CheckResult.Success, null));
+                $"TableInfo {liveTable} passed {nameof(MigrationColumnSet)} check ", CheckResult.Success, null));
         }
         catch (Exception e)
         {
 
             notifier.OnCheckPerformed(new CheckEventArgs(
-                $"{typeof(MigrationColumnSet).Name} reports a problem with the configuration of columns on STAGING/LIVE or in the ColumnInfos for TableInfo {liveTable}", CheckResult.Fail, e));
+                $"{nameof(MigrationColumnSet)} reports a problem with the configuration of columns on STAGING/LIVE or in the ColumnInfos for TableInfo {liveTable}", CheckResult.Fail, e));
         }
             
         //live columns 

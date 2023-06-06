@@ -36,7 +36,7 @@ public abstract class ScheduledJobFactory : IJobFactory
     {
         var job = CreateImpl(repositoryLocator,listener,configuration);
 
-        if (job == null || job.DatesToRetrieve == null || !job.DatesToRetrieve.Any())
+        if (job?.DatesToRetrieve == null || !job.DatesToRetrieve.Any())
             return null; // No dates to load
 
         return job;

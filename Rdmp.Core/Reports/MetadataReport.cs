@@ -262,7 +262,7 @@ public class MetadataReport:DocXHelper
             using(var cmd = DatabaseCommandHelper.GetCommand($"Select * from {lookupTable.Name}", con))
             using (var da = DatabaseCommandHelper.GetDataAdapter(cmd))
             {
-                var dt = new System.Data.DataTable();
+                var dt = new DataTable();
                 da.Fill(dt);
 
                 return dt;
@@ -373,7 +373,7 @@ public class MetadataReport:DocXHelper
         if (x.IsExtractionIdentifier && !y.IsExtractionIdentifier)
             return -1;
 
-        if (y.IsExtractionIdentifier && y.IsExtractionIdentifier)
+        if (y.IsExtractionIdentifier is true and true)
             return 1;
 
         return x.Order - y.Order;
@@ -442,7 +442,7 @@ public class MetadataReport:DocXHelper
                     .ToArray();
                 
             //there is only one table that we can query
-            if (tableInfos.Count() == 1)
+            if (tableInfos.Length == 1)
                 tableToQuery = tableInfos.Single();//query that one
             else
             if (tableInfos.Count(t => t.IsPrimaryExtractionTable) == 1)//there are multiple tables but there is only one IsPrimaryExtractionTable
@@ -463,7 +463,7 @@ public class MetadataReport:DocXHelper
 
             con.Open();
 
-            if (tableToQuery.Name.Contains("@"))
+            if (tableToQuery.Name.Contains('@'))
                 throw new Exception(
                     $"Table '{tableToQuery.Name}' looks like a table valued function so cannot be processed");
 

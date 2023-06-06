@@ -32,16 +32,13 @@ public class MandatoryPropertyChecker:ICheckable
             var demand = System.Attribute.GetCustomAttributes(propertyInfo).OfType<DemandsInitializationAttribute>().FirstOrDefault();
 
             //this one does
-            if (demand != null)
+            if (demand is { Mandatory: true })
             {
-                if(demand.Mandatory)
-                {
-                    var value = propertyInfo.GetValue(_classInstanceToCheck);
-                    if (value == null || string.IsNullOrEmpty(value.ToString()))
-                        notifier.OnCheckPerformed(new CheckEventArgs(
-                            $"DemandsInitialization Property '{propertyInfo.Name}' is marked Mandatory but does not have a value", CheckResult.Fail));
+                var value = propertyInfo.GetValue(_classInstanceToCheck);
+                if (value == null || string.IsNullOrEmpty(value.ToString()))
+                    notifier.OnCheckPerformed(new CheckEventArgs(
+                        $"DemandsInitialization Property '{propertyInfo.Name}' is marked Mandatory but does not have a value", CheckResult.Fail));
 
-                }
             }
         }
     }

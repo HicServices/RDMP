@@ -37,7 +37,7 @@ public static class PermissableDefaultsExtensions
             case PermissableDefaults.ANOStore:
                 return new ANOStorePatcher();
             default:
-                throw new ArgumentOutOfRangeException("permissableDefault");
+                throw new ArgumentOutOfRangeException(nameof(permissableDefault));
         }
     }
 }

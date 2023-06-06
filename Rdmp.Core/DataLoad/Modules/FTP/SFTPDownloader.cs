@@ -29,7 +29,7 @@ public class SFTPDownloader:FTPDownloader
 
     protected override void Download(string file, ILoadDirectory destination,IDataLoadEventListener job)
     {
-        if (file.Contains("/") || file.Contains("\\"))
+        if (file.Contains('/') || file.Contains('\\'))
             throw new Exception("Was not expecting a relative path here");
             
         var s = new Stopwatch();

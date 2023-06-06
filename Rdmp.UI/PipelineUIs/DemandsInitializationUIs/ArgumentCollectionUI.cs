@@ -106,9 +106,9 @@ public partial class ArgumentCollectionUI : UserControl
             
         if(DemandDictionary.Any())
         {
-            var g = this.CreateGraphics();
+            var g = CreateGraphics();
             maxArgNameWidth = DemandDictionary.Select(a =>
-                    g.MeasureString(UsefulStuff.PascalCaseStringToHumanReadable(a.Value.Name), Label.DefaultFont).Width)
+                    g.MeasureString(UsefulStuff.PascalCaseStringToHumanReadable(a.Value.Name), DefaultFont).Width)
                 .Max();
         }
 
@@ -154,10 +154,12 @@ public partial class ArgumentCollectionUI : UserControl
         if (required.Demand.Mandatory && string.IsNullOrWhiteSpace(argument.Value))
             ragSmiley.Fatal(new Exception($"Property {argument.Name} is Mandatory"));
 
-        var args = new ArgumentValueUIArgs();
-        args.Parent = parent;
-        args.Type = argument.GetSystemType();
-        args.ContextText = required.Demand.ContextText;
+        var args = new ArgumentValueUIArgs
+        {
+            Parent = parent,
+            Type = argument.GetSystemType(),
+            ContextText = required.Demand.ContextText
+        };
 
         try
         {

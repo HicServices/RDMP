@@ -115,7 +115,7 @@ public class GovernanceReport:DocXHelper
         description = description.Replace("\n"," ");
 
         if (description.Length >= 100)
-            return $"{description.Substring(0, 100)}...";
+            return $"{description[..100]}...";
         else
             return description;
     }

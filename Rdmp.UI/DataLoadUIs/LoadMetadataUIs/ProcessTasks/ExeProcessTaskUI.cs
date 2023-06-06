@@ -86,7 +86,7 @@ public partial class ExeProcessTaskUI : ExeProcessTaskUI_Design
 
     private void btnRunExe_Click(object sender, EventArgs e)
     {
-        if (_runTask != null && !_runTask.IsCompleted)
+        if (_runTask is { IsCompleted: false })
         {
             MessageBox.Show("Exe is still running");
             return;

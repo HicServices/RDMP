@@ -41,7 +41,7 @@ public class CohortSummaryQueryBuilder
     public CohortSummaryQueryBuilder(AggregateConfiguration summary, AggregateConfiguration cohort, ICoreChildProvider childProvider)
     {
         if (cohort == null)
-            throw new ArgumentException("cohort was null in CohortSummaryQueryBuilder constructor","cohort");
+            throw new ArgumentException("cohort was null in CohortSummaryQueryBuilder constructor",nameof(cohort));
             
         if(summary.Equals(cohort))
             throw new ArgumentException("Summary and Cohort should be different aggregates.  Summary should be a graphable useful aggregate while cohort should return a list of private identifiers");
@@ -69,12 +69,8 @@ public class CohortSummaryQueryBuilder
         //here we take the identifier from the cohort because the dataset might have multiple identifiers e.g. birth record could have patient Id, parent Id, child Id etc.  The Aggregate will already have one of those selected and only one of them selected
         _extractionIdentifierColumn = _cohort.AggregateDimensions.Single(d=>d.IsExtractionIdentifier);
 
-        var cic = _cohort.GetCohortIdentificationConfigurationIfAny();
-            
-        if(cic == null)
-            throw new ArgumentException(
+        var cic = _cohort.GetCohortIdentificationConfigurationIfAny() ?? throw new ArgumentException(
                 $"AggregateConfiguration {_cohort} looked like a cohort but did not belong to any CohortIdentificationConfiguration");
-
         _globals = cic.GetAllParameters();
     }
 
@@ -94,12 +90,8 @@ public class CohortSummaryQueryBuilder
         _summary = summary;
         _cohortContainer = cohortAggregateContainer;
 
-        var cic = _cohortContainer.GetCohortIdentificationConfiguration();
-
-        if (cic == null)
-            throw new ArgumentException(
+        var cic = _cohortContainer.GetCohortIdentificationConfiguration() ?? throw new ArgumentException(
                 $"CohortAggregateContainer {cohortAggregateContainer} is an orphan? it does not belong to any CohortIdentificationConfiguration");
-
         _globals = cic.GetAllParameters();
     }
 
@@ -128,7 +120,7 @@ public class CohortSummaryQueryBuilder
             case CohortSummaryAdjustment.WhereRecordsIn:
                 return GetAdjustedForRecordsIn(singleFilterOnly);
             default:
-                throw new ArgumentOutOfRangeException("adjustment");
+                throw new ArgumentOutOfRangeException(nameof(adjustment));
         }
     }
 
@@ -199,11 +191,7 @@ public class CohortSummaryQueryBuilder
 
     private AggregateBuilder GetAdjustedForExtractionIdentifiersIn()
     {
-        var cachingServer = GetQueryCachingServer();
-
-        if (cachingServer == null)
-            throw new NotSupportedException("No Query Caching Server configured");
-            
+        var cachingServer = GetQueryCachingServer() ?? throw new NotSupportedException("No Query Caching Server configured");
         var memoryRepository = new MemoryCatalogueRepository();
 
         //Get a builder for creating the basic aggregate graph 
@@ -283,7 +271,7 @@ public class CohortSummaryQueryBuilder
     private void ThrowIfNotValidGraph(AggregateConfiguration summary)
     {
         if (summary == null)
-            throw new ArgumentException("summary was null in CohortSummaryQueryBuilder constructor", "summary");
+            throw new ArgumentException("summary was null in CohortSummaryQueryBuilder constructor", nameof(summary));
 
         if (summary.IsCohortIdentificationAggregate)
             throw new ArgumentException(

@@ -213,7 +213,7 @@ public class ExecuteCrossServerDatasetExtractionSource : ExecuteDatasetExtractio
         }
         catch (Exception e)
         {
-            throw new Exception("An error occurred while trying to download the cohort from the Cohort server (in preparation for transfering it to the data server for linkage and extraction)",e);
+            throw new Exception("An error occurred while trying to download the cohort from the Cohort server (in preparation for transferring it to the data server for linkage and extraction)",e);
         }
             
         //make sure tempdb exists (this covers you for servers where it doesn't exist e.g. mysql or when user has specified a different database name)

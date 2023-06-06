@@ -118,7 +118,7 @@ public partial class CatalogueUI : CatalogueUI_Design, ISaveableUI
         {
             var f = new ScintillaTextEditorFactory();
             _scintillaDescription = f.Create(null, SyntaxLanguage.None, null, true, false, activator.CurrentDirectory);
-            _scintillaDescription.Font = System.Drawing.SystemFonts.DefaultFont;
+            _scintillaDescription.Font = SystemFonts.DefaultFont;
             _scintillaDescription.WrapMode = WrapMode.Word;
             panel1.Controls.Add(_scintillaDescription);
         }

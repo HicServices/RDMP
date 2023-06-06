@@ -143,7 +143,7 @@ public partial class LookupConfigurationUI : LookupConfiguration_Design
         
     public void SetLookupTableInfo(TableInfo t,bool setComboBox = true)
     {
-        if(t != null && t.IsTableValuedFunction)
+        if(t is { IsTableValuedFunction: true })
         {
             WideMessageBox.Show("Lookup table not valid",
                 $"Table '{t}' is a TableValuedFunction, you cannot use it as a lookup table");
@@ -343,7 +343,7 @@ Only define secondary columns if you really need them! if any of the key fields 
             null, true, null, WideMessageBoxTheme.Help);
     }
 
-    private void olvLookupColumns_CellRightClick(object sender, BrightIdeasSoftware.CellRightClickEventArgs e)
+    private void olvLookupColumns_CellRightClick(object sender, CellRightClickEventArgs e)
     {
         var c = e.Model as ColumnInfo;
 
@@ -362,14 +362,14 @@ Only define secondary columns if you really need them! if any of the key fields 
         }
     }
 
-    private void olvSelectedDescriptionColumns_ModelDropped(object sender, BrightIdeasSoftware.ModelDropEventArgs e)
+    private void olvSelectedDescriptionColumns_ModelDropped(object sender, ModelDropEventArgs e)
     {
         olvSelectedDescriptionColumns.AddObject(e.SourceModels[0]);
 
         UpdateValidityAssesment();
     }
 
-    private void olvSelectedDescriptionColumns_ModelCanDrop(object sender, BrightIdeasSoftware.ModelDropEventArgs e)
+    private void olvSelectedDescriptionColumns_ModelCanDrop(object sender, ModelDropEventArgs e)
     {
         if(e.SourceModels.Count == 1)
             if(e.SourceModels[0] is ColumnInfo)
@@ -406,11 +406,7 @@ Only define secondary columns if you really need them! if any of the key fields 
                 throw new Exception("No Foreign key column selected");
 
             var allExtractionInformations = olvExtractionInformations.Objects.Cast<ExtractionInformation>().ToArray();
-            var foreignKeyExtractionInformation = allExtractionInformations.SingleOrDefault(e => e.ColumnInfo != null && e.ColumnInfo.Equals(fk1.SelectedColumn));
-
-            if (foreignKeyExtractionInformation == null)
-                throw new Exception("Foreign key column(s) must come from the Catalogue ExtractionInformation columns");
-
+            var foreignKeyExtractionInformation = allExtractionInformations.SingleOrDefault(e => e.ColumnInfo != null && e.ColumnInfo.Equals(fk1.SelectedColumn)) ?? throw new Exception("Foreign key column(s) must come from the Catalogue ExtractionInformation columns");
             if ((pk2.SelectedColumn == null) != (fk2.SelectedColumn == null))
                 throw new Exception("If you want to have secondary joins you must have them in pairs");
 
@@ -428,7 +424,7 @@ Only define secondary columns if you really need them! if any of the key fields 
 
             var uniqueIDs = new[] { p1, p2, p3, f1, f2, f3 }.Where(o => o != null).Select(c => c.ID).ToArray();
 
-            if (uniqueIDs.Distinct().Count() != uniqueIDs.Count())
+            if (uniqueIDs.Distinct().Count() != uniqueIDs.Length)
                 throw new Exception("Columns can only appear once in any given key box");
 
             if (new[] { p1, p2, p3 }.Where(o => o != null).Select(c => c.TableInfo_ID).Distinct().Count() != 1)
@@ -449,8 +445,7 @@ Only define secondary columns if you really need them! if any of the key fields 
                         $"Also create a virtual extractable column(s) in '{_catalogue}' called '<Column>_Desc'",
                         "Create Extractable Column?");
 
-                var keyPairs = new List<Tuple<ColumnInfo, ColumnInfo>>();
-                keyPairs.Add(Tuple.Create(f1,p1));
+                var keyPairs = new List<Tuple<ColumnInfo, ColumnInfo>> { Tuple.Create(f1,p1) };
 
                 if(p2 != null)
                     keyPairs.Add(Tuple.Create(f2,p2));

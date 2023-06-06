@@ -221,7 +221,7 @@ public class CommandLineObjectPickerArgumentValue
                 return true;
             var val = GetValueForParameterOfType(paramType);
 
-            return val != null && paramType.IsAssignableFrom(val.GetType());
+            return val != null && paramType.IsInstanceOfType(val);
         }
         catch (Exception e)
         {
@@ -243,9 +243,9 @@ public class CommandLineObjectPickerArgumentValue
             if(other.Index != Index || other.RawValue != RawValue)
                 throw new ArgumentException("Merge only arguments of the same object");
 
-            Type = Type ?? other.Type;
-            Database = Database ?? other.Database;
-            Table = Table ?? other.Table;
+            Type ??= other.Type;
+            Database ??= other.Database;
+            Table ??= other.Table;
 
             //if they have some
             if(other.DatabaseEntities != null)
@@ -254,7 +254,7 @@ public class CommandLineObjectPickerArgumentValue
                     DatabaseEntities = other.DatabaseEntities; //use theirs
                 else
                 if(other.DatabaseEntities.Any())
-                    throw new Exception("Did not know which set to pick during merge.  Both had DatabaseEntitites");
+                    throw new Exception("Did not know which set to pick during merge.  Both had DatabaseEntities");
                 
         }
 

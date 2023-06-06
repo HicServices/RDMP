@@ -49,7 +49,7 @@ public class SessionCollectionUI : RDMPUserControl, IObjectCollectionControl, IC
 
     public string GetTabName()
     {
-        return Collection?.SessionName ?? "Unamed Session";
+        return Collection?.SessionName ?? "Unnamed Session";
     }
 
     public string GetTabToolTip()
@@ -95,7 +95,7 @@ public class SessionCollectionUI : RDMPUserControl, IObjectCollectionControl, IC
     {
         var toRemove = Activator.SelectMany("Remove From Session", typeof(IMapsDirectlyToDatabaseTable), Collection.DatabaseObjects.ToArray());
 
-        if(toRemove != null && toRemove.Length > 0)
+        if(toRemove is { Length: > 0 })
         {
             Remove(toRemove);
         }
@@ -109,15 +109,13 @@ public class SessionCollectionUI : RDMPUserControl, IObjectCollectionControl, IC
     {
         for(var i=0;i< toAdd.Length;i++)
         {
-            //unwrap pipelines
-            if(toAdd[i] is PipelineCompatibleWithUseCaseNode pcn)
+            toAdd[i] = toAdd[i] switch
             {
-                toAdd[i] = pcn.Pipeline;
-            }
-            else if(toAdd[i] is SpontaneousObject)
-            {
-                throw new NotSupportedException("Object cannot be added to sessions");
-            }
+                //unwrap pipelines
+                PipelineCompatibleWithUseCaseNode pcn => pcn.Pipeline,
+                SpontaneousObject => throw new NotSupportedException("Object cannot be added to sessions"),
+                _ => toAdd[i]
+            };
         }
 
         Collection.DatabaseObjects = toAdd.Union(Collection.DatabaseObjects).ToList();
@@ -146,7 +144,7 @@ public class SessionCollectionUI : RDMPUserControl, IObjectCollectionControl, IC
             }, typeof(IMapsDirectlyToDatabaseTable),
             Activator.CoreChildProvider.GetAllSearchables().Keys.Except(Collection.DatabaseObjects).ToArray())?.ToList();
 
-        if (toAdd == null || toAdd.Count() == 0)
+        if (toAdd == null || toAdd.Count == 0)
         {
             // user cancelled picking objects
             return;
@@ -160,7 +158,7 @@ public class SessionCollectionUI : RDMPUserControl, IObjectCollectionControl, IC
         var actualObjects = FavouritesCollectionUI.FindRootObjects(Activator,Collection.DatabaseObjects.Contains)
             .Union(Collection.DatabaseObjects.OfType<Pipeline>()).ToList();
             
-        //no change in root favouratism
+        //no change in root favouritism
         if (actualObjects.SequenceEqual(olvTree.Objects.OfType<IMapsDirectlyToDatabaseTable>()))
             return;
 
@@ -179,49 +177,49 @@ public class SessionCollectionUI : RDMPUserControl, IObjectCollectionControl, IC
 
     public override string ToString()
     {
-        return Collection?.SessionName ?? "Unamed Session";
+        return Collection?.SessionName ?? "Unnamed Session";
     }
 
     #region InitializeComponent
     private void InitializeComponent()
     {
-        this.olvTree = new BrightIdeasSoftware.TreeListView();
-        this.olvName = ((BrightIdeasSoftware.OLVColumn)(new BrightIdeasSoftware.OLVColumn()));
-        ((System.ComponentModel.ISupportInitialize)(this.olvTree)).BeginInit();
-        this.SuspendLayout();
+        olvTree = new BrightIdeasSoftware.TreeListView();
+        olvName = ((BrightIdeasSoftware.OLVColumn)(new BrightIdeasSoftware.OLVColumn()));
+        ((System.ComponentModel.ISupportInitialize)(olvTree)).BeginInit();
+        SuspendLayout();
         // 
         // olvRecent
         // 
-        this.olvTree.AllColumns.Add(this.olvName);
-        this.olvTree.CellEditUseWholeCell = false;
-        this.olvTree.Columns.AddRange(new System.Windows.Forms.ColumnHeader[] {
-            this.olvName});
-        this.olvTree.Cursor = System.Windows.Forms.Cursors.Default;
-        this.olvTree.Dock = System.Windows.Forms.DockStyle.Fill;
-        this.olvTree.FullRowSelect = true;
-        this.olvTree.HideSelection = false;
-        this.olvTree.Location = new System.Drawing.Point(0, 0);
-        this.olvTree.Name = "olvRecent";
-        this.olvTree.RowHeight = 19;
-        this.olvTree.ShowGroups = false;
-        this.olvTree.Size = new System.Drawing.Size(487, 518);
-        this.olvTree.TabIndex = 4;
-        this.olvTree.UseCompatibleStateImageBehavior = false;
-        this.olvTree.View = System.Windows.Forms.View.Details;
-        this.olvTree.VirtualMode = true;
+        olvTree.AllColumns.Add(olvName);
+        olvTree.CellEditUseWholeCell = false;
+        olvTree.Columns.AddRange(new ColumnHeader[] {
+            olvName});
+        olvTree.Cursor = Cursors.Default;
+        olvTree.Dock = DockStyle.Fill;
+        olvTree.FullRowSelect = true;
+        olvTree.HideSelection = false;
+        olvTree.Location = new System.Drawing.Point(0, 0);
+        olvTree.Name = "olvRecent";
+        olvTree.RowHeight = 19;
+        olvTree.ShowGroups = false;
+        olvTree.Size = new System.Drawing.Size(487, 518);
+        olvTree.TabIndex = 4;
+        olvTree.UseCompatibleStateImageBehavior = false;
+        olvTree.View = View.Details;
+        olvTree.VirtualMode = true;
         // 
         // olvName
         // 
-        this.olvName.Groupable = false;
-        this.olvName.Text = "Name";
+        olvName.Groupable = false;
+        olvName.Text = "Name";
         // 
         // SessionCollectionUI
         // 
-        this.Controls.Add(this.olvTree);
-        this.Name = "SessionCollectionUI";
-        this.Size = new System.Drawing.Size(487, 518);
-        ((System.ComponentModel.ISupportInitialize)(this.olvTree)).EndInit();
-        this.ResumeLayout(false);
+        Controls.Add(olvTree);
+        Name = "SessionCollectionUI";
+        Size = new System.Drawing.Size(487, 518);
+        ((System.ComponentModel.ISupportInitialize)(olvTree)).EndInit();
+        ResumeLayout(false);
 
     }
 

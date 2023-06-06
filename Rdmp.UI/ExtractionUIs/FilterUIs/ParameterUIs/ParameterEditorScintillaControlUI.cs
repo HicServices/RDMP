@@ -157,8 +157,7 @@ public partial class ParameterEditorScintillaControlUI : RDMPUserControl
                 }
                 catch (SyntaxErrorException errorException)
                 {
-                    if(!ProblemObjects.ContainsKey(parameter))
-                        ProblemObjects.Add(parameter,errorException);
+                    ProblemObjects.TryAdd(parameter, errorException);
                 }
                     
 
@@ -185,12 +184,9 @@ public partial class ParameterEditorScintillaControlUI : RDMPUserControl
                 
             IsBroken = true;
 
-            var exception = ex as QueryBuildingException;
-            if (exception != null)
+            if (ex is QueryBuildingException exception)
             {
-                foreach (var p in exception.ProblemObjects.OfType<ISqlParameter>())
-                    if(!ProblemObjects .ContainsKey(p))//might have already added it up above
-                        ProblemObjects.Add(p, ex);
+                foreach (var p in exception.ProblemObjects.OfType<ISqlParameter>()) ProblemObjects.TryAdd(p, ex);
 
                 ProblemObjectsFound();
             }
@@ -200,10 +196,9 @@ public partial class ParameterEditorScintillaControlUI : RDMPUserControl
         var highlighter = new ScintillaLineHighlightingHelper();
         highlighter.ClearAll(QueryEditor);
 
-        foreach (var section in Sections)
-            if (!section.Editable)
-                for (var i = section.LineStart; i <= section.LineEnd; i++)
-                    highlighter.HighlightLine(QueryEditor, i, Color.LightGray);
+        foreach (var section in Sections.Where(section => !section.Editable))
+            for (var i = section.LineStart; i <= section.LineEnd; i++)
+                highlighter.HighlightLine(QueryEditor, i, Color.LightGray);
     }
 
         

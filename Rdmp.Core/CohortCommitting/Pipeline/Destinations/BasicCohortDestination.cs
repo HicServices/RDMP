@@ -202,12 +202,12 @@ public class BasicCohortDestination : IPluginCohortDestination
         }
 
         listener.OnNotify(this, new NotifyEventArgs(ProgressEventType.Information,
-            $"Succesfully uploaded {_cohortDictionary.Count} records"));
+            $"Successfully uploaded {_cohortDictionary.Count} records"));
 
         var id = Request.ImportAsExtractableCohort(DeprecateOldCohortOnSuccess, MigrateUsages);
 
         listener.OnNotify(this,new NotifyEventArgs(ProgressEventType.Information,
-            $"Cohort successfully comitted to destination and imported as an RDMP ExtractableCohort (ID={id} <- this is the ID of the reference pointer, the cohortDefinitionID of the actual cohort remains as you specified:{Request.NewCohortDefinition.ID})"));
+            $"Cohort successfully committed to destination and imported as an RDMP ExtractableCohort (ID={id} <- this is the ID of the reference pointer, the cohortDefinitionID of the actual cohort remains as you specified:{Request.NewCohortDefinition.ID})"));
     }
 
     /// <summary>
@@ -257,7 +257,7 @@ public class BasicCohortDestination : IPluginCohortDestination
         }
 
         if (ReleaseIdentifierAllocator == null)
-            notifier.OnCheckPerformed(new CheckEventArgs("No ReleaseIdentifierAllocator has been set, this means that Release Identifiers must be provided in the cohort uploaded or populated afer committing manually",CheckResult.Warning));
+            notifier.OnCheckPerformed(new CheckEventArgs("No ReleaseIdentifierAllocator has been set, this means that Release Identifiers must be provided in the cohort uploaded or populated after committing manually",CheckResult.Warning));
             
         notifier.OnCheckPerformed(new CheckEventArgs(
             $"Cohort identifier columns are '{_privateIdentifier}' (private) and '{_releaseIdentifier}' (release)", CheckResult.Success));

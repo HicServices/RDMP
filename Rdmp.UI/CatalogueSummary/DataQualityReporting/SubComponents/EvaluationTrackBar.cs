@@ -48,7 +48,7 @@ public partial class EvaluationTrackBar : UserControl
     {
         if (Evaluations == null || Evaluations.Length == 0)
         {
-            this.Enabled = false;
+            Enabled = false;
             return;
         }
         else if (Evaluations.Length == 1)
@@ -58,11 +58,11 @@ public partial class EvaluationTrackBar : UserControl
             EvaluationSelected(this, Evaluations.Single());
         }
         else
-            this.Enabled = true;//let user drag around the trackbar if he wants
+            Enabled = true;//let user drag around the trackbar if he wants
 
         foreach (var label in labels)
         {
-            this.Controls.Remove(label);
+            Controls.Remove(label);
             label.Dispose();
         }
         labels.Clear();
@@ -86,7 +86,7 @@ public partial class EvaluationTrackBar : UserControl
             l.Text = Evaluations[i].DateOfEvaluation.ToString("d");
             l.Location = new Point(x - (l.PreferredWidth / 2), y);
               
-            this.Controls.Add(l);
+            Controls.Add(l);
             l.BringToFront();
                 
             labels.Add(l);

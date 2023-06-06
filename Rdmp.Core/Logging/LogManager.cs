@@ -241,11 +241,8 @@ public class LogManager : ILogManager
 
     public IDataLoadInfo CreateDataLoadInfo(string dataLoadTaskName, string packageName, string description, string suggestedRollbackCommand, bool isTest)
     {
-        var task = ListDataTasks().FirstOrDefault(t=>t.Equals(dataLoadTaskName,StringComparison.CurrentCultureIgnoreCase));
-        if(task == null)
-            throw new KeyNotFoundException(
+        var task = ListDataTasks().FirstOrDefault(t=>t.Equals(dataLoadTaskName,StringComparison.CurrentCultureIgnoreCase)) ?? throw new KeyNotFoundException(
                 $"DataLoadTask called '{dataLoadTaskName}' was not found in the logging database {Server}");
-
         var toReturn = new DataLoadInfo(task, packageName, description, suggestedRollbackCommand, isTest, Server);
 
         DataLoadInfoCreated?.Invoke(this,toReturn);

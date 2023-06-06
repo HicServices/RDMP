@@ -97,7 +97,7 @@ public class ArchivalTableLoadInfo : IArchivalLoggingRecordOfPastEvent, ICompara
             else
                 return Start > other.Start ? 1 : -1;
 
-        return System.String.Compare(ToString(), obj.ToString(), System.StringComparison.Ordinal);
+        return string.Compare(ToString(), obj.ToString(), StringComparison.Ordinal);
     }
     public void GetSummary(out string title, out string body, out string stackTrace, out CheckResult level)
     {

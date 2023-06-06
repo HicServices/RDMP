@@ -75,7 +75,7 @@ public class DataLoadJob : IDataLoadJob
     private string GetLoggingTask(IEnumerable<ICatalogue> cataloguesToLoad)
     {
         var distinctLoggingTasks = cataloguesToLoad.Select(catalogue => catalogue.LoggingDataTask).Distinct().ToList();
-        if (distinctLoggingTasks.Count() > 1)
+        if (distinctLoggingTasks.Count > 1)
             throw new Exception(
                 $"The catalogues to be loaded do not share the same logging task: {string.Join(", ", distinctLoggingTasks)}");
 
@@ -91,7 +91,7 @@ public class DataLoadJob : IDataLoadJob
         if (string.IsNullOrWhiteSpace(Description))
             throw new Exception("The data load description (for the DataLoadInfo object) must not be empty, please provide a relevant description");
 
-        DataLoadInfo = _logManager.CreateDataLoadInfo(_loggingTask, typeof(DataLoadProcess).Name, Description, "", false);
+        DataLoadInfo = _logManager.CreateDataLoadInfo(_loggingTask, nameof(DataLoadProcess), Description, "", false);
 
         if (DataLoadInfo == null)
             throw new Exception("DataLoadInfo is null");
@@ -114,7 +114,7 @@ public class DataLoadJob : IDataLoadJob
         if (DataLoadInfo == null)
             CreateDataLoadInfo();
 
-        DataLoadInfo.LogFatalError(typeof(DataLoadProcess).Name, message + Environment.NewLine + ExceptionHelper.ExceptionToListOfInnerMessages(exception, true));
+        DataLoadInfo.LogFatalError(nameof(DataLoadProcess), message + Environment.NewLine + ExceptionHelper.ExceptionToListOfInnerMessages(exception, true));
         DataLoadInfo.CloseAndMarkComplete();
     }
 

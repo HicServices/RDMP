@@ -76,7 +76,7 @@ class PipelineComponentVisualisation:DataFlowComponentVisualisation
         if (valueOrNullIfBroken == null)
             ragSmiley1.OnCheckPerformed(new CheckEventArgs("Could not construct object", CheckResult.Fail));
 
-        this.Width = lblText.PreferredWidth + 85;
+        Width = lblText.PreferredWidth + 85;
 
         _isEmpty = false;
 

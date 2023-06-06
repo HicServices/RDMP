@@ -238,8 +238,10 @@ public partial class CreateNewDataExtractionProjectUI : RDMPForm
 
                 tbCohortName.Text = cic.ToString();
 
-                var source = new CohortIdentificationConfigurationSource();
-                source.Timeout = 5;
+                var source = new CohortIdentificationConfigurationSource
+                {
+                    Timeout = 5
+                };
                 source.PreInitialize(cic,new ThrowImmediatelyDataLoadEventListener());
                 source.Check(ragCic);
 
@@ -298,8 +300,10 @@ public partial class CreateNewDataExtractionProjectUI : RDMPForm
             if (_configuration == null && cbDefineCohort.Checked)
             {
                 _configuration = new ExtractionConfiguration(Activator.RepositoryLocator.DataExportRepository,
-                    _project);
-                _configuration.Name = "Cases";
+                    _project)
+                {
+                    Name = "Cases"
+                };
                 _configuration.SaveToDatabase();
             }
 
@@ -355,7 +359,7 @@ public partial class CreateNewDataExtractionProjectUI : RDMPForm
                 _configuration.SaveToDatabase();
 
                 //User defined cohort if it came from cic then associate the cic with the project
-                if (cmdAssociateCicWithProject != null && !cmdAssociateCicWithProject.IsImpossible)
+                if (cmdAssociateCicWithProject is { IsImpossible: false })
                     cmdAssociateCicWithProject.Execute();
             }
 
@@ -413,7 +417,7 @@ public partial class CreateNewDataExtractionProjectUI : RDMPForm
         if(ddCohortSources.SelectedItem == null)
             return "You must choose an Identifier Allocation database (to put your cohort / anonymous mappings)";
 
-        if(this.cbxCohort.SelectedItem == null && _cohortFile == null)
+        if(cbxCohort.SelectedItem == null && _cohortFile == null)
             return "You must choose either a file or a cohort identification query to build the cohort from";
 
         //no problems
@@ -432,7 +436,7 @@ public partial class CreateNewDataExtractionProjectUI : RDMPForm
     private void cbDefineCohort_CheckedChanged(object sender, EventArgs e)
     {
         gbCohortAndDatasets.Visible = cbDefineCohort.Checked;
-        this.OnSizeChanged(e);
+        OnSizeChanged(e);
     }
 
     private void cbxDatasets_SelectedIndexChanged(object sender, EventArgs e)
@@ -498,6 +502,6 @@ public partial class CreateNewDataExtractionProjectUI : RDMPForm
 
     private void btnCancel_Click(object sender, EventArgs e)
     {
-        this.Close();
+        Close();
     }
 }

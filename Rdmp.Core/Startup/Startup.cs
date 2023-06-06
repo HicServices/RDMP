@@ -10,6 +10,7 @@ using System.Diagnostics;
 using System.IO;
 using System.IO.Compression;
 using System.Linq;
+using System.Runtime.Loader;
 using FAnsi.Discovery;
 using FAnsi.Discovery.ConnectionStringDefaults;
 using FAnsi.Implementation;
@@ -236,102 +237,15 @@ public class Startup
     private void LoadMEF(ICatalogueRepository catalogueRepository, ICheckNotifier notifier)
     {
         catalogueRepository.MEF ??= new MEF();
-
-        var downloadDirectory = catalogueRepository.MEF.DownloadDirectory;
-             
-        //make sure the MEF directory exists
-        if(!downloadDirectory.Exists)
-            downloadDirectory.Create();
-
-        var compatiblePlugins = catalogueRepository.PluginManager.GetCompatiblePlugins();
-
-        var dirs = new List<DirectoryInfo>();
-        var toLoad = new List<DirectoryInfo> {
-            //always load the current application directory
-            //new DirectoryInfo(AppDomain.CurrentDomain.BaseDirectory)
-        };
-
-        for (var i = 0; i < compatiblePlugins.Length; i++)
+        foreach (var dll in catalogueRepository.PluginManager.GetCompatiblePlugins()
+                     .SelectMany(p => p.LoadModuleAssemblies).SelectMany(a => a.GetContents()))
         {
-            var subDirName = compatiblePlugins[i].GetPluginDirectoryName(downloadDirectory);
-            var subdir = Directory.CreateDirectory(subDirName);
-
-            dirs.Add(subdir);
-                                                             
-            var existingFiles = subdir.GetFiles($"*{PackPluginRunner.PluginPackageSuffix}").ToList();
-
-            //if we have not downloaded this yet
-            if(!existingFiles.Any(f=>f.Name.Equals(compatiblePlugins[i].Name)))
-                compatiblePlugins[i].LoadModuleAssemblies.SingleOrDefault()?.DownloadAssembly(subdir); 
-            else
-                notifier.OnCheckPerformed(new CheckEventArgs(
-                    $"Found existing file '{compatiblePlugins[i].Name}' so didn't bother downloading it.",CheckResult.Success));
-                                
-            foreach(var archive in  subdir.GetFiles($"*{PackPluginRunner.PluginPackageSuffix}").ToList())
-            {                    
-                //get rid of any old out dirs
-                var outDir = subdir.EnumerateDirectories("out").SingleOrDefault();
-                    
-                var mustUnzip = true;
-
-                //if there's already an unpacked version
-                if(outDir is { Exists: true })
-                {
-                    //if the directory has no files we have to unzip - otherwise it has an unzipped version already yay
-                    mustUnzip = !outDir.GetFiles("*.dll",SearchOption.AllDirectories).Any();
-
-                    if(mustUnzip)
-                        outDir.Delete(true);
-                }
-                else
-                    outDir = subdir.CreateSubdirectory("out");
-
-                if(mustUnzip)
-                    using(var zf = ZipFile.OpenRead(archive.FullName))
-                        try
-                        {
-                            zf.ExtractToDirectory(outDir.FullName);
-                        }
-                        catch(Exception ex)
-                        {
-                            notifier.OnCheckPerformed(new CheckEventArgs(
-                                $"Could not extract Plugin to '{outDir.FullName}'",CheckResult.Warning,ex));
-                        }
-                else
-                    notifier.OnCheckPerformed(new CheckEventArgs(
-                        $"Found existing directory '{outDir.FullName}' so didn't bother unzipping.",CheckResult.Success));
-
-                toLoad.AddRange(_environmentInfo.GetPluginSubDirectories(outDir.CreateSubdirectory("lib"), notifier));
-
-                //tell them we downloaded it
-                MEFFileDownloaded(this,
-                    new MEFFileDownloadProgressEventArgs(subdir, compatiblePlugins.Length, i + 1,
-                        archive.Name, false, MEFFileDownloadEventStatus.Success));
-            }
+            AssemblyLoadContext.Default.LoadFromStream(dll);
+            dll.Dispose();
         }
-
-        //The only Directories in MEF folder should be Plugin subdirectories, any that don't correspond with a plugin should be deleted 
-        foreach (var unexpectedDirectory in downloadDirectory.GetDirectories().Where(expected=>!dirs.Any(d=>d.FullName.Equals(expected.FullName))))
-        {
-            try
-            {
-                unexpectedDirectory.Delete(true);
-                notifier.OnCheckPerformed(new CheckEventArgs(
-                    $"Deleted unreferenced plugin folder {unexpectedDirectory.FullName}", CheckResult.Success));
-
-            }
-            catch (Exception ex)
-            {
-                notifier.OnCheckPerformed(
-                    new CheckEventArgs(
-                        $"Found unreferenced (no Plugin) folder {unexpectedDirectory.FullName} but we were unable to delete it (possibly because it is in use, try closing all your local RDMP applications and restarting this one)",
-                        CheckResult.Fail, ex));
-            }
-        }
-
-        AssemblyResolver.SetupAssemblyResolver(toLoad.ToArray());
+        //AssemblyResolver.SetupAssemblyResolver(toLoad.ToArray());
             
-        MEFSafeDirectoryCatalog = new SafeDirectoryCatalog(notifier, toLoad.Select(d=>d.FullName).ToArray());
+        MEFSafeDirectoryCatalog = new SafeDirectoryCatalog(notifier, Array.Empty<string>());
         catalogueRepository.MEF.Setup(MEFSafeDirectoryCatalog);
             
         if (CatalogueRepository.SuppressHelpLoading) return;

@@ -48,7 +48,7 @@ class ProposeExecutionWhenTargetIsProjectSavedCohortsNode:RDMPCommandExecutionPr
 
         var columnCommand = cmd as ColumnCombineable;
 
-        if (columnCommand != null && columnCommand.Column is ExtractionInformation)
+        if (columnCommand is { Column: ExtractionInformation })
             return new ExecuteCommandCreateNewCohortFromCatalogue(ItemActivator,(ExtractionInformation) columnCommand.Column);
 
         return null;

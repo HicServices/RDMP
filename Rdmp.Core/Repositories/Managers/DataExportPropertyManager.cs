@@ -49,10 +49,7 @@ class DataExportPropertyManager : IDataExportPropertyManager
         if (!_allowCaching || _cacheOutOfDate)
             RefreshCache();
 
-        if (_cacheDictionary.ContainsKey(property))
-            return _cacheDictionary[property];
-
-        return null;
+        return _cacheDictionary.TryGetValue(property, out var value) ? value : null;
     }
         
     /// <inheritdoc cref="GetValue(string)"/>

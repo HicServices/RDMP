@@ -87,7 +87,7 @@ public partial class SelectIMapsDirectlyToDatabaseTableComboBox : UserControl
         }
     }
 
-    private void lPick_Click(object sender, System.EventArgs e)
+    private void lPick_Click(object sender, EventArgs e)
     {
         if(_activator.SelectObject(new DialogArgs
            {

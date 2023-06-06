@@ -75,21 +75,14 @@ public class PreExecutionChecker :  ICheckable
     private void CheckTablesDoNotExistOnStaging(IEnumerable<ITableInfo> allTableInfos)
     {
         var stagingDbInfo = _databaseConfiguration.DeployInfo[LoadBubble.Staging];
-        var alreadyExistingTableInfosThatShouldntBeThere = new List<string>();
 
         var tableNames = allTableInfos.Select(info => info.GetRuntimeName(LoadBubble.Staging, _databaseConfiguration.DatabaseNamer));
-        foreach (var tableName in tableNames)
-        {
-            if (stagingDbInfo.ExpectTable(tableName).Exists())
-                alreadyExistingTableInfosThatShouldntBeThere.Add(tableName);
-        }
+        var alreadyExistingTableInfosThatShouldntBeThere = tableNames.Where(tableName => stagingDbInfo.ExpectTable(tableName).Exists()).ToList();
 
         if (alreadyExistingTableInfosThatShouldntBeThere.Any())
         {
-            bool nukeTables;
-
-            nukeTables = _notifier.OnCheckPerformed(new CheckEventArgs(
-                $"The following tables: '{alreadyExistingTableInfosThatShouldntBeThere.Aggregate("", (s, n) => $"{s}{n},")}' exists in the Staging database ({stagingDbInfo.GetRuntimeName()}) but the database load configuration requires that tables are created during the load process",
+            var nukeTables = _notifier.OnCheckPerformed(new CheckEventArgs(
+                $"The following tables: '{string.Join(',', alreadyExistingTableInfosThatShouldntBeThere)}' exists in the Staging database ({stagingDbInfo.GetRuntimeName()}) but the database load configuration requires that tables are created during the load process",
                 CheckResult.Fail, null, "Drop the tables"));
 
             if (nukeTables)

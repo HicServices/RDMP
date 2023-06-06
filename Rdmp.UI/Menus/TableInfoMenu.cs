@@ -33,7 +33,7 @@ class TableInfoMenu : RDMPContextMenuStrip
         Add(new ExecuteCommandCreateNewPreLoadDiscardedColumn(_activator, tableInfo));
         Items.Add(new ToolStripSeparator());
 
-        if (tableInfo != null && tableInfo.IsTableValuedFunction)
+        if (tableInfo is { IsTableValuedFunction: true })
             Items.Add("Configure Parameters...", _activator.CoreIconProvider.GetImage(RDMPConcept.ParametersNode).ImageToBitmap(), delegate { ConfigureTableInfoParameters(tableInfo); });
     }
 

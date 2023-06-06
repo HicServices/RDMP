@@ -19,18 +19,20 @@ public abstract class CommandFactoryBase
     /// <returns></returns>
     public static bool Is<T>(object o, out T match)
     {
-        if(o is T)
+        while (true)
         {
-            match = (T)o;
-            return true;
+            switch (o)
+            {
+                case T o1:
+                    match = o1;
+                    return true;
+                case IMasqueradeAs m:
+                    o = m.MasqueradingAs();
+                    continue;
+                default:
+                    match = default;
+                    return false;
+            }
         }
-
-        if(o is IMasqueradeAs m)
-        {
-            return Is<T>(m.MasqueradingAs(),out match);
-        }
-
-        match = default(T);
-        return false;
     }
 }

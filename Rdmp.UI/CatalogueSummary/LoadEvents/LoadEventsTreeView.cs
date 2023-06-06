@@ -87,7 +87,7 @@ public partial class LoadEventsTreeView : RDMPUserControl,IObjectCollectionContr
     {
         try
         {
-            _toFetch = Int32.Parse(_tbToFetch.Text);
+            _toFetch = int.Parse(_tbToFetch.Text);
             _tbToFetch.ForeColor = Color.Black;
         }
         catch (Exception)

@@ -124,8 +124,7 @@ public class AutoCompleteProvider : IAutoCompleteProvider
 
     private void AddUnlessDuplicateImage(string fullySpecified, int idx)
     {
-        if(!ItemsWithImages.ContainsKey(fullySpecified))
-            ItemsWithImages.Add(fullySpecified, idx);
+        ItemsWithImages.TryAdd(fullySpecified, idx);
     }
     public void AddSQLKeywords(IQuerySyntaxHelper syntaxHelper)
     {

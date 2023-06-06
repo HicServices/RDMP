@@ -61,7 +61,7 @@ class ExecuteCommandSetFilterTreeShortcut : BasicCommandExecution
         if (_setOn.Catalogue.IsApiCall())
             SetImpossible(ExecuteCommandAddNewFilterContainer.FiltersCannotBeAddedToApiCalls);
 
-        if (_pointTo != null && _pointTo.RootFilterContainer_ID == null)
+        if (_pointTo is { RootFilterContainer_ID: null })
             SetImpossible($"{_pointTo} does not have a filter container tree to link to");
 
         if(_pointTo == null && setOn.OverrideFiltersByUsingParentAggregateConfigurationInstead_ID == null)

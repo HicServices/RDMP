@@ -35,7 +35,7 @@ public static class FolderHelper
 
             if(string.IsNullOrWhiteSpace(candidate))
             {
-                candidate = FolderHelper.Root;
+                candidate = Root;
             }
 
             return candidate;
@@ -57,7 +57,7 @@ public static class FolderHelper
         if (candidatePath.Contains("\\\\"))//if it contains double slash
             reason = $"Catalogue paths cannot contain double slashes '\\\\', Invalid path was:{candidatePath}";
         else
-        if (candidatePath.Contains("/"))//if it contains double slash
+        if (candidatePath.Contains('/'))//if it contains double slash
             reason =
                 $"Catalogue paths must use backwards slashes not forward slashes, Invalid path was:{candidatePath}";
 
@@ -103,7 +103,7 @@ public static class FolderHelper
                     throw new Exception($"Unable to build folder groups.  Current group was not a child of the current branch.  Branch was '{currentBranch.FullName}' while Group was '{g.Key}'");
                 }
                     
-                var subFolders = g.Key.Substring(idx);
+                var subFolders = g.Key[idx..];
                 var nextFolder = subFolders.Split('\\',StringSplitOptions.RemoveEmptyEntries).FirstOrDefault();
 
                 if(nextFolder == null)

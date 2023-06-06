@@ -34,8 +34,8 @@ public class ArchivalDataLoadInfo : IArchivalLoggingRecordOfPastEvent, IComparab
     public string ToShortString()
     {
         var s = ToString();
-        if (s.Length > ArchivalDataLoadInfo.MaxDescriptionLength)
-            return $"{s.Substring(0, ArchivalDataLoadInfo.MaxDescriptionLength)}...";
+        if (s.Length > MaxDescriptionLength)
+            return $"{s[..MaxDescriptionLength]}...";
         return s;
     }
 
@@ -113,7 +113,7 @@ public class ArchivalDataLoadInfo : IArchivalLoggingRecordOfPastEvent, IComparab
             else
                 return StartTime > other.StartTime ? 1 : -1;
 
-        return System.String.Compare(ToString(), obj.ToString(), System.StringComparison.Ordinal);
+        return string.Compare(ToString(), obj.ToString(), StringComparison.Ordinal);
     }
 
     private List<ArchivalTableLoadInfo> GetTableInfos()

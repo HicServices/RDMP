@@ -135,7 +135,7 @@ public class PipelineComponent : DatabaseEntity, IPipelineComponent
         if (string.IsNullOrWhiteSpace(Class))
             return Class;
 
-        return Class.Substring(Class.LastIndexOf('.') + 1);
+        return Class[(Class.LastIndexOf('.') + 1)..];
     }
         
     /// <inheritdoc/>

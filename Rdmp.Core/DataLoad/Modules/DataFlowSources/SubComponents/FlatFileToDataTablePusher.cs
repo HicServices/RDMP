@@ -84,7 +84,7 @@ public class FlatFileToDataTablePusher
             if (!_haveComplainedAboutColumnMismatch)
             {
                 listener.OnNotify(this, new NotifyEventArgs(ProgressEventType.Warning,
-                    $"Flat file '{_fileToLoad.File.Name}' line number '{reader.Context.Parser.RawRow}' had  {headerCount} columns while the destination DataTable had {dt.Columns.Count} columns.  This message apperas only once per file"));
+                    $"Flat file '{_fileToLoad.File.Name}' line number '{reader.Context.Parser.RawRow}' had  {headerCount} columns while the destination DataTable had {dt.Columns.Count} columns.  This message appears only once per file"));
                 _haveComplainedAboutColumnMismatch = true;
             }
 
@@ -233,24 +233,24 @@ public class FlatFileToDataTablePusher
             //add the peeked line to the current cells
             //add the first record as an extension of the last cell in current row
             if (peekedLine.Cells.Length != 0)
-                newCells[newCells.Count - 1] += Environment.NewLine + peekedLine.Cells[0];
+                newCells[^1] += Environment.NewLine + peekedLine.Cells[0];
             else
-                newCells[newCells.Count - 1] += Environment.NewLine; //the next line was completely blank! just add a new line
+                newCells[^1] += Environment.NewLine; //the next line was completely blank! just add a new line
 
             //add any further cells on after that
             newCells.AddRange(peekedLine.Cells.Skip(1));
 
-        } while (newCells.Count() < _headers.Length);
+        } while (newCells.Count < _headers.Length);
 
 
         //if we read too much or reached the end of the file
-        if (newCells.Count() > _headers.Length)
+        if (newCells.Count > _headers.Length)
         {
             AllBadExceptLastSoRequeueThatOne(lineToPush,allPeekedLines,eventHandlers);
             return false;
         }
 
-        if (newCells.Count() != _headers.Length)
+        if (newCells.Count != _headers.Length)
             throw new Exception("We didn't over read or reach end of file, how did we get here?");
 
         //we managed to create a full row
@@ -321,7 +321,7 @@ public class FlatFileToDataTablePusher
         PeekedRecord = allPeekedLines.Last();
 
         //but throw away everything else we read
-        foreach (var line in allPeekedLines.Take(allPeekedLines.Count() - 1))
+        foreach (var line in allPeekedLines.Take(allPeekedLines.Count - 1))
             eventHandlers.BadDataFound(line);
     }
 

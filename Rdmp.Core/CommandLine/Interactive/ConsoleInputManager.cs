@@ -271,7 +271,7 @@ public class ConsoleInputManager : BasicActivateItems
             }
         }
 
-        selected = default(T);
+        selected = default;
         return false;
     }
 
@@ -358,8 +358,8 @@ public class ConsoleInputManager : BasicActivateItems
             if(idxLastSlash == -1 || asteriskIdx < idxLastSlash)
                 throw new Exception("Wildcards are only supported at the file level");
 
-            var searchPattern = file.Substring(idxLastSlash+1);
-            var dirStr = file.Substring(0,idxLastSlash);
+            var searchPattern = file[(idxLastSlash+1)..];
+            var dirStr = file[..idxLastSlash];
                     
             var dir = new DirectoryInfo(dirStr);
 
@@ -424,7 +424,7 @@ public class ConsoleInputManager : BasicActivateItems
 
     public override void ShowLogs(ILoggedActivityRootObject rootObject)
     {
-        foreach(var load in base.GetLogs(rootObject).OrderByDescending(l=>l.StartTime))
+        foreach(var load in GetLogs(rootObject).OrderByDescending(l=>l.StartTime))
         {
             Console.WriteLine(load.Description);
             Console.WriteLine(load.StartTime);
@@ -505,7 +505,7 @@ public class ConsoleInputManager : BasicActivateItems
             );
     }
 
-    public override void ShowData(System.Data.DataTable collection)
+    public override void ShowData(DataTable collection)
     {
         var tbl = new Table();
 

@@ -77,7 +77,7 @@ public class ExecuteCommandCreateNewExtractionConfigurationForProject : BasicCom
         string name = "") : base(activator)
     {
         _project = project;
-        this._name = name;
+        _name = name;
     }
 
     public ExecuteCommandCreateNewExtractionConfigurationForProject(IBasicActivateItems activator) : base(activator)

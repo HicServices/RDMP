@@ -264,18 +264,18 @@ public class LoadMetadata : DatabaseEntity, ILoadMetadata, IHasDependencies, IHa
         var catalogueMetadatas = GetAllCatalogues().ToArray();
 
         if(!catalogueMetadatas.Any())
-            throw new Exception($"There are no Catalogues associated with load metadata (ID={this.ID})");
+            throw new Exception($"There are no Catalogues associated with load metadata (ID={ID})");
 
-        var cataloguesWithoutLoggingTasks = catalogueMetadatas.Where(c => String.IsNullOrWhiteSpace(c.LoggingDataTask)).ToArray();
+        var cataloguesWithoutLoggingTasks = catalogueMetadatas.Where(c => string.IsNullOrWhiteSpace(c.LoggingDataTask)).ToArray();
 
         if(cataloguesWithoutLoggingTasks.Any())
             throw new Exception(
                 $"The following Catalogues do not have a LoggingDataTask specified:{cataloguesWithoutLoggingTasks.Aggregate("", (s, n) => $"{s}{n}(ID={n.ID}),")}");
             
         var distinctLoggingTasks = catalogueMetadatas.Select(c => c.LoggingDataTask).Distinct().ToArray();
-        if(distinctLoggingTasks.Count()>= 2)
+        if(distinctLoggingTasks.Length>= 2)
             throw new Exception(
-                $"There are {distinctLoggingTasks.Length} logging tasks in Catalogues belonging to this metadata (ID={this.ID})");
+                $"There are {distinctLoggingTasks.Length} logging tasks in Catalogues belonging to this metadata (ID={ID})");
 
         return distinctLoggingTasks[0];
     }
@@ -303,7 +303,7 @@ public class LoadMetadata : DatabaseEntity, ILoadMetadata, IHasDependencies, IHa
         var normalTables = new HashSet<ITableInfo>();
         var lookupTables = new HashSet<ITableInfo>();
 
-        foreach (var catalogue in this.GetAllCatalogues())
+        foreach (var catalogue in GetAllCatalogues())
         {
             List<ITableInfo> normal;
             List<ITableInfo> lookup;

@@ -27,7 +27,7 @@ public sealed partial class WaitUI : Form
         InitializeComponent();
 
         label1.Text = caption;
-        this.SetClientSizeCore(pictureBox1.Width + label1.PreferredWidth + button1.Width + 10, button1.Height);
+        SetClientSizeCore(pictureBox1.Width + label1.PreferredWidth + button1.Width + 10, button1.Height);
 
         button1.Left = label1.Right;
         timer.Interval = 500;
@@ -40,7 +40,7 @@ public sealed partial class WaitUI : Form
         if (_task.IsCompleted)
         {
             timer.Stop();
-            this.Close();
+            Close();
         }
     }
         

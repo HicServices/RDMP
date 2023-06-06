@@ -85,7 +85,7 @@ public class ExceptionViewer : WideMessageBox
         else
             longMessage = ExceptionHelper.ExceptionToListOfInnerMessages(exception);
 
-        if (message.Trim().Contains("\n"))
+        if (message.Trim().Contains('\n'))
         {
             var split = message.Trim().Split('\n');
             message = split[0];

@@ -61,12 +61,8 @@ public partial class ChooseLoggingTaskUI : RDMPUserControl, ICheckNotifier
         {
             liveserver = ddLoggingServer.Items.Cast<ExternalDatabaseServer>()
                 .SingleOrDefault(i => i.ID == (int)_catalogue.LiveLoggingServer_ID);
-
-            if(liveserver == null)
-                throw new Exception(
-                    $"Catalogue '{_catalogue}' lists its Live Logging Server as '{_catalogue.LiveLoggingServer}' did not appear in combo box, possibly it is not marked as a '{expectedDatabaseTypeString}' server? Try editting it in Locations=>Manage External Servers");
-
-            ddLoggingServer.SelectedItem = liveserver;
+            ddLoggingServer.SelectedItem = liveserver ?? throw new Exception(
+                    $"Catalogue '{_catalogue}' lists its Live Logging Server as '{_catalogue.LiveLoggingServer}' did not appear in combo box, possibly it is not marked as a '{expectedDatabaseTypeString}' server? Try editing it in Locations=>Manage External Servers");
         }
             
         try

@@ -179,13 +179,10 @@ public partial class PerformanceCounterResultsUI : UserControl
     {
         var model = tlvLocations.SelectedObject as StackFramesTree;
 
-        if (model != null)
+        if (model is { HasSourceCode: true })
         {
-            if(model.HasSourceCode)
-            {
-                var dialog = new Rdmp.UI.SimpleDialogs.ViewSourceCodeDialog(model.Filename,model.LineNumber, Color.GreenYellow);
-                dialog.Show();
-            }
+            var dialog = new SimpleDialogs.ViewSourceCodeDialog(model.Filename,model.LineNumber, Color.GreenYellow);
+            dialog.Show();
         }
             
     }

@@ -92,7 +92,7 @@ public class ExtractionFilterParameterSet:DatabaseEntity, ICollectSqlParameters,
     /// <param name="name"></param>
     public ExtractionFilterParameterSet(ICatalogueRepository repository, ExtractionFilter filter, string name = null)
     {
-        name = name ?? $"New ExtractionFilterParameterSet {Guid.NewGuid()}";
+        name ??= $"New ExtractionFilterParameterSet {Guid.NewGuid()}";
 
         repository.InsertAndHydrate(this,new Dictionary<string, object>()
         {
@@ -145,7 +145,7 @@ public class ExtractionFilterParameterSet:DatabaseEntity, ICollectSqlParameters,
 
     public override void DeleteInDatabase()
     {
-        foreach(var v in this.Values)
+        foreach(var v in Values)
         {
             v.DeleteInDatabase();
         }

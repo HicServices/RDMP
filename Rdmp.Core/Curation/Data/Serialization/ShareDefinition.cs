@@ -56,7 +56,7 @@ public class ShareDefinition
     public ShareDefinition(Guid sharingGuid, int id, Type type, Dictionary<string, object> properties, Dictionary<RelationshipAttribute, Guid> relationshipProperties)
     {
         if (!typeof(IMapsDirectlyToDatabaseTable).IsAssignableFrom(type))
-            throw new ArgumentException("Type must be IMapsDirectlyToDatabaseTable", "type");
+            throw new ArgumentException("Type must be IMapsDirectlyToDatabaseTable", nameof(type));
             
         SharingGuid = sharingGuid;
         ID = id;

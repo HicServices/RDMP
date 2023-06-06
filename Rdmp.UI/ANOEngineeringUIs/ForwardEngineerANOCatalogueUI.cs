@@ -198,7 +198,7 @@ public partial class ForwardEngineerANOCatalogueUI : ForwardEngineerANOCatalogue
 
     #endregion
 
-    void tlvTableInfoMigrations_CellEditStarting(object sender, BrightIdeasSoftware.CellEditEventArgs e)
+    void tlvTableInfoMigrations_CellEditStarting(object sender, CellEditEventArgs e)
     {
         if (e.RowObject is TableInfo)
             e.Cancel = true;
@@ -286,7 +286,7 @@ public partial class ForwardEngineerANOCatalogueUI : ForwardEngineerANOCatalogue
         }
     }
         
-    void tlvTableInfoMigrations_CellEditFinishing(object sender, BrightIdeasSoftware.CellEditEventArgs e)
+    void tlvTableInfoMigrations_CellEditFinishing(object sender, CellEditEventArgs e)
     {
         try
         {
@@ -314,7 +314,7 @@ public partial class ForwardEngineerANOCatalogueUI : ForwardEngineerANOCatalogue
                 else
                 {
                     ExtractionCategory c;
-                    ExtractionCategory.TryParse((string) cbx.SelectedItem, out c);
+                    Enum.TryParse((string) cbx.SelectedItem, out c);
                     plan.ExtractionCategoryIfAny = c;
                 }
                         
@@ -477,10 +477,12 @@ public partial class ForwardEngineerANOCatalogueUI : ForwardEngineerANOCatalogue
 
     private void CreateAttacher(ITableInfo t, QueryBuilder qb, LoadMetadata lmd, LoadProgress loadProgressIfAny)
     {
-        var pt = new ProcessTask(Activator.RepositoryLocator.CatalogueRepository, lmd, LoadStage.Mounting);
-        pt.ProcessTaskType = ProcessTaskType.Attacher;
-        pt.Name = $"Read from {t}";
-        pt.Path = typeof(RemoteTableAttacher).FullName;
+        var pt = new ProcessTask(Activator.RepositoryLocator.CatalogueRepository, lmd, LoadStage.Mounting)
+            {
+                ProcessTaskType = ProcessTaskType.Attacher,
+                Name = $"Read from {t}",
+                Path = typeof(RemoteTableAttacher).FullName
+            };
         pt.SaveToDatabase();
 
         pt.CreateArgumentsForClassIfNotExists<RemoteTableAttacher>();
@@ -575,8 +577,10 @@ public partial class ForwardEngineerANOCatalogueUI : ForwardEngineerANOCatalogue
         {
             var fi = new FileInfo(sfd.FileName);
 
-            var cmdAnoTablesToo = new ExecuteCommandExportObjectsToFile(Activator, Activator.RepositoryLocator.CatalogueRepository.GetAllObjects<ANOTable>().ToArray(), fi.Directory);
-            cmdAnoTablesToo.ShowInExplorer = false;
+            var cmdAnoTablesToo = new ExecuteCommandExportObjectsToFile(Activator, Activator.RepositoryLocator.CatalogueRepository.GetAllObjects<ANOTable>().ToArray(), fi.Directory)
+                {
+                    ShowInExplorer = false
+                };
 
             if (!cmdAnoTablesToo.IsImpossible)
                 cmdAnoTablesToo.Execute();

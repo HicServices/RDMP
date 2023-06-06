@@ -94,7 +94,7 @@ public class AggregateBuilderCohortOptions: IAggregateBuilderOptions
             case AggregateEditorSection.AXIS:
                 return false;
             default:
-                throw new ArgumentOutOfRangeException("section");
+                throw new ArgumentOutOfRangeException(nameof(section));
         }
     }
 
@@ -118,11 +118,7 @@ public class AggregateBuilderCohortOptions: IAggregateBuilderOptions
             return toReturn.ToArray();
 
         //it's not a patient index table itself so it can reference other patient index tables in the configuration
-        var config = aggregate.GetCohortIdentificationConfigurationIfAny();
-
-        //If this returns null then it means someone deleted it out of the configuration while you were editing it?
-        if(config == null)
-            throw new NotSupportedException(
+        var config = aggregate.GetCohortIdentificationConfigurationIfAny() ?? throw new NotSupportedException(
                 $"Aggregate {aggregate} did not return its CohortIdentificationConfiguration correctly, did someone delete the configuration or Orphan this AggregateConfiguration while you weren't looking?");
 
         //find those that are already referenced

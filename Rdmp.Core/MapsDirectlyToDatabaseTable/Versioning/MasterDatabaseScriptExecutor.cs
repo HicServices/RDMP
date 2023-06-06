@@ -15,7 +15,6 @@ using FAnsi.Discovery;
 using Rdmp.Core.ReusableLibraryCode;
 using Rdmp.Core.ReusableLibraryCode.Checks;
 using TypeGuesser;
-using Version = System.Version;
 
 namespace Rdmp.Core.MapsDirectlyToDatabaseTable.Versioning;
 

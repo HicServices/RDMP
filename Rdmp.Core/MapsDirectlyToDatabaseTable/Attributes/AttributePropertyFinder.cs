@@ -48,12 +48,7 @@ public class AttributePropertyFinder<T> : IAttributePropertyFinder where T : Att
 
     public IEnumerable<PropertyInfo> GetProperties(IMapsDirectlyToDatabaseTable o)
     {
-        var t = o.GetType();
-
-        if (_properties.ContainsKey(t))
-            return _properties[t];
-
-        return Array.Empty<PropertyInfo>();
+        return _properties.TryGetValue(o.GetType(), out var properties) ? properties : Array.Empty<PropertyInfo>();
     }
 
     /// <summary>

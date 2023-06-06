@@ -28,8 +28,8 @@ class ExecuteCommandListSupportedCommands:BasicCommandExecution
         [DemandsInitialization("Optional. Set to true to display information about the command.  If specified with pattern then pattern will also search the description")]
         bool verbose = false):base(basicActivator)
     {
-        this._pattern = pattern;
-        this._verbose = verbose;
+        _pattern = pattern;
+        _verbose = verbose;
     }
 
     public override void Execute()
@@ -38,7 +38,7 @@ class ExecuteCommandListSupportedCommands:BasicCommandExecution
 
             
         var commands = commandCaller.GetSupportedCommands().ToArray();
-        var names = commands.Select(c=>BasicCommandExecution.GetCommandName(c.Name)).ToArray();
+        var names = commands.Select(c=>GetCommandName(c.Name)).ToArray();
         string[] descriptions;
             
              

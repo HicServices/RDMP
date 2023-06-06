@@ -44,12 +44,12 @@ public partial class SetSQLDialog : Form
     {
 
         DialogResult = DialogResult.OK;
-        this.Close();
+        Close();
     }
 
     private void button2_Click(object sender, EventArgs e)
     {
         DialogResult = DialogResult.Cancel;
-        this.Close();
+        Close();
     }
 }

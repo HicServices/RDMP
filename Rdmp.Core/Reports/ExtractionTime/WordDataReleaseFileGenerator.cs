@@ -159,7 +159,7 @@ public class WordDataReleaseFileGenerator : DocXHelper
         tableLine++;
             
         SetTableCell(table,tableLine, 0, Cohort.GetExternalData(CohortCountTimeoutInSeconds).ExternalVersion.ToString());
-        SetTableCell(table,tableLine, 1, string.Format("{0} (ID={1}, OriginID={2})" , Cohort,Cohort.ID,Cohort.OriginID));//description fetched from remote table
+        SetTableCell(table,tableLine, 1, $"{Cohort} (ID={Cohort.ID}, OriginID={Cohort.OriginID})");//description fetched from remote table
 
         var lastExtracted = ExtractionResults.Any() ? ExtractionResults.Max(r => r.DateOfExtraction).ToString() : "Never";
         SetTableCell(table,tableLine, 2, lastExtracted);
@@ -205,7 +205,7 @@ public class WordDataReleaseFileGenerator : DocXHelper
         if (result.DestinationDescription.StartsWith(Project.ExtractionDirectory,
                 StringComparison.CurrentCultureIgnoreCase))
         {
-            var relative = result.DestinationDescription.Substring(Project.ExtractionDirectory.Length).Replace('\\', '/');
+            var relative = result.DestinationDescription[Project.ExtractionDirectory.Length..].Replace('\\', '/');
                 
             return $"./{relative.Trim('/')}";
         }

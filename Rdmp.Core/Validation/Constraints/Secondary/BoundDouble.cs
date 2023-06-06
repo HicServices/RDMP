@@ -65,18 +65,18 @@ public class BoundDouble :  Bound
     {
         if (Inclusive)
         {
-            if (Lower.HasValue && v < Lower)
+            if (v < Lower)
                 return false;
 
-            if (Upper.HasValue && v > Upper)
+            if (v > Upper)
                 return false;
         }
         else
         {
-            if (Lower.HasValue && v <= Lower)
+            if (v <= Lower)
                 return false;
 
-            if (Upper.HasValue && v >= Upper)
+            if (v >= Upper)
                 return false;
         }
 
@@ -127,13 +127,13 @@ public class BoundDouble :  Bound
 
     private string CreateViolationReportUsingFieldNames(double d)
     {
-        if (!String.IsNullOrWhiteSpace(LowerFieldName) && !String.IsNullOrWhiteSpace(UpperFieldName))
+        if (!string.IsNullOrWhiteSpace(LowerFieldName) && !string.IsNullOrWhiteSpace(UpperFieldName))
             return BetweenMessage(d, LowerFieldName, UpperFieldName);
 
-        if (!String.IsNullOrWhiteSpace(LowerFieldName))
+        if (!string.IsNullOrWhiteSpace(LowerFieldName))
             return GreaterThanMessage(d, LowerFieldName);
 
-        if (!String.IsNullOrWhiteSpace(UpperFieldName))
+        if (!string.IsNullOrWhiteSpace(UpperFieldName))
             return LessThanMessage(d, UpperFieldName);
 
         throw new InvalidOperationException("Illegal state.");

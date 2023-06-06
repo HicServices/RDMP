@@ -84,9 +84,9 @@ public partial class PerformanceCounterUI : Form
         f.WindowState = FormWindowState.Maximized;
         f.Controls.Add(ui);
 
-        this.TopMost = false;
+        TopMost = false;
         f.ShowDialog();
-        this.TopMost = true;
+        TopMost = true;
 
         //now the viewer has been closed we can reinstantiate the performance counter
         DatabaseCommandHelper.PerformanceCounter = performanceCounter;

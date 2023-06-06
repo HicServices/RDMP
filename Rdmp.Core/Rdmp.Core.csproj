@@ -28,8 +28,11 @@
   </PropertyGroup>
   <ItemGroup>
     <Compile Remove="Databases\CatalogueDatabase\up\views\**" />
+    <Compile Remove="Startup\PluginManagement\**" />
     <EmbeddedResource Remove="Databases\CatalogueDatabase\up\views\**" />
+    <EmbeddedResource Remove="Startup\PluginManagement\**" />
     <None Remove="Databases\CatalogueDatabase\up\views\**" />
+    <None Remove="Startup\PluginManagement\**" />
   </ItemGroup>
   <ItemGroup>
     <None Remove="Curation\KeywordHelp.txt" />
@@ -296,7 +299,7 @@
     </PackageReference>
     <PackageReference Include="Newtonsoft.Json" Version="13.0.3" />
     <PackageReference Include="NLog" Version="5.2.0" />
-    <PackageReference Include="NPOI" Version="2.5.5" />
+    <PackageReference Include="NPOI" Version="2.6.0" />
     <PackageReference Include="SixLabors.ImageSharp" Version="3.0.1" />
     <PackageReference Include="SixLabors.ImageSharp.Drawing" Version="1.0.0-beta15" />
     <PackageReference Include="Spectre.Console" Version="0.47.0" />
@@ -326,7 +329,6 @@
   </ItemGroup>
   <ItemGroup>
     <Folder Include="ReusableLibraryCode\" />
-    <Folder Include="Startup\PluginManagement\" />
   </ItemGroup>
   <ItemGroup>
     <Compile Update="GlobalStrings.Designer.cs">

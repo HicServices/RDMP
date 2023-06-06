@@ -45,8 +45,10 @@ public class ExecuteCommandCreateNewPermissionWindow : BasicCommandExecution, IA
 
         if (TypeText("Permission Window Name", "Enter name for the PermissionWindow e.g. 'Nightly Loads'", 1000,null,out var name))
         {
-            var newWindow = new PermissionWindow(BasicActivator.RepositoryLocator.CatalogueRepository);
-            newWindow.Name = name;
+            var newWindow = new PermissionWindow(BasicActivator.RepositoryLocator.CatalogueRepository)
+            {
+                Name = name
+            };
             newWindow.SaveToDatabase();
 
             if (_cacheProgressToSetOnIfAny != null)

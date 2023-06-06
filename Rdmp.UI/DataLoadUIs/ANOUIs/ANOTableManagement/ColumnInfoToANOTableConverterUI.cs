@@ -366,7 +366,7 @@ public partial class ColumnInfoToANOTableConverterUI : ColumnInfoToANOTableConve
 
             if (worked)
                 if (Activator.YesNo("successfully changed column to ANO, close form?", "Close form?"))
-                    this.ParentForm.Close();
+                    ParentForm.Close();
         }
         catch (Exception exception)
         {

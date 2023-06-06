@@ -136,7 +136,7 @@ public static class UsefulStuff
             //clean the string
 
             var toAdd = s.Trim();
-            if (toAdd.Contains("."))
+            if (toAdd.Contains('.'))
                 toAdd = toAdd[(toAdd.LastIndexOf(".", StringComparison.Ordinal) + 1)..];
                 
             var gotDelimitedMatch = false;
@@ -535,7 +535,7 @@ public static class UsefulStuff
                 throw new Exception(
                     $"Although there were the same number of files in Globals directories {first.FullName} and {other.FullName}, there were differing file names ({file1.Name} and {file2.Name})");
 
-            if (!UsefulStuff.HashFile(file1.FullName).Equals(UsefulStuff.HashFile(file2.FullName)))
+            if (!HashFile(file1.FullName).Equals(HashFile(file2.FullName)))
                 throw new Exception(
                     $"File found in Globals directory which has a different MD5 from another Globals file.  Files were \"{file1.FullName}\" and \"{file2.FullName}\"");
         }

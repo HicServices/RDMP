@@ -88,19 +88,19 @@ public partial class SQLBeforeAndAfterViewer : Form
         lblBefore.Text = headerTextForBefore;
         lblAfter.Text = headerTextForAfter;
 
-        this.Text = caption;
+        Text = caption;
     }
         
     private void btnYes_Click(object sender, EventArgs e)
     {
         DialogResult = DialogResult.Yes;
-        this.Close();
+        Close();
     }
 
     private void btnNo_Click(object sender, EventArgs e)
     {
         DialogResult = DialogResult.No;
-        this.Close();
+        Close();
     }
 
 

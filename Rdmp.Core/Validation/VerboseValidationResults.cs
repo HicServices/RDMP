@@ -45,10 +45,12 @@ public class VerboseValidationResults
         foreach (var iv in validators)
         {
             DictionaryOfFailure.Add(iv.TargetProperty,null);
-            DictionaryOfFailure[iv.TargetProperty] = new Dictionary<Consequence, int>();
-            DictionaryOfFailure[iv.TargetProperty].Add(Consequence.Missing,0);
-            DictionaryOfFailure[iv.TargetProperty].Add(Consequence.Wrong, 0);
-            DictionaryOfFailure[iv.TargetProperty].Add(Consequence.InvalidatesRow, 0);
+            DictionaryOfFailure[iv.TargetProperty] = new Dictionary<Consequence, int>
+            {
+                { Consequence.Missing, 0 },
+                { Consequence.Wrong, 0 },
+                { Consequence.InvalidatesRow, 0 }
+            };
         }
     }
 

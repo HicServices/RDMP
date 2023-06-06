@@ -42,12 +42,12 @@ public partial class RAGSmiley : UserControl, IRAGSmiley
     private void SetCorrectCursor()
     {
         if (AlwaysShowHandCursor || memoryCheckNotifier.Messages.Any())
-            this.Cursor = Cursors.Hand;
+            Cursor = Cursors.Hand;
         else
         if (pbYellow.Tag != null || pbRed.Tag != null)
-            this.Cursor = Cursors.Hand;
+            Cursor = Cursors.Hand;
         else
-            this.Cursor = Cursors.Arrow;
+            Cursor = Cursors.Arrow;
     }
 
     public RAGSmiley()
@@ -230,7 +230,7 @@ public partial class RAGSmiley : UserControl, IRAGSmiley
         {
 
             //if there is already a Task and it has not completed
-            if (_checkTask != null && !_checkTask.IsCompleted)
+            if (_checkTask is { IsCompleted: false })
                 return;
 
             //else start a new Task

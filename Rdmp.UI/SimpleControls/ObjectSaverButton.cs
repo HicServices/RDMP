@@ -39,8 +39,8 @@ public partial class ObjectSaverButton
 
     public ObjectSaverButton()
     {
-        this.btnSave.Click += new System.EventHandler(this.btnSave_Click);
-        this.btnUndoRedo.Click += new System.EventHandler(this.btnUndoRedo_Click);
+        btnSave.Click += new EventHandler(btnSave_Click);
+        btnUndoRedo.Click += new EventHandler(btnUndoRedo_Click);
             
         _undoImage = FamFamFamIcons.Undo.ImageToBitmap();
         _redoImage = FamFamFamIcons.Redo.ImageToBitmap();
@@ -65,11 +65,7 @@ public partial class ObjectSaverButton
         control.CommonFunctionality.Add(btnSave);
         control.CommonFunctionality.Add(btnUndoRedo);
             
-        var f = control as Form ?? ((Control)control).FindForm();
-
-        if (f == null)
-            throw new NotSupportedException("Cannot call SetupFor before the control has been added to its parent form");
-
+        var f = (control as Form ?? ((Control)control).FindForm()) ?? throw new NotSupportedException("Cannot call SetupFor before the control has been added to its parent form");
         _parent = control;
 
         Enable(false);
@@ -161,7 +157,7 @@ public partial class ObjectSaverButton
 
     public void Redo()
     {
-        if (_undoneChanges != null && _undoneChanges.Evaluation == ChangeDescription.DatabaseCopyDifferent)
+        if (_undoneChanges is { Evaluation: ChangeDescription.DatabaseCopyDifferent })
         {
             foreach (var difference in _undoneChanges.Differences)
                 difference.Property.SetValue(_o, difference.LocalValue);

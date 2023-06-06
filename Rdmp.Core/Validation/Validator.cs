@@ -508,7 +508,7 @@ public class Validator
 
     public void RenameColumn(string oldName, string newName)
     {
-        foreach (var itemValidator in this.ItemValidators)
+        foreach (var itemValidator in ItemValidators)
         {
             if (itemValidator.TargetProperty == oldName)
                 itemValidator.TargetProperty = newName;

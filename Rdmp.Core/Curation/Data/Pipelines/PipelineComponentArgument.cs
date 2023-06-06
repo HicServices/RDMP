@@ -93,12 +93,14 @@ public class PipelineComponentArgument : Argument, IPipelineComponentArgument
     /// <inheritdoc/>
     public void Clone(PipelineComponent intoTargetComponent)
     {
-        var cloneArg = new PipelineComponentArgument(intoTargetComponent.CatalogueRepository, intoTargetComponent);
+        var cloneArg = new PipelineComponentArgument(intoTargetComponent.CatalogueRepository, intoTargetComponent)
+            {
+                Name = Name,
+                Value = Value,
+                Type = Type,
+                Description = Description
+            };
 
-        cloneArg.Name = Name;
-        cloneArg.Value = Value;
-        cloneArg.Type = Type;
-        cloneArg.Description = Description;
         cloneArg.SaveToDatabase();
     }
 }

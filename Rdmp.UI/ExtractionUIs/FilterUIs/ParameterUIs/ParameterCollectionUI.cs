@@ -271,25 +271,19 @@ public partial class ParameterCollectionUI : RDMPUserControl
         }
     }
 
-    private void olvParameters_CellEditFinishing(object sender, BrightIdeasSoftware.CellEditEventArgs e)
+    private void olvParameters_CellEditFinishing(object sender, CellEditEventArgs e)
     {
-        var revertable = e.RowObject as IRevertable;
-            
         var parameter = e.RowObject as ISqlParameter;
-        string oldParameterName = null;
-        string newParameterName = null;
+        string oldParameterName;
+        string newParameterName;
 
-        if (parameter != null)
+        try
         {
-            try
-            {
-                oldParameterName = parameter.ParameterName;
-            }
-            catch (Exception)
-            {
-                oldParameterName = null;
-            }
-                
+            oldParameterName = parameter?.ParameterName;
+        }
+        catch (Exception)
+        {
+            oldParameterName = null;
         }
 
         if(e.Column.Index == olvParameterSQL.Index)
@@ -300,29 +294,27 @@ public partial class ParameterCollectionUI : RDMPUserControl
 
         try
         {
-            if (parameter != null)
-                newParameterName = parameter.ParameterName;
+            newParameterName = parameter?.ParameterName;
         }
         catch (Exception)
         {
             return;
         }
 
-        if (revertable != null)
+        if (e.RowObject is IRevertable revertible)
         {
-            var changes = revertable.HasLocalChanges();
+            var changes = revertible.HasLocalChanges();
 
             if (changes.Evaluation == ChangeDescription.DatabaseCopyDifferent)
-                revertable.SaveToDatabase();
+                revertible.SaveToDatabase();
                 
             //if the name has changed handle renaming
             if(oldParameterName != null)
                 if (Options.Refactorer.HandleRename(parameter, oldParameterName, newParameterName))
                 {
                     var owner = parameter.GetOwnerIfAny();
-                    var toRefresh = (owner ?? (object)parameter) as DatabaseEntity;
-                        
-                    if(toRefresh != null)
+
+                    if((owner ?? (object)parameter) is DatabaseEntity toRefresh)
                         Activator.RefreshBus.Publish(this,new RefreshObjectEventArgs(toRefresh));
                 }
                         
@@ -333,7 +325,7 @@ public partial class ParameterCollectionUI : RDMPUserControl
             parameterEditorScintillaControl1.RegenerateSQL();
             UpdateTabVisibility();
 
-            //might not be a problem anymore so refresh the icons on them (and everything else)
+            //might not be a problem any more so refresh the icons on them (and everything else)
             olvParameters.RefreshObjects(problemsBefore.ToList());
 
         }
@@ -416,39 +408,27 @@ public partial class ParameterCollectionUI : RDMPUserControl
         var parameter = (ISqlParameter) rowobject;
         var owner = parameter.GetOwnerIfAny();
 
-        if (owner == null)
-            return null;
-
-        return $"{owner.GetType().Name}:{owner}";
+        return owner == null ? null : $"{owner.GetType().Name}:{owner}";
     }
 
     private void olvParameters_SelectedIndexChanged(object sender, EventArgs e)
     {
-        var param = olvParameters.SelectedObject as ISqlParameter;
-
-        miOverrideParameter.Enabled = false;
-
-        if(CanOverride(param))
-            miOverrideParameter.Enabled = true;
+        var parameter = olvParameters.SelectedObject as ISqlParameter;
+        miOverrideParameter.Enabled = CanOverride(parameter);
     }
 
     private bool CanOverride(ISqlParameter sqlParameter)
     {
-        if(sqlParameter != null)
-            //if it is not already overridden 
-            if (!Options.IsOverridden(sqlParameter) &&
-                //and it exists at a lower level
-                Options.ParameterManager.GetLevelForParameter(sqlParameter) < Options.CurrentLevel)
-                return true;
-
-        return false;
+        return sqlParameter != null &&
+               //if it is not already overridden 
+               !Options.IsOverridden(sqlParameter) &&
+               //and it exists at a lower level
+               Options.ParameterManager.GetLevelForParameter(sqlParameter) < Options.CurrentLevel;
     }
 
     private void miOverride_Click(object sender, EventArgs e)
     {
-        var param = olvParameters.SelectedObject as ISqlParameter;
-
-        if (!CanOverride(param) || param == null)
+        if (olvParameters.SelectedObject is not ISqlParameter param || !CanOverride(param))
             return;
 
         var newParameter = Options.CreateNewParameter(param.ParameterName);
@@ -464,10 +444,8 @@ public partial class ParameterCollectionUI : RDMPUserControl
 
     private void olvParameters_CellEditStarting(object sender, CellEditEventArgs e)
     {
-        var p = e.RowObject as ISqlParameter;
-
-        //cancel cell editting if it is readonly
-        if (p != null && Options.ShouldBeReadOnly(p))
+        //cancel cell editing if it is read only
+        if (e.RowObject is ISqlParameter p && Options.ShouldBeReadOnly(p))
             e.Cancel = true;
     }
         

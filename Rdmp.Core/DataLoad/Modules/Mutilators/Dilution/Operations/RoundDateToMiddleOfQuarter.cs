@@ -35,7 +35,7 @@ public class RoundDateToMiddleOfQuarter : DilutionOperation
         
     public override string GetMutilationSql(INameDatabasesAndTablesDuringLoads namer)
     {
-        return String.Format(@"IF OBJECT_ID('dbo.RoundDateToMiddleOfQuarter') IS NOT NULL
+        return string.Format(@"IF OBJECT_ID('dbo.RoundDateToMiddleOfQuarter') IS NOT NULL
   DROP FUNCTION RoundDateToMiddleOfQuarter
 GO
 

@@ -88,9 +88,11 @@ public class ExecuteCommandCreateNewFileBasedProcessTask : BasicCommandExecution
                 throw new ArgumentOutOfRangeException($"Unexpected _taskType:{_taskType}");
         }
 
-        var task = new ProcessTask((ICatalogueRepository)_loadMetadata.Repository, _loadMetadata, _loadStage);
-        task.ProcessTaskType = _taskType;
-        task.Path = _file.FullName;
+        var task = new ProcessTask((ICatalogueRepository)_loadMetadata.Repository, _loadMetadata, _loadStage)
+            {
+                ProcessTaskType = _taskType,
+                Path = _file.FullName
+            };
         SaveAndShow(task);
     }
 

@@ -72,14 +72,14 @@ public partial class OfferChanceToSaveDialogUI : Form
     {
         _revertable.SaveToDatabase();
         DialogResult = DialogResult.Yes;
-        this.Close();
+        Close();
     }
 
     private void btnNo_Click(object sender, EventArgs e)
     {
         _revertable.RevertToDatabaseState();
         DialogResult = DialogResult.No;
-        this.Close();
+        Close();
     }
 
     private void btnViewStackTrace_Click(object sender, EventArgs e)

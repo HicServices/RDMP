@@ -247,17 +247,17 @@ public partial class PipelineSelectionUI : UserControl, IPipelineSelectionUI
     [UsedImplicitly]
     public void CollapseToSingleLineMode()
     {
-        this.Height = 28;
+        Height = 28;
 
-        this.Controls.Remove(gbPrompt);
+        Controls.Remove(gbPrompt);
 
-        this.Controls.Add(ddPipelines);
+        Controls.Add(ddPipelines);
         ddPipelines.Location = new Point(0, 3);
         ddPipelines.Anchor = AnchorStyles.Top | AnchorStyles.Left | AnchorStyles.Right;
 
         foreach (var button in new Control[] { btnEditPipeline, btnCreateNewPipeline, btnClonePipeline, btnDeletePipeline })
         {
-            this.Controls.Add(button);
+            Controls.Add(button);
             button.Location = new Point(2, 2);
             button.Anchor = AnchorStyles.Top | AnchorStyles.Right;
         }

@@ -114,7 +114,7 @@ public class MemoryRepository : IRepository
     public T GetObjectByID<T>(int id) where T : IMapsDirectlyToDatabaseTable
     {
         if (id == 0)
-            return default(T);
+            return default;
 
         try
         {
@@ -356,7 +356,7 @@ public class MemoryRepository : IRepository
     public Type[] GetCompatibleTypes()
     {
         return
-            this.GetType().Assembly.GetTypes()
+            GetType().Assembly.GetTypes()
                 .Where(
                     t =>
                         typeof(IMapsDirectlyToDatabaseTable).IsAssignableFrom(t)

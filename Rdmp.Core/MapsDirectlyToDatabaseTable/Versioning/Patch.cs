@@ -42,7 +42,7 @@ public class Patch : IComparable
             return $"Patch {DatabaseVersionNumber}";
 
         if(Description.Length> 100)
-            return $"Patch {DatabaseVersionNumber}({Description.Substring(0, 100)}...)";
+            return $"Patch {DatabaseVersionNumber}({Description[..100]}...)";
 
         return $"Patch {DatabaseVersionNumber}({Description})";
 
@@ -57,7 +57,7 @@ public class Patch : IComparable
         if (idx == -1)
             throw new InvalidPatchException(locationInAssembly, $"Script does not start with {VersionKey}");
 
-        var versionNumber = lines[0].Substring(idx + VersionKey.Length).Trim(':',' ','\n','\r','/','*');
+        var versionNumber = lines[0][(idx + VersionKey.Length)..].Trim(':',' ','\n','\r','/','*');
 
         try
         {
@@ -77,7 +77,7 @@ public class Patch : IComparable
                 throw new InvalidPatchException(locationInAssembly,
                     $"Second line of patch scripts must start with {DescriptionKey}");
 
-            var description = lines[1].Substring(idx + DescriptionKey.Length).Trim(':', ' ', '\n', '\r', '/', '*');
+            var description = lines[1][(idx + DescriptionKey.Length)..].Trim(':', ' ', '\n', '\r', '/', '*');
             Description = description;
         } 
     }
@@ -98,10 +98,9 @@ public class Patch : IComparable
     }
     public override bool Equals(object obj)
     {
-        var y = obj as Patch;
         var x = this;
 
-        if (y == null)
+        if (obj is not Patch y)
             return false;
 
         var equal = x.locationInAssembly.Equals(y.locationInAssembly);
@@ -112,18 +111,17 @@ public class Patch : IComparable
 
         if (x.DatabaseVersionNumber.Equals(y.DatabaseVersionNumber))
             return true;
-        else
-            throw new InvalidPatchException(x.locationInAssembly,
-                $"Patches x and y are being compared and they have the same location in assembly ({x.locationInAssembly})  but different Verison numbers", null);
+        throw new InvalidPatchException(x.locationInAssembly,
+            $"Patches x and y are being compared and they have the same location in assembly ({x.locationInAssembly})  but different Version numbers", null);
     }
     public int CompareTo(object obj)
     {
-        if (obj is Patch)
+        if (obj is Patch patch)
         {
-            return -System.String.Compare(((Patch)obj).locationInAssembly, locationInAssembly, System.StringComparison.Ordinal); //sort alphabetically (reverse)
+            return -string.Compare(patch.locationInAssembly, locationInAssembly, StringComparison.Ordinal); //sort alphabetically (reverse)
         }
 
-        throw new Exception($"Cannot compare {this.GetType().Name} to {obj.GetType().Name}");
+        throw new Exception($"Cannot compare {GetType().Name} to {obj.GetType().Name}");
     }
 
     /// <summary>

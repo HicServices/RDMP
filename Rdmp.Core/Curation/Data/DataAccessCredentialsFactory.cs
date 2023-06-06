@@ -41,9 +41,11 @@ public class DataAccessCredentialsFactory
         if (credentialsToAssociate == null)
         {
             //create one
-            credentialsToAssociate = new DataAccessCredentials(_cataRepository);
-            credentialsToAssociate.Username = username;
-            credentialsToAssociate.Password = password;
+            credentialsToAssociate = new DataAccessCredentials(_cataRepository)
+            {
+                Username = username,
+                Password = password
+            };
             credentialsToAssociate.SaveToDatabase();
         }
 

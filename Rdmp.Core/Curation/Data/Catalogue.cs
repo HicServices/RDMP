@@ -736,7 +736,7 @@ public class Catalogue : DatabaseEntity, IComparable, ICatalogue, IInjectKnown<C
         {
             CatalogueType typeAsEnum;
 
-            if (CatalogueType.TryParse(type.ToString(), true, out typeAsEnum))
+            if (Enum.TryParse(type.ToString(), true, out typeAsEnum))
                 Type = typeAsEnum;
             else
                 throw new Exception($" r[\"Type\"] had value {type} which is not contained in Enum CatalogueType");
@@ -751,7 +751,7 @@ public class Catalogue : DatabaseEntity, IComparable, ICatalogue, IInjectKnown<C
         {
             CataloguePeriodicity periodicityAsEnum;
 
-            if (CataloguePeriodicity.TryParse(periodicity.ToString(), true, out periodicityAsEnum))
+            if (Enum.TryParse(periodicity.ToString(), true, out periodicityAsEnum))
                 Periodicity = periodicityAsEnum;
             else
             {
@@ -767,7 +767,7 @@ public class Catalogue : DatabaseEntity, IComparable, ICatalogue, IInjectKnown<C
         {
             CatalogueGranularity granularityAsEnum;
 
-            if (CatalogueGranularity.TryParse(granularity.ToString(), true, out granularityAsEnum))
+            if (Enum.TryParse(granularity.ToString(), true, out granularityAsEnum))
                 Granularity = granularityAsEnum;
             else
                 throw new Exception(
@@ -856,10 +856,10 @@ public class Catalogue : DatabaseEntity, IComparable, ICatalogue, IInjectKnown<C
     {
         if (obj is Catalogue)
         {
-            return -(obj.ToString().CompareTo(this.ToString())); //sort alphabetically (reverse)
+            return -(obj.ToString().CompareTo(ToString())); //sort alphabetically (reverse)
         }
 
-        throw new Exception($"Cannot compare {this.GetType().Name} to {obj.GetType().Name}");
+        throw new Exception($"Cannot compare {GetType().Name} to {obj.GetType().Name}");
     }
 
     /// <summary>
@@ -882,7 +882,7 @@ public class Catalogue : DatabaseEntity, IComparable, ICatalogue, IInjectKnown<C
         foreach (TableInfo t in tables)
             t.Check(notifier);
 
-        var extractionInformations = this.GetAllExtractionInformation(ExtractionCategory.Core);
+        var extractionInformations = GetAllExtractionInformation(ExtractionCategory.Core);
             
         if (extractionInformations.Any())
         {
@@ -917,8 +917,10 @@ public class Catalogue : DatabaseEntity, IComparable, ICatalogue, IInjectKnown<C
                     string sql;
                     try
                     {
-                        var qb = new QueryBuilder(null, null);
-                        qb.TopX = 1;
+                        var qb = new QueryBuilder(null, null)
+                        {
+                            TopX = 1
+                        };
                         qb.AddColumnRange(extractionInformations);
                     
                         sql = qb.SQL;
@@ -1091,7 +1093,7 @@ public class Catalogue : DatabaseEntity, IComparable, ICatalogue, IInjectKnown<C
     public LogManager GetLogManager()
     {
         if(LiveLoggingServer_ID == null) 
-            throw new Exception($"No live logging server set for Catalogue {this.Name}");
+            throw new Exception($"No live logging server set for Catalogue {Name}");
                 
         var server = DataAccessPortal.GetInstance().ExpectServer(LiveLoggingServer, DataAccessContext.Logging);
 
@@ -1146,7 +1148,7 @@ public class Catalogue : DatabaseEntity, IComparable, ICatalogue, IInjectKnown<C
             case FetchOptions.AllGlobalsAndAllLocals:
                 return o.Catalogue_ID == ID || o.IsGlobal;
             default:
-                throw new ArgumentOutOfRangeException("fetch");
+                throw new ArgumentOutOfRangeException(nameof(fetch));
         }
     }
 
@@ -1172,7 +1174,7 @@ public class Catalogue : DatabaseEntity, IComparable, ICatalogue, IInjectKnown<C
                 return $"WHERE Catalogue_ID={ID} OR IsGlobal=1";
                     
             default:
-                throw new ArgumentOutOfRangeException("fetch");
+                throw new ArgumentOutOfRangeException(nameof(fetch));
         }
     }
 
@@ -1235,7 +1237,7 @@ public class Catalogue : DatabaseEntity, IComparable, ICatalogue, IInjectKnown<C
     public bool IsProjectSpecific(IDataExportRepository dataExportRepository)
     {
         var e = GetExtractabilityStatus(dataExportRepository);
-        return e != null && e.IsProjectSpecific;
+        return e is { IsProjectSpecific: true };
     }
 
     /// <summary>
@@ -1245,12 +1247,8 @@ public class Catalogue : DatabaseEntity, IComparable, ICatalogue, IInjectKnown<C
     public IQuerySyntaxHelper GetQuerySyntaxHelper()
     {
         var f = new QuerySyntaxHelperFactory();
-        var type = GetDistinctLiveDatabaseServerType();
-
-        if(type == null)
-            throw new AmbiguousDatabaseTypeException(
+        var type = GetDistinctLiveDatabaseServerType() ?? throw new AmbiguousDatabaseTypeException(
                 $"Catalogue '{this}' has no extractable columns so no Database Type could be determined");
-            
         return f.Create(type.Value);
     }
 

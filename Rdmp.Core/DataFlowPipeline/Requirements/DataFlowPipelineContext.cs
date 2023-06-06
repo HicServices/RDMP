@@ -177,7 +177,7 @@ public class DataFlowPipelineContext<T>: IDataFlowPipelineContext
                 if (!mustHaveType.IsAssignableFrom(pipelineComponentType))
                 {
                     return
-                        $"The pipeline requires a {descriptionOfThingBeingChecked} of type {GetFullName(mustHaveType)} but the currently configured {descriptionOfThingBeingChecked}{GetFullName(pipelineComponentType)} is not of the same type or a derrived type";
+                        $"The pipeline requires a {descriptionOfThingBeingChecked} of type {GetFullName(mustHaveType)} but the currently configured {descriptionOfThingBeingChecked}{GetFullName(pipelineComponentType)} is not of the same type or a derived type";
                 }
             }
         else
@@ -329,7 +329,7 @@ public class DataFlowPipelineContext<T>: IDataFlowPipelineContext
             return t.Name;
         var sb = new StringBuilder();
 
-        sb.Append(t.Name.Substring(0, t.Name.LastIndexOf("`")));
+        sb.Append(t.Name[..t.Name.LastIndexOf("`")]);
         sb.Append(t.GetGenericArguments().Aggregate("<",
 
             delegate(string aggregate, Type type)

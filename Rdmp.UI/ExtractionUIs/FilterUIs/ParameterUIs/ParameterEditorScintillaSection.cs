@@ -61,9 +61,8 @@ public class ParameterEditorScintillaSection
         try
         {
             var oldName = Parameter.ParameterName;
-                
-            ConstantParameter newPrototype;
-            newPrototype = ConstantParameter.Parse(sql, _querySyntaxHelper);
+
+            var newPrototype = ConstantParameter.Parse(sql, _querySyntaxHelper);
 
             if (string.Equals(newPrototype.Comment, Parameter.Comment)//can be null you see
                 &&

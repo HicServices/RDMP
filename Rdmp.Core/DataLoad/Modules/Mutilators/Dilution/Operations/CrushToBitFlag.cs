@@ -26,7 +26,7 @@ public class CrushToBitFlag : DilutionOperation
     {
             
         return 
-            String.Format(
+            string.Format(
                 @"
   ALTER TABLE {0} Add {1}_bit bit 
   GO

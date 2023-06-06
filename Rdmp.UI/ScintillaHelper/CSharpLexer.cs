@@ -55,12 +55,12 @@ public class CSharpLexer
                         scintilla.SetStyling(1, StyleString);
                         state = STATE_STRING;
                     }
-                    else if (Char.IsDigit(c))
+                    else if (char.IsDigit(c))
                     {
                         state = STATE_NUMBER;
                         goto REPROCESS;
                     }
-                    else if (Char.IsLetter(c))
+                    else if (char.IsLetter(c))
                     {
                         state = STATE_IDENTIFIER;
                         goto REPROCESS;
@@ -87,7 +87,7 @@ public class CSharpLexer
                     break;
 
                 case STATE_NUMBER:
-                    if (Char.IsDigit(c) || (c >= 'a' && c <= 'f') || (c >= 'A' && c <= 'F') || c == 'x')
+                    if (char.IsDigit(c) || c is >= 'a' and <= 'f' || c is >= 'A' and <= 'F' || c == 'x')
                     {
                         length++;
                     }
@@ -101,7 +101,7 @@ public class CSharpLexer
                     break;
 
                 case STATE_IDENTIFIER:
-                    if (Char.IsLetterOrDigit(c))
+                    if (char.IsLetterOrDigit(c))
                     {
                         length++;
                     }

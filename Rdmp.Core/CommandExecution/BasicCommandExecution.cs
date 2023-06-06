@@ -87,12 +87,9 @@ public abstract class BasicCommandExecution : ICommandExecution,IAtomicCommand
 
     protected void SetImpossibleIfReadonly(IMightBeReadOnly m)
     {
-        if (m == null)
-            return;
-
-        if (m.ShouldBeReadOnly(out var reason))
+        if (m?.ShouldBeReadOnly(out var reason)==true)
         {
-            SetImpossible($"{(m is IContainer ? "Container" : ('\'' + m.ToString() + '\''))} is readonly beacause:{reason}");
+            SetImpossible($"{(m is IContainer ? "Container" : '\'' + m.ToString() + '\'')} is readonly because:{reason}");
         }
     }
     public BasicCommandExecution()
@@ -102,7 +99,7 @@ public abstract class BasicCommandExecution : ICommandExecution,IAtomicCommand
 
     public BasicCommandExecution(IBasicActivateItems basicActivator)
     {
-        this.BasicActivator = basicActivator;
+        BasicActivator = basicActivator;
     }
 
     public virtual void Execute()
@@ -154,7 +151,7 @@ public abstract class BasicCommandExecution : ICommandExecution,IAtomicCommand
 
     public virtual string GetCommandHelp()
     {
-        return String.Empty;
+        return string.Empty;
     }
 
     public virtual Image<Rgba32> GetImage(IIconProvider iconProvider)
@@ -523,7 +520,7 @@ public abstract class BasicCommandExecution : ICommandExecution,IAtomicCommand
     public static bool HasCommandNameOrAlias(Type commandType, string name)
     {
         return 
-            commandType.Name.Equals(BasicCommandExecution.ExecuteCommandPrefix + name,StringComparison.InvariantCultureIgnoreCase) 
+            commandType.Name.Equals(ExecuteCommandPrefix + name,StringComparison.InvariantCultureIgnoreCase) 
             || 
             commandType.Name.Equals(name,StringComparison.InvariantCultureIgnoreCase) 
             || 

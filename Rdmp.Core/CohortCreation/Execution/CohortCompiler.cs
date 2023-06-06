@@ -57,7 +57,7 @@ public class CohortCompiler
     /// </summary>
     public ICoreChildProvider CoreChildProvider
     {
-        get => _coreChildProvider = _coreChildProvider ?? new CatalogueChildProvider(CohortIdentificationConfiguration.CatalogueRepository,null,new IgnoreAllErrorsCheckNotifier(),null);
+        get => _coreChildProvider ??= new CatalogueChildProvider(CohortIdentificationConfiguration.CatalogueRepository,null,new IgnoreAllErrorsCheckNotifier(),null);
         set => _coreChildProvider = value;
     }
 
@@ -189,11 +189,11 @@ public class CohortCompiler
 
         foreach (var c in container.GetOrderedContents())
         {
-            if(c is CohortAggregateContainer aggregateContainer && !aggregateContainer.IsDisabled)
+            if(c is CohortAggregateContainer { IsDisabled: false } aggregateContainer)
             {
                 toReturn.AddRange(AddTasksRecursivelyAsync(globals, aggregateContainer, addSubcontainerTasks));
             }
-            if(c is AggregateConfiguration aggregate && !aggregate.IsDisabled)
+            if(c is AggregateConfiguration { IsDisabled: false } aggregate)
             {
                 toReturn.Add(Task.Run(() => { return AddTask(aggregate, globals); }));
             }
@@ -214,13 +214,8 @@ public class CohortCompiler
         var aggregate = runnable as AggregateConfiguration;
         var container = runnable as CohortAggregateContainer;
         var joinable = runnable as JoinableCohortAggregateConfiguration;
-        var obj = aggregate ?? container ?? (IMapsDirectlyToDatabaseTable)joinable;
-
-
-        if (obj == null)
-            throw new NotSupportedException(
+        var obj = (aggregate ?? container ?? (IMapsDirectlyToDatabaseTable)joinable) ?? throw new NotSupportedException(
                 $"Expected c to be either AggregateConfiguration or CohortAggregateContainer but it was {runnable.GetType().Name}");
-
         var source = new CancellationTokenSource();
         ICompileable task;
 
@@ -270,8 +265,10 @@ public class CohortCompiler
             //if the container/aggregate being processed isn't the first component in the container
             if (!isFirstInContainer && IncludeCumulativeTotals) //and we want cumulative totals
             {
-                cumulativeQueryBuilder = new CohortQueryBuilder(parent, globals,CoreChildProvider);
-                cumulativeQueryBuilder.StopContainerWhenYouReach = (IOrderable) runnable;
+                cumulativeQueryBuilder = new CohortQueryBuilder(parent, globals,CoreChildProvider)
+                    {
+                        StopContainerWhenYouReach = (IOrderable) runnable
+                    };
             }
                 
         }
@@ -522,7 +519,7 @@ public class CohortCompiler
             {
                 var execution = Tasks[compileable];
 
-                if (execution != null && execution.IsExecuting)
+                if (execution is { IsExecuting: true })
                 {
                     execution.Cancel();
                 }

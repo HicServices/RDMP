@@ -294,7 +294,7 @@ where
         using (var con = cohortTable.Database.Server.GetConnection())
         {
             con.Open();
-            var sql = $"SELECT DISTINCT * FROM {cohortTable.GetFullyQualifiedName()} WHERE {this.WhereSQL()}";
+            var sql = $"SELECT DISTINCT * FROM {cohortTable.GetFullyQualifiedName()} WHERE {WhereSQL()}";
 
             var da = cohortTable.Database.Server.GetDataAdapter(sql, con);
             var dtReturn = new DataTable();
@@ -575,7 +575,7 @@ where
             
         if(nullsFound > 0)
             listener.OnNotify(this, new NotifyEventArgs(ProgressEventType.Warning,
-                $"Found {nullsFound} null release identifiers amongst the {toProcess.Rows.Count} rows of the input data table (on which we were attempting to reverse annonymise)"));
+                $"Found {nullsFound} null release identifiers amongst the {toProcess.Rows.Count} rows of the input data table (on which we were attempting to reverse anonymise)"));
 
         listener.OnNotify(this, new NotifyEventArgs(substitutions >0?ProgressEventType.Information : ProgressEventType.Error,
             $"Substituted {substitutions} release identifiers for private identifiers in input data table (input data table contained {toProcess.Rows.Count} rows)"));

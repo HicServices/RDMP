@@ -56,8 +56,8 @@ public class ExecuteCommandChooseCohort : BasicCommandExecution,IAtomicCommand
         }
 
         //find cohorts that match the project number
-        if (_childProvider.ProjectNumberToCohortsDictionary.ContainsKey(project.ProjectNumber.Value))
-            _compatibleCohorts = _childProvider.ProjectNumberToCohortsDictionary[project.ProjectNumber.Value].Where(c=>!c.IsDeprecated).ToList();
+        if (_childProvider.ProjectNumberToCohortsDictionary.TryGetValue(project.ProjectNumber.Value, out var value))
+            _compatibleCohorts = value.Where(c=>!c.IsDeprecated).ToList();
 
         //if there's only one compatible cohort and that one is already selected
         if (_compatibleCohorts.Count == 1 && _compatibleCohorts.Single().ID == _extractionConfiguration.Cohort_ID)

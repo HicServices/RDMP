@@ -276,7 +276,7 @@ public partial class ProgressUI : UserControl, IDataLoadEventListener
         {
             olvSender.AutoResize(ColumnHeaderAutoResizeStyle.ColumnContent);
             olvMessage.AutoResize(ColumnHeaderAutoResizeStyle.ColumnContent);
-            olvMessage.Width = olvMessage.Width + 15; //add room for icon
+            olvMessage.Width += 15; //add room for icon
         }
     }
 
@@ -318,9 +318,9 @@ public partial class ProgressUI : UserControl, IDataLoadEventListener
         {
             for (; i < 500; i++)
             {
-                var startsWith = JobsreceivedFromSender[sender].First().Substring(0, i);
+                var startsWith = JobsreceivedFromSender[sender].First()[..i];
 
-                if (!JobsreceivedFromSender[sender].All(job => job.Substring(0,i).StartsWith(startsWith)))
+                if (!JobsreceivedFromSender[sender].All(job => job[..i].StartsWith(startsWith)))
                     break;
             }
         }
@@ -335,7 +335,7 @@ public partial class ProgressUI : UserControl, IDataLoadEventListener
         if(i ==1)
             floodJob = $"{sender} FloodOfMessages";
         else
-            floodJob = $"{JobsreceivedFromSender[sender].First().Substring(0, i - 1)}... FloodOfMessages";
+            floodJob = $"{JobsreceivedFromSender[sender].First()[..(i - 1)]}... FloodOfMessages";
             
         //add a new row (or edit existing) for the flood of messages from sender
         if (progress.Rows.Contains(floodJob))
@@ -452,12 +452,9 @@ public partial class ProgressUI : UserControl, IDataLoadEventListener
     public NotifyEventArgs GetWorst()
     {
             
-        var worstEntry = (olvProgressEvents.Objects ?? Array.Empty<object>()).OfType<ProgressUIEntry>().Union(NotificationQueue).OrderByDescending(e=>e.ProgressEventType).FirstOrDefault();
+        var worstEntry = (olvProgressEvents.Objects ?? Array.Empty<object>()).OfType<ProgressUIEntry>().Union(NotificationQueue).MaxBy(e=>e.ProgressEventType);
             
-        if(worstEntry == null)
-            return null;
-
-        return new NotifyEventArgs(worstEntry.ProgressEventType,worstEntry.Message,worstEntry.Exception);
+        return worstEntry == null ? null : new NotifyEventArgs(worstEntry.ProgressEventType,worstEntry.Message,worstEntry.Exception);
     }
 }
 internal class QueuedProgressMessage

@@ -89,11 +89,11 @@ public partial class DataFlowComponentVisualisation : UserControl
                 prongRight2.Visible = false;
                 break;
             default:
-                throw new ArgumentOutOfRangeException("role");
+                throw new ArgumentOutOfRangeException(nameof(role));
         }
 
             
-        this.Width = lblText.PreferredWidth + 80;
+        Width = lblText.PreferredWidth + 80;
     }
 
     ToolTip _toolTip = new ToolTip();

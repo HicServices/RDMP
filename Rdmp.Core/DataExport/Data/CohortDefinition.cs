@@ -82,10 +82,8 @@ public class CohortDefinition : ICohortDefinition
 
         }catch(Exception ex)
         {
-            matchDescription = 
-                string.Format("Error occured when checking for existing cohorts in the Project.  We were looking in {0} Error was: {1}",
-                    LocationOfCohort + Environment.NewLine + Environment.NewLine,
-                    ExceptionHelper.ExceptionToListOfInnerMessages(ex));
+            matchDescription =
+                $"Error occurred when checking for existing cohorts in the Project.  We were looking in {LocationOfCohort + Environment.NewLine + Environment.NewLine} Error was: {ExceptionHelper.ExceptionToListOfInnerMessages(ex)}";
 
             return false;    
         }

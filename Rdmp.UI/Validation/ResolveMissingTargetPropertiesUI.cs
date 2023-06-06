@@ -97,7 +97,7 @@ public partial class ResolveMissingTargetPropertiesUI : Form
       
     private void lbMissingReferences_MouseMove(object sender, MouseEventArgs e)
     {
-        if(_dragTarget != null && Control.MouseButtons == MouseButtons.Left)
+        if(_dragTarget != null && MouseButtons == MouseButtons.Left)
             DoDragDrop(_dragTarget, DragDropEffects.Link);
     }
 
@@ -151,14 +151,14 @@ public partial class ResolveMissingTargetPropertiesUI : Form
 
     private void btnCancel_Click(object sender, EventArgs e)
     {
-        this.DialogResult = DialogResult.Cancel;
-        this.AdjustedValidator = null;
-        this.Close();
+        DialogResult = DialogResult.Cancel;
+        AdjustedValidator = null;
+        Close();
     }
 
     private void btnOk_Click(object sender, EventArgs e)
     {
-        this.DialogResult = DialogResult.OK;
-        this.Close();
+        DialogResult = DialogResult.OK;
+        Close();
     }
 }

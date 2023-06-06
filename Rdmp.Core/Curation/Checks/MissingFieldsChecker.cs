@@ -25,7 +25,7 @@ public class MissingFieldsChecker : ICheckable
 
     public MissingFieldsChecker(TableRepository repository)
     {
-        this._repository = repository;
+        _repository = repository;
     }
         
     public void Check(ICheckNotifier notifier)

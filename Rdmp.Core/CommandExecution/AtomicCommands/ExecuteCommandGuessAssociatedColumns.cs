@@ -23,8 +23,8 @@ public class ExecuteCommandGuessAssociatedColumns : BasicCommandExecution
 
     public ExecuteCommandGuessAssociatedColumns(IBasicActivateItems activator,ICatalogue catalogue,ITableInfo tableInfo, bool allowPartial = true):base(activator)
     {
-        this._catalogue = catalogue;
-        this._tableInfo = tableInfo;
+        _catalogue = catalogue;
+        _tableInfo = tableInfo;
         _allowPartial = allowPartial;
     }
     public override void Execute()

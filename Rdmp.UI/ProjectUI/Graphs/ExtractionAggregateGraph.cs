@@ -130,7 +130,7 @@ public sealed class ExtractionAggregateGraphUI:AggregateGraphUI ,IObjectCollecti
     private void Close()
     {
         var parent = ParentForm;
-        if (parent != null && !parent.IsDisposed)
+        if (parent is { IsDisposed: false })
             parent.Close();//self destruct because object was deleted
     }
 

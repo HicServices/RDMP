@@ -24,7 +24,7 @@ public static class Rfc4180Writer
                 .OfType<DataColumn>()
                 .Select(column => QuoteValue(column.ColumnName));
 
-            writer.WriteLine(String.Join(",", headerValues));
+            writer.WriteLine(string.Join(",", headerValues));
         }
             
         var typeDictionary = sourceTable.Columns.Cast<DataColumn>().ToDictionary(c => c, c => new Guesser());
@@ -38,7 +38,7 @@ public static class Rfc4180Writer
             foreach (DataColumn col in sourceTable.Columns)
                 line.Add(QuoteValue(GetStringRepresentation(row[col], typeDictionary[col].Guess.CSharpType == typeof(DateTime), escaper)));
                 
-            writer.WriteLine(String.Join(",", line));
+            writer.WriteLine(string.Join(",", line));
         }
 
         writer.Flush();

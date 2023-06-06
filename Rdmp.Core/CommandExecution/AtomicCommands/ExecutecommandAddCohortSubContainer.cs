@@ -20,7 +20,7 @@ public class ExecuteCommandAddCohortSubContainer : BasicCommandExecution,IAtomic
     {
         Weight = 0.12f;
 
-        this._container = container;
+        _container = container;
 
         if (container.ShouldBeReadOnly(out var reason))
         {

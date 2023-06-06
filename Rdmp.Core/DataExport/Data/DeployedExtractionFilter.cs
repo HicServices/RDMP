@@ -164,7 +164,7 @@ public class DeployedExtractionFilter : ConcreteFilter
     {
         base.Check(notifier);
 
-        var checker = new ClonedFilterChecker(this, this.ClonedFromExtractionFilter_ID, ((IDataExportRepository)Repository).CatalogueRepository);
+        var checker = new ClonedFilterChecker(this, ClonedFromExtractionFilter_ID, ((IDataExportRepository)Repository).CatalogueRepository);
         checker.Check(notifier);
     }
 

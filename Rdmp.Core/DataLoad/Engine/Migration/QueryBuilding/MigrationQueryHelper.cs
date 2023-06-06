@@ -24,7 +24,7 @@ public abstract class MigrationQueryHelper
 
     public virtual string CreateUpdateQuery()
     {
-        var cte = String.Format(
+        var cte = string.Format(
             "WITH ToUpdate AS (SELECT stag.* FROM {0} AS stag LEFT OUTER JOIN {1} AS prod {2} WHERE {3} AND {4} AND EXISTS (SELECT {5} EXCEPT SELECT {6}))",
             ColumnsToMigrate.SourceTable.GetFullyQualifiedName(),
             ColumnsToMigrate.DestinationTable.GetFullyQualifiedName(),

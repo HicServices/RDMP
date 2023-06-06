@@ -31,7 +31,7 @@ public static class LoadBubbleExtensions
             case LoadBubble.Archive:
                 throw new Exception("LoadBubble.Archive refers to _Archive tables, therefore it cannot be translated into a LoadStage");
             default:
-                throw new ArgumentOutOfRangeException("bubble");
+                throw new ArgumentOutOfRangeException(nameof(bubble));
         }
     }
 }

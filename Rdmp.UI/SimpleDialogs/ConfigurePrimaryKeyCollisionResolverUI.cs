@@ -143,10 +143,10 @@ public partial class ConfigurePrimaryKeyCollisionResolverUI : RDMPForm
 
     private void listBox1_MouseDown(object sender, MouseEventArgs e)
     {
-        if (this.lbConflictResolutionColumns.SelectedItem == null) return;
+        if (lbConflictResolutionColumns.SelectedItem == null) return;
 
         if (e.Button == MouseButtons.Left)
-            this.lbConflictResolutionColumns.DoDragDrop(this.lbConflictResolutionColumns.SelectedItem,
+            lbConflictResolutionColumns.DoDragDrop(lbConflictResolutionColumns.SelectedItem,
                 DragDropEffects.Move);
 
     }
@@ -177,9 +177,9 @@ public partial class ConfigurePrimaryKeyCollisionResolverUI : RDMPForm
         var right = new Point(lbConflictResolutionColumns.Width, top);
 
         //draw over the old one in the background colour (incase it has moved) - we don't want to leave trails
-        g.DrawLine(new System.Drawing.Pen(lbConflictResolutionColumns.BackColor, 2), draggingOldLeftPoint,
+        g.DrawLine(new Pen(lbConflictResolutionColumns.BackColor, 2), draggingOldLeftPoint,
             draggingOldRightPoint);
-        g.DrawLine(new System.Drawing.Pen(Color.Black, 2), left, right);
+        g.DrawLine(new Pen(Color.Black, 2), left, right);
 
         draggingOldLeftPoint = left;
         draggingOldRightPoint = right;
@@ -189,11 +189,11 @@ public partial class ConfigurePrimaryKeyCollisionResolverUI : RDMPForm
     private void listBox1_DragDrop(object sender, DragEventArgs e)
     {
         var point = lbConflictResolutionColumns.PointToClient(new Point(e.X, e.Y));
-        var index = this.lbConflictResolutionColumns.IndexFromPoint(point);
+        var index = lbConflictResolutionColumns.IndexFromPoint(point);
 
         //if they are dragging it way down the bottom of the list
         if (index < 0)
-            index = this.lbConflictResolutionColumns.Items.Count;
+            index = lbConflictResolutionColumns.Items.Count;
 
         //get the thing they are dragging
         var data =
@@ -201,14 +201,14 @@ public partial class ConfigurePrimaryKeyCollisionResolverUI : RDMPForm
             (e.Data.GetData(typeof (ColumnInfo)) ?? e.Data.GetData(typeof (PreLoadDiscardedColumn)));
 
         //find original index because if we are dragging down then we will want to adjust the index so that insert point is correct even after removing the object further up the list
-        var originalIndex = this.lbConflictResolutionColumns.Items.IndexOf(data);
+        var originalIndex = lbConflictResolutionColumns.Items.IndexOf(data);
 
-        this.lbConflictResolutionColumns.Items.Remove(data);
+        lbConflictResolutionColumns.Items.Remove(data);
 
         if (originalIndex < index)
-            this.lbConflictResolutionColumns.Items.Insert(Math.Max(0, index - 1), data);
+            lbConflictResolutionColumns.Items.Insert(Math.Max(0, index - 1), data);
         else
-            this.lbConflictResolutionColumns.Items.Insert(index, data);
+            lbConflictResolutionColumns.Items.Insert(index, data);
 
         SaveOrderIntoDatabase();
 
@@ -232,7 +232,7 @@ public partial class ConfigurePrimaryKeyCollisionResolverUI : RDMPForm
 
     private void btnClose_Click(object sender, EventArgs e)
     {
-        this.Close();
+        Close();
     }
 
     private void lbConflictResolutionColumns_MouseUp(object sender, MouseEventArgs e)
@@ -314,10 +314,10 @@ public partial class ConfigurePrimaryKeyCollisionResolverUI : RDMPForm
             var resolver = new PrimaryKeyCollisionResolver(_table);
                 
             if(sender == btnCopyPreview)
-                System.Windows.Forms.Clipboard.SetText(resolver.GeneratePreviewSQL());
+                Clipboard.SetText(resolver.GeneratePreviewSQL());
 
             if(sender == btnCopyDetection)
-                System.Windows.Forms.Clipboard.SetText(resolver.GenerateCollisionDetectionSQL());
+                Clipboard.SetText(resolver.GenerateCollisionDetectionSQL());
 
         }
         catch (Exception exception)

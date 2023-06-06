@@ -40,7 +40,7 @@ public class Dilution : IPluginMutilateDataTables
     [DemandsInitialization("Dilution Operation to be performed on the column", DemandType.Unspecified, null, typeof(IDilutionOperation), Mandatory = true)]
     public Type Operation { get; set; }
 
-    [DemandsInitialization("The number of seconds to wait before Timming out when executing the Operation.  This will be running an UPDATE on every record in STAGING so should be quite high depending on how many records your load loads at once (e.g. 5000)", DemandType.Unspecified,5000)]
+    [DemandsInitialization("The number of seconds to wait before timing out when executing the Operation.  This will be running an UPDATE on every record in STAGING so should be quite high depending on how many records your load loads at once (e.g. 5000)", DemandType.Unspecified,5000)]
     public int Timeout { get; set; }
         
     public void Check(ICheckNotifier notifier)
@@ -73,8 +73,7 @@ public class Dilution : IPluginMutilateDataTables
             notifier.OnCheckPerformed(new CheckEventArgs(
                 $"Dilution can ONLY occur in load stage AdjustStaging, it is currently configured as load stage: {_loadStage}", CheckResult.Fail));
 
-        if(instance != null)
-            instance.Check(notifier);
+        instance?.Check(notifier);
     }
 
         
@@ -96,14 +95,9 @@ public class Dilution : IPluginMutilateDataTables
     {
         var namer = job.Configuration.DatabaseNamer;
 
-        using (var con = _dbInfo.Server.GetConnection())
-        {
-            con.Open();
-
-            UsefulStuff.ExecuteBatchNonQuery(GetMutilationSql(namer), con, timeout: Timeout);
-
-            con.Close();
-        }
+        using var con = _dbInfo.Server.GetConnection();
+        con.Open();
+        UsefulStuff.ExecuteBatchNonQuery(GetMutilationSql(namer), con, timeout: Timeout);
 
         return ExitCodeType.Success;
     }

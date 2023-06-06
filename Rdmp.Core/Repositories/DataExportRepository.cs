@@ -83,8 +83,8 @@ public class DataExportRepository : TableRepository, IDataExportRepository
     readonly ObjectConstructor _constructor = new ObjectConstructor();
     protected override IMapsDirectlyToDatabaseTable ConstructEntity(Type t, DbDataReader reader)
     {
-        if (Constructors.ContainsKey(t))
-            return Constructors[t](this, reader);
+        if (Constructors.TryGetValue(t, out var constructor))
+            return constructor(this, reader);
 
         return _constructor.ConstructIMapsDirectlyToDatabaseObject<IDataExportRepository>(t, this, reader);
     }
@@ -92,10 +92,7 @@ public class DataExportRepository : TableRepository, IDataExportRepository
     public CatalogueExtractabilityStatus GetExtractabilityStatus(ICatalogue c)
     {
         var eds = GetAllObjectsWithParent<ExtractableDataSet>(c).SingleOrDefault();
-        if (eds == null)
-            return new CatalogueExtractabilityStatus(false, false);
-
-        return eds.GetCatalogueExtractabilityStatus();
+        return eds == null ? new CatalogueExtractabilityStatus(false, false) : eds.GetCatalogueExtractabilityStatus();
     }
         
     public ISelectedDataSets[] GetSelectedDatasetsWithNoExtractionIdentifiers()
@@ -179,7 +176,7 @@ ec.ExtractionConfiguration_ID = sds.ExtractionConfiguration_ID
     public void AddDataSetToPackage(IExtractableDataSetPackage package, IExtractableDataSet dataSet)
     {
         if (_packageContentsDictionary.Value.ContainsKey(package.ID) && _packageContentsDictionary.Value[package.ID].Contains(dataSet.ID))
-            throw new ArgumentException($"dataSet {dataSet} is already part of package '{package}'", "dataSet");
+            throw new ArgumentException($"dataSet {dataSet} is already part of package '{package}'", nameof(dataSet));
 
         using (var con = GetConnection())
         {
@@ -208,7 +205,7 @@ ec.ExtractionConfiguration_ID = sds.ExtractionConfiguration_ID
     public void RemoveDataSetFromPackage(IExtractableDataSetPackage package, IExtractableDataSet dataSet)
     {
         if (!_packageContentsDictionary.Value[package.ID].Contains(dataSet.ID))
-            throw new ArgumentException($"dataSet {dataSet} is not part of package {package} so cannot be removed", "dataSet");
+            throw new ArgumentException($"dataSet {dataSet} is not part of package {package} so cannot be removed", nameof(dataSet));
 
         using (var con = GetConnection())
         {

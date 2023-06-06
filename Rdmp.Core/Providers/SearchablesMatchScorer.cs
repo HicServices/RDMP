@@ -136,9 +136,8 @@ public class SearchablesMatchScorer
         //Search the tokens for also inclusions e.g. "Pipeline" becomes "Pipeline PipelineCompatibleWithUseCaseNode"
         if (!string.IsNullOrWhiteSpace(searchText))
             foreach(var s in searchText.Split(' ').ToArray())
-                if (AlsoIncludes.ContainsKey(s))
-                    foreach(var v in AlsoIncludes[s])
-                        searchText += $" {v.Name}";
+                if (AlsoIncludes.TryGetValue(s, out var include))
+                    searchText = include.Aggregate(searchText, (current, v) => $"{current} {v.Name}");
 
         //if we have nothing to search for return no results
         if (ReturnEmptyResultWhenNoSearchTerms && string.IsNullOrWhiteSpace(searchText) && ID == null)
@@ -156,9 +155,7 @@ public class SearchablesMatchScorer
             explicitTypesRequested = TypeNames.Intersect(tokens,StringComparer.CurrentCultureIgnoreCase).ToArray();
 
             //else it's a regex
-            foreach (var token in tokens.Except(TypeNames,StringComparer.CurrentCultureIgnoreCase))
-                regexes.Add(new Regex(Regex.Escape(token), RegexOptions.IgnoreCase));
-
+            regexes.AddRange(tokens.Except(TypeNames, StringComparer.CurrentCultureIgnoreCase).Select(token => new Regex(Regex.Escape(token), RegexOptions.IgnoreCase)));
         }
         else
             explicitTypesRequested = Array.Empty<string>();
@@ -174,11 +171,11 @@ public class SearchablesMatchScorer
 
     private void SetupRespectUserSettings()
     {
-        _showInternalCatalogues = RespectUserSettings ? UserSettings.ShowInternalCatalogues : true;
-        _showDeprecatedCatalogues = RespectUserSettings ? UserSettings.ShowDeprecatedCatalogues : true;
-        _showColdStorageCatalogues = RespectUserSettings ? UserSettings.ShowColdStorageCatalogues : true;
-        _showProjectSpecificCatalogues = RespectUserSettings ? UserSettings.ShowProjectSpecificCatalogues : true;
-        _showNonExtractableCatalogues = RespectUserSettings ? UserSettings.ShowNonExtractableCatalogues : true;
+        _showInternalCatalogues = !RespectUserSettings || UserSettings.ShowInternalCatalogues;
+        _showDeprecatedCatalogues = !RespectUserSettings || UserSettings.ShowDeprecatedCatalogues;
+        _showColdStorageCatalogues = !RespectUserSettings || UserSettings.ShowColdStorageCatalogues;
+        _showProjectSpecificCatalogues = !RespectUserSettings || UserSettings.ShowProjectSpecificCatalogues;
+        _showNonExtractableCatalogues = !RespectUserSettings || UserSettings.ShowNonExtractableCatalogues;
     }
 
     private int ScoreMatches(KeyValuePair<IMapsDirectlyToDatabaseTable, DescendancyList> kvp, List<Regex> regexes, string[] explicitTypeNames, CancellationToken cancellationToken)
@@ -251,7 +248,7 @@ public class SearchablesMatchScorer
                 if (i > numberOfParents)
                     break;
 
-                var parent = parents[parents.Length - i];
+                var parent = parents[^i];
 
                 if (parent != null)
                 {
@@ -270,7 +267,7 @@ public class SearchablesMatchScorer
 
         var catalogueIfAny = GetCatalogueIfAnyInDescendancy(kvp);
 
-        if (catalogueIfAny != null && catalogueIfAny.IsDeprecated)
+        if (catalogueIfAny is { IsDeprecated: true })
             return score /10;
             
         //if we are bumping up matches

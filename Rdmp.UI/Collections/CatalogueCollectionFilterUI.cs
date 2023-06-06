@@ -29,7 +29,7 @@ public partial class CatalogueCollectionFilterUI : UserControl
 
     public event EventHandler<EventArgs> FiltersChanged;
 
-    private void OnCheckboxChanged(object sender, System.EventArgs e)
+    private void OnCheckboxChanged(object sender, EventArgs e)
     {
         if(_loading)
             return;

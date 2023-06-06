@@ -307,7 +307,7 @@ public partial class ConfigureAndExecutePipelineUI : RDMPUserControl, IPipelineR
 
     public void CancelIfRunning()
     {
-        if(_cancel != null && !_cancel.IsCancellationRequested)
+        if(_cancel is { IsCancellationRequested: false })
             _cancel.Cancel();
     }
 

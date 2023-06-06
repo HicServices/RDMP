@@ -89,7 +89,7 @@ public class CommandInvoker
                     WindowTitle = GetPromptFor(p),
                     InitialObjectSelection = p.DefaultValue is IMapsDirectlyToDatabaseTable m ? new IMapsDirectlyToDatabaseTable[] { m } : null,
                     InitialSearchText = p.DefaultValue?.ToString(),
-                }, GetAllObjectsOfType(p.Type))); ;
+                }, GetAllObjectsOfType(p.Type)));
 
         AddDelegate(typeof(IPipeline), false, SelectPipeline);
         AddDelegate(typeof(IMightBeDeprecated),false, SelectOne<IMightBeDeprecated>, true);
@@ -234,7 +234,7 @@ public class CommandInvoker
             var argDelegate = GetDelegate(required);
 
             //if it is an easy one to automatically fill e.g. IBasicActivateItems
-            if (argDelegate != null && argDelegate.IsAuto)
+            if (argDelegate is { IsAuto: true })
                 parameterValues.Add(argDelegate.Run(required));
             else
                 //if the constructor argument is a picker, use the one passed in

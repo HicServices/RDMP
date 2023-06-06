@@ -44,7 +44,7 @@ public class RuntimeTaskPackager
         if (!tasksForThisLoadStage.Any())
             return runtimeTasks;
 
-        var factory = new Runtime.RuntimeTaskFactory(_repository);
+        var factory = new RuntimeTaskFactory(_repository);
         foreach (var processTask in tasksForThisLoadStage)
             runtimeTasks.Add(factory.Create(processTask, _loadArgsDictionary[processTask.LoadStage]));
             

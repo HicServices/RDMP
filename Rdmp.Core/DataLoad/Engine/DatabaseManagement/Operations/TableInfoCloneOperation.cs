@@ -42,7 +42,7 @@ public class TableInfoCloneOperation
         _hicDatabaseConfiguration = hicDatabaseConfiguration;
         _tableInfo = tableInfo;
         _copyToBubble = copyToBubble;
-        this._listener = listener;
+        _listener = listener;
         DropIdentityColumns = true;
     }
 
@@ -136,7 +136,7 @@ public class TableInfoCloneOperation
             //also drop any columns we have specifically been told to ignore in the DLE configuration
             if(_hicDatabaseConfiguration.IgnoreColumns != null && _hicDatabaseConfiguration.IgnoreColumns.IsMatch(colName))
             {
-                _listener.OnNotify(this,new NotifyEventArgs(ProgressEventType.Information,$"{colName} will be dropped because it is matches the gloabl ignores pattern ({_hicDatabaseConfiguration.IgnoreColumns})"));
+                _listener.OnNotify(this,new NotifyEventArgs(ProgressEventType.Information,$"{colName} will be dropped because it is matches the global ignores pattern ({_hicDatabaseConfiguration.IgnoreColumns})"));
                 drop = true;
             }
 

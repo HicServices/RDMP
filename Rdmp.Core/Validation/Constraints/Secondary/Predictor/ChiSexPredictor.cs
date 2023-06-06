@@ -32,14 +32,10 @@ public class ChiSexPredictor : PredictionRule
         else
             throw new ArgumentException($"Gender must be a string or char, gender value is a {oGender.GetType()}");
 
-        var sChi = oChi as string;
-
-        if (sChi == null)
-            throw new ArgumentException($"Chi was not a string (or null) object.  It was of Type {oChi.GetType()}");
-
+        var sChi = oChi as string ?? throw new ArgumentException($"Chi was not a string (or null) object.  It was of Type {oChi.GetType()}");
         if (sChi.Length == 10)
         {
-            var sexDigit = (int)Char.GetNumericValue(sChi, 8);
+            var sexDigit = (int)char.GetNumericValue(sChi, 8);
 
             var isvalid = true;
 

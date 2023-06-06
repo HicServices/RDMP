@@ -76,7 +76,7 @@ public class JoinableCohortAggregateConfigurationUse:DatabaseEntity
     {
         ExtractionJoinType joinType;
 
-        if (ExtractionJoinType.TryParse(r["JoinType"].ToString(), true, out joinType))
+        if (Enum.TryParse(r["JoinType"].ToString(), true, out joinType))
             JoinType = joinType;
 
         JoinableCohortAggregateConfiguration_ID = Convert.ToInt32(r["JoinableCohortAggregateConfiguration_ID"]);

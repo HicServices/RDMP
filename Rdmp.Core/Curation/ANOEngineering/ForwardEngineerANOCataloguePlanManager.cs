@@ -116,7 +116,7 @@ public class ForwardEngineerANOCataloguePlanManager : ICheckable, IPickAnyConstr
         try
         {
             var joinInfos = GetJoinInfosRequiredCatalogue();
-            notifier.OnCheckPerformed(new CheckEventArgs("Generated Catalogue SQL succesfully", CheckResult.Success));
+            notifier.OnCheckPerformed(new CheckEventArgs("Generated Catalogue SQL successfully", CheckResult.Success));
 
             foreach (var joinInfo in joinInfos)
                 notifier.OnCheckPerformed(new CheckEventArgs(

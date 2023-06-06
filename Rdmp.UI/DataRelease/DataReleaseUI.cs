@@ -227,7 +227,7 @@ public partial class DataReleaseUI : DataReleaseUI_Design
 
         CommonFunctionality.Add(new ToolStripLabel("Release Pipeline:"));
         CommonFunctionality.Add(_pipelinePanel);
-        CommonFunctionality.AddHelpStringToToolStrip("Release Pipeline", "The sequence of components that will be executed in order to gather the extracted artifacts and assemble them into a single release folder/database. This will start with a source component that gathers the artifacts (from wherever they were extracted to) followed by subsequent components (if any) and then a destination component that generates the final releasable file/folder.");
+        CommonFunctionality.AddHelpStringToToolStrip("Release Pipeline", "The sequence of components that will be executed in order to gather the extracted artefacts and assemble them into a single release folder/database. This will start with a source component that gathers the artefacts (from wherever they were extracted to) followed by subsequent components (if any) and then a destination component that generates the final releasable file/folder.");
             
         checkAndExecuteUI1.SetItemActivator(activator);
 

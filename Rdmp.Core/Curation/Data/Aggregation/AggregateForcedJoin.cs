@@ -43,7 +43,8 @@ class AggregateForcedJoin : IAggregateForcedJoinManager
     /// <inheritdoc/>
     public void BreakLinkBetween(AggregateConfiguration configuration, ITableInfo tableInfo)
     {
-        _repository.Delete(string.Format("DELETE FROM AggregateForcedJoin WHERE AggregateConfiguration_ID = {0} AND TableInfo_ID = {1}", configuration.ID, tableInfo.ID));
+        _repository.Delete(
+            $"DELETE FROM AggregateForcedJoin WHERE AggregateConfiguration_ID = {configuration.ID} AND TableInfo_ID = {tableInfo.ID}");
     }
 
     /// <inheritdoc/>
@@ -51,9 +52,7 @@ class AggregateForcedJoin : IAggregateForcedJoinManager
     {
         using (var con = _repository.GetConnection())
         using(var cmd = DatabaseCommandHelper.GetCommand(
-                  string.Format(
-                      "INSERT INTO AggregateForcedJoin (AggregateConfiguration_ID,TableInfo_ID) VALUES ({0},{1})",
-                      configuration.ID, tableInfo.ID), con.Connection,con.Transaction))
+                  $"INSERT INTO AggregateForcedJoin (AggregateConfiguration_ID,TableInfo_ID) VALUES ({configuration.ID},{tableInfo.ID})", con.Connection,con.Transaction))
             cmd.ExecuteNonQuery();
     }
 }

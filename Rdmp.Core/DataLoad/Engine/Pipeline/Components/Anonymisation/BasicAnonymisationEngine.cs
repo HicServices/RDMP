@@ -53,7 +53,7 @@ public class BasicAnonymisationEngine :IPluginDataFlowComponent<DataTable>,IPipe
                         $"ColumnInfo  {columnName} does not start with ANO but is marked as an ANO column (ID={columnInfo.ID})");
 
                 //if the column is ANOGp then look for column Gp in the input columns (DataTable toProcess)
-                columnName = columnName.Substring(ANOTable.ANOPrefix.Length);
+                columnName = columnName[ANOTable.ANOPrefix.Length..];
                 columnsToAnonymise.Add(columnName, new ANOTransformer(columnInfo.ANOTable));
             }
         }
@@ -83,23 +83,20 @@ public class BasicAnonymisationEngine :IPluginDataFlowComponent<DataTable>,IPipe
 
         //Dump Identifiers
         stopwatch_TimeSpentDumping.Start();
-        _dumper.DumpAllIdentifiersInTable(toProcess); //do the dumping of all the rest of the columns (those that must disapear from pipeline as opposed to those above which were substituted for ANO versions)
+        _dumper.DumpAllIdentifiersInTable(toProcess); //do the dumping of all the rest of the columns (those that must disappear from pipeline as opposed to those above which were substituted for ANO versions)
         stopwatch_TimeSpentDumping.Stop();
             
         if(_dumper.HaveDumpedRecords)
             listener.OnProgress(this, new ProgressEventArgs("Dump Identifiers", new ProgressMeasurement(recordsProcessedSoFar, ProgressType.Records), stopwatch_TimeSpentDumping.Elapsed));//time taken to dump identifiers
            
         //Process ANO Identifier Substitutions
-        //for each column with an ANOTrasformer
-        foreach (var kvp in columnsToAnonymise)
+        //for each column with an ANOTransformer
+        foreach (var (column, transformer) in columnsToAnonymise)
         {
             didAno = true;
 
-            var column = kvp.Key;
-            var transformer = kvp.Value;
-
             //add an ANO version
-            var ANOColumn = new DataColumn(ANOTable.ANOPrefix + column);
+            var ANOColumn = new DataColumn($"{ANOTable.ANOPrefix}{column}";
             toProcess.Columns.Add(ANOColumn);
 
             //populate ANO version

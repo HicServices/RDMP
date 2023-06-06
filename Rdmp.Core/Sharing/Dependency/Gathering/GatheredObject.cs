@@ -122,8 +122,7 @@ public class GatheredObject : IHasDependencies, IMasqueradeAs
         var me = ToShareDefinition(shareManager, branchParents);
             
         var toReturn = new List<ShareDefinition>();
-        var parents = new List<ShareDefinition>(branchParents);
-        parents.Add(me);
+        var parents = new List<ShareDefinition>(branchParents) { me };
         toReturn.Add(me);
 
         foreach (var child in Children)
@@ -142,7 +141,7 @@ public class GatheredObject : IHasDependencies, IMasqueradeAs
     {
         if (ReferenceEquals(null, obj)) return false;
         if (ReferenceEquals(this, obj)) return true;
-        if (obj.GetType() != this.GetType()) return false;
+        if (obj.GetType() != GetType()) return false;
         return Equals((GatheredObject) obj);
     }
 

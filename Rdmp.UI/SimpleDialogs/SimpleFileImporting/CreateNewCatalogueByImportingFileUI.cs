@@ -169,7 +169,7 @@ public partial class CreateNewCatalogueByImportingFileUI : RDMPForm
                 }
                 catch (Exception)
                 {
-                    tbTableName.Text = String.Empty;
+                    tbTableName.Text = string.Empty;
                 }
 
                 ragSmileyFile.Visible = true;
@@ -194,7 +194,7 @@ public partial class CreateNewCatalogueByImportingFileUI : RDMPForm
 
                 break;
             default:
-                throw new ArgumentOutOfRangeException("state");
+                throw new ArgumentOutOfRangeException(nameof(state));
         }
     }
 
@@ -427,7 +427,8 @@ public partial class CreateNewCatalogueByImportingFileUI : RDMPForm
     {
         if (expectTable.Exists())
         {
-            var confirm = MessageBox.Show(String.Format("A table named {0} has been created as part of this import. Do you want to keep it?", expectTable.GetFullyQualifiedName()),
+            var confirm = MessageBox.Show(
+                $"A table named {expectTable.GetFullyQualifiedName()} has been created as part of this import. Do you want to keep it?",
                 "Confirm", MessageBoxButtons.YesNo);
             if (confirm == DialogResult.No) 
                 expectTable.Drop();
@@ -456,7 +457,7 @@ public partial class CreateNewCatalogueByImportingFileUI : RDMPForm
                 
         }
         if (cbAutoClose.Checked)
-            this.Close();
+            Close();
         else
             MessageBox.Show("Creation completed successfully, close the Form when you are finished reviewing the output");
     }

@@ -33,7 +33,7 @@ public class ExecuteCommandSetExtractionIdentifier : ExecuteCommandSetColumnSett
             [DemandsInitialization("Optional - The specific extraction you want the change made in or Null for the Catalogue itself (will affect all future extractions)")]
             IExtractionConfiguration inConfiguration,
 
-            [DemandsInitialization("Optional - The Column name(s) you want to select as the new linkage identifier(s).  Comma seperate multiple entries if needed")]
+            [DemandsInitialization("Optional - The Column name(s) you want to select as the new linkage identifier(s).  Comma separate multiple entries if needed")]
             string column) 
         // base class args
         :base(activator, catalogue, inConfiguration,column,

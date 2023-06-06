@@ -49,17 +49,17 @@ public class MultipleScheduleJobFactory : ScheduledJobFactory
 
     protected override ScheduledDataLoadJob CreateImpl(IRDMPPlatformRepositoryServiceLocator repositoryLocator,IDataLoadEventListener listener,HICDatabaseConfiguration configuration)
     {
-        ScheduledDataLoadJob job;
         var loadProgress = _scheduleList[_lastScheduleId];
         var datesToRetrieve = _availableSchedules[loadProgress].GetDates(OverrideNumberOfDaysToLoad??_scheduleList[_lastScheduleId].DefaultNumberOfDaysToLoadEachTime, false);
         if (!datesToRetrieve.Any())
             return null;
 
         var LoadDirectory = new LoadDirectory(LoadMetadata.LocationOfFlatFiles);
-        job = new ScheduledDataLoadJob(repositoryLocator,JobDescription, LogManager, LoadMetadata, LoadDirectory, listener,configuration);
-            
-        job.LoadProgress = loadProgress;
-        job.DatesToRetrieve = datesToRetrieve;
+        var job = new ScheduledDataLoadJob(repositoryLocator,JobDescription, LogManager, LoadMetadata, LoadDirectory, listener,configuration)
+        {
+            LoadProgress = loadProgress,
+            DatesToRetrieve = datesToRetrieve
+        };
 
         // move our circular pointer for the round-robin assignment
         _lastScheduleId = (_lastScheduleId + 1) % _scheduleList.Count;

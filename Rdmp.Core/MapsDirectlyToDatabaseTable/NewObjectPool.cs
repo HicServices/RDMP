@@ -74,7 +74,7 @@ public static class NewObjectPool
         public void Dispose()
         {
             Objects.Clear();
-            NewObjectPool.EndSession();
+            EndSession();
         }
     }
 }

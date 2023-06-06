@@ -107,7 +107,7 @@ public class ExecuteCommandBulkImportTableInfos : BasicCommandExecution, IAtomic
             //import the table
             importer.DoImport(out var ti, out var cis);
 
-            anyNewTable = anyNewTable ?? ti;
+            anyNewTable ??= ti;
 
             //find a Catalogue of the same name (possibly imported from Share Definition)
             var matchingCatalogues = catalogues.Where(c => c.Name.Equals(ti.GetRuntimeName(), StringComparison.CurrentCultureIgnoreCase)).ToArray();
@@ -135,8 +135,10 @@ public class ExecuteCommandBulkImportTableInfos : BasicCommandExecution, IAtomic
                 //is anyone unmarried? i.e. new ColumnInfos that don't have CatalogueItems with the same name
                 foreach (var columnInfo in unmatched)
                 {
-                    var cataItem = new CatalogueItem(BasicActivator.RepositoryLocator.CatalogueRepository, (Catalogue)matchingCatalogues[0], columnInfo.GetRuntimeName());
-                    cataItem.ColumnInfo_ID = columnInfo.ID;
+                    var cataItem = new CatalogueItem(BasicActivator.RepositoryLocator.CatalogueRepository, (Catalogue)matchingCatalogues[0], columnInfo.GetRuntimeName())
+                        {
+                            ColumnInfo_ID = columnInfo.ID
+                        };
                     cataItem.SaveToDatabase();
                     married.Add(cataItem, columnInfo);
                 }

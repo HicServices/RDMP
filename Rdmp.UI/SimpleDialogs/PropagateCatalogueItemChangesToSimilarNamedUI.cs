@@ -108,7 +108,7 @@ public partial class PropagateCatalogueItemChangesToSimilarNamedUI : RDMPForm
     }
 
 
-    void olvCatalogues_CellRightClick(object sender, BrightIdeasSoftware.CellRightClickEventArgs e)
+    void olvCatalogues_CellRightClick(object sender, CellRightClickEventArgs e)
     {
         var ci = olvCatalogues.SelectedObject as CatalogueItem;
         if(ci == null)
@@ -234,7 +234,7 @@ public partial class PropagateCatalogueItemChangesToSimilarNamedUI : RDMPForm
     //yes = do save and do propogate
     private void btnYes_Click(object sender, EventArgs e)
     {
-        this.DialogResult = DialogResult.Yes;
+        DialogResult = DialogResult.Yes;
 
             
         foreach (CatalogueItem ci in olvCatalogues.CheckedObjects)
@@ -245,21 +245,21 @@ public partial class PropagateCatalogueItemChangesToSimilarNamedUI : RDMPForm
             ci.SaveToDatabase();
         }
 
-        this.Close();
+        Close();
     }
 
     //no = do save but don't propagate
     private void btnNo_Click(object sender, EventArgs e)
     {
         DialogResult = DialogResult.No;
-        this.Close();
+        Close();
     }
 
     //cancel = don't save this and don't propagate
     private void btnCancel_Click(object sender, EventArgs e)
     {
         DialogResult = DialogResult.Cancel;
-        this.Close();
+        Close();
             
     }
 

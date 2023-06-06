@@ -85,12 +85,8 @@ class IdentifierDumperSynchronizer
             {
                 var expectedColName = originPk.GetRuntimeName(LoadStage.AdjustRaw);
 
-                var match = columnsInTheIdentifiersDumpTable.SingleOrDefault(c => c.GetRuntimeName().Equals(expectedColName));
-
-                if (match == null)
-                    throw new ANOConfigurationException(
+                var match = columnsInTheIdentifiersDumpTable.SingleOrDefault(c => c.GetRuntimeName().Equals(expectedColName)) ?? throw new ANOConfigurationException(
                         $"Column {originPk} is a primary key column but is not in Identifier dump table {identifiersTable}");
-
                 if (!match.IsPrimaryKey)
                     throw new ANOConfigurationException(
                         $"Column {originPk} is a primary key column but in Identifier dump {identifiersTable} it is not part of the primary key");

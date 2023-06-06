@@ -55,7 +55,7 @@ public class LoadDiagramServerNode:TableInfoServerNode,IKnowWhatIAm, IOrderable
                 _description = $"LIVE Server:{serverName}";
                 break;
             default:
-                throw new ArgumentOutOfRangeException("bubble");
+                throw new ArgumentOutOfRangeException(nameof(bubble));
         }
 
         //Live can have multiple databases (for lookups)
@@ -66,7 +66,7 @@ public class LoadDiagramServerNode:TableInfoServerNode,IKnowWhatIAm, IOrderable
             {
                 _description = $"Ambiguous LIVE Servers:{string.Join(",", servers)}";
                 ErrorDescription =
-                    $"The TableInfo collection that underly the Catalogues in this data load configuration are on different servers.  The servers they believe they live on are:{string.Join(",", servers)}.  All TableInfos in a load must belong on the same server or the load will not work.";
+                    $"The TableInfo collection that underlie the Catalogues in this data load configuration are on different servers.  The servers they believe they live on are:{string.Join(",", servers)}.  All TableInfos in a load must belong on the same server or the load will not work.";
             }
 
             var databases = _loadTables.Select(t => t.GetDatabaseRuntimeName()).Distinct().ToArray();
@@ -110,7 +110,7 @@ public class LoadDiagramServerNode:TableInfoServerNode,IKnowWhatIAm, IOrderable
     {
         if (ReferenceEquals(null, obj)) return false;
         if (ReferenceEquals(this, obj)) return true;
-        if (obj.GetType() != this.GetType()) return false;
+        if (obj.GetType() != GetType()) return false;
         return Equals((LoadDiagramServerNode) obj);
     }
 

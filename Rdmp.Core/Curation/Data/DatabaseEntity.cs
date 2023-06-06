@@ -261,7 +261,8 @@ public abstract class DatabaseEntity : IRevertable,  INotifyPropertyChanged, ICa
     protected void CopyShallowValuesTo(DatabaseEntity to,bool copyName = false,bool save = true)
     {
         if (GetType() != to.GetType())
-            throw new NotSupportedException(string.Format("Object to must be the same Type as us, we were '{0}' and it was '{1}'",GetType().Name,to.GetType().Name) );
+            throw new NotSupportedException(
+                $"Object to must be the same Type as us, we were '{GetType().Name}' and it was '{to.GetType().Name}'");
 
         var noMappingFinder = new AttributePropertyFinder<NoMappingToDatabase>(to);
         var relationsFinder = new AttributePropertyFinder<RelationshipAttribute>(to);
@@ -358,7 +359,7 @@ public abstract class DatabaseEntity : IRevertable,  INotifyPropertyChanged, ICa
 
             if (representation.Length > MAX_SUMMARY_ITEM_LENGTH)
             {
-                representation = $"{representation.Substring(0, MAX_SUMMARY_ITEM_LENGTH - 3)}...";
+                representation = $"{representation[..(MAX_SUMMARY_ITEM_LENGTH - 3)]}...";
             }
 
             if (representation.Contains('\n'))

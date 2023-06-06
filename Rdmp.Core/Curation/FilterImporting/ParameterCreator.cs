@@ -97,7 +97,7 @@ public class ParameterCreator
                             proposedAliasNumber++;
                         
                         //Naming conflict has been resolved! (by adding the proposed alias number on) so record that this is the new name
-                        proposedNewParameterName = proposedNewParameterName + proposedAliasNumber;
+                        proposedNewParameterName += proposedAliasNumber;
                     }
                     
                 //The final name is different e.g. bob2 instead of bob so propagate into the WHERE SQL of the filter

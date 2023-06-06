@@ -99,8 +99,7 @@ public class DQEStateOverDataLoadRunId
         }
 
         //ensure key exists in passing rows
-        if (!RowsPassingValidationByDataLoadRunID.ContainsKey(dataLoadRunID))
-            RowsPassingValidationByDataLoadRunID.Add(dataLoadRunID, 0);
+        RowsPassingValidationByDataLoadRunID.TryAdd(dataLoadRunID, 0);
     }
 
     private bool _correctValuesCalculated = false;
@@ -126,19 +125,17 @@ public class DQEStateOverDataLoadRunId
             {
                 //if it is a constrained column
                 if (ColumnValidationFailuresByDataLoadRunID[dataLoadRunID]
-                    .DictionaryOfFailure.ContainsKey( //with entries in the dictionary of failure
-                        column.TargetProperty))
+                    .DictionaryOfFailure.TryGetValue(column.TargetProperty, out var consequence))
                 {
                     //adjust our correct value downwards according to the results of the dictionary of failure
-                    var kvp = ColumnValidationFailuresByDataLoadRunID[dataLoadRunID].DictionaryOfFailure[column.TargetProperty];
 
-                    column.CountMissing = kvp[Consequence.Missing];
-                    column.CountWrong = kvp[Consequence.Wrong];
-                    column.CountInvalidatesRow = kvp[Consequence.InvalidatesRow];
+                    column.CountMissing = consequence[Consequence.Missing];
+                    column.CountWrong = consequence[Consequence.Wrong];
+                    column.CountInvalidatesRow = consequence[Consequence.InvalidatesRow];
 
-                    column.CountCorrect -= kvp[Consequence.Missing];
-                    column.CountCorrect -= kvp[Consequence.Wrong];
-                    column.CountCorrect -= kvp[Consequence.InvalidatesRow];
+                    column.CountCorrect -= consequence[Consequence.Missing];
+                    column.CountCorrect -= consequence[Consequence.Wrong];
+                    column.CountCorrect -= consequence[Consequence.InvalidatesRow];
                 }
             }
         }

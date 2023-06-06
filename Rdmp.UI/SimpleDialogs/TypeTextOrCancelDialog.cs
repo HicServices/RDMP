@@ -53,13 +53,13 @@ public partial class TypeTextOrCancelDialog : Form
         var header = args.WindowTitle;
            
 
-        if (header != null && header.Length > WideMessageBox.MAX_LENGTH_TITLE)
-            header = header.Substring(0, WideMessageBox.MAX_LENGTH_TITLE);
+        if (header is { Length: > WideMessageBox.MAX_LENGTH_TITLE })
+            header = header[..WideMessageBox.MAX_LENGTH_TITLE];
 
         taskDescriptionLabel1.SetupFor(args);
 
-        this.Text = header;
-        this.textBox1.MaxLength = maxCharacters;
+        Text = header;
+        textBox1.MaxLength = maxCharacters;
 
         if (_multiline)
         {
@@ -75,12 +75,12 @@ public partial class TypeTextOrCancelDialog : Form
             pTextEditor.Controls.Add(_scintilla);
 
             //Move cursor to the end of the textbox
-            this.ActiveControl = _scintilla;
+            ActiveControl = _scintilla;
             _scintilla.SelectionStart = _scintilla.TextLength;
 
-            this.textBox1.Anchor = (AnchorStyles.Top | AnchorStyles.Bottom | AnchorStyles.Left | AnchorStyles.Right);
-            this.textBox1.ScrollBars = ScrollBars.Vertical;
-            this.Width = 740;
+            textBox1.Anchor = (AnchorStyles.Top | AnchorStyles.Bottom | AnchorStyles.Left | AnchorStyles.Right);
+            textBox1.ScrollBars = ScrollBars.Vertical;
+            Width = 740;
 
             //Update the tooltip for the OK button
             toolTip.SetToolTip(btnOk, "Press to Save (SHIFT + ENTER)");
@@ -90,7 +90,7 @@ public partial class TypeTextOrCancelDialog : Form
             textBox1.Text = startingTextForInputBox;
             Width = Math.Max(540, Math.Min(740, taskDescriptionLabel1.PreferredWidth));
 
-            this.ActiveControl = textBox1;
+            ActiveControl = textBox1;
         }
 
         SetEnabledness();          
@@ -109,13 +109,13 @@ public partial class TypeTextOrCancelDialog : Form
     private void btnOk_Click(object sender, EventArgs e)
     {
         DialogResult = DialogResult.OK;
-        this.Close();
+        Close();
     }
 
     private void btnCancel_Click(object sender, EventArgs e)
     {
         DialogResult = DialogResult.Cancel;
-        this.Close();
+        Close();
     }
 
     private void textBox1_KeyDown(object sender, KeyEventArgs e)
@@ -173,11 +173,11 @@ public partial class TypeTextOrCancelDialog : Form
         // Set the height by taking the designer height and adding on the height that the task description label wants to be
         if (_multiline)
         {
-            this.Height = taskDescriptionLabel1.PreferredHeight + 220;
+            Height = taskDescriptionLabel1.PreferredHeight + 220;
         }
         else
         {
-            this.Height = taskDescriptionLabel1.PreferredHeight + 100;
+            Height = taskDescriptionLabel1.PreferredHeight + 100;
         }
     }
 }

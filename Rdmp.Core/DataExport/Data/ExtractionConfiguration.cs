@@ -392,7 +392,7 @@ public class ExtractionConfiguration : DatabaseEntity, IExtractionConfiguration,
             try
             {
                 //clone the root object (the configuration) - this includes cloning the link to the correct project and cohort 
-                var clone = this.ShallowClone();
+                var clone = ShallowClone();
 
                 //find each of the selected datasets for ourselves and clone those too
                 foreach (SelectedDataSets selected in SelectedDataSets)
@@ -452,7 +452,7 @@ public class ExtractionConfiguration : DatabaseEntity, IExtractionConfiguration,
                 clone.ReleaseTicket = null;
 
                 //wire up some changes
-                clone.ClonedFrom_ID = this.ID;
+                clone.ClonedFrom_ID = ID;
                 clone.SaveToDatabase();
 
                 repo.EndTransaction(true);
@@ -511,12 +511,8 @@ public class ExtractionConfiguration : DatabaseEntity, IExtractionConfiguration,
 
             var catalogue = repo.CatalogueRepository.GetObjectByID<Catalogue>((int)catalogueID);
 
-            var loggingServer = catalogue.LiveLoggingServer_ID;
-
-            if ( loggingServer == null)
-                throw new Exception(
+            var loggingServer = catalogue.LiveLoggingServer_ID ?? throw new Exception(
                     $"Catalogue {catalogue.Name} does not have a {(testLoggingServer ? "test" : "")} logging server configured");
-
             if (uniqueLoggingServerID == -1)
                 uniqueLoggingServerID = (int) catalogue.LiveLoggingServer_ID;
             else
@@ -582,8 +578,10 @@ public class ExtractionConfiguration : DatabaseEntity, IExtractionConfiguration,
         {
             //first we need a root container e.g. an AND container
             //add the AND container and set it as the root container for the dataset configuration
-            var rootFilterContainer = new FilterContainer(dataExportRepo);
-            rootFilterContainer.Operation = FilterContainerOperation.AND;
+            var rootFilterContainer = new FilterContainer(dataExportRepo)
+            {
+                Operation = FilterContainerOperation.AND
+            };
             rootFilterContainer.SaveToDatabase();
 
             selectedDataSet.RootFilterContainer_ID = rootFilterContainer.ID;

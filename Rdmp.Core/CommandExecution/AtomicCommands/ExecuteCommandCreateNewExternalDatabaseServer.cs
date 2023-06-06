@@ -56,10 +56,11 @@ public class ExecuteCommandCreateNewExternalDatabaseServer : BasicCommandExecuti
     public override string GetCommandName()
     {
         if (_defaultToSet != PermissableDefaults.None)
-            return string.Format("Create New {0} Server...", UsefulStuff.PascalCaseStringToHumanReadable(_defaultToSet.ToString().Replace("_ID", "").Replace("Live", "").Replace("ANO", "Anonymisation")));
+            return
+                $"Create New {UsefulStuff.PascalCaseStringToHumanReadable(_defaultToSet.ToString().Replace("_ID", "").Replace("Live", "").Replace("ANO", "Anonymisation"))} Server...";
 
         if (_patcher != null)
-            return string.Format("Create New {0} Server...", _patcher.Name);
+            return $"Create New {_patcher.Name} Server...";
 
         return base.GetCommandName();
     }

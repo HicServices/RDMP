@@ -112,13 +112,13 @@ public class DataFlowPipelineEngineFactory : IDataFlowPipelineEngineFactory
     {
         // if explicitThing and pipelineConfigurationThing are both null
         //Means: xplicitThing == null && pipelineConfigurationThing == null
-        if (EqualityComparer<T2>.Default.Equals(explicitThing, default(T2)) && EqualityComparer<T2>.Default.Equals(pipelineConfigurationThing, default(T2)))
+        if (EqualityComparer<T2>.Default.Equals(explicitThing, default) && EqualityComparer<T2>.Default.Equals(pipelineConfigurationThing, default))
             throw new Exception(
                 $"No explicit {descriptionOfWhatThingIs} was specified and there is no fixed {descriptionOfWhatThingIs} defined in the Pipeline configuration in the Catalogue");
 
         //if one of them only is null - XOR
-        if(EqualityComparer<T2>.Default.Equals(explicitThing, default(T2)) ^ EqualityComparer<T2>.Default.Equals(pipelineConfigurationThing, default(T2)))
-            return EqualityComparer<T2>.Default.Equals(explicitThing, default(T2)) ? pipelineConfigurationThing : explicitThing; //return the not null one
+        if(EqualityComparer<T2>.Default.Equals(explicitThing, default) ^ EqualityComparer<T2>.Default.Equals(pipelineConfigurationThing, default))
+            return EqualityComparer<T2>.Default.Equals(explicitThing, default) ? pipelineConfigurationThing : explicitThing; //return the not null one
 
         //both of them are populated
         throw new Exception(
@@ -149,11 +149,7 @@ public class DataFlowPipelineEngineFactory : IDataFlowPipelineEngineFactory
 
     private object CreateComponent(IPipelineComponent toBuild)
     {
-        var type = toBuild.GetClassAsSystemType();
-            
-        if(type == null)
-            throw new Exception($"Could not find Type '{toBuild.Class}'");
-
+        var type = toBuild.GetClassAsSystemType() ?? throw new Exception($"Could not find Type '{toBuild.Class}'");
         var toReturn = _constructor.Construct(type);
 
         //all the IArguments we need to initialize the class
@@ -166,7 +162,7 @@ public class DataFlowPipelineEngineFactory : IDataFlowPipelineEngineFactory
 
             //see if any demand nested initialization
             var nestedInit =
-                System.Attribute.GetCustomAttributes(propertyInfo)
+                Attribute.GetCustomAttributes(propertyInfo)
                     .FirstOrDefault(a => a is DemandsNestedInitializationAttribute);
 
             //this one does
@@ -199,7 +195,7 @@ public class DataFlowPipelineEngineFactory : IDataFlowPipelineEngineFactory
         //see if any demand initialization
         var initialization =
             (DemandsInitializationAttribute)
-            System.Attribute.GetCustomAttributes(propertyInfo)
+            Attribute.GetCustomAttributes(propertyInfo)
                 .FirstOrDefault(a => a is DemandsInitializationAttribute);
 
         //this one does
@@ -305,7 +301,7 @@ public class DataFlowPipelineEngineFactory : IDataFlowPipelineEngineFactory
 
         if (initizationObjects == null)
         {
-            checkNotifier.OnCheckPerformed(new CheckEventArgs("initizationObjects parameter has not been set (this is a programmer error most likely ask your developer to fix it - this parameter should be empty not null)",
+            checkNotifier.OnCheckPerformed(new CheckEventArgs("initializationObjects parameter has not been set (this is a programmer error most likely ask your developer to fix it - this parameter should be empty not null)",
                 CheckResult.Fail));
             return;
         }
@@ -319,7 +315,7 @@ public class DataFlowPipelineEngineFactory : IDataFlowPipelineEngineFactory
                 dataFlowPipelineEngine.Initialize(initizationObjects);
                 checkNotifier.OnCheckPerformed(
                     new CheckEventArgs(
-                        $"Pipeline sucesfully initialized with {initizationObjects.Length} initialization objects",
+                        $"Pipeline successfully initialized with {initizationObjects.Length} initialization objects",
                         CheckResult.Success));
             }
             catch (Exception exception)

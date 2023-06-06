@@ -169,22 +169,20 @@ public class CatalogueRepository : TableRepository, ICatalogueRepository
     {
         var configuration = GetAllObjects<TicketingSystemConfiguration>().Where(t => t.IsActive).ToArray();
 
-        if (configuration.Length == 0)
-            return null;
-
-        if (configuration.Length == 1)
-            return configuration[0];
-
-        throw new NotSupportedException(
-            $"There should only ever be one active ticketing system, something has gone very wrong, there are currently {configuration.Length}");
+        return configuration.Length switch
+        {
+            0 => null,
+            1 => configuration[0],
+            _ => throw new NotSupportedException(
+                $"There should only ever be one active ticketing system, something has gone very wrong, there are currently {configuration.Length}")
+        };
     }
         
     protected override IMapsDirectlyToDatabaseTable ConstructEntity(Type t, DbDataReader reader)
     {
-        if (Constructors.ContainsKey(t))
-            return Constructors[t](this, reader);
-
-        return _constructor.ConstructIMapsDirectlyToDatabaseObject<ICatalogueRepository>(t, this, reader);
+        return Constructors.TryGetValue(t, out var constructor)
+            ? constructor(this, reader)
+            : _constructor.ConstructIMapsDirectlyToDatabaseObject<ICatalogueRepository>(t, this, reader);
     }
 
     private readonly ConcurrentDictionary<Type, IRowVerCache> _caches = new ConcurrentDictionary<Type, IRowVerCache>();
@@ -220,30 +218,26 @@ public class CatalogueRepository : TableRepository, ICatalogueRepository
 
     public bool IsLookupTable(ITableInfo tableInfo)
     {
-        using (var con = GetConnection())
-        {
-            using (var cmd = DatabaseCommandHelper.GetCommand(
-                       @"if exists (select 1 from Lookup join ColumnInfo on Lookup.Description_ID = ColumnInfo.ID where TableInfo_ID = @tableInfoID)
+        using var con = GetConnection();
+        using var cmd = DatabaseCommandHelper.GetCommand(
+            @"if exists (select 1 from Lookup join ColumnInfo on Lookup.Description_ID = ColumnInfo.ID where TableInfo_ID = @tableInfoID)
 select 1
 else
-select 0", con.Connection, con.Transaction))
-            {
-                DatabaseCommandHelper.AddParameterWithValueToCommand("@tableInfoID", cmd, tableInfo.ID);
-                return Convert.ToBoolean(cmd.ExecuteScalar());
-            }
-        }
+select 0", con.Connection, con.Transaction);
+        DatabaseCommandHelper.AddParameterWithValueToCommand("@tableInfoID", cmd, tableInfo.ID);
+        return Convert.ToBoolean(cmd.ExecuteScalar());
     }
 
     public Catalogue[] GetAllCataloguesUsing(TableInfo tableInfo)
     {
 
         return GetAllObjects<Catalogue>(
-            string.Format(@"Where
+            $@"Where
   Catalogue.ID in (Select CatalogueItem.Catalogue_ID from
   CatalogueItem join
   ColumnInfo on ColumnInfo_ID = ColumnInfo.ID
   where
-  TableInfo_ID = {0} )", tableInfo.ID)).ToArray();
+  TableInfo_ID = {tableInfo.ID} )").ToArray();
     }
 
     public IExternalDatabaseServer GetDefaultFor(PermissableDefaults field)
@@ -284,7 +278,7 @@ select 0", con.Connection, con.Transaction))
     public void SetDefault(PermissableDefaults toChange, IExternalDatabaseServer externalDatabaseServer)
     {
         if (toChange == PermissableDefaults.None)
-            throw new ArgumentException("toChange cannot be None", "toChange");
+            throw new ArgumentException("toChange cannot be None", nameof(toChange));
 
         if (externalDatabaseServer == null)
         {
@@ -304,10 +298,9 @@ select 0", con.Connection, con.Transaction))
     private void UpdateExistingValue(PermissableDefaults toChange, IExternalDatabaseServer externalDatabaseServer)
     {
         if (toChange == PermissableDefaults.None)
-            throw new ArgumentException("toChange cannot be None", "toChange");
+            throw new ArgumentException("toChange cannot be None", nameof(toChange));
 
-        var sql =
-            "UPDATE ServerDefaults set ExternalDatabaseServer_ID  = @ExternalDatabaseServer_ID where DefaultType=@DefaultType";
+        const string sql = "UPDATE ServerDefaults set ExternalDatabaseServer_ID  = @ExternalDatabaseServer_ID where DefaultType=@DefaultType";
 
         var affectedRows = Update(sql, new Dictionary<string, object>()
         {
@@ -323,7 +316,7 @@ select 0", con.Connection, con.Transaction))
     private void InsertNewValue(PermissableDefaults toChange, IExternalDatabaseServer externalDatabaseServer)
     {
         if (toChange == PermissableDefaults.None)
-            throw new ArgumentException("toChange cannot be None", "toChange");
+            throw new ArgumentException("toChange cannot be None", nameof(toChange));
 
         Insert(
             "INSERT INTO ServerDefaults(DefaultType,ExternalDatabaseServer_ID) VALUES (@DefaultType,@ExternalDatabaseServer_ID)",

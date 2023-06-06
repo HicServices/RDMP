@@ -771,7 +771,7 @@ public class AtomicCommandFactory : CommandFactoryBase
             yield return new ExecuteCommandSetContainerOperation(_activator, cohortAggregateContainer, SetOperation.EXCEPT) { SuggestedCategory = SetContainerOperation, OverrideCommandName = "EXCEPT" };
             yield return new ExecuteCommandSetContainerOperation(_activator, cohortAggregateContainer, SetOperation.INTERSECT) { SuggestedCategory = SetContainerOperation, OverrideCommandName = "INTERSECT" };
 
-            yield return new ExecuteCommandUnMergeCohortIdentificationConfiguration(_activator, cohortAggregateContainer) { OverrideCommandName = "Seperate Cohort Builder Query"};
+            yield return new ExecuteCommandUnMergeCohortIdentificationConfiguration(_activator, cohortAggregateContainer) { OverrideCommandName = "Separate Cohort Builder Query"};
 
         }
 

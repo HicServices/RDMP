@@ -114,7 +114,7 @@ public partial class LoadDiagramUI : LoadDiagram_Design
         if (e.Column == olvDataType)
         {
             var colNode = e.Model as LoadDiagramColumnNode;
-            if (colNode != null && colNode.State == LoadDiagramState.Different)
+            if (colNode is { State: LoadDiagramState.Different })
                 e.SubItem.ForeColor = Color.Red;
         }
 
@@ -344,7 +344,7 @@ public partial class LoadDiagramUI : LoadDiagram_Design
     private void btnFetch_Click(object sender, EventArgs e)
     {
         //execution is already underway
-        if(taskDiscoverState != null && !taskDiscoverState.IsCompleted)
+        if(taskDiscoverState is { IsCompleted: false })
             return;
 
         CommonFunctionality.ResetChecks();
@@ -387,7 +387,7 @@ public partial class LoadDiagramUI : LoadDiagram_Design
 
     private void DiscoverStates()
     {
-        if (tlvLoadedTables.Objects == null || !tlvLoadedTables.Objects.Cast<Object>().Any())
+        if (tlvLoadedTables.Objects == null || !tlvLoadedTables.Objects.Cast<object>().Any())
             CommonFunctionality.Fatal("There are no tables loaded by the load",null);
 
 

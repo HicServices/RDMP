@@ -29,7 +29,7 @@ public class GracefulCancellationToken
     /// <summary>
     /// Creates a new <see cref="GracefulCancellationToken"/> that will never be cancelled
     /// </summary>
-    public GracefulCancellationToken() : this(default(CancellationToken), default(CancellationToken))
+    public GracefulCancellationToken() : this(default, default)
     {
     }
          

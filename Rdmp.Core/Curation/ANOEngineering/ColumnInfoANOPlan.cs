@@ -73,7 +73,7 @@ public class ColumnInfoANOPlan:ICheckable
                     Dilution = null;
                     break;
                 default:
-                    throw new ArgumentOutOfRangeException("value");
+                    throw new ArgumentOutOfRangeException(nameof(value));
             }
         }
     }
@@ -162,7 +162,7 @@ public class ColumnInfoANOPlan:ICheckable
         var agreedAnoTableID = matchingOnName.Where(c => c.ANOTable_ID != null).Select(c => c.ANOTable_ID).Distinct().ToArray();
 
         //if there is a single recommended anotable id amongst all columns with matching name featuring ano tables 
-        if (agreedAnoTableID.Count() == 1)
+        if (agreedAnoTableID.Length == 1)
         {
             ANOTable = ColumnInfo.Repository.GetObjectByID<ANOTable>(agreedAnoTableID.Single().Value);
             Plan = Plan.ANO;

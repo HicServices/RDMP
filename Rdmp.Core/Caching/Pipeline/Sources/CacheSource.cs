@@ -64,7 +64,7 @@ public abstract class CacheSource<T> : ICacheSource, IPluginDataFlowSource<T>,IP
 
         Chunk = DoGetChunk(Request,listener, cancellationToken);
 
-        if (Chunk != null && Chunk.Request == null && Request != null)
+        if (Chunk is { Request: null } && Request != null)
             listener.OnNotify(this,
                 new NotifyEventArgs(ProgressEventType.Error,
                     "DoGetChunk completed and set a Chunk Successfully but the Chunk.Request was null.  Try respecting the Request property in your class when creating your Chunk."));

@@ -233,7 +233,7 @@ public partial class BulkProcessCatalogueItemsUI : BulkProcessCatalogueItems_Des
 
         if (countOfColumnInfoAssociationsCreated != 0)
             message +=
-                $"Created  {countOfColumnInfoAssociationsCreated} assocations between CatalogueItems and ColumnInfos{Environment.NewLine}";
+                $"Created  {countOfColumnInfoAssociationsCreated} associations between CatalogueItems and ColumnInfos{Environment.NewLine}";
 
         if (!string.IsNullOrWhiteSpace(message))
             MessageBox.Show(message);

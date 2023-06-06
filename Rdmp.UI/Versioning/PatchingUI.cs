@@ -55,7 +55,7 @@ public partial class PatchingUI : Form
         }
         else
         {
-            tbDatabase.Text = string.Format("{0}, Version:{1}", _database.GetRuntimeName(),repository.GetVersion());
+            tbDatabase.Text = $"{_database.GetRuntimeName()}, Version:{repository.GetVersion()}";
         }
     }
 
@@ -88,7 +88,7 @@ public partial class PatchingUI : Form
                 checksUI1.OnCheckPerformed(new CheckEventArgs("Cleared UPDATE commands cache", CheckResult.Success, null));
             }
                 
-            checksUI1.OnCheckPerformed(new CheckEventArgs("Patching Succesful", CheckResult.Success, null));
+            checksUI1.OnCheckPerformed(new CheckEventArgs("Patching Successful", CheckResult.Success, null));
 
             if (MessageBox.Show("Application will now restart", "Close?", MessageBoxButtons.YesNo) == DialogResult.Yes)
                 ApplicationRestarter.Restart();

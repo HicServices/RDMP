@@ -127,7 +127,7 @@ public class LoadProgressSummaryReport:ICheckable
 
         //Now extend the X axis up to the cache fill location
         var cacheProgress = _loadProgress.CacheProgress;
-        if (cacheProgress != null && cacheProgress.CacheFillProgress != null)
+        if (cacheProgress is { CacheFillProgress: not null })
             ExtendXAxisTill(cacheProgress.CacheFillProgress.Value);
     }
 
@@ -313,7 +313,7 @@ public class LoadProgressSummaryReport:ICheckable
         else
             notifier.OnCheckPerformed(
                 new CheckEventArgs(
-                    $"There is no Cache configured for LoadProgress '{_loadProgress}' (Not nessesarily a problem e.g. if you have a RemoteTableAttacher or some other load module that uses LoadProgress directly, short cutting the need for a cache)",
+                    $"There is no Cache configured for LoadProgress '{_loadProgress}' (Not necessarily a problem e.g. if you have a RemoteTableAttacher or some other load module that uses LoadProgress directly, short cutting the need for a cache)",
                     CheckResult.Warning));
     }
 

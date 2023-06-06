@@ -48,7 +48,7 @@ public class CatalogueStateBasedIconProvider : IObjectStateBasedIconProvider
         if (c.IsInternalDataset)
             img = _overlayProvider.GetOverlay(img, OverlayKind.Internal);
             
-        if (status != null && status.IsExtractable)
+        if (status is { IsExtractable: true })
             img = _overlayProvider.GetOverlay(img, OverlayKind.Extractable);
 
         return img;

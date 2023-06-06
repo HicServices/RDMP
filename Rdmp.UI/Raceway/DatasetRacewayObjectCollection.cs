@@ -56,7 +56,7 @@ public class DatasetRacewayObjectCollection : PersistableObjectCollection
     public void AddCatalogue(Catalogue catalogue)
     {
         if(catalogue == null)
-            throw new ArgumentException("Catalogue must not be null", "catalogue");
+            throw new ArgumentException("Catalogue must not be null", nameof(catalogue));
 
         DatabaseObjects.Add(catalogue);
     }
@@ -64,7 +64,7 @@ public class DatasetRacewayObjectCollection : PersistableObjectCollection
     public void RemoveCatalogue(Catalogue catalogue)
     {
         if(catalogue == null)
-            throw new ArgumentException("Catalogue must not be null", "catalogue");
+            throw new ArgumentException("Catalogue must not be null", nameof(catalogue));
 
         DatabaseObjects.Remove(catalogue);
     }

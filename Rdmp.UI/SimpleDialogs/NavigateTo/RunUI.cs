@@ -33,16 +33,15 @@ public partial class RunUI : RDMPForm
 
         _commandCaller = new CommandInvoker(activator);
         _commandCaller.CommandImpossible += (s,e) =>MessageBox.Show(e.Command.ReasonCommandImpossible);
-        _commandCaller.CommandCompleted += (s, e) => this.Close();
+        _commandCaller.CommandCompleted += (s, e) => Close();
 
         var commands = _commandCaller.GetSupportedCommands();
             
         foreach (var c in commands)
         {
             var name = BasicCommandExecution.GetCommandName(c.Name);
-                
-            if(!_commandsDictionary.ContainsKey(name))
-                _commandsDictionary.Add(name, c);
+
+            _commandsDictionary.TryAdd(name, c);
         }
 
         comboBox1.Items.AddRange(_commandsDictionary.Keys.ToArray());
@@ -51,31 +50,24 @@ public partial class RunUI : RDMPForm
     {
         ExceptionViewer.Show(exception);
     }
-    private void comboBox1_KeyUp(object sender, System.Windows.Forms.KeyEventArgs e)
+    private void comboBox1_KeyUp(object sender, KeyEventArgs e)
     {
         var key = (string)comboBox1.SelectedItem;
 
         if (key == null)
             return;
-            
-        if (e.KeyCode == Keys.Enter)
-        {
-            if (_commandsDictionary.ContainsKey(key))
-            {
-                var type = _commandsDictionary[key];
 
-                try
-                {
-                    _commandCaller.ExecuteCommand(type, null);
-                }
-                catch (OperationCanceledException)
-                {
-                }
-                catch (Exception ex)
-                {
-                    ExceptionViewer.Show(ex);
-                }
-            }
+        if (e.KeyCode != Keys.Enter || !_commandsDictionary.TryGetValue(key, out var type)) return;
+        try
+        {
+            _commandCaller.ExecuteCommand(type, null);
+        }
+        catch (OperationCanceledException)
+        {
+        }
+        catch (Exception ex)
+        {
+            ExceptionViewer.Show(ex);
         }
     }
 }

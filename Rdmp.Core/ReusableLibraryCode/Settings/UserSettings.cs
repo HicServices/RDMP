@@ -26,11 +26,7 @@ public static class UserSettings
     {
         get
         {
-            var ret = implementation.Value;
-            if (ret == null)
-            {
-                throw new NotImplementedException("Isolated Storage does not work in this environment...");
-            }
+            var ret = implementation.Value ?? throw new NotImplementedException("Isolated Storage does not work in this environment...");
             return ret;
         }
     }

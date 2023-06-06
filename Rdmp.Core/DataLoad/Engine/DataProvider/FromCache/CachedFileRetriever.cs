@@ -50,11 +50,7 @@ public abstract class CachedFileRetriever : ICachedDataProvider
 
     protected  ICacheLayout CreateCacheLayout(ScheduledDataLoadJob job)
     {
-        var cacheProgress = job.LoadProgress.CacheProgress;
-
-        if(cacheProgress == null)
-            throw new NullReferenceException("cacheProgress cannot be null");
-
+        var cacheProgress = job.LoadProgress.CacheProgress ?? throw new NullReferenceException("cacheProgress cannot be null");
         return CreateCacheLayout(cacheProgress, job);
     }
 
@@ -67,11 +63,7 @@ public abstract class CachedFileRetriever : ICachedDataProvider
 
     protected static ScheduledDataLoadJob ConvertToScheduledJob(IDataLoadJob dataLoadJob)
     {
-        var scheduledJob = dataLoadJob as ScheduledDataLoadJob;
-
-        if (scheduledJob == null)
-            throw new Exception("CachedFileRetriever can only be used in conjunction with a ScheduledDataLoadJob");
-
+        var scheduledJob = dataLoadJob as ScheduledDataLoadJob ?? throw new Exception("CachedFileRetriever can only be used in conjunction with a ScheduledDataLoadJob");
         return scheduledJob;
     }
 
@@ -186,7 +178,7 @@ public abstract class CachedFileRetriever : ICachedDataProvider
             case CacheArchiveType.Zip:
                 return new ZipExtractor();
             default:
-                throw new ArgumentOutOfRangeException("cacheArchiveType");
+                throw new ArgumentOutOfRangeException(nameof(cacheArchiveType));
         }
     }
 

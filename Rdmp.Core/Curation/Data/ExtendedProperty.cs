@@ -227,6 +227,6 @@ public class ExtendedProperty  : Argument,IReferenceOtherObjectWithPersist, IInj
     /// <param name="forObject"></param>
     internal static ExtendedProperty GetProperty(ICatalogueRepository repository, string named, IMapsDirectlyToDatabaseTable forObject)
     {
-        return GetProperties(repository, forObject).Where(e => e.Name.Equals(named)).SingleOrDefault();
+        return GetProperties(repository, forObject).SingleOrDefault(e => e.Name.Equals(named));
     }
 }

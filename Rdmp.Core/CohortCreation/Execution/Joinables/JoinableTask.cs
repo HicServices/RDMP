@@ -69,7 +69,7 @@ public class JoinableTask:CacheableTask
         var expectedTrimStart = _cohortIdentificationConfiguration.GetNamingConventionPrefixForConfigurations();
 
         if (name.StartsWith(expectedTrimStart))
-            return name.Substring(expectedTrimStart.Length);
+            return name[expectedTrimStart.Length..];
 
         return name;
     }

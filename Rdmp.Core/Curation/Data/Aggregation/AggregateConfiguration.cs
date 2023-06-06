@@ -153,9 +153,7 @@ public class AggregateConfiguration : DatabaseEntity, ICheckable, IOrderable, IC
         {
             if (OverrideFiltersByUsingParentAggregateConfigurationInstead_ID != null && value != null)
                 throw new NotSupportedException(
-                    string.Format(
-                        "This AggregateConfiguration has a shortcut to another AggregateConfiguration's Filters (its OverrideFiltersByUsingParentAggregateConfigurationInstead_ID is {0}) which means it cannot be assigned its own RootFilterContainerID",
-                        OverrideFiltersByUsingParentAggregateConfigurationInstead_ID));
+                    $"This AggregateConfiguration has a shortcut to another AggregateConfiguration's Filters (its OverrideFiltersByUsingParentAggregateConfigurationInstead_ID is {OverrideFiltersByUsingParentAggregateConfigurationInstead_ID}) which means it cannot be assigned its own RootFilterContainerID");
 
             SetField(ref _rootFilterContainerID ,value);
         }
@@ -561,7 +559,7 @@ public class AggregateConfiguration : DatabaseEntity, ICheckable, IOrderable, IC
     {
         reason = null;
 
-        var dimensions = AggregateDimensions.ToArray();
+        var dimensions = AggregateDimensions;
 
         if (dimensions.Count(d => d.IsExtractionIdentifier) != 1)
             reason = "There must be exactly 1 Dimension which is marked IsExtractionIdentifier";
@@ -570,7 +568,7 @@ public class AggregateConfiguration : DatabaseEntity, ICheckable, IOrderable, IC
             reason = "It cannot contain a pivot";
 
         if (GetAxisIfAny() != null)
-            reason = "It cannot have any axises";
+            reason = "It cannot have any axes";
 
         return reason == null;
     }
@@ -675,10 +673,12 @@ public class AggregateConfiguration : DatabaseEntity, ICheckable, IOrderable, IC
 
         foreach (var aggregateDimension in AggregateDimensions)
         {
-            var cloneDimension = new AggregateDimension((ICatalogueRepository) Repository, aggregateDimension.ExtractionInformation, clone);
-            cloneDimension.Alias = aggregateDimension.Alias;
-            cloneDimension.SelectSQL = aggregateDimension.SelectSQL;
-            cloneDimension.Order = aggregateDimension.Order;
+            var cloneDimension = new AggregateDimension((ICatalogueRepository) Repository, aggregateDimension.ExtractionInformation, clone)
+                {
+                    Alias = aggregateDimension.Alias,
+                    SelectSQL = aggregateDimension.SelectSQL,
+                    Order = aggregateDimension.Order
+                };
             cloneDimension.SaveToDatabase();
 
             if(aggregateDimension.AggregateContinuousDateAxis != null)
@@ -697,9 +697,11 @@ public class AggregateConfiguration : DatabaseEntity, ICheckable, IOrderable, IC
 
         foreach (var p in GetAllParameters())
         {
-            var cloneP = new AnyTableSqlParameter(cataRepo, clone, p.ParameterSQL);
-            cloneP.Comment = p.Comment;
-            cloneP.Value = p.Value;
+            var cloneP = new AnyTableSqlParameter(cataRepo, clone, p.ParameterSQL)
+            {
+                Comment = p.Comment,
+                Value = p.Value
+            };
             cloneP.SaveToDatabase();
         }
             

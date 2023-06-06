@@ -530,7 +530,7 @@ abstract public class TableRepository : ITableRepository
             if (!idsToReturn.Any())
                 return Enumerable.Empty<T>();
 
-            return GetAllObjects<T>($"WHERE ID in ({String.Join(",", idsToReturn)})");
+            return GetAllObjects<T>($"WHERE ID in ({string.Join(",", idsToReturn)})");
         }
     }
     /// <summary>
@@ -546,47 +546,44 @@ abstract public class TableRepository : ITableRepository
     /// <param name="columnWithObjectID"></param>
     /// <param name="dbNullSubstition"></param>
     /// <returns></returns>
-    public IEnumerable<T> SelectAllWhere<T>(string selectQuery, string columnWithObjectID = null, Dictionary<string, object> parameters = null, T dbNullSubstition = default(T)) where T : IMapsDirectlyToDatabaseTable
+    public IEnumerable<T> SelectAllWhere<T>(string selectQuery, string columnWithObjectID = null, Dictionary<string, object> parameters = null, T dbNullSubstition = default) where T : IMapsDirectlyToDatabaseTable
     {
-        if (columnWithObjectID == null)
-            columnWithObjectID = $"{typeof(T).Name}_ID";
+        columnWithObjectID ??= $"{typeof(T).Name}_ID";
 
         if (selectQuery.ToLower().Contains("order by "))
-            throw new Exception("Select Query contained an ORDER BY statment in it!");
+            throw new Exception("Select Query contained an ORDER BY statement in it!");
 
         var nullsFound = 0;
 
-        using (var opener = GetConnection())
+        using var opener = GetConnection();
+        var idsToReturn = new List<int>();
+        var cmd = PrepareCommand(selectQuery, parameters, opener.Connection, opener.Transaction);
+        using (var r = cmd.ExecuteReader())
         {
-            var idsToReturn = new List<int>();
-            var cmd = PrepareCommand(selectQuery, parameters, opener.Connection, opener.Transaction);
-            using (var r = cmd.ExecuteReader())
+            while (r.Read())
             {
-                while (r.Read())
+                if (r[columnWithObjectID] == DBNull.Value)
                 {
-                    if (r[columnWithObjectID] == DBNull.Value)
-                    {
-                        nullsFound++;
-                        continue;
-                    }
-
-                    idsToReturn.Add(Convert.ToInt32(r[columnWithObjectID]));
+                    nullsFound++;
+                    continue;
                 }
+
+                idsToReturn.Add(Convert.ToInt32(r[columnWithObjectID]));
             }
-
-            if (!idsToReturn.Any())
-                return Enumerable.Empty<T>();
-
-
-            var toReturn =  GetAllObjects<T>($"WHERE ID in ({String.Join(",", idsToReturn)})").ToList();
-
-            //this bit of hackery is if your a crazy person who hates transparency and wants something like ColumnInfo.Missing to appear in the return list instead of an empty return list
-            if(dbNullSubstition != null)
-                for (var i = 0; i < nullsFound; i++)
-                    toReturn.Add(dbNullSubstition);
-
-            return toReturn;
         }
+
+        if (!idsToReturn.Any())
+            return Enumerable.Empty<T>();
+
+
+        var toReturn =  GetAllObjects<T>($"WHERE ID in ({string.Join(",", idsToReturn)})").ToList();
+
+        //this bit of hackery is if you're a crazy person who hates transparency and wants something like ColumnInfo.Missing to appear in the return list instead of an empty return list
+        if(dbNullSubstition != null)
+            for (var i = 0; i < nullsFound; i++)
+                toReturn.Add(dbNullSubstition);
+
+        return toReturn;
     }
         
         
@@ -829,7 +826,7 @@ abstract public class TableRepository : ITableRepository
     public bool SupportsObjectType(Type type)
     {
         if (!typeof(IMapsDirectlyToDatabaseTable).IsAssignableFrom(type))
-            throw new NotSupportedException("This method can only be passed Types derrived from IMapsDirectlyToDatabaseTable");
+            throw new NotSupportedException("This method can only be passed Types derived from IMapsDirectlyToDatabaseTable");
             
         lock (oLockKnownTypes)
         {

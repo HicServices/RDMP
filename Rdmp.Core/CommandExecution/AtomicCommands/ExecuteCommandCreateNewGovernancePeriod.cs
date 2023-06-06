@@ -18,7 +18,7 @@ public class ExecuteCommandCreateNewGovernancePeriod:BasicCommandExecution,IAtom
 
     public ExecuteCommandCreateNewGovernancePeriod(IBasicActivateItems activator, string name = null) : base(activator)
     {
-        this._name = name;
+        _name = name;
     }
 
     public override Image<Rgba32> GetImage(IIconProvider iconProvider)

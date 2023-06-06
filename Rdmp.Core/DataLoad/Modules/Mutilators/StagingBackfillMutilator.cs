@@ -183,16 +183,12 @@ public class StagingBackfillMutilator : IPluginMutilateDataTables
 
     private void UpdateOldParentsThatHaveNewChildren(ITableInfo tiCurrent, List<JoinInfo> joinPathToTimeTable, ReverseMigrationQueryHelper queryHelper, MigrationColumnSetQueryHelper mcsQueryHelper)
     {
-        var update = string.Format(@"WITH 
-{0}
+        var update = $@"WITH 
+{GetLiveDataToUpdateStaging(tiCurrent, joinPathToTimeTable)}
 UPDATE CurrentTable
-SET {1}
+SET {queryHelper.BuildUpdateClauseForRow("LiveDataForUpdating", "CurrentTable")}
 FROM 
-LiveDataForUpdating LEFT JOIN {2} AS CurrentTable {3}",
-            GetLiveDataToUpdateStaging(tiCurrent, joinPathToTimeTable),
-            queryHelper.BuildUpdateClauseForRow("LiveDataForUpdating", "CurrentTable"),
-            $"[{_dbInfo.GetRuntimeName()}]..[{tiCurrent.GetRuntimeName()}]",
-            mcsQueryHelper.BuildJoinClause("LiveDataForUpdating", "CurrentTable"));
+LiveDataForUpdating LEFT JOIN {$"[{_dbInfo.GetRuntimeName()}]..[{tiCurrent.GetRuntimeName()}]"} AS CurrentTable {mcsQueryHelper.BuildJoinClause("LiveDataForUpdating", "CurrentTable")}";
 
         using (var connection = (SqlConnection)_dbInfo.Server.GetConnection())
         {
@@ -235,12 +231,10 @@ LiveDataForUpdating LEFT JOIN {2} AS CurrentTable {3}",
                 $"WITH {GetCurrentOldEntriesSQL(tiCurrent, joinPathToTimeTable)}, EntriesToDelete AS (SELECT DISTINCT CurrentOldEntries.* FROM CurrentOldEntries {string.Join(" ", joins)} WHERE {string.Join(" AND ", wheres)})";
         }
 
-        deleteSql += string.Format(@"
+        deleteSql += $@"
 DELETE CurrentTable
-FROM {0} CurrentTable
-RIGHT JOIN EntriesToDelete {1}",
-            $"[{_dbInfo.GetRuntimeName()}]..[{tiCurrent.GetRuntimeName()}]",
-            mcsQueryHelper.BuildJoinClause("EntriesToDelete", "CurrentTable"));
+FROM {$"[{_dbInfo.GetRuntimeName()}]..[{tiCurrent.GetRuntimeName()}]"} CurrentTable
+RIGHT JOIN EntriesToDelete {mcsQueryHelper.BuildJoinClause("EntriesToDelete", "CurrentTable")}";
 
         using (var connection = (SqlConnection)_dbInfo.Server.GetConnection())
         {
@@ -258,13 +252,12 @@ RIGHT JOIN EntriesToDelete {1}",
     /// <returns></returns>
     private string GetCurrentOldEntriesSQL(ITableInfo tiCurrent, List<JoinInfo> joinPathToTimeTable)
     {
-        return string.Format(@"
+        return $@"
 CurrentOldEntries AS (
 SELECT ToLoadWithTime.* FROM 
 
-{0} 
-",
-            _sqlHelper.GetSQLComparingStagingAndLiveTables(tiCurrent, joinPathToTimeTable));
+{_sqlHelper.GetSQLComparingStagingAndLiveTables(tiCurrent, joinPathToTimeTable)} 
+";
     }
 
     /// <summary>
@@ -275,12 +268,11 @@ SELECT ToLoadWithTime.* FROM
     /// <returns></returns>
     private string GetLiveDataToUpdateStaging(ITableInfo tiCurrent, List<JoinInfo> joinPathToTimeTable)
     {
-        return string.Format(@"
+        return $@"
 LiveDataForUpdating AS (
 SELECT LoadedWithTime.* FROM
 
-{0}",
-            _sqlHelper.GetSQLComparingStagingAndLiveTables(tiCurrent, joinPathToTimeTable));
+{_sqlHelper.GetSQLComparingStagingAndLiveTables(tiCurrent, joinPathToTimeTable)}";
     }
 
     public void Initialize(DiscoveredDatabase dbInfo, LoadStage loadStage)

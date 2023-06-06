@@ -130,11 +130,13 @@ public class ForwardEngineerANOCatalogueEngine
                         if (columnPlan.Plan == Plan.Dilute)
                         {
                             //Create a discarded (load only) column with name matching the new columninfo
-                            var discard = new PreLoadDiscardedColumn(_catalogueRepository, newTableInfo,newColumnInfo.GetRuntimeName());
+                            var discard = new PreLoadDiscardedColumn(_catalogueRepository, newTableInfo,newColumnInfo.GetRuntimeName())
+                                {
+                                    //record that it exists to support dilution and that the data type matches the input (old) ColumnInfo (i.e. not the new data type!)
+                                    Destination = DiscardedColumnDestination.Dilute,
+                                    SqlDataType = oldColumnInfo.Data_type
+                                };
 
-                            //record that it exists to support dilution and that the data type matches the input (old) ColumnInfo (i.e. not the new data type!)
-                            discard.Destination = DiscardedColumnDestination.Dilute;
-                            discard.SqlDataType = oldColumnInfo.Data_type;
                             discard.SaveToDatabase();
 
                             DilutionOperationsForMigrations.Add(discard, columnPlan.Dilution);
@@ -194,9 +196,11 @@ public class ForwardEngineerANOCatalogueEngine
                     if (columnPlan.ExtractionCategoryIfAny != null)
                     {
                         //Create a new ExtractionInformation for the new Catalogue
-                        var newExtractionInformation = new ExtractionInformation(_catalogueRepository, newCatalogueItem, newColumnInfo, newColumnInfo.Name);
+                        var newExtractionInformation = new ExtractionInformation(_catalogueRepository, newCatalogueItem, newColumnInfo, newColumnInfo.Name)
+                            {
+                                ExtractionCategory = columnPlan.ExtractionCategoryIfAny.Value
+                            };
 
-                        newExtractionInformation.ExtractionCategory = columnPlan.ExtractionCategoryIfAny.Value;
                         newExtractionInformation.SaveToDatabase();
 
                         //if it was previously extractable
@@ -261,11 +265,7 @@ public class ForwardEngineerANOCatalogueEngine
                     var newPk = GetNewColumnInfoForOld(lookup.PrimaryKey);
 
                     //see if we already have a Lookup declared for the NEW columns (unlikely)
-                    var newLookup = existingLookups.SingleOrDefault(l => l.Description_ID == newDesc.ID && l.ForeignKey_ID == newFk.ID);
-                         
-                    //create new Lookup that mirrors the old but references the ANO columns instead
-                    if(newLookup == null)
-                        newLookup = new Lookup(_catalogueRepository, newDesc, newFk, newPk, lookup.ExtractionJoinType,lookup.Collation);
+                    var newLookup = existingLookups.SingleOrDefault(l => l.Description_ID == newDesc.ID && l.ForeignKey_ID == newFk.ID) ?? new Lookup(_catalogueRepository, newDesc, newFk, newPk, lookup.ExtractionJoinType,lookup.Collation);
 
                     //also mirror any composite (secondary, tertiary join column pairs needed for the Lookup to operate correclty e.g. where TestCode 'HAB1' means 2 different things depending on healthboard) 
                     foreach (var compositeJoin in lookup.GetSupplementalJoins().Cast<LookupCompositeJoinInfo>())
@@ -287,8 +287,10 @@ public class ForwardEngineerANOCatalogueEngine
 
                 if (_planManager.DateColumn != null)
                 {
-                    LoadProgressIfAny = new LoadProgress(_catalogueRepository, LoadMetadata);
-                    LoadProgressIfAny.OriginDate = _planManager.StartDate;
+                    LoadProgressIfAny = new LoadProgress(_catalogueRepository, LoadMetadata)
+                    {
+                        OriginDate = _planManager.StartDate
+                    };
                     LoadProgressIfAny.SaveToDatabase();
 
                     //date column based migration only works for single TableInfo migrations (see Plan Manager checks)
@@ -316,7 +318,7 @@ public class ForwardEngineerANOCatalogueEngine
             catch (Exception ex)
             {
                 _catalogueRepository.EndTransaction(false);
-                throw new Exception("Failed to create ANO version, transaction rolled back succesfully",ex);
+                throw new Exception("Failed to create ANO version, transaction rolled back successfully",ex);
             }
         }
     }
@@ -330,18 +332,15 @@ public class ForwardEngineerANOCatalogueEngine
     private ColumnInfo GetNewColumnInfoForOld(ColumnInfo col, bool isOptional = false)
     {
         //it's one we migrated ourselves
-        if (_parenthoodDictionary.ContainsKey(col))
-            return (ColumnInfo)_parenthoodDictionary[col];
+        if (_parenthoodDictionary.TryGetValue(col, out var value))
+            return (ColumnInfo)value;
             
         //it's one that was already existing before we did ANO migration e.g. a SkippedTableInfo (this can happen when there are 2+ tables underlying a Catalogue and you have already ANO one of those Tables previously (e.g. when it is a shared table with other Catalogues)
 
         //find a reference to the new ColumnInfo Location (note that it is possible the TableInfo was skipped, in which case we should still expect to find ColumnInfos that reference the new location because you must have created it somehow right?)
         var syntaxHelper = _planManager.TargetDatabase.Server.GetQuerySyntaxHelper();
 
-        var toReturn = FindNewColumnNamed(syntaxHelper,col,col.GetRuntimeName(),isOptional);
-                
-        if (toReturn == null)
-            toReturn = FindNewColumnNamed(syntaxHelper,col, $"ANO{col.GetRuntimeName()}",isOptional);
+        var toReturn = FindNewColumnNamed(syntaxHelper,col,col.GetRuntimeName(),isOptional) ?? FindNewColumnNamed(syntaxHelper,col, $"ANO{col.GetRuntimeName()}",isOptional);
 
         if(toReturn == null)
             if (isOptional)
@@ -367,27 +366,26 @@ public class ForwardEngineerANOCatalogueEngine
     /// <returns></returns>
     private ColumnInfo FindNewColumnNamed(IQuerySyntaxHelper syntaxHelper, ColumnInfo col, string expectedName, bool isOptional)
     {
-        var expectedNewNames = new HashSet<string>(StringComparer.CurrentCultureIgnoreCase);
+        var expectedNewNames = new HashSet<string>(StringComparer.CurrentCultureIgnoreCase)
+        {
+            //look for it in the default schema ".." or the API default server ".dbo." or the original table schema.
+            syntaxHelper.EnsureFullyQualified(
+                _planManager.TargetDatabase.GetRuntimeName(),
+                null,
+                col.TableInfo.GetRuntimeName(),
+                expectedName),
+            syntaxHelper.EnsureFullyQualified(
+                _planManager.TargetDatabase.GetRuntimeName(),
+                syntaxHelper.GetDefaultSchemaIfAny(),
+                col.TableInfo.GetRuntimeName(),
+                expectedName),
+            syntaxHelper.EnsureFullyQualified(
+                _planManager.TargetDatabase.GetRuntimeName(),
+                col.TableInfo.Schema,
+                col.TableInfo.GetRuntimeName(),
+                expectedName)
+        };
 
-        //look for it in the default schema ".." or the API default server ".dbo." or the original table schema.
-        expectedNewNames.Add(syntaxHelper.EnsureFullyQualified(
-            _planManager.TargetDatabase.GetRuntimeName(),
-            null,
-            col.TableInfo.GetRuntimeName(),
-            expectedName));
-
-        expectedNewNames.Add(syntaxHelper.EnsureFullyQualified(
-            _planManager.TargetDatabase.GetRuntimeName(),
-            syntaxHelper.GetDefaultSchemaIfAny(),
-            col.TableInfo.GetRuntimeName(),
-            expectedName));
-
-        expectedNewNames.Add(syntaxHelper.EnsureFullyQualified(
-            _planManager.TargetDatabase.GetRuntimeName(),
-            col.TableInfo.Schema,
-            col.TableInfo.GetRuntimeName(),
-            expectedName));
-                
 
         var columns = _allColumnsInfos.Where(c=>expectedNewNames.Contains(c.Name)).ToArray();
 

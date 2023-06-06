@@ -48,7 +48,7 @@ public class PrimaryKeyCollisionResolverMutilation : IPluginMutilateDataTables
     {
         if (loadStage != LoadStage.AdjustRaw)
             throw new Exception(
-                $"Primary key collisions can only be resolved in a RAW environment, current load stage is:{loadStage} (The reason for this is because there should be primary keys in the database level in STAGING and LIVE making primary key collisions IMPOSSIBE)");
+                $"Primary key collisions can only be resolved in a RAW environment, current load stage is:{loadStage} (The reason for this is because there should be primary keys in the database level in STAGING and LIVE making primary key collisions IMPOSSIBLE)");
 
         _dbInfo = dbInfo;
     }
@@ -62,33 +62,33 @@ public class PrimaryKeyCollisionResolverMutilation : IPluginMutilateDataTables
 
     private void ResolvePrimaryKeyConflicts(IDataLoadEventListener job)
     {
+        using var con = (SqlConnection) _dbInfo.Server.GetConnection();
+        con.Open();
 
-        using (var con = (SqlConnection) _dbInfo.Server.GetConnection())
+        var resolver = new PrimaryKeyCollisionResolver(TargetTable);
+        var cmdAreTherePrimaryKeyCollisions = new SqlCommand(resolver.GenerateCollisionDetectionSQL(), con)
         {
-            con.Open();
+            CommandTimeout = 5000
+        };
 
-            var resolver = new PrimaryKeyCollisionResolver(TargetTable);
-            var cmdAreTherePrimaryKeyCollisions = new SqlCommand(resolver.GenerateCollisionDetectionSQL(), con);
-            cmdAreTherePrimaryKeyCollisions.CommandTimeout = 5000;
-
-            //if there are no primary key collisions
-            if (cmdAreTherePrimaryKeyCollisions.ExecuteScalar().ToString().Equals("0"))
-            {
-                job.OnNotify(this, new NotifyEventArgs(ProgressEventType.Information, "No primary key collisions detected"));
-                return;
-            }
-
-            //there are primary key collisions so resolve them
-            job.OnNotify(this, new NotifyEventArgs(ProgressEventType.Warning, "Primary key collisions detected"));
-
-            var cmdResolve = new SqlCommand(resolver.GenerateSQL(), con);
-            cmdResolve.CommandTimeout = 5000;
-            var affectedRows = cmdResolve.ExecuteNonQuery();
-
-            job.OnNotify(this, new NotifyEventArgs(ProgressEventType.Warning,
-                $"Primary key collisions resolved by deleting {affectedRows} rows"));
-            con.Close();
+        //if there are no primary key collisions
+        if (cmdAreTherePrimaryKeyCollisions.ExecuteScalar().ToString().Equals("0"))
+        {
+            job.OnNotify(this, new NotifyEventArgs(ProgressEventType.Information, "No primary key collisions detected"));
+            return;
         }
+
+        //there are primary key collisions so resolve them
+        job.OnNotify(this, new NotifyEventArgs(ProgressEventType.Warning, "Primary key collisions detected"));
+
+        var cmdResolve = new SqlCommand(resolver.GenerateSQL(), con)
+        {
+            CommandTimeout = 5000
+        };
+        var affectedRows = cmdResolve.ExecuteNonQuery();
+
+        job.OnNotify(this, new NotifyEventArgs(ProgressEventType.Warning,
+            $"Primary key collisions resolved by deleting {affectedRows} rows"));
     }
 
     public void Check(ICheckNotifier notifier)

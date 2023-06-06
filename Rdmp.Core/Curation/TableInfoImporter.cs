@@ -6,6 +6,7 @@
 
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using FAnsi;
 using FAnsi.Discovery;
 using FAnsi.Implementation;
@@ -102,9 +103,6 @@ public class TableInfoImporter:ITableInfoImporter
     /// <inheritdoc/>
     public void DoImport(out ITableInfo tableInfoCreated, out ColumnInfo[] columnInfosCreated)
     {
-        string tableName;
-        string databaseName;
-
         try
         {
             _server.TestConnection();
@@ -116,18 +114,25 @@ public class TableInfoImporter:ITableInfoImporter
 
         var querySyntaxHelper = _server.GetQuerySyntaxHelper();
 
-        tableName = querySyntaxHelper.EnsureWrapped(_importDatabaseName);
+        var tableName = querySyntaxHelper.EnsureWrapped(_importDatabaseName);
 
-        if (_type == DatabaseType.MicrosoftSQLServer || _type == DatabaseType.PostgreSql)
-            tableName +=
-                $".{(querySyntaxHelper.EnsureWrapped(_importFromSchema ?? querySyntaxHelper.GetDefaultSchemaIfAny()))}.";
-        else if (_type == DatabaseType.MySql || _type == DatabaseType.Oracle)
-            tableName += ".";
-        else
-            throw new NotSupportedException($"Unknown Type:{_type}");
+        switch (_type)
+        {
+            case DatabaseType.MicrosoftSQLServer:
+            case DatabaseType.PostgreSql:
+                tableName +=
+                    $".{(querySyntaxHelper.EnsureWrapped(_importFromSchema ?? querySyntaxHelper.GetDefaultSchemaIfAny()))}.";
+                break;
+            case DatabaseType.MySql:
+            case DatabaseType.Oracle:
+                tableName += ".";
+                break;
+            default:
+                throw new NotSupportedException($"Unknown Type:{_type}");
+        }
 
         tableName += querySyntaxHelper.EnsureWrapped(_importTableName);
-        databaseName = querySyntaxHelper.EnsureWrapped(_importDatabaseName);
+        var databaseName = querySyntaxHelper.EnsureWrapped(_importDatabaseName);
 
         var discoveredColumns = _server.ExpectDatabase(_importDatabaseName)
             .ExpectTable(_importTableName,_importFromSchema, _importTableType)
@@ -145,34 +150,28 @@ public class TableInfoImporter:ITableInfoImporter
 
         parent.SaveToDatabase();
 
-        var newCols = new List<ColumnInfo>();
-
-        foreach (var discoveredColumn in discoveredColumns)
-            newCols.Add(CreateNewColumnInfo(parent,discoveredColumn));
-
         tableInfoCreated = parent;
-        columnInfosCreated = newCols.ToArray();
+        columnInfosCreated = discoveredColumns.Select(discoveredColumn => CreateNewColumnInfo(parent, discoveredColumn)).ToArray();
 
         //if there is a username then we need to associate it with the TableInfo we just created
         if(!string.IsNullOrWhiteSpace(_username) )
         {
-            var credentialsFactory = new DataAccessCredentialsFactory(_repository);
-            credentialsFactory.Create(tableInfoCreated, _username, _password, _usageContext);
+            new DataAccessCredentialsFactory(_repository).Create(tableInfoCreated, _username, _password, _usageContext);
         }
     }
 
     /// <inheritdoc/>
     public ColumnInfo CreateNewColumnInfo(ITableInfo parent,DiscoveredColumn discoveredColumn)
     {
-        var col = new ColumnInfo((ICatalogueRepository) parent.Repository,discoveredColumn.GetFullyQualifiedName(), discoveredColumn.DataType.SQLType, parent);
-
-        //if it has an explicitly specified format (Collation)
-        col.Format = discoveredColumn.Format;
-            
-        //if it is a primary key
-        col.IsPrimaryKey = discoveredColumn.IsPrimaryKey;
-        col.IsAutoIncrement = discoveredColumn.IsAutoIncrement;
-        col.Collation = discoveredColumn.Collation;
+        var col = new ColumnInfo((ICatalogueRepository) parent.Repository,discoveredColumn.GetFullyQualifiedName(), discoveredColumn.DataType.SQLType, parent)
+            {
+                //if it has an explicitly specified format (Collation)
+                Format = discoveredColumn.Format,
+                //if it is a primary key
+                IsPrimaryKey = discoveredColumn.IsPrimaryKey,
+                IsAutoIncrement = discoveredColumn.IsAutoIncrement,
+                Collation = discoveredColumn.Collation
+            };
 
         col.SaveToDatabase();
         

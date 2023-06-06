@@ -104,7 +104,7 @@ public partial class CommitsUI : CommitsUI_Design
         CommonCollectionFunctionality.SetupColumnTracking(olvDescription, new Guid("a53f80a5-c0a2-40c0-a8ec-1d3a897fcce4"));
     }
 
-    private void TreeListView1_ItemActivate(object sender, System.EventArgs e)
+    private void TreeListView1_ItemActivate(object sender, EventArgs e)
     {
         if(treeListView1.SelectedObject is not Memento m)
             return;

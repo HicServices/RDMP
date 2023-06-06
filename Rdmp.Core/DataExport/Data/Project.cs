@@ -210,7 +210,7 @@ public class Project : DatabaseEntity, IProject, ICustomSearchString,ICheckable,
     {
         if(childProvider is DataExportChildProvider dx)
         {
-            return dx.ExtractableDataSets.Where(eds => eds.Project_ID == this.ID)
+            return dx.ExtractableDataSets.Where(eds => eds.Project_ID == ID)
                 .Select(e => dx.AllCataloguesDictionary[e.Catalogue_ID])
                 .SelectMany(cata=>cata.GetAllExtractionInformation(c)).ToArray();
         }

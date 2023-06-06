@@ -381,8 +381,10 @@ public partial class ConfigureCatalogueExtractabilityUI : RDMPForm, ISaveableUI
     {
         olvColumnExtractability.UseFiltering = true;
 
-        var textFilter = new TextMatchFilter(olvColumnExtractability, tbFilter.Text);
-        textFilter.Columns = new[] {olvColumnInfoName};
+        var textFilter = new TextMatchFilter(olvColumnExtractability, tbFilter.Text)
+        {
+            Columns = new[] {olvColumnInfoName}
+        };
         olvColumnExtractability.ModelFilter = textFilter;
     }
 
@@ -687,7 +689,7 @@ public partial class ConfigureCatalogueExtractabilityUI : RDMPForm, ISaveableUI
         //turn off all IsExtractionIdentifierness
         foreach (var node in ddIsExtractionIdentifier.Items.OfType<ColPair>())
         {
-            if (node.ExtractionInformation != null && node.ExtractionInformation.IsExtractionIdentifier)
+            if (node.ExtractionInformation is { IsExtractionIdentifier: true })
             {
                 node.ExtractionInformation.IsExtractionIdentifier = false;
                 node.ExtractionInformation.SaveToDatabase();

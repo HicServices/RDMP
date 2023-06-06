@@ -75,7 +75,7 @@ public class FilterImportWizard
                 new FilterImporter(new DeployedExtractionFilterFactory((IDataExportRepository)containerToImportOneInto.Repository), globalParameters);
         else
             throw new ArgumentException(
-                $"Cannot import into IContainer of type {containerToImportOneInto.GetType().Name}", "containerToImportOneInto");
+                $"Cannot import into IContainer of type {containerToImportOneInto.GetType().Name}", nameof(containerToImportOneInto));
 
         //if there is a parameter value set then tell the importer to use these parameter values instead of the IFilter's default ones
         if (chosenParameterValues != null)
@@ -204,11 +204,7 @@ public class FilterImportWizard
 
         if (filtercontainer != null)
         {
-            var selectedDataSet = filtercontainer.GetSelectedDataSetsRecursively();
-
-            if(selectedDataSet == null)
-                throw new Exception($"Cannot import filter container {filtercontainer} because it does not belong to any SelectedDataSets");
-
+            var selectedDataSet = filtercontainer.GetSelectedDataSetsRecursively() ?? throw new Exception($"Cannot import filter container {filtercontainer} because it does not belong to any SelectedDataSets");
             var config = selectedDataSet.ExtractionConfiguration;
             var root = selectedDataSet.RootFilterContainer;
 

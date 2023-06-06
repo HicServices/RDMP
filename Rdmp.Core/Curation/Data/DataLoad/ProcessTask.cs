@@ -160,13 +160,13 @@ public class ProcessTask : DatabaseEntity, IProcessTask, IOrderable,INamed, IChe
 
         ProcessTaskType processTaskType;
 
-        if (ProcessTaskType.TryParse(r["ProcessTaskType"] as string, out processTaskType))
+        if (Enum.TryParse(r["ProcessTaskType"] as string, out processTaskType))
             ProcessTaskType = processTaskType;
         else
             throw new Exception($"Could not parse ProcessTaskType:{r["ProcessTaskType"]}");
 
         LoadStage loadStage;
-        if (LoadStage.TryParse(r["LoadStage"] as string, out loadStage))
+        if (Enum.TryParse(r["LoadStage"] as string, out loadStage))
             LoadStage = loadStage;
         else
             throw new Exception($"Could not parse LoadStage:{r["LoadStage"]}");
@@ -399,7 +399,7 @@ public class ProcessTask : DatabaseEntity, IProcessTask, IOrderable,INamed, IChe
             case ProcessTaskType.MutilateDataTable:
                 return stage != LoadStage.GetFiles;
             default:
-                throw new ArgumentOutOfRangeException("type");
+                throw new ArgumentOutOfRangeException(nameof(type));
         }
     }
 
@@ -420,11 +420,8 @@ public class ProcessTask : DatabaseEntity, IProcessTask, IOrderable,INamed, IChe
     /// <param name="o"></param>
     public void SetArgumentValue(string parameterName, object o)
     {
-        var matchingArgument = ProcessTaskArguments.SingleOrDefault(p => p.Name.Equals(parameterName));
-        if (matchingArgument == null)
-            throw new Exception(
+        var matchingArgument = ProcessTaskArguments.SingleOrDefault(p => p.Name.Equals(parameterName)) ?? throw new Exception(
                 $"Could not find a ProcessTaskArgument called '{parameterName}', have you called CreateArgumentsForClassIfNotExists<T> yet?");
-
         matchingArgument.SetValue(o);
         matchingArgument.SaveToDatabase();
     }

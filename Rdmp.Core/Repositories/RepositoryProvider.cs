@@ -81,8 +81,8 @@ public class RepositoryProvider : IRDMPPlatformRepositoryServiceLocator
         Type toReturn;
         lock (oLockDictionary)
         {
-            if (_cachedTypesByNameDictionary.ContainsKey(s))
-                return _cachedTypesByNameDictionary[s];
+            if (_cachedTypesByNameDictionary.TryGetValue(s, out var type))
+                return type;
 
             toReturn = CatalogueRepository.MEF.GetType(s, expectedBaseClassType);
 

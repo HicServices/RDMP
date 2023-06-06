@@ -17,7 +17,7 @@ internal class PluginCohortCompilerFactory
 
     public PluginCohortCompilerFactory(MEF mef)
     {
-        this._mef = mef;
+        _mef = mef;
     }
 
     internal IReadOnlyCollection<IPluginCohortCompiler> CreateAll()

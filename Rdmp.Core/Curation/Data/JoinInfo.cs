@@ -119,11 +119,11 @@ public class JoinInfo : DatabaseEntity, IJoin,IHasDependencies
     #region Relationships
     /// <inheritdoc/>
     [NoMappingToDatabase]
-    public ColumnInfo ForeignKey => _foreignKey ?? (_foreignKey = Repository.GetObjectByID<ColumnInfo>(ForeignKey_ID));
+    public ColumnInfo ForeignKey => _foreignKey ??= Repository.GetObjectByID<ColumnInfo>(ForeignKey_ID);
 
     /// <inheritdoc/>
     [NoMappingToDatabase]
-    public ColumnInfo PrimaryKey => _primaryKey ?? (_primaryKey = Repository.GetObjectByID<ColumnInfo>(PrimaryKey_ID));
+    public ColumnInfo PrimaryKey => _primaryKey ??= Repository.GetObjectByID<ColumnInfo>(PrimaryKey_ID);
 
     #endregion
 
@@ -146,7 +146,7 @@ public class JoinInfo : DatabaseEntity, IJoin,IHasDependencies
 
         ExtractionJoinType joinType;
 
-        if (ExtractionJoinType.TryParse(r["ExtractionJoinType"].ToString(), true, out joinType))
+        if (Enum.TryParse(r["ExtractionJoinType"].ToString(), true, out joinType))
             ExtractionJoinType = joinType;
         else
             throw new Exception($"Did not recognise ExtractionJoinType:{r["ExtractionJoinType"]}");

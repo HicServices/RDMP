@@ -43,7 +43,7 @@ public class ExecuteCommandDelete : BasicCommandExecution
         bool deleteMany = false) : base(activator)
     {
         _deletables = deletables;
-        this._allowDeleteMany = deleteMany;
+        _allowDeleteMany = deleteMany;
         if (_deletables.Any( d => d is CohortAggregateContainer c && c.IsRootContainer()))
             SetImpossible("Cannot delete root containers");
             
@@ -65,18 +65,15 @@ public class ExecuteCommandDelete : BasicCommandExecution
     private string GetDeleteVerbIfAny()
     {
         // if all objects are IDeletableWithCustomMessage
-        if (OverrideCommandName == null && _deletables.Count > 0 && _deletables.All(d => typeof(IDeletableWithCustomMessage).IsAssignableFrom(d.GetType())))
-        {
-            // Get the verbs (e.g. Remove, Disassociate etc)
-            var verbs = _deletables.Cast<IDeletableWithCustomMessage>().Select(d => d.GetDeleteVerb()).Distinct().ToArray();
+        if (OverrideCommandName != null || _deletables.Count <= 0 ||
+            !_deletables.All(d => d is IDeletableWithCustomMessage)) return null;
+        // Get the verbs (e.g. Remove, Disassociate etc)
+        var verbs = _deletables.Cast<IDeletableWithCustomMessage>().Select(d => d.GetDeleteVerb()).Distinct().ToArray();
 
-            // if they agree on one specific verb
-            if (verbs.Length == 1)
-                return verbs[0]; // use that
-        }
-
-        // couldn't agree on a verb or not all are IDeletableWithCustomMessage
-        return null;
+        // if they agree on one specific verb
+        return verbs.Length == 1 ? verbs[0] : // use that
+            // couldn't agree on a verb or not all are IDeletableWithCustomMessage
+            null;
     }
 
     public override void Execute()
@@ -86,7 +83,7 @@ public class ExecuteCommandDelete : BasicCommandExecution
         // if the thing we are deleting is important and sensitive then we should use a transaction
         if(_deletables.Count > 1 || ShouldUseTransactionsWhenDeleting(_deletables.FirstOrDefault()))
         {
-            base.ExecuteWithCommit(ExecuteImpl, GetDescription(), _deletables.OfType<IMapsDirectlyToDatabaseTable>().ToArray());
+            ExecuteWithCommit(ExecuteImpl, GetDescription(), _deletables.OfType<IMapsDirectlyToDatabaseTable>().ToArray());
             PublishNearest();
         }
         else

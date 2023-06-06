@@ -108,11 +108,11 @@ public class ConnectionStringTextBox : TextBox
             }
 
             //get last thing user is typing
-            var lastBitBeingTyped = Text.Substring(Text.LastIndexOf(";") + 1);
+            var lastBitBeingTyped = Text[(Text.LastIndexOf(";") + 1)..];
 
             if (string.IsNullOrWhiteSpace(lastBitBeingTyped) //user has not typed anything or has just put in a ;
                 ||
-                lastBitBeingTyped.Contains("="))//user has typed Password=bobsca <- i.e. he is midway through typing a value not a key
+                lastBitBeingTyped.Contains('='))//user has typed Password=bobsca <- i.e. he is midway through typing a value not a key
                 return;
 
             //we will suggest Server because user typed se

@@ -76,7 +76,7 @@ public class FilterContainer : ConcreteContainer, IContainer
     public override IContainer DeepCloneEntireTreeRecursivelyIncludingFilters()
     {
         //clone ourselves
-        var clonedFilterContainer = this.ShallowClone();
+        var clonedFilterContainer = ShallowClone();
             
         //clone our filters
         foreach (var deployedExtractionFilter in GetFilters())
@@ -94,7 +94,7 @@ public class FilterContainer : ConcreteContainer, IContainer
         }
 
         //now clone all subcontainers
-        foreach (FilterContainer toCloneSubcontainer in this.GetSubContainers())
+        foreach (FilterContainer toCloneSubcontainer in GetSubContainers())
         {
             //clone the subcontainer recursively
             var clonedSubcontainer = toCloneSubcontainer.DeepCloneEntireTreeRecursivelyIncludingFilters();

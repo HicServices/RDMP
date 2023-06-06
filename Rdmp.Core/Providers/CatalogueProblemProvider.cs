@@ -298,17 +298,14 @@ public class CatalogueProblemProvider : ProblemProvider
         {
             // if there is a parent container
             var parents = _childProvider.GetDescendancyListIfAnyFor(container);
-            if (parents != null && parents.Last() is CohortAggregateContainer parentContainer)
-            {
+            if (parents != null && parents.Last() is CohortAggregateContainer { Operation: SetOperation.EXCEPT } parentContainer)
                 // which is EXCEPT
-                if (parentContainer.Operation == SetOperation.EXCEPT)
+            {
+                // then something called 'inclusion criteria' should be the first among them
+                var first = _childProvider.GetChildren(parentContainer).OfType<IOrderable>().MinBy(o => o.Order);
+                if (first != null && (!first.Equals(container)))
                 {
-                    // then something called 'inclusion criteria' should be the first among them
-                    var first = _childProvider.GetChildren(parentContainer).OfType<IOrderable>().OrderBy(o => o.Order).FirstOrDefault();
-                    if (first != null && (!first.Equals(container)))
-                    {
-                        return $"{container.Name} must be the first container in the parent set.  Please re-order it to be the first";
-                    }
+                    return $"{container.Name} must be the first container in the parent set.  Please re-order it to be the first";
                 }
             }
         }

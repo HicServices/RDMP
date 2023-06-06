@@ -239,7 +239,7 @@ public class ANOTable : DatabaseEntity, ISaveable, IDeleteable,ICheckable,IRever
     public DiscoveredTable GetPushedTable()
     {
         if (!Server.WasCreatedBy(new ANOStorePatcher()))
-            throw new Exception(string.Format("ANOTable's Server '{0}' is not an ANOStore.  ANOTable was '{1}'",Server,this));
+            throw new Exception($"ANOTable's Server '{Server}' is not an ANOStore.  ANOTable was '{this}'");
 
         var tables = DataAccessPortal.GetInstance()
             .ExpectDatabase(Server, DataAccessContext.DataLoad)
@@ -313,7 +313,7 @@ public class ANOTable : DatabaseEntity, ISaveable, IDeleteable,ICheckable,IRever
 
         //if table name is ANOChi there are 2 columns Chi and ANOChi in it
         var anonymousColumnName = TableName;
-        var identifiableColumnName = TableName.Substring("ANO".Length);
+        var identifiableColumnName = TableName["ANO".Length..];
 
         var anonymousDatatype =
             $"varchar({(NumberOfCharactersToUseInAnonymousRepresentation + NumberOfIntegersToUseInAnonymousRepresentation + "_".Length + Suffix.Length)})";
@@ -384,7 +384,7 @@ CONSTRAINT AK_{TableName} UNIQUE({anonymousColumnName})
                 
             var columnsFoundInANO = server.GetCurrentDatabase().ExpectTable(TableName).DiscoverColumns();
 
-            var expectedIdentifiableName = TableName.Substring("ANO".Length);
+            var expectedIdentifiableName = TableName["ANO".Length..];
 
             var anonymous = columnsFoundInANO.SingleOrDefault(c => c.GetRuntimeName().Equals(TableName));
             var identifiable = columnsFoundInANO.SingleOrDefault(c=>c.GetRuntimeName().Equals(expectedIdentifiableName));
@@ -415,7 +415,7 @@ CONSTRAINT AK_{TableName} UNIQUE({anonymousColumnName})
             case LoadStage.PostLoad:
                 return _anonymousDataType;
             default:
-                throw new ArgumentOutOfRangeException("loadStage");
+                throw new ArgumentOutOfRangeException(nameof(loadStage));
         }
     }
         

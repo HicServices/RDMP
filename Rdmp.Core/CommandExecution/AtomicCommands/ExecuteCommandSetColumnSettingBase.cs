@@ -125,7 +125,7 @@ public abstract class ExecuteCommandSetColumnSettingBase : BasicCommandExecution
     {
         ConcreteColumn[] selected = null;
 
-        if (toPick != null && toPick.Length > 0)
+        if (toPick is { Length: > 0 })
         {
             selected = allColumns.Where(a => toPick.Contains(a.GetRuntimeName())).ToArray();
 

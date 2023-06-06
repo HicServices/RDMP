@@ -139,11 +139,7 @@ public class AnyTableSqlParameter : ReferenceOtherObjectDatabaseEntity, ISqlPara
     /// <inheritdoc/>
     public IQuerySyntaxHelper GetQuerySyntaxHelper()
     {
-        var parentWithQuerySyntaxHelper = GetOwnerIfAny() as IHasQuerySyntaxHelper;
-
-        if (parentWithQuerySyntaxHelper == null)
-            throw new AmbiguousDatabaseTypeException($"Could not figure out what the query syntax helper is for {this}");
-
+        var parentWithQuerySyntaxHelper = GetOwnerIfAny() as IHasQuerySyntaxHelper ?? throw new AmbiguousDatabaseTypeException($"Could not figure out what the query syntax helper is for {this}");
         return parentWithQuerySyntaxHelper.GetQuerySyntaxHelper();
     }
 

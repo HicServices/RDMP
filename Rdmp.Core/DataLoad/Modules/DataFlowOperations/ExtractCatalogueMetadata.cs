@@ -51,10 +51,7 @@ public class ExtractCatalogueMetadata : IPluginDataFlowComponent<DataTable>, IPi
         {
             var catalogue = extractDatasetCommand.Catalogue;
             
-            var sourceFolder = _request.GetExtractionDirectory();
-            if (sourceFolder == null)
-                throw new Exception("Could not find Source Folder. Does the project have an Extraction Directory defined?");
-
+            var sourceFolder = _request.GetExtractionDirectory() ?? throw new Exception("Could not find Source Folder. Does the project have an Extraction Directory defined?");
             var outputFolder = sourceFolder.Parent.CreateSubdirectory(ExtractionDirectory.METADATA_FOLDER_NAME);
             var outputFile = new FileInfo(Path.Combine(outputFolder.FullName, $"{toProcess.TableName}.sd"));
 

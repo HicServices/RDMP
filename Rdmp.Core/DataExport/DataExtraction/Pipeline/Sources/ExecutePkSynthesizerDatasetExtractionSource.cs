@@ -45,7 +45,7 @@ public class ExecutePkSynthesizerDatasetExtractionSource : ExecuteDatasetExtract
             {
                 string newSql;
                 if (primaryKeys.Length > 1) // no need to do anything if there is only one.
-                    newSql = $"CONCAT({String.Join(",'_',", primaryKeys.Select(apk => apk.ToString()))})";
+                    newSql = $"CONCAT({string.Join(",'_',", primaryKeys.Select(apk => apk.ToString()))})";
                 else
                     newSql = primaryKeys.Single().Name;
 
@@ -131,7 +131,7 @@ public class ExecutePkSynthesizerDatasetExtractionSource : ExecuteDatasetExtract
                 if (ri.IsPrimaryKey || ri.OriginalDatasetColumn.IsPrimaryKey)
                     yield return ri;
 
-            if (ec != null && ec.IsPrimaryKey)
+            if (ec is { IsPrimaryKey: true })
                 yield return ec;
         }
     }

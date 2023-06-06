@@ -26,7 +26,7 @@ public class ExecuteCommandExportInDublinCoreFormat : BasicCommandExecution, IAt
     {
         base.Execute();
 
-        if ((_toExport = _toExport ?? BasicActivator.SelectFile("Dublin Core Xml|*.xml")) == null)
+        if ((_toExport ??= BasicActivator.SelectFile("Dublin Core Xml|*.xml")) == null)
             return;
 
         using (var stream = File.OpenWrite(_toExport.FullName))

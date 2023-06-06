@@ -31,18 +31,14 @@ public class SelectSQLRefactorer
     /// <param name="newFullySpecifiedTableName"></param>
     public void RefactorTableName(IColumn column,IHasFullyQualifiedNameToo tableName,string newFullySpecifiedTableName)
     {
-        var ci = column.ColumnInfo;
-
-        if(ci == null)
-            throw new RefactoringException($"Cannot refactor '{column}' because its ColumnInfo was null");
-
+        var ci = column.ColumnInfo ?? throw new RefactoringException($"Cannot refactor '{column}' because its ColumnInfo was null");
         var fullyQualifiedName = tableName.GetFullyQualifiedName();
             
         if(!column.SelectSQL.Contains(fullyQualifiedName))
             throw new RefactoringException(
                 $"IColumn '{column}' did not contain the fully specified table name during refactoring ('{fullyQualifiedName}'");
 
-        if(!newFullySpecifiedTableName.Contains("."))
+        if(!newFullySpecifiedTableName.Contains('.'))
             throw new RefactoringException(
                 $"Replacement table name was not fully specified, value passed was '{newFullySpecifiedTableName}' which did not contain any dots");
 
@@ -65,7 +61,7 @@ public class SelectSQLRefactorer
             throw new RefactoringException(
                 $"ColumnInfo '{column}' did not start with the fully specified table name during refactoring ('{fullyQualifiedName}'");
 
-        if (!newFullySpecifiedTableName.Contains("."))
+        if (!newFullySpecifiedTableName.Contains('.'))
             throw new RefactoringException(
                 $"Replacement table name was not fully specified, value passed was '{newFullySpecifiedTableName}' which did not contain any dots");
 
@@ -175,10 +171,11 @@ public class SelectSQLRefactorer
         var db = table.GetDatabaseRuntimeName(Curation.Data.DataLoad.LoadStage.PostLoad);
 
         if(!table.Name.StartsWith(syntaxHelper.EnsureWrapped(db)))
-            return string.Format("Table with Name '{0}' has incorrect database propery '{1}'", table.Name , table.Database);
+            return $"Table with Name '{table.Name}' has incorrect database property '{table.Database}'";
 
         if(table.Name != table.GetFullyQualifiedName())
-            return string.Format("Table name '{0}' did not match the expected fully qualified name '{1}'",table.Name,table.GetFullyQualifiedName());
+            return
+                $"Table name '{table.Name}' did not match the expected fully qualified name '{table.GetFullyQualifiedName()}'";
 
         return null;
     }
@@ -201,7 +198,8 @@ public class SelectSQLRefactorer
     public int RefactorTableName(ITableInfo tableInfo, string oldFullyQualifiedTableName, string newFullyQualifiedTableName)
     {
         if(!IsRefactorable(tableInfo))
-            throw new RefactoringException(string.Format("TableInfo {0} is not refactorable because {1}",tableInfo,GetReasonNotRefactorable(tableInfo)));
+            throw new RefactoringException(
+                $"TableInfo {tableInfo} is not refactorable because {GetReasonNotRefactorable(tableInfo)}");
                         
         var updatesMade = 0;
             

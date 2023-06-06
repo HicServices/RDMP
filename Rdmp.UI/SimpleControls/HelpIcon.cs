@@ -42,12 +42,12 @@ public partial class HelpIcon : UserControl
         _title = title;
         _hoverText = hoverText;
         _originalHoverText = hoverText;
-        Visible = !String.IsNullOrWhiteSpace(_hoverText);
+        Visible = !string.IsNullOrWhiteSpace(_hoverText);
 
         _hoverText = GetShortText(_hoverText);
 
         //If TT is null create new tooltip
-        tt = tt?? new ToolTip
+        tt ??= new ToolTip
         {
             AutoPopDelay = 15000,  // Warning! MSDN states this is Int32, but anything over 32767 will fail.
             ShowAlways = true,
@@ -73,7 +73,7 @@ public partial class HelpIcon : UserControl
             return hoverText;
 
         //enforce a maximum of 150 characters
-        return $"{hoverText.Substring(0, MaxHoverTextLength - 3)}...";
+        return $"{hoverText[..(MaxHoverTextLength - 3)]}...";
     }
 
     private void HelpIcon_MouseClick(object sender, MouseEventArgs e)

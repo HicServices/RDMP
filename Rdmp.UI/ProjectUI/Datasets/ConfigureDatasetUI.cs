@@ -105,7 +105,7 @@ public partial class ConfigureDatasetUI : ConfigureDatasetUI_Design,ILifetimeSub
             
         RDMPCollectionCommonFunctionality.SetupColumnTracking(olvSelected, olvIssues, new Guid("741f0cff-1d2e-46a7-a5da-9ce13e0960cf"));
 
-        this.cbShowProjectSpecific.CheckedChanged += CbShowProjectSpecific_CheckedChanged;
+        cbShowProjectSpecific.CheckedChanged += CbShowProjectSpecific_CheckedChanged;
     }
 
     void olvSelected_CellRightClick(object sender, CellRightClickEventArgs e)
@@ -258,25 +258,15 @@ public partial class ConfigureDatasetUI : ConfigureDatasetUI_Design,ILifetimeSub
         // Prevents later queries to db to figure out things like column name etc
         foreach (var ec in allExtractableColumns)
         {
-            if(ec.CatalogueExtractionInformation_ID != null)
-            {
-                var eiDict = Activator.CoreChildProvider.AllExtractionInformationsDictionary;
-                var ciDict = Activator.CoreChildProvider.AllCatalogueItemsDictionary;
+            if (ec.CatalogueExtractionInformation_ID == null) continue;
+            var eiDict = Activator.CoreChildProvider.AllExtractionInformationsDictionary;
+            var ciDict = Activator.CoreChildProvider.AllCatalogueItemsDictionary;
 
-                if (eiDict.ContainsKey(ec.CatalogueExtractionInformation_ID.Value))
-                {
-                    var ei = eiDict[ec.CatalogueExtractionInformation_ID.Value];
-                    ec.InjectKnown(ei);
-                    ec.InjectKnown(ei.ColumnInfo);
+            if (!eiDict.TryGetValue(ec.CatalogueExtractionInformation_ID.Value, out var ei)) continue;
+            ec.InjectKnown(ei);
+            ec.InjectKnown(ei.ColumnInfo);
 
-                    if(ciDict.ContainsKey(ei.CatalogueItem_ID))
-                    {
-                        ec.InjectKnown(ciDict[ei.CatalogueItem_ID]);
-                    }
-                }
-
-                        
-            }
+            if(ciDict.TryGetValue(ei.CatalogueItem_ID, out var id)) ec.InjectKnown(id);
         }
 
 
@@ -460,7 +450,7 @@ public partial class ConfigureDatasetUI : ConfigureDatasetUI_Design,ILifetimeSub
         }
     }
 
-    private void olvSelected_ModelCanDrop(object sender, BrightIdeasSoftware.ModelDropEventArgs e)
+    private void olvSelected_ModelCanDrop(object sender, ModelDropEventArgs e)
     {
         e.Effect = DragDropEffects.None;
             
@@ -509,8 +499,7 @@ public partial class ConfigureDatasetUI : ConfigureDatasetUI_Design,ILifetimeSub
 
     private void HandleReorder(ExtractableColumn sourceColumn, IOrderable targetOrderable, DropTargetLocation location)
     {
-        if (targetOrderable == null)
-            targetOrderable = olvSelected.Objects.Cast<IOrderable>().OrderByDescending(o => o.Order).FirstOrDefault();
+        targetOrderable ??= olvSelected.Objects.Cast<IOrderable>().MaxBy(o => o.Order);
 
         if (targetOrderable == null)
             return;
@@ -825,7 +814,7 @@ public partial class ConfigureDatasetUI : ConfigureDatasetUI_Design,ILifetimeSub
         UpdateJoins();
     }
 
-    private void CbShowProjectSpecific_CheckedChanged(object sender, System.EventArgs e)
+    private void CbShowProjectSpecific_CheckedChanged(object sender, EventArgs e)
     {
         UserSettings.ShowProjectSpecificColumns = cbShowProjectSpecific.Checked;
         SetupUserInterface();            

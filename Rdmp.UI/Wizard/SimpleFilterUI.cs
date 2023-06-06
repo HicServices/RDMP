@@ -113,8 +113,7 @@ public partial class SimpleFilterUI : UserControl
             pbKnownValueSets.Visible = true;
             ddKnownGoodValues.Visible = true;
 
-            var l = new List<object>();
-            l.Add("");
+            var l = new List<object> { "" };
             l.AddRange(knownGoodValues);
 
             ddKnownGoodValues.DataSource = l;

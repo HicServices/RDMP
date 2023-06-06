@@ -67,10 +67,12 @@ public partial class DataLoadProgressUpdateInfoUI : Form, ICustomUI<DataLoadProg
 
     public ICustomUIDrivenClass GetFinalStateOfUnderlyingObject()
     {
-        var toReturn = new DataLoadProgressUpdateInfo();
-        toReturn.ExecuteScalarSQL = QueryEditor.Text;
-        toReturn.Timeout = _timeout;
-        toReturn.Strategy = (DataLoadProgressUpdateStrategy) ddStrategy.SelectedItem;
+        var toReturn = new DataLoadProgressUpdateInfo
+        {
+            ExecuteScalarSQL = QueryEditor.Text,
+            Timeout = _timeout,
+            Strategy = (DataLoadProgressUpdateStrategy) ddStrategy.SelectedItem
+        };
 
         return toReturn;
     }
@@ -111,7 +113,7 @@ public partial class DataLoadProgressUpdateInfoUI : Form, ICustomUI<DataLoadProg
     {
         _programaticClose = true;
         DialogResult = DialogResult.Cancel;
-        this.Close();
+        Close();
     }
 
     private void btnSave_Click(object sender, EventArgs e)

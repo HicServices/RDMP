@@ -223,7 +223,7 @@ public class CohortIdentificationConfiguration : DatabaseEntity, ICollectSqlPara
         if (RootCohortAggregateContainer_ID != null)
             RootCohortAggregateContainer.DeleteInDatabase();
 
-        //shouldnt ever happen but double check anyway incase somebody removes the CASCADE
+        //shouldn't ever happen but double check anyway in case somebody removes the CASCADE
         if(Exists())
             base.DeleteInDatabase();
         else
@@ -231,8 +231,7 @@ public class CohortIdentificationConfiguration : DatabaseEntity, ICollectSqlPara
             //make sure to do the obscure cross server/database cascade activities too
 
             //if the repository has obscure dependencies
-            if (CatalogueRepository.ObscureDependencyFinder != null)
-                CatalogueRepository.ObscureDependencyFinder.HandleCascadeDeletesForDeletedObject(this);
+            CatalogueRepository.ObscureDependencyFinder?.HandleCascadeDeletesForDeletedObject(this);
         }
     }
 
@@ -241,15 +240,13 @@ public class CohortIdentificationConfiguration : DatabaseEntity, ICollectSqlPara
     /// </summary>
     public void CreateRootContainerIfNotExists()
     {
-        //if it doesn't have one
-        if (RootCohortAggregateContainer_ID == null)
-        {
-            //create a new one and record its ID
-            RootCohortAggregateContainer_ID = new CohortAggregateContainer((ICatalogueRepository) Repository,SetOperation.UNION).ID;
+        //Only proceed if it doesn't have one already
+        if (RootCohortAggregateContainer_ID != null) return;
+        //create a new one and record its ID
+        RootCohortAggregateContainer_ID = new CohortAggregateContainer((ICatalogueRepository) Repository,SetOperation.UNION).ID;
 
-            //save us to database to cement the object
-            SaveToDatabase();
-        }
+        //save us to database to cement the object
+        SaveToDatabase();
     }
 
     /// <inheritdoc/>
@@ -314,7 +311,7 @@ public class CohortIdentificationConfiguration : DatabaseEntity, ICollectSqlPara
             return;
 
         //make it valid by sticking on the prefix
-        aggregate.Name = GetNamingConventionPrefixForConfigurations() + aggregate.Name;
+        aggregate.Name = $"{GetNamingConventionPrefixForConfigurations()}{aggregate.Name}";
 
         var copy = 0;
         var origName = aggregate.Name;
@@ -347,7 +344,7 @@ public class CohortIdentificationConfiguration : DatabaseEntity, ICollectSqlPara
     public CohortIdentificationConfiguration CreateClone(ICheckNotifier notifier)
     {
         //todo this would be nice if it was ICatalogueRepository but transaction is super SQLy
-        var cataRepo = ((ICatalogueRepository) Repository);
+        var cataRepo = (ICatalogueRepository) Repository;
         //start a new super transaction
         using (cataRepo.BeginNewTransaction())
         {
@@ -364,26 +361,16 @@ public class CohortIdentificationConfiguration : DatabaseEntity, ICollectSqlPara
                 foreach (var p in GetAllParameters())
                 {
                     notifier.OnCheckPerformed(new CheckEventArgs($"Cloning global parameter {p.ParameterName}",CheckResult.Success));
-                    var cloneP = new AnyTableSqlParameter(cataRepo, clone, p.ParameterSQL);
-                    cloneP.Comment = p.Comment;
-                    cloneP.Value = p.Value;
+                    var cloneP = new AnyTableSqlParameter(cataRepo, clone, p.ParameterSQL)
+                    {
+                        Comment = p.Comment,
+                        Value = p.Value
+                    };
                     cloneP.SaveToDatabase();
                 }
 
                 //key is the original, value is the clone
-                var parentToCloneJoinablesDictionary = new Dictionary<JoinableCohortAggregateConfiguration, JoinableCohortAggregateConfiguration>();
-
-                //clone the joinables
-                foreach (var joinable in GetAllJoinables())
-                {
-                    //clone the aggregate which has permission to be joinable
-                    var cloneJoinableAggregate = joinable.AggregateConfiguration.CreateClone();
-
-                    //clone the join permission
-                    var cloneJoinable = new JoinableCohortAggregateConfiguration(cataRepo, clone, cloneJoinableAggregate);
-
-                    parentToCloneJoinablesDictionary.Add(joinable,cloneJoinable);
-                }
+                var parentToCloneJoinablesDictionary = GetAllJoinables().ToDictionary(joinable => joinable, joinable => new JoinableCohortAggregateConfiguration(cataRepo, clone, joinable.AggregateConfiguration.CreateClone()));
 
                 clone.ClonedFrom_ID = ID;
                 clone.RootCohortAggregateContainer_ID = RootCohortAggregateContainer.CloneEntireTreeRecursively(notifier, this, clone, parentToCloneJoinablesDictionary).ID;
@@ -451,7 +438,7 @@ public class CohortIdentificationConfiguration : DatabaseEntity, ICollectSqlPara
         //make its name follow the naming convention e.g. cic_105_LINK103_MyAggregate 
         EnsureNamingConvention(newConfiguration);
 
-        //now clear its pivot dimension, make it not extratcable and make its countSQL basic/sane
+        //now clear its pivot dimension, make it not extractable and make its countSQL basic/sane
         newConfiguration.PivotOnDimensionID = null;
         newConfiguration.IsExtractable = false;
         newConfiguration.CountSQL = null;//clear the count sql
@@ -460,10 +447,11 @@ public class CohortIdentificationConfiguration : DatabaseEntity, ICollectSqlPara
         //clone parameters
         foreach (var toCloneParameter in toClone.Parameters)
         {
-            var newParam = new AnyTableSqlParameter((ICatalogueRepository)newConfiguration.Repository, newConfiguration, toCloneParameter.ParameterSQL);
-            newParam.Value = toCloneParameter.Value;
-            newParam.Comment = toCloneParameter.Comment;
-            newParam.SaveToDatabase();
+            new AnyTableSqlParameter((ICatalogueRepository)newConfiguration.Repository, newConfiguration, toCloneParameter.ParameterSQL)
+                {
+                    Value = toCloneParameter.Value,
+                    Comment = toCloneParameter.Comment
+                }.SaveToDatabase();
         }
 
 
@@ -538,7 +526,7 @@ public class CohortIdentificationConfiguration : DatabaseEntity, ICollectSqlPara
         {
             var extractionIdentifier = (ExtractionInformation)GetExtractionIdentifierFrom(catalogue, resolveMultipleExtractionIdentifiers);
             //make the extraction identifier column into the sole dimension on the new configuration
-            new AggregateDimension(cataRepo, extractionIdentifier, configuration);
+            _=new AggregateDimension(cataRepo, extractionIdentifier, configuration);
         }
 
         //no count sql
@@ -560,19 +548,17 @@ public class CohortIdentificationConfiguration : DatabaseEntity, ICollectSqlPara
 
         var createdSoFar = new List<AggregateFilter>();
 
-        if (mandatoryFilters.Any())
+        if (!mandatoryFilters.Any()) return;
+        var container = new AggregateFilterContainer((ICatalogueRepository) Repository, FilterContainerOperation.AND);
+        configuration.RootFilterContainer_ID = container.ID;
+        configuration.SaveToDatabase();
+
+        foreach (var filter in mandatoryFilters)
         {
-            var container = new AggregateFilterContainer((ICatalogueRepository) Repository, FilterContainerOperation.AND);
-            configuration.RootFilterContainer_ID = container.ID;
-            configuration.SaveToDatabase();
+            var newFilter = (AggregateFilter)filterImporter.ImportFilter(container, filter, createdSoFar.ToArray());
 
-            foreach (var filter in mandatoryFilters)
-            {
-                var newFilter = (AggregateFilter)filterImporter.ImportFilter(container, filter, createdSoFar.ToArray());
-
-                container.AddChild(newFilter);
-                createdSoFar.Add(newFilter);
-            }
+            container.AddChild(newFilter);
+            createdSoFar.Add(newFilter);
         }
     }
 
@@ -598,12 +584,12 @@ public class CohortIdentificationConfiguration : DatabaseEntity, ICollectSqlPara
         IColumn extractionIdentifier = null;
 
         //very unexpected, he had multiple IsExtractionIdentifier Dimensions all configured for simultaneous use on this Aggregate, it is very freaky and we definetly don't want to let him import it for cohort identification
-        if (existingExtractionIdentifierDimensions.Count() > 1)
+        if (existingExtractionIdentifierDimensions.Length > 1)
             throw new NotSupportedException(
                 $"Cannot clone the AggregateConfiguration {toClone} because it has multiple IsExtractionIdentifier dimensions (must be 0 or 1)");
 
         //It has 1... maybe it's already being used in cohort identification from another project or he just likes to graph chi numbers for some reason
-        if (existingExtractionIdentifierDimensions.Count() == 1)
+        if (existingExtractionIdentifierDimensions.Length == 1)
         {
             extractionIdentifier = existingExtractionIdentifierDimensions[0];
             underlyingExtractionInformation = existingExtractionIdentifierDimensions[0].ExtractionInformation;
@@ -631,23 +617,15 @@ public class CohortIdentificationConfiguration : DatabaseEntity, ICollectSqlPara
         var catalogueCandidates = catalogue.GetAllExtractionInformation(ExtractionCategory.Any).Where(e => e.IsExtractionIdentifier).ToArray();
 
         //if there are multiple IsExtractionInformation columns
-        if (catalogueCandidates.Count() != 1)
-            if (resolveMultipleExtractionIdentifiers == null)//no delegate has been provided for resolving this
-                throw new NotSupportedException(
-                    $"Cannot create AggregateConfiguration because the Catalogue {catalogue} has {catalogueCandidates.Length} IsExtractionIdentifier ExtractionInformations");
-            else
-            {
-                //there is a delegate to resolve this, invoke it
-                var answer = resolveMultipleExtractionIdentifiers(catalogue, catalogueCandidates);
+        if (catalogueCandidates.Length == 1) return catalogueCandidates[0];
+        if (resolveMultipleExtractionIdentifiers == null)//no delegate has been provided for resolving this
+            throw new NotSupportedException(
+                $"Cannot create AggregateConfiguration because the Catalogue {catalogue} has {catalogueCandidates.Length} IsExtractionIdentifier ExtractionInformations");
+        //there is a delegate to resolve this, invoke it
+        return resolveMultipleExtractionIdentifiers(catalogue, catalogueCandidates) ??
+               throw new Exception(
+                   "User did not pick a candidate ExtractionInformation column from those we offered");
 
-                //the delegate returned null
-                if (answer == null)
-                    throw new Exception("User did not pick a candidate ExtractionInformation column from those we offered");
-                else
-                    return answer;//the delegate picked one
-            }
-
-        return catalogueCandidates[0];
     }
 
     /// <summary>
@@ -670,15 +648,14 @@ public class CohortIdentificationConfiguration : DatabaseEntity, ICollectSqlPara
         return
             RootCohortAggregateContainer.GetAllAggregateConfigurationsRecursively() //get all the aggregate sets
                 .SelectMany(a=>a.AggregateDimensions //get all the Dimensions (should really be 1 per aggregate which is the IsExtractionIdentifier column but who are we to check)
-                    .Select(d=>d.ColumnInfo)) //get the underlying Column for the dimension
-                .Select(c => c.TableInfo) //get the TableInfo from the column
+                    .Select(d=>d.ColumnInfo.TableInfo)) //get the TableInfo of the underlying Column for the dimension
                 .Distinct() //return distinct array of them
                 .ToArray(); 
     }
 
     /// <summary>
     /// Freezes the current <see cref="CohortIdentificationConfiguration"/> marking it as immutable.
-    /// <para>This is the prefered way of setting <see cref="Frozen"/></para>
+    /// <para>This is the preferred way of setting <see cref="Frozen"/></para>
     /// <seealso cref="Frozen"/>
     /// </summary>
     public void Freeze()

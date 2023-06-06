@@ -53,11 +53,9 @@ public class PatientIndexTableSource : AggregateConfigurationTableSource, IPipel
         var insertionPoint = sql.IndexOf("group by", 0, StringComparison.CurrentCultureIgnoreCase);
 
         //if there isn't a group by
-        if (insertionPoint == -1)
-            return sql + Environment.NewLine + impromptuSql;
-            
-        //there is a group by
-        return sql.Substring(0, insertionPoint) + Environment.NewLine + impromptuSql + Environment.NewLine + sql.Substring(insertionPoint, sql.Length - insertionPoint);
+        return insertionPoint == -1 ? $"{sql}{Environment.NewLine}{impromptuSql}" :
+            //there is a group by
+            $"{sql[..insertionPoint]}{Environment.NewLine}{impromptuSql}{Environment.NewLine}{sql.Substring(insertionPoint, sql.Length - insertionPoint)}";
     }
         
     public void PreInitialize(ExtractableCohort value, IDataLoadEventListener listener)
@@ -71,6 +69,6 @@ public class PatientIndexTableSource : AggregateConfigurationTableSource, IPipel
 
         if (CohortIdentificationConfigurationIfAny == null)
             listener.OnNotify(this, new NotifyEventArgs(ProgressEventType.Error,
-                $"Configuration {AggregateConfiguration} is not a valid input because it does not have a CohortIdentificationConfiguration nevermind a JoinableCohortAggregateConfiguration.  Maybe it isn't a patient index table?"));
+                $"Configuration {AggregateConfiguration} is not a valid input because it does not have a CohortIdentificationConfiguration never mind a JoinableCohortAggregateConfiguration.  Maybe it isn't a patient index table?"));
     }
 }

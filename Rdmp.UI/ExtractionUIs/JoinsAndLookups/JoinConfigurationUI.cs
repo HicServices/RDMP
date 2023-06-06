@@ -77,7 +77,7 @@ public partial class JoinConfigurationUI : JoinConfiguration_Design
         tbLeftTableInfo.Text = _leftTableInfo.ToString();
 
         btnChooseRightTableInfo.Image = activator.CoreIconProvider.GetImage(RDMPConcept.TableInfo, OverlayKind.Add).ImageToBitmap();
-        UpdateValidityAssesment();
+        UpdateValidityAssessment();
             
         olvLeftColumns.ClearObjects();
         olvLeftColumns.AddObjects(_leftTableInfo.ColumnInfos);
@@ -127,10 +127,10 @@ public partial class JoinConfigurationUI : JoinConfiguration_Design
 
     private void k_SelectedColumnChanged()
     {
-        UpdateValidityAssesment();
+        UpdateValidityAssessment();
     }
 
-    private void UpdateValidityAssesment(bool actuallyDoIt = false)
+    private void UpdateValidityAssessment(bool actuallyDoIt = false)
     {
         ragSmiley1.Reset();
         try
@@ -145,7 +145,7 @@ public partial class JoinConfigurationUI : JoinConfiguration_Design
                 ((pk2.SelectedColumn == null) != (fk2.SelectedColumn == null))
                 ||
                 ((pk3.SelectedColumn == null) != (fk3.SelectedColumn == null)))
-                throw new Exception("You must have the same number of primary and foregin keys (they must come in pairs)");
+                throw new Exception("You must have the same number of primary and foreign keys (they must come in pairs)");
 
             if(pks.Any(p => p.TableInfo_ID != _leftTableInfo.ID))
                 throw new Exception("All Primary Keys must come from the Left hand TableInfo");
@@ -195,7 +195,7 @@ public partial class JoinConfigurationUI : JoinConfiguration_Design
 
     private void btnCreateJoinInfo_Click(object sender, EventArgs e)
     {
-        UpdateValidityAssesment(true);
+        UpdateValidityAssessment(true);
     }
         
     private void tbFilterLeft_TextChanged(object sender, EventArgs e)
@@ -213,7 +213,7 @@ public partial class JoinConfigurationUI : JoinConfiguration_Design
 
     private void rb_CheckedChanged(object sender, EventArgs e)
     {
-        UpdateValidityAssesment();
+        UpdateValidityAssessment();
     }
 
     public void SetOtherTableInfo(TableInfo otherTableInfo)
@@ -262,7 +262,7 @@ public partial class JoinConfigurationUI : JoinConfiguration_Design
     private void tbCollation_Leave(object sender, EventArgs e)
     {
         if (tbCollation.Text != null && tbCollation.Text.StartsWith("collate", StringComparison.CurrentCultureIgnoreCase))
-            tbCollation.Text = tbCollation.Text.Substring("collate".Length).Trim();
+            tbCollation.Text = tbCollation.Text["collate".Length..].Trim();
     }
 
     private void olv_ItemActivate(object sender, EventArgs e)

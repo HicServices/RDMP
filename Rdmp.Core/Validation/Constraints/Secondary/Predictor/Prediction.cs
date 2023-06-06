@@ -31,10 +31,7 @@ public class Prediction : SecondaryConstraint
 
     public Prediction(PredictionRule rule, string targetColumn)
     {
-        if(rule == null)
-            throw new ArgumentException("You must specify a PredictionRule to follow","rule");
-
-        Rule = rule;
+        Rule = rule ?? throw new ArgumentException("You must specify a PredictionRule to follow",nameof(rule));
         TargetColumn = targetColumn;
     }
 
@@ -76,9 +73,8 @@ public class Prediction : SecondaryConstraint
 
     public override string GetHumanReadableDescriptionOfValidation()
     {
-        if (Rule == null)
-            return "Normally checks input against prediction rule but no rule has yet been configured";
-
-        return $"Checks that input follows its prediciton rule: '{Rule.GetType().Name}'";
+        return Rule == null
+            ? "Normally checks input against prediction rule but no rule has yet been configured"
+            : $"Checks that input follows its prediction rule: '{Rule.GetType().Name}'";
     }
 }

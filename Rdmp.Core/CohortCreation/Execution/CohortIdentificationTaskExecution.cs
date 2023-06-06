@@ -65,7 +65,7 @@ public class CohortIdentificationTaskExecution: IDisposable
             _cmdCount.Cancel();
         }
 
-        if (_rIds != null && !_rIds.IsClosed)
+        if (_rIds is { IsClosed: false })
         {
             try
             {
@@ -76,7 +76,7 @@ public class CohortIdentificationTaskExecution: IDisposable
             }
         }
 
-        if (_rCumulative != null && !_rCumulative.IsClosed)
+        if (_rCumulative is { IsClosed: false })
         {
             try
             {

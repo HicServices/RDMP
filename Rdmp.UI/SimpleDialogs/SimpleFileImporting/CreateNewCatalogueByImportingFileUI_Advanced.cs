@@ -60,12 +60,12 @@ public partial class CreateNewCatalogueByImportingFileUI_Advanced : UserControl
         // 
         // configureAndExecutePipeline1
         // 
-        configureAndExecutePipeline1.Dock = System.Windows.Forms.DockStyle.Fill;
+        configureAndExecutePipeline1.Dock = DockStyle.Fill;
         configureAndExecutePipeline1.Location = new System.Drawing.Point(0, 0);
         configureAndExecutePipeline1.Name = "configureAndExecutePipeline1";
         configureAndExecutePipeline1.Size = new System.Drawing.Size(979, 894);
         configureAndExecutePipeline1.TabIndex = 14;
-        Controls.Add(this.configureAndExecutePipeline1);
+        Controls.Add(configureAndExecutePipeline1);
 
         configureAndExecutePipeline1.PipelineExecutionFinishedsuccessfully += ConfigureAndExecutePipeline1OnPipelineExecutionFinishedsuccessfully;
 
@@ -96,7 +96,7 @@ public partial class CreateNewCatalogueByImportingFileUI_Advanced : UserControl
                 else
                     MessageBox.Show("User cancelled Catalogue creation, data has been loaded and TableInfo/ColumnInfos exist in Data Catalogue but there will be no Catalogue");
 
-                this.ParentForm.Close();
+                ParentForm.Close();
             }
             catch (Exception e)
             {

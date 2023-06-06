@@ -43,7 +43,7 @@ public class ExpectedIdenticalStringsException : Exception
             {
                  
                 message = $"{message}{Environment.NewLine}Strings differ at index {i}";
-                message = message + GetPreviewsAround(i, expected, actual);
+                message += GetPreviewsAround(i, expected, actual);
                     
 
                 return message;

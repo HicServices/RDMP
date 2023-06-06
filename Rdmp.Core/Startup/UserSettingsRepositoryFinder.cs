@@ -68,7 +68,7 @@ public class UserSettingsRepositoryFinder : IRDMPPlatformRepositoryServiceLocato
         CommentStore commentStore = null;
             
         //if we have a catalogue repository with loaded MEF then grab it
-        if (_linkedRepositoryProvider != null && _linkedRepositoryProvider.CatalogueRepository != null)
+        if (_linkedRepositoryProvider is { CatalogueRepository: not null })
         {
 
             if(_linkedRepositoryProvider.CatalogueRepository.MEF != null)
@@ -101,7 +101,10 @@ public class UserSettingsRepositoryFinder : IRDMPPlatformRepositoryServiceLocato
         if (newrepo.CatalogueRepository != null)
         {
             //and the new repo doesn't have MEF loaded
-            if(newrepo.CatalogueRepository.MEF != null && !newrepo.CatalogueRepository.MEF.HaveDownloadedAllAssemblies && mef != null && mef.HaveDownloadedAllAssemblies)
+            if(newrepo.CatalogueRepository.MEF is { HaveDownloadedAllAssemblies: false } && mef is
+               {
+                   HaveDownloadedAllAssemblies: true
+               })
                 //use the old MEF    
                 newrepo.CatalogueRepository.MEF = mef;
 

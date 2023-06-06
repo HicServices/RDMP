@@ -95,7 +95,7 @@ public partial class DatabaseColumnRequestUI : UserControl
         }
     }
 
-    private void tbExplicitDbType_TextChanged(object sender, System.EventArgs e)
+    private void tbExplicitDbType_TextChanged(object sender, EventArgs e)
     {
         ResetVisibility();
             
@@ -105,7 +105,7 @@ public partial class DatabaseColumnRequestUI : UserControl
         _column.ExplicitDbType = tbExplicitDbType.Text;
     }
 
-    private void ddManagedType_SelectedIndexChanged(object sender, System.EventArgs e)
+    private void ddManagedType_SelectedIndexChanged(object sender, EventArgs e)
     {
         ResetVisibility();
 

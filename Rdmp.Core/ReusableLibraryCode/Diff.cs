@@ -342,7 +342,7 @@ public class Diff {
                 // Debug.Write(0, "SMS", "extend forward path " + k.ToString());
 
                 // find the only or better starting point
-                int x, y;
+                int x;
                 if (k == DownK - D) {
                     x = DownVector[DownOffset + k+1]; // down
                 } else {
@@ -350,7 +350,7 @@ public class Diff {
                     if ((k < DownK + D) && (DownVector[DownOffset + k+1] >= x))
                         x = DownVector[DownOffset + k+1]; // down
                 }
-                y = x - k;
+                var y = x - k;
 
                 // find the end of the furthest reaching forward D-path in diagonal k.
                 while ((x < UpperA) && (y < UpperB) && (DataA.data[x] == DataB.data[y])) {
@@ -376,7 +376,7 @@ public class Diff {
                 // Debug.Write(0, "SMS", "extend reverse path " + k.ToString());
 
                 // find the only or better starting point
-                int x, y;
+                int x;
                 if (k == UpK + D) {
                     x = UpVector[UpOffset + k-1]; // up
                 } else {
@@ -384,7 +384,7 @@ public class Diff {
                     if ((k > UpK - D) && (UpVector[UpOffset + k-1] < x))
                         x = UpVector[UpOffset + k-1]; // up
                 } // if
-                y = x - k;
+                var y = x - k;
 
                 while ((x > LowerA) && (y > LowerB) && (DataA.data[x-1] == DataB.data[y-1])) {
                     x--; y--; // diagonal
@@ -463,7 +463,6 @@ public class Diff {
     /// dynamic array
     private static Item[] CreateDiffs(DiffData DataA, DiffData DataB) {
         var a = new ArrayList();
-        Item []result;
 
         int StartA, StartB;
         int LineA, LineB;
@@ -503,7 +502,7 @@ public class Diff {
             } // if
         } // while
 
-        result = new Item[a.Count];
+        var result = new Item[a.Count];
         a.CopyTo(result);
 
         return (result);

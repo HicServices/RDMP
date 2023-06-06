@@ -23,17 +23,17 @@ public class PersistStringHelper
     /// <summary>
     /// The string to use to divide objects declared within a collection e.g. ',' in [RepoType:ObjectType:ID,RepoType:ObjectType:ID]
     /// </summary>
-    public const string CollectionObjectSeparator = ",";
+    public const char CollectionObjectSeparator = ',';
 
     /// <summary>
     /// The string to use to indicate the start of an objects collection e.g. '[' in  [RepoType:ObjectType:ID,RepoType:ObjectType:ID]
     /// </summary>
-    public const string CollectionStartDelimiter = "[";
+    public const char CollectionStartDelimiter = '[';
 
     /// <summary>
     /// The string to use to indicate the end of an objects collection e.g. ']' in  [RepoType:ObjectType:ID,RepoType:ObjectType:ID]
     /// </summary>
-    public const string CollectionEndDelimiter = "]";
+    public const char CollectionEndDelimiter = ']';
 
     /// <summary>
     /// The string to use to separate logic portions of a persistence string e.g. ':"  in  [RepoType:ObjectType:ID,RepoType:ObjectType:ID]
@@ -65,15 +65,11 @@ public class PersistStringHelper
     /// <returns></returns>
     public Dictionary<string, string> LoadDictionaryFromString(string str)
     {
-        if(String.IsNullOrWhiteSpace(str))
+        if(string.IsNullOrWhiteSpace(str))
             return new Dictionary<string, string>();
 
         var rootElement = XElement.Parse(str);
-        var dict = new Dictionary<string, string>();
-        foreach (var el in rootElement.Elements())
-            dict.Add(el.Name.LocalName, el.Value);
-
-        return dict;
+        return rootElement.Elements().ToDictionary(el => el.Name.LocalName, el => el.Value);
     }
 
     /// <summary>
@@ -88,10 +84,7 @@ public class PersistStringHelper
     {
         var dict = LoadDictionaryFromString(persistString);
 
-        if(dict.ContainsKey(key))
-            return dict[key];
-            
-        return null;
+        return dict.TryGetValue(key, out var s) ? s : null;
     }
 
     /// <summary>
@@ -108,7 +101,7 @@ public class PersistStringHelper
         sb.Append(CollectionStartDelimiter);
 
         //where obj is <RepositoryType>:<DatabaseObjectType>:<ObjectID>
-        sb.Append(String.Join(CollectionObjectSeparator, objects.Select(o => o.Repository.GetType().FullName + Separator + o.GetType().FullName + Separator + o.ID)));
+        sb.Append(string.Join(CollectionObjectSeparator, objects.Select(o => o.Repository.GetType().FullName + Separator + o.GetType().FullName + Separator + o.ID)));
             
         //ending bracket for the object collection
         sb.Append(CollectionEndDelimiter);
@@ -128,9 +121,8 @@ public class PersistStringHelper
         try
         {
             //match the starting delimiter
-            var pattern = Regex.Escape(CollectionStartDelimiter);
-            pattern += "(.*)";//then anything
-            pattern += Regex.Escape(CollectionEndDelimiter);//then the ending delimiter
+            var pattern =
+                $"{Regex.Escape(CollectionStartDelimiter.ToString())}(.*){Regex.Escape(CollectionEndDelimiter.ToString())}";//then the ending delimiter
 
             return Regex.Match(persistenceString, pattern).Groups[1].Value;
         }
@@ -152,7 +144,7 @@ public class PersistStringHelper
     {
         var toReturn = new List<IMapsDirectlyToDatabaseTable>();
 
-        allObjectsString = allObjectsString.Trim(CollectionStartDelimiter.ToCharArray()[0], CollectionEndDelimiter.ToCharArray()[0]);
+        allObjectsString = allObjectsString.Trim(CollectionStartDelimiter, CollectionEndDelimiter);
 
         var objectStrings = allObjectsString.Split(new[] { CollectionObjectSeparator }, StringSplitOptions.RemoveEmptyEntries);
 
@@ -164,7 +156,7 @@ public class PersistStringHelper
                 throw new PersistenceException(
                     $"Could not figure out what database object to fetch because the list contained an item with an invalid number of tokens ({objectTokens.Length} tokens).  The current object string is:{Environment.NewLine}{objectString}");
 
-            var dbObj = repositoryLocator.GetArbitraryDatabaseObject(objectTokens[0], objectTokens[1], Int32.Parse(objectTokens[2]));
+            var dbObj = repositoryLocator.GetArbitraryDatabaseObject(objectTokens[0], objectTokens[1], int.Parse(objectTokens[2]));
 
             if (dbObj != null)
                 toReturn.Add(dbObj);
@@ -183,10 +175,7 @@ public class PersistStringHelper
     /// <returns></returns>
     public string GetExtraText(string persistString)
     {
-        if (!persistString.Contains(ExtraText))
-            return null;
-
-        return persistString.Substring(persistString.IndexOf(ExtraText, StringComparison.Ordinal) + ExtraText.Length);
+        return !persistString.Contains(ExtraText) ? null : persistString[(persistString.IndexOf(ExtraText, StringComparison.Ordinal) + ExtraText.Length)..];
     }
 
 

@@ -38,11 +38,7 @@ public class CacheRunner : Runner
         var dataLoadTask = cp.GetDistinctLoggingTask();
 
         var defaults = repositoryLocator.CatalogueRepository;
-        var loggingServer = defaults.GetDefaultFor(PermissableDefaults.LiveLoggingServer_ID);
-
-        if (loggingServer == null)
-            throw new NotSupportedException("No default logging server specified, you must specify one in ");
-
+        var loggingServer = defaults.GetDefaultFor(PermissableDefaults.LiveLoggingServer_ID) ?? throw new NotSupportedException("No default logging server specified, you must specify one in ");
         var logManager = new LogManager(loggingServer);
 
         logManager.CreateNewLoggingTaskIfNotExists(dataLoadTask);
@@ -56,12 +52,13 @@ public class CacheRunner : Runner
                 var forkListener = new ForkDataLoadEventListener(toLog, listener);
                 try
                 {
-                    var cachingHost = new CachingHost(repositoryLocator.CatalogueRepository);
-                    cachingHost.RetryMode = _options.RetryMode;
-                    cachingHost.CacheProgress =  cp; //run the cp
-
-                    //By default caching host will block 
-                    cachingHost.TerminateIfOutsidePermissionWindow = true;
+                    var cachingHost = new CachingHost(repositoryLocator.CatalogueRepository)
+                    {
+                        RetryMode = _options.RetryMode,
+                        CacheProgress = cp, //run the cp
+                        //By default caching host will block 
+                        TerminateIfOutsidePermissionWindow = true
+                    };
 
                     cachingHost.Start(forkListener, token);
                 }

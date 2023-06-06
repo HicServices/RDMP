@@ -75,12 +75,12 @@ public class CacheLagPeriod
     /// <param name="cacheLagPeriod"></param>
     internal CacheLagPeriod(string cacheLagPeriod)
     {
-        var type = cacheLagPeriod.Substring(cacheLagPeriod.Length - 1);
+        var type = cacheLagPeriod[^1..];
         SetTypeFromString(type);
 
         Duration = string.IsNullOrWhiteSpace(cacheLagPeriod)
             ? DefaultDuration
-            : Convert.ToInt32(cacheLagPeriod.Substring(0, cacheLagPeriod.Length - 1));
+            : Convert.ToInt32(cacheLagPeriod[..^1]);
     }
 
     /// <summary>

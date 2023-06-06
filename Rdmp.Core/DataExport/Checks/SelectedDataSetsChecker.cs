@@ -175,8 +175,7 @@ public class SelectedDataSetsChecker : ICheckable
 
         var nonSelectedCore = cata.GetAllExtractionInformation(ExtractionCategory.Core)
             .Union(cata.GetAllExtractionInformation(ExtractionCategory.ProjectSpecific))
-            .Where(ei => !ei.IsExtractionIdentifier &&
-                         !selectedcols.OfType<ExtractableColumn>().Any(ec => ec.CatalogueExtractionInformation_ID == ei.ID))
+            .Where(ei => !ei.IsExtractionIdentifier && selectedcols.OfType<ExtractableColumn>().All(ec => ec.CatalogueExtractionInformation_ID != ei.ID))
             .ToArray();
 
         if (nonSelectedCore.Any())
@@ -346,7 +345,7 @@ public class SelectedDataSetsChecker : ICheckable
         if (cols.Any(c => c?.ExtractionCategory == category))
         {
             notifier.OnCheckPerformed(new CheckEventArgs(errorCode, configuration, dataset,
-                String.Join(",", cols.Where(c => c?.ExtractionCategory == category)
+                string.Join(",", cols.Where(c => c?.ExtractionCategory == category)
                     .Select(c => c.GetRuntimeName()))));
         }
     }

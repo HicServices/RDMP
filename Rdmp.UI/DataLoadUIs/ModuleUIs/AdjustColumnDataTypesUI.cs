@@ -36,7 +36,7 @@ public partial class AdjustColumnDataTypesUI : Form, IDatabaseColumnRequestAdjus
         ShowDialog();
     }
 
-    private void btnDone_Click(object sender, System.EventArgs e)
+    private void btnDone_Click(object sender, EventArgs e)
     {
         if (_columns == null)
             throw new Exception("AdjustColumns was not called yet");

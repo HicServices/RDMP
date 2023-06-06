@@ -36,7 +36,7 @@ public class AttacherRuntimeTask : RuntimeTask, IMEFRuntimeTask
             
         if (string.IsNullOrWhiteSpace(task.Path))
             throw new ArgumentException(
-                $"Path is blank for ProcessTask '{task}' - it should be a class name of type {typeof(IAttacher).Name}");
+                $"Path is blank for ProcessTask '{task}' - it should be a class name of type {nameof(IAttacher)}");
 
         Attacher = mef.CreateA<IAttacher>(ProcessTask.Path);
         SetPropertiesForClass(RuntimeArguments, Attacher);

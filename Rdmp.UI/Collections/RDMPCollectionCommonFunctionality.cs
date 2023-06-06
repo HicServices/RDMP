@@ -363,8 +363,8 @@ public partial class RDMPCollectionCommonFunctionality : IRefreshBusSubscriber
             lastInvalidatedCache = DateTime.Now;
         }
 
-        if(cache.ContainsKey(sum))
-            return cache[sum];
+        if(cache.TryGetValue(sum, out var body))
+            return body;
 
         var sb = new StringBuilder();
         sb.AppendLine(sum.GetSummary(false, false));
@@ -384,7 +384,7 @@ public partial class RDMPCollectionCommonFunctionality : IRefreshBusSubscriber
 
                 if(val.Length>100)
                 {
-                    val = $"{val.Substring(0, 100)}...";
+                    val = $"{val[..100]}...";
                 }
 
                 sb.AppendLine($"{kvp.Key}: {val}");
@@ -455,7 +455,7 @@ public partial class RDMPCollectionCommonFunctionality : IRefreshBusSubscriber
 
         var disableable = e.Model as IDisableable;
 
-        if (disableable != null && disableable.IsDisabled)
+        if (disableable is { IsDisabled: true })
         {
             e.Item.ForeColor = Color.FromArgb(152,152,152);
                 
@@ -730,23 +730,20 @@ public partial class RDMPCollectionCommonFunctionality : IRefreshBusSubscriber
         
     private ContextMenuStrip GetMenuWithCompatibleConstructorIfExists(object o, IMasqueradeAs oMasquerader = null)
     {
-        var args = new RDMPContextMenuStripArgs(_activator,Tree,o);
-        args.Masquerader = oMasquerader ?? o as IMasqueradeAs;
+        var args = new RDMPContextMenuStripArgs(_activator,Tree,o)
+        {
+            Masquerader = oMasquerader ?? o as IMasqueradeAs
+        };
 
         var objectConstructor = new ObjectConstructor();
 
         var oType = o.GetType();
 
         //if we have encountered this object type before
-        if (_cachedMenuCompatibility.ContainsKey(oType))
+        if (_cachedMenuCompatibility.TryGetValue(oType, out var compatibleMenu))
         {
-            var compatibleMenu = _cachedMenuCompatibility[oType];
-                
             //we know there are no menus compatible with o
-            if (compatibleMenu == null)
-                return null;
-
-            return ConstructMenu(objectConstructor, _cachedMenuCompatibility[oType], args, o);
+            return compatibleMenu == null ? null : ConstructMenu(objectConstructor, compatibleMenu, args, o);
         }
                 
 
@@ -760,20 +757,16 @@ public partial class RDMPCollectionCommonFunctionality : IRefreshBusSubscriber
             var menu = ConstructMenu(objectConstructor,menuType,args,o);
 
             //find first menu that's compatible
-            if (menu != null)
-            {
-                if (!_cachedMenuCompatibility.ContainsKey(oType))
-                    _cachedMenuCompatibility.Add(oType, menu.GetType());
+            if (menu == null) continue;
+            _cachedMenuCompatibility.TryAdd(oType, menu.GetType());
 
-                return menu;
-            }
+            return menu;
         }
 
         //we know there are no menus compatible with this type
-        if (!_cachedMenuCompatibility.ContainsKey(oType))
-            _cachedMenuCompatibility.Add(oType, null);
+        _cachedMenuCompatibility.TryAdd(oType, null);
 
-        //there are no derrived classes with compatible constructors
+        //there are no derived classes with compatible constructors
         return null;
     }
 
@@ -785,9 +778,8 @@ public partial class RDMPCollectionCommonFunctionality : IRefreshBusSubscriber
         //parameter 2 must be object compatible Type
 
         var menu = (RDMPContextMenuStrip)objectConstructor.ConstructIfPossible(type, args, o);
-            
-        if(menu != null)
-            menu.AddCommonMenuItems(this);
+
+        menu?.AddCommonMenuItems(this);
 
         return menu;
     }
@@ -829,14 +821,11 @@ public partial class RDMPCollectionCommonFunctionality : IRefreshBusSubscriber
             {
                 coll.Add(item);
 
-                if (item is ToolStripMenuItem mi)
-                {
+                if (item is ToolStripMenuItem { DropDownItems.Count: > 0 } mi)
                     // if menu item has submenus
-                    if (mi.DropDownItems.Count > 0)
-                    {
-                        // sort those too - recurisvely
-                        OrderMenuItems(mi.DropDownItems);
-                    }
+                {
+                    // sort those too - recurisvely
+                    OrderMenuItems(mi.DropDownItems);
                 }
             }
 

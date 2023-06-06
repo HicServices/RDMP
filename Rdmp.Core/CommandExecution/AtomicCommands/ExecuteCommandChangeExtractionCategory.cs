@@ -30,7 +30,7 @@ public class ExecuteCommandChangeExtractionCategory : BasicCommandExecution
             SetImpossible("No ExtractionInformations found");
 
         _extractionInformations = eis;
-        this._category = category;
+        _category = category;
 
         _isProjectSpecific = false;
 

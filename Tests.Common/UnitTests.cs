@@ -107,7 +107,7 @@ public class UnitTests
     /// <typeparam name="T">Type of object you want to create</typeparam>
     /// <returns></returns>
     /// <exception cref="NotSupportedException">If there is not yet an implementation for the given T.  Feel free to write one.</exception>
-    //[MethodImpl(MethodImplOptions.AggressiveInlining)]
+    [MethodImpl(MethodImplOptions.AggressiveInlining)]
     protected T WhenIHaveA<T>() where T : DatabaseEntity
     {
         return WhenIHaveA<T>(Repository);
@@ -121,6 +121,7 @@ public class UnitTests
     /// <typeparam name="T">Type of object you want to create</typeparam>
     /// <returns></returns>
     /// <exception cref="NotSupportedException">If there is not yet an implementation for the given T.  Feel free to write one.</exception>
+    [MethodImpl(MethodImplOptions.AggressiveInlining)]
     public static T WhenIHaveA<T>(MemoryDataExportRepository repository) where T : DatabaseEntity
     {
         if (typeof(T) == typeof(Catalogue))
@@ -164,9 +165,7 @@ public class UnitTests
 
         if (typeof(T) == typeof(AggregateConfiguration))
         {
-            ExtractionInformation dateEi;
-            ExtractionInformation otherEi;
-            return (T)(object)WhenIHaveA<AggregateConfiguration>(repository,out dateEi, out otherEi);
+            return (T)(object)WhenIHaveA<AggregateConfiguration>(repository,out _, out _);
         }
 
         if (typeof(T) == typeof(ExternalDatabaseServer))
@@ -176,8 +175,7 @@ public class UnitTests
 
         if (typeof(T) == typeof(ANOTable))
         {
-            ExternalDatabaseServer server;
-            return (T)(object)WhenIHaveA<ANOTable>(repository, out server);
+            return (T)(object)WhenIHaveA<ANOTable>(repository, out _);
         }
 
         if (typeof(T) == typeof(LoadMetadata))
@@ -256,14 +254,12 @@ public class UnitTests
 
         if (typeof (T) == typeof(ObjectExport))
         {
-            ShareManager sm;
-            return (T)(object)WhenIHaveA<ObjectExport>(repository, out sm);
+            return (T)(object)WhenIHaveA<ObjectExport>(repository, out _);
         }
             
         if (typeof (T) == typeof(ObjectImport))
         {
-            ShareManager sm;
-            var export = WhenIHaveA<ObjectExport>(repository, out sm);
+            var export = WhenIHaveA<ObjectExport>(repository, out var sm);
             return (T)(object)sm.GetImportAs(export.SharingUID, WhenIHaveA<Catalogue>(repository));
         }
             
@@ -304,9 +300,7 @@ public class UnitTests
             
         if (typeof (T) == typeof(AggregateContinuousDateAxis))
         {
-            ExtractionInformation dateEi;
-            ExtractionInformation otherEi;
-            var config = WhenIHaveA<AggregateConfiguration>(repository, out dateEi,out otherEi);
+            var config = WhenIHaveA<AggregateConfiguration>(repository, out var dateEi,out _);
                 
             //remove the other Ei
             config.AggregateDimensions[0].DeleteInDatabase();
@@ -420,7 +414,7 @@ public class UnitTests
         }
 
         if (typeof (T) == typeof(PreLoadDiscardedColumn))
-            return (T)(object)new PreLoadDiscardedColumn(repository,WhenIHaveA<TableInfo>(repository),"MyDiscardedColum");
+            return (T)(object)new PreLoadDiscardedColumn(repository,WhenIHaveA<TableInfo>(repository),"MyDiscardedColumn");
                         
                        
         if (typeof (T) == typeof(ProcessTask))
@@ -772,10 +766,10 @@ public class UnitTests
         var memObjectsArr = memObjects.OrderBy(o => o.ID).ToArray();
         var dbObjectsArr = dbObjects.OrderBy(o => o.ID).ToArray();
 
-        Assert.AreEqual(memObjectsArr.Count(), dbObjectsArr.Count());
+        Assert.AreEqual(memObjectsArr.Length, dbObjectsArr.Length);
 
-        for (var i = 0; i < memObjectsArr.Count(); i++)
-            UnitTests.AssertAreEqual(memObjectsArr[i], dbObjectsArr[i],firstIteration);
+        for (var i = 0; i < memObjectsArr.Length; i++)
+            AssertAreEqual(memObjectsArr[i], dbObjectsArr[i],firstIteration);
     }
 
     /// <summary>

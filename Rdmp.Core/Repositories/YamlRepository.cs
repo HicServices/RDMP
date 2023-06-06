@@ -450,16 +450,12 @@ public class YamlRepository : MemoryDataExportRepository
                     continue;
 
                 var valDictionary = new Dictionary<DataAccessContext, DataAccessCredentials>();
-                foreach(var credentialUsage in tableToCredentialUsage.Value)
+                foreach(var (usage, value) in tableToCredentialUsage.Value)
                 {
-                    var credential = GetObjectByIDIfExists<DataAccessCredentials>(credentialUsage.Value);
-                    var usage = credentialUsage.Key;
+                    var credential = GetObjectByIDIfExists<DataAccessCredentials>(value);
 
-                    // Credentials deleted on the sly
-                    if (credential == null)
-                        continue;
-                    
-                    valDictionary.Add(usage, credential);
+                    // Credentials can be deleted on the sly
+                    if (credential != null) valDictionary.Add(usage, credential);
                 }
 
                 CredentialsDictionary.Add(table, valDictionary);
@@ -617,7 +613,7 @@ public class YamlRepository : MemoryDataExportRepository
                 return new CohortContainerContent(repository.GetObjectByID<CohortAggregateContainer>(ID), Order);
             }
 
-            throw new System.Exception($"Unexpected IOrderable Type name '{Type}'");
+            throw new Exception($"Unexpected IOrderable Type name '{Type}'");
         }
     }
 

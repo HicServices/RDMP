@@ -81,7 +81,7 @@ public partial class CohortCreationRequestUI : RDMPForm
         if (Project.ProjectNumber == null)
         {
             MessageBox.Show(
-                $"Project {Project} does not have a project number yet, you must asign it one before it can be involved in cohort creation");
+                $"Project {Project} does not have a project number yet, you must assign it one before it can be involved in cohort creation");
             return;
         }
 
@@ -101,9 +101,7 @@ public partial class CohortCreationRequestUI : RDMPForm
         }
         else if (rbRevisedCohort.Checked)
         {
-
-            var existing = ddExistingCohort.SelectedItem as ExtractableCohort;
-            if (existing == null)
+            if (ddExistingCohort.SelectedItem is not ExtractableCohort existing)
             {
                 MessageBox.Show("You must select an existing cohort");
                 return;
@@ -120,17 +118,21 @@ public partial class CohortCreationRequestUI : RDMPForm
 
             
         //construct the result
-        Result = new CohortCreationRequest(Project, new CohortDefinition(null, name, version, (int)Project.ProjectNumber, _target), (IDataExportRepository)Project.Repository, tbDescription.Text);
-            
-        Result.NewCohortDefinition.CohortReplacedIfAny = ddExistingCohort.SelectedItem as ExtractableCohort;
-            
+        Result = new CohortCreationRequest(Project, new CohortDefinition(null, name, version, (int)Project.ProjectNumber, _target), (IDataExportRepository)Project.Repository, tbDescription.Text)
+            {
+                NewCohortDefinition =
+                {
+                    CohortReplacedIfAny = ddExistingCohort.SelectedItem as ExtractableCohort
+                }
+            };
+
         //see if it is passing checks
         var notifier = new ToMemoryCheckNotifier();
         Result.Check(notifier);
         if (notifier.GetWorst() <= CheckResult.Warning)
         {
-            this.DialogResult = DialogResult.OK;
-            this.Close();
+            DialogResult = DialogResult.OK;
+            Close();
         }
         else
         {
@@ -149,8 +151,8 @@ public partial class CohortCreationRequestUI : RDMPForm
     private void btnCancel_Click(object sender, EventArgs e)
     {
         Result = null;
-        this.DialogResult = DialogResult.Cancel;
-        this.Close();
+        DialogResult = DialogResult.Cancel;
+        Close();
     }
         
     private void rbNewCohort_CheckedChanged(object sender, EventArgs e)
@@ -296,8 +298,8 @@ public partial class CohortCreationRequestUI : RDMPForm
         btnClear.Visible = Project != null;
             
         //if a project is selected and the project has no project number
-        lblErrorNoProjectNumber.Visible = Project != null && Project.ProjectNumber == null;
-        tbSetProjectNumber.Visible = Project != null && Project.ProjectNumber == null;
+        lblErrorNoProjectNumber.Visible = Project is { ProjectNumber: null };
+        tbSetProjectNumber.Visible = Project is { ProjectNumber: null };
     }
 
     private void tbName_TextChanged(object sender, EventArgs e)

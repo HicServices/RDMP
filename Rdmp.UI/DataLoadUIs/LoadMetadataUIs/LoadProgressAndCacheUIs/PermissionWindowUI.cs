@@ -68,7 +68,7 @@ public partial class PermissionWindowUI : PermissionWindowUI_Design, ISaveableUI
 
     private void PopulatePeriodTextBoxForDay(TextBox textBox, int dayNum, Dictionary<int, List<PermissionWindowPeriod>> periodsByDay)
     {
-        if (periodsByDay.ContainsKey(dayNum)) PopulateTextBox(textBox, periodsByDay[dayNum]);
+        if (periodsByDay.TryGetValue(dayNum, out var value)) PopulateTextBox(textBox, value);
     }
 
     private void PopulateTextBox(TextBox textBox, IEnumerable<PermissionWindowPeriod> periods)
@@ -83,12 +83,10 @@ public partial class PermissionWindowUI : PermissionWindowUI_Design, ISaveableUI
         foreach (var periodString in listString.Split(new[] {","}, StringSplitOptions.RemoveEmptyEntries))
         {
             var parts = periodString.Split(new[] {"-"}, StringSplitOptions.RemoveEmptyEntries);
-            TimeSpan start;
-            if (!TimeSpan.TryParse(parts[0], out start))
+            if (!TimeSpan.TryParse(parts[0], out var start))
                 throw new Exception($"Could not parse {parts[0]} as a TimeSpan");
 
-            TimeSpan end;
-            if (!TimeSpan.TryParse(parts[1], out end))
+            if (!TimeSpan.TryParse(parts[1], out var end))
                 throw new Exception($"Could not parse {parts[1]} as a TimeSpan");
 
             periodList.Add(new PermissionWindowPeriod(dayOfWeek, start, end));

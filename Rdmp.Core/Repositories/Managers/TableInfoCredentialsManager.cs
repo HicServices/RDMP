@@ -202,14 +202,15 @@ class TableInfoCredentialsManager : ITableInfoCredentialsManager
     /// <inheritdoc/>
     public Dictionary<DataAccessContext, List<ITableInfo>> GetAllTablesUsingCredentials(DataAccessCredentials credentials)
     {
-        var toReturn = new Dictionary<DataAccessContext, List<int>>();
+        var toReturn = new Dictionary<DataAccessContext, List<int>>
+        {
+            { DataAccessContext.Any, new List<int>() },
+            { DataAccessContext.DataExport, new List<int>() },
+            { DataAccessContext.DataLoad, new List<int>() },
+            { DataAccessContext.InternalDataProcessing, new List<int>() },
+            { DataAccessContext.Logging, new List<int>() }
+        };
 
-        toReturn.Add(DataAccessContext.Any, new List<int>());
-        toReturn.Add(DataAccessContext.DataExport, new List<int>());
-        toReturn.Add(DataAccessContext.DataLoad, new List<int>());
-        toReturn.Add(DataAccessContext.InternalDataProcessing, new List<int>());
-        toReturn.Add(DataAccessContext.Logging, new List<int>());
-            
         using (var con = _repository.GetConnection())
         {
             using (var cmd = DatabaseCommandHelper.GetCommand(
@@ -288,7 +289,7 @@ class TableInfoCredentialsManager : ITableInfoCredentialsManager
     {
         //if it's not a valid context something has gone very wrong
         DataAccessContext context;
-        if (!DataAccessContext.TryParse((string) r["Context"], out context))
+        if (!Enum.TryParse((string) r["Context"], out context))
             throw new Exception($"Invalid DataAccessContext {r["Context"]}");
 
         return context;

@@ -109,7 +109,7 @@ public class DashboardControlFactory
     private UserControl CreateControl(Type t)
     {
         if (!IsCompatibleType(t))
-            throw new ArgumentException($"Type '{t}' is not a compatible Type", "t");
+            throw new ArgumentException($"Type '{t}' is not a compatible Type", nameof(t));
 
         var constructor = new ObjectConstructor();
         var instance = (UserControl)constructor.Construct(t);

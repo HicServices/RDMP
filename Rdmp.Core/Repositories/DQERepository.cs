@@ -44,11 +44,7 @@ public class DQERepository : TableRepository, IDQERepository
     {
         CatalogueRepository = catalogueRepository;
 
-        var server = CatalogueRepository.GetDefaultFor(PermissableDefaults.DQE);
-
-        if (server == null)
-            throw new NotSupportedException("There is no DataQualityEngine Reporting Server (ExternalDatabaseServer).  You will need to create/set one in CatalogueManager by using 'Locations=>Manage External Servers...'");
-
+        var server = CatalogueRepository.GetDefaultFor(PermissableDefaults.DQE) ?? throw new NotSupportedException("There is no DataQualityEngine Reporting Server (ExternalDatabaseServer).  You will need to create/set one in CatalogueManager by using 'Locations=>Manage External Servers...'");
         DiscoveredServer = DataAccessPortal.GetInstance().ExpectServer(server, DataAccessContext.InternalDataProcessing);
         _connectionStringBuilder = DiscoveredServer.Builder;
     }
@@ -71,7 +67,7 @@ public class DQERepository : TableRepository, IDQERepository
     /// <inheritdoc/>
     public Evaluation GetMostRecentEvaluationFor(ICatalogue c)
     {
-        return GetAllEvaluationsFor(c).OrderByDescending(e => e.DateOfEvaluation).FirstOrDefault();
+        return GetAllEvaluationsFor(c).MaxBy(e => e.DateOfEvaluation);
     }
 
     /// <inheritdoc/>

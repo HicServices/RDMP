@@ -64,11 +64,7 @@ public class ExecuteCommandCreateNewCohortByExecutingACohortIdentificationConfig
     {
         base.Execute();
 
-        var cic = _cic;
-
-        if (cic == null)
-            cic = (CohortIdentificationConfiguration)BasicActivator.SelectOne("Select Cohort Builder Query", BasicActivator.GetAll<CohortIdentificationConfiguration>().ToArray());
-
+        var cic = _cic ?? (CohortIdentificationConfiguration)BasicActivator.SelectOne("Select Cohort Builder Query", BasicActivator.GetAll<CohortIdentificationConfiguration>().ToArray());
         if (cic == null)
             return;
 
@@ -91,7 +87,7 @@ public class ExecuteCommandCreateNewCohortByExecutingACohortIdentificationConfig
 
         request.CohortIdentificationConfiguration = cic;
 
-        var configureAndExecute = GetConfigureAndExecuteControl(request, $"Execute CIC {cic} and commmit results",cic);
+        var configureAndExecute = GetConfigureAndExecuteControl(request, $"Execute CIC {cic} and commit results",cic);
 
         configureAndExecute.PipelineExecutionFinishedsuccessfully += (s,u)=>OnImportCompletedSuccessfully(s,u,cic);
 

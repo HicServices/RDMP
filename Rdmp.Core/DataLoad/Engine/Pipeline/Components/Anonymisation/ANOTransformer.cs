@@ -87,12 +87,8 @@ public class ANOTransformer
                 continue;
                 
             //its not null so look up the mapped value
-            var substitutionRow = substitutionTable.Rows.Find(valueToReplace);
-
-            if (substitutionRow == null)
-                throw new Exception(
+            var substitutionRow = substitutionTable.Rows.Find(valueToReplace) ?? throw new Exception(
                     $"Substitution table returned by {SubstitutionStoredprocedure} did not contain a mapping for identifier {valueToReplace}(Substitution Table had {substitutionTable.Rows.Count} rows)");
-
             var substitutionValue = substitutionRow[1];//substitution value
                 
             //overwrite the value with the substitution

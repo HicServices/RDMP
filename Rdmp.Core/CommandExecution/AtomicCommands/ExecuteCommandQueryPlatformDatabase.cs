@@ -59,7 +59,7 @@ public class ExecuteCommandQueryPlatformDatabase : ExecuteCommandViewDataBase
         {
             db = GetDatabase(BasicActivator.RepositoryLocator.DataExportRepository);
 
-            _query = _query ?? "Select * from Project";
+            _query ??= "Select * from Project";
             _table = db?.ExpectTable("Project");
             return;
         }
@@ -67,7 +67,7 @@ public class ExecuteCommandQueryPlatformDatabase : ExecuteCommandViewDataBase
         {
             db = GetDatabase(BasicActivator.RepositoryLocator.CatalogueRepository);
 
-            _query = _query ?? "Select * from Catalogue";
+            _query ??= "Select * from Catalogue";
             _table = db?.ExpectTable("Catalogue");
             return;
         }

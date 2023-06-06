@@ -49,13 +49,13 @@ public partial class DatasetRaceway : RDMPUserControl, IDashboardableControl
     {
         InitializeComponent();
 
-        this.btnAddCatalogue.Click += btnAddCatalogue_Click;
-        this.btnRemoveAll.Click += btnRemoveAll_Click;
-        this.ddShowPeriod.DropDownClosed += ddShowPeriod_DropDownClosed;
+        btnAddCatalogue.Click += btnAddCatalogue_Click;
+        btnRemoveAll.Click += btnRemoveAll_Click;
+        ddShowPeriod.DropDownClosed += ddShowPeriod_DropDownClosed;
 
-        this.cbIgnoreRowCounts.CheckOnClick = true;
-        this.cbIgnoreRowCounts.CheckedChanged += this.cbIgnoreRowCounts_CheckedChanged;
-        this.btnAddExtractableDatasetPackage.Click += btnAddExtractableDatasetPackage_Click;
+        cbIgnoreRowCounts.CheckOnClick = true;
+        cbIgnoreRowCounts.CheckedChanged += cbIgnoreRowCounts_CheckedChanged;
+        btnAddExtractableDatasetPackage.Click += btnAddExtractableDatasetPackage_Click;
             
         ddShowPeriod.ComboBox.DataSource = Enum.GetValues(typeof (RacewayShowPeriod));
             
@@ -111,7 +111,7 @@ public partial class DatasetRaceway : RDMPUserControl, IDashboardableControl
         racewayRenderArea.AddTracks(_activator,cataloguesToAdd, buckets, _collection.IgnoreRows);
         racewayRenderArea.Refresh();
 
-        this.Invalidate();
+        Invalidate();
     }
 
     private DateTime[] GetBuckets(Dictionary<Catalogue, Dictionary<DateTime, ArchivalPeriodicityCount>> cataloguesDictionary)

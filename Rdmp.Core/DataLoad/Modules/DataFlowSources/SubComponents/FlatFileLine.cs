@@ -58,6 +58,6 @@ public class FlatFileLine
 
     public string GetLineDescription()
     {
-        return string.Format("line {0}",LineNumber);
+        return $"line {LineNumber}";
     }
 }

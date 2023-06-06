@@ -93,17 +93,13 @@ public class CohortQueryBuilderDependency
         var eis = cohortSet?.AggregateDimensions?.Where(d => d.IsExtractionIdentifier).ToArray();
             
         //Multiple IsExtractionIdentifier columns is a big problem but it's handled elsewhere
-        if(eis != null && eis.Length == 1)
+        if(eis is { Length: 1 })
             ExtractionIdentifierColumn = eis[0];
             
         if (PatientIndexTableIfAny != null)
         {
             var join = _childProvider.AllJoinables.SingleOrDefault(j =>
-                j.ID == PatientIndexTableIfAny.JoinableCohortAggregateConfiguration_ID);
-
-            if(join == null)
-                throw new Exception("ICoreChildProvider did not know about the provided patient index table");
-
+                j.ID == PatientIndexTableIfAny.JoinableCohortAggregateConfiguration_ID) ?? throw new Exception("ICoreChildProvider did not know about the provided patient index table");
             JoinedTo = _childProvider.AllAggregateConfigurations.SingleOrDefault(ac =>
                 ac.ID == join.AggregateConfiguration_ID);
 

@@ -395,11 +395,11 @@ public class SqlQueryBuilderHelper
                         .ToArray();
                     
                 //if we have discarded all but 1 it is the only table that does not have any lookup descriptions in it so clearly the correct table to start joins from
-                if (winners.Count() == 1)
+                if (winners.Length == 1)
                     firstTable = winners[0];
                 else
                     throw new QueryBuildingException(
-                        $"There were {qb.TablesUsedInQuery.Count} Tables ({String.Join(",", qb.TablesUsedInQuery)}) involved in the query, some of them might have been lookup tables but there was no clear table to start joining from, either mark one of the TableInfos IsPrimaryExtractionTable or refine your query columns / create new lookup relationships");
+                        $"There were {qb.TablesUsedInQuery.Count} Tables ({string.Join(",", qb.TablesUsedInQuery)}) involved in the query, some of them might have been lookup tables but there was no clear table to start joining from, either mark one of the TableInfos IsPrimaryExtractionTable or refine your query columns / create new lookup relationships");
             }
                 
             toReturn += firstTable.Name; //simple case "FROM tableX"
@@ -606,7 +606,7 @@ public class SqlQueryBuilderHelper
             toReturn += currentContainer.Operation + Environment.NewLine;
 
         //output each filter also make sure it is tabbed in correctly
-        for (var i = 0; i < filtersInContainer.Count(); i++)
+        for (var i = 0; i < filtersInContainer.Length; i++)
         {
             if (qb.CheckSyntax)
                 filtersInContainer[i].Check(new ThrowImmediatelyCheckNotifier());
@@ -621,7 +621,7 @@ public class SqlQueryBuilderHelper
             toReturn += tabs + singleLineWhereSQL + Environment.NewLine;
 
             //if there are more filters to come
-            if (i + 1 < filtersInContainer.Count())
+            if (i + 1 < filtersInContainer.Length)
                 toReturn += tabs + currentContainer.Operation + Environment.NewLine;
 
         }
@@ -732,11 +732,11 @@ public class SqlQueryBuilderHelper
                 yield return new CustomLine("AND" , QueryComponent.WHERE); //otherwise just AND it with every other filter we currently have configured
 
             //add user custom Filter lines
-            for (var i = 0; i < lines.Count(); i++)
+            for (var i = 0; i < lines.Length; i++)
             {
                 yield return lines[i];
 
-                if (i + 1 < lines.Count())
+                if (i + 1 < lines.Length)
                     yield return new CustomLine("AND" , QueryComponent.WHERE);
             }
             yield break;
