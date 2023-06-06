@@ -43,8 +43,8 @@ public class DataLoadProgressUpdateInfo : ICustomUIDrivenClass, ICheckable
         if (lines.Length > 0)
         {
             var fields = lines[0].Split(';');
-            if (fields.Length > 0)
-                if (Enum.TryParse(fields[0], out DataLoadProgressUpdateStrategy strat))
+            if(fields.Length>0)
+                if (Enum.TryParse(fields[0], out strat))
                     Strategy = strat;
 
             if (fields.Length > 1)

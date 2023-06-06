@@ -92,9 +92,7 @@ public class PrematureLoadEnder : IPluginMutilateDataTables
 
         if (ConditionsToTerminateUnder == PrematureLoadEndCondition.NoFilesInForLoading)
         {
-            if (job is not IDataLoadJob dataLoadJob)
-                throw new Exception($"IDataLoadEventListener {job} was not an IDataLoadJob (very unexpected)");
-
+            var dataLoadJob = job as IDataLoadJob ?? throw new Exception($"IDataLoadEventListener {job} was not an IDataLoadJob (very unexpected)");
             job.OnNotify(this, new NotifyEventArgs(ProgressEventType.Information,
                 $"About to check ForLoading directory for files, the directory is:{dataLoadJob.LoadDirectory.ForLoading.FullName}"));
 

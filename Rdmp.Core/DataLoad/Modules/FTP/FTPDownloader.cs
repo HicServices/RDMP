@@ -53,8 +53,7 @@ public class FTPDownloader : IPluginDataProvider
     [DemandsInitialization("The timeout to use when connecting to the FTP server in SECONDS")]
     public int TimeoutInSeconds { get; set; }
 
-    [DemandsInitialization(
-        "Tick to delete files from the FTP server when the load is succesful (ends with .Success not .OperationNotRequired - which happens when LoadNotRequired state).  This will only delete the files if they were actually fetched from the FTP server.  If the files were already in forLoading then the remote files are not deleted")]
+    [DemandsInitialization("Tick to delete files from the FTP server when the load is successful (ends with .Success not .OperationNotRequired - which happens when LoadNotRequired state).  This will only delete the files if they were actually fetched from the FTP server.  If the files were already in forLoading then the remote files are not deleted")]
     public bool DeleteFilesOffFTPServerAfterSuccesfulDataLoad { get; set; }
 
     [DemandsInitialization(
@@ -184,7 +183,7 @@ public class FTPDownloader : IPluginDataProvider
                 : $"ftp://{_host}";
 
 #pragma warning disable SYSLIB0014 // Type or member is obsolete
-            var reqFTP = (FtpWebRequest)WebRequest.Create(new Uri(uri));
+            reqFTP = (FtpWebRequest)WebRequest.Create(new Uri(uri));
 #pragma warning restore SYSLIB0014 // Type or member is obsolete
             reqFTP.UseBinary = true;
             reqFTP.Credentials = new NetworkCredential(_username, _password);
@@ -238,7 +237,7 @@ public class FTPDownloader : IPluginDataProvider
         if (serverUri.Scheme != Uri.UriSchemeFtp) return;
 
 #pragma warning disable SYSLIB0014 // Type or member is obsolete
-        var reqFTP = (FtpWebRequest)WebRequest.Create(new Uri(uri));
+        reqFTP = (FtpWebRequest)WebRequest.Create(new Uri(uri));
 #pragma warning restore SYSLIB0014 // Type or member is obsolete
         reqFTP.Credentials = new NetworkCredential(_username, _password);
         reqFTP.KeepAlive = false;
@@ -288,11 +287,9 @@ public class FTPDownloader : IPluginDataProvider
             foreach (var file in _filesRetrieved)
             {
                 FtpWebRequest reqFTP;
-#pragma warning disable SYSLIB0014
-                // Type or member is obsolete
+#pragma warning disable SYSLIB0014 // Type or member is obsolete
                 reqFTP = (FtpWebRequest)WebRequest.Create(new Uri(file));
-#pragma warning restore SYSLIB0014
-                // Type or member is obsolete
+#pragma warning restore SYSLIB0014 // Type or member is obsolete
                 reqFTP.Credentials = new NetworkCredential(_username, _password);
                 reqFTP.KeepAlive = false;
                 reqFTP.Method = WebRequestMethods.Ftp.DeleteFile;

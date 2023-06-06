@@ -160,7 +160,7 @@ public partial class ExceptionViewerStackTraceWithHyperlinks : Form
         {
             Clipboard.SetText($"{Path.GetFileName(filename)}:{lineNumber}");
 
-            var viewer = new ViewSourceCodeDialog(filename, lineNumber, Color.LawnGreen);
+            var viewer = new ViewSourceCodeDialog(filename, lineNumber,Color.LawnGreen);
             viewer.ShowDialog();
         }
         catch (FileNotFoundException)

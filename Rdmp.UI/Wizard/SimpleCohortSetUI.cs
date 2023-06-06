@@ -235,11 +235,10 @@ public partial class SimpleCohortSetUI : UserControl
             ResolveMultipleExtractionIdentifiers = (s, e) => cbxColumns.SelectedItem as ExtractionInformation
         };
 
-        var cmd = new ExecuteCommandAddCatalogueToCohortIdentificationSetContainer(_activator, cataCommand,
-            targetContainer)
-        {
-            SkipMandatoryFilterCreation = true
-        };
+        var cmd = new ExecuteCommandAddCatalogueToCohortIdentificationSetContainer(_activator,cataCommand ,targetContainer)
+            {
+                SkipMandatoryFilterCreation = true
+            };
         cmd.Execute();
 
         var aggregate = cmd.AggregateCreatedIfAny;

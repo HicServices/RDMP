@@ -61,8 +61,7 @@ public abstract class RuntimeTask : DataLoadComponent, IRuntimeTask, ICheckable
         foreach (var propertyInfo in toSetPropertiesOf.GetType().GetProperties())
         {
             //see if any demand initialization
-            var initialization = (DemandsInitializationAttribute)Attribute.GetCustomAttributes(propertyInfo)
-                .FirstOrDefault(a => a is DemandsInitializationAttribute);
+            var initialization = (DemandsInitializationAttribute)Attribute.GetCustomAttributes(propertyInfo).FirstOrDefault(a => a is DemandsInitializationAttribute) ;
 
             //this one does
             if (initialization != null)

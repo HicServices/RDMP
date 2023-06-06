@@ -207,7 +207,10 @@ public abstract class BasicActivateItems : IBasicActivateItems
     }
 
     /// <inheritdoc/>
-    public virtual IEnumerable<Type> GetIgnoredCommands() => Type.EmptyTypes;
+    public virtual IEnumerable<Type> GetIgnoredCommands()
+    {
+        return Type.EmptyTypes;
+    }
 
     /// <inheritdoc/>
     public virtual void Wait(string title, Task task, CancellationTokenSource cts)
@@ -482,8 +485,8 @@ public abstract class BasicActivateItems : IBasicActivateItems
                     databaseObject = descendancy.Parents.OfType<DatabaseEntity>().LastOrDefault();
             }
 
-            if (deleteable is IMasqueradeAs @as)
-                databaseObject ??= @as.MasqueradingAs() as DatabaseEntity;
+            if (deleteable is IMasqueradeAs)
+                databaseObject ??= ((IMasqueradeAs)deleteable).MasqueradingAs() as DatabaseEntity;
 
             if (databaseObject == null)
                 throw new NotSupportedException(
@@ -647,18 +650,20 @@ public abstract class BasicActivateItems : IBasicActivateItems
         int version;
         var projectNumber = project?.ProjectNumber;
 
-        if (!TypeText("Name", "Enter name for cohort", 255, null, out var name, false))
-            throw new Exception("User chose not to enter a name for the cohortand none was provided");
+        if(!TypeText("Name","Enter name for cohort",255,null,out name,false))
+            throw new Exception("User chose not to enter a name for the cohort and none was provided");
 
 
-        if (projectNumber == null)
-            if (SelectValueType("enter project number", typeof(int), 0, out var chosen))
+        if(projectNumber == null)
+            if(SelectValueType("enter project number",typeof(int),0,out var chosen))
+            {
                 projectNumber = (int)chosen;
             else
                 throw new Exception("User chose not to enter a Project number and none was provided");
 
-
-        if (SelectValueType("enter version number for cohort", typeof(int), 0, out var chosenVersion))
+            
+        if(SelectValueType("enter version number for cohort",typeof(int),0,out var chosenVersion))
+        {
             version = (int)chosenVersion;
         else
             throw new Exception("User chose not to enter a version number and none was provided");
@@ -687,9 +692,7 @@ public abstract class BasicActivateItems : IBasicActivateItems
             // Mark the columns specified IsExtractionIdentifier
             foreach (var col in extractionIdentifierColumns)
             {
-                var match = eis.FirstOrDefault(ei => ei.ColumnInfo?.ID == col.ID) ??
-                            throw new ArgumentException(
-                                $"Supplied ColumnInfo {col.GetRuntimeName()} was not found amongst the columns created");
+                var match = eis.FirstOrDefault(ei=>ei.ColumnInfo?.ID == col.ID) ?? throw new ArgumentException($"Supplied ColumnInfo {col.GetRuntimeName()} was not found amongst the columns created");
                 match.IsExtractionIdentifier = true;
                 match.SaveToDatabase();
             }

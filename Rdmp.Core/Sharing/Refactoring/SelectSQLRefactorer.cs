@@ -32,15 +32,14 @@ public class SelectSQLRefactorer
     public static void RefactorTableName(IColumn column, IHasFullyQualifiedNameToo tableName,
         string newFullySpecifiedTableName)
     {
-        var ci = column.ColumnInfo ??
-                 throw new RefactoringException($"Cannot refactor '{column}' because its ColumnInfo was null");
+        var ci = column.ColumnInfo ?? throw new RefactoringException($"Cannot refactor '{column}' because its ColumnInfo was null");
         var fullyQualifiedName = tableName.GetFullyQualifiedName();
 
         if (!column.SelectSQL.Contains(fullyQualifiedName))
             throw new RefactoringException(
                 $"IColumn '{column}' did not contain the fully specified table name during refactoring ('{fullyQualifiedName}'");
 
-        if (!newFullySpecifiedTableName.Contains('.'))
+        if(!newFullySpecifiedTableName.Contains('.'))
             throw new RefactoringException(
                 $"Replacement table name was not fully specified, value passed was '{newFullySpecifiedTableName}' which did not contain any dots");
 
@@ -167,10 +166,10 @@ public class SelectSQLRefactorer
         var syntaxHelper = table.GetQuerySyntaxHelper();
         var db = table.GetDatabaseRuntimeName(Curation.Data.DataLoad.LoadStage.PostLoad);
 
-        if (!table.Name.StartsWith(syntaxHelper.EnsureWrapped(db)))
-            return $"Table with Name '{table.Name}' has incorrect database propery '{table.Database}'";
+        if(!table.Name.StartsWith(syntaxHelper.EnsureWrapped(db)))
+            return $"Table with Name '{table.Name}' has incorrect database property '{table.Database}'";
 
-        if (table.Name != table.GetFullyQualifiedName())
+        if(table.Name != table.GetFullyQualifiedName())
             return
                 $"Table name '{table.Name}' did not match the expected fully qualified name '{table.GetFullyQualifiedName()}'";
 
@@ -193,10 +192,10 @@ public class SelectSQLRefactorer
     public static int RefactorTableName(ITableInfo tableInfo, string oldFullyQualifiedTableName,
         string newFullyQualifiedTableName)
     {
-        if (!IsRefactorable(tableInfo))
+        if(!IsRefactorable(tableInfo))
             throw new RefactoringException(
                 $"TableInfo {tableInfo} is not refactorable because {GetReasonNotRefactorable(tableInfo)}");
-
+                        
         var updatesMade = 0;
 
         //if it's a new name

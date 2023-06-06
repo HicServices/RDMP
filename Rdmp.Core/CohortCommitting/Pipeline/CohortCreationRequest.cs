@@ -129,11 +129,10 @@ public sealed class CohortCreationRequest : PipelineUseCase, ICohortCreationRequ
         if (Project.ProjectNumber == null)
             throw new ProjectNumberException($"Project '{Project}' does not have a ProjectNumber");
 
-        var definition = new CohortDefinition(null, origCohortData.ExternalDescription,
-            origCohortData.ExternalVersion + 1, (int)Project.ProjectNumber, origCohort.ExternalCohortTable)
-        {
-            CohortReplacedIfAny = origCohort
-        };
+        var definition = new CohortDefinition(null, origCohortData.ExternalDescription, origCohortData.ExternalVersion + 1,(int) Project.ProjectNumber, origCohort.ExternalCohortTable)
+            {
+                CohortReplacedIfAny = origCohort
+            };
 
         NewCohortDefinition = definition;
         DescriptionForAuditLog = "Cohort Refresh";
@@ -263,6 +262,8 @@ public sealed class CohortCreationRequest : PipelineUseCase, ICohortCreationRequ
         return NewCohortDefinition.Description;
     }
 
-    public string GetSummary(bool includeName, bool includeId) =>
-        $"External Cohort Table: {NewCohortDefinition?.LocationOfCohort}";
+    public string GetSummary(bool includeName, bool includeId)
+    {
+        return $"External Cohort Table: {NewCohortDefinition?.LocationOfCohort}";
+    }
 }

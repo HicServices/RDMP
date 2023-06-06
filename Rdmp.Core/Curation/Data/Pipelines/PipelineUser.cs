@@ -55,10 +55,7 @@ public class PipelineUser : IPipelineUser
         //otherwise get it from the user
         if (_catalogueRepository == null)
         {
-            if (User.Repository == null)
-                throw new Exception("User does not have a Repository! how can it be a DatabaseEntity!");
-
-            _catalogueRepository = User.Repository as ICatalogueRepository;
+            _catalogueRepository = User.Repository as ICatalogueRepository ?? throw new Exception("User does not have a Repository! how can it be a DatabaseEntity!");
 
             if (User.Repository is IDataExportRepository dataExportRepo)
                 _catalogueRepository = dataExportRepo.CatalogueRepository;

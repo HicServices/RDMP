@@ -106,8 +106,11 @@ public class UnitTests
     /// <typeparam name="T">Type of object you want to create</typeparam>
     /// <returns></returns>
     /// <exception cref="NotSupportedException">If there is not yet an implementation for the given T.  Feel free to write one.</exception>
-    //[MethodImpl(MethodImplOptions.AggressiveInlining)]
-    protected T WhenIHaveA<T>() where T : DatabaseEntity => WhenIHaveA<T>(Repository);
+    [MethodImpl(MethodImplOptions.AggressiveInlining)]
+    protected T WhenIHaveA<T>() where T : DatabaseEntity
+    {
+        return WhenIHaveA<T>(Repository);
+    }
 
 
     /// <summary>
@@ -117,6 +120,7 @@ public class UnitTests
     /// <typeparam name="T">Type of object you want to create</typeparam>
     /// <returns></returns>
     /// <exception cref="NotSupportedException">If there is not yet an implementation for the given T.  Feel free to write one.</exception>
+    [MethodImpl(MethodImplOptions.AggressiveInlining)]
     public static T WhenIHaveA<T>(MemoryDataExportRepository repository) where T : DatabaseEntity
     {
         if (typeof(T) == typeof(Catalogue))
@@ -158,12 +162,17 @@ public class UnitTests
         }
 
         if (typeof(T) == typeof(AggregateConfiguration))
-            return (T)(object)WhenIHaveA<AggregateConfiguration>(repository, out var dateEi, out var otherEi);
+        {
+            return (T)(object)WhenIHaveA<AggregateConfiguration>(repository,out _, out _);
+        }
 
         if (typeof(T) == typeof(ExternalDatabaseServer))
             return (T)(object)Save(new ExternalDatabaseServer(repository, "My Server", null));
 
-        if (typeof(T) == typeof(ANOTable)) return (T)(object)WhenIHaveA<ANOTable>(repository, out var server);
+        if (typeof(T) == typeof(ANOTable))
+        {
+            return (T)(object)WhenIHaveA<ANOTable>(repository, out _);
+        }
 
         if (typeof(T) == typeof(LoadMetadata))
         {
@@ -242,6 +251,11 @@ public class UnitTests
 
         if (typeof(T) == typeof(ObjectImport))
         {
+            return (T)(object)WhenIHaveA<ObjectExport>(repository, out _);
+        }
+            
+        if (typeof (T) == typeof(ObjectImport))
+        {
             var export = WhenIHaveA<ObjectExport>(repository, out var sm);
             return (T)(object)sm.GetImportAs(export.SharingUID, WhenIHaveA<Catalogue>(repository));
         }
@@ -277,17 +291,8 @@ public class UnitTests
 
         if (typeof(T) == typeof(LoadModuleAssembly))
         {
-            var dll = Path.Combine(TestContext.CurrentContext.TestDirectory, "a.nupkg");
-            File.WriteAllBytes(dll, new byte[] { 0x11 });
-
-            return (T)(object)new LoadModuleAssembly(repository, new FileInfo(dll),
-                WhenIHaveA<Rdmp.Core.Curation.Data.Plugin>(repository));
-        }
-
-        if (typeof(T) == typeof(AggregateContinuousDateAxis))
-        {
-            var config = WhenIHaveA<AggregateConfiguration>(repository, out var dateEi, out var otherEi);
-
+            var config = WhenIHaveA<AggregateConfiguration>(repository, out var dateEi,out _);
+                
             //remove the other Ei
             config.AggregateDimensions[0].DeleteInDatabase();
             //add the date one
@@ -399,9 +404,12 @@ public class UnitTests
             return (T)comp.CreateArgumentsForClassIfNotExists<ColumnForbidder>().First();
         }
 
-        if (typeof(T) == typeof(PreLoadDiscardedColumn))
-            return (T)(object)new PreLoadDiscardedColumn(repository, WhenIHaveA<TableInfo>(repository),
-                "MyDiscardedColum");
+        if (typeof (T) == typeof(PreLoadDiscardedColumn))
+            return (T)(object)new PreLoadDiscardedColumn(repository,WhenIHaveA<TableInfo>(repository),"MyDiscardedColumn");
+                        
+                       
+        if (typeof (T) == typeof(ProcessTask))
+            return (T)(object)new ProcessTask(repository,WhenIHaveA<LoadMetadata>(repository),LoadStage.AdjustRaw);
 
 
         if (typeof(T) == typeof(ProcessTask))
@@ -776,7 +784,7 @@ public class UnitTests
         Assert.AreEqual(memObjectsArr.Length, dbObjectsArr.Length);
 
         for (var i = 0; i < memObjectsArr.Length; i++)
-            AssertAreEqual(memObjectsArr[i], dbObjectsArr[i], firstIteration);
+            AssertAreEqual(memObjectsArr[i], dbObjectsArr[i],firstIteration);
     }
 
     /// <summary>

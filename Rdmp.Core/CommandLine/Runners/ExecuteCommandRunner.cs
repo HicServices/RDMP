@@ -164,7 +164,7 @@ internal class ExecuteCommandRunner : IRunner
     {
         if (command.Contains(' '))
         {
-            picker = new CommandLineObjectPicker(SplitCommandLine(command).Skip(1).ToArray(), _input);
+            picker = new CommandLineObjectPicker(SplitCommandLine(command).Skip(1).ToArray(),_input);
             return command[..command.IndexOf(' ')];
         }
 

@@ -29,8 +29,8 @@ namespace Rdmp.Core.Tests.DataLoad.Engine.Integration;
 
 public class FlatFileAttacherTests : DatabaseTests
 {
-    private LoadDirectory LoadDirectory;
-    private DirectoryInfo parentDir;
+    private LoadDirectory _loadDirectory;
+    DirectoryInfo _parentDir;
     private DiscoveredDatabase _database;
     private DiscoveredTable _table;
 
@@ -40,14 +40,14 @@ public class FlatFileAttacherTests : DatabaseTests
         base.SetUp();
 
         var workingDir = new DirectoryInfo(TestContext.CurrentContext.TestDirectory);
-        parentDir = workingDir.CreateSubdirectory("FlatFileAttacherTests");
+        _parentDir = workingDir.CreateSubdirectory("FlatFileAttacherTests");
 
-        var toCleanup = parentDir.GetDirectories().SingleOrDefault(d => d.Name.Equals("Test_CSV_Attachment"));
+        var toCleanup = _parentDir.GetDirectories().SingleOrDefault(d => d.Name.Equals("Test_CSV_Attachment"));
         toCleanup?.Delete(true);
 
-        LoadDirectory = LoadDirectory.CreateDirectoryStructure(parentDir, "Test_CSV_Attachment");
-
-        // create a separate builder for setting an initial catalog on (need to figure out how best to stop child classes changing ServerICan... as this then causes TearDown to fail)
+        _loadDirectory = LoadDirectory.CreateDirectoryStructure(_parentDir, "Test_CSV_Attachment");
+            
+        // create a separate builder for setting an initial catalogue on (need to figure out how best to stop child classes changing ServerICan... as this then causes TearDown to fail)
         _database = GetCleanedServer(DatabaseType.MicrosoftSQLServer);
 
         using (var con = _database.Server.GetConnection())
@@ -68,7 +68,8 @@ public class FlatFileAttacherTests : DatabaseTests
     [TestCase(",", true)]
     public void Test_CSV_Attachment(string separator, bool overrideHeaders)
     {
-        var filename = Path.Combine(LoadDirectory.ForLoading.FullName, "bob.csv");
+            
+        var filename = Path.Combine(_loadDirectory.ForLoading.FullName, "bob.csv");
         var sw = new StreamWriter(filename);
 
         sw.WriteLine("name,name2");
@@ -80,7 +81,7 @@ public class FlatFileAttacherTests : DatabaseTests
         sw.Dispose();
 
 
-        var filename2 = Path.Combine(LoadDirectory.ForLoading.FullName, "bob2.csv");
+        var filename2 = Path.Combine(_loadDirectory.ForLoading.FullName, "bob2.csv");
         var sw2 = new StreamWriter(filename2);
 
         sw2.WriteLine("name,name2");
@@ -91,7 +92,7 @@ public class FlatFileAttacherTests : DatabaseTests
         sw2.Dispose();
 
         var attacher = new AnySeparatorFileAttacher();
-        attacher.Initialize(LoadDirectory, _database);
+        attacher.Initialize(_loadDirectory, _database);
         attacher.Separator = separator;
         attacher.FilePattern = "bob*";
         attacher.TableName = "Bob";
@@ -150,7 +151,7 @@ public class FlatFileAttacherTests : DatabaseTests
     [Test]
     public void Test_ExplicitDateTimeFormat_Attachment()
     {
-        var filename = Path.Combine(LoadDirectory.ForLoading.FullName, "bob.csv");
+        var filename = Path.Combine(_loadDirectory.ForLoading.FullName, "bob.csv");
         var sw = new StreamWriter(filename);
 
         sw.WriteLine("name,name2");
@@ -162,7 +163,7 @@ public class FlatFileAttacherTests : DatabaseTests
         sw.Dispose();
 
         var attacher = new AnySeparatorFileAttacher();
-        attacher.Initialize(LoadDirectory, _database);
+        attacher.Initialize(_loadDirectory, _database);
         attacher.Separator = ",";
         attacher.FilePattern = "bob*";
         attacher.TableName = "Bob";
@@ -201,7 +202,7 @@ public class FlatFileAttacherTests : DatabaseTests
     [Test]
     public void TabTestWithOverrideHeaders()
     {
-        var filename = Path.Combine(LoadDirectory.ForLoading.FullName, "bob.csv");
+        var filename = Path.Combine(_loadDirectory.ForLoading.FullName, "bob.csv");
         var sw = new StreamWriter(filename);
 
         sw.WriteLine("Face\tBasher");
@@ -212,7 +213,7 @@ public class FlatFileAttacherTests : DatabaseTests
         sw.Dispose();
 
         var attacher = new AnySeparatorFileAttacher();
-        attacher.Initialize(LoadDirectory, _database);
+        attacher.Initialize(_loadDirectory, _database);
         attacher.Separator = "\\t";
         attacher.FilePattern = "bob*";
         attacher.TableName = "Bob";
@@ -243,7 +244,7 @@ public class FlatFileAttacherTests : DatabaseTests
     [TestCase(false)]
     public void TabTestWithOverrideHeaders_IncludePath(bool columnExistsInRaw)
     {
-        var filename = Path.Combine(LoadDirectory.ForLoading.FullName, "bob.csv");
+        var filename = Path.Combine(_loadDirectory.ForLoading.FullName, "bob.csv");
         var sw = new StreamWriter(filename);
 
         sw.WriteLine("Face\tBasher");
@@ -257,7 +258,7 @@ public class FlatFileAttacherTests : DatabaseTests
             _table.AddColumn("FilePath", new DatabaseTypeRequest(typeof(string), 500), true, 30);
 
         var attacher = new AnySeparatorFileAttacher();
-        attacher.Initialize(LoadDirectory, _database);
+        attacher.Initialize(_loadDirectory, _database);
         attacher.Separator = "\\t";
         attacher.FilePattern = "bob*";
         attacher.TableName = "Bob";
@@ -301,7 +302,7 @@ public class FlatFileAttacherTests : DatabaseTests
     [TestCase(false)]
     public void TestTableInfo(bool usenamer)
     {
-        var filename = Path.Combine(LoadDirectory.ForLoading.FullName, "bob.csv");
+        var filename = Path.Combine(_loadDirectory.ForLoading.FullName, "bob.csv");
         var sw = new StreamWriter(filename);
 
         sw.WriteLine("name,name2");
@@ -312,10 +313,10 @@ public class FlatFileAttacherTests : DatabaseTests
         sw.Close();
         sw.Dispose();
 
-        Import(_table, out var ti, out var cols);
+        Import(_table, out var ti, out _);
 
         var attacher = new AnySeparatorFileAttacher();
-        attacher.Initialize(LoadDirectory, _database);
+        attacher.Initialize(_loadDirectory, _database);
         attacher.Separator = ",";
         attacher.FilePattern = "bob*";
         attacher.TableToLoad = ti;
@@ -356,7 +357,7 @@ public class FlatFileAttacherTests : DatabaseTests
     [Test]
     public void Test_FlatFileAttacher_IgnoreColumns()
     {
-        var filename = Path.Combine(LoadDirectory.ForLoading.FullName, "bob.csv");
+        var filename = Path.Combine(_loadDirectory.ForLoading.FullName, "bob.csv");
         var sw = new StreamWriter(filename);
 
         sw.WriteLine("name,name2,address");
@@ -366,15 +367,16 @@ public class FlatFileAttacherTests : DatabaseTests
         sw.Flush();
         sw.Close();
         sw.Dispose();
+        Import(_table, out var ti, out _);
 
-        Import(_table, out var ti, out var cols);
-
-        var attacher = new AnySeparatorFileAttacher();
-        attacher.Initialize(LoadDirectory, _database);
-        attacher.Separator = ",";
-        attacher.FilePattern = "bob*";
-        attacher.TableToLoad = ti;
-        attacher.IgnoreColumns = "address";
+        var attacher = new AnySeparatorFileAttacher
+        {
+            Separator = ",",
+            FilePattern = "bob*",
+            TableToLoad = ti,
+            IgnoreColumns = "address"
+        };
+        attacher.Initialize(_loadDirectory, _database);
 
         var job = new ThrowImmediatelyDataLoadJob(new HICDatabaseConfiguration(_database.Server, null), ti);
 
@@ -417,7 +419,7 @@ public class FlatFileAttacherTests : DatabaseTests
     {
         Thread.CurrentThread.CurrentCulture = new CultureInfo(threadCulture);
 
-        var filename = Path.Combine(LoadDirectory.ForLoading.FullName, "bob.csv");
+        var filename = Path.Combine(_loadDirectory.ForLoading.FullName, "bob.csv");
         var sw = new StreamWriter(filename);
 
         sw.WriteLine("dob");
@@ -435,7 +437,7 @@ public class FlatFileAttacherTests : DatabaseTests
             );
 
 
-        Import(tbl, out var ti, out _);
+        Import(tbl,out var ti,out _);
         var attacher = new AnySeparatorFileAttacher
         {
             Separator = ",",
@@ -443,9 +445,9 @@ public class FlatFileAttacherTests : DatabaseTests
             TableName = tbl.GetRuntimeName(),
             Culture = new CultureInfo(attacherCulture)
         };
-        attacher.Initialize(LoadDirectory, db);
-
-        var job = new ThrowImmediatelyDataLoadJob(new HICDatabaseConfiguration(_database.Server, null), ti);
+        attacher.Initialize(_loadDirectory, db);
+            
+        var job = new ThrowImmediatelyDataLoadJob(new HICDatabaseConfiguration(_database.Server, null),ti);
 
         var exitCode = attacher.Attach(job, new GracefulCancellationToken());
         Assert.AreEqual(ExitCodeType.Success, exitCode);

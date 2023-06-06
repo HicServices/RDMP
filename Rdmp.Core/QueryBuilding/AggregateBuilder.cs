@@ -194,8 +194,8 @@ public class AggregateBuilder : ISqlQueryBuilder
     /// <param name="aggregateConfigurationIfAny"><see cref="AggregateConfiguration"/> containing columns, filters, parameters etc for the GROUP BY</param>
     public AggregateBuilder(string limitationSQL, string countSQL, AggregateConfiguration aggregateConfigurationIfAny)
     {
-        if (limitationSQL != null && limitationSQL.Trim().StartsWith("top", StringComparison.CurrentCultureIgnoreCase))
-            throw new Exception("Use AggregateTopX property instead of limitation SQL to acheive this");
+        if (limitationSQL != null && limitationSQL.Trim().StartsWith("top",StringComparison.CurrentCultureIgnoreCase))
+            throw new Exception("Use AggregateTopX property instead of limitation SQL to achieve this");
 
         _aggregateConfigurationIfAny = aggregateConfigurationIfAny;
         LimitationSQL = limitationSQL;
@@ -320,9 +320,8 @@ public class AggregateBuilder : ISqlQueryBuilder
 
         //tell the count column what language it is
         if (_countColumn != null)
-        {
-            _isCohortIdentificationAggregate = _aggregateConfigurationIfAny != null &&
-                                               _aggregateConfigurationIfAny.IsCohortIdentificationAggregate;
+        {    
+            _isCohortIdentificationAggregate = _aggregateConfigurationIfAny is { IsCohortIdentificationAggregate: true };
 
             //if it is not a cic aggregate then make sure it has an alias e.g. count(*) AS MyCount.  cic aggregates take extreme liberties with this field like passing in 'distinct chi' and '*' and other wacky stuff that is so not cool
             _countColumn.SetQuerySyntaxHelper(QuerySyntaxHelper, !_isCohortIdentificationAggregate);

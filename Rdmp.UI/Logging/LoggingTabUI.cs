@@ -194,8 +194,8 @@ public class LoggingTabUI : LoggingTab_Design
         lblCurrentFilter = new Label();
         pFilter = new Panel();
         panel1 = new Panel();
-        ((ISupportInitialize)dataGridView1).BeginInit();
-        ((ISupportInitialize)pbRemoveFilter).BeginInit();
+        ((ISupportInitialize)(dataGridView1)).BeginInit();
+        ((ISupportInitialize)(pbRemoveFilter)).BeginInit();
         pFilter.SuspendLayout();
         panel1.SuspendLayout();
         SuspendLayout();
@@ -216,9 +216,9 @@ public class LoggingTabUI : LoggingTab_Design
         // 
         // pbRemoveFilter
         // 
-        pbRemoveFilter.Anchor = (AnchorStyles)(AnchorStyles.Top | AnchorStyles.Right);
+        pbRemoveFilter.Anchor = ((AnchorStyles)((AnchorStyles.Top | AnchorStyles.Right)));
         pbRemoveFilter.BackColor = Color.Goldenrod;
-        pbRemoveFilter.Image = (Image)resources.GetObject("pbRemoveFilter.Image");
+        pbRemoveFilter.Image = ((Image)(resources.GetObject("pbRemoveFilter.Image")));
         pbRemoveFilter.Location = new Point(820, 3);
         pbRemoveFilter.Name = "pbRemoveFilter";
         pbRemoveFilter.Size = new Size(19, 19);
@@ -229,8 +229,8 @@ public class LoggingTabUI : LoggingTab_Design
         // 
         // lblCurrentFilter
         // 
-        lblCurrentFilter.Anchor = (AnchorStyles)(AnchorStyles.Top | AnchorStyles.Left
-                                                                  | AnchorStyles.Right);
+        lblCurrentFilter.Anchor = ((AnchorStyles)(((AnchorStyles.Top | AnchorStyles.Left) 
+                                                                             | AnchorStyles.Right)));
         lblCurrentFilter.BackColor = Color.Goldenrod;
         lblCurrentFilter.ForeColor = SystemColors.ControlLightLight;
         lblCurrentFilter.Location = new Point(3, 3);
@@ -265,11 +265,12 @@ public class LoggingTabUI : LoggingTab_Design
         Controls.Add(panel1);
         Name = "LoggingTabUI";
         Size = new Size(842, 571);
-        ((ISupportInitialize)dataGridView1).EndInit();
-        ((ISupportInitialize)pbRemoveFilter).EndInit();
+        ((ISupportInitialize)(dataGridView1)).EndInit();
+        ((ISupportInitialize)(pbRemoveFilter)).EndInit();
         pFilter.ResumeLayout(false);
         panel1.ResumeLayout(false);
         ResumeLayout(false);
+
     }
 
     #endregion
@@ -292,9 +293,9 @@ public class LoggingTabUI : LoggingTab_Design
 
     public void SetFilter(LogViewerFilter filter)
     {
-        if (
-            _navigationTrack != null && _navigationTrack.Current != null //there is a back navigation stack setup
-                                     && filter != _navigationTrack.Current //we are not doing a Back operation
+        if(
+            _navigationTrack is { Current: not null } //there is a back navigation stack setup
+            && filter != _navigationTrack.Current //we are not doing a Back operation
         )
             _navigationTrack.Current.Tag =
                 tbContentFilter

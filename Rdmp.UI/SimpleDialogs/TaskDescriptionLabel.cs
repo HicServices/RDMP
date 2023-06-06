@@ -33,14 +33,14 @@ public partial class TaskDescriptionLabel : UserControl
 
         tbEntryLabel.Visible = pnlEntryLabel.Visible = !string.IsNullOrWhiteSpace(entryLabel);
 
-        if (entryLabel != null && entryLabel.Length > WideMessageBox.MAX_LENGTH_BODY)
+        if (entryLabel is { Length: > WideMessageBox.MAX_LENGTH_BODY })
             entryLabel = entryLabel[..WideMessageBox.MAX_LENGTH_BODY];
 
         // set prompt text. If theres a TaskDescription too then leave a bit of extra space
         tbEntryLabel.Text = entryLabel;
 
-        Height = (!string.IsNullOrWhiteSpace(entryLabel) ? tbEntryLabel.Height : 0) +
-                 (!string.IsNullOrWhiteSpace(task) ? tbTaskDescription.Height : 0);
+        Height = (!string.IsNullOrWhiteSpace(entryLabel) ? tbEntryLabel.Height : 0) + 
+                      (!string.IsNullOrWhiteSpace(task) ? tbTaskDescription.Height : 0);
 
         //Switch style based on args.DesciptionSeverity
         switch (args.DesciptionSeverity)
@@ -69,7 +69,6 @@ public partial class TaskDescriptionLabel : UserControl
     /// Returns the width this control would ideally like to take up
     /// </summary>
     public int PreferredWidth => Math.Max(tbEntryLabel.Width, tbTaskDescription.Width);
-
     public int PreferredHeight => Height;
 
     private void textBox1_Resize(object sender, EventArgs e)

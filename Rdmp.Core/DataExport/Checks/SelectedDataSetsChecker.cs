@@ -185,8 +185,7 @@ public class SelectedDataSetsChecker : ICheckable
 
         var nonSelectedCore = cata.GetAllExtractionInformation(ExtractionCategory.Core)
             .Union(cata.GetAllExtractionInformation(ExtractionCategory.ProjectSpecific))
-            .Where(ei => !ei.IsExtractionIdentifier && selectedcols.OfType<ExtractableColumn>()
-                .All(ec => ec.CatalogueExtractionInformation_ID != ei.ID))
+            .Where(ei => !ei.IsExtractionIdentifier && selectedcols.OfType<ExtractableColumn>().All(ec => ec.CatalogueExtractionInformation_ID != ei.ID))
             .ToArray();
 
         if (nonSelectedCore.Any())

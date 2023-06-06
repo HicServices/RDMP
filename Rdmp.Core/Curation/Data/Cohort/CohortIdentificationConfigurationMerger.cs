@@ -95,8 +95,7 @@ public class CohortIdentificationConfigurationMerger
     /// <param name="into">The container into which you want to add the <paramref name="cics"/></param>
     public void Import(CohortIdentificationConfiguration[] cics, CohortAggregateContainer into)
     {
-        var cicInto = into.GetCohortIdentificationConfiguration() ??
-                      throw new ArgumentException($"Cannot import into orphan container '{into}'", nameof(into));
+        var cicInto = into.GetCohortIdentificationConfiguration() ?? throw new ArgumentException($"Cannot import into orphan container '{into}'",nameof(into));
 
         //clone them
         var cicClones = new CohortIdentificationConfiguration[cics.Length];

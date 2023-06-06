@@ -210,7 +210,8 @@ public class Project : DatabaseEntity, IProject, ICustomSearchString, ICheckable
     /// <inheritdoc/>
     public ExtractionInformation[] GetAllProjectCatalogueColumns(ICoreChildProvider childProvider, ExtractionCategory c)
     {
-        if (childProvider is DataExportChildProvider dx)
+        if(childProvider is DataExportChildProvider dx)
+        {
             return dx.ExtractableDataSets.Where(eds => eds.Project_ID == ID)
                 .Select(e => dx.AllCataloguesDictionary[e.Catalogue_ID])
                 .SelectMany(cata => cata.GetAllExtractionInformation(c)).ToArray();

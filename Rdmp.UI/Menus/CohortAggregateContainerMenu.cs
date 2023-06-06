@@ -31,7 +31,7 @@ internal class CohortAggregateContainerMenu : RDMPContextMenuStrip
         //Add Graph results of container commands
 
         //this requires cache to exist (and be populated for the container)
-        if (cic != null && cic.QueryCachingServer_ID != null)
+        if (cic is { QueryCachingServer_ID: not null })
         {
             var matchIdentifiers = new ToolStripMenuItem("Graph All Records For Matching Patients",
                 _activator.CoreIconProvider.GetImage(RDMPConcept.AggregateGraph).ImageToBitmap());

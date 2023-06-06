@@ -45,6 +45,20 @@ public class DleRunner : Runner
 
         if (loadMetadata == null && loadProgress != null)
             loadMetadata = loadProgress.LoadMetadata;
+                
+        if(loadMetadata == null)
+            throw new ArgumentException("No Load Metadata specified");
+            
+        if(loadProgress != null && loadProgress.LoadMetadata_ID != loadMetadata.ID)
+            throw new ArgumentException("The supplied LoadProgress does not belong to the supplied LoadMetadata load");
+            
+        var databaseConfiguration = new HICDatabaseConfiguration(loadMetadata);
+        var flags = new HICLoadConfigurationFlags
+        {
+            ArchiveData = !_options.DoNotArchiveData,
+            DoLoadToStaging = !_options.StopAfterRAW,
+            DoMigrateFromStagingToLive = !_options.StopAfterSTAGING
+        };
 
         if (loadMetadata == null)
             throw new ArgumentException("No Load Metadata specified");

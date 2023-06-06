@@ -33,7 +33,10 @@ public static class FolderHelper
             candidate = candidate.ToLower();
             candidate = candidate.TrimEnd('\\');
 
-            if (string.IsNullOrWhiteSpace(candidate)) candidate = Root;
+            if(string.IsNullOrWhiteSpace(candidate))
+            {
+                candidate = Root;
+            }
 
             return candidate;
         }
@@ -52,7 +55,8 @@ public static class FolderHelper
             reason = $"All catalogue paths must start with \\.  Invalid path was:{candidatePath}";
         else if (candidatePath.Contains("\\\\")) //if it contains double slash
             reason = $"Catalogue paths cannot contain double slashes '\\\\', Invalid path was:{candidatePath}";
-        else if (candidatePath.Contains('/')) //if it contains double slash
+        else
+        if (candidatePath.Contains('/'))//if it contains double slash
             reason =
                 $"Catalogue paths must use backwards slashes not forward slashes, Invalid path was:{candidatePath}";
 
@@ -89,9 +93,13 @@ public static class FolderHelper
                 // or its also a problem if we found a full match to the end of the string
                 // this branch deals with sub folders and that would mean the current group
                 // are not in any subfolders
-                if (idx == -1 || idx == g.Key.Length - 1)
-                    throw new Exception(
-                        $"Unable to build folder groups.  Current group was not a child of the current branch.  Branch was '{currentBranch.FullName}' while Group was '{g.Key}'");
+                if (idx == -1 || idx == g.Key.Length -1)
+                {
+                    throw new Exception($"Unable to build folder groups.  Current group was not a child of the current branch.  Branch was '{currentBranch.FullName}' while Group was '{g.Key}'");
+                }
+                    
+                var subFolders = g.Key[idx..];
+                var nextFolder = subFolders.Split('\\',StringSplitOptions.RemoveEmptyEntries).FirstOrDefault();
 
                 var subFolders = g.Key[idx..];
                 var nextFolder = subFolders.Split('\\', StringSplitOptions.RemoveEmptyEntries).FirstOrDefault() ??

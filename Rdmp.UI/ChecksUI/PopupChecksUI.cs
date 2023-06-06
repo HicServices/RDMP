@@ -28,9 +28,7 @@ public partial class PopupChecksUI : Form, ICheckNotifier
             haveDemandedVisibility = true;
         }
         else
-        {
             CreateHandle(); //let windows get a handle on the situation ;)
-        }
 
         KeyPreview = true;
     }

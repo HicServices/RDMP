@@ -90,7 +90,7 @@ public partial class ResolveMissingTargetPropertiesUI : Form
 
     private void lbMissingReferences_MouseMove(object sender, MouseEventArgs e)
     {
-        if (_dragTarget != null && MouseButtons == MouseButtons.Left)
+        if(_dragTarget != null && MouseButtons == MouseButtons.Left)
             DoDragDrop(_dragTarget, DragDropEffects.Link);
     }
 

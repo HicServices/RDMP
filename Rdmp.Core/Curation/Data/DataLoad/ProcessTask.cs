@@ -166,12 +166,15 @@ public class ProcessTask : DatabaseEntity, IProcessTask, IOrderable, INamed, ICh
         Name = r["Name"] as string;
         Order = int.Parse(r["Order"].ToString());
 
-        if (Enum.TryParse(r["ProcessTaskType"] as string, out ProcessTaskType processTaskType))
+        ProcessTaskType processTaskType;
+
+        if (Enum.TryParse(r["ProcessTaskType"] as string, out processTaskType))
             ProcessTaskType = processTaskType;
         else
             throw new Exception($"Could not parse ProcessTaskType:{r["ProcessTaskType"]}");
 
-        if (Enum.TryParse(r["LoadStage"] as string, out LoadStage loadStage))
+        LoadStage loadStage;
+        if (Enum.TryParse(r["LoadStage"] as string, out loadStage))
             LoadStage = loadStage;
         else
             throw new Exception($"Could not parse LoadStage:{r["LoadStage"]}");
@@ -376,13 +379,19 @@ public class ProcessTask : DatabaseEntity, IProcessTask, IOrderable, INamed, ICh
     {
         return type switch
         {
-            ProcessTaskType.Executable => true,
-            ProcessTaskType.SQLFile => stage != LoadStage.GetFiles,
-            ProcessTaskType.Attacher => stage == LoadStage.Mounting,
-            ProcessTaskType.DataProvider => true,
-            ProcessTaskType.MutilateDataTable => stage != LoadStage.GetFiles,
-            _ => throw new ArgumentOutOfRangeException(nameof(type))
-        };
+            case ProcessTaskType.Executable:
+                return true;
+            case ProcessTaskType.SQLFile:
+                return stage != LoadStage.GetFiles;
+            case ProcessTaskType.Attacher:
+                return stage == LoadStage.Mounting;
+            case ProcessTaskType.DataProvider:
+                return true;
+            case ProcessTaskType.MutilateDataTable:
+                return stage != LoadStage.GetFiles;
+            default:
+                throw new ArgumentOutOfRangeException(nameof(type));
+        }
     }
 
     /// <summary>
@@ -401,9 +410,8 @@ public class ProcessTask : DatabaseEntity, IProcessTask, IOrderable, INamed, ICh
     /// <param name="o"></param>
     public void SetArgumentValue(string parameterName, object o)
     {
-        var matchingArgument = ProcessTaskArguments.SingleOrDefault(p => p.Name.Equals(parameterName)) ??
-                               throw new Exception(
-                                   $"Could not find a ProcessTaskArgument called '{parameterName}', have you called CreateArgumentsForClassIfNotExists<T> yet?");
+        var matchingArgument = ProcessTaskArguments.SingleOrDefault(p => p.Name.Equals(parameterName)) ?? throw new Exception(
+                $"Could not find a ProcessTaskArgument called '{parameterName}', have you called CreateArgumentsForClassIfNotExists<T> yet?");
         matchingArgument.SetValue(o);
         matchingArgument.SaveToDatabase();
     }

@@ -71,7 +71,7 @@ public partial class WideMessageBox : Form
 
         //try to resize form to fit bounds
         Size = GetPreferredSizeOfTextControl(richTextBox1);
-        Size = new Size(Size.Width + 10, Size.Height + 150); //leave a bit of padding
+        Size = new Size(Size.Width + 10, Size.Height + 150);//leave a bit of padding
 
         richTextBox1.LinkClicked += richTextBox1_LinkClicked;
         btnViewSourceCode.Click += (s, e) => new ViewSourceCodeDialog((string)btnViewSourceCode.Tag).Show();
@@ -124,7 +124,7 @@ public partial class WideMessageBox : Form
         //if there is a title
         if (!string.IsNullOrWhiteSpace(title))
         {
-            lblMainMessage.Text = title.Length > MAX_LENGTH_TITLE ? title[..MAX_LENGTH_TITLE] : title;
+            lblMainMessage.Text = title.Length > MAX_LENGTH_TITLE ? title[..MAX_LENGTH_TITLE]: title;
         }
         else
         {
@@ -179,7 +179,7 @@ public partial class WideMessageBox : Form
                 var v = row.Cells[c.Name].Value;
                 var stringval = v == null || v == DBNull.Value ? "NULL" : v.ToString();
 
-                if (stringval.Length > MAX_LENGTH_ELEMENT)
+                if(stringval.Length > MAX_LENGTH_ELEMENT)
                     stringval = $"{stringval[..MAX_LENGTH_ELEMENT]}...";
 
                 sb.AppendLine($"{c.Name}:{stringval}");
@@ -255,7 +255,7 @@ public partial class WideMessageBox : Form
 
     private void richTextBox1_LinkClicked(object sender, LinkClickedEventArgs e)
     {
-        if (e.LinkText.Contains('#'))
+        if(e.LinkText.Contains('#'))
         {
             var split = e.LinkText.Split('#');
             if (split.Length >= 2 && CommentStore.ContainsKey(split[1]))
@@ -283,7 +283,7 @@ public partial class WideMessageBox : Form
         if (string.IsNullOrWhiteSpace(message))
             message = "";
 
-        if (message.Length > MAX_LENGTH_BODY)
+        if(message.Length > MAX_LENGTH_BODY)
             message = message[..MAX_LENGTH_BODY];
 
         //if we don't have help documentation available just set the message without looking for hyperlinks
@@ -355,11 +355,15 @@ public partial class WideMessageBox : Form
     {
         return result switch
         {
-            CheckResult.Success => WideMessageBoxTheme.Help,
-            CheckResult.Warning => WideMessageBoxTheme.Warning,
-            CheckResult.Fail => WideMessageBoxTheme.Exception,
-            _ => throw new ArgumentOutOfRangeException(nameof(result))
-        };
+            case CheckResult.Success:
+                return WideMessageBoxTheme.Help;
+            case CheckResult.Warning:
+                return WideMessageBoxTheme.Warning;
+            case CheckResult.Fail:
+                return WideMessageBoxTheme.Exception;
+            default:
+                throw new ArgumentOutOfRangeException(nameof(result));
+        }
     }
 
     private void WideMessageBox_Load(object sender, EventArgs e)

@@ -38,7 +38,10 @@ public abstract class Runner : IRunner
     protected static T GetObjectFromCommandLineString<T>(IRDMPPlatformRepositoryServiceLocator locator, string arg)
         where T : IMapsDirectlyToDatabaseTable
     {
-        if (string.IsNullOrWhiteSpace(arg) || arg.Trim().Equals("0")) return default;
+        if(string.IsNullOrWhiteSpace(arg) || arg.Trim().Equals("0"))
+        {
+            return default;
+        }
 
         if (int.TryParse(arg, out var id))
         {

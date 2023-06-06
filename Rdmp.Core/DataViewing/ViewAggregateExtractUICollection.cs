@@ -59,7 +59,7 @@ public class ViewAggregateExtractUICollection : PersistableObjectCollection, IVi
         //the aggregate has no dimensions
         if (dim != null) return dim.ColumnInfo.TableInfo;
         var table = AggregateConfiguration.ForcedJoins.FirstOrDefault() ?? throw new Exception(
-            $"AggregateConfiguration '{AggregateConfiguration}' has no AggregateDimensions and no TableInfo forced joins, we do not know where/what table to run the query on");
+                $"AggregateConfiguration '{AggregateConfiguration}' has no AggregateDimensions and no TableInfo forced joins, we do not know where/what table to run the query on");
         return table;
     }
 

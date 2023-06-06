@@ -63,9 +63,7 @@ public class ExecuteCommandSetContainerOperation : BasicCommandExecution
 
         //if the old name was UNION and we are changing to INTERSECT Operation then we should probably change the Name too! even if they have something like 'INTERSECT the people who are big and small' and they change to UNION we want it to be changed to 'UNION the people who are big and small'
         if (_container.Name.StartsWith(oldOperation.ToString()))
-        {
             _container.Name = _operation + _container.Name[oldOperation.ToString().Length..];
-        }
         else
         {
             if (BasicActivator.TypeText("New name for container?",

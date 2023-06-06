@@ -577,7 +577,7 @@ where
 
         if (nullsFound > 0)
             listener.OnNotify(this, new NotifyEventArgs(ProgressEventType.Warning,
-                $"Found {nullsFound} null release identifiers amongst the {toProcess.Rows.Count} rows of the input data table (on which we were attempting to reverse annonymise)"));
+                $"Found {nullsFound} null release identifiers amongst the {toProcess.Rows.Count} rows of the input data table (on which we were attempting to reverse anonymise)"));
 
         listener.OnNotify(this, new NotifyEventArgs(
             substitutions > 0 ? ProgressEventType.Information : ProgressEventType.Error,

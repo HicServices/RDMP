@@ -338,7 +338,9 @@ public abstract class DatabaseEntity : IRevertable, INotifyPropertyChanged, ICan
                 $"{(includePropertyName ? $"{FormatPropertyNameForSummary(prop)}: " : "")}{FormatForSummary(val)}";
 
             if (representation.Length > MAX_SUMMARY_ITEM_LENGTH)
+            {
                 representation = $"{representation[..(MAX_SUMMARY_ITEM_LENGTH - 3)]}...";
+            }
 
             if (representation.Contains('\n')) representation = Regex.Replace(representation, @"\r?\n", " ");
 

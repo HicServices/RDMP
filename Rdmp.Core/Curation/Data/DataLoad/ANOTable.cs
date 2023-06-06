@@ -421,13 +421,25 @@ CONSTRAINT AK_{TableName} UNIQUE({anonymousColumnName})
         //return cached answer
         return loadStage switch
         {
-            LoadStage.GetFiles => _identifiableDataType,
-            LoadStage.Mounting => _identifiableDataType,
-            LoadStage.AdjustRaw => _identifiableDataType,
-            LoadStage.AdjustStaging => _anonymousDataType,
-            LoadStage.PostLoad => _anonymousDataType,
-            _ => throw new ArgumentOutOfRangeException(nameof(loadStage))
-        };
+            case LoadStage.GetFiles:
+                return _identifiableDataType;
+            case LoadStage.Mounting:
+                return _identifiableDataType;
+            case LoadStage.AdjustRaw:
+                return _identifiableDataType;
+            case LoadStage.AdjustStaging:
+                return _anonymousDataType;
+            case LoadStage.PostLoad:
+                return _anonymousDataType;
+            default:
+                throw new ArgumentOutOfRangeException(nameof(loadStage));
+        }
+    }
+        
+    /// <inheritdoc/>
+    public IHasDependencies[] GetObjectsThisDependsOn()
+    {
+        return Array.Empty<IHasDependencies>();
     }
 
     /// <inheritdoc/>

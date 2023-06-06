@@ -4,6 +4,7 @@
 // RDMP is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License for more details.
 // You should have received a copy of the GNU General Public License along with RDMP. If not, see <https://www.gnu.org/licenses/>.
 
+using System;
 using Rdmp.Core.Curation.Data;
 using Rdmp.Core.DataExport.Data;
 using Rdmp.Core.MapsDirectlyToDatabaseTable;
@@ -38,16 +39,12 @@ public class PackageContentNode : Node, IDeletableWithCustomMessage, IMasquerade
         if (obj is null) return false;
         if (ReferenceEquals(this, obj)) return true;
         if (obj.GetType() != GetType()) return false;
-        return Equals((PackageContentNode)obj);
+        return Equals((PackageContentNode) obj);
     }
 
     public override int GetHashCode()
     {
-        unchecked
-        {
-            return ((Package != null ? Package.GetHashCode() : 0) * 397) ^
-                   (DataSet != null ? DataSet.GetHashCode() : 0);
-        }
+        return HashCode.Combine(Package, DataSet);
     }
 
     public void DeleteInDatabase()
@@ -58,7 +55,10 @@ public class PackageContentNode : Node, IDeletableWithCustomMessage, IMasquerade
     public object MasqueradingAs() => DataSet;
 
     /// <inheritdoc/>
-    public string GetDeleteMessage() => $"remove '{DataSet}' from Pacakge";
+    public string GetDeleteMessage()
+    {
+        return $"remove '{DataSet}' from Package";
+    }
 
     /// <inheritdoc/>
     public string GetDeleteVerb() => "Remove";

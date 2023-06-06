@@ -1304,8 +1304,6 @@ public class CatalogueChildProvider : ICoreChildProvider
 
     private void AddChildren(CohortAggregateContainer container, DescendancyList descendancy)
     {
-        //all our children (containers and aggregates)
-
         //get subcontainers
         var subcontainers = _cohortContainerManager.GetChildren(container).OfType<CohortAggregateContainer>().ToList();
 
@@ -1326,6 +1324,7 @@ public class CatalogueChildProvider : ICoreChildProvider
             OrphanAggregateConfigurations.Remove(configuration);
         }
 
+        //all our children (containers and aggregates)
         //children are all aggregates and containers at the current hierarchy level in order
         var children = subcontainers.Union(configurations.Cast<IOrderable>()).OrderBy(o => o.Order).ToList();
 
@@ -1631,9 +1630,45 @@ public class CatalogueChildProvider : ICoreChildProvider
                         //if the plugin takes too long to respond we need to stop
                         if (sw.ElapsedMilliseconds > 1000)
                         {
-                            _blockedPlugins.Add(plugin);
-                            throw new Exception(
-                                $"Plugin '{plugin}' was forbidlisted for taking too long to respond to GetChildren(o) where o was a '{o.GetType().Name}' ('{o}')");
+                            sw.Restart();
+                            //otherwise ask plugin what its children are
+                            var pluginChildren = plugin.GetChildren(o);
+
+                            //if the plugin takes too long to respond we need to stop
+                            if (sw.ElapsedMilliseconds > 1000)
+                            {
+                                _blockedPlugins.Add(plugin);
+                                throw new Exception(
+                                    $"Plugin '{plugin}' was forbidlisted for taking too long to respond to GetChildren(o) where o was a '{o.GetType().Name}' ('{o}')");
+                            }
+
+                            //it has children
+                            if (pluginChildren != null && pluginChildren.Any())
+                            {
+                                //get the descendancy of the parent
+                                var parentDescendancy = GetDescendancyListIfAnyFor(o);
+
+                                var newDescendancy = parentDescendancy == null ? new DescendancyList(o) : //if the parent is a root level object start a new descendncy list from it
+                                    parentDescendancy.Add(o); //otherwise keep going down, returns a new DescendancyList so doesn't corrupt the dictionary one
+
+                                //record that 
+                                foreach (var pluginChild in pluginChildren)
+                                {
+                                    //if the parent didn't have any children before
+                                    if (!_childDictionary.ContainsKey(o))
+                                        _childDictionary.AddOrUpdate(o,new HashSet<object>(),(o1, set) => set);//it does now
+
+
+                                    //add us to the parent objects child collection
+                                    _childDictionary[o].Add(pluginChild);
+                                    
+                                    //add to the child collection of the parent object kvp.Key
+                                    _descendancyDictionary.AddOrUpdate(pluginChild, newDescendancy,(s,e)=>newDescendancy);
+
+                                    //we have found a new object so we must ask other plugins about it (chances are a plugin will have a whole tree of sub objects)
+                                    newObjectsFound.Add(pluginChild);
+                                }
+                            }
                         }
 
                         //it has children

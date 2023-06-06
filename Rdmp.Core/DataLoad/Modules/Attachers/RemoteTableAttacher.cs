@@ -51,16 +51,14 @@ public class RemoteTableAttacher : Attacher, IPluginAttacher
         "The DataSource (Server) connect to in order to read data.  Note that this may be MyFriendlyServer (SqlServer) or something like '192.168.56.101:1521/TRAININGDB'(Oracle)")]
     public string RemoteServer { get; set; }
 
-    [DemandsInitialization("The database on the remote host containg the table we will read data from")]
+    [DemandsInitialization("The database on the remote host containing the table we will read data from")]
     public string RemoteDatabaseName { get; set; }
 
     [DemandsInitialization("The table on the remote host from which data will be read.")]
     public string RemoteTableName { get; set; }
 
     [Sql]
-    [DemandsInitialization(
-        "When provided this OVERIDES RemoteTableName and is intended for running a complicated query on the remote machine in order to pull data in a suitable format.",
-        DemandType.SQL)]
+    [DemandsInitialization("When provided this OVERRIDES RemoteTableName and is intended for running a complicated query on the remote machine in order to pull data in a suitable format.",DemandType.SQL)]
     public string RemoteSelectSQL { get; set; }
 
     [DemandsInitialization(
@@ -463,8 +461,8 @@ public class RemoteTableAttacher : Attacher, IPluginAttacher
 
     private string GetScheduleParameterDeclarations(IDataLoadJob job, out bool scheduleMismatch)
     {
-        if (job is not ScheduledDataLoadJob jobAsScheduledJob)
-            throw new NotSupportedException(
+
+        var jobAsScheduledJob = job as ScheduledDataLoadJob ?? throw new NotSupportedException(
                 $"Job must be of type {nameof(ScheduledDataLoadJob)} because you have specified a LoadProgress");
 
         //if the currently scheduled job is not our Schedule then it is a mismatch and we should skip it
@@ -474,7 +472,7 @@ public class RemoteTableAttacher : Attacher, IPluginAttacher
         var max = jobAsScheduledJob.DatesToRetrieve.Max();
 
         //since it's a date time and fetch list is Dates then we should set the max to the last second of the day (23:59:59) but leave the min as the first second of the day (00:00:00).  This allows for single day loads too
-        if (max.Hour == 0 && max.Minute == 0 && max.Second == 0)
+        if(max.Hour == 0  && max is { Minute: 0, Second: 0 })
         {
             max = max.AddHours(23);
             max = max.AddMinutes(59);

@@ -98,9 +98,9 @@ public partial class DashboardLayoutUI : DashboardLayoutUI_Design
                 instance = _controlFactory.Create(c);
             }
 
-            ControlDictionary.Add(c, instance);
+            ControlDictionary.Add(c,instance);
             Controls.Add(instance);
-
+                
             //let people know what the edit state is
             _editModeFunctionality.EditMode = btnEditMode.Checked;
         }
@@ -131,9 +131,10 @@ public partial class DashboardLayoutUI : DashboardLayoutUI_Design
         if (cbxAvailableControls.SelectedItem is not Type type)
             return;
 
-        var db = _controlFactory.Create(_layout, type, out var control);
+        DashboardableControlHostPanel control;
+        var db = _controlFactory.Create(_layout, type, out control);
         Controls.Add(control);
-        ControlDictionary.Add(db, control);
+        ControlDictionary.Add(db,control);
         Controls.Add(control);
         control.BringToFront();
 

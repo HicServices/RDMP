@@ -6,6 +6,7 @@
 
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using FAnsi;
 using FAnsi.Discovery;
 using FAnsi.Implementation;
@@ -120,13 +121,20 @@ public class TableInfoImporter : ITableInfoImporter
 
         var tableName = querySyntaxHelper.EnsureWrapped(_importDatabaseName);
 
-        if (_type == DatabaseType.MicrosoftSQLServer || _type == DatabaseType.PostgreSql)
-            tableName +=
-                $".{querySyntaxHelper.EnsureWrapped(_importFromSchema ?? querySyntaxHelper.GetDefaultSchemaIfAny())}.";
-        else if (_type == DatabaseType.MySql || _type == DatabaseType.Oracle)
-            tableName += ".";
-        else
-            throw new NotSupportedException($"Unknown Type:{_type}");
+        switch (_type)
+        {
+            case DatabaseType.MicrosoftSQLServer:
+            case DatabaseType.PostgreSql:
+                tableName +=
+                    $".{(querySyntaxHelper.EnsureWrapped(_importFromSchema ?? querySyntaxHelper.GetDefaultSchemaIfAny()))}.";
+                break;
+            case DatabaseType.MySql:
+            case DatabaseType.Oracle:
+                tableName += ".";
+                break;
+            default:
+                throw new NotSupportedException($"Unknown Type:{_type}");
+        }
 
         tableName += querySyntaxHelper.EnsureWrapped(_importTableName);
         var databaseName = querySyntaxHelper.EnsureWrapped(_importDatabaseName);
@@ -146,35 +154,28 @@ public class TableInfoImporter : ITableInfoImporter
 
         parent.SaveToDatabase();
 
-        var newCols = new List<ColumnInfo>();
-
-        foreach (var discoveredColumn in discoveredColumns)
-            newCols.Add(CreateNewColumnInfo(parent, discoveredColumn));
-
         tableInfoCreated = parent;
-        columnInfosCreated = newCols.ToArray();
+        columnInfosCreated = discoveredColumns.Select(discoveredColumn => CreateNewColumnInfo(parent, discoveredColumn)).ToArray();
 
         //if there is a username then we need to associate it with the TableInfo we just created
         if (!string.IsNullOrWhiteSpace(_username))
         {
-            var credentialsFactory = new DataAccessCredentialsFactory(_repository);
-            credentialsFactory.Create(tableInfoCreated, _username, _password, _usageContext);
+            new DataAccessCredentialsFactory(_repository).Create(tableInfoCreated, _username, _password, _usageContext);
         }
     }
 
     /// <inheritdoc/>
     public ColumnInfo CreateNewColumnInfo(ITableInfo parent, DiscoveredColumn discoveredColumn)
     {
-        var col = new ColumnInfo((ICatalogueRepository)parent.Repository, discoveredColumn.GetFullyQualifiedName(),
-            discoveredColumn.DataType.SQLType, parent)
-        {
-            //if it has an explicitly specified format (Collation)
-            Format = discoveredColumn.Format,
-            //if it is a primary key
-            IsPrimaryKey = discoveredColumn.IsPrimaryKey,
-            IsAutoIncrement = discoveredColumn.IsAutoIncrement,
-            Collation = discoveredColumn.Collation
-        };
+        var col = new ColumnInfo((ICatalogueRepository) parent.Repository,discoveredColumn.GetFullyQualifiedName(), discoveredColumn.DataType.SQLType, parent)
+            {
+                //if it has an explicitly specified format (Collation)
+                Format = discoveredColumn.Format,
+                //if it is a primary key
+                IsPrimaryKey = discoveredColumn.IsPrimaryKey,
+                IsAutoIncrement = discoveredColumn.IsAutoIncrement,
+                Collation = discoveredColumn.Collation
+            };
 
         col.SaveToDatabase();
 

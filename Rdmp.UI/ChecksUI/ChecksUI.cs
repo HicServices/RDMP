@@ -246,7 +246,7 @@ public partial class ChecksUI : UserControl, ICheckNotifier
 
     public void TerminateWithExtremePrejudice()
     {
-        if (_checkingThread != null && _checkingThread.IsAlive)
+        if (_checkingThread is { IsAlive: true })
 #pragma warning disable SYSLIB0006 // Type or member is obsolete
             _checkingThread.Abort();
 #pragma warning restore SYSLIB0006 // Type or member is obsolete

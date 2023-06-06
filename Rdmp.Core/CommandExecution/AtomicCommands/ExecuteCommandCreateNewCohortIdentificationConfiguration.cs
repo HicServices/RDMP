@@ -152,16 +152,14 @@ public class ExecuteCommandCreateNewCohortIdentificationConfiguration : BasicCom
         root.Operation = SetOperation.EXCEPT;
         root.SaveToDatabase();
 
-        var inclusion =
-            new CohortAggregateContainer(BasicActivator.RepositoryLocator.CatalogueRepository, SetOperation.UNION)
+        var inclusion = new CohortAggregateContainer(BasicActivator.RepositoryLocator.CatalogueRepository, SetOperation.UNION)
             {
                 Name = InclusionCriteriaName,
                 Order = 0
             };
         inclusion.SaveToDatabase();
 
-        var exclusion =
-            new CohortAggregateContainer(BasicActivator.RepositoryLocator.CatalogueRepository, SetOperation.UNION)
+        var exclusion = new CohortAggregateContainer(BasicActivator.RepositoryLocator.CatalogueRepository, SetOperation.UNION)
             {
                 Name = ExclusionCriteriaName,
                 Order = 1

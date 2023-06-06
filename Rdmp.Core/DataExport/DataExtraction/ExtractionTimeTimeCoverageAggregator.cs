@@ -70,7 +70,7 @@ public class ExtractionTimeTimeCoverageAggregator
         if (!haveCheckedTimeFieldExists)
             if (!row.Table.Columns.Contains(_expectedTimeFieldInOutputBuffer))
                 throw new MissingFieldException(
-                    $"Catalogue {_catalogue.Name} specifies that the time periodicity field of the dataset is called {_expectedTimeFieldInOutputBuffer} but the pipeline did not contain a field with this name, the fileds in the pipeline are ({string.Join(",", row.Table.Columns.Cast<DataColumn>().Select(c => c.ColumnName))})");
+                    $"Catalogue {_catalogue.Name} specifies that the time periodicity field of the dataset is called {_expectedTimeFieldInOutputBuffer} but the pipeline did not contain a field with this name, the fields in the pipeline are ({string.Join(",", row.Table.Columns.Cast<DataColumn>().Select(c => c.ColumnName))})");
             else
                 haveCheckedTimeFieldExists = true;
 
@@ -113,6 +113,13 @@ public class ExtractionTimeTimeCoverageAggregator
                     countOfNullsSeen++;
                     return;
                 }
+                else
+                {
+                    var valueAsString = (string) value;
+                        
+                    //trim off times
+                    if (Regex.IsMatch(valueAsString,"[0-2][0-9]:[0-5][0-9]:[0-5][0-9]"))
+                        valueAsString = valueAsString[..^"00:00:00".Length].Trim();
 
                 var valueAsString = s;
 
@@ -193,7 +200,7 @@ public class ExtractionTimeTimeCoverageAggregator
         else
         {
             throw new Exception(
-                $"Could not work out how to extend agregation buckets where dictionary of datetimes had a max of {Buckets.Keys.Max()} and a min of{Buckets.Keys.Min()} which could not be extended in either direction to encompas{key}");
+                $"Could not work out how to extend aggregation buckets where dictionary of datetimes had a max of {Buckets.Keys.Max()} and a min of{Buckets.Keys.Min()} which could not be extended in either direction to encompass {key}");
         }
 
         if (addCount == somethingHasGoneWrongIfAddedThisManyBuckets)
@@ -202,10 +209,6 @@ public class ExtractionTimeTimeCoverageAggregator
 
     public static bool HasColumn(DbDataReader Reader, string ColumnName)
     {
-        foreach (DataRow row in Reader.GetSchemaTable().Rows)
-            if (row["ColumnName"].ToString() == ColumnName)
-                return true; //Still here? Column not found.
-
-        return false;
+        return Reader.GetSchemaTable().Rows.Cast<DataRow>().Any(row => row["ColumnName"].ToString() == ColumnName);
     }
 }

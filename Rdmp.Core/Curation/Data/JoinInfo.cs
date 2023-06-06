@@ -117,7 +117,6 @@ public class JoinInfo : DatabaseEntity, IJoin, IHasDependencies
     private List<JoinInfo> _queryTimeComboJoins = new();
 
     #region Relationships
-
     /// <inheritdoc/>
     [NoMappingToDatabase]
     public ColumnInfo ForeignKey => _foreignKey ??= Repository.GetObjectByID<ColumnInfo>(ForeignKey_ID);
@@ -144,7 +143,9 @@ public class JoinInfo : DatabaseEntity, IJoin, IHasDependencies
 
         Collation = r["Collation"] as string;
 
-        if (Enum.TryParse(r["ExtractionJoinType"].ToString(), true, out ExtractionJoinType joinType))
+        ExtractionJoinType joinType;
+
+        if (Enum.TryParse(r["ExtractionJoinType"].ToString(), true, out joinType))
             ExtractionJoinType = joinType;
         else
             throw new Exception($"Did not recognise ExtractionJoinType:{r["ExtractionJoinType"]}");

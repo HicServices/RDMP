@@ -79,8 +79,6 @@ public class AutoCompleteProviderWin : AutoCompleteProvider
 
     private string FormatForAutocomplete(string word)
     {
-        if (ItemsWithImages.TryGetValue(word, out var image)) return $"{word}?{image}";
-
-        return word;
+        return ItemsWithImages.TryGetValue(word, out var image) ? $"{word}?{image}" : word;
     }
 }

@@ -402,9 +402,8 @@ public class DataTableUploadDestination : IPluginDataFlowComponent<DataTable>, I
                 if (pipelineFailureExceptionIfAny != null)
                 {
                     _managedConnection.ManagedTransaction.AbandonAndCloseConnection();
-
-                    listener.OnNotify(this,
-                        new NotifyEventArgs(ProgressEventType.Information, "Transaction rolled back sucessfully"));
+                        
+                    listener.OnNotify(this, new NotifyEventArgs(ProgressEventType.Information, "Transaction rolled back successfully"));
 
                     _bulkcopy?.Dispose();
                 }
@@ -414,8 +413,7 @@ public class DataTableUploadDestination : IPluginDataFlowComponent<DataTable>, I
 
                     _bulkcopy?.Dispose();
 
-                    listener.OnNotify(this,
-                        new NotifyEventArgs(ProgressEventType.Information, "Transaction committed sucessfully"));
+                    listener.OnNotify(this, new NotifyEventArgs(ProgressEventType.Information, "Transaction committed successfully"));
                 }
             }
         }
@@ -427,8 +425,7 @@ public class DataTableUploadDestination : IPluginDataFlowComponent<DataTable>, I
         }
 
         //if we have a primary key to create
-        if (pipelineFailureExceptionIfAny == null && _primaryKey != null && _primaryKey.Any() &&
-            _discoveredTable != null && _discoveredTable.Exists())
+        if (pipelineFailureExceptionIfAny == null && _primaryKey?.Any()==true && _discoveredTable?.Exists()==true)
         {
             //Find the columns in the destination
             var allColumns = _discoveredTable.DiscoverColumns();

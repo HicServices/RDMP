@@ -37,7 +37,8 @@ public partial class RAGSmiley : UserControl, IRAGSmiley
     {
         if (AlwaysShowHandCursor || memoryCheckNotifier.Messages.Any())
             Cursor = Cursors.Hand;
-        else if (pbYellow.Tag != null || pbRed.Tag != null)
+        else
+        if (pbYellow.Tag != null || pbRed.Tag != null)
             Cursor = Cursors.Hand;
         else
             Cursor = Cursors.Arrow;
@@ -219,7 +220,7 @@ public partial class RAGSmiley : UserControl, IRAGSmiley
         lock (oTaskLock)
         {
             //if there is already a Task and it has not completed
-            if (_checkTask != null && !_checkTask.IsCompleted)
+            if (_checkTask is { IsCompleted: false })
                 return;
 
             //else start a new Task

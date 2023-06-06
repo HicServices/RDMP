@@ -50,10 +50,10 @@ public class ExtractionQueryBuilder
 
         if (request.ExtractableCohort == null)
             throw new NullReferenceException("No Cohort selected");
-
+            
         var databaseType = request.Catalogue.GetDistinctLiveDatabaseServerType() ?? throw new NotSupportedException(
-            $"Catalogue {request.Catalogue} did not know what DatabaseType it hosted, how can we extract from it! does it have no TableInfos?");
-        var syntaxHelper = new QuerySyntaxHelperFactory().Create(databaseType);
+                $"Catalogue {request.Catalogue} did not know what DatabaseType it hosted, how can we extract from it! does it have no TableInfos?");
+        var syntaxHelper = new QuerySyntaxHelperFactory().Create(databaseType.Value);
 
         substitutions = new List<ReleaseIdentifierSubstitution>();
 
@@ -90,8 +90,7 @@ public class ExtractionQueryBuilder
         //identify any tables we are supposed to force join to
         var forcedJoins = request.SelectedDataSets.SelectedDataSetsForcedJoins;
 
-        var queryBuilder =
-            new QueryBuilder("DISTINCT ", hashingAlgorithm, forcedJoins.Select(s => s.TableInfo).ToArray())
+        var queryBuilder = new QueryBuilder("DISTINCT ", hashingAlgorithm, forcedJoins.Select(s => s.TableInfo).ToArray())
             {
                 TopX = request.TopX
             };
@@ -211,9 +210,9 @@ public class ExtractionQueryBuilder
         var project = configuration.Project;
 
         if (project.ProjectNumber == null)
-            throw new ProjectNumberException("Project number has not been entered, cannot create constant paramaters");
-
-        if (extractableCohort == null)
+            throw new ProjectNumberException("Project number has not been entered, cannot create constant parameters");
+            
+        if(extractableCohort == null)
             throw new Exception("Cohort has not been selected, cannot create constant parameters");
 
         var externalCohortTable = extractableCohort.ExternalCohortTable;

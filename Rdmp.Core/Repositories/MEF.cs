@@ -202,11 +202,10 @@ public class MEF
     {
         if (!t.IsGenericType) return t.FullName;
         if (t.GenericTypeArguments.Length != 1)
-            throw new NotSupportedException(
-                "Generic type has more than 1 token (e.g. T1,T2) so no idea what MEF would call it");
+            throw new NotSupportedException("Generic type has more than 1 token (e.g. T1,T2) so no idea what MEF would call it");
         var genericTypeName = t.GetGenericTypeDefinition().FullName;
 
-        Debug.Assert(genericTypeName.EndsWith("`1"));
+        Debug.Assert(genericTypeName?.EndsWith("`1")==true);
         genericTypeName = genericTypeName[..^"`1".Length];
 
         var underlyingType = t.GenericTypeArguments.Single().FullName;
@@ -227,8 +226,7 @@ public class MEF
     {
         if (!t.IsGenericType) return t.Name;
         if (t.GenericTypeArguments.Length != 1)
-            throw new NotSupportedException(
-                "Generic type has more than 1 token (e.g. T1,T2) so no idea what MEF would call it");
+            throw new NotSupportedException("Generic type has more than 1 token (e.g. T1,T2) so no idea what MEF would call it");
         var genericTypeName = t.GetGenericTypeDefinition().Name;
 
         Debug.Assert(genericTypeName.EndsWith("`1"));
@@ -268,8 +266,8 @@ public class MEF
         return GetTypes(typeof(T));
     }
 
-    private object _cachedImplementationsLock = new();
-    private Dictionary<Type, Type[]> _cachedImplementations = new();
+    readonly object _cachedImplementationsLock = new object();
+    readonly Dictionary<Type,Type[]> _cachedImplementations = new Dictionary<Type, Type[]>();
 
     /// <summary>
     /// Returns MEF exported Types which inherit or implement <paramref name="type"/>.  E.g. pass IAttacher to see
@@ -283,7 +281,7 @@ public class MEF
 
         lock (_cachedImplementationsLock)
         {
-            if (_cachedImplementations.TryGetValue(type, out var types))
+            if(_cachedImplementations.TryGetValue(type, out var types))
                 return types;
 
             var results = SafeDirectoryCatalog.GetAllTypes()
@@ -310,9 +308,7 @@ public class MEF
     }
 
     /// <summary>
-    /// Creates an instance of the named class with the provided constructor args
-    /// 
-    /// <para>IMPORTANT: this will create classes from the MEF Exports ONLY i.e. not any loaded type but has to be an explicitly labled Export of a LoadModuleAssembly</para>
+    /// Creates an instance of the named class with the provided constructor arguments
     /// </summary>
     /// <typeparam name="T">The base/interface of the Type you want to create e.g. IAttacher</typeparam>
     /// <returns></returns>
@@ -325,9 +321,8 @@ public class MEF
             throw new Exception(
                 $"Requested typeToCreate '{typeToCreate}' was not assignable to the required Type '{typeof(T).Name}'");
 
-        var instance = (T)ObjectConstructor.ConstructIfPossible(typeToCreateAsType, args) ??
-                       throw new ObjectLacksCompatibleConstructorException(
-                           $"Could not construct a {typeof(T)} using the {args.Length} constructor arguments");
+        var instance = (T)o.ConstructIfPossible(typeToCreateAsType,args) ?? throw new ObjectLacksCompatibleConstructorException(
+                $"Could not construct a {typeof(T)} using the {args.Length} constructor arguments");
         return instance;
     }
 }

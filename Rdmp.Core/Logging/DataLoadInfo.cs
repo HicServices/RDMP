@@ -228,7 +228,23 @@ public sealed class DataLoadInfo : IDataLoadInfo
 
                 con.ManagedTransaction.CommitAndCloseConnection();
 
-                _isClosed = true;
+                    _isClosed = true;
+                }
+                catch (Exception)
+                {
+                    //if something goes wrong with the update, roll it back
+                    con.ManagedTransaction.AbandonAndCloseConnection();
+
+                    throw;
+                }
+
+                //once a record has been commited to the database it is redundant and no further attempts to read/change it should be made by anyone
+                foreach (var t in TableLoads.Values)
+                {
+                    //close any table loads that have not yet completed
+                    if (!t.IsClosed)
+                        t.CloseAndArchive();
+                }
             }
             catch (Exception)
             {

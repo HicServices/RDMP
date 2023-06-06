@@ -35,10 +35,10 @@ public class FixedWidthFormatFile
         readAllLines = readAllLines.Where(l => !string.IsNullOrWhiteSpace(l)).ToArray();
 
         //create a format field for each line in the format file
-        FormatColumns = new FixedWidthColumn[readAllLines.Length - 1];
+        FormatColumns = new FixedWidthColumn[readAllLines.Length-1];
 
         //now add values
-        for (var index = 0; index < readAllLines.Length - 1; index++)
+        for (var index = 0; index < readAllLines.Length-1; index++)
         {
             //skip header line
             var cellsOnRowAsSplitString = readAllLines[index + 1].Split(',');

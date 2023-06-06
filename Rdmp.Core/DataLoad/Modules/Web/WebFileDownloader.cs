@@ -94,9 +94,15 @@ public class WebFileDownloader : IPluginDataProvider
         throw new Exception($"Could not get response from {url} - {response.StatusCode} - {response.ReasonPhrase}");
     }
 
-    public string GetDescription() => throw new NotImplementedException();
+    public string GetDescription()
+    {
+        throw new NotImplementedException();
+    }
 
-    public IDataProvider Clone() => throw new NotImplementedException();
+    public IDataProvider Clone()
+    {
+        throw new NotImplementedException();
+    }
 
     public bool Validate(ILoadDirectory _)
     {

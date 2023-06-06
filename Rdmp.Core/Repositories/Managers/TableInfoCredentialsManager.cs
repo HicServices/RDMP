@@ -294,7 +294,8 @@ internal class TableInfoCredentialsManager : ITableInfoCredentialsManager
     private static DataAccessContext GetContext(DbDataReader r)
     {
         //if it's not a valid context something has gone very wrong
-        if (!Enum.TryParse((string)r["Context"], out DataAccessContext context))
+        DataAccessContext context;
+        if (!Enum.TryParse((string) r["Context"], out context))
             throw new Exception($"Invalid DataAccessContext {r["Context"]}");
 
         return context;

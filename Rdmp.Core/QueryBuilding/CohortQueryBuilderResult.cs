@@ -284,8 +284,10 @@ public class CohortQueryBuilderResult
     /// <returns></returns>
     public static bool IsEnabled(IOrderable arg, ICoreChildProvider childProvider)
     {
-        var parentDisabled = childProvider.GetDescendancyListIfAnyFor(arg)?.Parents
-            .Any(p => p is IDisableable d && d.IsDisabled);
+        var parentDisabled = childProvider.GetDescendancyListIfAnyFor(arg)?.Parents.Any(p => p is IDisableable
+        {
+            IsDisabled: true
+        });
 
         //if a parent is disabled
         if (parentDisabled.HasValue && parentDisabled.Value)
@@ -354,8 +356,7 @@ public class CohortQueryBuilderResult
             case CacheUsage.AllOrNothing:
 
                 //It's not fully cached so we have to run it entirely uncached
-                SetTargetServer(DependenciesSingleServer.GetDistinctServer(),
-                    "cache and data are on seperate servers / access credentials and not all datasets are in the cache");
+                SetTargetServer(DependenciesSingleServer.GetDistinctServer(),"cache and data are on separate servers / access credentials and not all datasets are in the cache");
                 return dependency.SqlCacheless.Use(parameterManager);
             default:
                 throw new ArgumentOutOfRangeException();

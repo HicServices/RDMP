@@ -41,7 +41,7 @@ public class Patch : IComparable
         if (string.IsNullOrWhiteSpace(Description))
             return $"Patch {DatabaseVersionNumber}";
 
-        if (Description.Length > 100)
+        if(Description.Length> 100)
             return $"Patch {DatabaseVersionNumber}({Description[..100]}...)";
 
         return $"Patch {DatabaseVersionNumber}({Description})";
@@ -56,7 +56,7 @@ public class Patch : IComparable
         if (idx == -1)
             throw new InvalidPatchException(locationInAssembly, $"Script does not start with {VersionKey}");
 
-        var versionNumber = lines[0][(idx + VersionKey.Length)..].Trim(':', ' ', '\n', '\r', '/', '*');
+        var versionNumber = lines[0][(idx + VersionKey.Length)..].Trim(':',' ','\n','\r','/','*');
 
         try
         {
@@ -110,15 +110,15 @@ public class Patch : IComparable
         if (x.DatabaseVersionNumber.Equals(y.DatabaseVersionNumber))
             return true;
         throw new InvalidPatchException(x.locationInAssembly,
-            $"Patches x and y are being compared and they have the same location in assembly ({x.locationInAssembly})  but different Verison numbers",
-            null);
+            $"Patches x and y are being compared and they have the same location in assembly ({x.locationInAssembly})  but different Version numbers", null);
     }
 
     public int CompareTo(object obj)
     {
         if (obj is Patch patch)
-            return -string.Compare(patch.locationInAssembly, locationInAssembly,
-                StringComparison.Ordinal); //sort alphabetically (reverse)
+        {
+            return -string.Compare(patch.locationInAssembly, locationInAssembly, StringComparison.Ordinal); //sort alphabetically (reverse)
+        }
 
         throw new Exception($"Cannot compare {GetType().Name} to {obj.GetType().Name}");
     }

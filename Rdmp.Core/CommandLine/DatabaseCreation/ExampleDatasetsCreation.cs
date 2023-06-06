@@ -78,8 +78,7 @@ public class ExampleDatasetsCreation
         //create a new database for the datasets
         db.Create();
 
-        notifier.OnCheckPerformed(new CheckEventArgs($"Succesfully created {db.GetRuntimeName()}",
-            CheckResult.Success));
+        notifier.OnCheckPerformed(new CheckEventArgs($"Successfully created {db.GetRuntimeName()}",CheckResult.Success));
 
         //fixed seed so everyone gets the same datasets
         var r = new Random(options.Seed);
@@ -196,10 +195,7 @@ public class ExampleDatasetsCreation
         var externalCohortTable = cmdCreateCohortTable.Created;
 
         //Find the pipeline for committing cohorts
-        var cohortCreationPipeline =
-            _repos.CatalogueRepository.GetAllObjects<Pipeline>().FirstOrDefault(p =>
-                p?.Source?.Class == typeof(CohortIdentificationConfigurationSource).FullName) ??
-            throw new Exception("Could not find a cohort committing pipeline");
+        var cohortCreationPipeline = _repos.CatalogueRepository.GetAllObjects<Pipeline>().FirstOrDefault(p=>p?.Source?.Class == typeof(CohortIdentificationConfigurationSource).FullName) ?? throw new Exception("Could not find a cohort committing pipeline");
 
         //A cohort creation query
         var f = CreateFilter(vConditions, "Lung Cancer Condition", "Condition", "Condition like 'C349'",
@@ -215,9 +211,8 @@ public class ExampleDatasetsCreation
         {
             con.Open();
             //delete half the records (so we can simulate cohort refresh)
-            using (var cmd = cohortTable.Database.Server.GetCommand(
-                       $"DELETE TOP (10) PERCENT from {cohortTable.GetFullyQualifiedName()}", con))
-            {
+            using(var cmd = cohortTable.Database.Server.GetCommand(
+                      $"DELETE TOP (10) PERCENT from {cohortTable.GetFullyQualifiedName()}", con))
                 cmd.ExecuteNonQuery();
             }
         }
@@ -295,8 +290,7 @@ public class ExampleDatasetsCreation
             }
             catch (Exception ex)
             {
-                notifier.OnCheckPerformed(new CheckEventArgs("Could not Release ExtractionConfiguration (nevermind)",
-                    CheckResult.Warning, ex));
+                notifier.OnCheckPerformed(new CheckEventArgs("Could not Release ExtractionConfiguration (never mind)",CheckResult.Warning,ex));
             }
     }
 
@@ -318,11 +312,8 @@ public class ExampleDatasetsCreation
     private ExtractionInformation CreateExtractionInformation(ICatalogue catalogue, string name, string columnInfoName,
         string selectSQL)
     {
-        var col =
-            catalogue.GetTableInfoList(false).SelectMany(t => t.ColumnInfos)
-                .SingleOrDefault(c => c.GetRuntimeName() == columnInfoName) ??
-            throw new Exception($"Could not find ColumnInfo called '{columnInfoName}' in Catalogue {catalogue}");
-        var ci = new CatalogueItem(_repos.CatalogueRepository, catalogue, name)
+        var col = catalogue.GetTableInfoList(false).SelectMany(t=>t.ColumnInfos).SingleOrDefault(c=>c.GetRuntimeName() == columnInfoName) ?? throw new Exception($"Could not find ColumnInfo called '{columnInfoName}' in Catalogue {catalogue}");
+        var ci = new CatalogueItem(_repos.CatalogueRepository,catalogue,name)
         {
             ColumnInfo_ID = col.ID
         };
@@ -334,7 +325,7 @@ public class ExampleDatasetsCreation
     private ExtractionConfiguration CreateExtractionConfiguration(Project project, ExtractableCohort cohort,
         string name, bool isReleased, ICheckNotifier notifier, params ICatalogue[] catalogues)
     {
-        var extractionConfiguration = new ExtractionConfiguration(_repos.DataExportRepository, project)
+        var extractionConfiguration = new ExtractionConfiguration(_repos.DataExportRepository,project)
         {
             Name = name,
             Cohort_ID = cohort.ID
@@ -368,8 +359,7 @@ public class ExampleDatasetsCreation
             }
             catch (Exception ex)
             {
-                notifier.OnCheckPerformed(new CheckEventArgs("Could not run ExtractionConfiguration (nevermind)",
-                    CheckResult.Warning, ex));
+                notifier.OnCheckPerformed(new CheckEventArgs("Could not run ExtractionConfiguration (never mind)",CheckResult.Warning,ex));
             }
 
             extractionConfiguration.IsReleased = true;
@@ -384,7 +374,7 @@ public class ExampleDatasetsCreation
         string cohortName, int projectNumber, out Project project)
     {
         //create a new data extraction Project
-        project = new Project(_repos.DataExportRepository, projectName)
+        project = new Project(_repos.DataExportRepository,projectName)
         {
             ProjectNumber = projectNumber,
             ExtractionDirectory = Path.GetTempPath()
@@ -394,12 +384,10 @@ public class ExampleDatasetsCreation
         //create a cohort
         var auditLogBuilder = new ExtractableCohortAuditLogBuilder();
 
-        var request = new CohortCreationRequest(project,
-            new CohortDefinition(null, cohortName, 1, projectNumber, externalCohortTable), _repos.DataExportRepository,
-            ExtractableCohortAuditLogBuilder.GetDescription(cic))
-        {
-            CohortIdentificationConfiguration = cic
-        };
+        var request = new CohortCreationRequest(project,new CohortDefinition(null,cohortName,1,projectNumber,externalCohortTable),_repos.DataExportRepository, auditLogBuilder.GetDescription(cic))
+            {
+                CohortIdentificationConfiguration = cic
+            };
 
         var engine = request.GetEngine(cohortCreationPipeline, new ThrowImmediatelyDataLoadEventListener());
 
@@ -414,7 +402,7 @@ public class ExampleDatasetsCreation
         var cic = new CohortIdentificationConfiguration(_repos.CatalogueRepository, "Tayside Lung Cancer Cohort");
 
         //create a UNION container for Inclusion Criteria
-        var container = new CohortAggregateContainer(_repos.CatalogueRepository, SetOperation.UNION)
+        var container = new CohortAggregateContainer(_repos.CatalogueRepository,SetOperation.UNION)
         {
             Name = "Inclusion Criteria"
         };
@@ -456,9 +444,8 @@ public class ExampleDatasetsCreation
         else
         {
             container = (AggregateFilterContainer)graph.RootFilterContainer;
-        }
-
-        var filter = new AggregateFilter(_repos.CatalogueRepository, name, container)
+            
+        var filter = new AggregateFilter(_repos.CatalogueRepository,name,container)
         {
             WhereSQL = whereSql
         };
@@ -512,12 +499,11 @@ UNPIVOT
     private IFilter CreateFilter(ICatalogue cata, string name, string parentExtractionInformation, string whereSql,
         string desc)
     {
-        var filter = new ExtractionFilter(_repos.CatalogueRepository, name,
-            GetExtractionInformation(cata, parentExtractionInformation))
-        {
-            WhereSQL = whereSql,
-            Description = desc
-        };
+        var filter = new ExtractionFilter(_repos.CatalogueRepository,name,GetExtractionInformation(cata,parentExtractionInformation))
+            {
+                WhereSQL = whereSql,
+                Description = desc
+            };
         filter.SaveToDatabase();
 
         var parameterCreator = new ParameterCreator(filter.GetFilterFactory(), null, null);
@@ -537,7 +523,7 @@ UNPIVOT
     private AggregateConfiguration CreateGraph(ICatalogue cata, string name, string dimension1, bool isAxis,
         string dimension2)
     {
-        var ac = new AggregateConfiguration(_repos.CatalogueRepository, cata, name)
+        var ac = new AggregateConfiguration(_repos.CatalogueRepository,cata,name)
         {
             CountSQL = "count(*) as NumberOfRecords"
         };
@@ -551,7 +537,7 @@ UNPIVOT
 
         if (isAxis)
         {
-            var axis = new AggregateContinuousDateAxis(_repos.CatalogueRepository, mainDimension)
+            var axis = new AggregateContinuousDateAxis(_repos.CatalogueRepository,mainDimension)
             {
                 StartDate = "'1970-01-01'",
                 AxisIncrement = FAnsi.Discovery.QuerySyntax.Aggregation.AxisIncrement.Year
@@ -585,9 +571,8 @@ UNPIVOT
         ICheckNotifier notifier, int numberOfRecords, params string[] primaryKey) where T : IDataGenerator
     {
         var dataset = typeof(T).Name;
-        notifier.OnCheckPerformed(new CheckEventArgs($"Generating {numberOfRecords} records for {dataset}",
-            CheckResult.Success));
-
+        notifier.OnCheckPerformed(new CheckEventArgs($"Generating {numberOfRecords} records for {dataset}",CheckResult.Success));
+            
         var factory = new DataGeneratorFactory();
 
         //half a million biochemistry results

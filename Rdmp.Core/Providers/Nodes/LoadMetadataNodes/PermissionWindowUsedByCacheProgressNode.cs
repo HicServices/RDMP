@@ -53,7 +53,7 @@ public class PermissionWindowUsedByCacheProgressNode : Node, IDeletableWithCusto
         if (obj is null) return false;
         if (ReferenceEquals(this, obj)) return true;
         if (obj.GetType() != GetType()) return false;
-        return Equals((PermissionWindowUsedByCacheProgressNode)obj);
+        return Equals((PermissionWindowUsedByCacheProgressNode) obj);
     }
 
     public override int GetHashCode() =>

@@ -175,7 +175,7 @@ public class DataAccessPointCollection
     /// <returns></returns>
     public DataAccessPointCollection Clone()
     {
-        var col = new DataAccessPointCollection(SingleServer, DataAccessContext)
+        var col = new DataAccessPointCollection(SingleServer,DataAccessContext)
         {
             _points = new HashSet<IDataAccessPoint>(_points)
         };

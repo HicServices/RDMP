@@ -35,7 +35,7 @@ public abstract class PersistableObjectCollection : IPersistableObjectCollection
         if (obj is null) return false;
         if (ReferenceEquals(this, obj)) return true;
         if (obj.GetType() != GetType()) return false;
-        return Equals((PersistableObjectCollection)obj);
+        return Equals((PersistableObjectCollection) obj);
     }
 
     public override int GetHashCode()
@@ -43,12 +43,12 @@ public abstract class PersistableObjectCollection : IPersistableObjectCollection
         unchecked
         {
             return
-                (397 * (DatabaseObjects != null
-                        ? DatabaseObjects.Aggregate(0, (old, curr) =>
-                            (old * 397) ^ (curr != null ? curr.GetHashCode() : 0))
-                        : 0)
+                (397 * (DatabaseObjects != null ?
+                        DatabaseObjects.Aggregate(0, (old, curr) =>
+                            (old * 397) ^ (curr != null ? curr.GetHashCode() : 0)) :
+                        0)
                 ) ^
                 (SaveExtraText() != null ? SaveExtraText().GetHashCode() : 0);
-        }
+        } 
     }
 }

@@ -65,18 +65,18 @@ public class BoundDouble : Bound
     {
         if (Inclusive)
         {
-            if (Lower.HasValue && v < Lower)
+            if (v < Lower)
                 return false;
 
-            if (Upper.HasValue && v > Upper)
+            if (v > Upper)
                 return false;
         }
         else
         {
-            if (Lower.HasValue && v <= Lower)
+            if (v <= Lower)
                 return false;
 
-            if (Upper.HasValue && v >= Upper)
+            if (v >= Upper)
                 return false;
         }
 

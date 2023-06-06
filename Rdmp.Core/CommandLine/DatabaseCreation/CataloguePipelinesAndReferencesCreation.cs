@@ -59,16 +59,21 @@ public class CataloguePipelinesAndReferencesCreation
                     Database = _logging.InitialCatalog
                 };
 
-            if(_logging.UserID != null)
+        _edsLogging = new ExternalDatabaseServer(_repositoryLocator.CatalogueRepository, "Logging",new LoggingDatabasePatcher())
             {
-                _edsLogging.Username = _logging.UserID;
-                _edsLogging.Password = _logging.Password;
-            }
+                Server = _logging.DataSource,
+                Database = _logging.InitialCatalog
+            };
 
-            _edsLogging.SaveToDatabase();
-            defaults.SetDefault(PermissableDefaults.LiveLoggingServer_ID, _edsLogging);
-            Console.WriteLine("Successfully configured default logging server");
+        if(_logging.UserID != null)
+        {
+            _edsLogging.Username = _logging.UserID;
+            _edsLogging.Password = _logging.Password;
         }
+
+        _edsLogging.SaveToDatabase();
+        defaults.SetDefault(PermissableDefaults.LiveLoggingServer_ID, _edsLogging);
+        Console.WriteLine("Successfully configured default logging server");
 
         var edsDQE = new ExternalDatabaseServer(_repositoryLocator.CatalogueRepository, "DQE", new DataQualityEnginePatcher())
             {
@@ -87,9 +92,9 @@ public class CataloguePipelinesAndReferencesCreation
         Console.WriteLine("Successfully configured default dqe server");
 
         var edsRAW = new ExternalDatabaseServer(_repositoryLocator.CatalogueRepository, "RAW Server", null)
-        {
-            Server = _dqe.DataSource
-        };
+ {
+     Server = _dqe.DataSource
+ };
 
         //We are expecting a single username/password for everything here, so just use the dqe one
         bool hasLoggingDB = _logging != null && _logging.UserID != null;

@@ -194,15 +194,13 @@ public class TableLoadInfo : ITableLoadInfo
             {
                 try
                 {
-                    _databaseSettings.AddParameterWithValueToCommand("@endTime", cmdCloseRecord, DateTime.Now);
+                    _databaseSettings.AddParameterWithValueToCommand("@endTime",cmdCloseRecord, DateTime.Now);
                     _databaseSettings.AddParameterWithValueToCommand("@inserts", cmdCloseRecord, Inserts);
                     _databaseSettings.AddParameterWithValueToCommand("@updates", cmdCloseRecord, Updates);
                     _databaseSettings.AddParameterWithValueToCommand("@deletes", cmdCloseRecord, Deletes);
                     _databaseSettings.AddParameterWithValueToCommand("@errorRows", cmdCloseRecord, ErrorRows);
-                    _databaseSettings.AddParameterWithValueToCommand("@duplicates", cmdCloseRecord,
-                        DiscardedDuplicates);
-                    _databaseSettings.AddParameterWithValueToCommand("@notes", cmdCloseRecord,
-                        string.IsNullOrWhiteSpace(Notes) ? DBNull.Value : Notes);
+                    _databaseSettings.AddParameterWithValueToCommand("@duplicates", cmdCloseRecord, DiscardedDuplicates);
+                    _databaseSettings.AddParameterWithValueToCommand("@notes", cmdCloseRecord, string.IsNullOrWhiteSpace(Notes) ? DBNull.Value : Notes);
                     _databaseSettings.AddParameterWithValueToCommand("@ID", cmdCloseRecord, ID);
 
                     var affectedRows = cmdCloseRecord.ExecuteNonQuery();

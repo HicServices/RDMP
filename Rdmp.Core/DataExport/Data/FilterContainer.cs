@@ -75,7 +75,7 @@ public class FilterContainer : ConcreteContainer, IContainer
     {
         //clone ourselves
         var clonedFilterContainer = ShallowClone();
-
+            
         //clone our filters
         foreach (var deployedExtractionFilter in GetFilters())
         {

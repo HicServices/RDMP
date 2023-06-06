@@ -141,9 +141,8 @@ public class GoodBadCataloguePieChartObjectCollection : PersistableObjectCollect
 
     public void SetSingleCatalogueMode(Catalogue catalogue)
     {
-        if (catalogue == null)
-            throw new ArgumentException("Catalogue must not be null to turn on SingleCatalogue mode",
-                nameof(catalogue));
+        if(catalogue == null)
+            throw new ArgumentException("Catalogue must not be null to turn on SingleCatalogue mode",nameof(catalogue));
 
         DatabaseObjects.Clear();
         DatabaseObjects.Add(catalogue);

@@ -281,7 +281,7 @@ public class DocXHelper
         }
 
 
-        public void Dispose()
+        public new void Dispose()
         {
             //saves?
             Write(_stream);

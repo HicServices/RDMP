@@ -58,7 +58,7 @@ public partial class GoodBadCataloguePieChart : RDMPUserControl, IDashboardableC
         btnSingleCatalogue.Click += new EventHandler(btnSingleCatalogue_Click);
         btnShowLabels.CheckStateChanged += new EventHandler(btnShowLabels_CheckStateChanged);
         btnRefresh.Click += new EventHandler(btnRefresh_Click);
-
+            
         //put edit mode on for the designer
         NotifyEditModeChange(false);
     }

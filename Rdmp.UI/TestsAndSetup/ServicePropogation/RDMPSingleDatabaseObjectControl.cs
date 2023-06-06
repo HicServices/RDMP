@@ -76,28 +76,29 @@ public abstract class RDMPSingleDatabaseObjectControl<T> : RDMPUserControl, IRDM
 
         if (_colorIndicator == null && AssociatedCollection != RDMPCollection.None)
         {
-            _colorIndicator = new Control
-            {
-                Dock = DockStyle.Top,
-                Location = new Point(0, 0),
-                Size = new Size(150, BackColorProvider.IndicatorBarSuggestedHeight),
-                TabIndex = 0,
-                BackColor = BackColorProvider.GetColor(AssociatedCollection)
-            };
+            var colorProvider = new BackColorProvider();
+            _colorIndicator = new Control();
+            _colorIndicator.Dock = DockStyle.Top;
+            _colorIndicator.Location = new Point(0, 0);
+            _colorIndicator.Size = new Size(150, BackColorProvider.IndicatorBarSuggestedHeight);
+            _colorIndicator.TabIndex = 0;
+            _colorIndicator.BackColor = colorProvider.GetColor(AssociatedCollection);
             Controls.Add(_colorIndicator);
         }
 
         _readonlyIndicator ??= new Label
         {
-            Dock = DockStyle.Top,
-            Location = new Point(0, 0),
-            Size = new Size(150, 20),
-            TabIndex = 0,
-            TextAlign = ContentAlignment.MiddleLeft,
-            BackColor = SystemColors.HotTrack,
-            Font = new Font("Microsoft Sans Serif", 8.25F, FontStyle.Bold, GraphicsUnit.Point, (byte)0),
-            ForeColor = Color.Moccasin
-        };
+            _readonlyIndicator = new Label();
+            _readonlyIndicator.Dock = DockStyle.Top;
+            _readonlyIndicator.Location = new Point(0, 0);
+            _readonlyIndicator.Size = new Size(150, 20);
+            _readonlyIndicator.TabIndex = 0;
+            _readonlyIndicator.TextAlign = ContentAlignment.MiddleLeft;
+            _readonlyIndicator.BackColor = SystemColors.HotTrack;
+            _readonlyIndicator.Font = new Font("Microsoft Sans Serif", 8.25F, FontStyle.Bold, GraphicsUnit.Point, ((byte)(0)));
+            _readonlyIndicator.ForeColor = Color.Moccasin;
+
+        }
 
         if (databaseObject is IMightBeReadOnly ro)
         {
@@ -197,9 +198,11 @@ public abstract class RDMPSingleDatabaseObjectControl<T> : RDMPUserControl, IRDM
         bool formattingEnabled = true, DataSourceUpdateMode updateMode = DataSourceUpdateMode.OnPropertyChanged)
     {
         //workaround for only comitting lists on loose focus
-        if (c is ComboBox box && box.DropDownStyle == ComboBoxStyle.DropDownList && propertyName.Equals("SelectedItem"))
-            box.SelectionChangeCommitted += (s, e) => box.DataBindings["SelectedItem"].WriteValue();
-
+        if (box is { DropDownStyle: ComboBoxStyle.DropDownList } && propertyName.Equals("SelectedItem"))
+        {
+            box.SelectionChangeCommitted += (s,e)=>box.DataBindings["SelectedItem"].WriteValue();
+        }
+            
         _binder.Bind(c, propertyName, (T)DatabaseObject, dataMember, formattingEnabled, updateMode, getter);
     }
 
@@ -268,12 +271,7 @@ public abstract class RDMPSingleDatabaseObjectControl<T> : RDMPUserControl, IRDM
     {
         if (DatabaseObject is INamed named)
             return named.Name;
-
-
-        if (DatabaseObject != null)
-            return DatabaseObject.ToString();
-
-        return "Unamed Tab";
+        return DatabaseObject?.ToString() ?? "Unnamed Tab";
     }
 
     public virtual string GetTabToolTip() => null;

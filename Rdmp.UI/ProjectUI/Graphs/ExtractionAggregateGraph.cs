@@ -136,8 +136,8 @@ public sealed class ExtractionAggregateGraphUI : AggregateGraphUI, IObjectCollec
     private void Close()
     {
         var parent = ParentForm;
-        if (parent != null && !parent.IsDisposed)
-            parent.Close(); //self destruct because object was deleted
+        if (parent is { IsDisposed: false })
+            parent.Close();//self destruct because object was deleted
     }
 
     public void SetCollection(IActivateItems activator, IPersistableObjectCollection collection)

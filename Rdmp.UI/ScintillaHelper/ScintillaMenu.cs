@@ -14,7 +14,7 @@ using ScintillaNET;
 namespace Rdmp.UI.ScintillaHelper;
 
 [DesignerCategory("")]
-internal class ScintillaMenu : ContextMenuStrip
+class ScintillaMenu:ContextMenuStrip
 {
     private readonly Scintilla _scintilla;
     private ToolStripMenuItem _miUndo;
@@ -41,7 +41,7 @@ internal class ScintillaMenu : ContextMenuStrip
 
     private void InitContextMenu(bool spellCheck)
     {
-        _miUndo = new ToolStripMenuItem("Undo", null, (s, ea) => _scintilla.Undo());
+        _miUndo = new ToolStripMenuItem("Undo",null, (s, ea) => _scintilla.Undo());
         Items.Add(_miUndo);
         _miRedo = new ToolStripMenuItem("Redo", null, (s, ea) => _scintilla.Redo());
 

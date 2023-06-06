@@ -87,12 +87,10 @@ public abstract class BasicCommandExecution : ICommandExecution, IAtomicCommand
 
     protected void SetImpossibleIfReadonly(IMightBeReadOnly m)
     {
-        if (m == null)
-            return;
-
-        if (m.ShouldBeReadOnly(out var reason))
-            SetImpossible(
-                $"{(m is IContainer ? "Container" : '\'' + m.ToString() + '\'')} is readonly beacause:{reason}");
+        if (m?.ShouldBeReadOnly(out var reason)==true)
+        {
+            SetImpossible($"{(m is IContainer ? "Container" : '\'' + m.ToString() + '\'')} is readonly because:{reason}");
+        }
     }
 
     public BasicCommandExecution()
@@ -144,7 +142,10 @@ public abstract class BasicCommandExecution : ICommandExecution, IAtomicCommand
     /// <returns></returns>
     public static string GetCommandName<T>() where T : BasicCommandExecution => GetCommandName(typeof(T).Name);
 
-    public virtual string GetCommandHelp() => string.Empty;
+    public virtual string GetCommandHelp()
+    {
+        return string.Empty;
+    }
 
     public virtual Image<Rgba32> GetImage(IIconProvider iconProvider) => OverrideIcon;
 
@@ -500,11 +501,11 @@ public abstract class BasicCommandExecution : ICommandExecution, IAtomicCommand
     /// </summary>
     public static bool HasCommandNameOrAlias(Type commandType, string name)
     {
-        return
-            commandType.Name.Equals(ExecuteCommandPrefix + name, StringComparison.InvariantCultureIgnoreCase)
-            ||
-            commandType.Name.Equals(name, StringComparison.InvariantCultureIgnoreCase)
-            ||
+        return 
+            commandType.Name.Equals(ExecuteCommandPrefix + name,StringComparison.InvariantCultureIgnoreCase) 
+            || 
+            commandType.Name.Equals(name,StringComparison.InvariantCultureIgnoreCase) 
+            || 
             commandType.GetCustomAttributes<AliasAttribute>(false)
                 .Any(a => a.Name.Equals(name, StringComparison.InvariantCultureIgnoreCase));
     }

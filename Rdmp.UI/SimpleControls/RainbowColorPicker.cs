@@ -30,7 +30,7 @@ public class RainbowColorPicker
             Color.Yellow,
             Color.Orange,
             Color.Red
-        }; // create a color list
+        };  // create a color list
         Colors = interpolateColors(baseColors, numberOfColors);
     }
 
@@ -42,7 +42,7 @@ public class RainbowColorPicker
         {
             color1,
             color2
-        }; // create a color list
+        };  // create a color list
         Colors = interpolateColors(baseColors, numberOfColors);
     }
 

@@ -62,8 +62,7 @@ public class MultipleScheduleJobFactory : ScheduledJobFactory
             return null;
 
         var LoadDirectory = new LoadDirectory(LoadMetadata.LocationOfFlatFiles);
-        var job = new ScheduledDataLoadJob(repositoryLocator, JobDescription, LogManager, LoadMetadata, LoadDirectory,
-            listener, configuration)
+        var job = new ScheduledDataLoadJob(repositoryLocator,JobDescription, LogManager, LoadMetadata, LoadDirectory, listener,configuration)
         {
             LoadProgress = loadProgress,
             DatesToRetrieve = datesToRetrieve

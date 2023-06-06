@@ -138,7 +138,7 @@ public class LoadDiagramTableNode : Node, ICombineableSource, IHasLoadDiagramSta
         if (obj is null) return false;
         if (ReferenceEquals(this, obj)) return true;
         if (obj.GetType() != GetType()) return false;
-        return Equals((LoadDiagramTableNode)obj);
+        return Equals((LoadDiagramTableNode) obj);
     }
 
     public override int GetHashCode() => HashCode.Combine(_databaseNode, Bubble, TableName);

@@ -35,6 +35,7 @@ public class RDMPBootStrapper<T> where T : RDMPForm, new()
         ApplicationArguments = args;
         _args = args;
         _environmentInfo = environmentInfo;
+
     }
 
     private readonly HashSet<string> IgnoreExceptions = new(StringComparer.InvariantCultureIgnoreCase)
@@ -91,8 +92,8 @@ public class RDMPBootStrapper<T> where T : RDMPForm, new()
             {
                 startup.RepositoryLocator = _args.GetRepositoryLocator();
             }
-            else if (!string.IsNullOrWhiteSpace(catalogueConnection) &&
-                     !string.IsNullOrWhiteSpace(dataExportConnection))
+            else
+            if (!string.IsNullOrWhiteSpace(catalogueConnection) && !string.IsNullOrWhiteSpace(dataExportConnection))
             {
                 startup.RepositoryLocator = new LinkedRepositoryProvider(catalogueConnection, dataExportConnection);
                 startup.RepositoryLocator.CatalogueRepository.TestConnection();

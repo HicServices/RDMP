@@ -108,8 +108,8 @@ public class QueryBuilder : ISqlQueryBuilder
 
     public void SetLimitationSQL(string limitationSQL)
     {
-        if (limitationSQL != null && limitationSQL.Contains("top"))
-            throw new Exception("Use TopX property instead of limitation SQL to acheive this");
+        if(limitationSQL != null && limitationSQL.Contains("top"))
+            throw new Exception("Use TopX property instead of limitation SQL to achieve this");
 
         LimitationSQL = limitationSQL;
         SQLOutOfDate = true;
@@ -227,7 +227,7 @@ public class QueryBuilder : ISqlQueryBuilder
                     TablesUsedInQuery.Add(force);
 
         PrimaryExtractionTable = primary;
-
+            
         SqlQueryBuilderHelper.FindLookups(this);
 
         JoinsUsedInQuery = SqlQueryBuilderHelper.FindRequiredJoins(this);

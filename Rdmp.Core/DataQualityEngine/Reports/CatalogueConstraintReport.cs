@@ -505,9 +505,9 @@ public class CatalogueConstraintReport : DataQualityReport
                     {
                         //Add an item validator onto the fk column that targets the description column with a nullness prediction
                         var newRule = new Prediction(new ValuePredictsOtherValueNullness(), foreignKeyFieldName)
-                        {
-                            Consequence = Consequence.Missing
-                        };
+                            {
+                                Consequence = Consequence.Missing
+                            };
 
                         //add one that says 'if I am null my fk should also be null'
                         itemValidator.SecondaryConstraints.Add(newRule);

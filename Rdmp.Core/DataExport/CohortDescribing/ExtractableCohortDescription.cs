@@ -140,7 +140,7 @@ public class ExtractableCohortDescription
         Description = "Loading...";
 
         //if it's already finished
-        if (fetch.Task != null && fetch.Task.IsCompleted)
+        if (fetch.Task is { IsCompleted: true })
             FetchOnFinished();
         else
             fetch.Finished += FetchOnFinished;
@@ -158,10 +158,10 @@ public class ExtractableCohortDescription
 
             if (Fetch.DataTable == null)
                 throw new Exception($"IsFaulted was false but DataTable was not populated for fetch {Fetch.Source}");
+            
+            var row = Fetch.DataTable.Rows.Cast<DataRow>().FirstOrDefault(r => Convert.ToInt32(r["OriginID"]) == OriginID) ?? throw new Exception(
+                    $"No row found for Origin ID {OriginID} in fetched cohort description table for source {Fetch.Source}");
 
-            var row = Fetch.DataTable.Rows.Cast<DataRow>()
-                .FirstOrDefault(r => Convert.ToInt32(r["OriginID"]) == OriginID) ?? throw new Exception(
-                $"No row found for Origin ID {OriginID} in fetched cohort description table for source {Fetch.Source}");
 
 
             //it's overriden ugh, got to go the slow way

@@ -730,7 +730,7 @@ public class SqlQueryBuilderHelper
                 yield return lines[i];
 
                 if (i + 1 < lines.Length)
-                    yield return new CustomLine("AND", QueryComponent.WHERE);
+                    yield return new CustomLine("AND" , QueryComponent.WHERE);
             }
 
             yield break;

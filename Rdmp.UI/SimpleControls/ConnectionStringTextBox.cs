@@ -112,8 +112,7 @@ public class ConnectionStringTextBox : TextBox
 
             if (string.IsNullOrWhiteSpace(lastBitBeingTyped) //user has not typed anything or has just put in a ;
                 ||
-                lastBitBeingTyped
-                    .Contains('=')) //user has typed Password=bobsca <- i.e. he is midway through typing a value not a key
+                lastBitBeingTyped.Contains('='))//user has typed Password=bobsca <- i.e. he is midway through typing a value not a key
                 return;
 
             //we will suggest Server because user typed se

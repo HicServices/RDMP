@@ -87,10 +87,9 @@ public class ForwardEngineerCatalogue
             order++;
 
             //create it with the same name
-            var cataItem = new CatalogueItem(repo, intoExistingCatalogue,
-                col.Name[(col.Name.LastIndexOf(".") + 1)..].Trim('[', ']', '`', '"'));
+            var cataItem = new CatalogueItem(repo, intoExistingCatalogue, col.Name[(col.Name.LastIndexOf(".") + 1)..].Trim('[', ']', '`','"'));
             catalogueItemsCreated.Add(cataItem);
-
+                                
             var newExtractionInfo = new ExtractionInformation(repo, cataItem, col, col.Name)
             {
                 Order = order

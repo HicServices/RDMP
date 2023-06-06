@@ -33,7 +33,7 @@ public class IdentifierDumpServerUsageNode : Node, IDeleteable
         if (obj is null) return false;
         if (ReferenceEquals(this, obj)) return true;
         if (obj.GetType() != GetType()) return false;
-        return Equals((IdentifierDumpServerUsageNode)obj);
+        return Equals((IdentifierDumpServerUsageNode) obj);
     }
 
     public override int GetHashCode() => TableInfo != null ? TableInfo.GetHashCode() : 0;

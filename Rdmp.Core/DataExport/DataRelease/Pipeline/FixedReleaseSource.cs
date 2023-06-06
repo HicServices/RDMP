@@ -123,8 +123,7 @@ public abstract class FixedReleaseSource<T> : ICheckable, IPipelineRequirement<R
 
         var projects = _releaseData.ConfigurationsForRelease.Keys.Select(cfr => cfr.Project_ID).Distinct().ToList();
         if (projects.Count != 1)
-            notifier.OnCheckPerformed(new CheckEventArgs(
-                "How is it possible that you are doing a release for multiple different projects?", CheckResult.Fail));
+            notifier.OnCheckPerformed(new CheckEventArgs("How is it possible that you are doing a release for multiple different projects?", CheckResult.Fail));
 
         if (_releaseData.ConfigurationsForRelease.Any(kvp => kvp.Key.Project_ID != projects.First()))
             notifier.OnCheckPerformed(new CheckEventArgs(

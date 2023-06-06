@@ -382,9 +382,7 @@ public class ExecuteFullExtractionToDatabaseMSSql : ExtractionDestination
                     // if there is no primary key then failed batches may have introduced duplication
                     if (!tbl.DiscoverColumns().Any(p => p.IsPrimaryKey))
                     {
-                        listener.OnNotify(this,
-                            new NotifyEventArgs(ProgressEventType.Information,
-                                $"Making {tbl} distinct incase there are duplicate rows from bad batch resumes"));
+                        listener.OnNotify(this, new NotifyEventArgs(ProgressEventType.Information, $"Making {tbl} distinct in case there are duplicate rows from bad batch resumes"));
                         tbl.MakeDistinct(50000000);
                         listener.OnNotify(this,
                             new NotifyEventArgs(ProgressEventType.Information, $"Finished distincting {tbl}"));
@@ -399,8 +397,7 @@ public class ExecuteFullExtractionToDatabaseMSSql : ExtractionDestination
         {
             var result = ((IExtractDatasetCommand)_request).CumulativeExtractionResults;
             if (result != null && _toProcess != null)
-                result.CompleteAudit(GetType(), GetDestinationDescription(), TableLoadInfo.Inserts,
-                    _request.IsBatchResume, pipelineFailureExceptionIfAny != null);
+                result.CompleteAudit(GetType(), GetDestinationDescription(), TableLoadInfo.Inserts, _request.IsBatchResume, pipelineFailureExceptionIfAny != null);
         }
     }
 

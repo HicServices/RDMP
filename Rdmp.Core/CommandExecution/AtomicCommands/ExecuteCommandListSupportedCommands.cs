@@ -40,7 +40,7 @@ internal class ExecuteCommandListSupportedCommands : BasicCommandExecution
 
 
         var commands = commandCaller.GetSupportedCommands().ToArray();
-        var names = commands.Select(c => GetCommandName(c.Name)).ToArray();
+        var names = commands.Select(c=>GetCommandName(c.Name)).ToArray();
         string[] descriptions;
 
 

@@ -45,8 +45,10 @@ internal class
             return new ExecuteCommandCreateNewCohortFromCatalogue(ItemActivator, catalogueCombineable.Catalogue)
                 .SetTarget(target.Project);
 
-        if (cmd is ColumnCombineable columnCommand && columnCommand.Column is ExtractionInformation column)
-            return new ExecuteCommandCreateNewCohortFromCatalogue(ItemActivator, column);
+        var columnCommand = cmd as ColumnCombineable;
+
+        if (columnCommand is { Column: ExtractionInformation })
+            return new ExecuteCommandCreateNewCohortFromCatalogue(ItemActivator,(ExtractionInformation) columnCommand.Column);
 
         return null;
     }

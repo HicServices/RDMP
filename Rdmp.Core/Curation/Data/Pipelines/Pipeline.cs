@@ -145,7 +145,7 @@ public class Pipeline : DatabaseEntity, IPipeline, IHasDependencies
     {
         var name = GetUniqueCloneName();
 
-        var clonePipe = new Pipeline((ICatalogueRepository)Repository, name)
+        var clonePipe = new Pipeline((ICatalogueRepository)Repository,name)
         {
             Description = Description
         };

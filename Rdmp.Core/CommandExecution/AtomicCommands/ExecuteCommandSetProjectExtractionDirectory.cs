@@ -21,8 +21,10 @@ public class ExecuteCommandSetProjectExtractionDirectory : BasicCommandExecution
         _project = project;
     }
 
-    public override string GetCommandHelp() =>
-        "Change the location on disk where extracted artifacts are put when you run extraction configurations of this project";
+    public override string GetCommandHelp()
+    {
+        return "Change the location on disk where extracted artefacts are put when you run extraction configurations of this project";
+    }
 
     public override void Execute()
     {
@@ -30,12 +32,10 @@ public class ExecuteCommandSetProjectExtractionDirectory : BasicCommandExecution
 
         var dir = BasicActivator.SelectDirectory("Extraction Directory");
 
-        if (dir != null)
-        {
-            _project.ExtractionDirectory = dir.FullName;
-            _project.SaveToDatabase();
-            Publish(_project);
-        }
+        if (dir == null) return;
+        _project.ExtractionDirectory = dir.FullName;
+        _project.SaveToDatabase();
+        Publish(_project);
     }
 
     public override Image<Rgba32> GetImage(IIconProvider iconProvider) =>

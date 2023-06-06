@@ -127,8 +127,7 @@ public class ShareManager
         }
 
         //otherwise get the existing master object
-        var o = RepositoryLocator.GetArbitraryDatabaseObject(elements[2], elements[0], int.Parse(elements[1])) ??
-                throw new Exception($"Could not find object for persistenceString:{persistenceString}");
+        var o = RepositoryLocator.GetArbitraryDatabaseObject(elements[2], elements[0], int.Parse(elements[1])) ?? throw new Exception($"Could not find object for persistenceString:{persistenceString}");
         return o;
     }
 
@@ -332,11 +331,9 @@ public class ShareManager
                     var actual = (IMapsDirectlyToDatabaseTable)GetExistingImportObject(sd.SharingGuid);
                     actual?.DeleteInDatabase();
                 }
-
                 var objectConstructor = new ObjectConstructor();
-                var instance = (IMapsDirectlyToDatabaseTable)ObjectConstructor.ConstructIfPossible(sd.Type, this, sd) ??
-                               throw new ObjectLacksCompatibleConstructorException(
-                                   $"Could not find a ShareManager constructor for '{sd.Type}'");
+                var instance = (IMapsDirectlyToDatabaseTable) objectConstructor.ConstructIfPossible(sd.Type, this, sd) ?? throw new ObjectLacksCompatibleConstructorException(
+                        $"Could not find a ShareManager constructor for '{sd.Type}'");
                 created.Add(instance);
             }
             catch (Exception e)

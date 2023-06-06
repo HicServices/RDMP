@@ -66,7 +66,7 @@ public partial class SecondaryConstraintUI : UserControl
         var inflation = 0;
         _repository = repository;
         SecondaryConstriant = secondaryConstriant;
-
+            
         _otherColumns = otherColumns;
 
         InitializeComponent();

@@ -27,7 +27,8 @@ public class ExecuteCommandImportAlreadyExistingCohort : BasicCommandExecution, 
         _externalCohortTable = externalCohortTable;
         this.specificProject = specificProject;
 
-        if (specificProject != null && specificProject.ProjectNumber == null)
+        if(specificProject is { ProjectNumber: null })
+        {
             SetImpossible("Project does not have a ProjectNumber yet");
     }
 

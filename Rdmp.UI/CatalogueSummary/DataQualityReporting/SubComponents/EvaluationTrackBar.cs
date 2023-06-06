@@ -59,9 +59,7 @@ public partial class EvaluationTrackBar : UserControl
             EvaluationSelected(this, Evaluations.Single());
         }
         else
-        {
-            Enabled = true; //let user drag around the trackbar if he wants
-        }
+            Enabled = true;//let user drag around the trackbar if he wants
 
         foreach (var label in labels)
         {
@@ -86,12 +84,10 @@ public partial class EvaluationTrackBar : UserControl
             var x = tbEvaluation.Left + (int)(ratio * tbEvaluation.Width);
             var y = tbEvaluation.Bottom - 10;
 
-            var l = new Label
-            {
-                Text = Evaluations[i].DateOfEvaluation.ToString("d")
-            };
-            l.Location = new Point(x - l.PreferredWidth / 2, y);
-
+            var l = new Label();
+            l.Text = Evaluations[i].DateOfEvaluation.ToString("d");
+            l.Location = new Point(x - (l.PreferredWidth / 2), y);
+              
             Controls.Add(l);
             l.BringToFront();
 

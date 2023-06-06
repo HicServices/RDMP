@@ -43,9 +43,9 @@ public partial class DashboardableControlHostPanel : RDMPUserControl
         Margin = Padding.Empty;
 
         pbDelete.Visible = false;
-
+            
         Controls.Add((Control)HostedControl);
-
+            
         AdjustControlLocation();
     }
 

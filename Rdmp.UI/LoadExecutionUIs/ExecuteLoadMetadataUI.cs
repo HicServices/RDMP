@@ -53,10 +53,8 @@ public partial class ExecuteLoadMetadataUI : DatasetLoadControl_Design
     {
         InitializeComponent();
 
-        helpIconRunRepeatedly.SetHelpText("Run Repeatedly",
-            "By default running a scheduled load will run the number of days specified as a single load (e.g. 5 days of data).  Ticking this box means that if the load is succesful a further 5 days will be executed and again until either a data load fails or the load is up to date.");
-        helpIconAbortShouldCancel.SetHelpText("Abort Behaviour",
-            "By default clicking the Abort button (in Controls) will issue an Abort flag on a run which usually results in it completing the current stage (e.g. Migrate RAW to STAGING) then stop.  Ticking this button in a Load Progress based load will make the button instead issue a Cancel notification which means the data load will complete the current LoadProgress and then not start a new one.  This is only an option when you have ticked 'Run Repeatedly' (left)");
+        helpIconRunRepeatedly.SetHelpText("Run Repeatedly", "By default running a scheduled load will run the number of days specified as a single load (e.g. 5 days of data).  Ticking this box means that if the load is successful a further 5 days will be executed and again until either a data load fails or the load is up to date.");
+        helpIconAbortShouldCancel.SetHelpText("Abort Behaviour", "By default clicking the Abort button (in Controls) will issue an Abort flag on a run which usually results in it completing the current stage (e.g. Migrate RAW to STAGING) then stop.  Ticking this button in a Load Progress based load will make the button instead issue a Cancel notification which means the data load will complete the current LoadProgress and then not start a new one.  This is only an option when you have ticked 'Run Repeatedly' (left)");
 
         AssociatedCollection = RDMPCollection.DataLoad;
 
@@ -136,7 +134,7 @@ public partial class ExecuteLoadMetadataUI : DatasetLoadControl_Design
             DaysToLoad = Convert.ToInt32(udDaysPerJob.Value),
             DoNotArchiveData = debugOpts != DebugOptions.RunNormally,
             StopAfterRAW = debugOpts == DebugOptions.StopAfterRAW,
-            StopAfterSTAGING = debugOpts == DebugOptions.StopAfterRAW || debugOpts == DebugOptions.StopAfterSTAGING
+            StopAfterSTAGING = debugOpts is DebugOptions.StopAfterRAW or DebugOptions.StopAfterSTAGING,
         };
 
         if (lp != null)
@@ -157,27 +155,22 @@ public partial class ExecuteLoadMetadataUI : DatasetLoadControl_Design
             return null;
 
         var scheduleItem = (KeyValuePair<int, string>)ddLoadProgress.SelectedItem;
-        if (scheduleItem.Key == 0)
-            return null;
-
-        return Activator.RepositoryLocator.CatalogueRepository.GetObjectByID<LoadProgress>(scheduleItem.Key);
+        return scheduleItem.Key == 0 ? null : Activator.RepositoryLocator.CatalogueRepository.GetObjectByID<LoadProgress>(scheduleItem.Key);
     }
 
 
     private void ddLoadProgress_SelectedIndexChanged(object sender, EventArgs e)
     {
-        var loadprogress = GetLoadProgressIfAny();
+        var loadProgress = GetLoadProgressIfAny();
 
-        if (loadprogress == null)
+        if (loadProgress == null)
         {
             var progresses = _loadMetadata.LoadProgresses.ToArray();
             if (progresses.Length == 1)
                 udDaysPerJob.Value = progresses[0].DefaultNumberOfDaysToLoadEachTime;
         }
         else
-        {
-            udDaysPerJob.Value = loadprogress.DefaultNumberOfDaysToLoadEachTime;
-        }
+            udDaysPerJob.Value = loadProgress.DefaultNumberOfDaysToLoadEachTime;
     }
 
     public override string GetTabName() => $"Execution:{base.GetTabName()}";

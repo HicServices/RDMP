@@ -157,7 +157,7 @@ internal class CatalogueLoadChecks : ICheckable
 
     private static void CheckTableInfoSynchronization(TableInfo tableInfo, ICheckNotifier notifier)
     {
-        //live is the current data load's (possilby overridden server/database)
+        //live is the current data load's (possibly overridden server/database)
         var tableInfoSynchronizer = new TableInfoSynchronizer(tableInfo);
 
         var problemList = "";
@@ -171,9 +171,8 @@ internal class CatalogueLoadChecks : ICheckable
         else
         {
             var launchSyncFixer = notifier.OnCheckPerformed(new CheckEventArgs(
-                $"TableInfo {tableInfo} failed Synchronization check with following problems:{problemList}",
-                CheckResult.Fail,
-                null, "Launch Synchronization Fixing")); //failed syncronization
+                $"TableInfo {tableInfo} failed Synchronization check with following problems:{problemList}", CheckResult.Fail,
+                null,"Launch Synchronization Fixing")); //failed synchronization
 
             if (launchSyncFixer)
             {
@@ -181,7 +180,7 @@ internal class CatalogueLoadChecks : ICheckable
                     //if silent running accept all changes
                     tableInfoSynchronizer.Synchronize(notifier);
 
-                if (!userFixed)
+                if(!userFixed)
                     notifier.OnCheckPerformed(new CheckEventArgs(
                         $"TableInfo {tableInfo} still failed Synchronization check", CheckResult.Fail,
                         null)); //passed synchronization
@@ -311,8 +310,7 @@ internal class CatalogueLoadChecks : ICheckable
         catch (Exception e)
         {
             notifier.OnCheckPerformed(new CheckEventArgs(
-                $"{nameof(MigrationColumnSet)} reports a problem with the configuration of columns on STAGING/LIVE or in the ColumnInfos for TableInfo {liveTable}",
-                CheckResult.Fail, e));
+                $"{nameof(MigrationColumnSet)} reports a problem with the configuration of columns on STAGING/LIVE or in the ColumnInfos for TableInfo {liveTable}", CheckResult.Fail, e));
         }
 
         //live columns

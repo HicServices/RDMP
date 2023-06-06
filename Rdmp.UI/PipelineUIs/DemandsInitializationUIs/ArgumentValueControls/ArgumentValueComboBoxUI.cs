@@ -110,7 +110,7 @@ public partial class ArgumentValueComboBoxUI : UserControl, IArgumentValueUI
 
         _bLoading = false;
     }
-
+        
     private void cbxValue_TextChanged(object sender, EventArgs e)
     {
         if (_bLoading)

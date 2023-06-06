@@ -259,13 +259,15 @@ RIGHT JOIN EntriesToDelete {mcsQueryHelper.BuildJoinClause("EntriesToDelete", "C
     /// <param name="tiCurrent"></param>
     /// <param name="joinPathToTimeTable"></param>
     /// <returns></returns>
-    private string GetCurrentOldEntriesSQL(ITableInfo tiCurrent, List<JoinInfo> joinPathToTimeTable) =>
-        $@"
+    private string GetCurrentOldEntriesSQL(ITableInfo tiCurrent, List<JoinInfo> joinPathToTimeTable)
+    {
+        return $@"
 CurrentOldEntries AS (
 SELECT ToLoadWithTime.* FROM 
 
 {_sqlHelper.GetSQLComparingStagingAndLiveTables(tiCurrent, joinPathToTimeTable)} 
 ";
+    }
 
     /// <summary>
     /// This and GetCurrentOldEntriesSQL are ugly in that they just reflect modifications to the comparison CTE. Leaving for now as a more thorough refactoring may be required once the full test suite is available.
@@ -273,12 +275,14 @@ SELECT ToLoadWithTime.* FROM
     /// <param name="tiCurrent"></param>
     /// <param name="joinPathToTimeTable"></param>
     /// <returns></returns>
-    private string GetLiveDataToUpdateStaging(ITableInfo tiCurrent, List<JoinInfo> joinPathToTimeTable) =>
-        $@"
+    private string GetLiveDataToUpdateStaging(ITableInfo tiCurrent, List<JoinInfo> joinPathToTimeTable)
+    {
+        return $@"
 LiveDataForUpdating AS (
 SELECT LoadedWithTime.* FROM
 
 {_sqlHelper.GetSQLComparingStagingAndLiveTables(tiCurrent, joinPathToTimeTable)}";
+    }
 
     public void Initialize(DiscoveredDatabase dbInfo, LoadStage loadStage)
     {

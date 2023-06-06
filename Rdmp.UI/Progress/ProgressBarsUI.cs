@@ -64,9 +64,7 @@ public partial class ProgressBarsUI : UserControl, IDataLoadEventListener
         }
 
         if (progressBars.TryGetValue(e.TaskDescription, out var bar))
-        {
             UpdateProgressBar(bar, e);
-        }
         else
         {
             var y = GetRowYForNewProgressBar();
@@ -121,7 +119,7 @@ public partial class ProgressBarsUI : UserControl, IDataLoadEventListener
 
     private void btnClose_Click(object sender, EventArgs e)
     {
-        if (ParentForm != null && ParentForm.IsHandleCreated)
+        if(ParentForm is { IsHandleCreated: true })
             ParentForm.Close();
     }
 

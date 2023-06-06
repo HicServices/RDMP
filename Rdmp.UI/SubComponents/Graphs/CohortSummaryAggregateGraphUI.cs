@@ -59,7 +59,7 @@ public class CohortSummaryAggregateGraphUI : AggregateGraphUI, IObjectCollection
 
         BuildMenu(activator);
 
-        SetAggregate(activator, _collection.Graph);
+        SetAggregate(activator,_collection.Graph);
         LoadGraphAsync();
     }
 
@@ -105,10 +105,13 @@ public class CohortSummaryAggregateGraphUI : AggregateGraphUI, IObjectCollection
     {
         return adjustment switch
         {
-            CohortSummaryAdjustment.WhereExtractionIdentifiersIn => "Graphing All Records For Patients",
-            CohortSummaryAdjustment.WhereRecordsIn => "Graphing Cohort Query Result",
-            _ => throw new ArgumentOutOfRangeException(nameof(adjustment))
-        };
+            case CohortSummaryAdjustment.WhereExtractionIdentifiersIn:
+                return "Graphing All Records For Patients";
+            case CohortSummaryAdjustment.WhereRecordsIn:
+                return "Graphing Cohort Query Result";
+            default:
+                throw new ArgumentOutOfRangeException(nameof(adjustment));
+        }
     }
 
     protected override AggregateBuilder GetQueryBuilder(AggregateConfiguration summary)

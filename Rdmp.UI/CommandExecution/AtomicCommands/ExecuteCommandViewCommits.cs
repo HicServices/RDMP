@@ -18,7 +18,7 @@ namespace Rdmp.UI.CommandExecution.AtomicCommands;
 
 internal class ExecuteCommandViewCommits : BasicUICommandExecution
 {
-    private IMapsDirectlyToDatabaseTable _o;
+    private readonly IMapsDirectlyToDatabaseTable _o;
 
     public ExecuteCommandViewCommits(IActivateItems activator, IMapsDirectlyToDatabaseTable o) : base(activator)
     {
@@ -29,6 +29,7 @@ internal class ExecuteCommandViewCommits : BasicUICommandExecution
             !activator.RepositoryLocator.CatalogueRepository
                 .GetAllObjectsWhere<Memento>(nameof(Memento.ReferencedObjectID), o.ID)
                 .Any(m => m.IsReferenceTo(o)))
+        {
             SetImpossible("No commits have been made yet");
     }
 

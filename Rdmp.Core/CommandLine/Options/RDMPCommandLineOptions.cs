@@ -126,13 +126,16 @@ public abstract class RDMPCommandLineOptions
             {
                 throw new Exception("CatalogueConnectionString is invalid", ex);
             }
-        else if (CatalogueDatabaseName != null)
+        else
+        if (CatalogueDatabaseName != null)
+        {
             c = new SqlConnectionStringBuilder
             {
                 DataSource = ServerName,
                 IntegratedSecurity = true,
                 InitialCatalog = CatalogueDatabaseName
             };
+        }
         else
             c = null;
 
@@ -145,13 +148,16 @@ public abstract class RDMPCommandLineOptions
             {
                 throw new Exception("DataExportConnectionString is invalid", ex);
             }
-        else if (DataExportDatabaseName != null)
+        else
+        if (DataExportDatabaseName != null)
+        {
             d = new SqlConnectionStringBuilder
             {
                 DataSource = ServerName,
                 IntegratedSecurity = true,
                 InitialCatalog = DataExportDatabaseName
             };
+        }
         else
             d = null;
     }

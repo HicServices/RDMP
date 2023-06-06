@@ -76,7 +76,7 @@ public partial class ExtractableCohortCollectionUI : RDMPUserControl, ILifetimeS
     private void BeforeSorting(object sender, BeforeSortingEventArgs e)
     {
         lbCohortDatabaseTable.ListViewItemSorter = new ColumnComparer(
-            e.ColumnToSort, e.SortOrder, e.SecondaryColumnToSort, e.SecondarySortOrder);
+            e.ColumnToSort,e.SortOrder , e.SecondaryColumnToSort, e.SecondarySortOrder);
         e.Handled = true;
     }
 
@@ -118,8 +118,7 @@ public partial class ExtractableCohortCollectionUI : RDMPUserControl, ILifetimeS
         catch (Exception e)
         {
             ExceptionViewer.Show(
-                $"{GetType().Name} could not load Cohorts:{Environment.NewLine}{ExceptionHelper.ExceptionToListOfInnerMessages(e)}",
-                e);
+                $"{GetType().Name} could not load Cohorts:{Environment.NewLine}{ExceptionHelper.ExceptionToListOfInnerMessages(e)}", e);
         }
     }
 
@@ -134,8 +133,7 @@ public partial class ExtractableCohortCollectionUI : RDMPUserControl, ILifetimeS
         catch (Exception e)
         {
             ExceptionViewer.Show(
-                $"{GetType().Name} could not load Cohorts:{Environment.NewLine}{ExceptionHelper.ExceptionToListOfInnerMessages(e)}",
-                e);
+                $"{GetType().Name} could not load Cohorts:{Environment.NewLine}{ExceptionHelper.ExceptionToListOfInnerMessages(e)}", e);
         }
     }
 
@@ -150,9 +148,10 @@ public partial class ExtractableCohortCollectionUI : RDMPUserControl, ILifetimeS
 
         lbCohortDatabaseTable.AddObjects(fetchDescriptionsDictionary.SelectMany(kvp => kvp.Value).ToArray());
 
-        //Just because the object updates itself doesn't mean ObjectListView will notice, so we must also subscribe to the fetch completion (1 per cohort source table)
-        //when the fetch completes, update the UI nodes (they also themselves subscribe to the fetch completion handler and should be registered further up the inovcation list)
+        //Just because the object updates itself doesn't mean ObjectListView will notice, so we must also subscribe to the fetch completion (1 per cohort source table) 
+        //when the fetch completes, update the UI nodes (they also themselves subscribe to the fetch completion handler and should be registered further up the invocation list)
         foreach (var (fetch, nodes) in fetchDescriptionsDictionary)
+        {
             //Could be we are disposed when this happens
             fetch.Finished += () =>
             {

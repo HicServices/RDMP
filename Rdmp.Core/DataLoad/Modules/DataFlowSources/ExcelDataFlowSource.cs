@@ -74,46 +74,41 @@ public class ExcelDataFlowSource : IPluginDataFlowSource<DataTable>, IPipelineRe
         if (!IsAcceptableFileExtension())
             throw new Exception($"FileToLoad ({_fileToLoad.File.FullName}) extension was not XLS or XLSX, dubious");
 
-        using (var fs = new FileStream(_fileToLoad.File.FullName, FileMode.Open))
+        using var fs = new FileStream(_fileToLoad.File.FullName, FileMode.Open);
+        IWorkbook wb = _fileToLoad.File.Extension == ".xls" ? new HSSFWorkbook(fs) : new XSSFWorkbook(fs);
+
+        DataTable toReturn=null;
+
+        try
         {
-            IWorkbook wb;
-            if (_fileToLoad.File.Extension == ".xls")
-                wb = new HSSFWorkbook(fs);
-            else
-                wb = new XSSFWorkbook(fs);
+            var worksheet =
+                //if the user hasn't picked one, use the first
+                (string.IsNullOrWhiteSpace(WorkSheetName) ? wb.GetSheetAt(0) : wb.GetSheet(WorkSheetName)) ?? throw new FlatFileLoadException(
+                    $"The Excel sheet '{WorkSheetName}' was not found in workbook '{_fileToLoad.File.Name}'");
+            toReturn = GetAllData(worksheet, listener);
 
-            DataTable toReturn;
-            try
+            //set the table name the file name
+            toReturn.TableName = QuerySyntaxHelper.MakeHeaderNameSensible(Path.GetFileNameWithoutExtension(_fileToLoad.File.Name));
+
+            if (toReturn.Columns.Count == 0)
+                throw new FlatFileLoadException(
+                    $"The Excel sheet '{worksheet.SheetName}' in workbook '{_fileToLoad.File.Name}' is empty");
+
+            //if the user wants a column in the DataTable storing the filename loaded add it
+            if (!string.IsNullOrWhiteSpace(AddFilenameColumnNamed))
             {
-                var worksheet =
-                    //if the user hasn't picked one, use the first
-                    (string.IsNullOrWhiteSpace(WorkSheetName) ? wb.GetSheetAt(0) : wb.GetSheet(WorkSheetName)) ??
-                    throw new FlatFileLoadException(
-                        $"The Excel sheet '{WorkSheetName}' was not found in workbook '{_fileToLoad.File.Name}'");
-                toReturn = GetAllData(worksheet, listener);
-
-                //set the table name the file name
-                toReturn.TableName =
-                    QuerySyntaxHelper.MakeHeaderNameSensible(Path.GetFileNameWithoutExtension(_fileToLoad.File.Name));
-
-                if (toReturn.Columns.Count == 0)
-                    throw new FlatFileLoadException(
-                        $"The Excel sheet '{worksheet.SheetName}' in workbook '{_fileToLoad.File.Name}' is empty");
-
-                //if the user wants a column in the DataTable storing the filename loaded add it
-                if (!string.IsNullOrWhiteSpace(AddFilenameColumnNamed))
-                {
-                    toReturn.Columns.Add(AddFilenameColumnNamed);
-                    foreach (DataRow dataRow in toReturn.Rows)
-                        dataRow[AddFilenameColumnNamed] = _fileToLoad.File.FullName;
-                }
+                toReturn.Columns.Add(AddFilenameColumnNamed);
+                foreach (DataRow dataRow in toReturn.Rows)
+                    dataRow[AddFilenameColumnNamed] = _fileToLoad.File.FullName;
             }
-            finally
-            {
-                wb.Close();
-            }
-            return toReturn;
         }
+        finally
+        {
+            wb.Close();
+            toReturn?.EndLoadData();
+        }
+
+        return toReturn;
     }
 
     /// <summary>
@@ -126,6 +121,7 @@ public class ExcelDataFlowSource : IPluginDataFlowSource<DataTable>, IPipelineRe
     {
         var toReturn = new DataTable();
         toReturn.BeginLoadData();
+
         var rowEnumerator = worksheet.GetRowEnumerator();
         var nColumns = -1;
 
@@ -177,7 +173,7 @@ public class ExcelDataFlowSource : IPluginDataFlowSource<DataTable>, IPipelineRe
                 if (!nonBlankColumns.ContainsKey(cell.ColumnIndex))
                 {
                     listener.OnNotify(this, new NotifyEventArgs(ProgressEventType.Warning,
-                        $"Discarded the following data (that was found in unamed columns):{value}"));
+                        $"Discarded the following data (that was found in unnamed columns):{value}"));
                     continue;
                 }
 
@@ -204,11 +200,12 @@ public class ExcelDataFlowSource : IPluginDataFlowSource<DataTable>, IPipelineRe
         if (cell == null)
             return null;
 
-        if (treatAs == CellType.Formula)
-            throw new Exception("Cannot treat the cell contents as a Formula");
-
-        if (treatAs == CellType.Unknown)
-            treatAs = cell.CellType;
+        treatAs = treatAs switch
+        {
+            CellType.Formula => throw new Exception("Cannot treat the cell contents as a Formula"),
+            CellType.Unknown => cell.CellType,
+            _ => treatAs
+        };
 
         switch (treatAs)
         {
@@ -217,26 +214,23 @@ public class ExcelDataFlowSource : IPluginDataFlowSource<DataTable>, IPipelineRe
             case CellType.Numeric:
 
                 //some numerics are actually dates/times
-                if (cell.CellStyle.DataFormat != 0)
-                {
-                    var format = cell.CellStyle.GetDataFormatString();
-                    var f = new NumberFormat(format);
+                if (cell.CellStyle.DataFormat == 0) return cell.NumericCellValue;
+                var format = cell.CellStyle.GetDataFormatString();
+                var f = new NumberFormat(format);
 
-                    if (IsDateWithoutTime(format))
-                        return cell.DateCellValue.ToString("yyyy-MM-dd");
+                if (IsDateWithoutTime(format))
+                    return cell.DateCellValue.ToString("yyyy-MM-dd");
+                        
+                if(IsDateWithTime(format))
+                    return cell.DateCellValue.ToString("yyyy-MM-dd HH:mm:ss");
 
-                    if (IsDateWithTime(format))
-                        return cell.DateCellValue.ToString("yyyy-MM-dd HH:mm:ss");
+                if (IsTimeWithoutDate(format))
+                    return cell.DateCellValue.ToString("HH:mm:ss");
 
-                    if (IsTimeWithoutDate(format))
-                        return cell.DateCellValue.ToString("HH:mm:ss");
+                return IsDateFormat(format)
+                    ? f.Format(cell.DateCellValue, CultureInfo.InvariantCulture)
+                    : f.Format(cell.NumericCellValue, CultureInfo.InvariantCulture);
 
-                    return IsDateFormat(format)
-                        ? f.Format(cell.DateCellValue, CultureInfo.InvariantCulture)
-                        : f.Format(cell.NumericCellValue, CultureInfo.InvariantCulture);
-                }
-
-                return cell.NumericCellValue;
             case CellType.String:
 
                 var v = cell.StringCellValue;
@@ -259,10 +253,19 @@ public class ExcelDataFlowSource : IPluginDataFlowSource<DataTable>, IPipelineRe
         }
     }
 
-    private static bool IsDateWithTime(string formatString) => formatString.Contains('h') && formatString.Contains('y');
+    private bool IsDateWithTime(string formatString)
+    {
+        return formatString.Contains('h') && formatString.Contains('y');
+    }
+    private bool IsDateWithoutTime(string formatString)
+    {
+        return formatString.Contains('y') && !formatString.Contains('h');
+    }
 
-    private static bool IsDateWithoutTime(string formatString) =>
-        formatString.Contains('y') && !formatString.Contains('h');
+    private bool IsTimeWithoutDate(string formatString)
+    {
+        return !formatString.Contains('y') && formatString.Contains('h');
+    }
 
     private static bool IsTimeWithoutDate(string formatString) =>
         !formatString.Contains('y') && formatString.Contains('h');

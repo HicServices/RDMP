@@ -548,7 +548,7 @@ public class AggregateConfiguration : DatabaseEntity, ICheckable, IOrderable, IC
     {
         reason = null;
 
-        var dimensions = AggregateDimensions.ToArray();
+        var dimensions = AggregateDimensions;
 
         if (dimensions.Count(d => d.IsExtractionIdentifier) != 1)
             reason = "There must be exactly 1 Dimension which is marked IsExtractionIdentifier";
@@ -557,7 +557,7 @@ public class AggregateConfiguration : DatabaseEntity, ICheckable, IOrderable, IC
             reason = "It cannot contain a pivot";
 
         if (GetAxisIfAny() != null)
-            reason = "It cannot have any axises";
+            reason = "It cannot have any axes";
 
         return reason == null;
     }
@@ -655,13 +655,12 @@ public class AggregateConfiguration : DatabaseEntity, ICheckable, IOrderable, IC
 
         foreach (var aggregateDimension in AggregateDimensions)
         {
-            var cloneDimension = new AggregateDimension((ICatalogueRepository)Repository,
-                aggregateDimension.ExtractionInformation, clone)
-            {
-                Alias = aggregateDimension.Alias,
-                SelectSQL = aggregateDimension.SelectSQL,
-                Order = aggregateDimension.Order
-            };
+            var cloneDimension = new AggregateDimension((ICatalogueRepository) Repository, aggregateDimension.ExtractionInformation, clone)
+                {
+                    Alias = aggregateDimension.Alias,
+                    SelectSQL = aggregateDimension.SelectSQL,
+                    Order = aggregateDimension.Order
+                };
             cloneDimension.SaveToDatabase();
 
             if (aggregateDimension.AggregateContinuousDateAxis != null)

@@ -115,8 +115,12 @@ public partial class LoadDiagramUI : LoadDiagram_Design
 
     private void tlvLoadedTables_FormatCell(object sender, FormatCellEventArgs e)
     {
-        if (e.Column == olvDataType && e.Model is LoadDiagramColumnNode { State: LoadDiagramState.Different })
-            e.SubItem.ForeColor = Color.Red;
+        if (e.Column == olvDataType)
+        {
+            var colNode = e.Model as LoadDiagramColumnNode;
+            if (colNode is { State: LoadDiagramState.Different })
+                e.SubItem.ForeColor = Color.Red;
+        }
 
         if (e.Column == olvState && e.CellValue is LoadDiagramState state)
             e.SubItem.ForeColor = state switch
@@ -291,7 +295,7 @@ public partial class LoadDiagramUI : LoadDiagram_Design
     private void btnFetch_Click(object sender, EventArgs e)
     {
         //execution is already underway
-        if (taskDiscoverState != null && !taskDiscoverState.IsCompleted)
+        if(taskDiscoverState is { IsCompleted: false })
             return;
 
         CommonFunctionality.ResetChecks();
@@ -335,7 +339,7 @@ public partial class LoadDiagramUI : LoadDiagram_Design
     private void DiscoverStates()
     {
         if (tlvLoadedTables.Objects == null || !tlvLoadedTables.Objects.Cast<object>().Any())
-            CommonFunctionality.Fatal("There are no tables loaded by the load", null);
+            CommonFunctionality.Fatal("There are no tables loaded by the load",null);
 
 
         //update the states of the objects (do UI code happens here)

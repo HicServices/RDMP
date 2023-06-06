@@ -160,8 +160,7 @@ public class ExecuteCommandSet : BasicCommandExecution
                     if (!string.IsNullOrWhiteSpace(rel.ValueGetter))
                     {
                         //get available from that method
-                        var method = on.GetType().GetMethod(rel.ValueGetter, Type.EmptyTypes) ?? throw new Exception(
-                            $"Could not find a method called '{rel.ValueGetter}' on Type '{on.GetType()}'.  This was specified as a ValueGetter on Property {_property.Name}");
+                        var method = on.GetType().GetMethod(rel.ValueGetter,Type.EmptyTypes) ?? throw new Exception($"Could not find a method called '{rel.ValueGetter}' on Type '{on.GetType()}'.  This was specified as a ValueGetter on Property {_property.Name}");
                         try
                         {
                             available = ((IEnumerable<IMapsDirectlyToDatabaseTable>)method.Invoke(on, null)).ToArray();

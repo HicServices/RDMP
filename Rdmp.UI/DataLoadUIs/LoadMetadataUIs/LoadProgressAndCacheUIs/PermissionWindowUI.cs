@@ -83,7 +83,7 @@ public partial class PermissionWindowUI : PermissionWindowUI_Design, ISaveableUI
         var periodList = new List<PermissionWindowPeriod>();
         foreach (var periodString in listString.Split(new[] { "," }, StringSplitOptions.RemoveEmptyEntries))
         {
-            var parts = periodString.Split(new[] { "-" }, StringSplitOptions.RemoveEmptyEntries);
+            var parts = periodString.Split(new[] {"-"}, StringSplitOptions.RemoveEmptyEntries);
             if (!TimeSpan.TryParse(parts[0], out var start))
                 throw new Exception($"Could not parse {parts[0]} as a TimeSpan");
 

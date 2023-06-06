@@ -103,8 +103,7 @@ public class ArgumentValueUIFactory
         catch (Exception e)
         {
             throw new Exception(
-                $"A problem occured trying to create an ArgumentUI for Property '{args.Required.Name}' of Type '{argumentType}' on parent class of Type '{args.Parent.GetClassNameWhoArgumentsAreFor()}'",
-                e);
+                $"A problem occurred trying to create an ArgumentUI for Property '{args.Required.Name}' of Type '{argumentType}' on parent class of Type '{args.Parent.GetClassNameWhoArgumentsAreFor()}'", e);
         }
 
         ((Control)toReturn).Dock = DockStyle.Fill;
@@ -123,9 +122,9 @@ public class ArgumentValueUIFactory
         //if it is an interface e.g. IExternalDatabaseServer look for ExternalDatabaseServer
         if (argumentType.IsInterface)
         {
-            var implmenetationType = args.CatalogueRepository.MEF.GetType(args.Type.Name[1..]);
-            if (implmenetationType != null)
-                argumentType = implmenetationType;
+            var implementationType = args.CatalogueRepository.MEF.GetType(args.Type.Name[1..]);
+            if (implementationType != null)
+                argumentType = implementationType;
         }
 
         //Populate dropdown with the appropriate types

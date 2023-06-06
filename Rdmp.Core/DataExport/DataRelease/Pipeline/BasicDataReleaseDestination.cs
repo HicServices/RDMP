@@ -109,7 +109,7 @@ public class BasicDataReleaseDestination : IPluginDataFlowComponent<ReleaseAudit
         if (pipelineFailureExceptionIfAny == null && _destinationFolder != null)
         {
             listener.OnNotify(this, new NotifyEventArgs(ProgressEventType.Information,
-                $"Data release succeded into:{_destinationFolder}"));
+                $"Data release succeeded into:{_destinationFolder}"));
             //mark configuration as released
             foreach (var config in _configurationReleased)
             {

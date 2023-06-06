@@ -59,7 +59,6 @@ public partial class SupportingSQLTableUI : SupportingSQLTableUI_Design, ISaveab
         QueryPreview.TextChanged += new EventHandler(QueryPreview_TextChanged);
 
         pSQL.Controls.Add(QueryPreview);
-
         #endregion
 
         tcTicket.TicketTextChanged += TcTicketOnTicketTextChanged;

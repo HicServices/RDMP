@@ -41,7 +41,7 @@ internal class MySqlTriggerImplementer : TriggerImplementer
                     cmd.ExecuteNonQuery();
                 }
 
-                thingsThatWorkedDroppingTrigger = $"Droppped trigger {GetTriggerName()}";
+                thingsThatWorkedDroppingTrigger = $"Dropped trigger {GetTriggerName()}";
             }
         }
         catch (Exception exception)
@@ -112,13 +112,18 @@ internal class MySqlTriggerImplementer : TriggerImplementer
     protected virtual string CreateTriggerBody()
     {
         var syntax = _server.GetQuerySyntaxHelper();
-
+            
         return $@"BEGIN
     INSERT INTO {_archiveTable.GetFullyQualifiedName()} SET {string.Join(",", _columns.Select(c =>
         $"{syntax.EnsureWrapped(c.GetRuntimeName())}=OLD.{syntax.EnsureWrapped(c.GetRuntimeName())}"))},hic_validTo=now(),hic_userID=CURRENT_USER(),hic_status='U';
 
 	SET NEW.{syntax.EnsureWrapped(SpecialFieldNames.ValidFrom)} = now();
   END";
+    }
+        
+    public override TriggerStatus GetTriggerStatus()
+    {
+        return string.IsNullOrWhiteSpace(GetTriggerBody())? TriggerStatus.Missing : TriggerStatus.Enabled;
     }
 
     public override TriggerStatus GetTriggerStatus() =>
@@ -130,9 +135,8 @@ internal class MySqlTriggerImplementer : TriggerImplementer
         {
             con.Open();
 
-            using (var cmd = _server.GetCommand($"show triggers like '{_table.GetRuntimeName()}'", con))
-            using (var r = cmd.ExecuteReader())
-            {
+            using(var cmd = _server.GetCommand($"show triggers like '{_table.GetRuntimeName()}'", con))
+            using(var r = cmd.ExecuteReader())
                 while (r.Read())
                     if (r["Trigger"].Equals(GetTriggerName()))
                         return (string)r["Statement"];
@@ -160,8 +164,7 @@ internal class MySqlTriggerImplementer : TriggerImplementer
 
     protected virtual void AssertTriggerBodiesAreEqual(string sqlThen, string sqlNow)
     {
-        if (!sqlNow.Equals(sqlThen))
-            throw new ExpectedIdenticalStringsException("Sql body for trigger doesn't match expcted sql", sqlNow,
-                sqlThen);
+        if(!sqlNow.Equals(sqlThen))
+            throw new ExpectedIdenticalStringsException("Sql body for trigger doesn't match expected sql",sqlNow,sqlThen);
     }
 }

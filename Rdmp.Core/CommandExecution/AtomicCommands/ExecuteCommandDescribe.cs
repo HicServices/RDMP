@@ -56,10 +56,10 @@ public class ExecuteCommandDescribe : BasicCommandExecution
         {
             // Maybe they typed the alias or name of a command
             _nonDatabaseObjectToDescribe = new CommandInvoker(BasicActivator).GetSupportedCommands()
-                .FirstOrDefault(t => HasCommandNameOrAlias(t, picker[0].RawValue));
-
-
-            if (_nonDatabaseObjectToDescribe == null)
+                .FirstOrDefault(t=>HasCommandNameOrAlias(t,picker[0].RawValue));
+                
+                    
+            if(_nonDatabaseObjectToDescribe == null)
                 SetImpossible("Did not recognise parameter as a valid command");
         }
     }
@@ -243,6 +243,7 @@ public class ExecuteCommandDescribe : BasicCommandExecution
                 new PickObjectByID(BasicActivator),
                 new PickObjectByName(BasicActivator),
                 new PickObjectByQuery(BasicActivator)) || anySyntaxes;
+
         }
 
 
@@ -283,13 +284,11 @@ public class ExecuteCommandDescribe : BasicCommandExecution
 
         try
         {
-            if (BasicActivator is ConsoleInputManager)
-            {
+            if(BasicActivator is ConsoleInputManager)
+            {              
                 var name = req.Name.Length < nameColWidth ? req.Name.PadRight(nameColWidth) : req.Name[..nameColWidth];
-                var type = req.Type.Name.Length < typeColWidth
-                    ? req.Type.Name.PadRight(typeColWidth)
-                    : req.Type.Name[..typeColWidth];
-
+                var type = req.Type.Name.Length < typeColWidth ? req.Type.Name.PadRight(typeColWidth) : req.Type.Name[..typeColWidth];
+                    
                 var desc = req.DemandIfAny?.Description;
 
 

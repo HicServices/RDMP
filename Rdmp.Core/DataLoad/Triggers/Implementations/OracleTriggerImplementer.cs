@@ -24,21 +24,17 @@ internal class OracleTriggerImplementer : MySqlTriggerImplementer
 
     protected override string GetTriggerBody()
     {
-        using (var con = _server.GetConnection())
-        {
-            con.Open();
+        using var con = _server.GetConnection();
+        con.Open();
 
-            using (var cmd =
-                   _server.GetCommand(
-                       $"select trigger_body from all_triggers where trigger_name = UPPER('{GetTriggerName()}')", con))
-            {
-                ((OracleCommand)cmd).InitialLONGFetchSize = -1;
-                var r = cmd.ExecuteReader();
+        using var cmd =
+            _server.GetCommand(
+                $"select trigger_body from all_triggers where trigger_name = UPPER('{GetTriggerName()}')", con);
+        ((OracleCommand)cmd).InitialLONGFetchSize = -1;
+        var r = cmd.ExecuteReader();
 
-                while (r.Read())
-                    return (string)r["trigger_body"];
-            }
-        }
+        while (r.Read())
+            return (string) r["trigger_body"];
 
         return null;
     }
@@ -67,8 +63,7 @@ internal class OracleTriggerImplementer : MySqlTriggerImplementer
         sqlNow ??= "";
         sqlThen ??= "";
 
-        if (!sqlNow.Trim(';', ' ', '\t').Equals(sqlThen.Trim(';', ' ', '\t')))
-            throw new ExpectedIdenticalStringsException("Sql body for trigger doesn't match expcted sql", sqlThen,
-                sqlNow);
+        if(!sqlNow.Trim(';',' ','\t').Equals(sqlThen.Trim(';',' ','\t')))
+            throw new ExpectedIdenticalStringsException("Sql body for trigger doesn't match expected sql",sqlThen,sqlNow);
     }
 }

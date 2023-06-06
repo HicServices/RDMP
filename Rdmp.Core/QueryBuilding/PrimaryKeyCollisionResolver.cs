@@ -151,10 +151,8 @@ WHERE DuplicateCount > 1";
     {
         var basicSQL = GenerateSQL(out var pks, out var resolvers);
 
-        var commaSeparatedPKs = string.Join(",",
-            pks.Select(c => _querySyntaxHelper.EnsureWrapped(c.GetRuntimeName(LoadStage.AdjustRaw))));
-        var commaSeparatedCols = string.Join(",",
-            resolvers.Select(c => _querySyntaxHelper.EnsureWrapped(c.GetRuntimeName(LoadStage.AdjustRaw))));
+        var commaSeparatedPKs = string.Join(",", pks.Select(c => _querySyntaxHelper.EnsureWrapped(c.GetRuntimeName(LoadStage.AdjustRaw))));
+        var commaSeparatedCols = string.Join(",", resolvers.Select(c => _querySyntaxHelper.EnsureWrapped(c.GetRuntimeName(LoadStage.AdjustRaw))));
 
         //add all the columns to the WITH CTE bit
         basicSQL = basicSQL.Replace(WithCTE, $"WITH CTE ({commaSeparatedPKs},{commaSeparatedCols},DuplicateCount)");
@@ -174,13 +172,10 @@ WHERE DuplicateCount > 1";
         basicSQL += $"\twhere{Environment.NewLine}";
 
         //add the child.pk1 = CTE.pk1 bit to restrict preview only to rows that are going to get compared for nukage
-        basicSQL += string.Join("\r\n\t\tand",
-            pks.Select(pk =>
-                "\t\tchild." + _querySyntaxHelper.EnsureWrapped(pk.GetRuntimeName(LoadStage.AdjustRaw)) + "= CTE." +
-                _querySyntaxHelper.EnsureWrapped(pk.GetRuntimeName(LoadStage.AdjustRaw))));
+        basicSQL += string.Join("\r\n\t\tand",pks.Select(pk =>  ("\t\tchild." + _querySyntaxHelper.EnsureWrapped(pk.GetRuntimeName(LoadStage.AdjustRaw)) + "= CTE." + _querySyntaxHelper.EnsureWrapped(pk.GetRuntimeName(LoadStage.AdjustRaw)))));
 
         basicSQL += $"\tgroup by{Environment.NewLine}";
-        basicSQL += string.Join(",\r\n", pks.Select(pk =>
+        basicSQL += string.Join(",\r\n", pks.Select( pk =>
             $"\t\t{_querySyntaxHelper.EnsureWrapped(pk.GetRuntimeName(LoadStage.AdjustRaw))}"));
 
         basicSQL += $"\t\t{Environment.NewLine}";
@@ -284,7 +279,7 @@ WHERE DuplicateCount > 1";
             if (min)
                 toReturn = "-";
 
-            //ignore element zero because elment zero is always a duplicate see https://msdn.microsoft.com/en-us/library/system.text.regularexpressions.match.groups%28v=vs.110%29.aspx
+            //ignore element zero because element zero is always a duplicate see https://msdn.microsoft.com/en-us/library/system.text.regularexpressions.match.groups%28v=vs.110%29.aspx
             if (digits.Groups.Count == 3 && string.IsNullOrWhiteSpace(digits.Groups[2].Value))
             {
                 for (var i = 0; i < Convert.ToInt32(digits.Groups[1].Value); i++)
@@ -310,36 +305,21 @@ WHERE DuplicateCount > 1";
 
         var valueType = GetDataType(datatype);
 
-        if (valueType == ValueType.CharacterString)
-            if (min)
-                return "''";
-            else
-                throw new NotSupportedException(
-                    "Cannot think what the maxmimum character string would be, maybe use min = true instead?");
-
-        if (valueType == ValueType.DateTime)
-            if (min)
-                return "'1753-1-1'";
-            else
-                throw new NotSupportedException(
-                    "Cannot think what the maxmimum date would be, maybe use min = true instead?");
-
-        if (valueType == ValueType.Time)
-            if (min)
-                return "'00:00:00'";
-            else
-                return "'23:59:59'";
-
-        if (valueType == ValueType.Freaky)
-            throw new NotSupportedException(
-                $"Cannot predict null value substitution for freaky datatypes like {datatype}");
-
-        if (valueType == ValueType.Binary)
-            throw new NotSupportedException(
-                $"Cannot predict null value substitution for binary datatypes like {datatype}");
-
-
-        throw new NotSupportedException($"Didn't know what minimum value type to use for {datatype}");
+        return valueType switch
+        {
+            ValueType.CharacterString when min => "''",
+            ValueType.CharacterString => throw new NotSupportedException(
+                "Cannot think what the maximum character string would be, maybe use min = true instead?"),
+            ValueType.DateTime when min => "'1753-1-1'",
+            ValueType.DateTime => throw new NotSupportedException(
+                "Cannot think what the maximum date would be, maybe use min = true instead?"),
+            ValueType.Time => min ? "'00:00:00'" : "'23:59:59'",
+            ValueType.Freaky => throw new NotSupportedException(
+                $"Cannot predict null value substitution for freaky data types like {datatype}"),
+            ValueType.Binary => throw new NotSupportedException(
+                $"Cannot predict null value substitution for binary data types like {datatype}"),
+            _ => throw new NotSupportedException($"Didn't know what minimum value type to use for {datatype}")
+        };
     }
 
     private enum ValueType

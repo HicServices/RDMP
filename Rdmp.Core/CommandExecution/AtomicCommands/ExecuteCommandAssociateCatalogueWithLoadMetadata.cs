@@ -80,6 +80,7 @@ public class ExecuteCommandAssociateCatalogueWithLoadMetadata : BasicCommandExec
 
                         //AND if there is agreement on what logging server to use!
                         if (liveServers.Length <= 1)
+                        {
                             //if there is no current logging task for the Catalogue
                             if (string.IsNullOrWhiteSpace(cata.LoggingDataTask)
                                 //or if the user wants to switch to the new one

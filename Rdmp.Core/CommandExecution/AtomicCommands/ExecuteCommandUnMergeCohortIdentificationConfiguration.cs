@@ -49,8 +49,8 @@ public class ExecuteCommandUnMergeCohortIdentificationConfiguration : BasicComma
             return;
         }
 
-        if (_target.GetSubContainers().Length <= 1)
-        {
+        if(_target.GetSubContainers().Length <= 1)
+        { 
             SetImpossible("Container must have 2 or more immediate subcontainers for unmerging");
             return;
         }

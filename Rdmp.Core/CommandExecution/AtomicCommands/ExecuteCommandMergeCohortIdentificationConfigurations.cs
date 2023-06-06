@@ -11,7 +11,7 @@ namespace Rdmp.Core.CommandExecution.AtomicCommands;
 
 public class ExecuteCommandMergeCohortIdentificationConfigurations : BasicCommandExecution
 {
-    public CohortIdentificationConfiguration[] ToMerge { get; }
+    private CohortIdentificationConfiguration[] ToMerge { get; }
 
     public ExecuteCommandMergeCohortIdentificationConfigurations(IBasicActivateItems activator,
         CohortIdentificationConfiguration[] toMerge) : base(activator)
@@ -25,13 +25,12 @@ public class ExecuteCommandMergeCohortIdentificationConfigurations : BasicComman
 
         var toMerge = ToMerge;
 
-        if (toMerge == null || toMerge.Length <= 1)
-            if (!SelectMany(
-                    BasicActivator.RepositoryLocator.CatalogueRepository
-                        .GetAllObjects<CohortIdentificationConfiguration>(), out toMerge))
-                return;
+        if (toMerge is not { Length: > 1 } &&
+            !SelectMany(
+                BasicActivator.RepositoryLocator.CatalogueRepository.GetAllObjects<CohortIdentificationConfiguration>(),
+                out toMerge)) return;
 
-        if (toMerge == null || toMerge.Length <= 1)
+        if(toMerge is not { Length: > 1 })
         {
             BasicActivator.Show($"You must select at least 2 configurations to merge");
             return;
@@ -42,11 +41,9 @@ public class ExecuteCommandMergeCohortIdentificationConfigurations : BasicComman
                 (CatalogueRepository)BasicActivator.RepositoryLocator.CatalogueRepository);
         var result = merger.Merge(toMerge, SetOperation.UNION);
 
-        if (result != null)
-        {
-            BasicActivator.Show($"Succesfully created '{result}'");
-            Publish(result);
-            Emphasise(result);
-        }
+        if (result == null) return;
+        BasicActivator.Show($"Successfully created '{result}'");
+        Publish(result);
+        Emphasise(result);
     }
 }

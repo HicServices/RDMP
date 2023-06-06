@@ -69,8 +69,8 @@ public class ReleaseFolderProvider : IPluginDataFlowComponent<ReleaseAudit>, IPi
 
     private void PrepareAndCheckReleaseFolder(ICheckNotifier notifier)
     {
-        if (FolderSettings.CustomReleaseFolder != null &&
-            !string.IsNullOrWhiteSpace(FolderSettings.CustomReleaseFolder.FullName))
+        if (FolderSettings.CustomReleaseFolder != null && !string.IsNullOrWhiteSpace(FolderSettings.CustomReleaseFolder.FullName))
+        {
             _releaseFolder = FolderSettings.CustomReleaseFolder;
         else
             _releaseFolder = GetFromProjectFolder(_project);
@@ -78,8 +78,7 @@ public class ReleaseFolderProvider : IPluginDataFlowComponent<ReleaseAudit>, IPi
         if (_releaseFolder.Exists && _releaseFolder.EnumerateFileSystemInfos().Any())
         {
             if (notifier.OnCheckPerformed(new CheckEventArgs(
-                    $"Release folder {_releaseFolder.FullName} already exists!", CheckResult.Fail, null,
-                    "Do you want to delete it? You should check the contents first.")))
+                    $"Release folder {_releaseFolder.FullName} already exists!", CheckResult.Fail, null, "Do you want to delete it? You should check the contents first.")))
                 _releaseFolder.Delete(true);
             else
                 return;
@@ -99,8 +98,7 @@ public class ReleaseFolderProvider : IPluginDataFlowComponent<ReleaseAudit>, IPi
 
         var prefix = DateTime.UtcNow.ToString("yyyy-MM-dd");
         var suffix = string.Empty;
-        if (_releaseData != null && _releaseData.ConfigurationsForRelease != null &&
-            _releaseData.ConfigurationsForRelease.Keys.Any())
+        if (_releaseData is { ConfigurationsForRelease: not null } && _releaseData.ConfigurationsForRelease.Keys.Any())
         {
             var releaseTicket = _releaseData.ConfigurationsForRelease.Keys.First().ReleaseTicket;
             if (_releaseData.ConfigurationsForRelease.Keys.All(x => x.ReleaseTicket == releaseTicket))
@@ -110,7 +108,12 @@ public class ReleaseFolderProvider : IPluginDataFlowComponent<ReleaseAudit>, IPi
         }
 
         if (string.IsNullOrWhiteSpace(suffix))
-            suffix = string.IsNullOrWhiteSpace(p.MasterTicket) ? $"{p.ID}_{p.Name}" : p.MasterTicket;
+        {
+            if (string.IsNullOrWhiteSpace(p.MasterTicket))
+                suffix = $"{p.ID}_{p.Name}";
+            else
+                suffix = p.MasterTicket;
+        }
 
         return new DirectoryInfo(Path.Combine(p.ExtractionDirectory, $"{prefix}_{suffix}"));
     }

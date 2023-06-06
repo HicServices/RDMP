@@ -50,14 +50,11 @@ ConnectionString (Required)";
     {
         var m = MatchOrThrow(arg, idx);
 
-        var tableName = m.Groups[1].Value;
-        var schema = Trim("Schema:", m.Groups[2].Value);
-
-        var isViewStr = Trim("IsView:", m.Groups[3].Value);
+        var isViewStr = Trim("IsView:",m.Groups[3].Value);
         var isViewBool = isViewStr != null && bool.Parse(isViewStr);
-
-        var dbType = (DatabaseType)Enum.Parse(typeof(DatabaseType), m.Groups[4].Value);
-        var dbName = Trim("Name:", m.Groups[5].Value);
+            
+        var dbType = (DatabaseType)Enum.Parse(typeof(DatabaseType),m.Groups[4].Value);
+        var dbName = Trim("Name:",m.Groups[5].Value);
         var connectionString = m.Groups[6].Value;
 
         var server = new DiscoveredServer(connectionString, dbType);
@@ -66,7 +63,6 @@ ConnectionString (Required)";
                  throw new CommandLineObjectPickerParseException(
                      "Missing database name parameter, it was not in connection string or specified explicitly", idx,
                      arg);
-        return new CommandLineObjectPickerArgumentValue(arg, idx,
-            db.ExpectTable(tableName, schema, isViewBool ? TableType.View : TableType.Table));
+        return new CommandLineObjectPickerArgumentValue(arg,idx,db.ExpectTable(tableName,schema,isViewBool ? TableType.View:TableType.Table));
     }
 }

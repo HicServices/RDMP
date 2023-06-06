@@ -40,7 +40,7 @@ public class ExtractionDirectoryNode : Node, IDirectoryInfoNode, IOrderable
         if (obj is null) return false;
         if (ReferenceEquals(this, obj)) return true;
         if (obj.GetType() != GetType()) return false;
-        return Equals((ExtractionDirectoryNode)obj);
+        return Equals((ExtractionDirectoryNode) obj);
     }
 
     public override int GetHashCode() => Project != null ? Project.GetHashCode() : 0;

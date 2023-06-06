@@ -54,10 +54,8 @@ public class MemoryCatalogueRepository : MemoryRepository, ICatalogueRepository,
         set
         {
             _mef = value;
-
-            if (ObscureDependencyFinder is CatalogueObscureDependencyFinder odf && this is IDataExportRepository dxm)
-                odf.AddOtherDependencyFinderIfNotExists<ValidationXMLObscureDependencyFinder>(
-                    new RepositoryProvider(dxm));
+            if(ObscureDependencyFinder is CatalogueObscureDependencyFinder odf && this is IDataExportRepository dxm)
+                odf.AddOtherDependencyFinderIfNotExists<ValidationXMLObscureDependencyFinder>(new RepositoryProvider(dxm));
         }
     }
 
@@ -107,7 +105,7 @@ public class MemoryCatalogueRepository : MemoryRepository, ICatalogueRepository,
 
         var dependencyFinder = new CatalogueObscureDependencyFinder(this);
 
-        if (this is IDataExportRepository dxm)
+        if(this is IDataExportRepository dxm)
         {
             dependencyFinder.AddOtherDependencyFinderIfNotExists<ObjectSharingObscureDependencyFinder>(
                 new RepositoryProvider(dxm));
@@ -122,10 +120,7 @@ public class MemoryCatalogueRepository : MemoryRepository, ICatalogueRepository,
     public LogManager GetDefaultLogManager()
     {
         var server = GetDefaultFor(PermissableDefaults.LiveLoggingServer_ID);
-        if (server == null)
-            return null;
-
-        return new LogManager(server);
+        return server == null ? null : new LogManager(server);
     }
 
     public IEnumerable<AnyTableSqlParameter> GetAllParametersForParentTable(IMapsDirectlyToDatabaseTable parent)
@@ -181,10 +176,7 @@ public class MemoryCatalogueRepository : MemoryRepository, ICatalogueRepository,
 
     public virtual void SetDefault(PermissableDefaults toChange, IExternalDatabaseServer externalDatabaseServer)
     {
-        if (Defaults.ContainsKey(toChange))
-            Defaults[toChange] = externalDatabaseServer;
-        else
-            Defaults.Add(toChange, externalDatabaseServer);
+        Defaults[toChange] = externalDatabaseServer;
     }
 
     public override void Clear()
@@ -261,10 +253,7 @@ public class MemoryCatalogueRepository : MemoryRepository, ICatalogueRepository,
 
     public Dictionary<DataAccessContext, DataAccessCredentials> GetCredentialsIfExistsFor(ITableInfo tableInfo)
     {
-        if (CredentialsDictionary.TryGetValue(tableInfo, out var @for))
-            return @for;
-
-        return null;
+        return CredentialsDictionary.TryGetValue(tableInfo, out var credential) ? credential : null;
     }
 
     public Dictionary<ITableInfo, List<DataAccessCredentialUsageNode>> GetAllCredentialUsagesBy(
@@ -286,11 +275,9 @@ public class MemoryCatalogueRepository : MemoryRepository, ICatalogueRepository,
     public Dictionary<DataAccessContext, List<ITableInfo>> GetAllTablesUsingCredentials(
         DataAccessCredentials credentials)
     {
-        var toreturn = new Dictionary<DataAccessContext, List<ITableInfo>>();
-
+        var toreturn = Enum.GetValues(typeof(DataAccessContext)).Cast<DataAccessContext>().ToDictionary(context => context, _ => new List<ITableInfo>());
+            
         //add the keys
-        foreach (DataAccessContext context in Enum.GetValues(typeof(DataAccessContext)))
-            toreturn.Add(context, new List<ITableInfo>());
 
         foreach (var kvp in CredentialsDictionary)
         foreach (var forNode in kvp.Value)
@@ -469,8 +456,7 @@ public class MemoryCatalogueRepository : MemoryRepository, ICatalogueRepository,
 
     public IFilter[] GetFilters(IContainer container)
     {
-        return GetAllObjects<IFilter>().Where(f => f is not ExtractionFilter && f.FilterContainer_ID == container.ID)
-            .ToArray();
+        return GetAllObjects<IFilter>().Where(f =>f is not ExtractionFilter && f.FilterContainer_ID == container.ID).ToArray();
     }
 
     public void AddChild(IContainer container, IFilter filter)
@@ -545,32 +531,49 @@ public class MemoryCatalogueRepository : MemoryRepository, ICatalogueRepository,
     {
         base.CascadeDeletes(oTableWrapperObject);
 
-        if (oTableWrapperObject is Catalogue catalogue)
-            foreach (var ci in catalogue.CatalogueItems)
-                ci.DeleteInDatabase();
-
-        if (oTableWrapperObject is ExtractionInformation extractionInformation)
-            extractionInformation.CatalogueItem.ClearAllInjections();
-
-        // when deleting a TableInfo
-        if (oTableWrapperObject is TableInfo t)
+        switch (oTableWrapperObject)
         {
-            // forget about its credentials usages
-            CredentialsDictionary.Remove(t);
-
-            foreach (var c in t.ColumnInfos) c.DeleteInDatabase();
-        }
-
-        // when deleting a ColumnInfo
-        if (oTableWrapperObject is ColumnInfo columnInfo)
-            foreach (var ci in Objects.Keys.OfType<CatalogueItem>().Where(ci => ci.ColumnInfo_ID == columnInfo.ID))
+            case Catalogue catalogue:
             {
-                ci.ColumnInfo_ID = null;
-                ci.ClearAllInjections();
-                ci.SaveToDatabase();
-            }
+                foreach (var ci in catalogue.CatalogueItems)
+                {
+                    ci.DeleteInDatabase();
+                }
 
-        if (oTableWrapperObject is CatalogueItem catalogueItem) catalogueItem.ExtractionInformation?.DeleteInDatabase();
+                break;
+            }
+            case ExtractionInformation extractionInformation:
+                extractionInformation.CatalogueItem.ClearAllInjections();
+                break;
+            // when deleting a TableInfo
+            case TableInfo t:
+            {
+                // forget about its credentials usages
+                CredentialsDictionary.Remove(t);
+
+                foreach(var c in t.ColumnInfos)
+                {
+                    c.DeleteInDatabase();
+                }
+
+                break;
+            }
+            // when deleting a ColumnInfo
+            case ColumnInfo columnInfo:
+            {
+                foreach(var ci in Objects.Keys.OfType<CatalogueItem>().Where(ci=>ci.ColumnInfo_ID == columnInfo.ID))
+                {
+                    ci.ColumnInfo_ID = null;
+                    ci.ClearAllInjections();
+                    ci.SaveToDatabase();
+                }
+
+                break;
+            }
+            case CatalogueItem catalogueItem:
+                catalogueItem.ExtractionInformation?.DeleteInDatabase();
+                break;
+        }
     }
 
     /// <inheritdoc/>

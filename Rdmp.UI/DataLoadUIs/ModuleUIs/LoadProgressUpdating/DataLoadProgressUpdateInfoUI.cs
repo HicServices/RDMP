@@ -72,7 +72,7 @@ public partial class DataLoadProgressUpdateInfoUI : Form, ICustomUI<DataLoadProg
         {
             ExecuteScalarSQL = QueryEditor.Text,
             Timeout = _timeout,
-            Strategy = (DataLoadProgressUpdateStrategy)ddStrategy.SelectedItem
+            Strategy = (DataLoadProgressUpdateStrategy) ddStrategy.SelectedItem
         };
 
         return toReturn;

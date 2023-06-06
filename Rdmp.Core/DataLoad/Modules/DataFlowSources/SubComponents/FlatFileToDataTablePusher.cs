@@ -87,7 +87,7 @@ public class FlatFileToDataTablePusher
             if (!_haveComplainedAboutColumnMismatch)
             {
                 listener.OnNotify(this, new NotifyEventArgs(ProgressEventType.Warning,
-                    $"Flat file '{_fileToLoad.File.Name}' line number '{reader.Context.Parser.RawRow}' had  {headerCount} columns while the destination DataTable had {dt.Columns.Count} columns.  This message apperas only once per file"));
+                    $"Flat file '{_fileToLoad.File.Name}' line number '{reader.Context.Parser.RawRow}' had  {headerCount} columns while the destination DataTable had {dt.Columns.Count} columns.  This message appears only once per file"));
                 _haveComplainedAboutColumnMismatch = true;
             }
 
@@ -248,6 +248,7 @@ public class FlatFileToDataTablePusher
 
             //add any further cells on after that
             newCells.AddRange(peekedLine.Cells.Skip(1));
+
         } while (newCells.Count < _headers.Length);
 
 

@@ -441,11 +441,11 @@ public class YamlRepository : MemoryDataExportRepository
                     continue;
 
                 var valDictionary = new Dictionary<DataAccessContext, DataAccessCredentials>();
-                foreach (var (usage, value) in tableToCredentialUsage.Value)
+                foreach(var (usage, value) in tableToCredentialUsage.Value)
                 {
                     var credential = GetObjectByIDIfExists<DataAccessCredentials>(value);
 
-                    // In case credentials were deleted on the sly
+                    // Credentials can be deleted on the sly
                     if (credential != null) valDictionary.Add(usage, credential);
                 }
 

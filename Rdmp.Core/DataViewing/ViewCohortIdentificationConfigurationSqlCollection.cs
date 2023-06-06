@@ -42,8 +42,7 @@ internal class ViewCohortIdentificationConfigurationSqlCollection : PersistableO
 
     private ExternalDatabaseServer GetCacheServer()
     {
-        if (CohortIdentificationConfiguration != null &&
-            CohortIdentificationConfiguration.QueryCachingServer_ID != null)
+        if (CohortIdentificationConfiguration is { QueryCachingServer_ID: not null })
             return CohortIdentificationConfiguration.QueryCachingServer;
 
         return null;

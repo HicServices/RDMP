@@ -219,8 +219,8 @@ public partial class ExtractionFilterUI : ExtractionFilterUI_Design, ILifetimeSu
         if (e.Object is not IFilter filter)
             return;
 
-        if (filter.Equals(_extractionFilter))
-            if (!filter.Exists()) //its deleted
+        if (e.Object.Equals(_extractionFilter))
+            if (!e.Object.Exists()) //its deleted
                 ParentForm.Close();
             else
                 _extractionFilter = filter;

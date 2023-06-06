@@ -33,8 +33,11 @@ public class AggregatesNode : Node
         if (obj is null) return false;
         if (ReferenceEquals(this, obj)) return true;
         if (obj.GetType() != GetType()) return false;
-        return Equals((AggregatesNode)obj);
+        return Equals((AggregatesNode) obj);
     }
 
-    public override int GetHashCode() => Catalogue.GetHashCode() * GetType().GetHashCode();
+    public override int GetHashCode()
+    {
+        return Catalogue.GetHashCode() * GetType().GetHashCode();
+    }
 }

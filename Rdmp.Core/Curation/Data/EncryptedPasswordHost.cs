@@ -73,8 +73,7 @@ public class EncryptedPasswordHost : IEncryptedPasswordHost
         get
         {
             if (_encryptedString is FakeEncryptedString)
-                throw new Exception(
-                    $"Encryption setup failed, API caller must have forgotten to call {nameof(SetRepository)}");
+                throw new Exception($"Encryption setup failed, API caller must have forgotten to call {nameof(SetRepository)}");
 
             return _encryptedString.Value;
         }

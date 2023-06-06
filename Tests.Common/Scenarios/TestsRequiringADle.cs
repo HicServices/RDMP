@@ -63,7 +63,7 @@ public class TestsRequiringADle : TestsRequiringA
         TestCatalogue = Import(LiveTable);
         RowsBefore = 5000;
 
-        TestLoadMetadata = new LoadMetadata(CatalogueRepository, "Loading Test Catalogue")
+        TestLoadMetadata = new LoadMetadata (CatalogueRepository,"Loading Test Catalogue")
         {
             LocationOfFlatFiles = LoadDirectory.RootPath.FullName
         };

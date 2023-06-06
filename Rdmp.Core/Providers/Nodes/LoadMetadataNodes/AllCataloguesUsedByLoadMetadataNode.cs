@@ -41,7 +41,7 @@ public class AllCataloguesUsedByLoadMetadataNode : Node, IOrderable
         if (obj is null) return false;
         if (ReferenceEquals(this, obj)) return true;
         if (obj.GetType() != GetType()) return false;
-        return Equals((AllCataloguesUsedByLoadMetadataNode)obj);
+        return Equals((AllCataloguesUsedByLoadMetadataNode) obj);
     }
 
     public override int GetHashCode() => LoadMetadata != null ? LoadMetadata.GetHashCode() : 0;

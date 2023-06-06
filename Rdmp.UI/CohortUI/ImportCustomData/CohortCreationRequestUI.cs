@@ -82,7 +82,7 @@ public partial class CohortCreationRequestUI : RDMPForm
         if (Project.ProjectNumber == null)
         {
             MessageBox.Show(
-                $"Project {Project} does not have a project number yet, you must asign it one before it can be involved in cohort creation");
+                $"Project {Project} does not have a project number yet, you must assign it one before it can be involved in cohort creation");
             return;
         }
 
@@ -118,15 +118,13 @@ public partial class CohortCreationRequestUI : RDMPForm
 
 
         //construct the result
-        Result = new CohortCreationRequest(Project,
-            new CohortDefinition(null, name, version, (int)Project.ProjectNumber, _target),
-            (IDataExportRepository)Project.Repository, tbDescription.Text)
-        {
-            NewCohortDefinition =
+        Result = new CohortCreationRequest(Project, new CohortDefinition(null, name, version, (int)Project.ProjectNumber, _target), (IDataExportRepository)Project.Repository, tbDescription.Text)
             {
-                CohortReplacedIfAny = ddExistingCohort.SelectedItem as ExtractableCohort
-            }
-        };
+                NewCohortDefinition =
+                {
+                    CohortReplacedIfAny = ddExistingCohort.SelectedItem as ExtractableCohort
+                }
+            };
 
         //see if it is passing checks
         var notifier = new ToMemoryCheckNotifier();
@@ -309,8 +307,8 @@ public partial class CohortCreationRequestUI : RDMPForm
         btnClear.Visible = Project != null;
 
         //if a project is selected and the project has no project number
-        lblErrorNoProjectNumber.Visible = Project != null && Project.ProjectNumber == null;
-        tbSetProjectNumber.Visible = Project != null && Project.ProjectNumber == null;
+        lblErrorNoProjectNumber.Visible = Project is { ProjectNumber: null };
+        tbSetProjectNumber.Visible = Project is { ProjectNumber: null };
     }
 
     private void tbName_TextChanged(object sender, EventArgs e)

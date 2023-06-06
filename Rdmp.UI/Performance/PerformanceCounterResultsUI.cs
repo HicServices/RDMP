@@ -180,13 +180,14 @@ public partial class PerformanceCounterResultsUI : UserControl
 
     private void tlvLocations_ItemActivate(object sender, EventArgs e)
     {
-        if (tlvLocations.SelectedObject is StackFramesTree model)
-            if (model.HasSourceCode)
-            {
-                var dialog =
-                    new SimpleDialogs.ViewSourceCodeDialog(model.Filename, model.LineNumber, Color.GreenYellow);
-                dialog.Show();
-            }
+        var model = tlvLocations.SelectedObject as StackFramesTree;
+
+        if (model is { HasSourceCode: true })
+        {
+            var dialog = new SimpleDialogs.ViewSourceCodeDialog(model.Filename,model.LineNumber, Color.GreenYellow);
+            dialog.Show();
+        }
+            
     }
 
     private void tbFilter_TextChanged(object sender, EventArgs e)

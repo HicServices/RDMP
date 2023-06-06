@@ -197,7 +197,10 @@ public partial class ConfigurePrimaryKeyCollisionResolverUI : RDMPForm
 
         lbConflictResolutionColumns.Items.Remove(data);
 
-        lbConflictResolutionColumns.Items.Insert(originalIndex < index ? Math.Max(0, index - 1) : index, data);
+        if (originalIndex < index)
+            lbConflictResolutionColumns.Items.Insert(Math.Max(0, index - 1), data);
+        else
+            lbConflictResolutionColumns.Items.Insert(index, data);
 
         SaveOrderIntoDatabase();
     }
@@ -300,9 +303,12 @@ public partial class ConfigurePrimaryKeyCollisionResolverUI : RDMPForm
         {
             //this is used only to generate the SQL preview of how to resolve primary key collisions so no username/password is required - hence the null,null
             var resolver = new PrimaryKeyCollisionResolver(_table);
-
-            if (sender == btnCopyPreview)
+                
+            if(sender == btnCopyPreview)
                 Clipboard.SetText(resolver.GeneratePreviewSQL());
+
+            if(sender == btnCopyDetection)
+                Clipboard.SetText(resolver.GenerateCollisionDetectionSQL());
 
             if (sender == btnCopyDetection)
                 Clipboard.SetText(resolver.GenerateCollisionDetectionSQL());

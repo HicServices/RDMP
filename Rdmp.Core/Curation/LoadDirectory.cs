@@ -78,9 +78,13 @@ public class LoadDirectory : ILoadDirectory
 
     private static DirectoryInfo FindFolderInPathOrThrow(DirectoryInfo path, string folderName)
     {
-        var d = path.EnumerateDirectories(folderName, SearchOption.TopDirectoryOnly).FirstOrDefault() ??
-                throw new DirectoryNotFoundException(
-                    $"This dataset requires the directory '{folderName}' located at {Path.Combine(path.FullName, folderName)}");
+        return path.EnumerateDirectories(folderName, SearchOption.TopDirectoryOnly).FirstOrDefault();
+    }
+
+    private DirectoryInfo FindFolderInPathOrThrow(DirectoryInfo path, string folderName)
+    {
+        var d = path.EnumerateDirectories(folderName, SearchOption.TopDirectoryOnly).FirstOrDefault() ?? throw new DirectoryNotFoundException(
+                $"This dataset requires the directory '{folderName}' located at {Path.Combine(path.FullName, folderName)}");
         return d;
     }
 

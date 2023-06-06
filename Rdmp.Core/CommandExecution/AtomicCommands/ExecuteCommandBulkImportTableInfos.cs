@@ -130,11 +130,10 @@ public class ExecuteCommandBulkImportTableInfos : BasicCommandExecution, IAtomic
                 //is anyone unmarried? i.e. new ColumnInfos that don't have CatalogueItems with the same name
                 foreach (var columnInfo in unmatched)
                 {
-                    var cataItem = new CatalogueItem(BasicActivator.RepositoryLocator.CatalogueRepository,
-                        (Catalogue)matchingCatalogues[0], columnInfo.GetRuntimeName())
-                    {
-                        ColumnInfo_ID = columnInfo.ID
-                    };
+                    var cataItem = new CatalogueItem(BasicActivator.RepositoryLocator.CatalogueRepository, (Catalogue)matchingCatalogues[0], columnInfo.GetRuntimeName())
+                        {
+                            ColumnInfo_ID = columnInfo.ID
+                        };
                     cataItem.SaveToDatabase();
                     married.Add(cataItem, columnInfo);
                 }

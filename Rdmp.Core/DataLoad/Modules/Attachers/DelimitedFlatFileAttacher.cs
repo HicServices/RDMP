@@ -102,18 +102,10 @@ public abstract class DelimitedFlatFileAttacher : FlatFileAttacher
     public string AddFilenameColumnNamed { get; set; }
 
     [DemandsInitialization(Culture_DemandDescription)]
-    public override CultureInfo Culture
-    {
-        get => _source.Culture;
-        set => _source.Culture = value;
-    }
+    public override CultureInfo Culture { get => _source.Culture; set => _source.Culture = value; }
 
     [DemandsInitialization(ExplicitDateTimeFormat_DemandDescription)]
-    public override string ExplicitDateTimeFormat
-    {
-        get => _source.ExplicitDateTimeFormat;
-        set => _source.ExplicitDateTimeFormat = value;
-    }
+    public override string ExplicitDateTimeFormat {get => _source.ExplicitDateTimeFormat; set => _source.ExplicitDateTimeFormat = value; }
 
 
     protected DelimitedFlatFileAttacher(char separator)
@@ -127,7 +119,8 @@ public abstract class DelimitedFlatFileAttacher : FlatFileAttacher
         {
             Separator = separator.ToString(),
             StronglyTypeInput = false,
-            StronglyTypeInputBatchSize = 0
+            StronglyTypeInputBatchSize = 0,
+            Culture = Culture
         };
     }
 

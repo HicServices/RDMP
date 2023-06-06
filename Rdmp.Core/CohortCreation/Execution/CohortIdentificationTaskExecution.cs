@@ -64,7 +64,8 @@ public class CohortIdentificationTaskExecution : IDisposable
         _cancellationTokenSource.Cancel();
         if (_cmdCount != null && _cmdCount.Connection.State == ConnectionState.Open) _cmdCount.Cancel();
 
-        if (_rIds != null && !_rIds.IsClosed)
+        if (_rIds is { IsClosed: false })
+        {
             try
             {
                 _rIds.Close();
@@ -73,7 +74,8 @@ public class CohortIdentificationTaskExecution : IDisposable
             {
             }
 
-        if (_rCumulative != null && !_rCumulative.IsClosed)
+        if (_rCumulative is { IsClosed: false })
+        {
             try
             {
                 _rCumulative.Close();

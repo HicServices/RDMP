@@ -143,8 +143,8 @@ public class BulkTestsData
         var f = new TableInfoImporter(_repository, BulkDataDatabase.ExpectTable(BulkDataTable));
         f.DoImport(out tableInfo, out columnInfos);
 
-        var forwardEngineer = new ForwardEngineerCatalogue(tableInfo, columnInfos);
-        forwardEngineer.ExecuteForwardEngineering(out var c, out catalogueItems, out extractionInformations);
+        var forwardEngineer = new ForwardEngineerCatalogue(tableInfo,columnInfos);
+        forwardEngineer.ExecuteForwardEngineering(out var c,out catalogueItems, out extractionInformations);
         catalogue = c;
 
         var chi = extractionInformations.Single(e => e.GetRuntimeName().Equals("chi"));

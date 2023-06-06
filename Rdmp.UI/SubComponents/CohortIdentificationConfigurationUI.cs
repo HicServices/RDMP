@@ -85,7 +85,12 @@ public partial class CohortIdentificationConfigurationUI : CohortIdentificationC
         tlvCic.RowHeight = 19;
         olvExecute.AspectGetter += Common.ExecuteAspectGetter;
         tlvCic.ButtonClick += tlvCic_ButtonClick;
-        olvOrder.AspectGetter += static o => o is IOrderable orderable ? orderable.Order : null;
+        olvOrder.AspectGetter += (o)=> o switch
+        {
+            JoinableCollectionNode => null,
+            ISqlParameter => null,
+            _ => (o as IOrderable)?.Order
+        };
         olvOrder.IsEditable = false;
         tlvCic.ItemActivate += TlvCic_ItemActivate;
         AssociatedCollection = RDMPCollection.Cohort;
@@ -132,7 +137,7 @@ public partial class CohortIdentificationConfigurationUI : CohortIdentificationC
             new Guid("cfe55a4f-9e17-4205-9016-ae506667f22d"));
 
         tt.SetToolTip(btnExecute, "Starts running and caches all cohort sets and containers");
-        tt.SetToolTip(btnAbortLoad, "Cancells execution of any running cohort sets");
+        tt.SetToolTip(btnAbortLoad, "Cancels execution of any running cohort sets");
     }
 
 

@@ -77,7 +77,9 @@ public class JoinableCohortAggregateConfigurationUse : DatabaseEntity
     internal JoinableCohortAggregateConfigurationUse(ICatalogueRepository repository, DbDataReader r)
         : base(repository, r)
     {
-        if (Enum.TryParse(r["JoinType"].ToString(), true, out ExtractionJoinType joinType))
+        ExtractionJoinType joinType;
+
+        if (Enum.TryParse(r["JoinType"].ToString(), true, out joinType))
             JoinType = joinType;
 
         JoinableCohortAggregateConfiguration_ID = Convert.ToInt32(r["JoinableCohortAggregateConfiguration_ID"]);

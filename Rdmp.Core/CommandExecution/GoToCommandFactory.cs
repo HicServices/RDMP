@@ -72,10 +72,7 @@ public class GoToCommandFactory : CommandFactoryBase
         if (Is(forObject, out CohortIdentificationConfiguration cic))
             yield return new ExecuteCommandShow(_activator, () =>
             {
-                if (_activator.CoreChildProvider is DataExportChildProvider dx)
-                    if (dx.AllProjectAssociatedCics != null)
-                        return dx.AllProjectAssociatedCics.Where(a => a.CohortIdentificationConfiguration_ID == cic.ID)
-                            .Select(a => a.Project).Distinct();
+                if (_activator.CoreChildProvider is DataExportChildProvider { AllProjectAssociatedCics: not null } dx) return dx.AllProjectAssociatedCics.Where(a => a.CohortIdentificationConfiguration_ID == cic.ID).Select(a => a.Project).Distinct();
 
                 return Array.Empty<CohortIdentificationConfiguration>();
             })

@@ -277,10 +277,8 @@ public class ObjectConstructor
 
     private static object GetUsingBlankConstructor(Type t)
     {
-        var blankConstructor = t.GetConstructor(Type.EmptyTypes) ??
-                               throw new ObjectLacksCompatibleConstructorException(
-                                   $"Type '{t}' did not contain a blank constructor");
-        return blankConstructor.Invoke(Array.Empty<object>());
+        var blankConstructor = t.GetConstructor(Type.EmptyTypes) ?? throw new ObjectLacksCompatibleConstructorException($"Type '{t}' did not contain a blank constructor");
+        return (blankConstructor.Invoke(Array.Empty<object>()));
     }
 
     /// <summary>

@@ -40,10 +40,9 @@ internal class FindSearchTailFilterWithAlwaysShowList : IListFilter
 
             var scorer = new SearchablesMatchScorer
             {
-                TypeNames = new HashSet<string>(allObjects.Select(m => m.GetType().Name).Distinct(),
-                    StringComparer.CurrentCultureIgnoreCase)
+                TypeNames = new HashSet<string>(allObjects.Select(m => m.GetType().Name).Distinct(), StringComparer.CurrentCultureIgnoreCase)
             };
-            var matches = scorer.ScoreMatches(searchThese, text, cancellationToken, null);
+            var matches = scorer.ScoreMatches(searchThese, text, cancellationToken,null);
 
             // we were cancelled
             if (matches == null)

@@ -62,7 +62,7 @@ public class PostgreSqlTriggerImplementer : TriggerImplementer
                     cmd.ExecuteNonQuery();
                 }
 
-                thingsThatWorkedDroppingTrigger = $"Droppped trigger {_triggerRuntimeName}";
+                thingsThatWorkedDroppingTrigger = $"Dropped trigger {_triggerRuntimeName}";
             }
         }
         catch (Exception exception)
@@ -157,9 +157,8 @@ LANGUAGE 'plpgsql';"
 
     private static void AssertTriggerBodiesAreEqual(string sqlThen, string sqlNow)
     {
-        if (!sqlNow.Equals(sqlThen))
-            throw new ExpectedIdenticalStringsException("Sql body for trigger doesn't match expcted sql", sqlNow,
-                sqlThen);
+        if(!sqlNow.Equals(sqlThen))
+            throw new ExpectedIdenticalStringsException("Sql body for trigger doesn't match expected sql",sqlNow,sqlThen);
     }
 
     private string CreateTriggerBody()

@@ -171,8 +171,11 @@ public partial class ChoosePlatformDatabasesUI : Form
 
     private void ChooseDatabase_KeyUp(object sender, KeyEventArgs e)
     {
-        if (e.KeyCode == Keys.Enter)
-            btnSaveAndClose_Click(null, null);
+        if(e.KeyCode == Keys.Enter)
+            btnSaveAndClose_Click(null,null);
+
+        if(e.KeyCode == Keys.Escape)
+            Close();
 
         if (e.KeyCode == Keys.Escape)
             Close();

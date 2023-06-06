@@ -85,7 +85,7 @@ public sealed class ProcessTaskArgument : Argument
         try
         {
             //if the import is into a repository other than the master original repository
-            if (!shareManager.IsExportedObject(ProcessTask.LoadMetadata))
+            if(!shareManager.IsExportedObject(ProcessTask.LoadMetadata))
             {
                 //and we are a reference type e.g. to a ColumnInfo or something
                 var t = GetConcreteSystemType();

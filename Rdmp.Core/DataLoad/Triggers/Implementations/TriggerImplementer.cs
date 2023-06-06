@@ -124,9 +124,8 @@ public abstract class TriggerImplementer : ITriggerImplementer
         var dateTimeDatatype =
             syntaxHelper.TypeTranslater.GetSQLDBTypeForCSharpType(new DatabaseTypeRequest(typeof(DateTime)));
         var nowFunction = syntaxHelper.GetScalarFunctionSql(MandatoryScalarFunctions.GetTodaysDate);
-
-        _table.AddColumn(SpecialFieldNames.ValidFrom, $" {dateTimeDatatype} DEFAULT {nowFunction}", true,
-            UserSettings.ArchiveTriggerTimeout);
+            
+        _table.AddColumn(SpecialFieldNames.ValidFrom, $" {dateTimeDatatype} DEFAULT {nowFunction}", true, UserSettings.ArchiveTriggerTimeout);
     }
 
 

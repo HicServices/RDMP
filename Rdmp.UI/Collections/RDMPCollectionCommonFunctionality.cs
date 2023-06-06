@@ -364,7 +364,7 @@ public partial class RDMPCollectionCommonFunctionality : IRefreshBusSubscriber
             lastInvalidatedCache = DateTime.Now;
         }
 
-        if (cache.TryGetValue(sum, out var body))
+        if(cache.TryGetValue(sum, out var body))
             return body;
 
         var sb = new StringBuilder();
@@ -383,7 +383,10 @@ public partial class RDMPCollectionCommonFunctionality : IRefreshBusSubscriber
 
                 var val = string.Join(", ", kvp.Value.Select(o => o.ToString()).ToArray());
 
-                if (val.Length > 100) val = $"{val[..100]}...";
+                if(val.Length>100)
+                {
+                    val = $"{val[..100]}...";
+                }
 
                 sb.AppendLine($"{kvp.Key}: {val}");
             }
@@ -448,7 +451,9 @@ public partial class RDMPCollectionCommonFunctionality : IRefreshBusSubscriber
     {
         var hasProblems = _activator.HasProblem(e.Model);
 
-        if (e.Model is IDisableable disableable && disableable.IsDisabled)
+        var disableable = e.Model as IDisableable;
+
+        if (disableable is { IsDisabled: true })
         {
             e.Item.ForeColor = Color.FromArgb(152, 152, 152);
 
@@ -714,18 +719,22 @@ public partial class RDMPCollectionCommonFunctionality : IRefreshBusSubscriber
 
     private ContextMenuStrip GetMenuWithCompatibleConstructorIfExists(object o, IMasqueradeAs oMasquerader = null)
     {
-        var args = new RDMPContextMenuStripArgs(_activator, Tree, o)
+        var args = new RDMPContextMenuStripArgs(_activator,Tree,o)
         {
             Masquerader = oMasquerader ?? o as IMasqueradeAs
         };
+
+        var objectConstructor = new ObjectConstructor();
 
         var oType = o.GetType();
 
         //if we have encountered this object type before
         if (_cachedMenuCompatibility.TryGetValue(oType, out var compatibleMenu))
+        {
             //we know there are no menus compatible with o
-            return compatibleMenu == null ? null : ConstructMenu(compatibleMenu, args, o);
-
+            return compatibleMenu == null ? null : ConstructMenu(objectConstructor, compatibleMenu, args, o);
+        }
+                
 
         //now find the first RDMPContextMenuStrip with a compatible constructor
         foreach (var menuType in _activator.RepositoryLocator.CatalogueRepository.MEF.GetTypes<RDMPContextMenuStrip>())
@@ -737,12 +746,10 @@ public partial class RDMPCollectionCommonFunctionality : IRefreshBusSubscriber
             var menu = ConstructMenu(menuType, args, o);
 
             //find first menu that's compatible
-            if (menu != null)
-            {
-                _cachedMenuCompatibility.TryAdd(oType, menu.GetType());
+            if (menu == null) continue;
+            _cachedMenuCompatibility.TryAdd(oType, menu.GetType());
 
-                return menu;
-            }
+            return menu;
         }
 
         //we know there are no menus compatible with this type
@@ -759,7 +766,7 @@ public partial class RDMPCollectionCommonFunctionality : IRefreshBusSubscriber
         //parameter 1 must be args
         //parameter 2 must be object compatible Type
 
-        var menu = (RDMPContextMenuStrip)ObjectConstructor.ConstructIfPossible(type, args, o);
+        var menu = (RDMPContextMenuStrip)objectConstructor.ConstructIfPossible(type, args, o);
 
         menu?.AddCommonMenuItems(this);
 
@@ -797,11 +804,12 @@ public partial class RDMPCollectionCommonFunctionality : IRefreshBusSubscriber
             {
                 coll.Add(item);
 
-                if (item is ToolStripMenuItem mi)
+                if (item is ToolStripMenuItem { DropDownItems.Count: > 0 } mi)
                     // if menu item has submenus
-                    if (mi.DropDownItems.Count > 0)
-                        // sort those too - recurisvely
-                        OrderMenuItems(mi.DropDownItems);
+                {
+                    // sort those too - recurisvely
+                    OrderMenuItems(mi.DropDownItems);
+                }
             }
 
             // if there are more buckets to come

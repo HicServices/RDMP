@@ -348,9 +348,9 @@ public class ConsoleInputManager : BasicActivateItems
             if (idxLastSlash == -1 || asteriskIdx < idxLastSlash)
                 throw new Exception("Wildcards are only supported at the file level");
 
-            var searchPattern = file[(idxLastSlash + 1)..];
+            var searchPattern = file[(idxLastSlash+1)..];
             var dirStr = file[..idxLastSlash];
-
+                    
             var dir = new DirectoryInfo(dirStr);
 
             if (!dir.Exists)
@@ -408,7 +408,7 @@ public class ConsoleInputManager : BasicActivateItems
 
     public override void ShowLogs(ILoggedActivityRootObject rootObject)
     {
-        foreach (var load in GetLogs(rootObject).OrderByDescending(l => l.StartTime))
+        foreach(var load in GetLogs(rootObject).OrderByDescending(l=>l.StartTime))
         {
             Console.WriteLine(load.Description);
             Console.WriteLine(load.StartTime);

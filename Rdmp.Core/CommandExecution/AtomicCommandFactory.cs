@@ -878,13 +878,11 @@ public class AtomicCommandFactory : CommandFactoryBase
                 { SuggestedCategory = Add, OverrideCommandName = "Existing Cohort Builder Query (copy of)" };
 
             //Set Operation
-            yield return new ExecuteCommandSetContainerOperation(_activator, cohortAggregateContainer,
-                SetOperation.UNION) { SuggestedCategory = SetContainerOperation, OverrideCommandName = "UNION" };
-            yield return new ExecuteCommandSetContainerOperation(_activator, cohortAggregateContainer,
-                SetOperation.EXCEPT) { SuggestedCategory = SetContainerOperation, OverrideCommandName = "EXCEPT" };
-            yield return new ExecuteCommandSetContainerOperation(_activator, cohortAggregateContainer,
-                    SetOperation.INTERSECT)
-                { SuggestedCategory = SetContainerOperation, OverrideCommandName = "INTERSECT" };
+            yield return new ExecuteCommandSetContainerOperation(_activator, cohortAggregateContainer, SetOperation.UNION) { SuggestedCategory = SetContainerOperation, OverrideCommandName = "UNION" };
+            yield return new ExecuteCommandSetContainerOperation(_activator, cohortAggregateContainer, SetOperation.EXCEPT) { SuggestedCategory = SetContainerOperation, OverrideCommandName = "EXCEPT" };
+            yield return new ExecuteCommandSetContainerOperation(_activator, cohortAggregateContainer, SetOperation.INTERSECT) { SuggestedCategory = SetContainerOperation, OverrideCommandName = "INTERSECT" };
+
+            yield return new ExecuteCommandUnMergeCohortIdentificationConfiguration(_activator, cohortAggregateContainer) { OverrideCommandName = "Separate Cohort Builder Query"};
 
             yield return new ExecuteCommandUnMergeCohortIdentificationConfiguration(_activator,
                 cohortAggregateContainer) { OverrideCommandName = "Seperate Cohort Builder Query" };

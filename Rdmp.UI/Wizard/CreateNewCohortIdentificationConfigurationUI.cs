@@ -176,7 +176,10 @@ public partial class CreateNewCohortIdentificationConfigurationUI : RDMPForm
         pnlWizard.Visible = cbUseWizard.Checked;
         pnlWizard.Enabled = cbUseWizard.Checked;
 
-        Size = cbUseWizard.Checked ? _bigSize : _smallSize;
+        if (cbUseWizard.Checked)
+            Size = _bigSize;
+        else
+            Size = _smallSize;
     }
 
     private void btnCancel_Click(object sender, EventArgs e)

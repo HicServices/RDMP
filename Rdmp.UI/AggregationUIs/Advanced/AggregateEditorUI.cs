@@ -219,7 +219,7 @@ public partial class AggregateEditorUI : AggregateEditor_Design, ISaveableUI
         foreach (var d in _aggregate.AggregateDimensions)
         {
             var colInfo = d.ExtractionInformation.ColumnInfo ?? throw new Exception(
-                $"Aggregate Configuration {_aggregate} (Catalogue '{_aggregate.Catalogue}') has a Dimension '{d}' which is an orphan (someone deleted the ColumnInfo)");
+                    $"Aggregate Configuration {_aggregate} (Catalogue '{_aggregate.Catalogue}') has a Dimension '{d}' which is an orphan (someone deleted the ColumnInfo)");
             var toAdd = colInfo.TableInfo.ToString();
 
             if (!uniqueUsedTables.Contains(toAdd))
@@ -429,9 +429,9 @@ public partial class AggregateEditorUI : AggregateEditor_Design, ISaveableUI
 
         //create a new one
         var axis = new AggregateContinuousDateAxis(Activator.RepositoryLocator.CatalogueRepository, selectedDimension)
-        {
-            AxisIncrement = AxisIncrement.Month
-        };
+            {
+                AxisIncrement = AxisIncrement.Month
+            };
 
         //copy over old values of start/end/increment
         if (existing != null && existing.AggregateDimension_ID != selectedDimension.ID)

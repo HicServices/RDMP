@@ -21,16 +21,25 @@ public static class BackColorProvider
     {
         return collection switch
         {
-            RDMPCollection.None => SystemColors.Control,
-            RDMPCollection.Tables => Color.FromArgb(255, 220, 255),
-            RDMPCollection.Catalogue => Color.FromArgb(255, 255, 220),
-            RDMPCollection.DataExport => Color.FromArgb(200, 255, 220),
-            RDMPCollection.SavedCohorts => Color.FromArgb(255, 220, 220),
-            RDMPCollection.Favourites => SystemColors.Control,
-            RDMPCollection.Cohort => Color.FromArgb(210, 240, 255),
-            RDMPCollection.DataLoad => Color.DarkGray,
-            _ => throw new ArgumentOutOfRangeException(nameof(collection))
-        };
+            case RDMPCollection.None:
+                return SystemColors.Control;
+            case RDMPCollection.Tables:
+                return Color.FromArgb(255, 220, 255);
+            case RDMPCollection.Catalogue:
+                return Color.FromArgb(255, 255, 220);
+            case RDMPCollection.DataExport:
+                return Color.FromArgb(200, 255, 220);
+            case RDMPCollection.SavedCohorts:
+                return Color.FromArgb(255, 220, 220);
+            case RDMPCollection.Favourites:
+                return SystemColors.Control;
+            case RDMPCollection.Cohort:
+                return Color.FromArgb(210, 240, 255);
+            case RDMPCollection.DataLoad:
+                return Color.DarkGray;
+            default:
+                throw new ArgumentOutOfRangeException(nameof(collection));
+        }
     }
 
     public static Image GetBackgroundImage(Size size, RDMPCollection collection)

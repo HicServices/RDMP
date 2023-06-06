@@ -149,7 +149,7 @@ public partial class LookupConfigurationUI : LookupConfiguration_Design
 
     public void SetLookupTableInfo(TableInfo t, bool setComboBox = true)
     {
-        if (t != null && t.IsTableValuedFunction)
+        if(t is { IsTableValuedFunction: true })
         {
             WideMessageBox.Show("Lookup table not valid",
                 $"Table '{t}' is a TableValuedFunction, you cannot use it as a lookup table");
@@ -406,11 +406,8 @@ Only define secondary columns if you really need them! if any of the key fields 
                 throw new Exception("No Foreign key column selected");
 
             var allExtractionInformations = olvExtractionInformations.Objects.Cast<ExtractionInformation>().ToArray();
-            var foreignKeyExtractionInformation =
-                allExtractionInformations.SingleOrDefault(e =>
-                    e.ColumnInfo != null && e.ColumnInfo.Equals(fk1.SelectedColumn)) ??
-                throw new Exception("Foreign key column(s) must come from the Catalogue ExtractionInformation columns");
-            if (pk2.SelectedColumn == null != (fk2.SelectedColumn == null))
+            var foreignKeyExtractionInformation = allExtractionInformations.SingleOrDefault(e => e.ColumnInfo != null && e.ColumnInfo.Equals(fk1.SelectedColumn)) ?? throw new Exception("Foreign key column(s) must come from the Catalogue ExtractionInformation columns");
+            if ((pk2.SelectedColumn == null) != (fk2.SelectedColumn == null))
                 throw new Exception("If you want to have secondary joins you must have them in pairs");
 
             if (pk3.SelectedColumn == null != (fk3.SelectedColumn == null))
@@ -448,10 +445,7 @@ Only define secondary columns if you really need them! if any of the key fields 
                         $"Also create a virtual extractable column(s) in '{_catalogue}' called '<Column>_Desc'",
                         "Create Extractable Column?");
 
-                var keyPairs = new List<Tuple<ColumnInfo, ColumnInfo>>
-                {
-                    Tuple.Create(f1, p1)
-                };
+                var keyPairs = new List<Tuple<ColumnInfo, ColumnInfo>> { Tuple.Create(f1,p1) };
 
                 if (p2 != null)
                     keyPairs.Add(Tuple.Create(f2, p2));

@@ -82,6 +82,7 @@ public class ExecuteCommandRelease : BasicUICommandExecution, IAtomicCommandWith
 
         var p = _project ?? SelectOne(Activator.RepositoryLocator.DataExportRepository.GetAllObjects<Project>());
         if (p == null)
+        {
             // user cancelled picking a Project
             return;
 

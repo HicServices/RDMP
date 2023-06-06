@@ -61,9 +61,9 @@ public partial class DatasetRaceway : RDMPUserControl, IDashboardableControl
         cbIgnoreRowCounts.CheckOnClick = true;
         cbIgnoreRowCounts.CheckedChanged += cbIgnoreRowCounts_CheckedChanged;
         btnAddExtractableDatasetPackage.Click += btnAddExtractableDatasetPackage_Click;
-
-        ddShowPeriod.ComboBox.DataSource = Enum.GetValues(typeof(RacewayShowPeriod));
-
+            
+        ddShowPeriod.ComboBox.DataSource = Enum.GetValues(typeof (RacewayShowPeriod));
+            
         btnRemoveAll.Image = FamFamFamIcons.delete_multi.ImageToBitmap();
         _ignoreRowCounts = CatalogueIcons.RowCounts_Ignore.ImageToBitmap();
         _respectRowCounts = CatalogueIcons.RowCounts_Respect.ImageToBitmap();

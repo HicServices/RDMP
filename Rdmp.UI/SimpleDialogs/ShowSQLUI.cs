@@ -34,5 +34,6 @@ public partial class ShowSQLUI : Form
         QueryEditor.ReadOnly = isReadOnly;
 
         Controls.Add(QueryEditor);
+
     }
 }

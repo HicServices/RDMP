@@ -83,7 +83,7 @@ public class SupportingDocumentsFetcher
         {
             var toCopy = document.GetFileName();
 
-            if (toCopy != null && toCopy.Exists)
+            if (toCopy is { Exists: true })
                 notifier.OnCheckPerformed(
                     new CheckEventArgs($"Found SupportingDocument {toCopy.Name} and it exists",
                         CheckResult.Success));

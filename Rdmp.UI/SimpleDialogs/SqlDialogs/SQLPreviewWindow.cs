@@ -52,7 +52,7 @@ public partial class SQLPreviewWindow : Form
 
     private void btnCancel_Click(object sender, EventArgs e)
     {
-        DialogResult = DialogResult.Cancel;
+        DialogResult=DialogResult.Cancel;
         Close();
     }
 

@@ -85,7 +85,7 @@ public class ExecuteCommandCreateNewCohortFromTable : CohortCreationCommandExecu
 
         request.ExtractionIdentifierColumn = fakeExtractionInformation;
         var configureAndExecute = GetConfigureAndExecuteControl(request,
-            $"Import column {col.GetFullyQualifiedName()} as cohort and commmit results", fakeExtractionInformation);
+            $"Import column {col.GetFullyQualifiedName()} as cohort and commit results", fakeExtractionInformation);
 
         configureAndExecute.Run(BasicActivator.RepositoryLocator, null, null, null);
     }

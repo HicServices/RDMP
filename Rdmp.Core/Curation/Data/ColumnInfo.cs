@@ -311,7 +311,8 @@ public class ColumnInfo : DatabaseEntity, IComparable, IResolveDuplication, IHas
         IgnoreInLoads = ObjectToNullableBool(r["IgnoreInLoads"]) ?? false;
 
         //try to turn string value in database into enum value
-        if (Enum.TryParse(r["Status"].ToString(), out ColumnStatus dbStatus))
+        ColumnStatus dbStatus;
+        if (Enum.TryParse(r["Status"].ToString(), out dbStatus))
             Status = dbStatus;
 
         RegexPattern = r["RegexPattern"].ToString();
@@ -347,9 +348,13 @@ public class ColumnInfo : DatabaseEntity, IComparable, IResolveDuplication, IHas
     /// <returns></returns>
     public int CompareTo(object obj)
     {
-        if (obj is ColumnInfo) return -obj.ToString().CompareTo(ToString()); //sort alphabetically (reverse)
-
+        if (obj is ColumnInfo)
+        {
+            return - (obj.ToString().CompareTo(ToString())); //sort alphabetically (reverse)
+        }
+            
         throw new Exception($"Cannot compare {GetType().Name} to {obj.GetType().Name}");
+            
     }
 
     ///<inheritdoc/>
@@ -384,6 +389,7 @@ public class ColumnInfo : DatabaseEntity, IComparable, IResolveDuplication, IHas
             //see if it has an ANO Transform on it
             if (ANOTable_ID != null && finalName.StartsWith("ANO"))
                 return finalName["ANO".Length..];
+        }
 
         //any other stage will be the regular final name
         return finalName;

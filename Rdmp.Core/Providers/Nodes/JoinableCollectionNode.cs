@@ -60,7 +60,7 @@ criteria are 'in the 6 months' / 'in the 12 months' post hospitalisation date pe
         if (obj is null) return false;
         if (ReferenceEquals(this, obj)) return true;
         if (obj.GetType() != GetType()) return false;
-        return Equals((JoinableCollectionNode)obj);
+        return Equals((JoinableCollectionNode) obj);
     }
 
     public override int GetHashCode() =>

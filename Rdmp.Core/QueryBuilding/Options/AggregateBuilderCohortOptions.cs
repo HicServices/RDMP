@@ -121,7 +121,7 @@ public class AggregateBuilderCohortOptions : IAggregateBuilderOptions
 
         //it's not a patient index table itself so it can reference other patient index tables in the configuration
         var config = aggregate.GetCohortIdentificationConfigurationIfAny() ?? throw new NotSupportedException(
-            $"Aggregate {aggregate} did not return its CohortIdentificationConfiguration correctly, did someone delete the configuration or Orphan this AggregateConfiguration while you weren't looking?");
+                $"Aggregate {aggregate} did not return its CohortIdentificationConfiguration correctly, did someone delete the configuration or Orphan this AggregateConfiguration while you weren't looking?");
 
         //find those that are already referenced
         var existingJoinables = aggregate.PatientIndexJoinablesUsed.Select(u => u.JoinableCohortAggregateConfiguration);

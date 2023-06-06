@@ -33,7 +33,7 @@ public class ProjectCohortsNode : Node, IOrderable
         if (obj is null) return false;
         if (ReferenceEquals(this, obj)) return true;
         if (obj.GetType() != GetType()) return false;
-        return Equals((ProjectCohortsNode)obj);
+        return Equals((ProjectCohortsNode) obj);
     }
 
     public override int GetHashCode() => Project.GetHashCode();

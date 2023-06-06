@@ -384,7 +384,7 @@ This will not help you avoid bad data as the full file structure must still be r
         {
             notifier.OnCheckPerformed(
                 new CheckEventArgs(
-                    $"File {_fileToLoad.File.Name} has a prohibitted file extension {_fileToLoad.File.Extension} (this class is designed to handle .csv, .tsv, .txt etc - basically anything that is delimitted by characters and not some freaky binary/fixed width file type",
+                    $"File {_fileToLoad.File.Name} has a prohibited file extension {_fileToLoad.File.Extension} (this class is designed to handle .csv, .tsv, .txt etc - basically anything that is delimited by characters and not some freaky binary/fixed width file type",
                     CheckResult.Fail));
             return;
         }

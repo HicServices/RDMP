@@ -56,7 +56,7 @@ public partial class PipelineDiagramUI : UserControl
         AllowSelection = false;
 
         Controls.Add(pipelineSmiley);
-        pipelineSmiley.Anchor = AnchorStyles.Top | AnchorStyles.Right;
+        pipelineSmiley.Anchor = AnchorStyles.Top|AnchorStyles.Right;
         pipelineSmiley.Left = Width - pipelineSmiley.Width - 1;
         pipelineSmiley.Top = 1;
         pipelineSmiley.BringToFront();

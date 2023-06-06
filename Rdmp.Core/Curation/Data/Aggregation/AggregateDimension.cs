@@ -221,7 +221,7 @@ public class AggregateDimension : DatabaseEntity, ISaveable, IDeleteable, IColum
         }
         catch (Exception)
         {
-            return $"Unamed AggregateDimension ID {ID}";
+            return $"Unnamed AggregateDimension ID {ID}";
         }
     }
 

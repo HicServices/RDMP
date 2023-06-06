@@ -108,7 +108,7 @@ public class ItemValidator
 
     public void As(string constraintType)
     {
-        PrimaryConstraint = (PrimaryConstraint)Validator.CreateConstraint(constraintType, Consequence.Wrong);
+        PrimaryConstraint = (PrimaryConstraint)Validator.CreateConstraint(constraintType,Consequence.Wrong);
     }
 
     public ItemValidator OfType(Type type)

@@ -111,7 +111,8 @@ public partial class PropagateCatalogueItemChangesToSimilarNamedUI : RDMPForm
             new Guid("b56adceb-2cd5-4f77-9be7-07fb38baad18"));
     }
 
-    private void olvCatalogues_CellRightClick(object sender, CellRightClickEventArgs e)
+
+    void olvCatalogues_CellRightClick(object sender, CellRightClickEventArgs e)
     {
         if (olvCatalogues.SelectedObject is not CatalogueItem ci)
             return;
@@ -232,7 +233,6 @@ public partial class PropagateCatalogueItemChangesToSimilarNamedUI : RDMPForm
     {
         DialogResult = DialogResult.Yes;
 
-
         foreach (CatalogueItem ci in olvCatalogues.CheckedObjects)
         {
             foreach (PropertyInfo p in olvProperties.CheckedObjects)
@@ -256,6 +256,7 @@ public partial class PropagateCatalogueItemChangesToSimilarNamedUI : RDMPForm
     {
         DialogResult = DialogResult.Cancel;
         Close();
+            
     }
 
     private void olv_ItemActivate(object sender, EventArgs e)

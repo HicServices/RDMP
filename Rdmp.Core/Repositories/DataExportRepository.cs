@@ -101,10 +101,7 @@ public class DataExportRepository : TableRepository, IDataExportRepository
     public CatalogueExtractabilityStatus GetExtractabilityStatus(ICatalogue c)
     {
         var eds = GetAllObjectsWithParent<ExtractableDataSet>(c).SingleOrDefault();
-        if (eds == null)
-            return new CatalogueExtractabilityStatus(false, false);
-
-        return eds.GetCatalogueExtractabilityStatus();
+        return eds == null ? new CatalogueExtractabilityStatus(false, false) : eds.GetCatalogueExtractabilityStatus();
     }
 
     public ISelectedDataSets[] GetSelectedDatasetsWithNoExtractionIdentifiers() =>
@@ -183,16 +180,8 @@ ec.ExtractionConfiguration_ID = sds.ExtractionConfiguration_ID
     /// <param name="dataSet"></param>
     public void AddDataSetToPackage(IExtractableDataSetPackage package, IExtractableDataSet dataSet)
     {
-        if (_packageContentsDictionary.Value.TryGetValue(package.ID, out var contents))
-        {
-            if (contents.Contains(dataSet.ID))
-                throw new ArgumentException($"dataSet {dataSet} is already part of package '{package}'",
-                    nameof(dataSet));
-        }
-        else
-        {
-            _packageContentsDictionary.Value.Add(package.ID, contents = new List<int>());
-        }
+        if (_packageContentsDictionary.Value.ContainsKey(package.ID) && _packageContentsDictionary.Value[package.ID].Contains(dataSet.ID))
+            throw new ArgumentException($"dataSet {dataSet} is already part of package '{package}'", nameof(dataSet));
 
         using (var con = GetConnection())
         {
@@ -218,8 +207,7 @@ ec.ExtractionConfiguration_ID = sds.ExtractionConfiguration_ID
     public void RemoveDataSetFromPackage(IExtractableDataSetPackage package, IExtractableDataSet dataSet)
     {
         if (!_packageContentsDictionary.Value[package.ID].Contains(dataSet.ID))
-            throw new ArgumentException($"dataSet {dataSet} is not part of package {package} so cannot be removed",
-                nameof(dataSet));
+            throw new ArgumentException($"dataSet {dataSet} is not part of package {package} so cannot be removed", nameof(dataSet));
 
         using (var con = GetConnection())
         {

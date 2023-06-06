@@ -52,16 +52,17 @@ internal class RDMPApplicationSettings : ISettings
             type = type.GenericTypeArguments.FirstOrDefault();
 
 
-        if (type == typeof(string) ||
-            type == typeof(decimal) ||
-            type == typeof(double) ||
-            type == typeof(float) ||
-            type == typeof(DateTime) ||
-            type == typeof(Guid) ||
-            type == typeof(bool) ||
-            type == typeof(int) ||
-            type == typeof(long) ||
-            type == typeof(byte))
+        if ((type == typeof(string)) ||
+            (type == typeof(decimal)) ||
+            (type == typeof(double)) ||
+            (type == typeof(float)) ||
+            (type == typeof(DateTime)) ||
+            (type == typeof(Guid)) ||
+            (type == typeof(bool)) ||
+            (type == typeof(int)) ||
+            (type == typeof(long)) ||
+            (type == typeof(byte)))
+        {
             lock (locker)
             {
                 if (value is decimal)

@@ -32,7 +32,7 @@ public partial class RunUI : RDMPForm
         _commandsDictionary = new Dictionary<string, Type>(StringComparer.CurrentCultureIgnoreCase);
 
         _commandCaller = new CommandInvoker(activator);
-        _commandCaller.CommandImpossible += (s, e) => MessageBox.Show(e.Command.ReasonCommandImpossible);
+        _commandCaller.CommandImpossible += (s,e) =>MessageBox.Show(e.Command.ReasonCommandImpossible);
         _commandCaller.CommandCompleted += (s, e) => Close();
 
         var commands = _commandCaller.GetSupportedCommands();
@@ -51,7 +51,6 @@ public partial class RunUI : RDMPForm
     {
         ExceptionViewer.Show(exception);
     }
-
     private void comboBox1_KeyUp(object sender, KeyEventArgs e)
     {
         var key = (string)comboBox1.SelectedItem;
@@ -59,18 +58,17 @@ public partial class RunUI : RDMPForm
         if (key == null)
             return;
 
-        if (e.KeyCode == Keys.Enter)
-            if (_commandsDictionary.TryGetValue(key, out var type))
-                try
-                {
-                    _commandCaller.ExecuteCommand(type, null);
-                }
-                catch (OperationCanceledException)
-                {
-                }
-                catch (Exception ex)
-                {
-                    ExceptionViewer.Show(ex);
-                }
+        if (e.KeyCode != Keys.Enter || !_commandsDictionary.TryGetValue(key, out var type)) return;
+        try
+        {
+            _commandCaller.ExecuteCommand(type, null);
+        }
+        catch (OperationCanceledException)
+        {
+        }
+        catch (Exception ex)
+        {
+            ExceptionViewer.Show(ex);
+        }
     }
 }

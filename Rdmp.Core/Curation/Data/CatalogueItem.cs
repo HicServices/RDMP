@@ -249,11 +249,17 @@ public class CatalogueItem : DatabaseEntity, IDeleteable, IComparable, IHasDepen
 
         //Periodicity - with handling for invalid enum values listed in database
         var periodicity = r["Periodicity"];
-        Periodicity =
-            periodicity == null || periodicity == DBNull.Value || !Enum.TryParse(periodicity.ToString(), true,
-                out Catalogue.CataloguePeriodicity periodicityAsEnum)
-                ? Catalogue.CataloguePeriodicity.Unknown
-                : periodicityAsEnum;
+        if (periodicity == null || periodicity == DBNull.Value)
+            Periodicity = Catalogue.CataloguePeriodicity.Unknown;
+        else
+        {
+            Catalogue.CataloguePeriodicity periodicityAsEnum;
+
+            if(Enum.TryParse(periodicity.ToString(), true, out periodicityAsEnum))
+                Periodicity = periodicityAsEnum;
+            else
+                Periodicity = Catalogue.CataloguePeriodicity.Unknown;
+        }
 
         ClearAllInjections();
     }
@@ -312,7 +318,10 @@ public class CatalogueItem : DatabaseEntity, IDeleteable, IComparable, IHasDepen
     /// <returns></returns>
     public int CompareTo(object obj)
     {
-        if (obj is CatalogueItem) return -obj.ToString().CompareTo(ToString()); //sort alphabetically (reverse)
+        if (obj is CatalogueItem)
+        {
+            return -(obj.ToString().CompareTo(ToString())); //sort alphabetically (reverse)
+        }
 
         throw new Exception($"Cannot compare {GetType().Name} to {obj.GetType().Name}");
     }
@@ -324,22 +333,19 @@ public class CatalogueItem : DatabaseEntity, IDeleteable, IComparable, IHasDepen
     /// <returns></returns>
     public CatalogueItem CloneCatalogueItemWithIDIntoCatalogue(Catalogue cataToImportTo)
     {
-        if (Catalogue_ID == cataToImportTo.ID)
-            throw new ArgumentException(
-                "Cannot clone a CatalogueItem into its own parent, specify a different catalogue to clone into");
+        if(Catalogue_ID == cataToImportTo.ID)
+            throw new ArgumentException("Cannot clone a CatalogueItem into its own parent, specify a different catalogue to clone into");
 
         var clone = new CatalogueItem((ICatalogueRepository)cataToImportTo.Repository, cataToImportTo, Name);
-
-        //Get all the properties
-        var propertyInfo =
-            GetType().GetProperties(BindingFlags.Public | BindingFlags.NonPublic | BindingFlags.Instance);
+            
+        //Get all the properties           
+        var propertyInfo = GetType().GetProperties(BindingFlags.Public | BindingFlags.NonPublic | BindingFlags.Instance);
 
         //Assign all source property to taget object 's properties
         foreach (var property in propertyInfo)
             //Check whether property can be written to
             if (property.CanWrite && !property.Name.Equals("ID") && !property.Name.Equals("Catalogue_ID"))
-                if (property.PropertyType.IsValueType || property.PropertyType.IsEnum ||
-                    property.PropertyType.Equals(typeof(string)))
+                if (property.PropertyType.IsValueType || property.PropertyType.IsEnum || property.PropertyType.Equals(typeof(string)))
                     property.SetValue(clone, property.GetValue(this, null), null);
 
         clone.SaveToDatabase();
@@ -368,8 +374,7 @@ public class CatalogueItem : DatabaseEntity, IDeleteable, IComparable, IHasDepen
             return Guess;
 
         //ignore caps and remove spaces match instead
-        Guess = guessPool.Where(col =>
-            col.GetRuntimeName().ToLower().Replace(" ", "").Equals(Name.ToLower().Replace(" ", ""))).ToArray();
+        Guess = guessPool.Where(col => col.GetRuntimeName().ToLower().Replace(" ", "").Equals(Name.ToLower().Replace(" ", ""))).ToArray();
         if (Guess.Any())
             return Guess;
 

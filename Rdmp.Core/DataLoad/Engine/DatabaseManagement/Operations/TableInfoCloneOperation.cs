@@ -151,9 +151,7 @@ public class TableInfoCloneOperation
             if (_hicDatabaseConfiguration.IgnoreColumns != null &&
                 _hicDatabaseConfiguration.IgnoreColumns.IsMatch(colName))
             {
-                _listener.OnNotify(this,
-                    new NotifyEventArgs(ProgressEventType.Information,
-                        $"{colName} will be dropped because it is matches the gloabl ignores pattern ({_hicDatabaseConfiguration.IgnoreColumns})"));
+                _listener.OnNotify(this,new NotifyEventArgs(ProgressEventType.Information,$"{colName} will be dropped because it is matches the global ignores pattern ({_hicDatabaseConfiguration.IgnoreColumns})"));
                 drop = true;
             }
 

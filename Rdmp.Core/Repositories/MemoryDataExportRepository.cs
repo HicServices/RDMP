@@ -47,17 +47,16 @@ public class MemoryDataExportRepository : MemoryCatalogueRepository, IDataExport
 
     #region IDataExportPropertyManager
 
-    protected Dictionary<DataExportProperty, string> PropertiesDictionary = new();
-
-    public virtual string GetValue(DataExportProperty property) =>
-        PropertiesDictionary.TryGetValue(property, out var value) ? value : null;
+    protected Dictionary<DataExportProperty,string>  PropertiesDictionary = new Dictionary<DataExportProperty, string>();
+        
+    public virtual string GetValue(DataExportProperty property)
+    {
+        return PropertiesDictionary.TryGetValue(property, out var value) ? value : null;
+    }
 
     public virtual void SetValue(DataExportProperty property, string value)
     {
-        if (!PropertiesDictionary.ContainsKey(property))
-            PropertiesDictionary.Add(property, value);
-        else
-            PropertiesDictionary[property] = value;
+        PropertiesDictionary[property] = value;
     }
 
     #endregion
@@ -90,8 +89,7 @@ public class MemoryDataExportRepository : MemoryCatalogueRepository, IDataExport
             PackageDictionary.Add(package, new HashSet<IExtractableDataSet>());
 
         if (!PackageDictionary[package].Contains(dataSet))
-            throw new ArgumentException($"dataSet {dataSet} is not part of package {package} so cannot be removed",
-                nameof(dataSet));
+            throw new ArgumentException($"dataSet {dataSet} is not part of package {package} so cannot be removed", nameof(dataSet));
 
         PackageDictionary[package].Remove(dataSet);
     }

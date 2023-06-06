@@ -138,11 +138,21 @@ public class DiffDatabaseDataFetcher
                 syntaxHelper.EnsureWrapped(pk.GetRuntimeName()),
                 archiveTableName);
 
-        var qb = new QueryBuilder(null, null, new[] { _tableInfo })
+        var qb = new QueryBuilder(null, null, new[] {_tableInfo})
         {
             TopX = _batchSize
         };
-        qb.AddColumnRange(_tableInfo.ColumnInfos.Select(c => new ColumnInfoToIColumn(memoryRepository, c)).ToArray());
+        qb.AddColumnRange(_tableInfo.ColumnInfos.Select(c => new ColumnInfoToIColumn(memoryRepository,c)).ToArray());
+            
+        //where
+        var filter1 = new SpontaneouslyInventedFilter(memoryRepository,null,
+            $"{syntaxHelper.EnsureWrapped(SpecialFieldNames.DataLoadRunID)} = {_dataLoadRunID}", "DataLoadRunID matches", null, null);
+        var filter2 =
+            new SpontaneouslyInventedFilter(memoryRepository,null,
+                $@" not exists (
+select 1 from {archiveTableName} where {whereStatement} {syntaxHelper.EnsureWrapped(SpecialFieldNames.DataLoadRunID)} < {_dataLoadRunID}
+)",
+                "Record doesn't exist in archive",null,null);
 
         //where
         var filter1 = new SpontaneouslyInventedFilter(memoryRepository, null,
@@ -265,7 +275,8 @@ Join
             var replacedRow = Updates_Replaced.Rows.Add();
 
             foreach (DataColumn column in dtComboTable.Columns)
-                if (column.ColumnName.StartsWith(zzArchive, StringComparison.InvariantCultureIgnoreCase))
+            {
+                if (column.ColumnName.StartsWith(zzArchive,StringComparison.InvariantCultureIgnoreCase))
                     replacedRow[column.ColumnName[zzArchive.Length..]] = fromRow[column];
                 else
                     newRow[column.ColumnName] = fromRow[column];

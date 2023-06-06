@@ -81,7 +81,7 @@ public class ExceptionCounterUI : ToolStripButton, ICheckNotifier
         //handle cross thread invocations
         var p = GetCurrentParent();
 
-        if (p != null && p.InvokeRequired)
+        if(p is { InvokeRequired: true })
         {
             p.BeginInvoke(new MethodInvoker(() => { OnCheckPerformed(args); }));
             return false;

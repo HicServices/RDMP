@@ -140,8 +140,7 @@ public class ParameterCollectionUIOptionsFactory
         if (host is ExtractionConfiguration extractionConfiguration)
             return Create(extractionConfiguration);
 
-        throw new ArgumentException("Host Type was not recognised as one of the Types we know how to deal with",
-            nameof(host));
+        throw new ArgumentException("Host Type was not recognised as one of the Types we know how to deal with", nameof(host));
     }
 
     private static ParameterCollectionUIOptions Create(

@@ -47,6 +47,7 @@ public class HistoryEntry : IMasqueradeAs
             e.Date = DateTime.Parse(PersistStringHelper.GetExtraText(s));
 
             var objectString = s[..s.IndexOf(PersistStringHelper.ExtraText)];
+                
 
 
             e.Object = PersistStringHelper.GetObjectCollectionFromPersistString(objectString, locator).Single();
@@ -67,7 +68,7 @@ public class HistoryEntry : IMasqueradeAs
         if (obj is null) return false;
         if (ReferenceEquals(this, obj)) return true;
         if (obj.GetType() != GetType()) return false;
-        return Equals((HistoryEntry)obj);
+        return Equals((HistoryEntry) obj);
     }
 
     public override int GetHashCode() => Object != null ? Object.GetHashCode() : 0;

@@ -291,7 +291,10 @@ public class ExternalDatabaseServer : DatabaseEntity, IExternalDatabaseServer, I
         foreach (PermissableDefaults d in Enum.GetValues(typeof(PermissableDefaults)))
         {
             var existingDefault = CatalogueRepository.GetDefaultFor(d);
-            if (Equals(existingDefault)) CatalogueRepository.ClearDefault(d);
+            if (Equals(existingDefault))
+            {
+                CatalogueRepository.ClearDefault(d);
+            }
         }
     }
 

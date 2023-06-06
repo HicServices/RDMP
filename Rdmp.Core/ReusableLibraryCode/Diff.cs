@@ -351,17 +351,13 @@ public class Diff
 
                 // find the only or better starting point
                 int x;
-                if (k == DownK - D)
-                {
-                    x = DownVector[DownOffset + k + 1]; // down
+                if (k == DownK - D) {
+                    x = DownVector[DownOffset + k+1]; // down
+                } else {
+                    x = DownVector[DownOffset + k-1] + 1; // a step to the right
+                    if ((k < DownK + D) && (DownVector[DownOffset + k+1] >= x))
+                        x = DownVector[DownOffset + k+1]; // down
                 }
-                else
-                {
-                    x = DownVector[DownOffset + k - 1] + 1; // a step to the right
-                    if (k < DownK + D && DownVector[DownOffset + k + 1] >= x)
-                        x = DownVector[DownOffset + k + 1]; // down
-                }
-
                 var y = x - k;
 
                 // find the end of the furthest reaching forward D-path in diagonal k.
@@ -393,9 +389,17 @@ public class Diff
 
                 // find the only or better starting point
                 int x;
-                if (k == UpK + D)
-                {
-                    x = UpVector[UpOffset + k - 1]; // up
+                if (k == UpK + D) {
+                    x = UpVector[UpOffset + k-1]; // up
+                } else {
+                    x = UpVector[UpOffset + k+1] - 1; // left
+                    if ((k > UpK - D) && (UpVector[UpOffset + k-1] < x))
+                        x = UpVector[UpOffset + k-1]; // up
+                } // if
+                var y = x - k;
+
+                while ((x > LowerA) && (y > LowerB) && (DataA.data[x-1] == DataB.data[y-1])) {
+                    x--; y--; // diagonal
                 }
                 else
                 {
@@ -532,7 +536,6 @@ public class Diff
                     }); // if
             } // if
 
-        // while
         var result = new Item[a.Count];
         a.CopyTo(result);
 

@@ -41,7 +41,7 @@ public class ProjectConsistentGuidReleaseIdentifierAllocator : IAllocateReleaseI
         //if we have a historical release Id use it
         if (_releaseMap.TryGetValue(privateIdentifier, out var identifier))
             return identifier;
-
+            
         //otherwise allocate a new guid and let's record it just for prosperity
         var toReturn = Guid.NewGuid().ToString();
         _releaseMap.Add(privateIdentifier, toReturn);
@@ -63,37 +63,25 @@ public class ProjectConsistentGuidReleaseIdentifierAllocator : IAllocateReleaseI
 
         var syntax = cohortDatabase.Server.GetQuerySyntaxHelper();
 
-        using (var con = cohortDatabase.Server.GetConnection())
+        using var con = cohortDatabase.Server.GetConnection();
+        var sql =
+            $"SELECT DISTINCT {ect.PrivateIdentifierField},{ect.ReleaseIdentifierField} FROM {ect.TableName} JOIN {ect.DefinitionTableName} ON {ect.DefinitionTableForeignKeyField}={ect.DefinitionTableName}.id WHERE {ect.DefinitionTableName}.{syntax.EnsureWrapped("projectNumber")}={_projectNumber}";
+
+        var syntaxHelper = ect.GetQuerySyntaxHelper();
+
+        var priv = syntaxHelper.GetRuntimeName(ect.PrivateIdentifierField);
+        var rel = syntaxHelper.GetRuntimeName(ect.ReleaseIdentifierField);
+
+        con.Open();
+
+        using var r = cohortDatabase.Server.GetCommand(sql, con).ExecuteReader();
+        while (r.Read())
         {
-            var sql =
-                string.Format("SELECT DISTINCT {0},{1} FROM {2} JOIN {3} ON {4}={3}.{5} WHERE {3}.{6}={7}"
-                    , ect.PrivateIdentifierField,
-                    ect.ReleaseIdentifierField,
-                    ect.TableName,
-                    ect.DefinitionTableName,
-                    ect.DefinitionTableForeignKeyField,
-                    "id",
-                    syntax.EnsureWrapped("projectNumber"),
-                    _projectNumber);
+            if(toReturn.ContainsKey(r[priv]))
+                throw new Exception(
+                    $"Private identifier '{r[priv]}' has more than 1 historical release identifier ({string.Join(",", toReturn[r[priv]], r[rel])}");
 
-            var syntaxHelper = ect.GetQuerySyntaxHelper();
-
-            var priv = syntaxHelper.GetRuntimeName(ect.PrivateIdentifierField);
-            var rel = syntaxHelper.GetRuntimeName(ect.ReleaseIdentifierField);
-
-            con.Open();
-
-            using (var r = cohortDatabase.Server.GetCommand(sql, con).ExecuteReader())
-            {
-                while (r.Read())
-                {
-                    if (toReturn.TryGetValue(r[priv], out var value))
-                        throw new Exception(
-                            $"Private identifier '{r[priv]}' has more than 1 historical release identifier ({string.Join(",", value, r[rel])}");
-
-                    toReturn.Add(r[priv], r[rel]);
-                }
-            }
+            toReturn.Add(r[priv],r[rel]);
         }
 
         return toReturn;

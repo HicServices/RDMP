@@ -89,7 +89,7 @@ public abstract class ConcreteContainer : DatabaseEntity, IContainer
 
         //then delete any children it has itself
         foreach (var subContainer in GetAllSubContainersRecursively())
-            if (subContainer.Exists())
+            if(subContainer.Exists())
                 subContainer.DeleteInDatabase();
 
         //clean up the orphans that will be created by killing ourselves

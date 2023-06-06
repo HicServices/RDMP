@@ -231,7 +231,7 @@ END
 
         //trim off last AND
         toReturn = toReturn[..^"AND ".Length];
-
+            
         return toReturn;
     }
 
@@ -277,8 +277,7 @@ END
         sqlToRun += $"BEGIN{Environment.NewLine}";
         sqlToRun += Environment.NewLine;
 
-        var liveCols = _columns.Select(c => $"[{c.GetRuntimeName()}]").Union(new string[]
-        {
+        var liveCols = _columns.Select(c => $"[{c.GetRuntimeName()}]").Union(new string[] {
             $"[{SpecialFieldNames.DataLoadRunID}]", $"[{SpecialFieldNames.ValidFrom}]"
         }).ToArray();
 
@@ -384,7 +383,6 @@ END
                     cmd.CommandTimeout = UserSettings.ArchiveTriggerTimeout;
                     result = cmd.ExecuteScalar() as string;
                 }
-
 
                 if (string.IsNullOrWhiteSpace(result))
                     throw new TriggerMissingException(

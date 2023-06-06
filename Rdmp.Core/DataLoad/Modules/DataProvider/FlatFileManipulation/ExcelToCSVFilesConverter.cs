@@ -6,6 +6,7 @@
 
 using System.Diagnostics;
 using System.IO;
+using System.Text;
 using System.Text.RegularExpressions;
 using FAnsi.Discovery;
 using FAnsi.Implementations.MicrosoftSQL;
@@ -110,7 +111,8 @@ public class ExcelToCSVFilesConverter : IPluginDataProvider
 
                     var savePath = Path.Combine(job.LoadDirectory.ForLoading.FullName, newName);
                     var dt = source.GetAllData(sheet, job);
-                    using var saveStream = new StreamWriter(savePath);
+                    dt.EndLoadData();
+                    using var saveStream = new StreamWriter(savePath,false,Encoding.UTF8, 1<<20);
                     dt.SaveAsCsv(saveStream);
 
                     job.OnNotify(this,

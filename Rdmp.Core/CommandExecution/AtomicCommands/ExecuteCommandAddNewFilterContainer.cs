@@ -64,9 +64,8 @@ public class ExecuteCommandAddNewFilterContainer : BasicCommandExecution
     public override void Execute()
     {
         base.Execute();
-
-        var factory = (_container?.GetFilterFactory() ?? _host?.GetFilterFactory()) ??
-                      throw new Exception("Unable to determine FilterFactory, is host and container null?");
+            
+        var factory = (_container?.GetFilterFactory() ?? _host?.GetFilterFactory()) ?? throw new Exception("Unable to determine FilterFactory, is host and container null?");
         var newContainer = factory.CreateNewContainer();
 
         if (_host != null)

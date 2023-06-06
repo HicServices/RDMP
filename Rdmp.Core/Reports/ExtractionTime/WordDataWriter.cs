@@ -277,12 +277,20 @@ public class WordDataWriter : DocXHelper
 
         foreach (var value in Executer.Source.ExtractTimeTransformationsObserved.Values)
         {
-            var supplementalValuesForThisOne = new List<Tuple<string, string>>
-            {
+            var supplementalValuesForThisOne = new List<Tuple<string, string>> {
                 //Jim no longer wants these to appear in metadata
                 /*
-                if (value.FoundAtExtractTime)
-                    supplementalValuesForThisOne.Add(new Tuple<string, string>("Runtime Name:", value.RuntimeName));
+            if (value.FoundAtExtractTime)
+                supplementalValuesForThisOne.Add(new Tuple<string, string>("Runtime Name:", value.RuntimeName));
+            else
+                supplementalValuesForThisOne.Add(new Tuple<string, string>("Runtime Name:", "Not found"));
+            */
+                new Tuple<string, string>("Datatype (SQL):",value.DataTypeInCatalogue) };
+
+
+            if(value.FoundAtExtractTime)
+                if(value.DataTypeObservedInRuntimeBuffer == null)
+                    supplementalValuesForThisOne.Add(new Tuple<string, string>("Datatype:", "Value was always NULL"));
                 else
                     supplementalValuesForThisOne.Add(new Tuple<string, string>("Runtime Name:", "Not found"));
                 */
@@ -446,11 +454,11 @@ public class WordDataWriter : DocXHelper
             tableLine++;
         }
 
-        //ouput list of validations we skipped
+        //output list of validations we skipped
         foreach (var iv in Executer.Source.ExtractionTimeValidator.IgnoredBecauseColumnHashed)
         {
-            SetTableCell(t, tableLine, 0, iv.TargetProperty);
-            SetTableCell(t, tableLine, 1, "No validations carried out because column is Hashed/Annonymised");
+            SetTableCell(t, tableLine, 0 , iv.TargetProperty);
+            SetTableCell(t, tableLine, 1, "No validations carried out because column is Hashed/Anonymised");
             tableLine++;
         }
     }
@@ -470,12 +478,12 @@ public class WordDataWriter : DocXHelper
 
         tableLine++;
 
-        foreach (var (colname, value) in results.DictionaryOfFailure)
+        foreach (var (colName, consequences) in results.DictionaryOfFailure)
         {
-            SetTableCell(t, tableLine, 0, colname);
-            SetTableCell(t, tableLine, 1, value[Consequence.Missing].ToString());
-            SetTableCell(t, tableLine, 2, value[Consequence.Wrong].ToString());
-            SetTableCell(t, tableLine, 3, value[Consequence.InvalidatesRow].ToString());
+            SetTableCell(t,tableLine, 0,colName);
+            SetTableCell(t,tableLine, 1,consequences[Consequence.Missing].ToString());
+            SetTableCell(t,tableLine, 2,consequences[Consequence.Wrong].ToString());
+            SetTableCell(t,tableLine, 3,consequences[Consequence.InvalidatesRow].ToString());
             tableLine++;
         }
     }

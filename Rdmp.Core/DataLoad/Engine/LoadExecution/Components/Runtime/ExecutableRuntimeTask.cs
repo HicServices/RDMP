@@ -184,8 +184,10 @@ public class ExecutableRuntimeTask : RuntimeTask
                     CheckResult.Warning));
     }
 
-    public override string ToString() =>
-        string.IsNullOrEmpty(ExeFilepath) ? "No executable" : $"{ExeFilepath} {CreateArgString()}";
+    public override string ToString()
+    {
+        return string.IsNullOrEmpty(ExeFilepath) ? "No executable" : $"{ExeFilepath} {CreateArgString()}";
+    }
 
     public static XmlSchema GetSchema() => null;
 }

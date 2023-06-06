@@ -25,8 +25,8 @@ public class RefreshObjectEventArgs
     {
         Object = o;
 
-        if (o == null)
-            throw new ArgumentException("You cannot create a refresh on a null object", nameof(o));
+        if(o == null)
+            throw new ArgumentException("You cannot create a refresh on a null object",nameof(o));
 
         Exists = Object.Exists();
     }

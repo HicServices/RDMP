@@ -45,11 +45,18 @@ public class LoadDiagramServerNode : TableInfoServerNode, IKnowWhatIAm, IOrderab
 
         _description = bubble switch
         {
-            LoadBubble.Raw => $"RAW Server:{serverName}",
-            LoadBubble.Staging => $"STAGING Server:{serverName}",
-            LoadBubble.Live => $"LIVE Server:{serverName}",
-            _ => throw new ArgumentOutOfRangeException(nameof(bubble))
-        };
+            case LoadBubble.Raw:
+                _description = $"RAW Server:{serverName}";
+                break;
+            case LoadBubble.Staging:
+                _description = $"STAGING Server:{serverName}";
+                break;
+            case LoadBubble.Live:
+                _description = $"LIVE Server:{serverName}";
+                break;
+            default:
+                throw new ArgumentOutOfRangeException(nameof(bubble));
+        }
 
         //Live can have multiple databases (for lookups)
         if (_bubble == LoadBubble.Live)
@@ -101,7 +108,7 @@ public class LoadDiagramServerNode : TableInfoServerNode, IKnowWhatIAm, IOrderab
         if (obj is null) return false;
         if (ReferenceEquals(this, obj)) return true;
         if (obj.GetType() != GetType()) return false;
-        return Equals((LoadDiagramServerNode)obj);
+        return Equals((LoadDiagramServerNode) obj);
     }
 
     public override int GetHashCode() => HashCode.Combine(base.GetHashCode(), _bubble, _database);

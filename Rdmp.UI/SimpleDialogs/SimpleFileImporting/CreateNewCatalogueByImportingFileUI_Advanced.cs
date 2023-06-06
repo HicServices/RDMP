@@ -68,6 +68,8 @@ public partial class CreateNewCatalogueByImportingFileUI_Advanced : UserControl
         configureAndExecutePipeline1.TabIndex = 14;
         Controls.Add(configureAndExecutePipeline1);
 
+        configureAndExecutePipeline1.PipelineExecutionFinishedsuccessfully += ConfigureAndExecutePipeline1OnPipelineExecutionFinishedsuccessfully;
+
         configureAndExecutePipeline1.PipelineExecutionFinishedsuccessfully +=
             ConfigureAndExecutePipeline1OnPipelineExecutionFinishedsuccessfully;
     }

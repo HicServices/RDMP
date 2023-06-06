@@ -149,7 +149,7 @@ public class BoundDate : Bound
 
     private string CreateViolationReportUsingFieldNames(DateTime d)
     {
-        if (!string.IsNullOrWhiteSpace(LowerFieldName) && !string.IsNullOrWhiteSpace(UpperFieldName))
+        if (!string.IsNullOrWhiteSpace(LowerFieldName) && !string.IsNullOrWhiteSpace(UpperFieldName)) 
             return BetweenMessage(d, LowerFieldName, UpperFieldName);
 
         if (!string.IsNullOrWhiteSpace(LowerFieldName))

@@ -197,10 +197,9 @@ public partial class ParameterEditorScintillaControlUI : RDMPUserControl
         var highlighter = new ScintillaLineHighlightingHelper();
         ScintillaLineHighlightingHelper.ClearAll(QueryEditor);
 
-        foreach (var section in Sections)
-            if (!section.Editable)
-                for (var i = section.LineStart; i <= section.LineEnd; i++)
-                    ScintillaLineHighlightingHelper.HighlightLine(QueryEditor, i, Color.LightGray);
+        foreach (var section in Sections.Where(section => !section.Editable))
+            for (var i = section.LineStart; i <= section.LineEnd; i++)
+                highlighter.HighlightLine(QueryEditor, i, Color.LightGray);
     }
 
 

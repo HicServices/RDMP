@@ -28,7 +28,7 @@ public class FilterGraphObjectCollection : PersistableObjectCollection
     {
         if (graph.IsCohortIdentificationAggregate)
             throw new ArgumentException(
-                $"Graph '{graph}' is a Cohort Identification Aggregate, this is not allowed.  Aggregat must be a graph aggregate");
+                $"Graph '{graph}' is a Cohort Identification Aggregate, this is not allowed.  Aggregate must be a graph aggregate");
         DatabaseObjects.Add(graph);
         DatabaseObjects.Add(filter);
     }
@@ -45,8 +45,7 @@ public class FilterGraphObjectCollection : PersistableObjectCollection
 
     public void HandleRefreshObject(RefreshObjectEventArgs e)
     {
-        foreach (var o in DatabaseObjects)
-            if (o.Equals(e.Object))
-                ((IRevertable)o).RevertToDatabaseState();
+        foreach (var o in DatabaseObjects.Where(o => o.Equals(e.Object)))
+            ((IRevertable) o).RevertToDatabaseState();
     }
 }

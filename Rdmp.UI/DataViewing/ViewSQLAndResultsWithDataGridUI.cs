@@ -198,8 +198,8 @@ public partial class ViewSQLAndResultsWithDataGridUI : RDMPUserControl, IObjectC
         tbErrors.Visible = true;
         tbErrors.Text = exception.Message;
         tbErrors.Dock = DockStyle.Fill;
-
-        CommonFunctionality.Fatal("Query failed", exception);
+            
+        CommonFunctionality.Fatal("Query failed",exception);
     }
 
     private void HideFatal()
@@ -213,6 +213,7 @@ public partial class ViewSQLAndResultsWithDataGridUI : RDMPUserControl, IObjectC
         splitContainer1.Panel2.Controls.Add(dataGridView1);
         splitContainer1.Panel2.Controls.Remove(tbErrors);
         CommonFunctionality.ResetChecks();
+
     }
 
     private void LoadDataTableAsync(DiscoveredServer server, string sql)
@@ -220,7 +221,7 @@ public partial class ViewSQLAndResultsWithDataGridUI : RDMPUserControl, IObjectC
         lblHelp.Visible = false;
 
         //it is already running and not completed
-        if (_task != null && !_task.IsCompleted)
+        if (_task is { IsCompleted: false })
             return;
 
         HideFatal();

@@ -793,7 +793,7 @@ delete from {1}..Project
                     catch (Exception)
                     {
                         TestContext.Out.WriteLine(
-                            $"Failed to generate disable System Versioning check for table {t} (nevermind)");
+                            $"Failed to generate disable System Versioning check for table {t} (never mind)");
                     }
             }
 

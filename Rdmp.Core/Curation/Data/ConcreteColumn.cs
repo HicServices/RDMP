@@ -108,9 +108,9 @@ public abstract class ConcreteColumn : DatabaseEntity, IColumn, IOrderable, ICom
     /// <inheritdoc/>
     public string GetRuntimeName()
     {
-        var helper = ColumnInfo == null ? MicrosoftQuerySyntaxHelper.Instance : ColumnInfo.GetQuerySyntaxHelper();
+        var helper = ColumnInfo == null ? MicrosoftQuerySyntaxHelper.Instance: ColumnInfo.GetQuerySyntaxHelper();
         if (!string.IsNullOrWhiteSpace(Alias))
-            return helper.GetRuntimeName(Alias); //.GetRuntimeName(); RDMPQuerySyntaxHelper.GetRuntimeName(this);
+            return helper.GetRuntimeName(Alias);//.GetRuntimeName(); RDMPQuerySyntaxHelper.GetRuntimeName(this);
 
         if (!string.IsNullOrWhiteSpace(SelectSQL))
             return helper.GetRuntimeName(SelectSQL);
@@ -131,8 +131,8 @@ public abstract class ConcreteColumn : DatabaseEntity, IColumn, IOrderable, ICom
     /// <returns></returns>
     public int CompareTo(object obj)
     {
-        if (obj is IColumn column)
-            return Order - column.Order;
+        if (obj is IColumn)
+            return Order - (obj as IColumn).Order;
 
         return 0;
     }

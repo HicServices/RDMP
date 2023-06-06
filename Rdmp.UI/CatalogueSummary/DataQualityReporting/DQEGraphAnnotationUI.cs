@@ -20,7 +20,11 @@ internal class DQEGraphAnnotationUI
         if (obj is null) return false;
         if (ReferenceEquals(this, obj)) return true;
         if (obj.GetType() != GetType()) return false;
-        return Equals((DQEGraphAnnotationUI)obj);
+        return Equals((DQEGraphAnnotationUI) obj);
+    }
+    protected bool Equals(DQEGraphAnnotationUI other)
+    {
+        return Equals(_underlyingAnnotationObject, other._underlyingAnnotationObject);
     }
 
     protected bool Equals(DQEGraphAnnotationUI other) =>

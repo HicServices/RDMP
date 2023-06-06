@@ -44,7 +44,10 @@ public class SessionCollectionUI : RDMPUserControl, IObjectCollectionControl, IC
 
     public IPersistableObjectCollection GetCollection() => Collection;
 
-    public string GetTabName() => Collection?.SessionName ?? "Unamed Session";
+    public string GetTabName()
+    {
+        return Collection?.SessionName ?? "Unnamed Session";
+    }
 
     public string GetTabToolTip() => null;
 
@@ -83,7 +86,10 @@ public class SessionCollectionUI : RDMPUserControl, IObjectCollectionControl, IC
         var toRemove = Activator.SelectMany("Remove From Session", typeof(IMapsDirectlyToDatabaseTable),
             Collection.DatabaseObjects.ToArray());
 
-        if (toRemove != null && toRemove.Length > 0) Remove(toRemove);
+        if(toRemove is { Length: > 0 })
+        {
+            Remove(toRemove);
+        }
     }
 
     /// <summary>
@@ -92,12 +98,16 @@ public class SessionCollectionUI : RDMPUserControl, IObjectCollectionControl, IC
     /// <param name="toAdd"></param>
     public void Add(params IMapsDirectlyToDatabaseTable[] toAdd)
     {
-        for (var i = 0; i < toAdd.Length; i++)
-            //unwrap pipelines
-            if (toAdd[i] is PipelineCompatibleWithUseCaseNode pcn)
-                toAdd[i] = pcn.Pipeline;
-            else if (toAdd[i] is SpontaneousObject)
-                throw new NotSupportedException("Object cannot be added to sessions");
+        for(var i=0;i< toAdd.Length;i++)
+        {
+            toAdd[i] = toAdd[i] switch
+            {
+                //unwrap pipelines
+                PipelineCompatibleWithUseCaseNode pcn => pcn.Pipeline,
+                SpontaneousObject => throw new NotSupportedException("Object cannot be added to sessions"),
+                _ => toAdd[i]
+            };
+        }
 
         Collection.DatabaseObjects = toAdd.Union(Collection.DatabaseObjects).ToList();
         RefreshSessionObjects();
@@ -129,6 +139,7 @@ public class SessionCollectionUI : RDMPUserControl, IObjectCollectionControl, IC
             ?.ToList();
 
         if (toAdd == null || toAdd.Count == 0)
+        {
             // user cancelled picking objects
             return;
 
@@ -139,8 +150,8 @@ public class SessionCollectionUI : RDMPUserControl, IObjectCollectionControl, IC
     {
         var actualObjects = FavouritesCollectionUI.FindRootObjects(Activator, Collection.DatabaseObjects.Contains)
             .Union(Collection.DatabaseObjects.OfType<Pipeline>()).ToList();
-
-        //no change in root favouratism
+            
+        //no change in root favouritism
         if (actualObjects.SequenceEqual(olvTree.Objects.OfType<IMapsDirectlyToDatabaseTable>()))
             return;
 
@@ -157,25 +168,26 @@ public class SessionCollectionUI : RDMPUserControl, IObjectCollectionControl, IC
         olvTree.RebuildAll(true);
     }
 
-    public override string ToString() => Collection?.SessionName ?? "Unamed Session";
+    public override string ToString()
+    {
+        return Collection?.SessionName ?? "Unnamed Session";
+    }
 
     #region InitializeComponent
 
     private void InitializeComponent()
     {
         olvTree = new BrightIdeasSoftware.TreeListView();
-        olvName = (BrightIdeasSoftware.OLVColumn)new BrightIdeasSoftware.OLVColumn();
-        ((System.ComponentModel.ISupportInitialize)olvTree).BeginInit();
+        olvName = ((BrightIdeasSoftware.OLVColumn)(new BrightIdeasSoftware.OLVColumn()));
+        ((System.ComponentModel.ISupportInitialize)(olvTree)).BeginInit();
         SuspendLayout();
         // 
         // olvRecent
         // 
         olvTree.AllColumns.Add(olvName);
         olvTree.CellEditUseWholeCell = false;
-        olvTree.Columns.AddRange(new ColumnHeader[]
-        {
-            olvName
-        });
+        olvTree.Columns.AddRange(new ColumnHeader[] {
+            olvName});
         olvTree.Cursor = Cursors.Default;
         olvTree.Dock = DockStyle.Fill;
         olvTree.FullRowSelect = true;
@@ -200,8 +212,9 @@ public class SessionCollectionUI : RDMPUserControl, IObjectCollectionControl, IC
         Controls.Add(olvTree);
         Name = "SessionCollectionUI";
         Size = new System.Drawing.Size(487, 518);
-        ((System.ComponentModel.ISupportInitialize)olvTree).EndInit();
+        ((System.ComponentModel.ISupportInitialize)(olvTree)).EndInit();
         ResumeLayout(false);
+
     }
 
     public void ConsultAboutClosing(object sender, FormClosingEventArgs e)

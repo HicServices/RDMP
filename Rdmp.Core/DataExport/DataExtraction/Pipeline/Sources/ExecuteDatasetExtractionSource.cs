@@ -72,7 +72,7 @@ public class ExecuteDatasetExtractionSource : IPluginDataFlowSource<DataTable>, 
 None - Do not DISTINCT the records, can result in duplication in your extract (not recommended)
 SqlDistinct - Adds the DISTINCT keyword to the SELECT sql sent to the server
 OrderByAndDistinctInMemory - Adds an ORDER BY statement to the query and applies the DISTINCT in memory as records are read from the server (this can help when extracting very large data sets where DISTINCT keyword blocks record streaming until all records are ready to go)"
-        , DefaultValue = DistinctStrategy.SqlDistinct)]
+        ,DefaultValue = DistinctStrategy.SqlDistinct)]
     public DistinctStrategy DistinctStrategy { get; set; }
 
 
@@ -192,7 +192,7 @@ OrderByAndDistinctInMemory - Adds an ORDER BY statement to the query and applies
 
             _hostedSource = new DbDataCommandDataFlowSource(GetCommandSQL(listener),
                 $"ExecuteDatasetExtraction {Request.DatasetBundle.DataSet}",
-                Request.GetDistinctLiveDatabaseServer().Builder,
+                Request.GetDistinctLiveDatabaseServer().Builder, 
                 ExecutionTimeout)
             {
                 // If we are running in batches then always allow empty extractions
@@ -214,7 +214,7 @@ OrderByAndDistinctInMemory - Adds an ORDER BY statement to the query and applies
             {
                 var releaseIdentifierColumn = Request.ReleaseIdentifierSubstitutions.First().GetRuntimeName();
 
-                if (chunk != null && chunk.Rows.Count > 0)
+                if(chunk is { Rows.Count: > 0 })
                 {
                     //last release id in the current chunk
                     var lastReleaseId = chunk.Rows[^1][releaseIdentifierColumn];
@@ -474,10 +474,7 @@ OrderByAndDistinctInMemory - Adds an ORDER BY statement to the query and applies
 
         if (Request.IsBatchResume)
         {
-            var match =
-                previousAudit.FirstOrDefault(a => a.ExtractableDataSet_ID == Request.DatasetBundle.DataSet.ID) ??
-                throw new Exception(
-                    $"Could not find previous CumulativeExtractionResults for dataset {Request.DatasetBundle.DataSet} despite the Request being marked as a batch resume");
+            var match = previousAudit.FirstOrDefault(a => a.ExtractableDataSet_ID == Request.DatasetBundle.DataSet.ID) ?? throw new Exception($"Could not find previous CumulativeExtractionResults for dataset {Request.DatasetBundle.DataSet} despite the Request being marked as a batch resume");
             Request.CumulativeExtractionResults = match;
         }
         else

@@ -392,7 +392,7 @@ public class ExtractionConfiguration : DatabaseEntity, IExtractionConfiguration,
         {
             try
             {
-                //clone the root object (the configuration) - this includes cloning the link to the correct project and cohort
+                //clone the root object (the configuration) - this includes cloning the link to the correct project and cohort 
                 var clone = ShallowClone();
 
                 //find each of the selected datasets for ourselves and clone those too
@@ -516,7 +516,7 @@ public class ExtractionConfiguration : DatabaseEntity, IExtractionConfiguration,
             var catalogue = repo.CatalogueRepository.GetObjectByID<Catalogue>((int)catalogueID);
 
             var loggingServer = catalogue.LiveLoggingServer_ID ?? throw new Exception(
-                $"Catalogue {catalogue.Name} does not have a {(testLoggingServer ? "test" : "")} logging server configured");
+                    $"Catalogue {catalogue.Name} does not have a {(testLoggingServer ? "test" : "")} logging server configured");
             if (uniqueLoggingServerID == -1)
             {
                 uniqueLoggingServerID = (int)catalogue.LiveLoggingServer_ID;

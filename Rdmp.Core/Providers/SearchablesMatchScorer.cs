@@ -135,10 +135,9 @@ public class SearchablesMatchScorer
 
         //Search the tokens for also inclusions e.g. "Pipeline" becomes "Pipeline PipelineCompatibleWithUseCaseNode"
         if (!string.IsNullOrWhiteSpace(searchText))
-            foreach (var s in searchText.Split(' ').ToArray())
+            foreach(var s in searchText.Split(' ').ToArray())
                 if (AlsoIncludes.TryGetValue(s, out var include))
-                    foreach (var v in include)
-                        searchText += $" {v.Name}";
+                    searchText = include.Aggregate(searchText, (current, v) => $"{current} {v.Name}");
 
         //if we have nothing to search for return no results
         if (ReturnEmptyResultWhenNoSearchTerms && string.IsNullOrWhiteSpace(searchText) && ID == null)
@@ -156,8 +155,7 @@ public class SearchablesMatchScorer
             explicitTypesRequested = TypeNames.Intersect(tokens, StringComparer.CurrentCultureIgnoreCase).ToArray();
 
             //else it's a regex
-            foreach (var token in tokens.Except(TypeNames, StringComparer.CurrentCultureIgnoreCase))
-                regexes.Add(new Regex(Regex.Escape(token), RegexOptions.IgnoreCase));
+            regexes.AddRange(tokens.Except(TypeNames, StringComparer.CurrentCultureIgnoreCase).Select(token => new Regex(Regex.Escape(token), RegexOptions.IgnoreCase)));
         }
         else
         {
@@ -264,9 +262,9 @@ public class SearchablesMatchScorer
 
         var catalogueIfAny = GetCatalogueIfAnyInDescendancy(kvp);
 
-        if (catalogueIfAny != null && catalogueIfAny.IsDeprecated)
-            return score / 10;
-
+        if (catalogueIfAny is { IsDeprecated: true })
+            return score /10;
+            
         //if we are bumping up matches
         if (score > 0 && BumpMatches.Contains(kvp.Key))
             score += BumpWeight;

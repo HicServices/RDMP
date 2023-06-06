@@ -250,7 +250,7 @@ public partial class CreateNewDataExtractionProjectUI : RDMPForm
                 {
                     Timeout = 5
                 };
-                source.PreInitialize(cic, new ThrowImmediatelyDataLoadEventListener());
+                source.PreInitialize(cic,new ThrowImmediatelyDataLoadEventListener());
                 source.Check(ragCic);
 
                 ClearFile();
@@ -366,7 +366,7 @@ public partial class CreateNewDataExtractionProjectUI : RDMPForm
                 _configuration.SaveToDatabase();
 
                 //User defined cohort if it came from cic then associate the cic with the project
-                if (cmdAssociateCicWithProject != null && !cmdAssociateCicWithProject.IsImpossible)
+                if (cmdAssociateCicWithProject is { IsImpossible: false })
                     cmdAssociateCicWithProject.Execute();
             }
 
@@ -423,7 +423,7 @@ public partial class CreateNewDataExtractionProjectUI : RDMPForm
         if (ddCohortSources.SelectedItem == null)
             return "You must choose an Identifier Allocation database (to put your cohort / anonymous mappings)";
 
-        if (cbxCohort.SelectedItem == null && _cohortFile == null)
+        if(cbxCohort.SelectedItem == null && _cohortFile == null)
             return "You must choose either a file or a cohort identification query to build the cohort from";
 
         //no problems

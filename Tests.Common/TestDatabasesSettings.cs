@@ -49,7 +49,7 @@ public class TestDatabasesSettings
             DatabaseType.MySql => MySqlLowPrivilegeUsername,
             DatabaseType.Oracle => OracleLowPrivilegeUsername,
             DatabaseType.PostgreSql => PostgreSqlLowPrivilegeUsername,
-            _ => throw new ArgumentOutOfRangeException(nameof(databaseType))
+            _ => throw new ArgumentOutOfRangeException(nameof(databaseType)),
         };
     }
 
@@ -62,7 +62,7 @@ public class TestDatabasesSettings
             DatabaseType.MySql => MySqlLowPrivilegePassword,
             DatabaseType.Oracle => OracleLowPrivilegePassword,
             DatabaseType.PostgreSql => PostgreSqlLowPrivilegePassword,
-            _ => throw new ArgumentOutOfRangeException(nameof(databaseType))
+            _ => throw new ArgumentOutOfRangeException(nameof(databaseType)),
         };
     }
 }

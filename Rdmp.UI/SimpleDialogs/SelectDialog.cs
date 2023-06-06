@@ -291,7 +291,7 @@ public partial class SelectDialog<T> : Form, IVirtualListDataSource where T : cl
 
         var type = mapsDirectlyToDatabaseTables.First().GetType();
 
-        // types differ (use Any to jump out ASAP if there are a billion objects)
+        // types differ (use All to jump out ASAP if theres a billion objects)
         if (mapsDirectlyToDatabaseTables.Any(m => m.GetType() != type))
             return;
 
@@ -301,15 +301,13 @@ public partial class SelectDialog<T> : Form, IVirtualListDataSource where T : cl
         foreach (var propertyInfo in type.GetProperties())
         {
             var useful = _usefulPropertyFinder.GetAttribute(propertyInfo);
-            if (useful != null)
-            {
-                //add a column
-                var newCol = new OLVColumn(propertyInfo.Name, propertyInfo.Name);
-                olv.AllColumns.Add(newCol);
+            if (useful == null) continue;
+            //add a column
+            var newCol = new OLVColumn(propertyInfo.Name, propertyInfo.Name);
+            olv.AllColumns.Add(newCol);
 
 
-                RDMPCollectionCommonFunctionality.SetupColumnTracking(olv, newCol, $"Useful_{propertyInfo.Name}");
-            }
+            RDMPCollectionCommonFunctionality.SetupColumnTracking(olv, newCol, $"Useful_{propertyInfo.Name}");
         }
     }
 
@@ -335,21 +333,11 @@ public partial class SelectDialog<T> : Form, IVirtualListDataSource where T : cl
 
         lock (oMatches)
         {
-            if (_searchables == null)
-                return null;
+            if (_searchables?.TryGetValue(m, out var searchable) != true) return null;
+            var parent = searchable?.GetMostDescriptiveParent();
 
-            if (_searchables.TryGetValue(m, out var searchable))
-            {
-                var parent = searchable?.GetMostDescriptiveParent();
-
-                if (parent == null)
-                    return null;
-
-                return provider.GetGrayscale(_activator.CoreIconProvider.GetImage(parent)).ImageToBitmap();
-            }
+            return parent == null ? null : provider.GetGrayscale(_activator.CoreIconProvider.GetImage(parent)).ImageToBitmap();
         }
-
-        return null;
     }
 
     private object GetHierarchy(object rowObject)
@@ -359,14 +347,11 @@ public partial class SelectDialog<T> : Form, IVirtualListDataSource where T : cl
 
         lock (oMatches)
         {
-            if (_searchables == null)
-                return null;
-
-            if (_searchables.TryGetValue(m, out var searchable))
-                return searchable != null
-                    ? Regex.Replace(string.Join('\\', searchable.GetUsefulParents()), "\\\\+", "\\").Trim('\\')
+            if (_searchables?.TryGetValue(m, out var descendancy)==true)
+                return descendancy != null
+                    ? Regex.Replace(string.Join('\\', descendancy.GetUsefulParents()), "\\\\+", "\\").Trim('\\')
                     : null;
-        }
+        }   
 
         return null;
     }
@@ -381,12 +366,14 @@ public partial class SelectDialog<T> : Form, IVirtualListDataSource where T : cl
                 _typeNames.Add(t.Name);
         Type[] startingFilters = null;
 
-        if (focusedCollection != RDMPCollection.None &&
-            StartingEasyFilters.TryGetValue(focusedCollection, out var filter))
+        if (focusedCollection != RDMPCollection.None && StartingEasyFilters.TryGetValue(focusedCollection, out var filter))
             startingFilters = filter;
 
+        var backColorProvider = new BackColorProvider();
+
         // if there are at least 2 Types of object let them filter
-        if (_types.Length > 1)
+        if(_types.Length > 1)
+        {
             foreach (var t in EasyFilterTypesAndAssociatedCollections.Keys)
             {
                 var shortCode = SearchablesMatchScorer.ShortCodes.Single(kvp => kvp.Value == t).Key;
@@ -520,10 +507,6 @@ public partial class SelectDialog<T> : Form, IVirtualListDataSource where T : cl
             BumpMatches = _activator.HistoryProvider.History.Select(h => h.Object).ToList()
         };
 
-        if (_lblId != null && int.TryParse(_lblId.Text, out var requireId)) scorer.ID = requireId;
-
-        if (AlwaysFilterOn != null) showOnlyTypes = new List<Type>(new[] { AlwaysFilterOn });
-
         var scores = scorer.ScoreMatches(_searchables, text, cancellationToken, showOnlyTypes);
 
         if (scores == null)
@@ -581,7 +564,7 @@ public partial class SelectDialog<T> : Form, IVirtualListDataSource where T : cl
         if (e.KeyCode == Keys.Enter && olv.SelectedObject != null)
         {
             DialogResult = DialogResult.OK;
-            Selected = olv.SelectedObject as T ?? default;
+            Selected = olv.SelectedObject is T s ? s : default;
 
             // if there are some multi selected items already
             if (AllowMultiSelect && MultiSelected.Any())
@@ -642,7 +625,7 @@ public partial class SelectDialog<T> : Form, IVirtualListDataSource where T : cl
         }
 
         //cancel the last execution if it has not completed yet
-        if (_lastFetchTask != null && !_lastFetchTask.IsCompleted)
+        if (_lastFetchTask is { IsCompleted: false })
             _lastCancellationToken.Cancel();
 
         _lastCancellationToken = new CancellationTokenSource();

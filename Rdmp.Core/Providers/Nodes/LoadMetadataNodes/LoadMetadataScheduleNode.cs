@@ -27,7 +27,7 @@ public class LoadMetadataScheduleNode : Node, IOrderable
         if (obj is null) return false;
         if (ReferenceEquals(this, obj)) return true;
         if (obj.GetType() != GetType()) return false;
-        return Equals((LoadMetadataScheduleNode)obj);
+        return Equals((LoadMetadataScheduleNode) obj);
     }
 
     public override int GetHashCode() => LoadMetadata != null ? LoadMetadata.GetHashCode() : 0;

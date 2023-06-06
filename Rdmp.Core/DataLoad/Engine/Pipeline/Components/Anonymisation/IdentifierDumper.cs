@@ -119,8 +119,7 @@ public class IdentifierDumper : IHasRuntimeName, IDisposeAfterDataLoad, ICheckab
                 catch (Exception e)
                 {
                     throw new Exception(
-                        $"IdentifierDumper STAGING insert ({bulkCopy.DestinationTableName}) failed, make sure you have called CreateSTAGINGTable() before trying to Dump identifiers (also you should call DropStagging() when you are done)",
-                        e);
+                        $"IdentifierDumper STAGING insert ({bulkCopy.DestinationTableName}) failed, make sure you have called CreateSTAGINGTable() before trying to Dump identifiers (also you should call DropStaging() when you are done)",e);
                 }
 
                 MergeStagingWithLive(pks.Select(col => col.GetRuntimeName(LoadStage.AdjustRaw)).ToArray());
@@ -329,8 +328,8 @@ public class IdentifierDumper : IHasRuntimeName, IDisposeAfterDataLoad, ICheckab
                      c.Destination == DiscardedColumnDestination.Dilute))
             if (!columnInfos.Any(c => c.GetRuntimeName().Equals(dilutedColumn.RuntimeColumnName)))
                 notifier.OnCheckPerformed(new CheckEventArgs(
-                    $"PreLoadDiscardedColumn called {dilutedColumn.GetRuntimeName()} is marked for Dilution but does not appear in the TableInfo object's ColumnInfo collection.  Diluted columns must appear both in the LIVE database (in diluted state) and in IdentifierDump (in pristene state) which means that for every PreLoadDiscardedColumn which has the destination Dilution, there must be a ColumnInfo with the same name in LIVE",
-                    CheckResult.Fail, null));
+                    $"PreLoadDiscardedColumn called {dilutedColumn.GetRuntimeName()} is marked for Dilution but does not appear in the TableInfo object's ColumnInfo collection.  Diluted columns must appear both in the LIVE database (in diluted state) and in IdentifierDump (in pristine state) which means that for every PreLoadDiscardedColumn which has the destination Dilution, there must be a ColumnInfo with the same name in LIVE",CheckResult.Fail, null));
+        }
 
         //if there are any columns due to be stored in the Identifier dump
         if (ColumnsToRouteToSomewhereElse.Any(c => c.GoesIntoIdentifierDump()))
@@ -361,7 +360,7 @@ public class IdentifierDumper : IHasRuntimeName, IDisposeAfterDataLoad, ICheckab
             {
                 if (!cmdDropSTAGING.CommandText.Contains("STAGING"))
                     throw new Exception(
-                        $"Expected comand {cmdDropSTAGING.CommandText} to have the word STAGING in it, do not drop a live ANO table that would be the worst of things!");
+                        $"Expected command {cmdDropSTAGING.CommandText} to have the word STAGING in it, do not drop a live ANO table that would be the worst of things!");
 
                 cmdDropSTAGING.ExecuteNonQuery();
             }

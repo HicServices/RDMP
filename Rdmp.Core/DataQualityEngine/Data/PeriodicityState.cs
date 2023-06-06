@@ -71,25 +71,26 @@ public class PeriodicityState
     where
   Evaluation_ID = ${evaluation.ID} and PivotCategory = 'ALL' ORDER BY {t.Wrap("Year")},{t.Wrap("Month")}";
 
-            using (var cmd = DatabaseCommandHelper.GetCommand(sql, con.Connection, con.Transaction))
+            using var cmd = DatabaseCommandHelper.GetCommand(sql, con.Connection, con.Transaction);
+            using var r = cmd.ExecuteReader();
+            while (r.Read())
             {
-                using (var r = cmd.ExecuteReader())
+                var date = new DateTime((int) r["Year"], (int) r["Month"], 1);
+
+                switch (discardOutliers)
                 {
-                    while (r.Read())
-                    {
-                        var date = new DateTime((int)r["Year"], (int)r["Month"], 1);
+                    //discard outliers before start
+                    case true when result.Item1.HasValue && date < result.Item1.Value:
+                    //discard outliers after end
+                    case true when result.Item2.HasValue && date > result.Item2.Value:
+                        continue;
+                }
 
-                        //discard outliers before start
-                        if (discardOutliers && result.Item1.HasValue && date < result.Item1.Value) continue;
+                toReturn.TryAdd(date, new ArchivalPeriodicityCount());
 
-                        //discard outliers after end
-                        if (discardOutliers && result.Item2.HasValue && date > result.Item2.Value) continue;
+                var toIncrement = toReturn[date];
 
-                        toReturn.TryAdd(date, new ArchivalPeriodicityCount());
-
-                        var toIncrement = toReturn[date];
-
-                        /*
+                /*
                          *
      Correct
      InvalidatesRow
@@ -97,26 +98,20 @@ public class PeriodicityState
      Wrong
                          * */
 
-                        switch ((string)r["RowEvaluation"])
-                        {
-                            case "Correct":
-                                toIncrement.CountGood += (int)r["CountOfRecords"];
-                                toIncrement.Total += (int)r["CountOfRecords"];
-                                break;
-                            case "InvalidatesRow":
-                                toIncrement.Total += (int)r["CountOfRecords"];
-                                break;
-                            case "Missing":
-                                toIncrement.Total += (int)r["CountOfRecords"];
-                                break;
-                            case "Wrong":
-                                toIncrement.Total += (int)r["CountOfRecords"];
-                                break;
-                            default:
-                                throw new ArgumentOutOfRangeException(
-                                    $"Unexpected RowEvaluation '{r["RowEvaluation"]}'");
-                        }
-                    }
+                switch ((string)r["RowEvaluation"])
+                {
+                    case "Correct": 
+                        toIncrement.CountGood += (int) r["CountOfRecords"];
+                        toIncrement.Total += (int)r["CountOfRecords"];
+                        break;
+                    case "InvalidatesRow": toIncrement.Total += (int)r["CountOfRecords"];
+                        break;
+                    case "Missing": toIncrement.Total += (int)r["CountOfRecords"];
+                        break;
+                    case "Wrong": toIncrement.Total += (int)r["CountOfRecords"];
+                        break;
+                    default:throw new ArgumentOutOfRangeException(
+                        $"Unexpected RowEvaluation '{r["RowEvaluation"]}'");
                 }
             }
         }

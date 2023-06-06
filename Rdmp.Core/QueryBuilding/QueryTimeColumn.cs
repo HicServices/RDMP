@@ -97,9 +97,11 @@ public class QueryTimeColumn : IComparable
     /// <inheritdoc/>
     public int CompareTo(object obj)
     {
-        if (obj is QueryTimeColumn column)
+        if (obj is QueryTimeColumn)
+        {
             return IColumn.Order -
-                   column.IColumn.Order;
+                   (obj as QueryTimeColumn).IColumn.Order;
+        }
 
         return 0;
     }
@@ -121,7 +123,7 @@ public class QueryTimeColumn : IComparable
 
         if (firstTable != null)
             allAvailableLookups = firstTable.Repository.GetAllObjects<Lookup>();
-
+                
         for (var i = 0; i < ColumnsInOrder.Length; i++)
         {
             //it is a custom column

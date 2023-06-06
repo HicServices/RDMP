@@ -95,10 +95,10 @@ public class ExecuteCommandCreateNewFileBasedProcessTask : BasicCommandExecution
         }
 
         var task = new ProcessTask((ICatalogueRepository)_loadMetadata.Repository, _loadMetadata, _loadStage)
-        {
-            ProcessTaskType = _taskType,
-            Path = _file.FullName
-        };
+            {
+                ProcessTaskType = _taskType,
+                Path = _file.FullName
+            };
         SaveAndShow(task);
     }
 

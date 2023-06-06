@@ -72,9 +72,9 @@ public partial class CreatePlatformDatabase : Form
             return;
         }
 
-        if (_tCreateDatabase != null && !_tCreateDatabase.IsCompleted)
+        if (_tCreateDatabase is { IsCompleted: false })
         {
-            MessageBox.Show("Setup already underaway");
+            MessageBox.Show("Setup already underway");
             return;
         }
 
@@ -98,14 +98,11 @@ public partial class CreatePlatformDatabase : Form
 
                         DatabaseCreatedIfAny = db;
 
-                        var worst = memory.GetWorst();
-                        if (worst == CheckResult.Success || worst == CheckResult.Warning)
-                            if (MessageBox.Show("Succesfully created database, close form?", "Success",
-                                    MessageBoxButtons.YesNo) == DialogResult.Yes)
-                            {
-                                _programaticClose = true;
-                                Invoke(new MethodInvoker(Close));
-                            }
+                        if (memory.GetWorst() is not (CheckResult.Success or CheckResult.Warning) ||
+                            MessageBox.Show("Successfully created database, close form?", "Success",
+                                MessageBoxButtons.YesNo) != DialogResult.Yes) return;
+                        _programaticClose = true;
+                        Invoke(new MethodInvoker(Close));
                     }
                     else
                     {

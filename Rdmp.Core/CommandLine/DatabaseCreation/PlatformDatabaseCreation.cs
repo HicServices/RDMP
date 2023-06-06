@@ -82,7 +82,7 @@ public class PlatformDatabaseCreation
         {
             BinaryCollation = options.BinaryCollation
         };
-        executor.CreateAndPatchDatabase(patcher, new AcceptAllCheckNotifier());
+        executor.CreateAndPatchDatabase(patcher,new AcceptAllCheckNotifier());
         Console.WriteLine($"Created {builder.InitialCatalog} on server {builder.DataSource}");
 
         return builder;

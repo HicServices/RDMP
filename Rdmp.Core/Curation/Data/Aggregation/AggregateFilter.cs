@@ -106,8 +106,8 @@ public class AggregateFilter : ConcreteFilter, IDisableable
         AggregateFilterContainer container = null)
     {
         name ??= $"New AggregateFilter{Guid.NewGuid()}";
-
-        repository.InsertAndHydrate(this, new Dictionary<string, object>
+            
+        repository.InsertAndHydrate(this,new Dictionary<string, object>
         {
             { "Name", name },
             { "FilterContainer_ID", container != null ? (object)container.ID : DBNull.Value }
@@ -161,7 +161,7 @@ public class AggregateFilter : ConcreteFilter, IDisableable
     public override Catalogue GetCatalogue()
     {
         var agg = GetAggregate() ?? throw new Exception(
-            $"Cannot determine the Catalogue for AggregateFilter {this} because GetAggregate returned null, possibly the Filter does not belong to any AggregateFilterContainer (i.e. it is an orphan?)");
+                $"Cannot determine the Catalogue for AggregateFilter {this} because GetAggregate returned null, possibly the Filter does not belong to any AggregateFilterContainer (i.e. it is an orphan?)");
         return agg.Catalogue;
     }
 

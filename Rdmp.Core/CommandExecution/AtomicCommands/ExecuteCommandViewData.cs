@@ -100,7 +100,8 @@ public class ExecuteCommandViewData : ExecuteCommandViewDataBase, IAtomicCommand
         var collection = new ViewAggregateExtractUICollection(ac);
 
         //if it has a cic with a query cache AND it uses joinables.  Since this is a TOP 100 select * from dataset the cache on CHI is useless only patient index tables used by this query are useful if cached
-        if (cic != null && cic.QueryCachingServer_ID != null && ac.PatientIndexJoinablesUsed.Any())
+        if (cic is { QueryCachingServer_ID: not null } && ac.PatientIndexJoinablesUsed.Any())
+        {
             collection.UseQueryCache = _useCache;
 
         collection.TopX = _viewType == ViewType.TOP_100 ? 100 : null;

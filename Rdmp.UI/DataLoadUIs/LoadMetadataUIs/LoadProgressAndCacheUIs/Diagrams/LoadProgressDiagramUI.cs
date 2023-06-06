@@ -46,7 +46,7 @@ public partial class LoadProgressDiagramUI : RDMPUserControl
         olvDQERuns.ButtonClick += olvDQERuns_ButtonClick;
     }
 
-    private void olvDQERuns_ButtonClick(object sender, CellClickEventArgs e)
+    void olvDQERuns_ButtonClick(object sender, CellClickEventArgs e)
     {
         var c = (Catalogue)e.Model;
         new ExecuteCommandRunDQEOnCatalogue(Activator).SetTarget(c).Execute();

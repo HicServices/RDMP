@@ -754,7 +754,9 @@ public class Catalogue : DatabaseEntity, IComparable, ICatalogue, IInjectKnown<C
         }
         else
         {
-            if (Enum.TryParse(type.ToString(), true, out CatalogueType typeAsEnum))
+            CatalogueType typeAsEnum;
+
+            if (Enum.TryParse(type.ToString(), true, out typeAsEnum))
                 Type = typeAsEnum;
             else
                 throw new Exception($" r[\"Type\"] had value {type} which is not contained in Enum CatalogueType");
@@ -768,7 +770,9 @@ public class Catalogue : DatabaseEntity, IComparable, ICatalogue, IInjectKnown<C
         }
         else
         {
-            if (Enum.TryParse(periodicity.ToString(), true, out CataloguePeriodicity periodicityAsEnum))
+            CataloguePeriodicity periodicityAsEnum;
+
+            if (Enum.TryParse(periodicity.ToString(), true, out periodicityAsEnum))
                 Periodicity = periodicityAsEnum;
             else
                 throw new Exception(
@@ -782,7 +786,9 @@ public class Catalogue : DatabaseEntity, IComparable, ICatalogue, IInjectKnown<C
         }
         else
         {
-            if (Enum.TryParse(granularity.ToString(), true, out CatalogueGranularity granularityAsEnum))
+            CatalogueGranularity granularityAsEnum;
+
+            if (Enum.TryParse(granularity.ToString(), true, out granularityAsEnum))
                 Granularity = granularityAsEnum;
             else
                 throw new Exception(
@@ -865,7 +871,10 @@ public class Catalogue : DatabaseEntity, IComparable, ICatalogue, IInjectKnown<C
     /// <returns></returns>
     public int CompareTo(object obj)
     {
-        if (obj is Catalogue) return -obj.ToString().CompareTo(ToString()); //sort alphabetically (reverse)
+        if (obj is Catalogue)
+        {
+            return -(obj.ToString().CompareTo(ToString())); //sort alphabetically (reverse)
+        }
 
         throw new Exception($"Cannot compare {GetType().Name} to {obj.GetType().Name}");
     }
@@ -890,7 +899,7 @@ public class Catalogue : DatabaseEntity, IComparable, ICatalogue, IInjectKnown<C
             t.Check(notifier);
 
         var extractionInformations = GetAllExtractionInformation(ExtractionCategory.Core);
-
+            
         if (extractionInformations.Any())
         {
             var missingColumnInfos = false;
@@ -1103,10 +1112,10 @@ public class Catalogue : DatabaseEntity, IComparable, ICatalogue, IInjectKnown<C
     /// <returns></returns>
     public LogManager GetLogManager()
     {
-        if (LiveLoggingServer_ID == null)
+        if(LiveLoggingServer_ID == null) 
             throw new Exception($"No live logging server set for Catalogue {Name}");
-
-        var server = DataAccessPortal.ExpectServer(LiveLoggingServer, DataAccessContext.Logging);
+                
+        var server = DataAccessPortal.GetInstance().ExpectServer(LiveLoggingServer, DataAccessContext.Logging);
 
         return new LogManager(server);
     }
@@ -1143,14 +1152,21 @@ public class Catalogue : DatabaseEntity, IComparable, ICatalogue, IInjectKnown<C
     {
         return fetch switch
         {
-            FetchOptions.AllGlobals => o.IsGlobal,
-            FetchOptions.ExtractableGlobalsAndLocals => (o.Catalogue_ID == ID || o.IsGlobal) && o.Extractable,
-            FetchOptions.ExtractableGlobals => o.IsGlobal && o.Extractable,
-            FetchOptions.AllLocals => o.Catalogue_ID == ID && !o.IsGlobal,
-            FetchOptions.ExtractableLocals => o.Catalogue_ID == ID && o.Extractable && !o.IsGlobal,
-            FetchOptions.AllGlobalsAndAllLocals => o.Catalogue_ID == ID || o.IsGlobal,
-            _ => throw new ArgumentOutOfRangeException(nameof(fetch))
-        };
+            case FetchOptions.AllGlobals:
+                return o.IsGlobal;
+            case FetchOptions.ExtractableGlobalsAndLocals:
+                return (o.Catalogue_ID == ID || o.IsGlobal) && o.Extractable;
+            case FetchOptions.ExtractableGlobals:
+                return o.IsGlobal && o.Extractable;
+            case FetchOptions.AllLocals:
+                return o.Catalogue_ID == ID && !o.IsGlobal;
+            case FetchOptions.ExtractableLocals:
+                return o.Catalogue_ID == ID && o.Extractable && !o.IsGlobal;
+            case FetchOptions.AllGlobalsAndAllLocals:
+                return o.Catalogue_ID == ID || o.IsGlobal;
+            default:
+                throw new ArgumentOutOfRangeException(nameof(fetch));
+        }
     }
 
 
@@ -1158,16 +1174,25 @@ public class Catalogue : DatabaseEntity, IComparable, ICatalogue, IInjectKnown<C
     {
         return fetch switch
         {
-            FetchOptions.AllGlobals => "WHERE IsGlobal=1",
-            FetchOptions.ExtractableGlobalsAndLocals => $"WHERE (Catalogue_ID={ID} OR IsGlobal=1) AND Extractable=1",
-            FetchOptions.ExtractableGlobals => "WHERE IsGlobal=1 AND Extractable=1",
-            FetchOptions.AllLocals =>
-                $"WHERE Catalogue_ID={ID}  AND IsGlobal=0" //globals still retain their Catalogue_ID in case the configurer removes the global attribute in which case they revert to belonging to that Catalogue as a local
-            ,
-            FetchOptions.ExtractableLocals => $"WHERE Catalogue_ID={ID} AND Extractable=1 AND IsGlobal=0",
-            FetchOptions.AllGlobalsAndAllLocals => $"WHERE Catalogue_ID={ID} OR IsGlobal=1",
-            _ => throw new ArgumentOutOfRangeException(nameof(fetch))
-        };
+            case FetchOptions.AllGlobals:
+                return "WHERE IsGlobal=1";
+            case FetchOptions.ExtractableGlobalsAndLocals:
+                return $"WHERE (Catalogue_ID={ID} OR IsGlobal=1) AND Extractable=1";
+            case FetchOptions.ExtractableGlobals:
+                return  "WHERE IsGlobal=1 AND Extractable=1";
+                    
+            case FetchOptions.AllLocals:
+                return $"WHERE Catalogue_ID={ID}  AND IsGlobal=0";//globals still retain their Catalogue_ID incase the configurer removes the global attribute in which case they revert to belonging to that Catalogue as a local
+                    
+            case FetchOptions.ExtractableLocals:
+                return $"WHERE Catalogue_ID={ID} AND Extractable=1 AND IsGlobal=0";
+                    
+            case FetchOptions.AllGlobalsAndAllLocals:
+                return $"WHERE Catalogue_ID={ID} OR IsGlobal=1";
+                    
+            default:
+                throw new ArgumentOutOfRangeException(nameof(fetch));
+        }
     }
 
     /// <inheritdoc/>
@@ -1227,7 +1252,7 @@ public class Catalogue : DatabaseEntity, IComparable, ICatalogue, IInjectKnown<C
     public bool IsProjectSpecific(IDataExportRepository dataExportRepository)
     {
         var e = GetExtractabilityStatus(dataExportRepository);
-        return e != null && e.IsProjectSpecific;
+        return e is { IsProjectSpecific: true };
     }
 
     /// <summary>
@@ -1238,8 +1263,8 @@ public class Catalogue : DatabaseEntity, IComparable, ICatalogue, IInjectKnown<C
     {
         var f = new QuerySyntaxHelperFactory();
         var type = GetDistinctLiveDatabaseServerType() ?? throw new AmbiguousDatabaseTypeException(
-            $"Catalogue '{this}' has no extractable columns so no Database Type could be determined");
-        return f.Create(type);
+                $"Catalogue '{this}' has no extractable columns so no Database Type could be determined");
+        return f.Create(type.Value);
     }
 
     #region Static Methods

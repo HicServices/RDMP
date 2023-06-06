@@ -56,7 +56,8 @@ False - Delete the larger value")]
                 ?
                 //delete rows {0} where {0} is not null and {1} is null - leaving only the null records {1}
                 $"({t1DotColumn} IS NOT NULL AND {t2DotColumn} IS NULL)"
-                : string.Format("({1} IS NOT NULL AND {0} IS NULL)", t1DotColumn, t2DotColumn);
+                :
+                string.Format("({1} IS NOT NULL AND {0} IS NULL)",t1DotColumn,t2DotColumn);
 
         deleteConditional += " OR ";
 
@@ -88,7 +89,7 @@ False - Delete the larger value")]
 
     public void Check(ICheckNotifier notifier)
     {
-        if (ColumnToResolveOn != null && ColumnToResolveOn.IsPrimaryKey)
+        if(ColumnToResolveOn is { IsPrimaryKey: true })
             notifier.OnCheckPerformed(new CheckEventArgs(
                 $"You cannot use {ColumnToResolveOn} to resolve primary key collisions because it is part of the primary key",
                 CheckResult.Fail));

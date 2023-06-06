@@ -91,14 +91,10 @@ public class YesNoYesToAllDialog : WideMessageBox
 
     private void btn_Click(object sender, EventArgs e)
     {
-        if (sender == btnYes)
-        {
+        if(sender == btnYes)
             DialogResult = DialogResult.Yes;
-        }
         else if (sender == btnNo)
-        {
             DialogResult = DialogResult.No;
-        }
         else if (sender == btnYesToAll)
         {
             YesToAllClicked = true;

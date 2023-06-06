@@ -21,7 +21,7 @@ public partial class DataTableViewerUI : UserControl
     public DataTableViewerUI(DataTable source, string caption)
     {
         InitializeComponent();
-
+            
         Text = caption;
         dataGridView1.ColumnAdded += (s, e) => e.Column.FillWeight = 1;
         dataGridView1.DataSource = source;

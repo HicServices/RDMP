@@ -30,7 +30,8 @@ internal class ProposeExecutionWhenTargetIsSelectedDataSets : RDMPCommandExecuti
         InsertOption insertOption = InsertOption.Default)
     {
         // if use drops a reusable template aggregate (e.g. from Cohort Builder)
-        if (cmd is AggregateConfigurationCombineable ac && ac.IsTemplate && ac.Aggregate.RootFilterContainer_ID != null)
+        if(cmd is AggregateConfigurationCombineable { IsTemplate: true } ac && ac.Aggregate.RootFilterContainer_ID != null)
+        {
             // offer to import the WHERE containers
             return new ExecuteCommandImportFilterContainerTree(ItemActivator, target, ac.Aggregate);
 

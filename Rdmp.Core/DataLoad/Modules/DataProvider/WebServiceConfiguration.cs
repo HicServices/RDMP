@@ -81,8 +81,10 @@ public class WebServiceConfiguration : EncryptedPasswordHost, ICustomUIDrivenCla
         return sb.ToString();
     }
 
-    public bool IsValid() =>
-        !string.IsNullOrWhiteSpace(Endpoint) &&
-        !string.IsNullOrWhiteSpace(Username) &&
-        !string.IsNullOrWhiteSpace(Password);
+    public bool IsValid()
+    {
+        return !string.IsNullOrWhiteSpace(Endpoint) &&
+               !string.IsNullOrWhiteSpace(Username) &&
+               !string.IsNullOrWhiteSpace(Password);
+    }
 }

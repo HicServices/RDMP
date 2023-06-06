@@ -113,9 +113,6 @@ public partial class ConfigureDatasetUI : ConfigureDatasetUI_Design, ILifetimeSu
         RDMPCollectionCommonFunctionality.SetupColumnTracking(olvSelected, olvSelectedColumnOrder,
             new Guid("2b4db0ee-3768-4e0e-a62b-e5a9b19e91a7"));
 
-        RDMPCollectionCommonFunctionality.SetupColumnTracking(olvSelected, olvIssues,
-            new Guid("741f0cff-1d2e-46a7-a5da-9ce13e0960cf"));
-
         cbShowProjectSpecific.CheckedChanged += CbShowProjectSpecific_CheckedChanged;
     }
 
@@ -259,19 +256,17 @@ public partial class ConfigureDatasetUI : ConfigureDatasetUI_Design, ILifetimeSu
         // Tell our columns about their CatalogueItems by using CoreChildProvider
         // Prevents later queries to db to figure out things like column name etc
         foreach (var ec in allExtractableColumns)
-            if (ec.CatalogueExtractionInformation_ID != null)
-            {
-                var eiDict = Activator.CoreChildProvider.AllExtractionInformationsDictionary;
-                var ciDict = Activator.CoreChildProvider.AllCatalogueItemsDictionary;
+        {
+            if (ec.CatalogueExtractionInformation_ID == null) continue;
+            var eiDict = Activator.CoreChildProvider.AllExtractionInformationsDictionary;
+            var ciDict = Activator.CoreChildProvider.AllCatalogueItemsDictionary;
 
-                if (eiDict.TryGetValue(ec.CatalogueExtractionInformation_ID.Value, out var ei))
-                {
-                    ec.InjectKnown(ei);
-                    ec.InjectKnown(ei.ColumnInfo);
+            if (!eiDict.TryGetValue(ec.CatalogueExtractionInformation_ID.Value, out var ei)) continue;
+            ec.InjectKnown(ei);
+            ec.InjectKnown(ei.ColumnInfo);
 
-                    if (ciDict.TryGetValue(ei.CatalogueItem_ID, out var value)) ec.InjectKnown(value);
-                }
-            }
+            if(ciDict.TryGetValue(ei.CatalogueItem_ID, out var id)) ec.InjectKnown(id);
+        }
 
 
         //now get all the ExtractableColumns that are already configured for this configuration (previously)

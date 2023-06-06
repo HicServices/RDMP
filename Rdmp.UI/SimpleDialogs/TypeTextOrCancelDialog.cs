@@ -54,7 +54,7 @@ public partial class TypeTextOrCancelDialog : Form
         var header = args.WindowTitle;
 
 
-        if (header != null && header.Length > WideMessageBox.MAX_LENGTH_TITLE)
+        if (header is { Length: > WideMessageBox.MAX_LENGTH_TITLE })
             header = header[..WideMessageBox.MAX_LENGTH_TITLE];
 
         taskDescriptionLabel1.SetupFor(args);
@@ -79,7 +79,7 @@ public partial class TypeTextOrCancelDialog : Form
             ActiveControl = _scintilla;
             _scintilla.SelectionStart = _scintilla.TextLength;
 
-            textBox1.Anchor = AnchorStyles.Top | AnchorStyles.Bottom | AnchorStyles.Left | AnchorStyles.Right;
+            textBox1.Anchor = (AnchorStyles.Top | AnchorStyles.Bottom | AnchorStyles.Left | AnchorStyles.Right);
             textBox1.ScrollBars = ScrollBars.Vertical;
             Width = 740;
 
@@ -169,8 +169,12 @@ public partial class TypeTextOrCancelDialog : Form
     {
         // Set the height by taking the designer height and adding on the height that the task description label wants to be
         if (_multiline)
+        {
             Height = taskDescriptionLabel1.PreferredHeight + 220;
+        }
         else
+        {
             Height = taskDescriptionLabel1.PreferredHeight + 100;
+        }
     }
 }

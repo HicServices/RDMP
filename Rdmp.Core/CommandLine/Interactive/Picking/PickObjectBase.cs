@@ -52,11 +52,9 @@ public abstract class PickObjectBase
 
     protected Type ParseDatabaseEntityType(string objectType, string arg, int idx)
     {
-        var t = (GetTypeFromShortCodeIfAny(objectType) ??
-                 Activator.RepositoryLocator.CatalogueRepository.MEF.GetType(objectType)) ??
-                throw new CommandLineObjectPickerParseException("Could not recognize Type name", idx, arg);
+        var t = (GetTypeFromShortCodeIfAny(objectType) ?? Activator.RepositoryLocator.CatalogueRepository.MEF.GetType(objectType)) ?? throw new CommandLineObjectPickerParseException("Could not recognize Type name",idx,arg);
         if (!typeof(DatabaseEntity).IsAssignableFrom(t))
-            throw new CommandLineObjectPickerParseException("Type specified must be a DatabaseEntity", idx, arg);
+            throw new CommandLineObjectPickerParseException("Type specified must be a DatabaseEntity",idx,arg);
 
         return t;
     }
@@ -70,8 +68,7 @@ public abstract class PickObjectBase
     /// <returns></returns>
     protected bool IsDatabaseObjectType(string possibleTypeName, out Type t)
     {
-        var mef = Activator.RepositoryLocator.CatalogueRepository.MEF ??
-                  throw new Exception("MEF not loaded yet, program may not have loaded startup");
+        var mef = Activator.RepositoryLocator.CatalogueRepository.MEF ?? throw new Exception("MEF not loaded yet, program may not have loaded startup");
         try
         {
             t = GetTypeFromShortCodeIfAny(possibleTypeName) ?? mef.GetType(possibleTypeName);
@@ -85,10 +82,12 @@ public abstract class PickObjectBase
         return t != null
                && typeof(IMapsDirectlyToDatabaseTable).IsAssignableFrom(t);
     }
-
-    protected static Type GetTypeFromShortCodeIfAny(string possibleShortCode) =>
-        SearchablesMatchScorer.ShortCodes.TryGetValue(possibleShortCode, out var code) ? code : null;
-
+    protected Type GetTypeFromShortCodeIfAny(string possibleShortCode)
+    {
+        return SearchablesMatchScorer.ShortCodes.TryGetValue(possibleShortCode, out var code) ?
+            code :
+            null;
+    }
     protected IMapsDirectlyToDatabaseTable GetObjectByID(Type type, int id)
     {
         var repo = Activator.GetRepositoryFor(type);

@@ -44,7 +44,7 @@ public class VerboseValidationResults
 
         foreach (var iv in validators)
         {
-            DictionaryOfFailure.Add(iv.TargetProperty, null);
+            DictionaryOfFailure.Add(iv.TargetProperty,null);
             DictionaryOfFailure[iv.TargetProperty] = new Dictionary<Consequence, int>
             {
                 { Consequence.Missing, 0 },

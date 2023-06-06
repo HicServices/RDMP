@@ -23,17 +23,17 @@ public sealed class PersistStringHelper
     /// <summary>
     /// The string to use to divide objects declared within a collection e.g. ',' in [RepoType:ObjectType:ID,RepoType:ObjectType:ID]
     /// </summary>
-    private const char CollectionObjectSeparator = ',';
+    public const char CollectionObjectSeparator = ',';
 
     /// <summary>
     /// The string to use to indicate the start of an objects collection e.g. '[' in  [RepoType:ObjectType:ID,RepoType:ObjectType:ID]
     /// </summary>
-    private const char CollectionStartDelimiter = '[';
+    public const char CollectionStartDelimiter = '[';
 
     /// <summary>
     /// The string to use to indicate the end of an objects collection e.g. ']' in  [RepoType:ObjectType:ID,RepoType:ObjectType:ID]
     /// </summary>
-    private const char CollectionEndDelimiter = ']';
+    public const char CollectionEndDelimiter = ']';
 
     /// <summary>
     /// The string to use to separate logic portions of a persistence string e.g. ':"  in  [RepoType:ObjectType:ID,RepoType:ObjectType:ID]
@@ -65,12 +65,11 @@ public sealed class PersistStringHelper
     /// <returns></returns>
     public static Dictionary<string, string> LoadDictionaryFromString(string str)
     {
-        if (string.IsNullOrWhiteSpace(str))
+        if(string.IsNullOrWhiteSpace(str))
             return new Dictionary<string, string>();
 
         var rootElement = XElement.Parse(str);
-
-        return rootElement.Elements().ToDictionary(static el => el.Name.LocalName, static el => el.Value);
+        return rootElement.Elements().ToDictionary(el => el.Name.LocalName, el => el.Value);
     }
 
     /// <summary>
@@ -101,9 +100,8 @@ public sealed class PersistStringHelper
         sb.Append(CollectionStartDelimiter);
 
         //where obj is <RepositoryType>:<DatabaseObjectType>:<ObjectID>
-        sb.AppendJoin(CollectionObjectSeparator, objects.Select(static o =>
-            $"{o.Repository.GetType().FullName}{Separator}{o.GetType().FullName}{Separator}{o.ID}"));
-
+        sb.Append(string.Join(CollectionObjectSeparator, objects.Select(o => o.Repository.GetType().FullName + Separator + o.GetType().FullName + Separator + o.ID)));
+            
         //ending bracket for the object collection
         sb.Append(CollectionEndDelimiter);
 
@@ -125,7 +123,11 @@ public sealed class PersistStringHelper
     {
         try
         {
-            return CollectionPattern.Match(persistenceString).Groups[1].Value;
+            //match the starting delimiter
+            var pattern =
+                $"{Regex.Escape(CollectionStartDelimiter.ToString())}(.*){Regex.Escape(CollectionEndDelimiter.ToString())}";//then the ending delimiter
+
+            return Regex.Match(persistenceString, pattern).Groups[1].Value;
         }
         catch (Exception e)
         {
@@ -159,8 +161,7 @@ public sealed class PersistStringHelper
                 throw new PersistenceException(
                     $"Could not figure out what database object to fetch because the list contained an item with an invalid number of tokens ({objectTokens.Length} tokens).  The current object string is:{Environment.NewLine}{objectString}");
 
-            var dbObj = repositoryLocator.GetArbitraryDatabaseObject(objectTokens[0], objectTokens[1],
-                int.Parse(objectTokens[2]));
+            var dbObj = repositoryLocator.GetArbitraryDatabaseObject(objectTokens[0], objectTokens[1], int.Parse(objectTokens[2]));
 
             if (dbObj != null)
                 toReturn.Add(dbObj);
@@ -179,10 +180,7 @@ public sealed class PersistStringHelper
     /// <returns></returns>
     public static string GetExtraText(string persistString)
     {
-        if (!persistString.Contains(ExtraText))
-            return null;
-
-        return persistString[(persistString.IndexOf(ExtraText, StringComparison.Ordinal) + ExtraText.Length)..];
+        return !persistString.Contains(ExtraText) ? null : persistString[(persistString.IndexOf(ExtraText, StringComparison.Ordinal) + ExtraText.Length)..];
     }
 
 

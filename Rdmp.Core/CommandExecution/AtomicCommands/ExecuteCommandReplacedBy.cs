@@ -43,7 +43,8 @@ public class ExecuteCommandReplacedBy : BasicCommandExecution, IAtomicCommand
 
         _type = deprecated.GetType();
 
-        if (deprecated is IMightBeDeprecated m && !m.IsDeprecated)
+        if(deprecated is IMightBeDeprecated { IsDeprecated: false })
+        {
             SetImpossible($"{deprecated} is not marked IsDeprecated so no replacement can be specified");
 
         if (replacement != null && replacement.GetType() != _type)

@@ -89,7 +89,7 @@ public partial class CSharpLexer
                     break;
 
                 case STATE_NUMBER:
-                    if (char.IsDigit(c) || (c >= 'a' && c <= 'f') || (c >= 'A' && c <= 'F') || c == 'x')
+                    if (char.IsDigit(c) || c is >= 'a' and <= 'f' || c is >= 'A' and <= 'F' || c == 'x')
                     {
                         length++;
                     }

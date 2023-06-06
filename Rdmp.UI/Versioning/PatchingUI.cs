@@ -89,8 +89,8 @@ public partial class PatchingUI : Form
                 checksUI1.OnCheckPerformed(new CheckEventArgs("Cleared UPDATE commands cache", CheckResult.Success,
                     null));
             }
-
-            checksUI1.OnCheckPerformed(new CheckEventArgs("Patching Succesful", CheckResult.Success, null));
+                
+            checksUI1.OnCheckPerformed(new CheckEventArgs("Patching Successful", CheckResult.Success, null));
 
             if (MessageBox.Show("Application will now restart", "Close?", MessageBoxButtons.YesNo) == DialogResult.Yes)
                 ApplicationRestarter.Restart();

@@ -41,7 +41,7 @@ public static class AssemblyResolver
                 if (dll != null)
                     return assemblyResolveAttempts[assemblyInfo] = LoadFile(dll); //cache and return answer
             }
-
+                
             var assembly = AppContext.BaseDirectory;
             if (string.IsNullOrWhiteSpace(assembly))
                 return null;

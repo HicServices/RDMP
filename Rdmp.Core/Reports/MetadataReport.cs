@@ -267,7 +267,6 @@ public class MetadataReport : DocXHelper
             using (var da = DatabaseCommandHelper.GetDataAdapter(cmd))
             {
                 var dt = new DataTable();
-                dt.BeginLoadData();
                 da.Fill(dt);
                 dt.EndLoadData();
                 return dt;
@@ -379,7 +378,7 @@ public class MetadataReport : DocXHelper
         if (x.IsExtractionIdentifier && !y.IsExtractionIdentifier)
             return -1;
 
-        if (y.IsExtractionIdentifier && y.IsExtractionIdentifier)
+        if (y.IsExtractionIdentifier is true and true)
             return 1;
 
         return x.Order - y.Order;
@@ -443,10 +442,9 @@ public class MetadataReport : DocXHelper
 
             //there is only one table that we can query
             if (tableInfos.Length == 1)
-                tableToQuery = tableInfos.Single(); //query that one
-            else if
-                (tableInfos.Count(t => t.IsPrimaryExtractionTable) ==
-                 1) //there are multiple tables but there is only one IsPrimaryExtractionTable
+                tableToQuery = tableInfos.Single();//query that one
+            else
+            if (tableInfos.Count(t => t.IsPrimaryExtractionTable) == 1)//there are multiple tables but there is only one IsPrimaryExtractionTable
                 tableToQuery = tableInfos.Single(t => t.IsPrimaryExtractionTable);
             else
                 throw new Exception(

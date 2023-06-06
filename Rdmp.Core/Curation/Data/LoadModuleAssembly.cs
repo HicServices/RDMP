@@ -10,6 +10,7 @@ using System.Data.Common;
 using System.IO;
 using System.Linq;
 using System.Threading;
+using ICSharpCode.SharpZipLib.Zip;
 using Rdmp.Core.CommandLine.Runners;
 using Rdmp.Core.Curation.Data.ImportExport;
 using Rdmp.Core.Curation.Data.Serialization;
@@ -28,7 +29,6 @@ namespace Rdmp.Core.Curation.Data;
 public class LoadModuleAssembly : DatabaseEntity, IInjectKnown<Plugin>
 {
     #region Database Properties
-
     private byte[] _bin;
     private string _committer;
     private DateTime _uploadDate;
@@ -122,15 +122,32 @@ public class LoadModuleAssembly : DatabaseEntity, IInjectKnown<Plugin>
         ClearAllInjections();
     }
 
-
+    /// <summary>
+    /// Unpack the plugin DLL files, excluding any Windows specific dlls when not running on Windows
+    /// </summary>
+    public IEnumerable<MemoryStream> GetContents()
+    {
+        var isWin = Environment.OSVersion.Platform == PlatformID.Win32NT;
+        using var ms = new MemoryStream(Bin);
+        using var zip = new ZipFile(ms);
+        foreach (ZipEntry e in zip)
+        {
+            if (!e.IsFile || !e.Name.EndsWith(".dll", StringComparison.OrdinalIgnoreCase)) continue;
+            if (isWin && e.Name.Contains("/windows/")) continue;
+            using var s = zip.GetInputStream(e);
+            using var ms2 = new MemoryStream();
+            s.CopyTo(ms2);
+            yield return ms2;
+        }
+    }
+        
     /// <summary>
     /// Downloads the plugin nupkg to the given directory
     /// </summary>
     /// <param name="downloadDirectory"></param>
     public string DownloadAssembly(DirectoryInfo downloadDirectory)
     {
-        var targetDirectory = downloadDirectory.FullName ??
-                              throw new Exception("Could not get currently executing assembly directory");
+        var targetDirectory = downloadDirectory.FullName ?? throw new Exception("Could not get currently executing assembly directory");
         if (!downloadDirectory.Exists)
             downloadDirectory.Create();
 

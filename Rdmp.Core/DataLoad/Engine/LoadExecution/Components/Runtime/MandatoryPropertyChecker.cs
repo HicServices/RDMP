@@ -33,15 +33,14 @@ public class MandatoryPropertyChecker : ICheckable
                 .FirstOrDefault();
 
             //this one does
-            if (demand != null)
-                if (demand.Mandatory)
-                {
-                    var value = propertyInfo.GetValue(_classInstanceToCheck);
-                    if (value == null || string.IsNullOrEmpty(value.ToString()))
-                        notifier.OnCheckPerformed(new CheckEventArgs(
-                            $"DemandsInitialization Property '{propertyInfo.Name}' is marked Mandatory but does not have a value",
-                            CheckResult.Fail));
-                }
+            if (demand is { Mandatory: true })
+            {
+                var value = propertyInfo.GetValue(_classInstanceToCheck);
+                if (value == null || string.IsNullOrEmpty(value.ToString()))
+                    notifier.OnCheckPerformed(new CheckEventArgs(
+                        $"DemandsInitialization Property '{propertyInfo.Name}' is marked Mandatory but does not have a value", CheckResult.Fail));
+
+            }
         }
     }
 }
