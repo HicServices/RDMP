@@ -109,7 +109,7 @@ public class SelectedDataSets : DatabaseEntity, ISelectedDataSets, IInjectKnown<
     public SelectedDataSets(IDataExportRepository repository, ExtractionConfiguration configuration,
         IExtractableDataSet dataSet, FilterContainer rootContainerIfAny)
     {
-        repository.InsertAndHydrate(this, new Dictionary<string, object>
+        repository.InsertAndHydrate(this,new Dictionary<string, object>
         {
             { "ExtractionConfiguration_ID", configuration.ID },
             { "ExtractableDataSet_ID", dataSet.ID },

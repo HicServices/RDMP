@@ -130,7 +130,8 @@ internal class ConsoleGuiViewGraph : ConsoleGuiSqlEditor
 
         for (var i = 1; i < dt.Columns.Count; i++)
         {
-            var series = new PathAnnotation { LineColor = colors[i - 1], BeforeSeries = true };
+
+            var series = new PathAnnotation { LineColor = colors[i - 1],BeforeSeries = true };
             var row = 0;
 
             foreach (DataRow dr in dt.Rows)

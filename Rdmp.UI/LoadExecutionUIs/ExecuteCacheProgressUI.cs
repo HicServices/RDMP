@@ -33,8 +33,9 @@ public partial class ExecuteCacheProgressUI : CachingEngineUI_Design
         checkAndExecuteUI1.CommandGetter += CommandGetter;
     }
 
-    private RDMPCommandLineOptions CommandGetter(CommandLineActivity commandLineActivity) =>
-        new CacheOptions
+    private RDMPCommandLineOptions CommandGetter(CommandLineActivity commandLineActivity)
+    {
+        return new CacheOptions
         {
             CacheProgress = _cacheProgress.ID.ToString(),
             Command = commandLineActivity,

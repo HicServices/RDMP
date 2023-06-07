@@ -61,13 +61,15 @@ public class SessionCollectionUI : RDMPUserControl, IObjectCollectionControl, IC
 
         Collection = (SessionCollection)collection;
 
-        if (!CommonTreeFunctionality.IsSetup)
-            CommonTreeFunctionality.SetUp(RDMPCollection.None, olvTree, activator, olvName, olvName,
-                new RDMPCollectionCommonFunctionalitySettings
-                {
-                    // add custom options here
-                });
-
+        if(!CommonTreeFunctionality.IsSetup)
+        {
+            CommonTreeFunctionality.SetUp(RDMPCollection.None,olvTree,activator,olvName,olvName,new RDMPCollectionCommonFunctionalitySettings
+            {
+                // add custom options here
+                    
+            });
+        }
+                
         RefreshSessionObjects();
 
         CommonFunctionality.ClearToolStrip();

@@ -22,8 +22,9 @@ internal class RunDleWindow : RunEngineWindow<DleOptions>
         this.lmd = lmd;
     }
 
-    private static DleOptions GetCommand(LoadMetadata lmd) =>
-        new()
+    private static DleOptions GetCommand(LoadMetadata lmd)
+    {
+        return new DleOptions
         {
             LoadMetadata = lmd.ID.ToString(),
             Iterative = false

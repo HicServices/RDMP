@@ -41,11 +41,12 @@ public class ExecuteCommandAddNewGovernanceDocument : BasicCommandExecution, IAt
         if (p == null)
         {
             if (BasicActivator.SelectObject(new DialogArgs
-                    {
-                        WindowTitle = "Add Governance Document",
-                        TaskDescription = "Select which GovernancePeriod you want to attach the document to."
-                    }, BasicActivator.RepositoryLocator.CatalogueRepository.GetAllObjects<GovernancePeriod>(),
-                    out var selected))
+                {
+                    WindowTitle = "Add Governance Document",
+                    TaskDescription = "Select which GovernancePeriod you want to attach the document to."
+
+                }, BasicActivator.RepositoryLocator.CatalogueRepository.GetAllObjects<GovernancePeriod>(), out var selected))
+            {
                 p = selected;
             else
                 // user cancelled selecting a Catalogue

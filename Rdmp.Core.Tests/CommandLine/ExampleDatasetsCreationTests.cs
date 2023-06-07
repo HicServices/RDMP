@@ -33,9 +33,8 @@ internal class ExampleDatasetsCreationTests : DatabaseTests
 
         //create all the stuff
         var db = GetCleanedServer(FAnsi.DatabaseType.MicrosoftSQLServer);
-        var creator = new ExampleDatasetsCreation(new ThrowImmediatelyActivator(RepositoryLocator), RepositoryLocator);
-        creator.Create(db, new ThrowImmediatelyCheckNotifier(),
-            new PlatformDatabaseCreationOptions { Seed = 500, DropDatabases = true });
+        var creator = new ExampleDatasetsCreation(new ThrowImmediatelyActivator(RepositoryLocator),RepositoryLocator);
+        creator.Create(db,new ThrowImmediatelyCheckNotifier(),new PlatformDatabaseCreationOptions {Seed = 500,DropDatabases = true });
 
         //should be at least 2 views (marked as view)
         var views = CatalogueRepository.GetAllObjects<TableInfo>().Count(ti => ti.IsView);

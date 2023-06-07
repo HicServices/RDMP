@@ -65,11 +65,13 @@ namespace Rdmp.UI.SubComponents;
 public partial class CohortIdentificationConfigurationUI : CohortIdentificationConfigurationUI_Design,
     IRefreshBusSubscriber
 {
-    private ToolStripMenuItem cbIncludeCumulative = new("Calculate Cumulative Totals") { CheckOnClick = true };
-    private ToolTip tt = new();
-    private readonly ToolStripTimeout _timeoutControls = new() { Timeout = 3000 };
-    private RDMPCollectionCommonFunctionality _commonFunctionality;
-    private Timer timer = new();
+    ToolStripMenuItem cbIncludeCumulative = new ToolStripMenuItem("Calculate Cumulative Totals") { CheckOnClick = true };
+    ToolTip tt = new ToolTip();
+                
+    readonly ToolStripTimeout _timeoutControls = new ToolStripTimeout { Timeout = 3000 };
+    RDMPCollectionCommonFunctionality _commonFunctionality;
+
+    Timer timer = new Timer();
 
     private ExecuteCommandClearQueryCache _clearCacheCommand;
     private CohortIdentificationConfigurationUICommon Common = new();

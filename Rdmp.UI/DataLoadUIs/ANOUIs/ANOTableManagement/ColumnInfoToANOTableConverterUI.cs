@@ -347,8 +347,7 @@ public partial class ColumnInfoToANOTableConverterUI : ColumnInfoToANOTableConve
         //if it is not pushed, push it now
         if (!ANOTable.IsTablePushed())
         {
-            ANOTable.PushToANOServerAsNewTable(_columnInfo.Data_type,
-                new ThrowImmediatelyCheckNotifier { ThrowOnWarning = true });
+            ANOTable.PushToANOServerAsNewTable(_columnInfo.Data_type, new ThrowImmediatelyCheckNotifier { ThrowOnWarning = true });
             ANOTable.SaveToDatabase();
         }
 

@@ -38,13 +38,10 @@ public class ExecuteCommandOptions : RDMPCommandLineOptions
     {
         get
         {
-            yield return new Example("Runs the delete command on Catalogue with ID 1",
-                new ExecuteCommandOptions { CommandName = "Delete", CommandArgs = new string[] { "Catalogue:1" } });
-            yield return new Example("List available commands",
-                new ExecuteCommandOptions { CommandName = "ListSupportedCommands" });
-            yield return new Example("Runs all commands in the file",
-                new ExecuteCommandOptions { File = "./myfile.yaml" });
-            yield return new Example("Prompts you which command to run", new ExecuteCommandOptions());
+            yield return new Example("Runs the delete command on Catalogue with ID 1",new ExecuteCommandOptions {CommandName = "Delete", CommandArgs = new string[]{"Catalogue:1"}});
+            yield return new Example("List available commands",new ExecuteCommandOptions {CommandName = "ListSupportedCommands"});
+            yield return new Example("Runs all commands in the file",new ExecuteCommandOptions {File = "./myfile.yaml"});
+            yield return new Example("Prompts you which command to run",new ExecuteCommandOptions());
         }
     }
 }

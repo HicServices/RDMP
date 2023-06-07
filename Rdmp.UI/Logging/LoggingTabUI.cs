@@ -38,11 +38,11 @@ namespace Rdmp.UI.Logging;
 /// </summary>
 public class LoggingTabUI : LoggingTab_Design
 {
-    private ToolStripTextBox tbContentFilter = new();
-    private ToolStripLabel label1 = new("Filter:");
-    private ToolStripLabel label2 = new("Top:");
-    private ToolStripTextBox tbTop = new() { Text = "10000" };
-    private ToolStripButton cbPreferNewer = new("Newest") { CheckOnClick = true, Checked = true };
+    private ToolStripTextBox tbContentFilter = new ToolStripTextBox();
+    private ToolStripLabel label1 = new ToolStripLabel("Filter:");
+    private ToolStripLabel label2 = new ToolStripLabel("Top:");
+    private ToolStripTextBox tbTop = new ToolStripTextBox {Text = "10000" };
+    private ToolStripButton cbPreferNewer = new ToolStripButton("Newest"){CheckOnClick =true,Checked = true};
 
     private Label lblCurrentFilter;
     private PictureBox pbRemoveFilter;

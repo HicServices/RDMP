@@ -89,6 +89,7 @@ public class ExecuteCommandAddDatasetsToConfiguration : BasicCommandExecution
 
         if (_userMustPick)
         {
+            ExtractableDataSet[] selected;
             if (!SelectMany(new DialogArgs
                 {
                     WindowTitle = "Select Datasets",

@@ -470,10 +470,8 @@ public class FlatFileAttacherTests : DatabaseTests
 
         source.TableToLoad = tiNotInLoad;
 
-        var job = new ThrowImmediatelyDataLoadJob(new ThrowImmediatelyDataLoadEventListener { ThrowOnWarning = true })
-        {
-            RegularTablesToLoad = new System.Collections.Generic.List<ITableInfo>(new[] { tiInLoad })
-        };
+        var job = new ThrowImmediatelyDataLoadJob(new ThrowImmediatelyDataLoadEventListener { ThrowOnWarning = true});
+        job.RegularTablesToLoad = new System.Collections.Generic.List<ITableInfo>(new []{tiInLoad });
 
 
         var ex = Assert.Throws<Exception>(() => source.Attach(job, new GracefulCancellationToken()));

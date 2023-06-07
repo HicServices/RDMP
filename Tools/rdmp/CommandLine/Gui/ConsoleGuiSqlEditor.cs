@@ -76,6 +76,8 @@ internal class ConsoleGuiSqlEditor : Window
 
         TabView.AddTab(queryTab = new Tab("Query", textView), true);
 
+        TabView.AddTab(queryTab = new Tab("Query", textView),true);
+
         tableView = new TableView
         {
             X = 0,
@@ -379,7 +381,9 @@ internal class ConsoleGuiSqlEditor : Window
 
         public SqlTextView()
         {
-            Autocomplete = new SqlAutocomplete
+            Autocomplete = new SqlAutocomplete();
+
+            Autocomplete.ColorScheme = new ColorScheme
             {
                 ColorScheme = new ColorScheme
                 {

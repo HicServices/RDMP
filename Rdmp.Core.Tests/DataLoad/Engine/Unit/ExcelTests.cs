@@ -285,8 +285,8 @@ public class ExcelTests
     public void Checks_ValidFileExtension_Pass()
     {
         var source = new ExcelDataFlowSource();
-        source.PreInitialize(new FlatFileToLoad(new FileInfo("bob.xlsx")), new ThrowImmediatelyDataLoadEventListener());
-        source.Check(new ThrowImmediatelyCheckNotifier { ThrowOnWarning = true });
+        source.PreInitialize(new FlatFileToLoad(new FileInfo("bob.xlsx")),new ThrowImmediatelyDataLoadEventListener() );
+        source.Check(new ThrowImmediatelyCheckNotifier {ThrowOnWarning = true});
     }
 
     [Test]
@@ -294,10 +294,8 @@ public class ExcelTests
     {
         var source = new ExcelDataFlowSource();
         source.PreInitialize(new FlatFileToLoad(new FileInfo("bob.csv")), new ThrowImmediatelyDataLoadEventListener());
-        var ex = Assert.Throws<Exception>(() =>
-            source.Check(new ThrowImmediatelyCheckNotifier { ThrowOnWarning = true }));
-        Assert.AreEqual("File extension bob.csv has an invalid extension:.csv (this class only accepts:.xlsx,.xls)",
-            ex.Message);
+        var ex = Assert.Throws<Exception>(()=>source.Check(new ThrowImmediatelyCheckNotifier { ThrowOnWarning = true }));
+        Assert.AreEqual("File extension bob.csv has an invalid extension:.csv (this class only accepts:.xlsx,.xls)",ex.Message);
     }
 
     [TestCase(true)]

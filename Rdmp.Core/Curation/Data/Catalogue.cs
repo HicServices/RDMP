@@ -699,7 +699,7 @@ public class Catalogue : DatabaseEntity, IComparable, ICatalogue, IInjectKnown<C
     {
         var loggingServer = repository.GetDefaultFor(PermissableDefaults.LiveLoggingServer_ID);
 
-        repository.InsertAndHydrate(this, new Dictionary<string, object>
+        repository.InsertAndHydrate(this,new Dictionary<string, object>
         {
             { "Name", name },
             { "LiveLoggingServer_ID", loggingServer == null ? DBNull.Value : loggingServer.ID }

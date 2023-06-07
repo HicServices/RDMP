@@ -104,11 +104,8 @@ public class ExcelConversionTest
 
             var converter = new ExcelToCSVFilesConverter();
 
-            var job = new ThrowImmediatelyDataLoadJob(new ThrowImmediatelyDataLoadEventListener
-                { ThrowOnWarning = true, WriteToConsole = true })
-            {
-                LoadDirectory = directory
-            };
+            var job = new ThrowImmediatelyDataLoadJob(new ThrowImmediatelyDataLoadEventListener {ThrowOnWarning =  true, WriteToConsole =  true});
+            job.LoadDirectory = directory;
 
             converter.ExcelFilePattern = fileExtensionToConvert;
             converter.Fetch(job, new GracefulCancellationToken());

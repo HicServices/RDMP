@@ -68,8 +68,8 @@ public partial class ExecuteExtractionUI : ExecuteExtractionUI_Design
 
     private ToolStripControlHost _pipelinePanel;
 
-    private ToolStripLabel lblMaxConcurrent = new("Concurrent:");
-    private ToolStripTextBox tbMaxConcurrent = new() { Text = "3" };
+    private ToolStripLabel lblMaxConcurrent = new ToolStripLabel("Concurrent:");
+    private ToolStripTextBox tbMaxConcurrent = new ToolStripTextBox {Text="3"};
 
     public ExecuteExtractionUI()
     {
@@ -232,7 +232,7 @@ public partial class ExecuteExtractionUI : ExecuteExtractionUI_Design
         max = int.TryParse(tbMaxConcurrent.Text, out max) ? max : 3;
 
         return new ExtractionOptions
-        {
+        { 
             Command = activityRequested,
             ExtractGlobals = tlvDatasets.IsChecked(_globalsFolder),
             MaxConcurrentExtractions = max,
@@ -259,15 +259,14 @@ public partial class ExecuteExtractionUI : ExecuteExtractionUI_Design
 
 
         if (!_commonFunctionality.IsSetup)
-            _commonFunctionality.SetUp(RDMPCollection.None, tlvDatasets, activator, olvName, null,
-                new RDMPCollectionCommonFunctionalitySettings
-                {
-                    AddFavouriteColumn = false,
-                    SuppressChildrenAdder = true,
-                    SuppressActivate = true,
-                    AddCheckColumn = false
-                });
-
+            _commonFunctionality.SetUp(RDMPCollection.None, tlvDatasets,activator,olvName,null,new RDMPCollectionCommonFunctionalitySettings
+            {
+                AddFavouriteColumn = false,
+                SuppressChildrenAdder=true,
+                SuppressActivate = true,
+                AddCheckColumn = false
+            });
+            
         var checkedBefore = tlvDatasets.CheckedObjects;
 
         tlvDatasets.ClearObjects();

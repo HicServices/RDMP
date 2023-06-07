@@ -91,10 +91,14 @@ public class GoodBadCataloguePieChartObjectCollection : PersistableObjectCollect
         };
     }
 
-    public Catalogue GetSingleCatalogueModeCatalogue() => (Catalogue)DatabaseObjects.SingleOrDefault();
-
-    public override string SaveExtraText() =>
-        PersistStringHelper.SaveDictionaryToString(new Dictionary<string, string>
+    public Catalogue GetSingleCatalogueModeCatalogue()
+    {
+        return (Catalogue) DatabaseObjects.SingleOrDefault();
+    }
+        
+    public override string SaveExtraText()
+    {
+        return Helper.SaveDictionaryToString(new Dictionary<string, string>
         {
             { nameof(ShowLabels), ShowLabels.ToString() },
 

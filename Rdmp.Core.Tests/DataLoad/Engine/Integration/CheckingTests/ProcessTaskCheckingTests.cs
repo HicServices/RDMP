@@ -115,10 +115,9 @@ public class ProcessTaskCheckingTests : DatabaseTests
         _task.SaveToDatabase();
         _task.CreateArgumentsForClassIfNotExists<AnySeparatorFileAttacher>();
 
-        var ex = Assert.Throws<Exception>(() =>
-            _checker.Check(new ThrowImmediatelyCheckNotifier { ThrowOnWarning = true }));
-        Assert.AreEqual($@"No Project Directory (LocationOfFlatFiles) has been configured on LoadMetadata {_lmd.Name}",
-            ex.InnerException.Message);
+        var ex = Assert.Throws<Exception>(()=>_checker.Check(new ThrowImmediatelyCheckNotifier {ThrowOnWarning = true}));
+        Assert.AreEqual($@"No Project Directory (LocationOfFlatFiles) has been configured on LoadMetadata {_lmd.Name}", ex.InnerException.Message);
+            
     }
 
     [Test]
@@ -136,8 +135,10 @@ public class ProcessTaskCheckingTests : DatabaseTests
             _task.SaveToDatabase();
 
 
-            var ex = Assert.Throws<ArgumentException>(() =>
-                _checker.Check(new ThrowImmediatelyCheckNotifier { ThrowOnWarning = true }));
+            var ex = Assert.Throws<ArgumentException>(() => _checker.Check(new ThrowImmediatelyCheckNotifier { ThrowOnWarning = true }));
+
+            Assert.AreEqual(@"Class AnySeparatorFileAttacher has a Mandatory property 'Separator' marked with DemandsInitialization but no corresponding argument was provided in ArgumentCollection",ex.Message);
+                
 
             Assert.AreEqual(
                 @"Class AnySeparatorFileAttacher has a Mandatory property 'Separator' marked with DemandsInitialization but no corresponding argument was provided in ArgumentCollection",
@@ -208,8 +209,7 @@ public class ProcessTaskCheckingTests : DatabaseTests
         _task.ProcessTaskType = ProcessTaskType.Executable;
         _task.Path = path;
         _task.SaveToDatabase();
-        var ex = Assert.Throws<Exception>(() =>
-            _checker.Check(new ThrowImmediatelyCheckNotifier { ThrowOnWarning = true }));
-        StringAssert.Contains("bob.exe which does not exist at this time.", ex.Message);
+        var ex = Assert.Throws<Exception>(()=>_checker.Check(new ThrowImmediatelyCheckNotifier {ThrowOnWarning=true}));
+        StringAssert.Contains("bob.exe which does not exist at this time.",ex.Message);
     }
 }

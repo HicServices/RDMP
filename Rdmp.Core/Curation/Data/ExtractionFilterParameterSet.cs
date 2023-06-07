@@ -95,7 +95,7 @@ public class ExtractionFilterParameterSet : DatabaseEntity, ICollectSqlParameter
     {
         name ??= $"New ExtractionFilterParameterSet {Guid.NewGuid()}";
 
-        repository.InsertAndHydrate(this, new Dictionary<string, object>
+        repository.InsertAndHydrate(this,new Dictionary<string, object>
         {
             { "Name", name },
             { "ExtractionFilter_ID", filter.ID }

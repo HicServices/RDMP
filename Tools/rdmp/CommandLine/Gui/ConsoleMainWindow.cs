@@ -91,11 +91,13 @@ internal class ConsoleMainWindow
                 new("_Refresh...", "", () => Publish()),
                 new("_Quit", "", () => Quit())
             }),
-            new("_Diagnostics", new MenuItem[]
-            {
-                mi_default = new MenuItem { Title = "Query Catalogue", Action = () => Query(nameof(CataloguePatcher)) },
-                mi_default = new MenuItem
-                    { Title = "Query Data Export", Action = () => Query(nameof(DataExportPatcher)) }
+            new MenuBarItem ("_Diagnostics", new MenuItem [] {
+                mi_default = new MenuItem {Title = "Query Catalogue", Action = ()=>Query(nameof(CataloguePatcher))},
+                mi_default = new MenuItem {Title = "Query Data Export", Action = ()=>Query(nameof(DataExportPatcher))},
+            }),
+            new MenuBarItem ("_Color Scheme", new MenuItem [] {
+                mi_default = new MenuItem {Title = "Default", Checked = true, CheckType = MenuItemCheckStyle.Radio, Action = ()=>SetColorScheme(mi_default)},
+                mi_green = new MenuItem {Title = "Green", Checked = false, CheckType = MenuItemCheckStyle.Radio, Action = ()=>SetColorScheme(mi_green)},
             }),
             new("_Color Scheme", new MenuItem[]
             {
@@ -111,8 +113,8 @@ internal class ConsoleMainWindow
                 }
             })
         });
-        top.Add(menu);
-
+        top.Add (menu);
+                
         _win = new Window
         {
             X = 0,

@@ -150,7 +150,7 @@ public class TestsRequiringAnExtractionConfiguration : TestsRequiringACohort
     {
         var pipeline = SetupPipeline();
 
-        var runner = new ExtractionRunner(new ThrowImmediatelyActivator(RepositoryLocator), new ExtractionOptions
+        var runner = new ExtractionRunner(new ThrowImmediatelyActivator(RepositoryLocator),new ExtractionOptions
         {
             Command = CommandLineActivity.run, ExtractionConfiguration = _configuration.ID.ToString(),
             ExtractGlobals = true, Pipeline = pipeline.ID.ToString()

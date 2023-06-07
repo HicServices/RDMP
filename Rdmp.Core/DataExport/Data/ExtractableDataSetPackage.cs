@@ -80,7 +80,7 @@ public class ExtractableDataSetPackage : DatabaseEntity, IExtractableDataSetPack
     /// <param name="name"></param>
     public ExtractableDataSetPackage(IDataExportRepository dataExportRepository, string name)
     {
-        dataExportRepository.InsertAndHydrate(this, new Dictionary<string, object>
+        dataExportRepository.InsertAndHydrate(this,new Dictionary<string, object>
         {
             { "Name", name },
             { "Creator", Environment.UserName },

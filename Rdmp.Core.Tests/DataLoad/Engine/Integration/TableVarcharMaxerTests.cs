@@ -40,20 +40,17 @@ public class TableVarcharMaxerTests : DatabaseTests
 
         Import(tbl, out var ti, out var cols);
 
-        var maxer = new TableVarcharMaxer
-        {
-            AllDataTypes = allDataTypes,
-            TableRegexPattern = new Regex(".*"),
-            DestinationType = db.Server.GetQuerySyntaxHelper().TypeTranslater
-                .GetSQLDBTypeForCSharpType(new DatabaseTypeRequest(typeof(string), int.MaxValue))
-        };
+        var maxer = new TableVarcharMaxer();
+        maxer.AllDataTypes = allDataTypes;
+        maxer.TableRegexPattern = new Regex(".*");
+        maxer.DestinationType = db.Server.GetQuerySyntaxHelper().TypeTranslater.GetSQLDBTypeForCSharpType(new DatabaseTypeRequest(typeof(string),int.MaxValue));
+            
+        maxer.Initialize(db,LoadStage.AdjustRaw);
+        maxer.Check(new ThrowImmediatelyCheckNotifier {ThrowOnWarning = true});
 
-        maxer.Initialize(db, LoadStage.AdjustRaw);
-        maxer.Check(new ThrowImmediatelyCheckNotifier { ThrowOnWarning = true });
-
-        var job = Substitute.For<IDataLoadJob>();
-        job.RegularTablesToLoad.Returns(new List<ITableInfo> { ti });
-        job.Configuration.Returns(new HICDatabaseConfiguration(db.Server, null, null, null));
+        var job = Mock.Of<IDataLoadJob>(x => 
+            x.RegularTablesToLoad==new List<ITableInfo> {ti} &&
+            x.Configuration==new HICDatabaseConfiguration(db.Server,null,null,null));
 
         maxer.Mutilate(job);
 
@@ -90,21 +87,16 @@ public class TableVarcharMaxerTests : DatabaseTests
 
         Import(tbl, out var ti, out var cols);
 
-        var maxer = new TableVarcharMaxer
-        {
-            TableRegexPattern = new Regex(".*"),
-            DestinationType = db.Server.GetQuerySyntaxHelper().TypeTranslater
-                .GetSQLDBTypeForCSharpType(new DatabaseTypeRequest(typeof(string), int.MaxValue))
-        };
+        var maxer = new TableVarcharMaxer();
+        maxer.TableRegexPattern = new Regex(".*");
+        maxer.DestinationType = db.Server.GetQuerySyntaxHelper().TypeTranslater.GetSQLDBTypeForCSharpType(new DatabaseTypeRequest(typeof(string),int.MaxValue));
+            
+        maxer.Initialize(db,LoadStage.AdjustRaw);
+        maxer.Check(new ThrowImmediatelyCheckNotifier {ThrowOnWarning = true});
 
-        maxer.Initialize(db, LoadStage.AdjustRaw);
-        maxer.Check(new ThrowImmediatelyCheckNotifier { ThrowOnWarning = true });
-
-        var job = new ThrowImmediatelyDataLoadJob
-        {
-            RegularTablesToLoad = new List<ITableInfo> { ti },
-            Configuration = new HICDatabaseConfiguration(db.Server, null, null, null)
-        };
+        var job = new ThrowImmediatelyDataLoadJob();
+        job.RegularTablesToLoad = new List<ITableInfo> {ti};
+        job.Configuration = new HICDatabaseConfiguration(db.Server,null,null,null);
 
         maxer.Mutilate(job);
 

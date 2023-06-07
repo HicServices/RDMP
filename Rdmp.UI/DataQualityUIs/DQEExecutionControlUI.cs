@@ -44,8 +44,10 @@ public partial class DQEExecutionControlUI : DQEExecutionControl_Design
         SetDatabaseObject(Activator, _catalogue);
     }
 
-    private RDMPCommandLineOptions CommandGetter(CommandLineActivity commandLineActivity) => new DqeOptions
-        { Catalogue = _catalogue.ID.ToString(), Command = commandLineActivity };
+    private RDMPCommandLineOptions CommandGetter(CommandLineActivity commandLineActivity)
+    {
+        return new DqeOptions { Catalogue = _catalogue.ID.ToString(), Command = commandLineActivity };
+    }
 
     public override void SetDatabaseObject(IActivateItems activator, Catalogue databaseObject)
     {

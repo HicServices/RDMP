@@ -57,11 +57,10 @@ public class PipelineComponentArgument : Argument, IPipelineComponentArgument
     public PipelineComponentArgument(ICatalogueRepository repository, PipelineComponent parent)
     {
         repository.InsertAndHydrate(this, new Dictionary<string, object>
-        {
-            { "PipelineComponent_ID", parent.ID },
-            { "Name", $"Parameter{Guid.NewGuid()}" },
-            { "Type", typeof(string).ToString() }
-        });
+        { 
+            {"PipelineComponent_ID",parent.ID},
+            {"Name", $"Parameter{Guid.NewGuid()}" },
+            {"Type", typeof (string).ToString()} });
     }
 
     internal PipelineComponentArgument(ICatalogueRepository repository, DbDataReader r)

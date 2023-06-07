@@ -15,43 +15,43 @@ public class TestConstants
     public const string _INVALID_CHI_SEX = "0204450363";
     public const string _INVALID_CHI_CHECKSUM = "0204450361";
 
-    public static readonly Dictionary<string, object> ValidChiAndConsistentSex = new()
+    public static readonly Dictionary<string, object> ValidChiAndConsistentSex = new Dictionary<string, object>
     {
         { "chi", _VALID_CHI },
         { "gender", "M" }
     };
 
-    public static readonly Dictionary<string, object> ValidChiAndInconsistentSex = new()
+    public static readonly Dictionary<string, object> ValidChiAndInconsistentSex = new Dictionary<string, object>
     {
         { "chi", _VALID_CHI },
         { "gender", "F" }
     };
 
-    public static readonly Dictionary<string, object> ValidChiAndNullSex = new()
+    public static readonly Dictionary<string, object> ValidChiAndNullSex = new Dictionary<string, object>
     {
         { "chi", _VALID_CHI },
         { "gender", null }
     };
 
-    public static readonly Dictionary<string, object> InvalidChiAndNullSex = new()
+    public static readonly Dictionary<string, object> InvalidChiAndNullSex = new Dictionary<string, object>
     {
         { "chi", _INVALID_CHI_CHECKSUM },
         { "gender", null }
     };
 
-    public static readonly Dictionary<string, object> InvalidChiAndValidSex = new()
+    public static readonly Dictionary<string, object> InvalidChiAndValidSex = new Dictionary<string, object>
     {
         { "chi", _INVALID_CHI_CHECKSUM },
         { "gender", "F" }
     };
 
-    public static readonly Dictionary<string, object> NullChiAndValidSex = new()
+    public static readonly Dictionary<string, object> NullChiAndValidSex = new Dictionary<string, object>
     {
         { "chi", null },
         { "gender", "F" }
     };
 
-    public static readonly Dictionary<string, object> NullChiAndNullSex = new()
+    public static readonly Dictionary<string, object> NullChiAndNullSex = new Dictionary<string, object>
     {
         { "chi", null },
         { "gender", null }

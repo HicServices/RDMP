@@ -21,8 +21,9 @@ internal class RunExtractionWindow : RunEngineWindow<ExtractionOptions>
     {
     }
 
-    private static ExtractionOptions GetRunCommand(ExtractionConfiguration ec) =>
-        new()
+    private static ExtractionOptions GetRunCommand(ExtractionConfiguration ec)
+    {
+        return new ExtractionOptions
         {
             ExtractionConfiguration = ec.ID.ToString(),
             ExtractGlobals = true

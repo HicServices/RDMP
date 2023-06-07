@@ -101,8 +101,9 @@ public abstract class CohortCreationCommandExecution : BasicCommandExecution, IA
     /// Describes in a user friendly way the activity of picking an <see cref="ExternalCohortTable"/>
     /// </summary>
     /// <returns></returns>
-    public static DialogArgs GetChooseCohortDialogArgs() =>
-        new()
+    public static DialogArgs GetChooseCohortDialogArgs()
+    {
+        return new DialogArgs
         {
             WindowTitle = "Choose where to save cohort",
             TaskDescription =

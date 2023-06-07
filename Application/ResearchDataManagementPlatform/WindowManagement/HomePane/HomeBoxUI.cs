@@ -80,12 +80,11 @@ public partial class HomeBoxUI : UserControl
                     .ToArray());
             }
 
-            olvName.AspectGetter = o => ((HistoryEntry)o).Object.ToString();
-            CommonTreeFunctionality.SetUp(RDMPCollection.None, olvRecent, activator, olvName, olvName,
-                new RDMPCollectionCommonFunctionalitySettings
-                {
-                    SuppressChildrenAdder = true
-                });
+            olvName.AspectGetter = (o) => ((HistoryEntry)o).Object.ToString();
+            CommonTreeFunctionality.SetUp(RDMPCollection.None,olvRecent,activator,olvName,olvName,new RDMPCollectionCommonFunctionalitySettings
+            {
+                SuppressChildrenAdder = true
+            });
 
             _doneSetup = true;
         }

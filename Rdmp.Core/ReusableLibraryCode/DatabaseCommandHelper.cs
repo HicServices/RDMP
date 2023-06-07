@@ -30,7 +30,7 @@ namespace Rdmp.Core.ReusableLibraryCode;
 /// </summary>
 public class DatabaseCommandHelper
 {
-    private static readonly Dictionary<DatabaseType, IImplementation> _dbConHelpersByType = new()
+    private static readonly Dictionary<DatabaseType, IImplementation> _dbConHelpersByType = new Dictionary<DatabaseType, IImplementation>
     {
         { DatabaseType.MySql, new MySqlImplementation() },
         { DatabaseType.Oracle, new OracleImplementation() },
