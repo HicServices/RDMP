@@ -25,10 +25,11 @@ class DocumentationCrossExaminationTest
     private const bool ReWriteMarkdownToReferenceGlossary = true;
 
     //words that are in Pascal case and you can use in comments despite not being in the codebase... this is an ironic variable to be honest
-    //since the very fact that you add something to _ignorelist means that it is in the codebase after all!
+    //since the very fact that you add something to Ignorelist means that it is in the codebase after all!
     #region IgnoreList Terms
     private static readonly HashSet<string> IgnoreList = new()
     {
+        "AppData",
         "ExecuteAggregateGraph",
         "ExtractMetadata",
         "DateRange",
@@ -306,7 +307,7 @@ class DocumentationCrossExaminationTest
             if(file.Contains("packages"))
                 continue;
 
-            foreach (var line in File.ReadAllLines(file))
+            foreach (var line in File.ReadLines(file))
             {
                 //if it is a comment
                 if (MatchComments.IsMatch(line))
@@ -363,7 +364,7 @@ class DocumentationCrossExaminationTest
 
         if (problems.Any())
         {
-            Console.WriteLine("Found problem words in comments (Scroll down to see by file then if you think they are fine add them to DocumentationCrossExaminationTest._ignorelist):");
+            Console.WriteLine("Found problem words in comments (Scroll down to see by file then if you think they are fine add them to DocumentationCrossExaminationTest.Ignorelist):");
             foreach (var pLine in problems.Where(l=>l.Contains('\n')).Select(p => p.Split('\n')))
                 Console.WriteLine($"\"{pLine[1]}\",");
             foreach (var problem in problems)
