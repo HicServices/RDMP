@@ -29,31 +29,13 @@ public class MEF
 
     public bool HaveDownloadedAllAssemblies;
     public SafeDirectoryCatalog SafeDirectoryCatalog;
-    private readonly ObjectConstructor o = new();
-
-    private readonly string _localPath = null;
+    readonly ObjectConstructor _o = new();
 
     public MEF()
     {
         //try to use the app data folder to download MEF but also evaluate everything in _localPath
-        _localPath = AppContext.BaseDirectory;
-
-        string _MEFPathAsString;
-
-        try
-        {
-            _MEFPathAsString =
-                Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData), "MEF");
-        }
-        catch (Exception) //couldn't get the AppData/MEF directory so instead go to .\MEF\
-        {
-            if (_localPath == null)
-                throw new Exception(
-                    "ApplicationData was not available to download MEF and neither apparently was Assembly.GetExecutingAssembly().GetName().CodeBase");
-
-            _MEFPathAsString = Path.Combine(_localPath, "MEF");
-        }
-
+        var localPath = AppContext.BaseDirectory;
+        var _MEFPathAsString = Path.Combine(localPath, "MEF");
         DownloadDirectory = new DirectoryInfo(_MEFPathAsString);
     }
 
@@ -236,27 +218,9 @@ public class MEF
         return $"{genericTypeName}<{underlyingType}>";
     }
 
+    [Obsolete("MEF dead",true)]
     public void CheckForVersionMismatches(ICheckNotifier notifier)
     {
-        SetupMEFIfRequired();
-
-        var root = new DirectoryInfo(".");
-
-        var binDirectoryFiles = root.EnumerateFiles().ToArray();
-
-        foreach (var dllInMEFFolder in DownloadDirectory.GetFiles())
-        {
-            var dllInBinFolder = binDirectoryFiles.FirstOrDefault(f => f.Name.Equals(dllInMEFFolder.Name));
-
-            if (dllInBinFolder == null) continue;
-            var md5Bin = UsefulStuff.HashFile(dllInBinFolder.FullName);
-            var md5Mef = UsefulStuff.HashFile(dllInMEFFolder.FullName);
-
-            if (!md5Bin.Equals(md5Mef))
-                notifier.OnCheckPerformed(new CheckEventArgs(
-                    $"Different versions of the dll exist in MEF and BIN directory:{Environment.NewLine}{dllInBinFolder.FullName} (MD5={md5Bin}){Environment.NewLine}Version:{FileVersionInfo.GetVersionInfo(dllInBinFolder.FullName).FileVersion}{Environment.NewLine}and{Environment.NewLine}{dllInMEFFolder.FullName} (MD5={md5Mef}){Environment.NewLine}Version:{FileVersionInfo.GetVersionInfo(dllInMEFFolder.FullName).FileVersion}{Environment.NewLine}"
-                    , CheckResult.Warning, null));
-        }
     }
 
     public IEnumerable<Type> GetTypes<T>()
@@ -321,7 +285,7 @@ public class MEF
             throw new Exception(
                 $"Requested typeToCreate '{typeToCreate}' was not assignable to the required Type '{typeof(T).Name}'");
 
-        var instance = (T)o.ConstructIfPossible(typeToCreateAsType,args) ?? throw new ObjectLacksCompatibleConstructorException(
+        var instance = (T)_o.ConstructIfPossible(typeToCreateAsType,args) ?? throw new ObjectLacksCompatibleConstructorException(
                 $"Could not construct a {typeof(T)} using the {args.Length} constructor arguments");
         return instance;
     }

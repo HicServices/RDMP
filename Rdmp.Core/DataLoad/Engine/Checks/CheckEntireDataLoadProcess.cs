@@ -43,8 +43,6 @@ public class CheckEntireDataLoadProcess : ICheckable
         var processTaskChecks = new ProcessTaskChecks(LoadMetadata);
         var preExecutionChecks = new PreExecutionChecker(LoadMetadata, _databaseConfiguration);
 
-        _mef.CheckForVersionMismatches(notifier);
-
         //If the load is a progressable (loaded over time) then make sure any associated caches are compatible with the load ProcessTasks
         foreach (var loadProgress in LoadMetadata.LoadProgresses)
         {
