@@ -67,8 +67,8 @@ public class ExcelTests
             Separator = ","
         };
         invalid.PreInitialize(new FlatFileToLoad(new FileInfo(TestFile)), new ThrowImmediatelyDataLoadEventListener());
-        var ex = Assert.Throws<Exception>(() => invalid.Check(new ThrowImmediatelyCheckNotifier()));
-        StringAssert.Contains("File Book1.xlsx has a prohibitted file extension .xlsx", ex.Message);
+        var ex = Assert.Throws<Exception>(()=>invalid.Check(new ThrowImmediatelyCheckNotifier()));
+        StringAssert.Contains("File Book1.xlsx has a prohibited file extension .xlsx",ex.Message);
     }
 
     [Test]
@@ -238,9 +238,7 @@ public class ExcelTests
 
         Console.Write(messages.ToString());
 
-        Assert.IsTrue(args.Any(a =>
-            a.Message.Contains("Discarded the following data (that was found in unamed columns):RowCount:5") &&
-            a.ProgressEventType == ProgressEventType.Warning));
+        Assert.IsTrue(args.Any(a => a.Message.Contains("Discarded the following data (that was found in unnamed columns):RowCount:5") && a.ProgressEventType == ProgressEventType.Warning));
     }
 
     [Test]
