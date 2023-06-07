@@ -121,8 +121,7 @@ public class DatabaseTests
         ImplementationManager.Load<PostgreSqlImplementation>();
 
         // Always ignore SSL when running tests
-        DiscoveredServerHelper.AddConnectionStringKeyword(DatabaseType.MicrosoftSQLServer, "TrustServerCertificate",
-            "true", ConnectionStringKeywordPriority.ApiRule);
+        DiscoveredServerHelper.AddConnectionStringKeyword(DatabaseType.MicrosoftSQLServer, "TrustServerCertificate", "true", ConnectionStringKeywordPriority.ApiRule);
 
         ReadSettingsFile();
     }
