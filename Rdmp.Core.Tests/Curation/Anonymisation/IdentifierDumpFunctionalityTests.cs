@@ -236,7 +236,7 @@ public class IdentifierDumpFunctionalityTests:TestsRequiringFullAnonymisationSui
         {
             dumper.Check(new AcceptAllCheckNotifier());
             var ex = Assert.Throws<Exception>(()=>dumper.DumpAllIdentifiersInTable(_bulkData.GetDataTable(10)));
-            Assert.AreEqual("IdentifierDumper STAGING insert (ID_BulkData_STAGING) failed, make sure you have called CreateSTAGINGTable() before trying to Dump identifiers (also you should call DropStagging() when you are done)",ex.Message);
+            Assert.AreEqual("IdentifierDumper STAGING insert (ID_BulkData_STAGING) failed, make sure you have called CreateSTAGINGTable() before trying to Dump identifiers (also you should call DropStaging() when you are done)",ex?.Message);
         }
         finally
         {

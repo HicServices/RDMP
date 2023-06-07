@@ -18,7 +18,7 @@ using Rdmp.Core.ReusableLibraryCode.Progress;
 namespace Rdmp.Core.DataLoad.Engine.LoadExecution.Components.Runtime;
 
 /// <summary>
-/// RuntimeTask that hosts an IAttacher.  The instance is hydrated from the users configuration (ProcessTask and ProcessTaskArguments) See
+/// RuntimeTask that hosts an IAttacher.  The instance is hydrated from the user's configuration (ProcessTask and ProcessTaskArguments) See
 /// RuntimeArgumentCollection
 /// </summary>
 public class AttacherRuntimeTask : RuntimeTask, IMEFRuntimeTask
