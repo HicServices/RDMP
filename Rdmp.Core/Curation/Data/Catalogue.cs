@@ -1064,14 +1064,13 @@ public class Catalogue : DatabaseEntity, IComparable, ICatalogue, IInjectKnown<C
 
         var type = tables.Select(t => t.DatabaseType).Distinct().ToArray();
 
-        if (type.Length == 0)
-            return null;
-
-        if (type.Length == 1)
-            return type[0];
-
-        throw new AmbiguousDatabaseTypeException(
-            $"The Catalogue '{this}' has TableInfos belonging to multiple DatabaseTypes ({string.Join(",", tables.Select(t => $"{t.GetRuntimeName()}(ID={t.ID} is {t.DatabaseType})"))}");
+        return type.Length switch
+        {
+            0 => null,
+            1 => type[0],
+            _ => throw new AmbiguousDatabaseTypeException(
+                $"The Catalogue '{this}' has TableInfos belonging to multiple DatabaseTypes ({string.Join(",", tables.Select(t => $"{t.GetRuntimeName()}(ID={t.ID} is {t.DatabaseType})"))}")
+        };
     }
 
     /// <summary>
@@ -1249,7 +1248,7 @@ public class Catalogue : DatabaseEntity, IComparable, ICatalogue, IInjectKnown<C
         var f = new QuerySyntaxHelperFactory();
         var type = GetDistinctLiveDatabaseServerType() ?? throw new AmbiguousDatabaseTypeException(
                 $"Catalogue '{this}' has no extractable columns so no Database Type could be determined");
-        return f.Create(type.Value);
+        return f.Create(type);
     }
 
     #region Static Methods

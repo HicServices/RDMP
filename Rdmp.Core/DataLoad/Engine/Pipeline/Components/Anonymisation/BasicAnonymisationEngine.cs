@@ -96,7 +96,7 @@ public class BasicAnonymisationEngine :IPluginDataFlowComponent<DataTable>,IPipe
             didAno = true;
 
             //add an ANO version
-            var ANOColumn = new DataColumn($"{ANOTable.ANOPrefix}{column}";
+            var ANOColumn = new DataColumn($"{ANOTable.ANOPrefix}{column}");
             toProcess.Columns.Add(ANOColumn);
 
             //populate ANO version
