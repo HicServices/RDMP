@@ -245,7 +245,7 @@ public class MemoryRepository : IRepository
     {
         //if we don't know about it then it was deleted
         if(!Objects.ContainsKey(mapsDirectlyToDatabaseTable))
-            return new RevertableObjectReport(){Evaluation = ChangeDescription.DatabaseCopyWasDeleted};
+            return new RevertableObjectReport {Evaluation = ChangeDescription.DatabaseCopyWasDeleted};
 
         //if it has no changes (since a save)
         if (!_propertyChanges.ContainsKey(mapsDirectlyToDatabaseTable))

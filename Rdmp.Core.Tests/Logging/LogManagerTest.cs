@@ -134,12 +134,10 @@ public class LogManagerTest : DatabaseTests
     {
 
         var lds = new DiscoveredServer(UnitTestLoggingConnectionString);
-        using (var con = lds.GetConnection())
-        {
-            con.Open();
-            lds.GetCommand("DELETE FROM DataLoadTask where LOWER(dataSetID) like '%truncate%'", con).ExecuteNonQuery();
-            lds.GetCommand("DELETE FROM DataSet where LOWER(dataSetID) like '%truncate%'", con).ExecuteNonQuery();
-        }
+        using var con = lds.GetConnection();
+        con.Open();
+        lds.GetCommand("DELETE FROM DataLoadTask where LOWER(dataSetID) like '%truncate%'", con).ExecuteNonQuery();
+        lds.GetCommand("DELETE FROM DataSet where LOWER(dataSetID) like '%truncate%'", con).ExecuteNonQuery();
     }
 
 

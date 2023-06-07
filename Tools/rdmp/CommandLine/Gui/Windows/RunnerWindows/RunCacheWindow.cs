@@ -19,6 +19,6 @@ class RunCacheWindow : RunEngineWindow<CacheOptions>
 
     private static CacheOptions GetCommand(ICacheProgress cp)
     {
-        return new CacheOptions() { CacheProgress = cp.ID.ToString() };
+        return new CacheOptions { CacheProgress = cp.ID.ToString() };
     }
 }

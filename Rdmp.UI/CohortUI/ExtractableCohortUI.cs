@@ -147,7 +147,7 @@ public partial class ExtractableCohortUI :ExtractableCohortUI_Design, ISaveableU
         if (!_commonFunctionality1.IsSetup)
         {
             _commonFunctionality1.SetUp(RDMPCollection.None, tlvCohortUsage,activator,olvUsedIn,null,
-                new RDMPCollectionCommonFunctionalitySettings()
+                new RDMPCollectionCommonFunctionalitySettings
                 {
                     AddCheckColumn = false,
                     AddFavouriteColumn = false,
@@ -161,7 +161,7 @@ public partial class ExtractableCohortUI :ExtractableCohortUI_Design, ISaveableU
         if (!_commonFunctionality2.IsSetup)
         {
             _commonFunctionality2.SetUp(RDMPCollection.None, tlvPreviousVersions, activator, olvOtherVersions, null,
-                new RDMPCollectionCommonFunctionalitySettings()
+                new RDMPCollectionCommonFunctionalitySettings
                 {
                     AddCheckColumn = false,
                     AddFavouriteColumn = false,

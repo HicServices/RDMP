@@ -112,7 +112,7 @@ WHERE
             var s = new ExecuteCrossServerDatasetExtractionSource();
             s.TemporaryDatabaseName = "tempdb";
             s.PreInitialize(_request, new ThrowImmediatelyDataLoadEventListener());
-            var hacked = s.HackExtractionSQL(_request.QueryBuilder.SQL, new ThrowImmediatelyDataLoadEventListener() { ThrowOnWarning = true });
+            var hacked = s.HackExtractionSQL(_request.QueryBuilder.SQL, new ThrowImmediatelyDataLoadEventListener { ThrowOnWarning = true });
 
             Assert.AreEqual(expectedOutput.Trim(),hacked.Trim());
         }

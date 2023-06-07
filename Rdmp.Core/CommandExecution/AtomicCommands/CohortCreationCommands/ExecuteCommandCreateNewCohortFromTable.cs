@@ -51,7 +51,7 @@ public class ExecuteCommandCreateNewCohortFromTable : CohortCreationCommandExecu
             return;
         }
 
-        if (!BasicActivator.SelectObject(new DialogArgs()
+        if (!BasicActivator.SelectObject(new DialogArgs
             {
                 EntryLabel = "Patient Identifier Column",
                 TaskDescription = $"Select which column in the table '{tbl.GetFullyQualifiedName()}' contains the patient identifiers which you want to import",

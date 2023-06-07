@@ -77,7 +77,7 @@ internal class ConsoleGuiActivator : BasicActivateItems
 
         using (var dlg = new Dialog(title, w, h, btn) { Modal = true })
         {
-            dlg.Add(new TextView()
+            dlg.Add(new TextView
             {
                 Width = Dim.Fill(),
                 Height = Dim.Fill(1),
@@ -296,7 +296,7 @@ internal class ConsoleGuiActivator : BasicActivateItems
     {
         var msg = GetExceptionText(errorText,exception,false);
 
-        var textView = new TextView()
+        var textView = new TextView
         {
             Text = msg,
             X = 0,

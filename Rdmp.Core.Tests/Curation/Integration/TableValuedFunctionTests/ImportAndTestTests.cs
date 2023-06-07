@@ -225,12 +225,12 @@ public class ImportAndTestTests : DatabaseTests
     [Test]
     public void TableInfoCheckingWorks()
     {
-        _function.TableInfoCreated.Check(new ThrowImmediatelyCheckNotifier() { ThrowOnWarning = true });
+        _function.TableInfoCreated.Check(new ThrowImmediatelyCheckNotifier { ThrowOnWarning = true });
     }
         
     [Test]
     public void CatalogueCheckingWorks()
     {
-        _function.Cata.Check(new ThrowImmediatelyCheckNotifier() { ThrowOnWarning = true });
+        _function.Cata.Check(new ThrowImmediatelyCheckNotifier { ThrowOnWarning = true });
     }
 }

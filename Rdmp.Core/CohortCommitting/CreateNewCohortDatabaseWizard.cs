@@ -128,7 +128,7 @@ public class CreateNewCohortDatabaseWizard
                 }
                 ,
                 //foreign key between id and cohortDefinition_id
-                new Dictionary<DatabaseColumnRequest, DiscoveredColumn>() { { foreignKey, idColumn } }, true);
+                new Dictionary<DatabaseColumnRequest, DiscoveredColumn> { { foreignKey, idColumn } }, true);
 
 
             notifier.OnCheckPerformed(new CheckEventArgs("About to create pointer to the source", CheckResult.Success));

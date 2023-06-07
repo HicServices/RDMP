@@ -226,7 +226,7 @@ public class ExecuteCommandSet:BasicCommandExecution
         if (on is ISqlParameter p && _property.Name.Equals(nameof(ISqlParameter.Value)))
             return AnyTableSqlParameter.GetValuePromptDialogArgs(p);
 
-        return new DialogArgs()
+        return new DialogArgs
         {
             WindowTitle = $"Set value for '{_property.Name}'",
             EntryLabel = _property.Name

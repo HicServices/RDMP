@@ -21,8 +21,8 @@ public class ObjectConstructorTests : UnitTests
     public void ConstructValidTests()
     {
         var constructor =new ObjectConstructor();
-        var testarg = new TestArg(){Text = "amagad"};
-        var testarg2 = new TestArg2() { Text = "amagad" };
+        var testarg = new TestArg {Text = "amagad"};
+        var testarg2 = new TestArg2 { Text = "amagad" };
 
         //anyone can construct on object!
         constructor.Construct(typeof(TestClass1),testarg);

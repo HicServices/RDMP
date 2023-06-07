@@ -43,7 +43,7 @@ internal class ConsoleGuiViewLogs : Window, ITreeBuilder<object>
 
         Add(lblToFetch);
 
-        _tbToFetch = new TextField()
+        _tbToFetch = new TextField
         {
             X = Pos.Right(lblToFetch),
             Text = "1000",
@@ -52,7 +52,7 @@ internal class ConsoleGuiViewLogs : Window, ITreeBuilder<object>
 
         Add(_tbToFetch);
 
-        var btnFetch = new Button()
+        var btnFetch = new Button
         {
             X = Pos.Right(_tbToFetch),
             Text = "Go"
@@ -102,7 +102,7 @@ internal class ConsoleGuiViewLogs : Window, ITreeBuilder<object>
 
         Add(lblcontains);
 
-        _tbcontains = new TextField()
+        _tbcontains = new TextField
         {
             Y = Pos.Bottom(lbl),
             X = Pos.Right(lblcontains),
@@ -111,7 +111,7 @@ internal class ConsoleGuiViewLogs : Window, ITreeBuilder<object>
         _tbcontains.TextChanged += Tbcontains_TextChanged;
         Add(_tbcontains);
 
-        _treeView = new TreeView<object>()
+        _treeView = new TreeView<object>
         {
             X = 0,
             Y = Pos.Bottom(lblFilter),

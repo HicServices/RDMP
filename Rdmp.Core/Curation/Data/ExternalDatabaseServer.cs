@@ -141,7 +141,7 @@ public class ExternalDatabaseServer : DatabaseEntity, IExternalDatabaseServer, I
 
     public ExternalDatabaseServer()
     {
-        _selfCertifyingDataAccessPoint = new SelfCertifyingDataAccessPoint()
+        _selfCertifyingDataAccessPoint = new SelfCertifyingDataAccessPoint
         {
             DatabaseType = DatabaseType.MicrosoftSQLServer
         };

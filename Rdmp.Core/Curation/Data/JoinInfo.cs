@@ -164,7 +164,7 @@ public class JoinInfo : DatabaseEntity, IJoin,IHasDependencies
         if (foreignKey.TableInfo_ID == primaryKey.TableInfo_ID)
             throw new ArgumentException("Joink Key 1 and Join Key 2 are from the same table, this is not cool");
 
-        repository.InsertAndHydrate(this,new Dictionary<string, object>()
+        repository.InsertAndHydrate(this,new Dictionary<string, object>
         {
             {"ForeignKey_ID",foreignKey.ID},
             {"PrimaryKey_ID",primaryKey.ID},
@@ -198,7 +198,7 @@ public class JoinInfo : DatabaseEntity, IJoin,IHasDependencies
     public IEnumerable<ISupplementalJoin> GetSupplementalJoins()
     {
         //Supplemental Joins are not currently supported by JoinInfo, only Lookups
-        return _queryTimeComboJoins.Select(j => new QueryTimeComboJoin()
+        return _queryTimeComboJoins.Select(j => new QueryTimeComboJoin
         {
             Collation = j.Collation,
             PrimaryKey = j.PrimaryKey,

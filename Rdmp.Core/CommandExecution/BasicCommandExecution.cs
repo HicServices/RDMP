@@ -492,7 +492,7 @@ public abstract class BasicCommandExecution : ICommandExecution,IAtomicCommand
     {
         try
         {
-            checkable.Check(new ThrowImmediatelyCheckNotifier() { WriteToConsole = false });
+            checkable.Check(new ThrowImmediatelyCheckNotifier { WriteToConsole = false });
         }
         catch (Exception e)
         {

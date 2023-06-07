@@ -47,7 +47,7 @@ public partial class LoadEventsTreeView : RDMPUserControl,IObjectCollectionContr
 
     readonly ToolStripTextBox _tbFilterBox = new ToolStripTextBox();
     readonly ToolStripButton _btnApplyFilter = new ToolStripButton("Apply");
-    readonly ToolStripTextBox _tbToFetch = new ToolStripTextBox() { Text = "1000" };
+    readonly ToolStripTextBox _tbToFetch = new ToolStripTextBox { Text = "1000" };
     readonly ToolStripButton _btnFetch = new ToolStripButton("Go");
 
     private int _toFetch = 1000;

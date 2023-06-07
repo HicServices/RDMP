@@ -329,7 +329,7 @@ public class ExternalCohortTable : DatabaseEntity, IDataAccessCredentials, IExte
     /// <inheritdoc/>
     public void PushToServer(ICohortDefinition newCohortDefinition,IManagedConnection connection)
     {
-        newCohortDefinition.ID = DiscoverDefinitionTable().Insert(new Dictionary<string, object>()
+        newCohortDefinition.ID = DiscoverDefinitionTable().Insert(new Dictionary<string, object>
         {
             {"projectNumber",newCohortDefinition.ProjectNumber},
             {"version",newCohortDefinition.Version},

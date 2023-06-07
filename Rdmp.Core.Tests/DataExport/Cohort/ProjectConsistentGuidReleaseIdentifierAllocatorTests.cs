@@ -48,7 +48,7 @@ class ProjectConsistentGuidReleaseIdentifierAllocatorTests:DatabaseTests
         Assert.IsNotNull(allocator.AllocateReleaseIdentifier("0101010101"));
             
         //Now let's define a cohort identifier for someone (0202020202) who is not in our project
-        defTable.Insert(new Dictionary<string, object>()
+        defTable.Insert(new Dictionary<string, object>
         {
             {"projectNumber", 11}, //project is not our project
             {"version", 1},
@@ -57,7 +57,7 @@ class ProjectConsistentGuidReleaseIdentifierAllocatorTests:DatabaseTests
 
         Assert.AreEqual(1,defTable.GetRowCount());
 
-        cohortTable.Insert(new Dictionary<string, object>()
+        cohortTable.Insert(new Dictionary<string, object>
         {
             {ect.GetQuerySyntaxHelper().GetRuntimeName(ect.DefinitionTableForeignKeyField), 1},
             {"chi", "0202020202"},
@@ -76,7 +76,7 @@ class ProjectConsistentGuidReleaseIdentifierAllocatorTests:DatabaseTests
 
 
         //Now let's define a cohort identifier for someone (0202020202) who IS in our project
-        defTable.Insert(new Dictionary<string, object>()
+        defTable.Insert(new Dictionary<string, object>
         {
             {"projectNumber", 10}, //this is our project number!
             {"version", 1},
@@ -85,7 +85,7 @@ class ProjectConsistentGuidReleaseIdentifierAllocatorTests:DatabaseTests
 
         Assert.AreEqual(2, defTable.GetRowCount());
 
-        cohortTable.Insert(new Dictionary<string, object>()
+        cohortTable.Insert(new Dictionary<string, object>
         {
             {ect.GetQuerySyntaxHelper().GetRuntimeName(ect.DefinitionTableForeignKeyField), 2},
             {"chi", "0202020202"},
@@ -105,7 +105,7 @@ class ProjectConsistentGuidReleaseIdentifierAllocatorTests:DatabaseTests
 
         //finally let's break it by giving it conflicting historical records
         //let's pretend that previously we had already got 2 historical batches for the project, batch 1 released 0202020202 as 0x0127 (see above) and batch 2 released 0202020202 as 0x0128
-        defTable.Insert(new Dictionary<string, object>()
+        defTable.Insert(new Dictionary<string, object>
         {
             {"projectNumber", 10}, //this is our project number!
             {"version", 2},
@@ -114,7 +114,7 @@ class ProjectConsistentGuidReleaseIdentifierAllocatorTests:DatabaseTests
 
         Assert.AreEqual(3, defTable.GetRowCount());
 
-        cohortTable.Insert(new Dictionary<string, object>()
+        cohortTable.Insert(new Dictionary<string, object>
         {
             {ect.GetQuerySyntaxHelper().GetRuntimeName(ect.DefinitionTableForeignKeyField), 3},
             {"chi", "0202020202"},

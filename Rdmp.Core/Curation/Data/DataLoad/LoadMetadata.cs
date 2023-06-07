@@ -169,7 +169,7 @@ public class LoadMetadata : DatabaseEntity, ILoadMetadata, IHasDependencies, IHa
     {
         if (name == null)
             name = $"NewLoadMetadata{Guid.NewGuid()}";
-        repository.InsertAndHydrate(this,new Dictionary<string, object>()
+        repository.InsertAndHydrate(this,new Dictionary<string, object>
         {
             {"Name",name},
             { "IgnoreTrigger",false/*todo could be system global default here*/},

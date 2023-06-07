@@ -41,7 +41,7 @@ public class MsSqlReleaseSource<T> : FixedReleaseSource<ReleaseAudit>
         Debug.Assert(sourceFolder != null, "sourceFolder != null");
         var dbOutputFolder = sourceFolder.CreateSubdirectory(ExtractionDirectory.MASTER_DATA_FOLDER_NAME);
 
-        var releaseAudit = new ReleaseAudit()
+        var releaseAudit = new ReleaseAudit
         {
             SourceGlobalFolder = PrepareSourceGlobalFolder()
         };

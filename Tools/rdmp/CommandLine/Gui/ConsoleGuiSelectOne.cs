@@ -70,7 +70,8 @@ class ConsoleGuiSelectOne : ConsoleGuiBigListBox<IMapsDirectlyToDatabaseTable>
         };
         win.Add(lbl);
             
-        txtId = new TextField(){
+        txtId = new TextField
+        {
             X = Pos.Right(lbl),
             Y = Pos.Top(lbl),
             Width = 5

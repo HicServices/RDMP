@@ -90,17 +90,18 @@ class ConsoleMainWindow
                 new MenuItem ("_Quit", "", () => Quit()),
             }),
             new MenuBarItem ("_Diagnostics", new MenuItem [] {
-                mi_default = new MenuItem (){Title = "Query Catalogue", Action = ()=>Query(nameof(CataloguePatcher))},
-                mi_default = new MenuItem (){Title = "Query Data Export", Action = ()=>Query(nameof(DataExportPatcher))},
+                mi_default = new MenuItem {Title = "Query Catalogue", Action = ()=>Query(nameof(CataloguePatcher))},
+                mi_default = new MenuItem {Title = "Query Data Export", Action = ()=>Query(nameof(DataExportPatcher))},
             }),
             new MenuBarItem ("_Color Scheme", new MenuItem [] {
-                mi_default = new MenuItem (){Title = "Default", Checked = true, CheckType = MenuItemCheckStyle.Radio, Action = ()=>SetColorScheme(mi_default)},
-                mi_green = new MenuItem (){Title = "Green", Checked = false, CheckType = MenuItemCheckStyle.Radio, Action = ()=>SetColorScheme(mi_green)},
+                mi_default = new MenuItem {Title = "Default", Checked = true, CheckType = MenuItemCheckStyle.Radio, Action = ()=>SetColorScheme(mi_default)},
+                mi_green = new MenuItem {Title = "Green", Checked = false, CheckType = MenuItemCheckStyle.Radio, Action = ()=>SetColorScheme(mi_green)},
             }),
         });
         top.Add (menu);
                 
-        _win = new Window(){
+        _win = new Window
+        {
             X = 0,
             Y = 1, // menu
             Width =  Dim.Fill(1),
@@ -108,7 +109,7 @@ class ConsoleMainWindow
         };
 
         _defaultColorScheme = ColorScheme = _win.ColorScheme;
-        _greenColorScheme = new ColorScheme()
+        _greenColorScheme = new ColorScheme
         {
             Disabled = Application.Driver.MakeAttribute(Color.Black, Color.Black),
             Focus = Application.Driver.MakeAttribute(Color.Black, Color.Green),
@@ -118,7 +119,8 @@ class ConsoleMainWindow
         };
 
 
-        _treeView = new TreeView<object> () {
+        _treeView = new TreeView<object>
+        {
             X = 0,
             Y = 0,
             Width = Dim.Fill(),

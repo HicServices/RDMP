@@ -108,7 +108,7 @@ public class GovernanceTests:DatabaseTests
         gov.Name = "NeverExpires";
 
         //valid to start with 
-        var ex = Assert.Throws<Exception>(()=>gov.Check(new ThrowImmediatelyCheckNotifier(){ThrowOnWarning = true}));
+        var ex = Assert.Throws<Exception>(()=>gov.Check(new ThrowImmediatelyCheckNotifier {ThrowOnWarning = true}));
         Assert.AreEqual("There is no end date for GovernancePeriod NeverExpires",ex.Message);
 
     }

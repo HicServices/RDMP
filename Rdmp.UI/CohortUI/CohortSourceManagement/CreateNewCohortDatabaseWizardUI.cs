@@ -101,7 +101,8 @@ partial class CreateNewCohortDatabaseWizardUI : RDMPUserControl
     {
         var bmp = CatalogueIcons.WhatIsACohort.ImageToBitmap();
 
-        var pb = new PictureBox(){
+        var pb = new PictureBox
+        {
             Image = bmp,
             Size = new System.Drawing.Size(bmp.Width,bmp.Height)
                 

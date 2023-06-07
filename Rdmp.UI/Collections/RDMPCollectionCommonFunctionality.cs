@@ -87,7 +87,7 @@ public partial class RDMPCollectionCommonFunctionality : IRefreshBusSubscriber
 
     public event EventHandler<MenuBuiltEventArgs> MenuBuilt;
          
-    private static readonly Dictionary<RDMPCollection,Guid> TreeGuids = new Dictionary<RDMPCollection, Guid>()
+    private static readonly Dictionary<RDMPCollection,Guid> TreeGuids = new Dictionary<RDMPCollection, Guid>
     {
         {RDMPCollection.Tables,new Guid("8f24d624-acad-45dd-862b-01b18dfdd9a2")},
         {RDMPCollection.Catalogue,new Guid("d0f72b03-63f1-487e-9afa-51c03afa7819")},
@@ -485,7 +485,8 @@ public partial class RDMPCollectionCommonFunctionality : IRefreshBusSubscriber
     private object _lastMenuObject;
     private DateTime _lastMenuBuilt = DateTime.Now;
     private ContextMenuStrip _menu;
-    HashSet<Keys> _shortcutKeys = new HashSet<Keys>(){
+    HashSet<Keys> _shortcutKeys = new HashSet<Keys>
+    {
         Keys.I,
         Keys.Delete,
         Keys.F1,

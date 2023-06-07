@@ -101,7 +101,7 @@ public class LoadProgress : DatabaseEntity, ILoadProgress, ICheckable
     public LoadProgress(ICatalogueRepository repository, LoadMetadata parent)
     {
         repository.InsertAndHydrate(this,  
-            new Dictionary<string, object>()
+            new Dictionary<string, object>
             {
                 {"Name", Guid.NewGuid().ToString()},
                 {"LoadMetadata_ID", parent.ID}

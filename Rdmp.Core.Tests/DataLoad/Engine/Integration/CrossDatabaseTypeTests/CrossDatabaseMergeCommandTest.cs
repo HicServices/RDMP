@@ -92,7 +92,7 @@ public class CrossDatabaseMergeCommandTest:FromToDatabaseTests
         logManager.CreateNewLoggingTaskIfNotExists("CrossDatabaseMergeCommandTest");
         var dli = logManager.CreateDataLoadInfo("CrossDatabaseMergeCommandTest", "tests", "running test", "", true);
 
-        var job = new ThrowImmediatelyDataLoadJob()
+        var job = new ThrowImmediatelyDataLoadJob
         {
             LoadMetadata = lmd,
             DataLoadInfo = dli,

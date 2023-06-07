@@ -24,7 +24,7 @@ class RunDleWindow : RunEngineWindow<DleOptions>
 
     private static DleOptions GetCommand(LoadMetadata lmd)
     {
-        return new DleOptions()
+        return new DleOptions
         {
             LoadMetadata = lmd.ID.ToString(),
             Iterative = false,

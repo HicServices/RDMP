@@ -63,7 +63,7 @@ public class ExternalCohortDefinitionData : IExternalCohortDefinitionData
     /// Describes the lack of available external data for an <see cref="ExtractableCohort"/> because the data has
     /// been deleted from the cohort database
     /// </summary>
-    public static IExternalCohortDefinitionData Orphan { get; } = new ExternalCohortDefinitionData()
+    public static IExternalCohortDefinitionData Orphan { get; } = new ExternalCohortDefinitionData
     {
         ExternalProjectNumber = -1,
         ExternalDescription = "Orphan Cohort",

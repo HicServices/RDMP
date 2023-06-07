@@ -148,7 +148,7 @@ public partial class DataReleaseUI : DataReleaseUI_Design
 
     private RDMPCommandLineOptions CommandGetter(CommandLineActivity activityRequested)
     {
-        return new ReleaseOptions()
+        return new ReleaseOptions
         {
             Pipeline = _pipelineSelectionUI1.Pipeline == null ? "0" : _pipelineSelectionUI1.Pipeline.ID.ToString(),
             Configurations = ToIdList(

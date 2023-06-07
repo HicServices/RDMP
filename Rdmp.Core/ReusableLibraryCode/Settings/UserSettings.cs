@@ -134,7 +134,7 @@ public static class UserSettings
     }
 
     /// <summary>
-    /// Set the amount of time (in milliseconds) that tooltips should take to appear in the tree collection views (e.g. list of Cataologues etc)
+    /// Set the amount of time (in milliseconds) that tooltips should take to appear in the tree collection views (e.g. list of Catalogues etc)
     /// </summary>
     public static int TooltipAppearDelay
     {

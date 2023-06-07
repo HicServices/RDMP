@@ -61,9 +61,9 @@ class ConsoleGuiSqlEditor : Window
         ColorScheme = ConsoleMainWindow.ColorScheme;
 
         // Tabs (query and results)
-        TabView = new TabView() { Width = Dim.Fill(), Height = Dim.Fill(), Y = 1 };
+        TabView = new TabView { Width = Dim.Fill(), Height = Dim.Fill(), Y = 1 };
 
-        textView = new SqlTextView()
+        textView = new SqlTextView
         {
             X = 0,
             Y = 0,
@@ -76,7 +76,7 @@ class ConsoleGuiSqlEditor : Window
 
         TabView.AddTab(queryTab = new Tab("Query", textView),true);
 
-        tableView = new TableView()
+        tableView = new TableView
         {
             X = 0,
             Y = 0,
@@ -386,7 +386,7 @@ class ConsoleGuiSqlEditor : Window
         {
             Autocomplete = new SqlAutocomplete();
 
-            Autocomplete.ColorScheme = new ColorScheme()
+            Autocomplete.ColorScheme = new ColorScheme
             {
                 Normal = Driver.MakeAttribute(Color.Black, Color.Blue),
                 Focus = Driver.MakeAttribute(Color.Black, Color.Cyan),

@@ -145,7 +145,7 @@ public class DatabaseTests
     public DatabaseTests()
     {
 
-        var opts = new PlatformDatabaseCreationOptions()
+        var opts = new PlatformDatabaseCreationOptions
         {
             ServerName = TestDatabaseSettings.ServerName,
             Prefix = TestDatabaseNames.Prefix,
@@ -158,35 +158,17 @@ public class DatabaseTests
             new RepositoryProvider(GetFreshYamlRepository()) :
             new PlatformDatabaseCreationRepositoryFinder(opts);
                     
-        if(CatalogueRepository is TableRepository cataRepo)
+        if(CatalogueRepository is TableRepository cataRepo && !cataRepo.DiscoveredServer.Exists())
         {
-            Console.WriteLine(
-                $"Expecting Unit Test Catalogue To Be At Server={cataRepo.DiscoveredServer.Name} Database={cataRepo.DiscoveredServer.GetCurrentDatabase()}");
-
-            if(!cataRepo.DiscoveredServer.Exists())
-            {
-                DealWithMissingTestDatabases(opts,cataRepo);
-            }
-                    
+            DealWithMissingTestDatabases(opts,cataRepo);
         }
-                
-
-        Console.WriteLine("Found Catalogue");
-
-            
 
         if(DataExportRepository is TableRepository tblRepo)
         {
-            Console.WriteLine(
-                $"Expecting Unit Test Data Export To Be At Server={tblRepo.DiscoveredServer.Name} Database= {tblRepo.DiscoveredServer.GetCurrentDatabase()}");
-            Assert.IsTrue(tblRepo.DiscoveredServer.Exists(), "Data Export database does not exist, run 'rdmp.exe install ...' to create it (Ensure that servername and prefix in TestDatabases.txt match those you provide to CreateDatabases.exe e.g. 'rdmp.exe install localhost\\sqlexpress TEST_')");
+            Assert.IsTrue(tblRepo.DiscoveredServer.Exists(),
+                "Data Export database does not exist, run 'rdmp.exe install ...' to create it (Ensure that server name and prefix in TestDatabases.txt match those you provide e.g. 'rdmp.exe install localhost\\sqlexpress TEST_')");
         }
-                
-
-        Console.WriteLine("Found DataExport");
-            
-        Console.Write(Environment.NewLine + Environment.NewLine + Environment.NewLine);
-
+        
         RunBlitzDatabases(RepositoryLocator);
 
         var defaults = CatalogueRepository;
@@ -214,7 +196,7 @@ public class DatabaseTests
                 if (k is "server" or "database" or "user id" or "password")
                     continue;
 
-                new ConnectionStringKeyword(CatalogueRepository, DatabaseType.MySql, k, builder[k].ToString());
+                _=new ConnectionStringKeyword(CatalogueRepository, DatabaseType.MySql, k, builder[k].ToString());
             }
             _discoveredMySqlServer = new DiscoveredServer(builder);
         }
@@ -262,7 +244,7 @@ public class DatabaseTests
 
     private SqlConnectionStringBuilder CreateServerPointerInCatalogue(IServerDefaults defaults, string prefix, string databaseName, PermissableDefaults defaultToSet,IPatcher patcher)
     {
-        var opts = new PlatformDatabaseCreationOptions()
+        var opts = new PlatformDatabaseCreationOptions
         {
             ServerName = TestDatabaseSettings.ServerName,
             Prefix = prefix,

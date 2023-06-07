@@ -17,7 +17,7 @@ namespace Rdmp.UI;
 public class ToolStripTimeout
 {
     ToolStripLabel timeoutLabel = new ToolStripLabel("Timeout:");
-    ToolStripTextBox tbTimeout = new ToolStripTextBox(){Text = "300"};
+    ToolStripTextBox tbTimeout = new ToolStripTextBox {Text = "300"};
     private int _timeout;
 
     public int Timeout

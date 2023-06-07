@@ -19,7 +19,7 @@ public class RDMPFormInitializationTests
     readonly List<string> _rdmpFormClassNames = new List<string>();
     readonly List<string> _fails = new List<string>();
 
-    List<string> methodIgnoreList = new List<string>()
+    List<string> methodIgnoreList = new List<string>
     {
         "if",
         "catch",

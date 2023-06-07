@@ -34,7 +34,7 @@ public class ExtractionOptions:ConcurrentRDMPCommandLineOptions
         get
         {
             yield return new Example("Check dataset 123 and 124 in configuration 32 for extraction using pipeline 2",
-                new ExtractionOptions()
+                new ExtractionOptions
                 {
                     Command = CommandLineActivity.check,
                     ExtractionConfiguration =  "32",

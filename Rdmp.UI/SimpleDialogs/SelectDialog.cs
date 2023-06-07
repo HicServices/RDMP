@@ -117,7 +117,7 @@ public partial class SelectDialog<T> : Form, IVirtualListDataSource where T : cl
     /// <summary>
     /// Object types that appear in the task bar as filterable types
     /// </summary>
-    private Dictionary<Type, RDMPCollection> EasyFilterTypesAndAssociatedCollections = new Dictionary<Type, RDMPCollection>()
+    private Dictionary<Type, RDMPCollection> EasyFilterTypesAndAssociatedCollections = new Dictionary<Type, RDMPCollection>
     {
         {typeof (Catalogue),RDMPCollection.Catalogue},
         {typeof (CatalogueItem),RDMPCollection.Catalogue},
@@ -136,7 +136,7 @@ public partial class SelectDialog<T> : Form, IVirtualListDataSource where T : cl
     /// Identifies which Types are checked by default when the dialog is shown when the given RDMPCollection has focus
     /// </summary>
     public Dictionary<RDMPCollection, Type[]> StartingEasyFilters
-        = new Dictionary<RDMPCollection, Type[]>()
+        = new Dictionary<RDMPCollection, Type[]>
         {
             {RDMPCollection.Catalogue, new[] {typeof (Catalogue)}},
             {RDMPCollection.Cohort, new[] {typeof (CohortIdentificationConfiguration)}},

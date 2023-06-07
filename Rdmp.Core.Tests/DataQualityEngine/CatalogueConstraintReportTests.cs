@@ -235,7 +235,7 @@ public class CatalogueConstraintReportTests : TestsRequiringAnExtractionConfigur
             
         Assert.IsTrue(report.CatalogueSupportsReport(_catalogue));
 
-        var ex = Assert.Throws<Exception>(() => report.Check(new ThrowImmediatelyCheckNotifier() {ThrowOnWarning = true}));
+        var ex = Assert.Throws<Exception>(() => report.Check(new ThrowImmediatelyCheckNotifier {ThrowOnWarning = true}));
         Assert.IsTrue(ex.Message == "Did not find ExtractionInformation for a column called hic_dataLoadRunID, this will prevent you from viewing the resulting report subdivided by data load batch (make sure you have this column and that it is marked as extractable)");
     }
     #endregion

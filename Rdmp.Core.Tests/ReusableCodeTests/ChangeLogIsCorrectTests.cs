@@ -16,7 +16,7 @@ internal class ChangeLogIsCorrectTests
     [Test]
     public void TestChangeLogContents()
     {
-        var opts = new EnumerationOptions() { MatchCasing = MatchCasing.CaseInsensitive };
+        var opts = new EnumerationOptions { MatchCasing = MatchCasing.CaseInsensitive };
         var dir = new DirectoryInfo(TestContext.CurrentContext.TestDirectory);
         var log = dir.GetFiles("changelog.md", opts).SingleOrDefault();
         while (log == null && dir.Parent != null)
