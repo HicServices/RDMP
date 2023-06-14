@@ -30,7 +30,7 @@ public class PackPluginRunner : IRunner
     public const string PluginPackageSuffix = ".nupkg";
     public const string PluginPackageManifest = ".nuspec";
 
-    Regex versionSuffix = new Regex("-.*$");
+    static readonly Regex VersionSuffix = new("-.*$");
 
     public PackPluginRunner(PackOptions packOpts)
     {
@@ -72,10 +72,10 @@ public class PackPluginRunner : IRunner
 
             var ns = doc.Root.GetDefaultNamespace();// XNamespace.Get("http://schemas.microsoft.com/packaging/2013/05/nuspec.xsd");
             var versionNode = doc.Root.Element(ns + "metadata").Element(ns + "version") ?? throw new Exception("Could not find version tag");
-            pluginVersion = new Version(versionSuffix.Replace(versionNode.Value, ""));
+            pluginVersion = new Version(VersionSuffix.Replace(versionNode.Value, ""));
 
             var rdmpDependencyNode = doc.Descendants(ns + "dependency").FirstOrDefault(e => e?.Attribute("id")?.Value == "HIC.RDMP.Plugin") ?? throw new Exception("Expected a single <dependency> tag with id = HIC.RDMP.Plugin (in order to determine plugin compatibility).  Ensure your nuspec file includes a dependency on this package.");
-            rdmpDependencyVersion = new Version(versionSuffix.Replace(rdmpDependencyNode?.Attribute("version")?.Value??"", ""));
+            rdmpDependencyVersion = new Version(VersionSuffix.Replace(rdmpDependencyNode?.Attribute("version")?.Value??"", ""));
         }
 
         var runningSoftwareVersion = typeof(PackPluginRunner).Assembly.GetName().Version;
