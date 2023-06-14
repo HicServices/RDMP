@@ -41,7 +41,6 @@ public class Startup
 {
     public SafeDirectoryCatalog MEFSafeDirectoryCatalog { get; private set; }
 
-    private readonly EnvironmentInfo _environmentInfo;
     public IRDMPPlatformRepositoryServiceLocator RepositoryLocator;
     public event FoundPlatformDatabaseHandler DatabaseFound = delegate { };
     public event MEFDownloadProgressHandler MEFFileDownloaded = delegate { };
@@ -56,14 +55,13 @@ public class Startup
     PatcherManager _patcherManager = new PatcherManager();
 
     #region Constructors
-    public Startup(EnvironmentInfo environmentInfo,IRDMPPlatformRepositoryServiceLocator repositoryLocator):this(environmentInfo)
+    public Startup(IRDMPPlatformRepositoryServiceLocator repositoryLocator):this()
     {
         RepositoryLocator = repositoryLocator;
     }
 
-    public Startup(EnvironmentInfo environmentInfo)
+    public Startup()
     {
-        _environmentInfo = environmentInfo;
         TypeGuesser.GuessSettingsFactory.Defaults.CharCanBeBoolean = false;
     }
     #endregion

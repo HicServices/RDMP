@@ -6,7 +6,6 @@
 
 using NUnit.Framework;
 using Rdmp.Core.ReusableLibraryCode.Checks;
-using Rdmp.Core.Startup;
 using Tests.Common;
 
 
@@ -17,7 +16,7 @@ class TestStartup : UnitTests
     [Test]
     public void TestStartupWithMemoryRepository()
     {
-        var s = new Rdmp.Core.Startup.Startup(new EnvironmentInfo(),RepositoryLocator);
+        var s = new Startup.Startup(RepositoryLocator);
         Assert.DoesNotThrow(()=>s.DoStartup(new ThrowImmediatelyCheckNotifier()));
     }
 

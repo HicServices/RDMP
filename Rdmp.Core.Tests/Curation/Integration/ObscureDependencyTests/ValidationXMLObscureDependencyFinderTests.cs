@@ -11,7 +11,6 @@ using NUnit.Framework;
 using Rdmp.Core.Curation.Data;
 using Rdmp.Core.MapsDirectlyToDatabaseTable.Versioning;
 using Rdmp.Core.ReusableLibraryCode.Checks;
-using Rdmp.Core.Startup;
 using Rdmp.Core.Validation;
 using Rdmp.Core.Validation.Constraints.Secondary;
 using Rdmp.Core.Validation.Dependency;
@@ -114,7 +113,7 @@ public class ValidationXMLObscureDependencyFinderTests: DatabaseTests
     [Test]
     public void Test_DeleteAColumnInfoThatIsReferenced()
     {
-        var startup = new Startup.Startup(new EnvironmentInfo(),RepositoryLocator);
+        var startup = new Startup.Startup(RepositoryLocator);
         startup.DoStartup(new IgnoreAllErrorsCheckNotifier());
 
         ColumnInfo l2ColumnInfo;
@@ -138,7 +137,7 @@ public class ValidationXMLObscureDependencyFinderTests: DatabaseTests
     public void TestRunningSetupMultipleTimes()
     {
 
-        var startup = new Startup.Startup(new EnvironmentInfo(),RepositoryLocator);
+        var startup = new Startup.Startup(RepositoryLocator);
         try
         {
             startup.DoStartup(new IgnoreAllErrorsCheckNotifier());

@@ -34,7 +34,7 @@ namespace Rdmp.Core.CommandExecution;
 /// 
 /// <para>Override GetCommandHelp and GetCommandName to change the presentation layer of the command (if applicable).</para>
 /// </summary>
-public abstract class BasicCommandExecution : ICommandExecution,IAtomicCommand
+public abstract class BasicCommandExecution : IAtomicCommand
 {
     /// <summary>
     /// The last command executed by RDMP (will be null at start)

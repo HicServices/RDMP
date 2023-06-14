@@ -82,7 +82,7 @@ public partial class RDMPTopMenuStripUI : RDMPUserControl
 
     private void BuildSwitchInstanceMenuItems()
     {
-        var args = RDMPBootStrapper<RDMPMainForm>.ApplicationArguments;
+        var args = RDMPBootStrapper.ApplicationArguments;
 
         // somehow app was launched without populating the load args
         if (args == null)

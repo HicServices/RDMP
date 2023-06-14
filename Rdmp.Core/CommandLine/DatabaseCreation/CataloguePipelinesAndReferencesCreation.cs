@@ -20,7 +20,6 @@ using Rdmp.Core.DataLoad.Engine.Pipeline.Destinations;
 using Rdmp.Core.DataLoad.Modules.DataFlowSources;
 using Rdmp.Core.Repositories;
 using Rdmp.Core.ReusableLibraryCode.Checks;
-using Rdmp.Core.Startup;
 
 namespace Rdmp.Core.CommandLine.DatabaseCreation;
 
@@ -45,7 +44,7 @@ public class CataloguePipelinesAndReferencesCreation
 
     private void DoStartup()
     {
-        var startup = new Startup.Startup(new EnvironmentInfo(),_repositoryLocator);
+        var startup = new Startup.Startup(_repositoryLocator);
         startup.DoStartup(new IgnoreAllErrorsCheckNotifier());
     }
     private void CreateServers()
