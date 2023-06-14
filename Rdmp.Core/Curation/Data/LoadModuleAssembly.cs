@@ -137,6 +137,7 @@ public class LoadModuleAssembly : DatabaseEntity, IInjectKnown<Plugin>
             using var s = zip.GetInputStream(e);
             using var ms2 = new MemoryStream();
             s.CopyTo(ms2);
+            ms2.Position = 0;
             yield return (e.Name,ms2);
         }
     }
