@@ -91,8 +91,9 @@ public class ExecuteCommandPrunePlugin : BasicCommandExecution
                 }
                 catch (Exception exception)
                 {
-                    logger.Error(exception,$"Ignoring corrupt or non-.Net file {e.FullName} due to {exception.Message}");
-                    throw;
+                    logger.Error(exception,$"Deleting corrupt or non-.Net file {e.FullName} due to {exception.Message}");
+                    e.Delete();
+                    continue;
                 }
 
                 if (AssemblyLoadContext.Default.Assemblies.Any(a => a.FullName?.Equals(assembly.FullName) == true))
