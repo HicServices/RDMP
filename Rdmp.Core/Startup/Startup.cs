@@ -240,7 +240,7 @@ public class Startup
             }
             catch (Exception e)
             {
-                var msg = $"Could not load plugin component {name}";
+                var msg = $"Could not load plugin component {name} due to {e.Message}";
                 Console.Error.WriteLine(msg);
                 notifier.OnCheckPerformed(new CheckEventArgs(msg,CheckResult.Warning,e));
             }
