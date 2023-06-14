@@ -165,7 +165,7 @@ internal class Program
 
         var checker = new NLogICheckNotifier(true, false);
 
-        var start = new Startup.Startup(RdmpCommandLineBootStrapper.GetEnvironmentInfo(), repo);
+        var start = new Startup.Startup(repo);
         var badTimes = false;
 
         start.DatabaseFound += (s, e) =>

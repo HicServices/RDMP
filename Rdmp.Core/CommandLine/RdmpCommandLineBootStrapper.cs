@@ -129,11 +129,10 @@ public class RdmpCommandLineBootStrapper
             if (!CheckRepo(repositoryLocator)) return REPO_ERROR;
 
             CatalogueRepository.SuppressHelpLoading = false;
-            opts.DoStartup(GetEnvironmentInfo(),
-                opts.LogStartup ? (ICheckNotifier)checker : new IgnoreAllErrorsCheckNotifier());
+            opts.DoStartup(opts.LogStartup ? checker : new IgnoreAllErrorsCheckNotifier());
         }
 
-        //if user wants to run checking chances are they don't want checks to fail becasue of errors logged during startup (MEF shows lots of errors!)
+        //if user wants to run checking chances are they don't want checks to fail because of errors logged during startup (MEF shows lots of errors!)
         if (opts.LogStartup && opts.Command == CommandLineActivity.check)
             checker.Worst = LogLevel.Info;
 
@@ -170,36 +169,35 @@ public class RdmpCommandLineBootStrapper
     /// </summary>
     public const int REPO_ERROR = 7;
 
-    public static EnvironmentInfo GetEnvironmentInfo() => new(PluginFolders.Main);
-
     public static bool CheckRepo(IRDMPPlatformRepositoryServiceLocator repo)
     {
         var logger = LogManager.GetCurrentClassLogger();
-        if (repo is LinkedRepositoryProvider l)
+        if (repo is not LinkedRepositoryProvider l) return true;
+        if (l.CatalogueRepository is TableRepository c)
         {
-            if (l.CatalogueRepository is TableRepository c)
-                try
-                {
-                    c.DiscoveredServer.TestConnection(15_000);
-                }
-                catch (Exception ex)
-                {
-                    logger.Error(ex,
-                        $"Could not reach {c.DiscoveredServer} (Database:{c.DiscoveredServer.GetCurrentDatabase()}).  Ensure that you have configured RDMP database connections in Databases.yaml correctly and/or that you have run install to setup platform databases");
-                    return false;
-                }
+            try
+            {
+                c.DiscoveredServer.TestConnection(15_000);
+            }
+            catch (Exception ex)
+            {
+                logger.Error(ex, $"Could not reach {c.DiscoveredServer} (Database:{c.DiscoveredServer.GetCurrentDatabase()}).  Ensure that you have configured RDMP database connections in Databases.yaml correctly and/or that you have run install to setup platform databases");
+                return false;
+            }
+        }
 
-            if (l.DataExportRepository is TableRepository d)
-                try
-                {
-                    d.DiscoveredServer.TestConnection();
-                }
-                catch (Exception ex)
-                {
-                    logger.Error(ex,
-                        $"Could not reach {d.DiscoveredServer} (Database:{d.DiscoveredServer.GetCurrentDatabase()}).  Ensure that you have configured RDMP database connections in Databases.yaml correctly and/or that you have run install to setup platform databases");
-                    return false;
-                }
+        if (l.DataExportRepository is TableRepository d)
+        {
+            try
+            {
+                d.DiscoveredServer.TestConnection();
+            }
+            catch (Exception ex)
+            {
+                logger.Error(ex, $"Could not reach {d.DiscoveredServer} (Database:{d.DiscoveredServer.GetCurrentDatabase()}).  Ensure that you have configured RDMP database connections in Databases.yaml correctly and/or that you have run install to setup platform databases");
+                return false;
+
+            }
         }
 
         return true;

@@ -9,6 +9,7 @@ using System.IO;
 using System.Runtime.InteropServices;
 using CommandLine;
 using Rdmp.Core.Curation.Data;
+using Rdmp.Core.Repositories;
 using Rdmp.Core.ReusableLibraryCode;
 using Rdmp.Core.ReusableLibraryCode.Checks;
 using Rdmp.Core.Startup;
@@ -63,11 +64,14 @@ internal static class Program
         }
 
         var bootStrapper =
-            new RDMPBootStrapper<RDMPMainForm>(
-                new EnvironmentInfo(PluginFolders.Main | PluginFolders.Windows),
-                arg);
+            new RDMPBootStrapper(arg, locator =>
+            {
+                var form = new RDMPMainForm();
+                form.SetRepositoryLocator(locator);
+                return form;
+            });
 
-        bootStrapper.Show(false);
+        bootStrapper.Show();
         return 0;
     }
 }

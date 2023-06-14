@@ -120,12 +120,12 @@ public partial class RDMPMainForm : RDMPForm
             var database = connectedTo.DiscoveredServer?.GetCurrentDatabase();
             var instanceDescription = "";
 
-            var connectionStringsFileLoaded =
-                RDMPBootStrapper<RDMPMainForm>.ApplicationArguments?.ConnectionStringsFileLoaded;
+            var connectionStringsFileLoaded = RDMPBootStrapper.ApplicationArguments?.ConnectionStringsFileLoaded;
             if (connectionStringsFileLoaded != null)
                 instanceDescription =
                     $" - {connectionStringsFileLoaded.Name ?? connectionStringsFileLoaded.FileLoaded.Name}";
-            if (database != null)
+            }
+            if (database != null) 
                 _connectedTo = $"({database.GetRuntimeName()} on {database.Server.Name}){instanceDescription}";
         }
 
@@ -144,12 +144,13 @@ public partial class RDMPMainForm : RDMPForm
         //if there is no persist file or user wants to show the home screen always on startup
         if (!_persistenceFile.Exists || UserSettings.ShowHomeOnStartup)
             _windowManager.PopHome();
-        else
+        }
+        else if (_persistenceFile.Exists)
+        {
             try
             {
-                if (_persistenceFile.Exists)
-                    LoadFromXml(new FileStream(_persistenceFile.FullName, FileMode.Open));
                 //load the state using the method
+                LoadFromXml(new FileStream(_persistenceFile.FullName, FileMode.Open));
             }
             catch (Exception ex)
             {
@@ -170,10 +171,10 @@ public partial class RDMPMainForm : RDMPForm
     public override string Text
     {
         get => base.Text;
-        set => base.Text = (value + " v" + _version + " " + _connectedTo).Trim();
+        set => base.Text = $"{value} v{_version} {_connectedTo}".Trim();
     }
 
-    public void LoadFromXml(Stream stream)
+    private void LoadFromXml(Stream stream)
     {
         if (dockPanel1.DocumentStyle == DocumentStyle.SystemMdi)
             foreach (var form in MdiChildren)
@@ -181,7 +182,7 @@ public partial class RDMPMainForm : RDMPForm
         else
             foreach (var document in dockPanel1.DocumentsToArray())
             {
-                // IMPORANT: dispose all panes.
+                // IMPORTANT: dispose all panes.
                 document.DockHandler.DockPanel = null;
                 document.DockHandler.Close();
             }
@@ -209,22 +210,12 @@ public partial class RDMPMainForm : RDMPForm
 
         // You might not want to use the outer using statement that I have
         // I wasn't sure how long you would need the MemoryStream object    
-        using (var ms = new MemoryStream())
-        {
-            var sw = new StreamWriter(ms, uniEncoding);
-            try
-            {
-                sw.Write(target.LayoutData);
-                sw.Flush(); //otherwise you are risking empty stream
-                ms.Seek(0, SeekOrigin.Begin);
-
-                LoadFromXml(ms);
-            }
-            finally
-            {
-                sw.Dispose();
-            }
-        }
+        using var ms = new MemoryStream();
+        using var sw = new StreamWriter(ms, uniEncoding);
+        sw.Write(target.LayoutData);
+        sw.Flush();//otherwise you are risking empty stream
+        ms.Seek(0, SeekOrigin.Begin);
+        LoadFromXml(ms);
     }
 
 
@@ -232,21 +223,10 @@ public partial class RDMPMainForm : RDMPForm
     {
         var uniEncoding = new UnicodeEncoding();
 
-        using (var ms = new MemoryStream())
-        {
-            dockPanel1.SaveAsXml(ms, uniEncoding);
-
-            ms.Seek(0, SeekOrigin.Begin);
-
-            try
-            {
-                return new StreamReader(ms).ReadToEnd();
-            }
-            finally
-            {
-                ms.Dispose();
-            }
-        }
+        using var ms = new MemoryStream();
+        dockPanel1.SaveAsXml(ms, uniEncoding);
+        ms.Seek(0, SeekOrigin.Begin);
+        return new StreamReader(ms).ReadToEnd();
     }
 
     private void CloseForm(object sender, FormClosingEventArgs e)
@@ -265,13 +245,10 @@ public partial class RDMPMainForm : RDMPForm
 
         try
         {
-            if (_persistenceFile != null)
-            {
-                if (!_persistenceFile.Directory.Exists)
-                    _persistenceFile.Directory.Create();
-
-                dockPanel1.SaveAsXml(_persistenceFile.FullName); //save when Form closes
-            }
+            if (_persistenceFile == null) return;
+            if (_persistenceFile.Directory?.Exists==false)
+                _persistenceFile.Directory.Create();
+            dockPanel1.SaveAsXml(_persistenceFile.FullName); //save when Form closes
         }
         catch (Exception ex)
         {

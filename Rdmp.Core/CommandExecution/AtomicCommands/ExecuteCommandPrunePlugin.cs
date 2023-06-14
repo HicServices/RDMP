@@ -26,13 +26,13 @@ namespace Rdmp.Core.CommandExecution.AtomicCommands;
 /// </summary>
 public class ExecuteCommandPrunePlugin : BasicCommandExecution
 {
-    private string file;
+    private string _file;
 
 
     [UseWithObjectConstructor]
-    public ExecuteCommandPrunePlugin(string file) : base()
+    public ExecuteCommandPrunePlugin(string file)
     {
-        this.file = file;
+        _file = file;
     }
 
     /// <summary>
@@ -49,19 +49,17 @@ public class ExecuteCommandPrunePlugin : BasicCommandExecution
         base.Execute();
 
         // make runtime decision about the file to run on
-        if (file == null && BasicActivator != null)
-            file = BasicActivator.SelectFile("Select plugin to prune")?.FullName;
+        _file ??= BasicActivator?.SelectFile("Select plugin to prune")?.FullName;
 
-        if (file == null) return;
+        if(_file == null)
+            return;
 
         var logger = LogManager.GetCurrentClassLogger();
 
-        var main = new Regex($@"^/?lib/{EnvironmentInfo.MainSubDir}/.*\.dll$",
-            RegexOptions.Compiled | RegexOptions.CultureInvariant);
-        var windows = new Regex($@"^/?lib/{EnvironmentInfo.WindowsSubDir}/.*\.dll$",
-            RegexOptions.Compiled | RegexOptions.CultureInvariant);
-        var context = new AssemblyLoadContext(nameof(ExecuteCommandPrunePlugin), true);
-        using (var zf = ZipFile.Open(file, ZipArchiveMode.Update))
+        Regex main = new ($@"/{EnvironmentInfo.MainSubDir}/.*\.dll$",RegexOptions.Compiled|RegexOptions.CultureInvariant);
+        Regex windows = new($@"/{EnvironmentInfo.WindowsSubDir}/.*\.dll$", RegexOptions.Compiled | RegexOptions.CultureInvariant);
+        AssemblyLoadContext context = new(nameof(ExecuteCommandPrunePlugin),true);
+        using (var zf = ZipFile.Open(_file, ZipArchiveMode.Update))
         {
             var current = UsefulStuff.GetExecutableDirectory();
 
