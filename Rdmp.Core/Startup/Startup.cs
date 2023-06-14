@@ -248,11 +248,21 @@ public class Startup
     private void LoadMEF(ICatalogueRepository catalogueRepository, ICheckNotifier notifier)
     {
         catalogueRepository.MEF ??= new MEF();
-        foreach (var dll in catalogueRepository.PluginManager.GetCompatiblePlugins()
+        foreach (var (name, body) in catalogueRepository.PluginManager.GetCompatiblePlugins()
                      .SelectMany(p => p.LoadModuleAssemblies).SelectMany(a => a.GetContents()))
         {
-            AssemblyLoadContext.Default.LoadFromStream(dll);
-            dll.Dispose();
+            try
+            {
+                AssemblyLoadContext.Default.LoadFromStream(body);
+            }
+            catch (Exception e)
+            {
+                notifier.OnCheckPerformed(new CheckEventArgs($"Could not load plugin component {name}",CheckResult.Warning,e));
+            }
+            finally
+            {
+                body.Dispose();
+            }
         }
         //AssemblyResolver.SetupAssemblyResolver(toLoad.ToArray());
             

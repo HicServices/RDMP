@@ -125,7 +125,7 @@ public class LoadModuleAssembly : DatabaseEntity, IInjectKnown<Plugin>
     /// <summary>
     /// Unpack the plugin DLL files, excluding any Windows specific dlls when not running on Windows
     /// </summary>
-    public IEnumerable<MemoryStream> GetContents()
+    public IEnumerable<ValueTuple<string,MemoryStream>> GetContents()
     {
         var isWin = Environment.OSVersion.Platform == PlatformID.Win32NT;
         using var ms = new MemoryStream(Bin);
@@ -137,7 +137,7 @@ public class LoadModuleAssembly : DatabaseEntity, IInjectKnown<Plugin>
             using var s = zip.GetInputStream(e);
             using var ms2 = new MemoryStream();
             s.CopyTo(ms2);
-            yield return ms2;
+            yield return (e.Name,ms2);
         }
     }
         
