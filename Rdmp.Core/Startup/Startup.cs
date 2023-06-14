@@ -257,7 +257,9 @@ public class Startup
             }
             catch (Exception e)
             {
-                notifier.OnCheckPerformed(new CheckEventArgs($"Could not load plugin component {name}",CheckResult.Warning,e));
+                var msg = $"Could not load plugin component {name}";
+                Console.Error.WriteLine(msg);
+                notifier.OnCheckPerformed(new CheckEventArgs(msg,CheckResult.Warning,e));
             }
             finally
             {
