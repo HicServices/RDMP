@@ -90,8 +90,8 @@ public class ExecuteCommandPrunePlugin : BasicCommandExecution
                 }
                 catch (Exception exception)
                 {
-                    logger.Warn($"Ignoring corrupt or non-.Net file {e.FullName} due to {exception.Message}");
-                    continue;
+                    logger.Error(exception,$"Ignoring corrupt or non-.Net file {e.FullName} due to {exception.Message}");
+                    throw;
                 }
 
                 if (AssemblyLoadContext.Default.Assemblies.Any(a => a.FullName?.Equals(assembly.FullName) == true))
@@ -103,14 +103,23 @@ public class ExecuteCommandPrunePlugin : BasicCommandExecution
 
                 if (main.IsMatch(e.FullName))
                     inMain.Add(e);
-                else if (windows.IsMatch(e.FullName)) inWindows.Add(e);
+                }
+                else if (windows.IsMatch(e.FullName))
+                {
+                    inWindows.Add(e);
+                }
+                else
+                {
+                    logger.Warn($"Unclassified plugin component {e.FullName}");
+                }
             }
 
-            foreach (var dup in inWindows.Where(e => inMain.Any(o => o.Name.Equals(e.Name))).ToArray())
+            foreach (var dup in inWindows.Where(e => inMain.Any(o => o.Name.Equals(e.Name))))
             {
                 logger.Info($"Deleting '{dup.FullName}' because it is already in 'main' subdir");
                 dup.Delete();
             }
+            context.Unload();
         }
 
         BasicActivator?.Show("Prune Completed");
