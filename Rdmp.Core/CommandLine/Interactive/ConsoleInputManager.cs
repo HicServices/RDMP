@@ -371,12 +371,9 @@ public class ConsoleInputManager : BasicActivateItems
 
     public override bool YesNo(DialogArgs args, out bool chosen)
     {
-        var result = GetString(args, new List<string> { "Yes", "No", "Cancel" });
-
-
+        var result = GetString(args, new List<string> { "Yes","No","Cancel"});
         chosen = result == "Yes";
-
-        //user made a noncancel decision?
+        //user made a non-cancel decision?
         return result != "Cancel" && !string.IsNullOrWhiteSpace(result);
     }
 
