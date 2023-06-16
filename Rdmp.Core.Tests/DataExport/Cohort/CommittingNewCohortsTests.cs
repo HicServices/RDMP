@@ -78,7 +78,7 @@ public class CommittingNewCohortsTests : TestsRequiringACohort
     [Test]
     public void CommittingNewCohortFile_CallPipeline()
     {
-        var listener = new ThrowImmediatelyDataLoadEventListener();
+        var listener = ThrowImmediatelyDataLoadEventListener.Quiet;
 
         var proj = new Project(DataExportRepository, projName)
         {

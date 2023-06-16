@@ -55,7 +55,7 @@ class DelimitedFileSourceTests_Unresolveable: DelimitedFileSourceTestsBase
 
                 break;
             default:
-                throw new ArgumentOutOfRangeException("strategy");
+                throw new ArgumentOutOfRangeException(nameof(strategy));
         }
     }
         
@@ -70,14 +70,14 @@ class DelimitedFileSourceTests_Unresolveable: DelimitedFileSourceTestsBase
             "Frank,Is the greatest,100",
             "Frank,Is the greatest,100");
 
-        Action<DelimitedFlatFileDataFlowSource> adjust = (a) =>
+        void Adjust(DelimitedFlatFileDataFlowSource a)
         {
             a.BadDataHandlingStrategy = BadDataHandlingStrategy.ThrowException;
             a.ThrowOnEmptyFiles = true;
             a.IgnoreQuotes = true;
-        };
+        }
 
-        var dt2 = RunGetChunk(file, adjust);
+        var dt2 = RunGetChunk(file, Adjust);
         Assert.AreEqual(5, dt2.Rows.Count);
         Assert.AreEqual("\"Is the greatest", dt2.Rows[1]["Description"]);
     }

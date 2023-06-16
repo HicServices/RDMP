@@ -27,12 +27,12 @@ public class ThrowImmediatelyDataLoadJob: IDataLoadJob
 
     public ThrowImmediatelyDataLoadJob()
     {
-        _listener = new ThrowImmediatelyDataLoadEventListener();
+        _listener = ThrowImmediatelyDataLoadEventListener.Quiet;
     }
 
     public ThrowImmediatelyDataLoadJob(DiscoveredServer liveServer)
     {
-        _listener = new ThrowImmediatelyDataLoadEventListener();
+        _listener = ThrowImmediatelyDataLoadEventListener.Quiet;
         Configuration = new HICDatabaseConfiguration(liveServer);
     }
 
@@ -42,7 +42,7 @@ public class ThrowImmediatelyDataLoadJob: IDataLoadJob
     }
     public ThrowImmediatelyDataLoadJob(HICDatabaseConfiguration configuration, params ITableInfo[] regularTablesToLoad)
     {
-        _listener = new ThrowImmediatelyDataLoadEventListener();
+        _listener = ThrowImmediatelyDataLoadEventListener.Quiet;
         RegularTablesToLoad = new List<ITableInfo>(regularTablesToLoad);
         Configuration = configuration;
     }

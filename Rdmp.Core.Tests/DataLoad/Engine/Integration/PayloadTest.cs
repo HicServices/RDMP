@@ -60,9 +60,9 @@ public class PayloadTest:DatabaseTests
 
         var config = new HICDatabaseConfiguration(GetCleanedServer(FAnsi.DatabaseType.MicrosoftSQLServer).Server);
         var factory = new HICDataLoadFactory(lmd, config, new HICLoadConfigurationFlags(), CatalogueRepository, lm);
-        var execution = factory.Create(new ThrowImmediatelyDataLoadEventListener());
+        var execution = factory.Create(ThrowImmediatelyDataLoadEventListener.Quiet);
 
-        var proceedure = new DataLoadProcess(RepositoryLocator, lmd, null, lm, new ThrowImmediatelyDataLoadEventListener(), execution, config);
+        var proceedure = new DataLoadProcess(RepositoryLocator, lmd, null, lm, ThrowImmediatelyDataLoadEventListener.Quiet, execution, config);
 
         proceedure.Run(new GracefulCancellationToken(), payload);
 

@@ -32,17 +32,8 @@ public class ExecuteCommandAddCatalogueToCohortIdentificationSetContainer : Basi
 
     public bool SkipMandatoryFilterCreation { get; set; }
 
-    public AggregateConfiguration AggregateCreatedIfAny
-    {
-        get
-        {
-            if (_postImportCommand == null)
-                return null;
+    public AggregateConfiguration AggregateCreatedIfAny => _postImportCommand?.AggregateCreatedIfAny;
 
-            return _postImportCommand.AggregateCreatedIfAny;
-        }
-    }
-        
     [UseWithObjectConstructor]
     public ExecuteCommandAddCatalogueToCohortIdentificationSetContainer(IBasicActivateItems activator,
 

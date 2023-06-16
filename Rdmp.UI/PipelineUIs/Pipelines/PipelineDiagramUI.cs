@@ -148,7 +148,7 @@ public partial class PipelineDiagramUI : UserControl
                     _pipelineFactory = new DataFlowPipelineEngineFactory(_useCase, _pipeline);
 
                     //create it
-                    var pipelineInstance = _pipelineFactory.Create(pipeline, new ThrowImmediatelyDataLoadEventListener());
+                    var pipelineInstance = _pipelineFactory.Create(pipeline, ThrowImmediatelyDataLoadEventListener.Quiet);
                     
                     //initialize it (unless it is design time)
                     if(!_useCase.IsDesignTime)
@@ -245,7 +245,7 @@ public partial class PipelineDiagramUI : UserControl
             {
                 if (!_useCase.IsDesignTime)
                 {
-                    _useCase.GetContext().PreInitializeGeneric(new ThrowImmediatelyDataLoadEventListener(), value, _useCase.GetInitializationObjects().ToArray());
+                    _useCase.GetContext().PreInitializeGeneric(ThrowImmediatelyDataLoadEventListener.Quiet, value, _useCase.GetInitializationObjects().ToArray());
                     component.Check();
                 }
 
@@ -312,7 +312,7 @@ public partial class PipelineDiagramUI : UserControl
         try
         {
             if (!_useCase.IsDesignTime)
-                _useCase.GetContext().PreInitializeGeneric(new ThrowImmediatelyDataLoadEventListener(), component.Value, _useCase.GetInitializationObjects().ToArray());
+                _useCase.GetContext().PreInitializeGeneric(ThrowImmediatelyDataLoadEventListener.Quiet, component.Value, _useCase.GetInitializationObjects().ToArray());
         }
         catch (Exception e)
         {

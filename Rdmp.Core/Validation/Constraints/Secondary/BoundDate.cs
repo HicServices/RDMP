@@ -31,9 +31,9 @@ public class BoundDate : Bound
         if(value == null)
             return null;
 
-        if (value is string)
+        if (value is string stringValue)
         {
-            value = SafeConvertToDate(value as string);
+            value = SafeConvertToDate(stringValue);
             
             if (!((DateTime?)value).HasValue)
                 return null;
@@ -52,28 +52,7 @@ public class BoundDate : Bound
 
     private bool IsWithinRange(DateTime d)
     {
-        if (Inclusive)
-        {
-            if(Lower != null)
-                if (d < Lower)
-                    return false;
-
-            if(Upper != null)
-                if (d > Upper)
-                    return false;
-        }
-        else
-        {
-            if (Lower != null)
-                if (d <= Lower)
-                    return false;
-
-            if (Upper != null)
-                if (d >= Upper)
-                    return false;
-        }
-
-        return true;
+        return Inclusive ? d >= Lower && d <= Upper : d > Lower && d < Upper;
     }
 
     private bool IsWithinRange(DateTime d, object[] otherColumns, string[] otherColumnNames)

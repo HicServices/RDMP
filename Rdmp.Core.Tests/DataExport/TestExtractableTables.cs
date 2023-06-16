@@ -43,8 +43,7 @@ public class TestExtractableTables : TestsRequiringACohort
         }
         finally
         {
-            if (eds != null)
-                eds.DeleteInDatabase();
+            eds?.DeleteInDatabase();
 
             cata.DeleteInDatabase();
         }

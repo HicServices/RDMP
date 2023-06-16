@@ -32,7 +32,7 @@ class MetadataReportTests:UnitTests
             
         reporter.RequestCatalogueImages += (s) => { return new BitmapWithDescription[] {new BitmapWithDescription(bmp,"MyPicture","Something interesting about it"),  }; };
 
-        var file = reporter.GenerateWordFile(new ThrowImmediatelyDataLoadEventListener(), false);
+        var file = reporter.GenerateWordFile(ThrowImmediatelyDataLoadEventListener.Quiet, false);
             
         Assert.IsNotNull(file);
         Assert.IsTrue(File.Exists(file.FullName));
@@ -56,7 +56,7 @@ class MetadataReportTests:UnitTests
         var reporter = new MetadataReport(Repository, 
             new MetadataReportArgs(new[] {ei.CatalogueItem.Catalogue})
         );
-        var file = reporter.GenerateWordFile(new ThrowImmediatelyDataLoadEventListener(), false);
+        var file = reporter.GenerateWordFile(ThrowImmediatelyDataLoadEventListener.Quiet, false);
 
         Assert.IsNotNull(file);
         Assert.IsTrue(File.Exists(file.FullName));

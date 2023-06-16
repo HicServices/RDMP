@@ -210,7 +210,7 @@ public class FixedWidthTests :DatabaseTests
                     ex = Assert.Throws<FlatFileLoadException>(() => attacher.Attach(new ThrowImmediatelyDataLoadJob(), new GracefulCancellationToken()));
                     break;
                 default:
-                    throw new ArgumentOutOfRangeException("testCase");
+                    throw new ArgumentOutOfRangeException(nameof(testCase));
             }
               
             //Assert the expected error result is the real one

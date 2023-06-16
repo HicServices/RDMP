@@ -57,7 +57,7 @@ public class RenameProvider
         if (e.Column != _columnThatSupportsRenaming)
             return;
 
-        if (!(e.RowObject is INamed) || e.RowObject is ITableInfo)
+        if (e.RowObject is not INamed or ITableInfo)
             e.Cancel = true;
     }
 

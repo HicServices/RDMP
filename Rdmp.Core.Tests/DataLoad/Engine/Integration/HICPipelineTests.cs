@@ -262,7 +262,7 @@ public class HICPipelineTests : DatabaseTests
             };
 
             //run checks (with ignore errors if we are sending dodgy credentials)
-            new RunnerFactory().CreateRunner(new ThrowImmediatelyActivator(RepositoryLocator),options).Run(RepositoryLocator, new ThrowImmediatelyDataLoadEventListener(), 
+            new RunnerFactory().CreateRunner(new ThrowImmediatelyActivator(RepositoryLocator),options).Run(RepositoryLocator, ThrowImmediatelyDataLoadEventListener.Quiet, 
                 sendDodgyCredentials?
                     (ICheckNotifier) new IgnoreAllErrorsCheckNotifier(): new AcceptAllCheckNotifier(), new GracefulCancellationToken());
 
@@ -273,12 +273,12 @@ public class HICPipelineTests : DatabaseTests
                 
             if (sendDodgyCredentials)
             {
-                var ex = Assert.Throws<Exception>(()=>runner.Run(RepositoryLocator, new ThrowImmediatelyDataLoadEventListener(), new AcceptAllCheckNotifier(), new GracefulCancellationToken()));
+                var ex = Assert.Throws<Exception>(()=>runner.Run(RepositoryLocator, ThrowImmediatelyDataLoadEventListener.Quiet, new AcceptAllCheckNotifier(), new GracefulCancellationToken()));
                 Assert.IsTrue(ex.InnerException.Message.Contains("Login failed for user 'IveGotaLovely'"),"Error message did not contain expected text");
                 return;
             }
             else
-                runner.Run(RepositoryLocator, new ThrowImmediatelyDataLoadEventListener(), new AcceptAllCheckNotifier(), new GracefulCancellationToken());
+                runner.Run(RepositoryLocator, ThrowImmediatelyDataLoadEventListener.Quiet, new AcceptAllCheckNotifier(), new GracefulCancellationToken());
 
 
             var archiveFile = loadDirectory.ForArchiving.EnumerateFiles("*.zip").MaxBy(f=>f.FullName);

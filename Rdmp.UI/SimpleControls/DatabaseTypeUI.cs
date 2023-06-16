@@ -52,7 +52,7 @@ public partial class DatabaseTypeUI : UserControl
         ddDatabaseType.Enabled = false;
     }
 
-    private bool changing = false;
+    private bool changing;
     private void ddDatabaseType_SelectedIndexChanged(object sender, EventArgs e)
     {
         if(changing )
@@ -62,8 +62,7 @@ public partial class DatabaseTypeUI : UserControl
 
         DatabaseType = (DatabaseType)ddDatabaseType.SelectedItem;
 
-        if(DatabaseTypeChanged != null)
-            DatabaseTypeChanged(this,EventArgs.Empty);
+        DatabaseTypeChanged?.Invoke(this,EventArgs.Empty);
 
         changing = false;
     }

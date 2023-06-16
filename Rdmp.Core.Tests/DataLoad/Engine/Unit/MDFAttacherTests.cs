@@ -85,7 +85,7 @@ public class MDFAttacherTests : DatabaseTests
             //should be a warning since overwriting is default behaviour
             var ex = Assert.Throws<Exception>(()=>
                 attacher.Attach(
-                    new ThrowImmediatelyDataLoadJob(new ThrowImmediatelyDataLoadEventListener {ThrowOnWarning=true})
+                    new ThrowImmediatelyDataLoadJob(ThrowImmediatelyDataLoadEventListener.QuietPicky)
                     , new GracefulCancellationToken())
             );
 

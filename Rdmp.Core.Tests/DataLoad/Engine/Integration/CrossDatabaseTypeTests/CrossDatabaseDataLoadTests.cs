@@ -203,10 +203,10 @@ MrMurder,2001-01-01,Yella");
 
         try
         {
-            var exe = loadFactory.Create(new ThrowImmediatelyDataLoadEventListener());
+            var exe = loadFactory.Create(ThrowImmediatelyDataLoadEventListener.Quiet);
             
             var exitCode = exe.Run(
-                new DataLoadJob(RepositoryLocator,"Go go go!", logManager, lmd, projectDirectory,new ThrowImmediatelyDataLoadEventListener(),dbConfig),
+                new DataLoadJob(RepositoryLocator,"Go go go!", logManager, lmd, projectDirectory,ThrowImmediatelyDataLoadEventListener.Quiet,dbConfig),
                 new GracefulCancellationToken());
 
             Assert.AreEqual(ExitCodeType.Success,exitCode);
@@ -386,10 +386,10 @@ MrMurder,2001-01-01,Yella");
         );
         try
         {
-            var exe = loadFactory.Create(new ThrowImmediatelyDataLoadEventListener());
+            var exe = loadFactory.Create(ThrowImmediatelyDataLoadEventListener.Quiet);
 
             var exitCode = exe.Run(
-                new DataLoadJob(RepositoryLocator,"Go go go!", logManager, lmd, projectDirectory, new ThrowImmediatelyDataLoadEventListener(),config),
+                new DataLoadJob(RepositoryLocator,"Go go go!", logManager, lmd, projectDirectory, ThrowImmediatelyDataLoadEventListener.Quiet,config),
                 new GracefulCancellationToken());
 
             Assert.AreEqual(ExitCodeType.Success, exitCode);
@@ -449,7 +449,7 @@ class CustomINameDatabasesAndTablesDuringLoads:INameDatabasesAndTablesDuringLoad
             case LoadBubble.Archive:
                 return rootDatabaseName;
             default:
-                throw new ArgumentOutOfRangeException("convention");
+                throw new ArgumentOutOfRangeException(nameof(convention));
         }
     }
 

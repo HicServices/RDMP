@@ -142,7 +142,7 @@ public class FlatFileAttacherTests : DatabaseTests
             Assert.AreEqual("Ok", r["name2"]);
         }
             
-        attacher.LoadCompletedSoDispose(ExitCodeType.Success,new ThrowImmediatelyDataLoadEventListener());
+        attacher.LoadCompletedSoDispose(ExitCodeType.Success,ThrowImmediatelyDataLoadEventListener.Quiet);
 
         File.Delete(filename);
     }
@@ -196,7 +196,7 @@ public class FlatFileAttacherTests : DatabaseTests
             Assert.AreEqual(new DateTime(2002,01,13), r["name2"]);
         }
             
-        attacher.LoadCompletedSoDispose(ExitCodeType.Success,new ThrowImmediatelyDataLoadEventListener());
+        attacher.LoadCompletedSoDispose(ExitCodeType.Success,ThrowImmediatelyDataLoadEventListener.Quiet);
 
         File.Delete(filename);
     }
@@ -238,7 +238,7 @@ public class FlatFileAttacherTests : DatabaseTests
             Assert.AreEqual("Crusher", r["name2"]);
         }
 
-        attacher.LoadCompletedSoDispose(ExitCodeType.Success, new ThrowImmediatelyDataLoadEventListener());
+        attacher.LoadCompletedSoDispose(ExitCodeType.Success, ThrowImmediatelyDataLoadEventListener.Quiet);
 
         File.Delete(filename);
 
@@ -296,7 +296,7 @@ public class FlatFileAttacherTests : DatabaseTests
             Assert.AreEqual("Crusher", r["name2"]);
         }
 
-        attacher.LoadCompletedSoDispose(ExitCodeType.Success, new ThrowImmediatelyDataLoadEventListener());
+        attacher.LoadCompletedSoDispose(ExitCodeType.Success, ThrowImmediatelyDataLoadEventListener.Quiet);
 
         File.Delete(filename);
 
@@ -354,7 +354,7 @@ public class FlatFileAttacherTests : DatabaseTests
             Assert.AreEqual("Hollyw9ood", r["name2"]);
         }
 
-        attacher.LoadCompletedSoDispose(ExitCodeType.Success, new ThrowImmediatelyDataLoadEventListener());
+        attacher.LoadCompletedSoDispose(ExitCodeType.Success, ThrowImmediatelyDataLoadEventListener.Quiet);
 
         File.Delete(filename);
 
@@ -404,7 +404,7 @@ public class FlatFileAttacherTests : DatabaseTests
             Assert.AreEqual("Hollyw9ood", r["name2"]);
         }
 
-        attacher.LoadCompletedSoDispose(ExitCodeType.Success, new ThrowImmediatelyDataLoadEventListener());
+        attacher.LoadCompletedSoDispose(ExitCodeType.Success, ThrowImmediatelyDataLoadEventListener.Quiet);
 
         File.Delete(filename);
 
@@ -462,7 +462,7 @@ public class FlatFileAttacherTests : DatabaseTests
         var exitCode = attacher.Attach(job, new GracefulCancellationToken());
         Assert.AreEqual(ExitCodeType.Success, exitCode);
             
-        attacher.LoadCompletedSoDispose(ExitCodeType.Success, new ThrowImmediatelyDataLoadEventListener());
+        attacher.LoadCompletedSoDispose(ExitCodeType.Success, ThrowImmediatelyDataLoadEventListener.Quiet);
 
         Assert.AreEqual(new DateTime(2001,1,27),tbl.GetDataTable().Rows[0][0]);
 
@@ -480,7 +480,7 @@ public class FlatFileAttacherTests : DatabaseTests
 
         source.TableToLoad = tiNotInLoad;
 
-        var job = new ThrowImmediatelyDataLoadJob(new ThrowImmediatelyDataLoadEventListener { ThrowOnWarning = true})
+        var job = new ThrowImmediatelyDataLoadJob(ThrowImmediatelyDataLoadEventListener.QuietPicky)
             {
                 RegularTablesToLoad = new System.Collections.Generic.List<ITableInfo>(new []{tiInLoad })
             };

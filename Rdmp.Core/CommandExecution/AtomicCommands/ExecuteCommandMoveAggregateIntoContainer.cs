@@ -45,9 +45,8 @@ public class ExecuteCommandMoveAggregateIntoContainer : BasicCommandExecution
 
         //remove it from its old container
         var oldContainer = _sourceAggregateCommand.ContainerIfAny;
-            
-        if(oldContainer != null)
-            oldContainer.RemoveChild(_sourceAggregateCommand.Aggregate);
+
+        oldContainer?.RemoveChild(_sourceAggregateCommand.Aggregate);
 
         //add  it to the new container
         _targetCohortAggregateContainer.AddChild(_sourceAggregateCommand.Aggregate,0);

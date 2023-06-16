@@ -118,7 +118,7 @@ class RemoteTableAttacherTests : DatabaseTests
 
             var dbConfiguration = new HICDatabaseConfiguration(lmd, RdmpMockFactory.Mock_INameDatabasesAndTablesDuringLoads(db, "table2"));
 
-            var job = new DataLoadJob(RepositoryLocator,"test job",logManager,lmd,new TestLoadDirectory(),new ThrowImmediatelyDataLoadEventListener(),dbConfiguration);
+            var job = new DataLoadJob(RepositoryLocator,"test job",logManager,lmd,new TestLoadDirectory(),ThrowImmediatelyDataLoadEventListener.Quiet,dbConfiguration);
             job.StartLogging();
             attacher.Attach(job, new GracefulCancellationToken());
 
@@ -175,7 +175,7 @@ class RemoteTableAttacherTests : DatabaseTests
             
             var dbConfiguration = new HICDatabaseConfiguration(lmd, RdmpMockFactory.Mock_INameDatabasesAndTablesDuringLoads(db, "table2"));
 
-            var job = new ScheduledDataLoadJob(RepositoryLocator,"test job",logManager,lmd,new TestLoadDirectory(),new ThrowImmediatelyDataLoadEventListener(),dbConfiguration)
+            var job = new ScheduledDataLoadJob(RepositoryLocator,"test job",logManager,lmd,new TestLoadDirectory(),ThrowImmediatelyDataLoadEventListener.Quiet,dbConfiguration)
                 {
                     LoadProgress = mismatchProgress
                         ? new LoadProgress(CatalogueRepository, new LoadMetadata(CatalogueRepository, "ffsdf"))

@@ -72,7 +72,7 @@ class DatabaseOperationTests : DatabaseTests
 
             //now clone the catalogue data structures to MachineName
             foreach (TableInfo tableInfo in cata.GetTableInfoList(false))
-                cloner.CreateTablesInDatabaseFromCatalogueInfo(new ThrowImmediatelyDataLoadEventListener(), tableInfo, LoadBubble.Raw);
+                cloner.CreateTablesInDatabaseFromCatalogueInfo(ThrowImmediatelyDataLoadEventListener.Quiet, tableInfo, LoadBubble.Raw);
                 
             Assert.IsTrue(raw.Exists());
             Assert.IsTrue(raw.ExpectTable("Table_1").Exists());
@@ -80,7 +80,7 @@ class DatabaseOperationTests : DatabaseTests
         }
         finally
         {
-            cloner.LoadCompletedSoDispose(ExitCodeType.Success, new ThrowImmediatelyDataLoadEventListener());
+            cloner.LoadCompletedSoDispose(ExitCodeType.Success, ThrowImmediatelyDataLoadEventListener.Quiet);
 
             while (toCleanUp.Count > 0)
                 try

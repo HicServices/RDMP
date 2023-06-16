@@ -119,7 +119,7 @@ public class ReleaseRunner:ManyRunner
         var useCase = GetReleaseUseCase(checkNotifier);
         if (useCase != null)
         {
-            var engine = useCase.GetEngine(_pipeline, new ThrowImmediatelyDataLoadEventListener());
+            var engine = useCase.GetEngine(_pipeline, ThrowImmediatelyDataLoadEventListener.Quiet);
             toReturn.Add(engine);
         }
 

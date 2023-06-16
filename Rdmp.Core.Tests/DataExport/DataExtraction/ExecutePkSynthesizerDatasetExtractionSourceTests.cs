@@ -43,8 +43,8 @@ public class ExecutePkSynthesizerDatasetExtractionSourceTests : TestsRequiringAn
         var request = SetupExtractDatasetCommand("ExtractionInformationPrimaryKey_IsRespected", new[] { "DateOfBirth" });
 
         var source = new ExecutePkSynthesizerDatasetExtractionSource();
-        source.PreInitialize(request, new ThrowImmediatelyDataLoadEventListener());
-        var chunk = source.GetChunk(new ThrowImmediatelyDataLoadEventListener(), new GracefulCancellationToken());
+        source.PreInitialize(request, ThrowImmediatelyDataLoadEventListener.Quiet);
+        var chunk = source.GetChunk(ThrowImmediatelyDataLoadEventListener.Quiet, new GracefulCancellationToken());
 
         Assert.That(chunk.PrimaryKey, Is.Not.Null);
         Assert.That(chunk.Columns.Cast<DataColumn>().ToList(), Has.Count.EqualTo(_columnInfos.Count())); // NO new column added
@@ -58,8 +58,8 @@ public class ExecutePkSynthesizerDatasetExtractionSourceTests : TestsRequiringAn
         var request = SetupExtractDatasetCommand("ExtractionInformationMultiPrimaryKey_IsRespected", new[] { "PrivateID", "DateOfBirth" });
 
         var source = new ExecutePkSynthesizerDatasetExtractionSource();
-        source.PreInitialize(request, new ThrowImmediatelyDataLoadEventListener());
-        var chunk = source.GetChunk(new ThrowImmediatelyDataLoadEventListener(), new GracefulCancellationToken());
+        source.PreInitialize(request, ThrowImmediatelyDataLoadEventListener.Quiet);
+        var chunk = source.GetChunk(ThrowImmediatelyDataLoadEventListener.Quiet, new GracefulCancellationToken());
 
         Assert.That(chunk.PrimaryKey, Is.Not.Null);
         Assert.That(chunk.Columns.Cast<DataColumn>().ToList(), Has.Count.EqualTo(_columnInfos.Count()));
@@ -73,8 +73,8 @@ public class ExecutePkSynthesizerDatasetExtractionSourceTests : TestsRequiringAn
         var request = SetupExtractDatasetCommand("NonExtractedPrimaryKey_AreRespected", new string[] { }, pkColumnInfos: new [] { "DateOfBirth" });
 
         var source = new ExecutePkSynthesizerDatasetExtractionSource();
-        source.PreInitialize(request, new ThrowImmediatelyDataLoadEventListener());
-        var chunk = source.GetChunk(new ThrowImmediatelyDataLoadEventListener(), new GracefulCancellationToken());
+        source.PreInitialize(request, ThrowImmediatelyDataLoadEventListener.Quiet);
+        var chunk = source.GetChunk(ThrowImmediatelyDataLoadEventListener.Quiet, new GracefulCancellationToken());
 
         Assert.That(chunk.PrimaryKey, Is.Not.Null);
         Assert.That(chunk.Columns.Cast<DataColumn>().ToList(), Has.Count.EqualTo(_columnInfos.Count() + 1)); // synth PK is added
@@ -91,8 +91,8 @@ public class ExecutePkSynthesizerDatasetExtractionSourceTests : TestsRequiringAn
         var request = SetupExtractDatasetCommand("MultiTable_PksAreMerged", new string[] { }, new[] { "DateOfBirth" }, true, true);
             
         var source = new ExecutePkSynthesizerDatasetExtractionSource();
-        source.PreInitialize(request, new ThrowImmediatelyDataLoadEventListener());
-        var chunk = source.GetChunk(new ThrowImmediatelyDataLoadEventListener(), new GracefulCancellationToken());
+        source.PreInitialize(request, ThrowImmediatelyDataLoadEventListener.Quiet);
+        var chunk = source.GetChunk(ThrowImmediatelyDataLoadEventListener.Quiet, new GracefulCancellationToken());
 
         Assert.That(chunk.PrimaryKey, Is.Not.Null);
         Assert.That(chunk.Columns.Cast<DataColumn>().ToList(), Has.Count.EqualTo(_columnInfos.Count() + 3)); // the "desc" column is added to the existing ones
@@ -112,8 +112,8 @@ public class ExecutePkSynthesizerDatasetExtractionSourceTests : TestsRequiringAn
         var request = SetupExtractDatasetCommand("LookupsOnly_IsRespected", new string[] { }, pkColumnInfos: new[] { "DateOfBirth" }, withLookup: true);
 
         var source = new ExecutePkSynthesizerDatasetExtractionSource();
-        source.PreInitialize(request, new ThrowImmediatelyDataLoadEventListener());
-        var chunk = source.GetChunk(new ThrowImmediatelyDataLoadEventListener(), new GracefulCancellationToken());
+        source.PreInitialize(request, ThrowImmediatelyDataLoadEventListener.Quiet);
+        var chunk = source.GetChunk(ThrowImmediatelyDataLoadEventListener.Quiet, new GracefulCancellationToken());
 
         Assert.That(chunk.PrimaryKey, Is.Not.Null);
         Assert.That(chunk.Columns.Cast<DataColumn>().ToList(), Has.Count.EqualTo(_columnInfos.Count() + 2)); // the "desc" column is added to the existing ones + the SynthPk

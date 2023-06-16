@@ -37,7 +37,7 @@ class ZipTests
     {
         var _dir = TestContext.CurrentContext.WorkDirectory;
         var _zt = new ZipTestLayout(new DirectoryInfo(_dir), "yyyy-MM-dd", CacheArchiveType.Zip, CacheFileGranularity.Hour, new NoSubdirectoriesCachePathResolver());
-        var _listener = new ThrowImmediatelyDataLoadEventListener();
+        var _listener = ThrowImmediatelyDataLoadEventListener.Quiet;
         var when = DateTime.Now;
         var targetzip = _zt.GetArchiveFileInfoForDate(when, _listener);
         var files=new List<FileInfo>();

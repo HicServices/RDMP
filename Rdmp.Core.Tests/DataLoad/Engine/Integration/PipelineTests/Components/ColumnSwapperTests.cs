@@ -64,7 +64,7 @@ class ColumnSwapperTests:DatabaseTests
         dtToSwap.Rows.Add("A", "Dave", 30);
         dtToSwap.Rows.Add("B", "Frank", 50);
 
-        var resultDt = swapper.ProcessPipelineData(dtToSwap, new ThrowImmediatelyDataLoadEventListener(), new GracefulCancellationToken());
+        var resultDt = swapper.ProcessPipelineData(dtToSwap, ThrowImmediatelyDataLoadEventListener.Quiet, new GracefulCancellationToken());
 
         //in should be there or not depending on the setting KeepInputColumnToo
         Assert.AreEqual(keepInputColumnToo, resultDt.Columns.Contains("In"));
@@ -124,14 +124,14 @@ class ColumnSwapperTests:DatabaseTests
         dtToSwap.Rows.Add("B", "Frank", 50);
 
         // Our pipeline data does not have a column called In but instead it is called In2
-        var ex = Assert.Throws<Exception>(() => swapper.ProcessPipelineData(dtToSwap, new ThrowImmediatelyDataLoadEventListener(), new GracefulCancellationToken()));
+        var ex = Assert.Throws<Exception>(() => swapper.ProcessPipelineData(dtToSwap, ThrowImmediatelyDataLoadEventListener.Quiet, new GracefulCancellationToken()));
         Assert.AreEqual("DataTable did not contain a field called 'In'", ex.Message);
             
         // Tell the swapper about the new name
         swapper.InputFromColumn = "In2";
         swapper.OutputToColumn = "Out2";
 
-        var resultDt = swapper.ProcessPipelineData(dtToSwap, new ThrowImmediatelyDataLoadEventListener(), new GracefulCancellationToken());
+        var resultDt = swapper.ProcessPipelineData(dtToSwap, ThrowImmediatelyDataLoadEventListener.Quiet, new GracefulCancellationToken());
 
         //in should be there or not depending on the setting KeepInputColumnToo
         Assert.AreEqual(keepInputColumnToo, resultDt.Columns.Contains("In2"));
@@ -195,7 +195,7 @@ class ColumnSwapperTests:DatabaseTests
         swapper.InputFromColumn = "In2";
         swapper.OutputToColumn = "In2";
 
-        var resultDt = swapper.ProcessPipelineData(dtToSwap, new ThrowImmediatelyDataLoadEventListener(), new GracefulCancellationToken());
+        var resultDt = swapper.ProcessPipelineData(dtToSwap, ThrowImmediatelyDataLoadEventListener.Quiet, new GracefulCancellationToken());
 
         // in ALWAYS be there, because it is an in place update - ignore KeepInputColumnToo
         Assert.True(resultDt.Columns.Contains("In2"));
@@ -249,11 +249,11 @@ class ColumnSwapperTests:DatabaseTests
         switch (strategy)
         {
             case AliasResolutionStrategy.CrashIfAliasesFound:
-                Assert.Throws<AliasException>(()=>swapper.ProcessPipelineData(dtToSwap, new ThrowImmediatelyDataLoadEventListener(), new GracefulCancellationToken()));
+                Assert.Throws<AliasException>(()=>swapper.ProcessPipelineData(dtToSwap, ThrowImmediatelyDataLoadEventListener.Quiet, new GracefulCancellationToken()));
                 break;
             case AliasResolutionStrategy.MultiplyInputDataRowsByAliases:
 
-                var resultDt = swapper.ProcessPipelineData(dtToSwap, new ThrowImmediatelyDataLoadEventListener(), new GracefulCancellationToken());
+                var resultDt = swapper.ProcessPipelineData(dtToSwap, ThrowImmediatelyDataLoadEventListener.Quiet, new GracefulCancellationToken());
 
                 AreBasicallyEquals(1, resultDt.Rows[0]["Out"]);
                 Assert.AreEqual("Dave", resultDt.Rows[0]["Name"]);
@@ -269,7 +269,7 @@ class ColumnSwapperTests:DatabaseTests
                 AreBasicallyEquals(60, resultDt.Rows[1]["Age"]);
                 break;
             default:
-                throw new ArgumentOutOfRangeException("strategy");
+                throw new ArgumentOutOfRangeException(nameof(strategy));
         }
             
     }
@@ -312,10 +312,10 @@ class ColumnSwapperTests:DatabaseTests
         dtToSwap.Rows.Add("B", "Frank", 50);
 
         if(crashIfNoMappingsFound)
-            Assert.Throws<KeyNotFoundException>(() => swapper.ProcessPipelineData(dtToSwap, new ThrowImmediatelyDataLoadEventListener(), null));
+            Assert.Throws<KeyNotFoundException>(() => swapper.ProcessPipelineData(dtToSwap, ThrowImmediatelyDataLoadEventListener.Quiet, null));
         else
         {
-            var resultDt = swapper.ProcessPipelineData(dtToSwap, new ThrowImmediatelyDataLoadEventListener(), new GracefulCancellationToken());
+            var resultDt = swapper.ProcessPipelineData(dtToSwap, ThrowImmediatelyDataLoadEventListener.Quiet, new GracefulCancellationToken());
 
             Assert.AreEqual(1, resultDt.Rows.Count);
             AreBasicallyEquals(1, resultDt.Rows[0]["Out"]);
@@ -349,7 +349,7 @@ class ColumnSwapperTests:DatabaseTests
         };
 
         // initialize with a mock that returns ProjectNumber 1
-        swapper.PreInitialize(GetMockExtractDatasetCommand(), new ThrowImmediatelyDataLoadEventListener());
+        swapper.PreInitialize(GetMockExtractDatasetCommand(), ThrowImmediatelyDataLoadEventListener.Quiet);
 
         swapper.Check(new ThrowImmediatelyCheckNotifier());
 
@@ -362,7 +362,7 @@ class ColumnSwapperTests:DatabaseTests
         dtToSwap.Rows.Add("A", "Dave", 30);
         dtToSwap.Rows.Add("B", "Frank", 50);
 
-        using var resultDt = swapper.ProcessPipelineData(dtToSwap, new ThrowImmediatelyDataLoadEventListener(), new GracefulCancellationToken());
+        using var resultDt = swapper.ProcessPipelineData(dtToSwap, ThrowImmediatelyDataLoadEventListener.Quiet, new GracefulCancellationToken());
 
         Assert.AreEqual(2, resultDt.Rows.Count);
 
@@ -407,7 +407,7 @@ class ColumnSwapperTests:DatabaseTests
         dtToSwap.Rows.Add(1, "Dave", 30);
         dtToSwap.Rows.Add(null, "Bob", 30);
 
-        var resultDt = swapper.ProcessPipelineData(dtToSwap, new ThrowImmediatelyDataLoadEventListener(), new GracefulCancellationToken());
+        var resultDt = swapper.ProcessPipelineData(dtToSwap, ThrowImmediatelyDataLoadEventListener.Quiet, new GracefulCancellationToken());
 
         Assert.AreEqual(2, resultDt.Rows.Count);
         AreBasicallyEquals(1, resultDt.Rows[0]["Out"]);
@@ -504,7 +504,7 @@ class ColumnSwapperTests:DatabaseTests
         dtToSwap.Columns.Add("Name");
         dtToSwap.Rows.Add(1 /*int*/, "Dave");
             
-        var resultDt = swapper.ProcessPipelineData(dtToSwap, new ThrowImmediatelyDataLoadEventListener(), new GracefulCancellationToken());
+        var resultDt = swapper.ProcessPipelineData(dtToSwap, ThrowImmediatelyDataLoadEventListener.Quiet, new GracefulCancellationToken());
 
         Assert.AreEqual(1, resultDt.Rows.Count);
         AreBasicallyEquals(2, resultDt.Rows[0]["Out"]);
@@ -548,7 +548,7 @@ class ColumnSwapperTests:DatabaseTests
         dtToSwap.Columns.Add("Name");
         dtToSwap.Rows.Add("1" /*string*/, "Dave");
             
-        var resultDt = swapper.ProcessPipelineData(dtToSwap, new ThrowImmediatelyDataLoadEventListener(), new GracefulCancellationToken());
+        var resultDt = swapper.ProcessPipelineData(dtToSwap, ThrowImmediatelyDataLoadEventListener.Quiet, new GracefulCancellationToken());
 
         Assert.AreEqual(1, resultDt.Rows.Count);
         AreBasicallyEquals(2, resultDt.Rows[0]["Out"]);

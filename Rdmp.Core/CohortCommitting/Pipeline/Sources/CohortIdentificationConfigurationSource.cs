@@ -74,13 +74,13 @@ public class CohortIdentificationConfigurationSource : IPluginDataFlowSource<Dat
 
     public DataTable TryGetPreview()
     {
-        return GetDataTable(new ThrowImmediatelyDataLoadEventListener());
+        return GetDataTable(ThrowImmediatelyDataLoadEventListener.Quiet);
     }
 
     private DataTable GetDataTable(IDataLoadEventListener listener)
     {
         if(listener == null)
-            listener = new ThrowImmediatelyDataLoadEventListener();
+            listener = ThrowImmediatelyDataLoadEventListener.Quiet;
 
         listener.OnNotify(this, new NotifyEventArgs(ProgressEventType.Information,
             $"About to lookup which server to interrogate for CohortIdentificationConfiguration {_cohortIdentificationConfiguration}"));

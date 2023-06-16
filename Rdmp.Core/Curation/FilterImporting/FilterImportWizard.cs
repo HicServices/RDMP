@@ -159,7 +159,7 @@ public class FilterImportWizard
         cancel = false;
 
         //only advertise filter parameter sets if it is a master level filter (Catalogue level)
-        if (!(filter is ExtractionFilter extractionFilterOrNull))
+        if (filter is not ExtractionFilter extractionFilterOrNull)
             return null;
 
         var parameterSets = extractionFilterOrNull.Repository.GetAllObjectsWithParent<ExtractionFilterParameterSet>(extractionFilterOrNull);
@@ -177,8 +177,7 @@ public class FilterImportWizard
 
             if (chosen != null)
                 return chosen as ExtractionFilterParameterSet;
-            else
-                cancel = true;
+            cancel = true;
         }
 
         return null;

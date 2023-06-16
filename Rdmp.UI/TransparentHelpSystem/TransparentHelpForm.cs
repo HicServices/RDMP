@@ -171,7 +171,7 @@ public class TransparentHelpForm:Form
         var screenCoordinates = _highlight.PointToScreen(new Point(0, 0));
         var highlightTopLeft = _host.PointToClient(screenCoordinates);
 
-        var highlightBottomLeft = new Point(highlightTopLeft.X, highlightTopLeft.Y + _highlight.ClientRectangle.Height);
+        var highlightBottomLeft = highlightTopLeft with { Y = highlightTopLeft.Y + _highlight.ClientRectangle.Height };
 
 
         //First let's try to place it like this
@@ -213,18 +213,14 @@ public class TransparentHelpForm:Form
             *  MSG_MSG_MSGMSG_MSG_MSGMSG_MSG_MSGMSG_MSG_MSG
             *    
             *********************************************/
-            return new Point(Math.Max(0, _host.ClientRectangle.Width - currentHelpBox.Width), highlightBottomLeft.Y);
+            return highlightBottomLeft with { X = Math.Max(0, _host.ClientRectangle.Width - currentHelpBox.Width) };
         }
         else if (currentHelpBox.Height < availableSpaceAboveHighlight)
         {
             //No space below so go above it
-
-                
-            if (_currentHelpBox.Width < availableSpaceHorizontally)
-                return new Point(highlightTopLeft.X, highlightTopLeft.Y - currentHelpBox.Height);
-
-            //consider moving X back because message box is so wide (See diagram above)
-            return new Point(Math.Max(0, _host.ClientRectangle.Width - currentHelpBox.Width), highlightTopLeft.Y - currentHelpBox.Height);
+            return _currentHelpBox.Width < availableSpaceHorizontally ? highlightTopLeft with { Y = highlightTopLeft.Y - currentHelpBox.Height } :
+                //consider moving X back because message box is so wide (See diagram above)
+                new Point(Math.Max(0, _host.ClientRectangle.Width - currentHelpBox.Width), highlightTopLeft.Y - currentHelpBox.Height);
         }
 
         var screenCoordinatesTopRight = _highlight.PointToScreen(new Point(_highlight.ClientRectangle.Width, 0));

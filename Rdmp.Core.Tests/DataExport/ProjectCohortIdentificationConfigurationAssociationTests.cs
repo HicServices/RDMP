@@ -40,8 +40,7 @@ public class ProjectCohortIdentificationConfigurationAssociationTests
 
         //in order to make it an orphan we have to suppress the system default behaviour of cascading across the deletion
         var obscure = memory.ObscureDependencyFinder as CatalogueObscureDependencyFinder;
-        if(obscure != null)
-            obscure.OtherDependencyFinders.Clear();
+        obscure?.OtherDependencyFinders.Clear();
 
         //make the assoc an orphan
         cic.DeleteInDatabase();

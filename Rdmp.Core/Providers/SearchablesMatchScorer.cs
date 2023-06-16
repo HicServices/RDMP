@@ -250,13 +250,10 @@ public class SearchablesMatchScorer
 
                 var parent = parents[^i];
 
-                if (parent != null)
+                if (parent is { } and not IContainer)
                 {
-                    if (!(parent is IContainer))
-                    {
-                        score += Weights[i] * CountMatchToString(regexes, parent);
-                        score += Weights[i] * CountMatchType(regexes, parent);
-                    }
+                    score += Weights[i] * CountMatchToString(regexes, parent);
+                    score += Weights[i] * CountMatchType(regexes, parent);
                 }
             }
         }

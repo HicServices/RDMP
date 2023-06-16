@@ -27,7 +27,7 @@ public class ExecuteCommandRefreshBrokenCohorts : BasicCommandExecution
     {
         _ect = ect;
 
-        if (!(activator.CoreChildProvider is DataExportChildProvider dx))
+        if (activator.CoreChildProvider is not DataExportChildProvider dx)
         {
             SetImpossible($"{nameof(activator.CoreChildProvider)} is not a {nameof(DataExportChildProvider)}");
             return;
@@ -47,7 +47,6 @@ public class ExecuteCommandRefreshBrokenCohorts : BasicCommandExecution
             if (!dx.ForbidListedSources.Any())
             {
                 SetImpossible("There are no broken ExternalCohortTable to clear status on");
-                return;
             }
         }
     }
@@ -59,7 +58,7 @@ public class ExecuteCommandRefreshBrokenCohorts : BasicCommandExecution
         var dx = (DataExportChildProvider)BasicActivator.CoreChildProvider;
         var toPublish = _ect ?? dx.ForbidListedSources.FirstOrDefault();
 
-        // theres nothing to clear now anyway
+        // there's nothing to clear now anyway
         if (toPublish == null)
             return;
 

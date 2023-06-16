@@ -30,7 +30,7 @@ class TableInfoCloneOperationTests : DatabaseTests
         var config = new HICDatabaseConfiguration(tbl.Database.Server);
 
         //create a RAW table schema called TableName_Isolation
-        var cloner = new TableInfoCloneOperation(config,(TableInfo)ti,LoadBubble.Live,new ThrowImmediatelyDataLoadEventListener());
+        var cloner = new TableInfoCloneOperation(config,(TableInfo)ti,LoadBubble.Live,ThrowImmediatelyDataLoadEventListener.Quiet);
         cloner.CloneTable(tbl.Database, tbl.Database,tbl, $"{tbl.GetRuntimeName()}_copy", true, true, true, ti.PreLoadDiscardedColumns);
              
         var tbl2 = tbl.Database.ExpectTable($"{tbl.GetRuntimeName()}_copy");

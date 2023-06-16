@@ -41,12 +41,12 @@ class ExecuteDatasetExtractionFlatFileDestinationTests : TestsRequiringAnExtract
         }
         dest.RoundFloatsTo = lotsOfDecimalPlaces ? 10 : 2;
 
-        dest.PreInitialize(_request, new ThrowImmediatelyDataLoadEventListener());
-        dest.PreInitialize(_project, new ThrowImmediatelyDataLoadEventListener());
-        dest.PreInitialize((DataLoadInfo)dli, new ThrowImmediatelyDataLoadEventListener());
+        dest.PreInitialize(_request, ThrowImmediatelyDataLoadEventListener.Quiet);
+        dest.PreInitialize(_project, ThrowImmediatelyDataLoadEventListener.Quiet);
+        dest.PreInitialize((DataLoadInfo)dli, ThrowImmediatelyDataLoadEventListener.Quiet);
 
-        dest.ProcessPipelineData(dt, new ThrowImmediatelyDataLoadEventListener(), new GracefulCancellationToken());
-        dest.Dispose(new ThrowImmediatelyDataLoadEventListener(),null);
+        dest.ProcessPipelineData(dt, ThrowImmediatelyDataLoadEventListener.Quiet, new GracefulCancellationToken());
+        dest.Dispose(ThrowImmediatelyDataLoadEventListener.Quiet,null);
 
         Assert.IsNotNull(dest.OutputFile);
         FileAssert.Exists(dest.OutputFile);

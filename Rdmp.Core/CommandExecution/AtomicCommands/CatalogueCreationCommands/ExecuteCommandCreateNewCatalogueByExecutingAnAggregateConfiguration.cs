@@ -40,8 +40,7 @@ public class ExecuteCommandCreateNewCatalogueByExecutingAnAggregateConfiguration
     {
         base.Execute();
 
-        if (_aggregateConfiguration == null)
-            _aggregateConfiguration = SelectOne<AggregateConfiguration>(BasicActivator.RepositoryLocator.CatalogueRepository);
+        _aggregateConfiguration ??= SelectOne<AggregateConfiguration>(BasicActivator.RepositoryLocator.CatalogueRepository);
 
         if (_aggregateConfiguration == null)
             return;
@@ -59,16 +58,13 @@ public class ExecuteCommandCreateNewCatalogueByExecutingAnAggregateConfiguration
                     return;
             }
 
-            if (_cohort != null)
+            var externalData = _cohort?.GetExternalData();
+            if (externalData != null)
             {
-                var externalData = _cohort.GetExternalData();
-                if (externalData != null)
-                {
-                    var projNumber = externalData.ExternalProjectNumber;
-                    var projs = BasicActivator.RepositoryLocator.DataExportRepository.GetAllObjects<Project>().Where(p => p.ProjectNumber == projNumber).ToArray();
-                    if (projs.Length == 1)
-                        ProjectSpecific = projs[0];
-                }
+                var projNumber = externalData.ExternalProjectNumber;
+                var projs = BasicActivator.RepositoryLocator.DataExportRepository.GetAllObjects<Project>().Where(p => p.ProjectNumber == projNumber).ToArray();
+                if (projs.Length == 1)
+                    ProjectSpecific = projs[0];
             }
         }
 

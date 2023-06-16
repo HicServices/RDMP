@@ -35,8 +35,8 @@ public class ExecuteCommandChoosePlatformDatabase : BasicCommandExecution,IAtomi
     private void Initialize(IRDMPPlatformRepositoryServiceLocator locator)
     {
         _repositoryLocator = locator;
-        if (!(_repositoryLocator is UserSettingsRepositoryFinder))
-            SetImpossible("Platform databases location is read-only (probably passed as commandline parameter?).");
+        if (_repositoryLocator is not UserSettingsRepositoryFinder)
+            SetImpossible("Platform databases location is read-only (probably passed as command line parameter?).");
     }
 
     public override string GetCommandHelp()

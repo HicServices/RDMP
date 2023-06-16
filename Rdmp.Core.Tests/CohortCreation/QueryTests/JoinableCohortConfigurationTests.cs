@@ -43,8 +43,7 @@ public class JoinableCohortConfigurationTests : CohortIdentificationTests
         }
         finally
         {
-            if(joinable != null)
-                joinable.DeleteInDatabase();
+            joinable?.DeleteInDatabase();
         }
     }
 

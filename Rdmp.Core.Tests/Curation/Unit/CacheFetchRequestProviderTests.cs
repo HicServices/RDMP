@@ -40,7 +40,7 @@ public class CacheFetchRequestProviderTests
         cacheProgress.Setup(c => c.FetchPage(It.IsAny<int>(), It.IsAny<int>())).Returns(failures);
 
         var provider = new FailedCacheFetchRequestProvider(cacheProgress.Object, 2);
-        var fetchRequest = provider.GetNext(new ThrowImmediatelyDataLoadEventListener());
+        var fetchRequest = provider.GetNext(ThrowImmediatelyDataLoadEventListener.Quiet);
         Assert.IsNotNull(fetchRequest);
         Assert.AreEqual(fetchRequest.ChunkPeriod, new TimeSpan(8, 0, 0));
         Assert.AreEqual(fetchRequest.Start, failure.FetchRequestStart);
@@ -78,10 +78,10 @@ public class CacheFetchRequestProviderTests
         var provider = new FailedCacheFetchRequestProvider(cacheProgress.Object, 2);
 
         // We should get three ICacheFetchRequests in total, followed by a null to signify that there are no more ICacheFetchRequests
-        Assert.IsNotNull(provider.GetNext(new ThrowImmediatelyDataLoadEventListener()));
-        Assert.IsNotNull(provider.GetNext(new ThrowImmediatelyDataLoadEventListener()));
-        Assert.IsNotNull(provider.GetNext(new ThrowImmediatelyDataLoadEventListener()));
-        Assert.IsNull(provider.GetNext(new ThrowImmediatelyDataLoadEventListener()));
+        Assert.IsNotNull(provider.GetNext(ThrowImmediatelyDataLoadEventListener.Quiet));
+        Assert.IsNotNull(provider.GetNext(ThrowImmediatelyDataLoadEventListener.Quiet));
+        Assert.IsNotNull(provider.GetNext(ThrowImmediatelyDataLoadEventListener.Quiet));
+        Assert.IsNull(provider.GetNext(ThrowImmediatelyDataLoadEventListener.Quiet));
     }
 
     /// <summary>

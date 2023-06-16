@@ -99,7 +99,7 @@ class ExecuteSqlFileRuntimeTaskTests:DatabaseTests
         var ex = Assert.Throws<ExecuteSqlFileRuntimeTaskException>(()=>task.Run(job, new GracefulCancellationToken()));
         StringAssert.Contains("Failed to find a TableInfo in the load with ID 0",ex.Message);
 
-        task.LoadCompletedSoDispose(Core.DataLoad.ExitCodeType.Success,new ThrowImmediatelyDataLoadEventListener());
+        task.LoadCompletedSoDispose(Core.DataLoad.ExitCodeType.Success,ThrowImmediatelyDataLoadEventListener.Quiet);
     }
 
     [TestCase(DatabaseType.MySql)]
@@ -151,7 +151,7 @@ class ExecuteSqlFileRuntimeTaskTests:DatabaseTests
         StringAssert.Contains("Mutilate failed",ex.Message);
         StringAssert.Contains("Failed to find a TableInfo in the load with ID 0",ex.InnerException.Message);
 
-        task.LoadCompletedSoDispose(Core.DataLoad.ExitCodeType.Success,new ThrowImmediatelyDataLoadEventListener());
+        task.LoadCompletedSoDispose(Core.DataLoad.ExitCodeType.Success,ThrowImmediatelyDataLoadEventListener.Quiet);
     }
 
     [TestCase(DatabaseType.MySql)]

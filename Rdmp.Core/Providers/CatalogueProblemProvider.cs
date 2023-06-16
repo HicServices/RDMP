@@ -312,7 +312,7 @@ public class CatalogueProblemProvider : ProblemProvider
 
         //count children that are not disabled
         var children = _childProvider.GetChildren(container);
-        var enabledChildren = children.Where(o => !(o is IDisableable d) || !d.IsDisabled).ToArray();
+        var enabledChildren = children.Where(o => o is not IDisableable { IsDisabled: true }).ToArray();
 
         //are there any children with the same order in this container?
         if (children.OfType<IOrderable>().GroupBy(o => o.Order).Any(g => g.Count() > 1))

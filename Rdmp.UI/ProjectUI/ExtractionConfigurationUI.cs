@@ -164,7 +164,7 @@ public partial class ExtractionConfigurationUI : ExtractionConfigurationUI_Desig
         ragSmiley1Refresh.Reset();
         try
         {
-            new CohortCreationRequest(_extractionConfiguration).GetEngine(_cohortRefreshingPipelineSelectionUI.Pipeline, new ThrowImmediatelyDataLoadEventListener());
+            new CohortCreationRequest(_extractionConfiguration).GetEngine(_cohortRefreshingPipelineSelectionUI.Pipeline, ThrowImmediatelyDataLoadEventListener.Quiet);
         }
         catch (Exception ex)
         {

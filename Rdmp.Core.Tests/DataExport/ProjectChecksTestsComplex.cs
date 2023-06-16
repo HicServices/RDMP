@@ -36,8 +36,8 @@ public class ProjectChecksTestsComplex:TestsRequiringAnExtractionConfiguration
 
         //but if the user goes ahead and executes the extraction that should fail too
         var source = new ExecuteDatasetExtractionSource();
-        source.PreInitialize(_request, new ThrowImmediatelyDataLoadEventListener());
-        var exception2 = Assert.Throws<Exception>(() => source.GetChunk(new ThrowImmediatelyDataLoadEventListener(), new GracefulCancellationToken()));
+        source.PreInitialize(_request, ThrowImmediatelyDataLoadEventListener.Quiet);
+        var exception2 = Assert.Throws<Exception>(() => source.GetChunk(ThrowImmediatelyDataLoadEventListener.Quiet, new GracefulCancellationToken()));
 
         Assert.AreEqual("Cannot extract TestTable because DisableExtraction is set to true", exception2.Message);
     }

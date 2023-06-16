@@ -44,8 +44,7 @@ public partial class HelpBox : UserControl
 
         btnOption1.Click += (s, e) =>
         {
-            if (OptionTaken != null)
-                OptionTaken();
+            OptionTaken?.Invoke();
         };
             
         Size = GetSizeOfHelpBoxFor(text,!string.IsNullOrWhiteSpace(optionIfAny));

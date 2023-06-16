@@ -416,7 +416,7 @@ public class LookupTest : DatabaseTests
                 Assert.IsTrue(sqlAfter.Contains("SendingLocation_Desc"));
                 break;
             default:
-                throw new ArgumentOutOfRangeException("testCase");
+                throw new ArgumentOutOfRangeException(nameof(testCase));
         }
             
         foreach (var d in CatalogueRepository.GetAllObjects<Lookup>())

@@ -53,7 +53,7 @@ public class ItemValidatorTest
 
         Assert.IsNotNull(result);
         Assert.IsTrue(result.Message.StartsWith("Incompatible type"));
-        Assert.IsTrue(result.Message.Contains(typeof(DateTime).Name));
+        Assert.IsTrue(result.Message.Contains(nameof(DateTime)));
             
     }
         

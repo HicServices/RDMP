@@ -365,7 +365,7 @@ public class ExcelDataFlowSource : IPluginDataFlowSource<DataTable>, IPipelineRe
         DataTable dt;
         try
         {
-            dt = GetAllData(new ThrowImmediatelyDataLoadEventListener(),token);
+            dt = GetAllData(ThrowImmediatelyDataLoadEventListener.Quiet,token);
         }
         catch (Exception e)
         {
