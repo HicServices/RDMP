@@ -64,12 +64,12 @@ public class ArbitraryTableExtractionUICollection : PersistableObjectCollection,
     /// <nheritdoc/>
     public override string SaveExtraText()
     {
-        return Helper.SaveDictionaryToString(_arguments);
+        return PersistStringHelper.SaveDictionaryToString(_arguments);
     }
 
     public override void LoadExtraText(string s)
     {
-        _arguments = Helper.LoadDictionaryFromString(s);
+        _arguments = PersistStringHelper.LoadDictionaryFromString(s);
 
         DatabaseType = (DatabaseType)Enum.Parse(typeof(DatabaseType), _arguments[DatabaseTypeKey]);
 

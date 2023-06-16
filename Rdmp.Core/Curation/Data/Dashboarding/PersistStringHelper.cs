@@ -18,8 +18,9 @@ namespace Rdmp.Core.Curation.Data.Dashboarding;
 /// <summary>
 /// Helps you create simple string based argument lists
 /// </summary>
-public class PersistStringHelper
+public static class PersistStringHelper
 {
+
     /// <summary>
     /// The string to use to divide objects declared within a collection e.g. ',' in [RepoType:ObjectType:ID,RepoType:ObjectType:ID]
     /// </summary>
@@ -50,7 +51,7 @@ public class PersistStringHelper
     /// </summary>
     /// <param name="dict"></param>
     /// <returns></returns>
-    public string SaveDictionaryToString(Dictionary<string, string> dict)
+    public static string SaveDictionaryToString(Dictionary<string, string> dict)
     {
         var el = new XElement("root",
             dict.Select(kv => new XElement(kv.Key, kv.Value)));
@@ -63,7 +64,7 @@ public class PersistStringHelper
     /// </summary>
     /// <param name="str"></param>
     /// <returns></returns>
-    public Dictionary<string, string> LoadDictionaryFromString(string str)
+    public static Dictionary<string, string> LoadDictionaryFromString(string str)
     {
         if(string.IsNullOrWhiteSpace(str))
             return new Dictionary<string, string>();
@@ -80,7 +81,7 @@ public class PersistStringHelper
     /// <param name="key"></param>
     /// <param name="persistString"></param>
     /// <returns></returns>
-    public string GetValueIfExistsFromPersistString(string key, string persistString)
+    public static string GetValueIfExistsFromPersistString(string key, string persistString)
     {
         var dict = LoadDictionaryFromString(persistString);
 
@@ -92,7 +93,7 @@ public class PersistStringHelper
     /// </summary>
     /// <param name="objects"></param>
     /// <returns></returns>
-    public string GetObjectCollectionPersistString(params IMapsDirectlyToDatabaseTable[] objects)
+    public static string GetObjectCollectionPersistString(params IMapsDirectlyToDatabaseTable[] objects)
     {
 
         var sb = new StringBuilder();
@@ -116,7 +117,7 @@ public class PersistStringHelper
     /// </summary>
     /// <param name="persistenceString">persistence string in the format [RepoType:ObjectType:ID,RepoType:ObjectType:ID]</param>
     /// <returns></returns>
-    public string MatchCollectionInString(string persistenceString)
+    public static string MatchCollectionInString(string persistenceString)
     {
         try
         {
@@ -140,7 +141,7 @@ public class PersistStringHelper
     /// <param name="allObjectsString">A string with a list of objects ID's, should have the format [RepoType:ObjectType:ID,RepoType:ObjectType:ID]</param>
     /// <param name="repositoryLocator"></param>
     /// <returns></returns>
-    public List<IMapsDirectlyToDatabaseTable> GetObjectCollectionFromPersistString(string allObjectsString, IRDMPPlatformRepositoryServiceLocator repositoryLocator)
+    public static List<IMapsDirectlyToDatabaseTable> GetObjectCollectionFromPersistString(string allObjectsString, IRDMPPlatformRepositoryServiceLocator repositoryLocator)
     {
         var toReturn = new List<IMapsDirectlyToDatabaseTable>();
 
@@ -173,7 +174,7 @@ public class PersistStringHelper
     /// </summary>
     /// <param name="persistString"></param>
     /// <returns></returns>
-    public string GetExtraText(string persistString)
+    public static string GetExtraText(string persistString)
     {
         return !persistString.Contains(ExtraText) ? null : persistString[(persistString.IndexOf(ExtraText, StringComparison.Ordinal) + ExtraText.Length)..];
     }
@@ -187,7 +188,7 @@ public class PersistStringHelper
     /// <param name="key"></param>
     /// <param name="valueIfMissing"></param>
     /// <returns></returns>
-    public bool GetBool(Dictionary<string, string> dict, string key, bool valueIfMissing)
+    public static bool GetBool(Dictionary<string, string> dict, string key, bool valueIfMissing)
     {
         if(dict == null || !dict.ContainsKey(key))
             return valueIfMissing;

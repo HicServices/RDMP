@@ -20,11 +20,6 @@ namespace Rdmp.Core.Curation.Data.Dashboarding;
 public interface IPersistableObjectCollection
 {
     /// <summary>
-    /// Gets the class you can use to serialize/deserialize values for this collection
-    /// </summary>
-    PersistStringHelper Helper { get; }
-
-    /// <summary>
     /// A list of all the currently used objects in this collection
     /// </summary>
     List<IMapsDirectlyToDatabaseTable> DatabaseObjects { get; set; }

@@ -469,8 +469,7 @@ public class RDMPControlCommonFunctionality
     /// <param name="red"></param>
     public void ScintillaGoRed(Scintilla queryEditor, bool red)
     {
-        if(!_oldColours.ContainsKey(queryEditor))
-            _oldColours.Add(queryEditor, queryEditor.Styles[1].ForeColor);
+        _oldColours.TryAdd(queryEditor, queryEditor.Styles[1].ForeColor);
 
         if (red)
         {

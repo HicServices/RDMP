@@ -23,8 +23,6 @@ namespace ResearchDataManagementPlatform.WindowManagement.ContentWindowTracking.
 /// </summary>
 public class PersistenceDecisionFactory
 {
-    PersistStringHelper _persistStringHelper = new PersistStringHelper();
-
     public PersistenceDecisionFactory()
     {
         //ensure dashboard UI assembly is loaded
@@ -109,11 +107,11 @@ public class PersistenceDecisionFactory
             throw new PersistenceException(
                 $"Constructor of Type '{collectionType}' did not initialise property DatabaseObjects");
             
-        var allObjectsString = _persistStringHelper.MatchCollectionInString(persistString);
+        var allObjectsString = PersistStringHelper.MatchCollectionInString(persistString);
 
-        collectionInstance.DatabaseObjects.AddRange(_persistStringHelper.GetObjectCollectionFromPersistString(allObjectsString,repositoryLocator));
+        collectionInstance.DatabaseObjects.AddRange(PersistStringHelper.GetObjectCollectionFromPersistString(allObjectsString,repositoryLocator));
 
-        var extraText = _persistStringHelper.GetExtraText(persistString);
+        var extraText = PersistStringHelper.GetExtraText(persistString);
         collectionInstance.LoadExtraText(extraText);
 
         return new DeserializeInstruction(uiType,collectionInstance);

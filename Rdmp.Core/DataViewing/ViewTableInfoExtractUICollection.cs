@@ -43,12 +43,12 @@ public class ViewTableInfoExtractUICollection : PersistableObjectCollection, IVi
 
     public override string SaveExtraText()
     {
-        return Helper.SaveDictionaryToString(new Dictionary<string, string> { { "ViewType", ViewType.ToString() } });
+        return PersistStringHelper.SaveDictionaryToString(new Dictionary<string, string> { { "ViewType", ViewType.ToString() } });
     }
 
     public override void LoadExtraText(string s)
     {
-        var value = Helper.GetValueIfExistsFromPersistString("ViewType", s);
+        var value = PersistStringHelper.GetValueIfExistsFromPersistString("ViewType", s);
         ViewType = (ViewType)Enum.Parse(typeof(ViewType), value);
     }
 
