@@ -30,8 +30,8 @@ public partial class ObjectSaverButton
     private Bitmap _undoImage;
     private Bitmap _redoImage;
 
-    private ToolStripButton btnSave  = new ToolStripButton("Save",FamFamFamIcons.disk.ImageToBitmap());
-    private ToolStripButton btnUndoRedo = new ToolStripButton("Undo", FamFamFamIcons.Undo.ImageToBitmap());
+    private ToolStripButton btnSave  = new("Save",FamFamFamIcons.disk.ImageToBitmap());
+    private ToolStripButton btnUndoRedo = new("Undo", FamFamFamIcons.Undo.ImageToBitmap());
         
     private RevertableObjectReport _undoneChanges;
     private IRDMPControl _parent;

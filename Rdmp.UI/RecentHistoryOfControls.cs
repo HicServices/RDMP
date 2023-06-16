@@ -56,7 +56,7 @@ public class RecentHistoryOfControls
     {
         _controlGuid = controlGuid;
         _recentValues = new List<string>(UserSettings.GetHistoryForControl(controlGuid));
-        _rvContents = new(_recentValues);
+        _rvContents = new HashSet<string>(_recentValues);
     }
 
     public void AddResult( string value,bool save = true)

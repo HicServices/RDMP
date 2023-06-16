@@ -29,7 +29,7 @@ public class WordDataWriter : DocXHelper
 {
     public ExtractionPipelineUseCase Executer { get; set; }
 
-    public List<Exception> ExceptionsGeneratingWordFile = new List<Exception>();
+    public List<Exception> ExceptionsGeneratingWordFile = new();
 
     public WordDataWriter(ExtractionPipelineUseCase executer)
     {
@@ -48,7 +48,7 @@ public class WordDataWriter : DocXHelper
                 $"{GetType().FullName} only supports destinations which are {typeof(ExecuteDatasetExtractionFlatFileDestination).FullName}");
     }
         
-    private static object oLockOnWordUsage = new object();
+    private static object oLockOnWordUsage = new();
     private IExecuteDatasetExtractionDestination _destination;
 
     /// <summary>
@@ -289,7 +289,7 @@ public class WordDataWriter : DocXHelper
             else
                 supplementalValuesForThisOne.Add(new Tuple<string, string>("Runtime Name:", "Not found"));
             */
-                new Tuple<string, string>("Datatype (SQL):",value.DataTypeInCatalogue) };
+                new("Datatype (SQL):",value.DataTypeInCatalogue) };
 
 
             if(value.FoundAtExtractTime)

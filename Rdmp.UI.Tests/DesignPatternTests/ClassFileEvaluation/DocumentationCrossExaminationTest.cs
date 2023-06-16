@@ -17,10 +17,10 @@ namespace Rdmp.UI.Tests.DesignPatternTests.ClassFileEvaluation;
 class DocumentationCrossExaminationTest
 {
     private readonly DirectoryInfo _slndir;
-    private static readonly Regex MatchComments = new Regex(@"///[^;\r\n]*",RegexOptions.Compiled|RegexOptions.CultureInvariant);
+    private static readonly Regex MatchComments = new(@"///[^;\r\n]*",RegexOptions.Compiled|RegexOptions.CultureInvariant);
 
     private string[] _mdFiles;
-    private static readonly Regex MatchMdReferences = new Regex(@"`(.*)`",RegexOptions.Compiled|RegexOptions.CultureInvariant);
+    private static readonly Regex MatchMdReferences = new(@"`(.*)`",RegexOptions.Compiled|RegexOptions.CultureInvariant);
 
     private const bool ReWriteMarkdownToReferenceGlossary = true;
 
@@ -269,7 +269,7 @@ class DocumentationCrossExaminationTest
         "MakeAnonymous",
         "ReleaseIdentifierAllocation",
         "SocialSecurityNumber",
-        "BuildInParallel",
+        "BuildInParallel"
     };
     #endregion
     public DocumentationCrossExaminationTest(DirectoryInfo slndir)

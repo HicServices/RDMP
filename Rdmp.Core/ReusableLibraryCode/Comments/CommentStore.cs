@@ -22,7 +22,7 @@ namespace Rdmp.Core.ReusableLibraryCode.Comments;
 /// </summary>
 public class CommentStore : IEnumerable<KeyValuePair<string, string>>
 {
-    private readonly Dictionary<string,string> _dictionary = new Dictionary<string, string>(StringComparer.CurrentCultureIgnoreCase);
+    private readonly Dictionary<string,string> _dictionary = new(StringComparer.CurrentCultureIgnoreCase);
 
     private string[] _ignoreHelpFor = new[]
     {

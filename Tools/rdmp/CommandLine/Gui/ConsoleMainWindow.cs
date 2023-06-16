@@ -43,7 +43,7 @@ class ConsoleMainWindow
     private MouseFlags _rightClick = MouseFlags.Button3Clicked;
         
     // Last time the mouse moved and where it moved to
-    private Point _lastMousePos = new Point(0,0);
+    private Point _lastMousePos = new(0,0);
     private DateTime _lastMouseMove = DateTime.Now;
 
     public const string Catalogues = "Catalogues";
@@ -81,22 +81,22 @@ class ConsoleMainWindow
     internal void SetUp(Toplevel top)
     {
         var menu = new MenuBar (new MenuBarItem [] {
-            new MenuBarItem ("_File (F9)", new MenuItem [] {
-                new MenuItem ("_New...", "", () => New()),
-                new MenuItem ("_Find...", "", () => Find()),
-                new MenuItem ("_User Settings...", "", () => ShowUserSettings()),
-                new MenuItem ("_Run...", "", () => Run()),
-                new MenuItem ("_Refresh...", "", () => Publish()),
-                new MenuItem ("_Quit", "", () => Quit()),
+            new("_File (F9)", new MenuItem [] {
+                new("_New...", "", () => New()),
+                new("_Find...", "", () => Find()),
+                new("_User Settings...", "", () => ShowUserSettings()),
+                new("_Run...", "", () => Run()),
+                new("_Refresh...", "", () => Publish()),
+                new("_Quit", "", () => Quit())
             }),
-            new MenuBarItem ("_Diagnostics", new MenuItem [] {
+            new("_Diagnostics", new MenuItem [] {
                 mi_default = new MenuItem {Title = "Query Catalogue", Action = ()=>Query(nameof(CataloguePatcher))},
-                mi_default = new MenuItem {Title = "Query Data Export", Action = ()=>Query(nameof(DataExportPatcher))},
+                mi_default = new MenuItem {Title = "Query Data Export", Action = ()=>Query(nameof(DataExportPatcher))}
             }),
-            new MenuBarItem ("_Color Scheme", new MenuItem [] {
+            new("_Color Scheme", new MenuItem [] {
                 mi_default = new MenuItem {Title = "Default", Checked = true, CheckType = MenuItemCheckStyle.Radio, Action = ()=>SetColorScheme(mi_default)},
-                mi_green = new MenuItem {Title = "Green", Checked = false, CheckType = MenuItemCheckStyle.Radio, Action = ()=>SetColorScheme(mi_green)},
-            }),
+                mi_green = new MenuItem {Title = "Green", Checked = false, CheckType = MenuItemCheckStyle.Radio, Action = ()=>SetColorScheme(mi_green)}
+            })
         });
         top.Add (menu);
                 
@@ -115,7 +115,7 @@ class ConsoleMainWindow
             Focus = Application.Driver.MakeAttribute(Color.Black, Color.Green),
             HotFocus = Application.Driver.MakeAttribute(Color.Black, Color.Green),
             HotNormal = Application.Driver.MakeAttribute(Color.BrightYellow, Color.Black),
-            Normal = Application.Driver.MakeAttribute(Color.Green, Color.Black),
+            Normal = Application.Driver.MakeAttribute(Color.Green, Color.Black)
         };
 
 
@@ -151,11 +151,11 @@ class ConsoleMainWindow
         _treeView.AspectGetter = AspectGetter;
             
         var statusBar = new StatusBar (new StatusItem [] {
-            new StatusItem(Key.Q | Key.CtrlMask, "~^Q~ Quit", () => Quit()),
-            new StatusItem(Key.R | Key.CtrlMask, "~^R~ Run", () => Run()),
-            new StatusItem(Key.F | Key.CtrlMask, "~^F~ Find", () => Find()),
-            new StatusItem(Key.N | Key.CtrlMask, "~^N~ New", () => New()),
-            new StatusItem(Key.F5, "~F5~ Refresh", () => Publish()),
+            new(Key.Q | Key.CtrlMask, "~^Q~ Quit", () => Quit()),
+            new(Key.R | Key.CtrlMask, "~^R~ Run", () => Run()),
+            new(Key.F | Key.CtrlMask, "~^F~ Find", () => Find()),
+            new(Key.N | Key.CtrlMask, "~^N~ New", () => New()),
+            new(Key.F5, "~F5~ Refresh", () => Publish())
         });
 
         top.Add (statusBar);

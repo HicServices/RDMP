@@ -31,7 +31,7 @@ public class MemoryRepository : IRepository
     protected readonly ConcurrentDictionary<IMapsDirectlyToDatabaseTable,byte> Objects = new ();
 
 
-    readonly ConcurrentDictionary<IMapsDirectlyToDatabaseTable, HashSet<PropertyChangedExtendedEventArgs>> _propertyChanges = new ConcurrentDictionary<IMapsDirectlyToDatabaseTable, HashSet<PropertyChangedExtendedEventArgs>>();
+    readonly ConcurrentDictionary<IMapsDirectlyToDatabaseTable, HashSet<PropertyChangedExtendedEventArgs>> _propertyChanges = new();
 
     public event EventHandler<SaveEventArgs> Saving;
     public event EventHandler<IMapsDirectlyToDatabaseTableEventArgs> Inserting;

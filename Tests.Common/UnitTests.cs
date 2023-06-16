@@ -50,17 +50,17 @@ namespace Tests.Common;
 [Category("Unit")]
 public class UnitTests
 {
-    protected MemoryDataExportRepository Repository = new MemoryDataExportRepository();
+    protected MemoryDataExportRepository Repository = new();
     protected IRDMPPlatformRepositoryServiceLocator RepositoryLocator { get; private set; }
         
     //These types do not have to be supported by the method WhenIHaveA
-    protected HashSet<string> SkipTheseTypes = new HashSet<string>(new string[]
+    protected HashSet<string> SkipTheseTypes = new(new string[]
     {
         "TestColumn",
         "ExtractableCohort",
         "DQEGraphAnnotation",
         "Evaluation",
-        "WindowLayout",
+        "WindowLayout"
     });
         
         
@@ -688,7 +688,7 @@ public class UnitTests
 
     //Fields that can be safely ignored when comparing an object created in memory with one created into the database.
     private static readonly string[] IgnorePropertiesWhenDiffing = new[] {"ID","Repository","CatalogueRepository","SoftwareVersion"};
-    public static Dictionary<PropertyInfo,HashSet<object>> _alreadyChecked = new Dictionary<PropertyInfo, HashSet<object>>();
+    public static Dictionary<PropertyInfo,HashSet<object>> _alreadyChecked = new();
 
     /// <summary>
     /// Asserts that the two objects are basically the same except for IDs/Repositories.  This includes checking all public properties

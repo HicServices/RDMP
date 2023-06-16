@@ -76,7 +76,7 @@ public class Memento : ReferenceOtherObjectDatabaseEntity
             {"Commit_ID",commit.ID},
             {"BeforeYaml",beforeYaml},
             {"AfterYaml",afterYaml},
-            {"Type",type},
+            {"Type",type}
         });
     }
     public override string ToString()

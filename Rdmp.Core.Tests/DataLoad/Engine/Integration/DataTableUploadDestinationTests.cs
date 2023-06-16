@@ -559,12 +559,12 @@ ALTER TABLE DroppedColumnsTable add color varchar(1)
         var table = db.CreateTable("TestResizing",
             new DatabaseColumnRequest[] 
             {
-                new DatabaseColumnRequest("MyInteger",new DatabaseTypeRequest(typeof(int))),
-                new DatabaseColumnRequest("MyMaxString",new DatabaseTypeRequest(typeof(string),int.MaxValue)),
-                new DatabaseColumnRequest("Description",new DatabaseTypeRequest(typeof(string),int.MaxValue)),
-                new DatabaseColumnRequest("StringNotNull",new DatabaseTypeRequest(typeof(string),100),false),
-                new DatabaseColumnRequest("StringAllowNull",new DatabaseTypeRequest(typeof(string),100),true),
-                new DatabaseColumnRequest("StringPk",new DatabaseTypeRequest(typeof(string),50),true){IsPrimaryKey = true }
+                new("MyInteger",new DatabaseTypeRequest(typeof(int))),
+                new("MyMaxString",new DatabaseTypeRequest(typeof(string),int.MaxValue)),
+                new("Description",new DatabaseTypeRequest(typeof(string),int.MaxValue)),
+                new("StringNotNull",new DatabaseTypeRequest(typeof(string),100),false),
+                new("StringAllowNull",new DatabaseTypeRequest(typeof(string),100),true),
+                new("StringPk",new DatabaseTypeRequest(typeof(string),50),true){IsPrimaryKey = true }
             });
 
         using (var con = server.GetConnection())
@@ -636,12 +636,12 @@ ALTER TABLE DroppedColumnsTable add color varchar(1)
         var table = db.CreateTable("TestResizing",
             new DatabaseColumnRequest[]
             {
-                new DatabaseColumnRequest("MyInteger",new DatabaseTypeRequest(typeof(int))),
-                new DatabaseColumnRequest("MyMaxString",new DatabaseTypeRequest(typeof(string),int.MaxValue)),
-                new DatabaseColumnRequest("Description",new DatabaseTypeRequest(typeof(string),int.MaxValue)),
-                new DatabaseColumnRequest("StringNotNull",new DatabaseTypeRequest(typeof(string),10),false),
-                new DatabaseColumnRequest("StringAllowNull",new DatabaseTypeRequest(typeof(string),100),true),
-                new DatabaseColumnRequest("StringPk",new DatabaseTypeRequest(typeof(string),50),true){IsPrimaryKey = true }
+                new("MyInteger",new DatabaseTypeRequest(typeof(int))),
+                new("MyMaxString",new DatabaseTypeRequest(typeof(string),int.MaxValue)),
+                new("Description",new DatabaseTypeRequest(typeof(string),int.MaxValue)),
+                new("StringNotNull",new DatabaseTypeRequest(typeof(string),10),false),
+                new("StringAllowNull",new DatabaseTypeRequest(typeof(string),100),true),
+                new("StringPk",new DatabaseTypeRequest(typeof(string),50),true){IsPrimaryKey = true }
             });
 
         Assert.AreEqual(10, table.DiscoverColumn("StringNotNull").DataType.GetLengthIfString());
@@ -1064,7 +1064,7 @@ ALTER TABLE DroppedColumnsTable add color varchar(1)
         }
                        
         //in the database it should be typed
-        Assert.AreEqual(typeof(Decimal),db.ExpectTable("ff").DiscoverColumn("mycol").DataType.GetCSharpDataType());
+        Assert.AreEqual(typeof(decimal),db.ExpectTable("ff").DiscoverColumn("mycol").DataType.GetCSharpDataType());
 
         var dt2 = db.ExpectTable("ff").GetDataTable();
             

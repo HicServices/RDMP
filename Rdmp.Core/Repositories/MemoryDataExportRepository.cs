@@ -46,7 +46,7 @@ public class MemoryDataExportRepository : MemoryCatalogueRepository,IDataExportR
 
     #region IDataExportPropertyManager
 
-    protected Dictionary<DataExportProperty,string>  PropertiesDictionary = new Dictionary<DataExportProperty, string>();
+    protected Dictionary<DataExportProperty,string>  PropertiesDictionary = new();
         
     public virtual string GetValue(DataExportProperty property)
     {

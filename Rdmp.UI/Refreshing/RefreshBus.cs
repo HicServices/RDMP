@@ -33,7 +33,7 @@ public class RefreshBus
 
     public ICoreChildProvider ChildProvider { get; set; }
 
-    private object oPublishLock = new object();
+    private object oPublishLock = new();
 
     public void Publish(object sender, RefreshObjectEventArgs e)
     {
@@ -75,7 +75,7 @@ public class RefreshBus
         }
     }
 
-    private HashSet<IRefreshBusSubscriber> subscribers = new HashSet<IRefreshBusSubscriber>();
+    private HashSet<IRefreshBusSubscriber> subscribers = new();
 
     public void Subscribe(IRefreshBusSubscriber subscriber)
     {
@@ -115,7 +115,7 @@ public class RefreshBus
         parentForm.FormClosing += (s, e) => Unsubscribe(subscriber);
     }
 
-    List<object> _selfDestructors = new List<object>();
+    List<object> _selfDestructors = new();
 
 
     /// <summary>

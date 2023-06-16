@@ -33,8 +33,8 @@ public class LoadDiagramDatabaseNode : Node,IHasLoadDiagramState, IKnowWhatIAm
 
     public string DatabaseName { get; private set; }
 
-    public List<LoadDiagramTableNode> _anticipatedChildren = new List<LoadDiagramTableNode>();
-    public List<UnplannedTable> _unplannedChildren = new List<UnplannedTable>();
+    public List<LoadDiagramTableNode> _anticipatedChildren = new();
+    public List<UnplannedTable> _unplannedChildren = new();
 
 
     public LoadDiagramDatabaseNode(LoadBubble bubble, DiscoveredDatabase database, TableInfo[] loadTables, HICDatabaseConfiguration config)

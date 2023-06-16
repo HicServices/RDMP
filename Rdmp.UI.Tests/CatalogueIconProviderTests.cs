@@ -25,7 +25,7 @@ class CatalogueIconProviderTests: UITests
     {
         var provider = new CatalogueIconProvider(RepositoryLocator,null);
 
-        var img = provider.GetImage(new Object(), OverlayKind.None);
+        var img = provider.GetImage(new object(), OverlayKind.None);
 
         Assert.IsFalse(provider.HasIcon(new object()));
     }

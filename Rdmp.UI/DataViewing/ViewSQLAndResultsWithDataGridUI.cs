@@ -50,10 +50,10 @@ public partial class ViewSQLAndResultsWithDataGridUI : RDMPUserControl, IObjectC
     private DiscoveredServer _server;
     private AutoCompleteProviderWin _autoComplete;
         
-    ToolStripButton btnExecuteSql = new ToolStripButton("Run");
-    ToolStripButton btnResetSql = new ToolStripButton("Restore Original SQL");
+    ToolStripButton btnExecuteSql = new("Run");
+    ToolStripButton btnResetSql = new("Restore Original SQL");
 
-    readonly ToolStripTimeout _timeoutControls = new ToolStripTimeout();
+    readonly ToolStripTimeout _timeoutControls = new();
     private ToolStripLabel _serverHeader;
     private DatabaseTypeIconProvider _databaseTypeIconProvider;
 

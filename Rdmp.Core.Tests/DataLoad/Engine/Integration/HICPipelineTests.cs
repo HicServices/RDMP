@@ -123,22 +123,22 @@ public class HICPipelineTests : DatabaseTests
             // Not assigned to a variable as they will be magically available through the repository
             var processTaskArgs = new List<Tuple<string, string, Type>>
             {
-                new Tuple<string, string, Type>("FilePattern", "1.csv", typeof (string)),
-                new Tuple<string, string, Type>("TableName", "TestData", typeof (string)),
-                new Tuple<string, string, Type>("ForceHeaders", null, typeof (string)),
-                new Tuple<string, string, Type>("IgnoreQuotes", null, typeof (bool)),
-                new Tuple<string, string, Type>("IgnoreBlankLines", null, typeof (bool)),
-                new Tuple<string, string, Type>("ForceHeadersReplacesFirstLineInFile", null, typeof (bool)),
-                new Tuple<string, string, Type>("SendLoadNotRequiredIfFileNotFound", "false", typeof (bool)),
-                new Tuple<string, string, Type>("Separator", ",", typeof (string)),
-                new Tuple<string, string, Type>("TableToLoad", null, typeof (TableInfo)),
-                new Tuple<string, string, Type>("BadDataHandlingStrategy", BadDataHandlingStrategy.ThrowException.ToString(), typeof (BadDataHandlingStrategy)),
-                new Tuple<string, string, Type>("ThrowOnEmptyFiles", "true", typeof (bool)),
-                new Tuple<string, string, Type>("AttemptToResolveNewLinesInRecords", "true", typeof (bool)),
-                new Tuple<string, string, Type>("MaximumErrorsToReport", "0", typeof (int)),
-                new Tuple<string, string, Type>("IgnoreColumns", null, typeof (string)),
-                new Tuple<string, string, Type>("IgnoreBadReads", "false", typeof (bool)),
-                new Tuple<string, string, Type>("AddFilenameColumnNamed", null, typeof (string)),
+                new("FilePattern", "1.csv", typeof (string)),
+                new("TableName", "TestData", typeof (string)),
+                new("ForceHeaders", null, typeof (string)),
+                new("IgnoreQuotes", null, typeof (bool)),
+                new("IgnoreBlankLines", null, typeof (bool)),
+                new("ForceHeadersReplacesFirstLineInFile", null, typeof (bool)),
+                new("SendLoadNotRequiredIfFileNotFound", "false", typeof (bool)),
+                new("Separator", ",", typeof (string)),
+                new("TableToLoad", null, typeof (TableInfo)),
+                new("BadDataHandlingStrategy", BadDataHandlingStrategy.ThrowException.ToString(), typeof (BadDataHandlingStrategy)),
+                new("ThrowOnEmptyFiles", "true", typeof (bool)),
+                new("AttemptToResolveNewLinesInRecords", "true", typeof (bool)),
+                new("MaximumErrorsToReport", "0", typeof (int)),
+                new("IgnoreColumns", null, typeof (string)),
+                new("IgnoreBadReads", "false", typeof (bool)),
+                new("AddFilenameColumnNamed", null, typeof (string))
 
             };
                 

@@ -41,7 +41,7 @@ public class TestsRequiringAnExtractionConfiguration : TestsRequiringACohort
     protected Project _project;
     protected ExtractionConfiguration _configuration;
     protected ExtractionInformation[] _extractionInformations;
-    protected List<IColumn> _extractableColumns = new List<IColumn>();
+    protected List<IColumn> _extractableColumns = new();
     protected ExtractDatasetCommand _request;
 
     private readonly string _testDatabaseName = TestDatabaseNames.GetConsistentName("ExtractionConfiguration");

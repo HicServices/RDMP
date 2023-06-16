@@ -13,7 +13,7 @@ namespace Rdmp.Core.MapsDirectlyToDatabaseTable;
 public static class NewObjectPool
 {
     private static Scope CurrentScope;
-    private static object currentScopeLock = new object();
+    private static object currentScopeLock = new();
 
     public static void Add(IMapsDirectlyToDatabaseTable toCreate)
     {
@@ -68,7 +68,7 @@ public static class NewObjectPool
 
     private class Scope : IDisposable
     {
-        public List<IMapsDirectlyToDatabaseTable> Objects { get; set; } = new List<IMapsDirectlyToDatabaseTable>();
+        public List<IMapsDirectlyToDatabaseTable> Objects { get; set; } = new();
 
 
         public void Dispose()

@@ -75,7 +75,7 @@ class TableInfoCredentialsManager : ITableInfoCredentialsManager
             {
                 {"cid", credentials.ID},
                 {"tid", tableInfo.ID},
-                {"context", context},
+                {"context", context}
             });
 
         tableInfo.ClearAllInjections();

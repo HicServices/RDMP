@@ -29,7 +29,7 @@ public class FromCheckNotifierToDataLoadEventListener : IDataLoadEventListener
         _checker.OnCheckPerformed(e.ToCheckEventArgs());
     }
 
-    private HashSet<string> _progressMessagesReceived = new HashSet<string>();
+    private HashSet<string> _progressMessagesReceived = new();
 
     public void OnProgress(object sender, ProgressEventArgs e)
     {

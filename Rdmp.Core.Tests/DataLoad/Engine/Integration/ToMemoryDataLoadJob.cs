@@ -37,8 +37,8 @@ public class ToMemoryDataLoadJob : ToMemoryDataLoadEventListener, IDataLoadJob
     public ILoadMetadata LoadMetadata { get; private set; }
     public bool DisposeImmediately { get; private set; }
     public string ArchiveFilepath { get; private set; }
-    public List<ITableInfo> RegularTablesToLoad { get; private set; } = new List<ITableInfo>();
-    public List<ITableInfo> LookupTablesToLoad { get; private set; } = new List<ITableInfo>();
+    public List<ITableInfo> RegularTablesToLoad { get; private set; } = new();
+    public List<ITableInfo> LookupTablesToLoad { get; private set; } = new();
     public IRDMPPlatformRepositoryServiceLocator RepositoryLocator => null;
 
     public void StartLogging()

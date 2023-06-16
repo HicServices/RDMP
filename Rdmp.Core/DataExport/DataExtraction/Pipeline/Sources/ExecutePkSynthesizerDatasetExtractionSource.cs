@@ -56,7 +56,7 @@ public class ExecutePkSynthesizerDatasetExtractionSource : ExecuteDatasetExtract
                     {
                         HashOnDataRelease = true,
                         IsPrimaryKey = true,
-                        Order = -1,
+                        Order = -1
                     });
                 _synthesizePkCol = true;
             }

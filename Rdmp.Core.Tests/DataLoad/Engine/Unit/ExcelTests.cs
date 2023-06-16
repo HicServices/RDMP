@@ -31,7 +31,7 @@ public class ExcelTests
     public const string FreakyTestFile = "FreakyBook1.xlsx";
     public const string OddFormatsFile = "OddFormats.xls";
 
-    private Dictionary<string, FileInfo> _fileLocations = new Dictionary<string, FileInfo>();
+    private Dictionary<string, FileInfo> _fileLocations = new();
     public static FileInfo TestFileInfo;
     public static FileInfo FreakyTestFileInfo;
     public static FileInfo OddFormatsFileInfo;

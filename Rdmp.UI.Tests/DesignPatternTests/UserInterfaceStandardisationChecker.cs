@@ -33,7 +33,7 @@ namespace Rdmp.UI.Tests.DesignPatternTests;
 public class UserInterfaceStandardisationChecker
 {
     private List<string> _csFilesList;
-    private List<string> problems = new List<string>();
+    private List<string> problems = new();
 
     private Type[] excusedNodeClasses = new Type[]
     {

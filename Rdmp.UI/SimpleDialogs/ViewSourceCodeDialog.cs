@@ -27,8 +27,8 @@ public partial class ViewSourceCodeDialog : Form
 {
     private Scintilla QueryEditor;
 
-    private static HashSet<FileInfo> SupplementalSourceZipFiles = new HashSet<FileInfo>();
-    private static object oSupplementalSourceZipFilesLock = new object();
+    private static HashSet<FileInfo> SupplementalSourceZipFiles = new();
+    private static object oSupplementalSourceZipFilesLock = new();
     private const string MainSourceCodeRepo = "SourceCodeForSelfAwareness.zip";
 
     public static void AddSupplementalSourceZipFile(FileInfo f)

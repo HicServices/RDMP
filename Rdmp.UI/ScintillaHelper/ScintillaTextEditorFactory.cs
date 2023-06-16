@@ -243,7 +243,7 @@ public class ScintillaTextEditorFactory
         scintilla.SetKeywords(5, @"sys objects sysobjects ");
     }
 
-    private CSharpLexer cSharpLexer = new CSharpLexer("class const int namespace partial public static string using void");
+    private CSharpLexer cSharpLexer = new("class const int namespace partial public static string using void");
 
     private void scintilla_StyleNeeded(Scintilla scintilla, StyleNeededEventArgs e)
     {

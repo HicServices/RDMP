@@ -15,7 +15,7 @@ namespace Rdmp.UI.TestsAndSetup;
 /// </summary>
 public class GlobalExceptionHandler
 {
-    public static GlobalExceptionHandler Instance {get;} = new GlobalExceptionHandler();
+    public static GlobalExceptionHandler Instance {get;} = new();
 
     /// <summary>
     /// What to do when errors occur, changing this discards the old action and sets a new one.  Defaults to launching a non modal <see cref="ExceptionViewer"/>

@@ -75,8 +75,8 @@ public class DataTableUploadDestination : IPluginDataFlowComponent<DataTable>, I
     private IBulkCopy _bulkcopy;
     private int _affectedRows = 0;
         
-    Stopwatch swTimeSpentWriting = new Stopwatch();
-    Stopwatch swMeasuringStrings = new Stopwatch();
+    Stopwatch swTimeSpentWriting = new();
+    Stopwatch swMeasuringStrings = new();
 
     private DiscoveredServer _loggingDatabaseSettings;
 
@@ -91,7 +91,7 @@ public class DataTableUploadDestination : IPluginDataFlowComponent<DataTable>, I
     public List<DatabaseColumnRequest> ExplicitTypes { get; set; }
 
     private bool _firstTime = true;
-    private HashSet<string> _primaryKey = new HashSet<string>(StringComparer.CurrentCultureIgnoreCase);
+    private HashSet<string> _primaryKey = new(StringComparer.CurrentCultureIgnoreCase);
     private DiscoveredTable _discoveredTable;
 
     //All column values sent to server so far

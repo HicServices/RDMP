@@ -36,7 +36,7 @@ public class FileUnzipper : IPluginDataProvider
     [DemandsInitialization("Leave blank to extract all files or populate with a REGULAR EXPRESSION to extract only specific files e.g. \".*\\.txt\" to extract all .txt files - notice how the pattern is a regular expression, so the dot must be escaped to prevent matching anything")]
     public Regex ZipEntryPattern { get; set; }
 
-    readonly List<FileInfo> _entriesUnzipped = new List<FileInfo>();
+    readonly List<FileInfo> _entriesUnzipped = new();
 
     public void Initialize(ILoadDirectory directory, DiscoveredDatabase dbInfo)
     {

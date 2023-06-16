@@ -26,8 +26,8 @@ class RunEngineWindow<T> : Window, IListDataSource where T : RDMPCommandLineOpti
     protected readonly IBasicActivateItems BasicActivator;
     private readonly Func<T> commandGetter;
 
-    private object lockList = new object();
-    private List<string> consoleOutput = new List<string>();
+    private object lockList = new();
+    private List<string> consoleOutput = new();
     private ColorScheme _red;
     private ColorScheme _yellow;
     private ColorScheme _white;

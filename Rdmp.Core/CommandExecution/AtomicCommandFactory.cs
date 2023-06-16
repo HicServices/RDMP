@@ -737,7 +737,7 @@ public class AtomicCommandFactory : CommandFactoryBase
             yield return new ExecuteCommandCreateNewExtractionConfigurationForProject(_activator)
             {
                 CohortIfAny = cohort,
-                OverrideCommandName = "New Extraction Configuration using Cohort",
+                OverrideCommandName = "New Extraction Configuration using Cohort"
             };
         }
 

@@ -95,8 +95,8 @@ public class CheckColumnProvider
         }
     }
 
-    private object ocheckResultsDictionaryLock = new object();
-    Dictionary<ICheckable, CheckResult> checkResultsDictionary = new Dictionary<ICheckable, CheckResult>();
+    private object ocheckResultsDictionaryLock = new();
+    Dictionary<ICheckable, CheckResult> checkResultsDictionary = new();
 
     public void RecordWorst(ICheckable o, CheckResult result)
     {

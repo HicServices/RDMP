@@ -76,7 +76,7 @@ public partial class ConfigureCatalogueExtractabilityUI : RDMPForm, ISaveableUI
 
     private BinderWithErrorProviderFactory _binder;
         
-    ObjectSaverButton objectSaverButton1 = new ObjectSaverButton();
+    ObjectSaverButton objectSaverButton1 = new();
         
     /// <summary>
     /// True if we are making programatic changes to values and shouldn't respond to control events (e.g. dropdown changes)

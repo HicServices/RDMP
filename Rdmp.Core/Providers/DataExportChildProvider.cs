@@ -65,12 +65,12 @@ public class DataExportChildProvider : CatalogueChildProvider
 
     public List<ExternalCohortTable> ForbidListedSources { get; private set; }
         
-    public List<IObjectUsedByOtherObjectNode<Project,IMapsDirectlyToDatabaseTable>> DuplicatesByProject = new List<IObjectUsedByOtherObjectNode<Project,IMapsDirectlyToDatabaseTable>>();
-    public List<IObjectUsedByOtherObjectNode<CohortSourceUsedByProjectNode>> DuplicatesByCohortSourceUsedByProjectNode = new List<IObjectUsedByOtherObjectNode<CohortSourceUsedByProjectNode>>();
+    public List<IObjectUsedByOtherObjectNode<Project,IMapsDirectlyToDatabaseTable>> DuplicatesByProject = new();
+    public List<IObjectUsedByOtherObjectNode<CohortSourceUsedByProjectNode>> DuplicatesByCohortSourceUsedByProjectNode = new();
 
 
-    private readonly object _oProjectNumberToCohortsDictionary = new object();
-    public Dictionary<int,List<ExtractableCohort>> ProjectNumberToCohortsDictionary = new Dictionary<int, List<ExtractableCohort>>();
+    private readonly object _oProjectNumberToCohortsDictionary = new();
+    public Dictionary<int,List<ExtractableCohort>> ProjectNumberToCohortsDictionary = new();
 
     public ProjectCohortIdentificationConfigurationAssociation[] AllProjectAssociatedCics;
 
@@ -241,7 +241,7 @@ public class DataExportChildProvider : CatalogueChildProvider
 
         ReportProgress("Injecting SelectedDataSets");
 
-        _configurationToDatasetMapping = new();
+        _configurationToDatasetMapping = new Dictionary<IExtractionConfiguration, List<SelectedDataSets>>();
 
         var configToSds = SelectedDataSets.GroupBy(k => k.ExtractionConfiguration_ID).ToDictionaryEx(gdc => gdc.Key, gdc => gdc.ToList());
 

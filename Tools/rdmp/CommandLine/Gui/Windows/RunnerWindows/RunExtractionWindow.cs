@@ -26,7 +26,7 @@ class RunExtractionWindow : RunEngineWindow<ExtractionOptions>
         return new ExtractionOptions
         {
             ExtractionConfiguration = ec.ID.ToString(),
-            ExtractGlobals = true,
+            ExtractGlobals = true
         };
     }
 

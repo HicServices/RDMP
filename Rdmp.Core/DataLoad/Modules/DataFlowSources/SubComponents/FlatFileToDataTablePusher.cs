@@ -44,7 +44,7 @@ public class FlatFileToDataTablePusher
     /// All line numbers of the source file being read that could not be processed.  Allows BadDataFound etc to be called multiple times without skipping
     /// records by accident.
     /// </summary>
-    public HashSet<int> BadLines = new HashSet<int>();
+    public HashSet<int> BadLines = new();
 
     /// <summary>
     /// This is incremented when too many values are read from the file to match the header count BUT the values read were null/empty

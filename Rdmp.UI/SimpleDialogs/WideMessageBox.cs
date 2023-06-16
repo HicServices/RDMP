@@ -42,9 +42,9 @@ public partial class WideMessageBox : Form
     /// </summary>
     public WideMessageBoxArgs Args { get; set; }
 
-    readonly Stack<WideMessageBoxArgs> _navigationStack = new Stack<WideMessageBoxArgs>();
+    readonly Stack<WideMessageBoxArgs> _navigationStack = new();
 
-    private static readonly HashSet<string> KeywordIgnoreList = new HashSet<string>(StringComparer.CurrentCultureIgnoreCase)
+    private static readonly HashSet<string> KeywordIgnoreList = new(StringComparer.CurrentCultureIgnoreCase)
     {
         "date",
         "example",
@@ -56,7 +56,7 @@ public partial class WideMessageBox : Form
     public static CommentStore CommentStore;
     #endregion
         
-    Regex className = new Regex(@"^\w+$");
+    Regex className = new(@"^\w+$");
 
     public WideMessageBox(WideMessageBoxArgs args)
     {
@@ -206,7 +206,7 @@ public partial class WideMessageBox : Form
             WideMessageBoxTheme.Exception => (Image)Images.ErrorIcon.ImageToBitmap(),
             WideMessageBoxTheme.Warning => (Image)Images.WarningIcon.ImageToBitmap(),
             WideMessageBoxTheme.Help => (Image)Images.InformationIcon.ImageToBitmap(),
-            _ => throw new ArgumentOutOfRangeException(nameof(theme)),
+            _ => throw new ArgumentOutOfRangeException(nameof(theme))
         };
 
         Icon = IconFactory.Instance.GetIcon(pbIcon.Image.LegacyToImage());

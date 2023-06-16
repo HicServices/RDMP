@@ -47,7 +47,7 @@ class UITimeoutAttribute : NUnitAttribute, IWrapTestMethod
         }
 
         [DllImport("user32.dll", CharSet = CharSet.Auto)]
-        private static extern IntPtr SendMessage(IntPtr hWnd, UInt32 Msg, int wParam, IntPtr lParam);
+        private static extern IntPtr SendMessage(IntPtr hWnd, uint Msg, int wParam, IntPtr lParam);
 
         [DllImport("user32.dll", SetLastError = true, CharSet = CharSet.Auto)]
         static extern int GetClassName(IntPtr hWnd, StringBuilder lpClassName, int nMaxCount);
@@ -57,8 +57,8 @@ class UITimeoutAttribute : NUnitAttribute, IWrapTestMethod
 
         private string YesNoDialog = "#32770";
 
-        private const UInt32 WM_CLOSE = 0x0010;
-        private const UInt32 WM_COMMAND = 0x0111;
+        private const uint WM_CLOSE = 0x0010;
+        private const uint WM_COMMAND = 0x0111;
         private int IDNO = 7;
 
 

@@ -48,8 +48,8 @@ public partial class ParameterCollectionUI : RDMPUserControl
 {
     public ParameterCollectionUIOptions Options { get; private set; }
         
-    ToolStripMenuItem miAddNewParameter = new ToolStripMenuItem("New Parameter...");
-    ToolStripMenuItem miOverrideParameter = new ToolStripMenuItem("Override Parameter");
+    ToolStripMenuItem miAddNewParameter = new("New Parameter...");
+    ToolStripMenuItem miOverrideParameter = new("Override Parameter");
 
     public ParameterCollectionUI()
     {
@@ -108,7 +108,7 @@ public partial class ParameterCollectionUI : RDMPUserControl
             {ParameterLevel.Global.ToString(),0},
             {ParameterLevel.CompositeQueryLevel.ToString(),1},
             {ParameterLevel.QueryLevel.ToString(),2},
-            {ParameterLevel.TableInfo.ToString(),3},
+            {ParameterLevel.TableInfo.ToString(),3}
         };
 
         foreach (var g in e.Groups)

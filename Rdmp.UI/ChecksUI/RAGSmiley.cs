@@ -158,9 +158,9 @@ public partial class RAGSmiley : UserControl, IRAGSmiley
         _exception = null;
     }
 
-    private ToMemoryCheckNotifier memoryCheckNotifier = new ToMemoryCheckNotifier();
+    private ToMemoryCheckNotifier memoryCheckNotifier = new();
     private Task _checkTask;
-    private object oTaskLock = new object();
+    private object oTaskLock = new();
     private Timer _timer;
     private CheckResult _state;
     private Exception _exception;

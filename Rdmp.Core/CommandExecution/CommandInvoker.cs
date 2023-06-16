@@ -74,7 +74,7 @@ public class CommandInvoker
                 new DialogArgs
                 {
                     WindowTitle = $"Type needed for {p.Name}",
-                    InitialSearchText = p.DefaultValue?.ToString(),
+                    InitialSearchText = p.DefaultValue?.ToString()
                 }, p.DemandIfAny?.TypeOf, out var chosen)
                 ? chosen 
                 : throw new OperationCanceledException());
@@ -88,7 +88,7 @@ public class CommandInvoker
                 {
                     WindowTitle = GetPromptFor(p),
                     InitialObjectSelection = p.DefaultValue is IMapsDirectlyToDatabaseTable m ? new IMapsDirectlyToDatabaseTable[] { m } : null,
-                    InitialSearchText = p.DefaultValue?.ToString(),
+                    InitialSearchText = p.DefaultValue?.ToString()
                 }, GetAllObjectsOfType(p.Type)));
 
         AddDelegate(typeof(IPipeline), false, SelectPipeline);
@@ -104,7 +104,7 @@ public class CommandInvoker
         AddDelegate(typeof(Enum),false,(p)=>_basicActivator.SelectEnum(
             new DialogArgs { 
                 WindowTitle = GetPromptFor(p),
-                InitialSearchText = p.DefaultValue?.ToString(),
+                InitialSearchText = p.DefaultValue?.ToString()
             } , p.Type, out var chosen)?chosen:null);
 
 
@@ -178,7 +178,7 @@ public class CommandInvoker
                 new DialogArgs
                 {
                     WindowTitle = "Value needed for parameter",
-                    EntryLabel = GetPromptFor(p),
+                    EntryLabel = GetPromptFor(p)
                 }
                 , 1000, p.DefaultValue?.ToString(), out var result, false)
                 ? result
@@ -316,7 +316,7 @@ public class CommandInvoker
             {
                 WindowTitle = GetPromptFor(p),
                 InitialObjectSelection = p.DefaultValue is IMapsDirectlyToDatabaseTable m ? new IMapsDirectlyToDatabaseTable[] { m } : null,
-                InitialSearchText = p.DefaultValue?.ToString(),
+                InitialSearchText = p.DefaultValue?.ToString()
             }
             , _basicActivator.GetAll(p.Type).Cast<IMapsDirectlyToDatabaseTable>().ToArray());
     }

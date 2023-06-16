@@ -50,9 +50,9 @@ public class ExecuteCrossServerDatasetExtractionSource : ExecuteDatasetExtractio
         return base.GetChunk(listener, cancellationToken);
     }
         
-    private List<DiscoveredTable> tablesToCleanup = new List<DiscoveredTable>();
+    private List<DiscoveredTable> tablesToCleanup = new();
 
-    public static Semaphore OneCrossServerExtractionAtATime = new Semaphore(1, 1);
+    public static Semaphore OneCrossServerExtractionAtATime = new(1, 1);
     private DiscoveredServer _server;
     private DiscoveredDatabase _tempDb;
     private bool _semaphoreObtained;
@@ -63,7 +63,7 @@ public class ExecuteCrossServerDatasetExtractionSource : ExecuteDatasetExtractio
     private bool _doNotMigrate;
 
     private string _tablename = null;
-    private object _tableName = new object();
+    private object _tableName = new();
 
     public override string HackExtractionSQL(string sql, IDataLoadEventListener listener)
     {

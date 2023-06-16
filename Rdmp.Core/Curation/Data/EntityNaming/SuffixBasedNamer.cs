@@ -15,7 +15,7 @@ namespace Rdmp.Core.Curation.Data.EntityNaming;
 /// </summary>
 public class SuffixBasedNamer : INameDatabasesAndTablesDuringLoads
 {
-    protected static Dictionary<LoadBubble, string> Suffixes = new Dictionary<LoadBubble, string>
+    protected static Dictionary<LoadBubble, string> Suffixes = new()
     {
         {LoadBubble.Raw, ""},
         {LoadBubble.Staging, "_STAGING"},

@@ -107,7 +107,7 @@ ec.ExtractionConfiguration_ID = sds.ExtractionConfiguration_ID
 )", "ID").ToArray();
     }
 
-    private readonly Dictionary<Type, IRowVerCache> _caches = new Dictionary<Type, IRowVerCache>();
+    private readonly Dictionary<Type, IRowVerCache> _caches = new();
 
     public override T[] GetAllObjects<T>()
     {

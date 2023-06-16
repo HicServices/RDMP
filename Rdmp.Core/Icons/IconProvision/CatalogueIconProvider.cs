@@ -37,7 +37,7 @@ public class CatalogueIconProvider : ICoreIconProvider
 
     protected readonly EnumImageCollection<RDMPConcept> ImagesCollection;
     protected readonly CatalogueStateBasedIconProvider CatalogueStateBasedIconProvider;
-    private DatabaseTypeIconProvider _databaseTypeIconProvider = new DatabaseTypeIconProvider();
+    private DatabaseTypeIconProvider _databaseTypeIconProvider = new();
 
     public Image<Rgba32> ImageUnknown => ImagesCollection[RDMPConcept.NoIconAvailable];
 
@@ -241,7 +241,7 @@ public class CatalogueIconProvider : ICoreIconProvider
             RDMPCollection.Favourites => RDMPConcept.Favourite,
             RDMPCollection.Cohort => RDMPConcept.CohortIdentificationConfiguration,
             RDMPCollection.DataLoad => RDMPConcept.LoadMetadata,
-            _ => throw new ArgumentOutOfRangeException(nameof(rdmpCollection)),
+            _ => throw new ArgumentOutOfRangeException(nameof(rdmpCollection))
         };
     }
 

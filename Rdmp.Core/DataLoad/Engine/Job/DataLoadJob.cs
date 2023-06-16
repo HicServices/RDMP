@@ -38,7 +38,7 @@ public class DataLoadJob : IDataLoadJob
     public List<ITableInfo> LookupTablesToLoad { get; private set; }
     public IRDMPPlatformRepositoryServiceLocator RepositoryLocator { get; private set; }
 
-    private Stack<IDisposeAfterDataLoad> _disposalStack = new Stack<IDisposeAfterDataLoad>();
+    private Stack<IDisposeAfterDataLoad> _disposalStack = new();
         
     public HICDatabaseConfiguration Configuration { get; set; }
     public object Payload { get; set; }

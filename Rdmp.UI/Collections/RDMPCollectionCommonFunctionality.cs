@@ -87,7 +87,7 @@ public partial class RDMPCollectionCommonFunctionality : IRefreshBusSubscriber
 
     public event EventHandler<MenuBuiltEventArgs> MenuBuilt;
          
-    private static readonly Dictionary<RDMPCollection,Guid> TreeGuids = new Dictionary<RDMPCollection, Guid>
+    private static readonly Dictionary<RDMPCollection,Guid> TreeGuids = new()
     {
         {RDMPCollection.Tables,new Guid("8f24d624-acad-45dd-862b-01b18dfdd9a2")},
         {RDMPCollection.Catalogue,new Guid("d0f72b03-63f1-487e-9afa-51c03afa7819")},
@@ -95,7 +95,7 @@ public partial class RDMPCollectionCommonFunctionality : IRefreshBusSubscriber
         {RDMPCollection.SavedCohorts,new Guid("6d0e4560-9357-4ee1-91b6-a182a57f7a6f")},
         {RDMPCollection.Cohort,new Guid("5c7cceb3-4202-47b1-b271-e2eed869d9ef")},
         {RDMPCollection.Favourites,new Guid("39d37439-ac7a-4346-8c79-9867384db92e")},
-        {RDMPCollection.DataLoad,new Guid("600aad33-df6c-4013-ad92-65de19d494cf")},
+        {RDMPCollection.DataLoad,new Guid("600aad33-df6c-4013-ad92-65de19d494cf")}
     };
 
     /// <summary>
@@ -351,7 +351,7 @@ public partial class RDMPCollectionCommonFunctionality : IRefreshBusSubscriber
     }
 
     static DateTime lastInvalidatedCache = DateTime.Now;
-    static Dictionary<object, string> cache = new Dictionary<object, string>();
+    static Dictionary<object, string> cache = new();
 
     private static string GetToolTipBody(IActivateItems activator, ICanBeSummarised sum)
     {
@@ -483,7 +483,7 @@ public partial class RDMPCollectionCommonFunctionality : IRefreshBusSubscriber
     private object _lastMenuObject;
     private DateTime _lastMenuBuilt = DateTime.Now;
     private ContextMenuStrip _menu;
-    HashSet<Keys> _shortcutKeys = new HashSet<Keys>
+    HashSet<Keys> _shortcutKeys = new()
     {
         Keys.I,
         Keys.Delete,
@@ -725,7 +725,7 @@ public partial class RDMPCollectionCommonFunctionality : IRefreshBusSubscriber
     }
 
     //once we find the best menu for object of Type x then we want to cache that knowledge and go directly to that menu every time
-    Dictionary<Type,Type> _cachedMenuCompatibility = new Dictionary<Type, Type>();
+    Dictionary<Type,Type> _cachedMenuCompatibility = new();
         
     private ContextMenuStrip GetMenuWithCompatibleConstructorIfExists(object o, IMasqueradeAs oMasquerader = null)
     {

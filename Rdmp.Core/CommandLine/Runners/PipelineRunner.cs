@@ -23,7 +23,7 @@ public class PipelineRunner : IPipelineRunner
     public IPipelineUseCase UseCase { get; }
     public IPipeline Pipeline { get; }
 
-    public HashSet<IDataLoadEventListener> AdditionalListeners = new HashSet<IDataLoadEventListener>();
+    public HashSet<IDataLoadEventListener> AdditionalListeners = new();
 
     public event PipelineEngineEventHandler PipelineExecutionFinishedsuccessfully;
 

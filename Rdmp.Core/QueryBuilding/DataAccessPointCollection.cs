@@ -32,7 +32,7 @@ public class DataAccessPointCollection
 
     public DataAccessContext DataAccessContext { get;}
 
-    private HashSet<IDataAccessPoint> _points = new HashSet<IDataAccessPoint>();
+    private HashSet<IDataAccessPoint> _points = new();
 
     /// <summary>
     /// Creates a new collection of <see cref="IDataAccessPoint"/> for collecting dependencies e.g.

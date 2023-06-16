@@ -39,7 +39,7 @@ public class FTPDownloader : IPluginDataProvider
         
     private bool _useSSL = false;
 
-    protected List<string> _filesRetrieved = new List<string>();
+    protected List<string> _filesRetrieved = new();
     private ILoadDirectory _directory;
 
     [DemandsInitialization("Determines the behaviour of the system when no files are found on the server.  If true the entire data load process immediately stops with exit code LoadNotRequired, if false then the load proceeds as normal (useful if for example if you have multiple Attachers and some files are optional)")]

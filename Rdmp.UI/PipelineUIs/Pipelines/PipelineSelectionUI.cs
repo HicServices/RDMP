@@ -29,7 +29,7 @@ public partial class PipelineSelectionUI : UserControl, IPipelineSelectionUI
     public event EventHandler PipelineChanged;
     IPipeline _previousSelection = null;
 
-    ToolTip tt = new ToolTip();
+    ToolTip tt = new();
 
     const string ShowAll = "Show All/Incompatible Pipelines";
     public bool showAll = false;

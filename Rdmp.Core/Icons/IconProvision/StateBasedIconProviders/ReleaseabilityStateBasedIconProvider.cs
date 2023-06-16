@@ -19,7 +19,7 @@ public class ReleaseabilityStateBasedIconProvider : IObjectStateBasedIconProvide
 
     public ReleaseabilityStateBasedIconProvider()
     {
-        _images = new()
+        _images = new Dictionary<Releaseability, Image<Rgba32>>
         {
             { Releaseability.Undefined, Image.Load<Rgba32>(CatalogueIcons.TinyRed) },
 
@@ -32,7 +32,7 @@ public class ReleaseabilityStateBasedIconProvider : IObjectStateBasedIconProvide
             { Releaseability.Releaseable, Image.Load<Rgba32>(CatalogueIcons.TinyGreen) }
         };
 
-        _environmentImages = new()
+        _environmentImages = new Dictionary<TicketingReleaseabilityEvaluation, Image<Rgba32>>
         {
             { TicketingReleaseabilityEvaluation.CouldNotAuthenticateAgainstServer, Image.Load<Rgba32>(CatalogueIcons.TinyRed) },
             { TicketingReleaseabilityEvaluation.CouldNotReachTicketingServer, Image.Load<Rgba32>(CatalogueIcons.TinyRed) },

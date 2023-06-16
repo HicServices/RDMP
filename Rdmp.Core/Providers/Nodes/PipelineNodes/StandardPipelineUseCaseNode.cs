@@ -19,7 +19,7 @@ public class StandardPipelineUseCaseNode : SingletonNode,IKnowWhatIAm
 {
     private readonly CommentStore _commentStore;
     public PipelineUseCase UseCase { get; set; }
-    public List<Pipeline> Pipelines { get; } = new List<Pipeline>();
+    public List<Pipeline> Pipelines { get; } = new();
 
     public StandardPipelineUseCaseNode(string caption, PipelineUseCase useCase,CommentStore commentStore) : base(caption)
     {

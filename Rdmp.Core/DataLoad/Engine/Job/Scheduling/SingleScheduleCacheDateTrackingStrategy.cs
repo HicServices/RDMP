@@ -21,7 +21,7 @@ namespace Rdmp.Core.DataLoad.Engine.Job.Scheduling;
 /// </summary>
 public class SingleScheduleCacheDateTrackingStrategy : IJobDateGenerationStrategy
 {
-    private readonly Queue<DateTime> _availableDates = new Queue<DateTime>();
+    private readonly Queue<DateTime> _availableDates = new();
     private readonly DateTime _lastDateForLoading;
 
     public SingleScheduleCacheDateTrackingStrategy(ICacheLayout cacheLayout, ILoadProgress loadProgress,IDataLoadEventListener listener)

@@ -91,7 +91,7 @@ public class ExecuteCommandCreateNewCohortIdentificationConfiguration : BasicCom
                 {
                     WindowTitle = "Associate with Project",
                     TaskDescription = "Do you want to associate this new query with a Project? if not select Null or Cancel.",
-                    AllowSelectingNull = true,
+                    AllowSelectingNull = true
                 }, projects);
             }
         }

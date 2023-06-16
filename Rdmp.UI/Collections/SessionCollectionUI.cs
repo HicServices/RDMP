@@ -32,7 +32,7 @@ public class SessionCollectionUI : RDMPUserControl, IObjectCollectionControl, IC
     private bool _firstTime = true;
 
     public SessionCollection Collection {get; private set;}
-    public RDMPCollectionCommonFunctionality CommonTreeFunctionality {get;} = new RDMPCollectionCommonFunctionality();
+    public RDMPCollectionCommonFunctionality CommonTreeFunctionality {get;} = new();
 
     public SessionCollectionUI()
     {

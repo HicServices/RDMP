@@ -227,7 +227,7 @@ public partial class CatalogueCollectionUI : RDMPCollectionUI
             new ExecuteCommandAddNewSupportingSqlTable(Activator, null){ Weight = -46.8f},
 
             new ExecuteCommandCreateNewGovernancePeriod(Activator){OverrideCommandName = "Add New Governance Period", Weight = 44.9f },
-            new ExecuteCommandAddNewGovernanceDocument(Activator, null){Weight = 44.9f },
+            new ExecuteCommandAddNewGovernanceDocument(Activator, null){Weight = 44.9f }
         };
 
         Activator.RefreshBus.EstablishLifetimeSubscription(this);

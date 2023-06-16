@@ -34,13 +34,13 @@ namespace Rdmp.UI.SimpleDialogs;
 /// </summary>
 public partial class FindAndReplaceUI : RDMPUserControl
 {
-    private HashSet<IMapsDirectlyToDatabaseTable> _allObjects = new HashSet<IMapsDirectlyToDatabaseTable>();
+    private HashSet<IMapsDirectlyToDatabaseTable> _allObjects = new();
 
     private IAttributePropertyFinder _adjustableLocationPropertyFinder;
-    private List<FindAndReplaceNode> _locationNodes = new List<FindAndReplaceNode>(); 
+    private List<FindAndReplaceNode> _locationNodes = new(); 
         
     private IAttributePropertyFinder _sqlPropertyFinder;
-    private List<FindAndReplaceNode> _sqlNodes = new List<FindAndReplaceNode>();
+    private List<FindAndReplaceNode> _sqlNodes = new();
 
         
     public FindAndReplaceUI(IActivateItems activator)

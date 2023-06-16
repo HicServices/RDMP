@@ -109,7 +109,7 @@ public class ExtractDatasetCommand : ExtractCommand, IExtractDatasetCommand
         TopX = -1;
     }
 
-    public static readonly ExtractDatasetCommand EmptyCommand = new ExtractDatasetCommand();
+    public static readonly ExtractDatasetCommand EmptyCommand = new();
 
 
     private ExtractDatasetCommand(IExtractionConfiguration configuration, IExtractableDataSet dataset):base(configuration)

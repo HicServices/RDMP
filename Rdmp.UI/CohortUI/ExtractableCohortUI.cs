@@ -46,8 +46,8 @@ public partial class ExtractableCohortUI :ExtractableCohortUI_Design, ISaveableU
 {
     private ExtractableCohort _extractableCohort; 
         
-    RDMPCollectionCommonFunctionality _commonFunctionality1 = new RDMPCollectionCommonFunctionality();
-    RDMPCollectionCommonFunctionality _commonFunctionality2 = new RDMPCollectionCommonFunctionality();
+    RDMPCollectionCommonFunctionality _commonFunctionality1 = new();
+    RDMPCollectionCommonFunctionality _commonFunctionality2 = new();
 
     private void GenerateSQLPreview()
     {
@@ -190,7 +190,7 @@ public partial class ExtractableCohortUI :ExtractableCohortUI_Design, ISaveableU
         CommonFunctionality.Add(new ExecuteCommandCreateNewExtractionConfigurationForProject(activator, null)
         {
             CohortIfAny = databaseObject,
-            OverrideCommandName = "New Extraction Configuration using Cohort",
+            OverrideCommandName = "New Extraction Configuration using Cohort"
         });
 
         AssociatedCollection = RDMPCollection.SavedCohorts;

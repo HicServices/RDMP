@@ -25,12 +25,12 @@ public abstract class ManyRunner: Runner
     protected IRDMPPlatformRepositoryServiceLocator RepositoryLocator { get; private set; }
     protected GracefulCancellationToken Token { get;private set; }
 
-    private readonly Dictionary<ICheckable, ToMemoryCheckNotifier> _checksDictionary = new Dictionary<ICheckable, ToMemoryCheckNotifier>();
+    private readonly Dictionary<ICheckable, ToMemoryCheckNotifier> _checksDictionary = new();
 
     /// <summary>
     /// Lock for all operations that read or write to <see cref="_checksDictionary"/>.  Use it if you want to enumerate / read the results
     /// </summary>
-    private readonly object _oLock = new object();
+    private readonly object _oLock = new();
 
     protected ManyRunner(ConcurrentRDMPCommandLineOptions options)
     {

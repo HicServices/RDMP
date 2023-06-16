@@ -84,10 +84,10 @@ public partial class CheckAndExecuteUI : RDMPUserControl, IConsultableBeforeClos
     {
         var stages = new List<HelpStage>
         {
-            new HelpStage(btnRunChecks,
+            new(btnRunChecks,
                 "Once you are happy with the selections, use this button to run the checks for the selected options."),
-            new HelpStage(btnExecute, "This button will execute the required operation in the RDMP UI.\r\n" +
-                                      "Results will be shown below."),
+            new(btnExecute, "This button will execute the required operation in the RDMP UI.\r\n" +
+                            "Results will be shown below.")
         };
             
         return stages;

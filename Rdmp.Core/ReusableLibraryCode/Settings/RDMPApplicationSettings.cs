@@ -15,7 +15,7 @@ namespace Rdmp.Core.ReusableLibraryCode.Settings;
 internal class RDMPApplicationSettings : ISettings
 {
     private readonly IsolatedStorageFile store;
-    private readonly object locker = new object();
+    private readonly object locker = new();
 
     public RDMPApplicationSettings()
     {

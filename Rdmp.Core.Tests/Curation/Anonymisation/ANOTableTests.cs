@@ -21,7 +21,7 @@ namespace Rdmp.Core.Tests.Curation.Anonymisation;
 
 public class ANOTableTests:TestsRequiringANOStore
 {
-    Regex _anochiPattern = new Regex(@"\d{10}_A");
+    Regex _anochiPattern = new(@"\d{10}_A");
 
     #region Create New ANOTables
     [Test]

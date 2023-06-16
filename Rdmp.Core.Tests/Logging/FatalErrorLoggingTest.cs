@@ -40,7 +40,7 @@ class FatalErrorLoggingTest : DatabaseTests
             "No rollback is possible/required as no database rows are actually inserted",
             true, new DiscoveredServer(UnitTestLoggingConnectionString));
            
-        var ds = new DataSource[]{ new DataSource("nothing",DateTime.Now)};
+        var ds = new DataSource[]{ new("nothing",DateTime.Now)};
 
             
 
@@ -69,7 +69,7 @@ class FatalErrorLoggingTest : DatabaseTests
             hashAsBytes = md5.ComputeHash(memory);    
         }
 
-        var ds = new DataSource[] { new DataSource("nothing", DateTime.Now) };
+        var ds = new DataSource[] { new("nothing", DateTime.Now) };
 
         ds[0].MD5 = hashAsBytes; //MD5 is a property so confirm write and read are the same - and don't bomb
 

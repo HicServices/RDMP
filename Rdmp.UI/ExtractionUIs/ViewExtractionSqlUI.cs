@@ -41,12 +41,12 @@ public partial class ViewExtractionSqlUI : ViewExtractionSql_Design
 {
     private Catalogue _catalogue;
         
-    ToolStripButton rbCore = new ToolStripButton("Core");
-    ToolStripButton rbSupplemental = new ToolStripButton("Supplemental"){Checked = true};
-    ToolStripButton rbSpecialApproval = new ToolStripButton("Special Approval");
-    ToolStripButton rbInternal = new ToolStripButton("Internal");
+    ToolStripButton rbCore = new("Core");
+    ToolStripButton rbSupplemental = new("Supplemental"){Checked = true};
+    ToolStripButton rbSpecialApproval = new("Special Approval");
+    ToolStripButton rbInternal = new("Internal");
 
-    ToolStripButton btnRun = new ToolStripButton("Run",CatalogueIcons.ExecuteArrow.ImageToBitmap());
+    ToolStripButton btnRun = new("Run",CatalogueIcons.ExecuteArrow.ImageToBitmap());
         
     private Scintilla QueryPreview;
     public ViewExtractionSqlUI()

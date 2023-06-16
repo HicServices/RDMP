@@ -18,15 +18,15 @@ namespace Rdmp.Core.DataExport.Data;
 /// </summary>
 public class ExtractableCohortAuditLogBuilder
 {
-    Regex _regexGetID = new Regex(@"\(ID=(\d+)\)");
-    Regex _regexGetFilePath = new Regex(@$"{InFile} '(.*)'");
-    Regex _regexGetColumn = new Regex(@$"{InColumn} '(.*)'");
+    Regex _regexGetID = new(@"\(ID=(\d+)\)");
+    Regex _regexGetFilePath = new(@$"{InFile} '(.*)'");
+    Regex _regexGetColumn = new(@$"{InColumn} '(.*)'");
 
     /// <summary>
     /// regex for picking up <see cref="CohortIdentificationConfiguration"/> IDs from audit log based on a legacy way of
     /// writing that ID into the <see cref="ExtractableCohort.AuditLog"/>
     /// </summary>
-    Regex _legacyCic = new Regex(@"Created by running cic ([\d]+)");
+    Regex _legacyCic = new(@"Created by running cic ([\d]+)");
 
     const string InFile = "Patient identifiers in file";
     const string InColumn = "Patient identifiers in column ";

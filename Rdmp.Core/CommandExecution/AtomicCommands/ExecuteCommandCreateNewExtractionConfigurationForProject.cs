@@ -107,7 +107,7 @@ public class ExecuteCommandCreateNewExtractionConfigurationForProject : BasicCom
             if (!SelectOne(new DialogArgs
                 {
                     WindowTitle = "Select Project",
-                    TaskDescription = GetTaskDescription(),
+                    TaskDescription = GetTaskDescription()
                 }, GetProjects(CohortIfAny).ToList(), out p))
                 return;
 
@@ -124,7 +124,7 @@ public class ExecuteCommandCreateNewExtractionConfigurationForProject : BasicCom
                 {
                     WindowTitle = "New Extraction Configuration",
                     TaskDescription = "Enter a name for the new Extraction Configuration",
-                    EntryLabel = "Name",
+                    EntryLabel = "Name"
                 }, 255, $"{p.ProjectNumber} {DateTime.Now.ToString("yyyy-MM-dd")} Extraction".Trim(), out name, false))
                 return;
         }

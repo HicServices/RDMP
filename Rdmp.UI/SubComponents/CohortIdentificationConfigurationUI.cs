@@ -64,13 +64,13 @@ namespace Rdmp.UI.SubComponents;
 /// </summary>
 public partial class CohortIdentificationConfigurationUI : CohortIdentificationConfigurationUI_Design,IRefreshBusSubscriber
 {
-    ToolStripMenuItem cbIncludeCumulative = new ToolStripMenuItem("Calculate Cumulative Totals") { CheckOnClick = true };
-    ToolTip tt = new ToolTip();
+    ToolStripMenuItem cbIncludeCumulative = new("Calculate Cumulative Totals") { CheckOnClick = true };
+    ToolTip tt = new();
                 
-    readonly ToolStripTimeout _timeoutControls = new ToolStripTimeout { Timeout = 3000 };
+    readonly ToolStripTimeout _timeoutControls = new() { Timeout = 3000 };
     RDMPCollectionCommonFunctionality _commonFunctionality;
 
-    Timer timer = new Timer();
+    Timer timer = new();
 
     private ExecuteCommandClearQueryCache _clearCacheCommand;
 
@@ -184,7 +184,7 @@ public partial class CohortIdentificationConfigurationUI : CohortIdentificationC
                 SuppressActivate = true,
                 AddFavouriteColumn = false,
                 AddCheckColumn = false,
-                AllowSorting =  true, //important, we need sorting on so that we can override sort order with our OrderableComparer
+                AllowSorting =  true //important, we need sorting on so that we can override sort order with our OrderableComparer
             });
             _commonFunctionality.MenuBuilt += MenuBuilt;
             tlvCic.AddObject(databaseObject);

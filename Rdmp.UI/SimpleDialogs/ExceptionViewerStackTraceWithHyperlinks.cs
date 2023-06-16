@@ -24,9 +24,9 @@ namespace Rdmp.UI.SimpleDialogs;
 /// </summary>
 public partial class ExceptionViewerStackTraceWithHyperlinks : Form
 {
-    private static readonly Regex SourceFilePath = new Regex(@" in (.*):line ");
-    private static readonly Regex SourceCodeAvailable = new Regex(@"\.cs:line (\d+)");
-    private static readonly Regex MethodName = new Regex(@"\.([A-Za-z_0-9][^\.]*)\(");
+    private static readonly Regex SourceFilePath = new(@" in (.*):line ");
+    private static readonly Regex SourceCodeAvailable = new(@"\.cs:line (\d+)");
+    private static readonly Regex MethodName = new(@"\.([A-Za-z_0-9][^\.]*)\(");
     private string _s;
 
     private ExceptionViewerStackTraceWithHyperlinks()

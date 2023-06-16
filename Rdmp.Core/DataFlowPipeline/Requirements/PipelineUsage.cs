@@ -45,5 +45,5 @@ public enum PipelineUsage
     /// <summary>
     /// The pipeline cannot have a source, the source instance is provided at runtime by the environment
     /// </summary>
-    FixedSource = 16,
+    FixedSource = 16
 }

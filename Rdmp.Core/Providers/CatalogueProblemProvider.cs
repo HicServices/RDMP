@@ -27,7 +27,7 @@ namespace Rdmp.Core.Providers;
 public class CatalogueProblemProvider : ProblemProvider
 {
     private ICoreChildProvider _childProvider;
-    private HashSet<int> _orphanCatalogueItems = new HashSet<int>();
+    private HashSet<int> _orphanCatalogueItems = new();
     private HashSet<int> _usedJoinables;
     private JoinInfo[] _joinsWithMismatchedCollations = Array.Empty<JoinInfo>();
 

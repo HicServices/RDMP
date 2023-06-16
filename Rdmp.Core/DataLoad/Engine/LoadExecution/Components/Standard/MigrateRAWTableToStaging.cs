@@ -84,7 +84,7 @@ public class MigrateRAWTableToStaging : DataLoadComponent
         var tableLoadInfo = job.DataLoadInfo.CreateTableLoadInfo(
             "None required, if fails then simply drop Staging database and reload dataset",
             $"STAGING:{destinationTableName}",
-            new DataSource[] { new DataSource($"RAW:{sourceTableName}", DateTime.Now) }, -1);
+            new DataSource[] { new($"RAW:{sourceTableName}", DateTime.Now) }, -1);
 
         var syntax = sourceDatabase.Server.GetQuerySyntaxHelper();
 

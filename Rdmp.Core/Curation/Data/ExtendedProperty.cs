@@ -117,7 +117,7 @@ public class ExtendedProperty  : Argument,IReferenceOtherObjectWithPersist, IInj
             {"ReferencedObjectType",setOn.GetType().Name},
             {"ReferencedObjectRepositoryType",setOn.Repository.GetType().Name},
             {"Name", name},
-            {"Type", value.GetType().ToString()},
+            {"Type", value.GetType().ToString()}
         });
 
         SetValue(value);

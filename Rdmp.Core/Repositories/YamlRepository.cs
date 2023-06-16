@@ -35,7 +35,7 @@ public class YamlRepository : MemoryDataExportRepository
     public IReadOnlyCollection<IMapsDirectlyToDatabaseTable> AllObjects => Objects.Keys.ToList().AsReadOnly();
     public DirectoryInfo Directory { get; }
 
-    object lockFs = new object();
+    object lockFs = new();
 
     public YamlRepository(DirectoryInfo dir)
     {
@@ -650,11 +650,11 @@ public class YamlRepository : MemoryDataExportRepository
 
     private void LoadWhereSubContainers()
     {        
-        foreach (var c in Load<FilterContainer, FilterContainer>("ExtractionFilters") ?? new())
+        foreach (var c in Load<FilterContainer, FilterContainer>("ExtractionFilters") ?? new Dictionary<FilterContainer, HashSet<FilterContainer>>())
         {
             WhereSubContainers.Add(c.Key, new HashSet<IContainer>(c.Value));
         }
-        foreach(var c in Load<AggregateFilterContainer, AggregateFilterContainer>("AggregateFilters") ?? new())
+        foreach(var c in Load<AggregateFilterContainer, AggregateFilterContainer>("AggregateFilters") ?? new Dictionary<AggregateFilterContainer, HashSet<AggregateFilterContainer>>())
         {
             WhereSubContainers.Add(c.Key, new HashSet<IContainer>(c.Value));
         }

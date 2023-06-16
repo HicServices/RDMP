@@ -95,7 +95,7 @@ class ConsoleGuiSqlEditor : Window
 
         _btnRunOrCancel = new Button("Run"){
             X= 0,
-            Y= 0,
+            Y= 0
         };
 
         _btnRunOrCancel.Clicked += ()=>RunOrCancel();
@@ -108,7 +108,7 @@ class ConsoleGuiSqlEditor : Window
         Add(resetSql);
 
         var clearSql = new Button("Clear S_ql"){
-            X= Pos.Right(resetSql)+1,
+            X= Pos.Right(resetSql)+1
         };
 
         clearSql.Clicked += ()=>ClearSql();
@@ -116,7 +116,7 @@ class ConsoleGuiSqlEditor : Window
 
         var lblTimeout = new Label("Timeout:")
         {
-            X = Pos.Right(clearSql)+1,
+            X = Pos.Right(clearSql)+1
         };
         Add(lblTimeout);
 
@@ -130,14 +130,14 @@ class ConsoleGuiSqlEditor : Window
         Add(tbTimeout);
 
         var btnSave = new Button("Save"){
-            X= Pos.Right(tbTimeout)+1,
+            X= Pos.Right(tbTimeout)+1
         };
         btnSave.Clicked += ()=>Save();
         Add(btnSave);
 
         var btnOpen = new Button("Open")
         {
-            X = Pos.Right(btnSave) + 1,
+            X = Pos.Right(btnSave) + 1
         };
 
         btnOpen.Clicked += OpenFile;
@@ -145,7 +145,7 @@ class ConsoleGuiSqlEditor : Window
         Add(btnOpen);
 
         var btnClose = new Button("Clos_e"){
-            X= Pos.Right(btnOpen) +1,
+            X= Pos.Right(btnOpen) +1
         };
 
 
@@ -376,7 +376,7 @@ class ConsoleGuiSqlEditor : Window
             "CONSTRAINT_SCHEMA", "CONSTRAINT_NAME", "CONTAINS", "CONTEXT", "CONTRIBUTORS", "COPY", "CPU",
             "CURSOR_NAME", "primary", "key", "insert", "alter", "add", "update", "set", "delete", "truncate", "as",
             "order", "by", "asc", "desc", "between", "where", "and", "or", "not", "limit", "null", "is", "drop",
-            "database", "table", "having", "in", "join", "on", "union", "exists",
+            "database", "table", "having", "in", "join", "on", "union", "exists"
         }, StringComparer.CurrentCultureIgnoreCase);
         private readonly Attribute _blue;
         private readonly Attribute _white;
@@ -389,7 +389,7 @@ class ConsoleGuiSqlEditor : Window
             Autocomplete.ColorScheme = new ColorScheme
             {
                 Normal = Driver.MakeAttribute(Color.Black, Color.Blue),
-                Focus = Driver.MakeAttribute(Color.Black, Color.Cyan),
+                Focus = Driver.MakeAttribute(Color.Black, Color.Cyan)
             };
 
             _blue = Driver.MakeAttribute(Color.Cyan, Color.Black);

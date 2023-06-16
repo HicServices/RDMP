@@ -26,7 +26,7 @@ public class HistoryProvider
     /// <summary>
     /// Collection of objects and when they were accessed, use <see cref="HistoryProvider.Add"/> instead of modifying this list directly
     /// </summary>
-    public List<HistoryEntry> History { get; set; } = new List<HistoryEntry>();
+    public List<HistoryEntry> History { get; set; } = new();
 
     /// <summary>
     /// What Types to track in <see cref="Add"/>

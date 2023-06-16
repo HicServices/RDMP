@@ -59,8 +59,8 @@ public class ObjectExport : ReferenceOtherObjectDatabaseEntity, IInjectKnown<IMa
             {"ReferencedObjectID",objectForSharing.ID},
             {"ReferencedObjectType",objectForSharing.GetType().Name},
             {"ReferencedObjectRepositoryType",objectForSharing.Repository.GetType().Name},
-            {"SharingUID",guid.ToString()},
-            
+            {"SharingUID",guid.ToString()}
+
         });
 
         if (ID == 0 || Repository != repository)

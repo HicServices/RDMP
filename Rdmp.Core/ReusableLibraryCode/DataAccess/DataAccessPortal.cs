@@ -19,7 +19,7 @@ namespace Rdmp.Core.ReusableLibraryCode.DataAccess;
 /// </summary>
 public class DataAccessPortal
 {
-    private static readonly object oLockInstance = new object();
+    private static readonly object oLockInstance = new();
     private static DataAccessPortal _instance;
 
     public static DataAccessPortal GetInstance()

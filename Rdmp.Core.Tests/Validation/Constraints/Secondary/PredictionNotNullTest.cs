@@ -17,7 +17,7 @@ class PredictionNotNullTest
     public void Validate_ValueNotNullAndRelatedValueNotNull_Succeeds()
     {
 
-        var p = new Prediction(new ValuePredictsOtherValueNullness(), "someColumn");
+        var p = new Prediction(new ValuePredictsOtherValueNullity(), "someColumn");
         var otherCols = new object[] { "not null" };
         var otherColsNames = new string[] { "someColumn" };
         Assert.IsNull(p.Validate("this is not null", otherCols, otherColsNames));
@@ -26,7 +26,7 @@ class PredictionNotNullTest
     [Test]
     public void Validate_ValueNotNullAndRelatedValueIsNull_ThrowsException()
     {
-        var p = new Prediction(new ValuePredictsOtherValueNullness(), "someColumn");
+        var p = new Prediction(new ValuePredictsOtherValueNullity(), "someColumn");
         var otherCols = new object[] { null };
         var otherColsNames = new string[] { "someColumn" };
         Assert.NotNull(p.Validate("this is not null", otherCols, otherColsNames));
@@ -35,7 +35,7 @@ class PredictionNotNullTest
     [Test]
     public void Validate_ValueIsNullAndRelatedValueNotNull_Succeeds()
     {
-        var p = new Prediction(new ValuePredictsOtherValueNullness(), "someColumn");
+        var p = new Prediction(new ValuePredictsOtherValueNullity(), "someColumn");
         var otherCols = new object[] { "not null" };
         var otherColsNames = new string[] { "someColumn" };
         StringAssert.StartsWith("Nullness did not match, when one value is null, the other mus", p.Validate(null, otherCols, otherColsNames)?.Message);
@@ -44,7 +44,7 @@ class PredictionNotNullTest
     [Test]
     public void Validate_ValueIsNullAndRelatedValueIsNull_Succeeds()
     {
-        var p = new Prediction(new ValuePredictsOtherValueNullness(), "someColumn");
+        var p = new Prediction(new ValuePredictsOtherValueNullity(), "someColumn");
         var otherCols = new object[] { null };
         var otherColsNames = new string[] { "someColumn" };
         Assert.IsNull(p.Validate(null, otherCols, otherColsNames));

@@ -445,5 +445,5 @@ public class LookupTest : DatabaseTests
 public enum LookupTestCase
 {
     SingleKeySingleDescriptionNoVirtualColumn,
-    SingleKeySingleDescription,
+    SingleKeySingleDescription
 }

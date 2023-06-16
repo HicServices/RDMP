@@ -20,7 +20,7 @@ namespace Rdmp.Core.Tests.DataLoad.Engine.Integration;
 [Category("Unit")]
 public class ExcelConversionTest
 {
-    private readonly Stack<DirectoryInfo> _dirsToCleanUp = new Stack<DirectoryInfo>();
+    private readonly Stack<DirectoryInfo> _dirsToCleanUp = new();
     private DirectoryInfo _parentDir;
         
     [OneTimeSetUp]

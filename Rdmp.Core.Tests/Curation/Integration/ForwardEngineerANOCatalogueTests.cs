@@ -62,7 +62,7 @@ public class ForwardEngineerANOCatalogueTests : TestsRequiringFullAnonymisationS
         //create a table with the same name in the endpoint database to confirm that that's a problem
         db.CreateTable(bulk.tableInfo.GetRuntimeName(), new DatabaseColumnRequest[]
         {
-            new DatabaseColumnRequest("fish", "varchar(100)")
+            new("fish", "varchar(100)")
         });
 
         //throws because table already exists

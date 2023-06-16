@@ -16,10 +16,10 @@ namespace Rdmp.UI.Tests.DesignPatternTests.ClassFileEvaluation;
 
 public class RDMPFormInitializationTests
 {
-    readonly List<string> _rdmpFormClassNames = new List<string>();
-    readonly List<string> _fails = new List<string>();
+    readonly List<string> _rdmpFormClassNames = new();
+    readonly List<string> _fails = new();
 
-    List<string> methodIgnoreList = new List<string>
+    List<string> methodIgnoreList = new()
     {
         "if",
         "catch",
@@ -27,9 +27,9 @@ public class RDMPFormInitializationTests
     };
 
     //match anything on start of line followed by whitespace followed by a method name e.g. Fishfish( where capture group[1] is the method name
-    Regex methodCalls = new Regex("^\\s*([A-Za-z0-9]*)\\s?\\(", RegexOptions.Multiline);
-    Regex rdmpFormClasses = new Regex("class\\s+(.*)\\s*:\\s*RDMPForm");
-    Regex rdmpControlClasses = new Regex("class\\s+(.*)\\s*:\\s*RDMPUserControl");
+    Regex methodCalls = new("^\\s*([A-Za-z0-9]*)\\s?\\(", RegexOptions.Multiline);
+    Regex rdmpFormClasses = new("class\\s+(.*)\\s*:\\s*RDMPForm");
+    Regex rdmpControlClasses = new("class\\s+(.*)\\s*:\\s*RDMPUserControl");
         
     public void FindUninitializedForms(List<string> csFiles )
     {
@@ -125,5 +125,5 @@ public class RDMPFormInitializationTests
         Console.WriteLine(msg);
         _fails.Add(msg);
     }
-    private static Regex GetConstructorRegex(string className) => new Regex($"(public|private)\\s+{className}\\s*\\(.*\\{{", RegexOptions.Singleline);
+    private static Regex GetConstructorRegex(string className) => new($"(public|private)\\s+{className}\\s*\\(.*\\{{", RegexOptions.Singleline);
 }

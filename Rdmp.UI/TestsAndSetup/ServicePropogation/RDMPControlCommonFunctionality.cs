@@ -60,12 +60,12 @@ public class RDMPControlCommonFunctionality
     private AtomicCommandUIFactory atomicCommandUIFactory;
         
     private readonly RAGSmileyToolStrip _ragSmileyToolStrip;
-    private readonly ToolStripButton _runChecksToolStripButton = new ToolStripButton("Run Checks", FamFamFamIcons.arrow_refresh.ImageToBitmap());
+    private readonly ToolStripButton _runChecksToolStripButton = new("Run Checks", FamFamFamIcons.arrow_refresh.ImageToBitmap());
     private ICheckable _checkable;
     private IActivateItems _activator;
 
-    private Dictionary<string,ToolStripDropDownButton> _dropDownButtons = new Dictionary<string, ToolStripDropDownButton>();
-    private Dictionary<string, ToolStripMenuItem> _addToMenuSubmenus = new Dictionary<string, ToolStripMenuItem>();
+    private Dictionary<string,ToolStripDropDownButton> _dropDownButtons = new();
+    private Dictionary<string, ToolStripMenuItem> _addToMenuSubmenus = new();
 
 
     public RDMPControlCommonFunctionality(IRDMPControl hostControl)
@@ -238,7 +238,7 @@ public class RDMPControlCommonFunctionality
     /// <summary>
     /// All keywords added via <see cref="AddHelp"/>
     /// </summary>
-    private readonly HashSet<Control> _helpAdded = new HashSet<Control>();
+    private readonly HashSet<Control> _helpAdded = new();
 
     /// <summary>
     /// Adds a <see cref="HelpIcon"/> to the task bar at the top of the control
@@ -461,7 +461,7 @@ public class RDMPControlCommonFunctionality
         }
     }
 
-    Dictionary<Scintilla,Color> _oldColours = new Dictionary<Scintilla, Color>();
+    Dictionary<Scintilla,Color> _oldColours = new();
     /// <summary>
     /// Sets the text color in the <paramref name="queryEditor"/> to red (or back to normal if <paramref name="red"/> is false).
     /// </summary>

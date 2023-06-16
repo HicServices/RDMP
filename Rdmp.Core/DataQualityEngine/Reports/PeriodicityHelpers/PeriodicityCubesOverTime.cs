@@ -23,9 +23,9 @@ namespace Rdmp.Core.DataQualityEngine.Reports.PeriodicityHelpers;
 public class PeriodicityCubesOverTime
 {
     private readonly string _pivotCategory;
-    private List<PeriodicityCube> allCubes = new List<PeriodicityCube>();
+    private List<PeriodicityCube> allCubes = new();
         
-    Dictionary<int,Dictionary<int,PeriodicityCube>>  hyperCube = new Dictionary<int, Dictionary<int, PeriodicityCube>>();
+    Dictionary<int,Dictionary<int,PeriodicityCube>>  hyperCube = new();
 
     public PeriodicityCubesOverTime(string pivotCategory)
     {

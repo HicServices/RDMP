@@ -61,7 +61,7 @@ public partial class DataReleaseUI : DataReleaseUI_Design
     private IMapsDirectlyToDatabaseTable[] _globals;
     private DataExportChildProvider _childProvider;
         
-    private ArbitraryFolderNode _globalsNode = new ArbitraryFolderNode(ExtractionDirectory.GLOBALS_DATA_NAME,-500);
+    private ArbitraryFolderNode _globalsNode = new(ExtractionDirectory.GLOBALS_DATA_NAME,-500);
 
 
     private bool _isExecuting;
@@ -158,7 +158,7 @@ public partial class DataReleaseUI : DataReleaseUI_Design
                 _selectedDataSets.All(tlvReleasePotentials.IsChecked) ? Array.Empty<int>() : tlvReleasePotentials.CheckedObjects.OfType<ISelectedDataSets>().Select(sds => sds.ID).ToArray()
             ),
             Command = activityRequested,
-            ReleaseGlobals = tlvReleasePotentials.IsChecked(_globalsNode),
+            ReleaseGlobals = tlvReleasePotentials.IsChecked(_globalsNode)
         };
     }
 

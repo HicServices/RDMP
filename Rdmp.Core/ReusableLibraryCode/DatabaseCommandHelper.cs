@@ -30,12 +30,12 @@ namespace Rdmp.Core.ReusableLibraryCode;
 /// </summary>
 public class DatabaseCommandHelper
 {
-    private static readonly Dictionary<DatabaseType, IImplementation> _dbConHelpersByType = new Dictionary<DatabaseType, IImplementation>
+    private static readonly Dictionary<DatabaseType, IImplementation> _dbConHelpersByType = new()
     {
         {DatabaseType.MySql,new MySqlImplementation()},
         {DatabaseType.Oracle,new OracleImplementation()},
         {DatabaseType.MicrosoftSQLServer,new MicrosoftSQLImplementation()},
-        {DatabaseType.PostgreSql,new PostgreSqlImplementation()},
+        {DatabaseType.PostgreSql,new PostgreSqlImplementation()}
     };
 
     public static ComprehensiveQueryPerformanceCounter PerformanceCounter = null;

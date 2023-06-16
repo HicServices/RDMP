@@ -16,7 +16,7 @@ namespace Rdmp.Core.Tests.Logging;
 class DataLoadTaskHelper
 {
     private readonly DiscoveredServer _loggingServer;
-    private readonly Stack<string> _sqlToCleanUp = new Stack<string>();
+    private readonly Stack<string> _sqlToCleanUp = new();
 
     public DataLoadTaskHelper(DiscoveredServer loggingServer)
     {

@@ -115,8 +115,8 @@ public class GoodBadCataloguePieChartObjectCollection : PersistableObjectCollect
 
             {nameof(IncludeNonExtractableCatalogueItems), IncludeNonExtractableCatalogueItems.ToString()},
             {nameof(IncludeInternalCatalogueItems), IncludeInternalCatalogueItems.ToString()},
-            {nameof(IncludeDeprecatedCatalogueItems), IncludeDeprecatedCatalogueItems.ToString()},
-                
+            {nameof(IncludeDeprecatedCatalogueItems), IncludeDeprecatedCatalogueItems.ToString()}
+
         });
     }
 

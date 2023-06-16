@@ -41,7 +41,7 @@ public partial class EvaluationTrackBar : UserControl
         }
     }
 
-    private List<Label> labels = new List<Label>();
+    private List<Label> labels = new();
     public event EvaluationSelectedHandler EvaluationSelected;
 
     private void RefreshUI()

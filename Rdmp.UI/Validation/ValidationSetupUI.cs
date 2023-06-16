@@ -388,7 +388,7 @@ public partial class ValidationSetupUI : ValidationSetupForm_Design, ISaveableUI
     {
         if(Activator.SelectObject(new DialogArgs { 
                TaskDescription = "Which date column in the Catalogue should provide the time element of the data when generating graphs, DQE etc?",
-               AllowSelectingNull = true,
+               AllowSelectingNull = true
            }, _catalogue.GetAllExtractionInformation(ExtractionCategory.Any),out var selected))
         {
             cbxTimePeriodColumn.SelectedItem = selected;
@@ -401,7 +401,7 @@ public partial class ValidationSetupUI : ValidationSetupForm_Design, ISaveableUI
         if (Activator.SelectObject(new DialogArgs
             {
                 TaskDescription = "Which column in the Catalogue provides the most useful subdivision of the data when viewing in DQE? The column should have a relatively small number of unique values e.g. healthboard.",
-                AllowSelectingNull = true,
+                AllowSelectingNull = true
             }, _catalogue.GetAllExtractionInformation(ExtractionCategory.Any), out var selected))
         {
             cbxPivotColumn.SelectedItem = selected;

@@ -42,7 +42,7 @@ class ConsoleGuiTextDialog
         var description = new Label
         {
             Text = _args.TaskDescription ?? "",
-            Y = 0,
+            Y = 0
         };
 
         win.Add(description);
@@ -50,7 +50,7 @@ class ConsoleGuiTextDialog
         var entryLabel = new Label
         {
             Text = _args.EntryLabel ?? "",
-            Y = Pos.Bottom(description),
+            Y = Pos.Bottom(description)
         };
 
         win.Add(entryLabel);
@@ -63,7 +63,7 @@ class ConsoleGuiTextDialog
             Width = Dim.Fill(2),
             Text = _initialValue ?? "",
             AllowsTab = false,
-            AllowsReturn = MaxLength is > BasicActivateItems.MultiLineLengthThreshold,
+            AllowsReturn = MaxLength is > BasicActivateItems.MultiLineLengthThreshold
         };
 
         win.Add(textField);

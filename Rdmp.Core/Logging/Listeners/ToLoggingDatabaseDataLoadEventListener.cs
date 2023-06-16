@@ -18,7 +18,7 @@ namespace Rdmp.Core.Logging.Listeners;
 /// </summary>
 public class ToLoggingDatabaseDataLoadEventListener : IDataLoadEventListener
 {
-    public Dictionary<string, ITableLoadInfo> TableLoads = new Dictionary<string, ITableLoadInfo>();
+    public Dictionary<string, ITableLoadInfo> TableLoads = new();
 
     private readonly object _hostingApplication;
     private readonly LogManager _logManager;

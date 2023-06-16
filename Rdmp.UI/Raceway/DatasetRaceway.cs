@@ -38,12 +38,12 @@ namespace Rdmp.UI.Raceway;
 /// </summary>
 public partial class DatasetRaceway : RDMPUserControl, IDashboardableControl
 {
-    private ToolStripButton btnAddCatalogue = new ToolStripButton("Add Catalogue"){Name= "btnAddCatalogue" };
-    private ToolStripButton btnRemoveAll = new ToolStripButton("Clear",FamFamFamIcons.delete_multi.ImageToBitmap()) { Name = "btnRemoveAll" };
-    private ToolStripButton btnAddExtractableDatasetPackage = new ToolStripButton("Add Package") { Name = "btnAddExtractableDatasetPackage" };
-    private ToolStripLabel toolStripLabel1 = new ToolStripLabel("Show Period") { Name = "toolStripLabel1" };
-    private ToolStripComboBox ddShowPeriod = new ToolStripComboBox { Name = "ddShowPeriod", Size = new Size(121, 25) };
-    private ToolStripButton cbIgnoreRowCounts = new ToolStripButton { Name = "cbIgnoreRowCounts" };
+    private ToolStripButton btnAddCatalogue = new("Add Catalogue"){Name= "btnAddCatalogue" };
+    private ToolStripButton btnRemoveAll = new("Clear",FamFamFamIcons.delete_multi.ImageToBitmap()) { Name = "btnRemoveAll" };
+    private ToolStripButton btnAddExtractableDatasetPackage = new("Add Package") { Name = "btnAddExtractableDatasetPackage" };
+    private ToolStripLabel toolStripLabel1 = new("Show Period") { Name = "toolStripLabel1" };
+    private ToolStripComboBox ddShowPeriod = new() { Name = "ddShowPeriod", Size = new Size(121, 25) };
+    private ToolStripButton cbIgnoreRowCounts = new() { Name = "cbIgnoreRowCounts" };
 
     public DatasetRaceway()
     {
@@ -234,7 +234,7 @@ public partial class DatasetRaceway : RDMPUserControl, IDashboardableControl
     private void btnAddCatalogue_Click(object sender, EventArgs e)
     {
         if(_activator.SelectObjects(new DialogArgs { 
-                   TaskDescription = "Choose which new Catalogues should be represented in the diagram.",
+                   TaskDescription = "Choose which new Catalogues should be represented in the diagram."
                },
                _activator.RepositoryLocator.CatalogueRepository.GetAllObjects<Catalogue>()
                    .Except(_collection.GetCatalogues())
@@ -271,7 +271,7 @@ public partial class DatasetRaceway : RDMPUserControl, IDashboardableControl
 
         if(Activator.SelectObject(new DialogArgs
            {
-               TaskDescription = "Choose a Package.  All Catalogues in the Package will be added to the diagram.",
+               TaskDescription = "Choose a Package.  All Catalogues in the Package will be added to the diagram."
 
            }, dataExportChildProvider.AllPackages,out var packageToAdd))
         {

@@ -72,7 +72,7 @@ public class BulkTestsData
 
     private Demography _dataGenerator;
 
-    private Random r = new Random();
+    private Random r = new();
 
     /// <summary>
     /// the bulk test data created during <see cref="SetupTestData"/>
@@ -120,9 +120,9 @@ public class BulkTestsData
 
         //create the table but make sure the chi is a primary key and the correct data type and that we have a sensible primary key
         Table = BulkDataDatabase.CreateTable(BulkDataTable,dt,new DatabaseColumnRequest[]{ 
-            new DatabaseColumnRequest("chi",new DatabaseTypeRequest(typeof(string),10)){IsPrimaryKey=true},
-            new DatabaseColumnRequest("dtCreated",new DatabaseTypeRequest(typeof(DateTime))){IsPrimaryKey=true},
-            new DatabaseColumnRequest("hb_extract",new DatabaseTypeRequest(typeof(string),1)){IsPrimaryKey=true}
+            new("chi",new DatabaseTypeRequest(typeof(string),10)){IsPrimaryKey=true},
+            new("dtCreated",new DatabaseTypeRequest(typeof(DateTime))){IsPrimaryKey=true},
+            new("hb_extract",new DatabaseTypeRequest(typeof(string),1)){IsPrimaryKey=true}
 
         });
     }

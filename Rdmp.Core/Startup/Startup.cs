@@ -52,7 +52,7 @@ public class Startup
 
     public PluginPatcherFoundHandler PluginPatcherFound = delegate { }; 
 
-    PatcherManager _patcherManager = new PatcherManager();
+    PatcherManager _patcherManager = new();
 
     #region Constructors
     public Startup(IRDMPPlatformRepositoryServiceLocator repositoryLocator):this()

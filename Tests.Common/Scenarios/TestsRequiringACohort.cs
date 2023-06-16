@@ -44,7 +44,7 @@ public class TestsRequiringACohort : TestsRequiringA
     /// <summary>
     /// Dictionary of the private and release IDs generated for the cohort, where Keys is a collection of private identifiers and Values are the corresponding release identifiers
     /// </summary>
-    protected readonly Dictionary<string, string> _cohortKeysGenerated = new Dictionary<string, string>();
+    protected readonly Dictionary<string, string> _cohortKeysGenerated = new();
 
         
 

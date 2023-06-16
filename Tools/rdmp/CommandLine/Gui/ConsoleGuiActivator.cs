@@ -84,7 +84,7 @@ internal class ConsoleGuiActivator : BasicActivateItems
                 Text = message.Replace("\r\n", "\n"),
                 ReadOnly = true,
                 AllowsTab = false,
-                WordWrap = true,
+                WordWrap = true
 
             });
             Application.Run(dlg, ConsoleMainWindow.ExceptionPopup);
@@ -191,7 +191,7 @@ internal class ConsoleGuiActivator : BasicActivateItems
             return true;
         }
 
-        selected = default(T);
+        selected = default;
         return false;
     }
 
@@ -210,7 +210,7 @@ internal class ConsoleGuiActivator : BasicActivateItems
             AllowsMultipleSelection = false,
             CanCreateDirectories = true,
             CanChooseDirectories = true,
-            CanChooseFiles = false,
+            CanChooseFiles = false
         };
             
         Application.Run(openDir, ConsoleMainWindow.ExceptionPopup);
@@ -305,7 +305,7 @@ internal class ConsoleGuiActivator : BasicActivateItems
             Height = Dim.Fill() - 2,
             ReadOnly = true,
             AllowsTab = false,
-            WordWrap = true,
+            WordWrap = true
         };
 
         var toggleStack = true;

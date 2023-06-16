@@ -78,7 +78,7 @@ public class ConnectionStringKeyword : DatabaseEntity, INamed, ICheckable
         {
             {"DatabaseType",databaseType.ToString()},
             {"Name",keyword},
-            {"Value",value},
+            {"Value",value}
         });
 
         if (ID == 0 || Repository != repository)

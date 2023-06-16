@@ -16,7 +16,7 @@ namespace Rdmp.Core.Providers.Nodes.PipelineNodes;
 /// </summary>
 public class OtherPipelinesNode:SingletonNode
 {
-    public List<Pipeline> Pipelines { get; } = new List<Pipeline>();
+    public List<Pipeline> Pipelines { get; } = new();
 
     public OtherPipelinesNode():base("Other Pipelines")
     {

@@ -36,8 +36,8 @@ public class ForwardEngineerANOCatalogueEngine
     public LoadMetadata LoadMetadata { get; private set; }
     public LoadProgress LoadProgressIfAny { get; set; }
 
-    public Dictionary<ITableInfo, QueryBuilder> SelectSQLForMigrations = new Dictionary<ITableInfo, QueryBuilder>();
-    public Dictionary<PreLoadDiscardedColumn,IDilutionOperation> DilutionOperationsForMigrations = new Dictionary<PreLoadDiscardedColumn, IDilutionOperation>();
+    public Dictionary<ITableInfo, QueryBuilder> SelectSQLForMigrations = new();
+    public Dictionary<PreLoadDiscardedColumn,IDilutionOperation> DilutionOperationsForMigrations = new();
 
     private ShareManager _shareManager;
 
@@ -299,7 +299,7 @@ public class ForwardEngineerANOCatalogueEngine
                         new[]
                         {
                             new SpontaneouslyInventedFilter(memoryRepo,null, $"{_planManager.DateColumn} >= @startDate","After batch start date","",null),
-                            new SpontaneouslyInventedFilter(memoryRepo,null, $"{_planManager.DateColumn} <= @endDate","Before batch end date","",null),
+                            new SpontaneouslyInventedFilter(memoryRepo,null, $"{_planManager.DateColumn} <= @endDate","Before batch end date","",null)
                         }
                         ,FilterContainerOperation.AND);
                 }
@@ -423,7 +423,7 @@ public class ForwardEngineerANOCatalogueEngine
             $"Found '{columns.Length}' ColumnInfos called '{expectedNewNames.First()}'{(failedANOToo ? $" (Or 'ANO{expectedName}')" : "")}");
     }
 
-    Dictionary<IMapsDirectlyToDatabaseTable,IMapsDirectlyToDatabaseTable> _parenthoodDictionary = new Dictionary<IMapsDirectlyToDatabaseTable, IMapsDirectlyToDatabaseTable>();
+    Dictionary<IMapsDirectlyToDatabaseTable,IMapsDirectlyToDatabaseTable> _parenthoodDictionary = new();
         
 
     private void AuditParenthood(IMapsDirectlyToDatabaseTable parent, IMapsDirectlyToDatabaseTable child)

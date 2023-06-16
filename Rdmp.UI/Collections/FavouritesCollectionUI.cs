@@ -23,7 +23,7 @@ namespace Rdmp.UI.Collections;
 /// </summary>
 public partial class FavouritesCollectionUI : RDMPCollectionUI, ILifetimeSubscriber
 {
-    List<IMapsDirectlyToDatabaseTable> favourites = new List<IMapsDirectlyToDatabaseTable>();
+    List<IMapsDirectlyToDatabaseTable> favourites = new();
     bool _firstTime = true;
     public FavouritesCollectionUI()
     {

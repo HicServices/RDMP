@@ -679,7 +679,7 @@ delete from {1}..Project
         return Regex.Replace(sql, @"\s+", " ").Trim();
     }
         
-    HashSet<DiscoveredDatabase> forCleanup = new HashSet<DiscoveredDatabase>();
+    HashSet<DiscoveredDatabase> forCleanup = new();
 
     /// <summary>
     /// Gets an empty database on the test server of the appropriate DBMS

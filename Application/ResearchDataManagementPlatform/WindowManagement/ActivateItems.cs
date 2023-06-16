@@ -86,7 +86,7 @@ public class ActivateItems : BasicActivateItems, IActivateItems, IRefreshBusSubs
 
     public RefreshBus RefreshBus { get; private set; }
         
-    readonly UIObjectConstructor _constructor = new UIObjectConstructor();
+    readonly UIObjectConstructor _constructor = new();
 
     public IArrangeWindows WindowArranger { get; private set; }
         
@@ -690,7 +690,7 @@ public class ActivateItems : BasicActivateItems, IActivateItems, IRefreshBusSubs
             return true;
         }
 
-        selected = default(T);
+        selected = default;
         return false;
     }
 
@@ -714,7 +714,7 @@ public class ActivateItems : BasicActivateItems, IActivateItems, IRefreshBusSubs
             return true;
         }
 
-        selected = default(T[]);
+        selected = default;
         return false;
     }
     public override DirectoryInfo SelectDirectory(string prompt)
@@ -851,7 +851,7 @@ public class ActivateItems : BasicActivateItems, IActivateItems, IRefreshBusSubs
     {
         return new List<CommandInvokerDelegate>
         {
-            new CommandInvokerDelegate(typeof(IActivateItems),true,(p)=>this)
+            new(typeof(IActivateItems),true,(p)=>this)
         };
     }
     public void StartSession(string sessionName, IEnumerable<IMapsDirectlyToDatabaseTable> initialObjects, string initialSearch)
@@ -864,7 +864,7 @@ public class ActivateItems : BasicActivateItems, IActivateItems, IRefreshBusSubs
                 TaskDescription = "Pick which objects you want added to the session window.  You can always add more later",
                 InitialSearchText = initialSearch,
 
-                IsFind = sessionName.StartsWith(ExecuteCommandStartSession.FindResultsTitle),
+                IsFind = sessionName.StartsWith(ExecuteCommandStartSession.FindResultsTitle)
             },typeof(IMapsDirectlyToDatabaseTable),CoreChildProvider.GetAllSearchables().Keys.ToArray())?.ToList();
 
             if(initialObjects?.Any()!=true)

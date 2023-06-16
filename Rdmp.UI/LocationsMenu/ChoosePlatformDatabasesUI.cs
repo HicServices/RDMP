@@ -421,7 +421,7 @@ public partial class ChoosePlatformDatabasesUI : Form
             var toSerialize = new ConnectionStringsYamlFile
             {
                 CatalogueConnectionString = tbCatalogueConnectionString.Text,
-                DataExportConnectionString = tbDataExportManagerConnectionString.Text,
+                DataExportConnectionString = tbDataExportManagerConnectionString.Text
             };
 
             var serializer = new Serializer();

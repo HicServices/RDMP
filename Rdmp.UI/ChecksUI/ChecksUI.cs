@@ -42,7 +42,7 @@ public partial  class ChecksUI : UserControl, ICheckNotifier
     private Bitmap _fail;
     private Bitmap _failEx;
 
-    ConcurrentBag<CheckEventArgs> _results = new ConcurrentBag<CheckEventArgs>();
+    ConcurrentBag<CheckEventArgs> _results = new();
     bool outOfDate = false;
 
     public ChecksUI()
@@ -196,7 +196,7 @@ public partial  class ChecksUI : UserControl, ICheckNotifier
         return shouldApplyFix;
     }
 
-    private object olockYesNoToAll = new object();
+    private object olockYesNoToAll = new();
 
     private bool DoesUserWantToApplyFix(CheckEventArgs args)
     {

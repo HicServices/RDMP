@@ -151,7 +151,7 @@ public class MasterDatabaseScriptExecutor
 
                 {"entry_date", now},
                 {"modified_date", now},
-                {"entered_by", Environment.UserName},
+                {"entered_by", Environment.UserName}
 
             });
 

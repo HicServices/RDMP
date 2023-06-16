@@ -66,7 +66,7 @@ public class LogManagerTest : DatabaseTests
 
             var tableLoadInfo = _successfulLoad.CreateTableLoadInfo("ignoreme", "Nowhereland",
                 new DataSource[]
-                    {new DataSource("Firehouse", DateTime.Now.AddDays(-1)), new DataSource("WaterHaus")}, 100);
+                    {new("Firehouse", DateTime.Now.AddDays(-1)), new("WaterHaus")}, 100);
 
             tableLoadInfo.Inserts = 500;
             tableLoadInfo.Updates = 100;

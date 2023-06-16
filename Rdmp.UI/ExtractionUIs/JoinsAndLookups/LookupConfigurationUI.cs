@@ -61,7 +61,7 @@ namespace Rdmp.UI.ExtractionUIs.JoinsAndLookups;
 public partial class LookupConfigurationUI : LookupConfiguration_Design
 {
     private Catalogue _catalogue;
-    private ToolTip toolTip = new ToolTip();
+    private ToolTip toolTip = new();
 
     //constructor
     public LookupConfigurationUI()
@@ -209,7 +209,7 @@ public partial class LookupConfigurationUI : LookupConfiguration_Design
             "  1. Choose Lookup Table",
             "  2. Choose the Code column (e.g. T/F)",
             "  3. Choose the dataset column containing a matching code (T/F)",
-            "  4. Choose the Description column (e.g. Tayside,Fife)",
+            "  4. Choose the Description column (e.g. Tayside,Fife)"
         };
 
 

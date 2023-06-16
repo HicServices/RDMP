@@ -114,7 +114,7 @@ public class JoinInfo : DatabaseEntity, IJoin,IHasDependencies
     private ColumnInfo _primaryKey;
 
         
-    private List<JoinInfo> _queryTimeComboJoins = new List<JoinInfo>();
+    private List<JoinInfo> _queryTimeComboJoins = new();
 
     #region Relationships
     /// <inheritdoc/>

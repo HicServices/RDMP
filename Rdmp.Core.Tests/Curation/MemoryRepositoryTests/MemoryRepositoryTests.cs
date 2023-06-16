@@ -19,7 +19,7 @@ namespace Rdmp.Core.Tests.Curation.MemoryRepositoryTests;
 [Category("Unit")]
 class MemoryRepositoryTests
 {
-    readonly MemoryCatalogueRepository _repo = new MemoryCatalogueRepository();
+    readonly MemoryCatalogueRepository _repo = new();
 
     [OneTimeSetUp]
     public virtual void OneTimeSetUp()

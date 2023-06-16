@@ -38,9 +38,9 @@ internal class ConsoleGuiBigListBox<T>
     /// <summary>
     /// Ongoing filtering of a large collection should be cancelled when the user changes the filter even if it is not completed yet
     /// </summary>
-    ConcurrentBag<CancellationTokenSource> _cancelFiltering = new ConcurrentBag<CancellationTokenSource>();
+    ConcurrentBag<CancellationTokenSource> _cancelFiltering = new();
     Task _currentFilterTask;
-    object _taskCancellationLock = new object();
+    object _taskCancellationLock = new();
         
     private ListView _listView;
     private bool _changes;
@@ -170,7 +170,7 @@ internal class ConsoleGuiBigListBox<T>
             var searchLabel = new Label("Search:")
             {
                 X = 0,
-                Y = Pos.Bottom(_listView),
+                Y = Pos.Bottom(_listView)
             };
 
             win.Add(searchLabel);
@@ -178,7 +178,7 @@ internal class ConsoleGuiBigListBox<T>
             _mainInput = new TextField ("") {
                 X = Pos.Right(searchLabel),
                 Y = Pos.Bottom(_listView),
-                Width = 30,
+                Width = 30
             };
 
             btnOk.X = 38;

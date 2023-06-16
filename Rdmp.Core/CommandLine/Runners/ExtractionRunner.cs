@@ -41,7 +41,7 @@ public class ExtractionRunner : ManyRunner
     private Pipeline _pipeline;
     private LogManager _logManager;
 
-    object _oLock = new object();
+    object _oLock = new();
     public Dictionary<ISelectedDataSets, ExtractCommand> ExtractCommands { get;private set; }
 
     public ExtractionRunner(IBasicActivateItems activator,ExtractionOptions extractionOpts):base(extractionOpts)

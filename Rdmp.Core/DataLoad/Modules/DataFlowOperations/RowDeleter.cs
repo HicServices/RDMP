@@ -27,7 +27,7 @@ class RowDeleter: IPluginDataFlowComponent<DataTable>
     public Regex DeleteRowsWhereValuesMatch { get; set; }
 
     private int _deleted;
-    private Stopwatch _sw = new Stopwatch();
+    private Stopwatch _sw = new();
 
     public DataTable ProcessPipelineData(DataTable toProcess, IDataLoadEventListener listener, GracefulCancellationToken cancellationToken)
     {

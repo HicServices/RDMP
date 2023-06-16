@@ -24,7 +24,7 @@ public class ExtractionTimeTimeCoverageAggregatorBucket
     public DateTime Time { get; set; }
     public int CountOfTimesSeen { get; set; }
     public int CountOfDistinctIdentifiers => _identifiersSeen.Count;
-    private readonly HashSet<object> _identifiersSeen = new HashSet<object>();
+    private readonly HashSet<object> _identifiersSeen = new();
 
     public ExtractionTimeTimeCoverageAggregatorBucket(DateTime time)
     {

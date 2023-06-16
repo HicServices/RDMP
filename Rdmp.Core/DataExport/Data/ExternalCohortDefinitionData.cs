@@ -69,6 +69,6 @@ public class ExternalCohortDefinitionData : IExternalCohortDefinitionData
         ExternalDescription = "Orphan Cohort",
         ExternalVersion = -1,
         ExternalCohortTableName = null,
-        ExternalCohortCreationDate = null,
+        ExternalCohortCreationDate = null
     };
 }

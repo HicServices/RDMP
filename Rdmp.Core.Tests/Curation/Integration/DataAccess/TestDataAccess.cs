@@ -158,7 +158,7 @@ public class TestDataAccess:DatabaseTests
         Assert.IsEmpty(asyncExceptions);
     }
 
-    private List<Exception> asyncExceptions = new List<Exception>();
+    private List<Exception> asyncExceptions = new();
 
     private void MessWithCatalogue()
     {

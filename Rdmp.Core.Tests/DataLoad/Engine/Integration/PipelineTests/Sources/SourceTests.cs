@@ -241,7 +241,7 @@ public class TestObjectNoRequirements : IDataFlowComponent<DataTable>
 
 public class TestObject_Suspicious : IDataFlowComponent<DataTable>, IPipelineRequirement<object>
 {
-    public Object Object { get; set; }
+    public object Object { get; set; }
     public DataTable ProcessPipelineData(DataTable toProcess, IDataLoadEventListener listener,
         GracefulCancellationToken cancellationToken)
     {
@@ -266,7 +266,7 @@ public class TestObject_Suspicious : IDataFlowComponent<DataTable>, IPipelineReq
 
 public class TestObject_ExtraSuspicious : IDataFlowComponent<DataTable>, IPipelineRequirement<object>, IPipelineRequirement<string>
 {
-    public Object Object { get; set; }
+    public object Object { get; set; }
     public DataTable ProcessPipelineData(DataTable toProcess, IDataLoadEventListener listener,
         GracefulCancellationToken cancellationToken)
     {

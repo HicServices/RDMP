@@ -21,7 +21,7 @@ namespace Rdmp.UI.SimpleControls;
 public class ConnectionStringTextBox : TextBox
 {
     private DatabaseType _databaseType;
-    private List<string> supportedKeywords = new List<string>();
+    private List<string> supportedKeywords = new();
     private bool suppressAutocomplete = false;
 
     public DatabaseType DatabaseType

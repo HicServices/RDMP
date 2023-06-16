@@ -65,7 +65,7 @@ public class CachedFileRetrieverTests : DatabaseTests
             var job = CreateTestJob(loadDirectory); 
             job.DatesToRetrieve = new List<DateTime>
             {
-                new DateTime(2016, 01, 02)
+                new(2016, 01, 02)
             };
 
             // Should fail after determining that the files in ForLoading do not match the job specification
@@ -108,7 +108,7 @@ public class CachedFileRetrieverTests : DatabaseTests
             var job = CreateTestJob(loadDirectory); 
             job.DatesToRetrieve = new List<DateTime>
             {
-                new DateTime(2016, 01, 01)
+                new(2016, 01, 01)
             };
 
             // Should complete successfully, the file in ForLoading matches the job specification
@@ -152,7 +152,7 @@ public class CachedFileRetrieverTests : DatabaseTests
             var job = CreateTestJob(loadDirectory);
             job.DatesToRetrieve = new List<DateTime>
             {
-                new DateTime(2016, 01, 01)
+                new(2016, 01, 01)
             };
 
             // Should complete successfully, there are no files in ForLoading to worry about
