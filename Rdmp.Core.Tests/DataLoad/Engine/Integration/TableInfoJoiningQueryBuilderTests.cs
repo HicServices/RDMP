@@ -43,7 +43,7 @@ public class TableInfoJoiningQueryBuilderTests:DatabaseTests
         };
         queryBuilder.AddColumn(icol1);
 
-        var tablesUsed = SqlQueryBuilderHelper.GetTablesUsedInQuery(queryBuilder, out var primary,null);
+        var tablesUsed = SqlQueryBuilderHelper.GetTablesUsedInQuery(queryBuilder, out _,null);
             
         Assert.AreEqual(1,tablesUsed.Count);
         Assert.AreEqual(head,tablesUsed[0]);
@@ -58,7 +58,7 @@ public class TableInfoJoiningQueryBuilderTests:DatabaseTests
         };
         queryBuilder.AddColumn(icol4);
 
-        tablesUsed = SqlQueryBuilderHelper.GetTablesUsedInQuery(queryBuilder, out primary, null);
+        tablesUsed = SqlQueryBuilderHelper.GetTablesUsedInQuery(queryBuilder, out _, null);
             
         Assert.AreEqual(2, tablesUsed.Count);
         Assert.AreEqual(head, tablesUsed[0]);

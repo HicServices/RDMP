@@ -237,11 +237,8 @@ public class MasterDatabaseScriptExecutor
 
         try
         {
-            var i = 0;
             foreach (var patch in patches)
             {
-                i++;
-
                 var shouldRun = patchPreviewShouldIRunIt(patch.Value);
 
                 if (shouldRun)
@@ -264,10 +261,7 @@ public class MasterDatabaseScriptExecutor
             }
                 
             SetVersion("Patching",maxPatchVersion.ToString());
-            notifier.OnCheckPerformed(new CheckEventArgs($"Updated database version to {maxPatchVersion}", CheckResult.Success, null));
-
-            //all went fine
-            notifier.OnCheckPerformed(new CheckEventArgs("All patches applied, transaction committed", CheckResult.Success, null));
+            notifier.OnCheckPerformed(new CheckEventArgs($"Updated database version to {maxPatchVersion}", CheckResult.Success));
                 
             return true;
 

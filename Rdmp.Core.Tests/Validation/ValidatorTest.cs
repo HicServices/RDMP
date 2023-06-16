@@ -120,16 +120,15 @@ public class ValidatorTest
     public void ValidateVerbose_InvalidChi_CountOfWrongIncreases()
     {
         var validator = CreateSimpleChiValidator();
-        Consequence? lastRowConsequence;
         //run once
-        var results = validator.ValidateVerboseAdditive(_domainObjectWithInvalidChi, null, out lastRowConsequence);
+        var results = validator.ValidateVerboseAdditive(_domainObjectWithInvalidChi, null, out _);
 
         Assert.IsNotNull(results);
 
         Assert.AreEqual(results.DictionaryOfFailure["chi"][Consequence.Wrong] , 1);
 
         //additive --give it same row again, expect the count of wrong ones to go SetUp by 1
-        results = validator.ValidateVerboseAdditive(_domainObjectWithInvalidChi, results, out lastRowConsequence);
+        results = validator.ValidateVerboseAdditive(_domainObjectWithInvalidChi, results, out _);
             
         Assert.AreEqual(results.DictionaryOfFailure["chi"][Consequence.Wrong], 2);
     }

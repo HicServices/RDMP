@@ -52,8 +52,7 @@ public static class Rfc4180Writer
         var s = o as string;
         if (s != null && allowDates)
         {
-            DateTime dt;
-            if (DateTime.TryParse(s, out dt))
+            if (DateTime.TryParse(s, out var dt))
                 return GetStringRepresentation(dt);
         }
 

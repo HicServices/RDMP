@@ -144,9 +144,7 @@ public class JoinInfo : DatabaseEntity, IJoin,IHasDependencies
 
         Collation = r["Collation"] as string;
 
-        ExtractionJoinType joinType;
-
-        if (Enum.TryParse(r["ExtractionJoinType"].ToString(), true, out joinType))
+        if (Enum.TryParse(r["ExtractionJoinType"].ToString(), true, out ExtractionJoinType joinType))
             ExtractionJoinType = joinType;
         else
             throw new Exception($"Did not recognise ExtractionJoinType:{r["ExtractionJoinType"]}");

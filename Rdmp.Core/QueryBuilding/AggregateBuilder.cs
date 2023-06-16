@@ -560,12 +560,10 @@ public class AggregateBuilder : ISqlQueryBuilder
 
             
         // the sql bit of the transform (e.g. "UPPER(mycol)" in above example)
-        string select;
 
         // the column alias (e.g. "mytransform" in above example)
-        string alias;
 
-        QuerySyntaxHelper.SplitLineIntoSelectSQLAndAlias(col.GetSelectSQL(null, null, QuerySyntaxHelper), out select, out alias);
+        QuerySyntaxHelper.SplitLineIntoSelectSQLAndAlias(col.GetSelectSQL(null, null, QuerySyntaxHelper), out var select, out var alias);
 
         return GetGroupOrOrderByCustomLineBasedOn(select, alias);
     }

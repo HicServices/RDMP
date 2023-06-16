@@ -63,9 +63,7 @@ internal class AggregateEditorUITests:UITests
     [Test, UITimeout(50000)]
     public void Test_AggregateEditorUI_AxisOnlyShowsDateDimensions()
     {
-        ExtractionInformation dateEi;
-        ExtractionInformation otherEi;
-        var config = GetAggregateConfigurationWithNoDimensions(out dateEi,out otherEi);
+        var config = GetAggregateConfigurationWithNoDimensions(out var dateEi,out var otherEi);
             
         var dimDate = new AggregateDimension(Repository, dateEi, config);
         var dimOther = new AggregateDimension(Repository, otherEi, config);
@@ -119,9 +117,7 @@ internal class AggregateEditorUITests:UITests
 
     private AggregateConfiguration GetAggregateConfigurationWithNoDimensions()
     {
-        ExtractionInformation otherEi;
-        ExtractionInformation dateEi;
-        return GetAggregateConfigurationWithNoDimensions(out dateEi, out otherEi);
+        return GetAggregateConfigurationWithNoDimensions(out _, out _);
     }
 
     private AggregateConfiguration GetAggregateConfigurationWithNoDimensions(out ExtractionInformation dateEi, out ExtractionInformation otherEi)

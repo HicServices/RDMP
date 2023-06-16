@@ -23,8 +23,7 @@ namespace Rdmp.Core.DataExport.DataRelease.Pipeline;
 /// <summary>
 /// Prepares the Environment and the Source Database for the ReleaseEngine.
 /// </summary>
-/// <typeparam name="T">The ReleaseAudit object passed around in the pipeline</typeparam>
-public class MsSqlReleaseSource<T> : FixedReleaseSource<ReleaseAudit>
+public class MsSqlReleaseSource : FixedReleaseSource<ReleaseAudit>
 {
     private readonly ICatalogueRepository _catalogueRepository;
     private DiscoveredDatabase _database;

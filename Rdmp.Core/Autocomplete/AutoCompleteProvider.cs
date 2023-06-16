@@ -103,10 +103,9 @@ public class AutoCompleteProvider : IAutoCompleteProvider
 
     public void Add(IColumn column)
     {
-        string runtimeName;
         try
         {
-            runtimeName = column.GetRuntimeName();
+            _ = column.GetRuntimeName();
         }
         catch (Exception)
         {

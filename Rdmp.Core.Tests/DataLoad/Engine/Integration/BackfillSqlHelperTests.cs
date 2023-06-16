@@ -75,13 +75,10 @@ LEFT JOIN [{0}]..[Headers] TimePeriodicityTable ON TimePeriodicityTable.ID = j1.
         CreateTables("Results", "ID int NOT NULL, SampleID int NOT NULL, Result int", "ID", "CONSTRAINT [FK_Samples_Results] FOREIGN KEY (SampleID) REFERENCES Samples (ID)");
 
         // Set SetUp catalogue entities
-        ColumnInfo[] ciHeaders;
-        ColumnInfo[] ciSamples;
-        ColumnInfo[] ciResults;
 
-        var tiHeaders = AddTableToCatalogue(DatabaseName, "Headers", "ID", out ciHeaders, true);
-        AddTableToCatalogue(DatabaseName, "Samples", "ID", out ciSamples);
-        AddTableToCatalogue(DatabaseName, "Results", "ID", out ciResults);
+        var tiHeaders = AddTableToCatalogue(DatabaseName, "Headers", "ID", out var ciHeaders, true);
+        AddTableToCatalogue(DatabaseName, "Samples", "ID", out var ciSamples);
+        AddTableToCatalogue(DatabaseName, "Results", "ID", out var ciResults);
 
         _catalogue.Time_coverage = "[Headers].[HeaderDate]";
         _catalogue.SaveToDatabase();
@@ -138,10 +135,7 @@ LEFT JOIN [{0}]..[Headers] TimePeriodicityTable ON TimePeriodicityTable.ID = j1.
         var forwardEngineer = new ForwardEngineerCatalogue(ti, ciList);
         if (createCatalogue)
         {
-            CatalogueItem[] cataItems;
-            ExtractionInformation[] extractionInformations;
-
-            forwardEngineer.ExecuteForwardEngineering(out _catalogue, out cataItems, out extractionInformations);
+            forwardEngineer.ExecuteForwardEngineering(out _catalogue, out _, out _);
         }
         else
             forwardEngineer.ExecuteForwardEngineering(_catalogue);

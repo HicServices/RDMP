@@ -79,8 +79,7 @@ public partial class CatalogueUI : CatalogueUI_Design, ISaveableUI
         
     private void tbName_TextChanged(object sender, EventArgs e)
     {
-        string reasonInvalid;
-        if (!Catalogue.IsAcceptableName(tbName.Text, out reasonInvalid))
+        if (!Catalogue.IsAcceptableName(tbName.Text, out var reasonInvalid))
             errorProvider1.SetError(tbName, reasonInvalid);
         else
             errorProvider1.Clear();

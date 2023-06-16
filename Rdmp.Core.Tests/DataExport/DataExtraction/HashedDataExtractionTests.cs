@@ -30,9 +30,6 @@ public class HashedDataExtractionTests : TestsRequiringAnExtractionConfiguration
             }
         };
 
-        ExtractionPipelineUseCase execute;
-        IExecuteDatasetExtractionDestination result;
-
         _catalogue.Name = "TestTable";
         _catalogue.SaveToDatabase();
         _request.DatasetBundle.DataSet.RevertToDatabaseState();
@@ -40,7 +37,7 @@ public class HashedDataExtractionTests : TestsRequiringAnExtractionConfiguration
         Assert.AreEqual(1, _request.ColumnsToExtract.Count(c => c.IsExtractionIdentifier));
         var listener = new ToMemoryDataLoadEventListener(true);
 
-        Execute(out execute,out result,listener);
+        Execute(out _,out var result,listener);
 
         var messages = 
             listener.EventsReceivedBySender.SelectMany(m => m.Value)

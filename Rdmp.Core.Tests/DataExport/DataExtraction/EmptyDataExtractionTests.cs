@@ -78,12 +78,9 @@ public class EmptyDataExtractionTests:TestsRequiringAnExtractionConfiguration
         TruncateDataTable();
         AllowEmptyExtractions = true;
 
-        ExtractionPipelineUseCase execute;
-        IExecuteDatasetExtractionDestination result;
-
         Assert.AreEqual(1, _request.ColumnsToExtract.Count(c => c.IsExtractionIdentifier));
 
-        Execute(out execute, out result);
+        Execute(out _, out var result);
 
         var r = (ExecuteDatasetExtractionFlatFileDestination)result;
 

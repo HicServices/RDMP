@@ -38,9 +38,7 @@ public class FilterImportWizard
     }
     public IFilter Import(IContainer containerToImportOneInto, IFilter filterToImport, ExtractionFilterParameterSet parameterSet)
     {
-        ISqlParameter[] globals;
-        IFilter[] otherFilters;
-        GetGlobalsAndFilters(containerToImportOneInto, out globals, out otherFilters);
+        GetGlobalsAndFilters(containerToImportOneInto, out var globals, out var otherFilters);
         return Import(containerToImportOneInto, filterToImport, globals, otherFilters, parameterSet);
     }
 
@@ -94,7 +92,6 @@ public class FilterImportWizard
         //If we've not imported values but there is a parameter then ask for their values
         if (chosenParameterValues == null && newFilter.GetAllParameters().Any())
         {
-            string param;
             foreach (var parameter in newFilter.GetAllParameters())
             {
                 var initialText = parameter.Value;
@@ -103,7 +100,7 @@ public class FilterImportWizard
                     initialText = null;
                 }
 
-                if (_activator.IsInteractive && _activator.TypeText(AnyTableSqlParameter.GetValuePromptDialogArgs(newFilter, parameter), 255, initialText, out param, false))
+                if (_activator.IsInteractive && _activator.TypeText(AnyTableSqlParameter.GetValuePromptDialogArgs(newFilter, parameter), 255, initialText, out var param, false))
                 {
                     parameter.Value = param;
                     parameter.SaveToDatabase();

@@ -42,11 +42,7 @@ internal class StackFramesTree
 
     private bool PopulateSourceCode(string frame)
     {
-        string filenameMatch;
-        int lineNumberMatch;
-        string method;
-
-        HasSourceCode = ExceptionViewerStackTraceWithHyperlinks.MatchStackLine(frame, out filenameMatch, out lineNumberMatch, out method);
+        HasSourceCode = ExceptionViewerStackTraceWithHyperlinks.MatchStackLine(frame, out var filenameMatch, out var lineNumberMatch, out var method);
 
         Filename = filenameMatch;
         LineNumber = lineNumberMatch;
@@ -57,19 +53,11 @@ internal class StackFramesTree
 
     public static bool FindSourceCode(string frame)
     {
-        string filenameMatch;
-        int lineNumberMatch;
-        string method;
-
-        return ExceptionViewerStackTraceWithHyperlinks.MatchStackLine(frame, out filenameMatch, out lineNumberMatch, out method);
+        return ExceptionViewerStackTraceWithHyperlinks.MatchStackLine(frame, out _, out _, out _);
     }
     public static string GetMethodName(string frame)
     {
-        string filenameMatch;
-        int lineNumberMatch;
-        string method;
-
-        ExceptionViewerStackTraceWithHyperlinks.MatchStackLine(frame, out filenameMatch, out lineNumberMatch, out method);
+        ExceptionViewerStackTraceWithHyperlinks.MatchStackLine(frame, out _, out _, out var method);
 
         return method;
     }

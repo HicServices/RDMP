@@ -22,16 +22,13 @@ public class NormalDataExtractionTests:TestsRequiringAnExtractionConfiguration
     [Test]
     public void ExtractNormally()
     {
-        ExtractionPipelineUseCase execute;
-        IExecuteDatasetExtractionDestination result;
-
         _catalogue.Name = "TestTable";
         _catalogue.SaveToDatabase();
         _request.DatasetBundle.DataSet.RevertToDatabaseState();
 
         Assert.AreEqual(1, _request.ColumnsToExtract.Count(c => c.IsExtractionIdentifier));
             
-        Execute(out execute,out result);
+        Execute(out _,out var result);
 
         var r = (ExecuteDatasetExtractionFlatFileDestination)result;
 

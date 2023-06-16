@@ -26,11 +26,7 @@ public class CohortCompilerRunnerTests:DatabaseTests
     [Test]
     public void CacheIdentifierListWithRunner_SimpleCase()
     {
-        DiscoveredDatabase db;
-        CohortIdentificationConfiguration cic;
-        DataTable dt;
-
-        SetupCohort(out db,out cic,out dt);
+        SetupCohort(out var db,out var cic,out var dt);
 
         var compiler = new CohortCompiler(cic);
 
@@ -51,11 +47,7 @@ public class CohortCompilerRunnerTests:DatabaseTests
     [Test]
     public void CacheIdentifierListWithRunner_WithCaching()
     {
-        DiscoveredDatabase db;
-        CohortIdentificationConfiguration cic;
-        DataTable dt;
-
-        SetupCohort(out db, out cic, out dt);
+        SetupCohort(out var db, out var cic, out var dt);
             
         var e = new MasterDatabaseScriptExecutor(db);
         var p = new QueryCachingPatcher();
@@ -87,6 +79,7 @@ public class CohortCompilerRunnerTests:DatabaseTests
     private void SetupCohort(out DiscoveredDatabase db, out CohortIdentificationConfiguration cic, out DataTable dt)
     {
         dt = new DataTable();
+        dt.BeginLoadData();
         dt.Columns.Add("PK");
 
         //add lots of rows
@@ -107,7 +100,7 @@ public class CohortCompilerRunnerTests:DatabaseTests
             CountSQL = null
         };
         agg.SaveToDatabase();
-        var dimension = new AggregateDimension(CatalogueRepository, ei, agg);
+        _ = new AggregateDimension(CatalogueRepository, ei, agg);
 
         cic = new CohortIdentificationConfiguration(CatalogueRepository, "MyCic");
         cic.CreateRootContainerIfNotExists();

@@ -18,8 +18,8 @@ using Rdmp.Core.Repositories.Construction;
 namespace Rdmp.Core.DataExport.DataRelease.Pipeline;
 
 /// <summary>
-/// Describes the use case in which a <see cref="Pipeline"/> takes artifacts produced as part of one or more <see cref="ExtractionConfiguration"/> for a <see cref="Project"/>.  
-/// The artifacts may be CSV files, tables in an extraction database etc.  The artifacts should be gathered and sent to the recipient (e.g. zipped up and moved to FTP
+/// Describes the use case in which a <see cref="Pipeline"/> takes artefacts produced as part of one or more <see cref="ExtractionConfiguration"/> for a <see cref="Project"/>.  
+/// The artefacts may be CSV files, tables in an extraction database etc.  The artefacts should be gathered and sent to the recipient (e.g. zipped up and moved to FTP
 /// server / output folder).  
 /// 
 /// <para>The configurations should be marked as released.</para>
@@ -44,7 +44,7 @@ public sealed class ReleaseUseCase : PipelineUseCase
             releasePotentials.FirstOrDefault(rp => rp.DatasetExtractionResult != null);
 
         if (releasePotentialWithKnownDestination == null)
-            ExplicitSource = new NullReleaseSource<ReleaseAudit>();
+            ExplicitSource = new NullReleaseSource();
         else
         {
             var destinationType = catalogueRepository.MEF
@@ -87,7 +87,7 @@ public sealed class ReleaseUseCase : PipelineUseCase
         typeof(ReleaseData),
         typeof(CatalogueRepository)})
     {
-        ExplicitSource = new NullReleaseSource<ReleaseAudit>();
+        ExplicitSource = new NullReleaseSource();
         GenerateContext();
     }
 

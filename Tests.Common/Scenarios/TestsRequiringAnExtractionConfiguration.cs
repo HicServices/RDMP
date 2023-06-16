@@ -134,9 +134,8 @@ public class TestsRequiringAnExtractionConfiguration : TestsRequiringACohort
         dt.Rows.Add(new object[] {_cohortKeysGenerated.Keys.First(), "Dave", "2001-01-01"});
 
         var tbl = Database.CreateTable("TestTable", dt, new[] { new DatabaseColumnRequest("Name",new DatabaseTypeRequest(typeof(string),50))});
-            
-        CatalogueItem[] cataItems;
-        _catalogue = Import(tbl, out _tableInfo, out _columnInfos, out cataItems,out _extractionInformations);
+
+        _catalogue = Import(tbl, out _tableInfo, out _columnInfos, out _,out _extractionInformations);
             
         var _privateID = _extractionInformations.First(e => e.GetRuntimeName().Equals("PrivateID"));
         _privateID.IsExtractionIdentifier = true;

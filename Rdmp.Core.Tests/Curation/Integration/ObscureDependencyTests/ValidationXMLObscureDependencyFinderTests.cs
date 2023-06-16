@@ -68,8 +68,7 @@ public class ValidationXMLObscureDependencyFinderTests: DatabaseTests
     [Test]
     public void DeleteAReferencedValidationXML()
     {
-        ColumnInfo l2ColumnInfo;
-        var testData = SetupTestData(out l2ColumnInfo);
+        var testData = SetupTestData(out var l2ColumnInfo);
         try
         {
             Validator.LocatorForXMLDeserialization = RepositoryLocator;
@@ -116,8 +115,7 @@ public class ValidationXMLObscureDependencyFinderTests: DatabaseTests
         var startup = new Startup.Startup(RepositoryLocator);
         startup.DoStartup(new IgnoreAllErrorsCheckNotifier());
 
-        ColumnInfo l2ColumnInfo;
-        var testData = SetupTestData(out l2ColumnInfo);
+        var testData = SetupTestData(out var l2ColumnInfo);
 
         try
         {

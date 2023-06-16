@@ -1092,7 +1092,7 @@ ALTER TABLE DroppedColumnsTable add color varchar(1)
     {
         var db = GetCleanedServer(dbType);
 
-        var dt = new DataTable("ForceStringTable");
+        using var dt = new DataTable("ForceStringTable");
         dt.Columns.Add("hb_extract");
         dt.Columns.Add("Name");
 

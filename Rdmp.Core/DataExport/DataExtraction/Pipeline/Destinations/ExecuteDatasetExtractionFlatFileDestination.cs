@@ -205,7 +205,7 @@ public class ExecuteDatasetExtractionFlatFileDestination : ExtractionDestination
 
     public override FixedReleaseSource<ReleaseAudit> GetReleaseSource(ICatalogueRepository catalogueRepository)
     {
-        return new FlatFileReleaseSource<ReleaseAudit>();
+        return new FlatFileReleaseSource();
     }
 
     public override GlobalReleasePotential GetGlobalReleasabilityEvaluator(IRDMPPlatformRepositoryServiceLocator repositoryLocator, ISupplementalExtractionResults globalResult, IMapsDirectlyToDatabaseTable globalToCheck)

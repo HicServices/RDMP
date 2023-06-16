@@ -370,10 +370,7 @@ public class YamlRepository : MemoryDataExportRepository
         // save the default and the ID
         File.WriteAllText(GetDataExportPropertiesFile(), serializer.Serialize(PropertiesDictionary));
     }
-    public override string GetValue(DataExportProperty property)
-    {
-        return base.GetValue(property);
-    }
+
     public override void SetValue(DataExportProperty property, string value)
     {
         base.SetValue(property, value);

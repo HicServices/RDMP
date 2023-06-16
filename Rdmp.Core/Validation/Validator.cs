@@ -346,9 +346,7 @@ public class Validator
         //for all the columns we need to validate
         foreach (var itemValidator in ItemValidators)
         {
-                
-            object o;
-            if (_domainObjectDictionary.TryGetValue(itemValidator.TargetProperty, out o))
+            if (_domainObjectDictionary.TryGetValue(itemValidator.TargetProperty, out var o))
             {
                 //get the first validation failure for the given column (or null if it is valid)
                 var result = itemValidator.ValidateAll(o, vals, keys);

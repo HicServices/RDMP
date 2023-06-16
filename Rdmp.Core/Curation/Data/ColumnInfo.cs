@@ -310,8 +310,7 @@ public class ColumnInfo : DatabaseEntity, IComparable, IResolveDuplication, IHas
         IgnoreInLoads = ObjectToNullableBool(r["IgnoreInLoads"]) ?? false;
 
         //try to turn string value in database into enum value
-        ColumnStatus dbStatus;
-        if (Enum.TryParse(r["Status"].ToString(), out dbStatus))
+        if (Enum.TryParse(r["Status"].ToString(), out ColumnStatus dbStatus))
             Status = dbStatus;
 
         RegexPattern = r["RegexPattern"].ToString();

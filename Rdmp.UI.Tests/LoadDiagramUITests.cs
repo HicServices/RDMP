@@ -21,7 +21,7 @@ public class LoadDiagramUITests : UITests
             
         SetupMEF();
 
-        var ui = AndLaunch<LoadDiagramUI>(lmd);
+        _ = AndLaunch<LoadDiagramUI>(lmd);
 
         //it isn't impossible to show us
         AssertCommandIsPossible(new ExecuteCommandViewLoadDiagram(ItemActivator, lmd));
@@ -40,9 +40,9 @@ public class LoadDiagramUITests : UITests
             
         SetupMEF();
 
-        var ui = AndLaunch<LoadDiagramUI>(lmd);
+        _ = AndLaunch<LoadDiagramUI>(lmd);
 
-        //cant launch the command
+        //can't launch the command
         AssertCommandIsImpossible(new ExecuteCommandViewLoadDiagram(ItemActivator, lmd), "does not have any associated Catalogues");
 
         //and ui should be showing big problems

@@ -282,13 +282,11 @@ public class CohortIdentificationConfigurationUICommon
     {
         var manager = new CachedAggregateConfigurationResultsManager(QueryCachingServer);
 
-        var successes = 0;
         foreach (var t in tasks)
             try
             {
                 t.ClearYourselfFromCache(manager);
                 Compiler.CancelTask(t, true);
-                successes++;
             }
             catch (Exception exception)
             {

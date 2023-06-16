@@ -30,14 +30,11 @@ public class TestCohortRefreshing : TestsRequiringAnExtractionConfiguration
     [Test]
     public void RefreshCohort()
     {
-        ExtractionPipelineUseCase useCase;
-        IExecuteDatasetExtractionDestination results;
-
         var pipe = SetupPipeline();
         pipe.Name = "RefreshPipe";
         pipe.SaveToDatabase();
 
-        Execute(out useCase,out results);
+        Execute(out _,out _);
 
         var oldcohort = _configuration.Cohort;
 
@@ -76,9 +73,6 @@ public class TestCohortRefreshing : TestsRequiringAnExtractionConfiguration
     [Test]
     public void RefreshCohort_WithCaching()
     {
-        ExtractionPipelineUseCase useCase;
-        IExecuteDatasetExtractionDestination results;
-
         var pipe = new Pipeline(CatalogueRepository, "RefreshPipeWithCaching");
 
         var source = new PipelineComponent(CatalogueRepository, pipe, typeof (CohortIdentificationConfigurationSource), 0);
@@ -97,7 +91,7 @@ public class TestCohortRefreshing : TestsRequiringAnExtractionConfiguration
         pipe.DestinationPipelineComponent_ID = dest.ID;
         pipe.SaveToDatabase();
 
-        Execute(out useCase, out results);
+        Execute(out _, out _);
 
         var oldcohort = _configuration.Cohort;
 

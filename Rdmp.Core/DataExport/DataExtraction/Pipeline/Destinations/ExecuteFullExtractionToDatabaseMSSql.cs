@@ -423,7 +423,7 @@ public class ExecuteFullExtractionToDatabaseMSSql : ExtractionDestination
     }
     public override FixedReleaseSource<ReleaseAudit> GetReleaseSource(ICatalogueRepository catalogueRepository)
     {
-        return new MsSqlReleaseSource<ReleaseAudit>(catalogueRepository);
+        return new MsSqlReleaseSource(catalogueRepository);
     }
     public override GlobalReleasePotential GetGlobalReleasabilityEvaluator(IRDMPPlatformRepositoryServiceLocator repositoryLocator, ISupplementalExtractionResults globalResult, IMapsDirectlyToDatabaseTable globalToCheck)
     {

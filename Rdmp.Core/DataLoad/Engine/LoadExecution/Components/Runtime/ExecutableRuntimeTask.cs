@@ -113,8 +113,7 @@ public class ExecutableRuntimeTask : RuntimeTask
 
     private ExitCodeType ParseExitCode(int value)
     {
-        ExitCodeType exitCode;
-        var success = Enum.TryParse(value.ToString(), out exitCode);
+        var success = Enum.TryParse(value.ToString(), out ExitCodeType exitCode);
         if (!success)
             throw new ArgumentException($"Could not parse exit code from value: {value}");
         return exitCode;

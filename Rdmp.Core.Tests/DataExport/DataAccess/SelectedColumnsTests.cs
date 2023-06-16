@@ -28,15 +28,12 @@ public class SelectedColumnsTests:DatabaseTests
             
         var proj = new Project(DataExportRepository, "MyProj");
         var config = new ExtractionConfiguration(DataExportRepository, proj);
-            
-        SelectedDataSets selectedDataSets;
 
         var extractableColumn = new ExtractableColumn(DataExportRepository, ds, config, ExtractionInfo, 1, "fish");
 
         try
         {
-                
-            selectedDataSets = new SelectedDataSets(DataExportRepository,config, ds,null);
+            _=new SelectedDataSets(DataExportRepository,config, ds,null);
 
             var cols = config.GetAllExtractableColumnsFor(ds);
 

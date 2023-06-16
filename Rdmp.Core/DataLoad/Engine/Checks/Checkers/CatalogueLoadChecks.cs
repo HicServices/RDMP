@@ -89,8 +89,6 @@ internal class CatalogueLoadChecks:ICheckable
     private void CheckTableInfo(TableInfo tableInfo, ICheckNotifier notifier)
     {
         //get all columns
-        ColumnInfo[] columnInfos;
-        ColumnInfo[] columnInfosWhichArePrimaryKeys;
 
         //check whether the live database and staging databases have appropriate columns and triggers etc on them
         var staging = _databaseConfiguration.DeployInfo[LoadBubble.Staging];
@@ -101,7 +99,7 @@ internal class CatalogueLoadChecks:ICheckable
 
         CheckTableInfoSynchronization(tableInfo,notifier);
 
-        CheckTableHasColumnInfosAndPrimaryKeys(live, tableInfo, out columnInfos, out columnInfosWhichArePrimaryKeys,notifier);
+        CheckTableHasColumnInfosAndPrimaryKeys(live, tableInfo, out _, out _,notifier);
             
         //check for trying to ignore primary keys
         foreach (var col in tableInfo.ColumnInfos)
@@ -115,8 +113,7 @@ internal class CatalogueLoadChecks:ICheckable
             if(!_loadMetadata.IgnoreTrigger)
             {
                 //if trigger is created as part of this check then it is likely to have resulted in changes to the underlying table (e.g. added hic_validFrom field) in which case we should resynch the TableInfo to pickup these new columns
-                bool runSynchronizationAgain;
-                CheckTriggerIntact(liveTable,notifier,out runSynchronizationAgain);
+                CheckTriggerIntact(liveTable,notifier,out var runSynchronizationAgain);
 
                 if(runSynchronizationAgain)
                     CheckTableInfoSynchronization(tableInfo, notifier);

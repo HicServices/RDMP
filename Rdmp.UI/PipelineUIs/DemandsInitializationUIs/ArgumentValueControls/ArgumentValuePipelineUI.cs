@@ -56,10 +56,9 @@ public partial class ArgumentValuePipelineUI : UserControl, IArgumentValueUI
 
         try
         {
-            Pipeline p = null;
             try
             {
-                p = (Pipeline)args.InitialValue;
+                _ = (Pipeline)args.InitialValue;
             }
             catch (Exception e)
             {

@@ -734,9 +734,7 @@ public class Catalogue : DatabaseEntity, IComparable, ICatalogue, IInjectKnown<C
             Type = CatalogueType.Unknown;
         else
         {
-            CatalogueType typeAsEnum;
-
-            if (Enum.TryParse(type.ToString(), true, out typeAsEnum))
+            if (Enum.TryParse(type.ToString(), true, out CatalogueType typeAsEnum))
                 Type = typeAsEnum;
             else
                 throw new Exception($" r[\"Type\"] had value {type} which is not contained in Enum CatalogueType");
@@ -749,9 +747,7 @@ public class Catalogue : DatabaseEntity, IComparable, ICatalogue, IInjectKnown<C
             Periodicity = CataloguePeriodicity.Unknown;
         else
         {
-            CataloguePeriodicity periodicityAsEnum;
-
-            if (Enum.TryParse(periodicity.ToString(), true, out periodicityAsEnum))
+            if (Enum.TryParse(periodicity.ToString(), true, out CataloguePeriodicity periodicityAsEnum))
                 Periodicity = periodicityAsEnum;
             else
             {
@@ -765,9 +761,7 @@ public class Catalogue : DatabaseEntity, IComparable, ICatalogue, IInjectKnown<C
             Granularity = CatalogueGranularity.Unknown;
         else
         {
-            CatalogueGranularity granularityAsEnum;
-
-            if (Enum.TryParse(granularity.ToString(), true, out granularityAsEnum))
+            if (Enum.TryParse(granularity.ToString(), true, out CatalogueGranularity granularityAsEnum))
                 Granularity = granularityAsEnum;
             else
                 throw new Exception(
@@ -868,9 +862,7 @@ public class Catalogue : DatabaseEntity, IComparable, ICatalogue, IInjectKnown<C
     /// <param name="notifier"></param>
     public void Check(ICheckNotifier notifier)
     {
-        string reason;
-
-        if (!IsAcceptableName(Name, out reason))
+        if (!IsAcceptableName(Name, out var reason))
             notifier.OnCheckPerformed(
                 new CheckEventArgs(
                     $"Catalogue name {Name} (ID={ID}) does not follow naming conventions reason:{reason}",
@@ -969,8 +961,7 @@ public class Catalogue : DatabaseEntity, IComparable, ICatalogue, IInjectKnown<C
     /// <inheritdoc/>
     public ITableInfo[] GetTableInfoList(bool includeLookupTables)
     {
-        List<ITableInfo> normalTables, lookupTables;
-        GetTableInfos(out normalTables, out lookupTables);
+        GetTableInfos(out var normalTables, out var lookupTables);
 
         if (includeLookupTables)
             return normalTables.Union(lookupTables).ToArray();
@@ -981,8 +972,7 @@ public class Catalogue : DatabaseEntity, IComparable, ICatalogue, IInjectKnown<C
     /// <inheritdoc/>
     public ITableInfo[] GetLookupTableInfoList()
     {
-        List<ITableInfo> normalTables, lookupTables;
-        GetTableInfos(out normalTables, out lookupTables);
+        GetTableInfos(out _, out var lookupTables);
 
         return lookupTables.ToArray();
     }
@@ -1132,49 +1122,33 @@ public class Catalogue : DatabaseEntity, IComparable, ICatalogue, IInjectKnown<C
 
     private bool Fetch(ISupportingObject o, FetchOptions fetch)
     {
-        switch (fetch)
+        return fetch switch
         {
-            case FetchOptions.AllGlobals:
-                return o.IsGlobal;
-            case FetchOptions.ExtractableGlobalsAndLocals:
-                return (o.Catalogue_ID == ID || o.IsGlobal) && o.Extractable;
-            case FetchOptions.ExtractableGlobals:
-                return o.IsGlobal && o.Extractable;
-            case FetchOptions.AllLocals:
-                return o.Catalogue_ID == ID && !o.IsGlobal;
-            case FetchOptions.ExtractableLocals:
-                return o.Catalogue_ID == ID && o.Extractable && !o.IsGlobal;
-            case FetchOptions.AllGlobalsAndAllLocals:
-                return o.Catalogue_ID == ID || o.IsGlobal;
-            default:
-                throw new ArgumentOutOfRangeException(nameof(fetch));
-        }
+            FetchOptions.AllGlobals => o.IsGlobal,
+            FetchOptions.ExtractableGlobalsAndLocals => (o.Catalogue_ID == ID || o.IsGlobal) && o.Extractable,
+            FetchOptions.ExtractableGlobals => o.IsGlobal && o.Extractable,
+            FetchOptions.AllLocals => o.Catalogue_ID == ID && !o.IsGlobal,
+            FetchOptions.ExtractableLocals => o.Catalogue_ID == ID && o.Extractable && !o.IsGlobal,
+            FetchOptions.AllGlobalsAndAllLocals => o.Catalogue_ID == ID || o.IsGlobal,
+            _ => throw new ArgumentOutOfRangeException(nameof(fetch))
+        };
     }
 
 
-    private string GetFetchSQL<T>(FetchOptions fetch) where T:IMapsDirectlyToDatabaseTable
+    private string GetFetchSQL(FetchOptions fetch)
     {
-        switch (fetch)
+        return fetch switch
         {
-            case FetchOptions.AllGlobals:
-                return "WHERE IsGlobal=1";
-            case FetchOptions.ExtractableGlobalsAndLocals:
-                return $"WHERE (Catalogue_ID={ID} OR IsGlobal=1) AND Extractable=1";
-            case FetchOptions.ExtractableGlobals:
-                return  "WHERE IsGlobal=1 AND Extractable=1";
-                    
-            case FetchOptions.AllLocals:
-                return $"WHERE Catalogue_ID={ID}  AND IsGlobal=0";//globals still retain their Catalogue_ID incase the configurer removes the global attribute in which case they revert to belonging to that Catalogue as a local
-                    
-            case FetchOptions.ExtractableLocals:
-                return $"WHERE Catalogue_ID={ID} AND Extractable=1 AND IsGlobal=0";
-                    
-            case FetchOptions.AllGlobalsAndAllLocals:
-                return $"WHERE Catalogue_ID={ID} OR IsGlobal=1";
-                    
-            default:
-                throw new ArgumentOutOfRangeException(nameof(fetch));
-        }
+            FetchOptions.AllGlobals => "WHERE IsGlobal=1",
+            FetchOptions.ExtractableGlobalsAndLocals => $"WHERE (Catalogue_ID={ID} OR IsGlobal=1) AND Extractable=1",
+            FetchOptions.ExtractableGlobals => "WHERE IsGlobal=1 AND Extractable=1",
+            FetchOptions.AllLocals =>
+                $"WHERE Catalogue_ID={ID}  AND IsGlobal=0" //globals still retain their Catalogue_ID incase the configurer removes the global attribute in which case they revert to belonging to that Catalogue as a local
+            ,
+            FetchOptions.ExtractableLocals => $"WHERE Catalogue_ID={ID} AND Extractable=1 AND IsGlobal=0",
+            FetchOptions.AllGlobalsAndAllLocals => $"WHERE Catalogue_ID={ID} OR IsGlobal=1",
+            _ => throw new ArgumentOutOfRangeException(nameof(fetch))
+        };
     }
 
     /// <inheritdoc/>
@@ -1282,8 +1256,7 @@ public class Catalogue : DatabaseEntity, IComparable, ICatalogue, IInjectKnown<C
     /// <inheritdoc cref="Catalogue.IsAcceptableName(string,out string)"/>
     public static bool IsAcceptableName(string name)
     {
-        string whoCares;
-        return IsAcceptableName(name, out whoCares);
+        return IsAcceptableName(name, out _);
     }
     #endregion
 

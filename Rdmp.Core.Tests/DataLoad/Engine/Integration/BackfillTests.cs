@@ -89,8 +89,7 @@ public class BackfillTests : FromToDatabaseTests
         CreateTables("Samples", "ID int NOT NULL, SampleDate DATETIME, Description varchar(1024)", "ID");
 
         // Set SetUp catalogue entities
-        ColumnInfo[] ciSamples;
-        AddTableToCatalogue(DatabaseName, "Samples", "ID", out ciSamples, true);
+        AddTableToCatalogue(DatabaseName, "Samples", "ID", out _, true);
 
         Assert.AreEqual(5, _catalogue.CatalogueItems.Count(), "Unexpected number of items in catalogue");
     }
@@ -248,11 +247,9 @@ public class BackfillTests : FromToDatabaseTests
         CreateTables("Results", "ID int NOT NULL, SampleID int NOT NULL, Result int", "ID", "CONSTRAINT [FK_Samples_Results] FOREIGN KEY (SampleID) REFERENCES Samples (ID)");
 
         // Set SetUp catalogue entities
-        ColumnInfo[] ciSamples;
-        ColumnInfo[] ciResults; 
 
-        var tiSamples = AddTableToCatalogue(DatabaseName, "Samples", "ID", out ciSamples, true);
-        AddTableToCatalogue(DatabaseName, "Results", "ID", out ciResults);
+        var tiSamples = AddTableToCatalogue(DatabaseName, "Samples", "ID", out var ciSamples, true);
+        AddTableToCatalogue(DatabaseName, "Results", "ID", out var ciResults);
 
         _catalogue.Time_coverage = "[Samples].[SampleDate]";
         _catalogue.SaveToDatabase();
@@ -494,11 +491,9 @@ public class BackfillTests : FromToDatabaseTests
             "CONSTRAINT [FK_Headers_Samples] FOREIGN KEY (HeaderID) REFERENCES Headers (ID)");
 
         // Set SetUp catalogue entities
-        ColumnInfo[] ciSamples;
-        ColumnInfo[] ciHeaders;
 
-        var tiSamples = AddTableToCatalogue(DatabaseName, "Samples", "ID", out ciSamples, true);
-        AddTableToCatalogue(DatabaseName, "Headers", "ID", out ciHeaders);
+        var tiSamples = AddTableToCatalogue(DatabaseName, "Samples", "ID", out var ciSamples, true);
+        AddTableToCatalogue(DatabaseName, "Headers", "ID", out var ciHeaders);
 
         _catalogue.Time_coverage = "[Samples].[SampleDate]";
         _catalogue.SaveToDatabase();
@@ -871,8 +866,8 @@ public class BackfillTests : FromToDatabaseTests
         #endregion  
 
         #region Set SetUp catalogue entities
-        ColumnInfo[] ciSamples;
-        var tiSamples = AddSamplesTableToCatalogue(DatabaseName, out ciSamples);
+
+        var tiSamples = AddSamplesTableToCatalogue(DatabaseName, out var ciSamples);
         var tiResults = AddResultsTableToCatalogue(DatabaseName, ciSamples);
         var tiHeaders = AddHeaderTableToCatalogue(DatabaseName, ciSamples);
 
@@ -1010,8 +1005,7 @@ public class BackfillTests : FromToDatabaseTests
 
     private ITableInfo AddResultsTableToCatalogue(string databaseName, ColumnInfo[] ciSamples)
     {
-        ColumnInfo[] ciList;
-        var ti = AddTableToCatalogue(databaseName, "Results", "ID", out ciList);
+        var ti = AddTableToCatalogue(databaseName, "Results", "ID", out var ciList);
 
         // setup join infos
         new JoinInfo(CatalogueRepository,ciList.Single(info => info.GetRuntimeName().Equals("SampleID")),
@@ -1022,8 +1016,7 @@ public class BackfillTests : FromToDatabaseTests
 
     private ITableInfo AddHeaderTableToCatalogue(string databaseName, ColumnInfo[] ciSamples)
     {
-        ColumnInfo[] ciList;
-        var ti = AddTableToCatalogue(databaseName, "Header", "ID", out ciList);
+        var ti = AddTableToCatalogue(databaseName, "Header", "ID", out var ciList);
 
         // setup join infos
         new JoinInfo(CatalogueRepository,ciSamples.Single(info => info.GetRuntimeName().Equals("HeaderID")),
@@ -1050,10 +1043,7 @@ public class BackfillTests : FromToDatabaseTests
         var forwardEngineer = new ForwardEngineerCatalogue(ti, ciList);
         if (createCatalogue)
         {
-            CatalogueItem[] cataItems;
-            ExtractionInformation[] extractionInformations;
-
-            forwardEngineer.ExecuteForwardEngineering(out _catalogue, out cataItems, out extractionInformations);
+            forwardEngineer.ExecuteForwardEngineering(out _catalogue, out _, out _);
         }
         else
             forwardEngineer.ExecuteForwardEngineering(_catalogue);

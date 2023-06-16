@@ -93,8 +93,7 @@ public partial class ConfigureCatalogueExtractabilityUI : RDMPForm, ISaveableUI
 
     public ConfigureCatalogueExtractabilityUI(IActivateItems activator, ITableInfoImporter importer, string initialDescription, IProject projectSpecificIfAny):this(activator)
     {
-        ColumnInfo[] cols;
-        importer.DoImport(out _tableInfo, out cols);
+        importer.DoImport(out _tableInfo, out _);
 
         _importedNewTable = true;
 
@@ -115,8 +114,7 @@ public partial class ConfigureCatalogueExtractabilityUI : RDMPForm, ISaveableUI
         var cols = _tableInfo.ColumnInfos;
             
         var forwardEngineer = new ForwardEngineerCatalogue(_tableInfo, cols);
-        ExtractionInformation[] eis;
-        forwardEngineer.ExecuteForwardEngineering(out _catalogue, out _catalogueItems, out eis);
+        forwardEngineer.ExecuteForwardEngineering(out _catalogue, out _catalogueItems, out var eis);
 
         tbDescription.Text = $"{initialDescription} ({Environment.UserName} - {DateTime.Now})";
         tbTableName.Text = _tableInfo.Name;

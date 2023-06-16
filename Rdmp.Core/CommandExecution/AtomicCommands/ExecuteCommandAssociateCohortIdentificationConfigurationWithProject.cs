@@ -50,8 +50,7 @@ public class ExecuteCommandAssociateCohortIdentificationConfigurationWithProject
                         !_existingAssociations.Any(
                             a => a.CohortIdentificationConfiguration_ID == _cic.ID && v.ID == a.Project_ID)).ToArray();
 
-            Project p;
-            if (SelectOne(valid, out p))
+            if (SelectOne(valid, out var p))
                 SetTarget(p);
             else
                 return;
@@ -70,8 +69,7 @@ public class ExecuteCommandAssociateCohortIdentificationConfigurationWithProject
                         a => a.Project_ID == _project.ID && v.ID == a.CohortIdentificationConfiguration_ID)).ToArray();
 
 
-            CohortIdentificationConfiguration cic;
-            if (SelectOne(valid, out cic))
+            if (SelectOne(valid, out var cic))
                 SetTarget(cic);
             else
                 return;

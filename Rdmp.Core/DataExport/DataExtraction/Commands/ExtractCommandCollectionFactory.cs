@@ -37,9 +37,7 @@ public class ExtractCommandCollectionFactory
         var sqls = catalogue.GetAllSupportingSQLTablesForCatalogue(FetchOptions.ExtractableLocals);
             
         //Now find all the lookups and include them into the bundle
-        List<ITableInfo> lookupsFound;
-        List<ITableInfo> normalTablesFound;
-        catalogue.GetTableInfos(out normalTablesFound, out lookupsFound);
+        catalogue.GetTableInfos(out _, out var lookupsFound);
 
         //bundle consists of:
         var bundle = new ExtractableDatasetBundle(

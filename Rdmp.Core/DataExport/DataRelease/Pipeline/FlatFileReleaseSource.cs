@@ -15,8 +15,7 @@ namespace Rdmp.Core.DataExport.DataRelease.Pipeline;
 /// <summary>
 /// Prepares the Source Global Folder for the ReleaseEngine.
 /// </summary>
-/// <typeparam name="T">The ReleaseAudit object passed around in the pipeline</typeparam>
-public class FlatFileReleaseSource<T> : FixedReleaseSource<ReleaseAudit>
+public class FlatFileReleaseSource : FixedReleaseSource<ReleaseAudit>
 {
     protected override ReleaseAudit GetChunkImpl(IDataLoadEventListener listener, GracefulCancellationToken cancellationToken)
     {
@@ -43,9 +42,6 @@ public class FlatFileReleaseSource<T> : FixedReleaseSource<ReleaseAudit>
 
     protected override DirectoryInfo PrepareSourceGlobalFolder()
     {
-        if (_releaseData.ReleaseGlobals)
-            return base.PrepareSourceGlobalFolder();
-
-        return null;
+        return _releaseData.ReleaseGlobals ? base.PrepareSourceGlobalFolder() : null;
     }
 }

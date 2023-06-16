@@ -191,8 +191,7 @@ public class CatalogueProblemProvider : ProblemProvider
 
     public string DescribeProblem(Catalogue catalogue)
     {
-        string reason;
-        if (!Catalogue.IsAcceptableName(catalogue.Name, out reason))
+        if (!Catalogue.IsAcceptableName(catalogue.Name, out var reason))
             return $"Invalid Name:{reason}";
 
         return null;
