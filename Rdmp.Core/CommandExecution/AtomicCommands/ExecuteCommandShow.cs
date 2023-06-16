@@ -188,6 +188,6 @@ public class ExecuteCommandShow : BasicCommandExecution, IAtomicCommand
     public IEnumerable<IMapsDirectlyToDatabaseTable> GetObjects()
     {
         FetchDestinationObjects();
-        return new[] { _objectToShow } ?? _objectsToPickFrom ?? Enumerable.Empty<IMapsDirectlyToDatabaseTable>();
+        return new[] {_objectToShow};
     }
 }

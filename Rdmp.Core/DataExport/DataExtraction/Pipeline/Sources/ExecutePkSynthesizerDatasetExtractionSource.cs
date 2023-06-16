@@ -29,8 +29,7 @@ namespace Rdmp.Core.DataExport.DataExtraction.Pipeline.Sources;
 public class ExecutePkSynthesizerDatasetExtractionSource : ExecuteDatasetExtractionSource
 {
     private const string SYNTH_PK_COLUMN = "SynthesizedPk";
-    private bool _synthesizePkCol = false;
-
+    private bool _synthesizePkCol;
     public override string HackExtractionSQL(string sql, IDataLoadEventListener listener)
     {
         // let's look for primary keys in the Extraction Information

@@ -78,8 +78,8 @@ public partial class ProjectUI : ProjectUI_Design, ISaveableUI
         InitializeComponent();
 
         dataGridView1.ColumnAdded += (s, e) => e.Column.FillWeight = 1;
-        mi_SetDescription.Click += new EventHandler(mi_SetDescription_Click);
-
+        mi_SetDescription.Click += mi_SetDescription_Click;
+            
         tcMasterTicket.Title = "Master Ticket";
         tcMasterTicket.TicketTextChanged += tcMasterTicket_TicketTextChanged;
 

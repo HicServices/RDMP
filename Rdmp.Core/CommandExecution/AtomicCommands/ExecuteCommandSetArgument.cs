@@ -23,10 +23,9 @@ public class ExecuteCommandSetArgument : BasicCommandExecution
     private IArgument _arg;
     private object _value;
 
-    private bool _promptUser = false;
-
-    public ExecuteCommandSetArgument(IBasicActivateItems activator, IArgumentHost host, IArgument arg, object value) :
-        base(activator)
+    private bool _promptUser;
+        
+    public ExecuteCommandSetArgument(IBasicActivateItems activator,IArgumentHost host, IArgument arg, object value):base(activator)
     {
         _host = host;
         _arg = arg;

@@ -25,7 +25,8 @@ namespace Rdmp.Core.DataExport.DataRelease.Pipeline;
 public class BasicDataReleaseDestination : IPluginDataFlowComponent<ReleaseAudit>, IDataFlowDestination<ReleaseAudit>,
     IPipelineRequirement<Project>, IPipelineRequirement<ReleaseData>
 {
-    [DemandsNestedInitialization] public ReleaseEngineSettings ReleaseSettings { get; set; }
+    [DemandsNestedInitialization]
+    public ReleaseEngineSettings ReleaseSettings { get; set; }
 
     private ReleaseData _releaseData;
     private Project _project;

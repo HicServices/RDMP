@@ -111,8 +111,7 @@ public class ExternalCohortTable : DatabaseEntity, IDataAccessCredentials, IExte
     /// <summary>
     /// Fields expected to be part of any table referenced by the <see cref="DefinitionTableName"/> property
     /// </summary>
-    public static readonly string[] CohortDefinitionTable_RequiredFields =
-    {
+    public static readonly string[] CohortDefinitionTable_RequiredFields = {
         "id",
         // joins to CohortToDefinitionTableJoinColumn and is used as ID in all ExtractableCohort entities throughout DataExportManager
         "projectNumber",

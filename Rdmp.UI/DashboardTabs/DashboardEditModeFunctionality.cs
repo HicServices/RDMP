@@ -43,8 +43,8 @@ public class DashboardEditModeFunctionality
     }
 
     private EditModeAction _plannedAction = EditModeAction.None;
-    private UserControl _plannedControl = null;
-
+    private UserControl _plannedControl;
+        
     private EditModeAction _actionUnderway;
     private UserControl _actionUnderwayOnControl;
 

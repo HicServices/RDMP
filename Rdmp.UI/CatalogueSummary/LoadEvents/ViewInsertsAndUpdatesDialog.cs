@@ -156,7 +156,7 @@ public partial class ViewInsertsAndUpdatesDialog : Form, ICheckNotifier
         return candidates.Single();
     }
 
-    private bool _yesToAll = false;
+    private bool _yesToAll;
 
     public bool OnCheckPerformed(CheckEventArgs args)
     {

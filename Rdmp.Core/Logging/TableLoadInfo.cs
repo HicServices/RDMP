@@ -23,7 +23,7 @@ namespace Rdmp.Core.Logging;
 /// </summary>
 public class TableLoadInfo : ITableLoadInfo
 {
-    private bool _isClosed = false;
+    private bool _isClosed;
 
     public bool IsClosed => _isClosed;
 

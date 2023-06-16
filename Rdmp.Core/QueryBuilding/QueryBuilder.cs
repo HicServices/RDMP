@@ -91,7 +91,7 @@ public class QueryBuilder : ISqlQueryBuilder
     public bool CheckSyntax { get; set; }
 
 
-    private string _salt = null;
+    private string _salt;
 
     /// <summary>
     /// Only use this if you want IColumns which are marked as requiring Hashing to be hashed.  Once you set this on a QueryEditor all fields so marked will be hashed using the

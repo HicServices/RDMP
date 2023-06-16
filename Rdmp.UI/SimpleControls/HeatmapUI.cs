@@ -68,7 +68,7 @@ public partial class HeatmapUI : UserControl
     private const double MaxLabelsWidth = 150;
     private const double LabelsHorizontalPadding = 10.0;
 
-    private double _currentLabelsWidth = 0;
+    private double _currentLabelsWidth;
 
     private object oDataTableLock = new();
 
@@ -159,7 +159,7 @@ public partial class HeatmapUI : UserControl
     private int toolTipDelayInTicks = 500;
     private Point _lastHoverPoint;
     private int _lastHoverTickCount;
-    private bool _useEntireControlAsVisibleArea = false;
+    private bool _useEntireControlAsVisibleArea;
 
 
     private void hoverToolTipTimer_Tick(object sender, EventArgs e)

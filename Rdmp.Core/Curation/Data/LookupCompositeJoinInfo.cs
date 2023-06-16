@@ -107,8 +107,7 @@ public class LookupCompositeJoinInfo : DatabaseEntity, ISupplementalJoin
     /// <inheritdoc/>
     public override string ToString() => ToStringCached();
 
-    private string _cachedToString = null;
-
+    private string _cachedToString;
     private string ToStringCached()
     {
         return _cachedToString ??= $"{ForeignKey.Name} = {PrimaryKey.Name}";

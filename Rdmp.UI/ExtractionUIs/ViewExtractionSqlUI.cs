@@ -87,8 +87,8 @@ public partial class ViewExtractionSqlUI : ViewExtractionSql_Design
 
     private Bitmap ImageGetter(object rowObject) => Activator.CoreIconProvider.GetImage(rowObject).ImageToBitmap();
 
-    private bool bLoading = false;
-
+    private bool bLoading;
+        
 
     private void RefreshUIFromDatabase()
     {

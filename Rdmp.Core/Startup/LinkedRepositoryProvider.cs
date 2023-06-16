@@ -26,7 +26,7 @@ namespace Rdmp.Core.Startup;
 /// </summary>
 public class LinkedRepositoryProvider : RepositoryProvider
 {
-    private List<IPluginRepositoryFinder> _pluginRepositoryFinders = null;
+    private List<IPluginRepositoryFinder> _pluginRepositoryFinders;
 
 
     public LinkedRepositoryProvider(string catalogueConnectionString, string dataExportConnectionString)

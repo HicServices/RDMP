@@ -61,8 +61,8 @@ namespace Rdmp.UI.DataLoadUIs.ANOUIs.ANOTableManagement;
 public partial class ColumnInfoToANOTableConverterUI : ColumnInfoToANOTableConverterUI_Design
 {
     private ColumnInfo _columnInfo;
-    private bool _yesToAll = false;
-
+    private bool _yesToAll;
+        
     public ColumnInfo ColumnInfo
     {
         get => _columnInfo;

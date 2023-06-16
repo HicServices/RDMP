@@ -45,7 +45,7 @@ public class ValidationXMLObscureDependencyFinder : IObscureDependencyFinder
         _mef = catalogueRepositoryServiceLocator.CatalogueRepository.MEF;
     }
 
-    private bool initialized = false;
+    private bool initialized;
 
     private void Initialize()
     {

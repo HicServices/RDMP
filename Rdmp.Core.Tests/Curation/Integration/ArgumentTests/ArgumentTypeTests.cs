@@ -23,8 +23,7 @@ public class ArgumentTypeTests : UnitTests
         SetupMEF();
     }
 
-    private object[] _expectedAnswers = new object[]
-    {
+    private object[] _expectedAnswers = {
         5,
         new CultureInfo("en-us"),
         CultureInfo.CurrentCulture

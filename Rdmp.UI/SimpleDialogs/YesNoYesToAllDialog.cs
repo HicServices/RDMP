@@ -16,8 +16,8 @@ namespace Rdmp.UI.SimpleDialogs;
 [TechnicalUI]
 public class YesNoYesToAllDialog : WideMessageBox
 {
-    private bool YesToAllClicked = false;
-    private bool NoToAllClicked = false;
+    private bool YesToAllClicked;
+    private bool NoToAllClicked;
     private object lockShowDialog = new();
 
     private FlowLayoutPanel p = new();
@@ -64,7 +64,7 @@ public class YesNoYesToAllDialog : WideMessageBox
     private new DialogResult ShowDialog()
     {
         if (InvokeRequired)
-            return (DialogResult)Invoke(new Func<DialogResult>(() => ShowDialog()));
+            return (DialogResult)Invoke(() => ShowDialog());
 
         if (YesToAllClicked)
             return DialogResult.Yes;
@@ -77,8 +77,8 @@ public class YesNoYesToAllDialog : WideMessageBox
 
     public DialogResult ShowDialog(string message, string caption)
     {
-        if (InvokeRequired)
-            return (DialogResult)Invoke(new Func<DialogResult>(() => ShowDialog(message, caption)));
+        if(InvokeRequired)
+            return (DialogResult)Invoke(() => ShowDialog(message,caption));
 
         Args.Title = caption;
         Args.Message = message;

@@ -56,10 +56,8 @@ public partial class SecondaryConstraintUI : UserControl
     internal event RequestDeletionHandler RequestDeletion;
 
 
-    private bool loadingComplete = false;
-
-    public SecondaryConstraintUI(ICatalogueRepository repository, SecondaryConstraint secondaryConstriant,
-        string[] otherColumns)
+    private bool loadingComplete;
+    public SecondaryConstraintUI(ICatalogueRepository repository,SecondaryConstraint secondaryConstriant, string[] otherColumns)
     {
         const int rowHeight = 30;
         //the amount of additional space required to accomodate description labels

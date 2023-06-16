@@ -72,9 +72,9 @@ public class LoggingTabUI : LoggingTab_Design
         //start with no filter
         panel1.Controls.Remove(pFilter);
 
-        tbTop.TextChanged += new EventHandler(tbTop_TextChanged);
-        tbContentFilter.TextChanged += new EventHandler(tbContentFilter_TextChanged);
-        cbPreferNewer.CheckedChanged += new EventHandler(cbPreferNewer_CheckedChanged);
+        tbTop.TextChanged += tbTop_TextChanged;
+        tbContentFilter.TextChanged += tbContentFilter_TextChanged;
+        cbPreferNewer.CheckedChanged += cbPreferNewer_CheckedChanged;
     }
 
     private int UpdateTopX()
@@ -226,7 +226,7 @@ public class LoggingTabUI : LoggingTab_Design
         pbRemoveFilter.SizeMode = PictureBoxSizeMode.CenterImage;
         pbRemoveFilter.TabIndex = 10;
         pbRemoveFilter.TabStop = false;
-        pbRemoveFilter.Click += new EventHandler(pbRemoveFilter_Click);
+        pbRemoveFilter.Click += pbRemoveFilter_Click;
         // 
         // lblCurrentFilter
         // 

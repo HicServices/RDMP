@@ -59,7 +59,7 @@ public partial class ExtractionInformationUI : ExtractionInformationUI_Design, I
     private Scintilla QueryEditor;
 
     //handles the case when the user renames the SQL e.g. by putting an alias on the column
-    private bool _namesMatchedWhenDialogWasLaunched = false;
+    private bool _namesMatchedWhenDialogWasLaunched;
 
     private bool isFirstTimeSetupCalled = true;
     private IQuerySyntaxHelper _querySyntaxHelper = MicrosoftQuerySyntaxHelper.Instance;

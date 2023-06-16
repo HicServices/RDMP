@@ -21,7 +21,8 @@ namespace Rdmp.Core.Logging;
 /// </summary>
 public sealed class DataLoadInfo : IDataLoadInfo
 {
-    private bool _isClosed = false;
+        
+    private bool _isClosed;
     private readonly string _packageName;
     private readonly string _userAccount;
     private readonly DateTime _startTime;

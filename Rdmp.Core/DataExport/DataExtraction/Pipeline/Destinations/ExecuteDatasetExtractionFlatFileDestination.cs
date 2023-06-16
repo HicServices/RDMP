@@ -155,7 +155,7 @@ public class ExecuteDatasetExtractionFlatFileDestination : ExtractionDestination
         CloseFile(listener, true);
     }
 
-    private bool _fileAlreadyClosed = false;
+    private bool _fileAlreadyClosed;
 
     /// <summary>
     /// If performing a batch resume then this file will be a copy of the flat file

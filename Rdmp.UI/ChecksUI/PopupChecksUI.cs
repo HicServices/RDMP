@@ -44,7 +44,7 @@ public partial class PopupChecksUI : Form, ICheckNotifier
         return base.ProcessCmdKey(ref msg, keyData);
     }
 
-    private bool haveDemandedVisibility = false;
+    private bool haveDemandedVisibility;
     private CheckResult _worstSeen = CheckResult.Success;
 
     public bool OnCheckPerformed(CheckEventArgs args)

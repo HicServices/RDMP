@@ -14,7 +14,7 @@ namespace Rdmp.Core.ReusableLibraryCode.Performance;
 public class QueryPerformed
 {
     public string QueryText;
-    public int TimesSeen = 0;
+    public int TimesSeen;
 
     public QueryPerformed(string queryText)
     {

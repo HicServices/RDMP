@@ -49,7 +49,7 @@ public class BasicCohortDestination : IPluginCohortDestination
         DefaultValue = false)]
     public bool MigrateUsages { get; set; }
 
-    private IAllocateReleaseIdentifiers _allocator = null;
+    private IAllocateReleaseIdentifiers _allocator;
 
     private readonly Dictionary<object, object> _cohortDictionary = new();
 

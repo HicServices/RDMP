@@ -27,13 +27,12 @@ public partial class PipelineSelectionUI : UserControl, IPipelineSelectionUI
     public event Action PipelineDeleted = delegate { };
 
     public event EventHandler PipelineChanged;
-    private IPipeline _previousSelection = null;
+    private IPipeline _previousSelection;
 
     private ToolTip tt = new();
 
     private const string ShowAll = "Show All/Incompatible Pipelines";
-    public bool showAll = false;
-
+    public bool showAll;
     public IPipeline Pipeline
     {
         get => _pipeline;
@@ -107,7 +106,8 @@ public partial class PipelineSelectionUI : UserControl, IPipelineSelectionUI
         tt.SetToolTip(btnEditPipeline, "Change which components are run in the Pipeline and with what settings");
 
         ddPipelines.DrawMode = DrawMode.OwnerDrawFixed;
-        ddPipelines.DrawItem += new DrawItemEventHandler(cmb_Type_DrawItem);
+        ddPipelines.DrawItem += cmb_Type_DrawItem;
+
     }
 
     private void cmb_Type_DrawItem(object sender, DrawItemEventArgs e)

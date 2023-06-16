@@ -42,8 +42,8 @@ public partial class ValidationSetupUI : ValidationSetupForm_Design, ISaveableUI
     private string _noPrimaryConstraintText = "No Primary Constraint Defined";
 
     public Validator Validator { get; private set; }
-
-    private bool bSuppressChangeEvents = false;
+     
+    private bool bSuppressChangeEvents;
     private Catalogue _catalogue;
 
     private string ClearSelection = "<<Clear Selection>>";

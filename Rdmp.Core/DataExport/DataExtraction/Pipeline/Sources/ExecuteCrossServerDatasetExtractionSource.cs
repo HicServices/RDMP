@@ -26,7 +26,7 @@ namespace Rdmp.Core.DataExport.DataExtraction.Pipeline.Sources;
 /// </summary>
 public class ExecuteCrossServerDatasetExtractionSource : ExecuteDatasetExtractionSource
 {
-    private bool _haveCopiedCohortAndAdjustedSql = false;
+    private bool _haveCopiedCohortAndAdjustedSql;
 
     [DemandsInitialization("Database to upload the cohort to prior to linking", defaultValue: "tempdb",
         mandatory: true)]
@@ -69,7 +69,7 @@ public class ExecuteCrossServerDatasetExtractionSource : ExecuteDatasetExtractio
     /// </summary>
     private bool _doNotMigrate;
 
-    private string _tablename = null;
+    private string _tablename;
     private object _tableName = new();
 
     public override string HackExtractionSQL(string sql, IDataLoadEventListener listener)

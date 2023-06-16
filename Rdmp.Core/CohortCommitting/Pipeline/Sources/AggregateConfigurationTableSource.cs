@@ -27,7 +27,7 @@ public class AggregateConfigurationTableSource : IPluginDataFlowSource<DataTable
     protected AggregateConfiguration AggregateConfiguration;
     protected CohortIdentificationConfiguration CohortIdentificationConfigurationIfAny;
 
-    private bool _haveSentData = false;
+    private bool _haveSentData; 
 
     [DemandsInitialization(
         "The length of time (in seconds) to wait before timing out the SQL command to execute the Aggregate.",

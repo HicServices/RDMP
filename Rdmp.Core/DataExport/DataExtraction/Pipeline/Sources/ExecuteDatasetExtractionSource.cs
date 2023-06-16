@@ -42,7 +42,7 @@ public class ExecuteDatasetExtractionSource : IPluginDataFlowSource<DataTable>, 
 
     private readonly List<string> _extractionIdentifiersidx = new();
         
-    private bool _cancel = false;
+    private bool _cancel;
 
     private ICatalogue _catalogue;
 
@@ -144,11 +144,11 @@ OrderByAndDistinctInMemory - Adds an ORDER BY statement to the query and applies
     public bool WasCancelled => _cancel;
 
     private Stopwatch _timeSpentValidating;
-    private int _rowsValidated = 0;
+    private int _rowsValidated;
 
     private Stopwatch _timeSpentCalculatingDISTINCT;
     private Stopwatch _timeSpentBuckettingDates;
-    private int _rowsBucketted = 0;
+    private int _rowsBucketted;
 
     private bool firstChunk = true;
     private bool firstGlobalChunk = true;

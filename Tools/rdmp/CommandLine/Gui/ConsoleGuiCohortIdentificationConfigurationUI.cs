@@ -29,7 +29,7 @@ public partial class ConsoleGuiCohortIdentificationConfigurationUI
     private bool _contextMenuShowing = false;
 
     private List<object> RowObjects = new();
-    private bool _contextMenuShowing = false;
+    private bool _contextMenuShowing;
 
     public ConsoleGuiCohortIdentificationConfigurationUI(IBasicActivateItems activator, CohortIdentificationConfiguration cic) {
         InitializeComponent();

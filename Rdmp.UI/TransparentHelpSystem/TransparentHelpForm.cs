@@ -148,9 +148,8 @@ public class TransparentHelpForm : Form
             base.WndProc(ref m);
     }
 
-    private HelpBox _currentHelpBox = null;
-
-    public HelpBox ShowStage(HelpWorkflow workflow, HelpStage stage)
+    private HelpBox _currentHelpBox;
+    public HelpBox ShowStage(HelpWorkflow workflow,HelpStage stage)
     {
         if (_currentHelpBox != null)
             _host.Controls.Remove(_currentHelpBox);

@@ -41,7 +41,7 @@ public partial class SelectDialog<T> : Form, IVirtualListDataSource where T : cl
     private const int MaxMatches = 500;
     private object oMatches = new();
 
-    private Task _lastFetchTask = null;
+    private Task _lastFetchTask;
     private CancellationTokenSource _lastCancellationToken;
     private int _runCount;
 

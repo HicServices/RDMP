@@ -24,7 +24,7 @@ namespace Rdmp.Core.DataLoad.Engine.Pipeline.Components.Anonymisation;
 /// </summary>
 public class BasicAnonymisationEngine : IPluginDataFlowComponent<DataTable>, IPipelineRequirement<TableInfo>
 {
-    private bool _bInitialized = false;
+    private bool _bInitialized;
 
     private Dictionary<string, ANOTransformer> columnsToAnonymise = new();
 
@@ -59,9 +59,7 @@ public class BasicAnonymisationEngine : IPluginDataFlowComponent<DataTable>, IPi
         }
     }
 
-    private int recordsProcessedSoFar = 0;
-    private Stopwatch stopwatch_TimeSpentTransforming = new();
-    private Stopwatch stopwatch_TimeSpentDumping = new();
+    private int recordsProcessedSoFar;
 
     private Stopwatch stopwatch_TimeSpentTransforming = new();
     private Stopwatch stopwatch_TimeSpentDumping = new();

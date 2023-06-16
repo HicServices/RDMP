@@ -110,7 +110,7 @@ public class ExecuteCommandAddPipelineComponent : BasicCommandExecution
         }
 
         // if we don't know the order yet and it's important
-        if (!order.HasValue && !isDest && !isSource)
+        if (!order.HasValue)
         {
             if (BasicActivator.SelectValueType("Order", typeof(int), 0, out var chosen))
                 order = (int)chosen;
@@ -119,7 +119,7 @@ public class ExecuteCommandAddPipelineComponent : BasicCommandExecution
         }
 
         var newComponent = new PipelineComponent(BasicActivator.RepositoryLocator.CatalogueRepository, _pipeline,
-            add, order ?? 0);
+            add, (int)order);
         newComponent.CreateArgumentsForClassIfNotExists(add);
 
         if (isSource)

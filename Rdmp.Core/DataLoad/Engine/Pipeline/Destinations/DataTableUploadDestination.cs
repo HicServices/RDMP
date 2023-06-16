@@ -83,7 +83,7 @@ public class DataTableUploadDestination : IPluginDataFlowComponent<DataTable>, I
     public bool CreatedTable { get; private set; }
 
     private IBulkCopy _bulkcopy;
-    private int _affectedRows = 0;
+    private int _affectedRows;
 
     private Stopwatch swTimeSpentWriting = new();
     private Stopwatch swMeasuringStrings = new();

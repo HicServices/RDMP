@@ -61,8 +61,8 @@ public partial class ConfigureCatalogueExtractabilityUI : RDMPForm, ISaveableUI
     private bool _choicesFinalised;
     private HelpWorkflow _workflow;
     private CatalogueItem[] _catalogueItems;
-    private bool _ddChangeAllChanged = false;
-    private bool _importedNewTable = false;
+    private bool _ddChangeAllChanged;
+    private bool _importedNewTable;
 
     /// <summary>
     /// the Project to associate the Catalogue with to make it ProjectSpecific (probably null)

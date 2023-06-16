@@ -34,8 +34,8 @@ public class AnyTableSqlParameter : ReferenceOtherObjectDatabaseEntity, ISqlPara
     /// Names that are not allowed for user custom parameters because they
     /// are used internally by RMDP query building engines
     /// </summary>
-    public static readonly string[] ProhibitedParameterNames =
-    {
+    public static readonly string[] ProhibitedParameterNames = {
+
         "@CohortDefinitionID",
         "@ProjectNumber",
         "@dateAxis",

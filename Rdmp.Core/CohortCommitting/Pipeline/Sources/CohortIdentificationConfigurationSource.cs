@@ -39,7 +39,7 @@ public class CohortIdentificationConfigurationSource : IPluginDataFlowSource<Dat
         "If ticked, will Freeze the CohortIdentificationConfiguration if the import pipeline terminates successfully")]
     public bool FreezeAfterSuccessfulImport { get; set; }
 
-    private bool haveSentData = false;
+    private bool haveSentData;
     private CancellationTokenSource _cancelGlobalOperations = new();
 
     /// <summary>

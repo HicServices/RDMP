@@ -53,9 +53,9 @@ public partial class ParameterEditorScintillaControlUI : RDMPUserControl
         QueryEditor = new ScintillaTextEditorFactory().Create(new RDMPCombineableFactory());
         gbCompiledView.Controls.Add(QueryEditor);
 
-        QueryEditor.KeyDown += new KeyEventHandler(QueryEditor_KeyDown);
-        QueryEditor.KeyUp += new KeyEventHandler(QueryEditor_KeyUp);
-        QueryEditor.MouseUp += new MouseEventHandler(QueryEditor_MouseUp);
+        QueryEditor.KeyDown += QueryEditor_KeyDown;
+        QueryEditor.KeyUp += QueryEditor_KeyUp;
+        QueryEditor.MouseUp += QueryEditor_MouseUp;
 
         QueryEditor.Leave += (s, e) => RegenerateSQL();
         ProblemObjects = new Dictionary<ISqlParameter, Exception>();

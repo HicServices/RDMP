@@ -38,7 +38,7 @@ namespace Rdmp.UI.ANOEngineeringUIs;
 /// </summary>
 public partial class ForwardEngineerANOCatalogueUI : ForwardEngineerANOCatalogueUI_Design
 {
-    private bool _setup = false;
+    private bool _setup;
     private RDMPCollectionCommonFunctionality tlvANOTablesCommonFunctionality;
     private RDMPCollectionCommonFunctionality tlvTableInfoMigrationsCommonFunctionality;
     private ForwardEngineerANOCataloguePlanManager _planManager;

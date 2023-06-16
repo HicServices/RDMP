@@ -208,7 +208,7 @@ public class Validator
     }
 
     private static object oLockExtraTypes = new();
-    private static Type[] _extraTypes = null;
+    private static Type[] _extraTypes;
 
     public static void RefreshExtraTypes(SafeDirectoryCatalog mef, ICheckNotifier notifier)
     {

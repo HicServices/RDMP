@@ -24,7 +24,7 @@ namespace ResearchDataManagementPlatform.WindowManagement.HomePane;
 public partial class HomeBoxUI : UserControl
 {
     private IActivateItems _activator;
-    private bool _doneSetup = false;
+    private bool _doneSetup;
     private Type _openType;
 
     private RDMPCollectionCommonFunctionality CommonTreeFunctionality { get;} = new();

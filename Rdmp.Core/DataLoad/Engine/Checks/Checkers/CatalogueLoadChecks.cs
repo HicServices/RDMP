@@ -36,7 +36,7 @@ internal class CatalogueLoadChecks:ICheckable
 
     public void Check(ICheckNotifier notifier)
     {
-        Catalogue[] catalogueMetadatas = null;
+        Catalogue[] catalogueMetadatas;
 
         try
         {

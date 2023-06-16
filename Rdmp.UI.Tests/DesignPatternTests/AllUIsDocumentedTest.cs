@@ -56,8 +56,7 @@ public class AllUIsDocumentedTest : UnitTests
         Assert.AreEqual(Errors.Count, 0);
     }
 
-    private string[] _exemptNamespaces =
-    {
+    private string[] _exemptNamespaces = {
         "System.ComponentModel.Design",
         "System.Windows.Forms",
         "Rdmp.UI.ScintillaHelper"

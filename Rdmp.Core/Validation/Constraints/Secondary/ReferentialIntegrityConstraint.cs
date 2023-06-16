@@ -78,7 +78,7 @@ public class ReferentialIntegrityConstraint : SecondaryConstraint, ICheckable
         _repository = repository;
     }
 
-    private HashSet<string> _uniqueValues = null;
+    private HashSet<string> _uniqueValues;
     private ColumnInfo _otherColumnInfo;
 
 

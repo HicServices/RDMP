@@ -31,13 +31,13 @@ namespace Rdmp.UI.Versioning;
 /// </summary>
 public partial class CreatePlatformDatabase : Form
 {
-    private bool _completed = false;
+    private bool _completed;
 
     private bool _programaticClose;
     private IPatcher _patcher;
 
     private Task _tCreateDatabase;
-    public DiscoveredDatabase DatabaseCreatedIfAny { get; private set; } = null;
+    public DiscoveredDatabase DatabaseCreatedIfAny { get; private set; }
 
     /// <summary>
     /// Calls the main constructor but passing control of what scripts to extract to the Patch class
