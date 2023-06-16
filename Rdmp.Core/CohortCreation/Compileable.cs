@@ -51,7 +51,7 @@ public abstract class Compileable:ICompileable
             _state = value;
             var h = StateChanged;
             if(h != null)
-                h(this,new EventArgs());
+                h(this,EventArgs.Empty);
         }
         get => _state;
     }

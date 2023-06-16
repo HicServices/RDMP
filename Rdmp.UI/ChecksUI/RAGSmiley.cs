@@ -120,7 +120,7 @@ public partial class RAGSmiley : UserControl, IRAGSmiley
 
     public void ShowMessagesIfAny()
     {
-        pb_Click(this, new EventArgs());
+        pb_Click(this, EventArgs.Empty);
     }
 
     private void pb_Click(object sender, EventArgs e)

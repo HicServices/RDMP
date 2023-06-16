@@ -165,7 +165,7 @@ public partial class CreateNewCohortIdentificationConfigurationUI : RDMPForm
     {
         if (e.KeyCode == Keys.Enter)
         {
-            btnGo_Click(this, new EventArgs());
+            btnGo_Click(this, EventArgs.Empty);
         }
     }
 

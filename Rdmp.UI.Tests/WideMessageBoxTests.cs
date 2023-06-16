@@ -32,7 +32,7 @@ class WideMessageBoxTests:UITests
 
         // simulate showing the control without actually blocking/firing
         var onShow = typeof(WideMessageBox).GetMethod("OnShown", BindingFlags.NonPublic | BindingFlags.Instance);
-        onShow.Invoke(wmb, new[] { new EventArgs() });
+        onShow.Invoke(wmb, new[] { EventArgs.Empty });
 
         //pretend like we launched it
         LastUserInterfaceLaunched = wmb;
@@ -65,7 +65,7 @@ class WideMessageBoxTests:UITests
 
         // simulate showing the control without actually blocking/firing
         var onShow = typeof(WideMessageBox).GetMethod("OnShown", BindingFlags.NonPublic | BindingFlags.Instance);
-        onShow.Invoke(wmb, new[] { new EventArgs()});
+        onShow.Invoke(wmb, new[] { EventArgs.Empty });
 
         //pretend like we launched it
         LastUserInterfaceLaunched = wmb;

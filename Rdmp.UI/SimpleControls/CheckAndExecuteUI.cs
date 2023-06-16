@@ -238,7 +238,7 @@ public partial class CheckAndExecuteUI : RDMPUserControl, IConsultableBeforeClos
     {
         var h = StateChanged;
         if (h != null)
-            h(this, new EventArgs());
+            h(this, EventArgs.Empty);
 
         if (!ChecksPassed)
         {

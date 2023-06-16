@@ -164,6 +164,6 @@ public class CohortCompilerRunner
 
         var h = PhaseChanged;
         if (h != null)
-            h(this,new EventArgs());
+            h(this,EventArgs.Empty);
     }
 }

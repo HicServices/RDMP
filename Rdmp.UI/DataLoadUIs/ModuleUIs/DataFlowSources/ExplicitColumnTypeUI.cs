@@ -44,7 +44,7 @@ public partial class ExplicitColumnTypeUI : UserControl
     {
         var h = DeletePressed;
         if(h != null)
-            DeletePressed(this, new EventArgs());
+            DeletePressed(this, EventArgs.Empty);
     }
 
     private void textBox1_TextChanged(object sender, EventArgs e)
