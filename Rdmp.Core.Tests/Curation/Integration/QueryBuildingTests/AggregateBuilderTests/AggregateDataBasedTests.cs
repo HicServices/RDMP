@@ -68,8 +68,8 @@ public class AggregateDataBasedTests : DatabaseTests
     private DiscoveredTable UploadTestDataAsTableToServer(DatabaseType type, out ICatalogue catalogue,
         out ExtractionInformation[] extractionInformations, out ITableInfo tableinfo)
     {
-        var listener = new ThrowImmediatelyDataLoadEventListener();
-
+        var listener = ThrowImmediatelyDataLoadEventListener.Quiet;
+            
         var db = GetCleanedServer(type);
 
         var data = GetTestDataTable();

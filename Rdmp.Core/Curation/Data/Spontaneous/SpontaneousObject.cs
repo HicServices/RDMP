@@ -29,7 +29,7 @@ public abstract class SpontaneousObject : DatabaseEntity
     /// <param name="repository"></param>
     protected SpontaneousObject(MemoryRepository repository)
     {
-        repository?.InsertAndHydrate(this, new Dictionary<string, object>());
+        repository?.InsertAndHydrate(this,new Dictionary<string, object>());
     }
 
     public override void SaveToDatabase()

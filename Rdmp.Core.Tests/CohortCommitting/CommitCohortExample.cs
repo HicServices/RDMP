@@ -64,19 +64,17 @@ internal class CommitCohortExample : DatabaseTests
 
         //initialize the destination
         pipelineDestination.PreInitialize(
-            new CohortCreationRequest(project, definition, DataExportRepository,
-                "A cohort created in an example unit test"),
-            new ThrowImmediatelyDataLoadEventListener());
+            new CohortCreationRequest(project, definition, DataExportRepository,"A cohort created in an example unit test"),
+            ThrowImmediatelyDataLoadEventListener.Quiet);
 
         //process the cohort data table
-        pipelineDestination.ProcessPipelineData(dt, new ThrowImmediatelyDataLoadEventListener(),
-            new GracefulCancellationToken());
+        pipelineDestination.ProcessPipelineData(dt,ThrowImmediatelyDataLoadEventListener.Quiet, new GracefulCancellationToken());
 
         //there should be no cohorts yet
         Assert.IsEmpty(DataExportRepository.GetAllObjects<ExtractableCohort>());
 
         //dispose of the pipeline
-        pipelineDestination.Dispose(new ThrowImmediatelyDataLoadEventListener(), null);
+        pipelineDestination.Dispose(ThrowImmediatelyDataLoadEventListener.Quiet, null);
 
         //now there should be one
         var cohort = DataExportRepository.GetAllObjects<ExtractableCohort>().Single();

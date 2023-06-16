@@ -81,7 +81,7 @@ public class SingleScheduleCacheDateTrackingStrategy : IJobDateGenerationStrateg
             
         try
         {
-            return factory.CreateDestinationOnly(new ThrowImmediatelyDataLoadEventListener());
+            return factory.CreateDestinationOnly(ThrowImmediatelyDataLoadEventListener.Quiet);
         }
         catch (Exception e)
         {

@@ -32,7 +32,7 @@ internal class ChildProviderTests : UITests
         Assert.IsNotNull(desc);
 
         //instead we should get a parent node with the name "Null Server"
-        var parent = (TableInfoServerNode)desc.Parents[^2];
+        var parent = (TableInfoServerNode) desc.Parents[^2];
         Assert.AreEqual(TableInfoServerNode.NullServerNode, parent.ServerName);
     }
 

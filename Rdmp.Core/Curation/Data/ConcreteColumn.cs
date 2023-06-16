@@ -50,7 +50,7 @@ public abstract class ConcreteColumn : DatabaseEntity, IColumn, IOrderable, ICom
         get => _selectSql;
         set
         {
-            //never allow annoying whitespace on this field
+            //never allow annoying white space on this field
             value = value?.Trim();
 
             SetField(ref _selectSql, value);

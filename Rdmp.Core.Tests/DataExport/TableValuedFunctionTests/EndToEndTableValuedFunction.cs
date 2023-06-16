@@ -174,7 +174,7 @@ public class EndToEndTableValuedFunction : DatabaseTests
             {
                 CohortIdentificationConfiguration = _cic
             };
-        var engine = request.GetEngine(_pipe,new ThrowImmediatelyDataLoadEventListener());
+        var engine = request.GetEngine(_pipe,ThrowImmediatelyDataLoadEventListener.Quiet);
         engine.ExecutePipeline(new GracefulCancellationToken());
     }
 
@@ -441,9 +441,11 @@ end
 
         var source = new ExecuteDatasetExtractionSource();
 
-        source.PreInitialize(extractionCommand, new ThrowImmediatelyDataLoadEventListener());
+        source.PreInitialize(extractionCommand, ThrowImmediatelyDataLoadEventListener.Quiet);
 
-        var dt = source.GetChunk(new ThrowImmediatelyDataLoadEventListener(), new GracefulCancellationToken());
+        var dt = source.GetChunk(ThrowImmediatelyDataLoadEventListener.Quiet, new GracefulCancellationToken());
+            
+        Assert.AreEqual(1,dt.Rows.Count);
 
         Assert.AreEqual(1, dt.Rows.Count);
 

@@ -237,9 +237,8 @@ public class LoadProgressSummaryReport : ICheckable
                         new FromCheckNotifierToDataLoadEventListener(notifier));
 
                 var layout = cacheFileSystem.CreateCacheLayout();
-                availableFiles = layout.GetSortedDateQueue(new ThrowImmediatelyDataLoadEventListener()).ToArray();
-                ResolvedCachePath =
-                    layout.GetLoadCacheDirectory(new FromCheckNotifierToDataLoadEventListener(notifier));
+                availableFiles = layout.GetSortedDateQueue(ThrowImmediatelyDataLoadEventListener.Quiet).ToArray();
+                ResolvedCachePath = layout.GetLoadCacheDirectory(new FromCheckNotifierToDataLoadEventListener(notifier));
             }
             catch (Exception e)
             {

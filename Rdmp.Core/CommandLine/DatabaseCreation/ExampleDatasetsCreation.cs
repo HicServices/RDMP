@@ -285,8 +285,7 @@ public class ExampleDatasetsCreation
                 };
 
                 var runnerRelease = new ReleaseRunner(optsRelease);
-                runnerRelease.Run(_repos, new ThrowImmediatelyDataLoadEventListener(), notifier,
-                    new GracefulCancellationToken());
+                runnerRelease.Run(_repos,ThrowImmediatelyDataLoadEventListener.Quiet,notifier,new GracefulCancellationToken());
             }
             catch (Exception ex)
             {
@@ -354,8 +353,7 @@ public class ExampleDatasetsCreation
             var runnerExtract = new ExtractionRunner(_activator, optsExtract);
             try
             {
-                runnerExtract.Run(_repos, new ThrowImmediatelyDataLoadEventListener(), notifier,
-                    new GracefulCancellationToken());
+                runnerExtract.Run(_repos,ThrowImmediatelyDataLoadEventListener.Quiet,notifier,new GracefulCancellationToken());
             }
             catch (Exception ex)
             {
@@ -389,7 +387,7 @@ public class ExampleDatasetsCreation
                 CohortIdentificationConfiguration = cic
             };
 
-        var engine = request.GetEngine(cohortCreationPipeline, new ThrowImmediatelyDataLoadEventListener());
+        var engine = request.GetEngine(cohortCreationPipeline,ThrowImmediatelyDataLoadEventListener.Quiet);                        
 
         engine.ExecutePipeline(new GracefulCancellationToken());
 

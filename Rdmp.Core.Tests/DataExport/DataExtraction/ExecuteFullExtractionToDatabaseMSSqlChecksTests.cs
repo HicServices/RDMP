@@ -93,8 +93,8 @@ public class ExecuteFullExtractionToDatabaseMSSqlChecksTests : DatabaseTests
         try
         {
             var destination = new ExecuteFullExtractionToDatabaseMSSql();
-            destination.PreInitialize(_projectStub, new ThrowImmediatelyDataLoadEventListener());
-            destination.PreInitialize(_commandStub, new ThrowImmediatelyDataLoadEventListener());
+            destination.PreInitialize(_projectStub, ThrowImmediatelyDataLoadEventListener.Quiet);
+            destination.PreInitialize(_commandStub, ThrowImmediatelyDataLoadEventListener.Quiet);
 
             destination.TargetDatabaseServer = server;
             destination.TableNamingPattern = "$d";
@@ -136,8 +136,8 @@ public class ExecuteFullExtractionToDatabaseMSSqlChecksTests : DatabaseTests
         try
         {
             var destination = new ExecuteFullExtractionToDatabaseMSSql();
-            destination.PreInitialize(_projectStub, new ThrowImmediatelyDataLoadEventListener());
-            destination.PreInitialize(_commandStub, new ThrowImmediatelyDataLoadEventListener());
+            destination.PreInitialize(_projectStub, ThrowImmediatelyDataLoadEventListener.Quiet);
+            destination.PreInitialize(_commandStub, ThrowImmediatelyDataLoadEventListener.Quiet);
             destination.TargetDatabaseServer = server;
             destination.TableNamingPattern = "$d";
             destination.DatabaseNamingPattern = "FictionalDatabase";

@@ -45,7 +45,6 @@ public class ExecuteCommandRefreshBrokenCohorts : BasicCommandExecution
             if (!dx.ForbidListedSources.Any())
             {
                 SetImpossible("There are no broken ExternalCohortTable to clear status on");
-                return;
             }
         }
     }
@@ -57,7 +56,7 @@ public class ExecuteCommandRefreshBrokenCohorts : BasicCommandExecution
         var dx = (DataExportChildProvider)BasicActivator.CoreChildProvider;
         var toPublish = _ect ?? dx.ForbidListedSources.FirstOrDefault();
 
-        // theres nothing to clear now anyway
+        // there's nothing to clear now anyway
         if (toPublish == null)
             return;
 

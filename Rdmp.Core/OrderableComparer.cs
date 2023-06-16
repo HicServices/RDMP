@@ -62,12 +62,12 @@ public class OrderableComparer : IComparer, IComparer<object>
 
     private static int? GetOrderIfAny(object o)
     {
-        if (o is IOrderable orderable)
-            return orderable.Order;
-
-        if (o is ISqlParameter) return -5000;
-
-        return null;
+        return o switch
+        {
+            IOrderable orderable => orderable.Order,
+            ISqlParameter => -5000,
+            _ => null
+        };
     }
 
     /// <summary>
@@ -75,5 +75,8 @@ public class OrderableComparer : IComparer, IComparer<object>
     /// </summary>
     /// <param name="x"></param>
     /// <returns></returns>
-    private static bool ShouldSortByName(object x) => x is INamed && x is not IProject;
+    private bool ShouldSortByName(object x)
+    {
+        return x is INamed and not IProject;
+    }
 }

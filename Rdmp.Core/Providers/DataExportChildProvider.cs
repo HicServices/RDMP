@@ -773,7 +773,8 @@ public class DataExportChildProvider : CatalogueChildProvider
         {
             base.UpdateTo(other);
 
-            if (other is not DataExportChildProvider dxOther)
+            if(other is not DataExportChildProvider dxOther)
+            {
                 throw new NotSupportedException(
                     $"Did not know how to UpdateTo ICoreChildProvider of type {other.GetType().Name}");
 

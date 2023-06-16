@@ -222,9 +222,9 @@ public class DocXHelper
 
     protected static void SetLandscape(XWPFDocumentFile document)
     {
-        document.Document.body.sectPr = document.Document.body.sectPr ?? new CT_SectPr();
-        document.Document.body.sectPr.pgSz = document.Document.body.sectPr.pgSz ?? new CT_PageSz();
-
+        document.Document.body.sectPr ??= new CT_SectPr();
+        document.Document.body.sectPr.pgSz ??= new CT_PageSz();
+            
         document.Document.body.sectPr.pgSz.orient = ST_PageOrientation.landscape;
         document.Document.body.sectPr.pgSz.w = 842 * 20;
         document.Document.body.sectPr.pgSz.h = 595 * 20;
@@ -252,9 +252,9 @@ public class DocXHelper
     /// <param name="marginSize"></param>
     protected static void SetMargins(XWPFDocumentFile document, int marginSize)
     {
-        document.Document.body.sectPr = document.Document.body.sectPr ?? new CT_SectPr();
-        document.Document.body.sectPr.pgMar.right = (ulong)(marginSize * 14.60);
-        document.Document.body.sectPr.pgMar.left = (ulong)(marginSize * 14.60);
+        document.Document.body.sectPr ??= new CT_SectPr();
+        document.Document.body.sectPr.pgMar.right = (ulong) (marginSize * 14.60);
+        document.Document.body.sectPr.pgMar.left = (ulong) (marginSize * 14.60);
 
         /*document.MarginLeft = marginSize;
         document.MarginRight= marginSize;

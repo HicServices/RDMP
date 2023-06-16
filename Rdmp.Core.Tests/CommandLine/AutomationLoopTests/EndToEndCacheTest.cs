@@ -86,7 +86,7 @@ public class EndToEndCacheTest : DatabaseTests
             CacheProgress = _cp
         };
 
-        cachingHost.Start(new ThrowImmediatelyDataLoadEventListener(), new GracefulCancellationToken());
+        cachingHost.Start(ThrowImmediatelyDataLoadEventListener.Quiet, new GracefulCancellationToken());
 
         // should be numDaysToCache days in cache
         Assert.AreEqual(NumDaysToCache, _LoadDirectory.Cache.GetFiles("*.csv").Length);
@@ -108,7 +108,7 @@ public class EndToEndCacheTest : DatabaseTests
             Assert.AreEqual(0, _LoadDirectory.Cache.GetFiles("*.csv").Length);
 
             var auto = new CacheRunner(new CacheOptions {CacheProgress = _cp.ID.ToString(), Command = CommandLineActivity.run});
-            auto.Run(RepositoryLocator, new ThrowImmediatelyDataLoadEventListener(),new ThrowImmediatelyCheckNotifier(), new GracefulCancellationToken());
+            auto.Run(RepositoryLocator, ThrowImmediatelyDataLoadEventListener.Quiet,new ThrowImmediatelyCheckNotifier(), new GracefulCancellationToken());
         });
 
         Assert.True(t.Wait(60000));

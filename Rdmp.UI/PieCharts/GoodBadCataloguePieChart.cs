@@ -234,8 +234,8 @@ public partial class GoodBadCataloguePieChart : RDMPUserControl, IDashboardableC
 
         if (isEditModeOn)
         {
-            gbWhatThisIs.Location = l with { Y = l.Y + 25 }; //move it down 25 to allow space for tool bar
-            gbWhatThisIs.Size = s with { Height = s.Height - 25 }; //and adjust height accordingly
+            gbWhatThisIs.Location = l with { Y = l.Y + 25 };//move it down 25 to allow space for tool bar
+            gbWhatThisIs.Size = s with { Height = s.Height - 25 };//and adjust height accordingly
         }
         else
         {
@@ -255,19 +255,17 @@ public partial class GoodBadCataloguePieChart : RDMPUserControl, IDashboardableC
 
     private void btnSingleCatalogue_Click(object sender, EventArgs e)
     {
-        if (Activator.SelectObject(new DialogArgs
+        if (!Activator.SelectObject(new DialogArgs
             {
                 TaskDescription = "Which Catalogue should the graph depict?"
-            }, Activator.RepositoryLocator.CatalogueRepository.GetAllObjects<Catalogue>(), out var selected))
-        {
-            _collection.SetSingleCatalogueMode(selected);
+            }, Activator.RepositoryLocator.CatalogueRepository.GetAllObjects<Catalogue>(), out var selected)) return;
+        _collection.SetSingleCatalogueMode(selected);
 
-            btnAllCatalogues.Checked = false;
-            btnSingleCatalogue.Checked = true;
+        btnAllCatalogues.Checked = false;
+        btnSingleCatalogue.Checked = true;
 
-            SaveCollectionChanges();
-            GenerateChart();
-        }
+        SaveCollectionChanges();
+        GenerateChart();
     }
 
     private void btnRefresh_Click(object sender, EventArgs e)

@@ -329,7 +329,7 @@ This will not help you avoid bad data as the full file structure must still be r
         if (Headers == null)
         {
             //get a chunk
-            var toReturn = GetChunk(new ThrowImmediatelyDataLoadEventListener(), new GracefulCancellationToken());
+            var toReturn = GetChunk(ThrowImmediatelyDataLoadEventListener.Quiet, new GracefulCancellationToken());
 
             //clear these to close the file and reset state to 'I need to open the file again state'
             CloseReader();

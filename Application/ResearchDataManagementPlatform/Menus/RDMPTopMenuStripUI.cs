@@ -348,7 +348,7 @@ public partial class RDMPTopMenuStripUI : RDMPUserControl
 
     private void WindowFactory_TabChanged(object sender, IDockContent newTab)
     {
-        closeToolStripMenuItem.Enabled = newTab != null && newTab is not PersistableToolboxDockContent;
+        closeToolStripMenuItem.Enabled = newTab is { } and not PersistableToolboxDockContent;
         showHelpToolStripMenuItem.Enabled = newTab is RDMPSingleControlTab;
 
         if (newTab is not RDMPSingleControlTab singleObjectControlTab)
@@ -360,8 +360,7 @@ public partial class RDMPTopMenuStripUI : RDMPUserControl
         var saveable = singleObjectControlTab.Control as ISaveableUI;
 
         //if user wants to emphasise on tab change and there's an object we can emphasise associated with the control
-        if (singleObjectControlTab.Control is IRDMPSingleDatabaseObjectControl singleObject &&
-            UserSettings.EmphasiseOnTabChanged && singleObject.DatabaseObject != null)
+        if (singleObjectControlTab.Control is IRDMPSingleDatabaseObjectControl singleObject && UserSettings.EmphasiseOnTabChanged && singleObject.DatabaseObject != null)
         {
             var isCicChild = Activator.CoreChildProvider.GetDescendancyListIfAnyFor(singleObject.DatabaseObject)
                 ?.Parents?.Any(p => p is CohortIdentificationConfiguration);

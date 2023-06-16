@@ -43,8 +43,8 @@ public class TestCohortRefreshing : TestsRequiringAnExtractionConfiguration
         _configuration.CohortRefreshPipeline_ID = pipe.ID;
         _configuration.SaveToDatabase();
 
-        var engine = new CohortRefreshEngine(new ThrowImmediatelyDataLoadEventListener(), _configuration);
-
+        var engine = new CohortRefreshEngine(ThrowImmediatelyDataLoadEventListener.Quiet, _configuration);
+            
         Assert.NotNull(engine.Request.NewCohortDefinition);
 
         var oldData = oldcohort.GetExternalData();
@@ -130,7 +130,7 @@ public class TestCohortRefreshing : TestsRequiringAnExtractionConfiguration
             _configuration.SaveToDatabase();
 
             //get a refreshing engine
-            var engine = new CohortRefreshEngine(new ThrowImmediatelyDataLoadEventListener(), _configuration);
+            var engine = new CohortRefreshEngine(ThrowImmediatelyDataLoadEventListener.Quiet, _configuration);
             engine.Execute();
 
             Assert.NotNull(engine.Request.NewCohortDefinition);

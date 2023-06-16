@@ -60,14 +60,12 @@ public class LoadProgressUnitTests : UnitTests
         lp.DataLoadProgress = DateTime.Now;
 
         lp.Check(new ThrowImmediatelyCheckNotifier());
-
-        var stratFactory =
-            new JobDateGenerationStrategyFactory(new AnyAvailableLoadProgressSelectionStrategy(lp.LoadMetadata));
-        var strat = stratFactory.Create(lp, new ThrowImmediatelyDataLoadEventListener());
-
-        var dir = LoadDirectory.CreateDirectoryStructure(new DirectoryInfo(TestContext.CurrentContext.WorkDirectory),
-            "LoadProgress_JobFactory_NoDates", true);
-
+            
+        var stratFactory = new JobDateGenerationStrategyFactory(new AnyAvailableLoadProgressSelectionStrategy(lp.LoadMetadata));
+        var strat = stratFactory.Create(lp,ThrowImmediatelyDataLoadEventListener.Quiet);
+            
+        var dir = LoadDirectory.CreateDirectoryStructure(new DirectoryInfo(TestContext.CurrentContext.WorkDirectory),"LoadProgress_JobFactory_NoDates",true);
+            
         var lmd = lp.LoadMetadata;
         lmd.LocationOfFlatFiles = dir.RootPath.FullName;
 
@@ -78,20 +76,20 @@ public class LoadProgressUnitTests : UnitTests
         }
 
         lmd.SaveToDatabase();
-
-        var jobFactory = new SingleScheduledJobFactory(lp, strat, 999, lp.LoadMetadata, null);
-        var job = jobFactory.Create(RepositoryLocator, new ThrowImmediatelyDataLoadEventListener(), null);
+            
+        var jobFactory = new SingleScheduledJobFactory(lp,strat,999,lp.LoadMetadata,null);
+        var job = jobFactory.Create(RepositoryLocator, ThrowImmediatelyDataLoadEventListener.Quiet, null);
 
         Assert.IsNull(job);
 
         // We have 1 day to load (date is the last fully loaded date)
         lp.DataLoadProgress = DateTime.Now.AddDays(-2);
         lp.SaveToDatabase();
+             
+        strat = stratFactory.Create(lp,ThrowImmediatelyDataLoadEventListener.Quiet);
+        jobFactory =  new SingleScheduledJobFactory(lp,strat,999,lp.LoadMetadata,null);
 
-        strat = stratFactory.Create(lp, new ThrowImmediatelyDataLoadEventListener());
-        jobFactory = new SingleScheduledJobFactory(lp, strat, 999, lp.LoadMetadata, null);
-
-        job = jobFactory.Create(RepositoryLocator, new ThrowImmediatelyDataLoadEventListener(), null);
-        Assert.AreEqual(1, ((ScheduledDataLoadJob)job).DatesToRetrieve.Count);
+        job = jobFactory.Create(RepositoryLocator,ThrowImmediatelyDataLoadEventListener.Quiet,null);
+        Assert.AreEqual(1,((ScheduledDataLoadJob)job).DatesToRetrieve.Count);
     }
 }

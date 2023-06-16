@@ -158,7 +158,7 @@ public class TestsRequiringAnExtractionConfiguration : TestsRequiringACohort
 
         var returnCode = runner.Run(
             RepositoryLocator,
-            new ThrowImmediatelyDataLoadEventListener(),
+            ThrowImmediatelyDataLoadEventListener.Quiet,
             new ThrowImmediatelyCheckNotifier(),
             new GracefulCancellationToken());
 
@@ -168,7 +168,7 @@ public class TestsRequiringAnExtractionConfiguration : TestsRequiringACohort
     protected void Execute(out ExtractionPipelineUseCase pipelineUseCase,
         out IExecuteDatasetExtractionDestination results, IDataLoadEventListener listener = null)
     {
-        listener ??= new ThrowImmediatelyDataLoadEventListener();
+        listener ??= ThrowImmediatelyDataLoadEventListener.Quiet;
 
         var d = new DataLoadInfo("Internal", _testDatabaseName, "IgnoreMe", "", true,
             new DiscoveredServer(UnitTestLoggingConnectionString));

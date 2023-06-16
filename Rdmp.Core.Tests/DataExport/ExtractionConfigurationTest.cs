@@ -26,8 +26,7 @@ public class ExtractionConfigurationTest : DatabaseTests
         ColumnInfo column = null;
         TableInfo table = null;
 
-        ExtractionInformation extractionInformation = null;
-        ExtractableColumn extractableColumn = null;
+        ExtractionInformation extractionInformation=null;
 
         try
         {
@@ -46,26 +45,18 @@ public class ExtractionConfigurationTest : DatabaseTests
 
             configuration = new ExtractionConfiguration(DataExportRepository, project);
 
-            extractableColumn = new ExtractableColumn(DataExportRepository, dataSet, configuration,
-                extractionInformation, 0, "Hashme2(Name)");
+            _ = new ExtractableColumn(DataExportRepository, dataSet, configuration, extractionInformation, 0, "Hashme2(Name)");
             Assert.AreEqual(configuration.GetAllExtractableColumnsFor(dataSet).Length, 1);
         }
         finally
         {
             extractionInformation?.DeleteInDatabase();
-
             column?.DeleteInDatabase();
-
             table?.DeleteInDatabase();
-
             cataItem?.DeleteInDatabase();
-
             configuration?.DeleteInDatabase();
-
             project?.DeleteInDatabase();
-
             dataSet?.DeleteInDatabase();
-
             cata?.DeleteInDatabase();
         }
     }

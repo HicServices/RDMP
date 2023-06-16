@@ -29,7 +29,7 @@ public class CacheLayoutFactory
         var cp = loadProgress.CacheProgress;
 
         var factory = new CachingPipelineUseCase(cp);
-        var destination = factory.CreateDestinationOnly(new ThrowImmediatelyDataLoadEventListener());
+        var destination = factory.CreateDestinationOnly(ThrowImmediatelyDataLoadEventListener.Quiet);
 
         return destination.CreateCacheLayout();
     }

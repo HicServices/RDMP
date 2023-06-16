@@ -38,7 +38,7 @@ public sealed class CreateTableFromAggregateUseCase : PipelineUseCase
         if (constrainByCohort == null)
         {
             var src = new AggregateConfigurationTableSource();
-            src.PreInitialize(aggregateConfiguration, new ThrowImmediatelyDataLoadEventListener());
+            src.PreInitialize(aggregateConfiguration, ThrowImmediatelyDataLoadEventListener.Quiet);
             src.TableName = table.GetRuntimeName();
             ExplicitSource = src;
         }
@@ -47,8 +47,8 @@ public sealed class CreateTableFromAggregateUseCase : PipelineUseCase
             AddInitializationObject(constrainByCohort);
 
             var src = new PatientIndexTableSource();
-            src.PreInitialize(aggregateConfiguration, new ThrowImmediatelyDataLoadEventListener());
-            src.PreInitialize(constrainByCohort, new ThrowImmediatelyDataLoadEventListener());
+            src.PreInitialize(aggregateConfiguration, ThrowImmediatelyDataLoadEventListener.Quiet);
+            src.PreInitialize(constrainByCohort, ThrowImmediatelyDataLoadEventListener.Quiet);
             src.TableName = table.GetRuntimeName();
             ExplicitSource = src;
         }

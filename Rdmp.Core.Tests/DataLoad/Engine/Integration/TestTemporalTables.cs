@@ -125,11 +125,10 @@ INSERT INTO Employee(EmployeeID,Name,Position,Department,Address,AnnualSalary) V
             logManager
         );
 
-        var exe = loadFactory.Create(new ThrowImmediatelyDataLoadEventListener());
-
+        var exe = loadFactory.Create(ThrowImmediatelyDataLoadEventListener.Quiet);
+            
         var exitCode = exe.Run(
-            new DataLoadJob(RepositoryLocator, "Go go go!", logManager, lmd, projectDirectory,
-                new ThrowImmediatelyDataLoadEventListener(), dbConfig),
+            new DataLoadJob(RepositoryLocator,"Go go go!", logManager, lmd, projectDirectory,ThrowImmediatelyDataLoadEventListener.Quiet,dbConfig),
             new GracefulCancellationToken());
 
         Assert.AreEqual(ExitCodeType.Success, exitCode);

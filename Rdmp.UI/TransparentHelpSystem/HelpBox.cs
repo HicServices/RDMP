@@ -41,9 +41,12 @@ public partial class HelpBox : UserControl
             //make label fill whole form
             lblHelp.Height = panel1.Height;
 
-        btnOption1.Click += (s, e) => { OptionTaken?.Invoke(); };
-
-        Size = GetSizeOfHelpBoxFor(text, !string.IsNullOrWhiteSpace(optionIfAny));
+        btnOption1.Click += (s, e) =>
+        {
+            OptionTaken?.Invoke();
+        };
+            
+        Size = GetSizeOfHelpBoxFor(text,!string.IsNullOrWhiteSpace(optionIfAny));
     }
 
     private Size GetSizeOfHelpBoxFor(string text, bool hasOptionButtons)

@@ -100,7 +100,7 @@ public class RemoteDatabaseAttacherTests : DatabaseTests
         if (scenario == Scenario.AllRawColumns)
             VerifyRowExist(dt, 123, DBNull.Value);
 
-        attacher.LoadCompletedSoDispose(ExitCodeType.Success, new ThrowImmediatelyDataLoadEventListener());
+        attacher.LoadCompletedSoDispose(ExitCodeType.Success, ThrowImmediatelyDataLoadEventListener.Quiet);
 
         externalServer.DeleteInDatabase();
     }

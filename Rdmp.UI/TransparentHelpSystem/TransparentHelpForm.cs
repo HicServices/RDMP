@@ -208,26 +208,21 @@ public class TransparentHelpForm : Form
 
             //not enough space horizontally so try to move MSG to left till there is enough space
             /**************HOST CONTROL BOUNDS***********
-             *
-             *       HIGHLIGHT
-             *  <---|HIGHLIGHT
-             *  MSG_MSG_MSGMSG_MSG_MSGMSG_MSG_MSGMSG_MSG_MSG
-             *
-             *********************************************/
+            * 
+            *       HIGHLIGHT
+            *  <---|HIGHLIGHT
+            *  MSG_MSG_MSGMSG_MSG_MSGMSG_MSG_MSGMSG_MSG_MSG
+            *    
+            *********************************************/
             return highlightBottomLeft with { X = Math.Max(0, _host.ClientRectangle.Width - currentHelpBox.Width) };
         }
 
         if (currentHelpBox.Height < availableSpaceAboveHighlight)
         {
             //No space below so go above it
-
-
-            if (_currentHelpBox.Width < availableSpaceHorizontally)
-                return highlightTopLeft with { Y = highlightTopLeft.Y - currentHelpBox.Height };
-
-            //consider moving X back because message box is so wide (See diagram above)
-            return new Point(Math.Max(0, _host.ClientRectangle.Width - currentHelpBox.Width),
-                highlightTopLeft.Y - currentHelpBox.Height);
+            return _currentHelpBox.Width < availableSpaceHorizontally ? highlightTopLeft with { Y = highlightTopLeft.Y - currentHelpBox.Height } :
+                //consider moving X back because message box is so wide (See diagram above)
+                new Point(Math.Max(0, _host.ClientRectangle.Width - currentHelpBox.Width), highlightTopLeft.Y - currentHelpBox.Height);
         }
 
         var screenCoordinatesTopRight = _highlight.PointToScreen(new Point(_highlight.ClientRectangle.Width, 0));

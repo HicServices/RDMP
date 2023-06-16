@@ -39,7 +39,7 @@ public class CohortCreationRunner : Runner
 
         if (_options.Command == CommandLineActivity.run)
         {
-            var engine = new CohortRefreshEngine(new ThrowImmediatelyDataLoadEventListener(), _configuration);
+            var engine = new CohortRefreshEngine(ThrowImmediatelyDataLoadEventListener.Quiet, _configuration);
             engine.Execute();
         }
 

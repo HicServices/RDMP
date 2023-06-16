@@ -24,7 +24,13 @@ internal class CohortIdentificationHeader
 
     public static string GetStateDescription() => "";
 
-    public static string Order() => "";
-
-    public static string GetCachedQueryUseCount() => "";
+    public string Order()
+    {
+        return "";
+    }
+    
+    public string GetCachedQueryUseCount()
+    {
+        return "";
+    }
 }

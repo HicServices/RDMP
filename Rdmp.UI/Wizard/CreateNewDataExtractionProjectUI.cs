@@ -250,7 +250,7 @@ public partial class CreateNewDataExtractionProjectUI : RDMPForm
                 {
                     Timeout = 5
                 };
-                source.PreInitialize(cic,new ThrowImmediatelyDataLoadEventListener());
+                source.PreInitialize(cic,ThrowImmediatelyDataLoadEventListener.Quiet);
                 source.Check(ragCic);
 
                 ClearFile();
@@ -347,8 +347,7 @@ public partial class CreateNewDataExtractionProjectUI : RDMPForm
                             _project).SetTarget(cohortRequest.CohortIdentificationConfiguration);
                 }
 
-                var engine = cohortRequest.GetEngine((Pipeline)dd.SelectedItem,
-                    new ThrowImmediatelyDataLoadEventListener());
+                var engine = cohortRequest.GetEngine((Pipeline) dd.SelectedItem,ThrowImmediatelyDataLoadEventListener.Quiet);
                 engine.ExecutePipeline(new GracefulCancellationToken());
                 _cohortCreated = cohortRequest.CohortCreatedIfAny;
             }

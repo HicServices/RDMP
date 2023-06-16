@@ -65,7 +65,7 @@ public abstract class CommandCliTests : UnitTests
         };
 
         var runner = new ExecuteCommandRunner(opts);
-        return runner.Run(RepositoryLocator, new ThrowImmediatelyDataLoadEventListener(),
+        return runner.Run(RepositoryLocator, ThrowImmediatelyDataLoadEventListener.Quiet,
             new ThrowImmediatelyCheckNotifier(), new GracefulCancellationToken());
     }
 }

@@ -219,11 +219,10 @@ MrMurder,2001-01-01,Yella");
 
         try
         {
-            var exe = loadFactory.Create(new ThrowImmediatelyDataLoadEventListener());
-
+            var exe = loadFactory.Create(ThrowImmediatelyDataLoadEventListener.Quiet);
+            
             var exitCode = exe.Run(
-                new DataLoadJob(RepositoryLocator, "Go go go!", logManager, lmd, projectDirectory,
-                    new ThrowImmediatelyDataLoadEventListener(), dbConfig),
+                new DataLoadJob(RepositoryLocator,"Go go go!", logManager, lmd, projectDirectory,ThrowImmediatelyDataLoadEventListener.Quiet,dbConfig),
                 new GracefulCancellationToken());
 
             Assert.AreEqual(ExitCodeType.Success, exitCode);
@@ -409,11 +408,10 @@ MrMurder,2001-01-01,Yella");
         );
         try
         {
-            var exe = loadFactory.Create(new ThrowImmediatelyDataLoadEventListener());
+            var exe = loadFactory.Create(ThrowImmediatelyDataLoadEventListener.Quiet);
 
             var exitCode = exe.Run(
-                new DataLoadJob(RepositoryLocator, "Go go go!", logManager, lmd, projectDirectory,
-                    new ThrowImmediatelyDataLoadEventListener(), config),
+                new DataLoadJob(RepositoryLocator,"Go go go!", logManager, lmd, projectDirectory, ThrowImmediatelyDataLoadEventListener.Quiet,config),
                 new GracefulCancellationToken());
 
             Assert.AreEqual(ExitCodeType.Success, exitCode);
@@ -464,12 +462,16 @@ internal class CustomINameDatabasesAndTablesDuringLoads : INameDatabasesAndTable
         //RAW is AA, Staging is BB
         return convention switch
         {
-            LoadBubble.Raw => "AA_RAW",
-            LoadBubble.Staging => "BB_STAGING",
-            LoadBubble.Live => rootDatabaseName,
-            LoadBubble.Archive => rootDatabaseName,
-            _ => throw new ArgumentOutOfRangeException(nameof(convention))
-        };
+            case LoadBubble.Raw:
+                return "AA_RAW";
+            case LoadBubble.Staging:
+                return "BB_STAGING";
+            case LoadBubble.Live:
+            case LoadBubble.Archive:
+                return rootDatabaseName;
+            default:
+                throw new ArgumentOutOfRangeException(nameof(convention));
+        }
     }
 
     public string GetName(string tableName, LoadBubble convention)

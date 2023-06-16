@@ -28,8 +28,7 @@ public class ProcessTaskArgumentTests : DatabaseTests
     {
         var tableInfoName = $"TableInfoFor_{new StackTrace().GetFrame(0).GetMethod().Name}";
 
-        var toCleanup = CatalogueRepository.GetAllObjects<TableInfo>()
-            .SingleOrDefault(t => t.Name.Equals(tableInfoName));
+        var toCleanup = CatalogueRepository.GetAllObjects<TableInfo>().SingleOrDefault(t => t.Name.Equals(tableInfoName));
 
         toCleanup?.DeleteInDatabase();
 

@@ -62,29 +62,13 @@ public class DataFlowPipelineEngineFactory : IDataFlowPipelineEngineFactory
         var destination = GetBest(_useCase.ExplicitDestination, CreateDestinationIfExists(pipeline), "destination");
         var source = GetBest(_useCase.ExplicitSource, CreateSourceIfExists(pipeline), "source");
 
-
-        //new DataFlowPipelineEngine<T>(_context, source, destination, listener, pipeline);
-
         //engine (this is the source, target is the destination)
-        var dataFlowEngine = (IDataFlowPipelineEngine)ObjectConstructor.ConstructIfPossible(_engineType, _context, source, destination, listener, pipeline); 
+        var dataFlowEngine = (IDataFlowPipelineEngine)ObjectConstructor.ConstructIfPossible(_engineType, _context, source, destination, listener, pipeline);
 
-        //now go fetch everything that the user has configured for this particular pipeline
-        foreach (PipelineComponent toBuild in pipeline.PipelineComponents)
-        {
-            //if it is the destination do not add it
-            if (toBuild.ID == pipeline.DestinationPipelineComponent_ID)
-                continue;
-
-            //if it is the source do not add it
-            if (toBuild.ID == pipeline.SourcePipelineComponent_ID)
-                continue;
-
-            //get the factory to realize the freaky Export types defined in any assembly anywhere and set their DemandsInitialization properties based on the Arguments
-            var component = CreateComponent(toBuild);
-
-            //Add the components to the pipeline
+        //now go fetch everything that the user has configured for this particular pipeline except the source and destination
+        //get the factory to realize the freaky Export types defined in any assembly anywhere and set their DemandsInitialization properties based on the Arguments
+        foreach (var component in pipeline.PipelineComponents.Where(pc=>pc.ID!=pipeline.DestinationPipelineComponent_ID && pc.ID!=pipeline.SourcePipelineComponent_ID).Select(CreateComponent))
             dataFlowEngine.ComponentObjects.Add(component);
-        }
 
         return dataFlowEngine;
     }
@@ -100,7 +84,7 @@ public class DataFlowPipelineEngineFactory : IDataFlowPipelineEngineFactory
     private static T2 GetBest<T2>(T2 explicitThing, T2 pipelineConfigurationThing, string descriptionOfWhatThingIs)
     {
         // if explicitThing and pipelineConfigurationThing are both null
-        //Means: xplicitThing == null && pipelineConfigurationThing == null
+        //Means: explicitThing == null && pipelineConfigurationThing == null
         if (EqualityComparer<T2>.Default.Equals(explicitThing, default) && EqualityComparer<T2>.Default.Equals(pipelineConfigurationThing, default))
             throw new Exception(
                 $"No explicit {descriptionOfWhatThingIs} was specified and there is no fixed {descriptionOfWhatThingIs} defined in the Pipeline configuration in the Catalogue");

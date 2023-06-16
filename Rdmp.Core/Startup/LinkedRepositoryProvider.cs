@@ -77,9 +77,9 @@ public class LinkedRepositoryProvider : RepositoryProvider
 
         if (DataExportRepository.ObscureDependencyFinder == null)
             DataExportRepository.ObscureDependencyFinder = new ObjectSharingObscureDependencyFinder(this);
-        else if (DataExportRepository.ObscureDependencyFinder is not ObjectSharingObscureDependencyFinder)
-            throw new Exception(
-                "Expected DataExportRepository.ObscureDependencyFinder to be an ObjectSharingObscureDependencyFinder");
+        else
+        if (DataExportRepository.ObscureDependencyFinder is not ObjectSharingObscureDependencyFinder)
+            throw new Exception("Expected DataExportRepository.ObscureDependencyFinder to be an ObjectSharingObscureDependencyFinder");
     }
 
     protected override IRepository GetRepository(string s)

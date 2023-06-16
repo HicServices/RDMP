@@ -65,7 +65,7 @@ public class RDMPContextMenuStrip : ContextMenuStrip
 
         RepositoryLocator = _activator.RepositoryLocator;
 
-        if (o != null && o is not RDMPCollection)
+        if (o is { } and not RDMPCollection)
         {
             var activateCommand = new ExecuteCommandActivate(_activator, args.Masquerader ?? o);
             ActivateCommandMenuItem = Add(activateCommand, Keys.None);

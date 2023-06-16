@@ -308,7 +308,7 @@ public partial class LookupConfigurationUI : LookupConfiguration_Design
         var w = end.X - start.X;
         var h = end.Y - start.Y;
 
-        DrawCurveWithLabel(start, start with { X = start.X + w }, start with { Y = start.Y + h }, end, label, g, p);
+        DrawCurveWithLabel(start, start with { X = start.X + w },start with { Y = start.Y + h },end,label,g,p);
     }
 
     private bool debugPoints = false;

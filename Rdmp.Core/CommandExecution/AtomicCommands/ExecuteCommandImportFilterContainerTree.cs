@@ -50,7 +50,7 @@ public class ExecuteCommandImportFilterContainerTree : BasicCommandExecution
     {
         Weight = DEFAULT_WEIGHT;
 
-        if (activator.CoreChildProvider is not DataExportChildProvider)
+        if(activator.CoreChildProvider is not DataExportChildProvider)
             SetImpossible("Data export functions unavailable");
     }
 

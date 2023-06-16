@@ -176,13 +176,13 @@ public class CreateNewCohortDatabaseWizardTests : DatabaseTests
         //the destination component that will put it there
         var dest = new BasicCohortDestination();
 
-        dest.PreInitialize(request, new ThrowImmediatelyDataLoadEventListener());
-
+        dest.PreInitialize(request, ThrowImmediatelyDataLoadEventListener.Quiet);
+            
         //tell it to use the guid allocator
-        dest.ReleaseIdentifierAllocator = typeof(GuidReleaseIdentifierAllocator);
-
-        dest.ProcessPipelineData(dt, new ThrowImmediatelyDataLoadEventListener(), new GracefulCancellationToken());
-        dest.Dispose(new ThrowImmediatelyDataLoadEventListener(), null);
+        dest.ReleaseIdentifierAllocator = typeof (GuidReleaseIdentifierAllocator);
+            
+        dest.ProcessPipelineData(dt, ThrowImmediatelyDataLoadEventListener.Quiet, new GracefulCancellationToken());
+        dest.Dispose(ThrowImmediatelyDataLoadEventListener.Quiet, null);
 
         var cohort = request.CohortCreatedIfAny;
         Assert.IsNotNull(cohort);
@@ -221,7 +221,7 @@ public class CreateNewCohortDatabaseWizardTests : DatabaseTests
         dtAno.Rows.Add(aguid, 23);
         dtAno.Rows.Add(aguid, 99);
 
-        cohort.ReverseAnonymiseDataTable(dtAno, new ThrowImmediatelyDataLoadEventListener(), true);
+        cohort.ReverseAnonymiseDataTable(dtAno, ThrowImmediatelyDataLoadEventListener.Quiet, true);
 
         Assert.AreEqual(2, dtAno.Columns.Count);
         Assert.IsTrue(dtAno.Columns.Contains(cohort.GetPrivateIdentifier(true)));

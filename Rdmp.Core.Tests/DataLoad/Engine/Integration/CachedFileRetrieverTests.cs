@@ -179,7 +179,7 @@ public class CachedFileRetrieverTests : DatabaseTests
         catalogue.GetLookupTableInfoList().Returns(Array.Empty<TableInfo>());
         catalogue.LoggingDataTask.Returns("TestLogging");
 
-        var j = new ScheduledDataLoadJob(RepositoryLocator, "Test job", logManager, loadMetadata, directory, new ThrowImmediatelyDataLoadEventListener(), null)
+        var j = new ScheduledDataLoadJob(RepositoryLocator, "Test job", logManager, loadMetadata, directory, ThrowImmediatelyDataLoadEventListener.Quiet, null)
             {
                 LoadProgress = _lpMock
             };

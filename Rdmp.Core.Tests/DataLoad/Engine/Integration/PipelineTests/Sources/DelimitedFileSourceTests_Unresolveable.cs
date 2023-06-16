@@ -70,14 +70,14 @@ internal class DelimitedFileSourceTests_Unresolveable : DelimitedFileSourceTests
             "Frank,Is the greatest,100",
             "Frank,Is the greatest,100");
 
-        static void adjust(DelimitedFlatFileDataFlowSource a)
+        void Adjust(DelimitedFlatFileDataFlowSource a)
         {
             a.BadDataHandlingStrategy = BadDataHandlingStrategy.ThrowException;
             a.ThrowOnEmptyFiles = true;
             a.IgnoreQuotes = true;
         }
 
-        var dt2 = RunGetChunk(file, adjust);
+        var dt2 = RunGetChunk(file, Adjust);
         Assert.AreEqual(5, dt2.Rows.Count);
         Assert.AreEqual("\"Is the greatest", dt2.Rows[1]["Description"]);
     }
