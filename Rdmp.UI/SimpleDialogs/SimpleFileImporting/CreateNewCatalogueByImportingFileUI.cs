@@ -372,9 +372,9 @@ public partial class CreateNewCatalogueByImportingFileUI : RDMPForm
 
             var dest = (DataTableUploadDestination)engine.DestinationObject;
             dest.TableNamerDelegate = () => tbTableName.Text;
-
-            var cts = new CancellationTokenSource();
-            var t = Task.Run(() =>
+                
+            using var cts = new CancellationTokenSource();
+            var t =Task.Run(() =>
                 {
                     try
                     {
@@ -394,8 +394,7 @@ public partial class CreateNewCatalogueByImportingFileUI : RDMPForm
                             ConfirmTableDeletion(db.ExpectTable(dest.TargetTableName));
                         crashed = true;
                     }
-                }
-            );
+                }, cts.Token);
 
             Activator.Wait("Uploading Table...", t, cts);
 

@@ -84,23 +84,21 @@ False - Trigger an error reporting the missing table(s)
             // A table in the load does not exist on the remote db
             if (!remoteTables.Contains(table))
             {
-                if (IgnoreMissingTables)
-                {
-                    job.OnNotify(this,
-                        new NotifyEventArgs(ProgressEventType.Information,
-                            $"Table {table} was NOT found on the remote DB but {nameof(IgnoreMissingTables)} is enabled so table will be skipped"));
+                if (!IgnoreMissingTables)
+                    throw new Exception(
+                        $"Loadable table {table} was NOT found on the remote DB and IgnoreMissingTables is false");
 
-                    //skip it
-                    continue;
-                }
+                job.OnNotify(this,
+                    new NotifyEventArgs(ProgressEventType.Information,
+                        $"Table {table} was NOT found on the remote DB but {nameof(IgnoreMissingTables)} is enabled so table will be skipped"));
 
-                throw new Exception(
-                    $"Loadable table {table} was NOT found on the remote DB and IgnoreMissingTables is false");
+                //skip it
+                continue;
             }
 
 
             string sql;
-            if (LoadRawColumnsOnly)
+            if(LoadRawColumnsOnly)
             {
                 var rawColumns = LoadRawColumnsOnly
                     ? tableInfo.GetColumnsAtStage(LoadStage.AdjustRaw)

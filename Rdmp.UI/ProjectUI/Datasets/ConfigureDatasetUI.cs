@@ -684,7 +684,7 @@ public partial class ConfigureDatasetUI : ConfigureDatasetUI_Design, ILifetimeSu
 
         return olvSelected.Objects.OfType<ExtractableColumn>()
             .Where(ec => ec.CatalogueExtractionInformation_ID != null)
-            .Select(ec => eis.TryGetValue(ec.CatalogueExtractionInformation_ID.Value, out var ei1) ? ei1 : null)
+            .Select(ec => eis.TryGetValue(ec.CatalogueExtractionInformation_ID.Value, out var extractionInfo) ? extractionInfo : null)
             .Where(ei => ei != null)
             .Select(ei => ei.ColumnInfo.TableInfo)
             .Distinct()

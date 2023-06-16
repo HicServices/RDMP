@@ -414,44 +414,41 @@ public class Validator
 
             try
             {
-                ValidationFailure result = null;
+                ValidationFailure result;
 
                 //see if it has property with this name
-                object value = null;
-                if (o is DbDataReader dataReader)
+                object value;
+                switch (o)
                 {
-                    value = dataReader[itemValidator.TargetProperty];
-                    if (value == DBNull.Value)
-                        value = null;
-
-                    result = itemValidator.ValidateAll(value, values, names);
-                }
-                else if (o is DataRow dataRow)
-                {
-                    result = itemValidator.ValidateAll(dataRow[itemValidator.TargetProperty], values, names);
-                }
-                else
-                {
-                    var propertiesDictionary = DomainObjectPropertiesToDictionary(o);
-
-                    if (propertiesDictionary.TryGetValue(itemValidator.TargetProperty, out var value1))
+                    case DbDataReader reader:
                     {
-                        value = value1;
+                        value = reader[itemValidator.TargetProperty];
+                        if (value == DBNull.Value)
+                            value = null;
 
-                        result = itemValidator.ValidateAll(value, propertiesDictionary.Values.ToArray(),
-                            propertiesDictionary.Keys.ToArray());
+                        result = itemValidator.ValidateAll(value, values, names);
+                        break;
                     }
-                    else
+                    case DataRow row:
+                        result = itemValidator.ValidateAll(row[itemValidator.TargetProperty], values, names);
+                        break;
+                    default:
                     {
-                        throw new MissingFieldException(
-                            $"Validation failed: Target field [{itemValidator.TargetProperty}] not found in domain object.");
+                        var propertiesDictionary = DomainObjectPropertiesToDictionary(o);
+
+                        if (propertiesDictionary.TryGetValue(itemValidator.TargetProperty, out value))
+                            result = itemValidator.ValidateAll(value, propertiesDictionary.Values.ToArray(),
+                                propertiesDictionary.Keys.ToArray());
+                        else
+                            throw new MissingFieldException(
+                                $"Validation failed: Target field [{itemValidator.TargetProperty}] not found in domain object.");
+                        break;
                     }
                 }
 
                 if (result != null)
                 {
                     result.SourceItemValidator ??= itemValidator;
-
                     eList.Add(result);
                 }
             }

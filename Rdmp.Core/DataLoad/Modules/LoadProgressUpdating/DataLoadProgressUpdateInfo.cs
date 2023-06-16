@@ -117,36 +117,26 @@ public class DataLoadProgressUpdateInfo : ICustomUIDrivenClass, ICheckable
 
     private DateTime GetMaxDate(DiscoveredServer server, IDataLoadEventListener listener)
     {
-        using (var con = server.GetConnection())
+        using var con = server.GetConnection();
+        con.Open();
+
+        listener.OnNotify(this, new NotifyEventArgs(ProgressEventType.Information,
+            $"About to execute SQL to determine the maximum date for data loaded:{ExecuteScalarSQL}"));
+
+        using var cmd = server.GetCommand(ExecuteScalarSQL, con);
+        var scalarValue = cmd.ExecuteScalar();
+
+        if (scalarValue == null || scalarValue == DBNull.Value)
+            throw new DataLoadProgressUpdateException("ExecuteScalarSQL specified for determining the maximum date of data loaded returned null when executed");
+
+        try
         {
-            con.Open();
-
-            listener.OnNotify(this, new NotifyEventArgs(ProgressEventType.Information,
-                $"About to execute SQL to determine the maximum date for data loaded:{ExecuteScalarSQL}"));
-
-            DateTime dt;
-            using (var cmd = server.GetCommand(ExecuteScalarSQL, con))
-            {
-                var scalarValue = cmd.ExecuteScalar();
-
-                if (scalarValue == null || scalarValue == DBNull.Value)
-                    throw new DataLoadProgressUpdateException(
-                        "ExecuteScalarSQL specified for determining the maximum date of data loaded returned null when executed");
-
-                try
-                {
-                    dt = Convert.ToDateTime(scalarValue);
-                }
-                catch (Exception e)
-                {
-                    throw new DataLoadProgressUpdateException(
-                        $"ExecuteScalarSQL specified for determining the maximum date of data loaded returned a value that was not a Date:{scalarValue}",
-                        e);
-                }
-            }
-
-
-            return dt;
+            return Convert.ToDateTime(scalarValue);
+        }
+        catch (Exception e)
+        {
+            throw new DataLoadProgressUpdateException(
+                $"ExecuteScalarSQL specified for determining the maximum date of data loaded returned a value that was not a Date:{scalarValue}", e);
         }
     }
 

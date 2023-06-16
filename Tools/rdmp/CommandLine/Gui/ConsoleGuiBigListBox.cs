@@ -275,7 +275,8 @@ internal class ConsoleGuiBigListBox<T>
                 _collection = result;
                 _changes = true;
             }
-        });
+                    
+        }, cts.Token);       
     }
 
     private IList<ListViewObject<T>> BuildList(IList<T> listOfT)

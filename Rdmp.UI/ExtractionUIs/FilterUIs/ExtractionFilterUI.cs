@@ -158,11 +158,11 @@ public partial class ExtractionFilterUI : ExtractionFilterUI_Design, ILifetimeSu
         Catalogue = databaseObject.GetCatalogue();
         _extractionFilter = databaseObject;
 
-        ParameterCollectionUIOptions options = null;
+        ParameterCollectionUIOptions options;
         try
         {
             var factory = new ParameterCollectionUIOptionsFactory();
-            options = factory.Create(databaseObject, activator.CoreChildProvider);
+            options = factory.Create(databaseObject,activator.CoreChildProvider);
         }
         catch (Exception e)
         {

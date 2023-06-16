@@ -45,7 +45,7 @@ public class RdmpCommandLineBootStrapper
                     ExecuteCommandOptions>(args)
                 .MapResult(
                     //Add new verbs as options here and invoke relevant runner
-                    (DleOptions opts) => Run(opts, null, existingLocator),
+                    (DleOptions opts) => Run(opts,null, existingLocator),
                     (DqeOptions opts) => Run(opts, null, existingLocator),
                     (CacheOptions opts) => Run(opts, null, existingLocator),
                     (ExtractionOptions opts) => Run(opts, null, existingLocator),

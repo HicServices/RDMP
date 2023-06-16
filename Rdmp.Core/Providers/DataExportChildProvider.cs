@@ -222,6 +222,7 @@ public class DataExportChildProvider : CatalogueChildProvider
         foreach (var child in folder.ChildFolders)
             //add subfolder children
             AddChildren(child, descendancy.Add(child));
+        }
 
         //add catalogues in folder
         foreach (var project in folder.ChildObjects) AddChildren(project, descendancy.Add(project));
@@ -241,8 +242,7 @@ public class DataExportChildProvider : CatalogueChildProvider
         SelectedDataSets = GetAllObjects<SelectedDataSets>(dataExportRepository);
         ReportProgress("Fetching data export objects");
 
-        _extractionProgressesBySelectedDataSetID = GetAllObjects<ExtractionProgress>(dataExportRepository)
-            .ToDictionaryEx(ds => ds.SelectedDataSets_ID, d => d);
+        _extractionProgressesBySelectedDataSetID = GetAllObjects<ExtractionProgress>(dataExportRepository).ToDictionaryEx(ds => ds.SelectedDataSets_ID, d => d);
 
         var dsDictionary = ExtractableDataSets.ToDictionaryEx(ds => ds.ID, d => d);
         foreach (var s in SelectedDataSets)
@@ -458,8 +458,8 @@ public class DataExportChildProvider : CatalogueChildProvider
     {
         var children = new HashSet<object>();
 
-        if (_extractionProgressesBySelectedDataSetID.TryGetValue(selectedDataSets.ID, out var value))
-            children.Add(value);
+        if (_extractionProgressesBySelectedDataSetID.TryGetValue(selectedDataSets.ID, out var progress))
+            children.Add(progress);
 
         if (selectedDataSets.RootFilterContainer_ID != null)
         {

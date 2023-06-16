@@ -124,8 +124,7 @@ internal class ExecuteSqlFileRuntimeTaskTests : DatabaseTests
 
         var sql = @"UPDATE {T:0} Set {C:0} = 1";
 
-        var dir = LoadDirectory.CreateDirectoryStructure(new DirectoryInfo(TestContext.CurrentContext.TestDirectory),
-            "ExecuteSqlFileRuntimeTaskTests", true);
+        var dir = LoadDirectory.CreateDirectoryStructure(new DirectoryInfo(TestContext.CurrentContext.TestDirectory),"ExecuteSqlFileRuntimeTaskTests", true);
 
 #pragma warning disable CS0252, CS0253 // Spurious warning 'Possible unintended reference comparison; left hand side needs cast' since VS doesn't grok Moq fully
         var _arg = Substitute.For<IArgument>();
@@ -140,12 +139,13 @@ internal class ExecuteSqlFileRuntimeTaskTests : DatabaseTests
 
         var args = new RuntimeArgumentCollection(sqlArg, new StageArgs(LoadStage.AdjustRaw, db, dir));
 
-        var pt = Substitute.For<IProcessTask>();
-        pt.Path.Returns(typeof(ExecuteSqlMutilation).FullName);
-        pt.GetAllArguments().Returns(sqlArg);
+        var pt = Mock.Of<IProcessTask>(x => 
+            x.Path == typeof(ExecuteSqlMutilation).FullName &&
+            x.GetAllArguments() == sqlArg
+        );
 
-        IRuntimeTask task = new MutilateDataTablesRuntimeTask(pt, args, CatalogueRepository.MEF);
-
+        IRuntimeTask task = new MutilateDataTablesRuntimeTask(pt,args,CatalogueRepository.MEF);
+                        
         task.Check(new ThrowImmediatelyCheckNotifier());
         var configuration = new HICDatabaseConfiguration(db.Server);
 

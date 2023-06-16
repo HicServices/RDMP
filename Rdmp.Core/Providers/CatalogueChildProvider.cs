@@ -822,6 +822,7 @@ public class CatalogueChildProvider : ICoreChildProvider
         foreach (var child in folder.ChildFolders)
             //add subfolder children
             AddChildren(child, descendancy.Add(child));
+        }
 
         //add catalogues in folder
         foreach (var c in folder.ChildObjects) AddChildren(c, descendancy.Add(c));
@@ -838,6 +839,7 @@ public class CatalogueChildProvider : ICoreChildProvider
         foreach (var child in folder.ChildFolders)
             //add subfolder children
             AddChildren(child, descendancy.Add(child));
+        }
 
         //add loads in folder
         foreach (var lmd in folder.ChildObjects) AddChildren(lmd, descendancy.Add(lmd));
@@ -854,6 +856,7 @@ public class CatalogueChildProvider : ICoreChildProvider
         foreach (var child in folder.ChildFolders)
             //add subfolder children
             AddChildren(child, descendancy.Add(child));
+        }
 
         //add cics in folder
         foreach (var cic in folder.ChildObjects) AddChildren(cic, descendancy.Add(cic));

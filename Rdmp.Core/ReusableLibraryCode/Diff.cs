@@ -268,14 +268,13 @@ public class Diff
         // get all codes of the text
         var lastUsedCode = h.Count;
 
-        // strip off all cr, only use lf as textline separator.
+        // strip off all cr, only use lf as line separator.
         aText = aText.Replace("\r", "");
         var Lines = aText.Split('\n');
 
         var Codes = new int[Lines.Length];
 
-        for (var i = 0; i < Lines.Length; ++i)
-        {
+        for (var i = 0; i < Lines.Length; ++i) {
             var s = Lines[i];
             if (trimSpace)
                 s = s.Trim();
@@ -284,10 +283,9 @@ public class Diff
 
             if (ignoreCase)
                 s = s.ToLower();
-
+        
             var aCode = h[s];
-            if (aCode == null)
-            {
+            if (aCode == null) {
                 lastUsedCode++;
                 h[s] = lastUsedCode;
                 Codes[i] = lastUsedCode;
@@ -312,8 +310,7 @@ public class Diff
     /// <param name="LowerB">lower bound of the actual range in DataB</param>
     /// <param name="UpperB">upper bound of the actual range in DataB (exclusive)</param>
     /// <returns>a MiddleSnakeData record containing x,y and u,v</returns>
-    private static SMSRD SMS(DiffData DataA, int LowerA, int UpperA, DiffData DataB, int LowerB, int UpperB)
-    {
+    private static SMSRD SMS(DiffData DataA, int LowerA, int UpperA, DiffData DataB, int LowerB, int UpperB) {
         var MAX = DataA.Length + DataB.Length + 1;
 
         var DownK = LowerA - LowerB; // the k-line to start the forward search
@@ -345,8 +342,7 @@ public class Diff
         {
             // Extend the forward path.
             SMSRD ret;
-            for (var k = DownK - D; k <= DownK + D; k += 2)
-            {
+            for (var k = DownK - D; k <= DownK + D; k += 2) {
                 // Debug.Write(0, "SMS", "extend forward path " + k.ToString());
 
                 // find the only or better starting point

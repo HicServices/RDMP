@@ -723,27 +723,12 @@ public abstract class TableRepository : ITableRepository
         lock (ongoingConnectionsLock)
         {
             //see if Thread dictionary has it
-            if (ongoingConnections.TryGetValue(Thread.CurrentThread, out var connection))
-            {
-                ongoingConnection = connection;
-            }
-            else
-            {
+            if (!ongoingConnections.TryGetValue(Thread.CurrentThread, out ongoingConnection))
                 ongoingConnections.Add(Thread.CurrentThread, null);
-                ongoingConnection = null;
-            }
-
 
             //see if Thread dictionary has it
-            if (ongoingTransactions.TryGetValue(Thread.CurrentThread, out var transaction))
-            {
-                ongoingTransaction = transaction;
-            }
-            else
-            {
+            if (!ongoingTransactions.TryGetValue(Thread.CurrentThread, out ongoingTransaction))
                 ongoingTransactions.Add(Thread.CurrentThread, null);
-                ongoingTransaction = null;
-            }
         }
     }
 
