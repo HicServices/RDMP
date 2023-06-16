@@ -28,6 +28,7 @@ public partial class UserSettingsFileUI : Form
 {
     private bool _bLoaded;
     private IActivateItems _activator;
+
     private const string WarnOnTimeoutOnExtractionChecks = "Extraction checks timeout";
 
     /// <summary>

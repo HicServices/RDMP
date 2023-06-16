@@ -34,9 +34,7 @@ public class FixedWidthAttacher : FlatFileAttacher
     public FileInfo PathToFormatFile { get; set; }
 
     private DataTable _flatFile;
-
-    protected override void OpenFile(FileInfo fileToLoad, IDataLoadEventListener listener,
-        GracefulCancellationToken cancellationToken)
+    protected override void OpenFile(FileInfo fileToLoad, IDataLoadEventListener listener,GracefulCancellationToken cancellationToken)
     {
         bHaveAlreadySubmittedData = false;
 

@@ -12,7 +12,7 @@ using Tests.Common;
 
 namespace Rdmp.Core.Tests.Curation.Integration.QueryBuildingTests.QueryBuilderTests;
 
-internal class MicrosoftQueryBuilderTests : DatabaseTests
+internal class MicrosoftQueryBuilderTests:DatabaseTests
 {
     [Test]
     public void TestQueryBuilder_MicrosoftSQLServer_Top35()

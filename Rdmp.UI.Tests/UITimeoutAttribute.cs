@@ -18,7 +18,7 @@ using NUnit.Framework.Internal.Commands;
 namespace Rdmp.UI.Tests;
 
 [AttributeUsage(AttributeTargets.Method, AllowMultiple = false, Inherited = false)]
-internal partial class UITimeoutAttribute : NUnitAttribute, IWrapTestMethod
+internal class UITimeoutAttribute : NUnitAttribute, IWrapTestMethod
 {
     private readonly int _timeout;
 
@@ -49,11 +49,11 @@ internal partial class UITimeoutAttribute : NUnitAttribute, IWrapTestMethod
         [DllImport("user32.dll", CharSet = CharSet.Auto)]
         private static extern IntPtr SendMessage(IntPtr hWnd, uint Msg, int wParam, IntPtr lParam);
 
-        [DllImport("user32.dll", SetLastError = true, CharSet = CharSet.Unicode)]
+        [DllImport("user32.dll", SetLastError = true, CharSet = CharSet.Auto)]
         private static extern int GetClassName(IntPtr hWnd, StringBuilder lpClassName, int nMaxCount);
 
-        [LibraryImport("user32.dll")]
-        private static partial IntPtr GetDlgItem(IntPtr hDlg, int nIDDlgItem);
+        [DllImport("user32.dll")]
+        private static extern IntPtr GetDlgItem(IntPtr hDlg, int nIDDlgItem);
 
         private string YesNoDialog = "#32770";
 

@@ -25,8 +25,9 @@ public partial class CommitsUI : CommitsUI_Design
     private List<Commit> _commits;
     private RDMPCollectionCommonFunctionality CommonCollectionFunctionality = new();
 
-    public const string GeneralAdviceAboutWhatIsShown =
-        "Only includes changes made while 'Commit' system was enabled.  Does not include changes made by processes/commands that do not support Commit system.";
+    private RDMPCollectionCommonFunctionality CommonCollectionFunctionality = new ();
+
+    public const string GeneralAdviceAboutWhatIsShown = "Only includes changes made while 'Commit' system was enabled.  Does not include changes made by processes/commands that do not support Commit system.";
 
     private CommitsUI()
     {

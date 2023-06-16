@@ -92,6 +92,7 @@ public partial class ObjectSaverButton
         CheckForOutOfDateObjectAndOfferToFix();
     }
 
+
     private void ParentForm_Enter(object sender, EventArgs e)
     {
         CheckForOutOfDateObjectAndOfferToFix();

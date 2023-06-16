@@ -14,7 +14,7 @@ using Rdmp.UI.ItemActivation;
 
 namespace Rdmp.UI.CommandExecution.Proposals;
 
-internal class ProposeExecutionWhenTargetIsProject : RDMPCommandExecutionProposal<Project>
+internal class ProposeExecutionWhenTargetIsProject:RDMPCommandExecutionProposal<Project>
 {
     public ProposeExecutionWhenTargetIsProject(IActivateItems itemActivator) : base(itemActivator)
     {

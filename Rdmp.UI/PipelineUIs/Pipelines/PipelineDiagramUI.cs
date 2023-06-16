@@ -37,7 +37,7 @@ public partial class PipelineDiagramUI : UserControl
     public bool AllowSelection { get; set; }
     public bool AllowReOrdering { get; set; }
 
-    RAGSmiley pipelineSmiley = new();
+    private RAGSmiley pipelineSmiley = new();
         
     public IPipelineComponent SelectedComponent;
     public event PipelineComponentSelectedHandler SelectedComponentChanged;
@@ -283,6 +283,7 @@ public partial class PipelineDiagramUI : UserControl
         divider.DragDrop += divider_DragDrop;
         flpPipelineDiagram.Controls.Add(divider);
     }
+
 
     private void component_Selected(object sender, IPipelineComponent selected)
     {

@@ -15,7 +15,7 @@ using System;
 
 namespace Rdmp.UI.Tests;
 
-internal class WideMessageBoxTests : UITests
+internal class WideMessageBoxTests:UITests
 {
     [Test]
     public void Test_WideMessageBox_TinyStrings()

@@ -15,7 +15,7 @@ using Tests.Common;
 
 namespace Rdmp.Core.Tests.CommandLine;
 
-internal class ExampleDatasetsCreationTests : DatabaseTests
+internal class ExampleDatasetsCreationTests:DatabaseTests
 {
     /// <summary>
     /// Tests the creation of example datasets during first installation of RDMP or when running "rdmp.exe install [...] -e" from the CLI

@@ -44,8 +44,9 @@ public class DataExportRepository : TableRepository, IDataExportRepository
 
     private Lazy<Dictionary<int, List<int>>> _packageContentsDictionary;
 
-    public DataExportRepository(DbConnectionStringBuilder connectionString, ICatalogueRepository catalogueRepository) :
-        base(null, connectionString)
+    private Lazy<Dictionary<int, List<int>>> _packageContentsDictionary;
+
+    public DataExportRepository(DbConnectionStringBuilder connectionString, ICatalogueRepository catalogueRepository) : base(null, connectionString)
     {
         CatalogueRepository = catalogueRepository;
 

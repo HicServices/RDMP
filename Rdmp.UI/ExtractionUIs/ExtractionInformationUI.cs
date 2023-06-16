@@ -63,6 +63,7 @@ public partial class ExtractionInformationUI : ExtractionInformationUI_Design, I
 
     private bool isFirstTimeSetupCalled = true;
     private IQuerySyntaxHelper _querySyntaxHelper = MicrosoftQuerySyntaxHelper.Instance;
+
     private RAGSmileyToolStrip ragSmiley1;
     private bool _isLoading;
 

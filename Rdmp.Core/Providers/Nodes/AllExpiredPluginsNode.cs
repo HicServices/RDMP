@@ -6,7 +6,7 @@
 
 namespace Rdmp.Core.Providers.Nodes;
 
-internal class AllExpiredPluginsNode : SingletonNode
+internal class AllExpiredPluginsNode :SingletonNode
 {
     public AllExpiredPluginsNode() : base("Old Plugins")
     {

@@ -94,7 +94,7 @@ public class RemoteTableAttacher : Attacher, IPluginAttacher
 
     private const string StartDateParameter = "@startDate";
     private const string EndDateParameter = "@endDate";
-
+        
     private DiscoveredDatabase _remoteDatabase;
 
     /// <summary>

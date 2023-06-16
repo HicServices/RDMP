@@ -17,8 +17,7 @@ namespace Rdmp.Core.Providers.Nodes.CohortNodes;
 /// 
 /// <para>Cache invalidation automatically occurs when subcomponents are changed</para>
 /// </summary>
-internal class QueryCacheUsedByCohortIdentificationNode :
-    ObjectUsedByOtherObjectNode<CohortIdentificationConfiguration, ExternalDatabaseServer>, IDeletableWithCustomMessage
+internal class QueryCacheUsedByCohortIdentificationNode : ObjectUsedByOtherObjectNode<CohortIdentificationConfiguration, ExternalDatabaseServer>, IDeletableWithCustomMessage
 {
     public QueryCacheUsedByCohortIdentificationNode(CohortIdentificationConfiguration cic,
         ExternalDatabaseServer cacheServer)

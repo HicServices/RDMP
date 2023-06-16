@@ -154,7 +154,7 @@ public partial class HeatmapUI : UserControl
     }
 
 
-    ToolTip tt = new();
+    private ToolTip tt = new();
 
     private int toolTipDelayInTicks = 500;
     private Point _lastHoverPoint;

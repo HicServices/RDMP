@@ -36,6 +36,7 @@ namespace Rdmp.UI.SimpleDialogs.Reports;
 public partial class GenerateTestDataUI : RDMPForm
 {
     public HelpWorkflow HelpWorkflow { get; private set; }
+    private int? _seed;
 
     private int? _seed;
 

@@ -17,12 +17,11 @@ using Rdmp.UI.SimpleDialogs;
 
 namespace Rdmp.UI.Menus.MenuItems;
 
-internal class DQEMenuItem : RDMPToolStripMenuItem
+internal class DQEMenuItem:RDMPToolStripMenuItem
 {
     private readonly Catalogue _catalogue;
     private readonly IExternalDatabaseServer _dqeServer;
-
-    public DQEMenuItem(IActivateItems activator, Catalogue catalogue) : base(activator, "Data Quality Engine...")
+    public DQEMenuItem(IActivateItems activator, Catalogue catalogue): base(activator, "Data Quality Engine...")
     {
         _catalogue = catalogue;
 

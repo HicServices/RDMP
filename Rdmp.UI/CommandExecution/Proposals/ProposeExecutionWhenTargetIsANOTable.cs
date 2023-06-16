@@ -11,7 +11,7 @@ using Rdmp.UI.ItemActivation;
 
 namespace Rdmp.UI.CommandExecution.Proposals;
 
-internal class ProposeExecutionWhenTargetIsANOTable : RDMPCommandExecutionProposal<ANOTable>
+internal class ProposeExecutionWhenTargetIsANOTable:RDMPCommandExecutionProposal<ANOTable>
 {
     public ProposeExecutionWhenTargetIsANOTable(IActivateItems itemActivator) : base(itemActivator)
     {

@@ -18,7 +18,7 @@ public class NavigationTrack<T>
     private Stack<T> _navigationStack = new();
     private Stack<T> _forward = new();
 
-    const int MaxHistory = 10;
+    private const int MaxHistory = 10;
     private bool _suspended = false;
 
     /// <summary>

@@ -15,7 +15,7 @@ using TypeGuesser;
 
 namespace Rdmp.UI.Tests.CommandExecution.Alter;
 
-internal class ExecuteCommandAlterColumnTypeTests : DatabaseTests
+internal class ExecuteCommandAlterColumnTypeTests:DatabaseTests
 {
     [TestCaseSource(typeof(All), nameof(All.DatabaseTypes))]
     [UITimeout(10000)]

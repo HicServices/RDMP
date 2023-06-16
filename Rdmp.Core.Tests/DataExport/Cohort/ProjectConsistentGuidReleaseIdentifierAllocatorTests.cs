@@ -18,7 +18,7 @@ using TypeGuesser;
 
 namespace Rdmp.Core.Tests.DataExport.Cohort;
 
-internal class ProjectConsistentGuidReleaseIdentifierAllocatorTests : DatabaseTests
+internal class ProjectConsistentGuidReleaseIdentifierAllocatorTests:DatabaseTests
 {
     [TestCase(DatabaseType.MicrosoftSQLServer)]
     [TestCase(DatabaseType.MySql)]

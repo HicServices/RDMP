@@ -12,7 +12,7 @@ using Rdmp.UI.CommandExecution.AtomicCommands;
 namespace Rdmp.UI.Menus;
 
 [System.ComponentModel.DesignerCategory("")]
-internal class LoadMetadataMenu : RDMPContextMenuStrip
+internal class LoadMetadataMenu:RDMPContextMenuStrip
 {
     public LoadMetadataMenu(RDMPContextMenuStripArgs args, LoadMetadata loadMetadata) : base(args, loadMetadata)
     {

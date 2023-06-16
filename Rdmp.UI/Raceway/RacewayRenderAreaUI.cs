@@ -38,8 +38,8 @@ public partial class RacewayRenderAreaUI : UserControl, INotifyMeOfEditState
     private DateTime[] _buckets;
     private Pen _verticalLinesPen = new(Color.FromArgb(150, Color.White));
 
-    Timer _mouseHeldDownTimer = new();
-    ScrollActionUnderway _currentScrollAction = ScrollActionUnderway.None;
+    private Timer _mouseHeldDownTimer = new();
+    private ScrollActionUnderway _currentScrollAction = ScrollActionUnderway.None;
 
     public RacewayRenderAreaUI()
     {
@@ -83,9 +83,9 @@ public partial class RacewayRenderAreaUI : UserControl, INotifyMeOfEditState
     private Dictionary<Catalogue, Dictionary<DateTime, ArchivalPeriodicityCount>> _periodicityDictionary;
     private const float MinimumRowHeight = 20;
 
-    public void AddTracks(IActivateItems activator,
-        Dictionary<Catalogue, Dictionary<DateTime, ArchivalPeriodicityCount>> periodicityDictionary, DateTime[] buckets,
-        bool ignoreRows)
+    private const float MinimumRowHeight = 20;
+
+    public void AddTracks(IActivateItems activator, Dictionary<Catalogue, Dictionary<DateTime, ArchivalPeriodicityCount>> periodicityDictionary, DateTime[] buckets, bool ignoreRows)
     {
         _activator = activator;
         _buckets = buckets;

@@ -42,8 +42,8 @@ public partial class ChecksUI : UserControl, ICheckNotifier
     private Bitmap _fail;
     private Bitmap _failEx;
 
-    ConcurrentBag<CheckEventArgs> _results = new();
-    bool outOfDate = false;
+    private ConcurrentBag<CheckEventArgs> _results = new();
+    private bool outOfDate = false;
 
     public ChecksUI()
     {
@@ -129,7 +129,7 @@ public partial class ChecksUI : UserControl, ICheckNotifier
 
     public event EventHandler<AllChecksCompleteHandlerArgs> AllChecksComplete;
 
-    private Thread _checkingThread;
+    private Thread _checkingThread; 
     private YesNoYesToAllDialog yesNoYesToAllDialog;
 
     protected override void OnLoad(EventArgs e)

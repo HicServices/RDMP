@@ -13,9 +13,7 @@ using Rdmp.UI.ItemActivation;
 
 namespace Rdmp.UI.CommandExecution.Proposals;
 
-internal class
-    ProposeExecutionWhenTargetIsPermissionWindowUsedByCacheProgressNode : RDMPCommandExecutionProposal<
-        PermissionWindowUsedByCacheProgressNode>
+internal class ProposeExecutionWhenTargetIsPermissionWindowUsedByCacheProgressNode : RDMPCommandExecutionProposal<PermissionWindowUsedByCacheProgressNode>
 {
     public ProposeExecutionWhenTargetIsPermissionWindowUsedByCacheProgressNode(IActivateItems itemActivator) :
         base(itemActivator)

@@ -15,7 +15,7 @@ using Tests.Common;
 
 namespace Rdmp.Core.Tests.DataExport.Data;
 
-internal class ExternalCohortTableTests : UnitTests
+internal class ExternalCohortTableTests:UnitTests
 {
     /// <summary>
     /// Demonstrates the minimum properties required to create a <see cref="ExternalCohortTable"/>.  See <see cref="CreateNewCohortDatabaseWizard"/>

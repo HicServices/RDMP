@@ -13,7 +13,7 @@ using Tests.Common;
 
 namespace Rdmp.Core.Tests.Databases;
 
-internal class Patch68FixNamespacesTest : UnitTests
+internal class Patch68FixNamespacesTest:UnitTests
 {
     /// <summary>
     /// Tests the systems ability to migrate old class paths in deployed databases to the new namespaces as they exist in

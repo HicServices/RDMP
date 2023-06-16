@@ -17,7 +17,7 @@ namespace Rdmp.Core.Tests.DataLoad.Engine.Integration.PipelineTests.Components;
 [Category("Unit")]
 public class TransposerTests
 {
-    DataTable dt = new();
+    private DataTable dt = new();
 
 
     [OneTimeSetUp]

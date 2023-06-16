@@ -11,9 +11,7 @@ using Rdmp.UI.ItemActivation;
 
 namespace Rdmp.UI.CommandExecution.Proposals;
 
-internal class
-    ProposeExecutionWhenTargetIsPipelineCompatibleWithUseCaseNode : RDMPCommandExecutionProposal<
-        PipelineCompatibleWithUseCaseNode>
+internal class ProposeExecutionWhenTargetIsPipelineCompatibleWithUseCaseNode : RDMPCommandExecutionProposal<PipelineCompatibleWithUseCaseNode>
 {
     public ProposeExecutionWhenTargetIsPipelineCompatibleWithUseCaseNode(IActivateItems itemActivator) : base(
         itemActivator)

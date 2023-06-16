@@ -13,7 +13,7 @@ using Rdmp.UI.ProjectUI.Datasets;
 
 namespace Rdmp.UI.CommandExecution.Proposals;
 
-internal class ProposeExecutionWhenTargetIsSelectedDataSets : RDMPCommandExecutionProposal<SelectedDataSets>
+internal class ProposeExecutionWhenTargetIsSelectedDataSets:RDMPCommandExecutionProposal<SelectedDataSets>
 {
     public ProposeExecutionWhenTargetIsSelectedDataSets(IActivateItems itemActivator) : base(itemActivator)
     {

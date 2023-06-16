@@ -14,7 +14,7 @@ public class ExecuteCommandExportInDublinCoreFormat : BasicCommandExecution, IAt
 {
     private readonly DublinCoreDefinition _definition;
     private FileInfo _toExport;
-    readonly DublinCoreTranslater _translater = new();
+    private readonly DublinCoreTranslater _translater = new();
 
     public ExecuteCommandExportInDublinCoreFormat(IBasicActivateItems activator, Catalogue catalogue) : base(activator)
     {

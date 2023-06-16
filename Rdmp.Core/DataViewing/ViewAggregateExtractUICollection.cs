@@ -88,8 +88,7 @@ public class ViewAggregateExtractUICollection : PersistableObjectCollection, IVi
             autoComplete.Add(AggregateConfiguration);
     }
 
-    private AggregateConfiguration AggregateConfiguration =>
-        DatabaseObjects.OfType<AggregateConfiguration>().SingleOrDefault();
+    private AggregateConfiguration AggregateConfiguration => DatabaseObjects.OfType<AggregateConfiguration>().SingleOrDefault();
 
     public IQuerySyntaxHelper GetQuerySyntaxHelper() => AggregateConfiguration?.GetQuerySyntaxHelper();
 }

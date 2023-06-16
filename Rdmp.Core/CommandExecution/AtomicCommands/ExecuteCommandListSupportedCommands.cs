@@ -17,7 +17,7 @@ namespace Rdmp.Core.CommandExecution.AtomicCommands;
 /// </summary>
 [Alias("lc")]
 [Alias("ListCommands")]
-internal class ExecuteCommandListSupportedCommands : BasicCommandExecution
+internal class ExecuteCommandListSupportedCommands:BasicCommandExecution
 {
     private readonly string _pattern;
     private readonly bool _verbose;

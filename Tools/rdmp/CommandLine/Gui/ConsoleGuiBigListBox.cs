@@ -38,9 +38,10 @@ internal class ConsoleGuiBigListBox<T>
     /// <summary>
     /// Ongoing filtering of a large collection should be cancelled when the user changes the filter even if it is not completed yet
     /// </summary>
-    ConcurrentBag<CancellationTokenSource> _cancelFiltering = new();
-    Task _currentFilterTask;
-    object _taskCancellationLock = new();
+    private ConcurrentBag<CancellationTokenSource> _cancelFiltering = new();
+
+    private Task _currentFilterTask;
+    private object _taskCancellationLock = new();
         
     private ListView _listView;
     private bool _changes;
@@ -225,7 +226,7 @@ internal class ConsoleGuiBigListBox<T>
     {
     }
 
-    private bool Timer(MainLoop caller)
+    private bool Timer (MainLoop caller)
     {
         if (_changes && DateTime.Now.Subtract(_lastKeypress) > TimeSpan.FromSeconds(1))
             lock (_taskCancellationLock)

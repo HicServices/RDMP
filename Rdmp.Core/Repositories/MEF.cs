@@ -228,8 +228,8 @@ public class MEF
         return GetTypes(typeof(T));
     }
 
-    readonly object _cachedImplementationsLock = new();
-    readonly Dictionary<Type,Type[]> _cachedImplementations = new();
+    private readonly object _cachedImplementationsLock = new();
+    private readonly Dictionary<Type,Type[]> _cachedImplementations = new();
 
     /// <summary>
     /// Returns MEF exported Types which inherit or implement <paramref name="type"/>.  E.g. pass IAttacher to see

@@ -34,7 +34,7 @@ namespace Rdmp.UI.Progress;
 /// </summary>
 public partial class ProgressUI : UserControl, IDataLoadEventListener
 {
-    DataTable progress = new();
+    private DataTable progress = new();
 
     /// <summary>
     /// Sender for all global errors that should never be filtered out of the <see cref="ProgressUI"/>
@@ -149,15 +149,15 @@ public partial class ProgressUI : UserControl, IDataLoadEventListener
         lblCrashed.Visible = false;
         lblSuccess.Visible = false;
     }
-        
-    Dictionary<object, HashSet<string>> JobsreceivedFromSender = new();
 
-    object oProgressQueLock = new();
-    Dictionary<string, QueuedProgressMessage> ProgressQueue = new();
+    private Dictionary<object, HashSet<string>> JobsreceivedFromSender = new();
+
+    private object oProgressQueLock = new();
+    private Dictionary<string, QueuedProgressMessage> ProgressQueue = new();
 
 
-    object oNotifyQueLock = new();
-    List<ProgressUIEntry> NotificationQueue = new();
+    private object oNotifyQueLock = new();
+    private List<ProgressUIEntry> NotificationQueue = new();
 
     public void Progress(object sender,ProgressEventArgs args)
     {

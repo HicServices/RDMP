@@ -45,8 +45,9 @@ public class ExcelAttacher : FlatFileAttacher
 
     private bool _haveServedData = false;
 
-    protected override void OpenFile(FileInfo fileToLoad, IDataLoadEventListener listener,
-        GracefulCancellationToken cancellationToken)
+    private bool _haveServedData = false;
+
+    protected override void OpenFile(FileInfo fileToLoad, IDataLoadEventListener listener,GracefulCancellationToken cancellationToken)
     {
         _haveServedData = false;
         _fileToLoad = fileToLoad;

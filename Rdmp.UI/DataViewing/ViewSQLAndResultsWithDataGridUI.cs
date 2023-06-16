@@ -49,11 +49,11 @@ public partial class ViewSQLAndResultsWithDataGridUI : RDMPUserControl, IObjectC
     private string _originalSql;
     private DiscoveredServer _server;
     private AutoCompleteProviderWin _autoComplete;
-        
-    ToolStripButton btnExecuteSql = new("Run");
-    ToolStripButton btnResetSql = new("Restore Original SQL");
 
-    readonly ToolStripTimeout _timeoutControls = new();
+    private ToolStripButton btnExecuteSql = new("Run");
+    private ToolStripButton btnResetSql = new("Restore Original SQL");
+
+    private readonly ToolStripTimeout _timeoutControls = new();
     private ToolStripLabel _serverHeader;
     private DatabaseTypeIconProvider _databaseTypeIconProvider;
 

@@ -30,7 +30,7 @@ namespace Rdmp.Core.QueryBuilding;
 public class QueryBuilder : ISqlQueryBuilder
 {
     private readonly ITableInfo[] _forceJoinsToTheseTables;
-    object oSQLLock = new();
+    private object oSQLLock = new();
 
     /// <inheritdoc/>
     public string SQL

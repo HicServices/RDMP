@@ -11,7 +11,7 @@ using Rdmp.UI.ItemActivation;
 
 namespace Rdmp.UI.CommandExecution.Proposals;
 
-internal class ProposeExecutionWhenTargetIsProcessTaskArgument : RDMPCommandExecutionProposal<ProcessTaskArgument>
+internal class ProposeExecutionWhenTargetIsProcessTaskArgument: RDMPCommandExecutionProposal<ProcessTaskArgument>
 {
     private IActivateItems _activator;
 

@@ -36,7 +36,7 @@ public class YamlRepository : MemoryDataExportRepository
 
     public DirectoryInfo Directory { get; }
 
-    object lockFs = new();
+    private object lockFs = new();
 
     public YamlRepository(DirectoryInfo dir)
     {

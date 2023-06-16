@@ -17,7 +17,7 @@ using SixLabors.ImageSharp.PixelFormats;
 namespace Rdmp.UI.Tests;
 
 [SupportedOSPlatform("windows7.0")]
-internal class CatalogueIconProviderTests : UITests
+internal class CatalogueIconProviderTests: UITests
 {
     [Test]
     public void CatalogueIconProvider_HasImage_NoImage()

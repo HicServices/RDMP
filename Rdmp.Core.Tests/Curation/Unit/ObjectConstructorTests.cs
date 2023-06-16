@@ -90,6 +90,7 @@ public class ObjectConstructorTests : UnitTests
     {
     }
 
+
     private class TestClass1
     {
         public TestClass1(object o)
@@ -132,6 +133,7 @@ public class ObjectConstructorTests : UnitTests
         }
     }
 
+
     private class TestClass5
     {
         public TestArg A { get; set; }
@@ -153,9 +155,12 @@ public class ObjectConstructorTests : UnitTests
         public string Text { get; set; }
     }
 
-    private class TestArg2 : TestArg
+    private class TestArg2:TestArg
     {
     }
+
+    private class TestArg3 : TestArg2
+    {
 
     private class TestArg3 : TestArg2
     {

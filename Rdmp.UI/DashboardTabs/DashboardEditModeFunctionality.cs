@@ -127,6 +127,9 @@ public class DashboardEditModeFunctionality
 
     private void control_MouseMove(object sender, MouseEventArgs e)
     {
+
+    private void control_MouseMove(object sender, MouseEventArgs e)
+    {
         var s = (UserControl)sender;
 
         var currentScreenCoordinate = s.PointToScreen(e.Location);
@@ -215,7 +218,12 @@ public class DashboardEditModeFunctionality
 
     private enum EditModeAction
     {
-        None = 0,
+        return e.X > sender.Width - 20 && e.Y > sender.Height - 20;
+    }
+
+    private enum EditModeAction
+    {
+        None=0,
         Move,
         Resize
     }

@@ -23,8 +23,8 @@ namespace Rdmp.UI.Validation;
 public partial class ResolveMissingTargetPropertiesUI : Form
 {
     private string[] AvailableColumns { get; set; }
-
-    public ResolveMissingTargetPropertiesUI(Validator validator, ExtractionInformation[] availableColumns)
+        
+    public ResolveMissingTargetPropertiesUI( Validator validator, ExtractionInformation[] availableColumns)
     {
         if (validator == null && availableColumns == null)
             return;

@@ -14,7 +14,7 @@ using ScintillaNET;
 namespace Rdmp.UI.ScintillaHelper;
 
 [DesignerCategory("")]
-class ScintillaMenu:ContextMenuStrip
+internal class ScintillaMenu:ContextMenuStrip
 {
     private readonly Scintilla _scintilla;
     private ToolStripMenuItem _miUndo;

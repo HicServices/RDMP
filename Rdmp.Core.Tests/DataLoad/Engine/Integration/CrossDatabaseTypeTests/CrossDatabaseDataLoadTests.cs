@@ -453,7 +453,7 @@ MrMurder,2001-01-01,Yella");
     }
 }
 
-internal class CustomINameDatabasesAndTablesDuringLoads : INameDatabasesAndTablesDuringLoads
+internal class CustomINameDatabasesAndTablesDuringLoads:INameDatabasesAndTablesDuringLoads
 {
     public string GetDatabaseName(string rootDatabaseName, LoadBubble convention)
     {

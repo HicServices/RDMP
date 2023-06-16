@@ -28,6 +28,8 @@ public class BasicAnonymisationEngine : IPluginDataFlowComponent<DataTable>, IPi
 
     private Dictionary<string, ANOTransformer> columnsToAnonymise = new();
 
+    private IdentifierDumper _dumper;
+        
     public TableInfo TableToLoad { get; set; }
 
     public void PreInitialize(TableInfo target, IDataLoadEventListener listener)
@@ -61,8 +63,8 @@ public class BasicAnonymisationEngine : IPluginDataFlowComponent<DataTable>, IPi
     private Stopwatch stopwatch_TimeSpentTransforming = new();
     private Stopwatch stopwatch_TimeSpentDumping = new();
 
-    Stopwatch stopwatch_TimeSpentTransforming = new();
-    Stopwatch stopwatch_TimeSpentDumping = new();
+    private Stopwatch stopwatch_TimeSpentTransforming = new();
+    private Stopwatch stopwatch_TimeSpentDumping = new();
 
     public DataTable ProcessPipelineData( DataTable toProcess, IDataLoadEventListener listener, GracefulCancellationToken cancellationToken)
     {

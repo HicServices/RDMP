@@ -121,6 +121,7 @@ public partial class SupportingSQLTableUI : SupportingSQLTableUI_Design, ISaveab
 
     private bool _bLoading;
 
+
     private void QueryPreview_TextChanged(object sender, EventArgs e)
     {
         if (_supportingSQLTable != null)

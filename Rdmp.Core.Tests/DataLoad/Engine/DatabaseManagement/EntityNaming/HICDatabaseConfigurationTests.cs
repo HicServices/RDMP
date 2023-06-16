@@ -18,7 +18,7 @@ using Tests.Common;
 
 namespace Rdmp.Core.Tests.DataLoad.Engine.DatabaseManagement.EntityNaming;
 
-internal class HICDatabaseConfigurationTests : UnitTests
+internal class HICDatabaseConfigurationTests: UnitTests
 {
     /// <summary>
     /// Tests the ability of <see cref="HICDatabaseConfiguration"/> to predict where tables will exist

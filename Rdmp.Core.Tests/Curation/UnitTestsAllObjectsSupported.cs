@@ -18,7 +18,7 @@ using Tests.Common;
 
 namespace Rdmp.Core.Tests.Curation;
 
-internal class UnitTestsAllObjectsSupported : UnitTests
+internal class UnitTestsAllObjectsSupported:UnitTests
 {
     /// <summary>
     /// Who tests the tester? this method does! It makes sure that <see cref="UnitTests.WhenIHaveA{T}()"/> supports all <see cref="DatabaseEntity"/> classes (except

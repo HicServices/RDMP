@@ -67,6 +67,7 @@ public class AggregateBuilder : ISqlQueryBuilder
 
 
     private AggregateCountColumn _countColumn;
+
     private QueryTimeColumn _pivotDimension = null;
     private AggregateContinuousDateAxis _axis = null;
     private AggregateDimension _axisAppliesToDimension = null;
@@ -126,7 +127,6 @@ public class AggregateBuilder : ISqlQueryBuilder
     public ParameterManager ParameterManager { get; private set; }
 
     private string _sql;
-
     /// <inheritdoc/>
     public bool SQLOutOfDate { get; set; }
 

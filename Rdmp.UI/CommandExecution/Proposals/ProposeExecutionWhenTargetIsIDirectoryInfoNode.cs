@@ -11,7 +11,7 @@ using Rdmp.UI.ItemActivation;
 
 namespace Rdmp.UI.CommandExecution.Proposals;
 
-internal class ProposeExecutionWhenTargetIsIDirectoryInfoNode : RDMPCommandExecutionProposal<IDirectoryInfoNode>
+internal class ProposeExecutionWhenTargetIsIDirectoryInfoNode:RDMPCommandExecutionProposal<IDirectoryInfoNode>
 {
     public ProposeExecutionWhenTargetIsIDirectoryInfoNode(IActivateItems itemActivator) : base(itemActivator)
     {

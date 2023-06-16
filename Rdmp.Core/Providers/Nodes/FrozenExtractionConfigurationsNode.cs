@@ -12,7 +12,7 @@ namespace Rdmp.Core.Providers.Nodes;
 /// <summary>
 /// Collection of all previously extracted (and now readonly) <see cref="ExtractionConfiguration"/>s in a given <see cref="Project"/>
 /// </summary>
-internal class FrozenExtractionConfigurationsNode : Node, IOrderable
+internal class FrozenExtractionConfigurationsNode:Node , IOrderable
 {
     public Project Project { get; set; }
 

@@ -11,8 +11,7 @@ using Rdmp.UI.MainFormUITabs;
 
 namespace Rdmp.UI.CommandExecution.Proposals;
 
-internal class
-    ProposeExecutionWhenTargetIsConnectionStringKeyword : RDMPCommandExecutionProposal<ConnectionStringKeyword>
+internal class ProposeExecutionWhenTargetIsConnectionStringKeyword :RDMPCommandExecutionProposal<ConnectionStringKeyword>
 {
     public ProposeExecutionWhenTargetIsConnectionStringKeyword(IActivateItems itemActivator) : base(itemActivator)
     {

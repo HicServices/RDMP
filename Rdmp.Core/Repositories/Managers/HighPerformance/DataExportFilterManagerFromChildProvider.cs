@@ -19,7 +19,7 @@ namespace Rdmp.Core.Repositories.Managers.HighPerformance;
 /// </summary>
 internal class DataExportFilterManagerFromChildProvider : DataExportFilterManager
 {
-    readonly Dictionary<int, List<FilterContainer>> _subcontainers = new();
+    private readonly Dictionary<int, List<FilterContainer>> _subcontainers = new();
         
     private Dictionary<int, List<DeployedExtractionFilter>> _containersToFilters;
 

@@ -15,7 +15,7 @@ using Rdmp.Core;
 
 namespace Rdmp.UI.Tests;
 
-internal class ArbitraryFolderNodeTests : UITests
+internal class ArbitraryFolderNodeTests:UITests
 {
     [Test]
     [UITimeout(50000)]

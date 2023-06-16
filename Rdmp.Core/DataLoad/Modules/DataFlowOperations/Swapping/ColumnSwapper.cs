@@ -30,8 +30,7 @@ namespace Rdmp.Core.DataLoad.Modules.DataFlowOperations.Swapping;
 /// <summary>
 /// Swaps values stored in a given column for values found in a mapping table (e.g. swap ReleaseID for PrivateID)
 /// </summary>
-internal class ColumnSwapper : IPluginDataFlowComponent<DataTable>, IPipelineOptionalRequirement<IExtractCommand>,
-    IPipelineOptionalRequirement<ICohortCreationRequest>
+internal class ColumnSwapper:IPluginDataFlowComponent<DataTable>, IPipelineOptionalRequirement<IExtractCommand>, IPipelineOptionalRequirement<ICohortCreationRequest>
 {
     [DemandsInitialization(
         "The column in your pipeline containing input values you want swapped.  Leave null to use the same name as the MappingFromColumn")]
@@ -87,8 +86,8 @@ False - Drop the row from the DataTable (and issue a warning)", DefaultValue = t
         set => _culture = value;
     }
 
-    private Dictionary<object, List<object>> _mappingTable;
-
+    private Dictionary<object,List<object>> _mappingTable;
+        
     /// <summary>
     /// The Type of objects that are stored in the Keys of <see cref="_mappingTable"/>.  For use when input types do not match the mapping table types
     /// </summary>

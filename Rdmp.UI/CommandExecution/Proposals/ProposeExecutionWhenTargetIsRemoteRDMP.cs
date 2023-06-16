@@ -11,7 +11,7 @@ using Rdmp.UI.SimpleDialogs.Remoting;
 
 namespace Rdmp.UI.CommandExecution.Proposals;
 
-internal class ProposeExecutionWhenTargetIsRemoteRDMP : RDMPCommandExecutionProposal<RemoteRDMP>
+internal class ProposeExecutionWhenTargetIsRemoteRDMP:RDMPCommandExecutionProposal<RemoteRDMP>
 {
     public ProposeExecutionWhenTargetIsRemoteRDMP(IActivateItems itemActivator) : base(itemActivator)
     {

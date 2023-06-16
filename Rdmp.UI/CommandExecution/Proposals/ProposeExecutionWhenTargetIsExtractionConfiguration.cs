@@ -15,8 +15,7 @@ using Rdmp.UI.ProjectUI;
 
 namespace Rdmp.UI.CommandExecution.Proposals;
 
-internal class
-    ProposeExecutionWhenTargetIsExtractionConfiguration : RDMPCommandExecutionProposal<ExtractionConfiguration>
+internal class ProposeExecutionWhenTargetIsExtractionConfiguration:RDMPCommandExecutionProposal<ExtractionConfiguration>
 {
     public ProposeExecutionWhenTargetIsExtractionConfiguration(IActivateItems itemActivator) : base(itemActivator)
     {

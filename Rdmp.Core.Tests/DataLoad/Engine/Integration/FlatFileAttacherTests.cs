@@ -30,7 +30,7 @@ namespace Rdmp.Core.Tests.DataLoad.Engine.Integration;
 public class FlatFileAttacherTests : DatabaseTests
 {
     private LoadDirectory _loadDirectory;
-    DirectoryInfo _parentDir;
+    private DirectoryInfo _parentDir;
     private DiscoveredDatabase _database;
     private DiscoveredTable _table;
 

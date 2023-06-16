@@ -55,9 +55,9 @@ public partial class LoadDiagramUI : LoadDiagram_Design
     private LoadDiagramServerNode _raw;
     private readonly RDMPCollectionCommonFunctionality _collectionCommonFunctionality = new();
 
-    readonly RDMPCollectionCommonFunctionality _collectionCommonFunctionality = new();
+    private readonly RDMPCollectionCommonFunctionality _collectionCommonFunctionality = new();
 
-    readonly ToolStripButton _btnFetchData = new("Fetch State",CatalogueIcons.DatabaseRefresh.ImageToBitmap())
+    private readonly ToolStripButton _btnFetchData = new("Fetch State",CatalogueIcons.DatabaseRefresh.ImageToBitmap())
     {
         DisplayStyle = ToolStripItemDisplayStyle.ImageAndText
     };

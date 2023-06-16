@@ -20,7 +20,7 @@ using Tests.Common;
 
 namespace Rdmp.Core.Tests.CohortCommitting;
 
-internal class CommitCohortExample : DatabaseTests
+internal class CommitCohortExample: DatabaseTests
 {
     [TestCase(DatabaseType.MicrosoftSQLServer, "varchar(10)")]
     [TestCase(DatabaseType.MySql, "varchar(10)")]

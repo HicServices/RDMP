@@ -14,7 +14,7 @@ using Rdmp.Core.Validation.Constraints.Secondary;
 namespace Rdmp.Core.Tests.Validation.Constraints.Primary;
 
 [Category("Unit")]
-internal class BoundsValidationDateTest : ValidationTests
+internal class BoundsValidationDateTest: ValidationTests
 {
     private Dictionary<string, object> _d;
 

@@ -12,7 +12,7 @@ using Tests.Common;
 
 namespace Rdmp.Core.Tests.DataLoad.Engine.Integration.CrossDatabaseTypeTests;
 
-internal class HowDoWeAchieveMd5Test : DatabaseTests
+internal class HowDoWeAchieveMd5Test:DatabaseTests
 {
     [TestCase(DatabaseType.MicrosoftSQLServer)]
     [TestCase(DatabaseType.MySql)]

@@ -26,7 +26,7 @@ using TypeGuesser;
 
 namespace Rdmp.Core.Tests.QueryCaching;
 
-internal class QueryCachingCrossServerTests : TestsRequiringA
+internal class QueryCachingCrossServerTests: TestsRequiringA
 {
     [TestCase(DatabaseType.MicrosoftSQLServer, typeof(QueryCachingPatcher))]
     [TestCase(DatabaseType.MySql, typeof(QueryCachingPatcher))]

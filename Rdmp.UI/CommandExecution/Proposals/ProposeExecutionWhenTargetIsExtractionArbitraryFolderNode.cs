@@ -10,9 +10,7 @@ using Rdmp.UI.ItemActivation;
 
 namespace Rdmp.UI.CommandExecution.Proposals;
 
-internal class
-    ProposeExecutionWhenTargetIsExtractionArbitraryFolderNode : RDMPCommandExecutionProposal<
-        ExtractionArbitraryFolderNode>
+internal class ProposeExecutionWhenTargetIsExtractionArbitraryFolderNode : RDMPCommandExecutionProposal<ExtractionArbitraryFolderNode>
 {
     public ProposeExecutionWhenTargetIsExtractionArbitraryFolderNode(IActivateItems activator) : base(activator)
     {

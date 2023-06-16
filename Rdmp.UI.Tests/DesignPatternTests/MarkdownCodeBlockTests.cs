@@ -207,7 +207,7 @@ internal class MarkdownCodeBlockTests
         {
             #region cae13dde1de14f5cac984330a222c311
 
-            private class ProposeExecutionWhenTargetIsPipeline : RDMPCommandExecutionProposal<Pipeline>
+            private class ProposeExecutionWhenTargetIsPipeline:RDMPCommandExecutionProposal<Pipeline>
             {
                 public ProposeExecutionWhenTargetIsPipeline(IActivateItems itemActivator) : base(itemActivator)
                 {

@@ -322,7 +322,7 @@ public partial class SelectDialog<T> : Form, IVirtualListDataSource where T : cl
         if (e.Column == olvHierarchy) e.SubItem.ForeColor = Color.Gray;
     }
 
-    IconOverlayProvider provider = new();
+    private IconOverlayProvider provider = new();
 
     private Bitmap GetHierarchyImage(object rowObject)
     {

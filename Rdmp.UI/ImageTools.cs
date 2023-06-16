@@ -29,8 +29,7 @@ public static class ImageTools
         });
     }
 
-    private static ConcurrentDictionary<byte[], Bitmap> ImageToBitmapCacheByteArray =
-        new();
+    private static ConcurrentDictionary<byte[], Bitmap> ImageToBitmapCacheByteArray = new ();
 
     public static Bitmap ImageToBitmap(this byte[] img)
     {

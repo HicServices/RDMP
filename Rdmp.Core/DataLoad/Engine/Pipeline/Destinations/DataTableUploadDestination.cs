@@ -84,9 +84,9 @@ public class DataTableUploadDestination : IPluginDataFlowComponent<DataTable>, I
 
     private IBulkCopy _bulkcopy;
     private int _affectedRows = 0;
-        
-    Stopwatch swTimeSpentWriting = new();
-    Stopwatch swMeasuringStrings = new();
+
+    private Stopwatch swTimeSpentWriting = new();
+    private Stopwatch swMeasuringStrings = new();
 
     private DiscoveredServer _loggingDatabaseSettings;
 

@@ -30,7 +30,7 @@ public sealed class ExtractionPipelineUseCase : PipelineUseCase
 {
     private readonly IPipeline _pipeline;
     private readonly DataLoadInfo _dataLoadInfo;
-
+        
     public IExtractCommand ExtractCommand { get; set; }
     public ExecuteDatasetExtractionSource Source { get; private set; }
 

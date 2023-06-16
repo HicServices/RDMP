@@ -11,7 +11,7 @@ using Rdmp.UI.ItemActivation;
 
 namespace Rdmp.UI.CommandExecution.Proposals;
 
-internal class ProposeExecutionWhenTargetIsExternalCohortTable : RDMPCommandExecutionProposal<ExternalCohortTable>
+internal class ProposeExecutionWhenTargetIsExternalCohortTable:RDMPCommandExecutionProposal<ExternalCohortTable>
 {
     public ProposeExecutionWhenTargetIsExternalCohortTable(IActivateItems itemActivator) : base(itemActivator)
     {

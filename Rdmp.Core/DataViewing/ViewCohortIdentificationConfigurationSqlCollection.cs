@@ -16,8 +16,7 @@ using Rdmp.Core.ReusableLibraryCode.DataAccess;
 
 namespace Rdmp.Core.DataViewing;
 
-internal class ViewCohortIdentificationConfigurationSqlCollection : PersistableObjectCollection,
-    IViewSQLAndResultsCollection
+internal class ViewCohortIdentificationConfigurationSqlCollection : PersistableObjectCollection, IViewSQLAndResultsCollection
 {
     public bool UseQueryCache { get; set; }
 
@@ -77,8 +76,7 @@ internal class ViewCohortIdentificationConfigurationSqlCollection : PersistableO
     {
     }
 
-    private CohortIdentificationConfiguration CohortIdentificationConfiguration =>
-        DatabaseObjects.OfType<CohortIdentificationConfiguration>().SingleOrDefault();
+    private CohortIdentificationConfiguration CohortIdentificationConfiguration => DatabaseObjects.OfType<CohortIdentificationConfiguration>().SingleOrDefault();
 
     public IQuerySyntaxHelper GetQuerySyntaxHelper() => GetDataAccessPoint()?.GetQuerySyntaxHelper();
 }

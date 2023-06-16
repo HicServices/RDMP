@@ -27,10 +27,11 @@ public partial class PipelineSelectionUI : UserControl, IPipelineSelectionUI
     public event Action PipelineDeleted = delegate { };
 
     public event EventHandler PipelineChanged;
+    private IPipeline _previousSelection = null;
 
-    ToolTip tt = new();
+    private ToolTip tt = new();
 
-    const string ShowAll = "Show All/Incompatible Pipelines";
+    private const string ShowAll = "Show All/Incompatible Pipelines";
     public bool showAll = false;
 
     public IPipeline Pipeline

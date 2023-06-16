@@ -20,7 +20,7 @@ namespace Rdmp.Core.ReusableLibraryCode.Settings;
 /// </summary>
 public static class UserSettings
 {
-    static Lazy<ISettings> implementation = new(() => CreateSettings(), System.Threading.LazyThreadSafetyMode.PublicationOnly);
+    private static Lazy<ISettings> implementation = new(() => CreateSettings(), System.Threading.LazyThreadSafetyMode.PublicationOnly);
 
     private static ISettings AppSettings
     {
@@ -602,8 +602,9 @@ public static class UserSettings
         }
     }
 
-    public static void ClearUserSettings(){
-        AppSettings.Clear();
+    private static ISettings CreateSettings()
+    {
+        return new RDMPApplicationSettings();
     }
     private static ISettings CreateSettings() => new RDMPApplicationSettings();
 }

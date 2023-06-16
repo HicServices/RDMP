@@ -83,16 +83,16 @@ public partial class AggregateGraphUI : AggregateGraph_Design
     private ToolStripButton btnResendQuery = new("Send Query", FamFamFamIcons.arrow_refresh.ImageToBitmap());
     private readonly ToolStripTimeout _timeoutControls = new();
 
-    ToolStripMenuItem miSaveImages = new("Save Image", FamFamFamIcons.disk.ImageToBitmap());
+    private ToolStripMenuItem miSaveImages = new("Save Image", FamFamFamIcons.disk.ImageToBitmap());
 
-    ToolStripMenuItem miCopyToClipboard = new("Copy to Clipboard", CatalogueIcons.Clipboard.ImageToBitmap());
-    ToolStripMenuItem miClipboardWord = new("Word Format");
-    ToolStripMenuItem miClipboardCsv = new("Comma Separated Format");
-    ToolStripMenuItem btnCache = new("Cache", FamFamFamIcons.picture_save.ImageToBitmap());
+    private ToolStripMenuItem miCopyToClipboard = new("Copy to Clipboard", CatalogueIcons.Clipboard.ImageToBitmap());
+    private ToolStripMenuItem miClipboardWord = new("Word Format");
+    private ToolStripMenuItem miClipboardCsv = new("Comma Separated Format");
+    private ToolStripMenuItem btnCache = new("Cache", FamFamFamIcons.picture_save.ImageToBitmap());
 
-    ToolStripButton btnResendQuery = new("Send Query", FamFamFamIcons.arrow_refresh.ImageToBitmap());
+    private ToolStripButton btnResendQuery = new("Send Query", FamFamFamIcons.arrow_refresh.ImageToBitmap());
 
-    readonly ToolStripTimeout _timeoutControls = new();
+    private readonly ToolStripTimeout _timeoutControls = new();
         
         
     public AggregateGraphUI()
@@ -219,7 +219,7 @@ public partial class AggregateGraphUI : AggregateGraph_Design
 
     private DbCommand _cmd;
 
-    private ChartDashStyle[] StyleList =
+    private ChartDashStyle[] StyleList = new ChartDashStyle[]
     {
         ChartDashStyle.Solid,
         ChartDashStyle.Dash,

@@ -12,7 +12,7 @@ using Tests.Common;
 
 namespace Rdmp.Core.Tests.DataExport;
 
-internal class DataExportRepositoryTests : DatabaseTests
+internal class DataExportRepositoryTests:DatabaseTests
 {
     [Test]
     public void TestNoIsExtractionIdentifierFinding()
