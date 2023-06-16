@@ -29,7 +29,7 @@ namespace Rdmp.Core.DataExport.DataExtraction.Pipeline;
 public sealed class ExtractionPipelineUseCase : PipelineUseCase
 {
     private readonly IPipeline _pipeline;
-    readonly DataLoadInfo _dataLoadInfo;
+    private readonly DataLoadInfo _dataLoadInfo;
         
     public IExtractCommand ExtractCommand { get; set; }
     public ExecuteDatasetExtractionSource Source { get; private set; }

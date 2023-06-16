@@ -23,7 +23,7 @@ using Terminal.Gui.Trees;
 
 namespace Rdmp.Core.CommandLine.Gui;
 
-class ConsoleMainWindow
+internal class ConsoleMainWindow
 {
     private Window _win;
     private TreeView<object> _treeView;

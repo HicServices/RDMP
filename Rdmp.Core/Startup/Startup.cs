@@ -50,9 +50,9 @@ public class Startup
     /// </summary>
     public bool SkipPatching { get; set; }
 
-    public PluginPatcherFoundHandler PluginPatcherFound = delegate { }; 
+    public PluginPatcherFoundHandler PluginPatcherFound = delegate { };
 
-    PatcherManager _patcherManager = new();
+    private PatcherManager _patcherManager = new();
 
     #region Constructors
     public Startup(IRDMPPlatformRepositoryServiceLocator repositoryLocator):this()

@@ -88,7 +88,7 @@ public partial class RDMPTaskBarUI : UserControl
     /// <summary>
     /// Updates the enabled status (greyed out) of the Forward/Back buttons based on the current <see cref="_manager"/> <see cref="NavigationTrack{T}"/>
     /// </summary>
-    void UpdateForwardBackEnabled()
+    private void UpdateForwardBackEnabled()
     {
         btnBack.Enabled = _manager.Navigation.CanBack();
         btnForward.Enabled = _manager.Navigation.CanForward();

@@ -9,7 +9,7 @@ using Rdmp.UI.CommandExecution.AtomicCommands;
 
 namespace Rdmp.UI.Menus;
 
-class ExtractionConfigurationsNodeMenu:RDMPContextMenuStrip
+internal class ExtractionConfigurationsNodeMenu:RDMPContextMenuStrip
 {
     public ExtractionConfigurationsNodeMenu(RDMPContextMenuStripArgs args, ExtractionConfigurationsNode extractionConfigurationsNode): base(args, extractionConfigurationsNode)
     {

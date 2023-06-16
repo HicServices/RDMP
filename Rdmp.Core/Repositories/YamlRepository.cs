@@ -35,7 +35,7 @@ public class YamlRepository : MemoryDataExportRepository
     public IReadOnlyCollection<IMapsDirectlyToDatabaseTable> AllObjects => Objects.Keys.ToList().AsReadOnly();
     public DirectoryInfo Directory { get; }
 
-    object lockFs = new();
+    private object lockFs = new();
 
     public YamlRepository(DirectoryInfo dir)
     {
@@ -583,7 +583,7 @@ public class YamlRepository : MemoryDataExportRepository
         SaveCohortContainerContents(parent);
     }
 
-    class PersistCohortContainerContent
+    private class PersistCohortContainerContent
     {
         public string Type { get; set; }
         public int ID { get; set; }

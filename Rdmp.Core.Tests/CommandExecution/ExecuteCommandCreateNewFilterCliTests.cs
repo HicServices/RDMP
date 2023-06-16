@@ -16,7 +16,7 @@ namespace Rdmp.Core.Tests.CommandExecution;
 /// <summary>
 /// Tests for <see cref="ExecuteCommandCreateNewFilter">
 /// </summary>
-class ExecuteCommandCreateNewFilterCliTests : CommandCliTests
+internal class ExecuteCommandCreateNewFilterCliTests : CommandCliTests
 {
     [Test]
     public void TestNewFilterForAggregate()

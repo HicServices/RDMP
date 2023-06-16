@@ -25,14 +25,12 @@ public class CustomMetadataReport
     /// <summary>
     /// Substitutions that are used during template value replacement e.g. $Name => Catalogue.Name
     /// </summary>
-
-    Dictionary<string,Func<Catalogue,object>> Replacements = new();
+    private Dictionary<string,Func<Catalogue,object>> Replacements = new();
 
     /// <summary>
     /// Substitutions that are used during template value replacement when inside a '$foreach CatalogueItem' block e.g. $Name => CatalogueItem.Name
     /// </summary>
-
-    Dictionary<string,Func<CatalogueItem,object>> ReplacementsCatalogueItem = new();
+    private Dictionary<string,Func<CatalogueItem,object>> ReplacementsCatalogueItem = new();
 
         
     /// <summary>

@@ -19,7 +19,7 @@ using Terminal.Gui;
 
 namespace Rdmp.Core.CommandLine.Gui.Windows.RunnerWindows;
 
-class RunEngineWindow<T> : Window, IListDataSource where T : RDMPCommandLineOptions
+internal class RunEngineWindow<T> : Window, IListDataSource where T : RDMPCommandLineOptions
 {
     private Process process;
     private ListView _results;

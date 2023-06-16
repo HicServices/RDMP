@@ -16,7 +16,7 @@ using Terminal.Gui;
 
 namespace Rdmp.Core.CommandLine.Gui.Windows;
 
-class ConsoleGuiEdit : Window
+internal class ConsoleGuiEdit : Window
 {
     private readonly IBasicActivateItems _activator;
     private List<PropertyInListView> collection;

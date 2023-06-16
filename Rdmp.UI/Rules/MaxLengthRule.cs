@@ -16,7 +16,7 @@ namespace Rdmp.UI.Rules;
 /// reports an error if it is too long to fit
 /// </summary>
 /// <typeparam name="T"></typeparam>
-class MaxLengthRule<T> : BinderRule<T> where T : IMapsDirectlyToDatabaseTable
+internal class MaxLengthRule<T> : BinderRule<T> where T : IMapsDirectlyToDatabaseTable
 {
     private string _problemDescription;
     private int? _maxLength;

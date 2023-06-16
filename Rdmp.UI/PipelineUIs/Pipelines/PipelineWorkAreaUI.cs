@@ -104,7 +104,7 @@ public partial class PipelineWorkAreaUI : UserControl
         olvComponents.AddObjects(_allComponents.Where(a => a.IsCompatible() || cbShowIncompatible.Checked).ToArray());
     }
 
-    void _pipelineDiagram_SelectedComponentChanged(object sender, IPipelineComponent selected)
+    private void _pipelineDiagram_SelectedComponentChanged(object sender, IPipelineComponent selected)
     {
         gbArguments.Enabled = true;
 

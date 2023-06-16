@@ -32,7 +32,7 @@ public class ExecuteCommandCreateNewFilter : BasicCommandExecution, IAtomicComma
     public string Name { get; }
     public string WhereSQL { get; }
 
-    IFilter[] _offerFilters;
+    private IFilter[] _offerFilters;
     private bool offerCatalogueFilters;
         
     public bool OfferCatalogueFilters

@@ -56,7 +56,7 @@ public partial class CatalogueUI : CatalogueUI_Design, ISaveableUI
         UseCommitSystem = true;
     }
 
-    void ticketingControl1_TicketTextChanged(object sender, EventArgs e)
+    private void ticketingControl1_TicketTextChanged(object sender, EventArgs e)
     {
         if (_catalogue != null)
             _catalogue.Ticket = ticketingControl1.TicketText;

@@ -15,7 +15,7 @@ using Rdmp.Core.Validation.Constraints.Secondary.Predictor;
 namespace Rdmp.Core.Tests.Validation;
 
 [Category("Unit")]
-class ExceptionHandlingTests
+internal class ExceptionHandlingTests
 {
 
     [Test]

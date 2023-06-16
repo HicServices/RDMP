@@ -10,7 +10,7 @@ using Tests.Common;
 
 namespace Rdmp.Core.Tests.Curation.Integration;
 
-class ExtractionFilterParameterSetTests : DatabaseTests
+internal class ExtractionFilterParameterSetTests : DatabaseTests
 {
     [Test]
     public void ExtractionFilterParameterSet_Deleting()

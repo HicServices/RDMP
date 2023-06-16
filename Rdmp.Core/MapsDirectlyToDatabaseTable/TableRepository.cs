@@ -51,7 +51,7 @@ public abstract class TableRepository : ITableRepository
 
     private readonly Logger _logger = LogManager.GetCurrentClassLogger();
 
-    Lazy<DiscoveredTable[]> _tables;
+    private Lazy<DiscoveredTable[]> _tables;
 
     //If you are calling this constructor then make sure to set the connection strings in your derived class constructor
     public TableRepository()
@@ -809,8 +809,8 @@ public abstract class TableRepository : ITableRepository
         return (DateTime)o;
     }
 
-    Dictionary<Type,bool> _knownSupportedTypes = new();
-    object oLockKnownTypes = new();
+    private Dictionary<Type,bool> _knownSupportedTypes = new();
+    private object oLockKnownTypes = new();
 
     public bool SupportsObjectType(Type type)
     {

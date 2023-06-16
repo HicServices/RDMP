@@ -12,7 +12,7 @@ using System.Linq;
 
 namespace Rdmp.Core.CommandLine.Gui.Windows.RunnerWindows;
 
-class RunDleWindow : RunEngineWindow<DleOptions>
+internal class RunDleWindow : RunEngineWindow<DleOptions>
 {
     private readonly LoadMetadata lmd;
 

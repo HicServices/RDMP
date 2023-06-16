@@ -25,7 +25,7 @@ using Rune = System.Rune;
 
 namespace Rdmp.Core.CommandLine.Gui;
 
-class ConsoleGuiSqlEditor : Window
+internal class ConsoleGuiSqlEditor : Window
 {
     protected readonly IBasicActivateItems Activator;
     private readonly IViewSQLAndResultsCollection _collection;

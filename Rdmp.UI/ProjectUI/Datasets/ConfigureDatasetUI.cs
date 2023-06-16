@@ -108,7 +108,7 @@ public partial class ConfigureDatasetUI : ConfigureDatasetUI_Design,ILifetimeSub
         cbShowProjectSpecific.CheckedChanged += CbShowProjectSpecific_CheckedChanged;
     }
 
-    void olvSelected_CellRightClick(object sender, CellRightClickEventArgs e)
+    private void olvSelected_CellRightClick(object sender, CellRightClickEventArgs e)
     {
         var ec = e.Model as ExtractableColumn;
 
@@ -125,7 +125,7 @@ public partial class ConfigureDatasetUI : ConfigureDatasetUI_Design,ILifetimeSub
         }
     }
 
-    void olvSelected_FormatCell(object sender, FormatCellEventArgs e)
+    private void olvSelected_FormatCell(object sender, FormatCellEventArgs e)
     {
         if(e.Column == olvIssues)
             if((string) e.CellValue == "None")
@@ -691,7 +691,7 @@ public partial class ConfigureDatasetUI : ConfigureDatasetUI_Design,ILifetimeSub
             .Where(t => !t.IsLookupTable(Activator.CoreChildProvider));
     }
 
-    void olvJoin_ButtonClick(object sender, CellClickEventArgs e)
+    private void olvJoin_ButtonClick(object sender, CellClickEventArgs e)
     {
         var node = (AvailableForceJoinNode) e.Model;
         if(e.Column == olvJoinColumn)

@@ -18,7 +18,7 @@ using Tests.Common;
 
 namespace Rdmp.Core.Tests.DataLoad.Engine.Unit;
 
-class CohortSamplerTests : UnitTests
+internal class CohortSamplerTests : UnitTests
 {
     [Test]
     public void TestCohortSampler_NoColumnFound()

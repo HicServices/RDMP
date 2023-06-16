@@ -23,7 +23,7 @@ namespace Rdmp.Core.Tests.DataLoad.Engine.Integration;
 /// <summary>
 /// Base class for tests that want to run data loads contains helper methods for setting up a valid DLE load configuration and running it
 /// </summary>
-class DataLoadEngineTestsBase : DatabaseTests
+internal class DataLoadEngineTestsBase : DatabaseTests
 {
     protected void AssertHasDataLoadRunId(DataRow row)
     {

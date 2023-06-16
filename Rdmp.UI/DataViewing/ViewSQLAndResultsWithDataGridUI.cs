@@ -49,11 +49,11 @@ public partial class ViewSQLAndResultsWithDataGridUI : RDMPUserControl, IObjectC
     private string _originalSql;
     private DiscoveredServer _server;
     private AutoCompleteProviderWin _autoComplete;
-        
-    ToolStripButton btnExecuteSql = new("Run");
-    ToolStripButton btnResetSql = new("Restore Original SQL");
 
-    readonly ToolStripTimeout _timeoutControls = new();
+    private ToolStripButton btnExecuteSql = new("Run");
+    private ToolStripButton btnResetSql = new("Restore Original SQL");
+
+    private readonly ToolStripTimeout _timeoutControls = new();
     private ToolStripLabel _serverHeader;
     private DatabaseTypeIconProvider _databaseTypeIconProvider;
 
@@ -329,7 +329,7 @@ public partial class ViewSQLAndResultsWithDataGridUI : RDMPUserControl, IObjectC
             _cmd.Cancel();
     }
 
-    void _scintilla_TextChanged(object sender, EventArgs e)
+    private void _scintilla_TextChanged(object sender, EventArgs e)
     {
         //enable the reset button only if the SQL has changed (e.g. user is typing stuff)
         btnResetSql.Enabled = !_originalSql.Equals(_scintilla.Text);
@@ -348,7 +348,7 @@ public partial class ViewSQLAndResultsWithDataGridUI : RDMPUserControl, IObjectC
         _scintilla.Text = _originalSql;
     }
 
-    void dataGridView1_CellDoubleClick(object sender, DataGridViewCellEventArgs e)
+    private void dataGridView1_CellDoubleClick(object sender, DataGridViewCellEventArgs e)
     {
         if (e.RowIndex == -1)
             return;

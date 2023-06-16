@@ -15,7 +15,7 @@ using Tests.Common;
 
 namespace Rdmp.Core.Tests.DataExport.DataExtraction;
 
-class ExtractionSubdirectoryPatternTests : UnitTests
+internal class ExtractionSubdirectoryPatternTests : UnitTests
 {
 
     [Test]

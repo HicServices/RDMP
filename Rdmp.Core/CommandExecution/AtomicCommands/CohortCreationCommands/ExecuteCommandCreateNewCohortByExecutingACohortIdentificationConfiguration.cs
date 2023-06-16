@@ -94,7 +94,7 @@ public class ExecuteCommandCreateNewCohortByExecutingACohortIdentificationConfig
         configureAndExecute.Run(BasicActivator.RepositoryLocator, null, null, null);
     }
 
-    void OnImportCompletedSuccessfully(object sender, PipelineEngineEventArgs u, CohortIdentificationConfiguration cic)
+    private void OnImportCompletedSuccessfully(object sender, PipelineEngineEventArgs u, CohortIdentificationConfiguration cic)
     {
         //see if we can associate the cic with the project
         var cmd = new ExecuteCommandAssociateCohortIdentificationConfigurationWithProject(BasicActivator).SetTarget((Project)Project).SetTarget(cic);

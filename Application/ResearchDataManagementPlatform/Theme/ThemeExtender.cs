@@ -12,7 +12,7 @@ using System.Xml.Linq;
 
 namespace ResearchDataManagementPlatform.Theme;
 
-class ThemeExtender
+internal class ThemeExtender
 {
     private XDocument _xml;
     private const string Env = "Environment";

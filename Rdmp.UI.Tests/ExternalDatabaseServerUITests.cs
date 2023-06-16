@@ -10,7 +10,7 @@ using Rdmp.UI.MainFormUITabs.SubComponents;
 
 namespace Rdmp.UI.Tests;
 
-class ExternalDatabaseServerUITests : UITests
+internal class ExternalDatabaseServerUITests : UITests
 {
     [Test, UITimeout(50000)]
     public void Test_ExternalDatabaseServerUITests_NormalState()

@@ -15,7 +15,7 @@ public class ExecuteCommandImportDublinCoreFormat : BasicCommandExecution, IAtom
 {
     private Catalogue _target;
     private FileInfo _toImport;
-    readonly DublinCoreTranslater _translater = new();
+    private readonly DublinCoreTranslater _translater = new();
 
     public ExecuteCommandImportDublinCoreFormat(IBasicActivateItems activator, Catalogue catalogue) : base(activator)
     {

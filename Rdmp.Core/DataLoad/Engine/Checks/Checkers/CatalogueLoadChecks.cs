@@ -20,7 +20,7 @@ using Rdmp.Core.ReusableLibraryCode.DataAccess;
 
 namespace Rdmp.Core.DataLoad.Engine.Checks.Checkers;
 
-class CatalogueLoadChecks:ICheckable
+internal class CatalogueLoadChecks:ICheckable
 {
     private readonly ILoadMetadata _loadMetadata;
     private readonly HICLoadConfigurationFlags _loadConfigurationFlags;

@@ -14,7 +14,7 @@ using Rdmp.Core.Validation.Constraints.Secondary;
 namespace Rdmp.Core.Tests.Validation.Constraints.Primary;
 
 [Category("Unit")]
-class ChiValidationTest : ValidationTests
+internal class ChiValidationTest : ValidationTests
 {
 
     [Test]

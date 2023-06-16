@@ -11,7 +11,7 @@ using Rdmp.UI.ItemActivation;
 
 namespace Rdmp.UI.CommandExecution.Proposals;
 
-class ProposeExecutionWhenTargetIsDataAccessCredentials : RDMPCommandExecutionProposal<DataAccessCredentials>
+internal class ProposeExecutionWhenTargetIsDataAccessCredentials : RDMPCommandExecutionProposal<DataAccessCredentials>
 {
     public ProposeExecutionWhenTargetIsDataAccessCredentials(IActivateItems itemActivator)
         : base(itemActivator)

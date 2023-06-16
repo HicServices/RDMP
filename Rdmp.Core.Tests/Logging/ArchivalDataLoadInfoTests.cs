@@ -10,7 +10,7 @@ using System;
 
 namespace Rdmp.Core.Tests.Logging;
 
-class ArchivalDataLoadInfoTests
+internal class ArchivalDataLoadInfoTests
 {
     [Test]
     public void ArchivalDataLoadInfo_ToString()

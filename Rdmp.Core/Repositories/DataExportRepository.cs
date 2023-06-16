@@ -43,7 +43,7 @@ public class DataExportRepository : TableRepository, IDataExportRepository
     public IDataExportPropertyManager DataExportPropertyManager { get; private set; }
 
 
-    Lazy<Dictionary<int, List<int>>> _packageContentsDictionary;
+    private Lazy<Dictionary<int, List<int>>> _packageContentsDictionary;
 
     public DataExportRepository(DbConnectionStringBuilder connectionString, ICatalogueRepository catalogueRepository) : base(null, connectionString)
     {

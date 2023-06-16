@@ -37,9 +37,9 @@ namespace ResearchDataManagementPlatform.WindowManagement;
 /// </summary>
 public class WindowManager
 {
-    readonly Dictionary<RDMPCollection, PersistableToolboxDockContent> _visibleToolboxes = new();
-    readonly List<RDMPSingleControlTab>  _trackedWindows = new();
-    readonly List<DockContent> _trackedAdhocWindows = new();
+    private readonly Dictionary<RDMPCollection, PersistableToolboxDockContent> _visibleToolboxes = new();
+    private readonly List<RDMPSingleControlTab>  _trackedWindows = new();
+    private readonly List<DockContent> _trackedAdhocWindows = new();
         
     public NavigationTrack<INavigation> Navigation { get; private set; }
     public event TabChangedHandler TabChanged;
@@ -58,8 +58,8 @@ public class WindowManager
         
     public event RDMPCollectionCreatedEventHandler CollectionCreated;
 
-    HomeUI _home;
-    DockContent _homeContent;
+    private HomeUI _home;
+    private DockContent _homeContent;
 
     public WindowManager(ITheme theme,RDMPMainForm mainForm, RefreshBus refreshBus, DockPanel mainDockPanel, IRDMPPlatformRepositoryServiceLocator repositoryLocator, ICheckNotifier globalErrorCheckNotifier)
     {
@@ -356,7 +356,7 @@ public class WindowManager
         }
     }
 
-    void mainDockPanel_ActiveDocumentChanged(object sender, EventArgs e)
+    private void mainDockPanel_ActiveDocumentChanged(object sender, EventArgs e)
     {
         var newTab = (DockContent) _mainDockPanel.ActiveDocument;
             

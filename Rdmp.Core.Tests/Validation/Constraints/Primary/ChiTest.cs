@@ -12,7 +12,7 @@ using Rdmp.Core.Validation.Constraints.Primary;
 namespace Rdmp.Core.Tests.Validation.Constraints.Primary;
 
 [Category("Unit")]
-class ChiTest : ValidationTests
+internal class ChiTest : ValidationTests
 {
     private IPrimaryConstraint _chi;
 

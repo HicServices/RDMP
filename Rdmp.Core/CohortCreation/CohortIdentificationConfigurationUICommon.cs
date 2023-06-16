@@ -31,7 +31,7 @@ public class CohortIdentificationConfigurationUICommon
 
     public ExternalDatabaseServer QueryCachingServer;
     private CohortAggregateContainer _root;
-    CancellationTokenSource _cancelGlobalOperations;
+    private CancellationTokenSource _cancelGlobalOperations;
     private ISqlParameter[] _globals;
     public CohortCompilerRunner Runner;
 

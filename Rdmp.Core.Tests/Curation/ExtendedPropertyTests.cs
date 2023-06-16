@@ -10,7 +10,7 @@ using Tests.Common;
 
 namespace Rdmp.Core.Tests.Curation;
 
-class ExtendedPropertyTests : DatabaseTests
+internal class ExtendedPropertyTests : DatabaseTests
 {
     [Test]
     public void ExtendedProperty_Catalogue()

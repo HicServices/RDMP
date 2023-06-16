@@ -12,7 +12,7 @@ using Rdmp.Core.ReusableLibraryCode.Extensions;
 namespace Rdmp.Core.Tests.ReusableCodeTests;
 
 [Category("Unit")]
-class DataTableExtensionsTests
+internal class DataTableExtensionsTests
 {
     [Test]
     public void TestEscaping_CommaInCell()

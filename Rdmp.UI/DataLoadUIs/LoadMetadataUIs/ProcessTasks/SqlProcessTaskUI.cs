@@ -114,7 +114,7 @@ public partial class SqlProcessTaskUI : SqlProcessTaskUI_Design, ISaveableUI
         _autoComplete.RegisterForEvents(_scintilla);
     }
 
-    bool objectSaverButton1_BeforeSave(DatabaseEntity arg)
+    private bool objectSaverButton1_BeforeSave(DatabaseEntity arg)
     {
         File.WriteAllText(_processTask.Path,_scintilla.Text);
         _scintilla.SetSavePoint();

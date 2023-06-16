@@ -13,7 +13,7 @@ using System.Text.RegularExpressions;
 
 namespace Rdmp.Core.Tests.CommandExecution;
 
-class TestsExecuteCommandList : CommandCliTests
+internal class TestsExecuteCommandList : CommandCliTests
 {
     [Test]
     public void Test_ExecuteCommandList_NoCataloguesParsing()

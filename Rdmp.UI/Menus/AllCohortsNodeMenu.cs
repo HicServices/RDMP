@@ -16,7 +16,7 @@ using Rdmp.UI.CommandExecution.AtomicCommands;
 namespace Rdmp.UI.Menus;
 
 [System.ComponentModel.DesignerCategory("")]
-class AllCohortsNodeMenu:RDMPContextMenuStrip
+internal class AllCohortsNodeMenu:RDMPContextMenuStrip
 {
     [UseWithObjectConstructor]
     public AllCohortsNodeMenu(RDMPContextMenuStripArgs args, AllCohortsNode node)

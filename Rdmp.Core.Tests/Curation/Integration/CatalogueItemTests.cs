@@ -10,7 +10,7 @@ using Tests.Common;
 
 namespace Rdmp.Core.Tests.Curation.Integration;
 
-class CatalogueItemTests : DatabaseTests
+internal class CatalogueItemTests : DatabaseTests
 {
 
     [Test]

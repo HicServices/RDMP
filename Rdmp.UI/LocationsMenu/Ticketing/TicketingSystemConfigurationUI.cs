@@ -51,7 +51,7 @@ public partial class TicketingSystemConfigurationUI : RDMPUserControl
         RefreshUIFromDatabase();
     }
 
-    bool _bLoading = true;
+    private bool _bLoading = true;
 
     private void RefreshUIFromDatabase()
     {

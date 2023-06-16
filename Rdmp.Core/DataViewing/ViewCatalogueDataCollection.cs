@@ -21,7 +21,7 @@ namespace Rdmp.Core.DataViewing;
 /// </summary>
 public class ViewCatalogueDataCollection : PersistableObjectCollection, IViewSQLAndResultsCollection
 {
-    QueryBuilder builder;
+    private QueryBuilder builder;
 
     public Catalogue Catalogue => DatabaseObjects.OfType<Catalogue>().FirstOrDefault();
 

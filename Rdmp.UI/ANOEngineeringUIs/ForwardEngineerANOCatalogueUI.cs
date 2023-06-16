@@ -198,7 +198,7 @@ public partial class ForwardEngineerANOCatalogueUI : ForwardEngineerANOCatalogue
 
     #endregion
 
-    void tlvTableInfoMigrations_CellEditStarting(object sender, CellEditEventArgs e)
+    private void tlvTableInfoMigrations_CellEditStarting(object sender, CellEditEventArgs e)
     {
         if (e.RowObject is TableInfo)
             e.Cancel = true;
@@ -285,8 +285,8 @@ public partial class ForwardEngineerANOCatalogueUI : ForwardEngineerANOCatalogue
 
         }
     }
-        
-    void tlvTableInfoMigrations_CellEditFinishing(object sender, CellEditEventArgs e)
+
+    private void tlvTableInfoMigrations_CellEditFinishing(object sender, CellEditEventArgs e)
     {
         try
         {

@@ -17,7 +17,7 @@ namespace Rdmp.Core.CommandExecution.AtomicCommands;
 
 public class ExecuteCommandChangeExtractionCategory : BasicCommandExecution
 {
-    ExtractionInformation[] _extractionInformations;
+    private ExtractionInformation[] _extractionInformations;
     private bool _isProjectSpecific;
     private readonly ExtractionCategory? _category;
 

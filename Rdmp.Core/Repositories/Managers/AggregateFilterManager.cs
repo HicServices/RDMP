@@ -11,7 +11,7 @@ using Rdmp.Core.Curation.Data.Aggregation;
 
 namespace Rdmp.Core.Repositories.Managers;
 
-class AggregateFilterManager : IFilterManager
+internal class AggregateFilterManager : IFilterManager
 {
     private readonly CatalogueRepository _catalogueRepository;
 

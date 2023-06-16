@@ -34,7 +34,7 @@ namespace Rdmp.UI.Progress;
 /// </summary>
 public partial class ProgressUI : UserControl, IDataLoadEventListener
 {
-    DataTable progress = new();
+    private DataTable progress = new();
 
     /// <summary>
     /// Sender for all global errors that should never be filtered out of the <see cref="ProgressUI"/>
@@ -136,7 +136,7 @@ public partial class ProgressUI : UserControl, IDataLoadEventListener
         return null;
     }
 
-    void dataGridView1_CellFormatting(object sender, DataGridViewCellFormattingEventArgs e)
+    private void dataGridView1_CellFormatting(object sender, DataGridViewCellFormattingEventArgs e)
     {
         if(e.ColumnIndex == _processingTimeColIndex)
             if (e.Value != null && e.Value != DBNull.Value)
@@ -156,15 +156,15 @@ public partial class ProgressUI : UserControl, IDataLoadEventListener
         lblCrashed.Visible = false;
         lblSuccess.Visible = false;
     }
-        
-    Dictionary<object, HashSet<string>> JobsreceivedFromSender = new();
 
-    object oProgressQueLock = new();
-    Dictionary<string, QueuedProgressMessage> ProgressQueue = new();
+    private Dictionary<object, HashSet<string>> JobsreceivedFromSender = new();
+
+    private object oProgressQueLock = new();
+    private Dictionary<string, QueuedProgressMessage> ProgressQueue = new();
 
 
-    object oNotifyQueLock = new();
-    List<ProgressUIEntry> NotificationQueue = new();
+    private object oNotifyQueLock = new();
+    private List<ProgressUIEntry> NotificationQueue = new();
 
     public void Progress(object sender,ProgressEventArgs args)
     {
@@ -215,7 +215,7 @@ public partial class ProgressUI : UserControl, IDataLoadEventListener
         }
     }
 
-    void ProcessAndClearQueuedProgressMessages(object sender, EventArgs e)
+    private void ProcessAndClearQueuedProgressMessages(object sender, EventArgs e)
     {
         lock (oProgressQueLock)
         {
@@ -345,7 +345,7 @@ public partial class ProgressUI : UserControl, IDataLoadEventListener
            
     }
 
-    void olvProgressEvents_ItemActivate(object sender, EventArgs e)
+    private void olvProgressEvents_ItemActivate(object sender, EventArgs e)
     {
         var model = olvProgressEvents.SelectedObject as ProgressUIEntry;
 

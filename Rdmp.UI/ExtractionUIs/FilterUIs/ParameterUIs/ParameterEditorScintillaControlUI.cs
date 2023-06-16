@@ -122,8 +122,8 @@ public partial class ParameterEditorScintillaControlUI : RDMPUserControl
     {
         return Sections.SingleOrDefault(s=>s.IncludesLine(lineNumber));
     }
-        
-    List<ParameterEditorScintillaSection> Sections = new();
+
+    private List<ParameterEditorScintillaSection> Sections = new();
         
     /// <summary>
     /// Updates the Sql code for the current state of the <see cref="Options"/> 

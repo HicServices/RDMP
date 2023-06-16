@@ -16,7 +16,7 @@ using Rdmp.Core.ReusableLibraryCode.Checks;
 
 namespace Rdmp.Core.Tests.Providers;
 
-class CatalogueProblemProviderTests : UnitTests
+internal class CatalogueProblemProviderTests : UnitTests
 {
     #region ROOT CONTAINERS
     [Test]

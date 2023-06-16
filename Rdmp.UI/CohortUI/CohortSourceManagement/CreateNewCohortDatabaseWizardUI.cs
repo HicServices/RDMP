@@ -30,7 +30,7 @@ namespace Rdmp.UI.CohortUI.CohortSourceManagement;
 /// <para>You can use <see cref="CreateNewCohortDatabaseWizard"/> to create a suitable database based on the private identifiers you
 /// hold in your existing datasets.</para>
 /// </summary>
-partial class CreateNewCohortDatabaseWizardUI : RDMPUserControl
+internal partial class CreateNewCohortDatabaseWizardUI : RDMPUserControl
 {
     public CreateNewCohortDatabaseWizardUI(IActivateItems activator)
     {

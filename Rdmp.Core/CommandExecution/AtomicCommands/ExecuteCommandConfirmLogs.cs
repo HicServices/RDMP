@@ -25,7 +25,7 @@ public class ExecuteCommandConfirmLogs : BasicCommandExecution {
     /// <summary>
     /// Optional time period in which to expect successful logs
     /// </summary>
-    TimeSpan? WithinTime { get; set; }
+    private TimeSpan? WithinTime { get; set; }
 
     /// <summary>
     /// The object which generates logs that you want to check

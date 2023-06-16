@@ -38,7 +38,7 @@ public partial class DQEExecutionControlUI : DQEExecutionControl_Design
         checkAndExecuteUI1.ExecutionFinished += checkAndExecuteUI1_ExecutionFinished;
     }
 
-    void checkAndExecuteUI1_ExecutionFinished(object sender, ExecutionEventArgs e)
+    private void checkAndExecuteUI1_ExecutionFinished(object sender, ExecutionEventArgs e)
     {
         //refresh
         SetDatabaseObject(Activator,_catalogue);

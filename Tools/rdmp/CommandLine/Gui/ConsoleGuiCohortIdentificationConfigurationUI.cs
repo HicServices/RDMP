@@ -22,11 +22,11 @@ namespace Rdmp.Core.CommandLine.Gui;
 
 public partial class ConsoleGuiCohortIdentificationConfigurationUI {
     private readonly IBasicActivateItems _activator;
-    CohortIdentificationConfigurationUICommon Common = new ();
+    private CohortIdentificationConfigurationUICommon Common = new ();
     private bool _isDisposed;
 
-    List<object> RowObjects = new();
-    bool _contextMenuShowing = false;
+    private List<object> RowObjects = new();
+    private bool _contextMenuShowing = false;
 
     public ConsoleGuiCohortIdentificationConfigurationUI(IBasicActivateItems activator, CohortIdentificationConfiguration cic) {
         InitializeComponent();

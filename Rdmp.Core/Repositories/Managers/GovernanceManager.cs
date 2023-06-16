@@ -11,7 +11,7 @@ using Rdmp.Core.Curation.Data.Governance;
 
 namespace Rdmp.Core.Repositories.Managers;
 
-class GovernanceManager : IGovernanceManager
+internal class GovernanceManager : IGovernanceManager
 {
     private readonly CatalogueRepository _catalogueRepository;
 

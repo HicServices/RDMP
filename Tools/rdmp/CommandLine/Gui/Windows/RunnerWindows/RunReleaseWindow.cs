@@ -14,7 +14,7 @@ using System.Linq;
 
 namespace Rdmp.Core.CommandLine.Gui.Windows.RunnerWindows;
 
-class RunReleaseWindow : RunEngineWindow<ReleaseOptions>
+internal class RunReleaseWindow : RunEngineWindow<ReleaseOptions>
 {
     private IExtractionConfiguration[] configs;
 

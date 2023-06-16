@@ -13,7 +13,7 @@ using Rdmp.Core.ReusableLibraryCode;
 
 namespace Rdmp.Core.Repositories.Managers;
 
-class CohortContainerManager : ICohortContainerManager
+internal class CohortContainerManager : ICohortContainerManager
 {
     protected readonly CatalogueRepository CatalogueRepository;
 

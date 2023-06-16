@@ -16,7 +16,7 @@ using Rdmp.Core.MapsDirectlyToDatabaseTable;
 namespace Rdmp.Core.Tests.DataLoad.Engine.Unit;
 
 [Category("Unit")]
-class ExecutableProcessTaskTests
+internal class ExecutableProcessTaskTests
 {
     [Test]
     public void TestCreateArgString()

@@ -13,7 +13,7 @@ using Tests.Common;
 
 namespace Rdmp.Core.Tests.Providers;
 
-class RowVerTest : DatabaseTests
+internal class RowVerTest : DatabaseTests
 {
     [Test]
     public void Test_RowVer()

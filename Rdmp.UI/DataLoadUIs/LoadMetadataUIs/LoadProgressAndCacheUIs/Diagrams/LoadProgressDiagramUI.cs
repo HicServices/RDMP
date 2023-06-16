@@ -27,12 +27,12 @@ namespace Rdmp.UI.DataLoadUIs.LoadMetadataUIs.LoadProgressAndCacheUIs.Diagrams;
 /// </summary>
 public partial class LoadProgressDiagramUI : RDMPUserControl
 {
-    LoadProgressAnnotation _annotations;
+    private LoadProgressAnnotation _annotations;
     private LoadProgress _loadProgress;
     private LoadProgressSummaryReport _report;
     public event Action LoadProgressChanged;
 
-    ChartLookAndFeelSetter _chartLookAndFeelSetter = new();
+    private ChartLookAndFeelSetter _chartLookAndFeelSetter = new();
 
 
     public LoadProgressDiagramUI()
@@ -47,7 +47,7 @@ public partial class LoadProgressDiagramUI : RDMPUserControl
             
     }
 
-    void olvDQERuns_ButtonClick(object sender, CellClickEventArgs e)
+    private void olvDQERuns_ButtonClick(object sender, CellClickEventArgs e)
     {
         var c = (Catalogue) e.Model;
         new ExecuteCommandRunDQEOnCatalogue(Activator).SetTarget(c).Execute();

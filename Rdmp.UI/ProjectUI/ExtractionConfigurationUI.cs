@@ -60,8 +60,8 @@ public partial class ExtractionConfigurationUI : ExtractionConfigurationUI_Desig
         cbxCohortIdentificationConfiguration.PropertySelector = sel => sel.Cast<CohortIdentificationConfiguration>().Select(cic=> cic == null? "<<None>>":cic.Name);
         AssociatedCollection = RDMPCollection.DataExport;
     }
-        
-    void tcRequest_TicketTextChanged(object sender, EventArgs e)
+
+    private void tcRequest_TicketTextChanged(object sender, EventArgs e)
     {
         if (_extractionConfiguration == null)
             return;
@@ -75,7 +75,7 @@ public partial class ExtractionConfigurationUI : ExtractionConfigurationUI_Desig
         _extractionConfiguration.SaveToDatabase();
     }
 
-    void tcRelease_TicketTextChanged(object sender, EventArgs e)
+    private void tcRelease_TicketTextChanged(object sender, EventArgs e)
     {
         if (_extractionConfiguration == null)
             return;
@@ -159,7 +159,7 @@ public partial class ExtractionConfigurationUI : ExtractionConfigurationUI_Desig
         }
     }
 
-    void _cohortRefreshingPipelineSelectionUI_PipelineChanged(object sender, EventArgs e)
+    private void _cohortRefreshingPipelineSelectionUI_PipelineChanged(object sender, EventArgs e)
     {
         ragSmiley1Refresh.Reset();
         try

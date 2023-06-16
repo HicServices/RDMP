@@ -11,7 +11,7 @@ using Rdmp.UI.CommandExecution.AtomicCommands;
 namespace Rdmp.UI.Menus;
 
 [System.ComponentModel.DesignerCategory("")]
-class ExternalCohortTableMenu : RDMPContextMenuStrip
+internal class ExternalCohortTableMenu : RDMPContextMenuStrip
 {        
     public ExternalCohortTableMenu(RDMPContextMenuStripArgs args, ExternalCohortTable externalCohortTable): base(args, externalCohortTable)
     {

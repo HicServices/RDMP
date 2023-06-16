@@ -16,7 +16,7 @@ using Rdmp.Core.ReusableLibraryCode.Checks;
 
 namespace Rdmp.UI.Tests;
 
-class ChildProviderTests : UITests
+internal class ChildProviderTests : UITests
 {
     [Test]
     public void ChildProviderGiven_TableInfoWith_NullServer()

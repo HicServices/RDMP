@@ -11,7 +11,7 @@ using Rdmp.UI.MainFormUITabs.SubComponents;
 
 namespace Rdmp.UI.CommandExecution.Proposals;
 
-class ProposeExecutionWhenTargetIsTableInfo : RDMPCommandExecutionProposal<TableInfo>
+internal class ProposeExecutionWhenTargetIsTableInfo : RDMPCommandExecutionProposal<TableInfo>
 {
     public ProposeExecutionWhenTargetIsTableInfo(IActivateItems itemActivator)
         : base(itemActivator)

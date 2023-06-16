@@ -15,7 +15,7 @@ using Rdmp.Core.ReusableLibraryCode.Progress;
 
 namespace Rdmp.Core.DataLoad.Modules.DataFlowOperations;
 
-class RowDeleter: IPluginDataFlowComponent<DataTable>
+internal class RowDeleter: IPluginDataFlowComponent<DataTable>
 {
     [DemandsInitialization("Looks for a column with exactly this name", Mandatory = true)]
     public string ColumnNameToFind { get; set; }

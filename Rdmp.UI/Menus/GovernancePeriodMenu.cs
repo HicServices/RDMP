@@ -9,7 +9,7 @@ using Rdmp.Core.Curation.Data.Governance;
 
 namespace Rdmp.UI.Menus;
 
-class GovernancePeriodMenu : RDMPContextMenuStrip
+internal class GovernancePeriodMenu : RDMPContextMenuStrip
 {
     public GovernancePeriodMenu(RDMPContextMenuStripArgs args, GovernancePeriod period)
         : base(args, period)

@@ -74,9 +74,9 @@ public class DataTableUploadDestination : IPluginDataFlowComponent<DataTable>, I
         
     private IBulkCopy _bulkcopy;
     private int _affectedRows = 0;
-        
-    Stopwatch swTimeSpentWriting = new();
-    Stopwatch swMeasuringStrings = new();
+
+    private Stopwatch swTimeSpentWriting = new();
+    private Stopwatch swMeasuringStrings = new();
 
     private DiscoveredServer _loggingDatabaseSettings;
 
@@ -95,7 +95,7 @@ public class DataTableUploadDestination : IPluginDataFlowComponent<DataTable>, I
     private DiscoveredTable _discoveredTable;
 
     //All column values sent to server so far
-    Dictionary<string, Guesser> _dataTypeDictionary;
+    private Dictionary<string, Guesser> _dataTypeDictionary;
 
     /// <summary>
     /// Optional function called when a name is needed for the table being uploaded (this overrides

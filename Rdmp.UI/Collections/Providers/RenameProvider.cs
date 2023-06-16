@@ -61,7 +61,7 @@ public class RenameProvider
             e.Cancel = true;
     }
 
-    void OlvOnCellEditFinishing(object sender, CellEditEventArgs e)
+    private void OlvOnCellEditFinishing(object sender, CellEditEventArgs e)
     {
         if(e.RowObject == null)
             return;

@@ -350,8 +350,8 @@ public partial class RDMPCollectionCommonFunctionality : IRefreshBusSubscriber
             model?.ToString();
     }
 
-    static DateTime lastInvalidatedCache = DateTime.Now;
-    static Dictionary<object, string> cache = new();
+    private static DateTime lastInvalidatedCache = DateTime.Now;
+    private static Dictionary<object, string> cache = new();
 
     private static string GetToolTipBody(IActivateItems activator, ICanBeSummarised sum)
     {
@@ -411,7 +411,7 @@ public partial class RDMPCollectionCommonFunctionality : IRefreshBusSubscriber
         }
     }
 
-    void Tree_KeyPress(object sender, KeyPressEventArgs e)
+    private void Tree_KeyPress(object sender, KeyPressEventArgs e)
     {
         //Prevents keyboard 'bong' sound occuring when using Enter to activate an object
         if (e.KeyChar == (char)Keys.Enter)
@@ -447,7 +447,7 @@ public partial class RDMPCollectionCommonFunctionality : IRefreshBusSubscriber
         Tree.Parent.Controls.Add(ctrl);
     }
 
-    void Tree_FormatRow(object sender, FormatRowEventArgs e)
+    private void Tree_FormatRow(object sender, FormatRowEventArgs e)
     {
         var hasProblems = _activator.HasProblem(e.Model);
 
@@ -483,7 +483,8 @@ public partial class RDMPCollectionCommonFunctionality : IRefreshBusSubscriber
     private object _lastMenuObject;
     private DateTime _lastMenuBuilt = DateTime.Now;
     private ContextMenuStrip _menu;
-    HashSet<Keys> _shortcutKeys = new()
+
+    private HashSet<Keys> _shortcutKeys = new()
     {
         Keys.I,
         Keys.Delete,
@@ -537,7 +538,7 @@ public partial class RDMPCollectionCommonFunctionality : IRefreshBusSubscriber
         }
     }
 
-    void _activator_Emphasise(object sender, EmphasiseEventArgs args)
+    private void _activator_Emphasise(object sender, EmphasiseEventArgs args)
     {
         var rootObject = _activator.GetRootObjectOrSelf(args.Request.ObjectToEmphasise);
                         
@@ -725,7 +726,7 @@ public partial class RDMPCollectionCommonFunctionality : IRefreshBusSubscriber
     }
 
     //once we find the best menu for object of Type x then we want to cache that knowledge and go directly to that menu every time
-    Dictionary<Type,Type> _cachedMenuCompatibility = new();
+    private Dictionary<Type,Type> _cachedMenuCompatibility = new();
         
     private ContextMenuStrip GetMenuWithCompatibleConstructorIfExists(object o, IMasqueradeAs oMasquerader = null)
     {

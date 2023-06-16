@@ -39,7 +39,7 @@ public partial class RDMPMainForm : RDMPForm
 {
     private readonly PersistenceDecisionFactory _persistenceFactory = new();
     private ITheme _theme;
-    IRDMPPlatformRepositoryServiceLocator RepositoryLocator { get; set; }
+    private IRDMPPlatformRepositoryServiceLocator RepositoryLocator { get; set; }
 
     /// <summary>
     /// True while the main form is loading (e.g. from a persistence file)
@@ -83,8 +83,8 @@ public partial class RDMPMainForm : RDMPForm
             new LicenseUI().ShowDialog();
     }
 
-    WindowManager _windowManager;
-    readonly RefreshBus _refreshBus = new();
+    private WindowManager _windowManager;
+    private readonly RefreshBus _refreshBus = new();
     private FileInfo _persistenceFile;
     private ICheckNotifier _globalErrorCheckNotifier;
     private string _version;

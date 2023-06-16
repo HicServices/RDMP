@@ -100,7 +100,7 @@ public partial class FindAndReplaceUI : RDMPUserControl
             _allObjects.Add(o);
     }
 
-    void OlvAllObjectsCellEditFinished(object sender, CellEditEventArgs e)
+    private void OlvAllObjectsCellEditFinished(object sender, CellEditEventArgs e)
     {
         if( e == null || e.RowObject == null)
             return;

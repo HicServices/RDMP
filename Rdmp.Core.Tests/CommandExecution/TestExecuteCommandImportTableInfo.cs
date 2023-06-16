@@ -11,7 +11,7 @@ using Rdmp.Core.CommandLine.Interactive.Picking;
 
 namespace Rdmp.Core.Tests.CommandExecution;
 
-class TestExecuteCommandImportTableInfo : CommandCliTests
+internal class TestExecuteCommandImportTableInfo : CommandCliTests
 {
     [Test]
     public void Test_ImportTableInfo_NoArguments()

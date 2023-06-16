@@ -12,7 +12,7 @@ using Rdmp.Core.ReusableLibraryCode.Settings;
 
 namespace Rdmp.Core.Tests.CommandExecution;
 
-class TestExecuteCommandSetUserSetting : CommandCliTests
+internal class TestExecuteCommandSetUserSetting : CommandCliTests
 {
     [Test]
     public void Test_CatalogueDescription_Normal()

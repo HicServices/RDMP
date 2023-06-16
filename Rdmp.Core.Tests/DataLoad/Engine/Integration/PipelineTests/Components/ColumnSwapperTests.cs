@@ -25,7 +25,7 @@ using Tests.Common;
 
 namespace Rdmp.Core.Tests.DataLoad.Engine.Integration.PipelineTests.Components;
 
-class ColumnSwapperTests:DatabaseTests
+internal class ColumnSwapperTests:DatabaseTests
 {
     [TestCase(true)]
     [TestCase(false)]

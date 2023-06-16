@@ -20,7 +20,7 @@ public class ExecuteCommandChooseCohort : BasicCommandExecution,IAtomicCommand
 {
     private readonly ExtractionConfiguration _extractionConfiguration;
     private DataExportChildProvider _childProvider;
-    List<ExtractableCohort> _compatibleCohorts = new();
+    private List<ExtractableCohort> _compatibleCohorts = new();
     private ExtractableCohort _pick;
 
     public ExecuteCommandChooseCohort(IBasicActivateItems activator,

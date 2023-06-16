@@ -27,7 +27,7 @@ using TypeGuesser;
 
 namespace Rdmp.Core.Tests.DataLoad.Modules.Attachers;
 
-class RemoteTableAttacherTests : DatabaseTests
+internal class RemoteTableAttacherTests : DatabaseTests
 {
     [TestCaseSource(typeof(All),nameof(All.DatabaseTypes))]
     public void TestRemoteTableAttacher_Normal(DatabaseType dbType)

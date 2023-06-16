@@ -35,7 +35,7 @@ public partial class ChooseLoadDirectoryUI : RDMPForm
     /// </summary>
     public string Result { get; private set; }
 
-    Regex _endsWithDataFolder = new(@"[/\\]Data[/\\ ]*$", RegexOptions.IgnoreCase);
+    private Regex _endsWithDataFolder = new(@"[/\\]Data[/\\ ]*$", RegexOptions.IgnoreCase);
 
     public ChooseLoadDirectoryUI(IActivateItems activator, ILoadMetadata loadMetadata)
     {

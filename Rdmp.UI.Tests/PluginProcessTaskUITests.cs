@@ -15,7 +15,7 @@ using Rdmp.UI.DataLoadUIs.LoadMetadataUIs.ProcessTasks;
 
 namespace Rdmp.UI.Tests;
 
-class PluginProcessTaskUITests : UITests
+internal class PluginProcessTaskUITests : UITests
 {
     [OneTimeSetUp]
     protected override void OneTimeSetUp()
@@ -83,7 +83,7 @@ class PluginProcessTaskUITests : UITests
         AssertNoErrors(ExpectedErrorType.Any);
     }
 
-    class OmgDates
+    private class OmgDates
     {
         [DemandsInitialization("A Date")]
         public DateTime MyDate { get; set; }

@@ -42,7 +42,7 @@ public partial class WideMessageBox : Form
     /// </summary>
     public WideMessageBoxArgs Args { get; set; }
 
-    readonly Stack<WideMessageBoxArgs> _navigationStack = new();
+    private readonly Stack<WideMessageBoxArgs> _navigationStack = new();
 
     private static readonly HashSet<string> KeywordIgnoreList = new(StringComparer.CurrentCultureIgnoreCase)
     {
@@ -55,8 +55,8 @@ public partial class WideMessageBox : Form
     #region Static setup of dictionary of keywords
     public static CommentStore CommentStore;
     #endregion
-        
-    Regex className = new(@"^\w+$");
+
+    private Regex className = new(@"^\w+$");
 
     public WideMessageBox(WideMessageBoxArgs args)
     {
@@ -243,7 +243,7 @@ public partial class WideMessageBox : Form
         dialog.Show();
     }
 
-    void richTextBox1_LinkClicked(object sender, LinkClickedEventArgs e)
+    private void richTextBox1_LinkClicked(object sender, LinkClickedEventArgs e)
     {
         if(e.LinkText.Contains('#'))
         {

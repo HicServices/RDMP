@@ -19,7 +19,7 @@ using Rdmp.Core.ReusableLibraryCode.Checks;
 namespace Rdmp.Core.Tests.Curation.Unit;
 
 [Category("Unit")]
-class IColumnTests
+internal class IColumnTests
 {
 
     /// <summary>

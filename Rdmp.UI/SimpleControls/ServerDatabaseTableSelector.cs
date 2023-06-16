@@ -67,11 +67,11 @@ public partial class ServerDatabaseTableSelector : UserControl
     private IDiscoveredServerHelper _helper;
 
     private BackgroundWorker _workerRefreshDatabases = new();
-    CancellationTokenSource _workerRefreshDatabasesToken;
+    private CancellationTokenSource _workerRefreshDatabasesToken;
     private string[] _listDatabasesAsyncResult;
 
     private BackgroundWorker _workerRefreshTables = new();
-    CancellationTokenSource _workerRefreshTablesToken;
+    private CancellationTokenSource _workerRefreshTablesToken;
     private List<DiscoveredTable> _listTablesAsyncResult;
 
     private const string CancelConnection = "Cancel Connection";

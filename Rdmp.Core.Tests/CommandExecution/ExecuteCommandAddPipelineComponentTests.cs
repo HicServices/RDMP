@@ -14,7 +14,7 @@ using System;
 
 namespace Rdmp.Core.Tests.CommandExecution;
 
-class ExecuteCommandAddPipelineComponentTests : CommandCliTests
+internal class ExecuteCommandAddPipelineComponentTests : CommandCliTests
 {
     [Test]
     public void TestCreatePipelineWithCommands()

@@ -16,7 +16,7 @@ using Tests.Common;
 
 namespace Rdmp.Core.Tests.CommandExecution;
 
-class ExecuteCommandConfirmLogsTests : DatabaseTests
+internal class ExecuteCommandConfirmLogsTests : DatabaseTests
 {
     [Test]
     public void ConfirmLogs_NoEntries_Throws()

@@ -13,7 +13,7 @@ using Rdmp.Core.ReusableLibraryCode.Checks;
 
 namespace Rdmp.Core.Tests.Logging;
 
-class DataLoadTaskHelper
+internal class DataLoadTaskHelper
 {
     private readonly DiscoveredServer _loggingServer;
     private readonly Stack<string> _sqlToCleanUp = new();

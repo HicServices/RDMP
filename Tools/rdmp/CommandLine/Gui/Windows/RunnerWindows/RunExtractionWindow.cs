@@ -14,7 +14,7 @@ using System.Linq;
 
 namespace Rdmp.Core.CommandLine.Gui.Windows.RunnerWindows;
 
-class RunExtractionWindow : RunEngineWindow<ExtractionOptions>
+internal class RunExtractionWindow : RunEngineWindow<ExtractionOptions>
 {
     public RunExtractionWindow(IBasicActivateItems activator, ExtractionConfiguration ec) : base(activator, () => GetRunCommand(ec))
     {

@@ -16,7 +16,7 @@ using Rdmp.Core.ReusableLibraryCode.Progress;
 
 namespace Rdmp.Core.Tests.Caching.Unit;
 
-class ZipTests
+internal class ZipTests
 {
     private class ZipTestLayout : CacheLayout
     {

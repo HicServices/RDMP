@@ -21,7 +21,7 @@ using Rdmp.Core.ReusableLibraryCode.Checks;
 
 namespace Rdmp.Core;
 
-class Program
+internal class Program
 {
     /// <summary>
     /// True if the user passed the -q switch at startup to suppress any helpful messages we might
@@ -29,7 +29,7 @@ class Program
     /// </summary>
     public static bool Quiet { get; private set; }
 
-    static int Main(string[] args)
+    private static int Main(string[] args)
     {
         try
         {    

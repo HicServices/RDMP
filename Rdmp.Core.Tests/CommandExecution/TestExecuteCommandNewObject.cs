@@ -14,7 +14,7 @@ using Tests.Common;
 
 namespace Rdmp.Core.Tests.CommandExecution;
 
-class TestExecuteCommandNewObject : CommandCliTests
+internal class TestExecuteCommandNewObject : CommandCliTests
 {
     [Test]
     public void Test_NewObjectCommand_NoArguments()

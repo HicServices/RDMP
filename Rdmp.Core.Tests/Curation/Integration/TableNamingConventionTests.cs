@@ -13,7 +13,7 @@ using Tests.Common;
 
 namespace Rdmp.Core.Tests.Curation.Integration;
 
-class TableNamingConventionTests : DatabaseTests
+internal class TableNamingConventionTests : DatabaseTests
 {
     [Test]
     public void GetAllTableInfos_moreThan1_pass()

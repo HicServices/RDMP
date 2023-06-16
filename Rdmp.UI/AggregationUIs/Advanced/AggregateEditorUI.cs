@@ -69,12 +69,12 @@ public partial class AggregateEditorUI : AggregateEditor_Design,ISaveableUI
         
     private List<ITableInfo> _forcedJoins;
 
-    IQuerySyntaxHelper _querySyntaxHelper;
+    private IQuerySyntaxHelper _querySyntaxHelper;
 
     [DesignerSerializationVisibility(DesignerSerializationVisibility.Hidden)]
     public Scintilla QueryHaving;
-        
-    ErrorProvider _errorProviderAxis = new();
+
+    private ErrorProvider _errorProviderAxis = new();
 
     //Constructor
     public AggregateEditorUI()

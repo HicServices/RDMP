@@ -34,14 +34,14 @@ public class ExtractionRunner : ManyRunner
 {
     private ExtractionOptions _options;
     private IBasicActivateItems _activator;
-    ExtractionConfiguration _configuration;
-    IProject _project;
+    private ExtractionConfiguration _configuration;
+    private IProject _project;
 
-    ExtractGlobalsCommand _globalsCommand;
+    private ExtractGlobalsCommand _globalsCommand;
     private Pipeline _pipeline;
     private LogManager _logManager;
 
-    object _oLock = new();
+    private object _oLock = new();
     public Dictionary<ISelectedDataSets, ExtractCommand> ExtractCommands { get;private set; }
 
     public ExtractionRunner(IBasicActivateItems activator,ExtractionOptions extractionOpts):base(extractionOpts)

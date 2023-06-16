@@ -13,7 +13,7 @@ using Rdmp.Core.ReusableLibraryCode.DataAccess;
 
 namespace Rdmp.Core.DataViewing;
 
-class ViewSupportingSqlCollection : PersistableObjectCollection, IViewSQLAndResultsCollection
+internal class ViewSupportingSqlCollection : PersistableObjectCollection, IViewSQLAndResultsCollection
 {
 
     public SupportingSQLTable SupportingSQLTable => DatabaseObjects.OfType<SupportingSQLTable>().FirstOrDefault();

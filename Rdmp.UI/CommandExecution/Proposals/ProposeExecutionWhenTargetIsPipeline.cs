@@ -13,7 +13,7 @@ using Rdmp.Core.CommandExecution;
 
 namespace Rdmp.UI.CommandExecution.Proposals;
 
-class ProposeExecutionWhenTargetIsPipeline : RDMPCommandExecutionProposal<Pipeline>
+internal class ProposeExecutionWhenTargetIsPipeline : RDMPCommandExecutionProposal<Pipeline>
 {
     public ProposeExecutionWhenTargetIsPipeline(IActivateItems itemActivator): base(itemActivator)
     {

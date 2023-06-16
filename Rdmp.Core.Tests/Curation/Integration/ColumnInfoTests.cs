@@ -13,7 +13,7 @@ using Tests.Common;
 
 namespace Rdmp.Core.Tests.Curation.Integration;
 
-class ColumnInfoTests : DatabaseTests
+internal class ColumnInfoTests : DatabaseTests
 {
 
  

@@ -22,7 +22,7 @@ namespace Rdmp.Core.Repositories.Managers;
 /// 
 /// <para></para>
 /// </summary>
-class TableInfoCredentialsManager : ITableInfoCredentialsManager
+internal class TableInfoCredentialsManager : ITableInfoCredentialsManager
 {
     private readonly CatalogueRepository _repository;
 

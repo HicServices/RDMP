@@ -15,11 +15,11 @@ using Rdmp.Core.ReusableLibraryCode.Progress;
 
 namespace Rdmp.Core.Tests.DataExport.DataExtraction;
 
-class SimpleFileExtractorTests
+internal class SimpleFileExtractorTests
 {
-    SimpleFileExtractor _extractor;
-    DirectoryInfo _inDir;
-    DirectoryInfo _outDir;
+    private SimpleFileExtractor _extractor;
+    private DirectoryInfo _inDir;
+    private DirectoryInfo _outDir;
     private DirectoryInfo _inDirSub1;
     private DirectoryInfo _inDirSub2;
 

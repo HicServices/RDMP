@@ -32,7 +32,7 @@ public class ResetTutorialsMenuItem : ToolStripMenuItem
         _tracker.ClearCompleted();
     }
 
-    void parent_DropDownOpening(object sender, EventArgs e)
+    private void parent_DropDownOpening(object sender, EventArgs e)
     {
         Enabled = _tracker.IsClearable();
     }

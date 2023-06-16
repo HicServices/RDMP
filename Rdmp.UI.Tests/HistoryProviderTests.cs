@@ -14,7 +14,7 @@ using Tests.Common;
 
 namespace Rdmp.UI.Tests;
 
-class HistoryProviderTests : UnitTests
+internal class HistoryProviderTests : UnitTests
 {
     protected override void SetUp()
     {

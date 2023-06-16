@@ -15,7 +15,7 @@ using Rdmp.Core.ReusableLibraryCode.Icons.IconProvision;
 namespace Rdmp.UI.Menus;
 
 [System.ComponentModel.DesignerCategory("")]
-class ExtractableDataSetPackageMenu : RDMPContextMenuStrip
+internal class ExtractableDataSetPackageMenu : RDMPContextMenuStrip
 {
     private readonly ExtractableDataSetPackage _package;
     private readonly DataExportChildProvider _childProvider;

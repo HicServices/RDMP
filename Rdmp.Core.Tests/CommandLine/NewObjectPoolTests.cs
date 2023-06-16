@@ -13,7 +13,7 @@ using Tests.Common;
 
 namespace Rdmp.Core.Tests.CommandLine;
 
-class NewObjectPoolTests : UnitTests
+internal class NewObjectPoolTests : UnitTests
 {
     [Test]
     public void TwoCataloguesWithSameName_NoSession()

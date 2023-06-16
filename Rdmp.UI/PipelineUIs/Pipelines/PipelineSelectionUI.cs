@@ -27,11 +27,11 @@ public partial class PipelineSelectionUI : UserControl, IPipelineSelectionUI
     public event Action PipelineDeleted = delegate { };
         
     public event EventHandler PipelineChanged;
-    IPipeline _previousSelection = null;
+    private IPipeline _previousSelection = null;
 
-    ToolTip tt = new();
+    private ToolTip tt = new();
 
-    const string ShowAll = "Show All/Incompatible Pipelines";
+    private const string ShowAll = "Show All/Incompatible Pipelines";
     public bool showAll = false;
     public IPipeline Pipeline
     {
@@ -113,7 +113,7 @@ public partial class PipelineSelectionUI : UserControl, IPipelineSelectionUI
 
     }
 
-    void cmb_Type_DrawItem(object sender, DrawItemEventArgs e)
+    private void cmb_Type_DrawItem(object sender, DrawItemEventArgs e)
     {
         e.DrawBackground();
             

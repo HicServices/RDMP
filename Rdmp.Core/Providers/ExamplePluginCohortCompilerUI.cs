@@ -11,7 +11,7 @@ using Rdmp.Core.MapsDirectlyToDatabaseTable;
 
 namespace Rdmp.Core.Providers;
 
-class ExamplePluginCohortCompilerUI : PluginUserInterface
+internal class ExamplePluginCohortCompilerUI : PluginUserInterface
 {
     private ExamplePluginCohortCompiler compiler;
 

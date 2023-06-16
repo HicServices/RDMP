@@ -17,7 +17,7 @@ using Tests.Common;
 
 namespace Rdmp.Core.Tests.Reports;
 
-class MetadataReportTests:UnitTests
+internal class MetadataReportTests:UnitTests
 {
     [Test]
     public void Test_MetadataReport_Basic()

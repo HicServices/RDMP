@@ -58,7 +58,7 @@ public partial class SelectIMapsDirectlyToDatabaseTableComboBox : UserControl
         suggestComboBox1.SelectedIndexChanged += suggestComboBox1_SelectedIndexChanged;
     }
 
-    void suggestComboBox1_SelectedIndexChanged(object sender, EventArgs e)
+    private void suggestComboBox1_SelectedIndexChanged(object sender, EventArgs e)
     {
         if (!_settingUp) SelectedItemChanged?.Invoke(this, EventArgs.Empty);
     }

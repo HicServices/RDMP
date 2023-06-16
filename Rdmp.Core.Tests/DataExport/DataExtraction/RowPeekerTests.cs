@@ -14,7 +14,7 @@ using Rdmp.Core.DataLoad.Engine.Pipeline.Sources;
 namespace Rdmp.Core.Tests.DataExport.DataExtraction;
 
 [Category("Unit")]
-class RowPeekerTests
+internal class RowPeekerTests
 {
     [Test]
     public void Peeker()

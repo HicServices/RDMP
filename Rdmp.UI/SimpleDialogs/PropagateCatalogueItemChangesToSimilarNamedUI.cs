@@ -108,7 +108,7 @@ public partial class PropagateCatalogueItemChangesToSimilarNamedUI : RDMPForm
     }
 
 
-    void olvCatalogues_CellRightClick(object sender, CellRightClickEventArgs e)
+    private void olvCatalogues_CellRightClick(object sender, CellRightClickEventArgs e)
     {
         var ci = olvCatalogues.SelectedObject as CatalogueItem;
         if(ci == null)

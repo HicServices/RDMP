@@ -11,7 +11,7 @@ using Rdmp.Core.Providers.Nodes;
 namespace Rdmp.UI.Menus;
 
 [System.ComponentModel.DesignerCategory("")]
-class ExtractionDirectoryNodeMenu : RDMPContextMenuStrip
+internal class ExtractionDirectoryNodeMenu : RDMPContextMenuStrip
 {
     public ExtractionDirectoryNodeMenu(RDMPContextMenuStripArgs args, ExtractionDirectoryNode folder): base(args, folder)
     {

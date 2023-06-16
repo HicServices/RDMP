@@ -11,7 +11,7 @@ using Rdmp.UI.ItemActivation;
 
 namespace Rdmp.UI.CommandExecution.Proposals;
 
-class ProposeExecutionWhenTargetIsPreLoadDiscardedColumn : RDMPCommandExecutionProposal<PreLoadDiscardedColumn>
+internal class ProposeExecutionWhenTargetIsPreLoadDiscardedColumn : RDMPCommandExecutionProposal<PreLoadDiscardedColumn>
 {
     public ProposeExecutionWhenTargetIsPreLoadDiscardedColumn(IActivateItems itemActivator)
         : base(itemActivator)

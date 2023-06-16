@@ -776,7 +776,7 @@ public class UnitTests
     /// The number of seconds that have to differ between two DateTime objects in method <see cref="AreAboutTheSameTime"/> before
     /// they are considered not the same time
     /// </summary>
-    const double TimeThresholdInSeconds = 60;
+    private const double TimeThresholdInSeconds = 60;
 
     private static bool AreAboutTheSameTime(DateTime memValue, DateTime dbValue)
     {

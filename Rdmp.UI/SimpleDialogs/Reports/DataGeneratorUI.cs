@@ -47,7 +47,7 @@ public partial class DataGeneratorUI : UserControl
         return 10* (int)Math.Pow(10, trackBar1.Value);
     }
 
-    int sizeAtBeginGeneration = -1;
+    private int sizeAtBeginGeneration = -1;
     public Thread Thread;
     private IDataGenerator _generator;
     public event Action TrackBarMouseUp;

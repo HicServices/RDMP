@@ -86,7 +86,7 @@ public class ExecuteCommandCreateNewCatalogueByExecutingAnAggregateConfiguration
         runner.Run(BasicActivator.RepositoryLocator, null, null, null);
     }
 
-    void ui_PipelineExecutionFinishedsuccessfully(object sender, PipelineEngineEventArgs args)
+    private void ui_PipelineExecutionFinishedsuccessfully(object sender, PipelineEngineEventArgs args)
     {
         if (!_table.Exists())
             throw new Exception($"Pipeline execute successfully but the expected table '{_table}' did not exist");

@@ -28,7 +28,7 @@ public class ExecuteCommandSimilar : BasicCommandExecution
     /// </summary>
     private readonly Type[] _diffSupportedTypes = new Type[]{ typeof(ColumnInfo) };
 
-    ReadOnlyCollection<IMapsDirectlyToDatabaseTable> _matched;
+    private ReadOnlyCollection<IMapsDirectlyToDatabaseTable> _matched;
     /// <summary>
     /// The objects matched by the command (similar or different objects)
     /// </summary>
@@ -139,7 +139,7 @@ public class ExecuteCommandSimilar : BasicCommandExecution
         };
     }
 
-    static readonly char[] trimChars = new char[] { ' ', '[', ']', '\'', '"', '`' };
+    private static readonly char[] trimChars = new char[] { ' ', '[', ']', '\'', '"', '`' };
 
     private bool SimilarWord(string name1, string name2, StringComparison comparisonType)
     {

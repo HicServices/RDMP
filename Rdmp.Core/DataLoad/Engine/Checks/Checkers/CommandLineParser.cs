@@ -10,11 +10,11 @@ using System.Text;
 
 namespace Rdmp.Core.DataLoad.Engine.Checks.Checkers;
 
-class CommandLineParser
+internal class CommandLineParser
 {
-    char[] cmd; // source buffer
-    StringBuilder buf; // output buffer
-    int i; // current position within the source buffer
+    private char[] cmd; // source buffer
+    private StringBuilder buf; // output buffer
+    private int i; // current position within the source buffer
 
     public CommandLineParser()
     {

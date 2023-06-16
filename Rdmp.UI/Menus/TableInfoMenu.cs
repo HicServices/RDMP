@@ -16,7 +16,7 @@ using Rdmp.UI.SimpleDialogs;
 namespace Rdmp.UI.Menus;
 
 [System.ComponentModel.DesignerCategory("")]
-class TableInfoMenu : RDMPContextMenuStrip
+internal class TableInfoMenu : RDMPContextMenuStrip
 {
 
     public TableInfoMenu(RDMPContextMenuStripArgs args, TableInfo tableInfo)

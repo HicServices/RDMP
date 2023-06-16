@@ -18,7 +18,7 @@ using Rdmp.Core.ReusableLibraryCode.DataAccess;
 
 namespace Rdmp.Core.DataLoad.Engine.Pipeline.Components.Anonymisation;
 
-class IdentifierDumperSynchronizer
+internal class IdentifierDumperSynchronizer
 {
     private readonly IdentifierDumper _parent;
     private readonly ExternalDatabaseServer _dump;

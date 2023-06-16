@@ -47,9 +47,9 @@ namespace Rdmp.UI.ExtractionUIs.FilterUIs.ParameterUIs;
 public partial class ParameterCollectionUI : RDMPUserControl
 {
     public ParameterCollectionUIOptions Options { get; private set; }
-        
-    ToolStripMenuItem miAddNewParameter = new("New Parameter...");
-    ToolStripMenuItem miOverrideParameter = new("Override Parameter");
+
+    private ToolStripMenuItem miAddNewParameter = new("New Parameter...");
+    private ToolStripMenuItem miOverrideParameter = new("Override Parameter");
 
     public ParameterCollectionUI()
     {
@@ -337,7 +337,8 @@ public partial class ParameterCollectionUI : RDMPUserControl
     {
         olvParameters.RefreshObjects(parameterEditorScintillaControl1.ProblemObjects.Select(kvp=>kvp.Key).ToList());
     }
-    void olvParameters_CellToolTipShowing(object sender, ToolTipShowingEventArgs e)
+
+    private void olvParameters_CellToolTipShowing(object sender, ToolTipShowingEventArgs e)
     {
         var sqlParameter = (ISqlParameter)e.Model;
 

@@ -11,7 +11,7 @@ namespace Rdmp.Core.CommandExecution;
 /// <summary>
 /// <see cref="CommandInvokerDelegate"/> that handles any value type except <see cref="Enum"/> (in <see cref="CommandInvokerDelegate.Run"/>).
 /// </summary>
-class CommandInvokerValueTypeDelegate : CommandInvokerDelegate
+internal class CommandInvokerValueTypeDelegate : CommandInvokerDelegate
 {
     /// <inheritdoc />
     public CommandInvokerValueTypeDelegate(Func<RequiredArgument,object> run):base(typeof(object),false,run)

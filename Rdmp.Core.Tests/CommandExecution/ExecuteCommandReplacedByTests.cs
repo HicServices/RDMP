@@ -11,7 +11,7 @@ using System.Linq;
 
 namespace Rdmp.Core.Tests.CommandExecution;
 
-class ExecuteCommandReplacedByTests : CommandCliTests
+internal class ExecuteCommandReplacedByTests : CommandCliTests
 {
     [Test]
     public void CommandImpossible_BecauseNotDeprecated()

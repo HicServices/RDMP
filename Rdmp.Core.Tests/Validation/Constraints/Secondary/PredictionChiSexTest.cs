@@ -11,7 +11,7 @@ using Rdmp.Core.Validation.Constraints.Secondary.Predictor;
 namespace Rdmp.Core.Tests.Validation.Constraints.Secondary;
 
 [Category("Unit")]
-class PredictionChiSexTest
+internal class PredictionChiSexTest
 {
     private readonly DateTime _wrongType = DateTime.Now;
         

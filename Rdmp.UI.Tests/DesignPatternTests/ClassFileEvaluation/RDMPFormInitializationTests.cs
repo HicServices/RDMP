@@ -16,10 +16,10 @@ namespace Rdmp.UI.Tests.DesignPatternTests.ClassFileEvaluation;
 
 public class RDMPFormInitializationTests
 {
-    readonly List<string> _rdmpFormClassNames = new();
-    readonly List<string> _fails = new();
+    private readonly List<string> _rdmpFormClassNames = new();
+    private readonly List<string> _fails = new();
 
-    List<string> methodIgnoreList = new()
+    private List<string> methodIgnoreList = new()
     {
         "if",
         "catch",
@@ -27,9 +27,9 @@ public class RDMPFormInitializationTests
     };
 
     //match anything on start of line followed by whitespace followed by a method name e.g. Fishfish( where capture group[1] is the method name
-    Regex methodCalls = new("^\\s*([A-Za-z0-9]*)\\s?\\(", RegexOptions.Multiline);
-    Regex rdmpFormClasses = new("class\\s+(.*)\\s*:\\s*RDMPForm");
-    Regex rdmpControlClasses = new("class\\s+(.*)\\s*:\\s*RDMPUserControl");
+    private Regex methodCalls = new("^\\s*([A-Za-z0-9]*)\\s?\\(", RegexOptions.Multiline);
+    private Regex rdmpFormClasses = new("class\\s+(.*)\\s*:\\s*RDMPForm");
+    private Regex rdmpControlClasses = new("class\\s+(.*)\\s*:\\s*RDMPUserControl");
         
     public void FindUninitializedForms(List<string> csFiles )
     {
@@ -42,9 +42,8 @@ public class RDMPFormInitializationTests
         var rdmpFormClassNames = _rdmpFormClassNames;
 
         //look for "new (myclass1|myclass2)\s*\("
-        var sbFindInstantiations = new StringBuilder();
-        sbFindInstantiations.Append("new (");
-        sbFindInstantiations.Append(string.Join("|", rdmpFormClassNames.Select(Regex.Escape)));
+        var sbFindInstantiations = new StringBuilder("new (");
+        sbFindInstantiations.AppendJoin("|", rdmpFormClassNames.Select(Regex.Escape));
         sbFindInstantiations.Append(")\\s*\\(");
 
         if(_fails.Any())

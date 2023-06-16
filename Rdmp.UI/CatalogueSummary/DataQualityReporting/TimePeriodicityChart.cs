@@ -225,7 +225,7 @@ public partial class TimePeriodicityChart : RDMPUserControl,IDataQualityReportin
         Cursor = DefaultCursor;
     }
 
-    void chart1_KeyUp(object sender, KeyEventArgs e)
+    private void chart1_KeyUp(object sender, KeyEventArgs e)
     {
         if(e.KeyCode == Keys.Delete)
             foreach (DQEGraphAnnotationUI ui in

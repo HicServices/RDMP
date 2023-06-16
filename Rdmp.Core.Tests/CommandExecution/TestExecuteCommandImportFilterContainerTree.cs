@@ -16,7 +16,7 @@ using Rdmp.Core.ReusableLibraryCode.Checks;
 
 namespace Rdmp.Core.Tests.CommandExecution;
 
-class TestExecuteCommandImportFilterContainerTree : CommandInvokerTests
+internal class TestExecuteCommandImportFilterContainerTree : CommandInvokerTests
 {
     [Test]
     public void TestImportTree_FromCohortIdentificationConfiguration_ToSelectedDatasets()

@@ -12,7 +12,7 @@ using Rdmp.Core.Validation.Constraints.Primary;
 namespace Rdmp.Core.Tests.Validation.Constraints.Primary;
 
 [Category("Unit")]
-class AlphaNumericTest : ValidationTests
+internal class AlphaNumericTest : ValidationTests
 {
     private IPrimaryConstraint _alphanum;
 

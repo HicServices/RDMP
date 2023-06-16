@@ -33,7 +33,7 @@ public class LoadProgressSummaryReport:ICheckable
         
     public bool DQERepositoryExists => dqeRepository != null;
 
-    DQERepository dqeRepository;
+    private DQERepository dqeRepository;
 
     public DataTable CataloguesPeriodictiyData;
     public DataTable CachePeriodictiyData;

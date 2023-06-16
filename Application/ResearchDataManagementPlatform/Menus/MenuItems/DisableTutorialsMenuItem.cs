@@ -26,7 +26,7 @@ public class DisableTutorialsMenuItem : ToolStripMenuItem
         Text = "Disable Tutorials";
     }
 
-    void parent_DropDownOpened(object sender, EventArgs e)
+    private void parent_DropDownOpened(object sender, EventArgs e)
     {
         Checked = UserSettings.DisableTutorials;
     }

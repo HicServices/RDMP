@@ -63,7 +63,7 @@ public class CommandLineObjectPickerArgumentValue
     public bool ExplicitNull =>
         RawValue != null && RawValue.Equals("null", StringComparison.CurrentCultureIgnoreCase);
 
-    Logger _logger = LogManager.GetCurrentClassLogger();
+    private Logger _logger = LogManager.GetCurrentClassLogger();
 
     public CommandLineObjectPickerArgumentValue(string rawValue,int idx)
     {

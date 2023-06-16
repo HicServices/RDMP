@@ -31,7 +31,7 @@ public class MemoryRepository : IRepository
     protected readonly ConcurrentDictionary<IMapsDirectlyToDatabaseTable,byte> Objects = new ();
 
 
-    readonly ConcurrentDictionary<IMapsDirectlyToDatabaseTable, HashSet<PropertyChangedExtendedEventArgs>> _propertyChanges = new();
+    private readonly ConcurrentDictionary<IMapsDirectlyToDatabaseTable, HashSet<PropertyChangedExtendedEventArgs>> _propertyChanges = new();
 
     public event EventHandler<SaveEventArgs> Saving;
     public event EventHandler<IMapsDirectlyToDatabaseTableEventArgs> Inserting;
@@ -91,7 +91,8 @@ public class MemoryRepository : IRepository
         else
             prop.SetValue(toCreate, Convert.ChangeType(val, type));
     }
-    void toCreate_PropertyChanged(object sender, PropertyChangedEventArgs e)
+
+    private void toCreate_PropertyChanged(object sender, PropertyChangedEventArgs e)
     {
         var changes = (PropertyChangedExtendedEventArgs)e;
         var onObject = (IMapsDirectlyToDatabaseTable)sender;

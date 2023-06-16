@@ -18,7 +18,7 @@ using Rdmp.UI.TestsAndSetup;
 
 namespace ResearchDataManagementPlatform;
 
-static class Program
+internal static class Program
 {
     [DllImport("kernel32.dll")]
     [return: MarshalAs(UnmanagedType.Bool)]
@@ -28,7 +28,7 @@ static class Program
         /// The main entry point for the application.
         /// </summary>
         [STAThread]
-        static void Main(string[] args)
+        private static void Main(string[] args)
         {
             // if user has the command line built and runnable from the windows
             // client then don't load the dlls (or we end up with 2 copies!).

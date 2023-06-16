@@ -14,7 +14,7 @@ using Tests.Common.Scenarios;
 
 namespace Rdmp.Core.Tests.DataExport.Data;
 
-class ExtractionProgressTests : TestsRequiringAnExtractionConfiguration
+internal class ExtractionProgressTests : TestsRequiringAnExtractionConfiguration
 {
 
     [Test]

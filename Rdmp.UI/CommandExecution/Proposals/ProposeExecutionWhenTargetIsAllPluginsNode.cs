@@ -13,7 +13,7 @@ using Rdmp.UI.ItemActivation;
 
 namespace Rdmp.UI.CommandExecution.Proposals;
 
-class ProposeExecutionWhenTargetIsAllPluginsNode : RDMPCommandExecutionProposal<AllPluginsNode>
+internal class ProposeExecutionWhenTargetIsAllPluginsNode : RDMPCommandExecutionProposal<AllPluginsNode>
 {
     public ProposeExecutionWhenTargetIsAllPluginsNode(IActivateItems itemActivator) : base(itemActivator)
     {

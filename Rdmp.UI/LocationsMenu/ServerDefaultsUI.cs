@@ -29,7 +29,7 @@ namespace Rdmp.UI.LocationsMenu;
 /// </summary>
 public partial class ServerDefaultsUI : RDMPForm
 {
-    IServerDefaults defaults;
+    private IServerDefaults defaults;
         
     public ServerDefaultsUI(IActivateItems activator):base(activator)
     {

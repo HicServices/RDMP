@@ -51,12 +51,12 @@ namespace Rdmp.UI.DataLoadUIs.LoadMetadataUIs.LoadDiagram;
 public partial class LoadDiagramUI : LoadDiagram_Design
 {
     private LoadMetadata _loadMetadata;
-    DragDropProvider _dragDropProvider;
+    private DragDropProvider _dragDropProvider;
     private LoadDiagramServerNode _raw;
 
-    readonly RDMPCollectionCommonFunctionality _collectionCommonFunctionality = new();
+    private readonly RDMPCollectionCommonFunctionality _collectionCommonFunctionality = new();
 
-    readonly ToolStripButton _btnFetchData = new("Fetch State",CatalogueIcons.DatabaseRefresh.ImageToBitmap())
+    private readonly ToolStripButton _btnFetchData = new("Fetch State",CatalogueIcons.DatabaseRefresh.ImageToBitmap())
     {
         DisplayStyle = ToolStripItemDisplayStyle.ImageAndText
     };
@@ -86,7 +86,7 @@ public partial class LoadDiagramUI : LoadDiagram_Design
         RDMPCollectionCommonFunctionality.SetupColumnTracking(tlvLoadedTables, olvDataType, new Guid("4cd3b1c5-c705-433c-a6b4-5ffd3a9b3ede"));
     }
 
-    void tlvLoadedTables_ItemActivate(object sender, EventArgs e)
+    private void tlvLoadedTables_ItemActivate(object sender, EventArgs e)
     {
         var tableNode = tlvLoadedTables.SelectedObject as LoadDiagramTableNode;
         var table = tlvLoadedTables.SelectedObject as DiscoveredTable;
@@ -109,7 +109,7 @@ public partial class LoadDiagramUI : LoadDiagram_Design
             Activator.Activate<ViewSQLAndResultsWithDataGridUI>(new ArbitraryTableExtractionUICollection(table));
     }
 
-    void tlvLoadedTables_FormatCell(object sender, FormatCellEventArgs e)
+    private void tlvLoadedTables_FormatCell(object sender, FormatCellEventArgs e)
     {
         if (e.Column == olvDataType)
         {

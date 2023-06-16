@@ -14,7 +14,7 @@ using Tests.Common;
 namespace Rdmp.Core.Tests.Curation;
 
 [Category("Unit")]
-class DublinCoreTests
+internal class DublinCoreTests
 {
     [Test]
     public void TestWritingDocument()

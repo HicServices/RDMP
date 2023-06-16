@@ -43,14 +43,14 @@ internal class NightmareDatasets : DataGenerator
         _databaseNameRuntime = _db.GetRuntimeName();
     }
 
-    BucketList<Catalogue> Catalogues = new ();
-    BucketList<ExtractableDataSet> ExtractableDatasets = new ();
-    BucketList<Project> Projects = new ();
-    BucketList<TableInfo> Tables = new ();
-    int TablesCount = 0;
+    private BucketList<Catalogue> Catalogues = new ();
+    private BucketList<ExtractableDataSet> ExtractableDatasets = new ();
+    private BucketList<Project> Projects = new ();
+    private BucketList<TableInfo> Tables = new ();
+    private int TablesCount = 0;
 
-    BucketList<ColumnInfo> Columns = new();
-    int ColumnsCount = 0;
+    private BucketList<ColumnInfo> Columns = new();
+    private int ColumnsCount = 0;
 
     /// <summary>
     /// <para>Generates a lot of metadata in the RDMP platform databases.  This is for testing

@@ -17,7 +17,7 @@ public class RepositoryProvider : IRDMPPlatformRepositoryServiceLocator
 {
     public ICatalogueRepository CatalogueRepository { get; protected set; }
     public IDataExportRepository DataExportRepository { get; protected set; }
-    readonly Dictionary<string, Type> _cachedTypesByNameDictionary = new();
+    private readonly Dictionary<string, Type> _cachedTypesByNameDictionary = new();
 
     /// <summary>
     /// Use when you have an already initialized set of repositories.  Sets up the class to fetch objects from the Catalogue/Data export databases only.
@@ -74,8 +74,8 @@ public class RepositoryProvider : IRDMPPlatformRepositoryServiceLocator
             $"Did not know what instance of IRepository to use for IRepository Type '{repoType}' , expected it to either be CatalogueRepository or DataExportRepository");
 
     }
-        
-    object oLockDictionary = new();
+
+    private object oLockDictionary = new();
     private Type GetTypeByName(string s, Type expectedBaseClassType)
     {
         Type toReturn;

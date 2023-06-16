@@ -46,7 +46,7 @@ public class DragDropProvider:SimpleDragSource
         _treeView.ModelDropped += ModelDropped;
     }
 
-    void DragDropProvider_CanDrop(object sender, OlvDropEventArgs e)
+    private void DragDropProvider_CanDrop(object sender, OlvDropEventArgs e)
     {
         var dropTargetModel = e.DropTargetItem != null ? e.DropTargetItem.RowObject :null;
         var dataObject = e.DataObject as DataObject;

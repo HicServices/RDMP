@@ -15,8 +15,7 @@ namespace Rdmp.UI.Tests.DesignPatternTests.ClassFileEvaluation;
 
 public class SuspiciousEmptyChecksMethodsOrNotICheckablePlugins
 {
-
-    List<string> _fails = new();
+    private List<string> _fails = new();
 
     public void FindProblems(List<string> csFilesFound)
     {

@@ -109,7 +109,7 @@ public partial class ExecuteExtractionUI : ExecuteExtractionUI_Design
             Activator.Activate(sds);
     }
 
-    void tlvDatasets_CellClick(object sender, CellClickEventArgs e)
+    private void tlvDatasets_CellClick(object sender, CellClickEventArgs e)
     {
         if (e.Column == olvState)
         {

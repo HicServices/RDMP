@@ -127,7 +127,7 @@ FROM
 (select top 1000 FIELDTOEVALUATE as thing from TABLETOEVALUATE  order by newID()) bob";
     #endregion
 
-    TableInfo _parent;
+    private TableInfo _parent;
 
     public PatternPredictor(ColumnInfo columnInfo)
     {

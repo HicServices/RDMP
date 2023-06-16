@@ -37,7 +37,7 @@ public partial class PipelineDiagramUI : UserControl
     public bool AllowSelection { get; set; }
     public bool AllowReOrdering { get; set; }
 
-    RAGSmiley pipelineSmiley = new();
+    private RAGSmiley pipelineSmiley = new();
         
     public IPipelineComponent SelectedComponent;
     public event PipelineComponentSelectedHandler SelectedComponentChanged;
@@ -281,7 +281,7 @@ public partial class PipelineDiagramUI : UserControl
     }
 
 
-    void component_Selected(object sender, IPipelineComponent selected)
+    private void component_Selected(object sender, IPipelineComponent selected)
     {
         if (!AllowSelection)
             return;
@@ -369,7 +369,7 @@ public partial class PipelineDiagramUI : UserControl
         return DragDropEffects.None;
     }
 
-    void divider_DragDrop(object sender, DragEventArgs e)
+    private void divider_DragDrop(object sender, DragEventArgs e)
     {
         //get the divider which caused the drop event
         var divider = (DividerLineControl)sender;

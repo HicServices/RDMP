@@ -12,7 +12,7 @@ using Tests.Common;
 
 namespace Rdmp.Core.Tests.CommandLine.Interactive;
 
-class ConsoleInputManagerTests : UnitTests
+internal class ConsoleInputManagerTests : UnitTests
 {
     [Test]
     public void TestDisallowInput()

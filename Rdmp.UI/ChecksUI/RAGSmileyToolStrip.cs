@@ -21,7 +21,7 @@ public partial class RAGSmileyToolStrip : ToolStripButton,  IRAGSmiley
     private readonly Control _host;
     private CheckResult _worst;
     private Exception _exception;
-    YesNoYesToAllDialog dialog;
+    private YesNoYesToAllDialog dialog;
 
     public RAGSmileyToolStrip(Control host)
     {

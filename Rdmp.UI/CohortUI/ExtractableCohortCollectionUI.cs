@@ -29,7 +29,7 @@ namespace Rdmp.UI.CohortUI;
 /// </summary>
 public partial class ExtractableCohortCollectionUI : RDMPUserControl, ILifetimeSubscriber
 {
-    ExtractableCohortAuditLogBuilder _auditLogBuilder = new();
+    private ExtractableCohortAuditLogBuilder _auditLogBuilder = new();
     public ExtractableCohortCollectionUI()
     {
         InitializeComponent();
@@ -79,7 +79,7 @@ public partial class ExtractableCohortCollectionUI : RDMPUserControl, ILifetimeS
         e.Handled = true;
     }
 
-    void lbCohortDatabaseTable_ButtonClick(object sender, CellClickEventArgs e)
+    private void lbCohortDatabaseTable_ButtonClick(object sender, CellClickEventArgs e)
     {
         var ecd = e.Model as ExtractableCohortDescription;
 

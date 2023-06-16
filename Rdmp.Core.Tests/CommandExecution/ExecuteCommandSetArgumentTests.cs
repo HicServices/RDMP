@@ -13,7 +13,7 @@ using Rdmp.Core.Curation.Data.Pipelines;
 
 namespace Rdmp.Core.Tests.CommandExecution;
 
-class ExecuteCommandSetArgumentTests : CommandCliTests
+internal class ExecuteCommandSetArgumentTests : CommandCliTests
 {
     [Test]
     public void TestSetArgument_WrongArgCount()

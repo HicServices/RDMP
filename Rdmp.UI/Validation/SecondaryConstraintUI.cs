@@ -51,7 +51,7 @@ public partial class SecondaryConstraintUI : UserControl
     /// <summary>
     /// A record of the writeable properties in the SecondaryConstraint you threw at it
     /// </summary>
-    PropertyInfo[] _requiredProperties;
+    private PropertyInfo[] _requiredProperties;
 
     internal event RequestDeletionHandler RequestDeletion;
 

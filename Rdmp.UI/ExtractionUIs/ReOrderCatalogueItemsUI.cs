@@ -49,7 +49,7 @@ public partial class ReOrderCatalogueItemsUI : ReOrderCatalogueItems_Design
     /// </summary>
     private List<ExtractionInformation> itemsToReOrderAndOffsetRelativeToFirst;
 
-    List<int> desiredColumnIndexesNotFound;
+    private List<int> desiredColumnIndexesNotFound;
     private int indexOfStartOfReordingInNewOrderListbox;
 
     public ReOrderCatalogueItemsUI()
@@ -262,7 +262,7 @@ public partial class ReOrderCatalogueItemsUI : ReOrderCatalogueItems_Design
         }
     }
 
-    object oDrawLock = new();
+    private object oDrawLock = new();
         
 
     private void lbDesiredOrder_DrawItem(object sender, DrawItemEventArgs e)

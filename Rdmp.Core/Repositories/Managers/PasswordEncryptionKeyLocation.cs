@@ -43,7 +43,7 @@ public class PasswordEncryptionKeyLocation : IEncryptionManager, IInjectKnown
     }
 
 
-    Lazy<string> _knownKeyFileLocation;
+    private Lazy<string> _knownKeyFileLocation;
 
     /// <summary>
     /// Gets the physical file path to the currently configured RSA private key for encrypting/decrypting passwords or null if no

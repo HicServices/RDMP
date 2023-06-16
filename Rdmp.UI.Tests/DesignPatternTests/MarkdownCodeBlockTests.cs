@@ -34,10 +34,11 @@ namespace Rdmp.UI.Tests.DesignPatternTests;
 /// This class exists to ensure that code blocks in the markdown documentation compile (at least!).  The guid matches the guid in the markdown file.  The method
 /// <see cref="DocumentationCrossExaminationTest.EnsureCodeBlocksCompile"/> checks that the code in the markdown matches the code here within the same guid region.
 /// </summary>
-class MarkdownCodeBlockTests
+internal class MarkdownCodeBlockTests
 {
     #region df7d2bb4cd6145719f933f6f15218b1a
-    class FrozenExtractionConfigurationsNode
+
+    private class FrozenExtractionConfigurationsNode
     {
         public Project Project { get; set; }
 
@@ -56,7 +57,8 @@ class MarkdownCodeBlockTests
     private class _a93fd8b3d1fb4ad8975ef8cf9c384236
     {
         #region a93fd8b3d1fb4ad8975ef8cf9c384236
-        class FrozenExtractionConfigurationsNode
+
+        private class FrozenExtractionConfigurationsNode
         {
             public Project Project { get; set; }
 
@@ -178,7 +180,8 @@ class MarkdownCodeBlockTests
         private class _f243e95a6dc94b3486f44b8f0bb0ed7d
         {
             #region f243e95a6dc94b3486f44b8f0bb0ed7d
-            class AllServersNodeMenu : RDMPContextMenuStrip
+
+            private class AllServersNodeMenu : RDMPContextMenuStrip
             {
                 public AllServersNodeMenu(RDMPContextMenuStripArgs args, AllServersNode o) : base(args, o)
                 {
@@ -191,7 +194,8 @@ class MarkdownCodeBlockTests
         private class _cae13dde1de14f5cac984330a222c311
         {
             #region cae13dde1de14f5cac984330a222c311
-            class ProposeExecutionWhenTargetIsPipeline:RDMPCommandExecutionProposal<Pipeline>
+
+            private class ProposeExecutionWhenTargetIsPipeline:RDMPCommandExecutionProposal<Pipeline>
             {
                 public ProposeExecutionWhenTargetIsPipeline(IActivateItems itemActivator) : base(itemActivator)
                 {
