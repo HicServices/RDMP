@@ -51,16 +51,8 @@ public class SpontaneouslyInventedPermissionWindow:SpontaneousObject,IPermission
     public List<PermissionWindowPeriod> PermissionWindowPeriods { get; private set; }
     public bool WithinPermissionWindow()
     {
-        //if no periods then yeah its in the window yo
-        if (PermissionWindowPeriods == null || !PermissionWindowPeriods.Any())
-            return true;
-
-        return PermissionWindowPeriods.Any(w => w.Contains(DateTime.Now, true));
-    }
-
-    public bool WithinPermissionWindow(DateTime dateTimeUTC)
-    {
-        return WithinPermissionWindow(DateTime.UtcNow);
+        //if no periods then it's in the window
+        return PermissionWindowPeriods?.Any()!=true || PermissionWindowPeriods.Any(w => w.Contains(DateTime.UtcNow, true));
     }
 
     public IEnumerable<ICacheProgress> CacheProgresses{get { return new[] {_cp}; }}

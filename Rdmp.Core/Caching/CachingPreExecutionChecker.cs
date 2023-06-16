@@ -60,7 +60,7 @@ public class CachingPreExecutionChecker : ICheckable
                         "Both the CacheFillProgress and the LoadProgress.OriginDate are null, this means we don't know where the cache has filled up to and we don't know when the dataset is supposed to start.  This means it is impossible to know what dates to fetch",
                         CheckResult.Fail));
 
-            if (_cacheProgress.PermissionWindow_ID != null && !_cacheProgress.PermissionWindow.WithinPermissionWindow(DateTime.UtcNow))
+            if (_cacheProgress.PermissionWindow_ID != null && !_cacheProgress.PermissionWindow.WithinPermissionWindow())
             {
                 notifier.OnCheckPerformed(new CheckEventArgs(
                     $"Current time is {DateTime.UtcNow} which is not a permitted time according to the configured PermissionWindow {_cacheProgress.PermissionWindow.Description} of the CacheProgress {_cacheProgress}",

@@ -214,13 +214,13 @@ public class SuspiciousRelationshipPropertyUse
                 continue;
 
             //don't worry about the ToString method on classes that are IInjectKnown
-            var toStringMethod = t.GetMethod("ToString", new Type[0]);
+            var toStringMethod = t.GetMethod("ToString", Type.EmptyTypes);
 
             //it doesn't have any ToString methods!
             if (toStringMethod == null)
                 continue;
 
-            if (toStringMethod.DeclaringType == typeof (System.Object))
+            if (toStringMethod.DeclaringType == typeof (object))
                 continue;
 
             if (toStringMethod.DeclaringType == typeof (MarshalByRefObject))

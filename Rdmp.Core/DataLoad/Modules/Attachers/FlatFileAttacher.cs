@@ -69,32 +69,26 @@ public abstract class FlatFileAttacher : Attacher, IPluginAttacher
 
 
         if(string.IsNullOrWhiteSpace(TableName))
-            throw new ArgumentNullException("TableName has not been set, set it in the DataCatalogue");
+            throw new ArgumentNullException(nameof(TableName),"TableName has not been set, set it in the DataCatalogue");
 
         var table = _dbInfo.ExpectTable(TableName);
 
-        //table didnt exist!
+        //table didn't exist!
         if (!table.Exists())
-            if (!_dbInfo.DiscoverTables(false).Any())//maybe no tables existed
-                throw new FlatFileLoadException("Raw database had 0 tables we could load");
-            else//no there are tables just not the one we were looking for
-                throw new FlatFileLoadException($"RAW database did not have a table called:{TableName}");
+            throw new FlatFileLoadException(_dbInfo.DiscoverTables(false).Any()? $"RAW database did not have a table called:{TableName}" : "Raw database had 0 tables we could load");
 
             
         //load the flat file
-        var filepattern = FilePattern ?? "*";
+        var filePattern = FilePattern ?? "*";
 
-        var filesToLoad = LoadDirectory.ForLoading.EnumerateFiles(filepattern).OrderBy(a=>a.Name,StringComparer.InvariantCultureIgnoreCase).ToList();
+        var filesToLoad = LoadDirectory.ForLoading.EnumerateFiles(filePattern).OrderBy(a=>a.Name,StringComparer.InvariantCultureIgnoreCase).ToList();
 
         if (!filesToLoad.Any())
         {
             job.OnNotify(this,new NotifyEventArgs(ProgressEventType.Warning,
-                $"Did not find any files matching pattern {filepattern} in forLoading directory"));
+                $"Did not find any files matching pattern {filePattern} in forLoading directory"));
                 
-            if(SendLoadNotRequiredIfFileNotFound)
-                return ExitCodeType.OperationNotRequired;
-
-            return ExitCodeType.Success;
+            return SendLoadNotRequiredIfFileNotFound ? ExitCodeType.OperationNotRequired : ExitCodeType.Success;
         }
 
         foreach (var fileToLoad in filesToLoad)

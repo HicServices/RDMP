@@ -223,19 +223,13 @@ public partial class ProgressUI : UserControl, IDataLoadEventListener
             {
                 var message = ProgressQueue.First();
                 var args = message.Value.ProgressEventArgs;
-                    
-                var label = "";
-                switch (args.Progress.UnitOfMeasurement)
+
+                var label = args.Progress.UnitOfMeasurement switch
                 {
-                    case ProgressType.Records:
-                        label = "records";
-                        break;
-                    case ProgressType.Kilobytes:
-                        label = "KB";
-                        break;
-                    default:
-                        throw new ArgumentOutOfRangeException("type");
-                }
+                    ProgressType.Records => "records",
+                    ProgressType.Kilobytes => "KB",
+                    _ => throw new ArgumentOutOfRangeException("type")
+                };
 
                 var handledByFlood = HandleFloodOfMessagesFromJob(message.Value.Sender, args.TaskDescription, args.Progress.Value, label);
                         

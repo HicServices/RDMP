@@ -45,9 +45,6 @@ public interface IPermissionWindow : INamed
     /// <returns></returns>
     bool WithinPermissionWindow();
 
-    /// <inheritdoc cref="WithinPermissionWindow()"/>
-    bool WithinPermissionWindow(DateTime dateTimeUTC);
-
     /// <summary>
     /// Sets the time of day that activities are permitted in
     /// </summary>

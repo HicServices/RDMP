@@ -279,7 +279,7 @@ public class HICPipelineTests : DatabaseTests
                 runner.Run(RepositoryLocator, new ThrowImmediatelyDataLoadEventListener(), new AcceptAllCheckNotifier(), new GracefulCancellationToken());
 
 
-            var archiveFile = loadDirectory.ForArchiving.EnumerateFiles("*.zip").OrderByDescending(f=>f.FullName).FirstOrDefault();
+            var archiveFile = loadDirectory.ForArchiving.EnumerateFiles("*.zip").MaxBy(f=>f.FullName);
             Assert.NotNull(archiveFile,"Archive file has not been created by the load.");
             Assert.IsFalse(loadDirectory.ForLoading.EnumerateFileSystemInfos().Any());
 
@@ -289,8 +289,7 @@ public class HICPipelineTests : DatabaseTests
             //reset the original RAW server
             defaults.SetDefault(PermissableDefaults.RAWDataLoadServer, oldDefault);
 
-            if (external != null)
-                external.DeleteInDatabase();
+            external?.DeleteInDatabase();
 
             testDir.Delete(true);
 

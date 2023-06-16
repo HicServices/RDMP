@@ -184,7 +184,7 @@ public class SessionCollectionUI : RDMPUserControl, IObjectCollectionControl, IC
     private void InitializeComponent()
     {
         olvTree = new BrightIdeasSoftware.TreeListView();
-        olvName = ((BrightIdeasSoftware.OLVColumn)(new BrightIdeasSoftware.OLVColumn()));
+        olvName = new BrightIdeasSoftware.OLVColumn();
         ((System.ComponentModel.ISupportInitialize)(olvTree)).BeginInit();
         SuspendLayout();
         // 

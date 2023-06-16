@@ -627,15 +627,14 @@ public class ExtractionConfiguration : DatabaseEntity, IExtractionConfiguration,
     {
         if (string.IsNullOrWhiteSpace(column.SelectSQL))
             throw new ArgumentException(
-                $"IColumn ({column.GetType().Name}) {column} has a blank value for SelectSQL, fix this in the CatalogueManager", "item");
+                $"IColumn ({column.GetType().Name}) {column} has a blank value for SelectSQL, fix this in the CatalogueManager", nameof(column));
 
-        var query = "";
-        query = column.SelectSQL;
+        var query = column.SelectSQL;
 
         ExtractableColumn addMe;
 
-        if (column is ExtractionInformation)
-            addMe = new ExtractableColumn((IDataExportRepository)Repository, forDataSet, this, column as ExtractionInformation, -1, query);
+        if (column is ExtractionInformation extractionInformation)
+            addMe = new ExtractableColumn((IDataExportRepository)Repository, forDataSet, this, extractionInformation, -1, query);
         else
             addMe = new ExtractableColumn((IDataExportRepository)Repository, forDataSet, this, null, -1, query); // its custom column of some kind, not tied to a catalogue entry
 
