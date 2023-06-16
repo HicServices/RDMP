@@ -12,7 +12,6 @@ using System.IO;
 using System.Linq;
 using CsvHelper;
 using Rdmp.Core.DataFlowPipeline.Requirements;
-using FAnsi.Extensions;
 using Rdmp.Core.ReusableLibraryCode;
 using Rdmp.Core.ReusableLibraryCode.Progress;
 using TypeGuesser;

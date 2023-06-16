@@ -193,9 +193,7 @@ public class ReleaseRunner : ManyRunner
             else
             {
                 //it's been extracted!, who extracted it?
-                var destinationThatExtractedIt =
-                    (IExecuteDatasetExtractionDestination)ObjectConstructor.Construct(extractionResults
-                        .GetDestinationType());
+                var destinationThatExtractedIt = (IExecuteDatasetExtractionDestination)ObjectConstructor.Construct(extractionResults.GetDestinationType());
 
                 //destination tell us how releasable it is
                 var releasePotential =

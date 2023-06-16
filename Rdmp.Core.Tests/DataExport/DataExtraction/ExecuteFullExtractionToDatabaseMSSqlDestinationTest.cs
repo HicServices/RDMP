@@ -12,7 +12,6 @@ using BadMedicine.Datasets;
 using FAnsi.Discovery;
 using NUnit.Framework;
 using Rdmp.Core.Curation.Data;
-using Rdmp.Core.Curation.Data.DataLoad;
 using Rdmp.Core.Curation.Data.Pipelines;
 using Rdmp.Core.DataExport.Data;
 using Rdmp.Core.DataExport.DataExtraction.Pipeline.Destinations;
@@ -26,7 +25,7 @@ public class ExecuteFullExtractionToDatabaseMSSqlDestinationTest : TestsRequirin
 {
     private ExternalDatabaseServer _extractionServer;
 
-    private readonly string _expectedTableName = "ExecuteFullExtractionToDatabaseMSSqlDestinationTest_TestTable";
+    private const string _expectedTableName = "ExecuteFullExtractionToDatabaseMSSqlDestinationTest_TestTable";
     private ColumnInfo _columnToTransform;
     private Pipeline _pipeline;
 
@@ -53,11 +52,10 @@ public class ExecuteFullExtractionToDatabaseMSSqlDestinationTest : TestsRequirin
             ei.SaveToDatabase();
 
             //make it part of the ExtractionConfiguration
-            var newColumn = new ExtractableColumn(DataExportRepository, _selectedDataSet.ExtractableDataSet,
-                (ExtractionConfiguration)_selectedDataSet.ExtractionConfiguration, ei, 0, ei.SelectSQL)
-            {
-                Alias = ei.Alias
-            };
+            var newColumn = new ExtractableColumn(DataExportRepository, _selectedDataSet.ExtractableDataSet, (ExtractionConfiguration)_selectedDataSet.ExtractionConfiguration, ei, 0, ei.SelectSQL)
+                {
+                    Alias = ei.Alias
+                };
             newColumn.SaveToDatabase();
 
             _extractableColumns.Add(newColumn);
@@ -95,7 +93,7 @@ public class ExecuteFullExtractionToDatabaseMSSqlDestinationTest : TestsRequirin
         }
         finally
         {
-            if (dbToExtractTo != null && dbToExtractTo.Exists())
+            if(dbToExtractTo?.Exists()==true)
                 dbToExtractTo.Drop();
 
             _pipeline?.DeleteInDatabase();
@@ -117,7 +115,7 @@ public class ExecuteFullExtractionToDatabaseMSSqlDestinationTest : TestsRequirin
         //an extractable file
         var filename = Path.Combine(TestContext.CurrentContext.WorkDirectory, "bob.txt");
 
-        File.WriteAllText(filename, "fishfishfish");
+        File.WriteAllText(filename,"fishfishfish");
         var doc = new SupportingDocument(CatalogueRepository, _catalogue, "bob")
         {
             URL = new Uri($"file://{filename}"),
@@ -128,7 +126,7 @@ public class ExecuteFullExtractionToDatabaseMSSqlDestinationTest : TestsRequirin
         //an extractable global file (comes out regardless of datasets)
         var filename2 = Path.Combine(TestContext.CurrentContext.WorkDirectory, "bob2.txt");
 
-        File.WriteAllText(filename2, "fishfishfish2");
+        File.WriteAllText(filename2,"fishfishfish2");
         var doc2 = new SupportingDocument(CatalogueRepository, _catalogue, "bob2")
         {
             URL = new Uri($"file://{filename2}"),
@@ -147,10 +145,6 @@ public class ExecuteFullExtractionToDatabaseMSSqlDestinationTest : TestsRequirin
         sql.SQL = $"SELECT * FROM {tbl.GetFullyQualifiedName()}";
         sql.Extractable = true;
         sql.SaveToDatabase();
-
-
-        //an supplemental (global) table in the database (not linked against cohort)
-        var tbl2 = CreateDataset<HospitalAdmissions>(Database, 500, 1000, new Random(50));
 
         var sql2 = new SupportingSQLTable(CatalogueRepository, _catalogue, "Hosp")
         {
@@ -191,7 +185,7 @@ public class ExecuteFullExtractionToDatabaseMSSqlDestinationTest : TestsRequirin
     protected override Pipeline SetupPipeline()
     {
         //create a target server pointer
-        _extractionServer = new ExternalDatabaseServer(CatalogueRepository, "myserver", null)
+        _extractionServer = new ExternalDatabaseServer(CatalogueRepository, "myserver",null)
         {
             Server = DiscoveredServerICanCreateRandomDatabasesAndTablesOn.Name,
             Username = DiscoveredServerICanCreateRandomDatabasesAndTablesOn.ExplicitUsernameIfAny,

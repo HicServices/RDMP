@@ -36,7 +36,7 @@ internal class ProjectConsistentGuidReleaseIdentifierAllocatorTests : DatabaseTe
         var defTable = ect.DiscoverDefinitionTable();
         var cohortTable = ect.DiscoverCohortTable();
 
-        var p = new Project(DataExportRepository, "MyProject")
+        var p = new Project(DataExportRepository,"MyProject")
         {
             ProjectNumber = 10
         };

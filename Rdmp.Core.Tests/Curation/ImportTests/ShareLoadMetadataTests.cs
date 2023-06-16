@@ -89,7 +89,7 @@ public class ShareLoadMetadataTests : UnitTests
         var lmd1 = WhenIHaveA<LoadMetadata>();
 
         SetupMEF();
-
+            
         var pt1 = new ProcessTask(Repository, lmd1, LoadStage.Mounting)
         {
             ProcessTaskType = ProcessTaskType.Attacher,

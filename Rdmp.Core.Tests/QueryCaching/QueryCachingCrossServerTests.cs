@@ -668,7 +668,7 @@ internal class QueryCachingCrossServerTests : TestsRequiringA
         cic.EnsureNamingConvention(ac);
 
         var and = new AggregateFilterContainer(CatalogueRepository, FilterContainerOperation.AND);
-        var filter = new AggregateFilter(CatalogueRepository, "TestCode is NA", and)
+        var filter = new AggregateFilter(CatalogueRepository,"TestCode is NA",and)
         {
             WhereSQL = $"{syntax.EnsureWrapped("TestCode")} = 'NA'"
         };

@@ -23,7 +23,13 @@ internal class PrematureLoadEnderTests : DatabaseTests
     {
         var database = GetCleanedServer(type);
 
-        Assert.AreEqual(0, database.DiscoverTables(false).Length);
+        var ender = new PrematureLoadEnder
+        {
+            ConditionsToTerminateUnder = PrematureLoadEndCondition.NoRecordsInAnyTablesInDatabase,
+            ExitCodeToReturnIfConditionMet = ExitCodeType.OperationNotRequired
+        };
+
+        ender.Initialize(database,LoadStage.AdjustRaw);
 
         var ender = new PrematureLoadEnder
         {

@@ -74,7 +74,7 @@ internal class IColumnTests
             Alias = "test"
         };
 
-        Assert.AreEqual(tc.GetRuntimeName(), "test");
+        Assert.AreEqual(tc.GetRuntimeName(),"test");
 
         tc.SelectSQL = "MangleQuery([mydb]..[myExcitingField])"; //still has Alias
         Assert.AreEqual(tc.GetRuntimeName(), "test");
@@ -92,7 +92,7 @@ internal class IColumnTests
             SelectSQL = "MangleQuery([mydb]..[myExcitingField])"
         };
 
-        var ex = Assert.Throws<RuntimeNameException>(() => tc.GetRuntimeName());
+        var ex = Assert.Throws<RuntimeNameException>(()=> tc.GetRuntimeName());
     }
 
 
@@ -119,8 +119,9 @@ internal class IColumnTests
         {
             Alias = "bob smith"
         };
-        var ex = Assert.Throws<SyntaxErrorException>(() => tc.Check(new ThrowImmediatelyCheckNotifier()));
-        Assert.AreEqual("Whitespace found in unwrapped Alias \"bob smith\"", ex.Message);
+        var ex = Assert.Throws<SyntaxErrorException>(()=>tc.Check(new ThrowImmediatelyCheckNotifier()));
+        Assert.AreEqual("Whitespace found in unwrapped Alias \"bob smith\"",ex.Message);
+
     }
 
     [Test]

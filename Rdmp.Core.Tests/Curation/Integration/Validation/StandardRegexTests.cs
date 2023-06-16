@@ -7,7 +7,6 @@
 using System.Linq;
 using NUnit.Framework;
 using Rdmp.Core.Curation.Data;
-using Rdmp.Core.Validation;
 using Rdmp.Core.Validation.Constraints.Secondary;
 using Tests.Common;
 
@@ -37,7 +36,7 @@ public class StandardRegexTests : DatabaseTests
                 CatalogueStandardRegex = regex
             };
 
-            Assert.IsNull(constraint.Validate("Fish", null, null));
+            Assert.IsNull(constraint.Validate("Fish",null,null));
             var failure = constraint.Validate("FishFingers", null, null);
             Assert.IsNotNull(failure);
         }

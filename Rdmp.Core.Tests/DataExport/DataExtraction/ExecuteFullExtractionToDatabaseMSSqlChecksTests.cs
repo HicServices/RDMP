@@ -81,7 +81,7 @@ public class ExecuteFullExtractionToDatabaseMSSqlChecksTests : DatabaseTests
     [TestCase(true)]
     public void ServerDatabaseIsPresentAndCorrect(bool alreadyExists)
     {
-        var server = new ExternalDatabaseServer(CatalogueRepository, "Fiction", null)
+        var server = new ExternalDatabaseServer(CatalogueRepository, "Fiction",null)
         {
             Server = DiscoveredServerICanCreateRandomDatabasesAndTablesOn.Name,
             Username = DiscoveredServerICanCreateRandomDatabasesAndTablesOn.ExplicitUsernameIfAny,
@@ -118,7 +118,7 @@ public class ExecuteFullExtractionToDatabaseMSSqlChecksTests : DatabaseTests
     [Test]
     public void ServerDatabaseIsPresentAndCorrectButHasTablesInIt()
     {
-        var server = new ExternalDatabaseServer(CatalogueRepository, "Fiction", null)
+        var server = new ExternalDatabaseServer(CatalogueRepository, "Fiction",null)
         {
             Server = DiscoveredServerICanCreateRandomDatabasesAndTablesOn.Name,
             Username = DiscoveredServerICanCreateRandomDatabasesAndTablesOn.ExplicitUsernameIfAny,

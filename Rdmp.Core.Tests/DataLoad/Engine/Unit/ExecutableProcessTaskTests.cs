@@ -23,16 +23,13 @@ internal class ExecutableProcessTaskTests
     {
         const string db = "my-db";
 
-        var customArgs = new List<SpontaneouslyInventedArgument>
-        {
-            new(new MemoryRepository(), "DatabaseName", db)
-        };
+        var customArgs = new List<SpontaneouslyInventedArgument> { new(new MemoryRepository(), "DatabaseName", db) };
 
         var processTask = Substitute.For<IProcessTask>();
         var task = new ExecutableRuntimeTask(processTask, new RuntimeArgumentCollection(customArgs.ToArray(), null));
 
         var argString = task.CreateArgString();
-        var expectedArgString = $"--database-name={db}";
+        const string expectedArgString = $"--database-name={db}";
 
         Assert.AreEqual(expectedArgString, argString);
     }

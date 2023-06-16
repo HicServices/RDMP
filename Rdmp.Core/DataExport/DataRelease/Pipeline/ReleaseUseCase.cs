@@ -52,8 +52,7 @@ public sealed class ReleaseUseCase : PipelineUseCase
             var destinationType = catalogueRepository.MEF
                 .GetType(
                     releasePotentialWithKnownDestination.DatasetExtractionResult.DestinationType,
-                    typeof(IExecuteDatasetExtractionDestination));
-            var constructor = new ObjectConstructor();
+                    typeof (IExecuteDatasetExtractionDestination));
             var destinationUsedAtExtraction =
                 (IExecuteDatasetExtractionDestination)ObjectConstructor.Construct(destinationType, catalogueRepository);
 

@@ -687,23 +687,13 @@ ALTER TABLE DroppedColumnsTable add color varchar(1)
             "f" //StringPk
         );
 
-        var dt2 = dt.Clone();
-        dt2.Rows.Clear();
-        dt2.Rows.Add("1", //MyInteger
-            "fff", //MyMaxString
-            "fff2", //Description
-            "12345678910112", //StringNotNull - too long for the column, so it should resize
-            DBNull.Value, //StringAllowNull
-            "f2" //StringPk
-        );
-
         var dest = new DataTableUploadDestination
         {
             AllowResizingColumnsAtUploadTime = true
         };
-        dest.PreInitialize(db, new ThrowImmediatelyDataLoadEventListener());
-
-        dest.ProcessPipelineData(dt, new ThrowImmediatelyDataLoadEventListener(), new GracefulCancellationToken());
+        dest.PreInitialize(db,new ThrowImmediatelyDataLoadEventListener());
+            
+        dest.ProcessPipelineData(dt,new ThrowImmediatelyDataLoadEventListener(),new GracefulCancellationToken());
         dest.ProcessPipelineData(dt2, new ThrowImmediatelyDataLoadEventListener(), new GracefulCancellationToken());
         dest.Dispose(new ThrowImmediatelyDataLoadEventListener(), null);
 
@@ -724,7 +714,7 @@ ALTER TABLE DroppedColumnsTable add color varchar(1)
         var dt = new DataTable("TestFreeText");
         dt.Columns.Add("MyFreeText");
         dt.Rows.Add(testValue);
-
+            
         var dest = new DataTableUploadDestination
         {
             AllowResizingColumnsAtUploadTime = true
@@ -987,6 +977,8 @@ ALTER TABLE DroppedColumnsTable add color varchar(1)
         {
             AllowResizingColumnsAtUploadTime = true
         };
+
+        destination.PreInitialize(db,new ThrowImmediatelyDataLoadEventListener());
 
         destination.PreInitialize(db, new ThrowImmediatelyDataLoadEventListener());
 

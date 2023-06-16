@@ -90,9 +90,8 @@ public class TransposerTests
         {
             MakeHeaderNamesSane = true
         };
-        var actual =
-            transposer.ProcessPipelineData(dt, new ThrowImmediatelyDataLoadJob(), new GracefulCancellationToken());
-
+        var actual = transposer.ProcessPipelineData(dt, new ThrowImmediatelyDataLoadJob(), new GracefulCancellationToken());
+            
         Assert.IsTrue(actual.Columns.Contains("_32GramMax"));
 
         dt.Rows.Remove(dr);

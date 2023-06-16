@@ -13,7 +13,6 @@ using Rdmp.Core.Curation.Data.DataLoad;
 using Rdmp.Core.Curation.Data.Pipelines;
 using Rdmp.Core.DataFlowPipeline.Requirements;
 using Rdmp.Core.DataFlowPipeline.Requirements.Exceptions;
-using Rdmp.Core.Repositories;
 using Rdmp.Core.Repositories.Construction;
 using Rdmp.Core.ReusableLibraryCode.Checks;
 using Rdmp.Core.ReusableLibraryCode.Progress;
@@ -31,11 +30,9 @@ namespace Rdmp.Core.DataFlowPipeline;
 /// </summary>
 public class DataFlowPipelineEngineFactory : IDataFlowPipelineEngineFactory
 {
-    private readonly MEF _mefPlugins;
     private readonly IDataFlowPipelineContext _context;
     private IPipelineUseCase _useCase;
     private Type _flowType;
-    private ObjectConstructor _constructor;
 
     private Type _engineType;
 
@@ -43,22 +40,16 @@ public class DataFlowPipelineEngineFactory : IDataFlowPipelineEngineFactory
     /// Creates a new factory which can translate <see cref="IPipeline"/> blueprints into runnable <see cref="IDataFlowPipelineEngine"/> instances.
     /// </summary>
     /// <param name="useCase">The use case which describes which <see cref="IPipeline"/> are compatible, which objects are available for hydration/preinitialization etc</param>
-    /// <param name="mefPlugins">Class for generating Types by name, use <see cref="ICatalogueRepository.MEF"/> to get this </param>
-    public DataFlowPipelineEngineFactory(IPipelineUseCase useCase, MEF mefPlugins)
+    public DataFlowPipelineEngineFactory(IPipelineUseCase useCase)
     {
-        _mefPlugins = mefPlugins;
         _context = useCase.GetContext();
         _useCase = useCase;
         _flowType = _context.GetFlowType();
-
-        _constructor = new ObjectConstructor();
-
-        _engineType = typeof(DataFlowPipelineEngine<>).MakeGenericType(_flowType);
+        _engineType = typeof (DataFlowPipelineEngine<>).MakeGenericType(_flowType);
     }
 
     /// <inheritdoc/>
-    public DataFlowPipelineEngineFactory(IPipelineUseCase useCase, IPipeline pipeline) : this(useCase,
-        ((ICatalogueRepository)pipeline.Repository).MEF)
+    public DataFlowPipelineEngineFactory(IPipelineUseCase useCase, IPipeline pipeline): this(useCase)
     {
     }
 
@@ -75,9 +66,7 @@ public class DataFlowPipelineEngineFactory : IDataFlowPipelineEngineFactory
         //new DataFlowPipelineEngine<T>(_context, source, destination, listener, pipeline);
 
         //engine (this is the source, target is the destination)
-        var dataFlowEngine =
-            (IDataFlowPipelineEngine)ObjectConstructor.ConstructIfPossible(_engineType, _context, source, destination,
-                listener, pipeline);
+        var dataFlowEngine = (IDataFlowPipelineEngine)ObjectConstructor.ConstructIfPossible(_engineType, _context, source, destination, listener, pipeline); 
 
         //now go fetch everything that the user has configured for this particular pipeline
         foreach (PipelineComponent toBuild in pipeline.PipelineComponents)
@@ -150,7 +139,7 @@ public class DataFlowPipelineEngineFactory : IDataFlowPipelineEngineFactory
     private static object CreateComponent(IPipelineComponent toBuild)
     {
         var type = toBuild.GetClassAsSystemType() ?? throw new Exception($"Could not find Type '{toBuild.Class}'");
-        var toReturn = _constructor.Construct(type);
+        var toReturn = ObjectConstructor.Construct(type);
 
         //all the IArguments we need to initialize the class
         var allArguments = toBuild.GetAllArguments().ToArray();

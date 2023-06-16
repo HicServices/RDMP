@@ -470,7 +470,7 @@ dataset with interesting stuff";
 
         var cataItem2 = new CatalogueItem(RepositoryLocator.CatalogueRepository, cata, "Col2")
         {
-            Description = @"some info
+            Description = @"some info 
 about column 2"
         };
         cataItem2.SaveToDatabase();

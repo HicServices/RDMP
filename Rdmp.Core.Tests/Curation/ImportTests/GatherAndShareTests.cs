@@ -293,10 +293,10 @@ public class GatherAndShareTests : DatabaseTests
 
         //Also create a 'known good value' set i.e. recommended value for the parameter to achive some goal (you can have multiple of these - this will not be shared)
         var set = new ExtractionFilterParameterSet(CatalogueRepository, filter, "Fife");
-        var val = new ExtractionFilterParameterSetValue(CatalogueRepository, set, (ExtractionFilterParameter)param)
-        {
-            Value = "'FISH'"
-        };
+        var val = new ExtractionFilterParameterSetValue(CatalogueRepository, set, (ExtractionFilterParameter) param)
+            {
+                Value = "'FISH'"
+            };
 
         //Gather the dependencies (this is what we are testing)
         var gatherer = new Gatherer(RepositoryLocator);

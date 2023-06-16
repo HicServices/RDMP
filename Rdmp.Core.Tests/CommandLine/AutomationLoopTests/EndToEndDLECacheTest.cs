@@ -25,20 +25,20 @@ public class EndToEndDLECacheTest : TestsRequiringADle
         RepositoryLocator.CatalogueRepository.MEF.AddTypeToCatalogForTesting(typeof(TestDataWriter));
         RepositoryLocator.CatalogueRepository.MEF.AddTypeToCatalogForTesting(typeof(TestDataInventor));
 
-        var timeoutInMilliseconds = 120000;
-
+        const int timeoutInMilliseconds = 120000;
+            
         var lmd = TestLoadMetadata;
 
-        var lp = new LoadProgress(CatalogueRepository, lmd)
+        var lp = new LoadProgress(CatalogueRepository,lmd)
         {
-            DataLoadProgress = new DateTime(2001, 1, 1),
+            DataLoadProgress = new DateTime(2001,1,1),
             DefaultNumberOfDaysToLoadEachTime = 10
         };
         lp.SaveToDatabase();
 
         var cp = new CacheProgress(CatalogueRepository, lp)
         {
-            CacheFillProgress = new DateTime(2001, 1, 11) //10 days available to load
+            CacheFillProgress = new DateTime(2001,1,11) //10 days available to load
         };
         cp.SaveToDatabase();
 
@@ -48,7 +48,7 @@ public class EndToEndDLECacheTest : TestsRequiringADle
         //setup the cache process task
         var pt = new ProcessTask(CatalogueRepository, lmd, LoadStage.GetFiles)
         {
-            Path = typeof(BasicCacheDataProvider).FullName,
+            Path = typeof (BasicCacheDataProvider).FullName,
             ProcessTaskType = ProcessTaskType.DataProvider
         };
         pt.SaveToDatabase();

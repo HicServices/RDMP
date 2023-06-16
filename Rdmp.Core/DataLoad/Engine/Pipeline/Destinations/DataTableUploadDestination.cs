@@ -14,7 +14,6 @@ using System.Threading.Tasks;
 using FAnsi.Connections;
 using FAnsi.Discovery;
 using FAnsi.Discovery.TableCreation;
-using FAnsi.Extensions;
 using Rdmp.Core.Curation.Data;
 using Rdmp.Core.DataFlowPipeline;
 using Rdmp.Core.DataFlowPipeline.Requirements;
@@ -129,8 +128,7 @@ public class DataTableUploadDestination : IPluginDataFlowComponent<DataTable>, I
         IDatabaseColumnRequestAdjuster adjuster = null;
         if (Adjuster != null)
         {
-            var constructor = new ObjectConstructor();
-            adjuster = (IDatabaseColumnRequestAdjuster)ObjectConstructor.Construct(Adjuster);
+            adjuster = (IDatabaseColumnRequestAdjuster) ObjectConstructor.Construct(Adjuster);
         }
 
         //work out the table name for the table we are going to create

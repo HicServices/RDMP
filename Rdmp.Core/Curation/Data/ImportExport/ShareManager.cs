@@ -331,8 +331,8 @@ public class ShareManager
                     var actual = (IMapsDirectlyToDatabaseTable)GetExistingImportObject(sd.SharingGuid);
                     actual?.DeleteInDatabase();
                 }
-                var objectConstructor = new ObjectConstructor();
-                var instance = (IMapsDirectlyToDatabaseTable) objectConstructor.ConstructIfPossible(sd.Type, this, sd) ?? throw new ObjectLacksCompatibleConstructorException(
+
+                var instance = (IMapsDirectlyToDatabaseTable) ObjectConstructor.ConstructIfPossible(sd.Type, this, sd) ?? throw new ObjectLacksCompatibleConstructorException(
                         $"Could not find a ShareManager constructor for '{sd.Type}'");
                 created.Add(instance);
             }

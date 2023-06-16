@@ -39,9 +39,9 @@ public class ProcessTaskCheckingTests : DatabaseTests
         _lmd.LocationOfFlatFiles = hicdir.RootPath.FullName;
         _lmd.SaveToDatabase();
 
-        var c = new Catalogue(CatalogueRepository, "c");
-        var ci = new CatalogueItem(CatalogueRepository, c, "ci");
-        var t = new TableInfo(CatalogueRepository, "t")
+        var c = new Catalogue(CatalogueRepository,"c");
+        var ci = new CatalogueItem(CatalogueRepository,c,"ci");
+        var t = new TableInfo(CatalogueRepository,"t")
         {
             Server = DiscoveredServerICanCreateRandomDatabasesAndTablesOn.Name,
             Database = "mydb"

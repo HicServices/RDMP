@@ -26,15 +26,15 @@ internal class ExternalCohortTableTests : UnitTests
     {
         var repository = new MemoryDataExportRepository();
         var table = new ExternalCohortTable(repository, "My Cohort Database", DatabaseType.MicrosoftSQLServer)
-        {
-            Database = "mydb",
-            PrivateIdentifierField = "chi",
-            ReleaseIdentifierField = "release",
-            DefinitionTableForeignKeyField = "c_id",
-            TableName = "Cohorts",
-            DefinitionTableName = "InventoryTable",
-            Server = "superfastdatabaseserver\\sqlexpress"
-        };
+            {
+                Database = "mydb",
+                PrivateIdentifierField = "chi",
+                ReleaseIdentifierField = "release",
+                DefinitionTableForeignKeyField = "c_id",
+                TableName = "Cohorts",
+                DefinitionTableName = "InventoryTable",
+                Server = "superfastdatabaseserver\\sqlexpress"
+            };
         table.SaveToDatabase();
 
         var ex = Assert.Throws<Exception>(() => table.Check(new ThrowImmediatelyCheckNotifier()));

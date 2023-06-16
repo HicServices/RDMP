@@ -213,7 +213,7 @@ sex=@sex
         {
             WhereSQL = "sex=@sex"
         };
-        new ParameterCreator(new AggregateFilterFactory(CatalogueRepository), null, null).CreateAll(filter, null);
+        new ParameterCreator(new AggregateFilterFactory(CatalogueRepository), null, null).CreateAll(filter,null);
         filter.SaveToDatabase();
 
         //with a parameter too

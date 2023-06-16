@@ -204,7 +204,7 @@ public class KVPAttacherTest : DatabaseTests
             TableName = "MyTable",
             FilePattern = "*.csv",
             PrimaryKeyColumns = "dave,bob",
-            TargetDataTableKeyColumnName = isKeyColumnDuplicate ? "dave" : "Fish",
+            TargetDataTableKeyColumnName = isKeyColumnDuplicate ?"dave":"Fish",
             TargetDataTableValueColumnName = isKeyColumnDuplicate ? "tron" : "dave"
         };
 

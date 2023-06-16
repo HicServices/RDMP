@@ -8,7 +8,6 @@ using System.Linq;
 using NUnit.Framework;
 using Rdmp.Core.Curation;
 using Rdmp.Core.Curation.Data;
-using Rdmp.Core.Validation;
 using Rdmp.Core.Validation.Constraints.Secondary;
 using Tests.Common;
 

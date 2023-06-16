@@ -82,8 +82,7 @@ public class DataLoadProgressUpdateInfoTests : DatabaseTests
             Strategy = DataLoadProgressUpdateStrategy.ExecuteScalarSQLInRAW
         };
 
-        var ex = Assert.Throws<Exception>(() =>
-            updateInfo.AddAppropriateDisposeStep(_job, GetCleanedServer(FAnsi.DatabaseType.MicrosoftSQLServer)));
+        var ex = Assert.Throws<Exception>(()=>updateInfo.AddAppropriateDisposeStep(_job, GetCleanedServer(FAnsi.DatabaseType.MicrosoftSQLServer)));
 
         Assert.IsTrue(ex.Message.StartsWith("Strategy is ExecuteScalarSQLInRAW but there is no ExecuteScalarSQL"));
     }
@@ -97,8 +96,7 @@ public class DataLoadProgressUpdateInfoTests : DatabaseTests
             ExecuteScalarSQL = "SELECT Top 1 BarrelORum from CaptainMorgansSpicedRumBarrel"
         };
 
-        var ex = Assert.Throws<DataLoadProgressUpdateException>(() =>
-            updateInfo.AddAppropriateDisposeStep(_job, GetCleanedServer(FAnsi.DatabaseType.MicrosoftSQLServer)));
+        var ex = Assert.Throws<DataLoadProgressUpdateException>(() => updateInfo.AddAppropriateDisposeStep(_job, GetCleanedServer(FAnsi.DatabaseType.MicrosoftSQLServer)));
 
         Assert.IsTrue(ex.Message.StartsWith("Failed to execute the following SQL in the RAW database"));
         Assert.IsInstanceOf<SqlException>(ex.InnerException);
@@ -113,8 +111,7 @@ public class DataLoadProgressUpdateInfoTests : DatabaseTests
             ExecuteScalarSQL = "SELECT null"
         };
 
-        var ex = Assert.Throws<DataLoadProgressUpdateException>(() =>
-            updateInfo.AddAppropriateDisposeStep(_job, GetCleanedServer(FAnsi.DatabaseType.MicrosoftSQLServer)));
+        var ex = Assert.Throws<DataLoadProgressUpdateException>(() => updateInfo.AddAppropriateDisposeStep(_job, GetCleanedServer(FAnsi.DatabaseType.MicrosoftSQLServer)));
 
         Assert.IsTrue(ex.Message.Contains("ExecuteScalarSQL"));
         Assert.IsTrue(ex.Message.Contains("returned null"));
@@ -128,6 +125,8 @@ public class DataLoadProgressUpdateInfoTests : DatabaseTests
             Strategy = DataLoadProgressUpdateStrategy.ExecuteScalarSQLInRAW,
             ExecuteScalarSQL = "SELECT 'fishfish'"
         };
+
+        var ex = Assert.Throws<DataLoadProgressUpdateException>(() => updateInfo.AddAppropriateDisposeStep(_job, GetCleanedServer(FAnsi.DatabaseType.MicrosoftSQLServer)));
 
         var ex = Assert.Throws<DataLoadProgressUpdateException>(() =>
             updateInfo.AddAppropriateDisposeStep(_job, GetCleanedServer(FAnsi.DatabaseType.MicrosoftSQLServer)));
@@ -153,9 +152,6 @@ public class DataLoadProgressUpdateInfoTests : DatabaseTests
             Strategy = DataLoadProgressUpdateStrategy.ExecuteScalarSQLInRAW,
             ExecuteScalarSQL = "SELECT '2001-01-07'"
         };
-
-        var added = (UpdateProgressIfLoadsuccessful)updateInfo.AddAppropriateDisposeStep(_job,
-            GetCleanedServer(FAnsi.DatabaseType.MicrosoftSQLServer));
 
         Assert.AreEqual(new DateTime(2001, 1, 7), added.DateToSetProgressTo);
 

@@ -111,7 +111,6 @@ public class DashboardControlFactory
         if (!IsCompatibleType(t))
             throw new ArgumentException($"Type '{t}' is not a compatible Type", nameof(t));
 
-        var constructor = new ObjectConstructor();
         var instance = (UserControl)ObjectConstructor.Construct(t);
 
         instance.Dock = DockStyle.None;

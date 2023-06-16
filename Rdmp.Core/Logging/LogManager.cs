@@ -11,7 +11,6 @@ using System.Data.Common;
 using System.Linq;
 using System.Text;
 using System.Threading;
-using System.Threading.Tasks;
 using FAnsi.Discovery;
 using FAnsi.Discovery.QuerySyntax;
 using Rdmp.Core.Logging.PastEvents;

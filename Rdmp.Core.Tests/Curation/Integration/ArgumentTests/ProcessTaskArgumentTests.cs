@@ -294,8 +294,8 @@ public class ProcessTaskArgumentTests : DatabaseTests
 
         var useCase = ReleaseUseCase.DesignTime();
 
-        var factory = new DataFlowPipelineEngineFactory(useCase, RepositoryLocator.CatalogueRepository.MEF);
-        var destInstance = DataFlowPipelineEngineFactory.CreateDestinationIfExists(pipe);
+        var factory = new DataFlowPipelineEngineFactory(useCase);
+        var destInstance = factory.CreateDestinationIfExists(pipe);
 
         Assert.AreEqual(true, ((BasicDataReleaseDestination)destInstance).ReleaseSettings.DeleteFilesOnSuccess);
     }
@@ -376,7 +376,7 @@ public class ProcessTaskArgumentTests : DatabaseTests
             {
                 Name = "MyNames"
             };
-            arg.SetType(typeof(Dictionary<TableInfo, string>));
+            arg.SetType(typeof(Dictionary<TableInfo,string>));
             arg.SaveToDatabase();
 
             Assert.AreEqual(typeof(Dictionary<TableInfo, string>), arg.GetConcreteSystemType());

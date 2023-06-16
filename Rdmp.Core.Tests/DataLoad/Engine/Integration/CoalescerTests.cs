@@ -30,9 +30,10 @@ public class CoalescerTests : DatabaseTests
     {
         var db = GetCleanedServer(type, "TestCoalescer");
 
-        var batchCount = 1000;
+        const int batchCount = 1000;
 
-        var dt = new DataTable("TestCoalescer_RampantNullness");
+        using var dt = new DataTable("TestCoalescer_RampantNullness");
+        dt.BeginLoadData();
         dt.Columns.Add("pk");
         dt.Columns.Add("f1");
         dt.Columns.Add("f2");
@@ -77,6 +78,7 @@ public class CoalescerTests : DatabaseTests
             }
         }
 
+        dt.EndLoadData();
         var tbl = db.CreateTable(dt.TableName, dt);
 
         var importer = new TableInfoImporter(CatalogueRepository, tbl);
@@ -94,15 +96,15 @@ public class CoalescerTests : DatabaseTests
             tbl.Rename("AAAA");
             namer = RdmpMockFactory.Mock_INameDatabasesAndTablesDuringLoads(db, "AAAA");
         }
-
-        var configuration = new HICDatabaseConfiguration(db.Server, namer);
-
+            
+        var configuration = new HICDatabaseConfiguration(db.Server,namer);
+            
         var coalescer = new Coalescer
         {
             TableRegexPattern = new Regex(".*"),
             CreateIndex = true
         };
-        coalescer.Initialize(db, LoadStage.AdjustRaw);
+        coalescer.Initialize(db,LoadStage.AdjustRaw);
 
 
         var job = new ThrowImmediatelyDataLoadJob(configuration, tableInfo);

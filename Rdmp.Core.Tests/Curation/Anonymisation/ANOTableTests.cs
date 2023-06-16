@@ -10,7 +10,6 @@ using System.Data;
 using System.Diagnostics;
 using System.Linq;
 using System.Text.RegularExpressions;
-using FAnsi.Discovery;
 using NUnit.Framework;
 using Rdmp.Core.Curation.Data.DataLoad;
 using Rdmp.Core.DataLoad.Engine.Pipeline.Components.Anonymisation;

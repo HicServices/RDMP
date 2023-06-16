@@ -23,13 +23,13 @@ public class MySqlQueryBuilderTests : DatabaseTests
         };
         t.SaveToDatabase();
 
-        var col = new ColumnInfo(CatalogueRepository, "`db`.`tbl`.`col`", "varchar(10)", t);
-        Assert.AreEqual("col", col.GetRuntimeName());
+        var col = new ColumnInfo(CatalogueRepository, "`db`.`tbl`.`col`","varchar(10)",t);
+        Assert.AreEqual("col",col.GetRuntimeName());
 
-        var cata = new Catalogue(CatalogueRepository, "cata");
+        var cata = new Catalogue(CatalogueRepository,"cata");
         var catalogueItem = new CatalogueItem(CatalogueRepository, cata, "col");
         var extractionInfo = new ExtractionInformation(CatalogueRepository, catalogueItem, col, col.Name);
-
+            
         var qb = new QueryBuilder(null, null);
         qb.AddColumn(extractionInfo);
         Assert.AreEqual(CollapseWhitespace(
@@ -37,9 +37,9 @@ public class MySqlQueryBuilderTests : DatabaseTests
 `db`.`tbl`.`col`
 FROM 
 `db`.`tbl`"
-        ), CollapseWhitespace(qb.SQL));
-    }
+        ),CollapseWhitespace(qb.SQL));
 
+    }
     [Test]
     public void TestQueryBuilder_MySql_Top35()
     {

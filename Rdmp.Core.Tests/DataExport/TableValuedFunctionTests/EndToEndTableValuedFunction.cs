@@ -148,10 +148,9 @@ public class EndToEndTableValuedFunction : DatabaseTests
 
         //create a pipeline for executing this CIC and turning it into a cohort
         _pipe = new Pipeline(CatalogueRepository, "CREATE COHORT:By Executing CIC");
-
-        var source = new PipelineComponent(CatalogueRepository, _pipe, typeof(CohortIdentificationConfigurationSource),
-            0, "CIC Source");
-
+            
+        var source = new PipelineComponent(CatalogueRepository, _pipe,typeof (CohortIdentificationConfigurationSource), 0, "CIC Source");
+            
         _project = new Project(DataExportRepository, "TvfProject")
         {
             ProjectNumber = 12,
@@ -171,13 +170,11 @@ public class EndToEndTableValuedFunction : DatabaseTests
         destination.CreateArgumentsForClassIfNotExists<BasicCohortDestination>();
 
         //create pipeline initialization objects
-        var request = new CohortCreationRequest(_project,
-            new CohortDefinition(null, "MyFirstCohortForTvfTest", 1, 12, _externalCohortTable), DataExportRepository,
-            "Here goes nothing")
-        {
-            CohortIdentificationConfiguration = _cic
-        };
-        var engine = request.GetEngine(_pipe, new ThrowImmediatelyDataLoadEventListener());
+        var request = new CohortCreationRequest(_project, new CohortDefinition(null, "MyFirstCohortForTvfTest", 1, 12, _externalCohortTable), DataExportRepository, "Here goes nothing")
+            {
+                CohortIdentificationConfiguration = _cic
+            };
+        var engine = request.GetEngine(_pipe,new ThrowImmediatelyDataLoadEventListener());
         engine.ExecutePipeline(new GracefulCancellationToken());
     }
 
@@ -353,9 +350,9 @@ end
 
         //create a global overriding parameter on the aggregate
         var global = new AnyTableSqlParameter(CatalogueRepository, _aggregate, "DECLARE @numberOfRecords AS int;")
-        {
-            Value = "1"
-        };
+            {
+                Value = "1"
+            };
         global.SaveToDatabase();
 
 
@@ -434,8 +431,7 @@ end
         Assert.AreEqual("10", _tvfTableInfo.GetAllParameters().Single().Value);
 
         //configure an extraction specific global of 1 so that only 1 chi number is fetched (which will be in the cohort)
-        var globalP =
-            new GlobalExtractionFilterParameter(DataExportRepository, config, "DECLARE @numberOfRecords AS int;")
+        var globalP = new GlobalExtractionFilterParameter(DataExportRepository, config, "DECLARE @numberOfRecords AS int;")
             {
                 Value = "1"
             };

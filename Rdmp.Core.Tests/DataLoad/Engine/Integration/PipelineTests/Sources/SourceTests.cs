@@ -136,9 +136,9 @@ public class SourceTests : DatabaseTests
 
         var pipeline = new Pipeline(CatalogueRepository, "DeleteMePipeline");
         var component = new PipelineComponent(CatalogueRepository, pipeline, typeof(TestObject_RequiresTableInfo), 0)
-        {
-            Name = "TestPipeComponent"
-        };
+            {
+                Name = "TestPipeComponent"
+            };
         component.SaveToDatabase();
 
         var rejection = context.IsAllowable(pipeline, out var reason);

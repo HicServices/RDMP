@@ -143,9 +143,9 @@ public class CustomDataImportingTests : TestsRequiringAnExtractionConfiguration
         _selectedDataSet.SaveToDatabase();
 
         var filter = new DeployedExtractionFilter(DataExportRepository, "monkeys only", rootContainer)
-        {
-            WhereSQL = "SuperSecretThing = 'monkeys can all secretly fly'"
-        };
+ {
+     WhereSQL = "SuperSecretThing = 'monkeys can all secretly fly'"
+ };
         filter.SaveToDatabase();
         rootContainer.AddChild(filter);
 

@@ -21,7 +21,6 @@ namespace Rdmp.Core.Curation.Data.Serialization;
 public class PickAnyConstructorJsonConverter : JsonConverter
 {
     private readonly object[] _constructorObjects;
-    private ObjectConstructor _objectConstructor;
 
     /// <summary>
     /// Creates a JSON deserializer that can use any constructors on the class which match <paramref name="constructorObjects"/>
@@ -30,7 +29,6 @@ public class PickAnyConstructorJsonConverter : JsonConverter
     public PickAnyConstructorJsonConverter(params object[] constructorObjects)
     {
         _constructorObjects = constructorObjects;
-        _objectConstructor = new ObjectConstructor();
     }
 
     /// <summary>
@@ -100,6 +98,8 @@ public class PickAnyConstructorJsonConverter : JsonConverter
             $"There were {constructors.Count} compatible constructors for the constructorObjects provided");
     }
 
-    private Dictionary<ConstructorInfo, List<object>> GetConstructors(Type objectType) =>
-        ObjectConstructor.GetConstructors(objectType, false, false, _constructorObjects);
+    private Dictionary<ConstructorInfo, List<object>> GetConstructors(Type objectType)
+    {
+        return ObjectConstructor.GetConstructors(objectType, false, false, _constructorObjects);
+    }
 }

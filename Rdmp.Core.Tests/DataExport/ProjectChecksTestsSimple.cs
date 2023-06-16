@@ -175,7 +175,7 @@ public class ProjectChecksTestsSimple : DatabaseTests
         {
             ProjectNumber = -5000
         };
-        config = new ExtractionConfiguration(DataExportRepository, p);
+        config = new ExtractionConfiguration(DataExportRepository,p);
         return p;
     }
 

@@ -11,7 +11,6 @@ using System.IO;
 using System.IO.Compression;
 using System.Linq;
 using System.Text.RegularExpressions;
-using System.Threading;
 using System.Threading.Tasks;
 using FAnsi.Discovery;
 using Rdmp.Core.Curation;

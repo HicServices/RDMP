@@ -54,7 +54,7 @@ internal class ChiValidationTest : ValidationTests
         {
             // 3. Set the ItemValidator's PrimaryConstraint (must be valid CHI)
             // (using Validator's CreateConstraint() method to create a Primary Constraint (CHI))
-            PrimaryConstraint = (PrimaryConstraint)Validator.CreateConstraint("chi", Consequence.Wrong)
+            PrimaryConstraint = (PrimaryConstraint)Validator.CreateConstraint("chi",Consequence.Wrong)
         };
 
         // 4. Add the ItemValidator to our Validator, specifying the item it should validate against

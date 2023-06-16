@@ -202,10 +202,10 @@ INSERT INTO DiluteToBitFlagTests VALUES ({insert})", con).ExecuteNonQuery();
         var dilution = new Dilution
         {
             ColumnToDilute = discarded,
-            Operation = typeof(CrushToBitFlag)
+            Operation = typeof (CrushToBitFlag)
         };
 
-        dilution.Initialize(db, LoadStage.AdjustStaging);
+        dilution.Initialize(db,LoadStage.AdjustStaging);
         dilution.Check(new ThrowImmediatelyCheckNotifier());
 
         var job = new ThrowImmediatelyDataLoadJob(new HICDatabaseConfiguration(db.Server, namer), ti);

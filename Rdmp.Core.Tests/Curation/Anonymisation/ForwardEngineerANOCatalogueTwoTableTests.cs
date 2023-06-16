@@ -43,8 +43,7 @@ public class ForwardEngineerANOCatalogueTwoTableTests : TestsRequiringANOStore
     {
         base.SetUp();
 
-        var sql =
-            @"CREATE TABLE [dbo].[Tests](
+        const string sql = @"CREATE TABLE [dbo].[Tests](
 	[chi] [varchar](10) NULL,
 	[Date] [datetime] NULL,
 	[hb_extract] [varchar](1) NULL,
@@ -100,9 +99,9 @@ GO";
             ExtractionJoinType.Left, null);
 
         _anoTable = new ANOTable(CatalogueRepository, ANOStore_ExternalDatabaseServer, "ANOTes", "T")
-        {
-            NumberOfCharactersToUseInAnonymousRepresentation = 10
-        };
+            {
+                NumberOfCharactersToUseInAnonymousRepresentation = 10
+            };
         _anoTable.SaveToDatabase();
         _anoTable.PushToANOServerAsNewTable("int", new ThrowImmediatelyCheckNotifier());
 
@@ -137,7 +136,7 @@ GO";
     [Test]
     public void TestAnonymisingJoinKey()
     {
-        //Create a plan for the first Catlogue (Tests) - single Table dataset
+        //Create a plan for the first Catalogue (Tests) - single Table dataset
         var plan1 = new ForwardEngineerANOCataloguePlanManager(RepositoryLocator, cata1);
         var testIdHeadPlan = plan1.GetPlanForColumnInfo(c1.Single(c => c.GetRuntimeName().Equals("TestId")));
         plan1.TargetDatabase = _destinationDatabase;
@@ -169,14 +168,13 @@ GO";
         var engine2 = new ForwardEngineerANOCatalogueEngine(RepositoryLocator, plan2);
         engine2.Execute();
 
-        //Did it succesfully pick SetUp the correct ANO column
-        var plan2ExtractionInformationsAtDestination =
-            engine2.NewCatalogue.GetAllExtractionInformation(ExtractionCategory.Any);
+        //Did it successfully pick SetUp the correct ANO column
+        var plan2ExtractionInformationsAtDestination = engine2.NewCatalogue.GetAllExtractionInformation(ExtractionCategory.Any);
 
         var ei2 = plan2ExtractionInformationsAtDestination.Single(e => e.GetRuntimeName().Equals("ANOTestId"));
         Assert.IsTrue(ei2.Exists());
 
-        //and can the query be executed succesfully
+        //and can the query be executed successfully
         var qb = new QueryBuilder(null, null);
         qb.AddColumnRange(plan2ExtractionInformationsAtDestination);
 

@@ -37,7 +37,7 @@ public class TableInfoJoiningQueryBuilderTests : DatabaseTests
 
         //CASE 1 : Only 1 column used so no join needed
         var queryBuilder = new QueryBuilder(null, null);
-        var icol1 = new ColumnInfoToIColumn(memory, col1)
+        var icol1 = new ColumnInfoToIColumn(memory,col1)
         {
             Order = 1
         };
@@ -52,7 +52,7 @@ public class TableInfoJoiningQueryBuilderTests : DatabaseTests
         queryBuilder = new QueryBuilder(null, null);
         queryBuilder.AddColumn(new ColumnInfoToIColumn(memory, col1));
 
-        var icol4 = new ColumnInfoToIColumn(memory, col4)
+        var icol4 = new ColumnInfoToIColumn(memory,col4)
         {
             Order = 2
         };

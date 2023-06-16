@@ -44,8 +44,6 @@ internal class ColumnSwapperTests : DatabaseTests
 
         var db = GetCleanedServer(DatabaseType.MicrosoftSQLServer);
 
-        Import(db.CreateTable("Map", dt), out var map, out var mapCols);
-
         var swapper = new ColumnSwapper
         {
             MappingFromColumn = mapCols.Single(c => c.GetRuntimeName().Equals("In")),

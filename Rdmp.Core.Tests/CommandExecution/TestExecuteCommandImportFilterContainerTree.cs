@@ -39,13 +39,13 @@ internal class TestExecuteCommandImportFilterContainerTree : CommandInvokerTests
         Assert.IsNull(sds.RootFilterContainer);
 
         //run the command
-        var mgr = new ConsoleInputManager(RepositoryLocator, new ThrowImmediatelyCheckNotifier())
+        var mgr = new ConsoleInputManager(RepositoryLocator,new ThrowImmediatelyCheckNotifier())
         {
             DisallowInput = true
         };
-        var cmd = new ExecuteCommandImportFilterContainerTree(mgr, sds, ac);
-
-        Assert.IsFalse(cmd.IsImpossible, cmd.ReasonCommandImpossible);
+        var cmd = new ExecuteCommandImportFilterContainerTree(mgr,sds,ac);
+            
+        Assert.IsFalse(cmd.IsImpossible,cmd.ReasonCommandImpossible);
         cmd.Execute();
 
         sds.ClearAllInjections();
@@ -82,13 +82,13 @@ internal class TestExecuteCommandImportFilterContainerTree : CommandInvokerTests
         Assert.IsNull(ac.RootFilterContainer);
 
         //run the command
-        var mgr = new ConsoleInputManager(RepositoryLocator, new ThrowImmediatelyCheckNotifier())
+        var mgr = new ConsoleInputManager(RepositoryLocator,new ThrowImmediatelyCheckNotifier())
         {
             DisallowInput = true
         };
-        var cmd = new ExecuteCommandImportFilterContainerTree(mgr, ac, sds);
-
-        Assert.IsFalse(cmd.IsImpossible, cmd.ReasonCommandImpossible);
+        var cmd = new ExecuteCommandImportFilterContainerTree(mgr,ac,sds);
+            
+        Assert.IsFalse(cmd.IsImpossible,cmd.ReasonCommandImpossible);
         cmd.Execute();
 
         ac.ClearAllInjections();
@@ -129,13 +129,13 @@ internal class TestExecuteCommandImportFilterContainerTree : CommandInvokerTests
         Assert.IsNull(sds.RootFilterContainer);
 
         //run the command
-        var mgr = new ConsoleInputManager(RepositoryLocator, new ThrowImmediatelyCheckNotifier())
+        var mgr = new ConsoleInputManager(RepositoryLocator,new ThrowImmediatelyCheckNotifier())
         {
             DisallowInput = true
         };
-        var cmd = new ExecuteCommandImportFilterContainerTree(mgr, sds, ac);
-
-        Assert.IsFalse(cmd.IsImpossible, cmd.ReasonCommandImpossible);
+        var cmd = new ExecuteCommandImportFilterContainerTree(mgr,sds,ac);
+            
+        Assert.IsFalse(cmd.IsImpossible,cmd.ReasonCommandImpossible);
         cmd.Execute();
 
         sds.ClearAllInjections();

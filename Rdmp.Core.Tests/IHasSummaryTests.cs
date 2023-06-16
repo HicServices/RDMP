@@ -5,7 +5,6 @@
 // You should have received a copy of the GNU General Public License along with RDMP. If not, see <https://www.gnu.org/licenses/>.
 
 using NUnit.Framework;
-using Rdmp.Core.Curation.Data;
 using System;
 using Tests.Common;
 
@@ -21,6 +20,7 @@ internal class IHasSummaryTests : UnitTests
             {
                 var text = obj.GetSummary(true, true);
                 Assert.IsNotNull(text);
+                objectCount++;
             }
             catch (Exception ex)
             {

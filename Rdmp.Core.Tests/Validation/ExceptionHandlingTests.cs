@@ -21,10 +21,10 @@ internal class ExceptionHandlingTests
     public void Validate_WhenMultipleErrors_ReturnsAllErrors()
     {
         var validator = new Validator();
-
+            
         var chi = new ItemValidator
         {
-            PrimaryConstraint = (PrimaryConstraint)Validator.CreateConstraint("chi", Consequence.Wrong)
+            PrimaryConstraint = (PrimaryConstraint) Validator.CreateConstraint("chi",Consequence.Wrong)
         };
         var prediction = new Prediction(new ChiSexPredictor(), "gender");
         chi.AddSecondaryConstraint(prediction);

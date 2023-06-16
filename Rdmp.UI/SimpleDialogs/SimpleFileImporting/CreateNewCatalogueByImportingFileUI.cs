@@ -344,8 +344,10 @@ public partial class CreateNewCatalogueByImportingFileUI : RDMPForm
     private UploadFileUseCase GetUseCase() =>
         new(_selectedFile, serverDatabaseTableSelector1.GetDiscoveredDatabase(), Activator);
 
-    private DataFlowPipelineEngineFactory GetFactory() =>
-        new(GetUseCase(), Activator.RepositoryLocator.CatalogueRepository.MEF);
+    private DataFlowPipelineEngineFactory GetFactory()
+    {
+        return new DataFlowPipelineEngineFactory(GetUseCase());
+    }
 
     private void btnExecute_Click(object sender, EventArgs e)
     {

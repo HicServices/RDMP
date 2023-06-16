@@ -38,9 +38,7 @@ public class PayloadTest : DatabaseTests
 
         var lmd = new LoadMetadata(CatalogueRepository, "Loading")
         {
-            LocationOfFlatFiles = LoadDirectory
-                .CreateDirectoryStructure(new DirectoryInfo(TestContext.CurrentContext.TestDirectory), "delme", true)
-                .RootPath.FullName
+            LocationOfFlatFiles = LoadDirectory.CreateDirectoryStructure(new DirectoryInfo(TestContext.CurrentContext.TestDirectory),"delme", true).RootPath.FullName
         };
         lmd.SaveToDatabase();
 
@@ -55,7 +53,7 @@ public class PayloadTest : DatabaseTests
 
         var pt = new ProcessTask(CatalogueRepository, lmd, LoadStage.Mounting)
         {
-            Path = typeof(TestPayloadAttacher).FullName,
+            Path = typeof (TestPayloadAttacher).FullName,
             ProcessTaskType = ProcessTaskType.Attacher
         };
         pt.SaveToDatabase();

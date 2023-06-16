@@ -15,6 +15,8 @@ namespace ResearchDataManagementPlatform.WindowManagement;
 /// </summary>
 public class UIObjectConstructor : ObjectConstructor
 {
-    public static object Construct(Type t, IActivateItems itemActivator, bool allowBlankConstructors = true) =>
-        ObjectConstructor.Construct(t, itemActivator, allowBlankConstructors);
+    public object Construct(Type t,IActivateItems itemActivator, bool allowBlankConstructors = true)
+    {
+        return ObjectConstructor.Construct(t, itemActivator, allowBlankConstructors);
+    }
 }

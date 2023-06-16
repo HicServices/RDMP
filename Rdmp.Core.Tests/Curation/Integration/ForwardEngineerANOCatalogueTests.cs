@@ -52,9 +52,9 @@ public class ForwardEngineerANOCatalogueTests : TestsRequiringFullAnonymisationS
         bulk.ImportAsCatalogue();
 
         var planManager = new ForwardEngineerANOCataloguePlanManager(RepositoryLocator, bulk.catalogue)
-        {
-            TargetDatabase = db
-        };
+ {
+     TargetDatabase = db
+ };
 
         //no operations are as yet configured
         Assert.DoesNotThrow(() => planManager.Check(new ThrowImmediatelyCheckNotifier()));
@@ -104,10 +104,10 @@ public class ForwardEngineerANOCatalogueTests : TestsRequiringFullAnonymisationS
         bulk.SetupTestData();
         bulk.ImportAsCatalogue();
 
-        var planManager = new ForwardEngineerANOCataloguePlanManager(RepositoryLocator, bulk.catalogue)
-        {
-            TargetDatabase = db
-        };
+        var planManager = new ForwardEngineerANOCataloguePlanManager(RepositoryLocator,bulk.catalogue)
+ {
+     TargetDatabase = db
+ };
 
         //setup test rules for migrator
         CreateMigrationRules(planManager, bulk);
@@ -244,9 +244,9 @@ public class ForwardEngineerANOCatalogueTests : TestsRequiringFullAnonymisationS
 
         //setup ANOTable on head
         var anoTable = new ANOTable(CatalogueRepository, ANOStore_ExternalDatabaseServer, "ANOSkullColor", "C")
-        {
-            NumberOfCharactersToUseInAnonymousRepresentation = 10
-        };
+            {
+                NumberOfCharactersToUseInAnonymousRepresentation = 10
+            };
         anoTable.SaveToDatabase();
         anoTable.PushToANOServerAsNewTable("varchar(10)", new ThrowImmediatelyCheckNotifier());
 
@@ -395,13 +395,12 @@ public class ForwardEngineerANOCatalogueTests : TestsRequiringFullAnonymisationS
         }
 
         var ciDescription = new CatalogueItem(CatalogueRepository, bulk.catalogue, "Sex_Desc");
-        var eiDescription = new ExtractionInformation(CatalogueRepository, ciDescription, lookupColumnInfos[2],
-            lookupColumnInfos[2].Name)
-        {
-            Alias = "Sex_Desc",
-            Order = orderToInsertDescriptionFieldAt + 1,
-            ExtractionCategory = ExtractionCategory.Supplemental
-        };
+        var eiDescription = new ExtractionInformation(CatalogueRepository, ciDescription, lookupColumnInfos[2],lookupColumnInfos[2].Name)
+            {
+                Alias = "Sex_Desc",
+                Order = orderToInsertDescriptionFieldAt +1,
+                ExtractionCategory = ExtractionCategory.Supplemental
+            };
         eiDescription.SaveToDatabase();
 
         bulk.catalogue.ClearAllInjections();
@@ -420,10 +419,10 @@ public class ForwardEngineerANOCatalogueTests : TestsRequiringFullAnonymisationS
         Assert.AreEqual(lookup, qb.GetDistinctRequiredLookups().Single());
 
         //////////////////////////////////////////////////////////////////////////////////////The Actual Bit Being Tested////////////////////////////////////////////////////
-        var planManager = new ForwardEngineerANOCataloguePlanManager(RepositoryLocator, bulk.catalogue)
-        {
-            TargetDatabase = db
-        };
+        var planManager = new ForwardEngineerANOCataloguePlanManager(RepositoryLocator,bulk.catalogue)
+ {
+     TargetDatabase = db
+ };
 
         //setup test rules for migrator
         CreateMigrationRules(planManager, bulk);
@@ -515,12 +514,12 @@ public class ForwardEngineerANOCatalogueTests : TestsRequiringFullAnonymisationS
     private void CreateMigrationRules(ForwardEngineerANOCataloguePlanManager planManager, BulkTestsData bulk)
     {
         var chi = bulk.GetColumnInfo("chi");
-
+            
         var anoChi = new ANOTable(CatalogueRepository, ANOStore_ExternalDatabaseServer, "ANOCHI", "C")
-        {
-            NumberOfIntegersToUseInAnonymousRepresentation = 9,
-            NumberOfCharactersToUseInAnonymousRepresentation = 1
-        };
+            {
+                NumberOfIntegersToUseInAnonymousRepresentation = 9,
+                NumberOfCharactersToUseInAnonymousRepresentation = 1
+            };
         anoChi.SaveToDatabase();
         anoChi.PushToANOServerAsNewTable(chi.Data_type, new ThrowImmediatelyCheckNotifier());
 

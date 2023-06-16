@@ -171,25 +171,21 @@ internal class RemoteTableAttacherTests : DatabaseTests
             logManager.CreateNewLoggingTaskIfNotExists(lmd.GetDistinctLoggingTask());
 
             var lp = new LoadProgress(CatalogueRepository, new LoadMetadata(CatalogueRepository, "ffffff"))
-            {
-                OriginDate = new DateTime(2001, 1, 1)
-            };
+ {
+     OriginDate = new DateTime(2001,1,1)
+ };
             attacher.Progress = lp;
             attacher.ProgressUpdateStrategy = new DataLoadProgressUpdateInfo {Strategy = DataLoadProgressUpdateStrategy.DoNothing};
             
             var dbConfiguration = new HICDatabaseConfiguration(lmd, RdmpMockFactory.Mock_INameDatabasesAndTablesDuringLoads(db, "table2"));
 
-            var dbConfiguration = new HICDatabaseConfiguration(lmd,
-                RdmpMockFactory.Mock_INameDatabasesAndTablesDuringLoads(db, "table2"));
-
-            var job = new ScheduledDataLoadJob(RepositoryLocator, "test job", logManager, lmd, new TestLoadDirectory(),
-                new ThrowImmediatelyDataLoadEventListener(), dbConfiguration)
-            {
-                LoadProgress = mismatchProgress
-                    ? new LoadProgress(CatalogueRepository, new LoadMetadata(CatalogueRepository, "ffsdf"))
-                    : lp,
-                DatesToRetrieve = new List<DateTime> { new(2001, 01, 01) }
-            };
+            var job = new ScheduledDataLoadJob(RepositoryLocator,"test job",logManager,lmd,new TestLoadDirectory(),new ThrowImmediatelyDataLoadEventListener(),dbConfiguration)
+                {
+                    LoadProgress = mismatchProgress
+                        ? new LoadProgress(CatalogueRepository, new LoadMetadata(CatalogueRepository, "ffsdf"))
+                        : lp,
+                    DatesToRetrieve = new List<DateTime>{new DateTime(2001,01,01)}
+                };
 
             job.StartLogging();
             attacher.Attach(job, new GracefulCancellationToken());

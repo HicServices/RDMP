@@ -615,7 +615,7 @@ public class AggregateDataBasedTests : DatabaseTests
         configuration.CountSQL = "sum(NumberInTrouble)";
         configuration.PivotOnDimensionID = pivotDimension.ID; //pivot on the Category
         configuration.SaveToDatabase();
-
+            
         var topx = new AggregateTopX(CatalogueRepository, configuration, 2)
         {
             OrderByDirection = AggregateTopXOrderByDirection.Descending,

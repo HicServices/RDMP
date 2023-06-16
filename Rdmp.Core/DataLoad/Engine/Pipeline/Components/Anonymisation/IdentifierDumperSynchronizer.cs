@@ -9,7 +9,6 @@ using System.Collections.Generic;
 using System.Data.Common;
 using Microsoft.Data.SqlClient;
 using System.Linq;
-using FAnsi.Discovery;
 using Rdmp.Core.Curation.Data;
 using Rdmp.Core.Curation.Data.DataLoad;
 using Rdmp.Core.DataLoad.Triggers;

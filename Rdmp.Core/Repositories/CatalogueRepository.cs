@@ -200,11 +200,10 @@ public class CatalogueRepository : TableRepository, ICatalogueRepository
     {
         return Constructors.TryGetValue(t, out var constructor)
             ? constructor(this, reader)
-            : _constructor.ConstructIMapsDirectlyToDatabaseObject<ICatalogueRepository>(t, this, reader);
+            : ObjectConstructor.ConstructIMapsDirectlyToDatabaseObject<ICatalogueRepository>(t, this, reader);
     }
 
     private readonly ConcurrentDictionary<Type, IRowVerCache> _caches = new();
-
     public override T[] GetAllObjects<T>()
     {
         return _caches.GetOrAdd(typeof(T), t => new RowVerCache<T>(this))

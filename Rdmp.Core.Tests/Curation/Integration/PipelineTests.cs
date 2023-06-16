@@ -175,10 +175,10 @@ public class PipelineTests : DatabaseTests
         var p = new Pipeline(CatalogueRepository);
 
         //Setup a pipeline with a source component type that doesn't exist
-        var source = new PipelineComponent(CatalogueRepository, p, typeof(DelimitedFlatFileAttacher), 0)
-        {
-            Class = "Trollololol"
-        };
+        var source = new PipelineComponent(CatalogueRepository, p, typeof (DelimitedFlatFileAttacher), 0)
+ {
+     Class = "Trollololol"
+ };
         source.SaveToDatabase();
 
         var arg = source.CreateNewArgument();

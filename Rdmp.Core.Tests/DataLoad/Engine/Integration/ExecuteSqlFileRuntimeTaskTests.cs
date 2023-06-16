@@ -151,10 +151,12 @@ internal class ExecuteSqlFileRuntimeTaskTests : DatabaseTests
 
         var job = new ThrowImmediatelyDataLoadJob
         {
-            RegularTablesToLoad = new List<ITableInfo> { ti },
+            RegularTablesToLoad = new List<ITableInfo> {ti},
             LookupTablesToLoad = new List<ITableInfo>(),
             Configuration = configuration
         };
+
+        var ex = Assert.Throws<Exception>(()=>task.Run(job, new GracefulCancellationToken()));
 
         var ex = Assert.Throws<Exception>(() => task.Run(job, new GracefulCancellationToken()));
 

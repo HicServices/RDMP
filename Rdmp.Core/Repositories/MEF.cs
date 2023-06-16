@@ -28,7 +28,6 @@ public class MEF
 
     public bool HaveDownloadedAllAssemblies;
     public SafeDirectoryCatalog SafeDirectoryCatalog;
-    readonly ObjectConstructor _o = new();
 
     public MEF()
     {
@@ -284,7 +283,7 @@ public class MEF
             throw new Exception(
                 $"Requested typeToCreate '{typeToCreate}' was not assignable to the required Type '{typeof(T).Name}'");
 
-        var instance = (T)_o.ConstructIfPossible(typeToCreateAsType,args) ?? throw new ObjectLacksCompatibleConstructorException(
+        var instance = (T)ObjectConstructor.ConstructIfPossible(typeToCreateAsType,args) ?? throw new ObjectLacksCompatibleConstructorException(
                 $"Could not construct a {typeof(T)} using the {args.Length} constructor arguments");
         return instance;
     }

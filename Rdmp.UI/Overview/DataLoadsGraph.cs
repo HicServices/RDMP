@@ -17,7 +17,6 @@ using Rdmp.Core.Curation.Data.Dashboarding;
 using Rdmp.Core.Curation.Data.DataLoad;
 using Rdmp.Core.Icons.IconProvision;
 using Rdmp.Core.Logging;
-using Rdmp.Core.Logging.PastEvents;
 using Rdmp.UI.Collections;
 using Rdmp.UI.DashboardTabs.Construction;
 using Rdmp.UI.ItemActivation;

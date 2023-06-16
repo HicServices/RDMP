@@ -18,7 +18,6 @@ using Rdmp.Core.CommandLine.Interactive;
 using Rdmp.Core.Repositories;
 using Rdmp.Core.ReusableLibraryCode.Checks;
 using Rdmp.UI.CommandExecution.AtomicCommands;
-using Rdmp.UI.ItemActivation;
 using Tests.Common;
 
 namespace Rdmp.UI.Tests.DesignPatternTests;

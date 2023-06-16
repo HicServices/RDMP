@@ -7,7 +7,6 @@
 using System;
 using System.IO;
 using System.Linq;
-using MathNet.Numerics;
 using NUnit.Framework;
 using Rdmp.Core.Curation.Data;
 using Rdmp.Core.Reports;
@@ -78,13 +77,11 @@ internal class DitaExtractorTests : DatabaseTests
             .SingleOrDefault(c => c.Name.Equals("DitaExtractorConstructor_ExtractTestCatalogue_FilesExist"));
         oldCatalogueVersion?.DeleteInDatabase();
 
-        var ditaTestCatalogue =
-            new Catalogue(CatalogueRepository, "DitaExtractorConstructor_ExtractTestCatalogue_FilesExist")
+        var ditaTestCatalogue = new Catalogue(CatalogueRepository, "DitaExtractorConstructor_ExtractTestCatalogue_FilesExist")
             {
                 Acronym = "DITA_TEST",
-                Description =
-                    $"Test catalogue for the unit test DitaExtractorConstructor_ExtractTestCatalogue_FilesExist in file {typeof(DitaExtractorTests).FullName}.cs"
-            }; //name of Catalogue
+                Description = $"Test catalogue for the unit test DitaExtractorConstructor_ExtractTestCatalogue_FilesExist in file {typeof(DitaExtractorTests).FullName}.cs"
+            };//name of Catalogue
 
         ditaTestCatalogue.SaveToDatabase();
 

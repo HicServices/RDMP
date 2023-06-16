@@ -416,14 +416,12 @@ public abstract class BasicCommandExecution : IAtomicCommand
     /// <param name="constructorSelector">Selects which constructor on <paramref name="toConstruct"/> you want to invoke</param>
     /// <param name="pickerArgsIfAny"></param>
     /// <returns></returns>
-    protected object Construct(Type toConstruct, Func<ObjectConstructor, ConstructorInfo> constructorSelector,
+    protected object Construct(Type toConstruct, Func<ConstructorInfo> constructorSelector,
         IEnumerable<CommandLineObjectPickerArgumentValue> pickerArgsIfAny = null)
     {
-        var objectConstructor = new ObjectConstructor();
-
         var invoker = new CommandInvoker(BasicActivator);
-
-        var constructor = constructorSelector(objectConstructor);
+            
+        var constructor = constructorSelector();
 
         var constructorValues = new List<object>();
 

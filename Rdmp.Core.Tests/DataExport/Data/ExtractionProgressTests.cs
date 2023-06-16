@@ -7,7 +7,6 @@
 using NUnit.Framework;
 using Rdmp.Core.Curation.Data;
 using Rdmp.Core.DataExport.Data;
-using Rdmp.Core.DataExport.DataExtraction.Pipeline.Destinations;
 using System;
 using System.IO;
 using System.Linq;

@@ -70,7 +70,7 @@ public class JobDateGenerationStrategyFactoryTestsIntegration : DatabaseTests
     {
         var pt = new ProcessTask(CatalogueRepository, _lmd, LoadStage.GetFiles)
         {
-            Path = typeof(DoNothingDataProvider).FullName,
+            Path = typeof (DoNothingDataProvider).FullName,
             ProcessTaskType = ProcessTaskType.DataProvider,
             Name = "DoNothing"
         };

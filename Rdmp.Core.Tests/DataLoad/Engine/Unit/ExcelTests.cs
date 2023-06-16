@@ -6,7 +6,6 @@
 
 using System;
 using System.Collections.Generic;
-using System.Data;
 using System.IO;
 using System.Linq;
 using NSubstitute;
@@ -310,10 +309,9 @@ public class ExcelTests
             PrefixWithWorkbookName = prefixWithWorkbookName
         };
 
-        var mockProjDir = Substitute.For<ILoadDirectory>();
-        mockProjDir.ForLoading.Returns(loc.Directory);
-
-        var j = new ThrowImmediatelyDataLoadJob
+        var mockProjDir = Mock.Of<ILoadDirectory>(p => p.ForLoading==loc.Directory);
+          
+        var j= new ThrowImmediatelyDataLoadJob
         {
             LoadDirectory = mockProjDir
         };

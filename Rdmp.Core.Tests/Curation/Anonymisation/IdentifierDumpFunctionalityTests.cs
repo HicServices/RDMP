@@ -8,7 +8,6 @@ using System;
 using System.Collections.Generic;
 using System.Data;
 using System.Linq;
-using FAnsi.Discovery;
 using NUnit.Framework;
 using Rdmp.Core.Curation;
 using Rdmp.Core.Curation.Data;
@@ -153,17 +152,17 @@ public class IdentifierDumpFunctionalityTests : TestsRequiringFullAnonymisationS
     public void DumpAllIdentifiersInTable_UnexpectedColumnFoundInIdentifierDumpTable()
     {
         var preDiscardedColumn1 = new PreLoadDiscardedColumn(CatalogueRepository, tableInfoCreated, "surname")
-        {
-            Destination = DiscardedColumnDestination.StoreInIdentifiersDump,
-            SqlDataType = "varchar(20)"
-        };
+            {
+                Destination = DiscardedColumnDestination.StoreInIdentifiersDump,
+                SqlDataType = "varchar(20)"
+            };
         preDiscardedColumn1.SaveToDatabase();
 
         var preDiscardedColumn2 = new PreLoadDiscardedColumn(CatalogueRepository, tableInfoCreated, "forename")
-        {
-            Destination = DiscardedColumnDestination.StoreInIdentifiersDump,
-            SqlDataType = "varchar(50)"
-        };
+            {
+                Destination = DiscardedColumnDestination.StoreInIdentifiersDump,
+                SqlDataType = "varchar(50)"
+            };
         preDiscardedColumn2.SaveToDatabase();
 
         //give it the correct server
@@ -257,10 +256,10 @@ public class IdentifierDumpFunctionalityTests : TestsRequiringFullAnonymisationS
     public void IdentifierDumperCheckFails_NoTableExists()
     {
         var preDiscardedColumn1 = new PreLoadDiscardedColumn(CatalogueRepository, tableInfoCreated, "forename")
-        {
-            Destination = DiscardedColumnDestination.StoreInIdentifiersDump,
-            SqlDataType = "varchar(50)"
-        };
+            {
+                Destination = DiscardedColumnDestination.StoreInIdentifiersDump,
+                SqlDataType = "varchar(50)"
+            };
         preDiscardedColumn1.SaveToDatabase();
 
         //give it the correct server
@@ -297,8 +296,7 @@ public class IdentifierDumpFunctionalityTests : TestsRequiringFullAnonymisationS
     [Test]
     public void IdentifierDumperCheckFails_ServerIsNotADumpServer()
     {
-        var preDiscardedColumn1 =
-            new PreLoadDiscardedColumn(CatalogueRepository, tableInfoCreated, "NationalSecurityNumber")
+        var preDiscardedColumn1 = new PreLoadDiscardedColumn(CatalogueRepository, tableInfoCreated, "NationalSecurityNumber")
             {
                 Destination = DiscardedColumnDestination.StoreInIdentifiersDump,
                 SqlDataType = "varchar(10)"
@@ -356,10 +354,10 @@ public class IdentifierDumpFunctionalityTests : TestsRequiringFullAnonymisationS
     public void IdentifierDumperCheckFails_LieAboutDatatype()
     {
         var preDiscardedColumn1 = new PreLoadDiscardedColumn(CatalogueRepository, tableInfoCreated, "forename")
-        {
-            Destination = DiscardedColumnDestination.StoreInIdentifiersDump,
-            SqlDataType = "varchar(50)"
-        };
+            {
+                Destination = DiscardedColumnDestination.StoreInIdentifiersDump,
+                SqlDataType = "varchar(50)"
+            };
         preDiscardedColumn1.SaveToDatabase();
         try
         {

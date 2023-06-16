@@ -6,6 +6,7 @@
 
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using Microsoft.Data.SqlClient;
 using Rdmp.Core.Curation.Data;
 using Rdmp.Core.DataExport;
@@ -103,7 +104,6 @@ public class LinkedRepositoryProvider : RepositoryProvider
             return;
 
         _pluginRepositoryFinders = new List<IPluginRepositoryFinder>();
-        var constructor = new ObjectConstructor();
 
         //it's a plugin?
         foreach (var type in CatalogueRepository.MEF.GetTypes<IPluginRepositoryFinder>())
@@ -119,11 +119,7 @@ public class LinkedRepositoryProvider : RepositoryProvider
         if (DataExportRepository != null)
             yield return DataExportRepository;
 
-        foreach (var p in _pluginRepositoryFinders)
-        {
-            var r = p.GetRepositoryIfAny();
-            if (r != null)
-                yield return r;
-        }
+        foreach (var r in _pluginRepositoryFinders.Select(p => p.GetRepositoryIfAny()).Where(r => r != null))
+            yield return r;
     }
 }

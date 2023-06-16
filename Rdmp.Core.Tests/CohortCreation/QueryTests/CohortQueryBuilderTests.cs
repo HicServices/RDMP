@@ -254,8 +254,8 @@ FROM
     public void TestGettingAggregateSQLFromEntirity_IncludingParametersAtTop()
     {
         //setup a filter (all filters must be in a container so the container is a default AND container)
-        var AND = new AggregateFilterContainer(CatalogueRepository, FilterContainerOperation.AND);
-        var filter = new AggregateFilter(CatalogueRepository, "hithere", AND)
+        var AND = new AggregateFilterContainer(CatalogueRepository,FilterContainerOperation.AND);
+        var filter = new AggregateFilter(CatalogueRepository,"hithere",AND)
         {
             //give the filter an implicit parameter requiring bit of SQL
             WhereSQL = "1=@abracadabra"
@@ -372,11 +372,11 @@ SET @abracadabra=1;
     [Test]
     public void TestGettingAggregateSQLFromEntirity_StopEarly()
     {
-        rootcontainer.AddChild(aggregate1, 1);
-        rootcontainer.AddChild(aggregate2, 2);
-        rootcontainer.AddChild(aggregate3, 3);
-
-        var builder = new CohortQueryBuilder(rootcontainer, null, null)
+        rootcontainer.AddChild(aggregate1,1);
+        rootcontainer.AddChild(aggregate2,2);
+        rootcontainer.AddChild(aggregate3,3);
+            
+        var builder = new CohortQueryBuilder(rootcontainer, null,null)
         {
             StopContainerWhenYouReach = aggregate2
         };
@@ -408,7 +408,7 @@ SET @abracadabra=1;
                 CollapseWhitespace(builder.SQL));
 
 
-            var builder2 = new CohortQueryBuilder(rootcontainer, null, null)
+            var builder2 = new CohortQueryBuilder(rootcontainer, null,null)
             {
                 StopContainerWhenYouReach = null
             };
@@ -467,12 +467,12 @@ SET @abracadabra=1;
         new AggregateDimension(CatalogueRepository,
             testData.extractionInformations.Single(e => e.GetRuntimeName().Equals("chi")), aggregate4);
 
-        rootcontainer.AddChild(aggregate4, 5);
-        var builder = new CohortQueryBuilder(rootcontainer, null, null)
+        rootcontainer.AddChild(aggregate4,5);
+        var builder = new CohortQueryBuilder(rootcontainer, null,null)
         {
             //Looks like:
             /*
-         *
+         * 
         EXCEPT
         Aggregate 1
           UNION            <-----We tell it to stop after this container

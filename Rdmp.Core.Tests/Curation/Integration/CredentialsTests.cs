@@ -219,6 +219,7 @@ public class CredentialsTests : DatabaseTests
     [Test]
     public void GetCredentialsFromATableInfo()
     {
+
         var tableInfo = new TableInfo(CatalogueRepository, "GetCredentialsFromATableInfo")
         {
             Name = "My Exciting Table"
@@ -318,6 +319,12 @@ public class CredentialsTests : DatabaseTests
         {
             t.Server = "myserver";
             t.Database = "mydatabase";
+                
+            cred = new DataAccessCredentials(CatalogueRepository, "bob")
+            {
+                Username = "bob",
+                Password = "pass"
+            };
 
             cred = new DataAccessCredentials(CatalogueRepository, "bob")
             {
