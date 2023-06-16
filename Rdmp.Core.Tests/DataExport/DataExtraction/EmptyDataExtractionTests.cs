@@ -77,7 +77,7 @@ public class EmptyDataExtractionTests : TestsRequiringAnExtractionConfiguration
 
         Assert.AreEqual(1, _request.ColumnsToExtract.Count(c => c.IsExtractionIdentifier));
 
-        Execute(out var execute, out var result);
+        Execute(out execute, out result);
 
         var r = (ExecuteDatasetExtractionFlatFileDestination)result;
 

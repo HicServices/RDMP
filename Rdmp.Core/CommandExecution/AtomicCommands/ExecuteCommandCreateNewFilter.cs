@@ -45,8 +45,9 @@ public class ExecuteCommandCreateNewFilter : BasicCommandExecution, IAtomicComma
                 var c = GetCatalogue();
                 _offerFilters = c?.GetAllFilters();
 
-                if (_offerFilters == null || !_offerFilters.Any())
-                    SetImpossible($"There are no Filters declared in Catalogue '{c?.ToString() ?? "NULL"}'");
+                if (_offerFilters ==null || !_offerFilters.Any())
+                    SetImpossible($"There are no Filters declared in Catalogue '{c?.ToString() ?? "NULL" }'");
+
             }
 
 

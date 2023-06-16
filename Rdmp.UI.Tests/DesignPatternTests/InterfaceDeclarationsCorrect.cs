@@ -34,8 +34,7 @@ public class InterfaceDeclarationsCorrect
                 .Where(matchingInterface =>
                     !typeof(IMapsDirectlyToDatabaseTable).IsAssignableFrom(matchingInterface))
                 .Select(matchingInterface =>
-                    $"FAIL: Interface '{matchingInterface.Name}' does not inherit IMapsDirectlyToDatabaseTable")
-                .ToList();
+                    $"FAIL: Interface '{matchingInterface.Name}' does not inherit IMapsDirectlyToDatabaseTable").ToList();
         Assert.IsEmpty(problems);
     }
 }

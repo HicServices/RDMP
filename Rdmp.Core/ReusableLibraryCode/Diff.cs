@@ -199,9 +199,9 @@ public class Diff
     /// <param name="TextA">A-version of the text (usualy the old one)</param>
     /// <param name="TextB">B-version of the text (usualy the new one)</param>
     /// <returns>Returns a array of Items that describe the differences.</returns>
-    public static Item[] DiffText(string TextA, string TextB) =>
-        DiffText(TextA, TextB, false, false, false); // DiffText
-
+    public Item [] DiffText(string TextA, string TextB) {
+        return DiffText(TextA, TextB, false, false, false);
+    } // DiffText
 
     /// <summary>
     /// Find the difference in 2 text documents, comparing by textlines.
@@ -295,7 +295,6 @@ public class Diff
                 Codes[i] = (int)aCode;
             } // if
         } // for
-
         return Codes;
     } // DiffCodes
 
@@ -329,9 +328,9 @@ public class Diff
         // and are access using a specific offset: UpOffset UpVector and DownOffset for DownVektor
         var DownOffset = MAX - DownK;
         var UpOffset = MAX - UpK;
-
-        var MaxD = (UpperA - LowerA + UpperB - LowerB) / 2 + 1;
-
+	
+        var  MaxD = (UpperA - LowerA + UpperB - LowerB) / 2 + 1;
+		
         // Debug.Write(2, "SMS", String.Format("Search the box: A[{0}-{1}] to B[{2}-{3}]", LowerA, UpperA, LowerB, UpperB));
 
         // init vectors
@@ -351,24 +350,21 @@ public class Diff
                     x = DownVector[DownOffset + k+1]; // down
                 } else {
                     x = DownVector[DownOffset + k-1] + 1; // a step to the right
-                    if ((k < DownK + D) && (DownVector[DownOffset + k+1] >= x))
+                    if (k < DownK + D && DownVector[DownOffset + k+1] >= x)
                         x = DownVector[DownOffset + k+1]; // down
                 }
                 var y = x - k;
 
                 // find the end of the furthest reaching forward D-path in diagonal k.
-                while (x < UpperA && y < UpperB && DataA.data[x] == DataB.data[y])
-                {
-                    x++;
-                    y++;
+                while (x < UpperA && y < UpperB && DataA.data[x] == DataB.data[y]) {
+                    x++; y++;
                 }
 
                 DownVector[DownOffset + k] = x;
 
                 // overlap ?
-                if (oddDelta && UpK - D < k && k < UpK + D)
-                    if (UpVector[UpOffset + k] <= DownVector[DownOffset + k])
-                    {
+                if (oddDelta && UpK-D < k && k < UpK+D) {
+                    if (UpVector[UpOffset + k] <= DownVector[DownOffset + k]) {
                         ret.x = DownVector[DownOffset + k];
                         ret.y = DownVector[DownOffset + k] - k;
                         // ret.u = UpVector[UpOffset + k];      // 2002.09.20: no need for 2 points
@@ -389,12 +385,12 @@ public class Diff
                     x = UpVector[UpOffset + k-1]; // up
                 } else {
                     x = UpVector[UpOffset + k+1] - 1; // left
-                    if ((k > UpK - D) && (UpVector[UpOffset + k-1] < x))
+                    if (k > UpK - D && UpVector[UpOffset + k-1] < x)
                         x = UpVector[UpOffset + k-1]; // up
                 } // if
                 var y = x - k;
 
-                while ((x > LowerA) && (y > LowerB) && (DataA.data[x-1] == DataB.data[y-1])) {
+                while (x > LowerA && y > LowerB && DataA.data[x-1] == DataB.data[y-1]) {
                     x--; y--; // diagonal
                 }
                 else
@@ -415,9 +411,8 @@ public class Diff
                 UpVector[UpOffset + k] = x;
 
                 // overlap ?
-                if (!oddDelta && DownK - D <= k && k <= DownK + D)
-                    if (UpVector[UpOffset + k] <= DownVector[DownOffset + k])
-                    {
+                if (! oddDelta && DownK-D <= k && k <= DownK+D) {
+                    if (UpVector[UpOffset + k] <= DownVector[DownOffset + k]) {
                         ret.x = DownVector[DownOffset + k];
                         ret.y = DownVector[DownOffset + k] - k;
                         // ret.u = UpVector[UpOffset + k];     // 2002.09.20: no need for 2 points
@@ -497,12 +492,11 @@ public class Diff
 
         int StartA, StartB;
 
-        var LineA = 0;
-        var LineB = 0;
-        while (LineA < DataA.Length || LineB < DataB.Length)
-            if (LineA < DataA.Length && !DataA.modified[LineA]
-                                     && LineB < DataB.Length && !DataB.modified[LineB])
-            {
+        LineA = 0;
+        LineB = 0;
+        while (LineA < DataA.Length || LineB < DataB.Length) {
+            if (LineA < DataA.Length && ! DataA.modified[LineA]
+                                     && LineB < DataB.Length && ! DataB.modified[LineB]) {
                 // equal lines
                 LineA++;
                 LineB++;
@@ -521,7 +515,7 @@ public class Diff
                     // while (LineB < DataB.Length && DataB.modified[LineB])
                     LineB++;
 
-                if (StartA < LineA || StartB < LineB)
+                if (StartA < LineA || StartB < LineB) {
                     // store a new difference-item
                     a.Add(new Item
                     {

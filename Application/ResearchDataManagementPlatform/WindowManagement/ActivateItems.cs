@@ -217,8 +217,8 @@ public class ActivateItems : BasicActivateItems, IActivateItems, IRefreshBusSubs
         //really should be a listener now btw since we just launched the relevant Toolbox if it wasn't there before
         //Look at assignments to Sender, the invocation list can change the Sender!
         var args = new EmphasiseEventArgs(request);
-        OnEmphasise(this, args);
-
+        OnEmphasise(this,args);
+            
         //might be different than sender that was passed in
         if (args.Sender is DockContent content)
             content.Activate();
@@ -432,7 +432,7 @@ public class ActivateItems : BasicActivateItems, IActivateItems, IRefreshBusSubs
             throw new ArgumentException(
                 "DeserializeInstruction cannot have both a DatabaseObject and an ObjectCollection");
 
-        var c = (Control)UIObjectConstructor.Construct(instruction.UIControlType, activator, true);
+        var c = (Control)UIObjectConstructor.Construct(instruction.UIControlType,activator,true);
 
 
         //it has a database object so call SetDatabaseObject

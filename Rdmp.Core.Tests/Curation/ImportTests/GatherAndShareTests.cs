@@ -136,11 +136,11 @@ public class GatherAndShareTests : DatabaseTests
     {
         var f1 = new FileInfo(Path.Combine(TestContext.CurrentContext.TestDirectory,
             $"Imaginary1{PackPluginRunner.PluginPackageSuffix}"));
-        File.WriteAllBytes(f1.FullName, new byte[] { 0x1, 0x2 });
-
-        var plugin = new Core.Curation.Data.Plugin(CatalogueRepository, new FileInfo(
-            $"Imaginary{PackPluginRunner.PluginPackageSuffix}"), new Version(1, 1, 1), new Version(1, 1, 1));
-        var lma1 = new LoadModuleAssembly(CatalogueRepository, f1, plugin);
+        File.WriteAllBytes(f1.FullName,new byte[]{0x1,0x2});
+            
+        var plugin = new Core.Curation.Data.Plugin(CatalogueRepository,new FileInfo(
+            $"Imaginary{PackPluginRunner.PluginPackageSuffix}"),new Version(1,1,1),new Version(1,1,1));
+        var lma1 = new LoadModuleAssembly(CatalogueRepository,f1,plugin);
 
         Assert.AreEqual(lma1.Plugin_ID, plugin.ID);
 

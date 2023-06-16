@@ -274,8 +274,8 @@ public class UITests : UnitTests
         //there must have been something checked that failed with the provided message
         Assert.IsTrue(checkResults.Messages.Any(m =>
             m.Message.Contains(expectedContainsText) ||
-            (m.Ex != null && m.Ex.Message.Contains(expectedContainsText)
-                          && m.Result == CheckResult.Fail)));
+            m.Ex != null && m.Ex.Message.Contains(expectedContainsText)
+                         && m.Result == CheckResult.Fail));
     }
 
     private List<string> GetAllErrorProviderErrorsShown()
@@ -292,12 +292,22 @@ public class UITests : UnitTests
 
     private static IEnumerable<ErrorProvider> GetErrorProviders(Control arg)
     {
-        var t = arg.GetType();
-        var errorProviderFields = ErrorProviderFieldCache.GetOrAdd(t, static t => t
-            .GetFields(BindingFlags.Instance | BindingFlags.NonPublic)
-            .Where(static f => f.FieldType == typeof(ErrorProvider)).ToArray());
-        return errorProviderFields.Select(f => f.GetValue(arg)).Where(static instance => instance != null)
-            .Cast<ErrorProvider>();
+        //https://referencesource.microsoft.com/#system.windows.forms/winforms/Managed/System/WinForms/ErrorProvider.cs.html,11db4fca371f280c
+
+        var hashtable = (Hashtable) typeof (ErrorProvider).GetField("_items",BindingFlags.Instance | BindingFlags.NonPublic).GetValue(errorProvider);
+
+        return hashtable.Values.Cast<object>()
+            .Select(entry =>
+                (string)entry.GetType()
+                    .GetField("_error", BindingFlags.Instance | BindingFlags.NonPublic)
+                    .GetValue(entry)).ToList();
+    }
+
+    private List<ErrorProvider> GetErrorProviders(Control arg)
+    {
+        var errorProviderFields = arg.GetType().GetFields(BindingFlags.Instance | BindingFlags.NonPublic).Where(f => f.FieldType == typeof(ErrorProvider));
+
+        return errorProviderFields.Select(f => f.GetValue(arg)).Where(instance => instance != null).Cast<ErrorProvider>().ToList();
     }
 
     /// <summary>

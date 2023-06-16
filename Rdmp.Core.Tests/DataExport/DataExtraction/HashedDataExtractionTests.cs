@@ -38,7 +38,7 @@ public class HashedDataExtractionTests : TestsRequiringAnExtractionConfiguration
         Assert.AreEqual(1, _request.ColumnsToExtract.Count(c => c.IsExtractionIdentifier));
         var listener = new ToMemoryDataLoadEventListener(true);
 
-        Execute(out var execute, out var result, listener);
+        Execute(out execute,out result,listener);
 
         var messages =
             listener.EventsReceivedBySender.SelectMany(m => m.Value)

@@ -23,7 +23,7 @@ namespace Rdmp.Core.Repositories.Construction;
 /// 
 /// <para>If there are no compatible constructors you will get an ObjectLacksCompatibleConstructorException.</para>
 /// </summary>
-public static class ObjectConstructor
+public class ObjectConstructor
 {
     private const BindingFlags TargetBindingFlags = BindingFlags.Instance | BindingFlags.Public | BindingFlags.NonPublic;
 

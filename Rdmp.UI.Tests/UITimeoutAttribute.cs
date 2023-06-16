@@ -32,7 +32,10 @@ internal partial class UITimeoutAttribute : NUnitAttribute, IWrapTestMethod
     }
 
     /// <inheritdoc/>
-    public TestCommand Wrap(TestCommand command) => new TimeoutCommand(command, _timeout);
+    public TestCommand Wrap(TestCommand command)
+    {
+        return new TimeoutCommand(command, _timeout);
+    }
 
     private partial class TimeoutCommand : DelegatingTestCommand
     {

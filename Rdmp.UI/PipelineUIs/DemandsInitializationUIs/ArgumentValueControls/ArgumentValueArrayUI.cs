@@ -39,7 +39,7 @@ public partial class ArgumentValueArrayUI : UserControl, IArgumentValueUI
     {
         _args = args;
 
-        var value = (Array)args.InitialValue;
+        var value = (Array) args.InitialValue;
         SetUp(value);
     }
 

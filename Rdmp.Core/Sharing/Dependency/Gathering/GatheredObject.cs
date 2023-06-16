@@ -147,7 +147,10 @@ public class GatheredObject : IHasDependencies, IMasqueradeAs
         return Equals((GatheredObject) obj);
     }
 
-    public override int GetHashCode() => Object != null ? Object.GetHashCode() : 0;
+    public override int GetHashCode()
+    {
+        return Object != null ? Object.GetHashCode() : 0;
+    }
 
     public object MasqueradingAs() => Object;
 

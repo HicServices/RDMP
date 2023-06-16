@@ -228,7 +228,7 @@ public class DocXHelper
         document.Document.body.sectPr.pgSz.orient = ST_PageOrientation.landscape;
         document.Document.body.sectPr.pgSz.w = 842 * 20;
         document.Document.body.sectPr.pgSz.h = 595 * 20;
-
+        
 
         //document.PageLayout.Orientation = Orientation.Landscape;
     }

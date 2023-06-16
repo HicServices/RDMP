@@ -37,7 +37,6 @@ public class ExtractionConfigurationsNode : Node, IOrderable
 
     public int Order
     {
-        get => 3;
-        set { }
+        return Project != null ? Project.GetHashCode() : 0;
     }
 }

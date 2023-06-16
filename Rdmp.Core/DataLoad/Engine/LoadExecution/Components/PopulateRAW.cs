@@ -61,8 +61,7 @@ public class PopulateRAW : CompositeDataLoadComponent
         {
             // if there are multiple attachers, ensure that they all agree on whether or not they require external database creation
             var attachers = attachingProcesses.Select(runtime => runtime.Attacher).ToList();
-            var numAttachersRequiringDbCreation =
-                attachers.Count(attacher => attacher.RequestsExternalDatabaseCreation);
+            var numAttachersRequiringDbCreation = attachers.Count(attacher => attacher.RequestsExternalDatabaseCreation);
 
             if (numAttachersRequiringDbCreation > 0 && numAttachersRequiringDbCreation < attachingProcesses.Length)
                 throw new Exception(

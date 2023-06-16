@@ -24,7 +24,10 @@ public class ExecuteCrossServerDatasetExtractionSourceTest : TestsRequiringAnExt
     [Test]
     public void CrossServerExtraction()
     {
-        Execute(out var execute, out var result);
+        ExtractionPipelineUseCase execute;
+        IExecuteDatasetExtractionDestination result;
+
+        Execute(out execute, out result);
 
         var r = (ExecuteDatasetExtractionFlatFileDestination)result;
 

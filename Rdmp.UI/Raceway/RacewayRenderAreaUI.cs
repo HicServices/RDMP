@@ -300,7 +300,7 @@ public partial class RacewayRenderAreaUI : UserControl, INotifyMeOfEditState
                     break;
                 }
 
-                var middleLineOfCatalogueLabelY = ((eachRaceLaneHasThisMuchYSpace / 2) - (Font.Height / 2.0)) + startDrawingLaneAtY;
+                var middleLineOfCatalogueLabelY = eachRaceLaneHasThisMuchYSpace / 2 - Font.Height / 2.0 + startDrawingLaneAtY;
 
                 if (!_buckets.Any())
                 {
@@ -385,7 +385,7 @@ public partial class RacewayRenderAreaUI : UserControl, INotifyMeOfEditState
                         valueSize.Width += 20;
 
                     var rectHoverLabel = new
-                        RectangleF(Width - (labelSize.Width + valueSize.Width + 2 * labelPadding),
+                        RectangleF(Width - (labelSize.Width + valueSize.Width + 2*labelPadding),
                             Height - (heightReservedForAxis + labelSize.Height),
                             labelSize.Width,
                             labelSize.Height);
@@ -403,8 +403,7 @@ public partial class RacewayRenderAreaUI : UserControl, INotifyMeOfEditState
                 if (_isEditModeOn)
                 {
                     var deleteIcon = FamFamFamIcons.delete.ImageToBitmap();
-                    var middleLineOfDeleteButtonY = eachRaceLaneHasThisMuchYSpace / 2 - deleteIcon.Height / 2.0 +
-                                                    startDrawingLaneAtY;
+                    var middleLineOfDeleteButtonY = eachRaceLaneHasThisMuchYSpace / 2 - deleteIcon.Height / 2.0 + startDrawingLaneAtY;
                     var buttonPoint = new Point(Width / 2, (int)middleLineOfDeleteButtonY);
 
                     e.Graphics.DrawImage(deleteIcon, buttonPoint);

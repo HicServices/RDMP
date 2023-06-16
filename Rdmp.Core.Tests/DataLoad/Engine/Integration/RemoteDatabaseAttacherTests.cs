@@ -80,8 +80,7 @@ public class RemoteDatabaseAttacherTests : DatabaseTests
                 var ex = Assert.Throws<PipelineCrashedException>(() =>
                     attacher.Attach(job, new GracefulCancellationToken()));
 
-                Assert.AreEqual("Invalid column name 'MyMissingCol'.",
-                    ex.InnerException.InnerException.InnerException.Message);
+                Assert.AreEqual("Invalid column name 'MyMissingCol'.", ex.InnerException.InnerException.InnerException.Message);
                 return;
             case Scenario.MissingPreLoadDiscardedColumnButSelectStar:
                 break;

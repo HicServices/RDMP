@@ -27,7 +27,7 @@ public class DataTableUploadDestinationTests : DatabaseTests
     public void DataTableChangesLengths_NoReAlter()
     {
         var token = new GracefulCancellationToken();
-        var db = GetCleanedServer(FAnsi.DatabaseType.MicrosoftSQLServer);
+        var db = GetCleanedServer(DatabaseType.MicrosoftSQLServer);
         var toConsole = ThrowImmediatelyDataLoadEventListener.Quiet;
 
         var destination = new DataTableUploadDestination();
@@ -218,7 +218,7 @@ ALTER TABLE DroppedColumnsTable add color varchar(1)
     public void DataTableEmpty_ThrowHelpfulException()
     {
         var token = new GracefulCancellationToken();
-        var db = GetCleanedServer(FAnsi.DatabaseType.MicrosoftSQLServer);
+        var db = GetCleanedServer(DatabaseType.MicrosoftSQLServer);
         var toConsole = ThrowImmediatelyDataLoadEventListener.Quiet;
 
         var destination = new DataTableUploadDestination();
@@ -239,7 +239,7 @@ ALTER TABLE DroppedColumnsTable add color varchar(1)
     public void DataTableNoRows_ThrowHelpfulException()
     {
         var token = new GracefulCancellationToken();
-        var db = GetCleanedServer(FAnsi.DatabaseType.MicrosoftSQLServer);
+        var db = GetCleanedServer(DatabaseType.MicrosoftSQLServer);
         var toConsole = ThrowImmediatelyDataLoadEventListener.Quiet;
 
         var destination = new DataTableUploadDestination();
@@ -259,7 +259,7 @@ ALTER TABLE DroppedColumnsTable add color varchar(1)
     public void DataTableChangesLengths_AllowAlter()
     {
         var token = new GracefulCancellationToken();
-        var db = GetCleanedServer(FAnsi.DatabaseType.MicrosoftSQLServer);
+        var db = GetCleanedServer(DatabaseType.MicrosoftSQLServer);
         var toConsole = ThrowImmediatelyDataLoadEventListener.Quiet;
         var toMemory = new ToMemoryDataLoadEventListener(true);
 
@@ -291,7 +291,7 @@ ALTER TABLE DroppedColumnsTable add color varchar(1)
     public void DoubleResizingBetweenIntAndDouble()
     {
         var token = new GracefulCancellationToken();
-        var db = GetCleanedServer(FAnsi.DatabaseType.MicrosoftSQLServer);
+        var db = GetCleanedServer(DatabaseType.MicrosoftSQLServer);
         var toConsole = ThrowImmediatelyDataLoadEventListener.Quiet;
 
         var destination = new DataTableUploadDestination();
@@ -323,7 +323,7 @@ ALTER TABLE DroppedColumnsTable add color varchar(1)
     public void BatchResizing(string expectedDatatypeInDatabase, object batch1Value, object batch2Value)
     {
         var token = new GracefulCancellationToken();
-        var db = GetCleanedServer(FAnsi.DatabaseType.MicrosoftSQLServer);
+        var db = GetCleanedServer(DatabaseType.MicrosoftSQLServer);
         var toConsole = ThrowImmediatelyDataLoadEventListener.Quiet;
 
         var destination = new DataTableUploadDestination();
@@ -361,7 +361,7 @@ ALTER TABLE DroppedColumnsTable add color varchar(1)
         object batch2Value, string batch1SqlType)
     {
         var token = new GracefulCancellationToken();
-        var db = GetCleanedServer(FAnsi.DatabaseType.MicrosoftSQLServer);
+        var db = GetCleanedServer(DatabaseType.MicrosoftSQLServer);
         var toConsole = ThrowImmediatelyDataLoadEventListener.Quiet;
 
         var destination = new DataTableUploadDestination();
@@ -399,7 +399,7 @@ ALTER TABLE DroppedColumnsTable add color varchar(1)
     public void VeryLongStringIsVarcharMax()
     {
         var token = new GracefulCancellationToken();
-        var db = GetCleanedServer(FAnsi.DatabaseType.MicrosoftSQLServer);
+        var db = GetCleanedServer(DatabaseType.MicrosoftSQLServer);
         var toConsole = ThrowImmediatelyDataLoadEventListener.Quiet;
 
         var destination = new DataTableUploadDestination();
@@ -434,7 +434,7 @@ ALTER TABLE DroppedColumnsTable add color varchar(1)
     public void DecimalResizing(bool negative)
     {
         var token = new GracefulCancellationToken();
-        var db = GetCleanedServer(FAnsi.DatabaseType.MicrosoftSQLServer);
+        var db = GetCleanedServer(DatabaseType.MicrosoftSQLServer);
         var toConsole = ThrowImmediatelyDataLoadEventListener.Quiet;
         var toMemory = new ToMemoryDataLoadEventListener(true);
 
@@ -500,7 +500,7 @@ ALTER TABLE DroppedColumnsTable add color varchar(1)
         object[] expectedValuesReadFromDatabase)
     {
         var token = new GracefulCancellationToken();
-        var db = GetCleanedServer(FAnsi.DatabaseType.MicrosoftSQLServer);
+        var db = GetCleanedServer(DatabaseType.MicrosoftSQLServer);
         var toConsole = ThrowImmediatelyDataLoadEventListener.Quiet;
             
         var destination = new DataTableUploadDestination();
@@ -731,7 +731,7 @@ ALTER TABLE DroppedColumnsTable add color varchar(1)
     public void DodgyTypes()
     {
         var token = new GracefulCancellationToken();
-        var db = GetCleanedServer(FAnsi.DatabaseType.MicrosoftSQLServer);
+        var db = GetCleanedServer(DatabaseType.MicrosoftSQLServer);
         var toConsole = ThrowImmediatelyDataLoadEventListener.Quiet;
 
         var destination = new DataTableUploadDestination();
@@ -778,7 +778,7 @@ ALTER TABLE DroppedColumnsTable add color varchar(1)
     public void TypeAlteringlResizing()
     {
         var token = new GracefulCancellationToken();
-        var db = GetCleanedServer(FAnsi.DatabaseType.MicrosoftSQLServer);
+        var db = GetCleanedServer(DatabaseType.MicrosoftSQLServer);
         var toConsole = ThrowImmediatelyDataLoadEventListener.Quiet;
         var toMemory = new ToMemoryDataLoadEventListener(true);
 
@@ -918,8 +918,7 @@ ALTER TABLE DroppedColumnsTable add color varchar(1)
     {
         //create a table in the scratch database with a single column Name
         var db = GetCleanedServer(DatabaseType.MicrosoftSQLServer);
-        var tbl = db.CreateTable("TestDestinationAlreadyExistingIsOk",
-            new[] { new DatabaseColumnRequest("Name", "varchar(10)", false) });
+        var tbl = db.CreateTable("TestDestinationAlreadyExistingIsOk",new[]{new DatabaseColumnRequest("Name","varchar(10)",false)});
         try
         {
             if (!targetTableIsEmpty)

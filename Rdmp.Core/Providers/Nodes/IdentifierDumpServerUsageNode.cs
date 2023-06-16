@@ -36,7 +36,10 @@ public class IdentifierDumpServerUsageNode : Node, IDeleteable
         return Equals((IdentifierDumpServerUsageNode) obj);
     }
 
-    public override int GetHashCode() => TableInfo != null ? TableInfo.GetHashCode() : 0;
+    public override int GetHashCode()
+    {
+        return TableInfo != null ? TableInfo.GetHashCode() : 0;
+    }
 
     public void DeleteInDatabase()
     {

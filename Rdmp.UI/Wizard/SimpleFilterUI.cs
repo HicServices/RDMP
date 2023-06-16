@@ -100,7 +100,7 @@ public partial class SimpleFilterUI : UserControl
             tableLayoutPanel1.CellBorderStyle = TableLayoutPanelCellBorderStyle.Inset;
         }
 
-        Height = 50 + parameters.Length * rowHeight;
+        Height = 50 + parameters.Length*rowHeight;
     }
 
     private void SetupKnownGoodValues()

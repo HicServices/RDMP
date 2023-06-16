@@ -52,15 +52,16 @@ public class ExecuteCommandCreateNewClassBasedProcessTask : BasicCommandExecutio
 
     private Type[] GetProcessTaskTypes()
     {
-        return BasicActivator.RepositoryLocator.CatalogueRepository.MEF.GetAllTypes().Where(t =>
-            // must not be interface or abstract
-            !(t.IsInterface || t.IsAbstract) &&
-            (
-                // must implement one of these interfaces
-                typeof(IAttacher).IsAssignableFrom(t) ||
-                typeof(IDataProvider).IsAssignableFrom(t) ||
-                typeof(IMutilateDataTables).IsAssignableFrom(t)
-            )).ToArray();
+        return BasicActivator.RepositoryLocator.CatalogueRepository.MEF.GetAllTypes().
+            Where(t=>
+                // must not be interface or abstract
+                !(t.IsInterface || t.IsAbstract) &&
+                (
+                    // must implement one of these interfaces
+                    typeof(IAttacher).IsAssignableFrom(t) ||
+                    typeof(IDataProvider).IsAssignableFrom(t) ||
+                    typeof(IMutilateDataTables).IsAssignableFrom(t)
+                )).ToArray();
     }
 
     public override void Execute()

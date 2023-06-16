@@ -33,7 +33,10 @@ internal class FrozenExtractionConfigurationsNode : Node, IOrderable
         return Equals((FrozenExtractionConfigurationsNode) obj);
     }
 
-    public override int GetHashCode() => Project != null ? Project.GetHashCode() : 0;
+    public override int GetHashCode()
+    {
+        return Project != null ? Project.GetHashCode() : 0;
+    }
 
     public int Order
     {

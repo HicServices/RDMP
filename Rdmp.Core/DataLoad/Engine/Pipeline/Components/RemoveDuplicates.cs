@@ -109,7 +109,10 @@ public class RemoveDuplicates : IPluginDataFlowComponent<DataTable>
                 var hash = 17;
 
                 // get hash code for all items in array
-                foreach (var item in array) hash = hash * 23 + (item != null ? item.GetHashCode() : 0);
+                foreach (var item in array)
+                {
+                    hash = hash * 23 + (item != null ? item.GetHashCode() : 0);
+                }
 
                 return hash;
             }

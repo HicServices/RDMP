@@ -110,10 +110,12 @@ public class CohortQueryBuilderDependency
         }
     }
 
-    public override string ToString() =>
-        JoinedTo != null
+    public override string ToString()
+    {
+        return JoinedTo != null
             ? $"{CohortSet.Name}{PatientIndexTableIfAny.JoinType} JOIN {JoinedTo.Name}"
             : CohortSet.Name;
+    }
 
     public void Build(CohortQueryBuilderResult parent, ISqlParameter[] globals, CancellationToken cancellationToken)
     {

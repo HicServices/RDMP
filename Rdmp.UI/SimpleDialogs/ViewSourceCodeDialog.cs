@@ -47,7 +47,7 @@ public partial class ViewSourceCodeDialog : Form
 
         if (filename == null)
             return;
-
+            
         var designMode = LicenseManager.UsageMode == LicenseUsageMode.Designtime;
 
         if (designMode) //don't add the QueryEditor if we are in design time (visual studio) because it breaks

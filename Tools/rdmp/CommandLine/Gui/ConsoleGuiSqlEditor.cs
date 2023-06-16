@@ -358,7 +358,10 @@ internal class ConsoleGuiSqlEditor : Window
 
     private class SqlAutocomplete : TextViewAutocomplete
     {
-        public override bool IsWordChar(Rune rune) => (char)rune == '_' || base.IsWordChar(rune);
+        public override bool IsWordChar(Rune rune)
+        {
+            return (char)rune == '_' || base.IsWordChar(rune);
+        }
     }
 
     private class SqlTextView : TextView

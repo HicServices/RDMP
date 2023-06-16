@@ -34,5 +34,10 @@ public class PreLoadDiscardedColumnsNode : Node
         return Equals((PreLoadDiscardedColumnsNode) obj);
     }
 
-    public override int GetHashCode() => TableInfo != null ? TableInfo.GetHashCode() : 0;
+    public override int GetHashCode()
+    {
+        return TableInfo != null ? TableInfo.GetHashCode() : 0;
+    }
+
+     
 }

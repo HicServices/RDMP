@@ -57,8 +57,8 @@ internal class ConsoleGuiEdit : Window
             X = Pos.Right(btnSet),
             Y = Pos.Bottom(list)
         };
-        btnClose.Clicked += () => Application.RequestStop();
-
+        btnClose.Clicked += ()=>Application.RequestStop();
+            
         Add(list);
         Add(btnSet);
         Add(btnClose);

@@ -181,7 +181,7 @@ public class SessionCollectionUI : RDMPUserControl, IObjectCollectionControl, IC
     {
         olvTree = new BrightIdeasSoftware.TreeListView();
         olvName = new BrightIdeasSoftware.OLVColumn();
-        ((System.ComponentModel.ISupportInitialize)(olvTree)).BeginInit();
+        ((System.ComponentModel.ISupportInitialize)olvTree).BeginInit();
         SuspendLayout();
         // 
         // olvRecent
@@ -214,7 +214,7 @@ public class SessionCollectionUI : RDMPUserControl, IObjectCollectionControl, IC
         Controls.Add(olvTree);
         Name = "SessionCollectionUI";
         Size = new System.Drawing.Size(487, 518);
-        ((System.ComponentModel.ISupportInitialize)(olvTree)).EndInit();
+        ((System.ComponentModel.ISupportInitialize)olvTree).EndInit();
         ResumeLayout(false);
 
     }

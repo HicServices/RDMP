@@ -168,19 +168,16 @@ $c - Configuration Extraction Directory  (e.g. c:\MyProject\Extractions\Extr_16)
                 var dest = Path.Combine(destinationDirectory.FullName, dir.Name);
 
                 // Recursively copy all files from input path to destination path
-                listener.OnNotify(this,
-                    new NotifyEventArgs(ProgressEventType.Information,
-                        $"Copying directory '{e.FullName}' to '{dest}'"));
-                CopyFolder(e.FullName, dest);
+                listener.OnNotify(this,new NotifyEventArgs(ProgressEventType.Information,$"Copying directory '{e.FullName}' to '{dest}'"));
+                CopyFolder(e.FullName,dest);
                 atLeastOne = true;
             }
 
             if (!Directories && e is FileInfo f)
             {
-                var dest = Path.Combine(destinationDirectory.FullName, f.Name);
-                listener.OnNotify(this,
-                    new NotifyEventArgs(ProgressEventType.Information, $"Copying file '{f.FullName}' to '{dest}'"));
-                File.Copy(f.FullName, dest, Overwrite);
+                var dest = Path.Combine(destinationDirectory.FullName,f.Name);
+                listener.OnNotify(this,new NotifyEventArgs(ProgressEventType.Information,$"Copying file '{f.FullName}' to '{dest}'"));
+                File.Copy(f.FullName,dest,Overwrite);
                 atLeastOne = true;
             }
         }
@@ -230,10 +227,8 @@ $c - Configuration Extraction Directory  (e.g. c:\MyProject\Extractions\Extr_16)
                     dir.Name.Replace(privateIdentifier.ToString(), releaseSub));
 
                 // Recursively copy all files from input path to destination path
-                listener.OnNotify(this,
-                    new NotifyEventArgs(ProgressEventType.Information,
-                        $"Copying directory '{e.FullName}' to '{dest}'"));
-                CopyFolder(e.FullName, dest);
+                listener.OnNotify(this,new NotifyEventArgs(ProgressEventType.Information,$"Copying directory '{e.FullName}' to '{dest}'"));
+                CopyFolder(e.FullName,dest);
                 atLeastOne = true;
             }
 
@@ -243,9 +238,8 @@ $c - Configuration Extraction Directory  (e.g. c:\MyProject\Extractions\Extr_16)
                     destinationDirectory.FullName,
                     f.Name.Replace(privateIdentifier.ToString(), releaseSub));
 
-                listener.OnNotify(this,
-                    new NotifyEventArgs(ProgressEventType.Information, $"Copying file '{f.FullName}' to '{dest}'"));
-                File.Copy(f.FullName, dest, Overwrite);
+                listener.OnNotify(this,new NotifyEventArgs(ProgressEventType.Information,$"Copying file '{f.FullName}' to '{dest}'"));
+                File.Copy(f.FullName,dest,Overwrite);
                 atLeastOne = true;
             }
         }

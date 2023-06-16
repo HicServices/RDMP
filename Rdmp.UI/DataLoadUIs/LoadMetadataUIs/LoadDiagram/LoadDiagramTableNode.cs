@@ -141,7 +141,16 @@ public class LoadDiagramTableNode : Node, ICombineableSource, IHasLoadDiagramSta
         return Equals((LoadDiagramTableNode) obj);
     }
 
-    public override int GetHashCode() => HashCode.Combine(_databaseNode, Bubble, TableName);
+    public override int GetHashCode()
+    {
+        unchecked
+        {
+            var hashCode = _databaseNode != null ? _databaseNode.GetHashCode() : 0;
+            hashCode = (hashCode*397) ^ (int) Bubble;
+            hashCode = (hashCode*397) ^ (TableName != null ? TableName.GetHashCode() : 0);
+            return hashCode;
+        }
+    }
 
     public string WhatIsThis()
     {

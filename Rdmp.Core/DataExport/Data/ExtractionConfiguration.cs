@@ -505,7 +505,7 @@ public class ExtractionConfiguration : DatabaseEntity, IExtractionConfiguration,
     {
         var uniqueLoggingServerID = -1;
 
-        var repo = (IDataExportRepository)Repository;
+        var repo = (IDataExportRepository) Repository;
 
         foreach (int? catalogueID in GetAllExtractableDataSets().Select(ds => ds.Catalogue_ID))
         {

@@ -43,7 +43,10 @@ public class ExtractionDirectoryNode : Node, IDirectoryInfoNode, IOrderable
         return Equals((ExtractionDirectoryNode) obj);
     }
 
-    public override int GetHashCode() => Project != null ? Project.GetHashCode() : 0;
+    public override int GetHashCode()
+    {
+        return Project != null ? Project.GetHashCode() : 0;
+    }
 
     public DirectoryInfo GetDirectoryInfoIfAny()
     {

@@ -51,7 +51,7 @@ internal class CohortIdentificationConfigurationUnitTests : UITests
         cmd.Execute();
 
         var ac1 = (AggregateConfiguration)cic.RootCohortAggregateContainer.GetOrderedContents().First();
-        Assert.AreEqual(0, ac1.Order);
+        Assert.AreEqual(0,ac1.Order);
 
         //add another one
         var cmd2 = new ExecuteCommandAddCatalogueToCohortIdentificationSetContainer(ItemActivator,

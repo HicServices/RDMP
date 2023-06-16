@@ -43,8 +43,7 @@ public class CatalogueConstraintReportTests : TestsRequiringAnExtractionConfigur
         var numberOfRecordsToGenerate = 10000;
         var startTime = DateTime.Now;
 
-        var testData = new BulkTestsData(CatalogueRepository, GetCleanedServer(DatabaseType.MicrosoftSQLServer),
-            numberOfRecordsToGenerate);
+        var testData = new BulkTestsData(CatalogueRepository,GetCleanedServer(DatabaseType.MicrosoftSQLServer),numberOfRecordsToGenerate); 
         testData.SetupTestData();
         testData.ImportAsCatalogue();
 

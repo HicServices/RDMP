@@ -214,7 +214,7 @@ FETCH NEXT {batchSize} ROWS ONLY", conn.Connection, conn.Transaction))
     public TimeSpan GetShortfall()
     {
         var lag = GetCacheLagPeriod();
-        var lastExpectedCacheDate = lag?.CalculateStartOfLagPeriodFrom(DateTime.Today) ?? DateTime.Today;
+        var lastExpectedCacheDate = lag == null ? DateTime.Today : lag.CalculateStartOfLagPeriodFrom(DateTime.Today);
 
         TimeSpan shortfall;
         if (CacheFillProgress != null)

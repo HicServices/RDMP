@@ -125,7 +125,7 @@ public class TableInfoImporter : ITableInfoImporter
             case DatabaseType.MicrosoftSQLServer:
             case DatabaseType.PostgreSql:
                 tableName +=
-                    $".{(querySyntaxHelper.EnsureWrapped(_importFromSchema ?? querySyntaxHelper.GetDefaultSchemaIfAny()))}.";
+                    $".{querySyntaxHelper.EnsureWrapped(_importFromSchema ?? querySyntaxHelper.GetDefaultSchemaIfAny())}.";
                 break;
             case DatabaseType.MySql:
             case DatabaseType.Oracle:

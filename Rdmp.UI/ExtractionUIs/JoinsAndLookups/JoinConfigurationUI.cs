@@ -140,10 +140,10 @@ public partial class JoinConfigurationUI : JoinConfiguration_Design
                 throw new Exception(
                     "You must specify at least one pair of keys to join on, do this by dragging columns out of the collection into the key boxes");
 
-            if (
+            if(
                 pk2.SelectedColumn == null != (fk2.SelectedColumn == null)
                 ||
-                ((pk3.SelectedColumn == null) != (fk3.SelectedColumn == null)))
+                pk3.SelectedColumn == null != (fk3.SelectedColumn == null))
                 throw new Exception("You must have the same number of primary and foreign keys (they must come in pairs)");
 
             if (pks.Any(p => p.TableInfo_ID != _leftTableInfo.ID))

@@ -309,7 +309,7 @@ public class ProcessTask : DatabaseEntity, IProcessTask, IOrderable, INamed, ICh
     /// <returns>the new ProcessTask (the clone has a different ID to the parent)</returns>
     public ProcessTask CloneToNewLoadMetadataStage(LoadMetadata loadMetadata, LoadStage loadStage)
     {
-        var cataRepository = (ICatalogueRepository)Repository;
+        var cataRepository = (ICatalogueRepository) Repository;
 
         //clone only accepts sql connections so make sure we aren't in mysql land or something
         using (cataRepository.BeginNewTransaction())

@@ -99,8 +99,7 @@ public partial class StartupUI : Form, ICheckNotifier
         }
 
         //25% to 50% is downloading MEF
-        pbLoadProgress.Value =
-            (int)(250 + (float)eventArgs.CurrentDllNumber / (float)eventArgs.DllsSeenInCatalogue * 250f);
+        pbLoadProgress.Value = (int) (250 + (float)eventArgs.CurrentDllNumber / (float)eventArgs.DllsSeenInCatalogue * 250f);
 
         lblProgress.Text = $"Downloading MEF File {eventArgs.FileBeingProcessed}";
 
@@ -326,7 +325,7 @@ public partial class StartupUI : Form, ICheckNotifier
         if (match.Success)
         {
             var percent = float.Parse(match.Groups[1].Value);
-            pbLoadProgress.Value = (int)(500 + percent * 2.5); //500-750
+            pbLoadProgress.Value = (int) (500 + percent*2.5);//500-750
         }
 
         switch (args.Result)

@@ -471,7 +471,7 @@ public abstract class BasicActivateItems : IBasicActivateItems
 
         if (
             YesNo(
-                overrideConfirmationText ??
+                overrideConfirmationText??
                 $"{"Are you sure you want to delete '" + deleteable + "'?"}{Environment.NewLine}({deleteable.GetType().Name}{idText})",
                 $"Delete {deleteable.GetType().Name}"))
         {

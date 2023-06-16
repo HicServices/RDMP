@@ -37,5 +37,8 @@ public class DocumentationNode : Node
         return Equals((DocumentationNode)obj);
     }
 
-    public override int GetHashCode() => Catalogue != null ? Catalogue.GetHashCode() : 0;
+    public override int GetHashCode()
+    {
+        return Catalogue != null ? Catalogue.GetHashCode() : 0;
+    }
 }

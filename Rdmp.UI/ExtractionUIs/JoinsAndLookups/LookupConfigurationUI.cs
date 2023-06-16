@@ -224,8 +224,7 @@ public partial class LookupConfigurationUI : LookupConfiguration_Design
         var lineHeight = e.Graphics.MeasureString(lines[0], Font).Height;
 
         for (var i = 0; i < lines.Length; i++)
-            e.Graphics.DrawString(lines[i], Font, Brushes.Black,
-                new PointF(drawTaskListAt.X, drawTaskListAt.Y + lineHeight * i));
+            e.Graphics.DrawString(lines[i], Font, Brushes.Black,new PointF(drawTaskListAt.X, drawTaskListAt.Y + lineHeight*i));
 
         var bulletLineIndex = _currentStage switch
         {
@@ -246,10 +245,9 @@ public partial class LookupConfigurationUI : LookupConfiguration_Design
             //0,1
             //offset by the drawing start location + the appropriate line number
 
-            new PointF(drawTaskListAt.X, drawTaskListAt.Y + bulletLineIndex * lineHeight),
-            new PointF(drawTaskListAt.X + lineHeight / 2,
-                drawTaskListAt.Y + bulletLineIndex * lineHeight + lineHeight / 2),
-            new PointF(drawTaskListAt.X, drawTaskListAt.Y + lineHeight + bulletLineIndex * lineHeight)
+            new PointF(drawTaskListAt.X, drawTaskListAt.Y + bulletLineIndex * lineHeight ),
+            new PointF(drawTaskListAt.X + lineHeight/2 , drawTaskListAt.Y + bulletLineIndex * lineHeight  + lineHeight/2),
+            new PointF(drawTaskListAt.X, drawTaskListAt.Y + lineHeight + bulletLineIndex *lineHeight)
         };
 
         e.Graphics.FillPolygon(Brushes.Black, triangleBasePoints);
@@ -284,8 +282,7 @@ public partial class LookupConfigurationUI : LookupConfiguration_Design
             case LookupCreationStage.DragAForeignKey:
 
                 DrawCurveWithLabel(
-                    new PointF(olvExtractionInformations.Right + 10,
-                        olvExtractionInformations.Bottom - olvExtractionInformations.Height / 10f),
+                    new PointF(olvExtractionInformations.Right + 10, olvExtractionInformations.Bottom - olvExtractionInformations.Height / 10f),
                     new PointF(olvSelectedDescriptionColumns.Right + 100, olvSelectedDescriptionColumns.Bottom + 200),
                     new PointF(fk1.Right + 500, fk1.Top + 100),
                     new PointF(fk1.Right + 15, fk1.Bottom - 10),
@@ -407,7 +404,7 @@ Only define secondary columns if you really need them! if any of the key fields 
 
             var allExtractionInformations = olvExtractionInformations.Objects.Cast<ExtractionInformation>().ToArray();
             var foreignKeyExtractionInformation = allExtractionInformations.SingleOrDefault(e => e.ColumnInfo != null && e.ColumnInfo.Equals(fk1.SelectedColumn)) ?? throw new Exception("Foreign key column(s) must come from the Catalogue ExtractionInformation columns");
-            if ((pk2.SelectedColumn == null) != (fk2.SelectedColumn == null))
+            if (pk2.SelectedColumn == null != (fk2.SelectedColumn == null))
                 throw new Exception("If you want to have secondary joins you must have them in pairs");
 
             if (pk3.SelectedColumn == null != (fk3.SelectedColumn == null))

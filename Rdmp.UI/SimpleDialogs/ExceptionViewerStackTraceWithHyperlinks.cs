@@ -146,12 +146,14 @@ public partial class ExceptionViewerStackTraceWithHyperlinks : Form
         Clipboard.SetText(_s);
     }
 
-    public static bool IsSourceCodeAvailable(Exception exception) =>
-        exception != null //exception exists
-        &&
-        !string.IsNullOrWhiteSpace(exception.StackTrace) //and has a stack trace
-        &&
-        SourceCodeAvailable.IsMatch(exception.StackTrace); //and stack trace contains line numbers
+    public static bool IsSourceCodeAvailable(Exception exception)
+    {
+        return exception != null  //exception exists
+               &&
+               !string.IsNullOrWhiteSpace(exception.StackTrace)  //and has a stack trace
+               &&
+               SourceCodeAvailable.IsMatch(exception.StackTrace); //and stack trace contains line numbers
+    }
 
 
     private static void OpenVisualStudio(string filename, int lineNumber)

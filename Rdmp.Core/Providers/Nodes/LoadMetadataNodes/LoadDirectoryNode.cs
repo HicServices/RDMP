@@ -44,7 +44,10 @@ public class LoadDirectoryNode : Node, IDirectoryInfoNode, IOrderable
         return Equals((LoadDirectoryNode) obj);
     }
 
-    public override int GetHashCode() => LoadMetadata != null ? LoadMetadata.GetHashCode() : 0;
+    public override int GetHashCode()
+    {
+        return LoadMetadata != null ? LoadMetadata.GetHashCode() : 0;
+    }
 
     public int Order
     {

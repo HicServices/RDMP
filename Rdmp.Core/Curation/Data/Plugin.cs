@@ -99,10 +99,10 @@ public class Plugin : DatabaseEntity, INamed
     {
         repository.InsertAndHydrate(this, new Dictionary<string, object>
         {
-            { "Name", pluginZipFile.Name },
-            { "UploadedFromDirectory", pluginZipFile.DirectoryName },
-            { "PluginVersion", pluginVersion ?? new Version(0, 0, 0, 0) },
-            { "RdmpVersion", rdmpVersion ?? new Version(0, 0, 0, 0) }
+            {"Name", pluginZipFile.Name},
+            {"UploadedFromDirectory", pluginZipFile.DirectoryName},
+            {"PluginVersion", pluginVersion ?? new Version(0,0,0,0)},
+            {"RdmpVersion", rdmpVersion ?? new Version(0,0,0,0)}
         });
     }
 

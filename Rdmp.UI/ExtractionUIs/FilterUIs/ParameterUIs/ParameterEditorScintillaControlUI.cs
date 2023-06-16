@@ -167,8 +167,8 @@ public partial class ParameterEditorScintillaControlUI : RDMPUserControl
 
                 var lineCount = GetLineCount(toAdd);
 
-                Sections.Add(new ParameterEditorScintillaSection(Options.Refactorer, currentLine,
-                    currentLine += lineCount - 1, parameter,
+                Sections.Add(new ParameterEditorScintillaSection(Options.Refactorer,currentLine, currentLine += lineCount - 1, parameter, 
+                        
                     !Options.ShouldBeReadOnly(parameter),
                     toAdd));
 

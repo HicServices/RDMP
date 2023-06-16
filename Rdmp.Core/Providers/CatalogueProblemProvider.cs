@@ -216,8 +216,7 @@ public class CatalogueProblemProvider : ProblemProvider
                     expiredCatalogueIds.Remove(i);
         }
 
-        var expiredCatalogues = expiredCatalogueIds.Select(id => _childProvider.AllCataloguesDictionary[id])
-            .Where(c => !c.IsDeprecated /* || c.IsColdStorage || c.IsInternal*/).ToArray();
+        var expiredCatalogues = expiredCatalogueIds.Select(id => _childProvider.AllCataloguesDictionary[id]).Where(c => !c.IsDeprecated /* || c.IsColdStorage || c.IsInternal*/).ToArray();
 
         if (expiredCatalogues.Any())
             return
@@ -293,7 +292,7 @@ public class CatalogueProblemProvider : ProblemProvider
             {
                 // then something called 'inclusion criteria' should be the first among them
                 var first = _childProvider.GetChildren(parentContainer).OfType<IOrderable>().MinBy(o => o.Order);
-                if (first != null && (!first.Equals(container)))
+                if (first != null && !first.Equals(container))
                 {
                     return $"{container.Name} must be the first container in the parent set.  Please re-order it to be the first";
                 }

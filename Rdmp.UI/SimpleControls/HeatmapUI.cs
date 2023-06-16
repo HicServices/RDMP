@@ -295,8 +295,8 @@ public partial class HeatmapUI : UserControl
                 //draw the labels
                 for (var i = 1; i < _dataTable.Columns.Count; i++)
                 {
-                    var labelStartY = i * heatPixelHeight;
-
+                    var labelStartY = i*heatPixelHeight;
+                    
                     var name = _dataTable.Columns[i].ColumnName;
 
                     e.Graphics.DrawString(name, font, Brushes.Black,
@@ -339,8 +339,7 @@ public partial class HeatmapUI : UserControl
 
 
                     //draw axis black line
-                    e.Graphics.DrawLine(Pens.Black, new PointF((float)axisXStart, (float)axisYStart),
-                        new PointF((float)axisXStart, Height));
+                    e.Graphics.DrawLine(Pens.Black, new PointF((float) axisXStart, (float)axisYStart), new PointF((float) axisXStart, Height));
                 }
             }
         }

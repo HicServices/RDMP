@@ -70,27 +70,25 @@ public partial class ConsequenceBar : UserControl
 
         //draw the nulls bar
         var valuesRatio = 1 - DBNull / totalRecords;
-        var midPointOfNullsBar = (int)(valuesRatio * Width);
+        var midPointOfNullsBar = (int) (valuesRatio*Width);
 
         //values
-        e.Graphics.FillRectangle(bValues,
-            new Rectangle(0, heightOfNullsBarStart, midPointOfNullsBar, heightOfNullsBar));
-        e.Graphics.FillRectangle(bNulls,
-            new Rectangle(midPointOfNullsBar, heightOfNullsBarStart, Width - midPointOfNullsBar, heightOfNullsBar));
-
-
+        e.Graphics.FillRectangle(bValues,new Rectangle(0,heightOfNullsBarStart,midPointOfNullsBar,heightOfNullsBar));
+        e.Graphics.FillRectangle(bNulls,new Rectangle(midPointOfNullsBar,heightOfNullsBarStart,Width-midPointOfNullsBar,heightOfNullsBar));
+            
+            
         //draw the main bar
-        var correctRightPoint = (int)(Correct / totalRecords * Width);
+        var correctRightPoint = (int) (Correct/totalRecords*Width);
 
-        var missingWidth = (int)(Missing / totalRecords * Width);
+        var missingWidth = (int) (Missing/totalRecords*Width);
         var missingRightPoint = correctRightPoint + missingWidth;
 
-        var wrongWidth = (int)(Wrong / totalRecords * Width);
-        var wrongRightPoint = missingRightPoint + wrongWidth;
+        var wrongWidth = (int) (Wrong/totalRecords*Width);
+        var wrongRightPoint =  missingRightPoint + wrongWidth;
 
         var invalidWidth = (int)(Invalid / totalRecords * Width);
-
-        e.Graphics.FillRectangle(bCorrect, new Rectangle(0, 0, correctRightPoint, heightOfNullsBarStart));
+            
+        e.Graphics.FillRectangle(bCorrect,new Rectangle(0,0,correctRightPoint,heightOfNullsBarStart));
         e.Graphics.FillRectangle(bMissing, new Rectangle(correctRightPoint, 0, missingWidth, heightOfNullsBarStart));
         e.Graphics.FillRectangle(bWrong, new Rectangle(missingRightPoint, 0, wrongWidth, heightOfNullsBarStart));
         e.Graphics.FillRectangle(bInvalid, new Rectangle(wrongRightPoint, 0, invalidWidth, heightOfNullsBarStart));
@@ -123,7 +121,7 @@ public partial class ConsequenceBar : UserControl
     private string GetPercentageText(double fraction)
     {
         var totalRecords = Correct + Missing + Invalid + Wrong;
-        return $"({Truncate((fraction / totalRecords) * 100, 2):n2}%){Environment.NewLine}";
+        return $"({Truncate(fraction / totalRecords * 100, 2):n2}%){Environment.NewLine}";
     }
 
     private static double Truncate(double value, int digits)

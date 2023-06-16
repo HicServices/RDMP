@@ -105,8 +105,7 @@ public partial class CreateNewCatalogueByImportingFileUI_Advanced : UserControl
             catch (Exception e)
             {
                 ExceptionViewer.Show(
-                    $"Failed to import TableInfo/Forward Engineer Catalogue from {_database}(Table was {targetTable ?? "Null!"}) - see Exception for details",
-                    e);
+                    $"Failed to import TableInfo/Forward Engineer Catalogue from {_database}(Table was {targetTable ?? "Null!"}) - see Exception for details", e);
             }
         }
     }
