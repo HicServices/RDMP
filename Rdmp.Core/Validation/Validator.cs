@@ -429,45 +429,43 @@ public class Validator
                 
             if(itemValidator.TargetProperty == null)
                 throw new NullReferenceException("Target property cannot be null");
-                
-            object value = null;
 
             try
             {
-                ValidationFailure result = null;
+                ValidationFailure result;
 
                 //see if it has property with this name
-                if (o is DbDataReader)
+                object value;
+                switch (o)
                 {
-                    value = ((DbDataReader) o)[itemValidator.TargetProperty];
-                    if (value == DBNull.Value)
-                        value = null;
-
-                    result = itemValidator.ValidateAll(value, values, names);
-                }
-                else
-                if (o is DataRow)
-                    result = itemValidator.ValidateAll(((DataRow)o)[itemValidator.TargetProperty], values, names);
-                else
-                {
-                    var propertiesDictionary = DomainObjectPropertiesToDictionary(o);
-                        
-                    if (propertiesDictionary.ContainsKey(itemValidator.TargetProperty))
+                    case DbDataReader reader:
                     {
-                        value = propertiesDictionary[itemValidator.TargetProperty];
-                            
-                        result = itemValidator.ValidateAll(value, propertiesDictionary.Values.ToArray(), propertiesDictionary.Keys.ToArray());
+                        value = reader[itemValidator.TargetProperty];
+                        if (value == DBNull.Value)
+                            value = null;
+
+                        result = itemValidator.ValidateAll(value, values, names);
+                        break;
                     }
-                    else
-                        throw new MissingFieldException(
-                            $"Validation failed: Target field [{itemValidator.TargetProperty}] not found in domain object.");
-                        
+                    case DataRow row:
+                        result = itemValidator.ValidateAll(row[itemValidator.TargetProperty], values, names);
+                        break;
+                    default:
+                    {
+                        var propertiesDictionary = DomainObjectPropertiesToDictionary(o);
+
+                        if (propertiesDictionary.TryGetValue(itemValidator.TargetProperty, out value))
+                            result = itemValidator.ValidateAll(value, propertiesDictionary.Values.ToArray(),
+                                propertiesDictionary.Keys.ToArray());
+                        else
+                            throw new MissingFieldException(
+                                $"Validation failed: Target field [{itemValidator.TargetProperty}] not found in domain object.");
+                        break;
+                    }
                 }
                 if (result != null)
                 {
-                    if (result.SourceItemValidator == null)
-                        result.SourceItemValidator = itemValidator;
-
+                    result.SourceItemValidator ??= itemValidator;
                     eList.Add(result);
                 }
             }

@@ -247,27 +247,19 @@ public partial class ParameterCollectionUI : RDMPUserControl
     {
         var deletables = olvParameters.SelectedObjects.OfType<IDeleteable>().ToArray();
 
-        bool dr;
-        if(deletables.Any() && e.KeyCode == Keys.Delete)
+        if (!deletables.Any() || e.KeyCode != Keys.Delete || !Activator.YesNo(
+                deletables.Length == 1
+                    ? $"Confirm deleting {deletables[0]}"
+                    : $"Confirm deleting {deletables.Length} Parameters?", "Confirm delete")) return;
+        foreach (IDeleteable d in olvParameters.SelectedObjects)
         {
-            if (deletables.Length == 1)
-                dr = Activator.YesNo($"Confirm deleting {deletables[0]}", "Confirm Delete?");
-            else
-                dr =  Activator.YesNo($"Confirm deleting {deletables.Length} Parameters?", "Confirm delete");
+            d.DeleteInDatabase();
+            olvParameters.RemoveObject(d);
+            Options.ParameterManager.RemoveParameter((ISqlParameter)d);
 
-            if(dr)
-            {
-                foreach (IDeleteable d in olvParameters.SelectedObjects)
-                {
-                    d.DeleteInDatabase();
-                    olvParameters.RemoveObject(d);
-                    Options.ParameterManager.RemoveParameter((ISqlParameter)d);
-
-                    DisableRelevantObjects();
-                    parameterEditorScintillaControl1.RegenerateSQL();
-                    UpdateTabVisibility();
-                }
-            }
+            DisableRelevantObjects();
+            parameterEditorScintillaControl1.RegenerateSQL();
+            UpdateTabVisibility();
         }
     }
 
@@ -354,12 +346,11 @@ public partial class ParameterCollectionUI : RDMPUserControl
         e.StandardIcon = ToolTipControl.StandardIcons.Info;
 
         //if it is a problem parameter
-        if (parameterEditorScintillaControl1.ProblemObjects.ContainsKey(sqlParameter))
+        if (parameterEditorScintillaControl1.ProblemObjects.TryGetValue(sqlParameter, out var exception))
         {
-            var ex = parameterEditorScintillaControl1.ProblemObjects[sqlParameter];
             e.StandardIcon = ToolTipControl.StandardIcons.Warning;
             e.Title = "Problem Detected With Parameter";
-            e.Text = ex.Message;
+            e.Text = exception.Message;
             return;
         }
 

@@ -65,10 +65,10 @@ ColumnInfos List of columns that should form the primary key (1 for simple prima
         if (cols == null || cols.Length == 0)
             return;
             
-        var cts = new CancellationTokenSource();
+        using var cts = new CancellationTokenSource();
 
         var task = Task.Run(() =>
-            Table.CreatePrimaryKey(cols.Select(c => c.Discover(DataAccessContext.DataLoad)).ToArray()));
+            Table.CreatePrimaryKey(cols.Select(c => c.Discover(DataAccessContext.DataLoad)).ToArray()), cts.Token);
                 
         Wait("Creating Primary Key...",task, cts);
 

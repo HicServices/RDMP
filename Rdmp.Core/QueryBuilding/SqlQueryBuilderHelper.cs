@@ -246,7 +246,7 @@ public class SqlQueryBuilderHelper
                     else
                         primaryExtractionTable = PickBestPrimaryExtractionTable(qb,primaryExtractionTable, table)
                                                  ?? throw new QueryBuildingException(
-                                                     $"There are multiple tables marked as IsPrimaryExtractionTable:{primaryExtractionTable.Name}(ID={primaryExtractionTable.ID}) and {table.Name}(ID={table.ID})"); ;
+                                                     $"There are multiple tables marked as IsPrimaryExtractionTable:{primaryExtractionTable.Name}(ID={primaryExtractionTable.ID}) and {table.Name}(ID={table.ID})");
             }
         }
 

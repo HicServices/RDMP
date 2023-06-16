@@ -78,7 +78,6 @@ public sealed class ExtractionPipelineUseCase : PipelineUseCase
     {
         if(ExtractCommand is ExtractDatasetCommand eds)
         {
-            bool runSuccessful;
             bool runAgain;
             var totalFailureCount = 0;
             var consecutiveFailureCount = 0;
@@ -88,6 +87,7 @@ public sealed class ExtractionPipelineUseCase : PipelineUseCase
                 Token?.ThrowIfStopRequested();
                 Token?.ThrowIfAbortRequested();
 
+                bool runSuccessful;
                 try
                 {
                     runSuccessful = ExecuteOnce(listener);

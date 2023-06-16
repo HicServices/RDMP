@@ -282,10 +282,8 @@ public partial class RDMPCollectionCommonFunctionality : IRefreshBusSubscriber
         Tree.FormatRow += Tree_FormatRow;
         Tree.KeyDown += Tree_KeyDown;
 
-        if(Settings.AllowSorting)
-        {
-            SetupColumnSortTracking(Tree, TreeGuids.ContainsKey(collection) ? TreeGuids[collection] : Guid.Empty);
-        }
+        if (Settings.AllowSorting)
+            SetupColumnSortTracking(Tree, TreeGuids.TryGetValue(collection, out var guid) ? guid : Guid.Empty);
         else
             foreach (var c in Tree.AllColumns)
                 c.Sortable = false;

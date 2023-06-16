@@ -212,8 +212,7 @@ public class WordDataWriter : DocXHelper
 
         if (fc != null)
         {
-            List<IFilter> filtersUsed;
-            filtersUsed = fc.GetAllFiltersIncludingInSubContainersRecursively();
+            var filtersUsed = fc.GetAllFiltersIncludingInSubContainersRecursively();
 
             WriteOutFilters(document,filtersUsed);
 

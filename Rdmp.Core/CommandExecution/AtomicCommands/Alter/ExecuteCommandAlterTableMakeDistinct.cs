@@ -54,10 +54,10 @@ public class ExecuteCommandAlterTableMakeDistinct : AlterTableCommandExecution
             }
         }
 
-        var cts = new CancellationTokenSource();
+        using var cts = new CancellationTokenSource();
 
         var task = Task.Run(() =>
-            Table.MakeDistinct(Timeout));
+            Table.MakeDistinct(Timeout), cts.Token);
 
         Wait("Making Distinct...", task, cts);
 

@@ -160,11 +160,10 @@ public partial class ExtractionFilterUI :ExtractionFilterUI_Design, ILifetimeSub
         Catalogue = databaseObject.GetCatalogue();
         _extractionFilter = databaseObject;
 
-        ParameterCollectionUIOptionsFactory factory = null;
-        ParameterCollectionUIOptions options = null;
+        ParameterCollectionUIOptions options;
         try
         {
-            factory = new ParameterCollectionUIOptionsFactory();
+            var factory = new ParameterCollectionUIOptionsFactory();
             options = factory.Create(databaseObject,activator.CoreChildProvider);
         }
         catch (Exception e)

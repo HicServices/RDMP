@@ -411,13 +411,12 @@ public partial class ConfigureCatalogueExtractabilityUI : RDMPForm, ISaveableUI
 
     private void FinaliseExtractability()
     {
-        new ExtractableDataSet(Activator.RepositoryLocator.DataExportRepository, _catalogue);
+        _=new ExtractableDataSet(Activator.RepositoryLocator.DataExportRepository, _catalogue);
 
-        IAtomicCommandWithTarget cmd;
         if(_projectSpecific != null)
         {
-            cmd = new ExecuteCommandMakeCatalogueProjectSpecific(Activator,_catalogue,_projectSpecific);
-            
+            IAtomicCommandWithTarget cmd = new ExecuteCommandMakeCatalogueProjectSpecific(Activator,_catalogue,_projectSpecific);
+
             if (!cmd.IsImpossible)
                 cmd.Execute();
             else

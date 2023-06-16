@@ -263,9 +263,9 @@ public partial class LoadEventsTreeView : RDMPUserControl,IObjectCollectionContr
     LogManager _logManager;
     void _populateLoadHistory_DoWork(object sender, DoWorkEventArgs e)
     {
-        ArchivalDataLoadInfo[] results;
         try
         {
+            ArchivalDataLoadInfo[] results;
             try
             {
                 _logManager = new LogManager(Collection.RootObject.GetDistinctLoggingDatabase());

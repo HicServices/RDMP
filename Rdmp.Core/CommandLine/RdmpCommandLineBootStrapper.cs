@@ -32,29 +32,27 @@ public class RdmpCommandLineBootStrapper
 
     public static int HandleArgumentsWithStandardRunner(string[] args, Logger logger,IRDMPPlatformRepositoryServiceLocator existingLocator = null)
     {
-        int returnCode;
         try
         {
-            returnCode =
-                UsefulStuff.GetParser()
-                    .ParseArguments<
-                        DleOptions,
-                        DqeOptions,
-                        CacheOptions,
-                        ExtractionOptions,
-                        ReleaseOptions,
-                        CohortCreationOptions,
-                        ExecuteCommandOptions>(args)
-                    .MapResult(
-                        //Add new verbs as options here and invoke relevant runner
-                        (DleOptions opts) => Run(opts,null, existingLocator),
-                        (DqeOptions opts) => Run(opts, null, existingLocator),
-                        (CacheOptions opts) => Run(opts, null, existingLocator),
-                        (ExtractionOptions opts) => Run(opts, null, existingLocator),
-                        (ReleaseOptions opts) => Run(opts, null, existingLocator),
-                        (CohortCreationOptions opts) => Run(opts, null, existingLocator),
-                        (ExecuteCommandOptions opts) => RunCmd(opts, existingLocator),
-                        errs => 1);
+            var returnCode = UsefulStuff.GetParser()
+                .ParseArguments<
+                    DleOptions,
+                    DqeOptions,
+                    CacheOptions,
+                    ExtractionOptions,
+                    ReleaseOptions,
+                    CohortCreationOptions,
+                    ExecuteCommandOptions>(args)
+                .MapResult(
+                    //Add new verbs as options here and invoke relevant runner
+                    (DleOptions opts) => Run(opts,null, existingLocator),
+                    (DqeOptions opts) => Run(opts, null, existingLocator),
+                    (CacheOptions opts) => Run(opts, null, existingLocator),
+                    (ExtractionOptions opts) => Run(opts, null, existingLocator),
+                    (ReleaseOptions opts) => Run(opts, null, existingLocator),
+                    (CohortCreationOptions opts) => Run(opts, null, existingLocator),
+                    (ExecuteCommandOptions opts) => RunCmd(opts, existingLocator),
+                    errs => 1);
 
             logger.Info($"Exiting with code {returnCode}");
             return returnCode;

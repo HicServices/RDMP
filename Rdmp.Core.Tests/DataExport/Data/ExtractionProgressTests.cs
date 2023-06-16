@@ -35,7 +35,7 @@ class ExtractionProgressTests : TestsRequiringAnExtractionConfiguration
     [Test]
     public void ExtractionProgressConstructor_Normal()
     {
-        ExtractionProgress progress = null; ;
+        ExtractionProgress progress = null;
         Assert.DoesNotThrow(()=> progress = CreateAnExtractionProgress());
         progress?.DeleteInDatabase();
     }

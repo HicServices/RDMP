@@ -60,7 +60,6 @@ public class BundledLookupTable : IBundledLookupTable
     public string GetDataTableFetchSql()
     {
         var catas = TableInfo.GetAllRelatedCatalogues().Where(IsLookupOnlyCatalogue).ToArray();
-        QueryBuilder qb;
 
         if (catas.Length == 1)
         {
@@ -74,12 +73,12 @@ public class BundledLookupTable : IBundledLookupTable
 
             if (eis.Length > 0)
             {
-                qb = new QueryBuilder(null, null, new[] { TableInfo });
+                var qb = new QueryBuilder(null, null, new[] { TableInfo });
                 qb.AddColumnRange(eis);
                 return qb.SQL;
             }
-            else
-                throw new QueryBuildingException($"Lookup table '{TableInfo}' has a Catalogue defined '{cata}' but it has no Core extractable columns");
+
+            throw new QueryBuildingException($"Lookup table '{TableInfo}' has a Catalogue defined '{cata}' but it has no Core extractable columns");
         }
 
         return $"select * from {TableInfo.GetFullyQualifiedName()}";

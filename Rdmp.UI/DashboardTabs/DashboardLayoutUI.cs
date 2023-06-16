@@ -74,9 +74,9 @@ public partial class DashboardLayoutUI : DashboardLayoutUI_Design
         cbxAvailableControls.Items.AddRange(_controlFactory.GetAvailableControlTypes());
         cbxAvailableControls.SelectedItem = cbxAvailableControls.Items.Cast<object>().FirstOrDefault();
 
-        DashboardableControlHostPanel instance;
         foreach (var c in _layout.Controls)
         {
+            DashboardableControlHostPanel instance;
             try
             {
                 instance = _controlFactory.Create(c);

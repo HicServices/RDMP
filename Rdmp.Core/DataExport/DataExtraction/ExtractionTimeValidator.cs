@@ -53,13 +53,12 @@ public class ExtractionTimeValidator
     {
         if (!_initialized)
             Initialize(dt);
-        Consequence? consequenceOnLastRowProcessed;
 
         foreach (DataRow r in dt.Rows)
         {
             //additive validation results, Results is a class that wraps DictionaryOfFailure which is an array of columns and each element is another array of consequences (with a row count for each consequence)
             //think of it like a 2D array with X columns and Y consquences and a number in each box which is how many values in that column failed validation with that consequence
-            Results = Validator.ValidateVerboseAdditive(r, Results, out consequenceOnLastRowProcessed);
+            Results = Validator.ValidateVerboseAdditive(r, Results, out var consequenceOnLastRowProcessed);
 
 
             if (validationColumnToPopulateIfAny != null)

@@ -68,20 +68,15 @@ class CatalogueMenu:RDMPContextMenuStrip
 
         if (catalogue.LoadMetadata_ID != null)
         {
-            var dir = catalogue.LoadMetadata.LocationOfFlatFiles;
-            DirectoryInfo dirReal;
-            if (dir != null)
+            if (catalogue.LoadMetadata.LocationOfFlatFiles == null) return;
+            try
             {
-                try
-                {
-                    dirReal = new DirectoryInfo(dir);
-                }
-                catch (Exception)
-                {
-                    // if the directory name is bad or corrupt
-                    return;
-                }
-                Add(new ExecuteCommandOpenInExplorer(_activator, dirReal) { OverrideCommandName = "Open Load Directory"});
+                var dirReal = new DirectoryInfo(catalogue.LoadMetadata.LocationOfFlatFiles);
+                Add(new ExecuteCommandOpenInExplorer(_activator, dirReal) { OverrideCommandName = "Open Load Directory" });
+            }
+            catch (Exception)
+            {
+                // if the directory name is bad or corrupt
             }
         }
     }
