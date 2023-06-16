@@ -36,7 +36,7 @@ internal class LoadProgressAnnotation
         _lp = lp;
         _dt = dt;
 
-        GetAnnotations("OriginDate", 0.9, lp.OriginDate, chart, out var line, out var text);
+        GetAnnotations("OriginDate",0.9,lp.OriginDate, chart, out var line, out var text);
         LineAnnotationOrigin = line;
         TextAnnotationOrigin = text;
 

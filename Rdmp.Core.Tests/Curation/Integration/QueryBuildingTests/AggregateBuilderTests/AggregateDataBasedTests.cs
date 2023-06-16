@@ -438,8 +438,7 @@ public class AggregateDataBasedTests : DatabaseTests
             out var tableInfo);
 
         //setup the aggregate pivot (and axis)
-        var configuration = SetupAggregateWithPivot(type, extractionInformations, catalogue, out var axisDimension,
-            out var pivotDimension);
+        var configuration = SetupAggregateWithPivot(type, extractionInformations, catalogue, out var axisDimension, out var pivotDimension);
 
         configuration.CountSQL = "sum(NumberInTrouble)";
         configuration.PivotOnDimensionID = pivotDimension.ID; //pivot on the Category
@@ -490,8 +489,7 @@ public class AggregateDataBasedTests : DatabaseTests
             out var tableInfo);
 
         //setup the aggregate pivot (and axis)
-        var configuration = SetupAggregateWithPivot(type, extractionInformations, catalogue, out var axisDimension,
-            out var pivotDimension);
+        var configuration = SetupAggregateWithPivot(type, extractionInformations, catalogue, out var axisDimension, out var pivotDimension);
 
         configuration.CountSQL = "sum(NumberInTrouble)";
         configuration.PivotOnDimensionID = pivotDimension.ID; //pivot on the Category
@@ -548,8 +546,7 @@ public class AggregateDataBasedTests : DatabaseTests
             out var tableInfo);
 
         //setup the aggregate pivot (and axis)
-        var configuration = SetupAggregateWithPivot(type, extractionInformations, catalogue, out var axisDimension,
-            out var pivotDimension);
+        var configuration = SetupAggregateWithPivot(type, extractionInformations, catalogue, out var axisDimension, out var pivotDimension);
 
         configuration.CountSQL = "sum(NumberInTrouble)";
         configuration.PivotOnDimensionID = pivotDimension.ID; //pivot on the Category
@@ -609,8 +606,7 @@ public class AggregateDataBasedTests : DatabaseTests
             out var tableInfo);
 
         //setup the aggregate pivot (and axis)
-        var configuration = SetupAggregateWithPivot(type, extractionInformations, catalogue, out var axisDimension,
-            out var pivotDimension);
+        var configuration = SetupAggregateWithPivot(type, extractionInformations, catalogue, out var axisDimension, out var pivotDimension);
 
         configuration.CountSQL = "sum(NumberInTrouble)";
         configuration.PivotOnDimensionID = pivotDimension.ID; //pivot on the Category
@@ -673,8 +669,7 @@ public class AggregateDataBasedTests : DatabaseTests
             out var tableInfo);
 
         //setup the aggregate pivot (and axis)
-        var configuration = SetupAggregateWithPivot(type, extractionInformations, catalogue, out var axisDimension,
-            out var pivotDimension);
+        var configuration = SetupAggregateWithPivot(type, extractionInformations, catalogue, out var axisDimension, out var pivotDimension);
 
         configuration.CountSQL = "sum(NumberInTrouble)";
         configuration.PivotOnDimensionID = pivotDimension.ID; //pivot on the Category

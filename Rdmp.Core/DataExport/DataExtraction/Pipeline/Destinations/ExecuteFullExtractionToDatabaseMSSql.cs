@@ -428,21 +428,25 @@ public class ExecuteFullExtractionToDatabaseMSSql : ExtractionDestination
         return $"{TargetDatabaseServer.ID}|{dbName}|{tblName}";
     }
 
-    public static DestinationType GetDestinationType() => DestinationType.Database;
-
-    public override ReleasePotential GetReleasePotential(IRDMPPlatformRepositoryServiceLocator repositoryLocator,
-        ISelectedDataSets selectedDataSet) => new MsSqlExtractionReleasePotential(repositoryLocator, selectedDataSet);
-
-    public override FixedReleaseSource<ReleaseAudit> GetReleaseSource(ICatalogueRepository catalogueRepository) =>
-        new MsSqlReleaseSource<ReleaseAudit>(catalogueRepository);
-
-    public override GlobalReleasePotential GetGlobalReleasabilityEvaluator(
-        IRDMPPlatformRepositoryServiceLocator repositoryLocator, ISupplementalExtractionResults globalResult,
-        IMapsDirectlyToDatabaseTable globalToCheck) =>
-        new MsSqlGlobalsReleasePotential(repositoryLocator, globalResult, globalToCheck);
-
-    protected override void TryExtractSupportingSQLTableImpl(SupportingSQLTable sqlTable, DirectoryInfo directory,
-        IExtractionConfiguration configuration, IDataLoadEventListener listener, out int linesWritten,
+    public DestinationType GetDestinationType()
+    {
+        return DestinationType.Database;
+    }
+        
+    public override ReleasePotential GetReleasePotential(IRDMPPlatformRepositoryServiceLocator repositoryLocator, ISelectedDataSets selectedDataSet)
+    {
+        return new MsSqlExtractionReleasePotential(repositoryLocator, selectedDataSet);
+    }
+    public override FixedReleaseSource<ReleaseAudit> GetReleaseSource(ICatalogueRepository catalogueRepository)
+    {
+        return new MsSqlReleaseSource(catalogueRepository);
+    }
+    public override GlobalReleasePotential GetGlobalReleasabilityEvaluator(IRDMPPlatformRepositoryServiceLocator repositoryLocator, ISupplementalExtractionResults globalResult, IMapsDirectlyToDatabaseTable globalToCheck)
+    {
+        return new MsSqlGlobalsReleasePotential(repositoryLocator, globalResult, globalToCheck);
+    }
+        
+    protected override void TryExtractSupportingSQLTableImpl(SupportingSQLTable sqlTable, DirectoryInfo directory, IExtractionConfiguration configuration,IDataLoadEventListener listener, out int linesWritten,
         out string destinationDescription)
     {
         listener.OnNotify(this, new NotifyEventArgs(ProgressEventType.Information,

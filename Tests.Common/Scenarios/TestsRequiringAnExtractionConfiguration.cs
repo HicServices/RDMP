@@ -141,6 +141,10 @@ public class TestsRequiringAnExtractionConfiguration : TestsRequiringACohort
 
         _catalogue = Import(tbl, out _tableInfo, out _columnInfos, out var cataItems, out _extractionInformations);
 
+        var tbl = Database.CreateTable("TestTable", dt, new[] { new DatabaseColumnRequest("Name",new DatabaseTypeRequest(typeof(string),50))});
+
+        _catalogue = Import(tbl, out _tableInfo, out _columnInfos, out _,out _extractionInformations);
+            
         var _privateID = _extractionInformations.First(e => e.GetRuntimeName().Equals("PrivateID"));
         _privateID.IsExtractionIdentifier = true;
         _privateID.SaveToDatabase();

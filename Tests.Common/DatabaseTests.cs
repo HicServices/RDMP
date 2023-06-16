@@ -816,11 +816,12 @@ delete from {1}..Project
 
     protected ICatalogue Import(DiscoveredTable tbl) => Import(tbl, out _, out _, out _, out _);
 
-    protected ICatalogue Import(DiscoveredTable tbl, out ITableInfo tableInfoCreated,
-        out ColumnInfo[] columnInfosCreated) => Import(tbl, out tableInfoCreated, out columnInfosCreated,
-        out var catalogueItems, out var extractionInformations);
+    protected ICatalogue Import(DiscoveredTable tbl, out ITableInfo tableInfoCreated,out ColumnInfo[] columnInfosCreated)
+    {
+        return Import(tbl, out tableInfoCreated, out columnInfosCreated, out _, out _);
+    }
 
-    protected static void VerifyRowExist(DataTable resultTable, params object[] rowObjects)
+    protected void VerifyRowExist(DataTable resultTable, params object[] rowObjects)
     {
         if (resultTable.Columns.Count != rowObjects.Length)
             Assert.Fail(

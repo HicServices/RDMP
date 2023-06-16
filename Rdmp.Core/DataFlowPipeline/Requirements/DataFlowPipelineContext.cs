@@ -55,8 +55,11 @@ public class DataFlowPipelineContext<T> : IDataFlowPipelineContext
     /// </summary>
     /// <param name="t"></param>
     /// <returns></returns>
-    public bool IsAllowable(Type t) => IsAllowable(t, out string whoCares);
-
+    public bool IsAllowable(Type t)
+    {
+        return IsAllowable(t, out string _);
+    }
+        
     /// <inheritdoc/>
     public bool IsAllowable(Type t, out string reason)
     {
@@ -135,6 +138,7 @@ public class DataFlowPipelineContext<T> : IDataFlowPipelineContext
     public bool IsAllowable(IPipeline pipeline, out string reason)
     {
         foreach (var component in pipeline.PipelineComponents)
+        {
             if (!IsAllowable(component.GetClassAsSystemType(), out Type forbiddenType))
             {
                 reason =
@@ -182,7 +186,10 @@ public class DataFlowPipelineContext<T> : IDataFlowPipelineContext
     }
 
     /// <inheritdoc/>
-    public bool IsAllowable(IPipeline pipeline) => IsAllowable(pipeline, out var whocares);
+    public bool IsAllowable(IPipeline pipeline)
+    {
+        return IsAllowable(pipeline, out _);
+    }
 
 
     /// <summary>

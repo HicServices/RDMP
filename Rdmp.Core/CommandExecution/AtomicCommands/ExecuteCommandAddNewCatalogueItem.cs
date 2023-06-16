@@ -102,8 +102,7 @@ public class ExecuteCommandAddNewCatalogueItem : BasicCommandExecution, IAtomicC
             if (columnInfo == null) return;
 
             //get them to type a name for it (based on the ColumnInfo if picked)
-            if (TypeText("Name", "Type a name for the new CatalogueItem", 500, columnInfo?.GetRuntimeName(),
-                    out var text))
+            if(TypeText("Name", "Type a name for the new CatalogueItem", 500,columnInfo?.GetRuntimeName(),out var text))
             {
                 var ci = new CatalogueItem(BasicActivator.RepositoryLocator.CatalogueRepository, c,
                     $"New CatalogueItem {Guid.NewGuid()}")

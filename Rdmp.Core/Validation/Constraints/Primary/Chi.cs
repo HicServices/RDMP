@@ -26,8 +26,8 @@ public partial class Chi : PrimaryConstraint
                 $"Incompatible type, CHIs must be strings, value passed was of type {value.GetType().Name}", this);
 
         if (!IsValidChi(valueAsString, out var reason))
-            return new ValidationFailure(reason, this);
-
+            return new ValidationFailure(reason,this);
+           
         return null;
     }
 
@@ -52,7 +52,7 @@ public partial class Chi : PrimaryConstraint
         var yy = columnValueAsString.Substring(4, 2);
 
         //maybe tryparse instead
-        if (DateTime.TryParse($"{dd}/{mm}/{yy}", out var outDt) == false)
+        if (DateTime.TryParse($"{dd}/{mm}/{yy}", out _) == false)
         {
             reason = "First 6 numbers of CHI did not constitute a valid date";
             return false;
@@ -100,7 +100,7 @@ public partial class Chi : PrimaryConstraint
     /// <returns>1 for male and 0 for female</returns>
     public static int GetSex(string chi)
     {
-        if (!IsValidChiNumber(chi, out var errorReport))
+        if (!IsValidChiNumber(chi, out _))
             throw new ArgumentException("Invalid CHI");
 
         var sexChar = chi[8];

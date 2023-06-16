@@ -49,7 +49,10 @@ WHERE DuplicateCount > 1";
     /// Get the SQL to run to delete records colliding on primary key
     /// </summary>
     /// <returns></returns>
-    public string GenerateSQL() => GenerateSQL(out var pks, out var resolvers);
+    public string GenerateSQL()
+    {
+        return GenerateSQL(out _, out _);
+    }
 
     private string GenerateSQL(out ColumnInfo[] pks, out List<IResolveDuplication> resolvers)
     {

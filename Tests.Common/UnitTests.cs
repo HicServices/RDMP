@@ -369,16 +369,16 @@ public class UnitTests
 
         if (typeof(T) == typeof(JoinInfo))
         {
-            WhenIHaveTwoTables(repository, out var col1, out var col2, out var col3);
-
-            return (T)(object)new JoinInfo(repository, col1, col2, ExtractionJoinType.Left, null);
+            WhenIHaveTwoTables(repository, out var col1,out var col2,out _);
+                
+            return (T)(object)new JoinInfo(repository,col1,col2,ExtractionJoinType.Left, null);
         }
 
         if (typeof(T) == typeof(Lookup))
         {
-            WhenIHaveTwoTables(repository, out var col1, out var col2, out var col3);
-
-            return (T)(object)new Lookup(repository, col3, col1, col2, ExtractionJoinType.Left, null);
+            WhenIHaveTwoTables(repository, out var col1,out var col2,out var col3);
+                
+            return (T)(object)new Lookup(repository,col3,col1,col2,ExtractionJoinType.Left, null);
         }
 
         if (typeof(T) == typeof(LookupCompositeJoinInfo))
@@ -599,7 +599,7 @@ public class UnitTests
     private static void WhenIHaveTwoTables(MemoryDataExportRepository repository, out ColumnInfo col1,
         out ColumnInfo col2, out ColumnInfo col3)
     {
-        WhenIHaveTwoTables(repository, out var ti1, out var ti2, out col1, out col2, out col3);
+        WhenIHaveTwoTables(repository, out _, out _, out col1, out col2, out col3);
     }
 
     private static void WhenIHaveTwoTables(MemoryDataExportRepository repository, out TableInfo ti1, out TableInfo ti2,
@@ -632,8 +632,7 @@ public class UnitTests
     }
 
     /// <inheritdoc cref="WhenIHaveA{T}()"/>
-    protected static AggregateConfiguration WhenIHaveA<T>(MemoryDataExportRepository repository,
-        out ExtractionInformation dateEi, out ExtractionInformation otherEi) where T : AggregateConfiguration
+    protected static AggregateConfiguration WhenIHaveA(MemoryDataExportRepository repository, out ExtractionInformation dateEi, out ExtractionInformation otherEi)
     {
         var ti = WhenIHaveA<TableInfo>(repository);
         var dateCol = new ColumnInfo(repository, "MyDateCol", "datetime2", ti);
@@ -651,17 +650,14 @@ public class UnitTests
     }
 
     /// <inheritdoc cref="WhenIHaveA{T}()"/>
-    protected static ANOTable WhenIHaveA<T>(MemoryDataExportRepository repository, out ExternalDatabaseServer server)
-        where T : ANOTable
+    protected static ANOTable WhenIHaveA(MemoryDataExportRepository repository, out ExternalDatabaseServer server)
     {
         server = new ExternalDatabaseServer(repository, "ANO Server", new ANOStorePatcher());
-        var anoTable = new ANOTable(repository, server, "ANOFish", "F");
-        return anoTable;
+        return new ANOTable(repository, server, "ANOFish", "F");
     }
 
     /// <inheritdoc cref="WhenIHaveA{T}()"/>
-    protected static ObjectExport WhenIHaveA<T>(MemoryDataExportRepository repository, out ShareManager shareManager)
-        where T : ObjectExport
+    protected static ObjectExport WhenIHaveA(MemoryDataExportRepository repository, out ShareManager shareManager)
     {
         shareManager = new ShareManager(new RepositoryProvider(repository));
         return shareManager.GetNewOrExistingExportFor(WhenIHaveA<Catalogue>(repository));

@@ -363,8 +363,6 @@ public class YamlRepository : MemoryDataExportRepository
         File.WriteAllText(GetDataExportPropertiesFile(), serializer.Serialize(PropertiesDictionary));
     }
 
-    public override string GetValue(DataExportProperty property) => base.GetValue(property);
-
     public override void SetValue(DataExportProperty property, string value)
     {
         base.SetValue(property, value);

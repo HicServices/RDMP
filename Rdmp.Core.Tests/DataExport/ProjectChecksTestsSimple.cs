@@ -41,7 +41,7 @@ public class ProjectChecksTestsSimple : DatabaseTests
     public void Project_NoDirectory()
     {
         var p = GetProjectWithConfig(out var config);
-        var ex = Assert.Throws<Exception>(() => RunTestWithCleanup(p, config));
+        var ex = Assert.Throws<Exception>(()=>RunTestWithCleanup(p, config));
         Assert.AreEqual("Project does not have an ExtractionDirectory", ex.Message);
     }
 
@@ -52,6 +52,10 @@ public class ProjectChecksTestsSimple : DatabaseTests
     public void Project_NonExistentDirectory(string dir)
     {
         var p = GetProjectWithConfig(out var config);
+           
+        p.ExtractionDirectory = dir;
+        var ex = Assert.Throws<Exception>(()=>RunTestWithCleanup(p, config));
+        Assert.IsTrue(Regex.IsMatch(ex.Message,@"Project ExtractionDirectory .* Does Not Exist"));
 
         p.ExtractionDirectory = dir;
         var ex = Assert.Throws<Exception>(() => RunTestWithCleanup(p, config));
@@ -138,17 +142,17 @@ public class ProjectChecksTestsSimple : DatabaseTests
     [Test]
     public void Configuration_NoDatasets()
     {
-        var p = GetProjectWithConfigDirectory(out var config, out var dir);
-        var ex = Assert.Throws<Exception>(() => RunTestWithCleanup(p, config));
-        StringAssert.StartsWith("There are no datasets selected for open configuration 'New ExtractionConfiguration",
-            ex.Message);
+        var p = GetProjectWithConfigDirectory(out var config, out _);
+        var ex = Assert.Throws<Exception>(()=>RunTestWithCleanup(p,config));
+        StringAssert.StartsWith("There are no datasets selected for open configuration 'New ExtractionConfiguration",ex.Message);
+
     }
 
 
     [Test]
     public void Configuration_NoProjectNumber()
     {
-        var p = GetProjectWithConfigDirectory(out var config, out var dir);
+        var p = GetProjectWithConfigDirectory(out var config, out _);
         p.ProjectNumber = null;
         var ex = Assert.Throws<Exception>(() => RunTestWithCleanup(p, config));
         StringAssert.Contains(

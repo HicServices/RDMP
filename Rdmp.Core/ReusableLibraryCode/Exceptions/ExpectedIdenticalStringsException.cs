@@ -56,7 +56,7 @@ public class ExpectedIdenticalStringsException : Exception
     {
         var toReturn = "";
 
-        var previewExpected = GetPreviewAround(i, expected, out var iIsAtCharacterPosition);
+        var previewExpected = GetPreviewAround(i,expected,out var iIsAtCharacterPosition);
         var previewActual = GetPreviewAround(i, actual, out iIsAtCharacterPosition);
 
         var differencePointer = "";

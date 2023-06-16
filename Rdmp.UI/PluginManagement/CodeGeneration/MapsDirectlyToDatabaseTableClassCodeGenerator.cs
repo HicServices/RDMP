@@ -69,7 +69,7 @@ public class MapsDirectlyToDatabaseTableClassCodeGenerator
 
         foreach (var col in columns.Where(c => c.GetRuntimeName() != "ID"))
         {
-            var type = GetCSharpTypeFor(col, out var setCode);
+            var type = GetCSharpTypeFor(col,out var setCode);
             var propertyName = col.GetRuntimeName();
             var fieldString = col.GetRuntimeName();
                 

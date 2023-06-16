@@ -61,7 +61,8 @@ public class FilterImporter
 
         //If user is trying to publish a filter into the Catalogue as a new master top level filter, make sure it is properly documented
         if (_factory is ExtractionFilterFactory)
-            if (!IsProperlyDocumented(fromMaster, out var reason))
+        {
+            if(!IsProperlyDocumented(fromMaster, out var reason))
                 throw new Exception($"Cannot clone filter called '{fromMaster.Name}' because:{reason}");
 
         //Handle problems with existing filters
@@ -161,6 +162,7 @@ public class FilterImporter
         if (reason == null)
             //check to see if there's a problem with the parameters
             foreach (var filterParameter in filter.GetAllParameters())
+            {
                 if (!ExtractionFilterParameter.IsProperlyDocumented(filterParameter, out var reasonParameterRejected))
                 {
                     reason = $"Parameter '{filterParameter.ParameterName}' was rejected :{reasonParameterRejected}";

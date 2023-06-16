@@ -146,7 +146,7 @@ public class ExtractDatasetCommand : ExtractCommand, IExtractDatasetCommand
     public void GenerateQueryBuilder()
     {
         var host = new ExtractionQueryBuilder(DataExportRepository);
-        QueryBuilder = host.GetSQLCommandForFullExtractionSet(this, out var substitutions);
+        QueryBuilder = host.GetSQLCommandForFullExtractionSet(this,out var substitutions);
         ReleaseIdentifierSubstitutions = substitutions;
     }
 

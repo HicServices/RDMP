@@ -89,13 +89,11 @@ public class ExecuteCommandAddDatasetsToConfiguration : BasicCommandExecution
 
         if (_userMustPick)
         {
-            ExtractableDataSet[] selected;
             if (!SelectMany(new DialogArgs
                 {
                     WindowTitle = "Select Datasets",
-                    TaskDescription =
-                        "Select the Datasets you would like to be exported as part of your Extraction Configuration."
-                }, _toadd.Cast<ExtractableDataSet>().ToArray(), out var selected))
+                    TaskDescription = "Select the Datasets you would like to be exported as part of your Extraction Configuration."
+                }, _toadd.Cast<ExtractableDataSet>().ToArray(),out var selected))
                 return;
 
             foreach (var ds in selected)

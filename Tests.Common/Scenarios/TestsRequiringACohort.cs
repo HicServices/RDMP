@@ -192,8 +192,7 @@ GO
 
         new TableInfoImporter(CatalogueRepository, CustomTable).DoImport(out CustomTableInfo, out var cols);
 
-        new ForwardEngineerCatalogue(CustomTableInfo, cols).ExecuteForwardEngineering(out CustomCatalogue, out var cis,
-            out var eis);
+        new ForwardEngineerCatalogue(CustomTableInfo, cols).ExecuteForwardEngineering(out CustomCatalogue, out _, out var eis);
 
         CustomExtractableDataSet = new ExtractableDataSet(DataExportRepository, CustomCatalogue);
 

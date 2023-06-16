@@ -83,8 +83,7 @@ public class CSVOutputFormat : FileOutputFormat
 
     public string CleanString(object o)
     {
-        var toReturn = CleanString(o, Separator, out var numberOfSeparatorsStrippedOutThisPass, DateFormat,
-            RoundFloatsTo);
+        var toReturn = CleanString(o, Separator, out var numberOfSeparatorsStrippedOutThisPass, DateFormat,RoundFloatsTo);
 
         SeparatorsStrippedOut += numberOfSeparatorsStrippedOutThisPass;
 

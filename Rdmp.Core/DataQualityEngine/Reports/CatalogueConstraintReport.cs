@@ -536,10 +536,9 @@ public class CatalogueConstraintReport : DataQualityReport
 
         //ask the validator to validate! 
         _validator.ValidateVerboseAdditive(
-            r, //validate the data reader
-            states.ColumnValidationFailuresByDataLoadRunID[
-                dataLoadRunIDOfCurrentRecord], //additively adjust the validation failures dictionary
-            out var worstConsequence); //and tell us what the worst consequence in the row was 
+            r,//validate the data reader
+            states.ColumnValidationFailuresByDataLoadRunID[dataLoadRunIDOfCurrentRecord],//additively adjust the validation failures dictionary
+            out var worstConsequence);//and tell us what the worst consequence in the row was 
 
 
         //increment the time periodicity hypercube!

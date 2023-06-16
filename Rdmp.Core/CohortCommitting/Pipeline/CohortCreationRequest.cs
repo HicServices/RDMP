@@ -193,7 +193,7 @@ public sealed class CohortCreationRequest : PipelineUseCase, ICohortCreationRequ
 
     public void PushToServer(IManagedConnection connection)
     {
-        if (!NewCohortDefinition.IsAcceptableAsNewCohort(out var reason))
+        if(!NewCohortDefinition.IsAcceptableAsNewCohort(out var reason))
             throw new Exception(reason);
 
         NewCohortDefinition.LocationOfCohort.PushToServer(NewCohortDefinition, connection);

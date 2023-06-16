@@ -138,7 +138,7 @@ public class CrossDatabaseTriggerTests : DatabaseTests
             Assert.AreEqual(2, archive.Rows.Cast<DataRow>().Count(r => r["amagad"] == DBNull.Value));
         }
 
-        implementer.DropTrigger(out var problems, out var worked);
+        implementer.DropTrigger(out var problems,out _);
 
         Assert.IsTrue(string.IsNullOrEmpty(problems));
 

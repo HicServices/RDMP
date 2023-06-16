@@ -652,7 +652,7 @@ public abstract class BasicActivateItems : IBasicActivateItems
         int version;
         var projectNumber = project?.ProjectNumber;
 
-        if(!TypeText("Name","Enter name for cohort",255,null,out name,false))
+        if(!TypeText("Name","Enter name for cohort",255,null,out var name,false))
             throw new Exception("User chose not to enter a name for the cohort and none was provided");
 
 

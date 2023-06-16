@@ -300,8 +300,7 @@ public partial class ForwardEngineerANOCatalogueUI : ForwardEngineerANOCatalogue
                 }
                 else
                 {
-                    ExtractionCategory c;
-                    Enum.TryParse((string) cbx.SelectedItem, out c);
+                    Enum.TryParse((string) cbx.SelectedItem, out ExtractionCategory c);
                     plan.ExtractionCategoryIfAny = c;
                 }
             }

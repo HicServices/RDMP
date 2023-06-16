@@ -17,12 +17,9 @@ internal class AutoComplete
 
     public char[] Separators { get; set; } = { ',' };
 
-    public string[] GetSuggestions(string text, int index)
+    public string[] GetSuggestions(string text, int _)
     {
         //they haven't typed anything yet
-        if (string.IsNullOrWhiteSpace(text))
-            return autocompletes;
-
-        return autocompletes.Where(a => a.StartsWith(text)).ToArray();
+        return string.IsNullOrWhiteSpace(text) ? autocompletes : autocompletes.Where(a=>a.StartsWith(text)).ToArray();
     }
 }

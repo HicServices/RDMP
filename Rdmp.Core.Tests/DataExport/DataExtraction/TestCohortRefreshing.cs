@@ -33,7 +33,7 @@ public class TestCohortRefreshing : TestsRequiringAnExtractionConfiguration
         pipe.Name = "RefreshPipe";
         pipe.SaveToDatabase();
 
-        Execute(out var useCase, out var results);
+        Execute(out _,out _);
 
         var oldcohort = _configuration.Cohort;
 
@@ -92,7 +92,7 @@ public class TestCohortRefreshing : TestsRequiringAnExtractionConfiguration
         pipe.DestinationPipelineComponent_ID = dest.ID;
         pipe.SaveToDatabase();
 
-        Execute(out var useCase, out var results);
+        Execute(out _, out _);
 
         var oldcohort = _configuration.Cohort;
 

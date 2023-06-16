@@ -43,8 +43,7 @@ internal class StackFramesTree
 
     private bool PopulateSourceCode(string frame)
     {
-        HasSourceCode = ExceptionViewerStackTraceWithHyperlinks.MatchStackLine(frame, out var filenameMatch,
-            out var lineNumberMatch, out var method);
+        HasSourceCode = ExceptionViewerStackTraceWithHyperlinks.MatchStackLine(frame, out var filenameMatch, out var lineNumberMatch, out var method);
 
         Filename = filenameMatch;
         LineNumber = lineNumberMatch;
@@ -53,9 +52,10 @@ internal class StackFramesTree
         return HasSourceCode;
     }
 
-    public static bool FindSourceCode(string frame) =>
-        ExceptionViewerStackTraceWithHyperlinks.MatchStackLine(frame, out _, out _, out _);
-
+    public static bool FindSourceCode(string frame)
+    {
+        return ExceptionViewerStackTraceWithHyperlinks.MatchStackLine(frame, out _, out _, out _);
+    }
     public static string GetMethodName(string frame)
     {
         ExceptionViewerStackTraceWithHyperlinks.MatchStackLine(frame, out _, out _, out var method);

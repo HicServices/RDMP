@@ -141,8 +141,9 @@ LEFT JOIN [{0}]..[Headers] TimePeriodicityTable ON TimePeriodicityTable.ID = j1.
 
         var forwardEngineer = new ForwardEngineerCatalogue(ti, ciList);
         if (createCatalogue)
-            forwardEngineer.ExecuteForwardEngineering(out _catalogue, out var cataItems,
-                out var extractionInformations);
+        {
+            forwardEngineer.ExecuteForwardEngineering(out _catalogue, out _, out _);
+        }
         else
             forwardEngineer.ExecuteForwardEngineering(_catalogue);
 

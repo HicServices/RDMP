@@ -573,8 +573,7 @@ public class AggregateBuilder : ISqlQueryBuilder
 
         // the column alias (e.g. "mytransform" in above example)
 
-        QuerySyntaxHelper.SplitLineIntoSelectSQLAndAlias(col.GetSelectSQL(null, null, QuerySyntaxHelper),
-            out var select, out var alias);
+        QuerySyntaxHelper.SplitLineIntoSelectSQLAndAlias(col.GetSelectSQL(null, null, QuerySyntaxHelper), out var select, out var alias);
 
         return GetGroupOrOrderByCustomLineBasedOn(select, alias);
     }

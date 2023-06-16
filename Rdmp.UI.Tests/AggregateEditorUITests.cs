@@ -66,8 +66,8 @@ internal class AggregateEditorUITests:UITests
     [UITimeout(50000)]
     public void Test_AggregateEditorUI_AxisOnlyShowsDateDimensions()
     {
-        var config = GetAggregateConfigurationWithNoDimensions(out var dateEi, out var otherEi);
-
+        var config = GetAggregateConfigurationWithNoDimensions(out var dateEi,out var otherEi);
+            
         var dimDate = new AggregateDimension(Repository, dateEi, config);
         var dimOther = new AggregateDimension(Repository, otherEi, config);
         config.ClearAllInjections();
@@ -122,7 +122,12 @@ internal class AggregateEditorUITests:UITests
     private AggregateConfiguration GetAggregateConfigurationWithNoDimensions(out ExtractionInformation dateEi,
         out ExtractionInformation otherEi)
     {
-        var config = WhenIHaveA<AggregateConfiguration>(Repository, out dateEi, out otherEi);
+        return GetAggregateConfigurationWithNoDimensions(out _, out _);
+    }
+
+    private AggregateConfiguration GetAggregateConfigurationWithNoDimensions(out ExtractionInformation dateEi, out ExtractionInformation otherEi)
+    {
+        var config = WhenIHaveA<AggregateConfiguration>(Repository,out dateEi, out otherEi);
 
         //remove any existing dimensions
         foreach (var d in config.AggregateDimensions)

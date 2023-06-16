@@ -131,8 +131,7 @@ public partial class DashboardLayoutUI : DashboardLayoutUI_Design
         if (cbxAvailableControls.SelectedItem is not Type type)
             return;
 
-        DashboardableControlHostPanel control;
-        var db = _controlFactory.Create(_layout, type, out control);
+        var db = _controlFactory.Create(_layout, type, out var control);
         Controls.Add(control);
         ControlDictionary.Add(db,control);
         Controls.Add(control);

@@ -166,15 +166,12 @@ public class ProcessTask : DatabaseEntity, IProcessTask, IOrderable, INamed, ICh
         Name = r["Name"] as string;
         Order = int.Parse(r["Order"].ToString());
 
-        ProcessTaskType processTaskType;
-
-        if (Enum.TryParse(r["ProcessTaskType"] as string, out processTaskType))
+        if (Enum.TryParse(r["ProcessTaskType"] as string, out ProcessTaskType processTaskType))
             ProcessTaskType = processTaskType;
         else
             throw new Exception($"Could not parse ProcessTaskType:{r["ProcessTaskType"]}");
 
-        LoadStage loadStage;
-        if (Enum.TryParse(r["LoadStage"] as string, out loadStage))
+        if (Enum.TryParse(r["LoadStage"] as string, out LoadStage loadStage))
             LoadStage = loadStage;
         else
             throw new Exception($"Could not parse LoadStage:{r["LoadStage"]}");

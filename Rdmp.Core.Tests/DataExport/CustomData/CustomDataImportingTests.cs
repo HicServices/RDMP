@@ -35,9 +35,8 @@ public class CustomDataImportingTests : TestsRequiringAnExtractionConfiguration
 
         try
         {
-            _request = new ExtractDatasetCommand(_configuration,
-                new ExtractableDatasetBundle(CustomExtractableDataSet));
-            Execute(out var useCase, out var results);
+            _request = new ExtractDatasetCommand(_configuration,new ExtractableDatasetBundle(CustomExtractableDataSet));
+            Execute(out _, out var results);
 
             var customDataCsv = results.DirectoryPopulated.GetFiles().Single(f => f.Name.Equals("custTable99.csv"));
 
@@ -104,7 +103,7 @@ public class CustomDataImportingTests : TestsRequiringAnExtractionConfiguration
             blk.Upload(dt);
         }
 
-        Execute(out var useCase, out var results);
+        Execute(out _, out var results);
 
         var mainDataTableCsv = results.DirectoryPopulated.GetFiles().Single(f => f.Name.Equals("TestTable.csv"));
 
@@ -180,7 +179,7 @@ public class CustomDataImportingTests : TestsRequiringAnExtractionConfiguration
             blk.Upload(dt);
         }
 
-        Execute(out var useCase, out var results);
+        Execute(out _, out var results);
 
         var mainDataTableCsv = results.DirectoryPopulated.GetFiles().Single(f => f.Name.Equals("TestTable.csv"));
 

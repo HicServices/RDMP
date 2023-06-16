@@ -97,7 +97,7 @@ public partial class ConfigureCatalogueExtractabilityUI : RDMPForm, ISaveableUI
     public ConfigureCatalogueExtractabilityUI(IActivateItems activator, ITableInfoImporter importer,
         string initialDescription, IProject projectSpecificIfAny) : this(activator)
     {
-        importer.DoImport(out _tableInfo, out var cols);
+        importer.DoImport(out _tableInfo, out _);
 
         _importedNewTable = true;
 

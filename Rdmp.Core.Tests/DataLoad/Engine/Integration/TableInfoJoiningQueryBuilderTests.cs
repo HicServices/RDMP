@@ -43,10 +43,10 @@ public class TableInfoJoiningQueryBuilderTests : DatabaseTests
         };
         queryBuilder.AddColumn(icol1);
 
-        var tablesUsed = SqlQueryBuilderHelper.GetTablesUsedInQuery(queryBuilder, out var primary, null);
-
-        Assert.AreEqual(1, tablesUsed.Count);
-        Assert.AreEqual(head, tablesUsed[0]);
+        var tablesUsed = SqlQueryBuilderHelper.GetTablesUsedInQuery(queryBuilder, out _,null);
+            
+        Assert.AreEqual(1,tablesUsed.Count);
+        Assert.AreEqual(head,tablesUsed[0]);
 
         //CASE 2 : 2 columns used one from each table so join is needed
         queryBuilder = new QueryBuilder(null, null);
@@ -58,8 +58,8 @@ public class TableInfoJoiningQueryBuilderTests : DatabaseTests
         };
         queryBuilder.AddColumn(icol4);
 
-        tablesUsed = SqlQueryBuilderHelper.GetTablesUsedInQuery(queryBuilder, out primary, null);
-
+        tablesUsed = SqlQueryBuilderHelper.GetTablesUsedInQuery(queryBuilder, out _, null);
+            
         Assert.AreEqual(2, tablesUsed.Count);
         Assert.AreEqual(head, tablesUsed[0]);
         Assert.AreEqual(result, tablesUsed[1]);

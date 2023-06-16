@@ -84,9 +84,7 @@ public class CohortSummaryAggregateGraphObjectCollection : PersistableObjectColl
 
     public override void LoadExtraText(string s)
     {
-        CohortSummaryAdjustment a;
-            
-        if(!Enum.TryParse(s, out a))
+        if(!Enum.TryParse(s, out CohortSummaryAdjustment a))
             throw new Exception($"Could not parse '{s}' into a valid CohortSummaryAdjustment");
 
         Adjustment = a;

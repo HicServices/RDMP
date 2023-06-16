@@ -88,8 +88,7 @@ public class CohortAggregateContainer : DatabaseEntity, IOrderable, INamed, IDis
         : base(repository, r)
     {
         Order = int.Parse(r["Order"].ToString());
-        SetOperation op;
-        Enum.TryParse(r["Operation"].ToString(), out op);
+        Enum.TryParse(r["Operation"].ToString(), out SetOperation op);
         Operation = op;
         Name = r["Name"].ToString();
         IsDisabled = Convert.ToBoolean(r["IsDisabled"]);

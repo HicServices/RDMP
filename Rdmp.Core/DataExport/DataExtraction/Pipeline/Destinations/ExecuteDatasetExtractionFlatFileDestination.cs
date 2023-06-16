@@ -201,8 +201,10 @@ public class ExecuteDatasetExtractionFlatFileDestination : ExtractionDestination
 
     public override string GetDestinationDescription() => OutputFile;
 
-    public override ReleasePotential GetReleasePotential(IRDMPPlatformRepositoryServiceLocator repositoryLocator,
-        ISelectedDataSets selectedDataSet) => new FlatFileReleasePotential(repositoryLocator, selectedDataSet);
+    public override FixedReleaseSource<ReleaseAudit> GetReleaseSource(ICatalogueRepository catalogueRepository)
+    {
+        return new FlatFileReleaseSource();
+    }
 
     public override FixedReleaseSource<ReleaseAudit> GetReleaseSource(ICatalogueRepository catalogueRepository) =>
         new FlatFileReleaseSource<ReleaseAudit>();

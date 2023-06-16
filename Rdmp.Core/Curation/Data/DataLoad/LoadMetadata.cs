@@ -233,7 +233,10 @@ public class LoadMetadata : DatabaseEntity, ILoadMetadata, IHasDependencies, IHa
     /// The unique logging server for auditing the load (found by querying <see cref="Catalogue.LiveLoggingServer"/>)
     /// </summary>
     /// <returns></returns>
-    public DiscoveredServer GetDistinctLoggingDatabase() => GetDistinctLoggingDatabase(out var whoCares);
+    public DiscoveredServer GetDistinctLoggingDatabase()
+    {
+        return GetDistinctLoggingDatabase(out _);
+    }
 
     private IDataAccessPoint[] GetLoggingServers()
     {
