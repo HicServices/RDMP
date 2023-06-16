@@ -88,9 +88,11 @@ INSERT [ANOMigration] ([AdmissionDate], [DischargeDate], [Condition1], [Conditio
         importer.DoImport(out _tableInfo,out _columnInfos);
 
         //Configure the structure of the ANO transform we want - identifiers should have 3 characters and 2 ints and end with _C
-        _anoConditionTable = new ANOTable(CatalogueRepository, ANOStore_ExternalDatabaseServer, "ANOCondition","C");
-        _anoConditionTable.NumberOfCharactersToUseInAnonymousRepresentation = 3;
-        _anoConditionTable.NumberOfIntegersToUseInAnonymousRepresentation = 2;
+        _anoConditionTable = new ANOTable(CatalogueRepository, ANOStore_ExternalDatabaseServer, "ANOCondition","C")
+            {
+                NumberOfCharactersToUseInAnonymousRepresentation = 3,
+                NumberOfIntegersToUseInAnonymousRepresentation = 2
+            };
         _anoConditionTable.SaveToDatabase();
         _anoConditionTable.PushToANOServerAsNewTable("varchar(4)", new ThrowImmediatelyCheckNotifier());
     }

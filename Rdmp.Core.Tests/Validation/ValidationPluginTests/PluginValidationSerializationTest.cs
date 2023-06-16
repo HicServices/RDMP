@@ -18,8 +18,10 @@ public class PluginValidationSerializationTest
     public void TestSerialization()
     {
         var v = new Validator();
-        var iv = new ItemValidator("fish");
-        iv.PrimaryConstraint = new FishConstraint();
+        var iv = new ItemValidator("fish")
+        {
+            PrimaryConstraint = new FishConstraint()
+        };
 
         //validation should be working
         Assert.IsNull(iv.ValidateAll("Fish", Array.Empty<object>(), Array.Empty<string>()));

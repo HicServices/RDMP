@@ -4,7 +4,6 @@
 // RDMP is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License for more details.
 // You should have received a copy of the GNU General Public License along with RDMP. If not, see <https://www.gnu.org/licenses/>.
 
-using System;
 using System.Data;
 using System.Linq;
 using NUnit.Framework;
@@ -29,13 +28,13 @@ public class ComponentCompatibilityTests :UnitTests
     {
         var array = MEF.GetTypes<IDataFlowComponent<DataTable>>().ToArray();
 
-        Assert.Greater(array.Count(),0);
+        Assert.Greater(array.Length,0);
     }
 
     [Test]
     public void HowDoesMEFHandleTypeNames()
     {
-        var expected = "Rdmp.Core.DataFlowPipeline.IDataFlowSource(System.Data.DataTable)";
+        const string expected = "Rdmp.Core.DataFlowPipeline.IDataFlowSource(System.Data.DataTable)";
 
         Assert.AreEqual(expected, MEF.GetMEFNameForType(typeof(IDataFlowSource<DataTable>)));
     }

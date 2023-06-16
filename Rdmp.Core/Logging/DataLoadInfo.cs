@@ -6,7 +6,6 @@
 
 using System;
 using System.Collections.Generic;
-using System.Data.Common;
 using FAnsi.Discovery;
 
 namespace Rdmp.Core.Logging;

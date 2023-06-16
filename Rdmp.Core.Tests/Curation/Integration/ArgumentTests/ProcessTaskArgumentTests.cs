@@ -298,7 +298,7 @@ public class ProcessTaskArgumentTests:DatabaseTests
 
         var useCase = ReleaseUseCase.DesignTime();
 
-        var factory = new DataFlowPipelineEngineFactory(useCase,RepositoryLocator.CatalogueRepository.MEF);
+        var factory = new DataFlowPipelineEngineFactory(useCase);
         var destInstance = factory.CreateDestinationIfExists(pipe);
 
         Assert.AreEqual(true, ((BasicDataReleaseDestination)destInstance).ReleaseSettings.DeleteFilesOnSuccess);
@@ -376,8 +376,10 @@ public class ProcessTaskArgumentTests:DatabaseTests
 
         try
         {
-            var arg = new PipelineComponentArgument(CatalogueRepository, pc);
-            arg.Name = "MyNames";
+            var arg = new PipelineComponentArgument(CatalogueRepository, pc)
+            {
+                Name = "MyNames"
+            };
             arg.SetType(typeof(Dictionary<TableInfo,string>));
             arg.SaveToDatabase();
                 

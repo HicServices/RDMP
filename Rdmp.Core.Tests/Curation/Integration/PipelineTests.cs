@@ -74,8 +74,10 @@ public class PipelineTests : DatabaseTests
     [Test]
     public void ClonePipelineNaming()
     {
-        var p = new Pipeline(CatalogueRepository);
-        p.Name = "My Pipe";
+        var p = new Pipeline(CatalogueRepository)
+        {
+            Name = "My Pipe"
+        };
         p.SaveToDatabase();
 
         var clone1 = p.Clone();
@@ -168,8 +170,10 @@ public class PipelineTests : DatabaseTests
         var p = new Pipeline(CatalogueRepository);
 
         //Setup a pipeline with a source component type that doesn't exist
-        var source = new PipelineComponent(CatalogueRepository, p, typeof (DelimitedFlatFileAttacher), 0);
-        source.Class = "Trollololol";
+        var source = new PipelineComponent(CatalogueRepository, p, typeof (DelimitedFlatFileAttacher), 0)
+ {
+     Class = "Trollololol"
+ };
         source.SaveToDatabase();
 
         var arg = source.CreateNewArgument();
@@ -199,8 +203,10 @@ public class PipelineTests : DatabaseTests
         var p = new Pipeline(CatalogueRepository);
 
         //Setup a pipeline with a source component
-        var source = new PipelineComponent(CatalogueRepository, p, typeof(DelimitedFlatFileAttacher), 0);
-        source.Class = "Trollololol";
+        var source = new PipelineComponent(CatalogueRepository, p, typeof(DelimitedFlatFileAttacher), 0)
+        {
+            Class = "Trollololol"
+        };
         p.SourcePipelineComponent_ID = source.ID;
         p.SaveToDatabase();
 
@@ -218,8 +224,10 @@ public class PipelineTests : DatabaseTests
         var p = new Pipeline(CatalogueRepository);
 
         //Setup a pipeline with a source component
-        var dest = new PipelineComponent(CatalogueRepository, p, typeof(DelimitedFlatFileAttacher), 0);
-        dest.Class = "Trollololol";
+        var dest = new PipelineComponent(CatalogueRepository, p, typeof(DelimitedFlatFileAttacher), 0)
+        {
+            Class = "Trollololol"
+        };
         p.DestinationPipelineComponent_ID = dest.ID;
         p.SaveToDatabase();
 

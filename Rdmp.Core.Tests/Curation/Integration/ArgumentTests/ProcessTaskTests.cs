@@ -66,8 +66,10 @@ public class ProcessTaskTests : DatabaseTests
 
         //setup things to clone in parent1
         var processTask1 = new ProcessTask(CatalogueRepository, parent1, LoadStage.AdjustRaw);
-        var arg = new ProcessTaskArgument(CatalogueRepository, processTask1);
-        arg.Name = "TestArg";
+        var arg = new ProcessTaskArgument(CatalogueRepository, processTask1)
+        {
+            Name = "TestArg"
+        };
         arg.SetType(typeof (System.String));
         arg.SetValue("TestValue");
         arg.SaveToDatabase();

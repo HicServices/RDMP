@@ -646,8 +646,10 @@ class QueryCachingCrossServerTests: TestsRequiringA
         cic.EnsureNamingConvention(ac);
 
         var and = new AggregateFilterContainer(CatalogueRepository, FilterContainerOperation.AND);
-        var filter = new AggregateFilter(CatalogueRepository,"TestCode is NA",and);
-        filter.WhereSQL = $"{syntax.EnsureWrapped("TestCode")} = 'NA'";
+        var filter = new AggregateFilter(CatalogueRepository,"TestCode is NA",and)
+        {
+            WhereSQL = $"{syntax.EnsureWrapped("TestCode")} = 'NA'"
+        };
         filter.SaveToDatabase();
 
         ac.RootFilterContainer_ID = and.ID;
@@ -681,8 +683,10 @@ class QueryCachingCrossServerTests: TestsRequiringA
         var ac = SetupAggregateConfiguration(db,people,r,cic);
             
         var and = new AggregateFilterContainer(CatalogueRepository, FilterContainerOperation.AND);
-        var filter = new AggregateFilter(CatalogueRepository, "Hospitalised after an NA", and);
-        filter.WhereSQL = $"{syntax.EnsureWrapped("AdmissionDate")} > {syntax.EnsureWrapped("SampleDate")}";
+        var filter = new AggregateFilter(CatalogueRepository, "Hospitalised after an NA", and)
+        {
+            WhereSQL = $"{syntax.EnsureWrapped("AdmissionDate")} > {syntax.EnsureWrapped("SampleDate")}"
+        };
         filter.SaveToDatabase();
 
         ac.RootFilterContainer_ID = and.ID;

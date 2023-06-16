@@ -36,8 +36,10 @@ public class PayloadTest:DatabaseTests
         b.SetupTestData();
         b.ImportAsCatalogue();
 
-        var lmd = new LoadMetadata(CatalogueRepository, "Loading");
-        lmd.LocationOfFlatFiles = LoadDirectory.CreateDirectoryStructure(new DirectoryInfo(TestContext.CurrentContext.TestDirectory),"delme", true).RootPath.FullName;
+        var lmd = new LoadMetadata(CatalogueRepository, "Loading")
+        {
+            LocationOfFlatFiles = LoadDirectory.CreateDirectoryStructure(new DirectoryInfo(TestContext.CurrentContext.TestDirectory),"delme", true).RootPath.FullName
+        };
         lmd.SaveToDatabase();
 
         CatalogueRepository.MEF.AddTypeToCatalogForTesting(typeof(TestPayloadAttacher));
@@ -49,9 +51,11 @@ public class PayloadTest:DatabaseTests
         var lm = new LogManager(CatalogueRepository.GetDefaultFor(PermissableDefaults.LiveLoggingServer_ID));
         lm.CreateNewLoggingTaskIfNotExists("TestPayloadInjection");
 
-        var pt = new ProcessTask(CatalogueRepository, lmd, LoadStage.Mounting);
-        pt.Path = typeof (TestPayloadAttacher).FullName;
-        pt.ProcessTaskType = ProcessTaskType.Attacher;
+        var pt = new ProcessTask(CatalogueRepository, lmd, LoadStage.Mounting)
+        {
+            Path = typeof (TestPayloadAttacher).FullName,
+            ProcessTaskType = ProcessTaskType.Attacher
+        };
         pt.SaveToDatabase();
 
         var config = new HICDatabaseConfiguration(GetCleanedServer(FAnsi.DatabaseType.MicrosoftSQLServer).Server);

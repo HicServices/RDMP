@@ -34,8 +34,10 @@ class ProjectConsistentGuidReleaseIdentifierAllocatorTests:DatabaseTests
         var defTable = ect.DiscoverDefinitionTable();
         var cohortTable = ect.DiscoverCohortTable();
 
-        var p = new Project(DataExportRepository,"MyProject");
-        p.ProjectNumber = 10;
+        var p = new Project(DataExportRepository,"MyProject")
+        {
+            ProjectNumber = 10
+        };
         p.SaveToDatabase();
 
         var req = new CohortCreationRequest(p,new CohortDefinition(null,"TestCohort1",1,p.ProjectNumber.Value,ect),DataExportRepository,"Ignoreme");

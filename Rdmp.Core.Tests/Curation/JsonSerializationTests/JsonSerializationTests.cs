@@ -25,10 +25,12 @@ public class JsonSerializationTests:DatabaseTests
 
         var c = new Catalogue(RepositoryLocator.CatalogueRepository,"Fish");
             
-        var mySerializeable = new MySerializeableTestClass(new ShareManager(RepositoryLocator));
-        mySerializeable.SelectedCatalogue = c;
-        mySerializeable.Title = "War and Pieces";
-            
+        var mySerializeable = new MySerializeableTestClass(new ShareManager(RepositoryLocator))
+ {
+     SelectedCatalogue = c,
+     Title = "War and Pieces"
+ };
+
         var dbConverter = new DatabaseEntityJsonConverter(RepositoryLocator);
         var lazyConverter = new PickAnyConstructorJsonConverter(RepositoryLocator);
 

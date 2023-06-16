@@ -124,7 +124,7 @@ public partial class ConfigureAndExecutePipelineUI : RDMPUserControl, IPipelineR
         pPipelineSelection.Controls.Add(_pipelineSelectionUI);
             
         //setup factory
-        PipelineFactory = new DataFlowPipelineEngineFactory(_useCase, repository.MEF);
+        PipelineFactory = new DataFlowPipelineEngineFactory(_useCase);
 
         _pipelineOptionsSet = true;
 

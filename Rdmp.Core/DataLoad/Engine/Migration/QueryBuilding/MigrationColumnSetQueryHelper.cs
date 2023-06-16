@@ -6,7 +6,6 @@
 
 using System;
 using System.Linq;
-using FAnsi.Discovery;
 using Rdmp.Core.DataLoad.Triggers;
 
 namespace Rdmp.Core.DataLoad.Engine.Migration.QueryBuilding;

@@ -139,12 +139,13 @@ class ExecuteSqlFileRuntimeTaskTests:DatabaseTests
         task.Check(new ThrowImmediatelyCheckNotifier());
         var configuration = new HICDatabaseConfiguration(db.Server);
 
-        var job = new ThrowImmediatelyDataLoadJob();
-            
-        job.RegularTablesToLoad = new List<ITableInfo> {ti};
-        job.LookupTablesToLoad = new List<ITableInfo>();
-        job.Configuration = configuration;
-                                  
+        var job = new ThrowImmediatelyDataLoadJob
+        {
+            RegularTablesToLoad = new List<ITableInfo> {ti},
+            LookupTablesToLoad = new List<ITableInfo>(),
+            Configuration = configuration
+        };
+
         var ex = Assert.Throws<Exception>(()=>task.Run(job, new GracefulCancellationToken()));
 
         StringAssert.Contains("Mutilate failed",ex.Message);

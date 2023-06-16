@@ -68,8 +68,10 @@ INSERT INTO Employee(EmployeeID,Name,Position,Department,Address,AnnualSalary) V
             raw.Drop();
 
         //define a new load configuration
-        var lmd = new LoadMetadata(CatalogueRepository, "MyLoad");
-        lmd.IgnoreTrigger = true;
+        var lmd = new LoadMetadata(CatalogueRepository, "MyLoad")
+        {
+            IgnoreTrigger = true
+        };
         lmd.SaveToDatabase();
               
         var ti = Import(tbl, lmd,logManager);

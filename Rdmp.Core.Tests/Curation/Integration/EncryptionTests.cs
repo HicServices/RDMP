@@ -22,12 +22,11 @@ public class EncryptionTests : DatabaseTests
 
         var encrypter = CatalogueRepository.EncryptionManager.GetEncrypter();
 
-        var toEncrypt = "Amagad";
-        var encrytpedBinaryString = encrypter.Encrypt(toEncrypt);
+        const string toEncrypt = "Amagad";
+        var encryptedBinaryString = encrypter.Encrypt(toEncrypt);
 
-        Console.WriteLine($"Encrypted password was:{encrytpedBinaryString}");
-        Assert.AreNotEqual(toEncrypt, encrytpedBinaryString);
-        Assert.AreEqual(toEncrypt,encrypter.Decrypt(encrytpedBinaryString));
+        Assert.AreNotEqual(toEncrypt, encryptedBinaryString);
+        Assert.AreEqual(toEncrypt,encrypter.Decrypt(encryptedBinaryString));
     }
 
     [Test]
@@ -36,12 +35,12 @@ public class EncryptionTests : DatabaseTests
 
         var encrypter = CatalogueRepository.EncryptionManager.GetEncrypter();
 
-        var toEncrypt = "Amagad";
-        var encrytpedBinaryString = encrypter.Encrypt(toEncrypt);
+        const string toEncrypt = "Amagad";
+        var encryptedBinaryString = encrypter.Encrypt(toEncrypt);
 
-        Console.WriteLine($"Encrypted password was:{encrytpedBinaryString}");
+        Console.WriteLine($"Encrypted password was:{encryptedBinaryString}");
             
-        Assert.True(encrypter.IsStringEncrypted(encrytpedBinaryString));
+        Assert.True(encrypter.IsStringEncrypted(encryptedBinaryString));
         Assert.False(encrypter.IsStringEncrypted(toEncrypt));
     }
 

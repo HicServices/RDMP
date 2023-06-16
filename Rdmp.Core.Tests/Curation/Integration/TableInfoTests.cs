@@ -75,13 +75,17 @@ class TableInfoTests : DatabaseTests
     [TestCase("TestDB..TestTableName", "TestDB..TestTableName.ANOMyCol")]
     public void CreateNewTableInfoInDatabase_Naming(string tableName, string columnName)
     {
-        var table = new TableInfo(CatalogueRepository, tableName);
-        table.Database = "TestDB";
+        var table = new TableInfo(CatalogueRepository, tableName)
+        {
+            Database = "TestDB"
+        };
         table.SaveToDatabase();
 
-        var c = new ColumnInfo(CatalogueRepository, columnName, "varchar(100)", table);
-        c.ANOTable_ID = -100;
-            
+        var c = new ColumnInfo(CatalogueRepository, columnName, "varchar(100)", table)
+        {
+            ANOTable_ID = -100
+        };
+
         try
         {
             Assert.AreEqual("ANOMyCol",c.GetRuntimeName());

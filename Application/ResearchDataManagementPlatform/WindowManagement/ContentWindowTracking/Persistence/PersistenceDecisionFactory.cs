@@ -9,7 +9,6 @@ using System.Reflection;
 using System.Windows.Forms;
 using Rdmp.Core;
 using Rdmp.Core.Curation.Data.Dashboarding;
-using Rdmp.Core.MapsDirectlyToDatabaseTable;
 using Rdmp.Core.Repositories;
 using Rdmp.Core.Repositories.Construction;
 using Rdmp.UI.LoadExecutionUIs;
@@ -100,8 +99,7 @@ public class PersistenceDecisionFactory
         var uiType = GetTypeByName(tokens[1],typeof(Control),repositoryLocator);
         var collectionType = GetTypeByName(tokens[2], typeof (IPersistableObjectCollection), repositoryLocator);
 
-        var objectConstructor = new ObjectConstructor();
-        var collectionInstance = (IPersistableObjectCollection)objectConstructor.Construct(collectionType);
+        var collectionInstance = (IPersistableObjectCollection)ObjectConstructor.Construct(collectionType);
                 
         if(collectionInstance.DatabaseObjects == null)
             throw new PersistenceException(

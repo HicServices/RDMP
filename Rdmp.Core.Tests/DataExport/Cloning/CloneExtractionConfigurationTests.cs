@@ -119,8 +119,10 @@ AND
     {
         var sds = _configuration.SelectedDataSets[0];
         var ci = sds.GetCatalogue().CatalogueItems.First();
-        var origProgress = new ExtractionProgress(DataExportRepository, sds, null, DateTime.Now, 10, "fff drrr", ci.ID);
-        origProgress.ProgressDate = new DateTime(2001, 01, 01);
+        var origProgress = new ExtractionProgress(DataExportRepository, sds, null, DateTime.Now, 10, "fff drrr", ci.ID)
+            {
+                ProgressDate = new DateTime(2001, 01, 01)
+            };
         origProgress.SaveToDatabase();
 
         var deepClone = _configuration.DeepCloneWithNewIDs();

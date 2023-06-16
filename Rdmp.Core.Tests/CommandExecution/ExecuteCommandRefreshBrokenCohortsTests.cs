@@ -22,17 +22,21 @@ internal class ExecuteCommandRefreshBrokenCohortsTests
     {
         var repo = new MemoryDataExportRepository();
             
-        var ect = new ExternalCohortTable(repo, "yarg", FAnsi.DatabaseType.MicrosoftSQLServer);
-        ect.Server = "IDontExist";
-        ect.Database = "fff";
-        ect.PrivateIdentifierField = "haha";
-        ect.ReleaseIdentifierField = "haha";
+        var ect = new ExternalCohortTable(repo, "yarg", FAnsi.DatabaseType.MicrosoftSQLServer)
+        {
+            Server = "IDontExist",
+            Database = "fff",
+            PrivateIdentifierField = "haha",
+            ReleaseIdentifierField = "haha"
+        };
         ect.SaveToDatabase();
 
-        var cohort = new ExtractableCohort();
-        cohort.Repository = repo;
-        cohort.ExternalCohortTable_ID = ect.ID;
-        cohort.OriginID = 123;
+        var cohort = new ExtractableCohort
+        {
+            Repository = repo,
+            ExternalCohortTable_ID = ect.ID,
+            OriginID = 123
+        };
         cohort.SaveToDatabase();
 
         var repoLocator = new RepositoryProvider(repo);

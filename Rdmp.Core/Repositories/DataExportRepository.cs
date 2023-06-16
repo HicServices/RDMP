@@ -80,13 +80,11 @@ public class DataExportRepository : TableRepository, IDataExportRepository
     }
 
 
-    readonly ObjectConstructor _constructor = new ObjectConstructor();
     protected override IMapsDirectlyToDatabaseTable ConstructEntity(Type t, DbDataReader reader)
     {
-        if (Constructors.TryGetValue(t, out var constructor))
-            return constructor(this, reader);
-
-        return _constructor.ConstructIMapsDirectlyToDatabaseObject<IDataExportRepository>(t, this, reader);
+        return Constructors.TryGetValue(t, out var constructor)
+            ? constructor(this, reader)
+            : ObjectConstructor.ConstructIMapsDirectlyToDatabaseObject<IDataExportRepository>(t, this, reader);
     }
         
     public CatalogueExtractabilityStatus GetExtractabilityStatus(ICatalogue c)

@@ -333,11 +333,12 @@ MrMurder,2001-01-01,Yella");
             {
                 {fkParentID, pkParentID}
             },
-            true);
-
-        args.ExplicitColumnDefinitions = new[]
+            true)
         {
-            fkParentID
+            ExplicitColumnDefinitions = new[]
+            {
+                fkParentID
+            }
         };
 
         var childTbl = db.CreateTable(args);

@@ -180,9 +180,11 @@ public class ValidationXMLObscureDependencyFinderTests: DatabaseTests
         l2ColumnInfo = testData.columnInfos.Single(c => c.GetRuntimeName().Equals("previous_address_L2"));
 
         //define the secondary constraint
-        var referentialConstraint = new ReferentialIntegrityConstraint(CatalogueRepository);
-        referentialConstraint.InvertLogic = true;
-        referentialConstraint.OtherColumnInfo = l2ColumnInfo;
+        var referentialConstraint = new ReferentialIntegrityConstraint(CatalogueRepository)
+        {
+            InvertLogic = true,
+            OtherColumnInfo = l2ColumnInfo
+        };
 
         //add it to the item validator for previous_address_L1
         iv.SecondaryConstraints.Add(referentialConstraint);

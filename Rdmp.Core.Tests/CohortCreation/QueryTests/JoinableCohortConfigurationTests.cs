@@ -351,9 +351,11 @@ ABS(DATEDIFF(year, {0}.dtCreated, ["+TestDatabaseNames.Prefix+@"ScratchArea].[db
         //add the first aggregate to the configuration
         rootcontainer.AddChild(aggregate1,1);
             
-        var globalParameter = new AnyTableSqlParameter(CatalogueRepository, cohortIdentificationConfiguration,"DECLARE @fish varchar(50)");
-        globalParameter.Comment = "Comments for the crazies";
-        globalParameter.Value = "'fishes'";
+        var globalParameter = new AnyTableSqlParameter(CatalogueRepository, cohortIdentificationConfiguration,"DECLARE @fish varchar(50)")
+            {
+                Comment = "Comments for the crazies",
+                Value = "'fishes'"
+            };
         globalParameter.SaveToDatabase();
 
         var builder = new CohortQueryBuilder(cohortIdentificationConfiguration,null);
@@ -455,10 +457,11 @@ ABS(DATEDIFF(year, {0}.dtCreated, ["+TestDatabaseNames.Prefix+@"ScratchArea].[db
 
             try
             {
-                var builder = new CohortQueryBuilder(aggregate1, null,null);
-
-                //make the builder use the query cache we just set SetUp
-                builder.CacheServer = queryCachingDatabaseServer;
+                var builder = new CohortQueryBuilder(aggregate1, null,null)
+                {
+                    //make the builder use the query cache we just set SetUp
+                    CacheServer = queryCachingDatabaseServer
+                };
 
                 Console.WriteLine(builder.SQL);
 

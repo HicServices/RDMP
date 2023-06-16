@@ -6,7 +6,6 @@
 
 using System;
 using System.Data;
-using FAnsi.Naming;
 using NUnit.Framework;
 using Rdmp.Core.Curation.Data;
 using Rdmp.Core.Curation.Data.Aggregation;

@@ -21,9 +21,10 @@ class ExtractionSubdirectoryPatternTests : UnitTests
     [Test]
     public void Test_NoRelativePaths()
     {
-        var dest = new ExecuteDatasetExtractionFlatFileDestination();
-
-        dest.ExtractionSubdirectoryPattern = "../../troll";
+        var dest = new ExecuteDatasetExtractionFlatFileDestination
+        {
+            ExtractionSubdirectoryPattern = "../../troll"
+        };
 
         var ex = Assert.Throws<Exception>(()=>dest.Check(new ThrowImmediatelyCheckNotifier()));
         StringAssert.Contains("ExtractionSubdirectoryPattern cannot contain dots",ex.Message);
@@ -36,9 +37,10 @@ class ExtractionSubdirectoryPatternTests : UnitTests
     [TestCase("$n")]
     public void Test_NoConfigToken(string badString)
     {
-        var dest = new ExecuteDatasetExtractionFlatFileDestination();
-
-        dest.ExtractionSubdirectoryPattern = badString;
+        var dest = new ExecuteDatasetExtractionFlatFileDestination
+        {
+            ExtractionSubdirectoryPattern = badString
+        };
 
         var ex = Assert.Throws<Exception>(()=>dest.Check(new ThrowImmediatelyCheckNotifier()));
         StringAssert.Contains("ExtractionSubdirectoryPattern must contain a Configuration element",ex.Message);
@@ -48,9 +50,10 @@ class ExtractionSubdirectoryPatternTests : UnitTests
     [TestCase("$i")]
     public void Test_NoDatasetToken(string badString)
     {
-        var dest = new ExecuteDatasetExtractionFlatFileDestination();
-
-        dest.ExtractionSubdirectoryPattern = badString;
+        var dest = new ExecuteDatasetExtractionFlatFileDestination
+        {
+            ExtractionSubdirectoryPattern = badString
+        };
 
         var ex = Assert.Throws<Exception>(()=>dest.Check(new ThrowImmediatelyCheckNotifier()));
         StringAssert.Contains("ExtractionSubdirectoryPattern must contain a Dataset element",ex.Message);
@@ -84,9 +87,11 @@ class ExtractionSubdirectoryPatternTests : UnitTests
             
             
         var cmd = new ExtractDatasetCommand(sds.ExtractionConfiguration, new ExtractableDatasetBundle(sds.ExtractableDataSet));
-        var dest = new ExecuteDatasetExtractionFlatFileDestination();
+        var dest = new ExecuteDatasetExtractionFlatFileDestination
+        {
+            ExtractionSubdirectoryPattern = goodString
+        };
 
-        dest.ExtractionSubdirectoryPattern = goodString;
         Assert.DoesNotThrow(()=>dest.Check(new ThrowImmediatelyCheckNotifier()));
 
         var answer = dest.GetDirectoryFor(cmd);

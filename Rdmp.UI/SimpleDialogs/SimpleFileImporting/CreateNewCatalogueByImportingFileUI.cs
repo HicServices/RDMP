@@ -349,7 +349,7 @@ public partial class CreateNewCatalogueByImportingFileUI : RDMPForm
 
     private DataFlowPipelineEngineFactory GetFactory()
     {
-        return new DataFlowPipelineEngineFactory(GetUseCase(), Activator.RepositoryLocator.CatalogueRepository.MEF);
+        return new DataFlowPipelineEngineFactory(GetUseCase());
     }
 
     private void btnExecute_Click(object sender, EventArgs e)

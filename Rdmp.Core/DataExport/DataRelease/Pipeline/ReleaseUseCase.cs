@@ -51,9 +51,8 @@ public sealed class ReleaseUseCase : PipelineUseCase
                 .GetType(
                     releasePotentialWithKnownDestination.DatasetExtractionResult.DestinationType,
                     typeof (IExecuteDatasetExtractionDestination));
-            var constructor = new ObjectConstructor();
             var destinationUsedAtExtraction =
-                (IExecuteDatasetExtractionDestination)constructor.Construct(destinationType, catalogueRepository);
+                (IExecuteDatasetExtractionDestination)ObjectConstructor.Construct(destinationType, catalogueRepository);
 
             var fixedReleaseSource =
                 destinationUsedAtExtraction.GetReleaseSource(catalogueRepository);

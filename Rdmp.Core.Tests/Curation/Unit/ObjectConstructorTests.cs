@@ -20,49 +20,46 @@ public class ObjectConstructorTests : UnitTests
     [Test]
     public void ConstructValidTests()
     {
-        var constructor =new ObjectConstructor();
         var testarg = new TestArg {Text = "amagad"};
         var testarg2 = new TestArg2 { Text = "amagad" };
 
         //anyone can construct on object!
-        constructor.Construct(typeof(TestClass1),testarg);
-        constructor.Construct(typeof(TestClass1), testarg2);
+        ObjectConstructor.Construct(typeof(TestClass1),testarg);
+        ObjectConstructor.Construct(typeof(TestClass1), testarg2);
             
         //basic case - identical Type parameter
-        var instance = (TestClass2)constructor.Construct(typeof(TestClass2), testarg);
+        var instance = (TestClass2)ObjectConstructor.Construct(typeof(TestClass2), testarg);
         Assert.AreEqual(instance.A.Text, "amagad");
-        //also allowed because testarg2 is a testarg derrived class 
-        constructor.Construct(typeof(TestClass2), testarg2);
+        //also allowed because testarg2 is a testarg derived class 
+        ObjectConstructor.Construct(typeof(TestClass2), testarg2);
 
         //not allowed because class 3 explicitly requires a TestArg2 
-        Assert.Throws<ObjectLacksCompatibleConstructorException>(()=>constructor.Construct(typeof(TestClass3), testarg));
+        Assert.Throws<ObjectLacksCompatibleConstructorException>(()=>ObjectConstructor.Construct(typeof(TestClass3), testarg));
             
         //allowed
-        constructor.Construct(typeof(TestClass3), testarg2);
+        ObjectConstructor.Construct(typeof(TestClass3), testarg2);
 
         //valid because even though both constructors are valid there is one that matches EXACTLY on Type
-        constructor.Construct(typeof(TestClass4), testarg2);
+        ObjectConstructor.Construct(typeof(TestClass4), testarg2);
 
         var testarg3 = new TestArg3();
 
         //not valid because there are 2 constructors that are both base classes of TestArg3 so ObjectConstructor doesn't know which to invoke
-        var ex = Assert.Throws<ObjectLacksCompatibleConstructorException>(()=>constructor.Construct(typeof (TestClass4), testarg3));
-        Assert.IsTrue(ex.Message.Contains("Could not pick the correct constructor between"));
+        var ex = Assert.Throws<ObjectLacksCompatibleConstructorException>(()=>ObjectConstructor.Construct(typeof (TestClass4), testarg3));
+        Assert.IsTrue(ex?.Message.Contains("Could not pick the correct constructor between"));
 
         //exactly the same as the above case but one constructor has been decorated with [UseWithObjectConstructor] attribute
-        constructor.Construct(typeof (TestClass5), testarg3);
+        ObjectConstructor.Construct(typeof (TestClass5), testarg3);
     }
 
     [Test]
     public void ConstructIfPossibleTests_BlankConstructors()
     {
-        var constructor = new ObjectConstructor();
-            
         //blank constructors are only used if no params are specified
-        Assert.IsNotNull(constructor.ConstructIfPossible(typeof(TestClassDefaultConstructor)));
+        Assert.IsNotNull(ObjectConstructor.ConstructIfPossible(typeof(TestClassDefaultConstructor)));
             
         //no constructor taking an int
-        Assert.IsNull(constructor.ConstructIfPossible(typeof(TestClassDefaultConstructor),8));
+        Assert.IsNull(ObjectConstructor.ConstructIfPossible(typeof(TestClassDefaultConstructor),8));
     }
 
     [Test]
@@ -77,8 +74,7 @@ public class ObjectConstructorTests : UnitTests
         {
             try
             {
-                var oc = new ObjectConstructor();
-                Assert.IsNotNull(oc.GetRepositoryConstructor(typeof(Catalogue)));
+                Assert.IsNotNull(ObjectConstructor.GetRepositoryConstructor(typeof(Catalogue)));
                 countCompatible++;
             }
             catch (Exception e)

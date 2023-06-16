@@ -22,8 +22,10 @@ class ExtractionFilterParameterSetTests : DatabaseTests
         var col = new ColumnInfo(CatalogueRepository, "myCol", "varchar(10)", table);
 
         var ei = new ExtractionInformation(CatalogueRepository, cataItem, col, "[myTbl].[mycol]");
-        var filter = new ExtractionFilter(CatalogueRepository, "Age", ei);
-        filter.WhereSQL = "Age >= @age";
+        var filter = new ExtractionFilter(CatalogueRepository, "Age", ei)
+        {
+            WhereSQL = "Age >= @age"
+        };
         new ExtractionFilterParameter(CatalogueRepository, "DECLARE @age int", filter);
 
         var paramSet = new ExtractionFilterParameterSet(CatalogueRepository, filter, "Old");

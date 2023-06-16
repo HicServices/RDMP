@@ -6,7 +6,6 @@
 
 using System.Collections.Concurrent;
 using System.Collections.Generic;
-using System.Data.Common;
 using Rdmp.Core.MapsDirectlyToDatabaseTable;
 using Rdmp.Core.ReusableLibraryCode;
 

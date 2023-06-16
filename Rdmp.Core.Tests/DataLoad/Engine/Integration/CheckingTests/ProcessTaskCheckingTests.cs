@@ -41,9 +41,11 @@ public class ProcessTaskCheckingTests:DatabaseTests
 
         var c = new Catalogue(CatalogueRepository,"c");
         var ci = new CatalogueItem(CatalogueRepository,c,"ci");
-        var t = new TableInfo(CatalogueRepository,"t");
-        t.Server = DiscoveredServerICanCreateRandomDatabasesAndTablesOn.Name;
-        t.Database = "mydb";
+        var t = new TableInfo(CatalogueRepository,"t")
+        {
+            Server = DiscoveredServerICanCreateRandomDatabasesAndTablesOn.Name,
+            Database = "mydb"
+        };
         t.SaveToDatabase();
         var col = new ColumnInfo(CatalogueRepository,"col","bit",t);
         ci.SetColumnInfo(col);

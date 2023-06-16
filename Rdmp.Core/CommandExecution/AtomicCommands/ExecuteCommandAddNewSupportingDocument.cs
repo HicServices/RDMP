@@ -7,7 +7,6 @@
 using System;
 using System.Collections.Generic;
 using SixLabors.ImageSharp;
-using System.IO;
 using System.Linq;
 using Rdmp.Core.CommandExecution.Combining;
 using Rdmp.Core.Curation.Data;

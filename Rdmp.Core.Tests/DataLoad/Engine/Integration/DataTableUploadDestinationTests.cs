@@ -672,8 +672,10 @@ ALTER TABLE DroppedColumnsTable add color varchar(1)
             "f2"             //StringPk
         );
 
-        var dest = new DataTableUploadDestination();
-        dest.AllowResizingColumnsAtUploadTime = true;
+        var dest = new DataTableUploadDestination
+        {
+            AllowResizingColumnsAtUploadTime = true
+        };
         dest.PreInitialize(db,new ThrowImmediatelyDataLoadEventListener());
             
         dest.ProcessPipelineData(dt,new ThrowImmediatelyDataLoadEventListener(),new GracefulCancellationToken());
@@ -698,8 +700,10 @@ ALTER TABLE DroppedColumnsTable add color varchar(1)
         dt.Columns.Add("MyFreeText");
         dt.Rows.Add(testValue);
             
-        var dest = new DataTableUploadDestination();
-        dest.AllowResizingColumnsAtUploadTime = true;
+        var dest = new DataTableUploadDestination
+        {
+            AllowResizingColumnsAtUploadTime = true
+        };
         dest.PreInitialize(db, new ThrowImmediatelyDataLoadEventListener());
         dest.ProcessPipelineData(dt, new ThrowImmediatelyDataLoadEventListener(), new GracefulCancellationToken());
         dest.Dispose(new ThrowImmediatelyDataLoadEventListener(), null);
@@ -908,10 +912,12 @@ ALTER TABLE DroppedColumnsTable add color varchar(1)
             }
             
             //create the destination component (what we want to test)
-            var destinationComponent = new DataTableUploadDestination();
-            destinationComponent.AllowResizingColumnsAtUploadTime = true;
-            destinationComponent.AllowLoadingPopulatedTables = true;
-            
+            var destinationComponent = new DataTableUploadDestination
+            {
+                AllowResizingColumnsAtUploadTime = true,
+                AllowLoadingPopulatedTables = true
+            };
+
             //create the simulated chunk that will be dispatched
             var dt = new DataTable("TestDestinationAlreadyExistingIsOk");
             dt.Columns.Add("Name");
@@ -942,9 +948,11 @@ ALTER TABLE DroppedColumnsTable add color varchar(1)
     {
         var db = GetCleanedServer(dbtype);
 
-        var destination = new DataTableUploadDestination();
-            
-        destination.AllowResizingColumnsAtUploadTime = true;
+        var destination = new DataTableUploadDestination
+        {
+            AllowResizingColumnsAtUploadTime = true
+        };
+
         destination.PreInitialize(db,new ThrowImmediatelyDataLoadEventListener());
 
         var dt1 = new DataTable();
@@ -1002,9 +1010,11 @@ ALTER TABLE DroppedColumnsTable add color varchar(1)
                 bulk.Upload(dtAlreadyThereData);
                 
             //create the destination component (what we want to test)
-            var destinationComponent = new DataTableUploadDestination();
-            destinationComponent.AllowResizingColumnsAtUploadTime = true;
-            destinationComponent.AllowLoadingPopulatedTables = true;
+            var destinationComponent = new DataTableUploadDestination
+            {
+                AllowResizingColumnsAtUploadTime = true,
+                AllowLoadingPopulatedTables = true
+            };
 
             //create the simulated chunk that will be dispatched
             var dt = new DataTable("TestDestinationAlreadyExisting_ColumnSubset");

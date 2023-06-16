@@ -19,9 +19,11 @@ class RowDeleterTests
     [Test]
     public void TestRowDeleter_OneCell()
     {
-        var operation = new RowDeleter();
-        operation.ColumnNameToFind = "b";
-        operation.DeleteRowsWhereValuesMatch = new Regex("^cat$");
+        var operation = new RowDeleter
+        {
+            ColumnNameToFind = "b",
+            DeleteRowsWhereValuesMatch = new Regex("^cat$")
+        };
 
         using (var dt = new DataTable())
         {

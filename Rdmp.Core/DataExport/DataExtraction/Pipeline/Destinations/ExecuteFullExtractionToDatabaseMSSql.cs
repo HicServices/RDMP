@@ -26,7 +26,6 @@ using Rdmp.Core.ReusableLibraryCode;
 using Rdmp.Core.ReusableLibraryCode.Checks;
 using Rdmp.Core.ReusableLibraryCode.DataAccess;
 using Rdmp.Core.ReusableLibraryCode.Progress;
-using TypeGuesser;
 
 namespace Rdmp.Core.DataExport.DataExtraction.Pipeline.Destinations;
 

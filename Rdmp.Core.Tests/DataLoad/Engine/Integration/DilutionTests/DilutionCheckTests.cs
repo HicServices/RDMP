@@ -31,8 +31,10 @@ public class DilutionCheckTests
     {
         var col = Mock.Of<IPreLoadDiscardedColumn>(p => p.SqlDataType == incompatibleType);
 
-        var dil = new RoundDateToMiddleOfQuarter();
-        dil.ColumnToDilute = col;
+        var dil = new RoundDateToMiddleOfQuarter
+        {
+            ColumnToDilute = col
+        };
 
         Assert.Throws<Exception>(() => dil.Check(new ThrowImmediatelyCheckNotifier()));
     }
@@ -43,8 +45,10 @@ public class DilutionCheckTests
     {
         var col = Mock.Of<IPreLoadDiscardedColumn>(p => p.SqlDataType==incompatibleType);
 
-        var dil = new RoundDateToMiddleOfQuarter();
-        dil.ColumnToDilute = col;
+        var dil = new RoundDateToMiddleOfQuarter
+        {
+            ColumnToDilute = col
+        };
 
         dil.Check(new ThrowImmediatelyCheckNotifier());
     }

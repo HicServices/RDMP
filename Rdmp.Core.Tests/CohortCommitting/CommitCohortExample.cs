@@ -40,8 +40,10 @@ class CommitCohortExample: DatabaseTests
         Assert.AreEqual(dbType,externalCohortTable.DatabaseType);
 
         //create a project into which we want to import a cohort
-        var project = new Project(DataExportRepository, "MyProject");
-        project.ProjectNumber = 500;
+        var project = new Project(DataExportRepository, "MyProject")
+        {
+            ProjectNumber = 500
+        };
         project.SaveToDatabase();
 
         //create a description of the cohort we are importing
@@ -54,10 +56,11 @@ class CommitCohortExample: DatabaseTests
         dt.Rows.Add("0202020202");
 
         //Create a pipeline (we only need the destination)
-        var pipelineDestination = new BasicCohortDestination();
-
-        //choose how to allocate the anonymous release identifiers
-        pipelineDestination.ReleaseIdentifierAllocator = typeof(ProjectConsistentGuidReleaseIdentifierAllocator);
+        var pipelineDestination = new BasicCohortDestination
+        {
+            //choose how to allocate the anonymous release identifiers
+            ReleaseIdentifierAllocator = typeof(ProjectConsistentGuidReleaseIdentifierAllocator)
+        };
 
         //initialize the destination
         pipelineDestination.PreInitialize(

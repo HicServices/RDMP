@@ -34,17 +34,21 @@ class RemoteTableAttacherTests : DatabaseTests
     {
         var db = GetCleanedServer(dbType);
 
-        var attacher = new RemoteTableAttacher();
-        //where to go for data
-        attacher.RemoteServer = db.Server.Name;
-        attacher.RemoteDatabaseName = db.GetRuntimeName();
-        attacher.DatabaseType = db.Server.DatabaseType;
+        var attacher = new RemoteTableAttacher
+        {
+            //where to go for data
+            RemoteServer = db.Server.Name,
+            RemoteDatabaseName = db.GetRuntimeName(),
+            DatabaseType = db.Server.DatabaseType
+        };
 
         if (db.Server.ExplicitUsernameIfAny != null)
         {
-            var creds = new DataAccessCredentials(CatalogueRepository);
-            creds.Username = db.Server.ExplicitUsernameIfAny;
-            creds.Password = db.Server.ExplicitPasswordIfAny;
+            var creds = new DataAccessCredentials(CatalogueRepository)
+            {
+                Username = db.Server.ExplicitUsernameIfAny,
+                Password = db.Server.ExplicitPasswordIfAny
+            };
             creds.SaveToDatabase();
             attacher.RemoteTableAccessCredentials = creds;
         }
@@ -162,19 +166,23 @@ class RemoteTableAttacherTests : DatabaseTests
             Mock.Get(lmd).Setup(p=>p.CatalogueRepository).Returns(CatalogueRepository);
             logManager.CreateNewLoggingTaskIfNotExists(lmd.GetDistinctLoggingTask());
 
-            var lp = new LoadProgress(CatalogueRepository, new LoadMetadata(CatalogueRepository, "ffffff"));
-            lp.OriginDate = new DateTime(2001,1,1);
+            var lp = new LoadProgress(CatalogueRepository, new LoadMetadata(CatalogueRepository, "ffffff"))
+ {
+     OriginDate = new DateTime(2001,1,1)
+ };
             attacher.Progress = lp;
             attacher.ProgressUpdateStrategy = new DataLoadProgressUpdateInfo {Strategy = DataLoadProgressUpdateStrategy.DoNothing};
             
             var dbConfiguration = new HICDatabaseConfiguration(lmd, RdmpMockFactory.Mock_INameDatabasesAndTablesDuringLoads(db, "table2"));
 
-            var job = new ScheduledDataLoadJob(RepositoryLocator,"test job",logManager,lmd,new TestLoadDirectory(),new ThrowImmediatelyDataLoadEventListener(),dbConfiguration);
+            var job = new ScheduledDataLoadJob(RepositoryLocator,"test job",logManager,lmd,new TestLoadDirectory(),new ThrowImmediatelyDataLoadEventListener(),dbConfiguration)
+                {
+                    LoadProgress = mismatchProgress
+                        ? new LoadProgress(CatalogueRepository, new LoadMetadata(CatalogueRepository, "ffsdf"))
+                        : lp,
+                    DatesToRetrieve = new List<DateTime>{new DateTime(2001,01,01)}
+                };
 
-            job.LoadProgress = mismatchProgress
-                ? new LoadProgress(CatalogueRepository, new LoadMetadata(CatalogueRepository, "ffsdf"))
-                : lp;
-            job.DatesToRetrieve = new List<DateTime>{new DateTime(2001,01,01)};
             job.StartLogging();
             attacher.Attach(job, new GracefulCancellationToken());
 

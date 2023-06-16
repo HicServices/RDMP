@@ -734,15 +734,13 @@ public partial class RDMPCollectionCommonFunctionality : IRefreshBusSubscriber
             Masquerader = oMasquerader ?? o as IMasqueradeAs
         };
 
-        var objectConstructor = new ObjectConstructor();
-
         var oType = o.GetType();
 
         //if we have encountered this object type before
         if (_cachedMenuCompatibility.TryGetValue(oType, out var compatibleMenu))
         {
             //we know there are no menus compatible with o
-            return compatibleMenu == null ? null : ConstructMenu(objectConstructor, compatibleMenu, args, o);
+            return compatibleMenu == null ? null : ConstructMenu(compatibleMenu, args, o);
         }
                 
 
@@ -753,7 +751,7 @@ public partial class RDMPCollectionCommonFunctionality : IRefreshBusSubscriber
                 continue;
 
             //try constructing menu with:
-            var menu = ConstructMenu(objectConstructor,menuType,args,o);
+            var menu = ConstructMenu(menuType,args,o);
 
             //find first menu that's compatible
             if (menu == null) continue;
@@ -769,14 +767,14 @@ public partial class RDMPCollectionCommonFunctionality : IRefreshBusSubscriber
         return null;
     }
 
-    private RDMPContextMenuStrip ConstructMenu(ObjectConstructor objectConstructor, Type type, RDMPContextMenuStripArgs args, object o)
+    private RDMPContextMenuStrip ConstructMenu(Type type, RDMPContextMenuStripArgs args, object o)
     {
         //there is a compatible menu Type known
             
         //parameter 1 must be args
         //parameter 2 must be object compatible Type
 
-        var menu = (RDMPContextMenuStrip)objectConstructor.ConstructIfPossible(type, args, o);
+        var menu = (RDMPContextMenuStrip)ObjectConstructor.ConstructIfPossible(type, args, o);
 
         menu?.AddCommonMenuItems(this);
 

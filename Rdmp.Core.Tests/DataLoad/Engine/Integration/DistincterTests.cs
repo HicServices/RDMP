@@ -31,9 +31,10 @@ public class DistincterTests : DatabaseTests
     {
         var db = GetCleanedServer(type, "TestCoalescer");
 
-        var batchCount = 1000;
+        const int batchCount = 1000;
 
-        var dt = new DataTable("TestCoalescer_RampantNullness");
+        using var dt = new DataTable("TestCoalescer_RampantNullness");
+        dt.BeginLoadData();
         dt.Columns.Add("pk");
         dt.Columns.Add("f1");
         dt.Columns.Add("f2");
@@ -50,6 +51,7 @@ public class DistincterTests : DatabaseTests
             dt.Rows.Add(new object[] { randInt, randInt, randInt, randInt, randInt });
         }
 
+        dt.EndLoadData();
         var tbl = db.CreateTable(dt.TableName, dt);
 
         var importer = new TableInfoImporter(CatalogueRepository, tbl);
@@ -62,8 +64,10 @@ public class DistincterTests : DatabaseTests
 
         var rowsBefore = tbl.GetRowCount();
 
-        var distincter = new Distincter();
-        distincter.TableRegexPattern = new Regex(".*");
+        var distincter = new Distincter
+        {
+            TableRegexPattern = new Regex(".*")
+        };
         distincter.Initialize(db, LoadStage.AdjustRaw);
 
         var job = Mock.Of<IDataLoadJob>(p => p.RegularTablesToLoad==new List<ITableInfo>(new[] { tableInfo })&& p.Configuration==new HICDatabaseConfiguration(db.Server,null,null,null));
@@ -84,9 +88,10 @@ public class DistincterTests : DatabaseTests
     {
         var db = GetCleanedServer(type, "TestCoalescer");
 
-        var batchCount = 1000;
+        const int batchCount = 1000;
 
-        var dt = new DataTable("TestCoalescer_RampantNullness");
+        using var dt = new DataTable("TestCoalescer_RampantNullness");
+        dt.BeginLoadData();
         dt.Columns.Add("pk");
         dt.Columns.Add("f1");
         dt.Columns.Add("f2");
@@ -102,7 +107,7 @@ public class DistincterTests : DatabaseTests
             dt.Rows.Add(new object[] { randInt, randInt, randInt, randInt, randInt });
             dt.Rows.Add(new object[] { randInt, randInt, randInt, randInt, randInt+1 });
         }
-
+        dt.EndLoadData();
         var tbl = db.CreateTable(dt.TableName, dt);
 
         var importer = new TableInfoImporter(CatalogueRepository, tbl);
@@ -115,8 +120,10 @@ public class DistincterTests : DatabaseTests
 
         var rowsBefore = tbl.GetRowCount();
 
-        var distincter = new Distincter();
-        distincter.TableRegexPattern = new Regex(".*");
+        var distincter = new Distincter
+        {
+            TableRegexPattern = new Regex(".*")
+        };
         distincter.Initialize(db, LoadStage.AdjustRaw);
 
         var job = Mock.Of<IDataLoadJob>(p => p.RegularTablesToLoad==new List<ITableInfo>(new[] { tableInfo }) && p.Configuration==new HICDatabaseConfiguration(db.Server,null,null,null));

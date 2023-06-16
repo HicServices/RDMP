@@ -44,10 +44,12 @@ class DataLoadEngineTestsBase : DatabaseTests
 
     protected void CreateCSVProcessTask(LoadMetadata lmd, ITableInfo ti, string regex)
     {
-        var pt = new ProcessTask(CatalogueRepository, lmd, LoadStage.Mounting);
-        pt.Path = typeof(AnySeparatorFileAttacher).FullName;
-        pt.ProcessTaskType = ProcessTaskType.Attacher;
-        pt.Name = $"Load {ti.GetRuntimeName()}";
+        var pt = new ProcessTask(CatalogueRepository, lmd, LoadStage.Mounting)
+        {
+            Path = typeof(AnySeparatorFileAttacher).FullName,
+            ProcessTaskType = ProcessTaskType.Attacher,
+            Name = $"Load {ti.GetRuntimeName()}"
+        };
         pt.SaveToDatabase();
 
         pt.CreateArgumentsForClassIfNotExists<AnySeparatorFileAttacher>();

@@ -9,7 +9,6 @@ using System.IO;
 using System.Runtime.InteropServices;
 using CommandLine;
 using Rdmp.Core.Curation.Data;
-using Rdmp.Core.Repositories;
 using Rdmp.Core.ReusableLibraryCode;
 using Rdmp.Core.ReusableLibraryCode.Checks;
 using Rdmp.Core.Startup;

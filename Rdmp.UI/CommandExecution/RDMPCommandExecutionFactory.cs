@@ -36,9 +36,7 @@ public class RDMPCommandExecutionFactory : ICommandExecutionFactory
         {
             try
             {
-                var constructor = new ObjectConstructor();
-                _proposers.Add((ICommandExecutionProposal)constructor.Construct(proposerType,activator));
-
+                _proposers.Add((ICommandExecutionProposal)ObjectConstructor.Construct(proposerType,activator));
             }
             catch (Exception ex)
             {

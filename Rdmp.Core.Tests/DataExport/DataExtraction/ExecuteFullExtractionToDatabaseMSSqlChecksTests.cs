@@ -60,8 +60,10 @@ public class ExecuteFullExtractionToDatabaseMSSqlChecksTests:DatabaseTests
         var server = new ExternalDatabaseServer(CatalogueRepository, "Fiction",null);
         try
         {
-            var destination = new ExecuteFullExtractionToDatabaseMSSql();
-            destination.TargetDatabaseServer = server;
+            var destination = new ExecuteFullExtractionToDatabaseMSSql
+            {
+                TargetDatabaseServer = server
+            };
 
             var tomemory = new ToMemoryCheckNotifier();
             destination.Check(tomemory);
@@ -79,11 +81,13 @@ public class ExecuteFullExtractionToDatabaseMSSqlChecksTests:DatabaseTests
     [TestCase(true)]
     public void ServerDatabaseIsPresentAndCorrect(bool alreadyExists)
     {
-        var server = new ExternalDatabaseServer(CatalogueRepository, "Fiction",null);
-        server.Server = DiscoveredServerICanCreateRandomDatabasesAndTablesOn.Name;
-        server.Username = DiscoveredServerICanCreateRandomDatabasesAndTablesOn.ExplicitUsernameIfAny;
-        server.Password = DiscoveredServerICanCreateRandomDatabasesAndTablesOn.ExplicitPasswordIfAny;
-            
+        var server = new ExternalDatabaseServer(CatalogueRepository, "Fiction",null)
+        {
+            Server = DiscoveredServerICanCreateRandomDatabasesAndTablesOn.Name,
+            Username = DiscoveredServerICanCreateRandomDatabasesAndTablesOn.ExplicitUsernameIfAny,
+            Password = DiscoveredServerICanCreateRandomDatabasesAndTablesOn.ExplicitPasswordIfAny
+        };
+
         //server.Database = "FictionalDatabase"; Ignored by the extractor!
             
         try
@@ -116,10 +120,12 @@ public class ExecuteFullExtractionToDatabaseMSSqlChecksTests:DatabaseTests
     [Test]
     public void ServerDatabaseIsPresentAndCorrectButHasTablesInIt()
     {
-        var server = new ExternalDatabaseServer(CatalogueRepository, "Fiction",null);
-        server.Server = DiscoveredServerICanCreateRandomDatabasesAndTablesOn.Name;
-        server.Username = DiscoveredServerICanCreateRandomDatabasesAndTablesOn.ExplicitUsernameIfAny;
-        server.Password = DiscoveredServerICanCreateRandomDatabasesAndTablesOn.ExplicitPasswordIfAny;
+        var server = new ExternalDatabaseServer(CatalogueRepository, "Fiction",null)
+        {
+            Server = DiscoveredServerICanCreateRandomDatabasesAndTablesOn.Name,
+            Username = DiscoveredServerICanCreateRandomDatabasesAndTablesOn.ExplicitUsernameIfAny,
+            Password = DiscoveredServerICanCreateRandomDatabasesAndTablesOn.ExplicitPasswordIfAny
+        };
         //server.Database = "FictionalDatabase"; Ignored by the extractor!
             
         using (var con = Database.Server.GetConnection())

@@ -82,9 +82,8 @@ public class DQERepository : TableRepository, IDQERepository
         return GetAllEvaluationsFor(catalogue).Any();
     }
 
-    private readonly ObjectConstructor _constructor = new ObjectConstructor();
     protected override IMapsDirectlyToDatabaseTable ConstructEntity(Type t, DbDataReader reader)
     {
-        return _constructor.ConstructIMapsDirectlyToDatabaseObject(t,this, reader);
+        return ObjectConstructor.ConstructIMapsDirectlyToDatabaseObject(t,this, reader);
     }
 }

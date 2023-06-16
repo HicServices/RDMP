@@ -8,7 +8,6 @@ using FAnsi;
 using NUnit.Framework;
 using Rdmp.Core.CommandExecution.AtomicCommands.Alter;
 using Rdmp.Core.CommandLine.Interactive;
-using Rdmp.Core.Curation.Data;
 using System;
 using System.Data;
 using Rdmp.Core.ReusableLibraryCode.Checks;
