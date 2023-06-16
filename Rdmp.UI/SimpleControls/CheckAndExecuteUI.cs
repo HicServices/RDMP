@@ -234,7 +234,8 @@ public partial class CheckAndExecuteUI : RDMPUserControl, IConsultableBeforeClos
     private void SetButtonStates()
     {
         var h = StateChanged;
-        h?.Invoke(this, EventArgs.Empty);
+        if (h != null)
+            h(this, EventArgs.Empty);
 
         if (!ChecksPassed)
         {

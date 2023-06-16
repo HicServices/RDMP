@@ -239,9 +239,10 @@ public class SuspiciousRelationshipPropertyUse
         var maybe = info.DeclaringType
             .GetFields(BindingFlags.NonPublic | BindingFlags.Instance)
             .Where(f => f.Name.Contains(info.Name))
-            .Where(static f => f.Name.Contains("BackingField")
+            .Where(
+                f => f.Name.Contains("BackingField")
             )
-            .Any(static f => f.GetCustomAttributes(
+            .Any(f => f.GetCustomAttributes(
                 typeof(CompilerGeneratedAttribute),
                 true
             ).Any());

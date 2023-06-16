@@ -175,7 +175,7 @@ public partial class PipelineSelectionUI : UserControl, IPipelineSelectionUI
 
         if (!Equals(_previousSelection, Pipeline))
         {
-            PipelineChanged?.Invoke(this, EventArgs.Empty);
+            PipelineChanged?.Invoke(this,EventArgs.Empty);
             _previousSelection = Pipeline;
         }
     }

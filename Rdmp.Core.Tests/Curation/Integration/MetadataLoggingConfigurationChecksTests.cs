@@ -106,6 +106,9 @@ public class MetadataLoggingConfigurationChecksTests : UnitTests
         AssertFailWithFix("Some catalogues have NULL LiveLoggingServer_ID",
             $"Set LiveLoggingServer_ID to 'My Logging Server' (the default)", toMem);
     }
+    private void AssertFailWithFix(string expectedMessage, string expectedFix, ToMemoryCheckNotifier toMem)
+    {
+        var msg = toMem.Messages.First(m => m.Result == CheckResult.Fail);
 
     private static void AssertFailWithFix(string expectedMessage, string expectedFix, ToMemoryCheckNotifier toMem)
     {

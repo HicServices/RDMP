@@ -41,7 +41,7 @@ public partial class CatalogueCollectionFilterUI : UserControl
         UserSettings.ShowProjectSpecificCatalogues = cbProjectSpecific.Checked;
         UserSettings.ShowNonExtractableCatalogues = cbShowNonExtractable.Checked;
 
-        FiltersChanged?.Invoke(this, EventArgs.Empty);
+        FiltersChanged?.Invoke(this,EventArgs.Empty);
     }
 
     public void EnsureVisible(Catalogue c)

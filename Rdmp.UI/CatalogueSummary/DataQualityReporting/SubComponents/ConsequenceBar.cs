@@ -116,14 +116,14 @@ public partial class ConsequenceBar : UserControl
             return;
 
         toolTip.SetToolTip(this,
-            $"{Label}{Environment.NewLine}Null:{$"{DBNull:n0}"}{GetPercentageText(DBNull)}Correct:{$"{Correct:n0}"}{GetPercentageText(Correct)}Missing:{$"{Missing:n0}"}{GetPercentageText(Missing)}Wrong:{$"{Wrong:n0}"}{GetPercentageText(Wrong)}Invalid:{$"{Invalid:n0}"}{GetPercentageText(Invalid).TrimEnd()}"
+            $"{Label}{Environment.NewLine}Null:{DBNull:n0}{GetPercentageText(DBNull)}Correct:{Correct:n0}{GetPercentageText(Correct)}Missing:{Missing:n0}{GetPercentageText(Missing)}Wrong:{Wrong:n0}{GetPercentageText(Wrong)}Invalid:{Invalid:n0}{GetPercentageText(Invalid).TrimEnd()}"
         );
     }
 
     private string GetPercentageText(double fraction)
     {
         var totalRecords = Correct + Missing + Invalid + Wrong;
-        return $"({$"{Truncate((fraction / totalRecords) * 100, 2):n2}"}%){Environment.NewLine}";
+        return $"({Truncate((fraction / totalRecords) * 100, 2):n2}%){Environment.NewLine}";
     }
 
     private static double Truncate(double value, int digits)

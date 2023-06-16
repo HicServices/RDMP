@@ -41,7 +41,7 @@ public partial class ExplicitColumnTypeUI : UserControl
     private void btnDelete_Click(object sender, EventArgs e)
     {
         var h = DeletePressed;
-        if (h != null)
+        if(h != null)
             DeletePressed(this, EventArgs.Empty);
     }
 

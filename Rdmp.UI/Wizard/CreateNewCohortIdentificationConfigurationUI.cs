@@ -168,7 +168,10 @@ public partial class CreateNewCohortIdentificationConfigurationUI : RDMPForm
 
     private void tbName_KeyDown(object sender, KeyEventArgs e)
     {
-        if (e.KeyCode == Keys.Enter) btnGo_Click(this, EventArgs.Empty);
+        if (e.KeyCode == Keys.Enter)
+        {
+            btnGo_Click(this, EventArgs.Empty);
+        }
     }
 
     private void cbUseWizard_CheckedChanged(object sender, EventArgs e)

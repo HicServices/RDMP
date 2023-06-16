@@ -116,8 +116,7 @@ public partial class RDMPTopMenuStripUI : RDMPUserControl
             if (!ConnectionStringsYamlFile.TryLoadFrom(yaml, out var connectionStrings))
                 continue;
 
-            var isSameAsCurrent = origYamlFile?.FileLoaded != null &&
-                                  yaml.FullName.Equals(origYamlFile.FileLoaded.FullName);
+            var isSameAsCurrent = origYamlFile?.FileLoaded != null && yaml.FullName.Equals(origYamlFile.FileLoaded.FullName);
 
             var launchNew = new ToolStripMenuItem(connectionStrings.Name ?? yaml.Name, null,
                 (s, e) => { LaunchNew(connectionStrings); })
