@@ -290,8 +290,8 @@ public class HICPipelineTests : DatabaseTests
             }
 
 
-            var archiveFile = loadDirectory.ForArchiving.EnumerateFiles("*.zip").MaxBy(f => f.FullName);
-            Assert.NotNull(archiveFile, "Archive file has not been created by the load.");
+            var archiveFile = loadDirectory.ForArchiving.EnumerateFiles("*.zip").MaxBy(f=>f.FullName);
+            Assert.NotNull(archiveFile,"Archive file has not been created by the load.");
             Assert.IsFalse(loadDirectory.ForLoading.EnumerateFileSystemInfos().Any());
         }
         finally

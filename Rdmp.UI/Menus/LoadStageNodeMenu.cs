@@ -51,7 +51,7 @@ internal class LoadStageNodeMenu : RDMPContextMenuStrip
         else if (typeof(T) == typeof(IMutilateDataTables))
             taskType = ProcessTaskType.MutilateDataTable;
         else
-            throw new ArgumentException($"Type '{typeof(T)}' was not expected", "T");
+            throw new ArgumentException($"Type '{typeof(T)}' was not expected", nameof(T));
 
         foreach (var type in types)
         {

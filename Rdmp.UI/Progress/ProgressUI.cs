@@ -227,6 +227,13 @@ public partial class ProgressUI : UserControl, IDataLoadEventListener
                     _ => throw new ArgumentOutOfRangeException("type")
                 };
 
+                var label = args.Progress.UnitOfMeasurement switch
+                {
+                    ProgressType.Records => "records",
+                    ProgressType.Kilobytes => "KB",
+                    _ => throw new ArgumentOutOfRangeException("type")
+                };
+
                 var handledByFlood = HandleFloodOfMessagesFromJob(message.Value.Sender, args.TaskDescription,
                     args.Progress.Value, label);
 

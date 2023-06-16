@@ -54,11 +54,10 @@ public class CohortDefinition : ICohortDefinition
         LocationOfCohort = locationOfCohort;
 
         if (string.IsNullOrWhiteSpace(description))
-            if (id == null)
-                throw new ArgumentNullException("Cohorts must have a description");
-            else
-                throw new NullReferenceException(
-                    $"There is a cohort (with ID {id}) in {locationOfCohort.DefinitionTableName} which has a blank/null description.  You must fix this.");
+            throw new ArgumentNullException(nameof(description),
+                id == null
+                    ? "Cohorts must have a description"
+                    : $"There is a cohort (with ID {id}) in {locationOfCohort.DefinitionTableName} which has a blank/null description.  You must fix this.");
     }
 
     /// <inheritdoc/>
@@ -75,30 +74,22 @@ public class CohortDefinition : ICohortDefinition
             }
 
 
-        var foundSimilar = false;
-
         try
         {
-            foundSimilar = ExtractableCohort
-                .GetImportableCohortDefinitions(
-                    (ExternalCohortTable)LocationOfCohort) //see if there is one with the same name
-                .Any(t => t.Description.Equals(Description) &&
-                          t.Version.Equals(
-                              Version)); //and description (it might have a different ID but it is still against the rules)
+            var foundSimilar = ExtractableCohort.GetImportableCohortDefinitions((ExternalCohortTable)LocationOfCohort) //see if there is one with the same name
+                .Any(t => t.Description.Equals(Description) && t.Version.Equals(Version)); //and description (it might have a different ID but it is still against the rules)
+            if (foundSimilar)
+            {
+                matchDescription =
+                    $"Found an existing cohort called {Description} with version {Version} in {LocationOfCohort}";
+                return false;
+            }
         }
         catch (Exception ex)
         {
             matchDescription =
                 $"Error occurred when checking for existing cohorts in the Project.  We were looking in {LocationOfCohort + Environment.NewLine + Environment.NewLine} Error was: {ExceptionHelper.ExceptionToListOfInnerMessages(ex)}";
 
-            return false;
-        }
-
-
-        if (foundSimilar)
-        {
-            matchDescription =
-                $"Found an existing cohort called {Description} with version {Version} in {LocationOfCohort}";
             return false;
         }
 
