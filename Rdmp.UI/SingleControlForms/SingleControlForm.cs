@@ -44,7 +44,7 @@ public class SingleControlForm:Form
                 
             Height += btnHeight;
             control.Height -= btnHeight;
-            okButton.Location = new Point((ClientSize.Width / 2) - (btnWidth / 2), ClientSize.Height - btnHeight);
+            okButton.Location = new Point(ClientSize.Width / 2 - btnWidth / 2, ClientSize.Height - btnHeight);
             okButton.Anchor = AnchorStyles.Bottom;
                 
             Controls.Add(okButton);

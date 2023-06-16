@@ -107,7 +107,7 @@ public class WordDataWriter : DocXHelper
                     
                     var f = new FileInfo(_destination.OutputFile);
                     SetTableCell(t,rownum,0,"File Size");
-                    SetTableCell(t,rownum,1, $"{f.Length}bytes ({(f.Length / 1024)}KB)");
+                    SetTableCell(t,rownum,1, $"{f.Length}bytes ({f.Length / 1024}KB)");
                     rownum++;
                 }
 

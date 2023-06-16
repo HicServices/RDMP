@@ -56,7 +56,7 @@ public class EndToEndTableValuedFunction:DatabaseTests
     {
         base.SetUp();
 
-        _database = GetCleanedServer(FAnsi.DatabaseType.MicrosoftSQLServer);
+        _database = GetCleanedServer(DatabaseType.MicrosoftSQLServer);
     }
 
     [Test]

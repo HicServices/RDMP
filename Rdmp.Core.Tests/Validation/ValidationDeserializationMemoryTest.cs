@@ -37,7 +37,7 @@ public class ValidationDeserializationMemoryTest
 
         var bytesAtEnd = Process.GetCurrentProcess().WorkingSet64;
 
-        Assert.Less(bytesAtEnd,bytesAtStart * 2 , "Should not be using double the working memory as many bytes by the end, at start we were using " + bytesAtStart + " at end we were using " + bytesAtEnd + " (Increase of " +((float)bytesAtEnd/bytesAtStart) + " times)");
+        Assert.Less(bytesAtEnd,bytesAtStart * 2 , "Should not be using double the working memory as many bytes by the end, at start we were using " + bytesAtStart + " at end we were using " + bytesAtEnd + " (Increase of " +(float)bytesAtEnd/bytesAtStart + " times)");
 
     }
 

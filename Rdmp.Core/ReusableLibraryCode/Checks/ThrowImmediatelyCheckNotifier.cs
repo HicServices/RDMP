@@ -21,7 +21,7 @@ public class ThrowImmediatelyCheckNotifier : ICheckNotifier
         WriteToConsole = false;
     }
 
-    virtual public bool OnCheckPerformed(CheckEventArgs args)
+    public virtual bool OnCheckPerformed(CheckEventArgs args)
     {
         if (WriteToConsole)
             Console.WriteLine(args.Message);

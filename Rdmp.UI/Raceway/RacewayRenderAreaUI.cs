@@ -250,7 +250,7 @@ public partial class RacewayRenderAreaUI : UserControl,INotifyMeOfEditState
 
     private int GetMaxScrollDownToIndex()
     {
-        var indexesVisibleOnScreen = (Height / MinimumRowHeight);
+        var indexesVisibleOnScreen = Height / MinimumRowHeight;
         var indexes = _periodicityDictionary.Count + 1;
             
         return (int) Math.Max(0,indexes - indexesVisibleOnScreen);
@@ -266,7 +266,7 @@ public partial class RacewayRenderAreaUI : UserControl,INotifyMeOfEditState
         if (_buckets == null)
             return;
 
-        var eachBucketHasThisManyPixelsOfX = ((float)Width) / _buckets.Length;
+        var eachBucketHasThisManyPixelsOfX = (float)Width / _buckets.Length;
 
         var heightReservedForAxis = e.Graphics.MeasureString("TEST",Font).Height + 2;
 
@@ -302,13 +302,13 @@ public partial class RacewayRenderAreaUI : UserControl,INotifyMeOfEditState
                     continue;
 
                 //we have run out of space stop drawing
-                if (startDrawingLaneAtY + eachRaceLaneHasThisMuchYSpace > (Height - heightReservedForAxis))
+                if (startDrawingLaneAtY + eachRaceLaneHasThisMuchYSpace > Height - heightReservedForAxis)
                 {
                     _allowScrollDown = true;
                     break;
                 }
 
-                var middleLineOfCatalogueLabelY = ((eachRaceLaneHasThisMuchYSpace / 2) - (Font.Height / 2.0)) + startDrawingLaneAtY;
+                var middleLineOfCatalogueLabelY = eachRaceLaneHasThisMuchYSpace / 2 - Font.Height / 2.0 + startDrawingLaneAtY;
 
                 if (!_buckets.Any())
                 {
@@ -349,7 +349,7 @@ public partial class RacewayRenderAreaUI : UserControl,INotifyMeOfEditState
 
                             brush = _brushes[(int) (ratioGood*100)];
 
-                            lineHeightPercentage = ((float)(total)) / maxRowsInAnyMonth;
+                            lineHeightPercentage = (float)total / maxRowsInAnyMonth;
                         }
                         else
                         {
@@ -392,7 +392,7 @@ public partial class RacewayRenderAreaUI : UserControl,INotifyMeOfEditState
                         valueSize.Width += 20;
 
                     var rectHoverLabel = new
-                        RectangleF(Width - (labelSize.Width + valueSize.Width + (2*labelPadding)),
+                        RectangleF(Width - (labelSize.Width + valueSize.Width + 2*labelPadding),
                             Height - (heightReservedForAxis + labelSize.Height),
                             labelSize.Width,
                             labelSize.Height);
@@ -410,8 +410,8 @@ public partial class RacewayRenderAreaUI : UserControl,INotifyMeOfEditState
                 if (_isEditModeOn)
                 {
                     var deleteIcon = FamFamFamIcons.delete.ImageToBitmap();
-                    var middleLineOfDeleteButtonY = ((eachRaceLaneHasThisMuchYSpace / 2) - (deleteIcon.Height / 2.0)) + startDrawingLaneAtY;
-                    var buttonPoint = new Point((Width / 2), (int)middleLineOfDeleteButtonY);
+                    var middleLineOfDeleteButtonY = eachRaceLaneHasThisMuchYSpace / 2 - deleteIcon.Height / 2.0 + startDrawingLaneAtY;
+                    var buttonPoint = new Point(Width / 2, (int)middleLineOfDeleteButtonY);
 
                     e.Graphics.DrawImage(deleteIcon, buttonPoint);
 

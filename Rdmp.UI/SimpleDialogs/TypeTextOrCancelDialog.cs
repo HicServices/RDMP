@@ -78,7 +78,7 @@ public partial class TypeTextOrCancelDialog : Form
             ActiveControl = _scintilla;
             _scintilla.SelectionStart = _scintilla.TextLength;
 
-            textBox1.Anchor = (AnchorStyles.Top | AnchorStyles.Bottom | AnchorStyles.Left | AnchorStyles.Right);
+            textBox1.Anchor = AnchorStyles.Top | AnchorStyles.Bottom | AnchorStyles.Left | AnchorStyles.Right;
             textBox1.ScrollBars = ScrollBars.Vertical;
             Width = 740;
 
@@ -144,7 +144,7 @@ public partial class TypeTextOrCancelDialog : Form
             }
         }
 
-        btnOk.Enabled = (!string.IsNullOrWhiteSpace(ResultText)) || _allowBlankText;
+        btnOk.Enabled = !string.IsNullOrWhiteSpace(ResultText) || _allowBlankText;
     }
 
     private void FinishedKeyCheck(KeyEventArgs e)

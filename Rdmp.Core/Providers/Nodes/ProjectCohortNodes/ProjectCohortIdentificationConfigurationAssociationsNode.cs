@@ -44,7 +44,7 @@ public class ProjectCohortIdentificationConfigurationAssociationsNode:Node,IOrde
 
     public override int GetHashCode()
     {
-        return (Project != null ? Project.GetHashCode() : 0);
+        return Project != null ? Project.GetHashCode() : 0;
     }
 
     public int Order { get => 1;

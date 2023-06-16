@@ -322,7 +322,7 @@ public class CatalogueItem : DatabaseEntity, IDeleteable, IComparable, IHasDepen
     {
         if (obj is CatalogueItem)
         {
-            return -(obj.ToString().CompareTo(ToString())); //sort alphabetically (reverse)
+            return -obj.ToString().CompareTo(ToString()); //sort alphabetically (reverse)
         }
 
         throw new Exception($"Cannot compare {GetType().Name} to {obj.GetType().Name}");

@@ -42,7 +42,7 @@ public class CustomDateCaching
             ChunkPeriod = _cacheProgress.ChunkPeriod
         };
 
-        var requestProvider = (startDate == endDate)
+        var requestProvider = startDate == endDate
             ? (ICacheFetchRequestProvider) new SingleDayCacheFetchRequestProvider(initialFetchRequest)
             : new MultiDayCacheFetchRequestProvider(initialFetchRequest, endDate);
             

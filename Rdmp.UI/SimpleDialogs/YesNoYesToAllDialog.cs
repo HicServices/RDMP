@@ -62,7 +62,7 @@ public  class YesNoYesToAllDialog : WideMessageBox
         p.Controls.Add(button);
     }
 
-    new private DialogResult ShowDialog()
+    private new DialogResult ShowDialog()
     {
         if (InvokeRequired)
             return (DialogResult)Invoke(new Func<DialogResult>(() => ShowDialog()));

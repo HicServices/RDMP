@@ -232,7 +232,7 @@ OrderByAndDistinctInMemory - Adds an ORDER BY statement to the query and applies
         //if the first chunk is null
         if (firstChunk && chunk == null && !AllowEmptyExtractions)
             throw new Exception(
-                $"There is no data to load, query returned no rows, query was:{Environment.NewLine}{(_hostedSource.Sql ?? Request.QueryBuilder.SQL)}");
+                $"There is no data to load, query returned no rows, query was:{Environment.NewLine}{_hostedSource.Sql ?? Request.QueryBuilder.SQL}");
             
         //not the first chunk anymore
         firstChunk = false;

@@ -38,7 +38,7 @@ class Program
             if (File.Exists(nlog))
             {
                 LogManager.ThrowConfigExceptions = false;
-                NLog.LogManager.Configuration = new NLog.Config.XmlLoggingConfiguration(nlog);
+                LogManager.Configuration = new NLog.Config.XmlLoggingConfiguration(nlog);
             }
                     
         }

@@ -243,7 +243,7 @@ public class TableInfo : DatabaseEntity,ITableInfo,INamed, IHasFullyQualifiedNam
     {
         if (obj is TableInfo)
         {
-            return -(obj.ToString().CompareTo(ToString())); //sort alphabetically (reverse)
+            return -obj.ToString().CompareTo(ToString()); //sort alphabetically (reverse)
         }
 
         throw new Exception($"Cannot compare {GetType().Name} to {obj.GetType().Name}");

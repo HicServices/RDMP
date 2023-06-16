@@ -31,7 +31,7 @@ public class NormalDataExtractionTests:TestsRequiringAnExtractionConfiguration
 
         Assert.AreEqual(1, _request.ColumnsToExtract.Count(c => c.IsExtractionIdentifier));
             
-        base.Execute(out execute,out result);
+        Execute(out execute,out result);
 
         var r = (ExecuteDatasetExtractionFlatFileDestination)result;
 

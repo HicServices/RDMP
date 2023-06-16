@@ -185,7 +185,7 @@ public class RemoteTableAttacher: Attacher, IPluginAttacher
             catch (Exception e)
             {
                 notifier.OnCheckPerformed(new CheckEventArgs(
-                    $"Program crashed while trying to inspect remote server {(RemoteServerReference ?? (object)RemoteServer)}  for presence of tables/databases specified in the load configuration.",
+                    $"Program crashed while trying to inspect remote server {RemoteServerReference ?? (object)RemoteServer}  for presence of tables/databases specified in the load configuration.",
                     CheckResult.Fail, e));
             }
 

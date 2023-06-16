@@ -146,7 +146,7 @@ public class LoadDiagramTableNode:Node,ICombineableSource, IHasLoadDiagramState,
     {
         unchecked
         {
-            var hashCode = (_databaseNode != null ? _databaseNode.GetHashCode() : 0);
+            var hashCode = _databaseNode != null ? _databaseNode.GetHashCode() : 0;
             hashCode = (hashCode*397) ^ (int) Bubble;
             hashCode = (hashCode*397) ^ (TableName != null ? TableName.GetHashCode() : 0);
             return hashCode;

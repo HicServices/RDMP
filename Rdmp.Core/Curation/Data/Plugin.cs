@@ -103,8 +103,8 @@ public class Plugin : DatabaseEntity,INamed
         {
             {"Name", pluginZipFile.Name},
             {"UploadedFromDirectory", pluginZipFile.DirectoryName},
-            {"PluginVersion", (pluginVersion ?? new Version(0,0,0,0))},
-            {"RdmpVersion", (rdmpVersion ?? new Version(0,0,0,0))}
+            {"PluginVersion", pluginVersion ?? new Version(0,0,0,0)},
+            {"RdmpVersion", rdmpVersion ?? new Version(0,0,0,0)}
         });
             
     }

@@ -44,7 +44,7 @@ public class DilutionOperationTests:DatabaseTests
         };
         var sql = o.GetMutilationSql(null);
 
-        var server = GetCleanedServer(FAnsi.DatabaseType.MicrosoftSQLServer).Server;
+        var server = GetCleanedServer(DatabaseType.MicrosoftSQLServer).Server;
         using (var con = server.BeginNewTransactedConnection())
         {
             try
@@ -99,7 +99,7 @@ INSERT INTO DateRoundingTests VALUES ({insert})", con).ExecuteNonQuery();
         };
         var sql = o.GetMutilationSql(null);
 
-        var server = GetCleanedServer(FAnsi.DatabaseType.MicrosoftSQLServer).Server;
+        var server = GetCleanedServer(DatabaseType.MicrosoftSQLServer).Server;
         using (var con = server.BeginNewTransactedConnection())
         {
             try
@@ -146,7 +146,7 @@ INSERT INTO DateRoundingTests VALUES ({insert})", con).ExecuteNonQuery();
         };
         var sql = o.GetMutilationSql(null);
 
-        var server = GetCleanedServer(FAnsi.DatabaseType.MicrosoftSQLServer).Server;
+        var server = GetCleanedServer(DatabaseType.MicrosoftSQLServer).Server;
         using (var con = server.BeginNewTransactedConnection())
         {
             try

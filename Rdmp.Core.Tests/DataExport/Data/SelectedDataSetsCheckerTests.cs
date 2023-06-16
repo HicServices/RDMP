@@ -32,10 +32,10 @@ public class SelectedDataSetsCheckerTests : TestsRequiringAnExtractionConfigurat
         // normal checks pass
         var checker = new SelectedDataSetsChecker(new ThrowImmediatelyActivator(RepositoryLocator), _selectedDataSet);
 
-        var ep = new ExtractionProgress(DataExportRepository, _selectedDataSet, new System.DateTime(1990, 1, 1), new System.DateTime(2001, 1, 1),100,"mybatch",
+        var ep = new ExtractionProgress(DataExportRepository, _selectedDataSet, new DateTime(1990, 1, 1), new DateTime(2001, 1, 1),100,"mybatch",
             _extractionInformations[0].ID)
         {
-            ProgressDate = new System.DateTime(1995, 1, 1) // we are half way through
+            ProgressDate = new DateTime(1995, 1, 1) // we are half way through
         };
 
         ep.SaveToDatabase();
@@ -55,10 +55,10 @@ public class SelectedDataSetsCheckerTests : TestsRequiringAnExtractionConfigurat
             r.DeleteInDatabase();
         }
 
-        var ep = new ExtractionProgress(DataExportRepository, _selectedDataSet, new System.DateTime(1990, 1, 1), new System.DateTime(2001, 1, 1), 100, "mybatch",
+        var ep = new ExtractionProgress(DataExportRepository, _selectedDataSet, new DateTime(1990, 1, 1), new DateTime(2001, 1, 1), 100, "mybatch",
             _extractionInformations[0].ID)
         {
-            ProgressDate = new System.DateTime(1995, 1, 1) // we are half way through
+            ProgressDate = new DateTime(1995, 1, 1) // we are half way through
         };
 
         ep.SaveToDatabase();
@@ -82,10 +82,10 @@ public class SelectedDataSetsCheckerTests : TestsRequiringAnExtractionConfigurat
         // normal checks pass
         var checker = new SelectedDataSetsChecker(new ThrowImmediatelyActivator(RepositoryLocator), _selectedDataSet);
 
-        var ep = new ExtractionProgress(DataExportRepository, _selectedDataSet, new System.DateTime(1990, 1, 1), new System.DateTime(2001, 1, 1), 100, "mybatch",
+        var ep = new ExtractionProgress(DataExportRepository, _selectedDataSet, new DateTime(1990, 1, 1), new DateTime(2001, 1, 1), 100, "mybatch",
             _extractionInformations[0].ID)
         {
-            ProgressDate = new System.DateTime(1995, 1, 1) // we are half way through
+            ProgressDate = new DateTime(1995, 1, 1) // we are half way through
         };
 
         ep.SaveToDatabase();

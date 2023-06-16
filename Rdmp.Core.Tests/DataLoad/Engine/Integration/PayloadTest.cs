@@ -66,7 +66,7 @@ public class PayloadTest:DatabaseTests
 
         proceedure.Run(new GracefulCancellationToken(), payload);
 
-        Assert.IsTrue(PayloadTest.Success, "Expected IAttacher to detect Payload and set this property to true");
+        Assert.IsTrue(Success, "Expected IAttacher to detect Payload and set this property to true");
     }
 
 
@@ -79,7 +79,7 @@ public class PayloadTest:DatabaseTests
         public override ExitCodeType Attach(IDataLoadJob job, GracefulCancellationToken cancellationToken)
         {
             job.OnNotify(this,new NotifyEventArgs(ProgressEventType.Information, $"Found Payload:{job.Payload}"));
-            PayloadTest.Success = ReferenceEquals(payload, job.Payload);
+            Success = ReferenceEquals(payload, job.Payload);
 
             return ExitCodeType.OperationNotRequired;
         }

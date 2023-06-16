@@ -138,7 +138,7 @@ internal class ConsoleGuiBigListBox<T>
         };
 
         _listView.KeyPress += _listView_KeyPress;
-        _listView.SetSource( (_collection = BuildList(this.GetInitialSource())).ToList());
+        _listView.SetSource( (_collection = BuildList(GetInitialSource())).ToList());
         win.Add(_listView);
 
         var btnOk = new Button(_okText,true)

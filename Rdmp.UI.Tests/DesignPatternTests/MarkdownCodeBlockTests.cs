@@ -79,13 +79,13 @@ class MarkdownCodeBlockTests
             {
                 if (ReferenceEquals(null, obj)) return false;
                 if (ReferenceEquals(this, obj)) return true;
-                if (obj.GetType() != this.GetType()) return false;
+                if (obj.GetType() != GetType()) return false;
                 return Equals((FrozenExtractionConfigurationsNode) obj);
             }
 
             public override int GetHashCode()
             {
-                return (Project != null ? Project.GetHashCode() : 0);
+                return Project != null ? Project.GetHashCode() : 0;
             }
         }
         #endregion

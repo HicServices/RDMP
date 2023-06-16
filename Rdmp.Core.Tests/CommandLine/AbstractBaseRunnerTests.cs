@@ -160,12 +160,12 @@ public class AbstractBaseRunnerTests : UnitTests
 
     class TestRunner : Runner
     {
-        new public T GetObjectFromCommandLineString<T>(IRDMPPlatformRepositoryServiceLocator locator, string arg) where T : IMapsDirectlyToDatabaseTable
+        public new T GetObjectFromCommandLineString<T>(IRDMPPlatformRepositoryServiceLocator locator, string arg) where T : IMapsDirectlyToDatabaseTable
         {
             return base.GetObjectFromCommandLineString<T>(locator, arg);
         }
 
-        new public IEnumerable<T> GetObjectsFromCommandLineString<T>(IRDMPPlatformRepositoryServiceLocator locator, string arg) where T : IMapsDirectlyToDatabaseTable
+        public new IEnumerable<T> GetObjectsFromCommandLineString<T>(IRDMPPlatformRepositoryServiceLocator locator, string arg) where T : IMapsDirectlyToDatabaseTable
         {
             return base.GetObjectsFromCommandLineString<T>(locator, arg);
         }

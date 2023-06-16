@@ -33,7 +33,7 @@ public class CohortQueryBuilderWithCacheTests : CohortIdentificationTests
             $"{TestDatabaseNames.Prefix}QueryCache");
 
         if (queryCacheDatabase.Exists())
-            base.DeleteTables(queryCacheDatabase);
+            DeleteTables(queryCacheDatabase);
 
         var executor = new MasterDatabaseScriptExecutor(queryCacheDatabase);
 

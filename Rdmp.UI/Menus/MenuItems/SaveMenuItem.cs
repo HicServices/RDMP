@@ -31,7 +31,7 @@ public class SaveMenuItem : ToolStripMenuItem
 
     public SaveMenuItem() : base("Save")
     {
-        ShortcutKeys = (Keys.Control | Keys.S);
+        ShortcutKeys = Keys.Control | Keys.S;
     }
     public SaveMenuItem(ISaveableUI saveable) : this()
     {

@@ -222,7 +222,7 @@ public class ForwardEngineerANOCatalogueEngine
                                     continue;
 
                                 //otherwise do a non strict refactoring (don't worry if you don't finda ny references)
-                                refactorer.RefactorColumnName(newExtractionInformation,(ColumnInfo)kvpOtherCols.Key,((ColumnInfo)(kvpOtherCols.Value)).Name,false);
+                                refactorer.RefactorColumnName(newExtractionInformation,(ColumnInfo)kvpOtherCols.Key,((ColumnInfo)kvpOtherCols.Value).Name,false);
                             }
                             
                             //make the new one exactly as extractable

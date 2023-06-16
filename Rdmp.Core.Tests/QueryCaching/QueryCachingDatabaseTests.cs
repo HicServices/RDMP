@@ -16,7 +16,7 @@ namespace Rdmp.Core.Tests.QueryCaching;
 
 public class QueryCachingDatabaseTests:DatabaseTests
 {
-    protected string QueryCachingDatabaseName = global::Tests.Common.TestDatabaseNames.GetConsistentName("QueryCaching");
+    protected string QueryCachingDatabaseName = TestDatabaseNames.GetConsistentName("QueryCaching");
     public DiscoveredDatabase DiscoveredQueryCachingDatabase { get; set; }
     public ExternalDatabaseServer QueryCachingDatabaseServer;
 

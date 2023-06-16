@@ -73,7 +73,7 @@ public class ConsoleGuiSelectMany : Window
 
         Title = prompt;
             
-        this._activator = activator;
+        _activator = activator;
     }
 
     private void TbSearch_TextChanged(NStack.ustring obj)

@@ -217,7 +217,7 @@ public class CustomMetadataReport
             return null;
         }
 
-        return $"{((int)(columnStats.CountDBNull / (double)total * 100))}%";
+        return $"{(int)(columnStats.CountDBNull / (double)total * 100)}%";
     }
 
     private Evaluation GetEvaluation(CatalogueItem ci)

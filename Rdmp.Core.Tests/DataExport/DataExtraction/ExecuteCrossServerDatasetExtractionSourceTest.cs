@@ -27,7 +27,7 @@ public class ExecuteCrossServerDatasetExtractionSourceTest : TestsRequiringAnExt
         ExtractionPipelineUseCase execute;
         IExecuteDatasetExtractionDestination result;
 
-        base.Execute(out execute, out result);
+        Execute(out execute, out result);
 
         var r = (ExecuteDatasetExtractionFlatFileDestination)result;
 

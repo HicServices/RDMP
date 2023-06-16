@@ -42,7 +42,7 @@ public class PreLoadDiscardedColumnsNode:Node
 
     public override int GetHashCode()
     {
-        return (TableInfo != null ? TableInfo.GetHashCode() : 0);
+        return TableInfo != null ? TableInfo.GetHashCode() : 0;
     }
 
      

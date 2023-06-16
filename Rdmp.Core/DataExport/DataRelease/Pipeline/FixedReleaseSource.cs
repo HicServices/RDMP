@@ -170,7 +170,7 @@ public abstract class FixedReleaseSource<T> : ICheckable, IPipelineRequirement<R
             if (globalFolderForThisExtract == null) //this particular release didn't include globals/custom data at all
                 continue;
 
-            yield return (globalFolderForThisExtract);
+            yield return globalFolderForThisExtract;
         }
     }
 }

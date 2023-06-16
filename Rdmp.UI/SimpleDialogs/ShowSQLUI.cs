@@ -25,7 +25,7 @@ public partial class ShowSQLUI : Form
     {
         InitializeComponent();
 
-        _designMode = (LicenseManager.UsageMode == LicenseUsageMode.Designtime);
+        _designMode = LicenseManager.UsageMode == LicenseUsageMode.Designtime;
 
         if (_designMode) //don't add the QueryEditor if we are in design time (visual studio) because it breaks
             return;

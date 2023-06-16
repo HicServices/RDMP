@@ -264,8 +264,8 @@ public class UITests : UnitTests
         //there must have been something checked that failed with the provided message
         Assert.IsTrue(checkResults.Messages.Any(m =>
             m.Message.Contains(expectedContainsText) ||
-            (m.Ex != null && m.Ex.Message.Contains(expectedContainsText))
-            && m.Result == CheckResult.Fail));
+            m.Ex != null && m.Ex.Message.Contains(expectedContainsText)
+                         && m.Result == CheckResult.Fail));
     }
 
     private List<string> GetAllErrorProviderErrorsShown()
@@ -288,11 +288,11 @@ public class UITests : UnitTests
 
         var hashtable = (Hashtable) typeof (ErrorProvider).GetField("_items",BindingFlags.Instance | BindingFlags.NonPublic).GetValue(errorProvider);
 
-        return (hashtable.Values.Cast<object>()
+        return hashtable.Values.Cast<object>()
             .Select(entry =>
                 (string)entry.GetType()
                     .GetField("_error", BindingFlags.Instance | BindingFlags.NonPublic)
-                    .GetValue(entry))).ToList();
+                    .GetValue(entry)).ToList();
     }
 
     private List<ErrorProvider> GetErrorProviders(Control arg)
@@ -375,11 +375,11 @@ public class UITests : UnitTests
         var methods = typeof (UITests).GetMethods(BindingFlags.Public | BindingFlags.NonPublic | BindingFlags.Instance);
         var methodWhenIHaveA = methods.Single(m => m.Name.Equals("WhenIHaveA") && !m.GetParameters().Any());
 
-        var objectsToTest = (types
+        var objectsToTest = types
             .Where(t => !SkipTheseTypes.Contains(t.Name) && !t.Name.StartsWith("Spontaneous") &&
                         !typeof(SpontaneousObject).IsAssignableFrom(t))
             .Select(t => methodWhenIHaveA.MakeGenericMethod(t))
-            .Select(genericWhenIHaveA => (DatabaseEntity)genericWhenIHaveA.Invoke(this, null))).ToList();
+            .Select(genericWhenIHaveA => (DatabaseEntity)genericWhenIHaveA.Invoke(this, null)).ToList();
 
         //sets up all the child providers etc
         _itemActivator=InitializeItemActivator();

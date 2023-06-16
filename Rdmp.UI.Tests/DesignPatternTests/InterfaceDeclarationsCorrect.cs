@@ -24,7 +24,7 @@ public class InterfaceDeclarationsCorrect
     public static void FindProblems(MEF mef)
     {
         var problems =
-            (mef.GetAllTypes()
+            mef.GetAllTypes()
                 .Where(t => typeof(DatabaseEntity).IsAssignableFrom(t))
                 .Select(dbEntities => typeof(Catalogue).Assembly.GetTypes()
                     .SingleOrDefault(t => t.Name.Equals($"I{dbEntities.Name}")))
@@ -33,7 +33,7 @@ public class InterfaceDeclarationsCorrect
                 .Where(matchingInterface =>
                     !typeof(IMapsDirectlyToDatabaseTable).IsAssignableFrom(matchingInterface))
                 .Select(matchingInterface =>
-                    $"FAIL: Interface '{matchingInterface.Name}' does not inherit IMapsDirectlyToDatabaseTable")).ToList();
+                    $"FAIL: Interface '{matchingInterface.Name}' does not inherit IMapsDirectlyToDatabaseTable").ToList();
         Assert.IsEmpty(problems);
     }
 }

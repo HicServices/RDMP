@@ -352,7 +352,7 @@ public class ColumnInfo : DatabaseEntity, IComparable, IResolveDuplication, IHas
     {
         if (obj is ColumnInfo)
         {
-            return - (obj.ToString().CompareTo(ToString())); //sort alphabetically (reverse)
+            return - obj.ToString().CompareTo(ToString()); //sort alphabetically (reverse)
         }
             
         throw new Exception($"Cannot compare {GetType().Name} to {obj.GetType().Name}");
@@ -546,7 +546,7 @@ public class ColumnInfo : DatabaseEntity, IComparable, IResolveDuplication, IHas
         {
             //is it numerical?
             var cSharpType = GetQuerySyntaxHelper().TypeTranslater.GetCSharpTypeForSQLDBType(Data_type);
-            return (cSharpType == typeof (decimal) || cSharpType == typeof (int));
+            return cSharpType == typeof (decimal) || cSharpType == typeof (int);
         }
         catch (Exception)
         {

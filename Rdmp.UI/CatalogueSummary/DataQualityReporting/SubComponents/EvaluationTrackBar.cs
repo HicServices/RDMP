@@ -76,7 +76,7 @@ public partial class EvaluationTrackBar : UserControl
 
         for (var i = 0; i < Evaluations.Length; i++)
         {
-            var ratio = ((double)i)/(Evaluations.Length-1);
+            var ratio = (double)i/(Evaluations.Length-1);
 
 
             var x = tbEvaluation.Left + (int) (ratio * tbEvaluation.Width);
@@ -84,7 +84,7 @@ public partial class EvaluationTrackBar : UserControl
 
             var l = new Label();
             l.Text = Evaluations[i].DateOfEvaluation.ToString("d");
-            l.Location = new Point(x - (l.PreferredWidth / 2), y);
+            l.Location = new Point(x - l.PreferredWidth / 2, y);
               
             Controls.Add(l);
             l.BringToFront();

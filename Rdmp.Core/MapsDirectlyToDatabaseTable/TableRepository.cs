@@ -28,7 +28,7 @@ namespace Rdmp.Core.MapsDirectlyToDatabaseTable;
 /// <summary>
 /// See ITableRepository
 /// </summary>
-abstract public class TableRepository : ITableRepository
+public abstract class TableRepository : ITableRepository
 {
     //fields
     protected DbConnectionStringBuilder _connectionStringBuilder;

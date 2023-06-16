@@ -38,7 +38,7 @@ public class AllProcessTasksUsedByLoadMetadataNode : Node,IOrderable
 
     public override int GetHashCode()
     {
-        return (LoadMetadata != null ? LoadMetadata.GetHashCode() : 0);
+        return LoadMetadata != null ? LoadMetadata.GetHashCode() : 0;
     }
 
     public int Order { get => 2;

@@ -182,8 +182,8 @@ public class UserInterfaceStandardisationChecker
             
         //Make sure all user interface classes have the suffix UI
         foreach(var uiType in mef.GetAllTypes().Where(t => 
-                    (typeof(RDMPUserControl).IsAssignableFrom(t)||(typeof(RDMPForm).IsAssignableFrom(t))
-                        && !t.IsAbstract && !t.IsInterface)))
+                    typeof(RDMPUserControl).IsAssignableFrom(t)||typeof(RDMPForm).IsAssignableFrom(t)
+                    && !t.IsAbstract && !t.IsInterface))
         {
                 
             if(!uiType.Name.EndsWith("UI") && !uiType.Name.EndsWith("_Design"))
