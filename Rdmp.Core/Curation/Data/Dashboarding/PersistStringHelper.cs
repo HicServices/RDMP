@@ -18,8 +18,9 @@ namespace Rdmp.Core.Curation.Data.Dashboarding;
 /// <summary>
 /// Helps you create simple string based argument lists
 /// </summary>
-public sealed class PersistStringHelper
+public static class PersistStringHelper
 {
+
     /// <summary>
     /// The string to use to divide objects declared within a collection e.g. ',' in [RepoType:ObjectType:ID,RepoType:ObjectType:ID]
     /// </summary>
@@ -143,8 +144,7 @@ public sealed class PersistStringHelper
     /// <param name="allObjectsString">A string with a list of objects ID's, should have the format [RepoType:ObjectType:ID,RepoType:ObjectType:ID]</param>
     /// <param name="repositoryLocator"></param>
     /// <returns></returns>
-    public static List<IMapsDirectlyToDatabaseTable> GetObjectCollectionFromPersistString(string allObjectsString,
-        IRDMPPlatformRepositoryServiceLocator repositoryLocator)
+    public static List<IMapsDirectlyToDatabaseTable> GetObjectCollectionFromPersistString(string allObjectsString, IRDMPPlatformRepositoryServiceLocator repositoryLocator)
     {
         var toReturn = new List<IMapsDirectlyToDatabaseTable>();
 

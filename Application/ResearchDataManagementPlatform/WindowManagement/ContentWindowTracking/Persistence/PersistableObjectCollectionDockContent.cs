@@ -30,8 +30,6 @@ public class PersistableObjectCollectionDockContent : RDMPSingleControlTab
 
     public const string Prefix = "RDMPObjectCollection";
 
-    private PersistStringHelper persistStringHelper = new();
-
     public IPersistableObjectCollection Collection => _control.GetCollection();
 
     public PersistableObjectCollectionDockContent(IActivateItems activator, IObjectCollectionControl control,

@@ -29,8 +29,9 @@ public class DatasetRacewayObjectCollection : PersistableObjectCollection
 
     public Catalogue[] GetCatalogues() => DatabaseObjects.Cast<Catalogue>().ToArray();
 
-    public override string SaveExtraText() =>
-        PersistStringHelper.SaveDictionaryToString(new Dictionary<string, string>
+    public override string SaveExtraText()
+    {
+        return PersistStringHelper.SaveDictionaryToString(new Dictionary<string, string>
         {
             { "ShowPeriod", ShowPeriod.ToString() },
             { "IgnoreRows", IgnoreRows.ToString() }

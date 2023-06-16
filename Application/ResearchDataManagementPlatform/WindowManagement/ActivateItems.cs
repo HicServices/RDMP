@@ -326,7 +326,7 @@ public class ActivateItems : BasicActivateItems, IActivateItems, IRefreshBusSubs
         }
 
         f.Close();
-        WideMessageBox.Show("Window Closed", reason);
+        WideMessageBox.Show("Window Closed",reason);
     }
 
     public void OnRuleRegistered(IBinderRule rule)

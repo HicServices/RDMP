@@ -12,13 +12,11 @@ namespace Rdmp.Core.Curation.Data.Dashboarding;
 
 public abstract class PersistableObjectCollection : IPersistableObjectCollection
 {
-    public PersistStringHelper Helper { get; private set; }
     public List<IMapsDirectlyToDatabaseTable> DatabaseObjects { get; set; }
 
     public PersistableObjectCollection()
     {
         DatabaseObjects = new List<IMapsDirectlyToDatabaseTable>();
-        Helper = new PersistStringHelper();
     }
 
     public virtual string SaveExtraText() => "";

@@ -98,7 +98,7 @@ public class GoodBadCataloguePieChartObjectCollection : PersistableObjectCollect
         
     public override string SaveExtraText()
     {
-        return Helper.SaveDictionaryToString(new Dictionary<string, string>
+        return PersistStringHelper.SaveDictionaryToString(new Dictionary<string, string>
         {
             { nameof(ShowLabels), ShowLabels.ToString() },
 
@@ -121,21 +121,17 @@ public class GoodBadCataloguePieChartObjectCollection : PersistableObjectCollect
         if (dict == null || !dict.Any())
             return;
 
-        ShowLabels = PersistStringHelper.GetBool(dict, nameof(ShowLabels), true);
+        ShowLabels = PersistStringHelper.GetBool(dict,nameof(ShowLabels),true);
 
-        IncludeNonExtractableCatalogues =
-            PersistStringHelper.GetBool(dict, nameof(IncludeNonExtractableCatalogues), true);
+        IncludeNonExtractableCatalogues = PersistStringHelper.GetBool(dict, nameof(IncludeNonExtractableCatalogues), true);
         IncludeDeprecatedCatalogues = PersistStringHelper.GetBool(dict, nameof(IncludeDeprecatedCatalogues), true);
         IncludeInternalCatalogues = PersistStringHelper.GetBool(dict, nameof(IncludeInternalCatalogues), true);
         IncludeColdStorageCatalogues = PersistStringHelper.GetBool(dict, nameof(IncludeColdStorageCatalogues), true);
-        IncludeProjectSpecificCatalogues =
-            PersistStringHelper.GetBool(dict, nameof(IncludeProjectSpecificCatalogues), true);
+        IncludeProjectSpecificCatalogues = PersistStringHelper.GetBool(dict, nameof(IncludeProjectSpecificCatalogues), true);
 
-        IncludeNonExtractableCatalogueItems =
-            PersistStringHelper.GetBool(dict, nameof(IncludeNonExtractableCatalogueItems), true);
+        IncludeNonExtractableCatalogueItems = PersistStringHelper.GetBool(dict, nameof(IncludeNonExtractableCatalogueItems), true);
         IncludeInternalCatalogueItems = PersistStringHelper.GetBool(dict, nameof(IncludeInternalCatalogueItems), true);
-        IncludeDeprecatedCatalogueItems =
-            PersistStringHelper.GetBool(dict, nameof(IncludeDeprecatedCatalogueItems), true);
+        IncludeDeprecatedCatalogueItems = PersistStringHelper.GetBool(dict, nameof(IncludeDeprecatedCatalogueItems), true);
     }
 
     public void SetAllCataloguesMode()
