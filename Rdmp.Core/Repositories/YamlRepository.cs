@@ -55,7 +55,7 @@ public class YamlRepository : MemoryDataExportRepository
         MEF = new MEF();
 
         // Don't create new objects with the ID of existing objects
-        NextObjectId = Objects.Count == 0 ? 0 : Objects.Max(o => o.Key.ID);
+        NextObjectId = Objects.IsEmpty ? 0 : Objects.Max(o => o.Key.ID);
     }
 
     /// <summary>

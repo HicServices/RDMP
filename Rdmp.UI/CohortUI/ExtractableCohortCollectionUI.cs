@@ -107,7 +107,7 @@ public partial class ExtractableCohortCollectionUI : RDMPUserControl, ILifetimeS
         return null;
     }
 
-    private bool haveSubscribed = false;
+    private bool haveSubscribed;
 
     public void SetupForAllCohorts(IActivateItems activator)
     {

@@ -49,7 +49,7 @@ public class FlatFileToDataTablePusher
     /// <summary>
     /// This is incremented when too many values are read from the file to match the header count BUT the values read were null/empty
     /// </summary>
-    private long _bufferOverrunsWhereColumnValueWasBlank = 0;
+    private long _bufferOverrunsWhereColumnValueWasBlank;
 
     /// <summary>
     /// We only complain once about headers not matching the number of cell values

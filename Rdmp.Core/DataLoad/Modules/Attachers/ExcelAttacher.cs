@@ -42,7 +42,7 @@ public class ExcelAttacher:FlatFileAttacher
     public bool AllowExtraColumnsInTargetWithoutComplainingOfColumnMismatch { get; set; }
 
 
-    private bool _haveServedData = false;
+    private bool _haveServedData;
 
     protected override void OpenFile(FileInfo fileToLoad, IDataLoadEventListener listener,GracefulCancellationToken cancellationToken)
     {

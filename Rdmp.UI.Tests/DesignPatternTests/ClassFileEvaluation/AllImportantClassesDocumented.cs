@@ -17,8 +17,8 @@ public class AllImportantClassesDocumented
 {
     private List<string> _csFilesList;
     private List<string> problems = new();
-    private int commentedCount = 0;
-    private int commentLineCount = 0;
+    private int commentedCount;
+    private int commentLineCount;
     private bool strict = false;
 
     private string[] excusedClassFileNames =

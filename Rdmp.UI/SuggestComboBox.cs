@@ -115,7 +115,7 @@ public class SuggestComboBox : ComboBox
         return keywords.All(k => arg.ToLower().Contains(k.ToLower()));
     }
 
-    private bool _changingVisibility = false;
+    private bool _changingVisibility;
 
     private void _suggLb_VisibleChanged(object sender, EventArgs e)
     {
@@ -300,7 +300,7 @@ public class SuggestComboBox : ComboBox
         base.OnKeyDown(e);
     }
 
-    private static readonly Keys[] KeysToHandle = new[] { Keys.Down, Keys.Up, Keys.Enter, Keys.Escape };
+    private static readonly Keys[] KeysToHandle = { Keys.Down, Keys.Up, Keys.Enter, Keys.Escape };
     protected override bool ProcessCmdKey(ref Message msg, Keys keyData)
     {
         // the keysstrokes of our interest should not be processed be base class:

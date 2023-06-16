@@ -57,7 +57,7 @@ public partial class SecondaryConstraintUI : UserControl
 
         
 
-    private bool loadingComplete = false;
+    private bool loadingComplete;
     public SecondaryConstraintUI(ICatalogueRepository repository,SecondaryConstraint secondaryConstriant, string[] otherColumns)
     {
         const int rowHeight = 30;

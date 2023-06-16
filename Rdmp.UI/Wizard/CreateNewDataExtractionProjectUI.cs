@@ -47,7 +47,7 @@ public partial class CreateNewDataExtractionProjectUI : RDMPForm
     /// </summary>
     private IExtractableDataSet[] _selectedDatasets = Array.Empty<IExtractableDataSet>();
 
-    private bool _bLoading = false;
+    private bool _bLoading;
 
     public ExtractionConfiguration ExtractionConfigurationCreatedIfAny { get; private set; }
     public Project ProjectCreatedIfAny => _project;

@@ -23,8 +23,7 @@ public class WordCatalogueExtractor: DocXHelper
     private ICatalogue Catalogue { get; set; }
 
     //This is an alternative for [DoNotExtractProperty] that only applies to this class where [DoNotExtractProperty] applies to all users of Catalogue e.g. DITAExtractor
-    private static string[] PropertyIgnorelist = new string[]
-    {
+    private static string[] PropertyIgnorelist = {
         "Statistical_cons", "Research_relevance", "Topic", "Agg_method", "Limitations", "Comments", "Periodicity",
         "Acronym",
         "Detail_Page_URL",

@@ -38,7 +38,7 @@ public partial class AggregateTopXUI : RDMPUserControl
         RDMPControlCommonFunctionality.DisableMouseWheel(ddOrderByDimension);
     }
 
-    private bool bLoading = false;
+    private bool bLoading;
 
     public void SetUp(IActivateItems activator, IAggregateBuilderOptions options, AggregateConfiguration aggregate)
     {

@@ -26,10 +26,10 @@ public class ExtractionTimeTimeCoverageAggregator
     public Dictionary<DateTime, ExtractionTimeTimeCoverageAggregatorBucket> Buckets { get; private set; }
 
     private readonly ICatalogue _catalogue;
-    private string _expectedTimeFieldInOutputBuffer = null;
-    private string _expectedExtractionIdentifierInOutputBuffer = null;
+    private string _expectedTimeFieldInOutputBuffer;
+    private string _expectedExtractionIdentifierInOutputBuffer;
 
-    private bool haveCheckedTimeFieldExists=false;
+    private bool haveCheckedTimeFieldExists;
 
 
     private const ExtractionTimeTimeCoverageAggregatorBucket.BucketSize BucketSize = ExtractionTimeTimeCoverageAggregatorBucket.BucketSize.Month;

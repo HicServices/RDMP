@@ -6,6 +6,7 @@
 
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using BrightIdeasSoftware;
 
 namespace Rdmp.UI.Collections;
@@ -16,19 +17,15 @@ namespace Rdmp.UI.Collections;
 /// </summary>
 public class TextMatchFilterWithAlwaysShowList : TextMatchFilter
 {
-    public HashSet<object>  AlwaysShow = new();
-    private string[] _tokens;
-    private CompositeAllFilter _compositeFilter;
+    public readonly HashSet<object>  AlwaysShow = new();
+    private readonly CompositeAllFilter _compositeFilter;
 
     public TextMatchFilterWithAlwaysShowList(IEnumerable<object> alwaysShow ,ObjectListView olv, string text, StringComparison comparison): base(olv, text, comparison)
     {
         if(!string.IsNullOrWhiteSpace(text) && text.Contains(' '))
         {
-            var filters = new List<IModelFilter>();
-                
-            _tokens = text.Split(' ');
-            foreach (var token in _tokens)
-                filters.Add(new TextMatchFilter(olv,token,comparison));
+            var tokens = text.Split(' ');
+            var filters = tokens.Select(token => new TextMatchFilter(olv, token, comparison)).Cast<IModelFilter>().ToList();
 
             _compositeFilter = new CompositeAllFilter(filters);
         }
@@ -45,12 +42,9 @@ public class TextMatchFilterWithAlwaysShowList : TextMatchFilter
     public override bool Filter(object modelObject)
     {
         //gets us the highlight and composite match if the user put in spaces
-        var showing = _compositeFilter != null ? _compositeFilter.Filter(modelObject) : base.Filter(modelObject);
+        var showing = _compositeFilter?.Filter(modelObject) ?? base.Filter(modelObject);
 
-        //if its in the always show it
-        if (AlwaysShow.Contains(modelObject))
-            return true;
-
-        return showing;
+        //if it's in the always show it list, do so
+        return AlwaysShow.Contains(modelObject) || showing;
     }
 }

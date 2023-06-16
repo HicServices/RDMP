@@ -47,10 +47,10 @@ internal class NightmareDatasets : DataGenerator
     private BucketList<ExtractableDataSet> ExtractableDatasets = new ();
     private BucketList<Project> Projects = new ();
     private BucketList<TableInfo> Tables = new ();
-    private int TablesCount = 0;
+    private int TablesCount;
 
     private BucketList<ColumnInfo> Columns = new();
-    private int ColumnsCount = 0;
+    private int ColumnsCount;
 
     /// <summary>
     /// <para>Generates a lot of metadata in the RDMP platform databases.  This is for testing

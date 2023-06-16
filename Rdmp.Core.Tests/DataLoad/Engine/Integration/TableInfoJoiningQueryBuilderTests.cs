@@ -84,7 +84,7 @@ FROM
         queryBuilder.AddColumn(new ColumnInfoToIColumn(memory,col1));
 
         //without the filter
-        tablesUsed = SqlQueryBuilderHelper.GetTablesUsedInQuery(queryBuilder, out primary, null);
+        tablesUsed = SqlQueryBuilderHelper.GetTablesUsedInQuery(queryBuilder, out _, null);
         Assert.AreEqual(1, tablesUsed.Count);
             
         //set the filter
@@ -95,7 +95,7 @@ FROM
         queryBuilder.ParameterManager.ClearNonGlobals();
 
         //with the filter
-        tablesUsed = SqlQueryBuilderHelper.GetTablesUsedInQuery(queryBuilder, out primary,null);
+        tablesUsed = SqlQueryBuilderHelper.GetTablesUsedInQuery(queryBuilder, out _,null);
         Assert.AreEqual(2, tablesUsed.Count);
 
             

@@ -198,7 +198,7 @@ public class Lookup : DatabaseEntity, IJoin, IHasDependencies, ICheckable
         return ToStringCached();
     }
 
-    private string _cachedToString = null;
+    private string _cachedToString;
     private string ToStringCached()
     {
         return _cachedToString ??= $" {ForeignKey.Name} = {PrimaryKey.Name}";

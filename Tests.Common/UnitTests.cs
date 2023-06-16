@@ -165,7 +165,7 @@ public class UnitTests
 
         if (typeof(T) == typeof(AggregateConfiguration))
         {
-            return (T)(object)WhenIHaveA<AggregateConfiguration>(repository,out _, out _);
+            return (T)(object)WhenIHaveA(repository,out _, out _);
         }
 
         if (typeof(T) == typeof(ExternalDatabaseServer))
@@ -175,7 +175,7 @@ public class UnitTests
 
         if (typeof(T) == typeof(ANOTable))
         {
-            return (T)(object)WhenIHaveA<ANOTable>(repository, out _);
+            return (T)(object)WhenIHaveA<ANOTable>(repository);
         }
 
         if (typeof(T) == typeof(LoadMetadata))
@@ -254,12 +254,12 @@ public class UnitTests
 
         if (typeof (T) == typeof(ObjectExport))
         {
-            return (T)(object)WhenIHaveA<ObjectExport>(repository, out _);
+            return (T)(object)WhenIHaveA<ObjectExport>(repository);
         }
             
         if (typeof (T) == typeof(ObjectImport))
         {
-            var export = WhenIHaveA<ObjectExport>(repository, out var sm);
+            var export = WhenIHaveA(repository, out ShareManager sm);
             return (T)(object)sm.GetImportAs(export.SharingUID, WhenIHaveA<Catalogue>(repository));
         }
             
@@ -300,7 +300,7 @@ public class UnitTests
             
         if (typeof (T) == typeof(AggregateContinuousDateAxis))
         {
-            var config = WhenIHaveA<AggregateConfiguration>(repository, out var dateEi,out _);
+            var config = WhenIHaveA(repository, out var dateEi,out _);
                 
             //remove the other Ei
             config.AggregateDimensions[0].DeleteInDatabase();
@@ -678,7 +678,7 @@ public class UnitTests
     }
 
     //Fields that can be safely ignored when comparing an object created in memory with one created into the database.
-    private static readonly string[] IgnorePropertiesWhenDiffing = new[] {"ID","Repository","CatalogueRepository","SoftwareVersion"};
+    private static readonly string[] IgnorePropertiesWhenDiffing = {"ID","Repository","CatalogueRepository","SoftwareVersion"};
     public static Dictionary<PropertyInfo,HashSet<object>> _alreadyChecked = new();
 
     /// <summary>

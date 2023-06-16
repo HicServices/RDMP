@@ -137,7 +137,7 @@ public partial class GenerateTestDataUI : RDMPForm
 
     }
 
-    private bool started = false;
+    private bool started;
         
     private List<DataGeneratorUI> Executing = new();
     private DirectoryInfo _extractDirectory;

@@ -148,7 +148,7 @@ public class LoadModuleAssembly : DatabaseEntity, IInjectKnown<Plugin>
     /// <param name="downloadDirectory"></param>
     public string DownloadAssembly(DirectoryInfo downloadDirectory)
     {
-        var targetDirectory = downloadDirectory.FullName ?? throw new Exception("Could not get currently executing assembly directory");
+        var targetDirectory = downloadDirectory.FullName;
         if (!downloadDirectory.Exists)
             downloadDirectory.Create();
 

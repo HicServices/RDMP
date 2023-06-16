@@ -51,7 +51,7 @@ public partial class TimePeriodicityChart : RDMPUserControl,IDataQualityReportin
         chart1.Series.Clear();
     }
 
-    private string _pivotCategoryValue = null;
+    private string _pivotCategoryValue;
 
     /// <inheritdoc/>
     public void SelectEvaluation(Evaluation evaluation, string pivotCategoryValue)
@@ -162,8 +162,8 @@ public partial class TimePeriodicityChart : RDMPUserControl,IDataQualityReportin
     }
 
 
-    private double pointStartX = 0;
-    private double pointStartY = 0;
+    private double pointStartX;
+    private double pointStartY;
 
     private void chart1_MouseDown(object sender, MouseEventArgs e)
     {
@@ -206,7 +206,7 @@ public partial class TimePeriodicityChart : RDMPUserControl,IDataQualityReportin
         }
     }
 
-    private bool annotating = false;
+    private bool annotating;
     private Evaluation _currentEvaluation;
 
     private void btnAnnotator_Click(object sender, EventArgs e)

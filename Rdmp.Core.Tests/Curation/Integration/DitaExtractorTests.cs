@@ -17,7 +17,7 @@ namespace Rdmp.Core.Tests.Curation.Integration;
 
 internal class DitaExtractorTests : DatabaseTests
 {
-    private Exception _setupException = null;
+    private Exception _setupException;
 
     private TestDirectoryHelper _directoryHelper;
 

@@ -47,7 +47,7 @@ public class ValidationXMLObscureDependencyFinder:IObscureDependencyFinder
             
     }
 
-    private bool initialized = false;
+    private bool initialized;
 
     private void Initialize()
     {

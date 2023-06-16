@@ -35,8 +35,7 @@ public class UserInterfaceStandardisationChecker
     private List<string> _csFilesList;
     private List<string> problems = new();
 
-    private Type[] excusedNodeClasses = new Type[]
-    {
+    private Type[] excusedNodeClasses = {
         //it's a singleton because you can only have one decryption certificate for an RDMP as opposed to other SingletonNode classses that represent collections e.g. AllTableInfos is the only collection of TableInfos but it's a collection
         typeof(DecryptionPrivateKeyNode),
         typeof(ArbitraryFolderNode),
@@ -54,8 +53,7 @@ public class UserInterfaceStandardisationChecker
     /// <summary>
     /// UI classes that are allowed not to end with the suffix UI
     /// </summary>
-    private Type[] excusedUIClasses = new[]
-    {
+    private Type[] excusedUIClasses = {
         typeof (RDMPUserControl),
         typeof (RDMPForm),
         typeof(RDMPSingleDatabaseObjectControl<>),

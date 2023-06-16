@@ -77,7 +77,7 @@ public partial class ResolveMissingTargetPropertiesUI : Form
     }
 
     #region drag and drop
-    private ItemValidator _dragTarget = null;
+    private ItemValidator _dragTarget;
 
     private void lbMissingReferences_MouseDown(object sender, MouseEventArgs e)
     {

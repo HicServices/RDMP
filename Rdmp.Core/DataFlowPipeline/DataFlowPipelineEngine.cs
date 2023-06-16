@@ -27,7 +27,7 @@ public class DataFlowPipelineEngine<T> : IDataFlowPipelineEngine
     private readonly DataFlowPipelineContext<T> _context;
     private readonly IDataLoadEventListener _listener;
 
-    private bool initialized = false;
+    private bool initialized;
     private string _name;
 
     /// <summary>

@@ -43,7 +43,7 @@ public abstract class RDMPSingleDatabaseObjectControl<T> : RDMPUserControl, IRDM
     /// before <see cref="SetDatabaseObject(IActivateItems, DatabaseEntity)"/> has been called
     /// or if <see cref="UseCommitSystem"/> is false.
     /// </summary>
-    protected CommitInProgress CurrentCommit = null;
+    protected CommitInProgress CurrentCommit;
 
     private Control _colorIndicator;
     private Label _readonlyIndicator;

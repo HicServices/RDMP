@@ -42,7 +42,7 @@ public class BasicCohortDestination : IPluginCohortDestination
     [DemandsInitialization(@"Determines behaviour when you are creating a new version of an existing cohort.  If true then any ExtractionConfiguration that are not frozen are moved to the new version of the cohort", DefaultValue = false)]
     public bool MigrateUsages { get; set; }
 
-    private IAllocateReleaseIdentifiers _allocator = null;
+    private IAllocateReleaseIdentifiers _allocator;
 
     private readonly Dictionary<object, object> _cohortDictionary = new();
 

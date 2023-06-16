@@ -49,7 +49,7 @@ public partial class ChoosePlatformDatabasesUI : Form
 {
     private readonly IRDMPPlatformRepositoryServiceLocator _repositoryLocator;
 
-    public bool ChangesMade = false;
+    public bool ChangesMade;
 
     private int _seed = 500;
     private int _peopleCount = ExampleDatasetsCreation.NumberOfPeople;

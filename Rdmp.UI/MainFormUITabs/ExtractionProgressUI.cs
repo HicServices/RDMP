@@ -65,7 +65,7 @@ public partial class ExtractionProgressUI : ExtractionProgressUI_Design, ISaveab
         }
             
 
-        tbStartDate.Text = databaseObject.StartDate == null ? "" :databaseObject.StartDate.Value.ToString("yyyy-MM-dd") ?? "";
+        tbStartDate.Text = databaseObject.StartDate == null ? "" :databaseObject.StartDate.Value.ToString("yyyy-MM-dd");
         tbEndDate.Text = databaseObject.EndDate == null ? "" : databaseObject.EndDate.Value.ToString("yyyy-MM-dd");
         tbProgress.Text = databaseObject.ProgressDate == null ? "" : databaseObject.ProgressDate.Value.ToString("yyyy-MM-dd");
 

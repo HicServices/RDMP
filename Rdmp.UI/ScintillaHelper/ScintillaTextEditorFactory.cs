@@ -33,8 +33,8 @@ public enum SyntaxLanguage
 /// </summary>
 public class ScintillaTextEditorFactory
 {
-    private static WordList hUnSpell = null;
-    private static bool DictionaryExceptionShown = false;
+    private static WordList hUnSpell;
+    private static bool DictionaryExceptionShown;
 
     /// <summary>
     /// Creates a new SQL (default) Scintilla editor with highlighting

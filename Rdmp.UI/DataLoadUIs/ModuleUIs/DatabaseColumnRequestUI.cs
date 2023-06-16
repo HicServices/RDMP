@@ -14,7 +14,7 @@ namespace Rdmp.UI.DataLoadUIs.ModuleUIs;
 public partial class DatabaseColumnRequestUI : UserControl
 {
     private readonly DatabaseColumnRequest _column;
-    private bool bLoaded = false;
+    private bool bLoaded;
 
     public DatabaseColumnRequestUI(DatabaseColumnRequest column)
     {

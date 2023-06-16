@@ -21,8 +21,8 @@ namespace Rdmp.Core.DataLoad.Engine.Pipeline.Components;
 public class RemoveDuplicates :IPluginDataFlowComponent<DataTable>
 {
     private Stopwatch sw = new();
-    private int totalRecordsProcessed = 0;
-    private int totalDuplicatesFound = 0;
+    private int totalRecordsProcessed;
+    private int totalDuplicatesFound;
 
     private Dictionary<int, List<DataRow>> unqiueHashesSeen = new();
         

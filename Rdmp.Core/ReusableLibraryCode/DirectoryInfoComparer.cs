@@ -26,8 +26,6 @@ public class DirectoryInfoComparer : IEqualityComparer<DirectoryInfo>
 
     public int GetHashCode(DirectoryInfo obj)
     {
-        if (obj == null)
-            return 0;
         return obj.FullName.GetHashCode();
     }
 }

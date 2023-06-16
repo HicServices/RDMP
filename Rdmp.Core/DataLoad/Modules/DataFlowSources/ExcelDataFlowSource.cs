@@ -49,7 +49,7 @@ public class ExcelDataFlowSource : IPluginDataFlowSource<DataTable>, IPipelineRe
     private FlatFileToLoad _fileToLoad;
 
     private DataTable dataReadFromFile;
-    private bool haveDispatchedDataTable = false;
+    private bool haveDispatchedDataTable;
         
     public DataTable GetChunk(IDataLoadEventListener listener, GracefulCancellationToken cancellationToken)
     {

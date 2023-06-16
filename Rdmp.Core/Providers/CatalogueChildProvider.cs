@@ -206,7 +206,7 @@ public class CatalogueChildProvider : ICoreChildProvider
 
 
     protected Stopwatch ProgressStopwatch = Stopwatch.StartNew();
-    private int _progress = 0;
+    private int _progress;
 
     /// <summary>
     /// 

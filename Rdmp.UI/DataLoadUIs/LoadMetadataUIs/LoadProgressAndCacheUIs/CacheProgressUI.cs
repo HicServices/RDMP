@@ -51,7 +51,7 @@ public partial class CacheProgressUI : CacheProgressUI_Design,ISaveableUI
         _bLoading = false;
     }
 
-    private bool _bLoading = false;
+    private bool _bLoading;
     private Control _pipelineSelectionUI;
 
     public override void SetDatabaseObject(IActivateItems activator, CacheProgress databaseObject)

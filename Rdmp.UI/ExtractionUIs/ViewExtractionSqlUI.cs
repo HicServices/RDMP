@@ -89,7 +89,7 @@ public partial class ViewExtractionSqlUI : ViewExtractionSql_Design
         return Activator.CoreIconProvider.GetImage(rowObject).ImageToBitmap();
     }
 
-    private bool bLoading = false;
+    private bool bLoading;
         
 
     private void RefreshUIFromDatabase()

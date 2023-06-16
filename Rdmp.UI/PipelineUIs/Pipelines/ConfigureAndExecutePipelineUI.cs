@@ -58,7 +58,7 @@ public partial class ConfigureAndExecutePipelineUI : RDMPUserControl, IPipelineR
     /// </summary>
     public event PipelineEngineEventHandler PipelineExecutionFinishedsuccessfully;
 
-    private ForkDataLoadEventListener fork = null;
+    private ForkDataLoadEventListener fork;
 
     private readonly List<object> _initializationObjects = new();
 
@@ -99,7 +99,7 @@ public partial class ConfigureAndExecutePipelineUI : RDMPUserControl, IPipelineR
         SetPipelineOptions( activator.RepositoryLocator.CatalogueRepository);
     }
 
-    private bool _pipelineOptionsSet = false;
+    private bool _pipelineOptionsSet;
 
         
     public DataFlowPipelineEngineFactory PipelineFactory { get; private set; }

@@ -24,7 +24,7 @@ public class PatientIdentifierColumnSource:IPluginDataFlowSource<DataTable>, IPi
 {
     private ExtractionInformation _extractionInformation;
 
-    private bool _haveSentData = false;
+    private bool _haveSentData;
 
     [DemandsInitialization("How long to wait for the select query to run before giving up in seconds",DemandType.Unspecified,60)]
     public int Timeout { get; set; }

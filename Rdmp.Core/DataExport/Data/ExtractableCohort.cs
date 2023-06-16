@@ -476,8 +476,8 @@ where
     }
 
     //these need to be private since ReverseAnonymiseDataTable will likely be called in batch
-    private int _reverseAnonymiseProgressFetchingMap = 0;
-    private int _reverseAnonymiseProgressReversing = 0;
+    private int _reverseAnonymiseProgressFetchingMap;
+    private int _reverseAnonymiseProgressReversing;
         
     /// <summary>
     /// Indicates whether the database described in ExternalCohortTable is unreachable or if the cohort has since been deleted etc.

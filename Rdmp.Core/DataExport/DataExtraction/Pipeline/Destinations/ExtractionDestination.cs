@@ -58,8 +58,8 @@ e.g. /$i/$a")]
     protected IProject _project;
 
     //state variables
-    protected bool haveOpened = false;
-    private bool haveWrittenBundleContents = false;
+    protected bool haveOpened;
+    private bool haveWrittenBundleContents;
     private Stopwatch stopwatch = new();
 
     public TableLoadInfo TableLoadInfo { get; private set; }

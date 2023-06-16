@@ -117,7 +117,7 @@ public partial class StartupUI : Form, ICheckNotifier
         pbLoadProgress.Value = 800;//80% done
     }
 
-    private bool escapePressed = false;
+    private bool escapePressed;
     private int countDownToClose = 5;
 
     private void StartupComplete()
@@ -226,7 +226,7 @@ public partial class StartupUI : Form, ICheckNotifier
 
     private RDMPPlatformDatabaseStatus lastStatus = RDMPPlatformDatabaseStatus.Healthy;
     private ChoosePlatformDatabasesUI _choosePlatformsUI;
-    private bool _haveWarnedAboutOutOfDate = false;
+    private bool _haveWarnedAboutOutOfDate;
 
     private void HandleDatabaseFoundOnSimpleUI(PlatformDatabaseFoundEventArgs eventArgs)
     {

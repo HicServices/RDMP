@@ -17,7 +17,7 @@ internal class AutoComplete
         this.autocompletes = autocompletes?.ToArray() ?? Array.Empty<string>();
     }
 
-    public char[] Separators { get;set;} = new []{ ','};
+    public char[] Separators { get;set;} = { ','};
 
     public string[] GetSuggestions(string text, int _)
     {

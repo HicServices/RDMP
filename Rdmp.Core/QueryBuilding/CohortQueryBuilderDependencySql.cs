@@ -27,7 +27,7 @@ public class CohortQueryBuilderDependencySql
     /// </summary>
     public ParameterManager ParametersUsed { get; }
 
-    private bool _hasBeenUsed = false;
+    private bool _hasBeenUsed;
 
     public CohortQueryBuilderDependencySql(string sql, ParameterManager parameterManager)
     {

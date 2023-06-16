@@ -149,7 +149,7 @@ public class TransparentHelpForm:Form
             base.WndProc(ref m);
     }
 
-    private HelpBox _currentHelpBox = null;
+    private HelpBox _currentHelpBox;
     public HelpBox ShowStage(HelpWorkflow workflow,HelpStage stage)
     {
         if(_currentHelpBox != null)

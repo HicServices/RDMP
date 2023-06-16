@@ -215,7 +215,7 @@ public partial class MetadataReportUI : RDMPForm
                 
     }
 
-    private bool bLoading = false;
+    private bool bLoading;
     private void SetCatalogueSelection(ICatalogue[] array)
     {
         bLoading = true;

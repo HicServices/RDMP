@@ -35,7 +35,7 @@ public class TableInfoCloneOperation
     public bool AllowNulls { get; set; }
 
 
-    private bool _operationSucceeded = false;
+    private bool _operationSucceeded;
 
     public TableInfoCloneOperation(HICDatabaseConfiguration hicDatabaseConfiguration, TableInfo tableInfo, LoadBubble copyToBubble, IDataLoadEventListener listener)
     {

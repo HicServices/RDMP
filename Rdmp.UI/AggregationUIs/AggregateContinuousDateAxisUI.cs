@@ -53,7 +53,7 @@ public partial class AggregateContinuousDateAxisUI : UserControl
         }
     }
 
-    private bool updating = false;
+    private bool updating;
         
     private void UpdateFormStateToMatchAxisState()
     {

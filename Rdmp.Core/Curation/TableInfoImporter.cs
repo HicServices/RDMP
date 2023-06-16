@@ -184,8 +184,7 @@ public class TableInfoImporter:ITableInfoImporter
         DoImport(out _, out _);
     }
 
-    private static readonly string[] ProhibitedNames = new[]
-    {
+    private static readonly string[] ProhibitedNames = {
         "ADD",
         "EXTERNAL",
         "PROCEDURE",

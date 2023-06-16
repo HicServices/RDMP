@@ -23,7 +23,7 @@ namespace Rdmp.UI.PipelineUIs.DemandsInitializationUIs.ArgumentValueControls;
 public partial class ArgumentValueTextUI : UserControl, IArgumentValueUI
 {
     private bool _bLoading = true;
-    private bool _isPassword = false;
+    private bool _isPassword;
     private ArgumentValueUIArgs _args;
 
     public ArgumentValueTextUI(bool isPassword)

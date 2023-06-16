@@ -43,7 +43,7 @@ public partial  class ChecksUI : UserControl, ICheckNotifier
     private Bitmap _failEx;
 
     private ConcurrentBag<CheckEventArgs> _results = new();
-    private bool outOfDate = false;
+    private bool outOfDate;
 
     public ChecksUI()
     {
@@ -203,7 +203,7 @@ public partial  class ChecksUI : UserControl, ICheckNotifier
         if (InvokeRequired)
             lock (olockYesNoToAll)
             {
-                return Invoke(new Func<bool>(() => DoesUserWantToApplyFix(args)));
+                return Invoke(() => DoesUserWantToApplyFix(args));
             }
 
         //if there is a fix and a request handler for whether or not to apply the fix

@@ -71,7 +71,7 @@ public class FlatFileColumnCollection
     /// <summary>
     /// The Headers found in the file / overridden by ForceHeaders
     /// </summary>
-    private string[] _headers = null;
+    private string[] _headers;
 
     /// <summary>
     /// Column headers that appear in the middle of the file (i.e. not trailing) but that don't have a header name.  These get thrown away
@@ -80,12 +80,12 @@ public class FlatFileColumnCollection
     /// </summary>
     public ReadOnlyCollection<DataColumn> UnamedColumns = new(Array.Empty<DataColumn>()); //start off with none
 
-    public bool FileIsEmpty = false;
+    public bool FileIsEmpty;
 
     /// <summary>
     /// used to advise user if he has selected the wrong separator
     /// </summary>
-    private string[] _commonSeparators = new[] { "|", ",", "    ", "#" };
+    private string[] _commonSeparators = { "|", ",", "    ", "#" };
 
     /// <summary>
     /// Counts the number of headers that are not null

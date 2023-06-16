@@ -144,7 +144,7 @@ public partial class SimpleFilterUI : UserControl
 
     }
 
-    private bool _settingAKnownGoodValue = false;
+    private bool _settingAKnownGoodValue;
 
     private void ddKnownGoodValues_SelectedIndexChanged(object sender, EventArgs e)
     {

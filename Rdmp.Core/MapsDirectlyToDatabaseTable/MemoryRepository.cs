@@ -21,7 +21,7 @@ namespace Rdmp.Core.MapsDirectlyToDatabaseTable;
 /// </summary>
 public class MemoryRepository : IRepository
 {
-    protected int NextObjectId = 0;
+    protected int NextObjectId;
 
     public bool SupportsCommits => false;
 

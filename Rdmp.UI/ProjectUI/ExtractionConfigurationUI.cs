@@ -88,7 +88,7 @@ public partial class ExtractionConfigurationUI : ExtractionConfigurationUI_Desig
         _extractionConfiguration.SaveToDatabase();
     }
 
-    private bool _bLoading = false;
+    private bool _bLoading;
         
     public override void SetDatabaseObject(IActivateItems activator, ExtractionConfiguration databaseObject)
     {

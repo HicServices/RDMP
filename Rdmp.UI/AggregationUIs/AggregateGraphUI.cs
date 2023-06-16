@@ -213,8 +213,7 @@ public partial class AggregateGraphUI : AggregateGraph_Design
 
     private DbCommand _cmd;
 
-    private ChartDashStyle[] StyleList = new ChartDashStyle[]
-    {
+    private ChartDashStyle[] StyleList = {
         ChartDashStyle.Solid,
         ChartDashStyle.Dash,
         ChartDashStyle.Dot,
@@ -702,9 +701,9 @@ public partial class AggregateGraphUI : AggregateGraph_Design
     /// Normally you don't need to worry about double subscriptions but this graph gets recycled during MetadataReport generation with different aggregates one
     /// after the other which violates the 1 subscription per control rule (see base.SetDatabaseObject)
     /// </summary>
-    private bool menuInitialized = false;
+    private bool menuInitialized;
 
-    private bool _ribbonInitialized = false;
+    private bool _ribbonInitialized;
 
     public override void SetDatabaseObject(IActivateItems activator, AggregateConfiguration databaseObject)
     {

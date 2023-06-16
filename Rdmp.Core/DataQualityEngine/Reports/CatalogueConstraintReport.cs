@@ -87,7 +87,7 @@ public class CatalogueConstraintReport : DataQualityReport
                 "You must set a Default LiveLoggingServer so we can audit the DQE run, do this through the ManageExternalServers dialog");
     }
 
-    private bool haveComplainedAboutNullCategories = false;
+    private bool haveComplainedAboutNullCategories;
 
     public override void GenerateReport(ICatalogue c, IDataLoadEventListener listener, CancellationToken cancellationToken)
     {
@@ -249,7 +249,7 @@ public class CatalogueConstraintReport : DataQualityReport
         }
     }
 
-    private bool _haveComplainedAboutTrailingWhitespaces = false;
+    private bool _haveComplainedAboutTrailingWhitespaces;
 
     private string GetStringValueForPivotField(object o, IDataLoadEventListener listener)
     {

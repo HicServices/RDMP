@@ -21,7 +21,7 @@ namespace Rdmp.UI.SimpleDialogs;
 /// </summary> 
 public partial class ConfigureDisclaimerUI : RDMPForm
 {
-    private bool _allowClose = false;
+    private bool _allowClose;
         
     public ConfigureDisclaimerUI(IActivateItems activator):base(activator)
     {

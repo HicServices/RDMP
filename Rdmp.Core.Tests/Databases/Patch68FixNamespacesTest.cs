@@ -59,8 +59,7 @@ internal class Patch68FixNamespacesTest:UnitTests
 
     }
     private string[] ExpectedClasses
-        = new[]
-        {
+        = {
             "CachingEngine.PipelineExecution.Destinations.CacheFileGranularity",
             "CatalogueLibrary.Data.ColumnInfo",
             "CatalogueLibrary.Data.DataAccessCredentials",

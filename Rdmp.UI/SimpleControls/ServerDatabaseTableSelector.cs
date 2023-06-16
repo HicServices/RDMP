@@ -304,7 +304,7 @@ public partial class ServerDatabaseTableSelector : UserControl
         UpdateTableList();
     }
 
-    private bool _clearingTable = false;
+    private bool _clearingTable;
     private void cbxTable_SelectedIndexChanged(object sender, EventArgs e)
     {
         //don't clear both!
@@ -411,7 +411,7 @@ public partial class ServerDatabaseTableSelector : UserControl
 
     public event IntegratedSecurityUseChangedHandler IntegratedSecurityUseChanged;
 
-    private string oldUsername = null;
+    private string oldUsername;
     private IBasicActivateItems _activator;
     private Exception _exception;
 

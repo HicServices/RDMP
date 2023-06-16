@@ -16,25 +16,20 @@ namespace Rdmp.UI.SimpleDialogs;
 /// </summary>
 public partial class ShowSQLUI : Form
 {
-
-    private ScintillaNET.Scintilla QueryEditor;
-    private bool _designMode;
-
-
     public ShowSQLUI(string sql, bool isReadOnly = false)
     {
         InitializeComponent();
 
-        _designMode = LicenseManager.UsageMode == LicenseUsageMode.Designtime;
+        var designMode = LicenseManager.UsageMode == LicenseUsageMode.Designtime;
 
-        if (_designMode) //don't add the QueryEditor if we are in design time (visual studio) because it breaks
+        if (designMode) //don't add the QueryEditor if we are in design time (visual studio) because it breaks
             return;
 
-        QueryEditor = new ScintillaTextEditorFactory().Create();
-        QueryEditor.Text = sql;
-        QueryEditor.ReadOnly = isReadOnly;
+        var queryEditor = new ScintillaTextEditorFactory().Create();
+        queryEditor.Text = sql;
+        queryEditor.ReadOnly = isReadOnly;
 
-        Controls.Add(QueryEditor);
+        Controls.Add(queryEditor);
 
     }
 }
