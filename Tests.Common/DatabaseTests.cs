@@ -673,9 +673,10 @@ delete from {1}..Project
     /// <returns></returns>
     protected static string CollapseWhitespace(string sql) =>
         //replace all whitespace with single spaces
-        Regex.Replace(sql, @"\s+", " ").Trim();
-
-    private HashSet<DiscoveredDatabase> forCleanup = new();
+        return Regex.Replace(sql, @"\s+", " ").Trim();
+    }
+        
+    HashSet<DiscoveredDatabase> forCleanup = new();
 
     /// <summary>
     /// Gets an empty database on the test server of the appropriate DBMS

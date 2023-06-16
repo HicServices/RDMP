@@ -70,21 +70,22 @@ public class SearchablesMatchScorer
     /// When the user types one of these they get a filter on the full Type
     /// </summary>
     public static Dictionary<string, Type> ShortCodes =
-        new(StringComparer.CurrentCultureIgnoreCase)
-        {
-            { "c", typeof(Catalogue) },
-            { "ci", typeof(CatalogueItem) },
-            { "sd", typeof(SupportingDocument) },
-            { "p", typeof(Project) },
-            { "ec", typeof(ExtractionConfiguration) },
-            { "co", typeof(ExtractableCohort) },
-            { "cic", typeof(CohortIdentificationConfiguration) },
-            { "t", typeof(TableInfo) },
-            { "col", typeof(ColumnInfo) },
-            { "lmd", typeof(LoadMetadata) },
-            { "pipe", typeof(Pipeline) },
-            { "sds", typeof(SelectedDataSets) },
-            { "eds", typeof(ExternalDatabaseServer) }
+        new(StringComparer.CurrentCultureIgnoreCase){
+
+            {"c",typeof (Catalogue)},
+            {"ci",typeof (CatalogueItem)},
+            {"sd",typeof (SupportingDocument)},
+            {"p",typeof (Project)},
+            {"ec",typeof (ExtractionConfiguration)},
+            {"co",typeof (ExtractableCohort)},
+            {"cic",typeof (CohortIdentificationConfiguration)},
+            {"t",typeof (TableInfo)},
+            {"col",typeof (ColumnInfo)},
+            {"lmd",typeof (LoadMetadata)},
+            {"pipe",typeof(Pipeline)},
+            {"sds",typeof(SelectedDataSets)},
+            {"eds",typeof(ExternalDatabaseServer)}
+
         };
 
     /// <summary>
@@ -93,9 +94,10 @@ public class SearchablesMatchScorer
     /// Key Type.
     /// </summary>
     public static Dictionary<string, Type[]> AlsoIncludes =
-        new(StringComparer.CurrentCultureIgnoreCase)
-        {
-            { "Pipeline", new Type[] { typeof(PipelineCompatibleWithUseCaseNode) } }
+        new(StringComparer.CurrentCultureIgnoreCase){
+
+            {"Pipeline",new Type[]{ typeof(PipelineCompatibleWithUseCaseNode)}}
+
         };
 
     public SearchablesMatchScorer()

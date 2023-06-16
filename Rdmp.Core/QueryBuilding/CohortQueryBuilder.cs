@@ -36,7 +36,7 @@ public class CohortQueryBuilder
 {
     private ICoreChildProvider _childProvider;
     private readonly ISqlParameter[] _globals;
-    private object oSQLLock = new();
+    object oSQLLock = new();
     private string _sql;
 
     public string SQL
@@ -68,7 +68,6 @@ public class CohortQueryBuilder
     }
 
     public ParameterManager ParameterManager = new();
-
 
     private CohortQueryBuilderHelper helper;
     public CohortQueryBuilderResult Results { get; private set; }

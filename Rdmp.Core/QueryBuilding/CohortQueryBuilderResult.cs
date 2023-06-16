@@ -55,7 +55,7 @@ public class CohortQueryBuilderResult
     /// </summary>
     public CacheUsage CacheUsageDecision { get; private set; }
 
-    private List<CohortQueryBuilderDependency> _dependencies = new();
+    List<CohortQueryBuilderDependency> _dependencies = new();
     private bool _alreadyBuilt = false;
 
     public IReadOnlyCollection<CohortQueryBuilderDependency> Dependencies => _dependencies;

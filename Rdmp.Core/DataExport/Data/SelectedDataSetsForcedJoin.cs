@@ -64,8 +64,8 @@ public class SelectedDataSetsForcedJoin : DatabaseEntity, ISelectedDataSetsForce
     {
         repository.InsertAndHydrate(this, new Dictionary<string, object>
         {
-            { "SelectedDataSets_ID", sds.ID },
-            { "TableInfo_ID", tableInfo.ID }
+            {"SelectedDataSets_ID",sds.ID},
+            {"TableInfo_ID",tableInfo.ID}
         });
 
         if (ID == 0 || Repository != repository)

@@ -47,9 +47,9 @@ namespace Rdmp.UI.ExtractionUIs.FilterUIs.ParameterUIs;
 public partial class ParameterCollectionUI : RDMPUserControl
 {
     public ParameterCollectionUIOptions Options { get; private set; }
-
-    private ToolStripMenuItem miAddNewParameter = new("New Parameter...");
-    private ToolStripMenuItem miOverrideParameter = new("Override Parameter");
+        
+    ToolStripMenuItem miAddNewParameter = new("New Parameter...");
+    ToolStripMenuItem miOverrideParameter = new("Override Parameter");
 
     public ParameterCollectionUI()
     {
@@ -108,10 +108,10 @@ public partial class ParameterCollectionUI : RDMPUserControl
 
         var order = new Dictionary<string, int>
         {
-            { ParameterLevel.Global.ToString(), 0 },
-            { ParameterLevel.CompositeQueryLevel.ToString(), 1 },
-            { ParameterLevel.QueryLevel.ToString(), 2 },
-            { ParameterLevel.TableInfo.ToString(), 3 }
+            {ParameterLevel.Global.ToString(),0},
+            {ParameterLevel.CompositeQueryLevel.ToString(),1},
+            {ParameterLevel.QueryLevel.ToString(),2},
+            {ParameterLevel.TableInfo.ToString(),3}
         };
 
         foreach (var g in e.Groups)

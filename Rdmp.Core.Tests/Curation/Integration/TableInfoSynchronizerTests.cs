@@ -176,7 +176,7 @@ public class TableInfoSynchronizerTests : DatabaseTests
         var tbl = db.CreateTable("FF",
             new DatabaseColumnRequest[]
             {
-                new("F", new DatabaseTypeRequest(typeof(int)))
+                new("F",new DatabaseTypeRequest(typeof(int)))
             });
 
         Import(tbl, out var ti, out _);

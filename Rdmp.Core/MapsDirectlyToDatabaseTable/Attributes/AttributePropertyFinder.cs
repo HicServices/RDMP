@@ -18,7 +18,7 @@ namespace Rdmp.Core.MapsDirectlyToDatabaseTable.Attributes;
 /// <typeparam name="T">The specific attribute you are looking for e.g. SqlAttribute</typeparam>
 public class AttributePropertyFinder<T> : IAttributePropertyFinder where T : Attribute
 {
-    private readonly Dictionary<Type, HashSet<PropertyInfo>> _properties = new();
+    readonly Dictionary<Type, HashSet<PropertyInfo>> _properties = new();
 
     public AttributePropertyFinder(IEnumerable<IMapsDirectlyToDatabaseTable> objects)
     {

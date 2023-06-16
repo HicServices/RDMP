@@ -25,13 +25,15 @@ public class CustomMetadataReport
     /// <summary>
     /// Substitutions that are used during template value replacement e.g. $Name => Catalogue.Name
     /// </summary>
-    private Dictionary<string, Func<Catalogue, object>> Replacements = new();
+
+    Dictionary<string,Func<Catalogue,object>> Replacements = new();
 
     /// <summary>
     /// Substitutions that are used during template value replacement when inside a '$foreach CatalogueItem' block e.g. $Name => CatalogueItem.Name
     /// </summary>
     private Dictionary<string, Func<CatalogueItem, object>> ReplacementsCatalogueItem = new();
 
+    Dictionary<string,Func<CatalogueItem,object>> ReplacementsCatalogueItem = new();
 
     /// <summary>
     /// Control line that begins looping Catalogues
@@ -75,7 +77,7 @@ public class CustomMetadataReport
     /// <summary>
     /// Cache of latest run DQE <see cref="Evaluation"/> by <see cref="Catalogue"/> (populated from <see cref="DQERepository"/>)
     /// </summary>
-    public Dictionary<ICatalogue, Evaluation> EvaluationCache { get; set; } = new();
+    public Dictionary<ICatalogue, Evaluation> EvaluationCache { get; set; }  = new();
 
     /// <summary>
     /// Describes whether a $foreach is iterating and which element type is
@@ -395,9 +397,9 @@ public class CustomMetadataReport
 
     private class CatalogueSection
     {
-        public int LineNumber { get; set; }
-        public bool IsPlainText { get; set; }
-        public List<string> Body { get; set; } = new();
+        public int LineNumber { get;set;}
+        public bool IsPlainText { get;set;}
+        public List<string> Body {get;set; } = new();
 
         public CatalogueSection(bool isPlainText, int lineNumber)
         {

@@ -72,10 +72,9 @@ public partial class ConsoleGuiUserSettings
         if (code == null)
             return;
 
-        if (_activator.SelectEnum(new DialogArgs
-            {
-                WindowTitle = "New Treatment"
-            }, typeof(CheckResult), out var newValue))
+        if(_activator.SelectEnum(new DialogArgs {
+               WindowTitle = "New Treatment"
+           }, typeof(CheckResult), out var newValue))
         {
             UserSettings.SetErrorReportingLevelFor(code, (CheckResult)newValue);
             row[1] = newValue.ToString();

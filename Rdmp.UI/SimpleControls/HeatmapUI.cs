@@ -60,8 +60,8 @@ public partial class HeatmapUI : UserControl
     ///Table is interpreted in the following way: 
     /// - First column is the axis in direction X (horizontally) containing (in order) the axis label values that will be each pixel in each heat lane
     /// - Each subsequent column (HeatLine1, HeatLine2 etc above) is a horizontal line of the heatmap with each pixel intensity being determined by the value on the corresponding date (in the first column)
+        
     private RainbowColorPicker _rainbow = new(NumberOfColors);
-
     private const double MinPixelHeight = 15.0;
     private const double MaxPixelHeight = 20.0;
 
@@ -153,7 +153,8 @@ public partial class HeatmapUI : UserControl
         Invalidate();
     }
 
-    private ToolTip tt = new();
+
+    ToolTip tt = new();
 
     private int toolTipDelayInTicks = 500;
     private Point _lastHoverPoint;

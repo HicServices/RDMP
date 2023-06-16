@@ -29,8 +29,7 @@ namespace Rdmp.UI.CohortUI;
 /// </summary>
 public partial class ExtractableCohortCollectionUI : RDMPUserControl, ILifetimeSubscriber
 {
-    private ExtractableCohortAuditLogBuilder _auditLogBuilder = new();
-
+    ExtractableCohortAuditLogBuilder _auditLogBuilder = new();
     public ExtractableCohortCollectionUI()
     {
         InitializeComponent();

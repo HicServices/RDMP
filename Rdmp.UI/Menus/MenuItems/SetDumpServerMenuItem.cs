@@ -55,11 +55,10 @@ internal class SetDumpServerMenuItem : RDMPToolStripMenuItem
 
     private void UseExisting(object sender, EventArgs e)
     {
-        if (_activator.SelectObject(new DialogArgs
-            {
-                TaskDescription =
-                    "In which server should the table dump unloaded identifiable data during data loads.  This server must be already configured correctly to support identifier dumping (i.e. be an IdentifierDump)."
-            }, _availableServers, out var selected))
+        if(_activator.SelectObject(new DialogArgs
+           {
+               TaskDescription = "In which server should the table dump unloaded identifiable data during data loads.  This server must be already configured correctly to support identifier dumping (i.e. be an IdentifierDump)."
+           },_availableServers,out var selected))
         {
             _tableInfo.IdentifierDumpServer_ID = selected.ID;
             _tableInfo.SaveToDatabase();

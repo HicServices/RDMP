@@ -37,8 +37,8 @@ public partial class PipelineDiagramUI : UserControl
     public bool AllowSelection { get; set; }
     public bool AllowReOrdering { get; set; }
 
-    private RAGSmiley pipelineSmiley = new();
-
+    RAGSmiley pipelineSmiley = new();
+        
     public IPipelineComponent SelectedComponent;
     public event PipelineComponentSelectedHandler SelectedComponentChanged;
 

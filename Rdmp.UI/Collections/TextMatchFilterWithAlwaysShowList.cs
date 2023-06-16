@@ -16,7 +16,7 @@ namespace Rdmp.UI.Collections;
 /// </summary>
 public class TextMatchFilterWithAlwaysShowList : TextMatchFilter
 {
-    public HashSet<object> AlwaysShow = new();
+    public HashSet<object>  AlwaysShow = new();
     private string[] _tokens;
     private CompositeAllFilter _compositeFilter;
 

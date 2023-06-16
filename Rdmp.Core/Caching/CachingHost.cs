@@ -72,7 +72,7 @@ public class CachingHost
 
         _downloaders = new List<PermissionWindowCacheDownloader>
         {
-            new(permissionWindow, new List<ICacheProgress>(new[] { CacheProgress }), new RoundRobinPipelineExecution())
+            new(permissionWindow, new List<ICacheProgress>(new []{ CacheProgress}), new RoundRobinPipelineExecution())
         };
 
         RetrieveNewDataForCache(listener, cancellationToken);

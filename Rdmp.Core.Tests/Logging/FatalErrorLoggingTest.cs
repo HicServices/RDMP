@@ -38,6 +38,8 @@ internal class FatalErrorLoggingTest : DatabaseTests
             "Test case for fatal error generation",
             "No rollback is possible/required as no database rows are actually inserted",
             true, new DiscoveredServer(UnitTestLoggingConnectionString));
+           
+        var ds = new DataSource[]{ new("nothing",DateTime.Now)};
 
         var ds = new DataSource[] { new("nothing", DateTime.Now) };
 

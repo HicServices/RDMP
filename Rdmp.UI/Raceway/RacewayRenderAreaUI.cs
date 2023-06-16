@@ -37,8 +37,9 @@ public partial class RacewayRenderAreaUI : UserControl, INotifyMeOfEditState
 {
     private DateTime[] _buckets;
     private Pen _verticalLinesPen = new(Color.FromArgb(150, Color.White));
-    private Timer _mouseHeldDownTimer = new();
-    private ScrollActionUnderway _currentScrollAction = ScrollActionUnderway.None;
+
+    Timer _mouseHeldDownTimer = new();
+    ScrollActionUnderway _currentScrollAction = ScrollActionUnderway.None;
 
     public RacewayRenderAreaUI()
     {
@@ -62,14 +63,14 @@ public partial class RacewayRenderAreaUI : UserControl, INotifyMeOfEditState
     }
 
     private object oPeriodicityDictionaryLock = new();
-
+        
     private bool _ignoreRowCounts;
     private bool _isEditModeOn;
     private const float MaximumRaceLaneRenderSpace = 30f;
     private SolidBrush[] _brushes;
-
-    private Dictionary<Rectangle, Catalogue> rectNoDQE = new();
-    private Dictionary<Rectangle, Catalogue> rectDeleteButtons = new();
+        
+    private Dictionary<Rectangle,Catalogue> rectNoDQE = new();
+    private Dictionary<Rectangle, Catalogue> rectDeleteButtons = new(); 
     private IActivateItems _activator;
 
     private bool _allowScrollDown = false;
@@ -449,9 +450,9 @@ public partial class RacewayRenderAreaUI : UserControl, INotifyMeOfEditState
             e.Graphics.FillRectangle(Brushes.Black, _rectScrollUp.X + 2, _rectScrollUp.Y + 2, 16, 16);
             Point[] points =
             {
-                new((int)(_rectScrollUp.X + 5), (int)(_rectScrollUp.Y + 15)),
-                new((int)(_rectScrollUp.X + 15), (int)(_rectScrollUp.Y + 15)),
-                new((int)(_rectScrollUp.X + 10), (int)(_rectScrollUp.Y + 5))
+                new((int) (_rectScrollUp.X + 5),(int) (_rectScrollUp.Y +15)),
+                new((int) (_rectScrollUp.X + 15),(int) (_rectScrollUp.Y +15)),
+                new((int) (_rectScrollUp.X + 10),(int) (_rectScrollUp.Y + 5))
             };
 
             e.Graphics.DrawPolygon(new Pen(_allowScrollUp ? Color.LawnGreen : Color.Green), points);

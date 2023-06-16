@@ -42,7 +42,10 @@ public class ExtractionRunner : ManyRunner
     private object _oLock = new();
     public Dictionary<ISelectedDataSets, ExtractCommand> ExtractCommands { get; private set; }
 
-    public ExtractionRunner(IBasicActivateItems activator, ExtractionOptions extractionOpts) : base(extractionOpts)
+    object _oLock = new();
+    public Dictionary<ISelectedDataSets, ExtractCommand> ExtractCommands { get;private set; }
+
+    public ExtractionRunner(IBasicActivateItems activator,ExtractionOptions extractionOpts):base(extractionOpts)
     {
         _options = extractionOpts;
         _activator = activator;

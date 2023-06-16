@@ -20,8 +20,8 @@ namespace Rdmp.Core.ReusableLibraryCode.Progress;
 public class ToMemoryDataLoadEventListener : IDataLoadEventListener
 {
     private readonly bool _throwOnErrorEvents;
-    public Dictionary<object, List<NotifyEventArgs>> EventsReceivedBySender = new();
-    public Dictionary<string, ProgressEventArgs> LastProgressRecieivedByTaskName = new();
+    public Dictionary<object,List<NotifyEventArgs>> EventsReceivedBySender = new();
+    public Dictionary<string,ProgressEventArgs> LastProgressRecieivedByTaskName = new();
 
     public ToMemoryDataLoadEventListener(bool throwOnErrorEvents)
     {

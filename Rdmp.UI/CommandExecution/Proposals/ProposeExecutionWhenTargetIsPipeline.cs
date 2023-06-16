@@ -20,11 +20,10 @@ internal class ProposeExecutionWhenTargetIsPipeline : RDMPCommandExecutionPropos
 
     public override void Activate(Pipeline target)
     {
-        if (ItemActivator.SelectObject(new DialogArgs
-            {
-                TaskDescription =
-                    $"The Pipeline '{target.Name}' is not compatible with any known Pipeline use cases.  Select which use case you want to edit it under (which activity best describes what how the Pipeline is supposed to be used?)."
-            }, ItemActivator.CoreChildProvider.PipelineUseCases.ToArray(), out var selected))
+        if(ItemActivator.SelectObject(new DialogArgs
+           {
+               TaskDescription = $"The Pipeline '{target.Name}' is not compatible with any known Pipeline use cases.  Select which use case you want to edit it under (which activity best describes what how the Pipeline is supposed to be used?)."
+           }, ItemActivator.CoreChildProvider.PipelineUseCases.ToArray(), out var selected))
         {
             var cmd = new ExecuteCommandEditPipelineWithUseCase(ItemActivator, target, selected.UseCase);
             cmd.Execute();

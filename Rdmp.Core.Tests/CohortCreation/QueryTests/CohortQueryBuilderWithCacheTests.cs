@@ -22,7 +22,7 @@ public class CohortQueryBuilderWithCacheTests : CohortIdentificationTests
 {
     protected DiscoveredDatabase queryCacheDatabase;
     protected ExternalDatabaseServer externalDatabaseServer;
-    protected DatabaseColumnRequest _chiColumnSpecification = new("chi", "varchar(10)");
+    protected DatabaseColumnRequest _chiColumnSpecification = new("chi","varchar(10)");
 
     [OneTimeSetUp]
     protected override void OneTimeSetUp()

@@ -279,9 +279,9 @@ public abstract class BasicCommandExecution : IAtomicCommand
         {
             InitialSearchText = initialSearchText,
             AllowAutoSelect = allowAutoSelect
-        }, availableObjects, out var selected)
-            ? selected
-            : null;
+        },availableObjects, out var selected) ? selected : null;
+
+    }
 
     /// <summary>
     /// Prompts user to select 1 of the objects of type T in the list you provide
@@ -307,9 +307,8 @@ public abstract class BasicCommandExecution : IAtomicCommand
         {
             InitialSearchText = initialSearchText,
             AllowAutoSelect = allowAutoSelect
-        }, repository.GetAllObjects<T>().ToList(), out var answer)
-            ? answer
-            : null;
+        },repository.GetAllObjects<T>().ToList(),out var answer) ? answer: null;
+    }
 
     /// <summary>
     /// Prompts user to select 1 of the objects of type T from all the ones stored in the repository provided, returns true if they made a non null selection
@@ -343,7 +342,8 @@ public abstract class BasicCommandExecution : IAtomicCommand
         {
             InitialSearchText = initialSearchText,
             AllowAutoSelect = allowAutoSelect
-        }, availableObjects, out selected);
+        },availableObjects,out selected);
+    }
 
     /// <summary>
     /// Prompts user to select 1 of the objects of type T in the list you provide, returns true if they made a non null selection

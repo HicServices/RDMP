@@ -40,6 +40,9 @@ public sealed class DataLoadInfo : IDataLoadInfo
     private readonly object _logWaiter = new();
 
 
+    private object oLock = new();
+        
+        
     #region Property setup (these throw exceptions if you try to read them after the record is closed)
 
     public string PackageName => _packageName;
@@ -269,7 +272,7 @@ public sealed class DataLoadInfo : IDataLoadInfo
         DataSource[] sources, int expectedInserts) => new TableLoadInfo(this, suggestedRollbackCommand,
         destinationTable, sources, expectedInserts);
 
-    public static DataLoadInfo Empty = new();
+    public static DataLoadInfo Empty= new();
 
     private DataLoadInfo()
     {

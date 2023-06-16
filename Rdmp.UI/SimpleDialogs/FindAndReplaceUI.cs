@@ -37,11 +37,10 @@ public partial class FindAndReplaceUI : RDMPUserControl
     private HashSet<IMapsDirectlyToDatabaseTable> _allObjects = new();
 
     private IAttributePropertyFinder _adjustableLocationPropertyFinder;
-    private List<FindAndReplaceNode> _locationNodes = new();
-
+    private List<FindAndReplaceNode> _locationNodes = new(); 
+        
     private IAttributePropertyFinder _sqlPropertyFinder;
     private List<FindAndReplaceNode> _sqlNodes = new();
-
 
     public FindAndReplaceUI(IActivateItems activator)
     {

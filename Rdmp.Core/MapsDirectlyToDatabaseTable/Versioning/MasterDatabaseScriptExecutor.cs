@@ -149,9 +149,13 @@ public class MasterDatabaseScriptExecutor
         Database.ExpectTable(RoundhouseScriptsRunTable, RoundhouseSchemaName)
             .Insert(new Dictionary<string, object>
             {
-                { "script_name", kvp.Key },
-                { "text_of_script", kvp.Value.EntireScript },
-                { "text_hash", CalculateHash(kvp.Value.EntireScript) },
+                {"script_name", kvp.Key},
+                {"text_of_script", kvp.Value.EntireScript},
+                {"text_hash", CalculateHash(kvp.Value.EntireScript)},
+
+                {"entry_date", now},
+                {"modified_date", now},
+                {"entered_by", Environment.UserName}
 
                 { "entry_date", now },
                 { "modified_date", now },

@@ -88,8 +88,8 @@ public class Coalescer : MatchingTablesMutilator
     {
         var sqlLines = new List<CustomLine>
         {
-            new CustomLine($"(t1.{nonPk.GetRuntimeName()} is null AND t2.{nonPk.GetRuntimeName()} is not null)", QueryComponent.WHERE),
-            new CustomLine(
+            new($"(t1.{nonPk.GetRuntimeName()} is null AND t2.{nonPk.GetRuntimeName()} is not null)", QueryComponent.WHERE),
+            new(
                 $"t1.{nonPk.GetRuntimeName()} = COALESCE(t1.{nonPk.GetRuntimeName()},t2.{nonPk.GetRuntimeName()})", QueryComponent.SET)
         };
         sqlLines.AddRange(pks.Select(p=>new CustomLine(string.Format("t1.{0} = t2.{0}", p.GetRuntimeName()),QueryComponent.JoinInfoJoin)));

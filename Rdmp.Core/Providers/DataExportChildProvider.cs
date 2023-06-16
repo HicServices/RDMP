@@ -64,15 +64,13 @@ public class DataExportChildProvider : CatalogueChildProvider
     private IFilterManager _dataExportFilterManager;
 
     public List<ExternalCohortTable> ForbidListedSources { get; private set; }
-
-    public List<IObjectUsedByOtherObjectNode<Project, IMapsDirectlyToDatabaseTable>> DuplicatesByProject = new();
-
-    public List<IObjectUsedByOtherObjectNode<CohortSourceUsedByProjectNode>> DuplicatesByCohortSourceUsedByProjectNode =
-        new();
+        
+    public List<IObjectUsedByOtherObjectNode<Project,IMapsDirectlyToDatabaseTable>> DuplicatesByProject = new();
+    public List<IObjectUsedByOtherObjectNode<CohortSourceUsedByProjectNode>> DuplicatesByCohortSourceUsedByProjectNode = new();
 
 
     private readonly object _oProjectNumberToCohortsDictionary = new();
-    public Dictionary<int, List<ExtractableCohort>> ProjectNumberToCohortsDictionary = new();
+    public Dictionary<int,List<ExtractableCohort>> ProjectNumberToCohortsDictionary = new();
 
     public ProjectCohortIdentificationConfigurationAssociation[] AllProjectAssociatedCics;
 

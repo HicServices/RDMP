@@ -62,14 +62,14 @@ public partial class ExecuteExtractionUI : ExecuteExtractionUI_Design
     private const string CoreDatasets = "Core";
     private const string ProjectSpecificDatasets = "Project Specific";
 
-    private ExtractionArbitraryFolderNode _coreDatasetsFolder = new(CoreDatasets, 1);
-    private ExtractionArbitraryFolderNode _projectSpecificDatasetsFolder = new(ProjectSpecificDatasets, 2);
-    private ArbitraryFolderNode _globalsFolder = new(ExtractionDirectory.GLOBALS_DATA_NAME, 0);
-
+    private ExtractionArbitraryFolderNode _coreDatasetsFolder = new(CoreDatasets,1);
+    private ExtractionArbitraryFolderNode _projectSpecificDatasetsFolder = new(ProjectSpecificDatasets,2);
+    private ArbitraryFolderNode _globalsFolder = new(ExtractionDirectory.GLOBALS_DATA_NAME,0);
+        
     private ToolStripControlHost _pipelinePanel;
 
-    private ToolStripLabel lblMaxConcurrent = new ToolStripLabel("Concurrent:");
-    private ToolStripTextBox tbMaxConcurrent = new ToolStripTextBox {Text="3"};
+    private ToolStripLabel lblMaxConcurrent = new("Concurrent:");
+    private ToolStripTextBox tbMaxConcurrent = new() {Text="3"};
 
     public ExecuteExtractionUI()
     {
@@ -95,8 +95,8 @@ public partial class ExecuteExtractionUI : ExecuteExtractionUI_Design
         _coreDatasetsFolder.CommandGetter = () =>
             new IAtomicCommand[]
             {
-                new ExecuteCommandAddDatasetsToConfiguration(Activator, _extractionConfiguration),
-                new ExecuteCommandAddPackageToConfiguration(Activator, _extractionConfiguration)
+                new ExecuteCommandAddDatasetsToConfiguration(Activator,_extractionConfiguration),
+                new ExecuteCommandAddPackageToConfiguration(Activator,_extractionConfiguration)
             };
 
         RDMPCollectionCommonFunctionality.SetupColumnTracking(tlvDatasets, olvName,

@@ -39,7 +39,7 @@ public partial class TypeTextOrCancelDialog : Form
         {
             WindowTitle = title,
             EntryLabel = prompt
-        }, maxCharacters, startingTextForInputBox, allowBlankText, multiLine)
+        },maxCharacters,startingTextForInputBox,allowBlankText,multiLine)
     {
     }
 

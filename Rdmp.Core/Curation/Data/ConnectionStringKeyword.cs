@@ -77,9 +77,9 @@ public class ConnectionStringKeyword : DatabaseEntity, INamed, ICheckable
     {
         repository.InsertAndHydrate(this, new Dictionary<string, object>
         {
-            { "DatabaseType", databaseType.ToString() },
-            { "Name", keyword },
-            { "Value", value }
+            {"DatabaseType",databaseType.ToString()},
+            {"Name",keyword},
+            {"Value",value}
         });
 
         if (ID == 0 || Repository != repository)

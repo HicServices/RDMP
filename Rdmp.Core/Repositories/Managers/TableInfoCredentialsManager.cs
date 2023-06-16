@@ -73,9 +73,9 @@ internal class TableInfoCredentialsManager : ITableInfoCredentialsManager
             "DELETE FROM DataAccessCredentials_TableInfo WHERE DataAccessCredentials_ID = @cid AND TableInfo_ID = @tid and Context =@context",
             new Dictionary<string, object>
             {
-                { "cid", credentials.ID },
-                { "tid", tableInfo.ID },
-                { "context", context }
+                {"cid", credentials.ID},
+                {"tid", tableInfo.ID},
+                {"context", context}
             });
 
         tableInfo.ClearAllInjections();

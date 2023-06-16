@@ -183,7 +183,7 @@ internal class RemoteTableAttacherTests : DatabaseTests
                     LoadProgress = mismatchProgress
                         ? new LoadProgress(CatalogueRepository, new LoadMetadata(CatalogueRepository, "ffsdf"))
                         : lp,
-                    DatesToRetrieve = new List<DateTime>{new DateTime(2001,01,01)}
+                    DatesToRetrieve = new List<DateTime>{new(2001,01,01)}
                 };
 
             job.StartLogging();

@@ -69,7 +69,7 @@ public class ProcessTaskTests : DatabaseTests
         {
             Name = "TestArg"
         };
-        arg.SetType(typeof (System.String));
+        arg.SetType(typeof (string));
         arg.SetValue("TestValue");
         arg.SaveToDatabase();
 

@@ -38,11 +38,10 @@ internal class ConsoleGuiBigListBox<T>
     /// <summary>
     /// Ongoing filtering of a large collection should be cancelled when the user changes the filter even if it is not completed yet
     /// </summary>
-    private ConcurrentBag<CancellationTokenSource> _cancelFiltering = new();
-
-    private Task _currentFilterTask;
-    private object _taskCancellationLock = new();
-
+    ConcurrentBag<CancellationTokenSource> _cancelFiltering = new();
+    Task _currentFilterTask;
+    object _taskCancellationLock = new();
+        
     private ListView _listView;
     private bool _changes;
     private TextField _mainInput;

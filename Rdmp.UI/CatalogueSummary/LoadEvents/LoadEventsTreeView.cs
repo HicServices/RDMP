@@ -38,17 +38,17 @@ namespace Rdmp.UI.CatalogueSummary.LoadEvents;
 /// </summary>
 public partial class LoadEventsTreeView : RDMPUserControl, IObjectCollectionControl
 {
-    public LoadEventsTreeViewObjectCollection Collection { get; set; }
-
+    public LoadEventsTreeViewObjectCollection Collection {get;set;}
+                
     private BackgroundWorker _populateLoadHistory = new();
     private ArchivalDataLoadInfo[] _populateLoadHistoryResults = Array.Empty<ArchivalDataLoadInfo>();
     private CancellationTokenSource _populateLoadHistoryCancel;
         
 
-    readonly ToolStripTextBox _tbFilterBox = new ToolStripTextBox();
-    readonly ToolStripButton _btnApplyFilter = new ToolStripButton("Apply");
-    readonly ToolStripTextBox _tbToFetch = new ToolStripTextBox { Text = "1000" };
-    readonly ToolStripButton _btnFetch = new ToolStripButton("Go");
+    readonly ToolStripTextBox _tbFilterBox = new();
+    readonly ToolStripButton _btnApplyFilter = new("Apply");
+    readonly ToolStripTextBox _tbToFetch = new() { Text = "1000" };
+    readonly ToolStripButton _btnFetch = new("Go");
 
     private int _toFetch = 1000;
 

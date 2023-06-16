@@ -121,11 +121,11 @@ public class ExtendedProperty : Argument, IReferenceOtherObjectWithPersist, IInj
 
         repository.InsertAndHydrate(this, new Dictionary<string, object>
         {
-            { "ReferencedObjectID", setOn.ID },
-            { "ReferencedObjectType", setOn.GetType().Name },
-            { "ReferencedObjectRepositoryType", setOn.Repository.GetType().Name },
-            { "Name", name },
-            { "Type", value.GetType().ToString() }
+            {"ReferencedObjectID",setOn.ID},
+            {"ReferencedObjectType",setOn.GetType().Name},
+            {"ReferencedObjectRepositoryType",setOn.Repository.GetType().Name},
+            {"Name", name},
+            {"Type", value.GetType().ToString()}
         });
 
         SetValue(value);

@@ -43,7 +43,7 @@ internal class ConsoleMainWindow
     private MouseFlags _rightClick = MouseFlags.Button3Clicked;
 
     // Last time the mouse moved and where it moved to
-    private Point _lastMousePos = new(0, 0);
+    private Point _lastMousePos = new(0,0);
     private DateTime _lastMouseMove = DateTime.Now;
 
     public const string Catalogues = "Catalogues";
@@ -80,10 +80,8 @@ internal class ConsoleMainWindow
 
     internal void SetUp(Toplevel top)
     {
-        var menu = new MenuBar(new MenuBarItem[]
-        {
-            new("_File (F9)", new MenuItem[]
-            {
+        var menu = new MenuBar (new MenuBarItem [] {
+            new("_File (F9)", new MenuItem [] {
                 new("_New...", "", () => New()),
                 new("_Find...", "", () => Find()),
                 new("_User Settings...", "", () => ShowUserSettings()),
@@ -91,26 +89,13 @@ internal class ConsoleMainWindow
                 new("_Refresh...", "", () => Publish()),
                 new("_Quit", "", () => Quit())
             }),
-            new MenuBarItem ("_Diagnostics", new MenuItem [] {
+            new("_Diagnostics", new MenuItem [] {
                 mi_default = new MenuItem {Title = "Query Catalogue", Action = ()=>Query(nameof(CataloguePatcher))},
-                mi_default = new MenuItem {Title = "Query Data Export", Action = ()=>Query(nameof(DataExportPatcher))},
+                mi_default = new MenuItem {Title = "Query Data Export", Action = ()=>Query(nameof(DataExportPatcher))}
             }),
-            new MenuBarItem ("_Color Scheme", new MenuItem [] {
+            new("_Color Scheme", new MenuItem [] {
                 mi_default = new MenuItem {Title = "Default", Checked = true, CheckType = MenuItemCheckStyle.Radio, Action = ()=>SetColorScheme(mi_default)},
-                mi_green = new MenuItem {Title = "Green", Checked = false, CheckType = MenuItemCheckStyle.Radio, Action = ()=>SetColorScheme(mi_green)},
-            }),
-            new("_Color Scheme", new MenuItem[]
-            {
-                mi_default = new MenuItem
-                {
-                    Title = "Default", Checked = true, CheckType = MenuItemCheckStyle.Radio,
-                    Action = () => SetColorScheme(mi_default)
-                },
-                mi_green = new MenuItem
-                {
-                    Title = "Green", Checked = false, CheckType = MenuItemCheckStyle.Radio,
-                    Action = () => SetColorScheme(mi_green)
-                }
+                mi_green = new MenuItem {Title = "Green", Checked = false, CheckType = MenuItemCheckStyle.Radio, Action = ()=>SetColorScheme(mi_green)}
             })
         });
         top.Add (menu);
@@ -164,9 +149,8 @@ internal class ConsoleMainWindow
         _treeView.KeyPress += treeView_KeyPress;
         _treeView.SelectionChanged += _treeView_SelectionChanged;
         _treeView.AspectGetter = AspectGetter;
-
-        var statusBar = new StatusBar(new StatusItem[]
-        {
+            
+        var statusBar = new StatusBar (new StatusItem [] {
             new(Key.Q | Key.CtrlMask, "~^Q~ Quit", () => Quit()),
             new(Key.R | Key.CtrlMask, "~^R~ Run", () => Run()),
             new(Key.F | Key.CtrlMask, "~^F~ Find", () => Find()),

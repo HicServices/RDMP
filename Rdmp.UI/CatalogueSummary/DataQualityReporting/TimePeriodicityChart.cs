@@ -25,7 +25,7 @@ namespace Rdmp.UI.CatalogueSummary.DataQualityReporting;
 /// </summary>
 public partial class TimePeriodicityChart : RDMPUserControl, IDataQualityReportingChart
 {
-    private readonly ChartLookAndFeelSetter _chartLookAndFeelSetter = new();
+    private readonly ChartLookAndFeelSetter _chartLookAndFeelSetter =  new();
 
     public TimePeriodicityChart()
     {

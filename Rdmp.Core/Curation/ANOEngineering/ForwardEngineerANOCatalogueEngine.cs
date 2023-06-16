@@ -37,7 +37,7 @@ public class ForwardEngineerANOCatalogueEngine
     public LoadProgress LoadProgressIfAny { get; set; }
 
     public Dictionary<ITableInfo, QueryBuilder> SelectSQLForMigrations = new();
-    public Dictionary<PreLoadDiscardedColumn, IDilutionOperation> DilutionOperationsForMigrations = new();
+    public Dictionary<PreLoadDiscardedColumn,IDilutionOperation> DilutionOperationsForMigrations = new();
 
     private ShareManager _shareManager;
 
@@ -306,10 +306,8 @@ public class ForwardEngineerANOCatalogueEngine
                     qb.RootFilterContainer = new SpontaneouslyInventedFilterContainer(memoryRepo, null,
                         new[]
                         {
-                            new SpontaneouslyInventedFilter(memoryRepo, null,
-                                $"{_planManager.DateColumn} >= @startDate", "After batch start date", "", null),
-                            new SpontaneouslyInventedFilter(memoryRepo, null, $"{_planManager.DateColumn} <= @endDate",
-                                "Before batch end date", "", null)
+                            new SpontaneouslyInventedFilter(memoryRepo,null, $"{_planManager.DateColumn} >= @startDate","After batch start date","",null),
+                            new SpontaneouslyInventedFilter(memoryRepo,null, $"{_planManager.DateColumn} <= @endDate","Before batch end date","",null)
                         }
                         , FilterContainerOperation.AND);
                 }
@@ -437,8 +435,8 @@ public class ForwardEngineerANOCatalogueEngine
             $"Found '{columns.Length}' ColumnInfos called '{expectedNewNames.First()}'{(failedANOToo ? $" (Or 'ANO{expectedName}')" : "")}");
     }
 
-    private Dictionary<IMapsDirectlyToDatabaseTable, IMapsDirectlyToDatabaseTable> _parenthoodDictionary = new();
-
+    Dictionary<IMapsDirectlyToDatabaseTable,IMapsDirectlyToDatabaseTable> _parenthoodDictionary = new();
+        
 
     private void AuditParenthood(IMapsDirectlyToDatabaseTable parent, IMapsDirectlyToDatabaseTable child)
     {

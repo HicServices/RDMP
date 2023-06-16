@@ -85,8 +85,8 @@ public class ActivateItems : BasicActivateItems, IActivateItems, IRefreshBusSubs
     public ITheme Theme { get; private set; }
 
     public RefreshBus RefreshBus { get; private set; }
-
-    private readonly UIObjectConstructor _constructor = new();
+        
+    readonly UIObjectConstructor _constructor = new();
 
     public IArrangeWindows WindowArranger { get; private set; }
 
@@ -829,7 +829,7 @@ public class ActivateItems : BasicActivateItems, IActivateItems, IRefreshBusSubs
     {
         return new List<CommandInvokerDelegate>
         {
-            new(typeof(IActivateItems), true, p => this)
+            new(typeof(IActivateItems),true,(p)=>this)
         };
     }
 
@@ -848,7 +848,7 @@ public class ActivateItems : BasicActivateItems, IActivateItems, IRefreshBusSubs
                 InitialSearchText = initialSearch,
 
                 IsFind = sessionName.StartsWith(ExecuteCommandStartSession.FindResultsTitle)
-            }, typeof(IMapsDirectlyToDatabaseTable), CoreChildProvider.GetAllSearchables().Keys.ToArray())?.ToList();
+            },typeof(IMapsDirectlyToDatabaseTable),CoreChildProvider.GetAllSearchables().Keys.ToArray())?.ToList();
 
             if(initialObjects?.Any()!=true)
             {

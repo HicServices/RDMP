@@ -25,8 +25,8 @@ public class ExceptionCounterUI : ToolStripButton, ICheckNotifier
 {
     private const float EmSize = 8f;
 
-    private ToMemoryCheckNotifier _events = new(new NLogICheckNotifier(true, false));
-
+    private ToMemoryCheckNotifier _events = new(new NLogICheckNotifier(true,false));
+        
     private const float NotifyWidth = 15;
 
     public ExceptionCounterUI()

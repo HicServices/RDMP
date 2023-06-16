@@ -44,8 +44,8 @@ public class CatalogueConstraintReport : DataQualityReport
 
     public static int MaximumPivotValues = 5000;
 
-    private Dictionary<string, DQEStateOverDataLoadRunId> byPivotRowStatesOverDataLoadRunId = new();
-    private Dictionary<string, PeriodicityCubesOverTime> byPivotCategoryCubesOverTime = new();
+    private Dictionary<string,DQEStateOverDataLoadRunId> byPivotRowStatesOverDataLoadRunId = new();
+    private Dictionary<string,PeriodicityCubesOverTime> byPivotCategoryCubesOverTime = new();
 
     private IExternalDatabaseServer _loggingServer;
     private string _loggingTask;
@@ -504,7 +504,7 @@ public class CatalogueConstraintReport : DataQualityReport
                             constraint.GetType() != typeof(Prediction)))
                     {
                         //Add an item validator onto the fk column that targets the description column with a nullness prediction
-                        var newRule = new Prediction(new ValuePredictsOtherValueNullness(), foreignKeyFieldName)
+                        var newRule = new Prediction(new ValuePredictsOtherValueNullity(), foreignKeyFieldName)
                             {
                                 Consequence = Consequence.Missing
                             };

@@ -48,7 +48,7 @@ public class WordDataWriter : DocXHelper
             throw new NotSupportedException(
                 $"{GetType().FullName} only supports destinations which are {typeof(ExecuteDatasetExtractionFlatFileDestination).FullName}");
     }
-
+        
     private static object oLockOnWordUsage = new();
     private IExecuteDatasetExtractionDestination _destination;
 
@@ -284,7 +284,7 @@ public class WordDataWriter : DocXHelper
             else
                 supplementalValuesForThisOne.Add(new Tuple<string, string>("Runtime Name:", "Not found"));
             */
-                new Tuple<string, string>("Datatype (SQL):",value.DataTypeInCatalogue) };
+                new("Datatype (SQL):",value.DataTypeInCatalogue) };
 
 
             if(value.FoundAtExtractTime)

@@ -64,6 +64,7 @@ public class ExecuteCommandPasteClipboardAsNewCatalogueItems : BasicCommandExecu
                 if (!BasicActivator.TypeText(new DialogArgs
                     {
                         WindowTitle = "Paste Columns"
+
                     }, int.MaxValue, null, out clipboard, false))
                     // user cancelled search
                     return;

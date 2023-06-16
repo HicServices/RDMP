@@ -114,7 +114,7 @@ public class RefreshBus
         parentForm.FormClosing += (s, e) => Unsubscribe(subscriber);
     }
 
-    private List<object> _selfDestructors = new();
+    List<object> _selfDestructors = new();
 
 
     /// <summary>

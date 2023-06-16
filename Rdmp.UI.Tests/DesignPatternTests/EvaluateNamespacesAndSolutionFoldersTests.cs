@@ -195,8 +195,7 @@ public class EvaluateNamespacesAndSolutionFoldersTests : DatabaseTests
         }
     }
 
-    private readonly List<string> _errors = new();
-
+    readonly List<string> _errors = new();
     private void Error(string s)
     {
         Console.WriteLine(s);

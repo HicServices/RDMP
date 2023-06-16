@@ -50,8 +50,7 @@ public class ExecuteCommandCreateNewCohortFromTable : CohortCreationCommandExecu
         if (!BasicActivator.SelectObject(new DialogArgs
             {
                 EntryLabel = "Patient Identifier Column",
-                TaskDescription =
-                    $"Select which column in the table '{tbl.GetFullyQualifiedName()}' contains the patient identifiers which you want to import",
+                TaskDescription = $"Select which column in the table '{tbl.GetFullyQualifiedName()}' contains the patient identifiers which you want to import",
                 AllowAutoSelect = true
             }, tbl.DiscoverColumns(), out var col))
             // user cancelled selecting a column

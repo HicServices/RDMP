@@ -89,7 +89,7 @@ public class CommandInvoker
                 {
                     WindowTitle = GetPromptFor(p),
                     InitialObjectSelection = p.DefaultValue is IMapsDirectlyToDatabaseTable m ? new IMapsDirectlyToDatabaseTable[] { m } : null,
-                    InitialSearchText = p.DefaultValue?.ToString(),
+                    InitialSearchText = p.DefaultValue?.ToString()
                 }, GetAllObjectsOfType(p.Type)));
 
         AddDelegate(typeof(IPipeline), false, SelectPipeline);
@@ -107,9 +107,7 @@ public class CommandInvoker
             {
                 WindowTitle = GetPromptFor(p),
                 InitialSearchText = p.DefaultValue?.ToString()
-            }, p.Type, out var chosen)
-            ? chosen
-            : null);
+            } , p.Type, out var chosen)?chosen:null);
 
 
         _argumentDelegates.Add(new CommandInvokerArrayDelegate(typeof(IMapsDirectlyToDatabaseTable), false, p =>
@@ -175,16 +173,19 @@ public class CommandInvoker
                 : throw new OperationCanceledException()));
     }
 
-    private string SelectText(RequiredArgument p) =>
-        _basicActivator.TypeText(
-            new DialogArgs
-            {
-                WindowTitle = "Value needed for parameter",
-                EntryLabel = GetPromptFor(p)
-            }
-            , 1000, p.DefaultValue?.ToString(), out var result, false)
-            ? result
-            : throw new OperationCanceledException();
+    private string SelectText(RequiredArgument p)
+    {
+        return
+            _basicActivator.TypeText(
+                new DialogArgs
+                {
+                    WindowTitle = "Value needed for parameter",
+                    EntryLabel = GetPromptFor(p)
+                }
+                , 1000, p.DefaultValue?.ToString(), out var result, false)
+                ? result
+                : throw new OperationCanceledException();
+    }
 
     private IPipeline SelectPipeline(RequiredArgument arg) => (IPipeline)_basicActivator.SelectOne(GetPromptFor(arg),
         _basicActivator.RepositoryLocator.CatalogueRepository.GetAllObjects<Pipeline>().ToArray());
@@ -311,9 +312,7 @@ public class CommandInvoker
             new DialogArgs
             {
                 WindowTitle = GetPromptFor(p),
-                InitialObjectSelection = p.DefaultValue is IMapsDirectlyToDatabaseTable m
-                    ? new IMapsDirectlyToDatabaseTable[] { m }
-                    : null,
+                InitialObjectSelection = p.DefaultValue is IMapsDirectlyToDatabaseTable m ? new IMapsDirectlyToDatabaseTable[] { m } : null,
                 InitialSearchText = p.DefaultValue?.ToString()
             }
             , _basicActivator.GetAll(p.Type).Cast<IMapsDirectlyToDatabaseTable>().ToArray());

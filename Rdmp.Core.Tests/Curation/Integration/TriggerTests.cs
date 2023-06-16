@@ -33,10 +33,9 @@ public class TriggerTests : DatabaseTests
     {
         _database = GetCleanedServer(dbType);
 
-        _table = _database.CreateTable("TriggerTests", new DatabaseColumnRequest[]
-        {
-            new("name", new DatabaseTypeRequest(typeof(string), 30)) { AllowNulls = false },
-            new("bubbles", new DatabaseTypeRequest(typeof(int)))
+        _table =_database.CreateTable("TriggerTests",new DatabaseColumnRequest[]{ 
+            new("name",new DatabaseTypeRequest(typeof(string),30)){AllowNulls = false },
+            new("bubbles",new DatabaseTypeRequest(typeof(int)))
         });
 
         _archiveTable = _database.ExpectTable("TriggerTests_Archive");
@@ -85,12 +84,10 @@ public class TriggerTests : DatabaseTests
     {
         _database = GetCleanedServer(dbType);
 
-        _table = _database.CreateTable("Trol lol My Table Select * from Group by fish", new DatabaseColumnRequest[]
-        {
-            new("My Lovely Column Select * From Lolz", new DatabaseTypeRequest(typeof(string), 30))
-                { AllowNulls = false, IsPrimaryKey = true },
-            new("ANormalColumnName", new DatabaseTypeRequest(typeof(int))),
-            new("Group By Meeee Colll trollolol", new DatabaseTypeRequest(typeof(int)))
+        _table =_database.CreateTable("Trol lol My Table Select * from Group by fish",new DatabaseColumnRequest[]{ 
+            new("My Lovely Column Select * From Lolz",new DatabaseTypeRequest(typeof(string),30)){AllowNulls = false,IsPrimaryKey = true},
+            new("ANormalColumnName",new DatabaseTypeRequest(typeof(int))),
+            new("Group By Meeee Colll trollolol",new DatabaseTypeRequest(typeof(int)))
         });
 
         GetImplementer().CreateTrigger(new ThrowImmediatelyCheckNotifier());

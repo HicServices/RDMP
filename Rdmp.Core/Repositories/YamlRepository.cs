@@ -36,7 +36,7 @@ public class YamlRepository : MemoryDataExportRepository
 
     public DirectoryInfo Directory { get; }
 
-    private object lockFs = new();
+    object lockFs = new();
 
     public YamlRepository(DirectoryInfo dir)
     {
@@ -638,12 +638,13 @@ public class YamlRepository : MemoryDataExportRepository
     public override string ToString() => $"{{YamlRepository {Directory.FullName}}}";
 
     private void LoadWhereSubContainers()
-    {
-        foreach (var c in Load<FilterContainer, FilterContainer>("ExtractionFilters") ??
-                          new Dictionary<FilterContainer, HashSet<FilterContainer>>())
+    {        
+        foreach (var c in Load<FilterContainer, FilterContainer>("ExtractionFilters") ?? new Dictionary<FilterContainer, HashSet<FilterContainer>>())
+        {
             WhereSubContainers.Add(c.Key, new HashSet<IContainer>(c.Value));
-        foreach (var c in Load<AggregateFilterContainer, AggregateFilterContainer>("AggregateFilters") ??
-                          new Dictionary<AggregateFilterContainer, HashSet<AggregateFilterContainer>>())
+        }
+        foreach(var c in Load<AggregateFilterContainer, AggregateFilterContainer>("AggregateFilters") ?? new Dictionary<AggregateFilterContainer, HashSet<AggregateFilterContainer>>())
+        {
             WhereSubContainers.Add(c.Key, new HashSet<IContainer>(c.Value));
     }
 

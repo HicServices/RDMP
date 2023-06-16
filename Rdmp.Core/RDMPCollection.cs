@@ -20,4 +20,5 @@ public enum RDMPCollection
 
     Cohort,
     DataLoad
+
 }

@@ -69,7 +69,7 @@ public class CohortCompiler
     /// and not running yet.
     /// </summary>
     public Dictionary<ICompileable, CohortIdentificationTaskExecution> Tasks = new();
-
+        
     public List<Thread> Threads = new();
     private ICoreChildProvider _coreChildProvider;
 

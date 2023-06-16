@@ -41,9 +41,10 @@ public class ExecuteDatasetExtractionSource : IPluginDataFlowSource<DataTable>, 
     public const string AuditTaskName = "DataExtraction";
 
     private readonly List<string> _extractionIdentifiersidx = new();
-
-    private bool _cancel = false;
-    private ICatalogue _catalogue;
+        
+    private bool _cancel = false;   
+        
+    ICatalogue _catalogue;
 
     protected const string ValidationColumnName = "RowValidationResult";
 

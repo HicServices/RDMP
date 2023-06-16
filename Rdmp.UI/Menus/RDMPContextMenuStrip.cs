@@ -43,7 +43,7 @@ public class RDMPContextMenuStrip : ContextMenuStrip
     protected ToolStripMenuItem ActivateCommandMenuItem;
     private RDMPContextMenuStripArgs _args;
 
-    private Dictionary<string, ToolStripMenuItem> _subMenuDictionary = new();
+    private Dictionary <string,ToolStripMenuItem> _subMenuDictionary = new();
 
     public const string Checks = "Run Checks";
     public const string Tree = "Tree";

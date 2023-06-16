@@ -113,7 +113,7 @@ public class JoinInfo : DatabaseEntity, IJoin, IHasDependencies
     private ColumnInfo _foreignKey;
     private ColumnInfo _primaryKey;
 
-
+        
     private List<JoinInfo> _queryTimeComboJoins = new();
 
     #region Relationships

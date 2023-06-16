@@ -118,23 +118,23 @@ public class HICPipelineTests : DatabaseTests
             // Not assigned to a variable as they will be magically available through the repository
             var processTaskArgs = new List<Tuple<string, string, Type>>
             {
-                new("FilePattern", "1.csv", typeof(string)),
-                new("TableName", "TestData", typeof(string)),
-                new("ForceHeaders", null, typeof(string)),
-                new("IgnoreQuotes", null, typeof(bool)),
-                new("IgnoreBlankLines", null, typeof(bool)),
-                new("ForceHeadersReplacesFirstLineInFile", null, typeof(bool)),
-                new("SendLoadNotRequiredIfFileNotFound", "false", typeof(bool)),
-                new("Separator", ",", typeof(string)),
-                new("TableToLoad", null, typeof(TableInfo)),
-                new("BadDataHandlingStrategy", BadDataHandlingStrategy.ThrowException.ToString(),
-                    typeof(BadDataHandlingStrategy)),
-                new("ThrowOnEmptyFiles", "true", typeof(bool)),
-                new("AttemptToResolveNewLinesInRecords", "true", typeof(bool)),
-                new("MaximumErrorsToReport", "0", typeof(int)),
-                new("IgnoreColumns", null, typeof(string)),
-                new("IgnoreBadReads", "false", typeof(bool)),
-                new("AddFilenameColumnNamed", null, typeof(string))
+                new("FilePattern", "1.csv", typeof (string)),
+                new("TableName", "TestData", typeof (string)),
+                new("ForceHeaders", null, typeof (string)),
+                new("IgnoreQuotes", null, typeof (bool)),
+                new("IgnoreBlankLines", null, typeof (bool)),
+                new("ForceHeadersReplacesFirstLineInFile", null, typeof (bool)),
+                new("SendLoadNotRequiredIfFileNotFound", "false", typeof (bool)),
+                new("Separator", ",", typeof (string)),
+                new("TableToLoad", null, typeof (TableInfo)),
+                new("BadDataHandlingStrategy", BadDataHandlingStrategy.ThrowException.ToString(), typeof (BadDataHandlingStrategy)),
+                new("ThrowOnEmptyFiles", "true", typeof (bool)),
+                new("AttemptToResolveNewLinesInRecords", "true", typeof (bool)),
+                new("MaximumErrorsToReport", "0", typeof (int)),
+                new("IgnoreColumns", null, typeof (string)),
+                new("IgnoreBadReads", "false", typeof (bool)),
+                new("AddFilenameColumnNamed", null, typeof (string))
+
             };
 
 

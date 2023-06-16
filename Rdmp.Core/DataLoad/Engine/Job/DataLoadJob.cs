@@ -39,7 +39,7 @@ public class DataLoadJob : IDataLoadJob
     public IRDMPPlatformRepositoryServiceLocator RepositoryLocator { get; private set; }
 
     private Stack<IDisposeAfterDataLoad> _disposalStack = new();
-
+        
     public HICDatabaseConfiguration Configuration { get; set; }
     public object Payload { get; set; }
 

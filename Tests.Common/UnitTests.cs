@@ -691,10 +691,8 @@ public class UnitTests
     }
 
     //Fields that can be safely ignored when comparing an object created in memory with one created into the database.
-    private static readonly string[] IgnorePropertiesWhenDiffing =
-        { "ID", "Repository", "CatalogueRepository", "SoftwareVersion" };
-
-    public static Dictionary<PropertyInfo, HashSet<object>> _alreadyChecked = new();
+    private static readonly string[] IgnorePropertiesWhenDiffing = new[] {"ID","Repository","CatalogueRepository","SoftwareVersion"};
+    public static Dictionary<PropertyInfo,HashSet<object>> _alreadyChecked = new();
 
     /// <summary>
     /// Asserts that the two objects are basically the same except for IDs/Repositories.  This includes checking all public properties

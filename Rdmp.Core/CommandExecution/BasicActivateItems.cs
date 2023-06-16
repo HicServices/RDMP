@@ -502,7 +502,8 @@ public abstract class BasicActivateItems : IBasicActivateItems
             {
                 WindowTitle = $"Enter value for {prompt}",
                 EntryLabel = prompt
-            }, paramType, initialValue, out chosen);
+            },paramType,initialValue,out chosen);
+    }
 
     /// <inheritdoc/>
     public bool SelectValueType(DialogArgs args, Type paramType, object initialValue, out object chosen)
@@ -580,7 +581,8 @@ public abstract class BasicActivateItems : IBasicActivateItems
         {
             WindowTitle = prompt,
             InitialSearchText = initialSearchText
-        }, arrayElementType, availableObjects);
+        },arrayElementType,availableObjects);
+    }
 
     /// <inheritdoc/>
     public abstract IMapsDirectlyToDatabaseTable[] SelectMany(DialogArgs args, Type arrayElementType,

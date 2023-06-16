@@ -109,10 +109,10 @@ public class AnyTableSqlParameter : ReferenceOtherObjectDatabaseEntity, ISqlPara
     {
         repository.InsertAndHydrate(this, new Dictionary<string, object>
         {
-            { "ReferencedObjectID", parent.ID },
-            { "ReferencedObjectType", parent.GetType().Name },
-            { "ReferencedObjectRepositoryType", parent.Repository.GetType().Name },
-            { "ParameterSQL", parameterSQL }
+            {"ReferencedObjectID",parent.ID},
+            {"ReferencedObjectType",parent.GetType().Name},
+            {"ReferencedObjectRepositoryType",parent.Repository.GetType().Name},
+            {"ParameterSQL", parameterSQL}
         });
     }
 

@@ -42,7 +42,7 @@ public class ParameterManager
     /// Collection of all the parameters found at each level so far
     /// <para>Do not modify this yourself</para>
     /// </summary>
-    public Dictionary<ParameterLevel, List<ISqlParameter>> ParametersFoundSoFarInQueryGeneration = new();
+    public Dictionary<ParameterLevel,List<ISqlParameter>> ParametersFoundSoFarInQueryGeneration = new();
 
     /// <summary>
     /// Repository for creating temporary aggregate parameters

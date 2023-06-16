@@ -15,7 +15,7 @@ namespace Rdmp.UI.Tests.DesignPatternTests;
 
 internal class CsProjFileTidy
 {
-    public List<string> csFilesFound = new();
+    public List<string>  csFilesFound = new();
 
     public List<string> UntidyMessages { get; set; }
 

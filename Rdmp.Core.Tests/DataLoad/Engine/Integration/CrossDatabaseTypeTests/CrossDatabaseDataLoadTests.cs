@@ -118,12 +118,10 @@ internal class CrossDatabaseDataLoadTests : DataLoadEngineTestsBase
             {
                 tbl = db.CreateTable("MyTable", new[]
                 {
-                    new DatabaseColumnRequest("ID", new DatabaseTypeRequest(typeof(int)), false)
-                        { IsPrimaryKey = false, IsAutoIncrement = true },
-                    nameCol,
-                    new DatabaseColumnRequest("DateOfBirth", new DatabaseTypeRequest(typeof(DateTime)), false)
-                        { IsPrimaryKey = true },
-                    new DatabaseColumnRequest("FavouriteColour", new DatabaseTypeRequest(typeof(string)))
+                    new DatabaseColumnRequest("ID",new DatabaseTypeRequest(typeof(int)),false){IsPrimaryKey = false,IsAutoIncrement = true}, 
+                    nameCol, 
+                    new DatabaseColumnRequest("DateOfBirth",new DatabaseTypeRequest(typeof(DateTime)),false){IsPrimaryKey = true}, 
+                    new DatabaseColumnRequest("FavouriteColour",new DatabaseTypeRequest(typeof(string)))
                 });
 
                 using (var blk = tbl.BeginBulkInsert())

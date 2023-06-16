@@ -76,13 +76,13 @@ public class Memento : ReferenceOtherObjectDatabaseEntity
     {
         repository.InsertAndHydrate(this, new Dictionary<string, object>
         {
-            { "ReferencedObjectID", entity.ID },
-            { "ReferencedObjectType", entity.GetType().Name },
-            { "ReferencedObjectRepositoryType", entity.Repository.GetType().Name },
-            { "Commit_ID", commit.ID },
-            { "BeforeYaml", beforeYaml },
-            { "AfterYaml", afterYaml },
-            { "Type", type }
+            {"ReferencedObjectID",entity.ID},
+            {"ReferencedObjectType",entity.GetType().Name},
+            {"ReferencedObjectRepositoryType",entity.Repository.GetType().Name},
+            {"Commit_ID",commit.ID},
+            {"BeforeYaml",beforeYaml},
+            {"AfterYaml",afterYaml},
+            {"Type",type}
         });
     }
 

@@ -100,8 +100,8 @@ public abstract class PickObjectBase
         var repo = Activator.GetRepositoryFor(type);
         return repo.GetAllObjects(type);
     }
-
-    private Dictionary<string, Regex> patternDictionary = new();
+        
+    Dictionary<string,Regex> patternDictionary = new();
 
     /// <summary>
     /// Returns true if the <paramref name="pattern"/> (which is a simple non regex e.g. "Bio*") matches the ToString of <paramref name="o"/>

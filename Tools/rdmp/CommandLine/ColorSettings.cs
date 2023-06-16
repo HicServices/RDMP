@@ -56,8 +56,7 @@ public class ColorSettings
         Focus = new Attribute(RedForegroundFocus, RedBackgroundFocus),
         Disabled = new Attribute(RedForegroundDisabled, RedBackgroundDisabled),
         HotFocus = new Attribute(RedForegroundHotFocus, RedBackgroundHotFocus)
-    };
-
+    };     
     public Color RedForegroundNormal { get; set; }
     public Color RedBackgroundNormal { get; set; }
     public Color RedForegroundFocus { get; set; }

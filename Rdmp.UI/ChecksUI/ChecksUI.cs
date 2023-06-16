@@ -41,8 +41,9 @@ public partial class ChecksUI : UserControl, ICheckNotifier
     private Bitmap _warningEx;
     private Bitmap _fail;
     private Bitmap _failEx;
-    private ConcurrentBag<CheckEventArgs> _results = new();
-    private bool outOfDate = false;
+
+    ConcurrentBag<CheckEventArgs> _results = new();
+    bool outOfDate = false;
 
     public ChecksUI()
     {

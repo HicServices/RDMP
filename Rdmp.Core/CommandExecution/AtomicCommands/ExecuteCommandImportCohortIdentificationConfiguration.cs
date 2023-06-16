@@ -52,16 +52,13 @@ public class ExecuteCommandImportCohortIdentificationConfiguration : BasicComman
 
         var import = ToImport;
 
-        if (import == null)
-            if (!BasicActivator.SelectObjects(new DialogArgs
-                    {
-                        WindowTitle = "Add CohortIdentificationConfiguration(s) to Container",
-                        TaskDescription =
-                            $"Choose which CohortIdentificationConfiguration(s) to add to the cohort container '{IntoContainer.Name}'.  For each one selected, the entire query tree will be imported."
-                    },
-                    BasicActivator.RepositoryLocator.CatalogueRepository
-                        .GetAllObjects<CohortIdentificationConfiguration>(),
-                    out import))
+        if(import == null)
+            if(!BasicActivator.SelectObjects(new DialogArgs
+               {
+                   WindowTitle = "Add CohortIdentificationConfiguration(s) to Container",
+                   TaskDescription = $"Choose which CohortIdentificationConfiguration(s) to add to the cohort container '{IntoContainer.Name}'.  For each one selected, the entire query tree will be imported."
+
+               },BasicActivator.RepositoryLocator.CatalogueRepository.GetAllObjects<CohortIdentificationConfiguration>(),out import))
                 return;
 
         if (import == null || !import.Any())

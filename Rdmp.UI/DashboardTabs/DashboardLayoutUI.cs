@@ -33,7 +33,7 @@ public partial class DashboardLayoutUI : DashboardLayoutUI_Design
     private DashboardControlFactory _controlFactory;
     private readonly DashboardEditModeFunctionality _editModeFunctionality;
 
-    public Dictionary<DashboardControl, DashboardableControlHostPanel> ControlDictionary = new();
+    public Dictionary<DashboardControl,DashboardableControlHostPanel> ControlDictionary = new();
 
     public DashboardLayoutUI()
     {

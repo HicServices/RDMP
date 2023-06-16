@@ -119,10 +119,10 @@ public class AllImportantClassesDocumented
 
                     var idxLastSlash = f.LastIndexOf("\\");
 
-                    if (idxLastSlash != -1)
-                        problems.Add(string.Format("FAIL UNDOCUMENTED CLASS:{0} ({1})",
-                            f[(f.LastIndexOf("\\") + 1)..],
-                            f[..idxLastSlash])
+                    if(idxLastSlash != -1)
+                        problems.Add(string.Format("FAIL UNDOCUMENTED CLASS:{0} ({1})", 
+                            f.Substring(f.LastIndexOf("\\") + 1),
+                            f.Substring(0, idxLastSlash))
                         );
                     else
                         problems.Add($"FAIL UNDOCUMENTED CLASS:{f}");

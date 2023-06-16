@@ -23,7 +23,7 @@ public class CachedAggregateConfigurationResultsManagerTests : QueryCachingDatab
     private Catalogue _cata;
     private AggregateConfiguration _config;
     private CachedAggregateConfigurationResultsManager _manager;
-    private DatabaseColumnRequest _myColSpecification = new("MyCol", "varchar(10)");
+    private DatabaseColumnRequest _myColSpecification = new("MyCol","varchar(10)");
 
 
     [SetUp]

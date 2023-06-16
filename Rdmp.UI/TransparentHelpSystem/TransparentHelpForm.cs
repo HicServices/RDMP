@@ -31,7 +31,8 @@ public class TransparentHelpForm : Form
     const uint SW_SHOWNOACTIVATE = 4;
     private const uint WM_NCHITTEST = 0x0084;
     private const int HTTRANSPARENT = -1;
-    private Timer timer = new();
+
+    Timer timer = new();
     private Color _transparencyColor;
     private SolidBrush _highlightBrush;
 

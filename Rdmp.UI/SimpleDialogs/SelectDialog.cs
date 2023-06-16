@@ -59,7 +59,6 @@ public partial class SelectDialog<T> : Form, IVirtualListDataSource where T : cl
     /// All the objects when T is not an IMapsDirectlyToDatabaseTable.
     /// </summary>
     private T[] _allObjects;
-
     private List<T> _objectsToDisplay = new();
     private List<IMapsDirectlyToDatabaseTable> _tempMatches;
     private List<IMapsDirectlyToDatabaseTable> _matches;
@@ -116,18 +115,18 @@ public partial class SelectDialog<T> : Form, IVirtualListDataSource where T : cl
     /// <summary>
     /// Object types that appear in the task bar as filterable types
     /// </summary>
-    private Dictionary<Type, RDMPCollection> EasyFilterTypesAndAssociatedCollections = new Dictionary<Type, RDMPCollection>
+    private Dictionary<Type, RDMPCollection> EasyFilterTypesAndAssociatedCollections = new()
     {
-        { typeof(Catalogue), RDMPCollection.Catalogue },
-        { typeof(CatalogueItem), RDMPCollection.Catalogue },
-        { typeof(SupportingDocument), RDMPCollection.Catalogue },
-        { typeof(Project), RDMPCollection.DataExport },
-        { typeof(ExtractionConfiguration), RDMPCollection.DataExport },
-        { typeof(ExtractableCohort), RDMPCollection.SavedCohorts },
-        { typeof(CohortIdentificationConfiguration), RDMPCollection.Cohort },
-        { typeof(TableInfo), RDMPCollection.Tables },
-        { typeof(ColumnInfo), RDMPCollection.Tables },
-        { typeof(LoadMetadata), RDMPCollection.DataLoad }
+        {typeof (Catalogue),RDMPCollection.Catalogue},
+        {typeof (CatalogueItem),RDMPCollection.Catalogue},
+        {typeof (SupportingDocument),RDMPCollection.Catalogue},
+        {typeof (Project),RDMPCollection.DataExport},
+        {typeof (ExtractionConfiguration),RDMPCollection.DataExport},
+        {typeof (ExtractableCohort),RDMPCollection.SavedCohorts},
+        {typeof (CohortIdentificationConfiguration),RDMPCollection.Cohort},
+        {typeof (TableInfo),RDMPCollection.Tables},
+        {typeof (ColumnInfo),RDMPCollection.Tables},
+        {typeof (LoadMetadata),RDMPCollection.DataLoad}
     };
 
 
@@ -135,7 +134,7 @@ public partial class SelectDialog<T> : Form, IVirtualListDataSource where T : cl
     /// Identifies which Types are checked by default when the dialog is shown when the given RDMPCollection has focus
     /// </summary>
     public Dictionary<RDMPCollection, Type[]> StartingEasyFilters
-        = new Dictionary<RDMPCollection, Type[]>
+        = new()
         {
             { RDMPCollection.Catalogue, new[] { typeof(Catalogue) } },
             { RDMPCollection.Cohort, new[] { typeof(CohortIdentificationConfiguration) } },
@@ -323,7 +322,7 @@ public partial class SelectDialog<T> : Form, IVirtualListDataSource where T : cl
         if (e.Column == olvHierarchy) e.SubItem.ForeColor = Color.Gray;
     }
 
-    private IconOverlayProvider provider = new();
+    IconOverlayProvider provider = new();
 
     private Bitmap GetHierarchyImage(object rowObject)
     {

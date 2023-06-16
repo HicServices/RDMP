@@ -87,6 +87,7 @@ internal class ConsoleGuiActivator : BasicActivateItems
                 ReadOnly = true,
                 AllowsTab = false,
                 WordWrap = true
+
             });
             Application.Run(dlg, ConsoleMainWindow.ExceptionPopup);
         }

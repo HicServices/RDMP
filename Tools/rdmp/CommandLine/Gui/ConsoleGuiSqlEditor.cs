@@ -95,18 +95,22 @@ internal class ConsoleGuiSqlEditor : Window
 
         // Buttons on top of control
 
-        _btnRunOrCancel = new Button("Run")
-        {
-            X = 0,
-            Y = 0
+        _btnRunOrCancel = new Button("Run"){
+            X= 0,
+            Y= 0
         };
 
         _btnRunOrCancel.Clicked += () => RunOrCancel();
         Add(_btnRunOrCancel);
 
-        var resetSql = new Button("Reset Sq_l")
-        {
-            X = Pos.Right(_btnRunOrCancel) + 1
+        var resetSql = new Button("Reset Sq_l"){
+            X= Pos.Right(_btnRunOrCancel)+1};
+
+        resetSql.Clicked += ()=>ResetSql();
+        Add(resetSql);
+
+        var clearSql = new Button("Clear S_ql"){
+            X= Pos.Right(resetSql)+1
         };
 
         resetSql.Clicked += () => ResetSql();
@@ -122,7 +126,7 @@ internal class ConsoleGuiSqlEditor : Window
 
         var lblTimeout = new Label("Timeout:")
         {
-            X = Pos.Right(clearSql) + 1
+            X = Pos.Right(clearSql)+1
         };
         Add(lblTimeout);
 
@@ -135,9 +139,8 @@ internal class ConsoleGuiSqlEditor : Window
 
         Add(tbTimeout);
 
-        var btnSave = new Button("Save")
-        {
-            X = Pos.Right(tbTimeout) + 1
+        var btnSave = new Button("Save"){
+            X= Pos.Right(tbTimeout)+1
         };
         btnSave.Clicked += () => Save();
         Add(btnSave);
@@ -151,9 +154,8 @@ internal class ConsoleGuiSqlEditor : Window
 
         Add(btnOpen);
 
-        var btnClose = new Button("Clos_e")
-        {
-            X = Pos.Right(btnOpen) + 1
+        var btnClose = new Button("Clos_e"){
+            X= Pos.Right(btnOpen) +1
         };
 
 
@@ -378,6 +380,16 @@ internal class ConsoleGuiSqlEditor : Window
                 "null", "is", "drop", "database", "table", "having", "in", "join", "on", "union", "exists"
             }, StringComparer.CurrentCultureIgnoreCase);
 
+        private readonly HashSet<string> _keywords = new(new[]
+        {
+            "select", "distinct", "top", "from", "create", "CIPHER", "CLASS_ORIGIN", "CLIENT", "CLOSE", "COALESCE",
+            "CODE", "COLUMNS", "COLUMN_FORMAT", "COLUMN_NAME", "COMMENT", "COMMIT", "COMPACT", "COMPLETION",
+            "COMPRESSED", "COMPRESSION", "CONCURRENT", "CONNECT", "CONNECTION", "CONSISTENT", "CONSTRAINT_CATALOG",
+            "CONSTRAINT_SCHEMA", "CONSTRAINT_NAME", "CONTAINS", "CONTEXT", "CONTRIBUTORS", "COPY", "CPU",
+            "CURSOR_NAME", "primary", "key", "insert", "alter", "add", "update", "set", "delete", "truncate", "as",
+            "order", "by", "asc", "desc", "between", "where", "and", "or", "not", "limit", "null", "is", "drop",
+            "database", "table", "having", "in", "join", "on", "union", "exists"
+        }, StringComparer.CurrentCultureIgnoreCase);
         private readonly Attribute _blue;
         private readonly Attribute _white;
 
@@ -388,11 +400,8 @@ internal class ConsoleGuiSqlEditor : Window
 
             Autocomplete.ColorScheme = new ColorScheme
             {
-                ColorScheme = new ColorScheme
-                {
-                    Normal = Driver.MakeAttribute(Color.Black, Color.Blue),
-                    Focus = Driver.MakeAttribute(Color.Black, Color.Cyan)
-                }
+                Normal = Driver.MakeAttribute(Color.Black, Color.Blue),
+                Focus = Driver.MakeAttribute(Color.Black, Color.Cyan)
             };
 
             _blue = Driver.MakeAttribute(Color.Cyan, Color.Black);

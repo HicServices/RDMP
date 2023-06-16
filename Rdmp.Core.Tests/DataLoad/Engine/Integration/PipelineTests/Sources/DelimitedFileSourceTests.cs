@@ -682,11 +682,11 @@ old"",2001-01-05");
         source.StronglyTypeInput = true;
 
         var dt = source.GetChunk(ThrowImmediatelyDataLoadEventListener.Quiet,new GracefulCancellationToken());
-        Assert.AreEqual(typeof(Decimal), dt.Columns.Cast<DataColumn>().Single().DataType);
+        Assert.AreEqual(typeof(decimal), dt.Columns.Cast<DataColumn>().Single().DataType);
         Assert.AreEqual(DelimitedFlatFileDataFlowSource.MinimumStronglyTypeInputBatchSize, dt.Rows.Count);
             
         dt = source.GetChunk(ThrowImmediatelyDataLoadEventListener.Quiet, new GracefulCancellationToken());
-        Assert.AreEqual(typeof(Decimal), dt.Columns.Cast<DataColumn>().Single().DataType);
+        Assert.AreEqual(typeof(decimal), dt.Columns.Cast<DataColumn>().Single().DataType);
         Assert.AreEqual(2, dt.Rows.Count);
 
 

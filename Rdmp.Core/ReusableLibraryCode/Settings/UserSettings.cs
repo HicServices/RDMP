@@ -20,8 +20,7 @@ namespace Rdmp.Core.ReusableLibraryCode.Settings;
 /// </summary>
 public static class UserSettings
 {
-    private static Lazy<ISettings> implementation =
-        new(() => CreateSettings(), System.Threading.LazyThreadSafetyMode.PublicationOnly);
+    static Lazy<ISettings> implementation = new(() => CreateSettings(), System.Threading.LazyThreadSafetyMode.PublicationOnly);
 
     private static ISettings AppSettings
     {
@@ -571,7 +570,6 @@ public static class UserSettings
     }
 
     private static object _oLockUserSettings = new();
-
     public static void SetLastColumnSortForCollection(Guid controlGuid, string columnName, bool ascending)
     {
         lock (_oLockUserSettings)

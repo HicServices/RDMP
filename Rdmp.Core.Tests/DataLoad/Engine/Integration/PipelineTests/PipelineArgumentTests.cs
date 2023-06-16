@@ -27,8 +27,7 @@ public class PipelineArgumentTests : DatabaseTests
     public void TestIArgumentsForNullableTypes(Type nullableType, object value)
     {
         if (string.Equals(value as string, "now")) //sadly can't pass DateTime.Now 
-            value = new DateTime(2001, 01, 01, 3, 20,
-                11); //hey btw when you put in milliseconds into DateTime IArgument it drops them... due to DateTime.Parse? or DateTime.ToString()?
+            value = new DateTime(2001, 01, 01, 3, 20, 11); //hey btw when you put in milliseconds into DateTime IArgument it drops them... due to DateTime.Parse? or DateTime.ToString()?
 
         var p = new Pipeline(CatalogueRepository);
         var pc = new PipelineComponent(CatalogueRepository, p,

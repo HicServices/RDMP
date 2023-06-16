@@ -19,8 +19,8 @@ namespace Rdmp.Core.ReusableLibraryCode.DataAccess;
 /// </summary>
 public static class DataAccessPortal
 {
-    public static DiscoveredServer ExpectServer(IDataAccessPoint dataAccessPoint, DataAccessContext context,
-        bool setInitialDatabase = true) => GetServer(dataAccessPoint, context, setInitialDatabase);
+    private static readonly object oLockInstance = new();
+    private static DataAccessPortal _instance;
 
     public static DiscoveredDatabase ExpectDatabase(IDataAccessPoint dataAccessPoint, DataAccessContext context) =>
         GetServer(dataAccessPoint, context, true).GetCurrentDatabase();

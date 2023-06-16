@@ -67,7 +67,7 @@ e.g. /$i/$a")]
     //state variables
     protected bool haveOpened = false;
     private bool haveWrittenBundleContents = false;
-    private Stopwatch stopwatch = new();
+    Stopwatch stopwatch = new();
 
     public TableLoadInfo TableLoadInfo { get; private set; }
 
@@ -167,8 +167,8 @@ e.g. /$i/$a")]
             Open(toProcess, job, cancellationToken);
 
             //create an audit object
-            TableLoadInfo = new TableLoadInfo(_dataLoadInfo, "", OutputFile,
-                new DataSource[] { new(_request.DescribeExtractionImplementation(), DateTime.Now) }, -1);
+            TableLoadInfo = new TableLoadInfo(_dataLoadInfo, "", OutputFile, new DataSource[] { new(_request.DescribeExtractionImplementation(), DateTime.Now) }, -1);
+
         }
 
         WriteRows(toProcess, job, cancellationToken, stopwatch);

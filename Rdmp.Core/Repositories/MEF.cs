@@ -36,7 +36,7 @@ public class MEF
         var _MEFPathAsString = Path.Combine(localPath, "MEF");
         DownloadDirectory = new DirectoryInfo(_MEFPathAsString);
     }
-
+          
     private HashSet<string> TypeNotKnown = new();
 
     /// <summary>
@@ -228,8 +228,8 @@ public class MEF
         return GetTypes(typeof(T));
     }
 
-    readonly object _cachedImplementationsLock = new object();
-    readonly Dictionary<Type,Type[]> _cachedImplementations = new Dictionary<Type, Type[]>();
+    readonly object _cachedImplementationsLock = new();
+    readonly Dictionary<Type,Type[]> _cachedImplementations = new();
 
     /// <summary>
     /// Returns MEF exported Types which inherit or implement <paramref name="type"/>.  E.g. pass IAttacher to see

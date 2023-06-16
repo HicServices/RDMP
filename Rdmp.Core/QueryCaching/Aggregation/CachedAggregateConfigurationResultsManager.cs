@@ -190,11 +190,11 @@ WHERE
 
             mgrTable.Insert(new Dictionary<string, object>
             {
-                { "Committer", Environment.UserName },
-                { "AggregateConfiguration_ID", configuration.ID },
-                { "SqlExecuted", arguments.SQL.Trim() },
-                { "Operation", operation.ToString() },
-                { "TableName", tbl.GetRuntimeName() }
+                { "Committer", Environment.UserName},
+                { "AggregateConfiguration_ID", configuration.ID},
+                { "SqlExecuted", arguments.SQL.Trim()},
+                { "Operation", operation.ToString()},
+                { "TableName", tbl.GetRuntimeName()}
             });
 
             arguments.CommitTableDataCompleted(tbl);

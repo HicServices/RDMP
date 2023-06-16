@@ -28,12 +28,9 @@ internal class MetadataReportTests : UnitTests
 
         //setup delegate for returning images
         var bmp = new Image<Rgba32>(200, 200);
-        bmp.Mutate(x => x.Fill(Color.Black, new RectangleF(10.0f, 10.0f, 50.0f, 50.0f)));
-
-        reporter.RequestCatalogueImages += s =>
-        {
-            return new BitmapWithDescription[] { new(bmp, "MyPicture", "Something interesting about it") };
-        };
+        bmp.Mutate(x=>x.Fill(Color.Black,new RectangleF(10.0f,10.0f,50.0f,50.0f)));
+            
+        reporter.RequestCatalogueImages += (s) => { return new BitmapWithDescription[] {new(bmp,"MyPicture","Something interesting about it") }; };
 
         var file = reporter.GenerateWordFile(ThrowImmediatelyDataLoadEventListener.Quiet, false);
             

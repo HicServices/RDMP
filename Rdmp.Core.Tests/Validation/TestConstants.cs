@@ -15,50 +15,49 @@ public class TestConstants
     public const string _INVALID_CHI_SEX = "0204450363";
     public const string _INVALID_CHI_CHECKSUM = "0204450361";
 
-    public static readonly Dictionary<string, object> ValidChiAndConsistentSex = new Dictionary<string, object>
+    public static readonly Dictionary<string, object> ValidChiAndConsistentSex = new()
     {
         { "chi", _VALID_CHI },
         { "gender", "M" }
     };
 
-    public static readonly Dictionary<string, object> ValidChiAndInconsistentSex = new Dictionary<string, object>
+    public static readonly Dictionary<string, object> ValidChiAndInconsistentSex = new()
     {
         { "chi", _VALID_CHI },
         { "gender", "F" }
     };
 
-    public static readonly Dictionary<string, object> ValidChiAndNullSex = new Dictionary<string, object>
+    public static readonly Dictionary<string, object> ValidChiAndNullSex = new()
     {
         { "chi", _VALID_CHI },
         { "gender", null }
     };
 
-    public static readonly Dictionary<string, object> InvalidChiAndNullSex = new Dictionary<string, object>
+    public static readonly Dictionary<string, object> InvalidChiAndNullSex = new()
     {
         { "chi", _INVALID_CHI_CHECKSUM },
         { "gender", null }
     };
 
-    public static readonly Dictionary<string, object> InvalidChiAndValidSex = new Dictionary<string, object>
+    public static readonly Dictionary<string, object> InvalidChiAndValidSex = new()
     {
         { "chi", _INVALID_CHI_CHECKSUM },
         { "gender", "F" }
     };
 
-    public static readonly Dictionary<string, object> NullChiAndValidSex = new Dictionary<string, object>
+    public static readonly Dictionary<string, object> NullChiAndValidSex = new()
     {
         { "chi", null },
         { "gender", "F" }
     };
 
-    public static readonly Dictionary<string, object> NullChiAndNullSex = new Dictionary<string, object>
+    public static readonly Dictionary<string, object> NullChiAndNullSex = new()
     {
         { "chi", null },
         { "gender", null }
     };
 
     #region For testing date bounds
-
     public static readonly Dictionary<string, object> AdmissionDateOccursAfterDob = new()
     {
         { "dob", new DateTime(1977, 3, 3) },

@@ -108,9 +108,10 @@ public class GoodBadCataloguePieChartObjectCollection : PersistableObjectCollect
             { nameof(IncludeColdStorageCatalogues), IncludeColdStorageCatalogues.ToString() },
             { nameof(IncludeProjectSpecificCatalogues), IncludeProjectSpecificCatalogues.ToString() },
 
-            { nameof(IncludeNonExtractableCatalogueItems), IncludeNonExtractableCatalogueItems.ToString() },
-            { nameof(IncludeInternalCatalogueItems), IncludeInternalCatalogueItems.ToString() },
-            { nameof(IncludeDeprecatedCatalogueItems), IncludeDeprecatedCatalogueItems.ToString() }
+            {nameof(IncludeNonExtractableCatalogueItems), IncludeNonExtractableCatalogueItems.ToString()},
+            {nameof(IncludeInternalCatalogueItems), IncludeInternalCatalogueItems.ToString()},
+            {nameof(IncludeDeprecatedCatalogueItems), IncludeDeprecatedCatalogueItems.ToString()}
+
         });
 
     public override void LoadExtraText(string s)

@@ -130,7 +130,7 @@ public partial class ArgumentValueComboBoxUI : UserControl, IArgumentValueUI
             {
                 TaskDescription = $"Choose a new value for '{_args.Required.Name}'",
                 AllowSelectingNull = true
-            }, _objectsForComboBox, out var selected))
+            }, _objectsForComboBox,out var selected))
         {
             if (selected == null)
             {

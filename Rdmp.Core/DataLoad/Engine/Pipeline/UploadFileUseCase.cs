@@ -38,9 +38,9 @@ public sealed class UploadFileUseCase : PipelineUseCase
 
     private UploadFileUseCase() : base(new[]
     {
-        typeof(FlatFileToLoad),
-        typeof(DiscoveredDatabase),
-        typeof(IBasicActivateItems)
+        typeof (FlatFileToLoad),
+        typeof (DiscoveredDatabase),
+        typeof (IBasicActivateItems)
     })
     {
         GenerateContext();

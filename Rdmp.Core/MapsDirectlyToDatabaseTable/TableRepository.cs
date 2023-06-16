@@ -685,7 +685,7 @@ public abstract class TableRepository : ITableRepository
     }
 
     private object ongoingConnectionsLock = new();
-    private readonly Dictionary<Thread, IManagedConnection> ongoingConnections = new();
+    private readonly Dictionary<Thread,IManagedConnection> ongoingConnections = new();
     private readonly Dictionary<Thread, IManagedTransaction> ongoingTransactions = new();
 
 
@@ -805,8 +805,8 @@ public abstract class TableRepository : ITableRepository
         return (DateTime)o;
     }
 
-    private Dictionary<Type, bool> _knownSupportedTypes = new();
-    private object oLockKnownTypes = new();
+    Dictionary<Type,bool> _knownSupportedTypes = new();
+    object oLockKnownTypes = new();
 
     public bool SupportsObjectType(Type type)
     {

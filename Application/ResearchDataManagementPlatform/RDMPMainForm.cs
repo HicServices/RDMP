@@ -86,8 +86,8 @@ public partial class RDMPMainForm : RDMPForm
             new LicenseUI().ShowDialog();
     }
 
-    private WindowManager _windowManager;
-    private readonly RefreshBus _refreshBus = new();
+    WindowManager _windowManager;
+    readonly RefreshBus _refreshBus = new();
     private FileInfo _persistenceFile;
     private ICheckNotifier _globalErrorCheckNotifier;
     private string _version;

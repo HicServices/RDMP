@@ -395,12 +395,10 @@ public partial class ValidationSetupUI : ValidationSetupForm_Design, ISaveableUI
 
     private void lblPickTimePeriodColumn_Click(object sender, EventArgs e)
     {
-        if (Activator.SelectObject(new DialogArgs
-            {
-                TaskDescription =
-                    "Which date column in the Catalogue should provide the time element of the data when generating graphs, DQE etc?",
-                AllowSelectingNull = true
-            }, _catalogue.GetAllExtractionInformation(ExtractionCategory.Any), out var selected))
+        if(Activator.SelectObject(new DialogArgs { 
+               TaskDescription = "Which date column in the Catalogue should provide the time element of the data when generating graphs, DQE etc?",
+               AllowSelectingNull = true
+           }, _catalogue.GetAllExtractionInformation(ExtractionCategory.Any),out var selected))
         {
             cbxTimePeriodColumn.SelectedItem = selected;
             SetTimePeriod(selected);
@@ -411,8 +409,7 @@ public partial class ValidationSetupUI : ValidationSetupForm_Design, ISaveableUI
     {
         if (Activator.SelectObject(new DialogArgs
             {
-                TaskDescription =
-                    "Which column in the Catalogue provides the most useful subdivision of the data when viewing in DQE? The column should have a relatively small number of unique values e.g. healthboard.",
+                TaskDescription = "Which column in the Catalogue provides the most useful subdivision of the data when viewing in DQE? The column should have a relatively small number of unique values e.g. healthboard.",
                 AllowSelectingNull = true
             }, _catalogue.GetAllExtractionInformation(ExtractionCategory.Any), out var selected))
         {

@@ -244,7 +244,6 @@ public class TestObjectNoRequirements : IDataFlowComponent<DataTable>
 public class TestObject_Suspicious : IDataFlowComponent<DataTable>, IPipelineRequirement<object>
 {
     public object Object { get; set; }
-
     public DataTable ProcessPipelineData(DataTable toProcess, IDataLoadEventListener listener,
         GracefulCancellationToken cancellationToken) =>
         throw new NotImplementedException();
@@ -269,7 +268,6 @@ public class TestObject_ExtraSuspicious : IDataFlowComponent<DataTable>, IPipeli
     IPipelineRequirement<string>
 {
     public object Object { get; set; }
-
     public DataTable ProcessPipelineData(DataTable toProcess, IDataLoadEventListener listener,
         GracefulCancellationToken cancellationToken) =>
         throw new NotImplementedException();

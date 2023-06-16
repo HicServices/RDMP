@@ -89,8 +89,7 @@ public class ExecuteCommandCreateNewCohortIdentificationConfiguration : BasicCom
                 proj = (Project)BasicActivator.SelectOne(new DialogArgs
                 {
                     WindowTitle = "Associate with Project",
-                    TaskDescription =
-                        "Do you want to associate this new query with a Project? if not select Null or Cancel.",
+                    TaskDescription = "Do you want to associate this new query with a Project? if not select Null or Cancel.",
                     AllowSelectingNull = true
                 }, projects);
         }

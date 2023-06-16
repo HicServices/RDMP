@@ -45,7 +45,7 @@ public class TableInfo : DatabaseEntity, ITableInfo, INamed, IHasFullyQualifiedN
     /// Cached results of <see cref="GetQuerySyntaxHelper"/>
     /// </summary>
     private static ConcurrentDictionary<DatabaseType, IQuerySyntaxHelper> _cachedSyntaxHelpers = new();
-
+                
     #region Database Properties
 
     private string _name;

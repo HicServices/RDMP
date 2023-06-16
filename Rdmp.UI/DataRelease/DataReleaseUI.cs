@@ -60,8 +60,8 @@ public partial class DataReleaseUI : DataReleaseUI_Design
     private IPipelineSelectionUI _pipelineSelectionUI1;
     private IMapsDirectlyToDatabaseTable[] _globals;
     private DataExportChildProvider _childProvider;
-
-    private ArbitraryFolderNode _globalsNode = new(ExtractionDirectory.GLOBALS_DATA_NAME, -500);
+        
+    private ArbitraryFolderNode _globalsNode = new(ExtractionDirectory.GLOBALS_DATA_NAME,-500);
 
 
     private bool _isExecuting;
