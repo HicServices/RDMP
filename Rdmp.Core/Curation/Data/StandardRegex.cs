@@ -95,17 +95,15 @@ public class StandardRegex : DatabaseEntity, ICheckable
 
     public void Check(ICheckNotifier notifier)
     {
-        if(!string.IsNullOrWhiteSpace(Regex))
-            try
-            {
-                new Regex(Regex);
-                notifier.OnCheckPerformed(new CheckEventArgs("Regex is valid", CheckResult.Success));
-            }
-            catch (ArgumentException ex)
-            {
-                notifier.OnCheckPerformed(new CheckEventArgs("Regex is invalid", CheckResult.Fail, ex));
-            }
-           
-
+        if (string.IsNullOrWhiteSpace(Regex)) return;
+        try
+        {
+            _=new Regex(Regex);
+            notifier.OnCheckPerformed(new CheckEventArgs("Regex is valid", CheckResult.Success));
+        }
+        catch (ArgumentException ex)
+        {
+            notifier.OnCheckPerformed(new CheckEventArgs("Regex is invalid", CheckResult.Fail, ex));
+        }
     }
 }
