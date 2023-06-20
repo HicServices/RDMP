@@ -53,7 +53,7 @@
       <IncludeAssets>runtime; build; native; contentfiles; analyzers</IncludeAssets>
     </PackageReference>
     <PackageReference Include="System.Security.Permissions" Version="7.0.0" />
-    <PackageReference Include="System.Resources.Extensions" Version="4.6.0" />
+    <PackageReference Include="System.Resources.Extensions" Version="7.0.0" />
     <PackageReference Include="System.Threading.AccessControl" Version="7.0.1" />
     <PackageReference Include="VPKSoft.ScintillaLexers.NET" Version="1.1.16" />
     <PackageReference Include="WeCantSpell.Hunspell" Version="4.0.0" />
