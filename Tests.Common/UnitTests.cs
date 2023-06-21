@@ -251,7 +251,7 @@ public class UnitTests
 
         if (typeof(T) == typeof(ObjectImport))
         {
-            return (T)(object)WhenIHaveA<ObjectExport>(repository);
+            return (T)(object)WhenIHaveA(repository,out ShareManager _);
         }
             
         if (typeof (T) == typeof(ObjectImport))
@@ -797,22 +797,16 @@ public class UnitTests
     /// <returns></returns>
     public IEnumerable<DatabaseEntity> WhenIHaveAll()
     {
-        var types = typeof(Catalogue).Assembly.GetTypes()
-            .Where(t => t != null && typeof(DatabaseEntity).IsAssignableFrom(t) && !t.IsAbstract && !t.IsInterface)
-            .ToArray();
-
         var methodWhenIHaveA = GetWhenIHaveAMethod();
-
+        var repo = new object[] { Repository };
+        var types = typeof(Catalogue).Assembly.GetTypes()
+            .Where(t => !t.Name.StartsWith("Spontaneous") && !SkipTheseTypes.Contains(t.Name) && typeof (DatabaseEntity).IsAssignableFrom(t) && !typeof(SpontaneousObject).IsAssignableFrom(t) && !t.IsAbstract && !t.IsInterface);
+            
         foreach (var t in types)
         {
-            //ignore these types too
-            if (SkipTheseTypes.Contains(t.Name) || t.Name.StartsWith("Spontaneous") ||
-                typeof(SpontaneousObject).IsAssignableFrom(t))
-                continue;
-
+            Console.Error.WriteLine("WhenIHaveAll: {0}", t.Name);
             //ensure that the method supports the Type
-            var genericWhenIHaveA = methodWhenIHaveA.MakeGenericMethod(t);
-            yield return (DatabaseEntity)genericWhenIHaveA.Invoke(this, null);
+            yield return (DatabaseEntity)methodWhenIHaveA.MakeGenericMethod(t).Invoke(this, repo);
         }
     }
 
@@ -832,8 +826,6 @@ public class UnitTests
 
     private MethodInfo GetWhenIHaveAMethod()
     {
-        var methods =
-            typeof(UnitTests).GetMethods(BindingFlags.Public | BindingFlags.NonPublic | BindingFlags.Instance);
-        return methods.Single(m => m.Name.Equals(nameof(WhenIHaveA)) && !m.GetParameters().Any());
+        return typeof(UnitTests).GetMethod(nameof(WhenIHaveA), 1, new[] { typeof(MemoryDataExportRepository) });
     }
 }
