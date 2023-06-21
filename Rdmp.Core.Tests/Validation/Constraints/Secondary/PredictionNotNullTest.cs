@@ -38,7 +38,7 @@ internal class PredictionNotNullTest
         var p = new Prediction(new ValuePredictsOtherValueNullity(), "someColumn");
         var otherCols = new object[] { "not null" };
         var otherColsNames = new string[] { "someColumn" };
-        StringAssert.StartsWith("Nullness did not match, when one value is null, the other mus", p.Validate(null, otherCols, otherColsNames)?.Message);
+        StringAssert.StartsWith("Nullity did not match, when one value is null, the other mus", p.Validate(null, otherCols, otherColsNames)?.Message);
     }
 
     [Test]

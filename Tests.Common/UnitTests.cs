@@ -474,7 +474,7 @@ public class UnitTests
             File.WriteAllText(file,"omg rows");
                 
             var sds = WhenIHaveA<SelectedDataSets>(repository);
-            new CumulativeExtractionResults(repository,sds.ExtractionConfiguration,sds.ExtractableDataSet,"SELECT * FROM ANYWHERE");
+            _=new CumulativeExtractionResults(repository,sds.ExtractionConfiguration,sds.ExtractableDataSet,"SELECT * FROM ANYWHERE");
             var potential = new FlatFileReleasePotential(new RepositoryProvider(repository), sds);
 
             return (T)(object)new ReleaseLog(repository,
@@ -637,7 +637,7 @@ public class UnitTests
         otherEi = new ExtractionInformation(repository, otherCi, otherCol, otherCol.Name);
 
         var config = new AggregateConfiguration(repository, cata, "My graph");
-        new AggregateDimension(repository, otherEi, config);
+        _=new AggregateDimension(repository, otherEi, config);
         return config;
     }
 
@@ -673,8 +673,6 @@ public class UnitTests
         MEF = new MEF();
         MEF.Setup(new SafeDirectoryCatalog(new IgnoreAllErrorsCheckNotifier(),TestContext.CurrentContext.TestDirectory));
         Repository.CatalogueRepository.MEF = MEF;
-
-        Validator.RefreshExtraTypes(MEF.SafeDirectoryCatalog,new ThrowImmediatelyCheckNotifier());
     }
 
     //Fields that can be safely ignored when comparing an object created in memory with one created into the database.
@@ -727,20 +725,20 @@ public class UnitTests
                 Assert.Fail("{0} Property {1} could not be read from Database:\r\n{2}", dbObj.GetType().Name, property.Name, e);
             }
 
-            if(memValue is IMapsDirectlyToDatabaseTable)
+            if(memValue is IMapsDirectlyToDatabaseTable table)
             {
-                AssertAreEqual((IMapsDirectlyToDatabaseTable)memValue, (IMapsDirectlyToDatabaseTable)dbValue,false);
+                AssertAreEqual(table, (IMapsDirectlyToDatabaseTable)dbValue,false);
                 return;
             }
-            if (memValue is IEnumerable<IMapsDirectlyToDatabaseTable>)
+            if (memValue is IEnumerable<IMapsDirectlyToDatabaseTable> tables)
             {
-                AssertAreEqual((IEnumerable<IMapsDirectlyToDatabaseTable>)memValue, (IEnumerable<IMapsDirectlyToDatabaseTable>)dbValue,false);
+                AssertAreEqual(tables, (IEnumerable<IMapsDirectlyToDatabaseTable>)dbValue,false);
                 return;
             }
 
-            if (memValue is DateTime && dbValue is DateTime)
-                if (!AreAboutTheSameTime((DateTime) memValue, (DateTime) dbValue))
-                    Assert.Fail("Dates differed, {0} Property {1} differed Memory={2} and Db={3}",memObj.GetType().Name, property.Name, memValue, dbValue);
+            if (memValue is DateTime memTime && dbValue is DateTime dbTime)
+                if (!AreAboutTheSameTime(memTime, dbTime))
+                    Assert.Fail("Dates differed, {0} Property {1} differed Memory={2} and Db={3}",memObj.GetType().Name, property.Name, memTime, dbTime);
                 else
                     return;
 

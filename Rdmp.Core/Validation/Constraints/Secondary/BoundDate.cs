@@ -28,15 +28,18 @@ public class BoundDate : Bound
         
     public override ValidationFailure Validate(object value, object[] otherColumns, string[] otherColumnNames)
     {
-        if(value == null)
-            return null;
-
-        if (value is string stringValue)
+        switch (value)
         {
-            value = SafeConvertToDate(stringValue);
-            
-            if (!((DateTime?)value).HasValue)
+            case null:
                 return null;
+            case string stringValue:
+            {
+                value = SafeConvertToDate(stringValue);
+            
+                if (!((DateTime?)value).HasValue)
+                    return null;
+                break;
+            }
         }
 
         var d = (DateTime)value;
@@ -52,7 +55,9 @@ public class BoundDate : Bound
 
     private bool IsWithinRange(DateTime d)
     {
-        return Inclusive ? d >= Lower && d <= Upper : d > Lower && d < Upper;
+        if (Inclusive)
+            return !(d<Lower) && !(d>Upper);
+        return !(d<=Lower) && !(d>=Upper);
     }
 
     private bool IsWithinRange(DateTime d, object[] otherColumns, string[] otherColumnNames)
@@ -88,31 +93,14 @@ public class BoundDate : Bound
         if (lookupFieldNamed == DBNull.Value)
             return null;
 
-        if (lookupFieldNamed is DateTime)
-            return (DateTime)lookupFieldNamed;
-
-        if (lookupFieldNamed is string)
+        return lookupFieldNamed switch
         {
-            if (string.IsNullOrWhiteSpace(lookupFieldNamed as string))
-                return null; 
-            else
-                try
-                {
-                    lookupFieldNamed = DateTime.Parse(lookupFieldNamed as string);
-                }
-                catch (InvalidCastException )
-                {
-                    return null; //it's not our responsibility to look for malformed dates in this constraint (leave that to primary constraint date)
-                }
-                catch (FormatException )
-                {
-                    return null;
-                }
-
-            return (DateTime)lookupFieldNamed;
-        }
-
-        throw new ArgumentException($"Did not know how to deal with object of type {lookupFieldNamed.GetType().Name}");
+            DateTime dateTime => dateTime,
+            string named when string.IsNullOrWhiteSpace(named) => null,
+            string named => DateTime.TryParse(named, out var result) ? result : null,
+            _ => throw new ArgumentException(
+                $"Did not know how to deal with object of type {lookupFieldNamed.GetType().Name}")
+        };
     }
 
     private string CreateViolationReportUsingDates(DateTime d)

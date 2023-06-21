@@ -49,7 +49,7 @@ Start out by overriding the ToString method to return the text you want to appea
 ```csharp
 namespace Rdmp.Core.Providers.Nodes
 {
-    class FrozenExtractionConfigurationsNode
+    private class FrozenExtractionConfigurationsNode
     {
         public override string ToString()
         {
@@ -65,7 +65,7 @@ Assuming you dont have a SingletonNode then you should add constructor arguments
 
 <!--- df7d2bb4cd6145719f933f6f15218b1a --->
 ```csharp
-class FrozenExtractionConfigurationsNode
+private class FrozenExtractionConfigurationsNode
 {
     public Project Project { get; set; }
 
@@ -85,7 +85,7 @@ Finally we need to implement 'Equality members', this ensures that Object List V
 
 <!--- a93fd8b3d1fb4ad8975ef8cf9c384236 --->
 ```csharp
-class FrozenExtractionConfigurationsNode
+private class FrozenExtractionConfigurationsNode
 {
 	public Project Project { get; set; }
 
@@ -108,13 +108,13 @@ class FrozenExtractionConfigurationsNode
 	{
 		if (ReferenceEquals(null, obj)) return false;
 		if (ReferenceEquals(this, obj)) return true;
-		if (obj.GetType() != this.GetType()) return false;
+		if (obj.GetType() != GetType()) return false;
 		return Equals((FrozenExtractionConfigurationsNode) obj);
 	}
 
 	public override int GetHashCode()
 	{
-		return (Project != null ? Project.GetHashCode() : 0);
+		return Project != null ? Project.GetHashCode() : 0;
 	}
 }
 ```
