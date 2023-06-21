@@ -212,7 +212,17 @@ public class DatabaseTests
     {
         var mainDb = cataRepo.DiscoveredServer.ExpectDatabase("master");
 
-        if (HaveTriedCreatingTestDatabases || !mainDb.Server.Exists())
+        bool exists;
+        try
+        {
+            exists = mainDb.Server.Exists();
+        }
+        catch (OperationCanceledException e)
+        {
+            // TODO: JS 2023-06-21 Temporary workaround for FAnsi not catching OperationCanceledException in TestConnection
+            Console.WriteLine(e);
+        }
+        if (HaveTriedCreatingTestDatabases || !exists)
         {
             Assert.Inconclusive("Test database server does not exist.  You must install SQL Server LocalDb or Sql Server Express to run DatabaseTests. Or update TestDatabases.txt to point to your existing server.");
         }
