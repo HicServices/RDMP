@@ -23,19 +23,21 @@ namespace Rdmp.Core.Tests.DataExport.Cohort;
 
 public class CommittingNewCohortsTests : TestsRequiringACohort
 {
-    private string filename;
-    private string projName = "MyProj";
+    private string _filename;
+    private const string ProjName = "MyProj";
 
     [SetUp]
     protected override void SetUp()
     {
         base.SetUp();
 
-        EmptyCohortTables();
+        using var con = _cohortDatabase.Server.GetConnection();
+        con.Open();
+        EmptyCohortTables(con);
 
-        filename = Path.Combine(TestContext.CurrentContext.TestDirectory, "CommittingNewCohorts.csv");
+        _filename = Path.Combine(TestContext.CurrentContext.TestDirectory, "CommittingNewCohorts.csv");
 
-        var sw = new StreamWriter(filename);
+        var sw = new StreamWriter(_filename);    
         sw.WriteLine("PrivateID,ReleaseID,SomeHeader");
         sw.WriteLine("Priv_1111,Pub_1111,Smile buddy");
         sw.WriteLine("Priv_2222,Pub_2222,Your on tv");
@@ -47,7 +49,7 @@ public class CommittingNewCohortsTests : TestsRequiringACohort
     [Test]
     public void CommittingNewCohortFile_IDPopulated_Throws()
     {
-        var proj = new Project(DataExportRepository, projName);
+        var proj = new Project(DataExportRepository, ProjName);
 
         var request = new CohortCreationRequest(proj,
             new CohortDefinition(511, "CommittingNewCohorts", 1, 999, _externalCohortTable), DataExportRepository,
@@ -61,7 +63,7 @@ public class CommittingNewCohortsTests : TestsRequiringACohort
     [Test]
     public void CommittingNewCohortFile_ProjectNumberNumberMissing()
     {
-        var proj = new Project(DataExportRepository, projName);
+        var proj = new Project(DataExportRepository, ProjName);
 
         var request = new CohortCreationRequest(proj,
             new CohortDefinition(null, "CommittingNewCohorts", 1, 999, _externalCohortTable), DataExportRepository,
@@ -75,7 +77,7 @@ public class CommittingNewCohortsTests : TestsRequiringACohort
     [Test]
     public void CommittingNewCohortFile_ProjectNumberMismatch()
     {
-        var proj = new Project(DataExportRepository, projName) { ProjectNumber = 321 };
+        var proj = new Project(DataExportRepository, ProjName) {ProjectNumber = 321};
         proj.SaveToDatabase();
 
         var request = new CohortCreationRequest(proj,
@@ -91,7 +93,7 @@ public class CommittingNewCohortsTests : TestsRequiringACohort
     {
         var listener = ThrowImmediatelyDataLoadEventListener.Quiet;
 
-        var proj = new Project(DataExportRepository, projName)
+        var proj = new Project(DataExportRepository, ProjName)
         {
             ProjectNumber = 999
         };
@@ -107,10 +109,9 @@ public class CommittingNewCohortsTests : TestsRequiringACohort
 
         source.Separator = ",";
         source.StronglyTypeInput = true;
-
-        var pipeline = new DataFlowPipelineEngine<DataTable>((DataFlowPipelineContext<DataTable>)request.GetContext(),
-            source, destination, listener);
-        pipeline.Initialize(new FlatFileToLoad(new FileInfo(filename)), request);
+            
+        var pipeline = new DataFlowPipelineEngine<DataTable>((DataFlowPipelineContext<DataTable>) request.GetContext(),source,destination,listener);
+        pipeline.Initialize(new FlatFileToLoad(new FileInfo(_filename)),request);
         pipeline.ExecutePipeline(new GracefulCancellationToken());
 
         //there should be a new ExtractableCohort now
@@ -127,7 +128,7 @@ public class CommittingNewCohortsTests : TestsRequiringACohort
     [TestCase(false)]
     public void DeprecateOldCohort(bool deprecate)
     {
-        var proj = new Project(DataExportRepository, projName)
+        var proj = new Project(DataExportRepository, ProjName)
         {
             ProjectNumber = 999
         };
@@ -169,7 +170,7 @@ public class CommittingNewCohortsTests : TestsRequiringACohort
     [TestCase(false)]
     public void MigrateUsages(bool migrate)
     {
-        var proj = new Project(DataExportRepository, projName)
+        var proj = new Project(DataExportRepository, ProjName)
         {
             ProjectNumber = 999
         };
