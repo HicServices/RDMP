@@ -433,7 +433,7 @@ public partial class RDMPCollectionCommonFunctionality : IRefreshBusSubscriber
         var p = new BackColorProvider();
         var ctrl = new Control
         {
-            BackColor = p.GetColor(collection),
+            BackColor = BackColorProvider.GetColor(collection),
             Location = Tree.Location with { Y = tree.Location.Y - indicatorHeight },
             Height = indicatorHeight,
             Width = Tree.Width
