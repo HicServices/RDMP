@@ -171,7 +171,7 @@ public class UnitTests
 
         if (typeof(T) == typeof(ANOTable))
         {
-            return (T)(object)WhenIHaveA<ANOTable>(repository);
+            return (T)(object)WhenIHaveA(repository,out ExternalDatabaseServer _);
         }
 
         if (typeof(T) == typeof(LoadMetadata))

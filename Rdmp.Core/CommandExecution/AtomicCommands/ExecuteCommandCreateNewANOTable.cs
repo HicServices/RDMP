@@ -36,18 +36,15 @@ public class ExecuteCommandCreateNewANOTable : BasicCommandExecution, IAtomicCom
     {
         base.Execute();
 
-        if (TypeText("ANO Concept Name", "Name", 500, null, out var name))
-            if (TypeText("Type Concept Suffix", "Suffix", 5, null, out var suffix))
-            {
-                if (!name.StartsWith("ANO"))
-                    name = $"ANO{name}";
+        if (!TypeText("ANO Concept Name", "Name", 500, null, out var name)) return;
+        if (!TypeText("Type Concept Suffix", "Suffix", 5, null, out var suffix)) return;
+        if(!name.StartsWith("ANO"))
+            name = $"ANO{name}";
 
-                var s = suffix.Trim('_');
+        var s = suffix.Trim('_');
 
-                var anoTable = new ANOTable(BasicActivator.RepositoryLocator.CatalogueRepository,
-                    (ExternalDatabaseServer)_anoStoreServer, name, s);
-                Publish(anoTable);
-                Activate(anoTable);
-            }
+        var anoTable = new ANOTable(BasicActivator.RepositoryLocator.CatalogueRepository, (ExternalDatabaseServer) _anoStoreServer,name,s);
+        Publish(anoTable);
+        Activate(anoTable);
     }
 }
