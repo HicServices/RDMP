@@ -444,8 +444,18 @@ public class SafeDirectoryCatalog
         BadAssembliesDictionary = new Dictionary<string, Exception>();
 
         foreach (var assembly in AppDomain.CurrentDomain.GetAssemblies())
-        foreach (var type in assembly.GetTypes())
-            AddType(type);
+        {
+            try
+            {
+                foreach (var type in assembly.GetTypes())
+                    AddType(type);
+            }
+            catch (Exception e)
+            {
+                Console.WriteLine(e);
+                throw;
+            }
+        }
         var files = new HashSet<FileInfo>();
 
         foreach (var directory in directories)

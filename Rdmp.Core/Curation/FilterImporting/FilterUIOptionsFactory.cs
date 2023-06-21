@@ -19,6 +19,9 @@ public class FilterUIOptionsFactory
 {
     public static FilterUIOptions Create(IFilter filter)
     {
+        var deployedExtractionFilter = filter as DeployedExtractionFilter;
+        var masterCatalogueFilter = filter as ExtractionFilter;
+
         if (filter is AggregateFilter aggregateFilter)
             return new AggregateFilterUIOptions(aggregateFilter);
 

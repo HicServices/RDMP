@@ -385,8 +385,7 @@ public partial class SelectDialog<T> : Form, IVirtualListDataSource where T : cl
                     Text = $"{t.Name} ({shortCode})"
                 };
 
-                b.BackgroundImage =
-                    BackColorProvider.GetBackgroundImage(b.Size, EasyFilterTypesAndAssociatedCollections[t]);
+                b.BackgroundImage = BackColorProvider.GetBackgroundImage(b.Size, EasyFilterTypesAndAssociatedCollections[t]);
                 b.CheckedChanged += CollectionCheckedChanged;
 
                 toolStrip1.Items.Add(b);

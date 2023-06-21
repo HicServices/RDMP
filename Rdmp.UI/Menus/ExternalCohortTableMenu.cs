@@ -16,7 +16,7 @@ internal class ExternalCohortTableMenu : RDMPContextMenuStrip
     public ExternalCohortTableMenu(RDMPContextMenuStripArgs args, ExternalCohortTable externalCohortTable): base(args, externalCohortTable)
     {
         if (args.Masquerader is CohortSourceUsedByProjectNode projectOnlyNode)
-            Add(new ExecuteCommandShowSummaryOfCohorts(_activator, projectOnlyNode) { Weight = -99.9f });
+            Add(new ExecuteCommandShowSummaryOfCohorts(_activator, projectOnlyNode) { Weight = -99.9f});
         else
             Add(new ExecuteCommandShowSummaryOfCohorts(_activator, externalCohortTable) { Weight = -99.9f });
     }
