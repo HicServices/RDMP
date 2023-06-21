@@ -212,7 +212,7 @@ public class DatabaseTests
     {
         var mainDb = cataRepo.DiscoveredServer.ExpectDatabase("master");
 
-        bool exists;
+        var exists = false;
         try
         {
             exists = mainDb.Server.Exists();
