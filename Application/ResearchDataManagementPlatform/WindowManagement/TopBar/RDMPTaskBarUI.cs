@@ -35,22 +35,22 @@ public partial class RDMPTaskBarUI : UserControl
 
         btnHome.Image = FamFamFamIcons.application_home.ImageToBitmap();
         btnCatalogues.Image = CatalogueIcons.Catalogue.ImageToBitmap();
-        btnCatalogues.BackgroundImage = provider.GetBackgroundImage(btnCatalogues.Size, RDMPCollection.Catalogue);
+        btnCatalogues.BackgroundImage = BackColorProvider.GetBackgroundImage(btnCatalogues.Size, RDMPCollection.Catalogue);
 
         btnCohorts.Image = CatalogueIcons.CohortIdentificationConfiguration.ImageToBitmap();
-        btnCohorts.BackgroundImage = provider.GetBackgroundImage(btnCohorts.Size, RDMPCollection.Cohort);
+        btnCohorts.BackgroundImage = BackColorProvider.GetBackgroundImage(btnCohorts.Size, RDMPCollection.Cohort);
 
         btnSavedCohorts.Image = CatalogueIcons.AllCohortsNode.ImageToBitmap();
-        btnSavedCohorts.BackgroundImage = provider.GetBackgroundImage(btnSavedCohorts.Size, RDMPCollection.SavedCohorts);
+        btnSavedCohorts.BackgroundImage = BackColorProvider.GetBackgroundImage(btnSavedCohorts.Size, RDMPCollection.SavedCohorts);
 
         btnDataExport.Image = CatalogueIcons.Project.ImageToBitmap();
-        btnDataExport.BackgroundImage = provider.GetBackgroundImage(btnDataExport.Size, RDMPCollection.DataExport);
+        btnDataExport.BackgroundImage = BackColorProvider.GetBackgroundImage(btnDataExport.Size, RDMPCollection.DataExport);
 
         btnTables.Image = CatalogueIcons.TableInfo.ImageToBitmap();
-        btnTables.BackgroundImage = provider.GetBackgroundImage(btnTables.Size, RDMPCollection.Tables);
+        btnTables.BackgroundImage = BackColorProvider.GetBackgroundImage(btnTables.Size, RDMPCollection.Tables);
 
         btnLoad.Image = CatalogueIcons.LoadMetadata.ImageToBitmap();
-        btnLoad.BackgroundImage = provider.GetBackgroundImage(btnLoad.Size, RDMPCollection.DataLoad);
+        btnLoad.BackgroundImage = BackColorProvider.GetBackgroundImage(btnLoad.Size, RDMPCollection.DataLoad);
             
         btnFavourites.Image = CatalogueIcons.Favourite.ImageToBitmap();
         btnDeleteLayout.Image = FamFamFamIcons.delete.ImageToBitmap();
@@ -189,7 +189,7 @@ public partial class RDMPTaskBarUI : UserControl
         else if (button == btnFavourites)
             collectionToToggle = RDMPCollection.Favourites;
         else
-            throw new ArgumentOutOfRangeException();
+            throw new ArgumentOutOfRangeException(nameof(button));
 
         return collectionToToggle;
     }
@@ -198,12 +198,11 @@ public partial class RDMPTaskBarUI : UserControl
     private void cbx_DropDownClosed(object sender, EventArgs e)
     {
         var cbx = (ToolStripComboBox)sender;
-        var toOpen = cbx.SelectedItem as INamed;
 
         if (ReferenceEquals(cbx.SelectedItem, CreateNewLayout))
             AddNewLayout();
 
-        if (toOpen != null)
+        if (cbx.SelectedItem is INamed toOpen)
         {
             var cmd = new ExecuteCommandActivate(_manager.ActivateItems, toOpen);
             cmd.Execute();
@@ -255,8 +254,7 @@ public partial class RDMPTaskBarUI : UserControl
         else
             throw new Exception("Unexpected sender");
 
-        var d = cbx.SelectedItem as IDeleteable;
-        if (d != null)
+        if (cbx.SelectedItem is IDeleteable d)
         {
             _manager.ActivateItems.DeleteWithConfirmation(d);
             ReCreateDropDowns();
@@ -265,8 +263,7 @@ public partial class RDMPTaskBarUI : UserControl
 
     private void btnSaveWindowLayout_Click(object sender, EventArgs e)
     {
-        var layout = cbxLayouts.SelectedItem as WindowLayout;
-        if(layout != null)
+        if(cbxLayouts.SelectedItem is WindowLayout layout)
         {
             var xml = _manager.MainForm.GetCurrentLayoutXml();
 
