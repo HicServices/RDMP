@@ -207,7 +207,7 @@ internal class MarkdownCodeBlockTests
         {
             #region cae13dde1de14f5cac984330a222c311
 
-            private class ProposeExecutionWhenTargetIsPipeline:RDMPCommandExecutionProposal<Pipeline>
+            public class ProposeExecutionWhenTargetIsPipeline:RDMPCommandExecutionProposal<Pipeline>
             {
                 public ProposeExecutionWhenTargetIsPipeline(IActivateItems itemActivator) : base(itemActivator)
                 {
@@ -273,8 +273,8 @@ internal class MarkdownCodeBlockTests
             public override ICommandExecution ProposeExecution(ICombineToMakeCommand cmd, Pipeline target,
                 InsertOption insertOption = InsertOption.Default)
             {
-                if (cmd is CatalogueCombineable sourceCatalogueCombineable)
-                    return new ExecuteCommandDelete(ItemActivator, sourceCatalogueCombineable.Catalogue);
+                if(cmd is CatalogueCombineable sourceCatalogueCombineable)
+                    return new ExecuteCommandDelete(ItemActivator,sourceCatalogueCombineable.Catalogue);
 
                 return null;
             }

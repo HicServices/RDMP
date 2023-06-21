@@ -178,7 +178,7 @@ public class ItemValidator
     /// <returns>a String</returns>
     public string SaveToXml(bool indent = true)
     {
-        _serializer ??= new XmlSerializer(typeof(ItemValidator), Validator.GetExtraTypes());
+        _serializer ??= new XmlSerializer(typeof(ItemValidator), Validator.GetExtraTypes().ToArray());
 
         var sb = new StringBuilder();
 

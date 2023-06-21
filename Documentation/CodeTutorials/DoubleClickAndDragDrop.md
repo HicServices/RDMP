@@ -31,7 +31,7 @@ Create a new class called `ProposeExecutionWhenTargetIs<TypeName>` in namespace 
 
 <!--- cae13dde1de14f5cac984330a222c311 --->
 ```csharp
-private class ProposeExecutionWhenTargetIsPipeline : RDMPCommandExecutionProposal<Pipeline>
+public class ProposeExecutionWhenTargetIsPipeline:RDMPCommandExecutionProposal<Pipeline>
 {
     public ProposeExecutionWhenTargetIsPipeline(IActivateItems itemActivator) : base(itemActivator)
     {
@@ -94,8 +94,8 @@ To add support for dropping an object with an existing `ICombineToMakeCommand` y
 ```csharp
 public override ICommandExecution ProposeExecution(ICombineToMakeCommand cmd, Pipeline target, InsertOption insertOption = InsertOption.Default)
 {
-	if (cmd is CatalogueCombineable sourceCatalogueCombineable)
-		return new ExecuteCommandDelete(ItemActivator, sourceCatalogueCombineable.Catalogue);
+	if(cmd is CatalogueCombineable sourceCatalogueCombineable)
+		return new ExecuteCommandDelete(ItemActivator,sourceCatalogueCombineable.Catalogue);
 
 	return null;
 }

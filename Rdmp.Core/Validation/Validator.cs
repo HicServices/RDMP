@@ -155,7 +155,7 @@ public class Validator
 
 
     /// <summary>
-    /// Validate against the suppled domain object, which takes the form of a Dictionary.
+    /// Validate against the supplied domain object, which takes the form of a Dictionary.
     /// </summary>
     /// <param name="d"></param>
     public ValidationFailure Validate(Dictionary<string, object> d)
@@ -169,7 +169,7 @@ public class Validator
     private static XmlSerializer _serializer;
 
     /// <summary>
-    /// Instatiate a Validator from a (previously saved) XML string.
+    /// Instantiate a Validator from a (previously saved) XML string.
     /// </summary>
     /// <param name="xml"></param>
     /// <returns>a Validator</returns>
@@ -186,7 +186,7 @@ public class Validator
 
     private static void InitializeSerializer()
     {
-        _serializer ??= new XmlSerializer(typeof(Validator), GetExtraTypes());
+        _serializer ??= new XmlSerializer(typeof(Validator), GetExtraTypes().ToArray());
     }
 
     /// <summary>
@@ -207,43 +207,35 @@ public class Validator
         return sb.ToString();
     }
 
-    private static object oLockExtraTypes = new();
-    private static Type[] _extraTypes;
+    private static readonly object _oLockExtraTypes = new();
+    private static List<Type> _extraTypes;
 
-    public static void RefreshExtraTypes(SafeDirectoryCatalog mef, ICheckNotifier notifier)
+    private static List<Type> RefreshExtraTypes()
     {
-        lock (oLockExtraTypes)
+        lock (_oLockExtraTypes)
         {
-            _extraTypes = null;
+            return AppDomain.CurrentDomain.GetAssemblies().SelectMany(a=>a.GetTypes()).Where(
 
-            var extraTypes = new List<Type>();
-
-            //Get all the Types in the assembly that are compatible with Constraint (primary or secondary)
-            extraTypes.AddRange(mef.GetAllTypes().Where(
-                    //type is
-                    type =>
-                        type != null &&
-                        //of the correct Type
-                        (typeof(IConstraint).IsAssignableFrom(type) ||
-                         typeof(PredictionRule).IsAssignableFrom(type)) //Constraint or prediction
-                        &&
-                        !type.IsAbstract
-                        &&
-                        !type.IsInterface
-                        &&
-                        type.IsClass
-                )
-            );
-
-            _extraTypes = extraTypes.ToArray();
+                //type is
+                type =>
+                    type != null &&
+                    //of the correct Type
+                    (typeof(IConstraint).IsAssignableFrom(type) || typeof(PredictionRule).IsAssignableFrom(type)) //Constraint or prediction
+                    &&
+                    !type.IsAbstract
+                    &&
+                    !type.IsInterface
+                    &&
+                    type.IsClass
+            ).ToList();
         }
     }
 
-    public static Type[] GetExtraTypes()
+    public static List<Type> GetExtraTypes()
     {
-        lock (oLockExtraTypes)
+        lock (_oLockExtraTypes)
         {
-            return _extraTypes ?? Type.EmptyTypes;
+            return _extraTypes ??= RefreshExtraTypes();
         }
     }
 
@@ -491,7 +483,7 @@ public class Validator
             if (itemValidator.TargetProperty == oldName)
                 itemValidator.TargetProperty = newName;
 
-            itemValidator.PrimaryConstraint?.RenameColumn(oldName, newName);
+            itemValidator.PrimaryConstraint?.RenameColumn(oldName,newName);
 
             foreach (ISecondaryConstraint constraint in itemValidator.SecondaryConstraints)
                 constraint.RenameColumn(oldName, newName);

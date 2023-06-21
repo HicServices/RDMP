@@ -142,9 +142,6 @@ public class Startup
 
             FindTier3Databases(RepositoryLocator.CatalogueRepository, notifier);
         }
-
-        if (MEFSafeDirectoryCatalog != null)
-            Validator.RefreshExtraTypes(MEFSafeDirectoryCatalog, notifier);
     }
 
     private void FindTier3Databases(ICatalogueRepository catalogueRepository, ICheckNotifier notifier)
