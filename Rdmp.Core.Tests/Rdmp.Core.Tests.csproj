@@ -1,103 +1,103 @@
 <Project Sdk="Microsoft.NET.Sdk">
-    <PropertyGroup>
-        <ProjectGuid>13825638-5252-413c-98bc-1aef3b1cb9e4</ProjectGuid>
-        <AssemblyTitle>Rdmp.Core.Tests</AssemblyTitle>
-        <Product>Rdmp.Core.Tests</Product>
-        <Copyright>Copyright © 2019</Copyright>
-        <GenerateAssemblyInfo>false</GenerateAssemblyInfo>
-        <TargetFramework>net7.0</TargetFramework>
-        <DebugType>embedded</DebugType>
-        <DebugSymbols>true</DebugSymbols>
-    </PropertyGroup>
-    <ItemGroup>
-        <Compile Remove="Resources\**" />
-        <EmbeddedResource Remove="Resources\**" />
-        <None Remove="Resources\**" />
-    </ItemGroup>
-    <ItemGroup>
-        <None Remove="DataLoad\Engine\Integration\TrailingDots.xlsx" />
-        <None Remove="DataLoad\Engine\Resources\BlankBook.xlsx" />
-        <None Remove="DataLoad\Engine\Resources\BlankLineBook.xlsx" />
-        <None Remove="DataLoad\Engine\Resources\ExpectedData.sql" />
-        <None Remove="DataLoad\Engine\Resources\LiveData.sql" />
-        <None Remove="DataLoad\Engine\Resources\StagingData.sql" />
-        <None Remove="DataLoad\Engine\Resources\Test.xlsx" />
-        <None Remove="DataLoad\Engine\Resources\Test_DB.mdf" />
-        <None Remove="DataLoad\Engine\Resources\Test_DB_log.ldf" />
-        <None Remove="DataLoad\Engine\Resources\XmlTestForExcel.xml" />
-        <None Remove="DataLoad\Engine\Unit\TestFile\Book1.xlsx" />
-        <None Remove="DataLoad\Engine\Unit\TestFile\FreakyBook1.xlsx" />
-        <None Remove="DataLoad\Engine\Unit\TestFile\OddFormats.xls" />
-    </ItemGroup>
-    <ItemGroup>
-        <Compile Include="..\SharedAssemblyInfo.cs" Link="SharedAssemblyInfo.cs" />
-    </ItemGroup>
-    <ItemGroup>
-        <Content Include="TrailingDots....xlsx">
-            <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-        </Content>
-        <Content Include="DataLoad\Engine\Resources\BlankBook.xlsx">
-            <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-        </Content>
-        <Content Include="DataLoad\Engine\Resources\BlankLineBook.xlsx">
-            <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-        </Content>
-        <Content Include="DataLoad\Engine\Resources\ExpectedData.sql" />
-        <Content Include="DataLoad\Engine\Resources\LiveData.sql" />
-        <Content Include="DataLoad\Engine\Resources\StagingData.sql" />
-        <Content Include="DataLoad\Engine\Resources\Test.xlsx">
-            <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-        </Content>
-        <Content Include="DataLoad\Engine\Resources\Test_DB.mdf">
-            <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-        </Content>
-        <Content Include="DataLoad\Engine\Resources\Test_DB_log.ldf">
-            <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-            <DependentUpon>Test_DB.mdf</DependentUpon>
-        </Content>
-        <Content Include="DataLoad\Engine\Resources\XmlTestForExcel.xml">
-            <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-        </Content>
-    </ItemGroup>
-    <ItemGroup>
-        <EmbeddedResource Include="DataLoad\Engine\Unit\TestFile\Book1.xlsx" />
-        <EmbeddedResource Include="DataLoad\Engine\Unit\TestFile\FreakyBook1.xlsx" />
-        <EmbeddedResource Include="DataLoad\Engine\Unit\TestFile\OddFormats.xls" />
-    </ItemGroup>
-    <ItemGroup>
-        <PackageReference Include="coverlet.collector" Version="6.0.0">
-            <PrivateAssets>all</PrivateAssets>
-            <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
-        </PackageReference>
-        <PackageReference Include="Microsoft.NET.Test.Sdk" Version="17.7.1" />
-        <PackageReference Include="NSubstitute" Version="5.0.0" />
-        <PackageReference Include="NUnit" Version="3.13.3" />
-        <PackageReference Include="NUnit3TestAdapter" Version="4.5.0">
-            <PrivateAssets>all</PrivateAssets>
-            <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
-        </PackageReference>
-        <PackageReference Include="NunitXml.TestLogger" Version="3.1.15" />
-    </ItemGroup>
-    <ItemGroup>
-        <ProjectReference Include="..\Rdmp.Core\Rdmp.Core.csproj" />
-        <ProjectReference Include="..\Tests.Common\Tests.Common.csproj" />
-    </ItemGroup>
-    <ItemGroup>
-        <Compile Update="Curation\TestResources.Designer.cs">
-            <DependentUpon>TestResources.resx</DependentUpon>
-            <DesignTime>True</DesignTime>
-            <AutoGen>True</AutoGen>
-        </Compile>
-    </ItemGroup>
-    <ItemGroup>
-        <None Update="DataLoad\Engine\Resources\kvpTestFilePK.csv">
-            <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-        </None>
-        <None Update="DataLoad\Engine\Resources\kvpTestFilePK2.csv">
-            <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-        </None>
-        <None Update="DataLoad\Engine\Resources\kvpTestFile_NoPK.csv">
-            <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-        </None>
-    </ItemGroup>
+  <PropertyGroup>
+    <ProjectGuid>13825638-5252-413c-98bc-1aef3b1cb9e4</ProjectGuid>
+    <TargetFramework>net6.0</TargetFramework>
+    <AssemblyTitle>Rdmp.Core.Tests</AssemblyTitle>
+    <Product>Rdmp.Core.Tests</Product>
+    <Copyright>Copyright ©  2019</Copyright>
+    <GenerateAssemblyInfo>false</GenerateAssemblyInfo>
+    
+    <DebugType>embedded</DebugType>
+    <DebugSymbols>true</DebugSymbols>
+  </PropertyGroup>
+  <ItemGroup>
+    <Compile Remove="Resources\**" />
+    <EmbeddedResource Remove="Resources\**" />
+    <None Remove="Resources\**" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Remove="DataLoad\Engine\Integration\TrailingDots.xlsx" />
+    <None Remove="DataLoad\Engine\Resources\BlankBook.xlsx" />
+    <None Remove="DataLoad\Engine\Resources\BlankLineBook.xlsx" />
+    <None Remove="DataLoad\Engine\Resources\ExpectedData.sql" />
+    <None Remove="DataLoad\Engine\Resources\LiveData.sql" />
+    <None Remove="DataLoad\Engine\Resources\StagingData.sql" />
+    <None Remove="DataLoad\Engine\Resources\Test.xlsx" />
+    <None Remove="DataLoad\Engine\Resources\Test_DB.mdf" />
+    <None Remove="DataLoad\Engine\Resources\Test_DB_log.ldf" />
+    <None Remove="DataLoad\Engine\Resources\XmlTestForExcel.xml" />
+    <None Remove="DataLoad\Engine\Unit\TestFile\Book1.xlsx" />
+    <None Remove="DataLoad\Engine\Unit\TestFile\FreakyBook1.xlsx" />
+    <None Remove="DataLoad\Engine\Unit\TestFile\OddFormats.xls" />
+  </ItemGroup>
+  <ItemGroup>
+    <Compile Include="..\SharedAssemblyInfo.cs" Link="SharedAssemblyInfo.cs" />
+  </ItemGroup>
+  <ItemGroup>
+    <Content Include="TrailingDots....xlsx">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="DataLoad\Engine\Resources\BlankBook.xlsx">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="DataLoad\Engine\Resources\BlankLineBook.xlsx">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="DataLoad\Engine\Resources\ExpectedData.sql" />
+    <Content Include="DataLoad\Engine\Resources\LiveData.sql" />
+    <Content Include="DataLoad\Engine\Resources\StagingData.sql" />
+    <Content Include="DataLoad\Engine\Resources\Test.xlsx">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="DataLoad\Engine\Resources\Test_DB.mdf">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="DataLoad\Engine\Resources\Test_DB_log.ldf">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+      <DependentUpon>Test_DB.mdf</DependentUpon>
+    </Content>
+    <Content Include="DataLoad\Engine\Resources\XmlTestForExcel.xml">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+  </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="DataLoad\Engine\Unit\TestFile\Book1.xlsx" />
+    <EmbeddedResource Include="DataLoad\Engine\Unit\TestFile\FreakyBook1.xlsx" />
+    <EmbeddedResource Include="DataLoad\Engine\Unit\TestFile\OddFormats.xls" />
+  </ItemGroup>
+  <ItemGroup>
+    <PackageReference Include="coverlet.collector" Version="6.0.0">
+      <PrivateAssets>all</PrivateAssets>
+      <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
+    </PackageReference>
+    <PackageReference Include="Microsoft.NET.Test.Sdk" Version="17.6.2" />
+    <PackageReference Include="NUnit" Version="3.13.3" />
+    <PackageReference Include="NUnit3TestAdapter" Version="4.5.0">
+      <PrivateAssets>all</PrivateAssets>
+      <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
+    </PackageReference>
+    <PackageReference Include="NunitXml.TestLogger" Version="3.0.131" />
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\Rdmp.Core\Rdmp.Core.csproj" />
+    <ProjectReference Include="..\Tests.Common\Tests.Common.csproj" />
+  </ItemGroup>
+  <ItemGroup>
+    <Compile Update="Curation\TestResources.Designer.cs">
+      <DependentUpon>TestResources.resx</DependentUpon>
+      <DesignTime>True</DesignTime>
+      <AutoGen>True</AutoGen>
+    </Compile>
+  </ItemGroup>
+  <ItemGroup>
+    <None Update="DataLoad\Engine\Resources\kvpTestFilePK.csv">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Update="DataLoad\Engine\Resources\kvpTestFilePK2.csv">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Update="DataLoad\Engine\Resources\kvpTestFile_NoPK.csv">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+  </ItemGroup>
 </Project>
