@@ -34,26 +34,23 @@ public partial class RDMPTaskBarUI : UserControl
 
         btnHome.Image = FamFamFamIcons.application_home.ImageToBitmap();
         btnCatalogues.Image = CatalogueIcons.Catalogue.ImageToBitmap();
-        btnCatalogues.BackgroundImage =
-            BackColorProvider.GetBackgroundImage(btnCatalogues.Size, RDMPCollection.Catalogue);
+        btnCatalogues.BackgroundImage = BackColorProvider.GetBackgroundImage(btnCatalogues.Size, RDMPCollection.Catalogue);
 
         btnCohorts.Image = CatalogueIcons.CohortIdentificationConfiguration.ImageToBitmap();
         btnCohorts.BackgroundImage = BackColorProvider.GetBackgroundImage(btnCohorts.Size, RDMPCollection.Cohort);
 
         btnSavedCohorts.Image = CatalogueIcons.AllCohortsNode.ImageToBitmap();
-        btnSavedCohorts.BackgroundImage =
-            BackColorProvider.GetBackgroundImage(btnSavedCohorts.Size, RDMPCollection.SavedCohorts);
+        btnSavedCohorts.BackgroundImage = BackColorProvider.GetBackgroundImage(btnSavedCohorts.Size, RDMPCollection.SavedCohorts);
 
         btnDataExport.Image = CatalogueIcons.Project.ImageToBitmap();
-        btnDataExport.BackgroundImage =
-            BackColorProvider.GetBackgroundImage(btnDataExport.Size, RDMPCollection.DataExport);
+        btnDataExport.BackgroundImage = BackColorProvider.GetBackgroundImage(btnDataExport.Size, RDMPCollection.DataExport);
 
         btnTables.Image = CatalogueIcons.TableInfo.ImageToBitmap();
         btnTables.BackgroundImage = BackColorProvider.GetBackgroundImage(btnTables.Size, RDMPCollection.Tables);
 
         btnLoad.Image = CatalogueIcons.LoadMetadata.ImageToBitmap();
         btnLoad.BackgroundImage = BackColorProvider.GetBackgroundImage(btnLoad.Size, RDMPCollection.DataLoad);
-
+            
         btnFavourites.Image = CatalogueIcons.Favourite.ImageToBitmap();
         btnDeleteLayout.Image = FamFamFamIcons.delete.ImageToBitmap();
 
@@ -187,7 +184,7 @@ public partial class RDMPTaskBarUI : UserControl
         else if (button == btnFavourites)
             collectionToToggle = RDMPCollection.Favourites;
         else
-            throw new ArgumentOutOfRangeException();
+            throw new ArgumentOutOfRangeException(nameof(button));
 
         return collectionToToggle;
     }
@@ -260,7 +257,7 @@ public partial class RDMPTaskBarUI : UserControl
 
     private void btnSaveWindowLayout_Click(object sender, EventArgs e)
     {
-        if (cbxLayouts.SelectedItem is WindowLayout layout)
+        if(cbxLayouts.SelectedItem is WindowLayout layout)
         {
             var xml = _manager.MainForm.GetCurrentLayoutXml();
 
