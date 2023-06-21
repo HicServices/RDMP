@@ -158,10 +158,20 @@ public class DatabaseTests
         RepositoryLocator = TestDatabaseSettings.UseFileSystemRepo ? 
             new RepositoryProvider(GetFreshYamlRepository()) :
             new PlatformDatabaseCreationRepositoryFinder(opts);
-                    
-        if(CatalogueRepository is TableRepository cataRepo && !cataRepo.DiscoveredServer.Exists())
+
+        // TODO: JS 2023-06-21 Temporary workaround for FAnsi not catching OperationCanceledException
+        var missing=true;
+        try
         {
-            DealWithMissingTestDatabases(opts,cataRepo);
+            missing = CatalogueRepository is TableRepository cataRepo && !cataRepo.DiscoveredServer.Exists();
+        }
+        catch (OperationCanceledException e)
+        {
+            Console.WriteLine(e);
+        }
+        if (missing)
+        {
+            DealWithMissingTestDatabases(opts, CatalogueRepository as TableRepository);
         }
 
         if (DataExportRepository is TableRepository tblRepo)
