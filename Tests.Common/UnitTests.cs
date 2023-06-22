@@ -77,7 +77,7 @@ public class UnitTests
     /// <returns></returns>
     protected IBasicActivateItems GetActivator(IRDMPPlatformRepositoryServiceLocator locator = null)
     {
-        return new ConsoleInputManager(locator ?? RepositoryLocator, new ThrowImmediatelyCheckNotifier()) { DisallowInput = true};
+        return new ConsoleInputManager(locator ?? RepositoryLocator, ThrowImmediatelyCheckNotifier.Quiet) { DisallowInput = true};
     }
 
     /// <summary>
@@ -446,7 +446,7 @@ public class UnitTests
             //And we need another column too just for sanity sakes (in the same table)
             var ci2 = new CatalogueItem(repository,ei.CatalogueItem.Catalogue,"ci2");
             var col2 = new ColumnInfo(repository, "My_Col2", "varchar(10)", ei.ColumnInfo.TableInfo);
-            var ei2 = new ExtractionInformation(repository,ci2,col2,col2.GetFullyQualifiedName());
+            _ = new ExtractionInformation(repository,ci2,col2,col2.GetFullyQualifiedName());
 
             return (T)(object)new ExtractableDataSet(repository,ei.CatalogueItem.Catalogue);
         }
@@ -461,7 +461,7 @@ public class UnitTests
 
             foreach (var ei in eds.Catalogue.GetAllExtractionInformation(ExtractionCategory.Any))
             {
-                var ec = new ExtractableColumn(repository, eds, config,ei,ei.Order,ei.SelectSQL);
+                _=new ExtractableColumn(repository, eds, config,ei,ei.Order,ei.SelectSQL);
             }
 
             return (T)(object)new SelectedDataSets(repository,config,eds, null);

@@ -37,20 +37,17 @@ public abstract class RDMPCommandExecutionProposal<T>:ICommandExecutionProposal 
 
     public bool IsCompatibleTarget(object target)
     {
-        return target is T && IsCompatibleTargetImpl((T)target);
+        return target is T target1 && IsCompatibleTargetImpl(target1);
     }
 
-    protected virtual bool IsCompatibleTargetImpl(T target)
+    protected virtual bool IsCompatibleTargetImpl(T _)
     {
         return true;
     }
 
     public ICommandExecution ProposeExecution(ICombineToMakeCommand cmd, object target,InsertOption insertOption = InsertOption.Default)
     {
-        if(IsCompatibleTarget(target))
-            return ProposeExecution(cmd,(T)target, insertOption);
-
-        return null;
+        return IsCompatibleTarget(target) ? ProposeExecution(cmd,(T)target, insertOption) : null;
     }
 
     public void Activate(object target)

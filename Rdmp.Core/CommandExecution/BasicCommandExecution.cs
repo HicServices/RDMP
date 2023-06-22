@@ -490,11 +490,10 @@ public abstract class BasicCommandExecution : IAtomicCommand
     {
         try
         {
-            checkable.Check(new ThrowImmediatelyCheckNotifier { WriteToConsole = false });
+            checkable.Check(ThrowImmediatelyCheckNotifier.Quiet);
         }
         catch (Exception e)
         {
-
             SetImpossible(ExceptionHelper.ExceptionToListOfInnerMessages(e));
         }
     }

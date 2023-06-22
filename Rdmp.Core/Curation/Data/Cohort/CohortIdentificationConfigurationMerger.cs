@@ -43,7 +43,7 @@ public class CohortIdentificationConfigurationMerger
         {
             for (var i = 0; i < cics.Length; i++)
             {
-                cicClones[i] = cics[i].CreateClone(new ThrowImmediatelyCheckNotifier());
+                cicClones[i] = cics[i].CreateClone(ThrowImmediatelyCheckNotifier.Quiet);
             }
         }
         catch(Exception ex)
@@ -104,7 +104,7 @@ public class CohortIdentificationConfigurationMerger
         {
             for (var i = 0; i < cics.Length; i++)
             {
-                cicClones[i] = cics[i].CreateClone(new ThrowImmediatelyCheckNotifier());
+                cicClones[i] = cics[i].CreateClone(ThrowImmediatelyCheckNotifier.Quiet);
             }
         }
         catch(Exception ex)
@@ -174,7 +174,7 @@ public class CohortIdentificationConfigurationMerger
         try
         {
             // clone the input cic 
-            cic = cic.CreateClone(new ThrowImmediatelyCheckNotifier());
+            cic = cic.CreateClone(ThrowImmediatelyCheckNotifier.Quiet);
 
             // grab the new clone root container
             rootContainer = cic.RootCohortAggregateContainer;

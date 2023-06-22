@@ -159,7 +159,7 @@ internal class Program
         
     private static int Run(PatchDatabaseOptions opts)
     {
-        opts.PopulateConnectionStringsFromYamlIfMissing(new ThrowImmediatelyCheckNotifier());
+        opts.PopulateConnectionStringsFromYamlIfMissing(ThrowImmediatelyCheckNotifier.Quiet);
 
         var repo = opts.GetRepositoryLocator();
 

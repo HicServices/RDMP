@@ -24,20 +24,14 @@ namespace Rdmp.Core.Repositories;
 /// </summary>
 public class MEF
 {
-    public DirectoryInfo DownloadDirectory { get; private set; }
-
     public bool HaveDownloadedAllAssemblies;
     public SafeDirectoryCatalog SafeDirectoryCatalog;
 
     public MEF()
     {
-        //try to use the app data folder to download MEF but also evaluate everything in _localPath
-        var localPath = AppContext.BaseDirectory;
-        var _MEFPathAsString = Path.Combine(localPath, "MEF");
-        DownloadDirectory = new DirectoryInfo(_MEFPathAsString);
     }
           
-    private HashSet<string> TypeNotKnown = new();
+    private readonly HashSet<string> TypeNotKnown = new();
 
     /// <summary>
     /// Looks up the given Type in all loaded assemblies (during <see cref="Startup.Startup"/>).  Returns null
@@ -164,31 +158,6 @@ public class MEF
         return SafeDirectoryCatalog.BadAssembliesDictionary;
     }
 
-    /// <summary>
-    /// Turns the legit C# name:
-    /// DataLoadEngine.DataFlowPipeline.IDataFlowSource`1[[System.Data.DataTable, System.Data, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089]]
-    /// 
-    /// <para>Into a freaky MEF name:
-    /// DataLoadEngine.DataFlowPipeline.IDataFlowSource(System.Data.DataTable)</para>
-    /// 
-    /// </summary>
-    /// <param name="t"></param>
-    /// <returns></returns>
-    public static string GetMEFNameForType(Type t)
-    {
-        if (!t.IsGenericType) return t.FullName;
-        if (t.GenericTypeArguments.Length != 1)
-            throw new NotSupportedException("Generic type has more than 1 token (e.g. T1,T2) so no idea what MEF would call it");
-        var genericTypeName = t.GetGenericTypeDefinition().FullName;
-
-        Debug.Assert(genericTypeName?.EndsWith("`1")==true);
-        genericTypeName = genericTypeName[..^"`1".Length];
-
-        var underlyingType = t.GenericTypeArguments.Single().FullName;
-        return $"{genericTypeName}({underlyingType})";
-
-    }
-        
     /// <summary>
     /// 
     /// <para>Turns the legit C# name: 

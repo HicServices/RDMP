@@ -31,7 +31,7 @@ internal class SearchablesMatchScorerTests : UnitTests
 
         var scorer = new SearchablesMatchScorer();
 
-        var childProvider = new DataExportChildProvider(RepositoryLocator, null, new ThrowImmediatelyCheckNotifier(), null);
+        var childProvider = new DataExportChildProvider(RepositoryLocator, null, ThrowImmediatelyCheckNotifier.Quiet, null);
         var scores = scorer.ScoreMatches(childProvider.GetAllSearchables(), "FF", CancellationToken.None, new List<Type>());
 
         var cataScore = scores.Single(d => Equals(d.Key.Key, cata));
@@ -62,7 +62,7 @@ internal class SearchablesMatchScorerTests : UnitTests
         var scorer = new SearchablesMatchScorer();
         scorer.TypeNames.Add("CohortAggregateContainer");
 
-        var childProvider = new DataExportChildProvider(RepositoryLocator, null, new ThrowImmediatelyCheckNotifier(), null);
+        var childProvider = new DataExportChildProvider(RepositoryLocator, null, ThrowImmediatelyCheckNotifier.Quiet, null);
 
         var scores = scorer.ScoreMatches(childProvider.GetAllSearchables(),"", CancellationToken.None, new List<Type> { typeof(CohortAggregateContainer)});
 
@@ -87,7 +87,7 @@ internal class SearchablesMatchScorerTests : UnitTests
         var scorer = new SearchablesMatchScorer();
         scorer.TypeNames.Add("CohortAggregateContainer");
 
-        var childProvider = new DataExportChildProvider(RepositoryLocator, null, new ThrowImmediatelyCheckNotifier(), null);
+        var childProvider = new DataExportChildProvider(RepositoryLocator, null, ThrowImmediatelyCheckNotifier.Quiet, null);
 
         // user is searching for the text 'troll'
         var scores = scorer.ScoreMatches(childProvider.GetAllSearchables(), "troll", CancellationToken.None, new List<Type>());
@@ -210,7 +210,7 @@ internal class SearchablesMatchScorerTests : UnitTests
             RespectUserSettings = true
         };
 
-        var childProvider = new DataExportChildProvider(RepositoryLocator, null, new ThrowImmediatelyCheckNotifier(), null);
+        var childProvider = new DataExportChildProvider(RepositoryLocator, null, ThrowImmediatelyCheckNotifier.Quiet, null);
 
         // user is searching for the text 'troll'
         var scores = scorer.ScoreMatches(childProvider.GetAllSearchables(), "Bunny", CancellationToken.None, new List<Type>());

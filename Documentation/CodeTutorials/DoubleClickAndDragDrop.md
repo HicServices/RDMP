@@ -90,7 +90,7 @@ To add support for item dropping you should add an implementation to the body of
 | ------------- | ------------- |
 | ICombineToMakeCommand cmd| Self contained class describing both the object being dragged and salient facts about it e.g. if  it is a `CatalogueCombineable` then it will know whether the dragged [Catalogue] has at least one patient identifier column.|
 | T target | The object the cursor is currently hovering over |
-| InsertOption insertOption | Whether the cursor is above or below or ontop of your object (if the collection the object is in supports it) |
+| InsertOption insertOption | Whether the cursor is above or below or on top of your object (if the collection the object is in supports it) |
 
 The reason we have an `ICombineToMakeCommand` is so we can front load discovery and encapsulate facts into a single class which can then be waved around the place to look for valid combinations.  If an object doesn't have an associated `ICommand` then it won't be draggable in the first place.
 

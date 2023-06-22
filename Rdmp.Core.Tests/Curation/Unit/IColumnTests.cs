@@ -106,11 +106,11 @@ internal class IColumnTests
             Alias = "[bob smith]"
         };
 
-        tc.Check(new ThrowImmediatelyCheckNotifier());
+        tc.Check(ThrowImmediatelyCheckNotifier.Quiet());
         tc.Alias = "`bob smith`";
-        tc.Check(new ThrowImmediatelyCheckNotifier());
+        tc.Check(ThrowImmediatelyCheckNotifier.Quiet());
         tc.Alias = "`[bob smith]`";
-        tc.Check(new ThrowImmediatelyCheckNotifier());
+        tc.Check(ThrowImmediatelyCheckNotifier.Quiet());
 
     }
 
@@ -122,7 +122,7 @@ internal class IColumnTests
         {
             Alias = "bob smith"
         };
-        var ex = Assert.Throws<SyntaxErrorException>(()=>tc.Check(new ThrowImmediatelyCheckNotifier()));
+        var ex = Assert.Throws<SyntaxErrorException>(()=>tc.Check(ThrowImmediatelyCheckNotifier.Quiet()));
         Assert.AreEqual("Whitespace found in unwrapped Alias \"bob smith\"",ex.Message);
 
     }
@@ -135,7 +135,7 @@ internal class IColumnTests
             Alias = "`bob"
         };
 
-        var ex = Assert.Throws<SyntaxErrorException>(() => tc.Check(new ThrowImmediatelyCheckNotifier()));
+        var ex = Assert.Throws<SyntaxErrorException>(() => tc.Check(ThrowImmediatelyCheckNotifier.Quiet()));
         Assert.AreEqual("Invalid characters found in Alias \"`bob\"",ex.Message);
            
     }
@@ -146,7 +146,7 @@ internal class IColumnTests
         {
             Alias = "bob]"
         };
-        var ex = Assert.Throws<SyntaxErrorException>(() => tc.Check(new ThrowImmediatelyCheckNotifier()));
+        var ex = Assert.Throws<SyntaxErrorException>(() => tc.Check(ThrowImmediatelyCheckNotifier.Quiet()));
         Assert.AreEqual("Invalid characters found in Alias \"bob]\"",ex.Message);
             
     }
@@ -160,7 +160,7 @@ internal class IColumnTests
             Alias = "bob",
             SelectSQL = "GetSomething('here'"
         };
-        var ex = Assert.Throws<SyntaxErrorException>(() => tc.Check(new ThrowImmediatelyCheckNotifier()));
+        var ex = Assert.Throws<SyntaxErrorException>(() => tc.Check(ThrowImmediatelyCheckNotifier.Quiet()));
         Assert.AreEqual("Mismatch in the number of opening '(' and closing ')'",ex.Message);
     }
 }

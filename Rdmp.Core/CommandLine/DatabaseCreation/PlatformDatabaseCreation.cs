@@ -55,7 +55,7 @@ public class PlatformDatabaseCreation
             var examples = new ExampleDatasetsCreation(new ThrowImmediatelyActivator(repo,null),repo);
             var server = new DiscoveredServer(options.GetBuilder("ExampleData"));
                 
-            examples.Create(server.GetCurrentDatabase(),new ThrowImmediatelyCheckNotifier {WriteToConsole = true },options);
+            examples.Create(server.GetCurrentDatabase(),ThrowImmediatelyCheckNotifier.Quiet,options);
         }
     }
 

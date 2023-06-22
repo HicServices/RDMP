@@ -21,10 +21,10 @@ public sealed class ThrowImmediatelyDataLoadEventListener : IDataLoadEventListen
         
     public bool WriteToConsole { get; init; }
 
-    public static ThrowImmediatelyDataLoadEventListener Quiet = new(false, false);
-    public static ThrowImmediatelyDataLoadEventListener Noisy = new(true, false);
-    public static ThrowImmediatelyDataLoadEventListener QuietPicky = new(false, true);
-    public static ThrowImmediatelyDataLoadEventListener NoisyPicky = new(true, true);
+    public static readonly ThrowImmediatelyDataLoadEventListener Quiet = new(false, false);
+    public static readonly ThrowImmediatelyDataLoadEventListener Noisy = new(true, false);
+    public static readonly ThrowImmediatelyDataLoadEventListener QuietPicky = new(false, true);
+    public static readonly ThrowImmediatelyDataLoadEventListener NoisyPicky = new(true, true);
 
     private ThrowImmediatelyDataLoadEventListener(bool write,bool picky)
     {

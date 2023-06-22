@@ -26,7 +26,7 @@ internal class ExtractionSubdirectoryPatternTests : UnitTests
             ExtractionSubdirectoryPattern = "../../troll"
         };
 
-        var ex = Assert.Throws<Exception>(()=>dest.Check(new ThrowImmediatelyCheckNotifier()));
+        var ex = Assert.Throws<Exception>(()=>dest.Check(ThrowImmediatelyCheckNotifier.Quiet()));
         StringAssert.Contains("ExtractionSubdirectoryPattern cannot contain dots",ex.Message);
     }
 
@@ -42,7 +42,7 @@ internal class ExtractionSubdirectoryPatternTests : UnitTests
             ExtractionSubdirectoryPattern = badString
         };
 
-        var ex = Assert.Throws<Exception>(()=>dest.Check(new ThrowImmediatelyCheckNotifier()));
+        var ex = Assert.Throws<Exception>(()=>dest.Check(ThrowImmediatelyCheckNotifier.Quiet()));
         StringAssert.Contains("ExtractionSubdirectoryPattern must contain a Configuration element",ex.Message);
     }
 
@@ -55,7 +55,7 @@ internal class ExtractionSubdirectoryPatternTests : UnitTests
             ExtractionSubdirectoryPattern = badString
         };
 
-        var ex = Assert.Throws<Exception>(()=>dest.Check(new ThrowImmediatelyCheckNotifier()));
+        var ex = Assert.Throws<Exception>(()=>dest.Check(ThrowImmediatelyCheckNotifier.Quiet()));
         StringAssert.Contains("ExtractionSubdirectoryPattern must contain a Dataset element",ex.Message);
     }
 
@@ -92,7 +92,7 @@ internal class ExtractionSubdirectoryPatternTests : UnitTests
             ExtractionSubdirectoryPattern = goodString
         };
 
-        Assert.DoesNotThrow(()=>dest.Check(new ThrowImmediatelyCheckNotifier()));
+        Assert.DoesNotThrow(()=>dest.Check(ThrowImmediatelyCheckNotifier.Quiet()));
 
         var answer = dest.GetDirectoryFor(cmd);
         StringAssert.IsMatch(pattern,answer.FullName.Replace('\\','/'));

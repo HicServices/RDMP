@@ -49,11 +49,15 @@ public class ExecuteCommandCloneCohortIdentificationConfiguration : BasicCommand
 
     public IAtomicCommandWithTarget SetTarget(DatabaseEntity target)
     {
-        if (target is CohortIdentificationConfiguration)
-            _cic = (CohortIdentificationConfiguration)target;
-
-        if (target is Project)
-            _project = (Project)target;
+        switch (target)
+        {
+            case CohortIdentificationConfiguration configuration:
+                _cic = configuration;
+                break;
+            case Project project:
+                _project = project;
+                break;
+        }
 
         return this;
     }
@@ -62,34 +66,30 @@ public class ExecuteCommandCloneCohortIdentificationConfiguration : BasicCommand
     {
         base.Execute();
 
-        if (_cic == null)
-            _cic = SelectOne<CohortIdentificationConfiguration>(BasicActivator.RepositoryLocator.CatalogueRepository);
+        _cic ??= SelectOne<CohortIdentificationConfiguration>(BasicActivator.RepositoryLocator.CatalogueRepository);
 
         if(_cic == null)
             return;
 
         // Confirm creating yes/no (assuming activator is interactive)
-        if (!BasicActivator.IsInteractive || YesNo("This will create a 100% copy of the entire CohortIdentificationConfiguration including all datasets, " +
-                                                   "filters, parameters and set operations. Are you sure this is what you want?",
-                "Confirm Cloning"))
-        {
-                
-            CloneCreatedIfAny = _cic.CreateClone(new ThrowImmediatelyCheckNotifier());
+        if (BasicActivator.IsInteractive && !YesNo(
+                "This will create a 100% copy of the entire CohortIdentificationConfiguration including all datasets, filters, parameters and set operations. Are you sure this is what you want?",
+                "Confirm Cloning")) return;
+        CloneCreatedIfAny = _cic.CreateClone(ThrowImmediatelyCheckNotifier.Quiet);
 
-            if (_project != null) // clone the association
-                new ProjectCohortIdentificationConfigurationAssociation(
-                    BasicActivator.RepositoryLocator.DataExportRepository,
-                    _project,
-                    CloneCreatedIfAny);
+        if (_project != null) // clone the association
+            _=new ProjectCohortIdentificationConfigurationAssociation(
+                BasicActivator.RepositoryLocator.DataExportRepository,
+                _project,
+                CloneCreatedIfAny);
 
-            //Load the clone up
-            Publish(CloneCreatedIfAny);
-            if (_project != null)
-                Emphasise(_project);
-            else
-                Emphasise(CloneCreatedIfAny);
+        //Load the clone up
+        Publish(CloneCreatedIfAny);
+        if (_project != null)
+            Emphasise(_project);
+        else
+            Emphasise(CloneCreatedIfAny);
 
-            Activate(CloneCreatedIfAny);
-        }
+        Activate(CloneCreatedIfAny);
     }
 }

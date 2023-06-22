@@ -52,7 +52,7 @@ public class CommittingNewCohortsTests : TestsRequiringACohort
         var proj = new Project(DataExportRepository, ProjName);
 
         var request = new CohortCreationRequest(proj, new CohortDefinition(511, "CommittingNewCohorts",1,999,_externalCohortTable), DataExportRepository, "fish");
-        var ex = Assert.Throws<Exception>(()=>request.Check(new ThrowImmediatelyCheckNotifier()));
+        var ex = Assert.Throws<Exception>(()=>request.Check(ThrowImmediatelyCheckNotifier.Quiet()));
         Assert.AreEqual("Expected the cohort definition CommittingNewCohorts(Version 1, ID=511) to have a null ID - we are trying to create this, why would it already exist?",ex.Message);
     }
 
@@ -62,7 +62,7 @@ public class CommittingNewCohortsTests : TestsRequiringACohort
         var proj = new Project(DataExportRepository, ProjName);
 
         var request = new CohortCreationRequest(proj, new CohortDefinition(null, "CommittingNewCohorts", 1, 999, _externalCohortTable), DataExportRepository, "fish");
-        var ex = Assert.Throws<Exception>(()=>request.Check(new ThrowImmediatelyCheckNotifier()));
+        var ex = Assert.Throws<Exception>(()=>request.Check(ThrowImmediatelyCheckNotifier.Quiet()));
         Assert.AreEqual("Project MyProj does not have a ProjectNumber specified, it should have the same number as the CohortCreationRequest (999)",ex.Message);
     }
 
@@ -73,7 +73,7 @@ public class CommittingNewCohortsTests : TestsRequiringACohort
         proj.SaveToDatabase();
 
         var request = new CohortCreationRequest(proj, new CohortDefinition(null, "CommittingNewCohorts", 1, 999, _externalCohortTable), DataExportRepository, "fish");
-        var ex = Assert.Throws<Exception>(()=>request.Check(new ThrowImmediatelyCheckNotifier()));
+        var ex = Assert.Throws<Exception>(()=>request.Check(ThrowImmediatelyCheckNotifier.Quiet()));
         Assert.AreEqual("Project MyProj has ProjectNumber=321 but the CohortCreationRequest.ProjectNumber is 999",ex.Message);
     }
 
@@ -89,7 +89,7 @@ public class CommittingNewCohortsTests : TestsRequiringACohort
         proj.SaveToDatabase();
 
         var request = new CohortCreationRequest(proj, new CohortDefinition(null, "CommittingNewCohorts", 1, 999, _externalCohortTable), DataExportRepository, "fish");
-        request.Check(new ThrowImmediatelyCheckNotifier());
+        request.Check(ThrowImmediatelyCheckNotifier.Quiet());
 
         var source = new DelimitedFlatFileDataFlowSource();
         var destination = new BasicCohortDestination();
@@ -127,7 +127,7 @@ public class CommittingNewCohortsTests : TestsRequiringACohort
             
         // Create a basic cohort first
         var request1 = new CohortCreationRequest(proj, definition998, DataExportRepository, "fish");
-        request1.Check(new ThrowImmediatelyCheckNotifier());
+        request1.Check(ThrowImmediatelyCheckNotifier.Quiet());
 
         using var con = _cohortDatabase.Server.GetManagedConnection();
         request1.PushToServer(con);
@@ -142,7 +142,7 @@ public class CommittingNewCohortsTests : TestsRequiringACohort
         definition999.CohortReplacedIfAny = cohort998;
 
         var request2 = new CohortCreationRequest(proj, definition999, DataExportRepository, "fish");
-        request2.Check(new ThrowImmediatelyCheckNotifier());
+        request2.Check(ThrowImmediatelyCheckNotifier.Quiet());
         request2.PushToServer(con);
         request2.ImportAsExtractableCohort(deprecate, false);
 
@@ -169,7 +169,7 @@ public class CommittingNewCohortsTests : TestsRequiringACohort
 
         // Create a basic cohort first
         var request1 = new CohortCreationRequest(proj, definition998, DataExportRepository, "fish");
-        request1.Check(new ThrowImmediatelyCheckNotifier());
+        request1.Check(ThrowImmediatelyCheckNotifier.Quiet());
 
         using var con = _cohortDatabase.Server.GetManagedConnection();
         request1.PushToServer(con);
@@ -211,7 +211,7 @@ public class CommittingNewCohortsTests : TestsRequiringACohort
         definition999.CohortReplacedIfAny = cohort998;
 
         var request2 = new CohortCreationRequest(proj, definition999, DataExportRepository, "fish");
-        request2.Check(new ThrowImmediatelyCheckNotifier());
+        request2.Check(ThrowImmediatelyCheckNotifier.Quiet());
         request2.PushToServer(con);
         request2.ImportAsExtractableCohort(true, migrate);
 

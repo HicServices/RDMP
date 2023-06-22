@@ -174,6 +174,6 @@ public class TestsRequiringADle:TestsRequiringA
         }
 
         var runner = new DleRunner(new DleOptions { LoadMetadata = lmd.ID.ToString(), Command = CommandLineActivity.run});
-        runner.Run(RepositoryLocator,ThrowImmediatelyDataLoadEventListener.Quiet, new ThrowImmediatelyCheckNotifier(), new GracefulCancellationToken(timeout,timeout));
+        runner.Run(RepositoryLocator,ThrowImmediatelyDataLoadEventListener.Quiet, ThrowImmediatelyCheckNotifier.Quiet, new GracefulCancellationToken(timeout,timeout));
     }
 }

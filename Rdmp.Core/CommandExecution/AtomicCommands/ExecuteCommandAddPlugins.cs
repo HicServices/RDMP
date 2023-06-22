@@ -62,7 +62,7 @@ public class ExecuteCommandAddPlugins : BasicCommandExecution, IAtomicCommand
         foreach(var f in _files)
         {
             var runner = new PackPluginRunner(new CommandLine.Options.PackOptions {File = f.FullName});
-            runner.Run(BasicActivator.RepositoryLocator,ThrowImmediatelyDataLoadEventListener.Quiet,new ThrowImmediatelyCheckNotifier(),new DataFlowPipeline.GracefulCancellationToken());
+            runner.Run(BasicActivator.RepositoryLocator,ThrowImmediatelyDataLoadEventListener.Quiet,ThrowImmediatelyCheckNotifier.Quiet,new DataFlowPipeline.GracefulCancellationToken());
         }
                 
         Show("Changes will take effect on restart");

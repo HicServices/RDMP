@@ -39,7 +39,7 @@ internal class TestExecuteCommandImportFilterContainerTree : CommandInvokerTests
         Assert.IsNull(sds.RootFilterContainer);
             
         //run the command
-        var mgr = new ConsoleInputManager(RepositoryLocator,new ThrowImmediatelyCheckNotifier())
+        var mgr = new ConsoleInputManager(RepositoryLocator,ThrowImmediatelyCheckNotifier.Quiet())
         {
             DisallowInput = true
         };
@@ -81,7 +81,7 @@ internal class TestExecuteCommandImportFilterContainerTree : CommandInvokerTests
         Assert.IsNull(ac.RootFilterContainer);
             
         //run the command
-        var mgr = new ConsoleInputManager(RepositoryLocator,new ThrowImmediatelyCheckNotifier())
+        var mgr = new ConsoleInputManager(RepositoryLocator,ThrowImmediatelyCheckNotifier.Quiet())
         {
             DisallowInput = true
         };
@@ -130,7 +130,7 @@ internal class TestExecuteCommandImportFilterContainerTree : CommandInvokerTests
         Assert.IsNull(sds.RootFilterContainer);
             
         //run the command
-        var mgr = new ConsoleInputManager(RepositoryLocator,new ThrowImmediatelyCheckNotifier())
+        var mgr = new ConsoleInputManager(RepositoryLocator,ThrowImmediatelyCheckNotifier.Quiet())
         {
             DisallowInput = true
         };

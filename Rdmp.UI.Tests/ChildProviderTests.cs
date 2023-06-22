@@ -26,7 +26,7 @@ internal class ChildProviderTests : UITests
         ti.SaveToDatabase();
 
         //creating a child provider when there are TableInfos with null servers should not crash the API!
-        var provider = new CatalogueChildProvider(Repository.CatalogueRepository, null, new ThrowImmediatelyCheckNotifier(),null);
+        var provider = new CatalogueChildProvider(Repository.CatalogueRepository, null, ThrowImmediatelyCheckNotifier.Quiet,null);
         var desc = provider.GetDescendancyListIfAnyFor(ti);
         Assert.IsNotNull(desc);
 
@@ -43,7 +43,7 @@ internal class ChildProviderTests : UITests
         ti.SaveToDatabase();
 
         //creating a child provider when there are TableInfos with null servers should not crash the API!
-        var provider = new CatalogueChildProvider(Repository.CatalogueRepository, null, new ThrowImmediatelyCheckNotifier(), null);
+        var provider = new CatalogueChildProvider(Repository.CatalogueRepository, null, ThrowImmediatelyCheckNotifier.Quiet, null);
         var desc = provider.GetDescendancyListIfAnyFor(ti);
         Assert.IsNotNull(desc);
 
@@ -58,8 +58,8 @@ internal class ChildProviderTests : UITests
         string[] skip = {"AllAggregateContainers","_dataExportFilterManager","dataExportRepository","WriteLock","_oProjectNumberToCohortsDictionary","_errorsCheckNotifier", "ProgressStopwatch" };
 
         // We have 2 providers and want to suck all the data out of one into the other
-        var cp1 = new DataExportChildProvider(RepositoryLocator,null,new ThrowImmediatelyCheckNotifier(),null);
-        var cp2 = new DataExportChildProvider(RepositoryLocator,null,new ThrowImmediatelyCheckNotifier(),null);
+        var cp1 = new DataExportChildProvider(RepositoryLocator,null,ThrowImmediatelyCheckNotifier.Quiet,null);
+        var cp2 = new DataExportChildProvider(RepositoryLocator,null,ThrowImmediatelyCheckNotifier.Quiet,null);
 
         //to start with let's make sure all fields and properties are different on the two classes except where we expect them to be the same
         var bindFlags = BindingFlags.Instance | BindingFlags.Public | BindingFlags.NonPublic | BindingFlags.Static;
@@ -69,7 +69,7 @@ internal class ChildProviderTests : UITests
             var val1 = prop.GetValue(cp1);
             var val2 = prop.GetValue(cp2);
 
-            // these are exempt, I guess 2 seperate empty arrays are now considered 'same'
+            // these are exempt, I guess 2 separate empty arrays are now considered 'same'
             if(val1 is Array a1 && val2 is Array a2 && a1.Length == 0 && a2.Length == 0)
                 continue;
 
@@ -82,7 +82,7 @@ internal class ChildProviderTests : UITests
             var val1 = field.GetValue(cp1);
             var val2 = field.GetValue(cp2);
 
-            // these are exempt, I guess 2 seperate empty arrays are now considered 'same'
+            // these are exempt, I guess 2 separate empty arrays are now considered 'same'
             if(val1 is Array a1 && val2 is Array a2 && a1.Length == 0 && a2.Length == 0)
                 continue;
 
@@ -129,7 +129,7 @@ internal class ChildProviderTests : UITests
         var t1 = WhenIHaveA<TableInfo>();
         var t2 = WhenIHaveA<TableInfo>();
 
-        var cp = new DataExportChildProvider(RepositoryLocator, null, new ThrowImmediatelyCheckNotifier(), null);
+        var cp = new DataExportChildProvider(RepositoryLocator, null, ThrowImmediatelyCheckNotifier.Quiet, null);
 
         cp.GetAllObjects(typeof(TableInfo), false).Contains(t1);
         cp.GetAllObjects(typeof(TableInfo), false).Contains(t2);
@@ -150,7 +150,7 @@ internal class ChildProviderTests : UITests
         var t2 = WhenIHaveA<TableInfo>();
         t2.Server = "localhost";
 
-        var cp = new DataExportChildProvider(RepositoryLocator, null, new ThrowImmediatelyCheckNotifier(), null);
+        var cp = new DataExportChildProvider(RepositoryLocator, null, ThrowImmediatelyCheckNotifier.Quiet, null);
 
         cp.GetAllObjects(typeof(TableInfo), false).Contains(t1);
         cp.GetAllObjects(typeof(TableInfo), false).Contains(t2);
@@ -185,7 +185,7 @@ internal class ChildProviderTests : UITests
         var t2 = WhenIHaveA<TableInfo>();
         t2.DatabaseType = FAnsi.DatabaseType.PostgreSql;
 
-        var cp = new DataExportChildProvider(RepositoryLocator, null, new ThrowImmediatelyCheckNotifier(), null);
+        var cp = new DataExportChildProvider(RepositoryLocator, null, ThrowImmediatelyCheckNotifier.Quiet, null);
 
         cp.GetAllObjects(typeof(TableInfo), false).Contains(t1);
         cp.GetAllObjects(typeof(TableInfo), false).Contains(t2);
@@ -217,7 +217,7 @@ internal class ChildProviderTests : UITests
         var t2 = WhenIHaveA<TableInfo>();
         t2.Database = "Biff";
 
-        var cp = new DataExportChildProvider(RepositoryLocator, null, new ThrowImmediatelyCheckNotifier(), null);
+        var cp = new DataExportChildProvider(RepositoryLocator, null, ThrowImmediatelyCheckNotifier.Quiet, null);
 
         cp.GetAllObjects(typeof(TableInfo), false).Contains(t1);
         cp.GetAllObjects(typeof(TableInfo), false).Contains(t2);
@@ -253,7 +253,7 @@ internal class ChildProviderTests : UITests
         var t2 = WhenIHaveA<TableInfo>();
         t2.Server = "localhost";
 
-        var cp = new DataExportChildProvider(RepositoryLocator, null, new ThrowImmediatelyCheckNotifier(), null);
+        var cp = new DataExportChildProvider(RepositoryLocator, null, ThrowImmediatelyCheckNotifier.Quiet, null);
 
         cp.GetAllObjects(typeof(TableInfo), false).Contains(t1);
         cp.GetAllObjects(typeof(TableInfo), false).Contains(t2);
@@ -279,7 +279,7 @@ internal class ChildProviderTests : UITests
         var t2 = WhenIHaveA<TableInfo>();
         t2.Database = "fRAnk";
 
-        var cp = new DataExportChildProvider(RepositoryLocator, null, new ThrowImmediatelyCheckNotifier(), null);
+        var cp = new DataExportChildProvider(RepositoryLocator, null, ThrowImmediatelyCheckNotifier.Quiet, null);
 
         cp.GetAllObjects(typeof(TableInfo), false).Contains(t1);
         cp.GetAllObjects(typeof(TableInfo), false).Contains(t2);

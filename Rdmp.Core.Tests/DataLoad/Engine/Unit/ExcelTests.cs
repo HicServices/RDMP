@@ -64,8 +64,8 @@ public class ExcelTests
             Separator = ","
         };
         invalid.PreInitialize(new FlatFileToLoad(new FileInfo(TestFile)), ThrowImmediatelyDataLoadEventListener.Quiet);
-        var ex = Assert.Throws<Exception>(()=>invalid.Check(new ThrowImmediatelyCheckNotifier()));
-        StringAssert.Contains("File Book1.xlsx has a prohibited file extension .xlsx",ex.Message);
+        var ex = Assert.Throws<Exception>(()=>invalid.Check(ThrowImmediatelyCheckNotifier.Quiet));
+        StringAssert.Contains("File Book1.xlsx has a prohibited file extension .xlsx",ex?.Message);
     }
 
     [Test]
@@ -269,7 +269,7 @@ public class ExcelTests
 
 
         var ex = Assert.Throws<FlatFileLoadException>(()=>source.GetChunk(ThrowImmediatelyDataLoadEventListener.Quiet, new GracefulCancellationToken()));
-        Assert.AreEqual("The Excel sheet 'Sheet1' in workbook 'BlankBook.xlsx' is empty", ex.Message);
+        Assert.AreEqual("The Excel sheet 'Sheet1' in workbook 'BlankBook.xlsx' is empty", ex?.Message);
 
     }
     [Test]
@@ -277,15 +277,15 @@ public class ExcelTests
     {
         var source = new ExcelDataFlowSource();
         source.PreInitialize(new FlatFileToLoad(new FileInfo("bob.xlsx")),ThrowImmediatelyDataLoadEventListener.Quiet );
-        source.Check(new ThrowImmediatelyCheckNotifier {ThrowOnWarning = true});
+        source.Check(ThrowImmediatelyCheckNotifier.QuietPicky);
     }
     [Test]
     public void Checks_ValidFileExtension_InvalidExtensionPass()
     {
         var source = new ExcelDataFlowSource();
         source.PreInitialize(new FlatFileToLoad(new FileInfo("bob.csv")), ThrowImmediatelyDataLoadEventListener.Quiet);
-        var ex = Assert.Throws<Exception>(()=>source.Check(new ThrowImmediatelyCheckNotifier { ThrowOnWarning = true }));
-        Assert.AreEqual("File extension bob.csv has an invalid extension:.csv (this class only accepts:.xlsx,.xls)",ex.Message);
+        var ex = Assert.Throws<Exception>(()=>source.Check(ThrowImmediatelyCheckNotifier.QuietPicky));
+        Assert.AreEqual("File extension bob.csv has an invalid extension:.csv (this class only accepts:.xlsx,.xls)",ex?.Message);
     }
 
     [TestCase(true)]

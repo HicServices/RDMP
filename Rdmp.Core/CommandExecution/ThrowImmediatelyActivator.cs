@@ -25,8 +25,7 @@ namespace Rdmp.Core.CommandExecution;
 public class ThrowImmediatelyActivator : BasicActivateItems
 {
     // DONE: This should not inherit from ConsoleInputManager
-    private static readonly ThrowImmediatelyCheckNotifier Notifier=new ();
-    public ThrowImmediatelyActivator(IRDMPPlatformRepositoryServiceLocator repositoryLocator, ICheckNotifier notifier = null):base(repositoryLocator,notifier ?? Notifier)
+    public ThrowImmediatelyActivator(IRDMPPlatformRepositoryServiceLocator repositoryLocator, ICheckNotifier notifier = null):base(repositoryLocator,notifier ?? ThrowImmediatelyCheckNotifier.Quiet)
     {
     }
 

@@ -94,10 +94,10 @@ public class GovernanceTests:DatabaseTests
         gov.Name = "TestExpiryBeforeStarting";
 
         //valid to start with 
-        gov.Check(new ThrowImmediatelyCheckNotifier());
+        gov.Check(ThrowImmediatelyCheckNotifier.Quiet);
 
         gov.EndDate = DateTime.MinValue;
-        var ex = Assert.Throws<Exception>(()=>gov.Check(new ThrowImmediatelyCheckNotifier()));//no longer valid - notice there is no SaveToDatabase because we can shouldnt be going back to db anyway
+        var ex = Assert.Throws<Exception>(()=>gov.Check(ThrowImmediatelyCheckNotifier.Quiet));//no longer valid - notice there is no SaveToDatabase because we can shouldnt be going back to db anyway
         Assert.AreEqual("GovernancePeriod TestExpiryBeforeStarting expires before it begins!", ex.Message);
     }
 
@@ -108,8 +108,8 @@ public class GovernanceTests:DatabaseTests
         gov.Name = "NeverExpires";
 
         //valid to start with 
-        var ex = Assert.Throws<Exception>(()=>gov.Check(new ThrowImmediatelyCheckNotifier {ThrowOnWarning = true}));
-        Assert.AreEqual("There is no end date for GovernancePeriod NeverExpires",ex.Message);
+        var ex = Assert.Throws<Exception>(()=>gov.Check(ThrowImmediatelyCheckNotifier.QuietPicky));
+        Assert.AreEqual("There is no end date for GovernancePeriod NeverExpires",ex?.Message);
 
     }
 

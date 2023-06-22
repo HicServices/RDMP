@@ -39,7 +39,7 @@ internal class ExecuteCommandAlterTableMakeDistinctTests : DatabaseTests
 
         Assert.AreEqual(5, tbl.GetRowCount());
 
-        var activator = new ConsoleInputManager(RepositoryLocator, new ThrowImmediatelyCheckNotifier()) { DisallowInput = true };
+        var activator = new ConsoleInputManager(RepositoryLocator, ThrowImmediatelyCheckNotifier.Quiet()) { DisallowInput = true };
 
         var cmd = new ExecuteCommandAlterTableMakeDistinct(activator, tblInfo, 700, true);
 

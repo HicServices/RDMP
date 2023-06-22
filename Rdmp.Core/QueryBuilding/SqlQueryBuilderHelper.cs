@@ -609,7 +609,7 @@ public class SqlQueryBuilderHelper
         for (var i = 0; i < filtersInContainer.Length; i++)
         {
             if (qb.CheckSyntax)
-                filtersInContainer[i].Check(new ThrowImmediatelyCheckNotifier());
+                filtersInContainer[i].Check(ThrowImmediatelyCheckNotifier.Quiet);
 
             toReturn += $@"{tabs}/*{filtersInContainer[i].Name}*/{Environment.NewLine}";
 
@@ -639,8 +639,7 @@ public class SqlQueryBuilderHelper
     private static bool IsEnabled(IContainer container)
     {
         //skip disabled containers
-        var dis = container as IDisableable;
-        return dis == null || !dis.IsDisabled;
+        return container is not IDisableable { IsDisabled: true };
     }
 
     /// <summary>
@@ -651,8 +650,7 @@ public class SqlQueryBuilderHelper
     private static bool IsEnabled(IFilter filter)
     {
         //skip disabled filters
-        var dis = filter as IDisableable;
-        return dis == null || !dis.IsDisabled;
+        return filter is not IDisableable { IsDisabled: true };
     }
     /// <summary>
     /// Returns the unique database server type <see cref="IQuerySyntaxHelper"/> by evaluating the <see cref="TableInfo"/> used in the query.

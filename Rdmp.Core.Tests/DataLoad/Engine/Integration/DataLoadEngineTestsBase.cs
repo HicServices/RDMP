@@ -57,7 +57,7 @@ internal class DataLoadEngineTestsBase : DatabaseTests
         pt.SetArgumentValue("Separator", ",");
         pt.SetArgumentValue("TableToLoad", ti);
 
-        pt.Check(new ThrowImmediatelyCheckNotifier());
+        pt.Check(ThrowImmediatelyCheckNotifier.Quiet());
     }
 
     protected LoadDirectory SetupLoadDirectory(LoadMetadata lmd)

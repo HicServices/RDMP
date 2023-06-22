@@ -35,7 +35,7 @@ public class TestsRequiringFullAnonymisationSuite : TestsRequiringANOStore
 
         var scriptCreate = new MasterDatabaseScriptExecutor(IdentifierDump_Database);
         var p = new IdentifierDumpDatabasePatcher();
-        scriptCreate.CreateAndPatchDatabase(p, new ThrowImmediatelyCheckNotifier());
+        scriptCreate.CreateAndPatchDatabase(p, ThrowImmediatelyCheckNotifier.Quiet);
 
         //now create a new reference!
         IdentifierDump_ExternalDatabaseServer = new ExternalDatabaseServer(CatalogueRepository,IdentifierDump_DatabaseName,p);

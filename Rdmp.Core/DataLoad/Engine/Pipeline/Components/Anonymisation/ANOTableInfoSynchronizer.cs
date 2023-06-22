@@ -42,7 +42,7 @@ public class ANOTableInfoSynchronizer
         foreach (var columnInfoWithANOTransform in columnInfosWithANOTransforms)
         {
             var anoTable = columnInfoWithANOTransform.ANOTable;
-            anoTable.Check(new ThrowImmediatelyCheckNotifier());
+            anoTable.Check(ThrowImmediatelyCheckNotifier.Quiet);
                 
             if(!anoTable.GetRuntimeDataType(LoadStage.PostLoad).Equals(columnInfoWithANOTransform.Data_type))
                 throw new ANOConfigurationException(

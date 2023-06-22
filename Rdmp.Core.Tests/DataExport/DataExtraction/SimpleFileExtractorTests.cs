@@ -59,7 +59,7 @@ internal class SimpleFileExtractorTests
         _extractor.Directories = false;
         _extractor.Pattern = "*";
         _extractor.OutputDirectoryName = _outDir.FullName;
-        _extractor.Check(new ThrowImmediatelyCheckNotifier());
+        _extractor.Check(ThrowImmediatelyCheckNotifier.Quiet());
 
         FileAssert.DoesNotExist(Path.Combine(_outDir.FullName,"blah.txt"));
         FileAssert.DoesNotExist(Path.Combine(_outDir.FullName,"blah2.txt"));
@@ -75,7 +75,7 @@ internal class SimpleFileExtractorTests
         _extractor.Directories = false;
         _extractor.Pattern = "blah.*";
         _extractor.OutputDirectoryName = _outDir.FullName;
-        _extractor.Check(new ThrowImmediatelyCheckNotifier());
+        _extractor.Check(ThrowImmediatelyCheckNotifier.Quiet());
 
         FileAssert.DoesNotExist(Path.Combine(_outDir.FullName,"blah.txt"));
         FileAssert.DoesNotExist(Path.Combine(_outDir.FullName,"blah2.txt"));
@@ -93,7 +93,7 @@ internal class SimpleFileExtractorTests
         _extractor.Directories = true;
         _extractor.Pattern = "*";
         _extractor.OutputDirectoryName = _outDir.FullName;
-        _extractor.Check(new ThrowImmediatelyCheckNotifier());
+        _extractor.Check(ThrowImmediatelyCheckNotifier.Quiet());
 
         FileAssert.DoesNotExist(Path.Combine(_outDir.FullName,"blah.txt"));
         FileAssert.DoesNotExist(Path.Combine(_outDir.FullName,"blah2.txt"));
@@ -111,7 +111,7 @@ internal class SimpleFileExtractorTests
         _extractor.Directories = true;
         _extractor.Pattern = "*1";
         _extractor.OutputDirectoryName = _outDir.FullName;
-        _extractor.Check(new ThrowImmediatelyCheckNotifier());
+        _extractor.Check(ThrowImmediatelyCheckNotifier.Quiet());
 
         FileAssert.DoesNotExist(Path.Combine(_outDir.FullName,"blah.txt"));
         FileAssert.DoesNotExist(Path.Combine(_outDir.FullName,"blah2.txt"));
@@ -130,7 +130,7 @@ internal class SimpleFileExtractorTests
         _extractor.Directories = false;
         _extractor.Pattern = "$p.txt";
         _extractor.OutputDirectoryName = _outDir.FullName;
-        _extractor.Check(new ThrowImmediatelyCheckNotifier());
+        _extractor.Check(ThrowImmediatelyCheckNotifier.Quiet());
 
         FileAssert.DoesNotExist(Path.Combine(_outDir.FullName,"blah.txt"));
         FileAssert.DoesNotExist(Path.Combine(_outDir.FullName,"blah2.txt"));
@@ -148,7 +148,7 @@ internal class SimpleFileExtractorTests
         _extractor.Directories = false;
         _extractor.Pattern = "$p.txt";
         _extractor.OutputDirectoryName = _outDir.FullName;
-        _extractor.Check(new ThrowImmediatelyCheckNotifier());
+        _extractor.Check(ThrowImmediatelyCheckNotifier.Quiet());
 
         FileAssert.DoesNotExist(Path.Combine(_outDir.FullName,"blah.txt"));
         FileAssert.DoesNotExist(Path.Combine(_outDir.FullName,"blah2.txt"));
@@ -173,7 +173,7 @@ internal class SimpleFileExtractorTests
         _extractor.Directories = true;
         _extractor.Pattern = "$p";
         _extractor.OutputDirectoryName = _outDir.FullName;
-        _extractor.Check(new ThrowImmediatelyCheckNotifier());
+        _extractor.Check(ThrowImmediatelyCheckNotifier.Quiet());
 
         FileAssert.DoesNotExist(Path.Combine(_outDir.FullName,"blah.txt"));
         FileAssert.DoesNotExist(Path.Combine(_outDir.FullName,"blah2.txt"));
@@ -194,7 +194,7 @@ internal class SimpleFileExtractorTests
         _extractor.Directories = true;
         _extractor.Pattern = "$p";
         _extractor.OutputDirectoryName = _outDir.FullName;
-        _extractor.Check(new ThrowImmediatelyCheckNotifier());
+        _extractor.Check(ThrowImmediatelyCheckNotifier.Quiet());
 
         FileAssert.DoesNotExist(Path.Combine(_outDir.FullName,"blah.txt"));
         FileAssert.DoesNotExist(Path.Combine(_outDir.FullName,"blah2.txt"));

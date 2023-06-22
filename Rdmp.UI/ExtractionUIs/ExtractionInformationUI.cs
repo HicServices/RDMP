@@ -64,7 +64,7 @@ public partial class ExtractionInformationUI : ExtractionInformationUI_Design, I
     private bool isFirstTimeSetupCalled = true;
     private IQuerySyntaxHelper _querySyntaxHelper = MicrosoftQuerySyntaxHelper.Instance;
 
-    private RAGSmileyToolStrip ragSmiley1;
+    private readonly RAGSmileyToolStrip ragSmiley1;
     private bool _isLoading;
 
     public ExtractionInformationUI()//For use with SetDatabaseObject
@@ -118,7 +118,7 @@ public partial class ExtractionInformationUI : ExtractionInformationUI_Design, I
             ExtractionInformation.SelectSQL = sql;
             ExtractionInformation.Alias = alias;
 
-            ExtractionInformation.Check(new ThrowImmediatelyCheckNotifier());
+            ExtractionInformation.Check(ThrowImmediatelyCheckNotifier.Quiet);
             ExtractionInformation.GetRuntimeName();
             ragSmiley1.Reset();
         }

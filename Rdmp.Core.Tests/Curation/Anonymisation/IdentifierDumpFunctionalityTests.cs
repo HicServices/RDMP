@@ -188,15 +188,10 @@ public class IdentifierDumpFunctionalityTests:TestsRequiringFullAnonymisationSui
         //now create a new dumper and watch it go crazy 
         var dumper2 = new IdentifierDumper(tableInfoCreated);
 
-        var thrower = new ThrowImmediatelyCheckNotifier
-        {
-            ThrowOnWarning = true
-        };
-
         try
         {
-            var ex = Assert.Throws<Exception>(()=>dumper2.Check(thrower));
-            Assert.AreEqual("Column forename was found in the IdentifierDump table ID_BulkData but was not one of the primary keys or a PreLoadDiscardedColumn",ex.Message);
+            var ex = Assert.Throws<Exception>(()=>dumper2.Check(ThrowImmediatelyCheckNotifier.QuietPicky));
+            Assert.AreEqual("Column forename was found in the IdentifierDump table ID_BulkData but was not one of the primary keys or a PreLoadDiscardedColumn",ex?.Message);
         }
         finally
         {
@@ -309,14 +304,14 @@ public class IdentifierDumpFunctionalityTests:TestsRequiringFullAnonymisationSui
         var dumper = new IdentifierDumper(tableInfoCreated);
         try
         {
-            dumper.Check(new ThrowImmediatelyCheckNotifier());
+            dumper.Check(ThrowImmediatelyCheckNotifier.Quiet);
             Assert.Fail("Expected it to crash before now");
         }
         catch (Exception ex)
         {
             Assert.IsTrue(ex.Message.StartsWith("Exception occurred when trying to find stored procedure sp_createIdentifierDump"));
-            Assert.IsTrue(ex.InnerException.Message.StartsWith("Connected successfully to server"));
-            Assert.IsTrue(ex.InnerException.Message.EndsWith(" but did not find the stored procedure sp_createIdentifierDump in the database (Possibly the ExternalDatabaseServer is not an IdentifierDump database?)"));
+            Assert.IsTrue(ex.InnerException?.Message.StartsWith("Connected successfully to server"));
+            Assert.IsTrue(ex.InnerException?.Message.EndsWith(" but did not find the stored procedure sp_createIdentifierDump in the database (Possibly the ExternalDatabaseServer is not an IdentifierDump database?)"));
         }
         finally
         {
@@ -373,9 +368,9 @@ public class IdentifierDumpFunctionalityTests:TestsRequiringFullAnonymisationSui
             //get a new dumper because we have changed the pre load discarded column
             dumper = new IdentifierDumper(tableInfoCreated);
             //table doesnt exist yet it should work
-            var ex = Assert.Throws<Exception>(()=>dumper.Check(new ThrowImmediatelyCheckNotifier()));
+            var ex = Assert.Throws<Exception>(()=>dumper.Check(ThrowImmediatelyCheckNotifier.Quiet));
 
-            Assert.IsTrue(ex.Message.Contains("has data type varbinary(200) in the Catalogue but appears as varchar(50) in the actual IdentifierDump"));
+            Assert.IsTrue(ex?.Message.Contains("has data type varbinary(200) in the Catalogue but appears as varchar(50) in the actual IdentifierDump"));
         }
         finally
         {
