@@ -50,7 +50,6 @@ public partial class StartupUI : Form, ICheckNotifier
         Text = $"RDMP - v{GetVersion()}";
 
         _startup.DatabaseFound += StartupDatabaseFound;
-        _startup.MEFFileDownloaded += StartupMEFFileDownloaded;
         _startup.PluginPatcherFound += StartupPluginPatcherFound;
 
         pbDisconnected.Image = CatalogueIcons.ExternalDatabaseServer.ImageToBitmap();
@@ -90,22 +89,6 @@ public partial class StartupUI : Form, ICheckNotifier
         HandleDatabaseFoundOnSimpleUI(eventArgs);
     }
 
-    private void StartupMEFFileDownloaded(object sender, MEFFileDownloadProgressEventArgs eventArgs)
-    {
-        if (InvokeRequired)
-        {
-            Invoke(new MethodInvoker(() => StartupMEFFileDownloaded(sender, eventArgs)));
-            return;
-        }
-
-        //25% to 50% is downloading MEF
-        pbLoadProgress.Value = (int) (250 + (float)eventArgs.CurrentDllNumber / (float)eventArgs.DllsSeenInCatalogue * 250f);
-
-        lblProgress.Text = $"Downloading MEF File {eventArgs.FileBeingProcessed}";
-
-        if (eventArgs.Status == MEFFileDownloadEventStatus.OtherError)
-            ragSmiley1.Fatal(eventArgs.Exception);
-    }
 
     private void StartupPluginPatcherFound(object sender, PluginPatcherFoundEventArgs eventArgs)
     {
@@ -339,7 +322,7 @@ public partial class StartupUI : Form, ICheckNotifier
                 args.Result = CheckResult.Warning;
                 break;
             default:
-                throw new ArgumentOutOfRangeException();
+                throw new ArgumentOutOfRangeException(nameof(args.Result));
         }
 
         lblProgress.Text = args.Message;

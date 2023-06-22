@@ -4,6 +4,8 @@
 // RDMP is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License for more details.
 // You should have received a copy of the GNU General Public License along with RDMP. If not, see <https://www.gnu.org/licenses/>.
 
+using System;
+
 namespace Rdmp.Core.ReusableLibraryCode.Checks;
 
 /// <summary>
@@ -12,5 +14,12 @@ namespace Rdmp.Core.ReusableLibraryCode.Checks;
 /// </summary>
 public class IgnoreAllErrorsCheckNotifier : ICheckNotifier
 {
-    public bool OnCheckPerformed(CheckEventArgs args) => true;
+    public static readonly IgnoreAllErrorsCheckNotifier Instance = new();
+
+    [Obsolete("Use the Instance")]
+    public IgnoreAllErrorsCheckNotifier() { }
+    public bool OnCheckPerformed(CheckEventArgs args)
+    {
+        return true;
+    }
 }

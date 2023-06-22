@@ -188,7 +188,7 @@ internal class Program
             }
         };
 
-        start.DoStartup(new IgnoreAllErrorsCheckNotifier());
+        start.DoStartup(IgnoreAllErrorsCheckNotifier.Instance);
 
         return badTimes ? -1 : 0;
     }

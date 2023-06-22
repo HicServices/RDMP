@@ -289,7 +289,7 @@ public class SelectedDataSetsChecker : ICheckable
         try
         {
             rp = new FlatFileReleasePotential(_activator.RepositoryLocator, SelectedDataSet);
-            rp.Check(new IgnoreAllErrorsCheckNotifier());
+            rp.Check(IgnoreAllErrorsCheckNotifier.Instance);
         }
         catch (Exception ex)
         {

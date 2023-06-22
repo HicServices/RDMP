@@ -678,8 +678,7 @@ public class UnitTests
     protected void SetupMEF()
     {
         MEF = new MEF();
-        MEF.Setup(
-            new SafeDirectoryCatalog(new IgnoreAllErrorsCheckNotifier(), TestContext.CurrentContext.TestDirectory));
+        MEF.Setup(new SafeDirectoryCatalog(IgnoreAllErrorsCheckNotifier.Instance,TestContext.CurrentContext.TestDirectory));
         Repository.CatalogueRepository.MEF = MEF;
     }
 

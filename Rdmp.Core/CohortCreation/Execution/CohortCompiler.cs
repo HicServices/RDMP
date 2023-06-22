@@ -60,7 +60,7 @@ public class CohortCompiler
     /// </summary>
     public ICoreChildProvider CoreChildProvider
     {
-        get => _coreChildProvider ??= new CatalogueChildProvider(CohortIdentificationConfiguration.CatalogueRepository,null,new IgnoreAllErrorsCheckNotifier(),null);
+        get => _coreChildProvider ??= new CatalogueChildProvider(CohortIdentificationConfiguration.CatalogueRepository,null,IgnoreAllErrorsCheckNotifier.Instance,null);
         set => _coreChildProvider = value;
     }
 
