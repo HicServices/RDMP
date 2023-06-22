@@ -112,7 +112,7 @@ public class RdmpCommandLineBootStrapper
         // not done startup so check that we can reach stuff
         if (repositoryLocator == null)
         {
-            opts.PopulateConnectionStringsFromYamlIfMissing(new ThrowImmediatelyCheckNotifier());
+            opts.PopulateConnectionStringsFromYamlIfMissing(ThrowImmediatelyCheckNotifier.Quiet);
 
             // where RDMP objects are stored
             repositoryLocator = opts.GetRepositoryLocator();

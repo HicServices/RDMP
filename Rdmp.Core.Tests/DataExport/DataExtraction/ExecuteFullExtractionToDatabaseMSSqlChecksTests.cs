@@ -104,7 +104,7 @@ public class ExecuteFullExtractionToDatabaseMSSqlChecksTests : DatabaseTests
                 : //database that exists
                 "Fictional$nDatabase"; //database does not exist (but server does)
 
-            var tomemory = new ToMemoryCheckNotifier(new ThrowImmediatelyCheckNotifier());
+            var tomemory = new ToMemoryCheckNotifier(ThrowImmediatelyCheckNotifier.Quiet());
             destination.Check(tomemory);
 
             Assert.AreEqual(alreadyExists ? CheckResult.Warning : CheckResult.Success, tomemory.GetWorst());
@@ -142,7 +142,7 @@ public class ExecuteFullExtractionToDatabaseMSSqlChecksTests : DatabaseTests
             destination.TableNamingPattern = "$d";
             destination.DatabaseNamingPattern = "FictionalDatabase";
 
-            var tomemory = new ToMemoryCheckNotifier(new ThrowImmediatelyCheckNotifier());
+            var tomemory = new ToMemoryCheckNotifier(ThrowImmediatelyCheckNotifier.Quiet());
             destination.Check(tomemory);
 
             Assert.AreEqual(CheckResult.Warning, tomemory.GetWorst());

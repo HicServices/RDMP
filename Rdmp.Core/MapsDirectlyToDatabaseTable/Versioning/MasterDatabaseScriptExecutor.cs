@@ -412,7 +412,7 @@ public class MasterDatabaseScriptExecutor
     /// Creates a new platform database and patches it
     /// </summary>
     /// <param name="patcher">Determines the SQL schema created</param>
-    /// <param name="notifier">audit object, can be a new ThrowImmediatelyCheckNotifier if you aren't in a position to pass one</param>
+    /// <param name="notifier">audit object, can be a ThrowImmediatelyCheckNotifier.Quiet if you aren't in a position to pass one</param>
     public void CreateAndPatchDatabase(IPatcher patcher, ICheckNotifier notifier)
     {
         var initialPatch = patcher.GetInitialCreateScriptContents(Database);

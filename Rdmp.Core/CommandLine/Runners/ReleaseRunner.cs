@@ -206,7 +206,7 @@ public class ReleaseRunner : ManyRunner
 
     protected override object[] GetRunnables()
     {
-        return new[] { GetReleaseUseCase(new ThrowImmediatelyCheckNotifier()) };
+        return new[] { GetReleaseUseCase(ThrowImmediatelyCheckNotifier.Quiet) };
     }
 
     private ReleaseUseCase GetReleaseUseCase(ICheckNotifier checkNotifier)

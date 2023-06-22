@@ -64,7 +64,7 @@ internal static class Program
     {
         try
         {
-            arg.PopulateConnectionStringsFromYamlIfMissing(new ThrowImmediatelyCheckNotifier());
+            arg.PopulateConnectionStringsFromYamlIfMissing(ThrowImmediatelyCheckNotifier.Quiet);
         }
         catch (Exception ex)
         {

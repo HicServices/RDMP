@@ -26,10 +26,9 @@ public class ProjectChecksTestsSimple : DatabaseTests
 
         try
         {
-            var ex = Assert.Throws<Exception>(() =>
-                new ProjectChecker(new ThrowImmediatelyActivator(RepositoryLocator), p).Check(
-                    new ThrowImmediatelyCheckNotifier()));
-            Assert.AreEqual("Project does not have any ExtractionConfigurations yet", ex.Message);
+            var ex = Assert.Throws<Exception>(()=>new ProjectChecker(new ThrowImmediatelyActivator(RepositoryLocator),p).Check(ThrowImmediatelyCheckNotifier.Quiet));
+            Assert.AreEqual("Project does not have any ExtractionConfigurations yet",ex?.Message);
+
         }
         finally
         {
@@ -42,7 +41,8 @@ public class ProjectChecksTestsSimple : DatabaseTests
     {
         var p = GetProjectWithConfig(out var config);
         var ex = Assert.Throws<Exception>(()=>RunTestWithCleanup(p, config));
-        Assert.AreEqual("Project does not have an ExtractionDirectory", ex.Message);
+        Assert.AreEqual("Project does not have an ExtractionDirectory", ex?.Message);
+            
     }
 
     [Test]
@@ -164,7 +164,7 @@ public class ProjectChecksTestsSimple : DatabaseTests
     {
         try
         {
-            new ProjectChecker(new ThrowImmediatelyActivator(RepositoryLocator),p).Check(notifier??new ThrowImmediatelyCheckNotifier { ThrowOnWarning = true });
+            new ProjectChecker(new ThrowImmediatelyActivator(RepositoryLocator),p).Check(notifier??ThrowImmediatelyCheckNotifier.QuietPicky);
         }
         finally
         {

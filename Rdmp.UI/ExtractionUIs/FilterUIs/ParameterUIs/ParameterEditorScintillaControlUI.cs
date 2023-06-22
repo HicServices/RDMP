@@ -31,7 +31,7 @@ public delegate void ParameterEventHandler(object sender, ISqlParameter paramete
 /// </summary>
 public partial class ParameterEditorScintillaControlUI : RDMPUserControl
 {
-    private Scintilla QueryEditor;
+    private readonly Scintilla QueryEditor;
 
     public event ParameterEventHandler ParameterSelected = delegate { };
     public event ParameterEventHandler ParameterChanged = delegate { };
@@ -155,7 +155,7 @@ public partial class ParameterEditorScintillaControlUI : RDMPUserControl
 
                 try
                 {
-                    parameter.Check(new ThrowImmediatelyCheckNotifier());
+                    parameter.Check(ThrowImmediatelyCheckNotifier.Quiet);
                 }
                 catch (SyntaxErrorException errorException)
                 {

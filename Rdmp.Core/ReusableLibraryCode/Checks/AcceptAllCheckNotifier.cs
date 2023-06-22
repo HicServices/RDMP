@@ -16,7 +16,7 @@ public class AcceptAllCheckNotifier : ICheckNotifier
     /// <summary>
     /// True to write out all messages seen directly to the console
     /// </summary>
-    public bool WriteToConsole { get; set; }
+    public bool WriteToConsole { get; init; }
 
     /// <summary>
     /// Check handler that throws <see cref="Exception"/> on Failures but otherwise returns true

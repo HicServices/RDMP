@@ -55,7 +55,7 @@ public class ExecuteCommandCreateNewCohortStore : BasicCommandExecution
 
         //Create cohort store database
         var wizard = new CreateNewCohortDatabaseWizard(databaseToCreate, activator.RepositoryLocator.CatalogueRepository, activator.RepositoryLocator.DataExportRepository, allowNullReleaseIdentifiers);
-        Created = wizard.CreateDatabase(new PrivateIdentifierPrototype(privateFieldName, privateFieldDataType), new ThrowImmediatelyCheckNotifier { WriteToConsole = false });
+        Created = wizard.CreateDatabase(new PrivateIdentifierPrototype(privateFieldName, privateFieldDataType), ThrowImmediatelyCheckNotifier.Quiet);
             
         Publish(Created);
     }

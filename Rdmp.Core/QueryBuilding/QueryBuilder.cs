@@ -30,7 +30,7 @@ namespace Rdmp.Core.QueryBuilding;
 public class QueryBuilder : ISqlQueryBuilder
 {
     private readonly ITableInfo[] _forceJoinsToTheseTables;
-    private object oSQLLock = new();
+    private readonly object oSQLLock = new();
 
     /// <inheritdoc/>
     public string SQL
@@ -141,7 +141,7 @@ public class QueryBuilder : ISqlQueryBuilder
     public bool SQLOutOfDate { get; set; }
 
     private IContainer _rootFilterContainer;
-    private string _hashingAlgorithm;
+    private readonly string _hashingAlgorithm;
     private int _topX;
 
     public IQuerySyntaxHelper QuerySyntaxHelper { get; set; }
@@ -202,7 +202,7 @@ public class QueryBuilder : ISqlQueryBuilder
     /// </summary>
     public void RegenerateSQL()
     {
-        var checkNotifier = new ThrowImmediatelyCheckNotifier();
+        var checkNotifier = ThrowImmediatelyCheckNotifier.Quiet;
 
         _sql = "";
 

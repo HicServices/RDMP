@@ -419,12 +419,6 @@ public class SafeDirectoryCatalog
     public readonly ConcurrentDictionary<string, Type> TypesByName = new();
 
     /// <summary>
-    /// The number of ignored dlls that were skipped because another copy was already seen
-    /// with the same major/minor/build version
-    /// </summary>
-    public int DuplicateDllsIgnored { get; }
-
-    /// <summary>
     /// Assemblies which could not be loaded
     /// </summary>
     public Dictionary<string, Exception> BadAssembliesDictionary { get; }
@@ -491,7 +485,6 @@ public class SafeDirectoryCatalog
                 if (FileVersionsAreEqual(newOneVersion, existingOneVersion))
                 {
                     // no need to spam user with warnings about duplicated dlls
-                    DuplicateDllsIgnored++;
                     continue;
                 }
 

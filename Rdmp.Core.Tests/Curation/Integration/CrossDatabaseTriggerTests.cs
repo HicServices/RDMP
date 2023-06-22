@@ -42,13 +42,13 @@ public class CrossDatabaseTriggerTests : DatabaseTests
         implementer = factory.Create(tbl);
 
         //no primary keys
-        Assert.Throws<TriggerException>(() => implementer.CreateTrigger(new ThrowImmediatelyCheckNotifier()));
+        Assert.Throws<TriggerException>(()=>implementer.CreateTrigger(ThrowImmediatelyCheckNotifier.Quiet()));
 
         tbl.CreatePrimaryKey(tbl.DiscoverColumn("name"));
 
         implementer = factory.Create(tbl);
 
-        implementer.CreateTrigger(new ThrowImmediatelyCheckNotifier());
+        implementer.CreateTrigger(ThrowImmediatelyCheckNotifier.Quiet());
 
         Assert.AreEqual(4, tbl.DiscoverColumns().Length);
 

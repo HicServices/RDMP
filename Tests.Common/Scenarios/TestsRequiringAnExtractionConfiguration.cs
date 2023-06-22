@@ -163,7 +163,7 @@ public class TestsRequiringAnExtractionConfiguration : TestsRequiringACohort
         var returnCode = runner.Run(
             RepositoryLocator,
             ThrowImmediatelyDataLoadEventListener.Quiet,
-            new ThrowImmediatelyCheckNotifier(),
+            ThrowImmediatelyCheckNotifier.Quiet,
             new GracefulCancellationToken());
 
         Assert.AreEqual(0, returnCode, "Return code from runner was non zero");

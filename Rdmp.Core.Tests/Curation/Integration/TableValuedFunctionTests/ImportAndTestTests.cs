@@ -126,7 +126,7 @@ public class ImportAndTestTests : DatabaseTests
 
         var syncer = new TableInfoSynchronizer(_function.TableInfoCreated);
 
-        var ex = Assert.Throws<Exception>(() => syncer.Synchronize(new ThrowImmediatelyCheckNotifier()));
+        var ex = Assert.Throws<Exception>(()=>syncer.Synchronize(ThrowImmediatelyCheckNotifier.Quiet));
         Assert.IsTrue(ex.Message.Contains(expectedMessage));
 
         //no changes yet
@@ -151,7 +151,7 @@ public class ImportAndTestTests : DatabaseTests
 
         var syncer = new TableInfoSynchronizer(_function.TableInfoCreated);
 
-        var ex = Assert.Throws<Exception>(() => syncer.Synchronize(new ThrowImmediatelyCheckNotifier()));
+        var ex = Assert.Throws<Exception>(() => syncer.Synchronize(ThrowImmediatelyCheckNotifier.Quiet));
         Assert.IsTrue(ex.Message.Contains(expectedMessage));
 
         //no parameter called @startNumber (because we deleted it right!)
@@ -177,8 +177,8 @@ public class ImportAndTestTests : DatabaseTests
 
         var syncer = new TableInfoSynchronizer(_function.TableInfoCreated);
 
-        var ex = Assert.Throws<Exception>(() => syncer.Synchronize(new ThrowImmediatelyCheckNotifier()));
-        StringAssert.Contains(expectedMessage, ex.Message);
+        var ex = Assert.Throws<Exception>(() => syncer.Synchronize(ThrowImmediatelyCheckNotifier.Quiet));
+        StringAssert.Contains(expectedMessage,ex?.Message);
 
         //no changes should yet have taken place since we didn't accept it yet
         Assert.IsTrue(parameter.HasLocalChanges().Evaluation == ChangeDescription.NoChanges);
@@ -225,12 +225,12 @@ public class ImportAndTestTests : DatabaseTests
     [Test]
     public void TableInfoCheckingWorks()
     {
-        _function.TableInfoCreated.Check(new ThrowImmediatelyCheckNotifier { ThrowOnWarning = true });
+        _function.TableInfoCreated.Check(ThrowImmediatelyCheckNotifier.QuietPicky);
     }
 
     [Test]
     public void CatalogueCheckingWorks()
     {
-        _function.Cata.Check(new ThrowImmediatelyCheckNotifier { ThrowOnWarning = true });
+        _function.Cata.Check(ThrowImmediatelyCheckNotifier.QuietPicky);
     }
 }

@@ -46,7 +46,7 @@ public class LookupTest : DatabaseTests
         new ExtractionInformation(CatalogueRepository,cata2_code,tiHeader_Code,"[tbl]..[code]");
         new ExtractionInformation(CatalogueRepository,cata2_desc,tiLookup_Desc,"[lookup]..[desc]");
             
-        new CatalogueChildProvider(CatalogueRepository,null, new ThrowImmediatelyCheckNotifier {ThrowOnWarning=true},null);
+        new CatalogueChildProvider(CatalogueRepository,null, ThrowImmediatelyCheckNotifier.QuietPicky,null);
             
     }
 

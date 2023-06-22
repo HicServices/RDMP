@@ -32,7 +32,7 @@ internal class CatalogueProblemProviderTests : UnitTests
         container.AddChild(childAggregateConfiguration2, 1);
 
         var pp = new CatalogueProblemProvider();
-        pp.RefreshProblems(new CatalogueChildProvider(Repository, null, new ThrowImmediatelyCheckNotifier(), null));
+        pp.RefreshProblems(new CatalogueChildProvider(Repository, null, ThrowImmediatelyCheckNotifier.Quiet(), null));
         var problem = pp.DescribeProblem(container);
 
         Assert.IsNotNull(problem);
@@ -47,7 +47,7 @@ internal class CatalogueProblemProviderTests : UnitTests
         container.Operation = SetOperation.UNION;
 
         var pp = new CatalogueProblemProvider();
-        pp.RefreshProblems(new CatalogueChildProvider(Repository, null, new ThrowImmediatelyCheckNotifier(), null));
+        pp.RefreshProblems(new CatalogueChildProvider(Repository, null, ThrowImmediatelyCheckNotifier.Quiet(), null));
         var problem = pp.DescribeProblem(container);
 
         Assert.IsNotNull(problem);
@@ -62,7 +62,7 @@ internal class CatalogueProblemProviderTests : UnitTests
         container.Operation = SetOperation.EXCEPT;
 
         var pp = new CatalogueProblemProvider();
-        pp.RefreshProblems(new CatalogueChildProvider(Repository, null, new ThrowImmediatelyCheckNotifier(), null));
+        pp.RefreshProblems(new CatalogueChildProvider(Repository, null, ThrowImmediatelyCheckNotifier.Quiet(), null));
         var problem = pp.DescribeProblem(container);
 
         Assert.IsNotNull(problem);
@@ -79,7 +79,7 @@ internal class CatalogueProblemProviderTests : UnitTests
         container.Operation = SetOperation.INTERSECT;
 
         var pp = new CatalogueProblemProvider();
-        pp.RefreshProblems(new CatalogueChildProvider(Repository, null, new ThrowImmediatelyCheckNotifier(), null));
+        pp.RefreshProblems(new CatalogueChildProvider(Repository, null, ThrowImmediatelyCheckNotifier.Quiet(), null));
         var problem = pp.DescribeProblem(container);
 
         Assert.IsNotNull(problem);
@@ -98,7 +98,7 @@ internal class CatalogueProblemProviderTests : UnitTests
         container.AddChild(childAggregateConfiguration, 0);
 
         var pp = new CatalogueProblemProvider();
-        pp.RefreshProblems(new CatalogueChildProvider(Repository, null, new ThrowImmediatelyCheckNotifier(), null));
+        pp.RefreshProblems(new CatalogueChildProvider(Repository, null, ThrowImmediatelyCheckNotifier.Quiet(), null));
         var problem = pp.DescribeProblem(container);
 
         Assert.IsNull(problem);
@@ -116,7 +116,7 @@ internal class CatalogueProblemProviderTests : UnitTests
         container.AddChild(childAggregateConfiguration2, 2);
 
         var pp = new CatalogueProblemProvider();
-        pp.RefreshProblems(new CatalogueChildProvider(Repository, null, new ThrowImmediatelyCheckNotifier(), null));
+        pp.RefreshProblems(new CatalogueChildProvider(Repository, null, ThrowImmediatelyCheckNotifier.Quiet(), null));
         var problem = pp.DescribeProblem(container);
 
         Assert.IsNull(problem);
@@ -132,7 +132,7 @@ internal class CatalogueProblemProviderTests : UnitTests
         container.AddChild(childAggregateConfiguration, 0);
 
         var pp = new CatalogueProblemProvider();
-        pp.RefreshProblems(new CatalogueChildProvider(Repository, null, new ThrowImmediatelyCheckNotifier(), null));
+        pp.RefreshProblems(new CatalogueChildProvider(Repository, null, ThrowImmediatelyCheckNotifier.Quiet(), null));
         var problem = pp.DescribeProblem(container);
 
         Assert.IsNotNull(problem);
@@ -153,7 +153,7 @@ internal class CatalogueProblemProviderTests : UnitTests
         container.AddChild(childAggregateConfiguration2, 2);
 
         var pp = new CatalogueProblemProvider();
-        pp.RefreshProblems(new CatalogueChildProvider(Repository, null, new ThrowImmediatelyCheckNotifier(), null));
+        pp.RefreshProblems(new CatalogueChildProvider(Repository, null, ThrowImmediatelyCheckNotifier.Quiet(), null));
         var problem = pp.DescribeProblem(container);
 
         Assert.IsNull(problem);
@@ -169,7 +169,7 @@ internal class CatalogueProblemProviderTests : UnitTests
         container.AddChild(childAggregateConfiguration, 0);
 
         var pp = new CatalogueProblemProvider();
-        pp.RefreshProblems(new CatalogueChildProvider(Repository, null, new ThrowImmediatelyCheckNotifier(), null));
+        pp.RefreshProblems(new CatalogueChildProvider(Repository, null, ThrowImmediatelyCheckNotifier.Quiet(), null));
         var problem = pp.DescribeProblem(container);
 
         Assert.IsNotNull(problem);
@@ -190,7 +190,7 @@ internal class CatalogueProblemProviderTests : UnitTests
         container.AddChild(childAggregateConfiguration2, 2);
 
         var pp = new CatalogueProblemProvider();
-        pp.RefreshProblems(new CatalogueChildProvider(Repository, null, new ThrowImmediatelyCheckNotifier(), null));
+        pp.RefreshProblems(new CatalogueChildProvider(Repository, null, ThrowImmediatelyCheckNotifier.Quiet(), null));
         var problem = pp.DescribeProblem(container);
 
         Assert.IsNull(problem);
@@ -209,7 +209,7 @@ internal class CatalogueProblemProviderTests : UnitTests
         container.AddChild(childContainer);
 
         var pp = new CatalogueProblemProvider();
-        pp.RefreshProblems(new CatalogueChildProvider(Repository, null, new ThrowImmediatelyCheckNotifier(), null));
+        pp.RefreshProblems(new CatalogueChildProvider(Repository, null, ThrowImmediatelyCheckNotifier.Quiet(), null));
         var problem = pp.DescribeProblem(childContainer);
 
         Assert.IsNotNull(problem);
@@ -229,7 +229,7 @@ internal class CatalogueProblemProviderTests : UnitTests
         container.AddChild(childContainer);
 
         var pp = new CatalogueProblemProvider();
-        pp.RefreshProblems(new CatalogueChildProvider(Repository, null, new ThrowImmediatelyCheckNotifier(), null));
+        pp.RefreshProblems(new CatalogueChildProvider(Repository, null, ThrowImmediatelyCheckNotifier.Quiet(), null));
         var problem = pp.DescribeProblem(childContainer);
 
         Assert.IsNotNull(problem);
@@ -251,7 +251,7 @@ internal class CatalogueProblemProviderTests : UnitTests
         container.AddChild(childContainer);
 
         var pp = new CatalogueProblemProvider();
-        pp.RefreshProblems(new CatalogueChildProvider(Repository, null, new ThrowImmediatelyCheckNotifier(), null));
+        pp.RefreshProblems(new CatalogueChildProvider(Repository, null, ThrowImmediatelyCheckNotifier.Quiet(), null));
         var problem = pp.DescribeProblem(childContainer);
 
         Assert.IsNull(problem);
@@ -266,7 +266,7 @@ internal class CatalogueProblemProviderTests : UnitTests
         container.AddChild(childContainer);
 
         var pp = new CatalogueProblemProvider();
-        pp.RefreshProblems(new CatalogueChildProvider(Repository, null, new ThrowImmediatelyCheckNotifier(), null));
+        pp.RefreshProblems(new CatalogueChildProvider(Repository, null, ThrowImmediatelyCheckNotifier.Quiet(), null));
         var problem = pp.DescribeProblem(childContainer);
 
         Assert.IsNotNull(problem);
@@ -286,7 +286,7 @@ internal class CatalogueProblemProviderTests : UnitTests
         container.AddChild(childContainer);
 
         var pp = new CatalogueProblemProvider();
-        pp.RefreshProblems(new CatalogueChildProvider(Repository, null, new ThrowImmediatelyCheckNotifier(), null));
+        pp.RefreshProblems(new CatalogueChildProvider(Repository, null, ThrowImmediatelyCheckNotifier.Quiet(), null));
         var problem = pp.DescribeProblem(childContainer);
 
         Assert.IsNotNull(problem);
@@ -308,7 +308,7 @@ internal class CatalogueProblemProviderTests : UnitTests
         container.AddChild(childContainer);
 
         var pp = new CatalogueProblemProvider();
-        pp.RefreshProblems(new CatalogueChildProvider(Repository, null, new ThrowImmediatelyCheckNotifier(), null));
+        pp.RefreshProblems(new CatalogueChildProvider(Repository, null, ThrowImmediatelyCheckNotifier.Quiet(), null));
         var problem = pp.DescribeProblem(childContainer);
 
         Assert.IsNull(problem);
@@ -323,7 +323,7 @@ internal class CatalogueProblemProviderTests : UnitTests
         container.AddChild(childContainer);
 
         var pp = new CatalogueProblemProvider();
-        pp.RefreshProblems(new CatalogueChildProvider(Repository, null, new ThrowImmediatelyCheckNotifier(), null));
+        pp.RefreshProblems(new CatalogueChildProvider(Repository, null, ThrowImmediatelyCheckNotifier.Quiet(), null));
         var problem = pp.DescribeProblem(childContainer);
 
         Assert.IsNotNull(problem);
@@ -343,7 +343,7 @@ internal class CatalogueProblemProviderTests : UnitTests
         container.AddChild(childContainer);
 
         var pp = new CatalogueProblemProvider();
-        pp.RefreshProblems(new CatalogueChildProvider(Repository, null, new ThrowImmediatelyCheckNotifier(), null));
+        pp.RefreshProblems(new CatalogueChildProvider(Repository, null, ThrowImmediatelyCheckNotifier.Quiet(), null));
         var problem = pp.DescribeProblem(childContainer);
 
         Assert.IsNotNull(problem);
@@ -365,7 +365,7 @@ internal class CatalogueProblemProviderTests : UnitTests
         container.AddChild(childContainer);
 
         var pp = new CatalogueProblemProvider();
-        pp.RefreshProblems(new CatalogueChildProvider(Repository, null, new ThrowImmediatelyCheckNotifier(), null));
+        pp.RefreshProblems(new CatalogueChildProvider(Repository, null, ThrowImmediatelyCheckNotifier.Quiet(), null));
         var problem = pp.DescribeProblem(childContainer);
 
         Assert.IsNull(problem);
@@ -455,7 +455,7 @@ internal class CatalogueProblemProviderTests : UnitTests
         param.SaveToDatabase();
 
         var pp = new CatalogueProblemProvider { Culture = new CultureInfo("en-GB") };
-        pp.RefreshProblems(new CatalogueChildProvider(Repository, null, new ThrowImmediatelyCheckNotifier(), null));
+        pp.RefreshProblems(new CatalogueChildProvider(Repository, null, ThrowImmediatelyCheckNotifier.Quiet(), null));
         var problem = pp.DescribeProblem(param);
 
         if (expectProblem)

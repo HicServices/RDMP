@@ -202,23 +202,14 @@ where
 
         if (timeoutInSeconds != -1) db.Server.TestConnection(timeoutInSeconds * 1000);
 
-        using (var con = db.Server.GetConnection())
-        {
-            con.Open();
-            using (var getDescription = db.Server.GetCommand(sql, con))
-            {
-                if (timeoutInSeconds != -1)
-                    getDescription.CommandTimeout = timeoutInSeconds;
+        using var con = db.Server.GetConnection();
+        con.Open();
+        using var getDescription = db.Server.GetCommand(sql, con);
+        if(timeoutInSeconds != -1)
+            getDescription.CommandTimeout = timeoutInSeconds;
 
-                using (var r = getDescription.ExecuteReader())
-                {
-                    if (!r.Read())
-                        return ExternalCohortDefinitionData.Orphan;
-
-                    return new ExternalCohortDefinitionData(r, ExternalCohortTable.Name);
-                }
-            }
-        }
+        using var r = getDescription.ExecuteReader();
+        return r.Read() ? new ExternalCohortDefinitionData(r, ExternalCohortTable.Name) : ExternalCohortDefinitionData.Orphan;
     }
 
 
@@ -268,9 +259,7 @@ where
     /// <inheritdoc/>
     public IQuerySyntaxHelper GetQuerySyntaxHelper()
     {
-        _cachedQuerySyntaxHelper ??= ExternalCohortTable.GetQuerySyntaxHelper();
-
-        return _cachedQuerySyntaxHelper;
+        return _cachedQuerySyntaxHelper ??= ExternalCohortTable.GetQuerySyntaxHelper();
     }
 
     #region Stuff for executing the actual queries described by this class (generating cohorts etc)
@@ -282,20 +271,19 @@ where
 
         var cohortTable = ect.DiscoverCohortTable();
 
-        using (var con = cohortTable.Database.Server.GetConnection())
-        {
-            con.Open();
-            var sql = $"SELECT DISTINCT * FROM {cohortTable.GetFullyQualifiedName()} WHERE {WhereSQL()}";
+        using var con = cohortTable.Database.Server.GetConnection();
+        con.Open();
+        var sql = $"SELECT DISTINCT * FROM {cohortTable.GetFullyQualifiedName()} WHERE {WhereSQL()}";
 
-            var da = cohortTable.Database.Server.GetDataAdapter(sql, con);
-            DataTable dtReturn = new DataTable();
-            dtReturn.BeginLoadData();
-            da.Fill(dtReturn);
+        var da = cohortTable.Database.Server.GetDataAdapter(sql, con);
+        var dtReturn = new DataTable();
+        dtReturn.BeginLoadData();
+        da.Fill(dtReturn);
+        dtReturn.EndLoadData();
 
-            dtReturn.TableName = cohortTable.GetRuntimeName();
-            dtReturn.EndLoadData();
-            return dtReturn;
-        }
+        dtReturn.TableName = cohortTable.GetRuntimeName();
+                
+        return dtReturn;
     }
 
     /// <inheritdoc/>
@@ -313,15 +301,11 @@ where
         var ect = ExternalCohortTable;
 
         var db = ect.Discover();
-        using (var con = db.Server.GetConnection())
-        {
-            con.Open();
+        using var con = db.Server.GetConnection();
+        con.Open();
 
-            using (var cmd = db.Server.GetCommand($"SELECT count(*) FROM {ect.TableName} WHERE {WhereSQL()}", con))
-            {
-                return Convert.ToInt32(cmd.ExecuteScalar());
-            }
-        }
+        using var cmd = db.Server.GetCommand($"SELECT count(*) FROM {ect.TableName} WHERE {WhereSQL()}", con);
+        return Convert.ToInt32(cmd.ExecuteScalar());
     }
 
     /// <inheritdoc/>
@@ -339,18 +323,14 @@ where
         var ect = ExternalCohortTable;
 
         var db = ect.Discover();
-        using (var con = db.Server.GetConnection())
-        {
-            con.Open();
+        using var con = db.Server.GetConnection();
+        con.Open();
 
-            using (var cmd = db.Server.GetCommand(sql, con))
-            {
-                if (timeout != -1)
-                    cmd.CommandTimeout = timeout;
+        using var cmd = db.Server.GetCommand(sql, con);
+        if(timeout != -1)
+            cmd.CommandTimeout = timeout;
 
-                return cmd.ExecuteScalar();
-            }
-        }
+        return cmd.ExecuteScalar();
     }
 
     #endregion
@@ -362,20 +342,20 @@ where
     /// <returns></returns>
     public static IEnumerable<CohortDefinition> GetImportableCohortDefinitions(ExternalCohortTable externalSource)
     {
-        using (var dt = GetImportableCohortDefinitionsTable(externalSource,
-                   out var displayMemberName,
-                   out var valueMemberName,
-                   out var versionMemberName,
-                   out var projectNumberMemberName))
+        using var dt = GetImportableCohortDefinitionsTable(externalSource,
+            out var displayMemberName,
+            out var valueMemberName,
+            out var versionMemberName,
+            out var projectNumberMemberName);
+        foreach (DataRow r in dt.Rows)
         {
-            foreach (DataRow r in dt.Rows)
-                yield return
-                    new CohortDefinition(
-                        Convert.ToInt32(r[valueMemberName]),
-                        r[displayMemberName].ToString(),
-                        Convert.ToInt32(r[versionMemberName]),
-                        Convert.ToInt32(r[projectNumberMemberName])
-                        , externalSource);
+            yield return
+                new CohortDefinition(
+                    Convert.ToInt32(r[valueMemberName]),
+                    r[displayMemberName].ToString(),
+                    Convert.ToInt32(r[versionMemberName]),
+                    Convert.ToInt32(r[projectNumberMemberName])
+                    ,externalSource);
         }
     }
 
@@ -395,11 +375,10 @@ where
         var server = externalSource.Discover().Server;
         var syntax = server.GetQuerySyntaxHelper();
 
-        using (var con = server.GetConnection())
-        {
-            con.Open();
-            var sql =
-                $@"Select
+        using var con = server.GetConnection();
+        con.Open();
+        var sql =
+            $@"Select 
 {syntax.EnsureWrapped("description")},
 {syntax.EnsureWrapped("id")},
 {syntax.EnsureWrapped("version")},
@@ -408,20 +387,17 @@ from {externalSource.DefinitionTableName}
 where
     exists (Select 1 from {externalSource.TableName} WHERE {externalSource.DefinitionTableForeignKeyField}=id)";
 
-            using (var da = server.GetDataAdapter(sql, con))
-            {
-                displayMemberName = "description";
-                valueMemberName = "id";
-                versionMemberName = "version";
-                projectNumberMemberName = "projectNumber";
+        using var da = server.GetDataAdapter(sql, con);
+        displayMemberName = "description";
+        valueMemberName = "id";
+        versionMemberName = "version";
+        projectNumberMemberName = "projectNumber";
 
-                DataTable toReturn = new DataTable();
-                toReturn.BeginLoadData();
-                da.Fill(toReturn);
-                toReturn.EndLoadData();
-                return toReturn;
-            }
-        }
+        var toReturn = new DataTable();
+        toReturn.BeginLoadData();
+        da.Fill(toReturn);
+        toReturn.EndLoadData();
+        return toReturn;
     }
 
     /// <inheritdoc/>
@@ -433,14 +409,13 @@ where
             : OverrideReleaseIdentifierSQL;
 
         if (toReturn.Equals(ExternalCohortTable.PrivateIdentifierField))
-            new ThrowImmediatelyCheckNotifier()
+            ThrowImmediatelyCheckNotifier.Quiet
                 .OnCheckPerformed(new CheckEventArgs(ErrorCodes.ExtractionIsIdentifiable));
 
         var syntaxHelper = GetQuerySyntaxHelper();
 
-        if (syntaxHelper.GetRuntimeName(toReturn)
-            .Equals(syntaxHelper.GetRuntimeName(ExternalCohortTable.PrivateIdentifierField)))
-            new ThrowImmediatelyCheckNotifier()
+        if (syntaxHelper.GetRuntimeName(toReturn).Equals(syntaxHelper.GetRuntimeName(ExternalCohortTable.PrivateIdentifierField)))
+            ThrowImmediatelyCheckNotifier.Quiet
                 .OnCheckPerformed(new CheckEventArgs(ErrorCodes.ExtractionIsIdentifiable));
 
         return runtimeName ? GetQuerySyntaxHelper().GetRuntimeName(toReturn) : toReturn;

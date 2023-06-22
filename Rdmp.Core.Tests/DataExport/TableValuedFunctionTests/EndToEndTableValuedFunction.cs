@@ -80,7 +80,7 @@ public class EndToEndTableValuedFunction : DatabaseTests
 
         _externalCohortTable = cohortDatabaseWizard.CreateDatabase(
             new PrivateIdentifierPrototype(_nonTvfExtractionIdentifier)
-            , new ThrowImmediatelyCheckNotifier());
+            ,ThrowImmediatelyCheckNotifier.Quiet());
 
         //create a table valued function
         CreateTvfCatalogue(cohortDatabaseNameWillBe);

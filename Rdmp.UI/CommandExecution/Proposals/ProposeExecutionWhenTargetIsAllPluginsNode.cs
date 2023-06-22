@@ -21,9 +21,6 @@ internal class ProposeExecutionWhenTargetIsAllPluginsNode : RDMPCommandExecution
 
     public override void Activate(AllPluginsNode target)
     {
-        if (ItemActivator.RepositoryLocator.CatalogueRepository.MEF.DownloadDirectory.Exists)
-            UsefulStuff.ShowPathInWindowsExplorer(ItemActivator.RepositoryLocator.CatalogueRepository.MEF
-                .DownloadDirectory);
     }
 
     public override bool CanActivate(AllPluginsNode target) => true;

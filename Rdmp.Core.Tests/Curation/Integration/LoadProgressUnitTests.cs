@@ -24,28 +24,28 @@ public class LoadProgressUnitTests : UnitTests
     {
         var lp = WhenIHaveA<LoadProgress>();
 
-        lp.Check(new ThrowImmediatelyCheckNotifier());
+        lp.Check(ThrowImmediatelyCheckNotifier.Quiet());
 
         //Bad Origin Date
         lp.OriginDate = DateTime.Now.AddDays(1);
-        Assert.Throws<Exception>(() => lp.Check(new ThrowImmediatelyCheckNotifier()));
+        Assert.Throws<Exception>(()=>lp.Check(ThrowImmediatelyCheckNotifier.Quiet()));
 
         //Back to normal
         lp.RevertToDatabaseState();
-        lp.Check(new ThrowImmediatelyCheckNotifier());
+        lp.Check(ThrowImmediatelyCheckNotifier.Quiet());
 
         //Bad ProgressDate
         lp.DataLoadProgress = DateTime.Now.AddDays(1);
-        Assert.Throws<Exception>(() => lp.Check(new ThrowImmediatelyCheckNotifier()));
-
+        Assert.Throws<Exception>(()=>lp.Check(ThrowImmediatelyCheckNotifier.Quiet()));
+                        
         //Back to normal
         lp.RevertToDatabaseState();
-        lp.Check(new ThrowImmediatelyCheckNotifier());
+        lp.Check(ThrowImmediatelyCheckNotifier.Quiet());
 
         // valid progress (1 year)
-        lp.OriginDate = new DateTime(2001, 1, 1);
-        lp.DataLoadProgress = new DateTime(2002, 1, 1);
-        lp.Check(new ThrowImmediatelyCheckNotifier());
+        lp.OriginDate = new DateTime(2001,1,1);
+        lp.DataLoadProgress = new DateTime(2002,1,1);
+        lp.Check(ThrowImmediatelyCheckNotifier.Quiet());
     }
 
     [Test]
@@ -58,8 +58,8 @@ public class LoadProgressUnitTests : UnitTests
 
         // We are fully up-to-date
         lp.DataLoadProgress = DateTime.Now;
-
-        lp.Check(new ThrowImmediatelyCheckNotifier());
+            
+        lp.Check(ThrowImmediatelyCheckNotifier.Quiet());
             
         var stratFactory = new JobDateGenerationStrategyFactory(new AnyAvailableLoadProgressSelectionStrategy(lp.LoadMetadata));
         var strat = stratFactory.Create(lp,ThrowImmediatelyDataLoadEventListener.Quiet);

@@ -104,7 +104,7 @@ public class RunUITests : DatabaseTests
     [Test]
     public void Test_IsSupported_BasicActivator()
     {
-        IBasicActivateItems basic = new ConsoleInputManager(RepositoryLocator, new ThrowImmediatelyCheckNotifier());
+        IBasicActivateItems basic = new ConsoleInputManager(RepositoryLocator,ThrowImmediatelyCheckNotifier.Quiet);
 
         var commandCaller = new CommandInvoker(basic);
         foreach (var t in new[]

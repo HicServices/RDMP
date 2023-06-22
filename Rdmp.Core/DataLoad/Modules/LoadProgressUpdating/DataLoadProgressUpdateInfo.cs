@@ -38,13 +38,13 @@ public class DataLoadProgressUpdateInfo : ICustomUIDrivenClass, ICheckable
         if (string.IsNullOrWhiteSpace(value))
             return;
 
-        var lines = value.Split(new[] { '\n', '\r' }, StringSplitOptions.RemoveEmptyEntries);
+        var lines = value.Split(new []{'\n','\r'},StringSplitOptions.RemoveEmptyEntries);
 
         if (lines.Length > 0)
         {
             var fields = lines[0].Split(';');
             if(fields.Length>0)
-                if (Enum.TryParse(fields[0], out strat))
+                if (Enum.TryParse(fields[0], out DataLoadProgressUpdateStrategy strat))
                     Strategy = strat;
 
             if (fields.Length > 1)
@@ -77,7 +77,7 @@ public class DataLoadProgressUpdateInfo : ICustomUIDrivenClass, ICheckable
     public IUpdateLoadProgress AddAppropriateDisposeStep(ScheduledDataLoadJob job, DiscoveredDatabase rawDatabase)
     {
         IUpdateLoadProgress added;
-        Check(new ThrowImmediatelyCheckNotifier());
+        Check(ThrowImmediatelyCheckNotifier.Quiet);
 
         switch (Strategy)
         {
@@ -112,8 +112,10 @@ public class DataLoadProgressUpdateInfo : ICustomUIDrivenClass, ICheckable
         return added;
     }
 
-    private static DiscoveredServer GetLiveServer(ScheduledDataLoadJob job) =>
-        DataAccessPortal.ExpectDistinctServer(job.RegularTablesToLoad.ToArray(), DataAccessContext.DataLoad, false);
+    private static DiscoveredServer GetLiveServer(ScheduledDataLoadJob job)
+    {
+        return DataAccessPortal.GetInstance().ExpectDistinctServer(job.RegularTablesToLoad.ToArray(), DataAccessContext.DataLoad, false);
+    }
 
     private DateTime GetMaxDate(DiscoveredServer server, IDataLoadEventListener listener)
     {

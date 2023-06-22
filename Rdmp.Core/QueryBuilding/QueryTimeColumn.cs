@@ -294,7 +294,7 @@ public class QueryTimeColumn : IComparable
         //make sure to only throw SyntaxErrorException errors in here
         try
         {
-            IColumn.Check(new ThrowImmediatelyCheckNotifier());
+            IColumn.Check(ThrowImmediatelyCheckNotifier.Quiet);
             var runtimeName = IColumn.GetRuntimeName();
 
             if (string.IsNullOrWhiteSpace(runtimeName))

@@ -17,6 +17,6 @@ internal class TestStartup : UnitTests
     public void TestStartupWithMemoryRepository()
     {
         var s = new Startup.Startup(RepositoryLocator);
-        Assert.DoesNotThrow(()=>s.DoStartup(new ThrowImmediatelyCheckNotifier()));
+        Assert.DoesNotThrow(()=>s.DoStartup(ThrowImmediatelyCheckNotifier.Quiet()));
     }
 }

@@ -188,64 +188,63 @@ public partial class ColumnInfoToANOTableConverterUI : ColumnInfoToANOTableConve
         if (preview == null)
         {
             preview = new DataTable();
+            preview.BeginLoadData();
             preview.Columns.Add(_columnInfo.GetRuntimeName(LoadStage.PostLoad));
             preview.Columns.Add(ANOTable.ANOPrefix + _columnInfo.GetRuntimeName(LoadStage.PostLoad));
 
             var server = DataAccessPortal.ExpectServer(ColumnInfo.TableInfo, DataAccessContext.DataLoad);
 
-            using (var con = server.GetConnection())
+            using var con = server.GetConnection();
+            con.Open();
+
+            lblPreviewDataIsFictional.Visible = false;
+
+            var qb = new QueryBuilder(null, null, new[] {ColumnInfo.TableInfo});
+            qb.AddColumn(new ColumnInfoToIColumn(new MemoryRepository(), _columnInfo));
+            qb.TopX = 10;
+                    
+            var rowsRead = false;
+
+            using (var cmd = server.GetCommand(qb.SQL, con))
             {
-                con.Open();
-
-                lblPreviewDataIsFictional.Visible = false;
-
-                var qb = new QueryBuilder(null, null, new[] { ColumnInfo.TableInfo });
-                qb.AddColumn(new ColumnInfoToIColumn(new MemoryRepository(), _columnInfo));
-                qb.TopX = 10;
-
-                var rowsRead = false;
-
-                using (var cmd = server.GetCommand(qb.SQL, con))
+                cmd.CommandTimeout = Convert.ToInt32(ntimeout.Value);
+                using var r = cmd.ExecuteReader();
+                while (r.Read())
                 {
-                    cmd.CommandTimeout = Convert.ToInt32(ntimeout.Value);
-                    using (var r = cmd.ExecuteReader())
-                    {
-                        while (r.Read())
-                        {
-                            preview.Rows.Add(r[_columnInfo.GetRuntimeName(LoadStage.PostLoad)], DBNull.Value);
-                            rowsRead = true;
-                        }
-                    }
+                    preview.Rows.Add(r[_columnInfo.GetRuntimeName(LoadStage.PostLoad)],DBNull.Value);
+                    rowsRead = true;
                 }
-
-                if (!rowsRead)
-                {
-                    lblPreviewDataIsFictional.Visible = true;
-                    if (_columnInfo.GetRuntimeDataType(LoadStage.AdjustRaw).ToLower().Contains("char"))
-                    {
-                        preview.Rows.Add("?", DBNull.Value);
-                        preview.Rows.Add("?", DBNull.Value);
-                        preview.Rows.Add("?", DBNull.Value);
-                        preview.Rows.Add("?", DBNull.Value);
-                    }
-                    else if (_columnInfo.GetRuntimeDataType(LoadStage.AdjustRaw).ToLower().Contains("date"))
-                    {
-                        preview.Rows.Add("1977-08-16", DBNull.Value);
-                        preview.Rows.Add("1977-08-16", DBNull.Value);
-                        preview.Rows.Add("1977-08-16", DBNull.Value);
-                        preview.Rows.Add("1977-08-16", DBNull.Value);
-                    }
-                    else
-                    {
-                        preview.Rows.Add("-1", DBNull.Value);
-                        preview.Rows.Add("-1", DBNull.Value);
-                        preview.Rows.Add("-1", DBNull.Value);
-                        preview.Rows.Add("-1", DBNull.Value);
-                    }
-                }
-
-                con.Close();
             }
+                    
+            if(!rowsRead)
+            {
+                lblPreviewDataIsFictional.Visible = true;
+                if(_columnInfo.GetRuntimeDataType(LoadStage.AdjustRaw).ToLower().Contains("char"))
+                {
+                    preview.Rows.Add("?", DBNull.Value);
+                    preview.Rows.Add("?", DBNull.Value);
+                    preview.Rows.Add("?", DBNull.Value);
+                    preview.Rows.Add("?", DBNull.Value);
+                }
+                else if(_columnInfo.GetRuntimeDataType(LoadStage.AdjustRaw).ToLower().Contains("date"))
+                {
+
+                    preview.Rows.Add("1977-08-16", DBNull.Value);
+                    preview.Rows.Add("1977-08-16", DBNull.Value);
+                    preview.Rows.Add("1977-08-16", DBNull.Value);
+                    preview.Rows.Add("1977-08-16", DBNull.Value);
+                }
+                else
+                {
+                    preview.Rows.Add("-1", DBNull.Value);
+                    preview.Rows.Add("-1", DBNull.Value);
+                    preview.Rows.Add("-1", DBNull.Value);
+                    preview.Rows.Add("-1", DBNull.Value);
+                }
+                    
+            }
+
+            con.Close();
         }
 
         if (ANOTable != null)
@@ -263,6 +262,10 @@ public partial class ColumnInfoToANOTableConverterUI : ColumnInfoToANOTableConve
             {
                 checksUI1.OnCheckPerformed(new CheckEventArgs(e.Message, CheckResult.Fail, e));
             }
+        }
+
+        preview.EndLoadData();
+        dgPreview.DataSource = preview;
 
         dgPreview.DataSource = preview;
     }
@@ -346,7 +349,7 @@ public partial class ColumnInfoToANOTableConverterUI : ColumnInfoToANOTableConve
         //if it is not pushed, push it now
         if (!ANOTable.IsTablePushed())
         {
-            ANOTable.PushToANOServerAsNewTable(_columnInfo.Data_type, new ThrowImmediatelyCheckNotifier { ThrowOnWarning = true });
+            ANOTable.PushToANOServerAsNewTable(_columnInfo.Data_type, ThrowImmediatelyCheckNotifier.QuietPicky);
             ANOTable.SaveToDatabase();
         }
 
@@ -364,7 +367,7 @@ public partial class ColumnInfoToANOTableConverterUI : ColumnInfoToANOTableConve
 
             if (worked)
                 if (Activator.YesNo("successfully changed column to ANO, close form?", "Close form?"))
-                    ParentForm.Close();
+                    ParentForm?.Close();
         }
         catch (Exception exception)
         {

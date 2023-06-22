@@ -38,7 +38,8 @@ public class PrimaryKeyCollisionResolverTests : DatabaseTests
             c3.DuplicateRecordResolutionIsAscending = false;
             c3.SaveToDatabase();
 
-            Assert.DoesNotThrow(() => mutilation.Check(new ThrowImmediatelyCheckNotifier()));
+            Assert.DoesNotThrow(() => mutilation.Check(ThrowImmediatelyCheckNotifier.Quiet()));
+            
         }
         finally
         {
@@ -59,7 +60,8 @@ public class PrimaryKeyCollisionResolverTests : DatabaseTests
             };
             try
             {
-                mutilation.Check(new ThrowImmediatelyCheckNotifier());
+
+                mutilation.Check(ThrowImmediatelyCheckNotifier.Quiet());
                 Assert.Fail("Should have crashed before here");
             }
             catch (Exception e)
@@ -81,11 +83,9 @@ public class PrimaryKeyCollisionResolverTests : DatabaseTests
     public void PrimaryKeyCollisionResolverMultilation_Check_ThrowsBecauseNotInitialized()
     {
         var mutilation = new PrimaryKeyCollisionResolverMutilation();
-
-        var ex = Assert.Throws<Exception>(() => mutilation.Check(new ThrowImmediatelyCheckNotifier()));
-        StringAssert.Contains(
-            "Target table is null, a table must be specified upon which to resolve primary key duplication (that TableInfo must have a primary key collision resolution order)",
-            ex.Message);
+            
+        var ex = Assert.Throws<Exception>(()=>mutilation.Check(ThrowImmediatelyCheckNotifier.Quiet()));
+        StringAssert.Contains("Target table is null, a table must be specified upon which to resolve primary key duplication (that TableInfo must have a primary key collision resolution order)",ex.Message);
     }
 
     [Test]

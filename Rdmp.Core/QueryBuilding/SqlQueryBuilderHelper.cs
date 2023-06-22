@@ -604,7 +604,7 @@ public class SqlQueryBuilderHelper
         for (var i = 0; i < filtersInContainer.Length; i++)
         {
             if (qb.CheckSyntax)
-                filtersInContainer[i].Check(new ThrowImmediatelyCheckNotifier());
+                filtersInContainer[i].Check(ThrowImmediatelyCheckNotifier.Quiet);
 
             toReturn += $@"{tabs}/*{filtersInContainer[i].Name}*/{Environment.NewLine}";
 
@@ -632,7 +632,8 @@ public class SqlQueryBuilderHelper
     /// <returns></returns>
     private static bool IsEnabled(IContainer container) =>
         //skip disabled containers
-        container is not IDisableable dis || !dis.IsDisabled;
+        return container is not IDisableable { IsDisabled: true };
+    }
 
     /// <summary>
     /// Filters are enabled if they do not support disabling (<see cref="IDisableable"/>) or are <see cref="IDisableable.IsDisabled"/> = false
@@ -641,8 +642,8 @@ public class SqlQueryBuilderHelper
     /// <returns></returns>
     private static bool IsEnabled(IFilter filter) =>
         //skip disabled filters
-        filter is not IDisableable dis || !dis.IsDisabled;
-
+        return filter is not IDisableable { IsDisabled: true };
+    }
     /// <summary>
     /// Returns the unique database server type <see cref="IQuerySyntaxHelper"/> by evaluating the <see cref="TableInfo"/> used in the query.
     /// <para>Throws <see cref="QueryBuildingException"/> if the tables are from mixed server types (e.g. MySql mixed with Oracle)</para> 
