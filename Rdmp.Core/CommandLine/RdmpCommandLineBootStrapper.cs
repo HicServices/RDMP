@@ -129,7 +129,7 @@ public class RdmpCommandLineBootStrapper
             }
 
             CatalogueRepository.SuppressHelpLoading = false;
-            opts.DoStartup(opts.LogStartup ? checker : new IgnoreAllErrorsCheckNotifier());
+            opts.DoStartup(opts.LogStartup ? checker : IgnoreAllErrorsCheckNotifier.Instance);
         }
 
         //if user wants to run checking chances are they don't want checks to fail because of errors logged during startup (MEF shows lots of errors!)

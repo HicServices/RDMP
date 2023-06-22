@@ -34,7 +34,7 @@ internal class ExecuteCommandViewThenVsNowSql : BasicUICommandExecution, IAtomic
 
         var rp = new FlatFileReleasePotential(Activator.RepositoryLocator, _selectedDataSet);
 
-        rp.Check(new IgnoreAllErrorsCheckNotifier());
+        rp.Check(IgnoreAllErrorsCheckNotifier.Instance);
 
         if (string.IsNullOrWhiteSpace(rp.SqlCurrentConfiguration))
             Show("Could not generate Sql for dataset");

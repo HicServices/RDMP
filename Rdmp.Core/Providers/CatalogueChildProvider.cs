@@ -221,7 +221,7 @@ public class CatalogueChildProvider : ICoreChildProvider
         _catalogueRepository = repository;
         _catalogueRepository?.EncryptionManager?.ClearAllInjections();
 
-        _errorsCheckNotifier = errorsCheckNotifier ?? new IgnoreAllErrorsCheckNotifier();
+        _errorsCheckNotifier = errorsCheckNotifier ?? IgnoreAllErrorsCheckNotifier.Instance;
 
         if (UserSettings.DebugPerformance)
             _errorsCheckNotifier.OnCheckPerformed(new CheckEventArgs(

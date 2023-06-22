@@ -29,7 +29,7 @@ internal class UnitTestsAllObjectsSupported:UnitTests
     {
         //load all DatabaseEntity types
         var mef = new MEF();
-        mef.Setup(new SafeDirectoryCatalog(new IgnoreAllErrorsCheckNotifier(), TestContext.CurrentContext.TestDirectory));
+        mef.Setup(new SafeDirectoryCatalog(IgnoreAllErrorsCheckNotifier.Instance, TestContext.CurrentContext.TestDirectory));
 
         var types = mef.GetAllTypes()
             .Where(t => typeof (DatabaseEntity).IsAssignableFrom(t) && !t.IsAbstract && !t.IsInterface).ToArray();

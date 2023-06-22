@@ -113,7 +113,7 @@ public class ValidationXMLObscureDependencyFinderTests: DatabaseTests
     public void Test_DeleteAColumnInfoThatIsReferenced()
     {
         var startup = new Startup.Startup(RepositoryLocator);
-        startup.DoStartup(new IgnoreAllErrorsCheckNotifier());
+        startup.DoStartup(IgnoreAllErrorsCheckNotifier.Instance);
 
         var testData = SetupTestData(out var l2ColumnInfo);
 
@@ -138,7 +138,7 @@ public class ValidationXMLObscureDependencyFinderTests: DatabaseTests
         var startup = new Startup.Startup(RepositoryLocator);
         try
         {
-            startup.DoStartup(new IgnoreAllErrorsCheckNotifier());
+            startup.DoStartup(IgnoreAllErrorsCheckNotifier.Instance);
         }
         catch (InvalidPatchException patchException)
         {
@@ -149,9 +149,9 @@ public class ValidationXMLObscureDependencyFinderTests: DatabaseTests
             ((CatalogueObscureDependencyFinder) CatalogueRepository.ObscureDependencyFinder)
             .OtherDependencyFinders.Count;
 
-        startup.DoStartup(new IgnoreAllErrorsCheckNotifier());
-        startup.DoStartup(new IgnoreAllErrorsCheckNotifier());
-        startup.DoStartup(new IgnoreAllErrorsCheckNotifier());
+        startup.DoStartup(IgnoreAllErrorsCheckNotifier.Instance);
+        startup.DoStartup(IgnoreAllErrorsCheckNotifier.Instance);
+        startup.DoStartup(IgnoreAllErrorsCheckNotifier.Instance);
 
         //there should not be any replication! and doubling SetUp!
         Assert.AreEqual(numberAfterFirstRun,

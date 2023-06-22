@@ -45,7 +45,7 @@ public class CataloguePipelinesAndReferencesCreation
     private void DoStartup()
     {
         var startup = new Startup.Startup(_repositoryLocator);
-        startup.DoStartup(new IgnoreAllErrorsCheckNotifier());
+        startup.DoStartup(IgnoreAllErrorsCheckNotifier.Instance);
     }
     private void CreateServers()
     {

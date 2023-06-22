@@ -264,7 +264,7 @@ public class HICPipelineTests : DatabaseTests
             //run checks (with ignore errors if we are sending dodgy credentials)
             new RunnerFactory().CreateRunner(new ThrowImmediatelyActivator(RepositoryLocator),options).Run(RepositoryLocator, ThrowImmediatelyDataLoadEventListener.Quiet, 
                 sendDodgyCredentials?
-                    (ICheckNotifier) new IgnoreAllErrorsCheckNotifier(): new AcceptAllCheckNotifier(), new GracefulCancellationToken());
+                    (ICheckNotifier) IgnoreAllErrorsCheckNotifier.Instance: new AcceptAllCheckNotifier(), new GracefulCancellationToken());
 
             //run load
             options.Command = CommandLineActivity.run;
