@@ -58,7 +58,7 @@ public class AllImportantClassesDocumented
 
             if (startAt != -1)
             {
-                var beforeDeclaration = text.Substring(0, startAt);
+                var beforeDeclaration = text[..startAt];
 
                 var mNamespace = Regex.Match(beforeDeclaration, "namespace (.*)");
 
@@ -117,19 +117,17 @@ public class AllImportantClassesDocumented
                             continue;
                     }
 
-                    var idxLastSlash = f.LastIndexOf("\\");
+                    var idxLastSlash = f.LastIndexOf("\\", StringComparison.Ordinal);
 
-                    if(idxLastSlash != -1)
-                        problems.Add(string.Format("FAIL UNDOCUMENTED CLASS:{0} ({1})", 
-                            f.Substring(f.LastIndexOf("\\") + 1),
-                            f.Substring(0, idxLastSlash))
-                        );
-                    else
-                        problems.Add($"FAIL UNDOCUMENTED CLASS:{f}");
+                    problems.Add(
+                        idxLastSlash != -1
+                            ? $"FAIL UNDOCUMENTED CLASS:{f[(f.LastIndexOf("\\", StringComparison.Ordinal) + 1)..]} ({f[..idxLastSlash]})"
+                            : $"FAIL UNDOCUMENTED CLASS:{f}"
+                    );
                 }
                 else
                 {
-                    var lines = match.Groups[1].Value.Split(new[] {Environment.NewLine}, StringSplitOptions.RemoveEmptyEntries).Count();
+                    var lines = match.Groups[1].Value.Split(new[] { Environment.NewLine }, StringSplitOptions.RemoveEmptyEntries).Length;
                     commentLineCount += lines;
                     commentedCount++;
                 }

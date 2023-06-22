@@ -77,7 +77,7 @@ public abstract class ReleasePotential:ICheckable
         DatasetExtractionResult = Configuration.CumulativeExtractionResults.FirstOrDefault(r => r.ExtractableDataSet_ID == DataSet.ID);
     }
 
-    private Releaseability MakeAssesment(ICumulativeExtractionResults extractionResults)
+    private Releaseability MakeAssessment(ICumulativeExtractionResults extractionResults)
     {
         //always try to figure out what the current SQL is
         SqlCurrentConfiguration = GetCurrentConfigurationSQL();
@@ -132,19 +132,14 @@ public abstract class ReleasePotential:ICheckable
 
     private Releaseability MakeSupplementalAssesment(ISupplementalExtractionResults supplementalExtractionResults)
     {
-        var extractedObject = _repositoryLocator.GetArbitraryDatabaseObject(
-            supplementalExtractionResults.ReferencedObjectRepositoryType,
-            supplementalExtractionResults.ReferencedObjectType,
-            supplementalExtractionResults.ReferencedObjectID) as INamed;
-
-        if (extractedObject == null)
+        if (_repositoryLocator.GetArbitraryDatabaseObject(
+                supplementalExtractionResults.ReferencedObjectRepositoryType,
+                supplementalExtractionResults.ReferencedObjectType,
+                supplementalExtractionResults.ReferencedObjectID) is not INamed extractedObject)
             return Releaseability.Undefined;
 
-        if (extractedObject is SupportingSQLTable)
-        {
-            if ((extractedObject as SupportingSQLTable).SQL != supplementalExtractionResults.SQLExecuted)
-                return Releaseability.ExtractionSQLDesynchronisation;
-        }
+        if (extractedObject is SupportingSQLTable table && table.SQL != supplementalExtractionResults.SQLExecuted)
+            return Releaseability.ExtractionSQLDesynchronisation;
 
         var finalAssessment = GetSupplementalSpecificAssessment(supplementalExtractionResults);
 
@@ -164,8 +159,9 @@ public abstract class ReleasePotential:ICheckable
     {
         ColumnsThatAreDifferentFromCatalogue = new Dictionary<ExtractableColumn, ExtractionInformation>();
 
-        foreach (ExtractableColumn extractableColumn in _columnsToExtract)
+        foreach (var column in _columnsToExtract)
         {
+            var extractableColumn = (ExtractableColumn)column;
             if(extractableColumn.HasOriginalExtractionInformationVanished())
             {
                 ColumnsThatAreDifferentFromCatalogue.Add(extractableColumn,null);
@@ -255,8 +251,8 @@ public abstract class ReleasePotential:ICheckable
         var existingReleaseLog = DatasetExtractionResult.GetReleaseLogEntryIfAny();
         if (existingReleaseLog != null)
         {
-            if (notifier.OnCheckPerformed(new CheckEventArgs(string.Format("Dataset {0} has probably already been released as per {1}!",
-                        DataSet, existingReleaseLog),
+            if (notifier.OnCheckPerformed(new CheckEventArgs(
+                    $"Dataset {DataSet} has probably already been released as per {existingReleaseLog}!",
                     CheckResult.Warning,
                     null,
                     "Do you want to delete the old release Log? You should check the values first.")))
@@ -275,7 +271,7 @@ public abstract class ReleasePotential:ICheckable
         if (!Assessments.ContainsKey(DatasetExtractionResult))
             try
             {
-                Assessments.Add(DatasetExtractionResult, MakeAssesment(DatasetExtractionResult));
+                Assessments.Add(DatasetExtractionResult, MakeAssessment(DatasetExtractionResult));
             }
             catch (Exception e)
             {

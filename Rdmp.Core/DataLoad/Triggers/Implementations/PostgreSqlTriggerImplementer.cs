@@ -5,6 +5,7 @@
 // You should have received a copy of the GNU General Public License along with RDMP. If not, see <https://www.gnu.org/licenses/>.
 
 using System;
+using System.Data.Common;
 using System.Linq;
 using System.Text.RegularExpressions;
 using FAnsi.Discovery;
@@ -41,25 +42,23 @@ public class PostgreSqlTriggerImplementer : TriggerImplementer
 
         try
         {
-            using (var con = _server.GetConnection())
+            using var con = _server.GetConnection();
+            con.Open();
+
+            using(var cmd = _server.GetCommand(
+                      $"DROP TRIGGER IF EXISTS \"{_triggerRuntimeName}\" ON {_table.GetFullyQualifiedName()}", con))
             {
-                con.Open();
-
-                using(var cmd = _server.GetCommand(
-                          $"DROP TRIGGER IF EXISTS \"{_triggerRuntimeName}\" ON {_table.GetFullyQualifiedName()}", con))
-                {
-                    cmd.CommandTimeout = UserSettings.ArchiveTriggerTimeout;
-                    cmd.ExecuteNonQuery();
-                }
-
-                using(var cmd = _server.GetCommand($"DROP FUNCTION IF EXISTS  {_procedureNameFullyQualified}", con))
-                {
-                    cmd.CommandTimeout = UserSettings.ArchiveTriggerTimeout;
-                    cmd.ExecuteNonQuery();
-                }
-
-                thingsThatWorkedDroppingTrigger = $"Dropped trigger {_triggerRuntimeName}";
+                cmd.CommandTimeout = UserSettings.ArchiveTriggerTimeout;
+                cmd.ExecuteNonQuery();
             }
+
+            using(var cmd = _server.GetCommand($"DROP FUNCTION IF EXISTS  {_procedureNameFullyQualified}", con))
+            {
+                cmd.CommandTimeout = UserSettings.ArchiveTriggerTimeout;
+                cmd.ExecuteNonQuery();
+            }
+
+            thingsThatWorkedDroppingTrigger = $"Dropped trigger {_triggerRuntimeName}";
         }
         catch (Exception exception)
         {
@@ -71,65 +70,44 @@ public class PostgreSqlTriggerImplementer : TriggerImplementer
     public override string CreateTrigger(ICheckNotifier notifier)
     {
         var creationSql = base.CreateTrigger(notifier);
+        using var con = _server.GetConnection();
+        con.Open();
 
-        CreateProcedure(notifier);
+        CreateProcedure(con);
             
-        var sql = string.Format(@"CREATE TRIGGER ""{0}"" BEFORE UPDATE ON {1} FOR EACH ROW
-EXECUTE PROCEDURE {2}();", 
-            _triggerRuntimeName,
-            _table.GetFullyQualifiedName(),
-            _procedureNameFullyQualified);
+        var sql =
+            $@"CREATE TRIGGER ""{_triggerRuntimeName}"" BEFORE UPDATE ON {_table.GetFullyQualifiedName()} FOR EACH ROW
+EXECUTE PROCEDURE {_procedureNameFullyQualified}();";
 
-        using (var con = _server.GetConnection())
-        {
-            con.Open();
-
-            using(var cmd = _server.GetCommand(sql, con))
-            {
-                cmd.CommandTimeout = UserSettings.ArchiveTriggerTimeout;
-                cmd.ExecuteNonQuery();
-            }
-                    
-        }
+        using var cmd = _server.GetCommand(sql, con);
+        cmd.CommandTimeout = UserSettings.ArchiveTriggerTimeout;
+        cmd.ExecuteNonQuery();
 
         return creationSql;
     }
 
-    private void CreateProcedure(ICheckNotifier notifier)
+    private void CreateProcedure(DbConnection con)
     {
-        var sql = string.Format(@"CREATE OR REPLACE FUNCTION {0}()
+        var sql = $@"CREATE OR REPLACE FUNCTION {_procedureNameFullyQualified}()
   RETURNS trigger AS
 $$
-{1}
+{CreateTriggerBody()}
 $$
-LANGUAGE 'plpgsql';"
-            ,_procedureNameFullyQualified
-            , CreateTriggerBody()
-        );
+LANGUAGE 'plpgsql';";
 
-        using (var con = _server.GetConnection())
-        {
-            con.Open();
-
-            using(var cmd = _server.GetCommand(sql, con))
-            {
-                cmd.CommandTimeout = UserSettings.ArchiveTriggerTimeout;
-                cmd.ExecuteNonQuery();
-            }
-                    
-        }
+        using var cmd = _server.GetCommand(sql, con);
+        cmd.CommandTimeout = UserSettings.ArchiveTriggerTimeout;
+        cmd.ExecuteNonQuery();
     }
 
     protected string GetTriggerBody()
     {
-        using (var con = _server.GetConnection())
-        {
-            con.Open();
+        using var con = _server.GetConnection();
+        con.Open();
 
-            using(var cmd = _server.GetCommand($"select proname,prosrc from pg_proc where proname= '{_procedureRuntimeName}';", con))
-            using (var r = cmd.ExecuteReader())
-                return r.Read() ? r["prosrc"] as string:null;
-        }
+        using var cmd = _server.GetCommand($"select proname,prosrc from pg_proc where proname= '{_procedureRuntimeName}';", con);
+        using var r = cmd.ExecuteReader();
+        return r.Read() ? r["prosrc"] as string:null;
     }
 
     public override bool CheckUpdateTriggerIsEnabledAndHasExpectedBody()
@@ -161,18 +139,14 @@ LANGUAGE 'plpgsql';"
         var syntax = _table.GetQuerySyntaxHelper();
 
         return
-            string.Format(@"BEGIN
-            INSERT INTO {0}({1},""hic_validTo"",""hic_userID"",hic_status)
-            VALUES({2},now(),current_user,'U');
+            $@"BEGIN
+            INSERT INTO {_archiveTable.GetFullyQualifiedName()}({string.Join(",", _columns.Select(c => syntax.EnsureWrapped(c.GetRuntimeName())))},""hic_validTo"",""hic_userID"",hic_status)
+            VALUES({string.Join(",", _columns.Select(c => $"OLD.{syntax.EnsureWrapped(c.GetRuntimeName())}"))},now(),current_user,'U');
 
-            NEW.{3} := NOW();
+            NEW.{syntax.EnsureWrapped(SpecialFieldNames.ValidFrom)} := NOW();
  
             RETURN NEW;
-            END;",
-                _archiveTable.GetFullyQualifiedName()                                                                          
-                , string.Join(",", _columns.Select(c => syntax.EnsureWrapped(c.GetRuntimeName()))),         
-                string.Join(",", _columns.Select(c => $"OLD.{syntax.EnsureWrapped(c.GetRuntimeName())}")),
-                syntax.EnsureWrapped(SpecialFieldNames.ValidFrom));
+            END;";
 
     }
 

@@ -30,12 +30,7 @@ public class StandardPipelineUseCaseNode : SingletonNode,IKnowWhatIAm
     public string WhatIsThis()
     {
         var useCaseType = UseCase.GetType();
-
-        var useCaseDescription = string.Format("{0} \r\n {1}",
-            useCaseType.Name,
-            _commentStore.GetTypeDocumentationIfExists(useCaseType, false, true));
-
         return
-            $"Collection of all the Pipelines compatible with a given use case.  This node's use case is:{Environment.NewLine}{useCaseDescription}";
+            $"Collection of all the Pipelines compatible with a given use case.  This node's use case is:{Environment.NewLine}{useCaseType.Name}{Environment.NewLine} {_commentStore.GetTypeDocumentationIfExists(useCaseType, false, true)}";
     }
 }

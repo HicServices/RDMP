@@ -112,11 +112,8 @@ public class FlatFileToDataTablePusher
                 }
                 else
                 {
-                    var errorMessage = string.Format("Column mismatch on line {0} of file '{1}', it has too many columns (expected {2} columns but line had  {3})",
-                        reader.Context.Parser.RawRow,
-                        dt.TableName, 
-                        _headers.Length,
-                        lineToPush.Cells.Length);
+                    var errorMessage =
+                        $"Column mismatch on line {reader.Context.Parser.RawRow} of file '{dt.TableName}', it has too many columns (expected {_headers.Length} columns but line had  {lineToPush.Cells.Length})";
 
                     if (_bufferOverrunsWhereColumnValueWasBlank > 0)
                         errorMessage +=

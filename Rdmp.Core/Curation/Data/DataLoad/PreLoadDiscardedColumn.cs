@@ -166,10 +166,7 @@ public class PreLoadDiscardedColumn : DatabaseEntity, IPreLoadDiscardedColumn, I
         if (GoesIntoIdentifierDump() && TableInfo.IdentifierDumpServer_ID == null)
             notifier.OnCheckPerformed(
                 new CheckEventArgs(
-                    string.Format(
-                        "Column is set to {0}  which means its value should be stored in the IdentifierDump but the parent table '{1}'  doesn't have a dump server configured",
-                        Destination,
-                        TableInfo),
+                    $"Column is set to {Destination}  which means its value should be stored in the IdentifierDump but the parent table '{TableInfo}'  doesn't have a dump server configured",
                     CheckResult.Fail));
         else
             notifier.OnCheckPerformed(new CheckEventArgs("Destination is ok", CheckResult.Success));

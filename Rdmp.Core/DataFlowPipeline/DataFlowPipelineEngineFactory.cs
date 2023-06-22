@@ -188,10 +188,8 @@ public class DataFlowPipelineEngineFactory : IDataFlowPipelineEngineFactory
                 if (argument == null)
                     if (initialization.DefaultValue == null && initialization.Mandatory)
                     {
-                        var msg = string.Format("Class {0} has a property {1} marked with DemandsInitialization but no corresponding argument was found in the arguments (PipelineComponentArgument) of the PipelineComponent called {2}", 
-                            toReturn.GetType().Name ,
-                            propertyInfo.Name ,
-                            toBuild.Name);
+                        var msg =
+                            $"Class {toReturn.GetType().Name} has a property {propertyInfo.Name} marked with DemandsInitialization but no corresponding argument was found in the arguments (PipelineComponentArgument) of the PipelineComponent called {toBuild.Name}";
 
                         throw new PropertyDemandNotMetException(msg, toBuild,propertyInfo);
                     }
