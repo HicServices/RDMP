@@ -61,11 +61,9 @@ public class BackfillSqlHelper
         if (joinPath[^1].ForeignKey.TableInfo_ID != _tiWithTimeColumn.ID && joinPath[^1].PrimaryKey.TableInfo_ID != _tiWithTimeColumn.ID)
             throw new InvalidOperationException("The TimePeriodicity table is not at the beginning or end of the join path.");
             
-        var sql = string.Format(@"SELECT {0}.*, {1}.{2} AS TimePeriodicityField 
-FROM {3} {4}",
-            tableAlias, timePeriodTableAlias, _timePeriodicityField.GetRuntimeName(),
-            $"[{dbInfo.GetRuntimeName()}]..[{tableInfo.GetRuntimeName()}]",
-            tableAlias);
+        var sql =
+            $@"SELECT {tableAlias}.*, {timePeriodTableAlias}.{_timePeriodicityField.GetRuntimeName()} AS TimePeriodicityField 
+FROM {$"[{dbInfo.GetRuntimeName()}]..[{tableInfo.GetRuntimeName()}]"} {tableAlias}";
 
         // Is our table a parent or child? The join is composed differently.
         var ascending = tableInfo.ID == joinPath[0].ForeignKey.TableInfo_ID;
@@ -124,19 +122,14 @@ LEFT JOIN {0} {1} ON {2}.{3} = {1}.{4}",
                 info => $"ToLoadWithTime.{info.GetRuntimeName()} = LoadedWithTime.{info.GetRuntimeName()}"));
 
         // Join to leave valid STAGING rows which are stale, or whose relation with the TimePeriodicity field has been severed and as such should be deleted anyway (since we can't assign a date to the record)
-        var cte = string.Format(@"
-{0} 
-
+        var cte = $@"
+{toLoadWithTimeSQL} 
 RIGHT JOIN 
-
-{1} 
-
-ON {2} 
-
+{loadedWithTimeSQL} 
+ON {pkEquality} 
 WHERE ToLoadWithTime.ID IS NOT NULL 
     AND (ToLoadWithTime.TimePeriodicityField <= LoadedWithTime.TimePeriodicityField OR ToLoadWithTime.TimePeriodicityField IS NULL) 
-)",
-            toLoadWithTimeSQL, loadedWithTimeSQL, pkEquality);
+)";
         return cte;
     }
 }

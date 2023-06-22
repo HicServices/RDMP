@@ -40,16 +40,9 @@ public class RowState
     public RowState(Evaluation evaluation, int dataLoadRunID, int correct, int missing, int wrong, int invalid,
         string validatorXml, string pivotCategory, DbConnection con, DbTransaction transaction)
     {
-        var sql = string.Format(
-            "INSERT INTO RowState(Evaluation_ID,Correct,Missing,Wrong,Invalid,DataLoadRunID,ValidatorXML,PivotCategory)VALUES({0},{1},{2},{3},{4},{5},@validatorXML,{6})",
-            evaluation.ID,
-            correct,
-            missing,
-            wrong,
-            invalid,
-            dataLoadRunID,
-            "@pivotCategory"
-        );
+
+        var sql =
+            $"INSERT INTO RowState(Evaluation_ID,Correct,Missing,Wrong,Invalid,DataLoadRunID,ValidatorXML,PivotCategory)VALUES({evaluation.ID},{correct},{missing},{wrong},{invalid},{dataLoadRunID},@validatorXML,@pivotCategory)";
 
         using (var cmd = DatabaseCommandHelper.GetCommand(sql, con, transaction))
         {

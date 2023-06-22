@@ -43,7 +43,7 @@ public class Startup
 
     public IRDMPPlatformRepositoryServiceLocator RepositoryLocator;
     public event FoundPlatformDatabaseHandler DatabaseFound = delegate { };
-    public event MEFDownloadProgressHandler MEFFileDownloaded = delegate { };
+    //public event MEFDownloadProgressHandler MEFFileDownloaded = delegate { };
 
     /// <summary>
     /// Set to true to ignore unpatched platform databases
@@ -52,7 +52,7 @@ public class Startup
 
     public PluginPatcherFoundHandler PluginPatcherFound = delegate { };
 
-    private PatcherManager _patcherManager = new();
+    private readonly PatcherManager _patcherManager = new();
 
     #region Constructors
     public Startup(IRDMPPlatformRepositoryServiceLocator repositoryLocator):this()
@@ -115,33 +115,31 @@ public class Startup
 
 
         //only load data export manager if catalogue worked
-        if (foundCatalogue)
+        if (!foundCatalogue) return;
+        LoadMEF(RepositoryLocator.CatalogueRepository, notifier);
+
+        //find tier 2 databases
+        foreach (var patcher in _patcherManager.Tier2Patchers)
+            FindWithPatcher(patcher, notifier);
+
+        try
         {
-            LoadMEF(RepositoryLocator.CatalogueRepository, notifier);
+            var dataExportRepository = RepositoryLocator.DataExportRepository;
 
-            //find tier 2 databases
-            foreach (var patcher in _patcherManager.Tier2Patchers)
-                FindWithPatcher(patcher, notifier);
+            //not configured
+            if (dataExportRepository == null)
+                return;
 
-            try
-            {
-                var dataExportRepository = RepositoryLocator.DataExportRepository;
-
-                //not configured
-                if (dataExportRepository == null)
-                    return;
-
-                Find(dataExportRepository, new DataExportPatcher(), notifier);
-            }
-            catch (Exception e)
-            {
-                DatabaseFound(this,
-                    new PlatformDatabaseFoundEventArgs(null, new DataExportPatcher(), RDMPPlatformDatabaseStatus.Broken,
-                        e));
-            }
-
-            FindTier3Databases(RepositoryLocator.CatalogueRepository, notifier);
+            Find(dataExportRepository, new DataExportPatcher(), notifier);
         }
+        catch (Exception e)
+        {
+            DatabaseFound(this,
+                new PlatformDatabaseFoundEventArgs(null, new DataExportPatcher(), RDMPPlatformDatabaseStatus.Broken,
+                    e));
+        }
+
+        FindTier3Databases(RepositoryLocator.CatalogueRepository, notifier);
     }
 
     private void FindTier3Databases(ICatalogueRepository catalogueRepository, ICheckNotifier notifier)
@@ -184,12 +182,19 @@ public class Startup
         }
 
 
-        Patch.PatchingState patchingRequired;
         try
         {
             //is it up-to-date on patches?
-            patchingRequired = Patch.IsPatchingRequired(tableRepository.DiscoveredServer.GetCurrentDatabase(),
+            var patchingRequired = Patch.IsPatchingRequired(tableRepository.DiscoveredServer.GetCurrentDatabase(),
                 patcher, out _, out _, out _);
+            DatabaseFound(this,
+                new PlatformDatabaseFoundEventArgs(tableRepository, patcher, patchingRequired switch
+                {
+                    Patch.PatchingState.NotRequired => RDMPPlatformDatabaseStatus.Healthy,
+                    Patch.PatchingState.Required => SkipPatching ? RDMPPlatformDatabaseStatus.Healthy : RDMPPlatformDatabaseStatus.RequiresPatching,
+                    Patch.PatchingState.SoftwareBehindDatabase => RDMPPlatformDatabaseStatus.SoftwareOutOfDate,
+                    _ => throw new ArgumentOutOfRangeException(nameof(patchingRequired))
+                }));
         }
         catch (Exception e)
         {
@@ -198,17 +203,6 @@ public class Startup
                 new PlatformDatabaseFoundEventArgs(tableRepository, patcher, RDMPPlatformDatabaseStatus.Broken, e));
             return false;
         }
-
-        DatabaseFound(this,
-            new PlatformDatabaseFoundEventArgs(tableRepository, patcher, patchingRequired switch
-            {
-                Patch.PatchingState.NotRequired => RDMPPlatformDatabaseStatus.Healthy,
-                Patch.PatchingState.Required => SkipPatching
-                    ? RDMPPlatformDatabaseStatus.Healthy
-                    : RDMPPlatformDatabaseStatus.RequiresPatching,
-                Patch.PatchingState.SoftwareBehindDatabase => RDMPPlatformDatabaseStatus.SoftwareOutOfDate,
-                _ => throw new ArgumentOutOfRangeException(nameof(patchingRequired))
-            }));
 
         return true;
     }

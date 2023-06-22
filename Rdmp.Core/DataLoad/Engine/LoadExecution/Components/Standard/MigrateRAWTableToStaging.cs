@@ -133,28 +133,23 @@ public class MigrateRAWTableToStaging : DataLoadComponent
         {
             var cols = dbInfo.ExpectTable(sourceTableName).DiscoverColumns();
 
-            using (var con = dbInfo.Server.GetConnection())
-            {
-                con.Open();
-                using (var cmd = dbInfo.Server.GetCommand(
-                           //Magical code that nukes blank/null rows - where all rows are blank/null
-                           string.Format(@"delete from {0} WHERE {1}",
-                               sourceTableName,
-                               string.Join(" AND ",
-                                   cols.Select(c => $"({c} IS NULL OR {c}='')"))), con))
-                {
-                    job.OnNotify(this, new NotifyEventArgs(ProgressEventType.Warning,
-                        $"About to delete fully null records using SQL:{cmd.CommandText}"));
+            using var con = dbInfo.Server.GetConnection();
+            con.Open();
+            using var cmd = dbInfo.Server.GetCommand(
 
-                    cmd.CommandTimeout = 500000;
+                //Magical code that nukes blank/null rows - where all rows are blank/null
+                $@"delete from {sourceTableName} WHERE {string.Join(" AND ",
+                    cols.Select(c => $"({c} IS NULL OR {c}='')"))}", con);
+            job.OnNotify(this, new NotifyEventArgs(ProgressEventType.Warning,
+                $"About to delete fully null records using SQL:{cmd.CommandText}"));
 
-                    var affectedRows = cmd.ExecuteNonQuery();
+            cmd.CommandTimeout = 500000;
 
-                    if (affectedRows != 0)
-                        job.OnNotify(this, new NotifyEventArgs(ProgressEventType.Warning,
-                            $"Deleted {affectedRows} fully blank/null rows from RAW database"));
-                }
-            }
+            var affectedRows = cmd.ExecuteNonQuery();
+
+            if (affectedRows != 0)
+                job.OnNotify(this, new NotifyEventArgs(ProgressEventType.Warning,
+                    $"Deleted {affectedRows} fully blank/null rows from RAW database"));
         }
         catch (Exception e)
         {

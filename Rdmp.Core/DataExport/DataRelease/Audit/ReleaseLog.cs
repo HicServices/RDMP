@@ -105,12 +105,7 @@ public class ReleaseLog : DatabaseEntity, IReleaseLog
 
 
         return
-            string.Format(
-                "ReleaseLogEntry(CumulativeExtractionResults_ID={0},DatasetName={1},DateOfRelease={2},Username={3})",
-                CumulativeExtractionResults_ID,
-                _datasetName,
-                DateOfRelease,
-                Username);
+            $"ReleaseLogEntry(CumulativeExtractionResults_ID={CumulativeExtractionResults_ID},DatasetName={_datasetName},DateOfRelease={DateOfRelease},Username={Username})";
     }
 
     public ReleaseLog()

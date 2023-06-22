@@ -83,7 +83,7 @@ public abstract class ReleasePotential : ICheckable
             Configuration.CumulativeExtractionResults.FirstOrDefault(r => r.ExtractableDataSet_ID == DataSet.ID);
     }
 
-    private Releaseability MakeAssesment(ICumulativeExtractionResults extractionResults)
+    private Releaseability MakeAssessment(ICumulativeExtractionResults extractionResults)
     {
         //always try to figure out what the current SQL is
         SqlCurrentConfiguration = GetCurrentConfigurationSQL();
@@ -144,9 +144,8 @@ public abstract class ReleasePotential : ICheckable
                 supplementalExtractionResults.ReferencedObjectID) is not INamed extractedObject)
             return Releaseability.Undefined;
 
-        if (extractedObject is SupportingSQLTable table)
-            if (table.SQL != supplementalExtractionResults.SQLExecuted)
-                return Releaseability.ExtractionSQLDesynchronisation;
+        if (extractedObject is SupportingSQLTable table && table.SQL != supplementalExtractionResults.SQLExecuted)
+            return Releaseability.ExtractionSQLDesynchronisation;
 
         var finalAssessment = GetSupplementalSpecificAssessment(supplementalExtractionResults);
 
@@ -167,9 +166,10 @@ public abstract class ReleasePotential : ICheckable
     {
         ColumnsThatAreDifferentFromCatalogue = new Dictionary<ExtractableColumn, ExtractionInformation>();
 
-        foreach (ExtractableColumn extractableColumn in _columnsToExtract)
+        foreach (var column in _columnsToExtract)
         {
-            if (extractableColumn.HasOriginalExtractionInformationVanished())
+            var extractableColumn = (ExtractableColumn)column;
+            if(extractableColumn.HasOriginalExtractionInformationVanished())
             {
                 ColumnsThatAreDifferentFromCatalogue.Add(extractableColumn, null);
                 continue;
@@ -258,8 +258,8 @@ public abstract class ReleasePotential : ICheckable
         var existingReleaseLog = DatasetExtractionResult.GetReleaseLogEntryIfAny();
         if (existingReleaseLog != null)
         {
-            if (notifier.OnCheckPerformed(new CheckEventArgs(string.Format("Dataset {0} has probably already been released as per {1}!",
-                        DataSet, existingReleaseLog),
+            if (notifier.OnCheckPerformed(new CheckEventArgs(
+                    $"Dataset {DataSet} has probably already been released as per {existingReleaseLog}!",
                     CheckResult.Warning,
                     null,
                     "Do you want to delete the old release Log? You should check the values first.")))
@@ -280,7 +280,7 @@ public abstract class ReleasePotential : ICheckable
         if (!Assessments.ContainsKey(DatasetExtractionResult))
             try
             {
-                Assessments.Add(DatasetExtractionResult, MakeAssesment(DatasetExtractionResult));
+                Assessments.Add(DatasetExtractionResult, MakeAssessment(DatasetExtractionResult));
             }
             catch (Exception e)
             {

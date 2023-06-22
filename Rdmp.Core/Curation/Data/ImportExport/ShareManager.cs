@@ -365,9 +365,7 @@ public class ShareManager
 
         if (LocalReferenceGetter == null)
             throw new Exception(
-                string.Format("No LocalReferenceGetter has been set, cannot populate Property {0} {1}",
-                    property.Name,
-                    $" on class {property.DeclaringType.Name}"));
+                $"No LocalReferenceGetter has been set, cannot populate Property {property.Name}  on class {property.DeclaringType.Name}");
 
         return LocalReferenceGetter(property, relationshipAttribute, shareDefinition);
     }
