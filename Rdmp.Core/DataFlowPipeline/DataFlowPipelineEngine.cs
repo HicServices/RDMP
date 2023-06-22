@@ -263,6 +263,7 @@ public class DataFlowPipelineEngine<T> : IDataFlowPipelineEngine
             }
 
             foreach (var component in Components)
+            {
                 if (component is ICheckable checkable)
                 {
                     notifier.OnCheckPerformed(new CheckEventArgs($"About to start checking component {component}",

@@ -182,18 +182,23 @@ public class CohortCompiler
         //if it is the root container or we are adding tasks for all containers including subcontainers
         if (CohortIdentificationConfiguration.RootCohortAggregateContainer_ID == container.ID || addSubcontainerTasks)
             if (!container.IsDisabled)
-                toReturn.Add(Task.Run(() => { return AddTask(container, globals); }));
-
+            {
+                toReturn.Add(Task.Run(()=> AddTask(container, globals)));
+            }
+        }
+                
 
         foreach (var c in container.GetOrderedContents())
         {
-            if(c is CohortAggregateContainer { IsDisabled: false } aggregateContainer)
+            switch (c)
             {
-                toReturn.AddRange(AddTasksRecursivelyAsync(globals, aggregateContainer, addSubcontainerTasks));
+                case CohortAggregateContainer { IsDisabled: false } aggregateContainer:
+                    toReturn.AddRange(AddTasksRecursivelyAsync(globals, aggregateContainer, addSubcontainerTasks));
+                    break;
+                case AggregateConfiguration { IsDisabled: false } aggregate:
+                    toReturn.Add(Task.Run(() => AddTask(aggregate, globals)));
+                    break;
             }
-            if(c is AggregateConfiguration { IsDisabled: false } aggregate)
-            {
-                toReturn.Add(Task.Run(() => { return AddTask(aggregate, globals); }));
         }
 
         return toReturn;

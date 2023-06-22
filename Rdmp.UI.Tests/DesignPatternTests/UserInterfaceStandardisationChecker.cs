@@ -120,9 +120,11 @@ public class UserInterfaceStandardisationChecker
             }
 
             foreach (var c in menuClass.GetConstructors())
-                if (c.GetParameters().Length != 2)
+            {
+                if(c.GetParameters().Length != 2)
                     problems.Add(
                         $"Constructor of class '{menuClass}' which is an RDMPContextMenuStrip contained {c.GetParameters().Length} constructor arguments.  These menus are driven by reflection (See RDMPCollectionCommonFunctionality.GetMenuWithCompatibleConstructorIfExists )");
+            }
 
 
             var toLookFor = menuClass.Name[..^"Menu".Length];

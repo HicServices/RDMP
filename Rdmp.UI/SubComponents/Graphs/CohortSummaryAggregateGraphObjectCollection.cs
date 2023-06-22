@@ -95,8 +95,8 @@ public class CohortSummaryAggregateGraphObjectCollection : PersistableObjectColl
         shouldClose = false;
 
         //matched object in our collection
-        if (DatabaseObjects.SingleOrDefault(o => o.Equals(oTriggeringRefresh)) is IRevertable matchingObject)
-            if (matchingObject.Exists())
+        if(DatabaseObjects.SingleOrDefault(o => o.Equals(oTriggeringRefresh)) is IRevertable matchingObject)
+            if (matchingObject.Exists()) 
                 matchingObject.RevertToDatabaseState();
             else
                 shouldClose = true; //object doesn't exist anymore so close control

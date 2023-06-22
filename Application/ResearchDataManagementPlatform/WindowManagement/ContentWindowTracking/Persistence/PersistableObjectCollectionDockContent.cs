@@ -87,8 +87,8 @@ public class PersistableObjectCollectionDockContent : RDMPSingleControlTab
 
         foreach (var o in collection.DatabaseObjects)
         {
-            var revertable = o as IRevertable;
-            revertable?.RevertToDatabaseState();
+            if (o is IRevertable revertable)
+                revertable.RevertToDatabaseState();
         }
 
         _control.SetCollection(activator, collection);

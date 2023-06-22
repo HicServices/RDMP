@@ -183,7 +183,7 @@ public class PipelineComponent : DatabaseEntity, IPipelineComponent
 
     public override void DeleteInDatabase()
     {
-        if (Pipeline is Pipeline parent)
+        if(Pipeline is Pipeline parent)
         {
             if (parent.SourcePipelineComponent_ID == ID)
                 CatalogueRepository.SaveSpecificPropertyOnlyToDatabase(parent, "SourcePipelineComponent_ID", null);

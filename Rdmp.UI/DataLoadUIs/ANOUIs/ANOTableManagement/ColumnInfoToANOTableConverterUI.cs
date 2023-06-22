@@ -300,7 +300,7 @@ public partial class ColumnInfoToANOTableConverterUI : ColumnInfoToANOTableConve
 
     private void ddExternalDatabaseServer_SelectedIndexChanged(object sender, EventArgs e)
     {
-        if (ddExternalDatabaseServer.SelectedItem is not ExternalDatabaseServer server)
+        if(ddExternalDatabaseServer.SelectedItem is not ExternalDatabaseServer server)
             return;
 
         ANOTransformer.ConfirmDependencies(DataAccessPortal.ExpectDatabase(server, DataAccessContext.DataLoad),

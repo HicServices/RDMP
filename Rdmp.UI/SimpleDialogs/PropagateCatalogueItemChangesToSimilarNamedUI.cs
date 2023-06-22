@@ -114,7 +114,7 @@ public partial class PropagateCatalogueItemChangesToSimilarNamedUI : RDMPForm
 
     private void olvCatalogues_CellRightClick(object sender, CellRightClickEventArgs e)
     {
-        if (olvCatalogues.SelectedObject is not CatalogueItem ci)
+        if(olvCatalogues.SelectedObject is not CatalogueItem ci)
             return;
 
         var menu = new RDMPContextMenuStrip(new RDMPContextMenuStripArgs(Activator), ci);

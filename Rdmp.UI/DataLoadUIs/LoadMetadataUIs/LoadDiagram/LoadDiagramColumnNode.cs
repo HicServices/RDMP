@@ -44,7 +44,8 @@ public class LoadDiagramColumnNode : Node, ICombineableSource, IHasLoadDiagramSt
 
         if (_column is PreLoadDiscardedColumn preLoadDiscarded)
             _expectedDataType = preLoadDiscarded.SqlDataType;
-        else if (_column is ColumnInfo colInfo)
+        else
+        if (_column is ColumnInfo colInfo)
             _expectedDataType = colInfo.GetRuntimeDataType(_bubble.ToLoadStage());
         else
             throw new Exception(

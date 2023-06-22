@@ -295,6 +295,10 @@ public class SearchablesMatchScorer
 
     private static int CountMatchToString(List<Regex> regexes, object key)
     {
+        return MatchCount(regexes, key.GetType().Name);
+    }
+    private int CountMatchToString(List<Regex> regexes, object key)
+    {
         var matchOn = key is ICustomSearchString s ? s.GetSearchString() : key.ToString();
 
         return MatchCount(regexes, matchOn);
@@ -338,7 +342,7 @@ public class SearchablesMatchScorer
     public static bool Filter(object modelObject, DescendancyList descendancy, bool includeInternal,
         bool includeDeprecated, bool includeColdStorage, bool includeProjectSpecific, bool includeNonExtractable)
     {
-        //doesn't relate to us...
+        //doesn't relate to us... 
         if (modelObject is not ICatalogue cata)
         {
             // or are we one of these things that can be tied to a catalogue

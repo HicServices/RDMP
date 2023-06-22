@@ -194,7 +194,7 @@ public partial class ExecuteExtractionUI : ExecuteExtractionUI_Design
         if (rowObject == _globalsFolder && extractionRunner != null)
             return extractionRunner.GetGlobalsState();
 
-        if (extractionRunner != null && rowObject is SelectedDataSets sds)
+        if (extractionRunner != null && rowObject is SelectedDataSets sds) 
             return extractionRunner.GetState(sds.ExtractableDataSet);
 
         return null;
@@ -207,7 +207,7 @@ public partial class ExecuteExtractionUI : ExecuteExtractionUI_Design
         if (rowObject == _globalsFolder && extractionRunner != null)
             return extractionRunner.GetGlobalCheckNotifier();
 
-        if (extractionRunner != null && rowObject is SelectedDataSets sds)
+        if (extractionRunner != null && rowObject is SelectedDataSets sds) 
             return extractionRunner.GetCheckNotifier(sds.ExtractableDataSet);
 
         return null;

@@ -451,9 +451,7 @@ public partial class RDMPCollectionCommonFunctionality : IRefreshBusSubscriber
     {
         var hasProblems = _activator.HasProblem(e.Model);
 
-        var disableable = e.Model as IDisableable;
-
-        if (disableable is { IsDisabled: true })
+        if (e.Model is IDisableable { IsDisabled: true } disableable)
         {
             e.Item.ForeColor = Color.FromArgb(152, 152, 152);
 

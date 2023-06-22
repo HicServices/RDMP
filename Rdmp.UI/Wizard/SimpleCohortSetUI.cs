@@ -186,7 +186,7 @@ public partial class SimpleCohortSetUI : UserControl
 
     private void btnAddFilter_Click(object sender, EventArgs e)
     {
-        if (ddAvailableFilters.SelectedItem is not ExtractionFilter f)
+        if(ddAvailableFilters.SelectedItem is not ExtractionFilter f)
             return;
 
         AddFilter(f);

@@ -30,9 +30,8 @@ internal class ProposeExecutionWhenTargetIsAggregateConfiguration:RDMPCommandExe
     public override ICommandExecution ProposeExecution(ICombineToMakeCommand cmd,
         AggregateConfiguration targetAggregateConfiguration, InsertOption insertOption = InsertOption.Default)
     {
-        if (cmd is ContainerCombineable cc)
-            return new ExecuteCommandImportFilterContainerTree(ItemActivator, targetAggregateConfiguration,
-                cc.Container);
+        if(cmd is ContainerCombineable cc)
+            return new ExecuteCommandImportFilterContainerTree(ItemActivator,targetAggregateConfiguration,cc.Container);
 
         //if it is an aggregate being dragged
         if (cmd is AggregateConfigurationCombineable sourceAggregateCommand)

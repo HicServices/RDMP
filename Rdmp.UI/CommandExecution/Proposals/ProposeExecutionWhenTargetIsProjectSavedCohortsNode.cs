@@ -35,18 +35,15 @@ internal class ProposeExecutionWhenTargetIsProjectSavedCohortsNode:RDMPCommandEx
                     .SetTarget(cicCommand.CohortIdentificationConfiguration).SetTarget(target.Project);
 
         //drop a file on the SavedCohorts node to commit it
-        if (cmd is FileCollectionCombineable fileCommand && fileCommand.Files.Length == 1)
-            return new ExecuteCommandCreateNewCohortFromFile(ItemActivator, fileCommand.Files[0], null).SetTarget(
-                target.Project);
+        if(cmd is FileCollectionCombineable fileCommand && fileCommand.Files.Length == 1)
+            return new ExecuteCommandCreateNewCohortFromFile(ItemActivator,fileCommand.Files[0],null).SetTarget(target.Project);
 
         //drop a Project Specific Catalogue onto it
         if (cmd is CatalogueCombineable catalogueCombineable)
             return new ExecuteCommandCreateNewCohortFromCatalogue(ItemActivator, catalogueCombineable.Catalogue)
                 .SetTarget(target.Project);
 
-        var columnCommand = cmd as ColumnCombineable;
-
-        if (columnCommand is { Column: ExtractionInformation })
+        if (cmd is ColumnCombineable { Column: ExtractionInformation } columnCommand)
             return new ExecuteCommandCreateNewCohortFromCatalogue(ItemActivator,(ExtractionInformation) columnCommand.Column);
 
         return null;

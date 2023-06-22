@@ -117,7 +117,7 @@ public class RdmpCommandLineBootStrapper
             // where RDMP objects are stored
             repositoryLocator = opts.GetRepositoryLocator();
 
-            if (repositoryLocator == null || repositoryLocator.CatalogueRepository == null)
+            if(repositoryLocator?.CatalogueRepository == null)
             {
                 listener.OnNotify(typeof(RdmpCommandLineBootStrapper),
                     new NotifyEventArgs(ProgressEventType.Error,

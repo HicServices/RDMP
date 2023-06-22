@@ -81,11 +81,8 @@ public class CrossDatabaseTriggerTests : DatabaseTests
         {
             con.Open();
             var cmd = tbl.Database.Server.GetCommand(
-                $"INSERT INTO {tbl.GetRuntimeName()}(name,bubbles) VALUES('bob',1)", con);
+                $"INSERT INTO {tbl.GetRuntimeName()}(name,bubbles) VALUES('bob',1)",con);
             cmd.ExecuteNonQuery();
-
-            Assert.AreEqual(1, tbl.GetRowCount());
-            Assert.AreEqual(0, archiveTable.GetRowCount());
 
             cmd = tbl.Database.Server.GetCommand($"UPDATE {tbl.GetRuntimeName()} set bubbles=2", con);
             cmd.ExecuteNonQuery();

@@ -420,7 +420,7 @@ public partial class AggregateEditorUI : AggregateEditor_Design, ISaveableUI
         if (isRefreshing)
             return;
 
-        if (ddAxisDimension.SelectedItem is not AggregateDimension selectedDimension)
+        if(ddAxisDimension.SelectedItem is not AggregateDimension selectedDimension)
             return;
 
         //is there already an axis? if so keep the old start/end dates
@@ -554,8 +554,8 @@ public partial class AggregateEditorUI : AggregateEditor_Design, ISaveableUI
 
     private void olvJoin_ItemActivate(object sender, EventArgs e)
     {
-        if (olvJoin.SelectedObject is TableInfo t)
-            Activator.RequestItemEmphasis(this, new EmphasiseRequest(t));
+        if(olvJoin.SelectedObject is TableInfo t)
+            Activator.RequestItemEmphasis(this,new EmphasiseRequest(t));
     }
 }
 

@@ -89,8 +89,7 @@ public partial class FindAndReplaceUI : RDMPUserControl
             _allObjects.Add(o);
 
         if (Activator.CoreChildProvider is DataExportChildProvider dxmChildProvider)
-            foreach (var o in dxmChildProvider.GetAllExtractableColumns(
-                         Activator.RepositoryLocator.DataExportRepository))
+            foreach (var o in dxmChildProvider.GetAllExtractableColumns(Activator.RepositoryLocator.DataExportRepository))
                 _allObjects.Add(o);
 
         foreach (var o in g.GetAllObjectsInAllDatabases())
@@ -99,7 +98,7 @@ public partial class FindAndReplaceUI : RDMPUserControl
 
     private void OlvAllObjectsCellEditFinished(object sender, CellEditEventArgs e)
     {
-        if (e == null || e.RowObject == null)
+        if( e?.RowObject == null)
             return;
 
         var node = (FindAndReplaceNode)e.RowObject;
@@ -154,19 +153,17 @@ public partial class FindAndReplaceUI : RDMPUserControl
 
     private void tlvAllObjects_ItemActivate(object sender, EventArgs e)
     {
-        if (olvAllObjects.SelectedObject is FindAndReplaceNode node)
-        {
-            var cmd = new ExecuteCommandActivate(Activator, node.Instance);
-            if (!cmd.IsImpossible)
-                cmd.Execute();
-        }
+        if (olvAllObjects.SelectedObject is not FindAndReplaceNode node) return;
+        var cmd = new ExecuteCommandActivate(Activator, node.Instance);
+        if(!cmd.IsImpossible)
+            cmd.Execute();
     }
 
     private TextMatchFilter _textMatchFilter;
 
     private void btnFind_Click(object sender, EventArgs e)
     {
-        if (olvAllObjects.ModelFilter is not CompositeAllFilter all)
+        if(olvAllObjects.ModelFilter is not CompositeAllFilter all)
             olvAllObjects.ModelFilter = all = new CompositeAllFilter(new List<IModelFilter>());
 
         if (_textMatchFilter != null && all.Filters.Contains(_textMatchFilter))

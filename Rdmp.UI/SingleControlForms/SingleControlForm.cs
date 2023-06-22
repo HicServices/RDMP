@@ -22,7 +22,7 @@ public class SingleControlForm : Form
         Text = !string.IsNullOrWhiteSpace(control.Text) ? control.Text : control.Name;
 
         Controls.Add(control);
-        control.Anchor = AnchorStyles.Top | AnchorStyles.Left | AnchorStyles.Right | AnchorStyles.Bottom;
+        control.Anchor = AnchorStyles.Top | AnchorStyles.Left| AnchorStyles.Right | AnchorStyles.Bottom;
 
         if (control is IConsultableBeforeClosing consult)
             FormClosing += consult.ConsultAboutClosing;

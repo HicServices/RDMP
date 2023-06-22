@@ -73,8 +73,8 @@ public class SelectSQLRefactorer
 
     protected static void Save(object o)
     {
-        var s = o as ISaveable;
-        s?.SaveToDatabase();
+        if (o is ISaveable s)
+            s.SaveToDatabase();
     }
 
     /// <summary>

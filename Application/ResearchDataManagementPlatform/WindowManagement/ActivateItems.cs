@@ -177,7 +177,8 @@ public class ActivateItems : BasicActivateItems, IActivateItems, IRefreshBusSubs
             throw new Exception(
                 $"Control '{singleControlForm}' is a Form and asDocument was passed as true.  When asDocument is true you must be a Control not a Form e.g. inherit from RDMPUserControl instead of RDMPForm");
 
-        var c = singleControlForm as RDMPUserControl;
+        if(singleControlForm is RDMPUserControl c)
+            c.SetItemActivator(this);
 
         c?.SetItemActivator(this);
 
@@ -434,11 +435,11 @@ public class ActivateItems : BasicActivateItems, IActivateItems, IRefreshBusSubs
 
         var c = (Control)UIObjectConstructor.Construct(instruction.UIControlType,activator,true);
 
-
         //it has a database object so call SetDatabaseObject
         if (c is IObjectCollectionControl uiCollection)
-            //if we get here then Instruction wasn't for a
+            //if we get here then Instruction wasn't for a 
             return Activate(uiCollection, instruction.ObjectCollection);
+        else
         if (c is IRDMPSingleDatabaseObjectControl uiInstance)
         {
             var databaseObject = instruction.DatabaseObject;

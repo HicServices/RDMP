@@ -323,7 +323,7 @@ e.g. /$i/$a")]
 
     public DirectoryInfo GetDirectoryFor(IExtractCommand request)
     {
-        if (string.IsNullOrWhiteSpace(ExtractionSubdirectoryPattern) || request is not IExtractDatasetCommand cmd)
+        if(string.IsNullOrWhiteSpace(ExtractionSubdirectoryPattern) || request is not IExtractDatasetCommand cmd)
             return request.GetExtractionDirectory();
 
         var cata = cmd.SelectedDataSets.ExtractableDataSet.Catalogue;

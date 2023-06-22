@@ -472,20 +472,16 @@ public class ForwardEngineerANOCatalogueTests : TestsRequiringFullAnonymisationS
         //The query builder should be able to succesfully create SQL
         Console.WriteLine(qbdestination.SQL);
 
-        var anoEiPostcode = anoCatalogue.GetAllExtractionInformation(ExtractionCategory.Any)
-            .Single(ei => ei.GetRuntimeName().Equals("MyMutilatedColumn"));
-
+        var anoEiPostcode = anoCatalogue.GetAllExtractionInformation(ExtractionCategory.Any).Single(ei => ei.GetRuntimeName().Equals("MyMutilatedColumn"));
+            
         //The transform on postcode should have been refactored to the new table name and preserve the scalar function LEFT...
-        Assert.AreEqual($"LEFT(10,{anoEiPostcode.ColumnInfo.TableInfo.GetFullyQualifiedName()}.[current_postcode])",
-            anoEiPostcode.SelectSQL);
+        Assert.AreEqual($"LEFT(10,{anoEiPostcode.ColumnInfo.TableInfo.GetFullyQualifiedName()}.[current_postcode])",anoEiPostcode.SelectSQL);
 
-        var anoEiComboCol = anoCatalogue.GetAllExtractionInformation(ExtractionCategory.Any)
-            .Single(ei => ei.GetRuntimeName().Equals("ComboColumn"));
+        var anoEiComboCol = anoCatalogue.GetAllExtractionInformation(ExtractionCategory.Any).Single(ei => ei.GetRuntimeName().Equals("ComboColumn"));
 
         //The transform on postcode should have been refactored to the new table name and preserve the scalar function LEFT...
         Assert.AreEqual(
-            string.Format("{0}.[forename] + ' ' + {0}.[surname]",
-                anoEiPostcode.ColumnInfo.TableInfo.GetFullyQualifiedName()), anoEiComboCol.SelectSQL);
+            $"{anoEiPostcode.ColumnInfo.TableInfo.GetFullyQualifiedName()}.[forename] + ' ' + {anoEiPostcode.ColumnInfo.TableInfo.GetFullyQualifiedName()}.[surname]", anoEiComboCol.SelectSQL);
 
         //there should be 2 tables involved in the query [z_sexLookup] and [BulkData]
         Assert.AreEqual(2, qbdestination.TablesUsedInQuery.Count);

@@ -181,9 +181,7 @@ public partial class PerformanceCounterResultsUI : UserControl
 
     private void tlvLocations_ItemActivate(object sender, EventArgs e)
     {
-        var model = tlvLocations.SelectedObject as StackFramesTree;
-
-        if (model is { HasSourceCode: true })
+        if (tlvLocations.SelectedObject is StackFramesTree { HasSourceCode: true } model)
         {
             var dialog = new SimpleDialogs.ViewSourceCodeDialog(model.Filename,model.LineNumber, Color.GreenYellow);
             dialog.Show();

@@ -217,8 +217,8 @@ public partial class ViewExtractionSqlUI : ViewExtractionSql_Design
 
     private void olv_ItemActivate(object sender, EventArgs e)
     {
-        if (((ObjectListView)sender).SelectedObject is IMapsDirectlyToDatabaseTable o)
-            Activator.RequestItemEmphasis(this, new EmphasiseRequest(o) { ExpansionDepth = 1 });
+        if(((ObjectListView)sender).SelectedObject is IMapsDirectlyToDatabaseTable o)
+            Activator.RequestItemEmphasis(this,new EmphasiseRequest(o){ExpansionDepth = 1});
     }
 
     private void olvFilters_ItemChecked(object sender, ItemCheckedEventArgs e)

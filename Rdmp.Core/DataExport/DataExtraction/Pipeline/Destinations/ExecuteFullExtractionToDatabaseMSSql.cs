@@ -205,7 +205,7 @@ public class ExecuteFullExtractionToDatabaseMSSql : ExtractionDestination
     {
         //if the extraction is of a Catalogue
 
-        if (_request is not IExtractDatasetCommand datasetCommand)
+        if(_request is not IExtractDatasetCommand datasetCommand)
             return;
 
         //for every extractable column in the Catalogue
@@ -610,6 +610,7 @@ public class ExecuteFullExtractionToDatabaseMSSql : ExtractionDestination
         }
 
         if (TableNamingPattern != null && TableNamingPattern.Contains("$a"))
+        {
             if (_request is ExtractDatasetCommand dsRequest && string.IsNullOrWhiteSpace(dsRequest.Catalogue.Acronym))
                 notifier.OnCheckPerformed(new CheckEventArgs(
                     $"Catalogue '{dsRequest.Catalogue}' does not have an Acronym but TableNamingPattern contains $a",

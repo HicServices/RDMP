@@ -436,8 +436,9 @@ public partial class ServerDatabaseTableSelector : UserControl
     public DiscoveredTable GetDiscoveredTable()
     {
         //if user selected a specific object from the drop down properly
+        var tblValuedFunction = cbxTableValueFunctions.SelectedItem as DiscoveredTableValuedFunction;
 
-        if (cbxTable.SelectedItem is DiscoveredTable tbl)
+        if(cbxTable.SelectedItem is DiscoveredTable tbl)
             return tbl;
 
         if (cbxTableValueFunctions.SelectedItem is DiscoveredTableValuedFunction tblValuedFunction)

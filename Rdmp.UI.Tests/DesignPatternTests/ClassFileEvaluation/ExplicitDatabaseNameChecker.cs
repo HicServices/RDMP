@@ -18,7 +18,7 @@ public class ExplicitDatabaseNameChecker
     {
         var problemFiles = new Dictionary<string, string>();
         var prohibitedStrings = new List<string>();
-
+            
         var ignoreList = new List<string>
         {
             "ExplicitDatabaseNameChecker.cs", //us obviously since we do contain that text!

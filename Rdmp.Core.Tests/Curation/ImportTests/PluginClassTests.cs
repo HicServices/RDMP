@@ -108,7 +108,7 @@ public class PluginClassTests : UnitTests
 
         //now delete lma2 only
         lma2.DeleteInDatabase();
-
+            
         Assert.AreEqual(2, Repository.GetAllObjects<ObjectImport>().Length);
 
         //import them

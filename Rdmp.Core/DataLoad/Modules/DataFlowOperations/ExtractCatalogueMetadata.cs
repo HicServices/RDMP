@@ -100,6 +100,7 @@ public class ExtractCatalogueMetadata : IPluginDataFlowComponent<DataTable>, IPi
     public void Check(ICheckNotifier notifier)
     {
         if (MetadataNamingPattern != null && MetadataNamingPattern.Contains("$a"))
+        {
             if (_request is ExtractDatasetCommand dsRequest && string.IsNullOrWhiteSpace(dsRequest.Catalogue.Acronym))
                 notifier.OnCheckPerformed(new CheckEventArgs(
                     $"Catalogue '{dsRequest.Catalogue}' does not have an Acronym but MetadataNamingPattern contains $a",

@@ -161,7 +161,7 @@ public partial class TicketingSystemConfigurationUI : RDMPUserControl
 
     private void btnEditCredentials_Click(object sender, EventArgs e)
     {
-        if (ddCredentials.SelectedItem is DataAccessCredentials creds)
+        if(ddCredentials.SelectedItem is DataAccessCredentials creds)
             _activator.CommandExecutionFactory.Activate(creds);
     }
 

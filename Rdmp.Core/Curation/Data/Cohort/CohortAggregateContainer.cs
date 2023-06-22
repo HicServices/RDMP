@@ -312,9 +312,10 @@ public class CohortAggregateContainer : DatabaseEntity, IOrderable, INamed, IDis
         foreach (var content in contents)
         {
             var order = content.Order;
+            var container = content as CohortAggregateContainer;
 
             //its a config, clone the config and add it to the clone container
-            if (content is AggregateConfiguration config)
+            if(content is AggregateConfiguration config)
             {
                 var configClone = clone.ImportAggregateConfigurationAsIdentifierList(config, null, false);
                 notifier.OnCheckPerformed(new CheckEventArgs(

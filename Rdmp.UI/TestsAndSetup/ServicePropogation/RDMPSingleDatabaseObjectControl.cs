@@ -198,7 +198,7 @@ public abstract class RDMPSingleDatabaseObjectControl<T> : RDMPUserControl, IRDM
         bool formattingEnabled = true, DataSourceUpdateMode updateMode = DataSourceUpdateMode.OnPropertyChanged)
     {
         //workaround for only comitting lists on loose focus
-        if (box is { DropDownStyle: ComboBoxStyle.DropDownList } && propertyName.Equals("SelectedItem"))
+        if (c is ComboBox { DropDownStyle: ComboBoxStyle.DropDownList } box && propertyName.Equals("SelectedItem"))
         {
             box.SelectionChangeCommitted += (s,e)=>box.DataBindings["SelectedItem"].WriteValue();
         }

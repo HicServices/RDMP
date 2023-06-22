@@ -266,8 +266,8 @@ public partial class JoinConfigurationUI : JoinConfiguration_Design
     {
         var olv = (ObjectListView)sender;
 
-        if (olv.SelectedObject is IMapsDirectlyToDatabaseTable o)
-            Activator.RequestItemEmphasis(this, new EmphasiseRequest(o));
+        if(olv.SelectedObject is IMapsDirectlyToDatabaseTable o)
+            Activator.RequestItemEmphasis(this,new EmphasiseRequest(o));
     }
 }
 

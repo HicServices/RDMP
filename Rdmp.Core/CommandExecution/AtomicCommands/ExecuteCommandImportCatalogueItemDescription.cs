@@ -80,7 +80,7 @@ public class ExecuteCommandImportCatalogueItemDescription : BasicCommandExecutio
             propertyInfo.SetValue(to, value, null);
         }
 
-        var s = to as ISaveable;
-        s?.SaveToDatabase();
+        if (to is ISaveable s)
+            s.SaveToDatabase();
     }
 }

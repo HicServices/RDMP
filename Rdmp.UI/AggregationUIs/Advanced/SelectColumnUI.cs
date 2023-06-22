@@ -231,8 +231,9 @@ public partial class SelectColumnUI : RDMPUserControl
 
     private void ButtonClick(object sender, CellClickEventArgs cellClickEventArgs)
     {
-        if (cellClickEventArgs.Column == olvEditInPopup)
-            if (cellClickEventArgs.Model is IColumn col)
+        if(cellClickEventArgs.Column == olvEditInPopup)
+        {
+            if(cellClickEventArgs.Model is IColumn col)
             {
                 var dialog = new SetSQLDialog(col.SelectSQL, new RDMPCombineableFactory());
 
@@ -276,8 +277,8 @@ public partial class SelectColumnUI : RDMPUserControl
             return;
         }
 
-        var saveable = col as ISaveable;
-        saveable?.SaveToDatabase();
+        if (col is ISaveable saveable)
+            saveable.SaveToDatabase();
 
         _aggregate.SaveToDatabase();
         Activator.RefreshBus.Publish(this, new RefreshObjectEventArgs(_aggregate));

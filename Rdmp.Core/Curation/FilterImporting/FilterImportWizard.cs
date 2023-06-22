@@ -188,6 +188,9 @@ public class FilterImportWizard
     private void GetGlobalsAndFilters(IContainer containerToImportOneInto, out ISqlParameter[] globals,
         out IFilter[] otherFilters)
     {
+        var filtercontainer = containerToImportOneInto as FilterContainer;
+
+
         if (containerToImportOneInto is AggregateFilterContainer aggregatecontainer)
         {
             var aggregate = aggregatecontainer.GetAggregate();

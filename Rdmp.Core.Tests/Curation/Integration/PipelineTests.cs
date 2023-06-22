@@ -137,10 +137,8 @@ public class PipelineTests : DatabaseTests
 
         Assert.AreEqual(p2.Name, $"{p.Name} (Clone)");
 
-        Assert.AreEqual(componentsBefore * 2,
-            RepositoryLocator.CatalogueRepository.GetAllObjects<PipelineComponent>().Length);
-        Assert.AreEqual(argumentsBefore * 2,
-            RepositoryLocator.CatalogueRepository.GetAllObjects<PipelineComponentArgument>().Length);
+        Assert.AreEqual(componentsBefore *2, RepositoryLocator.CatalogueRepository.GetAllObjects<PipelineComponent>().Length);
+        Assert.AreEqual(argumentsBefore *2, RepositoryLocator.CatalogueRepository.GetAllObjects<PipelineComponentArgument>().Length);
 
         //p the original should have a pipeline component that has the value we set earlier
         Assert.AreEqual(

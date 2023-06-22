@@ -49,18 +49,13 @@ public partial class ProjectUI : ProjectUI_Design, ISaveableUI
 
     private void SetCohorts()
     {
-        if (_project == null || _project.ProjectNumber == null)
+        if(_project?.ProjectNumber == null)
             return;
 
-        if (Activator.CoreChildProvider is not DataExportChildProvider dxChildProvider) return;
+        if(Activator.CoreChildProvider is not DataExportChildProvider dxChildProvider)
+            return;
 
-        var toShow = new List<ExtractableCohort>();
-
-        foreach (var c in dxChildProvider.Cohorts)
-            if (c.ExternalProjectNumber == _project.ProjectNumber)
-                toShow.Add(c);
-
-        extractableCohortCollection1.SetupFor(toShow.ToArray());
+        extractableCohortCollection1.SetupFor(dxChildProvider.Cohorts.Where(c => c.ExternalProjectNumber == _project.ProjectNumber).ToArray());
     }
 
     //menu item setup

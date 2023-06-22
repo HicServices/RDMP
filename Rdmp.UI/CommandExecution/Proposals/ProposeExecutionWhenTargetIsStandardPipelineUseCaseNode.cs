@@ -27,9 +27,8 @@ internal class ProposeExecutionWhenTargetIsStandardPipelineUseCaseNode :RDMPComm
     public override ICommandExecution ProposeExecution(ICombineToMakeCommand cmd, StandardPipelineUseCaseNode target,
         InsertOption insertOption = InsertOption.Default)
     {
-        if (cmd is PipelineCombineable sourcePipelineCommand)
-            return new ExecuteCommandEditPipelineWithUseCase(ItemActivator, sourcePipelineCommand.Pipeline,
-                target.UseCase);
+        if(cmd is PipelineCombineable sourcePipelineCommand)
+            return new ExecuteCommandEditPipelineWithUseCase(ItemActivator,sourcePipelineCommand.Pipeline, target.UseCase);
 
         return null;
     }

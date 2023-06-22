@@ -150,9 +150,9 @@ public class ExecuteCommandSet : BasicCommandExecution
             var populatedNewValueWithRelationship = false;
 
             // If the property we are getting a value for is a foreign key ID field then we should show the user the compatible objects
-            if (_property.GetCustomAttribute(typeof(RelationshipAttribute)) is RelationshipAttribute rel &&
-                (_property.PropertyType == typeof(int) || _property.PropertyType == typeof(int?)))
-                if (typeof(IMapsDirectlyToDatabaseTable).IsAssignableFrom(rel.Cref))
+            if(_property.GetCustomAttribute(typeof(RelationshipAttribute)) is RelationshipAttribute rel && (_property.PropertyType == typeof(int) || _property.PropertyType == typeof(int?)))
+            {
+                if(typeof(IMapsDirectlyToDatabaseTable).IsAssignableFrom(rel.Cref))
                 {
                     IMapsDirectlyToDatabaseTable[] available;
 

@@ -119,8 +119,7 @@ public partial class LoadDiagramUI : LoadDiagram_Design
     {
         if (e.Column == olvDataType)
         {
-            var colNode = e.Model as LoadDiagramColumnNode;
-            if (colNode is { State: LoadDiagramState.Different })
+            if (e.Model is LoadDiagramColumnNode { State: LoadDiagramState.Different } colNode)
                 e.SubItem.ForeColor = Color.Red;
         }
 
@@ -184,26 +183,44 @@ public partial class LoadDiagramUI : LoadDiagram_Design
 
     private IEnumerable ChildrenGetter(object model)
     {
-        return model switch
-        {
-            LoadDiagramServerNode server => server.GetChildren(),
-            LoadDiagramDatabaseNode database => database.GetChildren(),
-            LoadDiagramTableNode table => table.GetChildren(cbOnlyShowDynamicColumns.Checked),
-            UnplannedTable unplannedTable => unplannedTable.Columns,
-            _ => null
-        };
+        var database = model as LoadDiagramDatabaseNode;
+        var table = model as LoadDiagramTableNode;
+        var unplannedTable = model as UnplannedTable;
+
+        if (model is LoadDiagramServerNode server)
+            return server.GetChildren();
+
+        if (database != null)
+            return database.GetChildren();
+
+        if (table != null)
+            return table.GetChildren(cbOnlyShowDynamicColumns.Checked);
+
+        if (unplannedTable != null)
+            return unplannedTable.Columns;
+
+        return null;
     }
 
     private bool CanExpandGetter(object model)
     {
-        return model switch
-        {
-            LoadDiagramServerNode server => server.GetChildren().Any(),
-            LoadDiagramDatabaseNode database => database.GetChildren().Any(),
-            LoadDiagramTableNode table => table.GetChildren(cbOnlyShowDynamicColumns.Checked).Any(),
-            UnplannedTable unplannedTable => true,
-            _ => false
-        };
+        var database = model as LoadDiagramDatabaseNode;
+        var table = model as LoadDiagramTableNode;
+        var unplannedTable = model as UnplannedTable;
+
+        if (model is LoadDiagramServerNode server)
+            return server.GetChildren().Any();
+
+        if (database != null)
+            return database.GetChildren().Any();
+
+        if (table != null)
+            return table.GetChildren(cbOnlyShowDynamicColumns.Checked).Any();
+
+        if (unplannedTable != null)
+            return true;
+
+        return false;
     }
 
     public void RefreshUIFromDatabase()

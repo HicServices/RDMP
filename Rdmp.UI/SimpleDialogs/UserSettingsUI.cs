@@ -216,7 +216,7 @@ public partial class UserSettingsFileUI : Form
         if (!_bLoaded)
             return;
 
-        if (ddTheme.SelectedItem is string t)
+        if(ddTheme.SelectedItem is string t)
             UserSettings.Theme = t;
     }
 

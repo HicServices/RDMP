@@ -159,12 +159,13 @@ public class ExtractionRunner : ManyRunner
 
         foreach (var runnable in GetRunnables())
         {
-            if (runnable is ExtractGlobalsCommand globalsCommand)
-                checkables.Add(new GlobalExtractionChecker(_activator, _configuration, globalsCommand, _pipeline));
+            var datasetCommand = runnable as ExtractDatasetCommand;
 
-            if (runnable is ExtractDatasetCommand datasetCommand)
-                checkables.Add(new SelectedDataSetsChecker(_activator, datasetCommand.SelectedDataSets, false,
-                    _pipeline));
+            if (runnable is ExtractGlobalsCommand globalsCommand)
+                checkables.Add(new GlobalExtractionChecker(_activator,_configuration, globalsCommand, _pipeline));
+
+            if (datasetCommand != null)
+                checkables.Add(new SelectedDataSetsChecker(_activator,datasetCommand.SelectedDataSets,  false, _pipeline));
         }
 
         return checkables.ToArray();

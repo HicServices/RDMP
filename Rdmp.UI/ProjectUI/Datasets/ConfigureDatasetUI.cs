@@ -377,7 +377,7 @@ public partial class ConfigureDatasetUI : ConfigureDatasetUI_Design, ILifetimeSu
 
                 //if the column is out of date
                 if (c is IRevertable r && r.HasLocalChanges().Evaluation == ChangeDescription.DatabaseCopyDifferent)
-                    r.RevertToDatabaseState(); //get a fresh copy
+                    r.RevertToDatabaseState();//get a fresh copy
 
                 //add to the config
                 var addMe = _config.AddColumnToExtraction(_dataSet, c);
@@ -801,6 +801,7 @@ public partial class ConfigureDatasetUI : ConfigureDatasetUI_Design, ILifetimeSu
 
         //if an ExtractionInformation is being refreshed
         if (e.Object is ExtractionInformation ei)
+        {
             //We should clear any old cached values for this ExtractionInformation amongst selected column
             foreach (var c in olvSelected.Objects.OfType<ExtractableColumn>().ToArray())
                 if (c.CatalogueExtractionInformation_ID == ei.ID)

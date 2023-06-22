@@ -185,11 +185,8 @@ public class ReleaseRunner : ManyRunner
                         selectedDataSet, progress.ProgressDate, progress.EndDate));
 
             //if it has never been extracted
-            if (extractionResults == null || extractionResults.DestinationDescription == null)
-            {
-                toReturn.Add(new NoReleasePotential(RepositoryLocator,
-                    selectedDataSet)); //the potential is ZERO to release this dataset
-            }
+            if (extractionResults?.DestinationDescription == null)
+                toReturn.Add(new NoReleasePotential(RepositoryLocator, selectedDataSet)); //the potential is ZERO to release this dataset
             else
             {
                 //it's been extracted!, who extracted it?

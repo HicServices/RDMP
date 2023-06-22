@@ -82,7 +82,7 @@ public partial class ExtractableCohortCollectionUI : RDMPUserControl, ILifetimeS
     private void lbCohortDatabaseTable_ButtonClick(object sender, CellClickEventArgs e)
     {
         if (e.Column == olvViewLog && e.Model is ExtractableCohortDescription ecd)
-            WideMessageBox.Show("Cohort audit log", ecd.Cohort.AuditLog, WideMessageBoxTheme.Help);
+            WideMessageBox.Show("Cohort audit log",ecd.Cohort.AuditLog,WideMessageBoxTheme.Help);
     }
 
     private object ViewLogAspectGetter(object rowObject)
@@ -95,9 +95,10 @@ public partial class ExtractableCohortCollectionUI : RDMPUserControl, ILifetimeS
 
     private object IDAspectGetter(object rowObject)
     {
-        var ecd = rowObject as ExtractableCohortDescription;
+        if (rowObject is ExtractableCohortDescription ecd)
+            return ecd.Cohort.ID;
 
-        return ecd?.Cohort.ID;
+        return null;
     }
 
     private bool haveSubscribed;
@@ -198,17 +199,19 @@ public partial class ExtractableCohortCollectionUI : RDMPUserControl, ILifetimeS
 
     private void lbCohortDatabaseTable_FormatRow(object sender, FormatRowEventArgs e)
     {
-        var model = e.Model as ExtractableCohortDescription;
+        if (e.Model is not ExtractableCohortDescription model)
+            return;
 
-        if (model?.Exception != null)
+        if (model.Exception != null)
             e.Item.BackColor = Color.Red;
     }
 
     private void lbCohortDatabaseTable_ItemActivate(object sender, EventArgs e)
     {
-        var model = lbCohortDatabaseTable.SelectedObject as ExtractableCohortDescription;
+        if(lbCohortDatabaseTable.SelectedObject is not ExtractableCohortDescription model)
+            return;
 
-        if (model?.Exception != null)
+        if(model.Exception != null)
             ExceptionViewer.Show(model.Exception);
     }
 
@@ -228,9 +231,7 @@ public partial class ExtractableCohortCollectionUI : RDMPUserControl, ILifetimeS
 
     private void lbCohortDatabaseTable_SelectionChanged(object sender, EventArgs e)
     {
-        var selected = lbCohortDatabaseTable.SelectedObject is not ExtractableCohortDescription node
-            ? null
-            : node.Cohort;
+        var selected = lbCohortDatabaseTable.SelectedObject is not ExtractableCohortDescription node ? null : node.Cohort;
 
         SelectedCohortChanged?.Invoke(this, selected);
     }

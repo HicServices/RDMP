@@ -129,7 +129,7 @@ public partial class LoadEventsTreeView : RDMPUserControl, IObjectCollectionCont
 
     private object olvDate_AspectGetter(object rowObject)
     {
-        if (rowObject is ArchivalDataLoadInfo adi)
+        if(rowObject is ArchivalDataLoadInfo adi)
             return adi.StartTime;
 
         if (rowObject is LoadEventsTreeView_Category cat)
@@ -322,6 +322,7 @@ public partial class LoadEventsTreeView : RDMPUserControl, IObjectCollectionCont
     {
         var RightClickMenu = new ContextMenuStrip();
 
+        var tli = e.Model as ArchivalTableLoadInfo;
 
         if (e.Model is LoadEventsTreeView_Category category)
         {

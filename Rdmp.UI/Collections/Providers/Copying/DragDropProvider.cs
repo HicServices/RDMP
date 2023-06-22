@@ -49,9 +49,9 @@ public class DragDropProvider : SimpleDragSource
 
     private void DragDropProvider_CanDrop(object sender, OlvDropEventArgs e)
     {
-        var dropTargetModel = e.DropTargetItem?.RowObject;
+        var dropTargetModel = e.DropTargetItem != null ? e.DropTargetItem.RowObject :null;
 
-        if (e.DataObject is not DataObject dataObject)
+        if(e.DataObject is not DataObject dataObject)
             return;
 
         if (dataObject is OLVDataObject)

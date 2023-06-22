@@ -31,10 +31,10 @@ public class TestDataAccess : DatabaseTests
     [Test]
     public void TestDistinctCredentials_PasswordMismatch()
     {
-        var testPoints = new List<TestAccessPoint>
+        var  testPoints = new List<TestAccessPoint>
         {
-            new("frank", "bob", "username", "mypas"),
-            new("frank", "bob", "username", "mydifferentPass")
+            new TestAccessPoint("frank", "bob", "username", "mypas"),
+            new TestAccessPoint("frank", "bob", "username", "mydifferentPass")
         };
 
         //call this
@@ -49,8 +49,8 @@ public class TestDataAccess : DatabaseTests
     {
         var testPoints = new List<TestAccessPoint>
         {
-            new("frank", "bob", null, null),
-            new("frank", "bob", "username", "mydifferentPass")
+            new TestAccessPoint("frank", "bob", null, null),
+            new TestAccessPoint("frank", "bob", "username", "mydifferentPass")
         };
 
         //call this
@@ -65,8 +65,8 @@ public class TestDataAccess : DatabaseTests
     {
         var testPoints = new List<TestAccessPoint>
         {
-            new("frank", "bob", "usernameasdasd", "mydifferentpass"),
-            new("frank", "bob", "username", "mydifferentPass")
+            new TestAccessPoint("frank", "bob", "usernameasdasd", "mydifferentpass"),
+            new TestAccessPoint("frank", "bob", "username", "mydifferentPass")
         };
 
         //call this
@@ -83,12 +83,11 @@ public class TestDataAccess : DatabaseTests
     {
         var testPoints = new List<TestAccessPoint>
         {
-            new("frank", "bob", null, null),
-            new("FRANK", "bob", null, null)
+            new TestAccessPoint("frank", "bob", null, null),
+            new TestAccessPoint("FRANK", "bob", null, null)
         };
 
-        var server =
-            DataAccessPortal.ExpectDistinctServer(testPoints.ToArray(), DataAccessContext.InternalDataProcessing, true);
+        var server = DataAccessPortal.GetInstance().ExpectDistinctServer(testPoints.ToArray(), DataAccessContext.InternalDataProcessing, true);
         Assert.AreEqual("frank", server.Name);
     }
 
@@ -97,16 +96,12 @@ public class TestDataAccess : DatabaseTests
     {
         var testPoints = new List<TestAccessPoint>
         {
-            new("frank", "bob", null, null),
-            new("frank", "BOB", null, null)
+            new TestAccessPoint("frank", "bob", null, null),
+            new TestAccessPoint("frank", "BOB", null, null)
         };
 
-        var ex = Assert.Throws<ExpectedIdenticalStringsException>(() =>
-            DataAccessPortal.ExpectDistinctServer(testPoints.ToArray(), DataAccessContext.InternalDataProcessing,
-                true));
-        StringAssert.Contains(
-            "All data access points must be into the same database, access points 'frankbob' and 'frankBOB' are into different databases",
-            ex.Message);
+        var ex = Assert.Throws<ExpectedIdenticalStringsException>(() => DataAccessPortal.GetInstance().ExpectDistinctServer(testPoints.ToArray(), DataAccessContext.InternalDataProcessing, true));
+        StringAssert.Contains("All data access points must be into the same database, access points 'frankbob' and 'frankBOB' are into different databases", ex.Message);
     }
 
     #endregion
@@ -118,9 +113,10 @@ public class TestDataAccess : DatabaseTests
     {
         var testPoints = new List<TestAccessPoint>
         {
-            new("frank", "[bob's Database]", "username", "mypas"),
-            new("frank", "bob's Database", "username", "mypas")
+            new TestAccessPoint("frank", "[bob's Database]", "username", "mypas"),
+            new TestAccessPoint("frank", "bob's Database", "username", "mypas")
         };
+
         //call this
         var result =
             DataAccessPortal.ExpectDistinctServer(testPoints.ToArray(), DataAccessContext.InternalDataProcessing, true);
@@ -134,8 +130,8 @@ public class TestDataAccess : DatabaseTests
     {
         var testPoints = new List<TestAccessPoint>
         {
-            new("frank", "bob", "username", "mypas"),
-            new("frank", "bob", "username", "mypas")
+            new TestAccessPoint("frank", "bob", "username", "mypas"),
+            new TestAccessPoint("frank", "bob", "username", "mypas")
         };
 
         //call this

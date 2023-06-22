@@ -140,8 +140,7 @@ public class EndToEndTableValuedFunction : DatabaseTests
         _cic.CreateRootContainerIfNotExists();
 
         //turn the catalogue _nonTvfCatalogue into a cohort set and add it to the root container
-        var newAggregate = _cic.CreateNewEmptyConfigurationForCatalogue(_nonTvfCatalogue,
-            (s, e) => { throw new Exception("Did not expect there to be more than 1!"); });
+        var newAggregate = _cic.CreateNewEmptyConfigurationForCatalogue(_nonTvfCatalogue,(s,e)=> throw new Exception("Did not expect there to be more than 1!"));
 
         var root = _cic.RootCohortAggregateContainer;
         root.AddChild(newAggregate, 0);
@@ -379,8 +378,8 @@ end
         root.SaveToDatabase();
 
         //declare a global parameter of 1 on the aggregate
-        _cicAggregate = _cic.ImportAggregateConfigurationAsIdentifierList(_aggregate, (s, e) => { return null; });
-
+        _cicAggregate = _cic.ImportAggregateConfigurationAsIdentifierList(_aggregate, (s, e) => null);
+            
         //it should have imported the global parameter as part of the import right?
         Assert.AreEqual(1, _cicAggregate.GetAllParameters().Length);
 

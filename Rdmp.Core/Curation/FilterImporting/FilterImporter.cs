@@ -54,8 +54,7 @@ public class FilterImporter
     public IFilter ImportFilter(IContainer containerToImportOneInto, IFilter fromMaster,
         IFilter[] existingFiltersAlreadyInScope)
     {
-        if (fromMaster is ExtractionFilter extractionFilter &&
-            extractionFilter.ExtractionInformation.ColumnInfo == null)
+        if(fromMaster is ExtractionFilter extractionFilter && extractionFilter.ExtractionInformation.ColumnInfo == null) 
             throw new Exception(
                 $"Could not import filter {extractionFilter} because it could not be traced back to a ColumnInfo");
 

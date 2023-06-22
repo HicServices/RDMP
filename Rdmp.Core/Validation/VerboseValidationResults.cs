@@ -121,8 +121,7 @@ public class VerboseValidationResults
 
         foreach (var validationException in v.GetExceptionList())
         {
-            if (validationException.SourceItemValidator == null ||
-                validationException.SourceItemValidator.TargetProperty == null)
+            if (validationException.SourceItemValidator?.TargetProperty == null)
                 throw new NullReferenceException(
                     $"Column name referenced in ValidationException was null!, message in the exception was:{validationException.Message}");
 

@@ -57,9 +57,9 @@ public class DataLoadProgressUpdateInfoTests : DatabaseTests
 
         _job.DatesToRetrieve = new List<DateTime>
         {
-            new(2001, 1, 1),
-            new(2001, 1, 2),
-            new(2001, 1, 3)
+            new DateTime(2001, 1, 1),
+            new DateTime(2001, 1, 2),
+            new DateTime(2001, 1, 3)
         };
         try
         {
@@ -142,9 +142,9 @@ public class DataLoadProgressUpdateInfoTests : DatabaseTests
     {
         _job.DatesToRetrieve = new List<DateTime>
         {
-            new(2001, 1, 6),
-            new(2001, 1, 7),
-            new(2001, 1, 8)
+            new DateTime(2001, 1, 6),
+            new DateTime(2001, 1, 7),
+            new DateTime(2001,1,8)
         };
 
         var updateInfo = new DataLoadProgressUpdateInfo

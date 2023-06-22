@@ -31,21 +31,17 @@ internal class ProposeExecutionWhenTargetIsProject:RDMPCommandExecutionProposal<
         InsertOption insertOption = InsertOption.Default)
     {
         //drop a cic on a Project to associate it with that project
-        if (cmd is CohortIdentificationConfigurationCommand cicCommand)
-            return new ExecuteCommandAssociateCohortIdentificationConfigurationWithProject(ItemActivator)
-                .SetTarget(cicCommand.CohortIdentificationConfiguration).SetTarget(project);
+        if(cmd is CohortIdentificationConfigurationCommand cicCommand)
+            return new ExecuteCommandAssociateCohortIdentificationConfigurationWithProject(ItemActivator).SetTarget(cicCommand.CohortIdentificationConfiguration).SetTarget(project);
 
         if (cmd is CatalogueCombineable cataCommand)
-            return new ExecuteCommandMakeCatalogueProjectSpecific(ItemActivator).SetTarget(cataCommand.Catalogue)
-                .SetTarget(project);
+            return new ExecuteCommandMakeCatalogueProjectSpecific(ItemActivator).SetTarget(cataCommand.Catalogue).SetTarget(project);
 
-        if (cmd is FileCollectionCombineable file && file.Files.Length == 1)
-            return new ExecuteCommandCreateNewCatalogueByImportingFileUI(ItemActivator, file.Files[0])
-                .SetTarget(project);
+        if(cmd is FileCollectionCombineable file && file.Files.Length == 1)
+            return new ExecuteCommandCreateNewCatalogueByImportingFileUI(ItemActivator,file.Files[0]).SetTarget(project);
 
-        if (cmd is AggregateConfigurationCombineable aggCommand)
-            return new ExecuteCommandCreateNewCatalogueByExecutingAnAggregateConfiguration(ItemActivator,
-                aggCommand.Aggregate).SetTarget(project);
+        if(cmd is AggregateConfigurationCombineable aggCommand)
+            return new ExecuteCommandCreateNewCatalogueByExecutingAnAggregateConfiguration(ItemActivator,aggCommand.Aggregate).SetTarget(project);
 
 
         return null;

@@ -251,7 +251,7 @@ public partial class DatasetRaceway : RDMPUserControl, IDashboardableControl
 
     private void btnAddExtractableDatasetPackage_Click(object sender, EventArgs e)
     {
-        if (_activator.CoreChildProvider is not DataExportChildProvider dataExportChildProvider)
+        if(_activator.CoreChildProvider is not DataExportChildProvider dataExportChildProvider)
             return;
 
         if(Activator.SelectObject(new DialogArgs

@@ -117,6 +117,11 @@ public partial class DataReleaseUI : DataReleaseUI_Design
 
     private object GetState(object rowObject)
     {
+        var sds = rowObject as ISelectedDataSets;
+        var configuration = rowObject as IExtractionConfiguration;
+        var supportingDocument = rowObject as SupportingDocument;
+        var supportingSqlTable = rowObject as SupportingSQLTable;
+
         if (checkAndExecuteUI1.CurrentRunner is not ReleaseRunner releaseRunner)
             return null;
 
@@ -165,6 +170,8 @@ public partial class DataReleaseUI : DataReleaseUI_Design
 
     private IEnumerable ChildrenGetter(object model)
     {
+        var ec = model as ExtractionConfiguration;
+
         if (model is Project p)
             return _configurations = _childProvider.GetActiveConfigurationsOnly(p);
 

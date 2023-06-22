@@ -878,9 +878,10 @@ public class BackfillTests : FromToDatabaseTests
         if (pkColumn == null || string.IsNullOrWhiteSpace(pkColumn))
             throw new InvalidOperationException("Primary Key column is required.");
 
-        var pkConstraint = string.Format("CONSTRAINT PK_{0} PRIMARY KEY ({1})", tableName, pkColumn);
+        var pkConstraint = $"CONSTRAINT PK_{tableName} PRIMARY KEY ({pkColumn})";
         var stagingTableDefinition = $"{columnDefinitions}, {pkConstraint}";
-        var liveTableDefinition = columnDefinitions + string.Format(", hic_validFrom DATETIME, hic_dataLoadRunID int, " + pkConstraint);
+        var liveTableDefinition =
+            $"{columnDefinitions}, hic_validFrom DATETIME, hic_dataLoadRunID int, {pkConstraint}";
 
         if (fkConstraintString != null)
         {
@@ -927,7 +928,6 @@ public class BackfillTests : FromToDatabaseTests
 
         // should be all entities set SetUp now
         Assert.AreEqual(15, _catalogue.CatalogueItems.Length, "Unexpected number of items in catalogue");
-
         #endregion
 
         // add data

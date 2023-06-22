@@ -237,7 +237,8 @@ public class ExecuteDatasetExtractionFlatFileDestination : ExtractionDestination
         }
 
         if (UseAcronymForFileNaming && _request is ExtractDatasetCommand dsRequest)
-            if (string.IsNullOrWhiteSpace(dsRequest.Catalogue.Acronym))
+        {
+            if(string.IsNullOrWhiteSpace(dsRequest.Catalogue.Acronym))
                 notifier.OnCheckPerformed(new CheckEventArgs(
                     $"Catalogue '{dsRequest.Catalogue}' does not have an Acronym but UseAcronymForFileNaming is true",
                     CheckResult.Fail));

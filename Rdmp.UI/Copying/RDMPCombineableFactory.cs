@@ -130,7 +130,7 @@ public class RDMPCombineableFactory : ICombineableFactory
         if (extractableDataSets != null)
             return new ExtractableDataSetCombineable(extractableDataSets);
 
-        if (modelObject is ExtractableDataSetPackage extractableDataSetPackage)
+        if(modelObject is ExtractableDataSetPackage extractableDataSetPackage)
             return new ExtractableDataSetCombineable(extractableDataSetPackage);
 
         if (modelObject is DataAccessCredentials dataAccessCredentials)

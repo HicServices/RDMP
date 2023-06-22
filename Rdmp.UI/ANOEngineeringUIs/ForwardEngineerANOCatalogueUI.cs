@@ -277,7 +277,7 @@ public partial class ForwardEngineerANOCatalogueUI : ForwardEngineerANOCatalogue
     {
         try
         {
-            if (e.RowObject is not ColumnInfo col)
+            if(e.RowObject is not ColumnInfo col)
                 return;
 
             var plan = _planManager.GetPlanForColumnInfo(col);

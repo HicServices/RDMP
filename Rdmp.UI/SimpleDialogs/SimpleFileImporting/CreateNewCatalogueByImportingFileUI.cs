@@ -278,7 +278,7 @@ public partial class CreateNewCatalogueByImportingFileUI : RDMPForm
     {
         var factory = GetFactory();
 
-        if (ddPipeline.SelectedItem is not Pipeline p)
+        if(ddPipeline.SelectedItem is not Pipeline p)
             return;
         try
         {

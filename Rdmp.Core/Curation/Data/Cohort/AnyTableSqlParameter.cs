@@ -204,7 +204,7 @@ public class AnyTableSqlParameter : ReferenceOtherObjectDatabaseEntity, ISqlPara
     public IHasDependencies[] GetObjectsDependingOnThis()
     {
         if (GetOwnerIfAny() is IHasDependencies parent)
-            return new[] { parent };
+            return new[] {parent};
 
         return Array.Empty<IHasDependencies>();
     }

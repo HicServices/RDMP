@@ -50,11 +50,9 @@ public partial class ValidationSetupUI : ValidationSetupForm_Design, ISaveableUI
 
     private ItemValidator SelectedColumnItemValidator
     {
-        get
-        {
-            //The user has not selected a column
-            if (olvColumns.SelectedObject is not ExtractionInformation ei)
-                return null;
+        //The user has not selected a column
+        if (olvColumns.SelectedObject is not ExtractionInformation ei)
+            return null;
 
             var c = ei.GetRuntimeName();
 
@@ -188,8 +186,7 @@ public partial class ValidationSetupUI : ValidationSetupForm_Design, ISaveableUI
         else
         {
             ddPrimaryConstraints.Text = SelectedColumnItemValidator.PrimaryConstraint.GetType().Name;
-            ddConsequence.SelectedItem =
-                SelectedColumnItemValidator.PrimaryConstraint.Consequence ?? Consequence.Missing;
+            ddConsequence.SelectedItem = SelectedColumnItemValidator.PrimaryConstraint.Consequence ?? Consequence.Missing;
         }
 
         //Make consequence selection only possible if there is a primary constraint selected

@@ -132,7 +132,9 @@ public class ExecutePkSynthesizerDatasetExtractionSource : ExecuteDatasetExtract
     {
         foreach (var column in Request.ColumnsToExtract.Union(Request.ReleaseIdentifierSubstitutions))
         {
-            if (column is ReleaseIdentifierSubstitution ri)
+            var ec = column as ExtractableColumn;
+
+            if(column is ReleaseIdentifierSubstitution ri)
                 if (ri.IsPrimaryKey || ri.OriginalDatasetColumn.IsPrimaryKey)
                     yield return ri;
 

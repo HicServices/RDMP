@@ -366,7 +366,7 @@ public partial class RacewayRenderAreaUI : UserControl, INotifyMeOfEditState
                         {
                             hoverLabel = _buckets[i].ToString("Y");
                             hoverValue =
-                                $"{$"{good:n0}"}/{$"{total:n0}"}";
+                                $"{good:n0}/{total:n0}";
                         }
                     }
 
